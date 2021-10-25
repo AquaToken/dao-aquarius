@@ -23,8 +23,6 @@ const ToastContainer = (): JSX.Element => {
         return () => unsub();
     }, []);
 
-    console.log(toasts);
-
     return (
         <Container>
             {toasts.map((toast) => (
