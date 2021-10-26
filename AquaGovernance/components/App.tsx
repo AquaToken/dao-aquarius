@@ -2,7 +2,6 @@ import * as React from 'react';
 import { lazy, Suspense } from 'react';
 import { hot } from 'react-hot-loader';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import '../../common/modules';
 
 import Provider from '../store';
 import { MainRoutes } from '../routes';
@@ -14,7 +13,7 @@ import useGlobalSubscriptions from '../../common/hooks/useGlobalSubscriptions';
 import ToastContainer from '../../common/toasts/ToastContainer';
 
 const MainPage = lazy(() => import('./MainPage/MainPage'));
-const AboutPage = lazy(() => import('./AboutPage/AboutPage'));
+const VoteProposalPage = lazy(() => import('./VoteProposalPage/VoteProposalPage'));
 
 const App = () => {
     useGlobalSubscriptions();
@@ -22,17 +21,15 @@ const App = () => {
     return (
         <Router>
             <Header>
-                <>
-                    <HeaderNavLink to={MainRoutes.proposals}>Proposals</HeaderNavLink>
-                </>
+                <HeaderNavLink to={MainRoutes.main}>Proposals</HeaderNavLink>
             </Header>
             <Suspense fallback={<div>Loading</div>}>
                 <Switch>
                     <Route exact path={MainRoutes.main}>
                         <MainPage />
                     </Route>
-                    <Route path={MainRoutes.proposals}>
-                        <AboutPage />
+                    <Route path={MainRoutes.proposal}>
+                        <VoteProposalPage />
                     </Route>
                 </Switch>
             </Suspense>

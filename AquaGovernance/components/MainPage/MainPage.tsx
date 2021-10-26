@@ -10,7 +10,7 @@ const MainBlock = styled.main`
 `;
 
 const Background = styled.div`
-    padding: 10% 0;
+    padding: 10% 4rem;
     ${flexAllCenter};
     flex-direction: column;
     background-color: ${COLORS.darkPurple};
