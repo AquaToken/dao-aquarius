@@ -12,6 +12,7 @@ const mock = [
 
 const AboutPageBlock = styled.div`
     padding: 2.4rem;
+    flex: 1 0 auto;
 `;
 
 const AboutPage = (): JSX.Element => {

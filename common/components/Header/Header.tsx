@@ -9,14 +9,13 @@ import useAuthStore from '../../store/authStore/useAuthStore';
 import AccountBlock from './AccountBlock/AccountBlock';
 import { ModalService } from '../../services/globalServices';
 
-const HeaderContainer = styled.div`
+const HeaderBlock = styled.header`
     width: 100%;
     display: flex;
     flex-direction: row;
     align-items: center;
     height: 11.2rem;
     padding: 0 4rem;
-    box-sizing: border-box;
 `;
 
 const NavLinksContainer = styled.div<{ isLogged: boolean }>`
@@ -44,14 +43,14 @@ const Header = ({ children }: { children: JSX.Element }): JSX.Element => {
     const { isLogged } = useAuthStore();
 
     return (
-        <HeaderContainer>
+        <HeaderBlock>
             <Link to="/">
                 <AquaLogo />
             </Link>
 
             <NavLinksContainer isLogged={isLogged}>{children}</NavLinksContainer>
             {isLogged ? <AccountBlock /> : <Button onClick={() => signIn()}>sign in</Button>}
-        </HeaderContainer>
+        </HeaderBlock>
     );
 };
 
