@@ -2,7 +2,6 @@ import * as React from 'react';
 import { lazy, Suspense } from 'react';
 import { hot } from 'react-hot-loader';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import '../../common/modules';
 
 import Provider from '../store';
 import { MainRoutes } from '../routes';
