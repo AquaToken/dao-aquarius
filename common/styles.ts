@@ -12,6 +12,7 @@ export const COLORS = {
     lightGray: '#FAFAFB',
     placeholder: '#B3B4C3',
     darkPurple: '#24034F',
+    pinkRed: '#FF3461',
 };
 
 export const FONT_FAMILY = {

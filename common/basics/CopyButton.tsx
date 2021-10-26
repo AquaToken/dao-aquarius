@@ -19,7 +19,13 @@ const CopyIconStyled = styled(CopyIcon)`
     margin-left: 0.8rem;
 `;
 
-const CopyButton = ({ text }: { text: string }): JSX.Element => {
+const CopyButton = ({
+    text,
+    children,
+}: {
+    text: string;
+    children: React.ReactNode;
+}): JSX.Element => {
     const [isShowTooltip, setIsShowTooltip] = useState(false);
     const timerRef = useRef(null);
 
@@ -52,7 +58,7 @@ const CopyButton = ({ text }: { text: string }): JSX.Element => {
             isShow={isShowTooltip}
         >
             <CopyButtonContainer onClick={() => copyText()}>
-                <span>Copy to clipboard</span>
+                {children}
                 <CopyIconStyled />
             </CopyButtonContainer>
         </Tooltip>
