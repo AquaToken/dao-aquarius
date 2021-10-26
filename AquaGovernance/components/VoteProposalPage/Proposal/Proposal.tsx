@@ -4,10 +4,12 @@ import { COLORS } from '../../../../common/styles';
 import { Link } from 'react-router-dom';
 import ArrowLeft16Icon from '../../../../common/assets/img/icon-arrow-left.svg';
 import { flexAllCenter } from '../../../../common/mixins';
+import AccountViewer from '../AccountViewer/AccountViewer';
+import CopyButton from '../../../../common/basics/CopyButton';
 
 const ProposalBlock = styled.div`
-    padding: 10rem 0 8rem;
     max-width: 79.2rem;
+    flex: 1 1 auto;
 `;
 
 const ProposalQuestion = styled.div`
@@ -38,18 +40,6 @@ const QuestionText = styled.h3`
     color: ${COLORS.titleText};
 `;
 
-const CastVotes = styled.div`
-    width: 36.4rem;
-    height: 28.6rem;
-    background: ${COLORS.white};
-    box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
-    border-radius: 0.5rem;
-
-    position: sticky;
-    top: 20px;
-    z-index: 1000;
-`;
-
 const ProposalSection = styled.section`
     padding-top: 6rem;
 `;
@@ -67,7 +57,7 @@ const DescriptionText = styled.div`
     opacity: 0.7;
 `;
 
-const DetailsTable = styled.div`
+const DataDetails = styled.div`
     display: flex;
     justify-content: space-between;
     margin-top: 3.2rem;
@@ -139,7 +129,7 @@ const Proposal = (): JSX.Element => {
             </ProposalSection>
             <ProposalSection>
                 <Title>Details</Title>
-                <DetailsTable>
+                <DataDetails>
                     <Column>
                         <DetailsTitle>Voting start:</DetailsTitle>
                         <DetailsDescription>Dec. 16, 2021, 13:00</DetailsDescription>
@@ -150,9 +140,19 @@ const Proposal = (): JSX.Element => {
                     </Column>
                     <Column>
                         <DetailsTitle>Proposed by:</DetailsTitle>
-                        <DetailsDescription>key</DetailsDescription>
+                        <DetailsDescription>
+                            <CopyButton
+                                text={'GARDNV3Q7YGT4AKSDF25LT32YSCCW4EV22Y2TV3I2PU2MMXJTEDL5T55'}
+                            >
+                                <AccountViewer
+                                    pubKey={
+                                        'GARDNV3Q7YGT4AKSDF25LT32YSCCW4EV22Y2TV3I2PU2MMXJTEDL5T55'
+                                    }
+                                />
+                            </CopyButton>
+                        </DetailsDescription>
                     </Column>
-                </DetailsTable>
+                </DataDetails>
             </ProposalSection>
         </ProposalBlock>
     );

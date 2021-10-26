@@ -35,7 +35,9 @@ const QRModal = ({ params }: ModalProps<{ uri: string }>): JSX.Element => {
                 <QRCode value={uri} size={170} />
 
                 <CopyButtonContainer>
-                    <CopyButton text={uri} />
+                    <CopyButton text={uri}>
+                        <span>Copy to clipboard</span>
+                    </CopyButton>
                 </CopyButtonContainer>
             </QRContainer>
         </>
