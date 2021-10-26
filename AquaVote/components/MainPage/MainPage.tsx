@@ -5,6 +5,10 @@ import BackgroundImageRight from '../../../common/assets/img/background-right.sv
 import { Breakpoints, COLORS } from '../../../common/styles';
 import { flexAllCenter, respondDown } from '../../../common/mixins';
 
+const MainBlock = styled.main`
+    flex: 1 0 auto;
+`;
+
 const Background = styled.div`
     padding: 10% 0;
     ${flexAllCenter};
@@ -69,7 +73,7 @@ const Description = styled.div`
 
 const MainPage = (): JSX.Element => {
     return (
-        <div>
+        <MainBlock>
             <Background>
                 <Title>Vote For Your Favorite Pairs</Title>
                 <Description>
@@ -79,7 +83,7 @@ const MainPage = (): JSX.Element => {
                 <BackgroundLeft />
                 <BackgroundRight />
             </Background>
-        </div>
+        </MainBlock>
     );
 };
 

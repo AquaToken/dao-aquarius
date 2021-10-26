@@ -2,8 +2,11 @@ import { createGlobalStyle } from 'styled-components';
 import { COLORS, FONT_FAMILY } from '../styles';
 
 const AppGlobalStyle = createGlobalStyle`
-  html {
+  * {
     box-sizing: border-box;
+  }
+  
+  html {
     width: 100%;
     height: 100%;
     font-size: 62.5%; // 1rem = 10px
@@ -11,7 +14,7 @@ const AppGlobalStyle = createGlobalStyle`
   }
 
   body {
-    min-height: 100vh;
+    height: 100%;
     padding: 0;
     margin: 0;
     width: 100vw !important;
@@ -51,6 +54,9 @@ const AppGlobalStyle = createGlobalStyle`
   }
   
   #root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
     max-width: 144rem;
     margin: 0 auto;
   }
