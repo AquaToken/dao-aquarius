@@ -1,9 +1,9 @@
 import * as React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { COLORS } from '../../../../common/styles';
 import NativeVotingButton from './VotingButton/VotingButton';
-import Success24Icon from '../../../../common/assets/img/icon-success24.svg';
-import Fail24Icon from '../../../../common/assets/img/icon-fail24.svg';
+import Success from '../../../../common/assets/img/icon-success.svg';
+import Fail from '../../../../common/assets/img/icon-fail.svg';
 
 const SideBarBlock = styled.aside`
     position: sticky;
@@ -40,15 +40,27 @@ const BoldText = styled.span`
     margin-left: 0.8rem;
 `;
 
+const iconStyles = css`
+    height: 2.4rem;
+    width: 2.4rem;
+`;
+
+const FailIcon = styled(Fail)`
+    ${iconStyles}
+`;
+const SuccessIcon = styled(Success)`
+    ${iconStyles}
+`;
+
 const SideBar = (): JSX.Element => {
     return (
         <SideBarBlock>
             <Title>Cast your votes</Title>
             <VotingButton>
-                <Success24Icon /> Vote <BoldText>For</BoldText>
+                <SuccessIcon /> Vote <BoldText>For</BoldText>
             </VotingButton>
             <VotingButton isVoteFor>
-                <Fail24Icon />
+                <FailIcon />
                 Vote <BoldText>Against</BoldText>
             </VotingButton>
         </SideBarBlock>
