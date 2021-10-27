@@ -5,6 +5,7 @@ import AquaLogo from './../../assets/img/aqua-logo.svg';
 import { COLORS } from '../../styles';
 
 const FooterBlock = styled.footer`
+    margin-top: 8rem;
     padding: 0 4rem;
     flex: 0 0 auto;
     display: flex;
