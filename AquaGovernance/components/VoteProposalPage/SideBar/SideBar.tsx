@@ -8,14 +8,14 @@ import Fail from '../../../../common/assets/img/icon-fail.svg';
 const SideBarBlock = styled.aside`
     position: sticky;
     top: 4rem;
+    margin: 10rem 4rem 0 0;
+    float: right;
 
     padding: 3.2rem 4.8rem 4.8rem;
     width: 36.4rem;
-    height: 28.6rem;
     background: ${COLORS.white};
     box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
     border-radius: 0.5rem;
-    flex-shrink: 0;
 `;
 
 const Title = styled.h5`
