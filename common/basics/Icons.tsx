@@ -12,6 +12,11 @@ const IconBlock = styled.div`
     background-color: #${COLORS.white};
     box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
     ${flexAllCenter};
+
+    svg {
+        height: 1.6rem;
+        width: 1.6rem;
+    }
 `;
 
 export const IconSuccess = (): JSX.Element => {
