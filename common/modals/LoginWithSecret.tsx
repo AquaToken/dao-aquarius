@@ -19,10 +19,10 @@ const InputWrapped = styled(Input)`
     margin-bottom: 3.1rem;
 `;
 
-const LoginWithSecret = ({ confirm, close }: ModalProps<never>): JSX.Element => {
+const LoginWithSecret = ({ close }: ModalProps<never>): JSX.Element => {
     const [secretKey, setSecretKey] = useState('');
 
-    const { login, isLogged, isLoginPending, loginErrorText } = useAuthStore();
+    const { login, isLogged, isLoginPending } = useAuthStore();
 
     const onSubmit = () => {
         StellarService.loginWithSecret(secretKey)
@@ -46,7 +46,6 @@ const LoginWithSecret = ({ confirm, close }: ModalProps<never>): JSX.Element => 
             <ModalDescription>Enter your secret key, started from “S”</ModalDescription>
             <LoginWithSecretBody>
                 <InputWrapped
-                    required
                     placeholder="SXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
                     maxLength={56}
                     value={secretKey}

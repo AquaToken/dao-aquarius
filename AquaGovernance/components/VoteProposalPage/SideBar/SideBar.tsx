@@ -4,6 +4,11 @@ import { COLORS } from '../../../../common/styles';
 import NativeVotingButton from './VotingButton/VotingButton';
 import Success from '../../../../common/assets/img/icon-success.svg';
 import Fail from '../../../../common/assets/img/icon-fail.svg';
+import { ModalService } from '../../../../common/services/globalServices';
+import useAuthStore from '../../../../common/store/authStore/useAuthStore';
+import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
+import ConfirmVoteModal from '../ConfirmVoteModal/ConfirmVoteModal';
+import { useEffect, useState } from 'react';
 
 const SideBarBlock = styled.aside`
     position: sticky;
@@ -53,10 +58,30 @@ const SuccessIcon = styled(Success)`
 `;
 
 const SideBar = (): JSX.Element => {
+    const [selectedOption, setSelectedOption] = useState(null);
+    const { isLogged } = useAuthStore();
+
+    const onVoteClick = (option) => {
+        if (isLogged) {
+            ModalService.openModal(ConfirmVoteModal, { option });
+            return;
+        }
+        setSelectedOption(option);
+        ModalService.openModal(ChooseLoginMethodModal, {});
+    };
+
+    useEffect(() => {
+        if (isLogged && selectedOption) {
+            ModalService.openModal(ConfirmVoteModal, { option: selectedOption }).then(() => {
+                setSelectedOption(null);
+            });
+        }
+    }, [isLogged]);
+
     return (
         <SideBarBlock>
             <Title>Cast your votes</Title>
-            <VotingButton>
+            <VotingButton onClick={() => onVoteClick({ name: 'Vote For' })}>
                 <SuccessIcon /> Vote <BoldText>For</BoldText>
             </VotingButton>
             <VotingButton isVoteFor>

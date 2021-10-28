@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { ModalDescription, ModalProps, ModalTitle } from '../atoms/ModalAtoms';
-import AquaLogo from '../../assets/img/aqua-logo-small.svg';
+import Aqua from '../../assets/img/aqua-logo-small.svg';
 import ArrowsIcon from '../../assets/img/icon-arrows-circle.svg';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { flexAllCenter } from '../../mixins';
 import { COLORS } from '../../styles';
 import DotsLoader from '../../basics/DotsLoader';
@@ -16,9 +16,17 @@ const Arrows = styled(ArrowsIcon)`
     margin: 0 4rem;
 `;
 
-const AppLogo = styled.img`
+const iconSize = css`
     height: 8.8rem;
     width: 8.8rem;
+`;
+
+const AquaLogo = styled(Aqua)`
+    ${iconSize};
+`;
+
+const AppLogo = styled.img`
+    ${iconSize};
 `;
 
 const Connecting = styled.div`
