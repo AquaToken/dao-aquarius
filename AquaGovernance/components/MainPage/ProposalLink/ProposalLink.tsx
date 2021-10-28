@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { COLORS } from '../../../../common/styles';
 import ArrowRight from '../../../../common/assets/img/icon-arrow-right.svg';
 import SuccessIcon from '../../../../common/assets/img/icon-success.svg';
+import { getDateString } from '../../../../common/helpers/helpers';
 
 const ProposalLinkBlock = styled.li<{ isEnd: boolean }>`
     display: flex;
@@ -39,6 +40,7 @@ const EndedLabel = styled.div`
     display: flex;
     align-items: center;
     background-color: ${COLORS.purple};
+    min-width: 18.5rem;
     border-radius: 100px;
     color: ${COLORS.white};
     padding: 0.8rem;
@@ -51,29 +53,6 @@ const Success = styled(SuccessIcon)`
     height: 16px;
     margin-right: 0.4rem;
 `;
-
-const getDateString = (timestamp) => {
-    const date = new Date(Number(timestamp)),
-        year = date.getFullYear(),
-        month = date.getMonth(),
-        day = date.getDate(),
-        months = [
-            'Jan',
-            'Feb',
-            'Mar',
-            'Apr',
-            'May',
-            'Jun',
-            'Jul',
-            'Aug',
-            'Sep',
-            'Oct',
-            'Nov',
-            'Dec',
-        ];
-
-    return `${months[month]}. ${day}, ${year}`;
-};
 
 const ProposalLink = ({
     proposalData,

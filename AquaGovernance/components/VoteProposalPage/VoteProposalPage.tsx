@@ -8,6 +8,7 @@ import { flexAllCenter, respondDown } from '../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../common/styles';
 import { Link } from 'react-router-dom';
 import CurrentResults from './CurrentResults/CurrentResults';
+import Votes from './Votes/Votes';
 
 const Container = styled.div`
     max-width: 78.2rem;
@@ -167,6 +168,9 @@ const VoteProposalPage = (): JSX.Element => {
             </ProposalSection>
             <ProposalSection>
                 <CurrentResults />
+            </ProposalSection>
+            <ProposalSection>
+                <Votes />
             </ProposalSection>
         </main>
     );
