@@ -14,6 +14,13 @@ export const flexAllCenter = css`
     justify-content: center;
 `;
 
+export const flexRowSpaceBetween = css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+`;
+
 export const respondUp =
     (breakPoint: Breakpoints) =>
     (...args: SimpleInterpolation[]): FlattenSimpleInterpolation =>

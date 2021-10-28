@@ -3,8 +3,9 @@ import styled from 'styled-components';
 import { flexAllCenter } from '../mixins';
 import { COLORS } from '../styles';
 
-const ButtonBody = styled.button<{ isBig?: boolean; pending?: boolean }>`
+const ButtonBody = styled.button<{ isBig?: boolean; pending?: boolean; fullWidth?: boolean }>`
     ${flexAllCenter};
+    width: ${({ fullWidth }) => (fullWidth ? '100%' : 'unset')};
     height: ${({ isBig }) => (isBig ? '6.6rem' : '4.8rem')};
     padding: ${({ isBig }) => (isBig ? '2.4rem 6.4rem' : '1.6rem 3.2rem')};
     background-color: ${COLORS.white};
@@ -72,11 +73,12 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     children: string | JSX.Element;
     pending?: boolean;
     isBig?: boolean;
+    fullWidth?: boolean;
 }
 
-const Button = ({ children, pending, isBig, ...props }: ButtonProps): JSX.Element => {
+const Button = ({ children, pending, isBig, fullWidth, ...props }: ButtonProps): JSX.Element => {
     return (
-        <ButtonBody pending={pending} isBig={isBig} {...props}>
+        <ButtonBody pending={pending} isBig={isBig} fullWidth={fullWidth} {...props}>
             <ButtonLoader pending={pending}>{children}</ButtonLoader>
         </ButtonBody>
     );

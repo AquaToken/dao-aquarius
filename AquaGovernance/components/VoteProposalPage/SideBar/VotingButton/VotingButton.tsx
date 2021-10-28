@@ -36,14 +36,12 @@ const ButtonBody = styled.button<{ isVoteFor?: boolean }>`
     }
 `;
 
-const VotingButton = ({
-    isVoteFor,
-    children,
-    ...props
-}: {
-    isVoteFor?: boolean;
+interface VotingButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     children: React.ReactNode;
-}): JSX.Element => {
+    isVoteFor?: boolean;
+}
+
+const VotingButton = ({ isVoteFor, children, ...props }: VotingButtonProps): JSX.Element => {
     return (
         <ButtonBody isVoteFor={isVoteFor} {...props}>
             {children}
