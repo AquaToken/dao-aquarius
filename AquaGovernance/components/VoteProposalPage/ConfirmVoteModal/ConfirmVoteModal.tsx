@@ -15,6 +15,7 @@ import RangeInput from '../../../../common/basics/RangeInput';
 import { useState } from 'react';
 import Button from '../../../../common/basics/Button';
 import { ToastService } from '../../../../common/services/globalServices';
+import { formatBalance, roundToPrecision } from '../../../../common/helpers/helpers';
 
 const MINIMUM_AMOUNT = 0.0000001;
 
@@ -91,13 +92,14 @@ const ConfirmVoteModal = ({ params }: ModalProps<{ option: any }>) => {
 
     const aquaBalance = account.getAquaBalance();
 
+    const formattedAquaBalance = formatBalance(aquaBalance);
+
     const onRangeChange = (percent) => {
-        console.log(percent);
         setPercent(percent);
 
-        const amountValue = (Number(aquaBalance) * percent) / 100;
+        const amountValue = (aquaBalance * percent) / 100;
 
-        setAmount(amountValue.toString());
+        setAmount(roundToPrecision(amountValue, 7));
     };
 
     const onInputChange = (value) => {
@@ -106,14 +108,16 @@ const ConfirmVoteModal = ({ params }: ModalProps<{ option: any }>) => {
         }
         setAmount(value);
 
-        const percentValue = Math.round((Number(value) / Number(aquaBalance)) * 100 * 10) / 10;
+        const percentValue = roundToPrecision((Number(value) / Number(aquaBalance)) * 100, 2);
 
-        setPercent(percentValue);
+        setPercent(+percentValue);
     };
 
     const onSubmit = () => {
         if (Number(amount) > Number(aquaBalance)) {
-            ToastService.showErrorToast(`The value must be less  than ${aquaBalance} AQUA`);
+            ToastService.showErrorToast(
+                `The value must be less or equal than ${formattedAquaBalance} AQUA`,
+            );
         }
         if (Number(amount) < MINIMUM_AMOUNT) {
             ToastService.showErrorToast(
@@ -141,7 +145,7 @@ const ConfirmVoteModal = ({ params }: ModalProps<{ option: any }>) => {
                 <Label>Voting power</Label>
 
                 <BalanceBlock>
-                    <Balance>{aquaBalance} AQUA </Balance>
+                    <Balance>{formattedAquaBalance} AQUA </Balance>
                     available
                 </BalanceBlock>
             </ContentRow>

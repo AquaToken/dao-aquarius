@@ -7,6 +7,7 @@ import IconPlus from '../../../assets/img/icon-plus.svg';
 import IconLogout from '../../../assets/img/icon-logout.svg';
 import useAuthStore from '../../../store/authStore/useAuthStore';
 import { WalletConnectService } from '../../../services/globalServices';
+import { formatBalance } from '../../../helpers/helpers';
 
 const AccountMenuBlock = styled.div`
     position: absolute;
@@ -57,6 +58,8 @@ const Logout = styled.span`
 const AccountMenu = ({ closeMenu }: { closeMenu: () => void }): JSX.Element => {
     const { logout, loginType, account } = useAuthStore();
     const aquaBalance = account.getAquaBalance();
+    const aquaBalanceView = aquaBalance === null ? '—' : formatBalance(aquaBalance, true);
+
     return (
         <AccountMenuBlock
             onClick={(e) => {
@@ -66,7 +69,7 @@ const AccountMenu = ({ closeMenu }: { closeMenu: () => void }): JSX.Element => {
             <AccountBalanceBlock>
                 <AccountBalance>
                     <AccountBalanceLabel>AQUA balance:</AccountBalanceLabel>
-                    <AccountBalanceValue>{aquaBalance || '—'}</AccountBalanceValue>
+                    <AccountBalanceValue>{aquaBalanceView}</AccountBalanceValue>
                 </AccountBalance>
                 <CircleButton>
                     <IconPlus />

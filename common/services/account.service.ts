@@ -8,7 +8,7 @@ export default class AccountService extends AccountResponse {
         super(account);
     }
 
-    getAquaBalance(): string | null {
+    getAquaBalance(): number | null {
         const aquaBalance = this.balances.find(
             (balance) =>
                 (balance as Horizon.BalanceLineAsset).asset_code == AQUA_CODE &&
@@ -19,9 +19,6 @@ export default class AccountService extends AccountResponse {
             return null;
         }
 
-        return new Intl.NumberFormat('en-US', {
-            maximumFractionDigits: 2,
-            minimumFractionDigits: 2,
-        }).format(+aquaBalance.balance);
+        return +aquaBalance.balance;
     }
 }
