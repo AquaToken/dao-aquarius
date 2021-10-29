@@ -55,3 +55,35 @@ export const getDateString = (timestamp: string): string => {
 
     return `${months[month]}. ${day}, ${year}`;
 };
+
+export const roundToPrecision = (value: string | number, numDecimals): string => {
+    const multiplier = 10 ** numDecimals;
+
+    return (Math.round(Number(value) * multiplier) / multiplier).toString();
+};
+
+const getNumDecimals = (value: number): number => {
+    if (value >= 2000) {
+        return 0;
+    } else if (value >= 10) {
+        return 2;
+    } else if (value >= 1) {
+        return 3;
+    } else if (value >= 0.1) {
+        return 4;
+    } else if (value >= 0.01) {
+        return 5;
+    } else if (value >= 0.001) {
+        return 6;
+    }
+    return 7;
+};
+
+export const formatBalance = (balance: number, withRounding?: boolean): string => {
+    const precision = getNumDecimals(balance);
+
+    return new Intl.NumberFormat('en-US', {
+        maximumFractionDigits: withRounding ? precision : 7,
+        minimumFractionDigits: withRounding ? precision : undefined,
+    }).format(balance);
+};
