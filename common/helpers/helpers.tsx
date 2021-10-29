@@ -1,5 +1,13 @@
-export function makeComparator({ key = null, isNum = false, isReversedSort = false } = {}) {
-    return (a, b) => {
+export function makeComparator({
+    key = null,
+    isNum = false,
+    isReversedSort = false,
+}: {
+    key?: string;
+    isNum: boolean;
+    isReversedSort: boolean;
+}) {
+    return (a: unknown, b: unknown): number => {
         let aVal = key ? a[key] : a;
         let bVal = key ? b[key] : b;
 
@@ -56,7 +64,7 @@ export const getDateString = (timestamp: string): string => {
     return `${months[month]}. ${day}, ${year}`;
 };
 
-export const roundToPrecision = (value: string | number, numDecimals): string => {
+export const roundToPrecision = (value: string | number, numDecimals: number): string => {
     const multiplier = 10 ** numDecimals;
 
     return (Math.round(Number(value) * multiplier) / multiplier).toString();

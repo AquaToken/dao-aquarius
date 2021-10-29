@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import SideBar from './SideBar/SideBar';
+import Sidebar from './Sidebar/Sidebar';
 import ArrowLeft from '../../../common/assets/img/icon-arrow-left.svg';
 import CopyButton from '../../../common/basics/CopyButton';
 import AccountViewer from './AccountViewer/AccountViewer';
@@ -92,7 +92,7 @@ const DetailsDescription = styled.div`
 const VoteProposalPage = (): JSX.Element => {
     return (
         <main>
-            <SideBar />
+            <Sidebar />
             <ProposalQuestion>
                 <Container>
                     <BackToProposals>
