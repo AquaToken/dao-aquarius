@@ -16,6 +16,7 @@ import { useState } from 'react';
 import Button from '../../../../common/basics/Button';
 import { ToastService } from '../../../../common/services/globalServices';
 import { formatBalance, roundToPrecision } from '../../../../common/helpers/helpers';
+import Link from '../../../../common/basics/Link';
 
 const MINIMUM_AMOUNT = 0.0000001;
 
@@ -50,6 +51,7 @@ const BalanceBlock = styled.span`
 
 const Balance = styled.span`
     color: ${COLORS.tooltip};
+    cursor: pointer;
 `;
 
 const InputPostfix = styled.div`
@@ -84,15 +86,35 @@ const StyledButton = styled(Button)`
     margin-top: 3.2rem;
 `;
 
+const GetAquaBlock = styled.div`
+    ${flexRowSpaceBetween};
+    height: 6.8rem;
+    border-radius: 1rem;
+    background: ${COLORS.lightGray};
+    padding: 0 3.2rem;
+    margin-top: 4.1rem;
+`;
+
+const GetAquaLabel = styled.span`
+    color: ${COLORS.grayText};
+`;
+
+const GetAquaLink = styled.div`
+    font-size: 1.4rem;
+`;
+
 const ConfirmVoteModal = ({ params }: ModalProps<{ option: any }>) => {
     const { account } = useAuthStore();
 
     const [percent, setPercent] = useState(0);
-    const [amount, setAmount] = useState('0');
+    const [amount, setAmount] = useState('');
 
     const aquaBalance = account.getAquaBalance();
 
-    const formattedAquaBalance = formatBalance(aquaBalance);
+    const hasTrustLine = aquaBalance !== null;
+    const hasAqua = aquaBalance !== 0;
+
+    const formattedAquaBalance = hasTrustLine && formatBalance(aquaBalance);
 
     const onRangeChange = (percent) => {
         setPercent(percent);
@@ -144,10 +166,16 @@ const ConfirmVoteModal = ({ params }: ModalProps<{ option: any }>) => {
             <ContentRow>
                 <Label>Voting power</Label>
 
-                <BalanceBlock>
-                    <Balance>{formattedAquaBalance} AQUA </Balance>
-                    available
-                </BalanceBlock>
+                {hasTrustLine ? (
+                    <BalanceBlock>
+                        <Balance onClick={() => onRangeChange(100)}>
+                            {formattedAquaBalance} AQUA{' '}
+                        </Balance>
+                        available
+                    </BalanceBlock>
+                ) : (
+                    <BalanceBlock>You don’t have AQUA trustline</BalanceBlock>
+                )}
             </ContentRow>
 
             <StyledInput
@@ -155,19 +183,35 @@ const ConfirmVoteModal = ({ params }: ModalProps<{ option: any }>) => {
                 onChange={(e) => {
                     onInputChange(e.target.value);
                 }}
+                placeholder="Enter voting power"
                 postfix={
                     <InputPostfix>
                         <AquaLogo />
                         <span>AQUA</span>
                     </InputPostfix>
                 }
+                disabled={!hasTrustLine || !hasAqua}
             />
 
-            <RangeInput onChange={onRangeChange} value={percent} />
+            <RangeInput
+                onChange={onRangeChange}
+                value={percent}
+                disabled={!hasTrustLine || !hasAqua}
+            />
 
-            <ClaimBack>
-                You can claim back your AQUA on <ClaimBackDate>Jan. 15, 2022, 3:00</ClaimBackDate>
-            </ClaimBack>
+            {hasTrustLine && hasAqua ? (
+                <ClaimBack>
+                    You can claim back your AQUA on{' '}
+                    <ClaimBackDate>Jan. 15, 2022, 3:00</ClaimBackDate>
+                </ClaimBack>
+            ) : (
+                <GetAquaBlock>
+                    <GetAquaLabel>You don't have enough AQUA</GetAquaLabel>
+                    <Link>
+                        <GetAquaLink>Get AQUA</GetAquaLink>
+                    </Link>
+                </GetAquaBlock>
+            )}
 
             <StyledButton fullWidth onClick={() => onSubmit()} disabled={!amount}>
                 CONFIRM VOTE
