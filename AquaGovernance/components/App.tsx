@@ -20,22 +20,20 @@ const App = () => {
 
     return (
         <Router>
-            <div id="scrollable">
-                <Header>
-                    <HeaderNavLink to={MainRoutes.main}>Proposals</HeaderNavLink>
-                </Header>
-                <Suspense fallback={<div>Loading</div>}>
-                    <Switch>
-                        <Route exact path={MainRoutes.main}>
-                            <MainPage />
-                        </Route>
-                        <Route path={MainRoutes.proposal}>
-                            <VoteProposalPage />
-                        </Route>
-                    </Switch>
-                </Suspense>
-                <Footer />
-            </div>
+            <Header>
+                <HeaderNavLink to={MainRoutes.main}>Proposals</HeaderNavLink>
+            </Header>
+            <Suspense fallback={<div>Loading</div>}>
+                <Switch>
+                    <Route exact path={MainRoutes.main}>
+                        <MainPage />
+                    </Route>
+                    <Route path={MainRoutes.proposal}>
+                        <VoteProposalPage />
+                    </Route>
+                </Switch>
+            </Suspense>
+            <Footer />
 
             <ModalContainer />
             <ToastContainer />
