@@ -11,19 +11,24 @@ const LinkBody = styled.a`
     font-size: 1.6rem;
     line-height: 2.8rem;
     cursor: pointer;
+    text-decoration: none;
 `;
 
 const LinkArrow = styled(LinkArrowIcon)`
     margin-left: 1rem;
 `;
 
-const Link = ({ children }: { children: JSX.Element | string }): JSX.Element => {
+interface ExternalLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+    children: string | JSX.Element;
+}
+
+const ExternalLink = ({ children, ...props }: ExternalLinkProps): JSX.Element => {
     return (
-        <LinkBody>
+        <LinkBody {...props}>
             {children}
             <LinkArrow />
         </LinkBody>
     );
 };
 
-export default Link;
+export default ExternalLink;
