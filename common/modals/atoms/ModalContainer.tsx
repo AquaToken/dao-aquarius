@@ -17,7 +17,6 @@ const ModalContainer = (): JSX.Element => {
                 scrollable.style.top = `${y}px`;
                 scrollable.style.left = '0';
                 scrollable.style.right = '0';
-                console.log(scrollable);
             } else {
                 const scrollY = scrollable.style.top;
                 scrollable.style.position = '';
