@@ -20,25 +20,27 @@ const App = () => {
 
     return (
         <Router>
-            <Header>
-                <>
-                    <HeaderNavLink to={MainRoutes.about}>Explore</HeaderNavLink>
-                    <HeaderNavLink to={MainRoutes.about}>Top 100</HeaderNavLink>
-                    <HeaderNavLink to={MainRoutes.about}>About</HeaderNavLink>
-                    <HeaderNavLink to={MainRoutes.about}>Airdrop</HeaderNavLink>
-                </>
-            </Header>
-            <Suspense fallback={<div>Loading</div>}>
-                <Switch>
-                    <Route exact path={MainRoutes.main}>
-                        <MainPage />
-                    </Route>
-                    <Route path={MainRoutes.about}>
-                        <AboutPage />
-                    </Route>
-                </Switch>
-            </Suspense>
-            <Footer />
+            <div id="scrollable">
+                <Header>
+                    <>
+                        <HeaderNavLink to={MainRoutes.about}>Explore</HeaderNavLink>
+                        <HeaderNavLink to={MainRoutes.about}>Top 100</HeaderNavLink>
+                        <HeaderNavLink to={MainRoutes.about}>About</HeaderNavLink>
+                        <HeaderNavLink to={MainRoutes.about}>Airdrop</HeaderNavLink>
+                    </>
+                </Header>
+                <Suspense fallback={<div>Loading</div>}>
+                    <Switch>
+                        <Route exact path={MainRoutes.main}>
+                            <MainPage />
+                        </Route>
+                        <Route path={MainRoutes.about}>
+                            <AboutPage />
+                        </Route>
+                    </Switch>
+                </Suspense>
+                <Footer />
+            </div>
             <ModalContainer />
             <ToastContainer />
         </Router>
