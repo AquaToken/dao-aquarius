@@ -20,12 +20,14 @@ const ModalWrapper = styled.div`
 `;
 
 const ModalInner = styled.div`
+    max-height: 80vh;
     border-radius: 1rem;
     background: #fff;
     box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
     padding: 6.4rem 4.8rem 4.8rem;
     animation: ${({ isShow }: { isShow: boolean }) => (isShow ? 'opening 300ms' : 'closing 300ms')};
     position: relative;
+    overflow-y: auto;
 
     @keyframes opening {
         0% {

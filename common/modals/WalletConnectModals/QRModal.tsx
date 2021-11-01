@@ -1,7 +1,7 @@
 import * as React from 'react';
 import QRCode from 'react-qr-code';
 import { ModalDescription, ModalProps, ModalTitle } from '../atoms/ModalAtoms';
-import Link from '../../basics/Link';
+import ExternalLink from '../../basics/ExternalLink';
 import CopyButton from '../../basics/CopyButton';
 import styled from 'styled-components';
 
@@ -29,7 +29,7 @@ const QRModal = ({ params }: ModalProps<{ uri: string }>): JSX.Element => {
                 <br />
                 LOBSTR wallet, and scan the QR code to connect.
             </ModalDescription>
-            <Link>How to connect LOBSTR wallet?</Link>
+            <ExternalLink>How to connect LOBSTR wallet?</ExternalLink>
 
             <QRContainer>
                 <QRCode value={uri} size={170} />

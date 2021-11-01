@@ -14,9 +14,10 @@ import Input from '../../../../common/basics/Input';
 import RangeInput from '../../../../common/basics/RangeInput';
 import { useState } from 'react';
 import Button from '../../../../common/basics/Button';
-import { ToastService } from '../../../../common/services/globalServices';
+import { ModalService, ToastService } from '../../../../common/services/globalServices';
 import { formatBalance, roundToPrecision } from '../../../../common/helpers/helpers';
-import Link from '../../../../common/basics/Link';
+import ExternalLink from '../../../../common/basics/ExternalLink';
+import GetAquaModal from '../../../../common/modals/GetAquaModal/GetAquaModal';
 
 const MINIMUM_AMOUNT = 0.0000001;
 
@@ -206,10 +207,10 @@ const ConfirmVoteModal = ({ params }: ModalProps<{ option: any }>) => {
                 </ClaimBack>
             ) : (
                 <GetAquaBlock>
-                    <GetAquaLabel>You don't have enough AQUA</GetAquaLabel>
-                    <Link>
+                    <GetAquaLabel>You don&apos;t have enough AQUA</GetAquaLabel>
+                    <ExternalLink onClick={() => ModalService.openModal(GetAquaModal, {})}>
                         <GetAquaLink>Get AQUA</GetAquaLink>
-                    </Link>
+                    </ExternalLink>
                 </GetAquaBlock>
             )}
 
