@@ -3,16 +3,16 @@ import styled from 'styled-components';
 import { COLORS } from '../styles';
 import { useEffect, useRef, useState } from 'react';
 
-const Pillar = styled.div.attrs<{ value: number }>(({ value }) => ({
+const Pillar = styled.div.attrs<{ value: number; disabled?: boolean }>(({ value, disabled }) => ({
     style: {
         background: `linear-gradient(to right, ${COLORS.titleText} 0% ${value}%, ${COLORS.gray} ${value}% 100%)`,
     },
-}))<{ value: number }>`
+}))<{ value: number; disabled?: boolean }>`
     width: calc(100% - 1rem);
     height: 0.2rem;
     position: relative;
     margin: 0.7rem auto;
-
+    pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
     cursor: pointer;
 
     // increase clickable area
@@ -44,16 +44,19 @@ const Mark = styled.div.attrs<{ percent: number; value: number }>(({ percent, va
     z-index: 1;
 `;
 
-const Thumb = styled.div.attrs<{ value: number; isDrag: boolean }>(({ value, isDrag }) => ({
-    style: {
-        cursor: isDrag ? 'grabbing' : 'grab',
-        left: `${value}%`,
-    },
-}))<{ value: number; isDrag: boolean }>`
+const Thumb = styled.div.attrs<{ value: number; isDrag: boolean; disabled?: boolean }>(
+    ({ value, isDrag }) => ({
+        style: {
+            cursor: isDrag ? 'grabbing' : 'grab',
+            left: `${value}%`,
+        },
+    }),
+)<{ value: number; isDrag: boolean; disabled?: boolean }>`
     height: 1.6rem;
     width: 1.6rem;
     border: 0.2rem solid ${COLORS.white};
-    background: ${COLORS.titleText};
+    background: ${({ disabled }) => (disabled ? COLORS.gray : COLORS.titleText)};
+    pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
     border-radius: 0.5rem;
     transform: translate(-50%, -50%) rotate(45deg);
     position: absolute;
@@ -95,11 +98,13 @@ const getClickPosition = (event: TouchEvent | MouseEvent, ref) => {
 const RangeInput = ({
     onChange,
     value: valueProps,
+    disabled,
 }: {
     onChange: (number) => void;
     value: number;
+    disabled?: boolean;
 }) => {
-    const [value, setValue] = useState(valueProps);
+    const [value, setValue] = useState(disabled ? 0 : valueProps);
     const [isMouseDrag, setIsMouseDrag] = useState(false);
 
     const ref = useRef(null);
@@ -152,6 +157,7 @@ const RangeInput = ({
                 setValue(position);
                 onChange(position);
             }}
+            disabled={disabled}
             ref={ref}
         >
             <Mark percent={0} value={value} />
@@ -160,6 +166,7 @@ const RangeInput = ({
             <Mark percent={75} value={value} />
             <Mark percent={100} value={value} />
             <Thumb
+                disabled={disabled}
                 value={value}
                 isDrag={isMouseDrag}
                 onMouseDown={(e) => {
