@@ -7,6 +7,7 @@ import PairingModal from '../modals/WalletConnectModals/PairingModal';
 import SessionRequestModal from '../modals/WalletConnectModals/SessionRequestModal';
 import EventService from './event.service';
 import { ModalService, ToastService } from './globalServices';
+import RequestModal from '../modals/WalletConnectModals/RequestModal';
 
 const METADATA = {
     name: 'Aqua Vote',
@@ -25,6 +26,11 @@ const PUBNET = 'stellar:pubnet';
 export enum WalletConnectEvents {
     login = 'login',
     logout = 'logout',
+}
+
+export enum BuildSignAndSubmitStatuses {
+    success = 'success',
+    pending = 'pending',
 }
 
 export default class WalletConnectServiceClass {
@@ -239,24 +245,22 @@ export default class WalletConnectServiceClass {
     signTx(tx: StellarSdk.Transaction): void {
         const xdr = tx.toEnvelope().toXDR('base64');
 
-        // this.driver.modal.handlers.activate('WalletConnectRequestModal', {
-        //     title: this.appMeta.name,
-        //     logo: this.appMeta.icons[0],
-        //     result: this.client
-        //         .request({
-        //             topic: this.session.topic,
-        //             chainId: PUBNET,
-        //             request: {
-        //                 jsonrpc: '2.0',
-        //                 method: STELLAR_METHODS.SIGN,
-        //                 params: {
-        //                     xdr,
-        //                 },
-        //             },
-        //         })
-        //         .then((result) => {
-        //             return result;
-        //         }),
-        // });
+        ModalService.openModal(RequestModal, {
+            name: this.appMeta.name,
+            result: this.client
+                .request({
+                    topic: this.session.topic,
+                    chainId: PUBNET,
+                    request: {
+                        method: STELLAR_METHODS.SIGN,
+                        params: {
+                            xdr,
+                        },
+                    },
+                })
+                .then((result) => {
+                    return result;
+                }),
+        });
     }
 }

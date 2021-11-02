@@ -17,7 +17,7 @@ export function login(
 
         StellarService.loadAccount(pubKey)
             .then((account) => {
-                const wrappedAccount = new AccountService(account);
+                const wrappedAccount = new AccountService(account, loginType);
                 dispatch({
                     type: AUTH_ACTIONS.LOGIN_SUCCESS,
                     payload: {

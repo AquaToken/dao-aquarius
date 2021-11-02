@@ -76,7 +76,7 @@ export default function authStore(state = initialState, action: ActionSimpleResu
             };
             return {
                 ...state,
-                account,
+                account: { ...state.account, ...account } as AccountService,
             };
         }
         case AUTH_ACTIONS.LOGOUT: {
