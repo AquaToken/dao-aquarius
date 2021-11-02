@@ -29,6 +29,11 @@ export default class StellarServiceClass {
         });
     }
 
+    signWithSecret(tx: StellarSdk.Transaction) {
+        tx.sign(this.keypair);
+        return tx;
+    }
+
     private startHorizonServer(): void {
         this.server = new StellarSdk.Server(HORIZON_SERVER.stellar);
     }
