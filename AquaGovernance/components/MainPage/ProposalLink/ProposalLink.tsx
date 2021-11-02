@@ -4,9 +4,9 @@ import { COLORS } from '../../../../common/styles';
 import ArrowRight from '../../../../common/assets/img/icon-arrow-right.svg';
 import SuccessIcon from '../../../../common/assets/img/icon-success.svg';
 import { getDateString } from '../../../../common/helpers/helpers';
-import { Link } from 'react-router-dom';
+import { Link, LinkProps } from 'react-router-dom';
 
-const ProposalLinkBlock = styled(Link)`
+const ProposalLinkBlock = styled(Link)<{ $isEnd: boolean }>`
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -16,7 +16,7 @@ const ProposalLinkBlock = styled(Link)`
     cursor: pointer;
     text-decoration: none;
 
-    pointer-events: ${({ isEnd }: { isEnd: boolean }) => (isEnd ? 'none' : 'auto')};
+    pointer-events: ${(props) => (props.$isEnd ? 'none' : 'auto')};
     &:hover {
         color: ${COLORS.purple};
     }
@@ -56,17 +56,16 @@ const Success = styled(SuccessIcon)`
     margin-right: 0.4rem;
 `;
 
-interface LinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+interface ProposalLinkProps extends LinkProps {
     proposalData: { proposal: string; isEnd: boolean; dateEnd: string; result: string };
-    to: string;
 }
 
-const ProposalLink = ({ proposalData, to, ...props }: LinkProps): JSX.Element => {
+const ProposalLink = ({ proposalData, ...props }: ProposalLinkProps): JSX.Element => {
     const { proposal, isEnd, dateEnd, result } = proposalData;
 
     const dateString = getDateString(dateEnd);
     return (
-        <ProposalLinkBlock to={to} {...props} isEnd={isEnd} {...props}>
+        <ProposalLinkBlock $isEnd={isEnd} {...props}>
             <Content>
                 <Label>{proposal}</Label>
                 <Info>{isEnd ? result : `Ends in ${dateString}`}</Info>
