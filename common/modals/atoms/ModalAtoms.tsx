@@ -20,14 +20,12 @@ const ModalWrapper = styled.div`
 `;
 
 const ModalInner = styled.div`
-    max-height: 80vh;
     border-radius: 1rem;
-    background: #fff;
+    background: ${COLORS.white};
     box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
-    padding: 6.4rem 4.8rem 4.8rem;
+    padding: 6.4rem 0 1rem;
     animation: ${({ isShow }: { isShow: boolean }) => (isShow ? 'opening 300ms' : 'closing 300ms')};
     position: relative;
-    overflow-y: auto;
 
     @keyframes opening {
         0% {
@@ -50,6 +48,12 @@ const ModalInner = styled.div`
             opacity: 0;
         }
     }
+`;
+
+const ModalContent = styled.div`
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: 0 4.8rem 3.8rem;
 `;
 
 const CloseButton = styled.div`
@@ -128,7 +132,9 @@ export const ModalBody = ({
                         <CloseIcon />
                     </CloseButton>
                 )}
-                {React.cloneElement(children, { confirm, close, params })}
+                <ModalContent>
+                    {React.cloneElement(children, { confirm, close, params })}
+                </ModalContent>
             </ModalInner>
         </ModalWrapper>
     );
