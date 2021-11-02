@@ -6,8 +6,9 @@ import { COLORS, Z_INDEX } from '../../../styles';
 import IconPlus from '../../../assets/img/icon-plus.svg';
 import IconLogout from '../../../assets/img/icon-logout.svg';
 import useAuthStore from '../../../store/authStore/useAuthStore';
-import { WalletConnectService } from '../../../services/globalServices';
+import { ModalService, WalletConnectService } from '../../../services/globalServices';
 import { formatBalance } from '../../../helpers/helpers';
+import GetAquaModal from '../../../modals/GetAquaModal/GetAquaModal';
 
 const AccountMenuBlock = styled.div`
     position: absolute;
@@ -71,7 +72,7 @@ const AccountMenu = ({ closeMenu }: { closeMenu: () => void }): JSX.Element => {
                     <AccountBalanceLabel>AQUA balance:</AccountBalanceLabel>
                     <AccountBalanceValue>{aquaBalanceView}</AccountBalanceValue>
                 </AccountBalance>
-                <CircleButton>
+                <CircleButton onClick={() => ModalService.openModal(GetAquaModal, {})}>
                     <IconPlus />
                 </CircleButton>
             </AccountBalanceBlock>

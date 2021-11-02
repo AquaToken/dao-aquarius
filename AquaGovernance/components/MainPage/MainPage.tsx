@@ -141,11 +141,9 @@ const MainPage = (): JSX.Element => {
             </Background>
             <ProposalsBlock>
                 <ProposalsTitle>Proposals</ProposalsTitle>
-                <ul>
-                    {proposalsMockData.map((item) => {
-                        return <ProposalLink key={item.proposal} proposalData={item} />;
-                    })}
-                </ul>
+                {proposalsMockData.map((item) => {
+                    return <ProposalLink key={item.proposal} proposalData={item} to="/proposal" />;
+                })}
             </ProposalsBlock>
             <About>
                 &#9757;️
