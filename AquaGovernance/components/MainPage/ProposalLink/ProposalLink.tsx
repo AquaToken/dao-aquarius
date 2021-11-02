@@ -16,7 +16,7 @@ const ProposalLinkBlock = styled(Link)<{ $isEnd: boolean }>`
     cursor: pointer;
     text-decoration: none;
 
-    pointer-events: ${(props) => (props.$isEnd ? 'none' : 'auto')};
+    pointer-events: ${({ $isEnd }) => ($isEnd ? 'none' : 'auto')};
     &:hover {
         color: ${COLORS.purple};
     }
