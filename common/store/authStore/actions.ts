@@ -65,6 +65,10 @@ export function resolveFederation(homeDomain: string, accountId: string): Action
     };
 }
 
-export function updateAccount(account: typeof AccountRecord): ActionSimpleResult {
-    return { type: AUTH_ACTIONS.UPDATE_ACCOUNT, payload: { account: new AccountService(account) } };
+export function updateAccount(
+    account: typeof AccountRecord,
+    authType: LoginTypes,
+): ActionSimpleResult {
+    const wrappedAccount = new AccountService(account, authType);
+    return { type: AUTH_ACTIONS.UPDATE_ACCOUNT, payload: { account: wrappedAccount } };
 }

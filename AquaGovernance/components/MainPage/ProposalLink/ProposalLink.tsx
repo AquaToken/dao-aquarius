@@ -3,8 +3,9 @@ import styled from 'styled-components';
 import { COLORS } from '../../../../common/styles';
 import ArrowRight from '../../../../common/assets/img/icon-arrow-right.svg';
 import SuccessIcon from '../../../../common/assets/img/icon-success.svg';
-import { getDateString } from '../../../../common/helpers/helpers';
+import { getDateString, roundToPrecision } from '../../../../common/helpers/helpers';
 import { Link, LinkProps } from 'react-router-dom';
+import { ProposalSimple } from '../../../api/types';
 
 const ProposalLinkBlock = styled(Link)<{ $isEnd: boolean }>`
     display: flex;
@@ -57,18 +58,54 @@ const Success = styled(SuccessIcon)`
 `;
 
 interface ProposalLinkProps extends LinkProps {
-    proposalData: { proposal: string; isEnd: boolean; dateEnd: string; result: string };
+    proposal: ProposalSimple;
 }
 
-const ProposalLink = ({ proposalData, ...props }: ProposalLinkProps): JSX.Element => {
-    const { proposal, isEnd, dateEnd, result } = proposalData;
+const getProposalInfo = (proposal: ProposalSimple): string => {
+    const {
+        end_at: dateEnd,
+        is_simple_proposal: isSimpleProposal,
+        vote_for_result: voteFor,
+        vote_against_result: voteAgainst,
+    } = proposal;
 
-    const dateString = getDateString(dateEnd);
+    const isEnd = new Date() >= new Date(dateEnd);
+
+    if (!isEnd) {
+        const dateString = getDateString(new Date(dateEnd).getTime());
+        return `Ends in ${dateString}`;
+    }
+
+    if (isSimpleProposal) {
+        const voteForValue = Number(voteFor);
+        const voteAgainstValue = Number(voteAgainst);
+
+        const isVoteForWin = voteForValue > voteAgainstValue;
+
+        const percent =
+            ((isVoteForWin ? voteForValue : voteAgainstValue) / (voteForValue + voteAgainstValue)) *
+            100;
+        const roundedPercent = roundToPrecision(percent, 2);
+
+        return `Winner ${
+            isVoteForWin ? '“Vote For”' : '“Vote Against”'
+        } with ${roundedPercent}% of the votes`;
+    }
+};
+
+const ProposalLink = ({ proposal, ...props }: ProposalLinkProps): JSX.Element => {
+    const { title, end_at: dateEnd } = proposal;
+
+    const dateString = getDateString(new Date(dateEnd).getTime());
+    const isEnd = new Date() >= new Date(dateEnd);
+
+    const info = getProposalInfo(proposal);
+
     return (
         <ProposalLinkBlock $isEnd={isEnd} {...props}>
             <Content>
-                <Label>{proposal}</Label>
-                <Info>{isEnd ? result : `Ends in ${dateString}`}</Info>
+                <Label>{title}</Label>
+                <Info>{info}</Info>
             </Content>
             {isEnd ? (
                 <EndedLabel>

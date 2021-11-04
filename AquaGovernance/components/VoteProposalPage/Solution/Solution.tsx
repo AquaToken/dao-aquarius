@@ -4,6 +4,7 @@ import { COLORS } from '../../../../common/styles';
 
 import Success from '../../../../common/assets/img/icon-success.svg';
 import Fail from '../../../../common/assets/img/icon-fail.svg';
+import { VoteChoiceSimple } from '../../../api/types';
 
 const SolutionBlock = styled.div`
     display: flex;
@@ -25,11 +26,16 @@ const FailIcon = styled(Fail)`
     ${IconStyles}
 `;
 
-const Solution = ({ label }: { label: string }): JSX.Element => {
+enum ChoiceLabel {
+    vote_against = 'Vote Against',
+    vote_for = 'Vote For',
+}
+
+const Solution = ({ choice }: { choice: VoteChoiceSimple }): JSX.Element => {
     return (
         <SolutionBlock>
-            {label === 'Vote Against' ? <FailIcon /> : <SuccessIcon />}
-            <span>{label}</span>
+            {choice === 'vote_against' ? <FailIcon /> : <SuccessIcon />}
+            <span>{ChoiceLabel[choice]}</span>
         </SolutionBlock>
     );
 };

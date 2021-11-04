@@ -1,6 +1,8 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 import { COLORS } from '../../../../../common/styles';
+import { formatBalance } from '../../../../../common/helpers/helpers';
+import { SimpleProposalResultsLabels } from '../../VoteProposalPage';
 
 const ProgressLine = styled.div`
     width: 100%;
@@ -41,16 +43,20 @@ const ResultProgressLine = ({
     result: { label: string; percentage: string; amount: string };
 }): JSX.Element => {
     const { label, percentage, amount } = result;
+    const resultDescription = `${percentage ? `${percentage} - ` : ''}${formatBalance(
+        Number(amount),
+    )} AQUA`;
     return (
         <ProgressLine>
             <Label>
                 <span>{label}</span>
-                <span>
-                    {percentage} - {amount} AQUA
-                </span>
+                <span>{resultDescription}</span>
             </Label>
             <Outer>
-                <Inner width={percentage} isAgainst={label === 'Votes Against'} />
+                <Inner
+                    width={percentage || '0'}
+                    isAgainst={label === SimpleProposalResultsLabels.votesAgainst}
+                />
             </Outer>
         </ProgressLine>
     );

@@ -11,7 +11,7 @@ type AuthActions = {
     login: (pubKey: string, loginType: LoginTypes, metadata?: AppMetadata) => ActionAsyncResult;
     logout: () => ActionSimpleResult;
     resolveFederation: (homeDomain: string, accountId: string) => ActionAsyncResult;
-    updateAccount: (account: typeof AccountRecord) => ActionSimpleResult;
+    updateAccount: (account: typeof AccountRecord, authType: LoginTypes) => ActionSimpleResult;
     clearLoginError: () => ActionSimpleResult;
 };
 

@@ -5,6 +5,7 @@ import BackgroundImageRight from '../../../common/assets/img/background-right.sv
 import { Breakpoints, COLORS } from '../../../common/styles';
 import { flexAllCenter, respondDown } from '../../../common/mixins';
 import ProposalLink from './ProposalLink/ProposalLink';
+import useProposalsStore from '../../store/proposalsStore/useProposalsStore';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -100,34 +101,9 @@ const About = styled.div`
     opacity: 0.7;
 `;
 
-const proposalsMockData = [
-    {
-        proposal: 'Should AQUA be allocated from the general pool to finance ambitious projects?',
-        isEnd: false,
-        dateEnd: '1642809600000',
-        result: null,
-    },
-    {
-        proposal: 'Distribute AQUA to everyone',
-        isEnd: false,
-        dateEnd: '1638835200000',
-        result: null,
-    },
-    {
-        proposal: 'Burn part of all AQUA tokens',
-        isEnd: true,
-        dateEnd: '1632355200000',
-        result: 'Winner “Burn 50% of AQUA” with 75% of the votes',
-    },
-    {
-        proposal: 'Hey, how are you?',
-        isEnd: true,
-        dateEnd: '1627948800000',
-        result: 'Winner “Vote For” with 51% of the votes',
-    },
-];
-
 const MainPage = (): JSX.Element => {
+    const { proposals } = useProposalsStore();
+
     return (
         <MainBlock>
             <Background>
@@ -141,8 +117,14 @@ const MainPage = (): JSX.Element => {
             </Background>
             <ProposalsBlock>
                 <ProposalsTitle>Proposals</ProposalsTitle>
-                {proposalsMockData.map((item) => {
-                    return <ProposalLink key={item.proposal} proposalData={item} to="/proposal" />;
+                {proposals.map((proposal) => {
+                    return (
+                        <ProposalLink
+                            key={proposal.id}
+                            proposal={proposal}
+                            to={`/proposal/${proposal.id}/`}
+                        />
+                    );
                 })}
             </ProposalsBlock>
             <About>

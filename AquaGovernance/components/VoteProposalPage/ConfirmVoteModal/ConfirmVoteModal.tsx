@@ -1,23 +1,30 @@
 import * as React from 'react';
+import { useState } from 'react';
 import {
     ModalDescription,
     ModalProps,
     ModalTitle,
 } from '../../../../common/modals/atoms/ModalAtoms';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { flexAllCenter, flexRowSpaceBetween } from '../../../../common/mixins';
 import { COLORS } from '../../../../common/styles';
 import Fail from '../../../../common/assets/img/icon-fail.svg';
+import Success from '../../../../common/assets/img/icon-success.svg';
 import Aqua from '../../../../common/assets/img/aqua-logo-small.svg';
 import useAuthStore from '../../../../common/store/authStore/useAuthStore';
 import Input from '../../../../common/basics/Input';
 import RangeInput from '../../../../common/basics/RangeInput';
-import { useState } from 'react';
 import Button from '../../../../common/basics/Button';
-import { ModalService, ToastService } from '../../../../common/services/globalServices';
-import { formatBalance, roundToPrecision } from '../../../../common/helpers/helpers';
+import {
+    ModalService,
+    StellarService,
+    ToastService,
+} from '../../../../common/services/globalServices';
+import { formatBalance, getDateString, roundToPrecision } from '../../../../common/helpers/helpers';
 import ExternalLink from '../../../../common/basics/ExternalLink';
 import GetAquaModal from '../../../../common/modals/GetAquaModal/GetAquaModal';
+import { SimpleProposalOptions } from '../VoteProposalPage';
+import { LoginTypes } from '../../../../common/store/authStore/types';
 
 const MINIMUM_AMOUNT = 0.0000001;
 
@@ -38,10 +45,18 @@ const Label = styled.span`
     ${flexAllCenter};
 `;
 
-const FailIcon = styled(Fail)`
+const iconStyles = css`
     height: 1.6rem;
     width: 1.6rem;
     margin-right: 0.5rem;
+`;
+
+const FailIcon = styled(Fail)`
+    ${iconStyles};
+`;
+
+const SuccessIcon = styled(Success)`
+    ${iconStyles};
 `;
 
 const BalanceBlock = styled.span`
@@ -104,11 +119,16 @@ const GetAquaLink = styled.div`
     font-size: 1.4rem;
 `;
 
-const ConfirmVoteModal = ({ params }: ModalProps<{ option: any }>) => {
+const ConfirmVoteModal = ({
+    params,
+    close,
+}: ModalProps<{ option: string; key: string; endDate: string }>) => {
     const { account } = useAuthStore();
+    const { option, key, endDate } = params;
 
     const [percent, setPercent] = useState(0);
     const [amount, setAmount] = useState('');
+    const [pending, setPending] = useState(false);
 
     const aquaBalance = account.getAquaBalance();
 
@@ -136,7 +156,10 @@ const ConfirmVoteModal = ({ params }: ModalProps<{ option: any }>) => {
         setPercent(+percentValue);
     };
 
-    const onSubmit = () => {
+    const onSubmit = async () => {
+        if (pending) {
+            return;
+        }
         if (Number(amount) > Number(aquaBalance)) {
             ToastService.showErrorToast(
                 `The value must be less or equal than ${formattedAquaBalance} AQUA`,
@@ -147,7 +170,25 @@ const ConfirmVoteModal = ({ params }: ModalProps<{ option: any }>) => {
                 `The value must be greater than ${MINIMUM_AMOUNT.toFixed(7)} AQUA`,
             );
         }
-        console.log('submit');
+        try {
+            setPending(true);
+            const voteOp = StellarService.createVoteOperation(
+                account.accountId(),
+                key,
+                amount,
+                new Date(endDate).getTime(),
+            );
+            const tx = await StellarService.buildTx(account, voteOp);
+            await account.signAndSubmitTx(tx);
+            setPending(false);
+            close();
+            if (account.authType === LoginTypes.secret) {
+                ToastService.showSuccessToast('Your vote is counted');
+            }
+        } catch (e) {
+            ToastService.showErrorToast(e);
+            setPending(false);
+        }
     };
 
     return (
@@ -159,8 +200,8 @@ const ConfirmVoteModal = ({ params }: ModalProps<{ option: any }>) => {
             <ContentRow>
                 <Label>Option:</Label>
                 <Label>
-                    <FailIcon />
-                    <span>Vote Against</span>
+                    {option === SimpleProposalOptions.voteAgainst ? <FailIcon /> : <SuccessIcon />}
+                    <span>{option}</span>
                 </Label>
             </ContentRow>
 
@@ -203,7 +244,9 @@ const ConfirmVoteModal = ({ params }: ModalProps<{ option: any }>) => {
             {hasTrustLine && hasAqua ? (
                 <ClaimBack>
                     You can claim back your AQUA on{' '}
-                    <ClaimBackDate>Jan. 15, 2022, 3:00</ClaimBackDate>
+                    <ClaimBackDate>
+                        {getDateString(new Date(endDate).getTime(), { withTime: true })}
+                    </ClaimBackDate>
                 </ClaimBack>
             ) : (
                 <GetAquaBlock>
@@ -214,7 +257,7 @@ const ConfirmVoteModal = ({ params }: ModalProps<{ option: any }>) => {
                 </GetAquaBlock>
             )}
 
-            <StyledButton fullWidth onClick={() => onSubmit()} disabled={!amount}>
+            <StyledButton fullWidth onClick={() => onSubmit()} disabled={!amount} pending={pending}>
                 CONFIRM VOTE
             </StyledButton>
         </>
