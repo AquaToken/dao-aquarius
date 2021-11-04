@@ -124,11 +124,11 @@ const GlobalStyle = createGlobalStyle`
 `;
 interface proposalCreationProps {
     title: string;
-    body: string;
+    text: string;
     startTime: Date;
     startDate: Date;
     setTitle: (value: string) => void;
-    setBody: (value: string) => void;
+    setText: (value: string) => void;
     setStartTime: (date: Date) => void;
     setStartDate: (date: Date) => void;
     hasData: boolean;
@@ -137,9 +137,9 @@ interface proposalCreationProps {
 
 const ProposalCreation = ({
     title,
-    body,
+    text,
     setTitle,
-    setBody,
+    setText,
     startTime,
     startDate,
     setStartTime,
@@ -187,9 +187,9 @@ const ProposalCreation = ({
                                 // wrap="hard"
                                 // cols={80}
                                 // rows={10}
-                                value={body}
+                                value={text}
                                 onChange={(event) => {
-                                    setBody(event.target.value);
+                                    setText(event.target.value);
                                 }}
                             />
                         </SectionForm>
