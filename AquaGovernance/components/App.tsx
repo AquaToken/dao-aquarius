@@ -13,6 +13,7 @@ import useGlobalSubscriptions from '../../common/hooks/useGlobalSubscriptions';
 import ToastContainer from '../../common/toasts/ToastContainer';
 import useProposalsStore from '../store/proposalsStore/useProposalsStore';
 import PageLoader from '../../common/basics/PageLoader';
+import ProposalCreationPage from './ProposalCreationPage/ProposalCreationPage';
 
 const MainPage = lazy(() => import('./MainPage/MainPage'));
 const VoteProposalPage = lazy(() => import('./VoteProposalPage/VoteProposalPage'));
@@ -42,6 +43,9 @@ const App = () => {
                     </Route>
                     <Route path={`${MainRoutes.proposal}/:id`} component={VoteProposalPage}>
                         {/*<VoteProposalPage />*/}
+                    </Route>
+                    <Route path={MainRoutes.create}>
+                        <ProposalCreationPage />
                     </Route>
                 </Switch>
             </Suspense>

@@ -52,7 +52,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     postfix?: React.ReactNode;
 }
 
-const Input = ({ postfix, className, ...props }: InputProps) => {
+const Input = ({ postfix, className, ...props }: InputProps): JSX.Element => {
     return (
         <InputWrapper className={className}>
             <StyledInput {...props} />
