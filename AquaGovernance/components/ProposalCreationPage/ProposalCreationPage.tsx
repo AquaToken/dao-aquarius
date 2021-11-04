@@ -17,20 +17,22 @@ const ProposalCreationPage = (): JSX.Element => {
     const [startDate, setStartDate] = useState(null);
     const [startTime, setStartTime] = useState(null);
     const [title, setTitle] = useState('');
-    const [body, setBody] = useState('');
+    const [text, setText] = useState('');
     const [screenState, setScreenState] = useState(statePage.creation);
 
-    const hasData = !!(startDate && startTime && title && body);
+    const hasData = !!(startDate && startTime && title && text);
     const onSubmit = () => {
         const data = {
             // startDate: Date.now(),
             endDate: startDate.setHours(startTime.getHours()),
             title,
-            body,
+            text,
         };
         if (hasData) setScreenState(statePage.check);
         console.log('submit', data);
     };
+
+    // const { title, text, proposed_by: proposedBy, start_at: startDate, end_at: endDate } = proposal;
 
     switch (screenState) {
         case statePage.creation: {
@@ -38,9 +40,9 @@ const ProposalCreationPage = (): JSX.Element => {
                 <MainBlock>
                     <ProposalCreation
                         title={title}
-                        body={body}
+                        text={text}
                         setTitle={setTitle}
-                        setBody={setBody}
+                        setText={setText}
                         startTime={startTime}
                         startDate={startDate}
                         setStartTime={setStartTime}
@@ -55,7 +57,15 @@ const ProposalCreationPage = (): JSX.Element => {
         case statePage.check: {
             return (
                 <MainBlock>
-                    <div>sdf</div>
+                    {/*<ProposalScreen*/}
+                    {/*    proposal={{*/}
+                    {/*        title,*/}
+                    {/*        text,*/}
+                    {/*        proposedBy: 'GSDFHGKSDHFSHFKHSDFSKFHKSJFKSKFS',*/}
+                    {/*        startDate,*/}
+                    {/*        endDate: startDate.setHours(startTime.getHours()),*/}
+                    {/*    }}*/}
+                    {/*/>*/}
                 </MainBlock>
             );
         }
