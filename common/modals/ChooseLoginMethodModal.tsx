@@ -91,12 +91,6 @@ const ChooseLoginMethodModal = ({ close }: ModalProps<never>): JSX.Element => {
             <ModalTitle>Log in with</ModalTitle>
             <ModalDescription>Choose the best login method</ModalDescription>
 
-            <LoginMethod onClick={() => chooseMethod(LoginTypes.secret)}>
-                <KeyIcon />
-                <LoginMethodName>Secret key</LoginMethodName>
-                <ArrowRight />
-            </LoginMethod>
-
             <LoginMethod onClick={() => chooseMethod(LoginTypes.walletConnect)}>
                 <WalletConnectLogoRelative>
                     <WalletConnectLogo />
@@ -107,6 +101,12 @@ const ChooseLoginMethodModal = ({ close }: ModalProps<never>): JSX.Element => {
                 </WalletConnectLogoRelative>
 
                 <LoginMethodName>WalletConnect</LoginMethodName>
+                <ArrowRight />
+            </LoginMethod>
+
+            <LoginMethod onClick={() => chooseMethod(LoginTypes.secret)}>
+                <KeyIcon />
+                <LoginMethodName>Secret key</LoginMethodName>
                 <ArrowRight />
             </LoginMethod>
         </>
