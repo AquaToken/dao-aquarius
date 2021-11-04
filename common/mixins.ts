@@ -1,6 +1,6 @@
 /* eslint-disable prefer-spread */
-import { css, FlattenSimpleInterpolation, SimpleInterpolation } from 'styled-components';
-import { Breakpoints } from './styles';
+import {css, FlattenSimpleInterpolation, SimpleInterpolation} from 'styled-components';
+import {Breakpoints} from './styles';
 
 export const textEllipsis = css`
     overflow: hidden;
@@ -19,6 +19,11 @@ export const flexRowSpaceBetween = css`
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+`;
+
+export const commonMaxWidth = css`
+    max-width: 144rem;
+    margin: 0 auto;
 `;
 
 export const respondUp =

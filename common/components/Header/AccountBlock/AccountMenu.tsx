@@ -6,7 +6,7 @@ import { COLORS, Z_INDEX } from '../../../styles';
 import IconPlus from '../../../assets/img/icon-plus.svg';
 import IconLogout from '../../../assets/img/icon-logout.svg';
 import useAuthStore from '../../../store/authStore/useAuthStore';
-import { ModalService, WalletConnectService } from '../../../services/globalServices';
+import { ModalService, ToastService, WalletConnectService } from '../../../services/globalServices';
 import { formatBalance } from '../../../helpers/helpers';
 import GetAquaModal from '../../../modals/GetAquaModal/GetAquaModal';
 
@@ -84,6 +84,7 @@ const AccountMenu = ({ closeMenu }: { closeMenu: () => void }): JSX.Element => {
                     if (loginType === LoginTypes.walletConnect) {
                         WalletConnectService.logout();
                     }
+                    ToastService.showSuccessToast('Successful Log out');
                 }}
             >
                 <IconLogout />
