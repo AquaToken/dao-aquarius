@@ -7,6 +7,17 @@ enum HORIZON_SERVER {
     lobstr = 'https://horizon.stellar.lobstr.co',
 }
 
+const FEE = 100000;
+const TRANSACTION_TIMEOUT = 60 * 60 * 24 * 30;
+
+export enum StellarEvents {
+    accountStream = 'account stream',
+    handleAccountUpdate = 'handle account update',
+}
+
+export const AQUA_CODE = 'AQUA';
+export const AQUA_ISSUER = 'GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA';
+
 export default class StellarServiceClass {
     server: StellarSdk.Server | null = null;
     event: EventService = new EventService();
@@ -29,9 +40,38 @@ export default class StellarServiceClass {
         });
     }
 
-    signWithSecret(tx: StellarSdk.Transaction) {
+    async buildTx(
+        account: StellarSdk.Account,
+        operations: StellarSdk.xdr.Operation | StellarSdk.xdr.Operation[],
+        memo?: StellarSdk.Memo,
+    ) {
+        const newAccount = await this.loadAccount(account.accountId());
+
+        this.event.trigger({ type: StellarEvents.handleAccountUpdate, account: newAccount });
+
+        const tx = new StellarSdk.TransactionBuilder(newAccount, {
+            fee: FEE.toString(),
+            networkPassphrase: StellarSdk.Networks.PUBLIC,
+        }).setTimeout(TRANSACTION_TIMEOUT);
+
+        if (Array.isArray(operations)) {
+            operations.forEach((op) => {
+                tx.addOperation(op);
+            });
+        } else {
+            tx.addOperation(operations);
+        }
+
+        if (memo) {
+            tx.addMemo(memo);
+        }
+
+        return tx.build();
+    }
+
+    async signAndSubmit(tx: StellarSdk.Transaction) {
         tx.sign(this.keypair);
-        return tx;
+        await this.server.submitTransaction(tx);
     }
 
     private startHorizonServer(): void {
@@ -62,7 +102,7 @@ export default class StellarServiceClass {
             .cursor('now')
             .stream({
                 onmessage: (result) => {
-                    this.event.trigger(result);
+                    this.event.trigger({ type: StellarEvents.accountStream, account: result });
                 },
             });
     }
@@ -95,5 +135,26 @@ export default class StellarServiceClass {
             );
             return hasNewEqualBalance ? acc : true;
         }, false);
+    }
+
+    createVoteOperation(publicKey, marketKey, amount, timestamp) {
+        const time = Math.ceil(timestamp / 1000);
+        return StellarSdk.Operation.createClaimableBalance({
+            source: publicKey,
+            amount: amount.toString(),
+            asset: new StellarSdk.Asset(AQUA_CODE, AQUA_ISSUER),
+            claimants: [
+                new StellarSdk.Claimant(
+                    marketKey,
+                    StellarSdk.Claimant.predicateNot(StellarSdk.Claimant.predicateUnconditional()),
+                ),
+                new StellarSdk.Claimant(
+                    publicKey,
+                    StellarSdk.Claimant.predicateNot(
+                        StellarSdk.Claimant.predicateBeforeAbsoluteTime(time.toString()),
+                    ),
+                ),
+            ],
+        });
     }
 }

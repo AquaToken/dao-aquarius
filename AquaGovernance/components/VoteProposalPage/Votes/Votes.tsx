@@ -1,12 +1,18 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { COLORS } from '../../../../common/styles';
-import SortIcon from '../../../../common/assets/img/icon-sort.svg';
 import ExternalLinkIcon from '../../../../common/assets/img/icon-external-link.svg';
 import AccountViewer from '../AccountViewer/AccountViewer';
 import Solution from '../Solution/Solution';
-import { useMemo, useState } from 'react';
-import { makeComparator } from '../../../../common/helpers/helpers';
+import { useEffect, useState } from 'react';
+import { formatBalance, getDateString } from '../../../../common/helpers/helpers';
+import { IconSort } from '../../../../common/basics/Icons';
+import { useParams } from 'react-router-dom';
+import { Vote } from '../../../api/types';
+import { getVotes, getVoteTxHash, UPDATE_INTERVAL, VoteFields } from '../../../api/api';
+import Loader from '../../../../common/assets/img/loader.svg';
+import { flexAllCenter } from '../../../../common/mixins';
+import Pagination from '../../../../common/basics/Pagination';
 
 const VotesBlock = styled.div`
     width: 100%;
@@ -31,18 +37,20 @@ const Cell = styled.div`
     display: flex;
     flex: 1;
     align-items: center;
-    padding: 0 0.4rem;
 `;
 
+const CellDate = styled(Cell)`
+    flex: 2.2;
+`;
 const CellAcc = styled(Cell)`
-    flex: 3;
+    flex: 4.5;
     min-width: 21.5rem;
 `;
 const CellSolution = styled(Cell)`
-    flex: 3;
+    flex: 2.2;
 `;
 const CellAmount = styled(Cell)`
-    flex: 2;
+    flex: 4;
     justify-content: flex-end;
 `;
 const VoteRow = styled.div`
@@ -58,6 +66,7 @@ const ExternalLink = styled.a`
     display: flex;
     align-items: center;
     margin-left: 0.4rem;
+    cursor: pointer;
 `;
 
 const SortingHeader = styled.button`
@@ -86,90 +95,163 @@ const SortingHeader = styled.button`
     }
 `;
 
-const votesMockData = [
-    {
-        account: 'GARDNV3Q7YGT4AKSDF25LT32YSCCW4EV22Y2TV3I2PU2MMXJTEDL5T55',
-        solution: 'Vote For',
-        amount: 1039389,
-    },
-    {
-        account: 'GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA',
-        solution: 'Vote Against',
-        amount: 241213,
-    },
-    {
-        account: 'GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR',
-        solution: 'Vote For',
-        amount: 1344213,
-    },
-];
+const LoaderContainer = styled.div`
+    ${flexAllCenter};
+    width: 100%;
+    padding: 1rem 0;
+`;
 
-const IS_KEY_NUMBER = {
-    account: false,
-    solution: false,
-    amount: true,
+const VotesLoader = styled(Loader)`
+    height: 3rem;
+    width: 3rem;
+`;
+
+const onVoteLinkClick = (url: string) => {
+    getVoteTxHash(url).then((hash: string) => {
+        if (hash) {
+            window.open(`https://stellar.expert/explorer/public/tx/${hash}`, '_blank');
+        }
+    });
 };
 
+const PAGE_SIZE = 10;
+
 const Votes = (): JSX.Element => {
-    const [sort, setSort] = useState('account');
+    const [updateIndex, setUpdateIndex] = useState(0);
+    const [sort, setSort] = useState(VoteFields.date);
     const [isReversedSort, setIsReversedSort] = useState(false);
+
+    const [votes, setVotes] = useState<Vote[] | null>(null);
+    const [totalVotes, setTotalVotes] = useState(null);
+    const [page, setPage] = useState(1);
+
+    const { id } = useParams<{ id?: string }>();
+
+    useEffect(() => {
+        getVotes(id, PAGE_SIZE, page, sort, isReversedSort).then((result) => {
+            setTotalVotes(result.data.count);
+            setVotes(result.data.results);
+        });
+    }, [sort, isReversedSort, updateIndex, page]);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setUpdateIndex((prev) => prev + 1);
+        }, UPDATE_INTERVAL);
+
+        return () => clearInterval(interval);
+    }, []);
 
     const changeSort = (newSort) => {
         const isEqualSort = sort === newSort;
         setSort(newSort);
+        setPage(1);
         setIsReversedSort(isEqualSort ? !isReversedSort : false);
     };
 
-    const sortedVotes = useMemo(() => {
-        return votesMockData.sort(
-            makeComparator({
-                key: sort,
-                isReversedSort,
-                isNum: IS_KEY_NUMBER[sort],
-            }),
+    if (!votes) {
+        return (
+            <LoaderContainer>
+                <VotesLoader />
+            </LoaderContainer>
         );
-    }, [votesMockData, sort, isReversedSort]);
+    }
+
+    if (!votes.length) {
+        return null;
+    }
 
     return (
         <VotesBlock>
-            <Title>Votes ({sortedVotes.length})</Title>
+            <Title>Votes({totalVotes})</Title>
             <VotesList>
                 <HeaderRow>
+                    <CellDate>
+                        <SortingHeader position="left" onClick={() => changeSort(VoteFields.date)}>
+                            Date{' '}
+                            <IconSort
+                                isEnabled={sort === VoteFields.date}
+                                isReversed={isReversedSort}
+                            />
+                        </SortingHeader>
+                    </CellDate>
                     <CellAcc>
-                        <SortingHeader position="left" onClick={() => changeSort('account')}>
-                            Account <SortIcon />
+                        <SortingHeader
+                            position="left"
+                            onClick={() => changeSort(VoteFields.account)}
+                        >
+                            Account{' '}
+                            <IconSort
+                                isEnabled={sort === VoteFields.account}
+                                isReversed={isReversedSort}
+                            />
                         </SortingHeader>
                     </CellAcc>
                     <CellSolution>
-                        <SortingHeader position="left" onClick={() => changeSort('solution')}>
-                            Solution <SortIcon />
+                        <SortingHeader
+                            position="left"
+                            onClick={() => changeSort(VoteFields.solution)}
+                        >
+                            Solution{' '}
+                            <IconSort
+                                isEnabled={sort === VoteFields.solution}
+                                isReversed={isReversedSort}
+                            />
                         </SortingHeader>
                     </CellSolution>
                     <CellAmount>
-                        <SortingHeader position="right" onClick={() => changeSort('amount')}>
-                            AQUA Voted <SortIcon />
+                        <SortingHeader
+                            position="right"
+                            onClick={() => changeSort(VoteFields.amount)}
+                        >
+                            AQUA Voted{' '}
+                            <IconSort
+                                isEnabled={sort === VoteFields.amount}
+                                isReversed={isReversedSort}
+                            />
                         </SortingHeader>
                     </CellAmount>
                 </HeaderRow>
-                {sortedVotes.map((vote) => {
-                    const { account, solution, amount } = vote;
+                {votes?.map((vote) => {
+                    const {
+                        account_issuer: account,
+                        vote_choice: voteChoice,
+                        amount,
+                        transaction_link: txLink,
+                        created_at: date,
+                    } = vote;
                     return (
-                        <VoteRow key={account}>
+                        <VoteRow key={date}>
+                            <CellDate>
+                                {getDateString(new Date(date).getTime(), {
+                                    withTime: true,
+                                    withoutYear: true,
+                                })}
+                            </CellDate>
                             <CellAcc>
                                 <AccountViewer pubKey={account} />
                             </CellAcc>
                             <CellSolution>
-                                <Solution label={solution} />
+                                <Solution choice={voteChoice} />
                             </CellSolution>
                             <CellAmount>
-                                {amount.toLocaleString('en-US')} AQUA{' '}
-                                <ExternalLink href="">
+                                {formatBalance(Number(amount))} AQUA{' '}
+                                <ExternalLink onClick={() => onVoteLinkClick(txLink)}>
                                     <ExternalLinkIcon />
                                 </ExternalLink>
                             </CellAmount>
                         </VoteRow>
                     );
                 })}
+                <Pagination
+                    pageSize={PAGE_SIZE}
+                    currentPage={page}
+                    itemName="votes"
+                    onPageChange={(res) => {
+                        setPage(res);
+                    }}
+                    totalCount={totalVotes}
+                />
             </VotesList>
         </VotesBlock>
     );

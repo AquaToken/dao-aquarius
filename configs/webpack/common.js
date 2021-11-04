@@ -10,7 +10,7 @@ const PROJECT_PATH = {
 
 const dotenv = require('dotenv');
 
-const project = dotenv.config().parsed?.PROJECT;
+const project = dotenv.config().parsed ? dotenv.config().parsed.PROJECT : null;
 
 const projectPath = PROJECT_PATH[project || process.env.PROJECT];
 

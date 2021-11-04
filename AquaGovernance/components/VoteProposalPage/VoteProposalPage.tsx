@@ -6,12 +6,17 @@ import CopyButton from '../../../common/basics/CopyButton';
 import AccountViewer from './AccountViewer/AccountViewer';
 import { flexAllCenter, respondDown } from '../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../common/styles';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import CurrentResults from './CurrentResults/CurrentResults';
 import Votes from './Votes/Votes';
+import { useEffect, useState } from 'react';
+import { getProposalRequest, UPDATE_INTERVAL } from '../../api/api';
+import PageLoader from '../../../common/basics/PageLoader';
+import { getDateString } from '../../../common/helpers/helpers';
+import { Proposal } from '../../api/types';
 
 const Container = styled.div`
-    max-width: 78.2rem;
+    max-width: 80rem;
 
     ${respondDown(Breakpoints.lg)`
       max-width: 58.2rem;
@@ -89,10 +94,48 @@ const DetailsDescription = styled.div`
     color: ${COLORS.paragraphText};
 `;
 
+export enum SimpleProposalOptions {
+    voteFor = 'Vote For',
+    voteAgainst = 'Vote Against',
+}
+
+export enum SimpleProposalResultsLabels {
+    votesFor = 'Votes For',
+    votesAgainst = 'Votes Against',
+}
+
 const VoteProposalPage = (): JSX.Element => {
+    const { id } = useParams<{ id?: string }>();
+
+    const [proposal, setProposal] = useState<null | Proposal>(null);
+    const [updateIndex, setUpdateIndex] = useState(0);
+
+    useEffect(() => {
+        getProposalRequest(id).then((response) => {
+            setProposal(response.data);
+        });
+    }, [updateIndex]);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setUpdateIndex((prev) => prev + 1);
+        }, UPDATE_INTERVAL);
+
+        return () => clearInterval(interval);
+    }, []);
+
+    if (!proposal) {
+        return <PageLoader />;
+    }
+
+    const { title, text, proposed_by: proposedBy, start_at: startDate, end_at: endDate } = proposal;
+
+    const startDateView = getDateString(new Date(startDate).getTime(), { withTime: true });
+    const endDateView = getDateString(new Date(endDate).getTime(), { withTime: true });
+
     return (
         <main>
-            <Sidebar />
+            <Sidebar proposal={proposal} />
             <ProposalQuestion>
                 <Container>
                     <BackToProposals>
@@ -101,73 +144,36 @@ const VoteProposalPage = (): JSX.Element => {
                         </BackButton>
                         <span>Proposals</span>
                     </BackToProposals>
-                    <QuestionText>
-                        Should AQUA be allocated from the general pool to finance ambitious
-                        projects?
-                    </QuestionText>
+                    <QuestionText>{title}</QuestionText>
                 </Container>
             </ProposalQuestion>
             <ProposalSection>
                 <Title>Proposal</Title>
-                <DescriptionText>
-                    <p>
-                        The question is, should AQUA be allocated from the general pool to finance
-                        ambitious projects. Aqua will stand out from the general pool.
-                    </p>
-                    <p>
-                        Next fishy text for volume In a standard payment on the Stellar Network, you
-                        will need to ensure the recipient of your transaction has a trustline
-                        enabled for the asset you’re sending. Just one asset on the network doesn’t
-                        follow this, which is the native token XLM, as it’s the only trustless asset
-                        on the network.
-                    </p>
-                    <p>
-                        When a standard payment is made, but no trustline is enabled, the sender
-                        will receive an error as the network won’t allow them to send the payment.
-                        This can be frustrating, as you would need to find out every potential
-                        receiver of an asset and ask each one to enable the assets trustline, all
-                        before a payment can be made. As frustrating as this is for the sender, this
-                        means Stellar users aren’t being forced to accept assets they don’t want.
-                    </p>
-                    <p>
-                        Trustlines are an important security feature, as it means your wallet won’t
-                        get flooded with random assets that you don’t trust, unlike other
-                        blockchains where you can be sent tokens you didn’t ask to have. The best
-                        example would be the Shiba Inu token, where the founder sent Vitalik
-                        Buterin, a co-founder of Ethereum, 50% of the SHIB (ERC-20) token supply,
-                        without his consent.
-                    </p>
-                </DescriptionText>
+                <DescriptionText>{text}</DescriptionText>
             </ProposalSection>
             <ProposalSection>
                 <Title>Details</Title>
                 <DataDetails>
                     <Column>
                         <DetailsTitle>Voting start:</DetailsTitle>
-                        <DetailsDescription>Dec. 16, 2021, 13:00</DetailsDescription>
+                        <DetailsDescription>{startDateView}</DetailsDescription>
                     </Column>
                     <Column>
                         <DetailsTitle>Voting end:</DetailsTitle>
-                        <DetailsDescription>Jan. 15, 2022, 3:00</DetailsDescription>
+                        <DetailsDescription>{endDateView}</DetailsDescription>
                     </Column>
                     <Column>
                         <DetailsTitle>Proposed by:</DetailsTitle>
                         <DetailsDescription>
-                            <CopyButton
-                                text={'GARDNV3Q7YGT4AKSDF25LT32YSCCW4EV22Y2TV3I2PU2MMXJTEDL5T55'}
-                            >
-                                <AccountViewer
-                                    pubKey={
-                                        'GARDNV3Q7YGT4AKSDF25LT32YSCCW4EV22Y2TV3I2PU2MMXJTEDL5T55'
-                                    }
-                                />
+                            <CopyButton text={proposedBy}>
+                                <AccountViewer pubKey={proposedBy} />
                             </CopyButton>
                         </DetailsDescription>
                     </Column>
                 </DataDetails>
             </ProposalSection>
             <ProposalSection>
-                <CurrentResults />
+                <CurrentResults proposal={proposal} />
             </ProposalSection>
             <ProposalSection>
                 <Votes />

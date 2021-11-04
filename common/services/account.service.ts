@@ -1,10 +1,8 @@
 import AccountRecord, * as StellarSdk from 'stellar-sdk';
 import { AccountResponse, Horizon } from 'stellar-sdk';
 import { LoginTypes } from '../store/authStore/types';
-import { StellarService, WalletConnectService } from './globalServices';
-
-const AQUA_CODE = 'AQUA';
-const AQUA_ISSUER = 'GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA';
+import { StellarService, ToastService, WalletConnectService } from './globalServices';
+import { AQUA_CODE, AQUA_ISSUER } from './stellar.service';
 
 export default class AccountService extends AccountResponse {
     authType?: LoginTypes;
@@ -16,12 +14,17 @@ export default class AccountService extends AccountResponse {
         }
     }
 
-    signAndSubmitTx(tx: StellarSdk.Transaction) {
+    async signAndSubmitTx(tx: StellarSdk.Transaction): Promise<void> {
+        if (this.authType === LoginTypes.secret && this.signers.length > 1) {
+            ToastService.showErrorToast('Accounts with multisig are not supported yet');
+            return Promise.resolve();
+        }
+
         if (this.authType === LoginTypes.secret) {
-            const signed = StellarService.signWithSecret(tx);
-            console.log(signed);
+            await StellarService.signAndSubmit(tx);
         } else if (this.authType === LoginTypes.walletConnect) {
             WalletConnectService.signTx(tx);
+            return Promise.resolve();
         }
     }
 

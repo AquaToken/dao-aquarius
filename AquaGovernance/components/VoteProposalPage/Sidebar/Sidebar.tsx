@@ -10,7 +10,8 @@ import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodM
 import ConfirmVoteModal from '../ConfirmVoteModal/ConfirmVoteModal';
 import { useEffect, useState } from 'react';
 import CheckedIcon from '../../../../common/assets/img/icon-checked.svg';
-import Button from '../../../../common/basics/Button';
+import { SimpleProposalOptions } from '../VoteProposalPage';
+import { Proposal } from '../../../api/types';
 
 const SidebarBlock = styled.aside`
     position: sticky;
@@ -126,32 +127,23 @@ const Checked = styled(CheckedIcon)`
     margin-right: 1.4rem;
 `;
 
-const voteOptionsMockData = {
-    isForAgainst: false,
-    options: [
-        { name: 'No', account: 'GASDASDASD' },
-        { name: '100% per transaction', account: 'GASDASDASD' },
-        { name: '50% per transaction', account: 'GKJLLKNJLKJ' },
-        { name: '25% per transaction', account: 'GJLKJBKJNKJNN' },
-    ],
-};
 // const voteOptionsMockData = {
-//     isForAgainst: true,
+//     isForAgainst: false,
 //     options: [
-//         { name: 'Vote For', acc: 'GASDASDASD' },
-//         { name: 'Vote Against', acc: 'GASDASDASD' },
+//         { name: 'No', account: 'GASDASDASD' },
+//         { name: '100% per transaction', account: 'GASDASDASD' },
+//         { name: '50% per transaction', account: 'GKJLLKNJLKJ' },
+//         { name: '25% per transaction', account: 'GJLKJBKJNKJNN' },
 //     ],
 // };
 
-const Sidebar = (): JSX.Element => {
+const Sidebar = ({ proposal }: { proposal: Proposal }): JSX.Element => {
     const [selectedOption, setSelectedOption] = useState(null);
     const { isLogged } = useAuthStore();
 
     const onVoteClick = (option) => {
         if (isLogged) {
-            if (selectedOption) {
-                ModalService.openModal(ConfirmVoteModal, { option });
-            }
+            ModalService.openModal(ConfirmVoteModal, option);
             return;
         }
         setSelectedOption(option);
@@ -160,57 +152,80 @@ const Sidebar = (): JSX.Element => {
 
     useEffect(() => {
         if (isLogged && selectedOption) {
-            ModalService.openModal(ConfirmVoteModal, { option: selectedOption }).then(() => {
+            ModalService.openModal(ConfirmVoteModal, selectedOption).then(() => {
                 setSelectedOption(null);
             });
         }
     }, [isLogged]);
 
-    const isForAgainst = voteOptionsMockData.isForAgainst;
+    const {
+        is_simple_proposal: isSimple,
+        vote_for_issuer: voteForKey,
+        vote_against_issuer: voteAgainstKey,
+        end_at: endDate,
+    } = proposal;
 
     return (
         <SidebarBlock>
-            {isForAgainst ? (
+            {isSimple && (
                 <Container>
                     <SidebarTitle>Cast your votes</SidebarTitle>
-                    <VotingButton onClick={() => onVoteClick({ name: 'Vote For' })}>
+                    <VotingButton
+                        onClick={() =>
+                            onVoteClick({
+                                option: SimpleProposalOptions.voteFor,
+                                key: voteForKey,
+                                endDate,
+                            })
+                        }
+                    >
                         <SuccessIcon /> Vote <BoldText>For</BoldText>
                     </VotingButton>
-                    <VotingButton isVoteFor onClick={() => onVoteClick({ name: 'Vote Against' })}>
+                    <VotingButton
+                        isVoteFor
+                        onClick={() =>
+                            onVoteClick({
+                                option: SimpleProposalOptions.voteAgainst,
+                                key: voteAgainstKey,
+                                endDate,
+                            })
+                        }
+                    >
                         <FailIcon />
                         Vote <BoldText>Against</BoldText>
                     </VotingButton>
                 </Container>
-            ) : (
-                <>
-                    <Container>
-                        <SidebarTitle>Cast your votes</SidebarTitle>
-                        {voteOptionsMockData?.options.map((item) => {
-                            const { name } = item;
-                            const isSelected = selectedOption?.name === name;
-                            return (
-                                <VoteOption key={name} isChecked={isSelected}>
-                                    <InputItem
-                                        type="checkbox"
-                                        checked={isSelected}
-                                        onChange={() => {
-                                            setSelectedOption({ ...item });
-                                        }}
-                                    />
-                                    {isSelected ? <Checked /> : <NonSelectedIcon />}
-                                    {name}
-                                </VoteOption>
-                            );
-                        })}
-                    </Container>
-                    <Divider />
-                    <Container>
-                        <Button fullWidth isBig onClick={() => onVoteClick(selectedOption)}>
-                            Cast vote
-                        </Button>
-                    </Container>
-                </>
             )}
+            {/*(*/}
+            {/*    <>*/}
+            {/*        <Container>*/}
+            {/*            <SidebarTitle>Cast your votes</SidebarTitle>*/}
+            {/*            {voteOptionsMockData?.options.map((item) => {*/}
+            {/*                const { name } = item;*/}
+            {/*                const isSelected = selectedOption?.name === name;*/}
+            {/*                return (*/}
+            {/*                    <VoteOption key={name} isChecked={isSelected}>*/}
+            {/*                        <InputItem*/}
+            {/*                            type="checkbox"*/}
+            {/*                            checked={isSelected}*/}
+            {/*                            onChange={() => {*/}
+            {/*                                setSelectedOption({ ...item });*/}
+            {/*                            }}*/}
+            {/*                        />*/}
+            {/*                        {isSelected ? <Checked /> : <NonSelectedIcon />}*/}
+            {/*                        {name}*/}
+            {/*                    </VoteOption>*/}
+            {/*                );*/}
+            {/*            })}*/}
+            {/*        </Container>*/}
+            {/*        <Divider />*/}
+            {/*        <Container>*/}
+            {/*            <Button fullWidth isBig onClick={() => onVoteClick(selectedOption)}>*/}
+            {/*                Cast vote*/}
+            {/*            </Button>*/}
+            {/*        </Container>*/}
+            {/*    </>*/}
+            {/*)}*/}
         </SidebarBlock>
     );
 };

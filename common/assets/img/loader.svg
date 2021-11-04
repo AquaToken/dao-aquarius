@@ -1,0 +1,28 @@
+<svg
+        xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+        style="margin: auto; display: block; shape-rendering: auto;"
+        width="100%"
+        height="100%"
+        viewBox="0 0 52 52"
+        preserveAspectRatio="xMidYMid"
+    >
+        <circle
+            cx="26"
+            cy="26"
+            fill="none"
+            r="21"
+            stroke-dasharray="98.96016858807849 34.98672286269283"
+            stroke="currentColor"
+            stroke-width="6"
+        >
+            <animateTransform
+                attributeName="transform"
+                type="rotate"
+                repeatCount="indefinite"
+                dur="1s"
+                values="0 26 26;360 26 26"
+                keyTimes="0;1"
+            ></animateTransform>
+        </circle>
+    </svg>

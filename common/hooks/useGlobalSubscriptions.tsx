@@ -4,6 +4,7 @@ import { WalletConnectEvents } from '../services/wallet-connect.service';
 import { LoginTypes } from '../store/authStore/types';
 import { Horizon } from 'stellar-sdk';
 import { StellarService, ToastService, WalletConnectService } from '../services/globalServices';
+import { StellarEvents } from '../services/stellar.service';
 
 const UnfundedError = 'Not Found';
 
@@ -59,14 +60,19 @@ export default function useGlobalSubscriptions(): void {
     }, [account]);
 
     useEffect(() => {
-        const unsub = StellarService.event.sub((newAccount) => {
+        const unsub = StellarService.event.sub(({ type, account: newAccount }) => {
             if (
+                type === StellarEvents.accountStream &&
                 StellarService.balancesHasChanges(
                     accountRef.current.balances as Horizon.BalanceLineAsset[],
                     newAccount.balances,
                 )
             ) {
-                updateAccount(newAccount);
+                updateAccount(newAccount, accountRef.current.authType);
+            }
+
+            if (type === StellarEvents.handleAccountUpdate) {
+                updateAccount(newAccount, accountRef.current.authType);
             }
         });
 

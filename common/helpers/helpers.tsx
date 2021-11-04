@@ -1,51 +1,16 @@
-export function makeComparator({
-    key = null,
-    isNum = false,
-    isReversedSort = false,
-}: {
-    key?: string;
-    isNum: boolean;
-    isReversedSort: boolean;
-}) {
-    return (a: unknown, b: unknown): number => {
-        let aVal = key ? a[key] : a;
-        let bVal = key ? b[key] : b;
+type GetDateStringConfig = {
+    withTime?: boolean;
+    withoutYear?: boolean;
+};
 
-        if (!aVal && !bVal) {
-            return 0;
-        }
-
-        if (!aVal) {
-            return isReversedSort ? 1 : -1;
-        }
-
-        if (!bVal) {
-            return isReversedSort ? -1 : 1;
-        }
-
-        if (!isNum) {
-            aVal = aVal.toLowerCase();
-            bVal = bVal.toLowerCase();
-        }
-        if (isNum) {
-            return isReversedSort ? aVal - bVal : bVal - aVal;
-        } else {
-            if (aVal > bVal) {
-                return isReversedSort ? 1 : -1;
-            }
-            if (aVal < bVal) {
-                return isReversedSort ? -1 : 1;
-            }
-        }
-        return 0;
-    };
-}
-
-export const getDateString = (timestamp: string): string => {
-    const date = new Date(Number(timestamp)),
+export const getDateString = (timestamp: number, config?: GetDateStringConfig): string => {
+    const { withTime, withoutYear } = config ?? {};
+    const date = new Date(timestamp),
         year = date.getFullYear(),
         month = date.getMonth(),
         day = date.getDate(),
+        hours = date.getHours(),
+        minutes = date.getMinutes(),
         months = [
             'Jan',
             'Feb',
@@ -61,7 +26,9 @@ export const getDateString = (timestamp: string): string => {
             'Dec',
         ];
 
-    return `${months[month]}. ${day}, ${year}`;
+    return `${months[month]}. ${day}${withoutYear ? '' : `, ${year}`}${
+        withTime ? `, ${hours == 24 ? '00' : `0${hours}`.slice(-2)}:${`0${minutes}`.slice(-2)}` : ''
+    }`;
 };
 
 export const roundToPrecision = (value: string | number, numDecimals: number): string => {
