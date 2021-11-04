@@ -3,13 +3,16 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import AquaLogo from './../../assets/img/aqua-logo.svg';
 import { COLORS } from '../../styles';
+import { commonMaxWidth } from '../../mixins';
 
 const FooterBlock = styled.footer`
-    margin-top: 8rem;
+    ${commonMaxWidth};
+    margin: 8rem auto 0;
     padding: 0 4rem;
     flex: 0 0 auto;
     display: flex;
     flex-direction: column;
+    width: 100%;
 `;
 
 const HelpfulLine = styled.div`
