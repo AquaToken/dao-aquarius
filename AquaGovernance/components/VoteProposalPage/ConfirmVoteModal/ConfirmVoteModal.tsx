@@ -257,7 +257,12 @@ const ConfirmVoteModal = ({
                 </GetAquaBlock>
             )}
 
-            <StyledButton fullWidth onClick={() => onSubmit()} disabled={!amount} pending={pending}>
+            <StyledButton
+                fullWidth
+                onClick={() => onSubmit()}
+                disabled={!amount || !Number(amount)}
+                pending={pending}
+            >
                 CONFIRM VOTE
             </StyledButton>
         </>

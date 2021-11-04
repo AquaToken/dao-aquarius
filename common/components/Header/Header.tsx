@@ -8,8 +8,10 @@ import ChooseLoginMethodModal from '../../modals/ChooseLoginMethodModal';
 import useAuthStore from '../../store/authStore/useAuthStore';
 import AccountBlock from './AccountBlock/AccountBlock';
 import { ModalService } from '../../services/globalServices';
+import { commonMaxWidth } from '../../mixins';
 
 const HeaderBlock = styled.header`
+    ${commonMaxWidth};
     width: 100%;
     display: flex;
     flex-direction: row;

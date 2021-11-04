@@ -5,9 +5,15 @@ import { COLORS } from '../../../../common/styles';
 import { roundToPrecision } from '../../../../common/helpers/helpers';
 import { SimpleProposalResultsLabels } from '../VoteProposalPage';
 import { Proposal } from '../../../api/types';
+import { flexRowSpaceBetween } from '../../../../common/mixins';
 
 const ResultBlock = styled.div`
     width: 100%;
+`;
+
+const Header = styled.div`
+    ${flexRowSpaceBetween};
+    color: ${COLORS.grayText};
 `;
 
 const Title = styled.h5`
@@ -51,7 +57,11 @@ const CurrentResults = ({ proposal }: { proposal: Proposal }): JSX.Element => {
     const results = getResultsData(proposal);
     return (
         <ResultBlock>
-            <Title>Current result</Title>
+            <Header>
+                <Title>Current result</Title>
+                <span>Updating every 5 min</span>
+            </Header>
+
             {results?.map((result) => {
                 return <ResultProgressLine key={result.label} result={result} />;
             })}

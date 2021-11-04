@@ -57,7 +57,6 @@ const AppGlobalStyle = createGlobalStyle`
     display: flex;
     flex-direction: column;
     min-height: 100%;
-    max-width: 144rem;
     margin: 0 auto;
   }
 `;

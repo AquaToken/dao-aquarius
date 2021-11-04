@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import BackgroundImageLeft from '../../../common/assets/img/background-left.svg';
 import BackgroundImageRight from '../../../common/assets/img/background-right.svg';
 import { Breakpoints, COLORS } from '../../../common/styles';
-import { flexAllCenter, respondDown } from '../../../common/mixins';
+import { commonMaxWidth, flexAllCenter, respondDown } from '../../../common/mixins';
 import ProposalLink from './ProposalLink/ProposalLink';
 import useProposalsStore from '../../store/proposalsStore/useProposalsStore';
 
@@ -76,6 +76,7 @@ const Description = styled.div`
 
 const ProposalsBlock = styled.div`
     padding: 8.5rem 4rem 0;
+    ${commonMaxWidth};
 `;
 
 const ProposalsTitle = styled.h3`

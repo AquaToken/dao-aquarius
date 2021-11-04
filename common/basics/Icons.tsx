@@ -6,39 +6,39 @@ import Success from '../assets/img/icon-success.svg';
 import Fail from '../assets/img/icon-fail.svg';
 import Pending from '../assets/img/icon-pending.svg';
 
-const IconBlock = styled.div`
-    height: 4rem;
-    width: 4rem;
+const IconBlock = styled.div<{ isBig?: boolean }>`
+    height: ${({ isBig }) => (isBig ? '5.6rem' : '4rem')};
+    width: ${({ isBig }) => (isBig ? '5.6rem' : '4rem')};
     border-radius: 50%;
     background-color: #${COLORS.white};
     box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
     ${flexAllCenter};
 
     svg {
-        height: 1.6rem;
-        width: 1.6rem;
+        height: ${({ isBig }) => (isBig ? '3.4rem' : '1.6rem')};
+        width: ${({ isBig }) => (isBig ? '3.4rem' : '1.6rem')};
     }
 `;
 
-export const IconSuccess = (): JSX.Element => {
+export const IconSuccess = ({ isBig }: { isBig?: boolean }): JSX.Element => {
     return (
-        <IconBlock>
+        <IconBlock isBig={isBig}>
             <Success />
         </IconBlock>
     );
 };
 
-export const IconFail = (): JSX.Element => {
+export const IconFail = ({ isBig }: { isBig?: boolean }): JSX.Element => {
     return (
-        <IconBlock>
+        <IconBlock isBig={isBig}>
             <Fail />
         </IconBlock>
     );
 };
 
-export const IconPending = (): JSX.Element => {
+export const IconPending = ({ isBig }: { isBig?: boolean }): JSX.Element => {
     return (
-        <IconBlock>
+        <IconBlock isBig={isBig}>
             <Pending />
         </IconBlock>
     );

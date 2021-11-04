@@ -1,6 +1,7 @@
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
-import { COLORS } from '../../../../common/styles';
+import { Breakpoints, COLORS } from '../../../../common/styles';
 import NativeVotingButton from './VotingButton/VotingButton';
 import Success from '../../../../common/assets/img/icon-success.svg';
 import Fail from '../../../../common/assets/img/icon-fail.svg';
@@ -8,21 +9,24 @@ import { ModalService } from '../../../../common/services/globalServices';
 import useAuthStore from '../../../../common/store/authStore/useAuthStore';
 import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
 import ConfirmVoteModal from '../ConfirmVoteModal/ConfirmVoteModal';
-import { useEffect, useState } from 'react';
 import CheckedIcon from '../../../../common/assets/img/icon-checked.svg';
 import { SimpleProposalOptions } from '../VoteProposalPage';
 import { Proposal } from '../../../api/types';
+import { respondDown } from '../../../../common/mixins';
 
 const SidebarBlock = styled.aside`
     position: sticky;
     top: 4rem;
-    margin: 10rem 4rem 0 0;
+    margin: 10rem 10% 0 0;
     float: right;
-
     width: 36.4rem;
     background: ${COLORS.white};
     box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
     border-radius: 0.5rem;
+
+    ${respondDown(Breakpoints.xl)`
+        margin-right: 4rem;
+    `};
 `;
 
 const Container = styled.div`
