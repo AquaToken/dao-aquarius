@@ -8,7 +8,13 @@ import ProposalLink from './ProposalLink/ProposalLink';
 import useProposalsStore from '../../store/proposalsStore/useProposalsStore';
 import Button from '../../../common/basics/Button';
 import Plus from '../../../common/assets/img/icon-plus.svg';
-import { Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
+import useAuthStore from '../../../common/store/authStore/useAuthStore';
+import { ModalService } from '../../../common/services/globalServices';
+import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
+import NotEnoughAquaModal from './NotEnoughAquaModal/NotEnoughAquaModal';
+
+const MINIMUM_BALANCE_AQUA = 30;
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -118,13 +124,28 @@ const PlusIcon = styled(Plus)`
     }
 `;
 
-const StyledLink = styled(Link)`
-    display: block;
-    text-decoration: none;
-`;
-
 const MainPage = (): JSX.Element => {
     const { proposals } = useProposalsStore();
+    const history = useHistory();
+    const { isLogged, account } = useAuthStore();
+
+    const aquaBalance = account?.getAquaBalance();
+
+    const hasNecessaryBalance = aquaBalance >= MINIMUM_BALANCE_AQUA;
+
+    console.log(account);
+    const handleClick = () => {
+        if (isLogged) {
+            if (hasNecessaryBalance) {
+                history.push('/create');
+                return;
+            } else {
+                ModalService.openModal(NotEnoughAquaModal, {});
+                return;
+            }
+        }
+        ModalService.openModal(ChooseLoginMethodModal, {});
+    };
 
     return (
         <MainBlock>
@@ -140,11 +161,9 @@ const MainPage = (): JSX.Element => {
             <ProposalsBlock>
                 <TitleBlock>
                     <ProposalsTitle>Proposals</ProposalsTitle>
-                    <StyledLink to="/create">
-                        <Button>
-                            Create proposal <PlusIcon />
-                        </Button>
-                    </StyledLink>
+                    <Button onClick={() => handleClick()}>
+                        Create proposal <PlusIcon />
+                    </Button>
                 </TitleBlock>
                 {proposals.map((proposal) => {
                     return (
