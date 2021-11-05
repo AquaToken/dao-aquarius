@@ -4,6 +4,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { useMemo, useState } from 'react';
 import ProposalCreation from './ProposalCreation/ProposalCreation';
 import ProposalScreen from '../VoteProposalPage/Proposal/ProposalScreen';
+import useAuthStore from '../../../common/store/authStore/useAuthStore';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -21,7 +22,10 @@ const ProposalCreationPage = (): JSX.Element => {
     const [text, setText] = useState('');
     const [screenState, setScreenState] = useState(statePage.creation);
 
-    const hasData = !!(startDate && startTime && title && text);
+    const { account } = useAuthStore();
+    const accountId = account?.accountId();
+
+    const hasData = !!(startDate && startTime && title && text && accountId);
     const onSubmit = () => {
         if (hasData) setScreenState(statePage.check);
         return;
@@ -63,7 +67,7 @@ const ProposalCreationPage = (): JSX.Element => {
                             is_simple_proposal: true,
                             title,
                             text,
-                            proposed_by: 'GCQ3WHGBFIZVHNFKOJJ65BLZZNZIO72U3PQH6NHW7J3T6JHOWM6LLVBV',
+                            proposed_by: accountId,
                             start_at: dateNow,
                             end_at: dateEnd,
                             vote_against_issuer: '',

@@ -153,7 +153,7 @@ const ProposalCreation = ({
             <Container>
                 <Title>New proposal</Title>
                 <Description>
-                    ☝️ The cost of creating a proposal - 100,000 AQUA.
+                    &#9757; The cost of creating a proposal - 100,000 AQUA.
                     <br /> This amount will not be received by someone in particular, but will be
                     burned.
                 </Description>
@@ -184,9 +184,6 @@ const ProposalCreation = ({
                             <TextArea
                                 id="body"
                                 name="body"
-                                // wrap="hard"
-                                // cols={80}
-                                // rows={10}
                                 value={text}
                                 onChange={(event) => {
                                     setText(event.target.value);
