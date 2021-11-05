@@ -12,7 +12,8 @@ import ConfirmVoteModal from '../ConfirmVoteModal/ConfirmVoteModal';
 import CheckedIcon from '../../../../common/assets/img/icon-checked.svg';
 import { SimpleProposalOptions } from '../VoteProposalPage';
 import { Proposal } from '../../../api/types';
-import { respondDown } from '../../../../common/mixins';
+import { flexAllCenter, respondDown } from '../../../../common/mixins';
+import { formatBalance, getDateString, roundToPrecision } from '../../../../common/helpers/helpers';
 
 const SidebarBlock = styled.aside`
     position: sticky;
@@ -65,6 +66,45 @@ const FailIcon = styled(Fail)`
 `;
 const SuccessIcon = styled(Success)`
     ${iconStyles}
+`;
+
+const Results = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+`;
+
+const Title = styled.span`
+    font-size: 1.6rem;
+    font-weight: 400;
+    color: ${COLORS.descriptionText};
+    margin-top: 2.2rem;
+`;
+
+const Winner = styled.div<{ isVoteFor: boolean }>`
+    height: 3.5rem;
+    padding: 0 1.5rem;
+    ${flexAllCenter};
+    width: min-content;
+    white-space: nowrap;
+    border-radius: 1.75rem;
+    background-color: ${({ isVoteFor }) => (isVoteFor ? COLORS.purple : COLORS.pinkRed)};
+    color: ${COLORS.white};
+    font-weight: 400;
+    margin-top: 1rem;
+    margin-bottom: 6rem;
+`;
+
+const EndDate = styled.span`
+    font-size: 2rem;
+    font-weight: bold;
+    color: ${COLORS.titleText};
+`;
+
+const FinalResult = styled.span`
+    color: ${COLORS.grayText};
+    font-size: 1.4rem;
+    margin-top: 1rem;
 `;
 
 const VoteOption = styled.label`
@@ -166,8 +206,43 @@ const Sidebar = ({ proposal }: { proposal: Proposal }): JSX.Element => {
         is_simple_proposal: isSimple,
         vote_for_issuer: voteForKey,
         vote_against_issuer: voteAgainstKey,
+        vote_for_result: voteForResult,
+        vote_against_result: voteAgainstResult,
         end_at: endDate,
     } = proposal;
+
+    const isEnd = new Date() >= new Date(endDate);
+
+    if (isEnd && isSimple) {
+        const voteForValue = Number(voteForResult);
+        const voteAgainstValue = Number(voteAgainstResult);
+        const isVoteForWon = voteForValue > voteAgainstValue;
+
+        const percent =
+            ((isVoteForWon ? voteForValue : voteAgainstValue) / (voteForValue + voteAgainstValue)) *
+            100;
+        const roundedPercent = roundToPrecision(percent, 2);
+
+        return (
+            <SidebarBlock>
+                <Container>
+                    <Results>
+                        <Title>Winner:</Title>
+                        <Winner isVoteFor={isVoteForWon}>
+                            {isVoteForWon ? <SuccessIcon /> : <FailIcon />}
+                            Vote <BoldText>{isVoteForWon ? 'For' : 'Against'}</BoldText>
+                        </Winner>
+                        <EndDate>Ended in {getDateString(new Date(endDate).getTime())}</EndDate>
+                        <FinalResult>
+                            {roundedPercent}% votes -{' '}
+                            {formatBalance(isVoteForWon ? voteForValue : voteAgainstValue, true)}{' '}
+                            AQUA
+                        </FinalResult>
+                    </Results>
+                </Container>
+            </SidebarBlock>
+        );
+    }
 
     return (
         <SidebarBlock>

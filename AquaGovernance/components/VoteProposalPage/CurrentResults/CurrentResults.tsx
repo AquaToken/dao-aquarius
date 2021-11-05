@@ -55,11 +55,12 @@ const getResultsData = (proposal: Proposal) => {
 
 const CurrentResults = ({ proposal }: { proposal: Proposal }): JSX.Element => {
     const results = getResultsData(proposal);
+    const isEnd = new Date() >= new Date(proposal.end_at);
     return (
         <ResultBlock>
             <Header>
-                <Title>Current result</Title>
-                <span>Updating every 5 min</span>
+                <Title>{isEnd ? 'Final result' : 'Current result'}</Title>
+                {!isEnd && <span>Updating every 5 min</span>}
             </Header>
 
             {results?.map((result) => {
