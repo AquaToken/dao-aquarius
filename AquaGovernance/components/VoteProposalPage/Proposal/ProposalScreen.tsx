@@ -4,28 +4,17 @@ import Sidebar from '../Sidebar/Sidebar';
 import ArrowLeft from '../../../../common/assets/img/icon-arrow-left.svg';
 import CopyButton from '../../../../common/basics/CopyButton';
 import AccountViewer from '../AccountViewer/AccountViewer';
-import { flexAllCenter, respondDown } from '../../../../common/mixins';
+import { commonMaxWidth, flexAllCenter, respondDown } from '../../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../../common/styles';
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import CurrentResults from '../CurrentResults/CurrentResults';
 import Votes from '../Votes/Votes';
-import { useEffect, useState } from 'react';
-import { getProposalRequest, UPDATE_INTERVAL } from '../../../api/api';
-import PageLoader from '../../../../common/basics/PageLoader';
 import { getDateString } from '../../../../common/helpers/helpers';
 import { Proposal } from '../../../api/types';
 
-const Container = styled.div`
-    max-width: 80rem;
-
-    ${respondDown(Breakpoints.lg)`
-      max-width: 58.2rem;
-    `}
-`;
-
 const ProposalQuestion = styled.div`
     width: 100%;
-    padding: 10rem 4rem 11.7rem;
+    padding: 4rem 0 11.7rem;
     background-color: ${COLORS.lightGray};
 `;
 
@@ -53,8 +42,18 @@ const QuestionText = styled.h3`
     color: ${COLORS.titleText};
 `;
 
-const ProposalSection = styled(Container)`
+const ProposalSection = styled.div`
     padding: 6rem 0 0 4rem;
+    width: 100%;
+    ${commonMaxWidth};
+`;
+
+const LeftContent = styled.div`
+    max-width: 78rem;
+
+    ${respondDown(Breakpoints.lg)`
+        max-width: 58.2rem;
+      `}
 `;
 
 const Title = styled.h5`
@@ -68,6 +67,7 @@ const DescriptionText = styled.div`
     line-height: 2.8rem;
     color: ${COLORS.descriptionText};
     opacity: 0.7;
+    white-space: pre-wrap;
 `;
 
 const DataDetails = styled.div`
@@ -101,51 +101,61 @@ const ProposalScreen = ({ proposal }: { proposal: Proposal }): JSX.Element => {
     const endDateView = getDateString(new Date(endDate).getTime(), { withTime: true });
 
     return (
-        <main>
+        <>
             <Sidebar proposal={proposal} />
             <ProposalQuestion>
-                <Container>
-                    <BackToProposals>
-                        <BackButton to="/">
-                            <ArrowLeft />
-                        </BackButton>
-                        <span>Proposals</span>
-                    </BackToProposals>
-                    <QuestionText>{title}</QuestionText>
-                </Container>
+                <ProposalSection>
+                    <LeftContent>
+                        <BackToProposals>
+                            <BackButton to="/">
+                                <ArrowLeft />
+                            </BackButton>
+                            <span>Proposals</span>
+                        </BackToProposals>
+                        <QuestionText>{title}</QuestionText>
+                    </LeftContent>
+                </ProposalSection>
             </ProposalQuestion>
             <ProposalSection>
-                <Title>Proposal</Title>
-                <DescriptionText>{text}</DescriptionText>
+                <LeftContent>
+                    <Title>Proposal</Title>
+                    <DescriptionText>{text}</DescriptionText>
+                </LeftContent>
             </ProposalSection>
             <ProposalSection>
-                <Title>Details</Title>
-                <DataDetails>
-                    <Column>
-                        <DetailsTitle>Voting start:</DetailsTitle>
-                        <DetailsDescription>{startDateView}</DetailsDescription>
-                    </Column>
-                    <Column>
-                        <DetailsTitle>Voting end:</DetailsTitle>
-                        <DetailsDescription>{endDateView}</DetailsDescription>
-                    </Column>
-                    <Column>
-                        <DetailsTitle>Proposed by:</DetailsTitle>
-                        <DetailsDescription>
-                            <CopyButton text={proposedBy}>
-                                <AccountViewer pubKey={proposedBy} />
-                            </CopyButton>
-                        </DetailsDescription>
-                    </Column>
-                </DataDetails>
+                <LeftContent>
+                    <Title>Details</Title>
+                    <DataDetails>
+                        <Column>
+                            <DetailsTitle>Voting start:</DetailsTitle>
+                            <DetailsDescription>{startDateView}</DetailsDescription>
+                        </Column>
+                        <Column>
+                            <DetailsTitle>Voting end:</DetailsTitle>
+                            <DetailsDescription>{endDateView}</DetailsDescription>
+                        </Column>
+                        <Column>
+                            <DetailsTitle>Proposed by:</DetailsTitle>
+                            <DetailsDescription>
+                                <CopyButton text={proposedBy}>
+                                    <AccountViewer pubKey={proposedBy} />
+                                </CopyButton>
+                            </DetailsDescription>
+                        </Column>
+                    </DataDetails>
+                </LeftContent>
             </ProposalSection>
             <ProposalSection>
-                <CurrentResults proposal={proposal} />
+                <LeftContent>
+                    <CurrentResults proposal={proposal} />
+                </LeftContent>
             </ProposalSection>
             <ProposalSection>
-                <Votes />
+                <LeftContent>
+                    <Votes />
+                </LeftContent>
             </ProposalSection>
-        </main>
+        </>
     );
 };
 
