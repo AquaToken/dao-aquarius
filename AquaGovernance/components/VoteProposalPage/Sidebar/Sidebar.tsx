@@ -13,6 +13,7 @@ import CheckedIcon from '../../../../common/assets/img/icon-checked.svg';
 import { SimpleProposalOptions } from '../VoteProposalPage';
 import { Proposal } from '../../../api/types';
 import { respondDown } from '../../../../common/mixins';
+import Button from '../../../../common/basics/Button';
 
 const SidebarBlock = styled.aside`
     position: sticky;
@@ -38,6 +39,21 @@ export const SidebarTitle = styled.h5`
     line-height: 2.8rem;
     margin-bottom: 3.4rem;
     color: ${COLORS.titleText};
+`;
+const SidebarTemplateTitle = styled(SidebarTitle)`
+    margin-bottom: 0.8rem;
+`;
+
+const SidebarDescription = styled.div`
+    font-size: 1.6rem;
+    line-height: 2.8rem;
+    color: #000427;
+    opacity: 0.7;
+    margin-bottom: 4.2rem;
+`;
+
+const Notice = styled.div`
+    margin-bottom: 2rem;
 `;
 
 const VotingButton = styled(NativeVotingButton)`
@@ -141,7 +157,13 @@ const Checked = styled(CheckedIcon)`
 //     ],
 // };
 
-const Sidebar = ({ proposal }: { proposal: Proposal }): JSX.Element => {
+const Sidebar = ({
+    proposal,
+    isTemplate,
+}: {
+    proposal: Proposal;
+    isTemplate: boolean;
+}): JSX.Element => {
     const [selectedOption, setSelectedOption] = useState(null);
     const { isLogged } = useAuthStore();
 
@@ -168,10 +190,10 @@ const Sidebar = ({ proposal }: { proposal: Proposal }): JSX.Element => {
         vote_against_issuer: voteAgainstKey,
         end_at: endDate,
     } = proposal;
-
+    console.log('isTemplate', isTemplate);
     return (
         <SidebarBlock>
-            {isSimple && (
+            {isSimple && !isTemplate && (
                 <Container>
                     <SidebarTitle>Cast your votes</SidebarTitle>
                     <VotingButton
@@ -198,6 +220,19 @@ const Sidebar = ({ proposal }: { proposal: Proposal }): JSX.Element => {
                         <FailIcon />
                         Vote <BoldText>Against</BoldText>
                     </VotingButton>
+                </Container>
+            )}
+            {isTemplate && (
+                <Container>
+                    <Notice>&#9757;️</Notice>
+                    <SidebarTemplateTitle>Check details</SidebarTemplateTitle>
+                    <SidebarDescription>
+                        Please check all details, after publish you will not be able to delete or
+                        change your proposal!
+                    </SidebarDescription>
+                    <Button isBig fullWidth>
+                        Continue
+                    </Button>
                 </Container>
             )}
             {/*(*/}
