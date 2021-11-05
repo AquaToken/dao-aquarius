@@ -1,14 +1,15 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import 'react-datepicker/dist/react-datepicker.css';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import ProposalCreation from './ProposalCreation/ProposalCreation';
+import ProposalScreen from '../VoteProposalPage/Proposal/ProposalScreen';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
 `;
 
-enum statePage {
+export enum statePage {
     creation = 'creation',
     check = 'check',
 }
@@ -22,17 +23,16 @@ const ProposalCreationPage = (): JSX.Element => {
 
     const hasData = !!(startDate && startTime && title && text);
     const onSubmit = () => {
-        const data = {
-            // startDate: Date.now(),
-            endDate: startDate.setHours(startTime.getHours()),
-            title,
-            text,
-        };
         if (hasData) setScreenState(statePage.check);
-        console.log('submit', data);
+        return;
     };
-
-    // const { title, text, proposed_by: proposedBy, start_at: startDate, end_at: endDate } = proposal;
+    const dateNow = new Date().toISOString();
+    const dateEnd = useMemo(() => {
+        if (startDate && startTime) {
+            return new Date(startDate.setHours(startTime.getHours())).toISOString();
+        }
+        return null;
+    }, [startDate, startTime]);
 
     switch (screenState) {
         case statePage.creation: {
@@ -57,15 +57,23 @@ const ProposalCreationPage = (): JSX.Element => {
         case statePage.check: {
             return (
                 <MainBlock>
-                    {/*<ProposalScreen*/}
-                    {/*    proposal={{*/}
-                    {/*        title,*/}
-                    {/*        text,*/}
-                    {/*        proposedBy: 'GSDFHGKSDHFSHFKHSDFSKFHKSJFKSKFS',*/}
-                    {/*        startDate,*/}
-                    {/*        endDate: startDate.setHours(startTime.getHours()),*/}
-                    {/*    }}*/}
-                    {/*/>*/}
+                    <ProposalScreen
+                        proposal={{
+                            id: 0,
+                            is_simple_proposal: true,
+                            title,
+                            text,
+                            proposed_by: 'GCQ3WHGBFIZVHNFKOJJ65BLZZNZIO72U3PQH6NHW7J3T6JHOWM6LLVBV',
+                            start_at: dateNow,
+                            end_at: dateEnd,
+                            vote_against_issuer: '',
+                            vote_against_result: '0',
+                            vote_for_issuer: '',
+                            vote_for_result: '0',
+                        }}
+                        isTemplate
+                        setScreenState={setScreenState}
+                    />
                 </MainBlock>
             );
         }

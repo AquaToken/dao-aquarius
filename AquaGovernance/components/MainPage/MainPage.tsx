@@ -6,6 +6,9 @@ import { Breakpoints, COLORS } from '../../../common/styles';
 import { commonMaxWidth, flexAllCenter, respondDown } from '../../../common/mixins';
 import ProposalLink from './ProposalLink/ProposalLink';
 import useProposalsStore from '../../store/proposalsStore/useProposalsStore';
+import Button from '../../../common/basics/Button';
+import Plus from '../../../common/assets/img/icon-plus.svg';
+import { Link } from 'react-router-dom';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -79,12 +82,18 @@ const ProposalsBlock = styled.div`
     ${commonMaxWidth};
 `;
 
+const TitleBlock = styled.div`
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4.8rem;
+    align-items: center;
+`;
+
 const ProposalsTitle = styled.h3`
     font-size: 5.6rem;
     line-height: 6.4rem;
     font-weight: bold;
     color: ${COLORS.titleText};
-    margin-bottom: 4.8rem;
 `;
 
 const About = styled.div`
@@ -102,6 +111,18 @@ const About = styled.div`
     opacity: 0.7;
 `;
 
+const PlusIcon = styled(Plus)`
+    margin-left: 1.7rem;
+    & > path {
+        fill: white;
+    }
+`;
+
+const StyledLink = styled(Link)`
+    display: block;
+    text-decoration: none;
+`;
+
 const MainPage = (): JSX.Element => {
     const { proposals } = useProposalsStore();
 
@@ -117,7 +138,14 @@ const MainPage = (): JSX.Element => {
                 <BackgroundRight />
             </Background>
             <ProposalsBlock>
-                <ProposalsTitle>Proposals</ProposalsTitle>
+                <TitleBlock>
+                    <ProposalsTitle>Proposals</ProposalsTitle>
+                    <StyledLink to="/create">
+                        <Button>
+                            Create proposal <PlusIcon />
+                        </Button>
+                    </StyledLink>
+                </TitleBlock>
                 {proposals.map((proposal) => {
                     return (
                         <ProposalLink

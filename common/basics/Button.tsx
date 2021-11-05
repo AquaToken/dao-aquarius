@@ -56,6 +56,7 @@ const ButtonLoader = styled.div<{ pending?: boolean }>`
     `
             : `
         color: ${COLORS.white};
+        ${flexAllCenter};
     `}
 
     @keyframes rainbow_animation {
@@ -70,7 +71,7 @@ const ButtonLoader = styled.div<{ pending?: boolean }>`
 `;
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-    children: string | JSX.Element;
+    children: React.ReactNode;
     pending?: boolean;
     isBig?: boolean;
     fullWidth?: boolean;

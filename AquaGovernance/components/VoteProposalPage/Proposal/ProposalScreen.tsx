@@ -11,6 +11,7 @@ import CurrentResults from '../CurrentResults/CurrentResults';
 import Votes from '../Votes/Votes';
 import { getDateString } from '../../../../common/helpers/helpers';
 import { Proposal } from '../../../api/types';
+import { statePage } from '../../ProposalCreationPage/ProposalCreationPage';
 
 const ProposalQuestion = styled.div`
     width: 100%;
@@ -18,7 +19,7 @@ const ProposalQuestion = styled.div`
     background-color: ${COLORS.lightGray};
 `;
 
-const BackToProposals = styled.div`
+const BackTo = styled.div`
     display: flex;
     column-gap: 1.6rem;
     align-items: center;
@@ -32,7 +33,17 @@ const BackButton = styled(Link)`
     box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
     border-radius: 50%;
     text-decoration: none;
+    border: none;
     cursor: pointer;
+    transition: all ease 200ms;
+
+    &:hover {
+        background-color: ${COLORS.lightGray};
+    }
+
+    &:active {
+        transform: scale(0.9);
+    }
 `;
 
 const QuestionText = styled.h3`
@@ -94,7 +105,15 @@ const DetailsDescription = styled.div`
     color: ${COLORS.paragraphText};
 `;
 
-const ProposalScreen = ({ proposal }: { proposal: Proposal }): JSX.Element => {
+const ProposalScreen = ({
+    proposal,
+    isTemplate,
+    setScreenState,
+}: {
+    proposal: Proposal;
+    isTemplate?: boolean;
+    setScreenState?: (state) => void;
+}): JSX.Element => {
     const { title, text, proposed_by: proposedBy, start_at: startDate, end_at: endDate } = proposal;
 
     const startDateView = getDateString(new Date(startDate).getTime(), { withTime: true });
@@ -102,16 +121,30 @@ const ProposalScreen = ({ proposal }: { proposal: Proposal }): JSX.Element => {
 
     return (
         <>
-            <Sidebar proposal={proposal} />
+            <Sidebar isTemplate={isTemplate} proposal={proposal} />
             <ProposalQuestion>
                 <ProposalSection>
                     <LeftContent>
-                        <BackToProposals>
-                            <BackButton to="/">
-                                <ArrowLeft />
-                            </BackButton>
-                            <span>Proposals</span>
-                        </BackToProposals>
+                        <BackTo>
+                            {isTemplate ? (
+                                <>
+                                    <BackButton
+                                        as="button"
+                                        onClick={() => setScreenState(statePage.creation)}
+                                    >
+                                        <ArrowLeft />
+                                    </BackButton>
+                                    <span>Back to edit proposal</span>
+                                </>
+                            ) : (
+                                <>
+                                    <BackButton to="/">
+                                        <ArrowLeft />
+                                    </BackButton>
+                                    <span>Proposals</span>
+                                </>
+                            )}
+                        </BackTo>
                         <QuestionText>{title}</QuestionText>
                     </LeftContent>
                 </ProposalSection>
@@ -150,11 +183,13 @@ const ProposalScreen = ({ proposal }: { proposal: Proposal }): JSX.Element => {
                     <CurrentResults proposal={proposal} />
                 </LeftContent>
             </ProposalSection>
-            <ProposalSection>
-                <LeftContent>
-                    <Votes />
-                </LeftContent>
-            </ProposalSection>
+            {!isTemplate && (
+                <ProposalSection>
+                    <LeftContent>
+                        <Votes />
+                    </LeftContent>
+                </ProposalSection>
+            )}
         </>
     );
 };
