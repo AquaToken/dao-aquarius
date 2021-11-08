@@ -7,7 +7,7 @@ import { getDateString, roundToPrecision } from '../../../../common/helpers/help
 import { Link, LinkProps } from 'react-router-dom';
 import { ProposalSimple } from '../../../api/types';
 
-const ProposalLinkBlock = styled(Link)<{ $isEnd: boolean }>`
+const ProposalLinkBlock = styled(Link)`
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -17,7 +17,6 @@ const ProposalLinkBlock = styled(Link)<{ $isEnd: boolean }>`
     cursor: pointer;
     text-decoration: none;
 
-    pointer-events: ${({ $isEnd }) => ($isEnd ? 'none' : 'auto')};
     &:hover {
         color: ${COLORS.purple};
     }
@@ -102,7 +101,7 @@ const ProposalLink = ({ proposal, ...props }: ProposalLinkProps): JSX.Element =>
     const info = getProposalInfo(proposal);
 
     return (
-        <ProposalLinkBlock $isEnd={isEnd} {...props}>
+        <ProposalLinkBlock {...props}>
             <Content>
                 <Label>{title}</Label>
                 <Info>{info}</Info>
