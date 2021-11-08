@@ -148,6 +148,7 @@ const SuccessIcon = styled(Success)`
 // const Checked = styled(CheckedIcon)`
 //     margin-right: 1.4rem;
 // `;
+
 const Results = styled.div`
     display: flex;
     flex-direction: column;
@@ -185,70 +186,6 @@ const FinalResult = styled.span`
     color: ${COLORS.grayText};
     font-size: 1.4rem;
     margin-top: 1rem;
-`;
-
-const VoteOption = styled.label`
-    display: flex;
-    align-items: center;
-    position: relative;
-    padding: 2.2rem;
-    width: 100%;
-    margin-bottom: 1.2rem;
-    background: ${COLORS.lightGray};
-    border-radius: 0.5rem;
-
-    font-size: 1.6rem;
-    line-height: 1.8rem;
-
-    transition: all ease 200ms;
-
-    ${({ isChecked }: { isChecked: boolean }) =>
-        isChecked
-            ? `color: ${COLORS.white}; 
-               background: ${COLORS.purple};
-            `
-            : `color: ${COLORS.paragraphText}; 
-               background: ${COLORS.lightGray};
-            `};
-    &:hover {
-        ${({ isChecked }: { isChecked: boolean }) =>
-            !isChecked &&
-            `cursor: pointer; 
-             background: ${COLORS.white};
-             box-shadow: 0px 20px 30px rgba(0, 6, 54, 0.06);
-             & > span {
-                border-color: ${COLORS.purple};
-             }
-             `};
-    }
-`;
-
-const Divider = styled.div`
-    height: 0;
-    width: 100%;
-    border-bottom: 0.1rem dashed #e8e8ed; ;
-`;
-
-const InputItem = styled.input`
-    position: absolute;
-    top: 0;
-    left: 0;
-    opacity: 0;
-`;
-
-const NonSelectedIcon = styled.span`
-    width: 2.2rem;
-    height: 2.2rem;
-    margin-right: 1.4rem;
-
-    background: ${COLORS.white};
-    border: 0.1rem solid ${COLORS.gray};
-    border-radius: 50%;
-    transition: all ease 200ms;
-`;
-
-const Checked = styled(CheckedIcon)`
-    margin-right: 1.4rem;
 `;
 
 // const voteOptionsMockData = {
