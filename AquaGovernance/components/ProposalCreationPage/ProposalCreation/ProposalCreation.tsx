@@ -72,56 +72,115 @@ const Label = styled.label`
     color: ${COLORS.paragraphText};
 `;
 
-const GlobalStyle = createGlobalStyle`
-    div.react-datepicker {
-        font-family: ${FONT_FAMILY.roboto};
-        font-size: 1.6rem;
-        background-color: #fff;
-        color: #000636;
-        border: none;
-        border-radius: 0.5rem;
-        box-shadow: 0 20px 30px rgba(0, 6, 54, 0.06);
+const DatePickerResetStyles = createGlobalStyle`
+  .react-datepicker {
+    font-family: ${FONT_FAMILY.roboto};
+    font-size: 1.6rem;
+    background-color: ${COLORS.white};
+    color: ${COLORS.paragraphText};
+    border: none;
+    border-radius: 0.5rem;
+    box-shadow: 0 20px 30px rgba(0, 6, 54, 0.06);
+
+    &__day {
+      border-color: ${COLORS.gray};
+      border-style: solid;
+      border-width: 0 1px 1px 0;
+
+      &--outside-month {
+        color: ${COLORS.placeholder};
+      }
     }
-    div.react-datepicker__triangle {
-        display: none;
+
+    &__day-name, &__day, &__time-name {
+      display: inline-block;
+      width: 4.6rem;
+      line-height: 4.5rem;
+      margin: 0;
     }
-    div.react-datepicker__header {
-        background-color: white;
-        border-bottom: none;
+
+    &__triangle {
+      display: none;
     }
-    div.react-datepicker__day-name, .react-datepicker__day, .react-datepicker__time-name {
-        display: inline-block;
-        width: 4.6rem;
-        line-height: 4.5rem;
-        margin: 0;
+
+    &__header {
+      background-color: ${COLORS.white};
+      border-bottom: none;
     }
-    div.react-datepicker__day--selected, div.react-datepicker__day--keyboard-selected {
-        border-radius: 0;
-        background-color: #8620B9;
-        color: #fff;
+
+    &__day--selected, &__day--keyboard-selected {
+      border-radius: 0;
+      background-color: ${COLORS.tooltip};
+      color: ${COLORS.white};
+
+      &:hover {
+        background-color: #b12af5;
+      }
     }
-    div.react-datepicker__current-month  {
-        color: #000;
-        font-weight: normal;
-        font-size: 1.6rem;
-        line-height: 2.8rem;
+
+    &__current-month,
+    &-time__header {
+      font-weight: normal;
+      font-size: 1.6rem;
+      line-height: 2.8rem;
     }
-    div.react-datepicker__month {
-        margin: 0;
-        border-left: 1px solid #E8E8ED;
-        border-top: 1px solid #E8E8ED;
+
+    &__month {
+      margin: 0;
+      border-color: ${COLORS.gray};
+      border-style: solid;
+      border-width: 1px 0 0 1px;
     }
-    div.react-datepicker__day {
-        width: 4.6rem;
-        line-height: 4.5rem;
-        margin: 0;
-        border-right: 1px solid #E8E8ED;
-        border-bottom: 1px solid #E8E8ED;
+
+    &__time-list-item {
+      line-height: 2rem;
+    }
+
+    &__time-container {
+      width: 324px;
+
+      .react-datepicker__time {
+        .react-datepicker__time-box {
+          width: 324px;
+          overflow-x: unset;
+          margin: 0;
+          text-align: match-parent;
+
+          ul.react-datepicker__time-list {
+            display: flex;
+            flex-wrap: wrap;
+            height: auto;
+            overflow-y: unset;
+            border-color: ${COLORS.gray};
+            border-style: solid;
+            border-width: 1px 0 0 1px;
+
+            li.react-datepicker__time-list-item {
+              height: 4.5rem;
+              min-width: 10.7rem;
+              flex: 1;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              border-color: ${COLORS.gray};
+              border-style: solid;
+              border-width: 0 1px 1px 0;
+
+              &--selected {
+                background-color: ${COLORS.tooltip};
+
+                &:hover {
+                  background-color: #b12af5;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
-    div.react-datepicker__day--outside-month {
-        color: #B3B4C3;
-    }
 `;
+
 interface proposalCreationProps {
     title: string;
     text: string;
@@ -197,7 +256,8 @@ const ProposalCreation = ({
                                     customInput={<Input />}
                                     selected={startDate}
                                     onChange={(date) => setStartDate(date)}
-                                    placeholderText="MM/DD/YYYY"
+                                    placeholderText="MM.DD.YYYY"
+                                    dateFormat="MM.dd.yyyy"
                                     popperModifiers={[
                                         {
                                             name: 'offset',
@@ -207,7 +267,6 @@ const ProposalCreation = ({
                                         },
                                     ]}
                                 />
-                                <GlobalStyle />
                             </Date>
                             <Time>
                                 <Label>End time</Label>
@@ -224,14 +283,15 @@ const ProposalCreation = ({
                                     placeholderText="00:00"
                                     popperModifiers={[
                                         {
-                                            name: 'arrow',
+                                            name: 'offset',
                                             options: {
-                                                padding: 10,
+                                                offset: [0, -10],
                                             },
                                         },
                                     ]}
                                 />
                             </Time>
+                            <DatePickerResetStyles />
                         </SectionDate>
                         <Button fullWidth isBig disabled={!hasData}>
                             Go to publish

@@ -14,7 +14,7 @@ import { ModalService } from '../../../common/services/globalServices';
 import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
 import NotEnoughAquaModal from './NotEnoughAquaModal/NotEnoughAquaModal';
 
-const MINIMUM_BALANCE_AQUA = 30;
+const MINIMUM_BALANCE_AQUA = 1;
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
