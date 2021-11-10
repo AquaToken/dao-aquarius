@@ -86,6 +86,10 @@ const getProposalInfo = (proposal: ProposalSimple): string => {
             100;
         const roundedPercent = roundToPrecision(percent, 2);
 
+        if (Number.isNaN(percent)) {
+            return 'No one voted';
+        }
+
         return `Winner ${
             isVoteForWin ? '“Vote For”' : '“Vote Against”'
         } with ${roundedPercent}% of the votes`;

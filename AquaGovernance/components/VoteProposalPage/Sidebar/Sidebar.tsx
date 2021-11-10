@@ -246,6 +246,18 @@ const Sidebar = ({
             100;
         const roundedPercent = roundToPrecision(percent, 2);
 
+        if (Number.isNaN(percent)) {
+            return (
+                <SidebarBlock>
+                    <Container>
+                        <Results>
+                            <Title>No one voted</Title>
+                        </Results>
+                    </Container>
+                </SidebarBlock>
+            );
+        }
+
         return (
             <SidebarBlock>
                 <Container>

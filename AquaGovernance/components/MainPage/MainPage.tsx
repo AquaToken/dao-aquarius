@@ -13,8 +13,10 @@ import useAuthStore from '../../../common/store/authStore/useAuthStore';
 import { ModalService } from '../../../common/services/globalServices';
 import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
 import NotEnoughAquaModal from './NotEnoughAquaModal/NotEnoughAquaModal';
+import { useEffect } from 'react';
+import PageLoader from '../../../common/basics/PageLoader';
 
-const MINIMUM_BALANCE_AQUA = 1;
+export const CREATE_PROPOSAL_COST = 0.0001;
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -125,27 +127,32 @@ const PlusIcon = styled(Plus)`
 `;
 
 const MainPage = (): JSX.Element => {
-    const { proposals } = useProposalsStore();
+    const { proposals, getProposals } = useProposalsStore();
     const history = useHistory();
     const { isLogged, account } = useAuthStore();
 
-    const aquaBalance = account?.getAquaBalance();
-
-    const hasNecessaryBalance = aquaBalance >= MINIMUM_BALANCE_AQUA;
-
-    console.log(account);
     const handleClick = () => {
-        if (isLogged) {
-            if (hasNecessaryBalance) {
-                history.push('/create');
-                return;
-            } else {
-                ModalService.openModal(NotEnoughAquaModal, {});
-                return;
-            }
+        if (!isLogged) {
+            ModalService.openModal(ChooseLoginMethodModal, {});
+            return;
         }
-        ModalService.openModal(ChooseLoginMethodModal, {});
+        const aquaBalance = account.getAquaBalance();
+        const hasNecessaryBalance = aquaBalance >= CREATE_PROPOSAL_COST;
+
+        if (hasNecessaryBalance) {
+            history.push('/create');
+            return;
+        }
+        ModalService.openModal(NotEnoughAquaModal, {});
     };
+
+    useEffect(() => {
+        getProposals();
+    }, []);
+
+    if (!proposals.length) {
+        return <PageLoader />;
+    }
 
     return (
         <MainBlock>
@@ -162,7 +169,9 @@ const MainPage = (): JSX.Element => {
                 <TitleBlock>
                     <ProposalsTitle>Proposals</ProposalsTitle>
                     <Button onClick={() => handleClick()}>
-                        Create proposal <PlusIcon />
+                        <>
+                            Create proposal <PlusIcon />
+                        </>
                     </Button>
                 </TitleBlock>
                 {proposals.map((proposal) => {

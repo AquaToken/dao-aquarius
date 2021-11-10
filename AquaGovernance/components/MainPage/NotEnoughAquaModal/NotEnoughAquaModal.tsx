@@ -4,6 +4,8 @@ import styled from 'styled-components';
 import Button from '../../../../common/basics/Button';
 import { ModalService } from '../../../../common/services/globalServices';
 import GetAquaModal from '../../../../common/modals/GetAquaModal/GetAquaModal';
+import { CREATE_PROPOSAL_COST } from '../MainPage';
+import { formatBalance } from '../../../../common/helpers/helpers';
 
 const StyledButton = styled(Button)`
     margin-top: 7.2rem;
@@ -14,16 +16,16 @@ const BoldText = styled.span`
     font-weight: bold;
 `;
 
-const NotEnoughAquaModal = (): JSX.Element => (
+const NotEnoughAquaModal = ({ close }): JSX.Element => (
     <>
         <ModalTitle>Not enough AQUA</ModalTitle>
         <ModalDescription>
-            To create a proposal, you must have at least <BoldText>1,000,000 AQUA</BoldText> in your
-            stellar account.
+            To create a proposal, you must have at least{' '}
+            <BoldText>{formatBalance(CREATE_PROPOSAL_COST)} AQUA</BoldText> in your stellar account.
         </ModalDescription>
         <StyledButton
             onClick={() => {
-                ModalService.closeAllModals();
+                close();
                 ModalService.openModal(GetAquaModal, {});
             }}
         >

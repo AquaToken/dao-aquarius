@@ -33,3 +33,12 @@ export type Vote = {
     transaction_link: string;
     created_at: string;
 };
+
+export type ProposalCreateOptions = {
+    proposed_by: string;
+    title: string;
+    text: string;
+    start_at: string;
+    end_at: string;
+    transaction_hash: string;
+};

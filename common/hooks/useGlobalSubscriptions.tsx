@@ -52,6 +52,7 @@ export default function useGlobalSubscriptions(): void {
             StellarService.startAccountStream(account.accountId());
             ToastService.showSuccessToast('Successful Log in');
         } else {
+            StellarService.logoutWithSecret();
             StellarService.closeAccountStream();
         }
     }, [isLogged]);

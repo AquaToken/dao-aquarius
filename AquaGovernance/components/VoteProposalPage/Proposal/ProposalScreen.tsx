@@ -71,6 +71,7 @@ const Title = styled.h5`
     font-size: 2rem;
     line-height: 2.8rem;
     color: ${COLORS.titleText};
+    margin-bottom: 1rem;
 `;
 
 const DescriptionText = styled.div`
@@ -152,7 +153,7 @@ const ProposalScreen = ({
             <ProposalSection>
                 <LeftContent>
                     <Title>Proposal</Title>
-                    <DescriptionText>{text}</DescriptionText>
+                    <DescriptionText dangerouslySetInnerHTML={{ __html: text }} />
                 </LeftContent>
             </ProposalSection>
             <ProposalSection>
