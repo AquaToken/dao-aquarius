@@ -16,7 +16,7 @@ import NotEnoughAquaModal from './NotEnoughAquaModal/NotEnoughAquaModal';
 import { useEffect } from 'react';
 import PageLoader from '../../../common/basics/PageLoader';
 
-export const CREATE_PROPOSAL_COST = 0.0001;
+export const CREATE_PROPOSAL_COST = 1;
 
 const MainBlock = styled.main`
     flex: 1 0 auto;

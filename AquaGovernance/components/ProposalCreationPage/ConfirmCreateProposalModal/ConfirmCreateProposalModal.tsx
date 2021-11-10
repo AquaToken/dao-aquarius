@@ -55,6 +55,11 @@ const ConfirmCreateProposalModal = ({ params, close }: ModalProps<Proposal>): JS
             return;
         }
 
+        if (new Date() > new Date(end_at)) {
+            ToastService.showErrorToast('"Voting end date" cannot be less than the current date');
+            return;
+        }
+
         setLoading(true);
 
         try {
