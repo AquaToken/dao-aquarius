@@ -13,11 +13,14 @@ type PairingModalParams = {
     connect: (pairing?: PairingTypes.Settled) => Promise<void>;
 };
 
+const ModalBlock = styled.div`
+    width: 52.3rem;
+`;
+
 const PairingBlock = styled.div`
     display: flex;
     flex-direction: row;
     align-items: center;
-    width: 52.3rem;
     background-color: ${COLORS.lightGray};
     border-radius: 0.5rem;
     padding: 2.1rem 2.4rem;
@@ -101,7 +104,7 @@ const PairingModal = ({ params }: ModalProps<PairingModalParams>): JSX.Element =
     };
 
     return (
-        <>
+        <ModalBlock>
             <ModalTitle>Logged in before?</ModalTitle>
             <ModalDescription>Restore your connection or create a new one.</ModalDescription>
             {currentPairings.map((pairing, index) => (
@@ -126,7 +129,7 @@ const PairingModal = ({ params }: ModalProps<PairingModalParams>): JSX.Element =
                 <span>Add new connection</span>
                 <NewConnectionButtonIcon />
             </NewConnectionButton>
-        </>
+        </ModalBlock>
     );
 };
 
