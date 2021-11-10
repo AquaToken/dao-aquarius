@@ -2,13 +2,14 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { COLORS } from '../styles';
 import { textEllipsis } from '../mixins';
+import { forwardRef, RefObject } from 'react';
 
 const InputWrapper = styled.div`
     position: relative;
     width: 100%;
 `;
 
-const StyledInput = styled.input`
+const StyledInput = styled.input<{ ref: RefObject<HTMLInputElement> }>`
     height: 6.6rem;
     width: 100%;
     border: 0.1rem solid ${COLORS.gray};
@@ -52,13 +53,15 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     postfix?: React.ReactNode;
 }
 
-const Input = ({ postfix, className, ...props }: InputProps): JSX.Element => {
-    return (
-        <InputWrapper className={className}>
-            <StyledInput {...props} />
-            {postfix && <Postfix>{postfix}</Postfix>}
-        </InputWrapper>
-    );
-};
+const Input = forwardRef(
+    ({ postfix, className, ...props }: InputProps, ref: RefObject<HTMLInputElement>) => {
+        return (
+            <InputWrapper className={className}>
+                <StyledInput ref={ref} {...props} />
+                {postfix && <Postfix>{postfix}</Postfix>}
+            </InputWrapper>
+        );
+    },
+);
 
 export default Input;

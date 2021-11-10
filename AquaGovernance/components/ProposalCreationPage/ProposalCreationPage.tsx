@@ -1,6 +1,5 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import 'react-datepicker/dist/react-datepicker.css';
 import { useMemo, useState } from 'react';
 import ProposalCreation from './ProposalCreation/ProposalCreation';
 import ProposalScreen from '../VoteProposalPage/Proposal/ProposalScreen';
@@ -28,7 +27,6 @@ const ProposalCreationPage = (): JSX.Element => {
     const hasData = !!(startDate && startTime && title && text && accountId);
     const onSubmit = () => {
         if (hasData) setScreenState(statePage.check);
-        return;
     };
     const dateNow = new Date().toISOString();
     const dateEnd = useMemo(() => {

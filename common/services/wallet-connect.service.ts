@@ -19,7 +19,8 @@ const METADATA = {
 };
 
 const STELLAR_METHODS = {
-    SIGN: 'stellar_signAndSubmitXDR',
+    SIGN_AND_SUBMIT: 'stellar_signAndSubmitXDR',
+    SIGN: 'stellar_signXDR',
 };
 const PUBNET = 'stellar:pubnet';
 
@@ -242,25 +243,47 @@ export default class WalletConnectServiceClass {
         }
     }
 
-    signTx(tx: StellarSdk.Transaction): void {
+    signAndSubmitTx(tx: StellarSdk.Transaction): Promise<void> {
         const xdr = tx.toEnvelope().toXDR('base64');
+
+        const request = this.client.request({
+            topic: this.session.topic,
+            chainId: PUBNET,
+            request: {
+                method: STELLAR_METHODS.SIGN_AND_SUBMIT,
+                params: {
+                    xdr,
+                },
+            },
+        });
 
         ModalService.openModal(RequestModal, {
             name: this.appMeta.name,
-            result: this.client
-                .request({
-                    topic: this.session.topic,
-                    chainId: PUBNET,
-                    request: {
-                        method: STELLAR_METHODS.SIGN,
-                        params: {
-                            xdr,
-                        },
-                    },
-                })
-                .then((result) => {
-                    return result;
-                }),
+            result: request,
         });
+
+        return request;
+    }
+
+    signTx(tx: StellarSdk.Transaction): Promise<any> {
+        const xdr = tx.toEnvelope().toXDR('base64');
+
+        const request = this.client.request({
+            topic: this.session.topic,
+            chainId: PUBNET,
+            request: {
+                method: STELLAR_METHODS.SIGN,
+                params: {
+                    xdr,
+                },
+            },
+        });
+
+        ModalService.openModal(RequestModal, {
+            name: this.appMeta.name,
+            result: request,
+        });
+
+        return request.then(({ signedXDR }) => signedXDR);
     }
 }

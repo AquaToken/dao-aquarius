@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState } from 'react';
 import {
     ModalDescription,
     ModalProps,
@@ -8,8 +9,16 @@ import styled from 'styled-components';
 import Button from '../../../../common/basics/Button';
 import { flexRowSpaceBetween } from '../../../../common/mixins';
 import { Proposal } from '../../../api/types';
-
-const MINIMUM_AMOUNT_AQUA_FOR_PAY = 100000;
+import { formatBalance } from '../../../../common/helpers/helpers';
+import { CREATE_PROPOSAL_COST } from '../../MainPage/MainPage';
+import { StellarService, ToastService } from '../../../../common/services/globalServices';
+import { MemoHash } from 'stellar-base';
+import { sha256 } from 'js-sha256';
+import useAuthStore from '../../../../common/store/authStore/useAuthStore';
+import { useIsMounted } from '../../../../common/hooks/useIsMounted';
+import { createProposal } from '../../../api/api';
+import { Horizon } from 'stellar-sdk';
+import { useHistory } from 'react-router-dom';
 
 const ProposalCost = styled.div`
     ${flexRowSpaceBetween};
@@ -31,23 +40,68 @@ const Amount = styled.div`
     color: #000636;
 `;
 
-const ConfirmCreateProposalModal = ({ params }: ModalProps<Proposal>): JSX.Element => {
-    const minCost = new Intl.NumberFormat('en-US').format(MINIMUM_AMOUNT_AQUA_FOR_PAY);
+const ConfirmCreateProposalModal = ({ params, close }: ModalProps<Proposal>): JSX.Element => {
+    const [loading, setLoading] = useState(false);
+    const { account } = useAuthStore();
+    const cost = formatBalance(CREATE_PROPOSAL_COST);
+
+    const history = useHistory();
+
+    const isMounted = useIsMounted();
+
+    const onSubmit = async () => {
+        const { text, title, start_at, end_at } = params;
+        if (loading) {
+            return;
+        }
+
+        setLoading(true);
+
+        try {
+            const op = StellarService.createBurnAquaOperation(CREATE_PROPOSAL_COST.toString());
+            const hash = sha256(text);
+            const memoHash = StellarService.createMemo(MemoHash, hash);
+
+            const tx = await StellarService.buildTx(account, op, memoHash);
+
+            const signed = await account.signAndSubmitTx(tx, true);
+
+            await createProposal({
+                proposed_by: account.accountId(),
+                title,
+                text,
+                start_at,
+                end_at,
+                transaction_hash: (signed as Horizon.SubmitTransactionResponse).hash,
+            });
+
+            close();
+
+            ToastService.showSuccessToast('The proposal has been created');
+
+            history.push('/');
+        } catch (e) {
+            ToastService.showErrorToast('The proposal has not been created');
+            if (isMounted.current) {
+                setLoading(false);
+            }
+        }
+    };
+
     return (
         <>
             <ModalTitle>Create proposal</ModalTitle>
-            <ModalDescription>
-                To create a proposal, you need to pay {minCost} AQUA.
-            </ModalDescription>
+            <ModalDescription>To create a proposal, you need to pay {cost} AQUA.</ModalDescription>
             <ProposalCost>
                 <Label>Proposal cost</Label>
-                <Amount>{minCost} AQUA</Amount>
+                <Amount>{cost} AQUA</Amount>
             </ProposalCost>
             <Button
                 isBig
                 fullWidth
+                pending={loading}
                 onClick={() => {
-                    console.log('CONFIRM', params);
+                    onSubmit();
                 }}
             >
                 Confirm

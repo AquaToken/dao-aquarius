@@ -19,6 +19,12 @@ declare module '*.woff2' {
     // noinspection all
     export default url;
 }
+
+declare module '*.css' {
+    const css: string;
+    // noinspection all
+    export default css;
+}
 declare module '*.svg' {
     import { ComponentType } from 'react';
 

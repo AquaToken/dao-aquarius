@@ -2,12 +2,14 @@ import * as React from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 
 import { COLORS, FONT_FAMILY } from '../../../../common/styles';
-
 import Input from '../../../../common/basics/Input';
-import TextArea from '../../../../common/basics/TextArea';
 import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import ReactQuill from 'react-quill';
 import Button from '../../../../common/basics/Button';
+import { useState } from 'react';
+import { ReactQuillCSS } from '../../App';
+import { formatBalance } from '../../../../common/helpers/helpers';
+import { CREATE_PROPOSAL_COST } from '../../MainPage/MainPage';
 
 const Background = styled.div`
     position: absolute;
@@ -181,6 +183,34 @@ const DatePickerResetStyles = createGlobalStyle`
   }
 `;
 
+const StyledReactQuill = styled(ReactQuill)<{ focused: boolean }>`
+    ${ReactQuillCSS};
+
+    .ql-toolbar {
+        box-sizing: border-box;
+        border-radius: 0.5rem 0.5rem 0 0;
+        border-color: ${COLORS.gray};
+        border-bottom-color: ${({ focused }) => (focused ? COLORS.purple : COLORS.gray)};
+        border-bottom-width: ${({ focused }) => (focused ? '0.2rem' : '0.1rem')};
+    }
+
+    .ql-container {
+        box-sizing: border-box;
+        border-radius: 0 0 0.5rem 0.5rem;
+        border-color: ${({ focused }) => (focused ? COLORS.purple : COLORS.gray)};
+        border-width: ${({ focused }) => (focused ? '0.2rem' : '0.1rem')};
+    }
+
+    .ql-editor {
+        width: 100%;
+        min-height: 30rem;
+        box-sizing: content-box;
+        border: ${({ focused }) => (focused ? 'none' : '0.1rem solid transparent')};
+        font-size: 1.6rem;
+        line-height: 2.8rem;
+    }
+`;
+
 interface proposalCreationProps {
     title: string;
     text: string;
@@ -206,13 +236,15 @@ const ProposalCreation = ({
     hasData,
     onSubmit,
 }: proposalCreationProps): JSX.Element => {
+    const [textFocused, setTextFocused] = useState(false);
     return (
         <>
             <Background />
             <Container>
                 <Title>New proposal</Title>
                 <Description>
-                    &#9757; The cost of creating a proposal - 100,000 AQUA.
+                    &#9757; The cost of creating a proposal - {formatBalance(CREATE_PROPOSAL_COST)}{' '}
+                    AQUA.
                     <br /> This amount will not be received by someone in particular, but will be
                     burned.
                 </Description>
@@ -240,13 +272,13 @@ const ProposalCreation = ({
                         </SectionForm>
                         <SectionForm>
                             <Label htmlFor="body">Content</Label>
-                            <TextArea
+                            <StyledReactQuill
+                                focused={textFocused}
                                 id="body"
-                                name="body"
                                 value={text}
-                                onChange={(event) => {
-                                    setText(event.target.value);
-                                }}
+                                onChange={setText}
+                                onFocus={() => setTextFocused(true)}
+                                onBlur={() => setTextFocused(false)}
                             />
                         </SectionForm>
                         <SectionDate>
