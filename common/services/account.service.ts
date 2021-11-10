@@ -3,28 +3,43 @@ import { AccountResponse, Horizon } from 'stellar-sdk';
 import { LoginTypes } from '../store/authStore/types';
 import { StellarService, ToastService, WalletConnectService } from './globalServices';
 import { AQUA_CODE, AQUA_ISSUER } from './stellar.service';
+import { BuildSignAndSubmitStatuses } from './wallet-connect.service';
 
 export default class AccountService extends AccountResponse {
     authType?: LoginTypes;
 
-    constructor(account: typeof AccountRecord, authType?: LoginTypes) {
+    constructor(account: typeof AccountRecord, authType: LoginTypes) {
         super(account);
-        if (authType) {
-            this.authType = authType;
-        }
+        this.authType = authType;
     }
 
-    async signAndSubmitTx(tx: StellarSdk.Transaction): Promise<void> {
-        if (this.authType === LoginTypes.secret && this.signers.length > 1) {
-            ToastService.showErrorToast('Accounts with multisig are not supported yet');
-            return Promise.resolve();
-        }
-
+    signAndSubmitTx(
+        tx: StellarSdk.Transaction,
+        withResult?: boolean,
+    ): Promise<Horizon.SubmitTransactionResponse | void | { status: BuildSignAndSubmitStatuses }> {
         if (this.authType === LoginTypes.secret) {
-            await StellarService.signAndSubmit(tx);
-        } else if (this.authType === LoginTypes.walletConnect) {
-            WalletConnectService.signTx(tx);
-            return Promise.resolve();
+            return StellarService.signAndSubmit(tx, {
+                signers: this.signers,
+                thresholds: this.thresholds,
+                account_id: this.account_id,
+            });
+        } else if (this.authType === LoginTypes.walletConnect && !withResult) {
+            return WalletConnectService.signAndSubmitTx(tx);
+        } else if (this.authType === LoginTypes.walletConnect && withResult) {
+            return WalletConnectService.signTx(tx).then((xdr) => {
+                const tx = new StellarSdk.Transaction(xdr, StellarSdk.Networks.PUBLIC);
+                if (
+                    StellarService.isMoreSignaturesNeeded(tx, {
+                        signers: this.signers,
+                        thresholds: this.thresholds,
+                        account_id: this.account_id,
+                    })
+                ) {
+                    ToastService.showErrorToast('Accounts with multisig are not supported yet');
+                    return Promise.reject();
+                }
+                return StellarService.submitXDR(xdr);
+            });
         }
     }
 

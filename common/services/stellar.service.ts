@@ -1,6 +1,8 @@
 import * as StellarSdk from 'stellar-sdk';
 import EventService from './event.service';
 import { Horizon } from 'stellar-sdk/lib/horizon_api';
+import { Memo, MemoType, OperationOptions } from 'stellar-sdk';
+import { ToastService } from './globalServices';
 
 enum HORIZON_SERVER {
     stellar = 'https://horizon.stellar.org',
@@ -17,6 +19,45 @@ export enum StellarEvents {
 
 export const AQUA_CODE = 'AQUA';
 export const AQUA_ISSUER = 'GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA';
+
+export enum THRESHOLDS {
+    LOW = 'low_threshold',
+    MED = 'med_threshold',
+    HIGH = 'high_threshold',
+    MULTIPLE = 'multiple',
+    UNKNOWN = 'unknown',
+}
+
+export const THRESHOLD_ORDER = {
+    [THRESHOLDS.LOW]: 1,
+    [THRESHOLDS.MED]: 2,
+    [THRESHOLDS.HIGH]: 3,
+};
+
+export const OP_THRESHOLDS = {
+    [THRESHOLDS.LOW]: ['allowTrust', 'inflation', 'bumpSequence', 'setTrustLineFlags'],
+    [THRESHOLDS.MED]: [
+        'createAccount',
+        'payment',
+        'pathPayment',
+        'pathPaymentStrictSend',
+        'pathPaymentStrictReceive',
+        'manageBuyOffer',
+        'manageSellOffer',
+        'createPassiveSellOffer',
+        'changeTrust',
+        'manageData',
+        'createClaimableBalance',
+        'claimClaimableBalance',
+        'beginSponsoringFutureReserves',
+        'endSponsoringFutureReserves',
+        'revokeSponsorship',
+        'clawback',
+        'clawbackClaimableBalance',
+    ],
+    [THRESHOLDS.HIGH]: ['accountMerge'],
+    [THRESHOLDS.MULTIPLE]: ['setOptions'], // med or high
+};
 
 export default class StellarServiceClass {
     server: StellarSdk.Server | null = null;
@@ -38,6 +79,12 @@ export default class StellarServiceClass {
                 reject(e);
             }
         });
+    }
+
+    logoutWithSecret() {
+        if (this.keypair) {
+            this.keypair = null;
+        }
     }
 
     async buildTx(
@@ -69,9 +116,69 @@ export default class StellarServiceClass {
         return tx.build();
     }
 
-    async signAndSubmit(tx: StellarSdk.Transaction) {
+    createMemo(type: MemoType, value): Memo {
+        return new StellarSdk.Memo(type, value);
+    }
+
+    signAndSubmit(
+        tx: StellarSdk.Transaction,
+        account: Partial<Horizon.AccountResponse>,
+    ): Promise<Horizon.SubmitTransactionResponse> {
         tx.sign(this.keypair);
-        await this.server.submitTransaction(tx);
+        if (this.isMoreSignaturesNeeded(tx, account)) {
+            ToastService.showErrorToast('Accounts with multisig are not supported yet');
+            return Promise.reject();
+        }
+        return this.server.submitTransaction(tx);
+    }
+
+    submitXDR(xdr: string): Promise<Horizon.SubmitTransactionResponse> {
+        const tx = new StellarSdk.Transaction(xdr, StellarSdk.Networks.PUBLIC);
+        return this.server.submitTransaction(tx);
+    }
+
+    isMoreSignaturesNeeded(tx: StellarSdk.Transaction, account: Partial<Horizon.AccountResponse>) {
+        const { operations } = tx;
+
+        const transactionThreshold = operations.reduce((acc, operation) => {
+            const { type } = operation;
+
+            let usedThreshold = Object.keys(OP_THRESHOLDS).reduce(
+                (used, threshold) => {
+                    if (OP_THRESHOLDS[threshold].includes(type)) {
+                        return threshold;
+                    }
+                    return used;
+                },
+                [THRESHOLDS.UNKNOWN],
+            );
+
+            if (usedThreshold === [THRESHOLDS.UNKNOWN]) {
+                throw new Error('unknown operation');
+            }
+
+            if (usedThreshold === [THRESHOLDS.MULTIPLE]) {
+                const { masterWeight, lowThreshold, medThreshold, highThreshold, signer } =
+                    operation as OperationOptions.SetOptions;
+                usedThreshold =
+                    masterWeight || lowThreshold || medThreshold || highThreshold || signer
+                        ? THRESHOLDS.HIGH
+                        : THRESHOLDS.MED;
+            }
+
+            return THRESHOLD_ORDER[usedThreshold as THRESHOLDS] > THRESHOLD_ORDER[acc]
+                ? usedThreshold
+                : acc;
+        }, THRESHOLDS.LOW);
+
+        const masterKeyWeight = account.signers.find(
+            (signer) => signer.key === account.account_id,
+        ).weight;
+
+        return (
+            masterKeyWeight <
+            account.thresholds[transactionThreshold as keyof Horizon.AccountThresholds]
+        );
     }
 
     private startHorizonServer(): void {
@@ -155,6 +262,14 @@ export default class StellarServiceClass {
                     ),
                 ),
             ],
+        });
+    }
+
+    createBurnAquaOperation(amount: string) {
+        return StellarSdk.Operation.payment({
+            amount,
+            asset: new StellarSdk.Asset(AQUA_CODE, AQUA_ISSUER),
+            destination: AQUA_ISSUER,
         });
     }
 }
