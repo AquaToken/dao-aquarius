@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { lazy, Suspense, useEffect } from 'react';
+import { lazy, Suspense } from 'react';
 import { hot } from 'react-hot-loader';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 
 import Provider from '../store';
 import { MainRoutes } from '../routes';
@@ -11,24 +11,21 @@ import AppGlobalStyle from '../../common/components/AppGlobalStyles';
 import ModalContainer from '../../common/modals/atoms/ModalContainer';
 import useGlobalSubscriptions from '../../common/hooks/useGlobalSubscriptions';
 import ToastContainer from '../../common/toasts/ToastContainer';
-import useProposalsStore from '../store/proposalsStore/useProposalsStore';
 import PageLoader from '../../common/basics/PageLoader';
+import useAuthStore from '../../common/store/authStore/useAuthStore';
+import 'react-datepicker/dist/react-datepicker.css';
+import reactQuillCSS from 'react-quill/dist/quill.snow.css';
+
+export const ReactQuillCSS = reactQuillCSS;
 
 const MainPage = lazy(() => import('./MainPage/MainPage'));
 const VoteProposalPage = lazy(() => import('./VoteProposalPage/VoteProposalPage'));
+const ProposalCreationPage = lazy(() => import('./ProposalCreationPage/ProposalCreationPage'));
 
 const App = () => {
     useGlobalSubscriptions();
 
-    const { proposals, getProposals } = useProposalsStore();
-
-    useEffect(() => {
-        getProposals();
-    }, []);
-
-    if (!proposals.length) {
-        return null;
-    }
+    const { isLogged } = useAuthStore();
 
     return (
         <Router>
@@ -40,9 +37,24 @@ const App = () => {
                     <Route exact path={MainRoutes.main}>
                         <MainPage />
                     </Route>
-                    <Route path={`${MainRoutes.proposal}/:id`} component={VoteProposalPage}>
-                        {/*<VoteProposalPage />*/}
+                    <Route path={`${MainRoutes.proposal}/:id`}>
+                        <VoteProposalPage />
                     </Route>
+                    <Route
+                        path={MainRoutes.create}
+                        render={({ location }) =>
+                            isLogged ? (
+                                <ProposalCreationPage />
+                            ) : (
+                                <Redirect
+                                    to={{
+                                        pathname: MainRoutes.main,
+                                        state: { from: location },
+                                    }}
+                                />
+                            )
+                        }
+                    />
                 </Switch>
             </Suspense>
             <Footer />

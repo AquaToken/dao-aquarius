@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ModalDescription, ModalProps, ModalTitle } from '../atoms/ModalAtoms';
 import Button from '../../basics/Button';
 import styled from 'styled-components';
@@ -8,6 +8,7 @@ import { flexAllCenter } from '../../mixins';
 import DotsLoader from '../../basics/DotsLoader';
 import { BuildSignAndSubmitStatuses } from '../../services/wallet-connect.service';
 import { COLORS } from '../../styles';
+import { useIsMounted } from '../../hooks/useIsMounted';
 
 enum TX_STATUSES {
     pending = 'pending',
@@ -45,7 +46,7 @@ const RightButton = styled(Button)`
 
 interface RequestModalProps {
     name: string;
-    result: Promise<{ status: BuildSignAndSubmitStatuses }>;
+    result: Promise<{ status?: BuildSignAndSubmitStatuses; signedXDR?: string }>;
 }
 
 const RequestModal = ({ params, close }: ModalProps<RequestModalProps>) => {
@@ -53,18 +54,29 @@ const RequestModal = ({ params, close }: ModalProps<RequestModalProps>) => {
 
     const [status, setStatus] = useState(TX_STATUSES.pending);
 
-    result
-        .then((result) => {
-            if (!result) {
-                return;
-            }
-            if (result.status === BuildSignAndSubmitStatuses.success) {
-                setStatus(TX_STATUSES.success);
-            } else if (result.status === BuildSignAndSubmitStatuses.pending) {
-                setStatus(TX_STATUSES.awaitSigners);
-            }
-        })
-        .catch(() => setStatus(TX_STATUSES.fail));
+    const isMounted = useIsMounted();
+
+    useEffect(() => {
+        result
+            .then((result) => {
+                if (!result || !isMounted.current) {
+                    return;
+                }
+                if (
+                    result.status === BuildSignAndSubmitStatuses.success ||
+                    Boolean(result.signedXDR)
+                ) {
+                    setStatus(TX_STATUSES.success);
+                } else if (result.status === BuildSignAndSubmitStatuses.pending) {
+                    setStatus(TX_STATUSES.awaitSigners);
+                }
+            })
+            .catch(() => {
+                if (isMounted.current) {
+                    setStatus(TX_STATUSES.fail);
+                }
+            });
+    }, []);
 
     return (
         <>
@@ -74,7 +86,9 @@ const RequestModal = ({ params, close }: ModalProps<RequestModalProps>) => {
             <IconContainer>
                 {status === TX_STATUSES.pending && <IconPending isBig />}
                 {status === TX_STATUSES.fail && <IconFail isBig />}
-                {status === TX_STATUSES.success && <IconSuccess isBig />}
+                {(status === TX_STATUSES.success || status === TX_STATUSES.awaitSigners) && (
+                    <IconSuccess isBig />
+                )}
             </IconContainer>
 
             <Status>

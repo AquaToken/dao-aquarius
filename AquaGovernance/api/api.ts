@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 import { ListResponse } from '../store/proposalsStore/types';
-import { Proposal, ProposalSimple, Vote } from './types';
+import { Proposal, ProposalCreateOptions, ProposalSimple, Vote } from './types';
 
 export const UPDATE_INTERVAL = 5 * 60 * 1000; // 5 minutes
 
@@ -44,4 +44,8 @@ export const getVotes = (
 
 export const getVoteTxHash = (url: string): Promise<string> => {
     return axios.get<any>(url).then((result) => result?.data?._embedded?.records?.[0]?.hash);
+};
+
+export const createProposal = (proposal: ProposalCreateOptions) => {
+    return axios.post(`${apiURL}/proposals/`, proposal);
 };

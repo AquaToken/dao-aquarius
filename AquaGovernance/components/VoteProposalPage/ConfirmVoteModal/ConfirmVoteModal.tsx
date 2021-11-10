@@ -24,7 +24,8 @@ import { formatBalance, getDateString, roundToPrecision } from '../../../../comm
 import ExternalLink from '../../../../common/basics/ExternalLink';
 import GetAquaModal from '../../../../common/modals/GetAquaModal/GetAquaModal';
 import { SimpleProposalOptions } from '../VoteProposalPage';
-import { LoginTypes } from '../../../../common/store/authStore/types';
+import { useIsMounted } from '../../../../common/hooks/useIsMounted';
+import { BuildSignAndSubmitStatuses } from '../../../../common/services/wallet-connect.service';
 
 const MINIMUM_AMOUNT = 0.0000001;
 
@@ -126,6 +127,8 @@ const ConfirmVoteModal = ({
     const { account } = useAuthStore();
     const { option, key, endDate } = params;
 
+    const isMounted = useIsMounted();
+
     const [percent, setPercent] = useState(0);
     const [amount, setAmount] = useState('');
     const [pending, setPending] = useState(false);
@@ -179,15 +182,25 @@ const ConfirmVoteModal = ({
                 new Date(endDate).getTime(),
             );
             const tx = await StellarService.buildTx(account, voteOp);
-            await account.signAndSubmitTx(tx);
-            setPending(false);
-            close();
-            if (account.authType === LoginTypes.secret) {
-                ToastService.showSuccessToast('Your vote is counted');
+            const result = await account.signAndSubmitTx(tx);
+            if (isMounted.current) {
+                setPending(false);
+                close();
             }
+
+            if (
+                (result as { status: BuildSignAndSubmitStatuses }).status ===
+                BuildSignAndSubmitStatuses.pending
+            ) {
+                ToastService.showSuccessToast('More signatures required to complete');
+                return;
+            }
+            ToastService.showSuccessToast('Your vote has been counted');
         } catch (e) {
-            ToastService.showErrorToast(e);
-            setPending(false);
+            ToastService.showErrorToast('Your vote has not been counted');
+            if (isMounted.current) {
+                setPending(false);
+            }
         }
     };
 
