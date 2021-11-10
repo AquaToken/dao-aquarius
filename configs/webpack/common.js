@@ -48,7 +48,10 @@ module.exports = {
     plugins: [
         new HtmlWebpackPlugin({ template: 'index.html.ejs' }),
         new webpack.DefinePlugin({
-            'process.env': JSON.stringify({ PROJECT_PATH: projectPath, PROJECT: project }),
+            'process.env': JSON.stringify({
+                PROJECT_PATH: projectPath,
+                PROJECT: project || process.env.PROJECT,
+            }),
         }),
     ],
     externals: {
