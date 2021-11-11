@@ -199,6 +199,7 @@ const StyledReactQuill = styled(ReactQuill)<{ focused: boolean }>`
         border-radius: 0 0 0.5rem 0.5rem;
         border-color: ${({ focused }) => (focused ? COLORS.purple : COLORS.gray)};
         border-width: ${({ focused }) => (focused ? '0.2rem' : '0.1rem')};
+        padding: 1.2rem 1.5rem;
     }
 
     .ql-editor {
@@ -208,6 +209,7 @@ const StyledReactQuill = styled(ReactQuill)<{ focused: boolean }>`
         border: ${({ focused }) => (focused ? 'none' : '0.1rem solid transparent')};
         font-size: 1.6rem;
         line-height: 2.8rem;
+        padding: 0;
     }
 `;
 
