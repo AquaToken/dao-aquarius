@@ -26,7 +26,7 @@ const VoteOption = styled.label`
     justify-content: center;
     padding: 0.8rem 1.6rem;
     margin: 0.4rem;
-
+    white-space: nowrap;
     background-color: ${COLORS.gray};
     border-radius: 3px;
 
