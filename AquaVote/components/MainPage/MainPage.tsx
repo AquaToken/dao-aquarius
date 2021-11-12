@@ -7,6 +7,7 @@ import { commonMaxWidth, flexAllCenter, respondDown } from '../../../common/mixi
 import ToggleGroup from '../../../common/basics/ToggleGroup';
 import { useState } from 'react';
 import Table from './Table/Table';
+import FloatingButton from './FloatingButton/FloatingButton';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -122,7 +123,8 @@ const StatusUpdate = styled.div`
 
 const MainPage = (): JSX.Element => {
     const [selectedOption, setSelectedOption] = useState(null);
-    console.log(selectedOption);
+    const [chosenPairs, setChosenPairs] = useState([]);
+
     return (
         <MainBlock>
             <Background>
@@ -146,6 +148,7 @@ const MainPage = (): JSX.Element => {
                     <StatusUpdate>Last updated 12 hours ago</StatusUpdate>
                 </Header>
                 <Table />
+                {chosenPairs.length > 0 && <FloatingButton>{chosenPairs.length}</FloatingButton>}
             </ExploreBlock>
         </MainBlock>
     );
