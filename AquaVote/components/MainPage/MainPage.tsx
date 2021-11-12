@@ -6,6 +6,7 @@ import { Breakpoints, COLORS } from '../../../common/styles';
 import { commonMaxWidth, flexAllCenter, respondDown } from '../../../common/mixins';
 import ToggleGroup from '../../../common/basics/ToggleGroup';
 import { useState } from 'react';
+import Table from './Table/Table';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -81,8 +82,8 @@ const ExploreBlock = styled.div`
 `;
 
 const PairSearch = styled.div`
-    position: sticky;
-    top: 3.2rem;
+    //position: sticky;
+    //top: 3.2rem;
     margin-top: -8.5rem;
     font-size: 5.2rem;
     height: 17rem;
@@ -92,11 +93,12 @@ const PairSearch = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
+    //z-index: 1;
 `;
 
 const Header = styled.header`
     display: flex;
-    justify-content: space-between;
+    //justify-content: space-between;
     align-items: center;
     margin: 5.4rem 0;
 `;
@@ -106,12 +108,15 @@ const TitleHeader = styled.h3`
     font-size: 5.6rem;
     line-height: 6.4rem;
     color: ${COLORS.titleText};
+    margin-right: 3.6rem;
 `;
 
 const StatusUpdate = styled.div`
+    margin-left: auto;
     font-size: 1.4rem;
     line-height: 2rem;
     color: ${COLORS.grayText};
+    white-space: nowrap;
 `;
 // const options = ['Popular', 'Top 100', 'Top Volume'];
 
@@ -140,53 +145,7 @@ const MainPage = (): JSX.Element => {
                     />
                     <StatusUpdate>Last updated 12 hours ago</StatusUpdate>
                 </Header>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci, alias asperiores
-                aut, beatae blanditiis consequatur consequuntur cupiditate earum expedita incidunt
-                ipsum nemo placeat similique tempore ut veritatis voluptatibus! Ad aliquid animi
-                aspernatur, blanditiis commodi inventore iure omnis quis. Assumenda distinctio
-                dolorem et illum libero necessitatibus perferendis sunt. A, alias autem consequuntur
-                delectus deserunt dignissimos et explicabo facilis fuga fugit impedit ipsa itaque
-                libero, nemo nulla omnis placeat quis sapiente sed sequi temporibus vero vitae
-                voluptas! Dignissimos fugiat libero magni molestias, natus nesciunt quam quasi quis
-                repellat voluptates. Architecto asperiores assumenda beatae consequatur cum debitis,
-                deleniti dicta dolor dolore dolorum eius eligendi excepturi expedita fugit ipsa iste
-                laudantium modi, nam neque nobis odio omnis optio perferendis quasi quibusdam quo
-                recusandae repellat rerum sapiente totam unde veritatis voluptates voluptatibus.
-                Animi distinctio exercitationem ipsam magnam odit pariatur rerum veritatis
-                voluptatibus voluptatum. Dolorum illo praesentium tempore? Aliquam atque beatae
-                corporis cupiditate deserunt dicta dignissimos dolore eius eligendi enim, eveniet,
-                expedita illo illum ipsum maiores maxime molestias mollitia nisi optio praesentium
-                quas reprehenderit saepe sapiente similique sint, suscipit unde ut vel vitae
-                voluptates. A, aliquam aperiam cupiditate dolores doloribus eaque facilis illo in
-                labore neque nihil rerum tenetur totam vel veritatis. Accusamus asperiores beatae
-                blanditiis commodi dolorem doloremque earum enim esse et illo in, iure libero nisi
-                officiis optio praesentium quae quidem quos repudiandae tempora. Dolorum ex
-                inventore laudantium quasi sunt veritatis! Ad assumenda delectus dolorum ducimus
-                eius error eveniet impedit ipsum iusto minus molestias mollitia numquam, odio odit
-                optio pariatur perferendis provident quia quibusdam ratione rem sapiente tenetur.
-                Adipisci alias animi cum, debitis eum exercitationem, facere ipsa molestiae quaerat
-                quis quisquam ratione, reprehenderit saepe. Debitis dolorem maiores non numquam
-                sapiente soluta? Accusantium autem dicta ex ipsam magni nam neque qui tempora veniam
-                voluptatum? Accusamus amet animi assumenda autem beatae blanditiis consectetur
-                cumque distinctio dolor dolore doloremque eius eligendi et id, illum, incidunt natus
-                optio praesentium quam quas recusandae rerum soluta tempore tenetur totam unde
-                veritatis. Aut distinctio harum laudantium maxime molestiae, rem repellat.
-                Consectetur culpa cumque, delectus eligendi fuga itaque, laborum magnam nisi numquam
-                officiis porro quia, quis quo reiciendis sunt! Ab adipisci aut eaque eligendi
-                inventore laboriosam maxime modi optio ratione sint. Aliquam aliquid amet aut,
-                beatae commodi cum distinctio dolor doloremque exercitationem expedita facilis id
-                itaque laboriosam laudantium minus molestias nostrum odio officiis omnis provident
-                quia quos repellat, voluptas voluptatem voluptates. Accusantium alias architecto,
-                assumenda consectetur distinctio dolorum est et facere fugit in iste nemo, odit
-                praesentium quasi recusandae reprehenderit repudiandae, ut. Architecto beatae
-                dolores ducimus et incidunt, maxime mollitia odit omnis porro rem, sequi, unde.
-                Animi asperiores commodi dignissimos exercitationem expedita illo ipsum minus omnis
-                quidem quo, quos rerum sapiente. Accusamus aliquam beatae, consequatur deserunt enim
-                eum, expedita explicabo in incidunt minus neque optio reprehenderit totam ullam
-                unde, ut voluptatum! Dicta ipsam libero quam? Accusantium magnam unde vel veritatis.
-                Accusamus amet beatae dignissimos, eligendi numquam quidem ratione recusandae
-                similique sit, ullam vel voluptatem? Accusamus ad, deleniti dolor dolorum minima
-                nobis ut vel. Accusantium beatae nemo tempora! Eum officia pariatur reiciendis sunt!
+                <Table />
             </ExploreBlock>
         </MainBlock>
     );
