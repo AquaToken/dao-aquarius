@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { COLORS } from '../../../../common/styles';
 import Button from '../../../../common/basics/Button';
 import IconsPair from '../../PairIcons/IconsPair';
+import StatusTag from './StatusTag/StatusTag';
 
 const TableBlock = styled.div`
     display: flex;
@@ -194,7 +195,9 @@ const Table = (): JSX.Element => {
                                 </AssetsContainer>
                             </TableCell>
                             <TableCell>12,811</TableCell>
-                            <TableCell> </TableCell>
+                            <TableCell>
+                                <StatusTag>15,042 AQUA</StatusTag>
+                            </TableCell>
                             <TableCell>155,042 AQUA</TableCell>
                             <TableCell>
                                 <Button>Add To Vote</Button>
