@@ -8,6 +8,10 @@ import ToggleGroup from '../../../common/basics/ToggleGroup';
 import { useState } from 'react';
 import Table from './Table/Table';
 import FloatingButton from './FloatingButton/FloatingButton';
+import SelectedPairsForm from './SelectedPairsForm/SelectedPairsForm';
+import { ModalService } from '../../../common/services/globalServices';
+import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
+import useAuthStore from '../../../common/store/authStore/useAuthStore';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -123,7 +127,17 @@ const StatusUpdate = styled.div`
 
 const MainPage = (): JSX.Element => {
     const [selectedOption, setSelectedOption] = useState(null);
-    const [chosenPairs, setChosenPairs] = useState([]);
+    const [chosenPairs, setChosenPairs] = useState([0, 0]);
+    const { isLogged } = useAuthStore();
+
+    const handleClick = (option) => {
+        if (isLogged) {
+            ModalService.openModal(SelectedPairsForm, option);
+            return;
+        }
+        setSelectedOption(option);
+        ModalService.openModal(ChooseLoginMethodModal, {});
+    };
 
     return (
         <MainBlock>
@@ -148,7 +162,11 @@ const MainPage = (): JSX.Element => {
                     <StatusUpdate>Last updated 12 hours ago</StatusUpdate>
                 </Header>
                 <Table />
-                {chosenPairs.length > 0 && <FloatingButton>{chosenPairs.length}</FloatingButton>}
+                {chosenPairs.length > 0 && (
+                    <FloatingButton onClick={() => handleClick({})}>
+                        {chosenPairs.length}
+                    </FloatingButton>
+                )}
             </ExploreBlock>
         </MainBlock>
     );
