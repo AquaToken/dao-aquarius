@@ -13,6 +13,7 @@ const FirstIcon = styled.div`
     border: 0.3rem solid white;
     border-radius: 50%;
     background: center / contain no-repeat url(${({ imageUrl }: { imageUrl: string }) => imageUrl});
+    z-index: 1;
 `;
 
 const SecondIconWrapper = styled.div`
@@ -21,7 +22,6 @@ const SecondIconWrapper = styled.div`
     height: 3.8rem;
     padding: 0.3rem;
     margin-left: -14px;
-    z-index: -1;
 `;
 
 const SecondIcon = styled.img`

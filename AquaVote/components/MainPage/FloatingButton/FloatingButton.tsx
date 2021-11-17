@@ -51,9 +51,13 @@ const Description = styled.div`
     color: ${COLORS.grayText};
 `;
 
-const FloatingButton = ({ children }: { children: React.ReactNode }): JSX.Element => {
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+    children: React.ReactNode;
+}
+
+const FloatingButton = ({ children, ...props }: ButtonProps): JSX.Element => {
     return (
-        <FloatingButtonBody>
+        <FloatingButtonBody {...props}>
             <VotesCounter>{children}</VotesCounter>
             <InfoBlock>
                 Chosen Pairs
