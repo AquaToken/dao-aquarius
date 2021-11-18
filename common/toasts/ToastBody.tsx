@@ -9,10 +9,10 @@ import { IconFail, IconSuccess } from '../basics/Icons';
 
 const ToastBody = styled.div<{ isShow: boolean }>`
     width: 36.2rem;
-    height: 12rem;
+    min-height: 12rem;
     display: flex;
     align-items: center;
-    padding-left: 4rem;
+    padding: 2rem 4rem;
     background: ${COLORS.white};
     box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
     border-radius: 1rem;
