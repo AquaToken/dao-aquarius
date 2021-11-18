@@ -19,6 +19,7 @@ import { useIsMounted } from '../../../../common/hooks/useIsMounted';
 import { createProposal } from '../../../api/api';
 import { Horizon } from 'stellar-sdk';
 import { useHistory } from 'react-router-dom';
+import { MAX_DURATION_VOTING_IN_DAY, MIN_DURATION_VOTING_IN_DAY } from '../ProposalCreationPage';
 
 const ProposalCost = styled.div`
     ${flexRowSpaceBetween};
@@ -51,12 +52,26 @@ const ConfirmCreateProposalModal = ({ params, close }: ModalProps<Proposal>): JS
 
     const onSubmit = async () => {
         const { text, title, start_at, end_at } = params;
+        //subtract 1 hour from time to give the user to think
+        const minEndDateTimeStamp = new Date(
+            new Date().getTime() +
+                (MIN_DURATION_VOTING_IN_DAY * 24 * 60 * 60 * 1000 - 60 * 60 * 1000),
+        );
+        const maxEndDateTimeStamp = new Date(
+            new Date().getTime() + MAX_DURATION_VOTING_IN_DAY * 24 * 60 * 60 * 1000,
+        );
+
         if (loading) {
             return;
         }
 
-        if (new Date() > new Date(end_at)) {
-            ToastService.showErrorToast('"Voting end date" cannot be less than the current date');
+        if (
+            new Date(minEndDateTimeStamp) > new Date(end_at) ||
+            new Date(end_at) > new Date(maxEndDateTimeStamp)
+        ) {
+            ToastService.showErrorToast(
+                `The duration of voting must be between ${MIN_DURATION_VOTING_IN_DAY} and ${MAX_DURATION_VOTING_IN_DAY} days!`,
+            );
             return;
         }
 
