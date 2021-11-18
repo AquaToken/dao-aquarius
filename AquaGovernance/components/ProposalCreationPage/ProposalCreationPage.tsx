@@ -5,8 +5,8 @@ import ProposalCreation from './ProposalCreation/ProposalCreation';
 import ProposalScreen from '../VoteProposalPage/Proposal/ProposalScreen';
 import useAuthStore from '../../../common/store/authStore/useAuthStore';
 
-export const MIN_DURATION_VOTING_IN_DAY = 3;
-export const MAX_DURATION_VOTING_IN_DAY = 7;
+export const MIN_DURATION_VOTING = 3 * 24 * 60 * 60 * 1000;
+export const MAX_DURATION_VOTING = 7 * 24 * 60 * 60 * 1000;
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -18,9 +18,7 @@ export enum statePage {
 }
 
 const ProposalCreationPage = (): JSX.Element => {
-    const minDateEnd = new Date(
-        new Date().getTime() + MIN_DURATION_VOTING_IN_DAY * 24 * 60 * 60 * 1000,
-    );
+    const minDateEnd = new Date(Date.now() + MIN_DURATION_VOTING);
 
     const [startDate, setStartDate] = useState(minDateEnd);
     const [startTime, setStartTime] = useState(minDateEnd);
