@@ -5,6 +5,9 @@ import ProposalCreation from './ProposalCreation/ProposalCreation';
 import ProposalScreen from '../VoteProposalPage/Proposal/ProposalScreen';
 import useAuthStore from '../../../common/store/authStore/useAuthStore';
 
+export const MIN_DURATION_VOTING = 3 * 24 * 60 * 60 * 1000;
+export const MAX_DURATION_VOTING = 7 * 24 * 60 * 60 * 1000;
+
 const MainBlock = styled.main`
     flex: 1 0 auto;
 `;
@@ -15,8 +18,10 @@ export enum statePage {
 }
 
 const ProposalCreationPage = (): JSX.Element => {
-    const [startDate, setStartDate] = useState(null);
-    const [startTime, setStartTime] = useState(null);
+    const minDateEnd = new Date(Date.now() + MIN_DURATION_VOTING);
+
+    const [endDate, setEndDate] = useState(minDateEnd);
+    const [endTime, setEndTime] = useState(minDateEnd);
     const [title, setTitle] = useState('');
     const [text, setText] = useState('');
     const [screenState, setScreenState] = useState(statePage.creation);
@@ -24,17 +29,17 @@ const ProposalCreationPage = (): JSX.Element => {
     const { account } = useAuthStore();
     const accountId = account?.accountId();
 
-    const hasData = !!(startDate && startTime && title && text && accountId);
+    const hasData = !!(endDate && endTime && title && text && accountId);
     const onSubmit = () => {
         if (hasData) setScreenState(statePage.check);
     };
     const dateNow = new Date().toISOString();
     const dateEnd = useMemo(() => {
-        if (startDate && startTime) {
-            return new Date(startDate.setHours(startTime.getHours())).toISOString();
+        if (endDate && endTime) {
+            return new Date(endDate.setHours(endTime.getHours())).toISOString();
         }
         return null;
-    }, [startDate, startTime]);
+    }, [endDate, endTime]);
 
     switch (screenState) {
         case statePage.creation: {
@@ -45,10 +50,10 @@ const ProposalCreationPage = (): JSX.Element => {
                         text={text}
                         setTitle={setTitle}
                         setText={setText}
-                        startTime={startTime}
-                        startDate={startDate}
-                        setStartTime={setStartTime}
-                        setStartDate={setStartDate}
+                        endTime={endTime}
+                        endDate={endDate}
+                        setEndTime={setEndTime}
+                        setEndDate={setEndDate}
                         hasData={hasData}
                         onSubmit={onSubmit}
                     />

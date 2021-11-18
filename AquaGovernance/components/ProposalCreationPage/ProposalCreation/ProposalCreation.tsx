@@ -216,12 +216,12 @@ const StyledReactQuill = styled(ReactQuill)<{ focused: boolean }>`
 interface proposalCreationProps {
     title: string;
     text: string;
-    startTime: Date;
-    startDate: Date;
+    endTime: Date;
+    endDate: Date;
     setTitle: (value: string) => void;
     setText: (value: string) => void;
-    setStartTime: (date: Date) => void;
-    setStartDate: (date: Date) => void;
+    setEndTime: (date: Date) => void;
+    setEndDate: (date: Date) => void;
     hasData: boolean;
     onSubmit: () => void;
 }
@@ -231,10 +231,10 @@ const ProposalCreation = ({
     text,
     setTitle,
     setText,
-    startTime,
-    startDate,
-    setStartTime,
-    setStartDate,
+    endTime,
+    endDate,
+    setEndTime,
+    setEndDate,
     hasData,
     onSubmit,
 }: proposalCreationProps): JSX.Element => {
@@ -288,8 +288,8 @@ const ProposalCreation = ({
                                 <Label>End day</Label>
                                 <DatePicker
                                     customInput={<Input />}
-                                    selected={startDate}
-                                    onChange={(date) => setStartDate(date)}
+                                    selected={endDate}
+                                    onChange={(date) => setEndDate(date)}
                                     placeholderText="MM.DD.YYYY"
                                     dateFormat="MM.dd.yyyy"
                                     popperModifiers={[
@@ -306,8 +306,8 @@ const ProposalCreation = ({
                                 <Label>End time</Label>
                                 <DatePicker
                                     customInput={<Input />}
-                                    selected={startTime}
-                                    onChange={(time) => setStartTime(time)}
+                                    selected={endTime}
+                                    onChange={(time) => setEndTime(time)}
                                     showTimeSelect
                                     showTimeSelectOnly
                                     timeIntervals={60}
