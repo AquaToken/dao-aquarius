@@ -6,6 +6,7 @@ import PageLoader from '../../../common/basics/PageLoader';
 import { Proposal } from '../../api/types';
 
 import ProposalScreen from './Proposal/ProposalScreen';
+import NotFoundPage from '../../../common/components/NotFoundPage/NotFoundPage';
 
 export enum SimpleProposalOptions {
     voteFor = 'Vote For',
@@ -22,11 +23,16 @@ const VoteProposalPage = (): JSX.Element => {
 
     const [proposal, setProposal] = useState<null | Proposal>(null);
     const [updateIndex, setUpdateIndex] = useState(0);
+    const [error, setError] = useState(false);
 
     useEffect(() => {
-        getProposalRequest(id).then((response) => {
-            setProposal(response.data);
-        });
+        getProposalRequest(id)
+            .then((response) => {
+                setProposal(response.data);
+            })
+            .catch(() => {
+                setError(true);
+            });
     }, [updateIndex]);
 
     useEffect(() => {
@@ -36,6 +42,10 @@ const VoteProposalPage = (): JSX.Element => {
 
         return () => clearInterval(interval);
     }, []);
+
+    if (error) {
+        return <NotFoundPage />;
+    }
 
     if (!proposal) {
         return <PageLoader />;

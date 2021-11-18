@@ -7,6 +7,7 @@ import Provider from '../store';
 import { MainRoutes } from '../routes';
 import Header, { HeaderNavLink } from '../../common/components/Header/Header';
 import Footer from '../../common/components/Footer/Footer';
+import NotFoundPage from '../../common/components/NotFoundPage/NotFoundPage';
 import AppGlobalStyle from '../../common/components/AppGlobalStyles';
 import ModalContainer from '../../common/modals/atoms/ModalContainer';
 import useGlobalSubscriptions from '../../common/hooks/useGlobalSubscriptions';
@@ -55,6 +56,7 @@ const App = () => {
                             )
                         }
                     />
+                    <Route component={NotFoundPage} />
                 </Switch>
             </Suspense>
             <Footer />
