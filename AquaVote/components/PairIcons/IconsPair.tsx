@@ -12,7 +12,8 @@ const FirstIcon = styled.div`
     height: 3.8rem;
     border: 0.3rem solid white;
     border-radius: 50%;
-    background: center / contain no-repeat url(${({ imageUrl }: { imageUrl: string }) => imageUrl});
+    background: center / contain no-repeat white
+        url(${({ imageUrl }: { imageUrl: string }) => imageUrl});
     z-index: 1;
 `;
 
