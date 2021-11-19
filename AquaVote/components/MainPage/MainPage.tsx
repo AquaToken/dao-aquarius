@@ -123,7 +123,6 @@ const StatusUpdate = styled.div`
     color: ${COLORS.grayText};
     white-space: nowrap;
 `;
-// const options = ['Popular', 'Top 100', 'Top Volume'];
 
 const MainPage = (): JSX.Element => {
     const [selectedOption, setSelectedOption] = useState(null);
