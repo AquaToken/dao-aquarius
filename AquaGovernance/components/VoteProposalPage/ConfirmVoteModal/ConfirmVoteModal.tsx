@@ -195,9 +195,9 @@ const ConfirmVoteModal = ({
                 ToastService.showSuccessToast('More signatures required to complete');
                 return;
             }
-            ToastService.showSuccessToast('Your vote has been counted');
+            ToastService.showSuccessToast('Your vote has been casted');
         } catch (e) {
-            ToastService.showErrorToast('Your vote has not been counted');
+            ToastService.showErrorToast('Oops. Something went wrong.');
             if (isMounted.current) {
                 setPending(false);
             }
@@ -208,10 +208,10 @@ const ConfirmVoteModal = ({
         <>
             <ModalTitle>Confirm vote</ModalTitle>
             <ModalDescription>
-                Make sure you are confident in your choice. This action cannot be undone.
+                Your AQUA will be locked until the voting ends. Please check the details carefully.
             </ModalDescription>
             <ContentRow>
-                <Label>Option:</Label>
+                <Label>Your vote:</Label>
                 <Label>
                     {option === SimpleProposalOptions.voteAgainst ? <FailIcon /> : <SuccessIcon />}
                     <span>{option}</span>
@@ -229,7 +229,7 @@ const ConfirmVoteModal = ({
                         available
                     </BalanceBlock>
                 ) : (
-                    <BalanceBlock>You donâ€™t have AQUA trustline</BalanceBlock>
+                    <BalanceBlock>You don’t have AQUA trustline</BalanceBlock>
                 )}
             </ContentRow>
 
@@ -238,7 +238,7 @@ const ConfirmVoteModal = ({
                 onChange={(e) => {
                     onInputChange(e.target.value);
                 }}
-                placeholder="Enter voting power"
+                placeholder="Enter amount"
                 postfix={
                     <InputPostfix>
                         <AquaLogo />
@@ -256,7 +256,7 @@ const ConfirmVoteModal = ({
 
             {hasTrustLine && hasAqua ? (
                 <ClaimBack>
-                    You can claim back your AQUA on{' '}
+                    You will be able to claim back your AQUA on{' '}
                     <ClaimBackDate>
                         {getDateString(new Date(endDate).getTime(), { withTime: true })}
                     </ClaimBackDate>
@@ -276,7 +276,7 @@ const ConfirmVoteModal = ({
                 disabled={!amount || !Number(amount)}
                 pending={pending}
             >
-                CONFIRM VOTE
+                SUBMIT VOTE
             </StyledButton>
         </>
     );
