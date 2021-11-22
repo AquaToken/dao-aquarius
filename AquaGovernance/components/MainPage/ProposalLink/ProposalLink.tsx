@@ -72,7 +72,7 @@ const getProposalInfo = (proposal: ProposalSimple): string => {
 
     if (!isEnd) {
         const dateString = getDateString(new Date(dateEnd).getTime());
-        return `Ends in ${dateString}`;
+        return `Ends on ${dateString}`;
     }
 
     if (isSimpleProposal) {
@@ -87,11 +87,11 @@ const getProposalInfo = (proposal: ProposalSimple): string => {
         const roundedPercent = roundToPrecision(percent, 2);
 
         if (Number.isNaN(percent)) {
-            return 'No one voted';
+            return 'No votes yet';
         }
 
-        return `Winner ${
-            isVoteForWin ? '“Vote For”' : '“Vote Against”'
+        return `${
+            isVoteForWin ? 'Voted For' : 'Voted Against'
         } with ${roundedPercent}% of the votes`;
     }
 };
@@ -113,7 +113,7 @@ const ProposalLink = ({ proposal, ...props }: ProposalLinkProps): JSX.Element =>
             {isEnd ? (
                 <EndedLabel>
                     <Success />
-                    Ended in {dateString}
+                    Ended on {dateString}
                 </EndedLabel>
             ) : (
                 <ArrowRight />

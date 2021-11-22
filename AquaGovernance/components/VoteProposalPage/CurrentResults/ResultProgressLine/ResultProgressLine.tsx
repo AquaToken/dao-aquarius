@@ -3,6 +3,9 @@ import styled, { css } from 'styled-components';
 import { COLORS } from '../../../../../common/styles';
 import { formatBalance } from '../../../../../common/helpers/helpers';
 import { SimpleProposalResultsLabels } from '../../VoteProposalPage';
+import Success from '../../../../../common/assets/img/icon-success.svg';
+import Fail from '../../../../../common/assets/img/icon-fail.svg';
+import { flexAllCenter } from '../../../../../common/mixins';
 
 const ProgressLine = styled.div`
     width: 100%;
@@ -18,6 +21,24 @@ const Label = styled.div`
     justify-content: space-between;
     align-items: center;
     margin-bottom: 0.7rem;
+`;
+
+const IconStyles = css`
+    height: 1.6rem;
+    width: 1.6rem;
+    margin-right: 0.8rem;
+`;
+
+const SuccessIcon = styled(Success)`
+    ${IconStyles}
+`;
+
+const FailIcon = styled(Fail)`
+    ${IconStyles}
+`;
+
+const Vote = styled.div`
+    ${flexAllCenter};
 `;
 
 const progressLineStyles = css`
@@ -46,10 +67,16 @@ const ResultProgressLine = ({
     const resultDescription = `${percentage ? `${percentage} - ` : ''}${formatBalance(
         Number(amount),
     )} AQUA`;
+
+    const isFor = SimpleProposalResultsLabels.votesFor === label;
+
     return (
         <ProgressLine>
             <Label>
-                <span>{label}</span>
+                <Vote>
+                    {isFor ? <SuccessIcon /> : <FailIcon />}
+                    {label}
+                </Vote>
                 <span>{resultDescription}</span>
             </Label>
             <Outer>

@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-d
 
 import Provider from '../store';
 import { MainRoutes } from '../routes';
-import Header, { HeaderNavLink } from '../../common/components/Header/Header';
+import Header from '../../common/components/Header/Header';
 import Footer from '../../common/components/Footer/Footer';
 import NotFoundPage from '../../common/components/NotFoundPage/NotFoundPage';
 import AppGlobalStyle from '../../common/components/AppGlobalStyles';
@@ -14,7 +14,6 @@ import useGlobalSubscriptions from '../../common/hooks/useGlobalSubscriptions';
 import ToastContainer from '../../common/toasts/ToastContainer';
 import PageLoader from '../../common/basics/PageLoader';
 import useAuthStore from '../../common/store/authStore/useAuthStore';
-import 'react-datepicker/dist/react-datepicker.css';
 import reactQuillCSS from 'react-quill/dist/quill.snow.css';
 
 export const ReactQuillCSS = reactQuillCSS;
@@ -30,9 +29,7 @@ const App = () => {
 
     return (
         <Router>
-            <Header>
-                <HeaderNavLink to={MainRoutes.main}>Proposals</HeaderNavLink>
-            </Header>
+            <Header />
             <Suspense fallback={<PageLoader />}>
                 <Switch>
                     <Route exact path={MainRoutes.main}>

@@ -19,7 +19,6 @@ import { useIsMounted } from '../../../../common/hooks/useIsMounted';
 import { createProposal } from '../../../api/api';
 import { Horizon } from 'stellar-sdk';
 import { useHistory } from 'react-router-dom';
-import { MAX_DURATION_VOTING, MIN_DURATION_VOTING } from '../ProposalCreationPage';
 
 const ProposalCost = styled.div`
     ${flexRowSpaceBetween};
@@ -28,6 +27,10 @@ const ProposalCost = styled.div`
     width: 52.8rem;
     margin-bottom: 2.4rem;
     border-bottom: 1px dashed #e8e8ed;
+`;
+
+const Description = styled(ModalDescription)`
+    width: 52.8rem;
 `;
 
 const Label = styled.div`
@@ -45,6 +48,7 @@ const ConfirmCreateProposalModal = ({ params, close }: ModalProps<Proposal>): JS
     const [loading, setLoading] = useState(false);
     const { account } = useAuthStore();
     const cost = formatBalance(CREATE_PROPOSAL_COST);
+    const reward = formatBalance(CREATE_PROPOSAL_COST * 1.5);
 
     const history = useHistory();
 
@@ -52,19 +56,8 @@ const ConfirmCreateProposalModal = ({ params, close }: ModalProps<Proposal>): JS
 
     const onSubmit = async () => {
         const { text, title, start_at, end_at } = params;
-        //subtract 1 hour from time to give the user to think
-        const minEndDateTimeStamp = Date.now() + (MIN_DURATION_VOTING - 60 * 60 * 1000);
-        const maxEndDateTimeStamp = Date.now() + MAX_DURATION_VOTING;
 
         if (loading) {
-            return;
-        }
-
-        if (
-            minEndDateTimeStamp > new Date(end_at).getTime() ||
-            new Date(end_at).getTime() > maxEndDateTimeStamp
-        ) {
-            ToastService.showErrorToast('The duration of voting must be between 3 and 7 days!');
             return;
         }
 
@@ -104,9 +97,24 @@ const ConfirmCreateProposalModal = ({ params, close }: ModalProps<Proposal>): JS
     return (
         <>
             <ModalTitle>Create proposal</ModalTitle>
-            <ModalDescription>To create a proposal, you need to pay {cost} AQUA.</ModalDescription>
+            <Description>
+                Please make sure your proposal is clear, well written and follows the suggested
+                format. Before you submit the proposal, we recommend sharing it on Discord to get
+                the feedback from the community and ensure it has a good chance of being accepted.
+                <br />
+                <br />
+                To create a proposal, you need to pay {cost} AQUA. The AQUA will be burned. If your
+                proposal is accepted, you will get a reward of {reward} AQUA.
+                <br />
+                <br />
+                Proposals must have clearly defined action points, be relevant to Aquarius and have
+                a feasible technical plan for implementation. Otherwise, they might be taken down
+                before the voting ends.
+                <br />
+                <br />
+            </Description>
             <ProposalCost>
-                <Label>Proposal cost</Label>
+                <Label>Proposal creation cost</Label>
                 <Amount>{cost} AQUA</Amount>
             </ProposalCost>
             <Button

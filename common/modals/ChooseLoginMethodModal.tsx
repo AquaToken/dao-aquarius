@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ModalDescription, ModalProps, ModalTitle } from './atoms/ModalAtoms';
+import { ModalProps, ModalTitle } from './atoms/ModalAtoms';
 import styled from 'styled-components';
 import { COLORS } from '../styles';
 import ArrowRightIcon from '../assets/img/icon-arrow-right.svg';
@@ -88,8 +88,7 @@ const ChooseLoginMethodModal = ({ close }: ModalProps<never>): JSX.Element => {
 
     return (
         <>
-            <ModalTitle>Log in with</ModalTitle>
-            <ModalDescription>Choose the best login method</ModalDescription>
+            <ModalTitle>Sign in</ModalTitle>
 
             <LoginMethod onClick={() => chooseMethod(LoginTypes.walletConnect)}>
                 <WalletConnectLogoRelative>

@@ -15,6 +15,7 @@ import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModa
 import NotEnoughAquaModal from './NotEnoughAquaModal/NotEnoughAquaModal';
 import { useEffect } from 'react';
 import PageLoader from '../../../common/basics/PageLoader';
+import ExternalLink from '../../../common/basics/ExternalLink';
 
 export const CREATE_PROPOSAL_COST = 1;
 
@@ -112,6 +113,8 @@ const About = styled.div`
 
     font-size: 1.6rem;
     line-height: 2.8rem;
+    ${flexAllCenter};
+    flex-direction: column;
     text-align: center;
 
     color: ${COLORS.descriptionText};
@@ -159,8 +162,8 @@ const MainPage = (): JSX.Element => {
             <Background>
                 <Title>Aquarius Governance</Title>
                 <Description>
-                    AQUA tokens represent voting shares in Aquarius governance. You can vote on each
-                    proposal yourself or delegate your votes to a third party.
+                    Aquarius protocol is governed by DAO voting with AQUA tokens. Vote and
+                    participate in discussions to shape the future of Aquarius.
                 </Description>
                 <BackgroundLeft />
                 <BackgroundRight />
@@ -188,7 +191,17 @@ const MainPage = (): JSX.Element => {
                 &#9757;️
                 <br />
                 This is an early version of Aquarius Governance. <br />
-                Over time, there will be more proposals and the ability to create custom propose.
+                Over time, users will create more proposals for you to vote on.
+                <br />
+                Participate in the discussion of governance proposals on Discord
+                (#governance-voting).
+                <ExternalLink
+                    href="https://discord.com/invite/QmaWRT7mqU"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    View discussion
+                </ExternalLink>
             </About>
         </MainBlock>
     );

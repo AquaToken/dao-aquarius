@@ -15,6 +15,10 @@ const LoginWithSecretBody = styled.div`
     align-items: flex-end;
 `;
 
+const Description = styled(ModalDescription)`
+    width: 52.8rem;
+`;
+
 const InputWrapped = styled(Input)`
     margin-bottom: 3.1rem;
 `;
@@ -43,7 +47,11 @@ const LoginWithSecret = ({ close }: ModalProps<never>): JSX.Element => {
     return (
         <>
             <ModalTitle>Secret key</ModalTitle>
-            <ModalDescription>Enter your secret key, started from “S”</ModalDescription>
+            <Description>
+                We recommend using WalletConnect login as it provides better security. Secret key
+                login is not recommended and will be deprecated shortly. Check the URL and make sure
+                you are on the correct website.
+            </Description>
             <LoginWithSecretBody>
                 <InputWrapped
                     placeholder="SXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
