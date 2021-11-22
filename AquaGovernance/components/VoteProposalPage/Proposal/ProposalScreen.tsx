@@ -169,7 +169,7 @@ const ProposalScreen = ({
                         Participate in the discussion of this proposal on Discord
                         (#governance-voting).
                         <ExternalLink
-                            href="https://discord.com/invite/QmaWRT7mqU"
+                            href="https://discord.gg/sgzFscHp4C"
                             target="_blank"
                             rel="noopener noreferrer"
                         >
