@@ -17,7 +17,7 @@ import { useEffect } from 'react';
 import PageLoader from '../../../common/basics/PageLoader';
 import ExternalLink from '../../../common/basics/ExternalLink';
 
-export const CREATE_PROPOSAL_COST = 1;
+export const CREATE_PROPOSAL_COST = 1000000;
 
 const MainBlock = styled.main`
     flex: 1 0 auto;

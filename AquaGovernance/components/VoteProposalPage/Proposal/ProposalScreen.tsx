@@ -13,6 +13,7 @@ import { getDateString } from '../../../../common/helpers/helpers';
 import { Proposal } from '../../../api/types';
 import { statePage } from '../../ProposalCreationPage/ProposalCreationPage';
 import ExternalLink from '../../../../common/basics/ExternalLink';
+import { useEffect } from 'react';
 
 const ProposalQuestion = styled.div`
     width: 100%;
@@ -120,6 +121,10 @@ const ProposalScreen = ({
 
     const startDateView = getDateString(new Date(startDate).getTime(), { withTime: true });
     const endDateView = getDateString(new Date(endDate).getTime(), { withTime: true });
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
 
     return (
         <>
