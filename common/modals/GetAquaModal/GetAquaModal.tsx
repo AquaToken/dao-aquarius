@@ -84,7 +84,7 @@ const GetAquaModal = (): JSX.Element => {
     return (
         <>
             <Container>
-                <ModalTitle>Get aqua token</ModalTitle>
+                <ModalTitle>Get AQUA token</ModalTitle>
                 <ModalDescription>
                     AQUA is the utility token of Aquarius project. You may be eligible to claim free
                     AQUA through the ongoing airdrop program. Currently AQUA is only available on
