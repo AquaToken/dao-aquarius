@@ -192,7 +192,7 @@ const Votes = (): JSX.Element => {
                             position="left"
                             onClick={() => changeSort(VoteFields.solution)}
                         >
-                            Solution{' '}
+                            Vote{' '}
                             <IconSort
                                 isEnabled={sort === VoteFields.solution}
                                 isReversed={isReversedSort}

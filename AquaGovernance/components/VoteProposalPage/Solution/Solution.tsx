@@ -27,8 +27,8 @@ const FailIcon = styled(Fail)`
 `;
 
 enum ChoiceLabel {
-    vote_against = 'Vote Against',
-    vote_for = 'Vote For',
+    vote_against = 'Against',
+    vote_for = 'For',
 }
 
 const Solution = ({ choice }: { choice: VoteChoiceSimple }): JSX.Element => {

@@ -31,6 +31,13 @@ export const getDateString = (timestamp: number, config?: GetDateStringConfig): 
     }`;
 };
 
+export const getTimeString = (timestamp: number): string => {
+    const date = new Date(timestamp);
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    return `${hours == 24 ? '00' : `0${hours}`.slice(-2)}:${`0${minutes}`.slice(-2)}`;
+};
+
 export const roundToPrecision = (value: string | number, numDecimals: number): string => {
     const multiplier = 10 ** numDecimals;
 

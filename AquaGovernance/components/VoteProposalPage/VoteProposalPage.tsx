@@ -9,13 +9,13 @@ import ProposalScreen from './Proposal/ProposalScreen';
 import NotFoundPage from '../../../common/components/NotFoundPage/NotFoundPage';
 
 export enum SimpleProposalOptions {
-    voteFor = 'Vote For',
-    voteAgainst = 'Vote Against',
+    voteFor = 'For',
+    voteAgainst = 'Against',
 }
 
 export enum SimpleProposalResultsLabels {
-    votesFor = 'Votes For',
-    votesAgainst = 'Votes Against',
+    votesFor = 'For',
+    votesAgainst = 'Against',
 }
 
 const VoteProposalPage = (): JSX.Element => {

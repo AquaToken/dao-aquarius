@@ -12,6 +12,7 @@ import Votes from '../Votes/Votes';
 import { getDateString } from '../../../../common/helpers/helpers';
 import { Proposal } from '../../../api/types';
 import { statePage } from '../../ProposalCreationPage/ProposalCreationPage';
+import ExternalLink from '../../../../common/basics/ExternalLink';
 
 const ProposalQuestion = styled.div`
     width: 100%;
@@ -154,6 +155,22 @@ const ProposalScreen = ({
                 <LeftContent>
                     <Title>Proposal</Title>
                     <DescriptionText dangerouslySetInnerHTML={{ __html: text }} />
+                </LeftContent>
+            </ProposalSection>
+            <ProposalSection>
+                <LeftContent>
+                    <Title>Discussion</Title>
+                    <DetailsDescription>
+                        Participate in the discussion of this proposal on Discord
+                        (#governance-voting).
+                        <ExternalLink
+                            href="https://discord.com/invite/QmaWRT7mqU"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            View discussion
+                        </ExternalLink>
+                    </DetailsDescription>
                 </LeftContent>
             </ProposalSection>
             <ProposalSection>

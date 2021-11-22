@@ -84,7 +84,7 @@ const AccountMenu = ({ closeMenu }: { closeMenu: () => void }): JSX.Element => {
                     if (loginType === LoginTypes.walletConnect) {
                         WalletConnectService.logout();
                     }
-                    ToastService.showSuccessToast('Successful Log out');
+                    ToastService.showSuccessToast('Logged out');
                 }}
             >
                 <IconLogout />

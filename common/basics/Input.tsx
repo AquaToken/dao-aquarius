@@ -40,6 +40,10 @@ const StyledInput = styled.input<{ ref: RefObject<HTMLInputElement> }>`
     &:focus {
         border: 0.2rem solid ${COLORS.purple};
     }
+
+    &:disabled {
+        color: ${COLORS.placeholder};
+    }
 `;
 
 const Postfix = styled.div`

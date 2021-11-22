@@ -50,7 +50,7 @@ export default function useGlobalSubscriptions(): void {
                 resolveFederation(account.home_domain, account.accountId());
             }
             StellarService.startAccountStream(account.accountId());
-            ToastService.showSuccessToast('Successful Log in');
+            ToastService.showSuccessToast('Logged in');
         } else {
             StellarService.logoutWithSecret();
             StellarService.closeAccountStream();

@@ -251,7 +251,7 @@ const Sidebar = ({
                 <SidebarBlock>
                     <Container>
                         <Results>
-                            <Title>No one voted</Title>
+                            <Title>No votes yet</Title>
                         </Results>
                     </Container>
                 </SidebarBlock>
@@ -262,12 +262,12 @@ const Sidebar = ({
             <SidebarBlock>
                 <Container>
                     <Results>
-                        <Title>Winner:</Title>
+                        <Title>Result</Title>
                         <Winner isVoteFor={isVoteForWon}>
                             {isVoteForWon ? <SuccessIcon /> : <FailIcon />}
-                            Vote <BoldText>{isVoteForWon ? 'For' : 'Against'}</BoldText>
+                            <BoldText>{isVoteForWon ? 'For' : 'Against'}</BoldText>
                         </Winner>
-                        <EndDate>Ended in {getDateString(new Date(endDate).getTime())}</EndDate>
+                        <EndDate>Ended on {getDateString(new Date(endDate).getTime())}</EndDate>
                         <FinalResult>
                             {roundedPercent}% votes -{' '}
                             {formatBalance(isVoteForWon ? voteForValue : voteAgainstValue, true)}{' '}
@@ -293,7 +293,8 @@ const Sidebar = ({
                             })
                         }
                     >
-                        <SuccessIcon /> Vote <BoldText>For</BoldText>
+                        <SuccessIcon />
+                        <BoldText>For</BoldText>
                     </VotingButton>
                     <VotingButton
                         isVoteFor
@@ -306,7 +307,7 @@ const Sidebar = ({
                         }
                     >
                         <FailIcon />
-                        Vote <BoldText>Against</BoldText>
+                        <BoldText>Against</BoldText>
                     </VotingButton>
                 </Container>
             )}
@@ -315,8 +316,8 @@ const Sidebar = ({
                     <Notice>&#9757;️</Notice>
                     <SidebarTemplateTitle>Check details</SidebarTemplateTitle>
                     <SidebarDescription>
-                        Please check all details, after publish you will not be able to delete or
-                        change your proposal!
+                        Please check all details, you will not be able to delete or change your
+                        proposal after publication!
                     </SidebarDescription>
                     <Button
                         isBig

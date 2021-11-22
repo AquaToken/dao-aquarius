@@ -37,7 +37,7 @@ export const HeaderNavLink = styled(Link)`
     }
 `;
 
-const Header = ({ children }: { children: JSX.Element }): JSX.Element => {
+const Header = ({ children }: { children?: JSX.Element }): JSX.Element => {
     const signIn = () => {
         ModalService.openModal(ChooseLoginMethodModal, {});
     };
