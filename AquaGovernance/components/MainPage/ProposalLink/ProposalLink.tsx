@@ -91,7 +91,7 @@ const getProposalInfo = (proposal: ProposalSimple): string => {
         }
 
         return `${
-            isVoteForWin ? 'Voted For' : 'Voted Against'
+            isVoteForWin ? 'Voted "For"' : 'Voted "Against"'
         } with ${roundedPercent}% of the votes`;
     }
 };
