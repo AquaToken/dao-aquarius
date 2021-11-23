@@ -167,11 +167,13 @@ const ConfirmVoteModal = ({
             ToastService.showErrorToast(
                 `The value must be less or equal than ${formattedAquaBalance} AQUA`,
             );
+            return;
         }
         if (Number(amount) < MINIMUM_AMOUNT) {
             ToastService.showErrorToast(
                 `The value must be greater than ${MINIMUM_AMOUNT.toFixed(7)} AQUA`,
             );
+            return;
         }
         try {
             setPending(true);
@@ -229,7 +231,7 @@ const ConfirmVoteModal = ({
                         available
                     </BalanceBlock>
                 ) : (
-                    <BalanceBlock>You don’t have AQUA trustline</BalanceBlock>
+                    <BalanceBlock>You donï¿½t have AQUA trustline</BalanceBlock>
                 )}
             </ContentRow>
 
