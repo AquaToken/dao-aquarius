@@ -197,7 +197,7 @@ const ConfirmVoteModal = ({
                 ToastService.showSuccessToast('More signatures required to complete');
                 return;
             }
-            ToastService.showSuccessToast('Your vote has been casted');
+            ToastService.showSuccessToast('Your vote has been cast');
         } catch (e) {
             ToastService.showErrorToast('Oops. Something went wrong.');
             if (isMounted.current) {
