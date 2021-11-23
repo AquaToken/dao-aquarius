@@ -16,6 +16,8 @@ import Button from '../../../../common/basics/Button';
 import ConfirmCreateProposalModal from '../../ProposalCreationPage/ConfirmCreateProposalModal/ConfirmCreateProposalModal';
 import { flexAllCenter, respondDown } from '../../../../common/mixins';
 import { formatBalance, getDateString, roundToPrecision } from '../../../../common/helpers/helpers';
+import NotEnoughAquaModal from '../../MainPage/NotEnoughAquaModal/NotEnoughAquaModal';
+import { CREATE_PROPOSAL_COST } from '../../MainPage/MainPage';
 
 const SidebarBlock = styled.aside`
     position: sticky;
@@ -206,7 +208,7 @@ const Sidebar = ({
     isTemplate: boolean;
 }): JSX.Element => {
     const [selectedOption, setSelectedOption] = useState(null);
-    const { isLogged } = useAuthStore();
+    const { isLogged, account } = useAuthStore();
 
     const onVoteClick = (option) => {
         if (isLogged) {
@@ -215,6 +217,18 @@ const Sidebar = ({
         }
         setSelectedOption(option);
         ModalService.openModal(ChooseLoginMethodModal, {});
+    };
+
+    const onContinueClick = () => {
+        const aquaBalance = account.getAquaBalance();
+        const hasNecessaryBalance = aquaBalance >= CREATE_PROPOSAL_COST;
+
+        if (!hasNecessaryBalance) {
+            ModalService.openModal(NotEnoughAquaModal, {});
+            return;
+        }
+
+        ModalService.openModal(ConfirmCreateProposalModal, proposal);
     };
 
     useEffect(() => {
@@ -323,7 +337,7 @@ const Sidebar = ({
                         isBig
                         fullWidth
                         onClick={() => {
-                            ModalService.openModal(ConfirmCreateProposalModal, proposal);
+                            onContinueClick();
                         }}
                     >
                         Continue

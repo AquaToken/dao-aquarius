@@ -163,7 +163,7 @@ const Votes = (): JSX.Element => {
 
     return (
         <VotesBlock>
-            <Title>Votes({totalVotes})</Title>
+            <Title>Votes ({totalVotes})</Title>
             <VotesList>
                 <HeaderRow>
                     <CellDate>
@@ -221,7 +221,7 @@ const Votes = (): JSX.Element => {
                         created_at: date,
                     } = vote;
                     return (
-                        <VoteRow key={date}>
+                        <VoteRow key={txLink}>
                             <CellDate>
                                 {getDateString(new Date(date).getTime(), {
                                     withTime: true,

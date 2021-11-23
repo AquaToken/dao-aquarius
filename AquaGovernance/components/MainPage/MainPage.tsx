@@ -12,7 +12,6 @@ import { useHistory } from 'react-router-dom';
 import useAuthStore from '../../../common/store/authStore/useAuthStore';
 import { ModalService } from '../../../common/services/globalServices';
 import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
-import NotEnoughAquaModal from './NotEnoughAquaModal/NotEnoughAquaModal';
 import { useEffect } from 'react';
 import PageLoader from '../../../common/basics/PageLoader';
 import ExternalLink from '../../../common/basics/ExternalLink';
@@ -132,21 +131,15 @@ const PlusIcon = styled(Plus)`
 const MainPage = (): JSX.Element => {
     const { proposals, getProposals } = useProposalsStore();
     const history = useHistory();
-    const { isLogged, account } = useAuthStore();
+    const { isLogged } = useAuthStore();
 
     const handleClick = () => {
         if (!isLogged) {
             ModalService.openModal(ChooseLoginMethodModal, {});
             return;
         }
-        const aquaBalance = account.getAquaBalance();
-        const hasNecessaryBalance = aquaBalance >= CREATE_PROPOSAL_COST;
 
-        if (hasNecessaryBalance) {
-            history.push('/create');
-            return;
-        }
-        ModalService.openModal(NotEnoughAquaModal, {});
+        history.push('/create');
     };
 
     useEffect(() => {
