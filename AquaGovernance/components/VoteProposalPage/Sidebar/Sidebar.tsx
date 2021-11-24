@@ -17,7 +17,7 @@ import ConfirmCreateProposalModal from '../../ProposalCreationPage/ConfirmCreate
 import { flexAllCenter, respondDown } from '../../../../common/mixins';
 import { formatBalance, getDateString, roundToPrecision } from '../../../../common/helpers/helpers';
 import NotEnoughAquaModal from '../../MainPage/NotEnoughAquaModal/NotEnoughAquaModal';
-import { CREATE_PROPOSAL_COST } from '../../MainPage/MainPage';
+import { CREATE_PROPOSAL_COST, MINIMUM_APPROVAL_PERCENT } from '../../MainPage/MainPage';
 
 const SidebarBlock = styled.aside`
     position: sticky;
@@ -264,13 +264,12 @@ const Sidebar = ({
         vote_for_result: voteForResult,
         vote_against_result: voteAgainstResult,
         end_at: endDate,
+        aqua_circulating_supply: aquaCirculatingSupply,
     } = proposal;
 
     const isEnd = new Date() >= new Date(endDate);
-    // TODO fix this when backend comes up
-    const isCanceled = false;
 
-    if ((isEnd || isCanceled) && isSimple && !isTemplate) {
+    if (isEnd && isSimple && !isTemplate) {
         const voteForValue = Number(voteForResult);
         const voteAgainstValue = Number(voteAgainstResult);
         const isVoteForWon = voteForValue > voteAgainstValue;
@@ -278,7 +277,6 @@ const Sidebar = ({
         const percent =
             ((isVoteForWon ? voteForValue : voteAgainstValue) / (voteForValue + voteAgainstValue)) *
             100;
-        const roundedPercent = roundToPrecision(percent, 2);
 
         if (Number.isNaN(percent)) {
             return (
@@ -291,6 +289,12 @@ const Sidebar = ({
                 </SidebarBlock>
             );
         }
+
+        const roundedPercent = roundToPrecision(percent, 2);
+
+        const isCanceled =
+            ((voteForValue + voteAgainstValue) / Number(aquaCirculatingSupply)) * 100 <
+            MINIMUM_APPROVAL_PERCENT;
 
         return (
             <SidebarBlock>
