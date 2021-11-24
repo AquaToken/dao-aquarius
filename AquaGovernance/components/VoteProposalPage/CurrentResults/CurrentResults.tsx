@@ -5,7 +5,8 @@ import { COLORS } from '../../../../common/styles';
 import { roundToPrecision } from '../../../../common/helpers/helpers';
 import { SimpleProposalResultsLabels } from '../VoteProposalPage';
 import { Proposal } from '../../../api/types';
-import { flexRowSpaceBetween } from '../../../../common/mixins';
+import { flexAllCenter, flexRowSpaceBetween } from '../../../../common/mixins';
+import Fail from '../../../../common/assets/img/icon-fail.svg';
 
 const ResultBlock = styled.div`
     width: 100%;
@@ -20,6 +21,50 @@ const Title = styled.h5`
     font-size: 2rem;
     line-height: 2.8rem;
     color: ${COLORS.titleText};
+`;
+
+const Quorum = styled.div`
+    height: 3.5rem;
+    margin-top: 3.2rem;
+    font-size: 1.4rem;
+    line-height: 2rem;
+    ${flexRowSpaceBetween};
+`;
+
+const Label = styled.div`
+    color: ${COLORS.grayText};
+`;
+
+const FailIcon = styled(Fail)`
+    height: 1.4rem;
+    width: 1.4rem;
+    margin-right: 0.6rem;
+
+    rect {
+        fill: ${COLORS.white};
+    }
+    path {
+        stroke: ${COLORS.pinkRed};
+    }
+`;
+
+const StatusTag = styled.div`
+    height: 3rem;
+    padding: 0.25rem 1rem;
+    ${flexAllCenter};
+    width: min-content;
+    white-space: nowrap;
+    border-radius: 1.5rem;
+    background-color: ${COLORS.pinkRed};
+    color: ${COLORS.white};
+    font-weight: 400;
+    line-height: 2.5rem;
+    margin-left: 0.8rem;
+`;
+
+const QuorumResult = styled.div<{ isApproved: boolean }>`
+    margin: 0 0.8rem 0 auto;
+    color: ${({ isApproved }) => (isApproved ? COLORS.titleText : COLORS.pinkRed)};
 `;
 
 const getResultsData = (proposal: Proposal) => {
@@ -56,6 +101,9 @@ const getResultsData = (proposal: Proposal) => {
 const CurrentResults = ({ proposal }: { proposal: Proposal }): JSX.Element => {
     const results = getResultsData(proposal);
     const isEnd = new Date() >= new Date(proposal.end_at);
+    const percentVote = 4;
+    const isApproved = percentVote > 5;
+
     return (
         <ResultBlock>
             <Header>
@@ -66,6 +114,16 @@ const CurrentResults = ({ proposal }: { proposal: Proposal }): JSX.Element => {
             {results?.map((result) => {
                 return <ResultProgressLine key={result.label} result={result} />;
             })}
+            <Quorum>
+                <Label>Minimum Approval:</Label>
+                <QuorumResult isApproved={isApproved}>{percentVote}%</QuorumResult>
+                <Label>(&gt;5% needed)</Label>
+                {!isApproved && (
+                    <StatusTag>
+                        <FailIcon /> Not enough votes
+                    </StatusTag>
+                )}
+            </Quorum>
         </ResultBlock>
     );
 };
