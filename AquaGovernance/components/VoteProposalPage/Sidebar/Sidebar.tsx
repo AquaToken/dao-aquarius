@@ -164,7 +164,7 @@ const Title = styled.span`
     margin-top: 2.2rem;
 `;
 
-const Winner = styled.div<{ isVoteFor: boolean }>`
+const Winner = styled.div<{ isVoteFor?: boolean }>`
     height: 3.5rem;
     padding: 0 1.5rem;
     ${flexAllCenter};
@@ -176,6 +176,24 @@ const Winner = styled.div<{ isVoteFor: boolean }>`
     font-weight: 400;
     margin-top: 1rem;
     margin-bottom: 6rem;
+`;
+
+const Canceled = styled(Winner)`
+    background-color: ${COLORS.gray};
+    color: ${COLORS.darkGrayText};
+`;
+
+const FailIconGray = styled(Fail)`
+    height: 1.4rem;
+    width: 1.4rem;
+    margin-right: 0.6rem;
+
+    rect {
+        fill: ${COLORS.white};
+    }
+    path {
+        stroke: ${COLORS.grayText};
+    }
 `;
 
 const EndDate = styled.span`
@@ -249,8 +267,10 @@ const Sidebar = ({
     } = proposal;
 
     const isEnd = new Date() >= new Date(endDate);
+    // TODO fix this when backend comes up
+    const isCanceled = false;
 
-    if (isEnd && isSimple && !isTemplate) {
+    if ((isEnd || isCanceled) && isSimple && !isTemplate) {
         const voteForValue = Number(voteForResult);
         const voteAgainstValue = Number(voteAgainstResult);
         const isVoteForWon = voteForValue > voteAgainstValue;
@@ -277,15 +297,28 @@ const Sidebar = ({
                 <Container>
                     <Results>
                         <Title>Result</Title>
-                        <Winner isVoteFor={isVoteForWon}>
-                            {isVoteForWon ? <SuccessIcon /> : <FailIcon />}
-                            <BoldText>{isVoteForWon ? 'For' : 'Against'}</BoldText>
-                        </Winner>
-                        <EndDate>Ended on {getDateString(new Date(endDate).getTime())}</EndDate>
+                        {isCanceled ? (
+                            <Canceled>
+                                <FailIconGray />
+                                Canceled
+                            </Canceled>
+                        ) : (
+                            <Winner isVoteFor={isVoteForWon}>
+                                {isVoteForWon ? <SuccessIcon /> : <FailIcon />}
+                                <BoldText>{isVoteForWon ? 'For' : 'Against'}</BoldText>
+                            </Winner>
+                        )}
+                        <EndDate>
+                            {isCanceled ? 'Canceled' : 'Ended'} on{' '}
+                            {getDateString(new Date(endDate).getTime())}
+                        </EndDate>
                         <FinalResult>
-                            {roundedPercent}% votes -{' '}
-                            {formatBalance(isVoteForWon ? voteForValue : voteAgainstValue, true)}{' '}
-                            AQUA
+                            {isCanceled
+                                ? 'Not enough votes'
+                                : `${roundedPercent}% votes - ${formatBalance(
+                                      isVoteForWon ? voteForValue : voteAgainstValue,
+                                      true,
+                                  )} AQUA`}
                         </FinalResult>
                     </Results>
                 </Container>
