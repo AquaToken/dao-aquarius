@@ -133,7 +133,7 @@ const CurrentResults = ({ proposal }: { proposal: Proposal }): JSX.Element => {
                 return <ResultProgressLine key={result.label} result={result} />;
             })}
             <Quorum>
-                <Label>Minimum Approval:</Label>
+                <Label>Participation Rate:</Label>
                 <QuorumResult isApproved={isApproved}>
                     {roundToPrecision(percentVote, 2)}%
                 </QuorumResult>
@@ -150,8 +150,9 @@ const CurrentResults = ({ proposal }: { proposal: Proposal }): JSX.Element => {
                     <Tooltip
                         content={
                             <TooltipInner>
-                                Minimum Approval is the percentage of the total AQUA token supply
-                                that is required to vote on a proposal before it can be approved.{' '}
+                                Participation rate is the percentage of the circulating AQUA supply
+                                that has taken part in the voting. Participation rate is required to
+                                be above 5% for the proposal to be approved.
                             </TooltipInner>
                         }
                         position={TOOLTIP_POSITION.bottom}
