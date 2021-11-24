@@ -6,6 +6,8 @@ import SuccessIcon from '../../../../common/assets/img/icon-success.svg';
 import { getDateString, roundToPrecision } from '../../../../common/helpers/helpers';
 import { Link, LinkProps } from 'react-router-dom';
 import { ProposalSimple } from '../../../api/types';
+import Fail from '../../../../common/assets/img/icon-fail.svg';
+import { MINIMUM_APPROVAL_PERCENT } from '../MainPage';
 
 const ProposalLinkBlock = styled(Link)`
     display: flex;
@@ -49,6 +51,23 @@ const EndedLabel = styled.div`
     font-size: 1.4rem;
     line-height: 1.6rem;
 `;
+const CanceledLabel = styled(EndedLabel)`
+    background-color: ${COLORS.gray};
+    color: ${COLORS.darkGrayText};
+`;
+
+const FailIcon = styled(Fail)`
+    height: 1.4rem;
+    width: 1.4rem;
+    margin-right: 0.6rem;
+
+    rect {
+        fill: ${COLORS.white};
+    }
+    path {
+        stroke: ${COLORS.grayText};
+    }
+`;
 
 const Success = styled(SuccessIcon)`
     width: 16px;
@@ -66,6 +85,7 @@ const getProposalInfo = (proposal: ProposalSimple): string => {
         is_simple_proposal: isSimpleProposal,
         vote_for_result: voteFor,
         vote_against_result: voteAgainst,
+        aqua_circulating_supply: aquaCirculatingSupply,
     } = proposal;
 
     const isEnd = new Date() >= new Date(dateEnd);
@@ -84,11 +104,19 @@ const getProposalInfo = (proposal: ProposalSimple): string => {
         const percent =
             ((isVoteForWin ? voteForValue : voteAgainstValue) / (voteForValue + voteAgainstValue)) *
             100;
-        const roundedPercent = roundToPrecision(percent, 2);
 
         if (Number.isNaN(percent)) {
             return 'No votes yet';
         }
+
+        const isCancelled =
+            ((voteForValue + voteAgainstValue) / Number(aquaCirculatingSupply)) * 100 <
+            MINIMUM_APPROVAL_PERCENT;
+
+        if (isCancelled) {
+            return 'Canceled - Not enough votes';
+        }
+        const roundedPercent = roundToPrecision(percent, 2);
 
         return `${
             isVoteForWin ? 'Voted "For"' : 'Voted "Against"'
@@ -96,13 +124,42 @@ const getProposalInfo = (proposal: ProposalSimple): string => {
     }
 };
 
-const ProposalLink = ({ proposal, ...props }: ProposalLinkProps): JSX.Element => {
-    const { title, end_at: dateEnd } = proposal;
-
-    const dateString = getDateString(new Date(dateEnd).getTime());
+const getRightBlock = (proposal: ProposalSimple) => {
+    const {
+        end_at: dateEnd,
+        vote_for_result: voteFor,
+        vote_against_result: voteAgainst,
+        aqua_circulating_supply: aquaCirculatingSupply,
+    } = proposal;
     const isEnd = new Date() >= new Date(dateEnd);
 
+    if (!isEnd) {
+        return <ArrowRight />;
+    }
+
+    const dateString = getDateString(new Date(dateEnd).getTime());
+
+    const isCancelled =
+        ((Number(voteAgainst) + Number(voteFor)) / Number(aquaCirculatingSupply)) * 100 <
+        MINIMUM_APPROVAL_PERCENT;
+
+    return isCancelled ? (
+        <CanceledLabel>
+            <FailIcon />
+            Canceled on {dateString}
+        </CanceledLabel>
+    ) : (
+        <EndedLabel>
+            <Success />
+            Ended on {dateString}
+        </EndedLabel>
+    );
+};
+
+const ProposalLink = ({ proposal, ...props }: ProposalLinkProps): JSX.Element => {
+    const { title } = proposal;
     const info = getProposalInfo(proposal);
+    const rightBlock = getRightBlock(proposal);
 
     return (
         <ProposalLinkBlock {...props}>
@@ -110,14 +167,7 @@ const ProposalLink = ({ proposal, ...props }: ProposalLinkProps): JSX.Element =>
                 <Label>{title}</Label>
                 <Info>{info}</Info>
             </Content>
-            {isEnd ? (
-                <EndedLabel>
-                    <Success />
-                    Ended on {dateString}
-                </EndedLabel>
-            ) : (
-                <ArrowRight />
-            )}
+            {rightBlock}
         </ProposalLinkBlock>
     );
 };
