@@ -10,6 +10,8 @@ import { flexAllCenter, flexRowSpaceBetween } from '../../../../common/mixins';
 import { COLORS } from '../../../../common/styles';
 import useAuthStore from '../../../../common/store/authStore/useAuthStore';
 import Button from '../../../../common/basics/Button';
+import Pair from '../../common/Pair';
+import * as StellarSdk from 'stellar-sdk';
 
 const ContentRow = styled.div`
     ${flexRowSpaceBetween};
@@ -45,13 +47,17 @@ const StyledButton = styled(Button)`
 const CreatePairModal = ({
     params,
     close,
-}: ModalProps<{ option: string; key: string; endDate: string }>) => {
+}: ModalProps<{ base: any; counter: any }>): JSX.Element => {
     const { account } = useAuthStore();
+    const { base, counter } = params;
 
     const [pending, setPending] = useState(false);
 
-    const firstAssetCode = 'yXLM';
-    const secondAssetCode = 'SOL';
+    const baseInstance = new StellarSdk.Asset(base.code, base.issuer);
+    const isBaseNative = baseInstance.isNative();
+
+    const counterInstance = new StellarSdk.Asset(counter.code, counter.issuer);
+    const isCounterNative = counterInstance.isNative();
 
     const onSubmit = () => {
         console.log('create pair');
@@ -64,26 +70,42 @@ const CreatePairModal = ({
                 To create a pair, you need to pay for the trustlines for transactions.
             </ModalDescription>
             <Content>
-                <AssetsInfo>assetsinfo</AssetsInfo>
+                <AssetsInfo>
+                    <Pair
+                        verticalDirections
+                        base={{
+                            code: base.code,
+                            issuer: base.issuer,
+                        }}
+                        counter={{
+                            code: counter.code,
+                            issuer: counter.issuer,
+                        }}
+                    />
+                </AssetsInfo>
                 <ContentRow>
                     <Label>Base account reserve</Label>
                     <span>1 XLM</span>
                 </ContentRow>
+                {!isBaseNative && (
+                    <ContentRow>
+                        <Label>{base.code} trustline</Label>
+                        <span>0.5 XLM</span>
+                    </ContentRow>
+                )}
+                {!isCounterNative && (
+                    <ContentRow>
+                        <Label>{counter.code} trustline</Label>
+                        <span>0.5 XLM</span>
+                    </ContentRow>
+                )}
                 <ContentRow>
-                    <Label>{firstAssetCode} trustline</Label>
-                    <span>0.5 XLM</span>
-                </ContentRow>
-                <ContentRow>
-                    <Label>{secondAssetCode} trustline</Label>
-                    <span>0.5 XLM</span>
-                </ContentRow>
-                <ContentRow>
-                    <Label>AQUA trustline</Label>
+                    <Label>Marker Key signer</Label>
                     <span>0.5 XLM</span>
                 </ContentRow>
                 <ContentRow>
                     <Label>Total:</Label>
-                    <span>2.5 XLM</span>
+                    <span>{isBaseNative || isCounterNative ? '2' : '2.5'} XLM</span>
                 </ContentRow>
             </Content>
 

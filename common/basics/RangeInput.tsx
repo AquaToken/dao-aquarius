@@ -5,7 +5,9 @@ import { useEffect, useRef, useState } from 'react';
 
 const Pillar = styled.div.attrs<{ value: number; disabled?: boolean }>(({ value, disabled }) => ({
     style: {
-        background: `linear-gradient(to right, ${COLORS.titleText} 0% ${value}%, ${COLORS.gray} ${value}% 100%)`,
+        background: `linear-gradient(to right, ${
+            disabled ? COLORS.gray : COLORS.titleText
+        } 0% ${value}%, ${COLORS.gray} ${value}% 100%)`,
     },
 }))<{ value: number; disabled?: boolean }>`
     width: calc(100% - 1rem);
@@ -27,13 +29,17 @@ const Pillar = styled.div.attrs<{ value: number; disabled?: boolean }>(({ value,
     }
 `;
 
-const Mark = styled.div.attrs<{ percent: number; value: number }>(({ percent, value }) => ({
-    style: {
-        background: value >= percent ? COLORS.titleText : COLORS.gray,
-        border: `0.1rem solid ${value >= percent ? COLORS.titleText : COLORS.white}`,
-        left: `${percent}%`,
-    },
-}))<{ percent: number; value: number }>`
+const Mark = styled.div.attrs<{ percent: number; value: number; disabled: boolean }>(
+    ({ percent, value, disabled }) => ({
+        style: {
+            background: !disabled && value >= percent ? COLORS.titleText : COLORS.gray,
+            border: `0.1rem solid ${
+                !disabled && value >= percent ? COLORS.titleText : COLORS.white
+            }`,
+            left: `${percent}%`,
+        },
+    }),
+)<{ percent: number; value: number; disabled: boolean }>`
     height: 0.8rem;
     width: 0.8rem;
     border-radius: 0.2rem;
@@ -65,14 +71,15 @@ const Thumb = styled.div.attrs<{ value: number; isDrag: boolean; disabled?: bool
     z-index: 2;
 `;
 
-const CurrentValue = styled.div.attrs<{ value: number }>(({ value }) => ({
+const CurrentValue = styled.div.attrs<{ value: number; disabled: boolean }>(({ value }) => ({
     style: {
         left: `${value}%`,
     },
-}))<{ value: number }>`
+}))<{ value: number; disabled: boolean }>`
     position: absolute;
     top: -2.5rem;
     transform: translateX(-50%);
+    color: ${({ disabled }) => (disabled ? COLORS.placeholder : COLORS.titleText)};
 `;
 
 const getClickPosition = (event: TouchEvent | MouseEvent, ref) => {
@@ -160,11 +167,11 @@ const RangeInput = ({
             disabled={disabled}
             ref={ref}
         >
-            <Mark percent={0} value={value} />
-            <Mark percent={25} value={value} />
-            <Mark percent={50} value={value} />
-            <Mark percent={75} value={value} />
-            <Mark percent={100} value={value} />
+            <Mark percent={0} value={value} disabled={disabled} />
+            <Mark percent={25} value={value} disabled={disabled} />
+            <Mark percent={50} value={value} disabled={disabled} />
+            <Mark percent={75} value={value} disabled={disabled} />
+            <Mark percent={100} value={value} disabled={disabled} />
             <Thumb
                 disabled={disabled}
                 value={value}
@@ -178,7 +185,9 @@ const RangeInput = ({
                     setIsMouseDrag(true);
                 }}
             />
-            <CurrentValue value={value}>{value}%</CurrentValue>
+            <CurrentValue value={value} disabled={disabled}>
+                {value}%
+            </CurrentValue>
         </Pillar>
     );
 };

@@ -21,6 +21,34 @@ const FloatingButtonBody = styled.button`
     background-color: ${COLORS.white};
     box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
     cursor: pointer;
+    animation: showButton linear 0.5s;
+
+    @keyframes showButton {
+        0% {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+
+        30% {
+            transform: translateX(-3rem);
+            opacity: 1;
+        }
+
+        50% {
+            transform: translateX(1rem);
+            opacity: 1;
+        }
+
+        70% {
+            transform: translateX(-1.5rem);
+            opacity: 1;
+        }
+
+        100% {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
 `;
 
 const VotesCounter = styled.div`

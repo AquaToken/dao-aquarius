@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import {
     ModalDescription,
     ModalProps,
@@ -13,11 +13,21 @@ import useAuthStore from '../../../../common/store/authStore/useAuthStore';
 import Input from '../../../../common/basics/Input';
 import RangeInput from '../../../../common/basics/RangeInput';
 import Button from '../../../../common/basics/Button';
-import { ModalService, ToastService } from '../../../../common/services/globalServices';
-import { formatBalance, roundToPrecision } from '../../../../common/helpers/helpers';
+import {
+    ModalService,
+    StellarService,
+    ToastService,
+} from '../../../../common/services/globalServices';
+import { formatBalance, getDateString, roundToPrecision } from '../../../../common/helpers/helpers';
 import ExternalLink from '../../../../common/basics/ExternalLink';
 import GetAquaModal from '../../../../common/modals/GetAquaModal/GetAquaModal';
-import Pair from './Pair/Pair';
+import CloseIcon from '../../../../common/assets/img/icon-close-small.svg';
+import Pair from '../../common/Pair';
+import { PairStats } from '../../../api/types';
+import { SELECTED_PAIRS_ALIAS } from '../MainPage';
+import Select, { Option } from '../../../../common/basics/Select';
+import { useIsMounted } from '../../../../common/hooks/useIsMounted';
+import { BuildSignAndSubmitStatuses } from '../../../../common/services/wallet-connect.service';
 
 const ContentRow = styled.div`
     ${flexRowSpaceBetween};
@@ -69,6 +79,10 @@ const ClaimBack = styled.div`
     border-bottom: 0.1rem dashed ${COLORS.gray};
 `;
 
+const VotePeriodSelect = styled(Select)`
+    margin-top: 1.2rem;
+`;
+
 const ClaimBackDate = styled.span`
     color: ${COLORS.paragraphText};
 `;
@@ -96,6 +110,38 @@ const GetAquaLink = styled.div`
 const PairsList = styled.div`
     padding-top: 1.6rem;
 `;
+const PairBlock = styled.div`
+    padding: 0.4rem 0;
+    margin-bottom: 0.8rem;
+    font-size: 1.6rem;
+    line-height: 2.8rem;
+    color: ${COLORS.paragraphText};
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+`;
+
+const AssetsInfo = styled.div`
+    display: flex;
+    align-items: center;
+    span {
+        margin-left: 0.8rem;
+    }
+`;
+
+const CloseButton = styled.button`
+    ${flexAllCenter};
+    border: none;
+    cursor: pointer;
+    padding: 1.2rem;
+    background-color: ${COLORS.lightGray};
+    border-radius: 1rem;
+`;
+
+const StyledInput = styled(Input)`
+    width: auto;
+    margin: 0 1.2rem 0 auto;
+`;
 
 const TotalAmountRow = styled.div`
     padding: 0.8rem 0;
@@ -119,83 +165,42 @@ const TotalAmount = styled.div`
     }
 `;
 
-const pairs = [
-    {
-        pairString:
-            'BTC:GAUTUYY2THLF7SGITDFMXJVYH3LHDSMGEAKSBU267M2K7A3W543CKUEF/AQUA:GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA',
-        baseAsset: {
-            code: 'BTC',
-            issuer: 'GAUTUYY2THLF7SGITDFMXJVYH3LHDSMGEAKSBU267M2K7A3W543CKUEF',
-            asset_string: 'BTC:GAUTUYY2THLF7SGITDFMXJVYH3LHDSMGEAKSBU267M2K7A3W543CKUEF',
-            home_domain: 'apay.io',
-            name: 'Bitcoin',
-            image: 'https://apay.io/public/logo/btc.svg',
-        },
-        counterAsset: {
-            code: 'AQUA',
-            issuer: 'GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA',
-            asset_string: 'AQUA:GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA',
-            home_domain: 'aqua.network',
-            name: 'AQUA',
-            image: 'https://aqua.network/assets/img/aqua-logo.png',
-        },
-    },
-    {
-        pairString: 'native/yXLM:GARDNV3Q7YGT4AKSDF25LT32YSCCW4EV22Y2TV3I2PU2MMXJTEDL5T55',
-        baseAsset: {
-            code: 'XLM',
-            issuer: '',
-            asset_string: 'native',
-            home_domain: '',
-            name: 'Lumens',
-            image: 'https://static.lobstr.co/media/Stellar_symbol_black_RGB_xs_square3.png',
-        },
-        counterAsset: {
-            code: 'yXLM',
-            issuer: 'GARDNV3Q7YGT4AKSDF25LT32YSCCW4EV22Y2TV3I2PU2MMXJTEDL5T55',
-            asset_string: 'yXLM:GARDNV3Q7YGT4AKSDF25LT32YSCCW4EV22Y2TV3I2PU2MMXJTEDL5T55',
-            home_domain: 'ultrastellar.com',
-            name: '',
-            image: 'https://ultrastellar.com/static/images/icons/yXLM.png',
-        },
-    },
-    {
-        pairString:
-            'USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN/AQUA:GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA',
-        baseAsset: {
-            code: 'USDC',
-            issuer: 'GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN',
-            asset_string: 'USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN',
-            home_domain: 'centre.io',
-            name: 'USD Coin',
-            image: 'https://www.centre.io/images/usdc/usdc-icon-86074d9d49.png',
-        },
-        counterAsset: {
-            code: 'AQUA',
-            issuer: 'GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA',
-            asset_string: 'AQUA:GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA',
-            home_domain: 'aqua.network',
-            name: 'AQUA',
-            image: 'https://aqua.network/assets/img/aqua-logo.png',
-        },
-    },
+const ResetValues = styled.div`
+    color: ${COLORS.tooltip};
+    cursor: pointer;
+`;
+
+const MINIMUM_AMOUNT = 0.0000001;
+
+const MINUTE = 60 * 1000;
+const MONTH = 30 * 24 * 60 * 60 * 1000;
+
+const PeriodOptions: Option<number>[] = [
+    { label: '6 minutes', value: 6 * MINUTE },
+    { label: '1 Month', value: MONTH },
+    { label: '2 Month', value: 2 * MONTH },
+    { label: '3 Month', value: 3 * MONTH },
 ];
 
-export const SelectedPairsForm = ({
-    params,
-    close,
-}: ModalProps<{ option: string; key: string; endDate: string }>): JSX.Element => {
-    const getInitialState = () => {
-        return pairs.map((pair) => {
-            return { ...pair, amountAqua: 0 };
-        });
-    };
+const SelectedPairsForm = ({ params, close }: ModalProps<{ pairs: PairStats[] }>) => {
     const { account } = useAuthStore();
+    const { pairs } = params;
+
+    const isMounted = useIsMounted();
 
     const [percent, setPercent] = useState(0);
     const [amount, setAmount] = useState('');
     const [pending, setPending] = useState(false);
-    const [selectedPairs, setSelectedPairs] = useState(() => getInitialState());
+    const [selectedPairs, setSelectedPairs] = useState(pairs);
+    const [votePeriod, setVotePeriod] = useState(6 * MINUTE);
+    const [pairsAmount, setPairsAmount] = useState(
+        selectedPairs.reduce((acc, pair) => {
+            acc[pair.market_key] = '';
+            return acc;
+        }, {}),
+    );
+    const [isHandleEdit, setIsHandleEdit] = useState(false);
+
     const aquaBalance = account.getAquaBalance();
 
     const hasTrustLine = aquaBalance !== null;
@@ -203,47 +208,19 @@ export const SelectedPairsForm = ({
 
     const formattedAquaBalance = hasTrustLine && formatBalance(aquaBalance);
 
-    const setAmountForEachPair = (amount) => {
-        const amountForEachPair = roundToPrecision(Number(amount) / selectedPairs.length, 7);
-        setSelectedPairs((selectedPairs) => {
-            return selectedPairs.map((pair) => ({
-                ...pair,
-                amountAqua: +amountForEachPair,
-            }));
-        });
-    };
-
-    const totalAmount = useMemo(() => {
-        let totalAmount = 0;
-        selectedPairs.forEach((pair) => {
-            totalAmount += pair.amountAqua;
-        });
-        return roundToPrecision(totalAmount, 7);
-    }, [selectedPairs]);
-
-    const handlerInputPair = ({ value, pairString }) => {
-        setSelectedPairs((selectedPairs) => {
-            return selectedPairs.map((pair) => {
-                if (pair.pairString === pairString) {
-                    return { ...pair, amountAqua: Number(value) };
-                } else return { ...pair };
-            });
-        });
-    };
-
-    const removePair = (pairString) => {
-        setSelectedPairs((selectedPairs) => {
-            return selectedPairs.filter((pair) => pair.pairString !== pairString);
-        });
-    };
-
     const onRangeChange = (percent) => {
         setPercent(percent);
 
-        const amountValue = roundToPrecision((aquaBalance * percent) / 100, 7);
+        const amountValue = (aquaBalance * percent) / 100;
 
-        setAmountForEachPair(amountValue);
-        setAmount(amountValue);
+        setAmount(roundToPrecision(amountValue, 7));
+
+        setPairsAmount(
+            selectedPairs.reduce((acc, pair) => {
+                acc[pair.market_key] = roundToPrecision(amountValue / selectedPairs.length, 7);
+                return acc;
+            }, {}),
+        );
     };
 
     const onInputChange = (value) => {
@@ -251,18 +228,157 @@ export const SelectedPairsForm = ({
             return;
         }
         setAmount(value);
-        setAmountForEachPair(value);
 
         const percentValue = roundToPrecision((Number(value) / Number(aquaBalance)) * 100, 2);
 
         setPercent(+percentValue);
+
+        setPairsAmount(
+            selectedPairs.reduce((acc, pair) => {
+                acc[pair.market_key] = roundToPrecision(value / selectedPairs.length, 7);
+                return acc;
+            }, {}),
+        );
+    };
+
+    const onPairInputChange = (value, marketKey) => {
+        if (Number.isNaN(Number(value))) {
+            return;
+        }
+
+        const newValue = {
+            ...pairsAmount,
+            ...{ [marketKey]: value },
+        };
+        setPairsAmount(newValue);
+
+        const sum = Object.values(newValue).reduce((acc: number, value: string) => {
+            acc += Number(value);
+            return acc;
+        }, 0);
+
+        setAmount(roundToPrecision(sum.toString(), 7));
+
+        const percentValue = roundToPrecision((Number(sum) / Number(aquaBalance)) * 100, 2);
+
+        setPercent(+percentValue);
+    };
+
+    const deletePair = (deletedPair: PairStats) => {
+        const updatedPairs = selectedPairs.filter(
+            (pair) => pair.market_key !== deletedPair.market_key,
+        );
+
+        setSelectedPairs(updatedPairs);
+        localStorage.setItem(SELECTED_PAIRS_ALIAS, JSON.stringify(updatedPairs));
+
+        if (!updatedPairs.length) {
+            close();
+            return;
+        }
+
+        const pairsAmountCopy = { ...pairsAmount };
+        delete pairsAmountCopy[deletedPair.market_key];
+
+        if (isHandleEdit) {
+            setPairsAmount(pairsAmountCopy);
+            const sum = Object.values(pairsAmountCopy).reduce((acc: number, value: string) => {
+                acc += Number(value);
+                return acc;
+            }, 0);
+
+            setAmount(roundToPrecision(sum.toString(), 7));
+
+            const percentValue = roundToPrecision((Number(sum) / Number(aquaBalance)) * 100, 2);
+
+            setPercent(+percentValue);
+
+            return;
+        }
+
+        setPairsAmount(
+            updatedPairs.reduce((acc, pair) => {
+                acc[pair.market_key] = roundToPrecision(Number(amount) / updatedPairs.length, 7);
+                return acc;
+            }, {}),
+        );
+    };
+
+    const resetForm = () => {
+        setAmount('');
+        setPercent(0);
+        setPairsAmount(
+            selectedPairs.reduce((acc, pair) => {
+                acc[pair.market_key] = '';
+                return acc;
+            }, {}),
+        );
+        setIsHandleEdit(false);
     };
 
     const onSubmit = async () => {
-        if (Number(totalAmount) > Number(amount)) {
+        if (pending) {
+            return;
+        }
+        if (Number(amount) > Number(aquaBalance)) {
             ToastService.showErrorToast(
-                `The total value cannot be greater than the selected amount of AQUA`,
+                `The value must be less or equal than ${formattedAquaBalance} AQUA`,
             );
+            return;
+        }
+        if (Number(amount) < MINIMUM_AMOUNT) {
+            ToastService.showErrorToast(
+                `The value must be greater than ${MINIMUM_AMOUNT.toFixed(7)} AQUA`,
+            );
+            return;
+        }
+
+        if (
+            Object.values(pairsAmount).some(
+                (value) => !value || !Number(value) || value < MINIMUM_AMOUNT,
+            )
+        ) {
+            ToastService.showErrorToast(
+                `The value of each vote must be greater than ${MINIMUM_AMOUNT.toFixed(7)} AQUA`,
+            );
+            return;
+        }
+
+        try {
+            setPending(true);
+
+            const voteOps = Object.entries(pairsAmount).map(([marketKey, voteAmount]) =>
+                StellarService.createVoteOperation(
+                    account.accountId(),
+                    marketKey,
+                    voteAmount,
+                    new Date(Date.now() + votePeriod).getTime(),
+                ),
+            );
+
+            const tx = await StellarService.buildTx(account, voteOps);
+            console.log(tx);
+            const result = await account.signAndSubmitTx(tx);
+            if (isMounted.current) {
+                setPending(false);
+                close();
+            }
+
+            localStorage.setItem(SELECTED_PAIRS_ALIAS, JSON.stringify([]));
+
+            if (
+                (result as { status: BuildSignAndSubmitStatuses }).status ===
+                BuildSignAndSubmitStatuses.pending
+            ) {
+                ToastService.showSuccessToast('More signatures required to complete');
+                return;
+            }
+            ToastService.showSuccessToast('Your vote has been cast');
+        } catch (e) {
+            ToastService.showErrorToast('Oops. Something went wrong.');
+            if (isMounted.current) {
+                setPending(false);
+            }
         }
     };
 
@@ -272,9 +388,16 @@ export const SelectedPairsForm = ({
             <ModalDescription>Lock your AQUA in the network to complete your vote</ModalDescription>
             <ContentRow>
                 <Label>Amount</Label>
+
                 {hasTrustLine ? (
                     <BalanceBlock>
-                        <Balance onClick={() => onRangeChange(100)}>
+                        <Balance
+                            onClick={() => {
+                                if (!isHandleEdit) {
+                                    onRangeChange(100);
+                                }
+                            }}
+                        >
                             {formattedAquaBalance} AQUA{' '}
                         </Balance>
                         available
@@ -296,39 +419,80 @@ export const SelectedPairsForm = ({
                         <span>AQUA</span>
                     </InputPostfix>
                 }
-                disabled={!hasTrustLine || !hasAqua}
+                disabled={!hasTrustLine || !hasAqua || isHandleEdit}
             />
 
             <RangeInput
                 onChange={onRangeChange}
                 value={percent}
-                disabled={!hasTrustLine || !hasAqua}
+                disabled={!hasTrustLine || !hasAqua || isHandleEdit}
             />
 
             <ContentRow>
                 <Label>Pairs ({selectedPairs.length})</Label>
+                {isHandleEdit && (
+                    <ResetValues
+                        onClick={() => {
+                            resetForm();
+                        }}
+                    >
+                        Reset values
+                    </ResetValues>
+                )}
             </ContentRow>
             <PairsList>
                 {selectedPairs.map((pair) => (
-                    <Pair
-                        key={pair.pairString}
-                        pairData={pair}
-                        handlerInputPair={handlerInputPair}
-                        removePair={removePair}
-                    />
+                    <PairBlock key={pair.market_key}>
+                        <AssetsInfo>
+                            <Pair
+                                base={{ code: pair.asset1_code, issuer: pair.asset1_issuer }}
+                                counter={{
+                                    code: pair.asset2_code,
+                                    issuer: pair.asset2_issuer,
+                                }}
+                                withoutDomains
+                            />
+                        </AssetsInfo>
+                        <StyledInput
+                            value={pairsAmount[pair.market_key]}
+                            onChange={(e) => {
+                                onPairInputChange(e.target.value, pair.market_key);
+                            }}
+                            onFocus={() => {
+                                setIsHandleEdit(true);
+                            }}
+                            isMedium
+                            isRightAligned
+                        />
+                        <CloseButton
+                            onClick={() => {
+                                deletePair(pair);
+                            }}
+                        >
+                            <CloseIcon />
+                        </CloseButton>
+                    </PairBlock>
                 ))}
             </PairsList>
             <TotalAmountRow>
                 <Label>Total:</Label>
                 <TotalAmount>
-                    {totalAmount} AQUA <AquaLogo />
+                    {amount || '0'} AQUA <AquaLogo />
                 </TotalAmount>
             </TotalAmountRow>
+
+            <ContentRow>
+                <Label>Vote Period</Label>
+            </ContentRow>
+
+            <VotePeriodSelect options={PeriodOptions} value={votePeriod} onChange={setVotePeriod} />
 
             {hasTrustLine && hasAqua ? (
                 <ClaimBack>
                     You can retrieve your AQUA + AQUA Voting reward on{' '}
-                    <ClaimBackDate>December 2, 2021</ClaimBackDate>
+                    <ClaimBackDate>
+                        {getDateString(Date.now() + votePeriod, { withTime: true })}
+                    </ClaimBackDate>
                 </ClaimBack>
             ) : (
                 <GetAquaBlock>
@@ -338,6 +502,7 @@ export const SelectedPairsForm = ({
                     </ExternalLink>
                 </GetAquaBlock>
             )}
+
             <StyledButton
                 fullWidth
                 onClick={() => onSubmit()}

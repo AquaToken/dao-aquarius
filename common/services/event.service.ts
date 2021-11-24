@@ -1,5 +1,5 @@
 export default class EventService {
-    private id: 0;
+    private id: number = 0;
     private listeners = new Map();
 
     sub(callback: (unknown: any) => unknown): () => void {
