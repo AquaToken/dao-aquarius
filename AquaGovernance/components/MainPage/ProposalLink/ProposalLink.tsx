@@ -7,6 +7,7 @@ import { getDateString, roundToPrecision } from '../../../../common/helpers/help
 import { Link, LinkProps } from 'react-router-dom';
 import { ProposalSimple } from '../../../api/types';
 import Fail from '../../../../common/assets/img/icon-fail.svg';
+import { MINIMUM_APPROVAL_PERCENT } from '../MainPage';
 
 const ProposalLinkBlock = styled(Link)`
     display: flex;
@@ -84,6 +85,7 @@ const getProposalInfo = (proposal: ProposalSimple): string => {
         is_simple_proposal: isSimpleProposal,
         vote_for_result: voteFor,
         vote_against_result: voteAgainst,
+        aqua_circulating_supply: aquaCirculatingSupply,
     } = proposal;
 
     const isEnd = new Date() >= new Date(dateEnd);
@@ -102,11 +104,19 @@ const getProposalInfo = (proposal: ProposalSimple): string => {
         const percent =
             ((isVoteForWin ? voteForValue : voteAgainstValue) / (voteForValue + voteAgainstValue)) *
             100;
-        const roundedPercent = roundToPrecision(percent, 2);
 
         if (Number.isNaN(percent)) {
             return 'No votes yet';
         }
+
+        const isCancelled =
+            ((voteForValue + voteAgainstValue) / Number(aquaCirculatingSupply)) * 100 <
+            MINIMUM_APPROVAL_PERCENT;
+
+        if (isCancelled) {
+            return 'Canceled - Not enough votes';
+        }
+        const roundedPercent = roundToPrecision(percent, 2);
 
         return `${
             isVoteForWin ? 'Voted "For"' : 'Voted "Against"'
@@ -114,14 +124,42 @@ const getProposalInfo = (proposal: ProposalSimple): string => {
     }
 };
 
-const ProposalLink = ({ proposal, ...props }: ProposalLinkProps): JSX.Element => {
-    const { title, end_at: dateEnd } = proposal;
+const getRightBlock = (proposal: ProposalSimple) => {
+    const {
+        end_at: dateEnd,
+        vote_for_result: voteFor,
+        vote_against_result: voteAgainst,
+        aqua_circulating_supply: aquaCirculatingSupply,
+    } = proposal;
+    const isEnd = new Date() >= new Date(dateEnd);
+
+    if (!isEnd) {
+        return <ArrowRight />;
+    }
 
     const dateString = getDateString(new Date(dateEnd).getTime());
-    const isEnd = new Date() >= new Date(dateEnd);
-    // TODO fix this when backend comes up
-    const isCanceled = false;
+
+    const isCancelled =
+        ((Number(voteAgainst) + Number(voteFor)) / Number(aquaCirculatingSupply)) * 100 <
+        MINIMUM_APPROVAL_PERCENT;
+
+    return isCancelled ? (
+        <CanceledLabel>
+            <FailIcon />
+            Canceled on {dateString}
+        </CanceledLabel>
+    ) : (
+        <EndedLabel>
+            <Success />
+            Ended on {dateString}
+        </EndedLabel>
+    );
+};
+
+const ProposalLink = ({ proposal, ...props }: ProposalLinkProps): JSX.Element => {
+    const { title } = proposal;
     const info = getProposalInfo(proposal);
+    const rightBlock = getRightBlock(proposal);
 
     return (
         <ProposalLinkBlock {...props}>
@@ -129,19 +167,7 @@ const ProposalLink = ({ proposal, ...props }: ProposalLinkProps): JSX.Element =>
                 <Label>{title}</Label>
                 <Info>{info}</Info>
             </Content>
-            {isEnd && (
-                <EndedLabel>
-                    <Success />
-                    Ended on {dateString}
-                </EndedLabel>
-            )}
-            {isCanceled && (
-                <CanceledLabel>
-                    <FailIcon />
-                    Canceled on {dateString}
-                </CanceledLabel>
-            )}
-            {!isCanceled && !isEnd && <ArrowRight />}
+            {rightBlock}
         </ProposalLinkBlock>
     );
 };

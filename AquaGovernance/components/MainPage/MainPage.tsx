@@ -17,6 +17,7 @@ import PageLoader from '../../../common/basics/PageLoader';
 import ExternalLink from '../../../common/basics/ExternalLink';
 
 export const CREATE_PROPOSAL_COST = 1000000;
+export const MINIMUM_APPROVAL_PERCENT = 5;
 
 const MainBlock = styled.main`
     flex: 1 0 auto;

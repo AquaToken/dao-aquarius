@@ -8,6 +8,7 @@ export type ProposalSimple = {
     vote_for_result: string;
     vote_against_result: string;
     is_simple_proposal: boolean;
+    aqua_circulating_supply: string;
 };
 
 export type Proposal = {
@@ -22,6 +23,7 @@ export type Proposal = {
     vote_against_result: string;
     vote_for_issuer: string;
     vote_for_result: string;
+    aqua_circulating_supply: string;
 };
 
 export type VoteChoiceSimple = 'vote_for' | 'vote_against';

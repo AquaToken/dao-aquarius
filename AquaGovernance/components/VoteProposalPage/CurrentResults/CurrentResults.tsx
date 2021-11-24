@@ -10,6 +10,7 @@ import Fail from '../../../../common/assets/img/icon-fail.svg';
 import Info from '../../../../common/assets/img/icon-info.svg';
 import Tooltip, { TOOLTIP_POSITION } from '../../../../common/basics/Tooltip';
 import { useState } from 'react';
+import { MINIMUM_APPROVAL_PERCENT } from '../../MainPage/MainPage';
 
 const ResultBlock = styled.div`
     width: 100%;
@@ -116,8 +117,10 @@ const CurrentResults = ({ proposal }: { proposal: Proposal }): JSX.Element => {
     const [showTooltip, setShowTooltip] = useState(false);
     const results = getResultsData(proposal);
     const isEnd = new Date() >= new Date(proposal.end_at);
-    const percentVote = 6.77;
-    const isApproved = percentVote > 5;
+
+    const votesSum = Number(proposal.vote_against_result) + Number(proposal.vote_for_result);
+    const percentVote = (votesSum / Number(proposal.aqua_circulating_supply)) * 100;
+    const isApproved = percentVote > MINIMUM_APPROVAL_PERCENT;
 
     return (
         <ResultBlock>
@@ -131,7 +134,9 @@ const CurrentResults = ({ proposal }: { proposal: Proposal }): JSX.Element => {
             })}
             <Quorum>
                 <Label>Minimum Approval:</Label>
-                <QuorumResult isApproved={isApproved}>{percentVote}%</QuorumResult>
+                <QuorumResult isApproved={isApproved}>
+                    {roundToPrecision(percentVote, 2)}%
+                </QuorumResult>
                 <Label>(&gt;5% needed)</Label>
                 {!isApproved && (
                     <StatusTag>
