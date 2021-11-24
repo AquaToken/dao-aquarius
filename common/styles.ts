@@ -5,6 +5,7 @@ export const COLORS = {
     descriptionText: '#000427',
     paragraphText: '#000636',
     grayText: '#6B6C83',
+    darkGrayText: '#4B4E67',
     buttonBackground: '#23024D',
     purple: '#872AB0',
     tooltip: '#8620B9',
