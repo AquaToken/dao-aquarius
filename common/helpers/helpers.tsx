@@ -31,6 +31,26 @@ export const getDateString = (timestamp: number, config?: GetDateStringConfig): 
     }`;
 };
 
+export const getTimeAgoValue = (timestamp: string): string => {
+    const minute = 60 * 1000;
+    const hour = 60 * minute;
+    const day = 24 * hour;
+    const timeFromTimestamp = Date.now() - new Date(timestamp).getTime();
+
+    if (timeFromTimestamp < hour) {
+        const minutesAgo = Math.floor(timeFromTimestamp / minute);
+        return `${minutesAgo} minute${minutesAgo === 1 ? '' : 's'} ago`;
+    }
+
+    if (timeFromTimestamp < day) {
+        const hoursAgo = Math.floor(timeFromTimestamp / hour);
+        return `${hoursAgo} hour${hoursAgo === 1 ? '' : 's'} ago`;
+    }
+
+    const daysAgo = Math.floor(timeFromTimestamp / day);
+    return `${daysAgo} day${daysAgo === 1 ? '' : 's'} ago`;
+};
+
 export const getTimeString = (timestamp: number): string => {
     const date = new Date(timestamp);
     const hours = date.getHours();

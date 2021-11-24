@@ -2,6 +2,7 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { COLORS } from '../styles';
 import { useEffect, useState } from 'react';
+import { Option } from './Select';
 
 const ToggleBlock = styled.div`
     background-color: ${COLORS.gray};
@@ -47,34 +48,37 @@ const VoteOption = styled.label`
     }
 `;
 
-const ToggleGroup = ({
+const ToggleGroup = <T,>({
     options,
-    defaultChecked,
+    value,
     onChange,
 }: {
-    defaultChecked?: string;
-    options: string[];
-    onChange: (value) => void;
+    value: T;
+    options: Option<T>[];
+    onChange: (value: T) => void;
 }): JSX.Element => {
-    const [selectedOption, setSelectedOption] = useState(defaultChecked || null);
+    const [selectedOption, setSelectedOption] = useState(
+        options.find((option) => option.value === value),
+    );
+
     useEffect(() => {
-        onChange(selectedOption);
-    }, [selectedOption]);
+        setSelectedOption(options.find((option) => option.value === value));
+    }, [value]);
 
     return (
         <ToggleBlock>
             {options.map((item) => {
-                const isSelected = selectedOption === item;
+                const isSelected = selectedOption?.value === item.value;
                 return (
-                    <VoteOption key={item} isChecked={isSelected}>
+                    <VoteOption key={item.value.toString()} isChecked={isSelected}>
                         <InputItem
                             type="checkbox"
                             checked={isSelected}
                             onChange={() => {
-                                setSelectedOption(item);
+                                onChange(item.value);
                             }}
                         />
-                        {item}
+                        {item.label}
                     </VoteOption>
                 );
             })}

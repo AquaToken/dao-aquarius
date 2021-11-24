@@ -12,6 +12,7 @@ export enum TOOLTIP_POSITION {
 const ChildrenBlock = styled.div`
     position: relative;
     display: inline-block;
+    width: 100%;
 `;
 
 const TooltipTop = css`

@@ -2,6 +2,10 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { COLORS } from '../../../../../common/styles';
 import IconChecked from '../../../../../common/assets/img/icon-checked.svg';
+import { useEffect, useState } from 'react';
+import { StellarService } from '../../../../../common/services/globalServices';
+import { StellarEvents } from '../../../../../common/services/stellar.service';
+import { formatBalance } from '../../../../../common/helpers/helpers';
 
 const StatusTagBody = styled.div`
     display: flex;
@@ -19,11 +23,27 @@ const StatusTagBody = styled.div`
     }
 `;
 
-const StatusTag = ({ children }: { children: React.ReactNode }): JSX.Element => {
+const StatusTag = ({ marketKey }: { marketKey: string }): JSX.Element => {
+    const [balance, setBalance] = useState(null);
+
+    useEffect(() => {
+        const unsub = StellarService.event.sub(({ type }) => {
+            if (type === StellarEvents.claimableUpdate) {
+                setBalance(StellarService.getMarketVotesValue(marketKey));
+            }
+        });
+
+        return () => unsub();
+    }, []);
+
+    if (!balance) {
+        return null;
+    }
+
     return (
         <StatusTagBody>
             <IconChecked />
-            {children}
+            {formatBalance(balance, true)} AQUA
         </StatusTagBody>
     );
 };

@@ -1,7 +1,7 @@
 import * as StellarSdk from 'stellar-sdk';
 import EventService from './event.service';
 import { Horizon } from 'stellar-sdk/lib/horizon_api';
-import { Memo, MemoType, OperationOptions } from 'stellar-sdk';
+import { Memo, MemoType, OperationOptions, ServerApi } from 'stellar-sdk';
 import { ToastService } from './globalServices';
 
 enum HORIZON_SERVER {
@@ -15,6 +15,7 @@ const TRANSACTION_TIMEOUT = 60 * 60 * 24 * 30;
 export enum StellarEvents {
     accountStream = 'account stream',
     handleAccountUpdate = 'handle account update',
+    claimableUpdate = 'claimable update',
 }
 
 export const AQUA_CODE = 'AQUA';
@@ -63,6 +64,8 @@ export default class StellarServiceClass {
     server: StellarSdk.Server | null = null;
     event: EventService = new EventService();
     closeStream: () => void | null = null;
+    closeEffectsStream: () => void | null = null;
+    private claimableBalances: ServerApi.ClaimableBalanceRecord[] | null = null;
     private keypair: StellarSdk.Keypair | null = null;
 
     constructor() {
@@ -218,6 +221,66 @@ export default class StellarServiceClass {
         if (this.closeStream) {
             this.closeStream();
         }
+    }
+
+    getClaimableBalances(publicKey: string) {
+        this.server
+            .claimableBalances()
+            .sponsor(publicKey)
+            .claimant(publicKey)
+            .order('desc')
+            .call()
+            .then((claimable) => {
+                this.claimableBalances = claimable.records;
+                this.event.trigger({ type: StellarEvents.claimableUpdate });
+            });
+    }
+
+    startClaimableBalancesStream(publicKey: string) {
+        this.getClaimableBalances(publicKey);
+
+        this.closeEffectsStream = this.server
+            .effects()
+            .forAccount(publicKey)
+            .cursor('now')
+            .stream({
+                onmessage: (res) => {
+                    if (
+                        (res as unknown as ServerApi.EffectRecord).type ===
+                            'claimable_balance_claimant_created' ||
+                        (res as unknown as ServerApi.EffectRecord).type ===
+                            'claimable_balance_claimed' ||
+                        (res as unknown as ServerApi.EffectRecord).type ===
+                            'claimable_balance_created'
+                    ) {
+                        this.getClaimableBalances(publicKey);
+                    }
+                },
+            });
+    }
+
+    closeClaimableBalancesStream(): void {
+        if (this.closeEffectsStream) {
+            this.closeEffectsStream();
+            this.claimableBalances = null;
+            this.event.trigger({ type: StellarEvents.claimableUpdate });
+        }
+    }
+
+    getMarketVotesValue(marketKey: string) {
+        if (!this.claimableBalances) {
+            return null;
+        }
+
+        return this.claimableBalances.reduce((acc, claim) => {
+            if (
+                claim.claimants.some((claimant) => claimant.destination === marketKey) &&
+                claim.asset === `${AQUA_CODE}:${AQUA_ISSUER}`
+            ) {
+                acc += Number(claim.amount);
+            }
+            return acc;
+        }, 0);
     }
 
     balancesHasChanges(
