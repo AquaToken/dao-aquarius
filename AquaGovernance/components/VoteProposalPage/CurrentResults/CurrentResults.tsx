@@ -7,6 +7,9 @@ import { SimpleProposalResultsLabels } from '../VoteProposalPage';
 import { Proposal } from '../../../api/types';
 import { flexAllCenter, flexRowSpaceBetween } from '../../../../common/mixins';
 import Fail from '../../../../common/assets/img/icon-fail.svg';
+import Info from '../../../../common/assets/img/icon-info.svg';
+import Tooltip, { TOOLTIP_POSITION } from '../../../../common/basics/Tooltip';
+import { useState } from 'react';
 
 const ResultBlock = styled.div`
     width: 100%;
@@ -46,6 +49,17 @@ const FailIcon = styled(Fail)`
     path {
         stroke: ${COLORS.pinkRed};
     }
+`;
+
+const InfoIconWrap = styled.div`
+    margin-left: 1.3rem;
+    height: 1.6rem;
+    cursor: help;
+`;
+
+const TooltipInner = styled.div`
+    width: 28.8rem;
+    white-space: pre-wrap;
 `;
 
 const StatusTag = styled.div`
@@ -99,9 +113,10 @@ const getResultsData = (proposal: Proposal) => {
 };
 
 const CurrentResults = ({ proposal }: { proposal: Proposal }): JSX.Element => {
+    const [showTooltip, setShowTooltip] = useState(false);
     const results = getResultsData(proposal);
     const isEnd = new Date() >= new Date(proposal.end_at);
-    const percentVote = 4;
+    const percentVote = 6.77;
     const isApproved = percentVote > 5;
 
     return (
@@ -123,6 +138,23 @@ const CurrentResults = ({ proposal }: { proposal: Proposal }): JSX.Element => {
                         <FailIcon /> Not enough votes
                     </StatusTag>
                 )}
+                <InfoIconWrap
+                    onMouseEnter={() => setShowTooltip(true)}
+                    onMouseLeave={() => setShowTooltip(false)}
+                >
+                    <Tooltip
+                        content={
+                            <TooltipInner>
+                                Minimum Approval is the percentage of the total AQUA token supply
+                                that is required to vote on a proposal before it can be approved.{' '}
+                            </TooltipInner>
+                        }
+                        position={TOOLTIP_POSITION.bottom}
+                        isShow={showTooltip}
+                    >
+                        <Info />
+                    </Tooltip>
+                </InfoIconWrap>
             </Quorum>
         </ResultBlock>
     );
