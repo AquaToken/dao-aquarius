@@ -6,6 +6,7 @@ import SuccessIcon from '../../../../common/assets/img/icon-success.svg';
 import { getDateString, roundToPrecision } from '../../../../common/helpers/helpers';
 import { Link, LinkProps } from 'react-router-dom';
 import { ProposalSimple } from '../../../api/types';
+import Fail from '../../../../common/assets/img/icon-fail.svg';
 
 const ProposalLinkBlock = styled(Link)`
     display: flex;
@@ -48,6 +49,23 @@ const EndedLabel = styled.div`
     padding: 0.8rem;
     font-size: 1.4rem;
     line-height: 1.6rem;
+`;
+const CanceledLabel = styled(EndedLabel)`
+    background-color: ${COLORS.gray};
+    color: ${COLORS.darkGrayText};
+`;
+
+const FailIcon = styled(Fail)`
+    height: 1.4rem;
+    width: 1.4rem;
+    margin-right: 0.6rem;
+
+    rect {
+        fill: ${COLORS.white};
+    }
+    path {
+        stroke: ${COLORS.grayText};
+    }
 `;
 
 const Success = styled(SuccessIcon)`
@@ -101,7 +119,8 @@ const ProposalLink = ({ proposal, ...props }: ProposalLinkProps): JSX.Element =>
 
     const dateString = getDateString(new Date(dateEnd).getTime());
     const isEnd = new Date() >= new Date(dateEnd);
-
+    // TODO fix this when backend comes up
+    const isCanceled = false;
     const info = getProposalInfo(proposal);
 
     return (
@@ -110,14 +129,19 @@ const ProposalLink = ({ proposal, ...props }: ProposalLinkProps): JSX.Element =>
                 <Label>{title}</Label>
                 <Info>{info}</Info>
             </Content>
-            {isEnd ? (
+            {isEnd && (
                 <EndedLabel>
                     <Success />
                     Ended on {dateString}
                 </EndedLabel>
-            ) : (
-                <ArrowRight />
             )}
+            {isCanceled && (
+                <CanceledLabel>
+                    <FailIcon />
+                    Canceled on {dateString}
+                </CanceledLabel>
+            )}
+            {!isCanceled && !isEnd && <ArrowRight />}
         </ProposalLinkBlock>
     );
 };
