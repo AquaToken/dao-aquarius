@@ -204,8 +204,7 @@ const AssetDropdown = ({ asset, onUpdate, disabled, onToggle, exclude }: AssetDr
                 return (
                     (assetItem.code.toLowerCase().includes(searchText.toLowerCase()) ||
                         assetInfo?.home_domain?.toLowerCase().includes(searchText.toLowerCase())) &&
-                    assetItem.code !== exclude?.code &&
-                    assetItem.issuer !== exclude?.issuer
+                    !(assetItem.code === exclude?.code && assetItem.issuer === exclude?.issuer)
                 );
             })
             .sort((a, b) => a.code.localeCompare(b.code));
