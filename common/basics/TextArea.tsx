@@ -24,11 +24,6 @@ const StyledArea = styled.textarea`
         margin: 0;
     }
 
-    /* Firefox */
-    //&[type='number'] {
-    //    -moz-appearance: textfield;
-    //}
-
     &::placeholder {
         color: ${COLORS.placeholder};
     }

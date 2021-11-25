@@ -9,12 +9,17 @@ const InputWrapper = styled.div`
     width: 100%;
 `;
 
-const StyledInput = styled.input<{ ref: RefObject<HTMLInputElement> }>`
-    height: 6.6rem;
+const StyledInput = styled.input<{
+    ref: RefObject<HTMLInputElement>;
+    isMedium?: boolean;
+    isRightAligned?: boolean;
+}>`
+    height: ${({ isMedium }) => (isMedium ? '4rem' : '6.6rem')};
+    padding: ${({ isMedium }) => (isMedium ? `1.1rem 1.6rem` : '2.4rem 6.5rem 2.4rem 2.4rem;')};
+    text-align: ${({ isRightAligned }) => (isRightAligned ? `right` : `start`)};
     width: 100%;
     border: 0.1rem solid ${COLORS.gray};
     border-radius: 0.5rem;
-    padding: 2.4rem 6.5rem 2.4rem 2.4rem;
     font-size: 1.6rem;
     line-height: 1.8rem;
     color: ${COLORS.paragraphText};
@@ -55,6 +60,8 @@ const Postfix = styled.div`
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     postfix?: React.ReactNode;
+    isMedium?: boolean;
+    isRightAligned?: boolean;
 }
 
 const Input = forwardRef(

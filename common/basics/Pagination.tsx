@@ -95,14 +95,14 @@ const Pagination = ({
         setPage(currentPage);
     }, [currentPage]);
 
-    if (totalCount <= pageSize) {
-        return null;
-    }
-
     const pages = useMemo(() => {
         const pagesCount = Math.ceil(totalCount / pageSize);
         return Array.from(Array(pagesCount), (_, i) => i + 1);
     }, [totalCount, pageSize]);
+
+    if (totalCount <= pageSize) {
+        return null;
+    }
 
     const visiblePages = getVisiblePages(pages, page);
 
