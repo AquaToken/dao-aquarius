@@ -31,7 +31,6 @@ const MINIMUM_AMOUNT = 0.0000001;
 
 const ContentRow = styled.div`
     ${flexRowSpaceBetween};
-    width: 52.8rem;
     margin-top: 3rem;
 
     &:first-child {
