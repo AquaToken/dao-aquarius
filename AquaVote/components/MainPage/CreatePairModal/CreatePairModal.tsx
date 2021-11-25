@@ -12,6 +12,9 @@ import useAuthStore from '../../../../common/store/authStore/useAuthStore';
 import Button from '../../../../common/basics/Button';
 import Pair from '../../common/Pair';
 import * as StellarSdk from 'stellar-sdk';
+import { StellarService, ToastService } from '../../../../common/services/globalServices';
+import { useIsMounted } from '../../../../common/hooks/useIsMounted';
+import { BuildSignAndSubmitStatuses } from '../../../../common/services/wallet-connect.service';
 
 const ContentRow = styled.div`
     ${flexRowSpaceBetween};
@@ -40,6 +43,9 @@ const Label = styled.span`
     ${flexAllCenter};
 `;
 
+const PairWithLumenCost = 2;
+const PairWithoutLumenCost = 2.5;
+
 const StyledButton = styled(Button)`
     margin-top: 3.2rem;
 `;
@@ -48,6 +54,8 @@ const CreatePairModal = ({
     params,
     close,
 }: ModalProps<{ base: any; counter: any }>): JSX.Element => {
+    const isMounted = useIsMounted();
+
     const { account } = useAuthStore();
     const { base, counter } = params;
 
@@ -59,8 +67,43 @@ const CreatePairModal = ({
     const counterInstance = new StellarSdk.Asset(counter.code, counter.issuer);
     const isCounterNative = counterInstance.isNative();
 
-    const onSubmit = () => {
-        console.log('create pair');
+    const pairHasNative = isBaseNative || isCounterNative;
+    const createCost = pairHasNative ? PairWithLumenCost : PairWithoutLumenCost;
+
+    const onSubmit = async () => {
+        if (account.getAvailableNativeBalance() < createCost) {
+            ToastService.showErrorToast("You don't have enough xlm");
+            return;
+        }
+        setPending(true);
+
+        try {
+            const tx = await StellarService.createMarketKeyTx(
+                account.accountId(),
+                baseInstance,
+                counterInstance,
+                createCost,
+            );
+            const result = await account.signAndSubmitTx(tx);
+            if (isMounted.current) {
+                setPending(false);
+                close();
+            }
+
+            if (
+                (result as { status: BuildSignAndSubmitStatuses }).status ===
+                BuildSignAndSubmitStatuses.pending
+            ) {
+                ToastService.showSuccessToast('More signatures required to complete');
+                return;
+            }
+            ToastService.showSuccessToast('Your vote has been cast');
+        } catch (e) {
+            ToastService.showErrorToast('Oops. Something went wrong');
+            if (isMounted.current) {
+                setPending(false);
+            }
+        }
     };
 
     return (
@@ -105,7 +148,7 @@ const CreatePairModal = ({
                 </ContentRow>
                 <ContentRow>
                     <Label>Total:</Label>
-                    <span>{isBaseNative || isCounterNative ? '2' : '2.5'} XLM</span>
+                    <span>{createCost} XLM</span>
                 </ContentRow>
             </Content>
 

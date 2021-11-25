@@ -6,11 +6,35 @@ import StatusTag from './StatusTag/StatusTag';
 import { PairStats } from '../../../api/types';
 import { formatBalance } from '../../../../common/helpers/helpers';
 import Pair from '../../common/Pair';
+import PageLoader from '../../../../common/basics/PageLoader';
+import { flexAllCenter } from '../../../../common/mixins';
 
 const TableBlock = styled.div`
     display: flex;
     flex-direction: column;
     width: 100%;
+    position: relative;
+`;
+
+const TableLoader = styled.div`
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: rgba(255, 255, 255, 0.8);
+    z-index: 10;
+    ${flexAllCenter};
+    animation: showLoader 0.1s ease-in-out;
+
+    @keyframes showLoader {
+        0% {
+            background-color: rgba(255, 255, 255, 0);
+        }
+        100% {
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+    }
 `;
 const TableHead = styled.div`
     display: flex;
@@ -69,40 +93,42 @@ const TableBodyRow = styled.div`
     }
 `;
 
-const SortingHeader = styled.button`
-    background: none;
-    border: none;
-    cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
-    padding: 0;
-    margin: 0;
-    width: 100%;
-    height: 100%;
-    color: inherit;
-
-    display: flex;
-    align-items: center;
-    justify-content: ${({ position }: { position?: string }) => {
-        if (position === 'right') return 'flex-end';
-        if (position === 'left') return 'flex-start';
-        return 'center';
-    }};
-
-    & > svg {
-        margin-left: 0.4rem;
-    }
-    &:hover {
-        color: ${COLORS.purple};
-    }
-`;
+// const SortingHeader = styled.button`
+//     background: none;
+//     border: none;
+//     cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+//     padding: 0;
+//     margin: 0;
+//     width: 100%;
+//     height: 100%;
+//     color: inherit;
+//
+//     display: flex;
+//     align-items: center;
+//     justify-content: ${({ position }: { position?: string }) => {
+//         if (position === 'right') return 'flex-end';
+//         if (position === 'left') return 'flex-start';
+//         return 'center';
+//     }};
+//
+//     & > svg {
+//         margin-left: 0.4rem;
+//     }
+//     &:hover {
+//         color: ${COLORS.purple};
+//     }
+// `;
 
 const Table = ({
     pairs,
     selectedPairs,
     selectPair,
+    loading,
 }: {
     pairs: PairStats[];
     selectedPairs: PairStats[];
     selectPair: (PairStats) => void;
+    loading: boolean;
 }): JSX.Element => {
     if (!pairs.length) {
         return null;
@@ -113,6 +139,12 @@ const Table = ({
     };
     return (
         <TableBlock>
+            {loading && (
+                <TableLoader>
+                    <PageLoader />
+                </TableLoader>
+            )}
+
             <TableHead>
                 <TableHeadRow>
                     <TableCell>Pair</TableCell>

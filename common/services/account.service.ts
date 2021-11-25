@@ -7,6 +7,8 @@ import { BuildSignAndSubmitStatuses } from './wallet-connect.service';
 
 export default class AccountService extends AccountResponse {
     authType?: LoginTypes;
+    num_sponsoring: number;
+    num_sponsored: number;
 
     constructor(account: typeof AccountRecord, authType: LoginTypes) {
         super(account);
@@ -55,5 +57,18 @@ export default class AccountService extends AccountResponse {
         }
 
         return +aquaBalance.balance;
+    }
+
+    getAvailableNativeBalance(): number | null {
+        const nativeBalance = this.balances.find(
+            ({ asset_type }) => asset_type === 'native',
+        ) as Horizon.BalanceLineNative;
+
+        const reserve = (2 + this.subentry_count + this.num_sponsoring - this.num_sponsored) * 0.5;
+
+        const available =
+            Number(nativeBalance.balance) - reserve - Number(nativeBalance.selling_liabilities);
+
+        return available > 0 ? available : 0;
     }
 }

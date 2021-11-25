@@ -303,7 +303,11 @@ const MainPage = (): JSX.Element => {
             </Background>
             <ExploreBlock>
                 <PairSearch>
-                    <AssetDropdown asset={searchBase} onUpdate={changeBaseSearch} />
+                    <AssetDropdown
+                        asset={searchBase}
+                        onUpdate={changeBaseSearch}
+                        exclude={searchCounter}
+                    />
                     <ArrowsIcon />
                     <Tooltip
                         content={
@@ -325,6 +329,7 @@ const MainPage = (): JSX.Element => {
                             onUpdate={changeCounterSearch}
                             disabled={!searchBase}
                             onToggle={setIsCounterSearchActive}
+                            exclude={searchBase}
                         />
                     </Tooltip>
                 </PairSearch>
@@ -341,24 +346,23 @@ const MainPage = (): JSX.Element => {
                         </StatusUpdate>
                     )}
                 </Header>
-                {pairsLoading ? (
-                    <PageLoader />
-                ) : (
-                    <>
-                        {searchBase && (
-                            <SearchEnabled>
-                                {pairs.length ? 'Search results' : 'No pair found'}
-                            </SearchEnabled>
-                        )}
-                        {searchBase && searchCounter && !pairs.length && (
-                            <CreatePair>
-                                <Pair base={searchBase} counter={searchCounter} />
-                                <Button onClick={() => createPair()}>create pair</Button>
-                            </CreatePair>
-                        )}
-                        <Table pairs={pairs} selectedPairs={chosenPairs} selectPair={addToVote} />
-                    </>
+                {searchBase && (
+                    <SearchEnabled>
+                        {pairs.length ? 'Search results' : 'No pair found'}
+                    </SearchEnabled>
                 )}
+                {searchBase && searchCounter && !pairs.length && (
+                    <CreatePair>
+                        <Pair base={searchBase} counter={searchCounter} />
+                        <Button onClick={() => createPair()}>create pair</Button>
+                    </CreatePair>
+                )}
+                <Table
+                    pairs={pairs}
+                    selectedPairs={chosenPairs}
+                    selectPair={addToVote}
+                    loading={pairsLoading}
+                />
                 {(!pairsLoading || changePageLoading) && (
                     <Pagination
                         pageSize={PAGE_SIZE}

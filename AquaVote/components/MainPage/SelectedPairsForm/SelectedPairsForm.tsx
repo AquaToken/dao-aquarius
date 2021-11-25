@@ -176,7 +176,7 @@ const MINUTE = 60 * 1000;
 const MONTH = 30 * 24 * 60 * 60 * 1000;
 
 const PeriodOptions: Option<number>[] = [
-    { label: '6 minutes', value: 6 * MINUTE },
+    { label: '10 minutes', value: 10 * MINUTE },
     { label: '1 Month', value: MONTH },
     { label: '2 Month', value: 2 * MONTH },
     { label: '3 Month', value: 3 * MONTH },
@@ -192,7 +192,7 @@ const SelectedPairsForm = ({ params, close }: ModalProps<{ pairs: PairStats[] }>
     const [amount, setAmount] = useState('');
     const [pending, setPending] = useState(false);
     const [selectedPairs, setSelectedPairs] = useState(pairs);
-    const [votePeriod, setVotePeriod] = useState(6 * MINUTE);
+    const [votePeriod, setVotePeriod] = useState(10 * MINUTE);
     const [pairsAmount, setPairsAmount] = useState(
         selectedPairs.reduce((acc, pair) => {
             acc[pair.market_key] = '';
@@ -357,7 +357,7 @@ const SelectedPairsForm = ({ params, close }: ModalProps<{ pairs: PairStats[] }>
             );
 
             const tx = await StellarService.buildTx(account, voteOps);
-            console.log(tx);
+
             const result = await account.signAndSubmitTx(tx);
             if (isMounted.current) {
                 setPending(false);
@@ -375,6 +375,7 @@ const SelectedPairsForm = ({ params, close }: ModalProps<{ pairs: PairStats[] }>
             }
             ToastService.showSuccessToast('Your vote has been cast');
         } catch (e) {
+            console.log(e);
             ToastService.showErrorToast('Oops. Something went wrong.');
             if (isMounted.current) {
                 setPending(false);
