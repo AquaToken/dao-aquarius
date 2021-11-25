@@ -173,10 +173,14 @@ const ResetValues = styled.div`
 const MINIMUM_AMOUNT = 0.0000001;
 
 const MINUTE = 60 * 1000;
-const MONTH = 30 * 24 * 60 * 60 * 1000;
+const HOUR = 60 * MINUTE;
+const DAY = 24 * HOUR;
+const MONTH = 30 * DAY;
 
 const PeriodOptions: Option<number>[] = [
-    { label: '10 minutes', value: 10 * MINUTE },
+    { label: '1 Day', value: DAY },
+    { label: '3 Days', value: 3 * DAY },
+    { label: '1 Week', value: 7 * DAY },
     { label: '1 Month', value: MONTH },
     { label: '2 Month', value: 2 * MONTH },
     { label: '3 Month', value: 3 * MONTH },
@@ -192,7 +196,7 @@ const SelectedPairsForm = ({ params, close }: ModalProps<{ pairs: PairStats[] }>
     const [amount, setAmount] = useState('');
     const [pending, setPending] = useState(false);
     const [selectedPairs, setSelectedPairs] = useState(pairs);
-    const [votePeriod, setVotePeriod] = useState(10 * MINUTE);
+    const [votePeriod, setVotePeriod] = useState(7 * DAY);
     const [pairsAmount, setPairsAmount] = useState(
         selectedPairs.reduce((acc, pair) => {
             acc[pair.market_key] = '';
