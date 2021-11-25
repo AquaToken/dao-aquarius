@@ -9,8 +9,11 @@ enum HORIZON_SERVER {
     lobstr = 'https://horizon.stellar.lobstr.co',
 }
 
-const FEE = 100000;
+const FEE = '100000';
 const TRANSACTION_TIMEOUT = 60 * 60 * 24 * 30;
+const MARKET_KEY_MARKER = 'GAV7YUQSLD674WGA32GDZ5WYGW3NRKD2XGMRY3NOLKIIP3W25J66XEP7';
+const MARKET_KEY_SIGNER_WEIGHT = 1;
+const MARKET_KEY_THRESHOLD = 10;
 
 export enum StellarEvents {
     accountStream = 'account stream',
@@ -334,5 +337,62 @@ export default class StellarServiceClass {
             asset: new StellarSdk.Asset(AQUA_CODE, AQUA_ISSUER),
             destination: AQUA_ISSUER,
         });
+    }
+
+    async createMarketKeyTx(sourceAccountId, asset1, asset2, amount) {
+        const newAccount = await this.loadAccount(sourceAccountId);
+        const marketKey = StellarSdk.Keypair.random();
+
+        const transactionBuilder = new StellarSdk.TransactionBuilder(newAccount, {
+            fee: FEE,
+            networkPassphrase: StellarSdk.Networks.PUBLIC,
+        });
+
+        transactionBuilder.addOperation(
+            StellarSdk.Operation.createAccount({
+                destination: marketKey.publicKey(),
+                startingBalance: amount.toString(),
+            }),
+        );
+
+        if (!asset1.isNative()) {
+            transactionBuilder.addOperation(
+                StellarSdk.Operation.changeTrust({
+                    source: marketKey.publicKey(),
+                    asset: asset1,
+                }),
+            );
+        }
+
+        if (!asset2.isNative()) {
+            transactionBuilder.addOperation(
+                StellarSdk.Operation.changeTrust({
+                    source: marketKey.publicKey(),
+                    asset: asset2,
+                }),
+            );
+        }
+
+        transactionBuilder.addOperation(
+            StellarSdk.Operation.setOptions({
+                source: marketKey.publicKey(),
+                masterWeight: MARKET_KEY_SIGNER_WEIGHT,
+                lowThreshold: MARKET_KEY_THRESHOLD,
+                medThreshold: MARKET_KEY_THRESHOLD,
+                highThreshold: MARKET_KEY_THRESHOLD,
+                signer: {
+                    ed25519PublicKey: MARKET_KEY_MARKER,
+                    weight: MARKET_KEY_SIGNER_WEIGHT,
+                },
+            }),
+        );
+
+        transactionBuilder.setTimeout(TRANSACTION_TIMEOUT);
+
+        const transaction = transactionBuilder.build();
+
+        transaction.sign(marketKey);
+
+        return transaction;
     }
 }

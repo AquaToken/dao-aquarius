@@ -155,7 +155,7 @@ export const getFilteredPairsList = async (
         if (marketVotes) {
             return { ...marketKey, ...marketVotes };
         } else {
-            return { ...marketKey };
+            return { ...marketKey, ...{ market_key: marketKey.account_id } };
         }
     });
 

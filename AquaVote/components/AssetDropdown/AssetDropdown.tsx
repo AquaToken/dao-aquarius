@@ -10,6 +10,7 @@ import useAssetsStore from '../../store/assetsStore/useAssetsStore';
 import { getAssetString } from '../../store/assetsStore/actions';
 import { useDebounce } from '../../../common/hooks/useDebounce';
 import * as StellarSdk from 'stellar-sdk';
+import { AssetSimple } from '../../api/types';
 
 const DropDown = styled.div<{ isOpen: boolean; disabled: boolean }>`
     width: 100%;
@@ -114,16 +115,17 @@ const SearchEmpty = styled.div`
 `;
 
 type AssetDropdownProps = {
-    asset: any;
+    asset: AssetSimple;
     onUpdate: (asset) => void;
     disabled?: boolean;
     onToggle?: (boolean) => void;
+    exclude?: AssetSimple;
 };
 
 const pattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?$/;
 const regexp = new RegExp(pattern);
 
-const AssetDropdown = ({ asset, onUpdate, disabled, onToggle }: AssetDropdownProps) => {
+const AssetDropdown = ({ asset, onUpdate, disabled, onToggle, exclude }: AssetDropdownProps) => {
     const { assets, assetsInfo, processNewAssets } = useAssetsStore();
 
     const [isOpen, setIsOpen] = useState(false);
@@ -200,12 +202,14 @@ const AssetDropdown = ({ asset, onUpdate, disabled, onToggle }: AssetDropdownPro
             .filter((assetItem) => {
                 const assetInfo = assetsInfo.get(getAssetString(assetItem));
                 return (
-                    assetItem.code.toLowerCase().includes(searchText.toLowerCase()) ||
-                    assetInfo?.home_domain?.toLowerCase().includes(searchText.toLowerCase())
+                    (assetItem.code.toLowerCase().includes(searchText.toLowerCase()) ||
+                        assetInfo?.home_domain?.toLowerCase().includes(searchText.toLowerCase())) &&
+                    assetItem.code !== exclude?.code &&
+                    assetItem.issuer !== exclude?.issuer
                 );
             })
             .sort((a, b) => a.code.localeCompare(b.code));
-    }, [assets, searchText, assetsInfo, searchResults]);
+    }, [assets, searchText, assetsInfo, searchResults, exclude]);
 
     return (
         <DropDown

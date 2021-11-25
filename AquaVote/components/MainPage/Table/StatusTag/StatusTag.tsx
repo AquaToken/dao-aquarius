@@ -24,7 +24,7 @@ const StatusTagBody = styled.div`
 `;
 
 const StatusTag = ({ marketKey }: { marketKey: string }): JSX.Element => {
-    const [balance, setBalance] = useState(null);
+    const [balance, setBalance] = useState(StellarService.getMarketVotesValue(marketKey));
 
     useEffect(() => {
         const unsub = StellarService.event.sub(({ type }) => {
