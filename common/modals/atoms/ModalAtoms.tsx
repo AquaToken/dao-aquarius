@@ -14,7 +14,7 @@ const ModalWrapper = styled.div`
     left: 0;
     ${flexAllCenter};
 
-    &:first-child {
+    &:last-child {
         background: rgba(15, 0, 35, 0.8);
     }
 `;
