@@ -14,14 +14,7 @@ const ToggleBlock = styled.div`
     color: ${COLORS.paragraphText};
 `;
 
-const InputItem = styled.input`
-    position: absolute;
-    top: 0;
-    left: 0;
-    opacity: 0;
-`;
-
-const VoteOption = styled.label`
+const VoteOption = styled.label<{ isChecked: boolean }>`
     display: flex;
     align-items: center;
     justify-content: center;
@@ -70,14 +63,14 @@ const ToggleGroup = <T,>({
             {options.map((item) => {
                 const isSelected = selectedOption?.value === item.value;
                 return (
-                    <VoteOption key={item.value.toString()} isChecked={isSelected}>
-                        <InputItem
-                            type="checkbox"
-                            checked={isSelected}
-                            onChange={() => {
-                                onChange(item.value);
-                            }}
-                        />
+                    <VoteOption
+                        key={item.value.toString()}
+                        isChecked={isSelected}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            onChange(item.value);
+                        }}
+                    >
                         {item.label}
                     </VoteOption>
                 );
