@@ -97,7 +97,10 @@ const CreatePairModal = ({
                 ToastService.showSuccessToast('More signatures required to complete');
                 return;
             }
-            ToastService.showSuccessToast('Your vote has been cast');
+            ToastService.showSuccessToast(
+                'Pair has been created! You will be able to see your pair in the list within 5 minutes',
+                20000,
+            );
         } catch (e) {
             ToastService.showErrorToast('Oops. Something went wrong');
             if (isMounted.current) {
