@@ -189,13 +189,7 @@ const MainPage = (): JSX.Element => {
                 <br />
                 Participate in the discussion of governance proposals on Discord
                 (#governance-voting).
-                <ExternalLink
-                    href="https://discord.gg/sgzFscHp4C"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    View discussion
-                </ExternalLink>
+                <ExternalLink href="https://discord.gg/sgzFscHp4C">View discussion</ExternalLink>
             </About>
         </MainBlock>
     );

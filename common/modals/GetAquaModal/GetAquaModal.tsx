@@ -115,10 +115,7 @@ const GetAquaModal = (): JSX.Element => {
                     </div>
                 </AssetInfo>
                 <InfoRow>
-                    <ExternalLink
-                        href="https://stellar.expert/explorer/public/asset/AQUA-GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA-1"
-                        target="_blank"
-                    >
+                    <ExternalLink href="https://stellar.expert/explorer/public/asset/AQUA-GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA-1">
                         View on Network Explorer
                     </ExternalLink>
                     <Text>
@@ -129,9 +126,7 @@ const GetAquaModal = (): JSX.Element => {
                     <Text>
                         If you used Stellar DEX previously you may be eligible to claim some AQUA.
                     </Text>
-                    <ExternalLink href="https://airdrop.aqua.network/" target="_blank">
-                        Learn more
-                    </ExternalLink>
+                    <ExternalLink href="https://airdrop.aqua.network/">Learn more</ExternalLink>
                 </InfoRow>
             </Container>
             <TrustedPlatformsBlock>
