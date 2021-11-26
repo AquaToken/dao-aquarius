@@ -105,7 +105,7 @@ const ExploreBlock = styled.div`
 `;
 
 const PairSearch = styled.div`
-    margin-top: -8.5rem;
+    margin-top: -5.5rem;
     height: 17rem;
     background: #ffffff;
     box-shadow: 0 20px 30px rgba(0, 6, 54, 0.06);
