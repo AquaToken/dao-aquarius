@@ -186,9 +186,12 @@ const PeriodOptions: Option<number>[] = [
     { label: '3 Month', value: 3 * MONTH },
 ];
 
-const SelectedPairsForm = ({ params, close }: ModalProps<{ pairs: PairStats[] }>) => {
+const SelectedPairsForm = ({
+    params,
+    close,
+}: ModalProps<{ pairs: PairStats[]; updatePairs: () => void }>) => {
     const { account } = useAuthStore();
-    const { pairs } = params;
+    const { pairs, updatePairs } = params;
 
     const isMounted = useIsMounted();
 
@@ -275,6 +278,7 @@ const SelectedPairsForm = ({ params, close }: ModalProps<{ pairs: PairStats[] }>
 
         setSelectedPairs(updatedPairs);
         localStorage.setItem(SELECTED_PAIRS_ALIAS, JSON.stringify(updatedPairs));
+        updatePairs();
 
         if (!updatedPairs.length) {
             close();
@@ -378,6 +382,7 @@ const SelectedPairsForm = ({ params, close }: ModalProps<{ pairs: PairStats[] }>
                 return;
             }
             ToastService.showSuccessToast('Your vote has been cast');
+            StellarService.getClaimableBalances(account.accountId());
         } catch (e) {
             console.log(e);
             ToastService.showErrorToast('Oops. Something went wrong.');

@@ -189,9 +189,16 @@ const MainPage = (): JSX.Element => {
     const [page, setPage] = useState(1);
     const { isLogged } = useAuthStore();
 
+    const updateChosenPairs = () => {
+        setChosenPairs(getCachedChosenPairs());
+    };
+
     const startVote = () => {
         if (isLogged) {
-            ModalService.openModal(SelectedPairsForm, { pairs: chosenPairs }).then(() => {
+            ModalService.openModal(SelectedPairsForm, {
+                pairs: chosenPairs,
+                updatePairs: updateChosenPairs,
+            }).then(() => {
                 setChosenPairs(getCachedChosenPairs());
             });
             return;
@@ -340,9 +347,12 @@ const MainPage = (): JSX.Element => {
                         onChange={(option) => changeSort(option)}
                         options={options}
                     />
-                    {Boolean(pairs.length) && (
+                    {Boolean(pairs.length && pairs.some((pair) => Boolean(pair.timestamp))) && (
                         <StatusUpdate>
-                            Last updated {getTimeAgoValue((pairs[0] as PairStats).timestamp)}
+                            Last updated{' '}
+                            {getTimeAgoValue(
+                                pairs.find((pair) => Boolean(pair.timestamp)).timestamp,
+                            )}
                         </StatusUpdate>
                     )}
                 </Header>
