@@ -24,7 +24,7 @@ interface ExternalLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement
 
 const ExternalLink = ({ children, ...props }: ExternalLinkProps): JSX.Element => {
     return (
-        <LinkBody {...props}>
+        <LinkBody {...props} target="_blank" rel="noreferrer noopener">
             {children}
             <LinkArrow />
         </LinkBody>
