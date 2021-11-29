@@ -24,6 +24,8 @@ export type Proposal = {
     vote_for_issuer: string;
     vote_for_result: string;
     aqua_circulating_supply: string;
+    discord_channel_name?: string | null;
+    discord_channel_url?: string | null;
 };
 
 export type VoteChoiceSimple = 'vote_for' | 'vote_against';

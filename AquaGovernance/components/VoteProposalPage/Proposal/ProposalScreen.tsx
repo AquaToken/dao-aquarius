@@ -117,7 +117,15 @@ const ProposalScreen = ({
     isTemplate?: boolean;
     setScreenState?: (state) => void;
 }): JSX.Element => {
-    const { title, text, proposed_by: proposedBy, start_at: startDate, end_at: endDate } = proposal;
+    const {
+        title,
+        text,
+        proposed_by: proposedBy,
+        start_at: startDate,
+        end_at: endDate,
+        discord_channel_name: discordChannelName,
+        discord_channel_url: discordChannelUrl,
+    } = proposal;
 
     const startDateView = getDateString(new Date(startDate).getTime(), { withTime: true });
     const endDateView = getDateString(new Date(endDate).getTime(), { withTime: true });
@@ -166,9 +174,9 @@ const ProposalScreen = ({
                 <LeftContent>
                     <Title>Discussion</Title>
                     <DetailsDescription>
-                        Participate in the discussion of this proposal on Discord
-                        (#governance-voting).
-                        <ExternalLink href="https://discord.gg/sgzFscHp4C">
+                        Participate in the discussion of this proposal on Discord (#
+                        {discordChannelName || 'governance-voting'}).
+                        <ExternalLink href={discordChannelUrl || 'https://discord.gg/sgzFscHp4C'}>
                             View discussion
                         </ExternalLink>
                     </DetailsDescription>
