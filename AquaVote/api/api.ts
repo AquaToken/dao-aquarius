@@ -39,6 +39,7 @@ export enum SortTypes {
     popular = 'popular',
     topVoted = 'top_voted',
     topVolume = 'topVolume',
+    yourVotes = 'your_votes',
 }
 
 const getPairUrl = (sortType: SortTypes, pageSize: number, page: number): string => {
@@ -92,6 +93,44 @@ export const getPairsList = async (
     });
 
     return { count: marketsVotes.data.count, pairs };
+};
+
+export const getUserPairsList = async (keys: string[]) => {
+    if (!keys.length) {
+        return [];
+    }
+
+    const params = new URLSearchParams();
+
+    keys.forEach((key) => {
+        params.append('account_id', key);
+    });
+
+    const marketKeys = await axios.get<ListResponse<MarketKey>>(`${marketKeysUrl}?limit=200`, {
+        params,
+    });
+
+    const marketVotesParams = new URLSearchParams();
+
+    marketKeys.data.results.forEach((marketKey) => {
+        marketVotesParams.append('market_key', marketKey.account_id);
+    });
+
+    const marketsVotes = await axios.get<ListResponse<MarketVotes>>(votingTrackerUrl, {
+        params: marketVotesParams,
+    });
+
+    return marketKeys.data.results.map((marketKey) => {
+        const marketVotes = marketsVotes.data.results.find(
+            (vote) => vote.market_key === marketKey.account_id,
+        );
+
+        if (marketVotes) {
+            return { ...marketKey, ...marketVotes };
+        } else {
+            return { ...marketKey, ...{ market_key: marketKey.account_id } };
+        }
+    });
 };
 
 const getAssetParam = (asset: AssetSimple) =>

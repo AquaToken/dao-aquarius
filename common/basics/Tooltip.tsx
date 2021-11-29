@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
-import { COLORS } from '../styles';
+import { COLORS, Z_INDEX } from '../styles';
 
 export enum TOOLTIP_POSITION {
     top = 'top',
@@ -11,8 +11,7 @@ export enum TOOLTIP_POSITION {
 
 const ChildrenBlock = styled.div`
     position: relative;
-    display: inline-block;
-    width: 100%;
+    display: flex;
 `;
 
 const TooltipTop = css`
@@ -78,6 +77,7 @@ const TooltipBody = styled.div<{ position: TOOLTIP_POSITION }>`
     background-color: ${COLORS.tooltip};
     border-radius: 0.5rem;
     white-space: nowrap;
+    z-index: ${Z_INDEX.tooltip};
 
     &::after {
         content: '';
@@ -97,6 +97,7 @@ const Tooltip = ({
     content,
     position = TOOLTIP_POSITION.top,
     isShow,
+    ...props
 }: {
     children: React.ReactNode;
     content: React.ReactNode;
@@ -104,7 +105,7 @@ const Tooltip = ({
     isShow: boolean;
 }): JSX.Element => {
     return (
-        <ChildrenBlock>
+        <ChildrenBlock {...props}>
             {children}
             {isShow && <TooltipBody position={position}>{content}</TooltipBody>}
         </ChildrenBlock>

@@ -15,18 +15,36 @@ import * as StellarSdk from 'stellar-sdk';
 import { StellarService, ToastService } from '../../../../common/services/globalServices';
 import { useIsMounted } from '../../../../common/hooks/useIsMounted';
 import { BuildSignAndSubmitStatuses } from '../../../../common/services/wallet-connect.service';
+import Info from '../../../../common/assets/img/icon-info.svg';
+import Tooltip, { TOOLTIP_POSITION } from '../../../../common/basics/Tooltip';
 
 const ContentRow = styled.div`
-    ${flexRowSpaceBetween};
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     width: 52.8rem;
     margin-top: 3rem;
     font-size: 1.6rem;
     line-height: 2.8rem;
     color: ${COLORS.paragraphText};
-`;
-const Content = styled.div`
     padding-bottom: 2.6rem;
     border-bottom: 0.1rem dashed ${COLORS.gray};
+`;
+
+const Cost = styled.div`
+    margin-left: auto;
+    line-height: 1.8rem;
+    font-size: 1.6rem;
+    margin-right: 1.2rem;
+    color: ${COLORS.grayText};
+`;
+
+const InfoIconWrap = styled.div`
+    margin-left: auto;
+    height: 1.8rem;
+    width: 1.6rem;
+    cursor: help;
+    ${flexAllCenter};
 `;
 
 const AssetsInfo = styled.div`
@@ -37,10 +55,28 @@ const AssetsInfo = styled.div`
 `;
 
 const Label = styled.span`
-    font-size: 1.6rem;
-    line-height: 1.8rem;
-    color: ${COLORS.grayText};
     ${flexAllCenter};
+`;
+
+const TooltipInner = styled.div`
+    display: flex;
+    flex-direction: column;
+    font-size: 1.4rem;
+    padding: 0.5rem;
+`;
+
+const TooltipRow = styled.div`
+    ${flexRowSpaceBetween};
+
+    &:not(:last-child) {
+        margin-bottom: 1rem;
+    }
+`;
+
+const TooltipLabel = styled.div`
+    margin-right: 5rem;
+    color: ${COLORS.white};
+    opacity: 0.5;
 `;
 
 const PairWithLumenCost = 2;
@@ -54,6 +90,7 @@ const CreatePairModal = ({
     params,
     close,
 }: ModalProps<{ base: any; counter: any }>): JSX.Element => {
+    const [showTooltip, setShowTooltip] = useState(false);
     const isMounted = useIsMounted();
 
     const { account } = useAuthStore();
@@ -115,7 +152,7 @@ const CreatePairModal = ({
             <ModalDescription>
                 To create a pair, you need to pay for the trustlines for transactions.
             </ModalDescription>
-            <Content>
+            <div>
                 <AssetsInfo>
                     <Pair
                         verticalDirections
@@ -130,34 +167,56 @@ const CreatePairModal = ({
                     />
                 </AssetsInfo>
                 <ContentRow>
-                    <Label>Base account reserve</Label>
-                    <span>1 XLM</span>
+                    <Label>Pair creating:</Label>
+                    <Cost>{createCost} XLM</Cost>
+                    <Tooltip
+                        content={
+                            <TooltipInner>
+                                <TooltipRow>
+                                    <TooltipLabel>Base account reserve</TooltipLabel>
+                                    <span>1 XLM</span>
+                                </TooltipRow>
+                                {!isBaseNative && (
+                                    <TooltipRow>
+                                        <TooltipLabel>{base.code} trustline</TooltipLabel>
+                                        <span>0.5 XLM</span>
+                                    </TooltipRow>
+                                )}
+                                {!isCounterNative && (
+                                    <TooltipRow>
+                                        <TooltipLabel>{counter.code} trustline</TooltipLabel>
+                                        <span>0.5 XLM</span>
+                                    </TooltipRow>
+                                )}
+                                <TooltipRow>
+                                    <TooltipLabel>Marker Key signer</TooltipLabel>
+                                    <span>0.5 XLM</span>
+                                </TooltipRow>
+                                <TooltipRow>
+                                    <div>Total</div>
+                                    <span>{createCost} XLM</span>
+                                </TooltipRow>
+                            </TooltipInner>
+                        }
+                        position={TOOLTIP_POSITION.left}
+                        isShow={showTooltip}
+                    >
+                        <InfoIconWrap
+                            onMouseEnter={() => {
+                                setShowTooltip(true);
+                            }}
+                            onMouseLeave={() => {
+                                setShowTooltip(false);
+                            }}
+                        >
+                            <Info />
+                        </InfoIconWrap>
+                    </Tooltip>
                 </ContentRow>
-                {!isBaseNative && (
-                    <ContentRow>
-                        <Label>{base.code} trustline</Label>
-                        <span>0.5 XLM</span>
-                    </ContentRow>
-                )}
-                {!isCounterNative && (
-                    <ContentRow>
-                        <Label>{counter.code} trustline</Label>
-                        <span>0.5 XLM</span>
-                    </ContentRow>
-                )}
-                <ContentRow>
-                    <Label>Marker Key signer</Label>
-                    <span>0.5 XLM</span>
-                </ContentRow>
-                <ContentRow>
-                    <Label>Total:</Label>
-                    <span>{createCost} XLM</span>
-                </ContentRow>
-            </Content>
-
-            <StyledButton fullWidth onClick={() => onSubmit()} pending={pending}>
-                Create pair
-            </StyledButton>
+                <StyledButton fullWidth onClick={() => onSubmit()} pending={pending}>
+                    Create pair
+                </StyledButton>
+            </div>
         </>
     );
 };

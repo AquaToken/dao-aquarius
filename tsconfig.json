@@ -3,6 +3,7 @@
         "**/*.ts", "**/*.tsx"
     ],
     "compilerOptions": {
-        "jsx": "react"
+        "jsx": "react",
+        "target": "es5"
     }
 }
