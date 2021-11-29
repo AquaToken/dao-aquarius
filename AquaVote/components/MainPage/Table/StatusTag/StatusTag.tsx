@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { StellarService } from '../../../../../common/services/globalServices';
 import { StellarEvents } from '../../../../../common/services/stellar.service';
 import { formatBalance } from '../../../../../common/helpers/helpers';
+import useAuthStore from '../../../../../common/store/authStore/useAuthStore';
 
 const StatusTagBody = styled.div`
     display: flex;
@@ -24,17 +25,23 @@ const StatusTagBody = styled.div`
 `;
 
 const StatusTag = ({ marketKey }: { marketKey: string }): JSX.Element => {
-    const [balance, setBalance] = useState(StellarService.getMarketVotesValue(marketKey));
+    const { account, isLogged } = useAuthStore();
+    const [balance, setBalance] = useState(
+        isLogged ? StellarService.getMarketVotesValue(marketKey, account?.accountId()) : null,
+    );
 
     useEffect(() => {
+        if (!account) {
+            setBalance(null);
+        }
         const unsub = StellarService.event.sub(({ type }) => {
             if (type === StellarEvents.claimableUpdate) {
-                setBalance(StellarService.getMarketVotesValue(marketKey));
+                setBalance(StellarService.getMarketVotesValue(marketKey, account?.accountId()));
             }
         });
 
         return () => unsub();
-    }, []);
+    }, [account]);
 
     if (!balance) {
         return null;

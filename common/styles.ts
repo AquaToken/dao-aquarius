@@ -22,6 +22,7 @@ export const FONT_FAMILY = {
 
 export const Z_INDEX = {
     accountMenu: 100,
+    tooltip: 400,
     modal: 500,
     toast: 600,
 };

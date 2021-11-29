@@ -14,12 +14,12 @@ import ToggleGroup from '../../../common/basics/ToggleGroup';
 import Table from './Table/Table';
 import FloatingButton from './FloatingButton/FloatingButton';
 import SelectedPairsForm from './SelectedPairsForm/SelectedPairsForm';
-import { ModalService } from '../../../common/services/globalServices';
+import { ModalService, StellarService } from '../../../common/services/globalServices';
 import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
 import useAuthStore from '../../../common/store/authStore/useAuthStore';
 import AssetDropdown from '../AssetDropdown/AssetDropdown';
 import Arrows from '../../../common/assets/img/icon-arrows-circle.svg';
-import { getFilteredPairsList, getPairsList, SortTypes } from '../../api/api';
+import { getFilteredPairsList, getPairsList, getUserPairsList, SortTypes } from '../../api/api';
 import PageLoader from '../../../common/basics/PageLoader';
 import useAssetsStore from '../../store/assetsStore/useAssetsStore';
 import Tooltip, { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
@@ -30,6 +30,7 @@ import Button from '../../../common/basics/Button';
 import { getTimeAgoValue } from '../../../common/helpers/helpers';
 import { Option } from '../../../common/basics/Select';
 import Pagination from '../../../common/basics/Pagination';
+import { StellarEvents } from '../../../common/services/stellar.service';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -122,6 +123,10 @@ const ArrowsIcon = styled(Arrows)`
     min-width: 1.6rem;
 `;
 
+const TooltipFullWidth = styled(Tooltip)`
+    width: 100%;
+`;
+
 const TooltipContent = styled.div`
     display: flex;
     ${flexAllCenter};
@@ -174,11 +179,13 @@ export const SELECTED_PAIRS_ALIAS = 'selected pairs';
 
 const getCachedChosenPairs = () => JSON.parse(localStorage.getItem(SELECTED_PAIRS_ALIAS) || '[]');
 
-const options: Option<SortTypes>[] = [
+const defaultOptions: Option<SortTypes>[] = [
     { label: 'Popular', value: SortTypes.popular },
     { label: 'Top 100', value: SortTypes.topVoted },
     { label: 'Top Volume', value: SortTypes.topVolume },
 ];
+
+const yourVotesOption: Option<SortTypes> = { label: 'Your Votes', value: SortTypes.yourVotes };
 
 const PAGE_SIZE = 10;
 
@@ -187,7 +194,32 @@ const MainPage = (): JSX.Element => {
     const [chosenPairs, setChosenPairs] = useState(getCachedChosenPairs());
     const [sort, setSort] = useState(SortTypes.popular);
     const [page, setPage] = useState(1);
-    const { isLogged } = useAuthStore();
+    const { isLogged, account } = useAuthStore();
+    const [isClaimableBalancesLoaded, setIsClaimableBalancesLoaded] = useState(false);
+    const [options, setOptions] = useState(defaultOptions);
+
+    useEffect(() => {
+        const unsub = StellarService.event.sub(({ type }) => {
+            if (type === StellarEvents.claimableUpdate) {
+                setIsClaimableBalancesLoaded(StellarService.isClaimableBalancesLoaded);
+            }
+        });
+
+        return () => unsub();
+    }, []);
+
+    useEffect(() => {
+        if (isClaimableBalancesLoaded) {
+            setOptions([...defaultOptions, yourVotesOption]);
+            return;
+        }
+        if (options.some((option) => option.value === SortTypes.yourVotes)) {
+            setOptions(defaultOptions);
+        }
+        if (sort === SortTypes.yourVotes) {
+            setSort(SortTypes.popular);
+        }
+    }, [isClaimableBalancesLoaded]);
 
     const updateChosenPairs = () => {
         setChosenPairs(getCachedChosenPairs());
@@ -228,12 +260,25 @@ const MainPage = (): JSX.Element => {
     };
 
     useEffect(() => {
-        if (sort) {
-            setPairsLoading(true);
+        if (!sort) {
+            return;
+        }
+        setPairsLoading(true);
+        if (sort !== SortTypes.yourVotes) {
             getPairsList(sort, PAGE_SIZE, page).then((result) => {
                 setPairs(result.pairs);
                 setCount(result.count);
                 processAssetsFromPairs(result.pairs);
+                setPairsLoading(false);
+                setChangePageLoading(false);
+            });
+        } else {
+            const keys = StellarService.getKeysSimilarToMarketKeys(account.accountId());
+
+            getUserPairsList(keys).then((result) => {
+                setPairs(result);
+                processAssetsFromPairs(result);
+                setCount(result.length);
                 setPairsLoading(false);
                 setChangePageLoading(false);
             });
@@ -316,7 +361,7 @@ const MainPage = (): JSX.Element => {
                         exclude={searchCounter}
                     />
                     <ArrowsIcon />
-                    <Tooltip
+                    <TooltipFullWidth
                         content={
                             <TooltipContent>
                                 <span>&#128075;</span>
@@ -338,7 +383,7 @@ const MainPage = (): JSX.Element => {
                             onToggle={setIsCounterSearchActive}
                             exclude={searchBase}
                         />
-                    </Tooltip>
+                    </TooltipFullWidth>
                 </PairSearch>
                 <Header>
                     <TitleHeader>Explore</TitleHeader>
@@ -361,6 +406,9 @@ const MainPage = (): JSX.Element => {
                         {pairs.length ? 'Search results' : 'No pair found'}
                     </SearchEnabled>
                 )}
+                {sort === SortTypes.yourVotes && !pairs.length && (
+                    <SearchEnabled>No pairs found</SearchEnabled>
+                )}
                 {searchBase && searchCounter && !pairs.length && (
                     <CreatePair>
                         <Pair base={searchBase} counter={searchCounter} />
@@ -373,15 +421,17 @@ const MainPage = (): JSX.Element => {
                     selectPair={addToVote}
                     loading={pairsLoading}
                 />
-                {(!pairsLoading || changePageLoading) && (
-                    <Pagination
-                        pageSize={PAGE_SIZE}
-                        totalCount={sort === SortTypes.popular ? PAGE_SIZE : count}
-                        onPageChange={(page) => changePage(page)}
-                        currentPage={page}
-                        itemName="pairs"
-                    />
-                )}
+                {(!pairsLoading || changePageLoading) &&
+                    sort !== SortTypes.yourVotes &&
+                    sort !== SortTypes.popular && (
+                        <Pagination
+                            pageSize={PAGE_SIZE}
+                            totalCount={count}
+                            onPageChange={(page) => changePage(page)}
+                            currentPage={page}
+                            itemName="pairs"
+                        />
+                    )}
                 {chosenPairs.length > 0 && (
                     <FloatingButton onClick={() => startVote()}>
                         {chosenPairs.length}

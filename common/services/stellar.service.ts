@@ -75,6 +75,10 @@ export default class StellarServiceClass {
         this.startHorizonServer();
     }
 
+    get isClaimableBalancesLoaded() {
+        return this.claimableBalances !== null;
+    }
+
     loginWithSecret(secretKey: string): Promise<string> {
         return new Promise((resolve, reject) => {
             try {
@@ -270,20 +274,59 @@ export default class StellarServiceClass {
         }
     }
 
-    getMarketVotesValue(marketKey: string) {
+    getMarketVotesValue(marketKey: string, accountId: string) {
         if (!this.claimableBalances) {
             return null;
         }
 
         return this.claimableBalances.reduce((acc, claim) => {
-            if (
-                claim.claimants.some((claimant) => claimant.destination === marketKey) &&
-                claim.asset === `${AQUA_CODE}:${AQUA_ISSUER}`
-            ) {
+            if (claim.claimants.length !== 2) {
+                return acc;
+            }
+            const hasMarker = claim.claimants.some(
+                (claimant) => claimant.destination === marketKey,
+            );
+            const hasPendingSelfClaim = claim.claimants.some(
+                (claimant) =>
+                    claimant.destination === accountId &&
+                    new Date(claimant.predicate.not.abs_before) > new Date(),
+            );
+            const isAqua = claim.asset === `${AQUA_CODE}:${AQUA_ISSUER}`;
+
+            if (hasMarker && hasPendingSelfClaim && isAqua) {
                 acc += Number(claim.amount);
             }
             return acc;
         }, 0);
+    }
+
+    getKeysSimilarToMarketKeys(accountId: string): string[] {
+        if (!this.claimableBalances) {
+            return null;
+        }
+
+        return this.claimableBalances.reduce((acc, claim) => {
+            if (claim.claimants.length !== 2) {
+                return acc;
+            }
+            const isAqua = claim.asset === `${AQUA_CODE}:${AQUA_ISSUER}`;
+            const hasPendingSelfClaim = claim.claimants.some(
+                (claimant) =>
+                    claimant.destination === accountId &&
+                    new Date(claimant.predicate.not.abs_before) > new Date(),
+            );
+            if (isAqua && hasPendingSelfClaim) {
+                const similarToMarketKey = claim.claimants.find(
+                    (claimant) => claimant.destination !== accountId,
+                );
+
+                if (!similarToMarketKey) {
+                    return acc;
+                }
+                acc.push(similarToMarketKey.destination);
+            }
+            return acc;
+        }, []);
     }
 
     balancesHasChanges(
