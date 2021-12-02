@@ -2,7 +2,7 @@ import * as React from 'react';
 import styled from 'styled-components';
 import Sidebar from '../Sidebar/Sidebar';
 import ArrowLeft from '../../../../common/assets/img/icon-arrow-left.svg';
-import CopyButton from '../../../../common/basics/CopyButton';
+import ExternalIcon from '../../../../common/assets/img/icon-external-link.svg';
 import AccountViewer from '../AccountViewer/AccountViewer';
 import { commonMaxWidth, flexAllCenter, respondDown } from '../../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../../common/styles';
@@ -108,6 +108,20 @@ const DetailsDescription = styled.div`
     color: ${COLORS.paragraphText};
 `;
 
+const ExternalButton = styled.div`
+    margin-left: 1rem;
+    ${flexAllCenter};
+    cursor: pointer;
+`;
+
+const AccountBlock = styled.div`
+    ${flexAllCenter};
+`;
+
+const viewOnStellarExpert = (account: string) => {
+    window.open(`https://stellar.expert/explorer/public/account/${account}`, '_blank');
+};
+
 const ProposalScreen = ({
     proposal,
     isTemplate,
@@ -197,9 +211,12 @@ const ProposalScreen = ({
                         <Column>
                             <DetailsTitle>Proposed by:</DetailsTitle>
                             <DetailsDescription>
-                                <CopyButton text={proposedBy}>
+                                <AccountBlock>
                                     <AccountViewer pubKey={proposedBy} />
-                                </CopyButton>
+                                    <ExternalButton onClick={() => viewOnStellarExpert(proposedBy)}>
+                                        <ExternalIcon />
+                                    </ExternalButton>
+                                </AccountBlock>
                             </DetailsDescription>
                         </Column>
                     </DataDetails>
