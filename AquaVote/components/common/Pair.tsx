@@ -8,6 +8,8 @@ import { LumenInfo } from '../../store/assetsStore/reducer';
 import { COLORS } from '../../../common/styles';
 import DotsLoader from '../../../common/basics/DotsLoader';
 import AssetLogo, { logoStyles } from '../AssetDropdown/AssetLogo';
+import External from '../../../common/assets/img/icon-external-link.svg';
+import { flexAllCenter } from '../../../common/mixins';
 
 const Wrapper = styled.div<{ verticalDirections?: boolean }>`
     display: flex;
@@ -52,6 +54,9 @@ const AssetsCodes = styled.span`
     font-size: 1.6rem;
     line-height: 2.8rem;
     color: ${COLORS.paragraphText};
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 `;
 
 const AssetsDomains = styled.span`
@@ -59,6 +64,29 @@ const AssetsDomains = styled.span`
     font-size: 1.4rem;
     line-height: 2rem;
 `;
+
+const Link = styled.div`
+    cursor: pointer;
+    box-sizing: border-box;
+    margin-left: 1rem;
+    height: 2.8rem;
+    ${flexAllCenter};
+`;
+
+const assetToString = (asset: StellarSdk.Asset) => {
+    if (asset.isNative()) {
+        return 'native';
+    }
+
+    return `${asset.code}:${asset.issuer}`;
+};
+
+const viewOnStellarX = (base: StellarSdk.Asset, counter: StellarSdk.Asset) => {
+    window.open(
+        `https://stellarx.com/markets/${assetToString(counter)}/${assetToString(base)}`,
+        '_blank',
+    );
+};
 
 type PairProps = {
     base: AssetSimple;
@@ -93,6 +121,9 @@ const Pair = ({ base, counter, withoutDomains, verticalDirections }: PairProps):
             <AssetsDetails verticalDirections={verticalDirections}>
                 <AssetsCodes>
                     {base.code} / {counter.code}
+                    <Link onClick={() => viewOnStellarX(baseInstance, counterInstance)}>
+                        <External />
+                    </Link>
                 </AssetsCodes>
                 {!withoutDomains && (
                     <AssetsDomains>
