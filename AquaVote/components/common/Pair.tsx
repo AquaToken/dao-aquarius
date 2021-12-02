@@ -83,10 +83,10 @@ const Pair = ({ base, counter, withoutDomains, verticalDirections }: PairProps):
     return (
         <Wrapper verticalDirections={verticalDirections}>
             <Icons>
-                <BaseIcon>
+                <BaseIcon key={baseInfo?.asset_string}>
                     <AssetLogo logoUrl={baseInfo?.image} />
                 </BaseIcon>
-                <SecondIcon>
+                <SecondIcon key={counterInfo?.asset_string}>
                     <AssetLogo logoUrl={counterInfo?.image} />
                 </SecondIcon>
             </Icons>

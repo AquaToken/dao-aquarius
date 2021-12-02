@@ -13,6 +13,7 @@ const CircleButtonContainer = styled.button`
     box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
     cursor: pointer;
     transition: all ease 200ms;
+    color: ${COLORS.purple};
 
     &:hover {
         background-color: ${COLORS.lightGray};

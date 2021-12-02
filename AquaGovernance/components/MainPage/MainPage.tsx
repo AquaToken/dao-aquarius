@@ -124,9 +124,6 @@ const About = styled.div`
 
 const PlusIcon = styled(Plus)`
     margin-left: 1.7rem;
-    & > path {
-        fill: white;
-    }
 `;
 
 const MainPage = (): JSX.Element => {
