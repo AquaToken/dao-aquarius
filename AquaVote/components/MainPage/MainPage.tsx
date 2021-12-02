@@ -179,13 +179,11 @@ export const SELECTED_PAIRS_ALIAS = 'selected pairs';
 
 const getCachedChosenPairs = () => JSON.parse(localStorage.getItem(SELECTED_PAIRS_ALIAS) || '[]');
 
-const defaultOptions: Option<SortTypes>[] = [
+const options: Option<SortTypes>[] = [
     { label: 'Popular', value: SortTypes.popular },
-    { label: 'Top 100', value: SortTypes.topVoted },
-    { label: 'Top Volume', value: SortTypes.topVolume },
+    { label: 'Top Voted', value: SortTypes.topVoted },
+    { label: 'Your Votes', value: SortTypes.yourVotes },
 ];
-
-const yourVotesOption: Option<SortTypes> = { label: 'Your Votes', value: SortTypes.yourVotes };
 
 const PAGE_SIZE = 10;
 
@@ -196,7 +194,6 @@ const MainPage = (): JSX.Element => {
     const [page, setPage] = useState(1);
     const { isLogged, account } = useAuthStore();
     const [isClaimableBalancesLoaded, setIsClaimableBalancesLoaded] = useState(false);
-    const [options, setOptions] = useState(defaultOptions);
 
     useEffect(() => {
         const unsub = StellarService.event.sub(({ type }) => {
@@ -207,19 +204,6 @@ const MainPage = (): JSX.Element => {
 
         return () => unsub();
     }, []);
-
-    useEffect(() => {
-        if (isClaimableBalancesLoaded) {
-            setOptions([...defaultOptions, yourVotesOption]);
-            return;
-        }
-        if (options.some((option) => option.value === SortTypes.yourVotes)) {
-            setOptions(defaultOptions);
-        }
-        if (sort === SortTypes.yourVotes) {
-            setSort(SortTypes.popular);
-        }
-    }, [isClaimableBalancesLoaded]);
 
     const updateChosenPairs = () => {
         setChosenPairs(getCachedChosenPairs());
@@ -260,7 +244,21 @@ const MainPage = (): JSX.Element => {
     };
 
     useEffect(() => {
+        if (sort === SortTypes.yourVotes && !isLogged) {
+            setSort(SortTypes.popular);
+        }
+    }, [isLogged]);
+
+    useEffect(() => {
         if (!sort) {
+            return;
+        }
+        if (sort === SortTypes.yourVotes && !isLogged) {
+            ModalService.openModal(ChooseLoginMethodModal, {});
+            return;
+        }
+        if (sort === SortTypes.yourVotes && !isClaimableBalancesLoaded) {
+            setPairsLoading(true);
             return;
         }
         setPairsLoading(true);
@@ -283,7 +281,7 @@ const MainPage = (): JSX.Element => {
                 setChangePageLoading(false);
             });
         }
-    }, [sort, page]);
+    }, [sort, page, isClaimableBalancesLoaded]);
 
     useEffect(() => {
         if (!searchBase) {
@@ -336,8 +334,20 @@ const MainPage = (): JSX.Element => {
         }
         ModalService.openModal(ChooseLoginMethodModal, {});
     };
-    const addToVote = (pair: PairStats) => {
-        const updatedPairs = [...chosenPairs, pair];
+    const onVoteClick = (pair: PairStats) => {
+        const isPairSelected = chosenPairs.some(
+            (chosenPair) => chosenPair.market_key === pair.market_key,
+        );
+
+        let updatedPairs;
+
+        if (isPairSelected) {
+            updatedPairs = chosenPairs.filter(
+                (chosenPair) => chosenPair.market_key !== pair.market_key,
+            );
+        } else {
+            updatedPairs = [...chosenPairs, pair];
+        }
         setChosenPairs(updatedPairs);
         localStorage.setItem(SELECTED_PAIRS_ALIAS, JSON.stringify(updatedPairs));
     };
@@ -401,7 +411,7 @@ const MainPage = (): JSX.Element => {
                         </StatusUpdate>
                     )}
                 </Header>
-                {searchBase && (
+                {searchBase && !searchCounter && (
                     <SearchEnabled>
                         {pairs.length ? 'Search results' : 'No pair found'}
                     </SearchEnabled>
@@ -418,7 +428,7 @@ const MainPage = (): JSX.Element => {
                 <Table
                     pairs={pairs}
                     selectedPairs={chosenPairs}
-                    selectPair={addToVote}
+                    selectPair={onVoteClick}
                     loading={pairsLoading}
                 />
                 {(!pairsLoading || changePageLoading) &&

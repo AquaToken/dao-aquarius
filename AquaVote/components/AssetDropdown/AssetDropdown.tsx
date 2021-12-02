@@ -11,6 +11,7 @@ import { getAssetString } from '../../store/assetsStore/actions';
 import { useDebounce } from '../../../common/hooks/useDebounce';
 import * as StellarSdk from 'stellar-sdk';
 import { AssetSimple } from '../../api/types';
+import { StellarService } from '../../../common/services/globalServices';
 
 const DropDown = styled.div<{ isOpen: boolean; disabled: boolean }>`
     width: 100%;
@@ -33,7 +34,7 @@ const DropdownSearch = styled.input<{ $disabled: boolean }>`
     border: none;
     height: 100%;
     width: 100%;
-    padding: 2.4rem;
+    padding: 2.4rem 5rem 2.4rem 2.4rem;
     box-sizing: border-box;
     cursor: pointer;
     font-size: 1.6rem;
@@ -164,30 +165,52 @@ const AssetDropdown = ({ asset, onUpdate, disabled, onToggle, exclude }: AssetDr
         }
     }, [isOpen]);
 
-    useEffect(() => {
-        if (regexp.test(debouncedSearchText)) {
-            setSearchPending(true);
+    const resolveCurrencies = (domain: string) => {
+        setSearchPending(true);
 
-            StellarSdk.StellarTomlResolver.resolve(debouncedSearchText)
-                .then(({ CURRENCIES }) => {
-                    if (CURRENCIES) {
-                        const newCurrencies = CURRENCIES.filter(
-                            (currency) =>
-                                !assets.find(
-                                    (asset) =>
-                                        asset.code === currency.code &&
-                                        asset.issuer === currency.issuer,
-                                ),
-                        );
-                        processNewAssets(newCurrencies);
-                        setSearchResults(newCurrencies);
+        StellarSdk.StellarTomlResolver.resolve(domain)
+            .then(({ CURRENCIES }) => {
+                if (CURRENCIES) {
+                    const newCurrencies = CURRENCIES.filter(
+                        (currency) =>
+                            !assets.find(
+                                (asset) =>
+                                    asset.code === currency.code &&
+                                    asset.issuer === currency.issuer,
+                            ),
+                    );
+                    processNewAssets(newCurrencies);
+                    setSearchResults(newCurrencies);
+                }
+                setSearchPending(false);
+            })
+            .catch(() => {
+                setSearchPending(false);
+                setSearchResults([]);
+            });
+    };
+
+    useEffect(() => {
+        if (StellarSdk.StrKey.isValidEd25519PublicKey(debouncedSearchText)) {
+            setSearchPending(true);
+            StellarService.loadAccount(debouncedSearchText)
+                .then((account) => {
+                    if (!account?.home_domain) {
+                        setSearchPending(false);
+                        setSearchResults([]);
+                        return;
                     }
-                    setSearchPending(false);
+                    resolveCurrencies(account.home_domain);
                 })
                 .catch(() => {
                     setSearchPending(false);
                     setSearchResults([]);
                 });
+            return;
+        }
+
+        if (regexp.test(debouncedSearchText)) {
+            resolveCurrencies(debouncedSearchText);
             return;
         }
         setSearchResults([]);
@@ -203,6 +226,7 @@ const AssetDropdown = ({ asset, onUpdate, disabled, onToggle, exclude }: AssetDr
                 const assetInfo = assetsInfo.get(getAssetString(assetItem));
                 return (
                     (assetItem.code.toLowerCase().includes(searchText.toLowerCase()) ||
+                        assetItem.issuer?.toLowerCase().includes(searchText.toLowerCase()) ||
                         assetInfo?.home_domain?.toLowerCase().includes(searchText.toLowerCase())) &&
                     !(assetItem.code === exclude?.code && assetItem.issuer === exclude?.issuer)
                 );
@@ -226,7 +250,7 @@ const AssetDropdown = ({ asset, onUpdate, disabled, onToggle, exclude }: AssetDr
                             e.stopPropagation();
                         }
                     }}
-                    placeholder="Search or pick asset"
+                    placeholder="Search asset or enter home domain"
                     $disabled={!assets.length || disabled}
                     value={searchText}
                     onChange={(e) => {

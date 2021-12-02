@@ -76,7 +76,6 @@ const ClaimBack = styled.div`
     margin-top: 4.1rem;
     padding-bottom: 1.7rem;
     color: ${COLORS.grayText};
-    border-bottom: 0.1rem dashed ${COLORS.gray};
 `;
 
 const VotePeriodSelect = styled(Select)`
@@ -87,8 +86,11 @@ const ClaimBackDate = styled.span`
     color: ${COLORS.paragraphText};
 `;
 
-const StyledButton = styled(Button)`
-    margin-top: 3.2rem;
+const StyledButton = styled(Button)``;
+
+const ButtonContainer = styled.div`
+    padding-top: 3.2rem;
+    border-top: 0.1rem dashed ${COLORS.gray};
 `;
 
 const GetAquaBlock = styled.div`
@@ -168,6 +170,28 @@ const TotalAmount = styled.div`
 const ResetValues = styled.div`
     color: ${COLORS.tooltip};
     cursor: pointer;
+`;
+
+const Scrollable = styled.div`
+    overflow-y: auto;
+    max-height: calc(80vh - 15rem);
+    padding: 0 2rem;
+    margin: 2rem 0 1rem;
+
+    ::-webkit-scrollbar {
+        width: 0.5rem;
+    }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+        background: ${COLORS.lightGray};
+    }
+
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+        background: ${COLORS.purple};
+        border-radius: 0.25rem;
+    }
 `;
 
 const MINIMUM_AMOUNT = 0.0000001;
@@ -395,133 +419,143 @@ const SelectedPairsForm = ({
 
     return (
         <>
-            <ModalTitle>Selected Pairs</ModalTitle>
-            <ModalDescription>Lock your AQUA in the network to complete your vote</ModalDescription>
-            <ContentRow>
-                <Label>Amount</Label>
+            <Scrollable>
+                <ModalTitle>Selected Pairs</ModalTitle>
+                <ModalDescription>
+                    Lock your AQUA in the network to complete your vote
+                </ModalDescription>
+                <ContentRow>
+                    <Label>Amount</Label>
 
-                {hasTrustLine ? (
-                    <BalanceBlock>
-                        <Balance
-                            onClick={() => {
-                                if (!isHandleEdit) {
-                                    onRangeChange(100);
-                                }
-                            }}
-                        >
-                            {formattedAquaBalance} AQUA{' '}
-                        </Balance>
-                        available
-                    </BalanceBlock>
-                ) : (
-                    <BalanceBlock>You don’t have AQUA trustline</BalanceBlock>
-                )}
-            </ContentRow>
-
-            <AmountInput
-                value={amount}
-                onChange={(e) => {
-                    onInputChange(e.target.value);
-                }}
-                placeholder="Enter voting power"
-                postfix={
-                    <InputPostfix>
-                        <AquaLogo />
-                        <span>AQUA</span>
-                    </InputPostfix>
-                }
-                disabled={!hasTrustLine || !hasAqua || isHandleEdit}
-            />
-
-            <RangeInput
-                onChange={onRangeChange}
-                value={percent}
-                disabled={!hasTrustLine || !hasAqua || isHandleEdit}
-            />
-
-            <ContentRow>
-                <Label>Pairs ({selectedPairs.length})</Label>
-                {isHandleEdit && (
-                    <ResetValues
-                        onClick={() => {
-                            resetForm();
-                        }}
-                    >
-                        Reset values
-                    </ResetValues>
-                )}
-            </ContentRow>
-            <PairsList>
-                {selectedPairs.map((pair) => (
-                    <PairBlock key={pair.market_key}>
-                        <AssetsInfo>
-                            <Pair
-                                base={{ code: pair.asset1_code, issuer: pair.asset1_issuer }}
-                                counter={{
-                                    code: pair.asset2_code,
-                                    issuer: pair.asset2_issuer,
+                    {hasTrustLine ? (
+                        <BalanceBlock>
+                            <Balance
+                                onClick={() => {
+                                    if (!isHandleEdit) {
+                                        onRangeChange(100);
+                                    }
                                 }}
-                                withoutDomains
-                            />
-                        </AssetsInfo>
-                        <StyledInput
-                            value={pairsAmount[pair.market_key]}
-                            onChange={(e) => {
-                                onPairInputChange(e.target.value, pair.market_key);
-                            }}
-                            onFocus={() => {
-                                setIsHandleEdit(true);
-                            }}
-                            isMedium
-                            isRightAligned
-                        />
-                        <CloseButton
+                            >
+                                {formattedAquaBalance} AQUA{' '}
+                            </Balance>
+                            available
+                        </BalanceBlock>
+                    ) : (
+                        <BalanceBlock>You don’t have AQUA trustline</BalanceBlock>
+                    )}
+                </ContentRow>
+
+                <AmountInput
+                    value={amount}
+                    onChange={(e) => {
+                        onInputChange(e.target.value);
+                    }}
+                    placeholder="Enter voting power"
+                    postfix={
+                        <InputPostfix>
+                            <AquaLogo />
+                            <span>AQUA</span>
+                        </InputPostfix>
+                    }
+                    disabled={!hasTrustLine || !hasAqua || isHandleEdit}
+                />
+
+                <RangeInput
+                    onChange={onRangeChange}
+                    value={percent}
+                    disabled={!hasTrustLine || !hasAqua || isHandleEdit}
+                />
+
+                <ContentRow>
+                    <Label>Pairs ({selectedPairs.length})</Label>
+                    {isHandleEdit && (
+                        <ResetValues
                             onClick={() => {
-                                deletePair(pair);
+                                resetForm();
                             }}
                         >
-                            <CloseIcon />
-                        </CloseButton>
-                    </PairBlock>
-                ))}
-            </PairsList>
-            <TotalAmountRow>
-                <Label>Total:</Label>
-                <TotalAmount>
-                    {amount || '0'} AQUA <AquaLogo />
-                </TotalAmount>
-            </TotalAmountRow>
+                            Reset values
+                        </ResetValues>
+                    )}
+                </ContentRow>
+                <PairsList>
+                    {selectedPairs.map((pair) => (
+                        <PairBlock key={pair.market_key}>
+                            <AssetsInfo>
+                                <Pair
+                                    base={{ code: pair.asset1_code, issuer: pair.asset1_issuer }}
+                                    counter={{
+                                        code: pair.asset2_code,
+                                        issuer: pair.asset2_issuer,
+                                    }}
+                                    withoutDomains
+                                />
+                            </AssetsInfo>
+                            <StyledInput
+                                value={pairsAmount[pair.market_key]}
+                                onChange={(e) => {
+                                    onPairInputChange(e.target.value, pair.market_key);
+                                }}
+                                onFocus={() => {
+                                    setIsHandleEdit(true);
+                                }}
+                                isMedium
+                                isRightAligned
+                            />
+                            <CloseButton
+                                onClick={() => {
+                                    deletePair(pair);
+                                }}
+                            >
+                                <CloseIcon />
+                            </CloseButton>
+                        </PairBlock>
+                    ))}
+                </PairsList>
+                <TotalAmountRow>
+                    <Label>Total:</Label>
+                    <TotalAmount>
+                        {amount || '0'} AQUA <AquaLogo />
+                    </TotalAmount>
+                </TotalAmountRow>
 
-            <ContentRow>
-                <Label>Vote Period</Label>
-            </ContentRow>
+                <ContentRow>
+                    <Label>Vote Period</Label>
+                </ContentRow>
 
-            <VotePeriodSelect options={PeriodOptions} value={votePeriod} onChange={setVotePeriod} />
+                <VotePeriodSelect
+                    options={PeriodOptions}
+                    value={votePeriod}
+                    onChange={setVotePeriod}
+                />
 
-            {hasTrustLine && hasAqua ? (
-                <ClaimBack>
-                    You can retrieve your AQUA + AQUA Voting reward on{' '}
-                    <ClaimBackDate>
-                        {getDateString(Date.now() + votePeriod, { withTime: true })}
-                    </ClaimBackDate>
-                </ClaimBack>
-            ) : (
-                <GetAquaBlock>
-                    <GetAquaLabel>You don&apos;t have enough AQUA</GetAquaLabel>
-                    <ExternalLink onClick={() => ModalService.openModal(GetAquaModal, {})}>
-                        <GetAquaLink>Get AQUA</GetAquaLink>
-                    </ExternalLink>
-                </GetAquaBlock>
-            )}
+                {hasTrustLine && hasAqua ? (
+                    <ClaimBack>
+                        You can retrieve your AQUA + AQUA Voting reward on{' '}
+                        <ClaimBackDate>
+                            {getDateString(Date.now() + votePeriod, { withTime: true })}
+                        </ClaimBackDate>
+                    </ClaimBack>
+                ) : (
+                    <GetAquaBlock>
+                        <GetAquaLabel>You don&apos;t have enough AQUA</GetAquaLabel>
+                        <ExternalLink onClick={() => ModalService.openModal(GetAquaModal, {})}>
+                            <GetAquaLink>Get AQUA</GetAquaLink>
+                        </ExternalLink>
+                    </GetAquaBlock>
+                )}
+            </Scrollable>
 
-            <StyledButton
-                fullWidth
-                onClick={() => onSubmit()}
-                disabled={!amount || !Number(amount)}
-                pending={pending}
-            >
-                CONFIRM
-            </StyledButton>
+            <ButtonContainer>
+                <StyledButton
+                    fullWidth
+                    onClick={() => onSubmit()}
+                    disabled={!amount || !Number(amount)}
+                    pending={pending}
+                >
+                    CONFIRM
+                </StyledButton>
+            </ButtonContainer>
         </>
     );
 };

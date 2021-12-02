@@ -3,13 +3,35 @@ import styled from 'styled-components';
 import { flexAllCenter } from '../mixins';
 import { COLORS } from '../styles';
 
-const ButtonBody = styled.button<{ isBig?: boolean; pending?: boolean; fullWidth?: boolean }>`
+const ButtonBody = styled.button<{
+    isBig?: boolean;
+    pending?: boolean;
+    fullWidth?: boolean;
+    likeDisabled?: boolean;
+    isSquare?: boolean;
+}>`
     ${flexAllCenter};
-    width: ${({ fullWidth }) => (fullWidth ? '100%' : 'unset')};
+    width: ${({ fullWidth, isSquare, isBig }) => {
+        if (fullWidth) {
+            return '100%';
+        }
+        if (isSquare) {
+            return isBig ? '6.6rem' : '4.8rem';
+        }
+
+        return 'unset';
+    }};
     height: ${({ isBig }) => (isBig ? '6.6rem' : '4.8rem')};
-    padding: ${({ isBig }) => (isBig ? '2.4rem 6.4rem' : '1.6rem 3.2rem')};
+    padding: ${({ isBig, isSquare }) => {
+        if (isSquare) {
+            return 'unset';
+        }
+
+        return isBig ? '0 6.4rem' : '0 3.2rem';
+    }};
     background-color: ${COLORS.white};
-    background-color: ${COLORS.buttonBackground};
+    background-color: ${({ likeDisabled }) =>
+        likeDisabled ? COLORS.gray : COLORS.buttonBackground};
     border-radius: 0.5rem;
     border: none;
     font-weight: bold;
@@ -19,9 +41,11 @@ const ButtonBody = styled.button<{ isBig?: boolean; pending?: boolean; fullWidth
     transition: all ease 200ms;
     position: relative;
     pointer-events: ${({ pending }) => (pending ? 'none' : 'auto')};
+    white-space: nowrap;
 
     &:hover {
-        background-color: ${COLORS.purple};
+        background-color: ${({ likeDisabled }) =>
+            likeDisabled ? COLORS.lightGray : COLORS.purple};
     }
 
     &:active {
@@ -34,7 +58,9 @@ const ButtonBody = styled.button<{ isBig?: boolean; pending?: boolean; fullWidth
     }
 `;
 
-const ButtonLoader = styled.div<{ pending?: boolean }>`
+const ButtonLoader = styled.div<{ pending?: boolean; likeDisabled?: boolean }>`
+    color: ${({ likeDisabled }) => (likeDisabled ? COLORS.placeholder : COLORS.white)};
+
     ${({ pending }) =>
         pending
             ? `
@@ -55,7 +81,6 @@ const ButtonLoader = styled.div<{ pending?: boolean }>`
         pointer-events: none;
     `
             : `
-        color: ${COLORS.white};
         ${flexAllCenter};
     `}
 
@@ -75,12 +100,31 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     pending?: boolean;
     isBig?: boolean;
     fullWidth?: boolean;
+    likeDisabled?: boolean;
+    isSquare?: boolean;
 }
 
-const Button = ({ children, pending, isBig, fullWidth, ...props }: ButtonProps): JSX.Element => {
+const Button = ({
+    children,
+    pending,
+    isBig,
+    fullWidth,
+    likeDisabled,
+    isSquare,
+    ...props
+}: ButtonProps): JSX.Element => {
     return (
-        <ButtonBody pending={pending} isBig={isBig} fullWidth={fullWidth} {...props}>
-            <ButtonLoader pending={pending}>{children}</ButtonLoader>
+        <ButtonBody
+            pending={pending}
+            isBig={isBig}
+            fullWidth={fullWidth}
+            likeDisabled={likeDisabled}
+            isSquare={isSquare}
+            {...props}
+        >
+            <ButtonLoader pending={pending} likeDisabled={likeDisabled}>
+                {children}
+            </ButtonLoader>
         </ButtonBody>
     );
 };

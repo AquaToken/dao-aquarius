@@ -1,13 +1,12 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { COLORS } from '../../../../common/styles';
-import Button from '../../../../common/basics/Button';
-import StatusTag from './StatusTag/StatusTag';
 import { PairStats } from '../../../api/types';
 import { formatBalance } from '../../../../common/helpers/helpers';
 import Pair from '../../common/Pair';
 import PageLoader from '../../../../common/basics/PageLoader';
 import { flexAllCenter } from '../../../../common/mixins';
+import VoteButton from './VoteButton/VoteButton';
 
 const TableBlock = styled.div`
     display: flex;
@@ -149,9 +148,8 @@ const Table = ({
                 <TableHeadRow>
                     <TableCell>Pair</TableCell>
                     <TableCell>Users Voted</TableCell>
-                    <TableCell>Your AQUA in Vote</TableCell>
                     <TableCell>AQUA Voted</TableCell>
-                    <TableCell />
+                    <TableCell>Your Vote</TableCell>
                 </TableHeadRow>
             </TableHead>
             <TableBody>
@@ -168,19 +166,16 @@ const Table = ({
                                 {pair.voting_amount ? formatBalance(pair.voting_amount) : null}
                             </TableCell>
                             <TableCell>
-                                <StatusTag marketKey={pair.market_key} />
-                            </TableCell>
-                            <TableCell>
                                 {pair.votes_value
                                     ? `${formatBalance(+pair.votes_value, true)} AQUA`
                                     : null}{' '}
                             </TableCell>
                             <TableCell>
-                                {isPairSelected(pair) ? (
-                                    <Button disabled>added</Button>
-                                ) : (
-                                    <Button onClick={() => selectPair(pair)}>Add To Vote</Button>
-                                )}
+                                <VoteButton
+                                    marketKey={pair.market_key}
+                                    isPairSelected={isPairSelected(pair)}
+                                    onButtonClick={() => selectPair(pair)}
+                                />
                             </TableCell>
                         </TableBodyRow>
                     );

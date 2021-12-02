@@ -38,7 +38,6 @@ export const getAssetsInfo = (assets) => {
 export enum SortTypes {
     popular = 'popular',
     topVoted = 'top_voted',
-    topVolume = 'topVolume',
     yourVotes = 'your_votes',
 }
 
@@ -47,8 +46,6 @@ const getPairUrl = (sortType: SortTypes, pageSize: number, page: number): string
         case SortTypes.popular:
             return `${votingTrackerUrl}top-voted/?limit=100&page=1`;
         case SortTypes.topVoted:
-            return `${votingTrackerUrl}top-voted/?limit=${pageSize}&page=${page}`;
-        case SortTypes.topVolume:
             return `${votingTrackerUrl}top-volume/?limit=${pageSize}&page=${page}`;
     }
 };
