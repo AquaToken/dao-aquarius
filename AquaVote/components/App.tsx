@@ -14,8 +14,10 @@ import ToastContainer from '../../common/toasts/ToastContainer';
 import PageLoader from '../../common/basics/PageLoader';
 import useAssetsStore from '../store/assetsStore/useAssetsStore';
 import useAuthStore from '../../common/store/authStore/useAuthStore';
-import { StellarService } from '../../common/services/globalServices';
+import { ModalService, StellarService } from '../../common/services/globalServices';
 import NotFoundPage from '../../common/components/NotFoundPage/NotFoundPage';
+import ProjectPurposeModal, { SHOW_PURPOSE_ALIAS } from './common/ProjectPurposeModal';
+import BG from '../../common/assets/img/purpose-modal-background.svg';
 
 const MainPage = lazy(() => import('./MainPage/MainPage'));
 const AboutPage = lazy(() => import('./AboutPage/AboutPage'));
@@ -29,6 +31,14 @@ const App = () => {
 
     useEffect(() => {
         getAssets();
+    }, []);
+
+    useEffect(() => {
+        const showPurpose = JSON.parse(localStorage.getItem(SHOW_PURPOSE_ALIAS) || 'true');
+        console.log(showPurpose);
+        if (showPurpose) {
+            ModalService.openModal(ProjectPurposeModal, {}, false, <BG />);
+        }
     }, []);
 
     useEffect(() => {
@@ -47,7 +57,17 @@ const App = () => {
 
     return (
         <Router>
-            <Header />
+            <Header>
+                <>
+                    <a
+                        href="https://aqua.network/rewards"
+                        target="_blank"
+                        rel="noreferrer noopener"
+                    >
+                        Rewards
+                    </a>
+                </>
+            </Header>
             <Suspense fallback={<PageLoader />}>
                 <Switch>
                     <Route exact path={MainRoutes.main}>

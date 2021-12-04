@@ -92,6 +92,33 @@ export const getPairsList = async (
     return { count: marketsVotes.data.count, pairs };
 };
 
+export const updateVotesForMarketKeys = async (pairs: PairStats[]): Promise<PairStats[]> => {
+    if (!pairs?.length) {
+        return pairs;
+    }
+    const params = new URLSearchParams();
+
+    pairs.forEach((pair) => {
+        params.append('market_key', pair.market_key);
+    });
+
+    const marketsVotes = await axios.get<ListResponse<MarketVotes>>(votingTrackerUrl, {
+        params,
+    });
+
+    return pairs.map((pair) => {
+        const marketVotes = marketsVotes.data.results.find(
+            (vote) => vote.market_key === pair.account_id,
+        );
+
+        if (marketVotes) {
+            return { ...pair, ...marketVotes };
+        } else {
+            return { ...pair, ...{ market_key: pair.account_id } };
+        }
+    });
+};
+
 export const getUserPairsList = async (keys: string[]) => {
     if (!keys.length) {
         return [];

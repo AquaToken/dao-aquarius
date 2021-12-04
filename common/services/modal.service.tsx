@@ -21,6 +21,7 @@ export default class ModalServiceClass {
             | ((unknown) => JSX.Element),
         params: unknown,
         hideClose = false,
+        backgroundImage = null,
     ): Promise<T> {
         this.id += 1;
         let resolver: (unknown) => void = undefined;
@@ -47,6 +48,7 @@ export default class ModalServiceClass {
                 key={this.id}
                 hideClose={hideClose}
                 triggerClosePromise={triggerClosePromise}
+                backgroundImage={backgroundImage}
             >
                 {modalTemplateElement}
             </ModalBody>
