@@ -26,6 +26,15 @@ const NavLinksContainer = styled.div<{ isLogged: boolean }>`
     align-items: center;
     margin-left: auto;
     margin-right: ${({ isLogged }) => (isLogged ? '0.8rem' : '3.2rem')};
+
+    a {
+        color: ${COLORS.titleText};
+        text-decoration: none;
+
+        &:not(:last-child) {
+            margin-right: 2.4rem;
+        }
+    }
 `;
 
 export const HeaderNavLink = styled(Link)`

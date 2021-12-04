@@ -1,0 +1,55 @@
+import * as React from 'react';
+import { ModalDescription, ModalTitle } from '../../../common/modals/atoms/ModalAtoms';
+import styled from 'styled-components';
+import Button from '../../../common/basics/Button';
+import Checkbox from '../../../common/basics/Checkbox';
+import { useEffect, useState } from 'react';
+import { COLORS } from '../../../common/styles';
+
+const Container = styled.div`
+    width: 52.8rem;
+`;
+
+const CheckboxBlock = styled.div`
+    padding: 1.5rem 0 1.6rem;
+    border-bottom: 0.1rem dashed ${COLORS.gray};
+`;
+
+const StyledButton = styled(Button)`
+    margin-top: 3.3rem;
+`;
+
+export const SHOW_PURPOSE_ALIAS = 'show purpose';
+
+const ProjectPurposeModal = ({ close }) => {
+    const [checked, setChecked] = useState(false);
+
+    useEffect(() => {
+        if (checked) {
+            localStorage.setItem(SHOW_PURPOSE_ALIAS, 'false');
+        } else {
+            localStorage.setItem(SHOW_PURPOSE_ALIAS, 'true');
+        }
+    }, [checked]);
+
+    return (
+        <Container>
+            <ModalTitle>Vote for pairs – Earn rewards</ModalTitle>
+            <ModalDescription>
+                You can use AQUA to vote for your favorite pairs on the SDEX, helping improve their
+                liquidity. Your votes can increase the rewards paid to SDEX market pairs that appear
+                on the current rewards list. Choose the markets you like, and earn extra AQUA
+                rewards for voting.
+            </ModalDescription>
+            <CheckboxBlock>
+                <Checkbox label="Don’t show again" checked={checked} onChange={setChecked} />
+            </CheckboxBlock>
+
+            <StyledButton fullWidth onClick={() => close()}>
+                Let’s start
+            </StyledButton>
+        </Container>
+    );
+};
+
+export default ProjectPurposeModal;

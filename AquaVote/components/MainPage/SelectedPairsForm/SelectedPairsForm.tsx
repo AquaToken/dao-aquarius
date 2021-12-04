@@ -406,7 +406,9 @@ const SelectedPairsForm = ({
                 ToastService.showSuccessToast('More signatures required to complete');
                 return;
             }
-            ToastService.showSuccessToast('Your vote has been cast');
+            ToastService.showSuccessToast(
+                'Your vote has been cast! You will be able to see your vote in the list within 10 minutes',
+            );
             StellarService.getClaimableBalances(account.accountId());
         } catch (e) {
             console.log(e);

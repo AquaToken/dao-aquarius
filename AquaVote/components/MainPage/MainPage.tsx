@@ -19,7 +19,13 @@ import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModa
 import useAuthStore from '../../../common/store/authStore/useAuthStore';
 import AssetDropdown from '../AssetDropdown/AssetDropdown';
 import Arrows from '../../../common/assets/img/icon-arrows-circle.svg';
-import { getFilteredPairsList, getPairsList, getUserPairsList, SortTypes } from '../../api/api';
+import {
+    getFilteredPairsList,
+    getPairsList,
+    getUserPairsList,
+    SortTypes,
+    updateVotesForMarketKeys,
+} from '../../api/api';
 import PageLoader from '../../../common/basics/PageLoader';
 import useAssetsStore from '../../store/assetsStore/useAssetsStore';
 import Tooltip, { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
@@ -175,6 +181,17 @@ const CreatePair = styled.div`
     height: 9.6rem;
 `;
 
+const BeFirst = styled.div`
+    font-weight: bold;
+    font-size: 1.2rem;
+    line-height: 1.4rem;
+    display: flex;
+
+    div:first-child {
+        margin-right: 0.8rem;
+    }
+`;
+
 export const SELECTED_PAIRS_ALIAS = 'selected pairs';
 
 const getCachedChosenPairs = () => JSON.parse(localStorage.getItem(SELECTED_PAIRS_ALIAS) || '[]');
@@ -186,14 +203,34 @@ const options: Option<SortTypes>[] = [
 ];
 
 const PAGE_SIZE = 10;
+const UPDATE_INTERVAL = 60 * 1000; // 1 minute
 
 const MainPage = (): JSX.Element => {
+    const [updateIndex, setUpdateIndex] = useState(0);
     const { processNewAssets } = useAssetsStore();
     const [chosenPairs, setChosenPairs] = useState(getCachedChosenPairs());
     const [sort, setSort] = useState(SortTypes.popular);
     const [page, setPage] = useState(1);
     const { isLogged, account } = useAuthStore();
     const [isClaimableBalancesLoaded, setIsClaimableBalancesLoaded] = useState(false);
+    const [searchBase, setSearchBase] = useState(null);
+    const [searchCounter, setSearchCounter] = useState(null);
+    const [pairsLoading, setPairsLoading] = useState(false);
+    const [changePageLoading, setChangePageLoading] = useState(false);
+    const [isCounterSearchActive, setIsCounterSearchActive] = useState(false);
+
+    const [pairs, setPairs] = useState(null);
+    const [count, setCount] = useState(0);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setUpdateIndex((prev) => prev + 1);
+        }, UPDATE_INTERVAL);
+
+        return () => {
+            clearInterval(interval);
+        };
+    }, [sort, searchBase, searchCounter, page]);
 
     useEffect(() => {
         const unsub = StellarService.event.sub(({ type }) => {
@@ -222,15 +259,6 @@ const MainPage = (): JSX.Element => {
         ModalService.openModal(ChooseLoginMethodModal, {});
     };
 
-    const [searchBase, setSearchBase] = useState(null);
-    const [searchCounter, setSearchCounter] = useState(null);
-    const [pairsLoading, setPairsLoading] = useState(false);
-    const [changePageLoading, setChangePageLoading] = useState(false);
-    const [isCounterSearchActive, setIsCounterSearchActive] = useState(false);
-
-    const [pairs, setPairs] = useState(null);
-    const [count, setCount] = useState(0);
-
     const processAssetsFromPairs = (pairs) => {
         const assets = pairs.reduce((acc, item) => {
             return [
@@ -250,27 +278,18 @@ const MainPage = (): JSX.Element => {
     }, [isLogged]);
 
     useEffect(() => {
-        if (!sort) {
-            return;
-        }
         if (sort === SortTypes.yourVotes && !isLogged) {
             ModalService.openModal(ChooseLoginMethodModal, {});
-            return;
         }
-        if (sort === SortTypes.yourVotes && !isClaimableBalancesLoaded) {
-            setPairsLoading(true);
+    }, [sort]);
+
+    useEffect(() => {
+        if (sort !== SortTypes.yourVotes) {
             return;
         }
         setPairsLoading(true);
-        if (sort !== SortTypes.yourVotes) {
-            getPairsList(sort, PAGE_SIZE, page).then((result) => {
-                setPairs(result.pairs);
-                setCount(result.count);
-                processAssetsFromPairs(result.pairs);
-                setPairsLoading(false);
-                setChangePageLoading(false);
-            });
-        } else {
+
+        if (isClaimableBalancesLoaded) {
             const keys = StellarService.getKeysSimilarToMarketKeys(account.accountId());
 
             getUserPairsList(keys).then((result) => {
@@ -281,7 +300,36 @@ const MainPage = (): JSX.Element => {
                 setChangePageLoading(false);
             });
         }
-    }, [sort, page, isClaimableBalancesLoaded]);
+    }, [sort, isClaimableBalancesLoaded]);
+
+    useEffect(() => {
+        if (sort === SortTypes.topVoted) {
+            getPairsList(sort, PAGE_SIZE, page).then((result) => {
+                setPairs(result.pairs);
+                setCount(result.count);
+                processAssetsFromPairs(result.pairs);
+            });
+            return;
+        }
+        updateVotesForMarketKeys(pairs).then((result) => {
+            setPairs(result);
+        });
+    }, [updateIndex]);
+
+    useEffect(() => {
+        if (!sort || sort === SortTypes.yourVotes) {
+            return;
+        }
+
+        setPairsLoading(true);
+        getPairsList(sort, PAGE_SIZE, page).then((result) => {
+            setPairs(result.pairs);
+            setCount(result.count);
+            processAssetsFromPairs(result.pairs);
+            setPairsLoading(false);
+            setChangePageLoading(false);
+        });
+    }, [sort, page]);
 
     useEffect(() => {
         if (!searchBase) {
@@ -422,7 +470,18 @@ const MainPage = (): JSX.Element => {
                 {searchBase && searchCounter && !pairs.length && (
                     <CreatePair>
                         <Pair base={searchBase} counter={searchCounter} />
-                        <Button onClick={() => createPair()}>create pair</Button>
+                        <Tooltip
+                            content={
+                                <BeFirst>
+                                    <div>&#128293;</div>
+                                    <div>Be first</div>
+                                </BeFirst>
+                            }
+                            position={TOOLTIP_POSITION.bottom}
+                            isShow={true}
+                        >
+                            <Button onClick={() => createPair()}>create pair</Button>
+                        </Tooltip>
                     </CreatePair>
                 )}
                 <Table

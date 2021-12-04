@@ -19,12 +19,12 @@ const ModalWrapper = styled.div`
     }
 `;
 
-const ModalInner = styled.div`
+const ModalInner = styled.div<{ withBackground: boolean; isShow: boolean }>`
     border-radius: 1rem;
     background: ${COLORS.white};
     box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
-    padding: 6.4rem 0 1rem;
-    animation: ${({ isShow }: { isShow: boolean }) => (isShow ? 'opening 300ms' : 'closing 300ms')};
+    padding: ${({ withBackground }) => (withBackground ? '0 0 1rem' : '6.4rem 0 1rem')};
+    animation: ${({ isShow }) => (isShow ? 'opening 300ms' : 'closing 300ms')};
     position: relative;
 
     @keyframes opening {
@@ -56,15 +56,23 @@ const ModalContent = styled.div`
     padding: 0 4.8rem 3.8rem;
 `;
 
-const CloseButton = styled.div`
+const CloseButton = styled.div<{ withBackground: boolean }>`
     position: absolute;
     top: 0;
     right: 0;
     cursor: pointer;
     padding: 2.5rem;
     box-sizing: border-box;
-    background-color: ${COLORS.lightGray};
+    background-color: ${({ withBackground }) => (withBackground ? COLORS.white : COLORS.lightGray)};
     border-radius: 1rem;
+`;
+
+const BackgroundBlock = styled.div`
+    background-color: ${COLORS.lightGray};
+    max-height: 28.2rem;
+    overflow: hidden;
+    margin-bottom: 4rem;
+    border-radius: 1rem 1rem 0 0;
 `;
 
 type ModalClose = () => void;
@@ -82,12 +90,14 @@ export const ModalBody = ({
     params,
     hideClose,
     triggerClosePromise,
+    backgroundImage,
 }: {
     resolver: (unknown) => void;
     children: JSX.Element;
     params: unknown;
     hideClose: boolean;
     triggerClosePromise: Promise<unknown>;
+    backgroundImage: JSX.Element | null;
 }): JSX.Element => {
     const [isShow, setIsShow] = useState(true);
     const [resolvedData, setResolvedData] = useState(null);
@@ -126,9 +136,10 @@ export const ModalBody = ({
 
     return (
         <ModalWrapper>
-            <ModalInner ref={ref} isShow={isShow}>
+            <ModalInner ref={ref} isShow={isShow} withBackground={Boolean(backgroundImage)}>
+                {backgroundImage && <BackgroundBlock>{backgroundImage}</BackgroundBlock>}
                 {!hideClose && (
-                    <CloseButton onClick={() => close()}>
+                    <CloseButton onClick={() => close()} withBackground={Boolean(backgroundImage)}>
                         <CloseIcon />
                     </CloseButton>
                 )}
@@ -145,6 +156,7 @@ export const ModalTitle = styled.h3`
     line-height: 4.2rem;
     color: ${COLORS.titleText};
     margin-bottom: 0.8rem;
+    font-weight: normal;
 `;
 
 export const ModalDescription = styled.div<{ smallMarginBottom?: boolean }>`
