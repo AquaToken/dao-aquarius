@@ -179,6 +179,7 @@ const SearchEnabled = styled.div`
 const CreatePair = styled.div`
     ${flexRowSpaceBetween};
     height: 9.6rem;
+    margin-bottom: 2rem;
 `;
 
 const BeFirst = styled.div`
