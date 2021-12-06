@@ -202,13 +202,15 @@ const DAY = 24 * HOUR;
 const MONTH = 30 * DAY;
 
 const PeriodOptions: Option<number>[] = [
-    { label: '1 minute', value: MINUTE },
-    { label: '1 Day', value: DAY },
-    { label: '3 Days', value: 3 * DAY },
     { label: '1 Week', value: 7 * DAY },
+    { label: '2 Weeks', value: 14 * DAY },
+    { label: '3 Weeks', value: 21 * DAY },
     { label: '1 Month', value: MONTH },
     { label: '2 Month', value: 2 * MONTH },
     { label: '3 Month', value: 3 * MONTH },
+    { label: '4 Month', value: 4 * MONTH },
+    { label: '5 Month', value: 5 * MONTH },
+    { label: '6 Month', value: 6 * MONTH },
 ];
 
 const SelectedPairsForm = ({
