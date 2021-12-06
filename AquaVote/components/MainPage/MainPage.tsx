@@ -105,10 +105,11 @@ const Description = styled.div`
     z-index: 1;
 `;
 
-const ExploreBlock = styled.div`
+const ExploreBlock = styled.div<{ hasChosenPairs: boolean }>`
     position: relative;
     padding: 0 4rem;
     ${commonMaxWidth};
+    padding-bottom: ${({ hasChosenPairs }) => (hasChosenPairs ? '0' : '6.6rem')};
 `;
 
 const PairSearch = styled.div`
@@ -404,6 +405,8 @@ const MainPage = (): JSX.Element => {
         localStorage.setItem(SELECTED_PAIRS_ALIAS, JSON.stringify(updatedPairs));
     };
 
+    const hasChosenPairs = chosenPairs.length > 0;
+
     return (
         <MainBlock>
             <Background>
@@ -415,7 +418,7 @@ const MainPage = (): JSX.Element => {
                 <BackgroundLeft />
                 <BackgroundRight />
             </Background>
-            <ExploreBlock>
+            <ExploreBlock hasChosenPairs={hasChosenPairs}>
                 <PairSearch>
                     <AssetDropdown
                         asset={searchBase}
@@ -505,7 +508,7 @@ const MainPage = (): JSX.Element => {
                             itemName="pairs"
                         />
                     )}
-                {chosenPairs.length > 0 && (
+                {hasChosenPairs && (
                     <FloatingButton onClick={() => startVote()}>
                         {chosenPairs.length}
                     </FloatingButton>
