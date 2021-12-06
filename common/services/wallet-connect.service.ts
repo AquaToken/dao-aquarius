@@ -11,8 +11,9 @@ import RequestModal from '../modals/WalletConnectModals/RequestModal';
 
 const METADATA = {
     vote: {
-        name: 'Aqua Vote',
-        description: 'Aqua vote description',
+        name: 'Aquarius Voting Tool',
+        description:
+            'Lock your AQUA to create immutable and transparent votes direct on the Stellar blockchain',
         url: 'https://vote.aqua.network',
         icons: [`${location.origin}/favicon.png`],
     },
