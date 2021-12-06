@@ -286,14 +286,12 @@ export default class StellarServiceClass {
             const hasMarker = claim.claimants.some(
                 (claimant) => claimant.destination === marketKey,
             );
-            const hasPendingSelfClaim = claim.claimants.some(
-                (claimant) =>
-                    claimant.destination === accountId &&
-                    new Date(claimant.predicate.not.abs_before) > new Date(),
+            const hasSelfClaim = claim.claimants.some(
+                (claimant) => claimant.destination === accountId,
             );
             const isAqua = claim.asset === `${AQUA_CODE}:${AQUA_ISSUER}`;
 
-            if (hasMarker && hasPendingSelfClaim && isAqua) {
+            if (hasMarker && hasSelfClaim && isAqua) {
                 acc += Number(claim.amount);
             }
             return acc;
@@ -310,12 +308,10 @@ export default class StellarServiceClass {
                 return acc;
             }
             const isAqua = claim.asset === `${AQUA_CODE}:${AQUA_ISSUER}`;
-            const hasPendingSelfClaim = claim.claimants.some(
-                (claimant) =>
-                    claimant.destination === accountId &&
-                    new Date(claimant.predicate.not.abs_before) > new Date(),
+            const hasSelfClaim = claim.claimants.some(
+                (claimant) => claimant.destination === accountId,
             );
-            if (isAqua && hasPendingSelfClaim) {
+            if (isAqua && hasSelfClaim) {
                 const similarToMarketKey = claim.claimants.find(
                     (claimant) => claimant.destination !== accountId,
                 );

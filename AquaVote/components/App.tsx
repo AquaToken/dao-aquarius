@@ -35,7 +35,6 @@ const App = () => {
 
     useEffect(() => {
         const showPurpose = JSON.parse(localStorage.getItem(SHOW_PURPOSE_ALIAS) || 'true');
-        console.log(showPurpose);
         if (showPurpose) {
             ModalService.openModal(ProjectPurposeModal, {}, false, <BG />);
         }

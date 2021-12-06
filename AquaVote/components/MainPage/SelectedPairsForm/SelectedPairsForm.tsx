@@ -173,22 +173,22 @@ const ResetValues = styled.div`
 `;
 
 const Scrollable = styled.div`
-    overflow-y: auto;
+    overflow-y: scroll;
     max-height: calc(80vh - 15rem);
-    padding: 0 2rem;
+    padding: 0 1.5rem 0 2rem;
     margin: 2rem 0 1rem;
 
-    ::-webkit-scrollbar {
+    &::-webkit-scrollbar {
         width: 0.5rem;
     }
 
     /* Track */
-    ::-webkit-scrollbar-track {
-        background: ${COLORS.lightGray};
+    &::-webkit-scrollbar-track {
+        background: ${COLORS.white};
     }
 
     /* Handle */
-    ::-webkit-scrollbar-thumb {
+    &::-webkit-scrollbar-thumb {
         background: ${COLORS.purple};
         border-radius: 0.25rem;
     }
