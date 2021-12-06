@@ -34,12 +34,12 @@ const ProjectPurposeModal = ({ close }) => {
 
     return (
         <Container>
-            <ModalTitle>Vote for pairs – Earn rewards</ModalTitle>
+            <ModalTitle>Liquidity voting with AQUA</ModalTitle>
             <ModalDescription>
-                You can use AQUA to vote for your favorite pairs on the SDEX, helping improve their
-                liquidity. Your votes can increase the rewards paid to SDEX market pairs that appear
-                on the current rewards list. Choose the markets you like, and earn extra AQUA
-                rewards for voting.
+                You can use AQUA to vote for your favorite market pairs on Stellar, helping improve
+                their liquidity. These votes define the size of the Aquarius liquidity rewards paid
+                to AMM liquidity providers and SDEX traders. Choose the pairs that are important to
+                you, and support them through the on-chain AQUA voting.
             </ModalDescription>
             <CheckboxBlock>
                 <Checkbox label="Don’t show again" checked={checked} onChange={setChecked} />

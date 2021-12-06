@@ -179,7 +179,7 @@ const SearchEnabled = styled.div`
 const CreatePair = styled.div`
     ${flexRowSpaceBetween};
     height: 9.6rem;
-    margin-bottom: 2rem;
+    margin-bottom: 4rem;
 `;
 
 const BeFirst = styled.div`
@@ -475,7 +475,7 @@ const MainPage = (): JSX.Element => {
                             content={
                                 <BeFirst>
                                     <div>&#128293;</div>
-                                    <div>Be first</div>
+                                    <div>Be the first to vote for rewards on this pair!</div>
                                 </BeFirst>
                             }
                             position={TOOLTIP_POSITION.bottom}

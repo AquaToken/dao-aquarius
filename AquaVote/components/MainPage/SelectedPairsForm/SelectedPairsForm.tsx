@@ -533,7 +533,7 @@ const SelectedPairsForm = ({
 
                 {hasTrustLine && hasAqua ? (
                     <ClaimBack>
-                        You can retrieve your AQUA + AQUA Voting reward on{' '}
+                        You can retrieve your AQUA on{' '}
                         <ClaimBackDate>
                             {getDateString(Date.now() + votePeriod, { withTime: true })}
                         </ClaimBackDate>

@@ -31,6 +31,10 @@ const ContentRow = styled.div`
     border-bottom: 0.1rem dashed ${COLORS.gray};
 `;
 
+const Description = styled(ModalDescription)`
+    width: 52.8rem;
+`;
+
 const Cost = styled.div`
     margin-left: auto;
     line-height: 1.8rem;
@@ -135,7 +139,7 @@ const CreatePairModal = ({
                 return;
             }
             ToastService.showSuccessToast(
-                'Pair has been created! You will be able to see your pair in the list within 5 minutes',
+                'Pair has been created! You will be able to see your pair in the list within 10 minutes',
                 20000,
             );
         } catch (e) {
@@ -149,9 +153,11 @@ const CreatePairModal = ({
     return (
         <>
             <ModalTitle>Create pair</ModalTitle>
-            <ModalDescription>
-                To create a pair, you need to pay for the trustlines for transactions.
-            </ModalDescription>
+            <Description>
+                To create a pair, you first need to pay for the trustlines for transactions. Once
+                it’s done, please allow up to 10 minutes for our systems to correctly add the new
+                market pair and make it available for anyone to vote.
+            </Description>
             <div>
                 <AssetsInfo>
                     <Pair
