@@ -179,7 +179,7 @@ const SearchEnabled = styled.div`
 const CreatePair = styled.div`
     ${flexRowSpaceBetween};
     height: 9.6rem;
-    margin-bottom: 4rem;
+    margin-bottom: 6rem;
 `;
 
 const BeFirst = styled.div`
@@ -187,6 +187,9 @@ const BeFirst = styled.div`
     font-size: 1.2rem;
     line-height: 1.4rem;
     display: flex;
+    align-items: center;
+    width: 16rem;
+    white-space: pre-line;
 
     div:first-child {
         margin-right: 0.8rem;
