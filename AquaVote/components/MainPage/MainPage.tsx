@@ -22,6 +22,7 @@ import Arrows from '../../../common/assets/img/icon-arrows-circle.svg';
 import {
     getFilteredPairsList,
     getPairsList,
+    getTotalVotingStats,
     getUserPairsList,
     SortTypes,
     updateVotesForMarketKeys,
@@ -33,10 +34,11 @@ import { PairStats } from '../../api/types';
 import CreatePairModal from './CreatePairModal/CreatePairModal';
 import Pair from '../common/Pair';
 import Button from '../../../common/basics/Button';
-import { getTimeAgoValue } from '../../../common/helpers/helpers';
+import { formatBalance, getTimeAgoValue } from '../../../common/helpers/helpers';
 import { Option } from '../../../common/basics/Select';
 import Pagination from '../../../common/basics/Pagination';
 import { StellarEvents } from '../../../common/services/stellar.service';
+import DotsLoader from '../../../common/basics/DotsLoader';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -223,6 +225,7 @@ const MainPage = (): JSX.Element => {
     const [pairsLoading, setPairsLoading] = useState(false);
     const [changePageLoading, setChangePageLoading] = useState(false);
     const [isCounterSearchActive, setIsCounterSearchActive] = useState(false);
+    const [totalStats, setTotalStats] = useState(null);
 
     const [pairs, setPairs] = useState(null);
     const [count, setCount] = useState(0);
@@ -236,6 +239,12 @@ const MainPage = (): JSX.Element => {
             clearInterval(interval);
         };
     }, [sort, searchBase, searchCounter, page]);
+
+    useEffect(() => {
+        getTotalVotingStats().then((result) => {
+            setTotalStats(result);
+        });
+    }, [UPDATE_INTERVAL]);
 
     useEffect(() => {
         const unsub = StellarService.event.sub(({ type }) => {
@@ -474,6 +483,14 @@ const MainPage = (): JSX.Element => {
                     />
                     {Boolean(pairs.length && pairs.some((pair) => Boolean(pair.timestamp))) && (
                         <StatusUpdate>
+                            {totalStats ? (
+                                `${formatBalance(
+                                    totalStats.votes_value_sum,
+                                    true,
+                                )} AQUA total in votes · `
+                            ) : (
+                                <DotsLoader />
+                            )}
                             Last updated{' '}
                             {getTimeAgoValue(
                                 pairs.find((pair) => Boolean(pair.timestamp)).timestamp,
