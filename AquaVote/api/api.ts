@@ -1,6 +1,14 @@
 import axios from 'axios';
 import * as StellarSdk from 'stellar-sdk';
-import { Asset, AssetSimple, ListResponse, MarketKey, MarketVotes, PairStats } from './types';
+import {
+    Asset,
+    AssetSimple,
+    ListResponse,
+    MarketKey,
+    MarketVotes,
+    PairStats,
+    TotalStats,
+} from './types';
 
 const assetsListUrl = 'https://fed.stellarterm.com/issuer_orgs/';
 const assetsInfoUrl = 'https://assets.ultrastellar.com/api/v1/assets/';
@@ -242,4 +250,8 @@ export const getFilteredPairsList = async (
     });
 
     return { count, pairs };
+};
+
+export const getTotalVotingStats = (): Promise<TotalStats> => {
+    return axios.get<TotalStats>(`${votingTrackerUrl}stats/`).then(({ data }) => data);
 };

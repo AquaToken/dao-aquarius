@@ -41,3 +41,10 @@ export type MarketKey = {
 };
 
 export type PairStats = MarketKey & MarketVotes;
+
+export type TotalStats = {
+    market_key_count: number;
+    votes_value_sum: string;
+    voting_amount_sum: number;
+    timestamp: string;
+};
