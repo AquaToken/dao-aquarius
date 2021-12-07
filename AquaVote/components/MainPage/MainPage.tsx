@@ -283,6 +283,19 @@ const MainPage = (): JSX.Element => {
     }, [isLogged]);
 
     useEffect(() => {
+        if (!searchBase && Boolean(searchCounter)) {
+            setSearchBase(searchCounter);
+            setSearchCounter(null);
+        }
+    }, [searchBase]);
+
+    useEffect(() => {
+        if (!sort && !searchBase && !searchCounter) {
+            setSort(SortTypes.popular);
+        }
+    }, [sort, searchBase, searchCounter]);
+
+    useEffect(() => {
         if (sort === SortTypes.yourVotes && !isLogged) {
             ModalService.openModal(ChooseLoginMethodModal, {});
         }
@@ -358,12 +371,14 @@ const MainPage = (): JSX.Element => {
     };
 
     const changeBaseSearch = (asset) => {
+        setPairsLoading(true);
         setSearchBase(asset);
         setPage(1);
         setSort(null);
     };
 
     const changeCounterSearch = (asset) => {
+        setPairsLoading(true);
         setSearchCounter(asset);
         setPage(1);
         setSort(null);
@@ -466,9 +481,9 @@ const MainPage = (): JSX.Element => {
                         </StatusUpdate>
                     )}
                 </Header>
-                {searchBase && !searchCounter && (
+                {!pairsLoading && searchBase && !searchCounter && (
                     <SearchEnabled>
-                        {pairs.length ? 'Search results' : 'No pair found'}
+                        {pairs.length ? 'Search results' : 'No pairs found'}
                     </SearchEnabled>
                 )}
                 {sort === SortTypes.yourVotes && !pairs.length && (
@@ -497,17 +512,15 @@ const MainPage = (): JSX.Element => {
                     selectPair={onVoteClick}
                     loading={pairsLoading}
                 />
-                {(!pairsLoading || changePageLoading) &&
-                    sort !== SortTypes.yourVotes &&
-                    sort !== SortTypes.popular && (
-                        <Pagination
-                            pageSize={PAGE_SIZE}
-                            totalCount={count}
-                            onPageChange={(page) => changePage(page)}
-                            currentPage={page}
-                            itemName="pairs"
-                        />
-                    )}
+                {(!pairsLoading || changePageLoading) && sort !== SortTypes.yourVotes && (
+                    <Pagination
+                        pageSize={PAGE_SIZE}
+                        totalCount={count}
+                        onPageChange={(page) => changePage(page)}
+                        currentPage={page}
+                        itemName="pairs"
+                    />
+                )}
                 {hasChosenPairs && (
                     <FloatingButton onClick={() => startVote()}>
                         {chosenPairs.length}

@@ -59,29 +59,48 @@ const shuffleArray = (array) => {
     }
 };
 
+let randomPairs = [];
+
 export const getPairsList = async (
     sortType: SortTypes,
     pageSize: number,
     page: number,
 ): Promise<{ pairs: PairStats[]; count: number }> => {
-    const params = new URLSearchParams();
+    if (sortType !== SortTypes.popular) {
+        randomPairs = [];
+    }
+
+    if (sortType === SortTypes.popular && randomPairs.length) {
+        const votes = randomPairs.slice((page - 1) * pageSize, (page - 1) * pageSize + pageSize);
+
+        return addKeysToMarketVotes(votes, randomPairs.length);
+    }
 
     const url = getPairUrl(sortType, pageSize, page);
 
     const marketsVotes = await axios.get<ListResponse<MarketVotes>>(url);
 
-    if (sortType === SortTypes.popular) {
+    if (sortType === SortTypes.popular && !randomPairs.length) {
         shuffleArray(marketsVotes.data.results);
-        marketsVotes.data.results.splice(pageSize, marketsVotes.data.results.length);
+        randomPairs = marketsVotes.data.results;
+        const votes = randomPairs.slice((page - 1) * pageSize, pageSize);
+
+        return addKeysToMarketVotes(votes, randomPairs.length);
     }
 
-    marketsVotes.data.results.forEach((marketVotes) => {
+    return addKeysToMarketVotes(marketsVotes.data.results, marketsVotes.data.count);
+};
+
+const addKeysToMarketVotes = async (votes: MarketVotes[], count) => {
+    const params = new URLSearchParams();
+
+    votes.forEach((marketVotes) => {
         params.append('account_id', marketVotes.market_key);
     });
 
     const marketsKeys = await axios.get<ListResponse<MarketKey>>(marketKeysUrl, { params });
 
-    const pairs = marketsVotes.data.results.map((marketVotes) => {
+    const pairs = votes.map((marketVotes) => {
         const marketKey = marketsKeys.data.results.find(
             (key) => key.account_id === marketVotes.market_key,
         );
@@ -89,7 +108,7 @@ export const getPairsList = async (
         return { ...marketVotes, ...marketKey };
     });
 
-    return { count: marketsVotes.data.count, pairs };
+    return { count, pairs };
 };
 
 export const updateVotesForMarketKeys = async (pairs: PairStats[]): Promise<PairStats[]> => {
