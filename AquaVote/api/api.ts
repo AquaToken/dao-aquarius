@@ -44,7 +44,7 @@ export enum SortTypes {
 const getPairUrl = (sortType: SortTypes, pageSize: number, page: number): string => {
     switch (sortType) {
         case SortTypes.popular:
-            return `${votingTrackerUrl}top-voted/?limit=100&page=1`;
+            return `${votingTrackerUrl}top-volume/?limit=100&page=1`;
         case SortTypes.topVoted:
             return `${votingTrackerUrl}top-volume/?limit=${pageSize}&page=${page}`;
     }
