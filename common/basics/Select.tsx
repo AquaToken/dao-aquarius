@@ -59,8 +59,23 @@ const DropdownList = styled.div`
     animation: openDropdown ease-in-out 0.2s;
     transform-origin: top center;
     max-height: 24rem;
-    overflow-y: auto;
+    overflow-y: scroll;
     z-index: 10;
+
+    &::-webkit-scrollbar {
+        width: 0.5rem;
+    }
+
+    /* Track */
+    &::-webkit-scrollbar-track {
+        background: ${COLORS.white};
+    }
+
+    /* Handle */
+    &::-webkit-scrollbar-thumb {
+        background: ${COLORS.purple};
+        border-radius: 0.25rem;
+    }
 
     @keyframes openDropdown {
         0% {

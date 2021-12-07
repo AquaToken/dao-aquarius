@@ -2,6 +2,7 @@ import * as React from 'react';
 import styled, { css } from 'styled-components';
 import ArrowDown from '../../../common/assets/img/icon-arrow-down.svg';
 import Loader from '../../../common/assets/img/loader.svg';
+import Fail from '../../../common/assets/img/icon-fail.svg';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { COLORS } from '../../../common/styles';
 import useOnClickOutside from '../../../common/hooks/useOutsideClick';
@@ -82,7 +83,22 @@ const DropdownList = styled.div`
     animation: openDropdown ease-in-out 0.2s;
     transform-origin: top center;
     max-height: 24rem;
-    overflow-y: auto;
+    overflow-y: scroll;
+
+    &::-webkit-scrollbar {
+        width: 0.5rem;
+    }
+
+    /* Track */
+    &::-webkit-scrollbar-track {
+        background: ${COLORS.white};
+    }
+
+    /* Handle */
+    &::-webkit-scrollbar-thumb {
+        background: ${COLORS.purple};
+        border-radius: 0.25rem;
+    }
 
     @keyframes openDropdown {
         0% {
@@ -113,6 +129,19 @@ const SearchEmpty = styled.div`
     align-items: center;
     font-size: 1.4rem;
     line-height: 2rem;
+`;
+
+const Reset = styled(Fail)`
+    rect {
+        fill: ${COLORS.gray};
+    }
+    height: 1.6rem;
+    width: 1.6rem;
+    position: absolute;
+    right: 6.4rem;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
 `;
 
 type AssetDropdownProps = {
@@ -220,6 +249,11 @@ const AssetDropdown = ({ asset, onUpdate, disabled, onToggle, exclude }: AssetDr
         onUpdate(asset);
     };
 
+    const resetAsset = (event) => {
+        event.stopPropagation();
+        onUpdate(null);
+    };
+
     const filteredAssets = useMemo(() => {
         return [...assets, ...searchResults]
             .filter((assetItem) => {
@@ -258,6 +292,16 @@ const AssetDropdown = ({ asset, onUpdate, disabled, onToggle, exclude }: AssetDr
                     }}
                     ref={inputRef}
                 />
+            )}
+
+            {selectedAsset && (
+                <div
+                    onClick={(e) => {
+                        resetAsset(e);
+                    }}
+                >
+                    <Reset />
+                </div>
             )}
 
             {!assets.length || searchPending ? (
