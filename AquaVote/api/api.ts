@@ -45,7 +45,7 @@ export const getAssetsInfo = (assets) => {
 
 export enum SortTypes {
     popular = 'popular',
-    topVoted = 'top_voted',
+    topVoted = 'top',
     yourVotes = 'your_votes',
 }
 

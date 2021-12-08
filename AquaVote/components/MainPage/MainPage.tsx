@@ -39,6 +39,7 @@ import { Option } from '../../../common/basics/Select';
 import Pagination from '../../../common/basics/Pagination';
 import { StellarEvents } from '../../../common/services/stellar.service';
 import DotsLoader from '../../../common/basics/DotsLoader';
+import { useHistory, useLocation } from 'react-router-dom';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -209,14 +210,40 @@ const options: Option<SortTypes>[] = [
     { label: 'Your Votes', value: SortTypes.yourVotes },
 ];
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 20;
 const UPDATE_INTERVAL = 60 * 1000; // 1 minute
+
+enum UrlParams {
+    sort = 'sort',
+    base = 'base',
+    counter = 'counter',
+}
+
+const assetToUrlParams = (asset) => {
+    const assetInstance = StellarService.createAsset(asset.code, asset.issuer);
+
+    if (assetInstance.isNative()) {
+        return 'native';
+    }
+
+    return `${assetInstance.code}:${assetInstance.issuer}`;
+};
+
+const assetFromUrlParams = (params) => {
+    if (params === 'native') {
+        return StellarService.createLumen();
+    }
+
+    const [code, issuer] = params.split(':');
+
+    return StellarService.createAsset(code, issuer);
+};
 
 const MainPage = (): JSX.Element => {
     const [updateIndex, setUpdateIndex] = useState(0);
     const { processNewAssets } = useAssetsStore();
     const [chosenPairs, setChosenPairs] = useState(getCachedChosenPairs());
-    const [sort, setSort] = useState(SortTypes.popular);
+    const [sort, setSort] = useState(null);
     const [page, setPage] = useState(1);
     const { isLogged, account } = useAuthStore();
     const [isClaimableBalancesLoaded, setIsClaimableBalancesLoaded] = useState(false);
@@ -229,6 +256,83 @@ const MainPage = (): JSX.Element => {
 
     const [pairs, setPairs] = useState(null);
     const [count, setCount] = useState(0);
+
+    const location = useLocation();
+    const history = useHistory();
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        if (
+            !params.has(UrlParams.sort) &&
+            !params.has(UrlParams.base) &&
+            !params.has(UrlParams.counter)
+        ) {
+            params.append(UrlParams.sort, SortTypes.popular);
+            history.replace({ search: params.toString() });
+            return;
+        }
+        if (
+            params.has(UrlParams.sort) &&
+            (params.has(UrlParams.base) || params.has(UrlParams.counter))
+        ) {
+            params.delete(UrlParams.base);
+            params.delete(UrlParams.counter);
+            history.replace({ search: params.toString() });
+            return;
+        }
+
+        if (params.has(UrlParams.counter) && !params.has(UrlParams.base)) {
+            params.append(UrlParams.base, params.get(UrlParams.counter));
+            params.delete(UrlParams.counter);
+            history.replace({ search: params.toString() });
+        }
+
+        if (
+            params.get(UrlParams.base) &&
+            params.get(UrlParams.base) === params.get(UrlParams.counter)
+        ) {
+            params.delete(UrlParams.counter);
+            history.replace({ search: params.toString() });
+            return;
+        }
+
+        if (
+            params.has(UrlParams.sort) &&
+            !Object.values(SortTypes).includes(params.get(UrlParams.sort) as SortTypes)
+        ) {
+            params.delete(UrlParams.sort);
+            history.replace({ search: params.toString() });
+            return;
+        }
+
+        if (params.has(UrlParams.sort)) {
+            setSort(params.get(UrlParams.sort));
+        } else {
+            setSort(null);
+        }
+        if (params.has(UrlParams.base)) {
+            try {
+                const asset = assetFromUrlParams(params.get(UrlParams.base));
+                setSearchBase(asset);
+            } catch (e) {
+                params.delete(UrlParams.base);
+                history.replace({ search: params.toString() });
+            }
+        } else {
+            setSearchBase(null);
+        }
+        if (params.has(UrlParams.counter)) {
+            try {
+                const asset = assetFromUrlParams(params.get(UrlParams.counter));
+                setSearchCounter(asset);
+            } catch (e) {
+                params.delete(UrlParams.counter);
+                history.replace({ search: params.toString() });
+            }
+        } else {
+            setSearchCounter(null);
+        }
+    }, [location]);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -287,22 +391,9 @@ const MainPage = (): JSX.Element => {
 
     useEffect(() => {
         if (sort === SortTypes.yourVotes && !isLogged) {
-            setSort(SortTypes.popular);
+            changeSort(SortTypes.popular);
         }
     }, [isLogged]);
-
-    useEffect(() => {
-        if (!searchBase && Boolean(searchCounter)) {
-            setSearchBase(searchCounter);
-            setSearchCounter(null);
-        }
-    }, [searchBase]);
-
-    useEffect(() => {
-        if (!sort && !searchBase && !searchCounter) {
-            setSort(SortTypes.popular);
-        }
-    }, [sort, searchBase, searchCounter]);
 
     useEffect(() => {
         if (sort === SortTypes.yourVotes && !isLogged) {
@@ -373,24 +464,44 @@ const MainPage = (): JSX.Element => {
     }, [searchBase, searchCounter, page]);
 
     const changeSort = (sortValue) => {
-        setSort(sortValue);
+        const params = new URLSearchParams(location.search);
+        params.set(UrlParams.sort, sortValue);
+        params.delete(UrlParams.base);
+        params.delete(UrlParams.counter);
+        history.push({ pathname: location.pathname, search: params.toString() });
         setPage(1);
-        setSearchBase(null);
-        setSearchCounter(null);
     };
 
     const changeBaseSearch = (asset) => {
+        const params = new URLSearchParams(location.search);
+        params.delete(UrlParams.sort);
+        if (asset) {
+            params.set(UrlParams.base, assetToUrlParams(asset));
+        } else {
+            params.delete(UrlParams.base);
+        }
+        history.push({
+            pathname: location.pathname,
+            search: decodeURIComponent(params.toString()),
+        });
         setPairsLoading(true);
-        setSearchBase(asset);
         setPage(1);
-        setSort(null);
     };
 
     const changeCounterSearch = (asset) => {
+        const params = new URLSearchParams(location.search);
+        params.delete(UrlParams.sort);
+        if (asset) {
+            params.set(UrlParams.counter, assetToUrlParams(asset));
+        } else {
+            params.delete(UrlParams.counter);
+        }
+        history.push({
+            pathname: location.pathname,
+            search: decodeURIComponent(params.toString()),
+        });
         setPairsLoading(true);
-        setSearchCounter(asset);
         setPage(1);
-        setSort(null);
     };
 
     const changePage = (page) => {
