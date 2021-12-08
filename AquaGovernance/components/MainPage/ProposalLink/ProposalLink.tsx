@@ -75,11 +75,16 @@ const Success = styled(SuccessIcon)`
     margin-right: 0.4rem;
 `;
 
+const Rate = styled.span<{ isCancelled: boolean }>`
+    color: ${({ isCancelled }) => (isCancelled ? COLORS.pinkRed : COLORS.grayText)};
+    margin-left: 0.5rem;
+`;
+
 interface ProposalLinkProps extends LinkProps {
     proposal: ProposalSimple;
 }
 
-const getProposalInfo = (proposal: ProposalSimple): string => {
+const getProposalInfo = (proposal: ProposalSimple) => {
     const {
         end_at: dateEnd,
         is_simple_proposal: isSimpleProposal,
@@ -88,40 +93,49 @@ const getProposalInfo = (proposal: ProposalSimple): string => {
         aqua_circulating_supply: aquaCirculatingSupply,
     } = proposal;
 
+    if (!isSimpleProposal) {
+        return '';
+    }
+
     const isEnd = new Date() >= new Date(dateEnd);
 
-    if (!isEnd) {
-        const dateString = getDateString(new Date(dateEnd).getTime());
-        return `Ends on ${dateString}`;
+    const dateString = getDateString(new Date(dateEnd).getTime());
+
+    const voteForValue = Number(voteFor);
+    const voteAgainstValue = Number(voteAgainst);
+
+    const isVoteForWin = voteForValue > voteAgainstValue;
+
+    const percentFor = (voteForValue / (voteForValue + voteAgainstValue)) * 100;
+
+    const percentAgainst = (voteAgainstValue / (voteForValue + voteAgainstValue)) * 100;
+
+    if (Number.isNaN(percentFor)) {
+        return <span>{isEnd ? 'No votes yet' : `Ends on ${dateString} · No votes yet`}</span>;
     }
 
-    if (isSimpleProposal) {
-        const voteForValue = Number(voteFor);
-        const voteAgainstValue = Number(voteAgainst);
+    const rate = ((voteForValue + voteAgainstValue) / Number(aquaCirculatingSupply)) * 100;
 
-        const isVoteForWin = voteForValue > voteAgainstValue;
+    const isCancelled = rate < MINIMUM_APPROVAL_PERCENT;
 
-        const percent =
-            ((isVoteForWin ? voteForValue : voteAgainstValue) / (voteForValue + voteAgainstValue)) *
-            100;
-
-        if (Number.isNaN(percent)) {
-            return 'No votes yet';
-        }
-
-        const isCancelled =
-            ((voteForValue + voteAgainstValue) / Number(aquaCirculatingSupply)) * 100 <
-            MINIMUM_APPROVAL_PERCENT;
-
-        if (isCancelled) {
-            return 'Canceled - Not enough votes';
-        }
-        const roundedPercent = roundToPrecision(percent, 2);
-
-        return `${
-            isVoteForWin ? 'Voted "For"' : 'Voted "Against"'
-        } with ${roundedPercent}% of the votes`;
+    if (isCancelled && isEnd) {
+        return <span>Canceled - Not enough votes</span>;
     }
+    const roundedPercentFor = roundToPrecision(percentFor, 2);
+    const roundedPercentAgainst = roundToPrecision(percentAgainst, 2);
+
+    return isEnd ? (
+        <span>
+            {isVoteForWin ? 'Voted "For"' : 'Voted "Against"'} with{' '}
+            {isVoteForWin ? roundedPercentFor : roundedPercentAgainst}% of the votes
+        </span>
+    ) : (
+        <span>
+            Ends on {dateString} · Participation Rate:
+            <Rate isCancelled={isCancelled}>{roundToPrecision(rate, 2)}%</Rate> · Vote Stats:{' '}
+            {roundedPercentFor}% “For” / {roundedPercentAgainst}% “Against”
+        </span>
+    );
 };
 
 const getRightBlock = (proposal: ProposalSimple) => {
