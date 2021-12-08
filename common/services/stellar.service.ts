@@ -130,6 +130,14 @@ export default class StellarServiceClass {
         return new StellarSdk.Memo(type, value);
     }
 
+    createAsset(code: string, issuer: string) {
+        return new StellarSdk.Asset(code, issuer);
+    }
+
+    createLumen() {
+        return StellarSdk.Asset.native();
+    }
+
     signAndSubmit(
         tx: StellarSdk.Transaction,
         account: Partial<Horizon.AccountResponse>,
