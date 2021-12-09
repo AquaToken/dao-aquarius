@@ -169,7 +169,7 @@ const Pair = ({
                                 onMouseEnter={() => setShowTooltip(true)}
                                 onMouseLeave={() => setShowTooltip(false)}
                             >
-                                rewards zone
+                                reward zone
                             </RewardsOn>
                         </Tooltip>
                     )}
