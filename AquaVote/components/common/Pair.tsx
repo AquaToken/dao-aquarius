@@ -158,8 +158,8 @@ const Pair = ({
                         <Tooltip
                             content={
                                 <TooltipInner>
-                                    Rewards are enabled only for markets that got at least 1% votes
-                                    from the total AQUA voted
+                                    Any market with at least 1% of the total AQUA votes is placed into
+                                    the reward zone and will get rewards after the next rewards update.
                                 </TooltipInner>
                             }
                             position={TOOLTIP_POSITION.top}
@@ -169,7 +169,7 @@ const Pair = ({
                                 onMouseEnter={() => setShowTooltip(true)}
                                 onMouseLeave={() => setShowTooltip(false)}
                             >
-                                rewards on
+                                rewards zone
                             </RewardsOn>
                         </Tooltip>
                     )}
