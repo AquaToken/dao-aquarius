@@ -1,8 +1,8 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { COLORS } from '../../../../common/styles';
-import { PairStats } from '../../../api/types';
-import { formatBalance } from '../../../../common/helpers/helpers';
+import { PairStats, TotalStats } from '../../../api/types';
+import { formatBalance, roundToPrecision } from '../../../../common/helpers/helpers';
 import Pair from '../../common/Pair';
 import PageLoader from '../../../../common/basics/PageLoader';
 import { flexAllCenter } from '../../../../common/mixins';
@@ -118,16 +118,30 @@ const TableBodyRow = styled.div`
 //     }
 // `;
 
+const getPercent = (value: string, total: string): string => {
+    return roundToPrecision((Number(value) / Number(total)) * 100, 2);
+};
+
+const MIN_REWARDS_PERCENT = 1;
+
+const isRewardsOn = (value: string, total: string): boolean => {
+    const percent = (Number(value) / Number(total)) * 100;
+
+    return percent >= MIN_REWARDS_PERCENT;
+};
+
 const Table = ({
     pairs,
     selectedPairs,
     selectPair,
     loading,
+    totalStats,
 }: {
     pairs: PairStats[];
     selectedPairs: PairStats[];
     selectPair: (PairStats) => void;
     loading: boolean;
+    totalStats: TotalStats;
 }): JSX.Element => {
     if (!pairs.length) {
         return null;
@@ -138,7 +152,7 @@ const Table = ({
     };
     return (
         <TableBlock>
-            {loading && (
+            {(loading || !totalStats) && (
                 <TableLoader>
                     <PageLoader />
                 </TableLoader>
@@ -160,6 +174,10 @@ const Table = ({
                                 <Pair
                                     base={{ code: pair.asset1_code, issuer: pair.asset1_issuer }}
                                     counter={{ code: pair.asset2_code, issuer: pair.asset2_issuer }}
+                                    isRewardsOn={isRewardsOn(
+                                        pair.votes_value,
+                                        totalStats.votes_value_sum,
+                                    )}
                                 />
                             </TableCell>
                             <TableCell>
@@ -167,7 +185,10 @@ const Table = ({
                             </TableCell>
                             <TableCell>
                                 {pair.votes_value
-                                    ? `${formatBalance(+pair.votes_value, true)} AQUA`
+                                    ? `${formatBalance(+pair.votes_value, true)} AQUA (${getPercent(
+                                          pair.votes_value,
+                                          totalStats.votes_value_sum,
+                                      )}%)`
                                     : null}{' '}
                             </TableCell>
                             <TableCell>

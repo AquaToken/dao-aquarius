@@ -639,6 +639,7 @@ const MainPage = (): JSX.Element => {
                     selectedPairs={chosenPairs}
                     selectPair={onVoteClick}
                     loading={pairsLoading}
+                    totalStats={totalStats}
                 />
                 {(!pairsLoading || changePageLoading) && sort !== SortTypes.yourVotes && (
                     <Pagination

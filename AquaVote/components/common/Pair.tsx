@@ -10,6 +10,8 @@ import DotsLoader from '../../../common/basics/DotsLoader';
 import AssetLogo, { logoStyles } from '../AssetDropdown/AssetLogo';
 import External from '../../../common/assets/img/icon-external-link.svg';
 import { flexAllCenter } from '../../../common/mixins';
+import Tooltip, { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
+import { useState } from 'react';
 
 const Wrapper = styled.div<{ verticalDirections?: boolean }>`
     display: flex;
@@ -73,6 +75,28 @@ const Link = styled.div`
     ${flexAllCenter};
 `;
 
+const RewardsOn = styled.div`
+    height: 1.6rem;
+    padding: 0 0.4rem;
+    border-radius: 0.3rem;
+    background: ${COLORS.purple};
+    color: ${COLORS.white};
+    text-transform: uppercase;
+    font-weight: 500;
+    font-size: 0.8rem;
+    line-height: 1.8rem;
+    margin-left: 0.7rem;
+    margin-right: 0.3rem;
+    cursor: help;
+`;
+
+const TooltipInner = styled.div`
+    width: 28.8rem;
+    white-space: pre-line;
+    font-size: 1.4rem;
+    line-height: 2rem;
+`;
+
 const assetToString = (asset: StellarSdk.Asset) => {
     if (asset.isNative()) {
         return 'native';
@@ -93,9 +117,16 @@ type PairProps = {
     counter: AssetSimple;
     withoutDomains?: boolean;
     verticalDirections?: boolean;
+    isRewardsOn?: boolean;
 };
 
-const Pair = ({ base, counter, withoutDomains, verticalDirections }: PairProps): JSX.Element => {
+const Pair = ({
+    base,
+    counter,
+    withoutDomains,
+    verticalDirections,
+    isRewardsOn,
+}: PairProps): JSX.Element => {
     const { assetsInfo } = useAssetsStore();
 
     const baseInstance = new StellarSdk.Asset(base.code, base.issuer);
@@ -107,6 +138,8 @@ const Pair = ({ base, counter, withoutDomains, verticalDirections }: PairProps):
     const isCounterNative = counterInstance.isNative();
     const hasCounterInfo = isCounterNative || assetsInfo.has(getAssetString(counter));
     const counterInfo = isCounterNative ? LumenInfo : assetsInfo.get(getAssetString(counter));
+
+    const [showTooltip, setShowTooltip] = useState(false);
 
     return (
         <Wrapper verticalDirections={verticalDirections}>
@@ -121,6 +154,25 @@ const Pair = ({ base, counter, withoutDomains, verticalDirections }: PairProps):
             <AssetsDetails verticalDirections={verticalDirections}>
                 <AssetsCodes>
                     {base.code} / {counter.code}
+                    {isRewardsOn && (
+                        <Tooltip
+                            content={
+                                <TooltipInner>
+                                    Rewards are enabled only for markets that got at least 1% votes
+                                    from the total AQUA voted
+                                </TooltipInner>
+                            }
+                            position={TOOLTIP_POSITION.top}
+                            isShow={showTooltip}
+                        >
+                            <RewardsOn
+                                onMouseEnter={() => setShowTooltip(true)}
+                                onMouseLeave={() => setShowTooltip(false)}
+                            >
+                                rewards on
+                            </RewardsOn>
+                        </Tooltip>
+                    )}
                     <Link onClick={() => viewOnStellarX(baseInstance, counterInstance)}>
                         <External />
                     </Link>

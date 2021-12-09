@@ -61,7 +61,7 @@ export const getTimeString = (timestamp: number): string => {
 export const roundToPrecision = (value: string | number, numDecimals: number): string => {
     const multiplier = 10 ** numDecimals;
 
-    return (Math.round(Number(value) * multiplier) / multiplier).toString();
+    return (Math.floor(Number(value) * multiplier) / multiplier).toString();
 };
 
 const getNumDecimals = (value: number): number => {
