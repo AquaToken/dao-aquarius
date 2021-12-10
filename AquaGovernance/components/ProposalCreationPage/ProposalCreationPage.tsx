@@ -68,6 +68,7 @@ const ProposalCreationPage = (): JSX.Element => {
                             vote_against_result: '0',
                             vote_for_issuer: '',
                             vote_for_result: '0',
+                            aqua_circulating_supply: '1',
                         }}
                         isTemplate
                         setScreenState={setScreenState}

@@ -13,7 +13,7 @@ import {
 import ToggleGroup from '../../../common/basics/ToggleGroup';
 import Table from './Table/Table';
 import FloatingButton from './FloatingButton/FloatingButton';
-import SelectedPairsForm from './SelectedPairsForm/SelectedPairsForm';
+import VotesAmountModal from './VoteModals/VotesAmountModal';
 import { ModalService, StellarService } from '../../../common/services/globalServices';
 import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
 import useAuthStore from '../../../common/store/authStore/useAuthStore';
@@ -202,7 +202,8 @@ const BeFirst = styled.div`
 
 export const SELECTED_PAIRS_ALIAS = 'selected pairs';
 
-const getCachedChosenPairs = () => JSON.parse(localStorage.getItem(SELECTED_PAIRS_ALIAS) || '[]');
+export const getCachedChosenPairs = () =>
+    JSON.parse(localStorage.getItem(SELECTED_PAIRS_ALIAS) || '[]');
 
 const options: Option<SortTypes>[] = [
     { label: 'Popular', value: SortTypes.popular },
@@ -366,7 +367,7 @@ const MainPage = (): JSX.Element => {
 
     const startVote = () => {
         if (isLogged) {
-            ModalService.openModal(SelectedPairsForm, {
+            ModalService.openModal(VotesAmountModal, {
                 pairs: chosenPairs,
                 updatePairs: updateChosenPairs,
             }).then(() => {

@@ -51,8 +51,6 @@ const ModalInner = styled.div<{ withBackground: boolean; isShow: boolean }>`
 `;
 
 const ModalContent = styled.div`
-    max-height: 80vh;
-    overflow-y: auto;
     padding: 0 4.8rem 3.8rem;
 `;
 
