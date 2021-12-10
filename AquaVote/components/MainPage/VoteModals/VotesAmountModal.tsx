@@ -152,9 +152,8 @@ const ResetValues = styled.div`
 
 const Scrollable = styled.div`
     overflow-y: scroll;
-    max-height: calc(80vh - 15rem);
-    padding: 0 1.5rem 0 2rem;
-    margin: 2rem 0 1rem;
+    padding: 0 1rem;
+    max-height: calc(100vh - 20rem);
 
     &::-webkit-scrollbar {
         width: 0.5rem;
@@ -471,11 +470,7 @@ const VotesAmountModal = ({
             </Scrollable>
 
             <ButtonContainer>
-                <Button
-                    fullWidth
-                    onClick={() => onSubmit()}
-                    disabled={!amount || !Number(amount)}
-                >
+                <Button fullWidth onClick={() => onSubmit()} disabled={!amount || !Number(amount)}>
                     NEXT
                 </Button>
             </ButtonContainer>
