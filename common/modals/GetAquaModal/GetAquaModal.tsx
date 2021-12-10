@@ -80,9 +80,30 @@ const LinkDescription = styled(GrayText)`
     line-height: 2.9rem;
 `;
 
+const Scrolled = styled.div`
+    max-height: 80vh;
+    overflow-y: scroll;
+    padding-right: 3rem;
+
+    &::-webkit-scrollbar {
+        width: 0.5rem;
+    }
+
+    /* Track */
+    &::-webkit-scrollbar-track {
+        background: ${COLORS.white};
+    }
+
+    /* Handle */
+    &::-webkit-scrollbar-thumb {
+        background: ${COLORS.purple};
+        border-radius: 0.25rem;
+    }
+`;
+
 const GetAquaModal = (): JSX.Element => {
     return (
-        <>
+        <Scrolled>
             <Container>
                 <ModalTitle>Get AQUA token</ModalTitle>
                 <ModalDescription>
@@ -174,7 +195,7 @@ const GetAquaModal = (): JSX.Element => {
                     <ArrowRight />
                 </PlatfomLink>
             </TrustedPlatformsBlock>
-        </>
+        </Scrolled>
     );
 };
 

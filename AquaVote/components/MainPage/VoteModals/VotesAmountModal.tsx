@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
     ModalDescription,
     ModalProps,
@@ -13,29 +13,23 @@ import useAuthStore from '../../../../common/store/authStore/useAuthStore';
 import Input from '../../../../common/basics/Input';
 import RangeInput from '../../../../common/basics/RangeInput';
 import Button from '../../../../common/basics/Button';
-import {
-    ModalService,
-    StellarService,
-    ToastService,
-} from '../../../../common/services/globalServices';
-import { formatBalance, getDateString, roundToPrecision } from '../../../../common/helpers/helpers';
+import { ModalService, ToastService } from '../../../../common/services/globalServices';
+import { formatBalance, roundToPrecision } from '../../../../common/helpers/helpers';
 import ExternalLink from '../../../../common/basics/ExternalLink';
 import GetAquaModal from '../../../../common/modals/GetAquaModal/GetAquaModal';
 import CloseIcon from '../../../../common/assets/img/icon-close-small.svg';
 import Pair from '../../common/Pair';
 import { PairStats } from '../../../api/types';
 import { SELECTED_PAIRS_ALIAS } from '../MainPage';
-import Select, { Option } from '../../../../common/basics/Select';
-import { useIsMounted } from '../../../../common/hooks/useIsMounted';
-import { BuildSignAndSubmitStatuses } from '../../../../common/services/wallet-connect.service';
+import VotesDurationModal from './VotesDurationModal';
 
-const ContentRow = styled.div`
+export const ContentRow = styled.div`
     ${flexRowSpaceBetween};
     width: 52.8rem;
     margin-top: 3rem;
 `;
 
-const Label = styled.span`
+export const Label = styled.span`
     font-size: 1.6rem;
     line-height: 1.8rem;
     color: ${COLORS.paragraphText};
@@ -71,22 +65,6 @@ const AmountInput = styled(Input)`
     margin-top: 1.2rem;
     margin-bottom: 3.3rem;
 `;
-
-const ClaimBack = styled.div`
-    margin-top: 4.1rem;
-    padding-bottom: 1.7rem;
-    color: ${COLORS.grayText};
-`;
-
-const VotePeriodSelect = styled(Select)`
-    margin-top: 1.2rem;
-`;
-
-const ClaimBackDate = styled.span`
-    color: ${COLORS.paragraphText};
-`;
-
-const StyledButton = styled(Button)``;
 
 const ButtonContainer = styled.div`
     padding-top: 3.2rem;
@@ -196,42 +174,23 @@ const Scrollable = styled.div`
 
 const MINIMUM_AMOUNT = 0.0000001;
 
-const MINUTE = 60 * 1000;
-const HOUR = 60 * MINUTE;
-const DAY = 24 * HOUR;
-const MONTH = 30 * DAY;
-
-const PeriodOptions: Option<number>[] = [
-    { label: '1 Week', value: 7 * DAY },
-    { label: '2 Weeks', value: 14 * DAY },
-    { label: '3 Weeks', value: 21 * DAY },
-    { label: '1 Month', value: MONTH },
-    { label: '2 Month', value: 2 * MONTH },
-    { label: '3 Month', value: 3 * MONTH },
-    { label: '4 Month', value: 4 * MONTH },
-    { label: '5 Month', value: 5 * MONTH },
-    { label: '6 Month', value: 6 * MONTH },
-];
-
-const SelectedPairsForm = ({
+const VotesAmountModal = ({
     params,
     close,
-}: ModalProps<{ pairs: PairStats[]; updatePairs: () => void }>) => {
+}: ModalProps<{ pairs: PairStats[]; updatePairs: () => void; pairsAmounts?: {} }>) => {
     const { account } = useAuthStore();
-    const { pairs, updatePairs } = params;
-
-    const isMounted = useIsMounted();
+    const { pairs, updatePairs, pairsAmounts } = params;
 
     const [percent, setPercent] = useState(0);
     const [amount, setAmount] = useState('');
-    const [pending, setPending] = useState(false);
     const [selectedPairs, setSelectedPairs] = useState(pairs);
-    const [votePeriod, setVotePeriod] = useState(7 * DAY);
+
     const [pairsAmount, setPairsAmount] = useState(
-        selectedPairs.reduce((acc, pair) => {
-            acc[pair.market_key] = '';
-            return acc;
-        }, {}),
+        pairsAmounts ||
+            selectedPairs.reduce((acc, pair) => {
+                acc[pair.market_key] = '';
+                return acc;
+            }, {}),
     );
     const [isHandleEdit, setIsHandleEdit] = useState(false);
 
@@ -241,6 +200,21 @@ const SelectedPairsForm = ({
     const hasAqua = aquaBalance !== 0;
 
     const formattedAquaBalance = hasTrustLine && formatBalance(aquaBalance);
+
+    useEffect(() => {
+        if (pairsAmounts) {
+            const sum = Object.values(pairsAmounts).reduce((acc: number, value: string) => {
+                acc += Number(value);
+                return acc;
+            }, 0);
+
+            setAmount(roundToPrecision(sum.toString(), 7));
+
+            const percentValue = roundToPrecision((Number(sum) / Number(aquaBalance)) * 100, 1);
+
+            setPercent(+percentValue);
+        }
+    }, []);
 
     const onRangeChange = (percent) => {
         setPercent(percent);
@@ -263,7 +237,7 @@ const SelectedPairsForm = ({
         }
         setAmount(value);
 
-        const percentValue = roundToPrecision((Number(value) / Number(aquaBalance)) * 100, 2);
+        const percentValue = roundToPrecision((Number(value) / Number(aquaBalance)) * 100, 1);
 
         setPercent(+percentValue);
 
@@ -293,7 +267,7 @@ const SelectedPairsForm = ({
 
         setAmount(roundToPrecision(sum.toString(), 7));
 
-        const percentValue = roundToPrecision((Number(sum) / Number(aquaBalance)) * 100, 2);
+        const percentValue = roundToPrecision((Number(sum) / Number(aquaBalance)) * 100, 1);
 
         setPercent(+percentValue);
     };
@@ -324,7 +298,7 @@ const SelectedPairsForm = ({
 
             setAmount(roundToPrecision(sum.toString(), 7));
 
-            const percentValue = roundToPrecision((Number(sum) / Number(aquaBalance)) * 100, 2);
+            const percentValue = roundToPrecision((Number(sum) / Number(aquaBalance)) * 100, 1);
 
             setPercent(+percentValue);
 
@@ -352,9 +326,6 @@ const SelectedPairsForm = ({
     };
 
     const onSubmit = async () => {
-        if (pending) {
-            return;
-        }
         if (Number(amount) > Number(aquaBalance)) {
             ToastService.showErrorToast(
                 `The value must be less or equal than ${formattedAquaBalance} AQUA`,
@@ -379,46 +350,12 @@ const SelectedPairsForm = ({
             return;
         }
 
-        try {
-            setPending(true);
-
-            const voteOps = Object.entries(pairsAmount).map(([marketKey, voteAmount]) =>
-                StellarService.createVoteOperation(
-                    account.accountId(),
-                    marketKey,
-                    voteAmount,
-                    new Date(Date.now() + votePeriod).getTime(),
-                ),
-            );
-
-            const tx = await StellarService.buildTx(account, voteOps);
-
-            const result = await account.signAndSubmitTx(tx);
-            if (isMounted.current) {
-                setPending(false);
-                close();
-            }
-
-            localStorage.setItem(SELECTED_PAIRS_ALIAS, JSON.stringify([]));
-
-            if (
-                (result as { status: BuildSignAndSubmitStatuses }).status ===
-                BuildSignAndSubmitStatuses.pending
-            ) {
-                ToastService.showSuccessToast('More signatures required to complete');
-                return;
-            }
-            ToastService.showSuccessToast(
-                'Your vote has been cast! You will be able to see your vote in the list within 10 minutes',
-            );
-            StellarService.getClaimableBalances(account.accountId());
-        } catch (e) {
-            console.log(e);
-            ToastService.showErrorToast('Oops. Something went wrong.');
-            if (isMounted.current) {
-                setPending(false);
-            }
-        }
+        close();
+        ModalService.openModal(VotesDurationModal, {
+            pairsAmounts: pairsAmount,
+            pairs,
+            updatePairs,
+        });
     };
 
     return (
@@ -523,24 +460,7 @@ const SelectedPairsForm = ({
                     </TotalAmount>
                 </TotalAmountRow>
 
-                <ContentRow>
-                    <Label>Vote Period</Label>
-                </ContentRow>
-
-                <VotePeriodSelect
-                    options={PeriodOptions}
-                    value={votePeriod}
-                    onChange={setVotePeriod}
-                />
-
-                {hasTrustLine && hasAqua ? (
-                    <ClaimBack>
-                        You can retrieve your AQUA on{' '}
-                        <ClaimBackDate>
-                            {getDateString(Date.now() + votePeriod, { withTime: true })}
-                        </ClaimBackDate>
-                    </ClaimBack>
-                ) : (
+                {hasTrustLine && hasAqua ? null : (
                     <GetAquaBlock>
                         <GetAquaLabel>You don&apos;t have enough AQUA</GetAquaLabel>
                         <ExternalLink onClick={() => ModalService.openModal(GetAquaModal, {})}>
@@ -551,17 +471,16 @@ const SelectedPairsForm = ({
             </Scrollable>
 
             <ButtonContainer>
-                <StyledButton
+                <Button
                     fullWidth
                     onClick={() => onSubmit()}
                     disabled={!amount || !Number(amount)}
-                    pending={pending}
                 >
-                    CONFIRM
-                </StyledButton>
+                    NEXT
+                </Button>
             </ButtonContainer>
         </>
     );
 };
 
-export default SelectedPairsForm;
+export default VotesAmountModal;
