@@ -92,6 +92,17 @@ const TableBodyRow = styled.div`
     }
 `;
 
+const Amount = styled.div`
+    display: flex;
+    flex-direction: column;
+
+    div:last-child {
+        color: ${COLORS.grayText};
+        font-size: 1.4rem;
+        line-height: 2rem;
+    }
+`;
+
 // const SortingHeader = styled.button`
 //     background: none;
 //     border: none;
@@ -184,12 +195,21 @@ const Table = ({
                                 {pair.voting_amount ? formatBalance(pair.voting_amount) : null}
                             </TableCell>
                             <TableCell>
-                                {pair.votes_value
-                                    ? `${formatBalance(+pair.votes_value, true)} AQUA (${getPercent(
-                                          pair.votes_value,
-                                          totalStats.votes_value_sum,
-                                      )}%)`
-                                    : null}{' '}
+                                <Amount>
+                                    <div>
+                                        {pair.votes_value
+                                            ? `${formatBalance(+pair.votes_value, true)} AQUA`
+                                            : null}
+                                    </div>
+                                    <div>
+                                        {pair.votes_value
+                                            ? `${getPercent(
+                                                  pair.votes_value,
+                                                  totalStats.votes_value_sum,
+                                              )}%`
+                                            : null}
+                                    </div>
+                                </Amount>
                             </TableCell>
                             <TableCell>
                                 <VoteButton
