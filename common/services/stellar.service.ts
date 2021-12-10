@@ -244,6 +244,7 @@ export default class StellarServiceClass {
             .sponsor(publicKey)
             .claimant(publicKey)
             .order('desc')
+            .limit(200)
             .call()
             .then((claimable) => {
                 this.claimableBalances = claimable.records;
