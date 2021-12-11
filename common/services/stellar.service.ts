@@ -328,7 +328,9 @@ export default class StellarServiceClass {
                 if (!similarToMarketKey) {
                     return acc;
                 }
-                acc.push(similarToMarketKey.destination);
+                if (!acc.includes(similarToMarketKey.destination)) {
+                    acc.push(similarToMarketKey.destination);
+                }
             }
             return acc;
         }, []);
