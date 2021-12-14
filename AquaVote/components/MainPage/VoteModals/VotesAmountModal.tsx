@@ -194,6 +194,8 @@ const VotesAmountModal = ({
     const [isHandleEdit, setIsHandleEdit] = useState(false);
 
     const aquaBalance = account.getAquaBalance();
+    const nativeBalance = account.getAvailableNativeBalance();
+    const formattedNativeBalance = formatBalance(nativeBalance);
 
     const hasTrustLine = aquaBalance !== null;
     const hasAqua = aquaBalance !== 0;
@@ -328,6 +330,13 @@ const VotesAmountModal = ({
         if (Number(amount) > Number(aquaBalance)) {
             ToastService.showErrorToast(
                 `The value must be less or equal than ${formattedAquaBalance} AQUA`,
+            );
+            return;
+        }
+        if (Object.values(pairsAmount).length > Number(nativeBalance)) {
+            ToastService.showErrorToast(
+                `A vote for each pair requires a reserve of 1 XLM on your account. Your available balance of ${formattedNativeBalance} XLM is not enough to cover the votes for the pairs you selected.`,
+                20000,
             );
             return;
         }
