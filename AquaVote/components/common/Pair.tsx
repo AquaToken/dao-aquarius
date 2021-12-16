@@ -158,8 +158,9 @@ const Pair = ({
                         <Tooltip
                             content={
                                 <TooltipInner>
-                                    Any market with at least 1% of the total AQUA votes is placed into
-                                    the reward zone and will get rewards after the next rewards update.
+                                    Any market with at least 1% of the total AQUA votes is placed
+                                    into the reward zone and will get rewards after the next rewards
+                                    update.
                                 </TooltipInner>
                             }
                             position={TOOLTIP_POSITION.top}

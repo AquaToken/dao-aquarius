@@ -82,7 +82,7 @@ const getNumDecimals = (value: number): number => {
 };
 
 export const formatBalance = (balance: number, withRounding?: boolean): string => {
-    const precision = getNumDecimals(balance);
+    const precision = getNumDecimals(Math.abs(balance));
 
     return new Intl.NumberFormat('en-US', {
         maximumFractionDigits: withRounding ? precision : 7,

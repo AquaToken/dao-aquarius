@@ -32,33 +32,43 @@ const Balance = styled.div`
 `;
 
 const VoteButton = ({
-    marketKey,
+    marketKeyUp,
+    marketKeyDown,
     isPairSelected,
     onButtonClick,
 }: {
-    marketKey: string;
+    marketKeyUp: string;
+    marketKeyDown: string;
     isPairSelected: boolean;
     onButtonClick: () => void;
 }): JSX.Element => {
     const { account, isLogged } = useAuthStore();
-    const [balance, setBalance] = useState(
-        isLogged ? StellarService.getMarketVotesValue(marketKey, account?.accountId()) : null,
+    const [balanceUp, setBalanceUp] = useState(
+        isLogged ? StellarService.getMarketVotesValue(marketKeyUp, account?.accountId()) : null,
+    );
+
+    const [balanceDown, setBalanceDown] = useState(
+        isLogged ? StellarService.getMarketVotesValue(marketKeyDown, account?.accountId()) : null,
     );
 
     useEffect(() => {
         if (!account) {
-            setBalance(null);
+            setBalanceUp(null);
+            setBalanceDown(null);
         }
         const unsub = StellarService.event.sub(({ type }) => {
             if (type === StellarEvents.claimableUpdate) {
-                setBalance(StellarService.getMarketVotesValue(marketKey, account?.accountId()));
+                setBalanceUp(StellarService.getMarketVotesValue(marketKeyUp, account?.accountId()));
+                setBalanceDown(
+                    StellarService.getMarketVotesValue(marketKeyDown, account?.accountId()),
+                );
             }
         });
 
         return () => unsub();
     }, [account]);
 
-    if (!balance) {
+    if (!balanceUp && !balanceDown) {
         return (
             <Button onClick={onButtonClick} likeDisabled={isPairSelected}>
                 {isPairSelected ? 'added' : 'Add To Vote'}
@@ -68,7 +78,7 @@ const VoteButton = ({
     }
     return (
         <Container>
-            <Balance>{formatBalance(balance, true)} AQUA</Balance>
+            <Balance>{formatBalance((+balanceUp || 0) - (+balanceDown || 0), true)} AQUA</Balance>
             <Button onClick={onButtonClick} likeDisabled={isPairSelected} isSquare>
                 {isPairSelected ? <IconTick /> : <IconPlus />}
             </Button>

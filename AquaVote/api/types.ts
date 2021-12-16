@@ -38,6 +38,7 @@ export type MarketKey = {
     created_at: string;
     id: number;
     locked_at: string;
+    downvote_account_id: string;
 };
 
 export type PairStats = MarketKey & MarketVotes;

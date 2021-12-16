@@ -61,12 +61,20 @@ const AquaLogo = styled(Aqua)`
     width: 3.2rem;
 `;
 
+const AssetsInfoBlock = styled.div`
+    ${flexAllCenter};
+    padding: 3.5rem 0;
+    background-color: ${COLORS.lightGray};
+    border-radius: 0.5rem;
+`;
+
 const AmountInput = styled(Input)`
     margin-top: 1.2rem;
     margin-bottom: 3.3rem;
 `;
 
 const ButtonContainer = styled.div`
+    margin-top: 2.5rem;
     padding-top: 3.2rem;
     border-top: 0.1rem dashed ${COLORS.gray};
 `;
@@ -150,10 +158,11 @@ const ResetValues = styled.div`
     cursor: pointer;
 `;
 
-const Scrollable = styled.div`
-    overflow-y: scroll;
+const Scrollable = styled.div<{ scrollDisabled: boolean }>`
+    overflow-y: ${({ scrollDisabled }) => (scrollDisabled ? 'unset' : 'scroll')};
     padding: 0 1rem;
     max-height: calc(100vh - 20rem);
+    min-height: 47rem;
 
     &::-webkit-scrollbar {
         width: 0.5rem;
@@ -176,18 +185,25 @@ const MINIMUM_AMOUNT = 0.0000001;
 const VotesAmountModal = ({
     params,
     close,
-}: ModalProps<{ pairs: PairStats[]; updatePairs: () => void; pairsAmounts?: {} }>) => {
+}: ModalProps<{
+    pairs: PairStats[];
+    updatePairs?: () => void;
+    pairsAmounts?: {};
+    isDownVoteModal?: boolean;
+}>) => {
     const { account } = useAuthStore();
-    const { pairs, updatePairs, pairsAmounts } = params;
+    const { pairs, updatePairs, pairsAmounts, isDownVoteModal } = params;
 
     const [percent, setPercent] = useState(0);
     const [amount, setAmount] = useState('');
     const [selectedPairs, setSelectedPairs] = useState(pairs);
 
+    const keyType: keyof PairStats = isDownVoteModal ? 'downvote_account_id' : 'market_key';
+
     const [pairsAmount, setPairsAmount] = useState(
         pairsAmounts ||
             selectedPairs.reduce((acc, pair) => {
-                acc[pair.market_key] = '';
+                acc[pair[keyType]] = '';
                 return acc;
             }, {}),
     );
@@ -199,7 +215,6 @@ const VotesAmountModal = ({
 
     const hasTrustLine = aquaBalance !== null;
     const hasAqua = aquaBalance !== 0;
-
     const formattedAquaBalance = hasTrustLine && formatBalance(aquaBalance);
 
     useEffect(() => {
@@ -220,13 +235,16 @@ const VotesAmountModal = ({
     const onRangeChange = (percent) => {
         setPercent(percent);
 
-        const amountValue = (aquaBalance * percent) / 100;
+        const amountValue = roundToPrecision((aquaBalance * percent) / 100, 7);
 
-        setAmount(roundToPrecision(amountValue, 7));
+        setAmount(amountValue);
 
         setPairsAmount(
             selectedPairs.reduce((acc, pair) => {
-                acc[pair.market_key] = roundToPrecision(amountValue / selectedPairs.length, 7);
+                acc[pair[keyType]] = roundToPrecision(
+                    Number(amountValue) / selectedPairs.length,
+                    7,
+                );
                 return acc;
             }, {}),
         );
@@ -244,7 +262,7 @@ const VotesAmountModal = ({
 
         setPairsAmount(
             selectedPairs.reduce((acc, pair) => {
-                acc[pair.market_key] = roundToPrecision(value / selectedPairs.length, 7);
+                acc[pair[keyType]] = roundToPrecision(value / selectedPairs.length, 7);
                 return acc;
             }, {}),
         );
@@ -274,9 +292,7 @@ const VotesAmountModal = ({
     };
 
     const deletePair = (deletedPair: PairStats) => {
-        const updatedPairs = selectedPairs.filter(
-            (pair) => pair.market_key !== deletedPair.market_key,
-        );
+        const updatedPairs = selectedPairs.filter((pair) => pair[keyType] !== deletedPair[keyType]);
 
         setSelectedPairs(updatedPairs);
         localStorage.setItem(SELECTED_PAIRS_ALIAS, JSON.stringify(updatedPairs));
@@ -288,7 +304,7 @@ const VotesAmountModal = ({
         }
 
         const pairsAmountCopy = { ...pairsAmount };
-        delete pairsAmountCopy[deletedPair.market_key];
+        delete pairsAmountCopy[deletedPair[keyType]];
 
         if (isHandleEdit) {
             setPairsAmount(pairsAmountCopy);
@@ -308,7 +324,7 @@ const VotesAmountModal = ({
 
         setPairsAmount(
             updatedPairs.reduce((acc, pair) => {
-                acc[pair.market_key] = roundToPrecision(Number(amount) / updatedPairs.length, 7);
+                acc[pair[keyType]] = roundToPrecision(Number(amount) / updatedPairs.length, 7);
                 return acc;
             }, {}),
         );
@@ -319,7 +335,7 @@ const VotesAmountModal = ({
         setPercent(0);
         setPairsAmount(
             selectedPairs.reduce((acc, pair) => {
-                acc[pair.market_key] = '';
+                acc[pair[keyType]] = '';
                 return acc;
             }, {}),
         );
@@ -361,18 +377,37 @@ const VotesAmountModal = ({
         close();
         ModalService.openModal(VotesDurationModal, {
             pairsAmounts: pairsAmount,
-            pairs,
+            pairs: selectedPairs,
             updatePairs,
+            isDownVoteModal,
         });
     };
 
     return (
         <>
-            <Scrollable>
-                <ModalTitle>Selected Pairs</ModalTitle>
+            <Scrollable scrollDisabled={isDownVoteModal}>
+                <ModalTitle>{isDownVoteModal ? 'Downvote pair' : 'Selected Pairs'}</ModalTitle>
                 <ModalDescription>
-                    Lock your AQUA in the network to complete your vote
+                    {isDownVoteModal
+                        ? 'Submit AQUA against a pair if you think it has no place in the market'
+                        : 'Lock your AQUA in the network to complete your vote'}
                 </ModalDescription>
+                {isDownVoteModal && (
+                    <AssetsInfoBlock>
+                        <Pair
+                            verticalDirections
+                            base={{
+                                code: pairs[0].asset1_code,
+                                issuer: pairs[0].asset1_issuer,
+                            }}
+                            counter={{
+                                code: pairs[0].asset2_code,
+                                issuer: pairs[0].asset2_issuer,
+                            }}
+                        />
+                    </AssetsInfoBlock>
+                )}
+
                 <ContentRow>
                     <Label>Amount</Label>
 
@@ -415,58 +450,65 @@ const VotesAmountModal = ({
                     disabled={!hasTrustLine || !hasAqua || isHandleEdit}
                 />
 
-                <ContentRow>
-                    <Label>Pairs ({selectedPairs.length})</Label>
-                    {isHandleEdit && (
-                        <ResetValues
-                            onClick={() => {
-                                resetForm();
-                            }}
-                        >
-                            Reset values
-                        </ResetValues>
-                    )}
-                </ContentRow>
-                <PairsList>
-                    {selectedPairs.map((pair) => (
-                        <PairBlock key={pair.market_key}>
-                            <AssetsInfo>
-                                <Pair
-                                    base={{ code: pair.asset1_code, issuer: pair.asset1_issuer }}
-                                    counter={{
-                                        code: pair.asset2_code,
-                                        issuer: pair.asset2_issuer,
+                {!isDownVoteModal && (
+                    <>
+                        <ContentRow>
+                            <Label>Pairs ({selectedPairs.length})</Label>
+                            {isHandleEdit && (
+                                <ResetValues
+                                    onClick={() => {
+                                        resetForm();
                                     }}
-                                    withoutDomains
-                                />
-                            </AssetsInfo>
-                            <StyledInput
-                                value={pairsAmount[pair.market_key]}
-                                onChange={(e) => {
-                                    onPairInputChange(e.target.value, pair.market_key);
-                                }}
-                                onFocus={() => {
-                                    setIsHandleEdit(true);
-                                }}
-                                isMedium
-                                isRightAligned
-                            />
-                            <CloseButton
-                                onClick={() => {
-                                    deletePair(pair);
-                                }}
-                            >
-                                <CloseIcon />
-                            </CloseButton>
-                        </PairBlock>
-                    ))}
-                </PairsList>
-                <TotalAmountRow>
-                    <Label>Total:</Label>
-                    <TotalAmount>
-                        {amount || '0'} AQUA <AquaLogo />
-                    </TotalAmount>
-                </TotalAmountRow>
+                                >
+                                    Reset values
+                                </ResetValues>
+                            )}
+                        </ContentRow>
+                        <PairsList>
+                            {selectedPairs.map((pair) => (
+                                <PairBlock key={pair.market_key}>
+                                    <AssetsInfo>
+                                        <Pair
+                                            base={{
+                                                code: pair.asset1_code,
+                                                issuer: pair.asset1_issuer,
+                                            }}
+                                            counter={{
+                                                code: pair.asset2_code,
+                                                issuer: pair.asset2_issuer,
+                                            }}
+                                            withoutDomains
+                                        />
+                                    </AssetsInfo>
+                                    <StyledInput
+                                        value={pairsAmount[pair[keyType]]}
+                                        onChange={(e) => {
+                                            onPairInputChange(e.target.value, pair[keyType]);
+                                        }}
+                                        onFocus={() => {
+                                            setIsHandleEdit(true);
+                                        }}
+                                        isMedium
+                                        isRightAligned
+                                    />
+                                    <CloseButton
+                                        onClick={() => {
+                                            deletePair(pair);
+                                        }}
+                                    >
+                                        <CloseIcon />
+                                    </CloseButton>
+                                </PairBlock>
+                            ))}
+                        </PairsList>
+                        <TotalAmountRow>
+                            <Label>Total:</Label>
+                            <TotalAmount>
+                                {amount || '0'} AQUA <AquaLogo />
+                            </TotalAmount>
+                        </TotalAmountRow>
+                    </>
+                )}
 
                 {hasTrustLine && hasAqua ? null : (
                     <GetAquaBlock>
