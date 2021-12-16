@@ -7,6 +7,7 @@ import Pair from '../../common/Pair';
 import PageLoader from '../../../../common/basics/PageLoader';
 import { flexAllCenter } from '../../../../common/mixins';
 import VoteButton from './VoteButton/VoteButton';
+import ThreeDotsMenu from './ThreeDotsMenu/ThreeDotsMenu';
 
 const TableBlock = styled.div`
     display: flex;
@@ -130,6 +131,9 @@ const Amount = styled.div`
 // `;
 
 const getPercent = (value: string, total: string): string => {
+    if (Number(value) < 0) {
+        return '0';
+    }
     return roundToPrecision((Number(value) / Number(total)) * 100, 2);
 };
 
@@ -213,10 +217,12 @@ const Table = ({
                             </TableCell>
                             <TableCell>
                                 <VoteButton
-                                    marketKey={pair.market_key}
+                                    marketKeyUp={pair.market_key}
+                                    marketKeyDown={pair.downvote_account_id}
                                     isPairSelected={isPairSelected(pair)}
                                     onButtonClick={() => selectPair(pair)}
                                 />
+                                <ThreeDotsMenu pair={pair} />
                             </TableCell>
                         </TableBodyRow>
                     );

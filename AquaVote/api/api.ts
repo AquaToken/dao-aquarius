@@ -151,19 +151,29 @@ export const getUserPairsList = async (keys: string[]) => {
         return [];
     }
 
-    const params = new URLSearchParams();
+    const paramsUp = new URLSearchParams();
+    const paramsDown = new URLSearchParams();
 
     keys.forEach((key) => {
-        params.append('account_id', key);
+        paramsUp.append('account_id', key);
+        paramsDown.append('downvote_account_id', key);
     });
 
-    const marketKeys = await axios.get<ListResponse<MarketKey>>(`${marketKeysUrl}?limit=200`, {
-        params,
+    const marketKeysUp = await axios.get<ListResponse<MarketKey>>(`${marketKeysUrl}?limit=200`, {
+        params: paramsUp,
     });
+
+    const marketKeysDown = await axios.get<ListResponse<MarketKey>>(`${marketKeysUrl}?limit=200`, {
+        params: paramsDown,
+    });
+
+    const marketKeys = [...marketKeysUp.data.results, ...marketKeysDown.data.results].filter(
+        (value, index, self) => index === self.findIndex((t) => t.account_id === value.account_id),
+    );
 
     const marketVotesParams = new URLSearchParams();
 
-    marketKeys.data.results.forEach((marketKey) => {
+    marketKeys.forEach((marketKey) => {
         marketVotesParams.append('market_key', marketKey.account_id);
     });
 
@@ -171,7 +181,7 @@ export const getUserPairsList = async (keys: string[]) => {
         params: marketVotesParams,
     });
 
-    return marketKeys.data.results.map((marketKey) => {
+    return marketKeys.map((marketKey) => {
         const marketVotes = marketsVotes.data.results.find(
             (vote) => vote.market_key === marketKey.account_id,
         );

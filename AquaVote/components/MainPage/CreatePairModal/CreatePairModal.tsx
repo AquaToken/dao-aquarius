@@ -83,8 +83,8 @@ const TooltipLabel = styled.div`
     opacity: 0.5;
 `;
 
-const PairWithLumenCost = 2;
-const PairWithoutLumenCost = 2.5;
+const PairWithLumenCost = 4;
+const PairWithoutLumenCost = 5;
 
 const StyledButton = styled(Button)`
     margin-top: 3.2rem;
@@ -126,6 +126,7 @@ const CreatePairModal = ({
                 createCost,
             );
             const result = await account.signAndSubmitTx(tx);
+
             if (isMounted.current) {
                 setPending(false);
                 close();
@@ -179,24 +180,24 @@ const CreatePairModal = ({
                         content={
                             <TooltipInner>
                                 <TooltipRow>
-                                    <TooltipLabel>Base account reserve</TooltipLabel>
-                                    <span>1 XLM</span>
+                                    <TooltipLabel>Base account reserve (x2)</TooltipLabel>
+                                    <span>2 XLM</span>
                                 </TooltipRow>
                                 {!isBaseNative && (
                                     <TooltipRow>
-                                        <TooltipLabel>{base.code} trustline</TooltipLabel>
-                                        <span>0.5 XLM</span>
+                                        <TooltipLabel>{base.code} trustline (x2)</TooltipLabel>
+                                        <span>1 XLM</span>
                                     </TooltipRow>
                                 )}
                                 {!isCounterNative && (
                                     <TooltipRow>
-                                        <TooltipLabel>{counter.code} trustline</TooltipLabel>
-                                        <span>0.5 XLM</span>
+                                        <TooltipLabel>{counter.code} trustline (x2)</TooltipLabel>
+                                        <span>1 XLM</span>
                                     </TooltipRow>
                                 )}
                                 <TooltipRow>
-                                    <TooltipLabel>Marker Key signer</TooltipLabel>
-                                    <span>0.5 XLM</span>
+                                    <TooltipLabel>Marker Key signer (x2)</TooltipLabel>
+                                    <span>1 XLM</span>
                                 </TooltipRow>
                                 <TooltipRow>
                                     <div>Total</div>

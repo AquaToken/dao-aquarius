@@ -4,7 +4,7 @@ import {
     StellarService,
     ToastService,
 } from '../../../../common/services/globalServices';
-import { getCachedChosenPairs, SELECTED_PAIRS_ALIAS } from '../MainPage';
+import { SELECTED_PAIRS_ALIAS } from '../MainPage';
 import { BuildSignAndSubmitStatuses } from '../../../../common/services/wallet-connect.service';
 import { useState } from 'react';
 import useAuthStore from '../../../../common/store/authStore/useAuthStore';
@@ -60,7 +60,7 @@ const PeriodOptions: Option<number>[] = [
 const VotesDurationModal = ({ params, close }) => {
     const [votePeriod, setVotePeriod] = useState(MONTH);
     const [pending, setPending] = useState(false);
-    const { pairsAmounts, updatePairs } = params;
+    const { pairsAmounts, updatePairs, isDownVoteModal, pairs } = params;
 
     const isMounted = useIsMounted();
 
@@ -69,9 +69,10 @@ const VotesDurationModal = ({ params, close }) => {
     const back = () => {
         close();
         ModalService.openModal(VotesAmountModal, {
-            pairs: getCachedChosenPairs(),
+            pairs,
             updatePairs,
             pairsAmounts,
+            isDownVoteModal,
         });
     };
 
@@ -120,8 +121,12 @@ const VotesDurationModal = ({ params, close }) => {
 
     return (
         <>
-            <ModalTitle>Selected Pairs</ModalTitle>
-            <ModalDescription>Lock your AQUA in the network to complete your vote</ModalDescription>
+            <ModalTitle>{isDownVoteModal ? 'Select Downvote Period' : 'Selected Pairs'}</ModalTitle>
+            <ModalDescription>
+                {isDownVoteModal
+                    ? 'Enter the period for which your AQUA will be locked to voting'
+                    : 'Lock your AQUA in the network to complete your vote'}
+            </ModalDescription>
 
             <ContentRow>
                 <Label>Vote Period</Label>

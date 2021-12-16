@@ -11,7 +11,8 @@ enum HORIZON_SERVER {
 
 const FEE = '100000';
 const TRANSACTION_TIMEOUT = 60 * 60 * 24 * 30;
-const MARKET_KEY_MARKER = 'GA2UB7VXXXUSEAQUAXXXAQUARIUSVOTINGWALLETXXXPOWEREDBYAQUA';
+const MARKET_KEY_MARKER_UP = 'GA2UB7VXXXUSEAQUAXXXAQUARIUSVOTINGWALLETXXXPOWEREDBYAQUA';
+const MARKET_KEY_MARKER_DOWN = 'GAYVCXXXUSEAQUAXXXAQUARIUSDOWNVOTEWALLETXXXPOWEREDBYAQUA';
 const MARKET_KEY_SIGNER_WEIGHT = 1;
 const MARKET_KEY_THRESHOLD = 10;
 
@@ -389,59 +390,80 @@ export default class StellarServiceClass {
         });
     }
 
-    async createMarketKeyTx(sourceAccountId, asset1, asset2, amount) {
-        const newAccount = await this.loadAccount(sourceAccountId);
-        const marketKey = StellarSdk.Keypair.random();
-
-        const transactionBuilder = new StellarSdk.TransactionBuilder(newAccount, {
-            fee: FEE,
-            networkPassphrase: StellarSdk.Networks.PUBLIC,
-        });
-
-        transactionBuilder.addOperation(
+    addMarketKeyOperations(txBuilder, accountId, asset1, asset2, amount, signerKey): void {
+        txBuilder.addOperation(
             StellarSdk.Operation.createAccount({
-                destination: marketKey.publicKey(),
+                destination: accountId,
                 startingBalance: amount.toString(),
             }),
         );
 
         if (!asset1.isNative()) {
-            transactionBuilder.addOperation(
+            txBuilder.addOperation(
                 StellarSdk.Operation.changeTrust({
-                    source: marketKey.publicKey(),
+                    source: accountId,
                     asset: asset1,
                 }),
             );
         }
 
         if (!asset2.isNative()) {
-            transactionBuilder.addOperation(
+            txBuilder.addOperation(
                 StellarSdk.Operation.changeTrust({
-                    source: marketKey.publicKey(),
+                    source: accountId,
                     asset: asset2,
                 }),
             );
         }
 
-        transactionBuilder.addOperation(
+        txBuilder.addOperation(
             StellarSdk.Operation.setOptions({
-                source: marketKey.publicKey(),
+                source: accountId,
                 masterWeight: MARKET_KEY_SIGNER_WEIGHT,
                 lowThreshold: MARKET_KEY_THRESHOLD,
                 medThreshold: MARKET_KEY_THRESHOLD,
                 highThreshold: MARKET_KEY_THRESHOLD,
                 signer: {
-                    ed25519PublicKey: MARKET_KEY_MARKER,
+                    ed25519PublicKey: signerKey,
                     weight: MARKET_KEY_SIGNER_WEIGHT,
                 },
             }),
+        );
+    }
+
+    async createMarketKeyTx(sourceAccountId, asset1, asset2, totalAmount) {
+        const updatedAccount = await this.loadAccount(sourceAccountId);
+        const marketKeyUp = StellarSdk.Keypair.random();
+        const marketKeyDown = StellarSdk.Keypair.random();
+
+        const transactionBuilder = new StellarSdk.TransactionBuilder(updatedAccount, {
+            fee: FEE,
+            networkPassphrase: StellarSdk.Networks.PUBLIC,
+        });
+
+        this.addMarketKeyOperations(
+            transactionBuilder,
+            marketKeyUp.publicKey(),
+            asset1,
+            asset2,
+            totalAmount / 2,
+            MARKET_KEY_MARKER_UP,
+        );
+        this.addMarketKeyOperations(
+            transactionBuilder,
+            marketKeyDown.publicKey(),
+            asset1,
+            asset2,
+            totalAmount / 2,
+            MARKET_KEY_MARKER_DOWN,
         );
 
         transactionBuilder.setTimeout(TRANSACTION_TIMEOUT);
 
         const transaction = transactionBuilder.build();
 
-        transaction.sign(marketKey);
+        transaction.sign(marketKeyUp);
+        transaction.sign(marketKeyDown);
 
         return transaction;
     }
