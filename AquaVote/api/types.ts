@@ -25,6 +25,8 @@ export type MarketVotes = {
     timestamp: string;
     votes_value: string;
     voting_amount: number;
+    upvote_value: string;
+    downvote_value: string;
 };
 
 export type MarketKey = {

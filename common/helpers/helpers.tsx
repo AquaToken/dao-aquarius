@@ -78,7 +78,10 @@ const getNumDecimals = (value: number): number => {
     } else if (value >= 0.001) {
         return 6;
     }
-    return 7;
+    if (value >= 0.0000001) {
+        return 7;
+    }
+    return 0;
 };
 
 export const formatBalance = (balance: number, withRounding?: boolean): string => {
