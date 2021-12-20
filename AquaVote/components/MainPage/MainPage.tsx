@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import BackgroundImageLeft from '../../../common/assets/img/background-left.svg';
 import BackgroundImageRight from '../../../common/assets/img/background-right.svg';
@@ -361,6 +361,15 @@ const MainPage = (): JSX.Element => {
         return () => unsub();
     }, []);
 
+    const headerRef = useRef(null);
+
+    useEffect(() => {
+        if (!pairs?.length || !headerRef.current) {
+            return;
+        }
+        headerRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, [page]);
+
     const updateChosenPairs = () => {
         setChosenPairs(getCachedChosenPairs());
     };
@@ -586,7 +595,7 @@ const MainPage = (): JSX.Element => {
                         />
                     </TooltipFullWidth>
                 </PairSearch>
-                <Header>
+                <Header ref={headerRef}>
                     <TitleHeader>Explore</TitleHeader>
                     <ToggleGroup
                         value={sort}
