@@ -3,7 +3,7 @@ import Tooltip, { TOOLTIP_POSITION } from '../../../../../common/basics/Tooltip'
 import { formatBalance, roundToPrecision } from '../../../../../common/helpers/helpers';
 import styled from 'styled-components';
 import { COLORS } from '../../../../../common/styles';
-import { flexAllCenter } from '../../../../../common/mixins';
+import { flexAllCenter, flexRowSpaceBetween } from '../../../../../common/mixins';
 import { useState } from 'react';
 import { PairStats, TotalStats } from '../../../../api/types';
 import InfoIcon from '../../../../../common/assets/img/icon-info.svg';
@@ -36,6 +36,12 @@ const TooltipWrap = styled.div`
 const TooltipRow = styled.div`
     color: ${COLORS.white};
     font-size: 1.4rem;
+    ${flexRowSpaceBetween};
+    width: 100%;
+
+    span:first-child {
+        margin-right: 2rem;
+    }
 `;
 
 const getPercent = (value: string, total: string): string => {
@@ -60,10 +66,12 @@ const VoteAmount = ({ pair, totalStats }: { pair: PairStats; totalStats: TotalSt
                 content={
                     <TooltipWrap>
                         <TooltipRow>
-                            upvotes: {formatBalance(+pair.upvote_value, true)} AQUA
+                            <span>Upvotes:</span>
+                            <span>{formatBalance(+pair.upvote_value, true)} AQUA</span>
                         </TooltipRow>
                         <TooltipRow>
-                            downvotes: {formatBalance(+pair.downvote_value, true)} AQUA
+                            <span>Downvotes:</span>
+                            <span>{formatBalance(+pair.downvote_value, true)} AQUA</span>
                         </TooltipRow>
                     </TooltipWrap>
                 }
