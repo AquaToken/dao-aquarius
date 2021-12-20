@@ -2,12 +2,13 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { COLORS } from '../../../../common/styles';
 import { PairStats, TotalStats } from '../../../api/types';
-import { formatBalance, roundToPrecision } from '../../../../common/helpers/helpers';
+import { formatBalance } from '../../../../common/helpers/helpers';
 import Pair from '../../common/Pair';
 import PageLoader from '../../../../common/basics/PageLoader';
 import { flexAllCenter } from '../../../../common/mixins';
 import VoteButton from './VoteButton/VoteButton';
 import ThreeDotsMenu from './ThreeDotsMenu/ThreeDotsMenu';
+import VoteAmount from './VoteAmount/VoteAmount';
 
 const TableBlock = styled.div`
     display: flex;
@@ -93,17 +94,6 @@ const TableBodyRow = styled.div`
     }
 `;
 
-const Amount = styled.div`
-    display: flex;
-    flex-direction: column;
-
-    div:last-child {
-        color: ${COLORS.grayText};
-        font-size: 1.4rem;
-        line-height: 2rem;
-    }
-`;
-
 // const SortingHeader = styled.button`
 //     background: none;
 //     border: none;
@@ -129,13 +119,6 @@ const Amount = styled.div`
 //         color: ${COLORS.purple};
 //     }
 // `;
-
-const getPercent = (value: string, total: string): string => {
-    if (Number(value) < 0) {
-        return '0';
-    }
-    return roundToPrecision((Number(value) / Number(total)) * 100, 2);
-};
 
 const MIN_REWARDS_PERCENT = 1;
 
@@ -199,21 +182,7 @@ const Table = ({
                                 {pair.voting_amount ? formatBalance(pair.voting_amount) : null}
                             </TableCell>
                             <TableCell>
-                                <Amount>
-                                    <div>
-                                        {pair.votes_value
-                                            ? `${formatBalance(+pair.votes_value, true)} AQUA`
-                                            : null}
-                                    </div>
-                                    <div>
-                                        {pair.votes_value
-                                            ? `${getPercent(
-                                                  pair.votes_value,
-                                                  totalStats.votes_value_sum,
-                                              )}%`
-                                            : null}
-                                    </div>
-                                </Amount>
+                                <VoteAmount pair={pair} totalStats={totalStats} />
                             </TableCell>
                             <TableCell>
                                 <VoteButton
