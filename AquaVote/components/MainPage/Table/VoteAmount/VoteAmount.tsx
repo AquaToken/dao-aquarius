@@ -53,6 +53,9 @@ const getPercent = (value: string, total: string): string => {
 
 const VoteAmount = ({ pair, totalStats }: { pair: PairStats; totalStats: TotalStats }) => {
     const [showTooltip, setShowTooltip] = useState(false);
+    if (!pair.votes_value) {
+        return null;
+    }
     return (
         <Amount
             onMouseEnter={() => {
