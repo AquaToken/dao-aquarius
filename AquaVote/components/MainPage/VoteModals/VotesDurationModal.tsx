@@ -98,6 +98,7 @@ const VotesDurationModal = ({ params, close }) => {
             }
 
             localStorage.setItem(SELECTED_PAIRS_ALIAS, JSON.stringify([]));
+            updatePairs();
 
             if (
                 (result as { status: BuildSignAndSubmitStatuses }).status ===
