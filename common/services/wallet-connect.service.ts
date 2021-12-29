@@ -24,6 +24,12 @@ const METADATA = {
         url: 'https://gov.aqua.network',
         icons: [`${location.origin}/favicon.png`],
     },
+    lock: {
+        name: 'Aquarius Locker',
+        description: 'Lock your AQUA token to get bonuses',
+        url: 'https://lock.aqua.network',
+        icons: [`${location.origin}/favicon.png`],
+    },
 };
 
 const STELLAR_METHODS = {
