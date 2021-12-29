@@ -1,6 +1,5 @@
 import { AUTH_ACTIONS, LoginTypes } from './types';
 import { Dispatch } from 'react';
-import axios, { AxiosResponse } from 'axios';
 import { AppMetadata } from '@walletconnect/types';
 import AccountService from '../../services/account.service';
 import AccountRecord from 'stellar-sdk';
@@ -45,18 +44,11 @@ export function resolveFederation(homeDomain: string, accountId: string): Action
     return (dispatch: Dispatch<ActionResult>): void => {
         dispatch({ type: AUTH_ACTIONS.FEDERATION_RESOLVE_START });
 
-        StellarService.resolveFederationServer(homeDomain)
-            .then((server) => {
-                const params = new URLSearchParams();
-                params.append('q', accountId);
-                params.append('type', 'id');
-
-                return axios.get(server, { params });
-            })
-            .then((result: AxiosResponse<{ stellar_address: string }>) => {
+        StellarService.resolveFederation(homeDomain, accountId)
+            .then((federation) => {
                 dispatch({
                     type: AUTH_ACTIONS.FEDERATION_RESOLVE_SUCCESS,
-                    payload: { federation: result.data.stellar_address },
+                    payload: { federation },
                 });
             })
             .catch(() => {

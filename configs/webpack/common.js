@@ -6,6 +6,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const PROJECT_PATH = {
     vote: 'AquaVote',
     governance: 'AquaGovernance',
+    lock: 'AquaLock',
 };
 
 const dotenv = require('dotenv');
