@@ -31,6 +31,7 @@ const MainBlock = styled.main`
 
 const Container = styled.div`
     ${commonMaxWidth};
+    flex: 1 0 auto;
     padding: 0 4rem;
     display: flex;
     flex-direction: row;
