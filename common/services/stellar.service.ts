@@ -3,6 +3,8 @@ import EventService from './event.service';
 import { Horizon } from 'stellar-sdk/lib/horizon_api';
 import { Memo, MemoType, OperationOptions, ServerApi } from 'stellar-sdk';
 import { ToastService } from './globalServices';
+import axios, { AxiosResponse } from 'axios';
+import { roundToPrecision } from '../helpers/helpers';
 
 enum HORIZON_SERVER {
     stellar = 'https://horizon.stellar.org',
@@ -24,6 +26,8 @@ export enum StellarEvents {
 
 export const AQUA_CODE = 'AQUA';
 export const AQUA_ISSUER = 'GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA';
+export const yXLM_CODE = 'yXLM';
+export const yXLM_ISSUER = 'GARDNV3Q7YGT4AKSDF25LT32YSCCW4EV22Y2TV3I2PU2MMXJTEDL5T55';
 
 export enum THRESHOLDS {
     LOW = 'low_threshold',
@@ -38,6 +42,8 @@ export const THRESHOLD_ORDER = {
     [THRESHOLDS.MED]: 2,
     [THRESHOLDS.HIGH]: 3,
 };
+
+export const START_AIRDROP2_TIMESTAMP = new Date('2022-01-15T00:00:00Z').getTime();
 
 export const OP_THRESHOLDS = {
     [THRESHOLDS.LOW]: ['allowTrust', 'inflation', 'bumpSequence', 'setTrustLineFlags'],
@@ -139,6 +145,10 @@ export default class StellarServiceClass {
         return StellarSdk.Asset.native();
     }
 
+    isValidPublicKey(key: string): boolean {
+        return StellarSdk.StrKey.isValidEd25519PublicKey(key);
+    }
+
     signAndSubmit(
         tx: StellarSdk.Transaction,
         account: Partial<Horizon.AccountResponse>,
@@ -211,14 +221,25 @@ export default class StellarServiceClass {
         return this.server.loadAccount(publicKey);
     }
 
-    resolveFederationServer(homeDomain: string): Promise<string> {
-        return StellarSdk.StellarTomlResolver.resolve(homeDomain).then((toml) => {
-            if (!toml.FEDERATION_SERVER) {
-                throw new Error('Federation server not exists');
-            }
+    resolveFederation(homeDomain: string, accountId: string): Promise<string> {
+        return StellarSdk.StellarTomlResolver.resolve(homeDomain)
+            .then((toml) => {
+                if (!toml.FEDERATION_SERVER) {
+                    throw new Error('Federation server not exists');
+                }
 
-            return toml.FEDERATION_SERVER;
-        });
+                return toml.FEDERATION_SERVER;
+            })
+            .then((server) => {
+                const params = new URLSearchParams();
+                params.append('q', accountId);
+                params.append('type', 'id');
+
+                return axios.get(server, { params });
+            })
+            .then(
+                (result: AxiosResponse<{ stellar_address: string }>) => result.data.stellar_address,
+            );
     }
 
     startAccountStream(publicKey: string): void {
@@ -240,7 +261,26 @@ export default class StellarServiceClass {
     }
 
     getClaimableBalances(publicKey: string) {
+        const limit = 200;
         this.server
+            .claimableBalances()
+            .sponsor(publicKey)
+            .claimant(publicKey)
+            .order('desc')
+            .limit(limit)
+            .call()
+            .then((claimable) => {
+                this.claimableBalances = claimable.records;
+                this.event.trigger({ type: StellarEvents.claimableUpdate });
+
+                if (claimable.records.length === limit) {
+                    this.getNextClaimableBalances(claimable.next, limit);
+                }
+            });
+    }
+
+    getAccountLocks(publicKey: string) {
+        return this.server
             .claimableBalances()
             .sponsor(publicKey)
             .claimant(publicKey)
@@ -248,9 +288,29 @@ export default class StellarServiceClass {
             .limit(200)
             .call()
             .then((claimable) => {
-                this.claimableBalances = claimable.records;
-                this.event.trigger({ type: StellarEvents.claimableUpdate });
+                return claimable.records.filter(
+                    (claim) =>
+                        claim.claimants.length === 1 &&
+                        claim.claimants[0].destination === publicKey &&
+                        claim.asset === `${AQUA_CODE}:${AQUA_ISSUER}` &&
+                        new Date(claim.claimants[0].predicate?.not?.abs_before).getTime() >
+                            START_AIRDROP2_TIMESTAMP,
+                );
             });
+    }
+
+    getNextClaimableBalances(
+        next: () => Promise<ServerApi.CollectionPage<ServerApi.ClaimableBalanceRecord>>,
+        limit,
+    ) {
+        next().then((res) => {
+            this.claimableBalances = [...this.claimableBalances, ...res.records];
+            this.event.trigger({ type: StellarEvents.claimableUpdate });
+
+            if (res.records.length === limit) {
+                this.getNextClaimableBalances(res.next, limit);
+            }
+        });
     }
 
     startClaimableBalancesStream(publicKey: string) {
@@ -381,6 +441,46 @@ export default class StellarServiceClass {
             ],
         });
     }
+    createLockOperation(publicKey, amount, timestamp) {
+        const time = Math.ceil(timestamp / 1000);
+        return StellarSdk.Operation.createClaimableBalance({
+            source: publicKey,
+            amount: amount.toString(),
+            asset: new StellarSdk.Asset(AQUA_CODE, AQUA_ISSUER),
+            claimants: [
+                new StellarSdk.Claimant(
+                    publicKey,
+                    StellarSdk.Claimant.predicateNot(
+                        StellarSdk.Claimant.predicateBeforeAbsoluteTime(time.toString()),
+                    ),
+                ),
+            ],
+        });
+    }
+
+    async getLiquidityPoolForAccount(id: string, limit): Promise<ServerApi.LiquidityPoolRecord[]> {
+        const { records, next } = await this.server
+            .liquidityPools()
+            .forAccount(id)
+            .limit(limit)
+            .call();
+
+        if (records.length === limit) {
+            return this.nextLiquidityPools(records, next, limit);
+        }
+
+        return Promise.resolve(records);
+    }
+
+    async nextLiquidityPools(previousRecords, nextRequest, limit) {
+        const { records, next } = nextRequest();
+
+        if (records.length === limit) {
+            return this.nextLiquidityPools([...previousRecords, records], next, limit);
+        }
+
+        return Promise.resolve([...previousRecords, ...records]);
+    }
 
     createBurnAquaOperation(amount: string) {
         return StellarSdk.Operation.payment({
@@ -466,5 +566,36 @@ export default class StellarServiceClass {
         transaction.sign(marketKeyDown);
 
         return transaction;
+    }
+
+    async getAquaAverageWeekPrice() {
+        const period = 7 * 24 * 60 * 60 * 1000;
+        const now = Date.now();
+
+        const start = now - period;
+
+        const { records } = await this.server
+            .tradeAggregation(
+                this.createLumen(),
+                this.createAsset(AQUA_CODE, AQUA_ISSUER),
+                start,
+                now,
+                3600000,
+                0,
+            )
+            .limit(200)
+            .order('desc')
+            .call();
+
+        const { baseVolume, counterVolume } = records.reduce(
+            (acc, item) => {
+                acc.baseVolume += Number(item.base_volume);
+                acc.counterVolume += Number(item.counter_volume);
+                return acc;
+            },
+            { baseVolume: 0, counterVolume: 0 },
+        );
+
+        return roundToPrecision(baseVolume / counterVolume, 7);
     }
 }
