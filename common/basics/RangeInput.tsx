@@ -106,10 +106,12 @@ const RangeInput = ({
     onChange,
     value: valueProps,
     disabled,
+    withoutPercent,
 }: {
     onChange: (number) => void;
     value: number;
     disabled?: boolean;
+    withoutPercent?: boolean;
 }) => {
     const [value, setValue] = useState(disabled ? 0 : valueProps);
     const [isMouseDrag, setIsMouseDrag] = useState(false);
@@ -185,9 +187,11 @@ const RangeInput = ({
                     setIsMouseDrag(true);
                 }}
             />
-            <CurrentValue value={value} disabled={disabled}>
-                {value}%
-            </CurrentValue>
+            {!withoutPercent && (
+                <CurrentValue value={value} disabled={disabled}>
+                    {value}%
+                </CurrentValue>
+            )}
         </Pillar>
     );
 };
