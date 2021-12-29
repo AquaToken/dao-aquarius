@@ -84,6 +84,7 @@ const AccountPage = () => {
         if (!accountId) {
             return;
         }
+        setCurrentAccount(null);
         StellarService.loadAccount(accountId).then((res) => {
             setCurrentAccount(new AccountService(res, null));
         });
