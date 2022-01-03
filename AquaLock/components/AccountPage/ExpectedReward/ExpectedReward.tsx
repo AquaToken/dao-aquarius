@@ -2,9 +2,14 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { COLORS } from '../../../../common/styles';
 import AquaGray from '../../../../common/assets/img/aqua-logo-gray.svg';
-import AquaLogo from '../../../../common/assets/img/aqua-logo-small.svg';
+import Aqua from '../../../../common/assets/img/aqua-logo-small.svg';
 import ArrowDown from '../../../../common/assets/img/icon-arrow-down-long.svg';
 import { formatBalance, roundToPrecision } from '../../../../common/helpers/helpers';
+
+const AquaLogo = styled(Aqua)`
+    height: 4.8rem;
+    width: 4.8rem;
+`;
 
 const Container = styled.div`
     margin-top: 4rem;
@@ -90,8 +95,6 @@ const BoostedAirdrop = styled.div`
 
     svg {
         margin-right: 1.6rem;
-        height: 4.8rem;
-        width: 4.8rem;
     }
 `;
 
@@ -112,7 +115,7 @@ const ExpectedReward = ({ boostPercent, airdropAmount }) => {
             <Title>Expected Airdrop #2 reward</Title>
             <AccountAirdrop>
                 <CurrentAirdrop>
-                    <AquaGray />
+                    {Boolean(boostPercent) ? <AquaGray /> : <AquaLogo />}
                     <CurrentAirdropAmount>
                         {formatBalance(airdropAmount, true)} AQUA
                     </CurrentAirdropAmount>
