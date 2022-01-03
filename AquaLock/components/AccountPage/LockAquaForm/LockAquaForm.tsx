@@ -260,6 +260,10 @@ const DatePickerContainer = styled.div`
     margin-bottom: 3.3rem;
 `;
 
+const EmptyDate = styled.div`
+    height: 1.6rem;
+`;
+
 const GlobalStyle = createGlobalStyle`
     div.react-datepicker {
         font-family: ${FONT_FAMILY.roboto};
@@ -550,8 +554,14 @@ const LockAquaForm = ({
             />
 
             <ClaimBack>
-                You will get your AQUA back on{' '}
-                <ClaimBackDate>{getDateString(lockPeriod)}</ClaimBackDate>
+                {lockPeriod ? (
+                    <>
+                        <span>You will get your AQUA back on </span>
+                        <ClaimBackDate>{getDateString(lockPeriod)}</ClaimBackDate>
+                    </>
+                ) : (
+                    <EmptyDate />
+                )}
             </ClaimBack>
 
             {/*<PriceBlock>*/}
