@@ -51,6 +51,8 @@ const RightColumn = styled.div`
     max-width: 48rem;
 `;
 
+export const MAX_AIRDROP_AMOUNT = 10000000;
+
 const AccountPage = () => {
     const [currentAccount, setCurrentAccount] = useState(null);
     const [ammReserves, setAmmReserves] = useState(null);
@@ -195,8 +197,6 @@ const AccountPage = () => {
     const hasEnoughLumens = xlmBalance + yXlmBalance >= 500;
 
     const isEligibleForAirdrop = hasEnoughAqua && hasEnoughLumens;
-
-    const MAX_AIRDROP_AMOUNT = 10000000;
 
     const airdropSharesWithoutLocks =
         xlmBalance +

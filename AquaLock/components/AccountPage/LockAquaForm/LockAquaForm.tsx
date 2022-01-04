@@ -8,7 +8,6 @@ import Aqua from '../../../../common/assets/img/aqua-logo-small.svg';
 import RangeInput from '../../../../common/basics/RangeInput';
 import { formatBalance, getDateString, roundToPrecision } from '../../../../common/helpers/helpers';
 // import Info from '../../../../common/assets/img/icon-info.svg';
-import InfoWhite from '../../../../common/assets/img/icon-info-white.svg';
 // import CloseIcon from '../../../../common/assets/img/icon-close-small.svg';
 import ArrowRight from '../../../../common/assets/img/icon-arrow-right-white.svg';
 import { useMemo, useState } from 'react';
@@ -345,6 +344,8 @@ const LockAquaForm = ({
 
     const { isLogged } = useAuthStore();
 
+    const aquaBalance = Math.max(account.getAquaBalance() - 1, 0);
+
     const onLockPeriodPercentChange = (value) => {
         setLockPeriodPercent(value);
         const period = (maxPeriod * value) / 100;
@@ -376,21 +377,18 @@ const LockAquaForm = ({
             setLockPercent(0);
             return;
         }
-        if (Number(value) > Number(account.getAquaBalance())) {
+        if (Number(value) > Number(aquaBalance)) {
             setLockPercent(100);
             return;
         }
-        const percent = roundToPrecision(
-            (Number(value) / Number(account.getAquaBalance())) * 100,
-            2,
-        );
+        const percent = roundToPrecision((Number(value) / Number(aquaBalance)) * 100, 2);
         setLockPercent(+percent);
     };
 
     const onLockPercentChange = (value) => {
         setLockPercent(value);
 
-        const newAmount = (value * account.getAquaBalance()) / 100;
+        const newAmount = (value * aquaBalance) / 100;
         setLockAmount(roundToPrecision(newAmount, 7));
     };
 
@@ -502,7 +500,9 @@ const LockAquaForm = ({
             <ContentRow>
                 <Label>Amount</Label>
                 <BalanceBlock>
-                    <Balance>{account.getAquaBalance()} AQUA </Balance>
+                    <Balance onClick={() => onAmountChange(aquaBalance.toString())}>
+                        {aquaBalance} AQUA{' '}
+                    </Balance>
                     available
                 </BalanceBlock>
             </ContentRow>
@@ -617,7 +617,6 @@ const LockAquaForm = ({
             <LockPreview>
                 <LockPreviewRow>
                     <TotalPercent>⚡ {boostPercent}% Airdrop #2 boost</TotalPercent>
-                    <InfoWhite />
                 </LockPreviewRow>
                 <TotalValues>
                     <PreviousValue>{formatBalance(airdropAmount, true)} AQUA</PreviousValue>

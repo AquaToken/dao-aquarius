@@ -55,9 +55,9 @@ const Header = ({ children }: { children?: JSX.Element }): JSX.Element => {
 
     return (
         <HeaderBlock>
-            <Link to="/">
+            <a href="https://aqua.network" target="_blank" rel="noreferrer noopener">
                 <AquaLogo />
-            </Link>
+            </a>
 
             <NavLinksContainer isLogged={isLogged}>{children}</NavLinksContainer>
             {isLogged ? <AccountBlock /> : <Button onClick={() => signIn()}>sign in</Button>}

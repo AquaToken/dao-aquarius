@@ -5,6 +5,8 @@ import AquaGray from '../../../../common/assets/img/aqua-logo-gray.svg';
 import Aqua from '../../../../common/assets/img/aqua-logo-small.svg';
 import ArrowDown from '../../../../common/assets/img/icon-arrow-down-long.svg';
 import { formatBalance, roundToPrecision } from '../../../../common/helpers/helpers';
+import { MAX_AIRDROP_AMOUNT } from '../AccountPage';
+import ExternalLink from '../../../../common/basics/ExternalLink';
 
 const AquaLogo = styled(Aqua)`
     height: 4.8rem;
@@ -45,10 +47,10 @@ const CurrentAirdrop = styled.div`
     }
 `;
 
-const CurrentAirdropAmount = styled.span`
+const CurrentAirdropAmount = styled.span<{ hasBoost: boolean }>`
     font-size: 3.6rem;
     line-height: 4.2rem;
-    color: ${COLORS.grayText};
+    color: ${({ hasBoost }) => (hasBoost ? COLORS.grayText : COLORS.titleText)};
     margin-right: 1.6rem;
 `;
 
@@ -71,7 +73,7 @@ const AirdropSchedule = styled.div`
 const AirdropAmountColumn = styled.div`
     display: flex;
     flex-direction: column;
-    margin-right: 8rem;
+    flex: 1;
 `;
 
 const AirdropSum = styled.span`
@@ -109,23 +111,35 @@ const Arrow = styled(ArrowDown)`
     margin: 0.8rem 1.8rem;
 `;
 
+const Link = styled(ExternalLink)`
+    margin-top: 1.6rem;
+`;
+
 const ExpectedReward = ({ boostPercent, airdropAmount }) => {
+    const isMaximumAirdrop = Number(airdropAmount) === MAX_AIRDROP_AMOUNT;
     return (
         <Container>
             <Title>Expected Airdrop #2 reward</Title>
             <AccountAirdrop>
                 <CurrentAirdrop>
                     {Boolean(boostPercent) ? <AquaGray /> : <AquaLogo />}
-                    <CurrentAirdropAmount>
+                    <CurrentAirdropAmount hasBoost={Boolean(boostPercent)}>
                         {formatBalance(airdropAmount, true)} AQUA
                     </CurrentAirdropAmount>
-                    <BoostInfo>
-                        ⚡{' '}
-                        {Boolean(boostPercent)
-                            ? `+${roundToPrecision(boostPercent, 2)}% boost`
-                            : 'Lock AQUA to get boost'}
-                    </BoostInfo>
+                    {!isMaximumAirdrop && (
+                        <BoostInfo>
+                            ⚡{' '}
+                            {Boolean(boostPercent)
+                                ? `+${roundToPrecision(boostPercent, 2)}% boost`
+                                : 'Lock AQUA to get boost'}
+                        </BoostInfo>
+                    )}
                 </CurrentAirdrop>
+                {isMaximumAirdrop && (
+                    <Link href="https://medium.com/aquarius-aqua/announcing-aqua-airdrop-2-b338e21c2bf6#:~:text=AQUA%20token%20holders.-,%F0%9F%90%B3%20Whale%20Wallets,-There%20is%20a">
+                        You will get the maximum amount
+                    </Link>
+                )}
                 {Boolean(boostPercent) && (
                     <>
                         <Arrow />
