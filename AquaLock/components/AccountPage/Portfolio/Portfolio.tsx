@@ -37,9 +37,7 @@ const Balance = styled.div`
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    &:not(:last-child) {
-        margin-right: 6rem;
-    }
+    flex: 1;
 `;
 
 const AssetRow = styled.div`
@@ -114,7 +112,7 @@ const Portfolio = ({
                     </AssetRow>
                     <AssetBalance>{formatBalance(aquaBalance, true)} AQUA</AssetBalance>
                     {Boolean(ammReserves?.AQUA) && (
-                        <AmmBalance>{formatBalance(ammReserves.AQUA, true)} AQUA</AmmBalance>
+                        <AmmBalance>+{formatBalance(ammReserves.AQUA, true)} AQUA</AmmBalance>
                     )}
                 </Balance>
                 <Balance>
@@ -130,7 +128,7 @@ const Portfolio = ({
                         XLM
                     </AssetBalance>
                     {Boolean(ammReserves?.XLM) && (
-                        <AmmBalance>{formatBalance(ammReserves.XLM, true)} XLM</AmmBalance>
+                        <AmmBalance>+{formatBalance(ammReserves.XLM, true)} XLM</AmmBalance>
                     )}
                 </Balance>
                 {Boolean()}
@@ -141,7 +139,7 @@ const Portfolio = ({
                     </AssetRow>
                     <AssetBalance>{formatBalance(yXLmBalance, true)} yXLM</AssetBalance>
                     {Boolean(ammReserves?.yXLM) && (
-                        <AmmBalance>{formatBalance(ammReserves.yXLM, true)} yXLM</AmmBalance>
+                        <AmmBalance>+{formatBalance(ammReserves.yXLM, true)} yXLM</AmmBalance>
                     )}
                 </Balance>
             </Balances>

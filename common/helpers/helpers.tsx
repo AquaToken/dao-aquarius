@@ -89,6 +89,5 @@ export const formatBalance = (balance: number, withRounding?: boolean): string =
 
     return new Intl.NumberFormat('en-US', {
         maximumFractionDigits: withRounding ? precision : 7,
-        minimumFractionDigits: withRounding ? precision : undefined,
     }).format(balance);
 };

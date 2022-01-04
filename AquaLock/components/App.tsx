@@ -25,7 +25,17 @@ const App = () => {
 
     return (
         <Router>
-            <Header />
+            <Header>
+                <>
+                    <a
+                        href="https://aqua.network/airdrop2"
+                        target="_blank"
+                        rel="noreferrer noopener"
+                    >
+                        Airdrop
+                    </a>
+                </>
+            </Header>
             <Suspense fallback={<PageLoader />}>
                 <Switch>
                     <Route
