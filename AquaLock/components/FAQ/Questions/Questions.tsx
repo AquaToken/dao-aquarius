@@ -11,27 +11,81 @@ const Container = styled.div`
 const Questions = () => {
     return (
         <Container>
-            '
             <Question
                 question={'Why lock aqua?'}
                 answer={
-                    'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolore nam odio quasi quibusdam? Ad animi consectetur corporis, debitis distinctio eos, esse fugit ipsam itaque magni maiores mollitia nesciunt nostrum perspiciatis quasi reiciendis sunt tempore temporibus. Alias, amet assumenda beatae ducimus ex harum, labore modi mollitia nulla officiis porro vel veritatis!'
+                    <span>
+                        Locking AQUA with this tool enables eligible wallet holders to boost their
+                        total AQUA reward for airdrop #2. You can receive up to a 4 times boost to
+                        your reward based on your eligible XLM, yXLM & AQUA balances.
+                    </span>
                 }
             />
             <Question
-                question={'What bonuses will I get for my aqua lock?'}
-                answer={'You get bonus accruals for Airdrop 2, as well as increased AMM rewards'}
-            />
-            <Question
-                question={'How much aqua can i lock?'}
+                question={'How does locking work?'}
                 answer={
-                    'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Commodi consequatur deserunt error fugiat ipsum mollitia numquam provident qui, quis voluptatem.'
+                    <span>
+                        Using the tool creates a claimable balance to yourself and the Airdrop #2
+                        lock wallet. The more AQUA you lock in the tool, and the longer you lock
+                        for, the higher your boosted airdrop reward will be.
+                    </span>
                 }
             />
             <Question
-                question={'Is locking aqua profitable?'}
+                question={'How is the boost calculated?'}
                 answer={
-                    'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto beatae debitis dolorem eligendi explicabo id incidunt laudantium nobis quaerat voluptates. Accusantium consectetur doloremque et expedita maiores molestias necessitatibus officia veniam?'
+                    <span>
+                        Using the formula from governance proposal 19, <b>AirdropShares</b> = XLM +
+                        yXLM + (Average Price in XLM of AQUA over 7 Days)* (AQUA + AQUALocked).
+                        <br />
+                        <br />
+                        You can find more in depth details of proposal 19 on the{' '}
+                        <a
+                            href="https://gov.aqua.network/proposal/19/"
+                            target="_blank"
+                            rel="noreferrer noopener"
+                        >
+                            governance website
+                        </a>
+                        .
+                    </span>
+                }
+            />
+            <Question
+                question={'Are there any limits for locking AQUA?'}
+                answer={
+                    <span>
+                        You need to ensure you still have 1 AQUA in your wallet after locking. This
+                        criteria is needed for your wallet to be eligible for the airdrop.
+                        <br />
+                        <br />
+                        Each wallet has a max limit of 10M AQUA for the airdrop. Ensure to use the
+                        sliders to see if you reach the 10M cap, as locking more AQUA than is needed
+                        will gain no extra benefits past the cap.
+                        <br />
+                        <br />
+                        There is no minimum lock time. You can lock from January 15, 2022, through
+                        to January 14, 2025. The choice is yours, but the longer you lock for, the
+                        higher the boost will be.
+                    </span>
+                }
+            />
+            <Question
+                question={'What is Airdrop #2?'}
+                answer={
+                    <span>
+                        Airdrop 2 is the last airdrop for Aquarius. It will distribute 15 Billion
+                        AQUA tokens to all eligible wallet holders. You can find out more in our
+                        medium article{' '}
+                        <a
+                            href="https://medium.com/aquarius-aqua/announcing-aqua-airdrop-2-b338e21c2bf6"
+                            target="_blank"
+                            rel="noreferrer noopener"
+                        >
+                            Announcing AQUA Airdrop #2
+                        </a>
+                        .
+                    </span>
                 }
             />
         </Container>
