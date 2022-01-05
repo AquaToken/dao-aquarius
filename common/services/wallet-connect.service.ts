@@ -27,7 +27,7 @@ const METADATA = {
     lock: {
         name: 'Aquarius Locker',
         description: 'Lock your AQUA token to get bonuses',
-        url: 'https://lock.aqua.network',
+        url: 'https://locker.aqua.network',
         icons: [`${location.origin}/favicon.png`],
     },
 };

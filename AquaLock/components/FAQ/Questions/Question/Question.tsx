@@ -37,6 +37,10 @@ const Answer = styled.div`
     animation: openAnswer ease-in-out 200ms;
     transform-origin: top;
 
+    a {
+        color: ${COLORS.purple};
+    }
+
     @keyframes openAnswer {
         0% {
             transform: scaleY(0);
@@ -50,7 +54,7 @@ const Answer = styled.div`
     }
 `;
 
-const Question = ({ question, answer }: { question: string; answer: string }) => {
+const Question = ({ question, answer }: { question: string; answer: JSX.Element }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     const toggle = () => {
