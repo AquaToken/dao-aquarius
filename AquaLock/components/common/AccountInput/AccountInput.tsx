@@ -14,7 +14,7 @@ const Container = styled.div<{ isModal }>`
     box-shadow: ${({ isModal }) => (isModal ? 'unset' : '0 2rem 3rem rgba(0, 6, 54, 0.06)')};
     border-radius: 1rem;
     padding: ${({ isModal }) => (isModal ? '0' : '4.8rem')};
-    min-width: 48rem;
+    width: 48rem;
 `;
 
 const InputBlock = styled.div`
@@ -62,7 +62,10 @@ const AccountInput = ({ params, close }: { params?: any; close?: any }) => {
         <Container isModal={isModal}>
             <InputBlock>
                 <Title>{isModal ? 'Check other account' : 'Check your account'}</Title>
-                <Description>You can check if your account is eligible and also lock AQUA to apply a boost, helping increase your projected total reward.</Description>
+                <Description>
+                    You can check if your account is eligible and also lock AQUA to apply a boost,
+                    helping increase your projected total reward.
+                </Description>
                 <Input
                     placeholder="Enter your public key (starts with G)"
                     value={value}
@@ -72,7 +75,7 @@ const AccountInput = ({ params, close }: { params?: any; close?: any }) => {
                 />
             </InputBlock>
             <StyledButton isBig disabled={!value} onClick={() => onSubmit()}>
-                {isModal ? 'Check account' : 'let’s start'}
+                {isModal ? 'Check account' : "let's start"}
             </StyledButton>
         </Container>
     );
