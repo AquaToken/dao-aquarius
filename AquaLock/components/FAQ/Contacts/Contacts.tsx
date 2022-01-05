@@ -35,8 +35,8 @@ const Contacts = () => {
         <Container>
             <Title>Questions?</Title>
             <Description>
-                We have tried to answer the most common and popular questions. If you still do not
-                understand something, please contact our community chats.
+                We have tried to answer the most common questions. If you need to find out
+                more information, please join our community chats.
             </Description>
             <Links>
                 <ExternalLink href="https://discord.com/invite/sgzFscHp4C">
