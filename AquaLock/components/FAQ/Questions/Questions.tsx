@@ -12,12 +12,12 @@ const Questions = () => {
     return (
         <Container>
             <Question
-                question={'Why lock aqua?'}
+                question={'Why lock AQUA?'}
                 answer={
                     <span>
                         Locking AQUA with this tool enables eligible wallet holders to boost their
                         total AQUA reward for airdrop #2. You can receive up to a 4 times boost to
-                        your reward based on your eligible XLM, yXLM & AQUA balances.
+                        your reward based on your eligible XLM, yXLM & AQUA balances. Later on there'll be even more benefits for users who locked their AQUA.
                     </span>
                 }
             />
@@ -74,7 +74,7 @@ const Questions = () => {
                 question={'What is Airdrop #2?'}
                 answer={
                     <span>
-                        Airdrop 2 is the last airdrop for Aquarius. It will distribute 15 Billion
+                        Airdrop 2 is the last airdrop for Aquarius. It will distribute 15 billion
                         AQUA tokens to all eligible wallet holders. You can find out more in our
                         medium article{' '}
                         <a
