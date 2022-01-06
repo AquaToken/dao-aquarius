@@ -162,8 +162,7 @@ const ExpectedReward = ({ boostPercent, airdropAmount }) => {
                 </AirdropAmountColumn>
                 <AirdropAmountColumn>
                     <AirdropSum>
-                        {formatBalance((airdropAmount * (100 + boostPercent)) / 100 / 12, true)}{' '}
-                        AQUA
+                        {formatBalance((airdropAmount * (100 + boostPercent)) / 100 / 3, true)} AQUA
                     </AirdropSum>
                     <AirdropSumPeriod>Estimated per year</AirdropSumPeriod>
                 </AirdropAmountColumn>
