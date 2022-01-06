@@ -2,7 +2,7 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { COLORS } from '../../../../common/styles';
 import ProgressLine from '../../../../common/basics/ProgressLine';
-import { getDateString, roundToPrecision } from '../../../../common/helpers/helpers';
+import { formatBalance, getDateString, roundToPrecision } from '../../../../common/helpers/helpers';
 
 const Container = styled.div`
     margin-top: 4rem;
@@ -89,7 +89,7 @@ const CurrentLocks = ({ locks, aquaBalance }) => {
                                 new Date(lock.claimants?.[0].predicate?.not?.abs_before).getTime(),
                             )}
                         </TableCell>
-                        <TableCellAmount>{lock.amount}</TableCellAmount>
+                        <TableCellAmount>{formatBalance(lock.amount, true)}</TableCellAmount>
                     </TableRow>
                 ))}
             </LocksList>
