@@ -155,15 +155,23 @@ const ExpectedReward = ({ boostPercent, airdropAmount }) => {
             </AccountAirdrop>
             <AirdropSchedule>
                 <AirdropAmountColumn>
-                    <AirdropSum>{formatBalance(airdropAmount, true)} AQUA</AirdropSum>
+                    <AirdropSum>
+                        {formatBalance((airdropAmount * (100 + boostPercent)) / 100, true)} AQUA
+                    </AirdropSum>
                     <AirdropSumPeriod>Estimated 3 year total</AirdropSumPeriod>
                 </AirdropAmountColumn>
                 <AirdropAmountColumn>
-                    <AirdropSum>{formatBalance(airdropAmount / 3, true)} AQUA</AirdropSum>
+                    <AirdropSum>
+                        {formatBalance((airdropAmount * (100 + boostPercent)) / 100 / 12, true)}{' '}
+                        AQUA
+                    </AirdropSum>
                     <AirdropSumPeriod>Estimated per year</AirdropSumPeriod>
                 </AirdropAmountColumn>
                 <AirdropAmountColumn>
-                    <AirdropSum>{formatBalance(airdropAmount / 36, true)} AQUA</AirdropSum>
+                    <AirdropSum>
+                        {formatBalance((airdropAmount * (100 + boostPercent)) / 100 / 36, true)}{' '}
+                        AQUA
+                    </AirdropSum>
                     <AirdropSumPeriod>Estimated per month</AirdropSumPeriod>
                 </AirdropAmountColumn>
             </AirdropSchedule>
