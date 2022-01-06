@@ -120,7 +120,7 @@ const AccountPage = () => {
         setUpdateIndex((prevState) => prevState + 1);
     };
 
-    const boostPercent = useMemo(() => {
+    const { boostPercent, lockAmount } = useMemo(() => {
         if (
             !locks?.length ||
             !averageAquaPrice ||
@@ -128,7 +128,7 @@ const AccountPage = () => {
             !currentAccount ||
             !airdropSharesPrice
         ) {
-            return 0;
+            return { boostPercent: 0, lockAmount: 0 };
         }
 
         const maxTimeStamp = new Date('2025-01-15T00:00:00Z').getTime();
@@ -176,7 +176,7 @@ const AccountPage = () => {
 
         const boost = totalMultiplier * maxBoost;
 
-        return boost * 100;
+        return { boostPercent: boost * 100, lockAmount: amountSum };
     }, [locks, averageAquaPrice, ammReserves, currentAccount]);
 
     if (!currentAccount || !ammReserves || !averageAquaPrice || !airdropSharesPrice) {
@@ -203,7 +203,7 @@ const AccountPage = () => {
         ammReserves.XLM +
         yXlmBalance +
         ammReserves.yXLM +
-        (aquaBalance + ammReserves.AQUA) * +averageAquaPrice;
+        (aquaBalance + ammReserves.AQUA + lockAmount) * +averageAquaPrice;
 
     const airdropAmountWithoutLocks = roundToPrecision(
         Math.min(airdropSharesWithoutLocks * Number(airdropSharesPrice), MAX_AIRDROP_AMOUNT),
