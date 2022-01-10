@@ -1,10 +1,10 @@
 import * as React from 'react';
+import { useState } from 'react';
 import Tooltip, { TOOLTIP_POSITION } from '../../../../../common/basics/Tooltip';
 import { formatBalance, roundToPrecision } from '../../../../../common/helpers/helpers';
 import styled from 'styled-components';
-import { COLORS } from '../../../../../common/styles';
-import { flexAllCenter, flexRowSpaceBetween } from '../../../../../common/mixins';
-import { useState } from 'react';
+import { Breakpoints, COLORS } from '../../../../../common/styles';
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
 import { PairStats, TotalStats } from '../../../../api/types';
 import InfoIcon from '../../../../../common/assets/img/icon-info.svg';
 
@@ -15,6 +15,10 @@ const Info = styled(InfoIcon)`
 const Amount = styled.div`
     display: flex;
     flex-direction: column;
+
+    ${respondDown(Breakpoints.md)`
+         align-items: flex-end;
+    `}
 `;
 
 const Percent = styled.div`

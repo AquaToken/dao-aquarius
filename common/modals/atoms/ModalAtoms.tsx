@@ -1,8 +1,8 @@
 import styled from 'styled-components';
-import { COLORS, Z_INDEX } from '../../styles';
-import { flexAllCenter } from '../../mixins';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { Breakpoints, COLORS, Z_INDEX } from '../../styles';
+import { flexAllCenter, respondDown } from '../../mixins';
 import * as React from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import CloseIcon from '../../assets/img/icon-close.svg';
 
 const ModalWrapper = styled.div`
@@ -17,6 +17,12 @@ const ModalWrapper = styled.div`
     &:last-child {
         background: rgba(15, 0, 35, 0.8);
     }
+
+    ${respondDown(Breakpoints.md)`
+          &:last-child {
+              background: transparent;
+          }
+    `};
 `;
 
 const ModalInner = styled.div<{ withBackground: boolean; isShow: boolean }>`
@@ -26,6 +32,16 @@ const ModalInner = styled.div<{ withBackground: boolean; isShow: boolean }>`
     padding: ${({ withBackground }) => (withBackground ? '0 0 1rem' : '6.4rem 0 1rem')};
     animation: ${({ isShow }) => (isShow ? 'opening 300ms' : 'closing 300ms')};
     position: relative;
+
+    ${respondDown(Breakpoints.md)`
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        border-radius: 0;
+        padding: ${({ withBackground }) => (withBackground ? '0 0 1rem' : '3.2rem 0 1rem')};
+    `};
 
     @keyframes opening {
         0% {
@@ -52,6 +68,10 @@ const ModalInner = styled.div<{ withBackground: boolean; isShow: boolean }>`
 
 const ModalContent = styled.div`
     padding: 0 4.8rem 3.8rem;
+
+    ${respondDown(Breakpoints.md)`
+        padding: 0 1.6rem 2rem;
+    `};
 `;
 
 const CloseButton = styled.div<{ withBackground: boolean }>`
@@ -63,6 +83,10 @@ const CloseButton = styled.div<{ withBackground: boolean }>`
     box-sizing: border-box;
     background-color: ${({ withBackground }) => (withBackground ? COLORS.white : COLORS.lightGray)};
     border-radius: 1rem;
+
+    ${respondDown(Breakpoints.md)`
+        padding: 2rem;
+    `};
 `;
 
 const BackgroundBlock = styled.div`
@@ -155,6 +179,11 @@ export const ModalTitle = styled.h3`
     color: ${COLORS.titleText};
     margin-bottom: 0.8rem;
     font-weight: normal;
+
+    ${respondDown(Breakpoints.md)`
+        font-size: 2rem;
+        line-height: 2.6rem;
+    `};
 `;
 
 export const ModalDescription = styled.div<{ smallMarginBottom?: boolean }>`

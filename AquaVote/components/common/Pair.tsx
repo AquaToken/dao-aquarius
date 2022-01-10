@@ -1,22 +1,29 @@
 import * as React from 'react';
+import { useState } from 'react';
 import { AssetSimple } from '../../api/types';
 import styled from 'styled-components';
 import useAssetsStore from '../../store/assetsStore/useAssetsStore';
 import * as StellarSdk from 'stellar-sdk';
 import { getAssetString } from '../../store/assetsStore/actions';
 import { LumenInfo } from '../../store/assetsStore/reducer';
-import { COLORS } from '../../../common/styles';
+import { Breakpoints, COLORS } from '../../../common/styles';
 import DotsLoader from '../../../common/basics/DotsLoader';
 import AssetLogo, { logoStyles } from '../AssetDropdown/AssetLogo';
 import External from '../../../common/assets/img/icon-external-link.svg';
-import { flexAllCenter } from '../../../common/mixins';
+import { flexAllCenter, respondDown } from '../../../common/mixins';
 import Tooltip, { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
-import { useState } from 'react';
 
-const Wrapper = styled.div<{ verticalDirections?: boolean }>`
+const Wrapper = styled.div<{ verticalDirections?: boolean; mobileVerticalDirections?: boolean }>`
     display: flex;
     ${({ verticalDirections }) => verticalDirections && 'flex-direction: column;'};
     align-items: center;
+
+    ${({ mobileVerticalDirections }) =>
+        mobileVerticalDirections &&
+        respondDown(Breakpoints.md)`
+            flex-direction: column;
+            align-items: flex-start;
+        `}
 `;
 
 const Icons = styled.div`
@@ -42,7 +49,10 @@ const SecondIcon = styled.div`
     left: -0.5rem;
 `;
 
-const AssetsDetails = styled.div<{ verticalDirections?: boolean }>`
+const AssetsDetails = styled.div<{
+    verticalDirections?: boolean;
+    mobileVerticalDirections?: boolean;
+}>`
     display: flex;
     flex-direction: column;
     ${({ verticalDirections }) =>
@@ -50,21 +60,46 @@ const AssetsDetails = styled.div<{ verticalDirections?: boolean }>`
             ? `align-items: center;
         margin-top: 2rem;`
             : 'margin-left: 1.6rem;'};
+
+    ${({ mobileVerticalDirections }) =>
+        mobileVerticalDirections &&
+        respondDown(Breakpoints.md)`
+              margin-left: 0;
+              width: calc(100vw - 6.4rem);
+          `}
 `;
 
-const AssetsCodes = styled.span`
+const AssetsCodes = styled.span<{ mobileVerticalDirections?: boolean }>`
     font-size: 1.6rem;
     line-height: 2.8rem;
     color: ${COLORS.paragraphText};
     display: flex;
     flex-direction: row;
     align-items: center;
+
+    ${({ mobileVerticalDirections }) =>
+        mobileVerticalDirections &&
+        respondDown(Breakpoints.md)`
+                font-weight: bold;
+                        font-size: 2.4rem;
+                        line-height: 2.8rem;
+                        color: ${COLORS.buttonBackground};
+                        margin-top: 0.7rem;
+                        margin-bottom: 0.4rem;
+            `}
 `;
 
-const AssetsDomains = styled.span`
+const AssetsDomains = styled.span<{ mobileVerticalDirections?: boolean }>`
     color: ${COLORS.grayText};
     font-size: 1.4rem;
     line-height: 2rem;
+
+    ${({ mobileVerticalDirections }) =>
+        mobileVerticalDirections &&
+        respondDown(Breakpoints.md)`
+                  font-size: 1.2rem;
+                  white=space: wrap;
+              `}
 `;
 
 const Link = styled.div`
@@ -118,6 +153,7 @@ type PairProps = {
     withoutDomains?: boolean;
     verticalDirections?: boolean;
     isRewardsOn?: boolean;
+    mobileVerticalDirections?: boolean;
 };
 
 const Pair = ({
@@ -126,6 +162,7 @@ const Pair = ({
     withoutDomains,
     verticalDirections,
     isRewardsOn,
+    mobileVerticalDirections,
 }: PairProps): JSX.Element => {
     const { assetsInfo } = useAssetsStore();
 
@@ -142,7 +179,10 @@ const Pair = ({
     const [showTooltip, setShowTooltip] = useState(false);
 
     return (
-        <Wrapper verticalDirections={verticalDirections}>
+        <Wrapper
+            verticalDirections={verticalDirections}
+            mobileVerticalDirections={mobileVerticalDirections}
+        >
             <Icons>
                 <BaseIcon key={baseInfo?.asset_string}>
                     <AssetLogo logoUrl={baseInfo?.image} />
@@ -151,8 +191,11 @@ const Pair = ({
                     <AssetLogo logoUrl={counterInfo?.image} />
                 </SecondIcon>
             </Icons>
-            <AssetsDetails verticalDirections={verticalDirections}>
-                <AssetsCodes>
+            <AssetsDetails
+                verticalDirections={verticalDirections}
+                mobileVerticalDirections={mobileVerticalDirections}
+            >
+                <AssetsCodes mobileVerticalDirections={mobileVerticalDirections}>
                     {base.code} / {counter.code}
                     {isRewardsOn && (
                         <Tooltip
@@ -179,7 +222,7 @@ const Pair = ({
                     </Link>
                 </AssetsCodes>
                 {!withoutDomains && (
-                    <AssetsDomains>
+                    <AssetsDomains mobileVerticalDirections={mobileVerticalDirections}>
                         {baseInfo?.name || base.code} (
                         {hasBaseInfo ? baseInfo.home_domain ?? 'unknown' : <DotsLoader />}){' · '}
                         {counterInfo?.name || counter.code} (

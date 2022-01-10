@@ -18,9 +18,16 @@ import { ModalService, StellarService } from '../../common/services/globalServic
 import NotFoundPage from '../../common/components/NotFoundPage/NotFoundPage';
 import ProjectPurposeModal, { SHOW_PURPOSE_ALIAS } from './common/ProjectPurposeModal';
 import BG from '../../common/assets/img/purpose-modal-background.svg';
+import styled, { createGlobalStyle } from 'styled-components';
+import { respondDown } from '../../common/mixins';
+import { Breakpoints, COLORS } from '../../common/styles';
 
 const MainPage = lazy(() => import('./MainPage/MainPage'));
 const AboutPage = lazy(() => import('./AboutPage/AboutPage'));
+
+const ModalBG = styled(BG)`
+    object-position: center center;
+`;
 
 const App = () => {
     useGlobalSubscriptions();
@@ -36,7 +43,7 @@ const App = () => {
     useEffect(() => {
         const showPurpose = JSON.parse(localStorage.getItem(SHOW_PURPOSE_ALIAS) || 'true');
         if (showPurpose) {
-            ModalService.openModal(ProjectPurposeModal, {}, false, <BG />);
+            ModalService.openModal(ProjectPurposeModal, {}, false, <ModalBG />);
         }
     }, []);
 
@@ -86,10 +93,19 @@ const App = () => {
     );
 };
 
+const BodyStyle = createGlobalStyle`
+    ${respondDown(Breakpoints.md)`
+        body {
+            background-color: ${COLORS.lightGray};
+        } 
+    `}
+`;
+
 const ProvidedApp = () => {
     return (
         <Provider>
             <AppGlobalStyle />
+            <BodyStyle />
             <App />
         </Provider>
     );

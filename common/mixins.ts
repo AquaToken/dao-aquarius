@@ -1,6 +1,11 @@
 /* eslint-disable prefer-spread */
-import {css, FlattenSimpleInterpolation, SimpleInterpolation} from 'styled-components';
-import {Breakpoints} from './styles';
+import {
+    css,
+    FlattenSimpleInterpolation,
+    Interpolation,
+    SimpleInterpolation,
+} from 'styled-components';
+import { Breakpoints } from './styles';
 
 export const textEllipsis = css`
     overflow: hidden;
@@ -28,7 +33,7 @@ export const commonMaxWidth = css`
 
 export const respondUp =
     (breakPoint: Breakpoints) =>
-    (...args: SimpleInterpolation[]): FlattenSimpleInterpolation =>
+    (...args: Interpolation<any>[]): FlattenSimpleInterpolation =>
         css`
             @media (min-width: ${breakPoint}) {
                 ${css.apply(null, args)};
@@ -36,7 +41,7 @@ export const respondUp =
         `;
 export const respondDown =
     (breakPoint: Breakpoints) =>
-    (...args: SimpleInterpolation[]): FlattenSimpleInterpolation =>
+    (...args: Interpolation<any>[]): FlattenSimpleInterpolation =>
         css`
             @media (max-width: ${breakPoint}) {
                 ${css.apply(null, args)};
