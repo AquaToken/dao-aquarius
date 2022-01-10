@@ -23,6 +23,7 @@ import { ModalService, StellarService } from '../../../../common/services/global
 import useAuthStore from '../../../../common/store/authStore/useAuthStore';
 import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
 import LockAquaModal from '../LockAquaModal/LockAquaModal';
+import { MAX_TIME_LOCK } from '../AccountPage';
 
 const Container = styled.div`
     background: ${COLORS.white};
@@ -438,9 +439,8 @@ const LockAquaForm = ({
         }
 
         const averageLockTime = weightedAverageTime / amountSum;
-        const maxLockPeriod = 3 * 365 * 24 * 60 * 60 * 1000;
 
-        const timeLockMultiplier = Math.min(maxLockPeriod, averageLockTime) / maxLockPeriod;
+        const timeLockMultiplier = Math.min(MAX_TIME_LOCK, averageLockTime) / MAX_TIME_LOCK;
 
         const lockedValue = amountSum * +averageAquaPrice;
 

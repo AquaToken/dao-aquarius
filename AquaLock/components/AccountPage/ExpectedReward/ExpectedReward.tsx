@@ -130,7 +130,7 @@ const ExpectedReward = ({ boostPercent, airdropAmount }) => {
                         <BoostInfo>
                             ⚡{' '}
                             {Boolean(boostPercent)
-                                ? `+${roundToPrecision(boostPercent, 2)}% boost`
+                                ? `+${roundToPrecision(boostPercent, 3)}% boost`
                                 : 'Lock AQUA to get boost'}
                         </BoostInfo>
                     )}
