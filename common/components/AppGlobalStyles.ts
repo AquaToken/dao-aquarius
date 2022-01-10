@@ -7,20 +7,21 @@ const AppGlobalStyle = createGlobalStyle`
   }
   
   html {
-    width: 100%;
     height: 100%;
     font-size: 62.5%; // 1rem = 10px
     animation-timing-function: linear;
+    width: 100vw !important;
+    overflow-x: hidden;
   }
 
   body {
     height: 100%;
     padding: 0;
     margin: 0;
-    width: 100vw !important;
-    overflow-x: hidden;
     background-color: ${COLORS.white};
     text-align: left;
+    width: 100vw !important;
+        overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }

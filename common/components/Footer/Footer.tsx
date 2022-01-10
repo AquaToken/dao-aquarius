@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import AquaLogo from './../../assets/img/aqua-logo.svg';
-import { COLORS } from '../../styles';
-import { commonMaxWidth } from '../../mixins';
+import { Breakpoints, COLORS } from '../../styles';
+import { commonMaxWidth, respondDown } from '../../mixins';
 
 const FooterBlock = styled.footer`
     ${commonMaxWidth};
@@ -13,6 +12,11 @@ const FooterBlock = styled.footer`
     display: flex;
     flex-direction: column;
     width: 100%;
+
+    ${respondDown(Breakpoints.md)`
+        margin-top: 2.4rem;
+        padding: 0 1.6rem;
+    `}
 `;
 
 const HelpfulLine = styled.div`
@@ -22,20 +26,36 @@ const HelpfulLine = styled.div`
 `;
 
 const CopyrightLine = styled(HelpfulLine)`
-    margin-top: 3rem;
-    margin-bottom: 5rem;
+    padding-top: 3rem;
+    padding-bottom: 5rem;
+    box-sizing: border-box;
     font-size: 1.2rem;
     line-height: 180%;
     color: ${COLORS.descriptionText};
+
+    ${respondDown(Breakpoints.md)`
+        flex-direction: column-reverse;
+        padding-top: 1.6rem;
+        padding-bottom: 2.4rem;
+        gap: 1.6rem;
+   `}
+`;
+
+const Aqua = styled(AquaLogo)`
+    height: 4.4rem;
+
+    ${respondDown(Breakpoints.md)`
+       height: 3.4rem;
+    `}
 `;
 
 const Footer = (): JSX.Element => {
     return (
         <FooterBlock>
             <HelpfulLine>
-                <Link to="/">
-                    <AquaLogo />
-                </Link>
+                <a href="https://aqua.network" target="_blank" rel="noreferrer noopener">
+                    <Aqua />
+                </a>
             </HelpfulLine>
             <CopyrightLine>
                 <div>© 2021 aqua.network</div>

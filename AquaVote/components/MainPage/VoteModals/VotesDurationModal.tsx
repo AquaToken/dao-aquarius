@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState } from 'react';
 import {
     ModalService,
     StellarService,
@@ -6,16 +7,16 @@ import {
 } from '../../../../common/services/globalServices';
 import { SELECTED_PAIRS_ALIAS } from '../MainPage';
 import { BuildSignAndSubmitStatuses } from '../../../../common/services/wallet-connect.service';
-import { useState } from 'react';
 import useAuthStore from '../../../../common/store/authStore/useAuthStore';
 import Select, { Option } from '../../../../common/basics/Select';
 import { useIsMounted } from '../../../../common/hooks/useIsMounted';
 import { ModalDescription, ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
 import { getDateString } from '../../../../common/helpers/helpers';
 import styled from 'styled-components';
-import { COLORS } from '../../../../common/styles';
+import { Breakpoints, COLORS } from '../../../../common/styles';
 import VotesAmountModal, { ContentRow, Label } from './VotesAmountModal';
 import Button from '../../../../common/basics/Button';
+import { respondDown } from '../../../../common/mixins';
 
 const ClaimBack = styled.div`
     margin: 2rem 0 3.2rem;
@@ -38,6 +39,14 @@ const ButtonContainer = styled.div`
     Button:first-child {
         margin-right: 1.6rem;
     }
+
+    ${respondDown(Breakpoints.md)`
+         flex-direction: column;
+         
+         Button:first-child {
+             margin-bottom: 1.6rem;
+         }
+    `}
 `;
 
 const MINUTE = 60 * 1000;

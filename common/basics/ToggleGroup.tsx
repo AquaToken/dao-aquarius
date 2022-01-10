@@ -8,7 +8,6 @@ const ToggleBlock = styled.div`
     background-color: ${COLORS.gray};
     border-radius: 5px;
     display: flex;
-
     font-size: 1.4rem;
     line-height: 1.6rem;
     color: ${COLORS.paragraphText};
@@ -45,6 +44,7 @@ const ToggleGroup = <T,>({
     options,
     value,
     onChange,
+    ...props
 }: {
     value: T;
     options: Option<T>[];
@@ -59,7 +59,7 @@ const ToggleGroup = <T,>({
     }, [value]);
 
     return (
-        <ToggleBlock>
+        <ToggleBlock {...props}>
             {options.map((item) => {
                 const isSelected = selectedOption?.value === item.value;
                 return (

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ModalProps, ModalTitle } from './atoms/ModalAtoms';
 import styled from 'styled-components';
-import { COLORS } from '../styles';
+import { Breakpoints, COLORS } from '../styles';
 import ArrowRightIcon from '../assets/img/icon-arrow-right.svg';
 import KeyIcon from '../assets/img/icon-key.svg';
 import WalletConnectLogo from '../assets/img/wallet-connect-logo.svg';
@@ -9,6 +9,7 @@ import LobstrLogo from '../assets/img/lobstr-logo.svg';
 import { LoginTypes } from '../store/authStore/types';
 import LoginWithSecret from './LoginWithSecret';
 import { ModalService, WalletConnectService } from '../services/globalServices';
+import { respondDown } from '../mixins';
 
 const LoginMethod = styled.div`
     width: 52.8rem;
@@ -30,6 +31,10 @@ const LoginMethod = styled.div`
     &:hover {
         padding-right: 1.9rem;
     }
+
+    ${respondDown(Breakpoints.md)`
+        width: 100%;
+    `}
 `;
 
 const LoginMethodName = styled.span`
