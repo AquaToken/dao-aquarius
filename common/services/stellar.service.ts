@@ -4,7 +4,6 @@ import { Horizon } from 'stellar-sdk/lib/horizon_api';
 import { Memo, MemoType, OperationOptions, ServerApi } from 'stellar-sdk';
 import { ToastService } from './globalServices';
 import axios, { AxiosResponse } from 'axios';
-import { roundToPrecision } from '../helpers/helpers';
 
 enum HORIZON_SERVER {
     stellar = 'https://horizon.stellar.org',
@@ -566,36 +565,5 @@ export default class StellarServiceClass {
         transaction.sign(marketKeyDown);
 
         return transaction;
-    }
-
-    async getAquaAverageWeekPrice() {
-        const period = 7 * 24 * 60 * 60 * 1000;
-        const now = Date.now();
-
-        const start = now - period;
-
-        const { records } = await this.server
-            .tradeAggregation(
-                this.createLumen(),
-                this.createAsset(AQUA_CODE, AQUA_ISSUER),
-                start,
-                now + 3600000,
-                3600000,
-                0,
-            )
-            .limit(200)
-            .order('desc')
-            .call();
-
-        const { baseVolume, counterVolume } = records.reduce(
-            (acc, item) => {
-                acc.baseVolume += Number(item.base_volume);
-                acc.counterVolume += Number(item.counter_volume);
-                return acc;
-            },
-            { baseVolume: 0, counterVolume: 0 },
-        );
-
-        return roundToPrecision(baseVolume / counterVolume, 7);
     }
 }

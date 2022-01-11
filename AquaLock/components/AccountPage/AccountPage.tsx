@@ -79,7 +79,8 @@ const AccountPage = () => {
 
     useEffect(() => {
         getSharePrice().then((res) => {
-            setAirdropSharesPrice(res);
+            setAirdropSharesPrice(res.share_price);
+            setAverageAquaPrice(+res.aqua_price);
         });
     }, []);
 
@@ -101,12 +102,6 @@ const AccountPage = () => {
             setLocks(res);
         });
     }, [accountId, updateIndex]);
-
-    useEffect(() => {
-        StellarService.getAquaAverageWeekPrice().then((res) => {
-            setAverageAquaPrice(Number(res));
-        });
-    }, []);
 
     useEffect(() => {
         if (!currentAccount) {
@@ -235,7 +230,8 @@ const AccountPage = () => {
                             account={currentAccount}
                             averageAquaPrice={averageAquaPrice}
                             locks={locks}
-                            airdropAmount={+airdropAmountWithoutLocks}
+                            airdropSharesWithoutLocks={airdropSharesWithoutLocks}
+                            airdropSharesPrice={+airdropSharesPrice}
                             ammReserves={ammReserves}
                             updateAccount={updateAccount}
                         />
