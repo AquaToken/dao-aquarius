@@ -63,8 +63,8 @@ const AccountInput = ({ params, close }: { params?: any; close?: any }) => {
             <InputBlock>
                 <Title>{isModal ? 'Check other account' : 'Check your account'}</Title>
                 <Description>
-                    You can check if your account is eligible and also lock AQUA to apply a boost,
-                    helping increase your projected total reward.
+                    Check if your account is eligible and see how you can increase your
+                    airdrop reward if you choose to lock your AQUA.
                 </Description>
                 <Input
                     placeholder="Enter your public key (starts with G)"
