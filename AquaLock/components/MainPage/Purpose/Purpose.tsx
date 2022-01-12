@@ -30,7 +30,7 @@ const Purpose = () => {
         <Container>
             <Title>Lock AQUA and get a boost for Airdrop #2</Title>
             <Description>
-                Time lock your AQUA with this tool to increase rewards if you plan to hold AQUA long term.
+                Time lock your AQUA with this tool to increase rewards if you plan to hold AQUA long term.<br/>
                 The more AQUA you lock, and the longer you lock, the higher the boost.
             </Description>
         </Container>
