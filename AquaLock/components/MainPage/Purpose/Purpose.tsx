@@ -28,9 +28,9 @@ const Description = styled.span`
 const Purpose = () => {
     return (
         <Container>
-            <Title>Get an Airdrop #2 boost by locking AQUA tokens</Title>
+            <Title>Lock AQUA and get a boost for Airdrop #2</Title>
             <Description>
-                The airdrop locker tool is designed to increase rewards for those with belief in the Aquarius project.
+                Time lock your AQUA with this tool to increase rewards if you plan to hold AQUA long term.
                 The more AQUA you lock, and the longer you lock, the higher the boost.
             </Description>
         </Container>
