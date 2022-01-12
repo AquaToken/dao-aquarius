@@ -82,7 +82,7 @@ const LockAquaModal = ({ confirm, params }: ModalProps<{ amount: string; period:
     };
     return (
         <ModalContainer>
-            <ModalTitle>Lock aqua</ModalTitle>
+            <ModalTitle>Lock AQUA</ModalTitle>
             <ModalDescription>You lock your AQUA to get a boost to the airdrop</ModalDescription>
             <Row>
                 <Label>Amount</Label>
