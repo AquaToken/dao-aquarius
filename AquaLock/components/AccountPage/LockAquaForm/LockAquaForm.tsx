@@ -499,7 +499,7 @@ const LockAquaForm = ({
                 <Label>Amount</Label>
                 <BalanceBlock>
                     <Balance onClick={() => onAmountChange(aquaBalance.toString())}>
-                        {aquaBalance} AQUA{' '}
+                        {formatBalance(aquaBalance)} AQUA{' '}
                     </Balance>
                     available
                 </BalanceBlock>
