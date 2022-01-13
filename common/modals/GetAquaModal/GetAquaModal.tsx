@@ -95,6 +95,7 @@ const LinkBody = styled.div`
     ${respondDown(Breakpoints.md)`
         flex-direction: column;
         align-items: start;
+        margin-right: 1.6rem;
     `}
 `;
 
