@@ -37,7 +37,6 @@ const MenuBlock = styled.div`
         bottom: 0;
         left: 0;
         right: 0;
-        height: calc(100vh - 5.8rem);
     `}
 `;
 
