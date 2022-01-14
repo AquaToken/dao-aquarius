@@ -107,8 +107,8 @@ const SignWithPublic = ({ params }: ModalProps<{ xdr: string; account: AccountSe
             <AccountBlock accountId={accountId} federation={federation} />
             <Title>Sign with Stellar Laboratory</Title>
             <ModalDescription>
-                You are logged in with a public key, so you can sign transaction in the Stellar
-                Laboratory
+                Please continue and submit transaction with Stellar Laboratory using one of the
+                supported methods (Ledger, Trezor, Freighter, Albedo or secret key).
             </ModalDescription>
             <a
                 href={`https://laboratory.stellar.org/#txsigner?xdr=${encodeURIComponent(
@@ -124,7 +124,7 @@ const SignWithPublic = ({ params }: ModalProps<{ xdr: string; account: AccountSe
                     <ActionMain>
                         <ActionName>Stellar Laboratory</ActionName>
                         <ActionDescription>
-                            You can sign in the laboratory in any convenient way
+                            Review and finalize the transaction in the Stellar Laboratory
                         </ActionDescription>
                     </ActionMain>
                     <ArrowRightIcon />
@@ -138,7 +138,9 @@ const SignWithPublic = ({ params }: ModalProps<{ xdr: string; account: AccountSe
                     </IconContainer>
                     <ActionMain>
                         <ActionName>Copy XDR</ActionName>
-                        <ActionDescription>Sign where you like</ActionDescription>
+                        <ActionDescription>
+                            Copy transaction XDR and paste into Stellar Laboratory or other wallet
+                        </ActionDescription>
                     </ActionMain>
                     <CopyIcon />
                 </ActionContainer>

@@ -19,6 +19,7 @@ const Label = styled.div`
 const CheckboxInput = styled.div<{ checked: boolean }>`
     height: 1.6rem;
     width: 1.6rem;
+    min-width: 1.6rem;
     border-radius: 0.4rem;
     margin-right: 1.6rem;
     background: ${({ checked }) => (checked ? COLORS.purple : COLORS.white)};
