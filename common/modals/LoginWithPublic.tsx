@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import useAuthStore from '../store/authStore/useAuthStore';
 import { LoginTypes } from '../store/authStore/types';
 import { StellarService, ToastService } from '../services/globalServices';
+import { useLocation } from 'react-router-dom';
 
 const LoginWithSecretBody = styled.div`
     width: 52.8rem;
@@ -24,7 +25,9 @@ const InputWrapped = styled(Input)`
 `;
 
 const LoginWithPublic = ({ close }: ModalProps<never>): JSX.Element => {
-    const [publicKey, setPublicKey] = useState('');
+    const location = useLocation();
+    const path = location.pathname.substring(1);
+    const [publicKey, setPublicKey] = useState(StellarService.isValidPublicKey(path) ? path : '');
 
     const { login, isLogged, isLoginPending } = useAuthStore();
 
