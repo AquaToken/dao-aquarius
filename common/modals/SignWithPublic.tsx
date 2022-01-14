@@ -70,10 +70,18 @@ const StellarLogo = styled(Stellar)`
 
 const ArrowRightIcon = styled(ArrowRight)`
     margin-left: auto;
+
+    path {
+        fill: ${COLORS.descriptionText};
+    }
 `;
 
 const CopyIcon = styled(Copy)`
     margin-left: auto;
+
+    path {
+        fill: ${COLORS.descriptionText};
+    }
 `;
 
 const CopyStyled = styled(CopyButton)`
