@@ -1,4 +1,3 @@
-import * as StellarSdk from 'stellar-sdk';
 import { AppMetadata } from '@walletconnect/types';
 import AccountService from '../../services/account.service';
 
@@ -17,6 +16,7 @@ export interface AuthStore {
 export enum LoginTypes {
     secret = 'secret',
     walletConnect = 'wallet-connect',
+    public = 'public',
 }
 
 export enum AUTH_ACTIONS {

@@ -19,7 +19,16 @@ export default class AccountService extends AccountResponse {
         tx: StellarSdk.Transaction,
         withResult?: boolean,
     ): Promise<Horizon.SubmitTransactionResponse | void | { status: BuildSignAndSubmitStatuses }> {
-        if (this.authType === LoginTypes.secret) {
+        if (this.authType === LoginTypes.public) {
+            const xdr = tx.toEnvelope().toXDR('base64');
+            window.open(
+                `https://laboratory.stellar.org/#txsigner?xdr=${encodeURIComponent(
+                    xdr,
+                )}&network=public`,
+                '_blank',
+            );
+            return Promise.resolve({ status: BuildSignAndSubmitStatuses.pending });
+        } else if (this.authType === LoginTypes.secret) {
             return StellarService.signAndSubmit(tx, {
                 signers: this.signers,
                 thresholds: this.thresholds,
