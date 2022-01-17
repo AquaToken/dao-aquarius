@@ -6,10 +6,12 @@ import ArrowRightIcon from '../assets/img/icon-arrow-right.svg';
 import KeyIcon from '../assets/img/icon-key.svg';
 import WalletConnectLogo from '../assets/img/wallet-connect-logo.svg';
 import LobstrLogo from '../assets/img/lobstr-logo.svg';
+import Stellar from '../assets/img/xlm-logo.svg';
 import { LoginTypes } from '../store/authStore/types';
 import LoginWithSecret from './LoginWithSecret';
 import { ModalService, WalletConnectService } from '../services/globalServices';
 import { respondDown } from '../mixins';
+import LoginWithPublic from './LoginWithPublic';
 
 const LoginMethod = styled.div`
     width: 52.8rem;
@@ -37,6 +39,11 @@ const LoginMethod = styled.div`
     `}
 `;
 
+const LoginMethodWithDescription = styled.div`
+    display: flex;
+    flex-direction: column;
+`;
+
 const LoginMethodName = styled.span`
     font-size: 1.6rem;
     line-height: 2.8rem;
@@ -44,8 +51,19 @@ const LoginMethodName = styled.span`
     margin-left: 3rem;
 `;
 
+const LoginMethodDescription = styled.div`
+    font-size: 1.4rem;
+    line-height: 2rem;
+    color: ${COLORS.grayText};
+    margin-left: 3rem;
+`;
+
 const ArrowRight = styled(ArrowRightIcon)`
     margin-left: auto;
+`;
+
+const StellarLogo = styled(Stellar)`
+    width: 3.7rem;
 `;
 
 const WalletConnectLogoRelative = styled.div`
@@ -88,6 +106,9 @@ const ChooseLoginMethodModal = ({ close }: ModalProps<never>): JSX.Element => {
             ModalService.openModal(LoginWithSecret, {});
         } else if (method === LoginTypes.walletConnect) {
             WalletConnectService.login();
+        } else if (method === LoginTypes.public) {
+            close();
+            ModalService.openModal(LoginWithPublic, {});
         }
     };
 
@@ -105,6 +126,18 @@ const ChooseLoginMethodModal = ({ close }: ModalProps<never>): JSX.Element => {
                 </WalletConnectLogoRelative>
 
                 <LoginMethodName>WalletConnect</LoginMethodName>
+                <ArrowRight />
+            </LoginMethod>
+
+            <LoginMethod onClick={() => chooseMethod(LoginTypes.public)}>
+                <StellarLogo />
+                <LoginMethodWithDescription>
+                    <LoginMethodName>Stellar Laboratory</LoginMethodName>
+                    <LoginMethodDescription>
+                        Sign with Ledger, Trezor, Freighter, Albedo or others tools.
+                    </LoginMethodDescription>
+                </LoginMethodWithDescription>
+
                 <ArrowRight />
             </LoginMethod>
 

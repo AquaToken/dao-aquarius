@@ -1,9 +1,10 @@
 import AccountRecord, * as StellarSdk from 'stellar-sdk';
 import { AccountResponse, Horizon } from 'stellar-sdk';
 import { LoginTypes } from '../store/authStore/types';
-import { StellarService, ToastService, WalletConnectService } from './globalServices';
+import { ModalService, StellarService, ToastService, WalletConnectService } from './globalServices';
 import { AQUA_CODE, AQUA_ISSUER } from './stellar.service';
 import { BuildSignAndSubmitStatuses } from './wallet-connect.service';
+import SignWithPublic from '../modals/SignWithPublic';
 
 export default class AccountService extends AccountResponse {
     authType?: LoginTypes;
@@ -19,7 +20,11 @@ export default class AccountService extends AccountResponse {
         tx: StellarSdk.Transaction,
         withResult?: boolean,
     ): Promise<Horizon.SubmitTransactionResponse | void | { status: BuildSignAndSubmitStatuses }> {
-        if (this.authType === LoginTypes.secret) {
+        if (this.authType === LoginTypes.public) {
+            const xdr = tx.toEnvelope().toXDR('base64');
+            ModalService.openModal(SignWithPublic, { xdr, account: this });
+            return Promise.resolve({ status: BuildSignAndSubmitStatuses.pending });
+        } else if (this.authType === LoginTypes.secret) {
             return StellarService.signAndSubmit(tx, {
                 signers: this.signers,
                 thresholds: this.thresholds,
