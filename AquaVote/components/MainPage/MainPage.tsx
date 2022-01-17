@@ -703,8 +703,8 @@ const MainPage = (): JSX.Element => {
                             {totalStats ? (
                                 <>
                                     <span>
-                                        ${formatBalance(totalStats.votes_value_sum, true)} AQUA
-                                        total in votes
+                                        {formatBalance(totalStats.votes_value_sum, true)} AQUA total
+                                        in votes
                                     </span>
                                     <Dot>{' · '}</Dot>
                                 </>
