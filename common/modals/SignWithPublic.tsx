@@ -1,12 +1,12 @@
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import { ModalDescription, ModalProps, ModalTitle } from './atoms/ModalAtoms';
 import styled from 'styled-components';
 import AccountBlock from '../basics/AccountBlock';
-import { useEffect, useState } from 'react';
 import { StellarService } from '../services/globalServices';
 import AccountService from '../services/account.service';
-import { flexAllCenter } from '../mixins';
-import { COLORS } from '../styles';
+import { flexAllCenter, respondDown } from '../mixins';
+import { Breakpoints, COLORS } from '../styles';
 import Stellar from '../assets/img/xlm-logo.svg';
 import ArrowRight from '../assets/img/icon-arrow-right.svg';
 import CopyButton from '../basics/CopyButton';
@@ -21,6 +21,10 @@ const Container = styled.div`
         display: block;
         margin-bottom: 1.4rem;
     }
+
+    ${respondDown(Breakpoints.md)`
+        width: 100%;
+    `}
 `;
 
 const Title = styled(ModalTitle)`
@@ -31,17 +35,18 @@ const ActionContainer = styled.div`
     display: flex;
     align-items: center;
     width: 100%;
-    height: 9rem;
+    min-height: 9rem;
     background: ${COLORS.lightGray};
     border-radius: 0.5rem;
     cursor: pointer;
-    padding: 0 2.4rem;
+    padding: 1.2rem 2.4rem;
 `;
 
 const IconContainer = styled.div`
     ${flexAllCenter};
     height: 4.8rem;
     width: 4.8rem;
+    min-width: 4.8rem;
     border-radius: 1rem;
     background-color: ${COLORS.white};
     margin-right: 3.1rem;
@@ -50,6 +55,7 @@ const IconContainer = styled.div`
 const ActionMain = styled.div`
     display: flex;
     flex-direction: column;
+    margin-right: 1.6rem;
 `;
 
 const ActionName = styled.div`
@@ -66,10 +72,12 @@ const ActionDescription = styled.div`
 
 const StellarLogo = styled(Stellar)`
     height: 3.2rem;
+    min-width: 3.2rem;
 `;
 
 const ArrowRightIcon = styled(ArrowRight)`
     margin-left: auto;
+    min-width: 1.6rem;
 
     path {
         fill: ${COLORS.descriptionText};
@@ -78,6 +86,7 @@ const ArrowRightIcon = styled(ArrowRight)`
 
 const CopyIcon = styled(Copy)`
     margin-left: auto;
+    min-width: 1.6rem;
 
     path {
         fill: ${COLORS.descriptionText};
