@@ -579,7 +579,7 @@ export default class StellarServiceClass {
                 this.createLumen(),
                 this.createAsset(AQUA_CODE, AQUA_ISSUER),
                 start,
-                now,
+                now + 3600000,
                 3600000,
                 0,
             )

@@ -23,6 +23,7 @@ import { ModalService, StellarService } from '../../../../common/services/global
 import useAuthStore from '../../../../common/store/authStore/useAuthStore';
 import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
 import LockAquaModal from '../LockAquaModal/LockAquaModal';
+import { MAX_TIME_LOCK } from '../AccountPage';
 
 const Container = styled.div`
     background: ${COLORS.white};
@@ -318,8 +319,6 @@ const GlobalStyle = createGlobalStyle`
     }
 `;
 
-const maxPeriod = 3 * 365 * 24 * 60 * 60 * 1000;
-
 const LockAquaForm = ({
     account,
     averageAquaPrice,
@@ -348,7 +347,7 @@ const LockAquaForm = ({
 
     const onLockPeriodPercentChange = (value) => {
         setLockPeriodPercent(value);
-        const period = (maxPeriod * value) / 100;
+        const period = (MAX_TIME_LOCK * value) / 100;
 
         setLockPeriod(period + START_AIRDROP2_TIMESTAMP);
     };
@@ -361,12 +360,12 @@ const LockAquaForm = ({
         }
         const period = value - START_AIRDROP2_TIMESTAMP;
 
-        if (period > maxPeriod) {
+        if (period > MAX_TIME_LOCK) {
             setLockPeriodPercent(100);
             return;
         }
 
-        const percent = roundToPrecision((period / maxPeriod) * 100, 2);
+        const percent = roundToPrecision((period / MAX_TIME_LOCK) * 100, 2);
 
         setLockPeriodPercent(+percent);
     };
@@ -438,9 +437,8 @@ const LockAquaForm = ({
         }
 
         const averageLockTime = weightedAverageTime / amountSum;
-        const maxLockPeriod = 3 * 365 * 24 * 60 * 60 * 1000;
 
-        const timeLockMultiplier = Math.min(maxLockPeriod, averageLockTime) / maxLockPeriod;
+        const timeLockMultiplier = Math.min(MAX_TIME_LOCK, averageLockTime) / MAX_TIME_LOCK;
 
         const lockedValue = amountSum * +averageAquaPrice;
 
@@ -501,7 +499,7 @@ const LockAquaForm = ({
                 <Label>Amount</Label>
                 <BalanceBlock>
                     <Balance onClick={() => onAmountChange(aquaBalance.toString())}>
-                        {aquaBalance} AQUA{' '}
+                        {formatBalance(aquaBalance)} AQUA{' '}
                     </Balance>
                     available
                 </BalanceBlock>

@@ -52,6 +52,7 @@ const RightColumn = styled.div`
 `;
 
 export const MAX_AIRDROP_AMOUNT = 10000000;
+export const MAX_TIME_LOCK = (3 * 365 + 1) * 24 * 60 * 60 * 1000;
 
 const AccountPage = () => {
     const [currentAccount, setCurrentAccount] = useState(null);
@@ -147,9 +148,8 @@ const AccountPage = () => {
         );
 
         const averageLockTime = weightedAverageTime / amountSum;
-        const maxLockPeriod = 3 * 365 * 24 * 60 * 60 * 1000;
 
-        const timeLockMultiplier = Math.min(maxLockPeriod, averageLockTime) / maxLockPeriod;
+        const timeLockMultiplier = Math.min(MAX_TIME_LOCK, averageLockTime) / MAX_TIME_LOCK;
 
         const lockedValue = amountSum * +averageAquaPrice;
 

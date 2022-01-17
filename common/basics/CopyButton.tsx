@@ -22,9 +22,12 @@ const CopyIconStyled = styled(CopyIcon)`
 const CopyButton = ({
     text,
     children,
+    withoutLogo,
+    ...props
 }: {
     text: string;
     children: React.ReactNode;
+    withoutLogo?: boolean;
 }): JSX.Element => {
     const [isShowTooltip, setIsShowTooltip] = useState(false);
     const timerRef = useRef(null);
@@ -56,10 +59,11 @@ const CopyButton = ({
             content={<span>Copied!</span>}
             position={TOOLTIP_POSITION.top}
             isShow={isShowTooltip}
+            {...props}
         >
-            <CopyButtonContainer onClick={() => copyText()}>
+            <CopyButtonContainer onClick={() => copyText()} {...props}>
                 {children}
-                <CopyIconStyled />
+                {!withoutLogo && <CopyIconStyled />}
             </CopyButtonContainer>
         </Tooltip>
     );

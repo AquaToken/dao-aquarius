@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { COLORS } from '../../../../common/styles';
 import { flexAllCenter } from '../../../../common/mixins';
 import AquaLogo from '../../../../common/assets/img/aqua-logo-small.svg';
-import XlmLogo from '../../../../common/assets/img/xlm-logo.svg';
+import Xlm from '../../../../common/assets/img/xlm-logo.svg';
 import YXlmLogo from '../../../../common/assets/img/yxlm-logo.svg';
 import AccountService from '../../../../common/services/account.service';
 import { formatBalance } from '../../../../common/helpers/helpers';
@@ -18,6 +18,10 @@ const Container = styled.div`
     background-color: ${COLORS.white};
     border-radius: 0.5rem;
     padding: 3.2rem 3.2rem 4.2rem;
+`;
+
+const XlmLogo = styled(Xlm)`
+    width: 2.5rem;
 `;
 
 const Title = styled.span`
