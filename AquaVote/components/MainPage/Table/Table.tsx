@@ -65,16 +65,18 @@ const TableCell = styled.div`
 `;
 
 const PairInfo = styled(TableCell)`
-    flex: 4;
+    flex: 2;
     min-width: 48rem;
     ${respondDown(Breakpoints.md)`
-            margin-bottom: 3.2rem;
+        margin-bottom: 3.2rem;
     `}
 `;
 
 const VoteStats = styled(TableCell)`
-    flex: 1;
+    flex: 0.5;
+
     min-width: 10rem;
+
     label {
         display: none;
     }
@@ -94,10 +96,6 @@ const ButtonBlock = styled(TableCell)`
     flex: 1;
     justify-content: flex-end;
     min-width: 17rem;
-
-    ${respondDown(Breakpoints.md)`
-          justify-content: center;
-    `}
 `;
 
 const TableBody = styled.div`
@@ -127,6 +125,12 @@ const TableBodyRow = styled.div`
         border-radius: 0.5rem;
         margin-bottom: 1.6rem;
         padding: 2.7rem 1.6rem 1.6rem;
+        
+        ${TableCell}:nth-child(2) {
+            font-size: 1.6rem;
+            line-height: 2.8rem;
+            color: ${COLORS.grayText};
+        }
     `}
 `;
 
@@ -210,10 +214,10 @@ const Table = ({
 
             <TableHead>
                 <TableHeadRow>
-                    <TableCell>Pair</TableCell>
-                    <TableCell>Users Voted</TableCell>
-                    <TableCell>AQUA Voted</TableCell>
-                    <TableCell>Your Vote</TableCell>
+                    <PairInfo>Pair</PairInfo>
+                    <VoteStats>Users Voted</VoteStats>
+                    <VoteStats>AQUA Voted</VoteStats>
+                    <ButtonBlock>Your Vote</ButtonBlock>
                 </TableHeadRow>
             </TableHead>
             <TableBody>

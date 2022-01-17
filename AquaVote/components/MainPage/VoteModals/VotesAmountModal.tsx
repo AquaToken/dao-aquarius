@@ -185,6 +185,10 @@ const Scrollable = styled.div<{ scrollDisabled: boolean }>`
     max-height: calc(100vh - 20rem);
     min-height: 47rem;
 
+    ${respondDown(Breakpoints.md)`
+        max-height: calc(100vh - 16rem);
+    `};
+
     &::-webkit-scrollbar {
         width: 0.5rem;
     }

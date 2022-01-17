@@ -29,6 +29,7 @@ const DropDown = styled.div<{ isOpen: boolean; disabled: boolean }>`
     box-sizing: border-box;
     pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
     font-size: 1.4rem;
+    background: ${COLORS.white};
 `;
 
 const DropdownSearch = styled.input<{ $disabled: boolean }>`

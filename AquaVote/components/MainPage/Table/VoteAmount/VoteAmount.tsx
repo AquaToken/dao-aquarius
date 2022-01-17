@@ -25,6 +25,20 @@ const Percent = styled.div`
     color: ${COLORS.grayText};
     font-size: 1.4rem;
     line-height: 2rem;
+
+    ${respondDown(Breakpoints.md)`
+        display: none;
+    `}
+`;
+
+const PercentMobile = styled.span`
+    display: none;
+    color: ${COLORS.grayText};
+    margin-left: 0.3rem;
+
+    ${respondDown(Breakpoints.md)`
+        display: inline-block;
+    `}
 `;
 
 const AmountRow = styled.div`
@@ -60,6 +74,10 @@ const VoteAmount = ({ pair, totalStats }: { pair: PairStats; totalStats: TotalSt
     if (!pair.votes_value) {
         return null;
     }
+
+    const percentValue = pair.votes_value
+        ? `${getPercent(pair.votes_value, totalStats.votes_value_sum)}%`
+        : null;
     return (
         <Amount
             onMouseEnter={() => {
@@ -87,15 +105,12 @@ const VoteAmount = ({ pair, totalStats }: { pair: PairStats; totalStats: TotalSt
             >
                 <AmountRow>
                     {pair.votes_value ? `${formatBalance(+pair.votes_value, true)} AQUA` : null}
+                    <PercentMobile>({percentValue})</PercentMobile>
                     <Info />
                 </AmountRow>
             </Tooltip>
 
-            <Percent>
-                {pair.votes_value
-                    ? `${getPercent(pair.votes_value, totalStats.votes_value_sum)}%`
-                    : null}
-            </Percent>
+            <Percent>{percentValue}</Percent>
         </Amount>
     );
 };

@@ -54,6 +54,10 @@ const Background = styled.div`
     max-height: 40vh;
     overflow: hidden;
     position: relative;
+
+    ${respondDown(Breakpoints.md)`
+        padding: 10% 1.6rem;
+    `}
 `;
 
 const BackgroundLeft = styled(BackgroundImageLeft)`
@@ -61,6 +65,13 @@ const BackgroundLeft = styled(BackgroundImageLeft)`
     top: 0;
     left: 0;
     height: 100%;
+
+    ${respondDown(Breakpoints.md)`
+        height: unset;
+        width: 40%;
+        top: 50%;
+        transform: translateY(-50%);
+    `}
 `;
 
 const BackgroundRight = styled(BackgroundImageRight)`
@@ -68,6 +79,13 @@ const BackgroundRight = styled(BackgroundImageRight)`
     top: 0;
     right: 0;
     height: 100%;
+
+    ${respondDown(Breakpoints.md)`
+         height: unset;
+         width: 40%;
+         top: 50%;
+         transform: translateY(-50%);
+     `}
 `;
 
 const Title = styled.h2`
@@ -184,7 +202,8 @@ const Header = styled.header`
     margin: 5.4rem 0;
 
     ${respondDown(Breakpoints.md)`
-         flex-direction: column;
+         flex-direction: column-reverse;
+         margin-bottom: 2.4rem;
     `}
 `;
 
@@ -204,7 +223,7 @@ const ToggleGroupStyled = styled(ToggleGroup)`
     ${respondDown(Breakpoints.md)`
         width: 100%;
         justify-content: space-evenly;
-        margin-bottom: 1.6rem;
+        margin-top: 1.6rem;
         
         label {
             padding: 0.8rem 0;

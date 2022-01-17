@@ -60,10 +60,12 @@ const LoginMethodDescription = styled.div`
 
 const ArrowRight = styled(ArrowRightIcon)`
     margin-left: auto;
+    min-width: 1.6rem;
 `;
 
 const StellarLogo = styled(Stellar)`
     width: 3.7rem;
+    min-width: 3.7rem;
 `;
 
 const WalletConnectLogoRelative = styled.div`
