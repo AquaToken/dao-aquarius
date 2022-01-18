@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useEffect } from 'react';
 import styled from 'styled-components';
 import Sidebar from '../Sidebar/Sidebar';
 import ArrowLeft from '../../../../common/assets/img/icon-arrow-left.svg';
@@ -13,12 +14,15 @@ import { getDateString } from '../../../../common/helpers/helpers';
 import { Proposal } from '../../../api/types';
 import { statePage } from '../../ProposalCreationPage/ProposalCreationPage';
 import ExternalLink from '../../../../common/basics/ExternalLink';
-import { useEffect } from 'react';
 
 const ProposalQuestion = styled.div`
     width: 100%;
     padding: 4rem 0 11.7rem;
     background-color: ${COLORS.lightGray};
+
+    ${respondDown(Breakpoints.md)`
+        padding: 1.6rem 0;
+    `}
 `;
 
 const BackTo = styled.div`
@@ -38,6 +42,7 @@ const BackButton = styled(Link)`
     border: none;
     cursor: pointer;
     transition: all ease 200ms;
+    z-index: 1;
 
     &:hover {
         background-color: ${COLORS.lightGray};
@@ -53,12 +58,22 @@ const QuestionText = styled.h3`
     line-height: 6.4rem;
     margin-top: 2.3rem;
     color: ${COLORS.titleText};
+
+    ${respondDown(Breakpoints.md)`
+        font-size: 4rem;
+        line-height: 4.5rem;
+        margin-bottom: 3.2rem;
+    `}
 `;
 
 const ProposalSection = styled.div`
     padding: 6rem 0 0 4rem;
     width: 100%;
     ${commonMaxWidth};
+
+    ${respondDown(Breakpoints.md)`
+        padding: 3.2rem 1.6rem 0;
+    `}
 `;
 
 const LeftContent = styled.div`
@@ -82,17 +97,35 @@ const DescriptionText = styled.div`
     color: ${COLORS.descriptionText};
     opacity: 0.7;
     white-space: pre-wrap;
+
+    ${respondDown(Breakpoints.md)`
+        word-break: break-word;
+    `}
 `;
 
 const DataDetails = styled.div`
     display: flex;
     justify-content: space-between;
     margin-top: 3.2rem;
+
+    ${respondDown(Breakpoints.md)`
+        flex-direction: column;
+    `}
 `;
 
 const Column = styled.div`
     display: flex;
     flex-direction: column;
+
+    ${respondDown(Breakpoints.md)`
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        
+        &:not(:last-child) {
+            margin-bottom: 0.8rem;
+        }
+    `}
 `;
 
 const DetailsTitle = styled.div`
@@ -106,6 +139,10 @@ const DetailsDescription = styled.div`
     font-size: 1.6rem;
     line-height: 2.4rem;
     color: ${COLORS.paragraphText};
+
+    ${respondDown(Breakpoints.md)`
+        margin-top: 0;
+    `}
 `;
 
 const ExternalButton = styled.div`

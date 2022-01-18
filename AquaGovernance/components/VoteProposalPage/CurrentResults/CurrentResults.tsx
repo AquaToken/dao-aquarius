@@ -1,15 +1,15 @@
 import * as React from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 import ResultProgressLine from './ResultProgressLine/ResultProgressLine';
-import { COLORS } from '../../../../common/styles';
+import { Breakpoints, COLORS } from '../../../../common/styles';
 import { roundToPrecision } from '../../../../common/helpers/helpers';
 import { SimpleProposalResultsLabels } from '../VoteProposalPage';
 import { Proposal } from '../../../api/types';
-import { flexAllCenter, flexRowSpaceBetween } from '../../../../common/mixins';
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
 import Fail from '../../../../common/assets/img/icon-fail.svg';
 import Info from '../../../../common/assets/img/icon-info.svg';
 import Tooltip, { TOOLTIP_POSITION } from '../../../../common/basics/Tooltip';
-import { useState } from 'react';
 import { MINIMUM_APPROVAL_PERCENT } from '../../MainPage/MainPage';
 
 const ResultBlock = styled.div`
@@ -75,6 +75,10 @@ const StatusTag = styled.div`
     font-weight: 400;
     line-height: 2.5rem;
     margin-left: 0.8rem;
+
+    ${respondDown(Breakpoints.xs)`
+        display: none;
+    `}
 `;
 
 const QuorumResult = styled.div<{ isApproved: boolean }>`
@@ -155,7 +159,11 @@ const CurrentResults = ({ proposal }: { proposal: Proposal }): JSX.Element => {
                                 be above 5% for the proposal to be approved.
                             </TooltipInner>
                         }
-                        position={TOOLTIP_POSITION.bottom}
+                        position={
+                            +window.innerWidth > 992
+                                ? TOOLTIP_POSITION.bottom
+                                : TOOLTIP_POSITION.left
+                        }
                         isShow={showTooltip}
                     >
                         <Info />

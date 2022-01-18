@@ -1,17 +1,17 @@
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { COLORS } from '../../../../common/styles';
+import { Breakpoints, COLORS } from '../../../../common/styles';
 import ExternalLinkIcon from '../../../../common/assets/img/icon-external-link.svg';
 import AccountViewer from '../AccountViewer/AccountViewer';
 import Solution from '../Solution/Solution';
-import { useEffect, useState } from 'react';
 import { formatBalance, getDateString } from '../../../../common/helpers/helpers';
 import { IconSort } from '../../../../common/basics/Icons';
 import { useParams } from 'react-router-dom';
 import { Vote } from '../../../api/types';
 import { getVotes, getVoteTxHash, UPDATE_INTERVAL, VoteFields } from '../../../api/api';
 import Loader from '../../../../common/assets/img/loader.svg';
-import { flexAllCenter } from '../../../../common/mixins';
+import { flexAllCenter, respondDown } from '../../../../common/mixins';
 import Pagination from '../../../../common/basics/Pagination';
 
 const VotesBlock = styled.div`
@@ -45,6 +45,11 @@ const CellDate = styled(Cell)`
 const CellAcc = styled(Cell)`
     flex: 4.5;
     min-width: 21.5rem;
+
+    ${respondDown(Breakpoints.md)`
+        flex: 3;
+        min-width: unset;
+    `}
 `;
 const CellSolution = styled(Cell)`
     flex: 2.2;
@@ -52,6 +57,7 @@ const CellSolution = styled(Cell)`
 const CellAmount = styled(Cell)`
     flex: 4;
     justify-content: flex-end;
+    text-align: right;
 `;
 const VoteRow = styled.div`
     display: flex;
@@ -60,6 +66,11 @@ const VoteRow = styled.div`
     line-height: 2.8rem;
 
     color: ${COLORS.paragraphText};
+
+    ${respondDown(Breakpoints.md)`
+        font-size: 1.2rem;
+        line-height: 1.4rem;
+    `}
 `;
 
 const ExternalLink = styled.a`
@@ -229,13 +240,13 @@ const Votes = (): JSX.Element => {
                                 })}
                             </CellDate>
                             <CellAcc>
-                                <AccountViewer pubKey={account} />
+                                <AccountViewer pubKey={account} narrowForMobile />
                             </CellAcc>
                             <CellSolution>
                                 <Solution choice={voteChoice} />
                             </CellSolution>
                             <CellAmount>
-                                {formatBalance(Number(amount))} AQUA{' '}
+                                {formatBalance(Number(amount), true)} AQUA{' '}
                                 <ExternalLink onClick={() => onVoteLinkClick(txLink)}>
                                     <ExternalLinkIcon />
                                 </ExternalLink>

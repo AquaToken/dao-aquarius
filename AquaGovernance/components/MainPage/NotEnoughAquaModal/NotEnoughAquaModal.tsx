@@ -6,10 +6,17 @@ import { ModalService } from '../../../../common/services/globalServices';
 import GetAquaModal from '../../../../common/modals/GetAquaModal/GetAquaModal';
 import { CREATE_PROPOSAL_COST } from '../MainPage';
 import { formatBalance } from '../../../../common/helpers/helpers';
+import { respondDown } from '../../../../common/mixins';
+import { Breakpoints } from '../../../../common/styles';
 
 const StyledButton = styled(Button)`
     margin-top: 7.2rem;
     margin-left: auto;
+
+    ${respondDown(Breakpoints.md)`
+         min-width: 100%;
+         margin-left: 0;
+    `}
 `;
 
 const BoldText = styled.span`
