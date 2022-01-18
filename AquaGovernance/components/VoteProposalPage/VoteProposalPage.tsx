@@ -1,12 +1,21 @@
 import * as React from 'react';
-import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { getProposalRequest, UPDATE_INTERVAL } from '../../api/api';
 import PageLoader from '../../../common/basics/PageLoader';
 import { Proposal } from '../../api/types';
 
 import ProposalScreen from './Proposal/ProposalScreen';
 import NotFoundPage from '../../../common/components/NotFoundPage/NotFoundPage';
+import styled from 'styled-components';
+import { respondDown } from '../../../common/mixins';
+import { Breakpoints, COLORS } from '../../../common/styles';
+
+const Main = styled.main`
+    ${respondDown(Breakpoints.md)`
+         background: ${COLORS.lightGray};
+    `}
+`;
 
 export enum SimpleProposalOptions {
     voteFor = 'For',
@@ -52,9 +61,9 @@ const VoteProposalPage = (): JSX.Element => {
     }
 
     return (
-        <main>
+        <Main>
             <ProposalScreen proposal={proposal} />
-        </main>
+        </Main>
     );
 };
 

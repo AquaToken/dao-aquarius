@@ -7,7 +7,7 @@ import {
 } from '../../../../common/modals/atoms/ModalAtoms';
 import styled from 'styled-components';
 import Button from '../../../../common/basics/Button';
-import { flexRowSpaceBetween } from '../../../../common/mixins';
+import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
 import { Proposal } from '../../../api/types';
 import { formatBalance } from '../../../../common/helpers/helpers';
 import { CREATE_PROPOSAL_COST } from '../../MainPage/MainPage';
@@ -19,6 +19,7 @@ import { useIsMounted } from '../../../../common/hooks/useIsMounted';
 import { createProposal } from '../../../api/api';
 import { Horizon } from 'stellar-sdk';
 import { useHistory } from 'react-router-dom';
+import { Breakpoints } from '../../../../common/styles';
 
 const ProposalCost = styled.div`
     ${flexRowSpaceBetween};
@@ -27,10 +28,18 @@ const ProposalCost = styled.div`
     width: 52.8rem;
     margin-bottom: 2.4rem;
     border-bottom: 1px dashed #e8e8ed;
+
+    ${respondDown(Breakpoints.md)`
+        width: 100%;
+    `}
 `;
 
 const Description = styled(ModalDescription)`
     width: 52.8rem;
+
+    ${respondDown(Breakpoints.md)`
+        width: 100%;
+    `}
 `;
 
 const Label = styled.div`

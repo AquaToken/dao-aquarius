@@ -20,7 +20,6 @@ import NotEnoughAquaModal from '../../MainPage/NotEnoughAquaModal/NotEnoughAquaM
 import { CREATE_PROPOSAL_COST, MINIMUM_APPROVAL_PERCENT } from '../../MainPage/MainPage';
 
 const SidebarBlock = styled.aside`
-    position: sticky;
     top: 4rem;
     margin: 10rem 10% 0 0;
     float: right;
@@ -31,6 +30,16 @@ const SidebarBlock = styled.aside`
 
     ${respondDown(Breakpoints.xl)`
         margin-right: 4rem;
+    `};
+
+    ${respondDown(Breakpoints.xl)`
+        position: relative;
+        float: unset;
+        top: unset;
+        margin: unset;
+        width: 100%;
+        border-radius: 0;
+        margin-top: 1.6rem;
     `};
 `;
 
