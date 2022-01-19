@@ -28,10 +28,10 @@ const Description = styled.span`
 const Purpose = () => {
     return (
         <Container>
-            <Title>Lock AQUA and get a boost for Airdrop #2</Title>
+            <Title>Lock AQUA to get additional benefits</Title>
             <Description>
-                Time lock your AQUA with this tool to increase rewards if you plan to hold AQUA long term.<br/>
-                The more AQUA you lock, and the longer you lock, the higher the boost.
+                Lock your AQUA with this tool to get extra benefits in future.<br/>
+                Perfect for those who are planning to hold AQUA long term. Stay tuned, details coming soon.<br/>
             </Description>
         </Container>
     );
