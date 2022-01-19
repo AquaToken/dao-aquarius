@@ -1,15 +1,15 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { COLORS } from '../../../../common/styles';
-import { flexAllCenter } from '../../../../common/mixins';
+import { flexRowSpaceBetween } from '../../../../common/mixins';
 import AquaLogo from '../../../../common/assets/img/aqua-logo-small.svg';
-import Xlm from '../../../../common/assets/img/xlm-logo.svg';
-import YXlmLogo from '../../../../common/assets/img/yxlm-logo.svg';
 import AccountService from '../../../../common/services/account.service';
-import { formatBalance } from '../../../../common/helpers/helpers';
+import { formatBalance, roundToPrecision } from '../../../../common/helpers/helpers';
 import PageLoader from '../../../../common/basics/PageLoader';
+import { ServerApi } from 'stellar-sdk';
+import { useEffect, useState } from 'react';
 import { StellarService } from '../../../../common/services/globalServices';
-import { yXLM_CODE, yXLM_ISSUER } from '../../../../common/services/stellar.service';
+import DotsLoader from '../../../../common/basics/DotsLoader';
 
 const Container = styled.div`
     margin-top: 6.3rem;
@@ -17,84 +17,98 @@ const Container = styled.div`
     flex-direction: column;
     background-color: ${COLORS.white};
     border-radius: 0.5rem;
-    padding: 3.2rem 3.2rem 4.2rem;
+    padding: 3.2rem;
 `;
 
-const XlmLogo = styled(Xlm)`
-    width: 2.5rem;
+const Header = styled.div`
+    ${flexRowSpaceBetween};
+    margin-bottom: 2.4rem;
 `;
 
 const Title = styled.span`
-    font-size: 2rem;
-    line-height: 2.8rem;
-    color: ${COLORS.titleText};
-    margin-bottom: 3.2rem;
-    font-weight: bold;
+    font-size: 1.4rem;
+    line-height: 2rem;
+    color: ${COLORS.grayText};
 `;
 
-const Balances = styled.div`
+const BalanceRow = styled.div`
     display: flex;
-    flex-direction: row;
+    align-items: center;
+    padding-bottom: 3.2rem;
+    border-bottom: 0.1rem dashed ${COLORS.gray};
 `;
 
-const Balance = styled.div`
+const Aqua = styled(AquaLogo)`
+    height: 4.8rem;
+    width: 4.8rem;
+`;
+
+const Balance = styled.span`
+    font-weight: bold;
+    font-size: 5.6rem;
+    line-height: 6.4rem;
+    color: ${COLORS.buttonBackground};
+    margin-left: 1.6rem;
+`;
+
+const AdditionalInfo = styled.div`
+    display: flex;
+    width: 100%;
+`;
+
+const AdditionalInfoColumn = styled.div`
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
     flex: 1;
+    padding-top: 3.2rem;
 `;
 
-const AssetRow = styled.div`
-    ${flexAllCenter};
-    font-size: 1.4rem;
-    line-height: 2rem;
-    color: ${COLORS.descriptionText};
-    margin-bottom: 1.6rem;
-
-    svg {
-        height: 2.4rem;
-        width: 2.4rem;
-        margin-right: 0.8rem;
-    }
+const Label = styled.div<{ color: string; textColor: string }>`
+    width: min-content;
+    height: 1.9rem;
+    border-radius: 0.3rem;
+    text-align: center;
+    line-height: 1.9rem;
+    font-size: 1rem;
+    font-weight: bold;
+    background: ${({ color }) => color};
+    color: ${({ textColor }) => textColor};
+    margin-right: 0.7rem;
+    padding: 0 0.8rem;
 `;
 
-const AssetBalance = styled.span`
+const AdditionalInfoBalance = styled.span`
+    font-weight: bold;
     font-size: 2rem;
     line-height: 2.8rem;
-    color: ${COLORS.titleText};
-    font-weight: bold;
-    margin-bottom: 1.6rem;
+    color: ${COLORS.buttonBackground};
+    margin-top: 1rem;
 `;
 
-const AmmBalance = styled.div`
-    display: flex;
+const AdditionalInfoDescription = styled.span`
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.titleText};
-
-    &:before {
-        content: 'AMM';
-        height: 1.9rem;
-        width: 4.1rem;
-        border-radius: 0.3rem;
-        text-align: center;
-        line-height: 1.9rem;
-        font-size: 1rem;
-        font-weight: bold;
-        background: ${COLORS.yellow};
-        color: ${COLORS.titleText};
-        margin-right: 0.7rem;
-    }
+    color: ${COLORS.grayText};
 `;
 
 const Portfolio = ({
-    ammReserves,
+    ammAquaBalance,
     currentAccount,
+    locks,
 }: {
-    ammReserves: { AQUA: number; XLM: number; yXLM: number };
+    ammAquaBalance: number;
     currentAccount: AccountService;
+    locks: ServerApi.ClaimableBalanceRecord[];
 }) => {
-    if (!currentAccount || !ammReserves) {
+    const [price, setPrice] = useState(null);
+
+    useEffect(() => {
+        StellarService.getAquaPrice().then((res) => {
+            setPrice(res);
+        });
+    }, []);
+
+    if (!currentAccount || ammAquaBalance === null || locks === null) {
         return (
             <Container>
                 <PageLoader />
@@ -102,51 +116,43 @@ const Portfolio = ({
         );
     }
     const aquaBalance = currentAccount.getAquaBalance();
-    const yXLmBalance = currentAccount.getAssetBalance(
-        StellarService.createAsset(yXLM_CODE, yXLM_ISSUER),
-    );
+    const locksSum = locks.reduce((acc, lock) => {
+        acc += Number(lock.amount);
+        return acc;
+    }, 0);
+
+    const percent = roundToPrecision((locksSum / (aquaBalance + locksSum)) * 100, 2);
+
     return (
         <Container>
-            <Title>Portfolio</Title>
-            <Balances>
-                <Balance>
-                    <AssetRow>
-                        <AquaLogo />
-                        <span>AQUA</span>
-                    </AssetRow>
-                    <AssetBalance>{formatBalance(aquaBalance, true)} AQUA</AssetBalance>
-                    {Boolean(ammReserves?.AQUA) && (
-                        <AmmBalance>+{formatBalance(ammReserves.AQUA, true)} AQUA</AmmBalance>
-                    )}
-                </Balance>
-                <Balance>
-                    <AssetRow>
-                        <XlmLogo />
-                        <span>Lumens</span>
-                    </AssetRow>
-                    <AssetBalance>
-                        {formatBalance(
-                            currentAccount.getAssetBalance(StellarService.createLumen()),
-                            true,
-                        )}{' '}
-                        XLM
-                    </AssetBalance>
-                    {Boolean(ammReserves?.XLM) && (
-                        <AmmBalance>+{formatBalance(ammReserves.XLM, true)} XLM</AmmBalance>
-                    )}
-                </Balance>
-                {Boolean()}
-                <Balance>
-                    <AssetRow>
-                        <YXlmLogo />
-                        <span>yXLM</span>
-                    </AssetRow>
-                    <AssetBalance>{formatBalance(yXLmBalance, true)} yXLM</AssetBalance>
-                    {Boolean(ammReserves?.yXLM) && (
-                        <AmmBalance>+{formatBalance(ammReserves.yXLM, true)} yXLM</AmmBalance>
-                    )}
-                </Balance>
-            </Balances>
+            <Header>
+                <Title>Your available AQUA balance</Title>
+                <Title>{price ? `1 AQUA = ${price} XLM` : <DotsLoader />}</Title>
+            </Header>
+            <BalanceRow>
+                <Aqua />
+                <Balance>{formatBalance(aquaBalance, true)} AQUA</Balance>
+            </BalanceRow>
+            <AdditionalInfo>
+                <AdditionalInfoColumn>
+                    <Label color={COLORS.yellow} textColor={COLORS.titleText}>
+                        AMM
+                    </Label>
+                    <AdditionalInfoBalance>
+                        + {formatBalance(ammAquaBalance, true)} AQUA
+                    </AdditionalInfoBalance>
+                    <AdditionalInfoDescription>in AMM pool</AdditionalInfoDescription>
+                </AdditionalInfoColumn>
+                <AdditionalInfoColumn>
+                    <Label color={COLORS.purple} textColor={COLORS.white}>
+                        LOCK
+                    </Label>
+                    <AdditionalInfoBalance>
+                        + {formatBalance(locksSum, true)} AQUA ({percent}%)
+                    </AdditionalInfoBalance>
+                    <AdditionalInfoDescription>Locked</AdditionalInfoDescription>
+                </AdditionalInfoColumn>
+            </AdditionalInfo>
         </Container>
     );
 };

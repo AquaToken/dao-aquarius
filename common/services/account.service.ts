@@ -71,10 +71,8 @@ export default class AccountService extends AccountResponse {
         return +assetBalance.balance;
     }
 
-    async getAmmBalancesForAirdrop2(): Promise<{ AQUA: number; XLM: number; yXLM: number }> {
-        const nativeAlias = 'native';
+    async getAmmAquaBalance(): Promise<number> {
         const aquaAlias = 'AQUA:GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA';
-        const yXlmAlias = 'yXLM:GARDNV3Q7YGT4AKSDF25LT32YSCCW4EV22Y2TV3I2PU2MMXJTEDL5T55';
 
         const liquidityPoolsBalances: Horizon.BalanceLineLiquidityPool[] = this.balances.filter(
             (balance) => balance.asset_type === 'liquidity_pool_shares',
@@ -85,45 +83,22 @@ export default class AccountService extends AccountResponse {
             200,
         );
 
-        return liquidityPoolsBalances.reduce(
-            (acc, item) => {
-                const pool = liquidityPoolsForAccount.find(
-                    ({ id }) => id === item.liquidity_pool_id,
-                );
-                if (!pool) {
-                    return acc;
-                }
-                const nativeReserve = pool.reserves.find(({ asset }) => asset === nativeAlias);
-
-                if (nativeReserve) {
-                    const balance =
-                        (Number(item.balance) * Number(nativeReserve.amount)) /
-                        Number(pool.total_shares);
-                    acc.XLM += balance;
-                }
-
-                const yXlmReserve = pool.reserves.find(({ asset }) => asset === yXlmAlias);
-
-                if (yXlmReserve) {
-                    const balance =
-                        (Number(item.balance) * Number(yXlmReserve.amount)) /
-                        Number(pool.total_shares);
-                    acc.yXLM += balance;
-                }
-
-                const aquaReserve = pool.reserves.find(({ asset }) => asset === aquaAlias);
-
-                if (aquaReserve) {
-                    const balance =
-                        (Number(item.balance) * Number(aquaReserve.amount)) /
-                        Number(pool.total_shares);
-                    acc.AQUA += balance;
-                }
-
+        return liquidityPoolsBalances.reduce((acc, item) => {
+            const pool = liquidityPoolsForAccount.find(({ id }) => id === item.liquidity_pool_id);
+            if (!pool) {
                 return acc;
-            },
-            { AQUA: 0, XLM: 0, yXLM: 0 },
-        );
+            }
+
+            const aquaReserve = pool.reserves.find(({ asset }) => asset === aquaAlias);
+
+            if (aquaReserve) {
+                const balance =
+                    (Number(item.balance) * Number(aquaReserve.amount)) / Number(pool.total_shares);
+                acc += balance;
+            }
+
+            return acc;
+        }, 0);
     }
 
     getAquaBalance(): number | null {

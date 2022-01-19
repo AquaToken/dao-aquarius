@@ -43,8 +43,6 @@ export const THRESHOLD_ORDER = {
     [THRESHOLDS.HIGH]: 3,
 };
 
-export const START_AIRDROP2_TIMESTAMP = new Date('2022-01-15T00:00:00Z').getTime();
-
 export const OP_THRESHOLDS = {
     [THRESHOLDS.LOW]: ['allowTrust', 'inflation', 'bumpSequence', 'setTrustLineFlags'],
     [THRESHOLDS.MED]: [
@@ -279,6 +277,15 @@ export default class StellarServiceClass {
             });
     }
 
+    getAquaPrice() {
+        return this.server
+            .orderbook(this.createAsset(AQUA_CODE, AQUA_ISSUER), this.createLumen())
+            .call()
+            .then((res) => {
+                return (+res.asks[0].price + +res.bids[0].price) / 2;
+            });
+    }
+
     getAccountLocks(publicKey: string) {
         return this.server
             .claimableBalances()
@@ -294,7 +301,7 @@ export default class StellarServiceClass {
                         claim.claimants[0].destination === publicKey &&
                         claim.asset === `${AQUA_CODE}:${AQUA_ISSUER}` &&
                         new Date(claim.claimants[0].predicate?.not?.abs_before).getTime() >
-                            START_AIRDROP2_TIMESTAMP,
+                            Date.now(),
                 );
             });
     }

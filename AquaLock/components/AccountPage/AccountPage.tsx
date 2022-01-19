@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import useAuthStore from '../../../common/store/authStore/useAuthStore';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StellarService } from '../../../common/services/globalServices';
 import { MainRoutes } from '../../routes';
 import styled from 'styled-components';
@@ -11,17 +11,8 @@ import AccountInfoBlock from './AccountInfoBlock/AccountInfoBlock';
 import PageLoader from '../../../common/basics/PageLoader';
 import AccountService from '../../../common/services/account.service';
 import Portfolio from './Portfolio/Portfolio';
-import ExpectedReward from './ExpectedReward/ExpectedReward';
-import {
-    START_AIRDROP2_TIMESTAMP,
-    yXLM_CODE,
-    yXLM_ISSUER,
-} from '../../../common/services/stellar.service';
-import NotEligibleBlock from './NotEligibleBlock/NotEligibleBlock';
 import CurrentLocks from './CurrentLocks/CurrentLocks';
 import LockAquaForm from './LockAquaForm/LockAquaForm';
-import { roundToPrecision } from '../../../common/helpers/helpers';
-import { getSharePrice } from '../../api/api';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -38,12 +29,11 @@ const Container = styled.div`
     justify-content: center;
 `;
 
-const LeftColumn = styled.div<{ onlyLeft: boolean }>`
+const LeftColumn = styled.div`
     display: flex;
     flex-direction: column;
     margin-right: 6rem;
     flex: 1;
-    max-width: ${({ onlyLeft }) => (onlyLeft ? '67.6rem' : 'unset')};
 `;
 
 const RightColumn = styled.div`
@@ -51,15 +41,10 @@ const RightColumn = styled.div`
     max-width: 48rem;
 `;
 
-export const MAX_AIRDROP_AMOUNT = 10000000;
-export const MAX_TIME_LOCK = (3 * 365 + 1) * 24 * 60 * 60 * 1000;
-
 const AccountPage = () => {
     const [currentAccount, setCurrentAccount] = useState(null);
-    const [ammReserves, setAmmReserves] = useState(null);
-    const [averageAquaPrice, setAverageAquaPrice] = useState(null);
+    const [ammAquaBalance, setAmmAquaBalance] = useState(null);
     const [locks, setLocks] = useState(null);
-    const [airdropSharesPrice, setAirdropSharesPrice] = useState(null);
     const [updateIndex, setUpdateIndex] = useState(0);
 
     const { account } = useAuthStore();
@@ -76,12 +61,6 @@ const AccountPage = () => {
             history.replace(`/${account.accountId()}`);
         }
     }, [account, accountId]);
-
-    useEffect(() => {
-        getSharePrice().then((res) => {
-            setAirdropSharesPrice(res);
-        });
-    }, []);
 
     useEffect(() => {
         if (!accountId) {
@@ -103,17 +82,11 @@ const AccountPage = () => {
     }, [accountId, updateIndex]);
 
     useEffect(() => {
-        StellarService.getAquaAverageWeekPrice().then((res) => {
-            setAverageAquaPrice(Number(res));
-        });
-    }, []);
-
-    useEffect(() => {
         if (!currentAccount) {
             return;
         }
-        currentAccount.getAmmBalancesForAirdrop2().then((res) => {
-            setAmmReserves(res);
+        currentAccount.getAmmAquaBalance().then((res) => {
+            setAmmAquaBalance(res);
         });
     }, [currentAccount]);
 
@@ -121,65 +94,7 @@ const AccountPage = () => {
         setUpdateIndex((prevState) => prevState + 1);
     };
 
-    const { boostPercent, lockAmount } = useMemo(() => {
-        if (
-            !locks?.length ||
-            !averageAquaPrice ||
-            !ammReserves ||
-            !currentAccount ||
-            !airdropSharesPrice
-        ) {
-            return { boostPercent: 0, lockAmount: 0 };
-        }
-
-        const maxTimeStamp = new Date('2025-01-15T00:00:00Z').getTime();
-
-        const { amountSum, weightedAverageTime } = locks.reduce(
-            (acc, lock) => {
-                acc.amountSum += Number(lock.amount);
-                const lockEndTimestamp = new Date(
-                    lock?.claimants?.[0].predicate?.not?.abs_before,
-                ).getTime();
-                const period = Math.min(lockEndTimestamp, maxTimeStamp) - START_AIRDROP2_TIMESTAMP;
-                acc.weightedAverageTime += Math.max(period, 0) * Number(lock.amount);
-                return acc;
-            },
-            { amountSum: 0, weightedAverageTime: 0 },
-        );
-
-        const averageLockTime = weightedAverageTime / amountSum;
-
-        const timeLockMultiplier = Math.min(MAX_TIME_LOCK, averageLockTime) / MAX_TIME_LOCK;
-
-        const lockedValue = amountSum * +averageAquaPrice;
-
-        const xlmBalance = currentAccount.getAssetBalance(StellarService.createLumen());
-        const yXlmBalance = currentAccount.getAssetBalance(
-            StellarService.createAsset(yXLM_CODE, yXLM_ISSUER),
-        );
-        const aquaBalance = currentAccount.getAquaBalance();
-
-        const airdropShares =
-            xlmBalance +
-            ammReserves.XLM +
-            yXlmBalance +
-            ammReserves.yXLM +
-            (aquaBalance + ammReserves.AQUA + amountSum) * +averageAquaPrice;
-
-        const unlockedValue = airdropShares - lockedValue;
-
-        const valueLockMultiplier = Math.min(lockedValue, unlockedValue) / unlockedValue;
-
-        const totalMultiplier = timeLockMultiplier * valueLockMultiplier;
-
-        const maxBoost = 3;
-
-        const boost = totalMultiplier * maxBoost;
-
-        return { boostPercent: boost * 100, lockAmount: amountSum };
-    }, [locks, averageAquaPrice, ammReserves, currentAccount]);
-
-    if (!currentAccount || !ammReserves || !averageAquaPrice || !airdropSharesPrice) {
+    if (!currentAccount || ammAquaBalance === null || locks === null) {
         return (
             <Container>
                 <PageLoader />
@@ -187,60 +102,25 @@ const AccountPage = () => {
         );
     }
 
-    const xlmBalance = currentAccount.getAssetBalance(StellarService.createLumen());
-    const yXlmBalance = currentAccount.getAssetBalance(
-        StellarService.createAsset(yXLM_CODE, yXLM_ISSUER),
-    );
-    const aquaBalance = currentAccount.getAquaBalance();
-
-    const hasEnoughAqua = aquaBalance >= 1;
-    const hasEnoughLumens = xlmBalance + yXlmBalance >= 500;
-
-    const isEligibleForAirdrop = hasEnoughAqua && hasEnoughLumens;
-
-    const airdropSharesWithoutLocks =
-        xlmBalance +
-        ammReserves.XLM +
-        yXlmBalance +
-        ammReserves.yXLM +
-        (aquaBalance + ammReserves.AQUA + lockAmount) * +averageAquaPrice;
-
-    const airdropAmountWithoutLocks = roundToPrecision(
-        Math.min(airdropSharesWithoutLocks * Number(airdropSharesPrice), MAX_AIRDROP_AMOUNT),
-        2,
-    );
-
     return (
         <MainBlock>
             <Container>
-                <LeftColumn onlyLeft={!isEligibleForAirdrop}>
+                <LeftColumn>
                     <AccountInfoBlock account={currentAccount} />
-                    {!isEligibleForAirdrop && (
-                        <NotEligibleBlock accountId={currentAccount.accountId()} />
-                    )}
-                    <Portfolio ammReserves={ammReserves} currentAccount={currentAccount} />
-                    {isEligibleForAirdrop && (
-                        <ExpectedReward
-                            airdropAmount={airdropAmountWithoutLocks}
-                            boostPercent={boostPercent}
-                        />
-                    )}
+                    <Portfolio
+                        ammAquaBalance={ammAquaBalance}
+                        currentAccount={currentAccount}
+                        locks={locks}
+                    />
+
                     {Boolean(locks?.length) && (
-                        <CurrentLocks locks={locks} aquaBalance={aquaBalance} />
+                        <CurrentLocks locks={locks} aquaBalance={currentAccount.getAquaBalance()} />
                     )}
                 </LeftColumn>
-                {isEligibleForAirdrop && (
-                    <RightColumn>
-                        <LockAquaForm
-                            account={currentAccount}
-                            averageAquaPrice={averageAquaPrice}
-                            locks={locks}
-                            airdropAmount={+airdropAmountWithoutLocks}
-                            ammReserves={ammReserves}
-                            updateAccount={updateAccount}
-                        />
-                    </RightColumn>
-                )}
+
+                <RightColumn>
+                    <LockAquaForm account={currentAccount} updateAccount={updateAccount} />
+                </RightColumn>
             </Container>
         </MainBlock>
     );

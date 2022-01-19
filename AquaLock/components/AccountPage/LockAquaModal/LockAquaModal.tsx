@@ -46,7 +46,6 @@ const LockAquaModal = ({ confirm, params }: ModalProps<{ amount: string; period:
     const { amount, period } = params;
     const { account } = useAuthStore();
     const [pending, setPending] = useState(false);
-
     const isMounted = useIsMounted();
 
     const onSubmit = async () => {
@@ -83,7 +82,7 @@ const LockAquaModal = ({ confirm, params }: ModalProps<{ amount: string; period:
     return (
         <ModalContainer>
             <ModalTitle>Lock AQUA</ModalTitle>
-            <ModalDescription>You lock your AQUA to get a boost to the airdrop</ModalDescription>
+            <ModalDescription>Please verify the details of your AQUA tokens lock</ModalDescription>
             <Row>
                 <Label>Amount</Label>
                 <Value>{formatBalance(+amount)} AQUA</Value>

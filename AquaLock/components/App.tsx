@@ -17,7 +17,6 @@ import useAuthStore from '../../common/store/authStore/useAuthStore';
 import MainPage from './MainPage/MainPage';
 import FAQ from './FAQ/FAQ';
 import AccountPage from './AccountPage/AccountPage';
-import { START_AIRDROP2_TIMESTAMP } from '../../common/services/stellar.service';
 import { ModalService } from '../../common/services/globalServices';
 import SnapshotPassedModal from './common/SnapshotPassedModal/SnapshotPassedModal';
 import Background from '../../common/assets/img/snapshot-passed-background.svg';
@@ -28,9 +27,7 @@ const App = () => {
     const { account } = useAuthStore();
 
     useEffect(() => {
-        if (Date.now() >= START_AIRDROP2_TIMESTAMP) {
-            ModalService.openModal(SnapshotPassedModal, {}, true, <Background />);
-        }
+        ModalService.openModal(SnapshotPassedModal, {}, true, <Background />);
     }, []);
 
     return (
