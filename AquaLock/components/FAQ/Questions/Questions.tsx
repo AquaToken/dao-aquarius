@@ -15,7 +15,7 @@ const Questions = () => {
                 question={'Why lock AQUA?'}
                 answer={
                     <span>
-                        Locking AQUA with this tool enables benefits for its holders.
+                        Locking AQUA with this tool will enable benefits for its holders.
                     </span>
                 }
             />
