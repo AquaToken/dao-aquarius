@@ -61,10 +61,9 @@ const AccountInput = ({ params, close }: { params?: any; close?: any }) => {
     return (
         <Container isModal={isModal}>
             <InputBlock>
-                <Title>{isModal ? 'Check other account' : 'Check your account'}</Title>
+                <Title>{isModal ? 'Switch account' : 'Lock AQUA'}</Title>
                 <Description>
-                    Check if your account is eligible and see how you can increase your
-                    airdrop reward if you choose to lock your AQUA.
+                    Track your portfolio and manage AQUA locks.
                 </Description>
                 <Input
                     placeholder="Enter your public key (starts with G)"
@@ -75,7 +74,7 @@ const AccountInput = ({ params, close }: { params?: any; close?: any }) => {
                 />
             </InputBlock>
             <StyledButton isBig disabled={!value} onClick={() => onSubmit()}>
-                {isModal ? 'Check account' : "let's start"}
+                {isModal ? 'Continue' : "let's start"}
             </StyledButton>
         </Container>
     );
