@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { COLORS } from '../../../common/styles';
-import { commonMaxWidth } from '../../../common/mixins';
+import { Breakpoints, COLORS } from '../../../common/styles';
+import { commonMaxWidth, respondDown } from '../../../common/mixins';
 import Purpose from './Purpose/Purpose';
 import AccountInput from '../common/AccountInput/AccountInput';
 
@@ -16,6 +16,11 @@ const Container = styled.div`
     flex-direction: row;
     ${commonMaxWidth};
     padding: 0 4rem;
+
+    ${respondDown(Breakpoints.md)`
+        flex-direction: column;
+        padding: 0 1.6rem;
+    `}
 `;
 
 const MainPage = () => {

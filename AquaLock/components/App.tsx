@@ -21,6 +21,11 @@ import { START_AIRDROP2_TIMESTAMP } from '../../common/services/stellar.service'
 import { ModalService } from '../../common/services/globalServices';
 import SnapshotPassedModal from './common/SnapshotPassedModal/SnapshotPassedModal';
 import Background from '../../common/assets/img/snapshot-passed-background.svg';
+import styled from 'styled-components';
+
+const ModalBG = styled(Background)`
+    object-position: center center;
+`;
 
 const App = () => {
     useGlobalSubscriptions();
@@ -29,7 +34,7 @@ const App = () => {
 
     useEffect(() => {
         if (Date.now() >= START_AIRDROP2_TIMESTAMP) {
-            ModalService.openModal(SnapshotPassedModal, {}, true, <Background />);
+            ModalService.openModal(SnapshotPassedModal, {}, true, <ModalBG />);
         }
     }, []);
 
