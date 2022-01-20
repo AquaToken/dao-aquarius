@@ -1,6 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { COLORS } from '../../../../common/styles';
+import { Breakpoints, COLORS } from '../../../../common/styles';
+import { respondDown } from '../../../../common/mixins';
 
 const Container = styled.div`
     display: flex;
@@ -17,6 +18,11 @@ const Title = styled.span`
     line-height: 6.4rem;
     color: ${COLORS.titleText};
     margin-bottom: 1.6rem;
+
+    ${respondDown(Breakpoints.md)`
+        font-size: 4rem;
+        line-height: 5rem;
+    `}
 `;
 
 const Description = styled.span`
@@ -30,7 +36,9 @@ const Purpose = () => {
         <Container>
             <Title>Lock AQUA and get a boost for Airdrop #2</Title>
             <Description>
-                Time lock your AQUA with this tool to increase rewards if you plan to hold AQUA long term.<br/>
+                Time lock your AQUA with this tool to increase rewards if you plan to hold AQUA long
+                term.
+                <br />
                 The more AQUA you lock, and the longer you lock, the higher the boost.
             </Description>
         </Container>
