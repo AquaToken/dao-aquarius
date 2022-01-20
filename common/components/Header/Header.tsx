@@ -38,6 +38,20 @@ export const HeaderNavLink = styled(Link)`
     }
 `;
 
+export const HeaderMobileNavLink = styled(Link)`
+    display: none;
+    color: ${COLORS.titleText};
+    text-decoration: none;
+
+    &:not(:last-child) {
+        margin-right: 2.4rem;
+    }
+
+    ${respondDown(Breakpoints.md)`
+        display: inline;
+    `}
+`;
+
 const Header = ({ children }: { children?: JSX.Element }): JSX.Element => {
     return (
         <HeaderBlock>

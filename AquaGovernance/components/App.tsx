@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-d
 
 import Provider from '../store';
 import { MainRoutes } from '../routes';
-import Header from '../../common/components/Header/Header';
+import Header, { HeaderMobileNavLink } from '../../common/components/Header/Header';
 import Footer from '../../common/components/Footer/Footer';
 import NotFoundPage from '../../common/components/NotFoundPage/NotFoundPage';
 import AppGlobalStyle from '../../common/components/AppGlobalStyles';
@@ -29,7 +29,9 @@ const App = () => {
 
     return (
         <Router>
-            <Header />
+            <Header>
+                <HeaderMobileNavLink to="/">Proposals</HeaderMobileNavLink>
+            </Header>
             <Suspense fallback={<PageLoader />}>
                 <Switch>
                     <Route exact path={MainRoutes.main}>
