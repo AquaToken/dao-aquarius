@@ -41,6 +41,7 @@ const Cell = styled.div`
 
 const CellDate = styled(Cell)`
     flex: 2.2;
+    margin-right: 0.3rem;
 `;
 const CellAcc = styled(Cell)`
     flex: 4.5;

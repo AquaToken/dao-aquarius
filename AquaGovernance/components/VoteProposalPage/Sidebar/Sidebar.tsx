@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { forwardRef, RefObject, useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { Breakpoints, COLORS } from '../../../../common/styles';
 import NativeVotingButton from './VotingButton/VotingButton';
@@ -21,25 +21,25 @@ import { CREATE_PROPOSAL_COST, MINIMUM_APPROVAL_PERCENT } from '../../MainPage/M
 
 const SidebarBlock = styled.aside`
     top: 4rem;
-    margin: 10rem 10% 0 0;
-    float: right;
+    right: 10%;
+    margin: 10rem 0 0;
     width: 36.4rem;
     background: ${COLORS.white};
     box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
     border-radius: 0.5rem;
+    position: absolute;
 
     ${respondDown(Breakpoints.xl)`
-        margin-right: 4rem;
+        right: 4rem;
     `};
 
-    ${respondDown(Breakpoints.xl)`
+    ${respondDown(Breakpoints.md)`
         position: relative;
+        width: calc(100% - 3.2rem);
         float: unset;
         top: unset;
-        margin: unset;
-        width: 100%;
-        border-radius: 0;
-        margin-top: 1.6rem;
+        right: unset;
+        margin: 1.6rem;
     `};
 `;
 
@@ -227,201 +227,201 @@ const FinalResult = styled.span`
 //     ],
 // };
 
-const Sidebar = ({
-    proposal,
-    isTemplate,
-}: {
-    proposal: Proposal;
-    isTemplate: boolean;
-}): JSX.Element => {
-    const [selectedOption, setSelectedOption] = useState(null);
-    const { isLogged, account } = useAuthStore();
+const Sidebar = forwardRef(
+    (
+        { proposal, isTemplate, ...props }: { proposal: Proposal; isTemplate: boolean },
+        ref: RefObject<HTMLDivElement>,
+    ) => {
+        const [selectedOption, setSelectedOption] = useState(null);
+        const { isLogged, account } = useAuthStore();
 
-    const onVoteClick = (option) => {
-        if (isLogged) {
-            ModalService.openModal(ConfirmVoteModal, option);
-            return;
-        }
-        setSelectedOption(option);
-        ModalService.openModal(ChooseLoginMethodModal, {});
-    };
+        const onVoteClick = (option) => {
+            if (isLogged) {
+                ModalService.openModal(ConfirmVoteModal, option);
+                return;
+            }
+            setSelectedOption(option);
+            ModalService.openModal(ChooseLoginMethodModal, {});
+        };
 
-    const onContinueClick = () => {
-        const aquaBalance = account.getAquaBalance();
-        const hasNecessaryBalance = aquaBalance >= CREATE_PROPOSAL_COST;
+        const onContinueClick = () => {
+            const aquaBalance = account.getAquaBalance();
+            const hasNecessaryBalance = aquaBalance >= CREATE_PROPOSAL_COST;
 
-        if (!hasNecessaryBalance) {
-            ModalService.openModal(NotEnoughAquaModal, {});
-            return;
-        }
+            if (!hasNecessaryBalance) {
+                ModalService.openModal(NotEnoughAquaModal, {});
+                return;
+            }
 
-        ModalService.openModal(ConfirmCreateProposalModal, proposal);
-    };
+            ModalService.openModal(ConfirmCreateProposalModal, proposal);
+        };
 
-    useEffect(() => {
-        if (isLogged && selectedOption) {
-            ModalService.openModal(ConfirmVoteModal, selectedOption).then(() => {
-                setSelectedOption(null);
-            });
-        }
-    }, [isLogged]);
+        useEffect(() => {
+            if (isLogged && selectedOption) {
+                ModalService.openModal(ConfirmVoteModal, selectedOption).then(() => {
+                    setSelectedOption(null);
+                });
+            }
+        }, [isLogged]);
 
-    const {
-        is_simple_proposal: isSimple,
-        vote_for_issuer: voteForKey,
-        vote_against_issuer: voteAgainstKey,
-        vote_for_result: voteForResult,
-        vote_against_result: voteAgainstResult,
-        end_at: endDate,
-        aqua_circulating_supply: aquaCirculatingSupply,
-    } = proposal;
+        const {
+            is_simple_proposal: isSimple,
+            vote_for_issuer: voteForKey,
+            vote_against_issuer: voteAgainstKey,
+            vote_for_result: voteForResult,
+            vote_against_result: voteAgainstResult,
+            end_at: endDate,
+            aqua_circulating_supply: aquaCirculatingSupply,
+        } = proposal;
 
-    const isEnd = new Date() >= new Date(endDate);
+        const isEnd = new Date() >= new Date(endDate);
 
-    if (isEnd && isSimple && !isTemplate) {
-        const voteForValue = Number(voteForResult);
-        const voteAgainstValue = Number(voteAgainstResult);
-        const isVoteForWon = voteForValue > voteAgainstValue;
+        if (isEnd && isSimple && !isTemplate) {
+            const voteForValue = Number(voteForResult);
+            const voteAgainstValue = Number(voteAgainstResult);
+            const isVoteForWon = voteForValue > voteAgainstValue;
 
-        const percent =
-            ((isVoteForWon ? voteForValue : voteAgainstValue) / (voteForValue + voteAgainstValue)) *
-            100;
+            const percent =
+                ((isVoteForWon ? voteForValue : voteAgainstValue) /
+                    (voteForValue + voteAgainstValue)) *
+                100;
 
-        if (Number.isNaN(percent)) {
+            if (Number.isNaN(percent)) {
+                return (
+                    <SidebarBlock ref={ref}>
+                        <Container>
+                            <Results>
+                                <Title>No votes yet</Title>
+                            </Results>
+                        </Container>
+                    </SidebarBlock>
+                );
+            }
+
+            const roundedPercent = roundToPrecision(percent, 2);
+
+            const isCanceled =
+                ((voteForValue + voteAgainstValue) / Number(aquaCirculatingSupply)) * 100 <
+                MINIMUM_APPROVAL_PERCENT;
+
             return (
-                <SidebarBlock>
+                <SidebarBlock ref={ref}>
                     <Container>
                         <Results>
-                            <Title>No votes yet</Title>
+                            <Title>Result</Title>
+                            {isCanceled ? (
+                                <Canceled>
+                                    <FailIconGray />
+                                    Canceled
+                                </Canceled>
+                            ) : (
+                                <Winner isVoteFor={isVoteForWon}>
+                                    {isVoteForWon ? <SuccessIcon /> : <FailIcon />}
+                                    <BoldText>{isVoteForWon ? 'For' : 'Against'}</BoldText>
+                                </Winner>
+                            )}
+                            <EndDate>
+                                {isCanceled ? 'Canceled' : 'Ended'} on{' '}
+                                {getDateString(new Date(endDate).getTime())}
+                            </EndDate>
+                            <FinalResult>
+                                {isCanceled
+                                    ? 'Not enough votes'
+                                    : `${roundedPercent}% votes - ${formatBalance(
+                                          isVoteForWon ? voteForValue : voteAgainstValue,
+                                          true,
+                                      )} AQUA`}
+                            </FinalResult>
                         </Results>
                     </Container>
                 </SidebarBlock>
             );
         }
 
-        const roundedPercent = roundToPrecision(percent, 2);
-
-        const isCanceled =
-            ((voteForValue + voteAgainstValue) / Number(aquaCirculatingSupply)) * 100 <
-            MINIMUM_APPROVAL_PERCENT;
-
         return (
-            <SidebarBlock>
-                <Container>
-                    <Results>
-                        <Title>Result</Title>
-                        {isCanceled ? (
-                            <Canceled>
-                                <FailIconGray />
-                                Canceled
-                            </Canceled>
-                        ) : (
-                            <Winner isVoteFor={isVoteForWon}>
-                                {isVoteForWon ? <SuccessIcon /> : <FailIcon />}
-                                <BoldText>{isVoteForWon ? 'For' : 'Against'}</BoldText>
-                            </Winner>
-                        )}
-                        <EndDate>
-                            {isCanceled ? 'Canceled' : 'Ended'} on{' '}
-                            {getDateString(new Date(endDate).getTime())}
-                        </EndDate>
-                        <FinalResult>
-                            {isCanceled
-                                ? 'Not enough votes'
-                                : `${roundedPercent}% votes - ${formatBalance(
-                                      isVoteForWon ? voteForValue : voteAgainstValue,
-                                      true,
-                                  )} AQUA`}
-                        </FinalResult>
-                    </Results>
-                </Container>
+            <SidebarBlock ref={ref}>
+                {isSimple && !isTemplate && (
+                    <Container>
+                        <SidebarTitle>Cast your votes</SidebarTitle>
+                        <VotingButton
+                            onClick={() =>
+                                onVoteClick({
+                                    option: SimpleProposalOptions.voteFor,
+                                    key: voteForKey,
+                                    endDate,
+                                })
+                            }
+                        >
+                            <SuccessIcon />
+                            <BoldText>For</BoldText>
+                        </VotingButton>
+                        <VotingButton
+                            isVoteFor
+                            onClick={() =>
+                                onVoteClick({
+                                    option: SimpleProposalOptions.voteAgainst,
+                                    key: voteAgainstKey,
+                                    endDate,
+                                })
+                            }
+                        >
+                            <FailIcon />
+                            <BoldText>Against</BoldText>
+                        </VotingButton>
+                    </Container>
+                )}
+                {isTemplate && (
+                    <Container>
+                        <Notice>&#9757;️</Notice>
+                        <SidebarTemplateTitle>Check details</SidebarTemplateTitle>
+                        <SidebarDescription>
+                            Please check all details, you will not be able to delete or change your
+                            proposal after publication!
+                        </SidebarDescription>
+                        <Button
+                            isBig
+                            fullWidth
+                            onClick={() => {
+                                onContinueClick();
+                            }}
+                        >
+                            Continue
+                        </Button>
+                    </Container>
+                )}
+                {/*(*/}
+                {/*    <>*/}
+                {/*        <Container>*/}
+                {/*            <SidebarTitle>Cast your votes</SidebarTitle>*/}
+                {/*            {voteOptionsMockData?.options.map((item) => {*/}
+                {/*                const { name } = item;*/}
+                {/*                const isSelected = selectedOption?.name === name;*/}
+                {/*                return (*/}
+                {/*                    <VoteOption key={name} isChecked={isSelected}>*/}
+                {/*                        <InputItem*/}
+                {/*                            type="checkbox"*/}
+                {/*                            checked={isSelected}*/}
+                {/*                            onChange={() => {*/}
+                {/*                                setSelectedOption({ ...item });*/}
+                {/*                            }}*/}
+                {/*                        />*/}
+                {/*                        {isSelected ? <Checked /> : <NonSelectedIcon />}*/}
+                {/*                        {name}*/}
+                {/*                    </VoteOption>*/}
+                {/*                );*/}
+                {/*            })}*/}
+                {/*        </Container>*/}
+                {/*        <Divider />*/}
+                {/*        <Container>*/}
+                {/*            <Button fullWidth isBig onClick={() => onVoteClick(selectedOption)}>*/}
+                {/*                Cast vote*/}
+                {/*            </Button>*/}
+                {/*        </Container>*/}
+                {/*    </>*/}
+                {/*)}*/}
             </SidebarBlock>
         );
-    }
-
-    return (
-        <SidebarBlock>
-            {isSimple && !isTemplate && (
-                <Container>
-                    <SidebarTitle>Cast your votes</SidebarTitle>
-                    <VotingButton
-                        onClick={() =>
-                            onVoteClick({
-                                option: SimpleProposalOptions.voteFor,
-                                key: voteForKey,
-                                endDate,
-                            })
-                        }
-                    >
-                        <SuccessIcon />
-                        <BoldText>For</BoldText>
-                    </VotingButton>
-                    <VotingButton
-                        isVoteFor
-                        onClick={() =>
-                            onVoteClick({
-                                option: SimpleProposalOptions.voteAgainst,
-                                key: voteAgainstKey,
-                                endDate,
-                            })
-                        }
-                    >
-                        <FailIcon />
-                        <BoldText>Against</BoldText>
-                    </VotingButton>
-                </Container>
-            )}
-            {isTemplate && (
-                <Container>
-                    <Notice>&#9757;️</Notice>
-                    <SidebarTemplateTitle>Check details</SidebarTemplateTitle>
-                    <SidebarDescription>
-                        Please check all details, you will not be able to delete or change your
-                        proposal after publication!
-                    </SidebarDescription>
-                    <Button
-                        isBig
-                        fullWidth
-                        onClick={() => {
-                            onContinueClick();
-                        }}
-                    >
-                        Continue
-                    </Button>
-                </Container>
-            )}
-            {/*(*/}
-            {/*    <>*/}
-            {/*        <Container>*/}
-            {/*            <SidebarTitle>Cast your votes</SidebarTitle>*/}
-            {/*            {voteOptionsMockData?.options.map((item) => {*/}
-            {/*                const { name } = item;*/}
-            {/*                const isSelected = selectedOption?.name === name;*/}
-            {/*                return (*/}
-            {/*                    <VoteOption key={name} isChecked={isSelected}>*/}
-            {/*                        <InputItem*/}
-            {/*                            type="checkbox"*/}
-            {/*                            checked={isSelected}*/}
-            {/*                            onChange={() => {*/}
-            {/*                                setSelectedOption({ ...item });*/}
-            {/*                            }}*/}
-            {/*                        />*/}
-            {/*                        {isSelected ? <Checked /> : <NonSelectedIcon />}*/}
-            {/*                        {name}*/}
-            {/*                    </VoteOption>*/}
-            {/*                );*/}
-            {/*            })}*/}
-            {/*        </Container>*/}
-            {/*        <Divider />*/}
-            {/*        <Container>*/}
-            {/*            <Button fullWidth isBig onClick={() => onVoteClick(selectedOption)}>*/}
-            {/*                Cast vote*/}
-            {/*            </Button>*/}
-            {/*        </Container>*/}
-            {/*    </>*/}
-            {/*)}*/}
-        </SidebarBlock>
-    );
-};
+    },
+);
 
 export default Sidebar;

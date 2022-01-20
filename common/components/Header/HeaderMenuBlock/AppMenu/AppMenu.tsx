@@ -214,7 +214,7 @@ const AppMenu = ({
                     </LogoutBlock>
                 </AccountBlock>
             )}
-            <NavLinks>{navLinks}</NavLinks>
+            <NavLinks onClick={() => closeMenu()}>{navLinks}</NavLinks>
 
             {!isLogged && (
                 <SignInButton>

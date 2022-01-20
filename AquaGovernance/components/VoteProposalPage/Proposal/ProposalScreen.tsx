@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import Sidebar from '../Sidebar/Sidebar';
 import ArrowLeft from '../../../../common/assets/img/icon-arrow-left.svg';
+import ArrowDown from '../../../../common/assets/img/icon-arrow-down.svg';
 import ExternalIcon from '../../../../common/assets/img/icon-external-link.svg';
 import AccountViewer from '../AccountViewer/AccountViewer';
 import { commonMaxWidth, flexAllCenter, respondDown } from '../../../../common/mixins';
@@ -159,6 +160,37 @@ const viewOnStellarExpert = (account: string) => {
     window.open(`https://stellar.expert/explorer/public/account/${account}`, '_blank');
 };
 
+function isElementInViewport(el) {
+    const rect = el.getBoundingClientRect();
+
+    return (
+        rect.top >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight)
+    );
+}
+
+const ScrollToSidebarButton = styled.div`
+    display: none;
+    position: fixed;
+    justify-content: space-between;
+    align-items: center;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: ${COLORS.white};
+    box-shadow: 0 -0.5rem 1rem rgba(0, 6, 54, 0.06);
+    border-radius: 1rem 1rem 0 0;
+    padding: 2.4rem 1.6rem;
+    font-size: 1.6rem;
+    line-height: 2.4rem;
+    font-weight: bold;
+    cursor: pointer;
+
+    ${respondDown(Breakpoints.md)`
+        display: flex;
+    `}
+`;
+
 const ProposalScreen = ({
     proposal,
     isTemplate,
@@ -185,9 +217,36 @@ const ProposalScreen = ({
         window.scrollTo(0, 0);
     }, []);
 
+    const ref = useRef(null);
+    const [showBottomBlock, setShowBottomBlock] = useState(false);
+    const isEnd = new Date() >= new Date(proposal.end_at);
+
+    const scrollToSidebar = () => {
+        ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+
+    const handler = () => {
+        if (!ref.current) {
+            return;
+        }
+        const isOnViewport = isElementInViewport(ref.current);
+        setShowBottomBlock(!isOnViewport);
+    };
+
+    useEffect(() => {
+        document.addEventListener('load', handler, { once: true, capture: true });
+        document.addEventListener('scroll', handler, { passive: true, capture: true });
+        window.addEventListener('resize', handler, false);
+
+        return () => {
+            document.removeEventListener('load', handler, { capture: true });
+            document.removeEventListener('scroll', handler, { capture: true });
+            window.removeEventListener('resize', handler, false);
+        };
+    }, []);
+
     return (
         <>
-            <Sidebar isTemplate={isTemplate} proposal={proposal} />
             <ProposalQuestion>
                 <ProposalSection>
                     <LeftContent>
@@ -270,6 +329,13 @@ const ProposalScreen = ({
                         <Votes />
                     </LeftContent>
                 </ProposalSection>
+            )}
+            <Sidebar isTemplate={isTemplate} proposal={proposal} ref={ref} />
+            {showBottomBlock && (
+                <ScrollToSidebarButton onClick={() => scrollToSidebar()}>
+                    <span>{isEnd ? 'Go to the result' : 'Go to voting'}</span>
+                    <ArrowDown />
+                </ScrollToSidebarButton>
             )}
         </>
     );
