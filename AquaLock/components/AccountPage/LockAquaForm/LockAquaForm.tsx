@@ -7,23 +7,16 @@ import Input from '../../../../common/basics/Input';
 import Aqua from '../../../../common/assets/img/aqua-logo-small.svg';
 import RangeInput from '../../../../common/basics/RangeInput';
 import { formatBalance, getDateString, roundToPrecision } from '../../../../common/helpers/helpers';
-// import Info from '../../../../common/assets/img/icon-info.svg';
-// import CloseIcon from '../../../../common/assets/img/icon-close-small.svg';
-import ArrowRight from '../../../../common/assets/img/icon-arrow-right-white.svg';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import Button from '../../../../common/basics/Button';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import {
-    START_AIRDROP2_TIMESTAMP,
-    yXLM_CODE,
-    yXLM_ISSUER,
-} from '../../../../common/services/stellar.service';
-import { ModalService, StellarService } from '../../../../common/services/globalServices';
+import { ModalService } from '../../../../common/services/globalServices';
 import useAuthStore from '../../../../common/store/authStore/useAuthStore';
 import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
 import LockAquaModal from '../LockAquaModal/LockAquaModal';
-import { MAX_TIME_LOCK } from '../AccountPage';
+
+const MAX_TIME_LOCK = (3 * 365 + 1) * 24 * 60 * 60 * 1000;
 
 const Container = styled.div`
     background: ${COLORS.white};
@@ -101,160 +94,6 @@ const ClaimBackDate = styled.span`
     color: ${COLORS.paragraphText};
 `;
 
-// const PriceBlock = styled.div`
-//     padding: 3.6rem 0 3.2rem;
-//     border-bottom: 0.1rem dashed ${COLORS.gray};
-// `;
-//
-// const PriceRow = styled.div`
-//     ${flexRowSpaceBetween};
-// `;
-//
-// const Price = styled.span`
-//     color: ${COLORS.grayText};
-//     font-size: 1.4rem;
-//     line-height: 2rem;
-// `;
-//
-// const EmulateButton = styled.div`
-//     color: ${COLORS.purple};
-//     font-size: 1.4rem;
-//     line-height: 2rem;
-//     border-bottom: 0.1rem dashed ${COLORS.purple};
-//     margin-left: auto;
-//     cursor: pointer;
-// `;
-//
-// const InfoIcon = styled(Info)`
-//     margin-left: 0.4rem;
-// `;
-//
-// const PriceForm = styled.div`
-//     display: flex;
-//     flex-direction: column;
-// `;
-//
-// const PriceFormHeader = styled.div`
-//     ${flexRowSpaceBetween};
-//     margin-bottom: 2rem;
-// `;
-//
-// const PriceFormTitle = styled.span`
-//     font-size: 1.6rem;
-//     line-height: 1.8rem;
-//     color: ${COLORS.paragraphText};
-// `;
-//
-// const Close = styled.div`
-//     font-size: 1.4rem;
-//     line-height: 2rem;
-//     color: ${COLORS.descriptionText};
-//     opacity: 0.7;
-//     ${flexAllCenter};
-//     cursor: pointer;
-//
-//     svg {
-//         margin-left: 0.8rem;
-//     }
-// `;
-//
-// const PriceFormDescription = styled.div`
-//     font-size: 1.4rem;
-//     line-height: 2rem;
-//     color: ${COLORS.descriptionText};
-//     opacity: 0.7;
-//     margin-bottom: 1.6rem;
-// `;
-//
-// const PriceFormInputBlock = styled.div`
-//     display: flex;
-//     flex-direction: row;
-//     align-items: center;
-//     margin-bottom: 0.8rem;
-// `;
-//
-// const PriceFormInputLabel = styled.span`
-//     font-size: 1.6rem;
-//     line-height: 1.8rem;
-//     margin-right: 1.6rem;
-//     white-space: nowrap;
-// `;
-//
-// const PriceFormInputPostfix = styled.span`
-//     color: ${COLORS.grayText};
-// `;
-//
-// const ResetCustomPrice = styled.div`
-//     display: flex;
-//     flex-direction: row;
-//     justify-content: flex-end;
-//     font-size: 1.4rem;
-//     line-height: 2rem;
-//     color: ${COLORS.descriptionText};
-//     opacity: 0.7;
-// `;
-//
-// const ResetCustomButton = styled.div`
-//     color: ${COLORS.purple};
-//     font-size: 1.4rem;
-//     line-height: 2rem;
-//     border-bottom: 0.1rem dashed ${COLORS.purple};
-//     cursor: pointer;
-//     margin-left: 0.8rem;
-//     opacity: 1;
-// `;
-
-const LockPreview = styled.div`
-    margin-top: 3.2rem;
-    margin-bottom: 3.2rem;
-    background: ${COLORS.tooltip};
-    border-radius: 0.5rem;
-    padding: 3.2rem 2.1rem 3.2rem 3.2rem;
-`;
-
-const TotalPercent = styled.div`
-    height: 3.5rem;
-    ${flexAllCenter};
-    padding: 0 1.5rem;
-    background: ${COLORS.white};
-    border-radius: 0.5rem;
-    box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
-    width: min-content;
-    white-space: nowrap;
-`;
-
-const LockPreviewRow = styled.div`
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    margin-bottom: 1.6rem;
-`;
-
-const TotalValues = styled.div`
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-`;
-
-const ArrowRightIcon = styled(ArrowRight)`
-    margin: 0 1.6rem;
-`;
-
-const PreviousValue = styled.span`
-    font-weight: bold;
-    font-size: 1.6rem;
-    line-height: 2.8rem;
-    color: ${COLORS.white};
-    opacity: 0.5;
-`;
-
-const NewValue = styled.span`
-    font-weight: bold;
-    font-size: 1.6rem;
-    line-height: 2.8rem;
-    color: ${COLORS.white};
-`;
-
 const DatePickerContainer = styled.div`
     margin-top: 1.2rem;
     margin-bottom: 3.3rem;
@@ -321,25 +160,15 @@ const GlobalStyle = createGlobalStyle`
 
 const LockAquaForm = ({
     account,
-    averageAquaPrice,
-    locks,
-    airdropAmount,
-    ammReserves,
     updateAccount,
 }: {
     account: AccountService;
-    averageAquaPrice: number;
-    locks: any[];
-    airdropAmount: number;
-    ammReserves: { AQUA: number; XLM: number; yXLM: number };
     updateAccount: () => void;
 }) => {
-    // const [showCustomPriceForm, setShowCustomPriceForm] = useState(false);
     const [lockPeriod, setLockPeriod] = useState(null);
     const [lockPeriodPercent, setLockPeriodPercent] = useState(0);
     const [lockAmount, setLockAmount] = useState('');
     const [lockPercent, setLockPercent] = useState(0);
-    // const [emulatedAquaPrice, setEmulatedAquaPrice] = useState('');
 
     const { isLogged } = useAuthStore();
 
@@ -349,16 +178,16 @@ const LockAquaForm = ({
         setLockPeriodPercent(value);
         const period = (MAX_TIME_LOCK * value) / 100;
 
-        setLockPeriod(period + START_AIRDROP2_TIMESTAMP);
+        setLockPeriod(period + Date.now());
     };
 
     const onLockPeriodChange = (value) => {
         setLockPeriod(value);
-        if (value < START_AIRDROP2_TIMESTAMP) {
+        if (value < Date.now()) {
             setLockPeriodPercent(0);
             return;
         }
-        const period = value - START_AIRDROP2_TIMESTAMP;
+        const period = value - Date.now();
 
         if (period > MAX_TIME_LOCK) {
             setLockPeriodPercent(100);
@@ -391,92 +220,6 @@ const LockAquaForm = ({
         setLockAmount(roundToPrecision(newAmount, 7));
     };
 
-    const boostPercent = useMemo(() => {
-        if (!averageAquaPrice || !ammReserves || !account || !locks) {
-            return 0;
-        }
-
-        const updatedLocks = [...locks];
-
-        if (lockAmount && lockPeriod) {
-            updatedLocks.push({
-                claimants: [
-                    {
-                        predicate: {
-                            not: {
-                                abs_before: lockPeriod,
-                            },
-                        },
-                    },
-                ],
-                amount: lockAmount.toString(),
-            });
-        }
-
-        if (!updatedLocks.length) {
-            return 0;
-        }
-
-        const maxTimeStamp = new Date('2025-01-15T00:00:00Z').getTime();
-
-        const { amountSum, weightedAverageTime } = updatedLocks.reduce(
-            (acc, lock) => {
-                acc.amountSum += Number(lock.amount);
-                const lockEndTimestamp = new Date(
-                    lock?.claimants?.[0].predicate?.not?.abs_before,
-                ).getTime();
-                const period = Math.min(lockEndTimestamp, maxTimeStamp) - START_AIRDROP2_TIMESTAMP;
-                acc.weightedAverageTime += Math.max(period, 0) * Number(lock.amount);
-                return acc;
-            },
-            { amountSum: 0, weightedAverageTime: 0 },
-        );
-
-        if (!weightedAverageTime) {
-            return 0;
-        }
-
-        const averageLockTime = weightedAverageTime / amountSum;
-
-        const timeLockMultiplier = Math.min(MAX_TIME_LOCK, averageLockTime) / MAX_TIME_LOCK;
-
-        const lockedValue = amountSum * +averageAquaPrice;
-
-        const xlmBalance = account.getAssetBalance(StellarService.createLumen());
-        const yXlmBalance = account.getAssetBalance(
-            StellarService.createAsset(yXLM_CODE, yXLM_ISSUER),
-        );
-        const aquaBalance = account.getAquaBalance();
-
-        const airdropShares =
-            xlmBalance +
-            ammReserves.XLM +
-            yXlmBalance +
-            ammReserves.yXLM +
-            ((lockAmount && lockPeriod ? aquaBalance - Number(lockAmount) : aquaBalance) +
-                ammReserves.AQUA +
-                amountSum) *
-                +averageAquaPrice;
-
-        const unlockedValue = airdropShares - lockedValue;
-
-        const valueLockMultiplier = Math.min(lockedValue, unlockedValue) / unlockedValue;
-
-        const totalMultiplier = timeLockMultiplier * valueLockMultiplier;
-
-        const maxBoost = 3;
-
-        const boost = totalMultiplier * maxBoost;
-
-        return +roundToPrecision(boost * 100, 3);
-    }, [locks, averageAquaPrice, ammReserves, account, lockAmount, lockPeriod]);
-
-    const MAX_AIRDROP_AMOUNT = 10000000;
-    const expectedAirdropWithBoost = Math.min(
-        (airdropAmount * (100 + boostPercent)) / 100,
-        MAX_AIRDROP_AMOUNT,
-    );
-
     const onSubmit = () => {
         if (!isLogged) {
             ModalService.openModal(ChooseLoginMethodModal, {});
@@ -494,7 +237,7 @@ const LockAquaForm = ({
     return (
         <Container>
             <Title>Lock your AQUA</Title>
-            <Description>Lock your AQUA token to get Airdrop #2 boost</Description>
+            <Description>Lock your AQUA token</Description>
             <ContentRow>
                 <Label>Amount</Label>
                 <BalanceBlock>
@@ -562,72 +305,7 @@ const LockAquaForm = ({
                 )}
             </ClaimBack>
 
-            {/*<PriceBlock>*/}
-            {/*    {showCustomPriceForm ? (*/}
-            {/*        <PriceForm>*/}
-            {/*            <PriceFormHeader>*/}
-            {/*                <PriceFormTitle>Emulate AQUA price</PriceFormTitle>*/}
-            {/*                <Close*/}
-            {/*                    onClick={() => {*/}
-            {/*                        setShowCustomPriceForm(false);*/}
-            {/*                        setEmulatedAquaPrice('');*/}
-            {/*                    }}*/}
-            {/*                >*/}
-            {/*                    Close <CloseIcon />*/}
-            {/*                </Close>*/}
-            {/*            </PriceFormHeader>*/}
-
-            {/*            <PriceFormDescription>*/}
-            {/*                AQUA price affects the size of the airdrop.*/}
-            {/*                <br />*/}
-            {/*                You can emulate price changes to predict your reward.*/}
-            {/*            </PriceFormDescription>*/}
-            {/*            <PriceFormInputBlock>*/}
-            {/*                <PriceFormInputLabel>Emulated price:</PriceFormInputLabel>*/}
-            {/*                <Input*/}
-            {/*                    value={emulatedAquaPrice}*/}
-            {/*                    onChange={(e) => {*/}
-            {/*                        setEmulatedAquaPrice(e.target.value);*/}
-            {/*                    }}*/}
-            {/*                    isMedium*/}
-            {/*                    postfix={<PriceFormInputPostfix>XLM</PriceFormInputPostfix>}*/}
-            {/*                />*/}
-            {/*            </PriceFormInputBlock>*/}
-            {/*            <ResetCustomPrice>*/}
-            {/*                <span>Market:</span>*/}
-            {/*                <ResetCustomButton*/}
-            {/*                    onClick={() => setEmulatedAquaPrice(averageAquaPrice.toString())}*/}
-            {/*                >*/}
-            {/*                    {averageAquaPrice} XLM*/}
-            {/*                </ResetCustomButton>*/}
-            {/*            </ResetCustomPrice>*/}
-            {/*        </PriceForm>*/}
-            {/*    ) : (*/}
-            {/*        <PriceRow>*/}
-            {/*            <Price>1 AQUA = {averageAquaPrice} XLM</Price>*/}
-            {/*            <EmulateButton onClick={() => setShowCustomPriceForm(true)}>*/}
-            {/*                Emulate other price*/}
-            {/*            </EmulateButton>*/}
-            {/*            <InfoIcon />*/}
-            {/*        </PriceRow>*/}
-            {/*    )}*/}
-            {/*</PriceBlock>*/}
-            <LockPreview>
-                <LockPreviewRow>
-                    <TotalPercent>⚡ {boostPercent}% Airdrop #2 boost</TotalPercent>
-                </LockPreviewRow>
-                <TotalValues>
-                    <PreviousValue>{formatBalance(airdropAmount, true)} AQUA</PreviousValue>
-                    <ArrowRightIcon />
-                    <NewValue>{formatBalance(expectedAirdropWithBoost, true)} AQUA</NewValue>
-                </TotalValues>
-            </LockPreview>
-
-            <Button
-                isBig
-                onClick={() => onSubmit()}
-                disabled={!lockAmount || lockPeriod <= START_AIRDROP2_TIMESTAMP}
-            >
+            <Button isBig onClick={() => onSubmit()} disabled={!lockAmount || !lockPeriod}>
                 LOCK AQUA
             </Button>
         </Container>
