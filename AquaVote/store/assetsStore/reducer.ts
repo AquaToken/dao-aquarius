@@ -54,6 +54,12 @@ export default function proposalStore(
                 assetsInfo: assetInfo,
             };
         }
+        case ASSETS_ACTIONS.CLEAR_ASSETS: {
+            return {
+                ...state,
+                assetsInfo: new Map(),
+            };
+        }
         default: {
             return state;
         }
