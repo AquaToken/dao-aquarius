@@ -1,17 +1,17 @@
 import * as React from 'react';
+import { useState } from 'react';
 import {
     ModalDescription,
     ModalProps,
     ModalTitle,
 } from '../../../../common/modals/atoms/ModalAtoms';
 import styled from 'styled-components';
-import { flexRowSpaceBetween } from '../../../../common/mixins';
-import { COLORS } from '../../../../common/styles';
+import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
+import { Breakpoints, COLORS } from '../../../../common/styles';
 import Button from '../../../../common/basics/Button';
 import { formatBalance, getDateString } from '../../../../common/helpers/helpers';
 import { StellarService, ToastService } from '../../../../common/services/globalServices';
 import { BuildSignAndSubmitStatuses } from '../../../../common/services/wallet-connect.service';
-import { useState } from 'react';
 import useAuthStore from '../../../../common/store/authStore/useAuthStore';
 import { useIsMounted } from '../../../../common/hooks/useIsMounted';
 
@@ -19,6 +19,10 @@ const ModalContainer = styled.div`
     width: 52.8rem;
     display: flex;
     flex-direction: column;
+
+    ${respondDown(Breakpoints.md)`
+        width: 100%;
+    `}
 `;
 
 const Row = styled.div`
