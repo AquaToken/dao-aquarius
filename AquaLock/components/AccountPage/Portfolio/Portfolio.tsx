@@ -1,13 +1,13 @@
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { COLORS } from '../../../../common/styles';
-import { flexRowSpaceBetween } from '../../../../common/mixins';
+import { Breakpoints, COLORS } from '../../../../common/styles';
+import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
 import AquaLogo from '../../../../common/assets/img/aqua-logo-small.svg';
 import AccountService from '../../../../common/services/account.service';
 import { formatBalance, roundToPrecision } from '../../../../common/helpers/helpers';
 import PageLoader from '../../../../common/basics/PageLoader';
 import { ServerApi } from 'stellar-sdk';
-import { useEffect, useState } from 'react';
 import { StellarService } from '../../../../common/services/globalServices';
 import DotsLoader from '../../../../common/basics/DotsLoader';
 
@@ -23,6 +23,11 @@ const Container = styled.div`
 const Header = styled.div`
     ${flexRowSpaceBetween};
     margin-bottom: 2.4rem;
+
+    ${respondDown(Breakpoints.md)`
+          flex-direction: column;
+          align-items: flex-start;
+    `}
 `;
 
 const Title = styled.span`
@@ -49,11 +54,20 @@ const Balance = styled.span`
     line-height: 6.4rem;
     color: ${COLORS.buttonBackground};
     margin-left: 1.6rem;
+
+    ${respondDown(Breakpoints.md)`
+         font-size: 2.4rem;
+         line-height: 3rem;
+    `}
 `;
 
 const AdditionalInfo = styled.div`
     display: flex;
     width: 100%;
+
+    ${respondDown(Breakpoints.md)`
+        flex-direction: column;
+    `}
 `;
 
 const AdditionalInfoColumn = styled.div`

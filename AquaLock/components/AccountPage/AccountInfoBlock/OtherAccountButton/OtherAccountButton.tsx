@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { flexAllCenter } from '../../../../../common/mixins';
-import { COLORS } from '../../../../../common/styles';
+import { flexAllCenter, respondDown } from '../../../../../common/mixins';
+import { Breakpoints, COLORS } from '../../../../../common/styles';
 import ArrowsCircle from '../../../../../common/assets/img/icon-arrows-circle.svg';
 import { ModalService } from '../../../../../common/services/globalServices';
 import AccountInput from '../../../common/AccountInput/AccountInput';
@@ -16,6 +16,10 @@ const ButtonText = styled.span`
     line-height: 2rem;
     color: ${COLORS.grayText};
     margin-right: 1.6rem;
+
+    ${respondDown(Breakpoints.md)`
+        display: none;
+    `}
 `;
 
 const IconContainer = styled.div`

@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { flexRowSpaceBetween } from '../../../../common/mixins';
-import { useEffect, useState } from 'react';
 import { StellarService } from '../../../../common/services/globalServices';
 import OtherAccountButton from './OtherAccountButton/OtherAccountButton';
 import AccountBlock from '../../../../common/basics/AccountBlock';

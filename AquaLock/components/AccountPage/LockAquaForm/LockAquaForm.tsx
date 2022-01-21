@@ -205,7 +205,7 @@ const LockAquaForm = ({
 
     const onAmountChange = (value) => {
         setLockAmount(value);
-        if (!value || Number.isNaN(Number(value))) {
+        if (!Number(value) || Number.isNaN(Number(value))) {
             setLockPercent(0);
             return;
         }
