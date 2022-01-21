@@ -6,6 +6,11 @@ import { AssetSimple } from '../../api/types';
 import { ASSET_CACHE } from './reducer';
 import * as StellarSdk from 'stellar-sdk';
 
+export function clearAssets() {
+    localStorage.setItem(ASSET_CACHE, '[]');
+    return { type: ASSETS_ACTIONS.CLEAR_ASSETS };
+}
+
 export function getAssets() {
     return (dispatch: Dispatch<ActionResult>): void => {
         dispatch({ type: ASSETS_ACTIONS.GET_ASSETS_START });

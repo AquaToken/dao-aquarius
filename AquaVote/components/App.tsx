@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { lazy, Suspense, useEffect } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { hot } from 'react-hot-loader';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
@@ -29,14 +29,28 @@ const ModalBG = styled(BG)`
     object-position: center center;
 `;
 
+const UPDATE_ASSETS_DATE = 'update assets timestamp';
+const UPDATE_PERIOD = 24 * 60 * 60 * 1000;
+
 const App = () => {
     useGlobalSubscriptions();
 
-    const { getAssets, assets, processNewAssets } = useAssetsStore();
+    const { getAssets, assets, processNewAssets, assetsInfo, clearAssets } = useAssetsStore();
+    const [isAssetsUpdated, setIsAssetsUpdated] = useState(false);
 
     const { isLogged, account } = useAuthStore();
 
     useEffect(() => {
+        const assetUpdateTimestamp = localStorage.getItem(UPDATE_ASSETS_DATE);
+
+        if (!assetUpdateTimestamp || Date.now() - Number(assetUpdateTimestamp) > UPDATE_PERIOD) {
+            clearAssets();
+            localStorage.setItem(UPDATE_ASSETS_DATE, Date.now().toString());
+            setIsAssetsUpdated(true);
+        } else {
+            setIsAssetsUpdated(true);
+        }
+
         getAssets();
     }, []);
 
@@ -60,6 +74,10 @@ const App = () => {
             StellarService.closeClaimableBalancesStream();
         }
     }, [isLogged]);
+
+    if (!isAssetsUpdated || !assetsInfo.size) {
+        return null;
+    }
 
     return (
         <Router>
