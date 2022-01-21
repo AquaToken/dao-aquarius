@@ -69,7 +69,7 @@ const ScrollToSidebarButton = styled.div`
     line-height: 2.4rem;
     font-weight: bold;
     cursor: pointer;
-    z-index: 450;
+    z-index: 430;
 
     ${respondDown(Breakpoints.md)`
         display: flex;
