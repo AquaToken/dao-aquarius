@@ -217,7 +217,7 @@ const Table = ({
         const counterInstance = new StellarSdk.Asset(asset2_code, asset2_issuer);
         const counterInfo = assetsInfo.get(getAssetString(counterInstance));
 
-        return Boolean(counterInfo?.auth_required || baseInfo?.asset_string);
+        return Boolean(counterInfo?.auth_required || baseInfo?.auth_required);
     };
 
     return (
@@ -269,7 +269,7 @@ const Table = ({
                                 />
                                 <ThreeDotsMenuWeb pair={pair} disabled={isAuthRequiredPair(pair)} />
                             </ButtonBlock>
-                            <ThreeDotsMenuMobile pair={pair} />
+                            <ThreeDotsMenuMobile pair={pair} disabled={isAuthRequiredPair(pair)} />
                         </TableBodyRow>
                     );
                 })}
