@@ -17,6 +17,7 @@ export type Asset = {
     image: string | null;
     issuer: string;
     name: string;
+    auth_required?: boolean;
 };
 
 export type MarketVotes = {

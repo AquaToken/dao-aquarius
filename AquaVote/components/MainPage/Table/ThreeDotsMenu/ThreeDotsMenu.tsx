@@ -16,10 +16,10 @@ const Wrapper = styled.div`
     z-index: 100;
 `;
 
-const Button = styled.div`
+const Button = styled.div<{ disabled: boolean }>`
     height: 4.8rem;
     min-width: 2rem;
-    cursor: pointer;
+    cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
     ${flexAllCenter};
     margin-left: 1.2rem;
 
@@ -50,10 +50,13 @@ const Menu = styled.div`
     }
 `;
 
-const ThreeDotsMenu = ({ pair }) => {
+const ThreeDotsMenu = ({ pair, disabled }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     const toggleMenu = () => {
+        if (disabled) {
+            return;
+        }
         setIsOpen((prevState) => !prevState);
     };
 
@@ -76,7 +79,7 @@ const ThreeDotsMenu = ({ pair }) => {
 
     return (
         <Wrapper onClick={() => toggleMenu()} ref={menuRef}>
-            <Button>
+            <Button disabled={disabled}>
                 <ThreeDots />
             </Button>
 

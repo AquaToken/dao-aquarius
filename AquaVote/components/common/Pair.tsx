@@ -75,11 +75,11 @@ const Link = styled.div`
     ${flexAllCenter};
 `;
 
-const RewardsOn = styled.div`
+const Label = styled.div<{ isRed?: boolean }>`
     height: 1.6rem;
     padding: 0 0.4rem;
     border-radius: 0.3rem;
-    background: ${COLORS.purple};
+    background: ${({ isRed }) => (isRed ? COLORS.pinkRed : COLORS.purple)};
     color: ${COLORS.white};
     text-transform: uppercase;
     font-weight: 500;
@@ -139,6 +139,8 @@ const Pair = ({
     const hasCounterInfo = isCounterNative || assetsInfo.has(getAssetString(counter));
     const counterInfo = isCounterNative ? LumenInfo : assetsInfo.get(getAssetString(counter));
 
+    const authRequired = counterInfo?.auth_required || baseInfo?.asset_string;
+
     const [showTooltip, setShowTooltip] = useState(false);
 
     return (
@@ -166,12 +168,33 @@ const Pair = ({
                             position={TOOLTIP_POSITION.top}
                             isShow={showTooltip}
                         >
-                            <RewardsOn
+                            <Label
                                 onMouseEnter={() => setShowTooltip(true)}
                                 onMouseLeave={() => setShowTooltip(false)}
                             >
                                 reward zone
-                            </RewardsOn>
+                            </Label>
+                        </Tooltip>
+                    )}
+                    {authRequired && (
+                        <Tooltip
+                            content={
+                                <TooltipInner>
+                                    In this pair there is an asset in which the "auth required" flag
+                                    is set. Voting for this pair is prohibited.
+                                </TooltipInner>
+                            }
+                            position={TOOLTIP_POSITION.top}
+                            isShow={showTooltip}
+                            isError
+                        >
+                            <Label
+                                isRed
+                                onMouseEnter={() => setShowTooltip(true)}
+                                onMouseLeave={() => setShowTooltip(false)}
+                            >
+                                auth required
+                            </Label>
                         </Tooltip>
                     )}
                     <Link onClick={() => viewOnStellarX(baseInstance, counterInstance)}>
