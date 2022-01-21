@@ -20,6 +20,7 @@ const Container = styled.div`
     ${respondDown(Breakpoints.md)`
         flex-direction: column;
         padding: 0 1.6rem;
+        gap: 1.6rem;
     `}
 `;
 
