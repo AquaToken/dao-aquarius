@@ -30,6 +30,7 @@ const Container = styled.div`
 
     ${respondDown(Breakpoints.md)`
         box-shadow: unset;
+        padding: 3.2rem;
     `}
 `;
 
