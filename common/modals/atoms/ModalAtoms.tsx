@@ -41,6 +41,7 @@ const ModalInner = styled.div<{ withBackground: boolean; isShow: boolean }>`
         right: 0;
         border-radius: 0;
         padding: ${({ withBackground }) => (withBackground ? '0 0 1rem' : '3.2rem 0 1rem')};
+        overflow-y: auto;
     `};
 
     @keyframes opening {
