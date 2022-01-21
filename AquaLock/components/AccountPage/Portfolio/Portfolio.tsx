@@ -121,7 +121,9 @@ const Portfolio = ({
         return acc;
     }, 0);
 
-    const percent = roundToPrecision((locksSum / (aquaBalance + locksSum)) * 100, 2);
+    const total = aquaBalance + locksSum;
+
+    const percent = total ? roundToPrecision((locksSum / total) * 100, 2) : 0;
 
     return (
         <Container>
