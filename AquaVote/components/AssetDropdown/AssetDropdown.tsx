@@ -85,7 +85,7 @@ const DropdownList = styled.div`
     transform-origin: top center;
     max-height: 24rem;
     overflow-y: scroll;
-    z-index: 1;
+    z-index: 2;
 
     &::-webkit-scrollbar {
         width: 0.5rem;
