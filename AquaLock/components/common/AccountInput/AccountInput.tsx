@@ -20,6 +20,7 @@ const Container = styled.div<{ isModal }>`
     ${respondDown(Breakpoints.md)`
         width: 100%;
         box-shadow: unset;
+        padding: 4rem 1.6rem;
     `}
 `;
 
