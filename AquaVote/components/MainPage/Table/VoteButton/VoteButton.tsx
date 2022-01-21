@@ -36,11 +36,13 @@ const VoteButton = ({
     marketKeyDown,
     isPairSelected,
     onButtonClick,
+    disabled,
 }: {
     marketKeyUp: string;
     marketKeyDown: string;
     isPairSelected: boolean;
     onButtonClick: () => void;
+    disabled: boolean;
 }): JSX.Element => {
     const { account, isLogged } = useAuthStore();
     const [balanceUp, setBalanceUp] = useState(
@@ -70,7 +72,7 @@ const VoteButton = ({
 
     if (!balanceUp && !balanceDown) {
         return (
-            <Button onClick={onButtonClick} likeDisabled={isPairSelected}>
+            <Button onClick={onButtonClick} likeDisabled={isPairSelected} disabled={disabled}>
                 {isPairSelected ? 'added' : 'Add To Vote'}
                 {isPairSelected ? <TickStyled /> : <PlusStyled />}
             </Button>
@@ -79,7 +81,12 @@ const VoteButton = ({
     return (
         <Container>
             <Balance>{formatBalance((+balanceUp || 0) - (+balanceDown || 0), true)} AQUA</Balance>
-            <Button onClick={onButtonClick} likeDisabled={isPairSelected} isSquare>
+            <Button
+                onClick={onButtonClick}
+                likeDisabled={isPairSelected}
+                isSquare
+                disabled={disabled}
+            >
                 {isPairSelected ? <IconTick /> : <IconPlus />}
             </Button>
         </Container>

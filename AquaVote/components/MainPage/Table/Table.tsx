@@ -9,6 +9,9 @@ import { flexAllCenter } from '../../../../common/mixins';
 import VoteButton from './VoteButton/VoteButton';
 import ThreeDotsMenu from './ThreeDotsMenu/ThreeDotsMenu';
 import VoteAmount from './VoteAmount/VoteAmount';
+import useAssetsStore from '../../../store/assetsStore/useAssetsStore';
+import * as StellarSdk from 'stellar-sdk';
+import { getAssetString } from '../../../store/assetsStore/actions';
 
 const TableBlock = styled.div`
     display: flex;
@@ -145,9 +148,22 @@ const Table = ({
         return null;
     }
 
+    const { assetsInfo } = useAssetsStore();
+
     const isPairSelected = ({ market_key: marketKey }: PairStats): boolean => {
         return selectedPairs.some((pair) => pair.market_key === marketKey);
     };
+
+    const isAuthRequiredPair = ({ asset1_code, asset1_issuer, asset2_code, asset2_issuer }) => {
+        const baseInstance = new StellarSdk.Asset(asset1_code, asset1_issuer);
+        const baseInfo = assetsInfo.get(getAssetString(baseInstance));
+
+        const counterInstance = new StellarSdk.Asset(asset2_code, asset2_issuer);
+        const counterInfo = assetsInfo.get(getAssetString(counterInstance));
+
+        return Boolean(counterInfo?.auth_required || baseInfo?.asset_string);
+    };
+
     return (
         <TableBlock>
             {(loading || !totalStats) && (
@@ -190,8 +206,9 @@ const Table = ({
                                     marketKeyDown={pair.downvote_account_id}
                                     isPairSelected={isPairSelected(pair)}
                                     onButtonClick={() => selectPair(pair)}
+                                    disabled={isAuthRequiredPair(pair)}
                                 />
-                                <ThreeDotsMenu pair={pair} />
+                                <ThreeDotsMenu pair={pair} disabled={isAuthRequiredPair(pair)} />
                             </TableCell>
                         </TableBodyRow>
                     );

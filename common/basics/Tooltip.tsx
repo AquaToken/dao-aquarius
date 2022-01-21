@@ -14,59 +14,59 @@ const ChildrenBlock = styled.div`
     display: flex;
 `;
 
-const TooltipTop = css`
+const TooltipTop = (isError) => css`
     bottom: calc(100% + 0.8rem);
     left: 50%;
     transform: translateX(-50%);
 
     &::after {
         top: 100%;
-        border-top: 0.6rem solid ${COLORS.tooltip};
+        border-top: 0.6rem solid ${isError ? COLORS.pinkRed : COLORS.tooltip};
         border-left: 0.6rem solid ${COLORS.transparent};
         border-right: 0.6rem solid ${COLORS.transparent};
     }
 `;
 
-const TooltipBottom = css`
+const TooltipBottom = (isError) => css`
     top: calc(100% + 0.8rem);
     left: 50%;
     transform: translateX(-50%);
 
     &::after {
         bottom: 100%;
-        border-bottom: 0.6rem solid ${COLORS.tooltip};
+        border-bottom: 0.6rem solid ${isError ? COLORS.pinkRed : COLORS.tooltip};
         border-left: 0.6rem solid ${COLORS.transparent};
         border-right: 0.6rem solid ${COLORS.transparent};
     }
 `;
 
-const TooltipLeft = css`
+const TooltipLeft = (isError) => css`
     top: 50%;
     right: calc(100% + 0.8rem);
     transform: translateY(-50%);
 
     &::after {
         left: 100%;
-        border-left: 0.6rem solid ${COLORS.tooltip};
+        border-left: 0.6rem solid ${isError ? COLORS.pinkRed : COLORS.tooltip};
         border-top: 0.6rem solid ${COLORS.transparent};
         border-bottom: 0.6rem solid ${COLORS.transparent};
     }
 `;
 
-const TooltipRight = css`
+const TooltipRight = (isError) => css`
     top: 50%;
     left: calc(100% + 0.8rem);
     transform: translateY(-50%);
 
     &::after {
         right: 100%;
-        border-right: 0.6rem solid ${COLORS.tooltip};
+        border-right: 0.6rem solid ${isError ? COLORS.pinkRed : COLORS.tooltip};
         border-top: 0.6rem solid ${COLORS.transparent};
         border-bottom: 0.6rem solid ${COLORS.transparent};
     }
 `;
 
-const TooltipBody = styled.div<{ position: TOOLTIP_POSITION }>`
+const TooltipBody = styled.div<{ position: TOOLTIP_POSITION; isError?: boolean }>`
     position: absolute;
     display: flex;
     flex-direction: row;
@@ -74,7 +74,7 @@ const TooltipBody = styled.div<{ position: TOOLTIP_POSITION }>`
     justify-content: center;
     padding: 0.9rem 1.2rem;
     color: ${COLORS.white};
-    background-color: ${COLORS.tooltip};
+    background-color: ${({ isError }) => (isError ? COLORS.pinkRed : COLORS.tooltip)};
     border-radius: 0.5rem;
     white-space: nowrap;
     z-index: ${Z_INDEX.tooltip};
@@ -85,11 +85,11 @@ const TooltipBody = styled.div<{ position: TOOLTIP_POSITION }>`
         position: absolute;
     }
 
-    ${({ position }) =>
-        (position === TOOLTIP_POSITION.top && TooltipTop) ||
-        (position === TOOLTIP_POSITION.bottom && TooltipBottom) ||
-        (position === TOOLTIP_POSITION.left && TooltipLeft) ||
-        (position === TOOLTIP_POSITION.right && TooltipRight)}
+    ${({ position, isError }) =>
+        (position === TOOLTIP_POSITION.top && TooltipTop(isError)) ||
+        (position === TOOLTIP_POSITION.bottom && TooltipBottom(isError)) ||
+        (position === TOOLTIP_POSITION.left && TooltipLeft(isError)) ||
+        (position === TOOLTIP_POSITION.right && TooltipRight(isError))}
 `;
 
 const Tooltip = ({
@@ -97,17 +97,23 @@ const Tooltip = ({
     content,
     position = TOOLTIP_POSITION.top,
     isShow,
+    isError,
     ...props
 }: {
     children: React.ReactNode;
     content: React.ReactNode;
     position: TOOLTIP_POSITION;
     isShow: boolean;
+    isError?: boolean;
 }): JSX.Element => {
     return (
         <ChildrenBlock {...props}>
             {children}
-            {isShow && <TooltipBody position={position}>{content}</TooltipBody>}
+            {isShow && (
+                <TooltipBody position={position} isError={isError}>
+                    {content}
+                </TooltipBody>
+            )}
         </ChildrenBlock>
     );
 };
