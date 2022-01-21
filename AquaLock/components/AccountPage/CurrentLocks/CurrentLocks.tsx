@@ -1,8 +1,9 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { COLORS } from '../../../../common/styles';
+import { Breakpoints, COLORS } from '../../../../common/styles';
 import ProgressLine from '../../../../common/basics/ProgressLine';
 import { formatBalance, getDateString, roundToPrecision } from '../../../../common/helpers/helpers';
+import { respondDown } from '../../../../common/mixins';
 
 const Container = styled.div`
     margin-top: 4rem;
@@ -34,6 +35,11 @@ const HeaderRow = styled.div`
     line-height: 2rem;
     color: ${COLORS.grayText};
     margin-bottom: 3.8rem;
+
+    ${respondDown(Breakpoints.md)`
+         font-size: 1.2rem;
+         line-height: 1.6rem;
+    `}
 `;
 
 const TableRow = styled.div`
@@ -46,10 +52,19 @@ const TableRow = styled.div`
     &:not(:last-child) {
         margin-bottom: 2.2rem;
     }
+
+    ${respondDown(Breakpoints.md)`
+        font-size: 1.4rem;
+        line-height: 2rem;
+    `}
 `;
 
 const TableCell = styled.div`
     flex: 1;
+
+    ${respondDown(Breakpoints.md)`
+        flex: 2;
+    `}
 `;
 
 const TableCellAmount = styled.div`
@@ -69,8 +84,8 @@ const CurrentLocks = ({ locks, aquaBalance }) => {
             <Title>Current locks </Title>
             <ProgressLine
                 percent={+percent}
-                leftLabel={`Locked: ${locksSum} AQUA (${percent}%)`}
-                rightLabel={`${aquaBalance + locksSum} AQUA`}
+                leftLabel={`Locked: ${formatBalance(locksSum)} AQUA (${percent}%)`}
+                rightLabel={`${formatBalance(aquaBalance + locksSum)} AQUA`}
             />
             <LocksList>
                 <HeaderRow>
