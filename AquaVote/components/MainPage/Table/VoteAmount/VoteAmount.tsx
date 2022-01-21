@@ -1,10 +1,10 @@
 import * as React from 'react';
+import { useState } from 'react';
 import Tooltip, { TOOLTIP_POSITION } from '../../../../../common/basics/Tooltip';
 import { formatBalance, roundToPrecision } from '../../../../../common/helpers/helpers';
 import styled from 'styled-components';
-import { COLORS } from '../../../../../common/styles';
-import { flexAllCenter, flexRowSpaceBetween } from '../../../../../common/mixins';
-import { useState } from 'react';
+import { Breakpoints, COLORS } from '../../../../../common/styles';
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
 import { PairStats, TotalStats } from '../../../../api/types';
 import InfoIcon from '../../../../../common/assets/img/icon-info.svg';
 
@@ -15,12 +15,30 @@ const Info = styled(InfoIcon)`
 const Amount = styled.div`
     display: flex;
     flex-direction: column;
+
+    ${respondDown(Breakpoints.md)`
+         align-items: flex-end;
+    `}
 `;
 
 const Percent = styled.div`
     color: ${COLORS.grayText};
     font-size: 1.4rem;
     line-height: 2rem;
+
+    ${respondDown(Breakpoints.md)`
+        display: none;
+    `}
+`;
+
+const PercentMobile = styled.span`
+    display: none;
+    color: ${COLORS.grayText};
+    margin-left: 0.3rem;
+
+    ${respondDown(Breakpoints.md)`
+        display: inline-block;
+    `}
 `;
 
 const AmountRow = styled.div`
@@ -56,6 +74,10 @@ const VoteAmount = ({ pair, totalStats }: { pair: PairStats; totalStats: TotalSt
     if (!pair.votes_value) {
         return null;
     }
+
+    const percentValue = pair.votes_value
+        ? `${getPercent(pair.votes_value, totalStats.votes_value_sum)}%`
+        : null;
     return (
         <Amount
             onMouseEnter={() => {
@@ -83,15 +105,12 @@ const VoteAmount = ({ pair, totalStats }: { pair: PairStats; totalStats: TotalSt
             >
                 <AmountRow>
                     {pair.votes_value ? `${formatBalance(+pair.votes_value, true)} AQUA` : null}
+                    <PercentMobile>({percentValue})</PercentMobile>
                     <Info />
                 </AmountRow>
             </Tooltip>
 
-            <Percent>
-                {pair.votes_value
-                    ? `${getPercent(pair.votes_value, totalStats.votes_value_sum)}%`
-                    : null}
-            </Percent>
+            <Percent>{percentValue}</Percent>
         </Amount>
     );
 };

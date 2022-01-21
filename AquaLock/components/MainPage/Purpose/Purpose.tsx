@@ -1,6 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { COLORS } from '../../../../common/styles';
+import { Breakpoints, COLORS } from '../../../../common/styles';
+import { respondDown } from '../../../../common/mixins';
 
 const Container = styled.div`
     display: flex;
@@ -17,6 +18,11 @@ const Title = styled.span`
     line-height: 6.4rem;
     color: ${COLORS.titleText};
     margin-bottom: 1.6rem;
+
+    ${respondDown(Breakpoints.md)`
+        font-size: 4rem;
+        line-height: 5rem;
+    `}
 `;
 
 const Description = styled.span`

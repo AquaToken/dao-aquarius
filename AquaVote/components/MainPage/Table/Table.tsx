@@ -1,11 +1,11 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { COLORS } from '../../../../common/styles';
+import { Breakpoints, COLORS } from '../../../../common/styles';
 import { PairStats, TotalStats } from '../../../api/types';
 import { formatBalance } from '../../../../common/helpers/helpers';
 import Pair from '../../common/Pair';
 import PageLoader from '../../../../common/basics/PageLoader';
-import { flexAllCenter } from '../../../../common/mixins';
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
 import VoteButton from './VoteButton/VoteButton';
 import ThreeDotsMenu from './ThreeDotsMenu/ThreeDotsMenu';
 import VoteAmount from './VoteAmount/VoteAmount';
@@ -43,6 +43,10 @@ const TableLoader = styled.div`
 const TableHead = styled.div`
     display: flex;
     width: 100%;
+
+    ${respondDown(Breakpoints.md)`
+         display: none;
+    `}
 `;
 const TableHeadRow = styled.div`
     display: flex;
@@ -61,19 +65,40 @@ const TableCell = styled.div`
     flex: 2 0 0;
     min-width: 14rem;
     max-width: 100%;
-    &:first-child {
-        flex: 4;
-        min-width: 48rem;
+`;
+
+const PairInfo = styled(TableCell)`
+    flex: 2;
+    min-width: 48rem;
+    ${respondDown(Breakpoints.md)`
+        margin-bottom: 3.2rem;
+    `}
+`;
+
+const VoteStats = styled(TableCell)`
+    flex: 0.5;
+
+    min-width: 10rem;
+
+    label {
+        display: none;
     }
-    &:nth-child(2) {
-        flex: 1;
-        min-width: 10rem;
-    }
-    &:last-child {
-        flex: 1;
-        justify-content: flex-end;
-        min-width: 17rem;
-    }
+
+    ${respondDown(Breakpoints.md)`
+        ${flexRowSpaceBetween};
+        align-items: flex-start;
+        margin-bottom: 1.6rem;
+        
+        label {
+            display: block;
+         }
+    `}
+`;
+
+const ButtonBlock = styled(TableCell)`
+    flex: 1;
+    justify-content: flex-end;
+    min-width: 17rem;
 `;
 
 const TableBody = styled.div`
@@ -89,12 +114,43 @@ const TableBodyRow = styled.div`
     font-size: 1.6rem;
     line-height: 2.8rem;
     color: ${COLORS.paragraphText};
+    position: relative;
 
     ${TableCell}:nth-child(2) {
         font-size: 1.4rem;
         line-height: 2rem;
         color: ${COLORS.grayText};
     }
+
+    ${respondDown(Breakpoints.md)`
+        flex-direction: column;
+        background: ${COLORS.white};
+        border-radius: 0.5rem;
+        margin-bottom: 1.6rem;
+        padding: 2.7rem 1.6rem 1.6rem;
+        
+        ${TableCell}:nth-child(2) {
+            font-size: 1.6rem;
+            line-height: 2.8rem;
+            color: ${COLORS.grayText};
+        }
+    `}
+`;
+
+const ThreeDotsMenuWeb = styled(ThreeDotsMenu)`
+    ${respondDown(Breakpoints.md)`
+          display: none
+    `}
+`;
+
+const ThreeDotsMenuMobile = styled(ThreeDotsMenu)`
+    display: none;
+    ${respondDown(Breakpoints.md)`
+          display: block;
+          position: absolute;
+          top: 1.6rem;
+          right: 1.6rem;
+    `}
 `;
 
 // const SortingHeader = styled.button`
@@ -174,17 +230,17 @@ const Table = ({
 
             <TableHead>
                 <TableHeadRow>
-                    <TableCell>Pair</TableCell>
-                    <TableCell>Users Voted</TableCell>
-                    <TableCell>AQUA Voted</TableCell>
-                    <TableCell>Your Vote</TableCell>
+                    <PairInfo>Pair</PairInfo>
+                    <VoteStats>Users Voted</VoteStats>
+                    <VoteStats>AQUA Voted</VoteStats>
+                    <ButtonBlock>Your Vote</ButtonBlock>
                 </TableHeadRow>
             </TableHead>
             <TableBody>
                 {pairs.map((pair) => {
                     return (
                         <TableBodyRow key={pair.id}>
-                            <TableCell>
+                            <PairInfo>
                                 <Pair
                                     base={{ code: pair.asset1_code, issuer: pair.asset1_issuer }}
                                     counter={{ code: pair.asset2_code, issuer: pair.asset2_issuer }}
@@ -192,15 +248,18 @@ const Table = ({
                                         pair.votes_value,
                                         totalStats.votes_value_sum,
                                     )}
+                                    mobileVerticalDirections
                                 />
-                            </TableCell>
-                            <TableCell>
+                            </PairInfo>
+                            <VoteStats>
+                                <label>Users Voted:</label>
                                 {pair.voting_amount ? formatBalance(pair.voting_amount) : null}
-                            </TableCell>
-                            <TableCell>
+                            </VoteStats>
+                            <VoteStats>
+                                <label>AQUA Voted:</label>
                                 <VoteAmount pair={pair} totalStats={totalStats} />
-                            </TableCell>
-                            <TableCell>
+                            </VoteStats>
+                            <ButtonBlock>
                                 <VoteButton
                                     marketKeyUp={pair.market_key}
                                     marketKeyDown={pair.downvote_account_id}
@@ -208,8 +267,9 @@ const Table = ({
                                     onButtonClick={() => selectPair(pair)}
                                     disabled={isAuthRequiredPair(pair)}
                                 />
-                                <ThreeDotsMenu pair={pair} disabled={isAuthRequiredPair(pair)} />
-                            </TableCell>
+                                <ThreeDotsMenuWeb pair={pair} disabled={isAuthRequiredPair(pair)} />
+                            </ButtonBlock>
+                            <ThreeDotsMenuMobile pair={pair} />
                         </TableBodyRow>
                     );
                 })}

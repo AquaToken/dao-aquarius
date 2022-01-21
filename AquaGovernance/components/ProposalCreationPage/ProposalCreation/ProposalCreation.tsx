@@ -1,15 +1,16 @@
 import * as React from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
-import { COLORS } from '../../../../common/styles';
+import { Breakpoints, COLORS } from '../../../../common/styles';
 import Input from '../../../../common/basics/Input';
 import ReactQuill from 'react-quill';
 import Button from '../../../../common/basics/Button';
-import { useEffect, useMemo, useState } from 'react';
 import { ReactQuillCSS } from '../../App';
 import { formatBalance, getDateString } from '../../../../common/helpers/helpers';
 import { CREATE_PROPOSAL_COST } from '../../MainPage/MainPage';
 import Select, { Option } from '../../../../common/basics/Select';
+import { respondDown } from '../../../../common/mixins';
 
 const Background = styled.div`
     position: absolute;
@@ -33,6 +34,12 @@ const Title = styled.h3`
     line-height: 6.4rem;
     font-weight: bold;
     color: ${COLORS.titleText};
+
+    ${respondDown(Breakpoints.md)`
+        font-size: 4rem;
+        line-height: 4.5rem;
+        padding: 0 1.6rem;
+    `}
 `;
 
 const Description = styled.div`
@@ -41,6 +48,10 @@ const Description = styled.div`
     line-height: 2.8rem;
     color: ${COLORS.descriptionText};
     opacity: 0.7;
+
+    ${respondDown(Breakpoints.md)`
+        padding: 0 1.6rem;
+    `}
 `;
 
 const ContainerForm = styled.div`
@@ -49,6 +60,10 @@ const ContainerForm = styled.div`
     background-color: ${COLORS.white};
     box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
     border-radius: 0.5rem;
+
+    ${respondDown(Breakpoints.md)`
+        padding: 3.2rem 1.6rem;
+    `}
 `;
 
 const SectionForm = styled.div`
@@ -58,9 +73,17 @@ const SectionForm = styled.div`
 const SectionDate = styled(SectionForm)`
     display: flex;
     column-gap: 4.8rem;
+
+    ${respondDown(Breakpoints.md)`
+         flex-direction: column;
+    `}
 `;
 const DateBlock = styled.div`
     flex: 1 0 0;
+
+    ${respondDown(Breakpoints.md)`
+        margin-bottom: 3.2rem;
+    `}
 `;
 const Time = styled.div`
     flex: 1 0 0;

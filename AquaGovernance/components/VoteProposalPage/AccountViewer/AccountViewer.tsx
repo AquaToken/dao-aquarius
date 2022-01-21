@@ -1,7 +1,8 @@
 import * as React from 'react';
 import createStellarIdenticon from 'stellar-identicon-js';
 import styled from 'styled-components';
-import { COLORS } from '../../../../common/styles';
+import { Breakpoints, COLORS } from '../../../../common/styles';
+import { respondDown } from '../../../../common/mixins';
 
 const AccountViewerBlock = styled.div`
     display: flex;
@@ -15,14 +16,40 @@ const IdenticonImage = styled.img`
     margin-right: 0.8rem;
 `;
 
-const AccountViewer = ({ pubKey }: { pubKey: string }): JSX.Element => {
+const KeyWeb = styled.span<{ narrowForMobile?: boolean }>`
+    ${({ narrowForMobile }) =>
+        narrowForMobile &&
+        respondDown(Breakpoints.md)`
+        display: none;
+    `}
+`;
+
+const KeyMobile = styled.span<{ narrowForMobile?: boolean }>`
+    display: none;
+
+    ${({ narrowForMobile }) =>
+        narrowForMobile &&
+        respondDown(Breakpoints.md)`
+        display: inline;
+    `}
+`;
+
+const AccountViewer = ({
+    pubKey,
+    narrowForMobile,
+}: {
+    pubKey: string;
+    narrowForMobile?: boolean;
+}): JSX.Element => {
     const url = createStellarIdenticon(pubKey).toDataURL();
-    const truncatedKey = `${pubKey.slice(0, 8)}...${pubKey.slice(-8)}`;
+    const truncatedKeyWeb = `${pubKey.slice(0, 8)}...${pubKey.slice(-8)}`;
+    const truncatedKeyMobile = `G...${pubKey.slice(-3)}`;
 
     return (
         <AccountViewerBlock>
             <IdenticonImage src={url} alt="IdentIcon" />
-            <span>{truncatedKey}</span>
+            <KeyWeb narrowForMobile={narrowForMobile}>{truncatedKeyWeb}</KeyWeb>
+            <KeyMobile narrowForMobile={narrowForMobile}>{truncatedKeyMobile}</KeyMobile>
         </AccountViewerBlock>
     );
 };

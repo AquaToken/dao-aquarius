@@ -20,6 +20,11 @@ import AccountPage from './AccountPage/AccountPage';
 import { ModalService } from '../../common/services/globalServices';
 import SnapshotPassedModal from './common/SnapshotPassedModal/SnapshotPassedModal';
 import Background from '../../common/assets/img/snapshot-passed-background.svg';
+import styled from 'styled-components';
+
+const ModalBG = styled(Background)`
+    object-position: center center;
+`;
 
 const App = () => {
     useGlobalSubscriptions();
@@ -27,7 +32,7 @@ const App = () => {
     const { account } = useAuthStore();
 
     useEffect(() => {
-        ModalService.openModal(SnapshotPassedModal, {}, true, <Background />);
+        ModalService.openModal(SnapshotPassedModal, {}, true, <ModalBG />);
     }, []);
 
     return (

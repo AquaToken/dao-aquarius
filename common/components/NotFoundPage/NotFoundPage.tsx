@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { COLORS } from '../../styles';
-import { flexAllCenter } from '../../mixins';
+import { Breakpoints, COLORS } from '../../styles';
+import { flexAllCenter, respondDown } from '../../mixins';
 import LinkArrowIcon from '../../assets/img/icon-link-arrow.svg';
 import { Link } from 'react-router-dom';
 
@@ -10,6 +10,10 @@ const MainBlock = styled.main`
     background-color: ${COLORS.lightGray};
     ${flexAllCenter};
     flex-direction: column;
+
+    ${respondDown(Breakpoints.md)`
+        padding: 0 1.6rem;
+    `}
 `;
 
 const Title = styled.h2`

@@ -8,16 +8,32 @@ import useAuthStore from '../store/authStore/useAuthStore';
 import { LoginTypes } from '../store/authStore/types';
 import { StellarService, ToastService } from '../services/globalServices';
 import { useLocation } from 'react-router-dom';
+import { Breakpoints } from '../styles';
+import { respondDown } from '../mixins';
 
 const LoginWithSecretBody = styled.div`
     width: 52.8rem;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
+
+    ${respondDown(Breakpoints.md)`
+          width: 100%;
+      `}
 `;
 
 const Description = styled(ModalDescription)`
     width: 52.8rem;
+
+    ${respondDown(Breakpoints.md)`
+          width: 100%;
+      `}
+`;
+
+const StyledButton = styled(Button)`
+    ${respondDown(Breakpoints.md)`
+            width: 100%;
+        `}
 `;
 
 const InputWrapped = styled(Input)`
@@ -57,14 +73,14 @@ const LoginWithPublic = ({ close }: ModalProps<never>): JSX.Element => {
                     value={publicKey}
                     onChange={({ target }) => setPublicKey(target.value)}
                 />
-                <Button
+                <StyledButton
                     isBig
                     disabled={!publicKey}
                     onClick={() => onSubmit()}
                     pending={isLoginPending ?? undefined}
                 >
                     connect
-                </Button>
+                </StyledButton>
             </LoginWithSecretBody>
         </>
     );

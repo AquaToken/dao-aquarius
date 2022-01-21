@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { ModalDescription, ModalTitle } from '../atoms/ModalAtoms';
 import styled from 'styled-components';
-import { flexRowSpaceBetween } from '../../mixins';
-import { COLORS } from '../../styles';
+import { flexRowSpaceBetween, respondDown } from '../../mixins';
+import { Breakpoints, COLORS } from '../../styles';
 import ExternalLink from '../../basics/ExternalLink';
 import ArrowRight from '../../assets/img/icon-arrow-right.svg';
 import LobstrLogo from '../../assets/img/lobstr-name-logo.svg';
@@ -13,6 +13,10 @@ import CopyButton from '../../basics/CopyButton';
 
 const Container = styled.div`
     width: 67.2rem;
+
+    ${respondDown(Breakpoints.md)`
+        width: 100%;
+    `}
 `;
 const TrustedPlatformsBlock = styled(Container)`
     margin-top: 5.6rem;
@@ -21,6 +25,18 @@ const TrustedPlatformsBlock = styled(Container)`
 const AssetInfo = styled.div`
     ${flexRowSpaceBetween};
     margin-bottom: 1.4rem;
+
+    ${respondDown(Breakpoints.md)`
+        flex-direction: column;
+        
+        & > div {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.6rem;
+        }
+    `}
 `;
 
 const GrayText = styled.div`
@@ -35,6 +51,10 @@ const BoldText = styled.div`
     line-height: 1.9rem;
     margin: 0.5rem 0 0 0;
     color: ${COLORS.titleText};
+
+    ${respondDown(Breakpoints.md)`
+          margin: 0;
+    `}
 `;
 
 const InfoRow = styled.div`
@@ -52,6 +72,7 @@ const Text = styled.div`
 const PlatfomLink = styled.a`
     display: flex;
     align-items: center;
+    justify-content: space-between;
     &:not(:last-child) {
         margin-bottom: 2rem;
     }
@@ -67,9 +88,25 @@ const PlatfomLink = styled.a`
     }
 `;
 
+const LinkBody = styled.div`
+    display: flex;
+    align-items: center;
+
+    ${respondDown(Breakpoints.md)`
+        flex-direction: column;
+        align-items: start;
+        margin-right: 1.6rem;
+    `}
+`;
+
 const LinkContent = styled.div`
     margin-left: 9.5rem;
     flex: 1;
+
+    ${respondDown(Breakpoints.md)`
+        margin-left: 0;
+        margin-top: 1.6rem;
+    `}
 `;
 
 const LinkTitle = styled(BoldText)`
@@ -159,39 +196,46 @@ const GetAquaModal = (): JSX.Element => {
                     href="https://lobstr.co/trade/AQUA:GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA"
                     target="_blank"
                 >
-                    <LobstrLogo />
-                    <LinkContent>
-                        <LinkTitle>Lobstr.co</LinkTitle>
-                        <LinkDescription>
-                            Trading platform built on the Stellar network.
-                        </LinkDescription>
-                    </LinkContent>
+                    <LinkBody>
+                        <LobstrLogo />
+                        <LinkContent>
+                            <LinkTitle>Lobstr.co</LinkTitle>
+                            <LinkDescription>
+                                Trading platform built on the Stellar network.
+                            </LinkDescription>
+                        </LinkContent>
+                    </LinkBody>
+
                     <ArrowRight />
                 </PlatfomLink>
                 <PlatfomLink
                     href="https://www.stellarx.com/markets/native/AQUA:GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA"
                     target="_blank"
                 >
-                    <StellarXLogo />
-                    <LinkContent>
-                        <LinkTitle>Stellarx.com</LinkTitle>
-                        <LinkDescription>
-                            Trading platform built on the Stellar network.
-                        </LinkDescription>
-                    </LinkContent>
+                    <LinkBody>
+                        <StellarXLogo />
+                        <LinkContent>
+                            <LinkTitle>Stellarx.com</LinkTitle>
+                            <LinkDescription>
+                                Trading platform built on the Stellar network.
+                            </LinkDescription>
+                        </LinkContent>
+                    </LinkBody>
                     <ArrowRight />
                 </PlatfomLink>
                 <PlatfomLink
                     href="https://stellarterm.com/exchange/AQUA-GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA/XLM-native"
                     target="_blank"
                 >
-                    <StellarTermLogo />
-                    <LinkContent>
-                        <LinkTitle>Stellarterm.com</LinkTitle>
-                        <LinkDescription>
-                            Light trading client for the Stellar network.
-                        </LinkDescription>
-                    </LinkContent>
+                    <LinkBody>
+                        <StellarTermLogo />
+                        <LinkContent>
+                            <LinkTitle>Stellarterm.com</LinkTitle>
+                            <LinkDescription>
+                                Light trading client for the Stellar network.
+                            </LinkDescription>
+                        </LinkContent>
+                    </LinkBody>
                     <ArrowRight />
                 </PlatfomLink>
             </TrustedPlatformsBlock>

@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { COLORS } from '../styles';
+import { Breakpoints, COLORS } from '../styles';
 import IconClose from '../assets/img/icon-close-small.svg';
 import Timer from '../services/timer.service';
 import { TOAST_TYPE } from '../services/toast.service';
 import { IconFail, IconSuccess } from '../basics/Icons';
+import { respondDown } from '../mixins';
 
 const ToastBody = styled.div<{ isShow: boolean }>`
     width: 36.2rem;
@@ -22,6 +23,16 @@ const ToastBody = styled.div<{ isShow: boolean }>`
     margin-right: 2rem;
     position: relative;
     overflow: hidden;
+
+    ${respondDown(Breakpoints.md)`
+        margin-top: unset;
+        margin-bottom: 2rem;
+        max-width: calc(100vw - 4rem);
+        animation: ${({ isShow }) =>
+            isShow ? 'openingToast ease-in-out 0.8s' : 'closingToastBottom linear 0.4s'};
+        min-height: 8rem;
+        box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.2);
+    `};
 
     @keyframes openingToast {
         0% {
@@ -70,6 +81,29 @@ const ToastBody = styled.div<{ isShow: boolean }>`
             opacity: 0;
             height: 0;
             margin-top: 0;
+        }
+    }
+
+    @keyframes closingToastBottom {
+        0% {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        20% {
+            transform: translateX(-5rem);
+            opacity: 1;
+        }
+        50% {
+            transform: translateX(100%);
+            opacity: 0;
+            height: 8rem;
+            margin-bottom: 2rem;
+        }
+        100% {
+            transform: translateX(100%);
+            opacity: 0;
+            height: 0;
+            margin-bottom: 0;
         }
     }
 `;
@@ -122,7 +156,10 @@ export const Toast = ({ text, resolver, delay, type }: ToastProps): JSX.Element 
     const ref = useRef(null);
 
     const transitionHandler = ({ animationName }) => {
-        if (!isShow && animationName === 'closingToast') {
+        if (
+            !isShow &&
+            (animationName === 'closingToast' || animationName === 'closingToastBottom')
+        ) {
             resolver();
         }
     };
@@ -158,6 +195,10 @@ export const Toast = ({ text, resolver, delay, type }: ToastProps): JSX.Element 
             onMouseLeave={() => {
                 setOnHover(false);
                 timer.current.resume();
+            }}
+            onTouchStart={() => {
+                setOnHover(true);
+                timer.current.pause();
             }}
         >
             <CloseButton onClick={() => close()} />

@@ -3,9 +3,10 @@ import { PairingTypes } from '@walletconnect/types';
 import { ModalDescription, ModalProps, ModalTitle } from '../atoms/ModalAtoms';
 import { useState } from 'react';
 import styled from 'styled-components';
-import { COLORS } from '../../styles';
+import { Breakpoints, COLORS } from '../../styles';
 import IconCloseSmall from '../../assets/img/icon-close-small.svg';
 import IconPlus from '../../assets/img/icon-plus.svg';
+import { respondDown } from '../../mixins';
 
 type PairingModalParams = {
     pairings: PairingTypes.Settled[];
@@ -15,6 +16,10 @@ type PairingModalParams = {
 
 const ModalBlock = styled.div`
     width: 52.3rem;
+
+    ${respondDown(Breakpoints.md)`
+        width: 100%;
+    `}
 `;
 
 const PairingBlock = styled.div`
@@ -29,12 +34,21 @@ const PairingBlock = styled.div`
     &:not(:last-child) {
         margin-bottom: 1.6rem;
     }
+
+    ${respondDown(Breakpoints.md)`
+        flex-direction: column;
+        align-items: start;
+    `}
 `;
 
 const AppIcon = styled.img`
     height: 4.8rem;
     width: 4.8rem;
     margin-right: 3.1rem;
+
+    ${respondDown(Breakpoints.md)`
+        margin-bottom: 1.2rem;
+    `}
 `;
 
 const AppInfoBlock = styled.div`
