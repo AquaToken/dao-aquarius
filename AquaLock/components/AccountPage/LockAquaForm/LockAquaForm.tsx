@@ -1,13 +1,13 @@
 import * as React from 'react';
+import { useState } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
-import { COLORS, FONT_FAMILY } from '../../../../common/styles';
-import { flexAllCenter, flexRowSpaceBetween } from '../../../../common/mixins';
+import { Breakpoints, COLORS, FONT_FAMILY } from '../../../../common/styles';
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
 import AccountService from '../../../../common/services/account.service';
 import Input from '../../../../common/basics/Input';
 import Aqua from '../../../../common/assets/img/aqua-logo-small.svg';
 import RangeInput from '../../../../common/basics/RangeInput';
 import { formatBalance, getDateString, roundToPrecision } from '../../../../common/helpers/helpers';
-import { useState } from 'react';
 import Button from '../../../../common/basics/Button';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -27,6 +27,10 @@ const Container = styled.div`
     flex-direction: column;
     //position: sticky;
     //top: 1rem;
+
+    ${respondDown(Breakpoints.md)`
+        box-shadow: unset;
+    `}
 `;
 
 const Title = styled.span`

@@ -1,12 +1,12 @@
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import useAuthStore from '../../../common/store/authStore/useAuthStore';
-import { useEffect, useState } from 'react';
 import { StellarService } from '../../../common/services/globalServices';
 import { MainRoutes } from '../../routes';
 import styled from 'styled-components';
-import { COLORS } from '../../../common/styles';
-import { commonMaxWidth } from '../../../common/mixins';
+import { Breakpoints, COLORS } from '../../../common/styles';
+import { commonMaxWidth, respondDown } from '../../../common/mixins';
 import AccountInfoBlock from './AccountInfoBlock/AccountInfoBlock';
 import PageLoader from '../../../common/basics/PageLoader';
 import AccountService from '../../../common/services/account.service';
@@ -27,6 +27,12 @@ const Container = styled.div`
     display: flex;
     flex-direction: row;
     justify-content: center;
+
+    ${respondDown(Breakpoints.md)`
+        flex-direction: column;
+        padding: 0 1.6rem;
+        gap: 1.6rem;
+    `}
 `;
 
 const LeftColumn = styled.div`
@@ -34,6 +40,10 @@ const LeftColumn = styled.div`
     flex-direction: column;
     margin-right: 6rem;
     flex: 1;
+
+    ${respondDown(Breakpoints.md)`
+        margin-right: 0;
+    `}
 `;
 
 const RightColumn = styled.div`
