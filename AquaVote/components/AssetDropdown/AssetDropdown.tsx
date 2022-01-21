@@ -29,6 +29,7 @@ const DropDown = styled.div<{ isOpen: boolean; disabled: boolean }>`
     box-sizing: border-box;
     pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
     font-size: 1.4rem;
+    background: ${COLORS.white};
 `;
 
 const DropdownSearch = styled.input<{ $disabled: boolean }>`
@@ -84,6 +85,7 @@ const DropdownList = styled.div`
     transform-origin: top center;
     max-height: 24rem;
     overflow-y: scroll;
+    z-index: 1;
 
     &::-webkit-scrollbar {
         width: 0.5rem;

@@ -1,12 +1,18 @@
 import * as React from 'react';
-import styled from 'styled-components';
 import { useState } from 'react';
+import styled from 'styled-components';
 import ProposalCreation, { DAY } from './ProposalCreation/ProposalCreation';
 import ProposalScreen from '../VoteProposalPage/Proposal/ProposalScreen';
 import useAuthStore from '../../../common/store/authStore/useAuthStore';
+import { respondDown } from '../../../common/mixins';
+import { Breakpoints, COLORS } from '../../../common/styles';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
+
+    ${respondDown(Breakpoints.md)`
+         background: ${COLORS.lightGray};
+    `}
 `;
 
 export enum statePage {

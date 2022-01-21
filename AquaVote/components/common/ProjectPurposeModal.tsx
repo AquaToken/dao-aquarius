@@ -4,10 +4,15 @@ import styled from 'styled-components';
 import Button from '../../../common/basics/Button';
 import Checkbox from '../../../common/basics/Checkbox';
 import { useEffect, useState } from 'react';
-import { COLORS } from '../../../common/styles';
+import { Breakpoints, COLORS } from '../../../common/styles';
+import { respondDown } from '../../../common/mixins';
 
 const Container = styled.div`
     width: 52.8rem;
+
+    ${respondDown(Breakpoints.md)`
+        width: 100%;
+    `}
 `;
 
 const CheckboxBlock = styled.div`

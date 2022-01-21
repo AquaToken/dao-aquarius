@@ -1,7 +1,9 @@
 import * as React from 'react';
+import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import Sidebar from '../Sidebar/Sidebar';
 import ArrowLeft from '../../../../common/assets/img/icon-arrow-left.svg';
+import ArrowDown from '../../../../common/assets/img/icon-arrow-down.svg';
 import ExternalIcon from '../../../../common/assets/img/icon-external-link.svg';
 import AccountViewer from '../AccountViewer/AccountViewer';
 import { commonMaxWidth, flexAllCenter, respondDown } from '../../../../common/mixins';
@@ -13,12 +15,16 @@ import { getDateString } from '../../../../common/helpers/helpers';
 import { Proposal } from '../../../api/types';
 import { statePage } from '../../ProposalCreationPage/ProposalCreationPage';
 import ExternalLink from '../../../../common/basics/ExternalLink';
-import { useEffect } from 'react';
+import { useIsOnViewport } from '../../../../common/hooks/useIsOnViewport';
 
 const ProposalQuestion = styled.div`
     width: 100%;
     padding: 4rem 0 11.7rem;
     background-color: ${COLORS.lightGray};
+
+    ${respondDown(Breakpoints.md)`
+        padding: 1.6rem 0;
+    `}
 `;
 
 const BackTo = styled.div`
@@ -38,6 +44,7 @@ const BackButton = styled(Link)`
     border: none;
     cursor: pointer;
     transition: all ease 200ms;
+    z-index: 1;
 
     &:hover {
         background-color: ${COLORS.lightGray};
@@ -53,12 +60,22 @@ const QuestionText = styled.h3`
     line-height: 6.4rem;
     margin-top: 2.3rem;
     color: ${COLORS.titleText};
+
+    ${respondDown(Breakpoints.md)`
+        font-size: 4rem;
+        line-height: 4.5rem;
+        margin-bottom: 3.2rem;
+    `}
 `;
 
 const ProposalSection = styled.div`
     padding: 6rem 0 0 4rem;
     width: 100%;
     ${commonMaxWidth};
+
+    ${respondDown(Breakpoints.md)`
+        padding: 3.2rem 1.6rem 0;
+    `}
 `;
 
 const LeftContent = styled.div`
@@ -82,17 +99,35 @@ const DescriptionText = styled.div`
     color: ${COLORS.descriptionText};
     opacity: 0.7;
     white-space: pre-wrap;
+
+    ${respondDown(Breakpoints.md)`
+        word-break: break-word;
+    `}
 `;
 
 const DataDetails = styled.div`
     display: flex;
     justify-content: space-between;
     margin-top: 3.2rem;
+
+    ${respondDown(Breakpoints.md)`
+        flex-direction: column;
+    `}
 `;
 
 const Column = styled.div`
     display: flex;
     flex-direction: column;
+
+    ${respondDown(Breakpoints.md)`
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        
+        &:not(:last-child) {
+            margin-bottom: 0.8rem;
+        }
+    `}
 `;
 
 const DetailsTitle = styled.div`
@@ -106,6 +141,10 @@ const DetailsDescription = styled.div`
     font-size: 1.6rem;
     line-height: 2.4rem;
     color: ${COLORS.paragraphText};
+
+    ${respondDown(Breakpoints.md)`
+        margin-top: 0;
+    `}
 `;
 
 const ExternalButton = styled.div`
@@ -121,6 +160,28 @@ const AccountBlock = styled.div`
 const viewOnStellarExpert = (account: string) => {
     window.open(`https://stellar.expert/explorer/public/account/${account}`, '_blank');
 };
+
+const ScrollToSidebarButton = styled.div`
+    display: none;
+    position: fixed;
+    justify-content: space-between;
+    align-items: center;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: ${COLORS.white};
+    box-shadow: 0 -0.5rem 1rem rgba(0, 6, 54, 0.06);
+    border-radius: 1rem 1rem 0 0;
+    padding: 2.4rem 1.6rem;
+    font-size: 1.6rem;
+    line-height: 2.4rem;
+    font-weight: bold;
+    cursor: pointer;
+
+    ${respondDown(Breakpoints.md)`
+        display: flex;
+    `}
+`;
 
 const ProposalScreen = ({
     proposal,
@@ -148,9 +209,17 @@ const ProposalScreen = ({
         window.scrollTo(0, 0);
     }, []);
 
+    const ref = useRef(null);
+    const isEnd = new Date() >= new Date(proposal.end_at);
+
+    const scrollToSidebar = () => {
+        ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+
+    const hideBottomBlock = useIsOnViewport(ref);
+
     return (
         <>
-            <Sidebar isTemplate={isTemplate} proposal={proposal} />
             <ProposalQuestion>
                 <ProposalSection>
                     <LeftContent>
@@ -233,6 +302,13 @@ const ProposalScreen = ({
                         <Votes />
                     </LeftContent>
                 </ProposalSection>
+            )}
+            <Sidebar isTemplate={isTemplate} proposal={proposal} ref={ref} />
+            {!hideBottomBlock && (
+                <ScrollToSidebarButton onClick={() => scrollToSidebar()}>
+                    <span>{isEnd ? 'Go to the result' : 'Go to voting'}</span>
+                    <ArrowDown />
+                </ScrollToSidebarButton>
             )}
         </>
     );

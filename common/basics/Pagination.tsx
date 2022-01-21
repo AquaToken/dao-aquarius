@@ -1,10 +1,10 @@
 import * as React from 'react';
-import styled, { css } from 'styled-components';
-import { COLORS } from '../styles';
 import { useEffect, useMemo, useState } from 'react';
+import styled, { css } from 'styled-components';
+import { Breakpoints, COLORS } from '../styles';
 import Left from '../assets/img/icon-arrow-left.svg';
 import Right from '../assets/img/icon-arrow-right.svg';
-import { flexAllCenter } from '../mixins';
+import { flexAllCenter, respondDown } from '../mixins';
 
 const Container = styled.div`
     width: 100%;
@@ -20,6 +20,11 @@ const Container = styled.div`
         content: '';
         flex: 1;
     }
+
+    ${respondDown(Breakpoints.md)`
+        flex-direction: column-reverse;
+        align-items: center;
+    `}
 `;
 
 const PaginationState = styled.div`
@@ -28,6 +33,10 @@ const PaginationState = styled.div`
 
 const PaginationControls = styled.div`
     ${flexAllCenter};
+
+    ${respondDown(Breakpoints.md)`
+        margin-bottom: 1.6rem;
+    `}
 `;
 
 const arrowStyle = css`

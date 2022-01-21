@@ -1,14 +1,19 @@
 import * as React from 'react';
+import { useState } from 'react';
 import { ModalDescription, ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
 import Checkbox from '../../../../common/basics/Checkbox';
 import styled from 'styled-components';
-import { COLORS } from '../../../../common/styles';
+import { Breakpoints, COLORS } from '../../../../common/styles';
 import Button from '../../../../common/basics/Button';
-import { useState } from 'react';
 import ExternalLink from '../../../../common/basics/ExternalLink';
+import { respondDown } from '../../../../common/mixins';
 
 const Container = styled.div`
     width: 52.8rem;
+
+    ${respondDown(Breakpoints.md)`
+        width: 100%;
+    `}
 `;
 
 const LinksBlock = styled.div`

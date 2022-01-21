@@ -6,8 +6,8 @@ import {
     ModalTitle,
 } from '../../../../common/modals/atoms/ModalAtoms';
 import styled from 'styled-components';
-import { flexAllCenter, flexRowSpaceBetween } from '../../../../common/mixins';
-import { COLORS } from '../../../../common/styles';
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
+import { Breakpoints, COLORS } from '../../../../common/styles';
 import useAuthStore from '../../../../common/store/authStore/useAuthStore';
 import Button from '../../../../common/basics/Button';
 import Pair from '../../common/Pair';
@@ -29,10 +29,18 @@ const ContentRow = styled.div`
     color: ${COLORS.paragraphText};
     padding-bottom: 2.6rem;
     border-bottom: 0.1rem dashed ${COLORS.gray};
+
+    ${respondDown(Breakpoints.md)`
+         width: 100%;
+    `}
 `;
 
 const Description = styled(ModalDescription)`
     width: 52.8rem;
+
+    ${respondDown(Breakpoints.md)`
+           width: 100%;
+      `}
 `;
 
 const Cost = styled.div`
@@ -214,6 +222,9 @@ const CreatePairModal = ({
                             }}
                             onMouseLeave={() => {
                                 setShowTooltip(false);
+                            }}
+                            onTouchStart={() => {
+                                setShowTooltip((prevState) => !prevState);
                             }}
                         >
                             <Info />

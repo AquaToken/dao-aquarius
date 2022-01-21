@@ -7,8 +7,8 @@ const IdenticonBlock = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 4.8rem;
-    height: 4.8rem;
+    width: 100%;
+    height: 100%;
     background: ${COLORS.white};
     border: 0.2rem solid ${COLORS.lightGray};
     box-sizing: border-box;
@@ -16,8 +16,8 @@ const IdenticonBlock = styled.div`
 `;
 
 const IdenticonImage = styled.img`
-    height: 2.4rem;
-    width: 2.4rem;
+    height: 50%;
+    width: 50%;
 `;
 
 const Identicon = ({ pubKey }: { pubKey: string }): JSX.Element => {

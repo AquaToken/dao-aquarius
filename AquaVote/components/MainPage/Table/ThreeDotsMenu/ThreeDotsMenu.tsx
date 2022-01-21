@@ -32,7 +32,7 @@ const Menu = styled.div`
     position: absolute;
     height: 5.2rem;
     top: calc(100% + 1.2rem);
-    right: -3.5rem;
+    right: -2.5rem;
     box-shadow: 0 0.2rem 1rem rgba(0, 6, 54, 0.06);
     border-radius: 5px;
     padding: 0 2.3rem;
@@ -50,7 +50,7 @@ const Menu = styled.div`
     }
 `;
 
-const ThreeDotsMenu = ({ pair, disabled }) => {
+const ThreeDotsMenu = ({ pair, disabled, ...props }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     const toggleMenu = () => {
@@ -78,7 +78,7 @@ const ThreeDotsMenu = ({ pair, disabled }) => {
     };
 
     return (
-        <Wrapper onClick={() => toggleMenu()} ref={menuRef}>
+        <Wrapper onClick={() => toggleMenu()} ref={menuRef} {...props}>
             <Button disabled={disabled}>
                 <ThreeDots />
             </Button>

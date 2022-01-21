@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useEffect } from 'react';
 import styled from 'styled-components';
 import BackgroundImageLeft from '../../../common/assets/img/background-left.svg';
 import BackgroundImageRight from '../../../common/assets/img/background-right.svg';
@@ -12,7 +13,6 @@ import { useHistory } from 'react-router-dom';
 import useAuthStore from '../../../common/store/authStore/useAuthStore';
 import { ModalService } from '../../../common/services/globalServices';
 import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
-import { useEffect } from 'react';
 import PageLoader from '../../../common/basics/PageLoader';
 import ExternalLink from '../../../common/basics/ExternalLink';
 
@@ -39,6 +39,13 @@ const BackgroundLeft = styled(BackgroundImageLeft)`
     top: 0;
     left: 0;
     height: 100%;
+
+    ${respondDown(Breakpoints.md)`
+          height: unset;
+          width: 40%;
+          top: 50%;
+          transform: translateY(-50%);
+      `}
 `;
 
 const BackgroundRight = styled(BackgroundImageRight)`
@@ -46,6 +53,13 @@ const BackgroundRight = styled(BackgroundImageRight)`
     top: 0;
     right: 0;
     height: 100%;
+
+    ${respondDown(Breakpoints.md)`
+          height: unset;
+          width: 40%;
+          top: 50%;
+          transform: translateY(-50%);
+      `}
 `;
 
 const Title = styled.h2`
@@ -89,6 +103,11 @@ const Description = styled.div`
 const ProposalsBlock = styled.div`
     padding: 8.5rem 4rem 0;
     ${commonMaxWidth};
+
+    ${respondDown(Breakpoints.md)`
+        padding: 5.5rem 1.6rem 0; 
+        background: ${COLORS.lightGray};
+    `}
 `;
 
 const TitleBlock = styled.div`
@@ -96,6 +115,17 @@ const TitleBlock = styled.div`
     justify-content: space-between;
     margin-bottom: 4.8rem;
     align-items: center;
+
+    ${respondDown(Breakpoints.md)`
+        flex-direction: column-reverse;
+    `}
+`;
+
+const StyledButton = styled(Button)`
+    ${respondDown(Breakpoints.md)`
+        width: 100%;
+        margin-bottom: 5.5rem;
+    `}
 `;
 
 const ProposalsTitle = styled.h3`
@@ -120,6 +150,11 @@ const About = styled.div`
     color: ${COLORS.descriptionText};
 
     opacity: 0.7;
+
+    ${respondDown(Breakpoints.md)`
+         margin-top: 0;
+         opacity: 1;
+    `}
 `;
 
 const PlusIcon = styled(Plus)`
@@ -162,11 +197,11 @@ const MainPage = (): JSX.Element => {
             <ProposalsBlock>
                 <TitleBlock>
                     <ProposalsTitle>Proposals</ProposalsTitle>
-                    <Button onClick={() => handleClick()}>
+                    <StyledButton onClick={() => handleClick()}>
                         <>
                             Create proposal <PlusIcon />
                         </>
-                    </Button>
+                    </StyledButton>
                 </TitleBlock>
                 {proposals.map((proposal) => {
                     return (

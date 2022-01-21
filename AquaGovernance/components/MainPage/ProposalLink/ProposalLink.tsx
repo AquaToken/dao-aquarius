@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { COLORS } from '../../../../common/styles';
+import { Breakpoints, COLORS } from '../../../../common/styles';
 import ArrowRight from '../../../../common/assets/img/icon-arrow-right.svg';
 import SuccessIcon from '../../../../common/assets/img/icon-success.svg';
 import { getDateString, roundToPrecision } from '../../../../common/helpers/helpers';
@@ -8,6 +8,7 @@ import { Link, LinkProps } from 'react-router-dom';
 import { ProposalSimple } from '../../../api/types';
 import Fail from '../../../../common/assets/img/icon-fail.svg';
 import { MINIMUM_APPROVAL_PERCENT } from '../MainPage';
+import { respondDown } from '../../../../common/mixins';
 
 const ProposalLinkBlock = styled(Link)`
     display: flex;
@@ -22,12 +23,30 @@ const ProposalLinkBlock = styled(Link)`
     &:hover {
         color: ${COLORS.purple};
     }
+
+    ${respondDown(Breakpoints.md)`
+         flex-direction: column;
+         border-bottom: none;
+         background: ${COLORS.white};
+         border-radius: 0.5rem;
+         padding: 2.7rem 1.6rem 1.6rem;
+         text-align: center;
+         
+         &:not(:last-child) {
+            margin-bottom: 1.6rem;
+         }
+    `}
 `;
 
 const Content = styled.div`
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+
+    ${respondDown(Breakpoints.md)`
+        align-items: center;
+        margin-bottom: 3.2rem;
+    `}
 `;
 const Label = styled.div`
     font-weight: bold;
@@ -78,6 +97,12 @@ const Success = styled(SuccessIcon)`
 const Rate = styled.span<{ isCancelled: boolean }>`
     color: ${({ isCancelled }) => (isCancelled ? COLORS.pinkRed : COLORS.grayText)};
     margin-left: 0.5rem;
+`;
+
+const Arrow = styled(ArrowRight)`
+    ${respondDown(Breakpoints.md)`
+        display: none;
+    `}
 `;
 
 interface ProposalLinkProps extends LinkProps {
@@ -148,7 +173,7 @@ const getRightBlock = (proposal: ProposalSimple) => {
     const isEnd = new Date() >= new Date(dateEnd);
 
     if (!isEnd) {
-        return <ArrowRight />;
+        return <Arrow />;
     }
 
     const dateString = getDateString(new Date(dateEnd).getTime());

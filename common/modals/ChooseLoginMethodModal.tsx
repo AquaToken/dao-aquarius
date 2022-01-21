@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ModalProps, ModalTitle } from './atoms/ModalAtoms';
 import styled from 'styled-components';
-import { COLORS } from '../styles';
+import { Breakpoints, COLORS } from '../styles';
 import ArrowRightIcon from '../assets/img/icon-arrow-right.svg';
 import KeyIcon from '../assets/img/icon-key.svg';
 import WalletConnectLogo from '../assets/img/wallet-connect-logo.svg';
@@ -10,6 +10,7 @@ import Stellar from '../assets/img/xlm-logo.svg';
 import { LoginTypes } from '../store/authStore/types';
 import LoginWithSecret from './LoginWithSecret';
 import { ModalService, WalletConnectService } from '../services/globalServices';
+import { respondDown } from '../mixins';
 import LoginWithPublic from './LoginWithPublic';
 
 const LoginMethod = styled.div`
@@ -32,6 +33,10 @@ const LoginMethod = styled.div`
     &:hover {
         padding-right: 1.9rem;
     }
+
+    ${respondDown(Breakpoints.md)`
+        width: 100%;
+    `}
 `;
 
 const LoginMethodWithDescription = styled.div`
@@ -55,10 +60,12 @@ const LoginMethodDescription = styled.div`
 
 const ArrowRight = styled(ArrowRightIcon)`
     margin-left: auto;
+    min-width: 1.6rem;
 `;
 
 const StellarLogo = styled(Stellar)`
     width: 3.7rem;
+    min-width: 3.7rem;
 `;
 
 const WalletConnectLogoRelative = styled.div`

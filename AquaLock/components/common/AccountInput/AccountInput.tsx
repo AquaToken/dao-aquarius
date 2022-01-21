@@ -1,11 +1,12 @@
 import * as React from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
-import { COLORS } from '../../../../common/styles';
+import { Breakpoints, COLORS } from '../../../../common/styles';
 import Input from '../../../../common/basics/Input';
 import Button from '../../../../common/basics/Button';
-import { useState } from 'react';
 import { StellarService, ToastService } from '../../../../common/services/globalServices';
 import { useHistory } from 'react-router-dom';
+import { respondDown } from '../../../../common/mixins';
 
 const Container = styled.div<{ isModal }>`
     display: flex;
@@ -15,6 +16,12 @@ const Container = styled.div<{ isModal }>`
     border-radius: 1rem;
     padding: ${({ isModal }) => (isModal ? '0' : '4.8rem')};
     width: 48rem;
+
+    ${respondDown(Breakpoints.md)`
+        width: 100%;
+        box-shadow: unset;
+        padding: 4rem 1.6rem;
+    `}
 `;
 
 const InputBlock = styled.div`
@@ -62,9 +69,7 @@ const AccountInput = ({ params, close }: { params?: any; close?: any }) => {
         <Container isModal={isModal}>
             <InputBlock>
                 <Title>{isModal ? 'Switch account' : 'Lock AQUA'}</Title>
-                <Description>
-                    Track your portfolio and manage AQUA locks.
-                </Description>
+                <Description>Track your portfolio and manage AQUA locks.</Description>
                 <Input
                     placeholder="Enter your public key (starts with G)"
                     value={value}

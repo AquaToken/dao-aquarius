@@ -54,6 +54,10 @@ const Background = styled.div`
     max-height: 40vh;
     overflow: hidden;
     position: relative;
+
+    ${respondDown(Breakpoints.md)`
+        padding: 10% 1.6rem;
+    `}
 `;
 
 const BackgroundLeft = styled(BackgroundImageLeft)`
@@ -61,6 +65,13 @@ const BackgroundLeft = styled(BackgroundImageLeft)`
     top: 0;
     left: 0;
     height: 100%;
+
+    ${respondDown(Breakpoints.md)`
+        height: unset;
+        width: 40%;
+        top: 50%;
+        transform: translateY(-50%);
+    `}
 `;
 
 const BackgroundRight = styled(BackgroundImageRight)`
@@ -68,6 +79,13 @@ const BackgroundRight = styled(BackgroundImageRight)`
     top: 0;
     right: 0;
     height: 100%;
+
+    ${respondDown(Breakpoints.md)`
+         height: unset;
+         width: 40%;
+         top: 50%;
+         transform: translateY(-50%);
+     `}
 `;
 
 const Title = styled.h2`
@@ -113,12 +131,17 @@ const ExploreBlock = styled.div<{ hasChosenPairs: boolean }>`
     padding: 0 4rem;
     ${commonMaxWidth};
     padding-bottom: ${({ hasChosenPairs }) => (hasChosenPairs ? '0' : '6.6rem')};
+
+    ${respondDown(Breakpoints.md)`
+        padding: 0 1.6rem;
+        background: ${COLORS.lightGray};
+    `}
 `;
 
 const PairSearch = styled.div`
     margin-top: -5.5rem;
     height: 17rem;
-    background: #ffffff;
+    background: ${COLORS.white};
     box-shadow: 0 20px 30px rgba(0, 6, 54, 0.06);
     border-radius: 5px;
     display: flex;
@@ -126,11 +149,25 @@ const PairSearch = styled.div`
     justify-content: center;
     padding: 0 4.8rem;
     box-sizing: border-box;
+
+    ${respondDown(Breakpoints.md)`
+        margin-top: 3rem;
+        flex-direction: column;
+        box-shadow: unset;
+        padding: 0;
+        margin-bottom: 8rem; 
+        background: ${COLORS.transparent};
+    `}
 `;
 
 const ArrowsIcon = styled(Arrows)`
     margin: 0 3.6rem;
     min-width: 1.6rem;
+
+    ${respondDown(Breakpoints.md)`
+        margin: 1.8rem 0;
+        min-height: 1.6rem;
+    `}
 `;
 
 const TooltipFullWidth = styled(Tooltip)`
@@ -149,6 +186,13 @@ const TooltipContent = styled.div`
     span:first-child {
         margin-right: 1.2rem;
     }
+
+    ${respondDown(Breakpoints.md)`
+        width: 25rem;
+        font-size: 1.2rem;
+        line-height: 1.4rem;
+        padding: 0.3rem;
+    `}
 `;
 
 const Header = styled.header`
@@ -156,6 +200,11 @@ const Header = styled.header`
     //justify-content: space-between;
     align-items: center;
     margin: 5.4rem 0;
+
+    ${respondDown(Breakpoints.md)`
+         flex-direction: column-reverse;
+         margin-bottom: 2.4rem;
+    `}
 `;
 
 const TitleHeader = styled.h3`
@@ -164,6 +213,23 @@ const TitleHeader = styled.h3`
     line-height: 6.4rem;
     color: ${COLORS.titleText};
     margin-right: 3.6rem;
+
+    ${respondDown(Breakpoints.md)`
+         display: none;
+    `}
+`;
+
+const ToggleGroupStyled = styled(ToggleGroup)`
+    ${respondDown(Breakpoints.md)`
+        width: 100%;
+        justify-content: space-evenly;
+        margin-top: 1.6rem;
+        
+        label {
+            padding: 0.8rem 0;
+            width: 100%;
+        }
+    `}
 `;
 
 const StatusUpdate = styled.div`
@@ -172,6 +238,23 @@ const StatusUpdate = styled.div`
     line-height: 2rem;
     color: ${COLORS.grayText};
     white-space: nowrap;
+
+    ${respondDown(Breakpoints.md)`
+         text-align: center;
+         margin-left: 0;
+    `}
+`;
+
+const Dot = styled.span`
+    ${respondDown(Breakpoints.md)`
+          display: none;
+    `}
+`;
+
+const LastUpdated = styled.span`
+    ${respondDown(Breakpoints.md)`
+            display: block;
+    `}
 `;
 
 const SearchEnabled = styled.div`
@@ -184,6 +267,19 @@ const CreatePair = styled.div`
     ${flexRowSpaceBetween};
     height: 9.6rem;
     margin-bottom: 6rem;
+
+    ${respondDown(Breakpoints.md)`
+        flex-direction: column;
+        background: ${COLORS.white};
+        border-radius: 0.5rem;
+        margin-bottom: 1.6rem;
+        padding: 2.7rem 1.6rem 8rem;
+        height: unset;
+        
+        Button {
+            margin-top: 3.2rem;
+        }
+    `}
 `;
 
 const BeFirst = styled.div`
@@ -597,7 +693,7 @@ const MainPage = (): JSX.Element => {
                 </PairSearch>
                 <Header ref={headerRef}>
                     <TitleHeader>Explore</TitleHeader>
-                    <ToggleGroup
+                    <ToggleGroupStyled
                         value={sort}
                         onChange={(option) => changeSort(option)}
                         options={options}
@@ -605,17 +701,22 @@ const MainPage = (): JSX.Element => {
                     {Boolean(pairs.length && pairs.some((pair) => Boolean(pair.timestamp))) && (
                         <StatusUpdate>
                             {totalStats ? (
-                                `${formatBalance(
-                                    totalStats.votes_value_sum,
-                                    true,
-                                )} AQUA total in votes · `
+                                <>
+                                    <span>
+                                        {formatBalance(totalStats.votes_value_sum, true)} AQUA total
+                                        in votes
+                                    </span>
+                                    <Dot>{' · '}</Dot>
+                                </>
                             ) : (
                                 <DotsLoader />
                             )}
-                            Last updated{' '}
-                            {getTimeAgoValue(
-                                pairs.find((pair) => Boolean(pair.timestamp)).timestamp,
-                            )}
+                            <LastUpdated>
+                                Last updated{' '}
+                                {getTimeAgoValue(
+                                    pairs.find((pair) => Boolean(pair.timestamp)).timestamp,
+                                )}
+                            </LastUpdated>
                         </StatusUpdate>
                     )}
                 </Header>
@@ -629,7 +730,7 @@ const MainPage = (): JSX.Element => {
                 )}
                 {searchBase && searchCounter && !pairs.length && (
                     <CreatePair>
-                        <Pair base={searchBase} counter={searchCounter} />
+                        <Pair base={searchBase} counter={searchCounter} mobileVerticalDirections />
                         <Tooltip
                             content={
                                 <BeFirst>

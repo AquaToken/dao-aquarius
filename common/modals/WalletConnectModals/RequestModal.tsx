@@ -4,10 +4,10 @@ import { ModalDescription, ModalProps, ModalTitle } from '../atoms/ModalAtoms';
 import Button from '../../basics/Button';
 import styled from 'styled-components';
 import { IconFail, IconPending, IconSuccess } from '../../basics/Icons';
-import { flexAllCenter } from '../../mixins';
+import { flexAllCenter, respondDown } from '../../mixins';
 import DotsLoader from '../../basics/DotsLoader';
 import { BuildSignAndSubmitStatuses } from '../../services/wallet-connect.service';
-import { COLORS } from '../../styles';
+import { Breakpoints, COLORS } from '../../styles';
 import { useIsMounted } from '../../hooks/useIsMounted';
 
 enum TX_STATUSES {
@@ -30,6 +30,10 @@ const IconContainer = styled.div`
     width: 50rem;
     background-color: ${COLORS.lightGray};
     ${flexAllCenter};
+
+    ${respondDown(Breakpoints.md)`
+        width: unset;
+    `}
 `;
 
 const Status = styled.div`
@@ -42,6 +46,11 @@ const Status = styled.div`
 const RightButton = styled(Button)`
     margin-top: 3.2rem;
     margin-left: auto;
+
+    ${respondDown(Breakpoints.md)`
+          margin-left: unset;
+          width: 100%;
+    `}
 `;
 
 interface RequestModalProps {

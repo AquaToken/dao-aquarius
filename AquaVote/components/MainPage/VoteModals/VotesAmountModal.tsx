@@ -6,8 +6,8 @@ import {
     ModalTitle,
 } from '../../../../common/modals/atoms/ModalAtoms';
 import styled from 'styled-components';
-import { flexAllCenter, flexRowSpaceBetween } from '../../../../common/mixins';
-import { COLORS } from '../../../../common/styles';
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
+import { Breakpoints, COLORS } from '../../../../common/styles';
 import Aqua from '../../../../common/assets/img/aqua-logo-small.svg';
 import useAuthStore from '../../../../common/store/authStore/useAuthStore';
 import Input from '../../../../common/basics/Input';
@@ -27,6 +27,10 @@ export const ContentRow = styled.div`
     ${flexRowSpaceBetween};
     width: 52.8rem;
     margin-top: 3rem;
+
+    ${respondDown(Breakpoints.md)`
+        width: 100%;
+    `}
 `;
 
 export const Label = styled.span`
@@ -104,9 +108,15 @@ const PairBlock = styled.div`
     font-size: 1.6rem;
     line-height: 2.8rem;
     color: ${COLORS.paragraphText};
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    display: grid;
+    grid-template-areas: 'Pair Input Close';
+    grid-template-columns: 1fr 1fr 0.1fr;
+
+    ${respondDown(Breakpoints.md)`
+         grid-template-areas: 'Pair Close' 'Input Input';
+         grid-row-gap: 1.6rem;
+         grid-template-columns: 1fr 0.1fr;
+    `}
 `;
 
 const AssetsInfo = styled.div`
@@ -115,20 +125,31 @@ const AssetsInfo = styled.div`
     span {
         margin-left: 0.8rem;
     }
+    grid-area: Pair;
 `;
 
 const CloseButton = styled.button`
     ${flexAllCenter};
     border: none;
     cursor: pointer;
-    padding: 1.2rem;
+    height: 4rem;
+    width: 4rem;
     background-color: ${COLORS.lightGray};
     border-radius: 1rem;
+    grid-area: Close;
+    justify-self: end;
 `;
 
 const StyledInput = styled(Input)`
     width: auto;
     margin: 0 1.2rem 0 auto;
+    grid-area: Input;
+    justify-self: end;
+
+    ${respondDown(Breakpoints.md)`
+          width: 100%;
+          margin: 0;
+    `}
 `;
 
 const TotalAmountRow = styled.div`
@@ -163,6 +184,10 @@ const Scrollable = styled.div<{ scrollDisabled: boolean }>`
     padding: 0 1rem;
     max-height: calc(100vh - 20rem);
     min-height: 47rem;
+
+    ${respondDown(Breakpoints.md)`
+        max-height: calc(100vh - 16rem);
+    `};
 
     &::-webkit-scrollbar {
         width: 0.5rem;
