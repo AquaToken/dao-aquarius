@@ -110,6 +110,11 @@ const Link = styled.div`
     ${flexAllCenter};
 `;
 
+const LabelWrap = styled.div`
+    padding-top: 1rem;
+    margin-top: -1rem;
+`;
+
 const Label = styled.div<{ isRed?: boolean }>`
     height: 1.6rem;
     padding: 0 0.4rem;
@@ -130,6 +135,10 @@ const TooltipInner = styled.div`
     white-space: pre-line;
     font-size: 1.4rem;
     line-height: 2rem;
+
+    a {
+        margin-left: 0.5rem;
+    }
 `;
 
 const assetToString = (asset: StellarSdk.Asset) => {
@@ -176,9 +185,10 @@ const Pair = ({
     const hasCounterInfo = isCounterNative || assetsInfo.has(getAssetString(counter));
     const counterInfo = isCounterNative ? LumenInfo : assetsInfo.get(getAssetString(counter));
 
-    const authRequired = counterInfo?.auth_required || baseInfo?.asset_string;
+    const authRequired = counterInfo?.auth_required || baseInfo?.auth_required;
 
     const [showTooltip, setShowTooltip] = useState(false);
+    const [showAuthTooltip, setShowAuthTooltip] = useState(false);
 
     return (
         <Wrapper
@@ -222,22 +232,31 @@ const Pair = ({
                     {authRequired && (
                         <Tooltip
                             content={
-                                <TooltipInner>
-                                    In this pair there is an asset in which the "auth required" flag
-                                    is set. Voting for this pair is prohibited.
+                                <TooltipInner
+                                    onMouseEnter={() => setShowAuthTooltip(true)}
+                                    onMouseLeave={() => setShowAuthTooltip(false)}
+                                >
+                                    “Authorization required” flag is enabled for one asset from the
+                                    pair. With this flag set, an issuer can grant a limited
+                                    permissions to transact with its asset.
+                                    <a
+                                        rel="noopener noreferrer"
+                                        target="_blank"
+                                        href="https://developers.stellar.org/docs/glossary/accounts/#flagshttps://developers.stellar.org/docs/glossary/accounts/#flags"
+                                    >
+                                        More details.
+                                    </a>
                                 </TooltipInner>
                             }
                             position={TOOLTIP_POSITION.top}
-                            isShow={showTooltip}
+                            isShow={showAuthTooltip}
                             isError
+                            onMouseEnter={() => setShowAuthTooltip(true)}
+                            onMouseLeave={() => setShowAuthTooltip(false)}
                         >
-                            <Label
-                                isRed
-                                onMouseEnter={() => setShowTooltip(true)}
-                                onMouseLeave={() => setShowTooltip(false)}
-                            >
-                                auth required
-                            </Label>
+                            <LabelWrap>
+                                <Label isRed>auth required</Label>
+                            </LabelWrap>
                         </Tooltip>
                     )}
                     <Link onClick={() => viewOnStellarX(baseInstance, counterInstance)}>

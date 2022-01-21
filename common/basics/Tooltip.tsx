@@ -92,6 +92,14 @@ const TooltipBody = styled.div<{ position: TOOLTIP_POSITION; isError?: boolean }
         (position === TOOLTIP_POSITION.right && TooltipRight(isError))}
 `;
 
+interface TooltipProps extends React.DOMAttributes<HTMLDivElement> {
+    children: React.ReactNode;
+    content: React.ReactNode;
+    position: TOOLTIP_POSITION;
+    isShow: boolean;
+    isError?: boolean;
+}
+
 const Tooltip = ({
     children,
     content,
@@ -99,13 +107,7 @@ const Tooltip = ({
     isShow,
     isError,
     ...props
-}: {
-    children: React.ReactNode;
-    content: React.ReactNode;
-    position: TOOLTIP_POSITION;
-    isShow: boolean;
-    isError?: boolean;
-}): JSX.Element => {
+}: TooltipProps): JSX.Element => {
     return (
         <ChildrenBlock {...props}>
             {children}
