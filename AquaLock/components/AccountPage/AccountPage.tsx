@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import useAuthStore from '../../../common/store/authStore/useAuthStore';
 import { StellarService } from '../../../common/services/globalServices';
@@ -13,6 +13,8 @@ import AccountService from '../../../common/services/account.service';
 import Portfolio from './Portfolio/Portfolio';
 import CurrentLocks from './CurrentLocks/CurrentLocks';
 import LockAquaForm from './LockAquaForm/LockAquaForm';
+import { useIsOnViewport } from '../../../common/hooks/useIsOnViewport';
+import ArrowDown from '../../../common/assets/img/icon-arrow-down.svg';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -49,6 +51,29 @@ const LeftColumn = styled.div`
 const RightColumn = styled.div`
     flex: 1;
     max-width: 48rem;
+`;
+
+const ScrollToSidebarButton = styled.div`
+    display: none;
+    position: fixed;
+    justify-content: space-between;
+    align-items: center;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: ${COLORS.white};
+    box-shadow: 0 -0.5rem 1rem rgba(0, 6, 54, 0.06);
+    border-radius: 1rem 1rem 0 0;
+    padding: 2.4rem 1.6rem;
+    font-size: 1.6rem;
+    line-height: 2.4rem;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 450;
+
+    ${respondDown(Breakpoints.md)`
+        display: flex;
+    `}
 `;
 
 const AccountPage = () => {
@@ -104,6 +129,13 @@ const AccountPage = () => {
         setUpdateIndex((prevState) => prevState + 1);
     };
 
+    const fromRef = useRef(null);
+    const hideBottomBlock = useIsOnViewport(fromRef);
+
+    const scrollToForm = () => {
+        fromRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+
     if (!currentAccount || ammAquaBalance === null || locks === null) {
         return (
             <Container>
@@ -129,9 +161,19 @@ const AccountPage = () => {
                 </LeftColumn>
 
                 <RightColumn>
-                    <LockAquaForm account={currentAccount} updateAccount={updateAccount} />
+                    <LockAquaForm
+                        account={currentAccount}
+                        updateAccount={updateAccount}
+                        ref={fromRef}
+                    />
                 </RightColumn>
             </Container>
+            {!hideBottomBlock && (
+                <ScrollToSidebarButton onClick={() => scrollToForm()}>
+                    <span>Lock AQUA</span>
+                    <ArrowDown />
+                </ScrollToSidebarButton>
+            )}
         </MainBlock>
     );
 };

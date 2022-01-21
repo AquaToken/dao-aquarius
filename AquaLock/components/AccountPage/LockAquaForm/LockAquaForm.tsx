@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { forwardRef, RefObject, useState } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import { Breakpoints, COLORS, FONT_FAMILY } from '../../../../common/styles';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
@@ -92,6 +92,7 @@ const ClaimBack = styled.div`
     padding-bottom: 3.2rem;
     color: ${COLORS.grayText};
     border-bottom: 0.1rem dashed ${COLORS.gray};
+    margin-bottom: 3.2rem;
 `;
 
 const ClaimBackDate = styled.span`
@@ -162,158 +163,163 @@ const GlobalStyle = createGlobalStyle`
     }
 `;
 
-const LockAquaForm = ({
-    account,
-    updateAccount,
-}: {
-    account: AccountService;
-    updateAccount: () => void;
-}) => {
-    const [lockPeriod, setLockPeriod] = useState(null);
-    const [lockPeriodPercent, setLockPeriodPercent] = useState(0);
-    const [lockAmount, setLockAmount] = useState('');
-    const [lockPercent, setLockPercent] = useState(0);
+const LockAquaForm = forwardRef(
+    (
+        {
+            account,
+            updateAccount,
+        }: {
+            account: AccountService;
+            updateAccount: () => void;
+        },
+        ref: RefObject<HTMLDivElement>,
+    ) => {
+        const [lockPeriod, setLockPeriod] = useState(null);
+        const [lockPeriodPercent, setLockPeriodPercent] = useState(0);
+        const [lockAmount, setLockAmount] = useState('');
+        const [lockPercent, setLockPercent] = useState(0);
 
-    const { isLogged } = useAuthStore();
+        const { isLogged } = useAuthStore();
 
-    const aquaBalance = Math.max(account.getAquaBalance() - 1, 0);
+        const aquaBalance = Math.max(account.getAquaBalance() - 1, 0);
 
-    const onLockPeriodPercentChange = (value) => {
-        setLockPeriodPercent(value);
-        const period = (MAX_TIME_LOCK * value) / 100;
+        const onLockPeriodPercentChange = (value) => {
+            setLockPeriodPercent(value);
+            const period = (MAX_TIME_LOCK * value) / 100;
 
-        setLockPeriod(period + Date.now());
-    };
+            setLockPeriod(period + Date.now());
+        };
 
-    const onLockPeriodChange = (value) => {
-        setLockPeriod(value);
-        if (value < Date.now()) {
-            setLockPeriodPercent(0);
-            return;
-        }
-        const period = value - Date.now();
+        const onLockPeriodChange = (value) => {
+            setLockPeriod(value);
+            if (value < Date.now()) {
+                setLockPeriodPercent(0);
+                return;
+            }
+            const period = value - Date.now();
 
-        if (period > MAX_TIME_LOCK) {
-            setLockPeriodPercent(100);
-            return;
-        }
+            if (period > MAX_TIME_LOCK) {
+                setLockPeriodPercent(100);
+                return;
+            }
 
-        const percent = roundToPrecision((period / MAX_TIME_LOCK) * 100, 2);
+            const percent = roundToPrecision((period / MAX_TIME_LOCK) * 100, 2);
 
-        setLockPeriodPercent(+percent);
-    };
+            setLockPeriodPercent(+percent);
+        };
 
-    const onAmountChange = (value) => {
-        setLockAmount(value);
-        if (!Number(value) || Number.isNaN(Number(value))) {
-            setLockPercent(0);
-            return;
-        }
-        if (Number(value) > Number(aquaBalance)) {
-            setLockPercent(100);
-            return;
-        }
-        const percent = roundToPrecision((Number(value) / Number(aquaBalance)) * 100, 2);
-        setLockPercent(+percent);
-    };
+        const onAmountChange = (value) => {
+            setLockAmount(value);
+            if (!Number(value) || Number.isNaN(Number(value))) {
+                setLockPercent(0);
+                return;
+            }
+            if (Number(value) > Number(aquaBalance)) {
+                setLockPercent(100);
+                return;
+            }
+            const percent = roundToPrecision((Number(value) / Number(aquaBalance)) * 100, 2);
+            setLockPercent(+percent);
+        };
 
-    const onLockPercentChange = (value) => {
-        setLockPercent(value);
+        const onLockPercentChange = (value) => {
+            setLockPercent(value);
 
-        const newAmount = (value * aquaBalance) / 100;
-        setLockAmount(roundToPrecision(newAmount, 7));
-    };
+            const newAmount = (value * aquaBalance) / 100;
+            setLockAmount(roundToPrecision(newAmount, 7));
+        };
 
-    const onSubmit = () => {
-        if (!isLogged) {
-            ModalService.openModal(ChooseLoginMethodModal, {});
-            return;
-        }
-        ModalService.openModal(LockAquaModal, { amount: lockAmount, period: lockPeriod }).then(
-            ({ isConfirmed }) => {
-                if (isConfirmed) {
-                    updateAccount();
-                }
-            },
-        );
-    };
+        const onSubmit = () => {
+            if (!isLogged) {
+                ModalService.openModal(ChooseLoginMethodModal, {});
+                return;
+            }
+            ModalService.openModal(LockAquaModal, { amount: lockAmount, period: lockPeriod }).then(
+                ({ isConfirmed }) => {
+                    if (isConfirmed) {
+                        updateAccount();
+                    }
+                },
+            );
+        };
 
-    return (
-        <Container>
-            <Title>Lock your AQUA</Title>
-            <Description>Lock your AQUA token</Description>
-            <ContentRow>
-                <Label>Amount</Label>
-                <BalanceBlock>
-                    <Balance onClick={() => onAmountChange(aquaBalance.toString())}>
-                        {formatBalance(aquaBalance)} AQUA{' '}
-                    </Balance>
-                    available
-                </BalanceBlock>
-            </ContentRow>
+        return (
+            <Container ref={ref}>
+                <Title>Lock your AQUA</Title>
+                <Description>Lock your AQUA token</Description>
+                <ContentRow>
+                    <Label>Amount</Label>
+                    <BalanceBlock>
+                        <Balance onClick={() => onAmountChange(aquaBalance.toString())}>
+                            {formatBalance(aquaBalance)} AQUA{' '}
+                        </Balance>
+                        available
+                    </BalanceBlock>
+                </ContentRow>
 
-            <StyledInput
-                value={lockAmount}
-                onChange={(e) => onAmountChange(e.target.value)}
-                placeholder="Enter lock amount"
-                postfix={
-                    <InputPostfix>
-                        <AquaLogo />
-                        <span>AQUA</span>
-                    </InputPostfix>
-                }
-            />
-
-            <RangeInput onChange={onLockPercentChange} value={lockPercent} />
-
-            <ContentRow>
-                <Label>Lock Period</Label>
-            </ContentRow>
-
-            <DatePickerContainer>
-                <DatePicker
-                    customInput={<Input />}
-                    selected={lockPeriod ? new Date(lockPeriod) : null}
-                    onChange={(res) => {
-                        onLockPeriodChange(res?.getTime() ?? null);
-                    }}
-                    dateFormat="MM.dd.yyyy"
-                    placeholderText="MM.DD.YYYY"
-                    popperModifiers={[
-                        {
-                            name: 'offset',
-                            options: {
-                                offset: [0, -10],
-                            },
-                        },
-                    ]}
+                <StyledInput
+                    value={lockAmount}
+                    onChange={(e) => onAmountChange(e.target.value)}
+                    placeholder="Enter lock amount"
+                    postfix={
+                        <InputPostfix>
+                            <AquaLogo />
+                            <span>AQUA</span>
+                        </InputPostfix>
+                    }
                 />
 
-                <GlobalStyle />
-            </DatePickerContainer>
+                <RangeInput onChange={onLockPercentChange} value={lockPercent} />
 
-            <RangeInput
-                onChange={onLockPeriodPercentChange}
-                value={lockPeriodPercent}
-                withoutPercent
-            />
+                <ContentRow>
+                    <Label>Lock Period</Label>
+                </ContentRow>
 
-            <ClaimBack>
-                {lockPeriod ? (
-                    <>
-                        <span>You will get your AQUA back on </span>
-                        <ClaimBackDate>{getDateString(lockPeriod)}</ClaimBackDate>
-                    </>
-                ) : (
-                    <EmptyDate />
-                )}
-            </ClaimBack>
+                <DatePickerContainer>
+                    <DatePicker
+                        customInput={<Input />}
+                        selected={lockPeriod ? new Date(lockPeriod) : null}
+                        onChange={(res) => {
+                            onLockPeriodChange(res?.getTime() ?? null);
+                        }}
+                        dateFormat="MM.dd.yyyy"
+                        placeholderText="MM.DD.YYYY"
+                        popperModifiers={[
+                            {
+                                name: 'offset',
+                                options: {
+                                    offset: [0, -10],
+                                },
+                            },
+                        ]}
+                    />
 
-            <Button isBig onClick={() => onSubmit()} disabled={!lockAmount || !lockPeriod}>
-                LOCK AQUA
-            </Button>
-        </Container>
-    );
-};
+                    <GlobalStyle />
+                </DatePickerContainer>
+
+                <RangeInput
+                    onChange={onLockPeriodPercentChange}
+                    value={lockPeriodPercent}
+                    withoutPercent
+                />
+
+                <ClaimBack>
+                    {lockPeriod ? (
+                        <>
+                            <span>You will get your AQUA back on </span>
+                            <ClaimBackDate>{getDateString(lockPeriod)}</ClaimBackDate>
+                        </>
+                    ) : (
+                        <EmptyDate />
+                    )}
+                </ClaimBack>
+
+                <Button isBig onClick={() => onSubmit()} disabled={!lockAmount || !lockPeriod}>
+                    LOCK AQUA
+                </Button>
+            </Container>
+        );
+    },
+);
 
 export default LockAquaForm;

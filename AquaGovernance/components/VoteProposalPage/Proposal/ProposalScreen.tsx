@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import Sidebar from '../Sidebar/Sidebar';
 import ArrowLeft from '../../../../common/assets/img/icon-arrow-left.svg';
@@ -15,6 +15,7 @@ import { getDateString } from '../../../../common/helpers/helpers';
 import { Proposal } from '../../../api/types';
 import { statePage } from '../../ProposalCreationPage/ProposalCreationPage';
 import ExternalLink from '../../../../common/basics/ExternalLink';
+import { useIsOnViewport } from '../../../../common/hooks/useIsOnViewport';
 
 const ProposalQuestion = styled.div`
     width: 100%;
@@ -160,15 +161,6 @@ const viewOnStellarExpert = (account: string) => {
     window.open(`https://stellar.expert/explorer/public/account/${account}`, '_blank');
 };
 
-function isElementInViewport(el) {
-    const rect = el.getBoundingClientRect();
-
-    return (
-        rect.top >= 0 &&
-        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight)
-    );
-}
-
 const ScrollToSidebarButton = styled.div`
     display: none;
     position: fixed;
@@ -218,32 +210,13 @@ const ProposalScreen = ({
     }, []);
 
     const ref = useRef(null);
-    const [showBottomBlock, setShowBottomBlock] = useState(false);
     const isEnd = new Date() >= new Date(proposal.end_at);
 
     const scrollToSidebar = () => {
         ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     };
 
-    const handler = () => {
-        if (!ref.current) {
-            return;
-        }
-        const isOnViewport = isElementInViewport(ref.current);
-        setShowBottomBlock(!isOnViewport);
-    };
-
-    useEffect(() => {
-        document.addEventListener('load', handler, { once: true, capture: true });
-        document.addEventListener('scroll', handler, { passive: true, capture: true });
-        window.addEventListener('resize', handler, false);
-
-        return () => {
-            document.removeEventListener('load', handler, { capture: true });
-            document.removeEventListener('scroll', handler, { capture: true });
-            window.removeEventListener('resize', handler, false);
-        };
-    }, []);
+    const hideBottomBlock = useIsOnViewport(ref);
 
     return (
         <>
@@ -331,7 +304,7 @@ const ProposalScreen = ({
                 </ProposalSection>
             )}
             <Sidebar isTemplate={isTemplate} proposal={proposal} ref={ref} />
-            {showBottomBlock && (
+            {!hideBottomBlock && (
                 <ScrollToSidebarButton onClick={() => scrollToSidebar()}>
                     <span>{isEnd ? 'Go to the result' : 'Go to voting'}</span>
                     <ArrowDown />
