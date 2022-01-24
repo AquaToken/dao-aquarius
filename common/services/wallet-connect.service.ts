@@ -2,7 +2,7 @@ import WalletConnectClient, { CLIENT_EVENTS } from '@walletconnect/client';
 import { AppMetadata, PairingTypes, SessionTypes } from '@walletconnect/types';
 import { ERROR } from '@walletconnect/utils';
 import * as StellarSdk from 'stellar-sdk';
-import QRModal from '../modals/WalletConnectModals/QRModal';
+import QRModal from '@walletconnect/legacy-modal';
 import PairingModal from '../modals/WalletConnectModals/PairingModal';
 import SessionRequestModal from '../modals/WalletConnectModals/SessionRequestModal';
 import EventService from './event.service';
@@ -61,7 +61,8 @@ export default class WalletConnectServiceClass {
         }
         this.client = await WalletConnectClient.init({
             // logger: 'debug',
-            relayProvider: 'wss://relay.walletconnect.org',
+            relayUrl: 'wss://relay.walletconnect.org',
+            projectId: 'f5279d443cff4b7901250e5b2e0e84f4',
         });
 
         // there is a problem with updating the states in wallet connect, a small timeout solves this problem
@@ -112,8 +113,7 @@ export default class WalletConnectServiceClass {
 
         if (this.isPairCreated) {
             this.isPairCreated = false;
-
-            ModalService.confirmAllModals();
+            QRModal.close();
 
             ModalService.openModal(SessionRequestModal, {
                 name: this.appMeta.name,
@@ -134,9 +134,7 @@ export default class WalletConnectServiceClass {
     async onPairProposal(proposal: PairingTypes.Proposal): Promise<void> {
         const { uri } = proposal.signal.params;
 
-        const { isConfirmed } = await ModalService.openModal(QRModal, { uri });
-
-        if (!isConfirmed) {
+        QRModal.open(uri, async () => {
             await this.client.pairing.pending.update(proposal.topic, {
                 outcome: {
                     reason: ERROR.UNKNOWN.format(),
@@ -144,7 +142,7 @@ export default class WalletConnectServiceClass {
                 status: 'responded',
             });
             await this.client.crypto.keychain.del(proposal.proposer.publicKey);
-        }
+        });
     }
 
     async login(): Promise<void> {
@@ -153,8 +151,6 @@ export default class WalletConnectServiceClass {
         if (isLogged) {
             return;
         }
-
-        // ModalService.closeAllModals();
 
         if (this.client.pairing.topics.length > 3) {
             const deletePromises = [];
