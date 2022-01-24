@@ -31,9 +31,9 @@ const App = () => {
 
     const { account } = useAuthStore();
 
-    useEffect(() => {
-        ModalService.openModal(SnapshotPassedModal, {}, true, <ModalBG />);
-    }, []);
+    // useEffect(() => {
+    //     ModalService.openModal(SnapshotPassedModal, {}, true, <ModalBG />);
+    // }, []);
 
     return (
         <Router>
