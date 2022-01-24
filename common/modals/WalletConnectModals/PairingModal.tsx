@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { useState } from 'react';
 import { PairingTypes } from '@walletconnect/types';
 import { ModalDescription, ModalProps, ModalTitle } from '../atoms/ModalAtoms';
-import { useState } from 'react';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../styles';
 import IconCloseSmall from '../../assets/img/icon-close-small.svg';
@@ -38,6 +38,7 @@ const PairingBlock = styled.div`
     ${respondDown(Breakpoints.md)`
         flex-direction: column;
         align-items: start;
+        justify-content: center;
     `}
 `;
 
@@ -86,9 +87,23 @@ const AppDescription = styled.span`
     color: ${COLORS.grayText};
 `;
 
-const DeleteButton = styled(IconCloseSmall)`
+const DeleteButtonWeb = styled(IconCloseSmall)`
     margin-left: auto;
     cursor: pointer;
+
+    ${respondDown(Breakpoints.md)`
+        display: none;
+    `}
+`;
+
+const DeleteButtonMobile = styled(IconCloseSmall)`
+    margin-left: auto;
+    cursor: pointer;
+    display: none;
+
+    ${respondDown(Breakpoints.md)`
+        display: block;
+    `}
 `;
 
 const NewConnectionButton = styled.div`
@@ -123,6 +138,7 @@ const PairingModal = ({ params }: ModalProps<PairingModalParams>): JSX.Element =
             <ModalDescription>Restore your connection or create a new one.</ModalDescription>
             {currentPairings.map((pairing, index) => (
                 <PairingBlock key={pairing.topic} onClick={() => connect(pairing)}>
+                    <DeleteButtonMobile onClick={(e) => handleDeletePairing(e, pairing.topic)} />
                     <AppIcon src={pairing.state.metadata.icons[0]} alt="" />
 
                     <AppInfoBlock>
@@ -135,7 +151,7 @@ const PairingModal = ({ params }: ModalProps<PairingModalParams>): JSX.Element =
                         <AppDescription>{pairing.state.metadata.description}</AppDescription>
                     </AppInfoBlock>
 
-                    <DeleteButton onClick={(e) => handleDeletePairing(e, pairing.topic)} />
+                    <DeleteButtonWeb onClick={(e) => handleDeletePairing(e, pairing.topic)} />
                 </PairingBlock>
             ))}
 
