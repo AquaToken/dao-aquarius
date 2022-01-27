@@ -34,10 +34,13 @@ const Description = styled.span`
 const Purpose = () => {
     return (
         <Container>
-            <Title>Lock AQUA to get additional benefits</Title>
+            <Title>Lock AQUA for additional benefits</Title>
             <Description>
-                Lock your AQUA with this tool to get extra benefits in future.<br/>
-                Perfect for those who are planning to hold AQUA long term. Stay tuned, details coming soon.<br/>
+                Lock your AQUA with this tool to get extra benefits in the future.
+                <br />
+                Perfect for those who are planning to hold AQUA long term. Stay tuned, details
+                coming soon.
+                <br />
             </Description>
         </Container>
     );
