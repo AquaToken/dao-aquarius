@@ -51,6 +51,11 @@ const LeftColumn = styled.div`
 const RightColumn = styled.div`
     flex: 1;
     max-width: 48rem;
+
+    ${respondDown(Breakpoints.md)`
+        width: 100%;
+        max-width: unset;
+     `}
 `;
 
 const ScrollToSidebarButton = styled.div`
