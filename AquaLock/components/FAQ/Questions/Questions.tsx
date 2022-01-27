@@ -15,7 +15,14 @@ const Questions = () => {
                 question={'Why lock AQUA?'}
                 answer={
                     <span>
-                        Locking AQUA with this tool will enable benefits for its holders.
+                        Although originally used for boosts in Airdrop #2, moving forward the locker
+                        tool will play a crucial role in Aquarius. Those who lock AQUA through this
+                        tool will be eligible for additional benefits while using AQUA products.
+                        <br />
+                        <br />
+                        Increased AQUA payouts for SDEX & AMM rewards and boosted voting power when
+                        voting for liquidity rewards are two of these benefits. More information
+                        will be released soon.
                     </span>
                 }
             />
@@ -23,7 +30,20 @@ const Questions = () => {
                 question={'How does locking work?'}
                 answer={
                     <span>
-                        Using the tool creates a claimable AQUA balance to yourself.
+                        Locking AQUA all takes place at the protocol level on Stellar. When you use
+                        the tool above, a claimable balance is created and sent back to yourself.
+                        Only you can reclaim the locked AQUA balance after the time you select
+                        passes.
+                    </span>
+                }
+            />
+            <Question
+                question={'Is locking AQUA safe?'}
+                answer={
+                    <span>
+                        Locking AQUA is completely safe when using this tool. AQUA is securely
+                        locked into the Stellar blockchain, with only the sending wallet able to
+                        reclaim the tokens at a later time.
                     </span>
                 }
             />
