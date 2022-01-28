@@ -32,6 +32,8 @@ const METADATA = {
     },
 };
 
+const wcDeepLinkAlias = 'WALLETCONNECT_DEEPLINK_CHOICE';
+
 const STELLAR_METHODS = {
     SIGN_AND_SUBMIT: 'stellar_signAndSubmitXDR',
     SIGN: 'stellar_signXDR',
@@ -74,6 +76,7 @@ export default class WalletConnectServiceClass {
         this.listenWalletConnectEvents();
 
         if (!this.client.session.topics.length) {
+            localStorage.removeItem(wcDeepLinkAlias);
             return false;
         }
 
@@ -135,6 +138,7 @@ export default class WalletConnectServiceClass {
         const { uri } = proposal.signal.params;
 
         QRModal.open(uri, async () => {
+            localStorage.removeItem(wcDeepLinkAlias);
             await this.client.pairing.pending.update(proposal.topic, {
                 outcome: {
                     reason: ERROR.UNKNOWN.format(),
@@ -246,6 +250,7 @@ export default class WalletConnectServiceClass {
 
     async logout(): Promise<void> {
         if (this.session) {
+            localStorage.removeItem(wcDeepLinkAlias);
             await this.client.disconnect({
                 topic: this.session.topic,
                 reason: ERROR.USER_DISCONNECTED.format(),
@@ -271,6 +276,11 @@ export default class WalletConnectServiceClass {
             name: this.appMeta.name,
             result: request,
         });
+        const deepLink = JSON.parse(localStorage.getItem(wcDeepLinkAlias) || 'null');
+
+        if (deepLink && deepLink.href) {
+            window.open(deepLink.href, '_blank');
+        }
 
         return request;
     }
@@ -293,6 +303,12 @@ export default class WalletConnectServiceClass {
             name: this.appMeta.name,
             result: request,
         });
+
+        const deepLink = JSON.parse(localStorage.getItem(wcDeepLinkAlias) || 'null');
+
+        if (deepLink && deepLink.href) {
+            window.open(deepLink.href, '_blank');
+        }
 
         return request.then(({ signedXDR }) => signedXDR);
     }
