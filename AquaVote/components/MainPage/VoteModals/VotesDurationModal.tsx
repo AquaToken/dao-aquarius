@@ -55,6 +55,7 @@ const DAY = 24 * HOUR;
 const MONTH = 30 * DAY;
 
 const PeriodOptions: Option<number>[] = [
+    { label: '5 minutes', value: 5 * MINUTE },
     { label: '1 Week', value: 7 * DAY },
     { label: '2 Weeks', value: 14 * DAY },
     { label: '3 Weeks', value: 21 * DAY },

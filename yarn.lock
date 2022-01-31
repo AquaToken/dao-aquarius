@@ -2007,32 +2007,32 @@
     "@walletconnect/safe-json" "^1.0.0"
     ws "^7.5.1"
 
-"@walletconnect/legacy-modal@^2.0.0-beta.20.1":
-  version "2.0.0-beta.20.1"
-  resolved "https://registry.yarnpkg.com/@walletconnect/legacy-modal/-/legacy-modal-2.0.0-beta.20.1.tgz#75356adbd12deffe14f8c4e5a71e2c5cc0abd27e"
-  integrity sha512-vnB51JSrYMnjvoaODIpP7ggYNjK3hAznBCvsZuVrC/Fz+5HPpGkCTihY6ycCGGrHIWQn3IvCPEL47JrBZH/ETQ==
+"@walletconnect/legacy-modal@^2.0.0-beta.22":
+  version "2.0.0-beta.22"
+  resolved "https://registry.yarnpkg.com/@walletconnect/legacy-modal/-/legacy-modal-2.0.0-beta.22.tgz#445c0d012a8945fb9d8e5862ada38d5c1a283db2"
+  integrity sha512-+2HaVKlj/YUbQ8NSey44p4mefRDfzp4Eo6sSib9m8fV75ZwZvLcX8Dptt7z7COOQN0kfQkQx6VppWcIFLT0Myw==
   dependencies:
-    "@walletconnect/legacy-types" "^2.0.0-beta.20.1"
-    "@walletconnect/legacy-utils" "^2.0.0-beta.20.1"
+    "@walletconnect/legacy-types" "^2.0.0-beta.22"
+    "@walletconnect/legacy-utils" "^2.0.0-beta.22"
     copy-to-clipboard "^3.3.1"
     preact "10.4.1"
     qrcode "1.4.4"
 
-"@walletconnect/legacy-types@^2.0.0-beta.20.1":
-  version "2.0.0-beta.20.1"
-  resolved "https://registry.yarnpkg.com/@walletconnect/legacy-types/-/legacy-types-2.0.0-beta.20.1.tgz#7242aac9100604d2d0c6399e373ea97a6a6294bf"
-  integrity sha512-v5xlpaNO1aT14+GwjBBZRvsMSYO2mT7T+4SEkGCXiR3VqMBEgQnagBJ++8/R0SXhoCAdc9PoIHVpfObd/WXziQ==
+"@walletconnect/legacy-types@^2.0.0-beta.22":
+  version "2.0.0-beta.22"
+  resolved "https://registry.yarnpkg.com/@walletconnect/legacy-types/-/legacy-types-2.0.0-beta.22.tgz#6a46ea20653f5627ff7c3afbd26fec6de1465163"
+  integrity sha512-Lj/4dpPAIkP6hbGHoTU5AsE/wa6+InDPDjDV2yP7GUpRJCQDIpuA9r71AzbZqwjEooKR+wCJYMLAl9/j/9FF5g==
   dependencies:
     "@walletconnect/jsonrpc-types" "^1.0.0"
 
-"@walletconnect/legacy-utils@^2.0.0-beta.20.1":
-  version "2.0.0-beta.20.1"
-  resolved "https://registry.yarnpkg.com/@walletconnect/legacy-utils/-/legacy-utils-2.0.0-beta.20.1.tgz#bd13be7efb026829d599175cd3a61fb15035e167"
-  integrity sha512-/63atZDLsYEm244tnR1qfFAeZkqpdRNZZscgrRag/UFd/xzcZl3cAyUuzT21ZeOhftMZbmhXmVUo1tvfbysawQ==
+"@walletconnect/legacy-utils@^2.0.0-beta.22":
+  version "2.0.0-beta.22"
+  resolved "https://registry.yarnpkg.com/@walletconnect/legacy-utils/-/legacy-utils-2.0.0-beta.22.tgz#13d4a78d5feb558bed34e2dfb7870c458529b092"
+  integrity sha512-0Y437PvDSdRZwJ3OA3N4QKYqxC1/XL6qnJqa2Cha6m2FZ9jR6agiaGZCyTDZ0qM0mGaBMPHb2Eckr+wXyVTgwg==
   dependencies:
     "@walletconnect/encoding" "^1.0.0"
     "@walletconnect/jsonrpc-utils" "^1.0.0"
-    "@walletconnect/legacy-types" "^2.0.0-beta.20.1"
+    "@walletconnect/legacy-types" "^2.0.0-beta.22"
     "@walletconnect/safe-json" "^1.0.0"
     "@walletconnect/window-getters" "^1.0.0"
     "@walletconnect/window-metadata" "^1.0.0"
