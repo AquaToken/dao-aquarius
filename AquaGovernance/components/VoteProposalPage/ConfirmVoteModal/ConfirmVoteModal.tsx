@@ -25,8 +25,12 @@ import ExternalLink from '../../../../common/basics/ExternalLink';
 import GetAquaModal from '../../../../common/modals/GetAquaModal/GetAquaModal';
 import { SimpleProposalOptions } from '../VoteProposalPage';
 import { useIsMounted } from '../../../../common/hooks/useIsMounted';
-import { BuildSignAndSubmitStatuses } from '../../../../common/services/wallet-connect.service';
 import ErrorHandler from '../../../../common/helpers/error-handler';
+import {
+    BuildSignAndSubmitStatuses,
+    openApp,
+} from '../../../../common/services/wallet-connect.service';
+import { LoginTypes } from '../../../../common/store/authStore/types';
 
 const MINIMUM_AMOUNT = 0.0000001;
 
@@ -179,6 +183,9 @@ const ConfirmVoteModal = ({
                 `The value must be greater than ${MINIMUM_AMOUNT.toFixed(7)} AQUA`,
             );
             return;
+        }
+        if (account.authType === LoginTypes.walletConnect) {
+            openApp();
         }
         try {
             setPending(true);
