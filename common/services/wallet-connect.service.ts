@@ -48,6 +48,119 @@ export enum BuildSignAndSubmitStatuses {
     pending = 'pending',
 }
 
+export const WC_APP_ALIAS = 'WC_APP';
+const WC_DEEP_LINK_APPS = 'WC_DEEP_LINK_APPS';
+const WC_VERSION_ALIAS = 'WC_VERSION_ALIAS';
+
+const INTERNET_CONNECTION_ERROR = 'Make sure you are connected to the internet and try again.';
+const SESSION_TIMEOUT_ERROR = 'Session failed to settle after 300 seconds';
+const PAIRING_TIMEOUT_ERROR = 'Pairing failed to settle after 300 seconds';
+
+const CONNECTION_TIMEOUT = 15000;
+
+function getLocalStorage(): Storage | undefined {
+    let res: Storage | undefined = undefined;
+    if (typeof window !== 'undefined' && typeof window['localStorage'] !== 'undefined') {
+        res = window['localStorage'];
+    }
+    return res;
+}
+
+const clearLocalStorage = () => {
+    const LS = getLocalStorage();
+    if (LS) {
+        LS.clear();
+    }
+};
+
+export const saveAppToLS = (name, uri) => {
+    const focusUri = uri.split('?')[0];
+    const LS = getLocalStorage();
+    if (LS) {
+        LS.setItem(
+            WC_APP_ALIAS,
+            JSON.stringify({
+                name,
+                uri: focusUri,
+            }),
+        );
+    }
+};
+
+export const getSavedApp = () => {
+    const LS = getLocalStorage();
+    if (!LS) {
+        return null;
+    }
+    return JSON.parse(LS.getItem(WC_APP_ALIAS) || 'null');
+};
+
+export const clearApp = () => {
+    const LS = getLocalStorage();
+    if (LS) {
+        LS.removeItem(WC_APP_ALIAS);
+    }
+};
+
+export const openApp = () => {
+    const saved = getSavedApp();
+    if (saved) {
+        window.open(saved.uri, '_blank');
+    }
+};
+
+const getAppsDeepLinkList = () => {
+    const LS = getLocalStorage();
+    if (!LS) {
+        return new Map();
+    }
+
+    return new Map(JSON.parse(LS.getItem(WC_DEEP_LINK_APPS) || '[]'));
+};
+
+const setAppsDeepLinkList = (list) => {
+    const LS = getLocalStorage();
+    if (!LS) {
+        return;
+    }
+
+    LS.setItem(WC_DEEP_LINK_APPS, JSON.stringify(Array.from(list.entries())));
+};
+
+const addAppToDeepLinkListIfNeeded = (topic: string) => {
+    const app = getSavedApp();
+
+    if (!app) {
+        return;
+    }
+    const appList = getAppsDeepLinkList();
+    appList.set(topic, JSON.stringify(app));
+    setAppsDeepLinkList(appList);
+};
+
+export const getAppFromDeepLinkList = (topic) => {
+    const appsList = getAppsDeepLinkList();
+
+    return appsList.has(topic) ? JSON.parse(appsList.get(topic)) : null;
+};
+
+const getVersionFromLS = () => {
+    const LS = getLocalStorage();
+    if (!LS) {
+        return null;
+    }
+    return LS.getItem(WC_VERSION_ALIAS);
+};
+
+const setVersionToLS = (version) => {
+    const LS = getLocalStorage();
+    if (!LS) {
+        return;
+    }
+
+    LS.setItem(WC_VERSION_ALIAS, version);
+};
+
 export default class WalletConnectServiceClass {
     appMeta: AppMetadata | null = null;
     client: WalletConnectClient | null = null;
@@ -55,42 +168,103 @@ export default class WalletConnectServiceClass {
     isPairCreated = false;
     event: EventService = new EventService();
     selfMeta = METADATA[process.env.PROJECT];
+    isOffline = false;
+
+    // When changing the walletConnect version, memory leaks sometimes occur,
+    // to avoid this, we clear the local storage
+    static checkVersion() {
+        const WALLET_CONNECT_VERSION_ID = '1';
+
+        const currentVersion = getVersionFromLS();
+        if (!currentVersion || currentVersion !== WALLET_CONNECT_VERSION_ID) {
+            clearLocalStorage();
+            setVersionToLS(WALLET_CONNECT_VERSION_ID);
+        }
+    }
+
+    constructor() {
+        window.addEventListener('offline', () => {
+            this.client = null;
+            this.isOffline = true;
+        });
+        window.addEventListener('online', () => {
+            this.isOffline = false;
+            if (this.session) {
+                Promise.race([
+                    WalletConnectClient.init({
+                        // logger: 'debug',
+                        relayUrl: 'wss://relay.walletconnect.com',
+                        projectId: process.env.WALLET_CONNECT_PROJECT_ID,
+                    }),
+                    new Promise((resolve, reject) => {
+                        setTimeout(() => {
+                            reject('Connection timeout');
+                        }, CONNECTION_TIMEOUT);
+                    }) as Promise<WalletConnectClient>,
+                ])
+                    .then((client) => {
+                        this.client = client;
+                    })
+                    .catch((e) => {
+                        ToastService.showErrorToast(e);
+                    });
+            }
+        });
+    }
 
     async initWalletConnect(): Promise<boolean> {
-        if (this.client) {
-            return false;
+        try {
+            if (this.isOffline) {
+                ToastService.showErrorToast(INTERNET_CONNECTION_ERROR);
+                return;
+            }
+            if (this.client) {
+                clearApp();
+                return false;
+            }
+            this.client = await Promise.race([
+                WalletConnectClient.init({
+                    // logger: 'debug',
+                    relayUrl: 'wss://relay.walletconnect.com',
+                    projectId: process.env.WALLET_CONNECT_PROJECT_ID,
+                }),
+                new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        reject('Connection timeout');
+                    }, CONNECTION_TIMEOUT);
+                }) as Promise<WalletConnectClient>,
+            ]);
+
+            // there is a problem with updating the states in wallet connect, a small timeout solves this problem
+            // TODO delete this when it is fixed in the library
+            await new Promise((resolve) => {
+                setTimeout(() => resolve(void 0), 500);
+            });
+
+            this.listenWalletConnectEvents();
+
+            if (!this.client.session.topics.length) {
+                clearApp();
+                return false;
+            }
+
+            this.session = await this.client.session.get(this.client.session.topics[0]);
+
+            const [_chain, _reference, publicKey] = this.session.state.accounts[0].split(':');
+            this.appMeta = this.session.peer.metadata;
+
+            this.event.trigger({
+                type: WalletConnectEvents.login,
+                publicKey,
+                metadata: this.appMeta,
+            });
+
+            ModalService.closeAllModals();
+
+            return true;
+        } catch (e) {
+            ToastService.showErrorToast(e);
         }
-        this.client = await WalletConnectClient.init({
-            // logger: 'debug',
-            relayProvider: 'wss://relay.walletconnect.org',
-        });
-
-        // there is a problem with updating the states in wallet connect, a small timeout solves this problem
-        // TODO delete this when it is fixed in the library
-        await new Promise((resolve) => {
-            setTimeout(() => resolve(void 0), 500);
-        });
-
-        this.listenWalletConnectEvents();
-
-        if (!this.client.session.topics.length) {
-            return false;
-        }
-
-        this.session = await this.client.session.get(this.client.session.topics[0]);
-
-        const [_chain, _reference, publicKey] = this.session.state.accounts[0].split(':');
-        this.appMeta = this.session.peer.metadata;
-
-        this.event.trigger({
-            type: WalletConnectEvents.login,
-            publicKey,
-            metadata: this.appMeta,
-        });
-
-        ModalService.closeAllModals();
-
-        return true;
     }
 
     listenWalletConnectEvents(): void {
@@ -106,6 +280,7 @@ export default class WalletConnectServiceClass {
     onPairCreated(res: PairingTypes.Settled): void {
         this.appMeta = res.state.metadata;
         this.isPairCreated = true;
+        addAppToDeepLinkListIfNeeded(res.topic);
     }
 
     onPairUpdated(res: PairingTypes.Settled): void {
@@ -127,6 +302,7 @@ export default class WalletConnectServiceClass {
         if (this.session && this.session.topic === session.topic) {
             this.session = null;
             this.appMeta = null;
+            clearApp();
 
             this.event.trigger({ type: WalletConnectEvents.logout });
         }
@@ -186,6 +362,10 @@ export default class WalletConnectServiceClass {
     }
 
     async connect(pairing?: PairingTypes.Settled): Promise<void> {
+        if (this.isOffline) {
+            ToastService.showErrorToast(INTERNET_CONNECTION_ERROR);
+            return;
+        }
         ModalService.closeAllModals();
 
         if (pairing) {
@@ -217,14 +397,20 @@ export default class WalletConnectServiceClass {
             if (e.message === ERROR.UNKNOWN.stringify()) {
                 return;
             }
+
             const errorMessage =
                 e.message === 'Session not approved'
-                    ? 'Connection canceled by the user'
+                    ? 'Connection cancelled by the user'
                     : e.message;
 
-            ToastService.showErrorToast(errorMessage);
+            console.log(ERROR.SETTLE_TIMEOUT.stringify());
 
-            console.log(errorMessage);
+            ToastService.showErrorToast(
+                errorMessage ??
+                    (e === SESSION_TIMEOUT_ERROR || e === PAIRING_TIMEOUT_ERROR
+                        ? 'Connection could not be established. Please try connecting again.'
+                        : e),
+            );
 
             ModalService.closeAllModals();
             return;
@@ -250,7 +436,12 @@ export default class WalletConnectServiceClass {
     }
 
     async logout(): Promise<void> {
+        if (this.isOffline) {
+            ToastService.showErrorToast(INTERNET_CONNECTION_ERROR);
+            return;
+        }
         if (this.session) {
+            clearApp();
             await this.client.disconnect({
                 topic: this.session.topic,
                 reason: ERROR.USER_DISCONNECTED.format(),

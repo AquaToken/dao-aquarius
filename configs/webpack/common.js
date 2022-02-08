@@ -15,6 +15,10 @@ const project = dotenv.config().parsed ? dotenv.config().parsed.PROJECT : null;
 
 const projectPath = PROJECT_PATH[project || process.env.PROJECT];
 
+const wcProjectId = dotenv.config().parsed
+    ? dotenv.config().parsed.WALLET_CONNECT_PROJECT_ID
+    : null;
+
 module.exports = {
     resolve: {
         extensions: ['.js', '.jsx', '.ts', '.tsx'],
@@ -52,6 +56,7 @@ module.exports = {
             'process.env': JSON.stringify({
                 PROJECT_PATH: projectPath,
                 PROJECT: project || process.env.PROJECT,
+                WALLET_CONNECT_PROJECT_ID: wcProjectId || process.env.WALLET_CONNECT_PROJECT_ID,
             }),
         }),
     ],

@@ -1,6 +1,6 @@
 import useAuthStore from '../store/authStore/useAuthStore';
 import { useEffect, useRef } from 'react';
-import { WalletConnectEvents } from '../services/wallet-connect.service';
+import WalletConnectServiceClass, { WalletConnectEvents } from '../services/wallet-connect.service';
 import { LoginTypes } from '../store/authStore/types';
 import { Horizon } from 'stellar-sdk';
 import { StellarService, ToastService, WalletConnectService } from '../services/globalServices';
@@ -9,6 +9,10 @@ import { StellarEvents } from '../services/stellar.service';
 const UnfundedError = 'Not Found';
 
 export default function useGlobalSubscriptions(): void {
+    useEffect(() => {
+        WalletConnectServiceClass.checkVersion();
+    }, []);
+
     const {
         login,
         logout,
@@ -41,6 +45,9 @@ export default function useGlobalSubscriptions(): void {
                 loginErrorText === UnfundedError ? 'Activate your account' : loginErrorText,
             );
             clearLoginError();
+        }
+        if (loginErrorText === UnfundedError) {
+            WalletConnectService.logout();
         }
     }, [loginErrorText]);
 

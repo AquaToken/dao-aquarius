@@ -18,8 +18,12 @@ import { useEffect, useState } from 'react';
 import Button from '../../../../common/basics/Button';
 import LinkIcon from '../../../../common/assets/img/icon-external-link.svg';
 import ExternalLink from '../../../../common/basics/ExternalLink';
-import { BuildSignAndSubmitStatuses } from '../../../../common/services/wallet-connect.service';
+import {
+    BuildSignAndSubmitStatuses,
+    openApp,
+} from '../../../../common/services/wallet-connect.service';
 import { useIsMounted } from '../../../../common/hooks/useIsMounted';
+import { LoginTypes } from '../../../../common/store/authStore/types';
 import ErrorHandler from '../../../../common/helpers/error-handler';
 
 const Container = styled.div`
@@ -192,6 +196,9 @@ const ManageVotesModal = ({ params, close }: ModalProps<{ pair: PairStats }>) =>
     }
 
     const onSubmit = async (id) => {
+        if (account.authType === LoginTypes.walletConnect) {
+            openApp();
+        }
         try {
             setPendingId(id);
             const ops = StellarService.createClaimOperations(id, account.getAquaBalance() === null);

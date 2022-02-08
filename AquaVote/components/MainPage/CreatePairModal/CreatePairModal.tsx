@@ -14,10 +14,14 @@ import Pair from '../../common/Pair';
 import * as StellarSdk from 'stellar-sdk';
 import { StellarService, ToastService } from '../../../../common/services/globalServices';
 import { useIsMounted } from '../../../../common/hooks/useIsMounted';
-import { BuildSignAndSubmitStatuses } from '../../../../common/services/wallet-connect.service';
+import {
+    BuildSignAndSubmitStatuses,
+    openApp,
+} from '../../../../common/services/wallet-connect.service';
 import Info from '../../../../common/assets/img/icon-info.svg';
 import Tooltip, { TOOLTIP_POSITION } from '../../../../common/basics/Tooltip';
 import ErrorHandler from '../../../../common/helpers/error-handler';
+import { LoginTypes } from '../../../../common/store/authStore/types';
 
 const ContentRow = styled.div`
     display: flex;
@@ -124,6 +128,9 @@ const CreatePairModal = ({
         if (account.getAvailableNativeBalance() < createCost) {
             ToastService.showErrorToast("You don't have enough xlm");
             return;
+        }
+        if (account.authType === LoginTypes.walletConnect) {
+            openApp();
         }
         setPending(true);
 

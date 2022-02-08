@@ -19,6 +19,8 @@ import { useIsMounted } from '../../../../common/hooks/useIsMounted';
 import { useHistory } from 'react-router-dom';
 import PaymentInProgressAlert from '../PaymentInProgressAlert/PaymentInProgressAlert';
 import ErrorHandler from '../../../../common/helpers/error-handler';
+import { LoginTypes } from '../../../../common/store/authStore/types';
+import { openApp } from '../../../../common/services/wallet-connect.service';
 
 const Description = styled(ModalDescription)`
     width: 52.8rem;
@@ -137,6 +139,10 @@ const PublishProposalModal = ({ params, close }) => {
         }
 
         setLoading(true);
+
+        if (account.authType === LoginTypes.walletConnect) {
+            openApp();
+        }
 
         try {
             const op = StellarService.createBurnAquaOperation(CREATE_PROPOSAL_COST.toString());

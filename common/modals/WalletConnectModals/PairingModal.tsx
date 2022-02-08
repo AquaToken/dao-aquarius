@@ -6,7 +6,11 @@ import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../styles';
 import IconCloseSmall from '../../assets/img/icon-close-small.svg';
 import IconPlus from '../../assets/img/icon-plus.svg';
-import { respondDown } from '../../mixins';
+import IconQR from '../../assets/img/icon-qr.svg';
+import IconDeepLink from '../../assets/img/icon-deep-link.svg';
+import IconArrowRight from '../../assets/img/icon-arrow-right-purple.svg';
+import { flexAllCenter, respondDown } from '../../mixins';
+import { getAppFromDeepLinkList, saveAppToLS } from '../../services/wallet-connect.service';
 
 type PairingModalParams = {
     pairings: PairingTypes.Settled[];
@@ -30,6 +34,7 @@ const PairingBlock = styled.div`
     border-radius: 0.5rem;
     padding: 2.1rem 2.4rem;
     cursor: pointer;
+    position: relative;
 
     &:not(:last-child) {
         margin-bottom: 1.6rem;
@@ -42,14 +47,40 @@ const PairingBlock = styled.div`
     `}
 `;
 
-const AppIcon = styled.img`
+const AppIconWeb = styled.img`
     height: 4.8rem;
     width: 4.8rem;
     margin-right: 3.1rem;
 
     ${respondDown(Breakpoints.md)`
-        margin-bottom: 1.2rem;
+        display: none;
     `}
+`;
+
+const AppIconMobileWrap = styled.div`
+    display: none;
+    position: relative;
+
+    ${respondDown(Breakpoints.md)`
+          display: inline;
+     `}
+`;
+
+const AppIconMobile = styled.img`
+    height: 2.4rem;
+    width: 2.4rem;
+    margin-right: 0.8rem;
+`;
+
+const LoginFlowIconWrap = styled.div`
+    position: absolute;
+    height: 1.6rem;
+    width: 1.6rem;
+    border-radius: 50%;
+    background-color: ${COLORS.lightGray};
+    ${flexAllCenter};
+    bottom: 0;
+    right: 0;
 `;
 
 const AppInfoBlock = styled.div`
@@ -57,18 +88,24 @@ const AppInfoBlock = styled.div`
     flex-direction: column;
 `;
 
-const AppName = styled.div`
+const AppNameWrap = styled.div`
+    display: flex;
     width: min-content;
     font-size: 1.6rem;
     line-height: 2.8rem;
     color: ${COLORS.paragraphText};
+`;
+
+const AppName = styled.div`
     position: relative;
+    width: min-content;
+    height: 2.8rem;
 `;
 
 const LatestAdded = styled.div`
     position: absolute;
     left: calc(100% + 0.5rem);
-    top: -0.2rem;
+    top: -0.5rem;
     height: 1.8rem;
     padding: 0 0.6rem;
     font-size: 0.8rem;
@@ -81,39 +118,88 @@ const LatestAdded = styled.div`
     background-color: ${COLORS.tooltip};
     border-radius: 0.5rem;
     white-space: nowrap;
+
+    ${respondDown(Breakpoints.md)`
+        top: 50%;
+        transform: translate(0, -50%);
+    `}
 `;
 
 const AppDescription = styled.span`
     color: ${COLORS.grayText};
+    word-break: break-word;
+    padding-right: 1.6rem;
+`;
+
+const ConnectButton = styled.div`
+    display: none;
+    color: ${COLORS.purple};
+    font-weight: 400;
+    font-size: 1.4rem;
+    line-height: 2rem;
+    margin-top: 1.6rem;
+    align-items: center;
+
+    svg {
+        margin-left: 0.8rem;
+    }
+
+    ${respondDown(Breakpoints.md)`
+         display: flex;
+    `}
 `;
 
 const DeleteButtonWeb = styled(IconCloseSmall)`
     margin-left: auto;
     cursor: pointer;
+    min-width: 1.6rem;
 
     ${respondDown(Breakpoints.md)`
         display: none;
     `}
 `;
 
-const DeleteButtonMobile = styled(IconCloseSmall)`
+const DeleteButtonMobile = styled.div`
     margin-left: auto;
     cursor: pointer;
+    height: 3rem;
+    width: 3rem;
+    ${flexAllCenter};
+    position: absolute;
+    top: 1.4rem;
+    right: 1.7rem;
     display: none;
 
     ${respondDown(Breakpoints.md)`
-        display: block;
+        display: flex;
     `}
 `;
 
 const NewConnectionButton = styled.div`
-    display: flex;
     align-items: center;
     font-size: 1.6rem;
     line-height: 2.8rem;
     color: ${COLORS.purple};
     cursor: pointer;
+`;
+
+const NewConnectionButtonWeb = styled(NewConnectionButton)`
+    display: flex;
     margin-top: 3.2rem;
+
+    ${respondDown(Breakpoints.md)`
+        display: none;
+    `}
+`;
+
+const NewConnectionButtonMobile = styled(NewConnectionButton)`
+    display: none;
+    margin-top: 1.6rem;
+    margin-bottom: 2.4rem;
+
+    ${respondDown(Breakpoints.md)`
+        display: flex;
+    `}
 `;
 
 const NewConnectionButtonIcon = styled(IconPlus)`
@@ -125,7 +211,10 @@ const PairingModal = ({ params }: ModalProps<PairingModalParams>): JSX.Element =
 
     const [currentPairings, setCurrentPairings] = useState(pairings);
 
-    const handleDeletePairing = (event: MouseEvent, topic: string): void => {
+    const handleDeletePairing = (
+        event: MouseEvent | React.MouseEvent<HTMLDivElement>,
+        topic: string,
+    ): void => {
         event.stopPropagation();
         deletePairing(topic).then(() => {
             setCurrentPairings(currentPairings.filter((pairing) => pairing.topic !== topic));
@@ -136,29 +225,59 @@ const PairingModal = ({ params }: ModalProps<PairingModalParams>): JSX.Element =
         <ModalBlock>
             <ModalTitle>Logged in before?</ModalTitle>
             <ModalDescription>Restore your connection or create a new one.</ModalDescription>
-            {currentPairings.map((pairing, index) => (
-                <PairingBlock key={pairing.topic} onClick={() => connect(pairing)}>
-                    <DeleteButtonMobile onClick={(e) => handleDeletePairing(e, pairing.topic)} />
-                    <AppIcon src={pairing.state.metadata.icons[0]} alt="" />
-
-                    <AppInfoBlock>
-                        <AppName>
-                            {pairing.state.metadata.name}
-                            {currentPairings.length > 1 && index === 0 && (
-                                <LatestAdded>latest added</LatestAdded>
-                            )}
-                        </AppName>
-                        <AppDescription>{pairing.state.metadata.description}</AppDescription>
-                    </AppInfoBlock>
-
-                    <DeleteButtonWeb onClick={(e) => handleDeletePairing(e, pairing.topic)} />
-                </PairingBlock>
-            ))}
-
-            <NewConnectionButton onClick={() => connect()}>
+            <NewConnectionButtonMobile onClick={() => connect()}>
                 <span>Add new connection</span>
                 <NewConnectionButtonIcon />
-            </NewConnectionButton>
+            </NewConnectionButtonMobile>
+            {currentPairings.map((pairing, index) => {
+                const app = getAppFromDeepLinkList(pairing.topic);
+                return (
+                    <PairingBlock
+                        key={pairing.topic}
+                        onClick={() => {
+                            if (app) {
+                                saveAppToLS(app.name, app.uri);
+                                window.open(app.uri, '_blank');
+                            }
+                            connect(pairing);
+                        }}
+                    >
+                        <DeleteButtonMobile onClick={(e) => handleDeletePairing(e, pairing.topic)}>
+                            <IconCloseSmall />
+                        </DeleteButtonMobile>
+                        <AppIconWeb src={pairing.state.metadata.icons[0]} alt="" />
+
+                        <AppInfoBlock>
+                            <AppNameWrap>
+                                <AppIconMobileWrap>
+                                    <AppIconMobile src={pairing.state.metadata.icons[0]} alt="" />
+                                    <LoginFlowIconWrap>
+                                        {Boolean(app) ? <IconDeepLink /> : <IconQR />}
+                                    </LoginFlowIconWrap>
+                                </AppIconMobileWrap>
+
+                                <AppName>
+                                    <span>{pairing.state.metadata.name}</span>
+                                    {currentPairings.length > 1 && index === 0 && (
+                                        <LatestAdded>latest added</LatestAdded>
+                                    )}
+                                </AppName>
+                            </AppNameWrap>
+                            <AppDescription>{pairing.state.metadata.description}</AppDescription>
+                            <ConnectButton>
+                                <span>Connect</span>
+                                <IconArrowRight />
+                            </ConnectButton>
+                        </AppInfoBlock>
+
+                        <DeleteButtonWeb onClick={(e) => handleDeletePairing(e, pairing.topic)} />
+                    </PairingBlock>
+                );
+            })}
+            <NewConnectionButtonWeb onClick={() => connect()}>
+                <span>Add new connection</span>
+                <NewConnectionButtonIcon />
+            </NewConnectionButtonWeb>
         </ModalBlock>
     );
 };
