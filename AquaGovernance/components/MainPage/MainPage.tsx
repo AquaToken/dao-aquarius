@@ -15,6 +15,8 @@ import { ModalService } from '../../../common/services/globalServices';
 import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
 import PageLoader from '../../../common/basics/PageLoader';
 import ExternalLink from '../../../common/basics/ExternalLink';
+import TemporarilyNotWork from '../TemporarilyNotWork/TemporarilyNotWork';
+import UnderMaintenance from '../../../common/assets/img/under-maintenance.svg';
 
 export const CREATE_PROPOSAL_COST = 1000000;
 export const MINIMUM_APPROVAL_PERCENT = 5;
@@ -157,6 +159,10 @@ const About = styled.div`
     `}
 `;
 
+const ModalBG = styled(UnderMaintenance)`
+    object-position: center center;
+`;
+
 const PlusIcon = styled(Plus)`
     margin-left: 1.7rem;
 `;
@@ -167,12 +173,13 @@ const MainPage = (): JSX.Element => {
     const { isLogged } = useAuthStore();
 
     const handleClick = () => {
-        if (!isLogged) {
-            ModalService.openModal(ChooseLoginMethodModal, {});
-            return;
-        }
-
-        history.push('/create');
+        // if (!isLogged) {
+        //     ModalService.openModal(ChooseLoginMethodModal, {});
+        //     return;
+        // }
+        //
+        // history.push('/create');
+        ModalService.openModal(TemporarilyNotWork, {}, true, <ModalBG />);
     };
 
     useEffect(() => {
