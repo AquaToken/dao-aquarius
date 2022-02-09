@@ -42,18 +42,26 @@ const App = () => {
                     </Route>
                     <Route
                         path={MainRoutes.create}
-                        render={({ location }) =>
-                            isLogged ? (
-                                <ProposalCreationPage />
-                            ) : (
-                                <Redirect
-                                    to={{
-                                        pathname: MainRoutes.main,
-                                        state: { from: location },
-                                    }}
-                                />
-                            )
-                        }
+                        // render={({ location }) =>
+                        //     isLogged ? (
+                        //         <ProposalCreationPage />
+                        //     ) : (
+                        //         <Redirect
+                        //             to={{
+                        //                 pathname: MainRoutes.main,
+                        //                 state: { from: location },
+                        //             }}
+                        //         />
+                        //     )
+                        // }
+                        render={({ location }) => (
+                            <Redirect
+                                to={{
+                                    pathname: MainRoutes.main,
+                                    state: { from: location },
+                                }}
+                            />
+                        )}
                     />
                     <Route component={NotFoundPage} />
                 </Switch>
