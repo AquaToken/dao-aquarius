@@ -11,7 +11,12 @@ export function getProposals() {
             .then((response) => {
                 dispatch({
                     type: PROPOSAL_ACTIONS.GET_PROPOSAL_SUCCESS,
-                    payload: { proposals: response.data.results },
+                    payload: {
+                        proposals: response.data.results.sort(
+                            (a, b) =>
+                                new Date(b.start_at).getTime() - new Date(a.start_at).getTime(),
+                        ),
+                    },
                 });
             })
             .catch(() => {
