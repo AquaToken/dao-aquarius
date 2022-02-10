@@ -48,6 +48,27 @@ export enum BuildSignAndSubmitStatuses {
     pending = 'pending',
 }
 
+export const WC_APP_ALIAS = 'WC_APP';
+
+export const saveAppToLS = (name, uri) => {
+    const focusUri = uri.split('?')[0];
+    localStorage.setItem(
+        WC_APP_ALIAS,
+        JSON.stringify({
+            name,
+            uri: focusUri,
+        }),
+    );
+};
+
+export const getSavedApp = () => {
+    return JSON.parse(localStorage.getItem(WC_APP_ALIAS) || 'null');
+};
+
+export const clearApp = () => {
+    localStorage.removeItem(WC_APP_ALIAS);
+};
+
 export default class WalletConnectServiceClass {
     appMeta: AppMetadata | null = null;
     client: WalletConnectClient | null = null;
@@ -58,6 +79,7 @@ export default class WalletConnectServiceClass {
 
     async initWalletConnect(): Promise<boolean> {
         if (this.client) {
+            clearApp();
             return false;
         }
         this.client = await WalletConnectClient.init({
@@ -75,6 +97,7 @@ export default class WalletConnectServiceClass {
         this.listenWalletConnectEvents();
 
         if (!this.client.session.topics.length) {
+            clearApp();
             return false;
         }
 
@@ -128,6 +151,7 @@ export default class WalletConnectServiceClass {
         if (this.session && this.session.topic === session.topic) {
             this.session = null;
             this.appMeta = null;
+            clearApp();
 
             this.event.trigger({ type: WalletConnectEvents.logout });
         }
@@ -223,9 +247,7 @@ export default class WalletConnectServiceClass {
                     ? 'Connection canceled by the user'
                     : e.message;
 
-            ToastService.showErrorToast(errorMessage);
-
-            console.log(errorMessage);
+            ToastService.showErrorToast(errorMessage ?? e);
 
             ModalService.closeAllModals();
             return;
@@ -252,6 +274,7 @@ export default class WalletConnectServiceClass {
 
     async logout(): Promise<void> {
         if (this.session) {
+            clearApp();
             await this.client.disconnect({
                 topic: this.session.topic,
                 reason: ERROR.USER_DISCONNECTED.format(),
@@ -272,6 +295,12 @@ export default class WalletConnectServiceClass {
                 },
             },
         });
+
+        const savedApp = getSavedApp();
+
+        if (savedApp) {
+            window.open(savedApp.uri, '_blank');
+        }
 
         ModalService.openModal(RequestModal, {
             name: this.appMeta.name,
@@ -294,6 +323,12 @@ export default class WalletConnectServiceClass {
                 },
             },
         });
+
+        const savedApp = getSavedApp();
+
+        if (savedApp) {
+            window.open(savedApp.uri, '_blank');
+        }
 
         ModalService.openModal(RequestModal, {
             name: this.appMeta.name,
