@@ -7,7 +7,6 @@ import Pair from '../../common/Pair';
 import PageLoader from '../../../../common/basics/PageLoader';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
 import VoteButton from './VoteButton/VoteButton';
-import ThreeDotsMenu from './ThreeDotsMenu/ThreeDotsMenu';
 import VoteAmount from './VoteAmount/VoteAmount';
 import useAssetsStore from '../../../store/assetsStore/useAssetsStore';
 import * as StellarSdk from 'stellar-sdk';
@@ -137,22 +136,6 @@ const TableBodyRow = styled.div`
     `}
 `;
 
-const ThreeDotsMenuWeb = styled(ThreeDotsMenu)`
-    ${respondDown(Breakpoints.md)`
-          display: none
-    `}
-`;
-
-const ThreeDotsMenuMobile = styled(ThreeDotsMenu)`
-    display: none;
-    ${respondDown(Breakpoints.md)`
-          display: block;
-          position: absolute;
-          top: 1.6rem;
-          right: 1.6rem;
-    `}
-`;
-
 // const SortingHeader = styled.button`
 //     background: none;
 //     border: none;
@@ -261,15 +244,12 @@ const Table = ({
                             </VoteStats>
                             <ButtonBlock>
                                 <VoteButton
-                                    marketKeyUp={pair.market_key}
-                                    marketKeyDown={pair.downvote_account_id}
+                                    pair={pair}
                                     isPairSelected={isPairSelected(pair)}
                                     onButtonClick={() => selectPair(pair)}
                                     disabled={isAuthRequiredPair(pair)}
                                 />
-                                <ThreeDotsMenuWeb pair={pair} disabled={isAuthRequiredPair(pair)} />
                             </ButtonBlock>
-                            <ThreeDotsMenuMobile pair={pair} disabled={isAuthRequiredPair(pair)} />
                         </TableBodyRow>
                     );
                 })}
