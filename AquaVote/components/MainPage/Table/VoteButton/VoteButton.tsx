@@ -1,6 +1,6 @@
 import * as React from 'react';
-import styled, { css } from 'styled-components';
 import { useEffect, useState } from 'react';
+import styled, { css } from 'styled-components';
 import { ModalService, StellarService } from '../../../../../common/services/globalServices';
 import { StellarEvents } from '../../../../../common/services/stellar.service';
 import { formatBalance } from '../../../../../common/helpers/helpers';
@@ -13,6 +13,7 @@ import { flexRowSpaceBetween } from '../../../../../common/mixins';
 import { PairStats } from '../../../../api/types';
 import ChooseLoginMethodModal from '../../../../../common/modals/ChooseLoginMethodModal';
 import VotesAmountModal from '../../VoteModals/VotesAmountModal';
+import Tooltip, { TOOLTIP_POSITION } from '../../../../../common/basics/Tooltip';
 
 const iconStyles = css`
     margin-left: 1.6rem;
@@ -39,6 +40,10 @@ const DownvoteButton = styled(Button)`
     margin-left: 0.8rem;
 `;
 
+const TooltipInner = styled.div`
+    font-size: 1.2rem;
+`;
+
 const VoteButton = ({
     pair,
     isPairSelected,
@@ -59,6 +64,8 @@ const VoteButton = ({
     const [balanceDown, setBalanceDown] = useState(
         isLogged ? StellarService.getMarketVotesValue(marketKeyDown, account?.accountId()) : null,
     );
+
+    const [showTooltip, setShowTooltip] = useState(false);
 
     const downVote = () => {
         if (!isLogged) {
@@ -97,14 +104,22 @@ const VoteButton = ({
                     {isPairSelected ? 'added' : 'Add To Vote'}
                     {isPairSelected ? <TickStyled /> : <Like />}
                 </Button>
-                <DownvoteButton
-                    isSquare
-                    likeDisabled
-                    disabled={disabled}
-                    onClick={() => downVote()}
+                <Tooltip
+                    content={<TooltipInner>Downvote this pair</TooltipInner>}
+                    position={TOOLTIP_POSITION.top}
+                    isShow={showTooltip}
                 >
-                    <IconDislike />
-                </DownvoteButton>
+                    <DownvoteButton
+                        isSquare
+                        likeDisabled
+                        disabled={disabled}
+                        onClick={() => downVote()}
+                        onMouseEnter={() => setShowTooltip(true)}
+                        onMouseLeave={() => setShowTooltip(false)}
+                    >
+                        <IconDislike />
+                    </DownvoteButton>
+                </Tooltip>
             </>
         );
     }
@@ -119,9 +134,22 @@ const VoteButton = ({
             >
                 {isPairSelected ? <IconTick /> : <IconLike />}
             </Button>
-            <DownvoteButton isSquare likeDisabled disabled={disabled} onClick={() => downVote()}>
-                <IconDislike />
-            </DownvoteButton>
+            <Tooltip
+                content={<TooltipInner>Downvote this pair</TooltipInner>}
+                position={TOOLTIP_POSITION.top}
+                isShow={showTooltip}
+            >
+                <DownvoteButton
+                    isSquare
+                    likeDisabled
+                    disabled={disabled}
+                    onClick={() => downVote()}
+                    onMouseEnter={() => setShowTooltip(true)}
+                    onMouseLeave={() => setShowTooltip(false)}
+                >
+                    <IconDislike />
+                </DownvoteButton>
+            </Tooltip>
         </Container>
     );
 };
