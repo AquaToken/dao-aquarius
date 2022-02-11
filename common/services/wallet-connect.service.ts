@@ -50,23 +50,41 @@ export enum BuildSignAndSubmitStatuses {
 
 export const WC_APP_ALIAS = 'WC_APP';
 
+function getLocalStorage(): Storage | undefined {
+    let res: Storage | undefined = undefined;
+    if (typeof window !== 'undefined' && typeof window['localStorage'] !== 'undefined') {
+        res = window['localStorage'];
+    }
+    return res;
+}
+
 export const saveAppToLS = (name, uri) => {
     const focusUri = uri.split('?')[0];
-    localStorage.setItem(
-        WC_APP_ALIAS,
-        JSON.stringify({
-            name,
-            uri: focusUri,
-        }),
-    );
+    const LS = getLocalStorage();
+    if (LS) {
+        LS.setItem(
+            WC_APP_ALIAS,
+            JSON.stringify({
+                name,
+                uri: focusUri,
+            }),
+        );
+    }
 };
 
 export const getSavedApp = () => {
-    return JSON.parse(localStorage.getItem(WC_APP_ALIAS) || 'null');
+    const LS = getLocalStorage();
+    if (!LS) {
+        return null;
+    }
+    return JSON.parse(LS.getItem(WC_APP_ALIAS) || 'null');
 };
 
 export const clearApp = () => {
-    localStorage.removeItem(WC_APP_ALIAS);
+    const LS = getLocalStorage();
+    if (LS) {
+        LS.removeItem(WC_APP_ALIAS);
+    }
 };
 
 export default class WalletConnectServiceClass {
