@@ -316,6 +316,8 @@ export default class WalletConnectServiceClass {
 
         const savedApp = getSavedApp();
 
+        ToastService.showSuccessToast(JSON.stringify(savedApp));
+
         if (savedApp) {
             window.open(savedApp.uri, '_blank');
         }
