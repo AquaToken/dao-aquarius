@@ -106,13 +106,13 @@ export default class AccountService extends AccountResponse {
             (balance) =>
                 (balance as Horizon.BalanceLineAsset).asset_code == AQUA_CODE &&
                 (balance as Horizon.BalanceLineAsset).asset_issuer === AQUA_ISSUER,
-        );
+        ) as Horizon.BalanceLineAsset;
 
         if (!aquaBalance) {
             return null;
         }
 
-        return +aquaBalance.balance;
+        return Number(aquaBalance.balance) - Number(aquaBalance.selling_liabilities);
     }
 
     getAvailableNativeBalance(): number | null {
