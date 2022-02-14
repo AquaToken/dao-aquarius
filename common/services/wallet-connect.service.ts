@@ -87,6 +87,13 @@ export const clearApp = () => {
     }
 };
 
+const openTargetBlank = (url) => {
+    const a = document.createElement('a');
+    a.setAttribute('href', url);
+    a.setAttribute('target', '_blank');
+    a.click();
+};
+
 export default class WalletConnectServiceClass {
     appMeta: AppMetadata | null = null;
     client: WalletConnectClient | null = null;
@@ -319,7 +326,7 @@ export default class WalletConnectServiceClass {
         ToastService.showSuccessToast(JSON.stringify(savedApp));
 
         if (savedApp) {
-            window.open(savedApp.uri, '_blank');
+            openTargetBlank(savedApp.uri);
         }
 
         ModalService.openModal(RequestModal, {
@@ -347,7 +354,7 @@ export default class WalletConnectServiceClass {
         const savedApp = getSavedApp();
 
         if (savedApp) {
-            window.open(savedApp.uri, '_blank');
+            openTargetBlank(savedApp.uri);
         }
 
         ModalService.openModal(RequestModal, {
