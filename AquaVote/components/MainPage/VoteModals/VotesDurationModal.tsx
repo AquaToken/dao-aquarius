@@ -1,26 +1,19 @@
 import * as React from 'react';
-import { useState } from 'react';
-import {
-    ModalService,
-    StellarService,
-    ToastService,
-} from '../../../../common/services/globalServices';
-import { SELECTED_PAIRS_ALIAS } from '../MainPage';
-import {
-    BuildSignAndSubmitStatuses,
-    getSavedApp,
-} from '../../../../common/services/wallet-connect.service';
+import {useState} from 'react';
+import {ModalService, StellarService, ToastService,} from '../../../../common/services/globalServices';
+import {SELECTED_PAIRS_ALIAS} from '../MainPage';
+import {BuildSignAndSubmitStatuses, openApp,} from '../../../../common/services/wallet-connect.service';
 import useAuthStore from '../../../../common/store/authStore/useAuthStore';
-import Select, { Option } from '../../../../common/basics/Select';
-import { useIsMounted } from '../../../../common/hooks/useIsMounted';
-import { ModalDescription, ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
-import { getDateString } from '../../../../common/helpers/helpers';
+import Select, {Option} from '../../../../common/basics/Select';
+import {useIsMounted} from '../../../../common/hooks/useIsMounted';
+import {ModalDescription, ModalTitle} from '../../../../common/modals/atoms/ModalAtoms';
+import {getDateString} from '../../../../common/helpers/helpers';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import VotesAmountModal, { ContentRow, Label } from './VotesAmountModal';
+import {Breakpoints, COLORS} from '../../../../common/styles';
+import VotesAmountModal, {ContentRow, Label} from './VotesAmountModal';
 import Button from '../../../../common/basics/Button';
-import { respondDown } from '../../../../common/mixins';
-import { LoginTypes } from '../../../../common/store/authStore/types';
+import {respondDown} from '../../../../common/mixins';
+import {LoginTypes} from '../../../../common/store/authStore/types';
 
 const ClaimBack = styled.div`
     margin: 2rem 0 3.2rem;
@@ -92,9 +85,8 @@ const VotesDurationModal = ({ params, close }) => {
     };
 
     const onSubmit = async () => {
-        const saved = getSavedApp();
-        if (account.authType === LoginTypes.walletConnect && saved) {
-            window.open(saved.uri, '_blank');
+        if (account.authType === LoginTypes.walletConnect) {
+            openApp();
         }
         try {
             setPending(true);

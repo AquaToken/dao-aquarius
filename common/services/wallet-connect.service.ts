@@ -87,6 +87,13 @@ export const clearApp = () => {
     }
 };
 
+export const openApp = () => {
+    const saved = getSavedApp();
+    if (saved) {
+        window.open(saved.uri, '_blank');
+    }
+};
+
 export default class WalletConnectServiceClass {
     appMeta: AppMetadata | null = null;
     client: WalletConnectClient | null = null;
