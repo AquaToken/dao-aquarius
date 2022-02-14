@@ -104,6 +104,35 @@ type Wallet = {
     mobile: { native: string; universal: string };
     name: string;
     versions: string[];
+    image_url: {
+        lg: string;
+        md: string;
+        sm: string;
+    };
+};
+const LOBSTR_STAGING: Wallet = {
+    app: {
+        browser: '',
+        ios: '',
+        android: '',
+        mac: '',
+        windows: '',
+        linux: '',
+    },
+    chains: ['stellar:pubnet'],
+    description: '',
+    desktop: { native: '', universal: '' },
+    homepage: '',
+    id: '1',
+    metadata: { shortName: '', colors: { primary: '', secondary: '' } },
+    mobile: { native: 'lobstr://wc', universal: 'https://staging.lobstr.co/uni/wc' },
+    name: 'Lobstr Staging',
+    versions: ['2'],
+    image_url: {
+        lg: 'https://imagedelivery.net/_aTEfDRm7z3tKgu9JhfeKA/0dafcaab-0852-47f7-85dd-436b86491d00/lg',
+        md: 'https://imagedelivery.net/_aTEfDRm7z3tKgu9JhfeKA/0dafcaab-0852-47f7-85dd-436b86491d00/md',
+        sm: 'https://imagedelivery.net/_aTEfDRm7z3tKgu9JhfeKA/0dafcaab-0852-47f7-85dd-436b86491d00/sm',
+    },
 };
 
 const registryUrl = 'https://registry.walletconnect.com/api/v1/wallets';
@@ -211,7 +240,7 @@ const QRModal = ({ params }: ModalProps<{ uri: string }>): JSX.Element => {
                     <>
                         {wallets && (
                             <IosBlock>
-                                {wallets.map((wallet) => (
+                                {[LOBSTR_STAGING, ...wallets].map((wallet: Wallet) => (
                                     <AppBlock
                                         key={wallet.id}
                                         onClick={() => {
@@ -220,7 +249,7 @@ const QRModal = ({ params }: ModalProps<{ uri: string }>): JSX.Element => {
                                             window.open(link, '_blank');
                                         }}
                                     >
-                                        <AppLogo src={`${logosUrl}${wallet.id}`} alt="" />
+                                        <AppLogo src={wallet.image_url.md} alt="" />
                                         <AppName>{wallet.name}</AppName>
                                         <ArrowRightIcon />
                                     </AppBlock>
