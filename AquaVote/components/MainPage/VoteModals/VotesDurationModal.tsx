@@ -6,7 +6,10 @@ import {
     ToastService,
 } from '../../../../common/services/globalServices';
 import { SELECTED_PAIRS_ALIAS } from '../MainPage';
-import { BuildSignAndSubmitStatuses } from '../../../../common/services/wallet-connect.service';
+import {
+    BuildSignAndSubmitStatuses,
+    getSavedApp,
+} from '../../../../common/services/wallet-connect.service';
 import useAuthStore from '../../../../common/store/authStore/useAuthStore';
 import Select, { Option } from '../../../../common/basics/Select';
 import { useIsMounted } from '../../../../common/hooks/useIsMounted';
@@ -17,6 +20,7 @@ import { Breakpoints, COLORS } from '../../../../common/styles';
 import VotesAmountModal, { ContentRow, Label } from './VotesAmountModal';
 import Button from '../../../../common/basics/Button';
 import { respondDown } from '../../../../common/mixins';
+import { LoginTypes } from '../../../../common/store/authStore/types';
 
 const ClaimBack = styled.div`
     margin: 2rem 0 3.2rem;
@@ -88,6 +92,10 @@ const VotesDurationModal = ({ params, close }) => {
     };
 
     const onSubmit = async () => {
+        const saved = getSavedApp();
+        if (account.authType === LoginTypes.walletConnect && saved) {
+            window.open(saved.uri, '_blank');
+        }
         try {
             setPending(true);
 
