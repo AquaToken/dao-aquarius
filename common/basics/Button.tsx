@@ -9,6 +9,7 @@ const ButtonBody = styled.button<{
     fullWidth?: boolean;
     likeDisabled?: boolean;
     isSquare?: boolean;
+    isSmall?: boolean;
 }>`
     ${flexAllCenter};
     width: ${({ fullWidth, isSquare, isBig }) => {
@@ -21,10 +22,24 @@ const ButtonBody = styled.button<{
 
         return 'unset';
     }};
-    height: ${({ isBig }) => (isBig ? '6.6rem' : '4.8rem')};
-    padding: ${({ isBig, isSquare }) => {
+    height: ${({ isBig, isSmall }) => {
+        if (isBig) {
+            return '6.6rem';
+        }
+
+        if (isSmall) {
+            return '2.8rem';
+        }
+
+        return '4.8rem';
+    }};
+    padding: ${({ isBig, isSquare, isSmall }) => {
         if (isSquare) {
             return 'unset';
+        }
+
+        if (isSmall) {
+            return '0 1.8rem';
         }
 
         return isBig ? '0 6.4rem' : '0 3.2rem';
@@ -102,12 +117,14 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     fullWidth?: boolean;
     likeDisabled?: boolean;
     isSquare?: boolean;
+    isSmall?: boolean;
 }
 
 const Button = ({
     children,
     pending,
     isBig,
+    isSmall,
     fullWidth,
     likeDisabled,
     isSquare,
@@ -120,6 +137,7 @@ const Button = ({
             fullWidth={fullWidth}
             likeDisabled={likeDisabled}
             isSquare={isSquare}
+            isSmall={isSmall}
             {...props}
         >
             <ButtonLoader pending={pending} likeDisabled={likeDisabled}>

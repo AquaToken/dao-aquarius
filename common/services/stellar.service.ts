@@ -5,6 +5,7 @@ import { Memo, MemoType, OperationOptions, ServerApi } from 'stellar-sdk';
 import { ToastService } from './globalServices';
 import axios, { AxiosResponse } from 'axios';
 import { roundToPrecision } from '../helpers/helpers';
+import { PairStats } from '../../AquaVote/api/types';
 
 enum HORIZON_SERVER {
     stellar = 'https://horizon.stellar.org',
@@ -375,6 +376,36 @@ export default class StellarServiceClass {
         }, 0);
     }
 
+    getPairVotes(pair: PairStats, accountId: string) {
+        if (!this.claimableBalances) {
+            return null;
+        }
+        return this.claimableBalances.reduce((acc, claim) => {
+            if (claim.claimants.length !== 2) {
+                return acc;
+            }
+            const hasUpMarker = claim.claimants.some(
+                (claimant) => claimant.destination === pair.account_id,
+            );
+            const hasDownMarker = claim.claimants.some(
+                (claimant) => claimant.destination === pair.downvote_account_id,
+            );
+            const selfClaim = claim.claimants.find(
+                (claimant) => claimant.destination === accountId,
+            );
+            const isAqua = claim.asset === `${AQUA_CODE}:${AQUA_ISSUER}`;
+
+            if ((hasUpMarker || hasDownMarker) && Boolean(selfClaim) && isAqua) {
+                acc.push({
+                    ...claim,
+                    isDownVote: hasDownMarker,
+                    claimBackDate: selfClaim.predicate.not.abs_before,
+                });
+            }
+            return acc;
+        }, []);
+    }
+
     getKeysSimilarToMarketKeys(accountId: string): string[] {
         if (!this.claimableBalances) {
             return null;
@@ -604,5 +635,24 @@ export default class StellarServiceClass {
         );
 
         return roundToPrecision(baseVolume / counterVolume, 7);
+    }
+
+    createClaimOperations(claimId: string, withTrust: boolean) {
+        const ops = [];
+
+        if (withTrust) {
+            const trustOp = StellarSdk.Operation.changeTrust({
+                asset: new StellarSdk.Asset(AQUA_CODE, AQUA_ISSUER),
+            });
+            ops.push(trustOp);
+        }
+
+        const claimOp = StellarSdk.Operation.claimClaimableBalance({
+            balanceId: claimId,
+        });
+
+        ops.push(claimOp);
+
+        return ops;
     }
 }
