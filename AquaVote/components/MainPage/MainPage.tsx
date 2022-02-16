@@ -343,7 +343,7 @@ const MainPage = (): JSX.Element => {
     const [sort, setSort] = useState(null);
     const [page, setPage] = useState(1);
     const { isLogged, account } = useAuthStore();
-    const [isClaimableBalancesLoaded, setIsClaimableBalancesLoaded] = useState(false);
+    const [claimUpdateId, setClaimUpdateId] = useState(0);
     const [searchBase, setSearchBase] = useState(null);
     const [searchCounter, setSearchCounter] = useState(null);
     const [pairsLoading, setPairsLoading] = useState(false);
@@ -450,7 +450,7 @@ const MainPage = (): JSX.Element => {
     useEffect(() => {
         const unsub = StellarService.event.sub(({ type }) => {
             if (type === StellarEvents.claimableUpdate) {
-                setIsClaimableBalancesLoaded(StellarService.isClaimableBalancesLoaded);
+                setClaimUpdateId((prevState) => prevState + 1);
             }
         });
 
@@ -513,7 +513,7 @@ const MainPage = (): JSX.Element => {
         }
         setPairsLoading(true);
 
-        if (isClaimableBalancesLoaded) {
+        if (Boolean(claimUpdateId)) {
             const keys = StellarService.getKeysSimilarToMarketKeys(account.accountId());
 
             getUserPairsList(keys).then((result) => {
@@ -524,7 +524,23 @@ const MainPage = (): JSX.Element => {
                 setChangePageLoading(false);
             });
         }
-    }, [sort, isClaimableBalancesLoaded]);
+    }, [sort]);
+
+    useEffect(() => {
+        if (sort !== SortTypes.yourVotes || !claimUpdateId) {
+            return;
+        }
+
+        const keys = StellarService.getKeysSimilarToMarketKeys(account.accountId());
+
+        getUserPairsList(keys).then((result) => {
+            setPairs(result);
+            processAssetsFromPairs(result);
+            setCount(result.length);
+            setPairsLoading(false);
+            setChangePageLoading(false);
+        });
+    }, [claimUpdateId]);
 
     useEffect(() => {
         if (sort === SortTypes.topVoted) {
@@ -751,6 +767,7 @@ const MainPage = (): JSX.Element => {
                     selectPair={onVoteClick}
                     loading={pairsLoading}
                     totalStats={totalStats}
+                    isYourVotes={sort === SortTypes.yourVotes}
                 />
                 {(!pairsLoading || changePageLoading) && sort !== SortTypes.yourVotes && (
                     <Pagination

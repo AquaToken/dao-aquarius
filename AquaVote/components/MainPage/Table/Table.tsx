@@ -11,6 +11,12 @@ import VoteAmount from './VoteAmount/VoteAmount';
 import useAssetsStore from '../../../store/assetsStore/useAssetsStore';
 import * as StellarSdk from 'stellar-sdk';
 import { getAssetString } from '../../../store/assetsStore/actions';
+import Button from '../../../../common/basics/Button';
+import ManageIcon from '../../../../common/assets/img/icon-manage.svg';
+import Tooltip, { TOOLTIP_POSITION } from '../../../../common/basics/Tooltip';
+import { useState } from 'react';
+import { ModalService } from '../../../../common/services/globalServices';
+import ManageVotesModal from '../ManageVotesModal/ManageVotesModal';
 
 const TableBlock = styled.div`
     display: flex;
@@ -94,8 +100,12 @@ const VoteStats = styled(TableCell)`
     `}
 `;
 
-const ButtonBlock = styled(TableCell)`
+const AquaVoted = styled(VoteStats)`
     flex: 1;
+`;
+
+const ButtonBlock = styled(TableCell)`
+    flex: 1.5;
     justify-content: flex-end;
     min-width: 17rem;
 `;
@@ -134,6 +144,14 @@ const TableBodyRow = styled.div`
             color: ${COLORS.grayText};
         }
     `}
+`;
+
+const ManageButton = styled(Button)`
+    margin-left: 0.8rem;
+`;
+
+const TooltipInner = styled.div`
+    font-size: 1.2rem;
 `;
 
 // const SortingHeader = styled.button`
@@ -176,13 +194,16 @@ const Table = ({
     selectPair,
     loading,
     totalStats,
+    isYourVotes,
 }: {
     pairs: PairStats[];
     selectedPairs: PairStats[];
     selectPair: (PairStats) => void;
     loading: boolean;
     totalStats: TotalStats;
+    isYourVotes: boolean;
 }): JSX.Element => {
+    const [showTooltipId, setShowTooltipId] = useState(null);
     if (!pairs.length) {
         return null;
     }
@@ -203,6 +224,10 @@ const Table = ({
         return Boolean(counterInfo?.auth_required || baseInfo?.auth_required);
     };
 
+    const manageVotes = (pair) => {
+        ModalService.openModal(ManageVotesModal, { pair });
+    };
+
     return (
         <TableBlock>
             {(loading || !totalStats) && (
@@ -215,7 +240,7 @@ const Table = ({
                 <TableHeadRow>
                     <PairInfo>Pair</PairInfo>
                     <VoteStats>Users Voted</VoteStats>
-                    <VoteStats>AQUA Voted</VoteStats>
+                    <AquaVoted>AQUA Voted</AquaVoted>
                     <ButtonBlock>Your Vote</ButtonBlock>
                 </TableHeadRow>
             </TableHead>
@@ -238,10 +263,10 @@ const Table = ({
                                 <label>Users Voted:</label>
                                 {pair.voting_amount ? formatBalance(pair.voting_amount) : null}
                             </VoteStats>
-                            <VoteStats>
+                            <AquaVoted>
                                 <label>AQUA Voted:</label>
                                 <VoteAmount pair={pair} totalStats={totalStats} />
-                            </VoteStats>
+                            </AquaVoted>
                             <ButtonBlock>
                                 <VoteButton
                                     pair={pair}
@@ -249,6 +274,23 @@ const Table = ({
                                     onButtonClick={() => selectPair(pair)}
                                     disabled={isAuthRequiredPair(pair)}
                                 />
+                                {isYourVotes && (
+                                    <Tooltip
+                                        content={<TooltipInner>Manage votes</TooltipInner>}
+                                        position={TOOLTIP_POSITION.top}
+                                        isShow={showTooltipId === pair.account_id}
+                                    >
+                                        <ManageButton
+                                            isSquare
+                                            likeDisabled
+                                            onMouseEnter={() => setShowTooltipId(pair.account_id)}
+                                            onMouseLeave={() => setShowTooltipId(null)}
+                                            onClick={() => manageVotes(pair)}
+                                        >
+                                            <ManageIcon />
+                                        </ManageButton>
+                                    </Tooltip>
+                                )}
                             </ButtonBlock>
                         </TableBodyRow>
                     );
