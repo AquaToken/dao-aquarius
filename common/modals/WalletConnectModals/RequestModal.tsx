@@ -6,9 +6,10 @@ import styled from 'styled-components';
 import { IconFail, IconPending, IconSuccess } from '../../basics/Icons';
 import { flexAllCenter, respondDown } from '../../mixins';
 import DotsLoader from '../../basics/DotsLoader';
-import { BuildSignAndSubmitStatuses } from '../../services/wallet-connect.service';
+import { BuildSignAndSubmitStatuses, getSavedApp } from '../../services/wallet-connect.service';
 import { Breakpoints, COLORS } from '../../styles';
 import { useIsMounted } from '../../hooks/useIsMounted';
+import { isMobile } from '../../helpers/browser';
 
 enum TX_STATUSES {
     pending = 'pending',
@@ -41,6 +42,10 @@ const Status = styled.div`
     padding-bottom: 4.5rem;
     background-color: ${COLORS.lightGray};
     ${flexAllCenter};
+`;
+
+const OpenAppButton = styled(Button)`
+    margin-top: 3.2rem;
 `;
 
 const RightButton = styled(Button)`
@@ -87,6 +92,8 @@ const RequestModal = ({ params, close }: ModalProps<RequestModalProps>) => {
             });
     }, []);
 
+    const savedApp = getSavedApp();
+
     return (
         <>
             <ModalTitle>Transaction</ModalTitle>
@@ -104,6 +111,17 @@ const RequestModal = ({ params, close }: ModalProps<RequestModalProps>) => {
                 {STATUS_DESCRIPTION[status]}
                 {status === TX_STATUSES.pending && <DotsLoader />}
             </Status>
+
+            {isMobile() && Boolean(savedApp) && status === TX_STATUSES.pending && (
+                <OpenAppButton
+                    fullWidth
+                    onClick={() => {
+                        window.open(savedApp.uri, '_blank');
+                    }}
+                >
+                    Open {savedApp.name}
+                </OpenAppButton>
+            )}
 
             <RightButton onClick={() => close()}>Close</RightButton>
         </>
