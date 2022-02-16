@@ -527,7 +527,7 @@ const MainPage = (): JSX.Element => {
     }, [sort]);
 
     useEffect(() => {
-        if (sort !== SortTypes.yourVotes || !claimUpdateId) {
+        if (sort !== SortTypes.yourVotes || !claimUpdateId || !account) {
             return;
         }
 
