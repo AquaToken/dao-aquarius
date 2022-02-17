@@ -212,7 +212,7 @@ const ManageVotesModal = ({ params, close }: ModalProps<{ pair: PairStats }>) =>
                 ToastService.showSuccessToast('More signatures required to complete');
                 return;
             }
-            ToastService.showSuccessToast('Your vote has claimed back');
+            ToastService.showSuccessToast('Your vote has been claimed back');
             StellarService.getClaimableBalances(account.accountId());
         } catch (e) {
             console.log(e);
@@ -225,8 +225,10 @@ const ManageVotesModal = ({ params, close }: ModalProps<{ pair: PairStats }>) =>
 
     return (
         <Container>
-            <ModalTitle>Claim back</ModalTitle>
-            <ModalDescription>List of your votes for pair</ModalDescription>
+            <ModalTitle>Manage your votes</ModalTitle>
+            <ModalDescription>
+                View your votes for a pair and claim unlocked votes back
+            </ModalDescription>
             <PairBlock>
                 <Pair
                     verticalDirections
@@ -235,15 +237,15 @@ const ManageVotesModal = ({ params, close }: ModalProps<{ pair: PairStats }>) =>
                 />
             </PairBlock>
             <TableHeader>
-                <DateCell>Date/Time</DateCell>
+                <DateCell>Vote date</DateCell>
                 <Amount>Amount</Amount>
-                <Claim>Claim back</Claim>
+                <Claim>Claim back date</Claim>
                 <Link />
             </TableHeader>
             {claims.map((claim) => (
                 <TableRow key={claim.id}>
                     <DateCell>
-                        <label>Date:</label>
+                        <label>Vote date:</label>
                         {getDateString(new Date(claim.last_modified_time).getTime(), {
                             withTime: true,
                         })}
@@ -267,7 +269,7 @@ const ManageVotesModal = ({ params, close }: ModalProps<{ pair: PairStats }>) =>
                     <Claim>
                         {new Date(claim.claimBackDate) > new Date() ? (
                             <>
-                                <label>Claim back:</label>
+                                <label>Claim back date:</label>
                                 <span>
                                     {getDateString(new Date(claim.claimBackDate).getTime(), {
                                         withTime: true,
