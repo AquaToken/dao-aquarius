@@ -1,8 +1,8 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { flexRowSpaceBetween } from '../../../../../common/mixins';
-import Down from '../../../../../common/assets/img/icon-arrow-down.svg';
-import { COLORS } from '../../../../../common/styles';
+import { flexRowSpaceBetween } from '../mixins';
+import Down from '../assets/img/icon-arrow-down.svg';
+import { COLORS } from '../styles';
 import { useState } from 'react';
 
 const Container = styled.div`

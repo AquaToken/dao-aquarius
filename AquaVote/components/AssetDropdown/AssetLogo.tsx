@@ -12,16 +12,22 @@ export const logoStyles = css`
     border-radius: 50%;
 `;
 
-const Logo = styled.img`
-    ${logoStyles};
+const smallLogoStyles = css`
+    height: 1.6rem;
+    width: 1.6rem;
+    border-radius: 0.1rem;
 `;
 
-const Unknown = styled(UnknownLogo)`
-    ${logoStyles};
+const Logo = styled.img<{ isSmall?: boolean }>`
+    ${({ isSmall }) => (isSmall ? smallLogoStyles : logoStyles)};
 `;
 
-const LogoLoaderContainer = styled.div`
-    ${logoStyles};
+const Unknown = styled(UnknownLogo)<{ $isSmall?: boolean }>`
+    ${({ $isSmall }) => ($isSmall ? smallLogoStyles : logoStyles)};
+`;
+
+const LogoLoaderContainer = styled.div<{ isSmall?: boolean }>`
+    ${({ isSmall }) => (isSmall ? smallLogoStyles : logoStyles)};
     ${flexAllCenter};
     background-color: ${COLORS.descriptionText};
 `;
@@ -32,25 +38,32 @@ const LogoLoader = styled(Loader)`
     color: ${COLORS.white};
 `;
 
-const AssetLogo = ({ logoUrl }: { logoUrl: string | null | undefined }) => {
+const AssetLogo = ({
+    logoUrl,
+    isSmall,
+}: {
+    logoUrl: string | null | undefined;
+    isSmall?: boolean;
+}) => {
     const [isErrorLoad, setIsErrorLoad] = useState(false);
 
     if (logoUrl === undefined) {
         return (
-            <LogoLoaderContainer>
+            <LogoLoaderContainer isSmall={isSmall}>
                 <LogoLoader />
             </LogoLoaderContainer>
         );
     }
 
     if (logoUrl === null || isErrorLoad) {
-        return <Unknown />;
+        return <Unknown $isSmall={isSmall} />;
     }
 
     return (
         <Logo
             src={logoUrl}
             alt=""
+            isSmall={isSmall}
             onError={() => {
                 setIsErrorLoad(true);
             }}

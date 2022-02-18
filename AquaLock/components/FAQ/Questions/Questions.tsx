@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Question from './Question/Question';
+import Question from '../../../../common/basics/Question';
 import styled from 'styled-components';
 
 const Container = styled.div`

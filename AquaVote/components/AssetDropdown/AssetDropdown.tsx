@@ -146,18 +146,42 @@ const Reset = styled(Fail)`
     cursor: pointer;
 `;
 
+const Label = styled.div`
+    position: absolute;
+    bottom: calc(100% + 1.2rem);
+    left: 0;
+    font-size: 1.6rem;
+    line-height: 1.8rem;
+    color: ${COLORS.paragraphText};
+`;
+
 type AssetDropdownProps = {
     asset: AssetSimple;
     onUpdate: (asset) => void;
     disabled?: boolean;
     onToggle?: (boolean) => void;
     exclude?: AssetSimple;
+    placeholder?: string;
+    label?: string;
 };
+
+const StyledAsset = styled(Asset)`
+    padding: 0.9rem 2.4rem;
+    height: 6.6rem;
+`;
 
 const pattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?$/;
 const regexp = new RegExp(pattern);
 
-const AssetDropdown = ({ asset, onUpdate, disabled, onToggle, exclude }: AssetDropdownProps) => {
+const AssetDropdown = ({
+    asset,
+    onUpdate,
+    disabled,
+    onToggle,
+    exclude,
+    placeholder,
+    label,
+}: AssetDropdownProps) => {
     const { assets, assetsInfo, processNewAssets } = useAssetsStore();
 
     const [isOpen, setIsOpen] = useState(false);
@@ -277,8 +301,9 @@ const AssetDropdown = ({ asset, onUpdate, disabled, onToggle, exclude }: AssetDr
             ref={ref}
             disabled={!assets.length || disabled}
         >
+            {Boolean(label) && <Label>{label}</Label>}
             {selectedAsset && !isOpen ? (
-                <Asset asset={selectedAsset} />
+                <StyledAsset asset={selectedAsset} />
             ) : (
                 <DropdownSearch
                     onClick={(e) => {
@@ -286,7 +311,7 @@ const AssetDropdown = ({ asset, onUpdate, disabled, onToggle, exclude }: AssetDr
                             e.stopPropagation();
                         }
                     }}
-                    placeholder="Search asset or enter home domain"
+                    placeholder={placeholder ?? 'Search asset or enter home domain'}
                     $disabled={!assets.length || disabled}
                     value={searchText}
                     onChange={(e) => {
@@ -318,7 +343,7 @@ const AssetDropdown = ({ asset, onUpdate, disabled, onToggle, exclude }: AssetDr
                             onClick={() => onClickAsset(assetItem)}
                             key={assetItem.code + assetItem.issuer}
                         >
-                            <Asset asset={assetItem} />
+                            <StyledAsset asset={assetItem} />
                         </DropdownItem>
                     ))}
                     {!filteredAssets.length && <SearchEmpty>Asset not found.</SearchEmpty>}

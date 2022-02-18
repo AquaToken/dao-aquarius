@@ -12,6 +12,7 @@ const LinkBody = styled.a`
     line-height: 2.8rem;
     cursor: pointer;
     text-decoration: none;
+    white-space: nowrap;
 `;
 
 const LinkArrow = styled(LinkArrowIcon)`
