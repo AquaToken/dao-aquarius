@@ -9,6 +9,7 @@ import {
     PairStats,
     TotalStats,
 } from './types';
+import { COLLECTOR_KEY } from '../../common/services/stellar.service';
 
 const assetsListUrl = 'https://fed.stellarterm.com/issuer_orgs/';
 const assetsInfoUrl = 'https://assets.ultrastellar.com/api/v1/assets/';
@@ -264,4 +265,88 @@ export const getFilteredPairsList = async (
 
 export const getTotalVotingStats = (): Promise<TotalStats> => {
     return axios.get<TotalStats>(`${votingTrackerUrl}stats/`).then(({ data }) => data);
+};
+
+export const getMarketPair = (base, counter) => {
+    return axios
+        .get<MarketKey>(`${marketKeysUrl}${getAssetParam(base)}-${getAssetParam(counter)}`)
+        .then(({ data }) => data)
+        .catch(() => null);
+};
+
+export const processBribes = async (claims) => {
+    if (!claims.length) {
+        return [];
+    }
+    const uniqMarkerKeys = [];
+
+    const filtered = claims.filter((claim) => {
+        if (claim.claimants.length !== 2) {
+            return false;
+        }
+
+        const collectorClaimant = claim.claimants.find(
+            (claimant) => claimant.destination === COLLECTOR_KEY,
+        );
+
+        if (
+            !collectorClaimant ||
+            !Boolean(collectorClaimant.predicate?.not?.abs_before) ||
+            new Date(collectorClaimant.predicate?.not?.abs_before).getTime() <= Date.now()
+        ) {
+            return false;
+        }
+
+        const markerClaimant = claim.claimants.find(
+            (claimant) => claimant.destination !== COLLECTOR_KEY,
+        );
+
+        if (!markerClaimant || !Boolean(markerClaimant.predicate?.not?.unconditional)) {
+            return false;
+        }
+
+        if (!uniqMarkerKeys.includes(markerClaimant.destination)) {
+            uniqMarkerKeys.push(markerClaimant.destination);
+        }
+
+        return true;
+    });
+
+    if (!filtered.length) {
+        return [];
+    }
+
+    const params = new URLSearchParams();
+
+    uniqMarkerKeys.forEach((key) => {
+        params.append('account_id', key);
+    });
+
+    const marketKeys = await axios.get<ListResponse<MarketKey>>(`${marketKeysUrl}?limit=200`, {
+        params,
+    });
+
+    return filtered
+        .map((claim) => {
+            const markerClaimant = claim.claimants.find(
+                (claimant) => claimant.destination !== COLLECTOR_KEY,
+            );
+
+            const marker = marketKeys.data.results.find(
+                (marketKey) => marketKey.account_id === markerClaimant.destination,
+            );
+
+            if (!marker) {
+                return null;
+            }
+
+            const collectorClaimant = claim.claimants.find(
+                (claimant) => claimant.destination === COLLECTOR_KEY,
+            );
+
+            const claimDate = collectorClaimant.predicate?.not?.abs_before;
+
+            return { ...claim, ...marker, claimDate };
+        })
+        .filter((item) => item !== null);
 };

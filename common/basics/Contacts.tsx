@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { COLORS } from '../../../../common/styles';
-import ExternalLink from '../../../../common/basics/ExternalLink';
+import { COLORS } from '../styles';
+import ExternalLink from './ExternalLink';
 
 const Container = styled.div`
     max-width: 36.6rem;
@@ -35,8 +35,8 @@ const Contacts = () => {
         <Container>
             <Title>Questions?</Title>
             <Description>
-                We have tried to answer the most common questions. If you need to find out
-                more information, please join our community chats.
+                We have tried to answer the most common questions. If you need to find out more
+                information, please join our community chats.
             </Description>
             <Links>
                 <ExternalLink href="https://discord.com/invite/sgzFscHp4C">

@@ -23,7 +23,8 @@ import { respondDown } from '../../common/mixins';
 import { Breakpoints, COLORS } from '../../common/styles';
 
 const MainPage = lazy(() => import('./MainPage/MainPage'));
-const AboutPage = lazy(() => import('./AboutPage/AboutPage'));
+const BribesPage = lazy(() => import('./BribesPage/BribesPage'));
+const AddBribePage = lazy(() => import('./AddBribePage/AddBribePage'));
 
 const ModalBG = styled(BG)`
     object-position: center center;
@@ -97,8 +98,11 @@ const App = () => {
                     <Route exact path={MainRoutes.main}>
                         <MainPage />
                     </Route>
-                    <Route path={MainRoutes.about}>
-                        <AboutPage />
+                    <Route path={MainRoutes.bribes}>
+                        <BribesPage />
+                    </Route>
+                    <Route path={MainRoutes.addBribe}>
+                        <AddBribePage />
                     </Route>
                     <Route component={NotFoundPage} />
                 </Switch>

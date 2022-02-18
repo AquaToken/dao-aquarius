@@ -19,6 +19,8 @@ const MARKET_KEY_MARKER_DOWN = 'GAYVCXXXUSEAQUAXXXAQUARIUSDOWNVOTEWALLETXXXPOWER
 const MARKET_KEY_SIGNER_WEIGHT = 1;
 const MARKET_KEY_THRESHOLD = 10;
 
+export const COLLECTOR_KEY = 'GAORXNBAWRIOJ7HRMCTWW2MIB6PYWSC7OKHGIXWTJXYRTZRSHP356TW3';
+
 export enum StellarEvents {
     accountStream = 'account stream',
     handleAccountUpdate = 'handle account update',
@@ -654,5 +656,37 @@ export default class StellarServiceClass {
         ops.push(claimOp);
 
         return ops;
+    }
+
+    createBribeOperation(marketKey, asset, amount, timestamp) {
+        const time = Math.ceil(timestamp / 1000);
+        return StellarSdk.Operation.createClaimableBalance({
+            amount: amount.toString(),
+            asset: new StellarSdk.Asset(asset.code, asset.issuer),
+            claimants: [
+                new StellarSdk.Claimant(
+                    marketKey,
+                    StellarSdk.Claimant.predicateNot(StellarSdk.Claimant.predicateUnconditional()),
+                ),
+                new StellarSdk.Claimant(
+                    COLLECTOR_KEY,
+                    StellarSdk.Claimant.predicateNot(
+                        StellarSdk.Claimant.predicateBeforeAbsoluteTime(time.toString()),
+                    ),
+                ),
+            ],
+        });
+    }
+
+    getBribes(limit) {
+        return this.server
+            .claimableBalances()
+            .claimant(COLLECTOR_KEY)
+            .order('desc')
+            .limit(limit)
+            .call()
+            .then((claimable) => {
+                return claimable;
+            });
     }
 }

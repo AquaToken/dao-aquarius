@@ -45,7 +45,7 @@ const TableLoader = styled.div`
         }
     }
 `;
-const TableHead = styled.div`
+export const TableHead = styled.div`
     display: flex;
     width: 100%;
 
@@ -53,7 +53,7 @@ const TableHead = styled.div`
          display: none;
     `}
 `;
-const TableHeadRow = styled.div`
+export const TableHeadRow = styled.div`
     display: flex;
     align-items: stretch;
     width: 100%;
@@ -64,7 +64,7 @@ const TableHeadRow = styled.div`
     white-space: nowrap;
 `;
 
-const TableCell = styled.div`
+export const TableCell = styled.div`
     display: flex;
     align-items: center;
     flex: 2 0 0;
@@ -110,12 +110,12 @@ const ButtonBlock = styled(TableCell)`
     min-width: 17rem;
 `;
 
-const TableBody = styled.div`
+export const TableBody = styled.div`
     display: flex;
     flex-direction: column;
 `;
 
-const TableBodyRow = styled.div`
+export const TableBodyRow = styled.div`
     display: flex;
     align-items: stretch;
     width: 100%;

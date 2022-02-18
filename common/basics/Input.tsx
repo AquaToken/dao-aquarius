@@ -58,16 +58,27 @@ const Postfix = styled.div`
     right: 2.4rem;
 `;
 
+const Label = styled.div`
+    position: absolute;
+    bottom: calc(100% + 1.2rem);
+    left: 0;
+    font-size: 1.6rem;
+    line-height: 1.8rem;
+    color: ${COLORS.paragraphText};
+`;
+
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     postfix?: React.ReactNode;
     isMedium?: boolean;
     isRightAligned?: boolean;
+    label?: string;
 }
 
 const Input = forwardRef(
-    ({ postfix, className, ...props }: InputProps, ref: RefObject<HTMLInputElement>) => {
+    ({ postfix, className, label, ...props }: InputProps, ref: RefObject<HTMLInputElement>) => {
         return (
             <InputWrapper className={className}>
+                {Boolean(label) && <Label>{label}</Label>}
                 <StyledInput ref={ref} {...props} />
                 {postfix && <Postfix>{postfix}</Postfix>}
             </InputWrapper>
