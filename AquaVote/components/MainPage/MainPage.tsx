@@ -46,6 +46,7 @@ const MainBlock = styled.main`
 `;
 
 const Background = styled.div`
+    padding: 10% 0;
     ${flexAllCenter};
     flex-direction: column;
     background-color: ${COLORS.darkPurple};
