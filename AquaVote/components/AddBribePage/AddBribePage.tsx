@@ -434,7 +434,9 @@ const AddBribePage = () => {
                         <span>Bribes</span>
                     </Back>
                     <Title>Create Bribe</Title>
-                    <Description>To create a bribe select the market,</Description>
+                    <Description>You are creating a bribe to incentivize voting for a specific market in Aquarius. 
+                    Each bribe is distributed over 7 days to the voters for the market. The bribe can be issued in any asset. 
+                    The minimum bribe value is 100,000 AQUA. To ensure this minimum a portion of the bribe will be converted to 100,000 AQUA before distribution.</Description>
                     <ExternalLinkStyled>Read all rules</ExternalLinkStyled>
                 </Content>
             </Background>
