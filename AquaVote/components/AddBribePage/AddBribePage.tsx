@@ -458,7 +458,7 @@ const AddBribePage = () => {
                         of the chosen market. To ensure validity, a portion of the bribe will be
                         converted to 100,000 AQUA before distribution.
                     </Description>
-                    <ExternalLinkStyled>Read all rules</ExternalLinkStyled>
+                    <ExternalLinkStyled>Learn more</ExternalLinkStyled>
                 </Content>
             </Background>
             <FormWrap>
