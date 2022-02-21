@@ -11,29 +11,87 @@ const Container = styled.div`
 const Questions = () => {
     return (
         <Container>
-            <Question question={'What is a bribe?'} answer={<span>What is a bribe?</span>} />
             <Question
-                question={'How does locking work?'}
+                question={'What is a bribe?'}
                 answer={
                     <span>
-                        Locking AQUA all takes place at the protocol level on Stellar. When you use
-                        the tool above, a claimable balance is created and sent back to yourself.
-                        Only you can reclaim the locked AQUA balance after the time you select
-                        passes.
+                        A bribe is a way for anyone to incentivize those who upvote particular
+                        Stellar markets on{' '}
+                        <a href="https://vote.aqua.network/">vote.aqua.network.</a>
+                        <br />
+                        <br />
+                        Bribes can be given in any Stellar asset. Users can simultaneously assign
+                        multiple assets to each market at any time.
+                        <br />
+                        <br />
+                        Those who vote on bribed markets will receive hourly payouts while the
+                        market stays incentivized with bribes.
+                    </span>
+                }
+            />
+            <Question
+                question={'How does bribing work?'}
+                answer={
+                    <span>
+                        Bribes take place entirely at the protocol level on Aquarius. A claimable
+                        balance is created using the tool above containing the marker for the bribed
+                        market and the tokens used to reward voters.
+                        <br />
+                        <br />
+                        Every Sunday, Aquarius collects bribes for the coming week and decides which
+                        ones are valid. Valid bribes are accepted and then distributed to voters
+                        linearly from Monday through Sunday.
+                    </span>
+                }
+            />
+            <Question
+                question={'Is there a maximum to bribes?'}
+                answer={
+                    <span>
+                        There is no maximum limit to the amount of a token that can be allocated,
+                        with no limit to how many assets that can be added to one market, in any
+                        given week.
+                    </span>
+                }
+            />
+            <Question
+                question={'Is there a minimum amount for a bribe?'}
+                answer={
+                    <span>
+                        All bribes must be worth a minimum of 100K AQUA per week.
+                        <br />
+                        <br />A validity check happens with Aquarius purchasing 100K AQUA using a
+                        path payment upon collection, helping ensure tokens used for bribes have
+                        value. The purchased 100K AQUA + the remainder of the chosen reward token
+                        gets distributed to voters. Aquarius returns rejected bribes to the sender.
                     </span>
                 }
             />
             <Question
                 question={'Why are bribes necessary?'}
-                answer={<span>Why are bribes necessary?</span>}
+                answer={
+                    <span>
+                        Bribes help create a level playing field where all Stellar markets can
+                        become incentivized, encouraging AQUA holders to place their votes towards
+                        specific markets.
+                    </span>
+                }
             />
+
             <Question
-                question={'How can I get a bribe?'}
-                answer={<span>How can I get a bribe?</span>}
-            />
-            <Question
-                question={'What is the maximum amount of bribe you can give?'}
-                answer={<span>What is the maximum amount of bribe you can give?</span>}
+                question={'How can I receive a bribe?'}
+                answer={
+                    <span>
+                        To receive a bribe, go to{' '}
+                        <a href="https://vote.aqua.network/">vote.aqua.network</a> and search for
+                        markets incentivized with bribes.
+                        <br />
+                        <br />
+                        Once you find a market you like, upvote it with your AQUA. You will start to
+                        receive bribe rewards within a day after your vote if bribes are already
+                        being distributed to that market.
+                    </span>
+                }
             />
         </Container>
     );
