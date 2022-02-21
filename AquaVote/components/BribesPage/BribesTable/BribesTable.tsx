@@ -163,19 +163,19 @@ const BribesTable = () => {
     return (
         <Container>
             <TitleBlock>
-                <Title>Active bribes</Title>
+                <Title>Upcoming Bribes</Title>
                 <AddBribeButton onClick={() => history.push(MainRoutes.addBribe)}>
-                    <span>add bribe</span>
+                    <span>create bribe</span>
                     <PlusIcon />
                 </AddBribeButton>
             </TitleBlock>
 
             <TableHead>
                 <TableHeadRow>
-                    <PairCell>Pair</PairCell>
+                    <PairCell>Market Pair</PairCell>
                     <BribeAssetCell>Reward asset</BribeAssetCell>
-                    <Cell>Amount of bribe</Cell>
-                    <Cell>Bribe period</Cell>
+                    <Cell>Amount</Cell>
+                    <Cell>Period</Cell>
                 </TableHeadRow>
             </TableHead>
             <TableBody>
@@ -199,12 +199,12 @@ const BribesTable = () => {
                                 <MobileAsset asset={{ code, issuer }} inRow withMobileView />
                             </BribeAssetCell>
                             <Cell>
-                                <label>Reward amount:</label>
+                                <label>Bribe Amount:</label>
                                 {formatBalance(+item.amount)} {code}
                             </Cell>
 
                             <Cell>
-                                <label>Bribe period:</label>
+                                <label>Period:</label>
                                 {getDateString(start.getTime(), { withoutYear: true })} -{' '}
                                 {getDateString(end.getTime())}
                             </Cell>
