@@ -147,14 +147,12 @@ const BribesPage = () => {
                     <MainContent>
                         <Title>Aquarius Bribes</Title>
                         <Description>
-                            Aquarius bribes aim to bring bribes native to the protocol, allowing
-                            everyone to view voting incentives all in one place. At the same time,
-                            through a simple interface, anyone can quickly set up and distribute
-                            bribe rewards on desired markets.
+                            With Bribes anyone can incentivize AQUA holders to vote for specific market offering rewards in any asset.
+                            Bribes worth over 100,000 AQUA are automatically collected and distributed to the voters every week.
                         </Description>
                         <MainContentFooter>
                             <AddBribeButton onClick={() => history.push(MainRoutes.addBribe)}>
-                                <span>add bribe</span>
+                                <span>create bribe</span>
                                 <PlusIcon />
                             </AddBribeButton>
 
