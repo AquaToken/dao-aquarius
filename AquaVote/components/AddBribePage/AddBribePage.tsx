@@ -292,9 +292,27 @@ const GlobalStyle = createGlobalStyle`
     }
 `;
 
+export function convertLocalDateToUTCIgnoringTimezone(date: Date) {
+    const timestamp = Date.UTC(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate(),
+        date.getHours(),
+        date.getMinutes(),
+        date.getSeconds(),
+        date.getMilliseconds(),
+    );
+
+    return new Date(timestamp);
+}
+
 export const getWeekStartFromDay = (date: Date) => {
-    const start = new Date(
-        date.setDate(date.getDay() === 0 ? date.getDate() - 6 : date.getDate() - date.getDay() + 1),
+    const start = convertLocalDateToUTCIgnoringTimezone(
+        new Date(
+            date.setDate(
+                date.getDay() === 0 ? date.getDate() - 6 : date.getDate() - date.getDay() + 1,
+            ),
+        ),
     );
 
     const end = new Date(date.setDate(start.getDate() + 6));
@@ -435,9 +453,10 @@ const AddBribePage = () => {
                     </Back>
                     <Title>Create Bribe</Title>
                     <Description>
-                    You are creating a bribe using any Stellar asset to incentivize voting for a specific market in Aquarius. 
-                    Each bribe is distributed over 7 days to voters of the chosen market. 
-                    To ensure validity, a portion of the bribe will be converted to 100,000 AQUA before distribution.
+                        You are creating a bribe using any Stellar asset to incentivize voting for a
+                        specific market in Aquarius. Each bribe is distributed over 7 days to voters
+                        of the chosen market. To ensure validity, a portion of the bribe will be
+                        converted to 100,000 AQUA before distribution.
                     </Description>
                     <ExternalLinkStyled>Read all rules</ExternalLinkStyled>
                 </Content>
@@ -548,6 +567,7 @@ const AddBribePage = () => {
                                         selected={startDate || null}
                                         onChange={(res) => {
                                             const { start, end } = getWeekStartFromDay(res);
+                                            console.log(start);
                                             setStartDate(start);
                                             setEndDate(end);
                                         }}
