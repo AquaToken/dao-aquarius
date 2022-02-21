@@ -315,10 +315,9 @@ const AddBribePage = () => {
         <MainBlock>
             <Background>
                 <Content>
-                    <Title>Add bribe</Title>
+                    <Title>Create Bribe</Title>
                     <Description>
-                        A bribe is created for a week, in order to create a bribe, select the
-                        amount, currency and deposit an asset
+                        To create a bribe select the market, 
                     </Description>
                     <ExternalLinkStyled>Read all rules</ExternalLinkStyled>
                 </Content>
@@ -329,7 +328,7 @@ const AddBribePage = () => {
                         <FormSection>
                             <FormSectionTitle>Select market</FormSectionTitle>
                             <FormSectionDescription>
-                                Select the market for which you want to add a bribe
+                                Choose the assets to define a market pair for your bribe.
                             </FormSectionDescription>
                             <FormRow>
                                 <AssetDropdown
@@ -337,7 +336,7 @@ const AddBribePage = () => {
                                     onUpdate={setBase}
                                     exclude={counter}
                                     placeholder="Search or pick asset"
-                                    label="First asset"
+                                    label="Choose asset"
                                 />
                                 <SwapIcon />
                                 <AssetDropdown
@@ -345,7 +344,7 @@ const AddBribePage = () => {
                                     onUpdate={setCounter}
                                     exclude={base}
                                     placeholder="Search or pick asset"
-                                    label="Second asset"
+                                    label="Choose asset"
                                 />
                             </FormRow>
                             {base && counter && pairInfo === null && (
@@ -374,9 +373,9 @@ const AddBribePage = () => {
                         </FormSection>
                         {step >= CreateStep.bribeAmount && (
                             <FormSection>
-                                <FormSectionTitle>Choose reward</FormSectionTitle>
+                                <FormSectionTitle>Set reward</FormSectionTitle>
                                 <FormSectionDescription>
-                                    Contribute a reward to the Aquarius Bribe Fund
+                                    Set the reward asset and amount. Note, your bribe should be worth at least 100,000 AQUA, otherwise it won't be accepted.
                                 </FormSectionDescription>
                                 <FormRow>
                                     <AssetDropdown
@@ -410,9 +409,9 @@ const AddBribePage = () => {
 
                         {step === CreateStep.period && (
                             <FormSection>
-                                <FormSectionTitle>Enter period</FormSectionTitle>
+                                <FormSectionTitle>Set period</FormSectionTitle>
                                 <FormSectionDescription>
-                                    A bribe can exist for a week, choose a suitable start date
+                                    A bribe is distributed over 7 days (Mon-Sun). You can plan bribes in advance by choosing a start date several weeks ahead.
                                 </FormSectionDescription>
                                 <FormRow>
                                     <DatePicker
@@ -458,7 +457,7 @@ const AddBribePage = () => {
                                     }
                                     onClick={() => onSubmit()}
                                 >
-                                    Add bribe
+                                    Create bribe
                                 </NextButton>
 
                                 <GlobalStyle />
