@@ -5,7 +5,6 @@ import { Breakpoints, COLORS, FONT_FAMILY } from '../../../common/styles';
 import { flexAllCenter, respondDown } from '../../../common/mixins';
 import ExternalLink from '../../../common/basics/ExternalLink';
 import AssetDropdown from '../AssetDropdown/AssetDropdown';
-import Swap from '../../../common/assets/img/icon-arrows-circle.svg';
 import Dash from '../../../common/assets/img/icon-dash.svg';
 import Success from '../../../common/assets/img/icon-success.svg';
 import Fail from '../../../common/assets/img/icon-fail.svg';
@@ -163,7 +162,7 @@ const FormRow = styled.div`
     `}
 `;
 
-const SwapIcon = styled(Swap)`
+const PairDivider = styled(Dash)`
     margin: 0 2.2rem;
     min-width: 1.6rem;
     min-height: 1.6rem;
@@ -477,7 +476,7 @@ const AddBribePage = () => {
                                     placeholder="Search or pick asset"
                                     label="Choose asset"
                                 />
-                                <SwapIcon />
+                                <PairDivider />
                                 <AssetDropdown
                                     asset={counter}
                                     onUpdate={setCounter}
@@ -514,8 +513,9 @@ const AddBribePage = () => {
                             <FormSection>
                                 <FormSectionTitle>Set reward</FormSectionTitle>
                                 <FormSectionDescription>
-                                    Set the reward asset and amount. Note, your bribe should be
-                                    worth at least 100,000 AQUA, otherwise it won't be accepted.
+                                    Set the reward asset and amount that will be distributed during
+                                    one week. Note, your bribe should be worth at least 100,000
+                                    AQUA, otherwise it won't be accepted.
                                 </FormSectionDescription>
                                 <FormRow>
                                     <AssetDropdown
@@ -567,12 +567,13 @@ const AddBribePage = () => {
                                         selected={startDate || null}
                                         onChange={(res) => {
                                             const { start, end } = getWeekStartFromDay(res);
-                                            console.log(start);
                                             setStartDate(start);
                                             setEndDate(end);
                                         }}
+                                        filterDate={(date) => date.getDay() === 1}
                                         dateFormat="MM.dd.yyyy"
                                         placeholderText="MM.DD.YYYY"
+                                        disabledKeyboardNavigation
                                         popperModifiers={[
                                             {
                                                 name: 'offset',

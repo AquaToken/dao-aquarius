@@ -20,7 +20,6 @@ import { StellarService } from '../../../../common/services/globalServices';
 import PageLoader from '../../../../common/basics/PageLoader';
 import { processBribes } from '../../../api/api';
 import { formatBalance, getDateString } from '../../../../common/helpers/helpers';
-import { getWeekStartFromDay } from '../../AddBribePage/AddBribePage';
 
 const Container = styled.div`
     display: flex;
@@ -116,6 +115,18 @@ const LoaderContainer = styled.div`
     margin: 5rem 0;
 `;
 
+const convertUTCToLocalDateIgnoringTimezone = (utcDate: Date) => {
+    return new Date(
+        utcDate.getUTCFullYear(),
+        utcDate.getUTCMonth(),
+        utcDate.getUTCDate(),
+        utcDate.getUTCHours(),
+        utcDate.getUTCMinutes(),
+        utcDate.getUTCSeconds(),
+        utcDate.getUTCMilliseconds(),
+    );
+};
+
 const BribesTable = () => {
     const history = useHistory();
 
@@ -182,9 +193,11 @@ const BribesTable = () => {
             <TableBody>
                 {bribes.map((item) => {
                     const [code, issuer] = item.asset.split(':');
-                    const { start, end } = getWeekStartFromDay(
-                        new Date(new Date(item.claimDate).getTime() + 24 * 60 * 60 * 1000),
-                    );
+                    const DAY = 24 * 60 * 60 * 1000;
+                    const start =
+                        convertUTCToLocalDateIgnoringTimezone(new Date(item.claimDate)).getTime() +
+                        DAY;
+                    const end = start + 7 * DAY;
                     return (
                         <TableBodyRow key={item.paging_token}>
                             <PairCell>
@@ -206,8 +219,10 @@ const BribesTable = () => {
 
                             <Cell>
                                 <label>Period:</label>
-                                {getDateString(start.getTime(), { withoutYear: true })} -{' '}
-                                {getDateString(end.getTime())}
+                                {getDateString(start, {
+                                    withoutYear: true,
+                                })}{' '}
+                                - {getDateString(end)}
                             </Cell>
                         </TableBodyRow>
                     );
