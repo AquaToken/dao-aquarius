@@ -7,16 +7,24 @@ import ExternalLink from '../../../common/basics/ExternalLink';
 import AssetDropdown from '../AssetDropdown/AssetDropdown';
 import Swap from '../../../common/assets/img/icon-arrows-circle.svg';
 import Dash from '../../../common/assets/img/icon-dash.svg';
+import Success from '../../../common/assets/img/icon-success.svg';
+import Fail from '../../../common/assets/img/icon-fail.svg';
+import Loader from '../../../common/assets/img/loader.svg';
 import Button from '../../../common/basics/Button';
 import Input from '../../../common/basics/Input';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { getMarketPair } from '../../api/api';
-import { ModalService } from '../../../common/services/globalServices';
+import { ModalService, StellarService } from '../../../common/services/globalServices';
 import CreatePairModal from '../MainPage/CreatePairModal/CreatePairModal';
 import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
 import useAuthStore from '../../../common/store/authStore/useAuthStore';
 import ConfirmBribeModal from './ConfirmBribeModal/ConfirmBribeModal';
+import { useDebounce } from '../../../common/hooks/useDebounce';
+import Tooltip, { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
+import ArrowLeft from '../../../common/assets/img/icon-arrow-left.svg';
+import { Link } from 'react-router-dom';
+import { MainRoutes } from '../../routes';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -37,6 +45,41 @@ const Content = styled.div`
     ${respondDown(Breakpoints.md)`
         width: 100%;
     `}
+`;
+
+const Back = styled(Link)`
+    display: flex;
+    align-items: center;
+    margin-bottom: 3.2rem;
+    text-decoration: none;
+    color: ${COLORS.paragraphText};
+
+    ${respondDown(Breakpoints.md)`
+          padding: 0 1.6rem;
+      `}
+`;
+
+const BackButton = styled.div`
+    ${flexAllCenter};
+    width: 4.8rem;
+    height: 4.8rem;
+    background-color: ${COLORS.white};
+    box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
+    border-radius: 50%;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all ease 200ms;
+    z-index: 1;
+    margin-right: 1.6rem;
+
+    &:hover {
+        background-color: ${COLORS.lightGray};
+    }
+
+    &:active {
+        transform: scale(0.9);
+    }
 `;
 
 const Title = styled.span`
@@ -158,6 +201,30 @@ const DateEndInput = styled(Input)`
     `}
 `;
 
+const FailIcon = styled(Fail)`
+    width: 1.6rem;
+    height: 1.6rem;
+`;
+
+const SuccessIcon = styled(Success)`
+    width: 1.6rem;
+    height: 1.6rem;
+`;
+
+const LoaderStyled = styled(Loader)`
+    width: 1.6rem;
+    height: 1.6rem;
+`;
+
+const TooltipInner = styled.span`
+    width: 40rem;
+    white-space: pre-line;
+
+    ${respondDown(Breakpoints.md)`
+        width: 15rem;
+    `}
+`;
+
 const GlobalStyle = createGlobalStyle`
     div.react-datepicker {
         font-family: ${FONT_FAMILY.roboto};
@@ -241,6 +308,8 @@ enum CreateStep {
     'period',
 }
 
+const MINIMUM_AQUA_EQUIVALENT = 100000;
+
 const AddBribePage = () => {
     const [step, setStep] = useState(CreateStep.pair);
     const [base, setBase] = useState(null);
@@ -249,6 +318,7 @@ const AddBribePage = () => {
 
     const [rewardAsset, setRewardAsset] = useState(null);
     const [amount, setAmount] = useState('');
+    const [aquaEquivalent, setAquaEquivalent] = useState(null);
 
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
@@ -278,6 +348,26 @@ const AddBribePage = () => {
             setPairInfo(res);
         });
     }, [base, counter]);
+
+    const debouncedAmount = useDebounce(amount, 700);
+
+    useEffect(() => {
+        setAquaEquivalent(null);
+        if (!debouncedAmount || !rewardAsset) {
+            return;
+        }
+
+        StellarService.getAquaEquivalent(
+            StellarService.createAsset(rewardAsset.code, rewardAsset.issuer),
+            debouncedAmount,
+        )
+            .then((res) => {
+                setAquaEquivalent(res);
+            })
+            .catch(() => {
+                setAquaEquivalent('0');
+            });
+    }, [debouncedAmount, rewardAsset]);
 
     const createPair = () => {
         if (isLogged) {
@@ -311,14 +401,40 @@ const AddBribePage = () => {
     const weekForward = new Date(now.setDate(now.getDate() + 7));
     const minDate = getWeekStartFromDay(weekForward).start;
 
+    const amountInputPostfix =
+        debouncedAmount !== null && aquaEquivalent === null ? (
+            <LoaderStyled />
+        ) : Number(aquaEquivalent) >= MINIMUM_AQUA_EQUIVALENT ? (
+            <SuccessIcon />
+        ) : (
+            <Tooltip
+                content={
+                    <TooltipInner>
+                        The bribe appears to be under 100,000 AQUA in value. Bribes below 100,000
+                        AQUA will not be accepted and will be sent back by the bribe collector. Are
+                        you sure you want to continue?
+                    </TooltipInner>
+                }
+                position={+window.innerWidth > 992 ? TOOLTIP_POSITION.top : TOOLTIP_POSITION.left}
+                isShow={true}
+                isError
+            >
+                <FailIcon />
+            </Tooltip>
+        );
+
     return (
         <MainBlock>
             <Background>
                 <Content>
+                    <Back to={MainRoutes.bribes}>
+                        <BackButton>
+                            <ArrowLeft />
+                        </BackButton>
+                        <span>Bribes</span>
+                    </Back>
                     <Title>Create Bribe</Title>
-                    <Description>
-                        To create a bribe select the market, 
-                    </Description>
+                    <Description>To create a bribe select the market,</Description>
                     <ExternalLinkStyled>Read all rules</ExternalLinkStyled>
                 </Content>
             </Background>
@@ -375,7 +491,8 @@ const AddBribePage = () => {
                             <FormSection>
                                 <FormSectionTitle>Set reward</FormSectionTitle>
                                 <FormSectionDescription>
-                                    Set the reward asset and amount. Note, your bribe should be worth at least 100,000 AQUA, otherwise it won't be accepted.
+                                    Set the reward asset and amount. Note, your bribe should be
+                                    worth at least 100,000 AQUA, otherwise it won't be accepted.
                                 </FormSectionDescription>
                                 <FormRow>
                                     <AssetDropdown
@@ -384,6 +501,7 @@ const AddBribePage = () => {
                                         placeholder="Search or pick asset"
                                         label="Reward asset"
                                     />
+
                                     <AmountInput
                                         placeholder="0"
                                         type="number"
@@ -392,6 +510,11 @@ const AddBribePage = () => {
                                         onChange={({ target }) => {
                                             setAmount(target.value);
                                         }}
+                                        postfix={
+                                            debouncedAmount && rewardAsset
+                                                ? amountInputPostfix
+                                                : null
+                                        }
                                     />
                                 </FormRow>
                                 {step === CreateStep.bribeAmount && (
@@ -411,7 +534,8 @@ const AddBribePage = () => {
                             <FormSection>
                                 <FormSectionTitle>Set period</FormSectionTitle>
                                 <FormSectionDescription>
-                                    A bribe is distributed over 7 days (Mon-Sun). You can plan bribes in advance by choosing a start date several weeks ahead.
+                                    A bribe is distributed over 7 days (Mon-Sun). You can plan
+                                    bribes in advance by choosing a start date several weeks ahead.
                                 </FormSectionDescription>
                                 <FormRow>
                                     <DatePicker

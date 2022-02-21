@@ -689,4 +689,19 @@ export default class StellarServiceClass {
                 return claimable;
             });
     }
+
+    getAquaEquivalent(asset, amount) {
+        return this.server
+            .strictSendPaths(asset, amount, [new StellarSdk.Asset(AQUA_CODE, AQUA_ISSUER)])
+            .call()
+            .then((res) => {
+                if (!res.records.length) {
+                    return '0';
+                }
+
+                return res.records.reduce(function (prev, current) {
+                    return +prev.destination_amount > +current.destination_amount ? prev : current;
+                }).destination_amount;
+            });
+    }
 }
