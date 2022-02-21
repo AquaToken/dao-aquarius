@@ -21,11 +21,8 @@ const Questions = () => {
                         <br />
                         <br />
                         Bribes can be given in any Stellar asset. Users can simultaneously assign
-                        multiple assets to each market at any time.
-                        <br />
-                        <br />
-                        Those who vote on bribed markets will receive hourly payouts while the
-                        market stays incentivized with bribes.
+                        multiple assets to each market at any time. Those who vote on bribed markets
+                        will receive hourly payouts while the market stays incentivized with bribes.
                     </span>
                 }
             />
