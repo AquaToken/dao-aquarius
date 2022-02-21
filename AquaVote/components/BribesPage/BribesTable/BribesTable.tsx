@@ -124,7 +124,7 @@ const BribesTable = () => {
     const [claimsLoaded, setClaimsLoaded] = useState(false);
 
     useEffect(() => {
-        const limit = 1;
+        const limit = 200;
         StellarService.getBribes(limit).then((res) => {
             setClaimableBalances(res.records);
 
