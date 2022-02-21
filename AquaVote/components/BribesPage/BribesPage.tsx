@@ -147,7 +147,7 @@ const BribesPage = () => {
                     <MainContent>
                         <Title>Aquarius Bribes</Title>
                         <Description>
-                            With Bribes anyone can incentivize AQUA holders to vote for specific market offering rewards in any asset.
+                            With Bribes, anyone can incentivize AQUA holders to vote for specific markets by offering rewards in any asset.
                             Bribes worth over 100,000 AQUA are automatically collected and distributed to the voters every week.
                         </Description>
                         <MainContentFooter>
