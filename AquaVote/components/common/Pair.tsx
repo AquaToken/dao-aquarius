@@ -165,6 +165,8 @@ type PairProps = {
     verticalDirections?: boolean;
     isRewardsOn?: boolean;
     mobileVerticalDirections?: boolean;
+    authRequired?: boolean;
+    noLiquidity?: boolean;
 };
 
 const Pair = ({
@@ -174,6 +176,8 @@ const Pair = ({
     verticalDirections,
     isRewardsOn,
     mobileVerticalDirections,
+    authRequired,
+    noLiquidity,
 }: PairProps): JSX.Element => {
     const { assetsInfo } = useAssetsStore();
 
@@ -187,10 +191,9 @@ const Pair = ({
     const hasCounterInfo = isCounterNative || assetsInfo.has(getAssetString(counter));
     const counterInfo = isCounterNative ? LumenInfo : assetsInfo.get(getAssetString(counter));
 
-    const authRequired = counterInfo?.auth_required || baseInfo?.auth_required;
-
     const [showTooltip, setShowTooltip] = useState(false);
     const [showAuthTooltip, setShowAuthTooltip] = useState(false);
+    const [showLiquidityTooltip, setShowLiquidityTooltip] = useState(false);
 
     return (
         <Wrapper
@@ -258,6 +261,28 @@ const Pair = ({
                         >
                             <LabelWrap>
                                 <Label isRed>auth required</Label>
+                            </LabelWrap>
+                        </Tooltip>
+                    )}
+                    {noLiquidity && (
+                        <Tooltip
+                            content={
+                                <TooltipInner
+                                    onMouseEnter={() => setShowLiquidityTooltip(true)}
+                                    onMouseLeave={() => setShowLiquidityTooltip(false)}
+                                >
+                                    This market pair is not eligible for AQUA rewards at the moment,
+                                    as it failed the liquidity test (no path payment from XLM).
+                                </TooltipInner>
+                            }
+                            position={TOOLTIP_POSITION.top}
+                            isShow={showLiquidityTooltip}
+                            isError
+                            onMouseEnter={() => setShowLiquidityTooltip(true)}
+                            onMouseLeave={() => setShowLiquidityTooltip(false)}
+                        >
+                            <LabelWrap>
+                                <Label isRed>no liquidity</Label>
                             </LabelWrap>
                         </Tooltip>
                     )}

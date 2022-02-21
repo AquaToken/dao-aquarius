@@ -42,6 +42,8 @@ export type MarketKey = {
     id: number;
     locked_at: string;
     downvote_account_id: string;
+    no_liquidity: boolean;
+    auth_required: boolean;
 };
 
 export type PairStats = MarketKey & MarketVotes;
