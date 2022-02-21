@@ -8,9 +8,6 @@ import PageLoader from '../../../../common/basics/PageLoader';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
 import VoteButton from './VoteButton/VoteButton';
 import VoteAmount from './VoteAmount/VoteAmount';
-import useAssetsStore from '../../../store/assetsStore/useAssetsStore';
-import * as StellarSdk from 'stellar-sdk';
-import { getAssetString } from '../../../store/assetsStore/actions';
 import Button from '../../../../common/basics/Button';
 import ManageIcon from '../../../../common/assets/img/icon-manage.svg';
 import Tooltip, { TOOLTIP_POSITION } from '../../../../common/basics/Tooltip';
@@ -208,20 +205,8 @@ const Table = ({
         return null;
     }
 
-    const { assetsInfo } = useAssetsStore();
-
     const isPairSelected = ({ market_key: marketKey }: PairStats): boolean => {
         return selectedPairs.some((pair) => pair.market_key === marketKey);
-    };
-
-    const isAuthRequiredPair = ({ asset1_code, asset1_issuer, asset2_code, asset2_issuer }) => {
-        const baseInstance = new StellarSdk.Asset(asset1_code, asset1_issuer);
-        const baseInfo = assetsInfo.get(getAssetString(baseInstance));
-
-        const counterInstance = new StellarSdk.Asset(asset2_code, asset2_issuer);
-        const counterInfo = assetsInfo.get(getAssetString(counterInstance));
-
-        return Boolean(counterInfo?.auth_required || baseInfo?.auth_required);
     };
 
     const manageVotes = (pair) => {
@@ -257,6 +242,8 @@ const Table = ({
                                         totalStats.votes_value_sum,
                                     )}
                                     mobileVerticalDirections
+                                    authRequired={pair.auth_required}
+                                    noLiquidity={pair.no_liquidity}
                                 />
                             </PairInfo>
                             <VoteStats>
@@ -272,7 +259,7 @@ const Table = ({
                                     pair={pair}
                                     isPairSelected={isPairSelected(pair)}
                                     onButtonClick={() => selectPair(pair)}
-                                    disabled={isAuthRequiredPair(pair)}
+                                    disabled={pair.auth_required || pair.no_liquidity}
                                 />
                                 {isYourVotes && (
                                     <Tooltip
