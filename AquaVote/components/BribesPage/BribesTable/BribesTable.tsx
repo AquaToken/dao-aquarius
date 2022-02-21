@@ -79,6 +79,7 @@ const Cell = styled(TableCell)`
 
     label {
         display: none;
+        color: ${COLORS.grayText};
     }
 
     ${respondDown(Breakpoints.md)`
