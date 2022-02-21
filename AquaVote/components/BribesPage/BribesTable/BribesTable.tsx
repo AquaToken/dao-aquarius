@@ -174,7 +174,7 @@ const BribesTable = () => {
                 <TableHeadRow>
                     <PairCell>Market Pair</PairCell>
                     <BribeAssetCell>Reward asset</BribeAssetCell>
-                    <Cell>Amount</Cell>
+                    <Cell>Reward per day</Cell>
                     <Cell>Period</Cell>
                 </TableHeadRow>
             </TableHead>
@@ -199,8 +199,8 @@ const BribesTable = () => {
                                 <MobileAsset asset={{ code, issuer }} inRow withMobileView />
                             </BribeAssetCell>
                             <Cell>
-                                <label>Bribe Amount:</label>
-                                {formatBalance(+item.amount)} {code}
+                                <label>Reward per day:</label>
+                                {formatBalance(+item.amount / 7, true)} {code}
                             </Cell>
 
                             <Cell>
