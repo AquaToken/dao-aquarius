@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 import Provider from '../store';
 import { MainRoutes } from '../routes';
-import Header from '../../common/components/Header/Header';
+import Header, { HeaderNavLink } from '../../common/components/Header/Header';
 import Footer from '../../common/components/Footer/Footer';
 import AppGlobalStyle from '../../common/components/AppGlobalStyles';
 import ModalContainer from '../../common/modals/atoms/ModalContainer';
@@ -84,6 +84,8 @@ const App = () => {
         <Router>
             <Header>
                 <>
+                    <HeaderNavLink to={MainRoutes.main}>Votes</HeaderNavLink>
+                    <HeaderNavLink to={MainRoutes.bribes}>Bribes</HeaderNavLink>
                     <a
                         href="https://aqua.network/rewards"
                         target="_blank"
