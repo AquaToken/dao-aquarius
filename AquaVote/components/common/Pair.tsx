@@ -117,11 +117,19 @@ const LabelWrap = styled.div`
     margin-top: -1rem;
 `;
 
-const Label = styled.div<{ isRed?: boolean }>`
+const Label = styled.div<{ isRed?: boolean; isGreen?: boolean }>`
     height: 1.6rem;
     padding: 0 0.4rem;
     border-radius: 0.3rem;
-    background: ${({ isRed }) => (isRed ? COLORS.pinkRed : COLORS.purple)};
+    background: ${({ isRed, isGreen }) => {
+        if (isRed) {
+            return COLORS.pinkRed;
+        }
+        if (isGreen) {
+            return COLORS.green;
+        }
+        return COLORS.purple;
+    }};
     color: ${COLORS.white};
     text-transform: uppercase;
     font-weight: 500;
@@ -167,6 +175,7 @@ type PairProps = {
     mobileVerticalDirections?: boolean;
     authRequired?: boolean;
     noLiquidity?: boolean;
+    boosted?: boolean;
 };
 
 const Pair = ({
@@ -178,6 +187,7 @@ const Pair = ({
     mobileVerticalDirections,
     authRequired,
     noLiquidity,
+    boosted,
 }: PairProps): JSX.Element => {
     const { assetsInfo } = useAssetsStore();
 
@@ -191,6 +201,7 @@ const Pair = ({
     const hasCounterInfo = isCounterNative || assetsInfo.has(getAssetString(counter));
     const counterInfo = isCounterNative ? LumenInfo : assetsInfo.get(getAssetString(counter));
 
+    const [showBoostTooltip, setShowBoosTooltip] = useState(false);
     const [showTooltip, setShowTooltip] = useState(false);
     const [showAuthTooltip, setShowAuthTooltip] = useState(false);
     const [showLiquidityTooltip, setShowLiquidityTooltip] = useState(false);
@@ -214,6 +225,27 @@ const Pair = ({
             >
                 <AssetsCodes mobileVerticalDirections={mobileVerticalDirections}>
                     {base.code} / {counter.code}
+                    {boosted && (
+                        <Tooltip
+                            content={
+                                <TooltipInner
+                                    onMouseEnter={() => setShowBoosTooltip(true)}
+                                    onMouseLeave={() => setShowBoosTooltip(false)}
+                                >
+                                    50% boost for pairs who vote with AQUA token
+                                </TooltipInner>
+                            }
+                            position={TOOLTIP_POSITION.top}
+                            isShow={showBoostTooltip}
+                            onMouseEnter={() => setShowBoosTooltip(true)}
+                            onMouseLeave={() => setShowBoosTooltip(false)}
+                            isSuccess
+                        >
+                            <LabelWrap>
+                                <Label isGreen>boost</Label>
+                            </LabelWrap>
+                        </Tooltip>
+                    )}
                     {isRewardsOn && (
                         <Tooltip
                             content={

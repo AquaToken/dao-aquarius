@@ -15,6 +15,7 @@ export const COLORS = {
     darkPurple: '#24034F',
     pinkRed: '#FF3461',
     yellow: '#F8D26C',
+    green: '#00B796',
 };
 
 export const FONT_FAMILY = {

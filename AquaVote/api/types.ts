@@ -44,6 +44,7 @@ export type MarketKey = {
     downvote_account_id: string;
     no_liquidity: boolean;
     auth_required: boolean;
+    adjusted_votes_value: string;
 };
 
 export type PairStats = MarketKey & MarketVotes;
@@ -53,4 +54,5 @@ export type TotalStats = {
     votes_value_sum: string;
     voting_amount_sum: number;
     timestamp: string;
+    adjusted_votes_value_sum: string;
 };
