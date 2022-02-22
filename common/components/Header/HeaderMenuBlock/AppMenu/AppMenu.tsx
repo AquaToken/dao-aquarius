@@ -112,6 +112,11 @@ const NavLinks = styled.div`
         line-height: 1.9rem;
         color: ${COLORS.titleText};
         text-decoration: none;
+        margin-bottom: 2.4rem;
+
+        &:not(:last-child) {
+            margin-right: 0;
+        }
     }
 `;
 
