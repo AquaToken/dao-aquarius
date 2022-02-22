@@ -147,8 +147,9 @@ const BribesPage = () => {
                     <MainContent>
                         <Title>Aquarius Bribes</Title>
                         <Description>
-                            With Bribes, anyone can incentivize AQUA holders to vote for specific markets by offering rewards in any asset.
-                            Bribes worth over 100,000 AQUA are automatically collected and distributed to the voters every week.
+                            With Bribes, anyone can incentivize AQUA holders to vote for specific
+                            markets by offering rewards in any asset. Bribes worth over 100,000 AQUA
+                            are automatically collected and distributed to the voters every week.
                         </Description>
                         <MainContentFooter>
                             <AddBribeButton onClick={() => history.push(MainRoutes.addBribe)}>
@@ -156,7 +157,9 @@ const BribesPage = () => {
                                 <PlusIcon />
                             </AddBribeButton>
 
-                            <ExternalLink>Learn more about Aquarius Bribes</ExternalLink>
+                            <ExternalLink href="https://medium.com/aquarius-aqua/introducing-aquarius-bribes-6b0931dc3dd7">
+                                Learn more about Aquarius Bribes
+                            </ExternalLink>
                         </MainContentFooter>
                     </MainContent>
                 </MainContentWrap>
