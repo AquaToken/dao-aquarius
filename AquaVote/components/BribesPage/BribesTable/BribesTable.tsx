@@ -194,9 +194,19 @@ const BribesTable = () => {
                 {bribes.map((item) => {
                     const [code, issuer] = item.asset.split(':');
                     const DAY = 24 * 60 * 60 * 1000;
-                    const start =
-                        convertUTCToLocalDateIgnoringTimezone(new Date(item.claimDate)).getTime() +
-                        DAY;
+                    const claimDateUTC = convertUTCToLocalDateIgnoringTimezone(
+                        new Date(item.claimDate),
+                    );
+                    const startDate = new Date(
+                        claimDateUTC.setDate(
+                            claimDateUTC.getDate() + ((7 - claimDateUTC.getDay()) % 7) + 1,
+                        ),
+                    );
+                    startDate.setHours(0);
+                    startDate.setMinutes(0);
+                    startDate.setSeconds(0);
+                    startDate.setMilliseconds(0);
+                    const start = startDate.getTime();
                     const end = start + 7 * DAY;
                     return (
                         <TableBodyRow key={item.paging_token}>
