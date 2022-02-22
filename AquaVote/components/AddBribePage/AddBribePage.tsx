@@ -457,7 +457,9 @@ const AddBribePage = () => {
                         of the chosen market. To ensure validity, a portion of the bribe will be
                         converted to 100,000 AQUA before distribution.
                     </Description>
-                    <ExternalLinkStyled>Learn more</ExternalLinkStyled>
+                    <ExternalLinkStyled href="https://medium.com/aquarius-aqua/introducing-aquarius-bribes-6b0931dc3dd7">
+                        Learn more
+                    </ExternalLinkStyled>
                 </Content>
             </Background>
             <FormWrap>
