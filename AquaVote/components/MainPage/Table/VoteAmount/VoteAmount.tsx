@@ -7,6 +7,9 @@ import { Breakpoints, COLORS } from '../../../../../common/styles';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
 import { PairStats, TotalStats } from '../../../../api/types';
 import InfoIcon from '../../../../../common/assets/img/icon-info.svg';
+import IconUp from '../../../../../common/assets/img/icon-up-green.svg';
+import IconDown from '../../../../../common/assets/img/icon-down-red.svg';
+import { MIN_REWARDS_PERCENT } from '../Table';
 
 const Info = styled(InfoIcon)`
     margin-left: 0.5rem;
@@ -25,6 +28,7 @@ const Percent = styled.div`
     color: ${COLORS.grayText};
     font-size: 1.4rem;
     line-height: 2rem;
+    display: flex;
 
     ${respondDown(Breakpoints.md)`
         display: none;
@@ -62,6 +66,13 @@ const TooltipRow = styled.div`
     }
 `;
 
+const Boost = styled.div<{ isDown?: boolean }>`
+    display: flex;
+    align-items: center;
+    margin-left: 0.5rem;
+    color: ${({ isDown }) => (isDown ? COLORS.pinkRed : COLORS.green)};
+`;
+
 const getPercent = (value: string, total: string): string => {
     if (Number(value) < 0) {
         return '0';
@@ -75,9 +86,23 @@ const VoteAmount = ({ pair, totalStats }: { pair: PairStats; totalStats: TotalSt
         return null;
     }
 
+    const boosted = Number(pair.adjusted_votes_value) > Number(pair.votes_value);
     const percentValue = pair.votes_value
         ? `${getPercent(pair.votes_value, totalStats.votes_value_sum)}%`
         : null;
+
+    const percentBoostedValue = pair.adjusted_votes_value
+        ? `${getPercent(pair.adjusted_votes_value, totalStats.adjusted_votes_value_sum)}%`
+        : null;
+
+    const downBoosted =
+        Number(pair.votes_value) &&
+        Number(pair.adjusted_votes_value) &&
+        (Number(pair.votes_value) / Number(totalStats.votes_value_sum)) * 100 >=
+            MIN_REWARDS_PERCENT &&
+        (Number(pair.adjusted_votes_value) / Number(totalStats.adjusted_votes_value_sum)) * 100 <
+            MIN_REWARDS_PERCENT;
+
     return (
         <Amount
             onMouseEnter={() => {
@@ -110,7 +135,21 @@ const VoteAmount = ({ pair, totalStats }: { pair: PairStats; totalStats: TotalSt
                 </AmountRow>
             </Tooltip>
 
-            <Percent>{percentValue}</Percent>
+            <Percent>
+                {percentValue}{' '}
+                {boosted ? (
+                    <Boost>
+                        <IconUp />
+                        {percentBoostedValue}
+                    </Boost>
+                ) : null}
+                {downBoosted && (
+                    <Boost isDown>
+                        <IconDown />
+                        {percentBoostedValue}
+                    </Boost>
+                )}
+            </Percent>
         </Amount>
     );
 };

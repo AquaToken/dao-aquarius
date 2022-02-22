@@ -177,7 +177,7 @@ const TooltipInner = styled.div`
 //     }
 // `;
 
-const MIN_REWARDS_PERCENT = 1;
+export const MIN_REWARDS_PERCENT = 1;
 
 const isRewardsOn = (value: string, total: string): boolean => {
     const percent = (Number(value) / Number(total)) * 100;
@@ -213,6 +213,8 @@ const Table = ({
         ModalService.openModal(ManageVotesModal, { pair });
     };
 
+    console.log(totalStats, pairs);
+
     return (
         <TableBlock>
             {(loading || !totalStats) && (
@@ -237,13 +239,24 @@ const Table = ({
                                 <Pair
                                     base={{ code: pair.asset1_code, issuer: pair.asset1_issuer }}
                                     counter={{ code: pair.asset2_code, issuer: pair.asset2_issuer }}
-                                    isRewardsOn={isRewardsOn(
-                                        pair.votes_value,
-                                        totalStats.votes_value_sum,
-                                    )}
+                                    isRewardsOn={
+                                        (isRewardsOn(
+                                            pair.votes_value,
+                                            totalStats.votes_value_sum,
+                                        ) ||
+                                            Number(pair.adjusted_votes_value) >
+                                                Number(pair.votes_value)) &&
+                                        isRewardsOn(
+                                            pair.adjusted_votes_value,
+                                            totalStats.adjusted_votes_value_sum,
+                                        )
+                                    }
                                     mobileVerticalDirections
                                     authRequired={pair.auth_required}
                                     noLiquidity={pair.no_liquidity}
+                                    boosted={
+                                        Number(pair.adjusted_votes_value) > Number(pair.votes_value)
+                                    }
                                 />
                             </PairInfo>
                             <VoteStats>
