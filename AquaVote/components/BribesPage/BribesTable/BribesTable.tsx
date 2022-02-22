@@ -20,6 +20,7 @@ import { StellarService } from '../../../../common/services/globalServices';
 import PageLoader from '../../../../common/basics/PageLoader';
 import { processBribes } from '../../../api/api';
 import { formatBalance, getDateString } from '../../../../common/helpers/helpers';
+import useAssetsStore from '../../../store/assetsStore/useAssetsStore';
 
 const Container = styled.div`
     display: flex;
@@ -134,6 +135,20 @@ const BribesTable = () => {
     const [bribes, setBribes] = useState(null);
     const [claimsLoaded, setClaimsLoaded] = useState(false);
 
+    const { processNewAssets } = useAssetsStore();
+
+    const processAssetsFromPairs = (pairs) => {
+        const assets = pairs.reduce((acc, item) => {
+            return [
+                ...acc,
+                { code: item.asset1_code, issuer: item.asset1_issuer },
+                { code: item.asset2_code, issuer: item.asset2_issuer },
+            ];
+        }, []);
+
+        processNewAssets(assets);
+    };
+
     useEffect(() => {
         const limit = 200;
         StellarService.getBribes(limit).then((res) => {
@@ -161,6 +176,7 @@ const BribesTable = () => {
         }
         processBribes(claimableBalances).then((res) => {
             setBribes(res);
+            processAssetsFromPairs(res);
         });
     }, [claimsLoaded]);
 
