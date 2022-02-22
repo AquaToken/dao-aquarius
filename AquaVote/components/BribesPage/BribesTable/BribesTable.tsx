@@ -209,6 +209,10 @@ const BribesTable = () => {
             <TableBody>
                 {bribes.map((item) => {
                     const [code, issuer] = item.asset.split(':');
+                    const rewardAsset =
+                        code === 'native'
+                            ? StellarService.createLumen()
+                            : StellarService.createAsset(code, issuer);
                     const DAY = 24 * 60 * 60 * 1000;
                     const claimDateUTC = convertUTCToLocalDateIgnoringTimezone(
                         new Date(item.claimDate),
@@ -235,12 +239,12 @@ const BribesTable = () => {
                             </PairCell>
                             <BribeAssetCell>
                                 <label>Reward asset:</label>
-                                <WebAsset asset={{ code, issuer }} />
-                                <MobileAsset asset={{ code, issuer }} inRow withMobileView />
+                                <WebAsset asset={rewardAsset} />
+                                <MobileAsset asset={rewardAsset} inRow withMobileView />
                             </BribeAssetCell>
                             <Cell>
                                 <label>Reward per day:</label>
-                                {formatBalance(+item.amount / 7, true)} {code}
+                                {formatBalance(+item.amount / 7, true)} {rewardAsset.code}
                             </Cell>
 
                             <Cell>
