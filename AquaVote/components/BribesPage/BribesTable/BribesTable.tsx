@@ -227,7 +227,7 @@ const BribesTable = () => {
                     startDate.setSeconds(0);
                     startDate.setMilliseconds(0);
                     const start = startDate.getTime();
-                    const end = start + 7 * DAY;
+                    const end = start + 7 * DAY - 1;
                     return (
                         <TableBodyRow key={item.paging_token}>
                             <PairCell>
