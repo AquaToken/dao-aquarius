@@ -13,6 +13,10 @@ import { MIN_REWARDS_PERCENT } from '../Table';
 
 const Info = styled(InfoIcon)`
     margin-left: 0.5rem;
+
+    ${respondDown(Breakpoints.md)`
+        display: none;
+    `}
 `;
 
 const Amount = styled.div`
@@ -35,24 +39,42 @@ const Percent = styled.div`
     `}
 `;
 
-const PercentMobile = styled.span`
+const Percents = styled.div`
     display: none;
-    color: ${COLORS.grayText};
-    margin-left: 0.3rem;
+    flex-direction: row;
+    justify-content: flex-end;
 
     ${respondDown(Breakpoints.md)`
-        display: inline-block;
+          display: flex;
     `}
+`;
+
+const PercentMobile = styled.span`
+    color: ${COLORS.grayText};
+
+    font-size: 1.2rem;
+    line-height: 1.4rem;
+    display: inline-block;
 `;
 
 const AmountRow = styled.div`
     ${flexAllCenter};
     cursor: help;
+
+    ${respondDown(Breakpoints.md)`
+        flex-direction: column;
+        align-items: flex-end;
+    `}
 `;
 
 const TooltipWrap = styled.div`
     display: flex;
     flex-direction: column;
+
+    ${respondDown(Breakpoints.md)`
+        max-width: 17rem;
+        white-space: pre-line;
+    `}
 `;
 
 const TooltipRow = styled.div`
@@ -67,10 +89,14 @@ const TooltipRow = styled.div`
 `;
 
 const Boost = styled.div<{ isDown?: boolean }>`
-    display: flex;
+    display: inline-flex;
     align-items: center;
     margin-left: 0.5rem;
     color: ${({ isDown }) => (isDown ? COLORS.pinkRed : COLORS.green)};
+
+    ${respondDown(Breakpoints.md)`
+        margin-left: 0;
+    `}
 `;
 
 const getPercent = (value: string, total: string): string => {
@@ -130,7 +156,29 @@ const VoteAmount = ({ pair, totalStats }: { pair: PairStats; totalStats: TotalSt
             >
                 <AmountRow>
                     {pair.votes_value ? `${formatBalance(+pair.votes_value, true)} AQUA` : null}
-                    <PercentMobile>({percentValue})</PercentMobile>
+                    <Percents>
+                        <PercentMobile>{percentValue}</PercentMobile>
+                        {boosted && (
+                            <PercentMobile>
+                                {
+                                    <Boost>
+                                        <IconUp />
+                                        {percentBoostedValue}
+                                    </Boost>
+                                }
+                            </PercentMobile>
+                        )}
+                        {downBoosted && (
+                            <PercentMobile>
+                                {
+                                    <Boost isDown>
+                                        <IconDown />
+                                        {percentBoostedValue}
+                                    </Boost>
+                                }
+                            </PercentMobile>
+                        )}
+                    </Percents>
                     <Info />
                 </AmountRow>
             </Tooltip>
