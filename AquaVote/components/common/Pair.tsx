@@ -232,7 +232,8 @@ const Pair = ({
                                     onMouseEnter={() => setShowBoosTooltip(true)}
                                     onMouseLeave={() => setShowBoosTooltip(false)}
                                 >
-                                    50% boost for pairs who vote with AQUA token
+                                    50% boost for markets paired with AQUA, up until 5% of adjusted
+                                    votes.
                                 </TooltipInner>
                             }
                             position={TOOLTIP_POSITION.top}
