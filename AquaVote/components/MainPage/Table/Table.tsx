@@ -213,8 +213,6 @@ const Table = ({
         ModalService.openModal(ManageVotesModal, { pair });
     };
 
-    console.log(totalStats, pairs);
-
     return (
         <TableBlock>
             {(loading || !totalStats) && (
