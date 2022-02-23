@@ -15,12 +15,13 @@ import Pair from '../../common/Pair';
 import Asset from '../../AssetDropdown/Asset';
 import { MainRoutes } from '../../../routes';
 import { useHistory } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { StellarService } from '../../../../common/services/globalServices';
 import PageLoader from '../../../../common/basics/PageLoader';
 import { processBribes } from '../../../api/api';
 import { formatBalance, getDateString } from '../../../../common/helpers/helpers';
 import useAssetsStore from '../../../store/assetsStore/useAssetsStore';
+import Pagination from '../../../../common/basics/Pagination';
 
 const Container = styled.div`
     display: flex;
@@ -128,12 +129,16 @@ const convertUTCToLocalDateIgnoringTimezone = (utcDate: Date) => {
     );
 };
 
+const PAGE_SIZE = 20;
+
 const BribesTable = () => {
     const history = useHistory();
 
     const [claimableBalances, setClaimableBalances] = useState(null);
     const [bribes, setBribes] = useState(null);
     const [claimsLoaded, setClaimsLoaded] = useState(false);
+
+    const [page, setPage] = useState(1);
 
     const { processNewAssets } = useAssetsStore();
 
@@ -180,6 +185,16 @@ const BribesTable = () => {
         });
     }, [claimsLoaded]);
 
+    const headerRef = useRef(null);
+
+    useEffect(() => {
+        console.log(bribes, headerRef);
+        if (!bribes?.length || !headerRef.current) {
+            return;
+        }
+        headerRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, [page]);
+
     if (!bribes) {
         return (
             <LoaderContainer>
@@ -190,7 +205,7 @@ const BribesTable = () => {
 
     return (
         <Container>
-            <TitleBlock>
+            <TitleBlock ref={headerRef}>
                 <Title>Upcoming Bribes</Title>
                 <AddBribeButton onClick={() => history.push(MainRoutes.addBribe)}>
                     <span>create bribe</span>
@@ -207,57 +222,72 @@ const BribesTable = () => {
                 </TableHeadRow>
             </TableHead>
             <TableBody>
-                {bribes.map((item) => {
-                    const [code, issuer] = item.asset.split(':');
-                    const rewardAsset =
-                        code === 'native'
-                            ? StellarService.createLumen()
-                            : StellarService.createAsset(code, issuer);
-                    const DAY = 24 * 60 * 60 * 1000;
-                    const claimDateUTC = convertUTCToLocalDateIgnoringTimezone(
-                        new Date(item.claimDate),
-                    );
-                    const startDate = new Date(
-                        claimDateUTC.setDate(
-                            claimDateUTC.getDate() + ((7 - claimDateUTC.getDay()) % 7) + 1,
-                        ),
-                    );
-                    startDate.setHours(0);
-                    startDate.setMinutes(0);
-                    startDate.setSeconds(0);
-                    startDate.setMilliseconds(0);
-                    const start = startDate.getTime();
-                    const end = start + 7 * DAY - 1;
-                    return (
-                        <TableBodyRow key={item.paging_token}>
-                            <PairCell>
-                                <Pair
-                                    base={{ code: item.asset1_code, issuer: item.asset1_issuer }}
-                                    counter={{ code: item.asset2_code, issuer: item.asset2_issuer }}
-                                    mobileVerticalDirections
-                                />
-                            </PairCell>
-                            <BribeAssetCell>
-                                <label>Reward asset:</label>
-                                <WebAsset asset={rewardAsset} />
-                                <MobileAsset asset={rewardAsset} inRow withMobileView />
-                            </BribeAssetCell>
-                            <Cell>
-                                <label>Reward per day:</label>
-                                {formatBalance(+item.amount / 7, true)} {rewardAsset.code}
-                            </Cell>
+                {bribes
+                    .slice((page - 1) * PAGE_SIZE, (page - 1) * PAGE_SIZE + PAGE_SIZE)
+                    .map((item) => {
+                        const [code, issuer] = item.asset.split(':');
+                        const rewardAsset =
+                            code === 'native'
+                                ? StellarService.createLumen()
+                                : StellarService.createAsset(code, issuer);
+                        const DAY = 24 * 60 * 60 * 1000;
+                        const claimDateUTC = convertUTCToLocalDateIgnoringTimezone(
+                            new Date(item.claimDate),
+                        );
+                        const startDate = new Date(
+                            claimDateUTC.setDate(
+                                claimDateUTC.getDate() + ((7 - claimDateUTC.getDay()) % 7) + 1,
+                            ),
+                        );
+                        startDate.setHours(0);
+                        startDate.setMinutes(0);
+                        startDate.setSeconds(0);
+                        startDate.setMilliseconds(0);
+                        const start = startDate.getTime();
+                        const end = start + 7 * DAY - 1;
+                        return (
+                            <TableBodyRow key={item.paging_token}>
+                                <PairCell>
+                                    <Pair
+                                        base={{
+                                            code: item.asset1_code,
+                                            issuer: item.asset1_issuer,
+                                        }}
+                                        counter={{
+                                            code: item.asset2_code,
+                                            issuer: item.asset2_issuer,
+                                        }}
+                                        mobileVerticalDirections
+                                    />
+                                </PairCell>
+                                <BribeAssetCell>
+                                    <label>Reward asset:</label>
+                                    <WebAsset asset={rewardAsset} />
+                                    <MobileAsset asset={rewardAsset} inRow withMobileView />
+                                </BribeAssetCell>
+                                <Cell>
+                                    <label>Reward per day:</label>
+                                    {formatBalance(+item.amount / 7, true)} {rewardAsset.code}
+                                </Cell>
 
-                            <Cell>
-                                <label>Period:</label>
-                                {getDateString(start, {
-                                    withoutYear: true,
-                                })}{' '}
-                                - {getDateString(end)}
-                            </Cell>
-                        </TableBodyRow>
-                    );
-                })}
+                                <Cell>
+                                    <label>Period:</label>
+                                    {getDateString(start, {
+                                        withoutYear: true,
+                                    })}{' '}
+                                    - {getDateString(end)}
+                                </Cell>
+                            </TableBodyRow>
+                        );
+                    })}
             </TableBody>
+            <Pagination
+                pageSize={PAGE_SIZE}
+                totalCount={bribes.length}
+                onPageChange={setPage}
+                currentPage={page}
+                itemName="bribes"
+            />
         </Container>
     );
 };
