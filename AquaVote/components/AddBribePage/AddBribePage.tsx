@@ -414,9 +414,7 @@ const AddBribePage = () => {
         });
     };
 
-    const now = new Date();
-    const weekForward = new Date(now.setDate(now.getDate() + 7));
-    const minDate = getWeekStartFromDay(weekForward).start;
+    const minDate = new Date();
 
     const amountInputPostfix =
         debouncedAmount !== null && aquaEquivalent === null ? (
