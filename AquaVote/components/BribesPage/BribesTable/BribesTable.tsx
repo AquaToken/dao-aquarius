@@ -129,6 +129,35 @@ const convertUTCToLocalDateIgnoringTimezone = (utcDate: Date) => {
     );
 };
 
+const getBribePeriod = (claimDate) => {
+    const DAY = 24 * 60 * 60 * 1000;
+    const claimDateUTC = convertUTCToLocalDateIgnoringTimezone(new Date(claimDate));
+    const claimUTC = new Date(claimDateUTC.getTime());
+    const collectDate = new Date(
+        claimUTC.setDate(claimUTC.getDate() + ((7 - claimUTC.getDay()) % 7)),
+    );
+    collectDate.setHours(0);
+    collectDate.setMinutes(0);
+    collectDate.setSeconds(0);
+    collectDate.setMilliseconds(0);
+
+    const startDate = new Date(
+        claimDateUTC.setDate(
+            claimDateUTC.getDate() +
+                ((7 - claimDateUTC.getDay()) % 7) +
+                (claimDateUTC.getTime() <= collectDate.getTime() ? 1 : 8),
+        ),
+    );
+    startDate.setHours(0);
+    startDate.setMinutes(0);
+    startDate.setSeconds(0);
+    startDate.setMilliseconds(0);
+    const start = startDate.getTime();
+    const end = start + 7 * DAY - 1;
+
+    return { start, end };
+};
+
 const PAGE_SIZE = 20;
 
 const BribesTable = () => {
@@ -188,7 +217,6 @@ const BribesTable = () => {
     const headerRef = useRef(null);
 
     useEffect(() => {
-        console.log(bribes, headerRef);
         if (!bribes?.length || !headerRef.current) {
             return;
         }
@@ -230,21 +258,8 @@ const BribesTable = () => {
                             code === 'native'
                                 ? StellarService.createLumen()
                                 : StellarService.createAsset(code, issuer);
-                        const DAY = 24 * 60 * 60 * 1000;
-                        const claimDateUTC = convertUTCToLocalDateIgnoringTimezone(
-                            new Date(item.claimDate),
-                        );
-                        const startDate = new Date(
-                            claimDateUTC.setDate(
-                                claimDateUTC.getDate() + ((7 - claimDateUTC.getDay()) % 7) + 1,
-                            ),
-                        );
-                        startDate.setHours(0);
-                        startDate.setMinutes(0);
-                        startDate.setSeconds(0);
-                        startDate.setMilliseconds(0);
-                        const start = startDate.getTime();
-                        const end = start + 7 * DAY - 1;
+
+                        const { start, end } = getBribePeriod(item.claimDate);
                         return (
                             <TableBodyRow key={item.paging_token}>
                                 <PairCell>
