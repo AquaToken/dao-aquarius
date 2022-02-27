@@ -22,6 +22,7 @@ import { processBribes } from '../../../api/api';
 import { formatBalance, getDateString } from '../../../../common/helpers/helpers';
 import useAssetsStore from '../../../store/assetsStore/useAssetsStore';
 import Pagination from '../../../../common/basics/Pagination';
+import { convertUTCToLocalDateIgnoringTimezone } from '../../AddBribePage/AddBribePage';
 
 const Container = styled.div`
     display: flex;
@@ -116,18 +117,6 @@ const LoaderContainer = styled.div`
     ${flexAllCenter};
     margin: 5rem 0;
 `;
-
-const convertUTCToLocalDateIgnoringTimezone = (utcDate: Date) => {
-    return new Date(
-        utcDate.getUTCFullYear(),
-        utcDate.getUTCMonth(),
-        utcDate.getUTCDate(),
-        utcDate.getUTCHours(),
-        utcDate.getUTCMinutes(),
-        utcDate.getUTCSeconds(),
-        utcDate.getUTCMilliseconds(),
-    );
-};
 
 const getBribePeriod = (claimDate) => {
     const DAY = 24 * 60 * 60 * 1000;
