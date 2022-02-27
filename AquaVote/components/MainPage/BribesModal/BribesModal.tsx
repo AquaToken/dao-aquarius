@@ -221,7 +221,7 @@ const BribesModal = ({ params }: ModalProps<{ pair: PairStats }>) => {
                     {pair.asset2_code} market pair.
                 </UsersVoted>
                 <HowItWorksButton onClick={() => setShowHowItWorks(true)}>
-                    How in works?
+                    How it works?
                 </HowItWorksButton>
                 {showHowItWorks && (
                     <HowItWorks>
