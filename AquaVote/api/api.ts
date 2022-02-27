@@ -16,7 +16,7 @@ const assetsListUrl = 'https://fed.stellarterm.com/issuer_orgs/';
 const assetsInfoUrl = 'https://assets.ultrastellar.com/api/v1/assets/';
 const marketKeysUrl = 'https://marketkeys-tracker.aqua.network/api/market-keys/';
 const votingTrackerUrl = 'https://voting-tracker.aqua.network/api/voting-snapshot/';
-const bribesApiUrl = 'https://bribes-api.aqua.network/api/bribes/?limit=200&?timestamp=1646041958';
+const bribesApiUrl = 'https://bribes-api.aqua.network/api/bribes/?timestamp=1646041958';
 
 export const getAssetsRequest = () => {
     return axios.get<{ issuer_orgs: any[] }>(assetsListUrl).then(({ data }) => {
@@ -114,7 +114,7 @@ const addKeysToMarketVotes = async (votes: MarketVotes[], count) => {
 
     const [marketsKeys, bribes] = await Promise.all([
         axios.get<ListResponse<MarketKey>>(marketKeysUrl, { params }),
-        axios.get<ListResponse<MarketBribes>>(bribesApiUrl, { params: bribesParams }),
+        axios.get<ListResponse<MarketBribes>>(`${bribesApiUrl}&limit=200`, { params: bribesParams }),
     ]);
 
     const pairs = votes.map((marketVotes) => {
@@ -193,7 +193,7 @@ export const getUserPairsList = async (keys: string[]) => {
         axios.get<ListResponse<MarketVotes>>(votingTrackerUrl, {
             params: marketVotesParams,
         }),
-        axios.get<ListResponse<MarketBribes>>(bribesApiUrl, { params: marketVotesParams }),
+        axios.get<ListResponse<MarketBribes>>(`${bribesApiUrl}&limit=200`, { params: marketVotesParams }),
     ]);
 
     return marketKeys.map((marketKey) => {
