@@ -291,6 +291,18 @@ const GlobalStyle = createGlobalStyle`
     }
 `;
 
+export const convertUTCToLocalDateIgnoringTimezone = (utcDate: Date) => {
+    return new Date(
+        utcDate.getUTCFullYear(),
+        utcDate.getUTCMonth(),
+        utcDate.getUTCDate(),
+        utcDate.getUTCHours(),
+        utcDate.getUTCMinutes(),
+        utcDate.getUTCSeconds(),
+        utcDate.getUTCMilliseconds(),
+    );
+};
+
 export function convertLocalDateToUTCIgnoringTimezone(date: Date) {
     const timestamp = Date.UTC(
         date.getFullYear(),
@@ -317,6 +329,14 @@ export const getWeekStartFromDay = (date: Date) => {
     const end = new Date(date.setDate(start.getDate() + 6));
 
     return { start, end };
+};
+
+const getMinDate = () => {
+    const now = convertUTCToLocalDateIgnoringTimezone(new Date());
+
+    const DAY = 24 * 60 * 60 * 1000;
+
+    return now.getDay() === 0 ? new Date(now.getTime() + 2 * DAY) : now;
 };
 
 enum CreateStep {
@@ -414,7 +434,7 @@ const AddBribePage = () => {
         });
     };
 
-    const minDate = new Date();
+    const minDate = getMinDate();
 
     const amountInputPostfix =
         debouncedAmount !== null && aquaEquivalent === null ? (
