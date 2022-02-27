@@ -46,7 +46,24 @@ export type MarketKey = {
     auth_required: boolean;
 };
 
-export type PairStats = MarketKey & MarketVotes;
+export type MarketBribes = {
+    market_key: string;
+    aggregated_bribes: Bribe[];
+};
+
+export type Bribe = {
+    market_key: string;
+    total_reward_amount: string;
+    start_at: string;
+    stop_at: string;
+    asset_code: string;
+    asset_issuer: string;
+    daily_amount: string;
+    aqua_total_reward_amount_equivalent: string;
+    daily_aqua_equivalent: string;
+};
+
+export type PairStats = MarketKey & MarketVotes & MarketBribes;
 
 export type TotalStats = {
     market_key_count: number;
