@@ -226,10 +226,10 @@ const BribesModal = ({ params }: ModalProps<{ pair: PairStats }>) => {
                 {showHowItWorks && (
                     <HowItWorks>
                         <HowItWorksText>
-                            Bribe works during the week, and is divided equally among all
-                            participants in the voting for the couple. Bribes are issued in the
-                            currency indicated by the creator of the bribe, in order to accept it
-                            you need to have an open trustline
+                            Bribes are paid out during a 7 day period. They are divided among all
+                            participants in the voting for the market pair. Bribes are issued in the
+                            currency indicated by the creator of the bribe, in order to receive them
+                            you need to have an open trustline.
                         </HowItWorksText>
                         <HowItWorksFooter>
                             <ExternalLinkWeb href="https://medium.com/aquarius-aqua/introducing-aquarius-bribes-6b0931dc3dd7">
