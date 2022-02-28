@@ -7,6 +7,7 @@ import Plus from '../../../../common/assets/img/icon-plus.svg';
 import {
     TableBody,
     TableBodyRow,
+    TableBodyRowWrap,
     TableCell,
     TableHead,
     TableHeadRow,
@@ -250,38 +251,40 @@ const BribesTable = () => {
 
                         const { start, end } = getBribePeriod(item.claimDate);
                         return (
-                            <TableBodyRow key={item.paging_token}>
-                                <PairCell>
-                                    <Pair
-                                        base={{
-                                            code: item.asset1_code,
-                                            issuer: item.asset1_issuer,
-                                        }}
-                                        counter={{
-                                            code: item.asset2_code,
-                                            issuer: item.asset2_issuer,
-                                        }}
-                                        mobileVerticalDirections
-                                    />
-                                </PairCell>
-                                <BribeAssetCell>
-                                    <label>Reward asset:</label>
-                                    <WebAsset asset={rewardAsset} />
-                                    <MobileAsset asset={rewardAsset} inRow withMobileView />
-                                </BribeAssetCell>
-                                <Cell>
-                                    <label>Reward per day:</label>
-                                    {formatBalance(+item.amount / 7, true)} {rewardAsset.code}
-                                </Cell>
+                            <TableBodyRowWrap key={item.paging_token}>
+                                <TableBodyRow>
+                                    <PairCell>
+                                        <Pair
+                                            base={{
+                                                code: item.asset1_code,
+                                                issuer: item.asset1_issuer,
+                                            }}
+                                            counter={{
+                                                code: item.asset2_code,
+                                                issuer: item.asset2_issuer,
+                                            }}
+                                            mobileVerticalDirections
+                                        />
+                                    </PairCell>
+                                    <BribeAssetCell>
+                                        <label>Reward asset:</label>
+                                        <WebAsset asset={rewardAsset} />
+                                        <MobileAsset asset={rewardAsset} inRow withMobileView />
+                                    </BribeAssetCell>
+                                    <Cell>
+                                        <label>Reward per day:</label>
+                                        {formatBalance(+item.amount / 7, true)} {rewardAsset.code}
+                                    </Cell>
 
-                                <Cell>
-                                    <label>Period:</label>
-                                    {getDateString(start, {
-                                        withoutYear: true,
-                                    })}{' '}
-                                    - {getDateString(end)}
-                                </Cell>
-                            </TableBodyRow>
+                                    <Cell>
+                                        <label>Period:</label>
+                                        {getDateString(start, {
+                                            withoutYear: true,
+                                        })}{' '}
+                                        - {getDateString(end)}
+                                    </Cell>
+                                </TableBodyRow>
+                            </TableBodyRowWrap>
                         );
                     })}
             </TableBody>
