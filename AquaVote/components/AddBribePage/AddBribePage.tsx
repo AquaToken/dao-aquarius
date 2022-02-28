@@ -318,15 +318,16 @@ export function convertLocalDateToUTCIgnoringTimezone(date: Date) {
 }
 
 export const getWeekStartFromDay = (date: Date) => {
-    const start = convertLocalDateToUTCIgnoringTimezone(
-        new Date(
-            date.setDate(
-                date.getDay() === 0 ? date.getDate() - 6 : date.getDate() - date.getDay() + 1,
-            ),
+    const dateIgnoreTimezone = convertLocalDateToUTCIgnoringTimezone(date);
+    const start = new Date(
+        dateIgnoreTimezone.setDate(
+            dateIgnoreTimezone.getDay() === 0
+                ? dateIgnoreTimezone.getDate() - 6
+                : dateIgnoreTimezone.getDate() - dateIgnoreTimezone.getDay() + 1,
         ),
     );
 
-    const end = new Date(date.setDate(start.getDate() + 6));
+    const end = new Date(dateIgnoreTimezone.setDate(start.getDate() + 6));
 
     return { start, end };
 };
