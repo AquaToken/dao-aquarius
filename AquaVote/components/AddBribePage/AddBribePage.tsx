@@ -336,7 +336,7 @@ const getMinDate = () => {
 
     const DAY = 24 * 60 * 60 * 1000;
 
-    return now.getDay() === 0 ? new Date(now.getTime() + 2 * DAY) : now;
+    return now.getDay() === 0 || now.getDay() === 1 ? new Date(now.getTime() + 2 * DAY) : now;
 };
 
 enum CreateStep {
