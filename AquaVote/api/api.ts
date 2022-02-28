@@ -16,7 +16,7 @@ const assetsListUrl = 'https://fed.stellarterm.com/issuer_orgs/';
 const assetsInfoUrl = 'https://assets.ultrastellar.com/api/v1/assets/';
 const marketKeysUrl = 'https://marketkeys-tracker.aqua.network/api/market-keys/';
 const votingTrackerUrl = 'https://voting-tracker.aqua.network/api/voting-snapshot/';
-const bribesApiUrl = 'https://bribes-api.aqua.network/api/bribes/?timestamp=1646041958';
+const bribesApiUrl = 'https://bribes-api.aqua.network/api/bribes/';
 
 export const getAssetsRequest = () => {
     return axios.get<{ issuer_orgs: any[] }>(assetsListUrl).then(({ data }) => {
