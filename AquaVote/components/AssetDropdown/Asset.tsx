@@ -56,11 +56,15 @@ const Asset = ({
     asset,
     inRow,
     withMobileView,
+    onlyLogo,
+    onlyLogoSmall,
     ...props
 }: {
     asset: AssetSimple;
     inRow?: boolean;
     withMobileView?: boolean;
+    onlyLogo?: boolean;
+    onlyLogoSmall?: boolean;
 }): JSX.Element => {
     const [showTooltip, setShowTooltip] = useState(false);
     const { assetsInfo } = useAssetsStore();
@@ -69,6 +73,14 @@ const Asset = ({
     const isNative = assetInstance.isNative();
     const hasAssetInfo = isNative || assetsInfo.has(getAssetString(asset));
     const assetInfo = isNative ? LumenInfo : assetsInfo.get(getAssetString(asset));
+
+    if (onlyLogo) {
+        return <AssetLogo logoUrl={assetInfo?.image} />;
+    }
+
+    if (onlyLogoSmall) {
+        return <AssetLogo logoUrl={assetInfo?.image} isSmall />;
+    }
 
     return (
         <Container {...props}>
