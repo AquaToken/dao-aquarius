@@ -114,7 +114,9 @@ const addKeysToMarketVotes = async (votes: MarketVotes[], count) => {
 
     const [marketsKeys, bribes] = await Promise.all([
         axios.get<ListResponse<MarketKey>>(marketKeysUrl, { params }),
-        axios.get<ListResponse<MarketBribes>>(`${bribesApiUrl}&limit=200`, { params: bribesParams }),
+        axios.get<ListResponse<MarketBribes>>(`${bribesApiUrl}?limit=200`, {
+            params: bribesParams,
+        }),
     ]);
 
     const pairs = votes.map((marketVotes) => {
@@ -193,7 +195,9 @@ export const getUserPairsList = async (keys: string[]) => {
         axios.get<ListResponse<MarketVotes>>(votingTrackerUrl, {
             params: marketVotesParams,
         }),
-        axios.get<ListResponse<MarketBribes>>(`${bribesApiUrl}&limit=200`, { params: marketVotesParams }),
+        axios.get<ListResponse<MarketBribes>>(`${bribesApiUrl}?limit=200`, {
+            params: marketVotesParams,
+        }),
     ]);
 
     return marketKeys.map((marketKey) => {
@@ -215,7 +219,7 @@ export const getUserPairsList = async (keys: string[]) => {
 
 export const getPairsWithBribes = async (pageSize: number, page: number) => {
     const bribes = await axios.get<ListResponse<MarketBribes>>(
-        `${bribesApiUrl}&limit=${pageSize}&page=${page}`,
+        `${bribesApiUrl}?limit=${pageSize}&page=${page}`,
     );
 
     if (!bribes.data.results.length) {
