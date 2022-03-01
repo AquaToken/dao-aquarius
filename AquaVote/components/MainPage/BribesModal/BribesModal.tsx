@@ -201,7 +201,7 @@ const BribesModal = ({ params }: ModalProps<{ pair: PairStats }>) => {
         acc += Number(bribe.daily_aqua_equivalent);
         return acc;
     }, 0);
-    const aquaBribePrice = Number(sum / Number(pair.votes_value)) * 1000;
+    const aquaBribePrice = Number(sum / Number(pair.upvote_value)) * 1000;
     return (
         <ModalContainer>
             <ModalTitle>
