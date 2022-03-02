@@ -24,6 +24,7 @@ import Tooltip, { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
 import ArrowLeft from '../../../common/assets/img/icon-arrow-left.svg';
 import { Link } from 'react-router-dom';
 import { MainRoutes } from '../../routes';
+import { endOfWeek, isBefore, nextMonday, nextSunday, startOfDay, startOfWeek } from 'date-fns';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -318,26 +319,22 @@ export function convertLocalDateToUTCIgnoringTimezone(date: Date) {
 }
 
 export const getWeekStartFromDay = (date: Date) => {
-    const dateIgnoreTimezone = convertLocalDateToUTCIgnoringTimezone(date);
-    const start = new Date(
-        dateIgnoreTimezone.setDate(
-            dateIgnoreTimezone.getDay() === 0
-                ? dateIgnoreTimezone.getDate() - 6
-                : dateIgnoreTimezone.getDate() - dateIgnoreTimezone.getDay() + 1,
-        ),
-    );
+    const startWeek = startOfWeek(date, { weekStartsOn: 1 });
+    const endWeek = endOfWeek(date, { weekStartsOn: 1 });
 
-    const end = new Date(dateIgnoreTimezone.setDate(start.getDate() + 6));
-
-    return { start, end };
+    return {
+        start: convertLocalDateToUTCIgnoringTimezone(startWeek),
+        end: convertLocalDateToUTCIgnoringTimezone(endWeek),
+    };
 };
 
 const getMinDate = () => {
-    const now = convertUTCToLocalDateIgnoringTimezone(new Date());
+    const now = Date.now();
+    const collectDate = convertLocalDateToUTCIgnoringTimezone(startOfDay(nextSunday(Date.now())));
 
-    const DAY = 24 * 60 * 60 * 1000;
-
-    return now.getDay() === 0 || now.getDay() === 1 ? new Date(now.getTime() + 2 * DAY) : now;
+    return isBefore(now, collectDate)
+        ? startOfDay(nextMonday(Date.now()))
+        : startOfDay(nextMonday(nextMonday(Date.now())));
 };
 
 enum CreateStep {
@@ -360,6 +357,7 @@ const AddBribePage = () => {
 
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
+    const [selectedDate, setSelectedDate] = useState(null);
 
     const { isLogged } = useAuthStore();
 
@@ -372,6 +370,7 @@ const AddBribePage = () => {
         setAmount('');
         setStartDate(null);
         setEndDate(null);
+        setSelectedDate(null);
     };
 
     useEffect(() => {
@@ -585,8 +584,9 @@ const AddBribePage = () => {
                                     <DatePicker
                                         customInput={<Input label="Start date" />}
                                         calendarStartDay={1}
-                                        selected={startDate || null}
+                                        selected={selectedDate || null}
                                         onChange={(res) => {
+                                            setSelectedDate(res);
                                             const { start, end } = getWeekStartFromDay(res);
                                             setStartDate(start);
                                             setEndDate(end);
