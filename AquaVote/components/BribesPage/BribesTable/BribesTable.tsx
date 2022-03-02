@@ -24,6 +24,15 @@ import { formatBalance, getDateString } from '../../../../common/helpers/helpers
 import useAssetsStore from '../../../store/assetsStore/useAssetsStore';
 import Pagination from '../../../../common/basics/Pagination';
 import { convertUTCToLocalDateIgnoringTimezone } from '../../AddBribePage/AddBribePage';
+import {
+    endOfWeek,
+    isBefore,
+    isEqual,
+    nextMonday,
+    nextSunday,
+    startOfDay,
+    startOfWeek,
+} from 'date-fns';
 
 const Container = styled.div`
     display: flex;
@@ -119,31 +128,16 @@ const LoaderContainer = styled.div`
     margin: 5rem 0;
 `;
 
-const getBribePeriod = (claimDate) => {
-    const DAY = 24 * 60 * 60 * 1000;
-    const claimDateUTC = convertUTCToLocalDateIgnoringTimezone(new Date(claimDate));
-    const claimUTC = new Date(claimDateUTC.getTime());
-    const collectDate = new Date(
-        claimUTC.setDate(claimUTC.getDate() + ((7 - claimUTC.getDay()) % 7)),
-    );
-    collectDate.setHours(0);
-    collectDate.setMinutes(0);
-    collectDate.setSeconds(0);
-    collectDate.setMilliseconds(0);
+const getBribePeriod = (claim) => {
+    const claimDate = convertUTCToLocalDateIgnoringTimezone(new Date(claim));
+    const collectDate = startOfDay(nextSunday(startOfWeek(claimDate, { weekStartsOn: 1 })));
 
-    const startDate = new Date(
-        claimDateUTC.setDate(
-            claimDateUTC.getDate() +
-                ((7 - claimDateUTC.getDay()) % 7) +
-                (claimDateUTC.getTime() <= collectDate.getTime() ? 1 : 8),
-        ),
-    );
-    startDate.setHours(0);
-    startDate.setMinutes(0);
-    startDate.setSeconds(0);
-    startDate.setMilliseconds(0);
-    const start = startDate.getTime();
-    const end = start + 7 * DAY - 1;
+    const start =
+        isEqual(claimDate, collectDate) || isBefore(claimDate, collectDate)
+            ? startOfDay(nextMonday(claimDate))
+            : startOfDay(nextMonday(nextMonday(claimDate)));
+
+    const end = endOfWeek(start, { weekStartsOn: 1 });
 
     return { start, end };
 };
@@ -163,10 +157,16 @@ const BribesTable = () => {
 
     const processAssetsFromPairs = (pairs) => {
         const assets = pairs.reduce((acc, item) => {
+            const [code, issuer] = item.asset.split(':');
+            const rewardAsset =
+                code === 'native'
+                    ? StellarService.createLumen()
+                    : StellarService.createAsset(code, issuer);
             return [
                 ...acc,
                 { code: item.asset1_code, issuer: item.asset1_issuer },
                 { code: item.asset2_code, issuer: item.asset2_issuer },
+                rewardAsset,
             ];
         }, []);
 
@@ -278,10 +278,10 @@ const BribesTable = () => {
 
                                     <Cell>
                                         <label>Period:</label>
-                                        {getDateString(start, {
+                                        {getDateString(start.getTime(), {
                                             withoutYear: true,
                                         })}{' '}
-                                        - {getDateString(end)}
+                                        - {getDateString(end.getTime())}
                                     </Cell>
                                 </TableBodyRow>
                             </TableBodyRowWrap>

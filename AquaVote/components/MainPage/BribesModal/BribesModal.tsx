@@ -9,7 +9,7 @@ import { PairStats } from '../../../api/types';
 import styled from 'styled-components';
 import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../../common/styles';
-import { getWeekStartFromDay } from '../../AddBribePage/AddBribePage';
+import { convertUTCToLocalDateIgnoringTimezone } from '../../AddBribePage/AddBribePage';
 import { formatBalance, getDateString } from '../../../../common/helpers/helpers';
 import Aqua from '../../../../common/assets/img/aqua-logo-small.svg';
 import Close from '../../../../common/assets/img/icon-close-small-purple.svg';
@@ -196,11 +196,16 @@ const ExternalLinkMobile = styled(ExternalLink)`
 const BribesModal = ({ params }: ModalProps<{ pair: PairStats }>) => {
     const [showHowItWorks, setShowHowItWorks] = useState(false);
     const { pair } = params;
-    const { start, end } = getWeekStartFromDay(new Date());
+
     const sum = pair.aggregated_bribes.reduce((acc, bribe) => {
         acc += Number(bribe.daily_aqua_equivalent);
         return acc;
     }, 0);
+    const { start_at, stop_at } = pair.aggregated_bribes[0];
+
+    const startUTC = convertUTCToLocalDateIgnoringTimezone(new Date(start_at));
+    const stopUTC = convertUTCToLocalDateIgnoringTimezone(new Date(stop_at));
+
     const aquaBribePrice = Number(sum / Number(pair.upvote_value)) * 1000;
     return (
         <ModalContainer>
@@ -208,8 +213,9 @@ const BribesModal = ({ params }: ModalProps<{ pair: PairStats }>) => {
                 Bribes for {pair.asset1_code}/{pair.asset2_code}
             </ModalTitle>
             <ModalDescription>
-                This week bribes from {getDateString(start.getTime(), { withoutYear: true })} to{' '}
-                {getDateString(end.getTime())}
+                This week bribes from{' '}
+                {getDateString(new Date(startUTC).getTime(), { withoutYear: true })} to{' '}
+                {getDateString(new Date(stopUTC).getTime() - 1)}
             </ModalDescription>
             <BribeDetails>
                 <AquaLogo />
