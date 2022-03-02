@@ -13,7 +13,7 @@ import {
 import { COLLECTOR_KEY } from '../../common/services/stellar.service';
 
 const assetsListUrl = 'https://fed.stellarterm.com/issuer_orgs/';
-const assetsInfoUrl = 'https://assets.ultrastellar.com/api/v1/assets/';
+const assetsInfoUrl = 'https://assets.aqua.network/api/v1/assets/';
 const marketKeysUrl = 'https://marketkeys-tracker.aqua.network/api/market-keys/';
 const votingTrackerUrl = 'https://voting-tracker.aqua.network/api/voting-snapshot/';
 const bribesApiUrl = 'https://bribes-api.aqua.network/api/bribes/';
