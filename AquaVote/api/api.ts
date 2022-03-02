@@ -350,11 +350,7 @@ export const processBribes = async (claims) => {
             (claimant) => claimant.destination === COLLECTOR_KEY,
         );
 
-        if (
-            !collectorClaimant ||
-            !Boolean(collectorClaimant.predicate?.not?.abs_before) ||
-            new Date(collectorClaimant.predicate?.not?.abs_before).getTime() <= Date.now()
-        ) {
+        if (!collectorClaimant || !Boolean(collectorClaimant.predicate?.not?.abs_before)) {
             return false;
         }
 
