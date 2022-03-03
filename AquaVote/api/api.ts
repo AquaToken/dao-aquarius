@@ -9,14 +9,14 @@ import {
     MarketVotes,
     PairStats,
     TotalStats,
+    UpcomingBribe,
 } from './types';
-import { COLLECTOR_KEY } from '../../common/services/stellar.service';
 
 const assetsListUrl = 'https://fed.stellarterm.com/issuer_orgs/';
 const assetsInfoUrl = 'https://assets.aqua.network/api/v1/assets/';
 const marketKeysUrl = 'https://marketkeys-tracker.aqua.network/api/market-keys/';
 const votingTrackerUrl = 'https://voting-tracker.aqua.network/api/voting-snapshot/';
-const bribesApiUrl = 'https://bribes-api.aqua.network/api/bribes/';
+const bribesApiUrl = 'https://bribes-api.aqua.network/api/';
 
 export const getAssetsRequest = () => {
     return axios.get<{ issuer_orgs: any[] }>(assetsListUrl).then(({ data }) => {
@@ -114,7 +114,7 @@ const addKeysToMarketVotes = async (votes: MarketVotes[], count) => {
 
     const [marketsKeys, bribes] = await Promise.all([
         axios.get<ListResponse<MarketKey>>(marketKeysUrl, { params }),
-        axios.get<ListResponse<MarketBribes>>(`${bribesApiUrl}?limit=200`, {
+        axios.get<ListResponse<MarketBribes>>(`${bribesApiUrl}bribes/?limit=200`, {
             params: bribesParams,
         }),
     ]);
@@ -195,7 +195,7 @@ export const getUserPairsList = async (keys: string[]) => {
         axios.get<ListResponse<MarketVotes>>(votingTrackerUrl, {
             params: marketVotesParams,
         }),
-        axios.get<ListResponse<MarketBribes>>(`${bribesApiUrl}?limit=200`, {
+        axios.get<ListResponse<MarketBribes>>(`${bribesApiUrl}bribes/?limit=200`, {
             params: marketVotesParams,
         }),
     ]);
@@ -219,7 +219,7 @@ export const getUserPairsList = async (keys: string[]) => {
 
 export const getPairsWithBribes = async (pageSize: number, page: number) => {
     const bribes = await axios.get<ListResponse<MarketBribes>>(
-        `${bribesApiUrl}?limit=${pageSize}&page=${page}`,
+        `${bribesApiUrl}bribes/?limit=${pageSize}&page=${page}`,
     );
 
     if (!bribes.data.results.length) {
@@ -335,75 +335,50 @@ export const getMarketPair = (base, counter) => {
         .catch(() => null);
 };
 
-export const processBribes = async (claims) => {
-    if (!claims.length) {
-        return [];
-    }
-    const uniqMarkerKeys = [];
+export enum BribeSortFields {
+    aquaAmountUp = '-aqua_total_reward_amount_equivalent',
+    aquaAmountDown = 'aqua_total_reward_amount_equivalent',
+    startAtUp = '-start_at',
+    startAtDown = 'start_at',
+}
 
-    const filtered = claims.filter((claim) => {
-        if (claim.claimants.length !== 2) {
-            return false;
-        }
+export const getBribes = async (
+    pageSize: number,
+    page: number,
+    sort: BribeSortFields,
+    filterByAmount: boolean,
+) => {
+    const { count, results } = await axios
+        .get<ListResponse<UpcomingBribe>>(
+            `${bribesApiUrl}pending-bribes/?limit=${pageSize}&page=${page}&ordering=${sort}&aqua_total_reward_amount_equivalent__gt=${
+                filterByAmount ? '100000' : '-1'
+            }`,
+        )
+        .then((result) => {
+            const { count, results } = result.data;
+            return {
+                count,
+                results,
+            };
+        });
 
-        const collectorClaimant = claim.claimants.find(
-            (claimant) => claimant.destination === COLLECTOR_KEY,
+    const keysParams = new URLSearchParams();
+
+    results.forEach((bribe) => {
+        keysParams.append('account_id', bribe.market_key);
+    });
+
+    const marketKeys = await axios.get<ListResponse<MarketKey>>(marketKeysUrl, {
+        params: keysParams,
+    });
+
+    const bribes = results.map((bribe) => {
+        const marketKey = marketKeys.data.results.find(
+            (marketKey) => marketKey.account_id === bribe.market_key,
         );
 
-        if (!collectorClaimant || !Boolean(collectorClaimant.predicate?.not?.abs_before)) {
-            return false;
-        }
-
-        const markerClaimant = claim.claimants.find(
-            (claimant) => claimant.destination !== COLLECTOR_KEY,
-        );
-
-        if (!markerClaimant || !Boolean(markerClaimant.predicate?.not?.unconditional)) {
-            return false;
-        }
-
-        if (!uniqMarkerKeys.includes(markerClaimant.destination)) {
-            uniqMarkerKeys.push(markerClaimant.destination);
-        }
-
-        return true;
+        return { ...bribe, ...marketKey };
     });
 
-    if (!filtered.length) {
-        return [];
-    }
-
-    const params = new URLSearchParams();
-
-    uniqMarkerKeys.forEach((key) => {
-        params.append('account_id', key);
-    });
-
-    const marketKeys = await axios.get<ListResponse<MarketKey>>(`${marketKeysUrl}?limit=200`, {
-        params,
-    });
-
-    return filtered
-        .map((claim) => {
-            const markerClaimant = claim.claimants.find(
-                (claimant) => claimant.destination !== COLLECTOR_KEY,
-            );
-
-            const marker = marketKeys.data.results.find(
-                (marketKey) => marketKey.account_id === markerClaimant.destination,
-            );
-
-            if (!marker) {
-                return null;
-            }
-
-            const collectorClaimant = claim.claimants.find(
-                (claimant) => claimant.destination === COLLECTOR_KEY,
-            );
-
-            const claimDate = collectorClaimant.predicate?.not?.abs_before;
-
-            return { ...claim, ...marker, claimDate };
-        })
-        .filter((item) => item !== null);
+    return { count, bribes };
 };

@@ -36,13 +36,14 @@ const Checkbox = ({
     label,
     checked,
     onChange,
+    ...props
 }: {
     label: string;
     checked: boolean;
     onChange: (boolean) => void;
 }) => {
     return (
-        <CheckboxContainer onClick={() => onChange(!checked)}>
+        <CheckboxContainer onClick={() => onChange(!checked)} {...props}>
             <CheckboxInput checked={checked}>{checked && <Tick />}</CheckboxInput>
             <Label>{label}</Label>
         </CheckboxContainer>
