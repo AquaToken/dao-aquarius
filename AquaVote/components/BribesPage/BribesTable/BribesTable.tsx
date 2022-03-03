@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../../common/styles';
@@ -16,23 +17,16 @@ import Pair from '../../common/Pair';
 import Asset from '../../AssetDropdown/Asset';
 import { MainRoutes } from '../../../routes';
 import { useHistory } from 'react-router-dom';
-import { useEffect, useRef, useState } from 'react';
 import { StellarService } from '../../../../common/services/globalServices';
 import PageLoader from '../../../../common/basics/PageLoader';
-import { processBribes } from '../../../api/api';
+import { BribeSortFields, getBribes } from '../../../api/api';
 import { formatBalance, getDateString } from '../../../../common/helpers/helpers';
 import useAssetsStore from '../../../store/assetsStore/useAssetsStore';
 import Pagination from '../../../../common/basics/Pagination';
 import { convertUTCToLocalDateIgnoringTimezone } from '../../AddBribePage/AddBribePage';
-import {
-    endOfWeek,
-    isBefore,
-    isEqual,
-    nextMonday,
-    nextSunday,
-    startOfDay,
-    startOfWeek,
-} from 'date-fns';
+import Checkbox from '../../../../common/basics/Checkbox';
+import { IconSort } from '../../../../common/basics/Icons';
+import Select from '../../../../common/basics/Select';
 
 const Container = styled.div`
     display: flex;
@@ -46,7 +40,7 @@ const Container = styled.div`
 
 const TitleBlock = styled.div`
     ${flexRowSpaceBetween};
-    margin-bottom: 8.3rem;
+    margin-bottom: 5.3rem;
 
     ${respondDown(Breakpoints.md)`
         margin-bottom: 2.3rem;
@@ -128,40 +122,98 @@ const LoaderContainer = styled.div`
     margin: 5rem 0;
 `;
 
-const getBribePeriod = (claim) => {
-    const claimDate = convertUTCToLocalDateIgnoringTimezone(new Date(claim));
-    const collectDate = startOfDay(nextSunday(startOfWeek(claimDate, { weekStartsOn: 1 })));
+const CheckboxStyled = styled(Checkbox)`
+    margin-bottom: 3rem;
+`;
 
-    const start =
-        isEqual(claimDate, collectDate) || isBefore(claimDate, collectDate)
-            ? startOfDay(nextMonday(claimDate))
-            : startOfDay(nextMonday(nextMonday(claimDate)));
+const SortingHeader = styled.button`
+    background: none;
+    border: none;
+    cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 100%;
 
-    const end = endOfWeek(start, { weekStartsOn: 1 });
+    display: flex;
+    align-items: center;
+    justify-content: ${({ position }: { position?: string }) => {
+        if (position === 'right') return 'flex-end';
+        if (position === 'left') return 'flex-start';
+        return 'center';
+    }};
 
-    return { start, end };
-};
+    color: ${COLORS.grayText};
+    & > svg {
+        margin-left: 0.4rem;
+    }
+    &:hover {
+        color: ${COLORS.purple};
+    }
+`;
+
+const SelectStyled = styled(Select)`
+    display: none;
+    margin-bottom: 3rem;
+
+    ${respondDown(Breakpoints.md)`
+          display: flex;
+      `}
+`;
+
+const TableLoader = styled.div`
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: rgba(255, 255, 255, 0.8);
+    z-index: 10;
+    ${flexAllCenter};
+    animation: showLoader 0.1s ease-in-out;
+
+    @keyframes showLoader {
+        0% {
+            background-color: rgba(255, 255, 255, 0);
+        }
+        100% {
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+    }
+`;
+
+const TableBlock = styled.div`
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    position: relative;
+`;
 
 const PAGE_SIZE = 20;
+
+const SORT_OPTIONS = [
+    { label: 'Sort by: Period ▲', value: BribeSortFields.startAtDown },
+    { label: 'Sort by: Period ▼', value: BribeSortFields.startAtUp },
+    { label: 'Sort by: Reward ▲', value: BribeSortFields.aquaAmountDown },
+    { label: 'Sort by: Reward ▼', value: BribeSortFields.aquaAmountUp },
+];
 
 const BribesTable = () => {
     const history = useHistory();
 
-    const [claimableBalances, setClaimableBalances] = useState(null);
+    const [loading, setLoading] = useState(false);
     const [bribes, setBribes] = useState(null);
-    const [claimsLoaded, setClaimsLoaded] = useState(false);
+    const [count, setCount] = useState(null);
+    const [sort, setSort] = useState(BribeSortFields.startAtDown);
+    const [filterByAmount, setFilterByAmount] = useState(false);
 
     const [page, setPage] = useState(1);
 
     const { processNewAssets } = useAssetsStore();
 
-    const processAssetsFromPairs = (pairs) => {
-        const assets = pairs.reduce((acc, item) => {
-            const [code, issuer] = item.asset.split(':');
-            const rewardAsset =
-                code === 'native'
-                    ? StellarService.createLumen()
-                    : StellarService.createAsset(code, issuer);
+    const processAssetsFromPairs = (bribes) => {
+        const assets = bribes.reduce((acc, item) => {
+            const rewardAsset = StellarService.createAsset(item.asset_code, item.asset_issuer);
             return [
                 ...acc,
                 { code: item.asset1_code, issuer: item.asset1_issuer },
@@ -174,35 +226,14 @@ const BribesTable = () => {
     };
 
     useEffect(() => {
-        const limit = 200;
-        StellarService.getBribes(limit).then((res) => {
-            setClaimableBalances(res.records);
-
-            getNextBribes(res, limit);
+        setLoading(true);
+        getBribes(PAGE_SIZE, page, sort, !filterByAmount).then((res) => {
+            setCount(res.count);
+            setBribes(res.bribes);
+            processAssetsFromPairs(res.bribes);
+            setLoading(false);
         });
-    }, []);
-
-    const getNextBribes = (collection, limit) => {
-        if (collection.records.length < limit) {
-            setClaimsLoaded(true);
-            return;
-        }
-
-        collection.next().then((res) => {
-            setClaimableBalances((prev) => [...prev, ...res.records]);
-            getNextBribes(res, limit);
-        });
-    };
-
-    useEffect(() => {
-        if (!claimsLoaded) {
-            return;
-        }
-        processBribes(claimableBalances).then((res) => {
-            setBribes(res);
-            processAssetsFromPairs(res);
-        });
-    }, [claimsLoaded]);
+    }, [page, filterByAmount, sort]);
 
     const headerRef = useRef(null);
 
@@ -212,6 +243,11 @@ const BribesTable = () => {
         }
         headerRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }, [page]);
+
+    const changeSort = (newSort) => {
+        setSort(newSort);
+        setPage(1);
+    };
 
     if (!bribes) {
         return (
@@ -231,27 +267,81 @@ const BribesTable = () => {
                 </AddBribeButton>
             </TitleBlock>
 
-            <TableHead>
-                <TableHeadRow>
-                    <PairCell>Market Pair</PairCell>
-                    <BribeAssetCell>Reward asset</BribeAssetCell>
-                    <Cell>Reward per day</Cell>
-                    <Cell>Period</Cell>
-                </TableHeadRow>
-            </TableHead>
-            <TableBody>
-                {bribes
-                    .slice((page - 1) * PAGE_SIZE, (page - 1) * PAGE_SIZE + PAGE_SIZE)
-                    .map((item) => {
-                        const [code, issuer] = item.asset.split(':');
-                        const rewardAsset =
-                            code === 'native'
-                                ? StellarService.createLumen()
-                                : StellarService.createAsset(code, issuer);
+            <CheckboxStyled
+                label={'Show bribes smaller than 100,000 AQUA'}
+                checked={filterByAmount}
+                onChange={setFilterByAmount}
+            />
 
-                        const { start, end } = getBribePeriod(item.claimDate);
+            <SelectStyled options={SORT_OPTIONS} value={sort} onChange={changeSort} />
+
+            <TableBlock>
+                {bribes && loading && (
+                    <TableLoader>
+                        <PageLoader />
+                    </TableLoader>
+                )}
+                <TableHead>
+                    <TableHeadRow>
+                        <PairCell>Market Pair</PairCell>
+                        <BribeAssetCell>Reward asset</BribeAssetCell>
+                        <Cell>
+                            <SortingHeader
+                                position="left"
+                                onClick={() =>
+                                    changeSort(
+                                        sort === BribeSortFields.aquaAmountUp
+                                            ? BribeSortFields.aquaAmountDown
+                                            : BribeSortFields.aquaAmountUp,
+                                    )
+                                }
+                            >
+                                Reward per day{' '}
+                                <IconSort
+                                    isEnabled={
+                                        sort === BribeSortFields.aquaAmountUp ||
+                                        sort === BribeSortFields.aquaAmountDown
+                                    }
+                                    isReversed={sort === BribeSortFields.aquaAmountDown}
+                                />
+                            </SortingHeader>
+                        </Cell>
+                        <Cell>
+                            <SortingHeader
+                                onClick={() =>
+                                    changeSort(
+                                        sort === BribeSortFields.startAtUp
+                                            ? BribeSortFields.startAtDown
+                                            : BribeSortFields.startAtUp,
+                                    )
+                                }
+                            >
+                                Period{' '}
+                                <IconSort
+                                    isEnabled={
+                                        sort === BribeSortFields.startAtUp ||
+                                        sort === BribeSortFields.startAtDown
+                                    }
+                                    isReversed={sort === BribeSortFields.startAtDown}
+                                />
+                            </SortingHeader>
+                        </Cell>
+                    </TableHeadRow>
+                </TableHead>
+                <TableBody>
+                    {bribes.map((item) => {
+                        const startUTC = convertUTCToLocalDateIgnoringTimezone(
+                            new Date(item.start_at),
+                        );
+                        const stopUTC = convertUTCToLocalDateIgnoringTimezone(
+                            new Date(item.stop_at),
+                        );
+                        const rewardAsset = StellarService.createAsset(
+                            item.asset_code,
+                            item.asset_issuer,
+                        );
                         return (
-                            <TableBodyRowWrap key={item.paging_token}>
+                            <TableBodyRowWrap key={item.claimable_balance_id}>
                                 <TableBodyRow>
                                     <PairCell>
                                         <Pair
@@ -278,19 +368,20 @@ const BribesTable = () => {
 
                                     <Cell>
                                         <label>Period:</label>
-                                        {getDateString(start.getTime(), {
+                                        {getDateString(startUTC.getTime(), {
                                             withoutYear: true,
                                         })}{' '}
-                                        - {getDateString(end.getTime())}
+                                        - {getDateString(stopUTC.getTime() - 1)}
                                     </Cell>
                                 </TableBodyRow>
                             </TableBodyRowWrap>
                         );
                     })}
-            </TableBody>
+                </TableBody>
+            </TableBlock>
             <Pagination
                 pageSize={PAGE_SIZE}
-                totalCount={bribes.length}
+                totalCount={count}
                 onPageChange={setPage}
                 currentPage={page}
                 itemName="bribes"

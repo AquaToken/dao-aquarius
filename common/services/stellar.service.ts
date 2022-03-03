@@ -678,18 +678,6 @@ export default class StellarServiceClass {
         });
     }
 
-    getBribes(limit) {
-        return this.server
-            .claimableBalances()
-            .claimant(COLLECTOR_KEY)
-            .order('desc')
-            .limit(limit)
-            .call()
-            .then((claimable) => {
-                return claimable;
-            });
-    }
-
     getAquaEquivalent(asset, amount) {
         return this.server
             .strictSendPaths(asset, amount, [new StellarSdk.Asset(AQUA_CODE, AQUA_ISSUER)])

@@ -71,3 +71,17 @@ export type TotalStats = {
     voting_amount_sum: number;
     timestamp: string;
 };
+
+export type UpcomingBribe = {
+    amount: string;
+    aqua_total_reward_amount_equivalent: string;
+    asset_code: string;
+    asset_issuer: string;
+    claimable_balance_id: string;
+    created_at: string;
+    market_key: string;
+    sponsor: string;
+    start_at: string;
+    stop_at: string;
+    unlock_time: string;
+};
