@@ -24,7 +24,16 @@ import Tooltip, { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
 import ArrowLeft from '../../../common/assets/img/icon-arrow-left.svg';
 import { Link } from 'react-router-dom';
 import { MainRoutes } from '../../routes';
-import { endOfWeek, isThisWeek, nextMonday, nextSunday, startOfDay, startOfWeek } from 'date-fns';
+import {
+    endOfWeek,
+    isBefore,
+    isSunday,
+    nextMonday,
+    nextSunday,
+    setHours,
+    startOfDay,
+    startOfWeek,
+} from 'date-fns';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -329,11 +338,14 @@ export const getWeekStartFromDay = (date: Date) => {
 };
 
 const getMinDate = () => {
-    const collectDate = convertLocalDateToUTCIgnoringTimezone(startOfDay(nextSunday(Date.now())));
+    const now = Date.now();
+    const collectDate = convertLocalDateToUTCIgnoringTimezone(
+        setHours(startOfDay(isSunday(now) ? now : nextSunday(now)), 18),
+    );
 
-    return isThisWeek(collectDate, { weekStartsOn: 1 })
-        ? startOfDay(nextMonday(Date.now()))
-        : startOfDay(nextMonday(nextMonday(Date.now())));
+    return isBefore(now, collectDate)
+        ? startOfDay(nextMonday(now))
+        : startOfDay(nextMonday(nextMonday(now)));
 };
 
 enum CreateStep {
