@@ -350,7 +350,7 @@ export const getBribes = async (
 ) => {
     const { count, results } = await axios
         .get<ListResponse<UpcomingBribe>>(
-            `${bribesApiUrl}pending-bribes/?limit=${pageSize}&page=${page}&ordering=${sort}&aqua_total_reward_amount_equivalent__gt=${
+            `${bribesApiUrl}pending-bribes/?limit=${pageSize}&page=${page}&ordering=${sort}&aqua_total_reward_amount_equivalent__gte=${
                 filterByAmount ? '100000' : '-1'
             }`,
         )
