@@ -433,7 +433,7 @@ const AddBribePage = () => {
         });
     };
 
-    const minDate = getMinDate();
+    // const minDate = getMinDate();
 
     const amountInputPostfix =
         debouncedAmount !== null && aquaEquivalent === null ? (
@@ -602,7 +602,7 @@ const AddBribePage = () => {
                                                 },
                                             },
                                         ]}
-                                        minDate={minDate}
+                                        minDate={new Date()}
                                     />
                                     <DashIcon />
                                     <DatePicker
