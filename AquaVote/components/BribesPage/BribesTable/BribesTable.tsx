@@ -270,7 +270,10 @@ const BribesTable = () => {
             <CheckboxStyled
                 label={'Show bribes smaller than 100,000 AQUA'}
                 checked={filterByAmount}
-                onChange={setFilterByAmount}
+                onChange={(value) => {
+                    setFilterByAmount(value);
+                    setPage(1);
+                }}
             />
 
             <SelectStyled options={SORT_OPTIONS} value={sort} onChange={changeSort} />
