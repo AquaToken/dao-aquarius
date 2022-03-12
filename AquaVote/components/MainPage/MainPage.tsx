@@ -510,7 +510,7 @@ const MainPage = (): JSX.Element => {
     }, [sort]);
 
     useEffect(() => {
-        if (sort !== SortTypes.yourVotes) {
+        if (sort !== SortTypes.yourVotes || !account) {
             return;
         }
         setPairsLoading(true);
