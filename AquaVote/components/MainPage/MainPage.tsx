@@ -504,12 +504,6 @@ const MainPage = (): JSX.Element => {
     }, [isLogged]);
 
     useEffect(() => {
-        if (sort === SortTypes.yourVotes && !isLogged) {
-            ModalService.openModal(ChooseLoginMethodModal, {});
-        }
-    }, [sort]);
-
-    useEffect(() => {
         if (sort !== SortTypes.yourVotes || !account) {
             return;
         }
@@ -603,6 +597,10 @@ const MainPage = (): JSX.Element => {
     }, [searchBase, searchCounter, page]);
 
     const changeSort = (sortValue) => {
+        if (!isLogged && sortValue === SortTypes.yourVotes) {
+            ModalService.openModal(ChooseLoginMethodModal, {});
+            return;
+        }
         const params = new URLSearchParams(location.search);
         params.set(UrlParams.sort, sortValue);
         params.delete(UrlParams.base);
