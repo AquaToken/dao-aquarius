@@ -93,7 +93,11 @@ const AssetsDomains = styled.span<{ mobileVerticalDirections?: boolean }>`
     color: ${COLORS.grayText};
     font-size: 1.4rem;
     line-height: 2rem;
-    text-align: center;
+    text-align: left;
+
+    ${respondDown(Breakpoints.md)`
+        text-align: center;
+    `}
 
     ${({ mobileVerticalDirections }) =>
         mobileVerticalDirections &&
