@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../../../common/styles';
 import { PairStats, TotalStats } from '../../../api/types';
@@ -11,9 +12,12 @@ import VoteAmount from './VoteAmount/VoteAmount';
 import Button from '../../../../common/basics/Button';
 import ManageIcon from '../../../../common/assets/img/icon-manage.svg';
 import Tooltip, { TOOLTIP_POSITION } from '../../../../common/basics/Tooltip';
-import { useState } from 'react';
-import { ModalService } from '../../../../common/services/globalServices';
+import { ModalService, StellarService } from '../../../../common/services/globalServices';
 import ManageVotesModal from '../ManageVotesModal/ManageVotesModal';
+import Aqua from '../../../../common/assets/img/aqua-logo-small.svg';
+import ArrowRight from '../../../../common/assets/img/icon-arrow-right.svg';
+import Asset from '../../AssetDropdown/Asset';
+import BribesModal from '../BribesModal/BribesModal';
 
 const TableBlock = styled.div`
     display: flex;
@@ -112,6 +116,22 @@ export const TableBody = styled.div`
     flex-direction: column;
 `;
 
+export const TableBodyRowWrap = styled.div`
+    ${respondDown(Breakpoints.md)`
+          flex-direction: column;
+          background: ${COLORS.white};
+          border-radius: 0.5rem;
+          margin-bottom: 1.6rem;
+          padding: 2.7rem 1.6rem 1.6rem;
+          
+          ${TableCell}:nth-child(2) {
+              font-size: 1.6rem;
+              line-height: 2.8rem;
+              color: ${COLORS.grayText};
+          }
+    `}
+`;
+
 export const TableBodyRow = styled.div`
     display: flex;
     align-items: stretch;
@@ -129,18 +149,14 @@ export const TableBodyRow = styled.div`
     }
 
     ${respondDown(Breakpoints.md)`
-        flex-direction: column;
-        background: ${COLORS.white};
-        border-radius: 0.5rem;
-        margin-bottom: 1.6rem;
-        padding: 2.7rem 1.6rem 1.6rem;
-        
-        ${TableCell}:nth-child(2) {
-            font-size: 1.6rem;
-            line-height: 2.8rem;
-            color: ${COLORS.grayText};
-        }
-    `}
+            flex-direction: column;
+            
+            ${TableCell}:nth-child(2) {
+                font-size: 1.6rem;
+                line-height: 2.8rem;
+                color: ${COLORS.grayText};
+            }
+      `}
 `;
 
 const ManageButton = styled(Button)`
@@ -151,31 +167,97 @@ const TooltipInner = styled.div`
     font-size: 1.2rem;
 `;
 
-// const SortingHeader = styled.button`
-//     background: none;
-//     border: none;
-//     cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
-//     padding: 0;
-//     margin: 0;
-//     width: 100%;
-//     height: 100%;
-//     color: inherit;
-//
-//     display: flex;
-//     align-items: center;
-//     justify-content: ${({ position }: { position?: string }) => {
-//         if (position === 'right') return 'flex-end';
-//         if (position === 'left') return 'flex-start';
-//         return 'center';
-//     }};
-//
-//     & > svg {
-//         margin-left: 0.4rem;
-//     }
-//     &:hover {
-//         color: ${COLORS.purple};
-//     }
-// `;
+const BribeInfo = styled.div`
+    display: flex;
+    align-items: center;
+    width: min-content;
+    height: 4.8rem;
+    background-color: ${COLORS.gray};
+    border-radius: 2.2rem;
+    padding: 0 1.6rem;
+    white-space: nowrap;
+    position: relative;
+    color: ${COLORS.grayText};
+    font-size: 1.4rem;
+    line-height: 2rem;
+    cursor: pointer;
+
+    &::after {
+        content: '';
+        display: block;
+        position: absolute;
+        bottom: 100%;
+        left: 3.3rem;
+        border-bottom: 0.6rem solid ${COLORS.gray};
+        border-left: 0.6rem solid ${COLORS.transparent};
+        border-right: 0.6rem solid ${COLORS.transparent};
+    }
+
+    ${respondDown(Breakpoints.md)`
+        margin-top: 1.6rem;
+        width: 100%;
+        height: unset;
+        border-radius: 0.6rem;
+        flex-direction: column;
+        padding: 1.6rem;
+        align-items: flex-start;
+    `}
+`;
+
+const BribeInfoRow = styled.div`
+    display: flex;
+    align-items: center;
+`;
+
+const BribeAquaSum = styled.div`
+    display: flex;
+    align-items: center;
+    background-color: ${COLORS.white};
+    height: 3.2rem;
+    border-radius: 10rem;
+    padding: 0 1.2rem;
+    margin-left: 0.9rem;
+    margin-right: 2rem;
+    color: ${COLORS.paragraphText};
+`;
+
+const AquaLogo = styled(Aqua)`
+    height: 1.6rem;
+    width: 1.6rem;
+    margin-right: 0.9rem;
+`;
+
+const BribeAssets = styled.div`
+    ${flexAllCenter};
+    margin-left: 0.9rem;
+    margin-right: 1.1rem;
+`;
+
+const BribeAsset = styled.div`
+    ${flexAllCenter};
+    height: 3.2rem;
+    width: 3.2rem;
+    background-color: ${COLORS.white};
+    border-radius: 50%;
+    border: 0.2rem solid ${COLORS.gray};
+
+    &:not(:first-child) {
+        margin-left: -1.2rem;
+    }
+`;
+
+const BribeAssetsMore = styled.span`
+    margin-right: 0.5rem;
+`;
+
+const ArrowRightIcon = styled(ArrowRight)`
+    ${respondDown(Breakpoints.md)`
+        position: absolute;
+        right: 0.3rem;
+        top: 50%;
+        transform: translate(0, -50%);
+    `}
+`;
 
 export const MIN_REWARDS_PERCENT = 1;
 
@@ -213,6 +295,10 @@ const Table = ({
         ModalService.openModal(ManageVotesModal, { pair });
     };
 
+    const showBribes = (pair) => {
+        ModalService.openModal(BribesModal, { pair });
+    };
+
     return (
         <TableBlock>
             {(loading || !totalStats) && (
@@ -231,13 +317,26 @@ const Table = ({
             </TableHead>
             <TableBody>
                 {pairs.map((pair) => {
+                    const hasBribes = pair.aggregated_bribes?.length;
+                    const sum = hasBribes
+                        ? pair.aggregated_bribes.reduce((acc, bribe) => {
+                              acc += Number(bribe.daily_aqua_equivalent);
+                              return acc;
+                          }, 0)
+                        : 0;
                     return (
-                        <TableBodyRow key={pair.id}>
-                            <PairInfo>
-                                <Pair
-                                    base={{ code: pair.asset1_code, issuer: pair.asset1_issuer }}
-                                    counter={{ code: pair.asset2_code, issuer: pair.asset2_issuer }}
-                                    isRewardsOn={
+                        <TableBodyRowWrap key={pair.id}>
+                            <TableBodyRow>
+                                <PairInfo>
+                                    <Pair
+                                        base={{
+                                            code: pair.asset1_code,
+                                            issuer: pair.asset1_issuer,
+                                        }}
+                                        counter={{
+                                            code: pair.asset2_code,
+                                            issuer: pair.asset2_issuer,
+                                        }}isRewardsOn={
                                         (isRewardsOn(
                                             pair.votes_value,
                                             totalStats.votes_value_sum,
@@ -255,42 +354,88 @@ const Table = ({
                                     boosted={
                                         Number(pair.adjusted_votes_value) > Number(pair.votes_value)
                                     }
-                                />
-                            </PairInfo>
-                            <VoteStats>
-                                <label>Users Voted:</label>
-                                {pair.voting_amount ? formatBalance(pair.voting_amount) : null}
-                            </VoteStats>
-                            <AquaVoted>
-                                <label>AQUA Voted:</label>
-                                <VoteAmount pair={pair} totalStats={totalStats} />
-                            </AquaVoted>
-                            <ButtonBlock>
-                                <VoteButton
-                                    pair={pair}
-                                    isPairSelected={isPairSelected(pair)}
-                                    onButtonClick={() => selectPair(pair)}
-                                    disabled={pair.auth_required || pair.no_liquidity}
-                                />
-                                {isYourVotes && (
-                                    <Tooltip
-                                        content={<TooltipInner>Manage votes</TooltipInner>}
-                                        position={TOOLTIP_POSITION.top}
-                                        isShow={showTooltipId === pair.account_id}
-                                    >
-                                        <ManageButton
-                                            isSquare
-                                            likeDisabled
-                                            onMouseEnter={() => setShowTooltipId(pair.account_id)}
-                                            onMouseLeave={() => setShowTooltipId(null)}
-                                            onClick={() => manageVotes(pair)}
+                                    />
+                                </PairInfo>
+                                <VoteStats>
+                                    <label>Users Voted:</label>
+                                    {pair.voting_amount ? formatBalance(pair.voting_amount) : null}
+                                </VoteStats>
+                                <AquaVoted>
+                                    <label>AQUA Voted:</label>
+                                    <VoteAmount pair={pair} totalStats={totalStats} />
+                                </AquaVoted>
+                                <ButtonBlock>
+                                    <VoteButton
+                                        pair={pair}
+                                        isPairSelected={isPairSelected(pair)}
+                                        onButtonClick={() => selectPair(pair)}
+                                        disabled={pair.auth_required || pair.no_liquidity}
+                                    />
+                                    {isYourVotes && (
+                                        <Tooltip
+                                            content={<TooltipInner>Manage votes</TooltipInner>}
+                                            position={TOOLTIP_POSITION.top}
+                                            isShow={showTooltipId === pair.account_id}
                                         >
-                                            <ManageIcon />
-                                        </ManageButton>
-                                    </Tooltip>
-                                )}
-                            </ButtonBlock>
-                        </TableBodyRow>
+                                            <ManageButton
+                                                isSquare
+                                                likeDisabled
+                                                onMouseEnter={() =>
+                                                    setShowTooltipId(pair.account_id)
+                                                }
+                                                onMouseLeave={() => setShowTooltipId(null)}
+                                                onClick={() => manageVotes(pair)}
+                                            >
+                                                <ManageIcon />
+                                            </ManageButton>
+                                        </Tooltip>
+                                    )}
+                                </ButtonBlock>
+                            </TableBodyRow>
+                            {hasBribes ? (
+                                <BribeInfo key={pair.account_id} onClick={() => showBribes(pair)}>
+                                    <BribeInfoRow>
+                                        <span>Daily bribe amount:</span>
+                                        <BribeAquaSum>
+                                            <AquaLogo />
+                                            <span>≈{formatBalance(sum, true)} AQUA</span>
+                                        </BribeAquaSum>
+                                    </BribeInfoRow>
+                                    <BribeInfoRow>
+                                        <span>Paid in:</span>
+                                        <BribeAssets>
+                                            {pair.aggregated_bribes
+                                                .sort(
+                                                    (a, b) =>
+                                                        Number(b.daily_aqua_equivalent) -
+                                                        Number(a.daily_aqua_equivalent),
+                                                )
+                                                .slice(0, 3)
+                                                .map((bribe, index) => (
+                                                    <BribeAsset
+                                                        style={{ zIndex: 3 - index }}
+                                                        key={bribe.asset_code + bribe.asset_issuer}
+                                                    >
+                                                        <Asset
+                                                            asset={StellarService.createAsset(
+                                                                bribe.asset_code,
+                                                                bribe.asset_issuer,
+                                                            )}
+                                                            onlyLogoSmall
+                                                        />
+                                                    </BribeAsset>
+                                                ))}
+                                        </BribeAssets>
+                                        {pair.aggregated_bribes.length > 3 ? (
+                                            <BribeAssetsMore>
+                                                +{pair.aggregated_bribes.length - 3} more
+                                            </BribeAssetsMore>
+                                        ) : null}
+                                    </BribeInfoRow>
+                                    <ArrowRightIcon />
+                                </BribeInfo>
+                            ) : null}
+                        </TableBodyRowWrap>
                     );
                 })}
             </TableBody>

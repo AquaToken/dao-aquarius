@@ -22,6 +22,7 @@ import Arrows from '../../../common/assets/img/icon-arrows-circle.svg';
 import {
     getFilteredPairsList,
     getPairsList,
+    getPairsWithBribes,
     getTotalVotingStats,
     getUserPairsList,
     SortTypes,
@@ -304,6 +305,7 @@ export const getCachedChosenPairs = () =>
 const options: Option<SortTypes>[] = [
     { label: 'Popular', value: SortTypes.popular },
     { label: 'Top Voted', value: SortTypes.topVoted },
+    { label: 'With Bribes', value: SortTypes.withBribes },
     { label: 'Your Votes', value: SortTypes.yourVotes },
 ];
 
@@ -502,13 +504,7 @@ const MainPage = (): JSX.Element => {
     }, [isLogged]);
 
     useEffect(() => {
-        if (sort === SortTypes.yourVotes && !isLogged) {
-            ModalService.openModal(ChooseLoginMethodModal, {});
-        }
-    }, [sort]);
-
-    useEffect(() => {
-        if (sort !== SortTypes.yourVotes) {
+        if (sort !== SortTypes.yourVotes || !account) {
             return;
         }
         setPairsLoading(true);
@@ -557,12 +553,27 @@ const MainPage = (): JSX.Element => {
     }, [updateIndex]);
 
     useEffect(() => {
-        if (!sort || sort === SortTypes.yourVotes) {
+        if (!sort || sort === SortTypes.yourVotes || sort === SortTypes.withBribes) {
             return;
         }
 
         setPairsLoading(true);
         getPairsList(sort, PAGE_SIZE, page).then((result) => {
+            setPairs(result.pairs);
+            setCount(result.count);
+            processAssetsFromPairs(result.pairs);
+            setPairsLoading(false);
+            setChangePageLoading(false);
+        });
+    }, [sort, page]);
+
+    useEffect(() => {
+        if (sort !== SortTypes.withBribes) {
+            return;
+        }
+
+        setPairsLoading(true);
+        getPairsWithBribes(PAGE_SIZE, page).then((result) => {
             setPairs(result.pairs);
             setCount(result.count);
             processAssetsFromPairs(result.pairs);
@@ -586,6 +597,10 @@ const MainPage = (): JSX.Element => {
     }, [searchBase, searchCounter, page]);
 
     const changeSort = (sortValue) => {
+        if (!isLogged && sortValue === SortTypes.yourVotes) {
+            ModalService.openModal(ChooseLoginMethodModal, {});
+            return;
+        }
         const params = new URLSearchParams(location.search);
         params.set(UrlParams.sort, sortValue);
         params.delete(UrlParams.base);
