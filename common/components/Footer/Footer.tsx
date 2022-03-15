@@ -58,7 +58,7 @@ const Footer = (): JSX.Element => {
                 </a>
             </HelpfulLine>
             <CopyrightLine>
-                <div>© 2021 aqua.network</div>
+                <div>© 2022 aqua.network</div>
                 <div>
                     Aquarius runs on Stellar. AQUA tokens are issued on Stellar. The project is
                     unaffiliated with the Stellar Development Foundation.

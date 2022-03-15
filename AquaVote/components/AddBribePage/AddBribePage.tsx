@@ -24,6 +24,16 @@ import Tooltip, { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
 import ArrowLeft from '../../../common/assets/img/icon-arrow-left.svg';
 import { Link } from 'react-router-dom';
 import { MainRoutes } from '../../routes';
+import {
+    endOfWeek,
+    isBefore,
+    isSunday,
+    nextMonday,
+    nextSunday,
+    setHours,
+    startOfDay,
+    startOfWeek,
+} from 'date-fns';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -291,6 +301,18 @@ const GlobalStyle = createGlobalStyle`
     }
 `;
 
+export const convertUTCToLocalDateIgnoringTimezone = (utcDate: Date) => {
+    return new Date(
+        utcDate.getUTCFullYear(),
+        utcDate.getUTCMonth(),
+        utcDate.getUTCDate(),
+        utcDate.getUTCHours(),
+        utcDate.getUTCMinutes(),
+        utcDate.getUTCSeconds(),
+        utcDate.getUTCMilliseconds(),
+    );
+};
+
 export function convertLocalDateToUTCIgnoringTimezone(date: Date) {
     const timestamp = Date.UTC(
         date.getFullYear(),
@@ -306,17 +328,24 @@ export function convertLocalDateToUTCIgnoringTimezone(date: Date) {
 }
 
 export const getWeekStartFromDay = (date: Date) => {
-    const start = convertLocalDateToUTCIgnoringTimezone(
-        new Date(
-            date.setDate(
-                date.getDay() === 0 ? date.getDate() - 6 : date.getDate() - date.getDay() + 1,
-            ),
-        ),
+    const startWeek = startOfWeek(date, { weekStartsOn: 1 });
+    const endWeek = endOfWeek(date, { weekStartsOn: 1 });
+
+    return {
+        start: convertLocalDateToUTCIgnoringTimezone(startWeek),
+        end: convertLocalDateToUTCIgnoringTimezone(endWeek),
+    };
+};
+
+const getMinDate = () => {
+    const now = Date.now();
+    const collectDate = convertLocalDateToUTCIgnoringTimezone(
+        setHours(startOfDay(isSunday(now) ? now : nextSunday(now)), 18),
     );
 
-    const end = new Date(date.setDate(start.getDate() + 6));
-
-    return { start, end };
+    return isBefore(now, collectDate)
+        ? startOfDay(nextMonday(now))
+        : startOfDay(nextMonday(nextMonday(now)));
 };
 
 enum CreateStep {
@@ -339,6 +368,7 @@ const AddBribePage = () => {
 
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
+    const [selectedDate, setSelectedDate] = useState(null);
 
     const { isLogged } = useAuthStore();
 
@@ -351,6 +381,7 @@ const AddBribePage = () => {
         setAmount('');
         setStartDate(null);
         setEndDate(null);
+        setSelectedDate(null);
     };
 
     useEffect(() => {
@@ -414,9 +445,7 @@ const AddBribePage = () => {
         });
     };
 
-    const now = new Date();
-    const weekForward = new Date(now.setDate(now.getDate() + 7));
-    const minDate = getWeekStartFromDay(weekForward).start;
+    const minDate = getMinDate();
 
     const amountInputPostfix =
         debouncedAmount !== null && aquaEquivalent === null ? (
@@ -566,8 +595,9 @@ const AddBribePage = () => {
                                     <DatePicker
                                         customInput={<Input label="Start date" />}
                                         calendarStartDay={1}
-                                        selected={startDate || null}
+                                        selected={selectedDate || null}
                                         onChange={(res) => {
+                                            setSelectedDate(res);
                                             const { start, end } = getWeekStartFromDay(res);
                                             setStartDate(start);
                                             setEndDate(end);
