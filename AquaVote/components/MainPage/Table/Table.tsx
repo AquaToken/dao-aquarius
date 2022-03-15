@@ -336,24 +336,26 @@ const Table = ({
                                         counter={{
                                             code: pair.asset2_code,
                                             issuer: pair.asset2_issuer,
-                                        }}isRewardsOn={
-                                        (isRewardsOn(
-                                            pair.votes_value,
-                                            totalStats.votes_value_sum,
-                                        ) ||
+                                        }}
+                                        isRewardsOn={
+                                            (isRewardsOn(
+                                                pair.votes_value,
+                                                totalStats.votes_value_sum,
+                                            ) ||
+                                                Number(pair.adjusted_votes_value) >
+                                                    Number(pair.votes_value)) &&
+                                            isRewardsOn(
+                                                pair.adjusted_votes_value,
+                                                totalStats.adjusted_votes_value_sum,
+                                            )
+                                        }
+                                        mobileVerticalDirections
+                                        authRequired={pair.auth_required}
+                                        noLiquidity={pair.no_liquidity}
+                                        boosted={
                                             Number(pair.adjusted_votes_value) >
-                                                Number(pair.votes_value)) &&
-                                        isRewardsOn(
-                                            pair.adjusted_votes_value,
-                                            totalStats.adjusted_votes_value_sum,
-                                        )
-                                    }
-                                    mobileVerticalDirections
-                                    authRequired={pair.auth_required}
-                                    noLiquidity={pair.no_liquidity}
-                                    boosted={
-                                        Number(pair.adjusted_votes_value) > Number(pair.votes_value)
-                                    }
+                                            Number(pair.votes_value)
+                                        }
                                     />
                                 </PairInfo>
                                 <VoteStats>
