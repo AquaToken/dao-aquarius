@@ -15,7 +15,7 @@ Description text
 * Code linting ([ESLint](https://github.com/eslint/eslint)) and formatting ([Prettier](https://github.com/prettier/prettier))
 * Test framework ([Jest](https://facebook.github.io/jest/))
 
-###Prerequisites
+### Prerequisites
 Make sure you have Node.js between 12 and 13 installed. If not, install it (Node version manager is recommended).
 
 ```sh
