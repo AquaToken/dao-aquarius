@@ -12,12 +12,16 @@ import VoteAmount from './VoteAmount/VoteAmount';
 import Button from '../../../../common/basics/Button';
 import ManageIcon from '../../../../common/assets/img/icon-manage.svg';
 import Tooltip, { TOOLTIP_POSITION } from '../../../../common/basics/Tooltip';
-import { ModalService, StellarService } from '../../../../common/services/globalServices';
+import {
+    ModalService,
+    StellarService,
+} from '../../../../common/services/globalServices';
 import ManageVotesModal from '../ManageVotesModal/ManageVotesModal';
 import Aqua from '../../../../common/assets/img/aqua-logo-small.svg';
 import ArrowRight from '../../../../common/assets/img/icon-arrow-right.svg';
 import Asset from '../../AssetDropdown/Asset';
 import BribesModal from '../BribesModal/BribesModal';
+import ClaimAllModal from '../ClaimAllModal/ClaimAllModal';
 
 const TableBlock = styled.div`
     display: flex;
@@ -259,6 +263,15 @@ const ArrowRightIcon = styled(ArrowRight)`
     `}
 `;
 
+const ClaimAllButton = styled(Button)`
+    width: 30rem;
+    margin-bottom: 2.5rem;
+
+    ${respondDown(Breakpoints.md)`
+        width: 100%;
+    `}
+`;
+
 export const MIN_REWARDS_PERCENT = 1;
 
 const isRewardsOn = (value: string, total: string): boolean => {
@@ -299,12 +312,20 @@ const Table = ({
         ModalService.openModal(BribesModal, { pair });
     };
 
+    const claimAll = () => {
+        ModalService.openModal(ClaimAllModal, { pairs });
+    };
+
     return (
         <TableBlock>
             {(loading || !totalStats) && (
                 <TableLoader>
                     <PageLoader />
                 </TableLoader>
+            )}
+
+            {isYourVotes && (
+                <ClaimAllButton onClick={() => claimAll()}>manage unlocked votes</ClaimAllButton>
             )}
 
             <TableHead>

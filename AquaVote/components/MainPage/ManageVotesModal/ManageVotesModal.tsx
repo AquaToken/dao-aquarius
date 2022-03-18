@@ -23,6 +23,7 @@ import {
     openApp,
 } from '../../../../common/services/wallet-connect.service';
 import { useIsMounted } from '../../../../common/hooks/useIsMounted';
+import { StellarEvents } from '../../../../common/services/stellar.service';
 import { LoginTypes } from '../../../../common/store/authStore/types';
 import ErrorHandler from '../../../../common/helpers/error-handler';
 
@@ -182,14 +183,24 @@ const ManageVotesModal = ({ params, close }: ModalProps<{ pair: PairStats }>) =>
     const [showTooltipId, setShowTooltipId] = useState(null);
     const [pendingId, setPendingId] = useState(null);
     const [claims, setClaims] = useState(null);
+    const [updateId, setUpdateId] = useState(1);
     const { pair } = params;
     const { account } = useAuthStore();
+    const isMounted = useIsMounted();
+
+    useEffect(() => {
+        const unsub = StellarService.event.sub(({ type }) => {
+            if (type === StellarEvents.claimableUpdate) {
+                setUpdateId((prevState) => prevState + 1);
+            }
+        });
+
+        return () => unsub();
+    }, []);
 
     useEffect(() => {
         setClaims(StellarService.getPairVotes(pair, account.accountId())?.reverse());
-    }, []);
-
-    const isMounted = useIsMounted();
+    }, [updateId]);
 
     if (!claims) {
         return null;
@@ -204,13 +215,8 @@ const ManageVotesModal = ({ params, close }: ModalProps<{ pair: PairStats }>) =>
             const ops = StellarService.createClaimOperations(id, account.getAquaBalance() === null);
             const tx = await StellarService.buildTx(account, ops);
             const result = await account.signAndSubmitTx(tx);
-
-            if (claims.length === 1) {
-                close();
-            }
             if (isMounted.current) {
                 setPendingId(null);
-                setClaims(claims.filter((claim) => claim.id !== id));
             }
 
             if (
@@ -219,6 +225,12 @@ const ManageVotesModal = ({ params, close }: ModalProps<{ pair: PairStats }>) =>
             ) {
                 ToastService.showSuccessToast('More signatures required to complete');
                 return;
+            }
+            if (claims.length === 1) {
+                close();
+            }
+            if (isMounted.current) {
+                setClaims(claims.filter((claim) => claim.id !== id));
             }
             ToastService.showSuccessToast('Your vote has been claimed back');
             StellarService.getClaimableBalances(account.accountId());
@@ -244,73 +256,84 @@ const ManageVotesModal = ({ params, close }: ModalProps<{ pair: PairStats }>) =>
                     counter={{ code: pair.asset2_code, issuer: pair.asset2_issuer }}
                 />
             </PairBlock>
-            <TableHeader>
-                <DateCell>Vote date</DateCell>
-                <Amount>Amount</Amount>
-                <Claim>Claim back date</Claim>
-                <Link />
-            </TableHeader>
-            {claims.map((claim) => (
-                <TableRow key={claim.id}>
-                    <DateCell>
-                        <label>Vote date:</label>
-                        {getDateString(new Date(claim.last_modified_time).getTime(), {
-                            withTime: true,
-                        })}
-                    </DateCell>
-                    <Amount>
-                        <label>Amount:</label>
-                        {claim.isDownVote && (
-                            <Tooltip
-                                content={<span>Downvote</span>}
-                                position={TOOLTIP_POSITION.top}
-                                isShow={showTooltipId === claim.id}
-                            >
-                                <Dislike
-                                    onMouseEnter={() => setShowTooltipId(claim.id)}
-                                    onMouseLeave={() => setShowTooltipId(null)}
+            {claims.length ? (
+                <>
+                    <TableHeader>
+                        <DateCell>Vote date</DateCell>
+                        <Amount>Amount</Amount>
+                        <Claim>Claim back date</Claim>
+                        <Link />
+                    </TableHeader>
+                    {claims.map((claim) => (
+                        <TableRow key={claim.id}>
+                            <DateCell>
+                                <label>Vote date:</label>
+                                {getDateString(new Date(claim.last_modified_time).getTime(), {
+                                    withTime: true,
+                                })}
+                            </DateCell>
+                            <Amount>
+                                <label>Amount:</label>
+                                {claim.isDownVote && (
+                                    <Tooltip
+                                        content={<span>Downvote</span>}
+                                        position={TOOLTIP_POSITION.top}
+                                        isShow={showTooltipId === claim.id}
+                                    >
+                                        <Dislike
+                                            onMouseEnter={() => setShowTooltipId(claim.id)}
+                                            onMouseLeave={() => setShowTooltipId(null)}
+                                        />
+                                    </Tooltip>
+                                )}
+                                <span>{formatBalance(claim.amount)} AQUA</span>
+                            </Amount>
+                            <Claim>
+                                {new Date(claim.claimBackDate) > new Date() ? (
+                                    <>
+                                        <label>Claim back date:</label>
+                                        <span>
+                                            {getDateString(
+                                                new Date(claim.claimBackDate).getTime(),
+                                                {
+                                                    withTime: true,
+                                                },
+                                            )}
+                                        </span>
+                                    </>
+                                ) : (
+                                    <ClaimButton
+                                        isSmall
+                                        onClick={() => onSubmit(claim.id)}
+                                        disabled={Boolean(pendingId) && claim.id !== pendingId}
+                                        pending={claim.id === pendingId}
+                                    >
+                                        Claim
+                                    </ClaimButton>
+                                )}
+                            </Claim>
+                            <Link>
+                                <MobileLink
+                                    onClick={() => {
+                                        goToStellarExpert(claim);
+                                    }}
+                                >
+                                    Stellar Expert
+                                </MobileLink>
+                                <WebLink
+                                    onClick={() => {
+                                        goToStellarExpert(claim);
+                                    }}
                                 />
-                            </Tooltip>
-                        )}
-                        <span>{formatBalance(claim.amount)} AQUA</span>
-                    </Amount>
-                    <Claim>
-                        {new Date(claim.claimBackDate) > new Date() ? (
-                            <>
-                                <label>Claim back date:</label>
-                                <span>
-                                    {getDateString(new Date(claim.claimBackDate).getTime(), {
-                                        withTime: true,
-                                    })}
-                                </span>
-                            </>
-                        ) : (
-                            <ClaimButton
-                                isSmall
-                                onClick={() => onSubmit(claim.id)}
-                                disabled={Boolean(pendingId) && claim.id !== pendingId}
-                                pending={claim.id === pendingId}
-                            >
-                                Claim
-                            </ClaimButton>
-                        )}
-                    </Claim>
-                    <Link>
-                        <MobileLink
-                            onClick={() => {
-                                goToStellarExpert(claim);
-                            }}
-                        >
-                            Stellar Expert
-                        </MobileLink>
-                        <WebLink
-                            onClick={() => {
-                                goToStellarExpert(claim);
-                            }}
-                        />
-                    </Link>
-                </TableRow>
-            ))}
+                            </Link>
+                        </TableRow>
+                    ))}
+                </>
+            ) : (
+                <Button fullWidth onClick={() => close()}>
+                    close
+                </Button>
+            )}
         </Container>
     );
 };
