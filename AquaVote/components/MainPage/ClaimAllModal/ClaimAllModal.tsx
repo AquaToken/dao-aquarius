@@ -82,6 +82,10 @@ const Cell = styled.div`
     align-items: center;
     justify-content: flex-end;
     flex: 1;
+    span {
+        margin-left: 0.8rem;
+    }
+
     label {
         display: none;
     }
