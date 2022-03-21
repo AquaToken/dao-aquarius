@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { lazy, Suspense, useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { hot } from 'react-hot-loader';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
@@ -21,6 +21,8 @@ import BG from '../../common/assets/img/purpose-modal-background.svg';
 import styled, { createGlobalStyle } from 'styled-components';
 import { respondDown } from '../../common/mixins';
 import { Breakpoints, COLORS } from '../../common/styles';
+import { StellarEvents } from '../../common/services/stellar.service';
+import { Horizon } from 'stellar-sdk';
 
 const MainPage = lazy(() => import('./MainPage/MainPage'));
 const BribesPage = lazy(() => import('./BribesPage/BribesPage'));
@@ -73,12 +75,31 @@ const App = () => {
         }
     }, [assets]);
 
+    const accountRef = useRef(account);
+
     useEffect(() => {
-        if (isLogged) {
-            StellarService.startClaimableBalancesStream(account.accountId());
-        } else {
-            StellarService.closeClaimableBalancesStream();
+        accountRef.current = account;
+    }, [account]);
+
+    useEffect(() => {
+        if (!isLogged) {
+            StellarService.clearClaimableBalances();
+            return;
         }
+        StellarService.getClaimableBalances(account.accountId());
+        const unsub = StellarService.event.sub(({ type, account: newAccount }) => {
+            if (
+                type === StellarEvents.accountStream &&
+                StellarService.balancesHasChanges(
+                    accountRef.current.balances as Horizon.BalanceLineAsset[],
+                    newAccount.balances,
+                )
+            ) {
+                StellarService.getClaimableBalances(account.accountId());
+            }
+        });
+
+        return () => unsub();
     }, [isLogged]);
 
     if (!isAssetsUpdated || !assetsInfo.size) {

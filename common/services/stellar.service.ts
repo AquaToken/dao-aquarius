@@ -323,35 +323,9 @@ export default class StellarServiceClass {
         });
     }
 
-    startClaimableBalancesStream(publicKey: string) {
-        this.getClaimableBalances(publicKey);
-
-        this.closeEffectsStream = this.server
-            .effects()
-            .forAccount(publicKey)
-            .cursor('now')
-            .stream({
-                onmessage: (res) => {
-                    if (
-                        (res as unknown as ServerApi.EffectRecord).type ===
-                            'claimable_balance_claimant_created' ||
-                        (res as unknown as ServerApi.EffectRecord).type ===
-                            'claimable_balance_claimed' ||
-                        (res as unknown as ServerApi.EffectRecord).type ===
-                            'claimable_balance_created'
-                    ) {
-                        this.getClaimableBalances(publicKey);
-                    }
-                },
-            });
-    }
-
-    closeClaimableBalancesStream(): void {
-        if (this.closeEffectsStream) {
-            this.closeEffectsStream();
-            this.claimableBalances = null;
-            this.event.trigger({ type: StellarEvents.claimableUpdate });
-        }
+    clearClaimableBalances() {
+        this.claimableBalances = null;
+        this.event.trigger({ type: StellarEvents.claimableUpdate });
     }
 
     getMarketVotesValue(marketKey: string, accountId: string) {
