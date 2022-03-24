@@ -49,6 +49,7 @@ export enum BuildSignAndSubmitStatuses {
 }
 
 export const WC_APP_ALIAS = 'WC_APP';
+const WC_DEEP_LINK_APPS = 'WC_DEEP_LINK_APPS';
 
 function getLocalStorage(): Storage | undefined {
     let res: Storage | undefined = undefined;
@@ -94,6 +95,41 @@ export const openApp = () => {
     }
 };
 
+const getAppsDeepLinkList = () => {
+    const LS = getLocalStorage();
+    if (!LS) {
+        return new Map();
+    }
+
+    return new Map(JSON.parse(LS.getItem(WC_DEEP_LINK_APPS) || '[]'));
+};
+
+const setAppsDeepLinkList = (list) => {
+    const LS = getLocalStorage();
+    if (!LS) {
+        return;
+    }
+
+    LS.setItem(WC_DEEP_LINK_APPS, JSON.stringify(Array.from(list.entries())));
+};
+
+const addAppToDeepLinkListIfNeeded = (topic: string) => {
+    const app = getSavedApp();
+
+    if (!app) {
+        return;
+    }
+    const appList = getAppsDeepLinkList();
+    appList.set(topic, JSON.stringify(app));
+    setAppsDeepLinkList(appList);
+};
+
+export const getAppFromDeepLinkList = (topic) => {
+    const appsList = getAppsDeepLinkList();
+
+    return appsList.has(topic) ? JSON.parse(appsList.get(topic)) : null;
+};
+
 export default class WalletConnectServiceClass {
     appMeta: AppMetadata | null = null;
     client: WalletConnectClient | null = null;
@@ -101,8 +137,31 @@ export default class WalletConnectServiceClass {
     isPairCreated = false;
     event: EventService = new EventService();
     selfMeta = METADATA[process.env.PROJECT];
+    isOffline = false;
+
+    constructor() {
+        window.addEventListener('offline', () => {
+            this.client = null;
+            this.isOffline = true;
+        });
+        window.addEventListener('online', () => {
+            this.isOffline = false;
+            if (this.session) {
+                WalletConnectClient.init({
+                    relayUrl: 'wss://relay.walletconnect.org',
+                    projectId: 'f5279d443cff4b7901250e5b2e0e84f4',
+                }).then((client) => {
+                    this.client = client;
+                });
+            }
+        });
+    }
 
     async initWalletConnect(): Promise<boolean> {
+        if (this.isOffline) {
+            ToastService.showErrorToast('Check your Internet connection');
+            return;
+        }
         if (this.client) {
             clearApp();
             return false;
@@ -155,6 +214,7 @@ export default class WalletConnectServiceClass {
     onPairCreated(res: PairingTypes.Settled): void {
         this.appMeta = res.state.metadata;
         this.isPairCreated = true;
+        addAppToDeepLinkListIfNeeded(res.topic);
     }
 
     onPairUpdated(res: PairingTypes.Settled): void {
@@ -308,6 +368,10 @@ export default class WalletConnectServiceClass {
     }
 
     signAndSubmitTx(tx: StellarSdk.Transaction): Promise<void> {
+        if (this.isOffline) {
+            ToastService.showErrorToast('Check your Internet connection');
+            return;
+        }
         const xdr = tx.toEnvelope().toXDR('base64');
 
         const request = this.client.request({
@@ -330,6 +394,10 @@ export default class WalletConnectServiceClass {
     }
 
     signTx(tx: StellarSdk.Transaction): Promise<any> {
+        if (this.isOffline) {
+            ToastService.showErrorToast('Check your Internet connection');
+            return;
+        }
         const xdr = tx.toEnvelope().toXDR('base64');
 
         const request = this.client.request({

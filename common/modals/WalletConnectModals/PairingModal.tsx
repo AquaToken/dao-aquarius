@@ -7,6 +7,7 @@ import { Breakpoints, COLORS } from '../../styles';
 import IconCloseSmall from '../../assets/img/icon-close-small.svg';
 import IconPlus from '../../assets/img/icon-plus.svg';
 import { respondDown } from '../../mixins';
+import { getAppFromDeepLinkList, saveAppToLS } from '../../services/wallet-connect.service';
 
 type PairingModalParams = {
     pairings: PairingTypes.Settled[];
@@ -136,24 +137,39 @@ const PairingModal = ({ params }: ModalProps<PairingModalParams>): JSX.Element =
         <ModalBlock>
             <ModalTitle>Logged in before?</ModalTitle>
             <ModalDescription>Restore your connection or create a new one.</ModalDescription>
-            {currentPairings.map((pairing, index) => (
-                <PairingBlock key={pairing.topic} onClick={() => connect(pairing)}>
-                    <DeleteButtonMobile onClick={(e) => handleDeletePairing(e, pairing.topic)} />
-                    <AppIcon src={pairing.state.metadata.icons[0]} alt="" />
+            {currentPairings.map((pairing, index) => {
+                const app = getAppFromDeepLinkList(pairing.topic);
+                return (
+                    <PairingBlock
+                        key={pairing.topic}
+                        onClick={() => {
+                            if (app) {
+                                saveAppToLS(app.name, app.uri);
+                                window.open(app.uri, '_blank');
+                            }
+                            connect(pairing);
+                        }}
+                    >
+                        <DeleteButtonMobile
+                            onClick={(e) => handleDeletePairing(e, pairing.topic)}
+                        />
+                        <AppIcon src={pairing.state.metadata.icons[0]} alt="" />
 
-                    <AppInfoBlock>
-                        <AppName>
-                            {pairing.state.metadata.name}
-                            {currentPairings.length > 1 && index === 0 && (
-                                <LatestAdded>latest added</LatestAdded>
-                            )}
-                        </AppName>
-                        <AppDescription>{pairing.state.metadata.description}</AppDescription>
-                    </AppInfoBlock>
+                        <AppInfoBlock>
+                            <AppName>
+                                {pairing.state.metadata.name}
+                                {currentPairings.length > 1 && index === 0 && (
+                                    <LatestAdded>latest added</LatestAdded>
+                                )}
+                                {Boolean(app) && <LatestAdded>Deep link</LatestAdded>}
+                            </AppName>
+                            <AppDescription>{pairing.state.metadata.description}</AppDescription>
+                        </AppInfoBlock>
 
-                    <DeleteButtonWeb onClick={(e) => handleDeletePairing(e, pairing.topic)} />
-                </PairingBlock>
-            ))}
+                        <DeleteButtonWeb onClick={(e) => handleDeletePairing(e, pairing.topic)} />
+                    </PairingBlock>
+                );
+            })}
 
             <NewConnectionButton onClick={() => connect()}>
                 <span>Add new connection</span>
