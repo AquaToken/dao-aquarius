@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../styles';
 import IconCloseSmall from '../../assets/img/icon-close-small.svg';
 import IconPlus from '../../assets/img/icon-plus.svg';
-import { respondDown } from '../../mixins';
+import { flexAllCenter, respondDown } from '../../mixins';
 import { getAppFromDeepLinkList, saveAppToLS } from '../../services/wallet-connect.service';
 
 type PairingModalParams = {
@@ -31,6 +31,7 @@ const PairingBlock = styled.div`
     border-radius: 0.5rem;
     padding: 2.1rem 2.4rem;
     cursor: pointer;
+    position: relative;
 
     &:not(:last-child) {
         margin-bottom: 1.6rem;
@@ -97,13 +98,19 @@ const DeleteButtonWeb = styled(IconCloseSmall)`
     `}
 `;
 
-const DeleteButtonMobile = styled(IconCloseSmall)`
+const DeleteButtonMobile = styled.div`
     margin-left: auto;
     cursor: pointer;
+    height: 3rem;
+    width: 3rem;
+    ${flexAllCenter};
+    position: absolute;
+    top: 1.4rem;
+    right: 1.7rem;
     display: none;
 
     ${respondDown(Breakpoints.md)`
-        display: block;
+        display: flex;
     `}
 `;
 
@@ -126,7 +133,10 @@ const PairingModal = ({ params }: ModalProps<PairingModalParams>): JSX.Element =
 
     const [currentPairings, setCurrentPairings] = useState(pairings);
 
-    const handleDeletePairing = (event: MouseEvent, topic: string): void => {
+    const handleDeletePairing = (
+        event: MouseEvent | React.MouseEvent<HTMLDivElement>,
+        topic: string,
+    ): void => {
         event.stopPropagation();
         deletePairing(topic).then(() => {
             setCurrentPairings(currentPairings.filter((pairing) => pairing.topic !== topic));
@@ -150,9 +160,9 @@ const PairingModal = ({ params }: ModalProps<PairingModalParams>): JSX.Element =
                             connect(pairing);
                         }}
                     >
-                        <DeleteButtonMobile
-                            onClick={(e) => handleDeletePairing(e, pairing.topic)}
-                        />
+                        <DeleteButtonMobile onClick={(e) => handleDeletePairing(e, pairing.topic)}>
+                            <IconCloseSmall />
+                        </DeleteButtonMobile>
                         <AppIcon src={pairing.state.metadata.icons[0]} alt="" />
 
                         <AppInfoBlock>
