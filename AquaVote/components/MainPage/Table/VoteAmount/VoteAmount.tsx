@@ -9,7 +9,6 @@ import { PairStats, TotalStats } from '../../../../api/types';
 import InfoIcon from '../../../../../common/assets/img/icon-info.svg';
 import IconUp from '../../../../../common/assets/img/icon-up-green.svg';
 import IconDown from '../../../../../common/assets/img/icon-down-red.svg';
-import { MIN_REWARDS_PERCENT } from '../Table';
 
 const Info = styled(InfoIcon)`
     margin-left: 0.5rem;
@@ -124,10 +123,8 @@ const VoteAmount = ({ pair, totalStats }: { pair: PairStats; totalStats: TotalSt
     const downBoosted =
         Number(pair.votes_value) &&
         Number(pair.adjusted_votes_value) &&
-        (Number(pair.votes_value) / Number(totalStats.votes_value_sum)) * 100 >=
-            MIN_REWARDS_PERCENT &&
-        (Number(pair.adjusted_votes_value) / Number(totalStats.adjusted_votes_value_sum)) * 100 <
-            MIN_REWARDS_PERCENT;
+        Number(pair.votes_value) / Number(totalStats.votes_value_sum) >
+            Number(pair.adjusted_votes_value) / Number(totalStats.adjusted_votes_value_sum);
 
     return (
         <Amount
