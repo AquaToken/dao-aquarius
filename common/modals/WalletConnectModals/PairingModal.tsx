@@ -77,7 +77,7 @@ const LoginFlowIconWrap = styled.div`
     height: 1.6rem;
     width: 1.6rem;
     border-radius: 50%;
-    background-color: ${COLORS.white};
+    background-color: ${COLORS.lightGray};
     ${flexAllCenter};
     bottom: 0;
     right: 0;
@@ -117,6 +117,8 @@ const LatestAdded = styled.div`
 
 const AppDescription = styled.span`
     color: ${COLORS.grayText};
+    word-break: break-word;
+    padding-right: 1.6rem;
 `;
 
 const ConnectButton = styled.div`
@@ -140,6 +142,7 @@ const ConnectButton = styled.div`
 const DeleteButtonWeb = styled(IconCloseSmall)`
     margin-left: auto;
     cursor: pointer;
+    min-width: 1.6rem;
 
     ${respondDown(Breakpoints.md)`
         display: none;
@@ -247,7 +250,6 @@ const PairingModal = ({ params }: ModalProps<PairingModalParams>): JSX.Element =
                                 {currentPairings.length > 1 && index === 0 && (
                                     <LatestAdded>latest added</LatestAdded>
                                 )}
-                                {Boolean(app) && <LatestAdded>Deep link</LatestAdded>}
                             </AppName>
                             <AppDescription>{pairing.state.metadata.description}</AppDescription>
                             <ConnectButton>
