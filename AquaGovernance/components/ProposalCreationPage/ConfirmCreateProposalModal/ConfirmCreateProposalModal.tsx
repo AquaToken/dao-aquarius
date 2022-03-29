@@ -20,6 +20,8 @@ import { createProposal } from '../../../api/api';
 import { Horizon } from 'stellar-sdk';
 import { useHistory } from 'react-router-dom';
 import { Breakpoints } from '../../../../common/styles';
+import { LoginTypes } from '../../../../common/store/authStore/types';
+import { openApp } from '../../../../common/services/wallet-connect.service';
 
 const ProposalCost = styled.div`
     ${flexRowSpaceBetween};
@@ -68,6 +70,10 @@ const ConfirmCreateProposalModal = ({ params, close }: ModalProps<Proposal>): JS
 
         if (loading) {
             return;
+        }
+
+        if (account.authType === LoginTypes.walletConnect) {
+            openApp();
         }
 
         setLoading(true);

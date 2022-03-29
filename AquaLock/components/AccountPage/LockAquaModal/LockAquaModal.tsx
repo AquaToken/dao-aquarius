@@ -11,9 +11,13 @@ import { Breakpoints, COLORS } from '../../../../common/styles';
 import Button from '../../../../common/basics/Button';
 import { formatBalance, getDateString } from '../../../../common/helpers/helpers';
 import { StellarService, ToastService } from '../../../../common/services/globalServices';
-import { BuildSignAndSubmitStatuses } from '../../../../common/services/wallet-connect.service';
+import {
+    BuildSignAndSubmitStatuses,
+    openApp,
+} from '../../../../common/services/wallet-connect.service';
 import useAuthStore from '../../../../common/store/authStore/useAuthStore';
 import { useIsMounted } from '../../../../common/hooks/useIsMounted';
+import { LoginTypes } from '../../../../common/store/authStore/types';
 
 const ModalContainer = styled.div`
     width: 52.8rem;
@@ -53,6 +57,9 @@ const LockAquaModal = ({ confirm, params }: ModalProps<{ amount: string; period:
     const isMounted = useIsMounted();
 
     const onSubmit = async () => {
+        if (account.authType === LoginTypes.walletConnect) {
+            openApp();
+        }
         try {
             setPending(true);
 

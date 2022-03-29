@@ -296,6 +296,10 @@ export default class WalletConnectServiceClass {
     }
 
     async connect(pairing?: PairingTypes.Settled): Promise<void> {
+        if (this.isOffline) {
+            ToastService.showErrorToast('Check your Internet connection');
+            return;
+        }
         ModalService.closeAllModals();
 
         if (pairing) {
@@ -358,6 +362,10 @@ export default class WalletConnectServiceClass {
     }
 
     async logout(): Promise<void> {
+        if (this.isOffline) {
+            ToastService.showErrorToast('Check your Internet connection');
+            return;
+        }
         if (this.session) {
             clearApp();
             await this.client.disconnect({
@@ -368,10 +376,6 @@ export default class WalletConnectServiceClass {
     }
 
     signAndSubmitTx(tx: StellarSdk.Transaction): Promise<void> {
-        if (this.isOffline) {
-            ToastService.showErrorToast('Check your Internet connection');
-            return;
-        }
         const xdr = tx.toEnvelope().toXDR('base64');
 
         const request = this.client.request({
@@ -394,10 +398,6 @@ export default class WalletConnectServiceClass {
     }
 
     signTx(tx: StellarSdk.Transaction): Promise<any> {
-        if (this.isOffline) {
-            ToastService.showErrorToast('Check your Internet connection');
-            return;
-        }
         const xdr = tx.toEnvelope().toXDR('base64');
 
         const request = this.client.request({
