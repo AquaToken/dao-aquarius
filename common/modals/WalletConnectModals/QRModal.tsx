@@ -12,7 +12,7 @@ import { flexAllCenter } from '../../mixins';
 import { COLORS } from '../../styles';
 import Button from '../../basics/Button';
 import ArrowRight from '../../assets/img/icon-arrow-right.svg';
-import { clearApp, saveAppToLS, WC_APP_ALIAS } from '../../services/wallet-connect.service';
+import { clearApp, saveAppToLS } from '../../services/wallet-connect.service';
 
 const QRContainer = styled.div`
     width: 100%;
@@ -136,7 +136,6 @@ const LOBSTR_STAGING: Wallet = {
 };
 
 const registryUrl = 'https://registry.walletconnect.com/api/v1/wallets';
-const logosUrl = 'https://registry.walletconnect.com/api/v1/logo/lg/';
 
 enum ModalStates {
     mobile = 'mobile',
@@ -200,8 +199,8 @@ const QRModal = ({ params }: ModalProps<{ uri: string }>): JSX.Element => {
             )}
             <ModalTitle>
                 {modalState === ModalStates.qr ? 'Scan QR code' : ''}
-                {isAndroid() ? 'Connect to Mobile Wallet' : ''}
-                {isIOS() ? 'Choose your prefer wallet' : ''}
+                {isAndroid() && modalState === ModalStates.mobile ? 'Connect to Mobile Wallet' : ''}
+                {isIOS() && modalState === ModalStates.mobile ? 'Choose your prefer wallet' : ''}
             </ModalTitle>
 
             {modalState === ModalStates.qr && (

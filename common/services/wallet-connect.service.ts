@@ -333,7 +333,7 @@ export default class WalletConnectServiceClass {
             }
             const errorMessage =
                 e.message === 'Session not approved'
-                    ? 'Connection canceled by the user'
+                    ? 'Connection cancelled by the user'
                     : e.message;
 
             ToastService.showErrorToast(errorMessage ?? e);

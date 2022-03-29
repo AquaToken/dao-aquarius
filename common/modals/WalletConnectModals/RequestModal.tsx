@@ -40,16 +40,13 @@ const IconContainer = styled.div`
 const Status = styled.div`
     padding-top: 2.4rem;
     padding-bottom: 4.5rem;
+    margin-bottom: 3.2rem;
     background-color: ${COLORS.lightGray};
     ${flexAllCenter};
 `;
 
-const OpenAppButton = styled(Button)`
-    margin-top: 3.2rem;
-`;
-
 const RightButton = styled(Button)`
-    margin-top: 3.2rem;
+    margin-top: 1.6rem;
     margin-left: auto;
 
     ${respondDown(Breakpoints.md)`
@@ -113,14 +110,14 @@ const RequestModal = ({ params, close }: ModalProps<RequestModalProps>) => {
             </Status>
 
             {isMobile() && Boolean(savedApp) && status === TX_STATUSES.pending && (
-                <OpenAppButton
+                <Button
                     fullWidth
                     onClick={() => {
                         window.open(savedApp.uri, '_blank');
                     }}
                 >
                     Open {savedApp.name === 'Unknown' ? '' : savedApp.name}
-                </OpenAppButton>
+                </Button>
             )}
 
             <RightButton onClick={() => close()}>Close</RightButton>
