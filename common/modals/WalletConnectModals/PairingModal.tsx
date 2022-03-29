@@ -88,19 +88,24 @@ const AppInfoBlock = styled.div`
     flex-direction: column;
 `;
 
-const AppName = styled.div`
+const AppNameWrap = styled.div`
     display: flex;
     width: min-content;
     font-size: 1.6rem;
     line-height: 2.8rem;
     color: ${COLORS.paragraphText};
+`;
+
+const AppName = styled.div`
     position: relative;
+    width: min-content;
+    height: 2.8rem;
 `;
 
 const LatestAdded = styled.div`
     position: absolute;
     left: calc(100% + 0.5rem);
-    top: -0.2rem;
+    top: -0.5rem;
     height: 1.8rem;
     padding: 0 0.6rem;
     font-size: 0.8rem;
@@ -113,6 +118,11 @@ const LatestAdded = styled.div`
     background-color: ${COLORS.tooltip};
     border-radius: 0.5rem;
     white-space: nowrap;
+
+    ${respondDown(Breakpoints.md)`
+        top: 50%;
+        transform: translate(0, -50%);
+    `}
 `;
 
 const AppDescription = styled.span`
@@ -238,7 +248,7 @@ const PairingModal = ({ params }: ModalProps<PairingModalParams>): JSX.Element =
                         <AppIconWeb src={pairing.state.metadata.icons[0]} alt="" />
 
                         <AppInfoBlock>
-                            <AppName>
+                            <AppNameWrap>
                                 <AppIconMobileWrap>
                                     <AppIconMobile src={pairing.state.metadata.icons[0]} alt="" />
                                     <LoginFlowIconWrap>
@@ -246,11 +256,13 @@ const PairingModal = ({ params }: ModalProps<PairingModalParams>): JSX.Element =
                                     </LoginFlowIconWrap>
                                 </AppIconMobileWrap>
 
-                                <span>{pairing.state.metadata.name}</span>
-                                {currentPairings.length > 1 && index === 0 && (
-                                    <LatestAdded>latest added</LatestAdded>
-                                )}
-                            </AppName>
+                                <AppName>
+                                    <span>{pairing.state.metadata.name}</span>
+                                    {currentPairings.length > 1 && index === 0 && (
+                                        <LatestAdded>latest added</LatestAdded>
+                                    )}
+                                </AppName>
+                            </AppNameWrap>
                             <AppDescription>{pairing.state.metadata.description}</AppDescription>
                             <ConnectButton>
                                 <span>Connect</span>
