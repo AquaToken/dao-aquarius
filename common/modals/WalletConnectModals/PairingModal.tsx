@@ -163,14 +163,30 @@ const DeleteButtonMobile = styled.div`
 `;
 
 const NewConnectionButton = styled.div`
-    display: flex;
     align-items: center;
     font-size: 1.6rem;
     line-height: 2.8rem;
     color: ${COLORS.purple};
     cursor: pointer;
+`;
+
+const NewConnectionButtonWeb = styled(NewConnectionButton)`
+    display: flex;
+    margin-top: 3.2rem;
+
+    ${respondDown(Breakpoints.md)`
+        display: none;
+    `}
+`;
+
+const NewConnectionButtonMobile = styled(NewConnectionButton)`
+    display: none;
     margin-top: 1.6rem;
     margin-bottom: 2.4rem;
+
+    ${respondDown(Breakpoints.md)`
+        display: flex;
+    `}
 `;
 
 const NewConnectionButtonIcon = styled(IconPlus)`
@@ -196,10 +212,10 @@ const PairingModal = ({ params }: ModalProps<PairingModalParams>): JSX.Element =
         <ModalBlock>
             <ModalTitle>Logged in before?</ModalTitle>
             <ModalDescription>Restore your connection or create a new one.</ModalDescription>
-            <NewConnectionButton onClick={() => connect()}>
+            <NewConnectionButtonMobile onClick={() => connect()}>
                 <span>Add new connection</span>
                 <NewConnectionButtonIcon />
-            </NewConnectionButton>
+            </NewConnectionButtonMobile>
             {currentPairings.map((pairing, index) => {
                 const app = getAppFromDeepLinkList(pairing.topic);
                 return (
@@ -244,6 +260,10 @@ const PairingModal = ({ params }: ModalProps<PairingModalParams>): JSX.Element =
                     </PairingBlock>
                 );
             })}
+            <NewConnectionButtonWeb onClick={() => connect()}>
+                <span>Add new connection</span>
+                <NewConnectionButtonIcon />
+            </NewConnectionButtonWeb>
         </ModalBlock>
     );
 };
