@@ -363,7 +363,6 @@ const Table = ({
                                     {pair.voting_amount ? formatBalance(pair.voting_amount) : null}
                                 </VoteStats>
                                 <AquaVoted>
-                                    <label>AQUA Voted:</label>
                                     <VoteAmount pair={pair} totalStats={totalStats} />
                                 </AquaVoted>
                                 <ButtonBlock>
