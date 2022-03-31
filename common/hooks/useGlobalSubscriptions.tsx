@@ -42,6 +42,9 @@ export default function useGlobalSubscriptions(): void {
             );
             clearLoginError();
         }
+        if (loginErrorText === UnfundedError) {
+            WalletConnectService.logout();
+        }
     }, [loginErrorText]);
 
     useEffect(() => {

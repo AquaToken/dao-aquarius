@@ -51,6 +51,8 @@ export enum BuildSignAndSubmitStatuses {
 export const WC_APP_ALIAS = 'WC_APP';
 const WC_DEEP_LINK_APPS = 'WC_DEEP_LINK_APPS';
 
+const INTERNET_CONNECTION_ERROR = 'Make sure you are connected to the internet and try again.';
+
 function getLocalStorage(): Storage | undefined {
     let res: Storage | undefined = undefined;
     if (typeof window !== 'undefined' && typeof window['localStorage'] !== 'undefined') {
@@ -158,7 +160,7 @@ export default class WalletConnectServiceClass {
 
     async initWalletConnect(): Promise<boolean> {
         if (this.isOffline) {
-            ToastService.showErrorToast('Check your Internet connection');
+            ToastService.showErrorToast(INTERNET_CONNECTION_ERROR);
             return;
         }
         if (this.client) {
@@ -295,7 +297,7 @@ export default class WalletConnectServiceClass {
 
     async connect(pairing?: PairingTypes.Settled): Promise<void> {
         if (this.isOffline) {
-            ToastService.showErrorToast('Check your Internet connection');
+            ToastService.showErrorToast(INTERNET_CONNECTION_ERROR);
             return;
         }
         ModalService.closeAllModals();
@@ -334,7 +336,11 @@ export default class WalletConnectServiceClass {
                     ? 'Connection cancelled by the user'
                     : e.message;
 
-            ToastService.showErrorToast(errorMessage ?? e);
+            ToastService.showErrorToast(
+                errorMessage ?? e === 'Pairing failed to settle after 300 seconds'
+                    ? 'Connection could not be established. Please try connecting again.'
+                    : e,
+            );
 
             ModalService.closeAllModals();
             return;
@@ -361,7 +367,7 @@ export default class WalletConnectServiceClass {
 
     async logout(): Promise<void> {
         if (this.isOffline) {
-            ToastService.showErrorToast('Check your Internet connection');
+            ToastService.showErrorToast(INTERNET_CONNECTION_ERROR);
             return;
         }
         if (this.session) {
