@@ -116,7 +116,7 @@ const RequestModal = ({ params, close }: ModalProps<RequestModalProps>) => {
                         window.open(savedApp.uri, '_blank');
                     }}
                 >
-                    Open {savedApp.name === 'Unknown' ? '' : savedApp.name}
+                    Open {name}
                 </Button>
             )}
 
