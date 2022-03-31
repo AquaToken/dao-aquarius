@@ -52,6 +52,8 @@ export const WC_APP_ALIAS = 'WC_APP';
 const WC_DEEP_LINK_APPS = 'WC_DEEP_LINK_APPS';
 
 const INTERNET_CONNECTION_ERROR = 'Make sure you are connected to the internet and try again.';
+const SESSION_TIMEOUT_ERROR = 'Session failed to settle after 300 seconds';
+const PAIRING_TIMEOUT_ERROR = 'Pairing failed to settle after 300 seconds';
 
 function getLocalStorage(): Storage | undefined {
     let res: Storage | undefined = undefined;
@@ -337,9 +339,11 @@ export default class WalletConnectServiceClass {
                     ? 'Connection cancelled by the user'
                     : e.message;
 
+            console.log(ERROR.SETTLE_TIMEOUT.stringify());
+
             ToastService.showErrorToast(
                 errorMessage ??
-                    (e === 'Pairing failed to settle after 300 seconds'
+                    (e === SESSION_TIMEOUT_ERROR || e === PAIRING_TIMEOUT_ERROR
                         ? 'Connection could not be established. Please try connecting again.'
                         : e),
             );
