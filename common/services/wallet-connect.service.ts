@@ -331,15 +331,17 @@ export default class WalletConnectServiceClass {
             if (e.message === ERROR.UNKNOWN.stringify()) {
                 return;
             }
+
             const errorMessage =
                 e.message === 'Session not approved'
                     ? 'Connection cancelled by the user'
                     : e.message;
 
             ToastService.showErrorToast(
-                errorMessage ?? e === 'Pairing failed to settle after 300 seconds'
-                    ? 'Connection could not be established. Please try connecting again.'
-                    : e,
+                errorMessage ??
+                    (e === 'Pairing failed to settle after 300 seconds'
+                        ? 'Connection could not be established. Please try connecting again.'
+                        : e),
             );
 
             ModalService.closeAllModals();
