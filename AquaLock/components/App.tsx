@@ -21,9 +21,16 @@ import { ModalService } from '../../common/services/globalServices';
 import SnapshotPassedModal from './common/SnapshotPassedModal/SnapshotPassedModal';
 import Background from '../../common/assets/img/snapshot-passed-background.svg';
 import styled from 'styled-components';
+import { Breakpoints } from '../../common/styles';
+import { respondDown } from '../../common/mixins';
 
 const ModalBG = styled(Background)`
     object-position: center center;
+    width: 62.4rem;
+
+    ${respondDown(Breakpoints.md)`
+        width: 100%;
+    `}
 `;
 
 const App = () => {
