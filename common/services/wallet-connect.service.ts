@@ -148,8 +148,7 @@ export default class WalletConnectServiceClass {
             this.isOffline = false;
             if (this.session) {
                 WalletConnectClient.init({
-                    relayUrl: 'wss://relay.walletconnect.org',
-                    projectId: 'f5279d443cff4b7901250e5b2e0e84f4',
+                    relayProvider: 'wss://relay.walletconnect.org',
                 }).then((client) => {
                     this.client = client;
                 });
@@ -168,8 +167,7 @@ export default class WalletConnectServiceClass {
         }
         this.client = await WalletConnectClient.init({
             // logger: 'debug',
-            relayUrl: 'wss://relay.walletconnect.org',
-            projectId: 'f5279d443cff4b7901250e5b2e0e84f4',
+            relayProvider: 'wss://relay.walletconnect.org',
         });
 
         // there is a problem with updating the states in wallet connect, a small timeout solves this problem

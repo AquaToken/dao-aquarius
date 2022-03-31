@@ -1,19 +1,26 @@
 import * as React from 'react';
-import {useState} from 'react';
-import {ModalService, StellarService, ToastService,} from '../../../../common/services/globalServices';
-import {SELECTED_PAIRS_ALIAS} from '../MainPage';
-import {BuildSignAndSubmitStatuses, openApp,} from '../../../../common/services/wallet-connect.service';
+import { useState } from 'react';
+import {
+    ModalService,
+    StellarService,
+    ToastService,
+} from '../../../../common/services/globalServices';
+import { SELECTED_PAIRS_ALIAS } from '../MainPage';
+import {
+    BuildSignAndSubmitStatuses,
+    openApp,
+} from '../../../../common/services/wallet-connect.service';
 import useAuthStore from '../../../../common/store/authStore/useAuthStore';
-import Select, {Option} from '../../../../common/basics/Select';
-import {useIsMounted} from '../../../../common/hooks/useIsMounted';
-import {ModalDescription, ModalTitle} from '../../../../common/modals/atoms/ModalAtoms';
-import {getDateString} from '../../../../common/helpers/helpers';
+import Select, { Option } from '../../../../common/basics/Select';
+import { useIsMounted } from '../../../../common/hooks/useIsMounted';
+import { ModalDescription, ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
+import { getDateString } from '../../../../common/helpers/helpers';
 import styled from 'styled-components';
-import {Breakpoints, COLORS} from '../../../../common/styles';
-import VotesAmountModal, {ContentRow, Label} from './VotesAmountModal';
+import { Breakpoints, COLORS } from '../../../../common/styles';
+import VotesAmountModal, { ContentRow, Label } from './VotesAmountModal';
 import Button from '../../../../common/basics/Button';
-import {respondDown} from '../../../../common/mixins';
-import {LoginTypes} from '../../../../common/store/authStore/types';
+import { respondDown } from '../../../../common/mixins';
+import { LoginTypes } from '../../../../common/store/authStore/types';
 
 const ClaimBack = styled.div`
     margin: 2rem 0 3.2rem;
@@ -54,6 +61,7 @@ const MONTH = 30 * DAY;
 const PeriodOptions: Option<number>[] = [
     // TODO Delete test case(5 minutes)
     { label: '5 minutes', value: 5 * MINUTE },
+    { label: '2', value: 2 * HOUR },
     { label: '1 Week', value: 7 * DAY },
     { label: '2 Weeks', value: 14 * DAY },
     { label: '3 Weeks', value: 21 * DAY },
