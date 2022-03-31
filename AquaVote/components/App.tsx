@@ -28,6 +28,11 @@ const AddBribePage = lazy(() => import('./AddBribePage/AddBribePage'));
 
 const ModalBG = styled(BG)`
     object-position: center center;
+    width: 62.4rem;
+
+    ${respondDown(Breakpoints.md)`
+        width: 100%;
+    `}
 `;
 
 const UPDATE_ASSETS_DATE = 'update assets timestamp';

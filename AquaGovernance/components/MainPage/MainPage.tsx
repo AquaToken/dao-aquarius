@@ -161,6 +161,11 @@ const About = styled.div`
 
 const ModalBG = styled(UnderMaintenance)`
     object-position: center center;
+    width: 62.4rem;
+
+    ${respondDown(Breakpoints.md)`
+          width: 100%;
+      `}
 `;
 
 const PlusIcon = styled(Plus)`
