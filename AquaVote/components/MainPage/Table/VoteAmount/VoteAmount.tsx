@@ -7,9 +7,25 @@ import { Breakpoints, COLORS } from '../../../../../common/styles';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
 import { PairStats, TotalStats } from '../../../../api/types';
 import InfoIcon from '../../../../../common/assets/img/icon-info.svg';
-import IconUp from '../../../../../common/assets/img/icon-up-green.svg';
-import IconDown from '../../../../../common/assets/img/icon-down-red.svg';
-import { MIN_REWARDS_PERCENT } from '../Table';
+import IconUp from '../../../../../common/assets/img/icon-up-percent.svg';
+import IconDown from '../../../../../common/assets/img/icon-down-percent.svg';
+
+const TooltipStyled = styled(Tooltip)`
+    label {
+        display: none;
+    }
+
+    ${respondDown(Breakpoints.md)`
+          width: 100%;
+          ${flexRowSpaceBetween};
+          align-items: flex-start;
+          margin-bottom: 1.6rem;
+          
+          label {
+              display: block;
+           }
+      `}
+`;
 
 const Info = styled(InfoIcon)`
     margin-left: 0.5rem;
@@ -25,11 +41,12 @@ const Amount = styled.div`
 
     ${respondDown(Breakpoints.md)`
          align-items: flex-end;
+         flex: 1;
     `}
 `;
 
-const Percent = styled.div`
-    color: ${COLORS.grayText};
+const Percent = styled.div<{ isBoosted: boolean }>`
+    color: ${({ isBoosted }) => (isBoosted ? COLORS.green : COLORS.grayText)};
     font-size: 1.4rem;
     line-height: 2rem;
     display: flex;
@@ -49,8 +66,8 @@ const Percents = styled.div`
     `}
 `;
 
-const PercentMobile = styled.span`
-    color: ${COLORS.grayText};
+const PercentMobile = styled.span<{ isBoosted: boolean }>`
+    color: ${({ isBoosted }) => (isBoosted ? COLORS.green : COLORS.grayText)};
 
     font-size: 1.2rem;
     line-height: 1.4rem;
@@ -70,11 +87,6 @@ const AmountRow = styled.div`
 const TooltipWrap = styled.div`
     display: flex;
     flex-direction: column;
-
-    ${respondDown(Breakpoints.md)`
-        max-width: 17rem;
-        white-space: pre-line;
-    `}
 `;
 
 const TooltipRow = styled.div`
@@ -88,15 +100,13 @@ const TooltipRow = styled.div`
     }
 `;
 
-const Boost = styled.div<{ isDown?: boolean }>`
-    display: inline-flex;
+const TooltipPercents = styled.div`
+    display: flex;
     align-items: center;
-    margin-left: 0.5rem;
-    color: ${({ isDown }) => (isDown ? COLORS.pinkRed : COLORS.green)};
 
-    ${respondDown(Breakpoints.md)`
-        margin-left: 0;
-    `}
+    span:first-child {
+        margin-right: 0;
+    }
 `;
 
 const getPercent = (value: string, total: string): string => {
@@ -121,84 +131,60 @@ const VoteAmount = ({ pair, totalStats }: { pair: PairStats; totalStats: TotalSt
         ? `${getPercent(pair.adjusted_votes_value, totalStats.adjusted_votes_value_sum)}%`
         : null;
 
-    const downBoosted =
-        Number(pair.votes_value) &&
-        Number(pair.adjusted_votes_value) &&
-        (Number(pair.votes_value) / Number(totalStats.votes_value_sum)) * 100 >=
-            MIN_REWARDS_PERCENT &&
-        (Number(pair.adjusted_votes_value) / Number(totalStats.adjusted_votes_value_sum)) * 100 <
-            MIN_REWARDS_PERCENT;
-
     return (
-        <Amount
-            onMouseEnter={() => {
-                setShowTooltip(true);
-            }}
-            onMouseLeave={() => {
-                setShowTooltip(false);
-            }}
+        <TooltipStyled
+            content={
+                <TooltipWrap>
+                    <TooltipRow>
+                        <span>Upvotes:</span>
+                        <span>{formatBalance(+pair.upvote_value, true)} AQUA</span>
+                    </TooltipRow>
+                    <TooltipRow>
+                        <span>Downvotes:</span>
+                        <span>{formatBalance(+pair.downvote_value, true)} AQUA</span>
+                    </TooltipRow>
+                    <TooltipRow>
+                        <span>% of votes:</span>
+                        <TooltipPercents>
+                            <span>{percentValue}</span>
+                            {boosted ? <IconUp /> : <IconDown />}
+                            <span>{percentBoostedValue}</span>
+                        </TooltipPercents>
+                    </TooltipRow>
+                </TooltipWrap>
+            }
+            position={TOOLTIP_POSITION.top}
+            isShow={showTooltip}
         >
-            <Tooltip
-                content={
-                    <TooltipWrap>
-                        <TooltipRow>
-                            <span>Upvotes:</span>
-                            <span>{formatBalance(+pair.upvote_value, true)} AQUA</span>
-                        </TooltipRow>
-                        <TooltipRow>
-                            <span>Downvotes:</span>
-                            <span>{formatBalance(+pair.downvote_value, true)} AQUA</span>
-                        </TooltipRow>
-                    </TooltipWrap>
-                }
-                position={TOOLTIP_POSITION.top}
-                isShow={showTooltip}
+            <label
+                onMouseEnter={() => {
+                    setShowTooltip(true);
+                }}
+                onMouseLeave={() => {
+                    setShowTooltip(false);
+                }}
+            >
+                AQUA Voted:
+            </label>
+            <Amount
+                onMouseEnter={() => {
+                    setShowTooltip(true);
+                }}
+                onMouseLeave={() => {
+                    setShowTooltip(false);
+                }}
             >
                 <AmountRow>
                     {pair.votes_value ? `${formatBalance(+pair.votes_value, true)} AQUA` : null}
                     <Percents>
-                        <PercentMobile>{percentValue}</PercentMobile>
-                        {boosted && (
-                            <PercentMobile>
-                                {
-                                    <Boost>
-                                        <IconUp />
-                                        {percentBoostedValue}
-                                    </Boost>
-                                }
-                            </PercentMobile>
-                        )}
-                        {downBoosted && (
-                            <PercentMobile>
-                                {
-                                    <Boost isDown>
-                                        <IconDown />
-                                        {percentBoostedValue}
-                                    </Boost>
-                                }
-                            </PercentMobile>
-                        )}
+                        <PercentMobile isBoosted={boosted}>{percentBoostedValue}</PercentMobile>
                     </Percents>
                     <Info />
                 </AmountRow>
-            </Tooltip>
 
-            <Percent>
-                {percentValue}{' '}
-                {boosted ? (
-                    <Boost>
-                        <IconUp />
-                        {percentBoostedValue}
-                    </Boost>
-                ) : null}
-                {downBoosted && (
-                    <Boost isDown>
-                        <IconDown />
-                        {percentBoostedValue}
-                    </Boost>
-                )}
-            </Percent>
-        </Amount>
+                <Percent isBoosted={boosted}>{percentBoostedValue}</Percent>
+            </Amount>
+        </TooltipStyled>
     );
 };
 
