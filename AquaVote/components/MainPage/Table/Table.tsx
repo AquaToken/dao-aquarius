@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../../../common/styles';
 import { PairStats, TotalStats } from '../../../api/types';
@@ -12,16 +12,15 @@ import VoteAmount from './VoteAmount/VoteAmount';
 import Button from '../../../../common/basics/Button';
 import ManageIcon from '../../../../common/assets/img/icon-manage.svg';
 import Tooltip, { TOOLTIP_POSITION } from '../../../../common/basics/Tooltip';
-import {
-    ModalService,
-    StellarService,
-} from '../../../../common/services/globalServices';
+import { ModalService, StellarService } from '../../../../common/services/globalServices';
 import ManageVotesModal from '../ManageVotesModal/ManageVotesModal';
 import Aqua from '../../../../common/assets/img/aqua-logo-small.svg';
 import ArrowRight from '../../../../common/assets/img/icon-arrow-right.svg';
 import Asset from '../../AssetDropdown/Asset';
 import BribesModal from '../BribesModal/BribesModal';
 import ClaimAllModal from '../ClaimAllModal/ClaimAllModal';
+import { StellarEvents } from '../../../../common/services/stellar.service';
+import useAuthStore from '../../../../common/store/authStore/useAuthStore';
 
 const TableBlock = styled.div`
     display: flex;
@@ -265,11 +264,49 @@ const ArrowRightIcon = styled(ArrowRight)`
 
 const ClaimAllButton = styled(Button)`
     width: 30rem;
-    margin-bottom: 2.5rem;
 
     ${respondDown(Breakpoints.md)`
         width: 100%;
     `}
+`;
+
+const ClaimAllBlock = styled.div`
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4rem 4.2rem;
+    background-color: ${COLORS.lightGray};
+    border-radius: 0.5rem;
+    margin-bottom: 6rem;
+
+    ${respondDown(Breakpoints.md)`
+        flex-direction: column;
+        padding: 0;
+        align-items: flex-start;
+        margin-bottom: 4rem;
+    `}
+`;
+
+const ClaimAllStats = styled.div`
+    display: flex;
+    flex-direction: column;
+    font-weight: 400;
+    font-size: 1.4rem;
+    line-height: 2rem;
+    color: ${COLORS.grayText};
+
+    ${respondDown(Breakpoints.md)`
+        margin-bottom: 2rem;
+        align-items: center;
+        width: 100%;
+    `}
+`;
+
+const ClaimAllTitle = styled.span`
+    font-size: 1.6rem;
+    line-height: 2.8rem;
+    color: ${COLORS.paragraphText};
 `;
 
 export const MIN_REWARDS_PERCENT = 1;
@@ -296,6 +333,51 @@ const Table = ({
     isYourVotes: boolean;
 }): JSX.Element => {
     const [showTooltipId, setShowTooltipId] = useState(null);
+    const [updateId, setUpdateId] = useState(1);
+    const [unclaimedVotesInfo, setUnclaimedVotesInfo] = useState(null);
+
+    const { account, isLogged } = useAuthStore();
+
+    useEffect(() => {
+        if (!isYourVotes || !isLogged) {
+            return;
+        }
+        const unsub = StellarService.event.sub(({ type }) => {
+            if (type === StellarEvents.claimableUpdate) {
+                setUpdateId((prevState) => prevState + 1);
+            }
+        });
+
+        return () => unsub();
+    }, [isLogged, isYourVotes]);
+
+    useEffect(() => {
+        if (!isYourVotes || !isLogged || loading) {
+            setUnclaimedVotesInfo(null);
+            return;
+        }
+        const processedClaims = pairs.reduce(
+            (acc, pair) => {
+                const pairUnclaimedVotes = StellarService.getPairVotes(
+                    pair,
+                    account.accountId(),
+                ).filter((claim) => new Date(claim.claimBackDate) < new Date());
+
+                const sum = pairUnclaimedVotes.reduce((votesSum, claim) => {
+                    votesSum += Number(claim.amount);
+                    return votesSum;
+                }, 0);
+
+                acc.sum = acc.sum + sum;
+                acc.count = acc.count + pairUnclaimedVotes.length;
+
+                return acc;
+            },
+            { count: 0, sum: 0 },
+        );
+        setUnclaimedVotesInfo(processedClaims);
+    }, [updateId, isLogged, isYourVotes, pairs, loading]);
+
     if (!pairs.length) {
         return null;
     }
@@ -324,8 +406,20 @@ const Table = ({
                 </TableLoader>
             )}
 
-            {isYourVotes && (
-                <ClaimAllButton onClick={() => claimAll()}>manage unlocked votes</ClaimAllButton>
+            {isYourVotes && !loading && pairs.length && Boolean(unclaimedVotesInfo?.count) && (
+                <ClaimAllBlock>
+                    <ClaimAllStats>
+                        <ClaimAllTitle>You have unlocked votes</ClaimAllTitle>
+                        <span>
+                            {unclaimedVotesInfo.count} votes for{' '}
+                            {formatBalance(unclaimedVotesInfo.sum, true)} AQUA
+                        </span>
+                    </ClaimAllStats>
+
+                    <ClaimAllButton onClick={() => claimAll()}>
+                        manage unlocked votes
+                    </ClaimAllButton>
+                </ClaimAllBlock>
             )}
 
             <TableHead>
