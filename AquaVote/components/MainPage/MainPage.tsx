@@ -36,7 +36,7 @@ import CreatePairModal from './CreatePairModal/CreatePairModal';
 import Pair from '../common/Pair';
 import Button from '../../../common/basics/Button';
 import { formatBalance, getTimeAgoValue } from '../../../common/helpers/helpers';
-import { Option } from '../../../common/basics/Select';
+import Select, { Option } from '../../../common/basics/Select';
 import Pagination from '../../../common/basics/Pagination';
 import { StellarEvents } from '../../../common/services/stellar.service';
 import DotsLoader from '../../../common/basics/DotsLoader';
@@ -221,15 +221,25 @@ const TitleHeader = styled.h3`
 `;
 
 const ToggleGroupStyled = styled(ToggleGroup)`
+    display: flex;
+
+    ${respondDown(Breakpoints.lg)`
+        display: none;
+    `}
+`;
+
+const SelectStyled = styled(Select)`
+    display: none;
+
+    ${respondDown(Breakpoints.lg)`
+        display: flex;
+        margin-right: 4rem;
+    `}
+
     ${respondDown(Breakpoints.md)`
-        width: 100%;
-        justify-content: space-evenly;
-        margin-top: 1.6rem;
-        
-        label {
-            padding: 0.8rem 0;
-            width: 100%;
-        }
+        display: flex;
+        margin-right: 0;
+        margin-top: 4rem;
     `}
 `;
 
@@ -728,6 +738,12 @@ const MainPage = (): JSX.Element => {
                         value={sort}
                         onChange={(option) => changeSort(option)}
                         options={options}
+                    />
+                    <SelectStyled
+                        options={options}
+                        value={sort}
+                        onChange={changeSort}
+                        placeholder="Explore by"
                     />
                     {Boolean(pairs.length && pairs.some((pair) => Boolean(pair.timestamp))) && (
                         <StatusUpdate>
