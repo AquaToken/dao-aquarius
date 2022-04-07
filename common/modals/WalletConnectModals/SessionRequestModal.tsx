@@ -43,9 +43,8 @@ const SessionRequestModal = ({
         <>
             <ModalTitle>Connecting</ModalTitle>
             <ModalDescription>
-                The connection request was sent to {name}. Confirm the request
-                <br />
-                in the app and continue with Aqua Vote.
+                The connection request was sent to {name}. Confirm the request in the app and
+                continue with Aqua Vote.
             </ModalDescription>
             <IconsBlock>
                 <AquaLogo />
