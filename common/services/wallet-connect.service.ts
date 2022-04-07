@@ -54,6 +54,7 @@ export default class WalletConnectServiceClass {
     session: SessionTypes.Settled | null = null;
     isPairCreated = false;
     event: EventService = new EventService();
+    selfMeta = METADATA[process.env.PROJECT];
 
     async initWalletConnect(): Promise<boolean> {
         if (this.client) {
@@ -196,7 +197,7 @@ export default class WalletConnectServiceClass {
 
         try {
             this.session = await this.client.connect({
-                metadata: METADATA[process.env.PROJECT],
+                metadata: this.selfMeta,
                 pairing: pairing ? { topic: pairing.topic } : undefined,
                 permissions: {
                     blockchain: {

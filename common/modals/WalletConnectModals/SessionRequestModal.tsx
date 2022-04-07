@@ -3,9 +3,18 @@ import { ModalDescription, ModalProps, ModalTitle } from '../atoms/ModalAtoms';
 import Aqua from '../../assets/img/aqua-logo-small.svg';
 import ArrowsIcon from '../../assets/img/icon-arrows-circle.svg';
 import styled, { css } from 'styled-components';
-import { flexAllCenter } from '../../mixins';
-import { COLORS } from '../../styles';
+import { flexAllCenter, respondDown } from '../../mixins';
+import { Breakpoints, COLORS } from '../../styles';
 import DotsLoader from '../../basics/DotsLoader';
+import { WalletConnectService } from '../../services/globalServices';
+
+const Container = styled.div`
+    width: 52.3rem;
+
+    ${respondDown(Breakpoints.md)`
+          width: 100%;
+      `}
+`;
 
 const IconsBlock = styled.div`
     ${flexAllCenter};
@@ -40,11 +49,11 @@ const SessionRequestModal = ({
 }: ModalProps<{ icon: string; name: string }>): JSX.Element => {
     const { icon, name } = params;
     return (
-        <>
+        <Container>
             <ModalTitle>Connecting</ModalTitle>
             <ModalDescription>
                 The connection request was sent to {name}. Confirm the request in the app and
-                continue with Aqua Vote.
+                continue with {WalletConnectService.selfMeta.name}.
             </ModalDescription>
             <IconsBlock>
                 <AquaLogo />
@@ -56,7 +65,7 @@ const SessionRequestModal = ({
                 Connecting
                 <DotsLoader />
             </Connecting>
-        </>
+        </Container>
     );
 };
 
