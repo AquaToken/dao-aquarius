@@ -39,7 +39,10 @@ export default class ToastServiceClass {
                 delay,
             },
         ];
-        window?.navigator?.vibrate(200);
+        if (window?.navigator?.vibrate) {
+            window?.navigator?.vibrate(200);
+        }
+
         this.event.trigger(this.toasts);
 
         promise.then(({ id }) => {
