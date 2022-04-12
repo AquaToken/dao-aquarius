@@ -50,6 +50,7 @@ export enum BuildSignAndSubmitStatuses {
 
 export const WC_APP_ALIAS = 'WC_APP';
 const WC_DEEP_LINK_APPS = 'WC_DEEP_LINK_APPS';
+const WC_VERSION_ALIAS = 'WC_VERSION_ALIAS';
 
 const INTERNET_CONNECTION_ERROR = 'Make sure you are connected to the internet and try again.';
 const SESSION_TIMEOUT_ERROR = 'Session failed to settle after 300 seconds';
@@ -62,6 +63,13 @@ function getLocalStorage(): Storage | undefined {
     }
     return res;
 }
+
+const clearLocalStorage = () => {
+    const LS = getLocalStorage();
+    if (LS) {
+        LS.clear();
+    }
+};
 
 export const saveAppToLS = (name, uri) => {
     const focusUri = uri.split('?')[0];
@@ -134,6 +142,23 @@ export const getAppFromDeepLinkList = (topic) => {
     return appsList.has(topic) ? JSON.parse(appsList.get(topic)) : null;
 };
 
+const getVersionFromLS = () => {
+    const LS = getLocalStorage();
+    if (!LS) {
+        return null;
+    }
+    return LS.getItem(WC_VERSION_ALIAS);
+};
+
+const setVersionToLS = (version) => {
+    const LS = getLocalStorage();
+    if (!LS) {
+        return;
+    }
+
+    LS.setItem(WC_VERSION_ALIAS, version);
+};
+
 export default class WalletConnectServiceClass {
     appMeta: AppMetadata | null = null;
     client: WalletConnectClient | null = null;
@@ -142,6 +167,18 @@ export default class WalletConnectServiceClass {
     event: EventService = new EventService();
     selfMeta = METADATA[process.env.PROJECT];
     isOffline = false;
+
+    // When changing the walletConnect version, memory leaks sometimes occur,
+    // to avoid this, we clear the local storage
+    static checkVersion() {
+        const WALLET_CONNECT_VERSION_ID = '1';
+
+        const currentVersion = getVersionFromLS();
+        if (!currentVersion || currentVersion !== WALLET_CONNECT_VERSION_ID) {
+            clearLocalStorage();
+            setVersionToLS(WALLET_CONNECT_VERSION_ID);
+        }
+    }
 
     constructor() {
         window.addEventListener('offline', () => {
