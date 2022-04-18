@@ -20,6 +20,7 @@ import LinkIcon from '../../../../common/assets/img/icon-external-link.svg';
 import ExternalLink from '../../../../common/basics/ExternalLink';
 import { BuildSignAndSubmitStatuses } from '../../../../common/services/wallet-connect.service';
 import { useIsMounted } from '../../../../common/hooks/useIsMounted';
+import ErrorHandler from '../../../../common/helpers/error-handler';
 
 const Container = styled.div`
     width: 80.6rem;
@@ -215,8 +216,8 @@ const ManageVotesModal = ({ params, close }: ModalProps<{ pair: PairStats }>) =>
             ToastService.showSuccessToast('Your vote has been claimed back');
             StellarService.getClaimableBalances(account.accountId());
         } catch (e) {
-            console.log(e);
-            ToastService.showErrorToast('Oops. Something went wrong.');
+            const errorText = ErrorHandler(e);
+            ToastService.showErrorToast(errorText);
             if (isMounted.current) {
                 setPendingId(null);
             }

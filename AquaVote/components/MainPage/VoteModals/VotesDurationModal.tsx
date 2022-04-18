@@ -17,6 +17,7 @@ import { Breakpoints, COLORS } from '../../../../common/styles';
 import VotesAmountModal, { ContentRow, Label } from './VotesAmountModal';
 import Button from '../../../../common/basics/Button';
 import { respondDown } from '../../../../common/mixins';
+import ErrorHandler from '../../../../common/helpers/error-handler';
 
 const ClaimBack = styled.div`
     margin: 2rem 0 3.2rem;
@@ -121,8 +122,8 @@ const VotesDurationModal = ({ params, close }) => {
             );
             StellarService.getClaimableBalances(account.accountId());
         } catch (e) {
-            console.log(e);
-            ToastService.showErrorToast('Oops. Something went wrong.');
+            const errorText = ErrorHandler(e);
+            ToastService.showErrorToast(errorText);
             if (isMounted.current) {
                 setPending(false);
             }

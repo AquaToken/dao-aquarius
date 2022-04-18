@@ -14,6 +14,7 @@ import { StellarService, ToastService } from '../../../../common/services/global
 import { BuildSignAndSubmitStatuses } from '../../../../common/services/wallet-connect.service';
 import useAuthStore from '../../../../common/store/authStore/useAuthStore';
 import { useIsMounted } from '../../../../common/hooks/useIsMounted';
+import ErrorHandler from '../../../../common/helpers/error-handler';
 
 const ModalContainer = styled.div`
     width: 52.8rem;
@@ -76,8 +77,8 @@ const LockAquaModal = ({ confirm, params }: ModalProps<{ amount: string; period:
             }
             ToastService.showSuccessToast('Your lock has been created!');
         } catch (e) {
-            console.log(e);
-            ToastService.showErrorToast('Oops. Something went wrong.');
+            const errorText = ErrorHandler(e);
+            ToastService.showErrorToast(errorText);
             if (isMounted.current) {
                 setPending(false);
             }

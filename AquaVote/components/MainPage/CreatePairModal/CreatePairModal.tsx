@@ -17,6 +17,7 @@ import { useIsMounted } from '../../../../common/hooks/useIsMounted';
 import { BuildSignAndSubmitStatuses } from '../../../../common/services/wallet-connect.service';
 import Info from '../../../../common/assets/img/icon-info.svg';
 import Tooltip, { TOOLTIP_POSITION } from '../../../../common/basics/Tooltip';
+import ErrorHandler from '../../../../common/helpers/error-handler';
 
 const ContentRow = styled.div`
     display: flex;
@@ -152,7 +153,8 @@ const CreatePairModal = ({
                 20000,
             );
         } catch (e) {
-            ToastService.showErrorToast('Oops. Something went wrong');
+            const errorText = ErrorHandler(e);
+            ToastService.showErrorToast(errorText);
             if (isMounted.current) {
                 setPending(false);
             }
