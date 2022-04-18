@@ -17,6 +17,7 @@ import useAuthStore from '../../../../common/store/authStore/useAuthStore';
 import { useState } from 'react';
 import { useIsMounted } from '../../../../common/hooks/useIsMounted';
 import { BuildSignAndSubmitStatuses } from '../../../../common/services/wallet-connect.service';
+import ErrorHandler from '../../../../common/helpers/error-handler';
 
 const Container = styled.div`
     width: 52.8rem;
@@ -131,8 +132,8 @@ const ConfirmBribeModal = ({
             }
             ToastService.showSuccessToast('Your bribe has been created');
         } catch (e) {
-            console.log(e);
-            ToastService.showErrorToast('Oops. Something went wrong.');
+            const errorText = ErrorHandler(e);
+            ToastService.showErrorToast(errorText);
             if (isMounted.current) {
                 setPending(false);
             }

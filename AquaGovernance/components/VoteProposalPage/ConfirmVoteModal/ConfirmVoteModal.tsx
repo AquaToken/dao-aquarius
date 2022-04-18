@@ -26,6 +26,7 @@ import GetAquaModal from '../../../../common/modals/GetAquaModal/GetAquaModal';
 import { SimpleProposalOptions } from '../VoteProposalPage';
 import { useIsMounted } from '../../../../common/hooks/useIsMounted';
 import { BuildSignAndSubmitStatuses } from '../../../../common/services/wallet-connect.service';
+import ErrorHandler from '../../../../common/helpers/error-handler';
 
 const MINIMUM_AMOUNT = 0.0000001;
 
@@ -198,7 +199,8 @@ const ConfirmVoteModal = ({
             }
             ToastService.showSuccessToast('Your vote has been cast');
         } catch (e) {
-            ToastService.showErrorToast('Oops. Something went wrong.');
+            const errorText = ErrorHandler(e);
+            ToastService.showErrorToast(errorText);
             if (isMounted.current) {
                 setPending(false);
             }
