@@ -575,7 +575,9 @@ const AddBribePage = () => {
                                     <NextButton
                                         isBig
                                         fullWidth
-                                        disabled={!rewardAsset || !Number(amount)}
+                                        disabled={
+                                            !rewardAsset || !Number(amount) || Number(amount) <= 0
+                                        }
                                         onClick={() => setStep(CreateStep.period)}
                                     >
                                         next
