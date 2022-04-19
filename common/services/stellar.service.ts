@@ -461,8 +461,54 @@ export default class StellarServiceClass {
         }, false);
     }
 
-    createVoteOperation(publicKey, marketKey, amount, timestamp) {
+    createVoteOperation(publicKey, marketKey, amount, timestamp, isBefore, isBetween) {
         const time = Math.ceil(timestamp / 1000);
+        if (isBefore) {
+            return StellarSdk.Operation.createClaimableBalance({
+                source: publicKey,
+                amount: amount.toString(),
+                asset: new StellarSdk.Asset(AQUA_CODE, AQUA_ISSUER),
+                claimants: [
+                    new StellarSdk.Claimant(
+                        marketKey,
+                        StellarSdk.Claimant.predicateNot(
+                            StellarSdk.Claimant.predicateUnconditional(),
+                        ),
+                    ),
+                    new StellarSdk.Claimant(
+                        publicKey,
+                        StellarSdk.Claimant.predicateBeforeAbsoluteTime(time.toString()),
+                    ),
+                ],
+            });
+        }
+
+        if (isBetween) {
+            return StellarSdk.Operation.createClaimableBalance({
+                source: publicKey,
+                amount: amount.toString(),
+                asset: new StellarSdk.Asset(AQUA_CODE, AQUA_ISSUER),
+                claimants: [
+                    new StellarSdk.Claimant(
+                        marketKey,
+                        StellarSdk.Claimant.predicateNot(
+                            StellarSdk.Claimant.predicateUnconditional(),
+                        ),
+                    ),
+                    new StellarSdk.Claimant(
+                        publicKey,
+                        StellarSdk.Claimant.predicateAnd(
+                            StellarSdk.Claimant.predicateBeforeAbsoluteTime(
+                                (time + 1000000).toString(),
+                            ),
+                            StellarSdk.Claimant.predicateNot(
+                                StellarSdk.Claimant.predicateBeforeAbsoluteTime(time.toString()),
+                            ),
+                        ),
+                    ),
+                ],
+            });
+        }
         return StellarSdk.Operation.createClaimableBalance({
             source: publicKey,
             amount: amount.toString(),

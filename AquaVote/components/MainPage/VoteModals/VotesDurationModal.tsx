@@ -54,7 +54,9 @@ const HOUR = 60 * MINUTE;
 const DAY = 24 * HOUR;
 const MONTH = 30 * DAY;
 
-const PeriodOptions: Option<number>[] = [
+const PeriodOptions: Option<number | string>[] = [
+    { label: 'Before', value: 'Before' },
+    { label: 'Between', value: 'Between' },
     { label: '1 Week', value: 7 * DAY },
     { label: '2 Weeks', value: 14 * DAY },
     { label: '3 Weeks', value: 21 * DAY },
@@ -94,7 +96,11 @@ const VotesDurationModal = ({ params, close }) => {
                     account.accountId(),
                     marketKey,
                     voteAmount,
-                    new Date(Date.now() + votePeriod).getTime(),
+                    new Date(
+                        Date.now() + (typeof votePeriod === 'number' ? votePeriod : DAY),
+                    ).getTime(),
+                    votePeriod === 'Before',
+                    votePeriod === 'Between',
                 ),
             );
 
