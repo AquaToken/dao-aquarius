@@ -37,31 +37,42 @@ const App = () => {
                     <Route exact path={MainRoutes.main}>
                         <MainPage />
                     </Route>
+                    <Route path={`${MainRoutes.proposal}/:id/:version`}>
+                        <VoteProposalPage />
+                    </Route>
                     <Route path={`${MainRoutes.proposal}/:id`}>
                         <VoteProposalPage />
                     </Route>
+
                     <Route
                         path={MainRoutes.create}
-                        // render={({ location }) =>
-                        //     isLogged ? (
-                        //         <ProposalCreationPage />
-                        //     ) : (
-                        //         <Redirect
-                        //             to={{
-                        //                 pathname: MainRoutes.main,
-                        //                 state: { from: location },
-                        //             }}
-                        //         />
-                        //     )
-                        // }
-                        render={({ location }) => (
-                            <Redirect
-                                to={{
-                                    pathname: MainRoutes.main,
-                                    state: { from: location },
-                                }}
-                            />
-                        )}
+                        render={({ location }) =>
+                            isLogged ? (
+                                <ProposalCreationPage />
+                            ) : (
+                                <Redirect
+                                    to={{
+                                        pathname: MainRoutes.main,
+                                        state: { from: location },
+                                    }}
+                                />
+                            )
+                        }
+                    />
+                    <Route
+                        path={`${MainRoutes.edit}/:id`}
+                        render={({ location }) =>
+                            isLogged ? (
+                                <ProposalCreationPage isEdit />
+                            ) : (
+                                <Redirect
+                                    to={{
+                                        pathname: MainRoutes.main,
+                                        state: { from: location },
+                                    }}
+                                />
+                            )
+                        }
                     />
                     <Route component={NotFoundPage} />
                 </Switch>

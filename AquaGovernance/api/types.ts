@@ -9,6 +9,27 @@ export type ProposalSimple = {
     vote_against_result: string;
     is_simple_proposal: boolean;
     aqua_circulating_supply: string;
+    proposal_status: ProposalStatus;
+    last_updated_at: string;
+    created_at: string;
+    discord_channel_name?: string | null;
+    discord_channel_url?: string | null;
+    discord_username?: string | null;
+};
+
+type ProposalStatus = 'DISCUSSION' | 'VOTING' | 'VOTED' | 'EXPIRED';
+type PaymentStatus =
+    | 'HORIZON_ERROR'
+    | 'BAD_MEMO'
+    | 'INVALID_PAYMENT'
+    | 'FINE'
+    | 'FAILED_TRANSACTION';
+
+type ProposalHistory = {
+    created_at: string;
+    text: string;
+    title: string;
+    version: number;
 };
 
 export type Proposal = {
@@ -26,6 +47,13 @@ export type Proposal = {
     aqua_circulating_supply: string;
     discord_channel_name?: string | null;
     discord_channel_url?: string | null;
+    discord_username?: string | null;
+    payment_status: PaymentStatus;
+    proposal_status: ProposalStatus;
+    last_updated_at: string;
+    created_at: string;
+    history_proposal: ProposalHistory[];
+    version: number;
 };
 
 export type VoteChoiceSimple = 'vote_for' | 'vote_against';
@@ -45,4 +73,7 @@ export type ProposalCreateOptions = {
     start_at: string;
     end_at: string;
     transaction_hash: string;
+    envelope_xdr: string;
+    discord_username?: string;
+    discord_channel_name?: string;
 };

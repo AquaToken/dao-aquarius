@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Redirect, useParams } from 'react-router-dom';
 import { getProposalRequest, UPDATE_INTERVAL } from '../../api/api';
 import PageLoader from '../../../common/basics/PageLoader';
 import { Proposal } from '../../api/types';
@@ -10,6 +10,7 @@ import NotFoundPage from '../../../common/components/NotFoundPage/NotFoundPage';
 import styled from 'styled-components';
 import { respondDown } from '../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../common/styles';
+import { MainRoutes } from '../../routes';
 
 const Main = styled.main`
     ${respondDown(Breakpoints.md)`
@@ -28,7 +29,7 @@ export enum SimpleProposalResultsLabels {
 }
 
 const VoteProposalPage = (): JSX.Element => {
-    const { id } = useParams<{ id?: string }>();
+    const { id, version } = useParams<{ id?: string; version?: string }>();
 
     const [proposal, setProposal] = useState<null | Proposal>(null);
     const [updateIndex, setUpdateIndex] = useState(0);
@@ -60,9 +61,17 @@ const VoteProposalPage = (): JSX.Element => {
         return <PageLoader />;
     }
 
+    if (
+        Number(version) === proposal.version ||
+        (Boolean(version) &&
+            !proposal.history_proposal.find((history) => history.version === Number(version)))
+    ) {
+        return <Redirect to={`${MainRoutes.proposal}/${proposal.id}`} />;
+    }
+
     return (
         <Main>
-            <ProposalScreen proposal={proposal} />
+            <ProposalScreen proposal={proposal} version={version} />
         </Main>
     );
 };

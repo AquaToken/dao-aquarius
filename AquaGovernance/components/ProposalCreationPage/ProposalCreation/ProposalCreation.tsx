@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 
 import { Breakpoints, COLORS } from '../../../../common/styles';
@@ -7,23 +7,27 @@ import Input from '../../../../common/basics/Input';
 import ReactQuill from 'react-quill';
 import Button from '../../../../common/basics/Button';
 import { ReactQuillCSS } from '../../App';
-import { formatBalance, getDateString } from '../../../../common/helpers/helpers';
-import { CREATE_PROPOSAL_COST } from '../../MainPage/MainPage';
-import Select, { Option } from '../../../../common/basics/Select';
+import { formatBalance } from '../../../../common/helpers/helpers';
+import {
+    APPROVED_PROPOSAL_REWARD,
+    CREATE_DISCUSSION_COST,
+    CREATE_PROPOSAL_COST,
+} from '../../MainPage/MainPage';
 import { respondDown } from '../../../../common/mixins';
+import { BackButton } from '../../VoteProposalPage/Proposal/ProposalScreen';
+import ArrowLeft from '../../../../common/assets/img/icon-arrow-left.svg';
+import { MainRoutes } from '../../../routes';
+import { useParams } from 'react-router-dom';
 
 const Background = styled.div`
-    position: absolute;
-    z-index: -1;
-    top: 11.2rem;
-    left: 0;
     width: 100%;
     background-color: ${COLORS.lightGray};
-    height: 42rem;
+    padding-top: 7.7rem;
+    padding-bottom: 16.4rem;
+    margin-bottom: -11.7rem;
 `;
 
 const Container = styled.div`
-    padding: 5rem 0;
     max-width: 79.2rem;
     height: 100%;
     margin: 0 auto;
@@ -56,7 +60,6 @@ const Description = styled.div`
 
 const ContainerForm = styled.div`
     padding: 4.8rem;
-    margin-top: 10rem;
     background-color: ${COLORS.white};
     box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
     border-radius: 0.5rem;
@@ -70,23 +73,27 @@ const SectionForm = styled.div`
     margin-bottom: 4.8rem;
 `;
 
-const SectionDate = styled(SectionForm)`
+const SectionDiscord = styled.div`
     display: flex;
-    column-gap: 4.8rem;
 
     ${respondDown(Breakpoints.md)`
          flex-direction: column;
     `}
 `;
-const DateBlock = styled.div`
-    flex: 1 0 0;
+
+const DiscordInput = styled.div`
+    flex: 1;
+
+    &:not(:last-child) {
+        margin-right: 6rem;
+    }
 
     ${respondDown(Breakpoints.md)`
-        margin-bottom: 3.2rem;
+         &:not(:last-child) {
+             margin-right: 0;
+             margin-bottom: 4.8rem;
+         }
     `}
-`;
-const Time = styled.div`
-    flex: 1 0 0;
 `;
 
 const Label = styled.label`
@@ -95,6 +102,48 @@ const Label = styled.label`
     font-size: 1.6rem;
     line-height: 1.8rem;
     color: ${COLORS.paragraphText};
+`;
+
+const DiscordRecommend = styled.div`
+    display: flex;
+    width: 100%;
+    background-color: ${COLORS.lightGray};
+    padding: 1.6rem 2.8rem;
+    margin-top: 1.6rem;
+    margin-bottom: 5.5rem;
+    font-weight: 400;
+    font-size: 1.4rem;
+    line-height: 2rem;
+    color: ${COLORS.grayText};
+`;
+
+const InfoRow = styled.div`
+    display: flex;
+    align-items: center;
+    font-weight: 400;
+    font-size: 1.4rem;
+    line-height: 2rem;
+    color: ${COLORS.grayText};
+
+    &:first-child {
+        margin-top: 4rem;
+    }
+
+    &:not(:last-child) {
+        margin-bottom: 1.6rem;
+    }
+`;
+
+const InfoIcon = styled.span`
+    width: 1.8rem;
+    margin-right: 1.6rem;
+`;
+
+const BackTo = styled.div`
+    display: flex;
+    column-gap: 1.6rem;
+    align-items: center;
+    margin-bottom: 3.2rem;
 `;
 
 const StyledReactQuill = styled(ReactQuill)<{ focused: boolean }>`
@@ -129,23 +178,18 @@ const StyledReactQuill = styled(ReactQuill)<{ focused: boolean }>`
 
 export const DAY = 24 * 60 * 60 * 1000;
 
-const Options: Option<number>[] = [
-    { label: '3 days', value: DAY * 3 },
-    { label: '4 days', value: DAY * 4 },
-    { label: '5 days', value: DAY * 5 },
-    { label: '6 days', value: DAY * 6 },
-    { label: '7 days', value: DAY * 7 },
-];
-
 interface proposalCreationProps {
     title: string;
     text: string;
-    period: number;
     setTitle: (value: string) => void;
     setText: (value: string) => void;
-    setPeriod: (period: number) => void;
     hasData: boolean;
     onSubmit: () => void;
+    discordChannel: string;
+    setDiscordChannel: (value: string) => void;
+    discordChannelOwner: string;
+    setDiscordChannelOwner: (value: string) => void;
+    isEdit?: boolean;
 }
 
 const ProposalCreation = ({
@@ -153,47 +197,60 @@ const ProposalCreation = ({
     text,
     setTitle,
     setText,
-    period,
-    setPeriod,
     hasData,
     onSubmit,
+    discordChannel,
+    setDiscordChannel,
+    discordChannelOwner,
+    setDiscordChannelOwner,
+    isEdit,
 }: proposalCreationProps): JSX.Element => {
     const [textFocused, setTextFocused] = useState(false);
-    const [updateIndex, setUpdateIndex] = useState(0);
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setUpdateIndex((prev) => prev + 1);
-        }, 10000);
-
-        return () => clearInterval(interval);
-    }, []);
-
-    const endDate = useMemo(() => Date.now() + period, [updateIndex, period]);
+    const { id } = useParams<{ id?: string }>();
 
     return (
         <>
-            <Background />
+            <Background>
+                <Container>
+                    {isEdit && (
+                        <BackTo>
+                            <BackButton to={`${MainRoutes.proposal}/${id}`}>
+                                <ArrowLeft />
+                            </BackButton>
+                            Back to discussion
+                        </BackTo>
+                    )}
+                    <Title>{isEdit ? 'Edit proposal' : 'New proposal'}</Title>
+
+                    {!isEdit ? (
+                        <Description>
+                            There is a fee of <b>{formatBalance(CREATE_DISCUSSION_COST)} AQUA</b> to
+                            create a <b>7 days proposal discussion</b>. In order to move the
+                            proposal <b>from discussion to voting</b> status, you will need to pay
+                            another {formatBalance(CREATE_PROPOSAL_COST)} AQUA.{' '}
+                            <b>Each proposal edit will cost {CREATE_DISCUSSION_COST} AQUA.</b> This
+                            fee is burned by being sent to the AQUA issuer wallet.
+                            <br />
+                            <br />
+                            If your proposal is accepted, you will get a reward of{' '}
+                            {formatBalance(APPROVED_PROPOSAL_REWARD)} AQUA.
+                        </Description>
+                    ) : (
+                        <Description>
+                            <b>
+                                Each proposal edit will cost {formatBalance(CREATE_DISCUSSION_COST)}{' '}
+                                AQUA.
+                            </b>{' '}
+                            This fee is burned by being sent to the AQUA issuer wallet. In order to
+                            move the proposal <b>from discussion to voting</b> status, you will need
+                            to pay another {formatBalance(CREATE_PROPOSAL_COST)} AQUA. If your
+                            proposal is accepted, you will get a reward of{' '}
+                            {formatBalance(APPROVED_PROPOSAL_REWARD)} AQUA.
+                        </Description>
+                    )}
+                </Container>
+            </Background>
             <Container>
-                <Title>New proposal</Title>
-                <Description>
-                    There is a fee of {formatBalance(CREATE_PROPOSAL_COST)} AQUA to create a
-                    proposal. This fee is burned by being sent to the AQUA issuer wallet.
-                    <br />
-                    If your proposal is accepted, you will get a reward of{' '}
-                    {formatBalance(CREATE_PROPOSAL_COST * 1.5)} AQUA.
-                    <br />
-                    <br />
-                    Please make sure your proposal is clear, well written and follows the suggested
-                    format. Before you submit the proposal, we recommend sharing it on Discord to
-                    get the feedback from the community and ensure it has a good chance of being
-                    accepted.
-                    <br />
-                    <br />
-                    Proposals must have clearly defined action points, be relevant to Aquarius and
-                    have a feasible technical plan for implementation. Otherwise, they might be
-                    taken down before the voting ends.
-                </Description>
                 <form
                     onSubmit={(event) => {
                         event.preventDefault();
@@ -216,6 +273,40 @@ const ProposalCreation = ({
                                 }}
                             />
                         </SectionForm>
+                        {!isEdit && (
+                            <>
+                                <SectionDiscord>
+                                    <DiscordInput>
+                                        <Label>Discord discussion channel</Label>
+                                        <Input
+                                            placeholder="#channel_name"
+                                            value={discordChannel}
+                                            maxLength={64}
+                                            onChange={(event) => {
+                                                setDiscordChannel(event.target.value);
+                                            }}
+                                        />
+                                    </DiscordInput>
+                                    <DiscordInput>
+                                        <Label>Discord discussion owner nickname</Label>
+                                        <Input
+                                            placeholder="Nickname#0000"
+                                            value={discordChannelOwner}
+                                            maxLength={64}
+                                            onChange={(event) => {
+                                                setDiscordChannelOwner(event.target.value);
+                                            }}
+                                        />
+                                    </DiscordInput>
+                                </SectionDiscord>
+
+                                <DiscordRecommend>
+                                    ☝️ We recommend sharing it on Discord to get the feedback from
+                                    the community and ensure it has a good chance of being accepted.
+                                </DiscordRecommend>
+                            </>
+                        )}
+
                         <SectionForm>
                             <Label htmlFor="body">Content</Label>
                             <StyledReactQuill
@@ -227,22 +318,29 @@ const ProposalCreation = ({
                                 onBlur={() => setTextFocused(false)}
                             />
                         </SectionForm>
-                        <SectionDate>
-                            <DateBlock>
-                                <Label>Duration of voting</Label>
-                                <Select options={Options} value={period} onChange={setPeriod} />
-                            </DateBlock>
-                            <Time>
-                                <Label>End date</Label>
-                                <Input
-                                    disabled
-                                    value={getDateString(endDate, { withTime: true })}
-                                />
-                            </Time>
-                        </SectionDate>
+
                         <Button fullWidth isBig disabled={!hasData}>
-                            PREVIEW
+                            {isEdit ? 'SUBMIT CHANGES' : 'NEXT'}
                         </Button>
+
+                        <div>
+                            <InfoRow>
+                                <InfoIcon>☝️</InfoIcon>
+                                Please make sure your proposal is clear, well written and follows
+                                the suggested format.
+                            </InfoRow>
+
+                            <InfoRow>
+                                <InfoIcon>☝️</InfoIcon>
+                                Proposals must have clearly defined action points, be relevant to
+                                Aquarius and have a feasible technical plan for implementation.
+                            </InfoRow>
+
+                            <InfoRow>
+                                <InfoIcon />
+                                <i>Otherwise, they might be taken down before the voting ends.</i>
+                            </InfoRow>
+                        </div>
                     </ContainerForm>
                 </form>
             </Container>
