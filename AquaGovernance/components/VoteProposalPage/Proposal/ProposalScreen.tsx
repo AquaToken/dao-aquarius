@@ -5,6 +5,7 @@ import Sidebar from '../Sidebar/Sidebar';
 import ArrowLeft from '../../../../common/assets/img/icon-arrow-left.svg';
 import ArrowDown from '../../../../common/assets/img/icon-arrow-down.svg';
 import ExternalIcon from '../../../../common/assets/img/icon-external-link.svg';
+import IconEdit from '../../../../common/assets/img/icon-edit.svg';
 import AccountViewer from '../AccountViewer/AccountViewer';
 import { commonMaxWidth, flexAllCenter, respondDown } from '../../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../../common/styles';
@@ -15,7 +16,10 @@ import { getDateString } from '../../../../common/helpers/helpers';
 import { Proposal } from '../../../api/types';
 import { statePage } from '../../ProposalCreationPage/ProposalCreationPage';
 import ExternalLink from '../../../../common/basics/ExternalLink';
-import { useIsOnViewport } from '../../../../common/hooks/useIsOnViewport';
+import { useIsOnViewport, useIsOverScrolled } from '../../../../common/hooks/useIsOnViewport';
+import useAuthStore from '../../../../common/store/authStore/useAuthStore';
+import { MainRoutes } from '../../../routes';
+import Versions from '../Versions/Versions';
 
 const ProposalQuestion = styled.div`
     width: 100%;
@@ -33,7 +37,7 @@ const BackTo = styled.div`
     align-items: center;
 `;
 
-const BackButton = styled(Link)`
+export const BackButton = styled(Link)`
     ${flexAllCenter};
     width: 4.8rem;
     height: 4.8rem;
@@ -53,6 +57,9 @@ const BackButton = styled(Link)`
     &:active {
         transform: scale(0.9);
     }
+`;
+const EditButtonLabel = styled.div`
+    margin-left: auto;
 `;
 
 const QuestionText = styled.h3`
@@ -157,6 +164,21 @@ const AccountBlock = styled.div`
     ${flexAllCenter};
 `;
 
+const SidebarWeb = styled(Sidebar)`
+    z-index: 2;
+    ${respondDown(Breakpoints.md)`
+        display: none;
+    `}
+`;
+
+const SidebarMobile = styled(Sidebar)`
+    display: none;
+
+    ${respondDown(Breakpoints.md)`
+        display: block;
+    `}
+`;
+
 const viewOnStellarExpert = (account: string) => {
     window.open(`https://stellar.expert/explorer/public/account/${account}`, '_blank');
 };
@@ -183,13 +205,71 @@ const ScrollToSidebarButton = styled.div`
     `}
 `;
 
+const TabNav = styled.div`
+    background-color: ${COLORS.lightGray};
+    position: sticky;
+    top: 0;
+    z-index: 1;
+
+    ${respondDown(Breakpoints.md)`
+        display: none;
+    `}
+`;
+
+const TabNavContent = styled.div`
+    ${commonMaxWidth};
+    width: 100%;
+    padding-left: 4rem;
+    display: flex;
+`;
+
+const TabNavItem = styled.div<{ active?: boolean }>`
+    padding: 1.7rem 0 1.3rem;
+    color: ${({ active }) => (active ? COLORS.purple : COLORS.grayText)};
+    font-weight: ${({ active }) => (active ? 700 : 400)};
+    border-bottom: ${({ active }) => (active ? `0.1rem solid ${COLORS.purple}` : 'none')};
+    cursor: pointer;
+
+    &:hover {
+        border-bottom: 0.1rem solid ${COLORS.purple};
+        color: ${COLORS.purple};
+    }
+
+    &:not(:last-child) {
+        margin-right: 2.5rem;
+    }
+`;
+
+const DiscordChannelOwner = styled.div`
+    margin-top: 2.1rem;
+    margin-bottom: 1.6rem;
+
+    div:first-child {
+        font-weight: 400;
+        font-size: 1.4rem;
+        line-height: 1.6rem;
+        color: ${COLORS.grayText};
+    }
+
+    div:last-child {
+        font-weight: 400;
+        font-size: 1.6rem;
+        line-height: 2.4rem;
+        color: ${COLORS.paragraphText};
+    }
+`;
+
+const scrollToRef = (ref) => {
+    ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
+
 const ProposalScreen = ({
     proposal,
-    isTemplate,
     setScreenState,
+    version,
 }: {
     proposal: Proposal;
-    isTemplate?: boolean;
+    version?: string;
     setScreenState?: (state) => void;
 }): JSX.Element => {
     const {
@@ -200,7 +280,13 @@ const ProposalScreen = ({
         end_at: endDate,
         discord_channel_name: discordChannelName,
         discord_channel_url: discordChannelUrl,
+        discord_username: discordUsername,
+        proposal_status: status,
     } = proposal;
+
+    const currentVersionProposal = version
+        ? proposal.history_proposal.find((history) => history.version === Number(version))
+        : null;
 
     const startDateView = getDateString(new Date(startDate).getTime(), { withTime: true });
     const endDateView = getDateString(new Date(endDate).getTime(), { withTime: true });
@@ -209,22 +295,29 @@ const ProposalScreen = ({
         window.scrollTo(0, 0);
     }, []);
 
-    const ref = useRef(null);
-    const isEnd = new Date() >= new Date(proposal.end_at);
+    const mobileSidebarRef = useRef(null);
 
-    const scrollToSidebar = () => {
-        ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    };
+    const hideBottomBlock = useIsOnViewport(mobileSidebarRef);
 
-    const hideBottomBlock = useIsOnViewport(ref);
+    const proposalRef = useRef(null);
+    const discussionRef = useRef(null);
+    const detailsRef = useRef(null);
+    const resultsRef = useRef(null);
+
+    const isProposalOverScrolled = useIsOverScrolled(proposalRef, 50);
+    const isDiscussionOverScrolled = useIsOverScrolled(discussionRef, 50);
+    const isDetailsOverScrolled = useIsOverScrolled(detailsRef, 50);
+
+    const { isLogged, account } = useAuthStore();
 
     return (
         <>
+            <SidebarWeb proposal={proposal} />
             <ProposalQuestion>
                 <ProposalSection>
                     <LeftContent>
                         <BackTo>
-                            {isTemplate ? (
+                            {status === null ? (
                                 <>
                                     <BackButton
                                         as="button"
@@ -242,71 +335,213 @@ const ProposalScreen = ({
                                     <span>Proposals</span>
                                 </>
                             )}
+
+                            {isLogged &&
+                                account.id === proposal.proposed_by &&
+                                status === 'DISCUSSION' &&
+                                !version && (
+                                    <>
+                                        <EditButtonLabel>Edit proposal</EditButtonLabel>
+                                        <BackButton to={`${MainRoutes.edit}/${proposal.id}`}>
+                                            <IconEdit />
+                                        </BackButton>
+                                    </>
+                                )}
                         </BackTo>
-                        <QuestionText>{title}</QuestionText>
+                        <QuestionText>
+                            {currentVersionProposal ? currentVersionProposal.title : title}
+                        </QuestionText>
                     </LeftContent>
                 </ProposalSection>
             </ProposalQuestion>
-            <ProposalSection>
+            {Boolean(status) && (
+                <TabNav>
+                    <TabNavContent>
+                        <TabNavItem
+                            active={!isProposalOverScrolled}
+                            onClick={() => scrollToRef(proposalRef)}
+                        >
+                            Proposal
+                        </TabNavItem>
+                        <TabNavItem
+                            active={isProposalOverScrolled && !isDiscussionOverScrolled}
+                            onClick={() => scrollToRef(discussionRef)}
+                        >
+                            Discussion
+                        </TabNavItem>
+                        <TabNavItem
+                            active={isDiscussionOverScrolled && !isDetailsOverScrolled}
+                            onClick={() => scrollToRef(detailsRef)}
+                        >
+                            Details
+                        </TabNavItem>
+                        {(status === 'VOTING' || status === 'VOTED') && (
+                            <TabNavItem
+                                active={isDetailsOverScrolled}
+                                onClick={() => scrollToRef(resultsRef)}
+                            >
+                                Results
+                            </TabNavItem>
+                        )}
+                        {status === 'DISCUSSION' && Boolean(proposal.history_proposal.length) && (
+                            <TabNavItem
+                                active={isDetailsOverScrolled}
+                                onClick={() => scrollToRef(resultsRef)}
+                            >
+                                Versions
+                            </TabNavItem>
+                        )}
+                    </TabNavContent>
+                </TabNav>
+            )}
+            <ProposalSection ref={proposalRef}>
                 <LeftContent>
                     <Title>Proposal</Title>
-                    <DescriptionText dangerouslySetInnerHTML={{ __html: text }} />
+                    <DescriptionText
+                        dangerouslySetInnerHTML={{
+                            __html: currentVersionProposal ? currentVersionProposal.text : text,
+                        }}
+                    />
                 </LeftContent>
             </ProposalSection>
-            <ProposalSection>
+            <ProposalSection ref={discussionRef}>
                 <LeftContent>
                     <Title>Discussion</Title>
                     <DetailsDescription>
-                        Participate in the discussion of this proposal on Discord (#
-                        {discordChannelName || 'governance-voting'}).
+                        Participate in the discussion of this proposal on Discord (
+                        {discordChannelName || '#governance-voting'}).
+                        {Boolean(discordUsername) && (
+                            <DiscordChannelOwner>
+                                <div>Discussion owner:</div>
+                                <div>{discordUsername}</div>
+                            </DiscordChannelOwner>
+                        )}
                         <ExternalLink href={discordChannelUrl || 'https://discord.gg/sgzFscHp4C'}>
                             View discussion
                         </ExternalLink>
                     </DetailsDescription>
                 </LeftContent>
             </ProposalSection>
-            <ProposalSection>
-                <LeftContent>
-                    <Title>Details</Title>
-                    <DataDetails>
-                        <Column>
-                            <DetailsTitle>Voting start:</DetailsTitle>
-                            <DetailsDescription>{startDateView}</DetailsDescription>
-                        </Column>
-                        <Column>
-                            <DetailsTitle>Voting end:</DetailsTitle>
-                            <DetailsDescription>{endDateView}</DetailsDescription>
-                        </Column>
-                        <Column>
-                            <DetailsTitle>Proposed by:</DetailsTitle>
-                            <DetailsDescription>
-                                <AccountBlock>
-                                    <AccountViewer pubKey={proposedBy} />
-                                    <ExternalButton onClick={() => viewOnStellarExpert(proposedBy)}>
-                                        <ExternalIcon />
-                                    </ExternalButton>
-                                </AccountBlock>
-                            </DetailsDescription>
-                        </Column>
-                    </DataDetails>
-                </LeftContent>
-            </ProposalSection>
-            <ProposalSection>
-                <LeftContent>
-                    <CurrentResults proposal={proposal} />
-                </LeftContent>
-            </ProposalSection>
-            {!isTemplate && (
+            {Boolean(status) && (
+                <ProposalSection ref={detailsRef}>
+                    {(status === 'VOTING' || status === 'VOTED') && (
+                        <LeftContent>
+                            <Title>Details</Title>
+                            <DataDetails>
+                                <Column>
+                                    <DetailsTitle>Voting start:</DetailsTitle>
+                                    <DetailsDescription>{startDateView}</DetailsDescription>
+                                </Column>
+                                <Column>
+                                    <DetailsTitle>Voting end:</DetailsTitle>
+                                    <DetailsDescription>{endDateView}</DetailsDescription>
+                                </Column>
+                                <Column>
+                                    <DetailsTitle>Proposed by:</DetailsTitle>
+                                    <DetailsDescription>
+                                        <AccountBlock>
+                                            <AccountViewer pubKey={proposedBy} />
+                                            <ExternalButton
+                                                onClick={() => viewOnStellarExpert(proposedBy)}
+                                            >
+                                                <ExternalIcon />
+                                            </ExternalButton>
+                                        </AccountBlock>
+                                    </DetailsDescription>
+                                </Column>
+                            </DataDetails>
+                        </LeftContent>
+                    )}
+                    {status === 'DISCUSSION' && (
+                        <LeftContent>
+                            <Title>Details</Title>
+                            <DataDetails>
+                                <Column>
+                                    <DetailsTitle>Discussion created::</DetailsTitle>
+                                    <DetailsDescription>
+                                        {getDateString(new Date(proposal.created_at).getTime(), {
+                                            withTime: true,
+                                        })}
+                                    </DetailsDescription>
+                                </Column>
+                                <Column>
+                                    <DetailsTitle>
+                                        {Boolean(version) ? 'Deprecated version:' : 'Latest edit:'}
+                                    </DetailsTitle>
+                                    <DetailsDescription>
+                                        {Boolean(version)
+                                            ? `v${
+                                                  currentVersionProposal.version
+                                              }.0 on ${getDateString(
+                                                  new Date(
+                                                      currentVersionProposal.created_at,
+                                                  ).getTime(),
+                                                  {
+                                                      withTime: true,
+                                                  },
+                                              )}`
+                                            : getDateString(
+                                                  new Date(proposal.last_updated_at).getTime(),
+                                                  {
+                                                      withTime: true,
+                                                  },
+                                              )}
+                                    </DetailsDescription>
+                                </Column>
+                                <Column>
+                                    <DetailsTitle>
+                                        {Boolean(version)
+                                            ? 'Latest version:'
+                                            : 'Discussion lifetime:'}
+                                    </DetailsTitle>
+                                    <DetailsDescription>
+                                        {Boolean(version)
+                                            ? `v${proposal.version}.0 on ${getDateString(
+                                                  new Date(proposal.last_updated_at).getTime(),
+                                                  {
+                                                      withTime: true,
+                                                  },
+                                              )}`
+                                            : getDateString(
+                                                  new Date(proposal.last_updated_at).getTime() +
+                                                      30 * 24 * 60 * 60 * 1000,
+                                                  {
+                                                      withTime: true,
+                                                  },
+                                              )}
+                                    </DetailsDescription>
+                                </Column>
+                            </DataDetails>
+                        </LeftContent>
+                    )}
+                </ProposalSection>
+            )}
+            {(status === 'VOTING' || status === 'VOTED') && (
+                <ProposalSection ref={resultsRef}>
+                    <LeftContent>
+                        <CurrentResults proposal={proposal} />
+                    </LeftContent>
+                </ProposalSection>
+            )}
+            {(status === 'VOTING' || status === 'VOTED') && (
                 <ProposalSection>
                     <LeftContent>
                         <Votes />
                     </LeftContent>
                 </ProposalSection>
             )}
-            <Sidebar isTemplate={isTemplate} proposal={proposal} ref={ref} />
-            {!hideBottomBlock && (
-                <ScrollToSidebarButton onClick={() => scrollToSidebar()}>
-                    <span>{isEnd ? 'Go to the result' : 'Go to voting'}</span>
+            {status === 'DISCUSSION' && Boolean(proposal.history_proposal.length) && (
+                <ProposalSection ref={resultsRef}>
+                    <LeftContent>
+                        <Title>Versions ({proposal.history_proposal.length + 1})</Title>
+                        <Versions proposal={proposal} />
+                    </LeftContent>
+                </ProposalSection>
+            )}
+            <SidebarMobile proposal={proposal} ref={mobileSidebarRef} />
+            {!hideBottomBlock && (status === 'VOTED' || status === 'VOTING') && (
+                <ScrollToSidebarButton onClick={() => scrollToRef(mobileSidebarRef)}>
+                    <span>{status === 'VOTED' ? 'Go to the result' : 'Go to voting'}</span>
                     <ArrowDown />
                 </ScrollToSidebarButton>
             )}

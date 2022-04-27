@@ -13,21 +13,31 @@ import ConfirmVoteModal from '../ConfirmVoteModal/ConfirmVoteModal';
 import { SimpleProposalOptions } from '../VoteProposalPage';
 import { Proposal } from '../../../api/types';
 import Button from '../../../../common/basics/Button';
-import ConfirmCreateProposalModal from '../../ProposalCreationPage/ConfirmCreateProposalModal/ConfirmCreateProposalModal';
+import CreateDiscussionModal from '../../ProposalCreationPage/CreateDiscussionModal/CreateDiscussionModal';
 import { flexAllCenter, respondDown } from '../../../../common/mixins';
 import { formatBalance, getDateString, roundToPrecision } from '../../../../common/helpers/helpers';
 import NotEnoughAquaModal from '../../MainPage/NotEnoughAquaModal/NotEnoughAquaModal';
-import { CREATE_PROPOSAL_COST, MINIMUM_APPROVAL_PERCENT } from '../../MainPage/MainPage';
+import {
+    CREATE_DISCUSSION_COST,
+    CREATE_PROPOSAL_COST,
+    MINIMUM_APPROVAL_PERCENT,
+} from '../../MainPage/MainPage';
+import ProposalStatus, { PROPOSAL_STATUS } from '../../MainPage/ProposalStatus/ProposalStatus';
+import ExternalLink from '../../../../common/basics/ExternalLink';
+import { Link, useParams } from 'react-router-dom';
+import { MainRoutes } from '../../../routes';
+import PublishProposalModal from '../../ProposalCreationPage/PublishProposalModal/PublishProposalModal';
 
 const SidebarBlock = styled.aside`
-    top: 4rem;
+    top: 2rem;
     right: 10%;
     margin: 10rem 0 0;
     width: 36.4rem;
     background: ${COLORS.white};
     box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
     border-radius: 0.5rem;
-    position: absolute;
+    position: sticky;
+    float: right;
 
     ${respondDown(Breakpoints.xl)`
         right: 4rem;
@@ -45,6 +55,10 @@ const SidebarBlock = styled.aside`
 
 const Container = styled.div`
     padding: 3.2rem 4.8rem 4.8rem;
+
+    a {
+        text-decoration: none;
+    }
 `;
 
 export const SidebarTitle = styled.h5`
@@ -54,7 +68,7 @@ export const SidebarTitle = styled.h5`
     color: ${COLORS.titleText};
 `;
 const SidebarTemplateTitle = styled(SidebarTitle)`
-    margin-bottom: 0.8rem;
+    margin-bottom: 0;
 `;
 
 const SidebarDescription = styled.div`
@@ -62,7 +76,8 @@ const SidebarDescription = styled.div`
     line-height: 2.8rem;
     color: #000427;
     opacity: 0.7;
-    margin-bottom: 4.2rem;
+    margin-bottom: 4rem;
+    margin-top: 1rem;
 `;
 
 const Notice = styled.div`
@@ -217,6 +232,15 @@ const FinalResult = styled.span`
     margin-top: 1rem;
 `;
 
+const DiscussionDescription = styled.div`
+    font-weight: 400;
+    font-size: 1.6rem;
+    line-height: 2.8rem;
+    color: ${COLORS.darkGrayText};
+    margin-top: 1.6rem;
+    margin-bottom: 2.5rem;
+`;
+
 // const voteOptionsMockData = {
 //     isForAgainst: false,
 //     options: [
@@ -228,12 +252,10 @@ const FinalResult = styled.span`
 // };
 
 const Sidebar = forwardRef(
-    (
-        { proposal, isTemplate, ...props }: { proposal: Proposal; isTemplate: boolean },
-        ref: RefObject<HTMLDivElement>,
-    ) => {
+    ({ proposal, ...props }: { proposal: Proposal }, ref: RefObject<HTMLDivElement>) => {
         const [selectedOption, setSelectedOption] = useState(null);
         const { isLogged, account } = useAuthStore();
+        const { version } = useParams<{ version?: string }>();
 
         const onVoteClick = (option) => {
             if (isLogged) {
@@ -246,14 +268,26 @@ const Sidebar = forwardRef(
 
         const onContinueClick = () => {
             const aquaBalance = account.getAquaBalance();
-            const hasNecessaryBalance = aquaBalance >= CREATE_PROPOSAL_COST;
+            const hasNecessaryBalance = aquaBalance >= CREATE_DISCUSSION_COST;
 
             if (!hasNecessaryBalance) {
-                ModalService.openModal(NotEnoughAquaModal, {});
+                ModalService.openModal(NotEnoughAquaModal, { cost: CREATE_DISCUSSION_COST });
                 return;
             }
 
-            ModalService.openModal(ConfirmCreateProposalModal, proposal);
+            ModalService.openModal(CreateDiscussionModal, proposal);
+        };
+
+        const onPublishClick = () => {
+            const aquaBalance = account.getAquaBalance();
+            const hasNecessaryBalance = aquaBalance >= CREATE_PROPOSAL_COST;
+
+            if (!hasNecessaryBalance) {
+                ModalService.openModal(NotEnoughAquaModal, { cost: CREATE_PROPOSAL_COST });
+                return;
+            }
+
+            ModalService.openModal(PublishProposalModal, { proposal });
         };
 
         useEffect(() => {
@@ -265,18 +299,16 @@ const Sidebar = forwardRef(
         }, [isLogged]);
 
         const {
-            is_simple_proposal: isSimple,
             vote_for_issuer: voteForKey,
             vote_against_issuer: voteAgainstKey,
             vote_for_result: voteForResult,
             vote_against_result: voteAgainstResult,
             end_at: endDate,
             aqua_circulating_supply: aquaCirculatingSupply,
+            proposal_status: status,
         } = proposal;
 
-        const isEnd = new Date() >= new Date(endDate);
-
-        if (isEnd && isSimple && !isTemplate) {
+        if (status === 'VOTED') {
             const voteForValue = Number(voteForResult);
             const voteAgainstValue = Number(voteAgainstResult);
             const isVoteForWon = voteForValue > voteAgainstValue;
@@ -288,7 +320,7 @@ const Sidebar = forwardRef(
 
             if (Number.isNaN(percent)) {
                 return (
-                    <SidebarBlock ref={ref}>
+                    <SidebarBlock ref={ref} {...props}>
                         <Container>
                             <Results>
                                 <Title>No votes yet</Title>
@@ -305,7 +337,7 @@ const Sidebar = forwardRef(
                 MINIMUM_APPROVAL_PERCENT;
 
             return (
-                <SidebarBlock ref={ref}>
+                <SidebarBlock ref={ref} {...props}>
                     <Container>
                         <Results>
                             <Title>Result</Title>
@@ -338,9 +370,9 @@ const Sidebar = forwardRef(
             );
         }
 
-        return (
-            <SidebarBlock ref={ref}>
-                {isSimple && !isTemplate && (
+        if (status === 'VOTING') {
+            return (
+                <SidebarBlock ref={ref} {...props}>
                     <Container>
                         <SidebarTitle>Cast your votes</SidebarTitle>
                         <VotingButton
@@ -369,15 +401,118 @@ const Sidebar = forwardRef(
                             <BoldText>Against</BoldText>
                         </VotingButton>
                     </Container>
-                )}
-                {isTemplate && (
+                </SidebarBlock>
+            );
+        }
+
+        if (status === 'DISCUSSION') {
+            if (version) {
+                const versionDate = proposal.history_proposal.find(
+                    (history) => history.version === Number(version),
+                ).created_at;
+                return (
+                    <SidebarBlock ref={ref} {...props}>
+                        <Container>
+                            <ProposalStatus status={PROPOSAL_STATUS.DEPRECATED} />
+                            <DiscussionDescription>
+                                <span>This is depricated version of proposal</span>
+                                <br />
+                                <b>
+                                    v{version}.0 on{' '}
+                                    {getDateString(new Date(versionDate).getTime(), {
+                                        withTime: true,
+                                    })}
+                                </b>
+                            </DiscussionDescription>
+                            <Link to={`${MainRoutes.proposal}/${proposal.id}/`}>
+                                <ExternalLink>Current version</ExternalLink>
+                            </Link>
+                        </Container>
+                    </SidebarBlock>
+                );
+            }
+            const lastUpdateTimestamp = new Date(proposal.last_updated_at).getTime();
+            const day = 24 * 60 * 60 * 1000;
+            const daysToDiscussion = 30 * day;
+            const daysToExpired = Math.floor(
+                (lastUpdateTimestamp + daysToDiscussion - new Date().getTime()) / day,
+            );
+            const publishDate = getDateString(lastUpdateTimestamp + 7 * day, { withTime: true });
+            return (
+                <SidebarBlock ref={ref} {...props}>
+                    <Container>
+                        <ProposalStatus status={PROPOSAL_STATUS.DISCUSSION} />
+                        {isLogged && account.accountId() === proposal.proposed_by ? (
+                            <>
+                                <DiscussionDescription>
+                                    <span>
+                                        Proposal is under discussion, you have{' '}
+                                        <b>{daysToExpired} days</b> to make changes and publish
+                                    </span>
+                                    {daysToExpired > 23 && (
+                                        <span>
+                                            <br />
+                                            <br />
+                                            <i>
+                                                You can submit your offer only after{' '}
+                                                <b>{publishDate}</b>
+                                            </i>
+                                        </span>
+                                    )}
+                                </DiscussionDescription>
+                                <Button
+                                    isBig
+                                    fullWidth
+                                    disabled={daysToExpired > 23}
+                                    onClick={() => onPublishClick()}
+                                >
+                                    publish
+                                </Button>
+                            </>
+                        ) : (
+                            <>
+                                <DiscussionDescription>
+                                    <span>
+                                        Before the voting starts, there will be <b>7 days</b> for
+                                        discussion in the specified discord channel
+                                    </span>
+                                </DiscussionDescription>
+                                <ExternalLink
+                                    href={
+                                        proposal.discord_channel_url ||
+                                        'https://discord.gg/sgzFscHp4C'
+                                    }
+                                >
+                                    Discussion details
+                                </ExternalLink>
+                            </>
+                        )}
+                    </Container>
+                </SidebarBlock>
+            );
+        }
+
+        return (
+            <SidebarBlock ref={ref} {...props}>
+                {status === null && (
                     <Container>
                         <Notice>&#9757;️</Notice>
                         <SidebarTemplateTitle>Check details</SidebarTemplateTitle>
                         <SidebarDescription>
-                            Please check all details, you will not be able to delete or change your
-                            proposal after publication!
+                            Please check all the details, Editing will be <b>paid separately</b> and
+                            will be <b>available only during the discussion</b> period
                         </SidebarDescription>
+
+                        <ProposalStatus status={PROPOSAL_STATUS.DISCUSSION} />
+
+                        <SidebarDescription>
+                            Before the voting starts, there will be <b>7 days</b> for discussion in
+                            the specified discord channel
+                            <br />
+                            The discussion can take a maximum of <b>30 days</b> after the last
+                            creation or editing
+                        </SidebarDescription>
+
                         <Button
                             isBig
                             fullWidth
@@ -385,7 +520,7 @@ const Sidebar = forwardRef(
                                 onContinueClick();
                             }}
                         >
-                            Continue
+                            OPEN DISCUSSION
                         </Button>
                     </Container>
                 )}
