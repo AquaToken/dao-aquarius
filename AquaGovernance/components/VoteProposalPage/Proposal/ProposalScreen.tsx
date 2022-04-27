@@ -293,8 +293,8 @@ const ProposalScreen = ({
     const endDateView = getDateString(new Date(endDate).getTime(), { withTime: true });
 
     useEffect(() => {
-        window.scrollTo(0, 0);
-    }, []);
+        document.body.scrollTo(0, 0);
+    }, [version]);
 
     const mobileSidebarRef = useRef(null);
 

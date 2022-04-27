@@ -425,7 +425,7 @@ const Sidebar = forwardRef(
                                 </b>
                             </DiscussionDescription>
                             <Link to={`${MainRoutes.proposal}/${proposal.id}/`}>
-                                <ExternalLink>Current version</ExternalLink>
+                                <ExternalLink asDiv>Current version</ExternalLink>
                             </Link>
                         </Container>
                     </SidebarBlock>
