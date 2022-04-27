@@ -210,6 +210,7 @@ const TabNav = styled.div`
     position: sticky;
     top: 0;
     z-index: 1;
+    width: 100%;
 
     ${respondDown(Breakpoints.md)`
         display: none;
@@ -218,9 +219,9 @@ const TabNav = styled.div`
 
 const TabNavContent = styled.div`
     ${commonMaxWidth};
-    width: 100%;
     padding-left: 4rem;
     display: flex;
+    clear: both;
 `;
 
 const TabNavItem = styled.div<{ active?: boolean }>`
