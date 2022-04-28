@@ -313,7 +313,7 @@ const MainPage = (): JSX.Element => {
             </MainBlock>
             {!hideBottomBlock && (
                 <ScrollToSidebarButton onClick={() => scrollToRef(creationRef)}>
-                    <span>Create proposal</span>
+                    <span>Create discussion</span>
                     <ArrowDown />
                 </ScrollToSidebarButton>
             )}
