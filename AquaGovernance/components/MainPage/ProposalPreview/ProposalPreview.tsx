@@ -22,6 +22,10 @@ const Container = styled.div`
     padding: 3.4rem 3.2rem 3.2rem;
     background-color: ${COLORS.white};
 
+    &:hover {
+        background-color: ${COLORS.lightGray};
+    }
+
     &:not(:last-child) {
         margin-bottom: 4rem;
     }
