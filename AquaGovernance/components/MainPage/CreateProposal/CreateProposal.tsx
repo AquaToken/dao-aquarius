@@ -9,6 +9,7 @@ import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodM
 import { useHistory } from 'react-router-dom';
 import useAuthStore from '../../../../common/store/authStore/useAuthStore';
 import Plus from '../../../../common/assets/img/icon-plus.svg';
+import { forwardRef, RefObject } from 'react';
 
 const Container = styled.div`
     flex: 1;
@@ -66,7 +67,7 @@ const PlusIcon = styled(Plus)`
     margin-left: 1.7rem;
 `;
 
-const CreateProposal = () => {
+const CreateProposal = forwardRef(({}, ref: RefObject<HTMLDivElement>) => {
     const history = useHistory();
     const { isLogged } = useAuthStore();
 
@@ -79,7 +80,7 @@ const CreateProposal = () => {
         history.push('/create');
     };
     return (
-        <Container>
+        <Container ref={ref}>
             <Aqua />
             <Title>Create your own proposal</Title>
             <Description>
@@ -98,6 +99,6 @@ const CreateProposal = () => {
             </Button>
         </Container>
     );
-};
+});
 
 export default CreateProposal;

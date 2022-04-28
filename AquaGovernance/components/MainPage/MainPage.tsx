@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import BackgroundImageLeft from '../../../common/assets/img/background-left.svg';
 import BackgroundImageRight from '../../../common/assets/img/background-right.svg';
@@ -16,6 +16,8 @@ import { useHistory, useLocation } from 'react-router-dom';
 import useAuthStore from '../../../common/store/authStore/useAuthStore';
 import { ModalService } from '../../../common/services/globalServices';
 import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
+import { useIsOnViewport } from '../../../common/hooks/useIsOnViewport';
+import ArrowDown from '../../../common/assets/img/icon-arrow-down.svg';
 
 export const CREATE_DISCUSSION_COST = 1;
 export const CREATE_PROPOSAL_COST = 1;
@@ -168,6 +170,32 @@ const SelectStyled = styled(Select)`
     `}
 `;
 
+const ScrollToSidebarButton = styled.div`
+    display: none;
+    position: fixed;
+    justify-content: space-between;
+    align-items: center;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: ${COLORS.white};
+    box-shadow: 0 -0.5rem 1rem rgba(0, 6, 54, 0.06);
+    border-radius: 1rem 1rem 0 0;
+    padding: 2.4rem 1.6rem;
+    font-size: 1.6rem;
+    line-height: 2.4rem;
+    font-weight: bold;
+    cursor: pointer;
+
+    ${respondDown(Breakpoints.md)`
+        display: flex;
+    `}
+`;
+
+const scrollToRef = (ref) => {
+    ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
+
 enum UrlParams {
     filter = 'filter',
 }
@@ -227,55 +255,69 @@ const MainPage = (): JSX.Element => {
         setFilter(params.get(UrlParams.filter));
     }, [location]);
 
+    const creationRef = useRef(null);
+    const hideBottomBlock = useIsOnViewport(creationRef);
+
     if (!proposals.length) {
         return <PageLoader />;
     }
 
     return (
-        <MainBlock>
-            <Background>
-                <Title>Aquarius Governance</Title>
-                <Description>
-                    Aquarius protocol is governed by DAO voting with AQUA tokens. Vote and
-                    participate in discussions to shape the future of Aquarius.
-                </Description>
-                <BackgroundLeft />
-                <BackgroundRight />
-            </Background>
-            <ProposalsBlockWrapper>
-                <ProposalsBlock>
-                    <ProposalList>
-                        <TitleBlock>
-                            <ProposalsTitle>Proposals</ProposalsTitle>
-                            <ToggleGroupStyled
-                                value={filter}
-                                options={Options}
-                                onChange={setFilterValue}
-                            />
-                            <SelectStyled
-                                value={filter}
-                                options={Options}
-                                onChange={setFilterValue}
-                            />
-                        </TitleBlock>
+        <>
+            <MainBlock>
+                <Background>
+                    <Title>Aquarius Governance</Title>
+                    <Description>
+                        Aquarius protocol is governed by DAO voting with AQUA tokens. Vote and
+                        participate in discussions to shape the future of Aquarius.
+                    </Description>
+                    <BackgroundLeft />
+                    <BackgroundRight />
+                </Background>
+                <ProposalsBlockWrapper>
+                    <ProposalsBlock>
+                        <ProposalList>
+                            <TitleBlock>
+                                <ProposalsTitle>Proposals</ProposalsTitle>
+                                <ToggleGroupStyled
+                                    value={filter}
+                                    options={Options}
+                                    onChange={setFilterValue}
+                                />
+                                <SelectStyled
+                                    value={filter}
+                                    options={Options}
+                                    onChange={setFilterValue}
+                                />
+                            </TitleBlock>
 
-                        {loading ? (
-                            <PageLoader />
-                        ) : (
-                            <div>
-                                {proposals.map((proposal) => {
-                                    return (
-                                        <ProposalPreview key={proposal.id} proposal={proposal} />
-                                    );
-                                })}
-                            </div>
-                        )}
-                    </ProposalList>
-                    <CreateProposal />
-                </ProposalsBlock>
-            </ProposalsBlockWrapper>
-            <FAQ />
-        </MainBlock>
+                            {loading ? (
+                                <PageLoader />
+                            ) : (
+                                <div>
+                                    {proposals.map((proposal) => {
+                                        return (
+                                            <ProposalPreview
+                                                key={proposal.id}
+                                                proposal={proposal}
+                                            />
+                                        );
+                                    })}
+                                </div>
+                            )}
+                        </ProposalList>
+                        <CreateProposal ref={creationRef} />
+                    </ProposalsBlock>
+                </ProposalsBlockWrapper>
+                <FAQ />
+            </MainBlock>
+            {!hideBottomBlock && (
+                <ScrollToSidebarButton onClick={() => scrollToRef(creationRef)}>
+                    <span>Create proposal</span>
+                    <ArrowDown />
+                </ScrollToSidebarButton>
+            )}
+        </>
     );
 };
 
