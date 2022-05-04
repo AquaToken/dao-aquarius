@@ -19,6 +19,7 @@ import { useIsMounted } from '../../../../common/hooks/useIsMounted';
 import { checkProposalStatus, createProposal, editProposal } from '../../../api/api';
 import { useHistory } from 'react-router-dom';
 import { Breakpoints } from '../../../../common/styles';
+import PaymentInProgressAlert from '../PaymentInProgressAlert/PaymentInProgressAlert';
 
 const ProposalCost = styled.div`
     ${flexRowSpaceBetween};
@@ -68,8 +69,6 @@ const CreateDiscussionModal = ({
         return new Promise((resolve, reject) => {
             async function check() {
                 const result = await checkProposalStatus(id);
-
-                console.log(result);
 
                 if (result.payment_status === 'FINE') {
                     resolve(void 0);
@@ -177,6 +176,7 @@ const CreateDiscussionModal = ({
             >
                 Confirm
             </Button>
+            {loading && <PaymentInProgressAlert />}
         </>
     );
 };

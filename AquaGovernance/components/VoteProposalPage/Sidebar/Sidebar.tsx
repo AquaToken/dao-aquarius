@@ -435,9 +435,13 @@ const Sidebar = forwardRef(
             const day = 24 * 60 * 60 * 1000;
             const daysToDiscussion = 30 * day;
             const daysToExpired = Math.floor(
-                (lastUpdateTimestamp + daysToDiscussion - new Date().getTime()) / day,
+                (lastUpdateTimestamp + daysToDiscussion - Date.now()) / day,
             );
+
+            const isPublishAvailable = (lastUpdateTimestamp - Date.now()) / day >= 7;
+
             const publishDate = getDateString(lastUpdateTimestamp + 7 * day, { withTime: true });
+
             return (
                 <SidebarBlock ref={ref} {...props}>
                     <Container>
@@ -449,7 +453,7 @@ const Sidebar = forwardRef(
                                         Proposal is under discussion, you have{' '}
                                         <b>{daysToExpired} days</b> to make changes and publish
                                     </span>
-                                    {daysToExpired > 23 && (
+                                    {!isPublishAvailable && (
                                         <span>
                                             <br />
                                             <br />
@@ -463,7 +467,7 @@ const Sidebar = forwardRef(
                                 <Button
                                     isBig
                                     fullWidth
-                                    disabled={daysToExpired > 23}
+                                    disabled={!isPublishAvailable}
                                     onClick={() => onPublishClick()}
                                 >
                                     publish

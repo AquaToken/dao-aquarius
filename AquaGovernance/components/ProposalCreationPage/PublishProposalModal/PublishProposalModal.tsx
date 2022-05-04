@@ -7,22 +7,17 @@ import { Breakpoints } from '../../../../common/styles';
 import { useEffect, useMemo, useState } from 'react';
 import useAuthStore from '../../../../common/store/authStore/useAuthStore';
 import { formatBalance, getDateString } from '../../../../common/helpers/helpers';
-import {
-    APPROVED_PROPOSAL_REWARD,
-    CREATE_PROPOSAL_COST,
-} from '../../MainPage/MainPage';
+import { APPROVED_PROPOSAL_REWARD, CREATE_PROPOSAL_COST } from '../../MainPage/MainPage';
 import Select, { Option } from '../../../../common/basics/Select';
 import { DAY } from '../ProposalCreation/ProposalCreation';
 import Input from '../../../../common/basics/Input';
-import {
-    checkProposalStatus,
-    publishProposal,
-} from '../../../api/api';
+import { checkProposalStatus, publishProposal } from '../../../api/api';
 import { StellarService, ToastService } from '../../../../common/services/globalServices';
 import { sha256 } from 'js-sha256';
 import { MemoHash } from 'stellar-base';
 import { useIsMounted } from '../../../../common/hooks/useIsMounted';
 import { useHistory } from 'react-router-dom';
+import PaymentInProgressAlert from '../PaymentInProgressAlert/PaymentInProgressAlert';
 
 const Description = styled(ModalDescription)`
     width: 52.8rem;
@@ -114,8 +109,6 @@ const PublishProposalModal = ({ params, close }) => {
         return new Promise((resolve, reject) => {
             async function check() {
                 const result = await checkProposalStatus(id);
-
-                console.log(result);
 
                 if (result.payment_status === 'FINE') {
                     resolve(void 0);
@@ -216,6 +209,7 @@ const PublishProposalModal = ({ params, close }) => {
             >
                 Confirm
             </Button>
+            {loading && <PaymentInProgressAlert />}
         </>
     );
 };
