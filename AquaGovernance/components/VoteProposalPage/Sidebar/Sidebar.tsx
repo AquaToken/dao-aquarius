@@ -303,6 +303,7 @@ const Sidebar = forwardRef(
             vote_against_issuer: voteAgainstKey,
             vote_for_result: voteForResult,
             vote_against_result: voteAgainstResult,
+            start_at: startDate,
             end_at: endDate,
             aqua_circulating_supply: aquaCirculatingSupply,
             proposal_status: status,
@@ -381,6 +382,7 @@ const Sidebar = forwardRef(
                                     option: SimpleProposalOptions.voteFor,
                                     key: voteForKey,
                                     endDate,
+                                    startDate,
                                 })
                             }
                         >
@@ -394,6 +396,7 @@ const Sidebar = forwardRef(
                                     option: SimpleProposalOptions.voteAgainst,
                                     key: voteAgainstKey,
                                     endDate,
+                                    startDate,
                                 })
                             }
                         >
@@ -438,7 +441,7 @@ const Sidebar = forwardRef(
                 (lastUpdateTimestamp + daysToDiscussion - Date.now()) / day,
             );
 
-            const isPublishAvailable = (lastUpdateTimestamp - Date.now()) / day >= 7;
+            const isPublishAvailable = (Date.now() - lastUpdateTimestamp) / day >= 7;
 
             const publishDate = getDateString(lastUpdateTimestamp + 7 * day, { withTime: true });
 
