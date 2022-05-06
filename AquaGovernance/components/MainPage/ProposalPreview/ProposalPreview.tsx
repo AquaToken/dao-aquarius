@@ -294,7 +294,7 @@ const ProposalPreview = ({ proposal }: { proposal: ProposalSimple }) => {
                                 </SummaryValue>
                             </SummaryColumn>
                             <SummaryColumn>
-                                <SummaryTitle>Discussion:</SummaryTitle>
+                                <SummaryTitle>Discussion channel:</SummaryTitle>
                                 <SummaryValue onClick={openDiscord}>
                                     {proposal.discord_channel_name}
                                 </SummaryValue>
@@ -332,7 +332,7 @@ const ProposalPreview = ({ proposal }: { proposal: ProposalSimple }) => {
                                 </SummaryValue>
                             </SummaryColumn>
                             <SummaryColumn>
-                                <SummaryTitle>Discussion:</SummaryTitle>
+                                <SummaryTitle>Discussion channel:</SummaryTitle>
                                 <SummaryValue onClick={openDiscord}>
                                     {proposal.discord_channel_name}
                                 </SummaryValue>

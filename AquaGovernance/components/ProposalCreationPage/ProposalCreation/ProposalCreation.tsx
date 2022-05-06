@@ -212,14 +212,13 @@ const ProposalCreation = ({
         <>
             <Background>
                 <Container>
-                    {isEdit && (
-                        <BackTo>
-                            <BackButton to={`${MainRoutes.proposal}/${id}`}>
-                                <ArrowLeft />
-                            </BackButton>
-                            Back to discussion
-                        </BackTo>
-                    )}
+                    <BackTo>
+                        <BackButton to={isEdit ? `${MainRoutes.proposal}/${id}` : MainRoutes.main}>
+                            <ArrowLeft />
+                        </BackButton>
+                        {isEdit ? 'Back to discussion' : 'Back to proposals'}
+                    </BackTo>
+
                     <Title>{isEdit ? 'Edit proposal' : 'New proposal'}</Title>
 
                     {!isEdit ? (
