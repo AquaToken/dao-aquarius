@@ -10,6 +10,8 @@ import { useHistory } from 'react-router-dom';
 import useAuthStore from '../../../../common/store/authStore/useAuthStore';
 import Plus from '../../../../common/assets/img/icon-plus.svg';
 import { forwardRef, RefObject } from 'react';
+import { formatBalance } from '../../../../common/helpers/helpers';
+import { APPROVED_PROPOSAL_REWARD } from '../MainPage';
 
 const Container = styled.div`
     flex: 1;
@@ -84,13 +86,16 @@ const CreateProposal = forwardRef(({}, ref: RefObject<HTMLDivElement>) => {
             <Aqua />
             <Title>Create your own proposal</Title>
             <Description>
-                If your proposal is accepted, you will get a reward of 1,500,000 AQUA.
+                Accepted proposals earn their creator a reward of{' '}
+                {formatBalance(APPROVED_PROPOSAL_REWARD)} AQUA. Create a discussion with the
+                community to start the governance process.
             </Description>
             <ProcessChangedBlock>
                 <span>☝️</span>
                 <ChangedProcessText>
-                    We have changed the process of creating an proposal, now creating a discussion
-                    is mandatory.
+                    We have changed the proposal creation process, and a discussion phase is now
+                    mandatory. This change allows for community feedback before final publication to
+                    a vote.
                 </ChangedProcessText>
                 <ExternalLink>Read more</ExternalLink>
             </ProcessChangedBlock>

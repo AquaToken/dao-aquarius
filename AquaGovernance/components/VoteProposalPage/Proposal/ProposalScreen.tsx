@@ -464,7 +464,7 @@ const ProposalScreen = ({
                             <Title>Details</Title>
                             <DataDetails>
                                 <Column>
-                                    <DetailsTitle>Discussion created::</DetailsTitle>
+                                    <DetailsTitle>Discussion created:</DetailsTitle>
                                     <DetailsDescription>
                                         {getDateString(new Date(proposal.created_at).getTime(), {
                                             withTime: true,
