@@ -417,6 +417,12 @@ const ProposalScreen = ({
                                 <div>{discordUsername}</div>
                             </DiscordChannelOwner>
                         )}
+                        {Boolean(discordChannelName) && (
+                            <DiscordChannelOwner>
+                                <div>Discussion channel:</div>
+                                <div>{discordChannelName}</div>
+                            </DiscordChannelOwner>
+                        )}
                         <ExternalLink href={discordChannelUrl || 'https://discord.gg/sgzFscHp4C'}>
                             View discussion
                         </ExternalLink>

@@ -129,7 +129,9 @@ const CreateDiscussionModal = ({
                       end_at,
                       transaction_hash: tx.hash().toString('hex'),
                       discord_username: Boolean(discord_username) ? discord_username : null,
-                      discord_channel_name: Boolean(discord_channel_name) ? discord_username : null,
+                      discord_channel_name: Boolean(discord_channel_name)
+                          ? discord_channel_name
+                          : null,
                       envelope_xdr: tx.toEnvelope().toXDR('base64'),
                   });
 
