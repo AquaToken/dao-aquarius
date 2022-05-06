@@ -418,7 +418,7 @@ const Sidebar = forwardRef(
                         <Container>
                             <ProposalStatus status={PROPOSAL_STATUS.DEPRECATED} />
                             <DiscussionDescription>
-                                <span>This is depricated version of proposal</span>
+                                <span>This is a deprecated version of this proposal</span>
                                 <br />
                                 <b>
                                     v{version}.0 on{' '}
@@ -453,15 +453,15 @@ const Sidebar = forwardRef(
                             <>
                                 <DiscussionDescription>
                                     <span>
-                                        Proposal is under discussion, you have{' '}
-                                        <b>{daysToExpired} days</b> to make changes and publish
+                                        This proposal is under discussion. You have{' '}
+                                        <b>{daysToExpired} days</b> to make any changes or publish.
                                     </span>
                                     {!isPublishAvailable && (
                                         <span>
                                             <br />
                                             <br />
                                             <i>
-                                                You can submit your offer only after{' '}
+                                                You can publish your proposal after{' '}
                                                 <b>{publishDate}</b>
                                             </i>
                                         </span>
@@ -506,18 +506,19 @@ const Sidebar = forwardRef(
                         <Notice>&#9757;️</Notice>
                         <SidebarTemplateTitle>Check details</SidebarTemplateTitle>
                         <SidebarDescription>
-                            Please check all the details, Editing will be <b>paid separately</b> and
-                            will be <b>available only during the discussion</b> period
+                            Please check all provided details. Any edits needed after opening a
+                            discussion will incur a {formatBalance(CREATE_DISCUSSION_COST)} AQUA
+                            fee.
                         </SidebarDescription>
 
                         <ProposalStatus status={PROPOSAL_STATUS.DISCUSSION} />
 
                         <SidebarDescription>
-                            Before the voting starts, there will be <b>7 days</b> for discussion in
-                            the specified discord channel
+                            There will be <b>7 days</b> of discussions in the specified discord
+                            channel before you can move the proposal to a vote.
                             <br />
-                            The discussion can take a maximum of <b>30 days</b> after the last
-                            creation or editing
+                            Discussions can last a maximum of <b>30 days</b> after creation or the
+                            last edit.
                         </SidebarDescription>
 
                         <Button

@@ -221,32 +221,21 @@ const ProposalCreation = ({
 
                     <Title>{isEdit ? 'Edit proposal' : 'New proposal'}</Title>
 
-                    {!isEdit ? (
-                        <Description>
-                            There is a fee of <b>{formatBalance(CREATE_DISCUSSION_COST)} AQUA</b> to
-                            create a <b>7 days proposal discussion</b>. In order to move the
-                            proposal <b>from discussion to voting</b> status, you will need to pay
-                            another {formatBalance(CREATE_PROPOSAL_COST)} AQUA.{' '}
-                            <b>Each proposal edit will cost {CREATE_DISCUSSION_COST} AQUA.</b> This
-                            fee is burned by being sent to the AQUA issuer wallet.
-                            <br />
-                            <br />
-                            If your proposal is accepted, you will get a reward of{' '}
-                            {formatBalance(APPROVED_PROPOSAL_REWARD)} AQUA.
-                        </Description>
-                    ) : (
-                        <Description>
-                            <b>
-                                Each proposal edit will cost {formatBalance(CREATE_DISCUSSION_COST)}{' '}
-                                AQUA.
-                            </b>{' '}
-                            This fee is burned by being sent to the AQUA issuer wallet. In order to
-                            move the proposal <b>from discussion to voting</b> status, you will need
-                            to pay another {formatBalance(CREATE_PROPOSAL_COST)} AQUA. If your
-                            proposal is accepted, you will get a reward of{' '}
-                            {formatBalance(APPROVED_PROPOSAL_REWARD)} AQUA.
-                        </Description>
-                    )}
+                    <Description>
+                        There is a <b>{formatBalance(CREATE_DISCUSSION_COST)} AQUA</b> fee to create
+                        a <b>7 day proposal discussion.</b> To move a proposal{' '}
+                        <b>from discussion to active</b>
+                        status, a further {formatBalance(CREATE_PROPOSAL_COST)} AQUA is needed.{' '}
+                        <b>
+                            Any proposal edits are treated as a new proposal and incur a{' '}
+                            {formatBalance(CREATE_DISCUSSION_COST)} AQUA fee.
+                        </b>{' '}
+                        All fees are sent to the AQUA issuer wallet, burning them from the supply.
+                        <br />
+                        <br />
+                        If your proposal is accepted, you will get a reward of{' '}
+                        {formatBalance(APPROVED_PROPOSAL_REWARD)} AQUA.
+                    </Description>
                 </Container>
             </Background>
             <Container>
@@ -300,8 +289,8 @@ const ProposalCreation = ({
                                 </SectionDiscord>
 
                                 <DiscordRecommend>
-                                    ☝️ We recommend sharing it on Discord to get the feedback from
-                                    the community and ensure it has a good chance of being accepted.
+                                    ☝️ We recommend sharing on Discord to get feedback from the
+                                    community, ensuring it has a good chance of acceptance.
                                 </DiscordRecommend>
                             </>
                         )}
