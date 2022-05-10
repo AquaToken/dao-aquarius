@@ -72,7 +72,7 @@ const Questions = () => {
                 question={'Is proposal creation incentivized?'}
                 answer={
                     <span>
-                        Any proposals that are accepted will see their creators rewarded with
+                        Any proposals that are accepted will see their creators rewarded with{' '}
                         {formatBalance(APPROVED_PROPOSAL_REWARD)} AQUA.
                     </span>
                 }
@@ -84,7 +84,7 @@ const Questions = () => {
                         A fee of{' '}
                         <b>{formatBalance(CREATE_DISCUSSION_COST)} AQUA is needed to create</b> a
                         proposal discussion. To move a discussion to the publishing phase requires a
-                        further {formatBalance(CREATE_PROPOSAL_COST)} AQUA. Any edits cost a fee of
+                        further {formatBalance(CREATE_PROPOSAL_COST)} AQUA. Any edits cost a fee of{' '}
                         {formatBalance(CREATE_DISCUSSION_COST)} AQUA, so ensure proposals are
                         thoroughly thought out & complete before submitting.
                     </span>

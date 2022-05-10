@@ -224,8 +224,8 @@ const ProposalCreation = ({
                     <Description>
                         There is a <b>{formatBalance(CREATE_DISCUSSION_COST)} AQUA</b> fee to create
                         a <b>7 day proposal discussion.</b> To move a proposal{' '}
-                        <b>from discussion to active</b>
-                        status, a further {formatBalance(CREATE_PROPOSAL_COST)} AQUA is needed.{' '}
+                        <b>from discussion to active</b> status, a further{' '}
+                        {formatBalance(CREATE_PROPOSAL_COST)} AQUA is needed.{' '}
                         <b>
                             Any proposal edits are treated as a new proposal and incur a{' '}
                             {formatBalance(CREATE_DISCUSSION_COST)} AQUA fee.
