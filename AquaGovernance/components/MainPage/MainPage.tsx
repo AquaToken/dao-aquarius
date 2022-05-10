@@ -192,6 +192,34 @@ const ScrollToSidebarButton = styled.div`
     `}
 `;
 
+const EmptyList = styled.div`
+    flex: 1;
+    ${flexAllCenter};
+    flex-direction: column;
+`;
+
+const EmptyTitle = styled.span`
+    font-weight: 700;
+    font-size: 2rem;
+    line-height: 2.8rem;
+    color: ${COLORS.buttonBackground};
+    margin-bottom: 0.8rem;
+`;
+
+const EmptyDescription = styled.div`
+    font-weight: 400;
+    font-size: 1.4rem;
+    line-height: 2rem;
+    color: ${COLORS.grayText};
+    text-align: center;
+`;
+
+const EmptyLink = styled.span`
+    color: ${COLORS.purple};
+    text-decoration: underline;
+    cursor: pointer;
+`;
+
 const scrollToRef = (ref) => {
     ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
@@ -215,7 +243,19 @@ const MainPage = (): JSX.Element => {
 
     const { isLogged, account } = useAuthStore();
 
+    const onLinkClick = () => {
+        if (!isLogged) {
+            ModalService.openModal(ChooseLoginMethodModal, {});
+            return;
+        }
+
+        history.push('/create');
+    };
+
     useEffect(() => {
+        if (!filter) {
+            return;
+        }
         setLoading(true);
         getProposalsRequest(filter, account?.accountId()).then((result) => {
             setProposals(result.data.results.reverse());
@@ -258,7 +298,7 @@ const MainPage = (): JSX.Element => {
     const creationRef = useRef(null);
     const hideBottomBlock = useIsOnViewport(creationRef);
 
-    if (!proposals.length) {
+    if (loading && !proposals.length) {
         return <PageLoader />;
     }
 
@@ -293,7 +333,7 @@ const MainPage = (): JSX.Element => {
 
                             {loading ? (
                                 <PageLoader />
-                            ) : (
+                            ) : proposals.length ? (
                                 <div>
                                     {proposals.map((proposal) => {
                                         return (
@@ -304,6 +344,20 @@ const MainPage = (): JSX.Element => {
                                         );
                                     })}
                                 </div>
+                            ) : (
+                                <EmptyList>
+                                    <EmptyTitle>There's nothing here.</EmptyTitle>
+                                    <EmptyDescription>
+                                        It looks like there are no proposals in the selected
+                                        category yet.
+                                    </EmptyDescription>
+                                    <EmptyDescription>
+                                        You can wait for new proposals or{' '}
+                                        <EmptyLink onClick={() => onLinkClick()}>
+                                            create your own.
+                                        </EmptyLink>
+                                    </EmptyDescription>
+                                </EmptyList>
                             )}
                         </ProposalList>
                         <CreateProposal ref={creationRef} />
