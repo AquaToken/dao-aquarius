@@ -143,8 +143,7 @@ const ConfirmVoteModal = ({
     const formattedAquaBalance = hasTrustLine && formatBalance(aquaBalance);
 
     const now = Date.now();
-    const unlockDate =
-        now + (new Date(endDate).getTime() - now) + RATIO * (now - new Date(startDate).getTime());
+    const unlockDate = new Date(endDate).getTime() + RATIO * (now - new Date(startDate).getTime());
 
     const onRangeChange = (percent) => {
         setPercent(percent);
