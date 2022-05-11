@@ -62,13 +62,13 @@ export default class AccountService extends AccountResponse {
             (balance) =>
                 (balance as Horizon.BalanceLineAsset).asset_code == asset.code &&
                 (balance as Horizon.BalanceLineAsset).asset_issuer === asset.issuer,
-        );
+        ) as Horizon.BalanceLineAsset;
 
         if (!assetBalance) {
             return null;
         }
 
-        return +assetBalance.balance;
+        return Number(assetBalance.balance) - Number(assetBalance.selling_liabilities);
     }
 
     async getAmmAquaBalance(): Promise<number> {
