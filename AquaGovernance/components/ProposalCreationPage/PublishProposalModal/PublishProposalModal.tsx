@@ -18,6 +18,7 @@ import { MemoHash } from 'stellar-base';
 import { useIsMounted } from '../../../../common/hooks/useIsMounted';
 import { useHistory } from 'react-router-dom';
 import PaymentInProgressAlert from '../PaymentInProgressAlert/PaymentInProgressAlert';
+import ErrorHandler from '../../../../common/helpers/error-handler';
 
 const Description = styled(ModalDescription)`
     width: 52.8rem;
@@ -108,6 +109,10 @@ const PublishProposalModal = ({ params, close }) => {
     const checkStatus = (id) => {
         return new Promise((resolve, reject) => {
             async function check() {
+                if (!isMounted.current) {
+                    reject();
+                    return;
+                }
                 const result = await checkProposalStatus(id);
 
                 if (result.payment_status === 'FINE') {
@@ -171,7 +176,8 @@ const PublishProposalModal = ({ params, close }) => {
 
             history.push('/');
         } catch (e) {
-            ToastService.showErrorToast('The proposal has not been published');
+            const errorText = ErrorHandler(e);
+            ToastService.showErrorToast(errorText);
             if (isMounted.current) {
                 setLoading(false);
             }

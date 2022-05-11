@@ -8,7 +8,6 @@ import { ModalService } from '../../../../common/services/globalServices';
 import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
 import { useHistory } from 'react-router-dom';
 import useAuthStore from '../../../../common/store/authStore/useAuthStore';
-import Plus from '../../../../common/assets/img/icon-plus.svg';
 import { forwardRef, RefObject } from 'react';
 import { formatBalance } from '../../../../common/helpers/helpers';
 import { APPROVED_PROPOSAL_REWARD } from '../MainPage';
@@ -65,10 +64,6 @@ const ChangedProcessText = styled.div`
     margin: 1.6rem 0;
 `;
 
-const PlusIcon = styled(Plus)`
-    margin-left: 1.7rem;
-`;
-
 const CreateProposal = forwardRef(({}, ref: RefObject<HTMLDivElement>) => {
     const history = useHistory();
     const { isLogged } = useAuthStore();
@@ -99,9 +94,7 @@ const CreateProposal = forwardRef(({}, ref: RefObject<HTMLDivElement>) => {
                 </ChangedProcessText>
                 <ExternalLink>Read more</ExternalLink>
             </ProcessChangedBlock>
-            <Button onClick={() => handleClick()}>
-                create discussion <PlusIcon />
-            </Button>
+            <Button onClick={() => handleClick()}>create discussion</Button>
         </Container>
     );
 });

@@ -31,8 +31,8 @@ const Questions = () => {
                 question={'How to create a proposal?'}
                 answer={
                     <span>
-                        To start the process, click the <b>Create Discussion +</b> button. Provide
-                        all necessary information, including the title, Discord information, and
+                        To start the process, click the <b>Create Discussion</b> button. Provide all
+                        necessary information, including the title, Discord information, and
                         proposal content. Ensure you give as much detail as possible, especially the
                         implementation plan.
                     </span>
@@ -87,6 +87,23 @@ const Questions = () => {
                         further {formatBalance(CREATE_PROPOSAL_COST)} AQUA. Any edits cost a fee of{' '}
                         {formatBalance(CREATE_DISCUSSION_COST)} AQUA, so ensure proposals are
                         thoroughly thought out & complete before submitting.
+                    </span>
+                }
+            />
+            <Question
+                question={'How long is AQUA locked when used for voting?'}
+                answer={
+                    <span>
+                        The unlock time for AQUA governance votes depends on how quickly a vote
+                        occurs after a proposal is published. The unlock logic takes the time
+                        difference between a proposal’s start time and when a vote occurs and
+                        multiplies it by two. This multiplied time is added to the end of a
+                        proposal’s vote period, giving a final unlock time.
+                        <br />
+                        <br />
+                        For example, a user who votes 3.5 days into a voting period will have those
+                        days multiplied by 2, giving 7 days. Therefore the AQUA used to vote will
+                        unlock 7 days after the proposal vote ends.
                     </span>
                 }
             />

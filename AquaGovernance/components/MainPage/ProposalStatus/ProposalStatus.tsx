@@ -15,14 +15,21 @@ export enum PROPOSAL_STATUS {
 const StatusLabels = {
     [PROPOSAL_STATUS.DISCUSSION]: 'Discussion',
     [PROPOSAL_STATUS.ACTIVE]: 'Active',
-    [PROPOSAL_STATUS.CLOSED]: 'Closed',
+    [PROPOSAL_STATUS.CLOSED]: 'Finished',
     [PROPOSAL_STATUS.DEPRECATED]: 'Deprecated',
 };
 
 const Container = styled.div<{ status: PROPOSAL_STATUS }>`
     ${flexAllCenter};
     height: 3.2rem;
-    padding: 0 0.8rem;
+    padding: ${({ status }) => {
+        switch (status) {
+            case PROPOSAL_STATUS.CLOSED:
+                return '0 1.4rem';
+            default:
+                return '0 0.8rem';
+        }
+    }};
     border-radius: 1.6rem;
     width: min-content;
     background-color: ${({ status }) => {
@@ -64,19 +71,6 @@ const ActiveIcon = styled(IconSuccess)`
     }
 `;
 
-const ClosedIcon = styled(IconSuccess)`
-    height: 1.6rem;
-    width: 1.6rem;
-    margin-right: 0.4rem;
-    rect {
-        fill: ${COLORS.white};
-    }
-
-    path {
-        stroke: ${COLORS.placeholder};
-    }
-`;
-
 const DiscussionIcon = styled(IconPending)`
     height: 1.6rem;
     width: 1.6rem;
@@ -109,7 +103,6 @@ const ProposalStatus = ({ status, ...props }: { status: PROPOSAL_STATUS }) => {
     return (
         <Container status={status} {...props}>
             {status === PROPOSAL_STATUS.ACTIVE && <ActiveIcon />}
-            {status === PROPOSAL_STATUS.CLOSED && <ClosedIcon />}
             {status === PROPOSAL_STATUS.DISCUSSION && <DiscussionIcon />}
             {status === PROPOSAL_STATUS.DEPRECATED && <DeprecatedIcon />}
             {StatusLabels[status]}

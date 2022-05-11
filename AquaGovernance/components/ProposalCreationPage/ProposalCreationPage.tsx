@@ -44,6 +44,7 @@ const ProposalCreationPage = ({ isEdit }: { isEdit?: boolean }): JSX.Element => 
                 setText(response.data.text);
                 setDiscordChannel(response.data.discord_channel_name ?? '');
                 setDiscordChannelOwner(response.data.discord_username ?? '');
+                setDiscordChannelUrl(response.data.discord_channel_url ?? '');
             })
             .catch(() => {
                 ToastService.showErrorToast('Something went wrong!');
@@ -55,6 +56,7 @@ const ProposalCreationPage = ({ isEdit }: { isEdit?: boolean }): JSX.Element => 
     const [text, setText] = useState(defaultText);
     const [screenState, setScreenState] = useState(statePage.creation);
     const [discordChannel, setDiscordChannel] = useState('');
+    const [discordChannelUrl, setDiscordChannelUrl] = useState('');
     const [discordChannelOwner, setDiscordChannelOwner] = useState('');
 
     const { account } = useAuthStore();
@@ -100,6 +102,8 @@ const ProposalCreationPage = ({ isEdit }: { isEdit?: boolean }): JSX.Element => 
                         setDiscordChannel={setDiscordChannel}
                         discordChannelOwner={discordChannelOwner}
                         setDiscordChannelOwner={setDiscordChannelOwner}
+                        discordChannelUrl={discordChannelUrl}
+                        setDiscordChannelUrl={setDiscordChannelUrl}
                     />
                 </MainBlock>
             );
@@ -124,7 +128,7 @@ const ProposalCreationPage = ({ isEdit }: { isEdit?: boolean }): JSX.Element => 
                             aqua_circulating_supply: '1',
                             discord_username: discordChannelOwner,
                             discord_channel_name: discordChannel,
-                            discord_channel_url: '',
+                            discord_channel_url: discordChannelUrl,
                             proposal_status: null,
                             payment_status: null,
                             last_updated_at: '',
