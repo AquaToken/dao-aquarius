@@ -20,6 +20,7 @@ import { checkProposalStatus, createProposal, editProposal } from '../../../api/
 import { useHistory } from 'react-router-dom';
 import { Breakpoints } from '../../../../common/styles';
 import PaymentInProgressAlert from '../PaymentInProgressAlert/PaymentInProgressAlert';
+import ErrorHandler from '../../../../common/helpers/error-handler';
 
 const ProposalCost = styled.div`
     ${flexRowSpaceBetween};
@@ -68,6 +69,10 @@ const CreateDiscussionModal = ({
     const checkStatus = (id) => {
         return new Promise((resolve, reject) => {
             async function check() {
+                if (!isMounted.current) {
+                    reject();
+                    return;
+                }
                 const result = await checkProposalStatus(id);
 
                 if (result.payment_status === 'FINE') {
@@ -94,6 +99,7 @@ const CreateDiscussionModal = ({
             end_at,
             discord_username,
             discord_channel_name,
+            discord_channel_url,
             isEdit,
             id,
         } = params;
@@ -132,6 +138,9 @@ const CreateDiscussionModal = ({
                       discord_channel_name: Boolean(discord_channel_name)
                           ? discord_channel_name
                           : null,
+                      discord_channel_url: Boolean(discord_channel_url)
+                          ? discord_channel_url
+                          : null,
                       envelope_xdr: tx.toEnvelope().toXDR('base64'),
                   });
 
@@ -153,7 +162,8 @@ const CreateDiscussionModal = ({
 
             history.push('/');
         } catch (e) {
-            ToastService.showErrorToast('The proposal has not been created');
+            const errorText = ErrorHandler(e);
+            ToastService.showErrorToast(errorText);
             if (isMounted.current) {
                 setLoading(false);
             }

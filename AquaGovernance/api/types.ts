@@ -76,4 +76,5 @@ export type ProposalCreateOptions = {
     envelope_xdr: string;
     discord_username?: string;
     discord_channel_name?: string;
+    discord_channel_url?: string;
 };
