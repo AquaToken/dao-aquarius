@@ -120,10 +120,10 @@ const CreateDiscussionModal = ({
             const result = isEdit
                 ? await editProposal(
                       {
-                          text,
-                          title,
-                          transaction_hash: tx.hash().toString('hex'),
-                          envelope_xdr: tx.toEnvelope().toXDR('base64'),
+                          new_text: text,
+                          new_title: title,
+                          new_transaction_hash: tx.hash().toString('hex'),
+                          new_envelope_xdr: tx.toEnvelope().toXDR('base64'),
                       },
                       id,
                   )
