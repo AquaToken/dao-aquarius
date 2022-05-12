@@ -73,14 +73,24 @@ export const createProposal = (proposal: ProposalCreateOptions): Promise<Proposa
 };
 
 export const editProposal = (
-    proposal: Partial<ProposalCreateOptions>,
+    proposal: {
+        new_title: string;
+        new_text: string;
+        new_transaction_hash: string;
+        new_envelope_xdr: string;
+    },
     id: number,
 ): Promise<Proposal> => {
     return axios.patch<Proposal>(`${apiURL}/proposal/${id}/`, proposal).then(({ data }) => data);
 };
 
 export const publishProposal = (
-    proposal: Partial<ProposalCreateOptions>,
+    proposal: {
+        new_start_at: string;
+        new_end_at: string;
+        new_transaction_hash: string;
+        new_envelope_xdr: string;
+    },
     id: number,
 ): Promise<Proposal> => {
     return axios

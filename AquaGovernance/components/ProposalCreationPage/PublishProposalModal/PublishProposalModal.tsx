@@ -150,10 +150,10 @@ const PublishProposalModal = ({ params, close }) => {
 
             const result = await publishProposal(
                 {
-                    start_at: dateNow,
-                    end_at: dateEnd,
-                    transaction_hash: tx.hash().toString('hex'),
-                    envelope_xdr: tx.toEnvelope().toXDR('base64'),
+                    new_start_at: dateNow,
+                    new_end_at: dateEnd,
+                    new_transaction_hash: tx.hash().toString('hex'),
+                    new_envelope_xdr: tx.toEnvelope().toXDR('base64'),
                 },
                 proposal.id,
             );
