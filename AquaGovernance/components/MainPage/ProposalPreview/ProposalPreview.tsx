@@ -260,12 +260,6 @@ const ProposalPreview = ({ proposal }: { proposal: ProposalSimple }) => {
         );
     };
 
-    const openDiscord = (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        window.open(proposal.discord_channel_url || 'https://discord.gg/sgzFscHp4C', '_blank');
-    };
-
     return (
         <Container>
             <Link to={`${MainRoutes.proposal}/${proposal.id}/`}>
@@ -295,9 +289,7 @@ const ProposalPreview = ({ proposal }: { proposal: ProposalSimple }) => {
                             </SummaryColumn>
                             <SummaryColumn>
                                 <SummaryTitle>Discussion channel:</SummaryTitle>
-                                <SummaryValue onClick={openDiscord}>
-                                    {proposal.discord_channel_name}
-                                </SummaryValue>
+                                <SummaryValue>{proposal.discord_channel_name}</SummaryValue>
                             </SummaryColumn>
                         </>
                     )}
@@ -333,9 +325,7 @@ const ProposalPreview = ({ proposal }: { proposal: ProposalSimple }) => {
                             </SummaryColumn>
                             <SummaryColumn>
                                 <SummaryTitle>Discussion channel:</SummaryTitle>
-                                <SummaryValue onClick={openDiscord}>
-                                    {proposal.discord_channel_name}
-                                </SummaryValue>
+                                <SummaryValue>{proposal.discord_channel_name}</SummaryValue>
                             </SummaryColumn>
                             <SummaryColumn>
                                 <CurrentResults proposal={proposal} />
