@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
     ModalService,
     StellarService,
@@ -74,7 +74,13 @@ const VotesDurationModal = ({ params, close }) => {
 
     const isMounted = useIsMounted();
 
-    const { account } = useAuthStore();
+    const { account, isLogged } = useAuthStore();
+
+    useEffect(() => {
+        if (!isLogged) {
+            close();
+        }
+    }, [isLogged]);
 
     const back = () => {
         close();
