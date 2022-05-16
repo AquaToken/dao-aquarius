@@ -216,8 +216,14 @@ const VotesAmountModal = ({
     pairsAmounts?: {};
     isDownVoteModal?: boolean;
 }>) => {
-    const { account } = useAuthStore();
+    const { account, isLogged } = useAuthStore();
     const { pairs, updatePairs, pairsAmounts, isDownVoteModal } = params;
+
+    useEffect(() => {
+        if (!isLogged) {
+            close();
+        }
+    }, [isLogged]);
 
     const [percent, setPercent] = useState(0);
     const [amount, setAmount] = useState('');
@@ -234,8 +240,8 @@ const VotesAmountModal = ({
     );
     const [isHandleEdit, setIsHandleEdit] = useState(false);
 
-    const aquaBalance = account.getAquaBalance();
-    const nativeBalance = account.getAvailableNativeBalance();
+    const aquaBalance = account?.getAquaBalance();
+    const nativeBalance = account?.getAvailableNativeBalance();
     const formattedNativeBalance = formatBalance(nativeBalance);
 
     const hasTrustLine = aquaBalance !== null;

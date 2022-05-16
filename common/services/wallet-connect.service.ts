@@ -129,6 +129,8 @@ export default class WalletConnectServiceClass {
             this.appMeta = null;
 
             this.event.trigger({ type: WalletConnectEvents.logout });
+
+            ToastService.showSuccessToast('Logged out');
         }
     }
 
