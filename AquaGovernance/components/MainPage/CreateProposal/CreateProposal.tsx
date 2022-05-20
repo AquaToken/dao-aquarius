@@ -92,7 +92,9 @@ const CreateProposal = forwardRef(({}, ref: RefObject<HTMLDivElement>) => {
                     mandatory. This change allows for community feedback before final publication to
                     a vote.
                 </ChangedProcessText>
-                <ExternalLink>Read more</ExternalLink>
+                <ExternalLink href="https://medium.com/aquarius-aqua/launching-governance-v2-0-79c81fa6b639">
+                    Read more
+                </ExternalLink>
             </ProcessChangedBlock>
             <Button onClick={() => handleClick()}>create discussion</Button>
         </Container>
