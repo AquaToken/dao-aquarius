@@ -120,12 +120,14 @@ const GetAquaLink = styled.div`
     font-size: 1.4rem;
 `;
 
+const RATIO = 2;
+
 const ConfirmVoteModal = ({
     params,
     close,
-}: ModalProps<{ option: string; key: string; endDate: string }>) => {
+}: ModalProps<{ option: string; key: string; endDate: string; startDate: string }>) => {
     const { account } = useAuthStore();
-    const { option, key, endDate } = params;
+    const { option, key, endDate, startDate } = params;
 
     const isMounted = useIsMounted();
 
@@ -139,6 +141,9 @@ const ConfirmVoteModal = ({
     const hasAqua = aquaBalance !== 0;
 
     const formattedAquaBalance = hasTrustLine && formatBalance(aquaBalance);
+
+    const now = Date.now();
+    const unlockDate = new Date(endDate).getTime() + RATIO * (now - new Date(startDate).getTime());
 
     const onRangeChange = (percent) => {
         setPercent(percent);
@@ -181,7 +186,7 @@ const ConfirmVoteModal = ({
                 account.accountId(),
                 key,
                 amount,
-                new Date(endDate).getTime(),
+                unlockDate,
             );
             const tx = await StellarService.buildTx(account, voteOp);
             const result = await account.signAndSubmitTx(tx);
@@ -260,9 +265,7 @@ const ConfirmVoteModal = ({
             {hasTrustLine && hasAqua ? (
                 <ClaimBack>
                     You will be able to claim back your AQUA on{' '}
-                    <ClaimBackDate>
-                        {getDateString(new Date(endDate).getTime(), { withTime: true })}
-                    </ClaimBackDate>
+                    <ClaimBackDate>{getDateString(unlockDate, { withTime: true })}</ClaimBackDate>
                 </ClaimBack>
             ) : (
                 <GetAquaBlock>

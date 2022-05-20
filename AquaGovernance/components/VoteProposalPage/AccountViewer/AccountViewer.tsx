@@ -19,7 +19,7 @@ const IdenticonImage = styled.img`
 const KeyWeb = styled.span<{ narrowForMobile?: boolean }>`
     ${({ narrowForMobile }) =>
         narrowForMobile &&
-        respondDown(Breakpoints.md)`
+        respondDown(Breakpoints.lg)`
         display: none;
     `}
 `;
@@ -29,7 +29,7 @@ const KeyMobile = styled.span<{ narrowForMobile?: boolean }>`
 
     ${({ narrowForMobile }) =>
         narrowForMobile &&
-        respondDown(Breakpoints.md)`
+        respondDown(Breakpoints.lg)`
         display: inline;
     `}
 `;

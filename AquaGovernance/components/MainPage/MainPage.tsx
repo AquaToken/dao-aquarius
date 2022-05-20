@@ -1,24 +1,27 @@
 import * as React from 'react';
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import BackgroundImageLeft from '../../../common/assets/img/background-left.svg';
 import BackgroundImageRight from '../../../common/assets/img/background-right.svg';
 import { Breakpoints, COLORS } from '../../../common/styles';
 import { commonMaxWidth, flexAllCenter, respondDown } from '../../../common/mixins';
-import ProposalLink from './ProposalLink/ProposalLink';
-import useProposalsStore from '../../store/proposalsStore/useProposalsStore';
-import Button from '../../../common/basics/Button';
-import Plus from '../../../common/assets/img/icon-plus.svg';
-import { useHistory } from 'react-router-dom';
+import PageLoader from '../../../common/basics/PageLoader';
+import { getProposalsRequest, PROPOSAL_FILTER } from '../../api/api';
+import ToggleGroup from '../../../common/basics/ToggleGroup';
+import CreateProposal from './CreateProposal/CreateProposal';
+import Select from '../../../common/basics/Select';
+import ProposalPreview from './ProposalPreview/ProposalPreview';
+import FAQ from './FAQ/FAQ';
+import { useHistory, useLocation } from 'react-router-dom';
 import useAuthStore from '../../../common/store/authStore/useAuthStore';
 import { ModalService } from '../../../common/services/globalServices';
 import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
-import PageLoader from '../../../common/basics/PageLoader';
-import ExternalLink from '../../../common/basics/ExternalLink';
-import TemporarilyNotWork from '../TemporarilyNotWork/TemporarilyNotWork';
-import UnderMaintenance from '../../../common/assets/img/under-maintenance.svg';
+import { useIsOnViewport } from '../../../common/hooks/useIsOnViewport';
+import ArrowDown from '../../../common/assets/img/icon-arrow-down.svg';
 
-export const CREATE_PROPOSAL_COST = 1000000;
+export const CREATE_DISCUSSION_COST = 100000;
+export const CREATE_PROPOSAL_COST = 900000;
+export const APPROVED_PROPOSAL_REWARD = 1500000;
 export const MINIMUM_APPROVAL_PERCENT = 5;
 
 const MainBlock = styled.main`
@@ -102,14 +105,33 @@ const Description = styled.div`
     z-index: 1;
 `;
 
-const ProposalsBlock = styled.div`
+const ProposalsBlockWrapper = styled.div`
     padding: 8.5rem 4rem 0;
     ${commonMaxWidth};
+    margin-bottom: 10rem;
 
     ${respondDown(Breakpoints.md)`
         padding: 5.5rem 1.6rem 0; 
         background: ${COLORS.lightGray};
+        margin-bottom: 0;
     `}
+`;
+
+const ProposalsBlock = styled.div`
+    display: flex;
+    justify-content: space-between;
+    column-gap: 6rem;
+
+    ${respondDown(Breakpoints.md)`
+        flex-direction: column;
+        row-gap: 6rem;
+    `}
+`;
+
+const ProposalList = styled.div`
+    flex: 3;
+    display: flex;
+    flex-direction: column;
 `;
 
 const TitleBlock = styled.div`
@@ -118,15 +140,8 @@ const TitleBlock = styled.div`
     margin-bottom: 4.8rem;
     align-items: center;
 
-    ${respondDown(Breakpoints.md)`
-        flex-direction: column-reverse;
-    `}
-`;
-
-const StyledButton = styled(Button)`
-    ${respondDown(Breakpoints.md)`
-        width: 100%;
-        margin-bottom: 5.5rem;
+    ${respondDown(Breakpoints.lg)`
+        flex-direction: column;
     `}
 `;
 
@@ -135,107 +150,228 @@ const ProposalsTitle = styled.h3`
     line-height: 6.4rem;
     font-weight: bold;
     color: ${COLORS.titleText};
-`;
 
-const About = styled.div`
-    padding: 4.8rem 6rem;
-    background-color: ${COLORS.lightGray};
-    border-radius: 0.5rem;
-    margin-top: 4.8rem;
-
-    font-size: 1.6rem;
-    line-height: 2.8rem;
-    ${flexAllCenter};
-    flex-direction: column;
-    text-align: center;
-
-    color: ${COLORS.descriptionText};
-
-    opacity: 0.7;
-
-    ${respondDown(Breakpoints.md)`
-         margin-top: 0;
-         opacity: 1;
+    ${respondDown(Breakpoints.lg)`
+         margin-bottom: 5.5rem;
     `}
 `;
 
-const ModalBG = styled(UnderMaintenance)`
-    object-position: center center;
-    width: 62.4rem;
+const ToggleGroupStyled = styled(ToggleGroup)`
+    ${respondDown(Breakpoints.md)`
+        display: none;
+    `}
+`;
+
+const SelectStyled = styled(Select)`
+    display: none;
 
     ${respondDown(Breakpoints.md)`
-          width: 100%;
-      `}
+          display: flex;
+    `}
 `;
 
-const PlusIcon = styled(Plus)`
-    margin-left: 1.7rem;
+const ScrollToSidebarButton = styled.div`
+    display: none;
+    position: fixed;
+    justify-content: space-between;
+    align-items: center;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: ${COLORS.white};
+    box-shadow: 0 -0.5rem 1rem rgba(0, 6, 54, 0.06);
+    border-radius: 1rem 1rem 0 0;
+    padding: 2.4rem 1.6rem;
+    font-size: 1.6rem;
+    line-height: 2.4rem;
+    font-weight: bold;
+    cursor: pointer;
+
+    ${respondDown(Breakpoints.md)`
+        display: flex;
+    `}
 `;
+
+const EmptyList = styled.div`
+    flex: 1;
+    ${flexAllCenter};
+    flex-direction: column;
+`;
+
+const EmptyTitle = styled.span`
+    font-weight: 700;
+    font-size: 2rem;
+    line-height: 2.8rem;
+    color: ${COLORS.buttonBackground};
+    margin-bottom: 0.8rem;
+`;
+
+const EmptyDescription = styled.div`
+    font-weight: 400;
+    font-size: 1.4rem;
+    line-height: 2rem;
+    color: ${COLORS.grayText};
+    text-align: center;
+`;
+
+const EmptyLink = styled.span`
+    color: ${COLORS.purple};
+    text-decoration: underline;
+    cursor: pointer;
+`;
+
+const scrollToRef = (ref) => {
+    ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
+
+enum UrlParams {
+    filter = 'filter',
+}
+
+const Options = [
+    { label: 'All', value: PROPOSAL_FILTER.ALL },
+    { label: 'Active', value: PROPOSAL_FILTER.ACTIVE },
+    { label: 'Discussion', value: PROPOSAL_FILTER.DISCUSSION },
+    { label: 'Finished', value: PROPOSAL_FILTER.CLOSED },
+    { label: 'My proposals', value: PROPOSAL_FILTER.MY },
+];
 
 const MainPage = (): JSX.Element => {
-    const { proposals, getProposals } = useProposalsStore();
-    const history = useHistory();
-    const { isLogged } = useAuthStore();
+    const [proposals, setProposals] = useState([]);
+    const [filter, setFilter] = useState(null);
+    const [loading, setLoading] = useState(false);
 
-    const handleClick = () => {
-        // if (!isLogged) {
-        //     ModalService.openModal(ChooseLoginMethodModal, {});
-        //     return;
-        // }
-        //
-        // history.push('/create');
-        ModalService.openModal(TemporarilyNotWork, {}, true, <ModalBG />);
+    const { isLogged, account } = useAuthStore();
+
+    const onLinkClick = () => {
+        if (!isLogged) {
+            ModalService.openModal(ChooseLoginMethodModal, {});
+            return;
+        }
+
+        history.push('/create');
     };
 
     useEffect(() => {
-        getProposals();
-    }, []);
+        if (!filter) {
+            return;
+        }
+        setLoading(true);
+        getProposalsRequest(filter, account?.accountId()).then((result) => {
+            setProposals(result.data.results.reverse());
+            setLoading(false);
+        });
+    }, [filter]);
 
-    if (!proposals.length) {
+    const location = useLocation();
+    const history = useHistory();
+
+    const setFilterValue = (value) => {
+        if (value === PROPOSAL_FILTER.MY && !isLogged) {
+            ModalService.openModal(ChooseLoginMethodModal, {});
+            return;
+        }
+        const params = new URLSearchParams(location.search);
+        params.set(UrlParams.filter, value);
+        history.push({ pathname: location.pathname, search: params.toString() });
+    };
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        if (!params.has(UrlParams.filter)) {
+            params.append(UrlParams.filter, PROPOSAL_FILTER.ALL);
+            history.replace({ search: params.toString() });
+            return;
+        }
+        if (
+            params.has(UrlParams.filter) &&
+            params.get(UrlParams.filter) === PROPOSAL_FILTER.MY &&
+            !isLogged
+        ) {
+            params.set(UrlParams.filter, PROPOSAL_FILTER.ALL);
+            history.replace({ search: params.toString() });
+            return;
+        }
+        setFilter(params.get(UrlParams.filter));
+    }, [location]);
+
+    const creationRef = useRef(null);
+    const hideBottomBlock = useIsOnViewport(creationRef);
+
+    if (loading && !proposals.length) {
         return <PageLoader />;
     }
 
     return (
-        <MainBlock>
-            <Background>
-                <Title>Aquarius Governance</Title>
-                <Description>
-                    Aquarius protocol is governed by DAO voting with AQUA tokens. Vote and
-                    participate in discussions to shape the future of Aquarius.
-                </Description>
-                <BackgroundLeft />
-                <BackgroundRight />
-            </Background>
-            <ProposalsBlock>
-                <TitleBlock>
-                    <ProposalsTitle>Proposals</ProposalsTitle>
-                    <StyledButton onClick={() => handleClick()}>
-                        <>
-                            Create proposal <PlusIcon />
-                        </>
-                    </StyledButton>
-                </TitleBlock>
-                {proposals.map((proposal) => {
-                    return (
-                        <ProposalLink
-                            key={proposal.id}
-                            proposal={proposal}
-                            to={`/proposal/${proposal.id}/`}
-                        />
-                    );
-                })}
-            </ProposalsBlock>
-            <About>
-                &#9757;️
-                <br />
-                This is an early version of Aquarius Governance. <br />
-                Over time, users will create more proposals for you to vote on.
-                <br />
-                Participate in the discussion of governance proposals on Discord
-                (#governance-voting).
-                <ExternalLink href="https://discord.gg/sgzFscHp4C">View discussion</ExternalLink>
-            </About>
-        </MainBlock>
+        <>
+            <MainBlock>
+                <Background>
+                    <Title>Aquarius Governance</Title>
+                    <Description>
+                        Aquarius protocol is governed by DAO voting with AQUA tokens. Vote and
+                        participate in discussions to shape the future of Aquarius.
+                    </Description>
+                    <BackgroundLeft />
+                    <BackgroundRight />
+                </Background>
+                <ProposalsBlockWrapper>
+                    <ProposalsBlock>
+                        <ProposalList>
+                            <TitleBlock>
+                                <ProposalsTitle>Proposals</ProposalsTitle>
+                                <ToggleGroupStyled
+                                    value={filter}
+                                    options={Options}
+                                    onChange={setFilterValue}
+                                />
+                                <SelectStyled
+                                    value={filter}
+                                    options={Options}
+                                    onChange={setFilterValue}
+                                />
+                            </TitleBlock>
+
+                            {loading ? (
+                                <PageLoader />
+                            ) : proposals.length ? (
+                                <div>
+                                    {proposals.map((proposal) => {
+                                        return (
+                                            <ProposalPreview
+                                                key={proposal.id}
+                                                proposal={proposal}
+                                            />
+                                        );
+                                    })}
+                                </div>
+                            ) : (
+                                <EmptyList>
+                                    <EmptyTitle>There's nothing here.</EmptyTitle>
+                                    <EmptyDescription>
+                                        It looks like there are no proposals in the selected
+                                        category yet.
+                                    </EmptyDescription>
+                                    <EmptyDescription>
+                                        You can wait for new proposals or{' '}
+                                        <EmptyLink onClick={() => onLinkClick()}>
+                                            create your own.
+                                        </EmptyLink>
+                                    </EmptyDescription>
+                                </EmptyList>
+                            )}
+                        </ProposalList>
+                        <CreateProposal ref={creationRef} />
+                    </ProposalsBlock>
+                </ProposalsBlockWrapper>
+                <FAQ />
+            </MainBlock>
+            {!hideBottomBlock && (
+                <ScrollToSidebarButton onClick={() => scrollToRef(creationRef)}>
+                    <span>Create discussion</span>
+                    <ArrowDown />
+                </ScrollToSidebarButton>
+            )}
+        </>
     );
 };
 
