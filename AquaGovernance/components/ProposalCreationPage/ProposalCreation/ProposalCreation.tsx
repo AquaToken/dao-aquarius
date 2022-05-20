@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 
 import { Breakpoints, COLORS } from '../../../../common/styles';
@@ -7,23 +7,29 @@ import Input from '../../../../common/basics/Input';
 import ReactQuill from 'react-quill';
 import Button from '../../../../common/basics/Button';
 import { ReactQuillCSS } from '../../App';
-import { formatBalance, getDateString } from '../../../../common/helpers/helpers';
-import { CREATE_PROPOSAL_COST } from '../../MainPage/MainPage';
-import Select, { Option } from '../../../../common/basics/Select';
-import { respondDown } from '../../../../common/mixins';
+import { formatBalance } from '../../../../common/helpers/helpers';
+import {
+    APPROVED_PROPOSAL_REWARD,
+    CREATE_DISCUSSION_COST,
+    CREATE_PROPOSAL_COST,
+} from '../../MainPage/MainPage';
+import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
+import { BackButton } from '../../VoteProposalPage/Proposal/ProposalScreen';
+import ArrowLeft from '../../../../common/assets/img/icon-arrow-left.svg';
+import PlusIcon from '../../../../common/assets/img/icon-plus.svg';
+import MinusIcon from '../../../../common/assets/img/icon-minus.svg';
+import { MainRoutes } from '../../../routes';
+import { useParams } from 'react-router-dom';
 
 const Background = styled.div`
-    position: absolute;
-    z-index: -1;
-    top: 11.2rem;
-    left: 0;
     width: 100%;
     background-color: ${COLORS.lightGray};
-    height: 42rem;
+    padding-top: 7.7rem;
+    padding-bottom: 16.4rem;
+    margin-bottom: -11.7rem;
 `;
 
 const Container = styled.div`
-    padding: 5rem 0;
     max-width: 79.2rem;
     height: 100%;
     margin: 0 auto;
@@ -56,7 +62,6 @@ const Description = styled.div`
 
 const ContainerForm = styled.div`
     padding: 4.8rem;
-    margin-top: 10rem;
     background-color: ${COLORS.white};
     box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
     border-radius: 0.5rem;
@@ -70,31 +75,63 @@ const SectionForm = styled.div`
     margin-bottom: 4.8rem;
 `;
 
-const SectionDate = styled(SectionForm)`
-    display: flex;
-    column-gap: 4.8rem;
-
-    ${respondDown(Breakpoints.md)`
-         flex-direction: column;
-    `}
-`;
-const DateBlock = styled.div`
-    flex: 1 0 0;
-
-    ${respondDown(Breakpoints.md)`
-        margin-bottom: 3.2rem;
-    `}
-`;
-const Time = styled.div`
-    flex: 1 0 0;
-`;
-
 const Label = styled.label`
     display: block;
     margin-bottom: 1.2rem;
     font-size: 1.6rem;
     line-height: 1.8rem;
     color: ${COLORS.paragraphText};
+`;
+
+const DiscordSectionHeader = styled.div`
+    ${flexRowSpaceBetween};
+    font-weight: 700;
+    font-size: 2rem;
+    line-height: 2.8rem;
+    color: ${COLORS.buttonBackground};
+    margin-bottom: 3.9rem;
+`;
+
+const DiscordRecommend = styled.div`
+    display: flex;
+    width: 100%;
+    background-color: ${COLORS.lightGray};
+    padding: 1.6rem 2.8rem;
+    margin-top: -2.3rem;
+    margin-bottom: 5.5rem;
+    font-weight: 400;
+    font-size: 1.4rem;
+    line-height: 2rem;
+    color: ${COLORS.grayText};
+`;
+
+const InfoRow = styled.div`
+    display: flex;
+    align-items: center;
+    font-weight: 400;
+    font-size: 1.4rem;
+    line-height: 2rem;
+    color: ${COLORS.grayText};
+
+    &:first-child {
+        margin-top: 4rem;
+    }
+
+    &:not(:last-child) {
+        margin-bottom: 1.6rem;
+    }
+`;
+
+const InfoIcon = styled.span`
+    width: 1.8rem;
+    margin-right: 1.6rem;
+`;
+
+const BackTo = styled.div`
+    display: flex;
+    column-gap: 1.6rem;
+    align-items: center;
+    margin-bottom: 3.2rem;
 `;
 
 const StyledReactQuill = styled(ReactQuill)<{ focused: boolean }>`
@@ -129,23 +166,20 @@ const StyledReactQuill = styled(ReactQuill)<{ focused: boolean }>`
 
 export const DAY = 24 * 60 * 60 * 1000;
 
-const Options: Option<number>[] = [
-    { label: '3 days', value: DAY * 3 },
-    { label: '4 days', value: DAY * 4 },
-    { label: '5 days', value: DAY * 5 },
-    { label: '6 days', value: DAY * 6 },
-    { label: '7 days', value: DAY * 7 },
-];
-
 interface proposalCreationProps {
     title: string;
     text: string;
-    period: number;
     setTitle: (value: string) => void;
     setText: (value: string) => void;
-    setPeriod: (period: number) => void;
     hasData: boolean;
     onSubmit: () => void;
+    discordChannel: string;
+    setDiscordChannel: (value: string) => void;
+    discordChannelOwner: string;
+    setDiscordChannelOwner: (value: string) => void;
+    discordChannelUrl: string;
+    setDiscordChannelUrl: (value: string) => void;
+    isEdit?: boolean;
 }
 
 const ProposalCreation = ({
@@ -153,47 +187,66 @@ const ProposalCreation = ({
     text,
     setTitle,
     setText,
-    period,
-    setPeriod,
     hasData,
     onSubmit,
+    discordChannel,
+    setDiscordChannel,
+    discordChannelOwner,
+    setDiscordChannelOwner,
+    discordChannelUrl,
+    setDiscordChannelUrl,
+    isEdit,
 }: proposalCreationProps): JSX.Element => {
     const [textFocused, setTextFocused] = useState(false);
-    const [updateIndex, setUpdateIndex] = useState(0);
+    const { id } = useParams<{ id?: string }>();
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setUpdateIndex((prev) => prev + 1);
-        }, 10000);
+    const [isDiscordSectionOpen, setIsDiscordSectionOpen] = useState(
+        Boolean(discordChannel || discordChannelOwner || discordChannelUrl),
+    );
 
-        return () => clearInterval(interval);
-    }, []);
-
-    const endDate = useMemo(() => Date.now() + period, [updateIndex, period]);
+    const toggleDiscordSection = (event) => {
+        event.preventDefault();
+        if (!isDiscordSectionOpen) {
+            setIsDiscordSectionOpen(true);
+        } else {
+            setIsDiscordSectionOpen(false);
+            setDiscordChannelUrl('');
+            setDiscordChannelOwner('');
+            setDiscordChannel('');
+        }
+    };
 
     return (
         <>
-            <Background />
+            <Background>
+                <Container>
+                    <BackTo>
+                        <BackButton to={isEdit ? `${MainRoutes.proposal}/${id}` : MainRoutes.main}>
+                            <ArrowLeft />
+                        </BackButton>
+                        {isEdit ? 'Back to discussion' : 'Back to proposals'}
+                    </BackTo>
+
+                    <Title>{isEdit ? 'Edit proposal' : 'New proposal'}</Title>
+
+                    <Description>
+                        There is a <b>{formatBalance(CREATE_DISCUSSION_COST)} AQUA</b> fee to create
+                        a <b>7 day proposal discussion.</b> To move a proposal{' '}
+                        <b>from discussion to active</b> status, a further{' '}
+                        {formatBalance(CREATE_PROPOSAL_COST)} AQUA is needed.{' '}
+                        <b>
+                            Any proposal edits are treated as a new proposal and incur a{' '}
+                            {formatBalance(CREATE_DISCUSSION_COST)} AQUA fee.
+                        </b>{' '}
+                        All fees are sent to the AQUA issuer wallet, burning them from the supply.
+                        <br />
+                        <br />
+                        If your proposal is accepted, you will get a reward of{' '}
+                        {formatBalance(APPROVED_PROPOSAL_REWARD)} AQUA.
+                    </Description>
+                </Container>
+            </Background>
             <Container>
-                <Title>New proposal</Title>
-                <Description>
-                    There is a fee of {formatBalance(CREATE_PROPOSAL_COST)} AQUA to create a
-                    proposal. This fee is burned by being sent to the AQUA issuer wallet.
-                    <br />
-                    If your proposal is accepted, you will get a reward of{' '}
-                    {formatBalance(CREATE_PROPOSAL_COST * 1.5)} AQUA.
-                    <br />
-                    <br />
-                    Please make sure your proposal is clear, well written and follows the suggested
-                    format. Before you submit the proposal, we recommend sharing it on Discord to
-                    get the feedback from the community and ensure it has a good chance of being
-                    accepted.
-                    <br />
-                    <br />
-                    Proposals must have clearly defined action points, be relevant to Aquarius and
-                    have a feasible technical plan for implementation. Otherwise, they might be
-                    taken down before the voting ends.
-                </Description>
                 <form
                     onSubmit={(event) => {
                         event.preventDefault();
@@ -216,6 +269,77 @@ const ProposalCreation = ({
                                 }}
                             />
                         </SectionForm>
+                        {!isEdit && (
+                            <>
+                                <DiscordSectionHeader>
+                                    <span>Add discord discussion</span>
+                                    <Button
+                                        isSquare
+                                        onClick={(e) => toggleDiscordSection(e)}
+                                        likeDisabled={isDiscordSectionOpen}
+                                    >
+                                        {isDiscordSectionOpen ? <MinusIcon /> : <PlusIcon />}
+                                    </Button>
+                                </DiscordSectionHeader>
+                                {isDiscordSectionOpen ? (
+                                    <>
+                                        <SectionForm>
+                                            <Label>Link to discord discussion</Label>
+                                            <Input
+                                                placeholder="https://discord.com/channels"
+                                                value={discordChannelUrl}
+                                                maxLength={64}
+                                                onChange={(event) => {
+                                                    setDiscordChannelUrl(event.target.value);
+                                                }}
+                                                pattern="https:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)"
+                                            />
+                                        </SectionForm>
+                                        <SectionForm>
+                                            <Label>Discord discussion channel</Label>
+                                            <Input
+                                                placeholder="#channel_name"
+                                                value={discordChannel}
+                                                maxLength={64}
+                                                onChange={(event) => {
+                                                    setDiscordChannel(event.target.value);
+                                                }}
+                                            />
+                                        </SectionForm>
+                                        <SectionForm>
+                                            <Label>Discord discussion owner nickname</Label>
+                                            <Input
+                                                placeholder="Nickname#0000"
+                                                value={discordChannelOwner}
+                                                maxLength={64}
+                                                onChange={(event) => {
+                                                    setDiscordChannelOwner(event.target.value);
+                                                }}
+                                                pattern="^.{3,32}#[0-9]{4}$"
+                                                onInvalid={(e) =>
+                                                    (
+                                                        e.target as HTMLInputElement
+                                                    ).setCustomValidity('Format Nickname#0000')
+                                                }
+                                                onInput={(e) =>
+                                                    (
+                                                        e.target as HTMLInputElement
+                                                    ).setCustomValidity('')
+                                                }
+                                            />
+                                        </SectionForm>{' '}
+                                    </>
+                                ) : (
+                                    <DiscordRecommend>
+                                        ☝️ We recommend sharing on Discord to get feedback from the
+                                        community, ensuring it has a good chance of acceptance.
+                                        Please contact one of the Aquarius Discord admins so your
+                                        channel can be created in preparation for discussion.
+                                    </DiscordRecommend>
+                                )}
+                            </>
+                        )}
+
                         <SectionForm>
                             <Label htmlFor="body">Content</Label>
                             <StyledReactQuill
@@ -227,22 +351,29 @@ const ProposalCreation = ({
                                 onBlur={() => setTextFocused(false)}
                             />
                         </SectionForm>
-                        <SectionDate>
-                            <DateBlock>
-                                <Label>Duration of voting</Label>
-                                <Select options={Options} value={period} onChange={setPeriod} />
-                            </DateBlock>
-                            <Time>
-                                <Label>End date</Label>
-                                <Input
-                                    disabled
-                                    value={getDateString(endDate, { withTime: true })}
-                                />
-                            </Time>
-                        </SectionDate>
+
                         <Button fullWidth isBig disabled={!hasData}>
-                            PREVIEW
+                            {isEdit ? 'SUBMIT CHANGES' : 'NEXT'}
                         </Button>
+
+                        <div>
+                            <InfoRow>
+                                <InfoIcon>☝️</InfoIcon>
+                                Please make sure your proposal is clear, well written and follows
+                                the suggested format.
+                            </InfoRow>
+
+                            <InfoRow>
+                                <InfoIcon>☝️</InfoIcon>
+                                Proposals must have clearly defined action points, be relevant to
+                                Aquarius and have a feasible technical plan for implementation.
+                            </InfoRow>
+
+                            <InfoRow>
+                                <InfoIcon />
+                                <i>Otherwise, they might be taken down.</i>
+                            </InfoRow>
+                        </div>
                     </ContainerForm>
                 </form>
             </Container>

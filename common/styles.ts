@@ -16,6 +16,8 @@ export const COLORS = {
     pinkRed: '#FF3461',
     yellow: '#F8D26C',
     green: '#00B796',
+    orange: '#FF8F00',
+    border: '#E9E6ED',
 };
 
 export const FONT_FAMILY = {
