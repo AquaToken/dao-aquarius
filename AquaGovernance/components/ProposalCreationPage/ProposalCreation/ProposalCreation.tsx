@@ -288,7 +288,7 @@ const ProposalCreation = ({
                                             <Input
                                                 placeholder="https://discord.com/channels"
                                                 value={discordChannelUrl}
-                                                maxLength={64}
+                                                maxLength={200}
                                                 onChange={(event) => {
                                                     setDiscordChannelUrl(event.target.value);
                                                 }}
