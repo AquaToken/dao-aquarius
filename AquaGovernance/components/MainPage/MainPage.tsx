@@ -232,7 +232,7 @@ const Options = [
     { label: 'All', value: PROPOSAL_FILTER.ALL },
     { label: 'Active', value: PROPOSAL_FILTER.ACTIVE },
     { label: 'Discussion', value: PROPOSAL_FILTER.DISCUSSION },
-    { label: 'Closed', value: PROPOSAL_FILTER.CLOSED },
+    { label: 'Finished', value: PROPOSAL_FILTER.CLOSED },
     { label: 'My proposals', value: PROPOSAL_FILTER.MY },
 ];
 
