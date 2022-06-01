@@ -55,9 +55,10 @@
     "webpack-merge": "^5.8.0"
   },
   "dependencies": {
-    "@walletconnect/client": "2.0.0-beta.18.3",
+    "@walletconnect/client": "2.0.0-beta.26",
     "axios": "^0.23.0",
     "date-fns": "^2.28.0",
+    "detect-browser": "^5.3.0",
     "js-sha256": "^0.9.0",
     "react-datepicker": "^4.5.0",
     "react-qr-code": "^2.0.2",

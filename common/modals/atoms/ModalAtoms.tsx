@@ -192,4 +192,8 @@ export const ModalDescription = styled.div<{ smallMarginBottom?: boolean }>`
     line-height: 2.8rem;
     color: ${COLORS.descriptionText};
     margin-bottom: ${({ smallMarginBottom }) => (smallMarginBottom ? '2.4rem' : '4rem')};
+
+    ${respondDown(Breakpoints.md)`
+         margin-bottom: 2.4rem;
+    `};
 `;
