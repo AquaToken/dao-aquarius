@@ -16,8 +16,12 @@ import { StellarService, ToastService } from '../../../../common/services/global
 import useAuthStore from '../../../../common/store/authStore/useAuthStore';
 import { useState } from 'react';
 import { useIsMounted } from '../../../../common/hooks/useIsMounted';
-import { BuildSignAndSubmitStatuses } from '../../../../common/services/wallet-connect.service';
 import ErrorHandler from '../../../../common/helpers/error-handler';
+import {
+    BuildSignAndSubmitStatuses,
+    openApp,
+} from '../../../../common/services/wallet-connect.service';
+import { LoginTypes } from '../../../../common/store/authStore/types';
 
 const Container = styled.div`
     width: 52.8rem;
@@ -103,6 +107,10 @@ const ConfirmBribeModal = ({
         if (+balance < +amount) {
             ToastService.showErrorToast(`You have insufficient ${rewardAsset.code} balance`);
             return;
+        }
+
+        if (account.authType === LoginTypes.walletConnect) {
+            openApp();
         }
 
         setPending(true);

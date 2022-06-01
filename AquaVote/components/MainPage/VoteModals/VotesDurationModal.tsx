@@ -6,7 +6,10 @@ import {
     ToastService,
 } from '../../../../common/services/globalServices';
 import { SELECTED_PAIRS_ALIAS } from '../MainPage';
-import { BuildSignAndSubmitStatuses } from '../../../../common/services/wallet-connect.service';
+import {
+    BuildSignAndSubmitStatuses,
+    openApp,
+} from '../../../../common/services/wallet-connect.service';
 import useAuthStore from '../../../../common/store/authStore/useAuthStore';
 import Select, { Option } from '../../../../common/basics/Select';
 import { useIsMounted } from '../../../../common/hooks/useIsMounted';
@@ -17,6 +20,7 @@ import { Breakpoints, COLORS } from '../../../../common/styles';
 import VotesAmountModal, { ContentRow, Label } from './VotesAmountModal';
 import Button from '../../../../common/basics/Button';
 import { respondDown } from '../../../../common/mixins';
+import { LoginTypes } from '../../../../common/store/authStore/types';
 import ErrorHandler from '../../../../common/helpers/error-handler';
 
 const ClaimBack = styled.div`
@@ -93,6 +97,9 @@ const VotesDurationModal = ({ params, close }) => {
     };
 
     const onSubmit = async () => {
+        if (account.authType === LoginTypes.walletConnect) {
+            openApp();
+        }
         try {
             setPending(true);
 
