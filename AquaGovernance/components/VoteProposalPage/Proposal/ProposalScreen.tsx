@@ -221,7 +221,6 @@ const TabNavContent = styled.div`
     ${commonMaxWidth};
     padding-left: 4rem;
     display: flex;
-    clear: both;
 `;
 
 const TabNavItem = styled.div<{ active?: boolean }>`
