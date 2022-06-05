@@ -227,7 +227,8 @@ const TabNavItem = styled.div<{ active?: boolean }>`
     padding: 1.7rem 0 1.3rem;
     color: ${({ active }) => (active ? COLORS.purple : COLORS.grayText)};
     font-weight: ${({ active }) => (active ? 700 : 400)};
-    border-bottom: ${({ active }) => (active ? `0.1rem solid ${COLORS.purple}` : 'none')};
+    border-bottom: ${({ active }) =>
+        active ? `0.1rem solid ${COLORS.purple}` : `0.1rem solid ${COLORS.transparent}`};
     cursor: pointer;
 
     &:hover {
