@@ -56,7 +56,7 @@ const INTERNET_CONNECTION_ERROR = 'Make sure you are connected to the internet a
 const SESSION_TIMEOUT_ERROR = 'Session failed to settle after 300 seconds';
 const PAIRING_TIMEOUT_ERROR = 'Pairing failed to settle after 300 seconds';
 
-const CONNECTION_TIMEOUT = 15000;
+const CONNECTION_TIMEOUT = 60000;
 
 function getLocalStorage(): Storage | undefined {
     let res: Storage | undefined = undefined;
