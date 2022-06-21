@@ -444,12 +444,6 @@ const MainPage = (): JSX.Element => {
     }, [sort, searchBase, searchCounter, page]);
 
     useEffect(() => {
-        getTotalVotingStats().then((result) => {
-            setTotalStats(result);
-        });
-    }, [UPDATE_INTERVAL]);
-
-    useEffect(() => {
         const unsub = StellarService.event.sub(({ type }) => {
             if (type === StellarEvents.claimableUpdate) {
                 setClaimUpdateId((prevState) => prevState + 1);
@@ -540,16 +534,22 @@ const MainPage = (): JSX.Element => {
 
     useEffect(() => {
         if (sort === SortTypes.topVoted) {
-            getPairsList(sort, PAGE_SIZE, page).then((result) => {
-                setPairs(result.pairs);
-                setCount(result.count);
-                processAssetsFromPairs(result.pairs);
-            });
+            Promise.all([getPairsList(sort, PAGE_SIZE, page), getTotalVotingStats()]).then(
+                ([pairsResult, totalStatsResult]) => {
+                    setPairs(pairsResult.pairs);
+                    setCount(pairsResult.count);
+                    processAssetsFromPairs(pairsResult.pairs);
+                    setTotalStats(totalStatsResult);
+                },
+            );
             return;
         }
-        updateVotesForMarketKeys(pairs).then((result) => {
-            setPairs(result);
-        });
+        Promise.all([updateVotesForMarketKeys(pairs), getTotalVotingStats()]).then(
+            ([pairsResult, totalStatsResult]) => {
+                setPairs(pairsResult);
+                setTotalStats(totalStatsResult);
+            },
+        );
     }, [updateIndex]);
 
     useEffect(() => {
