@@ -1,6 +1,6 @@
 import { AUTH_ACTIONS, LoginTypes } from './types';
 import { Dispatch } from 'react';
-import { AppMetadata } from '@walletconnect/types';
+import { SignClientTypes } from '@walletconnect/types';
 import AccountService from '../../services/account.service';
 import AccountRecord from 'stellar-sdk';
 import { StellarService } from '../../services/globalServices';
@@ -9,7 +9,7 @@ import { ActionAsyncResult, ActionResult, ActionSimpleResult } from '../types';
 export function login(
     pubKey: string,
     loginType: LoginTypes,
-    metadata?: AppMetadata,
+    metadata?: SignClientTypes.Metadata,
 ): ActionAsyncResult {
     return (dispatch: Dispatch<ActionResult>): void => {
         dispatch({ type: AUTH_ACTIONS.LOGIN_START });

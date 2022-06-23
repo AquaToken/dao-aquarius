@@ -1,5 +1,5 @@
 import { AUTH_ACTIONS, AuthStore, LoginTypes } from './types';
-import { AppMetadata } from '@walletconnect/types';
+import { SignClientTypes } from '@walletconnect/types';
 import AccountService from '../../services/account.service';
 import { ActionSimpleResult } from '../types';
 
@@ -24,7 +24,7 @@ export default function authStore(state = initialState, action: ActionSimpleResu
             const { account, loginType, metadata } = action.payload as {
                 account: AccountService;
                 loginType: LoginTypes;
-                metadata?: AppMetadata;
+                metadata?: SignClientTypes.Metadata;
             };
             return {
                 ...state,

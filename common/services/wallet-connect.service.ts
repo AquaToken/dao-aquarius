@@ -1,6 +1,6 @@
-import WalletConnectClient, { CLIENT_EVENTS } from '@walletconnect/client';
-import { AppMetadata, PairingTypes, SessionTypes } from '@walletconnect/types';
-import { ERROR } from '@walletconnect/utils';
+import WalletConnectClient, { SIGN_CLIENT_EVENTS } from '@walletconnect/sign-client';
+import { PairingTypes, SessionTypes, SignClientTypes } from '@walletconnect/types';
+import { getInternalError, getSdkError } from '@walletconnect/utils';
 import * as StellarSdk from 'stellar-sdk';
 import QRModal from '../modals/WalletConnectModals/QRModal';
 import PairingModal from '../modals/WalletConnectModals/PairingModal';
@@ -32,11 +32,20 @@ const METADATA = {
     },
 };
 
+const PUBNET = 'stellar:pubnet';
+
 const STELLAR_METHODS = {
     SIGN_AND_SUBMIT: 'stellar_signAndSubmitXDR',
     SIGN: 'stellar_signXDR',
 };
-const PUBNET = 'stellar:pubnet';
+
+const REQUIRED_NAMESPACES = {
+    stellar: {
+        chains: [PUBNET],
+        methods: Object.values(STELLAR_METHODS),
+        events: [],
+    },
+};
 
 export enum WalletConnectEvents {
     login = 'login',
@@ -162,9 +171,9 @@ const setVersionToLS = (version) => {
 };
 
 export default class WalletConnectServiceClass {
-    appMeta: AppMetadata | null = null;
+    appMeta: SignClientTypes.Metadata | null = null;
     client: WalletConnectClient | null = null;
-    session: SessionTypes.Settled | null = null;
+    session: SessionTypes.Struct | null = null;
     isPairCreated = false;
     event: EventService = new EventService();
     selfMeta = METADATA[process.env.PROJECT];
@@ -193,8 +202,8 @@ export default class WalletConnectServiceClass {
                 Promise.race([
                     WalletConnectClient.init({
                         // logger: 'debug',
-                        relayUrl: 'wss://relay.walletconnect.com',
                         projectId: process.env.WALLET_CONNECT_PROJECT_ID,
+                        metadata: this.selfMeta,
                     }),
                     new Promise((resolve, reject) => {
                         setTimeout(() => {
@@ -224,9 +233,9 @@ export default class WalletConnectServiceClass {
             }
             this.client = await Promise.race([
                 WalletConnectClient.init({
-                    // logger: 'debug',
-                    relayUrl: 'wss://relay.walletconnect.com',
+                    logger: 'debug',
                     projectId: process.env.WALLET_CONNECT_PROJECT_ID,
+                    metadata: this.selfMeta,
                 }),
                 new Promise((resolve, reject) => {
                     setTimeout(() => {
@@ -235,22 +244,17 @@ export default class WalletConnectServiceClass {
                 }) as Promise<WalletConnectClient>,
             ]);
 
-            // there is a problem with updating the states in wallet connect, a small timeout solves this problem
-            // TODO delete this when it is fixed in the library
-            await new Promise((resolve) => {
-                setTimeout(() => resolve(void 0), 500);
-            });
-
             this.listenWalletConnectEvents();
 
-            if (!this.client.session.topics.length) {
+            if (!this.client.session.length) {
                 clearApp();
                 return false;
             }
 
-            this.session = await this.client.session.get(this.client.session.topics[0]);
+            this.session = await this.client.session.getAll()[0];
 
-            const [_chain, _reference, publicKey] = this.session.state.accounts[0].split(':');
+            const [_chain, _reference, publicKey] =
+                this.session.namespaces.stellar.accounts[0].split(':');
             this.appMeta = this.session.peer.metadata;
 
             this.event.trigger({
@@ -263,64 +267,58 @@ export default class WalletConnectServiceClass {
 
             return true;
         } catch (e) {
-            ToastService.showErrorToast(e);
+            ToastService.showErrorToast('WalletConnect initialization failed');
+            return true;
         }
     }
 
     listenWalletConnectEvents(): void {
-        this.client.on(CLIENT_EVENTS.pairing.created, (res) => this.onPairCreated(res));
+        // this.client.on(SIGN_CLIENT_EVENTS.session_proposal, (res) => {
+        //     console.log('session_proposal', res);
+        // });
+        // this.client.on(SIGN_CLIENT_EVENTS.session_update, (res) => {
+        //     console.log('session_update', res);
+        // });
+        // this.client.on(SIGN_CLIENT_EVENTS.session_extend, (res) => {
+        //     console.log('session_extend', res);
+        // });
+        // this.client.on(SIGN_CLIENT_EVENTS.session_ping, (res) => {
+        //     console.log('session_ping', res);
+        // });
+        // this.client.on(SIGN_CLIENT_EVENTS.pairing_ping, (res) => {
+        //     console.log('pairing_ping', res);
+        // });
+        this.client.on(SIGN_CLIENT_EVENTS.session_delete, ({ topic }: any) => {
+            this.onSessionDeleted(topic);
+        });
 
-        this.client.on(CLIENT_EVENTS.pairing.updated, (res) => this.onPairUpdated(res));
-
-        this.client.on(CLIENT_EVENTS.session.deleted, (session) => this.onSessionDeleted(session));
-
-        this.client.on(CLIENT_EVENTS.pairing.proposal, (proposal) => this.onPairProposal(proposal));
+        // this.client.on(SIGN_CLIENT_EVENTS.pairing_delete, (res) => {
+        //     console.log('pairing_delete', res);
+        // });
+        // this.client.on(SIGN_CLIENT_EVENTS.session_expire, (res) => {
+        //     console.log('session_expire', res);
+        // });
+        // this.client.on(SIGN_CLIENT_EVENTS.pairing_expire, (res) => {
+        //     console.log('pairing_expire', res);
+        // });
+        // this.client.on(SIGN_CLIENT_EVENTS.session_request, (res) => {
+        //     console.log('session_request', res);
+        // });
+        // this.client.on(SIGN_CLIENT_EVENTS.session_event, (res) => {
+        //     console.log('session_event', res);
+        // });
+        // this.client.on(SIGN_CLIENT_EVENTS.proposal_expire, (res) => {
+        //     console.log('proposal_expire', res);
+        // });
     }
 
-    onPairCreated(res: PairingTypes.Settled): void {
-        this.appMeta = res.state.metadata;
-        this.isPairCreated = true;
-        addAppToDeepLinkListIfNeeded(res.topic);
-    }
-
-    onPairUpdated(res: PairingTypes.Settled): void {
-        this.appMeta = res.state.metadata;
-
-        if (this.isPairCreated) {
-            this.isPairCreated = false;
-
-            ModalService.confirmAllModals();
-
-            ModalService.openModal(SessionRequestModal, {
-                name: this.appMeta.name,
-                icon: this.appMeta.icons[0],
-            });
-        }
-    }
-
-    onSessionDeleted(session: SessionTypes.Settled): void {
-        if (this.session && this.session.topic === session.topic) {
+    onSessionDeleted(topic: string): void {
+        if (this.session && this.session.topic === topic) {
             this.session = null;
             this.appMeta = null;
             clearApp();
 
             this.event.trigger({ type: WalletConnectEvents.logout });
-        }
-    }
-
-    async onPairProposal(proposal: PairingTypes.Proposal): Promise<void> {
-        const { uri } = proposal.signal.params;
-
-        const { isConfirmed } = await ModalService.openModal(QRModal, { uri });
-
-        if (!isConfirmed) {
-            await this.client.pairing.pending.update(proposal.topic, {
-                outcome: {
-                    reason: ERROR.UNKNOWN.format(),
-                },
-                status: 'responded',
-            });
-            await this.client.crypto.keychain.del(proposal.proposer.publicKey);
         }
     }
 
@@ -331,23 +329,26 @@ export default class WalletConnectServiceClass {
             return;
         }
 
-        // ModalService.closeAllModals();
+        ModalService.closeAllModals();
 
-        if (this.client.pairing.topics.length > 3) {
+        if (this.client.pairing.getAll({ active: true }).length > 3) {
             const deletePromises = [];
-            this.client.pairing.topics.slice(0, -3).forEach((topic) => {
-                deletePromises.push(
-                    this.client.pairing.delete({ topic, reason: ERROR.DELETED.format() }),
-                );
-            });
+            this.client.pairing
+                .getAll({ active: true })
+                .slice(0, -3)
+                .forEach((pairing) => {
+                    deletePromises.push(
+                        this.client.pairing.delete(pairing.topic, getInternalError('UNKNOWN_TYPE')),
+                    );
+                });
 
             await Promise.all(deletePromises);
         }
 
-        if (this.client.pairing.topics.length) {
+        if (this.client.pairing.getAll({ active: true }).length) {
             ModalService.closeAllModals();
             ModalService.openModal(PairingModal, {
-                pairings: this.client.pairing.values.reverse(),
+                pairings: this.client.pairing.getAll({ active: true }).reverse(),
                 connect: this.connect.bind(this),
                 deletePairing: this.deletePairing.bind(this),
             });
@@ -358,10 +359,10 @@ export default class WalletConnectServiceClass {
     }
 
     async deletePairing(topic: string): Promise<void> {
-        await this.client.pairing.delete({ topic, reason: ERROR.DELETED.format() });
+        await this.client.pairing.delete(topic, getInternalError('UNKNOWN_TYPE'));
     }
 
-    async connect(pairing?: PairingTypes.Settled): Promise<void> {
+    async connect(pairing?: PairingTypes.Struct): Promise<void> {
         if (this.isOffline) {
             ToastService.showErrorToast(INTERNET_CONNECTION_ERROR);
             return;
@@ -370,40 +371,34 @@ export default class WalletConnectServiceClass {
 
         if (pairing) {
             ModalService.openModal(SessionRequestModal, {
-                name: pairing.state.metadata.name,
-                icon: pairing.state.metadata.icons[0],
+                name: pairing.peerMetadata.name,
+                icon: pairing.peerMetadata.icons[0],
             });
         }
 
         try {
-            this.session = await this.client.connect({
-                metadata: this.selfMeta,
-                pairing: pairing ? { topic: pairing.topic } : undefined,
-                permissions: {
-                    blockchain: {
-                        chains: [PUBNET],
-                    },
-                    jsonrpc: {
-                        methods: Object.values(STELLAR_METHODS),
-                    },
-                },
+            const { uri, approval } = await this.client.connect({
+                requiredNamespaces: REQUIRED_NAMESPACES,
+                pairingTopic: pairing?.topic,
             });
+
+            if (!pairing) {
+                ModalService.openModal(QRModal, { uri });
+            }
+
+            this.session = await approval();
         } catch (e) {
             if (this.session) {
                 return;
             }
             this.appMeta = null;
 
-            if (e.message === ERROR.UNKNOWN.stringify()) {
+            if (e.message === '') {
                 return;
             }
 
             const errorMessage =
-                e.message === 'Session not approved'
-                    ? 'Connection cancelled by the user'
-                    : e.message;
-
-            console.log(ERROR.SETTLE_TIMEOUT.stringify());
+                e.message === 'rejected' ? 'Connection cancelled by the user' : e.message;
 
             ToastService.showErrorToast(
                 errorMessage ??
@@ -420,7 +415,8 @@ export default class WalletConnectServiceClass {
 
         this.appMeta = this.session.peer.metadata;
 
-        const [chain, reference, publicKey] = this.session.state.accounts[0].split(':');
+        const [chain, reference, publicKey] =
+            this.session.namespaces.stellar.accounts[0].split(':');
 
         this.event.trigger({
             type: WalletConnectEvents.login,
@@ -428,9 +424,17 @@ export default class WalletConnectServiceClass {
             metadata: this.appMeta,
         });
 
+        const latestPairing = this.client.pairing.getAll({ active: true })[
+            this.client.pairing.length - 1
+        ];
+
+        if (latestPairing) {
+            addAppToDeepLinkListIfNeeded(latestPairing.topic);
+        }
+
         if (pairing) {
-            await this.client.pairing.settled.update(pairing.topic, {
-                state: { metadata: this.appMeta },
+            await this.client.pairing.update(pairing.topic, {
+                peerMetadata: this.appMeta,
             });
         }
     }
@@ -441,15 +445,15 @@ export default class WalletConnectServiceClass {
             return;
         }
         if (this.session) {
-            clearApp();
             await this.client.disconnect({
                 topic: this.session.topic,
-                reason: ERROR.USER_DISCONNECTED.format(),
+                reason: getSdkError('USER_DISCONNECTED'),
             });
+            this.onSessionDeleted(this.session.topic);
         }
     }
 
-    signAndSubmitTx(tx: StellarSdk.Transaction): Promise<void> {
+    signAndSubmitTx(tx: StellarSdk.Transaction): Promise<unknown> {
         const xdr = tx.toEnvelope().toXDR('base64');
 
         const request = this.client.request({
