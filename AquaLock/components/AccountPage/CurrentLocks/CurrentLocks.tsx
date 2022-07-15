@@ -4,6 +4,7 @@ import { Breakpoints, COLORS } from '../../../../common/styles';
 import ProgressLine from '../../../../common/basics/ProgressLine';
 import { formatBalance, getDateString, roundToPrecision } from '../../../../common/helpers/helpers';
 import { respondDown } from '../../../../common/mixins';
+import { useCallback } from 'react';
 
 const Container = styled.div`
     margin-top: 4rem;
@@ -72,13 +73,22 @@ const TableCellAmount = styled.div`
     text-align: right;
 `;
 
-const CurrentLocks = ({ locks, aquaBalance }) => {
+const CurrentLocks = ({ locks, aquaBalance, distributions }) => {
     const locksSum = locks.reduce((acc, lock) => {
         acc += Number(lock.amount);
         return acc;
     }, 0);
 
     const percent = roundToPrecision((locksSum / (aquaBalance + locksSum)) * 100, 2);
+
+    const getIceAmount = useCallback(
+        (balanceId) => {
+            return distributions.find((distribution) => distribution.balance_id === balanceId)
+                ?.distributed_amount;
+        },
+        [distributions, locks],
+    );
+
     return (
         <Container>
             <Title>Current locks </Title>
@@ -92,6 +102,7 @@ const CurrentLocks = ({ locks, aquaBalance }) => {
                     <TableCell>Lock start </TableCell>
                     <TableCell>Lock end</TableCell>
                     <TableCellAmount>AQUA locked</TableCellAmount>
+                    <TableCellAmount>ICE received</TableCellAmount>
                 </HeaderRow>
 
                 {locks.map((lock) => (
@@ -104,7 +115,12 @@ const CurrentLocks = ({ locks, aquaBalance }) => {
                                 new Date(lock.claimants?.[0].predicate?.not?.abs_before).getTime(),
                             )}
                         </TableCell>
-                        <TableCellAmount>{formatBalance(lock.amount, true)}</TableCellAmount>
+                        <TableCellAmount>{formatBalance(lock.amount, true)} AQUA</TableCellAmount>
+                        <TableCellAmount>
+                            {getIceAmount(lock.id)
+                                ? `${formatBalance(getIceAmount(lock.id), true)} ICE`
+                                : '-'}
+                        </TableCellAmount>
                     </TableRow>
                 ))}
             </LocksList>

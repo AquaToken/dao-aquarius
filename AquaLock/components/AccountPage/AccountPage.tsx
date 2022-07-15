@@ -15,6 +15,8 @@ import CurrentLocks from './CurrentLocks/CurrentLocks';
 import LockAquaForm from './LockAquaForm/LockAquaForm';
 import { useIsOnViewport } from '../../../common/hooks/useIsOnViewport';
 import ArrowDown from '../../../common/assets/img/icon-arrow-down.svg';
+import { getDistributionForAccount } from '../../api/api';
+import IceBlock from './IceBlock/IceBlock';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -80,6 +82,7 @@ const AccountPage = () => {
     const [currentAccount, setCurrentAccount] = useState(null);
     const [ammAquaBalance, setAmmAquaBalance] = useState(null);
     const [locks, setLocks] = useState(null);
+    const [distributions, setDistributions] = useState(null);
     const [updateIndex, setUpdateIndex] = useState(0);
 
     const { account } = useAuthStore();
@@ -125,6 +128,15 @@ const AccountPage = () => {
         });
     }, [currentAccount]);
 
+    useEffect(() => {
+        if (!currentAccount) {
+            return;
+        }
+        getDistributionForAccount(currentAccount.accountId()).then((res) => {
+            setDistributions(res);
+        });
+    }, [currentAccount]);
+
     const updateAccount = () => {
         setUpdateIndex((prevState) => prevState + 1);
     };
@@ -155,8 +167,14 @@ const AccountPage = () => {
                         locks={locks}
                     />
 
-                    {Boolean(locks?.length) && (
-                        <CurrentLocks locks={locks} aquaBalance={currentAccount.getAquaBalance()} />
+                    <IceBlock account={currentAccount} locks={locks} />
+
+                    {Boolean(locks?.length) && Boolean(distributions) && (
+                        <CurrentLocks
+                            distributions={distributions}
+                            locks={locks}
+                            aquaBalance={currentAccount.getAquaBalance()}
+                        />
                     )}
                 </LeftColumn>
 

@@ -1,22 +1,53 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../../../common/styles';
-import { respondDown } from '../../../../common/mixins';
+import { commonMaxWidth, respondDown } from '../../../../common/mixins';
+import LockerMainImage from '../../../../common/assets/img/locker-main.svg';
 
 const Container = styled.div`
+    background-color: ${COLORS.buttonBackground};
+    padding: 5% 0;
+`;
+
+const Content = styled.div`
+    display: flex;
+    flex-direction: row;
+    ${commonMaxWidth};
+    padding: 0 4rem;
+
+    ${respondDown(Breakpoints.md)`
+        flex-direction: column-reverse;
+        padding: 0 1.6rem;
+        gap: 1.6rem;
+    `}
+`;
+
+const Image = styled(LockerMainImage)`
+    max-height: 40rem;
+    ${respondDown(Breakpoints.md)`
+        max-height: 30rem;
+    `}
+`;
+
+const TextContainer = styled.div`
     display: flex;
     flex-direction: column;
-    max-width: 67.6rem;
+    min-width: 67.6rem;
     margin-right: 6.2rem;
     flex: 1;
     justify-content: center;
+
+    ${respondDown(Breakpoints.md)`
+        min-width: unset;
+        margin-right: 0;
+    `}
 `;
 
 const Title = styled.span`
     font-weight: bold;
     font-size: 5.6rem;
     line-height: 6.4rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.white};
     margin-bottom: 1.6rem;
 
     ${respondDown(Breakpoints.md)`
@@ -28,20 +59,23 @@ const Title = styled.span`
 const Description = styled.span`
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.white};
 `;
 
-const Purpose = () => {
+const Purpose = (): JSX.Element => {
     return (
         <Container>
-            <Title>Lock AQUA for additional benefits</Title>
-            <Description>
-                Lock your AQUA with this tool to get extra benefits in the future.
-                <br />
-                Perfect for those who are planning to hold AQUA long term. Stay tuned, details
-                coming soon.
-                <br />
-            </Description>
+            <Content>
+                <TextContainer>
+                    <Title>Lock your AQUA token in exchange for ICE</Title>
+                    <Description>
+                        Once freeze your AQUA into ICE, you immediately get access to increased
+                        yields from SDEX & AMM rewards, boosted power for liquidity & governance
+                        voting, and expanded freedom within the Aquarius ecosystem.
+                    </Description>
+                </TextContainer>
+                <Image />
+            </Content>
         </Container>
     );
 };
