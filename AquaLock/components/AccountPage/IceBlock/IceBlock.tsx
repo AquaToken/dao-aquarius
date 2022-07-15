@@ -121,13 +121,13 @@ const ClaimIcePending = styled.span`
     opacity: 0.7;
 `;
 
-export const MAX_BOOST = 9;
-export const MAX_BOOST_PERIOD = (3 * 365 + 1) * 24 * 60 * 60 * 1000;
-
 const Logo = styled(IceLogo)`
     width: 4.8rem;
     height: 4.8rem;
 `;
+
+export const MAX_BOOST = 9;
+export const MAX_BOOST_PERIOD = (3 * 365 + 1) * 24 * 60 * 60 * 1000;
 
 interface IceBlockProps {
     account: AccountService;
