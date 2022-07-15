@@ -130,6 +130,11 @@ PROJECT=governance
 PROJECT=lock
 
 ```
+4. Set environment variable `WALLET_CONNECT_PROJECT_ID` to work with WalletConnect
+
+```sh
+WALLET_CONNECT_PROJECT_ID=...your_key
+```
 
 ### Usage
 **Development**
