@@ -85,26 +85,28 @@ const WhyFreezeAQUA = (): JSX.Element => {
                     <Image1 />
                     <ColumnTitle>Increased Liquidity Rewards</ColumnTitle>
                     <ColumnText>
-                        The main benefit of ICE is the ability to boost your rewards on provided
-                        liquidity. The higher a user’s ICE balance, the higher their boost for
-                        liquidity rewards.
+                        The core benefit of ICE is boosted AQUA reward yields when taking part with
+                        SDEX & AMM liquidity rewarded markets. The higher a user’s ICE balance, the
+                        higher their liquidity reward boost!
                     </ColumnText>
                 </Column>
                 <Column>
                     <Image2 />
                     <ColumnTitle>Voting Flexibility</ColumnTitle>
                     <ColumnText>
-                        There’ll be no more hard decisions on whether to stop voting for your
-                        favourite markets to participate in governance or vote against any other
-                        market pair.
+                        There are no hard decisions on whether to vote for your favorite markets,
+                        participate in governance, or downvoting other market pairs. ICE allows full
+                        flexibility between these key voting areas, meaning you can participate with
+                        them simultaneously.
                     </ColumnText>
                 </Column>
                 <Column>
                     <Image3 />
                     <ColumnTitle>Increased Voting Power</ColumnTitle>
                     <ColumnText>
-                        A crucial advantage of freezing AQUA is the vast increase in voting power
-                        across governance & liquidity voting!
+                        Those who freeze into ICE can gain vastly increased voting power! Up to ten
+                        times the voting weight compared to AQUA can be achieved when freezing for 3
+                        years or more. This gives you more say in governance & liquidity voting.
                     </ColumnText>
                 </Column>
             </Content>

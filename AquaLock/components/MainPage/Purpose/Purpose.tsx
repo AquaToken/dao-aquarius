@@ -67,11 +67,12 @@ const Purpose = (): JSX.Element => {
         <Container>
             <Content>
                 <TextContainer>
-                    <Title>Lock your AQUA token in exchange for ICE</Title>
+                    <Title>Freeze your AQUA into ICE!</Title>
                     <Description>
-                        Once freeze your AQUA into ICE, you immediately get access to increased
-                        yields from SDEX & AMM rewards, boosted power for liquidity & governance
-                        voting, and expanded freedom within the Aquarius ecosystem.
+                        ICE brings entirely new benefits to the Aquarius ecosystem, giving those who
+                        freeze AQUA increased voting power for liquidity & governance voting,
+                        boosted yields when providing liquidity for markets receiving SDEX & AMM
+                        rewards, and expanded freedom within the Aquarius ecosystem.
                     </Description>
                 </TextContainer>
                 <Image />

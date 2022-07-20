@@ -98,9 +98,7 @@ const AccountInput = ({ params, close }: { params?: any; close?: any }) => {
         <Container isModal={isModal}>
             <TextBlock>
                 <Title>{isModal ? 'Switch account' : 'Check your account'}</Title>
-                <Description isModal={isModal}>
-                    Track your portfolio and manage AQUA locks.
-                </Description>
+                <Description isModal={isModal}>Track your AQUA locks and ICE balance.</Description>
             </TextBlock>
             <InputBlock isModal={isModal}>
                 <Input

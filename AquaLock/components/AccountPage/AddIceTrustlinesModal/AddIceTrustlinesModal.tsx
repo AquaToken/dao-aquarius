@@ -111,8 +111,8 @@ const AddIceTrustlinesModal = ({ confirm }) => {
         <ModalContainer>
             <ModalTitle>Add ICE trustlines</ModalTitle>
             <ModalDescription>
-                Need to add {unlistedAssets.length} new trustlines for the ICE tokens. For each
-                trustline added to your account 0.5 XLM will be blocked
+                Freezing AQUA requires you to add the {unlistedAssets.length} ICE trustlines. Each
+                trustline will reserve 0.5 XLM of your wallet balance.
             </ModalDescription>
             <AssetsBlock>
                 {unlistedAssets.map((asset) => (

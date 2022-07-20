@@ -284,8 +284,8 @@ const LockAquaForm = forwardRef(
 
         return (
             <Container ref={ref}>
-                <Title>Lock your AQUA</Title>
-                <Description>Lock your AQUA token to get ICE tokens reward</Description>
+                <Title>Freeze your AQUA</Title>
+                <Description>Turn your AQUA into ICE tokens!</Description>
                 <ContentRow>
                     <Label>Amount</Label>
                     <BalanceBlock>
@@ -362,7 +362,7 @@ const LockAquaForm = forwardRef(
                 </YouWillGet>
 
                 <Button isBig onClick={() => onSubmit()} disabled={!lockAmount || !lockPeriod}>
-                    LOCK AQUA
+                    FREEZE AQUA
                 </Button>
             </Container>
         );

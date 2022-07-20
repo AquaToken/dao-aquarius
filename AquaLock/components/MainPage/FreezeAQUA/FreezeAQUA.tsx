@@ -74,7 +74,7 @@ const FreezeAQUA = (): JSX.Element => {
                     governance and boosts CRV liquidity rewards on Curve.
                     <br />
                     <br />
-                    We will be taking this core idea and revamping it for use inside the Stellar
+                    We have taken this core idea and revamped it for use inside the Stellar
                     ecosystem. Users who lock (freeze) AQUA will receive four additional
                     non-transferable tokens inside their Stellar wallets, specifically for use in
                     the Aquarius universe.

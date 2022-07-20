@@ -174,8 +174,9 @@ const IceBlock = ({ account, locks }: IceBlockProps): JSX.Element => {
                 <IceDescriptionEmoji>☝️</IceDescriptionEmoji>
                 <IceDescriptionContent>
                     <IceDescriptionText>
-                        ICE token is boost your rewards on provided liquidity. The higher a user’s
-                        ICE balance, the higher their boost for liquidity rewards.
+                        ICE enables increased voting power & flexibility between liquidity &
+                        governance voting, as well as boosted yields when providing liquidity on
+                        markets receiving SDEX & AMM rewards.
                     </IceDescriptionText>
                     <ExternalLink>Learn more</ExternalLink>
                 </IceDescriptionContent>

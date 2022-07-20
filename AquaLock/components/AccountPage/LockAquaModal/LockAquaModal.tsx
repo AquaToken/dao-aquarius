@@ -211,7 +211,7 @@ const LockAquaModal = ({
     return (
         <ModalContainer>
             <ModalTitle>Lock AQUA</ModalTitle>
-            <ModalDescription>Please verify the details of your AQUA tokens lock</ModalDescription>
+            <ModalDescription>Please verify the details below before confirming</ModalDescription>
             <Row>
                 <Label>Amount</Label>
                 <Value>
@@ -235,8 +235,8 @@ const LockAquaModal = ({
                     <AddTrustDescription>
                         <AddTrustEmoji>☝️</AddTrustEmoji>
                         <AddTrustDescriptionText>
-                            Need to add {unlistedIceAssets.length} new trustlines for the ICE
-                            tokens. For each trustline added to your account 0.5 XLM will be blocked
+                            Freezing AQUA requires you to add the {unlistedIceAssets.length} ICE
+                            trustlines. Each trustline will reserve 0.5 XLM of your wallet balance.
                         </AddTrustDescriptionText>
                     </AddTrustDescription>
                     <ShowMoreBlock>
