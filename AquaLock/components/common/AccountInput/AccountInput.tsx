@@ -8,7 +8,7 @@ import { StellarService, ToastService } from '../../../../common/services/global
 import { useHistory } from 'react-router-dom';
 import { respondDown } from '../../../../common/mixins';
 
-const Container = styled.div<{ isModal: boolean }>`
+const Container = styled.form<{ isModal: boolean }>`
     display: flex;
     flex-direction: ${({ isModal }) => (isModal ? 'column' : 'row')};
     background-color: ${COLORS.white};
@@ -83,7 +83,8 @@ const AccountInput = ({ params, close }: { params?: any; close?: any }) => {
     const [value, setValue] = useState('');
     const history = useHistory();
 
-    const onSubmit = () => {
+    const onSubmit = (e) => {
+        e.preventDefault();
         if (!StellarService.isValidPublicKey(value)) {
             ToastService.showErrorToast('Invalid public key');
             return;
@@ -95,7 +96,7 @@ const AccountInput = ({ params, close }: { params?: any; close?: any }) => {
     };
 
     return (
-        <Container isModal={isModal}>
+        <Container isModal={isModal} onSubmit={onSubmit}>
             <TextBlock>
                 <Title>{isModal ? 'Switch account' : 'Check your account'}</Title>
                 <Description isModal={isModal}>Track your AQUA locks and ICE balance.</Description>
@@ -109,7 +110,7 @@ const AccountInput = ({ params, close }: { params?: any; close?: any }) => {
                     }}
                 />
             </InputBlock>
-            <StyledButton isBig disabled={!value} onClick={() => onSubmit()} isModal={isModal}>
+            <StyledButton isBig disabled={!value} isModal={isModal} type="submit">
                 {isModal ? 'Continue' : "let's start"}
             </StyledButton>
         </Container>
