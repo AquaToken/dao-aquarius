@@ -357,7 +357,7 @@ const LockAquaForm = forwardRef(
                     <YouWillGetLabel>You will get:</YouWillGetLabel>
                     <YouWillGetAmount>
                         <IceLogo />
-                        <span>{formatBalance(iceAmount)} ICE</span>
+                        <span>{formatBalance(iceAmount, true)} ICE</span>
                     </YouWillGetAmount>
                 </YouWillGet>
 
