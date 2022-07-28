@@ -39,10 +39,6 @@ export const GOV_ICE_CODE = 'governICE';
 export const UP_ICE_CODE = 'upvoteICE';
 export const DOWN_ICE_CODE = 'downvoteICE';
 
-export const GOV_ICE_CODE = 'A2TEST';
-export const UP_ICE_CODE = 'A3TEST';
-export const DOWN_ICE_CODE = 'A4TEST';
-
 export const ICE_ASSETS = [
     `${ICE_CODE}:${ICE_ISSUER}`,
     `${GOV_ICE_CODE}:${ICE_ISSUER}`,
