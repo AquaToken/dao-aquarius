@@ -9,6 +9,8 @@ import { PairStats, TotalStats } from '../../../../api/types';
 import InfoIcon from '../../../../../common/assets/img/icon-info.svg';
 import IconUp from '../../../../../common/assets/img/icon-up-percent.svg';
 import IconDown from '../../../../../common/assets/img/icon-down-percent.svg';
+import Ice from '../../../../../common/assets/img/ice-logo.svg';
+import Aqua from '../../../../../common/assets/img/aqua-logo-small.svg';
 
 const TooltipStyled = styled(Tooltip)`
     label {
@@ -90,8 +92,9 @@ const TooltipWrap = styled.div`
 `;
 
 const TooltipRow = styled.div`
-    color: ${COLORS.white};
+    color: ${COLORS.grayText};
     font-size: 1.4rem;
+    line-height: 2rem;
     ${flexRowSpaceBetween};
     width: 100%;
 
@@ -100,13 +103,48 @@ const TooltipRow = styled.div`
     }
 `;
 
+const TooltipRowTitleFirst = styled.div`
+    color: ${COLORS.paragraphText};
+    font-size: 1.4rem;
+    ${flexRowSpaceBetween};
+    width: 100%;
+    font-weight: 400;
+    line-height: 2.8rem;
+
+    span:first-child {
+        margin-right: 2rem;
+        font-weight: 400;
+    }
+`;
+
+const TooltipRowTitle = styled(TooltipRowTitleFirst)`
+    margin-top: 1.6rem;
+`;
+
 const TooltipPercents = styled.div`
     display: flex;
     align-items: center;
 
     span:first-child {
         margin-right: 0;
+        color: ${COLORS.grayText};
     }
+`;
+
+const IceLogo = styled(Ice)`
+    height: 1.8rem;
+    width: 1.8rem;
+    margin-right: 0.5rem;
+`;
+
+const AquaLogo = styled(Aqua)`
+    height: 1.8rem;
+    width: 1.8rem;
+    margin-right: 0.5rem;
+`;
+
+const TokenAmount = styled.div`
+    ${flexAllCenter};
 `;
 
 const getPercent = (value: string, total: string): string => {
@@ -135,26 +173,53 @@ const VoteAmount = ({ pair, totalStats }: { pair: PairStats; totalStats: TotalSt
         <TooltipStyled
             content={
                 <TooltipWrap>
-                    <TooltipRow>
+                    <TooltipRowTitleFirst>
                         <span>Upvotes:</span>
-                        <span>{formatBalance(+pair.upvote_value, true)} AQUA</span>
+                        <span>{formatBalance(+pair.upvote_value, true)}</span>
+                    </TooltipRowTitleFirst>
+                    <TooltipRow>
+                        <span>ICE voted:</span>
+                        <TokenAmount>
+                            <IceLogo />0
+                        </TokenAmount>
                     </TooltipRow>
                     <TooltipRow>
+                        <span>AQUA voted:</span>
+                        <TokenAmount>
+                            <AquaLogo />
+                            {formatBalance(+pair.upvote_value, true)}
+                        </TokenAmount>
+                    </TooltipRow>
+                    <TooltipRowTitle>
                         <span>Downvotes:</span>
-                        <span>{formatBalance(+pair.downvote_value, true)} AQUA</span>
+                        <span>{formatBalance(+pair.downvote_value, true)}</span>
+                    </TooltipRowTitle>
+                    <TooltipRow>
+                        <span>ICE voted:</span>
+                        <TokenAmount>
+                            <IceLogo />0
+                        </TokenAmount>
                     </TooltipRow>
                     <TooltipRow>
+                        <span>AQUA voted:</span>
+                        <TokenAmount>
+                            <AquaLogo />
+                            {formatBalance(+pair.downvote_value, true)}
+                        </TokenAmount>
+                    </TooltipRow>
+                    <TooltipRowTitle>
                         <span>% of votes:</span>
                         <TooltipPercents>
                             <span>{percentValue}</span>
                             {boosted ? <IconUp /> : <IconDown />}
                             <span>{percentBoostedValue}</span>
                         </TooltipPercents>
-                    </TooltipRow>
+                    </TooltipRowTitle>
                 </TooltipWrap>
             }
             position={TOOLTIP_POSITION.top}
             isShow={showTooltip}
+            isWhite
         >
             <label
                 onMouseEnter={() => {
@@ -175,7 +240,7 @@ const VoteAmount = ({ pair, totalStats }: { pair: PairStats; totalStats: TotalSt
                 }}
             >
                 <AmountRow>
-                    {pair.votes_value ? `${formatBalance(+pair.votes_value, true)} AQUA` : null}
+                    {pair.votes_value ? formatBalance(+pair.votes_value, true) : null}
                     <Percents>
                         <PercentMobile isBoosted={boosted}>{percentBoostedValue}</PercentMobile>
                     </Percents>

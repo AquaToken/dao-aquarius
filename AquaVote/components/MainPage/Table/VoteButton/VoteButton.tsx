@@ -14,6 +14,7 @@ import { PairStats } from '../../../../api/types';
 import ChooseLoginMethodModal from '../../../../../common/modals/ChooseLoginMethodModal';
 import VotesAmountModal from '../../VoteModals/VotesAmountModal';
 import Tooltip, { TOOLTIP_POSITION } from '../../../../../common/basics/Tooltip';
+import { AQUA, DOWN_ICE, UP_ICE } from '../../MainPage';
 
 const iconStyles = css`
     margin-left: 1.6rem;
@@ -57,13 +58,18 @@ const VoteButton = ({
 }): JSX.Element => {
     const { market_key: marketKeyUp, downvote_account_id: marketKeyDown } = pair;
     const { account, isLogged } = useAuthStore();
-    const [balanceUp, setBalanceUp] = useState(
-        isLogged ? StellarService.getMarketVotesValue(marketKeyUp, account?.accountId()) : null,
-    );
 
-    const [balanceDown, setBalanceDown] = useState(
-        isLogged ? StellarService.getMarketVotesValue(marketKeyDown, account?.accountId()) : null,
-    );
+    const getUpVotesValue = () =>
+        +StellarService.getMarketVotesValue(marketKeyUp, account?.accountId(), AQUA) +
+        +StellarService.getMarketVotesValue(marketKeyUp, account?.accountId(), UP_ICE);
+
+    const getDownVotesValue = () =>
+        +StellarService.getMarketVotesValue(marketKeyDown, account?.accountId(), AQUA) +
+        +StellarService.getMarketVotesValue(marketKeyDown, account?.accountId(), DOWN_ICE);
+
+    const [balanceUp, setBalanceUp] = useState(isLogged ? getUpVotesValue() : null);
+
+    const [balanceDown, setBalanceDown] = useState(isLogged ? getDownVotesValue() : null);
 
     const [showTooltip, setShowTooltip] = useState(false);
 
@@ -87,10 +93,8 @@ const VoteButton = ({
         }
         const unsub = StellarService.event.sub(({ type }) => {
             if (type === StellarEvents.claimableUpdate) {
-                setBalanceUp(StellarService.getMarketVotesValue(marketKeyUp, account?.accountId()));
-                setBalanceDown(
-                    StellarService.getMarketVotesValue(marketKeyDown, account?.accountId()),
-                );
+                setBalanceUp(getUpVotesValue());
+                setBalanceDown(getDownVotesValue());
             }
         });
 
@@ -125,7 +129,7 @@ const VoteButton = ({
     }
     return (
         <Container>
-            <Balance>{formatBalance((+balanceUp || 0) - (+balanceDown || 0), true)} AQUA</Balance>
+            <Balance>{formatBalance((+balanceUp || 0) - (+balanceDown || 0), true)}</Balance>
             <Button
                 onClick={onButtonClick}
                 likeDisabled={isPairSelected}

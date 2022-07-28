@@ -91,17 +91,6 @@ export default class AccountService extends AccountResponse {
         }, []);
     }
 
-    getCommonIceBalance() {
-        return ICE_ASSETS.map((asset) => {
-            const [code, issuer] = asset.split(':');
-            const stellarAsset = StellarService.createAsset(code, issuer);
-            return this.getAssetBalance(stellarAsset);
-        }).reduce((acc, balance) => {
-            console.log(balance);
-            return acc + balance;
-        }, 0);
-    }
-
     async getAmmAquaBalance(): Promise<number> {
         const aquaAlias = 'AQUA:GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA';
 

@@ -195,15 +195,19 @@ const ManageVotesModal = ({ params, close }: ModalProps<{ pair: PairStats }>) =>
         return null;
     }
 
-    const onSubmit = async (id) => {
+    const onSubmit = async ({ id, assetCode, assetIssuer }) => {
         if (account.authType === LoginTypes.walletConnect) {
             openApp();
         }
         try {
             setPendingId(id);
-            const ops = StellarService.createClaimOperations(id, account.getAquaBalance() === null);
+            const ops = StellarService.createClaimOperations(id);
+            const asset = StellarService.createAsset(assetCode, assetIssuer);
             const tx = await StellarService.buildTx(account, ops);
-            const result = await account.signAndSubmitTx(tx);
+
+            const processedTx = await StellarService.processIceTx(tx, asset);
+
+            const result = await account.signAndSubmitTx(processedTx);
 
             if (claims.length === 1) {
                 close();
@@ -272,7 +276,9 @@ const ManageVotesModal = ({ params, close }: ModalProps<{ pair: PairStats }>) =>
                                 />
                             </Tooltip>
                         )}
-                        <span>{formatBalance(claim.amount)} AQUA</span>
+                        <span>
+                            {formatBalance(claim.amount)} {claim.assetCode}
+                        </span>
                     </Amount>
                     <Claim>
                         {new Date(claim.claimBackDate) > new Date() ? (
@@ -287,7 +293,7 @@ const ManageVotesModal = ({ params, close }: ModalProps<{ pair: PairStats }>) =>
                         ) : (
                             <ClaimButton
                                 isSmall
-                                onClick={() => onSubmit(claim.id)}
+                                onClick={() => onSubmit(claim)}
                                 disabled={Boolean(pendingId) && claim.id !== pendingId}
                                 pending={claim.id === pendingId}
                             >

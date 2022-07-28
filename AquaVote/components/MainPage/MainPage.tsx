@@ -38,7 +38,14 @@ import Button from '../../../common/basics/Button';
 import { formatBalance, getTimeAgoValue } from '../../../common/helpers/helpers';
 import { Option } from '../../../common/basics/Select';
 import Pagination from '../../../common/basics/Pagination';
-import { StellarEvents } from '../../../common/services/stellar.service';
+import {
+    AQUA_CODE,
+    AQUA_ISSUER,
+    DOWN_ICE_CODE,
+    ICE_ISSUER,
+    StellarEvents,
+    UP_ICE_CODE,
+} from '../../../common/services/stellar.service';
 import DotsLoader from '../../../common/basics/DotsLoader';
 import { useHistory, useLocation } from 'react-router-dom';
 
@@ -311,6 +318,10 @@ const options: Option<SortTypes>[] = [
 
 const PAGE_SIZE = 20;
 const UPDATE_INTERVAL = 60 * 1000; // 1 minute
+
+export const AQUA = StellarService.createAsset(AQUA_CODE, AQUA_ISSUER);
+export const UP_ICE = StellarService.createAsset(UP_ICE_CODE, ICE_ISSUER);
+export const DOWN_ICE = StellarService.createAsset(DOWN_ICE_CODE, ICE_ISSUER);
 
 enum UrlParams {
     sort = 'sort',

@@ -23,12 +23,18 @@ const DropDown = styled.div<{ isOpen: boolean; disabled: boolean }>`
 `;
 
 const DropdownItem = styled.div`
+    display: flex;
+    align-items: center;
     height: 100%;
     width: 100%;
     padding: 2.4rem;
     box-sizing: border-box;
     cursor: pointer;
     font-size: 1.6rem;
+
+    svg {
+        margin-right: 0.8rem;
+    }
 `;
 
 const Placeholder = styled(DropdownItem)`
@@ -93,6 +99,7 @@ const DropdownList = styled.div`
 export type Option<T> = {
     label: string;
     value: T;
+    icon?: JSX.Element;
 };
 
 type SelectProps<T> = {
@@ -142,7 +149,10 @@ const Select = <T,>({
         >
             <DropdownArrow $isOpen={isOpen} />
             {selectedOption && !isOpen ? (
-                <DropdownItem>{selectedOption?.label}</DropdownItem>
+                <DropdownItem>
+                    {Boolean(selectedOption.icon) && selectedOption.icon}
+                    {selectedOption?.label}
+                </DropdownItem>
             ) : (
                 <Placeholder>{placeholder || 'Select'}</Placeholder>
             )}
@@ -154,6 +164,7 @@ const Select = <T,>({
                             key={option.value.toString()}
                             onClick={() => onSelect(option)}
                         >
+                            {Boolean(option.icon) && option.icon}
                             {option.label}
                         </DropdownItem>
                     ))}
