@@ -574,9 +574,13 @@ const VotesAmountModal = ({
                 {hasTrustLine && hasTargetBalance ? null : (
                     <GetAquaBlock>
                         <GetAquaLabel>You don&apos;t have enough {targetAsset.code}</GetAquaLabel>
-                        <ExternalLink onClick={() => ModalService.openModal(GetAquaModal, {})}>
-                            <GetAquaLink>Get {targetAsset.code}</GetAquaLink>
-                        </ExternalLink>
+                        {targetAsset === AQUA ? (
+                            <ExternalLink onClick={() => ModalService.openModal(GetAquaModal, {})}>
+                                <GetAquaLink>Get {targetAsset.code}</GetAquaLink>
+                            </ExternalLink>
+                        ) : (
+                            <ExternalLink href="https://locker.aqua.network">Get ICE</ExternalLink>
+                        )}
                     </GetAquaBlock>
                 )}
             </Scrollable>
