@@ -127,7 +127,6 @@ const AccountPage = () => {
         StellarService.startClaimableBalancesStream(account.accountId());
 
         const unsub = StellarService.event.sub(({ type }) => {
-            console.log('event', type);
             if (type === StellarEvents.claimableUpdate) {
                 StellarService.getAccountLocks(accountId).then((res) => {
                     setLocks(res);
