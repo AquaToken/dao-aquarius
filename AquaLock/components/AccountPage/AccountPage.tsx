@@ -17,6 +17,7 @@ import { useIsOnViewport } from '../../../common/hooks/useIsOnViewport';
 import ArrowDown from '../../../common/assets/img/icon-arrow-down.svg';
 import { getDistributionForAccount } from '../../api/api';
 import IceBlock from './IceBlock/IceBlock';
+import { StellarEvents } from '../../../common/services/stellar.service';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -83,9 +84,8 @@ const AccountPage = () => {
     const [ammAquaBalance, setAmmAquaBalance] = useState(null);
     const [locks, setLocks] = useState(null);
     const [distributions, setDistributions] = useState(null);
-    const [updateIndex, setUpdateIndex] = useState(0);
 
-    const { account } = useAuthStore();
+    const { account, isLogged } = useAuthStore();
     const { accountId } = useParams<{ accountId: string }>();
     const history = useHistory();
 
@@ -108,7 +108,7 @@ const AccountPage = () => {
         StellarService.loadAccount(accountId).then((res) => {
             setCurrentAccount(new AccountService(res, null));
         });
-    }, [accountId, updateIndex]);
+    }, [accountId]);
 
     useEffect(() => {
         if (!accountId) {
@@ -117,7 +117,26 @@ const AccountPage = () => {
         StellarService.getAccountLocks(accountId).then((res) => {
             setLocks(res);
         });
-    }, [accountId, updateIndex]);
+    }, [accountId]);
+
+    useEffect(() => {
+        if (!isLogged) {
+            StellarService.closeClaimableBalancesStream();
+            return;
+        }
+        StellarService.startClaimableBalancesStream(account.accountId());
+
+        const unsub = StellarService.event.sub(({ type }) => {
+            console.log('event', type);
+            if (type === StellarEvents.claimableUpdate) {
+                StellarService.getAccountLocks(accountId).then((res) => {
+                    setLocks(res);
+                });
+            }
+        });
+
+        return () => unsub();
+    }, [isLogged]);
 
     useEffect(() => {
         if (!currentAccount) {
@@ -136,10 +155,6 @@ const AccountPage = () => {
             setDistributions(res);
         });
     }, [currentAccount]);
-
-    const updateAccount = () => {
-        setUpdateIndex((prevState) => prevState + 1);
-    };
 
     const fromRef = useRef(null);
     const hideBottomBlock = useIsOnViewport(fromRef);
@@ -160,30 +175,28 @@ const AccountPage = () => {
         <MainBlock>
             <Container>
                 <LeftColumn>
-                    <AccountInfoBlock account={currentAccount} />
+                    <AccountInfoBlock account={account ?? currentAccount} />
                     <Portfolio
                         ammAquaBalance={ammAquaBalance}
-                        currentAccount={currentAccount}
+                        currentAccount={account ?? currentAccount}
                         locks={locks}
                     />
 
-                    <IceBlock account={currentAccount} locks={locks} />
+                    <IceBlock account={account ?? currentAccount} locks={locks} />
 
                     {Boolean(locks?.length) && Boolean(distributions) && (
                         <CurrentLocks
                             distributions={distributions}
                             locks={locks}
-                            aquaBalance={currentAccount.getAquaBalance()}
+                            aquaBalance={
+                                account?.getAquaBalance() ?? currentAccount.getAquaBalance()
+                            }
                         />
                     )}
                 </LeftColumn>
 
                 <RightColumn>
-                    <LockAquaForm
-                        account={currentAccount}
-                        updateAccount={updateAccount}
-                        ref={fromRef}
-                    />
+                    <LockAquaForm account={account ?? currentAccount} ref={fromRef} />
                 </RightColumn>
             </Container>
             {!hideBottomBlock && (

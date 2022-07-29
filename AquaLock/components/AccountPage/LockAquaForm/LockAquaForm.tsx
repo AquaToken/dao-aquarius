@@ -16,7 +16,7 @@ import { ModalService } from '../../../../common/services/globalServices';
 import useAuthStore from '../../../../common/store/authStore/useAuthStore';
 import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
 import LockAquaModal from '../LockAquaModal/LockAquaModal';
-import { MAX_BOOST, MAX_BOOST_PERIOD } from '../IceBlock/IceBlock';
+import { MAX_BOOST, MAX_BOOST_PERIOD, MIN_BOOST_PERIOD } from '../IceBlock/IceBlock';
 
 const Container = styled.div`
     background: ${COLORS.white};
@@ -198,10 +198,8 @@ const LockAquaForm = forwardRef(
     (
         {
             account,
-            updateAccount,
         }: {
             account: AccountService;
-            updateAccount: () => void;
         },
         ref: RefObject<HTMLDivElement>,
     ) => {
@@ -212,7 +210,7 @@ const LockAquaForm = forwardRef(
 
         const { isLogged } = useAuthStore();
 
-        const aquaBalance = Math.max(account.getAquaBalance() - 1, 0);
+        const aquaBalance = account.getAquaBalance();
 
         const onLockPeriodPercentChange = (value) => {
             setLockPeriodPercent(value);
@@ -275,10 +273,6 @@ const LockAquaForm = forwardRef(
                 amount: lockAmount,
                 period: lockPeriod,
                 iceAmount,
-            }).then(({ isConfirmed }) => {
-                if (isConfirmed) {
-                    updateAccount();
-                }
             });
         };
 
@@ -361,7 +355,13 @@ const LockAquaForm = forwardRef(
                     </YouWillGetAmount>
                 </YouWillGet>
 
-                <Button isBig onClick={() => onSubmit()} disabled={!lockAmount || !lockPeriod}>
+                <Button
+                    isBig
+                    onClick={() => onSubmit()}
+                    disabled={
+                        !lockAmount || !lockPeriod || lockPeriod - Date.now() < MIN_BOOST_PERIOD
+                    }
+                >
                     FREEZE AQUA
                 </Button>
             </Container>
