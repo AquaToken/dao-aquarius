@@ -179,7 +179,7 @@ const IceBlock = ({ account, locks }: IceBlockProps): JSX.Element => {
                         governance voting, as well as boosted yields when providing liquidity on
                         markets receiving SDEX & AMM rewards.
                     </IceDescriptionText>
-                    <ExternalLink>Learn more</ExternalLink>
+                    <ExternalLink href="https://medium.com/aquarius-aqua/ice-the-next-stage-of-aquarius-810edc7cf3bb">Learn more</ExternalLink>
                 </IceDescriptionContent>
             </IceDescription>
             {Boolean(locks.length && iceBalance === 0) && (
