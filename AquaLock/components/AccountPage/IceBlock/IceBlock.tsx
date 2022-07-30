@@ -189,7 +189,7 @@ const IceBlock = ({ account, locks }: IceBlockProps): JSX.Element => {
                         <ClaimIceAmount>≈ {formatBalance(getIceAmount(), true)} ICE</ClaimIceAmount>
                         {account.hasAllIceTrustlines() && (
                             <ClaimIcePending>
-                                These will be credited to your wallet shortly
+                                ICE tokens will be credited to your wallet within the next 2 hours.
                             </ClaimIcePending>
                         )}
                     </ClaimIceColumn>
