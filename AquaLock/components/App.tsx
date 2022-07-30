@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Suspense, useEffect } from 'react';
+import { Suspense } from 'react';
 import { hot } from 'react-hot-loader';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 
@@ -17,30 +17,11 @@ import useAuthStore from '../../common/store/authStore/useAuthStore';
 import MainPage from './MainPage/MainPage';
 import FAQ from './FAQ/FAQ';
 import AccountPage from './AccountPage/AccountPage';
-import { ModalService } from '../../common/services/globalServices';
-import SnapshotPassedModal from './common/SnapshotPassedModal/SnapshotPassedModal';
-import Background from '../../common/assets/img/snapshot-passed-background.svg';
-import styled from 'styled-components';
-import { Breakpoints } from '../../common/styles';
-import { respondDown } from '../../common/mixins';
-
-const ModalBG = styled(Background)`
-    object-position: center center;
-    width: 62.4rem;
-
-    ${respondDown(Breakpoints.md)`
-        width: 100%;
-    `}
-`;
 
 const App = () => {
     useGlobalSubscriptions();
 
     const { account } = useAuthStore();
-
-    useEffect(() => {
-        ModalService.openModal(SnapshotPassedModal, {}, true, <ModalBG />);
-    }, []);
 
     return (
         <Router>

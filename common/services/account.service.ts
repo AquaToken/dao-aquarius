@@ -2,7 +2,7 @@ import AccountRecord, * as StellarSdk from 'stellar-sdk';
 import { AccountResponse, Horizon } from 'stellar-sdk';
 import { LoginTypes } from '../store/authStore/types';
 import { ModalService, StellarService, ToastService, WalletConnectService } from './globalServices';
-import { AQUA_CODE, AQUA_ISSUER } from './stellar.service';
+import { AQUA_CODE, AQUA_ISSUER, ICE_ASSETS } from './stellar.service';
 import { BuildSignAndSubmitStatuses } from './wallet-connect.service';
 import SignWithPublic from '../modals/SignWithPublic';
 
@@ -69,6 +69,37 @@ export default class AccountService extends AccountResponse {
         }
 
         return Number(assetBalance.balance) - Number(assetBalance.selling_liabilities);
+    }
+
+    hasAllIceTrustlines() {
+        return ICE_ASSETS.map((asset) => {
+            const [code, issuer] = asset.split(':');
+            const stellarAsset = StellarService.createAsset(code, issuer);
+            return this.getAssetBalance(stellarAsset);
+        }).every((asset) => asset !== null);
+    }
+
+    getUntrustedIceAssets() {
+        return ICE_ASSETS.reduce((acc, asset) => {
+            const [code, issuer] = asset.split(':');
+            const stellarAsset = StellarService.createAsset(code, issuer);
+            if (this.getAssetBalance(stellarAsset) === null) {
+                acc.push(stellarAsset);
+                return acc;
+            }
+            return acc;
+        }, []);
+    }
+
+    getCommonIceBalance() {
+        return ICE_ASSETS.map((asset) => {
+            const [code, issuer] = asset.split(':');
+            const stellarAsset = StellarService.createAsset(code, issuer);
+            return this.getAssetBalance(stellarAsset);
+        }).reduce((acc, balance) => {
+            console.log(balance);
+            return acc + balance;
+        }, 0);
     }
 
     async getAmmAquaBalance(): Promise<number> {

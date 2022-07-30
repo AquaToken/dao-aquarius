@@ -10,6 +10,7 @@ const ButtonBody = styled.button<{
     likeDisabled?: boolean;
     isSquare?: boolean;
     isSmall?: boolean;
+    isWhite?: boolean;
 }>`
     ${flexAllCenter};
     width: ${({ fullWidth, isSquare, isBig }) => {
@@ -45,8 +46,15 @@ const ButtonBody = styled.button<{
         return isBig ? '0 6.4rem' : '0 3.2rem';
     }};
     background-color: ${COLORS.white};
-    background-color: ${({ likeDisabled }) =>
-        likeDisabled ? COLORS.gray : COLORS.buttonBackground};
+    background-color: ${({ likeDisabled, isWhite }) => {
+        if (likeDisabled) {
+            return COLORS.gray;
+        }
+        if (isWhite) {
+            return COLORS.white;
+        }
+        return COLORS.buttonBackground;
+    }};
     border-radius: 0.5rem;
     border: none;
     font-weight: bold;
@@ -59,8 +67,17 @@ const ButtonBody = styled.button<{
     white-space: nowrap;
 
     &:hover {
-        background-color: ${({ likeDisabled }) =>
-            likeDisabled ? COLORS.lightGray : COLORS.purple};
+        background-color: ${({ likeDisabled, isWhite }) => {
+            if (likeDisabled) {
+                return COLORS.lightGray;
+            }
+
+            if (isWhite) {
+                return COLORS.lightGray;
+            }
+
+            return COLORS.purple;
+        }};
     }
 
     &:active {
@@ -73,8 +90,18 @@ const ButtonBody = styled.button<{
     }
 `;
 
-const ButtonLoader = styled.div<{ pending?: boolean; likeDisabled?: boolean }>`
-    color: ${({ likeDisabled }) => (likeDisabled ? COLORS.placeholder : COLORS.white)};
+const ButtonLoader = styled.div<{ pending?: boolean; likeDisabled?: boolean; isWhite?: boolean }>`
+    color: ${({ likeDisabled, isWhite }) => {
+        if (likeDisabled) {
+            return COLORS.placeholder;
+        }
+
+        if (isWhite) {
+            return COLORS.blue;
+        }
+
+        return COLORS.white;
+    }}}
 
     ${({ pending }) =>
         pending
@@ -118,6 +145,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     likeDisabled?: boolean;
     isSquare?: boolean;
     isSmall?: boolean;
+    isWhite?: boolean;
 }
 
 const Button = ({
@@ -128,6 +156,7 @@ const Button = ({
     fullWidth,
     likeDisabled,
     isSquare,
+    isWhite,
     ...props
 }: ButtonProps): JSX.Element => {
     return (
@@ -138,9 +167,10 @@ const Button = ({
             likeDisabled={likeDisabled}
             isSquare={isSquare}
             isSmall={isSmall}
+            isWhite={isWhite}
             {...props}
         >
-            <ButtonLoader pending={pending} likeDisabled={likeDisabled}>
+            <ButtonLoader pending={pending} likeDisabled={likeDisabled} isWhite={isWhite}>
                 {children}
             </ButtonLoader>
         </ButtonBody>

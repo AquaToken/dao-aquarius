@@ -32,6 +32,20 @@ export const AQUA_ISSUER = 'GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67
 export const yXLM_CODE = 'yXLM';
 export const yXLM_ISSUER = 'GARDNV3Q7YGT4AKSDF25LT32YSCCW4EV22Y2TV3I2PU2MMXJTEDL5T55';
 
+export const ICE_CODE = 'ICE';
+export const ICE_ISSUER = 'GAXSGZ2JM3LNWOO4WRGADISNMWO4HQLG4QBGUZRKH5ZHL3EQBGX73ICE';
+
+export const GOV_ICE_CODE = 'governICE';
+export const UP_ICE_CODE = 'upvoteICE';
+export const DOWN_ICE_CODE = 'downvoteICE';
+
+export const ICE_ASSETS = [
+    `${ICE_CODE}:${ICE_ISSUER}`,
+    `${GOV_ICE_CODE}:${ICE_ISSUER}`,
+    `${UP_ICE_CODE}:${ICE_ISSUER}`,
+    `${DOWN_ICE_CODE}:${ICE_ISSUER}`,
+];
+
 export enum THRESHOLDS {
     LOW = 'low_threshold',
     MED = 'med_threshold',
@@ -302,9 +316,7 @@ export default class StellarServiceClass {
                     (claim) =>
                         claim.claimants.length === 1 &&
                         claim.claimants[0].destination === publicKey &&
-                        claim.asset === `${AQUA_CODE}:${AQUA_ISSUER}` &&
-                        new Date(claim.claimants[0].predicate?.not?.abs_before).getTime() >
-                            Date.now(),
+                        claim.asset === `${AQUA_CODE}:${AQUA_ISSUER}`,
                 );
             });
     }
@@ -691,5 +703,11 @@ export default class StellarServiceClass {
                     return +prev.destination_amount > +current.destination_amount ? prev : current;
                 }).destination_amount;
             });
+    }
+
+    createAddTrustOperation(asset) {
+        return StellarSdk.Operation.changeTrust({
+            asset,
+        });
     }
 }

@@ -8,27 +8,46 @@ import { StellarService, ToastService } from '../../../../common/services/global
 import { useHistory } from 'react-router-dom';
 import { respondDown } from '../../../../common/mixins';
 
-const Container = styled.div<{ isModal }>`
+const Container = styled.form<{ isModal: boolean }>`
     display: flex;
-    flex-direction: column;
+    flex-direction: ${({ isModal }) => (isModal ? 'column' : 'row')};
     background-color: ${COLORS.white};
     box-shadow: ${({ isModal }) => (isModal ? 'unset' : '0 2rem 3rem rgba(0, 6, 54, 0.06)')};
     border-radius: 1rem;
     padding: ${({ isModal }) => (isModal ? '0' : '4.8rem')};
-    width: 48rem;
+    width: ${({ isModal }) => (isModal ? '48rem' : '100%')};
+    margin: ${({ isModal }) => (isModal ? '0' : '-8rem 4rem 0')};
+    gap: ${({ isModal }) => (isModal ? '0' : '6rem')};
+
+    ${respondDown(Breakpoints.xl)`
+        margin: 0;
+    `}
 
     ${respondDown(Breakpoints.md)`
         width: 100%;
         box-shadow: unset;
         padding: 4rem 1.6rem;
+        flex-direction: column;
+        gap: 0;
     `}
 `;
 
-const InputBlock = styled.div`
+const TextBlock = styled.div`
     display: flex;
     flex-direction: column;
-    padding-bottom: 4rem;
-    border-bottom: 0.1rem dashed ${COLORS.gray};
+    width: 100%;
+`;
+
+const InputBlock = styled.div<{ isModal: boolean }>`
+    width: ${({ isModal }) => (isModal ? '100%' : '130%')};
+    padding-bottom: ${({ isModal }) => (isModal ? '4rem' : '0')};
+    border-bottom: ${({ isModal }) => (isModal ? `0.1rem dashed ${COLORS.gray}` : 'none')};
+
+    ${respondDown(Breakpoints.md)`
+        width: 100%;
+        padding-bottom: 4rem;
+        border-bottom: 0.1rem dashed ${COLORS.gray};
+    `}
 `;
 
 const Title = styled.span`
@@ -38,15 +57,25 @@ const Title = styled.span`
     margin-bottom: 0.8rem;
 `;
 
-const Description = styled.span`
+const Description = styled.span<{ isModal: boolean }>`
     font-size: 1.4rem;
     line-height: 2rem;
     color: ${COLORS.descriptionText};
-    margin-bottom: 4rem;
+    margin-bottom: ${({ isModal }) => (isModal ? '4rem' : '0')};
+
+    ${respondDown(Breakpoints.md)`
+        margin-bottom: 4rem;
+    `}
 `;
 
-const StyledButton = styled(Button)`
-    margin-top: 4rem;
+const StyledButton = styled(Button)<{ isModal: boolean }>`
+    width: 100%;
+    margin-top: ${({ isModal }) => (isModal ? '4rem' : '0')};
+    padding: 0;
+
+    ${respondDown(Breakpoints.md)`
+        margin-top: 4rem;
+    `}
 `;
 
 const AccountInput = ({ params, close }: { params?: any; close?: any }) => {
@@ -54,7 +83,8 @@ const AccountInput = ({ params, close }: { params?: any; close?: any }) => {
     const [value, setValue] = useState('');
     const history = useHistory();
 
-    const onSubmit = () => {
+    const onSubmit = (e) => {
+        e.preventDefault();
         if (!StellarService.isValidPublicKey(value)) {
             ToastService.showErrorToast('Invalid public key');
             return;
@@ -66,10 +96,12 @@ const AccountInput = ({ params, close }: { params?: any; close?: any }) => {
     };
 
     return (
-        <Container isModal={isModal}>
-            <InputBlock>
-                <Title>{isModal ? 'Switch account' : 'Lock AQUA'}</Title>
-                <Description>Track your portfolio and manage AQUA locks.</Description>
+        <Container isModal={isModal} onSubmit={onSubmit}>
+            <TextBlock>
+                <Title>{isModal ? 'Switch account' : 'Check your account'}</Title>
+                <Description isModal={isModal}>Track your AQUA locks and ICE balance.</Description>
+            </TextBlock>
+            <InputBlock isModal={isModal}>
                 <Input
                     placeholder="Enter your public key (starts with G)"
                     value={value}
@@ -78,7 +110,7 @@ const AccountInput = ({ params, close }: { params?: any; close?: any }) => {
                     }}
                 />
             </InputBlock>
-            <StyledButton isBig disabled={!value} onClick={() => onSubmit()}>
+            <StyledButton isBig disabled={!value} isModal={isModal} type="submit">
                 {isModal ? 'Continue' : "let's start"}
             </StyledButton>
         </Container>

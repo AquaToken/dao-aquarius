@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { forwardRef, RefObject, useState } from 'react';
+import { forwardRef, RefObject, useMemo, useState } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import { Breakpoints, COLORS, FONT_FAMILY } from '../../../../common/styles';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
 import AccountService from '../../../../common/services/account.service';
 import Input from '../../../../common/basics/Input';
 import Aqua from '../../../../common/assets/img/aqua-logo-small.svg';
+import Ice from '../../../../common/assets/img/ice-logo.svg';
 import RangeInput from '../../../../common/basics/RangeInput';
 import { formatBalance, getDateString, roundToPrecision } from '../../../../common/helpers/helpers';
 import Button from '../../../../common/basics/Button';
@@ -15,8 +16,7 @@ import { ModalService } from '../../../../common/services/globalServices';
 import useAuthStore from '../../../../common/store/authStore/useAuthStore';
 import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
 import LockAquaModal from '../LockAquaModal/LockAquaModal';
-
-const MAX_TIME_LOCK = (3 * 365 + 1) * 24 * 60 * 60 * 1000;
+import { MAX_BOOST, MAX_BOOST_PERIOD, MIN_BOOST_PERIOD } from '../IceBlock/IceBlock';
 
 const Container = styled.div`
     background: ${COLORS.white};
@@ -164,14 +164,42 @@ const GlobalStyle = createGlobalStyle`
     }
 `;
 
+const YouWillGet = styled.div`
+    display: flex;
+    margin-bottom: 3.8rem;
+    align-items: center;
+    justify-content: space-between;
+`;
+
+const YouWillGetLabel = styled.span`
+    font-weight: 400;
+    font-size: 1.4rem;
+    line-height: 2rem;
+    color: ${COLORS.descriptionText};
+    opacity: 0.7;
+`;
+
+const YouWillGetAmount = styled.div`
+    font-weight: 700;
+    font-size: 2rem;
+    line-height: 2.8rem;
+    color: ${COLORS.titleText};
+    display: flex;
+    align-items: center;
+`;
+
+const IceLogo = styled(Ice)`
+    height: 3.2rem;
+    width: 3.2rem;
+    margin-right: 0.8rem;
+`;
+
 const LockAquaForm = forwardRef(
     (
         {
             account,
-            updateAccount,
         }: {
             account: AccountService;
-            updateAccount: () => void;
         },
         ref: RefObject<HTMLDivElement>,
     ) => {
@@ -182,11 +210,11 @@ const LockAquaForm = forwardRef(
 
         const { isLogged } = useAuthStore();
 
-        const aquaBalance = Math.max(account.getAquaBalance() - 1, 0);
+        const aquaBalance = account.getAquaBalance();
 
         const onLockPeriodPercentChange = (value) => {
             setLockPeriodPercent(value);
-            const period = (MAX_TIME_LOCK * value) / 100;
+            const period = (MAX_BOOST_PERIOD * value) / 100;
 
             setLockPeriod(period + Date.now());
         };
@@ -199,12 +227,12 @@ const LockAquaForm = forwardRef(
             }
             const period = value - Date.now();
 
-            if (period > MAX_TIME_LOCK) {
+            if (period > MAX_BOOST_PERIOD) {
                 setLockPeriodPercent(100);
                 return;
             }
 
-            const percent = roundToPrecision((period / MAX_TIME_LOCK) * 100, 2);
+            const percent = roundToPrecision((period / MAX_BOOST_PERIOD) * 100, 2);
 
             setLockPeriodPercent(+percent);
         };
@@ -230,24 +258,28 @@ const LockAquaForm = forwardRef(
             setLockAmount(roundToPrecision(newAmount, 7));
         };
 
+        const iceAmount = useMemo(() => {
+            const remainingPeriod = Math.max(lockPeriod - Date.now(), 0);
+            const boost = Math.min(remainingPeriod / MAX_BOOST_PERIOD, 1) * MAX_BOOST;
+            return Number(lockAmount) * (1 + boost);
+        }, [lockAmount, lockPeriod]);
+
         const onSubmit = () => {
             if (!isLogged) {
                 ModalService.openModal(ChooseLoginMethodModal, {});
                 return;
             }
-            ModalService.openModal(LockAquaModal, { amount: lockAmount, period: lockPeriod }).then(
-                ({ isConfirmed }) => {
-                    if (isConfirmed) {
-                        updateAccount();
-                    }
-                },
-            );
+            ModalService.openModal(LockAquaModal, {
+                amount: lockAmount,
+                period: lockPeriod,
+                iceAmount,
+            });
         };
 
         return (
             <Container ref={ref}>
-                <Title>Lock your AQUA</Title>
-                <Description>Lock your AQUA token</Description>
+                <Title>Freeze your AQUA</Title>
+                <Description>Turn your AQUA into ICE tokens!</Description>
                 <ContentRow>
                     <Label>Amount</Label>
                     <BalanceBlock>
@@ -315,8 +347,22 @@ const LockAquaForm = forwardRef(
                     )}
                 </ClaimBack>
 
-                <Button isBig onClick={() => onSubmit()} disabled={!lockAmount || !lockPeriod}>
-                    LOCK AQUA
+                <YouWillGet>
+                    <YouWillGetLabel>You will get:</YouWillGetLabel>
+                    <YouWillGetAmount>
+                        <IceLogo />
+                        <span>{formatBalance(iceAmount, true)} ICE</span>
+                    </YouWillGetAmount>
+                </YouWillGet>
+
+                <Button
+                    isBig
+                    onClick={() => onSubmit()}
+                    disabled={
+                        !lockAmount || !lockPeriod || lockPeriod - Date.now() < MIN_BOOST_PERIOD
+                    }
+                >
+                    FREEZE AQUA
                 </Button>
             </Container>
         );

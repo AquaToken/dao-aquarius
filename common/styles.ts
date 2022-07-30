@@ -18,6 +18,7 @@ export const COLORS = {
     green: '#00B796',
     orange: '#FF8F00',
     border: '#E9E6ED',
+    blue: '#2E30F0',
 };
 
 export const FONT_FAMILY = {
