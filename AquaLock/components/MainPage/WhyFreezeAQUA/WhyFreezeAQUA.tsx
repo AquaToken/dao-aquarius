@@ -79,7 +79,7 @@ const ColumnText = styled.span`
 const WhyFreezeAQUA = (): JSX.Element => {
     return (
         <Container>
-            <Title>Why freeze aqua</Title>
+            <Title>Why freeze AQUA?</Title>
             <Content>
                 <Column>
                     <Image1 />
