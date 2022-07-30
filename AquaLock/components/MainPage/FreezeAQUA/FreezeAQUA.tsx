@@ -79,7 +79,7 @@ const FreezeAQUA = (): JSX.Element => {
                     non-transferable tokens inside their Stellar wallets, specifically for use in
                     the Aquarius universe.
                 </Description>
-                <ExternalLink>Read more about Freezing AQUA</ExternalLink>
+                <ExternalLink href="https://medium.com/aquarius-aqua/ice-the-next-stage-of-aquarius-810edc7cf3bb">Read more about freezing AQUA</ExternalLink>
             </TextBlock>
             <Image />
         </Container>
