@@ -83,7 +83,7 @@ const ClaimIceBlock = styled.div`
     background: ${COLORS.blue};
     border-radius: 5px;
     padding: 2.9rem 4.5rem 2.9rem 3.2rem;
-    margin-top: 3.3rem;
+    margin-bottom: 1.6rem;
     justify-content: space-between;
 
     ${respondDown(Breakpoints.md)`
@@ -171,17 +171,6 @@ const IceBlock = ({ account, locks }: IceBlockProps): JSX.Element => {
                     {account.hasAllIceTrustlines() ? formatBalance(iceBalance, true) : 0} ICE
                 </Balance>
             </BalanceRow>
-            <IceDescription>
-                <IceDescriptionEmoji>☝️</IceDescriptionEmoji>
-                <IceDescriptionContent>
-                    <IceDescriptionText>
-                        ICE enables increased voting power & flexibility between liquidity &
-                        governance voting, as well as boosted yields when providing liquidity on
-                        markets receiving SDEX & AMM rewards.
-                    </IceDescriptionText>
-                    <ExternalLink href="https://medium.com/aquarius-aqua/ice-the-next-stage-of-aquarius-810edc7cf3bb">Learn more</ExternalLink>
-                </IceDescriptionContent>
-            </IceDescription>
             {Boolean(locks.length && iceBalance === 0) && (
                 <ClaimIceBlock>
                     <ClaimIceColumn>
@@ -200,6 +189,19 @@ const IceBlock = ({ account, locks }: IceBlockProps): JSX.Element => {
                     )}
                 </ClaimIceBlock>
             )}
+            <IceDescription>
+                <IceDescriptionEmoji>☝️</IceDescriptionEmoji>
+                <IceDescriptionContent>
+                    <IceDescriptionText>
+                        ICE enables increased voting power & flexibility between liquidity &
+                        governance voting, as well as boosted yields when providing liquidity on
+                        markets receiving SDEX & AMM rewards.
+                    </IceDescriptionText>
+                    <ExternalLink href="https://medium.com/aquarius-aqua/ice-the-next-stage-of-aquarius-810edc7cf3bb">
+                        Learn more
+                    </ExternalLink>
+                </IceDescriptionContent>
+            </IceDescription>
         </Container>
     );
 };
