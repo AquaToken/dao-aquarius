@@ -16,7 +16,7 @@ import { ModalService } from '../../../../common/services/globalServices';
 import useAuthStore from '../../../../common/store/authStore/useAuthStore';
 import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
 import LockAquaModal from '../LockAquaModal/LockAquaModal';
-import { MAX_BOOST, MAX_BOOST_PERIOD, MIN_BOOST_PERIOD } from '../IceBlock/IceBlock';
+import { MAX_BOOST, MAX_BOOST_PERIOD, MIN_BOOST_PERIOD, roundMsToDays } from '../IceBlock/IceBlock';
 
 const Container = styled.div`
     background: ${COLORS.white};
@@ -259,8 +259,13 @@ const LockAquaForm = forwardRef(
         };
 
         const iceAmount = useMemo(() => {
-            const remainingPeriod = Math.max(lockPeriod - Date.now(), 0);
-            const boost = Math.min(remainingPeriod / MAX_BOOST_PERIOD, 1) * MAX_BOOST;
+            const remainingPeriod = Math.max(
+                roundMsToDays(lockPeriod) - roundMsToDays(Date.now()),
+                0,
+            );
+
+            const boost =
+                Math.min(remainingPeriod / roundMsToDays(MAX_BOOST_PERIOD), 1) * MAX_BOOST;
             return Number(lockAmount) * (1 + boost);
         }, [lockAmount, lockPeriod]);
 

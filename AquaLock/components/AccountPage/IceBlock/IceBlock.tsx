@@ -127,8 +127,12 @@ const Logo = styled(IceLogo)`
 `;
 
 export const MAX_BOOST = 9;
-export const MAX_BOOST_PERIOD = (3 * 365 + 1) * 24 * 60 * 60 * 1000;
+export const MAX_BOOST_PERIOD = 3 * 365 * 24 * 60 * 60 * 1000;
 export const MIN_BOOST_PERIOD = 24 * 60 * 60 * 1000;
+
+export const roundMsToDays = (timestamp) => {
+    return Math.floor(timestamp / (24 * 60 * 60 * 1000));
+};
 
 interface IceBlockProps {
     account: AccountService;
@@ -145,10 +149,12 @@ const IceBlock = ({ account, locks }: IceBlockProps): JSX.Element => {
     const getIceAmount = useCallback(() => {
         return locks.reduce((acc, lock) => {
             const remainingPeriod = Math.max(
-                new Date(lock.claimants[0].predicate.not.abs_before).getTime() - Date.now(),
+                roundMsToDays(new Date(lock.claimants[0].predicate.not.abs_before).getTime()) -
+                    roundMsToDays(Date.now()),
                 0,
             );
-            const boost = Math.min(remainingPeriod / MAX_BOOST_PERIOD, 1) * MAX_BOOST;
+            const boost =
+                Math.min(remainingPeriod / roundMsToDays(MAX_BOOST_PERIOD), 1) * MAX_BOOST;
             const distributedAmount = Number(lock.amount) * (1 + boost);
             return acc + distributedAmount;
         }, 0);
