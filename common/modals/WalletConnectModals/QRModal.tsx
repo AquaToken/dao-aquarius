@@ -176,7 +176,7 @@ const QRModal = ({ params }: ModalProps<{ uri: string }>): JSX.Element => {
             <ModalTitle>
                 {modalState === ModalStates.qr ? 'Scan QR code' : ''}
                 {isAndroid() && modalState === ModalStates.mobile ? 'Connect to Mobile Wallet' : ''}
-                {isIOS() && modalState === ModalStates.mobile ? 'Choose your prefer wallet' : ''}
+                {isIOS() && modalState === ModalStates.mobile ? 'Choose your preferred wallet' : ''}
             </ModalTitle>
 
             {modalState === ModalStates.qr && (
