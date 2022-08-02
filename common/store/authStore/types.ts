@@ -1,4 +1,4 @@
-import { AppMetadata } from '@walletconnect/types';
+import { SignClientTypes } from '@walletconnect/types';
 import AccountService from '../../services/account.service';
 
 export interface AuthStore {
@@ -10,7 +10,7 @@ export interface AuthStore {
     loginErrorText: string;
     federationAddress: string;
     isFederationPending: boolean;
-    metadata: AppMetadata | null;
+    metadata: SignClientTypes.Metadata | null;
 }
 
 export enum LoginTypes {

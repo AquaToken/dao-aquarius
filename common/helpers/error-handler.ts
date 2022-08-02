@@ -69,14 +69,14 @@ enum OPERATIONS_ERROR_CODES {
 }
 
 export default function ErrorHandler(error) {
-    if (
-        error === 'JSON-RPC Request timeout after 300 seconds: stellar_signAndSubmitXDR' ||
-        error === 'JSON-RPC Request timeout after 300 seconds: stellar_signXDR'
-    ) {
-        return '';
+    if (error?.message === "Cannot read properties of undefined (reading 'message')") {
+        return 'Request timeout';
     }
-    if (error.toString() === 'Error') {
+    if (error?.message === 'cancelled_by_user') {
         return 'Transaction cancelled by the user';
+    }
+    if (error?.code !== undefined) {
+        return error?.message;
     }
     if (error.error) {
         return error.error;

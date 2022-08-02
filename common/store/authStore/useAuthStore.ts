@@ -1,14 +1,18 @@
 import * as actions from './actions';
 import bindActions from '../bindActions';
 import { AuthStore, LoginTypes } from './types';
-import { AppMetadata } from '@walletconnect/types';
+import { SignClientTypes } from '@walletconnect/types';
 import AccountRecord from 'stellar-sdk';
 import { ActionAsyncResult, ActionSimpleResult } from '../types';
 
 const { useGlobalStore } = require(`../../../${process.env.PROJECT_PATH}/store`);
 
 type AuthActions = {
-    login: (pubKey: string, loginType: LoginTypes, metadata?: AppMetadata) => ActionAsyncResult;
+    login: (
+        pubKey: string,
+        loginType: LoginTypes,
+        metadata?: SignClientTypes.Metadata,
+    ) => ActionAsyncResult;
     logout: () => ActionSimpleResult;
     resolveFederation: (homeDomain: string, accountId: string) => ActionAsyncResult;
     updateAccount: (account: typeof AccountRecord, authType: LoginTypes) => ActionSimpleResult;
