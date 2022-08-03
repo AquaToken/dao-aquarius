@@ -2,7 +2,12 @@ import * as React from 'react';
 import { forwardRef, RefObject, useMemo, useState } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import { Breakpoints, COLORS, FONT_FAMILY } from '../../../../common/styles';
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
+import {
+    flexAllCenter,
+    flexRowSpaceBetween,
+    respondDown,
+    textEllipsis,
+} from '../../../../common/mixins';
 import AccountService from '../../../../common/services/account.service';
 import Input from '../../../../common/basics/Input';
 import Aqua from '../../../../common/assets/img/aqua-logo-small.svg';
@@ -11,6 +16,7 @@ import RangeInput from '../../../../common/basics/RangeInput';
 import { formatBalance, getDateString, roundToPrecision } from '../../../../common/helpers/helpers';
 import Button from '../../../../common/basics/Button';
 import DatePicker from 'react-datepicker';
+import MaskedTextInput from 'react-text-mask';
 import 'react-datepicker/dist/react-datepicker.css';
 import { ModalService } from '../../../../common/services/globalServices';
 import useAuthStore from '../../../../common/store/authStore/useAuthStore';
@@ -161,6 +167,46 @@ const GlobalStyle = createGlobalStyle`
   }
     div.react-datepicker__day--outside-month {
         color: #B3B4C3;
+    }
+`;
+
+const MaskedTextInputStyled = styled(MaskedTextInput)`
+    height: 6.6rem;
+    padding: 2.4rem 6.5rem 2.4rem 2.4rem;
+    text-align: start;
+    width: 100%;
+    border: 0.1rem solid ${COLORS.gray};
+    border-radius: 0.5rem;
+    font-size: 1.6rem;
+    line-height: 1.8rem;
+    color: ${COLORS.paragraphText};
+    box-sizing: border-box;
+    ${textEllipsis};
+    margin-top: 1.2rem;
+    margin-bottom: 3.3rem;
+
+    /* Chrome, Safari, Edge, Opera */
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    /* Firefox */
+    &[type='number'] {
+        -moz-appearance: textfield;
+    }
+
+    &::placeholder {
+        color: ${COLORS.placeholder};
+    }
+
+    &:focus {
+        border: 0.2rem solid ${COLORS.purple};
+    }
+
+    &:disabled {
+        color: ${COLORS.placeholder};
     }
 `;
 
@@ -315,7 +361,11 @@ const LockAquaForm = forwardRef(
 
                 <DatePickerContainer>
                     <DatePicker
-                        customInput={<Input />}
+                        customInput={
+                            <MaskedTextInputStyled
+                                mask={[/\d/, /\d/, '.', /\d/, /\d/, '.', /\d/, /\d/, /\d/, /\d/]}
+                            />
+                        }
                         selected={lockPeriod ? new Date(lockPeriod) : null}
                         onChange={(res) => {
                             onLockPeriodChange(res?.getTime() ?? null);
