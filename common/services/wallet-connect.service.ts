@@ -424,13 +424,15 @@ export default class WalletConnectServiceClass {
             metadata: this.appMeta,
         });
 
-        const latestPairing = this.client.pairing.getAll({ active: true })[
-            this.client.pairing.length - 1
-        ];
+        setTimeout(() => {
+            const latestPairing = this.client.pairing.getAll({ active: true })[
+                this.client.pairing.length - 1
+            ];
 
-        if (latestPairing) {
-            addAppToDeepLinkListIfNeeded(latestPairing.topic);
-        }
+            if (latestPairing) {
+                addAppToDeepLinkListIfNeeded(latestPairing.topic);
+            }
+        }, 1000);
 
         if (pairing) {
             await this.client.pairing.update(pairing.topic, {
