@@ -331,10 +331,15 @@ export default class WalletConnectServiceClass {
 
         ModalService.closeAllModals();
 
-        if (this.client.pairing.getAll({ active: true }).length > 3) {
+        if (
+            this.client.pairing
+                .getAll({ active: true })
+                .filter(({ peerMetadata }) => Boolean(peerMetadata)).length > 3
+        ) {
             const deletePromises = [];
             this.client.pairing
                 .getAll({ active: true })
+                .filter(({ peerMetadata }) => Boolean(peerMetadata))
                 .slice(0, -3)
                 .forEach((pairing) => {
                     deletePromises.push(
@@ -345,10 +350,17 @@ export default class WalletConnectServiceClass {
             await Promise.all(deletePromises);
         }
 
-        if (this.client.pairing.getAll({ active: true }).length) {
+        if (
+            this.client.pairing
+                .getAll({ active: true })
+                .filter(({ peerMetadata }) => Boolean(peerMetadata)).length
+        ) {
             ModalService.closeAllModals();
             ModalService.openModal(PairingModal, {
-                pairings: this.client.pairing.getAll({ active: true }).reverse(),
+                pairings: this.client.pairing
+                    .getAll({ active: true })
+                    .filter(({ peerMetadata }) => Boolean(peerMetadata))
+                    .reverse(),
                 connect: this.connect.bind(this),
                 deletePairing: this.deletePairing.bind(this),
             });
@@ -426,7 +438,7 @@ export default class WalletConnectServiceClass {
 
         setTimeout(() => {
             const latestPairing = this.client.pairing.getAll({ active: true })[
-                this.client.pairing.length - 1
+                this.client.pairing.getAll({ active: true }).length - 1
             ];
 
             if (latestPairing) {
