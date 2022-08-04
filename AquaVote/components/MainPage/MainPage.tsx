@@ -481,8 +481,14 @@ const MainPage = (): JSX.Element => {
 
     const processAssetsFromPairs = (pairs) => {
         const assets = pairs.reduce((acc, item) => {
+            const bribeAssets =
+                item.aggregated_bribes?.reduce((accum, bribe) => {
+                    return [...accum, { code: bribe.asset_code, issuer: bribe.asset_issuer }];
+                }, []) ?? [];
+
             return [
                 ...acc,
+                ...bribeAssets,
                 { code: item.asset1_code, issuer: item.asset1_issuer },
                 { code: item.asset2_code, issuer: item.asset2_issuer },
             ];
