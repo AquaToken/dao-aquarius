@@ -227,7 +227,7 @@ const LockAquaModal = ({
                 <Label>ICE reward amount</Label>
                 <Value>
                     <IceLogo />
-                    {formatBalance(iceAmount)}
+                    {formatBalance(iceAmount)} ICE
                 </Value>
             </Row>
             {Boolean(unlistedIceAssets.length) && (

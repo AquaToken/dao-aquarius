@@ -13,9 +13,9 @@ import { flexAllCenter, respondDown } from '../../mixins';
 import { getAppFromDeepLinkList, saveAppToLS } from '../../services/wallet-connect.service';
 
 type PairingModalParams = {
-    pairings: PairingTypes.Settled[];
+    pairings: PairingTypes.Struct[];
     deletePairing: (topic: string) => Promise<void>;
-    connect: (pairing?: PairingTypes.Settled) => Promise<void>;
+    connect: (pairing?: PairingTypes.Struct) => Promise<void>;
 };
 
 const ModalBlock = styled.div`
@@ -231,6 +231,7 @@ const PairingModal = ({ params }: ModalProps<PairingModalParams>): JSX.Element =
             </NewConnectionButtonMobile>
             {currentPairings.map((pairing, index) => {
                 const app = getAppFromDeepLinkList(pairing.topic);
+                const metadata = pairing.peerMetadata;
                 return (
                     <PairingBlock
                         key={pairing.topic}
@@ -245,25 +246,25 @@ const PairingModal = ({ params }: ModalProps<PairingModalParams>): JSX.Element =
                         <DeleteButtonMobile onClick={(e) => handleDeletePairing(e, pairing.topic)}>
                             <IconCloseSmall />
                         </DeleteButtonMobile>
-                        <AppIconWeb src={pairing.state.metadata.icons[0]} alt="" />
+                        <AppIconWeb src={metadata.icons[0]} alt="" />
 
                         <AppInfoBlock>
                             <AppNameWrap>
                                 <AppIconMobileWrap>
-                                    <AppIconMobile src={pairing.state.metadata.icons[0]} alt="" />
+                                    <AppIconMobile src={metadata.icons[0]} alt="" />
                                     <LoginFlowIconWrap>
                                         {Boolean(app) ? <IconDeepLink /> : <IconQR />}
                                     </LoginFlowIconWrap>
                                 </AppIconMobileWrap>
 
                                 <AppName>
-                                    <span>{pairing.state.metadata.name}</span>
+                                    <span>{metadata.name}</span>
                                     {currentPairings.length > 1 && index === 0 && (
                                         <LatestAdded>latest added</LatestAdded>
                                     )}
                                 </AppName>
                             </AppNameWrap>
-                            <AppDescription>{pairing.state.metadata.description}</AppDescription>
+                            <AppDescription>{metadata.description}</AppDescription>
                             <ConnectButton>
                                 <span>Connect</span>
                                 <IconArrowRight />
