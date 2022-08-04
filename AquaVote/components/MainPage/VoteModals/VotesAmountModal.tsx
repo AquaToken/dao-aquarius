@@ -14,7 +14,11 @@ import useAuthStore from '../../../../common/store/authStore/useAuthStore';
 import Input from '../../../../common/basics/Input';
 import RangeInput from '../../../../common/basics/RangeInput';
 import Button from '../../../../common/basics/Button';
-import { ModalService, ToastService } from '../../../../common/services/globalServices';
+import {
+    ModalService,
+    StellarService,
+    ToastService,
+} from '../../../../common/services/globalServices';
 import { formatBalance, roundToPrecision } from '../../../../common/helpers/helpers';
 import ExternalLink from '../../../../common/basics/ExternalLink';
 import GetAquaModal from '../../../../common/modals/GetAquaModal/GetAquaModal';
@@ -25,6 +29,13 @@ import { AQUA, DOWN_ICE, SELECTED_PAIRS_ALIAS, UP_ICE } from '../MainPage';
 import VotesDurationModal from './VotesDurationModal';
 import Select, { Option } from '../../../../common/basics/Select';
 import { Asset } from 'stellar-sdk';
+import { LoginTypes } from '../../../../common/store/authStore/types';
+import {
+    BuildSignAndSubmitStatuses,
+    openApp,
+} from '../../../../common/services/wallet-connect.service';
+import ErrorHandler from '../../../../common/helpers/error-handler';
+import { useIsMounted } from '../../../../common/hooks/useIsMounted';
 
 export const ContentRow = styled.div`
     ${flexRowSpaceBetween};
@@ -216,6 +227,7 @@ const Scrollable = styled.div<{ scrollDisabled: boolean }>`
 `;
 
 const MINIMUM_AMOUNT = 0.0000001;
+const MINIMUM_ICE_AMOUNT = 10;
 
 const VotesAmountModal = ({
     params,
@@ -240,6 +252,9 @@ const VotesAmountModal = ({
     const [amount, setAmount] = useState('');
     const [targetAsset, setTargetAsset] = useState(asset ?? AQUA);
     const [selectedPairs, setSelectedPairs] = useState(pairs);
+    const [pending, setPending] = useState(false);
+
+    const isMounted = useIsMounted();
 
     const keyType: keyof PairStats = isDownVoteModal ? 'downvote_account_id' : 'market_key';
 
@@ -401,6 +416,54 @@ const VotesAmountModal = ({
         setIsHandleEdit(false);
     };
 
+    const confirmVotes = async () => {
+        try {
+            setPending(true);
+
+            const voteOps = Object.entries(pairsAmount).map(([marketKey, voteAmount]) =>
+                StellarService.createVoteOperation(
+                    account.accountId(),
+                    marketKey,
+                    voteAmount,
+                    new Date(Date.now() + 60 * 60 * 1000).getTime(),
+                    targetAsset,
+                ),
+            );
+
+            const tx = await StellarService.buildTx(account, voteOps);
+
+            const processedTx = await StellarService.processIceTx(tx, targetAsset);
+
+            const result = await account.signAndSubmitTx(processedTx);
+
+            if (isMounted.current) {
+                setPending(false);
+                close();
+            }
+
+            localStorage.setItem(SELECTED_PAIRS_ALIAS, JSON.stringify([]));
+            updatePairs();
+
+            if (
+                (result as { status: BuildSignAndSubmitStatuses }).status ===
+                BuildSignAndSubmitStatuses.pending
+            ) {
+                ToastService.showSuccessToast('More signatures required to complete');
+                return;
+            }
+            ToastService.showSuccessToast(
+                'Your vote has been cast! You will be able to see your vote in the list within 10 minutes',
+            );
+            StellarService.getClaimableBalances(account.accountId());
+        } catch (e) {
+            const errorText = ErrorHandler(e);
+            ToastService.showErrorToast(errorText);
+            if (isMounted.current) {
+                setPending(false);
+            }
+        }
+    };
+
     const onSubmit = async () => {
         if (Number(amount) > Number(targetBalance)) {
             ToastService.showErrorToast(
@@ -424,14 +487,27 @@ const VotesAmountModal = ({
 
         if (
             Object.values(pairsAmount).some(
-                (value) => !value || !Number(value) || value < MINIMUM_AMOUNT,
+                (value) =>
+                    !value ||
+                    !Number(value) ||
+                    value < MINIMUM_AMOUNT ||
+                    (targetAsset !== AQUA && value < MINIMUM_ICE_AMOUNT),
             )
         ) {
             ToastService.showErrorToast(
-                `The value of each vote must be greater than ${MINIMUM_AMOUNT.toFixed(7)} ${
-                    targetAsset.code
-                }`,
+                `The value of each vote must be greater than ${
+                    targetAsset !== AQUA ? MINIMUM_ICE_AMOUNT : MINIMUM_AMOUNT.toFixed(7)
+                } ${targetAsset.code}`,
             );
+            return;
+        }
+
+        if (targetAsset !== AQUA && account.authType === LoginTypes.walletConnect) {
+            openApp();
+        }
+
+        if (targetAsset !== AQUA) {
+            confirmVotes();
             return;
         }
 
@@ -586,8 +662,13 @@ const VotesAmountModal = ({
             </Scrollable>
 
             <ButtonContainer>
-                <Button fullWidth onClick={() => onSubmit()} disabled={!amount || !Number(amount)}>
-                    NEXT
+                <Button
+                    fullWidth
+                    onClick={() => onSubmit()}
+                    disabled={!amount || !Number(amount)}
+                    pending={pending}
+                >
+                    {targetAsset === AQUA ? 'NEXT' : 'confirm'}
                 </Button>
             </ButtonContainer>
         </>
