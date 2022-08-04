@@ -695,8 +695,8 @@ const MainPage = (): JSX.Element => {
             <Background>
                 <Title>Vote For Your Favorite Pairs</Title>
                 <Description>
-                    Lock your AQUA to create immutable and transparent votes direct on the Stellar
-                    blockchain
+                    Lock your AQUA or ICE to create immutable and transparent votes direct on the
+                    Stellar blockchain
                 </Description>
                 <BackgroundLeft />
                 <BackgroundRight />
@@ -745,8 +745,8 @@ const MainPage = (): JSX.Element => {
                             {totalStats ? (
                                 <>
                                     <span>
-                                        {formatBalance(totalStats.votes_value_sum, true)} AQUA total
-                                        in votes
+                                        {formatBalance(totalStats.votes_value_sum, true)} total in
+                                        votes
                                     </span>
                                     <Dot>{' · '}</Dot>
                                 </>

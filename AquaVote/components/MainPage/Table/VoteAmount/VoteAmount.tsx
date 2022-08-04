@@ -11,6 +11,13 @@ import IconUp from '../../../../../common/assets/img/icon-up-percent.svg';
 import IconDown from '../../../../../common/assets/img/icon-down-percent.svg';
 import Ice from '../../../../../common/assets/img/ice-logo.svg';
 import Aqua from '../../../../../common/assets/img/aqua-logo-small.svg';
+import {
+    AQUA_CODE,
+    AQUA_ISSUER,
+    DOWN_ICE_CODE,
+    ICE_ISSUER,
+    UP_ICE_CODE,
+} from '../../../../../common/services/stellar.service';
 
 const TooltipStyled = styled(Tooltip)`
     label {
@@ -169,6 +176,19 @@ const VoteAmount = ({ pair, totalStats }: { pair: PairStats; totalStats: TotalSt
         ? `${getPercent(pair.adjusted_votes_value, totalStats.adjusted_votes_value_sum)}%`
         : null;
 
+    const upAqua =
+        pair.extra.upvote_assets.find(({ asset }) => asset === `${AQUA_CODE}:${AQUA_ISSUER}`)
+            ?.votes_sum ?? 0;
+    const downAqua =
+        pair.extra.downvote_assets.find(({ asset }) => asset === `${AQUA_CODE}:${AQUA_ISSUER}`)
+            ?.votes_sum ?? 0;
+    const upIce =
+        pair.extra.upvote_assets.find(({ asset }) => asset === `${UP_ICE_CODE}:${ICE_ISSUER}`)
+            ?.votes_sum ?? 0;
+    const downIce =
+        pair.extra.downvote_assets.find(({ asset }) => asset === `${DOWN_ICE_CODE}:${ICE_ISSUER}`)
+            ?.votes_sum ?? 0;
+
     return (
         <TooltipStyled
             content={
@@ -180,14 +200,15 @@ const VoteAmount = ({ pair, totalStats }: { pair: PairStats; totalStats: TotalSt
                     <TooltipRow>
                         <span>ICE voted:</span>
                         <TokenAmount>
-                            <IceLogo />0
+                            <IceLogo />
+                            {formatBalance(+upIce, true)}
                         </TokenAmount>
                     </TooltipRow>
                     <TooltipRow>
                         <span>AQUA voted:</span>
                         <TokenAmount>
                             <AquaLogo />
-                            {formatBalance(+pair.upvote_value, true)}
+                            {formatBalance(+upAqua, true)}
                         </TokenAmount>
                     </TooltipRow>
                     <TooltipRowTitle>
@@ -197,14 +218,15 @@ const VoteAmount = ({ pair, totalStats }: { pair: PairStats; totalStats: TotalSt
                     <TooltipRow>
                         <span>ICE voted:</span>
                         <TokenAmount>
-                            <IceLogo />0
+                            <IceLogo />
+                            {formatBalance(+downIce, true)}
                         </TokenAmount>
                     </TooltipRow>
                     <TooltipRow>
                         <span>AQUA voted:</span>
                         <TokenAmount>
                             <AquaLogo />
-                            {formatBalance(+pair.downvote_value, true)}
+                            {formatBalance(+downAqua, true)}
                         </TokenAmount>
                     </TooltipRow>
                     <TooltipRowTitle>
@@ -229,7 +251,7 @@ const VoteAmount = ({ pair, totalStats }: { pair: PairStats; totalStats: TotalSt
                     setShowTooltip(false);
                 }}
             >
-                AQUA Voted:
+                Voted:
             </label>
             <Amount
                 onMouseEnter={() => {
