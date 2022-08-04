@@ -198,14 +198,14 @@ const VoteAmount = ({ pair, totalStats }: { pair: PairStats; totalStats: TotalSt
                         <span>{formatBalance(+pair.upvote_value, true)}</span>
                     </TooltipRowTitleFirst>
                     <TooltipRow>
-                        <span>ICE voted:</span>
+                        <span>ICE:</span>
                         <TokenAmount>
                             <IceLogo />
                             {formatBalance(+upIce, true)}
                         </TokenAmount>
                     </TooltipRow>
                     <TooltipRow>
-                        <span>AQUA voted:</span>
+                        <span>AQUA:</span>
                         <TokenAmount>
                             <AquaLogo />
                             {formatBalance(+upAqua, true)}
@@ -216,14 +216,14 @@ const VoteAmount = ({ pair, totalStats }: { pair: PairStats; totalStats: TotalSt
                         <span>{formatBalance(+pair.downvote_value, true)}</span>
                     </TooltipRowTitle>
                     <TooltipRow>
-                        <span>ICE voted:</span>
+                        <span>ICE:</span>
                         <TokenAmount>
                             <IceLogo />
                             {formatBalance(+downIce, true)}
                         </TokenAmount>
                     </TooltipRow>
                     <TooltipRow>
-                        <span>AQUA voted:</span>
+                        <span>AQUA:</span>
                         <TokenAmount>
                             <AquaLogo />
                             {formatBalance(+downAqua, true)}
