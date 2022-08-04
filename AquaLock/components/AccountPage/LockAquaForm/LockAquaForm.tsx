@@ -12,11 +12,17 @@ import { formatBalance, getDateString, roundToPrecision } from '../../../../comm
 import Button from '../../../../common/basics/Button';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { ModalService } from '../../../../common/services/globalServices';
+import { ModalService, ToastService } from '../../../../common/services/globalServices';
 import useAuthStore from '../../../../common/store/authStore/useAuthStore';
 import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
 import LockAquaModal from '../LockAquaModal/LockAquaModal';
-import { MAX_BOOST, MAX_BOOST_PERIOD, MIN_BOOST_PERIOD, roundMsToDays } from '../IceBlock/IceBlock';
+import {
+    MAX_BOOST,
+    MAX_BOOST_PERIOD,
+    MAX_LOCK_PERIOD,
+    MIN_BOOST_PERIOD,
+    roundMsToDays,
+} from '../IceBlock/IceBlock';
 
 const Container = styled.div`
     background: ${COLORS.white};
@@ -270,6 +276,10 @@ const LockAquaForm = forwardRef(
         }, [lockAmount, lockPeriod]);
 
         const onSubmit = () => {
+            if (lockPeriod - Date.now() > MAX_LOCK_PERIOD) {
+                ToastService.showErrorToast('The maximum allowed lock period is 10 years');
+                return;
+            }
             if (!isLogged) {
                 ModalService.openModal(ChooseLoginMethodModal, {});
                 return;
