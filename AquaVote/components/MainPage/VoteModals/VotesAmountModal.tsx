@@ -425,7 +425,7 @@ const VotesAmountModal = ({
                     account.accountId(),
                     marketKey,
                     voteAmount,
-                    new Date(Date.now() + 60 * 60 * 1000).getTime(),
+                    new Date(Date.now() + 1.2 * 60 * 60 * 1000).getTime(),
                     targetAsset,
                 ),
             );
