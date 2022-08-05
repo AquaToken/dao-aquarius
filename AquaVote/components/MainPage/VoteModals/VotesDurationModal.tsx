@@ -74,7 +74,7 @@ const PeriodOptions: Option<number>[] = [
 const VotesDurationModal = ({ params, close }) => {
     const [votePeriod, setVotePeriod] = useState(MONTH);
     const [pending, setPending] = useState(false);
-    const { pairsAmounts, updatePairs, isDownVoteModal, pairs } = params;
+    const { pairsAmounts, updatePairs, isDownVoteModal, pairs, asset } = params;
 
     const isMounted = useIsMounted();
 
@@ -93,6 +93,7 @@ const VotesDurationModal = ({ params, close }) => {
             updatePairs,
             pairsAmounts,
             isDownVoteModal,
+            asset,
         });
     };
 
@@ -109,12 +110,15 @@ const VotesDurationModal = ({ params, close }) => {
                     marketKey,
                     voteAmount,
                     new Date(Date.now() + votePeriod).getTime(),
+                    asset,
                 ),
             );
 
             const tx = await StellarService.buildTx(account, voteOps);
 
-            const result = await account.signAndSubmitTx(tx);
+            const processedTx = await StellarService.processIceTx(tx, asset);
+
+            const result = await account.signAndSubmitTx(processedTx);
             if (isMounted.current) {
                 setPending(false);
                 close();
@@ -148,8 +152,8 @@ const VotesDurationModal = ({ params, close }) => {
             <ModalTitle>{isDownVoteModal ? 'Select Downvote Period' : 'Selected Pairs'}</ModalTitle>
             <ModalDescription>
                 {isDownVoteModal
-                    ? 'Enter the period for which your AQUA will be locked to voting'
-                    : 'Lock your AQUA in the network to complete your vote'}
+                    ? `Enter the period for which your ${asset.code} will be locked to voting`
+                    : `Lock your ${asset.code} in the network to complete your vote`}
             </ModalDescription>
 
             <ContentRow>
@@ -158,7 +162,7 @@ const VotesDurationModal = ({ params, close }) => {
 
             <VotePeriodSelect options={PeriodOptions} value={votePeriod} onChange={setVotePeriod} />
             <ClaimBack>
-                You can retrieve your AQUA on{' '}
+                You can retrieve your {asset.code} on{' '}
                 <ClaimBackDate>
                     {getDateString(Date.now() + votePeriod, { withTime: true })}
                 </ClaimBackDate>

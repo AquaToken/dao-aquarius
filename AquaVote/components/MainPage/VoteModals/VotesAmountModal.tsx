@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
     ModalDescription,
     ModalProps,
@@ -9,19 +9,33 @@ import styled from 'styled-components';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../../common/styles';
 import Aqua from '../../../../common/assets/img/aqua-logo-small.svg';
+import Ice from '../../../../common/assets/img/ice-logo.svg';
 import useAuthStore from '../../../../common/store/authStore/useAuthStore';
 import Input from '../../../../common/basics/Input';
 import RangeInput from '../../../../common/basics/RangeInput';
 import Button from '../../../../common/basics/Button';
-import { ModalService, ToastService } from '../../../../common/services/globalServices';
+import {
+    ModalService,
+    StellarService,
+    ToastService,
+} from '../../../../common/services/globalServices';
 import { formatBalance, roundToPrecision } from '../../../../common/helpers/helpers';
 import ExternalLink from '../../../../common/basics/ExternalLink';
 import GetAquaModal from '../../../../common/modals/GetAquaModal/GetAquaModal';
 import CloseIcon from '../../../../common/assets/img/icon-close-small.svg';
 import Pair from '../../common/Pair';
 import { PairStats } from '../../../api/types';
-import { SELECTED_PAIRS_ALIAS } from '../MainPage';
+import { AQUA, DOWN_ICE, SELECTED_PAIRS_ALIAS, UP_ICE } from '../MainPage';
 import VotesDurationModal from './VotesDurationModal';
+import Select, { Option } from '../../../../common/basics/Select';
+import { Asset } from 'stellar-sdk';
+import { LoginTypes } from '../../../../common/store/authStore/types';
+import {
+    BuildSignAndSubmitStatuses,
+    openApp,
+} from '../../../../common/services/wallet-connect.service';
+import ErrorHandler from '../../../../common/helpers/error-handler';
+import { useIsMounted } from '../../../../common/hooks/useIsMounted';
 
 export const ContentRow = styled.div`
     ${flexRowSpaceBetween};
@@ -31,6 +45,10 @@ export const ContentRow = styled.div`
     ${respondDown(Breakpoints.md)`
         width: 100%;
     `}
+`;
+
+const AmountRow = styled.div`
+    display: flex;
 `;
 
 export const Label = styled.span`
@@ -51,16 +69,12 @@ const Balance = styled.span`
     cursor: pointer;
 `;
 
-const InputPostfix = styled.div`
-    height: min-content;
-    ${flexAllCenter};
-    color: ${COLORS.grayText};
-    svg {
-        margin-right: 0.8rem;
-    }
+const AquaLogo = styled(Aqua)`
+    height: 3.2rem;
+    width: 3.2rem;
 `;
 
-const AquaLogo = styled(Aqua)`
+const IceLogo = styled(Ice)`
     height: 3.2rem;
     width: 3.2rem;
 `;
@@ -75,6 +89,13 @@ const AssetsInfoBlock = styled.div`
 const AmountInput = styled(Input)`
     margin-top: 1.2rem;
     margin-bottom: 3.3rem;
+    flex: 2;
+`;
+
+const AssetSelect = styled(Select)`
+    margin-top: 1.2rem;
+    margin-bottom: 3.3rem;
+    flex: 1;
 `;
 
 const ButtonContainer = styled.div`
@@ -206,6 +227,7 @@ const Scrollable = styled.div<{ scrollDisabled: boolean }>`
 `;
 
 const MINIMUM_AMOUNT = 0.0000001;
+const MINIMUM_ICE_AMOUNT = 10;
 
 const VotesAmountModal = ({
     params,
@@ -215,9 +237,10 @@ const VotesAmountModal = ({
     updatePairs?: () => void;
     pairsAmounts?: {};
     isDownVoteModal?: boolean;
+    asset: Asset;
 }>) => {
     const { account, isLogged } = useAuthStore();
-    const { pairs, updatePairs, pairsAmounts, isDownVoteModal } = params;
+    const { pairs, updatePairs, pairsAmounts, isDownVoteModal, asset } = params;
 
     useEffect(() => {
         if (!isLogged) {
@@ -227,7 +250,11 @@ const VotesAmountModal = ({
 
     const [percent, setPercent] = useState(0);
     const [amount, setAmount] = useState('');
+    const [targetAsset, setTargetAsset] = useState(asset ?? AQUA);
     const [selectedPairs, setSelectedPairs] = useState(pairs);
+    const [pending, setPending] = useState(false);
+
+    const isMounted = useIsMounted();
 
     const keyType: keyof PairStats = isDownVoteModal ? 'downvote_account_id' : 'market_key';
 
@@ -240,13 +267,23 @@ const VotesAmountModal = ({
     );
     const [isHandleEdit, setIsHandleEdit] = useState(false);
 
-    const aquaBalance = account?.getAquaBalance();
+    const OPTIONS: Option<Asset>[] = useMemo(() => {
+        return [
+            { label: 'AQUA', value: AQUA, icon: <AquaLogo /> },
+            { label: 'ICE', value: isDownVoteModal ? DOWN_ICE : UP_ICE, icon: <IceLogo /> },
+        ];
+    }, [isDownVoteModal]);
+
+    const targetBalance = useMemo(() => {
+        return account?.getAssetBalance(targetAsset);
+    }, [targetAsset]);
+
     const nativeBalance = account?.getAvailableNativeBalance();
     const formattedNativeBalance = formatBalance(nativeBalance);
 
-    const hasTrustLine = aquaBalance !== null;
-    const hasAqua = aquaBalance !== 0;
-    const formattedAquaBalance = hasTrustLine && formatBalance(aquaBalance);
+    const hasTrustLine = targetBalance !== null;
+    const hasTargetBalance = targetBalance !== 0;
+    const formattedTargetBalance = hasTrustLine && formatBalance(targetBalance);
 
     useEffect(() => {
         if (pairsAmounts) {
@@ -257,16 +294,22 @@ const VotesAmountModal = ({
 
             setAmount(roundToPrecision(sum.toString(), 7));
 
-            const percentValue = roundToPrecision((Number(sum) / Number(aquaBalance)) * 100, 1);
+            const percentValue = roundToPrecision((Number(sum) / Number(targetBalance)) * 100, 1);
 
             setPercent(+percentValue);
         }
     }, []);
 
+    useEffect(() => {
+        return () => {
+            resetForm();
+        };
+    }, [targetAsset]);
+
     const onRangeChange = (percent) => {
         setPercent(percent);
 
-        const amountValue = roundToPrecision((aquaBalance * percent) / 100, 7);
+        const amountValue = roundToPrecision((targetBalance * percent) / 100, 7);
 
         setAmount(amountValue);
 
@@ -287,7 +330,7 @@ const VotesAmountModal = ({
         }
         setAmount(value);
 
-        const percentValue = roundToPrecision((Number(value) / Number(aquaBalance)) * 100, 1);
+        const percentValue = roundToPrecision((Number(value) / Number(targetBalance)) * 100, 1);
 
         setPercent(+percentValue);
 
@@ -317,7 +360,7 @@ const VotesAmountModal = ({
 
         setAmount(roundToPrecision(sum.toString(), 7));
 
-        const percentValue = roundToPrecision((Number(sum) / Number(aquaBalance)) * 100, 1);
+        const percentValue = roundToPrecision((Number(sum) / Number(targetBalance)) * 100, 1);
 
         setPercent(+percentValue);
     };
@@ -346,7 +389,7 @@ const VotesAmountModal = ({
 
             setAmount(roundToPrecision(sum.toString(), 7));
 
-            const percentValue = roundToPrecision((Number(sum) / Number(aquaBalance)) * 100, 1);
+            const percentValue = roundToPrecision((Number(sum) / Number(targetBalance)) * 100, 1);
 
             setPercent(+percentValue);
 
@@ -373,10 +416,58 @@ const VotesAmountModal = ({
         setIsHandleEdit(false);
     };
 
+    const confirmVotes = async () => {
+        try {
+            setPending(true);
+
+            const voteOps = Object.entries(pairsAmount).map(([marketKey, voteAmount]) =>
+                StellarService.createVoteOperation(
+                    account.accountId(),
+                    marketKey,
+                    voteAmount,
+                    new Date(Date.now() + 1.2 * 60 * 60 * 1000).getTime(),
+                    targetAsset,
+                ),
+            );
+
+            const tx = await StellarService.buildTx(account, voteOps);
+
+            const processedTx = await StellarService.processIceTx(tx, targetAsset);
+
+            const result = await account.signAndSubmitTx(processedTx);
+
+            if (isMounted.current) {
+                setPending(false);
+                close();
+            }
+
+            localStorage.setItem(SELECTED_PAIRS_ALIAS, JSON.stringify([]));
+            updatePairs();
+
+            if (
+                (result as { status: BuildSignAndSubmitStatuses }).status ===
+                BuildSignAndSubmitStatuses.pending
+            ) {
+                ToastService.showSuccessToast('More signatures required to complete');
+                return;
+            }
+            ToastService.showSuccessToast(
+                'Your vote has been cast! You will be able to see your vote in the list within 10 minutes',
+            );
+            StellarService.getClaimableBalances(account.accountId());
+        } catch (e) {
+            const errorText = ErrorHandler(e);
+            ToastService.showErrorToast(errorText);
+            if (isMounted.current) {
+                setPending(false);
+            }
+        }
+    };
+
     const onSubmit = async () => {
-        if (Number(amount) > Number(aquaBalance)) {
+        if (Number(amount) > Number(targetBalance)) {
             ToastService.showErrorToast(
-                `The value must be less or equal than ${formattedAquaBalance} AQUA`,
+                `The value must be less or equal than ${formattedTargetBalance} ${targetAsset.code}`,
             );
             return;
         }
@@ -389,19 +480,34 @@ const VotesAmountModal = ({
         }
         if (Number(amount) < MINIMUM_AMOUNT) {
             ToastService.showErrorToast(
-                `The value must be greater than ${MINIMUM_AMOUNT.toFixed(7)} AQUA`,
+                `The value must be greater than ${MINIMUM_AMOUNT.toFixed(7)} ${targetAsset.code}`,
             );
             return;
         }
 
         if (
             Object.values(pairsAmount).some(
-                (value) => !value || !Number(value) || value < MINIMUM_AMOUNT,
+                (value) =>
+                    !value ||
+                    !Number(value) ||
+                    value < MINIMUM_AMOUNT ||
+                    (targetAsset !== AQUA && value < MINIMUM_ICE_AMOUNT),
             )
         ) {
             ToastService.showErrorToast(
-                `The value of each vote must be greater than ${MINIMUM_AMOUNT.toFixed(7)} AQUA`,
+                `The value of each vote must be greater than ${
+                    targetAsset !== AQUA ? MINIMUM_ICE_AMOUNT : MINIMUM_AMOUNT.toFixed(7)
+                } ${targetAsset.code}`,
             );
+            return;
+        }
+
+        if (targetAsset !== AQUA && account.authType === LoginTypes.walletConnect) {
+            openApp();
+        }
+
+        if (targetAsset !== AQUA) {
+            confirmVotes();
             return;
         }
 
@@ -411,6 +517,7 @@ const VotesAmountModal = ({
             pairs: selectedPairs,
             updatePairs,
             isDownVoteModal,
+            asset: targetAsset,
         });
     };
 
@@ -420,8 +527,8 @@ const VotesAmountModal = ({
                 <ModalTitle>{isDownVoteModal ? 'Downvote pair' : 'Selected Pairs'}</ModalTitle>
                 <ModalDescription>
                     {isDownVoteModal
-                        ? 'Submit AQUA against a pair if you think it has no place in the market'
-                        : 'Lock your AQUA in the network to complete your vote'}
+                        ? `Submit ${targetAsset.code} against a pair if you think it has no place in the market`
+                        : `Lock your ${targetAsset.code} in the network to complete your vote`}
                 </ModalDescription>
                 {isDownVoteModal && (
                     <AssetsInfoBlock>
@@ -451,34 +558,32 @@ const VotesAmountModal = ({
                                     }
                                 }}
                             >
-                                {formattedAquaBalance} AQUA{' '}
+                                {formattedTargetBalance} {targetAsset.code}{' '}
                             </Balance>
                             available
                         </BalanceBlock>
                     ) : (
-                        <BalanceBlock>You don’t have AQUA trustline</BalanceBlock>
+                        <BalanceBlock>You don’t have ${targetAsset.code} trustline</BalanceBlock>
                     )}
                 </ContentRow>
 
-                <AmountInput
-                    value={amount}
-                    onChange={(e) => {
-                        onInputChange(e.target.value);
-                    }}
-                    placeholder="Enter voting power"
-                    postfix={
-                        <InputPostfix>
-                            <AquaLogo />
-                            <span>AQUA</span>
-                        </InputPostfix>
-                    }
-                    disabled={!hasTrustLine || !hasAqua || isHandleEdit}
-                />
+                <AmountRow>
+                    <AmountInput
+                        value={amount}
+                        onChange={(e) => {
+                            onInputChange(e.target.value);
+                        }}
+                        placeholder="Enter voting power"
+                        disabled={!hasTrustLine || !hasTargetBalance || isHandleEdit}
+                    />
+
+                    <AssetSelect options={OPTIONS} value={targetAsset} onChange={setTargetAsset} />
+                </AmountRow>
 
                 <RangeInput
                     onChange={onRangeChange}
                     value={percent}
-                    disabled={!hasTrustLine || !hasAqua || isHandleEdit}
+                    disabled={!hasTrustLine || !hasTargetBalance || isHandleEdit}
                 />
 
                 {!isDownVoteModal && (
@@ -535,25 +640,35 @@ const VotesAmountModal = ({
                         <TotalAmountRow>
                             <Label>Total:</Label>
                             <TotalAmount>
-                                {amount || '0'} AQUA <AquaLogo />
+                                {amount || '0'} {targetAsset.code}{' '}
+                                {targetAsset === AQUA ? <AquaLogo /> : <IceLogo />}
                             </TotalAmount>
                         </TotalAmountRow>
                     </>
                 )}
 
-                {hasTrustLine && hasAqua ? null : (
+                {hasTrustLine && hasTargetBalance ? null : (
                     <GetAquaBlock>
-                        <GetAquaLabel>You don&apos;t have enough AQUA</GetAquaLabel>
-                        <ExternalLink onClick={() => ModalService.openModal(GetAquaModal, {})}>
-                            <GetAquaLink>Get AQUA</GetAquaLink>
-                        </ExternalLink>
+                        <GetAquaLabel>You don&apos;t have enough {targetAsset.code}</GetAquaLabel>
+                        {targetAsset === AQUA ? (
+                            <ExternalLink onClick={() => ModalService.openModal(GetAquaModal, {})}>
+                                <GetAquaLink>Get {targetAsset.code}</GetAquaLink>
+                            </ExternalLink>
+                        ) : (
+                            <ExternalLink href="https://locker.aqua.network">Get ICE</ExternalLink>
+                        )}
                     </GetAquaBlock>
                 )}
             </Scrollable>
 
             <ButtonContainer>
-                <Button fullWidth onClick={() => onSubmit()} disabled={!amount || !Number(amount)}>
-                    NEXT
+                <Button
+                    fullWidth
+                    onClick={() => onSubmit()}
+                    disabled={!amount || !Number(amount)}
+                    pending={pending}
+                >
+                    {targetAsset === AQUA ? 'NEXT' : 'confirm'}
                 </Button>
             </ButtonContainer>
         </>

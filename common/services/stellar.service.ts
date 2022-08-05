@@ -366,7 +366,7 @@ export default class StellarServiceClass {
         }
     }
 
-    getMarketVotesValue(marketKey: string, accountId: string) {
+    getMarketVotesValue(marketKey: string, accountId: string, asset: StellarSdk.Asset) {
         if (!this.claimableBalances) {
             return null;
         }
@@ -381,7 +381,7 @@ export default class StellarServiceClass {
             const hasSelfClaim = claim.claimants.some(
                 (claimant) => claimant.destination === accountId,
             );
-            const isAqua = claim.asset === `${AQUA_CODE}:${AQUA_ISSUER}`;
+            const isAqua = claim.asset === `${asset.code}:${asset.issuer}`;
 
             if (hasMarker && hasSelfClaim && isAqua) {
                 acc += Number(claim.amount);
@@ -408,12 +408,21 @@ export default class StellarServiceClass {
                 (claimant) => claimant.destination === accountId,
             );
             const isAqua = claim.asset === `${AQUA_CODE}:${AQUA_ISSUER}`;
+            const isUpIce = claim.asset === `${UP_ICE_CODE}:${ICE_ISSUER}`;
+            const isDownIce = claim.asset === `${DOWN_ICE_CODE}:${ICE_ISSUER}`;
 
-            if ((hasUpMarker || hasDownMarker) && Boolean(selfClaim) && isAqua) {
+            if (
+                (hasUpMarker || hasDownMarker) &&
+                Boolean(selfClaim) &&
+                (isAqua || isUpIce || isDownIce)
+            ) {
+                const [code, issuer] = claim.asset.split(':');
                 acc.push({
                     ...claim,
                     isDownVote: hasDownMarker,
                     claimBackDate: selfClaim.predicate.not.abs_before,
+                    assetCode: code,
+                    assetIssuer: issuer,
                 });
             }
             return acc;
@@ -430,10 +439,12 @@ export default class StellarServiceClass {
                 return acc;
             }
             const isAqua = claim.asset === `${AQUA_CODE}:${AQUA_ISSUER}`;
+            const isUpIce = claim.asset === `${UP_ICE_CODE}:${ICE_ISSUER}`;
+            const isDownIce = claim.asset === `${DOWN_ICE_CODE}:${ICE_ISSUER}`;
             const hasSelfClaim = claim.claimants.some(
                 (claimant) => claimant.destination === accountId,
             );
-            if (isAqua && hasSelfClaim) {
+            if ((isAqua || isUpIce || isDownIce) && hasSelfClaim) {
                 const similarToMarketKey = claim.claimants.find(
                     (claimant) => claimant.destination !== accountId,
                 );
@@ -473,12 +484,12 @@ export default class StellarServiceClass {
         }, false);
     }
 
-    createVoteOperation(publicKey, marketKey, amount, timestamp) {
+    createVoteOperation(publicKey, marketKey, amount, timestamp, asset) {
         const time = Math.ceil(timestamp / 1000);
         return StellarSdk.Operation.createClaimableBalance({
             source: publicKey,
             amount: amount.toString(),
-            asset: new StellarSdk.Asset(AQUA_CODE, AQUA_ISSUER),
+            asset: asset ?? new StellarSdk.Asset(AQUA_CODE, AQUA_ISSUER),
             claimants: [
                 new StellarSdk.Claimant(
                     marketKey,
@@ -493,6 +504,41 @@ export default class StellarServiceClass {
             ],
         });
     }
+
+    processIceTx(tx, asset) {
+        if (!ICE_ASSETS.includes(`${asset.code}:${asset.issuer}`)) {
+            return tx;
+        }
+
+        const endpoint = this.getIceApproveEndpoint(asset);
+
+        return axios
+            .post<{ status: string; tx: string }>(endpoint, { tx: tx.toEnvelope().toXDR('base64') })
+            .then(({ data }) => {
+                if (data.status !== 'revised') {
+                    throw new Error('Incorrect status');
+                }
+                return new StellarSdk.Transaction(data.tx, StellarSdk.Networks.PUBLIC);
+            });
+    }
+
+    private getIceApproveEndpoint(asset) {
+        if (asset.code === ICE_CODE && asset.issuer === ICE_ISSUER) {
+            return 'https://ice-approval.aqua.network/api/v1/ice/tx-approve/';
+        }
+        if (asset.code === UP_ICE_CODE && asset.issuer === ICE_ISSUER) {
+            return 'https://ice-approval.aqua.network/api/v1/upvote-ice/tx-approve/';
+        }
+        if (asset.code === DOWN_ICE_CODE && asset.issuer === ICE_ISSUER) {
+            return 'https://ice-approval.aqua.network/api/v1/downvote-ice/tx-approve/';
+        }
+        if (asset.code === GOV_ICE_CODE && asset.issuer === ICE_ISSUER) {
+            return 'https://ice-approval.aqua.network/api/v1/govern-ice/tx-approve/';
+        }
+
+        throw new Error('Unknown asset');
+    }
+
     createLockOperation(publicKey, amount, timestamp) {
         const time = Math.ceil(timestamp / 1000);
         return StellarSdk.Operation.createClaimableBalance({
@@ -651,7 +697,7 @@ export default class StellarServiceClass {
         return roundToPrecision(baseVolume / counterVolume, 7);
     }
 
-    createClaimOperations(claimId: string, withTrust: boolean) {
+    createClaimOperations(claimId: string, withTrust?: boolean) {
         const ops = [];
 
         if (withTrust) {

@@ -78,7 +78,7 @@ const CurrentValue = styled.div.attrs<{ value: number; disabled: boolean }>(({ v
 }))<{ value: number; disabled: boolean }>`
     position: absolute;
     top: -2.5rem;
-    transform: translateX(-50%);
+    transform: ${({ value }) => `translateX(-${value < 99 ? 50 : 80}%)`};
     color: ${({ disabled }) => (disabled ? COLORS.placeholder : COLORS.titleText)};
 `;
 

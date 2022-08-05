@@ -28,6 +28,16 @@ export type MarketVotes = {
     voting_amount: number;
     upvote_value: string;
     downvote_value: string;
+    extra: {
+        downvote_assets: MarketVotesAssetStats[];
+        upvote_assets: MarketVotesAssetStats[];
+    };
+};
+
+type MarketVotesAssetStats = {
+    asset: string;
+    votes_count: number;
+    votes_sum: string;
 };
 
 export type MarketKey = {

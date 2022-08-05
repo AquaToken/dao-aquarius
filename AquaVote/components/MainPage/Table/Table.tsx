@@ -311,7 +311,7 @@ const Table = ({
                 <TableHeadRow>
                     <PairInfo>Pair</PairInfo>
                     <VoteStats>Users Voted</VoteStats>
-                    <AquaVoted>AQUA Voted</AquaVoted>
+                    <AquaVoted>Votes</AquaVoted>
                     <ButtonBlock>Your Vote</ButtonBlock>
                 </TableHeadRow>
             </TableHead>
