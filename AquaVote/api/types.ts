@@ -82,6 +82,7 @@ export type TotalStats = {
     voting_amount_sum: number;
     timestamp: string;
     adjusted_votes_value_sum: string;
+    total_votes_sum: string;
 };
 
 export type UpcomingBribe = {
