@@ -279,7 +279,6 @@ export default class StellarServiceClass {
         const limit = 200;
         this.server
             .claimableBalances()
-            .sponsor(publicKey)
             .claimant(publicKey)
             .order('desc')
             .limit(limit)
