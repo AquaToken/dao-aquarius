@@ -512,7 +512,7 @@ const MainPage = (): JSX.Element => {
         if (sort === SortTypes.yourVotes && !isLogged) {
             changeSort(SortTypes.popular);
         }
-    }, [isLogged]);
+    }, [isLogged, sort]);
 
     useEffect(() => {
         if (sort !== SortTypes.yourVotes || !account) {
