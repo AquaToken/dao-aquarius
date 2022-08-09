@@ -10,6 +10,7 @@ export enum PROPOSAL_STATUS {
     ACTIVE = 'active',
     CLOSED = 'closed',
     DEPRECATED = 'deprecated',
+    EXPIRED = 'expired',
 }
 
 const StatusLabels = {
@@ -17,6 +18,7 @@ const StatusLabels = {
     [PROPOSAL_STATUS.ACTIVE]: 'Active',
     [PROPOSAL_STATUS.CLOSED]: 'Finished',
     [PROPOSAL_STATUS.DEPRECATED]: 'Deprecated',
+    [PROPOSAL_STATUS.EXPIRED]: 'Expired',
 };
 
 const Container = styled.div<{ status: PROPOSAL_STATUS }>`
@@ -42,6 +44,8 @@ const Container = styled.div<{ status: PROPOSAL_STATUS }>`
                 return COLORS.gray;
             case PROPOSAL_STATUS.DEPRECATED:
                 return COLORS.placeholder;
+            case PROPOSAL_STATUS.EXPIRED:
+                return COLORS.placeholder;
         }
     }};
     color: ${({ status }) => {
@@ -53,6 +57,8 @@ const Container = styled.div<{ status: PROPOSAL_STATUS }>`
             case PROPOSAL_STATUS.CLOSED:
                 return COLORS.darkGrayText;
             case PROPOSAL_STATUS.DEPRECATED:
+                return COLORS.white;
+            case PROPOSAL_STATUS.EXPIRED:
                 return COLORS.white;
         }
     }};
@@ -105,6 +111,7 @@ const ProposalStatus = ({ status, ...props }: { status: PROPOSAL_STATUS }) => {
             {status === PROPOSAL_STATUS.ACTIVE && <ActiveIcon />}
             {status === PROPOSAL_STATUS.DISCUSSION && <DiscussionIcon />}
             {status === PROPOSAL_STATUS.DEPRECATED && <DeprecatedIcon />}
+            {status === PROPOSAL_STATUS.EXPIRED && <DeprecatedIcon />}
             {StatusLabels[status]}
         </Container>
     );

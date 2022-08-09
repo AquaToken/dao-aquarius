@@ -407,6 +407,21 @@ const Sidebar = forwardRef(
                 </SidebarBlock>
             );
         }
+        if (status === 'EXPIRED') {
+            return (
+                <SidebarBlock ref={ref} {...props}>
+                    <Container>
+                        <ProposalStatus status={PROPOSAL_STATUS.EXPIRED} />
+                        <DiscussionDescription>
+                            <span>
+                                Proposal expired due to no publication within 30 days of creation or
+                                last edit
+                            </span>
+                        </DiscussionDescription>
+                    </Container>
+                </SidebarBlock>
+            );
+        }
 
         if (status === 'DISCUSSION') {
             if (version) {
