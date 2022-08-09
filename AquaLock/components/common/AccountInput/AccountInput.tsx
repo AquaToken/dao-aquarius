@@ -15,7 +15,7 @@ const Container = styled.form<{ isModal: boolean }>`
     box-shadow: ${({ isModal }) => (isModal ? 'unset' : '0 2rem 3rem rgba(0, 6, 54, 0.06)')};
     border-radius: 1rem;
     padding: ${({ isModal }) => (isModal ? '0' : '4.8rem')};
-    width: ${({ isModal }) => (isModal ? '48rem' : '100%')};
+    width: ${({ isModal }) => (isModal ? '48rem' : 'unset')};
     margin: ${({ isModal }) => (isModal ? '0' : '-8rem 4rem 0')};
     gap: ${({ isModal }) => (isModal ? '0' : '6rem')};
 

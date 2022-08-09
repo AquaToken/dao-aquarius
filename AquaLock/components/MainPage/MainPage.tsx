@@ -5,6 +5,7 @@ import AccountInput from '../common/AccountInput/AccountInput';
 import { commonMaxWidth } from '../../../common/mixins';
 import FreezeAQUA from './FreezeAQUA/FreezeAQUA';
 import WhyFreezeAQUA from './WhyFreezeAQUA/WhyFreezeAQUA';
+import StatisticBlock from './StatisticBlock/StatisticBlock';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -20,6 +21,9 @@ const MainPage = (): JSX.Element => {
             <Purpose />
             <MainSection>
                 <AccountInput />
+            </MainSection>
+            <MainSection>
+                <StatisticBlock />
             </MainSection>
             <MainSection>
                 <FreezeAQUA />
