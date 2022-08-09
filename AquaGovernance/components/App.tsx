@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-d
 
 import Provider from '../store';
 import { MainRoutes } from '../routes';
-import Header, { HeaderMobileNavLink } from '../../common/components/Header/Header';
+import Header, { HeaderNavLink } from '../../common/components/Header/Header';
 import Footer from '../../common/components/Footer/Footer';
 import NotFoundPage from '../../common/components/NotFoundPage/NotFoundPage';
 import AppGlobalStyle from '../../common/components/AppGlobalStyles';
@@ -30,7 +30,21 @@ const App = () => {
     return (
         <Router>
             <Header>
-                <HeaderMobileNavLink to="/">Proposals</HeaderMobileNavLink>
+                <>
+                    <a href="https://vote.aqua.network/">Voting</a>
+                    <a href="https://aqua.network/rewards">Rewards</a>
+                    <a href="https://vote.aqua.network/bribes/">Bribes</a>
+                    <a href="https://locker.aqua.network/">Locker</a>
+                    <HeaderNavLink
+                        to={MainRoutes.main}
+                        activeStyle={{
+                            fontWeight: 700,
+                        }}
+                    >
+                        Governance
+                    </HeaderNavLink>
+                    <a href="https://aqua.network/airdrop2">Airdrop</a>
+                </>
             </Header>
             <Suspense fallback={<PageLoader />}>
                 <Switch>

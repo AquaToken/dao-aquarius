@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import AquaLogo from './../../assets/img/aqua-logo.svg';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../styles';
@@ -29,7 +29,7 @@ const Aqua = styled(AquaLogo)`
   `}
 `;
 
-export const HeaderNavLink = styled(Link)`
+export const HeaderNavLink = styled(NavLink)`
     color: ${COLORS.titleText};
     text-decoration: none;
 
@@ -55,7 +55,7 @@ export const HeaderMobileNavLink = styled(Link)`
 const Header = ({ children }: { children?: JSX.Element }): JSX.Element => {
     return (
         <HeaderBlock>
-            <a href="https://aqua.network" target="_blank" rel="noreferrer noopener">
+            <a href="https://aqua.network">
                 <Aqua />
             </a>
 

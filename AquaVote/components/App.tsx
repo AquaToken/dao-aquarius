@@ -89,15 +89,27 @@ const App = () => {
         <Router>
             <Header>
                 <>
-                    <HeaderNavLink to={MainRoutes.main}>Votes</HeaderNavLink>
-                    <HeaderNavLink to={MainRoutes.bribes}>Bribes</HeaderNavLink>
-                    <a
-                        href="https://aqua.network/rewards"
-                        target="_blank"
-                        rel="noreferrer noopener"
+                    <HeaderNavLink
+                        to={MainRoutes.main}
+                        exact
+                        activeStyle={{
+                            fontWeight: 700,
+                        }}
                     >
-                        Rewards
-                    </a>
+                        Voting
+                    </HeaderNavLink>
+                    <a href="https://aqua.network/rewards/">Rewards</a>
+                    <HeaderNavLink
+                        to={MainRoutes.bribes}
+                        activeStyle={{
+                            fontWeight: 700,
+                        }}
+                    >
+                        Bribes
+                    </HeaderNavLink>
+                    <a href="https://locker.aqua.network/">Locker</a>
+                    <a href="https://gov.aqua.network/">Governance</a>
+                    <a href="https://aqua.network/airdrop2/">Airdrop</a>
                 </>
             </Header>
             <Suspense fallback={<PageLoader />}>

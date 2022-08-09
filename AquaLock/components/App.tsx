@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-d
 
 import Provider from '../store';
 import { MainRoutes } from '../routes';
-import Header from '../../common/components/Header/Header';
+import Header, { HeaderNavLink } from '../../common/components/Header/Header';
 import Footer from '../../common/components/Footer/Footer';
 import NotFoundPage from '../../common/components/NotFoundPage/NotFoundPage';
 import AppGlobalStyle from '../../common/components/AppGlobalStyles';
@@ -27,13 +27,19 @@ const App = () => {
         <Router>
             <Header>
                 <>
-                    <a
-                        href="https://aqua.network/airdrop2"
-                        target="_blank"
-                        rel="noreferrer noopener"
+                    <a href="https://vote.aqua.network/">Voting</a>
+                    <a href="https://aqua.network/rewards">Rewards</a>
+                    <a href="https://vote.aqua.network/bribes/">Bribes</a>
+                    <HeaderNavLink
+                        to={MainRoutes.main}
+                        activeStyle={{
+                            fontWeight: 700,
+                        }}
                     >
-                        Airdrop
-                    </a>
+                        Locker
+                    </HeaderNavLink>
+                    <a href="https://gov.aqua.network/">Governance</a>
+                    <a href="https://aqua.network/airdrop2">Airdrop</a>
                 </>
             </Header>
             <Suspense fallback={<PageLoader />}>
