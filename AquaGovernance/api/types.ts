@@ -15,6 +15,8 @@ export type ProposalSimple = {
     discord_channel_name?: string | null;
     discord_channel_url?: string | null;
     discord_username?: string | null;
+    percent_for_quorum: number;
+    ice_circulating_supply: string;
 };
 
 type ProposalStatus = 'DISCUSSION' | 'VOTING' | 'VOTED' | 'EXPIRED';
@@ -54,6 +56,8 @@ export type Proposal = {
     created_at: string;
     history_proposal: ProposalHistory[];
     version: number;
+    percent_for_quorum: number;
+    ice_circulating_supply: string;
 };
 
 export type VoteChoiceSimple = 'vote_for' | 'vote_against';
@@ -64,6 +68,7 @@ export type Vote = {
     vote_choice: VoteChoiceSimple;
     transaction_link: string;
     created_at: string;
+    asset_code: string;
 };
 
 export type ProposalCreateOptions = {

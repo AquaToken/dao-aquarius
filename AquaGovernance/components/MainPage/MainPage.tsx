@@ -22,7 +22,6 @@ import ArrowDown from '../../../common/assets/img/icon-arrow-down.svg';
 export const CREATE_DISCUSSION_COST = 100000;
 export const CREATE_PROPOSAL_COST = 900000;
 export const APPROVED_PROPOSAL_REWARD = 1500000;
-export const MINIMUM_APPROVAL_PERCENT = 5;
 
 const MainBlock = styled.main`
     flex: 1 0 auto;

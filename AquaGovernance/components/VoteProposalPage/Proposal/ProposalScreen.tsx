@@ -23,7 +23,7 @@ import Versions from '../Versions/Versions';
 
 const ProposalQuestion = styled.div`
     width: 100%;
-    padding: 4rem 0 11.7rem;
+    padding: 4rem 0 15rem;
     background-color: ${COLORS.lightGray};
 
     ${respondDown(Breakpoints.md)`
@@ -211,6 +211,7 @@ const TabNav = styled.div`
     top: 0;
     z-index: 1;
     width: 100%;
+    clear: both;
 
     ${respondDown(Breakpoints.md)`
         display: none;
@@ -221,6 +222,7 @@ const TabNavContent = styled.div`
     ${commonMaxWidth};
     padding-left: 4rem;
     display: flex;
+    width: 100%;
 `;
 
 const TabNavItem = styled.div<{ active?: boolean }>`

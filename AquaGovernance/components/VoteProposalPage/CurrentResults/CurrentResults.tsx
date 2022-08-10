@@ -10,7 +10,6 @@ import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../com
 import Fail from '../../../../common/assets/img/icon-fail.svg';
 import Info from '../../../../common/assets/img/icon-info.svg';
 import Tooltip, { TOOLTIP_POSITION } from '../../../../common/basics/Tooltip';
-import { MINIMUM_APPROVAL_PERCENT } from '../../MainPage/MainPage';
 
 const ResultBlock = styled.div`
     width: 100%;
@@ -91,6 +90,7 @@ const getResultsData = (proposal: Proposal) => {
         is_simple_proposal: isSimple,
         vote_for_result: voteFor,
         vote_against_result: voteAgainst,
+        ice_circulating_supply: iceCirculatingSupply,
     } = proposal;
 
     if (isSimple) {
@@ -98,12 +98,14 @@ const getResultsData = (proposal: Proposal) => {
         const voteAgainstValue = Number(voteAgainst);
         const percentFor = (voteForValue / (voteForValue + voteAgainstValue)) * 100;
         const roundedPercent = roundToPrecision(percentFor, 2);
+        const isIceSupported = Number(iceCirculatingSupply) !== 0;
 
         return [
             {
                 label: SimpleProposalResultsLabels.votesFor,
                 percentage: Number.isNaN(percentFor) ? '' : `${roundedPercent}%`,
                 amount: voteFor,
+                isIceSupported,
             },
             {
                 label: SimpleProposalResultsLabels.votesAgainst,
@@ -111,6 +113,7 @@ const getResultsData = (proposal: Proposal) => {
                     ? ''
                     : `${roundToPrecision(100 - Number(roundedPercent), 2)}%`,
                 amount: voteAgainst,
+                isIceSupported,
             },
         ];
     }
@@ -123,8 +126,11 @@ const CurrentResults = ({ proposal }: { proposal: Proposal }): JSX.Element => {
     const isEnd = new Date() >= new Date(proposal.end_at);
 
     const votesSum = Number(proposal.vote_against_result) + Number(proposal.vote_for_result);
-    const percentVote = (votesSum / Number(proposal.aqua_circulating_supply)) * 100;
-    const isApproved = percentVote > MINIMUM_APPROVAL_PERCENT;
+    const percentVote =
+        (votesSum /
+            (Number(proposal.aqua_circulating_supply) + Number(proposal.ice_circulating_supply))) *
+        100;
+    const isApproved = percentVote > proposal.percent_for_quorum;
 
     return (
         <ResultBlock>
@@ -141,7 +147,7 @@ const CurrentResults = ({ proposal }: { proposal: Proposal }): JSX.Element => {
                 <QuorumResult isApproved={isApproved}>
                     {roundToPrecision(percentVote, 2)}%
                 </QuorumResult>
-                <Label>(&gt;5% needed)</Label>
+                <Label>(&gt;{proposal.percent_for_quorum}% needed)</Label>
                 {!isApproved && (
                     <StatusTag>
                         <FailIcon /> Not enough votes
@@ -154,9 +160,10 @@ const CurrentResults = ({ proposal }: { proposal: Proposal }): JSX.Element => {
                     <Tooltip
                         content={
                             <TooltipInner>
-                                Participation rate is the percentage of the circulating AQUA supply
-                                that has taken part in the voting. Participation rate is required to
-                                be above 5% for the proposal to be approved.
+                                Participation rate is the percentage of the circulating AQUA and ICE
+                                supply that has taken part in the voting. Participation rate is
+                                required to be above {proposal.percent_for_quorum}% for the proposal
+                                to be approved.
                             </TooltipInner>
                         }
                         position={

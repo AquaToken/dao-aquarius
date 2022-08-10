@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../../../common/styles';
 import ProposalStatus, { PROPOSAL_STATUS } from '../ProposalStatus/ProposalStatus';
 import { formatBalance, getDateString, roundToPrecision } from '../../../../common/helpers/helpers';
-import { MINIMUM_APPROVAL_PERCENT } from '../MainPage';
 import IconFail from '../../../../common/assets/img/icon-fail.svg';
 import IconSuccess from '../../../../common/assets/img/icon-success.svg';
 import CurrentResults from './CurrentResults/CurrentResults';
@@ -172,6 +171,8 @@ const ProposalPreview = ({ proposal }: { proposal: ProposalSimple }) => {
             vote_for_result: voteFor,
             vote_against_result: voteAgainst,
             aqua_circulating_supply: aquaCirculatingSupply,
+            ice_circulating_supply: iceCirculatingSupply,
+            percent_for_quorum: percentForQuorum,
         } = proposal;
 
         const voteForValue = Number(voteFor);
@@ -187,9 +188,12 @@ const ProposalPreview = ({ proposal }: { proposal: ProposalSimple }) => {
             return <span>No votes yet</span>;
         }
 
-        const rate = ((voteForValue + voteAgainstValue) / Number(aquaCirculatingSupply)) * 100;
+        const rate =
+            ((voteForValue + voteAgainstValue) /
+                (Number(aquaCirculatingSupply) + Number(iceCirculatingSupply))) *
+            100;
 
-        const isCancelled = rate < MINIMUM_APPROVAL_PERCENT;
+        const isCancelled = rate < percentForQuorum;
 
         if (isCancelled) {
             return (
@@ -217,16 +221,23 @@ const ProposalPreview = ({ proposal }: { proposal: ProposalSimple }) => {
             vote_for_result: voteFor,
             vote_against_result: voteAgainst,
             aqua_circulating_supply: aquaCirculatingSupply,
+            ice_circulating_supply: iceCirculatingSupply,
+            percent_for_quorum: percentForQuorum,
         } = proposal;
 
         const voteForValue = Number(voteFor);
         const voteAgainstValue = Number(voteAgainst);
 
-        const rate = ((voteForValue + voteAgainstValue) / Number(aquaCirculatingSupply)) * 100;
+        const rate =
+            ((voteForValue + voteAgainstValue) /
+                (Number(aquaCirculatingSupply) + Number(iceCirculatingSupply))) *
+            100;
 
         const roundedRate = roundToPrecision(rate, 2);
 
-        return `${roundedRate}% (${formatBalance(voteForValue + voteAgainstValue, true)} AQUA)`;
+        return `${roundedRate}% (${formatBalance(voteForValue + voteAgainstValue, true)} ${
+            Number(iceCirculatingSupply) === 0 ? 'AQUA' : 'AQUA + ICE'
+        })`;
     };
 
     const getActiveParticipationRate = () => {
@@ -234,14 +245,19 @@ const ProposalPreview = ({ proposal }: { proposal: ProposalSimple }) => {
             vote_for_result: voteFor,
             vote_against_result: voteAgainst,
             aqua_circulating_supply: aquaCirculatingSupply,
+            ice_circulating_supply: iceCirculatingSupply,
+            percent_for_quorum: percentForQuorum,
         } = proposal;
 
         const voteForValue = Number(voteFor);
         const voteAgainstValue = Number(voteAgainst);
 
-        const rate = ((voteForValue + voteAgainstValue) / Number(aquaCirculatingSupply)) * 100;
+        const rate =
+            ((voteForValue + voteAgainstValue) /
+                (Number(aquaCirculatingSupply) + Number(iceCirculatingSupply))) *
+            100;
 
-        if (rate >= MINIMUM_APPROVAL_PERCENT || rate === 0) {
+        if (rate >= percentForQuorum || rate === 0) {
             return null;
         }
 
@@ -250,7 +266,8 @@ const ProposalPreview = ({ proposal }: { proposal: ProposalSimple }) => {
         return (
             <ActiveParticipationRate>
                 <span>
-                    Participation rate: <Red>{roundedRate}%</Red> ({'>'}5% needed)
+                    Participation rate: <Red>{roundedRate}%</Red> ({'>'}
+                    {percentForQuorum}% needed)
                 </span>
                 <div>
                     <IconAgainst />
