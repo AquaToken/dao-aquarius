@@ -31,19 +31,30 @@ const App = () => {
         <Router>
             <Header>
                 <>
-                    <a href="https://vote.aqua.network/">Voting</a>
-                    <a href="https://aqua.network/rewards">Rewards</a>
-                    <a href="https://vote.aqua.network/bribes/">Bribes</a>
-                    <a href="https://locker.aqua.network/">Locker</a>
+                    <a href="https://vote.aqua.network/" title="Voting">
+                        Voting
+                    </a>
+                    <a href="https://aqua.network/rewards" title="Rewards">
+                        Rewards
+                    </a>
+                    <a href="https://vote.aqua.network/bribes/" title="Bribes">
+                        Bribes
+                    </a>
+                    <a href="https://locker.aqua.network/" title="Locker">
+                        Locker
+                    </a>
                     <HeaderNavLink
                         to={MainRoutes.main}
                         activeStyle={{
                             fontWeight: 700,
                         }}
+                        title="Governance"
                     >
                         Governance
                     </HeaderNavLink>
-                    <a href="https://aqua.network/airdrop2">Airdrop</a>
+                    <a href="https://aqua.network/airdrop2" title="Airdrop">
+                        Airdrop
+                    </a>
                 </>
             </Header>
             <Suspense fallback={<PageLoader />}>

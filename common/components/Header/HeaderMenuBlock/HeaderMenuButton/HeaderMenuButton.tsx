@@ -16,6 +16,7 @@ import ChooseLoginMethodModal from '../../../../modals/ChooseLoginMethodModal';
 import MobileMenuIcon from '../../../../assets/img/icon-mobile-menu.svg';
 
 const AccountBlockContainer = styled.div<{ isMenuOpen: boolean }>`
+    height: 100%;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -93,6 +94,7 @@ const AccountPublic = styled.div`
 `;
 
 const SignInButton = styled(Button)`
+    width: 12rem;
     ${respondDown(Breakpoints.md)`
         display: none;
     `}

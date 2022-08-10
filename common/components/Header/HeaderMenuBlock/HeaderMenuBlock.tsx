@@ -6,6 +6,7 @@ import { Breakpoints, COLORS } from '../../../styles';
 import { respondDown } from '../../../mixins';
 
 const Container = styled.div`
+    height: 100%;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -14,6 +15,7 @@ const Container = styled.div`
 
 const HeaderNavLinks = styled.div<{ isLogged: boolean }>`
     margin-right: ${({ isLogged }) => (isLogged ? '0.8rem' : '3.2rem')};
+    display: flex;
 
     a {
         color: ${COLORS.titleText};
@@ -21,6 +23,21 @@ const HeaderNavLinks = styled.div<{ isLogged: boolean }>`
 
         &:not(:last-child) {
             margin-right: 2.4rem;
+        }
+
+        &:hover {
+            color: ${COLORS.purple};
+        }
+
+        &::after {
+            content: attr(title);
+            visibility: hidden;
+            overflow: hidden;
+            user-select: none;
+            pointer-events: none;
+            font-weight: 700;
+            height: 0;
+            display: block;
         }
     }
 

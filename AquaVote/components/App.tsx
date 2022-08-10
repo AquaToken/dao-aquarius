@@ -95,21 +95,31 @@ const App = () => {
                         activeStyle={{
                             fontWeight: 700,
                         }}
+                        title="Voting"
                     >
                         Voting
                     </HeaderNavLink>
-                    <a href="https://aqua.network/rewards/">Rewards</a>
+                    <a href="https://aqua.network/rewards/" title="Rewards">
+                        Rewards
+                    </a>
                     <HeaderNavLink
                         to={MainRoutes.bribes}
                         activeStyle={{
                             fontWeight: 700,
                         }}
+                        title="Bribes"
                     >
                         Bribes
                     </HeaderNavLink>
-                    <a href="https://locker.aqua.network/">Locker</a>
-                    <a href="https://gov.aqua.network/">Governance</a>
-                    <a href="https://aqua.network/airdrop2/">Airdrop</a>
+                    <a href="https://locker.aqua.network/" title="Locker">
+                        Locker
+                    </a>
+                    <a href="https://gov.aqua.network/" title="Governance">
+                        Governance
+                    </a>
+                    <a href="https://aqua.network/airdrop2/" title="Airdrop">
+                        Airdrop
+                    </a>
                 </>
             </Header>
             <Suspense fallback={<PageLoader />}>

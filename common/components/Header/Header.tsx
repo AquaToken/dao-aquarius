@@ -36,28 +36,21 @@ export const HeaderNavLink = styled(NavLink)`
     &:not(:last-child) {
         margin-right: 2.4rem;
     }
+    &:hover {
+        color: ${COLORS.purple};
+    }
 `;
 
-export const HeaderMobileNavLink = styled(Link)`
-    display: none;
-    color: ${COLORS.titleText};
-    text-decoration: none;
-
-    &:not(:last-child) {
-        margin-right: 2.4rem;
-    }
-
-    ${respondDown(Breakpoints.md)`
-        display: inline;
-    `}
+const MainLink = styled.a`
+    height: 4.4rem;
 `;
 
 const Header = ({ children }: { children?: JSX.Element }): JSX.Element => {
     return (
         <HeaderBlock>
-            <a href="https://aqua.network">
+            <MainLink href="https://aqua.network">
                 <Aqua />
-            </a>
+            </MainLink>
 
             <Menu navLinks={children} />
         </HeaderBlock>
