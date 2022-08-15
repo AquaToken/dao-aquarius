@@ -13,6 +13,8 @@ import { getVotes, getVoteTxHash, UPDATE_INTERVAL, VoteFields } from '../../../a
 import Loader from '../../../../common/assets/img/loader.svg';
 import { flexAllCenter, respondDown } from '../../../../common/mixins';
 import Pagination from '../../../../common/basics/Pagination';
+import Aqua from '../../../../common/assets/img/aqua-logo-small.svg';
+import Ice from '../../../../common/assets/img/ice-logo.svg';
 
 const VotesBlock = styled.div`
     width: 100%;
@@ -118,6 +120,18 @@ const VotesLoader = styled(Loader)`
     width: 3rem;
 `;
 
+const AquaLogo = styled(Aqua)`
+    height: 1.6rem;
+    width: 1.6rem;
+    margin-left: 0.8rem;
+`;
+
+const IceLogo = styled(Ice)`
+    height: 1.6rem;
+    width: 1.6rem;
+    margin-left: 0.8rem;
+`;
+
 const onVoteLinkClick = (url: string) => {
     getVoteTxHash(url).then((hash: string) => {
         if (hash) {
@@ -216,7 +230,7 @@ const Votes = (): JSX.Element => {
                             position="right"
                             onClick={() => changeSort(VoteFields.amount)}
                         >
-                            AQUA Voted{' '}
+                            Voted{' '}
                             <IconSort
                                 isEnabled={sort === VoteFields.amount}
                                 isReversed={isReversedSort}
@@ -247,7 +261,8 @@ const Votes = (): JSX.Element => {
                                 <Solution choice={voteChoice} />
                             </CellSolution>
                             <CellAmount>
-                                {formatBalance(Number(amount), true)} AQUA{' '}
+                                {formatBalance(Number(amount), true)}
+                                {vote.asset_code === 'AQUA' ? <AquaLogo /> : <IceLogo />}
                                 <ExternalLink onClick={() => onVoteLinkClick(txLink)}>
                                     <ExternalLinkIcon />
                                 </ExternalLink>

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
     ModalDescription,
     ModalProps,
@@ -11,6 +11,7 @@ import { COLORS } from '../../../../common/styles';
 import Fail from '../../../../common/assets/img/icon-fail.svg';
 import Success from '../../../../common/assets/img/icon-success.svg';
 import Aqua from '../../../../common/assets/img/aqua-logo-small.svg';
+import Ice from '../../../../common/assets/img/ice-logo.svg';
 import useAuthStore from '../../../../common/store/authStore/useAuthStore';
 import Input from '../../../../common/basics/Input';
 import RangeInput from '../../../../common/basics/RangeInput';
@@ -31,8 +32,16 @@ import {
     openApp,
 } from '../../../../common/services/wallet-connect.service';
 import { LoginTypes } from '../../../../common/store/authStore/types';
+import {
+    AQUA_CODE,
+    AQUA_ISSUER,
+    GOV_ICE_CODE,
+    ICE_ISSUER,
+} from '../../../../common/services/stellar.service';
+import Select from '../../../../common/basics/Select';
 
 const MINIMUM_AMOUNT = 0.0000001;
+const MINIMUM_ICE_AMOUNT = 10;
 
 const ContentRow = styled.div`
     ${flexRowSpaceBetween};
@@ -75,13 +84,13 @@ const Balance = styled.span`
     cursor: pointer;
 `;
 
-const InputPostfix = styled.div`
-    height: min-content;
-    ${flexAllCenter};
-    color: ${COLORS.grayText};
+const AquaLogo = styled(Aqua)`
+    margin-right: 0.8rem;
+    height: 3.2rem;
+    width: 3.2rem;
 `;
 
-const AquaLogo = styled(Aqua)`
+const IceLogo = styled(Ice)`
     margin-right: 0.8rem;
     height: 3.2rem;
     width: 3.2rem;
@@ -90,6 +99,13 @@ const AquaLogo = styled(Aqua)`
 const StyledInput = styled(Input)`
     margin-top: 1.2rem;
     margin-bottom: 3.3rem;
+    flex: 2;
+`;
+
+const StyledSelect = styled(Select)`
+    margin-top: 1.2rem;
+    margin-bottom: 3.3rem;
+    flex: 1;
 `;
 
 const ClaimBack = styled.div`
@@ -125,6 +141,13 @@ const GetAquaLink = styled.div`
 `;
 
 const RATIO = 2;
+const AQUA = StellarService.createAsset(AQUA_CODE, AQUA_ISSUER);
+const GOV_ICE = StellarService.createAsset(GOV_ICE_CODE, ICE_ISSUER);
+
+const OPTIONS = [
+    { label: 'AQUA', value: AQUA, icon: <AquaLogo /> },
+    { label: 'ICE', value: GOV_ICE, icon: <IceLogo /> },
+];
 
 const ConfirmVoteModal = ({
     params,
@@ -138,21 +161,32 @@ const ConfirmVoteModal = ({
     const [percent, setPercent] = useState(0);
     const [amount, setAmount] = useState('');
     const [pending, setPending] = useState(false);
+    const [targetAsset, setTargetAsset] = useState(AQUA);
 
-    const aquaBalance = account.getAquaBalance();
+    const targetBalance = useMemo(() => {
+        return account?.getAssetBalance(targetAsset);
+    }, [targetAsset]);
 
-    const hasTrustLine = aquaBalance !== null;
-    const hasAqua = aquaBalance !== 0;
+    const hasTrustLine = targetBalance !== null;
+    const hasTargetBalance = targetBalance !== 0;
 
-    const formattedAquaBalance = hasTrustLine && formatBalance(aquaBalance);
+    const formattedBalance = hasTrustLine && formatBalance(targetBalance);
 
     const now = Date.now();
-    const unlockDate = new Date(endDate).getTime() + RATIO * (now - new Date(startDate).getTime());
+    const unlockDate =
+        targetAsset === AQUA
+            ? new Date(endDate).getTime() + RATIO * (now - new Date(startDate).getTime())
+            : new Date(endDate).getTime() + 60 * 60 * 1000;
+
+    useEffect(() => {
+        setAmount('');
+        setPercent(0);
+    }, [targetAsset]);
 
     const onRangeChange = (percent) => {
         setPercent(percent);
 
-        const amountValue = (aquaBalance * percent) / 100;
+        const amountValue = (targetBalance * percent) / 100;
 
         setAmount(roundToPrecision(amountValue, 7));
     };
@@ -163,7 +197,7 @@ const ConfirmVoteModal = ({
         }
         setAmount(value);
 
-        const percentValue = roundToPrecision((Number(value) / Number(aquaBalance)) * 100, 2);
+        const percentValue = roundToPrecision((Number(value) / Number(targetBalance)) * 100, 2);
 
         setPercent(+percentValue);
     };
@@ -172,15 +206,21 @@ const ConfirmVoteModal = ({
         if (pending) {
             return;
         }
-        if (Number(amount) > Number(aquaBalance)) {
+        if (Number(amount) > Number(targetBalance)) {
             ToastService.showErrorToast(
-                `The value must be less or equal than ${formattedAquaBalance} AQUA`,
+                `The value must be less or equal than ${formattedBalance} AQUA`,
             );
             return;
         }
         if (Number(amount) < MINIMUM_AMOUNT) {
             ToastService.showErrorToast(
                 `The value must be greater than ${MINIMUM_AMOUNT.toFixed(7)} AQUA`,
+            );
+            return;
+        }
+        if (Number(amount) < MINIMUM_ICE_AMOUNT && targetAsset === GOV_ICE) {
+            ToastService.showErrorToast(
+                `The value must be greater than ${MINIMUM_ICE_AMOUNT} ${GOV_ICE.code}`,
             );
             return;
         }
@@ -194,9 +234,11 @@ const ConfirmVoteModal = ({
                 key,
                 amount,
                 unlockDate,
+                targetAsset,
             );
             const tx = await StellarService.buildTx(account, voteOp);
-            const result = await account.signAndSubmitTx(tx);
+            const processedTx = await StellarService.processIceTx(tx, targetAsset);
+            const result = await account.signAndSubmitTx(processedTx);
             if (isMounted.current) {
                 setPending(false);
                 close();
@@ -239,47 +281,49 @@ const ConfirmVoteModal = ({
                 {hasTrustLine ? (
                     <BalanceBlock>
                         <Balance onClick={() => onRangeChange(100)}>
-                            {formattedAquaBalance} AQUA{' '}
+                            {formattedBalance} {targetAsset.code}{' '}
                         </Balance>
                         available
                     </BalanceBlock>
                 ) : (
-                    <BalanceBlock>You don�t have AQUA trustline</BalanceBlock>
+                    <BalanceBlock>You don&apos;t have {targetAsset.code} trustline</BalanceBlock>
                 )}
             </ContentRow>
 
-            <StyledInput
-                value={amount}
-                onChange={(e) => {
-                    onInputChange(e.target.value);
-                }}
-                placeholder="Enter amount"
-                postfix={
-                    <InputPostfix>
-                        <AquaLogo />
-                        <span>AQUA</span>
-                    </InputPostfix>
-                }
-                disabled={!hasTrustLine || !hasAqua}
-            />
+            <ContentRow>
+                <StyledInput
+                    value={amount}
+                    onChange={(e) => {
+                        onInputChange(e.target.value);
+                    }}
+                    placeholder="Enter amount"
+                    disabled={!hasTrustLine || !hasTargetBalance}
+                />
+
+                <StyledSelect options={OPTIONS} value={targetAsset} onChange={setTargetAsset} />
+            </ContentRow>
 
             <RangeInput
                 onChange={onRangeChange}
                 value={percent}
-                disabled={!hasTrustLine || !hasAqua}
+                disabled={!hasTrustLine || !hasTargetBalance}
             />
 
-            {hasTrustLine && hasAqua ? (
+            {hasTrustLine && hasTargetBalance ? (
                 <ClaimBack>
-                    You will be able to claim back your AQUA on{' '}
+                    You will be able to claim back your {targetAsset.code} on{' '}
                     <ClaimBackDate>{getDateString(unlockDate, { withTime: true })}</ClaimBackDate>
                 </ClaimBack>
             ) : (
                 <GetAquaBlock>
-                    <GetAquaLabel>You don&apos;t have enough AQUA</GetAquaLabel>
-                    <ExternalLink onClick={() => ModalService.openModal(GetAquaModal, {})}>
-                        <GetAquaLink>Get AQUA</GetAquaLink>
-                    </ExternalLink>
+                    <GetAquaLabel>You don&apos;t have enough {targetAsset.code}</GetAquaLabel>
+                    {targetAsset === AQUA ? (
+                        <ExternalLink onClick={() => ModalService.openModal(GetAquaModal, {})}>
+                            <GetAquaLink>Get AQUA</GetAquaLink>
+                        </ExternalLink>
+                    ) : (
+                        <ExternalLink href="https://locker.aqua.network">Get ICE</ExternalLink>
+                    )}
                 </GetAquaBlock>
             )}
 

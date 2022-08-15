@@ -17,11 +17,7 @@ import CreateDiscussionModal from '../../ProposalCreationPage/CreateDiscussionMo
 import { flexAllCenter, respondDown } from '../../../../common/mixins';
 import { formatBalance, getDateString, roundToPrecision } from '../../../../common/helpers/helpers';
 import NotEnoughAquaModal from '../../MainPage/NotEnoughAquaModal/NotEnoughAquaModal';
-import {
-    CREATE_DISCUSSION_COST,
-    CREATE_PROPOSAL_COST,
-    MINIMUM_APPROVAL_PERCENT,
-} from '../../MainPage/MainPage';
+import { CREATE_DISCUSSION_COST, CREATE_PROPOSAL_COST } from '../../MainPage/MainPage';
 import ProposalStatus, { PROPOSAL_STATUS } from '../../MainPage/ProposalStatus/ProposalStatus';
 import ExternalLink from '../../../../common/basics/ExternalLink';
 import { Link, useParams } from 'react-router-dom';
@@ -307,6 +303,8 @@ const Sidebar = forwardRef(
             end_at: endDate,
             aqua_circulating_supply: aquaCirculatingSupply,
             proposal_status: status,
+            ice_circulating_supply: iceCirculatingSupply,
+            percent_for_quorum: percentForQuorum,
         } = proposal;
 
         if (status === 'VOTED') {
@@ -334,8 +332,10 @@ const Sidebar = forwardRef(
             const roundedPercent = roundToPrecision(percent, 2);
 
             const isCanceled =
-                ((voteForValue + voteAgainstValue) / Number(aquaCirculatingSupply)) * 100 <
-                MINIMUM_APPROVAL_PERCENT;
+                ((voteForValue + voteAgainstValue) /
+                    (Number(aquaCirculatingSupply) + Number(iceCirculatingSupply))) *
+                    100 <
+                percentForQuorum;
 
             return (
                 <SidebarBlock ref={ref} {...props}>
@@ -363,7 +363,7 @@ const Sidebar = forwardRef(
                                     : `${roundedPercent}% votes - ${formatBalance(
                                           isVoteForWon ? voteForValue : voteAgainstValue,
                                           true,
-                                      )} AQUA`}
+                                      )} ${iceCirculatingSupply ? 'AQUA + ICE' : 'AQUA'}`}
                             </FinalResult>
                         </Results>
                     </Container>
