@@ -228,6 +228,7 @@ const Scrollable = styled.div<{ scrollDisabled: boolean }>`
 
 const MINIMUM_AMOUNT = 0.0000001;
 const MINIMUM_ICE_AMOUNT = 10;
+const ICE_LOCK_TIME = 5 * 60 * 1000;
 
 const VotesAmountModal = ({
     params,
@@ -425,7 +426,7 @@ const VotesAmountModal = ({
                     account.accountId(),
                     marketKey,
                     voteAmount,
-                    new Date(Date.now() + 1.2 * 60 * 60 * 1000).getTime(),
+                    new Date(Date.now() + ICE_LOCK_TIME).getTime(),
                     targetAsset,
                 ),
             );
