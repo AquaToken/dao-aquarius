@@ -233,10 +233,11 @@ const Options = [
     { label: 'Discussion', value: PROPOSAL_FILTER.DISCUSSION },
     { label: 'Finished', value: PROPOSAL_FILTER.CLOSED },
     { label: 'My proposals', value: PROPOSAL_FILTER.MY },
+    { label: 'My votes', value: PROPOSAL_FILTER.MY_VOTES },
 ];
 
 const MainPage = (): JSX.Element => {
-    const [proposals, setProposals] = useState([]);
+    const [proposals, setProposals] = useState(null);
     const [filter, setFilter] = useState(null);
     const [loading, setLoading] = useState(false);
 
@@ -266,10 +267,11 @@ const MainPage = (): JSX.Element => {
     const history = useHistory();
 
     const setFilterValue = (value) => {
-        if (value === PROPOSAL_FILTER.MY && !isLogged) {
+        if ((value === PROPOSAL_FILTER.MY || value === PROPOSAL_FILTER.MY_VOTES) && !isLogged) {
             ModalService.openModal(ChooseLoginMethodModal, {});
             return;
         }
+        setProposals(null);
         const params = new URLSearchParams(location.search);
         params.set(UrlParams.filter, value);
         history.push({ pathname: location.pathname, search: params.toString() });
@@ -284,7 +286,8 @@ const MainPage = (): JSX.Element => {
         }
         if (
             params.has(UrlParams.filter) &&
-            params.get(UrlParams.filter) === PROPOSAL_FILTER.MY &&
+            (params.get(UrlParams.filter) === PROPOSAL_FILTER.MY ||
+                params.get(UrlParams.filter) === PROPOSAL_FILTER.MY_VOTES) &&
             !isLogged
         ) {
             params.set(UrlParams.filter, PROPOSAL_FILTER.ALL);
@@ -294,10 +297,16 @@ const MainPage = (): JSX.Element => {
         setFilter(params.get(UrlParams.filter));
     }, [location]);
 
+    useEffect(() => {
+        if (!isLogged && (filter === PROPOSAL_FILTER.MY || filter === PROPOSAL_FILTER.MY_VOTES)) {
+            setFilterValue(PROPOSAL_FILTER.ALL);
+        }
+    }, [isLogged]);
+
     const creationRef = useRef(null);
     const hideBottomBlock = useIsOnViewport(creationRef);
 
-    if (loading && !proposals.length) {
+    if (loading || !proposals) {
         return <PageLoader />;
     }
 
@@ -339,6 +348,7 @@ const MainPage = (): JSX.Element => {
                                             <ProposalPreview
                                                 key={proposal.id}
                                                 proposal={proposal}
+                                                withMyVotes={filter === PROPOSAL_FILTER.MY_VOTES}
                                             />
                                         );
                                     })}

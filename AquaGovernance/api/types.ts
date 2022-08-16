@@ -17,6 +17,17 @@ export type ProposalSimple = {
     discord_username?: string | null;
     percent_for_quorum: number;
     ice_circulating_supply: string;
+    logvote_set: LogVote[];
+};
+
+type LogVote = {
+    account_issuer: string;
+    amount: string;
+    asset_code: string;
+    claimable_balance_id: string;
+    created_at: string;
+    transaction_link: string;
+    vote_choice: string;
 };
 
 type ProposalStatus = 'DISCUSSION' | 'VOTING' | 'VOTED' | 'EXPIRED';

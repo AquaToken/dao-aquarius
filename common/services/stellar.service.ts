@@ -389,6 +389,41 @@ export default class StellarServiceClass {
         }, 0);
     }
 
+    getVotesForProposal(proposal, accountId) {
+        if (!this.claimableBalances) {
+            return null;
+        }
+
+        return this.claimableBalances.reduce((acc, claim) => {
+            if (claim.claimants.length !== 2) {
+                return acc;
+            }
+            const hasForMarker = claim.claimants.some(
+                (claimant) => claimant.destination === proposal.vote_for_issuer,
+            );
+            const hasAgainstMarker = claim.claimants.some(
+                (claimant) => claimant.destination === proposal.vote_against_issuer,
+            );
+            const selfClaim = claim.claimants.find(
+                (claimant) => claimant.destination === accountId,
+            );
+            const isAqua = claim.asset === `${AQUA_CODE}:${AQUA_ISSUER}`;
+            const isGovIce = claim.asset === `${GOV_ICE_CODE}:${ICE_ISSUER}`;
+
+            if ((hasForMarker || hasAgainstMarker) && Boolean(selfClaim) && (isAqua || isGovIce)) {
+                const [code, issuer] = claim.asset.split(':');
+                acc.push({
+                    ...claim,
+                    isForVote: hasForMarker,
+                    claimBackDate: selfClaim.predicate.not.abs_before,
+                    assetCode: code,
+                    assetIssuer: issuer,
+                });
+            }
+            return acc;
+        }, []);
+    }
+
     getPairVotes(pair: PairStats, accountId: string) {
         if (!this.claimableBalances) {
             return null;
