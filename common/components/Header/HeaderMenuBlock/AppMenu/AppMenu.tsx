@@ -237,7 +237,7 @@ const AppMenu = ({
                             </AccountBalanceValue>
                         </AccountBalance>
                         <CircleButton
-                            onClick={() => window.open('https://locker.aqua.network/', '_self')}
+                            onClick={() => window.open('https://locker.aqua.network/', '_blank')}
                         >
                             <IconPlus />
                         </CircleButton>
