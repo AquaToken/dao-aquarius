@@ -143,11 +143,7 @@ const GetAquaModal = (): JSX.Element => {
         <Scrolled>
             <Container>
                 <ModalTitle>Get AQUA token</ModalTitle>
-                <ModalDescription>
-                    AQUA is the utility token of Aquarius project. You may be eligible to claim free
-                    AQUA through the ongoing airdrop program. Currently AQUA is only available on
-                    the Stellar DEX.
-                </ModalDescription>
+                <ModalDescription>AQUA is the utility token of Aquarius project.</ModalDescription>
                 <AssetInfo>
                     <div>
                         <GrayText>Asset code</GrayText>

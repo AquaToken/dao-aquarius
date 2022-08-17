@@ -4,9 +4,12 @@ import styled from 'styled-components';
 import { Breakpoints, COLORS, Z_INDEX } from '../../../../styles';
 import IconLogout from '../../../../assets/img/icon-logout.svg';
 import IconPlus from '../../../../assets/img/icon-plus.svg';
+import Aqua from '../../../../assets/img/aqua-logo-small.svg';
+import Ice from '../../../../assets/img/ice-logo.svg';
 import useAuthStore from '../../../../store/authStore/useAuthStore';
 import {
     ModalService,
+    StellarService,
     ToastService,
     WalletConnectService,
 } from '../../../../services/globalServices';
@@ -17,6 +20,7 @@ import GetAquaModal from '../../../../modals/GetAquaModal/GetAquaModal';
 import Button from '../../../../basics/Button';
 import Identicon from '../../../../basics/Identicon';
 import ChooseLoginMethodModal from '../../../../modals/ChooseLoginMethodModal';
+import { ICE_CODE, ICE_ISSUER } from '../../../../services/stellar.service';
 
 const MenuBlock = styled.div`
     position: absolute;
@@ -54,7 +58,6 @@ const AccountBalanceBlock = styled.div`
     justify-content: space-between;
     align-items: center;
     padding: 0.8rem 2.4rem 2.4rem;
-    border-bottom: 0.1rem dashed ${COLORS.gray};
 `;
 
 const AccountBalance = styled.div`
@@ -69,6 +72,8 @@ const AccountBalanceLabel = styled.span`
 
 const AccountBalanceValue = styled.span`
     color: ${COLORS.titleText};
+    display: flex;
+    align-items: center;
 `;
 
 const LogoutBlock = styled.div`
@@ -76,6 +81,7 @@ const LogoutBlock = styled.div`
     align-items: center;
     padding: 2.4rem 2.4rem 2.9rem;
     cursor: pointer;
+    border-top: 0.1rem dashed ${COLORS.gray};
 
     ${respondDown(Breakpoints.md)`
         justify-content: center;
@@ -159,6 +165,18 @@ const AccountPublic = styled.span`
     color: ${COLORS.grayText};
 `;
 
+const AquaLogo = styled(Aqua)`
+    height: 1.6rem;
+    width: 1.6rem;
+    margin-right: 0.8rem;
+`;
+
+const IceLogo = styled(Ice)`
+    height: 1.6rem;
+    width: 1.6rem;
+    margin-right: 0.8rem;
+`;
+
 const AppMenu = ({
     closeMenu,
     navLinks,
@@ -168,7 +186,10 @@ const AppMenu = ({
 }): JSX.Element => {
     const { logout, loginType, account, isLogged, metadata, federationAddress } = useAuthStore();
     const aquaBalance = account?.getAquaBalance();
+    const ICE = StellarService.createAsset(ICE_CODE, ICE_ISSUER);
+    const iceBalance = account?.getAssetBalance(ICE);
     const aquaBalanceView = aquaBalance === null ? '—' : formatBalance(aquaBalance, true);
+    const iceBalanceView = aquaBalance === null ? '—' : formatBalance(iceBalance, true);
     const accountId = account?.accountId();
     const accountIdView = `${accountId?.slice(0, 8)}...${accountId?.slice(-8)}`;
 
@@ -198,9 +219,26 @@ const AppMenu = ({
                     <AccountBalanceBlock>
                         <AccountBalance>
                             <AccountBalanceLabel>AQUA balance:</AccountBalanceLabel>
-                            <AccountBalanceValue>{aquaBalanceView}</AccountBalanceValue>
+                            <AccountBalanceValue>
+                                <AquaLogo />
+                                {aquaBalanceView}
+                            </AccountBalanceValue>
                         </AccountBalance>
                         <CircleButton onClick={() => ModalService.openModal(GetAquaModal, {})}>
+                            <IconPlus />
+                        </CircleButton>
+                    </AccountBalanceBlock>
+                    <AccountBalanceBlock>
+                        <AccountBalance>
+                            <AccountBalanceLabel>ICE balance:</AccountBalanceLabel>
+                            <AccountBalanceValue>
+                                <IceLogo />
+                                {iceBalanceView}
+                            </AccountBalanceValue>
+                        </AccountBalance>
+                        <CircleButton
+                            onClick={() => window.open('https://locker.aqua.network/', '_self')}
+                        >
                             <IconPlus />
                         </CircleButton>
                     </AccountBalanceBlock>
