@@ -12,6 +12,7 @@ export enum PROPOSAL_FILTER {
     DISCUSSION = 'discussion',
     CLOSED = 'closed',
     MY = 'my',
+    MY_VOTES = 'my_votes',
 }
 
 export const getProposalsRequest = (
@@ -27,6 +28,8 @@ export const getProposalsRequest = (
         params.append('status', 'discussion');
     } else if (filter === PROPOSAL_FILTER.MY) {
         params.append('owner_public_key', pubkey);
+    } else if (filter === PROPOSAL_FILTER.MY_VOTES) {
+        params.append('vote_owner_public_key', pubkey);
     }
 
     return axios.get(`${apiURL}/proposal/`, { params });

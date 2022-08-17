@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { hot } from 'react-hot-loader';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 
@@ -15,6 +15,7 @@ import ToastContainer from '../../common/toasts/ToastContainer';
 import PageLoader from '../../common/basics/PageLoader';
 import useAuthStore from '../../common/store/authStore/useAuthStore';
 import reactQuillCSS from 'react-quill/dist/quill.snow.css';
+import { StellarService } from '../../common/services/globalServices';
 
 export const ReactQuillCSS = reactQuillCSS;
 
@@ -25,7 +26,15 @@ const ProposalCreationPage = lazy(() => import('./ProposalCreationPage/ProposalC
 const App = () => {
     useGlobalSubscriptions();
 
-    const { isLogged } = useAuthStore();
+    const { isLogged, account } = useAuthStore();
+
+    useEffect(() => {
+        if (isLogged) {
+            StellarService.startClaimableBalancesStream(account.accountId());
+        } else {
+            StellarService.closeClaimableBalancesStream();
+        }
+    }, [isLogged]);
 
     return (
         <Router>

@@ -467,7 +467,7 @@ export default class WalletConnectServiceClass {
         }
     }
 
-    signAndSubmitTx(tx: StellarSdk.Transaction): Promise<unknown> {
+    signAndSubmitTx(tx: StellarSdk.Transaction): Promise<any> {
         const xdr = tx.toEnvelope().toXDR('base64');
 
         const request = this.client.request({
