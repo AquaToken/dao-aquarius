@@ -563,7 +563,7 @@ const VotesAmountModal = ({
                             available
                         </BalanceBlock>
                     ) : (
-                        <BalanceBlock>You don’t have ${targetAsset.code} trustline</BalanceBlock>
+                        <BalanceBlock>You don’t have {targetAsset.code} trustline</BalanceBlock>
                     )}
                 </ContentRow>
 
