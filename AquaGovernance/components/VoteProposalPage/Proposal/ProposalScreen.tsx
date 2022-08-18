@@ -211,7 +211,6 @@ const TabNav = styled.div`
     top: 0;
     z-index: 1;
     width: 100%;
-    clear: both;
 
     ${respondDown(Breakpoints.md)`
         display: none;
@@ -315,7 +314,6 @@ const ProposalScreen = ({
 
     return (
         <>
-            <SidebarWeb proposal={proposal} />
             <ProposalQuestion>
                 <ProposalSection>
                     <LeftContent>
@@ -397,6 +395,7 @@ const ProposalScreen = ({
                     </TabNavContent>
                 </TabNav>
             )}
+            <SidebarWeb proposal={proposal} />
             <ProposalSection ref={proposalRef}>
                 <LeftContent>
                     <Title>Proposal</Title>
