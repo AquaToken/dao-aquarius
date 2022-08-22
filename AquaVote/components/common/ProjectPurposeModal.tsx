@@ -39,12 +39,12 @@ const ProjectPurposeModal = ({ close }) => {
 
     return (
         <Container>
-            <ModalTitle>Liquidity voting with AQUA</ModalTitle>
+            <ModalTitle>Liquidity voting with AQUA & ICE</ModalTitle>
             <ModalDescription>
-                You can use AQUA to vote for your favorite market pairs on Stellar, helping improve
-                their liquidity. These votes define the size of the Aquarius liquidity rewards paid
-                to AMM liquidity providers and SDEX traders. Choose the pairs that are important to
-                you, and support them through the on-chain AQUA voting.
+                You can use AQUA or ICE tokens to vote for your favorite market pairs on Stellar,
+                helping improve their liquidity. These votes define the size of the Aquarius
+                liquidity rewards paid to AMM liquidity providers and SDEX traders. Choose the pairs
+                that are important to you, and support them through the on-chain voting.
             </ModalDescription>
             <CheckboxBlock>
                 <Checkbox label="Don’t show again" checked={checked} onChange={setChecked} />
