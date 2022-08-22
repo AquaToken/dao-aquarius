@@ -8,6 +8,7 @@ import {
     MarketKey,
     MarketVotes,
     PairStats,
+    Rewards,
     TotalStats,
     UpcomingBribe,
 } from './types';
@@ -17,6 +18,8 @@ const assetsInfoUrl = 'https://assets.aqua.network/api/v1/assets/';
 const marketKeysUrl = 'https://marketkeys-tracker.aqua.network/api/market-keys/';
 const votingTrackerUrl = 'https://voting-tracker.aqua.network/api/voting-snapshot/';
 const bribesApiUrl = 'https://bribes-api.aqua.network/api/';
+const rewardsApi =
+    'https://reward-api.aqua.network/api/rewards/?ordering=-daily_total_reward&page=1&page_size=200';
 
 export const getAssetsRequest = () => {
     return axios.get<{ issuer_orgs: any[] }>(assetsListUrl).then(({ data }) => {
@@ -300,24 +303,33 @@ export const getFilteredPairsList = async (
         count = 1;
     }
     const marketVotesParams = new URLSearchParams();
+    const bribesParams = new URLSearchParams();
 
     marketKeys.forEach((marketKey) => {
         marketVotesParams.append('market_key', marketKey.account_id);
+        bribesParams.append('market_key', marketKey.account_id);
     });
 
-    const marketsVotes = await axios.get<ListResponse<MarketVotes>>(votingTrackerUrl, {
-        params: marketVotesParams,
-    });
+    const [marketsVotes, bribes] = await Promise.all([
+        axios.get<ListResponse<MarketVotes>>(votingTrackerUrl, {
+            params: marketVotesParams,
+        }),
+        axios.get<ListResponse<MarketBribes>>(`${bribesApiUrl}bribes/?limit=200`, {
+            params: bribesParams,
+        }),
+    ]);
 
     const pairs = marketKeys.map((marketKey) => {
         const marketVotes = marketsVotes.data.results.find(
             (vote) => vote.market_key === marketKey.account_id,
         );
 
+        const bribe = bribes.data.results.find((key) => key.market_key === marketKey.account_id);
+
         if (marketVotes) {
-            return { ...marketKey, ...marketVotes };
+            return { ...marketKey, ...marketVotes, ...bribe };
         } else {
-            return { ...marketKey, ...{ market_key: marketKey.account_id } };
+            return { ...marketKey, ...{ market_key: marketKey.account_id }, ...bribe };
         }
     });
 
@@ -381,4 +393,20 @@ export const getBribes = async (
     });
 
     return { count, bribes };
+};
+
+export const getUpcomingBribesForMarket = (marketKey) => {
+    return axios
+        .get<ListResponse<UpcomingBribe>>(
+            `${bribesApiUrl}pending-bribes/?limit=200&ordering=start_at&market_key=${marketKey}`,
+        )
+        .then(({ data }) => {
+            return data.results;
+        });
+};
+
+export const getRewards = (): Promise<Rewards[]> => {
+    return axios.get<ListResponse<Rewards>>(rewardsApi).then((res) => {
+        return res.data.results;
+    });
 };

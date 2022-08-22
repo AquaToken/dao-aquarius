@@ -48,6 +48,7 @@ import {
 } from '../../../common/services/stellar.service';
 import DotsLoader from '../../../common/basics/DotsLoader';
 import { useHistory, useLocation } from 'react-router-dom';
+import { MainRoutes } from '../../routes';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -275,6 +276,14 @@ const CreatePair = styled.div`
     ${flexRowSpaceBetween};
     height: 9.6rem;
     margin-bottom: 6rem;
+    border: 0.1rem solid ${COLORS.transparent};
+    cursor: pointer;
+    padding-right: 0.8rem;
+
+    &:hover {
+        background: ${COLORS.lightGray};
+        border: 0.1rem solid ${COLORS.gray};
+    }
 
     ${respondDown(Breakpoints.md)`
         flex-direction: column;
@@ -666,7 +675,9 @@ const MainPage = (): JSX.Element => {
     if (!pairs) {
         return <PageLoader />;
     }
-    const createPair = () => {
+    const createPair = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         if (isLogged) {
             ModalService.openModal(CreatePairModal, {
                 base: searchBase,
@@ -695,6 +706,18 @@ const MainPage = (): JSX.Element => {
     };
 
     const hasChosenPairs = chosenPairs.length > 0;
+
+    const goToMarketPage = () => {
+        history.push(
+            `${MainRoutes.market}/${
+                searchBase.isNative() ? 'native' : `${searchBase.code}:${searchBase.issuer}`
+            }/${
+                searchCounter.isNative()
+                    ? 'native'
+                    : `${searchCounter.code}:${searchCounter.issuer}`
+            }`,
+        );
+    };
 
     return (
         <MainBlock>
@@ -777,7 +800,7 @@ const MainPage = (): JSX.Element => {
                     <SearchEnabled>No pairs found</SearchEnabled>
                 )}
                 {searchBase && searchCounter && !pairs.length && (
-                    <CreatePair>
+                    <CreatePair onClick={() => goToMarketPage()}>
                         <Pair base={searchBase} counter={searchCounter} mobileVerticalDirections />
                         <Tooltip
                             content={
@@ -789,7 +812,7 @@ const MainPage = (): JSX.Element => {
                             position={TOOLTIP_POSITION.bottom}
                             isShow={true}
                         >
-                            <Button onClick={() => createPair()}>create pair</Button>
+                            <Button onClick={(e) => createPair(e)}>create pair</Button>
                         </Tooltip>
                     </CreatePair>
                 )}

@@ -18,6 +18,8 @@ import Aqua from '../../../../common/assets/img/aqua-logo-small.svg';
 import ArrowRight from '../../../../common/assets/img/icon-arrow-right.svg';
 import Asset from '../../AssetDropdown/Asset';
 import BribesModal from '../BribesModal/BribesModal';
+import { useHistory } from 'react-router-dom';
+import { MainRoutes } from '../../../routes';
 
 const TableBlock = styled.div`
     display: flex;
@@ -117,6 +119,16 @@ export const TableBody = styled.div`
 `;
 
 export const TableBodyRowWrap = styled.div`
+    cursor: pointer;
+    border: 0.1rem solid ${COLORS.transparent};
+    padding: 0.8rem;
+    border-radius: 0.5rem;
+
+    &:hover {
+        background: ${COLORS.lightGray};
+        border: 0.1rem solid ${COLORS.gray};
+    }
+
     ${respondDown(Breakpoints.md)`
           flex-direction: column;
           background: ${COLORS.white};
@@ -141,6 +153,7 @@ export const TableBodyRow = styled.div`
     line-height: 2.8rem;
     color: ${COLORS.paragraphText};
     position: relative;
+    border-radius: 0.5rem;
 
     ${TableCell}:nth-child(2) {
         font-size: 1.4rem;
@@ -181,6 +194,14 @@ const BribeInfo = styled.div`
     font-size: 1.4rem;
     line-height: 2rem;
     cursor: pointer;
+    margin-top: 0.6rem;
+
+    &:hover {
+        padding-right: 1.1rem;
+        svg:last-child {
+            margin-left: 0.5rem;
+        }
+    }
 
     &::after {
         content: '';
@@ -261,7 +282,7 @@ const ArrowRightIcon = styled(ArrowRight)`
 
 export const MIN_REWARDS_PERCENT = 1;
 
-const isRewardsOn = (value: string, total: string): boolean => {
+export const isRewardsOn = (value: string, total: string): boolean => {
     const percent = (Number(value) / Number(total)) * 100;
 
     return percent >= MIN_REWARDS_PERCENT;
@@ -283,6 +304,8 @@ const Table = ({
     isYourVotes: boolean;
 }): JSX.Element => {
     const [showTooltipId, setShowTooltipId] = useState(null);
+    const history = useHistory();
+
     if (!pairs.length) {
         return null;
     }
@@ -291,12 +314,20 @@ const Table = ({
         return selectedPairs.some((pair) => pair.market_key === marketKey);
     };
 
-    const manageVotes = (pair) => {
+    const manageVotes = (event, pair) => {
+        event.preventDefault();
+        event.stopPropagation();
         ModalService.openModal(ManageVotesModal, { pair });
     };
 
-    const showBribes = (pair) => {
+    const showBribes = (event, pair) => {
+        event.preventDefault();
+        event.stopPropagation();
         ModalService.openModal(BribesModal, { pair });
+    };
+
+    const goToMarketPage = (pair) => {
+        history.push(`${MainRoutes.market}/${pair.asset1}/${pair.asset2}`);
     };
 
     return (
@@ -325,7 +356,12 @@ const Table = ({
                           }, 0)
                         : 0;
                     return (
-                        <TableBodyRowWrap key={pair.id}>
+                        <TableBodyRowWrap
+                            key={pair.id}
+                            onClick={() => {
+                                goToMarketPage(pair);
+                            }}
+                        >
                             <TableBodyRow>
                                 <PairInfo>
                                     <Pair
@@ -385,7 +421,7 @@ const Table = ({
                                                     setShowTooltipId(pair.account_id)
                                                 }
                                                 onMouseLeave={() => setShowTooltipId(null)}
-                                                onClick={() => manageVotes(pair)}
+                                                onClick={(e) => manageVotes(e, pair)}
                                             >
                                                 <ManageIcon />
                                             </ManageButton>
@@ -394,7 +430,10 @@ const Table = ({
                                 </ButtonBlock>
                             </TableBodyRow>
                             {hasBribes ? (
-                                <BribeInfo key={pair.account_id} onClick={() => showBribes(pair)}>
+                                <BribeInfo
+                                    key={pair.account_id}
+                                    onClick={(e) => showBribes(e, pair)}
+                                >
                                     <BribeInfoRow>
                                         <span>Daily bribe amount:</span>
                                         <BribeAquaSum>

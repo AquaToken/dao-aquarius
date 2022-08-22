@@ -18,16 +18,46 @@ const smallLogoStyles = css`
     border-radius: 0.1rem;
 `;
 
-const Logo = styled.img<{ isSmall?: boolean }>`
-    ${({ isSmall }) => (isSmall ? smallLogoStyles : logoStyles)};
+const bigLogoStyles = css`
+    height: 8rem;
+    width: 8rem;
+    border-radius: 0.5rem;
 `;
 
-const Unknown = styled(UnknownLogo)<{ $isSmall?: boolean }>`
-    ${({ $isSmall }) => ($isSmall ? smallLogoStyles : logoStyles)};
+const Logo = styled.img<{ isSmall?: boolean; isBig?: boolean }>`
+    ${({ isSmall, isBig }) => {
+        if (isSmall) {
+            return smallLogoStyles;
+        }
+        if (isBig) {
+            return bigLogoStyles;
+        }
+        return logoStyles;
+    }}
 `;
 
-const LogoLoaderContainer = styled.div<{ isSmall?: boolean }>`
-    ${({ isSmall }) => (isSmall ? smallLogoStyles : logoStyles)};
+const Unknown = styled(UnknownLogo)<{ $isSmall?: boolean; $isBig?: boolean }>`
+    ${({ $isSmall, $isBig }) => {
+        if ($isSmall) {
+            return smallLogoStyles;
+        }
+        if ($isBig) {
+            return bigLogoStyles;
+        }
+        return logoStyles;
+    }}
+`;
+
+const LogoLoaderContainer = styled.div<{ isSmall?: boolean; isBig?: boolean }>`
+    ${({ isSmall, isBig }) => {
+        if (isSmall) {
+            return smallLogoStyles;
+        }
+        if (isBig) {
+            return bigLogoStyles;
+        }
+        return logoStyles;
+    }}
     ${flexAllCenter};
     background-color: ${COLORS.descriptionText};
 `;
@@ -41,22 +71,24 @@ const LogoLoader = styled(Loader)`
 const AssetLogo = ({
     logoUrl,
     isSmall,
+    isBig,
 }: {
     logoUrl: string | null | undefined;
     isSmall?: boolean;
+    isBig?: boolean;
 }) => {
     const [isErrorLoad, setIsErrorLoad] = useState(false);
 
     if (logoUrl === undefined) {
         return (
-            <LogoLoaderContainer isSmall={isSmall}>
+            <LogoLoaderContainer isSmall={isSmall} isBig={isBig}>
                 <LogoLoader />
             </LogoLoaderContainer>
         );
     }
 
     if (logoUrl === null || isErrorLoad) {
-        return <Unknown $isSmall={isSmall} />;
+        return <Unknown $isSmall={isSmall} $isBig={isBig} />;
     }
 
     return (
@@ -64,6 +96,7 @@ const AssetLogo = ({
             src={logoUrl}
             alt=""
             isSmall={isSmall}
+            isBig={isBig}
             onError={() => {
                 setIsErrorLoad(true);
             }}

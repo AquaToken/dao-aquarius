@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../../../common/styles';
 import ExternalLinkIcon from '../../../../common/assets/img/icon-external-link.svg';
-import AccountViewer from '../AccountViewer/AccountViewer';
+import AccountViewer from '../../../../common/basics/AccountViewer';
 import Solution from '../Solution/Solution';
 import { formatBalance, getDateString } from '../../../../common/helpers/helpers';
 import { IconSort } from '../../../../common/basics/Icons';

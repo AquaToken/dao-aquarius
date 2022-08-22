@@ -8,7 +8,7 @@ import ArrowRight from '../../assets/img/icon-arrow-right.svg';
 import LobstrLogo from '../../assets/img/lobstr-name-logo.svg';
 import StellarXLogo from '../../assets/img/stellarx-logo.svg';
 import StellarTermLogo from '../../assets/img/stellarterm-logo.svg';
-import AccountViewer from '../../../AquaGovernance/components/VoteProposalPage/AccountViewer/AccountViewer';
+import AccountViewer from '../../basics/AccountViewer';
 import CopyButton from '../../basics/CopyButton';
 
 const Container = styled.div`

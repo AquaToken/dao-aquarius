@@ -61,7 +61,7 @@ const PairBlock = styled.div`
     margin-bottom: 2.3rem;
 `;
 
-const TableHeader = styled.div`
+export const TableHeader = styled.div`
     font-size: 1.4rem;
     line-height: 1.6rem;
     color: ${COLORS.grayText};
@@ -96,7 +96,7 @@ const TableRow = styled.div`
     `};
 `;
 
-const Cell = styled.div`
+export const Cell = styled.div`
     display: flex;
     align-items: center;
     justify-content: flex-end;
@@ -118,12 +118,12 @@ const Cell = styled.div`
     `};
 `;
 
-const DateCell = styled(Cell)`
+export const DateCell = styled(Cell)`
     flex: 1;
     justify-content: flex-start;
 `;
 
-const Amount = styled(Cell)`
+export const Amount = styled(Cell)`
     flex: 1;
 
     span {
@@ -131,11 +131,11 @@ const Amount = styled(Cell)`
     }
 `;
 
-const Claim = styled(Cell)`
+export const Claim = styled(Cell)`
     flex: 1;
 `;
 
-const Link = styled(Cell)`
+export const Link = styled(Cell)`
     flex: 0.1;
     max-width: 3rem;
 
@@ -146,14 +146,14 @@ const Link = styled(Cell)`
     `};
 `;
 
-const ClaimButton = styled(Button)`
+export const ClaimButton = styled(Button)`
     ${respondDown(Breakpoints.md)`
          width: 100%;
          height: 5.4rem;
     `};
 `;
 
-const WebLink = styled(LinkIcon)`
+export const WebLink = styled(LinkIcon)`
     cursor: pointer;
 
     ${respondDown(Breakpoints.md)`
@@ -161,7 +161,7 @@ const WebLink = styled(LinkIcon)`
     `};
 `;
 
-const MobileLink = styled(ExternalLink)`
+export const MobileLink = styled(ExternalLink)`
     display: none;
 
     ${respondDown(Breakpoints.md)`
@@ -169,7 +169,7 @@ const MobileLink = styled(ExternalLink)`
     `};
 `;
 
-const goToStellarExpert = ({ transactions }) => {
+export const goToStellarExpert = ({ transactions }) => {
     transactions().then((res) => {
         const hash = res?.records?.[0]?.hash;
         if (hash) {

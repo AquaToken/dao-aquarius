@@ -755,4 +755,12 @@ export default class StellarServiceClass {
             asset,
         });
     }
+
+    getTradeAggregations(base, counter, startDate, endDate, resolution, limit) {
+        return this.server
+            .tradeAggregation(base, counter, startDate, endDate, resolution, 0)
+            .limit(limit)
+            .order('desc')
+            .call();
+    }
 }
