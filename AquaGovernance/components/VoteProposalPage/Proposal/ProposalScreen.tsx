@@ -6,7 +6,7 @@ import ArrowLeft from '../../../../common/assets/img/icon-arrow-left.svg';
 import ArrowDown from '../../../../common/assets/img/icon-arrow-down.svg';
 import ExternalIcon from '../../../../common/assets/img/icon-external-link.svg';
 import IconEdit from '../../../../common/assets/img/icon-edit.svg';
-import AccountViewer from '../AccountViewer/AccountViewer';
+import AccountViewer from '../../../../common/basics/AccountViewer';
 import { commonMaxWidth, flexAllCenter, respondDown } from '../../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../../common/styles';
 import { Link } from 'react-router-dom';

@@ -50,11 +50,13 @@ const VoteButton = ({
     isPairSelected,
     onButtonClick,
     disabled,
+    withoutStats,
 }: {
     pair: PairStats;
     isPairSelected: boolean;
     onButtonClick: () => void;
     disabled: boolean;
+    withoutStats?: boolean;
 }): JSX.Element => {
     const { market_key: marketKeyUp, downvote_account_id: marketKeyDown } = pair;
     const { account, isLogged } = useAuthStore();
@@ -73,7 +75,9 @@ const VoteButton = ({
 
     const [showTooltip, setShowTooltip] = useState(false);
 
-    const downVote = () => {
+    const downVote = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
         if (!isLogged) {
             ModalService.openModal(ChooseLoginMethodModal, {});
             return;
@@ -87,9 +91,10 @@ const VoteButton = ({
     };
 
     useEffect(() => {
-        if (!account) {
+        if (!account || withoutStats) {
             setBalanceUp(null);
             setBalanceDown(null);
+            return;
         }
         const unsub = StellarService.event.sub(({ type }) => {
             if (type === StellarEvents.claimableUpdate) {
@@ -101,10 +106,18 @@ const VoteButton = ({
         return () => unsub();
     }, [account]);
 
-    if (!balanceUp && !balanceDown) {
+    if ((!balanceUp && !balanceDown) || withoutStats) {
         return (
-            <>
-                <Button onClick={onButtonClick} likeDisabled={isPairSelected} disabled={disabled}>
+            <Container>
+                <Button
+                    onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        onButtonClick();
+                    }}
+                    likeDisabled={isPairSelected}
+                    disabled={disabled}
+                >
                     {isPairSelected ? 'added' : 'Add To Vote'}
                     {isPairSelected ? <TickStyled /> : <Like />}
                 </Button>
@@ -117,21 +130,25 @@ const VoteButton = ({
                         isSquare
                         likeDisabled
                         disabled={disabled}
-                        onClick={() => downVote()}
+                        onClick={(e) => downVote(e)}
                         onMouseEnter={() => setShowTooltip(true)}
                         onMouseLeave={() => setShowTooltip(false)}
                     >
                         <IconDislike />
                     </DownvoteButton>
                 </Tooltip>
-            </>
+            </Container>
         );
     }
     return (
         <Container>
             <Balance>{formatBalance((+balanceUp || 0) - (+balanceDown || 0), true)}</Balance>
             <Button
-                onClick={onButtonClick}
+                onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    onButtonClick();
+                }}
                 likeDisabled={isPairSelected}
                 isSquare
                 disabled={disabled}
@@ -147,7 +164,7 @@ const VoteButton = ({
                     isSquare
                     likeDisabled
                     disabled={disabled}
-                    onClick={() => downVote()}
+                    onClick={(e) => downVote(e)}
                     onMouseEnter={() => setShowTooltip(true)}
                     onMouseLeave={() => setShowTooltip(false)}
                 >

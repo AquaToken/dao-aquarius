@@ -18,6 +18,21 @@ export type Asset = {
     issuer: string;
     name: string;
     auth_required?: boolean;
+    desc?: string;
+    accounts_authorized?: number;
+    anchor_asset: string;
+    anchor_asset_type: string;
+    auth_clawback_enabled: boolean;
+    auth_immutable: boolean;
+    auth_revocable: boolean;
+    balances_authorized: string;
+    claimable_balances_amount: string;
+    conditions: string;
+    is_asset_anchored: boolean;
+    is_verified: boolean;
+    liquidity_pools_amount: string;
+    is_supply_locked: boolean;
+    first_transaction: string;
 };
 
 export type MarketVotes = {
@@ -97,4 +112,19 @@ export type UpcomingBribe = {
     start_at: string;
     stop_at: string;
     unlock_time: string;
+};
+
+export type Rewards = {
+    daily_amm_reward: number;
+    daily_sdex_reward: number;
+    daily_total_reward: number;
+    last_updated: string;
+    market_key: RewardMarketKey;
+};
+
+export type RewardMarketKey = {
+    asset1_code: string;
+    asset1_issuer: string;
+    asset2_code: string;
+    asset2_issuer: string;
 };

@@ -249,6 +249,10 @@ const BribesTable = () => {
         setPage(1);
     };
 
+    const goToMarketPage = ({ asset1, asset2 }) => {
+        history.push(`${MainRoutes.market}/${asset1}/${asset2}`);
+    };
+
     if (!bribes) {
         return (
             <LoaderContainer>
@@ -344,7 +348,10 @@ const BribesTable = () => {
                             item.asset_issuer,
                         );
                         return (
-                            <TableBodyRowWrap key={item.claimable_balance_id}>
+                            <TableBodyRowWrap
+                                key={item.claimable_balance_id}
+                                onClick={() => goToMarketPage(item)}
+                            >
                                 <TableBodyRow>
                                     <PairCell>
                                         <Pair

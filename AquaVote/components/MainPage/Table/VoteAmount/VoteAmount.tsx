@@ -154,7 +154,7 @@ const TokenAmount = styled.div`
     ${flexAllCenter};
 `;
 
-const getPercent = (value: string, total: string): string => {
+export const getPercent = (value: string, total: string): string => {
     if (Number(value) < 0) {
         return '0';
     }

@@ -25,6 +25,7 @@ import { Breakpoints, COLORS } from '../../common/styles';
 const MainPage = lazy(() => import('./MainPage/MainPage'));
 const BribesPage = lazy(() => import('./BribesPage/BribesPage'));
 const AddBribePage = lazy(() => import('./AddBribePage/AddBribePage'));
+const MarketPage = lazy(() => import('./MarketPage/MarketPage'));
 
 const ModalBG = styled(BG)`
     object-position: center center;
@@ -132,6 +133,9 @@ const App = () => {
                     </Route>
                     <Route path={MainRoutes.addBribe}>
                         <AddBribePage />
+                    </Route>
+                    <Route path={`${MainRoutes.market}/:base/:counter`}>
+                        <MarketPage />
                     </Route>
                     <Route component={NotFoundPage} />
                 </Switch>

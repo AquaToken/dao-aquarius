@@ -1,8 +1,8 @@
 import * as React from 'react';
 import createStellarIdenticon from 'stellar-identicon-js';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import { respondDown } from '../../../../common/mixins';
+import { Breakpoints, COLORS } from '../styles';
+import { respondDown } from '../mixins';
 
 const AccountViewerBlock = styled.div`
     display: flex;
