@@ -95,8 +95,7 @@ const DailyStats = ({ base, counter }) => {
             return acc;
         }, 0);
         const change24 = (
-            (lastPrice / last15MinutesTrades[last15MinutesTrades.length - 1].open - 1) *
-            100
+            (lastPrice / last15MinutesTrades[last15MinutesTrades.length - 1].open - 1) * 100 || 0
         ).toFixed(2);
 
         return { lastPrice, change24, volume24 };
@@ -107,7 +106,7 @@ const DailyStats = ({ base, counter }) => {
             <DetailsColumn>
                 <DetailTitle>Last price</DetailTitle>
                 <DetailValue>
-                    {lastPrice ? (
+                    {lastPrice !== null ? (
                         `${
                             lastPrice === '-'
                                 ? '-'
