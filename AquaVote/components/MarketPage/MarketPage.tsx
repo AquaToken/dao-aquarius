@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { StellarService } from '../../../common/services/globalServices';
 import NotFoundPage from '../../../common/components/NotFoundPage/NotFoundPage';
@@ -22,6 +22,7 @@ import TradeStats from './TradeStats/TradeStats';
 import Rewards from './Rewards/Rewards';
 import { useIsOverScrolled } from '../../../common/hooks/useIsOnViewport';
 import ArrowLeft from '../../../common/assets/img/icon-arrow-left.svg';
+import { MainRoutes } from '../../routes';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -93,10 +94,7 @@ const Header = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-
-    ${respondDown(Breakpoints.md)`
-        flex-direction: column-reverse;
-    `}
+    flex-direction: column-reverse;
 `;
 
 const NavPanel = styled.div`
@@ -167,6 +165,8 @@ const MarketPage = () => {
     const [chosenPairs, setChosenPairs] = useState(getCachedChosenPairs());
 
     const { isLogged } = useAuthStore();
+
+    const history = useHistory();
 
     const isValidAssets = isValidPathAsset(base) && isValidPathAsset(counter) && base !== counter;
 
@@ -242,6 +242,8 @@ const MarketPage = () => {
         return <PageLoader />;
     }
 
+    console.log(history);
+
     return (
         <MainBlock>
             <Background>
@@ -277,7 +279,13 @@ const MarketPage = () => {
                                     : false
                             }
                         />
-                        <Back onClick={() => history.back()}>
+                        <Back
+                            onClick={() => {
+                                history.length > 2
+                                    ? history.goBack()
+                                    : history.push(MainRoutes.main);
+                            }}
+                        >
                             <BackButton>
                                 <ArrowLeft />
                             </BackButton>
