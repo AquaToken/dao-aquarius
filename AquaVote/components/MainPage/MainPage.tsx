@@ -529,17 +529,15 @@ const MainPage = (): JSX.Element => {
         }
         setPairsLoading(true);
 
-        if (Boolean(claimUpdateId)) {
-            const keys = StellarService.getKeysSimilarToMarketKeys(account.accountId());
+        const keys = StellarService.getKeysSimilarToMarketKeys(account.accountId());
 
-            getUserPairsList(keys).then((result) => {
-                setPairs(result);
-                processAssetsFromPairs(result);
-                setCount(result.length);
-                setPairsLoading(false);
-                setChangePageLoading(false);
-            });
-        }
+        getUserPairsList(keys).then((result) => {
+            setPairs(result);
+            processAssetsFromPairs(result);
+            setCount(result.length);
+            setPairsLoading(false);
+            setChangePageLoading(false);
+        });
     }, [sort]);
 
     useEffect(() => {
