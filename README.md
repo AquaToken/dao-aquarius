@@ -217,5 +217,5 @@ Project Link: [https://github.com/AquaToken/dao-aquarius](https://github.com/Aqu
 [issues-shield]: https://img.shields.io/github/issues/AquaToken/dao-aquarius.svg?style=for-the-badge
 [issues-url]: https://github.com/AquaToken/dao-aquarius/issues
 [license-shield]: https://img.shields.io/github/license/AquaToken/dao-aquarius.svg?style=for-the-badge
-[license-url]: https://github.com/AquaToken/dao-aquarius/blob/master/LICENSE.txt
+[license-url]: https://github.com/AquaToken/dao-aquarius/blob/master/LICENSE
 [product-screenshot]: images/screenshot.png
