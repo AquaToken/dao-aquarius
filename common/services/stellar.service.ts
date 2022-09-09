@@ -9,7 +9,6 @@ import { PairStats } from '../../AquaVote/api/types';
 
 enum HORIZON_SERVER {
     stellar = 'https://horizon.stellar.org',
-    lobstr = 'https://horizon.stellar.lobstr.co',
 }
 
 const FEE = '100000';
