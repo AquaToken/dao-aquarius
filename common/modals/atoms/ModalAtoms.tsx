@@ -4,6 +4,7 @@ import { flexAllCenter, respondDown } from '../../mixins';
 import * as React from 'react';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import CloseIcon from '../../assets/img/icon-close.svg';
+import useOnClickOutside from '../../hooks/useOutsideClick';
 
 const ModalWrapper = styled.div`
     position: fixed;
@@ -128,15 +129,29 @@ export const ModalBody = ({
 
     useLayoutEffect(() => {
         ref.current.addEventListener('animationend', transitionHandler);
+        document.addEventListener('keydown', clickHandler, false);
 
         return () => {
             ref.current.removeEventListener('animationend', transitionHandler);
+            document.removeEventListener('keydown', clickHandler, false);
         };
+    });
+
+    useOnClickOutside(ref, () => {
+        if (!hideClose) {
+            close();
+        }
     });
 
     const transitionHandler = () => {
         if (!isShow) {
             resolver(resolvedData);
+        }
+    };
+
+    const clickHandler = ({ key }) => {
+        if (!hideClose && key === 'Escape') {
+            close();
         }
     };
 
