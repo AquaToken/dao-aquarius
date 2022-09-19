@@ -6,6 +6,7 @@ import IconLogout from '../../../../assets/img/icon-logout.svg';
 import IconPlus from '../../../../assets/img/icon-plus.svg';
 import Aqua from '../../../../assets/img/aqua-logo-small.svg';
 import Ice from '../../../../assets/img/ice-logo.svg';
+import IconCopy from '../../../../assets/img/icon-copy.svg';
 import useAuthStore from '../../../../store/authStore/useAuthStore';
 import {
     ModalService,
@@ -21,6 +22,7 @@ import Button from '../../../../basics/Button';
 import Identicon from '../../../../basics/Identicon';
 import ChooseLoginMethodModal from '../../../../modals/ChooseLoginMethodModal';
 import { ICE_CODE, ICE_ISSUER } from '../../../../services/stellar.service';
+import CopyButton from '../../../../basics/CopyButton';
 
 const MenuBlock = styled.div`
     position: absolute;
@@ -51,6 +53,17 @@ const AccountBlock = styled.div`
         border-radius: 0.5rem;
         padding: 2.4rem 1.6rem;
     `}
+`;
+
+const CopyButtonCustom = styled(CopyButton)`
+    width: 100%;
+`;
+
+const CopyIcon = styled(IconCopy)`
+    margin-left: 0.8rem;
+    path {
+        fill: ${COLORS.white};
+    }
 `;
 
 const AccountBalanceBlock = styled.div`
@@ -216,6 +229,14 @@ const AppMenu = ({
                         {federationAddress && <Federation>{federationAddress}</Federation>}
                         <AccountPublic>{accountIdView}</AccountPublic>
                     </AccountInfo>
+                    <AccountBalanceBlock>
+                        <CopyButtonCustom text={account.accountId()} withoutLogo>
+                            <Button fullWidth>
+                                copy address
+                                <CopyIcon />
+                            </Button>
+                        </CopyButtonCustom>
+                    </AccountBalanceBlock>
                     <AccountBalanceBlock>
                         <AccountBalance>
                             <AccountBalanceLabel>AQUA balance:</AccountBalanceLabel>
