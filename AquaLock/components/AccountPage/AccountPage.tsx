@@ -114,6 +114,7 @@ const AccountPage = () => {
         if (!accountId) {
             return;
         }
+        setLocks(null);
         StellarService.getAccountLocks(accountId).then((res) => {
             setLocks(res);
         });

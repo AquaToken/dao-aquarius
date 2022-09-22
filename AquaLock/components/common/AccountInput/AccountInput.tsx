@@ -7,6 +7,7 @@ import Button from '../../../../common/basics/Button';
 import { StellarService, ToastService } from '../../../../common/services/globalServices';
 import { useHistory } from 'react-router-dom';
 import { respondDown } from '../../../../common/mixins';
+import useAuthStore from '../../../../common/store/authStore/useAuthStore';
 
 const Container = styled.form<{ isModal: boolean }>`
     display: flex;
@@ -83,11 +84,16 @@ const AccountInput = ({ params, close }: { params?: any; close?: any }) => {
     const [value, setValue] = useState('');
     const history = useHistory();
 
+    const { isLogged, logout } = useAuthStore();
+
     const onSubmit = (e) => {
         e.preventDefault();
         if (!StellarService.isValidPublicKey(value)) {
             ToastService.showErrorToast('Invalid public key');
             return;
+        }
+        if (isLogged && isModal) {
+            logout();
         }
         history.push(`/${value}`);
         if (isModal) {
