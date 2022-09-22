@@ -136,7 +136,7 @@ const AccountPage = () => {
         });
 
         return () => unsub();
-    }, [isLogged]);
+    }, [isLogged, accountId]);
 
     useEffect(() => {
         if (!currentAccount) {
