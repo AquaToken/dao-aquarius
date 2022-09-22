@@ -8,11 +8,21 @@ import styled from 'styled-components';
 import { isAndroid, isIOS, isMobile } from '../../helpers/browser';
 import axios from 'axios';
 import ToggleGroup from '../../basics/ToggleGroup';
-import { flexAllCenter } from '../../mixins';
-import { COLORS } from '../../styles';
+import { flexAllCenter, respondDown } from '../../mixins';
+import { Breakpoints, COLORS } from '../../styles';
 import Button from '../../basics/Button';
 import ArrowRight from '../../assets/img/icon-arrow-right.svg';
 import { clearApp, saveAppToLS } from '../../services/wallet-connect.service';
+
+const Wrapper = styled.div`
+    width: 52.8rem;
+    display: flex;
+    flex-direction: column;
+
+    ${respondDown(Breakpoints.md)`
+        width: 100%;
+    `}
+`;
 
 const QRContainer = styled.div`
     width: 100%;
@@ -159,7 +169,7 @@ const QRModal = ({ params }: ModalProps<{ uri: string }>): JSX.Element => {
     }, []);
 
     return (
-        <>
+        <Wrapper>
             {isMobile() && (
                 <>
                     <MobileTitle>WalletConnect</MobileTitle>
@@ -232,7 +242,7 @@ const QRModal = ({ params }: ModalProps<{ uri: string }>): JSX.Element => {
                         )}
                     </>
                 ))}
-        </>
+        </Wrapper>
     );
 };
 
