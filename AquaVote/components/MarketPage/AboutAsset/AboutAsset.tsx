@@ -170,7 +170,7 @@ const AboutAsset = ({ asset }) => {
                         <AssetDetail>
                             <AssetDetailTitle>Issuer</AssetDetailTitle>
                             <AssetDetailValue>
-                                <CopyButton text={'asdasd'}>
+                                <CopyButton text={asset.issuer}>
                                     <AccountViewer pubKey={asset.issuer} />
                                 </CopyButton>
                             </AssetDetailValue>
