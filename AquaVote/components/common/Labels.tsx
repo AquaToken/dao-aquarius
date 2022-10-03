@@ -51,7 +51,7 @@ export const BoostLabel = () => {
                     onMouseEnter={() => setShowTooltip(true)}
                     onMouseLeave={() => setShowTooltip(false)}
                 >
-                    50% boost for markets paired with AQUA, up until 5% of adjusted votes.
+                    25% boost for markets paired with AQUA, up until 5% of adjusted votes.
                 </TooltipInner>
             }
             position={TOOLTIP_POSITION.top}
