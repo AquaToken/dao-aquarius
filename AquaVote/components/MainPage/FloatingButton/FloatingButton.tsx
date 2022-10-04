@@ -22,7 +22,7 @@ const FloatingButtonBody = styled.button`
     box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
     cursor: pointer;
     animation: showButton linear 0.5s;
-    z-index: 1;
+    z-index: 3;
 
     @keyframes showButton {
         0% {
