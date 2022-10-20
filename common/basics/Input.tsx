@@ -79,7 +79,7 @@ const Input = forwardRef(
         return (
             <InputWrapper className={className}>
                 {Boolean(label) && <Label>{label}</Label>}
-                <StyledInput ref={ref} {...props} />
+                <StyledInput ref={ref} {...props} onWheel={(e) => e.currentTarget.blur()} />
                 {postfix && <Postfix>{postfix}</Postfix>}
             </InputWrapper>
         );
