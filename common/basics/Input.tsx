@@ -13,10 +13,12 @@ const StyledInput = styled.input<{
     ref: RefObject<HTMLInputElement>;
     isMedium?: boolean;
     isRightAligned?: boolean;
+    isCenterAligned?: boolean;
 }>`
     height: ${({ isMedium }) => (isMedium ? '4rem' : '6.6rem')};
-    padding: ${({ isMedium }) => (isMedium ? `1.1rem 1.6rem` : '2.4rem 6.5rem 2.4rem 2.4rem;')};
-    text-align: ${({ isRightAligned }) => (isRightAligned ? `right` : `start`)};
+    padding: ${({ isMedium }) => (isMedium ? `1.1rem 1.6rem` : `2.4rem 6.5rem 2.4rem 2.4rem`)};
+    text-align: ${({ isRightAligned, isCenterAligned }) =>
+        isRightAligned ? `right` : isCenterAligned ? 'center' : 'start'};
     width: 100%;
     border: 0.1rem solid ${COLORS.gray};
     border-radius: 0.5rem;
@@ -58,6 +60,13 @@ const Postfix = styled.div`
     right: 2.4rem;
 `;
 
+const Prefix = styled.div`
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 2.4rem;
+`;
+
 const Label = styled.div`
     position: absolute;
     bottom: calc(100% + 1.2rem);
@@ -69,16 +78,22 @@ const Label = styled.div`
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     postfix?: React.ReactNode;
+    prefixCustom?: React.ReactNode;
     isMedium?: boolean;
     isRightAligned?: boolean;
+    isCenterAligned?: boolean;
     label?: string;
 }
 
 const Input = forwardRef(
-    ({ postfix, className, label, ...props }: InputProps, ref: RefObject<HTMLInputElement>) => {
+    (
+        { postfix, prefixCustom, className, label, ...props }: InputProps,
+        ref: RefObject<HTMLInputElement>,
+    ) => {
         return (
             <InputWrapper className={className}>
                 {Boolean(label) && <Label>{label}</Label>}
+                {prefixCustom && <Prefix>{prefixCustom}</Prefix>}
                 <StyledInput ref={ref} {...props} onWheel={(e) => e.currentTarget.blur()} />
                 {postfix && <Postfix>{postfix}</Postfix>}
             </InputWrapper>

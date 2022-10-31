@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import { Breakpoints, COLORS, FONT_FAMILY } from '../../../common/styles';
 import { flexAllCenter, respondDown } from '../../../common/mixins';
@@ -9,6 +9,8 @@ import Dash from '../../../common/assets/img/icon-dash.svg';
 import Success from '../../../common/assets/img/icon-success.svg';
 import Fail from '../../../common/assets/img/icon-fail.svg';
 import Loader from '../../../common/assets/img/loader.svg';
+import Minus from '../../../common/assets/img/icon-minus.svg';
+import Plus from '../../../common/assets/img/icon-plus.svg';
 import Button from '../../../common/basics/Button';
 import Input from '../../../common/basics/Input';
 import DatePicker from 'react-datepicker';
@@ -25,6 +27,7 @@ import ArrowLeft from '../../../common/assets/img/icon-arrow-left.svg';
 import { Link } from 'react-router-dom';
 import { MainRoutes } from '../../routes';
 import {
+    addWeeks,
     endOfWeek,
     isBefore,
     isSunday,
@@ -34,6 +37,7 @@ import {
     startOfDay,
     startOfWeek,
 } from 'date-fns';
+import { formatBalance } from '../../../common/helpers/helpers';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -127,7 +131,7 @@ const FormWrap = styled.div`
     ${flexAllCenter};
 `;
 
-const Form = styled.div`
+const Form = styled.form`
     width: 100%;
     background: ${COLORS.white};
     box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
@@ -182,7 +186,7 @@ const PairDivider = styled(Dash)`
     `}
 `;
 const DashIcon = styled(Dash)`
-    margin: 0 2.2rem;
+    margin: 0 2rem;
     min-width: 1.6rem;
     min-height: 1.6rem;
 
@@ -218,6 +222,18 @@ const FailIcon = styled(Fail)`
 const SuccessIcon = styled(Success)`
     width: 1.6rem;
     height: 1.6rem;
+`;
+
+const MinusIcon = styled(Minus)`
+    width: 1.6rem;
+    height: 1.6rem;
+    color: ${COLORS.purple};
+`;
+
+const PlusIcon = styled(Plus)`
+    width: 1.6rem;
+    height: 1.6rem;
+    color: ${COLORS.purple};
 `;
 
 const LoaderStyled = styled(Loader)`
@@ -301,6 +317,27 @@ const GlobalStyle = createGlobalStyle`
     }
 `;
 
+const DurationInput = styled(Input)`
+    margin-right: 4.5rem;
+
+    ${respondDown(Breakpoints.md)`
+        margin-right: 0;
+        margin-bottom: 5rem;
+    `}
+`;
+
+const DurationButton = styled.div`
+    ${flexAllCenter};
+    width: 3rem;
+    height: 3rem;
+    cursor: pointer;
+    user-select: none;
+
+    &:hover {
+        background-color: ${COLORS.lightGray};
+    }
+`;
+
 export const convertUTCToLocalDateIgnoringTimezone = (utcDate: Date) => {
     return new Date(
         utcDate.getUTCFullYear(),
@@ -327,13 +364,14 @@ export function convertLocalDateToUTCIgnoringTimezone(date: Date) {
     return new Date(timestamp);
 }
 
-export const getWeekStartFromDay = (date: Date) => {
+export const getWeekStartFromDay = (date: Date, duration: number) => {
     const startWeek = startOfWeek(date, { weekStartsOn: 1 });
     const endWeek = endOfWeek(date, { weekStartsOn: 1 });
+    const endPeriod = addWeeks(endWeek, duration - 1);
 
     return {
         start: convertLocalDateToUTCIgnoringTimezone(startWeek),
-        end: convertLocalDateToUTCIgnoringTimezone(endWeek),
+        end: convertLocalDateToUTCIgnoringTimezone(endPeriod),
     };
 };
 
@@ -355,6 +393,7 @@ enum CreateStep {
 }
 
 const MINIMUM_AQUA_EQUIVALENT = 100000;
+const MAX_AMOUNT = 922337203685.4775807;
 
 const AddBribePage = () => {
     const [step, setStep] = useState(CreateStep.pair);
@@ -364,11 +403,14 @@ const AddBribePage = () => {
 
     const [rewardAsset, setRewardAsset] = useState(null);
     const [amount, setAmount] = useState('');
+    const [isInvalidAmount, setIsInvalidAmount] = useState(false);
     const [aquaEquivalent, setAquaEquivalent] = useState(null);
 
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
     const [selectedDate, setSelectedDate] = useState(null);
+
+    const [duration, setDuration] = useState('1');
 
     const { isLogged } = useAuthStore();
 
@@ -405,6 +447,14 @@ const AddBribePage = () => {
             return;
         }
 
+        if (Number(debouncedAmount) > MAX_AMOUNT) {
+            setAquaEquivalent('0');
+            setIsInvalidAmount(true);
+            return;
+        }
+
+        setIsInvalidAmount(false);
+
         StellarService.getAquaEquivalent(
             StellarService.createAsset(rewardAsset.code, rewardAsset.issuer),
             debouncedAmount,
@@ -440,10 +490,47 @@ const AddBribePage = () => {
             amount,
             startDate,
             endDate,
+            duration,
             marketKey: pairInfo.account_id,
             resetForm,
         });
     };
+
+    const decrementDuration = useCallback(() => {
+        if (Number(duration) - 1 > 100) {
+            setDuration('100');
+            return;
+        }
+        if (Number.isNaN(Number(duration)) || Number(duration) - 1 <= 1) {
+            setDuration('1');
+            return;
+        }
+        setDuration(Math.floor(Number(duration) - 1).toString());
+    }, [duration]);
+
+    const incrementDuration = useCallback(() => {
+        if (Number(duration) + 1 > 100) {
+            setDuration('100');
+            return;
+        }
+        if (Number.isNaN(Number(duration)) || Number(duration) + 1 <= 1) {
+            setDuration('1');
+            return;
+        }
+        setDuration(Math.floor(Number(duration) + 1).toString());
+    }, [duration]);
+
+    useEffect(() => {
+        if (!startDate || !Number(duration) || Number(duration) > 100) {
+            return;
+        }
+        const { end } = getWeekStartFromDay(
+            convertUTCToLocalDateIgnoringTimezone(startDate),
+            Number(duration),
+        );
+
+        setEndDate(end);
+    }, [startDate, duration]);
 
     const minDate = getMinDate();
 
@@ -452,6 +539,15 @@ const AddBribePage = () => {
             <LoaderStyled />
         ) : Number(aquaEquivalent) >= MINIMUM_AQUA_EQUIVALENT ? (
             <SuccessIcon />
+        ) : isInvalidAmount ? (
+            <Tooltip
+                content={<div>Value must be less or equal {formatBalance(MAX_AMOUNT)}</div>}
+                position={+window.innerWidth > 992 ? TOOLTIP_POSITION.top : TOOLTIP_POSITION.left}
+                isShow={true}
+                isError
+            >
+                <FailIcon />
+            </Tooltip>
         ) : (
             <Tooltip
                 content={
@@ -493,7 +589,13 @@ const AddBribePage = () => {
             </Background>
             <FormWrap>
                 <Content>
-                    <Form>
+                    <Form
+                        onSubmit={(event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            onSubmit();
+                        }}
+                    >
                         <FormSection>
                             <FormSectionTitle>Select market</FormSectionTitle>
                             <FormSectionDescription>
@@ -559,8 +661,9 @@ const AddBribePage = () => {
                                     <AmountInput
                                         placeholder="0"
                                         type="number"
-                                        label="Reward amount"
+                                        label="Weekly reward amount"
                                         value={amount}
+                                        required
                                         onChange={({ target }) => {
                                             setAmount(target.value);
                                         }}
@@ -590,19 +693,52 @@ const AddBribePage = () => {
                             <FormSection>
                                 <FormSectionTitle>Set period</FormSectionTitle>
                                 <FormSectionDescription>
-                                    A bribe is distributed over 7 days (Mon-Sun). You can plan
-                                    bribes in advance by choosing a start date several weeks ahead.
+                                    Bribe distribution starts on Mondays and happens every day until
+                                    Sunday. You can plan bribes by choosing a start date in advance
+                                    or selecting multiple weeks.
                                 </FormSectionDescription>
                                 <FormRow>
+                                    <DurationInput
+                                        label="Duration (weeks)"
+                                        placeholder="1"
+                                        prefixCustom={
+                                            <DurationButton onClick={() => decrementDuration()}>
+                                                <MinusIcon />
+                                            </DurationButton>
+                                        }
+                                        postfix={
+                                            <DurationButton onClick={() => incrementDuration()}>
+                                                <PlusIcon />
+                                            </DurationButton>
+                                        }
+                                        value={duration}
+                                        onChange={({ target }) => {
+                                            setDuration(target.value);
+                                        }}
+                                        style={{ padding: '0rem 6rem' }}
+                                        isCenterAligned
+                                        required
+                                        pattern="^[0-9]$|^[1-9][0-9]$|^(100)$"
+                                        onInvalid={(e) =>
+                                            (e.target as HTMLInputElement).setCustomValidity(
+                                                'Only integer less or equal 100',
+                                            )
+                                        }
+                                        onInput={(e) =>
+                                            (e.target as HTMLInputElement).setCustomValidity('')
+                                        }
+                                    />
                                     <DatePicker
                                         customInput={<Input label="Start date" />}
                                         calendarStartDay={1}
                                         selected={selectedDate || null}
                                         onChange={(res) => {
                                             setSelectedDate(res);
-                                            const { start, end } = getWeekStartFromDay(res);
+                                            const { start } = getWeekStartFromDay(
+                                                res,
+                                                Number(duration),
+                                            );
                                             setStartDate(start);
-                                            setEndDate(end);
                                         }}
                                         filterDate={(date) => date.getDay() === 1}
                                         dateFormat="MM.dd.yyyy"
@@ -636,9 +772,9 @@ const AddBribePage = () => {
                                         !counter ||
                                         !rewardAsset ||
                                         !Number(amount) ||
-                                        !startDate
+                                        !startDate ||
+                                        !Number(duration)
                                     }
-                                    onClick={() => onSubmit()}
                                 >
                                     Create bribe
                                 </NextButton>

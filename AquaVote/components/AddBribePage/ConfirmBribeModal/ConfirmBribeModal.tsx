@@ -22,6 +22,7 @@ import {
     openApp,
 } from '../../../../common/services/wallet-connect.service';
 import { LoginTypes } from '../../../../common/store/authStore/types';
+import { addWeeks } from 'date-fns';
 
 const Container = styled.div`
     width: 52.8rem;
@@ -87,8 +88,19 @@ const ConfirmBribeModal = ({
     endDate: Date;
     marketKey: string;
     resetForm: () => void;
+    duration: string;
 }>) => {
-    const { base, counter, rewardAsset, amount, startDate, endDate, marketKey, resetForm } = params;
+    const {
+        base,
+        counter,
+        rewardAsset,
+        amount,
+        startDate,
+        endDate,
+        marketKey,
+        resetForm,
+        duration,
+    } = params;
     const { account } = useAuthStore();
     const [pending, setPending] = useState(false);
 
@@ -104,7 +116,7 @@ const ConfirmBribeModal = ({
             return;
         }
 
-        if (+balance < +amount) {
+        if (+balance < +amount * +duration) {
             ToastService.showErrorToast(`You have insufficient ${rewardAsset.code} balance`);
             return;
         }
@@ -115,14 +127,21 @@ const ConfirmBribeModal = ({
 
         setPending(true);
         try {
-            const op = StellarService.createBribeOperation(
-                marketKey,
-                rewardAsset,
-                amount,
-                startDate.getTime() - DAY,
-            );
+            const ops = [];
 
-            const tx = await StellarService.buildTx(account, [op]);
+            for (let i = 0; i < +duration; i++) {
+                const start = startDate.getTime() - DAY;
+                const op = StellarService.createBribeOperation(
+                    marketKey,
+                    rewardAsset,
+                    amount,
+                    addWeeks(start, i),
+                );
+
+                ops.push(op);
+            }
+
+            const tx = await StellarService.buildTx(account, ops);
             const result = await account.signAndSubmitTx(tx);
 
             if (isMounted.current) {
@@ -163,16 +182,23 @@ const ConfirmBribeModal = ({
                     </Value>
                 </InfoRow>
                 <InfoRow>
-                    <Label>Reward amount</Label>
+                    <Label>Weekly reward amount</Label>
                     <Value>
                         {formatBalance(+amount)} {rewardAsset.code}
+                    </Value>
+                </InfoRow>
+                <InfoRow>
+                    <Label>Total reward amount</Label>
+                    <Value>
+                        {formatBalance(+amount * +duration)} {rewardAsset.code}
                     </Value>
                 </InfoRow>
                 <InfoRow>
                     <Label>Bribe period</Label>
                     <Value>
                         {getDateString(startDate.getTime(), { withoutYear: true })} -{' '}
-                        {getDateString(endDate.getTime())}
+                        {getDateString(endDate.getTime())} ({duration} week
+                        {duration === '1' ? '' : 's'})
                     </Value>
                 </InfoRow>
             </BribeInfo>
