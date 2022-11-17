@@ -129,7 +129,7 @@ const Labels = styled.div`
     margin-top: 0.8rem;
 `;
 
-const assetToString = (asset: StellarSdk.Asset) => {
+export const assetToString = (asset: StellarSdk.Asset) => {
     if (asset.isNative()) {
         return 'native';
     }

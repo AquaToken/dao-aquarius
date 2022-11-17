@@ -23,6 +23,7 @@ import Rewards from './Rewards/Rewards';
 import { useIsOverScrolled } from '../../../common/hooks/useIsOnViewport';
 import ArrowLeft from '../../../common/assets/img/icon-arrow-left.svg';
 import { MainRoutes } from '../../routes';
+import AmmStats from './AmmStats/AmmStats';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -225,6 +226,7 @@ const MarketPage = () => {
     };
 
     const MarketStatRef = useRef(null);
+    const AmmStatRef = useRef(null);
     const RewardsRef = useRef(null);
     const AboutBaseRef = useRef(null);
     const AboutCounterRef = useRef(null);
@@ -232,6 +234,7 @@ const MarketPage = () => {
     const YourVotesRef = useRef(null);
 
     const isMarketStatRefOverScrolled = useIsOverScrolled(MarketStatRef, 50);
+    const isAmmStatRefOverScrolled = useIsOverScrolled(AmmStatRef, 50);
     const isRewardsRefOverScrolled = useIsOverScrolled(RewardsRef, 50);
     const isAboutBaseRefOverScrolled = useIsOverScrolled(AboutBaseRef, 50);
     const isAboutCounterRefOverScrolled = useIsOverScrolled(AboutCounterRef, 50);
@@ -241,8 +244,6 @@ const MarketPage = () => {
     if (votesData === null || !totalStats) {
         return <PageLoader />;
     }
-
-    console.log(history);
 
     return (
         <MainBlock>
@@ -302,9 +303,15 @@ const MarketPage = () => {
                     >
                         Market stats
                     </NavItem>
+                    <NavItem
+                        active={isMarketStatRefOverScrolled && !isAmmStatRefOverScrolled}
+                        onClick={() => scrollToRef(AmmStatRef)}
+                    >
+                        AMM stats
+                    </NavItem>
                     {votesData && (
                         <NavItem
-                            active={isMarketStatRefOverScrolled && !isRewardsRefOverScrolled}
+                            active={isAmmStatRefOverScrolled && !isRewardsRefOverScrolled}
                             onClick={() => scrollToRef(RewardsRef)}
                         >
                             Rewards
@@ -354,6 +361,9 @@ const MarketPage = () => {
             />
             <MarketSection ref={MarketStatRef}>
                 <TradeStats base={baseAsset} counter={counterAsset} />
+            </MarketSection>
+            <MarketSection ref={AmmStatRef}>
+                <AmmStats base={baseAsset} counter={counterAsset} />
             </MarketSection>
             {votesData && (
                 <MarketSection ref={RewardsRef}>
