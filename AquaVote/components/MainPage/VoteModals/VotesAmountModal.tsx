@@ -90,12 +90,22 @@ const AmountInput = styled(Input)`
     margin-top: 1.2rem;
     margin-bottom: 3.3rem;
     flex: 2;
+
+    ${respondDown(Breakpoints.md)`
+        input {
+            padding-right: 0;
+        }
+    `}
 `;
 
 const AssetSelect = styled(Select)`
     margin-top: 1.2rem;
     margin-bottom: 3.3rem;
     flex: 1;
+
+    ${respondDown(Breakpoints.md)`
+        flex: 1.6;
+    `}
 `;
 
 const ButtonContainer = styled.div`
