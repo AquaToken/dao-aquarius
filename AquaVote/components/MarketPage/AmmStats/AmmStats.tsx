@@ -186,13 +186,13 @@ const AmmStats = ({ base, counter }) => {
                         </StatsColumn>
                         <StatsColumn>
                             <StatsDetail>
-                                <StatsDetailTitle>{base.code} locked</StatsDetailTitle>
+                                <StatsDetailTitle>{base.code} deposited</StatsDetailTitle>
                                 <StatsDetailValue>
                                     {formatBalance(baseReserve.amount, true)} {base.code}
                                 </StatsDetailValue>
                             </StatsDetail>
                             <StatsDetail>
-                                <StatsDetailTitle>{counter.code} locked</StatsDetailTitle>
+                                <StatsDetailTitle>{counter.code} deposited</StatsDetailTitle>
                                 <StatsDetailValue>
                                     {formatBalance(counterReserve.amount, true)} {counter.code}
                                 </StatsDetailValue>
