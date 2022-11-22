@@ -16,6 +16,9 @@ import { respondDown } from '../../../../common/mixins';
 const Container = styled.div`
     display: flex;
     flex-direction: column;
+    background-color: ${COLORS.white};
+    padding: 4.2rem 3.2rem 2rem;
+    border-radius: 0.5rem;
 `;
 
 const Title = styled.span`

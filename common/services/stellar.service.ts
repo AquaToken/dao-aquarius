@@ -699,8 +699,8 @@ export default class StellarServiceClass {
         return transaction;
     }
 
-    async getAquaAverageWeekPrice() {
-        const period = 7 * 24 * 60 * 60 * 1000;
+    async getAssetLumenPrice(asset) {
+        const period = 3 * 24 * 60 * 60 * 1000;
         const now = Date.now();
 
         const start = now - period;
@@ -708,26 +708,21 @@ export default class StellarServiceClass {
         const { records } = await this.server
             .tradeAggregation(
                 this.createLumen(),
-                this.createAsset(AQUA_CODE, AQUA_ISSUER),
+                this.createAsset(asset.code, asset.issuer),
                 start,
                 now + 3600000,
                 3600000,
                 0,
             )
-            .limit(200)
+            .limit(1)
             .order('desc')
             .call();
 
-        const { baseVolume, counterVolume } = records.reduce(
-            (acc, item) => {
-                acc.baseVolume += Number(item.base_volume);
-                acc.counterVolume += Number(item.counter_volume);
-                return acc;
-            },
-            { baseVolume: 0, counterVolume: 0 },
-        );
+        if (!records.length) {
+            return null;
+        }
 
-        return roundToPrecision(baseVolume / counterVolume, 7);
+        return roundToPrecision(1 / Number(records[0].close), 7);
     }
 
     createClaimOperations(claimId: string, withTrust?: boolean) {
@@ -796,5 +791,33 @@ export default class StellarServiceClass {
             .limit(limit)
             .order('desc')
             .call();
+    }
+
+    // from Liquidity pool XLM / USDC(centre.io) (a468d41d8e9b8f3c7209651608b74b7db7ac9952dcae0cdf24871d1d9c7b0088)
+    getLumenUsdPrice(): Promise<number> {
+        return this.server
+            .liquidityPools()
+            .liquidityPoolId('a468d41d8e9b8f3c7209651608b74b7db7ac9952dcae0cdf24871d1d9c7b0088')
+            .call()
+            .then(({ reserves }) => {
+                const [native, usdc] = reserves;
+                return Number(usdc.amount) / Number(native.amount);
+            });
+    }
+
+    getLiquidityPoolData(
+        base: StellarSdk.Asset,
+        counter: StellarSdk.Asset,
+    ): Promise<ServerApi.LiquidityPoolRecord | null> {
+        return this.server
+            .liquidityPools()
+            .forAssets(base, counter)
+            .call()
+            .then(({ records }) => {
+                if (!records.length) {
+                    return null;
+                }
+                return records[0];
+            });
     }
 }

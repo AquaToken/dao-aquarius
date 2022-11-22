@@ -3,16 +3,17 @@ import { useState } from 'react';
 import { convertUTCToLocalDateIgnoringTimezone } from '../../../AddBribePage/AddBribePage';
 import { formatBalance, getDateString } from '../../../../../common/helpers/helpers';
 import {
-    AverageBribePrice,
+    BribeDetail,
+    BribeDetailsMain,
+    BribeDetailTitle,
+    BribeDetailValue,
     CloseButton,
     ExternalLinkMobile,
     ExternalLinkWeb,
-    HowItWorksButton,
     HowItWorksFooter,
     HowItWorksText,
     RightAlignedCell,
     TableCell,
-    UsersVoted,
 } from '../../../MainPage/BribesModal/BribesModal';
 import Close from '../../../../../common/assets/img/icon-close-small-purple.svg';
 import { TableBody, TableHead, TableHeadRow } from '../../../MainPage/Table/Table';
@@ -21,6 +22,7 @@ import { StellarService } from '../../../../../common/services/globalServices';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../../../../common/styles';
 import Aqua from '../../../../../common/assets/img/aqua-logo-small.svg';
+import Info from '../../../../../common/assets/img/icon-info.svg';
 import { respondDown } from '../../../../../common/mixins';
 
 const Container = styled.div`
@@ -37,8 +39,16 @@ const Description = styled.div`
 `;
 
 const AquaLogo = styled(Aqua)`
-    height: 3.2rem;
-    width: 3.2rem;
+    height: 5rem;
+    width: 5rem;
+    margin-right: 3.8rem;
+`;
+
+const IconInfo = styled(Info)`
+    position: absolute;
+    right: 1.6rem;
+    top: 1.6rem;
+    cursor: pointer;
 `;
 
 const AquaLogoSmall = styled(Aqua)`
@@ -55,9 +65,10 @@ const BribeDetails = styled.div`
     background: ${COLORS.lightGray};
     border-radius: 0.5rem;
     margin-bottom: 3.8rem;
+    position: relative;
 
     ${respondDown(Breakpoints.md)`
-        padding: 1.6rem;
+        padding: 1.6rem 0;
         background-color: ${COLORS.white};
     `}
 `;
@@ -110,7 +121,7 @@ const Total = styled.div`
     align-items: center;
 `;
 
-const MarketCurrentBribes = ({ base, counter, extra, bribes }) => {
+const MarketCurrentBribes = ({ extra, bribes }) => {
     const [showHowItWorks, setShowHowItWorks] = useState(false);
     if (!bribes) {
         return (
@@ -149,17 +160,24 @@ const MarketCurrentBribes = ({ base, counter, extra, bribes }) => {
                 {getDateString(new Date(stopUTC).getTime() - 1)}
             </Description>
             <BribeDetails>
-                <AquaLogo />
-                <AverageBribePrice>
-                    ≈{formatBalance(aquaBribePrice, true)} AQUA per day for 1000 AQUA vote
-                </AverageBribePrice>
-                <UsersVoted>
-                    Bribe is distributed among {upvoteCount} voters for {base.code}/{counter.code}{' '}
-                    market pair.
-                </UsersVoted>
-                <HowItWorksButton onClick={() => setShowHowItWorks(true)}>
-                    How it works?
-                </HowItWorksButton>
+                <BribeDetailsMain>
+                    <AquaLogo />
+
+                    <BribeDetail>
+                        <BribeDetailTitle>Bribe for 1000 AQUA vote:</BribeDetailTitle>
+                        <BribeDetailValue>
+                            ≈{formatBalance(aquaBribePrice, true)} AQUA per day
+                        </BribeDetailValue>
+                    </BribeDetail>
+
+                    <BribeDetail>
+                        <BribeDetailTitle>Distributed among:</BribeDetailTitle>
+                        <BribeDetailValue>{upvoteCount} voters</BribeDetailValue>
+                    </BribeDetail>
+
+                    <IconInfo onClick={() => setShowHowItWorks(true)} />
+                </BribeDetailsMain>
+
                 {showHowItWorks && (
                     <HowItWorks>
                         <HowItWorksText>

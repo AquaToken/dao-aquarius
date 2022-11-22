@@ -6,10 +6,15 @@ import ToggleGroup from '../../../../common/basics/ToggleGroup';
 import { useState } from 'react';
 import LightWeightChart, { PeriodOptions } from './LightWeightChart/LightWeightChart';
 import DailyStats from './DailyStats/DailyStats';
+import ExternalLink from '../../../../common/basics/ExternalLink';
+import { assetToString } from '../../common/Pair';
 
 const Container = styled.div`
     display: flex;
     flex-direction: column;
+    background-color: ${COLORS.white};
+    padding: 4.2rem 3.2rem 2rem;
+    border-radius: 0.5rem;
 `;
 
 const Header = styled.div`
@@ -50,6 +55,10 @@ const ToggleGroupMobile = styled(ToggleGroup)`
     `}
 `;
 
+const ExternalLinkStyled = styled(ExternalLink)`
+    margin-top: 4rem;
+`;
+
 const OPTIONS = [
     { label: '1m', value: PeriodOptions.min_1 },
     { label: '5m', value: PeriodOptions.min_5 },
@@ -74,6 +83,14 @@ const TradeStats = ({ base, counter }) => {
             <ToggleGroupMobile value={period} options={OPTIONS} onChange={setPeriod} />
 
             <LightWeightChart base={base} counter={counter} period={period} />
+
+            <ExternalLinkStyled
+                href={`https://stellarx.com/markets/${assetToString(counter)}/${assetToString(
+                    base,
+                )}`}
+            >
+                See on SDEX
+            </ExternalLinkStyled>
         </Container>
     );
 };

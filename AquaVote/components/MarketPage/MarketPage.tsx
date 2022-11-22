@@ -23,14 +23,16 @@ import Rewards from './Rewards/Rewards';
 import { useIsOverScrolled } from '../../../common/hooks/useIsOnViewport';
 import ArrowLeft from '../../../common/assets/img/icon-arrow-left.svg';
 import { MainRoutes } from '../../routes';
+import AmmStats from './AmmStats/AmmStats';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
+    background-color: ${COLORS.lightGray};
 `;
 
 const Background = styled.div`
     width: 100%;
-    padding: 4rem 0 11.7rem;
+    padding: 4rem 0 6rem;
     background-color: ${COLORS.lightGray};
 
     ${respondDown(Breakpoints.md)`
@@ -70,12 +72,16 @@ const BackButton = styled.div`
     }
 `;
 
-const MarketSection = styled.section`
+const MarketSection = styled.section<{ smallTopPadding?: boolean }>`
     ${commonMaxWidth};
-    padding-top: 6rem;
+    padding-top: ${({ smallTopPadding }) => (smallTopPadding ? '2rem' : '2.8rem')};
     padding-left: 4rem;
     padding-right: calc(10vw + 20rem);
     width: 100%;
+
+    &:last-child {
+        margin-bottom: 6.6rem;
+    }
 
     ${respondDown(Breakpoints.xxxl)`
         padding-right: calc(10vw + 30rem);
@@ -95,6 +101,7 @@ const Header = styled.div`
     justify-content: space-between;
     align-items: flex-start;
     flex-direction: column-reverse;
+    background-color: ${COLORS.lightGray};
 `;
 
 const NavPanel = styled.div`
@@ -225,6 +232,7 @@ const MarketPage = () => {
     };
 
     const MarketStatRef = useRef(null);
+    const AmmStatRef = useRef(null);
     const RewardsRef = useRef(null);
     const AboutBaseRef = useRef(null);
     const AboutCounterRef = useRef(null);
@@ -232,6 +240,7 @@ const MarketPage = () => {
     const YourVotesRef = useRef(null);
 
     const isMarketStatRefOverScrolled = useIsOverScrolled(MarketStatRef, 50);
+    const isAmmStatRefOverScrolled = useIsOverScrolled(AmmStatRef, 50);
     const isRewardsRefOverScrolled = useIsOverScrolled(RewardsRef, 50);
     const isAboutBaseRefOverScrolled = useIsOverScrolled(AboutBaseRef, 50);
     const isAboutCounterRefOverScrolled = useIsOverScrolled(AboutCounterRef, 50);
@@ -241,8 +250,6 @@ const MarketPage = () => {
     if (votesData === null || !totalStats) {
         return <PageLoader />;
     }
-
-    console.log(history);
 
     return (
         <MainBlock>
@@ -278,6 +285,9 @@ const MarketPage = () => {
                                       )
                                     : false
                             }
+                            isBigLogo
+                            isCircleLogos
+                            withoutLink
                         />
                         <Back
                             onClick={() => {
@@ -302,9 +312,15 @@ const MarketPage = () => {
                     >
                         Market stats
                     </NavItem>
+                    <NavItem
+                        active={isMarketStatRefOverScrolled && !isAmmStatRefOverScrolled}
+                        onClick={() => scrollToRef(AmmStatRef)}
+                    >
+                        AMM stats
+                    </NavItem>
                     {votesData && (
                         <NavItem
-                            active={isMarketStatRefOverScrolled && !isRewardsRefOverScrolled}
+                            active={isAmmStatRefOverScrolled && !isRewardsRefOverScrolled}
                             onClick={() => scrollToRef(RewardsRef)}
                         >
                             Rewards
@@ -352,8 +368,11 @@ const MarketPage = () => {
                 onVoteClick={onVoteClick}
                 isPairSelected={votesData ? isPairSelected(votesData) : false}
             />
-            <MarketSection ref={MarketStatRef}>
+            <MarketSection smallTopPadding ref={MarketStatRef}>
                 <TradeStats base={baseAsset} counter={counterAsset} />
+            </MarketSection>
+            <MarketSection ref={AmmStatRef}>
+                <AmmStats base={baseAsset} counter={counterAsset} />
             </MarketSection>
             {votesData && (
                 <MarketSection ref={RewardsRef}>

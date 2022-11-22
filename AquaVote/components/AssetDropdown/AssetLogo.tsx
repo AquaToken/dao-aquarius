@@ -12,49 +12,49 @@ export const logoStyles = css`
     border-radius: 50%;
 `;
 
-const smallLogoStyles = css`
+const smallLogoStyles = (isCircle: boolean) => css`
     height: 1.6rem;
     width: 1.6rem;
-    border-radius: 0.1rem;
+    border-radius: ${isCircle ? '50%' : '0.1rem'};
 `;
 
-const bigLogoStyles = css`
+export const bigLogoStyles = (isCircle: boolean) => css`
     height: 8rem;
     width: 8rem;
-    border-radius: 0.5rem;
+    border-radius: ${isCircle ? '50%' : '0.5rem'};
 `;
 
-const Logo = styled.img<{ isSmall?: boolean; isBig?: boolean }>`
-    ${({ isSmall, isBig }) => {
+const Logo = styled.img<{ isSmall?: boolean; isBig?: boolean; isCircle?: boolean }>`
+    ${({ isSmall, isBig, isCircle }) => {
         if (isSmall) {
-            return smallLogoStyles;
+            return smallLogoStyles(isCircle);
         }
         if (isBig) {
-            return bigLogoStyles;
+            return bigLogoStyles(isCircle);
         }
         return logoStyles;
     }}
 `;
 
-const Unknown = styled(UnknownLogo)<{ $isSmall?: boolean; $isBig?: boolean }>`
-    ${({ $isSmall, $isBig }) => {
+const Unknown = styled(UnknownLogo)<{ $isSmall?: boolean; $isBig?: boolean; $isCircle?: boolean }>`
+    ${({ $isSmall, $isBig, $isCircle }) => {
         if ($isSmall) {
-            return smallLogoStyles;
+            return smallLogoStyles($isCircle);
         }
         if ($isBig) {
-            return bigLogoStyles;
+            return bigLogoStyles($isCircle);
         }
         return logoStyles;
     }}
 `;
 
-const LogoLoaderContainer = styled.div<{ isSmall?: boolean; isBig?: boolean }>`
-    ${({ isSmall, isBig }) => {
+const LogoLoaderContainer = styled.div<{ isSmall?: boolean; isBig?: boolean; isCircle?: boolean }>`
+    ${({ isSmall, isBig, isCircle }) => {
         if (isSmall) {
-            return smallLogoStyles;
+            return smallLogoStyles(isCircle);
         }
         if (isBig) {
-            return bigLogoStyles;
+            return bigLogoStyles(isCircle);
         }
         return logoStyles;
     }}
@@ -72,23 +72,25 @@ const AssetLogo = ({
     logoUrl,
     isSmall,
     isBig,
+    isCircle,
 }: {
     logoUrl: string | null | undefined;
     isSmall?: boolean;
     isBig?: boolean;
+    isCircle?: boolean;
 }) => {
     const [isErrorLoad, setIsErrorLoad] = useState(false);
 
     if (logoUrl === undefined) {
         return (
-            <LogoLoaderContainer isSmall={isSmall} isBig={isBig}>
+            <LogoLoaderContainer isSmall={isSmall} isBig={isBig} isCircle={isCircle}>
                 <LogoLoader />
             </LogoLoaderContainer>
         );
     }
 
     if (logoUrl === null || isErrorLoad) {
-        return <Unknown $isSmall={isSmall} $isBig={isBig} />;
+        return <Unknown $isSmall={isSmall} $isBig={isBig} $isCircl={isCircle} />;
     }
 
     return (
@@ -97,6 +99,7 @@ const AssetLogo = ({
             alt=""
             isSmall={isSmall}
             isBig={isBig}
+            isCircle={isCircle}
             onError={() => {
                 setIsErrorLoad(true);
             }}
