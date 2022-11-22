@@ -164,7 +164,7 @@ const MarketCurrentBribes = ({ extra, bribes }) => {
                     <AquaLogo />
 
                     <BribeDetail>
-                        <BribeDetailTitle>Bribe for 1000 AQUA vote:</BribeDetailTitle>
+                        <BribeDetailTitle>Bribe per 1000 AQUA/ICE votes:</BribeDetailTitle>
                         <BribeDetailValue>
                             ≈{formatBalance(aquaBribePrice, true)} AQUA per day
                         </BribeDetailValue>
