@@ -12,6 +12,9 @@ import { assetToString } from '../../common/Pair';
 const Container = styled.div`
     display: flex;
     flex-direction: column;
+    background-color: ${COLORS.white};
+    padding: 4.2rem 3.2rem 2rem;
+    border-radius: 0.5rem;
 `;
 
 const Header = styled.div`

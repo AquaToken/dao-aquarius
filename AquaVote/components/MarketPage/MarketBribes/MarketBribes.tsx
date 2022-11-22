@@ -10,6 +10,9 @@ import MarketUpcomingBribes from './MarketUpcomingBribes/MarketUpcomingBribes';
 const Container = styled.div`
     display: flex;
     flex-direction: column;
+    background-color: ${COLORS.white};
+    padding: 4.2rem 3.2rem 2rem;
+    border-radius: 0.5rem;
 `;
 
 const Header = styled.div`
@@ -54,7 +57,7 @@ const MarketBribes = ({ base, counter, bribes, extra, marketKey }) => {
                 <ToggleGroup value={blockState} options={OPTIONS} onChange={setBlockState} />
             </Header>
             {blockState === BribeBlockStates.current && (
-                <MarketCurrentBribes base={base} counter={counter} extra={extra} bribes={bribes} />
+                <MarketCurrentBribes extra={extra} bribes={bribes} />
             )}
             {blockState === BribeBlockStates.upcoming && (
                 <MarketUpcomingBribes marketKey={marketKey} />

@@ -70,7 +70,7 @@ const Row = styled.div`
 `;
 
 const LastRow = styled(Row)`
-    margin-bottom: 3.2rem;
+    margin-bottom: 3.6rem;
 `;
 
 const Label = styled.span`
@@ -246,13 +246,13 @@ const Sidebar = ({ votesData, base, counter, totalStats, onVoteClick, isPairSele
                 </Label>
                 <Label>{formatBalance(+upIce, true)}</Label>
             </Row>
-            <Row>
+            <LastRow>
                 <Label>
                     <AquaLogo />
                     AQUA voted:
                 </Label>
                 <Label>{formatBalance(+upAqua, true)}</Label>
-            </Row>
+            </LastRow>
             <VotesProgressLine
                 label="Downvotes"
                 iceVotes={+downIce}

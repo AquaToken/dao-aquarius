@@ -7,7 +7,7 @@ import { getAssetString } from '../../store/assetsStore/actions';
 import { LumenInfo } from '../../store/assetsStore/reducer';
 import { Breakpoints, COLORS } from '../../../common/styles';
 import DotsLoader from '../../../common/basics/DotsLoader';
-import AssetLogo, { logoStyles } from '../AssetDropdown/AssetLogo';
+import AssetLogo, { bigLogoStyles, logoStyles } from '../AssetDropdown/AssetLogo';
 import External from '../../../common/assets/img/icon-external-link.svg';
 import { flexAllCenter, respondDown } from '../../../common/mixins';
 import { AuthRequiredLabel, BoostLabel, NoLiquidityLabel, RewardLabel } from './Labels';
@@ -34,8 +34,8 @@ const Icons = styled.div`
     align-items: center;
 `;
 
-const BaseIcon = styled.div`
-    ${logoStyles};
+const BaseIcon = styled.div<{ isBig?: boolean; isCircleLogo?: boolean }>`
+    ${({ isBig, isCircleLogo }) => (isBig ? bigLogoStyles(isCircleLogo) : logoStyles)};
     border: 0.3rem solid ${COLORS.white};
     background-color: ${COLORS.white};
     z-index: 1;
@@ -44,8 +44,8 @@ const BaseIcon = styled.div`
     left: 0.5rem;
 `;
 
-const SecondIcon = styled.div`
-    ${logoStyles};
+const SecondIcon = styled.div<{ isBig?: boolean; isCircleLogo?: boolean }>`
+    ${({ isBig, isCircleLogo }) => (isBig ? bigLogoStyles(isCircleLogo) : logoStyles)};
     z-index: 0;
     box-sizing: content-box;
     position: relative;
@@ -159,6 +159,9 @@ type PairProps = {
     leftAlign?: boolean;
     bigCodes?: boolean;
     bottomLabels?: boolean;
+    isBigLogo?: boolean;
+    isCircleLogos?: boolean;
+    withoutLink?: boolean;
 };
 
 const Pair = ({
@@ -174,6 +177,9 @@ const Pair = ({
     boosted,
     bigCodes,
     bottomLabels,
+    isBigLogo,
+    isCircleLogos,
+    withoutLink,
 }: PairProps): JSX.Element => {
     const { assetsInfo } = useAssetsStore();
 
@@ -194,11 +200,27 @@ const Pair = ({
             leftAlign={leftAlign}
         >
             <Icons>
-                <BaseIcon key={baseInfo?.asset_string}>
-                    <AssetLogo logoUrl={baseInfo?.image} />
+                <BaseIcon
+                    key={baseInfo?.asset_string}
+                    isBig={isBigLogo}
+                    isCircleLogo={isCircleLogos}
+                >
+                    <AssetLogo
+                        logoUrl={baseInfo?.image}
+                        isBig={isBigLogo}
+                        isCircle={isCircleLogos}
+                    />
                 </BaseIcon>
-                <SecondIcon key={counterInfo?.asset_string}>
-                    <AssetLogo logoUrl={counterInfo?.image} />
+                <SecondIcon
+                    key={counterInfo?.asset_string}
+                    isBig={isBigLogo}
+                    isCircleLogo={isCircleLogos}
+                >
+                    <AssetLogo
+                        logoUrl={counterInfo?.image}
+                        isBig={isBigLogo}
+                        isCircle={isCircleLogos}
+                    />
                 </SecondIcon>
             </Icons>
             <AssetsDetails
@@ -217,9 +239,11 @@ const Pair = ({
                     {isRewardsOn && !bottomLabels && <RewardLabel />}
                     {authRequired && !bottomLabels && <AuthRequiredLabel />}
                     {noLiquidity && !bottomLabels && <NoLiquidityLabel />}
-                    <Link onClick={(e) => viewOnStellarX(e, baseInstance, counterInstance)}>
-                        <External />
-                    </Link>
+                    {!withoutLink && (
+                        <Link onClick={(e) => viewOnStellarX(e, baseInstance, counterInstance)}>
+                            <External />
+                        </Link>
+                    )}
                 </AssetsCodes>
                 {!withoutDomains && (
                     <AssetsDomains mobileVerticalDirections={mobileVerticalDirections}>

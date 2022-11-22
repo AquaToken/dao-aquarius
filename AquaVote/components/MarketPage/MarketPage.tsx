@@ -27,6 +27,7 @@ import AmmStats from './AmmStats/AmmStats';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
+    background-color: ${COLORS.lightGray};
 `;
 
 const Background = styled.div`
@@ -71,12 +72,16 @@ const BackButton = styled.div`
     }
 `;
 
-const MarketSection = styled.section`
+const MarketSection = styled.section<{ smallTopPadding?: boolean }>`
     ${commonMaxWidth};
-    padding-top: 6rem;
+    padding-top: ${({ smallTopPadding }) => (smallTopPadding ? '2rem' : '2.8rem')};
     padding-left: 4rem;
     padding-right: calc(10vw + 20rem);
     width: 100%;
+
+    &:last-child {
+        margin-bottom: 6.6rem;
+    }
 
     ${respondDown(Breakpoints.xxxl)`
         padding-right: calc(10vw + 30rem);
@@ -96,6 +101,7 @@ const Header = styled.div`
     justify-content: space-between;
     align-items: flex-start;
     flex-direction: column-reverse;
+    background-color: ${COLORS.lightGray};
 `;
 
 const NavPanel = styled.div`
@@ -279,6 +285,9 @@ const MarketPage = () => {
                                       )
                                     : false
                             }
+                            isBigLogo
+                            isCircleLogos
+                            withoutLink
                         />
                         <Back
                             onClick={() => {
@@ -359,7 +368,7 @@ const MarketPage = () => {
                 onVoteClick={onVoteClick}
                 isPairSelected={votesData ? isPairSelected(votesData) : false}
             />
-            <MarketSection ref={MarketStatRef}>
+            <MarketSection smallTopPadding ref={MarketStatRef}>
                 <TradeStats base={baseAsset} counter={counterAsset} />
             </MarketSection>
             <MarketSection ref={AmmStatRef}>

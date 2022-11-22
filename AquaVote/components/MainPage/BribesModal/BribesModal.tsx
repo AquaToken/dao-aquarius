@@ -17,6 +17,7 @@ import ExternalLink from '../../../../common/basics/ExternalLink';
 import { TableBody, TableHead, TableHeadRow } from '../Table/Table';
 import Asset from '../../AssetDropdown/Asset';
 import { StellarService } from '../../../../common/services/globalServices';
+import Info from '../../../../common/assets/img/icon-info.svg';
 
 const ModalContainer = styled.div`
     width: 80.6rem;
@@ -53,36 +54,61 @@ const BribeDetails = styled.div`
     background: ${COLORS.lightGray};
     border-radius: 0.5rem;
     margin-bottom: 3.8rem;
+    position: relative;
 
     ${respondDown(Breakpoints.md)`
         padding: 1.6rem;
     `}
 `;
 
-const AquaLogo = styled(Aqua)`
-    height: 3.2rem;
-    width: 3.2rem;
+export const BribeDetailsMain = styled.div`
+    display: flex;
+    align-items: center;
+    width: 100%;
+
+    ${respondDown(Breakpoints.md)`
+        flex-direction: column;
+        align-items: flex-start;
+    `}
 `;
 
-export const AverageBribePrice = styled.span`
-    font-size: 1.6rem;
-    line-height: 2.8rem;
-    color: ${COLORS.paragraphText};
-    margin-top: 2.6rem;
-    margin-bottom: 0.8rem;
+export const BribeDetail = styled.div`
+    display: flex;
+    flex-direction: column;
+
+    &:not(:last-child) {
+        margin-right: 7.7rem;
+    }
+
+    ${respondDown(Breakpoints.md)`
+        margin: 2.4rem 0;
+   `}
 `;
 
-export const UsersVoted = styled.span`
+export const BribeDetailTitle = styled.div`
+    font-weight: 400;
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
-    margin-bottom: 2rem;
+    ${COLORS.grayText}
 `;
 
-export const HowItWorksButton = styled.div`
-    font-size: 1.6rem;
+export const BribeDetailValue = styled.div`
+    font-weight: 700;
+    font-size: 2rem;
     line-height: 2.8rem;
-    color: ${COLORS.purple};
+    ${COLORS.titleText}
+`;
+
+const AquaLogo = styled(Aqua)`
+    height: 5rem;
+    width: 5rem;
+    margin-right: 3.8rem;
+`;
+
+const IconInfo = styled(Info)`
+    position: absolute;
+    right: 1.6rem;
+    top: 1.6rem;
     cursor: pointer;
 `;
 
@@ -218,17 +244,23 @@ const BribesModal = ({ params }: ModalProps<{ pair: PairStats }>) => {
                 {getDateString(new Date(stopUTC).getTime() - 1)}
             </ModalDescription>
             <BribeDetails>
-                <AquaLogo />
-                <AverageBribePrice>
-                    ≈{formatBalance(aquaBribePrice, true)} AQUA per day for 1000 AQUA vote
-                </AverageBribePrice>
-                <UsersVoted>
-                    Bribe is distributed among {pair.voting_amount} voters for {pair.asset1_code}/
-                    {pair.asset2_code} market pair.
-                </UsersVoted>
-                <HowItWorksButton onClick={() => setShowHowItWorks(true)}>
-                    How it works?
-                </HowItWorksButton>
+                <BribeDetailsMain>
+                    <AquaLogo />
+
+                    <BribeDetail>
+                        <BribeDetailTitle>Bribe for 1000 AQUA vote:</BribeDetailTitle>
+                        <BribeDetailValue>
+                            ≈{formatBalance(aquaBribePrice, true)} AQUA per day
+                        </BribeDetailValue>
+                    </BribeDetail>
+
+                    <BribeDetail>
+                        <BribeDetailTitle>Distributed among:</BribeDetailTitle>
+                        <BribeDetailValue>{pair.voting_amount} voters</BribeDetailValue>
+                    </BribeDetail>
+
+                    <IconInfo onClick={() => setShowHowItWorks(true)} />
+                </BribeDetailsMain>
                 {showHowItWorks && (
                     <HowItWorks>
                         <HowItWorksText>

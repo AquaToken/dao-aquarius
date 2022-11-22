@@ -10,6 +10,9 @@ import { formatBalance } from '../../../../common/helpers/helpers';
 const Container = styled.div`
     display: flex;
     flex-direction: column;
+    background-color: ${COLORS.white};
+    padding: 4.2rem 3.2rem 2rem;
+    border-radius: 0.5rem;
 `;
 
 const Title = styled.span`
@@ -60,9 +63,10 @@ const DetailTitle = styled.span`
 `;
 
 const DetailValue = styled.span`
-    font-size: 1.6rem;
-    line-height: 2.4rem;
-    color: ${COLORS.paragraphText};
+    font-weight: 700;
+    font-size: 2rem;
+    line-height: 2.8rem;
+    color: ${COLORS.buttonBackground};
     width: min-content;
     white-space: nowrap;
 `;
