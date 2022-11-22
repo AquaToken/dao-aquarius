@@ -49,7 +49,7 @@ const SecondIcon = styled.div<{ isBig?: boolean; isCircleLogo?: boolean }>`
     z-index: 0;
     box-sizing: content-box;
     position: relative;
-    left: -0.5rem;
+    left: ${({ isBig }) => (isBig ? '-1.5rem' : '-0.5rem')};
 `;
 
 const AssetsDetails = styled.div<{
