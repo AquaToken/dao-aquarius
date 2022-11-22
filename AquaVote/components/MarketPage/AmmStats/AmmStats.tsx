@@ -226,7 +226,7 @@ const AmmStats = ({ base, counter }) => {
                             base,
                         )}/${assetToString(counter)}`}
                     >
-                        See on AMM
+                        See AMM on StellarX
                     </ExternalLinkStyled>
                 </>
             ) : (

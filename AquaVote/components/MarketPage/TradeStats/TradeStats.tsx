@@ -89,7 +89,7 @@ const TradeStats = ({ base, counter }) => {
                     base,
                 )}`}
             >
-                See on SDEX
+                See SDEX on StellarX
             </ExternalLinkStyled>
         </Container>
     );
