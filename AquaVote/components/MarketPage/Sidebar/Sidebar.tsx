@@ -38,7 +38,7 @@ const Container = styled.aside`
     background: ${COLORS.white};
     display: flex;
     flex-direction: column;
-    margin-top: -36rem;
+    margin-top: -48rem;
     z-index: 102;
 
     ${respondDown(Breakpoints.md)`

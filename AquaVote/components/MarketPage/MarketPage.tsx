@@ -32,7 +32,7 @@ const MainBlock = styled.main`
 
 const Background = styled.div`
     width: 100%;
-    padding: 4rem 0 11.7rem;
+    padding: 4rem 0 6rem;
     background-color: ${COLORS.lightGray};
 
     ${respondDown(Breakpoints.md)`
