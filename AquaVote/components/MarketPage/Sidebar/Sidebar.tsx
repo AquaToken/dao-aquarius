@@ -42,7 +42,13 @@ const Container = styled.aside`
     z-index: 102;
 
     ${respondDown(Breakpoints.md)`
-         display: none;
+         float: unset;
+         position: relative;
+         width: calc(100% - 3.2rem);
+         margin-top: 0;
+         right: unset;
+         margin: 1.6rem;
+         box-shadow: unset;
     `}
 `;
 
@@ -67,6 +73,10 @@ const Row = styled.div`
     ${flexRowSpaceBetween};
     margin-bottom: 2rem;
     width: 26rem;
+
+    ${respondDown(Breakpoints.md)`
+         width: 100%;
+    `}
 `;
 
 const LastRow = styled(Row)`

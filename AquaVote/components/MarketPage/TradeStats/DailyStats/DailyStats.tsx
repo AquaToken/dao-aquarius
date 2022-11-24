@@ -110,7 +110,7 @@ const DailyStats = ({ base, counter }) => {
                         `${
                             lastPrice === '-'
                                 ? '-'
-                                : `1 ${base.code} = ${lastPrice} ${counter.code}`
+                                : `1 ${base.code} = ${formatBalance(+lastPrice)} ${counter.code}`
                         }`
                     ) : (
                         <DotsLoader />

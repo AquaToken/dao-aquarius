@@ -8,6 +8,7 @@ import LightWeightChart, { PeriodOptions } from './LightWeightChart/LightWeightC
 import DailyStats from './DailyStats/DailyStats';
 import ExternalLink from '../../../../common/basics/ExternalLink';
 import { assetToString } from '../../common/Pair';
+import Select from '../../../../common/basics/Select';
 
 const Container = styled.div`
     display: flex;
@@ -46,7 +47,7 @@ const ToggleGroupWeb = styled(ToggleGroup)`
     `}
 `;
 
-const ToggleGroupMobile = styled(ToggleGroup)`
+const ToggleGroupMobile = styled(Select)`
     display: none;
 
     ${respondDown(Breakpoints.md)`

@@ -44,6 +44,16 @@ const Info = styled(InfoIcon)`
     `}
 `;
 
+const InfoMobile = styled(InfoIcon)`
+    margin-left: 0.5rem;
+    margin-top: 0.6rem;
+    display: none;
+
+    ${respondDown(Breakpoints.md)`
+        display: block;
+    `}
+`;
+
 const Amount = styled.div`
     display: flex;
     flex-direction: column;
@@ -250,8 +260,12 @@ const VoteAmount = ({ pair, totalStats }: { pair: PairStats; totalStats: TotalSt
                 onMouseLeave={() => {
                     setShowTooltip(false);
                 }}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    setShowTooltip((value) => !value);
+                }}
             >
-                Voted:
+                Votes:
             </label>
             <Amount
                 onMouseEnter={() => {
@@ -259,6 +273,10 @@ const VoteAmount = ({ pair, totalStats }: { pair: PairStats; totalStats: TotalSt
                 }}
                 onMouseLeave={() => {
                     setShowTooltip(false);
+                }}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    setShowTooltip((value) => !value);
                 }}
             >
                 <AmountRow>
@@ -271,6 +289,7 @@ const VoteAmount = ({ pair, totalStats }: { pair: PairStats; totalStats: TotalSt
 
                 <Percent isBoosted={boosted}>{percentBoostedValue}</Percent>
             </Amount>
+            <InfoMobile />
         </TooltipStyled>
     );
 };
