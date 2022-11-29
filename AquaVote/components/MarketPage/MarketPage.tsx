@@ -291,9 +291,7 @@ const MarketPage = () => {
                         />
                         <Back
                             onClick={() => {
-                                history.length > 2
-                                    ? history.goBack()
-                                    : history.push(MainRoutes.main);
+                                history.length ? history.goBack() : history.push(MainRoutes.main);
                             }}
                         >
                             <BackButton>
