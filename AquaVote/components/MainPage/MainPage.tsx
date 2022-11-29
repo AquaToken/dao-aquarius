@@ -319,8 +319,8 @@ export const getCachedChosenPairs = () =>
     JSON.parse(localStorage.getItem(SELECTED_PAIRS_ALIAS) || '[]');
 
 const options: Option<SortTypes>[] = [
-    { label: 'Popular', value: SortTypes.popular },
     { label: 'Top Voted', value: SortTypes.topVoted },
+    { label: 'Popular', value: SortTypes.popular },
     { label: 'With Bribes', value: SortTypes.withBribes },
     { label: 'Your Votes', value: SortTypes.yourVotes },
 ];
@@ -386,7 +386,7 @@ const MainPage = (): JSX.Element => {
             !params.has(UrlParams.base) &&
             !params.has(UrlParams.counter)
         ) {
-            params.append(UrlParams.sort, SortTypes.popular);
+            params.append(UrlParams.sort, SortTypes.topVoted);
             history.replace({ search: params.toString() });
             return;
         }
@@ -519,7 +519,7 @@ const MainPage = (): JSX.Element => {
 
     useEffect(() => {
         if (sort === SortTypes.yourVotes && !isLogged) {
-            changeSort(SortTypes.popular);
+            changeSort(SortTypes.topVoted);
         }
     }, [isLogged, sort]);
 
@@ -557,7 +557,7 @@ const MainPage = (): JSX.Element => {
     }, [claimUpdateId]);
 
     useEffect(() => {
-        if (sort === SortTypes.topVoted) {
+        if (sort === SortTypes.topVoted || sort === SortTypes.popular) {
             Promise.all([getPairsList(sort, PAGE_SIZE, page), getTotalVotingStats()]).then(
                 ([pairsResult, totalStatsResult]) => {
                     setPairs(pairsResult.pairs);

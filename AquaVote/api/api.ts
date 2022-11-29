@@ -59,49 +59,20 @@ export enum SortTypes {
 const getPairUrl = (sortType: SortTypes, pageSize: number, page: number): string => {
     switch (sortType) {
         case SortTypes.popular:
-            return `${votingTrackerUrl}top-volume/?limit=100&page=1`;
+            return `${votingTrackerUrl}top-voted/?limit=${pageSize}&page=${page}`;
         case SortTypes.topVoted:
             return `${votingTrackerUrl}top-volume/?limit=${pageSize}&page=${page}`;
     }
 };
-
-const shuffleArray = (array) => {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        const temp = array[i];
-        array[i] = array[j];
-        array[j] = temp;
-    }
-};
-
-let randomPairs = [];
 
 export const getPairsList = async (
     sortType: SortTypes,
     pageSize: number,
     page: number,
 ): Promise<{ pairs: PairStats[]; count: number }> => {
-    if (sortType !== SortTypes.popular) {
-        randomPairs = [];
-    }
-
-    if (sortType === SortTypes.popular && randomPairs.length) {
-        const votes = randomPairs.slice((page - 1) * pageSize, (page - 1) * pageSize + pageSize);
-
-        return addKeysToMarketVotes(votes, randomPairs.length);
-    }
-
     const url = getPairUrl(sortType, pageSize, page);
 
     const marketsVotes = await axios.get<ListResponse<MarketVotes>>(url);
-
-    if (sortType === SortTypes.popular && !randomPairs.length) {
-        shuffleArray(marketsVotes.data.results);
-        randomPairs = marketsVotes.data.results;
-        const votes = randomPairs.slice((page - 1) * pageSize, pageSize);
-
-        return addKeysToMarketVotes(votes, randomPairs.length);
-    }
 
     return addKeysToMarketVotes(marketsVotes.data.results, marketsVotes.data.count);
 };
