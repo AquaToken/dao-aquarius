@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../../../common/styles';
 import Input from '../../../../common/basics/Input';
@@ -81,11 +81,17 @@ const StyledButton = styled(Button)<{ isModal: boolean }>`
 `;
 
 const AccountInput = ({ params, close }: { params?: any; close?: any }) => {
+    const { isLogged, logout, account } = useAuthStore();
+
     const isModal = params?.isModal ?? false;
-    const [value, setValue] = useState('');
+    const [value, setValue] = useState(isLogged && !isModal ? account.accountId() : '');
     const history = useHistory();
 
-    const { isLogged, logout } = useAuthStore();
+    useEffect(() => {
+        if (isLogged && !isModal) {
+            setValue(account.accountId());
+        }
+    }, [isLogged]);
 
     const onSubmit = (e) => {
         e.preventDefault();
