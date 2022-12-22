@@ -14,5 +14,5 @@ module.exports = merge(commonConfig, {
         publicPath: '/',
     },
     devtool: 'source-map',
-    plugins: [new CopyWebpackPlugin({ patterns: [{ from: '../common/static', to: '' }] })],
+    plugins: [new CopyWebpackPlugin({ patterns: [{ from: '../src/common/static', to: '' }] })],
 });
