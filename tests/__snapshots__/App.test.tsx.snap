@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`App is rendered 1`] = `
+exports[`Governance is rendered 1`] = `
 <div
   className="app"
 >

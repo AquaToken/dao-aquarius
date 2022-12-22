@@ -3,17 +3,7 @@ const webpack = require('webpack');
 const { resolve } = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-const PROJECT_PATH = {
-    vote: 'AquaVote',
-    governance: 'AquaGovernance',
-    lock: 'AquaLock',
-};
-
 const dotenv = require('dotenv');
-
-const project = dotenv.config().parsed ? dotenv.config().parsed.PROJECT : null;
-
-const projectPath = PROJECT_PATH[project || process.env.PROJECT];
 
 const wcProjectId = dotenv.config().parsed
     ? dotenv.config().parsed.WALLET_CONNECT_PROJECT_ID
@@ -28,7 +18,7 @@ module.exports = {
             util: false,
         },
     },
-    context: resolve(__dirname, `../../${projectPath}`),
+    context: resolve(__dirname, `../../src`),
     module: {
         rules: [
             {
@@ -54,8 +44,6 @@ module.exports = {
         new HtmlWebpackPlugin({ template: 'index.html.ejs' }),
         new webpack.DefinePlugin({
             'process.env': JSON.stringify({
-                PROJECT_PATH: projectPath,
-                PROJECT: project || process.env.PROJECT,
                 WALLET_CONNECT_PROJECT_ID: wcProjectId || process.env.WALLET_CONNECT_PROJECT_ID,
             }),
         }),

@@ -57,6 +57,7 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
+Aquarius is designed to supercharge trading on Stellar, bring more liquidity and give control over how it is distributed across various market pairs. It adds incentives for SDEX traders ("market maker rewards") and rewards for AMM liquidity providers. Aquarius allows community to set rewards for selected markets through on-chain voting.
 
 [![Aquarius Screen Shot][product-screenshot]](https://aqua.network/)
 
@@ -114,23 +115,7 @@ node --version
 ### Installation
 1. Clone/download repo
 2. `yarn install` (or `npm install` for npm)
-3. Set environment variable `PROJECT`
-
-```sh
-# Voting interface
-
-PROJECT=vote
-
-# Governance interface
-
-PROJECT=governance
-
-# Locker interface
-
-PROJECT=lock
-
-```
-4. Set environment variable `WALLET_CONNECT_PROJECT_ID` to work with WalletConnect
+3. Set environment variable `WALLET_CONNECT_PROJECT_ID` to work with WalletConnect
 
 ```sh
 WALLET_CONNECT_PROJECT_ID=...your_key
@@ -142,14 +127,14 @@ WALLET_CONNECT_PROJECT_ID=...your_key
 `yarn run start-dev`
 
 * Build app continuously (HMR enabled)
-* App served @ `http://localhost:8080`
+* Governance served @ `http://localhost:8080`
 
 **Production**
 
 `yarn run start-prod`
 
 * Build app once (HMR disabled) to `/dist/`
-* App served @ `http://localhost:3000`
+* Governance served @ `http://localhost:3000`
 
 ---
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as renderer from 'react-test-renderer';
-import App from '../AquaVote/components/App';
+import App from '../src/pages/vote/Vote';
 import { ReactTestRenderer, ReactTestRendererJSON } from 'react-test-renderer';
 
 it('App is rendered', () => {
