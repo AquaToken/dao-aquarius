@@ -78,7 +78,7 @@ const Line = styled.div`
 const SocialLinks = ({ isHorizontal }: { isHorizontal?: boolean }) => {
     return (
         <Container isHorizontal={isHorizontal}>
-            <a href="src/common/components/SocialLinks/SocialLinks" target="_blank">
+            <a href="https://www.reddit.com/r/AquariusAqua/" target="_blank">
                 <Reddit />
             </a>
             <a href="https://discord.gg/sgzFscHp4C" target="_blank">
