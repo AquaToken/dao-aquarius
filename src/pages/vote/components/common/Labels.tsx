@@ -106,7 +106,7 @@ export const AuthRequiredLabel = () => {
                     <a
                         rel="noopener noreferrer"
                         target="_blank"
-                        href="src/pages/vote/components/common/Labels#flagshttps://developers.stellar.org/docs/glossary/accounts/#flags"
+                        href="https://developers.stellar.org/docs/glossary/accounts/#flags"
                     >
                         More details.
                     </a>
