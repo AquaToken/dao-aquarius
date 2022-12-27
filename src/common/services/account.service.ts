@@ -132,7 +132,9 @@ export default class AccountService extends AccountResponse {
             return null;
         }
 
-        return Number(aquaBalance.balance) - Number(aquaBalance.selling_liabilities);
+        return Number(
+            (Number(aquaBalance.balance) - Number(aquaBalance.selling_liabilities)).toFixed(7),
+        );
     }
 
     getAvailableNativeBalance(): number | null {
@@ -142,8 +144,13 @@ export default class AccountService extends AccountResponse {
 
         const reserve = (2 + this.subentry_count + this.num_sponsoring - this.num_sponsored) * 0.5;
 
-        const available =
-            Number(nativeBalance.balance) - reserve - Number(nativeBalance.selling_liabilities);
+        const available = Number(
+            (
+                Number(nativeBalance.balance) -
+                reserve -
+                Number(nativeBalance.selling_liabilities)
+            ).toFixed(7),
+        );
 
         return available > 0 ? available : 0;
     }
