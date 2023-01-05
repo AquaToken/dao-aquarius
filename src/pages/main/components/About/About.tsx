@@ -76,6 +76,7 @@ const ContentBlock = styled.div`
 
     svg {
         grid-area: image;
+        width: 15rem;
     }
 
     ${respondDown(Breakpoints.md)`
