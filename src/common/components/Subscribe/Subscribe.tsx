@@ -4,6 +4,7 @@ import { Breakpoints, COLORS } from '../../styles';
 import { respondDown } from '../../mixins';
 import Input from '../../basics/Input';
 import Button from '../../basics/Button';
+import { useState } from 'react';
 
 const Container = styled.section`
     padding-top: 3.2rem;
@@ -103,7 +104,26 @@ const StyledButton = styled(Button)`
     `}
 `;
 
+const encode = (data) => {
+    return Object.keys(data)
+        .map((key) => encodeURIComponent(key) + '=' + encodeURIComponent(data[key]))
+        .join('&');
+};
+
 const Subscribe = () => {
+    const [email, setEmail] = useState('');
+
+    const handleSubmit = (e) => {
+        fetch('/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: encode({ 'form-name': 'subscribe', email }),
+        })
+            .then(() => alert('Success!'))
+            .catch((error) => alert(error));
+
+        e.preventDefault();
+    };
     return (
         <Container>
             <Wrapper>
@@ -116,8 +136,16 @@ const Subscribe = () => {
                     </Header>
                     <FormContainer>
                         {/*// @ts-ignore*/}
-                        <Form name="subscribe" netlify>
-                            <Input type="email" name="email" placeholder="Enter your email" />
+                        <Form onSubmit={handleSubmit}>
+                            <input type="hidden" name="form-name" value="subscribe" />
+
+                            <Input
+                                type="email"
+                                name="email"
+                                placeholder="Enter your email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                            />
                             <StyledButton isBig type="submit">
                                 Subscribe
                             </StyledButton>
