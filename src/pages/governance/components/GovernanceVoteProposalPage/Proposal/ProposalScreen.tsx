@@ -330,7 +330,7 @@ const ProposalScreen = ({
                                 </>
                             ) : (
                                 <>
-                                    <BackButton to="/">
+                                    <BackButton to={GovernanceRoutes.main}>
                                         <ArrowLeft />
                                     </BackButton>
                                     <span>Proposals</span>
