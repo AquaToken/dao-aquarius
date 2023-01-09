@@ -11,6 +11,7 @@ import useAuthStore from '../../../../../store/authStore/useAuthStore';
 import { forwardRef, RefObject } from 'react';
 import { formatBalance } from '../../../../../common/helpers/helpers';
 import { APPROVED_PROPOSAL_REWARD } from '../../../pages/GovernanceMainPage';
+import { GovernanceRoutes } from '../../../../../routes';
 
 const Container = styled.div`
     flex: 1;
@@ -74,7 +75,7 @@ const CreateProposal = forwardRef(({}, ref: RefObject<HTMLDivElement>) => {
             return;
         }
 
-        history.push('/create');
+        history.push(GovernanceRoutes.create);
     };
     return (
         <Container ref={ref}>
