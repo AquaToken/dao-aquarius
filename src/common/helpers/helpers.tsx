@@ -37,17 +37,28 @@ export const getTimeAgoValue = (timestamp: string | number): string => {
     const day = 24 * hour;
     const timeFromTimestamp = Date.now() - new Date(timestamp).getTime();
 
+    const minutesAgo = Math.floor(timeFromTimestamp / minute);
+    const hoursAgo = Math.floor(timeFromTimestamp / hour);
+    const daysAgo = Math.floor(timeFromTimestamp / day);
+
     if (timeFromTimestamp < hour) {
-        const minutesAgo = Math.floor(timeFromTimestamp / minute);
         return `${minutesAgo} minute${minutesAgo === 1 ? '' : 's'} ago`;
     }
 
     if (timeFromTimestamp < day) {
-        const hoursAgo = Math.floor(timeFromTimestamp / hour);
         return `${hoursAgo} hour${hoursAgo === 1 ? '' : 's'} ago`;
     }
 
-    const daysAgo = Math.floor(timeFromTimestamp / day);
+    if (timeFromTimestamp < 3 * day) {
+        const remainingHours = Math.floor((timeFromTimestamp % day) / hour);
+
+        return `${daysAgo} day${daysAgo === 1 ? '' : 's'} ${
+            Boolean(remainingHours)
+                ? `${remainingHours} hour${remainingHours === 1 ? ' ' : 's '}`
+                : ''
+        }ago`;
+    }
+
     return `${daysAgo} day${daysAgo === 1 ? '' : 's'} ago`;
 };
 
