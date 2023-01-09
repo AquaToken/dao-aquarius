@@ -18,6 +18,7 @@ import { ModalService } from '../../../common/services/globalServices';
 import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
 import { useIsOnViewport } from '../../../common/hooks/useIsOnViewport';
 import ArrowDown from '../../../common/assets/img/icon-arrow-down.svg';
+import { GovernanceRoutes } from '../../../routes';
 
 export const CREATE_DISCUSSION_COST = 100000;
 export const CREATE_PROPOSAL_COST = 900000;
@@ -249,7 +250,7 @@ const GovernanceMainPage = (): JSX.Element => {
             return;
         }
 
-        history.push('/create');
+        history.push(GovernanceRoutes.create);
     };
 
     useEffect(() => {
