@@ -275,6 +275,7 @@ const ProposalScreen = ({
     setScreenState?: (state) => void;
 }): JSX.Element => {
     const {
+        id,
         title,
         text,
         proposed_by: proposedBy,
@@ -311,6 +312,13 @@ const ProposalScreen = ({
     const isDetailsOverScrolled = useIsOverScrolled(detailsRef, 50);
 
     const { isLogged, account } = useAuthStore();
+
+    const discordName = discordChannelName || (Boolean(id) ? `Proposal #${id}` : '');
+    const discordUrl =
+        discordChannelUrl ||
+        (Boolean(id)
+            ? 'https://discord.com/channels/862710317825392660/1046931670458187836'
+            : 'https://discord.gg/sgzFscHp4C');
 
     return (
         <>
@@ -410,23 +418,21 @@ const ProposalScreen = ({
                 <LeftContent>
                     <Title>Discussion</Title>
                     <DetailsDescription>
-                        Participate in the discussion of this proposal on Discord (
-                        {discordChannelName || '#governance-voting'}).
+                        Participate in the discussion of this proposal on Discord
+                        {Boolean(discordName) ? ` (${discordName}).` : '.'}
                         {Boolean(discordUsername) && (
                             <DiscordChannelOwner>
                                 <div>Discussion owner:</div>
                                 <div>{discordUsername}</div>
                             </DiscordChannelOwner>
                         )}
-                        {Boolean(discordChannelName) && (
+                        {Boolean(discordName) && (
                             <DiscordChannelOwner>
                                 <div>Discussion channel:</div>
-                                <div>{discordChannelName}</div>
+                                <div>{discordName}</div>
                             </DiscordChannelOwner>
                         )}
-                        <ExternalLink href={discordChannelUrl || 'https://discord.gg/sgzFscHp4C'}>
-                            View discussion
-                        </ExternalLink>
+                        <ExternalLink href={discordUrl}>View discussion</ExternalLink>
                     </DetailsDescription>
                 </LeftContent>
             </ProposalSection>

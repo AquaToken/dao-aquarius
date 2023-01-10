@@ -13,11 +13,9 @@ import {
     CREATE_DISCUSSION_COST,
     CREATE_PROPOSAL_COST,
 } from '../../../pages/GovernanceMainPage';
-import { flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
+import { respondDown } from '../../../../../common/mixins';
 import { BackButton } from '../../GovernanceVoteProposalPage/Proposal/ProposalScreen';
 import ArrowLeft from '../../../../../common/assets/img/icon-arrow-left.svg';
-import PlusIcon from '../../../../../common/assets/img/icon-plus.svg';
-import MinusIcon from '../../../../../common/assets/img/icon-minus.svg';
 import { useParams } from 'react-router-dom';
 import { GovernanceRoutes } from '../../../../../routes';
 
@@ -81,28 +79,6 @@ const Label = styled.label`
     font-size: 1.6rem;
     line-height: 1.8rem;
     color: ${COLORS.paragraphText};
-`;
-
-const DiscordSectionHeader = styled.div`
-    ${flexRowSpaceBetween};
-    font-weight: 700;
-    font-size: 2rem;
-    line-height: 2.8rem;
-    color: ${COLORS.buttonBackground};
-    margin-bottom: 3.9rem;
-`;
-
-const DiscordRecommend = styled.div`
-    display: flex;
-    width: 100%;
-    background-color: ${COLORS.lightGray};
-    padding: 1.6rem 2.8rem;
-    margin-top: -2.3rem;
-    margin-bottom: 5.5rem;
-    font-weight: 400;
-    font-size: 1.4rem;
-    line-height: 2rem;
-    color: ${COLORS.grayText};
 `;
 
 const InfoRow = styled.div`
@@ -189,32 +165,12 @@ const ProposalCreation = ({
     setText,
     hasData,
     onSubmit,
-    discordChannel,
-    setDiscordChannel,
     discordChannelOwner,
     setDiscordChannelOwner,
-    discordChannelUrl,
-    setDiscordChannelUrl,
     isEdit,
 }: proposalCreationProps): JSX.Element => {
     const [textFocused, setTextFocused] = useState(false);
     const { id } = useParams<{ id?: string }>();
-
-    const [isDiscordSectionOpen, setIsDiscordSectionOpen] = useState(
-        Boolean(discordChannel || discordChannelOwner || discordChannelUrl),
-    );
-
-    const toggleDiscordSection = (event) => {
-        event.preventDefault();
-        if (!isDiscordSectionOpen) {
-            setIsDiscordSectionOpen(true);
-        } else {
-            setIsDiscordSectionOpen(false);
-            setDiscordChannelUrl('');
-            setDiscordChannelOwner('');
-            setDiscordChannel('');
-        }
-    };
 
     return (
         <>
@@ -276,74 +232,26 @@ const ProposalCreation = ({
                             />
                         </SectionForm>
                         {!isEdit && (
-                            <>
-                                <DiscordSectionHeader>
-                                    <span>Add discord discussion</span>
-                                    <Button
-                                        isSquare
-                                        onClick={(e) => toggleDiscordSection(e)}
-                                        likeDisabled={isDiscordSectionOpen}
-                                    >
-                                        {isDiscordSectionOpen ? <MinusIcon /> : <PlusIcon />}
-                                    </Button>
-                                </DiscordSectionHeader>
-                                {isDiscordSectionOpen ? (
-                                    <>
-                                        <SectionForm>
-                                            <Label>Link to discord discussion</Label>
-                                            <Input
-                                                placeholder="https://discord.com/channels"
-                                                value={discordChannelUrl}
-                                                maxLength={200}
-                                                onChange={(event) => {
-                                                    setDiscordChannelUrl(event.target.value);
-                                                }}
-                                                pattern="https:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)"
-                                            />
-                                        </SectionForm>
-                                        <SectionForm>
-                                            <Label>Discord discussion channel</Label>
-                                            <Input
-                                                placeholder="#channel_name"
-                                                value={discordChannel}
-                                                maxLength={64}
-                                                onChange={(event) => {
-                                                    setDiscordChannel(event.target.value);
-                                                }}
-                                            />
-                                        </SectionForm>
-                                        <SectionForm>
-                                            <Label>Discord discussion owner nickname</Label>
-                                            <Input
-                                                placeholder="Nickname#0000"
-                                                value={discordChannelOwner}
-                                                maxLength={64}
-                                                onChange={(event) => {
-                                                    setDiscordChannelOwner(event.target.value);
-                                                }}
-                                                pattern="^.{3,32}#[0-9]{4}$"
-                                                onInvalid={(e) =>
-                                                    (
-                                                        e.target as HTMLInputElement
-                                                    ).setCustomValidity('Format Nickname#0000')
-                                                }
-                                                onInput={(e) =>
-                                                    (
-                                                        e.target as HTMLInputElement
-                                                    ).setCustomValidity('')
-                                                }
-                                            />
-                                        </SectionForm>{' '}
-                                    </>
-                                ) : (
-                                    <DiscordRecommend>
-                                        ☝️ We recommend sharing on Discord to get feedback from the
-                                        community, ensuring it has a good chance of acceptance.
-                                        Please contact one of the Aquarius Discord admins so your
-                                        channel can be created in preparation for discussion.
-                                    </DiscordRecommend>
-                                )}
-                            </>
+                            <SectionForm>
+                                <Label>Discord discussion owner nickname (optional)</Label>
+                                <Input
+                                    placeholder="Nickname#0000"
+                                    value={discordChannelOwner}
+                                    maxLength={64}
+                                    onChange={(event) => {
+                                        setDiscordChannelOwner(event.target.value);
+                                    }}
+                                    pattern="^.{3,32}#[0-9]{4}$"
+                                    onInvalid={(e) =>
+                                        (e.target as HTMLInputElement).setCustomValidity(
+                                            'Format Nickname#0000',
+                                        )
+                                    }
+                                    onInput={(e) =>
+                                        (e.target as HTMLInputElement).setCustomValidity('')
+                                    }
+                                />
+                            </SectionForm>
                         )}
 
                         <SectionForm>
