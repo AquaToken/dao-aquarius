@@ -281,7 +281,6 @@ const ProposalScreen = ({
         proposed_by: proposedBy,
         start_at: startDate,
         end_at: endDate,
-        discord_channel_name: discordChannelName,
         discord_channel_url: discordChannelUrl,
         discord_username: discordUsername,
         proposal_status: status,
@@ -313,7 +312,7 @@ const ProposalScreen = ({
 
     const { isLogged, account } = useAuthStore();
 
-    const discordName = discordChannelName || (Boolean(id) ? `Proposal #${id}` : '');
+    const discordName = Boolean(id) ? `Proposal #${id}` : '';
     const discordUrl =
         discordChannelUrl ||
         (Boolean(id)

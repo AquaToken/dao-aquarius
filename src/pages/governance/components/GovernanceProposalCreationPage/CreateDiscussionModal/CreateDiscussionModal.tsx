@@ -94,17 +94,7 @@ const CreateDiscussionModal = ({
     };
 
     const onSubmit = async () => {
-        const {
-            text,
-            title,
-            start_at,
-            end_at,
-            discord_username,
-            discord_channel_name,
-            discord_channel_url,
-            isEdit,
-            id,
-        } = params;
+        const { text, title, start_at, end_at, discord_username, isEdit, id } = params;
 
         if (loading) {
             return;
@@ -141,12 +131,6 @@ const CreateDiscussionModal = ({
                       end_at,
                       transaction_hash: tx.hash().toString('hex'),
                       discord_username: Boolean(discord_username) ? discord_username : null,
-                      discord_channel_name: Boolean(discord_channel_name)
-                          ? discord_channel_name
-                          : null,
-                      discord_channel_url: Boolean(discord_channel_url)
-                          ? discord_channel_url
-                          : null,
                       envelope_xdr: tx.toEnvelope().toXDR('base64'),
                   });
 
