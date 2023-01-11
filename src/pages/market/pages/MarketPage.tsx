@@ -32,6 +32,7 @@ import Title from 'react-document-title';
 const MainBlock = styled.main`
     flex: 1 0 auto;
     background-color: ${COLORS.lightGray};
+    z-index: 1;
 `;
 
 const Background = styled.div`
