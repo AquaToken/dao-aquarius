@@ -19,14 +19,12 @@ const ToastBody = styled.div<{ isShow: boolean }>`
     border-radius: 1rem;
     animation: ${({ isShow }) =>
         isShow ? 'openingToast ease-in-out 0.8s' : 'closingToast linear 0.4s'};
-    margin-top: 2rem;
+    margin-bottom: 2rem;
     margin-right: 2rem;
     position: relative;
     overflow: hidden;
 
     ${respondDown(Breakpoints.md)`
-        margin-top: unset;
-        margin-bottom: 2rem;
         max-width: calc(100vw - 4rem);
         animation: ${({ isShow }) =>
             isShow ? 'openingToast ease-in-out 0.8s' : 'closingToastBottom linear 0.4s'};

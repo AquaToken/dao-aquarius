@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { hot } from 'react-hot-loader';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import useGlobalSubscriptions from './common/hooks/useGlobalSubscriptions';
 import useAssetsStore from './store/assetsStore/useAssetsStore';
 import useAuthStore from './store/authStore/useAuthStore';
@@ -29,6 +29,7 @@ const MarketPage = lazy(() => import('./pages/market/Market'));
 const RewardsPage = lazy(() => import('./pages/rewards/Rewards'));
 const AirdropPage = lazy(() => import('./pages/airdrop/Airdrop'));
 const Airdrop2Page = lazy(() => import('./pages/airdrop2/Airdrop2'));
+const ProfilePage = lazy(() => import('./pages/profile/Profile'));
 
 const UPDATE_ASSETS_DATE = 'update assets timestamp';
 const UPDATE_PERIOD = 24 * 60 * 60 * 1000;
@@ -184,6 +185,12 @@ const App = () => {
                     <Route path={MainRoutes.airdrop2}>
                         <Title title="Aquarius Airdrop #2">
                             <Airdrop2Page />
+                        </Title>
+                    </Route>
+
+                    <Route path={MainRoutes.account}>
+                        <Title title="My Aquarius">
+                            {isLogged ? <ProfilePage /> : <Redirect to={MainRoutes.main} />}
                         </Title>
                     </Route>
 

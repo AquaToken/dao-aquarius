@@ -249,10 +249,12 @@ const VotesAmountModal = ({
     updatePairs?: () => void;
     pairsAmounts?: {};
     isDownVoteModal?: boolean;
+    isSingleVoteForModal?: boolean;
     asset: Asset;
 }>) => {
     const { account, isLogged } = useAuthStore();
-    const { pairs, updatePairs, pairsAmounts, isDownVoteModal, asset } = params;
+    const { pairs, updatePairs, pairsAmounts, isDownVoteModal, asset, isSingleVoteForModal } =
+        params;
 
     useEffect(() => {
         if (!isLogged) {
@@ -535,14 +537,20 @@ const VotesAmountModal = ({
 
     return (
         <>
-            <Scrollable scrollDisabled={isDownVoteModal}>
-                <ModalTitle>{isDownVoteModal ? 'Downvote pair' : 'Selected Pairs'}</ModalTitle>
+            <Scrollable scrollDisabled={isDownVoteModal || isSingleVoteForModal}>
+                <ModalTitle>
+                    {isDownVoteModal
+                        ? 'Downvote pair'
+                        : isSingleVoteForModal
+                        ? 'Upvote pair'
+                        : 'Selected Pairs'}
+                </ModalTitle>
                 <ModalDescription>
                     {isDownVoteModal
                         ? `Submit ${targetAsset.code} against a pair if you think it has no place in the market`
                         : `Lock your ${targetAsset.code} in the network to complete your vote`}
                 </ModalDescription>
-                {isDownVoteModal && (
+                {(isDownVoteModal || isSingleVoteForModal) && (
                     <AssetsInfoBlock>
                         <Pair
                             verticalDirections
@@ -598,7 +606,7 @@ const VotesAmountModal = ({
                     disabled={!hasTrustLine || !hasTargetBalance || isHandleEdit}
                 />
 
-                {!isDownVoteModal && (
+                {!isDownVoteModal && !isSingleVoteForModal && (
                     <>
                         <ContentRow>
                             <Label>Pairs ({selectedPairs.length})</Label>

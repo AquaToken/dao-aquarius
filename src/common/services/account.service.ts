@@ -71,6 +71,18 @@ export default class AccountService extends AccountResponse {
         return Number(assetBalance.balance) - Number(assetBalance.selling_liabilities);
     }
 
+    getPoolBalance(id: string) {
+        const poolBalance = this.balances.find(
+            (balance) => (balance as Horizon.BalanceLineLiquidityPool).liquidity_pool_id === id,
+        ) as Horizon.BalanceLineLiquidityPool;
+
+        if (!poolBalance) {
+            return null;
+        }
+
+        return Number(poolBalance.balance);
+    }
+
     hasAllIceTrustlines() {
         return ICE_ASSETS.map((asset) => {
             const [code, issuer] = asset.split(':');

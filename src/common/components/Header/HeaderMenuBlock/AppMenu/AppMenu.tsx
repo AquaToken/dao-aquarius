@@ -3,10 +3,12 @@ import { LoginTypes } from '../../../../../store/authStore/types';
 import styled from 'styled-components';
 import { Breakpoints, COLORS, Z_INDEX } from '../../../../styles';
 import IconLogout from '../../../../assets/img/icon-logout.svg';
+import IconProfile from '../../../../assets/img/icon-profile.svg';
 import IconPlus from '../../../../assets/img/icon-plus.svg';
 import Aqua from '../../../../assets/img/aqua-logo-small.svg';
 import Ice from '../../../../assets/img/ice-logo.svg';
 import IconCopy from '../../../../assets/img/icon-copy.svg';
+import External from '../../../../assets/img/icon-external-link.svg';
 import useAuthStore from '../../../../../store/authStore/useAuthStore';
 import {
     ModalService,
@@ -25,7 +27,7 @@ import { ICE_CODE, ICE_ISSUER } from '../../../../services/stellar.service';
 import CopyButton from '../../../../basics/CopyButton';
 import SocialLinks from '../../../SocialLinks/SocialLinks';
 import { Link } from 'react-router-dom';
-import { LockerRoutes } from '../../../../../routes';
+import { LockerRoutes, MainRoutes } from '../../../../../routes';
 
 const MenuBlock = styled.div`
     position: absolute;
@@ -52,19 +54,21 @@ const MenuBlock = styled.div`
 
 const AccountBlock = styled.div`
     ${respondDown(Breakpoints.md)`
-        margin: 2.4rem 1.6rem;
+        margin: 2.4rem 1.6rem 0;
         background: ${COLORS.lightGray};
         border-radius: 0.5rem;
         padding: 2.4rem 1.6rem;
     `}
 `;
 
-const CopyButtonCustom = styled(CopyButton)`
-    width: 100%;
+const ExternalLogo = styled(External)`
+    margin-left: 0.8rem;
+    path {
+        fill: ${COLORS.white};
+    }
 `;
 
 const CopyIcon = styled(IconCopy)`
-    margin-left: 0.8rem;
     path {
         fill: ${COLORS.white};
     }
@@ -93,12 +97,34 @@ const AccountBalanceValue = styled.span`
     align-items: center;
 `;
 
+const ProfileBlock = styled(Link)`
+    display: flex;
+    align-items: center;
+    padding: 2.4rem 2.4rem 1.2rem;
+    cursor: pointer;
+    border-top: 0.1rem dashed ${COLORS.gray};
+    text-decoration: none;
+    color: ${COLORS.grayText};
+
+    &:hover {
+        color: ${COLORS.titleText};
+    }
+
+    ${respondDown(Breakpoints.md)`
+        justify-content: center;
+    `}
+`;
+
 const LogoutBlock = styled.div`
     display: flex;
     align-items: center;
-    padding: 2.4rem 2.4rem 2.9rem;
+    padding: 1.2rem 2.4rem 2.9rem;
     cursor: pointer;
-    border-top: 0.1rem dashed ${COLORS.gray};
+    color: ${COLORS.grayText};
+
+    &:hover {
+        color: ${COLORS.titleText};
+    }
 
     ${respondDown(Breakpoints.md)`
         justify-content: center;
@@ -106,9 +132,9 @@ const LogoutBlock = styled.div`
     `}
 `;
 
-const Logout = styled.span`
+const Logout = styled.div`
     margin-left: 0.8rem;
-    color: ${COLORS.grayText};
+    position: relative;
 `;
 
 const SignInButton = styled.div`
@@ -193,6 +219,29 @@ const IceLogo = styled(Ice)`
     margin-right: 0.8rem;
 `;
 
+const LinkButton = styled.a`
+    width: 100%;
+    margin-right: 1rem;
+`;
+
+const NewItem = styled.div`
+    position: absolute;
+    left: calc(100% + 0.5rem);
+    top: -0.5rem;
+    height: 1.8rem;
+    padding: 0 0.6rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.1rem;
+    line-height: 2rem;
+    text-transform: uppercase;
+    text-align: center;
+    color: ${COLORS.white};
+    background-color: ${COLORS.tooltip};
+    border-radius: 0.5rem;
+    white-space: nowrap;
+`;
+
 const AppMenu = ({
     closeMenu,
     navLinks,
@@ -233,12 +282,21 @@ const AppMenu = ({
                         <AccountPublic>{accountIdView}</AccountPublic>
                     </AccountInfo>
                     <AccountBalanceBlock>
-                        <CopyButtonCustom text={account.accountId()} withoutLogo>
+                        <LinkButton
+                            target="_blank"
+                            href={`https://stellar.expert/explorer/public/account/${account.accountId()}`}
+                        >
                             <Button fullWidth>
-                                copy address
+                                EXPLORER
+                                <ExternalLogo />
+                            </Button>
+                        </LinkButton>
+
+                        <CopyButton text={account.accountId()} withoutLogo>
+                            <Button isSquare>
                                 <CopyIcon />
                             </Button>
-                        </CopyButtonCustom>
+                        </CopyButton>
                     </AccountBalanceBlock>
                     <AccountBalanceBlock>
                         <AccountBalance>
@@ -266,6 +324,19 @@ const AppMenu = ({
                             </Link>
                         </CircleButton>
                     </AccountBalanceBlock>
+
+                    <ProfileBlock
+                        to={MainRoutes.account}
+                        onClick={() => {
+                            closeMenu();
+                        }}
+                    >
+                        <IconProfile />
+                        <Logout>
+                            My Aquarius<NewItem>NEW</NewItem>
+                        </Logout>
+                    </ProfileBlock>
+
                     <LogoutBlock
                         onClick={() => {
                             closeMenu();

@@ -370,7 +370,12 @@ const RewardsList = () => {
                             market_key,
                         }) => (
                             <TableBodyRowWrap
-                                key={daily_sdex_reward}
+                                key={
+                                    market_key.asset1_code +
+                                    market_key.asset1_issuer +
+                                    market_key.asset2_code +
+                                    market_key.asset2_issuer
+                                }
                                 onClick={() => goToMarketPage(market_key)}
                             >
                                 <TableBodyRow>

@@ -9,14 +9,12 @@ import { respondDown } from '../mixins';
 const Container = styled.div`
     position: fixed;
     right: 0;
-    top: 0;
+    bottom: 0;
     z-index: ${Z_INDEX.toast};
 
     ${respondDown(Breakpoints.md)`
         display: flex;
         flex-direction: column-reverse;
-        bottom: 0;
-        top: unset;
     `}
 `;
 

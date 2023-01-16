@@ -8,6 +8,7 @@ export enum MainRoutes {
     rewards = '/rewards',
     airdrop = '/airdrop',
     airdrop2 = '/airdrop2',
+    account = '/account',
 }
 
 //TODO: Replace constants with enums after TS 5.0 release

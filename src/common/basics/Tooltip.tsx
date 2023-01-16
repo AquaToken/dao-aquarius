@@ -1,6 +1,7 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 import { COLORS, Z_INDEX } from '../styles';
+import { useState } from 'react';
 
 export enum TOOLTIP_POSITION {
     top = 'top',
@@ -154,11 +155,12 @@ interface TooltipProps extends React.DOMAttributes<HTMLDivElement> {
     children: React.ReactNode;
     content: React.ReactNode;
     position: TOOLTIP_POSITION;
-    isShow: boolean;
+    isShow?: boolean;
     isError?: boolean;
     isSuccess?: boolean;
     isWhite?: boolean;
     isDark?: boolean;
+    showOnHover?: boolean;
 }
 
 const Tooltip = ({
@@ -170,12 +172,19 @@ const Tooltip = ({
     isSuccess,
     isWhite,
     isDark,
+    showOnHover,
     ...props
 }: TooltipProps): JSX.Element => {
+    const [onHover, setOnHover] = useState(false);
+
     return (
-        <ChildrenBlock {...props}>
+        <ChildrenBlock
+            {...props}
+            onMouseEnter={() => setOnHover(true)}
+            onMouseLeave={() => setOnHover(false)}
+        >
             {children}
-            {isShow && (
+            {(showOnHover ? onHover : isShow) && (
                 <TooltipBody
                     position={position}
                     isError={isError}
