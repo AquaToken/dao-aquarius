@@ -100,6 +100,7 @@ const AppName = styled.div`
     position: relative;
     width: min-content;
     height: 2.8rem;
+    white-space: nowrap;
 `;
 
 const LatestAdded = styled.div`
