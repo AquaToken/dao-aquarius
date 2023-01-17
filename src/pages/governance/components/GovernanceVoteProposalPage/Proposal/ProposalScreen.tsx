@@ -35,6 +35,7 @@ const BackTo = styled.div`
     display: flex;
     column-gap: 1.6rem;
     align-items: center;
+    margin-bottom: 5rem;
 `;
 
 export const BackButton = styled(Link)`
@@ -62,10 +63,18 @@ const EditButtonLabel = styled.div`
     margin-left: auto;
 `;
 
+const Id = styled.div`
+    font-size: 1.6rem;
+    line-height: 2.8rem;
+    color: ${COLORS.descriptionText};
+    opacity: 0.7;
+    margin-bottom: 0.4rem;
+`;
+
 const QuestionText = styled.h3`
     font-size: 5.6rem;
     line-height: 6.4rem;
-    margin-top: 2.3rem;
+
     color: ${COLORS.titleText};
 
     ${respondDown(Breakpoints.md)`
@@ -356,6 +365,7 @@ const ProposalScreen = ({
                                     </>
                                 )}
                         </BackTo>
+                        {Boolean(proposal.id) && <Id>Proposal #{proposal.id}</Id>}
                         <QuestionText>
                             {currentVersionProposal ? currentVersionProposal.title : title}
                         </QuestionText>

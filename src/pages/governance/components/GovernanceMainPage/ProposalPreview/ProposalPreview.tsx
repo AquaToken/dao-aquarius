@@ -15,7 +15,7 @@ import Aqua from '../../../../../common/assets/img/aqua-logo-small.svg';
 import Ice from '../../../../../common/assets/img/ice-logo.svg';
 import CurrentResults from './CurrentResults/CurrentResults';
 import { Link } from 'react-router-dom';
-import { respondDown } from '../../../../../common/mixins';
+import { flexAllCenter, respondDown } from '../../../../../common/mixins';
 import useAuthStore from '../../../../../store/authStore/useAuthStore';
 import { StellarService, ToastService } from '../../../../../common/services/globalServices';
 import {
@@ -59,11 +59,18 @@ const Container = styled.div`
 `;
 
 const Header = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    column-gap: 6rem;
     margin-bottom: 1.6rem;
+    display: grid;
+    grid-template-areas: 'id title status';
+    grid-template-columns: min-content auto 1fr;
+    align-items: center;
+    grid-column-gap: 1.5rem;
+
+    ${respondDown(Breakpoints.lg)`
+        grid-template-areas: 'id status' 'title title';
+        grid-template-columns: min-content 1fr;
+        grid-row-gap: 1.5rem;
+    `}
 `;
 
 const Title = styled.span`
@@ -71,6 +78,27 @@ const Title = styled.span`
     font-size: 2rem;
     line-height: 2.8rem;
     color: ${COLORS.titleText};
+    margin-right: auto;
+    grid-area: title;
+    align-items: center;
+`;
+
+const Id = styled.div`
+    padding: 0.2rem 0.4rem;
+    ${flexAllCenter};
+    background: ${COLORS.lightGray};
+    color: ${COLORS.grayText};
+    font-size: 1.4rem;
+    font-weight: 400;
+    line-height: 2rem;
+    grid-area: id;
+    height: min-content;
+    border-radius: 0.5rem;
+`;
+
+const ProposalStatusStyled = styled(ProposalStatus)`
+    margin-left: auto;
+    grid-area: status;
 `;
 
 const Text = styled.div`
@@ -479,8 +507,9 @@ const ProposalPreview = ({
         <Container>
             <Link to={`${GovernanceRoutes.proposal}/${proposal.id}/`}>
                 <Header>
+                    <Id>#{proposal.id}</Id>
                     <Title>{proposal.title}</Title>
-                    <ProposalStatus status={status} />
+                    <ProposalStatusStyled status={status} />
                 </Header>
                 <Text>{proposal.text.replace(/<[^>]*>?/gm, ' ')}</Text>
                 <SummaryBlock>
