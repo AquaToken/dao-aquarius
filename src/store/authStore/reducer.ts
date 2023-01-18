@@ -1,7 +1,7 @@
 import { AUTH_ACTIONS, AuthStore, LoginTypes } from './types';
 import { SignClientTypes } from '@walletconnect/types';
 import AccountService from '../../common/services/account.service';
-import { ActionSimpleResult } from '../../common/store/types';
+import { ActionSimpleResult } from '../types';
 
 export const initialState: AuthStore = {
     isLogged: false,

@@ -4,7 +4,7 @@ import { SignClientTypes } from '@walletconnect/types';
 import AccountService from '../../common/services/account.service';
 import AccountRecord from 'stellar-sdk';
 import { StellarService } from '../../common/services/globalServices';
-import { ActionAsyncResult, ActionResult, ActionSimpleResult } from '../../common/store/types';
+import { ActionAsyncResult, ActionResult, ActionSimpleResult } from '../types';
 
 export function login(
     pubKey: string,
