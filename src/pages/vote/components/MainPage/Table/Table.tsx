@@ -280,7 +280,7 @@ const ArrowRightIcon = styled(ArrowRight)`
     `}
 `;
 
-export const MIN_REWARDS_PERCENT = 1;
+export const MIN_REWARDS_PERCENT = 0.5;
 
 export const isRewardsOn = (value: string, total: string): boolean => {
     const percent = (Number(value) / Number(total)) * 100;
