@@ -3,6 +3,7 @@ import Tooltip, { TOOLTIP_POSITION } from '../../../../common/basics/Tooltip';
 import styled from 'styled-components';
 import { COLORS } from '../../../../common/styles';
 import { useState } from 'react';
+import { MIN_REWARDS_PERCENT } from '../MainPage/Table/Table';
 
 const TooltipInner = styled.div`
     width: 28.8rem;
@@ -74,8 +75,8 @@ export const RewardLabel = () => {
         <Tooltip
             content={
                 <TooltipInner>
-                    Any market with at least 1% of the total AQUA votes is placed into the reward
-                    zone and will get rewards after the next rewards update.
+                    Any market with at least {MIN_REWARDS_PERCENT}% of the total AQUA votes is
+                    placed into the reward zone and will get rewards after the next rewards update.
                 </TooltipInner>
             }
             position={TOOLTIP_POSITION.top}
