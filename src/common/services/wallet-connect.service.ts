@@ -389,12 +389,10 @@ export default class WalletConnectServiceClass {
             }
             this.appMeta = null;
 
-            if (e.message === '') {
-                return;
-            }
-
             const errorMessage =
-                e.message === 'rejected' ? 'Connection cancelled by the user' : e.message;
+                e.message === 'rejected' || e.message === ''
+                    ? 'Connection cancelled by the user'
+                    : e.message;
 
             ToastService.showErrorToast(
                 errorMessage ??
