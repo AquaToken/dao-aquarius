@@ -533,7 +533,7 @@ const ProposalPreview = ({
                             </SummaryColumn>
                             <SummaryColumn>
                                 <SummaryTitle>Discussion channel:</SummaryTitle>
-                                <SummaryValue>{proposal.discord_channel_name}</SummaryValue>
+                                <SummaryValue>Proposal #{proposal.id}</SummaryValue>
                             </SummaryColumn>
                         </>
                     )}
@@ -569,7 +569,7 @@ const ProposalPreview = ({
                             </SummaryColumn>
                             <SummaryColumn>
                                 <SummaryTitle>Discussion channel:</SummaryTitle>
-                                <SummaryValue>{proposal.discord_channel_name}</SummaryValue>
+                                <SummaryValue>Proposal #{proposal.id}</SummaryValue>
                             </SummaryColumn>
                             <SummaryColumn>
                                 <CurrentResults proposal={proposal} />
