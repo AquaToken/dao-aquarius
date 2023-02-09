@@ -390,7 +390,9 @@ export default class WalletConnectServiceClass {
             this.appMeta = null;
 
             const errorMessage =
-                e.message === 'rejected' || e.message === ''
+                e.message === 'rejected' ||
+                e.message === '' ||
+                getSdkError('USER_REJECTED').code === e?.code
                     ? 'Connection cancelled by the user'
                     : e.message;
 
