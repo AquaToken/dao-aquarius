@@ -132,7 +132,7 @@ export const SummaryColumn = styled.div`
     display: flex;
     flex-direction: column;
     flex: 1;
-    max-width: 31%;
+    max-width: 33%;
 
     ${respondDown(Breakpoints.md)`
          max-width: unset;
