@@ -42,7 +42,9 @@ const Contacts = () => {
                 <ExternalLink href="https://discord.com/invite/sgzFscHp4C">
                     Discord chat
                 </ExternalLink>
-                <ExternalLink href="https://t.me/aquarius_HOME">Telegram chat</ExternalLink>
+                <ExternalLink href="https://t.me/aquarius_official_community">
+                    Telegram chat
+                </ExternalLink>
             </Links>
         </Container>
     );

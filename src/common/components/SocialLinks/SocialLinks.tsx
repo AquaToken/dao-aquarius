@@ -90,7 +90,7 @@ const SocialLinks = ({ isHorizontal }: { isHorizontal?: boolean }) => {
             <a href="https://github.com/AquaToken" target="_blank">
                 <Github />
             </a>
-            <a href="https://t.me/aquarius_HOME" target="_blank">
+            <a href="https://t.me/aquarius_official_community" target="_blank">
                 <Telegram />
             </a>
             <a href="https://twitter.com/aqua_token" target="_blank">

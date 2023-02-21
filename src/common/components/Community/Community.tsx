@@ -159,7 +159,7 @@ const Community = () => {
                     other community members.
                 </Description>
                 <Links>
-                    <Link href="https://t.me/aquarius_HOME" target="_blank">
+                    <Link href="https://t.me/aquarius_official_community" target="_blank">
                         <Item>
                             <ItemContent>
                                 <Telegram />
