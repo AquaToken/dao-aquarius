@@ -5,7 +5,7 @@ import { respondDown } from '../../common/mixins';
 import { Breakpoints, COLORS } from '../../common/styles';
 import SupportedBy from './components/SupportedBy/SupportedBy';
 import About from './components/About/About';
-import Airdrop from './components/Airdrop/Airdrop';
+import IceBlock from './components/IceBlock/IceBlock';
 import Roadmap from './components/Roadmap/Roadmap';
 import Community from '../../common/components/Community/Community';
 import Subscribe from '../../common/components/Subscribe/Subscribe';
@@ -34,7 +34,7 @@ const MainPage = () => {
 
             <About />
 
-            <Airdrop />
+            <IceBlock />
 
             <Roadmap />
 

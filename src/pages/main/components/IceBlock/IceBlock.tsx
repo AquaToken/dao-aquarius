@@ -2,8 +2,7 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../../../common/styles';
 import { respondDown } from '../../../../common/mixins';
-import Airdrop2 from '../../../../common/assets/img/airdrop2.svg';
-import Success from '../../../../common/assets/img/icon-success-green.svg';
+import Ice from '../../../../common/assets/img/ice-logo.svg';
 import Arrow from '../../../../common/assets/img/icon-link-arrow.svg';
 import Button from '../../../../common/basics/Button';
 import { Link } from 'react-router-dom';
@@ -11,7 +10,7 @@ import { MainRoutes } from '../../../../routes';
 
 const Container = styled.section`
     width: 100%;
-    background-color: ${COLORS.titleText};
+    background-color: ${COLORS.blue};
     padding: 10rem 0;
     display: flex;
     justify-content: center;
@@ -37,21 +36,6 @@ const Wrapper = styled.div`
     ${respondDown(Breakpoints.lg)`
         flex-direction: column;
     `}
-`;
-
-const Label = styled.div`
-    display: flex;
-    align-items: center;
-    width: min-content;
-    margin-bottom: 2.4rem;
-    padding: 0.7rem 0.9rem 0.7rem 0.7rem;
-    background-color: ${COLORS.tooltip};
-    border-radius: 0.5rem;
-    font-size: 1.2rem;
-    font-weight: 700;
-    line-height: 1.4rem;
-    color: ${COLORS.white};
-    white-space: nowrap;
 `;
 
 const Title = styled.div`
@@ -132,67 +116,68 @@ const BlockDescription = styled.div`
     font-size: 1.8rem;
     line-height: 3.2rem;
     font-weight: 700;
-    color: ${COLORS.descriptionText};
+    color: ${COLORS.blue};
 `;
 
-const Airdrop2Logo = styled(Airdrop2)`
+const IceLogo = styled(Ice)`
     height: 6.5rem;
     margin-bottom: 3.8rem;
-`;
-
-const SuccessLogo = styled(Success)`
-    width: 1.5rem;
-    height: 1.9rem;
-    margin-right: 0.6rem;
 `;
 
 const StyledButton = styled(Button)`
     margin-top: 2.8rem;
     width: 100%;
     text-decoration: none;
+    background-color: ${COLORS.blue};
+
+    &:hover {
+        background-color: ${COLORS.blue};
+        opacity: 0.9;
+    }
 `;
 
-const Airdrop = () => {
+const IceBlock = () => {
     return (
         <Container>
             <Wrapper>
                 <div>
-                    <Label>⚡ Snapshot taken on January 15th, 2022!</Label>
-                    <Title>Airdrop #2</Title>
+                    <Title>ICE tokens</Title>
                     <Description>
-                        Airdrop #2 distribution is now complete. Rewards have been split into 36
-                        payments with each one unlocking monthly. Users can see airdrop rewards
-                        inside their eligible Stellar wallets as pending payments.
+                        With our AQUA locker tool, users can freeze their AQUA into ICE tokens on
+                        Stellar. ICE tokens bring a whole new dimension to Aquarius, creating a way
+                        for AQUA holders to increase rewards earned from SDEX market making and AMM
+                        liquidity provision and boost voting flexibility & power.
                     </Description>
                 </div>
                 <Column>
                     <FirstBlock>
                         <BlockColumn>
-                            <Airdrop2Logo />
-                            <BlockTitle>
-                                Check your Stellar addresses to see if they are eligible
-                            </BlockTitle>
-                            <Link to={MainRoutes.airdrop2}>
+                            <IceLogo />
+                            <BlockTitle>Turn AQUA into ICE with just a few clicks</BlockTitle>
+                            <a
+                                target="_blank"
+                                href="https://medium.com/aquarius-aqua/ice-the-next-stage-of-aquarius-810edc7cf3bb"
+                            >
                                 <StyledButton isBig>Learn more</StyledButton>
-                            </Link>
+                            </a>
                         </BlockColumn>
                     </FirstBlock>
-                    <a target="_blank" href="https://airdrop.aqua.network/">
+                    <Link
+                        onClick={() => setTimeout(() => window.scrollTo(0, 0))}
+                        to={MainRoutes.locker}
+                    >
                         <Block>
                             <BlockColumn>
-                                <BlockTitle>Initial Airdrop</BlockTitle>
-                                <BlockDescription>
-                                    <SuccessLogo />
-                                    Distribution completed
-                                </BlockDescription>
+                                <BlockTitle>Locker Tool</BlockTitle>
+                                <BlockDescription>Click here to freeze AQUA</BlockDescription>
                             </BlockColumn>
                             <Arrow />
                         </Block>
-                    </a>
+                    </Link>
                 </Column>
             </Wrapper>
         </Container>
     );
 };
 
-export default Airdrop;
+export default IceBlock;
