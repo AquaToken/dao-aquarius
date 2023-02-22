@@ -228,6 +228,12 @@ export default class WalletConnectServiceClass {
                 }) as Promise<WalletConnectClient>,
             ]);
 
+            // there is a problem with updating the states in wallet connect, a small timeout solves this problem
+            // TODO delete this when it is fixed in the library
+            await new Promise((resolve) => {
+                setTimeout(() => resolve(void 0), 500);
+            });
+
             this.listenWalletConnectEvents();
 
             if (!this.client.session.length) {
