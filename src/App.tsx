@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import useGlobalSubscriptions from './common/hooks/useGlobalSubscriptions';
 import useAssetsStore from './store/assetsStore/useAssetsStore';
 import useAuthStore from './store/authStore/useAuthStore';
-import { StellarService } from './common/services/globalServices';
+import { StellarService, WalletConnectService } from './common/services/globalServices';
 import Header, { HeaderNavLink } from './common/components/Header/Header';
 import { MainRoutes } from './routes';
 import PageLoader from './common/basics/PageLoader';
@@ -34,6 +34,7 @@ const UPDATE_ASSETS_DATE = 'update assets timestamp';
 const UPDATE_PERIOD = 24 * 60 * 60 * 1000;
 
 const App = () => {
+    const [wcLoginChecked, setWcLoginChecked] = useState(false);
     useGlobalSubscriptions();
 
     const { getAssets, assets, processNewAssets, assetsInfo, clearAssets } = useAssetsStore();
@@ -56,6 +57,12 @@ const App = () => {
     }, []);
 
     useEffect(() => {
+        WalletConnectService.loginIfSessionExist().then(() => {
+            setWcLoginChecked(true);
+        });
+    }, []);
+
+    useEffect(() => {
         if (assets.length) {
             processNewAssets(assets);
         }
@@ -69,7 +76,7 @@ const App = () => {
         }
     }, [isLogged]);
 
-    if (!isAssetsUpdated || !assetsInfo.size) {
+    if (!isAssetsUpdated || !assetsInfo.size || !wcLoginChecked) {
         return <PageLoader />;
     }
 

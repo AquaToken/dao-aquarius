@@ -154,6 +154,20 @@ const setVersionToLS = (version) => {
     LS.setItem(WC_VERSION_ALIAS, version);
 };
 
+const wcSessionAlias = 'wc@2:client:0.3//session';
+
+const isSessionExist = (): boolean => {
+    const LS = getLocalStorage();
+
+    if (!LS) {
+        return;
+    }
+
+    const sessionList = JSON.parse(LS.getItem(wcSessionAlias) || '[]');
+
+    return Boolean(sessionList.length);
+};
+
 export default class WalletConnectServiceClass {
     appMeta: SignClientTypes.Metadata | null = null;
     client: WalletConnectClient | null = null;
@@ -203,6 +217,14 @@ export default class WalletConnectServiceClass {
                     });
             }
         });
+    }
+
+    loginIfSessionExist(): Promise<void> {
+        if (!isSessionExist()) {
+            return Promise.resolve();
+        }
+
+        return this.login();
     }
 
     async initWalletConnect(): Promise<boolean> {
