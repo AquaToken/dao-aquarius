@@ -86,8 +86,8 @@ const TradeStats = ({ base, counter }) => {
             <LightWeightChart base={base} counter={counter} period={period} />
 
             <ExternalLinkStyled
-                href={`https://stellarx.com/markets/${assetToString(counter)}/${assetToString(
-                    base,
+                href={`https://stellarx.com/markets/${assetToString(base)}/${assetToString(
+                    counter,
                 )}`}
             >
                 See SDEX on StellarX
