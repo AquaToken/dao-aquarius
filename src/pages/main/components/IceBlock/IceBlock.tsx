@@ -143,10 +143,10 @@ const IceBlock = () => {
                 <div>
                     <Title>ICE tokens</Title>
                     <Description>
-                        With our AQUA locker tool, users can freeze their AQUA into ICE tokens on
-                        Stellar. ICE tokens bring a whole new dimension to Aquarius, creating a way
-                        for AQUA holders to increase rewards earned from SDEX market making and AMM
-                        liquidity provision and boost voting flexibility & power.
+                        Freeze your AQUA to ICE tokens securely on the Stellar network with our AQUA
+                        locker tool. ICE tokens bring a whole new dimension to Aquarius, creating a
+                        way for AQUA holders to increase rewards earned from SEX market making and
+                        AMM liquidity provision and boost voting flexibility & power.
                     </Description>
                 </div>
                 <Column>
