@@ -70,8 +70,8 @@ enum OPERATIONS_ERROR_CODES {
 
 export default function ErrorHandler(error) {
     // wallet connect case
-    if (error?.message === "Cannot read properties of undefined (reading 'message')") {
-        return 'Request timeout';
+    if (error?.message === '') {
+        return 'Transaction request timeout';
     }
 
     //wallet connect case

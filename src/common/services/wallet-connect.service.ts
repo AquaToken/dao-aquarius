@@ -239,7 +239,7 @@ export default class WalletConnectServiceClass {
             }
             this.client = await Promise.race([
                 WalletConnectClient.init({
-                    logger: 'debug',
+                    // logger: 'debug',
                     projectId: process.env.WALLET_CONNECT_PROJECT_ID,
                     metadata: this.selfMeta,
                 }),
