@@ -6,7 +6,13 @@ import DotsLoader from '../../../../common/basics/DotsLoader';
 import AssetLogo, { bigLogoStyles, logoStyles } from '../AssetDropdown/AssetLogo';
 import External from '../../../../common/assets/img/icon-external-link.svg';
 import { flexAllCenter, respondDown } from '../../../../common/mixins';
-import { AuthRequiredLabel, BoostLabel, NoLiquidityLabel, RewardLabel } from './Labels';
+import {
+    AuthRequiredLabel,
+    BoostLabel,
+    MaxRewardsLabel,
+    NoLiquidityLabel,
+    RewardLabel,
+} from './Labels';
 import { AssetSimple } from '../../../../store/assetsStore/types';
 import { getAssetString } from '../../../../store/assetsStore/actions';
 import { LumenInfo } from '../../../../store/assetsStore/reducer';
@@ -162,6 +168,7 @@ type PairProps = {
     isBigLogo?: boolean;
     isCircleLogos?: boolean;
     withoutLink?: boolean;
+    isMaxRewards?: boolean;
 };
 
 const Pair = ({
@@ -180,6 +187,7 @@ const Pair = ({
     isBigLogo,
     isCircleLogos,
     withoutLink,
+    isMaxRewards,
 }: PairProps): JSX.Element => {
     const { assetsInfo } = useAssetsStore();
 
@@ -237,6 +245,7 @@ const Pair = ({
                     </span>
                     {boosted && !bottomLabels && <BoostLabel />}
                     {isRewardsOn && !bottomLabels && <RewardLabel />}
+                    {isMaxRewards && !bottomLabels && <MaxRewardsLabel />}
                     {authRequired && !bottomLabels && <AuthRequiredLabel />}
                     {noLiquidity && !bottomLabels && <NoLiquidityLabel />}
                     {!withoutLink && (
@@ -258,6 +267,7 @@ const Pair = ({
                 <Labels>
                     {boosted && <BoostLabel />}
                     {isRewardsOn && <RewardLabel />}
+                    {isMaxRewards && <MaxRewardsLabel />}
                     {authRequired && <AuthRequiredLabel />}
                     {noLiquidity && <NoLiquidityLabel />}
                 </Labels>

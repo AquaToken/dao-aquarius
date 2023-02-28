@@ -3,7 +3,7 @@ import { useCallback, useState } from 'react';
 import Tooltip, { TOOLTIP_POSITION } from '../../../../common/basics/Tooltip';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../../../common/styles';
-import { MIN_REWARDS_PERCENT } from '../MainPage/Table/Table';
+import { MAX_REWARDS_PERCENT, MIN_REWARDS_PERCENT } from '../MainPage/Table/Table';
 import { respondDown } from '../../../../common/mixins';
 
 const TooltipInner = styled.div`
@@ -26,16 +26,19 @@ const LabelWrap = styled.div`
     margin-top: -1rem;
 `;
 
-const Label = styled.div<{ isRed?: boolean; isGreen?: boolean }>`
+const Label = styled.div<{ isRed?: boolean; isGreen?: boolean; isDark?: boolean }>`
     height: 1.6rem;
     padding: 0 0.4rem;
     border-radius: 0.3rem;
-    background: ${({ isRed, isGreen }) => {
+    background: ${({ isRed, isGreen, isDark }) => {
         if (isRed) {
             return COLORS.pinkRed;
         }
         if (isGreen) {
             return COLORS.green;
+        }
+        if (isDark) {
+            return COLORS.titleText;
         }
         return COLORS.purple;
     }};
@@ -53,11 +56,13 @@ const LabelComponent = ({
     text,
     isGreen,
     isRed,
+    isDark,
 }: {
     title: string;
     text: string | React.ReactNode;
     isGreen?: boolean;
     isRed?: boolean;
+    isDark?: boolean;
 }) => {
     const [showTooltip, setShowTooltip] = useState(false);
     const [isEnoughSpaceOnTop, setIsEnoughSpaceOnTop] = useState(true);
@@ -78,11 +83,12 @@ const LabelComponent = ({
             isShow={showTooltip}
             isSuccess={isGreen}
             isError={isRed}
+            isDark={isDark}
             onMouseEnter={() => setShowTooltip(true)}
             onMouseLeave={() => setShowTooltip(false)}
         >
             <LabelWrap>
-                <Label isGreen={isGreen} isRed={isRed}>
+                <Label isGreen={isGreen} isRed={isRed} isDark={isDark}>
                     {title}
                 </Label>
             </LabelWrap>
@@ -139,6 +145,16 @@ export const NoLiquidityLabel = () => {
                 'This market pair is not eligible for AQUA rewards at the moment, as it failed the liquidity test (no path payment from XLM).'
             }
             isRed
+        />
+    );
+};
+
+export const MaxRewardsLabel = () => {
+    return (
+        <LabelComponent
+            title={'MAX REWARDS'}
+            text={`Every market has a ${MAX_REWARDS_PERCENT}% maximum limit of total daily rewards. Any additional percentage points beyond this limit are distributed equally among all other markets in the reward zone.`}
+            isDark
         />
     );
 };

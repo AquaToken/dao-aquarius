@@ -9,7 +9,7 @@ import { commonMaxWidth, flexAllCenter, respondDown } from '../../../common/mixi
 import { getFilteredPairsList, getTotalVotingStats } from '../../vote/api/api';
 import Pair from '../../vote/components/common/Pair';
 import PageLoader from '../../../common/basics/PageLoader';
-import { isRewardsOn } from '../../vote/components/MainPage/Table/Table';
+import { isRewardsOn, MAX_REWARDS_PERCENT } from '../../vote/components/MainPage/Table/Table';
 import AboutAsset from '../components/AboutAsset/AboutAsset';
 import MarketBribes from '../components/MarketBribes/MarketBribes';
 import Sidebar from '../components/Sidebar/Sidebar';
@@ -289,6 +289,14 @@ const MarketPage = () => {
                                               votesData.adjusted_votes_value,
                                               totalStats.adjusted_votes_value_sum,
                                           )
+                                        : false
+                                }
+                                isMaxRewards={
+                                    votesData && votesData.adjusted_votes_value
+                                        ? (votesData.adjusted_votes_value /
+                                              totalStats.adjusted_votes_value_sum) *
+                                              100 >
+                                          MAX_REWARDS_PERCENT
                                         : false
                                 }
                                 isBigLogo

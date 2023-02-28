@@ -281,6 +281,7 @@ const ArrowRightIcon = styled(ArrowRight)`
 `;
 
 export const MIN_REWARDS_PERCENT = 0.5;
+export const MAX_REWARDS_PERCENT = 10;
 
 export const isRewardsOn = (value: string, total: string): boolean => {
     const percent = (Number(value) / Number(total)) * 100;
@@ -384,6 +385,14 @@ const Table = ({
                                                 pair.adjusted_votes_value,
                                                 totalStats.adjusted_votes_value_sum,
                                             )
+                                        }
+                                        isMaxRewards={
+                                            pair.adjusted_votes_value
+                                                ? (Number(pair.adjusted_votes_value) /
+                                                      Number(totalStats.adjusted_votes_value_sum)) *
+                                                      100 >
+                                                  MAX_REWARDS_PERCENT
+                                                : false
                                         }
                                         mobileVerticalDirections
                                         authRequired={pair.auth_required}
