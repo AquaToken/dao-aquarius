@@ -283,6 +283,7 @@ export default class StellarServiceClass {
             .limit(limit)
             .call()
             .then((claimable) => {
+                console.log(claimable);
                 this.claimableBalances = claimable.records;
                 this.event.trigger({ type: StellarEvents.claimableUpdate });
 
@@ -302,21 +303,41 @@ export default class StellarServiceClass {
     }
 
     getAccountLocks(publicKey: string) {
+        const LOCKS_LIMIT = 200;
         return this.server
             .claimableBalances()
             .sponsor(publicKey)
-            .claimant(publicKey)
             .order('desc')
-            .limit(200)
+            .limit(LOCKS_LIMIT)
             .call()
             .then((claimable) => {
-                return claimable.records.filter(
+                if (claimable.records.length === LOCKS_LIMIT) {
+                    return this.getNextLocks(claimable.records, claimable.next, LOCKS_LIMIT);
+                }
+                return claimable.records;
+            })
+            .then((records) => {
+                return records.filter(
                     (claim) =>
                         claim.claimants.length === 1 &&
                         claim.claimants[0].destination === publicKey &&
                         claim.asset === `${AQUA_CODE}:${AQUA_ISSUER}`,
                 );
             });
+    }
+
+    getNextLocks(
+        claims,
+        next: () => Promise<ServerApi.CollectionPage<ServerApi.ClaimableBalanceRecord>>,
+        limit: number,
+    ): Promise<ServerApi.ClaimableBalanceRecord[]> {
+        return next().then((res) => {
+            if (res.records.length === limit) {
+                return this.getNextLocks([...claims, ...res.records], res.next, limit);
+            }
+
+            return [...claims, ...res.records];
+        });
     }
 
     getNextClaimableBalances(
