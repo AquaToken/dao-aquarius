@@ -283,7 +283,6 @@ export default class StellarServiceClass {
             .limit(limit)
             .call()
             .then((claimable) => {
-                console.log(claimable);
                 this.claimableBalances = claimable.records;
                 this.event.trigger({ type: StellarEvents.claimableUpdate });
 
