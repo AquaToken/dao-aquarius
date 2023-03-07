@@ -9,6 +9,7 @@ export const COLORS = {
     buttonBackground: '#23024D',
     purple: '#872AB0',
     tooltip: '#8620B9',
+    background: '#5C1283',
     gray: '#E8E8ED',
     lightGray: '#FAFAFB',
     placeholder: '#B3B4C3',
