@@ -170,10 +170,11 @@ export const MobileLink = styled(ExternalLink)`
 `;
 
 export const goToStellarExpert = ({ transactions }) => {
+    const tab = window.open('', '_blank');
     transactions().then((res) => {
         const hash = res?.records?.[0]?.hash;
         if (hash) {
-            window.open(`https://stellar.expert/explorer/public/tx/${hash}`, '_blank');
+            tab.location.href = `https://stellar.expert/explorer/public/tx/${hash}`;
         }
     });
 };

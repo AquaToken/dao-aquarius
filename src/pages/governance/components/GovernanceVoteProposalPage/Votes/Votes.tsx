@@ -133,9 +133,10 @@ const IceLogo = styled(Ice)`
 `;
 
 const onVoteLinkClick = (url: string) => {
+    const tab = window.open('', '_blank');
     getVoteTxHash(url).then((hash: string) => {
         if (hash) {
-            window.open(`https://stellar.expert/explorer/public/tx/${hash}`, '_blank');
+            tab.location.href = `https://stellar.expert/explorer/public/tx/${hash}`;
         }
     });
 };
