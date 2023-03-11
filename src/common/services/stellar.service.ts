@@ -813,16 +813,10 @@ export default class StellarServiceClass {
             .call();
     }
 
-    // from Liquidity pool XLM / USDC(centre.io) (a468d41d8e9b8f3c7209651608b74b7db7ac9952dcae0cdf24871d1d9c7b0088)
     getLumenUsdPrice(): Promise<number> {
-        return this.server
-            .liquidityPools()
-            .liquidityPoolId('a468d41d8e9b8f3c7209651608b74b7db7ac9952dcae0cdf24871d1d9c7b0088')
-            .call()
-            .then(({ reserves }) => {
-                const [native, usdc] = reserves;
-                return Number(usdc.amount) / Number(native.amount);
-            });
+        return axios.get<any>('https://api.stellarterm.com/v1/ticker.json').then(({ data }) => {
+            return data._meta.externalPrices.USD_XLM;
+        });
     }
 
     getLiquidityPoolData(
