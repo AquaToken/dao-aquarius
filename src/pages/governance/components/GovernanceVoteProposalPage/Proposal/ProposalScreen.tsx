@@ -100,6 +100,10 @@ const LeftContent = styled.div`
     ${respondDown(Breakpoints.lg)`
         max-width: 58.2rem;
       `}
+
+    ${respondDown(Breakpoints.md)`
+        max-width: unset;
+    `}
 `;
 
 const Title = styled.h5`
