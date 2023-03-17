@@ -1,10 +1,19 @@
 import AccountRecord, * as StellarSdk from 'stellar-sdk';
 import { AccountResponse, Horizon } from 'stellar-sdk';
 import { LoginTypes } from '../../store/authStore/types';
-import { ModalService, StellarService, ToastService, WalletConnectService } from './globalServices';
+import {
+    LedgerService,
+    ModalService,
+    StellarService,
+    WalletConnectService,
+} from './globalServices';
 import { AQUA_CODE, AQUA_ISSUER, ICE_ASSETS } from './stellar.service';
 import { BuildSignAndSubmitStatuses } from './wallet-connect.service';
 import SignWithPublic from '../modals/SignWithPublic';
+import LedgerSignTx from '../modals/LedgerModals/LedgerSignTx';
+import SentToVault from '../modals/MultisigModals/SentToVault';
+
+const VAULT_MARKER = 'GA2T6GR7VXXXBETTERSAFETHANSORRYXXXPROTECTEDBYLOBSTRVAULT';
 
 export default class AccountService extends AccountResponse {
     authType?: LoginTypes;
@@ -16,7 +25,21 @@ export default class AccountService extends AccountResponse {
         this.authType = authType;
     }
 
-    signAndSubmitTx(
+    get isMultisigEnabled() {
+        return Boolean(this.signers.length > 1);
+    }
+
+    get isVaultEnabled() {
+        if (this.signers.length === 1) {
+            return false;
+        }
+
+        const vaultMarker = this.signers.find(({ key }) => key === VAULT_MARKER);
+
+        return Boolean(vaultMarker);
+    }
+
+    async signAndSubmitTx(
         tx: StellarSdk.Transaction,
         withResult?: boolean,
     ): Promise<Horizon.SubmitTransactionResponse | void | { status: BuildSignAndSubmitStatuses }> {
@@ -24,30 +47,70 @@ export default class AccountService extends AccountResponse {
             const xdr = tx.toEnvelope().toXDR('base64');
             ModalService.openModal(SignWithPublic, { xdr, account: this });
             return Promise.resolve({ status: BuildSignAndSubmitStatuses.pending });
-        } else if (this.authType === LoginTypes.secret) {
-            return StellarService.signAndSubmit(tx, {
+        }
+
+        if (this.authType === LoginTypes.walletConnect && !withResult) {
+            return WalletConnectService.signAndSubmitTx(tx);
+        }
+
+        let signedTx;
+
+        if (this.authType === LoginTypes.secret) {
+            signedTx = StellarService.signWithSecret(tx);
+        }
+
+        if (this.authType === LoginTypes.walletConnect && withResult) {
+            const signedXDR = await WalletConnectService.signTx(tx);
+            signedTx = new StellarSdk.Transaction(signedXDR, StellarSdk.Networks.PUBLIC);
+        }
+
+        if (this.authType === LoginTypes.ledger && !this.isMultisigEnabled) {
+            const result = LedgerService.signTx(tx).then((signed) =>
+                StellarService.submitTx(signed),
+            );
+            ModalService.openModal(LedgerSignTx, { result });
+            return result;
+        }
+
+        if (this.authType === LoginTypes.ledger) {
+            const signPromise = LedgerService.signTx(tx);
+            ModalService.openModal(LedgerSignTx, { result: signPromise });
+            signedTx = await signPromise;
+        }
+
+        if (
+            !this.isMultisigEnabled ||
+            !StellarService.isMoreSignaturesNeeded(signedTx, {
                 signers: this.signers,
                 thresholds: this.thresholds,
                 account_id: this.account_id,
-            });
-        } else if (this.authType === LoginTypes.walletConnect && !withResult) {
-            return WalletConnectService.signAndSubmitTx(tx);
-        } else if (this.authType === LoginTypes.walletConnect && withResult) {
-            return WalletConnectService.signTx(tx).then((xdr) => {
-                const tx = new StellarSdk.Transaction(xdr, StellarSdk.Networks.PUBLIC);
-                if (
-                    StellarService.isMoreSignaturesNeeded(tx, {
-                        signers: this.signers,
-                        thresholds: this.thresholds,
-                        account_id: this.account_id,
-                    })
-                ) {
-                    ToastService.showErrorToast('Accounts with multisig are not supported yet');
-                    return Promise.reject();
-                }
-                return StellarService.submitXDR(xdr);
-            });
+            })
+        ) {
+            if (this.authType === LoginTypes.ledger) {
+                ModalService.closeAllModals();
+            }
+            return StellarService.submitTx(signedTx);
         }
+
+        ModalService.closeAllModals();
+
+        const xdr = tx.toEnvelope().toXDR('base64');
+
+        if (!this.isVaultEnabled) {
+            ModalService.openModal(SignWithPublic, { xdr, account: this });
+
+            return Promise.resolve({ status: BuildSignAndSubmitStatuses.pending });
+        }
+
+        return StellarService.sendToVault(xdr)
+            .then(() => {
+                ModalService.openModal(SentToVault, {});
+                return Promise.resolve({ status: BuildSignAndSubmitStatuses.pending });
+            })
+            .catch(() => {
+                ModalService.openModal(SignWithPublic, { xdr, account: this });
+                return Promise.resolve({ status: BuildSignAndSubmitStatuses.pending });
+            });
     }
 
     getAssetBalance(asset) {

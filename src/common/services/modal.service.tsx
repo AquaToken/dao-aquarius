@@ -6,7 +6,7 @@ import EventService from './event.service';
 type Modals = Array<{
     id: number;
     modal: JSX.Element;
-    closeModal: ({ isConfirmed: boolean }) => void;
+    closeModal: ({ isConfirmed }) => void;
     name: string;
 }>;
 export default class ModalServiceClass {

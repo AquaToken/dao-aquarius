@@ -2,7 +2,6 @@ import * as StellarSdk from 'stellar-sdk';
 import EventService from './event.service';
 import { Horizon } from 'stellar-sdk/lib/horizon_api';
 import { Memo, MemoType, OperationOptions, ServerApi } from 'stellar-sdk';
-import { ToastService } from './globalServices';
 import axios, { AxiosResponse } from 'axios';
 import { roundToPrecision } from '../helpers/helpers';
 import { PairStats } from '../../pages/vote/api/types';
@@ -10,6 +9,8 @@ import { PairStats } from '../../pages/vote/api/types';
 enum HORIZON_SERVER {
     stellar = 'https://horizon.stellar.org',
 }
+
+const VAULT_API = 'https://vault.lobstr.co/api/transactions/';
 
 const FEE = '100000';
 const TRANSACTION_TIMEOUT = 60 * 60 * 24 * 30;
@@ -163,21 +164,24 @@ export default class StellarServiceClass {
         return StellarSdk.StrKey.isValidEd25519PublicKey(key);
     }
 
-    signAndSubmit(
-        tx: StellarSdk.Transaction,
-        account: Partial<Horizon.AccountResponse>,
-    ): Promise<Horizon.SubmitTransactionResponse> {
-        tx.sign(this.keypair);
-        if (this.isMoreSignaturesNeeded(tx, account)) {
-            ToastService.showErrorToast('Accounts with multisig are not supported yet');
-            return Promise.reject();
-        }
+    submitTx(tx: StellarSdk.Transaction) {
         return this.server.submitTransaction(tx);
+    }
+
+    signWithSecret(tx: StellarSdk.Transaction) {
+        tx.sign(this.keypair);
+        return tx;
     }
 
     submitXDR(xdr: string): Promise<Horizon.SubmitTransactionResponse> {
         const tx = new StellarSdk.Transaction(xdr, StellarSdk.Networks.PUBLIC);
-        return this.server.submitTransaction(tx);
+        return this.submitTx(tx);
+    }
+
+    sendToVault(xdr: string) {
+        const headers = { 'Content-Type': 'application/json' };
+
+        return axios.post(VAULT_API, JSON.stringify({ xdr }), { headers });
     }
 
     isMoreSignaturesNeeded(tx: StellarSdk.Transaction, account: Partial<Horizon.AccountResponse>) {

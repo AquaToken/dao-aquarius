@@ -1,4 +1,6 @@
 // https://developers.stellar.org/docs/glossary/transactions/#result-codes
+import { LEDGER_CANCEL_ERROR } from '../services/ledger.service';
+
 enum TRANSACTIONS_ERROR_CODES {
     'tx_too_early' = 'Ledger closeTime before minTime value in the transaction.',
     'tx_too_late' = 'Ledger closeTime after maxTime value in the transaction.',
@@ -74,8 +76,8 @@ export default function ErrorHandler(error) {
         return 'Transaction request timeout';
     }
 
-    //wallet connect case
-    if (error?.message === 'cancelled_by_user') {
+    //wallet connect case and Ledger case
+    if (error?.message === 'cancelled_by_user' || error?.message === LEDGER_CANCEL_ERROR) {
         return 'Transaction cancelled by the user';
     }
     if (error?.code !== undefined) {

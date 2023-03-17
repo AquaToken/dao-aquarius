@@ -21,6 +21,7 @@ const HeaderBlock = styled.header`
     ${respondDown(Breakpoints.md)`
         height: 5.8rem;
         padding: 0 1.6rem;
+        z-index: ${Z_INDEX.accountMenu}
     `}
 `;
 

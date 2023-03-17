@@ -3,8 +3,14 @@ import { useEffect, useRef } from 'react';
 import WalletConnectServiceClass, { WalletConnectEvents } from '../services/wallet-connect.service';
 import { LoginTypes } from '../../store/authStore/types';
 import { Horizon } from 'stellar-sdk';
-import { StellarService, ToastService, WalletConnectService } from '../services/globalServices';
+import {
+    LedgerService,
+    StellarService,
+    ToastService,
+    WalletConnectService,
+} from '../services/globalServices';
 import { StellarEvents } from '../services/stellar.service';
+import { LedgerEvents } from '../services/ledger.service';
 
 const UnfundedError = 'Not Found';
 
@@ -32,6 +38,19 @@ export default function useGlobalSubscriptions(): void {
                 login(event.publicKey, LoginTypes.walletConnect, event.metadata);
             }
             if (event.type === WalletConnectEvents.logout) {
+                logout();
+            }
+        });
+
+        return () => unsub();
+    }, []);
+
+    useEffect(() => {
+        const unsub = LedgerService.event.sub((event) => {
+            if (event.type === LedgerEvents.login) {
+                login(event.publicKey, LoginTypes.ledger);
+            }
+            if (event.type === LedgerEvents.logout) {
                 logout();
             }
         });

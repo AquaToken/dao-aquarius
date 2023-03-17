@@ -7,11 +7,18 @@ import KeyIcon from '../assets/img/icon-key.svg';
 import WalletConnectLogo from '../assets/img/wallet-connect-logo.svg';
 import LobstrLogo from '../assets/img/lobstr-logo.svg';
 import Stellar from '../assets/img/xlm-logo.svg';
+import Ledger from '../assets/img/ledger-logo.svg';
 import { LoginTypes } from '../../store/authStore/types';
 import LoginWithSecret from './LoginWithSecret';
-import { ModalService, WalletConnectService } from '../services/globalServices';
+import {
+    LedgerService,
+    ModalService,
+    ToastService,
+    WalletConnectService,
+} from '../services/globalServices';
 import { respondDown } from '../mixins';
 import LoginWithPublic from './LoginWithPublic';
+import LedgerLogin from './LedgerModals/LedgerLogin';
 
 const LoginMethod = styled.div`
     width: 52.8rem;
@@ -111,6 +118,15 @@ const ChooseLoginMethodModal = ({ close }: ModalProps<never>): JSX.Element => {
         } else if (method === LoginTypes.public) {
             close();
             ModalService.openModal(LoginWithPublic, {});
+        } else if (method === LoginTypes.ledger) {
+            LedgerService.isSupported.then((res) => {
+                if (res) {
+                    close();
+                    ModalService.openModal(LedgerLogin, {});
+                } else {
+                    ToastService.showErrorToast('Ledger Wallet is not supported by your browser.');
+                }
+            });
         }
     };
 
@@ -136,8 +152,17 @@ const ChooseLoginMethodModal = ({ close }: ModalProps<never>): JSX.Element => {
                 <LoginMethodWithDescription>
                     <LoginMethodName>Stellar Laboratory</LoginMethodName>
                     <LoginMethodDescription>
-                        Sign with Ledger, Trezor, Freighter, Albedo or others tools.
+                        Sign with Freighter, Trezor, Albedo or others tools.
                     </LoginMethodDescription>
+                </LoginMethodWithDescription>
+
+                <ArrowRight />
+            </LoginMethod>
+
+            <LoginMethod onClick={() => chooseMethod(LoginTypes.ledger)}>
+                <Ledger />
+                <LoginMethodWithDescription>
+                    <LoginMethodName>Ledger</LoginMethodName>
                 </LoginMethodWithDescription>
 
                 <ArrowRight />

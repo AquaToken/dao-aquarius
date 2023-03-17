@@ -16,6 +16,8 @@ module.exports = {
             http: false,
             https: false,
             util: false,
+            url: false,
+            buffer: require.resolve('buffer/'),
         },
     },
     context: resolve(__dirname, `../../src`),
@@ -46,6 +48,9 @@ module.exports = {
             'process.env': JSON.stringify({
                 WALLET_CONNECT_PROJECT_ID: wcProjectId || process.env.WALLET_CONNECT_PROJECT_ID,
             }),
+        }),
+        new webpack.ProvidePlugin({
+            Buffer: ['buffer', 'Buffer'],
         }),
     ],
     externals: {
