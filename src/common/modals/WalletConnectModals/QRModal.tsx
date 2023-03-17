@@ -156,10 +156,14 @@ const QRModal = ({ params }: ModalProps<{ uri: string }>): JSX.Element => {
             axios
                 .get<{ listings: Listings }>(registryUrl)
                 .then(({ data }) => {
+                    console.log(data);
                     return Object.values(data.listings).filter(
                         (wallet) =>
                             wallet.versions.includes('2') &&
-                            wallet.chains.includes('stellar:pubnet'),
+                            wallet.chains.includes('stellar:pubnet') &&
+                            // TODO remove this hardcode
+                            // Hide "SafePal" until they fix compatibility issues
+                            wallet.name !== 'SafePal',
                     );
                 })
                 .then((res) => {
