@@ -156,7 +156,6 @@ const QRModal = ({ params }: ModalProps<{ uri: string }>): JSX.Element => {
             axios
                 .get<{ listings: Listings }>(registryUrl)
                 .then(({ data }) => {
-                    console.log(data);
                     return Object.values(data.listings).filter(
                         (wallet) =>
                             wallet.versions.includes('2') &&
