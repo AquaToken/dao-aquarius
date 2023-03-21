@@ -17,8 +17,8 @@ const IconBlock = styled.div<{ isBig?: boolean }>`
     ${flexAllCenter};
 
     svg {
-        height: ${({ isBig }) => (isBig ? '3.4rem' : '1.6rem')};
-        width: ${({ isBig }) => (isBig ? '3.4rem' : '1.6rem')};
+        height: ${({ isBig }) => (isBig ? '3.4rem' : '2.4rem')};
+        width: ${({ isBig }) => (isBig ? '3.4rem' : '2.4rem')};
     }
 `;
 
