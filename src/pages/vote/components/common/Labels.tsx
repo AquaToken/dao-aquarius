@@ -11,6 +11,7 @@ const TooltipInner = styled.div`
     white-space: pre-line;
     font-size: 1.4rem;
     line-height: 2rem;
+    font-weight: normal;
 
     a {
         margin-left: 0.5rem;
@@ -64,7 +65,6 @@ const LabelComponent = ({
     isRed?: boolean;
     isDark?: boolean;
 }) => {
-    const [showTooltip, setShowTooltip] = useState(false);
     const [isEnoughSpaceOnTop, setIsEnoughSpaceOnTop] = useState(true);
 
     const ref = useCallback(
@@ -80,12 +80,10 @@ const LabelComponent = ({
         <Tooltip
             content={<TooltipInner ref={ref}>{text}</TooltipInner>}
             position={isEnoughSpaceOnTop ? TOOLTIP_POSITION.top : TOOLTIP_POSITION.right}
-            isShow={showTooltip}
             isSuccess={isGreen}
             isError={isRed}
             isDark={isDark}
-            onMouseEnter={() => setShowTooltip(true)}
-            onMouseLeave={() => setShowTooltip(false)}
+            showOnHover
         >
             <LabelWrap>
                 <Label isGreen={isGreen} isRed={isRed} isDark={isDark}>

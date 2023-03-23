@@ -216,7 +216,6 @@ const marketKeyToString = (code, issuer) => {
 const RewardsList = () => {
     const [rewards, setRewards] = useState(null);
     const [sort, setSort] = useState(null);
-    const [showTooltip, setShowTooltip] = useState(false);
     const [loading, setLoading] = useState(false);
 
     const { processNewAssets } = useAssetsStore();
@@ -289,12 +288,9 @@ const RewardsList = () => {
                             </TooltipInner>
                         }
                         position={TOOLTIP_POSITION.bottom}
-                        isShow={showTooltip}
+                        showOnHover
                     >
-                        <Info
-                            onMouseEnter={() => setShowTooltip(true)}
-                            onMouseLeave={() => setShowTooltip(false)}
-                        />
+                        <Info />
                     </Tooltip>
                 </LastUpdated>
             </Header>

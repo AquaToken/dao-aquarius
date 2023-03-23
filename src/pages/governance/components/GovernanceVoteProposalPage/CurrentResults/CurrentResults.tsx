@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useState } from 'react';
 import styled from 'styled-components';
 import ResultProgressLine from './ResultProgressLine/ResultProgressLine';
 import { Breakpoints, COLORS } from '../../../../../common/styles';
@@ -121,7 +120,6 @@ const getResultsData = (proposal: Proposal) => {
 };
 
 const CurrentResults = ({ proposal }: { proposal: Proposal }): JSX.Element => {
-    const [showTooltip, setShowTooltip] = useState(false);
     const results = getResultsData(proposal);
     const isEnd = new Date() >= new Date(proposal.end_at);
 
@@ -153,10 +151,7 @@ const CurrentResults = ({ proposal }: { proposal: Proposal }): JSX.Element => {
                         <FailIcon /> Not enough votes
                     </StatusTag>
                 )}
-                <InfoIconWrap
-                    onMouseEnter={() => setShowTooltip(true)}
-                    onMouseLeave={() => setShowTooltip(false)}
-                >
+                <InfoIconWrap>
                     <Tooltip
                         content={
                             <TooltipInner>
@@ -171,7 +166,7 @@ const CurrentResults = ({ proposal }: { proposal: Proposal }): JSX.Element => {
                                 ? TOOLTIP_POSITION.bottom
                                 : TOOLTIP_POSITION.left
                         }
-                        isShow={showTooltip}
+                        showOnHover
                     >
                         <Info />
                     </Tooltip>

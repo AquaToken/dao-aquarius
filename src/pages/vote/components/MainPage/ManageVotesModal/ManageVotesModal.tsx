@@ -179,8 +179,13 @@ export const goToStellarExpert = ({ transactions }) => {
     });
 };
 
+const TooltipInner = styled.span`
+    font-size: 1.4rem;
+    line-height: 2rem;
+    margin-left: 0 !important;
+`;
+
 const ManageVotesModal = ({ params, close }: ModalProps<{ pair: PairStats }>) => {
-    const [showTooltipId, setShowTooltipId] = useState(null);
     const [pendingId, setPendingId] = useState(null);
     const [claims, setClaims] = useState(null);
     const { pair } = params;
@@ -267,14 +272,11 @@ const ManageVotesModal = ({ params, close }: ModalProps<{ pair: PairStats }>) =>
                         <label>Amount:</label>
                         {claim.isDownVote && (
                             <Tooltip
-                                content={<span>Downvote</span>}
+                                content={<TooltipInner>Downvote</TooltipInner>}
                                 position={TOOLTIP_POSITION.top}
-                                isShow={showTooltipId === claim.id}
+                                showOnHover
                             >
-                                <Dislike
-                                    onMouseEnter={() => setShowTooltipId(claim.id)}
-                                    onMouseLeave={() => setShowTooltipId(null)}
-                                />
+                                <Dislike />
                             </Tooltip>
                         )}
                         <span>

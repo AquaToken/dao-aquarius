@@ -180,8 +180,18 @@ const Tooltip = ({
     return (
         <ChildrenBlock
             {...props}
-            onMouseEnter={() => setOnHover(true)}
-            onMouseLeave={() => setOnHover(false)}
+            onMouseEnter={(e) => {
+                e.stopPropagation();
+                setOnHover(true);
+            }}
+            onMouseLeave={(e) => {
+                e.stopPropagation();
+                setOnHover(false);
+            }}
+            onClick={(e) => {
+                e.stopPropagation();
+                setOnHover((value) => !value);
+            }}
         >
             {children}
             {(showOnHover ? onHover : isShow) && (

@@ -7,7 +7,6 @@ import AssetLogo from './AssetLogo';
 import { flexAllCenter, respondDown } from '../../../../common/mixins';
 import Tooltip, { TOOLTIP_POSITION } from '../../../../common/basics/Tooltip';
 import Info from '../../../../common/assets/img/icon-info.svg';
-import { useState } from 'react';
 import { AssetSimple } from '../../../../store/assetsStore/types';
 import { getAssetString } from '../../../../store/assetsStore/actions';
 import { LumenInfo } from '../../../../store/assetsStore/reducer';
@@ -66,7 +65,6 @@ const Asset = ({
     onlyLogo?: boolean;
     onlyLogoSmall?: boolean;
 }): JSX.Element => {
-    const [showTooltip, setShowTooltip] = useState(false);
     const { assetsInfo } = useAssetsStore();
 
     const assetInstance = new StellarSdk.Asset(asset.code, asset.issuer);
@@ -98,13 +96,9 @@ const Asset = ({
                         </span>
                     }
                     position={TOOLTIP_POSITION.left}
-                    isShow={showTooltip}
+                    showOnHover
                 >
-                    <InfoIcon
-                        withMobileView={withMobileView}
-                        onMouseEnter={() => setShowTooltip(true)}
-                        onMouseLeave={() => setShowTooltip(false)}
-                    >
+                    <InfoIcon withMobileView={withMobileView}>
                         <Info />
                     </InfoIcon>
                 </Tooltip>

@@ -48,7 +48,7 @@ const TableSection = styled(Section)`
 
     ${respondDown(Breakpoints.md)`
        background: ${COLORS.lightGray};
-       padding: 0;
+       padding: 3.2rem 0 0;
        overflow: hidden;
     `}
 `;

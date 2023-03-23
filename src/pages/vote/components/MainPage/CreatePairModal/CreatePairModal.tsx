@@ -107,7 +107,6 @@ const CreatePairModal = ({
     params,
     close,
 }: ModalProps<{ base: any; counter: any }>): JSX.Element => {
-    const [showTooltip, setShowTooltip] = useState(false);
     const isMounted = useIsMounted();
 
     const { account } = useAuthStore();
@@ -223,19 +222,9 @@ const CreatePairModal = ({
                             </TooltipInner>
                         }
                         position={TOOLTIP_POSITION.left}
-                        isShow={showTooltip}
+                        showOnHover
                     >
-                        <InfoIconWrap
-                            onMouseEnter={() => {
-                                setShowTooltip(true);
-                            }}
-                            onMouseLeave={() => {
-                                setShowTooltip(false);
-                            }}
-                            onTouchStart={() => {
-                                setShowTooltip((prevState) => !prevState);
-                            }}
-                        >
+                        <InfoIconWrap>
                             <Info />
                         </InfoIconWrap>
                     </Tooltip>

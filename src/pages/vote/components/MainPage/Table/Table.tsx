@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useState } from 'react';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../../../../common/styles';
 import { PairStats, TotalStats } from '../../../api/types';
@@ -304,7 +303,6 @@ const Table = ({
     totalStats: TotalStats;
     isYourVotes: boolean;
 }): JSX.Element => {
-    const [showTooltipId, setShowTooltipId] = useState(null);
     const history = useHistory();
 
     if (!pairs.length) {
@@ -421,15 +419,11 @@ const Table = ({
                                         <Tooltip
                                             content={<TooltipInner>Manage votes</TooltipInner>}
                                             position={TOOLTIP_POSITION.top}
-                                            isShow={showTooltipId === pair.account_id}
+                                            showOnHover
                                         >
                                             <ManageButton
                                                 isSquare
                                                 likeDisabled
-                                                onMouseEnter={() =>
-                                                    setShowTooltipId(pair.account_id)
-                                                }
-                                                onMouseLeave={() => setShowTooltipId(null)}
                                                 onClick={(e) => manageVotes(e, pair)}
                                             >
                                                 <ManageIcon />

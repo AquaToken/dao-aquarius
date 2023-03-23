@@ -73,8 +73,6 @@ const VoteButton = ({
 
     const [balanceDown, setBalanceDown] = useState(isLogged ? getDownVotesValue() : null);
 
-    const [showTooltip, setShowTooltip] = useState(false);
-
     const downVote = (event) => {
         event.preventDefault();
         event.stopPropagation();
@@ -124,15 +122,13 @@ const VoteButton = ({
                 <Tooltip
                     content={<TooltipInner>Downvote this pair</TooltipInner>}
                     position={TOOLTIP_POSITION.top}
-                    isShow={showTooltip}
+                    showOnHover
                 >
                     <DownvoteButton
                         isSquare
                         likeDisabled
                         disabled={disabled}
                         onClick={(e) => downVote(e)}
-                        onMouseEnter={() => setShowTooltip(true)}
-                        onMouseLeave={() => setShowTooltip(false)}
                     >
                         <IconDislike />
                     </DownvoteButton>
@@ -158,15 +154,13 @@ const VoteButton = ({
             <Tooltip
                 content={<TooltipInner>Downvote this pair</TooltipInner>}
                 position={TOOLTIP_POSITION.top}
-                isShow={showTooltip}
+                showOnHover
             >
                 <DownvoteButton
                     isSquare
                     likeDisabled
                     disabled={disabled}
                     onClick={(e) => downVote(e)}
-                    onMouseEnter={() => setShowTooltip(true)}
-                    onMouseLeave={() => setShowTooltip(false)}
                 >
                     <IconDislike />
                 </DownvoteButton>

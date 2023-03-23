@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useState } from 'react';
 import Tooltip, { TOOLTIP_POSITION } from '../../../../../../common/basics/Tooltip';
 import { formatBalance, roundToPrecision } from '../../../../../../common/helpers/helpers';
 import styled from 'styled-components';
@@ -172,7 +171,6 @@ export const getPercent = (value: string, total: string): string => {
 };
 
 const VoteAmount = ({ pair, totalStats }: { pair: PairStats; totalStats: TotalStats }) => {
-    const [showTooltip, setShowTooltip] = useState(false);
     if (!pair.votes_value) {
         return null;
     }
@@ -250,35 +248,11 @@ const VoteAmount = ({ pair, totalStats }: { pair: PairStats; totalStats: TotalSt
                 </TooltipWrap>
             }
             position={TOOLTIP_POSITION.top}
-            isShow={showTooltip}
             isWhite
+            showOnHover
         >
-            <label
-                onMouseEnter={() => {
-                    setShowTooltip(true);
-                }}
-                onMouseLeave={() => {
-                    setShowTooltip(false);
-                }}
-                onClick={(e) => {
-                    e.stopPropagation();
-                    setShowTooltip((value) => !value);
-                }}
-            >
-                Votes:
-            </label>
-            <Amount
-                onMouseEnter={() => {
-                    setShowTooltip(true);
-                }}
-                onMouseLeave={() => {
-                    setShowTooltip(false);
-                }}
-                onClick={(e) => {
-                    e.stopPropagation();
-                    setShowTooltip((value) => !value);
-                }}
-            >
+            <label>Votes:</label>
+            <Amount>
                 <AmountRow>
                     {pair.votes_value ? formatBalance(+pair.votes_value, true) : null}
                     <Percents>

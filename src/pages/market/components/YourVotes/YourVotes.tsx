@@ -80,8 +80,13 @@ const TableRow = styled.div`
     `};
 `;
 
+const TooltipInner = styled.span`
+    font-size: 1.4rem;
+    line-height: 2rem;
+    margin-left: 0 !important;
+`;
+
 const YourVotes = ({ votesData }) => {
-    const [showTooltipId, setShowTooltipId] = useState(null);
     const [pendingId, setPendingId] = useState(null);
 
     const { account, isLogged } = useAuthStore();
@@ -180,14 +185,11 @@ const YourVotes = ({ votesData }) => {
                                 <label>Amount:</label>
                                 {claim.isDownVote && (
                                     <Tooltip
-                                        content={<span>Downvote</span>}
+                                        content={<TooltipInner>Downvote</TooltipInner>}
                                         position={TOOLTIP_POSITION.top}
-                                        isShow={showTooltipId === claim.id}
+                                        isShow={true}
                                     >
-                                        <Dislike
-                                            onMouseEnter={() => setShowTooltipId(claim.id)}
-                                            onMouseLeave={() => setShowTooltipId(null)}
-                                        />
+                                        <Dislike />
                                     </Tooltip>
                                 )}
                                 <span>

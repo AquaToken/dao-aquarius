@@ -60,6 +60,10 @@ const TableHeader = styled.div`
     `};
 `;
 
+const DislikeIcon = styled(Dislike)`
+    margin-left: 0.4rem;
+`;
+
 const TableRow = styled.div`
     font-size: 1.6rem;
     line-height: 2.8rem;
@@ -136,7 +140,6 @@ const EmptyList = styled.span`
 `;
 
 const ClaimAllModal = ({ params, close }) => {
-    const [showTooltipId, setShowTooltipId] = useState(null);
     const [pendingId, setPendingId] = useState(null);
     const [pendingAll, setPendingAll] = useState(false);
     const [claims, setClaims] = useState(null);
@@ -268,12 +271,9 @@ const ClaimAllModal = ({ params, close }) => {
                                     <Tooltip
                                         content={<span>Downvote</span>}
                                         position={TOOLTIP_POSITION.top}
-                                        isShow={showTooltipId === claim.id}
+                                        showOnHover
                                     >
-                                        <Dislike
-                                            onMouseEnter={() => setShowTooltipId(claim.id)}
-                                            onMouseLeave={() => setShowTooltipId(null)}
-                                        />
+                                        <DislikeIcon />
                                     </Tooltip>
                                 )}
                                 <span>
