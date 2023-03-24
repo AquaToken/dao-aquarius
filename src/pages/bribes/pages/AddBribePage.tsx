@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import { Breakpoints, COLORS, FONT_FAMILY } from '../../../common/styles';
 import { flexAllCenter, respondDown } from '../../../common/mixins';
@@ -38,6 +38,7 @@ import {
 import { formatBalance } from '../../../common/helpers/helpers';
 import { BribesRoutes } from '../../../routes';
 import { getMarketPair } from '../api/api';
+import { LoginTypes } from '../../../store/authStore/types';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -412,7 +413,7 @@ const AddBribePage = () => {
 
     const [duration, setDuration] = useState('1');
 
-    const { isLogged } = useAuthStore();
+    const { isLogged, account } = useAuthStore();
 
     const resetForm = () => {
         setStep(CreateStep.pair);
@@ -496,9 +497,16 @@ const AddBribePage = () => {
         });
     };
 
+    const maxDuration = useMemo(() => {
+        if (isLogged && account.authType === LoginTypes.ledger) {
+            return 5;
+        }
+        return 100;
+    }, [isLogged]);
+
     const decrementDuration = useCallback(() => {
-        if (Number(duration) - 1 > 100) {
-            setDuration('100');
+        if (Number(duration) - 1 > maxDuration) {
+            setDuration(maxDuration.toString());
             return;
         }
         if (Number.isNaN(Number(duration)) || Number(duration) - 1 <= 1) {
@@ -509,8 +517,8 @@ const AddBribePage = () => {
     }, [duration]);
 
     const incrementDuration = useCallback(() => {
-        if (Number(duration) + 1 > 100) {
-            setDuration('100');
+        if (Number(duration) + 1 > maxDuration) {
+            setDuration(maxDuration.toString());
             return;
         }
         if (Number.isNaN(Number(duration)) || Number(duration) + 1 <= 1) {
@@ -521,7 +529,7 @@ const AddBribePage = () => {
     }, [duration]);
 
     useEffect(() => {
-        if (!startDate || !Number(duration) || Number(duration) > 100) {
+        if (!startDate || !Number(duration) || Number(duration) > maxDuration) {
             return;
         }
         const { end } = getWeekStartFromDay(
@@ -595,6 +603,7 @@ const AddBribePage = () => {
                             event.stopPropagation();
                             onSubmit();
                         }}
+                        key={maxDuration}
                     >
                         <FormSection>
                             <FormSectionTitle>Select market</FormSectionTitle>
@@ -718,10 +727,14 @@ const AddBribePage = () => {
                                         style={{ padding: '0rem 6rem' }}
                                         isCenterAligned
                                         required
-                                        pattern="^[0-9]$|^[1-9][0-9]$|^(100)$"
+                                        pattern={
+                                            maxDuration === 5
+                                                ? '[1-5]'
+                                                : '[0-9]$|^[1-9][0-9]$|^(100)$'
+                                        }
                                         onInvalid={(e) =>
                                             (e.target as HTMLInputElement).setCustomValidity(
-                                                'Only integer less or equal 100',
+                                                `Only integer less or equal ${maxDuration}`,
                                             )
                                         }
                                         onInput={(e) =>

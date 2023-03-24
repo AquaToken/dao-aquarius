@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { StellarService } from '../../../common/services/globalServices';
+import { ModalService, StellarService } from '../../../common/services/globalServices';
 import NotFoundPage from '../../../common/components/NotFoundPage/NotFoundPage';
 import { Breakpoints, COLORS } from '../../../common/styles';
 import { commonMaxWidth, flexAllCenter, respondDown } from '../../../common/mixins';
@@ -28,6 +28,8 @@ import AmmStats from '../components/AmmStats/AmmStats';
 import { VoteRoutes } from '../../../routes';
 import useAssetsStore from '../../../store/assetsStore/useAssetsStore';
 import Title from 'react-document-title';
+import { LoginTypes } from '../../../store/authStore/types';
+import VotesAmountModal from '../../vote/components/MainPage/VoteModals/VotesAmountModal';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -176,7 +178,7 @@ const MarketPage = () => {
     const [totalStats, setTotalStats] = useState(null);
     const [chosenPairs, setChosenPairs] = useState(getCachedChosenPairs());
 
-    const { isLogged } = useAuthStore();
+    const { isLogged, account } = useAuthStore();
 
     const history = useHistory();
 
@@ -215,6 +217,14 @@ const MarketPage = () => {
     }, []);
 
     const onVoteClick = (pair: PairStats) => {
+        if (isLogged && account.authType === LoginTypes.ledger) {
+            ModalService.openModal(VotesAmountModal, {
+                pairs: [pair],
+                isSingleVoteForModal: true,
+                updatePairs: () => {},
+            });
+            return;
+        }
         const isPairSelected = chosenPairs.some(
             (chosenPair) => chosenPair.market_key === pair.market_key,
         );

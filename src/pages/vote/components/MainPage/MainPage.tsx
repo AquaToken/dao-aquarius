@@ -49,6 +49,7 @@ import DotsLoader from '../../../../common/basics/DotsLoader';
 import { useHistory, useLocation } from 'react-router-dom';
 import useAssetsStore from '../../../../store/assetsStore/useAssetsStore';
 import { MarketRoutes } from '../../../../routes';
+import { LoginTypes } from '../../../../store/authStore/types';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -624,6 +625,14 @@ const MainPage = (): JSX.Element => {
         });
     }, [searchBase, searchCounter, page]);
 
+    // clear chosen pairs for Ledger
+    useEffect(() => {
+        if (isLogged && account.authType === LoginTypes.ledger) {
+            localStorage.setItem(SELECTED_PAIRS_ALIAS, JSON.stringify([]));
+            setChosenPairs([]);
+        }
+    }, [isLogged]);
+
     const changeSort = (sortValue) => {
         if (!isLogged && sortValue === SortTypes.yourVotes) {
             ModalService.openModal(ChooseLoginMethodModal, {});
@@ -690,6 +699,14 @@ const MainPage = (): JSX.Element => {
         ModalService.openModal(ChooseLoginMethodModal, {});
     };
     const onVoteClick = (pair: PairStats) => {
+        if (isLogged && account.authType === LoginTypes.ledger) {
+            ModalService.openModal(VotesAmountModal, {
+                pairs: [pair],
+                isSingleVoteForModal: true,
+                updatePairs: () => {},
+            });
+            return;
+        }
         const isPairSelected = chosenPairs.some(
             (chosenPair) => chosenPair.market_key === pair.market_key,
         );
