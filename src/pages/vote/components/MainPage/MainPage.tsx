@@ -170,14 +170,26 @@ const PairSearch = styled.div`
     `}
 `;
 
-const ArrowsIcon = styled(Arrows)`
+const SwapButton = styled.div<{ disabled: boolean }>`
     margin: 0 3.6rem;
-    min-width: 1.6rem;
+    padding: 0.8rem;
+    width: 3.2rem;
+    height: 3.2rem;
+    border-radius: 0.4rem;
+    cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+
+    &:hover {
+        background: ${COLORS.lightGray};
+    }
 
     ${respondDown(Breakpoints.md)`
         margin: 1.8rem 0;
-        min-height: 1.6rem;
     `}
+`;
+
+const ArrowsIcon = styled(Arrows)`
+    min-width: 1.6rem;
+    min-height: 1.6rem;
 `;
 
 const TooltipFullWidth = styled(Tooltip)`
@@ -678,6 +690,23 @@ const MainPage = (): JSX.Element => {
         setPage(1);
     };
 
+    const swapAssets = () => {
+        if (!searchCounter) {
+            return;
+        }
+        const params = new URLSearchParams(location.search);
+        const base = params.get(UrlParams.base);
+        const counter = params.get(UrlParams.counter);
+
+        params.set(UrlParams.base, counter);
+        params.set(UrlParams.counter, base);
+
+        history.push({
+            pathname: location.pathname,
+            search: decodeURIComponent(params.toString()),
+        });
+    };
+
     const changePage = (page) => {
         setPage(page);
         setChangePageLoading(true);
@@ -756,7 +785,10 @@ const MainPage = (): JSX.Element => {
                         onUpdate={changeBaseSearch}
                         exclude={searchCounter}
                     />
-                    <ArrowsIcon />
+                    <SwapButton disabled={!searchCounter} onClick={() => swapAssets()}>
+                        <ArrowsIcon />
+                    </SwapButton>
+
                     <TooltipFullWidth
                         content={
                             <TooltipContent>
