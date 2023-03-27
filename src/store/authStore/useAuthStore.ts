@@ -11,6 +11,7 @@ type AuthActions = {
         pubKey: string,
         loginType: LoginTypes,
         metadata?: SignClientTypes.Metadata,
+        topic?: string,
     ) => ActionAsyncResult;
     logout: () => ActionSimpleResult;
     resolveFederation: (homeDomain: string, accountId: string) => ActionAsyncResult;

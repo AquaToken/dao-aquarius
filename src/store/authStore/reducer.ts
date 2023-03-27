@@ -6,6 +6,7 @@ import { ActionSimpleResult } from '../types';
 export const initialState: AuthStore = {
     isLogged: false,
     isLoginPending: false,
+    loginPendingTopic: undefined,
     isUnfundedAccount: false,
     loginErrorText: '',
     loginType: null,
@@ -18,14 +19,23 @@ export const initialState: AuthStore = {
 export default function authStore(state = initialState, action: ActionSimpleResult): AuthStore {
     switch (action.type) {
         case AUTH_ACTIONS.LOGIN_START: {
-            return { ...state, isLoginPending: true, loginErrorText: '' };
+            const { topic } = action.payload as {
+                topic?: string;
+            };
+            return { ...state, isLoginPending: true, loginErrorText: '', loginPendingTopic: topic };
         }
         case AUTH_ACTIONS.LOGIN_SUCCESS: {
-            const { account, loginType, metadata } = action.payload as {
+            const { account, loginType, metadata, topic } = action.payload as {
                 account: AccountService;
                 loginType: LoginTypes;
                 metadata?: SignClientTypes.Metadata;
+                topic?: string;
             };
+            if (topic && state.loginPendingTopic !== topic) {
+                return {
+                    ...state,
+                };
+            }
             return {
                 ...state,
                 isLoginPending: false,

@@ -9,6 +9,7 @@ export enum MainRoutes {
     airdrop = '/airdrop',
     airdrop2 = '/airdrop2',
     account = '/account',
+    walletConnect = '/wallet-connect',
 }
 
 //TODO: Replace constants with enums after TS 5.0 release

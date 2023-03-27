@@ -11,6 +11,7 @@ export interface AuthStore {
     federationAddress: string;
     isFederationPending: boolean;
     metadata: SignClientTypes.Metadata | null;
+    loginPendingTopic?: string;
 }
 
 export enum LoginTypes {

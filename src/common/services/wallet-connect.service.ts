@@ -180,7 +180,7 @@ export default class WalletConnectServiceClass {
     // When changing the walletConnect version, memory leaks sometimes occur,
     // to avoid this, we clear the local storage
     static checkVersion() {
-        const WALLET_CONNECT_VERSION_ID = '1';
+        const WALLET_CONNECT_VERSION_ID = '2';
 
         const currentVersion = getVersionFromLS();
         if (!currentVersion || currentVersion !== WALLET_CONNECT_VERSION_ID) {
@@ -219,12 +219,12 @@ export default class WalletConnectServiceClass {
         });
     }
 
-    loginIfSessionExist(): Promise<void> {
+    loginIfSessionExist(): Promise<any> {
         if (!isSessionExist()) {
             return Promise.resolve();
         }
 
-        return this.login();
+        return this.initWalletConnect();
     }
 
     async initWalletConnect(): Promise<boolean> {
@@ -250,12 +250,6 @@ export default class WalletConnectServiceClass {
                 }) as Promise<WalletConnectClient>,
             ]);
 
-            // there is a problem with updating the states in wallet connect, a small timeout solves this problem
-            // TODO delete this when it is fixed in the library
-            await new Promise((resolve) => {
-                setTimeout(() => resolve(void 0), 500);
-            });
-
             this.listenWalletConnectEvents();
 
             if (!this.client.session.length) {
@@ -271,8 +265,9 @@ export default class WalletConnectServiceClass {
 
             this.event.trigger({
                 type: WalletConnectEvents.login,
-                publicKey,
+                publicKey: publicKey.toUpperCase(),
                 metadata: this.appMeta,
+                topic: this.session.topic,
             });
 
             ModalService.closeAllModals();
@@ -382,11 +377,24 @@ export default class WalletConnectServiceClass {
         await this.connect();
     }
 
+    async autoLogin() {
+        if (this.session) {
+            return Promise.resolve();
+        }
+        if (this.isOffline) {
+            ToastService.showErrorToast(INTERNET_CONNECTION_ERROR);
+            return Promise.reject();
+        }
+        await this.initWalletConnect();
+
+        return this.connect(null, true);
+    }
+
     async deletePairing(topic: string): Promise<void> {
         await this.client.pairing.delete(topic, getInternalError('UNKNOWN_TYPE'));
     }
 
-    async connect(pairing?: PairingTypes.Struct): Promise<void> {
+    async connect(pairing?: PairingTypes.Struct, isAutoConnect?: boolean): Promise<void> {
         if (this.isOffline) {
             ToastService.showErrorToast(INTERNET_CONNECTION_ERROR);
             return;
@@ -406,8 +414,12 @@ export default class WalletConnectServiceClass {
                 pairingTopic: pairing?.topic,
             });
 
-            if (!pairing) {
+            if (!pairing && !isAutoConnect) {
                 ModalService.openModal(QRModal, { uri });
+            }
+
+            if (isAutoConnect) {
+                this.customPostMessage(uri);
             }
 
             this.session = await approval();
@@ -444,8 +456,9 @@ export default class WalletConnectServiceClass {
 
         this.event.trigger({
             type: WalletConnectEvents.login,
-            publicKey,
+            publicKey: publicKey.toUpperCase(),
             metadata: this.appMeta,
+            topic: this.session.topic,
         });
 
         setTimeout(() => {
@@ -521,5 +534,29 @@ export default class WalletConnectServiceClass {
         });
 
         return request.then(({ signedXDR }) => signedXDR);
+    }
+
+    private customPostMessage(data) {
+        const stringify = JSON.stringify(data);
+        // IOS
+        // @ts-ignore
+        if (window.webkit) {
+            try {
+                // @ts-ignore
+                window.webkit.messageHandlers.submitToiOS.postMessage(stringify);
+            } catch (e) {
+                console.log(e);
+            }
+        }
+
+        // android
+        // @ts-ignore
+        if (window.android) {
+            // @ts-ignore
+            window.android.postMessage(stringify);
+        }
+
+        // web
+        console.log(stringify);
     }
 }

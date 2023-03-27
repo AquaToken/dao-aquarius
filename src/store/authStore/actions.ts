@@ -10,9 +10,10 @@ export function login(
     pubKey: string,
     loginType: LoginTypes,
     metadata?: SignClientTypes.Metadata,
+    topic?: string,
 ): ActionAsyncResult {
     return (dispatch: Dispatch<ActionResult>): void => {
-        dispatch({ type: AUTH_ACTIONS.LOGIN_START });
+        dispatch({ type: AUTH_ACTIONS.LOGIN_START, payload: { topic } });
 
         StellarService.loadAccount(pubKey)
             .then((account) => {
@@ -23,6 +24,7 @@ export function login(
                         account: wrappedAccount,
                         loginType,
                         metadata,
+                        topic,
                     },
                 });
             })

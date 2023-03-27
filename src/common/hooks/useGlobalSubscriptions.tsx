@@ -11,6 +11,7 @@ import {
 } from '../services/globalServices';
 import { StellarEvents } from '../services/stellar.service';
 import { LedgerEvents } from '../services/ledger.service';
+import { useSkipFirstRender } from './useSkipFirstRender';
 
 const UnfundedError = 'Not Found';
 
@@ -35,7 +36,7 @@ export default function useGlobalSubscriptions(): void {
     useEffect(() => {
         const unsub = WalletConnectService.event.sub((event) => {
             if (event.type === WalletConnectEvents.login) {
-                login(event.publicKey, LoginTypes.walletConnect, event.metadata);
+                login(event.publicKey, LoginTypes.walletConnect, event.metadata, event.topic);
             }
             if (event.type === WalletConnectEvents.logout) {
                 logout();
@@ -70,7 +71,7 @@ export default function useGlobalSubscriptions(): void {
         }
     }, [loginErrorText]);
 
-    useEffect(() => {
+    useSkipFirstRender(() => {
         if (isLogged) {
             if (account.home_domain) {
                 resolveFederation(account.home_domain, account.accountId());
@@ -80,6 +81,7 @@ export default function useGlobalSubscriptions(): void {
         } else {
             StellarService.logoutWithSecret();
             StellarService.closeAccountStream();
+            ToastService.showSuccessToast('Logged out');
         }
     }, [isLogged]);
 

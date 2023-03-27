@@ -30,6 +30,7 @@ const RewardsPage = lazy(() => import('./pages/rewards/Rewards'));
 const AirdropPage = lazy(() => import('./pages/airdrop/Airdrop'));
 const Airdrop2Page = lazy(() => import('./pages/airdrop2/Airdrop2'));
 const ProfilePage = lazy(() => import('./pages/profile/Profile'));
+const WalletConnectPage = lazy(() => import('./pages/wallet-connect/WalletConnect'));
 
 const UPDATE_ASSETS_DATE = 'update assets timestamp';
 const UPDATE_PERIOD = 24 * 60 * 60 * 1000;
@@ -191,6 +192,12 @@ const App = () => {
                     <Route path={MainRoutes.account}>
                         <Title title="My Aquarius">
                             {isLogged ? <ProfilePage /> : <Redirect to={MainRoutes.main} />}
+                        </Title>
+                    </Route>
+
+                    <Route path={MainRoutes.walletConnect}>
+                        <Title title="WalletConnect">
+                            {isLogged ? <Redirect to={MainRoutes.main} /> : <WalletConnectPage />}
                         </Title>
                     </Route>
 

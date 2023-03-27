@@ -13,7 +13,6 @@ import useAuthStore from '../../../../../store/authStore/useAuthStore';
 import {
     ModalService,
     StellarService,
-    ToastService,
     WalletConnectService,
 } from '../../../../services/globalServices';
 import { formatBalance } from '../../../../helpers/helpers';
@@ -344,7 +343,6 @@ const AppMenu = ({
                             if (loginType === LoginTypes.walletConnect) {
                                 WalletConnectService.logout();
                             }
-                            ToastService.showSuccessToast('Logged out');
                         }}
                     >
                         <IconLogout />
