@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../../../../common/styles';
 import { formatBalance, getDateString } from '../../../../../common/helpers/helpers';
@@ -11,9 +12,13 @@ import Tooltip, { TOOLTIP_POSITION } from '../../../../../common/basics/Tooltip'
 import { respondDown } from '../../../../../common/mixins';
 import useAuthStore from '../../../../../store/authStore/useAuthStore';
 import Button from '../../../../../common/basics/Button';
-import { useEffect, useState } from 'react';
 import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
-import { StellarEvents } from '../../../../../common/services/stellar.service';
+import {
+    DOWN_ICE_CODE,
+    ICE_ISSUER,
+    StellarEvents,
+    UP_ICE_CODE,
+} from '../../../../../common/services/stellar.service';
 import Pair from '../../common/Pair';
 import Dislike from '../../../../../common/assets/img/icon-dislike-gray.svg';
 import { ModalDescription, ModalTitle } from '../../../../../common/modals/atoms/ModalAtoms';
@@ -61,7 +66,7 @@ const TableHeader = styled.div`
 `;
 
 const DislikeIcon = styled(Dislike)`
-    margin-left: 0.4rem;
+    margin-left: 0.8rem;
 `;
 
 const TableRow = styled.div`
@@ -69,10 +74,7 @@ const TableRow = styled.div`
     line-height: 2.8rem;
     display: flex;
     color: ${COLORS.paragraphText};
-
-    &:not(:last-child) {
-        margin-bottom: 0.6rem;
-    }
+    margin-bottom: 0.6rem;
 
     ${respondDown(Breakpoints.md)`
          flex-direction: column;
@@ -139,6 +141,12 @@ const EmptyList = styled.span`
     font-size: 1.6rem;
 `;
 
+const TooltipInner = styled.span`
+    font-size: 1.4rem;
+    line-height: 2rem;
+    margin-left: 0 !important;
+`;
+
 const ClaimAllModal = ({ params, close }) => {
     const [pendingId, setPendingId] = useState(null);
     const [pendingAll, setPendingAll] = useState(false);
@@ -172,29 +180,48 @@ const ClaimAllModal = ({ params, close }) => {
         setClaims(processedClaims);
     }, [updateId]);
 
-    const claimVotes = async (id?: string) => {
+    const claimVotes = async (claim?: any) => {
         if (account.authType === LoginTypes.walletConnect) {
             openApp();
         }
         try {
-            if (id) {
-                setPendingId(id);
+            if (claim) {
+                setPendingId(claim.id);
             } else {
                 setPendingAll(true);
             }
-            const ops = id
-                ? StellarService.createClaimOperations(id, account.getAquaBalance() === null)
-                : claims.reduce((acc, claim) => {
-                      acc = [
-                          ...acc,
-                          ...StellarService.createClaimOperations(
-                              claim.id,
-                              account.getAquaBalance() === null,
-                          ),
-                      ];
+            let hasUpvote = claim && claim.assetCode === UP_ICE_CODE;
+            let hasDownvote = claim && claim.assetCode === DOWN_ICE_CODE;
+
+            const ops = claim
+                ? StellarService.createClaimOperations(claim.id)
+                : claims.reduce((acc, cb) => {
+                      if (cb.assetCode === UP_ICE_CODE) {
+                          hasUpvote = true;
+                      }
+                      if (cb.assetCode === DOWN_ICE_CODE) {
+                          hasDownvote = true;
+                      }
+                      acc = [...acc, ...StellarService.createClaimOperations(cb.id)];
                       return acc;
                   }, []);
-            const tx = await StellarService.buildTx(account, ops);
+
+            let tx = await StellarService.buildTx(account, ops);
+
+            if (hasUpvote) {
+                tx = await StellarService.processIceTx(
+                    tx,
+                    StellarService.createAsset(UP_ICE_CODE, ICE_ISSUER),
+                );
+            }
+
+            if (hasDownvote) {
+                tx = await StellarService.processIceTx(
+                    tx,
+                    StellarService.createAsset(DOWN_ICE_CODE, ICE_ISSUER),
+                );
+            }
+
             const result = await account.signAndSubmitTx(tx);
 
             if (isMounted.current) {
@@ -209,14 +236,14 @@ const ClaimAllModal = ({ params, close }) => {
                 ToastService.showSuccessToast('More signatures required to complete');
                 return;
             }
-            if (claims.length === 1 || !id) {
+            if (claims.length === 1 || !claim) {
                 close();
             }
-            if (isMounted.current && Boolean(id)) {
-                setClaims(claims.filter((claim) => claim.id !== id));
+            if (isMounted.current && Boolean(claim)) {
+                setClaims(claims.filter((cb) => cb.id !== claim.id));
             }
             ToastService.showSuccessToast(
-                Boolean(id)
+                Boolean(claim)
                     ? 'Your vote has been claimed back'
                     : 'Your votes have been claimed back',
             );
@@ -269,7 +296,7 @@ const ClaimAllModal = ({ params, close }) => {
                                 <label>Amount:</label>
                                 {claim.isDownVote && (
                                     <Tooltip
-                                        content={<span>Downvote</span>}
+                                        content={<TooltipInner>Downvote</TooltipInner>}
                                         position={TOOLTIP_POSITION.top}
                                         showOnHover
                                     >
@@ -283,7 +310,7 @@ const ClaimAllModal = ({ params, close }) => {
                             <ButtonCell>
                                 <ClaimButton
                                     isSmall
-                                    onClick={() => claimVotes(claim.id)}
+                                    onClick={() => claimVotes(claim)}
                                     disabled={
                                         (Boolean(pendingId) && claim.id !== pendingId) || pendingAll
                                     }
@@ -294,16 +321,18 @@ const ClaimAllModal = ({ params, close }) => {
                             </ButtonCell>
                         </TableRow>
                     ))}
-                    <ButtonContainer>
-                        <Button
-                            fullWidth
-                            pending={pendingAll}
-                            disabled={Boolean(pendingId)}
-                            onClick={() => claimVotes()}
-                        >
-                            claim all
-                        </Button>
-                    </ButtonContainer>
+                    {account.authType !== LoginTypes.ledger && (
+                        <ButtonContainer>
+                            <Button
+                                fullWidth
+                                pending={pendingAll}
+                                disabled={Boolean(pendingId)}
+                                onClick={() => claimVotes()}
+                            >
+                                claim all
+                            </Button>
+                        </ButtonContainer>
+                    )}
                 </>
             ) : (
                 <>
