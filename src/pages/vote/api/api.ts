@@ -102,7 +102,7 @@ export const updateVotesForMarketKeys = async (pairs: PairStats[]): Promise<Pair
 };
 
 export const getUserPairsList = async (keys: string[]) => {
-    if (!keys.length) {
+    if (!keys || !keys.length) {
         return [];
     }
 

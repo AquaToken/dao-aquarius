@@ -197,7 +197,10 @@ const YourVotes = () => {
                         <Section>
                             <UnlockedVotes>
                                 <UnlockedVotesData>
-                                    <UnlockedVotesTitle>You have unlocked votes</UnlockedVotesTitle>
+                                    <UnlockedVotesTitle>
+                                        You have unlocked vote
+                                        {unclaimedVotesInfo.count > 1 ? 's' : ''}
+                                    </UnlockedVotesTitle>
                                     <UnlockedVotesStats>
                                         {unclaimedVotesInfo.count} vote
                                         {unclaimedVotesInfo.count > 1 ? 's' : ''} for{' '}
