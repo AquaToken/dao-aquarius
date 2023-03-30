@@ -61,7 +61,7 @@ const Balance = styled.span`
     `}
 `;
 
-const AdditionalInfo = styled.div`
+export const AdditionalInfo = styled.div`
     display: flex;
     width: 100%;
 
@@ -70,7 +70,7 @@ const AdditionalInfo = styled.div`
     `}
 `;
 
-const AdditionalInfoColumn = styled.div`
+export const AdditionalInfoColumn = styled.div`
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -99,7 +99,7 @@ const AdditionalInfoBalance = styled.span`
     margin-top: 1rem;
 `;
 
-const AdditionalInfoDescription = styled.span`
+export const AdditionalInfoDescription = styled.span`
     font-size: 1.4rem;
     line-height: 2rem;
     color: ${COLORS.grayText};
