@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../../../../common/styles';
 import { formatBalance, getDateString } from '../../../../../common/helpers/helpers';
@@ -258,17 +258,6 @@ const ClaimAllModal = ({ params, close }) => {
         }
     };
 
-    // TODO remove this after backend fix
-    const hasBothUpvoteAndDownvote = useMemo(() => {
-        if (!claims || !claims.length) {
-            return false;
-        }
-        return (
-            claims.some(({ assetCode }) => assetCode === DOWN_ICE_CODE) &&
-            claims.some(({ assetCode }) => assetCode === UP_ICE_CODE)
-        );
-    }, [claims]);
-
     if (!claims) {
         return null;
     }
@@ -332,7 +321,7 @@ const ClaimAllModal = ({ params, close }) => {
                             </ButtonCell>
                         </TableRow>
                     ))}
-                    {account.authType !== LoginTypes.ledger && !hasBothUpvoteAndDownvote && (
+                    {account.authType !== LoginTypes.ledger && (
                         <ButtonContainer>
                             <Button
                                 fullWidth

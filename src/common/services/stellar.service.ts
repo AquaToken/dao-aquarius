@@ -584,10 +584,10 @@ export default class StellarServiceClass {
             return 'https://ice-approval.aqua.network/api/v1/ice/tx-approve/';
         }
         if (asset.code === UP_ICE_CODE && asset.issuer === ICE_ISSUER) {
-            return 'https://ice-approval.aqua.network/api/v1/upvote-ice/tx-approve/';
+            return 'https://ice-approval.aqua.network/api/v2/upvote-ice/tx-approve/';
         }
         if (asset.code === DOWN_ICE_CODE && asset.issuer === ICE_ISSUER) {
-            return 'https://ice-approval.aqua.network/api/v1/downvote-ice/tx-approve/';
+            return 'https://ice-approval.aqua.network/api/v2/downvote-ice/tx-approve/';
         }
         if (asset.code === GOV_ICE_CODE && asset.issuer === ICE_ISSUER) {
             return 'https://ice-approval.aqua.network/api/v1/govern-ice/tx-approve/';
