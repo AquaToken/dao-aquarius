@@ -13,6 +13,7 @@ import { LoginTypes } from '../../../store/authStore/types';
 import Copy from '../../../common/assets/img/icon-copy.svg';
 import External from '../../../common/assets/img/icon-external-link.svg';
 import CopyButton from '../../../common/basics/CopyButton';
+import MyAquarius from '../../../common/assets/img/my-aquarius.svg';
 
 const Container = styled.div`
     display: flex;
@@ -20,14 +21,35 @@ const Container = styled.div`
     width: 100%;
 `;
 
+const BgContainer = styled.div`
+    ${flexAllCenter};
+    flex-direction: column;
+    width: 100%;
+    height: 45vh;
+    position: relative;
+    overflow: hidden;
+    background: ${COLORS.background};
+`;
+
+const MyAquariusLogo = styled(MyAquarius)`
+    width: 100%;
+    position: absolute;
+    display: block;
+
+    ${respondDown(Breakpoints.xxl)`
+        width: unset;
+        height: 100%;
+    `};
+`;
+
 const Wrapper = styled.div`
     ${commonMaxWidth};
     width: 100%;
     padding: 5.6rem 4rem;
+    z-index: 1;
 
     ${respondDown(Breakpoints.md)`
         padding: 3.2rem 1.6rem 2rem;
-        background: ${COLORS.white};
     `}
 `;
 
@@ -69,7 +91,7 @@ const WcIcon = styled.img`
 const AccountData = styled.div`
     display: flex;
     flex-direction: column;
-    color: ${COLORS.titleText};
+    color: ${COLORS.white};
 
     span:first-child {
         font-weight: 700;
@@ -135,40 +157,43 @@ const AccountInfo = () => {
 
     return (
         <Container>
-            <Wrapper>
-                <Main>
-                    <AccountInfoBLock>
-                        <Icon>
-                            <Identicon pubKey={account.accountId()} />
-                            {loginType === LoginTypes.walletConnect && (
-                                <WcIcon src={metadata.icons[0]} />
-                            )}
-                        </Icon>
-                        <AccountData>
-                            {federationAddress && <span>{federationAddress}</span>}
-                            <span>{truncatedKey}</span>
-                        </AccountData>
-                    </AccountInfoBLock>
+            <BgContainer>
+                <MyAquariusLogo />
+                <Wrapper>
+                    <Main>
+                        <AccountInfoBLock>
+                            <Icon>
+                                <Identicon pubKey={account.accountId()} />
+                                {loginType === LoginTypes.walletConnect && (
+                                    <WcIcon src={metadata.icons[0]} />
+                                )}
+                            </Icon>
+                            <AccountData>
+                                {federationAddress && <span>{federationAddress}</span>}
+                                <span>{truncatedKey}</span>
+                            </AccountData>
+                        </AccountInfoBLock>
 
-                    <CopyWrap>
-                        <a
-                            target="_blank"
-                            href={`https://stellar.expert/explorer/public/account/${account.accountId()}`}
-                        >
-                            <ButtonBlock>
-                                Explorer
-                                <ExternalLogo />
-                            </ButtonBlock>
-                        </a>
+                        <CopyWrap>
+                            <a
+                                target="_blank"
+                                href={`https://stellar.expert/explorer/public/account/${account.accountId()}`}
+                            >
+                                <ButtonBlock>
+                                    Explorer
+                                    <ExternalLogo />
+                                </ButtonBlock>
+                            </a>
 
-                        <CopyButton text={account.accountId()} withoutLogo>
-                            <ButtonBlock>
-                                <Copy />
-                            </ButtonBlock>
-                        </CopyButton>
-                    </CopyWrap>
-                </Main>
-            </Wrapper>
+                            <CopyButton text={account.accountId()} withoutLogo>
+                                <ButtonBlock>
+                                    <Copy />
+                                </ButtonBlock>
+                            </CopyButton>
+                        </CopyWrap>
+                    </Main>
+                </Wrapper>
+            </BgContainer>
         </Container>
     );
 };

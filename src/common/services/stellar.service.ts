@@ -5,6 +5,7 @@ import { Memo, MemoType, OperationOptions, ServerApi } from 'stellar-sdk';
 import axios, { AxiosResponse } from 'axios';
 import { roundToPrecision } from '../helpers/helpers';
 import { PairStats } from '../../pages/vote/api/types';
+import { validateMarketKeys } from '../../pages/vote/api/api';
 
 enum HORIZON_SERVER {
     stellar = 'https://horizon.stellar.org',
@@ -484,6 +485,43 @@ export default class StellarServiceClass {
             }
             return acc;
         }, []);
+    }
+
+    getAquaInLiquidityVotes(accountId: string): Promise<number> {
+        if (!this.claimableBalances) {
+            return Promise.resolve(null);
+        }
+
+        const keys = this.getKeysSimilarToMarketKeys(accountId);
+
+        return validateMarketKeys(keys).then((marketPairs) => {
+            return this.claimableBalances.reduce((acc, claim) => {
+                if (claim.claimants.length !== 2) {
+                    return acc;
+                }
+                const hasUpMarker = claim.claimants.some((claimant) =>
+                    Boolean(marketPairs.find((pair) => pair.account_id === claimant.destination)),
+                );
+
+                const hasDownMarker = claim.claimants.some((claimant) =>
+                    Boolean(
+                        marketPairs.find(
+                            (pair) => pair.downvote_account_id === claimant.destination,
+                        ),
+                    ),
+                );
+
+                const selfClaim = claim.claimants.find(
+                    (claimant) => claimant.destination === accountId,
+                );
+                const isAqua = claim.asset === `${AQUA_CODE}:${AQUA_ISSUER}`;
+
+                if ((hasUpMarker || hasDownMarker) && Boolean(selfClaim) && isAqua) {
+                    acc += Number(claim.amount);
+                }
+                return acc;
+            }, 0);
+        });
     }
 
     getKeysSimilarToMarketKeys(accountId: string): string[] {
