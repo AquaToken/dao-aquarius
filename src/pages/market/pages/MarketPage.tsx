@@ -13,10 +13,6 @@ import { isRewardsOn, MAX_REWARDS_PERCENT } from '../../vote/components/MainPage
 import AboutAsset from '../components/AboutAsset/AboutAsset';
 import MarketBribes from '../components/MarketBribes/MarketBribes';
 import Sidebar from '../components/Sidebar/Sidebar';
-import {
-    getCachedChosenPairs,
-    SELECTED_PAIRS_ALIAS,
-} from '../../vote/components/MainPage/MainPage';
 import { PairStats } from '../../vote/api/types';
 import useAuthStore from '../../../store/authStore/useAuthStore';
 import YourVotes from '../components/YourVotes/YourVotes';
@@ -28,8 +24,8 @@ import AmmStats from '../components/AmmStats/AmmStats';
 import { VoteRoutes } from '../../../routes';
 import useAssetsStore from '../../../store/assetsStore/useAssetsStore';
 import Title from 'react-document-title';
-import { LoginTypes } from '../../../store/authStore/types';
 import VotesAmountModal from '../../vote/components/MainPage/VoteModals/VotesAmountModal';
+import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -176,9 +172,8 @@ const MarketPage = () => {
     const { processNewAssets } = useAssetsStore();
     const [votesData, setVotesData] = useState(null);
     const [totalStats, setTotalStats] = useState(null);
-    const [chosenPairs, setChosenPairs] = useState(getCachedChosenPairs());
 
-    const { isLogged, account } = useAuthStore();
+    const { isLogged } = useAuthStore();
 
     const history = useHistory();
 
@@ -217,7 +212,7 @@ const MarketPage = () => {
     }, []);
 
     const onVoteClick = (pair: PairStats) => {
-        if (isLogged && account.authType === LoginTypes.ledger) {
+        if (isLogged) {
             ModalService.openModal(VotesAmountModal, {
                 pairs: [pair],
                 isSingleVoteForModal: true,
@@ -225,25 +220,8 @@ const MarketPage = () => {
             });
             return;
         }
-        const isPairSelected = chosenPairs.some(
-            (chosenPair) => chosenPair.market_key === pair.market_key,
-        );
 
-        let updatedPairs;
-
-        if (isPairSelected) {
-            updatedPairs = chosenPairs.filter(
-                (chosenPair) => chosenPair.market_key !== pair.market_key,
-            );
-        } else {
-            updatedPairs = [...chosenPairs, pair];
-        }
-        setChosenPairs(updatedPairs);
-        localStorage.setItem(SELECTED_PAIRS_ALIAS, JSON.stringify(updatedPairs));
-    };
-
-    const isPairSelected = ({ market_key: marketKey }: PairStats): boolean => {
-        return chosenPairs.some((pair) => pair.market_key === marketKey);
+        ModalService.openModal(ChooseLoginMethodModal, {});
     };
 
     const MarketStatRef = useRef(null);
@@ -390,7 +368,7 @@ const MarketPage = () => {
                     counter={counterAsset}
                     totalStats={totalStats}
                     onVoteClick={onVoteClick}
-                    isPairSelected={votesData ? isPairSelected(votesData) : false}
+                    isPairSelected={false}
                 />
                 <MarketSection smallTopPadding ref={MarketStatRef}>
                     <TradeStats base={baseAsset} counter={counterAsset} />
