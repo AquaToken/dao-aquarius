@@ -273,18 +273,11 @@ const TooltipInner = styled.div`
     white-space: pre-wrap;
 `;
 
-const Balances = () => {
-    const [ammAquaBalance, setAmmAquaBalance] = useState(null);
+const Balances = ({ ammAquaBalance }) => {
     const [locks, setLocks] = useState(null);
     const [aquaInVotes, setAquaInVotes] = useState(null);
 
     const { account } = useAuthStore();
-
-    useEffect(() => {
-        account.getAmmAquaBalance().then((res) => {
-            setAmmAquaBalance(res);
-        });
-    }, []);
 
     useEffect(() => {
         StellarService.getAquaInLiquidityVotes(account.accountId()).then((res) => {
@@ -298,6 +291,7 @@ const Balances = () => {
                 StellarService.getAquaInLiquidityVotes(account.accountId()).then((res) => {
                     setAquaInVotes(res);
                 });
+                setLocks(StellarService.getLocks(account.accountId()));
             }
         });
 
@@ -305,9 +299,7 @@ const Balances = () => {
     }, []);
 
     useEffect(() => {
-        StellarService.getAccountLocks(account.accountId()).then((res) => {
-            setLocks(res);
-        });
+        setLocks(StellarService.getLocks(account.accountId()));
     }, []);
 
     const aquaBalance = account.getAquaBalance();
