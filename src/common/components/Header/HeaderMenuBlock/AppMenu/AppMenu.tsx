@@ -222,6 +222,7 @@ const IceLogo = styled(Ice)`
 const LinkButton = styled.a`
     width: 100%;
     margin-right: 1rem;
+    text-decoration: none;
 `;
 
 const NewItem = styled.div`
