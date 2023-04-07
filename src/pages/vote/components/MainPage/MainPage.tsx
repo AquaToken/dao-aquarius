@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import BackgroundImageLeft from '../../../../common/assets/img/background-left.svg';
 import BackgroundImageRight from '../../../../common/assets/img/background-right.svg';
+import Info from '../../../../common/assets/img/icon-info.svg';
 import { Breakpoints, COLORS } from '../../../../common/styles';
 import {
     commonMaxWidth,
@@ -50,6 +51,9 @@ import { useHistory, useLocation } from 'react-router-dom';
 import useAssetsStore from '../../../../store/assetsStore/useAssetsStore';
 import { MarketRoutes } from '../../../../routes';
 import { LoginTypes } from '../../../../store/authStore/types';
+import Ice from '../../../../common/assets/img/ice-logo.svg';
+import Aqua from '../../../../common/assets/img/aqua-logo-small.svg';
+import { getAssetString } from '../../../../store/assetsStore/actions';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -255,6 +259,9 @@ const ToggleGroupStyled = styled(ToggleGroup)`
 `;
 
 const StatusUpdate = styled.div`
+    display: flex;
+    align-items: center;
+    flex-direction: row-reverse;
     margin-left: auto;
     font-size: 1.4rem;
     line-height: 2rem;
@@ -264,10 +271,17 @@ const StatusUpdate = styled.div`
     ${respondDown(Breakpoints.md)`
          text-align: center;
          margin-left: 0;
+         flex-direction: column;
     `}
+
+    span {
+        display: flex;
+        align-items: center;
+    }
 `;
 
-const Dot = styled.span`
+const Dot = styled.div`
+    margin: 0 0.6rem;
     ${respondDown(Breakpoints.md)`
           display: none;
     `}
@@ -324,6 +338,34 @@ const BeFirst = styled.div`
     div:first-child {
         margin-right: 0.8rem;
     }
+`;
+
+const InfoIcon = styled(Info)`
+    margin-left: 0.4rem;
+`;
+
+const TotalTooltip = styled.div`
+    display: flex;
+    flex-direction: column;
+    color: ${COLORS.titleText};
+    width: 25rem;
+`;
+
+const TooltipRow = styled.div`
+    ${flexRowSpaceBetween};
+    padding: 0.4rem 0;
+`;
+
+const IceLogo = styled(Ice)`
+    height: 1.8rem;
+    width: 1.8rem;
+    margin-right: 0.5rem;
+`;
+
+const AquaLogo = styled(Aqua)`
+    height: 1.8rem;
+    width: 1.8rem;
+    margin-right: 0.5rem;
 `;
 
 export const SELECTED_PAIRS_ALIAS = 'selected pairs';
@@ -712,6 +754,24 @@ const MainPage = (): JSX.Element => {
         setChangePageLoading(true);
     };
 
+    const { totalAqua, totalUpIce, totalDownIce } = useMemo(() => {
+        if (!totalStats) {
+            return {
+                totalAqua: 0,
+                totalUpIce: 0,
+                totalDownIce: 0,
+            };
+        }
+        const { assets } = totalStats;
+
+        return {
+            totalAqua: +assets.find(({ asset }) => asset === getAssetString(AQUA))?.votes_sum,
+            totalUpIce: +assets.find(({ asset }) => asset === getAssetString(UP_ICE))?.votes_sum,
+            totalDownIce: +assets.find(({ asset }) => asset === getAssetString(DOWN_ICE))
+                ?.votes_sum,
+        };
+    }, [totalStats]);
+
     if (!pairs) {
         return <PageLoader />;
     }
@@ -823,13 +883,45 @@ const MainPage = (): JSX.Element => {
                     {Boolean(pairs.length && pairs.some((pair) => Boolean(pair.timestamp))) && (
                         <StatusUpdate>
                             {totalStats ? (
-                                <>
-                                    <span>
-                                        {formatBalance(totalStats.total_votes_sum, true)} total in
-                                        votes
-                                    </span>
-                                    <Dot>{' · '}</Dot>
-                                </>
+                                <Tooltip
+                                    content={
+                                        <TotalTooltip>
+                                            <TooltipRow>
+                                                <span>AQUA:</span>
+                                                <span>
+                                                    <AquaLogo />
+                                                    {formatBalance(totalAqua, true)}
+                                                </span>
+                                            </TooltipRow>
+                                            <TooltipRow>
+                                                <span>upvoteICE:</span>
+                                                <span>
+                                                    <IceLogo />
+                                                    {formatBalance(totalUpIce, true)}
+                                                </span>
+                                            </TooltipRow>
+                                            <TooltipRow>
+                                                <span>downvoteICE:</span>
+                                                <span>
+                                                    <IceLogo />
+                                                    {formatBalance(totalDownIce, true)}
+                                                </span>
+                                            </TooltipRow>
+                                        </TotalTooltip>
+                                    }
+                                    position={TOOLTIP_POSITION.top}
+                                    showOnHover
+                                    isWhite
+                                >
+                                    <>
+                                        <Dot>·</Dot>
+                                        <span>
+                                            {formatBalance(totalStats.total_votes_sum, true)} total
+                                            in votes
+                                            <InfoIcon />
+                                        </span>
+                                    </>
+                                </Tooltip>
                             ) : (
                                 <DotsLoader />
                             )}
