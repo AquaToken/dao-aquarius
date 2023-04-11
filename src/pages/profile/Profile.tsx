@@ -4,13 +4,16 @@ import AccountInfo from './AccountInfo/AccountInfo';
 import { commonMaxWidth, respondDown } from '../../common/mixins';
 import { Breakpoints, COLORS } from '../../common/styles';
 import ToggleGroup from '../../common/basics/ToggleGroup';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import YourVotes from './YourVotes/YourVotes';
 import Select from '../../common/basics/Select';
 import AmmRewards from './AmmRewards/AmmRewards';
 import SdexRewards from './SdexRewards/SdexRewards';
 import YourGovernanceVotes from './YourGovernanceVotes/YourGovernanceVotes';
 import Balances from './Balances/Balances';
+import Airdrop2List from './Airdrop2List/Airdrop2List';
+import IceLocks from './IceLocks/IceLocks';
+import useAuthStore from '../../store/authStore/useAuthStore';
 
 const Container = styled.div`
     height: 100%;
@@ -71,6 +74,8 @@ enum Tabs {
     amm = 'amm',
     your = 'your',
     governance = 'governance',
+    airdrop2 = 'airdrop2',
+    iceLocks = 'iceLocks',
 }
 
 const OPTIONS = [
@@ -78,14 +83,26 @@ const OPTIONS = [
     { label: 'AMM rewards', value: Tabs.amm },
     { label: 'Liquidity Votes', value: Tabs.your },
     { label: 'Governance Votes', value: Tabs.governance },
+    { label: 'Airdrop #2', value: Tabs.airdrop2 },
+    { label: 'ICE locks', value: Tabs.iceLocks },
 ];
 
 const Profile = () => {
     const [selectedTab, setSelectedTab] = useState(Tabs.sdex);
+    const [ammAquaBalance, setAmmAquaBalance] = useState(null);
+
+    const { account } = useAuthStore();
+
+    useEffect(() => {
+        account.getAmmAquaBalance().then((res) => {
+            setAmmAquaBalance(res);
+        });
+    }, []);
+
     return (
         <Container>
             <AccountInfo />
-            <Balances />
+            <Balances ammAquaBalance={ammAquaBalance} />
             <ControlsWrapper>
                 <ToggleGroupStyled
                     value={selectedTab}
@@ -101,6 +118,8 @@ const Profile = () => {
                     {selectedTab === Tabs.sdex && <SdexRewards />}
                     {selectedTab === Tabs.your && <YourVotes />}
                     {selectedTab === Tabs.governance && <YourGovernanceVotes />}
+                    {selectedTab === Tabs.airdrop2 && <Airdrop2List />}
+                    {selectedTab === Tabs.iceLocks && <IceLocks ammAquaBalance={ammAquaBalance} />}
                 </Content>
             </ContentWrap>
         </Container>

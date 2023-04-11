@@ -20,6 +20,8 @@ const MARKET_KEY_MARKER_DOWN = 'GAYVCXXXUSEAQUAXXXAQUARIUSDOWNVOTEWALLETXXXPOWER
 const MARKET_KEY_SIGNER_WEIGHT = 1;
 const MARKET_KEY_THRESHOLD = 10;
 
+const AIRDROP_2_SPONSOR = 'GDFCYDQOVJ2OEWPLEGIRQVAM3VTOQ6JDNLJTDZP5S5OGTEHM5CIWMYBH';
+
 export const COLLECTOR_KEY = 'GAORXNBAWRIOJ7HRMCTWW2MIB6PYWSC7OKHGIXWTJXYRTZRSHP356TW3';
 
 export enum StellarEvents {
@@ -306,6 +308,19 @@ export default class StellarServiceClass {
             });
     }
 
+    getLocks(publicKey: string) {
+        if (!this.claimableBalances) {
+            return null;
+        }
+
+        return this.claimableBalances.filter(
+            (claim) =>
+                claim.claimants.length === 1 &&
+                claim.claimants[0].destination === publicKey &&
+                claim.asset === `${AQUA_CODE}:${AQUA_ISSUER}`,
+        );
+    }
+
     getAccountLocks(publicKey: string) {
         const LOCKS_LIMIT = 200;
         return this.server
@@ -522,6 +537,14 @@ export default class StellarServiceClass {
                 return acc;
             }, 0);
         });
+    }
+
+    getAirdrop2Claims() {
+        if (!this.claimableBalances) {
+            return null;
+        }
+
+        return this.claimableBalances.filter((cb) => cb.sponsor === AIRDROP_2_SPONSOR);
     }
 
     getKeysSimilarToMarketKeys(accountId: string): string[] {

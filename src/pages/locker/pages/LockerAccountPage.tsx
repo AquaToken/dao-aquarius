@@ -84,6 +84,7 @@ const LockerAccountPage = () => {
     const [ammAquaBalance, setAmmAquaBalance] = useState(null);
     const [locks, setLocks] = useState(null);
     const [distributions, setDistributions] = useState(null);
+    const [aquaInVotes, setAquaInVotes] = useState(null);
 
     const { account, isLogged } = useAuthStore();
     const { accountId } = useParams<{ accountId: string }>();
@@ -132,6 +133,10 @@ const LockerAccountPage = () => {
                 StellarService.getAccountLocks(accountId).then((res) => {
                     setLocks(res);
                 });
+
+                StellarService.getAquaInLiquidityVotes(accountId).then((res) => {
+                    setAquaInVotes(res);
+                });
             }
         });
 
@@ -144,6 +149,15 @@ const LockerAccountPage = () => {
         }
         currentAccount.getAmmAquaBalance().then((res) => {
             setAmmAquaBalance(res);
+        });
+    }, [currentAccount]);
+
+    useEffect(() => {
+        if (!currentAccount) {
+            return;
+        }
+        StellarService.getAquaInLiquidityVotes(currentAccount.accountId()).then((res) => {
+            setAquaInVotes(res);
         });
     }, [currentAccount]);
 
@@ -191,6 +205,11 @@ const LockerAccountPage = () => {
                             aquaBalance={
                                 account?.getAquaBalance() ?? currentAccount.getAquaBalance()
                             }
+                            ammAquaBalance={ammAquaBalance}
+                            aquaInOffers={
+                                account?.getAquaInOffers() ?? currentAccount.getAquaInOffers()
+                            }
+                            aquaInVotes={aquaInVotes}
                         />
                     )}
                 </LeftColumn>
