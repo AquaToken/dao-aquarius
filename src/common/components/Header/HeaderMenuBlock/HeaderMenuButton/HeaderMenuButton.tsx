@@ -138,7 +138,8 @@ const BodyStyle = createGlobalStyle`
 
 const HeaderMenuButton = ({ navLinks }: { navLinks?: JSX.Element }): JSX.Element => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const { account, federationAddress, loginType, metadata, isLogged } = useAuthStore();
+    const { account, federationAddress, loginType, metadata, isLogged, isLoginPending } =
+        useAuthStore();
     const menuRef = useRef(null);
     useOnClickOutside(menuRef, () => setIsMenuOpen(false));
 
@@ -153,7 +154,9 @@ const HeaderMenuButton = ({ navLinks }: { navLinks?: JSX.Element }): JSX.Element
     if (!isLogged) {
         return (
             <>
-                <SignInButton onClick={() => signIn()}>sign in</SignInButton>
+                <SignInButton onClick={() => signIn()} pending={isLoginPending}>
+                    sign in
+                </SignInButton>
                 <MobileMenu onClick={() => toggleMenu()}>
                     {isMenuOpen ? (
                         <CloseMenuButton>
