@@ -271,7 +271,7 @@ export default class WalletConnectServiceClass {
 
             this.event.trigger({
                 type: WalletConnectEvents.login,
-                publicKey,
+                publicKey: publicKey.toUpperCase(),
                 metadata: this.appMeta,
             });
 
@@ -444,7 +444,7 @@ export default class WalletConnectServiceClass {
 
         this.event.trigger({
             type: WalletConnectEvents.login,
-            publicKey,
+            publicKey: publicKey.toUpperCase(),
             metadata: this.appMeta,
         });
 
