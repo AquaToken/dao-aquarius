@@ -7,6 +7,7 @@ import AccountService from '../../../../../common/services/account.service';
 import Input from '../../../../../common/basics/Input';
 import Aqua from '../../../../../common/assets/img/aqua-logo-small.svg';
 import Ice from '../../../../../common/assets/img/ice-logo.svg';
+import Info from '../../../../../common/assets/img/icon-info.svg';
 import RangeInput from '../../../../../common/basics/RangeInput';
 import {
     formatBalance,
@@ -27,6 +28,7 @@ import {
     MIN_BOOST_PERIOD,
     roundMsToDays,
 } from '../IceBlock/IceBlock';
+import Tooltip, { TOOLTIP_POSITION } from '../../../../../common/basics/Tooltip';
 
 const Container = styled.div`
     background: ${COLORS.white};
@@ -204,6 +206,44 @@ const IceLogo = styled(Ice)`
     margin-right: 0.8rem;
 `;
 
+const InfoIcon = styled(Info)`
+    margin-left: 0.8rem;
+`;
+
+const TooltipInner = styled.div`
+    display: flex;
+    flex-direction: column;
+    color: ${COLORS.titleText};
+    width: fit-content;
+`;
+
+const TooltipRow = styled.div`
+    ${flexRowSpaceBetween};
+    gap: 2rem;
+    padding: 0.4rem 0;
+    font-weight: 400;
+
+    span:first-child {
+        font-size: 1.4rem;
+        line-height: 2rem;
+        color: ${COLORS.grayText};
+    }
+
+    span:last-child {
+        display: flex;
+        align-items: center;
+        font-size: 1.6rem;
+        line-height: 2.8rem;
+        color: ${COLORS.paragraphText};
+    }
+`;
+
+const IceLogoSmall = styled(Ice)`
+    height: 1.8rem;
+    width: 1.8rem;
+    margin-right: 0.5rem;
+`;
+
 const LockAquaForm = forwardRef(
     (
         {
@@ -370,7 +410,40 @@ const LockAquaForm = forwardRef(
                     <YouWillGetLabel>You will get:</YouWillGetLabel>
                     <YouWillGetAmount>
                         <IceLogo />
-                        <span>{formatBalance(iceAmount, true)} ICE</span>
+                        <Tooltip
+                            content={
+                                <TooltipInner>
+                                    <TooltipRow>
+                                        <span>upvoteICE:</span>
+                                        <span>
+                                            <IceLogoSmall />
+                                            {formatBalance(iceAmount * 0.8, true)}
+                                        </span>
+                                    </TooltipRow>
+                                    <TooltipRow>
+                                        <span>downvoteICE:</span>
+                                        <span>
+                                            <IceLogoSmall />
+                                            {formatBalance(iceAmount * 0.2, true)}
+                                        </span>
+                                    </TooltipRow>
+                                    <TooltipRow>
+                                        <span>governICE:</span>
+                                        <span>
+                                            <IceLogoSmall />
+                                            {formatBalance(iceAmount, true)}
+                                        </span>
+                                    </TooltipRow>
+                                </TooltipInner>
+                            }
+                            position={TOOLTIP_POSITION.left}
+                            isWhite
+                            showOnHover
+                        >
+                            <span>
+                                {formatBalance(iceAmount, true)} ICE <InfoIcon />
+                            </span>
+                        </Tooltip>
                     </YouWillGetAmount>
                 </YouWillGet>
 

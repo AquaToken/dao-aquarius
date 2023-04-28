@@ -6,7 +6,7 @@ import { respondDown } from '../../../../../common/mixins';
 import IceLogo from '../../../../../common/assets/img/ice-logo.svg';
 import { formatBalance } from '../../../../../common/helpers/helpers';
 import ExternalLink from '../../../../../common/basics/ExternalLink';
-import { ICE_CODE, ICE_ISSUER } from '../../../../../common/services/stellar.service';
+import { GOV_ICE_CODE, ICE_CODE, ICE_ISSUER } from '../../../../../common/services/stellar.service';
 import { ModalService, StellarService } from '../../../../../common/services/globalServices';
 import Button from '../../../../../common/basics/Button';
 import AddIceTrustlinesModal from '../AddIceTrustlinesModal/AddIceTrustlinesModal';
@@ -14,6 +14,7 @@ import useAuthStore from '../../../../../store/authStore/useAuthStore';
 import ChooseLoginMethodModal from '../../../../../common/modals/ChooseLoginMethodModal';
 import AccountService from '../../../../../common/services/account.service';
 import { ServerApi } from 'stellar-sdk';
+import { DOWN_ICE, UP_ICE } from '../../../../vote/components/MainPage/MainPage';
 
 const Container = styled.div`
     margin-top: 4rem;
@@ -28,13 +29,41 @@ const Title = styled.span`
     font-size: 1.4rem;
     line-height: 2rem;
     color: ${COLORS.grayText};
-    margin-bottom: 2.4rem;
+    margin-bottom: 0.5rem;
 `;
 
 const BalanceRow = styled.div`
     display: flex;
     align-items: center;
-    padding-bottom: 3.2rem;
+    margin-top: 2.4rem;
+
+    &:last-child {
+        margin-bottom: 3.2rem;
+
+        ${respondDown(Breakpoints.md)`
+            flex-direction: column;
+            align-items: flex-start;
+        `}
+    }
+`;
+
+const SmallBalanceColumn = styled.div`
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+
+    ${respondDown(Breakpoints.md)`
+         margin-bottom: 2rem;
+    `}
+`;
+
+const SmallBalance = styled.div`
+    display: flex;
+    align-items: center;
+    font-weight: 700;
+    font-size: 2rem;
+    line-height: 2.8rem;
+    color: ${COLORS.titleText};
 `;
 
 const Balance = styled.span`
@@ -126,6 +155,12 @@ const Logo = styled(IceLogo)`
     height: 4.8rem;
 `;
 
+const SmallLogo = styled(IceLogo)`
+    width: 2rem;
+    height: 2rem;
+    margin-right: 0.5rem;
+`;
+
 export const MAX_BOOST = 9;
 export const MAX_BOOST_PERIOD = 3 * 365 * 24 * 60 * 60 * 1000;
 export const MIN_BOOST_PERIOD = 24 * 60 * 60 * 1000;
@@ -145,6 +180,12 @@ const IceBlock = ({ account, locks }: IceBlockProps): JSX.Element => {
 
     const iceBalance = Number(
         account.getAssetBalance(StellarService.createAsset(ICE_CODE, ICE_ISSUER)),
+    );
+
+    const upBalance = account.getAssetBalance(UP_ICE);
+    const downBalance = account.getAssetBalance(DOWN_ICE);
+    const govBalance = account.getAssetBalance(
+        StellarService.createAsset(GOV_ICE_CODE, ICE_ISSUER),
     );
 
     const getIceAmount = useCallback(() => {
@@ -172,12 +213,38 @@ const IceBlock = ({ account, locks }: IceBlockProps): JSX.Element => {
     return (
         <Container>
             <Title>Your available ICE balance</Title>
-            <BalanceRow>
-                <Logo />
-                <Balance>
-                    {account.hasAllIceTrustlines() ? formatBalance(iceBalance, true) : 0} ICE
-                </Balance>
-            </BalanceRow>
+            <div>
+                <BalanceRow>
+                    <Logo />
+                    <Balance>
+                        {account.hasAllIceTrustlines() ? formatBalance(iceBalance, true) : 0} ICE
+                    </Balance>
+                </BalanceRow>
+                <BalanceRow>
+                    <SmallBalanceColumn>
+                        <Title>upvoteICE</Title>
+                        <SmallBalance>
+                            <SmallLogo />
+                            {formatBalance(Number(upBalance), true)}
+                        </SmallBalance>
+                    </SmallBalanceColumn>
+                    <SmallBalanceColumn>
+                        <Title>downvoteICE</Title>
+                        <SmallBalance>
+                            <SmallLogo />
+                            {formatBalance(Number(downBalance), true)}
+                        </SmallBalance>
+                    </SmallBalanceColumn>
+                    <SmallBalanceColumn>
+                        <Title>governICE</Title>
+                        <SmallBalance>
+                            <SmallLogo />
+                            {formatBalance(Number(govBalance), true)}
+                        </SmallBalance>
+                    </SmallBalanceColumn>
+                </BalanceRow>
+            </div>
+
             {Boolean(locks.length && iceBalance === 0) && (
                 <ClaimIceBlock>
                     <ClaimIceColumn>
