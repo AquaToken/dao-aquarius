@@ -2,7 +2,7 @@ import * as React from 'react';
 import { TableBody, TableHead, TableHeadRow } from '../../vote/components/MainPage/Table/Table';
 import Pair from '../../vote/components/common/Pair';
 import { StellarService } from '../../../common/services/globalServices';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getSdexRewards } from '../api/api';
 import useAuthStore from '../../../store/authStore/useAuthStore';
 import PageLoader from '../../../common/basics/PageLoader';
@@ -16,6 +16,7 @@ import {
     Cell,
     Container,
     ExternalLinkStyled,
+    getSortFunction,
     Header,
     PairCell,
     Section,
@@ -30,11 +31,21 @@ import {
 import useAssetsStore from '../../../store/assetsStore/useAssetsStore';
 import { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
 import Info from '../../../common/assets/img/icon-info.svg';
+import { SortingHeader } from '../../bribes/components/BribesPage/BribesTable/BribesTable';
+import { IconSort } from '../../../common/basics/Icons';
+
+enum SortField {
+    daily = 'daily',
+    boost = 'boost',
+    total = 'total',
+}
 
 const SdexRewards = () => {
     const { account } = useAuthStore();
 
     const [sdexRewards, setSdexRewards] = useState(null);
+    const [sort, setSort] = useState(SortField.total);
+    const [isSortReversed, setIsSortReversed] = useState(false);
 
     const { processNewAssets } = useAssetsStore();
 
@@ -70,6 +81,44 @@ const SdexRewards = () => {
         }, 0);
     }, [sdexRewards]);
 
+    const sorted = useMemo(() => {
+        if (!sdexRewards) {
+            return null;
+        }
+        switch (sort) {
+            case SortField.daily:
+                return sdexRewards.sort((a, b) =>
+                    getSortFunction(
+                        a.maker_reward - a.boosted_reward,
+                        b.maker_reward - b.boosted_reward,
+                        isSortReversed,
+                    ),
+                );
+            case SortField.boost:
+                return sdexRewards.sort((a, b) =>
+                    getSortFunction(a.boosted_reward, b.boosted_reward, isSortReversed),
+                );
+            case SortField.total:
+                return sdexRewards.sort((a, b) =>
+                    getSortFunction(a.maker_reward, b.maker_reward, isSortReversed),
+                );
+            default:
+                throw new Error('Invalid sort field');
+        }
+    }, [sdexRewards, sort, isSortReversed]);
+
+    const changeSort = useCallback(
+        (sortField) => {
+            if (sortField === sort) {
+                setIsSortReversed((prevState) => !prevState);
+                return;
+            }
+            setSort(sortField);
+            setIsSortReversed(false);
+        },
+        [sort, isSortReversed],
+    );
+
     return (
         <Container>
             <Header>
@@ -82,31 +131,62 @@ const SdexRewards = () => {
                 )}
             </Header>
 
-            {!sdexRewards ? (
+            {!sorted ? (
                 <PageLoader />
-            ) : sdexRewards.length ? (
+            ) : sorted.length ? (
                 <Section>
                     <Table>
                         <TableHead>
                             <TableHeadRow>
                                 <PairCell>Pair</PairCell>
-                                <Cell>Daily SDEX reward</Cell>
                                 <Cell>
-                                    ICE holding boost
-                                    <TooltipCustom
-                                        content={<TooltipInner>{TOOLTIP_TEXT}</TooltipInner>}
-                                        position={TOOLTIP_POSITION.top}
-                                        showOnHover
+                                    <SortingHeader
+                                        position="left"
+                                        onClick={() => changeSort(SortField.daily)}
                                     >
-                                        <Info />
-                                    </TooltipCustom>
+                                        Daily SDEX reward
+                                        <IconSort
+                                            isEnabled={sort === SortField.daily}
+                                            isReversed={isSortReversed}
+                                        />
+                                    </SortingHeader>
                                 </Cell>
-                                <Cell>Total daily reward</Cell>
+                                <Cell>
+                                    <SortingHeader
+                                        position="left"
+                                        onClick={() => changeSort(SortField.boost)}
+                                    >
+                                        ICE holding boost
+                                        <IconSort
+                                            isEnabled={sort === SortField.boost}
+                                            isReversed={isSortReversed}
+                                        />
+                                        <TooltipCustom
+                                            content={<TooltipInner>{TOOLTIP_TEXT}</TooltipInner>}
+                                            position={TOOLTIP_POSITION.top}
+                                            showOnHover
+                                        >
+                                            <Info />
+                                        </TooltipCustom>
+                                    </SortingHeader>
+                                </Cell>
+                                <Cell>
+                                    <SortingHeader
+                                        position="left"
+                                        onClick={() => changeSort(SortField.total)}
+                                    >
+                                        Total daily reward
+                                        <IconSort
+                                            isEnabled={sort === SortField.total}
+                                            isReversed={isSortReversed}
+                                        />
+                                    </SortingHeader>
+                                </Cell>
                             </TableHeadRow>
                         </TableHead>
 
                         <TableBody>
-                            {sdexRewards.map(
+                            {sorted.map(
                                 ({
                                     market_key: pair,
                                     maker_reward: reward,

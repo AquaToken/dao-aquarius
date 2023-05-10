@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
     TableBody,
     TableCell,
@@ -23,6 +23,8 @@ import useAssetsStore from '../../../store/assetsStore/useAssetsStore';
 import Info from '../../../common/assets/img/icon-info.svg';
 import Aqua from '../../../common/assets/img/aqua-logo-small.svg';
 import Tooltip, { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
+import { IconSort } from '../../../common/basics/Icons';
+import { SortingHeader } from '../../bribes/components/BribesPage/BribesTable/BribesTable';
 
 export const Container = styled.div`
     display: flex;
@@ -165,10 +167,22 @@ export const TooltipInner = styled.span`
 export const TOOLTIP_TEXT =
     'You can freeze AQUA into ICE for additional benefits. One of them is a boost in SDEX and AMM rewards you can receive. The higher your ICE balance, the higher your boost can be.';
 
+enum SortField {
+    daily = 'daily',
+    boost = 'boost',
+    total = 'total',
+}
+
+export const getSortFunction = (value1, value2, isSortReversed) => {
+    return isSortReversed ? value1 - value2 : value2 - value1;
+};
+
 const AmmRewards = () => {
     const { account } = useAuthStore();
 
     const [ammRewards, setAmmRewards] = useState(null);
+    const [sort, setSort] = useState(SortField.total);
+    const [isSortReversed, setIsSortReversed] = useState(false);
 
     const { processNewAssets } = useAssetsStore();
 
@@ -214,6 +228,44 @@ const AmmRewards = () => {
         }, 0);
     }, [ammRewards]);
 
+    const sorted = useMemo(() => {
+        if (!ammRewards) {
+            return null;
+        }
+        switch (sort) {
+            case SortField.daily:
+                return ammRewards.sort((a, b) =>
+                    getSortFunction(
+                        a.reward_amount - a.boosted_reward,
+                        b.reward_amount - b.boosted_reward,
+                        isSortReversed,
+                    ),
+                );
+            case SortField.boost:
+                return ammRewards.sort((a, b) =>
+                    getSortFunction(a.boosted_reward, b.boosted_reward, isSortReversed),
+                );
+            case SortField.total:
+                return ammRewards.sort((a, b) =>
+                    getSortFunction(a.reward_amount, b.reward_amount, isSortReversed),
+                );
+            default:
+                throw new Error('Invalid sort field');
+        }
+    }, [ammRewards, sort, isSortReversed]);
+
+    const changeSort = useCallback(
+        (sortField) => {
+            if (sortField === sort) {
+                setIsSortReversed((prevState) => !prevState);
+                return;
+            }
+            setSort(sortField);
+            setIsSortReversed(false);
+        },
+        [sort, isSortReversed],
+    );
+
     return (
         <Container>
             <Header>
@@ -226,9 +278,9 @@ const AmmRewards = () => {
                 )}
             </Header>
 
-            {!ammRewards ? (
+            {!sorted ? (
                 <PageLoader />
-            ) : ammRewards.length ? (
+            ) : sorted.length ? (
                 <Section>
                     <Table>
                         <TableHead>
@@ -236,23 +288,55 @@ const AmmRewards = () => {
                                 <PairCell>Pair</PairCell>
                                 <Cell>Total shares</Cell>
                                 <Cell>My shares</Cell>
-                                <Cell>Daily AMM reward</Cell>
                                 <Cell>
-                                    ICE holding boost
-                                    <TooltipCustom
-                                        content={<TooltipInner>{TOOLTIP_TEXT}</TooltipInner>}
-                                        position={TOOLTIP_POSITION.top}
-                                        showOnHover
+                                    <SortingHeader
+                                        position="left"
+                                        onClick={() => changeSort(SortField.daily)}
                                     >
-                                        <Info />
-                                    </TooltipCustom>
+                                        Daily AMM reward
+                                        <IconSort
+                                            isEnabled={sort === SortField.daily}
+                                            isReversed={isSortReversed}
+                                        />
+                                    </SortingHeader>
                                 </Cell>
-                                <Cell>Total daily reward</Cell>
+                                <Cell>
+                                    <SortingHeader
+                                        position="left"
+                                        onClick={() => changeSort(SortField.boost)}
+                                    >
+                                        ICE holding boost
+                                        <IconSort
+                                            isEnabled={sort === SortField.boost}
+                                            isReversed={isSortReversed}
+                                        />
+                                        <TooltipCustom
+                                            content={<TooltipInner>{TOOLTIP_TEXT}</TooltipInner>}
+                                            position={TOOLTIP_POSITION.top}
+                                            showOnHover
+                                        >
+                                            <Info />
+                                        </TooltipCustom>
+                                    </SortingHeader>
+                                </Cell>
+
+                                <Cell>
+                                    <SortingHeader
+                                        position="left"
+                                        onClick={() => changeSort(SortField.total)}
+                                    >
+                                        Total daily reward
+                                        <IconSort
+                                            isEnabled={sort === SortField.total}
+                                            isReversed={isSortReversed}
+                                        />
+                                    </SortingHeader>
+                                </Cell>
                             </TableHeadRow>
                         </TableHead>
 
                         <TableBody>
-                            {ammRewards.map(
+                            {sorted.map(
                                 ({
                                     market_pair: pair,
                                     pool_id: id,
