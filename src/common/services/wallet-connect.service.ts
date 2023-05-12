@@ -265,8 +265,7 @@ export default class WalletConnectServiceClass {
 
             this.session = await this.client.session.getAll()[0];
 
-            const [_chain, _reference, publicKey] =
-                this.session.namespaces.stellar.accounts[0].split(':');
+            const [, , publicKey] = this.session.namespaces.stellar.accounts[0].split(':');
             this.appMeta = this.session.peer.metadata;
 
             this.event.trigger({
@@ -439,8 +438,7 @@ export default class WalletConnectServiceClass {
 
         this.appMeta = this.session.peer.metadata;
 
-        const [chain, reference, publicKey] =
-            this.session.namespaces.stellar.accounts[0].split(':');
+        const [, , publicKey] = this.session.namespaces.stellar.accounts[0].split(':');
 
         this.event.trigger({
             type: WalletConnectEvents.login,
