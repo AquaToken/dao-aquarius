@@ -197,7 +197,7 @@ const App = () => {
 
                     <Route path={MainRoutes.walletConnect}>
                         <Title title="WalletConnect">
-                            {isLogged ? <Redirect to={MainRoutes.main} /> : <WalletConnectPage />}
+                            <WalletConnectPage />
                         </Title>
                     </Route>
 
