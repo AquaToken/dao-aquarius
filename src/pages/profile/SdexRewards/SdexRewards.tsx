@@ -1,8 +1,8 @@
 import * as React from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { TableBody, TableHead, TableHeadRow } from '../../vote/components/MainPage/Table/Table';
 import Pair from '../../vote/components/common/Pair';
 import { StellarService } from '../../../common/services/globalServices';
-import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getSdexRewards } from '../api/api';
 import useAuthStore from '../../../store/authStore/useAuthStore';
 import PageLoader from '../../../common/basics/PageLoader';
@@ -15,9 +15,11 @@ import {
     AquaLogo,
     Cell,
     Container,
+    DailyRewards,
     ExternalLinkStyled,
     getSortFunction,
     Header,
+    InOffers,
     PairCell,
     Section,
     Summary,
@@ -25,29 +27,50 @@ import {
     TableBodyRow,
     Title,
     TOOLTIP_TEXT,
-    TooltipCustom,
-    TooltipInner,
 } from '../AmmRewards/AmmRewards';
 import useAssetsStore from '../../../store/assetsStore/useAssetsStore';
-import { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
-import Info from '../../../common/assets/img/icon-info.svg';
 import { SortingHeader } from '../../bribes/components/BribesPage/BribesTable/BribesTable';
 import { IconSort } from '../../../common/basics/Icons';
+import DotsLoader from '../../../common/basics/DotsLoader';
+import Label from '../../../common/basics/Label';
+import BoostBanner from '../BoostBanner/BoostBanner';
 
 enum SortField {
-    daily = 'daily',
-    boost = 'boost',
-    total = 'total',
+    market = 'market',
+    your = 'your',
 }
 
-const SdexRewards = () => {
+const getAssetString = (asset): string => {
+    const {
+        asset_code: assetCode,
+        asset_issuer: assetIssuer,
+        asset_type: assetType,
+        code,
+        issuer,
+    } = asset;
+
+    if (code) {
+        return asset.isNative() ? 'native' : `${code}:${issuer}`;
+    }
+
+    return assetType === 'native' ? 'native' : `${assetCode}:${assetIssuer}`;
+};
+
+const SdexRewards = ({ aquaUsdPrice }) => {
     const { account } = useAuthStore();
 
     const [sdexRewards, setSdexRewards] = useState(null);
-    const [sort, setSort] = useState(SortField.total);
+    const [sort, setSort] = useState(SortField.your);
     const [isSortReversed, setIsSortReversed] = useState(false);
+    const [offers, setOffers] = useState(null);
 
     const { processNewAssets } = useAssetsStore();
+
+    useEffect(() => {
+        StellarService.getAccountOffers(account.accountId()).then((res) => {
+            setOffers(res);
+        });
+    }, []);
 
     useEffect(() => {
         getSdexRewards(account.accountId()).then((res) => {
@@ -70,15 +93,39 @@ const SdexRewards = () => {
         });
     }, []);
 
-    const summary = useMemo(() => {
-        if (!sdexRewards || !sdexRewards.length) {
+    const offersMap = useMemo(() => {
+        if (!offers) {
             return null;
         }
 
-        return sdexRewards.reduce((acc, reward) => {
-            acc += reward.maker_reward * 24;
+        return offers.reduce((acc, item) => {
+            const { buying, selling, amount } = item;
+            const marketSlug = `${getAssetString(buying)}/${getAssetString(selling)}`;
+
+            if (acc.has(marketSlug)) {
+                const sum = acc.get(marketSlug);
+                acc.set(marketSlug, sum + Number(amount));
+                return acc;
+            }
+
+            acc.set(marketSlug, Number(amount));
             return acc;
-        }, 0);
+        }, new Map());
+    }, [offers]);
+
+    const { sumBoost, sumRewards } = useMemo(() => {
+        if (!sdexRewards || !sdexRewards.length) {
+            return { sumBoost: 0, sumRewards: 0 };
+        }
+
+        return sdexRewards.reduce(
+            (acc, reward) => {
+                acc.sumRewards += reward.maker_reward * 24;
+                acc.sumBoost += reward.boosted_reward;
+                return acc;
+            },
+            { sumBoost: 0, sumRewards: 0 },
+        );
     }, [sdexRewards]);
 
     const sorted = useMemo(() => {
@@ -86,19 +133,11 @@ const SdexRewards = () => {
             return null;
         }
         switch (sort) {
-            case SortField.daily:
+            case SortField.market:
                 return sdexRewards.sort((a, b) =>
-                    getSortFunction(
-                        a.maker_reward - a.boosted_reward,
-                        b.maker_reward - b.boosted_reward,
-                        isSortReversed,
-                    ),
+                    getSortFunction(a.daily_sdex_reward, b.daily_sdex_reward, isSortReversed),
                 );
-            case SortField.boost:
-                return sdexRewards.sort((a, b) =>
-                    getSortFunction(a.boosted_reward, b.boosted_reward, isSortReversed),
-                );
-            case SortField.total:
+            case SortField.your:
                 return sdexRewards.sort((a, b) =>
                     getSortFunction(a.maker_reward, b.maker_reward, isSortReversed),
                 );
@@ -123,13 +162,20 @@ const SdexRewards = () => {
         <Container>
             <Header>
                 <Title>SDEX rewards overview</Title>
-                {summary && (
+                {Boolean(sumRewards) && (
                     <Summary>
                         Daily SDEX reward: <AquaLogo />
-                        <AquaBalance>{formatBalance(summary, true)} AQUA</AquaBalance>
+                        <AquaBalance>{formatBalance(sumRewards, true)} AQUA</AquaBalance>
+                        {aquaUsdPrice ? (
+                            `(≈${(aquaUsdPrice * sumRewards).toFixed(2)}$)`
+                        ) : (
+                            <DotsLoader />
+                        )}
                     </Summary>
                 )}
             </Header>
+
+            {Boolean(sorted?.length) && !sumBoost && <BoostBanner />}
 
             {!sorted ? (
                 <PageLoader />
@@ -139,45 +185,27 @@ const SdexRewards = () => {
                         <TableHead>
                             <TableHeadRow>
                                 <PairCell>Pair</PairCell>
+                                <Cell>In offers</Cell>
                                 <Cell>
                                     <SortingHeader
-                                        position="left"
-                                        onClick={() => changeSort(SortField.daily)}
+                                        position="right"
+                                        onClick={() => changeSort(SortField.market)}
                                     >
-                                        Daily SDEX reward
+                                        Market daily reward
                                         <IconSort
-                                            isEnabled={sort === SortField.daily}
+                                            isEnabled={sort === SortField.market}
                                             isReversed={isSortReversed}
                                         />
                                     </SortingHeader>
                                 </Cell>
                                 <Cell>
                                     <SortingHeader
-                                        position="left"
-                                        onClick={() => changeSort(SortField.boost)}
+                                        position="right"
+                                        onClick={() => changeSort(SortField.your)}
                                     >
-                                        ICE holding boost
+                                        Your daily reward
                                         <IconSort
-                                            isEnabled={sort === SortField.boost}
-                                            isReversed={isSortReversed}
-                                        />
-                                        <TooltipCustom
-                                            content={<TooltipInner>{TOOLTIP_TEXT}</TooltipInner>}
-                                            position={TOOLTIP_POSITION.top}
-                                            showOnHover
-                                        >
-                                            <Info />
-                                        </TooltipCustom>
-                                    </SortingHeader>
-                                </Cell>
-                                <Cell>
-                                    <SortingHeader
-                                        position="left"
-                                        onClick={() => changeSort(SortField.total)}
-                                    >
-                                        Total daily reward
-                                        <IconSort
-                                            isEnabled={sort === SortField.total}
+                                            isEnabled={sort === SortField.your}
                                             isReversed={isSortReversed}
                                         />
                                     </SortingHeader>
@@ -191,15 +219,19 @@ const SdexRewards = () => {
                                     market_key: pair,
                                     maker_reward: reward,
                                     boosted_reward: boost,
+                                    daily_sdex_reward: marketReward,
                                 }) => {
                                     const dailyReward = reward * 24;
-                                    const dailyBoost = boost * 24;
+
+                                    const boostValue = (reward / (reward - boost)).toFixed(2);
+
                                     const {
                                         asset1_code: baseCode,
                                         asset1_issuer: baseIssuer,
                                         asset2_code: counterCode,
                                         asset2_issuer: counterIssuer,
                                     } = pair;
+
                                     const base = baseIssuer
                                         ? StellarService.createAsset(baseCode, baseIssuer)
                                         : StellarService.createLumen();
@@ -207,6 +239,16 @@ const SdexRewards = () => {
                                     const counter = counterIssuer
                                         ? StellarService.createAsset(counterCode, counterIssuer)
                                         : StellarService.createLumen();
+
+                                    const baseSum =
+                                        offersMap?.get(
+                                            `${getAssetString(counter)}/${getAssetString(base)}`,
+                                        ) || 0;
+
+                                    const counterSum =
+                                        offersMap?.get(
+                                            `${getAssetString(base)}/${getAssetString(counter)}`,
+                                        ) || 0;
 
                                     return (
                                         <TableBodyRow
@@ -220,32 +262,43 @@ const SdexRewards = () => {
                                                     counter={counter}
                                                     withoutLink
                                                     mobileVerticalDirections
+                                                    withMarketLink
                                                 />
                                             </PairCell>
                                             <Cell>
-                                                <label>Daily SDEX reward:</label>
-                                                {formatBalance(dailyReward - dailyBoost, true)} AQUA
+                                                <label>In offers:</label>
+                                                {offers ? (
+                                                    <InOffers>
+                                                        <div>
+                                                            {formatBalance(baseSum, true)}{' '}
+                                                            {base.code}
+                                                        </div>
+                                                        <div>
+                                                            {formatBalance(counterSum, true)}{' '}
+                                                            {counter.code}
+                                                        </div>
+                                                    </InOffers>
+                                                ) : (
+                                                    <DotsLoader />
+                                                )}
                                             </Cell>
                                             <Cell>
-                                                <label>
-                                                    ICE holding boost:
-                                                    <TooltipCustom
-                                                        content={
-                                                            <TooltipInner>
-                                                                {TOOLTIP_TEXT}
-                                                            </TooltipInner>
-                                                        }
-                                                        position={TOOLTIP_POSITION.top}
-                                                        showOnHover
-                                                    >
-                                                        <Info />
-                                                    </TooltipCustom>
-                                                </label>
-                                                {formatBalance(dailyBoost, true)} AQUA
+                                                <label>Market daily reward:</label>
+                                                {formatBalance(marketReward, true)} AQUA
                                             </Cell>
                                             <Cell>
-                                                <label>Total daily reward:</label>
-                                                {formatBalance(dailyReward, true)} AQUA
+                                                <label>Your daily reward:</label>
+
+                                                <DailyRewards>
+                                                    {formatBalance(dailyReward, true)} AQUA
+                                                </DailyRewards>
+                                                {Boolean(boost) && (
+                                                    <Label
+                                                        title={`Boosted ${boostValue}x`}
+                                                        text={TOOLTIP_TEXT}
+                                                        isBlue
+                                                    />
+                                                )}
                                             </Cell>
                                         </TableBodyRow>
                                     );

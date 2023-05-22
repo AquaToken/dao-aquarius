@@ -14,6 +14,7 @@ import Balances from './Balances/Balances';
 import Airdrop2List from './Airdrop2List/Airdrop2List';
 import IceLocks from './IceLocks/IceLocks';
 import useAuthStore from '../../store/authStore/useAuthStore';
+import { StellarService } from '../../common/services/globalServices';
 
 const Container = styled.div`
     height: 100%;
@@ -90,6 +91,7 @@ const OPTIONS = [
 const Profile = () => {
     const [selectedTab, setSelectedTab] = useState(Tabs.sdex);
     const [ammAquaBalance, setAmmAquaBalance] = useState(null);
+    const [aquaUsdPrice, setAquaUsdPrice] = useState(null);
 
     const { account } = useAuthStore();
 
@@ -97,6 +99,14 @@ const Profile = () => {
         account.getAmmAquaBalance().then((res) => {
             setAmmAquaBalance(res);
         });
+    }, []);
+
+    useEffect(() => {
+        Promise.all([StellarService.getAquaPrice(), StellarService.getLumenUsdPrice()]).then(
+            ([AQUA_XLM, XLM_USD]) => {
+                setAquaUsdPrice(AQUA_XLM * XLM_USD);
+            },
+        );
     }, []);
 
     return (
@@ -114,8 +124,8 @@ const Profile = () => {
 
             <ContentWrap>
                 <Content>
-                    {selectedTab === Tabs.amm && <AmmRewards />}
-                    {selectedTab === Tabs.sdex && <SdexRewards />}
+                    {selectedTab === Tabs.amm && <AmmRewards aquaUsdPrice={aquaUsdPrice} />}
+                    {selectedTab === Tabs.sdex && <SdexRewards aquaUsdPrice={aquaUsdPrice} />}
                     {selectedTab === Tabs.your && <YourVotes />}
                     {selectedTab === Tabs.governance && <YourGovernanceVotes />}
                     {selectedTab === Tabs.airdrop2 && <Airdrop2List />}

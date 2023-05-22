@@ -17,6 +17,8 @@ import { AssetSimple } from '../../../../store/assetsStore/types';
 import { getAssetString } from '../../../../store/assetsStore/actions';
 import { LumenInfo } from '../../../../store/assetsStore/reducer';
 import useAssetsStore from '../../../../store/assetsStore/useAssetsStore';
+import { Link } from 'react-router-dom';
+import { MarketRoutes } from '../../../../routes';
 
 const Wrapper = styled.div<{
     verticalDirections?: boolean;
@@ -123,7 +125,7 @@ const AssetsDomains = styled.span<{ mobileVerticalDirections?: boolean }>`
               `}
 `;
 
-const Link = styled.div`
+const LinkCustom = styled.div`
     cursor: pointer;
     box-sizing: border-box;
     height: 2.8rem;
@@ -169,6 +171,7 @@ type PairProps = {
     isCircleLogos?: boolean;
     withoutLink?: boolean;
     isMaxRewards?: boolean;
+    withMarketLink?: boolean;
 };
 
 const Pair = ({
@@ -188,6 +191,7 @@ const Pair = ({
     isCircleLogos,
     withoutLink,
     isMaxRewards,
+    withMarketLink,
 }: PairProps): JSX.Element => {
     const { assetsInfo } = useAssetsStore();
 
@@ -249,7 +253,21 @@ const Pair = ({
                     {authRequired && !bottomLabels && <AuthRequiredLabel />}
                     {noLiquidity && !bottomLabels && <NoLiquidityLabel />}
                     {!withoutLink && (
-                        <Link onClick={(e) => viewOnStellarX(e, baseInstance, counterInstance)}>
+                        <LinkCustom
+                            onClick={(e) => viewOnStellarX(e, baseInstance, counterInstance)}
+                        >
+                            <External />
+                        </LinkCustom>
+                    )}
+                    {withMarketLink && (
+                        <Link
+                            onClick={(e) => {
+                                e.stopPropagation();
+                            }}
+                            to={`${MarketRoutes.main}/${assetToString(
+                                baseInstance,
+                            )}/${assetToString(counterInstance)}`}
+                        >
                             <External />
                         </Link>
                     )}

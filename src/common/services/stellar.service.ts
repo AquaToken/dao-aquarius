@@ -404,6 +404,22 @@ export default class StellarServiceClass {
         }
     }
 
+    async getAccountOffers(publicKey: string): Promise<ServerApi.OfferRecord[]> {
+        const OFFERS_LIMIT = 200;
+        const { records, next } = await this.server
+            .offers()
+            .forAccount(publicKey)
+            .order('desc')
+            .limit(OFFERS_LIMIT)
+            .call();
+
+        if (records.length === OFFERS_LIMIT) {
+            return this.nextRequest(records, next, OFFERS_LIMIT);
+        }
+
+        return Promise.resolve(records);
+    }
+
     getMarketVotesValue(marketKey: string, accountId: string, asset: StellarSdk.Asset) {
         if (!this.claimableBalances) {
             return null;
@@ -682,17 +698,17 @@ export default class StellarServiceClass {
             .call();
 
         if (records.length === limit) {
-            return this.nextLiquidityPools(records, next, limit);
+            return this.nextRequest(records, next, limit);
         }
 
         return Promise.resolve(records);
     }
 
-    async nextLiquidityPools(previousRecords, nextRequest, limit) {
+    async nextRequest(previousRecords, nextRequest, limit) {
         const { records, next } = nextRequest();
 
         if (records.length === limit) {
-            return this.nextLiquidityPools([...previousRecords, records], next, limit);
+            return this.nextRequest([...previousRecords, records], next, limit);
         }
 
         return Promise.resolve([...previousRecords, ...records]);
