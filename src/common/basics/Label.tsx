@@ -75,11 +75,17 @@ const Label = ({
     isBlue?: boolean;
 }) => {
     const [isEnoughSpaceOnTop, setIsEnoughSpaceOnTop] = useState(true);
+    const [isRightOriented, setIsRightOriented] = useState(true);
 
     const ref = useCallback(
         (node) => {
             if (node !== null && isEnoughSpaceOnTop) {
-                setIsEnoughSpaceOnTop(node.getBoundingClientRect().left > 0);
+                setIsEnoughSpaceOnTop(
+                    node.getBoundingClientRect().left > 0 &&
+                        node.getBoundingClientRect().right < window.innerWidth,
+                );
+
+                setIsRightOriented(node.getBoundingClientRect().right < window.innerWidth);
             }
         },
         [isEnoughSpaceOnTop],
@@ -96,7 +102,13 @@ const Label = ({
     return (
         <Tooltip
             content={<TooltipInner ref={ref}>{text}</TooltipInner>}
-            position={isEnoughSpaceOnTop ? TOOLTIP_POSITION.top : TOOLTIP_POSITION.right}
+            position={
+                isEnoughSpaceOnTop
+                    ? TOOLTIP_POSITION.top
+                    : isRightOriented
+                    ? TOOLTIP_POSITION.right
+                    : TOOLTIP_POSITION.left
+            }
             isSuccess={isGreen}
             isError={isRed}
             isDark={isDark}
