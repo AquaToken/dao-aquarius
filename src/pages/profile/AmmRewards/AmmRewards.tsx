@@ -334,7 +334,7 @@ const AmmRewards = ({ aquaUsdPrice }) => {
                                         position="right"
                                         onClick={() => changeSort(SortField.your)}
                                     >
-                                        Total daily reward
+                                        Your daily reward
                                         <IconSort
                                             isEnabled={sort === SortField.your}
                                             isReversed={isSortReversed}
