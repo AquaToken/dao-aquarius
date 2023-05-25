@@ -321,7 +321,7 @@ const AmmRewards = ({ aquaUsdPrice }) => {
                                         position="right"
                                         onClick={() => changeSort(SortField.market)}
                                     >
-                                        Market daily reward
+                                        AMM daily reward
                                         <IconSort
                                             isEnabled={sort === SortField.market}
                                             isReversed={isSortReversed}
@@ -423,7 +423,7 @@ const AmmRewards = ({ aquaUsdPrice }) => {
                                                 </InOffers>
                                             </Cell>
                                             <Cell>
-                                                <label>Market daily reward::</label>
+                                                <label>AMM daily reward::</label>
                                                 {formatBalance(marketRewards, true)} AQUA
                                             </Cell>
 

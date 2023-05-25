@@ -191,7 +191,7 @@ const SdexRewards = ({ aquaUsdPrice }) => {
                                         position="right"
                                         onClick={() => changeSort(SortField.market)}
                                     >
-                                        Market daily reward
+                                        SDEX daily reward
                                         <IconSort
                                             isEnabled={sort === SortField.market}
                                             isReversed={isSortReversed}
@@ -283,7 +283,7 @@ const SdexRewards = ({ aquaUsdPrice }) => {
                                                 )}
                                             </Cell>
                                             <Cell>
-                                                <label>Market daily reward:</label>
+                                                <label>SDEX daily reward:</label>
                                                 {formatBalance(marketReward, true)} AQUA
                                             </Cell>
                                             <Cell>
