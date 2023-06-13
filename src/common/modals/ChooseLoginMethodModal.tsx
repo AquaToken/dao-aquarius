@@ -19,6 +19,7 @@ import {
 import { respondDown } from '../mixins';
 import LoginWithPublic from './LoginWithPublic';
 import LedgerLogin from './LedgerModals/LedgerLogin';
+import isUaWebview from 'is-ua-webview';
 
 const LoginMethod = styled.div`
     width: 52.8rem;
@@ -114,7 +115,12 @@ const ChooseLoginMethodModal = ({ close }: ModalProps<never>): JSX.Element => {
             close();
             ModalService.openModal(LoginWithSecret, {});
         } else if (method === LoginTypes.walletConnect) {
-            WalletConnectService.login();
+            if (isUaWebview(window?.navigator?.userAgent)) {
+                close();
+                WalletConnectService.autoLogin();
+            } else {
+                WalletConnectService.login();
+            }
         } else if (method === LoginTypes.public) {
             close();
             ModalService.openModal(LoginWithPublic, {});
