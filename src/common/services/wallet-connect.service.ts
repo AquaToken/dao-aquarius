@@ -219,12 +219,29 @@ export default class WalletConnectServiceClass {
         });
     }
 
-    loginIfSessionExist(): Promise<any> {
+    async loginIfSessionExist(): Promise<any> {
         if (!isSessionExist()) {
             return Promise.resolve();
         }
 
-        return this.initWalletConnect();
+        this.client = await Promise.race([
+            WalletConnectClient.init({
+                // logger: 'debug',
+                projectId: process.env.WALLET_CONNECT_PROJECT_ID,
+                metadata: this.selfMeta,
+            }),
+            new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    reject('Connection timeout');
+                }, CONNECTION_TIMEOUT);
+            }) as Promise<WalletConnectClient>,
+        ]);
+
+        await new Promise((resolve) => {
+            setTimeout(() => resolve(void 0), 2500);
+        });
+
+        return this.checkPersistedState();
     }
 
     async initWalletConnect(): Promise<boolean> {
@@ -252,31 +269,34 @@ export default class WalletConnectServiceClass {
 
             this.listenWalletConnectEvents();
 
-            if (!this.client.session.length) {
-                clearApp();
-                return false;
-            }
-
-            this.session = await this.client.session.getAll()[0];
-
-            const [_chain, _reference, publicKey] =
-                this.session.namespaces.stellar.accounts[0].split(':');
-            this.appMeta = this.session.peer.metadata;
-
-            this.event.trigger({
-                type: WalletConnectEvents.login,
-                publicKey: publicKey.toUpperCase(),
-                metadata: this.appMeta,
-                topic: this.session.topic,
-            });
-
-            ModalService.closeAllModals();
-
-            return true;
+            return this.checkPersistedState();
         } catch (e) {
             ToastService.showErrorToast('WalletConnect initialization failed');
             return true;
         }
+    }
+
+    async checkPersistedState(): Promise<boolean> {
+        if (!this.client.session.length) {
+            clearApp();
+            return false;
+        }
+
+        this.session = await this.client.session.getAll()[0];
+
+        const [, , publicKey] = this.session.namespaces.stellar.accounts[0].split(':');
+        this.appMeta = this.session.peer.metadata;
+
+        this.event.trigger({
+            type: WalletConnectEvents.login,
+            publicKey: publicKey.toUpperCase(),
+            metadata: this.appMeta,
+            topic: this.session.topic,
+        });
+
+        ModalService.closeAllModals();
+
+        return true;
     }
 
     listenWalletConnectEvents(): void {
@@ -451,8 +471,7 @@ export default class WalletConnectServiceClass {
 
         this.appMeta = this.session.peer.metadata;
 
-        const [chain, reference, publicKey] =
-            this.session.namespaces.stellar.accounts[0].split(':');
+        const [, , publicKey] = this.session.namespaces.stellar.accounts[0].split(':');
 
         this.event.trigger({
             type: WalletConnectEvents.login,
