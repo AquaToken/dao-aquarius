@@ -46,7 +46,7 @@ const ProgressLine = ({
 }: {
     percent: number;
     leftLabel: string;
-    rightLabel: string;
+    rightLabel: string | React.ReactNode;
 }): JSX.Element => {
     return (
         <Container>

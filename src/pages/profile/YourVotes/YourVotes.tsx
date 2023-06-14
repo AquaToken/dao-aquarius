@@ -197,9 +197,13 @@ const YourVotes = () => {
                         <Section>
                             <UnlockedVotes>
                                 <UnlockedVotesData>
-                                    <UnlockedVotesTitle>You have unlocked votes</UnlockedVotesTitle>
+                                    <UnlockedVotesTitle>
+                                        You have unlocked vote
+                                        {unclaimedVotesInfo.count > 1 ? 's' : ''}
+                                    </UnlockedVotesTitle>
                                     <UnlockedVotesStats>
-                                        {unclaimedVotesInfo.count} votes for{' '}
+                                        {unclaimedVotesInfo.count} vote
+                                        {unclaimedVotesInfo.count > 1 ? 's' : ''} for{' '}
                                         {formatBalance(unclaimedVotesInfo.sum)} AQUA + ICE
                                     </UnlockedVotesStats>
                                 </UnlockedVotesData>
@@ -232,9 +236,9 @@ const YourVotes = () => {
                         <Section>
                             <Empty>
                                 <h3>There's nothing here.</h3>
-                                <span>It looks like there are don't have an active votes.</span>
+                                <span>It looks like you don’t have any active votes.</span>
                                 <span>
-                                    You can <Link to={VoteRoutes.main}>vote right now.</Link>
+                                    You can vote <Link to={VoteRoutes.main}>from here.</Link>
                                 </span>
                             </Empty>
                         </Section>

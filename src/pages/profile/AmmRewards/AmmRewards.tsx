@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
     TableBody,
     TableCell,
@@ -20,9 +20,12 @@ import { MainRoutes } from '../../../routes';
 import ExternalLink from '../../../common/basics/ExternalLink';
 import { formatBalance } from '../../../common/helpers/helpers';
 import useAssetsStore from '../../../store/assetsStore/useAssetsStore';
-import Info from '../../../common/assets/img/icon-info.svg';
 import Aqua from '../../../common/assets/img/aqua-logo-small.svg';
-import Tooltip, { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
+import { IconSort } from '../../../common/basics/Icons';
+import { SortingHeader } from '../../bribes/components/BribesPage/BribesTable/BribesTable';
+import DotsLoader from '../../../common/basics/DotsLoader';
+import Label from '../../../common/basics/Label';
+import BoostBanner from '../BoostBanner/BoostBanner';
 
 export const Container = styled.div`
     display: flex;
@@ -89,7 +92,7 @@ export const TableBodyRow = styled.div`
 `;
 
 export const PairCell = styled(TableCell)`
-    flex: 3;
+    flex: 2.5;
 
     ${respondDown(Breakpoints.md)`
         margin-bottom: 2rem;
@@ -98,6 +101,19 @@ export const PairCell = styled(TableCell)`
 
 export const Cell = styled(TableCell)`
     flex: 1;
+
+    &:last-child {
+        flex: 1.5;
+    }
+
+    &:nth-last-child(2) {
+        justify-content: right;
+    }
+
+    &:last-child {
+        flex: 1.5;
+        justify-content: right;
+    }
 
     label {
         display: none;
@@ -142,15 +158,13 @@ export const AquaBalance = styled.div`
     font-size: 2rem;
     line-height: 2.4rem;
     color: ${COLORS.titleText};
+    margin-right: 1rem;
 `;
 
 const Percent = styled.div`
     color: ${COLORS.grayText};
-    margin-left: 0.5rem;
-`;
-
-export const TooltipCustom = styled(Tooltip)`
-    margin-left: 0.5rem;
+    font-size: 1.4rem;
+    line-height: 2.4rem;
 `;
 
 export const TooltipInner = styled.span`
@@ -162,13 +176,38 @@ export const TooltipInner = styled.span`
     `}
 `;
 
+export const DailyRewards = styled.span`
+    margin-right: 1rem;
+`;
+
+export const InOffers = styled.div`
+    display: flex;
+    flex-direction: column;
+    line-height: 2.4rem;
+
+    ${respondDown(Breakpoints.md)`
+        text-align: right;
+    `}
+`;
+
 export const TOOLTIP_TEXT =
     'You can freeze AQUA into ICE for additional benefits. One of them is a boost in SDEX and AMM rewards you can receive. The higher your ICE balance, the higher your boost can be.';
 
-const AmmRewards = () => {
+enum SortField {
+    market = 'market',
+    your = 'your',
+}
+
+export const getSortFunction = (value1, value2, isSortReversed) => {
+    return isSortReversed ? value1 - value2 : value2 - value1;
+};
+
+const AmmRewards = ({ aquaUsdPrice }) => {
     const { account } = useAuthStore();
 
     const [ammRewards, setAmmRewards] = useState(null);
+    const [sort, setSort] = useState(SortField.your);
+    const [isSortReversed, setIsSortReversed] = useState(false);
 
     const { processNewAssets } = useAssetsStore();
 
@@ -203,62 +242,119 @@ const AmmRewards = () => {
         return ` (${percent}%)`;
     };
 
-    const summary = useMemo(() => {
+    const { sumBoost, sumRewards } = useMemo(() => {
         if (!ammRewards || !ammRewards.length) {
-            return null;
+            return { sumBoost: 0, sumRewards: 0 };
         }
 
-        return ammRewards.reduce((acc, reward) => {
-            acc += reward.reward_amount * 24;
-            return acc;
-        }, 0);
+        return ammRewards.reduce(
+            (acc, reward) => {
+                acc.sumRewards += reward.reward_amount * 24;
+                acc.sumBoost += reward.boosted_reward;
+                return acc;
+            },
+            { sumBoost: 0, sumRewards: 0 },
+        );
     }, [ammRewards]);
+
+    const sorted = useMemo(() => {
+        if (!ammRewards) {
+            return null;
+        }
+        switch (sort) {
+            case SortField.market:
+                return ammRewards.sort((a, b) =>
+                    getSortFunction(a.reward_volume, b.reward_volume, isSortReversed),
+                );
+            case SortField.your:
+                return ammRewards.sort((a, b) =>
+                    getSortFunction(a.reward_amount, b.reward_amount, isSortReversed),
+                );
+            default:
+                throw new Error('Invalid sort field');
+        }
+    }, [ammRewards, sort, isSortReversed]);
+
+    const changeSort = useCallback(
+        (sortField) => {
+            if (sortField === sort) {
+                setIsSortReversed((prevState) => !prevState);
+                return;
+            }
+            setSort(sortField);
+            setIsSortReversed(false);
+        },
+        [sort, isSortReversed],
+    );
 
     return (
         <Container>
             <Header>
                 <Title>AMM rewards overview</Title>
-                {summary && (
+                {Boolean(sumRewards) && (
                     <Summary>
                         Daily AMM reward: <AquaLogo />
-                        <AquaBalance>{formatBalance(summary, true)} AQUA</AquaBalance>
+                        <AquaBalance>{formatBalance(sumRewards, true)} AQUA</AquaBalance>
+                        {aquaUsdPrice ? (
+                            `(≈${(aquaUsdPrice * sumRewards).toFixed(2)}$)`
+                        ) : (
+                            <DotsLoader />
+                        )}
                     </Summary>
                 )}
             </Header>
 
-            {!ammRewards ? (
+            {Boolean(sorted?.length) && !sumBoost && <BoostBanner />}
+
+            {!sorted ? (
                 <PageLoader />
-            ) : ammRewards.length ? (
+            ) : sorted.length ? (
                 <Section>
                     <Table>
                         <TableHead>
                             <TableHeadRow>
                                 <PairCell>Pair</PairCell>
-                                <Cell>Total shares</Cell>
-                                <Cell>My shares</Cell>
-                                <Cell>Daily AMM reward</Cell>
+                                <Cell>Pooled</Cell>
+                                <Cell>Pool shares</Cell>
                                 <Cell>
-                                    ICE holding boost
-                                    <TooltipCustom
-                                        content={<TooltipInner>{TOOLTIP_TEXT}</TooltipInner>}
-                                        position={TOOLTIP_POSITION.top}
-                                        showOnHover
+                                    <SortingHeader
+                                        position="right"
+                                        onClick={() => changeSort(SortField.market)}
                                     >
-                                        <Info />
-                                    </TooltipCustom>
+                                        AMM daily reward
+                                        <IconSort
+                                            isEnabled={sort === SortField.market}
+                                            isReversed={isSortReversed}
+                                        />
+                                    </SortingHeader>
                                 </Cell>
-                                <Cell>Total daily reward</Cell>
+
+                                <Cell>
+                                    <SortingHeader
+                                        position="right"
+                                        onClick={() => changeSort(SortField.your)}
+                                    >
+                                        Your daily reward
+                                        <IconSort
+                                            isEnabled={sort === SortField.your}
+                                            isReversed={isSortReversed}
+                                        />
+                                    </SortingHeader>
+                                </Cell>
                             </TableHeadRow>
                         </TableHead>
 
                         <TableBody>
-                            {ammRewards.map(
+                            {sorted.map(
                                 ({
                                     market_pair: pair,
                                     pool_id: id,
                                     total_shares: totalShares,
                                     reward_amount: rewardAmount,
                                     boosted_reward: boostedReward,
+                                    reward_volume: rewardVolume,
+                                    reserve_a_amount,
+                                    reserve_b_amount,
                                 }) => {
                                     const {
                                         asset1_code: baseCode,
@@ -275,7 +371,17 @@ const AmmRewards = () => {
                                         : StellarService.createLumen();
 
                                     const dailyReward = rewardAmount * 24;
-                                    const dailyBoost = boostedReward * 24;
+                                    const marketRewards = rewardVolume * 24;
+
+                                    const boostValue = (
+                                        rewardAmount /
+                                        (rewardAmount - boostedReward)
+                                    ).toFixed(2);
+
+                                    const poolBalance = account.getPoolBalance(id);
+                                    const percent = poolBalance / Number(totalShares);
+                                    const basePooled = reserve_a_amount * percent;
+                                    const counterPooled = reserve_b_amount * percent;
 
                                     return (
                                         <TableBodyRow key={id}>
@@ -284,47 +390,57 @@ const AmmRewards = () => {
                                                     base={base}
                                                     counter={counter}
                                                     withoutLink
+                                                    withMarketLink
                                                     mobileVerticalDirections
                                                 />
                                             </PairCell>
                                             <Cell>
-                                                <label>Total shares:</label>
-                                                {formatBalance(totalShares, true)}
+                                                <label>Pooled:</label>
+                                                <InOffers>
+                                                    <div>
+                                                        {formatBalance(basePooled, true)}{' '}
+                                                        {base.code}
+                                                    </div>
+                                                    <div>
+                                                        {formatBalance(counterPooled, true)}{' '}
+                                                        {counter.code}
+                                                    </div>
+                                                </InOffers>
                                             </Cell>
                                             <Cell>
-                                                <label>My shares:</label>
-                                                {formatBalance(account.getPoolBalance(id), true)}
-                                                <Percent>
-                                                    {getSharesPercent(
-                                                        Number(totalShares),
+                                                <label>Pool shares:</label>
+                                                <InOffers>
+                                                    {formatBalance(
                                                         account.getPoolBalance(id),
+                                                        true,
                                                     )}
-                                                </Percent>
+                                                    <Percent>
+                                                        {getSharesPercent(
+                                                            Number(totalShares),
+                                                            account.getPoolBalance(id),
+                                                        )}
+                                                    </Percent>
+                                                </InOffers>
                                             </Cell>
                                             <Cell>
-                                                <label>Daily AMM reward:</label>
-                                                {formatBalance(dailyReward - dailyBoost, true)} AQUA
+                                                <label>AMM daily reward::</label>
+                                                {formatBalance(marketRewards, true)} AQUA
                                             </Cell>
+
                                             <Cell>
-                                                <label>
-                                                    ICE holding boost:{' '}
-                                                    <TooltipCustom
-                                                        content={
-                                                            <TooltipInner>
-                                                                {TOOLTIP_TEXT}
-                                                            </TooltipInner>
-                                                        }
-                                                        position={TOOLTIP_POSITION.top}
-                                                        showOnHover
-                                                    >
-                                                        <Info />
-                                                    </TooltipCustom>
-                                                </label>
-                                                {formatBalance(dailyBoost, true)} AQUA
-                                            </Cell>
-                                            <Cell>
-                                                <label>Total daily reward:</label>
-                                                {formatBalance(dailyReward, true)} AQUA
+                                                <label>Your daily reward:</label>
+
+                                                <DailyRewards>
+                                                    {formatBalance(dailyReward, true)} AQUA
+                                                </DailyRewards>
+
+                                                {Boolean(boostedReward) && (
+                                                    <Label
+                                                        title={`Boosted ${boostValue}x`}
+                                                        text={TOOLTIP_TEXT}
+                                                        isBlue
+                                                    />
+                                                )}
                                             </Cell>
                                         </TableBodyRow>
                                     );

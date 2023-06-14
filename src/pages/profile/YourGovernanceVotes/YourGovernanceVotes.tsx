@@ -36,9 +36,9 @@ const YourGovernanceVotes = () => {
                 <Section>
                     <Empty>
                         <h3>There's nothing here.</h3>
-                        <span>It looks like there are don't have an active votes.</span>
+                        <span>It looks like you don’t have any active votes.</span>
                         <span>
-                            You can <Link to={GovernanceRoutes.main}>vote right now.</Link>
+                            You can vote <Link to={GovernanceRoutes.main}>from here.</Link>
                         </span>
                     </Empty>
                 </Section>

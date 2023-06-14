@@ -7,8 +7,10 @@ import {
     getDateString,
     roundToPrecision,
 } from '../../../../../common/helpers/helpers';
-import { respondDown } from '../../../../../common/mixins';
-import { useCallback } from 'react';
+import { flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
+import { useCallback, useMemo } from 'react';
+import Tooltip, { TOOLTIP_POSITION } from '../../../../../common/basics/Tooltip';
+import Info from '../../../../../common/assets/img/icon-info.svg';
 
 const Container = styled.div`
     margin-top: 4rem;
@@ -77,13 +79,80 @@ const TableCellAmount = styled.div`
     text-align: right;
 `;
 
-const CurrentLocks = ({ locks, aquaBalance, distributions }) => {
+const InfoIcon = styled(Info)`
+    margin-left: 0.5rem;
+`;
+
+const TooltipInner = styled.div`
+    display: flex;
+    flex-direction: column;
+    width: 32rem;
+
+    ${respondDown(Breakpoints.md)`
+        width: 20rem;
+    `}
+`;
+
+const TooltipRow = styled.div`
+    ${flexRowSpaceBetween};
+    font-size: 1.4rem;
+    line-height: 2rem;
+    color: ${COLORS.grayText};
+    margin-bottom: 0.4rem;
+`;
+
+const TooltipTotal = styled(TooltipRow)`
+    font-weight: 700;
+    color: ${COLORS.paragraphText};
+    font-size: 1.6rem;
+    line-height: 2.8rem;
+`;
+
+const Total = styled.div`
+    display: flex;
+    align-items: center;
+    text-align: right;
+
+    ${respondDown(Breakpoints.md)`
+        div {
+            width: min-content;
+        }
+    `}
+`;
+
+const CurrentLocks = ({
+    locks,
+    aquaBalance,
+    distributions,
+    ammAquaBalance,
+    aquaInOffers,
+    aquaInVotes,
+}) => {
     const locksSum = locks.reduce((acc, lock) => {
         acc += Number(lock.amount);
         return acc;
     }, 0);
 
-    const percent = roundToPrecision((locksSum / (aquaBalance + locksSum)) * 100, 2);
+    const total = useMemo(() => {
+        return locksSum + aquaBalance + aquaInOffers + ammAquaBalance + aquaInVotes;
+    }, [locksSum, aquaBalance, aquaInOffers, ammAquaBalance, aquaInVotes]);
+
+    const availablePercent = useMemo(() => {
+        return roundToPrecision((aquaBalance / total) * 100, 2);
+    }, [total]);
+    const inOffersPercent = useMemo(() => {
+        return roundToPrecision((aquaInOffers / total) * 100, 2);
+    }, [total]);
+    const inVotesPercent = useMemo(() => {
+        return roundToPrecision((aquaInVotes / total) * 100, 2);
+    }, [total]);
+    const ammPercent = useMemo(() => {
+        return roundToPrecision((ammAquaBalance / total) * 100, 2);
+    }, [total]);
+
+    const lockPercent = useMemo(() => {
+        return roundToPrecision((locksSum / total) * 100, 2);
+    }, [total]);
 
     const getIceAmount = useCallback(
         (balanceId) => {
@@ -95,11 +164,62 @@ const CurrentLocks = ({ locks, aquaBalance, distributions }) => {
 
     return (
         <Container>
-            <Title>Current locks </Title>
+            <Title>Current locks</Title>
             <ProgressLine
-                percent={+percent}
-                leftLabel={`Locked: ${formatBalance(locksSum)} AQUA (${percent}%)`}
-                rightLabel={`${formatBalance(aquaBalance + locksSum)} AQUA`}
+                percent={+lockPercent}
+                leftLabel={`Locked: ${formatBalance(locksSum, true)} AQUA (${lockPercent}%)`}
+                rightLabel={
+                    <Tooltip
+                        content={
+                            <TooltipInner>
+                                <TooltipTotal>
+                                    <span>Total:</span>
+                                    <span>{formatBalance(total, true)} AQUA</span>
+                                </TooltipTotal>
+                                <TooltipRow>
+                                    <span>Available:</span>
+                                    <span>
+                                        {formatBalance(aquaBalance, true)} ({availablePercent}%)
+                                    </span>
+                                </TooltipRow>
+                                <TooltipRow>
+                                    <span>In offers:</span>
+                                    <span>
+                                        {formatBalance(aquaInOffers, true)} ({inOffersPercent}%)
+                                    </span>
+                                </TooltipRow>
+                                <TooltipRow>
+                                    <span>In AMM pool:</span>
+                                    <span>
+                                        {formatBalance(ammAquaBalance, true)} ({ammPercent}%)
+                                    </span>
+                                </TooltipRow>
+                                <TooltipRow>
+                                    <span>In votes:</span>
+                                    <span>
+                                        {formatBalance(aquaInVotes, true)} ({inVotesPercent}%)
+                                    </span>
+                                </TooltipRow>
+                                <TooltipRow>
+                                    <span>Locked:</span>
+                                    <span>
+                                        {formatBalance(locksSum, true)} ({lockPercent}%)
+                                    </span>
+                                </TooltipRow>
+                            </TooltipInner>
+                        }
+                        position={
+                            +window.innerWidth > 992 ? TOOLTIP_POSITION.top : TOOLTIP_POSITION.left
+                        }
+                        isWhite
+                        showOnHover
+                    >
+                        <Total>
+                            <div>{formatBalance(total, true)} AQUA</div>
+                            <InfoIcon />
+                        </Total>
+                    </Tooltip>
+                }
             />
             <LocksList>
                 <HeaderRow>

@@ -5,6 +5,7 @@ import { Memo, MemoType, OperationOptions, ServerApi } from 'stellar-sdk';
 import axios, { AxiosResponse } from 'axios';
 import { roundToPrecision } from '../helpers/helpers';
 import { PairStats } from '../../pages/vote/api/types';
+import { validateMarketKeys } from '../../pages/vote/api/api';
 
 enum HORIZON_SERVER {
     stellar = 'https://horizon.stellar.org',
@@ -18,6 +19,8 @@ const MARKET_KEY_MARKER_UP = 'GA2UB7VXXXUSEAQUAXXXAQUARIUSVOTINGWALLETXXXPOWERED
 const MARKET_KEY_MARKER_DOWN = 'GAYVCXXXUSEAQUAXXXAQUARIUSDOWNVOTEWALLETXXXPOWEREDBYAQUA';
 const MARKET_KEY_SIGNER_WEIGHT = 1;
 const MARKET_KEY_THRESHOLD = 10;
+
+const AIRDROP_2_SPONSOR = 'GDFCYDQOVJ2OEWPLEGIRQVAM3VTOQ6JDNLJTDZP5S5OGTEHM5CIWMYBH';
 
 export const COLLECTOR_KEY = 'GAORXNBAWRIOJ7HRMCTWW2MIB6PYWSC7OKHGIXWTJXYRTZRSHP356TW3';
 
@@ -305,6 +308,19 @@ export default class StellarServiceClass {
             });
     }
 
+    getLocks(publicKey: string) {
+        if (!this.claimableBalances) {
+            return null;
+        }
+
+        return this.claimableBalances.filter(
+            (claim) =>
+                claim.claimants.length === 1 &&
+                claim.claimants[0].destination === publicKey &&
+                claim.asset === `${AQUA_CODE}:${AQUA_ISSUER}`,
+        );
+    }
+
     getAccountLocks(publicKey: string) {
         const LOCKS_LIMIT = 200;
         return this.server
@@ -386,6 +402,22 @@ export default class StellarServiceClass {
             this.claimableBalances = null;
             this.event.trigger({ type: StellarEvents.claimableUpdate });
         }
+    }
+
+    async getAccountOffers(publicKey: string): Promise<ServerApi.OfferRecord[]> {
+        const OFFERS_LIMIT = 200;
+        const { records, next } = await this.server
+            .offers()
+            .forAccount(publicKey)
+            .order('desc')
+            .limit(OFFERS_LIMIT)
+            .call();
+
+        if (records.length === OFFERS_LIMIT) {
+            return this.nextRequest(records, next, OFFERS_LIMIT);
+        }
+
+        return Promise.resolve(records);
     }
 
     getMarketVotesValue(marketKey: string, accountId: string, asset: StellarSdk.Asset) {
@@ -486,6 +518,51 @@ export default class StellarServiceClass {
         }, []);
     }
 
+    getAquaInLiquidityVotes(accountId: string): Promise<number> {
+        if (!this.claimableBalances) {
+            return Promise.resolve(null);
+        }
+
+        const keys = this.getKeysSimilarToMarketKeys(accountId);
+
+        return validateMarketKeys(keys).then((marketPairs) => {
+            return this.claimableBalances.reduce((acc, claim) => {
+                if (claim.claimants.length !== 2) {
+                    return acc;
+                }
+                const hasUpMarker = claim.claimants.some((claimant) =>
+                    Boolean(marketPairs.find((pair) => pair.account_id === claimant.destination)),
+                );
+
+                const hasDownMarker = claim.claimants.some((claimant) =>
+                    Boolean(
+                        marketPairs.find(
+                            (pair) => pair.downvote_account_id === claimant.destination,
+                        ),
+                    ),
+                );
+
+                const selfClaim = claim.claimants.find(
+                    (claimant) => claimant.destination === accountId,
+                );
+                const isAqua = claim.asset === `${AQUA_CODE}:${AQUA_ISSUER}`;
+
+                if ((hasUpMarker || hasDownMarker) && Boolean(selfClaim) && isAqua) {
+                    acc += Number(claim.amount);
+                }
+                return acc;
+            }, 0);
+        });
+    }
+
+    getAirdrop2Claims() {
+        if (!this.claimableBalances) {
+            return null;
+        }
+
+        return this.claimableBalances.filter((cb) => cb.sponsor === AIRDROP_2_SPONSOR);
+    }
+
     getKeysSimilarToMarketKeys(accountId: string): string[] {
         if (!this.claimableBalances) {
             return null;
@@ -584,10 +661,10 @@ export default class StellarServiceClass {
             return 'https://ice-approval.aqua.network/api/v1/ice/tx-approve/';
         }
         if (asset.code === UP_ICE_CODE && asset.issuer === ICE_ISSUER) {
-            return 'https://ice-approval.aqua.network/api/v1/upvote-ice/tx-approve/';
+            return 'https://ice-approval.aqua.network/api/v2/upvote-ice/tx-approve/';
         }
         if (asset.code === DOWN_ICE_CODE && asset.issuer === ICE_ISSUER) {
-            return 'https://ice-approval.aqua.network/api/v1/downvote-ice/tx-approve/';
+            return 'https://ice-approval.aqua.network/api/v2/downvote-ice/tx-approve/';
         }
         if (asset.code === GOV_ICE_CODE && asset.issuer === ICE_ISSUER) {
             return 'https://ice-approval.aqua.network/api/v1/govern-ice/tx-approve/';
@@ -621,17 +698,17 @@ export default class StellarServiceClass {
             .call();
 
         if (records.length === limit) {
-            return this.nextLiquidityPools(records, next, limit);
+            return this.nextRequest(records, next, limit);
         }
 
         return Promise.resolve(records);
     }
 
-    async nextLiquidityPools(previousRecords, nextRequest, limit) {
+    async nextRequest(previousRecords, nextRequest, limit) {
         const { records, next } = nextRequest();
 
         if (records.length === limit) {
-            return this.nextLiquidityPools([...previousRecords, records], next, limit);
+            return this.nextRequest([...previousRecords, records], next, limit);
         }
 
         return Promise.resolve([...previousRecords, ...records]);

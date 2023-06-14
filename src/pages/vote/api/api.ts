@@ -101,8 +101,8 @@ export const updateVotesForMarketKeys = async (pairs: PairStats[]): Promise<Pair
     });
 };
 
-export const getUserPairsList = async (keys: string[]) => {
-    if (!keys.length) {
+export const validateMarketKeys = async (keys: string[]): Promise<MarketKey[]> => {
+    if (!keys || !keys.length) {
         return [];
     }
 
@@ -123,9 +123,17 @@ export const getUserPairsList = async (keys: string[]) => {
         }),
     ]);
 
-    const marketKeys = [...marketKeysUp.data.results, ...marketKeysDown.data.results].filter(
+    return [...marketKeysUp.data.results, ...marketKeysDown.data.results].filter(
         (value, index, self) => index === self.findIndex((t) => t.account_id === value.account_id),
     );
+};
+
+export const getUserPairsList = async (keys: string[]) => {
+    const marketKeys = await validateMarketKeys(keys);
+
+    if (!marketKeys.length) {
+        return [];
+    }
 
     const marketVotesParams = new URLSearchParams();
 

@@ -4,6 +4,7 @@
     ],
     "compilerOptions": {
         "jsx": "react",
-        "target": "es5"
+        "target": "es5",
+        "resolveJsonModule": true,
     }
 }

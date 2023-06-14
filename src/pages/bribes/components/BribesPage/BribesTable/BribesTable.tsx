@@ -126,7 +126,7 @@ const CheckboxStyled = styled(Checkbox)`
     margin-bottom: 3rem;
 `;
 
-const SortingHeader = styled.button`
+export const SortingHeader = styled.button`
     background: none;
     border: none;
     cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};

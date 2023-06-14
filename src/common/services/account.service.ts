@@ -212,6 +212,20 @@ export default class AccountService extends AccountResponse {
         );
     }
 
+    getAquaInOffers(): number | null {
+        const aquaBalance = this.balances.find(
+            (balance) =>
+                (balance as Horizon.BalanceLineAsset).asset_code == AQUA_CODE &&
+                (balance as Horizon.BalanceLineAsset).asset_issuer === AQUA_ISSUER,
+        ) as Horizon.BalanceLineAsset;
+
+        if (!aquaBalance) {
+            return null;
+        }
+
+        return Number(aquaBalance.selling_liabilities);
+    }
+
     getAvailableNativeBalance(): number | null {
         const nativeBalance = this.balances.find(
             ({ asset_type }) => asset_type === 'native',

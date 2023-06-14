@@ -1,17 +1,20 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import AccountInfo from './AccountInfo/AccountInfo';
-import { commonMaxWidth, flexAllCenter, respondDown } from '../../common/mixins';
+import { commonMaxWidth, respondDown } from '../../common/mixins';
 import { Breakpoints, COLORS } from '../../common/styles';
 import ToggleGroup from '../../common/basics/ToggleGroup';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import YourVotes from './YourVotes/YourVotes';
 import Select from '../../common/basics/Select';
 import AmmRewards from './AmmRewards/AmmRewards';
 import SdexRewards from './SdexRewards/SdexRewards';
 import YourGovernanceVotes from './YourGovernanceVotes/YourGovernanceVotes';
-import MyAquarius from '../../common/assets/img/my-aquarius.svg';
-import Aqua from '../../common/assets/img/aqua-logo-small.svg';
+import Balances from './Balances/Balances';
+import Airdrop2List from './Airdrop2List/Airdrop2List';
+import IceLocks from './IceLocks/IceLocks';
+import useAuthStore from '../../store/authStore/useAuthStore';
+import { StellarService } from '../../common/services/globalServices';
 
 const Container = styled.div`
     height: 100%;
@@ -21,50 +24,6 @@ const Container = styled.div`
     flex-direction: column;
     scroll-behavior: smooth;
     overflow: auto;
-`;
-
-const BgContainer = styled.div`
-    ${flexAllCenter};
-    flex-direction: column;
-    width: 100%;
-    height: 35vh;
-    position: relative;
-    overflow: hidden;
-    background: ${COLORS.background};
-`;
-
-const MyAquariusLogo = styled(MyAquarius)`
-    width: 100%;
-    position: absolute;
-    display: block;
-
-    ${respondDown(Breakpoints.xxl)`
-        width: unset;
-        height: 100%;
-    `};
-`;
-
-const AquaLogo = styled(Aqua)`
-    height: 7.6rem;
-    width: 7.6rem;
-    margin-bottom: 2.2rem;
-`;
-
-const MainTitle = styled.h1`
-    font-weight: 700;
-    font-size: 8rem;
-    line-height: 9.4rem;
-    color: ${COLORS.white};
-
-    ${respondDown(Breakpoints.lg)`
-        font-size: 6rem;
-        line-height: 7.2rem;
-    `};
-
-    ${respondDown(Breakpoints.sm)`
-        font-size: 3rem;
-        line-height: 4rem;
-    `};
 `;
 
 const ControlsWrapper = styled.div`
@@ -116,6 +75,8 @@ enum Tabs {
     amm = 'amm',
     your = 'your',
     governance = 'governance',
+    airdrop2 = 'airdrop2',
+    iceLocks = 'iceLocks',
 }
 
 const OPTIONS = [
@@ -123,19 +84,35 @@ const OPTIONS = [
     { label: 'AMM rewards', value: Tabs.amm },
     { label: 'Liquidity Votes', value: Tabs.your },
     { label: 'Governance Votes', value: Tabs.governance },
+    { label: 'Airdrop #2', value: Tabs.airdrop2 },
+    { label: 'ICE locks', value: Tabs.iceLocks },
 ];
 
 const Profile = () => {
     const [selectedTab, setSelectedTab] = useState(Tabs.sdex);
+    const [ammAquaBalance, setAmmAquaBalance] = useState(null);
+    const [aquaUsdPrice, setAquaUsdPrice] = useState(null);
+
+    const { account } = useAuthStore();
+
+    useEffect(() => {
+        account.getAmmAquaBalance().then((res) => {
+            setAmmAquaBalance(res);
+        });
+    }, []);
+
+    useEffect(() => {
+        Promise.all([StellarService.getAquaPrice(), StellarService.getLumenUsdPrice()]).then(
+            ([AQUA_XLM, XLM_USD]) => {
+                setAquaUsdPrice(AQUA_XLM * XLM_USD);
+            },
+        );
+    }, []);
+
     return (
         <Container>
-            <BgContainer>
-                <MyAquariusLogo />
-                <AquaLogo />
-                <MainTitle>My Aquarius Account</MainTitle>
-            </BgContainer>
-
             <AccountInfo />
+            <Balances ammAquaBalance={ammAquaBalance} />
             <ControlsWrapper>
                 <ToggleGroupStyled
                     value={selectedTab}
@@ -147,10 +124,12 @@ const Profile = () => {
 
             <ContentWrap>
                 <Content>
-                    {selectedTab === Tabs.amm && <AmmRewards />}
-                    {selectedTab === Tabs.sdex && <SdexRewards />}
+                    {selectedTab === Tabs.amm && <AmmRewards aquaUsdPrice={aquaUsdPrice} />}
+                    {selectedTab === Tabs.sdex && <SdexRewards aquaUsdPrice={aquaUsdPrice} />}
                     {selectedTab === Tabs.your && <YourVotes />}
                     {selectedTab === Tabs.governance && <YourGovernanceVotes />}
+                    {selectedTab === Tabs.airdrop2 && <Airdrop2List />}
+                    {selectedTab === Tabs.iceLocks && <IceLocks ammAquaBalance={ammAquaBalance} />}
                 </Content>
             </ContentWrap>
         </Container>

@@ -1,24 +1,18 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import Loader from '../assets/img/loader.svg';
 import { flexAllCenter } from '../mixins';
-import { COLORS } from '../styles';
+import Lottie from 'lottie-react';
+import * as preloader from '../assets/animations/preloader.json';
 
 const Container = styled.div`
     flex: 1 0 auto;
     ${flexAllCenter};
 `;
 
-const StyledLoader = styled(Loader)`
-    height: 4rem;
-    width: 4rem;
-    color: ${COLORS.purple};
-`;
-
 const PageLoader = (): JSX.Element => {
     return (
         <Container>
-            <StyledLoader />
+            <Lottie animationData={preloader} style={{ height: '6rem', width: '6rem' }} />
         </Container>
     );
 };

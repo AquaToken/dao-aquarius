@@ -15,7 +15,7 @@ const ChildrenBlock = styled.div`
     display: flex;
 `;
 
-const TooltipTop = (isError, isSuccess, isWhite, isDark) => css`
+const TooltipTop = (isError, isSuccess, isWhite, isDark, isBlue) => css`
     bottom: calc(100% + 0.8rem);
     left: 50%;
     transform: translateX(-50%);
@@ -31,13 +31,15 @@ const TooltipTop = (isError, isSuccess, isWhite, isDark) => css`
                 ? COLORS.white
                 : isDark
                 ? COLORS.titleText
+                : isBlue
+                ? COLORS.blue
                 : COLORS.tooltip};
         border-left: 0.6rem solid ${COLORS.transparent};
         border-right: 0.6rem solid ${COLORS.transparent};
     }
 `;
 
-const TooltipBottom = (isError, isSuccess, isWhite, isDark) => css`
+const TooltipBottom = (isError, isSuccess, isWhite, isDark, isBlue) => css`
     top: calc(100% + 0.8rem);
     left: 50%;
     transform: translateX(-50%);
@@ -53,13 +55,15 @@ const TooltipBottom = (isError, isSuccess, isWhite, isDark) => css`
                 ? COLORS.white
                 : isDark
                 ? COLORS.titleText
+                : isBlue
+                ? COLORS.blue
                 : COLORS.tooltip};
         border-left: 0.6rem solid ${COLORS.transparent};
         border-right: 0.6rem solid ${COLORS.transparent};
     }
 `;
 
-const TooltipLeft = (isError, isSuccess, isWhite, isDark) => css`
+const TooltipLeft = (isError, isSuccess, isWhite, isDark, isBlue) => css`
     top: 50%;
     right: calc(100% + 0.8rem);
     transform: translateY(-50%);
@@ -75,13 +79,15 @@ const TooltipLeft = (isError, isSuccess, isWhite, isDark) => css`
                 ? COLORS.white
                 : isDark
                 ? COLORS.titleText
+                : isBlue
+                ? COLORS.blue
                 : COLORS.tooltip};
         border-top: 0.6rem solid ${COLORS.transparent};
         border-bottom: 0.6rem solid ${COLORS.transparent};
     }
 `;
 
-const TooltipRight = (isError, isSuccess, isWhite, isDark) => css`
+const TooltipRight = (isError, isSuccess, isWhite, isDark, isBlue) => css`
     top: 50%;
     left: calc(100% + 0.8rem);
     transform: translateY(-50%);
@@ -97,6 +103,8 @@ const TooltipRight = (isError, isSuccess, isWhite, isDark) => css`
                 ? COLORS.white
                 : isDark
                 ? COLORS.titleText
+                : isBlue
+                ? COLORS.blue
                 : COLORS.tooltip};
         border-top: 0.6rem solid ${COLORS.transparent};
         border-bottom: 0.6rem solid ${COLORS.transparent};
@@ -109,6 +117,7 @@ const TooltipBody = styled.div<{
     isSuccess?: boolean;
     isWhite?: boolean;
     isDark?: boolean;
+    isBlue?: boolean;
 }>`
     position: absolute;
     display: flex;
@@ -117,7 +126,7 @@ const TooltipBody = styled.div<{
     justify-content: center;
     padding: 0.9rem 1.2rem;
     color: ${COLORS.white};
-    background-color: ${({ isError, isSuccess, isWhite, isDark }) => {
+    background-color: ${({ isError, isSuccess, isWhite, isDark, isBlue }) => {
         if (isError) {
             return COLORS.pinkRed;
         }
@@ -129,6 +138,9 @@ const TooltipBody = styled.div<{
         }
         if (isDark) {
             return COLORS.titleText;
+        }
+        if (isBlue) {
+            return COLORS.blue;
         }
         return COLORS.tooltip;
     }};
@@ -143,12 +155,15 @@ const TooltipBody = styled.div<{
         position: absolute;
     }
 
-    ${({ position, isError, isSuccess, isWhite, isDark }) =>
-        (position === TOOLTIP_POSITION.top && TooltipTop(isError, isSuccess, isWhite, isDark)) ||
+    ${({ position, isError, isSuccess, isWhite, isDark, isBlue }) =>
+        (position === TOOLTIP_POSITION.top &&
+            TooltipTop(isError, isSuccess, isWhite, isDark, isBlue)) ||
         (position === TOOLTIP_POSITION.bottom &&
-            TooltipBottom(isError, isSuccess, isWhite, isDark)) ||
-        (position === TOOLTIP_POSITION.left && TooltipLeft(isError, isSuccess, isWhite, isDark)) ||
-        (position === TOOLTIP_POSITION.right && TooltipRight(isError, isSuccess, isWhite, isDark))}
+            TooltipBottom(isError, isSuccess, isWhite, isDark, isBlue)) ||
+        (position === TOOLTIP_POSITION.left &&
+            TooltipLeft(isError, isSuccess, isWhite, isDark, isBlue)) ||
+        (position === TOOLTIP_POSITION.right &&
+            TooltipRight(isError, isSuccess, isWhite, isDark, isBlue))}
 `;
 
 interface TooltipProps extends React.DOMAttributes<HTMLDivElement> {
@@ -160,6 +175,7 @@ interface TooltipProps extends React.DOMAttributes<HTMLDivElement> {
     isSuccess?: boolean;
     isWhite?: boolean;
     isDark?: boolean;
+    isBlue?: boolean;
     showOnHover?: boolean;
 }
 
@@ -172,6 +188,7 @@ const Tooltip = ({
     isSuccess,
     isWhite,
     isDark,
+    isBlue,
     showOnHover,
     ...props
 }: TooltipProps): JSX.Element => {
@@ -201,6 +218,7 @@ const Tooltip = ({
                     isSuccess={isSuccess}
                     isWhite={isWhite}
                     isDark={isDark}
+                    isBlue={isBlue}
                 >
                     {content}
                 </TooltipBody>

@@ -11,7 +11,6 @@ const AppGlobalStyle = createGlobalStyle`
     font-size: 62.5%; // 1rem = 10px
     animation-timing-function: linear;
     width: 100vw !important;
-    overflow-x: hidden;
   }
 
   body {
@@ -21,7 +20,6 @@ const AppGlobalStyle = createGlobalStyle`
     background-color: ${COLORS.white};
     text-align: left;
     width: 100vw !important;
-        overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     -webkit-text-size-adjust: 100%;

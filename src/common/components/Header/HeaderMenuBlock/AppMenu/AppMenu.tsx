@@ -221,6 +221,7 @@ const IceLogo = styled(Ice)`
 const LinkButton = styled.a`
     width: 100%;
     margin-right: 1rem;
+    text-decoration: none;
 `;
 
 const NewItem = styled.div`
@@ -248,7 +249,8 @@ const AppMenu = ({
     closeMenu: () => void;
     navLinks?: JSX.Element;
 }): JSX.Element => {
-    const { logout, loginType, account, isLogged, metadata, federationAddress } = useAuthStore();
+    const { logout, loginType, account, isLogged, metadata, federationAddress, isLoginPending } =
+        useAuthStore();
     const aquaBalance = account?.getAquaBalance();
     const ICE = StellarService.createAsset(ICE_CODE, ICE_ISSUER);
     const iceBalance = account?.getAssetBalance(ICE);
@@ -356,7 +358,7 @@ const AppMenu = ({
 
             {!isLogged && (
                 <SignInButton>
-                    <Button isBig fullWidth onClick={() => signIn()}>
+                    <Button isBig fullWidth onClick={() => signIn()} pending={isLoginPending}>
                         sign in
                     </Button>
                 </SignInButton>

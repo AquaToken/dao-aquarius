@@ -26,7 +26,7 @@ export const getDateString = (timestamp: number, config?: GetDateStringConfig): 
             'Dec',
         ];
 
-    return `${months[month]}. ${day}${withoutYear ? '' : `, ${year}`}${
+    return `${months[month]} ${day}${withoutYear ? '' : `, ${year}`}${
         withTime ? `, ${hours == 24 ? '00' : `0${hours}`.slice(-2)}:${`0${minutes}`.slice(-2)}` : ''
     }`;
 };
