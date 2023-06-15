@@ -65,6 +65,18 @@ const App = () => {
     }, []);
 
     useEffect(() => {
+        window.addEventListener('online', reloadIfNotLoaded);
+
+        return () => window.removeEventListener('online', reloadIfNotLoaded);
+    }, [wcLoginChecked, isAssetsUpdated]);
+
+    const reloadIfNotLoaded = () => {
+        if (!wcLoginChecked || !isAssetsUpdated) {
+            window.location.reload();
+        }
+    };
+
+    useEffect(() => {
         if (assets.length) {
             processNewAssets(assets);
         }
