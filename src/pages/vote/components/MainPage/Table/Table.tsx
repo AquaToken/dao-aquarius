@@ -79,6 +79,7 @@ const PairInfo = styled(TableCell)`
     min-width: 48rem;
     ${respondDown(Breakpoints.md)`
         margin-bottom: 3.2rem;
+        min-width: unset;
     `}
 `;
 
