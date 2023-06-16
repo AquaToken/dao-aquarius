@@ -1,33 +1,49 @@
 import * as React from 'react';
 import { useRef, useState } from 'react';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
+import useAuthStore from '../../../../store/authStore/useAuthStore';
 import styled, { createGlobalStyle } from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../styles';
-import Identicon from '../../../../basics/Identicon';
-import ArrowDown from '../../../../assets/img/icon-arrow-down.svg';
-import CloseIcon from '../../../../assets/img/icon-close-small.svg';
-import useOnClickOutside from '../../../../hooks/useOutsideClick';
-import { flexAllCenter, respondDown, textEllipsis } from '../../../../mixins';
+import { Breakpoints, COLORS } from '../../../styles';
+import Identicon from '../../../basics/Identicon';
+import ArrowDown from '../../../assets/img/icon-arrow-down.svg';
+import CloseIcon from '../../../assets/img/icon-close-small.svg';
+import useOnClickOutside from '../../../hooks/useOutsideClick';
+import { flexAllCenter, respondDown, textEllipsis } from '../../../mixins';
 import AppMenu from '../AppMenu/AppMenu';
-import { LoginTypes } from '../../../../../store/authStore/types';
-import Button from '../../../../basics/Button';
-import { ModalService } from '../../../../services/globalServices';
-import ChooseLoginMethodModal from '../../../../modals/ChooseLoginMethodModal';
-import MobileMenuIcon from '../../../../assets/img/icon-mobile-menu.svg';
+import { LoginTypes } from '../../../../store/authStore/types';
+import Button from '../../../basics/Button';
+import { ModalService } from '../../../services/globalServices';
+import ChooseLoginMethodModal from '../../../modals/ChooseLoginMethodModal';
+import MobileMenuIcon from '../../../assets/img/icon-mobile-menu.svg';
+import { Link } from 'react-router-dom';
+import { MainRoutes } from '../../../../routes';
 
-const AccountBlockContainer = styled.div<{ isMenuOpen: boolean }>`
+const Wrapper = styled.div`
+    position: relative;
+    height: 100%;
+`;
+
+const AccountBlockContainer = styled.div`
     height: 100%;
     display: flex;
     flex-direction: row;
     align-items: center;
-    position: relative;
-    padding: 2.4rem;
     cursor: pointer;
+`;
+
+const AccountBlockWeb = styled(AccountBlockContainer)<{ isMenuOpen: boolean }>`
+    padding: 2.4rem;
     box-shadow: ${({ isMenuOpen }) => (isMenuOpen ? '0 2rem 3rem rgba(0, 6, 54, 0.06)' : 'none')};
 
     ${respondDown(Breakpoints.md)`
-         box-shadow: unset;
-         padding-right: 0;
+        display: none;
+    `}
+`;
+
+const AccountBlockMobile = styled(AccountBlockContainer)`
+    display: none;
+
+    ${respondDown(Breakpoints.md)`
+        display: flex;
     `}
 `;
 
@@ -35,11 +51,12 @@ const IconsBlock = styled.div`
     position: relative;
     height: 4.8rem;
     width: 4.8rem;
+`;
 
-    ${respondDown(Breakpoints.md)`
-        height: 3.4rem;
-        width: 3.4rem;
-    `}
+const MyAquariusLink = styled(Link)`
+    position: relative;
+    height: 4.8rem;
+    width: 4.8rem;
 `;
 
 const AppIcon = styled.img`
@@ -95,6 +112,7 @@ const AccountPublic = styled.div`
 
 const SignInButton = styled(Button)`
     width: 12rem;
+    margin-left: 1.6rem;
     ${respondDown(Breakpoints.md)`
         display: none;
     `}
@@ -114,14 +132,27 @@ const MobileMenu = styled.div`
 
 const MobileMenuButton = styled.div`
     ${flexAllCenter};
-    height: 3.4rem;
-    width: 3.4rem;
+    height: 4.8rem;
+    font-size: 1.6rem;
+    line-height: 2.4rem;
+    color: ${COLORS.titleText};
+    background: ${COLORS.lightGray};
+    border-radius: 0.6rem;
+    padding: 0 1.6rem;
+
+    &:hover {
+        color: ${COLORS.purple};
+    }
+
+    svg {
+        margin-right: 0.8rem;
+    }
 `;
 
 const CloseMenuButton = styled.div`
     ${flexAllCenter};
-    height: 3.4rem;
-    width: 3.4rem;
+    height: 4.8rem;
+    width: 4.8rem;
     background-color: ${COLORS.white};
     box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
     border-radius: 0.5rem;
@@ -136,7 +167,7 @@ const BodyStyle = createGlobalStyle`
     }
 `;
 
-const HeaderMenuButton = ({ navLinks }: { navLinks?: JSX.Element }): JSX.Element => {
+const AccountBlock = ({ navLinks }: { navLinks?: JSX.Element }): JSX.Element => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const { account, federationAddress, loginType, metadata, isLogged, isLoginPending } =
         useAuthStore();
@@ -166,6 +197,7 @@ const HeaderMenuButton = ({ navLinks }: { navLinks?: JSX.Element }): JSX.Element
                     ) : (
                         <MobileMenuButton>
                             <MobileMenuIcon />
+                            Menu
                         </MobileMenuButton>
                     )}
                 </MobileMenu>
@@ -180,25 +212,52 @@ const HeaderMenuButton = ({ navLinks }: { navLinks?: JSX.Element }): JSX.Element
     const accountIdView = `${accountId.slice(0, 8)}...${accountId.slice(-8)}`;
 
     return (
-        <AccountBlockContainer onClick={() => toggleMenu()} isMenuOpen={isMenuOpen} ref={menuRef}>
-            <IconsBlock>
-                <Identicon pubKey={accountId} />
-                {loginType === LoginTypes.walletConnect && (
-                    <AppIcon src={metadata?.icons?.[0]} alt={metadata?.name} />
-                )}
-            </IconsBlock>
+        <Wrapper ref={menuRef}>
+            <AccountBlockWeb onClick={() => toggleMenu()} isMenuOpen={isMenuOpen}>
+                <IconsBlock>
+                    <Identicon pubKey={accountId} />
+                    {loginType === LoginTypes.walletConnect && (
+                        <AppIcon src={metadata?.icons?.[0]} alt={metadata?.name} />
+                    )}
+                </IconsBlock>
 
-            <AccountAddresses>
-                {federationAddress && <AccountFederation>{federationAddress}</AccountFederation>}
-                <AccountPublic>{accountIdView}</AccountPublic>
-            </AccountAddresses>
+                <AccountAddresses>
+                    {federationAddress && (
+                        <AccountFederation>{federationAddress}</AccountFederation>
+                    )}
+                    <AccountPublic>{accountIdView}</AccountPublic>
+                </AccountAddresses>
 
-            <Arrow isMenuOpen={isMenuOpen}>
-                <ArrowDown />
-            </Arrow>
+                <Arrow isMenuOpen={isMenuOpen}>
+                    <ArrowDown />
+                </Arrow>
+            </AccountBlockWeb>
+
+            <AccountBlockMobile>
+                <MyAquariusLink to={MainRoutes.account} onClick={() => setIsMenuOpen(false)}>
+                    <Identicon pubKey={accountId} />
+                    {loginType === LoginTypes.walletConnect && (
+                        <AppIcon src={metadata?.icons?.[0]} alt={metadata?.name} />
+                    )}
+                </MyAquariusLink>
+
+                <MobileMenu onClick={() => toggleMenu()}>
+                    {isMenuOpen ? (
+                        <CloseMenuButton>
+                            <CloseIcon />
+                            <BodyStyle />
+                        </CloseMenuButton>
+                    ) : (
+                        <MobileMenuButton>
+                            <MobileMenuIcon />
+                            Menu
+                        </MobileMenuButton>
+                    )}
+                </MobileMenu>
+            </AccountBlockMobile>
             {isMenuOpen && <AppMenu navLinks={navLinks} closeMenu={() => setIsMenuOpen(false)} />}
-        </AccountBlockContainer>
+        </Wrapper>
     );
 };
 
-export default HeaderMenuButton;
+export default AccountBlock;

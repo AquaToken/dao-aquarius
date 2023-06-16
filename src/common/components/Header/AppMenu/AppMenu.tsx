@@ -1,32 +1,32 @@
 import * as React from 'react';
-import { LoginTypes } from '../../../../../store/authStore/types';
+import { LoginTypes } from '../../../../store/authStore/types';
 import styled from 'styled-components';
-import { Breakpoints, COLORS, Z_INDEX } from '../../../../styles';
-import IconLogout from '../../../../assets/img/icon-logout.svg';
-import IconProfile from '../../../../assets/img/icon-profile.svg';
-import IconPlus from '../../../../assets/img/icon-plus.svg';
-import Aqua from '../../../../assets/img/aqua-logo-small.svg';
-import Ice from '../../../../assets/img/ice-logo.svg';
-import IconCopy from '../../../../assets/img/icon-copy.svg';
-import External from '../../../../assets/img/icon-external-link.svg';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
+import { Breakpoints, COLORS, Z_INDEX } from '../../../styles';
+import IconLogout from '../../../assets/img/icon-logout.svg';
+import IconProfile from '../../../assets/img/icon-profile.svg';
+import IconPlus from '../../../assets/img/icon-plus.svg';
+import Aqua from '../../../assets/img/aqua-logo-small.svg';
+import Ice from '../../../assets/img/ice-logo.svg';
+import IconCopy from '../../../assets/img/icon-copy.svg';
+import External from '../../../assets/img/icon-external-link.svg';
+import useAuthStore from '../../../../store/authStore/useAuthStore';
 import {
     ModalService,
     StellarService,
     WalletConnectService,
-} from '../../../../services/globalServices';
-import { formatBalance } from '../../../../helpers/helpers';
-import { respondDown } from '../../../../mixins';
-import CircleButton from '../../../../basics/CircleButton';
-import GetAquaModal from '../../../../modals/GetAquaModal/GetAquaModal';
-import Button from '../../../../basics/Button';
-import Identicon from '../../../../basics/Identicon';
-import ChooseLoginMethodModal from '../../../../modals/ChooseLoginMethodModal';
-import { ICE_CODE, ICE_ISSUER } from '../../../../services/stellar.service';
-import CopyButton from '../../../../basics/CopyButton';
-import SocialLinks from '../../../SocialLinks/SocialLinks';
+} from '../../../services/globalServices';
+import { formatBalance } from '../../../helpers/helpers';
+import { respondDown } from '../../../mixins';
+import CircleButton from '../../../basics/CircleButton';
+import GetAquaModal from '../../../modals/GetAquaModal/GetAquaModal';
+import Button from '../../../basics/Button';
+import Identicon from '../../../basics/Identicon';
+import ChooseLoginMethodModal from '../../../modals/ChooseLoginMethodModal';
+import { ICE_CODE, ICE_ISSUER } from '../../../services/stellar.service';
+import CopyButton from '../../../basics/CopyButton';
+import SocialLinks from '../../SocialLinks/SocialLinks';
 import { Link } from 'react-router-dom';
-import { LockerRoutes, MainRoutes } from '../../../../../routes';
+import { LockerRoutes, MainRoutes } from '../../../../routes';
 
 const MenuBlock = styled.div`
     position: absolute;
@@ -97,7 +97,7 @@ const AccountBalanceValue = styled.span`
 `;
 
 const ProfileBlock = styled(Link)`
-    display: flex;
+    display: none;
     align-items: center;
     padding: 2.4rem 2.4rem 1.2rem;
     cursor: pointer;
@@ -109,25 +109,36 @@ const ProfileBlock = styled(Link)`
         color: ${COLORS.titleText};
     }
 
+    ${respondDown(Breakpoints.lg)`
+        display: flex;
+    `}
     ${respondDown(Breakpoints.md)`
-        justify-content: center;
+        display: none;
     `}
 `;
 
 const LogoutBlock = styled.div`
     display: flex;
     align-items: center;
-    padding: 1.2rem 2.4rem 2.9rem;
+    padding: 2.4rem 2.4rem 2.9rem;
     cursor: pointer;
     color: ${COLORS.grayText};
+    border-top: 0.1rem dashed ${COLORS.gray};
 
     &:hover {
         color: ${COLORS.titleText};
     }
 
+    ${respondDown(Breakpoints.lg)`
+        border-top: unset;
+        padding-top: 1.2rem;
+    `}
+
     ${respondDown(Breakpoints.md)`
         justify-content: center;
         padding-bottom: 0;
+        border-top: 0.1rem dashed ${COLORS.gray};
+        padding-top: 2.4rem;
     `}
 `;
 
@@ -224,24 +235,6 @@ const LinkButton = styled.a`
     text-decoration: none;
 `;
 
-const NewItem = styled.div`
-    position: absolute;
-    left: calc(100% + 0.5rem);
-    top: -0.5rem;
-    height: 1.8rem;
-    padding: 0 0.6rem;
-    font-size: 0.8rem;
-    font-weight: 500;
-    letter-spacing: 0.1rem;
-    line-height: 2rem;
-    text-transform: uppercase;
-    text-align: center;
-    color: ${COLORS.white};
-    background-color: ${COLORS.tooltip};
-    border-radius: 0.5rem;
-    white-space: nowrap;
-`;
-
 const AppMenu = ({
     closeMenu,
     navLinks,
@@ -333,9 +326,7 @@ const AppMenu = ({
                         }}
                     >
                         <IconProfile />
-                        <Logout>
-                            My Aquarius<NewItem>NEW</NewItem>
-                        </Logout>
+                        <Logout>My Aquarius</Logout>
                     </ProfileBlock>
 
                     <LogoutBlock
