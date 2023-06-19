@@ -27,12 +27,12 @@ const AccountBlockContainer = styled.div`
     display: flex;
     flex-direction: row;
     align-items: center;
-    cursor: pointer;
 `;
 
 const AccountBlockWeb = styled(AccountBlockContainer)<{ isMenuOpen: boolean }>`
     padding: 2.4rem;
     box-shadow: ${({ isMenuOpen }) => (isMenuOpen ? '0 2rem 3rem rgba(0, 6, 54, 0.06)' : 'none')};
+    cursor: pointer;
 
     ${respondDown(Breakpoints.md)`
         display: none;
