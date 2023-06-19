@@ -90,6 +90,15 @@ const App = () => {
         }
     }, [isLogged]);
 
+    useEffect(() => {
+        const userAgent = window.navigator.userAgent;
+
+        if (userAgent.match(/iPad/i) || userAgent.match(/iPhone/i)) {
+            document.documentElement.style.overflowX = 'unset';
+            document.body.style.overflowX = 'unset';
+        }
+    }, []);
+
     if (!isAssetsUpdated || !assetsInfo.size || !wcLoginChecked) {
         return <PageLoader />;
     }
