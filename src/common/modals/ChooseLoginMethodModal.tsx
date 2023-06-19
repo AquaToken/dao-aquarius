@@ -20,6 +20,8 @@ import { respondDown } from '../mixins';
 import LoginWithPublic from './LoginWithPublic';
 import LedgerLogin from './LedgerModals/LedgerLogin';
 import isUaWebview from 'is-ua-webview';
+import { useEffect } from 'react';
+import useAuthStore from '../../store/authStore/useAuthStore';
 
 const LoginMethod = styled.div`
     width: 52.8rem;
@@ -109,7 +111,20 @@ const TooltipText = styled.div`
     color: ${COLORS.white};
 `;
 
-const ChooseLoginMethodModal = ({ close }: ModalProps<never>): JSX.Element => {
+const ChooseLoginMethodModal = ({
+    close,
+    params,
+}: ModalProps<{ withRedirect?: boolean }>): JSX.Element => {
+    const { enableRedirect, disableRedirect } = useAuthStore();
+
+    useEffect(() => {
+        if (params.withRedirect) {
+            enableRedirect();
+        } else {
+            disableRedirect();
+        }
+    }, []);
+
     const chooseMethod = (method: LoginTypes) => {
         if (method === LoginTypes.secret) {
             close();

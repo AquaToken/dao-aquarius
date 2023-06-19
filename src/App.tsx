@@ -42,7 +42,7 @@ const App = () => {
     const { getAssets, assets, processNewAssets, assetsInfo, clearAssets } = useAssetsStore();
     const [isAssetsUpdated, setIsAssetsUpdated] = useState(false);
 
-    const { isLogged, account } = useAuthStore();
+    const { isLogged, account, isRedirectEnabled, disableRedirect } = useAuthStore();
 
     useEffect(() => {
         const assetUpdateTimestamp = localStorage.getItem(UPDATE_ASSETS_DATE);
@@ -90,12 +90,19 @@ const App = () => {
         }
     }, [isLogged]);
 
+    useEffect(() => {
+        if (isLogged && isRedirectEnabled) {
+            disableRedirect();
+        }
+    }, [isLogged, isRedirectEnabled]);
+
     if (!isAssetsUpdated || !assetsInfo.size || !wcLoginChecked) {
         return <PageLoader />;
     }
 
     return (
         <Router>
+            {isLogged && isRedirectEnabled && <Redirect to={MainRoutes.account} />}
             <Header>
                 <>
                     <HeaderNavLink

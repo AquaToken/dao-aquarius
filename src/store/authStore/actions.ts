@@ -66,3 +66,11 @@ export function updateAccount(
     const wrappedAccount = new AccountService(account, authType);
     return { type: AUTH_ACTIONS.UPDATE_ACCOUNT, payload: { account: wrappedAccount } };
 }
+
+export function enableRedirect(): ActionSimpleResult {
+    return { type: AUTH_ACTIONS.ENABLE_REDIRECT };
+}
+
+export function disableRedirect(): ActionSimpleResult {
+    return { type: AUTH_ACTIONS.DISABLE_REDIRECT };
+}

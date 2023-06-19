@@ -17,6 +17,8 @@ type AuthActions = {
     resolveFederation: (homeDomain: string, accountId: string) => ActionAsyncResult;
     updateAccount: (account: typeof AccountRecord, authType: LoginTypes) => ActionSimpleResult;
     clearLoginError: () => ActionSimpleResult;
+    enableRedirect: () => ActionSimpleResult;
+    disableRedirect: () => ActionSimpleResult;
 };
 
 const useAuthStore = (): AuthStore & AuthActions => {
@@ -26,7 +28,15 @@ const useAuthStore = (): AuthStore & AuthActions => {
     const { authStore } = state;
 
     // List Actions
-    const { login, logout, resolveFederation, updateAccount, clearLoginError } = actions;
+    const {
+        login,
+        logout,
+        resolveFederation,
+        updateAccount,
+        clearLoginError,
+        enableRedirect,
+        disableRedirect,
+    } = actions;
 
     const authActions = bindActions(
         {
@@ -35,6 +45,8 @@ const useAuthStore = (): AuthStore & AuthActions => {
             resolveFederation,
             updateAccount,
             clearLoginError,
+            enableRedirect,
+            disableRedirect,
         },
         dispatch,
     ) as unknown as AuthActions;
