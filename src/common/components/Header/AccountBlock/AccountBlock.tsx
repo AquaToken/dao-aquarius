@@ -14,8 +14,6 @@ import Button from '../../../basics/Button';
 import { ModalService } from '../../../services/globalServices';
 import ChooseLoginMethodModal from '../../../modals/ChooseLoginMethodModal';
 import MobileMenuIcon from '../../../assets/img/icon-mobile-menu.svg';
-import { Link } from 'react-router-dom';
-import { MainRoutes } from '../../../../routes';
 
 const Wrapper = styled.div`
     position: relative;
@@ -48,12 +46,6 @@ const AccountBlockMobile = styled(AccountBlockContainer)`
 `;
 
 const IconsBlock = styled.div`
-    position: relative;
-    height: 4.8rem;
-    width: 4.8rem;
-`;
-
-const MyAquariusLink = styled(Link)`
     position: relative;
     height: 4.8rem;
     width: 4.8rem;
@@ -234,13 +226,6 @@ const AccountBlock = ({ navLinks }: { navLinks?: JSX.Element }): JSX.Element => 
             </AccountBlockWeb>
 
             <AccountBlockMobile>
-                <MyAquariusLink to={MainRoutes.account} onClick={() => setIsMenuOpen(false)}>
-                    <Identicon pubKey={accountId} />
-                    {loginType === LoginTypes.walletConnect && (
-                        <AppIcon src={metadata?.icons?.[0]} alt={metadata?.name} />
-                    )}
-                </MyAquariusLink>
-
                 <MobileMenu onClick={() => toggleMenu()}>
                     {isMenuOpen ? (
                         <CloseMenuButton>
