@@ -3,7 +3,6 @@ import { LoginTypes } from '../../../../store/authStore/types';
 import styled from 'styled-components';
 import { Breakpoints, COLORS, Z_INDEX } from '../../../styles';
 import IconLogout from '../../../assets/img/icon-logout.svg';
-import IconProfile from '../../../assets/img/icon-profile.svg';
 import IconPlus from '../../../assets/img/icon-plus.svg';
 import Aqua from '../../../assets/img/aqua-logo-small.svg';
 import Ice from '../../../assets/img/ice-logo.svg';
@@ -26,7 +25,7 @@ import { ICE_CODE, ICE_ISSUER } from '../../../services/stellar.service';
 import CopyButton from '../../../basics/CopyButton';
 import SocialLinks from '../../SocialLinks/SocialLinks';
 import { Link } from 'react-router-dom';
-import { LockerRoutes, MainRoutes } from '../../../../routes';
+import { LockerRoutes } from '../../../../routes';
 
 const MenuBlock = styled.div`
     position: absolute;
@@ -96,27 +95,6 @@ const AccountBalanceValue = styled.span`
     align-items: center;
 `;
 
-const ProfileBlock = styled(Link)`
-    display: none;
-    align-items: center;
-    padding: 2.4rem 2.4rem 1.2rem;
-    cursor: pointer;
-    border-top: 0.1rem dashed ${COLORS.gray};
-    text-decoration: none;
-    color: ${COLORS.grayText};
-
-    &:hover {
-        color: ${COLORS.titleText};
-    }
-
-    ${respondDown(Breakpoints.lg)`
-        display: flex;
-    `}
-    ${respondDown(Breakpoints.md)`
-        justify-content: center;
-    `}
-`;
-
 const LogoutBlock = styled.div`
     display: flex;
     align-items: center;
@@ -128,11 +106,6 @@ const LogoutBlock = styled.div`
     &:hover {
         color: ${COLORS.titleText};
     }
-
-    ${respondDown(Breakpoints.lg)`
-        border-top: unset;
-        padding-top: 1.2rem;
-    `}
 
     ${respondDown(Breakpoints.md)`
         justify-content: center;
@@ -316,16 +289,6 @@ const AppMenu = ({
                             </Link>
                         </CircleButton>
                     </AccountBalanceBlock>
-
-                    <ProfileBlock
-                        to={MainRoutes.account}
-                        onClick={() => {
-                            closeMenu();
-                        }}
-                    >
-                        <IconProfile />
-                        <Logout>My Aquarius</Logout>
-                    </ProfileBlock>
 
                     <LogoutBlock
                         onClick={() => {

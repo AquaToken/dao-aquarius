@@ -151,7 +151,13 @@ const MyAquarius = styled(NavLink)`
     }
 
     ${respondDown(Breakpoints.lg)`
-        display: none;
+        width: 4.8rem;
+        div {
+            display: none;
+        }
+        svg {
+            margin-right: 0;
+        }
     `}
 `;
 
