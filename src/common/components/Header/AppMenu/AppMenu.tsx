@@ -113,7 +113,7 @@ const ProfileBlock = styled(Link)`
         display: flex;
     `}
     ${respondDown(Breakpoints.md)`
-        display: none;
+        justify-content: center;
     `}
 `;
 
@@ -137,8 +137,6 @@ const LogoutBlock = styled.div`
     ${respondDown(Breakpoints.md)`
         justify-content: center;
         padding-bottom: 0;
-        border-top: 0.1rem dashed ${COLORS.gray};
-        padding-top: 2.4rem;
     `}
 `;
 
