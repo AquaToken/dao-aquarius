@@ -12,6 +12,7 @@ export interface AuthStore {
     isFederationPending: boolean;
     metadata: SignClientTypes.Metadata | null;
     loginPendingTopic?: string;
+    isRedirectEnabled?: boolean;
 }
 
 export enum LoginTypes {
@@ -31,4 +32,6 @@ export enum AUTH_ACTIONS {
     FEDERATION_RESOLVE_SUCCESS = 'FEDERATION_RESOLVE_SUCCESS',
     FEDERATION_RESOLVE_FAIL = 'FEDERATION_RESOLVE_FAIL',
     UPDATE_ACCOUNT = 'UPDATE_ACCOUNT',
+    ENABLE_REDIRECT = 'ENABLE_REDIRECT',
+    DISABLE_REDIRECT = 'DISABLE_REDIRECT',
 }
