@@ -6,6 +6,7 @@ export enum MainRoutes {
     governance = '/governance',
     market = '/market',
     rewards = '/rewards',
+    rewards2 = '/rewards-v2',
     airdrop = '/airdrop',
     airdrop2 = '/airdrop2',
     account = '/account',

@@ -213,7 +213,7 @@ const marketKeyToString = (code, issuer) => {
     return `${code}:${issuer}`;
 };
 
-const RewardsList = () => {
+const RewardsList = ({ isV2 }: { isV2?: boolean }) => {
     const [rewards, setRewards] = useState(null);
     const [sort, setSort] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -228,7 +228,7 @@ const RewardsList = () => {
             return;
         }
         setLoading(true);
-        getRewards(sort).then((res) => {
+        getRewards(sort, isV2).then((res) => {
             setRewards(res);
             setLoading(false);
             const assets = res.reduce((acc, item) => {
