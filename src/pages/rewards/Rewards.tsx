@@ -33,7 +33,7 @@ const Rewards = ({ isV2 }: { isV2?: boolean }) => {
         getTotalRewards(isV2).then((res) => {
             setTotalRewards(res);
         });
-    }, []);
+    }, [isV2]);
     return (
         <Container>
             <TotalRewards totalRewards={totalRewards} />

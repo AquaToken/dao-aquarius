@@ -240,7 +240,7 @@ const RewardsList = ({ isV2 }: { isV2?: boolean }) => {
 
             processNewAssets(assets);
         });
-    }, [sort]);
+    }, [sort, isV2]);
 
     useEffect(() => {
         const params = new URLSearchParams(location.search);
