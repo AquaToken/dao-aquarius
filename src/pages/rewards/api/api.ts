@@ -2,10 +2,11 @@ import axios from 'axios';
 import { Rewards, TotalRewards } from '../../vote/api/types';
 import { ListResponse } from '../../../store/assetsStore/types';
 
-const rewardsApi = 'https://reward-api.aqua.network/api/rewards/';
+const rewardsApi = 'https://voting-tracker.aqua.network/api/voting-rewards-v2/';
+const totalApi = 'https://voting-tracker.aqua.network/api/voting-rewards-v2-stats/';
 
 export const getTotalRewards = (): Promise<TotalRewards> => {
-    return axios.get<TotalRewards>(`${rewardsApi}total/`).then(({ data }) => {
+    return axios.get<TotalRewards>(totalApi).then(({ data }) => {
         return data;
     });
 };
