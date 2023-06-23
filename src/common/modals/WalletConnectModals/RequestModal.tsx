@@ -43,6 +43,7 @@ const Status = styled.div`
     margin-bottom: 3.2rem;
     background-color: ${COLORS.lightGray};
     ${flexAllCenter};
+    text-align: center;
 `;
 
 const RightButton = styled(Button)`
