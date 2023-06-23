@@ -361,8 +361,10 @@ const RewardsList = ({ isV2 }: { isV2?: boolean }) => {
                     {rewards.map(
                         ({
                             daily_sdex_reward,
+                            daily_sdex_percentage,
                             daily_total_reward,
                             daily_amm_reward,
+                            daily_amm_percentage,
                             market_key,
                         }) => (
                             <TableBodyRowWrap
@@ -391,7 +393,10 @@ const RewardsList = ({ isV2 }: { isV2?: boolean }) => {
                                     </PairCell>
                                     <RightCell>
                                         <label>SDEX daily reward</label>
-                                        <span>{formatBalance(daily_sdex_reward)} AQUA</span>
+                                        <span>
+                                            {formatBalance(daily_sdex_reward)} AQUA{' '}
+                                            {isV2 ? `(${daily_sdex_percentage}%)` : ''}
+                                        </span>
                                         <a
                                             href={`https://www.stellarx.com/markets/${marketKeyToString(
                                                 market_key.asset1_code,
@@ -411,7 +416,10 @@ const RewardsList = ({ isV2 }: { isV2?: boolean }) => {
                                     </RightCell>
                                     <RightCell>
                                         <label>AMM daily reward</label>
-                                        <span>{formatBalance(daily_amm_reward)} AQUA</span>{' '}
+                                        <span>
+                                            {formatBalance(daily_amm_reward)} AQUA{' '}
+                                            {isV2 ? `(${daily_amm_percentage}%)` : ''}
+                                        </span>{' '}
                                         <a
                                             href={`https://www.stellarx.com/amm/analytics/${marketKeyToString(
                                                 market_key.asset1_code,
