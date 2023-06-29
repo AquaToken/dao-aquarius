@@ -48,6 +48,12 @@ export function processNewAssets(assets: AssetSimple[]) {
                 cached.set(getAssetString(info), info);
             });
 
+            assets
+                .filter((asset) => !cached.has(getAssetString(asset)))
+                .forEach((asset) => {
+                    cached.set(getAssetString(asset), { image: null });
+                });
+
             localStorage.setItem(ASSET_CACHE, JSON.stringify(Array.from(cached.entries())));
 
             dispatch({ type: ASSETS_ACTIONS.UPDATE_ASSET_INFO, payload: { assetInfo: cached } });

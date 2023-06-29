@@ -31,6 +31,8 @@ const AirdropPage = lazy(() => import('./pages/airdrop/Airdrop'));
 const Airdrop2Page = lazy(() => import('./pages/airdrop2/Airdrop2'));
 const ProfilePage = lazy(() => import('./pages/profile/Profile'));
 const WalletConnectPage = lazy(() => import('./pages/wallet-connect/WalletConnect'));
+const AmmPage = lazy(() => import('./pages/amm/Amm'));
+const SwapPage = lazy(() => import('./pages/swap/Swap'));
 
 const UPDATE_ASSETS_DATE = 'update assets timestamp';
 const UPDATE_PERIOD = 24 * 60 * 60 * 1000;
@@ -129,60 +131,78 @@ const App = () => {
             {isLogged && Boolean(redirectURL) && <Redirect to={redirectURL} />}
             <Header>
                 <>
+                    {/*<HeaderNavLink*/}
+                    {/*    to={MainRoutes.vote}*/}
+                    {/*    exact*/}
+                    {/*    activeStyle={{*/}
+                    {/*        fontWeight: 700,*/}
+                    {/*    }}*/}
+                    {/*    title="Voting"*/}
+                    {/*>*/}
+                    {/*    Voting*/}
+                    {/*</HeaderNavLink>*/}
+                    {/*<HeaderNavLink*/}
+                    {/*    to={MainRoutes.rewards}*/}
+                    {/*    activeStyle={{*/}
+                    {/*        fontWeight: 700,*/}
+                    {/*    }}*/}
+                    {/*    title="Rewards"*/}
+                    {/*>*/}
+                    {/*    Rewards*/}
+                    {/*</HeaderNavLink>*/}
+                    {/*<HeaderNavLink*/}
+                    {/*    to={MainRoutes.bribes}*/}
+                    {/*    activeStyle={{*/}
+                    {/*        fontWeight: 700,*/}
+                    {/*    }}*/}
+                    {/*    title="Bribes"*/}
+                    {/*>*/}
+                    {/*    Bribes*/}
+                    {/*</HeaderNavLink>*/}
+                    {/*<HeaderNavLink*/}
+                    {/*    to={MainRoutes.locker}*/}
+                    {/*    activeStyle={{*/}
+                    {/*        fontWeight: 700,*/}
+                    {/*    }}*/}
+                    {/*    title="Locker"*/}
+                    {/*>*/}
+                    {/*    Locker*/}
+                    {/*</HeaderNavLink>*/}
+                    {/*<HeaderNavLink*/}
+                    {/*    to={MainRoutes.governance}*/}
+                    {/*    activeStyle={{*/}
+                    {/*        fontWeight: 700,*/}
+                    {/*    }}*/}
+                    {/*    title="Governance"*/}
+                    {/*>*/}
+                    {/*    Governance*/}
+                    {/*</HeaderNavLink>*/}
+                    {/*<HeaderNavLink*/}
+                    {/*    to={MainRoutes.airdrop2}*/}
+                    {/*    activeStyle={{*/}
+                    {/*        fontWeight: 700,*/}
+                    {/*    }}*/}
+                    {/*    title="Airdrop"*/}
+                    {/*>*/}
+                    {/*    Airdrop*/}
+                    {/*</HeaderNavLink>*/}
                     <HeaderNavLink
-                        to={MainRoutes.vote}
-                        exact
+                        to={MainRoutes.amm}
                         activeStyle={{
                             fontWeight: 700,
                         }}
-                        title="Voting"
+                        title="AMM"
                     >
-                        Voting
+                        AMM
                     </HeaderNavLink>
                     <HeaderNavLink
-                        to={MainRoutes.rewards}
+                        to={MainRoutes.swap}
                         activeStyle={{
                             fontWeight: 700,
                         }}
-                        title="Rewards"
+                        title="Swap"
                     >
-                        Rewards
-                    </HeaderNavLink>
-                    <HeaderNavLink
-                        to={MainRoutes.bribes}
-                        activeStyle={{
-                            fontWeight: 700,
-                        }}
-                        title="Bribes"
-                    >
-                        Bribes
-                    </HeaderNavLink>
-                    <HeaderNavLink
-                        to={MainRoutes.locker}
-                        activeStyle={{
-                            fontWeight: 700,
-                        }}
-                        title="Locker"
-                    >
-                        Locker
-                    </HeaderNavLink>
-                    <HeaderNavLink
-                        to={MainRoutes.governance}
-                        activeStyle={{
-                            fontWeight: 700,
-                        }}
-                        title="Governance"
-                    >
-                        Governance
-                    </HeaderNavLink>
-                    <HeaderNavLink
-                        to={MainRoutes.airdrop2}
-                        activeStyle={{
-                            fontWeight: 700,
-                        }}
-                        title="Airdrop"
-                    >
-                        Airdrop
+                        Swap
                     </HeaderNavLink>
                 </>
             </Header>
@@ -247,6 +267,18 @@ const App = () => {
                     <Route path={MainRoutes.walletConnect}>
                         <Title title="WalletConnect">
                             <WalletConnectPage />
+                        </Title>
+                    </Route>
+
+                    <Route path={MainRoutes.amm}>
+                        <Title title="AMM Example">
+                            <AmmPage />
+                        </Title>
+                    </Route>
+
+                    <Route path={MainRoutes.swap}>
+                        <Title title="Swap">
+                            <SwapPage />
                         </Title>
                     </Route>
 

@@ -163,6 +163,8 @@ type AssetDropdownProps = {
     exclude?: AssetSimple;
     placeholder?: string;
     label?: string;
+    assetsList?: AssetSimple[];
+    withoutReset?: boolean;
 };
 
 const StyledAsset = styled(Asset)`
@@ -181,8 +183,12 @@ const AssetDropdown = ({
     exclude,
     placeholder,
     label,
+    assetsList,
+    withoutReset,
 }: AssetDropdownProps) => {
-    const { assets, assetsInfo, processNewAssets } = useAssetsStore();
+    const { assets: knownAssets, assetsInfo, processNewAssets } = useAssetsStore();
+
+    const assets = assetsList || knownAssets;
 
     const [isOpen, setIsOpen] = useState(false);
     const [selectedAsset, setSelectedAsset] = useState(asset);
@@ -321,7 +327,7 @@ const AssetDropdown = ({
                 />
             )}
 
-            {selectedAsset && (
+            {!withoutReset && selectedAsset && (
                 <div
                     onClick={(e) => {
                         resetAsset(e);

@@ -1,10 +1,13 @@
 import AccountRecord, * as StellarSdk from 'stellar-sdk';
 import { AccountResponse, Horizon } from 'stellar-sdk';
+import * as SorobanClient from 'soroban-client';
 import { LoginTypes } from '../../store/authStore/types';
 import {
     LedgerService,
     ModalService,
+    SorobanService,
     StellarService,
+    ToastService,
     WalletConnectService,
 } from './globalServices';
 import { AQUA_CODE, AQUA_ISSUER, ICE_ASSETS } from './stellar.service';
@@ -242,5 +245,63 @@ export default class AccountService extends AccountResponse {
         );
 
         return available > 0 ? available : 0;
+    }
+
+    getBalancesWithSmartContracts() {
+        return Promise.all(
+            this.balances
+                .filter(
+                    ({ asset_type }) =>
+                        asset_type !== 'liquidity_pool_shares' && asset_type !== 'native',
+                )
+                .map((balance) => {
+                    const asset = SorobanService.getAsset(
+                        (balance as Horizon.BalanceLineAsset).asset_code,
+                        (balance as Horizon.BalanceLineAsset).asset_issuer,
+                    );
+                    return {
+                        contractId: SorobanService.getAssetContractId(asset),
+                        asset,
+                        balance: balance.balance,
+                    };
+                })
+                .map(async ({ contractId, asset, balance }) => {
+                    return {
+                        isDeployed: await SorobanService.checkContactDeployed(contractId),
+                        contractId,
+                        asset,
+                        balance,
+                    };
+                }),
+        ).then((balances) => {
+            const nativeBalance = this.balances.find(
+                ({ asset_type }) => asset_type === 'native',
+            ).balance;
+            const native = SorobanClient.Asset.native();
+            const contractId = SorobanService.getAssetContractId(native);
+            return [
+                { asset: native, balance: nativeBalance, isDeployed: true, contractId },
+                ...balances.sort((a, b) => +b.balance - +a.balance),
+            ];
+        });
+    }
+
+    async signContact(tx: SorobanClient.Transaction, isSimulate?: boolean): Promise<any> {
+        if (this.authType === LoginTypes.walletConnect || this.authType === LoginTypes.ledger) {
+            ToastService.showErrorToast('');
+        }
+        if (this.authType === LoginTypes.public) {
+            const xdr = tx.toEnvelope().toXDR('base64');
+            ModalService.openModal(SignWithPublic, { xdr, account: this });
+            return Promise.resolve({ status: BuildSignAndSubmitStatuses.pending });
+        }
+
+        if (this.authType === LoginTypes.secret) {
+            const signedTx = SorobanService.signWithSecret(tx);
+
+            return isSimulate
+                ? SorobanService.simulateTx(signedTx)
+                : SorobanService.submitTx(signedTx);
+        }
     }
 }

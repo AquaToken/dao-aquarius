@@ -5,6 +5,7 @@ import { LoginTypes } from '../../store/authStore/types';
 import { Horizon } from 'stellar-sdk';
 import {
     LedgerService,
+    SorobanService,
     StellarService,
     ToastService,
     WalletConnectService,
@@ -76,6 +77,7 @@ export default function useGlobalSubscriptions(): void {
             ToastService.showSuccessToast('Logged in');
         } else {
             StellarService.logoutWithSecret();
+            SorobanService.logoutWithSecret();
             StellarService.closeAccountStream();
             ToastService.showSuccessToast('Logged out');
         }

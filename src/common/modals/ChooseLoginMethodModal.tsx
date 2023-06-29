@@ -4,10 +4,7 @@ import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../styles';
 import ArrowRightIcon from '../assets/img/icon-arrow-right.svg';
 import KeyIcon from '../assets/img/icon-key.svg';
-import WalletConnectLogo from '../assets/img/wallet-connect-logo.svg';
-import LobstrLogo from '../assets/img/lobstr-logo.svg';
 import Stellar from '../assets/img/xlm-logo.svg';
-import Ledger from '../assets/img/ledger-logo.svg';
 import { LoginTypes } from '../../store/authStore/types';
 import LoginWithSecret from './LoginWithSecret';
 import {
@@ -172,39 +169,39 @@ const ChooseLoginMethodModal = ({
         <>
             <ModalTitle>Sign in</ModalTitle>
 
-            <LoginMethod onClick={() => chooseMethod(LoginTypes.walletConnect)}>
-                <WalletConnectLogoRelative>
-                    <WalletConnectLogo />
-                    <Tooltip>
-                        <LobstrLogo />
-                        <TooltipText>Available in LOBSTR wallet</TooltipText>
-                    </Tooltip>
-                </WalletConnectLogoRelative>
+            {/*<LoginMethod onClick={() => chooseMethod(LoginTypes.walletConnect)}>*/}
+            {/*    <WalletConnectLogoRelative>*/}
+            {/*        <WalletConnectLogo />*/}
+            {/*        <Tooltip>*/}
+            {/*            <LobstrLogo />*/}
+            {/*            <TooltipText>Available in LOBSTR wallet</TooltipText>*/}
+            {/*        </Tooltip>*/}
+            {/*    </WalletConnectLogoRelative>*/}
 
-                <LoginMethodName>WalletConnect</LoginMethodName>
-                <ArrowRight />
-            </LoginMethod>
+            {/*    <LoginMethodName>WalletConnect</LoginMethodName>*/}
+            {/*    <ArrowRight />*/}
+            {/*</LoginMethod>*/}
 
-            <LoginMethod onClick={() => chooseMethod(LoginTypes.public)}>
-                <StellarLogo />
-                <LoginMethodWithDescription>
-                    <LoginMethodName>Stellar Laboratory</LoginMethodName>
-                    <LoginMethodDescription>
-                        Sign with Freighter, Trezor, Albedo or others tools.
-                    </LoginMethodDescription>
-                </LoginMethodWithDescription>
+            {/*<LoginMethod onClick={() => chooseMethod(LoginTypes.public)}>*/}
+            {/*    <StellarLogo />*/}
+            {/*    <LoginMethodWithDescription>*/}
+            {/*        <LoginMethodName>Stellar Laboratory</LoginMethodName>*/}
+            {/*        <LoginMethodDescription>*/}
+            {/*            Sign with Freighter, Trezor, Albedo or others tools.*/}
+            {/*        </LoginMethodDescription>*/}
+            {/*    </LoginMethodWithDescription>*/}
 
-                <ArrowRight />
-            </LoginMethod>
+            {/*    <ArrowRight />*/}
+            {/*</LoginMethod>*/}
 
-            <LoginMethod onClick={() => chooseMethod(LoginTypes.ledger)}>
-                <Ledger />
-                <LoginMethodWithDescription>
-                    <LoginMethodName>Ledger</LoginMethodName>
-                </LoginMethodWithDescription>
+            {/*<LoginMethod onClick={() => chooseMethod(LoginTypes.ledger)}>*/}
+            {/*    <Ledger />*/}
+            {/*    <LoginMethodWithDescription>*/}
+            {/*        <LoginMethodName>Ledger</LoginMethodName>*/}
+            {/*    </LoginMethodWithDescription>*/}
 
-                <ArrowRight />
-            </LoginMethod>
+            {/*    <ArrowRight />*/}
+            {/*</LoginMethod>*/}
 
             <LoginMethod onClick={() => chooseMethod(LoginTypes.secret)}>
                 <KeyIcon />
