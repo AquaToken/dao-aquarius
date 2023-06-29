@@ -3,12 +3,13 @@ import EventService from './event.service';
 import { Horizon } from 'stellar-sdk/lib/horizon_api';
 import { Memo, MemoType, OperationOptions, ServerApi } from 'stellar-sdk';
 import axios, { AxiosResponse } from 'axios';
-import { roundToPrecision } from '../helpers/helpers';
+import { formatBalance, roundToPrecision } from '../helpers/helpers';
 import { PairStats } from '../../pages/vote/api/types';
 import { validateMarketKeys } from '../../pages/vote/api/api';
+import { ToastService } from './globalServices';
 
 enum HORIZON_SERVER {
-    stellar = 'https://horizon.stellar.org',
+    stellar = 'https://horizon-futurenet.stellar.org',
 }
 
 const VAULT_API = 'https://vault.lobstr.co/api/transactions/';
@@ -391,6 +392,25 @@ export default class StellarServiceClass {
                             'claimable_balance_created'
                     ) {
                         this.getClaimableBalances(publicKey);
+                    }
+                    if ((res as unknown as ServerApi.EffectRecord).type === 'account_debited') {
+                        const { amount, asset_type, asset_code } = res as any;
+
+                        ToastService.showSuccessToast(
+                            `Payment sent: ${formatBalance(amount)} ${
+                                asset_type === 'native' ? 'XLM' : asset_code
+                            }`,
+                        );
+                    }
+
+                    if ((res as unknown as ServerApi.EffectRecord).type === 'account_credited') {
+                        const { amount, asset_type, asset_code } = res as any;
+
+                        ToastService.showSuccessToast(
+                            `Payment received: ${formatBalance(amount)} ${
+                                asset_type === 'native' ? 'XLM' : asset_code
+                            }`,
+                        );
                     }
                 },
             });
