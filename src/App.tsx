@@ -87,12 +87,9 @@ const App = () => {
     };
 
     useEffect(() => {
-        processNewAssets(LIST);
-    }, []);
-
-    useEffect(() => {
         if (assets.length) {
             processNewAssets(assets);
+            processNewAssets(LIST);
         }
     }, [assets]);
 
