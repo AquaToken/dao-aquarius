@@ -26,6 +26,7 @@ import DotsLoader from '../../common/basics/DotsLoader';
 import Button from '../../common/basics/Button';
 import DepositToPool from './DepositToPool/DepositToPool';
 import ChooseLoginMethodModal from '../../common/modals/ChooseLoginMethodModal';
+import useAssetsStore from '../../store/assetsStore/useAssetsStore';
 
 const Container = styled.main`
     height: 100%;
@@ -96,6 +97,7 @@ export const LIST = [XLM, A, B, FRS1, SND1];
 
 const Amm = () => {
     const { account, isLogged } = useAuthStore();
+    const { processNewAssets } = useAssetsStore();
 
     const [base, setBase] = useState(A);
     const [counter, setCounter] = useState(B);
@@ -106,6 +108,10 @@ const Amm = () => {
     const [accountShares, setAccountShares] = useState(null);
     const [getTokenPending, setGetTokenPending] = useState(false);
     const [withdrawPending, setWithdrawPending] = useState(false);
+
+    useEffect(() => {
+        processNewAssets(LIST);
+    }, []);
 
     useEffect(() => {
         if (!isLogged) {

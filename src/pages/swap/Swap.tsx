@@ -16,6 +16,7 @@ import { useDebounce } from '../../common/hooks/useDebounce';
 import Button from '../../common/basics/Button';
 import { IconFail } from '../../common/basics/Icons';
 import { A, B, LIST } from '../amm/Amm';
+import useAssetsStore from '../../store/assetsStore/useAssetsStore';
 
 const Container = styled.main`
     background-color: ${COLORS.lightGray};
@@ -78,6 +79,7 @@ const Error = styled.div`
 
 const Swap = () => {
     const { account, isLogged } = useAuthStore();
+    const { processNewAssets } = useAssetsStore();
 
     const [base, setBase] = useState(A);
     const [counter, setCounter] = useState(B);
@@ -92,6 +94,10 @@ const Swap = () => {
     const [swapPending, setSwapPending] = useState(false);
 
     const debouncedAmount = useDebounce(counterAmount, 700);
+
+    useEffect(() => {
+        processNewAssets(LIST);
+    }, []);
 
     useEffect(() => {
         if (!isLogged) {

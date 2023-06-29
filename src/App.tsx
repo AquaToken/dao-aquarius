@@ -20,7 +20,6 @@ import { createGlobalStyle } from 'styled-components';
 import AppGlobalStyle from './common/components/AppGlobalStyles';
 import Governance from './pages/governance/Governance';
 import Title from 'react-document-title';
-import { LIST } from './pages/amm/Amm';
 
 const MainPage = lazy(() => import('./pages/main/MainPage'));
 const LockerPage = lazy(() => import('./pages/locker/Locker'));
@@ -82,7 +81,6 @@ const App = () => {
     useEffect(() => {
         if (assets.length) {
             processNewAssets(assets);
-            processNewAssets(LIST);
         }
     }, [assets]);
 
