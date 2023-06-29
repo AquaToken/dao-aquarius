@@ -74,19 +74,25 @@ const ButtonCell = styled.div`
     justify-content: flex-end;
 `;
 
-const XLM = SorobanClient.Asset.native();
-const A = new SorobanClient.Asset('A', 'GC6HLY2JXKXYXUU3XYC63O2RJNH4E3GEW26ABTHDF6AF6MY32B5QRISO');
-const B = new SorobanClient.Asset('B', 'GC6HLY2JXKXYXUU3XYC63O2RJNH4E3GEW26ABTHDF6AF6MY32B5QRISO');
-const FRS1 = new SorobanClient.Asset(
+export const XLM = SorobanClient.Asset.native();
+export const A = new SorobanClient.Asset(
+    'A',
+    'GC6HLY2JXKXYXUU3XYC63O2RJNH4E3GEW26ABTHDF6AF6MY32B5QRISO',
+);
+export const B = new SorobanClient.Asset(
+    'B',
+    'GC6HLY2JXKXYXUU3XYC63O2RJNH4E3GEW26ABTHDF6AF6MY32B5QRISO',
+);
+export const FRS1 = new SorobanClient.Asset(
     'FRS1',
     'GC6HLY2JXKXYXUU3XYC63O2RJNH4E3GEW26ABTHDF6AF6MY32B5QRISO',
 );
-const SND1 = new SorobanClient.Asset(
+export const SND1 = new SorobanClient.Asset(
     'SND1',
     'GC6HLY2JXKXYXUU3XYC63O2RJNH4E3GEW26ABTHDF6AF6MY32B5QRISO',
 );
 
-const LIST = [XLM, A, B, FRS1, SND1];
+export const LIST = [XLM, A, B, FRS1, SND1];
 
 const Amm = () => {
     const { account, isLogged } = useAuthStore();
