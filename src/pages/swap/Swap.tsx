@@ -5,7 +5,6 @@ import BalancesBlock from '../amm/BalancesBlock/BalancesBlock';
 import { Header, Title } from '../profile/AmmRewards/AmmRewards';
 import AssetDropdown from '../vote/components/AssetDropdown/AssetDropdown';
 import { COLORS } from '../../common/styles';
-import * as SorobanClient from 'soroban-client';
 import useAuthStore from '../../store/authStore/useAuthStore';
 import { useEffect, useMemo, useState } from 'react';
 import { ModalService, SorobanService, ToastService } from '../../common/services/globalServices';
@@ -16,6 +15,7 @@ import SwapIcon from '../../common/assets/img/icon-arrows-circle.svg';
 import { useDebounce } from '../../common/hooks/useDebounce';
 import Button from '../../common/basics/Button';
 import { IconFail } from '../../common/basics/Icons';
+import { A, B, LIST } from '../amm/Amm';
 
 const Container = styled.main`
     background-color: ${COLORS.lightGray};
@@ -75,20 +75,6 @@ const Error = styled.div`
     gap: 1rem;
     margin-top: 1rem;
 `;
-
-const XLM = SorobanClient.Asset.native();
-const A = new SorobanClient.Asset('A', 'GC6HLY2JXKXYXUU3XYC63O2RJNH4E3GEW26ABTHDF6AF6MY32B5QRISO');
-const B = new SorobanClient.Asset('B', 'GC6HLY2JXKXYXUU3XYC63O2RJNH4E3GEW26ABTHDF6AF6MY32B5QRISO');
-const FRS1 = new SorobanClient.Asset(
-    'FRS1',
-    'GC6HLY2JXKXYXUU3XYC63O2RJNH4E3GEW26ABTHDF6AF6MY32B5QRISO',
-);
-const SND1 = new SorobanClient.Asset(
-    'SND1',
-    'GC6HLY2JXKXYXUU3XYC63O2RJNH4E3GEW26ABTHDF6AF6MY32B5QRISO',
-);
-
-const LIST = [XLM, A, B, FRS1, SND1];
 
 const Swap = () => {
     const { account, isLogged } = useAuthStore();
