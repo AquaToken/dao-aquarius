@@ -17,7 +17,7 @@ import { ModalService, SorobanService, ToastService } from '../../common/service
 import Pair from '../vote/components/common/Pair';
 import { formatBalance } from '../../common/helpers/helpers';
 import useAuthStore from '../../store/authStore/useAuthStore';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import * as SorobanClient from 'soroban-client';
 import BalancesBlock from './BalancesBlock/BalancesBlock';
 import AssetDropdown from '../vote/components/AssetDropdown/AssetDropdown';
@@ -26,7 +26,6 @@ import DotsLoader from '../../common/basics/DotsLoader';
 import Button from '../../common/basics/Button';
 import DepositToPool from './DepositToPool/DepositToPool';
 import ChooseLoginMethodModal from '../../common/modals/ChooseLoginMethodModal';
-import useAssetsStore from '../../store/assetsStore/useAssetsStore';
 
 const Container = styled.main`
     height: 100%;
@@ -75,7 +74,6 @@ const ButtonCell = styled.div`
     justify-content: flex-end;
 `;
 
-export const XLM = SorobanClient.Asset.native();
 export const A = new SorobanClient.Asset(
     'A',
     'GC6HLY2JXKXYXUU3XYC63O2RJNH4E3GEW26ABTHDF6AF6MY32B5QRISO',
@@ -84,20 +82,9 @@ export const B = new SorobanClient.Asset(
     'B',
     'GC6HLY2JXKXYXUU3XYC63O2RJNH4E3GEW26ABTHDF6AF6MY32B5QRISO',
 );
-export const FRS1 = new SorobanClient.Asset(
-    'FRS1',
-    'GC6HLY2JXKXYXUU3XYC63O2RJNH4E3GEW26ABTHDF6AF6MY32B5QRISO',
-);
-export const SND1 = new SorobanClient.Asset(
-    'SND1',
-    'GC6HLY2JXKXYXUU3XYC63O2RJNH4E3GEW26ABTHDF6AF6MY32B5QRISO',
-);
 
-export const LIST = [XLM, A, B, FRS1, SND1];
-
-const Amm = () => {
+const Amm = ({ balances }) => {
     const { account, isLogged } = useAuthStore();
-    const { processNewAssets } = useAssetsStore();
 
     const [base, setBase] = useState(A);
     const [counter, setCounter] = useState(B);
@@ -108,10 +95,6 @@ const Amm = () => {
     const [accountShares, setAccountShares] = useState(null);
     const [getTokenPending, setGetTokenPending] = useState(false);
     const [withdrawPending, setWithdrawPending] = useState(false);
-
-    useEffect(() => {
-        processNewAssets(LIST);
-    }, []);
 
     useEffect(() => {
         if (!isLogged) {
@@ -160,10 +143,7 @@ const Amm = () => {
     };
 
     const neededInTestAssets =
-        account?.getAssetBalance(A) === null ||
-        account?.getAssetBalance(B) === null ||
-        account?.getAssetBalance(FRS1) === null ||
-        account?.getAssetBalance(SND1) === null;
+        account?.getAssetBalance(A) === null || account?.getAssetBalance(B) === null;
 
     const getTestTokens = () => {
         setGetTokenPending(true);
@@ -209,14 +189,18 @@ const Amm = () => {
             });
     };
 
-    if (!account) {
+    const assets = useMemo(() => {
+        return balances?.filter(({ isDeployed }) => isDeployed).map(({ asset }) => asset);
+    }, [balances]);
+
+    if (!account || !assets) {
         return <PageLoader />;
     }
 
     return (
         <Container>
             <Content>
-                <BalancesBlock />
+                <BalancesBlock balances={balances} />
                 <Header>
                     <Title>Liquidity overview</Title>
                 </Header>
@@ -225,14 +209,14 @@ const Amm = () => {
                         <AssetDropdown
                             asset={base}
                             onUpdate={setBase}
-                            assetsList={LIST}
+                            assetsList={assets}
                             exclude={counter}
                             withoutReset
                         />
                         <AssetDropdown
                             asset={counter}
                             onUpdate={setCounter}
-                            assetsList={LIST}
+                            assetsList={assets}
                             exclude={base}
                             withoutReset
                         />

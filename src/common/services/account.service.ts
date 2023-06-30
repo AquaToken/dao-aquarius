@@ -247,7 +247,7 @@ export default class AccountService extends AccountResponse {
         return available > 0 ? available : 0;
     }
 
-    getBalancesWithSmartContracts() {
+    getBalances() {
         return Promise.all(
             this.balances
                 .filter(
