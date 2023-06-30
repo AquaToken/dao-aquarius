@@ -5,9 +5,10 @@ import { respondDown } from '../../../common/mixins';
 import { ModalTitle } from '../../../common/modals/atoms/ModalAtoms';
 import Input from '../../../common/basics/Input';
 import Asset from '../../vote/components/AssetDropdown/Asset';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { SorobanService, ToastService } from '../../../common/services/globalServices';
 import Button from '../../../common/basics/Button';
+import useAuthStore from '../../../store/authStore/useAuthStore';
 
 const Container = styled.div`
     width: 52.3rem;
@@ -25,15 +26,32 @@ const Form = styled.div`
 
 const FormRow = styled.div`
     display: flex;
-    margin-bottom: 2rem;
+    padding: 3rem 0;
 `;
 
 const DepositToPool = ({ params, confirm }) => {
+    const { account } = useAuthStore();
     const { base, counter, poolId } = params;
 
     const [baseAmount, setBaseAmount] = useState('');
     const [counterAmount, setCounterAmount] = useState('');
     const [pending, setPending] = useState(false);
+
+    const baseAvailable = useMemo(() => {
+        if (!account) {
+            return null;
+        }
+
+        return `Available: ${account.getAssetBalance(base)} ${base.code}`;
+    }, [account, base]);
+
+    const counterAvailable = useMemo(() => {
+        if (!account) {
+            return null;
+        }
+
+        return `Available: ${account.getAssetBalance(counter)} ${counter.code}`;
+    }, [account, counter]);
 
     const onSubmit = () => {
         setPending(true);
@@ -63,6 +81,7 @@ const DepositToPool = ({ params, confirm }) => {
                             setBaseAmount(e.target.value);
                         }}
                         placeholder="Enter amount"
+                        label={baseAvailable}
                         postfix={<Asset asset={base} inRow />}
                     />
                 </FormRow>
@@ -73,6 +92,7 @@ const DepositToPool = ({ params, confirm }) => {
                             setCounterAmount(e.target.value);
                         }}
                         placeholder="Enter amount"
+                        label={counterAvailable}
                         postfix={<Asset asset={counter} inRow />}
                     />
                 </FormRow>

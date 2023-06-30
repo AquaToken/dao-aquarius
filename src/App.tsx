@@ -43,6 +43,7 @@ const App = () => {
 
     const { getAssets, assets, processNewAssets, assetsInfo, clearAssets } = useAssetsStore();
     const [isAssetsUpdated, setIsAssetsUpdated] = useState(false);
+    const [balances, setBalances] = useState(null);
 
     const { isLogged, account, redirectURL, disableRedirect, callback, removeAuthCallback } =
         useAuthStore();
@@ -90,6 +91,17 @@ const App = () => {
             processNewAssets(assets);
         }
     }, [assets]);
+
+    useEffect(() => {
+        if (account) {
+            account.getBalances().then((res) => {
+                setBalances(res);
+                processNewAssets(res.map(({ asset }) => asset));
+            });
+            return;
+        }
+        setBalances(null);
+    }, [account]);
 
     useEffect(() => {
         if (isLogged) {
@@ -272,13 +284,13 @@ const App = () => {
 
                     <Route path={MainRoutes.amm}>
                         <Title title="AMM Example">
-                            <AmmPage />
+                            <AmmPage balances={balances} />
                         </Title>
                     </Route>
 
                     <Route path={MainRoutes.swap}>
                         <Title title="Swap">
-                            <SwapPage />
+                            <SwapPage balances={balances} />
                         </Title>
                     </Route>
 

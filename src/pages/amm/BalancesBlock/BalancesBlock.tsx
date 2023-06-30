@@ -1,11 +1,9 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import useAuthStore from '../../../store/authStore/useAuthStore';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Header, Title } from '../../profile/AmmRewards/AmmRewards';
 import PageLoader from '../../../common/basics/PageLoader';
 import Asset from '../../vote/components/AssetDropdown/Asset';
-import useAssetsStore from '../../../store/assetsStore/useAssetsStore';
 import { formatBalance } from '../../../common/helpers/helpers';
 import Button from '../../../common/basics/Button';
 import { COLORS } from '../../../common/styles';
@@ -38,20 +36,8 @@ const BalanceLine = styled.div`
     }
 `;
 
-const BalancesBlock = () => {
-    const { account } = useAuthStore();
-    const { processNewAssets } = useAssetsStore();
-    const [balances, setBalances] = useState(null);
+const BalancesBlock = ({ balances }) => {
     const [showBalances, setShowBalances] = useState(false);
-
-    useEffect(() => {
-        if (account) {
-            account.getBalancesWithSmartContracts().then((res) => {
-                setBalances(res);
-                processNewAssets(res.map(({ asset }) => asset));
-            });
-        }
-    }, [account]);
 
     return (
         <Container>

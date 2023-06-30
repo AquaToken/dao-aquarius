@@ -15,8 +15,7 @@ import SwapIcon from '../../common/assets/img/icon-arrows-circle.svg';
 import { useDebounce } from '../../common/hooks/useDebounce';
 import Button from '../../common/basics/Button';
 import { IconFail } from '../../common/basics/Icons';
-import { A, B, LIST } from '../amm/Amm';
-import useAssetsStore from '../../store/assetsStore/useAssetsStore';
+import { A, B } from '../amm/Amm';
 
 const Container = styled.main`
     background-color: ${COLORS.lightGray};
@@ -77,9 +76,8 @@ const Error = styled.div`
     margin-top: 1rem;
 `;
 
-const Swap = () => {
+const Swap = ({ balances }) => {
     const { account, isLogged } = useAuthStore();
-    const { processNewAssets } = useAssetsStore();
 
     const [base, setBase] = useState(A);
     const [counter, setCounter] = useState(B);
@@ -94,10 +92,6 @@ const Swap = () => {
     const [swapPending, setSwapPending] = useState(false);
 
     const debouncedAmount = useDebounce(counterAmount, 700);
-
-    useEffect(() => {
-        processNewAssets(LIST);
-    }, []);
 
     useEffect(() => {
         if (!isLogged) {
@@ -181,14 +175,20 @@ const Swap = () => {
         return `Available: ${account.getAssetBalance(counter)} ${counter.code}`;
     }, [account, counter]);
 
-    if (!account) {
+    const assets = useMemo(() => {
+        return balances?.filter(({ isDeployed }) => isDeployed).map(({ asset }) => asset);
+    }, [balances]);
+
+    console.log(assets);
+
+    if (!account || !assets) {
         return <PageLoader />;
     }
 
     return (
         <Container>
             <Content>
-                <BalancesBlock />
+                <BalancesBlock balances={balances} />
                 <Form>
                     <Header>
                         <Title>Swap assets</Title>
@@ -200,7 +200,7 @@ const Swap = () => {
                             <AssetDropdown
                                 asset={base}
                                 onUpdate={setBase}
-                                assetsList={LIST}
+                                assetsList={assets}
                                 exclude={counter}
                                 label={baseAvailable}
                                 disabled={
@@ -238,7 +238,7 @@ const Swap = () => {
                             <AssetDropdown
                                 asset={counter}
                                 onUpdate={setCounter}
-                                assetsList={LIST}
+                                assetsList={assets}
                                 exclude={base}
                                 withoutReset
                                 label={counterAvailable}
