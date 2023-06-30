@@ -3,14 +3,15 @@ import { sha256 } from 'js-sha256';
 import binascii from 'binascii';
 import { xdr, Asset, Keypair, SorobanRpc } from 'soroban-client';
 import SendTransactionResponse = SorobanRpc.SendTransactionResponse;
-import { ToastService } from './globalServices';
+import { ModalService, ToastService } from './globalServices';
+import DepositCompleted from '../../pages/amm/DepositCompleted/DepositCompleted';
 
 const SOROBAN_SERVER = 'https://rpc-futurenet.stellar.org:443/';
 
 // SMART CONTACTS IDs
-const AMM_SMART_CONTACT_ID = 'f4727d2f7e8619d40ac82174d90955215dad1993bdc8962172eed57ff3aa8972';
+const AMM_SMART_CONTACT_ID = '395efa158e2659d8b6fd0e08d50084ef6eb47fcaafbcb7ed6919e7dd10d8a386';
 
-const POOL_CONTACT_WASM_HASH = '69ac7846eefb9ebc7f69d2036969fd3621e9152d400171a42c07c9f7cfad4351';
+const POOL_CONTACT_WASM_HASH = '10cb4f5093a444c0d9decdf8f30e9fd12cfbeac7583643e33b8bbf8e25c67745';
 
 const TOKEN_CONTACT_WASM_HASH = '68f5c739b568664e3c4f4b7787958ce4ba527cc310fb0de0fea707dc1d6bd3c3';
 
@@ -508,7 +509,23 @@ export default class SorobanServiceClass {
                 return this.processResponse(res);
             })
             .then((res) => {
-                console.log('DEPOSIT COMPLETED', res);
+                const result = xdr.TransactionResult.fromXDR(Buffer.from(res, 'base64'));
+                const [baseAmount, counterAmount] = result
+                    .result()
+                    .value()[0]
+                    .value()
+                    .value()
+                    .value()[2]
+                    .value();
+
+                ModalService.confirmAllModals();
+
+                ModalService.openModal(DepositCompleted, {
+                    base,
+                    counter,
+                    baseAmount: this.i128ToInt(baseAmount.value()),
+                    counterAmount: this.i128ToInt(counterAmount.value()),
+                });
             });
     }
 

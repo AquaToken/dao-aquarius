@@ -19,6 +19,7 @@ import { LumenInfo } from '../../../../store/assetsStore/reducer';
 import useAssetsStore from '../../../../store/assetsStore/useAssetsStore';
 import { Link } from 'react-router-dom';
 import { MarketRoutes } from '../../../../routes';
+import { formatBalance } from '../../../../common/helpers/helpers';
 
 const Wrapper = styled.div<{
     verticalDirections?: boolean;
@@ -173,6 +174,8 @@ type PairProps = {
     withoutLink?: boolean;
     isMaxRewards?: boolean;
     withMarketLink?: boolean;
+    baseAmount?: string;
+    counterAmount?: string;
 };
 
 const Pair = ({
@@ -193,6 +196,8 @@ const Pair = ({
     withoutLink,
     isMaxRewards,
     withMarketLink,
+    baseAmount,
+    counterAmount,
 }: PairProps): JSX.Element => {
     const { assetsInfo } = useAssetsStore();
 
@@ -246,7 +251,8 @@ const Pair = ({
                     bigCodes={bigCodes}
                 >
                     <span>
-                        {base.code} / {counter.code}
+                        {baseAmount ? formatBalance(+baseAmount) : ''} {base.code} /{' '}
+                        {counterAmount ? formatBalance(+counterAmount) : ''} {counter.code}
                     </span>
                     {boosted && !bottomLabels && <BoostLabel />}
                     {isRewardsOn && !bottomLabels && <RewardLabel />}
