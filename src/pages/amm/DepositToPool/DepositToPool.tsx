@@ -29,7 +29,7 @@ const FormRow = styled.div`
     padding: 3rem 0;
 `;
 
-const DepositToPool = ({ params, confirm }) => {
+const DepositToPool = ({ params }) => {
     const { account } = useAuthStore();
     const { base, counter, poolId } = params;
 
@@ -56,18 +56,11 @@ const DepositToPool = ({ params, confirm }) => {
     const onSubmit = () => {
         setPending(true);
 
-        SorobanService.deposit(poolId, base, counter, baseAmount, counterAmount)
-            .then((res) => {
-                console.log(res);
-                ToastService.showSuccessToast('Deposit was completed successfully');
-                setPending(false);
-                confirm();
-            })
-            .catch((e) => {
-                console.log(e);
-                ToastService.showErrorToast('Oops! Something went wrong');
-                setPending(false);
-            });
+        SorobanService.deposit(poolId, base, counter, baseAmount, counterAmount).catch((e) => {
+            console.log(e);
+            ToastService.showErrorToast('Oops! Something went wrong');
+            setPending(false);
+        });
     };
 
     return (

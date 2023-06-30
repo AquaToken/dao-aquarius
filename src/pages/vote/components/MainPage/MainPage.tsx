@@ -383,9 +383,9 @@ const options: Option<SortTypes>[] = [
 const PAGE_SIZE = 20;
 const UPDATE_INTERVAL = 60 * 1000; // 1 minute
 
-export const AQUA = StellarService.createAsset(AQUA_CODE, AQUA_ISSUER);
-export const UP_ICE = StellarService.createAsset(UP_ICE_CODE, ICE_ISSUER);
-export const DOWN_ICE = StellarService.createAsset(DOWN_ICE_CODE, ICE_ISSUER);
+export const AQUA = StellarService?.createAsset(AQUA_CODE, AQUA_ISSUER);
+export const UP_ICE = StellarService?.createAsset(UP_ICE_CODE, ICE_ISSUER);
+export const DOWN_ICE = StellarService?.createAsset(DOWN_ICE_CODE, ICE_ISSUER);
 
 enum UrlParams {
     sort = 'sort',
