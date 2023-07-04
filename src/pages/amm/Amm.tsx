@@ -212,6 +212,7 @@ const Amm = ({ balances }) => {
                             assetsList={assets}
                             exclude={counter}
                             withoutReset
+                            pending={!poolId}
                         />
                         <AssetDropdown
                             asset={counter}
@@ -219,6 +220,7 @@ const Amm = ({ balances }) => {
                             assetsList={assets}
                             exclude={base}
                             withoutReset
+                            pending={!poolId}
                         />
                     </PairSearch>
                 </Header>
@@ -280,7 +282,14 @@ const Amm = ({ balances }) => {
                                     </div>
                                 </Cell>
                                 <ButtonCell>
-                                    <Button onClick={() => openDepositModal()} disabled={!poolId}>
+                                    <Button
+                                        onClick={() => openDepositModal()}
+                                        disabled={
+                                            !poolId ||
+                                            !account.getAssetBalance(base) ||
+                                            !account.getAssetBalance(counter)
+                                        }
+                                    >
                                         deposit
                                     </Button>
                                     <Button

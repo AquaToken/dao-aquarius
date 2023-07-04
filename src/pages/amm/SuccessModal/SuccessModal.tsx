@@ -27,11 +27,11 @@ const StyledButton = styled(Button)`
     margin-top: 4.8rem;
 `;
 
-const DepositCompleted = ({ params, close }) => {
-    const { base, counter, baseAmount, counterAmount } = params;
+const SuccessModal = ({ params, close }) => {
+    const { base, counter, baseAmount, counterAmount, title, isSwap } = params;
     return (
         <Container>
-            <ModalTitle>Success deposit</ModalTitle>
+            <ModalTitle>{title ?? 'Success'}</ModalTitle>
             <AssetsInfo>
                 <Pair
                     base={base}
@@ -40,6 +40,7 @@ const DepositCompleted = ({ params, close }) => {
                     withoutLink
                     baseAmount={baseAmount}
                     counterAmount={counterAmount}
+                    isSwapResult={isSwap}
                 />
             </AssetsInfo>
             <StyledButton onClick={() => close()}>done</StyledButton>
@@ -47,4 +48,4 @@ const DepositCompleted = ({ params, close }) => {
     );
 };
 
-export default DepositCompleted;
+export default SuccessModal;

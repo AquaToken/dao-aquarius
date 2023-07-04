@@ -5,6 +5,7 @@ import { Breakpoints, COLORS } from '../../../../common/styles';
 import DotsLoader from '../../../../common/basics/DotsLoader';
 import AssetLogo, { bigLogoStyles, logoStyles } from '../AssetDropdown/AssetLogo';
 import External from '../../../../common/assets/img/icon-external-link.svg';
+import Arrow from '../../../../common/assets/img/icon-link-arrow.svg';
 import { flexAllCenter, respondDown } from '../../../../common/mixins';
 import {
     AuthRequiredLabel,
@@ -93,6 +94,8 @@ const AssetsCodes = styled.span<{ mobileVerticalDirections?: boolean; bigCodes?:
 
     span {
         margin-right: 1rem;
+        display: flex;
+        align-items: center;
     }
 
     ${({ mobileVerticalDirections }) =>
@@ -138,6 +141,10 @@ const Labels = styled.div`
     margin-top: 0.8rem;
 `;
 
+const ArrowRight = styled(Arrow)`
+    margin: 0 0.5rem;
+`;
+
 export const assetToString = (asset: StellarSdk.Asset) => {
     if (asset.isNative()) {
         return 'native';
@@ -175,6 +182,7 @@ type PairProps = {
     withMarketLink?: boolean;
     baseAmount?: string;
     counterAmount?: string;
+    isSwapResult?: boolean;
 };
 
 const Pair = ({
@@ -197,6 +205,7 @@ const Pair = ({
     withMarketLink,
     baseAmount,
     counterAmount,
+    isSwapResult,
 }: PairProps): JSX.Element => {
     const { assetsInfo } = useAssetsStore();
 
@@ -250,7 +259,8 @@ const Pair = ({
                     bigCodes={bigCodes}
                 >
                     <span>
-                        {baseAmount ? formatBalance(+baseAmount) : ''} {base.code} /{' '}
+                        {baseAmount ? formatBalance(+baseAmount) : ''} {base.code}{' '}
+                        {isSwapResult ? <ArrowRight /> : '/'}{' '}
                         {counterAmount ? formatBalance(+counterAmount) : ''} {counter.code}
                     </span>
                     {boosted && !bottomLabels && <BoostLabel />}
