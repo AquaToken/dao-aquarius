@@ -4,14 +4,14 @@ import binascii from 'binascii';
 import { xdr, Asset, Keypair, SorobanRpc } from 'soroban-client';
 import SendTransactionResponse = SorobanRpc.SendTransactionResponse;
 import { ModalService, ToastService } from './globalServices';
-import DepositCompleted from '../../pages/amm/DepositCompleted/DepositCompleted';
+import SuccessModal from '../../pages/amm/SuccessModal/SuccessModal';
 
 const SOROBAN_SERVER = 'https://rpc-futurenet.stellar.org:443/';
 
 // SMART CONTACTS IDs
-const AMM_SMART_CONTACT_ID = '395efa158e2659d8b6fd0e08d50084ef6eb47fcaafbcb7ed6919e7dd10d8a386';
+const AMM_SMART_CONTACT_ID = '1162a67f9d811df78425fc5bab886da125cf6f886f90fd0e660cfa15a1fb77e8';
 
-const POOL_CONTACT_WASM_HASH = '10cb4f5093a444c0d9decdf8f30e9fd12cfbeac7583643e33b8bbf8e25c67745';
+const POOL_CONTACT_WASM_HASH = 'bb26bea691608c46095827cbf1af1c898f5edfdbd6573ea6485a2aaba93b2d73';
 
 const TOKEN_CONTACT_WASM_HASH = '68f5c739b568664e3c4f4b7787958ce4ba527cc310fb0de0fea707dc1d6bd3c3';
 
@@ -22,6 +22,7 @@ enum AMM_CONTRACT_METHOD {
     ESTIMATE_SWAP_OUT = 'estimate_swap_out',
     WITHDRAW = 'sf_withdrw',
     SWAP = 'swap_out',
+    GET_RESERVES = 'get_reserves',
 }
 
 enum ASSET_CONTRACT_METHOD {
@@ -162,8 +163,9 @@ export default class SorobanServiceClass {
             return this.getTx(response.hash);
         }
         if (response.status !== 'PENDING') {
-            console.log(response);
-            return ToastService.showErrorToast(response.status);
+            ToastService.showErrorToast(response.status);
+
+            throw new Error(response.status);
         }
         return this.getTx(response.hash);
     }
@@ -351,7 +353,6 @@ export default class SorobanServiceClass {
             this.hashToAddressScVal(poolId),
         )
             .then((tx) => {
-                console.log(tx);
                 return this.simulateTx(tx);
             })
             .then(({ results }) => {
@@ -390,6 +391,42 @@ export default class SorobanServiceClass {
             })
             .then((res) => {
                 console.log(res);
+            });
+    }
+
+    getPoolPrice(a: Asset, b: Asset) {
+        const idA = this.getAssetContractId(a);
+        const idB = this.getAssetContractId(b);
+        const [base, counter] = idA > idB ? [b, a] : [a, b];
+
+        return this.buildSmartContactTx(
+            this.keypair.publicKey(),
+            AMM_SMART_CONTACT_ID,
+            AMM_CONTRACT_METHOD.GET_RESERVES,
+            this.assetToScVal(base),
+            this.assetToScVal(counter),
+        )
+            .then((tx) => {
+                return this.simulateTx(tx);
+            })
+            .then(({ results }) => {
+                if (results) {
+                    const xdr = results[0].xdr;
+
+                    // @ts-ignore
+                    const [baseAmount, counterAmount] = SorobanClient.xdr.ScVal.fromXDR(
+                        Buffer.from(xdr, 'base64'),
+                    ).value();
+
+                    const baseAmountInt = this.i128ToInt(baseAmount.i128());
+                    const counterAmountInt = this.i128ToInt(counterAmount.i128());
+
+                    return this.getAssetContractId(base) === idA
+                        ? baseAmountInt / counterAmountInt
+                        : counterAmountInt / baseAmountInt;
+                }
+
+                throw new Error('getPoolReserves fail');
             });
     }
 
@@ -496,11 +533,9 @@ export default class SorobanServiceClass {
                 return this.buildTxFromOps(this.keypair.publicKey(), ops);
             })
             .then((tx) => {
-                console.log('TX', tx);
                 return this.server.prepareTransaction(tx);
             })
             .then((prepared) => {
-                console.log(prepared);
                 prepared.sign(this.keypair);
 
                 return this.server.sendTransaction(prepared);
@@ -520,11 +555,12 @@ export default class SorobanServiceClass {
 
                 ModalService.confirmAllModals();
 
-                ModalService.openModal(DepositCompleted, {
+                ModalService.openModal(SuccessModal, {
                     base,
                     counter,
                     baseAmount: this.i128ToInt(baseAmount.value()),
                     counterAmount: this.i128ToInt(counterAmount.value()),
+                    title: 'Success deposit',
                 });
             });
     }
@@ -597,7 +633,25 @@ export default class SorobanServiceClass {
                 return this.processResponse(res);
             })
             .then((res) => {
-                console.log('WITHDRAW COMPLETED', res);
+                const result = xdr.TransactionResult.fromXDR(Buffer.from(res, 'base64'));
+
+                const [baseAmount, counterAmount] = result
+                    .result()
+                    .value()[0]
+                    .value()
+                    .value()
+                    .value()[1]
+                    .value();
+
+                ModalService.confirmAllModals();
+
+                ModalService.openModal(SuccessModal, {
+                    base,
+                    counter,
+                    baseAmount: this.i128ToInt(baseAmount.value()),
+                    counterAmount: this.i128ToInt(counterAmount.value()),
+                    title: 'Success withdraw',
+                });
             });
     }
 
@@ -617,7 +671,6 @@ export default class SorobanServiceClass {
 
                     let scVal = SorobanClient.xdr.ScVal.fromXDR(Buffer.from(xdr, 'base64'));
 
-                    console.log(scVal.i128());
                     return this.i128ToInt(scVal.i128());
                 }
 
@@ -703,7 +756,18 @@ export default class SorobanServiceClass {
                 return this.processResponse(res);
             })
             .then((res) => {
-                console.log('SWAP COMPLETED', res);
+                const result = xdr.TransactionResult.fromXDR(Buffer.from(res, 'base64'));
+
+                const value = result.result().value()[0].value().value().value()[1].value();
+
+                ModalService.openModal(SuccessModal, {
+                    base,
+                    counter,
+                    baseAmount: this.i128ToInt(value),
+                    counterAmount: Number(amount),
+                    title: 'Success swap',
+                    isSwap: true,
+                });
             });
     }
 

@@ -179,8 +179,6 @@ const Swap = ({ balances }) => {
         return balances?.filter(({ isDeployed }) => isDeployed).map(({ asset }) => asset);
     }, [balances]);
 
-    console.log(assets);
-
     if (!account || !assets) {
         return <PageLoader />;
     }

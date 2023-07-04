@@ -165,6 +165,7 @@ type AssetDropdownProps = {
     label?: string;
     assetsList?: AssetSimple[];
     withoutReset?: boolean;
+    pending?: boolean;
 };
 
 const StyledAsset = styled(Asset)`
@@ -185,6 +186,7 @@ const AssetDropdown = ({
     label,
     assetsList,
     withoutReset,
+    pending,
 }: AssetDropdownProps) => {
     const { assets: knownAssets, assetsInfo, processNewAssets } = useAssetsStore();
 
@@ -305,7 +307,7 @@ const AssetDropdown = ({
             onClick={() => toggleDropdown()}
             isOpen={isOpen}
             ref={ref}
-            disabled={!assets.length || disabled}
+            disabled={!assets.length || disabled || pending}
         >
             {Boolean(label) && <Label>{label}</Label>}
             {selectedAsset && !isOpen ? (
@@ -318,7 +320,7 @@ const AssetDropdown = ({
                         }
                     }}
                     placeholder={placeholder ?? 'Search asset or enter home domain'}
-                    $disabled={!assets.length || disabled}
+                    $disabled={!assets.length || disabled || pending}
                     value={searchText}
                     onChange={(e) => {
                         setSearchText(e.target.value);
@@ -337,7 +339,7 @@ const AssetDropdown = ({
                 </div>
             )}
 
-            {!assets.length || searchPending ? (
+            {!assets.length || searchPending || pending ? (
                 <DropdownLoader />
             ) : (
                 <DropdownArrow $isOpen={isOpen} />

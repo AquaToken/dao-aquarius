@@ -5,7 +5,7 @@ import { respondDown } from '../../../common/mixins';
 import { ModalTitle } from '../../../common/modals/atoms/ModalAtoms';
 import Input from '../../../common/basics/Input';
 import Asset from '../../vote/components/AssetDropdown/Asset';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { SorobanService, ToastService } from '../../../common/services/globalServices';
 import Button from '../../../common/basics/Button';
 import useAuthStore from '../../../store/authStore/useAuthStore';
@@ -36,6 +36,13 @@ const DepositToPool = ({ params }) => {
     const [baseAmount, setBaseAmount] = useState('');
     const [counterAmount, setCounterAmount] = useState('');
     const [pending, setPending] = useState(false);
+    const [price, setPrice] = useState(null);
+
+    useEffect(() => {
+        SorobanService.getPoolPrice(base, counter).then((res) => {
+            setPrice(res);
+        });
+    }, []);
 
     const baseAvailable = useMemo(() => {
         if (!account) {
@@ -63,6 +70,40 @@ const DepositToPool = ({ params }) => {
         });
     };
 
+    const onChangeBase = (e) => {
+        const { value } = e.target;
+        setBaseAmount(value);
+
+        // empty pool
+        if (Number.isNaN(price)) {
+            return;
+        }
+
+        // clear input
+        if (!Number(value)) {
+            return setCounterAmount('');
+        }
+
+        return setCounterAmount((value / price).toFixed(7));
+    };
+
+    const onChangeCounter = (e) => {
+        const { value } = e.target;
+        setCounterAmount(value);
+
+        // empty pool
+        if (Number.isNaN(price)) {
+            return;
+        }
+
+        // clear input
+        if (!Number(value)) {
+            return setBaseAmount('');
+        }
+
+        return setBaseAmount((value * price).toFixed(7));
+    };
+
     return (
         <Container>
             <ModalTitle>Increase liquidity position</ModalTitle>
@@ -71,22 +112,24 @@ const DepositToPool = ({ params }) => {
                     <Input
                         value={baseAmount}
                         onChange={(e) => {
-                            setBaseAmount(e.target.value);
+                            onChangeBase(e);
                         }}
                         placeholder="Enter amount"
                         label={baseAvailable}
                         postfix={<Asset asset={base} inRow />}
+                        disabled={price === null}
                     />
                 </FormRow>
                 <FormRow>
                     <Input
                         value={counterAmount}
                         onChange={(e) => {
-                            setCounterAmount(e.target.value);
+                            onChangeCounter(e);
                         }}
                         placeholder="Enter amount"
                         label={counterAvailable}
                         postfix={<Asset asset={counter} inRow />}
+                        disabled={price === null}
                     />
                 </FormRow>
                 <Button
