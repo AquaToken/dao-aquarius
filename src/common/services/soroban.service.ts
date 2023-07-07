@@ -724,8 +724,6 @@ export default class SorobanServiceClass {
 
         return this.getPoolAllowance(poolId, base)
             .then((allowance) => {
-                console.log('allowance', allowance);
-                console.log('maxBaseAmount', maxBaseAmount);
                 return new xdr.HostFunction({
                     args: xdr.HostFunctionArgs.hostFunctionTypeInvokeContract([
                         this.hashToScVal(this.getAssetContractId(base)),
