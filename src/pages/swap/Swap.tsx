@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { commonMaxWidth } from '../../common/mixins';
+import { commonMaxWidth, flexAllCenter } from '../../common/mixins';
 import BalancesBlock from '../amm/BalancesBlock/BalancesBlock';
 import { Header, Title } from '../profile/AmmRewards/AmmRewards';
 import AssetDropdown from '../vote/components/AssetDropdown/AssetDropdown';
@@ -76,6 +76,17 @@ const Error = styled.div`
     margin-top: 1rem;
 `;
 
+const RevertButton = styled.div`
+    cursor: pointer;
+    padding: 1rem;
+    border-radius: 0.3rem;
+    ${flexAllCenter};
+
+    &:hover {
+        background-color: ${COLORS.lightGray};
+    }
+`;
+
 const Swap = ({ balances }) => {
     const { account, isLogged } = useAuthStore();
 
@@ -149,11 +160,13 @@ const Swap = ({ balances }) => {
         setSwapPending(true);
         SorobanService.swapAssets(poolId, base, counter, counterAmount, baseAmount)
             .then(() => {
-                ToastService.showSuccessToast('Swap was completed successfully');
                 setSwapPending(false);
+                setBaseAmount('');
+                setCounterAmount('');
                 getData();
             })
-            .catch(() => {
+            .catch((e) => {
+                console.log(e);
                 ToastService.showErrorToast('Oops! Something went wrong');
                 setSwapPending(false);
             });
@@ -178,6 +191,14 @@ const Swap = ({ balances }) => {
     const assets = useMemo(() => {
         return balances?.filter(({ isDeployed }) => isDeployed).map(({ asset }) => asset);
     }, [balances]);
+
+    const revertAssets = () => {
+        const term = base;
+        setBase(counter);
+        setCounter(term);
+        setBaseAmount('');
+        setCounterAmount('');
+    };
 
     if (!account || !assets) {
         return <PageLoader />;
@@ -219,7 +240,9 @@ const Swap = ({ balances }) => {
                         estimatePending ? (
                             <PageLoader />
                         ) : (
-                            <SwapIcon />
+                            <RevertButton onClick={() => revertAssets()}>
+                                <SwapIcon />
+                            </RevertButton>
                         )}
                     </SwapDivider>
 

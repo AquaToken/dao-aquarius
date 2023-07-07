@@ -369,29 +369,33 @@ export default class SorobanServiceClass {
     }
 
     giveAllowance(poolId: string, asset: Asset, amount: string) {
-        return this.buildSmartContactTx(
-            this.keypair.publicKey(),
-            this.getAssetContractId(asset),
-            ASSET_CONTRACT_METHOD.INCREASE_ALLOWANCE,
-            this.publicKeyToScVal(this.keypair.publicKey()),
-            this.hashToAddressScVal(poolId),
-            this.amountToScVal(amount),
-        )
-            .then((tx) => {
-                return this.server.prepareTransaction(tx);
-            })
-            .then((prepared) => {
-                prepared.sign(this.keypair);
-                return this.submitTx(
-                    prepared as SorobanClient.Transaction<
-                        SorobanClient.Memo<SorobanClient.MemoType>,
-                        SorobanClient.Operation[]
-                    >,
-                );
-            })
-            .then((res) => {
-                console.log(res);
-            });
+        return this.getPoolAllowance(poolId, asset).then((allowance) => {
+            return this.buildSmartContactTx(
+                this.keypair.publicKey(),
+                this.getAssetContractId(asset),
+                +allowance < +amount
+                    ? ASSET_CONTRACT_METHOD.INCREASE_ALLOWANCE
+                    : ASSET_CONTRACT_METHOD.DECREASE_ALLOWANCE,
+                this.publicKeyToScVal(this.keypair.publicKey()),
+                this.hashToAddressScVal(poolId),
+                this.amountToScVal(Math.abs(+allowance - +amount).toFixed(7)),
+            )
+                .then((tx) => {
+                    return this.server.prepareTransaction(tx);
+                })
+                .then((prepared) => {
+                    prepared.sign(this.keypair);
+                    return this.submitTx(
+                        prepared as SorobanClient.Transaction<
+                            SorobanClient.Memo<SorobanClient.MemoType>,
+                            SorobanClient.Operation[]
+                        >,
+                    );
+                })
+                .then((res) => {
+                    return this.processResponse(res);
+                });
+        });
     }
 
     getPoolPrice(a: Asset, b: Asset) {
@@ -452,7 +456,7 @@ export default class SorobanServiceClass {
                         ),
                         this.publicKeyToScVal(this.keypair.publicKey()),
                         this.hashToAddressScVal(poolId),
-                        this.amountToScVal(baseAmount),
+                        this.amountToScVal(Math.abs(+baseAllowance - +baseAmount).toFixed(7)),
                     ]),
                     auth: [],
                 });
@@ -467,7 +471,7 @@ export default class SorobanServiceClass {
                         ),
                         this.publicKeyToScVal(this.keypair.publicKey()),
                         this.hashToAddressScVal(poolId),
-                        this.amountToScVal(counterAmount),
+                        this.amountToScVal(Math.abs(+counterAllowance - +counterAmount).toFixed(7)),
                     ]),
                     auth: [],
                 });
@@ -475,37 +479,37 @@ export default class SorobanServiceClass {
                 return [baseHostFunction, counterHostFunction];
             })
             .then((hostFunctions) => {
-                // const auth = new xdr.ContractAuth({
-                //     addressWithNonce: null,
-                //     signatureArgs: [],
-                //     rootInvocation: new xdr.AuthorizedInvocation({
-                //         contractId: Buffer.from(binascii.unhexlify(AMM_SMART_CONTACT_ID), 'ascii'),
-                //         functionName: AMM_CONTRACT_METHOD.DEPOSIT,
-                //         args: [
-                //             this.publicKeyToScVal(this.keypair.publicKey()),
-                //             this.assetToScVal(base),
-                //             this.assetToScVal(counter),
-                //             this.amountToScVal(baseAmount),
-                //             this.amountToScVal(baseAmount),
-                //             this.amountToScVal(counterAmount),
-                //             this.amountToScVal(counterAmount),
-                //         ],
-                //         subInvocations: [
-                //             new xdr.AuthorizedInvocation({
-                //                 contractId: Buffer.from(binascii.unhexlify(poolId), 'ascii'),
-                //                 functionName: 'deposit',
-                //                 args: [
-                //                     this.publicKeyToScVal(this.keypair.publicKey()),
-                //                     this.amountToScVal(baseAmount),
-                //                     this.amountToScVal(baseAmount),
-                //                     this.amountToScVal(counterAmount),
-                //                     this.amountToScVal(counterAmount),
-                //                 ],
-                //                 subInvocations: [],
-                //             }),
-                //         ],
-                //     }),
-                // });
+                const auth = new xdr.ContractAuth({
+                    addressWithNonce: null,
+                    signatureArgs: [],
+                    rootInvocation: new xdr.AuthorizedInvocation({
+                        contractId: Buffer.from(binascii.unhexlify(AMM_SMART_CONTACT_ID), 'ascii'),
+                        functionName: AMM_CONTRACT_METHOD.DEPOSIT,
+                        args: [
+                            this.publicKeyToScVal(this.keypair.publicKey()),
+                            this.assetToScVal(base),
+                            this.assetToScVal(counter),
+                            this.amountToScVal(baseAmount),
+                            this.amountToScVal(baseAmount),
+                            this.amountToScVal(counterAmount),
+                            this.amountToScVal(counterAmount),
+                        ],
+                        subInvocations: [
+                            new xdr.AuthorizedInvocation({
+                                contractId: Buffer.from(binascii.unhexlify(poolId), 'ascii'),
+                                functionName: 'deposit',
+                                args: [
+                                    this.publicKeyToScVal(this.keypair.publicKey()),
+                                    this.amountToScVal(baseAmount),
+                                    this.amountToScVal(baseAmount),
+                                    this.amountToScVal(counterAmount),
+                                    this.amountToScVal(counterAmount),
+                                ],
+                                subInvocations: [],
+                            }),
+                        ],
+                    }),
+                });
 
                 const op = SorobanClient.Operation.invokeHostFunctions({
                     functions: [
@@ -522,7 +526,7 @@ export default class SorobanServiceClass {
                                 this.amountToScVal(counterAmount),
                                 this.amountToScVal('0'),
                             ]),
-                            auth: [],
+                            auth: [auth],
                         }),
                     ],
                 });
@@ -592,12 +596,41 @@ export default class SorobanServiceClass {
                         ),
                         this.publicKeyToScVal(this.keypair.publicKey()),
                         this.hashToAddressScVal(poolId),
-                        this.amountToScVal(shareAmount),
+                        this.amountToScVal(Math.abs(+allowance - +shareAmount).toFixed(7)),
                     ]),
                     auth: [],
                 });
             })
             .then((hostFunction) => {
+                const auth = new xdr.ContractAuth({
+                    addressWithNonce: null,
+                    signatureArgs: [],
+                    rootInvocation: new xdr.AuthorizedInvocation({
+                        contractId: Buffer.from(binascii.unhexlify(AMM_SMART_CONTACT_ID), 'ascii'),
+                        functionName: AMM_CONTRACT_METHOD.WITHDRAW,
+                        args: [
+                            this.publicKeyToScVal(this.keypair.publicKey()),
+                            this.assetToScVal(base),
+                            this.assetToScVal(counter),
+                            this.amountToScVal(shareAmount),
+                            this.amountToScVal(baseAmount),
+                            this.amountToScVal(counterAmount),
+                        ],
+                        subInvocations: [
+                            new xdr.AuthorizedInvocation({
+                                contractId: Buffer.from(binascii.unhexlify(poolId), 'ascii'),
+                                functionName: 'withdraw',
+                                args: [
+                                    this.publicKeyToScVal(this.keypair.publicKey()),
+                                    this.amountToScVal(shareAmount),
+                                    this.amountToScVal(baseAmount),
+                                    this.amountToScVal(counterAmount),
+                                ],
+                                subInvocations: [],
+                            }),
+                        ],
+                    }),
+                });
                 const op = SorobanClient.Operation.invokeHostFunctions({
                     functions: [
                         hostFunction,
@@ -612,7 +645,7 @@ export default class SorobanServiceClass {
                                 this.amountToScVal(baseAmount),
                                 this.amountToScVal(counterAmount),
                             ]),
-                            auth: [],
+                            auth: [auth],
                         }),
                     ],
                 });
@@ -689,8 +722,10 @@ export default class SorobanServiceClass {
 
         const maxBaseAmount = ((1 + SLIPPAGE) * Number(estimatedAmount)).toFixed(7);
 
-        return this.getPoolAllowance(poolId, counter)
+        return this.getPoolAllowance(poolId, base)
             .then((allowance) => {
+                console.log('allowance', allowance);
+                console.log('maxBaseAmount', maxBaseAmount);
                 return new xdr.HostFunction({
                     args: xdr.HostFunctionArgs.hostFunctionTypeInvokeContract([
                         this.hashToScVal(this.getAssetContractId(base)),
@@ -701,40 +736,55 @@ export default class SorobanServiceClass {
                         ),
                         this.publicKeyToScVal(this.keypair.publicKey()),
                         this.hashToAddressScVal(poolId),
-                        this.amountToScVal(maxBaseAmount),
+                        this.amountToScVal(Math.abs(+allowance - +maxBaseAmount).toFixed(7)),
                     ]),
                     auth: [],
                 });
             })
             .then((hostFunction) => {
-                const swapFunction = new xdr.HostFunction({
-                    args: xdr.HostFunctionArgs.hostFunctionTypeInvokeContract([
-                        this.hashToScVal(AMM_SMART_CONTACT_ID),
-                        this.stringToScVal(AMM_CONTRACT_METHOD.SWAP),
-                        this.publicKeyToScVal(this.keypair.publicKey()),
-                        this.assetToScVal(base),
-                        this.assetToScVal(counter),
-                        this.amountToScVal(amount),
-                        this.amountToScVal(maxBaseAmount),
-                    ]),
-                    auth: [],
+                const auth = new xdr.ContractAuth({
+                    addressWithNonce: null,
+                    signatureArgs: [],
+                    rootInvocation: new xdr.AuthorizedInvocation({
+                        contractId: Buffer.from(binascii.unhexlify(AMM_SMART_CONTACT_ID), 'ascii'),
+                        functionName: AMM_CONTRACT_METHOD.SWAP,
+                        args: [
+                            this.publicKeyToScVal(this.keypair.publicKey()),
+                            this.assetToScVal(base),
+                            this.assetToScVal(counter),
+                            this.amountToScVal(amount),
+                            this.amountToScVal(maxBaseAmount),
+                        ],
+                        subInvocations: [
+                            new xdr.AuthorizedInvocation({
+                                contractId: Buffer.from(binascii.unhexlify(poolId), 'ascii'),
+                                functionName: 'swap',
+                                args: [
+                                    this.publicKeyToScVal(this.keypair.publicKey()),
+                                    this.boolToScVal(false),
+                                    this.amountToScVal(amount),
+                                    this.amountToScVal(maxBaseAmount),
+                                ],
+                                subInvocations: [],
+                            }),
+                        ],
+                    }),
                 });
 
-                return [hostFunction, swapFunction];
-            })
-            .then((hostFunctions) => {
                 const op = SorobanClient.Operation.invokeHostFunctions({
                     functions: [
-                        ...hostFunctions,
+                        hostFunction,
                         new xdr.HostFunction({
                             args: xdr.HostFunctionArgs.hostFunctionTypeInvokeContract([
-                                this.hashToScVal(this.getAssetContractId(base)),
-                                this.stringToScVal(ASSET_CONTRACT_METHOD.DECREASE_ALLOWANCE),
+                                this.hashToScVal(AMM_SMART_CONTACT_ID),
+                                this.stringToScVal(AMM_CONTRACT_METHOD.SWAP),
                                 this.publicKeyToScVal(this.keypair.publicKey()),
-                                this.hashToAddressScVal(poolId),
-                                this.amountToScVal('0'),
+                                this.assetToScVal(base),
+                                this.assetToScVal(counter),
+                                this.amountToScVal(amount),
+                                this.amountToScVal(maxBaseAmount),
                             ]),
-                            auth: [],
+                            auth: [auth],
                         }),
                     ],
                 });
@@ -756,6 +806,9 @@ export default class SorobanServiceClass {
                 return this.processResponse(res);
             })
             .then((res) => {
+                //TODO clear allowance if needed
+                // this.giveAllowance(poolId, base, '0');
+
                 const result = xdr.TransactionResult.fromXDR(Buffer.from(res, 'base64'));
 
                 const value = result.result().value()[0].value().value().value()[1].value();
@@ -861,6 +914,10 @@ export default class SorobanServiceClass {
                 lo: xdr.Uint64.fromString(value),
             }),
         );
+    }
+
+    boolToScVal(value: boolean): xdr.ScVal {
+        return xdr.ScVal.scvBool(value);
     }
 
     stringToScVal(val: string): xdr.ScVal {

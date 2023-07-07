@@ -178,7 +178,6 @@ const Amm = ({ balances }) => {
             accountShares,
         )
             .then(() => {
-                ToastService.showSuccessToast('Withdraw was completed successfully');
                 getData();
                 setWithdrawPending(false);
             })
