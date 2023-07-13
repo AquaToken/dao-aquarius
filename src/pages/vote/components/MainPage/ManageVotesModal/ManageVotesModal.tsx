@@ -25,6 +25,7 @@ import {
 import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
 import { LoginTypes } from '../../../../../store/authStore/types';
 import ErrorHandler from '../../../../../common/helpers/error-handler';
+import Table, { CellAlign } from '../../../../../common/basics/Table';
 
 const Container = styled.div`
     width: 80.6rem;
@@ -61,89 +62,12 @@ const PairBlock = styled.div`
     margin-bottom: 2.3rem;
 `;
 
-export const TableHeader = styled.div`
-    font-size: 1.4rem;
-    line-height: 1.6rem;
-    color: ${COLORS.grayText};
-    display: flex;
-
-    margin-bottom: 1.8rem;
-
-    ${respondDown(Breakpoints.md)`
-        display: none;
-    `};
+const Amount = styled.span`
+    text-align: right;
 `;
 
-const TableRow = styled.div`
-    font-size: 1.6rem;
-    line-height: 2.8rem;
-    display: flex;
-    color: ${COLORS.paragraphText};
-
-    &:not(:last-child) {
-        margin-bottom: 0.6rem;
-    }
-
-    ${respondDown(Breakpoints.md)`
-         flex-direction: column;
-         background: ${COLORS.lightGray};
-         padding: 2rem;
-         border-radius: 0.5rem;
-         
-         &:not(:last-child) {
-             margin-bottom: 1rem;
-         }
-    `};
-`;
-
-export const Cell = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    label {
-        display: none;
-    }
-
-    ${respondDown(Breakpoints.md)`
-        label {
-            display: inline;
-            margin-right: auto;
-            color: ${COLORS.grayText};
-        }
-        
-        &:not(:last-child) {
-            margin-bottom: 1rem;
-        }
-
-    `};
-`;
-
-export const DateCell = styled(Cell)`
-    flex: 1;
-    justify-content: flex-start;
-`;
-
-export const Amount = styled(Cell)`
-    flex: 1;
-
-    span {
-        margin-left: 0.8rem;
-    }
-`;
-
-export const Claim = styled(Cell)`
-    flex: 1;
-`;
-
-export const Link = styled(Cell)`
-    flex: 0.1;
-    max-width: 3rem;
-
-    ${respondDown(Breakpoints.md)`
-        flex: 1;  
-        max-width: unset;
-        justify-content: center;
-    `};
+const TooltipStyled = styled(Tooltip)`
+    margin-left: 0.8rem;
 `;
 
 export const ClaimButton = styled(Button)`
@@ -165,7 +89,10 @@ export const MobileLink = styled(ExternalLink)`
     display: none;
 
     ${respondDown(Breakpoints.md)`
-        display: block;    
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
     `};
 `;
 
@@ -254,72 +181,98 @@ const ManageVotesModal = ({ params, close }: ModalProps<{ pair: PairStats }>) =>
                     counter={{ code: pair.asset2_code, issuer: pair.asset2_issuer }}
                 />
             </PairBlock>
-            <TableHeader>
-                <DateCell>Vote date</DateCell>
-                <Amount>Amount</Amount>
-                <Claim>Claim back date</Claim>
-                <Link />
-            </TableHeader>
-            {claims.map((claim) => (
-                <TableRow key={claim.id}>
-                    <DateCell>
-                        <label>Vote date:</label>
-                        {getDateString(new Date(claim.last_modified_time).getTime(), {
-                            withTime: true,
-                        })}
-                    </DateCell>
-                    <Amount>
-                        <label>Amount:</label>
-                        {claim.isDownVote && (
-                            <Tooltip
-                                content={<TooltipInner>Downvote</TooltipInner>}
-                                position={TOOLTIP_POSITION.top}
-                                showOnHover
-                            >
-                                <Dislike />
-                            </Tooltip>
-                        )}
-                        <span>
-                            {formatBalance(claim.amount)} {claim.assetCode}
-                        </span>
-                    </Amount>
-                    <Claim>
-                        {new Date(claim.claimBackDate) > new Date() ? (
-                            <>
-                                <label>Claim back date:</label>
-                                <span>
-                                    {getDateString(new Date(claim.claimBackDate).getTime(), {
-                                        withTime: true,
-                                    })}
-                                </span>
-                            </>
-                        ) : (
-                            <ClaimButton
-                                isSmall
-                                onClick={() => onSubmit(claim)}
-                                disabled={Boolean(pendingId) && claim.id !== pendingId}
-                                pending={claim.id === pendingId}
-                            >
-                                Claim
-                            </ClaimButton>
-                        )}
-                    </Claim>
-                    <Link>
-                        <MobileLink
-                            onClick={() => {
-                                goToStellarExpert(claim);
-                            }}
-                        >
-                            Stellar Expert
-                        </MobileLink>
-                        <WebLink
-                            onClick={() => {
-                                goToStellarExpert(claim);
-                            }}
-                        />
-                    </Link>
-                </TableRow>
-            ))}
+            <Table
+                head={[
+                    { children: 'Vote date' },
+                    { children: 'Amount', align: CellAlign.Right },
+                    { children: 'Claim back date', align: CellAlign.Right },
+                    { children: '', align: CellAlign.Center, flexSize: 0.1 },
+                ]}
+                body={claims.map((claim) => ({
+                    key: claim.id,
+                    isNarrow: true,
+                    mobileBackground: COLORS.lightGray,
+                    mobileFontSize: '1.4rem',
+                    rowItems: [
+                        {
+                            children: getDateString(new Date(claim.last_modified_time).getTime(), {
+                                withTime: true,
+                            }),
+                            label: 'Vote date:',
+                        },
+                        {
+                            children: (
+                                <>
+                                    <Amount>
+                                        {formatBalance(claim.amount)} {claim.assetCode}
+                                    </Amount>
+                                    {claim.isDownVote && (
+                                        <TooltipStyled
+                                            content={<TooltipInner>Downvote</TooltipInner>}
+                                            position={
+                                                +window.innerWidth > 992
+                                                    ? TOOLTIP_POSITION.top
+                                                    : TOOLTIP_POSITION.left
+                                            }
+                                            showOnHover
+                                        >
+                                            <Dislike />
+                                        </TooltipStyled>
+                                    )}
+                                </>
+                            ),
+                            label: 'Amount:',
+                            align: CellAlign.Right,
+                        },
+                        {
+                            children:
+                                new Date(claim.claimBackDate) > new Date() ? (
+                                    <>
+                                        <label>Claim back date:</label>
+                                        <span>
+                                            {getDateString(
+                                                new Date(claim.claimBackDate).getTime(),
+                                                {
+                                                    withTime: true,
+                                                },
+                                            )}
+                                        </span>
+                                    </>
+                                ) : (
+                                    <ClaimButton
+                                        isSmall
+                                        onClick={() => onSubmit(claim)}
+                                        disabled={Boolean(pendingId) && claim.id !== pendingId}
+                                        pending={claim.id === pendingId}
+                                    >
+                                        Claim
+                                    </ClaimButton>
+                                ),
+                            align: CellAlign.Right,
+                        },
+                        {
+                            children: (
+                                <>
+                                    <MobileLink
+                                        onClick={() => {
+                                            goToStellarExpert(claim);
+                                        }}
+                                    >
+                                        Stellar Expert
+                                    </MobileLink>
+                                    <WebLink
+                                        onClick={() => {
+                                            goToStellarExpert(claim);
+                                        }}
+                                    />
+                                </>
+                            ),
+                            align: CellAlign.Right,
+                            flexSize: 0.1,
+                        },
+                    ],
+                }))}
+            />
         </Container>
     );
 };

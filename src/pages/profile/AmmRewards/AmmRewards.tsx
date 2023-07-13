@@ -1,11 +1,5 @@
 import * as React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeadRow,
-} from '../../vote/components/MainPage/Table/Table';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../../common/styles';
 import { flexRowSpaceBetween, respondDown } from '../../../common/mixins';
@@ -21,11 +15,10 @@ import ExternalLink from '../../../common/basics/ExternalLink';
 import { formatBalance } from '../../../common/helpers/helpers';
 import useAssetsStore from '../../../store/assetsStore/useAssetsStore';
 import Aqua from '../../../common/assets/img/aqua-logo-small.svg';
-import { IconSort } from '../../../common/basics/Icons';
-import { SortingHeader } from '../../bribes/components/BribesPage/BribesTable/BribesTable';
 import DotsLoader from '../../../common/basics/DotsLoader';
 import Label from '../../../common/basics/Label';
 import BoostBanner from '../BoostBanner/BoostBanner';
+import Table, { CellAlign } from '../../../common/basics/Table';
 
 export const Container = styled.div`
     display: flex;
@@ -63,75 +56,6 @@ export const Section = styled.section`
         padding: 0;
         background: ${COLORS.lightGray};
     `}
-`;
-
-export const Table = styled.div`
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    position: relative;
-`;
-
-export const TableBodyRow = styled.div`
-    display: flex;
-    align-items: stretch;
-    width: 100%;
-    min-height: 9.6rem;
-    font-size: 1.6rem;
-    line-height: 2.8rem;
-    color: ${COLORS.paragraphText};
-    position: relative;
-    border-radius: 0.5rem;
-
-    ${respondDown(Breakpoints.md)`
-        flex-direction: column;
-         background: ${COLORS.white};
-         padding: 2.7rem 1.6rem 1.6rem;
-         margin-bottom: 1.6rem;
-    `}
-`;
-
-export const PairCell = styled(TableCell)`
-    flex: 2.5;
-
-    ${respondDown(Breakpoints.md)`
-        margin-bottom: 2rem;
-    `};
-`;
-
-export const Cell = styled(TableCell)`
-    flex: 1;
-
-    &:last-child {
-        flex: 1.5;
-    }
-
-    &:nth-last-child(2) {
-        justify-content: right;
-    }
-
-    &:last-child {
-        flex: 1.5;
-        justify-content: right;
-    }
-
-    label {
-        display: none;
-        color: ${COLORS.grayText};
-    }
-
-    ${respondDown(Breakpoints.md)`
-          ${flexRowSpaceBetween};
-          align-items: center;
-          margin-bottom: 1.6rem;
-          
-          label {
-              display: block;
-              margin-right: auto;
-              display: flex;
-              align-items: center;
-           }
-      `}
 `;
 
 export const ExternalLinkStyled = styled(ExternalLink)`
@@ -310,82 +234,75 @@ const AmmRewards = ({ aquaUsdPrice }) => {
                 <PageLoader />
             ) : sorted.length ? (
                 <Section>
-                    <Table>
-                        <TableHead>
-                            <TableHeadRow>
-                                <PairCell>Pair</PairCell>
-                                <Cell>Pooled</Cell>
-                                <Cell>Pool shares</Cell>
-                                <Cell>
-                                    <SortingHeader
-                                        position="right"
-                                        onClick={() => changeSort(SortField.market)}
-                                    >
-                                        AMM daily reward
-                                        <IconSort
-                                            isEnabled={sort === SortField.market}
-                                            isReversed={isSortReversed}
-                                        />
-                                    </SortingHeader>
-                                </Cell>
+                    <Table
+                        head={[
+                            { children: 'Pair', flexSize: 2.5 },
+                            { children: 'Pooled' },
+                            { children: 'Pool shares' },
+                            {
+                                children: 'AMM daily reward',
+                                align: CellAlign.Right,
+                                sort: {
+                                    onClick: () => changeSort(SortField.market),
+                                    isEnabled: sort === SortField.market,
+                                    isReversed: isSortReversed,
+                                },
+                            },
+                            {
+                                children: 'Your daily reward',
+                                align: CellAlign.Right,
+                                sort: {
+                                    onClick: () => changeSort(SortField.your),
+                                    isEnabled: sort === SortField.your,
+                                    isReversed: isSortReversed,
+                                },
+                                flexSize: 1.5,
+                            },
+                        ]}
+                        body={sorted.map(
+                            ({
+                                market_pair: pair,
+                                pool_id: id,
+                                total_shares: totalShares,
+                                reward_amount: rewardAmount,
+                                boosted_reward: boostedReward,
+                                reward_volume: rewardVolume,
+                                reserve_a_amount,
+                                reserve_b_amount,
+                            }) => {
+                                const {
+                                    asset1_code: baseCode,
+                                    asset1_issuer: baseIssuer,
+                                    asset2_code: counterCode,
+                                    asset2_issuer: counterIssuer,
+                                } = pair;
+                                const base = baseIssuer
+                                    ? StellarService.createAsset(baseCode, baseIssuer)
+                                    : StellarService.createLumen();
 
-                                <Cell>
-                                    <SortingHeader
-                                        position="right"
-                                        onClick={() => changeSort(SortField.your)}
-                                    >
-                                        Your daily reward
-                                        <IconSort
-                                            isEnabled={sort === SortField.your}
-                                            isReversed={isSortReversed}
-                                        />
-                                    </SortingHeader>
-                                </Cell>
-                            </TableHeadRow>
-                        </TableHead>
+                                const counter = counterIssuer
+                                    ? StellarService.createAsset(counterCode, counterIssuer)
+                                    : StellarService.createLumen();
 
-                        <TableBody>
-                            {sorted.map(
-                                ({
-                                    market_pair: pair,
-                                    pool_id: id,
-                                    total_shares: totalShares,
-                                    reward_amount: rewardAmount,
-                                    boosted_reward: boostedReward,
-                                    reward_volume: rewardVolume,
-                                    reserve_a_amount,
-                                    reserve_b_amount,
-                                }) => {
-                                    const {
-                                        asset1_code: baseCode,
-                                        asset1_issuer: baseIssuer,
-                                        asset2_code: counterCode,
-                                        asset2_issuer: counterIssuer,
-                                    } = pair;
-                                    const base = baseIssuer
-                                        ? StellarService.createAsset(baseCode, baseIssuer)
-                                        : StellarService.createLumen();
+                                const dailyReward = rewardAmount * 24;
+                                const marketRewards = rewardVolume * 24;
 
-                                    const counter = counterIssuer
-                                        ? StellarService.createAsset(counterCode, counterIssuer)
-                                        : StellarService.createLumen();
+                                const boostValue = (
+                                    rewardAmount /
+                                    (rewardAmount - boostedReward)
+                                ).toFixed(2);
 
-                                    const dailyReward = rewardAmount * 24;
-                                    const marketRewards = rewardVolume * 24;
+                                const poolBalance = account.getPoolBalance(id);
+                                const percent = poolBalance / Number(totalShares);
+                                const basePooled = reserve_a_amount * percent;
+                                const counterPooled = reserve_b_amount * percent;
 
-                                    const boostValue = (
-                                        rewardAmount /
-                                        (rewardAmount - boostedReward)
-                                    ).toFixed(2);
-
-                                    const poolBalance = account.getPoolBalance(id);
-                                    const percent = poolBalance / Number(totalShares);
-                                    const basePooled = reserve_a_amount * percent;
-                                    const counterPooled = reserve_b_amount * percent;
-
-                                    return (
-                                        <TableBodyRow key={id}>
-                                            <PairCell>
+                                return {
+                                    key: id,
+                                    mobileFontSize: '1.4rem',
+                                    rowItems: [
+                                        {
+                                            children: (
                                                 <Pair
                                                     base={base}
                                                     counter={counter}
@@ -393,9 +310,11 @@ const AmmRewards = ({ aquaUsdPrice }) => {
                                                     withMarketLink
                                                     mobileVerticalDirections
                                                 />
-                                            </PairCell>
-                                            <Cell>
-                                                <label>Pooled:</label>
+                                            ),
+                                            flexSize: 2.5,
+                                        },
+                                        {
+                                            children: (
                                                 <InOffers>
                                                     <div>
                                                         {formatBalance(basePooled, true)}{' '}
@@ -406,9 +325,11 @@ const AmmRewards = ({ aquaUsdPrice }) => {
                                                         {counter.code}
                                                     </div>
                                                 </InOffers>
-                                            </Cell>
-                                            <Cell>
-                                                <label>Pool shares:</label>
+                                            ),
+                                            label: 'Pooled:',
+                                        },
+                                        {
+                                            children: (
                                                 <InOffers>
                                                     {formatBalance(
                                                         account.getPoolBalance(id),
@@ -421,33 +342,39 @@ const AmmRewards = ({ aquaUsdPrice }) => {
                                                         )}
                                                     </Percent>
                                                 </InOffers>
-                                            </Cell>
-                                            <Cell>
-                                                <label>AMM daily reward::</label>
-                                                {formatBalance(marketRewards, true)} AQUA
-                                            </Cell>
+                                            ),
+                                            label: 'Pool shares:',
+                                        },
+                                        {
+                                            children: `${formatBalance(marketRewards, true)} AQUA`,
+                                            label: 'AMM daily reward:',
+                                            align: CellAlign.Right,
+                                        },
+                                        {
+                                            children: (
+                                                <>
+                                                    <DailyRewards>
+                                                        {formatBalance(dailyReward, true)} AQUA
+                                                    </DailyRewards>
 
-                                            <Cell>
-                                                <label>Your daily reward:</label>
-
-                                                <DailyRewards>
-                                                    {formatBalance(dailyReward, true)} AQUA
-                                                </DailyRewards>
-
-                                                {Boolean(boostedReward) && (
-                                                    <Label
-                                                        title={`Boosted ${boostValue}x`}
-                                                        text={TOOLTIP_TEXT}
-                                                        isBlue
-                                                    />
-                                                )}
-                                            </Cell>
-                                        </TableBodyRow>
-                                    );
-                                },
-                            )}
-                        </TableBody>
-                    </Table>
+                                                    {Boolean(boostedReward) && (
+                                                        <Label
+                                                            title={`Boosted ${boostValue}x`}
+                                                            text={TOOLTIP_TEXT}
+                                                            isBlue
+                                                        />
+                                                    )}
+                                                </>
+                                            ),
+                                            label: 'Your daily reward:',
+                                            align: CellAlign.Right,
+                                            flexSize: 1.5,
+                                        },
+                                    ],
+                                };
+                            },
+                        )}
+                    />
                 </Section>
             ) : (
                 <Section>

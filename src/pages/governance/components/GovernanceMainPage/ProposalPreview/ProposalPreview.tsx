@@ -34,6 +34,7 @@ import {
 } from '../../../../../common/services/wallet-connect.service';
 import ErrorHandler from '../../../../../common/helpers/error-handler';
 import { GovernanceRoutes } from '../../../../../routes';
+import Table, { CellAlign } from '../../../../../common/basics/Table';
 
 const Container = styled.div`
     display: flex;
@@ -216,68 +217,9 @@ const Red = styled.span`
     color: ${COLORS.pinkRed};
 `;
 
-const TableRow = styled.div`
-    display: flex;
-    font-size: 1.6rem;
-    line-height: 2.8rem;
-    color: ${COLORS.paragraphText};
-
-    &:not(:last-child) {
-        margin-bottom: 2.2rem;
-    }
-
-    ${respondDown(Breakpoints.md)`
-         flex-direction: column;
-         background: ${COLORS.lightGray};
-         padding: 1.2rem;
-         font-size: 1.4rem;
-    `}
-`;
-
-const TableHead = styled(TableRow)`
-    font-size: 1.4rem;
-    line-height: 2rem;
-    color: ${COLORS.grayText};
-    margin-bottom: 2.7rem;
-
-    ${respondDown(Breakpoints.md)`
-         display: none;
-    `}
-`;
-
-const TableCell = styled.div`
+const Cell = styled.span`
     display: flex;
     align-items: center;
-    flex: 1;
-
-    span {
-        display: flex;
-        align-items: center;
-    }
-
-    label {
-        display: none;
-    }
-
-    ${respondDown(Breakpoints.md)`
-        justify-content: space-between;
-        
-        &:not(:last-child) {
-            margin-bottom: 1rem;
-        }
-        
-        label {
-            display: inline;
-        }
-    `}
-`;
-
-const TableCellRight = styled(TableCell)`
-    justify-content: flex-end;
-
-    ${respondDown(Breakpoints.md)`
-         justify-content: space-between;
-   `}
 `;
 
 const getStatus = (proposal: ProposalSimple) => {
@@ -582,50 +524,69 @@ const ProposalPreview = ({
                     getActiveParticipationRate()}
                 {withMyVotes && (
                     <>
-                        <TableHead>
-                            <TableCell>Time</TableCell>
-                            <TableCell>Vote</TableCell>
-                            <TableCellRight>Voted</TableCellRight>
-                            <TableCellRight>Claim back date</TableCellRight>
-                        </TableHead>
-                        {proposal.logvote_set.map((log) => (
-                            <TableRow key={log.claimable_balance_id}>
-                                <TableCell>
-                                    <label>Time:</label>
-                                    {getDateString(new Date(log.created_at).getTime(), {
-                                        withTime: true,
-                                        withoutYear: true,
-                                    })}
-                                </TableCell>
-                                <TableCell>
-                                    <label>Vote:</label>
-                                    <span>
-                                        {log.vote_choice === 'vote_for' ? (
-                                            <IconFor />
-                                        ) : (
-                                            <IconAgainst />
-                                        )}
-                                        {log.vote_choice === 'vote_for'
-                                            ? 'Vote For'
-                                            : 'Vote Against'}
-                                    </span>
-                                </TableCell>
-                                <TableCellRight>
-                                    <label>Voted:</label>
-                                    <span>
-                                        {formatBalance(Number(log.amount))}
-                                        {log.asset_code === 'AQUA' ? <AquaLogo /> : <IceLogo />}
-                                    </span>
-                                </TableCellRight>
-                                <TableCellRight>
-                                    <label>Claim back date:</label>
-                                    {getActionBlock(
-                                        log.claimable_balance_id,
-                                        log.asset_code === 'AQUA',
-                                    )}
-                                </TableCellRight>
-                            </TableRow>
-                        ))}
+                        <Table
+                            head={[
+                                { children: 'Time' },
+                                { children: 'Vote' },
+                                { children: 'Voted', align: CellAlign.Right },
+                                { children: 'Claim back date', align: CellAlign.Right },
+                            ]}
+                            body={proposal.logvote_set.map((log) => ({
+                                key: log.claimable_balance_id,
+                                isNarrow: true,
+                                mobileBackground: COLORS.lightGray,
+                                mobileFontSize: '1.4rem',
+                                rowItems: [
+                                    {
+                                        children: getDateString(
+                                            new Date(log.created_at).getTime(),
+                                            {
+                                                withTime: true,
+                                                withoutYear: true,
+                                            },
+                                        ),
+                                        label: 'Time:',
+                                    },
+                                    {
+                                        children: (
+                                            <Cell>
+                                                {log.vote_choice === 'vote_for' ? (
+                                                    <IconFor />
+                                                ) : (
+                                                    <IconAgainst />
+                                                )}
+                                                {log.vote_choice === 'vote_for'
+                                                    ? 'Vote For'
+                                                    : 'Vote Against'}
+                                            </Cell>
+                                        ),
+                                        label: 'Vote:',
+                                    },
+                                    {
+                                        children: (
+                                            <Cell>
+                                                {formatBalance(Number(log.amount))}
+                                                {log.asset_code === 'AQUA' ? (
+                                                    <AquaLogo />
+                                                ) : (
+                                                    <IceLogo />
+                                                )}
+                                            </Cell>
+                                        ),
+                                        label: 'Voted:',
+                                        align: CellAlign.Right,
+                                    },
+                                    {
+                                        children: getActionBlock(
+                                            log.claimable_balance_id,
+                                            log.asset_code === 'AQUA',
+                                        ),
+                                        label: 'Claim back date:',
+                                        align: CellAlign.Right,
+                                    },
+                                ],
+                            }))}
+                        />
                     </>
                 )}
             </Link>

@@ -94,7 +94,7 @@ const MarketSection = styled.section<{ smallTopPadding?: boolean }>`
         padding-right: calc(10vw + 40rem);
     `}
 
-    ${respondDown(Breakpoints.md)`
+    ${respondDown(Breakpoints.lg)`
         padding: 3.2rem 1.6rem 0;
     `}
 `;

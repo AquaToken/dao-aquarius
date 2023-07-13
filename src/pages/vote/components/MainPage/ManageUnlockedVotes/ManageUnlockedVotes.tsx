@@ -24,6 +24,7 @@ import Dislike from '../../../../../common/assets/img/icon-dislike-gray.svg';
 import { ModalDescription, ModalTitle } from '../../../../../common/modals/atoms/ModalAtoms';
 import { LoginTypes } from '../../../../../store/authStore/types';
 import ErrorHandler from '../../../../../common/helpers/error-handler';
+import Table, { CellAlign } from '../../../../../common/basics/Table';
 
 const Container = styled.div`
     width: 80.6rem;
@@ -52,76 +53,8 @@ const Container = styled.div`
       `};
 `;
 
-const TableHeader = styled.div`
-    font-size: 1.4rem;
-    line-height: 1.6rem;
-    color: ${COLORS.grayText};
-    display: flex;
-
-    margin-bottom: 1.8rem;
-
-    ${respondDown(Breakpoints.md)`
-        display: none;
-    `};
-`;
-
 const DislikeIcon = styled(Dislike)`
     margin-left: 0.8rem;
-`;
-
-const TableRow = styled.div`
-    font-size: 1.6rem;
-    line-height: 2.8rem;
-    display: flex;
-    color: ${COLORS.paragraphText};
-    margin-bottom: 0.6rem;
-
-    ${respondDown(Breakpoints.md)`
-         flex-direction: column;
-         background: ${COLORS.lightGray};
-         padding: 2rem;
-         border-radius: 0.5rem;
-         
-         &:not(:last-child) {
-             margin-bottom: 1rem;
-         }
-    `};
-`;
-
-const Cell = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    flex: 1;
-    text-align: right;
-    span {
-        margin-left: 0.8rem;
-    }
-    label {
-        display: none;
-    }
-
-    ${respondDown(Breakpoints.md)`
-        label {
-            display: inline;
-            margin-right: auto;
-            color: ${COLORS.grayText};
-        }
-        
-        &:not(:last-child) {
-            margin-bottom: 1rem;
-        }
-
-    `};
-`;
-
-const PairCell = styled(Cell)`
-    flex: 1.5;
-    justify-content: flex-start;
-`;
-
-const ButtonCell = styled(Cell)`
-    flex: 0.5;
 `;
 
 const ClaimButton = styled(Button)`
@@ -145,6 +78,14 @@ const TooltipInner = styled.span`
     font-size: 1.4rem;
     line-height: 2rem;
     margin-left: 0 !important;
+`;
+
+const Amount = styled.span`
+    text-align: right;
+`;
+
+const TooltipStyled = styled(Tooltip)`
+    margin-left: 0.4rem;
 `;
 
 const ClaimAllModal = ({ params, close }) => {
@@ -268,59 +209,90 @@ const ClaimAllModal = ({ params, close }) => {
             <ModalDescription>View your unlocked votes and claim back</ModalDescription>
             {claims.length ? (
                 <>
-                    <TableHeader>
-                        <PairCell>Pair</PairCell>
-                        <Cell>Vote date</Cell>
-                        <Cell>Amount</Cell>
-                        <ButtonCell />
-                    </TableHeader>
-                    {claims.map((claim) => (
-                        <TableRow key={claim.id}>
-                            <PairCell>
-                                <Pair
-                                    base={{ code: claim.asset1_code, issuer: claim.asset1_issuer }}
-                                    counter={{
-                                        code: claim.asset2_code,
-                                        issuer: claim.asset2_issuer,
-                                    }}
-                                    withoutDomains
-                                />
-                            </PairCell>
-                            <Cell>
-                                <label>Vote date:</label>
-                                {getDateString(new Date(claim.last_modified_time).getTime(), {
-                                    withTime: true,
-                                })}
-                            </Cell>
-                            <Cell>
-                                <label>Amount:</label>
-                                {claim.isDownVote && (
-                                    <Tooltip
-                                        content={<TooltipInner>Downvote</TooltipInner>}
-                                        position={TOOLTIP_POSITION.top}
-                                        showOnHover
-                                    >
-                                        <DislikeIcon />
-                                    </Tooltip>
-                                )}
-                                <span>
-                                    {formatBalance(claim.amount)} {claim.asset.split(':')[0]}
-                                </span>
-                            </Cell>
-                            <ButtonCell>
-                                <ClaimButton
-                                    isSmall
-                                    onClick={() => claimVotes(claim)}
-                                    disabled={
-                                        (Boolean(pendingId) && claim.id !== pendingId) || pendingAll
-                                    }
-                                    pending={claim.id === pendingId}
-                                >
-                                    Claim
-                                </ClaimButton>
-                            </ButtonCell>
-                        </TableRow>
-                    ))}
+                    <Table
+                        head={[
+                            { children: 'Pair', flexSize: 1.5 },
+                            { children: 'Vote date', align: CellAlign.Right },
+                            { children: 'Amount', align: CellAlign.Right, flexSize: 1.5 },
+                            { children: '', align: CellAlign.Right, flexSize: 0.6 },
+                        ]}
+                        body={claims.map((claim) => ({
+                            key: claim.id,
+                            isNarrow: true,
+                            mobileFontSize: '1.4rem',
+                            mobileBackground: COLORS.lightGray,
+                            rowItems: [
+                                {
+                                    children: (
+                                        <Pair
+                                            base={{
+                                                code: claim.asset1_code,
+                                                issuer: claim.asset1_issuer,
+                                            }}
+                                            counter={{
+                                                code: claim.asset2_code,
+                                                issuer: claim.asset2_issuer,
+                                            }}
+                                            withoutDomains
+                                        />
+                                    ),
+                                    flexSize: 1.5,
+                                },
+                                {
+                                    children: getDateString(
+                                        new Date(claim.last_modified_time).getTime(),
+                                        {
+                                            withTime: true,
+                                        },
+                                    ),
+                                    label: 'Vote date:',
+                                    align: CellAlign.Right,
+                                },
+                                {
+                                    children: (
+                                        <>
+                                            <Amount>
+                                                {formatBalance(claim.amount)} {claim.assetCode}
+                                            </Amount>
+                                            {claim.isDownVote && (
+                                                <TooltipStyled
+                                                    content={<TooltipInner>Downvote</TooltipInner>}
+                                                    position={
+                                                        +window.innerWidth > 992
+                                                            ? TOOLTIP_POSITION.top
+                                                            : TOOLTIP_POSITION.left
+                                                    }
+                                                    showOnHover
+                                                >
+                                                    <DislikeIcon />
+                                                </TooltipStyled>
+                                            )}
+                                        </>
+                                    ),
+                                    label: 'Amount:',
+                                    align: CellAlign.Right,
+                                    flexSize: 1.5,
+                                },
+                                {
+                                    children: (
+                                        <ClaimButton
+                                            isSmall
+                                            onClick={() => claimVotes(claim)}
+                                            disabled={
+                                                (Boolean(pendingId) && claim.id !== pendingId) ||
+                                                pendingAll
+                                            }
+                                            pending={claim.id === pendingId}
+                                        >
+                                            Claim
+                                        </ClaimButton>
+                                    ),
+                                    align: CellAlign.Right,
+                                    flexSize: 0.6,
+                                },
+                            ],
+                        }))}
+                    />
                     {account.authType !== LoginTypes.ledger && (
                         <ButtonContainer>
                             <Button

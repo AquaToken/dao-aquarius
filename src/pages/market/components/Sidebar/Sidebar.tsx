@@ -41,7 +41,7 @@ const Container = styled.aside`
     margin-top: -48rem;
     z-index: 102;
 
-    ${respondDown(Breakpoints.md)`
+    ${respondDown(Breakpoints.lg)`
          float: unset;
          position: relative;
          width: calc(100% - 3.2rem);

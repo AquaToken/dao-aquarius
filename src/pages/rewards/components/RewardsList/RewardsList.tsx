@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { flexAllCenter, respondDown } from '../../../../common/mixins';
+import { respondDown } from '../../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../../common/styles';
 import { getRewards, RewardsSort } from '../../api/api';
 import useAssetsStore from '../../../../store/assetsStore/useAssetsStore';
@@ -11,15 +11,9 @@ import Info from '../../../../common/assets/img/icon-info.svg';
 import Link from '../../../../common/assets/img/icon-external-link.svg';
 import { formatBalance, getTimeAgoValue } from '../../../../common/helpers/helpers';
 import Tooltip, { TOOLTIP_POSITION } from '../../../../common/basics/Tooltip';
-import {
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeadRow,
-} from '../../../vote/components/MainPage/Table/Table';
 import Pair from '../../../vote/components/common/Pair';
-import { IconSort } from '../../../../common/basics/Icons';
 import { MarketRoutes } from '../../../../routes';
+import Table, { CellAlign } from '../../../../common/basics/Table';
 
 const Container = styled.section`
     position: relative;
@@ -79,127 +73,21 @@ const TooltipInner = styled.div`
     white-space: pre-wrap;
 `;
 
-const Table = styled.div`
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    position: relative;
-`;
-
-const TableLoader = styled.div`
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    background-color: rgba(255, 255, 255, 0.8);
-    z-index: 10;
-    ${flexAllCenter};
-    animation: showLoader 0.1s ease-in-out;
-
-    @keyframes showLoader {
-        0% {
-            background-color: rgba(255, 255, 255, 0);
-        }
-        100% {
-            background-color: rgba(255, 255, 255, 0.8);
-        }
-    }
-`;
-
-const TableBodyRowWrap = styled.div`
-    cursor: pointer;
-    border: 0.1rem solid ${COLORS.transparent};
-    padding: 0.8rem;
-    border-radius: 0.5rem;
-
-    &:hover {
-        background: ${COLORS.lightGray};
-        border: 0.1rem solid ${COLORS.gray};
-    }
-
-    ${respondDown(Breakpoints.md)`
-          flex-direction: column;
-          background: ${COLORS.white};
-          border-radius: 0.5rem;
-          margin-bottom: 1.6rem;
-          padding: 2.7rem 1.6rem 1.6rem;
-          
-          ${TableCell}:nth-child(2), ${TableCell}:nth-child(3) {
-                font-size: 1.6rem;
-                line-height: 2.8rem;
-                color: ${COLORS.grayText};
-            }
-    `}
-`;
-
-const TableBodyRow = styled.div`
-    display: flex;
-    align-items: stretch;
-    width: 100%;
-    min-height: 9.6rem;
-    font-size: 1.6rem;
-    line-height: 2.8rem;
-    color: ${COLORS.paragraphText};
-    position: relative;
-    border-radius: 0.5rem;
-
-    ${TableCell}:nth-child(2), ${TableCell}:nth-child(3) {
-        font-size: 1.4rem;
-        line-height: 2rem;
-        color: ${COLORS.grayText};
-    }
-
-    ${respondDown(Breakpoints.md)`
-            flex-direction: column;
-            
-            ${TableCell}:nth-child(2), ${TableCell}:nth-child(3) {
-                font-size: 1.4rem;
-                line-height: 2.8rem;
-                color: ${COLORS.grayText};
-            }
-      `}
-`;
-
-const PairCell = styled(TableCell)`
-    flex: 3;
-`;
-
-const RightCell = styled(TableCell)`
-    justify-content: flex-end;
-
-    label {
-        display: none;
-    }
-
-    ${respondDown(Breakpoints.md)`
-        justify-content: space-between;
-        margin-top: 1.6rem;
-        
-        label {
-            display: inline;
-        }
-    `}
-`;
-
-const ClickableCell = styled(RightCell)`
-    cursor: pointer;
-
-    &:hover {
-        color: ${COLORS.titleText};
-    }
-
-    svg {
-        margin-left: 0.5rem;
-    }
-`;
-
-const TableHeadRowStyled = styled(TableHeadRow)`
-    padding: 0.8rem;
-`;
-
 const LinkIcon = styled(Link)`
     margin-left: 0.5rem;
+`;
+
+const Amount = styled.div`
+    display: flex;
+    align-items: center;
+    font-size: 1.4rem;
+    line-height: 2rem;
+    color: ${COLORS.grayText};
+
+    a {
+        display: flex;
+        align-items: center;
+    }
 `;
 
 enum UrlParams {
@@ -294,103 +182,84 @@ const RewardsList = () => {
                     </Tooltip>
                 </LastUpdated>
             </Header>
-            <Table>
-                {rewards && loading && (
-                    <TableLoader>
-                        <PageLoader />
-                    </TableLoader>
-                )}
-
-                <TableHead>
-                    <TableHeadRowStyled>
-                        <PairCell>Market</PairCell>
-                        <ClickableCell
-                            onClick={() =>
+            <Table
+                pending={rewards && loading}
+                head={[
+                    { children: 'Market', flexSize: 1.5 },
+                    {
+                        children: 'SDEX daily reward',
+                        sort: {
+                            onClick: () =>
                                 changeSort(
                                     sort === RewardsSort.sdexUp
                                         ? RewardsSort.sdexDown
                                         : RewardsSort.sdexUp,
-                                )
-                            }
-                        >
-                            SDEX daily reward
-                            <IconSort
-                                isEnabled={
-                                    sort === RewardsSort.sdexUp || sort === RewardsSort.sdexDown
-                                }
-                                isReversed={sort === RewardsSort.sdexDown}
-                            />
-                        </ClickableCell>
-                        <ClickableCell
-                            onClick={() =>
+                                ),
+                            isEnabled: sort === RewardsSort.sdexUp || sort === RewardsSort.sdexDown,
+                            isReversed: sort === RewardsSort.sdexDown,
+                        },
+                        align: CellAlign.Right,
+                    },
+                    {
+                        children: 'AMM daily reward',
+                        sort: {
+                            onClick: () =>
                                 changeSort(
                                     sort === RewardsSort.ammUp
                                         ? RewardsSort.ammDown
                                         : RewardsSort.ammUp,
-                                )
-                            }
-                        >
-                            AMM daily reward
-                            <IconSort
-                                isEnabled={
-                                    sort === RewardsSort.ammUp || sort === RewardsSort.ammDown
-                                }
-                                isReversed={sort === RewardsSort.ammDown}
-                            />
-                        </ClickableCell>
-                        <ClickableCell
-                            onClick={() =>
+                                ),
+                            isEnabled: sort === RewardsSort.ammUp || sort === RewardsSort.ammDown,
+                            isReversed: sort === RewardsSort.ammDown,
+                        },
+                        align: CellAlign.Right,
+                    },
+                    {
+                        children: 'Total daily reward',
+                        sort: {
+                            onClick: () =>
                                 changeSort(
                                     sort === RewardsSort.totalUp
                                         ? RewardsSort.totalDown
                                         : RewardsSort.totalUp,
-                                )
-                            }
-                        >
-                            Total daily reward
-                            <IconSort
-                                isEnabled={
-                                    sort === RewardsSort.totalUp || sort === RewardsSort.totalDown
-                                }
-                                isReversed={sort === RewardsSort.totalDown}
-                            />
-                        </ClickableCell>
-                    </TableHeadRowStyled>
-                </TableHead>
-                <TableBody>
-                    {rewards.map(
-                        ({
-                            daily_sdex_reward,
-                            daily_total_reward,
-                            daily_amm_reward,
-                            market_key,
-                        }) => (
-                            <TableBodyRowWrap
-                                key={
-                                    market_key.asset1_code +
-                                    market_key.asset1_issuer +
-                                    market_key.asset2_code +
-                                    market_key.asset2_issuer
-                                }
-                                onClick={() => goToMarketPage(market_key)}
-                            >
-                                <TableBodyRow>
-                                    <PairCell>
-                                        <Pair
-                                            base={{
-                                                code: market_key.asset1_code,
-                                                issuer: market_key.asset1_issuer,
-                                            }}
-                                            counter={{
-                                                code: market_key.asset2_code,
-                                                issuer: market_key.asset2_issuer,
-                                            }}
-                                            withoutLink
-                                            mobileVerticalDirections
-                                        />
-                                    </PairCell>
-                                    <RightCell>
-                                        <label>SDEX daily reward</label>
+                                ),
+                            isEnabled:
+                                sort === RewardsSort.totalUp || sort === RewardsSort.totalDown,
+                            isReversed: sort === RewardsSort.totalDown,
+                        },
+                        align: CellAlign.Right,
+                    },
+                ]}
+                body={rewards.map(
+                    ({ daily_sdex_reward, daily_total_reward, daily_amm_reward, market_key }) => ({
+                        key:
+                            market_key.asset1_code +
+                            market_key.asset1_issuer +
+                            market_key.asset2_code +
+                            market_key.asset2_issuer,
+                        onRowClick: () => goToMarketPage(market_key),
+                        mobileFontSize: '1.4rem',
+                        rowItems: [
+                            {
+                                children: (
+                                    <Pair
+                                        base={{
+                                            code: market_key.asset1_code,
+                                            issuer: market_key.asset1_issuer,
+                                        }}
+                                        counter={{
+                                            code: market_key.asset2_code,
+                                            issuer: market_key.asset2_issuer,
+                                        }}
+                                        withoutLink
+                                        mobileVerticalDirections
+                                    />
+                                ),
+                                flexSize: 1.5,
+                            },
+                            {
+                                children: (
+                                    <Amount>
                                         <span>{formatBalance(daily_sdex_reward)} AQUA</span>
                                         <a
                                             href={`https://www.stellarx.com/markets/${marketKeyToString(
@@ -408,9 +277,14 @@ const RewardsList = () => {
                                         >
                                             <LinkIcon />
                                         </a>
-                                    </RightCell>
-                                    <RightCell>
-                                        <label>AMM daily reward</label>
+                                    </Amount>
+                                ),
+                                label: 'SDEX daily reward',
+                                align: CellAlign.Right,
+                            },
+                            {
+                                children: (
+                                    <Amount>
                                         <span>{formatBalance(daily_amm_reward)} AQUA</span>{' '}
                                         <a
                                             href={`https://www.stellarx.com/amm/analytics/${marketKeyToString(
@@ -428,17 +302,21 @@ const RewardsList = () => {
                                         >
                                             <LinkIcon />
                                         </a>
-                                    </RightCell>
-                                    <RightCell>
-                                        <label>Total daily reward</label>
-                                        <span>{formatBalance(daily_total_reward)} AQUA</span>
-                                    </RightCell>
-                                </TableBodyRow>
-                            </TableBodyRowWrap>
-                        ),
-                    )}
-                </TableBody>
-            </Table>
+                                    </Amount>
+                                ),
+                                label: 'AMM daily reward',
+                                align: CellAlign.Right,
+                            },
+                            {
+                                children: `${formatBalance(daily_total_reward)} AQUA`,
+                                label: 'Total daily reward',
+                                align: CellAlign.Right,
+                                labelColor: COLORS.titleText,
+                            },
+                        ],
+                    }),
+                )}
+            />
         </Container>
     );
 };

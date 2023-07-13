@@ -1,15 +1,7 @@
 import * as React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import {
-    Cell,
-    ExternalLinkStyled,
-    Header,
-    Section,
-    Table,
-    TableBodyRow,
-    Title,
-} from '../AmmRewards/AmmRewards';
+import { ExternalLinkStyled, Header, Section, Title } from '../AmmRewards/AmmRewards';
 import PageLoader from '../../../common/basics/PageLoader';
 import { getDistributionForAccount } from '../../locker/api/api';
 import useAuthStore from '../../../store/authStore/useAuthStore';
@@ -17,7 +9,6 @@ import { StellarService, ToastService } from '../../../common/services/globalSer
 import { StellarEvents } from '../../../common/services/stellar.service';
 import { formatBalance, getDateString, roundToPrecision } from '../../../common/helpers/helpers';
 import ProgressLine from '../../../common/basics/ProgressLine';
-import { TableBody, TableHead, TableHeadRow } from '../../vote/components/MainPage/Table/Table';
 import Button from '../../../common/basics/Button';
 import { LoginTypes } from '../../../store/authStore/types';
 import {
@@ -32,18 +23,11 @@ import { Breakpoints, COLORS } from '../../../common/styles';
 import { flexRowSpaceBetween, respondDown } from '../../../common/mixins';
 import Info from '../../../common/assets/img/icon-info.svg';
 import Tooltip, { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
+import Table, { CellAlign } from '../../../common/basics/Table';
 
 const Container = styled.div`
     display: flex;
     flex-direction: column;
-`;
-
-const TableHeadRowStyled = styled(TableBodyRow)`
-    min-height: 5rem;
-`;
-
-const RightCell = styled(Cell)`
-    justify-content: flex-end;
 `;
 
 const TableStyled = styled(Table)`
@@ -353,73 +337,72 @@ const IceLocks = ({ ammAquaBalance }) => {
                                 </Tooltip>
                             }
                         />
-                        <TableStyled>
-                            <TableHead>
-                                <TableHeadRow>
-                                    <Cell>Lock start</Cell>
-                                    <Cell>Lock end</Cell>
-                                    <RightCell>AQUA locked</RightCell>
-                                    <RightCell>ICE received</RightCell>
-                                    <RightCell>Status</RightCell>
-                                </TableHeadRow>
-                            </TableHead>
-                            <TableBody>
-                                {locks.map((lock) => {
-                                    const lockEndTimestamp = new Date(
-                                        lock.claimants?.[0].predicate?.not?.abs_before,
-                                    ).getTime();
-                                    const status =
-                                        Number(lockEndTimestamp) > Date.now() ? (
-                                            <span>Upcoming</span>
-                                        ) : (
-                                            <Button
-                                                isSmall
-                                                disabled={
-                                                    Boolean(pendingId) && lock.id !== pendingId
-                                                }
-                                                pending={lock.id === pendingId}
-                                                onClick={() => onSubmit(lock.id)}
-                                            >
-                                                CLAIM
-                                            </Button>
-                                        );
-                                    return (
-                                        <TableHeadRowStyled key={lock.id}>
-                                            <Cell>
-                                                <label>Lock start:</label>
-                                                {getDateString(
-                                                    new Date(lock.last_modified_time).getTime(),
-                                                    { withTime: true },
-                                                )}
-                                            </Cell>
-                                            <Cell>
-                                                <label>Lock end:</label>
-                                                {getDateString(lockEndTimestamp, {
-                                                    withTime: true,
-                                                })}
-                                            </Cell>
-                                            <RightCell>
-                                                <label>AQUA locked:</label>
-                                                {formatBalance(+lock.amount, true)} AQUA
-                                            </RightCell>
-                                            <RightCell>
-                                                <label>ICE received :</label>
-                                                {getIceAmount(lock.id)
-                                                    ? `${formatBalance(
-                                                          getIceAmount(lock.id),
-                                                          true,
-                                                      )} ICE`
-                                                    : '-'}
-                                            </RightCell>
-                                            <RightCell>
-                                                <label>Status:</label>
-                                                {status}
-                                            </RightCell>
-                                        </TableHeadRowStyled>
+                        <TableStyled
+                            head={[
+                                { children: 'Lock start' },
+                                { children: 'Lock end' },
+                                { children: 'AQUA locked', align: CellAlign.Right },
+                                { children: 'ICE received', align: CellAlign.Right },
+                                { children: 'Status', align: CellAlign.Right },
+                            ]}
+                            body={locks.map((lock) => {
+                                const lockEndTimestamp = new Date(
+                                    lock.claimants?.[0].predicate?.not?.abs_before,
+                                ).getTime();
+                                const status =
+                                    Number(lockEndTimestamp) > Date.now() ? (
+                                        <span>Upcoming</span>
+                                    ) : (
+                                        <Button
+                                            isSmall
+                                            disabled={Boolean(pendingId) && lock.id !== pendingId}
+                                            pending={lock.id === pendingId}
+                                            onClick={() => onSubmit(lock.id)}
+                                        >
+                                            CLAIM
+                                        </Button>
                                     );
-                                })}
-                            </TableBody>
-                        </TableStyled>
+                                return {
+                                    key: lock.id,
+                                    isNarrow: true,
+                                    rowItems: [
+                                        {
+                                            children: `${getDateString(
+                                                new Date(lock.last_modified_time).getTime(),
+                                                { withTime: true },
+                                            )}`,
+                                            label: 'Lock start:',
+                                        },
+                                        {
+                                            children: `${getDateString(lockEndTimestamp, {
+                                                withTime: true,
+                                            })}`,
+                                            label: 'Lock end:',
+                                        },
+                                        {
+                                            children: `${formatBalance(+lock.amount, true)} AQUA`,
+                                            label: 'AQUA locked:',
+                                            align: CellAlign.Right,
+                                        },
+                                        {
+                                            children: getIceAmount(lock.id)
+                                                ? `${formatBalance(
+                                                      getIceAmount(lock.id),
+                                                      true,
+                                                  )} ICE`
+                                                : '-',
+                                            label: 'ICE received:',
+                                            align: CellAlign.Right,
+                                        },
+                                        {
+                                            children: status,
+                                            label: 'Status:',
+                                            align: CellAlign.Right,
+                                        },
+                                    ],
+                                };
+                            })}
+                        />
                     </>
                 ) : (
                     <Empty>
