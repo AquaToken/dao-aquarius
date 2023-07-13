@@ -236,6 +236,7 @@ export default class WalletConnectServiceClass {
                 }, CONNECTION_TIMEOUT);
             }) as Promise<WalletConnectClient>,
         ]);
+        this.listenWalletConnectEvents();
 
         await new Promise((resolve) => {
             setTimeout(() => resolve(void 0), 2500);
