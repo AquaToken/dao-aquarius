@@ -13,19 +13,18 @@ import {
     AquaBalance,
     AquaLogo,
     Container,
-    DailyRewards,
     ExternalLinkStyled,
     getSortFunction,
     Header,
     InOffers,
     Section,
+    StyledLabel,
     Summary,
     Title,
     TOOLTIP_TEXT,
 } from '../AmmRewards/AmmRewards';
 import useAssetsStore from '../../../store/assetsStore/useAssetsStore';
 import DotsLoader from '../../../common/basics/DotsLoader';
-import Label from '../../../common/basics/Label';
 import BoostBanner from '../BoostBanner/BoostBanner';
 import Table, { CellAlign } from '../../../common/basics/Table';
 
@@ -275,11 +274,11 @@ const SdexRewards = ({ aquaUsdPrice }) => {
                                         {
                                             children: (
                                                 <>
-                                                    <DailyRewards>
+                                                    <span>
                                                         {formatBalance(dailyReward, true)} AQUA
-                                                    </DailyRewards>
+                                                    </span>
                                                     {Boolean(boost) && (
-                                                        <Label
+                                                        <StyledLabel
                                                             title={`Boosted ${boostValue}x`}
                                                             text={TOOLTIP_TEXT}
                                                             isBlue

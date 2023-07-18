@@ -55,7 +55,6 @@ const LabelInner = styled.div<{
     font-weight: 500;
     font-size: 0.8rem;
     line-height: 1.8rem;
-    margin-right: 1rem;
     cursor: help;
 `;
 
@@ -66,6 +65,7 @@ const Label = ({
     isRed,
     isDark,
     isBlue,
+    ...props
 }: {
     title: string;
     text?: string | React.ReactNode;
@@ -116,7 +116,13 @@ const Label = ({
             showOnHover
         >
             <LabelWrap>
-                <LabelInner isGreen={isGreen} isRed={isRed} isDark={isDark} isBlue={isBlue}>
+                <LabelInner
+                    isGreen={isGreen}
+                    isRed={isRed}
+                    isDark={isDark}
+                    isBlue={isBlue}
+                    {...props}
+                >
                     {title}
                 </LabelInner>
             </LabelWrap>

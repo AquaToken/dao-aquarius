@@ -100,8 +100,8 @@ export const TooltipInner = styled.span`
     `}
 `;
 
-export const DailyRewards = styled.span`
-    margin-right: 1rem;
+export const StyledLabel = styled(Label)`
+    margin-left: 1rem;
 `;
 
 export const InOffers = styled.div`
@@ -353,12 +353,12 @@ const AmmRewards = ({ aquaUsdPrice }) => {
                                         {
                                             children: (
                                                 <>
-                                                    <DailyRewards>
+                                                    <span>
                                                         {formatBalance(dailyReward, true)} AQUA
-                                                    </DailyRewards>
+                                                    </span>
 
                                                     {Boolean(boostedReward) && (
-                                                        <Label
+                                                        <StyledLabel
                                                             title={`Boosted ${boostValue}x`}
                                                             text={TOOLTIP_TEXT}
                                                             isBlue
