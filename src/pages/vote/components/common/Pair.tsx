@@ -77,7 +77,6 @@ const AssetsDetails = styled.div<{
         mobileVerticalDirections &&
         respondDown(Breakpoints.md)`
               margin-left: 0;
-              width: calc(100vw - 6.4rem);
           `}
 `;
 
