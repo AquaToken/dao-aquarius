@@ -267,7 +267,7 @@ export default class AccountService extends AccountResponse {
                 })
                 .map(async ({ contractId, asset, balance }) => {
                     return {
-                        isDeployed: await SorobanService.checkContactDeployed(contractId),
+                        isDeployed: await SorobanService.checkContractDeployed(contractId),
                         contractId,
                         asset,
                         balance,
