@@ -74,20 +74,20 @@ const ButtonCell = styled.div`
     justify-content: flex-end;
 `;
 
-export const A = new SorobanClient.Asset(
-    'A',
-    'GC6HLY2JXKXYXUU3XYC63O2RJNH4E3GEW26ABTHDF6AF6MY32B5QRISO',
+export const USDT = new SorobanClient.Asset(
+    'USDT',
+    'GAHPYWLK6YRN7CVYZOO4H3VDRZ7PVF5UJGLZCSPAEIKJE2XSWF5LAGER',
 );
-export const B = new SorobanClient.Asset(
-    'B',
-    'GC6HLY2JXKXYXUU3XYC63O2RJNH4E3GEW26ABTHDF6AF6MY32B5QRISO',
+export const USDC = new SorobanClient.Asset(
+    'USDC',
+    'GAHPYWLK6YRN7CVYZOO4H3VDRZ7PVF5UJGLZCSPAEIKJE2XSWF5LAGER',
 );
 
 const Amm = ({ balances }) => {
     const { account, isLogged } = useAuthStore();
 
-    const [base, setBase] = useState(A);
-    const [counter, setCounter] = useState(B);
+    const [base, setBase] = useState(USDT);
+    const [counter, setCounter] = useState(USDC);
     const [poolId, setPoolId] = useState(null);
     const [baseShares, setBaseShares] = useState(null);
     const [counterShares, setCounterShares] = useState(null);
@@ -143,7 +143,7 @@ const Amm = ({ balances }) => {
     };
 
     const neededInTestAssets =
-        account?.getAssetBalance(A) === null || account?.getAssetBalance(B) === null;
+        account?.getAssetBalance(USDT) === null || account?.getAssetBalance(USDC) === null;
 
     const getTestTokens = () => {
         setGetTokenPending(true);

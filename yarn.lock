@@ -6228,10 +6228,10 @@ js-xdr@^1.1.3:
     lodash "^4.17.5"
     long "^2.2.3"
 
-js-xdr@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/js-xdr/-/js-xdr-2.0.0.tgz#ef24ea27369ab60217c001fd0e27301f6981ba0a"
-  integrity sha512-4mctWHR47ejNcfpE8/Xl3l2wYqO1Qy09d1pveZRmarUz2BcuU/M8grzadxV6PoN/X0ywOb6cy6117qYUWkfeBA==
+js-xdr@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/js-xdr/-/js-xdr-3.0.0.tgz#fb74275de0ed3cec61269721140a576edf6fca7e"
+  integrity sha512-tSt6UKJ2L7t+yaQURGkHo9kop9qnVbChTlCu62zNiDbDZQoZb/YjUj2iFJ3lgelhfg9p5bhO2o/QX+g36TPsSQ==
 
 js-yaml@4.1.0:
   version "4.1.0"
@@ -8456,10 +8456,10 @@ sonic-boom@^2.2.1:
   dependencies:
     atomic-sleep "^1.0.0"
 
-soroban-client@^0.8.1:
-  version "0.8.1"
-  resolved "https://registry.yarnpkg.com/soroban-client/-/soroban-client-0.8.1.tgz#c9dba7f96b29d5ee07b01cf0f5455ad6ba891757"
-  integrity sha512-F+3K+hHlpXbSSdBMjvTlkim1tb2aMlg4OT+71r1ILk8T+bMFHXlZShettJg2VMQ402WGalBNN4Q9oSeoHsPVFQ==
+soroban-client@0.9.2:
+  version "0.9.2"
+  resolved "https://registry.yarnpkg.com/soroban-client/-/soroban-client-0.9.2.tgz#5abe4ab69abc7af9a152038bef550f7e2a72ec6e"
+  integrity sha512-PPQLvAQTF/y56ev9V9wdMze/K49u1Cj6F9rkiUlRy++wCpSAVjiRYG+duolYvjkzUFPon56xlgAc7tuP4EolWA==
   dependencies:
     axios "^1.4.0"
     bignumber.js "^9.1.1"
@@ -8469,7 +8469,7 @@ soroban-client@^0.8.1:
     eventsource "^2.0.2"
     lodash "^4.17.21"
     randombytes "^2.1.0"
-    stellar-base "9.0.0-soroban.3"
+    stellar-base "10.0.0-soroban.4"
     toml "^3.0.0"
     urijs "^1.19.1"
 
@@ -8611,17 +8611,17 @@ stdout-stream@^1.4.0:
   dependencies:
     readable-stream "^2.0.1"
 
-stellar-base@9.0.0-soroban.3:
-  version "9.0.0-soroban.3"
-  resolved "https://registry.yarnpkg.com/stellar-base/-/stellar-base-9.0.0-soroban.3.tgz#ac3a497de5fd86ffeda2ab77f26a04054fb71670"
-  integrity sha512-PaeIrspURhbDA0FSkH/mu/lQxxSYPplOdhIcW4VqmKW2kMm/ADXjyQr1y4tFIfv8EpIe5DCJ6sfIyadIoPd8HQ==
+stellar-base@10.0.0-soroban.4:
+  version "10.0.0-soroban.4"
+  resolved "https://registry.yarnpkg.com/stellar-base/-/stellar-base-10.0.0-soroban.4.tgz#9baeaec1f750473cb0dc00c6fa0f3ec23cf7177d"
+  integrity sha512-Afl2Mlh+aXokIHhy2x67Df5ofbss83oAOHV7pHLI0fsPlxAgs7YtbClzkNxvpnXyxQI77PMIWFJbT17Y3dR/+A==
   dependencies:
     base32.js "^0.1.0"
     bignumber.js "^9.1.1"
+    buffer "^6.0.3"
     crc "^4.3.2"
     crypto-browserify "^3.12.0"
-    js-xdr "^2.0.0"
-    lodash "^4.17.21"
+    js-xdr "^3.0.0"
     sha.js "^2.3.6"
     tweetnacl "^1.0.3"
   optionalDependencies:

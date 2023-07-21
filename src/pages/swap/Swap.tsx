@@ -15,7 +15,7 @@ import SwapIcon from '../../common/assets/img/icon-arrows-circle.svg';
 import { useDebounce } from '../../common/hooks/useDebounce';
 import Button from '../../common/basics/Button';
 import { IconFail } from '../../common/basics/Icons';
-import { A, B } from '../amm/Amm';
+import { USDT, USDC } from '../amm/Amm';
 
 const Container = styled.main`
     background-color: ${COLORS.lightGray};
@@ -90,8 +90,8 @@ const RevertButton = styled.div`
 const Swap = ({ balances }) => {
     const { account, isLogged } = useAuthStore();
 
-    const [base, setBase] = useState(A);
-    const [counter, setCounter] = useState(B);
+    const [base, setBase] = useState(USDT);
+    const [counter, setCounter] = useState(USDC);
     const [poolId, setPoolId] = useState(null);
 
     const [baseShares, setBaseShares] = useState(null);

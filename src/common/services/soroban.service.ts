@@ -9,11 +9,11 @@ import SuccessModal from '../../pages/amm/SuccessModal/SuccessModal';
 const SOROBAN_SERVER = 'https://rpc-futurenet.stellar.org:443/';
 
 // SMART CONTACTS IDs
-const AMM_SMART_CONTACT_ID = '1162a67f9d811df78425fc5bab886da125cf6f886f90fd0e660cfa15a1fb77e8';
+const AMM_SMART_CONTACT_ID = '275936a642c3bb8594f0175e16cbac664415e0dcff2440e71b53833616cf51bd';
 
-const POOL_CONTACT_WASM_HASH = 'bb26bea691608c46095827cbf1af1c898f5edfdbd6573ea6485a2aaba93b2d73';
+const POOL_CONTACT_WASM_HASH = '588c9c473cf5ada4716d9a039b5cc0ae75077aa26e17bbccf300af0e271c8aef';
 
-const TOKEN_CONTACT_WASM_HASH = '68f5c739b568664e3c4f4b7787958ce4ba527cc310fb0de0fea707dc1d6bd3c3';
+const TOKEN_CONTACT_WASM_HASH = '9fb6e88690366661fa27537bdc02f4f0275dc1d259f95b8455132d43492bccd6';
 
 enum AMM_CONTRACT_METHOD {
     GET_OR_CREATE_POOL = 'get_or_create_pool',
@@ -27,12 +27,11 @@ enum AMM_CONTRACT_METHOD {
 
 enum ASSET_CONTRACT_METHOD {
     GET_ALLOWANCE = 'allowance',
-    INCREASE_ALLOWANCE = 'increase_allowance',
-    DECREASE_ALLOWANCE = 'decrease_allowance',
+    APPROVE_ALLOWANCE = 'approve',
     GET_BALANCE = 'balance',
 }
 
-const FEE = '100';
+const FEE = '1000';
 
 export default class SorobanServiceClass {
     server: SorobanClient.Server | null = null;
@@ -62,18 +61,13 @@ export default class SorobanServiceClass {
 
     getTestAssets() {
         const issuerKeypair = SorobanClient.Keypair.fromSecret(
-            'SCVKX7O35CLACSVJZ6K6VHMGOU5YNEZFU7ORQ2RSL446UHC2PHRRDL3I',
+            'SBPQCB4DOUQ26OC43QNAA3ODZOGECHJUVHDHYRHKYPL4SA22RRYGHQCX',
         );
-        const A = new SorobanClient.Asset('A', issuerKeypair.publicKey());
-        const B = new SorobanClient.Asset('B', issuerKeypair.publicKey());
-        const FRS1 = new SorobanClient.Asset(
-            'FRS1',
-            'GC6HLY2JXKXYXUU3XYC63O2RJNH4E3GEW26ABTHDF6AF6MY32B5QRISO',
-        );
-        const SND1 = new SorobanClient.Asset(
-            'SND1',
-            'GC6HLY2JXKXYXUU3XYC63O2RJNH4E3GEW26ABTHDF6AF6MY32B5QRISO',
-        );
+        const USDT = new SorobanClient.Asset('USDT', issuerKeypair.publicKey());
+        const USDC = new SorobanClient.Asset('USDC', issuerKeypair.publicKey());
+        const ETH = new SorobanClient.Asset('ETH', issuerKeypair.publicKey());
+        const BTC = new SorobanClient.Asset('BTC', issuerKeypair.publicKey());
+
         return this.server
             .getAccount(this.keypair.publicKey())
             .then((acc) => {
@@ -83,22 +77,22 @@ export default class SorobanServiceClass {
                 })
                     .addOperation(
                         SorobanClient.Operation.changeTrust({
-                            asset: A,
+                            asset: USDC,
                         }),
                     )
                     .addOperation(
                         SorobanClient.Operation.changeTrust({
-                            asset: B,
+                            asset: USDT,
                         }),
                     )
                     .addOperation(
                         SorobanClient.Operation.changeTrust({
-                            asset: FRS1,
+                            asset: BTC,
                         }),
                     )
                     .addOperation(
                         SorobanClient.Operation.changeTrust({
-                            asset: SND1,
+                            asset: ETH,
                         }),
                     )
                     .setTimeout(SorobanClient.TimeoutInfinite)
@@ -120,28 +114,28 @@ export default class SorobanServiceClass {
                             .addOperation(
                                 SorobanClient.Operation.payment({
                                     destination: this.keypair.publicKey(),
-                                    asset: A,
+                                    asset: USDT,
                                     amount: '10000',
                                 }),
                             )
                             .addOperation(
                                 SorobanClient.Operation.payment({
                                     destination: this.keypair.publicKey(),
-                                    asset: B,
+                                    asset: USDC,
                                     amount: '10000',
                                 }),
                             )
                             .addOperation(
                                 SorobanClient.Operation.payment({
                                     destination: this.keypair.publicKey(),
-                                    asset: FRS1,
+                                    asset: ETH,
                                     amount: '10000',
                                 }),
                             )
                             .addOperation(
                                 SorobanClient.Operation.payment({
                                     destination: this.keypair.publicKey(),
-                                    asset: SND1,
+                                    asset: BTC,
                                     amount: '10000',
                                 }),
                             )
@@ -175,7 +169,12 @@ export default class SorobanServiceClass {
             console.log('TX', res);
             if (res.status === 'SUCCESS') {
                 if (resolver) {
-                    resolver(res.resultXdr);
+                    const result = xdr.TransactionMeta.fromXDR(
+                        Buffer.from(res.resultMetaXdr, 'base64'),
+                    );
+
+                    // @ts-ignore
+                    resolver(result.value().sorobanMeta().returnValue());
                 }
                 return;
             }
@@ -206,35 +205,38 @@ export default class SorobanServiceClass {
     }
 
     getAssetContractId(asset: Asset): string {
-        const networkHash: Buffer = Buffer.from(
-            sha256.arrayBuffer(SorobanClient.Networks.FUTURENET),
-        );
+        const networkId: Buffer = Buffer.from(sha256.arrayBuffer(SorobanClient.Networks.FUTURENET));
 
-        const fromAsset: xdr.HashIdPreimageFromAsset = new xdr.HashIdPreimageFromAsset({
-            asset: asset.toXDRObject(),
-            networkId: networkHash,
+        const contractIdPreimage: xdr.ContractIdPreimage =
+            xdr.ContractIdPreimage.contractIdPreimageFromAsset(asset.toXDRObject());
+
+        const hashIdPreimageContractId = new xdr.HashIdPreimageContractId({
+            networkId,
+            contractIdPreimage,
         });
 
         const data: xdr.HashIdPreimage =
-            xdr.HashIdPreimage.envelopeTypeContractIdFromAsset(fromAsset);
+            xdr.HashIdPreimage.envelopeTypeContractId(hashIdPreimageContractId);
 
         return sha256(data.toXDR());
     }
 
-    checkContactDeployed(contractId: string): Promise<boolean> {
+    checkContractDeployed(contractId: string): Promise<boolean> {
         const contractIdBuffer: Buffer = Buffer.from(binascii.unhexlify(contractId), 'ascii');
 
         const ledgerKey: xdr.LedgerKey = xdr.LedgerKey.contractData(
             new xdr.LedgerKeyContractData({
-                contractId: contractIdBuffer,
-                key: xdr.ScVal.scvLedgerKeyContractExecutable(),
+                contract: xdr.ScAddress.scAddressTypeContract(contractIdBuffer),
+                key: xdr.ScVal.scvLedgerKeyContractInstance(),
+                durability: xdr.ContractDataDurability.persistent(),
+                bodyType: xdr.ContractEntryBodyType.dataEntry(),
             }),
         );
 
         return this.server
             .getLedgerEntries([ledgerKey])
             .then(({ entries }) => {
-                return Boolean(entries.length);
+                return Boolean(entries?.length);
             })
             .catch(() => {
                 return false;
@@ -264,19 +266,7 @@ export default class SorobanServiceClass {
                 );
             })
             .then((res) => this.processResponse(res))
-            .then((res) => {
-                const result = xdr.TransactionResult.fromXDR(Buffer.from(res, 'base64'));
-
-                return result
-                    .result()
-                    .value()[0]
-                    .value()
-                    .value()
-                    .value()[0]
-                    .value()
-                    .value()
-                    .toString('hex');
-            });
+            .then((res) => res.value().value().toString('hex'));
     }
 
     getPoolShareId(poolId: string) {
@@ -286,9 +276,9 @@ export default class SorobanServiceClass {
             AMM_CONTRACT_METHOD.SHARE_ID,
         )
             .then((tx) => this.server.simulateTransaction(tx))
-            .then(({ results }) => {
-                if (results) {
-                    const xdr = results[0].xdr;
+            .then((res) => {
+                if (res.results) {
+                    const xdr = res.results[0].xdr;
 
                     let scVal = SorobanClient.xdr.ScVal.fromXDR(Buffer.from(xdr, 'base64'));
 
@@ -300,48 +290,26 @@ export default class SorobanServiceClass {
     }
 
     getTokenBalance(token: Asset | string, where: string) {
-        return (
-            this.buildSmartContactTx(
-                this.keypair.publicKey(),
-                typeof token === 'string' ? token : this.getAssetContractId(token),
-                ASSET_CONTRACT_METHOD.GET_BALANCE,
-                SorobanClient.StrKey.isValidEd25519PublicKey(where)
-                    ? this.publicKeyToScVal(where)
-                    : this.hashToAddressScVal(where),
-            )
-                // .then((tx) => {
-                //     return this.server.prepareTransaction(tx);
-                // })
-                // .then((prepared) => {
-                //     prepared.sign(this.keypair);
-                //     return this.submitTx(
-                //         prepared as SorobanClient.Transaction<
-                //             SorobanClient.Memo<SorobanClient.MemoType>,
-                //             SorobanClient.Operation[]
-                //         >,
-                //     );
-                // })
-                // .then((res) => this.processResponse(res))
-                // .then((res) => {
-                //     const result = xdr.TransactionResult.fromXDR(Buffer.from(res, 'base64'));
-                //
-                //     const i128 = result.result().value()[0].value().value().value()[0].value();
-                //
-                //     return this.i128ToInt(i128);
-                // });
-                .then((tx) => this.server.simulateTransaction(tx))
-                .then(({ results }) => {
-                    if (results) {
-                        const xdr = results[0].xdr;
+        return this.buildSmartContactTx(
+            this.keypair.publicKey(),
+            typeof token === 'string' ? token : this.getAssetContractId(token),
+            ASSET_CONTRACT_METHOD.GET_BALANCE,
+            SorobanClient.StrKey.isValidEd25519PublicKey(where)
+                ? this.publicKeyToScVal(where)
+                : this.hashToAddressScVal(where),
+        )
+            .then((tx) => this.server.simulateTransaction(tx))
+            .then(({ results }) => {
+                if (results) {
+                    const xdr = results[0].xdr;
 
-                        let scVal = SorobanClient.xdr.ScVal.fromXDR(Buffer.from(xdr, 'base64'));
+                    let scVal = SorobanClient.xdr.ScVal.fromXDR(Buffer.from(xdr, 'base64'));
 
-                        return this.i128ToInt(scVal.i128());
-                    }
+                    return this.i128ToInt(scVal.i128());
+                }
 
-                    return null;
-                })
-        );
+                return null;
+            });
     }
 
     getPoolAllowance(poolId: string, token: Asset | string) {
@@ -368,34 +336,31 @@ export default class SorobanServiceClass {
             });
     }
 
-    giveAllowance(poolId: string, asset: Asset, amount: string) {
-        return this.getPoolAllowance(poolId, asset).then((allowance) => {
-            return this.buildSmartContactTx(
-                this.keypair.publicKey(),
-                this.getAssetContractId(asset),
-                +allowance < +amount
-                    ? ASSET_CONTRACT_METHOD.INCREASE_ALLOWANCE
-                    : ASSET_CONTRACT_METHOD.DECREASE_ALLOWANCE,
-                this.publicKeyToScVal(this.keypair.publicKey()),
-                this.hashToAddressScVal(poolId),
-                this.amountToScVal(Math.abs(+allowance - +amount).toFixed(7)),
-            )
-                .then((tx) => {
-                    return this.server.prepareTransaction(tx);
-                })
-                .then((prepared) => {
-                    prepared.sign(this.keypair);
-                    return this.submitTx(
-                        prepared as SorobanClient.Transaction<
-                            SorobanClient.Memo<SorobanClient.MemoType>,
-                            SorobanClient.Operation[]
-                        >,
-                    );
-                })
-                .then((res) => {
-                    return this.processResponse(res);
-                });
-        });
+    giveAllowance(poolId: string, asset: Asset | string, amount: string) {
+        return this.buildSmartContactTx(
+            this.keypair.publicKey(),
+            typeof asset === 'string' ? asset : this.getAssetContractId(asset),
+            ASSET_CONTRACT_METHOD.APPROVE_ALLOWANCE,
+            this.publicKeyToScVal(this.keypair.publicKey()),
+            this.hashToAddressScVal(poolId),
+            this.amountToScVal(amount),
+            xdr.ScVal.scvU32(2 ** 20),
+        )
+            .then((tx) => {
+                return this.server.prepareTransaction(tx);
+            })
+            .then((prepared) => {
+                prepared.sign(this.keypair);
+                return this.submitTx(
+                    prepared as SorobanClient.Transaction<
+                        SorobanClient.Memo<SorobanClient.MemoType>,
+                        SorobanClient.Operation[]
+                    >,
+                );
+            })
+            .then((res) => {
+                return this.processResponse(res);
+            });
     }
 
     getPoolPrice(a: Asset, b: Asset) {
@@ -441,121 +406,35 @@ export default class SorobanServiceClass {
         const [base, counter] = idA > idB ? [b, a] : [a, b];
         const [baseAmount, counterAmount] = idA > idB ? [bAmount, aAmount] : [aAmount, bAmount];
 
-        return Promise.all([
-            this.getPoolAllowance(poolId, base),
-            this.getPoolAllowance(poolId, counter),
-        ])
-            .then(([baseAllowance, counterAllowance]) => {
-                const baseHostFunction = new xdr.HostFunction({
-                    args: xdr.HostFunctionArgs.hostFunctionTypeInvokeContract([
-                        this.hashToScVal(this.getAssetContractId(base)),
-                        this.stringToScVal(
-                            +baseAllowance < +baseAmount
-                                ? ASSET_CONTRACT_METHOD.INCREASE_ALLOWANCE
-                                : ASSET_CONTRACT_METHOD.DECREASE_ALLOWANCE,
-                        ),
-                        this.publicKeyToScVal(this.keypair.publicKey()),
-                        this.hashToAddressScVal(poolId),
-                        this.amountToScVal(Math.abs(+baseAllowance - +baseAmount).toFixed(7)),
-                    ]),
-                    auth: [],
-                });
-
-                const counterHostFunction = new xdr.HostFunction({
-                    args: xdr.HostFunctionArgs.hostFunctionTypeInvokeContract([
-                        this.hashToScVal(this.getAssetContractId(counter)),
-                        this.stringToScVal(
-                            +counterAllowance < +counterAmount
-                                ? ASSET_CONTRACT_METHOD.INCREASE_ALLOWANCE
-                                : ASSET_CONTRACT_METHOD.DECREASE_ALLOWANCE,
-                        ),
-                        this.publicKeyToScVal(this.keypair.publicKey()),
-                        this.hashToAddressScVal(poolId),
-                        this.amountToScVal(Math.abs(+counterAllowance - +counterAmount).toFixed(7)),
-                    ]),
-                    auth: [],
-                });
-
-                return [baseHostFunction, counterHostFunction];
-            })
-            .then((hostFunctions) => {
-                const auth = new xdr.ContractAuth({
-                    addressWithNonce: null,
-                    signatureArgs: [],
-                    rootInvocation: new xdr.AuthorizedInvocation({
-                        contractId: Buffer.from(binascii.unhexlify(AMM_SMART_CONTACT_ID), 'ascii'),
-                        functionName: AMM_CONTRACT_METHOD.DEPOSIT,
-                        args: [
-                            this.publicKeyToScVal(this.keypair.publicKey()),
-                            this.assetToScVal(base),
-                            this.assetToScVal(counter),
-                            this.amountToScVal(baseAmount),
-                            this.amountToScVal(baseAmount),
-                            this.amountToScVal(counterAmount),
-                            this.amountToScVal(counterAmount),
-                        ],
-                        subInvocations: [
-                            new xdr.AuthorizedInvocation({
-                                contractId: Buffer.from(binascii.unhexlify(poolId), 'ascii'),
-                                functionName: 'deposit',
-                                args: [
-                                    this.publicKeyToScVal(this.keypair.publicKey()),
-                                    this.amountToScVal(baseAmount),
-                                    this.amountToScVal(baseAmount),
-                                    this.amountToScVal(counterAmount),
-                                    this.amountToScVal(counterAmount),
-                                ],
-                                subInvocations: [],
-                            }),
-                        ],
-                    }),
-                });
-
-                const op = SorobanClient.Operation.invokeHostFunctions({
-                    functions: [
-                        ...hostFunctions,
-                        new xdr.HostFunction({
-                            args: xdr.HostFunctionArgs.hostFunctionTypeInvokeContract([
-                                this.hashToScVal(AMM_SMART_CONTACT_ID),
-                                this.stringToScVal(AMM_CONTRACT_METHOD.DEPOSIT),
-                                this.publicKeyToScVal(this.keypair.publicKey()),
-                                this.assetToScVal(base),
-                                this.assetToScVal(counter),
-                                this.amountToScVal(baseAmount),
-                                this.amountToScVal('0'),
-                                this.amountToScVal(counterAmount),
-                                this.amountToScVal('0'),
-                            ]),
-                            auth: [auth],
-                        }),
-                    ],
-                });
-
-                return [op];
-            })
-            .then((ops) => {
-                return this.buildTxFromOps(this.keypair.publicKey(), ops);
-            })
-            .then((tx) => {
-                return this.server.prepareTransaction(tx);
-            })
+        return this.giveAllowance(poolId, base, baseAmount)
+            .then(() => this.giveAllowance(poolId, counter, counterAmount))
+            .then(() =>
+                this.buildSmartContactTx(
+                    this.keypair.publicKey(),
+                    AMM_SMART_CONTACT_ID,
+                    AMM_CONTRACT_METHOD.DEPOSIT,
+                    this.publicKeyToScVal(this.keypair.publicKey()),
+                    this.assetToScVal(base),
+                    this.assetToScVal(counter),
+                    this.amountToScVal(baseAmount),
+                    this.amountToScVal('0'),
+                    this.amountToScVal(counterAmount),
+                    this.amountToScVal('0'),
+                ),
+            )
+            .then((tx) => this.server.prepareTransaction(tx))
             .then((prepared) => {
                 prepared.sign(this.keypair);
-
-                return this.server.sendTransaction(prepared);
+                return this.submitTx(
+                    prepared as SorobanClient.Transaction<
+                        SorobanClient.Memo<SorobanClient.MemoType>,
+                        SorobanClient.Operation[]
+                    >,
+                );
             })
+            .then((res) => this.processResponse(res))
             .then((res) => {
-                return this.processResponse(res);
-            })
-            .then((res) => {
-                const result = xdr.TransactionResult.fromXDR(Buffer.from(res, 'base64'));
-                const [baseAmount, counterAmount] = result
-                    .result()
-                    .value()[0]
-                    .value()
-                    .value()
-                    .value()[2]
-                    .value();
+                const [baseAmount, counterAmount] = res.value();
 
                 ModalService.confirmAllModals();
 
@@ -584,97 +463,29 @@ export default class SorobanServiceClass {
         const [base, counter] = idA > idB ? [b, a] : [a, b];
         const [baseAmount, counterAmount] = idA > idB ? [bAmount, aAmount] : [aAmount, bAmount];
 
-        return this.getPoolAllowance(poolId, shareId)
-            .then((allowance) => {
-                return new xdr.HostFunction({
-                    args: xdr.HostFunctionArgs.hostFunctionTypeInvokeContract([
-                        this.hashToScVal(shareId),
-                        this.stringToScVal(
-                            +allowance < +shareAmount
-                                ? ASSET_CONTRACT_METHOD.INCREASE_ALLOWANCE
-                                : ASSET_CONTRACT_METHOD.DECREASE_ALLOWANCE,
-                        ),
-                        this.publicKeyToScVal(this.keypair.publicKey()),
-                        this.hashToAddressScVal(poolId),
-                        this.amountToScVal(Math.abs(+allowance - +shareAmount).toFixed(7)),
-                    ]),
-                    auth: [],
-                });
-            })
-            .then((hostFunction) => {
-                const auth = new xdr.ContractAuth({
-                    addressWithNonce: null,
-                    signatureArgs: [],
-                    rootInvocation: new xdr.AuthorizedInvocation({
-                        contractId: Buffer.from(binascii.unhexlify(AMM_SMART_CONTACT_ID), 'ascii'),
-                        functionName: AMM_CONTRACT_METHOD.WITHDRAW,
-                        args: [
-                            this.publicKeyToScVal(this.keypair.publicKey()),
-                            this.assetToScVal(base),
-                            this.assetToScVal(counter),
-                            this.amountToScVal(shareAmount),
-                            this.amountToScVal(baseAmount),
-                            this.amountToScVal(counterAmount),
-                        ],
-                        subInvocations: [
-                            new xdr.AuthorizedInvocation({
-                                contractId: Buffer.from(binascii.unhexlify(poolId), 'ascii'),
-                                functionName: 'withdraw',
-                                args: [
-                                    this.publicKeyToScVal(this.keypair.publicKey()),
-                                    this.amountToScVal(shareAmount),
-                                    this.amountToScVal(baseAmount),
-                                    this.amountToScVal(counterAmount),
-                                ],
-                                subInvocations: [],
-                            }),
-                        ],
-                    }),
-                });
-                const op = SorobanClient.Operation.invokeHostFunctions({
-                    functions: [
-                        hostFunction,
-                        new xdr.HostFunction({
-                            args: xdr.HostFunctionArgs.hostFunctionTypeInvokeContract([
-                                this.hashToScVal(AMM_SMART_CONTACT_ID),
-                                this.stringToScVal(AMM_CONTRACT_METHOD.WITHDRAW),
-                                this.publicKeyToScVal(this.keypair.publicKey()),
-                                this.assetToScVal(base),
-                                this.assetToScVal(counter),
-                                this.amountToScVal(shareAmount),
-                                this.amountToScVal(baseAmount),
-                                this.amountToScVal(counterAmount),
-                            ]),
-                            auth: [auth],
-                        }),
-                    ],
-                });
-                return [op];
-            })
-            .then((ops) => {
-                return this.buildTxFromOps(this.keypair.publicKey(), ops);
-            })
-            .then((tx) => {
-                return this.server.prepareTransaction(tx);
-            })
+        return this.giveAllowance(poolId, shareId, shareAmount)
+            .then(() =>
+                this.buildSmartContactTx(
+                    this.keypair.publicKey(),
+                    AMM_SMART_CONTACT_ID,
+                    AMM_CONTRACT_METHOD.WITHDRAW,
+                    this.publicKeyToScVal(this.keypair.publicKey()),
+                    this.assetToScVal(base),
+                    this.assetToScVal(counter),
+                    this.amountToScVal(shareAmount),
+                    this.amountToScVal(baseAmount),
+                    this.amountToScVal(counterAmount),
+                ),
+            )
+            .then((tx) => this.server.prepareTransaction(tx))
             .then((prepared) => {
                 prepared.sign(this.keypair);
 
                 return this.server.sendTransaction(prepared);
             })
+            .then((res) => this.processResponse(res))
             .then((res) => {
-                return this.processResponse(res);
-            })
-            .then((res) => {
-                const result = xdr.TransactionResult.fromXDR(Buffer.from(res, 'base64'));
-
-                const [baseAmount, counterAmount] = result
-                    .result()
-                    .value()[0]
-                    .value()
-                    .value()
-                    .value()[1]
-                    .value();
+                const [baseAmount, counterAmount] = res.value();
 
                 ModalService.confirmAllModals();
 
@@ -722,99 +533,31 @@ export default class SorobanServiceClass {
 
         const maxBaseAmount = ((1 + SLIPPAGE) * Number(estimatedAmount)).toFixed(7);
 
-        return this.getPoolAllowance(poolId, base)
-            .then((allowance) => {
-                return new xdr.HostFunction({
-                    args: xdr.HostFunctionArgs.hostFunctionTypeInvokeContract([
-                        this.hashToScVal(this.getAssetContractId(base)),
-                        this.stringToScVal(
-                            +allowance < +maxBaseAmount
-                                ? ASSET_CONTRACT_METHOD.INCREASE_ALLOWANCE
-                                : ASSET_CONTRACT_METHOD.DECREASE_ALLOWANCE,
-                        ),
-                        this.publicKeyToScVal(this.keypair.publicKey()),
-                        this.hashToAddressScVal(poolId),
-                        this.amountToScVal(Math.abs(+allowance - +maxBaseAmount).toFixed(7)),
-                    ]),
-                    auth: [],
-                });
-            })
-            .then((hostFunction) => {
-                const auth = new xdr.ContractAuth({
-                    addressWithNonce: null,
-                    signatureArgs: [],
-                    rootInvocation: new xdr.AuthorizedInvocation({
-                        contractId: Buffer.from(binascii.unhexlify(AMM_SMART_CONTACT_ID), 'ascii'),
-                        functionName: AMM_CONTRACT_METHOD.SWAP,
-                        args: [
-                            this.publicKeyToScVal(this.keypair.publicKey()),
-                            this.assetToScVal(base),
-                            this.assetToScVal(counter),
-                            this.amountToScVal(amount),
-                            this.amountToScVal(maxBaseAmount),
-                        ],
-                        subInvocations: [
-                            new xdr.AuthorizedInvocation({
-                                contractId: Buffer.from(binascii.unhexlify(poolId), 'ascii'),
-                                functionName: 'swap',
-                                args: [
-                                    this.publicKeyToScVal(this.keypair.publicKey()),
-                                    this.boolToScVal(false),
-                                    this.amountToScVal(amount),
-                                    this.amountToScVal(maxBaseAmount),
-                                ],
-                                subInvocations: [],
-                            }),
-                        ],
-                    }),
-                });
-
-                const op = SorobanClient.Operation.invokeHostFunctions({
-                    functions: [
-                        hostFunction,
-                        new xdr.HostFunction({
-                            args: xdr.HostFunctionArgs.hostFunctionTypeInvokeContract([
-                                this.hashToScVal(AMM_SMART_CONTACT_ID),
-                                this.stringToScVal(AMM_CONTRACT_METHOD.SWAP),
-                                this.publicKeyToScVal(this.keypair.publicKey()),
-                                this.assetToScVal(base),
-                                this.assetToScVal(counter),
-                                this.amountToScVal(amount),
-                                this.amountToScVal(maxBaseAmount),
-                            ]),
-                            auth: [auth],
-                        }),
-                    ],
-                });
-
-                return [op];
-            })
-            .then((ops) => {
-                return this.buildTxFromOps(this.keypair.publicKey(), ops);
-            })
-            .then((tx) => {
-                return this.server.prepareTransaction(tx);
-            })
+        return this.giveAllowance(poolId, base, maxBaseAmount)
+            .then(() =>
+                this.buildSmartContactTx(
+                    this.keypair.publicKey(),
+                    AMM_SMART_CONTACT_ID,
+                    AMM_CONTRACT_METHOD.SWAP,
+                    this.publicKeyToScVal(this.keypair.publicKey()),
+                    this.assetToScVal(base),
+                    this.assetToScVal(counter),
+                    this.amountToScVal(amount),
+                    this.amountToScVal(maxBaseAmount),
+                ),
+            )
+            .then((tx) => this.server.prepareTransaction(tx))
             .then((prepared) => {
                 prepared.sign(this.keypair);
 
                 return this.server.sendTransaction(prepared);
             })
+            .then((res) => this.processResponse(res))
             .then((res) => {
-                return this.processResponse(res);
-            })
-            .then((res) => {
-                //TODO clear allowance if needed
-                // this.giveAllowance(poolId, base, '0');
-
-                const result = xdr.TransactionResult.fromXDR(Buffer.from(res, 'base64'));
-
-                const value = result.result().value()[0].value().value().value()[1].value();
-
                 ModalService.openModal(SuccessModal, {
                     base,
                     counter,
-                    baseAmount: this.i128ToInt(value),
+                    baseAmount: this.i128ToInt(res.value()),
                     counterAmount: Number(amount),
                     title: 'Success swap',
                     isSwap: true,
@@ -836,27 +579,6 @@ export default class SorobanServiceClass {
             } else {
                 builtTx.addOperation(contract.call(method));
             }
-
-            return builtTx.setTimeout(SorobanClient.TimeoutInfinite).build();
-        });
-    }
-
-    buildSmartContractOp(contactId, method, ...args) {
-        const contract = new SorobanClient.Contract(contactId);
-
-        return args ? contract.call(method, ...args) : contract.call(method);
-    }
-
-    buildTxFromOps(publicKey, ops: any[]) {
-        return this.server.getAccount(publicKey).then((acc) => {
-            const builtTx = new SorobanClient.TransactionBuilder(acc, {
-                fee: FEE,
-                networkPassphrase: SorobanClient.Networks.FUTURENET,
-            });
-
-            ops.forEach((op) => {
-                builtTx.addOperation(op);
-            });
 
             return builtTx.setTimeout(SorobanClient.TimeoutInfinite).build();
         });
