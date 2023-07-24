@@ -9,7 +9,7 @@ import SuccessModal from '../../pages/amm/SuccessModal/SuccessModal';
 const SOROBAN_SERVER = 'https://rpc-futurenet.stellar.org:443/';
 
 // SMART CONTACTS IDs
-const AMM_SMART_CONTACT_ID = '275936a642c3bb8594f0175e16cbac664415e0dcff2440e71b53833616cf51bd';
+const AMM_SMART_CONTACT_ID = '58eb16a6d30a34401fdb7088a14b8e1e2a717a89e77ce967c437c4ec12257a66Fix';
 
 const POOL_CONTACT_WASM_HASH = '588c9c473cf5ada4716d9a039b5cc0ae75077aa26e17bbccf300af0e271c8aef';
 
