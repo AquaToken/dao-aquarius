@@ -11,16 +11,16 @@ import { MainRoutes } from '../../../routes';
 import { formatBalance, getDateString } from '../../../common/helpers/helpers';
 import useAuthStore from '../../../store/authStore/useAuthStore';
 import Button from '../../../common/basics/Button';
-import { COLORS } from '../../../common/styles';
+import { Breakpoints, COLORS } from '../../../common/styles';
 import { LoginTypes } from '../../../store/authStore/types';
 import {
     BuildSignAndSubmitStatuses,
     openApp,
 } from '../../../common/services/wallet-connect.service';
 import ErrorHandler from '../../../common/helpers/error-handler';
-import { UnlockedBlock, UnlockedStats } from '../IceLocks/IceLocks';
 import Checkbox from '../../../common/basics/Checkbox';
 import Table, { CellAlign } from '../../../common/basics/Table';
+import { respondDown } from '../../../common/mixins';
 
 const Container = styled.div`
     display: flex;
@@ -29,6 +29,40 @@ const Container = styled.div`
 
 const Expired = styled.span`
     color: ${COLORS.grayText};
+`;
+
+const UnlockedBlock = styled.div`
+    display: flex;
+    justify-content: space-between;
+    border-radius: 0.5rem;
+    background: ${COLORS.lightGray};
+    padding: 4rem 2.1rem 4rem 4.8rem;
+    margin-top: 2.2rem;
+    margin-bottom: 3rem;
+
+    ${respondDown(Breakpoints.md)`
+        flex-direction: column;
+        background: ${COLORS.white};
+    `}
+`;
+
+const UnlockedStats = styled.div`
+    display: flex;
+    flex-direction: column;
+    font-size: 1.6rem;
+    line-height: 2.8rem;
+    color: ${COLORS.paragraphText};
+
+    span:last-child {
+        font-size: 1.4rem;
+        line-height: 2rem;
+        color: ${COLORS.grayText};
+    }
+
+    ${respondDown(Breakpoints.md)`
+        margin-bottom: 2rem;
+        text-align: center;
+    `}
 `;
 
 const ALL_ID = 'all';

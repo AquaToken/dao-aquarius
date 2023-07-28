@@ -4,10 +4,11 @@ import { COLORS } from '../styles';
 import { flexAllCenter } from '../mixins';
 import Tick from '../assets/img/icon-checkbox-tick.svg';
 
-const CheckboxContainer = styled.div`
+const CheckboxContainer = styled.div<{ disabled?: boolean }>`
     display: flex;
     flex-direction: row;
     cursor: pointer;
+    pointer-events: ${({ disabled }) => (disabled ? 'none' : 'unset')};
 `;
 
 const Label = styled.div`
@@ -16,16 +17,20 @@ const Label = styled.div`
     color: ${COLORS.grayText};
 `;
 
-const CheckboxInput = styled.div<{ checked: boolean }>`
+const CheckboxInput = styled.div<{ checked: boolean; hasLabel: boolean; disabled?: boolean }>`
+    ${flexAllCenter};
     height: 1.6rem;
     width: 1.6rem;
     min-width: 1.6rem;
     border-radius: 0.4rem;
-    margin-right: 1.6rem;
+    margin-right: ${({ hasLabel }) => (hasLabel ? '1.6rem' : '0')};
     background: ${({ checked }) => (checked ? COLORS.purple : COLORS.white)};
-    border: ${({ checked }) =>
-        checked ? `0.1rem solid ${COLORS.purple}` : `0.1rem solid ${COLORS.gray}`};
-    ${flexAllCenter};
+    border: ${({ checked, disabled }) =>
+        checked
+            ? `0.1rem solid ${COLORS.purple}`
+            : disabled
+            ? `0.1rem solid ${COLORS.gray}`
+            : `0.1rem solid ${COLORS.grayText}`};
 
     &:hover {
         border: 0.1rem solid ${COLORS.purple};
@@ -36,16 +41,24 @@ const Checkbox = ({
     label,
     checked,
     onChange,
+    disabled,
     ...props
 }: {
-    label: string;
+    label?: string;
     checked: boolean;
-    onChange: (boolean) => void;
+    onChange: (boolean, event) => void;
+    disabled?: boolean;
 }) => {
     return (
-        <CheckboxContainer onClick={() => onChange(!checked)} {...props}>
-            <CheckboxInput checked={checked}>{checked && <Tick />}</CheckboxInput>
-            <Label>{label}</Label>
+        <CheckboxContainer
+            onClick={(event) => onChange(!checked, event)}
+            disabled={disabled}
+            {...props}
+        >
+            <CheckboxInput checked={checked} disabled={disabled} hasLabel={Boolean(label)}>
+                {checked && <Tick />}
+            </CheckboxInput>
+            {Boolean(label) && <Label>{label}</Label>}
         </CheckboxContainer>
     );
 };

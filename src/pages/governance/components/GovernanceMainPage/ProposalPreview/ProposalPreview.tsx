@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
 import { ProposalSimple } from '../../../api/types';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../../../../common/styles';
@@ -11,30 +10,11 @@ import {
 } from '../../../../../common/helpers/helpers';
 import IconFail from '../../../../../common/assets/img/icon-fail.svg';
 import IconSuccess from '../../../../../common/assets/img/icon-success.svg';
-import Aqua from '../../../../../common/assets/img/aqua-logo-small.svg';
-import Ice from '../../../../../common/assets/img/ice-logo.svg';
 import CurrentResults from './CurrentResults/CurrentResults';
 import { Link } from 'react-router-dom';
 import { flexAllCenter, respondDown } from '../../../../../common/mixins';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
-import { StellarService, ToastService } from '../../../../../common/services/globalServices';
-import {
-    AQUA_CODE,
-    AQUA_ISSUER,
-    GOV_ICE_CODE,
-    ICE_ISSUER,
-    StellarEvents,
-} from '../../../../../common/services/stellar.service';
-import DotsLoader from '../../../../../common/basics/DotsLoader';
-import Button from '../../../../../common/basics/Button';
-import { LoginTypes } from '../../../../../store/authStore/types';
-import {
-    BuildSignAndSubmitStatuses,
-    openApp,
-} from '../../../../../common/services/wallet-connect.service';
-import ErrorHandler from '../../../../../common/helpers/error-handler';
 import { GovernanceRoutes } from '../../../../../routes';
-import Table, { CellAlign } from '../../../../../common/basics/Table';
+import YourVotes from './YourVotes/YourVotes';
 
 const Container = styled.div`
     display: flex;
@@ -185,18 +165,6 @@ const IconFor = styled(IconSuccess)`
     margin-right: 0.5rem;
 `;
 
-const AquaLogo = styled(Aqua)`
-    height: 1.6rem;
-    width: 1.6rem;
-    margin-left: 0.5rem;
-`;
-
-const IceLogo = styled(Ice)`
-    height: 1.6rem;
-    width: 1.6rem;
-    margin-left: 0.5rem;
-`;
-
 const ActiveParticipationRate = styled.div`
     margin-top: 2.4rem;
     display: flex;
@@ -217,11 +185,6 @@ const Red = styled.span`
     color: ${COLORS.pinkRed};
 `;
 
-const Cell = styled.span`
-    display: flex;
-    align-items: center;
-`;
-
 const getStatus = (proposal: ProposalSimple) => {
     switch (proposal.proposal_status) {
         case 'DISCUSSION':
@@ -240,31 +203,6 @@ const ProposalPreview = ({
     proposal: ProposalSimple;
     withMyVotes: boolean;
 }) => {
-    const [claimUpdateId, setClaimUpdateId] = useState(0);
-    const [claims, setClaims] = useState(null);
-    const [pendingId, setPendingId] = useState(null);
-
-    const { account } = useAuthStore();
-
-    useEffect(() => {
-        const unsub = StellarService.event.sub(({ type }) => {
-            if (type === StellarEvents.claimableUpdate) {
-                setClaimUpdateId((prevState) => prevState + 1);
-            }
-        });
-
-        return () => unsub();
-    }, []);
-
-    useEffect(() => {
-        if (!account || !withMyVotes) {
-            setClaimUpdateId(0);
-            setClaims(null);
-            return;
-        }
-        setClaims(StellarService.getVotesForProposal(proposal, account.accountId()));
-    }, [claimUpdateId, account, withMyVotes]);
-
     const status = getStatus(proposal);
 
     const getVotedProposalResult = () => {
@@ -377,74 +315,6 @@ const ProposalPreview = ({
         );
     };
 
-    const claimBack = async (event, id, isAqua) => {
-        event.stopPropagation();
-        event.preventDefault();
-
-        if (account.authType === LoginTypes.walletConnect) {
-            openApp();
-        }
-
-        try {
-            setPendingId(id);
-            const ops = StellarService.createClaimOperations(id);
-            const asset = StellarService.createAsset(
-                isAqua ? AQUA_CODE : GOV_ICE_CODE,
-                isAqua ? AQUA_ISSUER : ICE_ISSUER,
-            );
-            const tx = await StellarService.buildTx(account, ops);
-
-            const processedTx = await StellarService.processIceTx(tx, asset);
-
-            const result = await account.signAndSubmitTx(processedTx);
-
-            setPendingId(null);
-
-            if (
-                (result as { status: BuildSignAndSubmitStatuses }).status ===
-                BuildSignAndSubmitStatuses.pending
-            ) {
-                ToastService.showSuccessToast('More signatures required to complete');
-                return;
-            }
-            ToastService.showSuccessToast('Your vote has been claimed back');
-            StellarService.getClaimableBalances(account.accountId());
-        } catch (e) {
-            const errorText = ErrorHandler(e);
-            ToastService.showErrorToast(errorText);
-            setPendingId(null);
-        }
-    };
-
-    const getActionBlock = (balanceId, isAqua) => {
-        if (!claims) {
-            return <DotsLoader />;
-        }
-
-        const claim = claims.find(({ id }) => id === balanceId);
-
-        if (!claim) {
-            return 'Claimed';
-        }
-
-        const claimBackTimestamp = new Date(claim.claimBackDate).getTime();
-
-        if (claimBackTimestamp > Date.now()) {
-            return getDateString(claimBackTimestamp, { withTime: true });
-        }
-
-        return (
-            <Button
-                isSmall
-                pending={balanceId === pendingId}
-                disabled={Boolean(pendingId) && balanceId !== pendingId}
-                onClick={(event) => claimBack(event, balanceId, isAqua)}
-            >
-                claim
-            </Button>
-        );
-    };
-
     return (
         <Container>
             <Link to={`${GovernanceRoutes.proposal}/${proposal.id}/`}>
@@ -522,73 +392,8 @@ const ProposalPreview = ({
                 {proposal.proposal_status === 'VOTING' &&
                     !withMyVotes &&
                     getActiveParticipationRate()}
-                {withMyVotes && (
-                    <>
-                        <Table
-                            head={[
-                                { children: 'Time' },
-                                { children: 'Vote' },
-                                { children: 'Voted', align: CellAlign.Right },
-                                { children: 'Claim back date', align: CellAlign.Right },
-                            ]}
-                            body={proposal.logvote_set.map((log) => ({
-                                key: log.claimable_balance_id,
-                                isNarrow: true,
-                                mobileBackground: COLORS.lightGray,
-                                mobileFontSize: '1.4rem',
-                                rowItems: [
-                                    {
-                                        children: getDateString(
-                                            new Date(log.created_at).getTime(),
-                                            {
-                                                withTime: true,
-                                                withoutYear: true,
-                                            },
-                                        ),
-                                        label: 'Time:',
-                                    },
-                                    {
-                                        children: (
-                                            <Cell>
-                                                {log.vote_choice === 'vote_for' ? (
-                                                    <IconFor />
-                                                ) : (
-                                                    <IconAgainst />
-                                                )}
-                                                {log.vote_choice === 'vote_for'
-                                                    ? 'Vote For'
-                                                    : 'Vote Against'}
-                                            </Cell>
-                                        ),
-                                        label: 'Vote:',
-                                    },
-                                    {
-                                        children: (
-                                            <Cell>
-                                                {formatBalance(Number(log.amount))}
-                                                {log.asset_code === 'AQUA' ? (
-                                                    <AquaLogo />
-                                                ) : (
-                                                    <IceLogo />
-                                                )}
-                                            </Cell>
-                                        ),
-                                        label: 'Voted:',
-                                        align: CellAlign.Right,
-                                    },
-                                    {
-                                        children: getActionBlock(
-                                            log.claimable_balance_id,
-                                            log.asset_code === 'AQUA',
-                                        ),
-                                        label: 'Claim back date:',
-                                        align: CellAlign.Right,
-                                    },
-                                ],
-                            }))}
-                        />
-                    </>
-                )}
+
+                {withMyVotes && <YourVotes proposal={proposal} />}
             </Link>
         </Container>
     );

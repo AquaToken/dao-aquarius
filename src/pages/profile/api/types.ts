@@ -1,4 +1,4 @@
-type MarketPair = {
+export type MarketPair = {
     asset1_code: string;
     asset1_issuer: string;
     asset2_code: string;

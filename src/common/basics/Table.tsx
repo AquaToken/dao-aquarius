@@ -25,6 +25,8 @@ interface TableItem {
     label?: string;
     labelColor?: string;
     color?: string;
+    hideOnWeb?: boolean;
+    hideOnMobile?: boolean;
 }
 
 interface TableHeadItem extends TableItem {
@@ -105,10 +107,13 @@ const TableHeadRow = styled.div`
 const Cell = styled.div<{
     align?: CellAlign;
     flexSize?: number;
-    color?: string;
+    label?: string;
     labelColor?: string;
+    color?: string;
+    hideOnWeb?: boolean;
+    hideOnMobile?: boolean;
 }>`
-    display: flex;
+    display: ${({ hideOnWeb }) => (hideOnWeb ? 'none' : 'flex')};
     align-items: center;
     color: ${({ color }) => color ?? COLORS.paragraphText};
     justify-content: ${({ align }) => {
@@ -132,6 +137,7 @@ const Cell = styled.div<{
     }
 
     ${respondDown(Breakpoints.md)`
+        display: ${({ hideOnMobile }) => (hideOnMobile ? 'none' : 'flex')};
         align-items: center;
         margin-bottom: 1.6rem;
           
@@ -216,23 +222,27 @@ const Table = forwardRef(
                 )}
                 <TableHead>
                     <TableHeadRow>
-                        {head.map(({ children, sort, align, flexSize }) => (
-                            <HeadCell
-                                key={children.toString()}
-                                align={align}
-                                withSort={Boolean(sort)}
-                                onClick={() => sort?.onClick()}
-                                flexSize={flexSize}
-                            >
-                                {children}
-                                {Boolean(sort) && (
-                                    <IconSort
-                                        isEnabled={sort.isEnabled}
-                                        isReversed={sort.isReversed}
-                                    />
-                                )}
-                            </HeadCell>
-                        ))}
+                        {head.map(
+                            ({ children, sort, align, flexSize, hideOnWeb, hideOnMobile }) => (
+                                <HeadCell
+                                    key={children.toString()}
+                                    align={align}
+                                    withSort={Boolean(sort)}
+                                    onClick={() => sort?.onClick()}
+                                    flexSize={flexSize}
+                                    hideOnWeb={hideOnWeb}
+                                    hideOnMobile={hideOnMobile}
+                                >
+                                    {children}
+                                    {Boolean(sort) && (
+                                        <IconSort
+                                            isEnabled={sort.isEnabled}
+                                            isReversed={sort.isReversed}
+                                        />
+                                    )}
+                                </HeadCell>
+                            ),
+                        )}
                     </TableHeadRow>
                 </TableHead>
                 <TableBody>
@@ -246,7 +256,16 @@ const Table = forwardRef(
                             <TableRow isNarrow={row.isNarrow} mobileFontSize={row.mobileFontSize}>
                                 {row?.rowItems.map(
                                     (
-                                        { children, align, color, label, labelColor, flexSize },
+                                        {
+                                            children,
+                                            align,
+                                            color,
+                                            label,
+                                            labelColor,
+                                            flexSize,
+                                            hideOnWeb,
+                                            hideOnMobile,
+                                        },
                                         index,
                                     ) => (
                                         <Cell
@@ -255,6 +274,8 @@ const Table = forwardRef(
                                             labelColor={labelColor}
                                             flexSize={flexSize}
                                             key={`${row.key}_${index}`}
+                                            hideOnWeb={hideOnWeb}
+                                            hideOnMobile={hideOnMobile}
                                         >
                                             {Boolean(label) && <label>{label}</label>}
                                             {children}

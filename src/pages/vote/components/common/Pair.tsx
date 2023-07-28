@@ -96,13 +96,15 @@ const AssetsCodes = styled.span<{ mobileVerticalDirections?: boolean; bigCodes?:
     ${({ mobileVerticalDirections }) =>
         mobileVerticalDirections &&
         respondDown(Breakpoints.md)`
-                font-weight: bold;
-                        font-size: 2.4rem;
-                        line-height: 2.8rem;
-                        color: ${COLORS.buttonBackground};
-                        margin-top: 0.7rem;
-                        margin-bottom: 0.4rem;
-            `}
+            font-weight: bold;
+            font-size: 2.4rem;
+            line-height: 2.8rem;
+            color: ${COLORS.buttonBackground};
+            margin-top: 0.7rem;
+            margin-bottom: 0.4rem;
+            display: flex;
+            flex-wrap: wrap;
+        `}
 `;
 
 const AssetsDomains = styled.span<{ mobileVerticalDirections?: boolean }>`
