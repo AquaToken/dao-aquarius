@@ -14,7 +14,7 @@ export const initialState: AuthStore = {
     federationAddress: '',
     isFederationPending: false,
     metadata: null,
-    isRedirectEnabled: false,
+    redirectURL: undefined,
 };
 
 export default function authStore(state = initialState, action: ActionSimpleResult): AuthStore {
@@ -96,15 +96,18 @@ export default function authStore(state = initialState, action: ActionSimpleResu
             };
         }
         case AUTH_ACTIONS.ENABLE_REDIRECT: {
+            const { redirectURL } = action.payload as {
+                redirectURL: string;
+            };
             return {
                 ...state,
-                isRedirectEnabled: true,
+                redirectURL,
             };
         }
         case AUTH_ACTIONS.DISABLE_REDIRECT: {
             return {
                 ...state,
-                isRedirectEnabled: false,
+                redirectURL: undefined,
             };
         }
         default: {

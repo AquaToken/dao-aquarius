@@ -49,7 +49,7 @@ import {
 import DotsLoader from '../../../../common/basics/DotsLoader';
 import { useHistory, useLocation } from 'react-router-dom';
 import useAssetsStore from '../../../../store/assetsStore/useAssetsStore';
-import { MarketRoutes } from '../../../../routes';
+import { MainRoutes, MarketRoutes } from '../../../../routes';
 import { LoginTypes } from '../../../../store/authStore/types';
 import Ice from '../../../../common/assets/img/ice-logo.svg';
 import Aqua from '../../../../common/assets/img/aqua-logo-small.svg';
@@ -586,7 +586,12 @@ const MainPage = (): JSX.Element => {
         if (sort !== SortTypes.yourVotes || !account) {
             return;
         }
+
         setPairsLoading(true);
+
+        if (!StellarService.isClaimableBalancesLoaded) {
+            return;
+        }
 
         const keys = StellarService.getKeysSimilarToMarketKeys(account.accountId());
 
@@ -602,6 +607,10 @@ const MainPage = (): JSX.Element => {
     useEffect(() => {
         if (sort !== SortTypes.yourVotes || !claimUpdateId || !account) {
             return;
+        }
+
+        if (!pairs.length) {
+            setPairsLoading(true);
         }
 
         const keys = StellarService.getKeysSimilarToMarketKeys(account.accountId());
@@ -689,7 +698,9 @@ const MainPage = (): JSX.Element => {
 
     const changeSort = (sortValue) => {
         if (!isLogged && sortValue === SortTypes.yourVotes) {
-            ModalService.openModal(ChooseLoginMethodModal, {});
+            ModalService.openModal(ChooseLoginMethodModal, {
+                redirectURL: `${MainRoutes.vote}?${UrlParams.sort}=${SortTypes.yourVotes}`,
+            });
             return;
         }
         const params = new URLSearchParams(location.search);
@@ -827,6 +838,8 @@ const MainPage = (): JSX.Element => {
         );
     };
 
+    console.log(pairs, StellarService.isClaimableBalancesLoaded, pairsLoading);
+
     return (
         <MainBlock>
             <Background>
@@ -939,9 +952,10 @@ const MainPage = (): JSX.Element => {
                         {pairs.length ? 'Search results' : 'No pairs found'}
                     </SearchEnabled>
                 )}
-                {sort === SortTypes.yourVotes && !pairs.length && (
-                    <SearchEnabled>No pairs found</SearchEnabled>
-                )}
+                {sort === SortTypes.yourVotes &&
+                    !pairs.length &&
+                    StellarService.isClaimableBalancesLoaded &&
+                    !pairsLoading && <SearchEnabled>No pairs found</SearchEnabled>}
                 {searchBase && searchCounter && !pairs.length && (
                     <CreatePair onClick={() => goToMarketPage()}>
                         <Pair base={searchBase} counter={searchCounter} mobileVerticalDirections />

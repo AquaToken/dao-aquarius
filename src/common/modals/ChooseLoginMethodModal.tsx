@@ -114,12 +114,12 @@ const TooltipText = styled.div`
 const ChooseLoginMethodModal = ({
     close,
     params,
-}: ModalProps<{ withRedirect?: boolean }>): JSX.Element => {
+}: ModalProps<{ redirectURL?: string }>): JSX.Element => {
     const { enableRedirect, disableRedirect } = useAuthStore();
 
     useEffect(() => {
-        if (params.withRedirect) {
-            enableRedirect();
+        if (params.redirectURL) {
+            enableRedirect(params.redirectURL);
         } else {
             disableRedirect();
         }

@@ -42,7 +42,7 @@ const App = () => {
     const { getAssets, assets, processNewAssets, assetsInfo, clearAssets } = useAssetsStore();
     const [isAssetsUpdated, setIsAssetsUpdated] = useState(false);
 
-    const { isLogged, account, isRedirectEnabled, disableRedirect } = useAuthStore();
+    const { isLogged, account, redirectURL, disableRedirect } = useAuthStore();
 
     useEffect(() => {
         const assetUpdateTimestamp = localStorage.getItem(UPDATE_ASSETS_DATE);
@@ -91,10 +91,10 @@ const App = () => {
     }, [isLogged]);
 
     useEffect(() => {
-        if (isLogged && isRedirectEnabled) {
+        if (isLogged && Boolean(redirectURL)) {
             disableRedirect();
         }
-    }, [isLogged, isRedirectEnabled]);
+    }, [isLogged, redirectURL]);
 
     useEffect(() => {
         const userAgent = window.navigator.userAgent;
@@ -111,7 +111,7 @@ const App = () => {
 
     return (
         <Router>
-            {isLogged && isRedirectEnabled && <Redirect to={MainRoutes.account} />}
+            {isLogged && Boolean(redirectURL) && <Redirect to={redirectURL} />}
             <Header>
                 <>
                     <HeaderNavLink

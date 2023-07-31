@@ -12,7 +12,7 @@ export interface AuthStore {
     isFederationPending: boolean;
     metadata: SignClientTypes.Metadata | null;
     loginPendingTopic?: string;
-    isRedirectEnabled?: boolean;
+    redirectURL?: string;
 }
 
 export enum LoginTypes {

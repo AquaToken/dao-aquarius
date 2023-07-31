@@ -170,7 +170,9 @@ const Header = ({ children }: { children?: JSX.Element }): JSX.Element => {
             e.stopPropagation();
             e.nativeEvent.stopImmediatePropagation();
 
-            return ModalService.openModal(ChooseLoginMethodModal, { withRedirect: true });
+            return ModalService.openModal(ChooseLoginMethodModal, {
+                redirectURL: MainRoutes.account,
+            });
         }
     };
 

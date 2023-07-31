@@ -17,7 +17,7 @@ type AuthActions = {
     resolveFederation: (homeDomain: string, accountId: string) => ActionAsyncResult;
     updateAccount: (account: typeof AccountRecord, authType: LoginTypes) => ActionSimpleResult;
     clearLoginError: () => ActionSimpleResult;
-    enableRedirect: () => ActionSimpleResult;
+    enableRedirect: (redirectURL: string) => ActionSimpleResult;
     disableRedirect: () => ActionSimpleResult;
 };
 

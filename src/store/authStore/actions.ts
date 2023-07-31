@@ -67,8 +67,8 @@ export function updateAccount(
     return { type: AUTH_ACTIONS.UPDATE_ACCOUNT, payload: { account: wrappedAccount } };
 }
 
-export function enableRedirect(): ActionSimpleResult {
-    return { type: AUTH_ACTIONS.ENABLE_REDIRECT };
+export function enableRedirect(redirectURL: string): ActionSimpleResult {
+    return { type: AUTH_ACTIONS.ENABLE_REDIRECT, payload: { redirectURL } };
 }
 
 export function disableRedirect(): ActionSimpleResult {
