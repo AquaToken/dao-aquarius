@@ -838,8 +838,6 @@ const MainPage = (): JSX.Element => {
         );
     };
 
-    console.log(pairs, StellarService.isClaimableBalancesLoaded, pairsLoading);
-
     return (
         <MainBlock>
             <Background>
