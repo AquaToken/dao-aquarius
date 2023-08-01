@@ -7,7 +7,9 @@ const webpack = require('webpack');
 const commonConfig = require('./common');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
-const branchName = childProcess.execSync('git rev-parse --abbrev-ref HEAD').toString().trim();
+const branchName =
+    process.env.BRANCH ||
+    childProcess.execSync('git rev-parse --abbrev-ref HEAD').toString().trim();
 
 const isMaster = branchName === 'master';
 
