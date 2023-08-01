@@ -7,10 +7,6 @@ import { roundToPrecision } from '../helpers/helpers';
 import { PairStats } from '../../pages/vote/api/types';
 import { validateMarketKeys } from '../../pages/vote/api/api';
 
-enum HORIZON_SERVER {
-    stellar = 'https://horizon.stellar.org',
-}
-
 const VAULT_API = 'https://vault.lobstr.co/api/transactions/';
 
 const FEE = '100000';
@@ -232,7 +228,9 @@ export default class StellarServiceClass {
     }
 
     private startHorizonServer(): void {
-        this.server = new StellarSdk.Server(HORIZON_SERVER.stellar);
+        // @ts-ignore
+        // settled in configs: prod.js and dev.js
+        this.server = new StellarSdk.Server(process.horizon.HORIZON_SERVER);
     }
 
     loadAccount(publicKey: string): Promise<StellarSdk.AccountResponse> {
