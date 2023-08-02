@@ -42,7 +42,8 @@ const App = () => {
     const { getAssets, assets, processNewAssets, assetsInfo, clearAssets } = useAssetsStore();
     const [isAssetsUpdated, setIsAssetsUpdated] = useState(false);
 
-    const { isLogged, account, redirectURL, disableRedirect } = useAuthStore();
+    const { isLogged, account, redirectURL, disableRedirect, callback, removeAuthCallback } =
+        useAuthStore();
 
     useEffect(() => {
         const assetUpdateTimestamp = localStorage.getItem(UPDATE_ASSETS_DATE);
@@ -95,6 +96,13 @@ const App = () => {
             disableRedirect();
         }
     }, [isLogged, redirectURL]);
+
+    useEffect(() => {
+        if (isLogged && Boolean(callback)) {
+            callback();
+            removeAuthCallback();
+        }
+    }, [isLogged, callback]);
 
     useEffect(() => {
         const userAgent = window.navigator.userAgent;

@@ -567,7 +567,15 @@ const MainPage = (): JSX.Element => {
             });
             return;
         }
-        ModalService.openModal(ChooseLoginMethodModal, {});
+        ModalService.openModal(ChooseLoginMethodModal, {
+            callback: () =>
+                ModalService.openModal(VotesAmountModal, {
+                    pairs: chosenPairs,
+                    updatePairs: updateChosenPairs,
+                }).then(() => {
+                    setChosenPairs(getCachedChosenPairs());
+                }),
+        });
     };
 
     const processAssetsFromPairs = (pairs) => {
@@ -796,7 +804,13 @@ const MainPage = (): JSX.Element => {
             });
             return;
         }
-        ModalService.openModal(ChooseLoginMethodModal, {});
+        ModalService.openModal(ChooseLoginMethodModal, {
+            callback: () =>
+                ModalService.openModal(CreatePairModal, {
+                    base: searchBase,
+                    counter: searchCounter,
+                }),
+        });
     };
     const onVoteClick = (pair: PairStats) => {
         if (isLogged && account.authType === LoginTypes.ledger) {

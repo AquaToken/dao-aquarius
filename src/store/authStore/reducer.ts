@@ -15,6 +15,7 @@ export const initialState: AuthStore = {
     isFederationPending: false,
     metadata: null,
     redirectURL: undefined,
+    callback: undefined,
 };
 
 export default function authStore(state = initialState, action: ActionSimpleResult): AuthStore {
@@ -108,6 +109,21 @@ export default function authStore(state = initialState, action: ActionSimpleResu
             return {
                 ...state,
                 redirectURL: undefined,
+            };
+        }
+        case AUTH_ACTIONS.ADD_AUTH_CALLBACK: {
+            const { callback } = action.payload as {
+                callback: void;
+            };
+            return {
+                ...state,
+                callback,
+            };
+        }
+        case AUTH_ACTIONS.REMOVE_AUTH_CALLBACK: {
+            return {
+                ...state,
+                callback: undefined,
             };
         }
         default: {

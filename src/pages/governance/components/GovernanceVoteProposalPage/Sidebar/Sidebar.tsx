@@ -243,16 +243,6 @@ const DiscussionDescription = styled.div`
     margin-bottom: 2.5rem;
 `;
 
-// const voteOptionsMockData = {
-//     isForAgainst: false,
-//     options: [
-//         { name: 'No', account: 'GASDASDASD' },
-//         { name: '100% per transaction', account: 'GASDASDASD' },
-//         { name: '50% per transaction', account: 'GKJLLKNJLKJ' },
-//         { name: '25% per transaction', account: 'GJLKJBKJNKJNN' },
-//     ],
-// };
-
 const Sidebar = forwardRef(
     ({ proposal, ...props }: { proposal: Proposal }, ref: RefObject<HTMLDivElement>) => {
         const [selectedOption, setSelectedOption] = useState(null);
@@ -265,7 +255,9 @@ const Sidebar = forwardRef(
                 return;
             }
             setSelectedOption(option);
-            ModalService.openModal(ChooseLoginMethodModal, {});
+            ModalService.openModal(ChooseLoginMethodModal, {
+                callback: () => ModalService.openModal(ConfirmVoteModal, option),
+            });
         };
 
         const onContinueClick = () => {

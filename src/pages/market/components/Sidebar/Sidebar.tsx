@@ -132,7 +132,13 @@ const Sidebar = ({ votesData, base, counter, totalStats, onVoteClick, isPairSele
             });
             return;
         }
-        ModalService.openModal(ChooseLoginMethodModal, {});
+        ModalService.openModal(ChooseLoginMethodModal, {
+            callback: () =>
+                ModalService.openModal(CreatePairModal, {
+                    base: base,
+                    counter: counter,
+                }),
+        });
     };
     if (!votesData) {
         return (

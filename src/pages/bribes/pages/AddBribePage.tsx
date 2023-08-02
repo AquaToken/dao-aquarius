@@ -476,12 +476,31 @@ const AddBribePage = () => {
             });
             return;
         }
-        ModalService.openModal(ChooseLoginMethodModal, {});
+        ModalService.openModal(ChooseLoginMethodModal, {
+            callback: () =>
+                ModalService.openModal(CreatePairModal, {
+                    base,
+                    counter,
+                }),
+        });
     };
 
     const onSubmit = () => {
         if (!isLogged) {
-            ModalService.openModal(ChooseLoginMethodModal, {});
+            ModalService.openModal(ChooseLoginMethodModal, {
+                callback: () =>
+                    ModalService.openModal(ConfirmBribeModal, {
+                        base,
+                        counter,
+                        rewardAsset,
+                        amount,
+                        startDate,
+                        endDate,
+                        duration,
+                        marketKey: pairInfo?.account_id,
+                        resetForm,
+                    }),
+            });
             return;
         }
         ModalService.openModal(ConfirmBribeModal, {
@@ -492,7 +511,7 @@ const AddBribePage = () => {
             startDate,
             endDate,
             duration,
-            marketKey: pairInfo.account_id,
+            marketKey: pairInfo?.account_id,
             resetForm,
         });
     };
@@ -631,7 +650,8 @@ const AddBribePage = () => {
                                 <NextButton
                                     isBig
                                     fullWidth
-                                    onClick={() => {
+                                    onClick={(e) => {
+                                        e.preventDefault();
                                         createPair();
                                     }}
                                 >

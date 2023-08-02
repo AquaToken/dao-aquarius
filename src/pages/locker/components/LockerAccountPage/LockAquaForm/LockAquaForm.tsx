@@ -325,7 +325,14 @@ const LockAquaForm = forwardRef(
                 return;
             }
             if (!isLogged) {
-                ModalService.openModal(ChooseLoginMethodModal, {});
+                ModalService.openModal(ChooseLoginMethodModal, {
+                    callback: () =>
+                        ModalService.openModal(LockAquaModal, {
+                            amount: lockAmount,
+                            period: lockPeriod,
+                            iceAmount,
+                        }),
+                });
                 return;
             }
             ModalService.openModal(LockAquaModal, {

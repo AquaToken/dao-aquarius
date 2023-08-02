@@ -5,6 +5,7 @@ import { SignClientTypes } from '@walletconnect/types';
 import AccountRecord from 'stellar-sdk';
 import { ActionAsyncResult, ActionSimpleResult } from '../types';
 import { useGlobalStore } from '../index';
+import { addAuthCallback, removeAuthCallback } from './actions';
 
 type AuthActions = {
     login: (
@@ -19,6 +20,8 @@ type AuthActions = {
     clearLoginError: () => ActionSimpleResult;
     enableRedirect: (redirectURL: string) => ActionSimpleResult;
     disableRedirect: () => ActionSimpleResult;
+    addAuthCallback: (cb: () => void) => ActionSimpleResult;
+    removeAuthCallback: () => ActionSimpleResult;
 };
 
 const useAuthStore = (): AuthStore & AuthActions => {
@@ -36,6 +39,8 @@ const useAuthStore = (): AuthStore & AuthActions => {
         clearLoginError,
         enableRedirect,
         disableRedirect,
+        addAuthCallback,
+        removeAuthCallback,
     } = actions;
 
     const authActions = bindActions(
@@ -47,6 +52,8 @@ const useAuthStore = (): AuthStore & AuthActions => {
             clearLoginError,
             enableRedirect,
             disableRedirect,
+            addAuthCallback,
+            removeAuthCallback,
         },
         dispatch,
     ) as unknown as AuthActions;

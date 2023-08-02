@@ -74,3 +74,11 @@ export function enableRedirect(redirectURL: string): ActionSimpleResult {
 export function disableRedirect(): ActionSimpleResult {
     return { type: AUTH_ACTIONS.DISABLE_REDIRECT };
 }
+
+export function addAuthCallback(callback: void): ActionSimpleResult {
+    return { type: AUTH_ACTIONS.ADD_AUTH_CALLBACK, payload: { callback } };
+}
+
+export function removeAuthCallback(): ActionSimpleResult {
+    return { type: AUTH_ACTIONS.REMOVE_AUTH_CALLBACK };
+}

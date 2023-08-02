@@ -13,6 +13,7 @@ export interface AuthStore {
     metadata: SignClientTypes.Metadata | null;
     loginPendingTopic?: string;
     redirectURL?: string;
+    callback?: () => void;
 }
 
 export enum LoginTypes {
@@ -34,4 +35,6 @@ export enum AUTH_ACTIONS {
     UPDATE_ACCOUNT = 'UPDATE_ACCOUNT',
     ENABLE_REDIRECT = 'ENABLE_REDIRECT',
     DISABLE_REDIRECT = 'DISABLE_REDIRECT',
+    ADD_AUTH_CALLBACK = 'ADD_AUTH_CALLBACK',
+    REMOVE_AUTH_CALLBACK = 'REMOVE_AUTH_CALLBACK',
 }

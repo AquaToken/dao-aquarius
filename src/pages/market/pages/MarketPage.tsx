@@ -221,7 +221,14 @@ const MarketPage = () => {
             return;
         }
 
-        ModalService.openModal(ChooseLoginMethodModal, {});
+        ModalService.openModal(ChooseLoginMethodModal, {
+            callback: () =>
+                ModalService.openModal(VotesAmountModal, {
+                    pairs: [pair],
+                    isSingleVoteForModal: true,
+                    updatePairs: () => {},
+                }),
+        });
     };
 
     const MarketStatRef = useRef(null);

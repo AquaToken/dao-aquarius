@@ -13,7 +13,6 @@ import { formatBalance } from '../../../common/helpers/helpers';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../common/mixins';
 import Button from '../../../common/basics/Button';
 import VotesAmountModal from '../../vote/components/MainPage/VoteModals/VotesAmountModal';
-import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
 import ManageUnlockedVotes from '../../vote/components/MainPage/ManageUnlockedVotes/ManageUnlockedVotes';
 import useAssetsStore from '../../../store/assetsStore/useAssetsStore';
 import { getAssetsFromPairs } from '../../vote/components/MainPage/MainPage';
@@ -182,7 +181,6 @@ const YourVotes = () => {
             });
             return;
         }
-        ModalService.openModal(ChooseLoginMethodModal, {});
     };
 
     return (

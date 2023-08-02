@@ -114,14 +114,22 @@ const TooltipText = styled.div`
 const ChooseLoginMethodModal = ({
     close,
     params,
-}: ModalProps<{ redirectURL?: string }>): JSX.Element => {
-    const { enableRedirect, disableRedirect } = useAuthStore();
+}: ModalProps<{ redirectURL?: string; callback?: () => void }>): JSX.Element => {
+    const { enableRedirect, disableRedirect, addAuthCallback, removeAuthCallback } = useAuthStore();
 
     useEffect(() => {
         if (params.redirectURL) {
             enableRedirect(params.redirectURL);
         } else {
             disableRedirect();
+        }
+    }, []);
+
+    useEffect(() => {
+        if (params.callback) {
+            addAuthCallback(params.callback);
+        } else {
+            removeAuthCallback();
         }
     }, []);
 
