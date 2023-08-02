@@ -13,7 +13,7 @@ const METADATA = {
     name: 'Aquarius',
     description: 'Aquarius - liquidity management layer for Stellar',
     url: 'https://aqua.network',
-    icons: [`${location.origin}/favicon.png`],
+    icons: [`https://aqua.network/favicon.png`],
 };
 
 const PUBNET = 'stellar:pubnet';
@@ -43,7 +43,6 @@ export enum BuildSignAndSubmitStatuses {
 
 export const WC_APP_ALIAS = 'WC_APP';
 const WC_DEEP_LINK_APPS = 'WC_DEEP_LINK_APPS';
-const WC_VERSION_ALIAS = 'WC_VERSION_ALIAS';
 
 const INTERNET_CONNECTION_ERROR = 'Make sure you are connected to the internet and try again.';
 const SESSION_TIMEOUT_ERROR = 'Session failed to settle after 300 seconds';
@@ -58,13 +57,6 @@ function getLocalStorage(): Storage | undefined {
     }
     return res;
 }
-
-const clearLocalStorage = () => {
-    const LS = getLocalStorage();
-    if (LS) {
-        LS.clear();
-    }
-};
 
 export const saveAppToLS = (name, uri) => {
     const focusUri = uri.split('?')[0];
@@ -137,23 +129,6 @@ export const getAppFromDeepLinkList = (topic) => {
     return appsList.has(topic) ? JSON.parse(appsList.get(topic)) : null;
 };
 
-const getVersionFromLS = () => {
-    const LS = getLocalStorage();
-    if (!LS) {
-        return null;
-    }
-    return LS.getItem(WC_VERSION_ALIAS);
-};
-
-const setVersionToLS = (version) => {
-    const LS = getLocalStorage();
-    if (!LS) {
-        return;
-    }
-
-    LS.setItem(WC_VERSION_ALIAS, version);
-};
-
 const wcSessionAlias = 'wc@2:client:0.3//session';
 
 const isSessionExist = (): boolean => {
@@ -168,53 +143,48 @@ const isSessionExist = (): boolean => {
     return Boolean(sessionList.length);
 };
 
+const customPostMessage = (data) => {
+    const stringify = JSON.stringify(data);
+
+    try {
+        // IOS
+        // @ts-ignore
+        if (window.webkit) {
+            // @ts-ignore
+            window.webkit.messageHandlers.submitToiOS.postMessage(stringify);
+        }
+
+        // android
+        // @ts-ignore
+        if (window.android) {
+            // @ts-ignore
+            window.android.postMessage(stringify);
+        }
+
+        // web
+        console.log(stringify);
+    } catch (e) {
+        // do nothing
+    }
+};
+
 export default class WalletConnectServiceClass {
     appMeta: SignClientTypes.Metadata | null = null;
     client: WalletConnectClient | null = null;
     session: SessionTypes.Struct | null = null;
-    isPairCreated = false;
     event: EventService = new EventService();
     selfMeta = METADATA;
     isOffline = false;
-
-    // When changing the walletConnect version, memory leaks sometimes occur,
-    // to avoid this, we clear the local storage
-    static checkVersion() {
-        const WALLET_CONNECT_VERSION_ID = '2';
-
-        const currentVersion = getVersionFromLS();
-        if (!currentVersion || currentVersion !== WALLET_CONNECT_VERSION_ID) {
-            clearLocalStorage();
-            setVersionToLS(WALLET_CONNECT_VERSION_ID);
-        }
-    }
 
     constructor() {
         window.addEventListener('offline', () => {
             this.client = null;
             this.isOffline = true;
         });
-        window.addEventListener('online', () => {
+        window.addEventListener('online', async () => {
             this.isOffline = false;
             if (this.session) {
-                Promise.race([
-                    WalletConnectClient.init({
-                        // logger: 'debug',
-                        projectId: process.env.WALLET_CONNECT_PROJECT_ID,
-                        metadata: this.selfMeta,
-                    }),
-                    new Promise((resolve, reject) => {
-                        setTimeout(() => {
-                            reject('Connection timeout');
-                        }, CONNECTION_TIMEOUT);
-                    }) as Promise<WalletConnectClient>,
-                ])
-                    .then((client) => {
-                        this.client = client;
-                    })
-                    .catch((e) => {
-                        ToastService.showErrorToast(e);
-                    });
+                await this.setClient();
             }
         });
     }
@@ -224,28 +194,10 @@ export default class WalletConnectServiceClass {
             return Promise.resolve();
         }
 
-        this.client = await Promise.race([
-            WalletConnectClient.init({
-                // logger: 'debug',
-                projectId: process.env.WALLET_CONNECT_PROJECT_ID,
-                metadata: this.selfMeta,
-            }),
-            new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    reject('Connection timeout');
-                }, CONNECTION_TIMEOUT);
-            }) as Promise<WalletConnectClient>,
-        ]);
-        this.listenWalletConnectEvents();
-
-        await new Promise((resolve) => {
-            setTimeout(() => resolve(void 0), 2500);
-        });
-
-        return this.checkPersistedState();
+        return this.initWalletConnect(true);
     }
 
-    async initWalletConnect(): Promise<boolean> {
+    async initWalletConnect(withTimeout?: boolean): Promise<boolean> {
         try {
             if (this.isOffline) {
                 ToastService.showErrorToast(INTERNET_CONNECTION_ERROR);
@@ -255,20 +207,18 @@ export default class WalletConnectServiceClass {
                 clearApp();
                 return false;
             }
-            this.client = await Promise.race([
-                WalletConnectClient.init({
-                    // logger: 'debug',
-                    projectId: process.env.WALLET_CONNECT_PROJECT_ID,
-                    metadata: this.selfMeta,
-                }),
-                new Promise((resolve, reject) => {
-                    setTimeout(() => {
-                        reject('Connection timeout');
-                    }, CONNECTION_TIMEOUT);
-                }) as Promise<WalletConnectClient>,
-            ]);
+
+            await this.setClient();
 
             this.listenWalletConnectEvents();
+
+            // This dirty code is needed for the case when a logout is performed from the wallet
+            // while the dapp is inactive and after launching the dapp the logout event comes 2 seconds later
+            if (withTimeout) {
+                await new Promise((resolve) => {
+                    setTimeout(() => resolve(void 0), 2500);
+                });
+            }
 
             return this.checkPersistedState();
         } catch (e) {
@@ -285,15 +235,7 @@ export default class WalletConnectServiceClass {
 
         this.session = await this.client.session.getAll()[0];
 
-        const [, , publicKey] = this.session.namespaces.stellar.accounts[0].split(':');
-        this.appMeta = this.session.peer.metadata;
-
-        this.event.trigger({
-            type: WalletConnectEvents.login,
-            publicKey: publicKey.toUpperCase(),
-            metadata: this.appMeta,
-            topic: this.session.topic,
-        });
+        this.processSessionAndTriggerEvent();
 
         ModalService.closeAllModals();
 
@@ -301,43 +243,9 @@ export default class WalletConnectServiceClass {
     }
 
     listenWalletConnectEvents(): void {
-        // this.client.on(SIGN_CLIENT_EVENTS.session_proposal, (res) => {
-        //     console.log('session_proposal', res);
-        // });
-        // this.client.on(SIGN_CLIENT_EVENTS.session_update, (res) => {
-        //     console.log('session_update', res);
-        // });
-        // this.client.on(SIGN_CLIENT_EVENTS.session_extend, (res) => {
-        //     console.log('session_extend', res);
-        // });
-        // this.client.on(SIGN_CLIENT_EVENTS.session_ping, (res) => {
-        //     console.log('session_ping', res);
-        // });
-        // this.client.on(SIGN_CLIENT_EVENTS.pairing_ping, (res) => {
-        //     console.log('pairing_ping', res);
-        // });
         this.client.on(SIGN_CLIENT_EVENTS.session_delete, ({ topic }: any) => {
             this.onSessionDeleted(topic);
         });
-
-        // this.client.on(SIGN_CLIENT_EVENTS.pairing_delete, (res) => {
-        //     console.log('pairing_delete', res);
-        // });
-        // this.client.on(SIGN_CLIENT_EVENTS.session_expire, (res) => {
-        //     console.log('session_expire', res);
-        // });
-        // this.client.on(SIGN_CLIENT_EVENTS.pairing_expire, (res) => {
-        //     console.log('pairing_expire', res);
-        // });
-        // this.client.on(SIGN_CLIENT_EVENTS.session_request, (res) => {
-        //     console.log('session_request', res);
-        // });
-        // this.client.on(SIGN_CLIENT_EVENTS.session_event, (res) => {
-        //     console.log('session_event', res);
-        // });
-        // this.client.on(SIGN_CLIENT_EVENTS.proposal_expire, (res) => {
-        //     console.log('proposal_expire', res);
-        // });
     }
 
     onSessionDeleted(topic: string): void {
@@ -440,7 +348,7 @@ export default class WalletConnectServiceClass {
             }
 
             if (isAutoConnect) {
-                this.customPostMessage(uri);
+                customPostMessage(uri);
             }
 
             this.session = await approval();
@@ -470,16 +378,7 @@ export default class WalletConnectServiceClass {
 
         ModalService.closeAllModals();
 
-        this.appMeta = this.session.peer.metadata;
-
-        const [, , publicKey] = this.session.namespaces.stellar.accounts[0].split(':');
-
-        this.event.trigger({
-            type: WalletConnectEvents.login,
-            publicKey: publicKey.toUpperCase(),
-            metadata: this.appMeta,
-            topic: this.session.topic,
-        });
+        this.processSessionAndTriggerEvent();
 
         setTimeout(() => {
             const latestPairing = this.client.pairing.getAll({ active: true })[
@@ -556,27 +455,30 @@ export default class WalletConnectServiceClass {
         return request.then(({ signedXDR }) => signedXDR);
     }
 
-    private customPostMessage(data) {
-        const stringify = JSON.stringify(data);
-        // IOS
-        // @ts-ignore
-        if (window.webkit) {
-            try {
-                // @ts-ignore
-                window.webkit.messageHandlers.submitToiOS.postMessage(stringify);
-            } catch (e) {
-                console.log(e);
-            }
-        }
+    private processSessionAndTriggerEvent() {
+        this.appMeta = this.session.peer.metadata;
 
-        // android
-        // @ts-ignore
-        if (window.android) {
-            // @ts-ignore
-            window.android.postMessage(stringify);
-        }
+        const [, , publicKey] = this.session.namespaces.stellar.accounts[0].split(':');
 
-        // web
-        console.log(stringify);
+        this.event.trigger({
+            type: WalletConnectEvents.login,
+            publicKey: publicKey.toUpperCase(),
+            metadata: this.appMeta,
+            topic: this.session.topic,
+        });
+    }
+
+    private async setClient() {
+        this.client = await Promise.race([
+            WalletConnectClient.init({
+                projectId: process.env.WALLET_CONNECT_PROJECT_ID,
+                metadata: this.selfMeta,
+            }),
+            new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    reject('Connection timeout');
+                }, CONNECTION_TIMEOUT);
+            }) as Promise<WalletConnectClient>,
+        ]);
     }
 }

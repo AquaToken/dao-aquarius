@@ -1,6 +1,6 @@
 import useAuthStore from '../../store/authStore/useAuthStore';
 import { useEffect, useRef } from 'react';
-import WalletConnectServiceClass, { WalletConnectEvents } from '../services/wallet-connect.service';
+import { WalletConnectEvents } from '../services/wallet-connect.service';
 import { LoginTypes } from '../../store/authStore/types';
 import { Horizon } from 'stellar-sdk';
 import {
@@ -16,10 +16,6 @@ import { useSkipFirstRender } from './useSkipFirstRender';
 const UnfundedError = 'Not Found';
 
 export default function useGlobalSubscriptions(): void {
-    useEffect(() => {
-        WalletConnectServiceClass.checkVersion();
-    }, []);
-
     const {
         login,
         logout,
