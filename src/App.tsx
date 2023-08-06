@@ -48,7 +48,11 @@ const App = () => {
     useEffect(() => {
         const assetUpdateTimestamp = localStorage.getItem(UPDATE_ASSETS_DATE);
 
-        if (!assetUpdateTimestamp || Date.now() - Number(assetUpdateTimestamp) > UPDATE_PERIOD) {
+        if (
+            !assetUpdateTimestamp ||
+            Date.now() - Number(assetUpdateTimestamp) > UPDATE_PERIOD ||
+            !assetsInfo.size
+        ) {
             clearAssets();
             localStorage.setItem(UPDATE_ASSETS_DATE, Date.now().toString());
             setIsAssetsUpdated(true);
@@ -113,7 +117,7 @@ const App = () => {
         }
     }, []);
 
-    if (!isAssetsUpdated || !assetsInfo.size || !wcLoginChecked) {
+    if (!isAssetsUpdated || !wcLoginChecked) {
         return <PageLoader />;
     }
 
