@@ -12,6 +12,7 @@ import useAssetsStore from '../../../../store/assetsStore/useAssetsStore';
 import { getAssetString } from '../../../../store/assetsStore/actions';
 import { LumenInfo } from '../../../../store/assetsStore/reducer';
 import { Asset } from '../../../../store/assetsStore/types';
+import PageLoader from '../../../../common/basics/PageLoader';
 
 const Container = styled.div`
     display: flex;
@@ -110,6 +111,10 @@ const AboutAsset = ({ asset }) => {
     const isNative = asset.isNative();
     const hasAssetInfo = isNative || assetsInfo.has(getAssetString(asset));
     const assetInfo: Partial<Asset> = isNative ? LumenInfo : assetsInfo.get(getAssetString(asset));
+
+    if (!assetInfo) {
+        return <PageLoader />;
+    }
 
     return (
         <Container>
