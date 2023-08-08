@@ -202,6 +202,7 @@ export default class WalletConnectServiceClass {
         await this.connect();
     }
 
+    // Method for auto-connection with the wallet inside the mobile WebView
     async autoLogin() {
         if (this.session) {
             return Promise.resolve();
