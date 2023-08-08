@@ -8,6 +8,9 @@ import { MainRoutes } from '../../routes';
 import useAuthStore from '../../store/authStore/useAuthStore';
 
 // URL example: https://aqua.network/wallet-connect?redirect=vote
+
+// This page is intended for auto-connection with the wallet (LOBSTR) via the WalletConnect inside the mobile WebView.
+// On this page we generate a URI to connect and send it by the custom postMessage that listens by the wallet
 const WalletConnect = () => {
     const { isLogged } = useAuthStore();
 
