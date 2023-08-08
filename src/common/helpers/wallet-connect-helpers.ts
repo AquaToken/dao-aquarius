@@ -1,6 +1,6 @@
 // Constants
-const WC_CURRENT_WALLET = 'WC_APP';
-const WC_DEEP_LINK_HISTORY = 'WC_DEEP_LINK_APPS';
+const WC_CURRENT_WALLET_ALIAS = 'WC_APP';
+const WC_DEEP_LINK_HISTORY_ALIAS = 'WC_DEEP_LINK_APPS';
 const WC_SESSION_ALIAS = 'wc@2:client:0.3//session';
 
 function getLocalStorage(): Storage | undefined {
@@ -18,7 +18,7 @@ export const saveCurrentWallet = (name, uri) => {
     const LS = getLocalStorage();
     if (LS) {
         LS.setItem(
-            WC_CURRENT_WALLET,
+            WC_CURRENT_WALLET_ALIAS,
             JSON.stringify({
                 name,
                 uri: focusUri,
@@ -34,7 +34,7 @@ export const getCurrentWallet = () => {
     if (!LS) {
         return null;
     }
-    return JSON.parse(LS.getItem(WC_CURRENT_WALLET) || 'null');
+    return JSON.parse(LS.getItem(WC_CURRENT_WALLET_ALIAS) || 'null');
 };
 
 // Deep Link functional
@@ -42,7 +42,7 @@ export const getCurrentWallet = () => {
 export const clearCurrentWallet = () => {
     const LS = getLocalStorage();
     if (LS) {
-        LS.removeItem(WC_CURRENT_WALLET);
+        LS.removeItem(WC_CURRENT_WALLET_ALIAS);
     }
 };
 
@@ -64,7 +64,7 @@ const getDeepLinkHistory = () => {
         return new Map();
     }
 
-    return new Map(JSON.parse(LS.getItem(WC_DEEP_LINK_HISTORY) || '[]'));
+    return new Map(JSON.parse(LS.getItem(WC_DEEP_LINK_HISTORY_ALIAS) || '[]'));
 };
 
 // Deep Link functional
@@ -75,7 +75,7 @@ const setDeepLinkHistory = (list) => {
         return;
     }
 
-    LS.setItem(WC_DEEP_LINK_HISTORY, JSON.stringify(Array.from(list.entries())));
+    LS.setItem(WC_DEEP_LINK_HISTORY_ALIAS, JSON.stringify(Array.from(list.entries())));
 };
 
 // Deep Link functional
