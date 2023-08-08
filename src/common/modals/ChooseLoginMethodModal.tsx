@@ -134,28 +134,37 @@ const ChooseLoginMethodModal = ({
     }, []);
 
     const chooseMethod = (method: LoginTypes) => {
-        if (method === LoginTypes.secret) {
-            close();
-            ModalService.openModal(LoginWithSecret, {});
-        } else if (method === LoginTypes.walletConnect) {
-            if (isUaWebview(window?.navigator?.userAgent)) {
-                close();
-                WalletConnectService.autoLogin();
-            } else {
-                WalletConnectService.login();
-            }
-        } else if (method === LoginTypes.public) {
-            close();
-            ModalService.openModal(LoginWithPublic, {});
-        } else if (method === LoginTypes.ledger) {
-            LedgerService.isSupported.then((res) => {
-                if (res) {
+        switch (method) {
+            case LoginTypes.walletConnect:
+                // We make the assumption that if the application is open via WebView,
+                // then wallet knows how to process the custom postMessage
+                if (isUaWebview(window?.navigator?.userAgent)) {
                     close();
-                    ModalService.openModal(LedgerLogin, {});
+                    WalletConnectService.autoLogin();
                 } else {
-                    ToastService.showErrorToast('Ledger Wallet is not supported by your browser.');
+                    WalletConnectService.login();
                 }
-            });
+                break;
+            case LoginTypes.public:
+                close();
+                ModalService.openModal(LoginWithPublic, {});
+                break;
+            case LoginTypes.ledger:
+                LedgerService.isSupported.then((res) => {
+                    if (res) {
+                        close();
+                        ModalService.openModal(LedgerLogin, {});
+                    } else {
+                        ToastService.showErrorToast(
+                            'Ledger Wallet is not supported by your browser.',
+                        );
+                    }
+                });
+                break;
+            case LoginTypes.secret:
+                close();
+                ModalService.openModal(LoginWithSecret, {});
+                break;
         }
     };
 

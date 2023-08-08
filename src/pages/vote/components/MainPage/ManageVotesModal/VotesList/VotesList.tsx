@@ -7,10 +7,7 @@ import Pair from '../../../common/Pair';
 import { formatBalance, getDateString } from '../../../../../../common/helpers/helpers';
 import Tooltip, { TOOLTIP_POSITION } from '../../../../../../common/basics/Tooltip';
 import Dislike from '../../../../../../common/assets/img/icon-dislike-gray.svg';
-import {
-    BuildSignAndSubmitStatuses,
-    openApp,
-} from '../../../../../../common/services/wallet-connect.service';
+import { BuildSignAndSubmitStatuses } from '../../../../../../common/services/wallet-connect.service';
 import {
     DOWN_ICE_CODE,
     ICE_ISSUER,
@@ -26,6 +23,7 @@ import { respondDown } from '../../../../../../common/mixins';
 import Button from '../../../../../../common/basics/Button';
 import LinkIcon from '../../../../../../common/assets/img/icon-external-link.svg';
 import { MarketPair } from '../../../../../profile/api/types';
+import { openCurrentWalletIfExist } from '../../../../../../common/helpers/wallet-connect-helpers';
 
 const CheckboxMobile = styled(Checkbox)`
     display: none;
@@ -206,7 +204,7 @@ const VotesList = ({
     );
     const onSubmit = async (claim?: any) => {
         if (account.authType === LoginTypes.walletConnect) {
-            openApp();
+            openCurrentWalletIfExist();
         }
         try {
             setPendingId(claim?.id || 'any');

@@ -8,13 +8,11 @@ import Ice from '../../../../../common/assets/img/ice-logo.svg';
 import Button from '../../../../../common/basics/Button';
 import { StellarService, ToastService } from '../../../../../common/services/globalServices';
 import { LoginTypes } from '../../../../../store/authStore/types';
-import {
-    BuildSignAndSubmitStatuses,
-    openApp,
-} from '../../../../../common/services/wallet-connect.service';
+import { BuildSignAndSubmitStatuses } from '../../../../../common/services/wallet-connect.service';
 import { useState } from 'react';
 import ErrorHandler from '../../../../../common/helpers/error-handler';
 import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
+import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
 
 const ModalContainer = styled.div`
     width: 52.8rem;
@@ -73,7 +71,7 @@ const AddIceTrustlinesModal = ({ confirm }) => {
 
     const addTrustlines = async () => {
         if (account.authType === LoginTypes.walletConnect) {
-            openApp();
+            openCurrentWalletIfExist();
         }
         try {
             setPending(true);

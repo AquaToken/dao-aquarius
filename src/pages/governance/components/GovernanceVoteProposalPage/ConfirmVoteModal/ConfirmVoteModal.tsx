@@ -31,10 +31,7 @@ import GetAquaModal from '../../../../../common/modals/GetAquaModal/GetAquaModal
 import { SimpleProposalOptions } from '../../../pages/GovernanceVoteProposalPage';
 import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
 import ErrorHandler from '../../../../../common/helpers/error-handler';
-import {
-    BuildSignAndSubmitStatuses,
-    openApp,
-} from '../../../../../common/services/wallet-connect.service';
+import { BuildSignAndSubmitStatuses } from '../../../../../common/services/wallet-connect.service';
 import { LoginTypes } from '../../../../../store/authStore/types';
 import {
     AQUA_CODE,
@@ -45,6 +42,7 @@ import {
 import Select from '../../../../../common/basics/Select';
 import { Link } from 'react-router-dom';
 import { LockerRoutes } from '../../../../../routes';
+import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
 
 const MINIMUM_AMOUNT = 0.0000001;
 const MINIMUM_ICE_AMOUNT = 10;
@@ -231,7 +229,7 @@ const ConfirmVoteModal = ({
             return;
         }
         if (account.authType === LoginTypes.walletConnect) {
-            openApp();
+            openCurrentWalletIfExist();
         }
         try {
             setPending(true);

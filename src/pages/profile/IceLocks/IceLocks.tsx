@@ -11,10 +11,7 @@ import { formatBalance, getDateString, roundToPrecision } from '../../../common/
 import ProgressLine from '../../../common/basics/ProgressLine';
 import Button from '../../../common/basics/Button';
 import { LoginTypes } from '../../../store/authStore/types';
-import {
-    BuildSignAndSubmitStatuses,
-    openApp,
-} from '../../../common/services/wallet-connect.service';
+import { BuildSignAndSubmitStatuses } from '../../../common/services/wallet-connect.service';
 import ErrorHandler from '../../../common/helpers/error-handler';
 import { Empty } from '../YourVotes/YourVotes';
 import { Link } from 'react-router-dom';
@@ -25,6 +22,7 @@ import Info from '../../../common/assets/img/icon-info.svg';
 import Tooltip, { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
 import Table, { CellAlign } from '../../../common/basics/Table';
 import Checkbox from '../../../common/basics/Checkbox';
+import { openCurrentWalletIfExist } from '../../../common/helpers/wallet-connect-helpers';
 
 const Container = styled.div`
     display: flex;
@@ -186,7 +184,7 @@ const IceLocks = ({ ammAquaBalance }) => {
 
     const onSubmit = async (id?: string) => {
         if (account.authType === LoginTypes.walletConnect) {
-            openApp();
+            openCurrentWalletIfExist();
         }
         try {
             setPendingId(id || ALL_ID);

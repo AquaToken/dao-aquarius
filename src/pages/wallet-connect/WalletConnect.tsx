@@ -7,6 +7,7 @@ import { Redirect, useLocation } from 'react-router-dom';
 import { MainRoutes } from '../../routes';
 import useAuthStore from '../../store/authStore/useAuthStore';
 
+// URL example: https://aqua.network/wallet-connect?redirect=vote
 const WalletConnect = () => {
     const { isLogged } = useAuthStore();
 
@@ -19,6 +20,10 @@ const WalletConnect = () => {
     useEffect(() => {
         const unsub = WalletConnectService.event.sub((event) => {
             if (event.type === WalletConnectEvents.logout) {
+                // The case is when the WalletConnect return the public key,
+                // but we are still in the process of receiving data from the Horizon
+                // and at this moment a disconnect event is received.
+                // We want to re-execute the autoLogin.
                 WalletConnectService.autoLogin();
             }
         });
@@ -26,6 +31,7 @@ const WalletConnect = () => {
         return () => unsub();
     }, []);
 
+    // After login redirect to the page from the url params or to the main page
     if (isLogged) {
         const params = new URLSearchParams(location.search);
         const redirect = params.get('redirect');

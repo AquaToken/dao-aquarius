@@ -14,14 +14,12 @@ import Pair from '../../common/Pair';
 import * as StellarSdk from 'stellar-sdk';
 import { StellarService, ToastService } from '../../../../../common/services/globalServices';
 import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
-import {
-    BuildSignAndSubmitStatuses,
-    openApp,
-} from '../../../../../common/services/wallet-connect.service';
+import { BuildSignAndSubmitStatuses } from '../../../../../common/services/wallet-connect.service';
 import Info from '../../../../../common/assets/img/icon-info.svg';
 import Tooltip, { TOOLTIP_POSITION } from '../../../../../common/basics/Tooltip';
 import ErrorHandler from '../../../../../common/helpers/error-handler';
 import { LoginTypes } from '../../../../../store/authStore/types';
+import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
 
 const ContentRow = styled.div`
     display: flex;
@@ -129,7 +127,7 @@ const CreatePairModal = ({
             return;
         }
         if (account.authType === LoginTypes.walletConnect) {
-            openApp();
+            openCurrentWalletIfExist();
         }
         setPending(true);
 

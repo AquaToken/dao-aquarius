@@ -22,7 +22,7 @@ import { Breakpoints } from '../../../../../common/styles';
 import PaymentInProgressAlert from '../PaymentInProgressAlert/PaymentInProgressAlert';
 import ErrorHandler from '../../../../../common/helpers/error-handler';
 import { LoginTypes } from '../../../../../store/authStore/types';
-import { openApp } from '../../../../../common/services/wallet-connect.service';
+import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
 
 const ProposalCost = styled.div`
     ${flexRowSpaceBetween};
@@ -103,7 +103,7 @@ const CreateDiscussionModal = ({
         setLoading(true);
 
         if (account.authType === LoginTypes.walletConnect) {
-            openApp();
+            openCurrentWalletIfExist();
         }
 
         try {

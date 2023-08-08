@@ -13,14 +13,12 @@ import useAuthStore from '../../../store/authStore/useAuthStore';
 import Button from '../../../common/basics/Button';
 import { Breakpoints, COLORS } from '../../../common/styles';
 import { LoginTypes } from '../../../store/authStore/types';
-import {
-    BuildSignAndSubmitStatuses,
-    openApp,
-} from '../../../common/services/wallet-connect.service';
+import { BuildSignAndSubmitStatuses } from '../../../common/services/wallet-connect.service';
 import ErrorHandler from '../../../common/helpers/error-handler';
 import Checkbox from '../../../common/basics/Checkbox';
 import Table, { CellAlign } from '../../../common/basics/Table';
 import { respondDown } from '../../../common/mixins';
+import { openCurrentWalletIfExist } from '../../../common/helpers/wallet-connect-helpers';
 
 const Container = styled.div`
     display: flex;
@@ -126,7 +124,7 @@ const Airdrop2List = () => {
 
     const onSubmit = async (id?: string) => {
         if (account.authType === LoginTypes.walletConnect) {
-            openApp();
+            openCurrentWalletIfExist();
         }
         try {
             setPendingId(id || ALL_ID);

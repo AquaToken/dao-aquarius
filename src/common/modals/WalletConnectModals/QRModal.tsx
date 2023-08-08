@@ -12,7 +12,7 @@ import { flexAllCenter, respondDown } from '../../mixins';
 import { Breakpoints, COLORS } from '../../styles';
 import Button from '../../basics/Button';
 import ArrowRight from '../../assets/img/icon-arrow-right.svg';
-import { clearApp, saveAppToLS } from '../../services/wallet-connect.service';
+import { clearCurrentWallet, saveCurrentWallet } from '../../helpers/wallet-connect-helpers';
 
 const Wrapper = styled.div`
     width: 52.8rem;
@@ -147,7 +147,7 @@ const QRModal = ({ params }: ModalProps<{ uri: string }>): JSX.Element => {
 
     useEffect(() => {
         if (modalState === ModalStates.qr) {
-            clearApp();
+            clearCurrentWallet();
         }
     }, [modalState]);
 
@@ -217,7 +217,7 @@ const QRModal = ({ params }: ModalProps<{ uri: string }>): JSX.Element => {
                 (isAndroid() ? (
                     <AndroidButtonBlock
                         onClick={() => {
-                            saveAppToLS('Unknown', uri);
+                            saveCurrentWallet('Unknown', uri);
                             window.open(uri, '_blank');
                         }}
                     >
@@ -232,7 +232,7 @@ const QRModal = ({ params }: ModalProps<{ uri: string }>): JSX.Element => {
                                         key={wallet.id}
                                         onClick={() => {
                                             const link = formatIOSMobile(uri, wallet);
-                                            saveAppToLS(wallet.name, link);
+                                            saveCurrentWallet(wallet.name, link);
                                             window.open(link, '_blank');
                                         }}
                                     >

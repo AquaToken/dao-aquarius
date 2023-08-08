@@ -6,10 +6,7 @@ import { formatBalance, getDateString } from '../../../../../../common/helpers/h
 import { LoginTypes } from '../../../../../../store/authStore/types';
 import DotsLoader from '../../../../../../common/basics/DotsLoader';
 import Button from '../../../../../../common/basics/Button';
-import {
-    BuildSignAndSubmitStatuses,
-    openApp,
-} from '../../../../../../common/services/wallet-connect.service';
+import { BuildSignAndSubmitStatuses } from '../../../../../../common/services/wallet-connect.service';
 import { StellarService, ToastService } from '../../../../../../common/services/globalServices';
 import {
     GOV_ICE_CODE,
@@ -26,6 +23,7 @@ import IconSuccess from '../../../../../../common/assets/img/icon-success.svg';
 import Checkbox from '../../../../../../common/basics/Checkbox';
 import { respondDown } from '../../../../../../common/mixins';
 import { LogVote } from '../../../../api/types';
+import { openCurrentWalletIfExist } from '../../../../../../common/helpers/wallet-connect-helpers';
 
 const AquaLogo = styled(Aqua)`
     height: 1.6rem;
@@ -197,7 +195,7 @@ const YourVotes = ({ proposal }) => {
         event.preventDefault();
 
         if (account.authType === LoginTypes.walletConnect) {
-            openApp();
+            openCurrentWalletIfExist();
         }
 
         try {

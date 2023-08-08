@@ -111,6 +111,7 @@ const App = () => {
     useEffect(() => {
         const userAgent = window.navigator.userAgent;
 
+        // Fix iOS functionality: tap on both sides of the dynamic island, and the phone will instantly scroll up
         if (userAgent.match(/iPad/i) || userAgent.match(/iPhone/i)) {
             document.documentElement.style.overflowX = 'unset';
             document.body.style.overflowX = 'unset';
