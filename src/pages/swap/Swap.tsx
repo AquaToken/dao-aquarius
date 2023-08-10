@@ -8,7 +8,6 @@ import { COLORS } from '../../common/styles';
 import useAuthStore from '../../store/authStore/useAuthStore';
 import { useEffect, useMemo, useState } from 'react';
 import { ModalService, SorobanService, ToastService } from '../../common/services/globalServices';
-import ChooseLoginMethodModal from '../../common/modals/ChooseLoginMethodModal';
 import PageLoader from '../../common/basics/PageLoader';
 import Input from '../../common/basics/Input';
 import SwapIcon from '../../common/assets/img/icon-arrows-circle.svg';
@@ -16,6 +15,8 @@ import { useDebounce } from '../../common/hooks/useDebounce';
 import Button from '../../common/basics/Button';
 import { IconFail } from '../../common/basics/Icons';
 import { USDT, USDC } from '../amm/Amm';
+import * as SorobanClient from 'soroban-client';
+import SuccessModal from '../amm/SuccessModal/SuccessModal';
 
 const Container = styled.main`
     background-color: ${COLORS.lightGray};
@@ -105,24 +106,20 @@ const Swap = ({ balances }) => {
     const debouncedAmount = useDebounce(counterAmount, 700);
 
     useEffect(() => {
-        if (!isLogged) {
-            ModalService.openModal(ChooseLoginMethodModal, {});
-        }
-    }, []);
-
-    useEffect(() => {
         if (isLogged) {
-            SorobanService.getPoolId(base, counter).then((id) => {
-                setPoolId(id);
-            });
+            SorobanService.getPoolIdTx(account?.accountId(), base, counter)
+                .then((tx) => account.signAndSubmitTx(tx as SorobanClient.Transaction, true))
+                .then((res) => {
+                    setPoolId(res.value().value().toString('hex'));
+                });
         }
-    }, [isLogged, base, counter]);
+    }, [isLogged, base, counter, account]);
 
     const getData = () => {
-        SorobanService.getTokenBalance(base, poolId).then((res) => {
+        SorobanService.getTokenBalance(account?.accountId(), base, poolId).then((res) => {
             setBaseShares(res);
         });
-        SorobanService.getTokenBalance(counter, poolId).then((res) => {
+        SorobanService.getTokenBalance(account?.accountId(), counter, poolId).then((res) => {
             setCounterShares(res);
         });
     };
@@ -144,7 +141,12 @@ const Swap = ({ balances }) => {
     useEffect(() => {
         if (!!Number(debouncedAmount)) {
             setEstimatePending(true);
-            SorobanService.getSwapEstimatedAmount(base, counter, debouncedAmount).then((res) => {
+            SorobanService.getSwapEstimatedAmount(
+                account?.accountId(),
+                base,
+                counter,
+                debouncedAmount,
+            ).then((res) => {
                 setBaseAmount(res.toString());
                 setEstimatePending(false);
             });
@@ -158,8 +160,32 @@ const Swap = ({ balances }) => {
             return;
         }
         setSwapPending(true);
-        SorobanService.swapAssets(poolId, base, counter, counterAmount, baseAmount)
-            .then(() => {
+        const SLIPPAGE = 0.01; // 1%
+
+        const maxBaseAmount = ((1 + SLIPPAGE) * Number(baseAmount)).toFixed(7);
+
+        SorobanService.getGiveAllowanceTx(account?.accountId(), poolId, base, maxBaseAmount)
+            .then((tx) => account.signAndSubmitTx(tx as SorobanClient.Transaction, true))
+            .then(() =>
+                SorobanService.getSwapTx(
+                    account?.accountId(),
+                    poolId,
+                    base,
+                    counter,
+                    counterAmount,
+                    maxBaseAmount,
+                ),
+            )
+            .then((tx) => account.signAndSubmitTx(tx as SorobanClient.Transaction, true))
+            .then((res) => {
+                ModalService.openModal(SuccessModal, {
+                    base,
+                    counter,
+                    baseAmount: SorobanService.i128ToInt(res.value()),
+                    counterAmount: Number(counterAmount),
+                    title: 'Success swap',
+                    isSwap: true,
+                });
                 setSwapPending(false);
                 setBaseAmount('');
                 setCounterAmount('');

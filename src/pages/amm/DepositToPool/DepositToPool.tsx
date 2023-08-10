@@ -6,9 +6,15 @@ import { ModalTitle } from '../../../common/modals/atoms/ModalAtoms';
 import Input from '../../../common/basics/Input';
 import Asset from '../../vote/components/AssetDropdown/Asset';
 import { useEffect, useMemo, useState } from 'react';
-import { SorobanService, ToastService } from '../../../common/services/globalServices';
+import {
+    ModalService,
+    SorobanService,
+    ToastService,
+} from '../../../common/services/globalServices';
 import Button from '../../../common/basics/Button';
 import useAuthStore from '../../../store/authStore/useAuthStore';
+import SuccessModal from '../SuccessModal/SuccessModal';
+import * as SorobanClient from 'soroban-client';
 
 const Container = styled.div`
     width: 52.3rem;
@@ -39,7 +45,7 @@ const DepositToPool = ({ params }) => {
     const [price, setPrice] = useState(null);
 
     useEffect(() => {
-        SorobanService.getPoolPrice(base, counter).then((res) => {
+        SorobanService.getPoolPrice(account?.accountId(), base, counter).then((res) => {
             setPrice(res);
         });
     }, []);
@@ -63,11 +69,59 @@ const DepositToPool = ({ params }) => {
     const onSubmit = () => {
         setPending(true);
 
-        SorobanService.deposit(poolId, base, counter, baseAmount, counterAmount).catch((e) => {
-            console.log(e);
-            ToastService.showErrorToast('Oops! Something went wrong');
-            setPending(false);
-        });
+        const baseId = SorobanService.getAssetContractId(base);
+        const counterId = SorobanService.getAssetContractId(counter);
+
+        const [firstAsset, secondAsset] = baseId > counterId ? [counter, base] : [base, counter];
+        const [firstAssetAmount, secondAssetAmount] =
+            baseId > counterId ? [counterAmount, baseAmount] : [baseAmount, counterAmount];
+
+        SorobanService.getGiveAllowanceTx(
+            account?.accountId(),
+            poolId,
+            firstAsset,
+            firstAssetAmount,
+        )
+            .then((tx) => account.signAndSubmitTx(tx as SorobanClient.Transaction, true))
+            .then(() =>
+                SorobanService.getGiveAllowanceTx(
+                    account?.accountId(),
+                    poolId,
+                    secondAsset,
+                    secondAssetAmount,
+                ),
+            )
+            .then((tx) => account.signAndSubmitTx(tx as SorobanClient.Transaction, true))
+            .then(() =>
+                SorobanService.getDepositTx(
+                    account?.accountId(),
+                    poolId,
+                    firstAsset,
+                    secondAsset,
+                    firstAssetAmount,
+                    secondAssetAmount,
+                ),
+            )
+            .then((tx) => account.signAndSubmitTx(tx as SorobanClient.Transaction, true))
+            .then((res) => {
+                setPending(false);
+                const [baseResultAmount, counterResultAmount] = res.value();
+
+                ModalService.confirmAllModals();
+
+                ModalService.openModal(SuccessModal, {
+                    base,
+                    counter,
+                    baseAmount: SorobanService.i128ToInt(baseResultAmount.value()),
+                    counterAmount: SorobanService.i128ToInt(counterResultAmount.value()),
+                    title: 'Success deposit',
+                });
+            })
+            .catch((e) => {
+                console.log(e);
+                ToastService.showErrorToast('Oops! Something went wrong');
+                setPending(false);
+            });
     };
 
     const onChangeBase = (e) => {
