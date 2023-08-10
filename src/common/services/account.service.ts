@@ -43,9 +43,9 @@ export default class AccountService extends AccountResponse {
     }
 
     async signAndSubmitTx(
-        tx: StellarSdk.Transaction,
+        tx: StellarSdk.Transaction | SorobanClient.Transaction,
         withResult?: boolean,
-    ): Promise<Horizon.SubmitTransactionResponse | void | { status: BuildSignAndSubmitStatuses }> {
+    ): Promise<any> {
         if (this.authType === LoginTypes.public) {
             const xdr = tx.toEnvelope().toXDR('base64');
             ModalService.openModal(SignWithPublic, { xdr, account: this });
@@ -53,30 +53,31 @@ export default class AccountService extends AccountResponse {
         }
 
         if (this.authType === LoginTypes.walletConnect && !withResult) {
-            return WalletConnectService.signAndSubmitTx(tx);
+            return WalletConnectService.signAndSubmitTx(tx as StellarSdk.Transaction);
         }
 
         let signedTx;
 
         if (this.authType === LoginTypes.secret) {
-            signedTx = StellarService.signWithSecret(tx);
+            signedTx = SorobanService.signWithSecret(tx as SorobanClient.Transaction);
         }
 
         if (this.authType === LoginTypes.walletConnect && withResult) {
-            const signedXDR = await WalletConnectService.signTx(tx);
+            const signedXDR = await WalletConnectService.signTx(tx as StellarSdk.Transaction);
             signedTx = new StellarSdk.Transaction(signedXDR, StellarSdk.Networks.PUBLIC);
         }
 
         if (this.authType === LoginTypes.ledger && !this.isMultisigEnabled) {
-            const result = LedgerService.signTx(tx).then((signed) =>
-                StellarService.submitTx(signed),
+            const result = LedgerService.signTx(tx as StellarSdk.Transaction).then((signed) =>
+                // @ts-ignore
+                SorobanService.submitTx(signed),
             );
             ModalService.openModal(LedgerSignTx, { result });
             return result;
         }
 
         if (this.authType === LoginTypes.ledger) {
-            const signPromise = LedgerService.signTx(tx);
+            const signPromise = LedgerService.signTx(tx as StellarSdk.Transaction);
             ModalService.openModal(LedgerSignTx, { result: signPromise });
             signedTx = await signPromise;
         }
@@ -92,7 +93,7 @@ export default class AccountService extends AccountResponse {
             if (this.authType === LoginTypes.ledger) {
                 ModalService.closeAllModals();
             }
-            return StellarService.submitTx(signedTx);
+            return SorobanService.submitTx(signedTx);
         }
 
         ModalService.closeAllModals();

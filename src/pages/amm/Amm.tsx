@@ -25,7 +25,7 @@ import { Breakpoints, COLORS } from '../../common/styles';
 import DotsLoader from '../../common/basics/DotsLoader';
 import Button from '../../common/basics/Button';
 import DepositToPool from './DepositToPool/DepositToPool';
-import ChooseLoginMethodModal from '../../common/modals/ChooseLoginMethodModal';
+import SuccessModal from './SuccessModal/SuccessModal';
 
 const Container = styled.main`
     height: 100%;
@@ -97,18 +97,14 @@ const Amm = ({ balances }) => {
     const [withdrawPending, setWithdrawPending] = useState(false);
 
     useEffect(() => {
-        if (!isLogged) {
-            ModalService.openModal(ChooseLoginMethodModal, {});
-        }
-    }, []);
-
-    useEffect(() => {
         if (isLogged) {
-            SorobanService.getPoolId(base, counter).then((id) => {
-                setPoolId(id);
-            });
+            SorobanService.getPoolIdTx(account?.accountId(), base, counter)
+                .then((tx) => account.signAndSubmitTx(tx as SorobanClient.Transaction, true))
+                .then((res) => {
+                    setPoolId(res.value().value().toString('hex'));
+                });
         }
-    }, [isLogged, base, counter]);
+    }, [isLogged, base, counter, account]);
 
     useEffect(() => {
         if (!poolId) {
@@ -127,18 +123,20 @@ const Amm = ({ balances }) => {
     }, [base, counter]);
 
     const getData = () => {
-        SorobanService.getTokenBalance(base, poolId).then((res) => {
+        SorobanService.getTokenBalance(account?.accountId(), base, poolId).then((res) => {
             setBaseShares(res);
         });
-        SorobanService.getTokenBalance(counter, poolId).then((res) => {
+        SorobanService.getTokenBalance(account?.accountId(), counter, poolId).then((res) => {
             setCounterShares(res);
         });
 
-        SorobanService.getPoolShareId(poolId).then((shareId) => {
+        SorobanService.getPoolShareId(account?.accountId(), poolId).then((shareId) => {
             setShareId(shareId);
-            SorobanService.getTokenBalance(shareId, account.accountId()).then((res) => {
-                setAccountShares(res);
-            });
+            SorobanService.getTokenBalance(account?.accountId(), shareId, account.accountId()).then(
+                (res) => {
+                    setAccountShares(res);
+                },
+            );
         });
     };
 
@@ -148,7 +146,9 @@ const Amm = ({ balances }) => {
     const getTestTokens = () => {
         setGetTokenPending(true);
 
-        SorobanService.getTestAssets()
+        SorobanService.getAddTrustTx(account?.accountId())
+            .then((tx) => account.signAndSubmitTx(tx))
+            .then(() => SorobanService.getTestAssets(account?.accountId()))
             .then(() => {
                 ToastService.showSuccessToast('Test tokens have been received');
                 setGetTokenPending(false);
@@ -168,16 +168,39 @@ const Amm = ({ balances }) => {
 
     const withdrawAll = () => {
         setWithdrawPending(true);
-        SorobanService.withdraw(
-            poolId,
-            base,
-            counter,
-            '0.0000001',
-            '0.0000001',
-            shareId,
-            accountShares,
-        )
-            .then(() => {
+
+        const baseId = SorobanService.getAssetContractId(base);
+        const counterId = SorobanService.getAssetContractId(counter);
+
+        const [firstAsset, secondAsset] = baseId > counterId ? [counter, base] : [base, counter];
+
+        SorobanService.getGiveAllowanceTx(account?.accountId(), poolId, shareId, accountShares)
+            .then((tx) => account.signAndSubmitTx(tx as SorobanClient.Transaction, true))
+            .then(() =>
+                SorobanService.getWithdrawTx(
+                    account?.accountId(),
+                    poolId,
+                    firstAsset,
+                    secondAsset,
+                    '0.0000001',
+                    '0.0000001',
+                    shareId,
+                    accountShares,
+                ),
+            )
+            .then((tx) => account.signAndSubmitTx(tx as SorobanClient.Transaction, true))
+            .then((res) => {
+                const [baseAmount, counterAmount] = res.value();
+
+                ModalService.confirmAllModals();
+
+                ModalService.openModal(SuccessModal, {
+                    base,
+                    counter,
+                    baseAmount: SorobanService.i128ToInt(baseAmount.value()),
+                    counterAmount: SorobanService.i128ToInt(counterAmount.value()),
+                    title: 'Success withdraw',
+                });
                 getData();
                 setWithdrawPending(false);
             })

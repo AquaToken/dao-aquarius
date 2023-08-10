@@ -3,8 +3,7 @@ import { sha256 } from 'js-sha256';
 import binascii from 'binascii';
 import { xdr, Asset, Keypair, SorobanRpc } from 'soroban-client';
 import SendTransactionResponse = SorobanRpc.SendTransactionResponse;
-import { ModalService, ToastService } from './globalServices';
-import SuccessModal from '../../pages/amm/SuccessModal/SuccessModal';
+import { ToastService } from './globalServices';
 
 const SOROBAN_SERVER = 'https://rpc-futurenet.stellar.org:443/';
 
@@ -33,6 +32,14 @@ enum ASSET_CONTRACT_METHOD {
 
 const FEE = '1000';
 
+const issuerKeypair = SorobanClient.Keypair.fromSecret(
+    'SBPQCB4DOUQ26OC43QNAA3ODZOGECHJUVHDHYRHKYPL4SA22RRYGHQCX',
+);
+const USDT = new SorobanClient.Asset('USDT', issuerKeypair.publicKey());
+const USDC = new SorobanClient.Asset('USDC', issuerKeypair.publicKey());
+const ETH = new SorobanClient.Asset('ETH', issuerKeypair.publicKey());
+const BTC = new SorobanClient.Asset('BTC', issuerKeypair.publicKey());
+
 export default class SorobanServiceClass {
     server: SorobanClient.Server | null = null;
     keypair: Keypair | null = null;
@@ -59,97 +66,77 @@ export default class SorobanServiceClass {
         }
     }
 
-    getTestAssets() {
-        const issuerKeypair = SorobanClient.Keypair.fromSecret(
-            'SBPQCB4DOUQ26OC43QNAA3ODZOGECHJUVHDHYRHKYPL4SA22RRYGHQCX',
-        );
-        const USDT = new SorobanClient.Asset('USDT', issuerKeypair.publicKey());
-        const USDC = new SorobanClient.Asset('USDC', issuerKeypair.publicKey());
-        const ETH = new SorobanClient.Asset('ETH', issuerKeypair.publicKey());
-        const BTC = new SorobanClient.Asset('BTC', issuerKeypair.publicKey());
-
-        return this.server
-            .getAccount(this.keypair.publicKey())
-            .then((acc) => {
-                const transaction = new SorobanClient.TransactionBuilder(acc, {
-                    fee: FEE,
-                    networkPassphrase: SorobanClient.Networks.FUTURENET,
-                })
-                    .addOperation(
-                        SorobanClient.Operation.changeTrust({
-                            asset: USDC,
-                        }),
-                    )
-                    .addOperation(
-                        SorobanClient.Operation.changeTrust({
-                            asset: USDT,
-                        }),
-                    )
-                    .addOperation(
-                        SorobanClient.Operation.changeTrust({
-                            asset: BTC,
-                        }),
-                    )
-                    .addOperation(
-                        SorobanClient.Operation.changeTrust({
-                            asset: ETH,
-                        }),
-                    )
-                    .setTimeout(SorobanClient.TimeoutInfinite)
-                    .build();
-                transaction.sign(this.keypair);
-                return this.server.sendTransaction(transaction);
+    getAddTrustTx(accountId: string) {
+        return this.server.getAccount(accountId).then((acc) => {
+            return new SorobanClient.TransactionBuilder(acc, {
+                fee: FEE,
+                networkPassphrase: SorobanClient.Networks.FUTURENET,
             })
-            .then((res) => {
-                return this.processResponse(res);
-            })
-            .then(() => {
-                return this.server
-                    .getAccount(issuerKeypair.publicKey())
-                    .then((issuer) => {
-                        const transaction = new SorobanClient.TransactionBuilder(issuer, {
-                            fee: FEE,
-                            networkPassphrase: SorobanClient.Networks.FUTURENET,
-                        })
-                            .addOperation(
-                                SorobanClient.Operation.payment({
-                                    destination: this.keypair.publicKey(),
-                                    asset: USDT,
-                                    amount: '10000',
-                                }),
-                            )
-                            .addOperation(
-                                SorobanClient.Operation.payment({
-                                    destination: this.keypair.publicKey(),
-                                    asset: USDC,
-                                    amount: '10000',
-                                }),
-                            )
-                            .addOperation(
-                                SorobanClient.Operation.payment({
-                                    destination: this.keypair.publicKey(),
-                                    asset: ETH,
-                                    amount: '10000',
-                                }),
-                            )
-                            .addOperation(
-                                SorobanClient.Operation.payment({
-                                    destination: this.keypair.publicKey(),
-                                    asset: BTC,
-                                    amount: '10000',
-                                }),
-                            )
-                            .setTimeout(SorobanClient.TimeoutInfinite)
-                            .build();
+                .addOperation(
+                    SorobanClient.Operation.changeTrust({
+                        asset: USDC,
+                    }),
+                )
+                .addOperation(
+                    SorobanClient.Operation.changeTrust({
+                        asset: USDT,
+                    }),
+                )
+                .addOperation(
+                    SorobanClient.Operation.changeTrust({
+                        asset: BTC,
+                    }),
+                )
+                .addOperation(
+                    SorobanClient.Operation.changeTrust({
+                        asset: ETH,
+                    }),
+                )
+                .setTimeout(SorobanClient.TimeoutInfinite)
+                .build();
+        });
+    }
 
-                        transaction.sign(issuerKeypair);
-                        return this.server.sendTransaction(transaction);
-                    })
-                    .then((res) => this.processResponse(res))
-                    .catch(function (error) {
-                        console.error('Error!', error);
-                    });
-            });
+    getTestAssets(accountId) {
+        return this.server.getAccount(issuerKeypair.publicKey()).then((issuer) => {
+            const transaction = new SorobanClient.TransactionBuilder(issuer, {
+                fee: FEE,
+                networkPassphrase: SorobanClient.Networks.FUTURENET,
+            })
+                .addOperation(
+                    SorobanClient.Operation.payment({
+                        destination: accountId,
+                        asset: USDT,
+                        amount: '10000',
+                    }),
+                )
+                .addOperation(
+                    SorobanClient.Operation.payment({
+                        destination: accountId,
+                        asset: USDC,
+                        amount: '10000',
+                    }),
+                )
+                .addOperation(
+                    SorobanClient.Operation.payment({
+                        destination: accountId,
+                        asset: ETH,
+                        amount: '10000',
+                    }),
+                )
+                .addOperation(
+                    SorobanClient.Operation.payment({
+                        destination: accountId,
+                        asset: BTC,
+                        amount: '10000',
+                    }),
+                )
+                .setTimeout(SorobanClient.TimeoutInfinite)
+                .build();
+
+            transaction.sign(issuerKeypair);
+            return this.submitTx(transaction);
+        });
     }
 
     processResponse(response: SendTransactionResponse) {
@@ -243,38 +230,22 @@ export default class SorobanServiceClass {
             });
     }
 
-    getPoolId(base: Asset, counter: Asset) {
+    getPoolIdTx(accountId: string, base: Asset, counter: Asset) {
         const [aId, bId] = this.orderTokenIDS(base, counter);
 
         return this.buildSmartContactTx(
-            this.keypair.publicKey(),
+            accountId,
             AMM_SMART_CONTACT_ID,
             AMM_CONTRACT_METHOD.GET_OR_CREATE_POOL,
             this.hashToScVal(POOL_CONTACT_WASM_HASH),
             this.hashToScVal(TOKEN_CONTACT_WASM_HASH),
             this.hashToAddressScVal(aId),
             this.hashToAddressScVal(bId),
-        )
-            .then((tx) => this.server.prepareTransaction(tx))
-            .then((prepared) => {
-                prepared.sign(this.keypair);
-                return this.submitTx(
-                    prepared as SorobanClient.Transaction<
-                        SorobanClient.Memo<SorobanClient.MemoType>,
-                        SorobanClient.Operation[]
-                    >,
-                );
-            })
-            .then((res) => this.processResponse(res))
-            .then((res) => res.value().value().toString('hex'));
+        ).then((tx) => this.server.prepareTransaction(tx));
     }
 
-    getPoolShareId(poolId: string) {
-        return this.buildSmartContactTx(
-            this.keypair.publicKey(),
-            poolId,
-            AMM_CONTRACT_METHOD.SHARE_ID,
-        )
+    getPoolShareId(accountId, poolId: string) {
+        return this.buildSmartContactTx(accountId, poolId, AMM_CONTRACT_METHOD.SHARE_ID)
             .then((tx) => this.server.simulateTransaction(tx))
             .then((res) => {
                 if (res.results) {
@@ -289,9 +260,9 @@ export default class SorobanServiceClass {
             });
     }
 
-    getTokenBalance(token: Asset | string, where: string) {
+    getTokenBalance(accountId, token: Asset | string, where: string) {
         return this.buildSmartContactTx(
-            this.keypair.publicKey(),
+            accountId,
             typeof token === 'string' ? token : this.getAssetContractId(token),
             ASSET_CONTRACT_METHOD.GET_BALANCE,
             SorobanClient.StrKey.isValidEd25519PublicKey(where)
@@ -312,9 +283,9 @@ export default class SorobanServiceClass {
             });
     }
 
-    getPoolAllowance(poolId: string, token: Asset | string) {
+    getPoolAllowance(accountId: string, poolId: string, token: Asset | string) {
         return this.buildSmartContactTx(
-            this.keypair.publicKey(),
+            accountId,
             typeof token === 'string' ? token : this.getAssetContractId(token),
             ASSET_CONTRACT_METHOD.GET_ALLOWANCE,
             this.publicKeyToScVal(this.keypair.publicKey()),
@@ -336,40 +307,27 @@ export default class SorobanServiceClass {
             });
     }
 
-    giveAllowance(poolId: string, asset: Asset | string, amount: string) {
+    getGiveAllowanceTx(accountId: string, poolId: string, asset: Asset | string, amount: string) {
         return this.buildSmartContactTx(
-            this.keypair.publicKey(),
+            accountId,
             typeof asset === 'string' ? asset : this.getAssetContractId(asset),
             ASSET_CONTRACT_METHOD.APPROVE_ALLOWANCE,
             this.publicKeyToScVal(this.keypair.publicKey()),
             this.hashToAddressScVal(poolId),
             this.amountToScVal(amount),
             xdr.ScVal.scvU32(2 ** 20),
-        )
-            .then((tx) => {
-                return this.server.prepareTransaction(tx);
-            })
-            .then((prepared) => {
-                prepared.sign(this.keypair);
-                return this.submitTx(
-                    prepared as SorobanClient.Transaction<
-                        SorobanClient.Memo<SorobanClient.MemoType>,
-                        SorobanClient.Operation[]
-                    >,
-                );
-            })
-            .then((res) => {
-                return this.processResponse(res);
-            });
+        ).then((tx) => {
+            return this.server.prepareTransaction(tx);
+        });
     }
 
-    getPoolPrice(a: Asset, b: Asset) {
+    getPoolPrice(accountId: string, a: Asset, b: Asset) {
         const idA = this.getAssetContractId(a);
         const idB = this.getAssetContractId(b);
         const [base, counter] = idA > idB ? [b, a] : [a, b];
 
         return this.buildSmartContactTx(
-            this.keypair.publicKey(),
+            accountId,
             AMM_SMART_CONTACT_ID,
             AMM_CONTRACT_METHOD.GET_RESERVES,
             this.assetToScVal(base),
@@ -399,63 +357,13 @@ export default class SorobanServiceClass {
             });
     }
 
-    deposit(poolId: string, a: Asset, b: Asset, aAmount: string, bAmount: string) {
-        const idA = this.getAssetContractId(a);
-        const idB = this.getAssetContractId(b);
-
-        const [base, counter] = idA > idB ? [b, a] : [a, b];
-        const [baseAmount, counterAmount] = idA > idB ? [bAmount, aAmount] : [aAmount, bAmount];
-
-        return this.giveAllowance(poolId, base, baseAmount)
-            .then(() => this.giveAllowance(poolId, counter, counterAmount))
-            .then(() =>
-                this.buildSmartContactTx(
-                    this.keypair.publicKey(),
-                    AMM_SMART_CONTACT_ID,
-                    AMM_CONTRACT_METHOD.DEPOSIT,
-                    this.publicKeyToScVal(this.keypair.publicKey()),
-                    this.assetToScVal(base),
-                    this.assetToScVal(counter),
-                    this.amountToScVal(baseAmount),
-                    this.amountToScVal('0'),
-                    this.amountToScVal(counterAmount),
-                    this.amountToScVal('0'),
-                ),
-            )
-            .then((tx) => this.server.prepareTransaction(tx))
-            .then((prepared) => {
-                prepared.sign(this.keypair);
-                return this.submitTx(
-                    prepared as SorobanClient.Transaction<
-                        SorobanClient.Memo<SorobanClient.MemoType>,
-                        SorobanClient.Operation[]
-                    >,
-                );
-            })
-            .then((res) => this.processResponse(res))
-            .then((res) => {
-                const [baseAmount, counterAmount] = res.value();
-
-                ModalService.confirmAllModals();
-
-                ModalService.openModal(SuccessModal, {
-                    base,
-                    counter,
-                    baseAmount: this.i128ToInt(baseAmount.value()),
-                    counterAmount: this.i128ToInt(counterAmount.value()),
-                    title: 'Success deposit',
-                });
-            });
-    }
-
-    withdraw(
+    getDepositTx(
+        accountId: string,
         poolId: string,
         a: Asset,
         b: Asset,
         aAmount: string,
         bAmount: string,
-        shareId: string,
-        shareAmount: string,
     ) {
         const idA = this.getAssetContractId(a);
         const idB = this.getAssetContractId(b);
@@ -463,45 +371,46 @@ export default class SorobanServiceClass {
         const [base, counter] = idA > idB ? [b, a] : [a, b];
         const [baseAmount, counterAmount] = idA > idB ? [bAmount, aAmount] : [aAmount, bAmount];
 
-        return this.giveAllowance(poolId, shareId, shareAmount)
-            .then(() =>
-                this.buildSmartContactTx(
-                    this.keypair.publicKey(),
-                    AMM_SMART_CONTACT_ID,
-                    AMM_CONTRACT_METHOD.WITHDRAW,
-                    this.publicKeyToScVal(this.keypair.publicKey()),
-                    this.assetToScVal(base),
-                    this.assetToScVal(counter),
-                    this.amountToScVal(shareAmount),
-                    this.amountToScVal(baseAmount),
-                    this.amountToScVal(counterAmount),
-                ),
-            )
-            .then((tx) => this.server.prepareTransaction(tx))
-            .then((prepared) => {
-                prepared.sign(this.keypair);
-
-                return this.server.sendTransaction(prepared);
-            })
-            .then((res) => this.processResponse(res))
-            .then((res) => {
-                const [baseAmount, counterAmount] = res.value();
-
-                ModalService.confirmAllModals();
-
-                ModalService.openModal(SuccessModal, {
-                    base,
-                    counter,
-                    baseAmount: this.i128ToInt(baseAmount.value()),
-                    counterAmount: this.i128ToInt(counterAmount.value()),
-                    title: 'Success withdraw',
-                });
-            });
+        return this.buildSmartContactTx(
+            accountId,
+            AMM_SMART_CONTACT_ID,
+            AMM_CONTRACT_METHOD.DEPOSIT,
+            this.publicKeyToScVal(this.keypair.publicKey()),
+            this.assetToScVal(base),
+            this.assetToScVal(counter),
+            this.amountToScVal(baseAmount),
+            this.amountToScVal('0'),
+            this.amountToScVal(counterAmount),
+            this.amountToScVal('0'),
+        );
     }
 
-    getSwapEstimatedAmount(sell: Asset, buy: Asset, amount: string) {
+    getWithdrawTx(
+        accountId: string,
+        poolId: string,
+        base: Asset,
+        counter: Asset,
+        baseAmount: string,
+        counterAmount: string,
+        shareId: string,
+        shareAmount: string,
+    ) {
         return this.buildSmartContactTx(
-            this.keypair.publicKey(),
+            accountId,
+            AMM_SMART_CONTACT_ID,
+            AMM_CONTRACT_METHOD.WITHDRAW,
+            this.publicKeyToScVal(this.keypair.publicKey()),
+            this.assetToScVal(base),
+            this.assetToScVal(counter),
+            this.amountToScVal(shareAmount),
+            this.amountToScVal(baseAmount),
+            this.amountToScVal(counterAmount),
+        ).then((tx) => this.server.prepareTransaction(tx));
+    }
+
+    getSwapEstimatedAmount(accountId: string, sell: Asset, buy: Asset, amount: string) {
+        return this.buildSmartContactTx(
+            accountId,
             AMM_SMART_CONTACT_ID,
             AMM_CONTRACT_METHOD.ESTIMATE_SWAP_OUT,
             this.assetToScVal(sell),
@@ -522,47 +431,24 @@ export default class SorobanServiceClass {
             });
     }
 
-    swapAssets(
+    getSwapTx(
+        accountId: string,
         poolId: string,
         base: Asset,
         counter: Asset,
         amount: string,
-        estimatedAmount: string,
+        maxBaseAmount: string,
     ) {
-        const SLIPPAGE = 0.01; // 1%
-
-        const maxBaseAmount = ((1 + SLIPPAGE) * Number(estimatedAmount)).toFixed(7);
-
-        return this.giveAllowance(poolId, base, maxBaseAmount)
-            .then(() =>
-                this.buildSmartContactTx(
-                    this.keypair.publicKey(),
-                    AMM_SMART_CONTACT_ID,
-                    AMM_CONTRACT_METHOD.SWAP,
-                    this.publicKeyToScVal(this.keypair.publicKey()),
-                    this.assetToScVal(base),
-                    this.assetToScVal(counter),
-                    this.amountToScVal(amount),
-                    this.amountToScVal(maxBaseAmount),
-                ),
-            )
-            .then((tx) => this.server.prepareTransaction(tx))
-            .then((prepared) => {
-                prepared.sign(this.keypair);
-
-                return this.server.sendTransaction(prepared);
-            })
-            .then((res) => this.processResponse(res))
-            .then((res) => {
-                ModalService.openModal(SuccessModal, {
-                    base,
-                    counter,
-                    baseAmount: this.i128ToInt(res.value()),
-                    counterAmount: Number(amount),
-                    title: 'Success swap',
-                    isSwap: true,
-                });
-            });
+        return this.buildSmartContactTx(
+            accountId,
+            AMM_SMART_CONTACT_ID,
+            AMM_CONTRACT_METHOD.SWAP,
+            this.publicKeyToScVal(this.keypair.publicKey()),
+            this.assetToScVal(base),
+            this.assetToScVal(counter),
+            this.amountToScVal(amount),
+            this.amountToScVal(maxBaseAmount),
+        ).then((tx) => this.server.prepareTransaction(tx));
     }
 
     buildSmartContactTx(publicKey, contactId, method, ...args) {
@@ -590,7 +476,7 @@ export default class SorobanServiceClass {
     }
 
     submitTx(tx: SorobanClient.Transaction) {
-        return this.server.sendTransaction(tx);
+        return this.server.sendTransaction(tx).then((res) => this.processResponse(res));
     }
 
     simulateTx(tx: SorobanClient.Transaction) {
