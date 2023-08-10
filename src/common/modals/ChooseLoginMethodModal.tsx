@@ -197,14 +197,14 @@ const ChooseLoginMethodModal = ({
                 <ArrowRight />
             </LoginMethod>
 
-            <LoginMethod onClick={() => chooseMethod(LoginTypes.ledger)}>
-                <Ledger />
-                <LoginMethodWithDescription>
-                    <LoginMethodName>Ledger</LoginMethodName>
-                </LoginMethodWithDescription>
+            {/*<LoginMethod onClick={() => chooseMethod(LoginTypes.ledger)}>*/}
+            {/*    <Ledger />*/}
+            {/*    <LoginMethodWithDescription>*/}
+            {/*        <LoginMethodName>Ledger</LoginMethodName>*/}
+            {/*    </LoginMethodWithDescription>*/}
 
-                <ArrowRight />
-            </LoginMethod>
+            {/*    <ArrowRight />*/}
+            {/*</LoginMethod>*/}
 
             <LoginMethod onClick={() => chooseMethod(LoginTypes.secret)}>
                 <KeyIcon />
