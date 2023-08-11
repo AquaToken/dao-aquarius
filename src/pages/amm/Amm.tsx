@@ -104,7 +104,7 @@ const Amm = ({ balances }) => {
                     setPoolId(res.value().value().toString('hex'));
                 });
         }
-    }, [isLogged, base, counter, account]);
+    }, [isLogged, base, counter]);
 
     useEffect(() => {
         if (!poolId) {
