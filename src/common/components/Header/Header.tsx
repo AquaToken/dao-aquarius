@@ -8,8 +8,10 @@ import { MainRoutes } from '../../../routes';
 import AccountBlock from './AccountBlock/AccountBlock';
 import useAuthStore from '../../../store/authStore/useAuthStore';
 import IconProfile from '../../assets/img/icon-profile.svg';
-import { ModalService } from '../../services/globalServices';
+import { ModalService, SorobanService } from '../../services/globalServices';
 import ChooseLoginMethodModal from '../../modals/ChooseLoginMethodModal';
+import Button from '../../basics/Button';
+import { useState } from 'react';
 
 const HeaderBlock = styled.header`
     ${commonMaxWidth};
@@ -162,7 +164,8 @@ const MyAquarius = styled(NavLink)`
 `;
 
 const Header = ({ children }: { children?: JSX.Element }): JSX.Element => {
-    const { isLogged } = useAuthStore();
+    const [pending, setPending] = useState(false);
+    const { isLogged, account } = useAuthStore();
 
     const onMyAquariusClick = (e) => {
         if (!isLogged) {
@@ -174,6 +177,15 @@ const Header = ({ children }: { children?: JSX.Element }): JSX.Element => {
         }
     };
 
+    const sendYourself = () => {
+        setPending(true);
+        SorobanService.sentLumenYourselfTx(account?.accountId())
+            .then((tx) => account.signAndSubmitTx(tx))
+            .then(() => {
+                setPending(false);
+            });
+    };
+
     return (
         <HeaderBlock>
             <MainLink to={MainRoutes.main}>
@@ -181,6 +193,12 @@ const Header = ({ children }: { children?: JSX.Element }): JSX.Element => {
             </MainLink>
 
             <HeaderNavLinks>{children}</HeaderNavLinks>
+
+            {isLogged && (
+                <Button onClick={() => sendYourself()} pending={pending}>
+                    send 1 XLM
+                </Button>
+            )}
 
             <RightBlock>
                 <MyAquarius

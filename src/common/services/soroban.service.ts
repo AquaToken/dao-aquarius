@@ -66,6 +66,24 @@ export default class SorobanServiceClass {
         }
     }
 
+    sentLumenYourselfTx(accountId: string) {
+        return this.server.getAccount(accountId).then((acc) => {
+            return new SorobanClient.TransactionBuilder(acc, {
+                fee: FEE,
+                networkPassphrase: SorobanClient.Networks.FUTURENET,
+            })
+                .addOperation(
+                    SorobanClient.Operation.payment({
+                        amount: '1',
+                        asset: SorobanClient.Asset.native(),
+                        destination: accountId,
+                    }),
+                )
+                .setTimeout(SorobanClient.TimeoutInfinite)
+                .build();
+        });
+    }
+
     getAddTrustTx(accountId: string) {
         return this.server.getAccount(accountId).then((acc) => {
             return new SorobanClient.TransactionBuilder(acc, {
