@@ -382,7 +382,7 @@ export default class SorobanServiceClass {
             this.amountToScVal('0'),
             this.amountToScVal(counterAmount),
             this.amountToScVal('0'),
-        );
+        ).then((tx) => this.server.prepareTransaction(tx));
     }
 
     getWithdrawTx(
