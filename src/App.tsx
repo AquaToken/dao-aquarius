@@ -219,6 +219,11 @@ const App = () => {
                             <RewardsPage />
                         </Title>
                     </Route>
+                    <Route path={MainRoutes.rewardsV2}>
+                        <Title title="Aquarius Rewards">
+                            <RewardsPage isV2 />
+                        </Title>
+                    </Route>
                     <Route path={MainRoutes.airdrop}>
                         <Title title="Aquarius Airdrop">
                             <AirdropPage />

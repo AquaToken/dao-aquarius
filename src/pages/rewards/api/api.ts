@@ -4,8 +4,11 @@ import { ListResponse } from '../../../store/assetsStore/types';
 
 const rewardsApi = 'https://reward-api.aqua.network/api/rewards/';
 
-export const getTotalRewards = (): Promise<TotalRewards> => {
-    return axios.get<TotalRewards>(`${rewardsApi}total/`).then(({ data }) => {
+const rewardsApiV2 = 'https://voting-tracker.aqua.network/api/voting-rewards-v2/';
+const totalApiV2 = 'https://voting-tracker.aqua.network/api/voting-rewards-v2-stats/';
+
+export const getTotalRewards = (isV2?: boolean): Promise<TotalRewards> => {
+    return axios.get<TotalRewards>(isV2 ? totalApiV2 : `${rewardsApi}total/`).then(({ data }) => {
         return data;
     });
 };
@@ -19,8 +22,10 @@ export enum RewardsSort {
     totalDown = 'daily_total_reward',
 }
 
-export const getRewards = (sort): Promise<Rewards[]> => {
+export const getRewards = (sort, isV2?: boolean): Promise<Rewards[]> => {
     return axios
-        .get<ListResponse<Rewards>>(`${rewardsApi}?ordering=${sort}&page=1&page_size=200`)
+        .get<ListResponse<Rewards>>(
+            isV2 ? rewardsApiV2 : `${rewardsApi}?ordering=${sort}&page=1&page_size=200`,
+        )
         .then(({ data }) => data.results);
 };

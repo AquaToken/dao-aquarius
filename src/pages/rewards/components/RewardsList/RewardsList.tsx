@@ -101,7 +101,7 @@ const marketKeyToString = (code, issuer) => {
     return `${code}:${issuer}`;
 };
 
-const RewardsList = () => {
+const RewardsList = ({ isV2 }: { isV2?: boolean }) => {
     const [rewards, setRewards] = useState(null);
     const [sort, setSort] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -116,7 +116,7 @@ const RewardsList = () => {
             return;
         }
         setLoading(true);
-        getRewards(sort).then((res) => {
+        getRewards(sort, isV2).then((res) => {
             setRewards(res);
             setLoading(false);
             const assets = res.reduce((acc, item) => {
@@ -128,7 +128,7 @@ const RewardsList = () => {
 
             processNewAssets(assets);
         });
-    }, [sort]);
+    }, [sort, isV2]);
 
     useEffect(() => {
         const params = new URLSearchParams(location.search);
@@ -231,7 +231,7 @@ const RewardsList = () => {
                     },
                 ]}
                 body={rewards.map(
-                    ({ daily_sdex_reward, daily_total_reward, daily_amm_reward, market_key }) => ({
+                    ({ daily_sdex_reward, daily_total_reward, daily_amm_reward, market_key, daily_sdex_percentage, daily_amm_percentage }) => ({
                         key:
                             market_key.asset1_code +
                             market_key.asset1_issuer +
@@ -260,7 +260,10 @@ const RewardsList = () => {
                             {
                                 children: (
                                     <Amount>
-                                        <span>{formatBalance(daily_sdex_reward)} AQUA</span>
+                                        <span>
+                                            {formatBalance(daily_sdex_reward)} AQUA{' '}
+                                            {isV2 ? `(${daily_sdex_percentage}%)` : ''}
+                                        </span>
                                         <a
                                             href={`https://www.stellarx.com/markets/${marketKeyToString(
                                                 market_key.asset1_code,
@@ -285,7 +288,10 @@ const RewardsList = () => {
                             {
                                 children: (
                                     <Amount>
-                                        <span>{formatBalance(daily_amm_reward)} AQUA</span>{' '}
+                                        <span>
+                                            {formatBalance(daily_amm_reward)} AQUA{' '}
+                                            {isV2 ? `(${daily_amm_percentage}%)` : ''}
+                                        </span>{' '}
                                         <a
                                             href={`https://www.stellarx.com/amm/analytics/${marketKeyToString(
                                                 market_key.asset1_code,
