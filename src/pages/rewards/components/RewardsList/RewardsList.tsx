@@ -231,7 +231,14 @@ const RewardsList = ({ isV2 }: { isV2?: boolean }) => {
                     },
                 ]}
                 body={rewards.map(
-                    ({ daily_sdex_reward, daily_total_reward, daily_amm_reward, market_key, daily_sdex_percentage, daily_amm_percentage }) => ({
+                    ({
+                        daily_sdex_reward,
+                        daily_total_reward,
+                        daily_amm_reward,
+                        market_key,
+                        daily_sdex_percentage,
+                        daily_amm_percentage,
+                    }) => ({
                         key:
                             market_key.asset1_code +
                             market_key.asset1_issuer +
