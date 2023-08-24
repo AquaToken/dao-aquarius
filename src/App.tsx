@@ -206,7 +206,7 @@ const App = () => {
                             <RewardsPage />
                         </Title>
                     </Route>
-                    <Route path={MainRoutes.rewards2}>
+                    <Route path={MainRoutes.rewardsV2}>
                         <Title title="Aquarius Rewards">
                             <RewardsPage isV2 />
                         </Title>
