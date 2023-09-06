@@ -98,11 +98,20 @@ const Amm = ({ balances }) => {
 
     useEffect(() => {
         if (isLogged) {
-            SorobanService.getPoolIdTx(account?.accountId(), base, counter)
-                .then((tx) => account.signAndSubmitTx(tx as SorobanClient.Transaction, true))
-                .then((res) => {
-                    setPoolId(res.value().value().toString('hex'));
-                });
+            SorobanService.getPoolId(account?.accountId(), base, counter).then((res) => {
+                if (!res.result) {
+                    return SorobanService.getInitPoolTx(account?.accountId(), base, counter)
+                        .then((tx) =>
+                            account.signAndSubmitTx(tx as SorobanClient.Transaction, true),
+                        )
+                        .then((res) => {
+                            setPoolId(res.value().value().toString('hex'));
+                        });
+                }
+                const id = res.result.retval.value()[1].value().value().toString('hex');
+
+                setPoolId(id);
+            });
         }
     }, [isLogged, base, counter]);
 
