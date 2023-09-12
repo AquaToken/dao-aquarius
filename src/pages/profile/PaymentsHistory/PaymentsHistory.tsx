@@ -54,7 +54,7 @@ const PaymentsHistory = () => {
                         pending={!history || StellarService.loadMorePaymentsPending}
                         head={[
                             { children: 'Time' },
-                            { children: 'Receive for' },
+                            { children: 'Reward type' },
                             { children: 'Account', flexSize: 2 },
                             { children: 'Memo note', flexSize: 2 },
                             { children: 'Amount', align: CellAlign.Right, flexSize: 2 },
@@ -75,7 +75,7 @@ const PaymentsHistory = () => {
                                         ),
                                         label: 'Time',
                                     },
-                                    { children: item.title, label: 'Receive for' },
+                                    { children: item.title, label: 'Reward type' },
                                     {
                                         children: (
                                             <AccountViewer pubKey={item.from} narrowForMobile />
