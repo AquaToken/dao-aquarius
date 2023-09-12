@@ -123,10 +123,10 @@ const LockerAccountPage = () => {
 
     useEffect(() => {
         if (!isLogged) {
-            StellarService.closeClaimableBalancesStream();
+            StellarService.stopEffectsStream();
             return;
         }
-        StellarService.startClaimableBalancesStream(account.accountId());
+        StellarService.startEffectsStream(account.accountId());
 
         const unsub = StellarService.event.sub(({ type }) => {
             if (type === StellarEvents.claimableUpdate) {

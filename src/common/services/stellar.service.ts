@@ -386,7 +386,7 @@ export default class StellarServiceClass {
         });
     }
 
-    startClaimableBalancesStream(publicKey: string) {
+    startEffectsStream(publicKey: string) {
         this.getClaimableBalances(publicKey);
 
         this.closeEffectsStream = this.server
@@ -413,10 +413,13 @@ export default class StellarServiceClass {
             });
     }
 
-    closeClaimableBalancesStream(): void {
+    stopEffectsStream(): void {
         if (this.closeEffectsStream) {
             this.closeEffectsStream();
             this.claimableBalances = null;
+            this.paymentsFullyLoaded = false;
+            this.paymentsHistory = null;
+            this.nextPayments = null;
             this.event.trigger({ type: StellarEvents.claimableUpdate });
         }
     }

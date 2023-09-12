@@ -28,6 +28,8 @@ interface TableItem {
     color?: string;
     hideOnWeb?: boolean;
     hideOnMobile?: boolean;
+    style?: any;
+    mobileStyle?: any;
 }
 
 interface TableHeadItem extends TableItem {
@@ -259,6 +261,8 @@ const Row = ({ row, style }: { row: any; style?: any }) => (
                         flexSize,
                         hideOnWeb,
                         hideOnMobile,
+                        style,
+                        mobileStyle,
                     },
                     index,
                 ) => (
@@ -272,7 +276,7 @@ const Row = ({ row, style }: { row: any; style?: any }) => (
                         hideOnMobile={hideOnMobile}
                     >
                         {Boolean(label) && <label>{label}</label>}
-                        {children}
+                        <div style={+window.innerWidth > 992 ? style : mobileStyle}>{children}</div>
                     </Cell>
                 ),
             )}
@@ -290,7 +294,7 @@ const Table = forwardRef(
             if (+window.innerWidth > 992) {
                 return body[0].isNarrow ? 50 : 96;
             }
-            return body[0].rowItems.length * 50;
+            return body[0].rowItems.length * 50 + 50;
         }, [body]);
 
         const rowMargin = +window.innerWidth > 992 ? 0 : 16;

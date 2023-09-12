@@ -1,16 +1,16 @@
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Header, Section, Title } from '../AmmRewards/AmmRewards';
 import Table, { CellAlign } from '../../../common/basics/Table';
-import { useEffect, useState } from 'react';
 import { StellarService } from '../../../common/services/globalServices';
 import useAuthStore from '../../../store/authStore/useAuthStore';
 import { StellarEvents } from '../../../common/services/stellar.service';
 import { formatBalance, getDateString } from '../../../common/helpers/helpers';
 import PageLoader from '../../../common/basics/PageLoader';
-import AccountViewer from '../../../common/basics/AccountViewer';
 import DotsLoader from '../../../common/basics/DotsLoader';
 import { COLORS } from '../../../common/styles';
+import ExternalLink from '../../../common/basics/ExternalLink';
 
 const Container = styled.div`
     display: flex;
@@ -55,9 +55,9 @@ const PaymentsHistory = () => {
                         head={[
                             { children: 'Time' },
                             { children: 'Reward type' },
-                            { children: 'Account', flexSize: 2 },
                             { children: 'Memo note', flexSize: 2 },
-                            { children: 'Amount', align: CellAlign.Right, flexSize: 2 },
+                            { children: 'Amount', align: CellAlign.Right },
+                            { children: '', align: CellAlign.Right },
                         ]}
                         body={history.map((item) => {
                             return {
@@ -75,24 +75,32 @@ const PaymentsHistory = () => {
                                         ),
                                         label: 'Time',
                                     },
-                                    { children: item.title, label: 'Reward type' },
-                                    {
-                                        children: (
-                                            <AccountViewer pubKey={item.from} narrowForMobile />
-                                        ),
-                                        flexSize: 2,
-                                        label: 'Account',
-                                    },
+                                    { children: <div>{item.title}</div>, label: 'Reward type' },
                                     {
                                         children: item.memo || <DotsLoader />,
                                         flexSize: 2,
                                         label: 'Memo note',
+                                        mobileStyle: {
+                                            textAlign: 'right',
+                                        },
                                     },
                                     {
                                         children: `${formatBalance(item.amount)} AQUA`,
                                         align: CellAlign.Right,
-                                        flexSize: 2,
                                         label: 'Amount',
+                                    },
+                                    {
+                                        children: (
+                                            <ExternalLink
+                                                href={`https://stellar.expert/explorer/public/tx/${item.transaction_hash}`}
+                                            >
+                                                View on Explorer
+                                            </ExternalLink>
+                                        ),
+                                        align: CellAlign.Right,
+                                        mobileStyle: {
+                                            margin: '0 auto',
+                                        },
                                     },
                                 ],
                             };
