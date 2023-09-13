@@ -725,7 +725,7 @@ export default class StellarServiceClass {
     }
 
     async nextRequest(previousRecords, nextRequest, limit) {
-        const { records, next } = nextRequest();
+        const { records, next } = await nextRequest();
 
         if (records.length === limit) {
             return this.nextRequest([...previousRecords, records], next, limit);
