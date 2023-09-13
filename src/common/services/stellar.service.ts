@@ -984,7 +984,9 @@ export default class StellarServiceClass {
                 return this.loadMorePayments();
             }
 
-            this.paymentsHistory = [...this.paymentsHistory, ...processed];
+            this.paymentsHistory = this.paymentsHistory
+                ? [...this.paymentsHistory, ...processed]
+                : processed;
 
             this.loadMorePaymentsPending = false;
 

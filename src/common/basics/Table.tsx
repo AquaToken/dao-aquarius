@@ -93,7 +93,7 @@ const TableHead = styled.div`
     `}
 `;
 
-const TableHeadRow = styled.div`
+const TableHeadRow = styled.div<{ withPadding: boolean }>`
     display: flex;
     align-items: stretch;
     width: 100%;
@@ -102,6 +102,7 @@ const TableHeadRow = styled.div`
     line-height: 2rem;
     color: ${COLORS.grayText};
     white-space: nowrap;
+    padding-right: ${({ withPadding }) => (withPadding ? '1rem' : 'unset')};
 
     ${respondDown(Breakpoints.md)`
         flex-direction: column;
@@ -175,9 +176,14 @@ const TableBody = styled.div<{ withScroll }>`
     flex-direction: column;
 
     height: ${({ withScroll }) => (withScroll ? '36rem' : 'unset')};
-    overflow-y: ${({ withScroll }) => (withScroll ? 'auto' : 'unset')};
-    margin-right: ${({ withScroll }) => (withScroll ? '-1rem' : 'unset')};
-    padding-right: ${({ withScroll }) => (withScroll ? '1rem' : 'unset')};
+
+    ${respondDown(Breakpoints.md)`
+        height: ${({ withScroll }) => (withScroll ? '50rem' : 'unset')};
+    `}
+`;
+
+const ListStyled = styled(List)`
+    padding-right: 1rem;
 
     &::-webkit-scrollbar {
         width: 0.5rem;
@@ -193,10 +199,6 @@ const TableBody = styled.div<{ withScroll }>`
         background: ${COLORS.purple};
         border-radius: 0.25rem;
     }
-
-    ${respondDown(Breakpoints.md)`
-        height: ${({ withScroll }) => (withScroll ? '50rem' : 'unset')};
-    `}
 `;
 
 const TableRowWrap = styled.div<{
@@ -299,9 +301,9 @@ const Table = forwardRef(
     ) => {
         const rowHeight = useMemo(() => {
             if (+window.innerWidth > 992) {
-                return body[0].isNarrow ? 50 : 96;
+                return body[0]?.isNarrow ? 50 : 96;
             }
-            return body[0].rowItems.length * 50 + 50;
+            return body[0]?.rowItems.length * 50 + 50;
         }, [body]);
 
         const rowMargin = +window.innerWidth > 992 ? 0 : 16;
@@ -314,7 +316,7 @@ const Table = forwardRef(
                     </TableLoader>
                 )}
                 <TableHead>
-                    <TableHeadRow>
+                    <TableHeadRow withPadding={Boolean(virtualScrollProps)}>
                         {head.map(
                             ({ children, sort, align, flexSize, hideOnWeb, hideOnMobile }) => (
                                 <HeadCell
@@ -355,7 +357,7 @@ const Table = forwardRef(
                                     }}
                                 >
                                     {({ onRowsRendered, registerChild }) => (
-                                        <List
+                                        <ListStyled
                                             width={width}
                                             height={height}
                                             onRowsRendered={onRowsRendered}

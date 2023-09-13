@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Header, Section, Title } from '../AmmRewards/AmmRewards';
+import { ExternalLinkStyled, Header, Section, Title } from '../AmmRewards/AmmRewards';
 import Table, { CellAlign } from '../../../common/basics/Table';
 import { StellarService } from '../../../common/services/globalServices';
 import useAuthStore from '../../../store/authStore/useAuthStore';
@@ -11,6 +11,9 @@ import PageLoader from '../../../common/basics/PageLoader';
 import DotsLoader from '../../../common/basics/DotsLoader';
 import { COLORS } from '../../../common/styles';
 import ExternalLink from '../../../common/basics/ExternalLink';
+import { Empty } from '../YourVotes/YourVotes';
+import { Link } from 'react-router-dom';
+import { MainRoutes } from '../../../routes';
 
 const Container = styled.div`
     display: flex;
@@ -19,6 +22,7 @@ const Container = styled.div`
 
 const PaymentsHistory = () => {
     const [history, setHistory] = useState(null);
+    const [historyFull, setHistoryFull] = useState(false);
     const { account } = useAuthStore();
 
     useEffect(() => {
@@ -32,7 +36,10 @@ const PaymentsHistory = () => {
     useEffect(() => {
         const unsub = StellarService.event.sub(({ type }) => {
             if (type === StellarEvents.paymentsHistoryUpdate) {
-                setHistory([...StellarService.paymentsHistory]);
+                setHistory(
+                    StellarService.paymentsHistory ? [...StellarService.paymentsHistory] : null,
+                );
+                setHistoryFull(StellarService.paymentsFullyLoaded);
             }
         });
 
@@ -60,6 +67,7 @@ const PaymentsHistory = () => {
                             { children: '', align: CellAlign.Right },
                         ]}
                         body={history.map((item) => {
+                            const opId = item._links.effects.href.split('/')[4];
                             return {
                                 key: item.id,
                                 isNarrow: true,
@@ -92,7 +100,7 @@ const PaymentsHistory = () => {
                                     {
                                         children: (
                                             <ExternalLink
-                                                href={`https://stellar.expert/explorer/public/tx/${item.transaction_hash}`}
+                                                href={`https://stellar.expert/explorer/public/tx/${item.transaction_hash}#${opId}`}
                                             >
                                                 View on Explorer
                                             </ExternalLink>
@@ -106,6 +114,17 @@ const PaymentsHistory = () => {
                             };
                         })}
                     />
+                ) : historyFull ? (
+                    <Section>
+                        <Empty>
+                            <h3>There's nothing here.</h3>
+                            <span>It looks like you haven't received AQUA rewards.</span>
+
+                            <ExternalLinkStyled asDiv>
+                                <Link to={MainRoutes.rewards}>Learn about rewards</Link>
+                            </ExternalLinkStyled>
+                        </Empty>
+                    </Section>
                 ) : (
                     <PageLoader />
                 )}
