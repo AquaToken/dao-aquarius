@@ -102,7 +102,7 @@ const TableHeadRow = styled.div<{ withPadding: boolean }>`
     line-height: 2rem;
     color: ${COLORS.grayText};
     white-space: nowrap;
-    padding-right: ${({ withPadding }) => (withPadding ? '1rem' : 'unset')};
+    padding-right: ${({ withPadding }) => (withPadding ? '1.5rem' : 'unset')};
 
     ${respondDown(Breakpoints.md)`
         flex-direction: column;
