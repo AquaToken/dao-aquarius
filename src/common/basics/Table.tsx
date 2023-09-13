@@ -242,6 +242,11 @@ const TableRow = styled.div<{ isNarrow?: boolean; mobileFontSize?: string }>`
     `}
 `;
 
+const CellContent = styled.div`
+    display: flex;
+    align-items: center;
+`;
+
 const Row = ({ row, style }: { row: any; style?: any }) => (
     <TableRowWrap
         mobileBackground={row.mobileBackground}
@@ -276,7 +281,9 @@ const Row = ({ row, style }: { row: any; style?: any }) => (
                         hideOnMobile={hideOnMobile}
                     >
                         {Boolean(label) && <label>{label}</label>}
-                        <div style={+window.innerWidth > 992 ? style : mobileStyle}>{children}</div>
+                        <CellContent style={+window.innerWidth > 992 ? style : mobileStyle}>
+                            {children}
+                        </CellContent>
                     </Cell>
                 ),
             )}
