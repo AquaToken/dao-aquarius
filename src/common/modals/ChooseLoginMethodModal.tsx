@@ -155,30 +155,30 @@ const ChooseLoginMethodModal = ({
         <>
             <ModalTitle>Sign in</ModalTitle>
 
-            <LoginMethod onClick={() => chooseMethod(LoginTypes.walletConnect)}>
-                <WalletConnectLogoRelative>
-                    <WalletConnectLogo />
-                    <Tooltip>
-                        <LobstrLogo />
-                        <TooltipText>Available in LOBSTR wallet</TooltipText>
-                    </Tooltip>
-                </WalletConnectLogoRelative>
+            {/*<LoginMethod onClick={() => chooseMethod(LoginTypes.walletConnect)}>*/}
+            {/*    <WalletConnectLogoRelative>*/}
+            {/*        <WalletConnectLogo />*/}
+            {/*        <Tooltip>*/}
+            {/*            <LobstrLogo />*/}
+            {/*            <TooltipText>Available in LOBSTR wallet</TooltipText>*/}
+            {/*        </Tooltip>*/}
+            {/*    </WalletConnectLogoRelative>*/}
 
-                <LoginMethodName>WalletConnect</LoginMethodName>
-                <ArrowRight />
-            </LoginMethod>
+            {/*    <LoginMethodName>WalletConnect</LoginMethodName>*/}
+            {/*    <ArrowRight />*/}
+            {/*</LoginMethod>*/}
 
-            <LoginMethod onClick={() => chooseMethod(LoginTypes.public)}>
-                <StellarLogo />
-                <LoginMethodWithDescription>
-                    <LoginMethodName>Stellar Laboratory</LoginMethodName>
-                    <LoginMethodDescription>
-                        Sign with Freighter, Trezor, Albedo or others tools.
-                    </LoginMethodDescription>
-                </LoginMethodWithDescription>
+            {/*<LoginMethod onClick={() => chooseMethod(LoginTypes.public)}>*/}
+            {/*    <StellarLogo />*/}
+            {/*    <LoginMethodWithDescription>*/}
+            {/*        <LoginMethodName>Stellar Laboratory</LoginMethodName>*/}
+            {/*        <LoginMethodDescription>*/}
+            {/*            Sign with Freighter, Trezor, Albedo or others tools.*/}
+            {/*        </LoginMethodDescription>*/}
+            {/*    </LoginMethodWithDescription>*/}
 
-                <ArrowRight />
-            </LoginMethod>
+            {/*    <ArrowRight />*/}
+            {/*</LoginMethod>*/}
 
             {/*<LoginMethod onClick={() => chooseMethod(LoginTypes.ledger)}>*/}
             {/*    <Ledger />*/}

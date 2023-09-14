@@ -6,20 +6,15 @@ import SendTransactionResponse = SorobanRpc.SendTransactionResponse;
 import { ToastService } from './globalServices';
 
 const SOROBAN_SERVER = 'https://rpc-futurenet.stellar.org:443/';
-
-// SMART CONTACTS IDs
-const AMM_SMART_CONTACT_ID = '58eb16a6d30a34401fdb7088a14b8e1e2a717a89e77ce967c437c4ec12257a66';
-
-const POOL_CONTACT_WASM_HASH = '588c9c473cf5ada4716d9a039b5cc0ae75077aa26e17bbccf300af0e271c8aef';
-
-const TOKEN_CONTACT_WASM_HASH = '9fb6e88690366661fa27537bdc02f4f0275dc1d259f95b8455132d43492bccd6';
+const AMM_SMART_CONTACT_ID = 'CBQMA6JZN6JTT4KIYAYP6MOUP3QVY244Q3OO46JIPXBW5FQQFU2NC2PG';
 
 enum AMM_CONTRACT_METHOD {
-    GET_OR_CREATE_POOL = 'get_or_create_pool',
-    DEPOSIT = 'sf_deposit',
+    GET_POOL = 'get_pool',
+    INIT_POOL = 'init_pool',
+    DEPOSIT = 'deposit',
     SHARE_ID = 'share_id',
     ESTIMATE_SWAP_OUT = 'estimate_swap_out',
-    WITHDRAW = 'sf_withdrw',
+    WITHDRAW = 'withdraw',
     SWAP = 'swap_out',
     GET_RESERVES = 'get_reserves',
 }
@@ -174,12 +169,7 @@ export default class SorobanServiceClass {
             console.log('TX', res);
             if (res.status === 'SUCCESS') {
                 if (resolver) {
-                    const result = xdr.TransactionMeta.fromXDR(
-                        Buffer.from(res.resultMetaXdr, 'base64'),
-                    );
-
-                    // @ts-ignore
-                    resolver(result.value().sorobanMeta().returnValue());
+                    resolver(res.returnValue);
                 }
                 return;
             }
@@ -248,15 +238,26 @@ export default class SorobanServiceClass {
             });
     }
 
-    getPoolIdTx(accountId: string, base: Asset, counter: Asset) {
+    getPoolId(accountId: string, base: Asset, counter: Asset) {
         const [aId, bId] = this.orderTokenIDS(base, counter);
 
         return this.buildSmartContactTx(
             accountId,
             AMM_SMART_CONTACT_ID,
-            AMM_CONTRACT_METHOD.GET_OR_CREATE_POOL,
-            this.hashToScVal(POOL_CONTACT_WASM_HASH),
-            this.hashToScVal(TOKEN_CONTACT_WASM_HASH),
+            AMM_CONTRACT_METHOD.GET_POOL,
+            this.hashToAddressScVal(aId),
+            this.hashToAddressScVal(bId),
+        ).then((tx) => this.server.simulateTransaction(tx));
+    }
+
+    getInitPoolTx(accountId: string, base: Asset, counter: Asset) {
+        console.log('init pool');
+        const [aId, bId] = this.orderTokenIDS(base, counter);
+
+        return this.buildSmartContactTx(
+            accountId,
+            AMM_SMART_CONTACT_ID,
+            AMM_CONTRACT_METHOD.INIT_POOL,
             this.hashToAddressScVal(aId),
             this.hashToAddressScVal(bId),
         ).then((tx) => this.server.prepareTransaction(tx));
@@ -265,13 +266,10 @@ export default class SorobanServiceClass {
     getPoolShareId(accountId, poolId: string) {
         return this.buildSmartContactTx(accountId, poolId, AMM_CONTRACT_METHOD.SHARE_ID)
             .then((tx) => this.server.simulateTransaction(tx))
-            .then((res) => {
-                if (res.results) {
-                    const xdr = res.results[0].xdr;
-
-                    let scVal = SorobanClient.xdr.ScVal.fromXDR(Buffer.from(xdr, 'base64'));
-
-                    return scVal.address().contractId().toString('hex');
+            .then(({ result }) => {
+                if (result) {
+                    // @ts-ignore
+                    return result.retval.value().value().toString('hex');
                 }
 
                 throw new Error('getPoolShareId error');
@@ -288,13 +286,9 @@ export default class SorobanServiceClass {
                 : this.hashToAddressScVal(where),
         )
             .then((tx) => this.server.simulateTransaction(tx))
-            .then(({ results }) => {
-                if (results) {
-                    const xdr = results[0].xdr;
-
-                    let scVal = SorobanClient.xdr.ScVal.fromXDR(Buffer.from(xdr, 'base64'));
-
-                    return this.i128ToInt(scVal.i128());
+            .then(({ result }) => {
+                if (result) {
+                    return this.i128ToInt(result.retval.value() as xdr.Int128Parts);
                 }
 
                 return null;
@@ -312,13 +306,9 @@ export default class SorobanServiceClass {
             .then((tx) => {
                 return this.simulateTx(tx);
             })
-            .then(({ results }) => {
-                if (results) {
-                    const xdr = results[0].xdr;
-
-                    let scVal = SorobanClient.xdr.ScVal.fromXDR(Buffer.from(xdr, 'base64'));
-
-                    return this.i128ToInt(scVal.i128());
+            .then(({ result }) => {
+                if (result) {
+                    return this.i128ToInt(result.retval.value() as xdr.Int128Parts);
                 }
 
                 throw new Error('getPoolAllowance fail');
@@ -354,14 +344,10 @@ export default class SorobanServiceClass {
             .then((tx) => {
                 return this.simulateTx(tx);
             })
-            .then(({ results }) => {
-                if (results) {
-                    const xdr = results[0].xdr;
-
+            .then(({ result }) => {
+                if (result) {
                     // @ts-ignore
-                    const [baseAmount, counterAmount] = SorobanClient.xdr.ScVal.fromXDR(
-                        Buffer.from(xdr, 'base64'),
-                    ).value();
+                    const [baseAmount, counterAmount] = result.retval.value();
 
                     const baseAmountInt = this.i128ToInt(baseAmount.i128());
                     const counterAmountInt = this.i128ToInt(counterAmount.i128());
@@ -436,13 +422,9 @@ export default class SorobanServiceClass {
             this.amountToScVal(amount),
         )
             .then((tx) => this.server.simulateTransaction(tx))
-            .then(({ results }) => {
-                if (results) {
-                    const xdr = results[0].xdr;
-
-                    let scVal = SorobanClient.xdr.ScVal.fromXDR(Buffer.from(xdr, 'base64'));
-
-                    return this.i128ToInt(scVal.i128());
+            .then(({ result }) => {
+                if (result) {
+                    return this.i128ToInt(result.retval.value() as xdr.Int128Parts);
                 }
 
                 throw new Error('getSwapEstimatedAmount error');
@@ -470,8 +452,14 @@ export default class SorobanServiceClass {
     }
 
     buildSmartContactTx(publicKey, contactId, method, ...args) {
+        const id = contactId.startsWith('C')
+            ? contactId
+            : SorobanClient.StrKey.encodeContract(
+                  Buffer.from(binascii.unhexlify(contactId), 'ascii'),
+              );
+
         return this.server.getAccount(publicKey).then((acc) => {
-            const contract = new SorobanClient.Contract(contactId);
+            const contract = new SorobanClient.Contract(id);
 
             const builtTx = new SorobanClient.TransactionBuilder(acc, {
                 fee: FEE,
