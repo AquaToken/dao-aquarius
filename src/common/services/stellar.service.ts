@@ -6,6 +6,7 @@ import axios, { AxiosResponse } from 'axios';
 import { roundToPrecision } from '../helpers/helpers';
 import { PairStats } from '../../pages/vote/api/types';
 import { validateMarketKeys } from '../../pages/vote/api/api';
+import debounceFunction from '../helpers/debounceFunction';
 
 const VAULT_API = 'https://vault.lobstr.co/api/transactions/';
 
@@ -24,6 +25,7 @@ export enum StellarEvents {
     accountStream = 'account stream',
     handleAccountUpdate = 'handle account update',
     claimableUpdate = 'claimable update',
+    paymentsHistoryUpdate = 'payments history update',
 }
 
 export const AQUA_CODE = 'AQUA';
@@ -59,6 +61,10 @@ export const THRESHOLD_ORDER = {
     [THRESHOLDS.HIGH]: 3,
 };
 
+const AMM_REWARDS_KEY = 'GC6ZWKVYRAUSCLMQYKDQZNTUNVDH2J5J6IELIWHMF7THRUQJQTQFQANA';
+const SDEX_REWARDS_KEY = 'GC5VEAWX7C3GSTW7RUKJKMQWXYZFW5TH4NGI4ZQSF6LNLUYSDGBVANBA';
+const BRIBE_REWARDS_KEY = 'GAORXNBAWRIOJ7HRMCTWW2MIB6PYWSC7OKHGIXWTJXYRTZRSHP356TW3';
+
 export const OP_THRESHOLDS = {
     [THRESHOLDS.LOW]: ['allowTrust', 'inflation', 'bumpSequence', 'setTrustLineFlags'],
     [THRESHOLDS.MED]: [
@@ -89,11 +95,20 @@ export default class StellarServiceClass {
     event: EventService = new EventService();
     closeStream: () => void | null = null;
     closeEffectsStream: () => void | null = null;
+    paymentsHistory = null;
+    debouncedUpdatePayments;
+    nextPayments = null;
+    loadMorePaymentsPending = false;
+    paymentsFullyLoaded = false;
     private claimableBalances: ServerApi.ClaimableBalanceRecord[] | null = null;
     private keypair: StellarSdk.Keypair | null = null;
 
     constructor() {
         this.startHorizonServer();
+        this.loadMorePayments = this.loadMorePayments.bind(this);
+        this.updatePayments = this.updatePayments.bind(this);
+
+        this.debouncedUpdatePayments = debounceFunction(this.updatePayments, 500);
     }
 
     get isClaimableBalancesLoaded() {
@@ -371,7 +386,7 @@ export default class StellarServiceClass {
         });
     }
 
-    startClaimableBalancesStream(publicKey: string) {
+    startEffectsStream(publicKey: string) {
         this.getClaimableBalances(publicKey);
 
         this.closeEffectsStream = this.server
@@ -390,14 +405,21 @@ export default class StellarServiceClass {
                     ) {
                         this.getClaimableBalances(publicKey);
                     }
+
+                    if ((res as unknown as ServerApi.EffectRecord).type === 'account_credited') {
+                        this.debouncedUpdatePayments(publicKey);
+                    }
                 },
             });
     }
 
-    closeClaimableBalancesStream(): void {
+    stopEffectsStream(): void {
         if (this.closeEffectsStream) {
             this.closeEffectsStream();
             this.claimableBalances = null;
+            this.paymentsFullyLoaded = false;
+            this.paymentsHistory = null;
+            this.nextPayments = null;
             this.event.trigger({ type: StellarEvents.claimableUpdate });
         }
     }
@@ -912,5 +934,135 @@ export default class StellarServiceClass {
                 }
                 return records[0];
             });
+    }
+
+    getPayments(accountId: string, limit: number = 200) {
+        if (this.paymentsHistory) {
+            return;
+        }
+        this.server
+            .payments()
+            .forAccount(accountId)
+            .order('desc')
+            .limit(limit)
+            .call()
+            .then(({ next, records }) => {
+                this.nextPayments = next;
+                const processed = this.processPayments(records);
+
+                if (!processed.length) {
+                    return this.loadMorePayments();
+                }
+
+                this.paymentsHistory = processed;
+
+                this.event.trigger({ type: StellarEvents.paymentsHistoryUpdate });
+            });
+    }
+
+    loadMorePayments() {
+        if (this.loadMorePaymentsPending || this.paymentsFullyLoaded) {
+            return;
+        }
+
+        this.loadMorePaymentsPending = true;
+
+        this.nextPayments().then(({ next, records }) => {
+            this.nextPayments = next;
+
+            if (!records.length) {
+                this.loadMorePaymentsPending = false;
+                this.paymentsFullyLoaded = true;
+                this.event.trigger({ type: StellarEvents.paymentsHistoryUpdate });
+                return;
+            }
+
+            const processed = this.processPayments(records);
+
+            if (!processed.length) {
+                this.loadMorePaymentsPending = false;
+                return this.loadMorePayments();
+            }
+
+            this.paymentsHistory = this.paymentsHistory
+                ? [...this.paymentsHistory, ...processed]
+                : processed;
+
+            this.loadMorePaymentsPending = false;
+
+            this.event.trigger({ type: StellarEvents.paymentsHistoryUpdate });
+        });
+    }
+
+    updatePayments(accountId: string) {
+        if (!this.paymentsHistory.length) {
+            return;
+        }
+
+        this.server
+            .payments()
+            .forAccount(accountId)
+            .order('desc')
+            .limit(10)
+            .call()
+            .then(({ records }) => {
+                const processed = this.processPayments(records);
+
+                const firstHistoryId = this.paymentsHistory[0].id;
+
+                const recordsFirstCommonIndex = processed.findIndex(
+                    (record) => record.id === firstHistoryId,
+                );
+
+                this.paymentsHistory = [
+                    ...processed.slice(0, recordsFirstCommonIndex),
+                    ...this.paymentsHistory,
+                ];
+
+                this.event.trigger({ type: StellarEvents.paymentsHistoryUpdate });
+            });
+    }
+
+    private processPayments(payments) {
+        const filtered = payments.filter(
+            ({ from }) =>
+                from === AMM_REWARDS_KEY || from === SDEX_REWARDS_KEY || from === BRIBE_REWARDS_KEY,
+        );
+
+        this.loadMemo(filtered);
+
+        return filtered.map((payment) => {
+            switch (payment.from) {
+                case AMM_REWARDS_KEY:
+                    payment.title = 'AMM Reward';
+                    break;
+                case SDEX_REWARDS_KEY:
+                    payment.title = 'SDEX Reward';
+                    break;
+                case BRIBE_REWARDS_KEY:
+                    payment.title = 'Bribe Reward';
+                    break;
+            }
+            return payment;
+        });
+    }
+
+    private loadMemo(payments) {
+        this.chunkFunction(payments, (payment) => {
+            return payment.transaction().then(({ memo }) => {
+                payment.memo = memo;
+                this.event.trigger({ type: StellarEvents.paymentsHistoryUpdate });
+            });
+        });
+    }
+
+    private async chunkFunction(array, promiseFunction, chunkSize = 10) {
+        const result = [];
+        for (let i = 0; i < array.length; i += chunkSize) {
+            const chunk = array.slice(i, i + chunkSize);
+            const chunkResult = await Promise.all(chunk.map((item) => promiseFunction(item)));
+            result.push(...chunkResult);
+        }
+        return result;
     }
 }

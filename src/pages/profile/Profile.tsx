@@ -15,6 +15,7 @@ import Airdrop2List from './Airdrop2List/Airdrop2List';
 import IceLocks from './IceLocks/IceLocks';
 import useAuthStore from '../../store/authStore/useAuthStore';
 import { StellarService } from '../../common/services/globalServices';
+import PaymentsHistory from './PaymentsHistory/PaymentsHistory';
 
 const Container = styled.div`
     height: 100%;
@@ -77,6 +78,7 @@ enum Tabs {
     governance = 'governance',
     airdrop2 = 'airdrop2',
     iceLocks = 'iceLocks',
+    history = 'history',
 }
 
 const OPTIONS = [
@@ -86,6 +88,7 @@ const OPTIONS = [
     { label: 'Governance Votes', value: Tabs.governance },
     { label: 'Airdrop #2', value: Tabs.airdrop2 },
     { label: 'ICE locks', value: Tabs.iceLocks },
+    { label: 'Payments history', value: Tabs.history },
 ];
 
 const Profile = () => {
@@ -130,6 +133,7 @@ const Profile = () => {
                     {selectedTab === Tabs.governance && <YourGovernanceVotes />}
                     {selectedTab === Tabs.airdrop2 && <Airdrop2List />}
                     {selectedTab === Tabs.iceLocks && <IceLocks ammAquaBalance={ammAquaBalance} />}
+                    {selectedTab === Tabs.history && <PaymentsHistory />}
                 </Content>
             </ContentWrap>
         </Container>

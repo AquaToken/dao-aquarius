@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { forwardRef, RefObject } from 'react';
+import { forwardRef, RefObject, useMemo } from 'react';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../styles';
 import { flexAllCenter, respondDown } from '../mixins';
 import PageLoader from './PageLoader';
 import { IconSort } from './Icons';
+import { List, AutoSizer, InfiniteLoader } from 'react-virtualized';
 
 interface Sort {
     onClick: () => void;
@@ -27,6 +28,8 @@ interface TableItem {
     color?: string;
     hideOnWeb?: boolean;
     hideOnMobile?: boolean;
+    style?: any;
+    mobileStyle?: any;
 }
 
 interface TableHeadItem extends TableItem {
@@ -47,6 +50,10 @@ interface TableProps {
     pending?: boolean;
     head: TableHeadItem[];
     body: TableRow[];
+    virtualScrollProps?: {
+        loadMore: () => void;
+        loadMoreOffset: number;
+    };
 }
 
 const Container = styled.div`
@@ -86,7 +93,7 @@ const TableHead = styled.div`
     `}
 `;
 
-const TableHeadRow = styled.div`
+const TableHeadRow = styled.div<{ withPadding: boolean }>`
     display: flex;
     align-items: stretch;
     width: 100%;
@@ -95,6 +102,7 @@ const TableHeadRow = styled.div`
     line-height: 2rem;
     color: ${COLORS.grayText};
     white-space: nowrap;
+    padding-right: ${({ withPadding }) => (withPadding ? '1.5rem' : 'unset')};
 
     ${respondDown(Breakpoints.md)`
         flex-direction: column;
@@ -163,9 +171,34 @@ const HeadCell = styled(Cell)<{ withSort?: boolean }>`
     }
 `;
 
-const TableBody = styled.div`
+const TableBody = styled.div<{ withScroll }>`
     display: flex;
     flex-direction: column;
+
+    height: ${({ withScroll }) => (withScroll ? '36rem' : 'unset')};
+
+    ${respondDown(Breakpoints.md)`
+        height: ${({ withScroll }) => (withScroll ? '50rem' : 'unset')};
+    `}
+`;
+
+const ListStyled = styled(List)`
+    padding-right: 1rem;
+
+    &::-webkit-scrollbar {
+        width: 0.5rem;
+    }
+
+    /* Track */
+    &::-webkit-scrollbar-track {
+        background: ${COLORS.white};
+    }
+
+    /* Handle */
+    &::-webkit-scrollbar-thumb {
+        background: ${COLORS.purple};
+        border-radius: 0.25rem;
+    }
 `;
 
 const TableRowWrap = styled.div<{
@@ -211,8 +244,70 @@ const TableRow = styled.div<{ isNarrow?: boolean; mobileFontSize?: string }>`
     `}
 `;
 
+const CellContent = styled.div`
+    display: flex;
+    align-items: center;
+`;
+
+const Row = ({ row, style }: { row: any; style?: any }) => (
+    <TableRowWrap
+        mobileBackground={row.mobileBackground}
+        isClickable={Boolean(row.onRowClick)}
+        onClick={() => row.onRowClick?.()}
+        style={style}
+    >
+        <TableRow isNarrow={row.isNarrow} mobileFontSize={row.mobileFontSize}>
+            {row?.rowItems.map(
+                (
+                    {
+                        children,
+                        align,
+                        color,
+                        label,
+                        labelColor,
+                        flexSize,
+                        hideOnWeb,
+                        hideOnMobile,
+                        style,
+                        mobileStyle,
+                    },
+                    index,
+                ) => (
+                    <Cell
+                        align={align}
+                        color={color}
+                        labelColor={labelColor}
+                        flexSize={flexSize}
+                        key={`${row.key}_${index}`}
+                        hideOnWeb={hideOnWeb}
+                        hideOnMobile={hideOnMobile}
+                    >
+                        {Boolean(label) && <label>{label}</label>}
+                        <CellContent style={+window.innerWidth > 992 ? style : mobileStyle}>
+                            {children}
+                        </CellContent>
+                    </Cell>
+                ),
+            )}
+        </TableRow>
+        {Boolean(row.afterRow) && row.afterRow}
+    </TableRowWrap>
+);
+
 const Table = forwardRef(
-    ({ pending, head, body, ...props }: TableProps, ref: RefObject<HTMLDivElement>) => {
+    (
+        { pending, head, body, virtualScrollProps, ...props }: TableProps,
+        ref: RefObject<HTMLDivElement>,
+    ) => {
+        const rowHeight = useMemo(() => {
+            if (+window.innerWidth > 992) {
+                return body[0]?.isNarrow ? 50 : 96;
+            }
+            return body[0]?.rowItems.length * 50 + 50;
+        }, [body]);
+
+        const rowMargin = +window.innerWidth > 992 ? 0 : 16;
+
         return (
             <Container ref={ref} {...props}>
                 {pending && (
@@ -221,7 +316,7 @@ const Table = forwardRef(
                     </TableLoader>
                 )}
                 <TableHead>
-                    <TableHeadRow>
+                    <TableHeadRow withPadding={Boolean(virtualScrollProps)}>
                         {head.map(
                             ({ children, sort, align, flexSize, hideOnWeb, hideOnMobile }) => (
                                 <HeadCell
@@ -245,47 +340,48 @@ const Table = forwardRef(
                         )}
                     </TableHeadRow>
                 </TableHead>
-                <TableBody>
-                    {body?.map((row) => (
-                        <TableRowWrap
-                            mobileBackground={row.mobileBackground}
-                            isClickable={Boolean(row.onRowClick)}
-                            onClick={() => row.onRowClick?.()}
-                            key={row.key}
-                        >
-                            <TableRow isNarrow={row.isNarrow} mobileFontSize={row.mobileFontSize}>
-                                {row?.rowItems.map(
-                                    (
-                                        {
-                                            children,
-                                            align,
-                                            color,
-                                            label,
-                                            labelColor,
-                                            flexSize,
-                                            hideOnWeb,
-                                            hideOnMobile,
-                                        },
-                                        index,
-                                    ) => (
-                                        <Cell
-                                            align={align}
-                                            color={color}
-                                            labelColor={labelColor}
-                                            flexSize={flexSize}
-                                            key={`${row.key}_${index}`}
-                                            hideOnWeb={hideOnWeb}
-                                            hideOnMobile={hideOnMobile}
-                                        >
-                                            {Boolean(label) && <label>{label}</label>}
-                                            {children}
-                                        </Cell>
-                                    ),
-                                )}
-                            </TableRow>
-                            {Boolean(row.afterRow) && row.afterRow}
-                        </TableRowWrap>
-                    ))}
+                <TableBody withScroll={Boolean(virtualScrollProps)}>
+                    {Boolean(virtualScrollProps) ? (
+                        <AutoSizer>
+                            {({ height, width }) => (
+                                <InfiniteLoader
+                                    isRowLoaded={() => {}}
+                                    rowCount={body.length}
+                                    loadMoreRows={(e) => {
+                                        if (
+                                            e.stopIndex + virtualScrollProps.loadMoreOffset >
+                                            body.length
+                                        ) {
+                                            virtualScrollProps.loadMore();
+                                        }
+                                    }}
+                                >
+                                    {({ onRowsRendered, registerChild }) => (
+                                        <ListStyled
+                                            width={width}
+                                            height={height}
+                                            onRowsRendered={onRowsRendered}
+                                            ref={registerChild}
+                                            rowHeight={rowHeight}
+                                            rowCount={body.length}
+                                            rowRenderer={({ key, index, style }) => (
+                                                <Row
+                                                    row={body[index]}
+                                                    key={key}
+                                                    style={{
+                                                        ...style,
+                                                        height: rowHeight - rowMargin,
+                                                    }}
+                                                />
+                                            )}
+                                        />
+                                    )}
+                                </InfiniteLoader>
+                            )}
+                        </AutoSizer>
+                    ) : (
+                        body?.map((row) => <Row row={row} key={row.key} />)
+                    )}
                 </TableBody>
             </Container>
         );

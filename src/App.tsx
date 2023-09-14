@@ -89,9 +89,9 @@ const App = () => {
 
     useEffect(() => {
         if (isLogged) {
-            StellarService.startClaimableBalancesStream(account.accountId());
+            StellarService.startEffectsStream(account.accountId());
         } else {
-            StellarService.closeClaimableBalancesStream();
+            StellarService.stopEffectsStream();
         }
     }, [isLogged]);
 
