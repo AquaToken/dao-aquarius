@@ -53,7 +53,7 @@ export const steps = [
     {
         date: 'Q3 - 2023',
         title: 'SCF 15 - Soroban & Aquarius',
-        text: 'Using funding via the Stellar Community Fund, we are building new systems for Aquarius using Soroban smart contracts. First will be Aquarius AMMs, introducing new AMM types to Stellar in 2024.',
+        text: 'Using funding via the Stellar Community Fund, we are building new systems for Aquarius using Soroban smart contracts. First will be Aquarius AMMs, introducing new AMM types to Stellar in 2023.',
     },
     {
         date: 'Q4 - 2023',
