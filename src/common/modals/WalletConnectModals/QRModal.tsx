@@ -198,7 +198,7 @@ const QRModal = ({ params }: ModalProps<{ uri: string }>): JSX.Element => {
                         Open your WalletConnect-compatible app with Stellar support, like LOBSTR
                         wallet, and scan the QR code to connect.
                     </ModalDescription>
-                    <ExternalLink href="https://lobstr.zendesk.com/hc/en-us/articles/4406569953938-WalletConnect-How-to-log-in-and-use-your-Stellar-wallet-from-LOBSTR-with-other-services">
+                    <ExternalLink href="https://lobstr.freshdesk.com/support/solutions/articles/151000001589-walletconnect-how-[…]nd-use-your-stellar-wallet-from-lobstr-with-other-services">
                         How to connect LOBSTR wallet?
                     </ExternalLink>
 

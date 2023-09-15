@@ -380,9 +380,7 @@ const AmmRewards = ({ aquaUsdPrice }) => {
                 <Section>
                     <Empty>
                         <h3>There's nothing here.</h3>
-                        <span>
-                            It looks like there are don't have an active liquidity position.
-                        </span>
+                        <span>It looks like you don’t have any active liquidity positions.</span>
 
                         <ExternalLinkStyled asDiv>
                             <Link to={MainRoutes.rewards}>Learn about AMM rewards</Link>

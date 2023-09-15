@@ -34,7 +34,7 @@ const SidebarBlock = styled.aside`
     top: 2rem;
     right: 10%;
     margin: -46rem 0 0;
-    width: 36.4rem;
+    width: 36.6rem;
     background: ${COLORS.white};
     box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
     border-radius: 0.5rem;
