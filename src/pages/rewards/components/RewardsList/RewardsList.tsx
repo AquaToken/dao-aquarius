@@ -231,14 +231,7 @@ const RewardsList = ({ isV2 }: { isV2?: boolean }) => {
                     },
                 ]}
                 body={rewards.map(
-                    ({
-                        daily_sdex_reward,
-                        daily_total_reward,
-                        daily_amm_reward,
-                        market_key,
-                        daily_sdex_percentage,
-                        daily_amm_percentage,
-                    }) => ({
+                    ({ daily_sdex_reward, daily_total_reward, daily_amm_reward, market_key }) => ({
                         key:
                             market_key.asset1_code +
                             market_key.asset1_issuer +
@@ -268,8 +261,12 @@ const RewardsList = ({ isV2 }: { isV2?: boolean }) => {
                                 children: (
                                     <Amount>
                                         <span>
-                                            {formatBalance(daily_sdex_reward)} AQUA{' '}
-                                            {isV2 ? `(${daily_sdex_percentage}%)` : ''}
+                                            {formatBalance(daily_sdex_reward)} AQUA (
+                                            {Math.round(
+                                                (daily_sdex_reward * 100) /
+                                                    (daily_sdex_reward + daily_amm_reward),
+                                            )}
+                                            %)
                                         </span>
                                         <a
                                             href={`https://www.stellarx.com/markets/${marketKeyToString(
@@ -296,8 +293,12 @@ const RewardsList = ({ isV2 }: { isV2?: boolean }) => {
                                 children: (
                                     <Amount>
                                         <span>
-                                            {formatBalance(daily_amm_reward)} AQUA{' '}
-                                            {isV2 ? `(${daily_amm_percentage}%)` : ''}
+                                            {formatBalance(daily_amm_reward)} AQUA (
+                                            {Math.round(
+                                                (daily_amm_reward * 100) /
+                                                    (daily_sdex_reward + daily_amm_reward),
+                                            )}
+                                            %)
                                         </span>{' '}
                                         <a
                                             href={`https://www.stellarx.com/amm/analytics/${marketKeyToString(
