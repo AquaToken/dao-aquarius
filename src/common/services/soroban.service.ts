@@ -3,10 +3,11 @@ import { sha256 } from 'js-sha256';
 import binascii from 'binascii';
 import { xdr, Asset, Keypair, SorobanRpc } from 'soroban-client';
 import SendTransactionResponse = SorobanRpc.SendTransactionResponse;
+import SimulateTransactionSuccessResponse = SorobanRpc.SimulateTransactionSuccessResponse;
 import { ToastService } from './globalServices';
 
 const SOROBAN_SERVER = 'https://rpc-futurenet.stellar.org:443/';
-const AMM_SMART_CONTACT_ID = 'CBQMA6JZN6JTT4KIYAYP6MOUP3QVY244Q3OO46JIPXBW5FQQFU2NC2PG';
+const AMM_SMART_CONTACT_ID = 'CCMYK4HT572TAJSHBV765HUP4FXDPVWNUTQL25YEV2ILXINFB3O7EVBF';
 
 enum AMM_CONTRACT_METHOD {
     GET_POOL = 'get_pool',
@@ -206,12 +207,11 @@ export default class SorobanServiceClass {
                 contract: xdr.ScAddress.scAddressTypeContract(contractIdBuffer),
                 key: xdr.ScVal.scvLedgerKeyContractInstance(),
                 durability: xdr.ContractDataDurability.persistent(),
-                bodyType: xdr.ContractEntryBodyType.dataEntry(),
             }),
         );
 
         return this.server
-            .getLedgerEntries([ledgerKey])
+            .getLedgerEntries(ledgerKey)
             .then(({ entries }) => {
                 return Boolean(entries?.length);
             })
@@ -220,7 +220,11 @@ export default class SorobanServiceClass {
             });
     }
 
-    getPoolId(accountId: string, base: Asset, counter: Asset) {
+    getPoolId(
+        accountId: string,
+        base: Asset,
+        counter: Asset,
+    ): Promise<SimulateTransactionSuccessResponse> {
         const [aId, bId] = this.orderTokenIDS(base, counter);
 
         return this.buildSmartContactTx(
@@ -229,11 +233,13 @@ export default class SorobanServiceClass {
             AMM_CONTRACT_METHOD.GET_POOL,
             this.hashToAddressScVal(aId),
             this.hashToAddressScVal(bId),
-        ).then((tx) => this.server.simulateTransaction(tx));
+        ).then(
+            (tx) =>
+                this.server.simulateTransaction(tx) as Promise<SimulateTransactionSuccessResponse>,
+        );
     }
 
     getInitPoolTx(accountId: string, base: Asset, counter: Asset) {
-        console.log('init pool');
         const [aId, bId] = this.orderTokenIDS(base, counter);
 
         return this.buildSmartContactTx(
@@ -247,7 +253,12 @@ export default class SorobanServiceClass {
 
     getPoolShareId(accountId, poolId: string) {
         return this.buildSmartContactTx(accountId, poolId, AMM_CONTRACT_METHOD.SHARE_ID)
-            .then((tx) => this.server.simulateTransaction(tx))
+            .then(
+                (tx) =>
+                    this.server.simulateTransaction(
+                        tx,
+                    ) as Promise<SimulateTransactionSuccessResponse>,
+            )
             .then(({ result }) => {
                 if (result) {
                     // @ts-ignore
@@ -267,7 +278,12 @@ export default class SorobanServiceClass {
                 ? this.publicKeyToScVal(where)
                 : this.hashToAddressScVal(where),
         )
-            .then((tx) => this.server.simulateTransaction(tx))
+            .then(
+                (tx) =>
+                    this.server.simulateTransaction(
+                        tx,
+                    ) as Promise<SimulateTransactionSuccessResponse>,
+            )
             .then(({ result }) => {
                 if (result) {
                     return this.i128ToInt(result.retval.value() as xdr.Int128Parts);
@@ -286,7 +302,7 @@ export default class SorobanServiceClass {
             this.hashToAddressScVal(poolId),
         )
             .then((tx) => {
-                return this.simulateTx(tx);
+                return this.simulateTx(tx) as Promise<SimulateTransactionSuccessResponse>;
             })
             .then(({ result }) => {
                 if (result) {
@@ -298,16 +314,18 @@ export default class SorobanServiceClass {
     }
 
     getGiveAllowanceTx(accountId: string, poolId: string, asset: Asset | string, amount: string) {
-        return this.buildSmartContactTx(
-            accountId,
-            typeof asset === 'string' ? asset : this.getAssetContractId(asset),
-            ASSET_CONTRACT_METHOD.APPROVE_ALLOWANCE,
-            this.publicKeyToScVal(this.keypair.publicKey()),
-            this.hashToAddressScVal(poolId),
-            this.amountToScVal(amount),
-            xdr.ScVal.scvU32(2 ** 20),
-        ).then((tx) => {
-            return this.server.prepareTransaction(tx);
+        return this.server.getLatestLedger().then(({ sequence }) => {
+            return this.buildSmartContactTx(
+                accountId,
+                typeof asset === 'string' ? asset : this.getAssetContractId(asset),
+                ASSET_CONTRACT_METHOD.APPROVE_ALLOWANCE,
+                this.publicKeyToScVal(this.keypair.publicKey()),
+                this.hashToAddressScVal(poolId),
+                this.amountToScVal(amount),
+                xdr.ScVal.scvU32(sequence + 477533),
+            ).then((tx) => {
+                return this.server.prepareTransaction(tx);
+            });
         });
     }
 
@@ -324,7 +342,7 @@ export default class SorobanServiceClass {
             this.assetToScVal(counter),
         )
             .then((tx) => {
-                return this.simulateTx(tx);
+                return this.simulateTx(tx) as Promise<SimulateTransactionSuccessResponse>;
             })
             .then(({ result }) => {
                 if (result) {
@@ -403,7 +421,12 @@ export default class SorobanServiceClass {
             this.assetToScVal(buy),
             this.amountToScVal(amount),
         )
-            .then((tx) => this.server.simulateTransaction(tx))
+            .then(
+                (tx) =>
+                    this.server.simulateTransaction(
+                        tx,
+                    ) as Promise<SimulateTransactionSuccessResponse>,
+            )
             .then(({ result }) => {
                 if (result) {
                     return this.i128ToInt(result.retval.value() as xdr.Int128Parts);
