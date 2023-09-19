@@ -105,6 +105,7 @@ const Amm = ({ balances }) => {
                             account.signAndSubmitTx(tx as SorobanClient.Transaction, true),
                         )
                         .then((res) => {
+                            console.log('res', res);
                             setPoolId(res.value().value().toString('hex'));
                         });
                 }
