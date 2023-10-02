@@ -9,7 +9,7 @@ import { validateMarketKeys } from '../../pages/vote/api/api';
 import { ToastService } from './globalServices';
 
 enum HORIZON_SERVER {
-    stellar = 'https://horizon-futurenet.stellar.org',
+    stellar = 'https://horizon-testnet.stellar.org',
 }
 
 const VAULT_API = 'https://vault.lobstr.co/api/transactions/';

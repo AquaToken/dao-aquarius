@@ -16,7 +16,7 @@ const METADATA = {
     icons: [`${location.origin}/favicon.png`],
 };
 
-const PUBNET = 'stellar:futurenet';
+const PUBNET = 'stellar:testnet';
 
 const STELLAR_METHODS = {
     SIGN_AND_SUBMIT: 'stellar_signAndSubmitXDR',
