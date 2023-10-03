@@ -6,8 +6,8 @@ import SendTransactionResponse = SorobanRpc.SendTransactionResponse;
 import SimulateTransactionSuccessResponse = SorobanRpc.SimulateTransactionSuccessResponse;
 import { ToastService } from './globalServices';
 
-const SOROBAN_SERVER = 'https://rpc-futurenet.stellar.org:443/';
-const AMM_SMART_CONTACT_ID = 'CCMYK4HT572TAJSHBV765HUP4FXDPVWNUTQL25YEV2ILXINFB3O7EVBF';
+const SOROBAN_SERVER = 'https://soroban-testnet.stellar.org:443';
+const AMM_SMART_CONTACT_ID = 'CD2L4RUBG7LONUH5KNP5UAUHPGBTHFDZW2NNC3MFFSGFC4OGD2RQ2WCO';
 
 enum AMM_CONTRACT_METHOD {
     GET_POOL = 'get_pool',
@@ -84,7 +84,7 @@ export default class SorobanServiceClass {
         return this.server.getAccount(accountId).then((acc) => {
             return new SorobanClient.TransactionBuilder(acc, {
                 fee: FEE,
-                networkPassphrase: SorobanClient.Networks.FUTURENET,
+                networkPassphrase: SorobanClient.Networks.TESTNET,
             })
                 .addOperation(
                     SorobanClient.Operation.changeTrust({
@@ -115,7 +115,7 @@ export default class SorobanServiceClass {
         return this.server.getAccount(issuerKeypair.publicKey()).then((issuer) => {
             const transaction = new SorobanClient.TransactionBuilder(issuer, {
                 fee: FEE,
-                networkPassphrase: SorobanClient.Networks.FUTURENET,
+                networkPassphrase: SorobanClient.Networks.TESTNET,
             })
                 .addOperation(
                     SorobanClient.Operation.payment({
@@ -201,7 +201,7 @@ export default class SorobanServiceClass {
     }
 
     getAssetContractId(asset: Asset): string {
-        const networkId: Buffer = Buffer.from(sha256.arrayBuffer(SorobanClient.Networks.FUTURENET));
+        const networkId: Buffer = Buffer.from(sha256.arrayBuffer(SorobanClient.Networks.TESTNET));
 
         const contractIdPreimage: xdr.ContractIdPreimage =
             xdr.ContractIdPreimage.contractIdPreimageFromAsset(asset.toXDRObject());
@@ -486,7 +486,7 @@ export default class SorobanServiceClass {
 
             const builtTx = new SorobanClient.TransactionBuilder(acc, {
                 fee: FEE,
-                networkPassphrase: SorobanClient.Networks.FUTURENET,
+                networkPassphrase: SorobanClient.Networks.TESTNET,
             });
 
             if (args) {
