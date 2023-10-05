@@ -26,21 +26,21 @@ const Container = styled.div`
     `}
 `;
 
-const Rewards = ({ isV2 }: { isV2?: boolean }) => {
+const Rewards = () => {
     const [totalRewards, setTotalRewards] = useState(null);
 
     useEffect(() => {
-        getTotalRewards(isV2).then((res) => {
+        getTotalRewards().then((res) => {
             setTotalRewards(res);
         });
-    }, [isV2]);
+    }, []);
     return (
         <Container>
             <TotalRewards totalRewards={totalRewards} />
 
             <DividedRewards totalRewards={totalRewards} />
 
-            <RewardsList isV2={isV2} />
+            <RewardsList />
 
             <FAQ />
 

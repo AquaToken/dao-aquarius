@@ -101,7 +101,7 @@ const marketKeyToString = (code, issuer) => {
     return `${code}:${issuer}`;
 };
 
-const RewardsList = ({ isV2 }: { isV2?: boolean }) => {
+const RewardsList = () => {
     const [rewards, setRewards] = useState(null);
     const [sort, setSort] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -116,7 +116,7 @@ const RewardsList = ({ isV2 }: { isV2?: boolean }) => {
             return;
         }
         setLoading(true);
-        getRewards(sort, isV2).then((res) => {
+        getRewards(sort).then((res) => {
             setRewards(res);
             setLoading(false);
             const assets = res.reduce((acc, item) => {
@@ -128,7 +128,7 @@ const RewardsList = ({ isV2 }: { isV2?: boolean }) => {
 
             processNewAssets(assets);
         });
-    }, [sort, isV2]);
+    }, [sort]);
 
     useEffect(() => {
         const params = new URLSearchParams(location.search);
