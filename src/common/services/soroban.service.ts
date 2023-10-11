@@ -202,7 +202,7 @@ export default class SorobanServiceClass {
     checkContractDeployed(contractId: string): Promise<boolean> {
         const contractIdBuffer: Buffer = Buffer.from(binascii.unhexlify(contractId), 'ascii');
 
-        const ledgerKey: xdr.LedgerKey = xdr.LedgerKey.contractData(
+        const contractKey: xdr.LedgerKey = xdr.LedgerKey.contractData(
             new xdr.LedgerKeyContractData({
                 contract: xdr.ScAddress.scAddressTypeContract(contractIdBuffer),
                 key: xdr.ScVal.scvLedgerKeyContractInstance(),
@@ -210,10 +210,26 @@ export default class SorobanServiceClass {
             }),
         );
 
+        const ledgerKey: xdr.LedgerKey = xdr.LedgerKey.expiration(
+            new xdr.LedgerKeyExpiration({
+                keyHash: Buffer.from(binascii.unhexlify(sha256(contractKey.toXDR())), 'ascii'),
+            }),
+        );
+
         return this.server
             .getLedgerEntries(ledgerKey)
-            .then(({ entries }) => {
-                return Boolean(entries?.length);
+            .then(({ entries, latestLedger }) => {
+                if (!entries?.length) {
+                    return false;
+                }
+
+                const [entry] = entries;
+
+                const contractExp = SorobanClient.xdr.LedgerEntryData.fromXDR(entry.xdr, 'base64')
+                    .expiration()
+                    .expirationLedgerSeq();
+
+                return contractExp > latestLedger;
             })
             .catch(() => {
                 return false;
