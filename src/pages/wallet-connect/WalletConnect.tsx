@@ -2,7 +2,6 @@ import * as React from 'react';
 import PageLoader from '../../common/basics/PageLoader';
 import { useEffect } from 'react';
 import { WalletConnectService } from '../../common/services/globalServices';
-import { WalletConnectEvents } from '../../common/services/wallet-connect.service';
 import { Redirect, useLocation } from 'react-router-dom';
 import { MainRoutes } from '../../routes';
 import useAuthStore from '../../store/authStore/useAuthStore';
@@ -18,20 +17,6 @@ const WalletConnect = () => {
 
     useEffect(() => {
         WalletConnectService.autoLogin();
-    }, []);
-
-    useEffect(() => {
-        const unsub = WalletConnectService.event.sub((event) => {
-            if (event.type === WalletConnectEvents.logout) {
-                // The case is when the WalletConnect return the public key,
-                // but we are still in the process of receiving data from the Horizon
-                // and at this moment a disconnect event is received.
-                // We want to re-execute the autoLogin.
-                WalletConnectService.autoLogin();
-            }
-        });
-
-        return () => unsub();
     }, []);
 
     // After login redirect to the page from the url params or to the main page

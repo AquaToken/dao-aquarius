@@ -85,15 +85,18 @@ export default class WalletConnectServiceClass {
 
     //  This method is called when app has mounted,
     //  if there is a saved session in the  WalletConnect storage, we start the WalletConnect initialization
-    async loginIfSessionExist(): Promise<any> {
+    //
+    //  If we want to disconnect all the established sessions, we pass the parameter disconnectAll.
+    //  Used for the auto-connect page
+    onAppStart(disconnectAll: boolean): Promise<any> {
         if (!sessionExistsInStorage()) {
             return Promise.resolve();
         }
 
-        return this.initWalletConnect(true);
+        return this.initWalletConnect(disconnectAll);
     }
 
-    async initWalletConnect(withTimeout?: boolean): Promise<boolean> {
+    async initWalletConnect(disconnectAll?: boolean): Promise<boolean> {
         try {
             if (this.isOffline) {
                 ToastService.showErrorToast(INTERNET_CONNECTION_ERROR);
@@ -106,15 +109,23 @@ export default class WalletConnectServiceClass {
 
             await this.setClient();
 
-            this.listenWalletConnectEvents();
+            const disconnectPromises = [];
 
-            // This dirty code is needed for the case when a logout is performed from the wallet
-            // while the dapp is inactive and after launching the dapp the logout event comes 2 seconds later
-            if (withTimeout) {
-                await new Promise((resolve) => {
-                    setTimeout(() => resolve(void 0), 2500);
+            //  disconnect all the established sessions
+            if (disconnectAll) {
+                this.client.session.getAll().forEach((session) => {
+                    disconnectPromises.push(
+                        this.client.disconnect({
+                            topic: session.topic,
+                            reason: getSdkError('USER_REJECTED'),
+                        }),
+                    );
                 });
             }
+
+            await Promise.all(disconnectPromises);
+
+            this.listenWalletConnectEvents();
 
             return this.checkPersistedState();
         } catch (e) {

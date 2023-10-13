@@ -64,9 +64,11 @@ const App = () => {
     }, []);
 
     useEffect(() => {
-        WalletConnectService.loginIfSessionExist().then(() => {
-            setWcLoginChecked(true);
-        });
+        WalletConnectService.onAppStart(window.location.pathname === MainRoutes.walletConnect).then(
+            () => {
+                setWcLoginChecked(true);
+            },
+        );
     }, []);
 
     useEffect(() => {
