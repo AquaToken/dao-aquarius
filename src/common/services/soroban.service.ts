@@ -1,7 +1,7 @@
 import * as SorobanClient from 'soroban-client';
 import { sha256 } from 'js-sha256';
 import binascii from 'binascii';
-import { xdr, Asset, Keypair, SorobanRpc } from 'soroban-client';
+import { xdr, Asset, Keypair, SorobanRpc, BASE_FEE, assembleTransaction } from 'soroban-client';
 import SendTransactionResponse = SorobanRpc.SendTransactionResponse;
 import SimulateTransactionSuccessResponse = SorobanRpc.SimulateTransactionSuccessResponse;
 import { ToastService } from './globalServices';
@@ -26,8 +26,6 @@ enum ASSET_CONTRACT_METHOD {
     GET_BALANCE = 'balance',
 }
 
-const FEE = '1000';
-
 const issuerKeypair = SorobanClient.Keypair.fromSecret(
     'SBPQCB4DOUQ26OC43QNAA3ODZOGECHJUVHDHYRHKYPL4SA22RRYGHQCX',
 );
@@ -35,6 +33,12 @@ const USDT = new SorobanClient.Asset('USDT', issuerKeypair.publicKey());
 const USDC = new SorobanClient.Asset('USDC', issuerKeypair.publicKey());
 const ETH = new SorobanClient.Asset('ETH', issuerKeypair.publicKey());
 const BTC = new SorobanClient.Asset('BTC', issuerKeypair.publicKey());
+
+export enum CONTRACT_STATUS {
+    ACTIVE = 'active',
+    EXPIRED = 'expired',
+    NOT_FOUND = 'not_found',
+}
 
 export default class SorobanServiceClass {
     server: SorobanClient.Server | null = null;
@@ -65,7 +69,7 @@ export default class SorobanServiceClass {
     getAddTrustTx(accountId: string) {
         return this.server.getAccount(accountId).then((acc) => {
             return new SorobanClient.TransactionBuilder(acc, {
-                fee: FEE,
+                fee: BASE_FEE,
                 networkPassphrase: SorobanClient.Networks.TESTNET,
             })
                 .addOperation(
@@ -96,7 +100,7 @@ export default class SorobanServiceClass {
     getTestAssets(accountId) {
         return this.server.getAccount(issuerKeypair.publicKey()).then((issuer) => {
             const transaction = new SorobanClient.TransactionBuilder(issuer, {
-                fee: FEE,
+                fee: BASE_FEE,
                 networkPassphrase: SorobanClient.Networks.TESTNET,
             })
                 .addOperation(
@@ -199,7 +203,9 @@ export default class SorobanServiceClass {
         return sha256(data.toXDR());
     }
 
-    checkContractDeployed(contractId: string): Promise<boolean> {
+    getContractData(
+        contractId: string,
+    ): Promise<{ status: CONTRACT_STATUS; ledgersBeforeExpire: number }> {
         const contractIdBuffer: Buffer = Buffer.from(binascii.unhexlify(contractId), 'ascii');
 
         const contractKey: xdr.LedgerKey = xdr.LedgerKey.contractData(
@@ -220,19 +226,147 @@ export default class SorobanServiceClass {
             .getLedgerEntries(ledgerKey)
             .then(({ entries, latestLedger }) => {
                 if (!entries?.length) {
-                    return false;
+                    return {
+                        status: CONTRACT_STATUS.NOT_FOUND,
+                        ledgersBeforeExpire: 0,
+                    };
                 }
 
                 const [entry] = entries;
 
-                const contractExp = SorobanClient.xdr.LedgerEntryData.fromXDR(entry.xdr, 'base64')
-                    .expiration()
-                    .expirationLedgerSeq();
+                console.log();
 
-                return contractExp > latestLedger;
+                // @ts-ignore
+                const contractExp = entry.val.value().expirationLedgerSeq();
+
+                return {
+                    status:
+                        contractExp > latestLedger
+                            ? CONTRACT_STATUS.ACTIVE
+                            : CONTRACT_STATUS.EXPIRED,
+                    ledgersBeforeExpire: Math.max(contractExp - latestLedger, 0),
+                };
             })
             .catch(() => {
-                return false;
+                return {
+                    status: CONTRACT_STATUS.NOT_FOUND,
+                    ledgersBeforeExpire: 0,
+                };
+            });
+    }
+
+    deployAssetContractTx(publicKey: string, asset: Asset) {
+        return this.server
+            .getAccount(publicKey)
+            .then((acc) => {
+                const tx = new SorobanClient.TransactionBuilder(acc, {
+                    fee: BASE_FEE,
+                    networkPassphrase: SorobanClient.Networks.TESTNET,
+                });
+
+                tx.addOperation(
+                    SorobanClient.Operation.invokeHostFunction({
+                        func: xdr.HostFunction.hostFunctionTypeCreateContract(
+                            new xdr.CreateContractArgs({
+                                contractIdPreimage:
+                                    xdr.ContractIdPreimage.contractIdPreimageFromAsset(
+                                        asset.toXDRObject(),
+                                    ),
+                                executable: xdr.ContractExecutable.contractExecutableToken(),
+                            }),
+                        ),
+                        auth: [],
+                    }),
+                );
+
+                return tx.setTimeout(SorobanClient.TimeoutInfinite).build();
+            })
+            .then((tx) => this.server.prepareTransaction(tx));
+    }
+
+    restoreAssetContractTx(publicKey: string, asset: Asset) {
+        const contractHash = this.getAssetContractId(asset);
+
+        const contractId = SorobanClient.StrKey.encodeContract(
+            Buffer.from(binascii.unhexlify(contractHash), 'ascii'),
+        );
+
+        const contact = new SorobanClient.Contract(contractId);
+
+        return this.server
+            .getAccount(publicKey)
+            .then((acc) => {
+                return new SorobanClient.TransactionBuilder(acc, {
+                    fee: BASE_FEE,
+                    networkPassphrase: SorobanClient.Networks.TESTNET,
+                })
+                    .addOperation(SorobanClient.Operation.restoreFootprint({}))
+                    .setSorobanData(
+                        new SorobanClient.SorobanDataBuilder()
+                            .setReadWrite([contact.getFootprint()[1]])
+                            .build(),
+                    )
+                    .setTimeout(SorobanClient.TimeoutInfinite)
+                    .build();
+            })
+            .then((tx) => this.simulateManually(tx));
+    }
+
+    bumpAssetContractTx(publicKey: string, asset: Asset) {
+        const contractHash = this.getAssetContractId(asset);
+
+        const contractId = SorobanClient.StrKey.encodeContract(
+            Buffer.from(binascii.unhexlify(contractHash), 'ascii'),
+        );
+
+        const contact = new SorobanClient.Contract(contractId);
+
+        return this.server
+            .getAccount(publicKey)
+            .then((acc) => {
+                return new SorobanClient.TransactionBuilder(acc, {
+                    fee: BASE_FEE,
+                    networkPassphrase: SorobanClient.Networks.TESTNET,
+                })
+                    .addOperation(
+                        SorobanClient.Operation.bumpFootprintExpiration({
+                            ledgersToExpire: 500000,
+                        }),
+                    )
+                    .setSorobanData(
+                        new SorobanClient.SorobanDataBuilder()
+                            .setReadOnly([contact.getFootprint()[1]])
+                            .build(),
+                    )
+                    .setTimeout(SorobanClient.TimeoutInfinite)
+                    .build();
+            })
+            .then((tx) => this.simulateManually(tx));
+    }
+
+    // TODO: the transaction simulation is broken in the SDK,
+    //  you will need to remove it after the fix is released
+    simulateManually(tx): Promise<SorobanClient.Transaction> {
+        const xdr = tx.toXDR();
+
+        let requestObject = {
+            jsonrpc: '2.0',
+            method: 'simulateTransaction',
+            id: 0,
+            params: {
+                transaction: xdr,
+            },
+        };
+
+        return fetch(SOROBAN_SERVER, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(requestObject),
+        })
+            .then((res) => res.json())
+            .then(({ result }) => {
+                console.log(result);
+                return assembleTransaction(tx, SorobanClient.Networks.TESTNET, result).build();
             });
     }
 
@@ -483,7 +617,7 @@ export default class SorobanServiceClass {
             const contract = new SorobanClient.Contract(id);
 
             const builtTx = new SorobanClient.TransactionBuilder(acc, {
-                fee: FEE,
+                fee: BASE_FEE,
                 networkPassphrase: SorobanClient.Networks.TESTNET,
             });
 

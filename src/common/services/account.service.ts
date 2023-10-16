@@ -15,6 +15,7 @@ import { BuildSignAndSubmitStatuses } from './wallet-connect.service';
 import SignWithPublic from '../modals/SignWithPublic';
 import LedgerSignTx from '../modals/LedgerModals/LedgerSignTx';
 import SentToVault from '../modals/MultisigModals/SentToVault';
+import { CONTRACT_STATUS } from './soroban.service';
 
 const VAULT_MARKER = 'GA2T6GR7VXXXBETTERSAFETHANSORRYXXXPROTECTEDBYLOBSTRVAULT';
 
@@ -267,8 +268,12 @@ export default class AccountService extends AccountResponse {
                     };
                 })
                 .map(async ({ contractId, asset, balance }) => {
+                    const { ledgersBeforeExpire, status } = await SorobanService.getContractData(
+                        contractId,
+                    );
                     return {
-                        isDeployed: await SorobanService.checkContractDeployed(contractId),
+                        status,
+                        ledgersBeforeExpire,
                         contractId,
                         asset,
                         balance,
@@ -281,7 +286,12 @@ export default class AccountService extends AccountResponse {
             const native = SorobanClient.Asset.native();
             const contractId = SorobanService.getAssetContractId(native);
             return [
-                { asset: native, balance: nativeBalance, isDeployed: true, contractId },
+                {
+                    asset: native,
+                    balance: nativeBalance,
+                    status: CONTRACT_STATUS.ACTIVE,
+                    contractId,
+                },
                 ...balances.sort((a, b) => +b.balance - +a.balance),
             ];
         });
