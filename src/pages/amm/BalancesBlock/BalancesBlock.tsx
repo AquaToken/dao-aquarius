@@ -157,31 +157,35 @@ const BalancesBlock = ({ balances }) => {
                                     </Status>
                                     <div>{ledgersBeforeExpire}</div>
                                     <div>
-                                        {status === CONTRACT_STATUS.EXPIRED && (
-                                            <Button
-                                                isSmall
-                                                pending={pendingId === contractId}
-                                                disabled={
-                                                    pendingId !== contractId && Boolean(pendingId)
-                                                }
-                                                onClick={() => restore({ asset, contractId })}
-                                            >
-                                                Restore
-                                            </Button>
-                                        )}
-                                        {status === CONTRACT_STATUS.NOT_FOUND && (
-                                            <Button
-                                                isSmall
-                                                pending={pendingId === contractId}
-                                                disabled={
-                                                    pendingId !== contractId && Boolean(pendingId)
-                                                }
-                                                onClick={() => deploy({ asset, contractId })}
-                                            >
-                                                Deploy
-                                            </Button>
-                                        )}
-                                        {status === CONTRACT_STATUS.ACTIVE && (
+                                        {status === CONTRACT_STATUS.EXPIRED &&
+                                            !asset.isNative() && (
+                                                <Button
+                                                    isSmall
+                                                    pending={pendingId === contractId}
+                                                    disabled={
+                                                        pendingId !== contractId &&
+                                                        Boolean(pendingId)
+                                                    }
+                                                    onClick={() => restore({ asset, contractId })}
+                                                >
+                                                    Restore
+                                                </Button>
+                                            )}
+                                        {status === CONTRACT_STATUS.NOT_FOUND &&
+                                            !asset.isNative() && (
+                                                <Button
+                                                    isSmall
+                                                    pending={pendingId === contractId}
+                                                    disabled={
+                                                        pendingId !== contractId &&
+                                                        Boolean(pendingId)
+                                                    }
+                                                    onClick={() => deploy({ asset, contractId })}
+                                                >
+                                                    Deploy
+                                                </Button>
+                                            )}
+                                        {status === CONTRACT_STATUS.ACTIVE && !asset.isNative() && (
                                             <Button
                                                 isSmall
                                                 pending={pendingId === contractId}
