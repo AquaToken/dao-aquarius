@@ -7,7 +7,11 @@ import Asset from '../../vote/components/AssetDropdown/Asset';
 import { formatBalance } from '../../../common/helpers/helpers';
 import Button from '../../../common/basics/Button';
 import { COLORS } from '../../../common/styles';
-import { IconFail, IconSuccess } from '../../../common/basics/Icons';
+import { IconFail, IconSuccess, IconPending } from '../../../common/basics/Icons';
+import { CONTRACT_STATUS } from '../../../common/services/soroban.service';
+import { SorobanService, ToastService } from '../../../common/services/globalServices';
+import useAuthStore from '../../../store/authStore/useAuthStore';
+import * as SorobanClient from 'soroban-client';
 
 const Container = styled.div`
     display: flex;
@@ -36,8 +40,76 @@ const BalanceLine = styled.div`
     }
 `;
 
+const Status = styled.div`
+    display: flex;
+    align-items: center;
+
+    div {
+        flex: unset;
+        margin-right: 0.5rem;
+    }
+`;
+
 const BalancesBlock = ({ balances }) => {
     const [showBalances, setShowBalances] = useState(false);
+    const { account } = useAuthStore();
+
+    const [pendingId, setPendingId] = useState(null);
+
+    const deploy = ({ asset, contractId }) => {
+        setPendingId(contractId);
+        return SorobanService.deployAssetContractTx(account.accountId(), asset)
+            .then((tx) => account.signAndSubmitTx(tx as SorobanClient.Transaction))
+            .then((res) => {
+                console.log(res);
+                setPendingId(null);
+                account.getBalances();
+                ToastService.showSuccessToast('Contract has been deployed!');
+            })
+            .catch((e) => {
+                console.log(e);
+                ToastService.showErrorToast('Oops! Something went wrong');
+                setPendingId(null);
+            });
+    };
+
+    const restore = ({ asset, contractId }) => {
+        setPendingId(contractId);
+        return SorobanService.restoreAssetContractTx(account.accountId(), asset)
+            .then((tx) => {
+                return account.signAndSubmitTx(tx as SorobanClient.Transaction);
+            })
+            .then((res) => {
+                console.log(res);
+                setPendingId(null);
+                account.getBalances();
+                ToastService.showSuccessToast('Contract has been restored!');
+            })
+            .catch((e) => {
+                console.log(e);
+                ToastService.showErrorToast('Oops! Something went wrong');
+                setPendingId(null);
+            });
+    };
+
+    const bump = ({ asset, contractId }) => {
+        setPendingId(contractId);
+        return SorobanService.bumpAssetContractTx(account.accountId(), asset)
+            .then((tx) => {
+                return account.signAndSubmitTx(tx as SorobanClient.Transaction);
+            })
+            .then((res) => {
+                console.log(res);
+                setPendingId(null);
+                account.getBalances();
+                ToastService.showSuccessToast('Contract has been restored!');
+            })
+            .catch((e) => {
+                console.log(e);
+                ToastService.showErrorToast('Oops! Something went wrong');
+                setPendingId(null);
+            });
+    };
 
     return (
         <Container>
@@ -55,17 +127,76 @@ const BalancesBlock = ({ balances }) => {
                         <BalanceLine>
                             <div>Asset</div>
                             <div>Balance</div>
-                            <div>Has deployed contract</div>
+                            <div>Contract status</div>
+                            <div>Ledgers before expiration</div>
+                            <div>Action</div>
                         </BalanceLine>
-                        {balances.map(({ asset, balance, isDeployed, contractId }) => (
-                            <BalanceLine key={contractId}>
-                                <div>
-                                    <Asset asset={asset} />
-                                </div>
-                                <div>{formatBalance(+balance)}</div>
-                                <div>{isDeployed ? <IconSuccess /> : <IconFail />}</div>
-                            </BalanceLine>
-                        ))}
+                        {balances.map(
+                            ({ asset, balance, status, contractId, ledgersBeforeExpire }) => (
+                                <BalanceLine key={contractId}>
+                                    <div>
+                                        <Asset asset={asset} />
+                                    </div>
+                                    <div>{formatBalance(+balance)}</div>
+                                    <Status>
+                                        {status === CONTRACT_STATUS.ACTIVE && (
+                                            <>
+                                                <IconSuccess /> Active
+                                            </>
+                                        )}
+                                        {status === CONTRACT_STATUS.EXPIRED && (
+                                            <>
+                                                <IconPending /> Expired
+                                            </>
+                                        )}
+                                        {status === CONTRACT_STATUS.NOT_FOUND && (
+                                            <>
+                                                <IconFail /> Not found
+                                            </>
+                                        )}
+                                    </Status>
+                                    <div>{ledgersBeforeExpire}</div>
+                                    <div>
+                                        {status === CONTRACT_STATUS.EXPIRED && (
+                                            <Button
+                                                isSmall
+                                                pending={pendingId === contractId}
+                                                disabled={
+                                                    pendingId !== contractId && Boolean(pendingId)
+                                                }
+                                                onClick={() => restore({ asset, contractId })}
+                                            >
+                                                Restore
+                                            </Button>
+                                        )}
+                                        {status === CONTRACT_STATUS.NOT_FOUND && (
+                                            <Button
+                                                isSmall
+                                                pending={pendingId === contractId}
+                                                disabled={
+                                                    pendingId !== contractId && Boolean(pendingId)
+                                                }
+                                                onClick={() => deploy({ asset, contractId })}
+                                            >
+                                                Deploy
+                                            </Button>
+                                        )}
+                                        {status === CONTRACT_STATUS.ACTIVE && (
+                                            <Button
+                                                isSmall
+                                                pending={pendingId === contractId}
+                                                disabled={
+                                                    pendingId !== contractId && Boolean(pendingId)
+                                                }
+                                                onClick={() => bump({ asset, contractId })}
+                                            >
+                                                Bump
+                                            </Button>
+                                        )}
+                                    </div>
+                                </BalanceLine>
+                            ),
+                        )}
                     </div>
                 )
             ) : null}

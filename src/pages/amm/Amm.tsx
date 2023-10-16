@@ -26,6 +26,7 @@ import DotsLoader from '../../common/basics/DotsLoader';
 import Button from '../../common/basics/Button';
 import DepositToPool from './DepositToPool/DepositToPool';
 import SuccessModal from './SuccessModal/SuccessModal';
+import { CONTRACT_STATUS } from '../../common/services/soroban.service';
 
 const Container = styled.main`
     height: 100%;
@@ -222,7 +223,9 @@ const Amm = ({ balances }) => {
     };
 
     const assets = useMemo(() => {
-        return balances?.filter(({ isDeployed }) => isDeployed).map(({ asset }) => asset);
+        return balances
+            ?.filter(({ status }) => status === CONTRACT_STATUS.ACTIVE)
+            .map(({ asset }) => asset);
     }, [balances]);
 
     if (!account || !assets) {

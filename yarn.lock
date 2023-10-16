@@ -8138,15 +8138,15 @@ sonic-boom@^2.2.1:
   dependencies:
     atomic-sleep "^1.0.0"
 
-soroban-client@1.0.0-beta.2:
-  version "1.0.0-beta.2"
-  resolved "https://registry.yarnpkg.com/soroban-client/-/soroban-client-1.0.0-beta.2.tgz#a59f9bd88436d6f06f38213efc4547676bee70d1"
-  integrity sha512-v5h3yvef7HkUD3H26w33NUEgRXcPiOSDWEsVzMloaxsprs3N002tXJHvFF+Uw1eYt50Uk6bvqBgvkLwX10VENw==
+soroban-client@1.0.0-beta.3:
+  version "1.0.0-beta.3"
+  resolved "https://registry.yarnpkg.com/soroban-client/-/soroban-client-1.0.0-beta.3.tgz#7ecec068f910c33ee0778477d9c1e9e7eed69275"
+  integrity sha512-BnySnAKmSaDTMn+QV50jpJ24+sxwsUyi78Et120o4lzxyya0MXTXyx2toqVBGrTdEubjO0Fy4+bc+1jkbvGSOg==
   dependencies:
     axios "^1.4.0"
     bignumber.js "^9.1.1"
     buffer "^6.0.3"
-    stellar-base v10.0.0-beta.1
+    stellar-base v10.0.0-beta.3
     urijs "^1.19.1"
 
 source-map-js@^1.0.2:
@@ -8302,10 +8302,10 @@ stellar-base@^8.2.1:
   optionalDependencies:
     sodium-native "^3.3.0"
 
-stellar-base@v10.0.0-beta.1:
-  version "10.0.0-beta.1"
-  resolved "https://registry.yarnpkg.com/stellar-base/-/stellar-base-10.0.0-beta.1.tgz#5b4209fbc44b8af82dd3ee8b7f6f4397126d8c3b"
-  integrity sha512-zXC5AsbUsLi57JruyeIMv23s3iUxq/P2ZFrSJ+FerLIZjSAjY8EDs4zwY4LCuu7swUu46Lm8GK6sqxUZCPekHw==
+stellar-base@v10.0.0-beta.3:
+  version "10.0.0-beta.3"
+  resolved "https://registry.yarnpkg.com/stellar-base/-/stellar-base-10.0.0-beta.3.tgz#c90e261945c58e2176b0a50b9a7b96003ecb0768"
+  integrity sha512-+B1fOdsDWJEnYSYkKSAVHVngzaqDtD8wdDMT/FC+11MrohP3uGY1OmrEeVn34jiBmUlpYZVudDnpDMSXD4RqDA==
   dependencies:
     base32.js "^0.1.0"
     bignumber.js "^9.1.2"
