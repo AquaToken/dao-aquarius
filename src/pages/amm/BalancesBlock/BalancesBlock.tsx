@@ -102,7 +102,7 @@ const BalancesBlock = ({ balances }) => {
                 console.log(res);
                 setPendingId(null);
                 account.getBalances();
-                ToastService.showSuccessToast('Contract has been restored!');
+                ToastService.showSuccessToast('Contract has been bumped!');
             })
             .catch((e) => {
                 console.log(e);
