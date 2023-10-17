@@ -201,7 +201,7 @@ const Amm = ({ balances }) => {
             )
             .then((tx) => account.signAndSubmitTx(tx as SorobanClient.Transaction, true))
             .then((res) => {
-                const [baseAmount, counterAmount] = res.value();
+                const [counterAmount, baseAmount] = res.value();
 
                 ModalService.confirmAllModals();
 

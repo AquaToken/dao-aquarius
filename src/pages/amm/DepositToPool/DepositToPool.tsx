@@ -105,7 +105,7 @@ const DepositToPool = ({ params }) => {
             .then((tx) => account.signAndSubmitTx(tx as SorobanClient.Transaction, true))
             .then((res) => {
                 setPending(false);
-                const [baseResultAmount, counterResultAmount] = res.value();
+                const [counterResultAmount, baseResultAmount] = res.value();
 
                 ModalService.confirmAllModals();
 
