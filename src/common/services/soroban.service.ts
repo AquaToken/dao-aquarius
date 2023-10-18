@@ -1,7 +1,15 @@
 import * as SorobanClient from 'soroban-client';
 import { sha256 } from 'js-sha256';
 import binascii from 'binascii';
-import { xdr, Asset, Keypair, SorobanRpc, BASE_FEE, assembleTransaction } from 'soroban-client';
+import {
+    xdr,
+    Asset,
+    Keypair,
+    SorobanRpc,
+    BASE_FEE,
+    assembleTransaction,
+    StrKey,
+} from 'soroban-client';
 import SendTransactionResponse = SorobanRpc.SendTransactionResponse;
 import SimulateTransactionSuccessResponse = SorobanRpc.SimulateTransactionSuccessResponse;
 import { ToastService } from './globalServices';
@@ -186,7 +194,7 @@ export default class SorobanServiceClass {
         return new Asset(code, issuer);
     }
 
-    getAssetContractId(asset: Asset): string {
+    getAssetContractHash(asset: Asset): string {
         const networkId: Buffer = Buffer.from(sha256.arrayBuffer(SorobanClient.Networks.TESTNET));
 
         const contractIdPreimage: xdr.ContractIdPreimage =
@@ -203,10 +211,20 @@ export default class SorobanServiceClass {
         return sha256(data.toXDR());
     }
 
+    getContactIdFromHash(hash) {
+        return SorobanClient.StrKey.encodeContract(Buffer.from(binascii.unhexlify(hash), 'ascii'));
+    }
+
+    getAssetContractId(asset: Asset): string {
+        const hash = this.getAssetContractHash(asset);
+
+        return this.getContactIdFromHash(hash);
+    }
+
     getContractData(
         contractId: string,
     ): Promise<{ status: CONTRACT_STATUS; ledgersBeforeExpire: number }> {
-        const contractIdBuffer: Buffer = Buffer.from(binascii.unhexlify(contractId), 'ascii');
+        const contractIdBuffer: Buffer = StrKey.decodeContract(contractId);
 
         const contractKey: xdr.LedgerKey = xdr.LedgerKey.contractData(
             new xdr.LedgerKeyContractData({
@@ -285,11 +303,7 @@ export default class SorobanServiceClass {
     }
 
     restoreAssetContractTx(publicKey: string, asset: Asset) {
-        const contractHash = this.getAssetContractId(asset);
-
-        const contractId = SorobanClient.StrKey.encodeContract(
-            Buffer.from(binascii.unhexlify(contractHash), 'ascii'),
-        );
+        const contractId = this.getAssetContractId(asset);
 
         const contact = new SorobanClient.Contract(contractId);
 
@@ -313,11 +327,7 @@ export default class SorobanServiceClass {
     }
 
     bumpAssetContractTx(publicKey: string, asset: Asset) {
-        const contractHash = this.getAssetContractId(asset);
-
-        const contractId = SorobanClient.StrKey.encodeContract(
-            Buffer.from(binascii.unhexlify(contractHash), 'ascii'),
-        );
+        const contractId = this.getAssetContractId(asset);
 
         const contact = new SorobanClient.Contract(contractId);
 
@@ -381,8 +391,8 @@ export default class SorobanServiceClass {
             accountId,
             AMM_SMART_CONTACT_ID,
             AMM_CONTRACT_METHOD.GET_POOL,
-            this.hashToAddressScVal(aId),
-            this.hashToAddressScVal(bId),
+            this.contractIdToScVal(aId),
+            this.contractIdToScVal(bId),
         ).then(
             (tx) =>
                 this.server.simulateTransaction(tx) as Promise<SimulateTransactionSuccessResponse>,
@@ -396,8 +406,8 @@ export default class SorobanServiceClass {
             accountId,
             AMM_SMART_CONTACT_ID,
             AMM_CONTRACT_METHOD.INIT_POOL,
-            this.hashToAddressScVal(aId),
-            this.hashToAddressScVal(bId),
+            this.contractIdToScVal(aId),
+            this.contractIdToScVal(bId),
         ).then((tx) => this.server.prepareTransaction(tx));
     }
 
@@ -426,7 +436,7 @@ export default class SorobanServiceClass {
             ASSET_CONTRACT_METHOD.GET_BALANCE,
             SorobanClient.StrKey.isValidEd25519PublicKey(where)
                 ? this.publicKeyToScVal(where)
-                : this.hashToAddressScVal(where),
+                : this.contractIdToScVal(where),
         )
             .then(
                 (tx) =>
@@ -443,26 +453,6 @@ export default class SorobanServiceClass {
             });
     }
 
-    getPoolAllowance(accountId: string, poolId: string, token: Asset | string) {
-        return this.buildSmartContactTx(
-            accountId,
-            typeof token === 'string' ? token : this.getAssetContractId(token),
-            ASSET_CONTRACT_METHOD.GET_ALLOWANCE,
-            this.publicKeyToScVal(this.keypair.publicKey()),
-            this.hashToAddressScVal(poolId),
-        )
-            .then((tx) => {
-                return this.simulateTx(tx) as Promise<SimulateTransactionSuccessResponse>;
-            })
-            .then(({ result }) => {
-                if (result) {
-                    return this.i128ToInt(result.retval.value() as xdr.Int128Parts);
-                }
-
-                throw new Error('getPoolAllowance fail');
-            });
-    }
-
     getGiveAllowanceTx(accountId: string, poolId: string, asset: Asset | string, amount: string) {
         return this.server.getLatestLedger().then(({ sequence }) => {
             return this.buildSmartContactTx(
@@ -470,7 +460,7 @@ export default class SorobanServiceClass {
                 typeof asset === 'string' ? asset : this.getAssetContractId(asset),
                 ASSET_CONTRACT_METHOD.APPROVE_ALLOWANCE,
                 this.publicKeyToScVal(this.keypair.publicKey()),
-                this.hashToAddressScVal(poolId),
+                this.contractIdToScVal(poolId),
                 this.amountToScVal(amount),
                 xdr.ScVal.scvU32(sequence + 477533),
             ).then((tx) => {
@@ -607,14 +597,8 @@ export default class SorobanServiceClass {
     }
 
     buildSmartContactTx(publicKey, contactId, method, ...args) {
-        const id = contactId.startsWith('C')
-            ? contactId
-            : SorobanClient.StrKey.encodeContract(
-                  Buffer.from(binascii.unhexlify(contactId), 'ascii'),
-              );
-
         return this.server.getAccount(publicKey).then((acc) => {
-            const contract = new SorobanClient.Contract(id);
+            const contract = new SorobanClient.Contract(contactId);
 
             const builtTx = new SorobanClient.TransactionBuilder(acc, {
                 fee: BASE_FEE,
@@ -648,22 +632,16 @@ export default class SorobanServiceClass {
         this.server = new SorobanClient.Server(SOROBAN_SERVER);
     }
 
-    private hashToScVal(hash: string): xdr.ScVal {
-        return xdr.ScVal.scvBytes(Buffer.from(binascii.unhexlify(hash), 'ascii'));
-    }
-
-    hashToAddressScVal(hash: string): xdr.ScVal {
+    contractIdToScVal(contractId) {
         return xdr.ScVal.scvAddress(
-            SorobanClient.Address.contract(
-                Buffer.from(binascii.unhexlify(hash), 'ascii'),
-            ).toScAddress(),
+            SorobanClient.Address.contract(StrKey.decodeContract(contractId)).toScAddress(),
         );
     }
 
     private assetToScVal(asset: Asset): xdr.ScVal {
         return xdr.ScVal.scvAddress(
             SorobanClient.Address.contract(
-                Buffer.from(binascii.unhexlify(this.getAssetContractId(asset)), 'ascii'),
+                StrKey.decodeContract(this.getAssetContractId(asset)),
             ).toScAddress(),
         );
     }
@@ -681,14 +659,6 @@ export default class SorobanServiceClass {
                 lo: xdr.Uint64.fromString(value),
             }),
         );
-    }
-
-    boolToScVal(value: boolean): xdr.ScVal {
-        return xdr.ScVal.scvBool(value);
-    }
-
-    stringToScVal(val: string): xdr.ScVal {
-        return SorobanClient.xdr.ScVal.scvSymbol(val);
     }
 
     i128ToInt(val: xdr.Int128Parts): number {

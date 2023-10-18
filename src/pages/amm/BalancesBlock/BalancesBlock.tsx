@@ -60,8 +60,7 @@ const BalancesBlock = ({ balances }) => {
         setPendingId(contractId);
         return SorobanService.deployAssetContractTx(account.accountId(), asset)
             .then((tx) => account.signAndSubmitTx(tx as SorobanClient.Transaction))
-            .then((res) => {
-                console.log(res);
+            .then(() => {
                 setPendingId(null);
                 account.getBalances();
                 ToastService.showSuccessToast('Contract has been deployed!');
@@ -79,8 +78,7 @@ const BalancesBlock = ({ balances }) => {
             .then((tx) => {
                 return account.signAndSubmitTx(tx as SorobanClient.Transaction);
             })
-            .then((res) => {
-                console.log(res);
+            .then(() => {
                 setPendingId(null);
                 account.getBalances();
                 ToastService.showSuccessToast('Contract has been restored!');
@@ -98,8 +96,7 @@ const BalancesBlock = ({ balances }) => {
             .then((tx) => {
                 return account.signAndSubmitTx(tx as SorobanClient.Transaction);
             })
-            .then((res) => {
-                console.log(res);
+            .then(() => {
                 setPendingId(null);
                 account.getBalances();
                 ToastService.showSuccessToast('Contract has been bumped!');
