@@ -115,10 +115,13 @@ const Swap = ({ balances }) => {
                             account.signAndSubmitTx(tx as SorobanClient.Transaction, true),
                         )
                         .then((res) => {
-                            setPoolId(res.value().value().toString('hex'));
+                            const hash = res.value().value().toString('hex');
+                            const id = SorobanService.getContactIdFromHash(hash);
+                            setPoolId(id);
                         });
                 }
-                const id = res.result.retval.value()[1].value().value().toString('hex');
+                const hash = res.result.retval.value()[1].value().value().toString('hex');
+                const id = SorobanService.getContactIdFromHash(hash);
 
                 setPoolId(id);
             });

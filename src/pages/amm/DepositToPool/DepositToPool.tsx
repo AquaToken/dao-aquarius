@@ -105,15 +105,23 @@ const DepositToPool = ({ params }) => {
             .then((tx) => account.signAndSubmitTx(tx as SorobanClient.Transaction, true))
             .then((res) => {
                 setPending(false);
-                const [counterResultAmount, baseResultAmount] = res.value();
+                const [baseResultAmount, counterResultAmount] = res.value();
 
                 ModalService.confirmAllModals();
 
                 ModalService.openModal(SuccessModal, {
                     base,
                     counter,
-                    baseAmount: SorobanService.i128ToInt(baseResultAmount.value()),
-                    counterAmount: SorobanService.i128ToInt(counterResultAmount.value()),
+                    baseAmount: SorobanService.i128ToInt(
+                        baseId === SorobanService.getAssetContractId(firstAsset)
+                            ? baseResultAmount.value()
+                            : counterResultAmount.value(),
+                    ),
+                    counterAmount: SorobanService.i128ToInt(
+                        baseId === SorobanService.getAssetContractId(firstAsset)
+                            ? counterResultAmount.value()
+                            : baseResultAmount.value(),
+                    ),
                     title: 'Success deposit',
                 });
             })
