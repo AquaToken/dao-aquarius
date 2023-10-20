@@ -189,6 +189,8 @@ const YouWillGetLabel = styled.span`
     line-height: 2rem;
     color: ${COLORS.descriptionText};
     opacity: 0.7;
+    white-space: nowrap;
+    margin-right: 0.6rem;
 `;
 
 const YouWillGetAmount = styled.div`
@@ -198,11 +200,16 @@ const YouWillGetAmount = styled.div`
     color: ${COLORS.titleText};
     display: flex;
     align-items: center;
+
+    span {
+        word-break: break-word;
+    }
 `;
 
 const IceLogo = styled(Ice)`
     height: 3.2rem;
     width: 3.2rem;
+    min-width: 3.2rem;
     margin-right: 0.8rem;
 `;
 
@@ -288,8 +295,12 @@ const LockAquaForm = forwardRef(
         };
 
         const onAmountChange = (value) => {
+            if (Number.isNaN(Number(value))) {
+                return;
+            }
             setLockAmount(value);
-            if (!Number(value) || Number.isNaN(Number(value))) {
+
+            if (!Number(value)) {
                 setLockPercent(0);
                 return;
             }
@@ -360,6 +371,7 @@ const LockAquaForm = forwardRef(
                     value={lockAmount}
                     onChange={(e) => onAmountChange(e.target.value)}
                     placeholder="Enter lock amount"
+                    style={{ paddingRight: '11rem' }}
                     postfix={
                         <InputPostfix>
                             <AquaLogo />

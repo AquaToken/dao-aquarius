@@ -200,8 +200,13 @@ const TotalAmountRow = styled.div`
 const TotalAmount = styled.div`
     display: flex;
     align-items: center;
+    word-break: break-word;
+    width: 48rem;
+    justify-content: flex-end;
+
     svg {
         margin-left: 0.8rem;
+        min-width: 3.2rem;
     }
 `;
 
