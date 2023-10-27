@@ -26,6 +26,7 @@ import DotsLoader from '../../common/basics/DotsLoader';
 import Button from '../../common/basics/Button';
 import DepositToPool from './DepositToPool/DepositToPool';
 import SuccessModal from './SuccessModal/SuccessModal';
+import { CONTRACT_STATUS } from '../../common/services/soroban.service';
 
 const Container = styled.main`
     height: 100%;
@@ -105,11 +106,13 @@ const Amm = ({ balances }) => {
                             account.signAndSubmitTx(tx as SorobanClient.Transaction, true),
                         )
                         .then((res) => {
-                            console.log('res', res);
-                            setPoolId(res.value().value().toString('hex'));
+                            const hash = res.value().value().toString('hex');
+                            const id = SorobanService.getContactIdFromHash(hash);
+                            setPoolId(id);
                         });
                 }
-                const id = res.result.retval.value()[1].value().value().toString('hex');
+                const hash = res.result.retval.value()[1].value().value().toString('hex');
+                const id = SorobanService.getContactIdFromHash(hash);
 
                 setPoolId(id);
             });
@@ -140,7 +143,8 @@ const Amm = ({ balances }) => {
             setCounterShares(res);
         });
 
-        SorobanService.getPoolShareId(account?.accountId(), poolId).then((shareId) => {
+        SorobanService.getPoolShareId(account?.accountId(), poolId).then((hash) => {
+            const shareId = SorobanService.getContactIdFromHash(hash);
             setShareId(shareId);
             SorobanService.getTokenBalance(account?.accountId(), shareId, account.accountId()).then(
                 (res) => {
@@ -207,8 +211,16 @@ const Amm = ({ balances }) => {
                 ModalService.openModal(SuccessModal, {
                     base,
                     counter,
-                    baseAmount: SorobanService.i128ToInt(baseAmount.value()),
-                    counterAmount: SorobanService.i128ToInt(counterAmount.value()),
+                    baseAmount: SorobanService.i128ToInt(
+                        baseId === SorobanService.getAssetContractId(firstAsset)
+                            ? baseAmount.value()
+                            : counterAmount.value(),
+                    ),
+                    counterAmount: SorobanService.i128ToInt(
+                        baseId === SorobanService.getAssetContractId(firstAsset)
+                            ? counterAmount.value()
+                            : baseAmount.value(),
+                    ),
                     title: 'Success withdraw',
                 });
                 getData();
@@ -222,7 +234,9 @@ const Amm = ({ balances }) => {
     };
 
     const assets = useMemo(() => {
-        return balances?.filter(({ isDeployed }) => isDeployed).map(({ asset }) => asset);
+        return balances
+            ?.filter(({ status }) => status === CONTRACT_STATUS.ACTIVE)
+            .map(({ asset }) => asset);
     }, [balances]);
 
     if (!account || !assets) {

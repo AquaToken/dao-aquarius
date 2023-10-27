@@ -17,6 +17,7 @@ import { IconFail } from '../../common/basics/Icons';
 import { USDT, USDC } from '../amm/Amm';
 import * as SorobanClient from 'soroban-client';
 import SuccessModal from '../amm/SuccessModal/SuccessModal';
+import { CONTRACT_STATUS } from '../../common/services/soroban.service';
 
 const Container = styled.main`
     background-color: ${COLORS.lightGray};
@@ -114,10 +115,13 @@ const Swap = ({ balances }) => {
                             account.signAndSubmitTx(tx as SorobanClient.Transaction, true),
                         )
                         .then((res) => {
-                            setPoolId(res.value().value().toString('hex'));
+                            const hash = res.value().value().toString('hex');
+                            const id = SorobanService.getContactIdFromHash(hash);
+                            setPoolId(id);
                         });
                 }
-                const id = res.result.retval.value()[1].value().value().toString('hex');
+                const hash = res.result.retval.value()[1].value().value().toString('hex');
+                const id = SorobanService.getContactIdFromHash(hash);
 
                 setPoolId(id);
             });
@@ -224,7 +228,9 @@ const Swap = ({ balances }) => {
     }, [account, counter]);
 
     const assets = useMemo(() => {
-        return balances?.filter(({ isDeployed }) => isDeployed).map(({ asset }) => asset);
+        return balances
+            ?.filter(({ status }) => status === CONTRACT_STATUS.ACTIVE)
+            .map(({ asset }) => asset);
     }, [balances]);
 
     const revertAssets = () => {
