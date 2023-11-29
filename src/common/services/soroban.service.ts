@@ -12,7 +12,8 @@ import {
 } from 'soroban-client';
 import SendTransactionResponse = SorobanRpc.SendTransactionResponse;
 import SimulateTransactionSuccessResponse = SorobanRpc.SimulateTransactionSuccessResponse;
-import { ToastService } from './globalServices';
+import { ModalService, ToastService } from './globalServices';
+import RestoreContractModal from '../modals/RestoreContractModal/RestoreContractModal';
 
 const SOROBAN_SERVER = 'https://soroban-testnet.stellar.org:443';
 const AMM_SMART_CONTACT_ID = 'CD2L4RUBG7LONUH5KNP5UAUHPGBTHFDZW2NNC3MFFSGFC4OGD2RQ2WCO';
@@ -147,19 +148,19 @@ export default class SorobanServiceClass {
         });
     }
 
-    processResponse(response: SendTransactionResponse) {
+    processResponse(response: SendTransactionResponse, tx: SorobanClient.Transaction) {
         if (response.status === 'DUPLICATE') {
-            return this.getTx(response.hash);
+            return this.getTx(response.hash, tx);
         }
         if (response.status !== 'PENDING') {
             ToastService.showErrorToast(response.status);
 
             throw new Error(response.status);
         }
-        return this.getTx(response.hash);
+        return this.getTx(response.hash, tx);
     }
 
-    getTx(hash: string, resolver?: (value?: any) => void) {
+    getTx(hash: string, tx: SorobanClient.Transaction, resolver?: (value?: any) => void) {
         return this.server.getTransaction(hash).then((res) => {
             console.log('TX', res);
             if (res.status === 'SUCCESS') {
@@ -170,6 +171,7 @@ export default class SorobanServiceClass {
             }
 
             if (res.status === 'FAILED') {
+                this.tryRestore(tx);
                 if (resolver) {
                     resolver();
                 }
@@ -177,13 +179,37 @@ export default class SorobanServiceClass {
             }
 
             if (resolver) {
-                return setTimeout(() => this.getTx(hash, resolver), 1000);
+                return setTimeout(() => this.getTx(hash, tx, resolver), 1000);
             }
 
             return new Promise((resolve) => {
-                setTimeout(() => this.getTx(hash, resolve), 1000);
+                setTimeout(() => this.getTx(hash, tx, resolve), 1000);
             });
         });
+    }
+
+    async tryRestore(tx: SorobanClient.Transaction) {
+        const sim = await this.server.simulateTransaction(tx);
+
+        // @ts-ignore
+        if (!sim.restorePreamble) {
+            return;
+        }
+
+        const account = await this.server.getAccount(tx.source);
+        let fee = parseInt(BASE_FEE);
+        // @ts-ignore
+        fee += parseInt(sim.restorePreamble.minResourceFee);
+
+        const restoreTx = new SorobanClient.TransactionBuilder(account, { fee: fee.toString() })
+            .setNetworkPassphrase(SorobanClient.Networks.TESTNET)
+            // @ts-ignore
+            .setSorobanData(sim.restorePreamble.transactionData.build())
+            .addOperation(SorobanClient.Operation.restoreFootprint({}))
+            .setTimeout(SorobanClient.TimeoutInfinite)
+            .build();
+
+        ModalService.openModal(RestoreContractModal, { tx: restoreTx });
     }
 
     getAsset(code, issuer): Asset {
@@ -621,7 +647,7 @@ export default class SorobanServiceClass {
     }
 
     submitTx(tx: SorobanClient.Transaction) {
-        return this.server.sendTransaction(tx).then((res) => this.processResponse(res));
+        return this.server.sendTransaction(tx).then((res) => this.processResponse(res, tx));
     }
 
     simulateTx(tx: SorobanClient.Transaction) {
