@@ -88,12 +88,20 @@ const BribeAquaSum = styled.div`
     margin-left: 0.9rem;
     margin-right: 2rem;
     color: ${COLORS.paragraphText};
+
+    ${respondDown(Breakpoints.md)`
+        background-color: unset;
+    `}
 `;
 
 const AquaLogo = styled(Aqua)`
     height: 1.6rem;
     width: 1.6rem;
     margin-right: 0.9rem;
+
+    ${respondDown(Breakpoints.md)`
+        display: none;
+    `}
 `;
 
 const BribeAssets = styled.div`
@@ -276,7 +284,10 @@ const VoteTable = ({
                             label: 'Users Voted:',
                             flexSize: 0.5,
                         },
-                        { children: <VoteAmount pair={pair} totalStats={totalStats} /> },
+                        {
+                            children: <VoteAmount pair={pair} totalStats={totalStats} />,
+                            mobileStyle: { width: '100%' },
+                        },
                         {
                             children: (
                                 <>
