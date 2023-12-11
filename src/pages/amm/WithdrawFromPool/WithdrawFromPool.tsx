@@ -80,7 +80,7 @@ const WithdrawFromPool = ({ params }) => {
 
     return (
         <Container>
-            <ModalTitle>Withdraw from liquidity pool</ModalTitle>
+            <ModalTitle>Withdraw</ModalTitle>
             <ModalDescription>Available: {share} shares</ModalDescription>
             <RangeInput onChange={setPercent} value={percent} />
             <StyledButton fullWidth pending={pending} onClick={() => withdraw()}>

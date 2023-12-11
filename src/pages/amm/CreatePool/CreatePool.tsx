@@ -6,7 +6,7 @@ import { Breakpoints } from '../../../common/styles';
 import ToggleGroup from '../../../common/basics/ToggleGroup';
 import { useState } from 'react';
 import Pair from '../../vote/components/common/Pair';
-import { ModalTitle } from '../../../common/modals/atoms/ModalAtoms';
+import { ModalDescription, ModalTitle } from '../../../common/modals/atoms/ModalAtoms';
 import Input from '../../../common/basics/Input';
 import Button from '../../../common/basics/Button';
 import { ModalService, SorobanService } from '../../../common/services/globalServices';
@@ -118,6 +118,7 @@ const CreatePool = ({ params }) => {
                     </>
                 ) : (
                     <>
+                        <ModalDescription>1 AQUA is needed to create a pool</ModalDescription>
                         <InputStyled
                             label="Swap Fee (0.04 - 1%)"
                             value={stableFee}

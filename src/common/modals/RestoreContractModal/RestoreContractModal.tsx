@@ -33,8 +33,6 @@ const RestoreContractModal = ({ params, close }) => {
     const { tx } = params;
     const { account } = useAuthStore();
 
-    console.log(tx);
-
     const restore = () => {
         setPending(true);
         account.signAndSubmitTx(tx).then(() => {

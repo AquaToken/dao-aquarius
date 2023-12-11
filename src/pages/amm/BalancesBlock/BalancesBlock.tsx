@@ -51,6 +51,10 @@ const Status = styled.div`
     }
 `;
 
+const GetTokenButton = styled(Button)`
+    margin: 5rem auto;
+`;
+
 const BalancesBlock = ({ balances }) => {
     const [showBalances, setShowBalances] = useState(false);
     const [getTokenPending, setGetTokenPending] = useState(false);
@@ -222,9 +226,13 @@ const BalancesBlock = ({ balances }) => {
                         )}
 
                         {neededInTestAssets && (
-                            <Button isBig onClick={() => getTestTokens()} pending={getTokenPending}>
+                            <GetTokenButton
+                                isBig
+                                onClick={() => getTestTokens()}
+                                pending={getTokenPending}
+                            >
                                 GET TEST TOKENS
-                            </Button>
+                            </GetTokenButton>
                         )}
                     </div>
                 )
