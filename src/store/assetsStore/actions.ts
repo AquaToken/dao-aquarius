@@ -56,6 +56,15 @@ const HARDCODE = new Map([
         },
     ],
     [
+        'AQUA:GAHPYWLK6YRN7CVYZOO4H3VDRZ7PVF5UJGLZCSPAEIKJE2XSWF5LAGER',
+        {
+            code: 'AQUA',
+            issuer: 'GAHPYWLK6YRN7CVYZOO4H3VDRZ7PVF5UJGLZCSPAEIKJE2XSWF5LAGER',
+            image: 'https://static.ultrastellar.com/media/assets/img/1878ee2d-2fd1-4e31-89a7-5a430f1596f8.png',
+            home_domain: 'aqua.network',
+        },
+    ],
+    [
         'ETH:GAHPYWLK6YRN7CVYZOO4H3VDRZ7PVF5UJGLZCSPAEIKJE2XSWF5LAGER',
         {
             code: 'ETH',

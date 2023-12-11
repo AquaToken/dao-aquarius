@@ -17,6 +17,10 @@ export const BoostLabel = () => {
     );
 };
 
+export const CustomLabel = ({ title, text }) => {
+    return <StyledLabel title={title} text={text} />;
+};
+
 export const RewardLabel = () => {
     return (
         <StyledLabel

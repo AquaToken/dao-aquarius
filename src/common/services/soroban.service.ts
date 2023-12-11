@@ -12,21 +12,27 @@ import {
 } from 'soroban-client';
 import SendTransactionResponse = SorobanRpc.SendTransactionResponse;
 import SimulateTransactionSuccessResponse = SorobanRpc.SimulateTransactionSuccessResponse;
-import { ModalService, ToastService } from './globalServices';
+import { ModalService, SorobanService, ToastService } from './globalServices';
 import RestoreContractModal from '../modals/RestoreContractModal/RestoreContractModal';
 
 const SOROBAN_SERVER = 'https://soroban-testnet.stellar.org:443';
-const AMM_SMART_CONTACT_ID = 'CD2L4RUBG7LONUH5KNP5UAUHPGBTHFDZW2NNC3MFFSGFC4OGD2RQ2WCO';
+export const AMM_SMART_CONTACT_ID = 'CBWWK4RPMA5MPKKJJSR2PBKXGXBJQ6SDX5T7V4LDZCJU4V7BNJXVFY4L';
 
 enum AMM_CONTRACT_METHOD {
-    GET_POOL = 'get_pool',
-    INIT_POOL = 'init_pool',
+    GET_POOLS = 'get_pools',
+    INIT_CONSTANT_POOL = 'init_standard_pool',
+    INIT_STABLESWAP_POOL = 'init_stableswap_pool',
     DEPOSIT = 'deposit',
     SHARE_ID = 'share_id',
-    ESTIMATE_SWAP_OUT = 'estimate_swap_out',
+    ESTIMATE_SWAP = 'estimate_swap',
     WITHDRAW = 'withdraw',
-    SWAP = 'swap_out',
+    SWAP = 'swap',
     GET_RESERVES = 'get_reserves',
+    POOL_TYPE = 'pool_type',
+    FEE_FRACTION = 'get_fee_fraction',
+    GET_REWARDS_INFO = 'get_rewards_info',
+    GET_USER_REWARD = 'get_user_reward',
+    CLAIM = 'claim',
 }
 
 enum ASSET_CONTRACT_METHOD {
@@ -42,6 +48,7 @@ const USDT = new SorobanClient.Asset('USDT', issuerKeypair.publicKey());
 const USDC = new SorobanClient.Asset('USDC', issuerKeypair.publicKey());
 const ETH = new SorobanClient.Asset('ETH', issuerKeypair.publicKey());
 const BTC = new SorobanClient.Asset('BTC', issuerKeypair.publicKey());
+const AQUA = new SorobanClient.Asset('AQUA', issuerKeypair.publicKey());
 
 export enum CONTRACT_STATUS {
     ACTIVE = 'active',
@@ -93,6 +100,11 @@ export default class SorobanServiceClass {
                 )
                 .addOperation(
                     SorobanClient.Operation.changeTrust({
+                        asset: AQUA,
+                    }),
+                )
+                .addOperation(
+                    SorobanClient.Operation.changeTrust({
                         asset: BTC,
                     }),
                 )
@@ -138,6 +150,13 @@ export default class SorobanServiceClass {
                         destination: accountId,
                         asset: BTC,
                         amount: '10000',
+                    }),
+                )
+                .addOperation(
+                    SorobanClient.Operation.payment({
+                        destination: accountId,
+                        asset: AQUA,
+                        amount: '1000000',
                     }),
                 )
                 .setTimeout(SorobanClient.TimeoutInfinite)
@@ -278,8 +297,6 @@ export default class SorobanServiceClass {
 
                 const [entry] = entries;
 
-                console.log();
-
                 // @ts-ignore
                 const contractExp = entry.val.value().expirationLedgerSeq();
 
@@ -401,39 +418,74 @@ export default class SorobanServiceClass {
         })
             .then((res) => res.json())
             .then(({ result }) => {
-                console.log(result);
                 return assembleTransaction(tx, SorobanClient.Networks.TESTNET, result).build();
             });
     }
 
-    getPoolId(
+    getPools(accountId: string, base: Asset, counter: Asset): Promise<null | Array<any>> {
+        const [aId, bId] = this.orderTokenIDS(base, counter);
+
+        return this.buildSmartContactTx(
+            accountId,
+            AMM_SMART_CONTACT_ID,
+            AMM_CONTRACT_METHOD.GET_POOLS,
+            this.scValToArray([this.contractIdToScVal(aId), this.contractIdToScVal(bId)]),
+        )
+            .then(
+                (tx) =>
+                    this.server.simulateTransaction(
+                        tx,
+                    ) as Promise<SimulateTransactionSuccessResponse>,
+            )
+            .then((res) => {
+                if (!res.result) {
+                    return [];
+                }
+
+                const hashArray = res.result.retval.value() as Array<any>;
+
+                if (!hashArray.length) {
+                    return [];
+                }
+
+                return hashArray.map((item) => [
+                    SorobanService.getContactIdFromHash(item.val().value().value().toString('hex')),
+                    item.key().value(),
+                ]);
+            });
+    }
+
+    getInitConstantPoolTx(accountId: string, base: Asset, counter: Asset, fee: number) {
+        const [aId, bId] = this.orderTokenIDS(base, counter);
+
+        return this.buildSmartContactTx(
+            accountId,
+            AMM_SMART_CONTACT_ID,
+            AMM_CONTRACT_METHOD.INIT_CONSTANT_POOL,
+            this.publicKeyToScVal(accountId),
+            this.scValToArray([this.contractIdToScVal(aId), this.contractIdToScVal(bId)]),
+            this.amountToUint32(fee),
+        ).then((tx) => this.server.prepareTransaction(tx));
+    }
+
+    getInitStableSwapPoolTx(
         accountId: string,
         base: Asset,
         counter: Asset,
-    ): Promise<SimulateTransactionSuccessResponse> {
+        a: number,
+        fee: number,
+    ) {
         const [aId, bId] = this.orderTokenIDS(base, counter);
 
         return this.buildSmartContactTx(
             accountId,
             AMM_SMART_CONTACT_ID,
-            AMM_CONTRACT_METHOD.GET_POOL,
-            this.contractIdToScVal(aId),
-            this.contractIdToScVal(bId),
-        ).then(
-            (tx) =>
-                this.server.simulateTransaction(tx) as Promise<SimulateTransactionSuccessResponse>,
-        );
-    }
-
-    getInitPoolTx(accountId: string, base: Asset, counter: Asset) {
-        const [aId, bId] = this.orderTokenIDS(base, counter);
-
-        return this.buildSmartContactTx(
-            accountId,
-            AMM_SMART_CONTACT_ID,
-            AMM_CONTRACT_METHOD.INIT_POOL,
-            this.contractIdToScVal(aId),
-            this.contractIdToScVal(bId),
+            AMM_CONTRACT_METHOD.INIT_STABLESWAP_POOL,
+            this.publicKeyToScVal(accountId),
+            this.scValToArray([this.contractIdToScVal(aId), this.contractIdToScVal(bId)]),
+            this.amountToUint128(a.toFixed(7)),
+            this.amountToUint32(fee * 100),
+            this.amountToUint32(0),
         ).then((tx) => this.server.prepareTransaction(tx));
     }
 
@@ -453,6 +505,132 @@ export default class SorobanServiceClass {
 
                 throw new Error('getPoolShareId error');
             });
+    }
+
+    getPoolType(accountId, poolId: string) {
+        return this.buildSmartContactTx(accountId, poolId, AMM_CONTRACT_METHOD.POOL_TYPE)
+            .then(
+                (tx) =>
+                    this.server.simulateTransaction(
+                        tx,
+                    ) as Promise<SimulateTransactionSuccessResponse>,
+            )
+            .then(({ result }) => {
+                if (result) {
+                    // @ts-ignore
+                    return result.retval.value().toString();
+                }
+
+                throw new Error('getPoolType error');
+            });
+    }
+
+    getPoolFee(accountId, poolId: string) {
+        return this.buildSmartContactTx(accountId, poolId, AMM_CONTRACT_METHOD.FEE_FRACTION)
+            .then(
+                (tx) =>
+                    this.server.simulateTransaction(
+                        tx,
+                    ) as Promise<SimulateTransactionSuccessResponse>,
+            )
+            .then(({ result }) => {
+                if (result) {
+                    // @ts-ignore
+                    return result.retval.value().toString();
+                }
+
+                throw new Error('getPoolFee error');
+            });
+    }
+
+    getPoolRewards(accountId: string, base: Asset, counter: Asset, poolId: string) {
+        return this.buildSmartContactTx(
+            accountId,
+            poolId,
+            AMM_CONTRACT_METHOD.GET_REWARDS_INFO,
+            this.publicKeyToScVal(accountId),
+        )
+            .then(
+                (tx) =>
+                    this.server.simulateTransaction(
+                        tx,
+                    ) as Promise<SimulateTransactionSuccessResponse>,
+            )
+            .then(({ result }) => {
+                if (result) {
+                    // @ts-ignore
+                    return result.retval.value().reduce((acc, val) => {
+                        acc[val.key().value().toString()] = this.i128ToInt(val.val().value());
+                        return acc;
+                    }, {});
+                }
+
+                throw new Error('getPoolRewards error');
+            });
+    }
+
+    getUserRewardsAmount(accountId: string, poolId: string) {
+        return this.buildSmartContactTx(
+            accountId,
+            poolId,
+            AMM_CONTRACT_METHOD.GET_USER_REWARD,
+            this.publicKeyToScVal(accountId),
+        )
+            .then(
+                (tx) =>
+                    this.server.simulateTransaction(
+                        tx,
+                    ) as Promise<SimulateTransactionSuccessResponse>,
+            )
+            .then(({ result }) => {
+                if (result) {
+                    // @ts-ignore
+                    return this.i128ToInt(result.retval.value());
+                }
+
+                throw new Error('getUserRewardsAmount error');
+            });
+    }
+
+    claimRewards(accountId: string, poolId: string) {
+        return this.buildSmartContactTx(
+            accountId,
+            poolId,
+            AMM_CONTRACT_METHOD.CLAIM,
+            this.publicKeyToScVal(accountId),
+        ).then((tx) => this.server.prepareTransaction(tx));
+    }
+
+    getPoolData(accountId: string, base: Asset, counter: Asset, [poolId, poolBytes]) {
+        return this.getPoolShareId(accountId, poolId)
+            .then((shareHash) => {
+                return Promise.all([
+                    this.getContactIdFromHash(shareHash),
+                    this.getTokenBalance(
+                        accountId,
+                        this.getContactIdFromHash(shareHash),
+                        accountId,
+                    ),
+                    this.getTokenBalance(accountId, base, poolId),
+                    this.getTokenBalance(accountId, counter, poolId),
+                    this.getPoolType(accountId, poolId),
+                    this.getPoolRewards(accountId, base, counter, poolId),
+                    this.getPoolFee(accountId, poolId),
+                ]);
+            })
+            .then(([shareId, share, baseAmount, counterAmount, type, rewardsData, fee]) => ({
+                id: poolId,
+                bytes: poolBytes,
+                base,
+                counter,
+                share,
+                shareId,
+                baseAmount,
+                counterAmount,
+                type,
+                rewardsData,
+                fee,
+            }));
     }
 
     getTokenBalance(accountId, token: Asset | string, where: string) {
@@ -485,9 +663,9 @@ export default class SorobanServiceClass {
                 accountId,
                 typeof asset === 'string' ? asset : this.getAssetContractId(asset),
                 ASSET_CONTRACT_METHOD.APPROVE_ALLOWANCE,
-                this.publicKeyToScVal(this.keypair.publicKey()),
+                this.publicKeyToScVal(accountId),
                 this.contractIdToScVal(poolId),
-                this.amountToScVal(amount),
+                this.amountToToInt128(amount),
                 xdr.ScVal.scvU32(sequence + 477533),
             ).then((tx) => {
                 return this.server.prepareTransaction(tx);
@@ -495,18 +673,12 @@ export default class SorobanServiceClass {
         });
     }
 
-    getPoolPrice(accountId: string, a: Asset, b: Asset) {
+    getPoolPrice(accountId: string, a: Asset, b: Asset, poolId: string) {
         const idA = this.getAssetContractId(a);
         const idB = this.getAssetContractId(b);
-        const [base, counter] = idA > idB ? [b, a] : [a, b];
+        const [base] = idA > idB ? [b, a] : [a, b];
 
-        return this.buildSmartContactTx(
-            accountId,
-            AMM_SMART_CONTACT_ID,
-            AMM_CONTRACT_METHOD.GET_RESERVES,
-            this.assetToScVal(base),
-            this.assetToScVal(counter),
-        )
+        return this.buildSmartContactTx(accountId, poolId, AMM_CONTRACT_METHOD.GET_RESERVES)
             .then((tx) => {
                 return this.simulateTx(tx) as Promise<SimulateTransactionSuccessResponse>;
             })
@@ -515,15 +687,15 @@ export default class SorobanServiceClass {
                     // @ts-ignore
                     const [baseAmount, counterAmount] = result.retval.value();
 
-                    const baseAmountInt = this.i128ToInt(baseAmount.i128());
-                    const counterAmountInt = this.i128ToInt(counterAmount.i128());
+                    const baseAmountInt = this.i128ToInt(baseAmount.value());
+                    const counterAmountInt = this.i128ToInt(counterAmount.value());
 
                     return this.getAssetContractId(base) === idA
                         ? baseAmountInt / counterAmountInt
                         : counterAmountInt / baseAmountInt;
                 }
 
-                throw new Error('getPoolReserves fail');
+                throw new Error('getPoolPrice fail');
             });
     }
 
@@ -538,87 +710,122 @@ export default class SorobanServiceClass {
         const idA = this.getAssetContractId(a);
         const idB = this.getAssetContractId(b);
 
-        const [base, counter] = idA > idB ? [b, a] : [a, b];
         const [baseAmount, counterAmount] = idA > idB ? [bAmount, aAmount] : [aAmount, bAmount];
 
         return this.buildSmartContactTx(
             accountId,
-            AMM_SMART_CONTACT_ID,
+            poolId,
             AMM_CONTRACT_METHOD.DEPOSIT,
-            this.publicKeyToScVal(this.keypair.publicKey()),
-            this.assetToScVal(base),
-            this.assetToScVal(counter),
-            this.amountToScVal(baseAmount),
-            this.amountToScVal('0'),
-            this.amountToScVal(counterAmount),
-            this.amountToScVal('0'),
+            this.publicKeyToScVal(accountId),
+            this.scValToArray([
+                this.amountToUint128(baseAmount),
+                this.amountToUint128(counterAmount),
+            ]),
         ).then((tx) => this.server.prepareTransaction(tx));
     }
 
-    getWithdrawTx(
+    getWithdrawTx(accountId: string, poolId: string, shareAmount: string) {
+        return this.buildSmartContactTx(
+            accountId,
+            poolId,
+            AMM_CONTRACT_METHOD.WITHDRAW,
+            this.publicKeyToScVal(accountId),
+            this.amountToUint128(shareAmount),
+            this.scValToArray([
+                this.amountToUint128('0.0000001'),
+                this.amountToUint128('0.0000001'),
+            ]),
+        ).then((tx) => this.server.prepareTransaction(tx));
+    }
+
+    getSwapEstimatedAmount(
         accountId: string,
-        poolId: string,
         base: Asset,
         counter: Asset,
-        baseAmount: string,
-        counterAmount: string,
-        shareId: string,
-        shareAmount: string,
+        pools: [string, Buffer][],
+        amount: string,
     ) {
-        return this.buildSmartContactTx(
-            accountId,
-            AMM_SMART_CONTACT_ID,
-            AMM_CONTRACT_METHOD.WITHDRAW,
-            this.publicKeyToScVal(this.keypair.publicKey()),
-            this.assetToScVal(base),
-            this.assetToScVal(counter),
-            this.amountToScVal(shareAmount),
-            this.amountToScVal(baseAmount),
-            this.amountToScVal(counterAmount),
-        ).then((tx) => this.server.prepareTransaction(tx));
+        return Promise.all(
+            pools.map(([poolId, poolBytes]) =>
+                this.getSwapEstimatedAmountForPool(
+                    accountId,
+                    base,
+                    counter,
+                    poolBytes,
+                    poolId,
+                    amount,
+                ),
+            ),
+        ).then((amounts) => {
+            const index = amounts.indexOf(Math.max(...amounts));
+            return {
+                pool: pools[index],
+                amount: amounts[index],
+            };
+        });
     }
 
-    getSwapEstimatedAmount(accountId: string, sell: Asset, buy: Asset, amount: string) {
+    getSwapEstimatedAmountForPool(
+        accountId: string,
+        base: Asset,
+        counter: Asset,
+        poolBytes: Buffer,
+        poolId: string,
+        amount: string,
+    ) {
+        const idA = this.getAssetContractId(base);
+        const idB = this.getAssetContractId(counter);
+
+        const [a, b] = idA > idB ? [counter, base] : [base, counter];
+
         return this.buildSmartContactTx(
             accountId,
             AMM_SMART_CONTACT_ID,
-            AMM_CONTRACT_METHOD.ESTIMATE_SWAP_OUT,
-            this.assetToScVal(sell),
-            this.assetToScVal(buy),
-            this.amountToScVal(amount),
+            AMM_CONTRACT_METHOD.ESTIMATE_SWAP,
+            this.scValToArray([this.assetToScVal(a), this.assetToScVal(b)]),
+            this.assetToScVal(base),
+            this.assetToScVal(counter),
+            this.bytesToScVal(poolBytes),
+            this.amountToUint128(amount),
         )
-            .then(
-                (tx) =>
-                    this.server.simulateTransaction(
-                        tx,
-                    ) as Promise<SimulateTransactionSuccessResponse>,
-            )
+            .then((tx) => {
+                return this.server.simulateTransaction(
+                    tx,
+                ) as Promise<SimulateTransactionSuccessResponse>;
+            })
             .then(({ result }) => {
                 if (result) {
                     return this.i128ToInt(result.retval.value() as xdr.Int128Parts);
                 }
 
-                throw new Error('getSwapEstimatedAmount error');
+                return 0;
             });
     }
 
     getSwapTx(
         accountId: string,
-        poolId: string,
+        poolBytes: Buffer,
         base: Asset,
         counter: Asset,
         amount: string,
-        maxBaseAmount: string,
+        minCounterAmount: string,
     ) {
+        const idA = this.getAssetContractId(base);
+        const idB = this.getAssetContractId(counter);
+
+        const [a, b] = idA > idB ? [counter, base] : [base, counter];
+
         return this.buildSmartContactTx(
             accountId,
             AMM_SMART_CONTACT_ID,
             AMM_CONTRACT_METHOD.SWAP,
-            this.publicKeyToScVal(this.keypair.publicKey()),
+            this.publicKeyToScVal(accountId),
+            this.scValToArray([this.assetToScVal(a), this.assetToScVal(b)]),
             this.assetToScVal(base),
             this.assetToScVal(counter),
-            this.amountToScVal(amount),
-            this.amountToScVal(maxBaseAmount),
+            this.bytesToScVal(poolBytes),
+            this.amountToUint128(amount),
+            this.amountToUint128(minCounterAmount),
         ).then((tx) => this.server.prepareTransaction(tx));
     }
 
@@ -659,9 +866,11 @@ export default class SorobanServiceClass {
     }
 
     contractIdToScVal(contractId) {
-        return xdr.ScVal.scvAddress(
-            SorobanClient.Address.contract(StrKey.decodeContract(contractId)).toScAddress(),
-        );
+        return SorobanClient.Address.contract(StrKey.decodeContract(contractId)).toScVal();
+    }
+
+    scValToArray(array: xdr.ScVal[]): xdr.ScVal {
+        return xdr.ScVal.scvVec(array);
     }
 
     private assetToScVal(asset: Asset): xdr.ScVal {
@@ -676,15 +885,20 @@ export default class SorobanServiceClass {
         return xdr.ScVal.scvAddress(SorobanClient.Address.fromString(pubkey).toScAddress());
     }
 
-    amountToScVal(amount: string): xdr.ScVal {
-        const value = (Number(amount) * 1e7).toFixed(0);
+    amountToUint32(amount: number): xdr.ScVal {
+        return xdr.ScVal.scvU32(amount);
+    }
 
-        return xdr.ScVal.scvI128(
-            new xdr.Int128Parts({
-                hi: xdr.Int64.fromString('0'),
-                lo: xdr.Uint64.fromString(value),
-            }),
-        );
+    amountToToInt128(amount: string): xdr.ScVal {
+        return new SorobanClient.XdrLargeInt('u128', (Number(amount) * 1e7).toFixed()).toI128();
+    }
+
+    amountToUint128(amount: string): xdr.ScVal {
+        return new SorobanClient.XdrLargeInt('u128', (Number(amount) * 1e7).toFixed()).toU128();
+    }
+
+    bytesToScVal(bytes: Buffer): xdr.ScVal {
+        return xdr.ScVal.scvBytes(bytes);
     }
 
     i128ToInt(val: xdr.Int128Parts): number {

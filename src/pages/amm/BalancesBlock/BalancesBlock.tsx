@@ -12,6 +12,7 @@ import { CONTRACT_STATUS } from '../../../common/services/soroban.service';
 import { SorobanService, ToastService } from '../../../common/services/globalServices';
 import useAuthStore from '../../../store/authStore/useAuthStore';
 import * as SorobanClient from 'soroban-client';
+import { USDC, USDT, AQUA } from '../Amm';
 
 const Container = styled.div`
     display: flex;
@@ -52,6 +53,7 @@ const Status = styled.div`
 
 const BalancesBlock = ({ balances }) => {
     const [showBalances, setShowBalances] = useState(false);
+    const [getTokenPending, setGetTokenPending] = useState(false);
     const { account } = useAuthStore();
 
     const [pendingId, setPendingId] = useState(null);
@@ -69,6 +71,26 @@ const BalancesBlock = ({ balances }) => {
                 console.log(e);
                 ToastService.showErrorToast('Oops! Something went wrong');
                 setPendingId(null);
+            });
+    };
+
+    const neededInTestAssets =
+        account?.getAssetBalance(USDT) === null ||
+        account?.getAssetBalance(USDC) === null ||
+        account?.getAssetBalance(AQUA) === null;
+
+    const getTestTokens = () => {
+        setGetTokenPending(true);
+
+        SorobanService.getAddTrustTx(account?.accountId())
+            .then((tx) => account.signAndSubmitTx(tx))
+            .then(() => SorobanService.getTestAssets(account?.accountId()))
+            .then(() => {
+                ToastService.showSuccessToast('Test tokens have been received');
+                setGetTokenPending(false);
+            })
+            .catch(() => {
+                setGetTokenPending(false);
             });
     };
 
@@ -197,6 +219,12 @@ const BalancesBlock = ({ balances }) => {
                                     </div>
                                 </BalanceLine>
                             ),
+                        )}
+
+                        {neededInTestAssets && (
+                            <Button isBig onClick={() => getTestTokens()} pending={getTokenPending}>
+                                GET TEST TOKENS
+                            </Button>
                         )}
                     </div>
                 )

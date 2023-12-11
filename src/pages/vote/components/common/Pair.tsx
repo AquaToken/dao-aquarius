@@ -10,6 +10,7 @@ import { flexAllCenter, respondDown } from '../../../../common/mixins';
 import {
     AuthRequiredLabel,
     BoostLabel,
+    CustomLabel,
     MaxRewardsLabel,
     NoLiquidityLabel,
     RewardLabel,
@@ -184,6 +185,7 @@ type PairProps = {
     baseAmount?: string;
     counterAmount?: string;
     isSwapResult?: boolean;
+    customLabel?: [string, string];
 };
 
 const Pair = ({
@@ -207,6 +209,7 @@ const Pair = ({
     baseAmount,
     counterAmount,
     isSwapResult,
+    customLabel,
 }: PairProps): JSX.Element => {
     const { assetsInfo } = useAssetsStore();
 
@@ -269,6 +272,7 @@ const Pair = ({
                     {isMaxRewards && !bottomLabels && <MaxRewardsLabel />}
                     {authRequired && !bottomLabels && <AuthRequiredLabel />}
                     {noLiquidity && !bottomLabels && <NoLiquidityLabel />}
+                    {customLabel && <CustomLabel title={customLabel[0]} text={customLabel[1]} />}
                     {!withoutLink && (
                         <LinkCustom
                             onClick={(e) => viewOnStellarX(e, baseInstance, counterInstance)}
@@ -305,6 +309,7 @@ const Pair = ({
                     {isMaxRewards && <MaxRewardsLabel />}
                     {authRequired && <AuthRequiredLabel />}
                     {noLiquidity && <NoLiquidityLabel />}
+                    {customLabel && <CustomLabel title={customLabel[0]} text={customLabel[1]} />}
                 </Labels>
             )}
         </Wrapper>

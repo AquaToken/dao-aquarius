@@ -48,6 +48,7 @@ const Form = styled.div`
 
 const FormRow = styled.div`
     display: flex;
+    margin-top: 5rem;
 `;
 
 const StyledInput = styled(Input)`
@@ -94,62 +95,25 @@ const Swap = ({ balances }) => {
 
     const [base, setBase] = useState(USDT);
     const [counter, setCounter] = useState(USDC);
-    const [poolId, setPoolId] = useState(null);
-
-    const [baseShares, setBaseShares] = useState(null);
-    const [counterShares, setCounterShares] = useState(null);
+    const [pools, setPools] = useState(null);
 
     const [baseAmount, setBaseAmount] = useState('');
     const [counterAmount, setCounterAmount] = useState('');
     const [estimatePending, setEstimatePending] = useState(false);
     const [swapPending, setSwapPending] = useState(false);
+    const [bestPool, setBestPool] = useState(null);
 
-    const debouncedAmount = useDebounce(counterAmount, 700);
+    const debouncedAmount = useDebounce(baseAmount, 700);
 
     useEffect(() => {
+        setPools(null);
+        setBestPool(null);
         if (isLogged) {
-            SorobanService.getPoolId(account?.accountId(), base, counter).then((res) => {
-                if (!res.result) {
-                    return SorobanService.getInitPoolTx(account?.accountId(), base, counter)
-                        .then((tx) =>
-                            account.signAndSubmitTx(tx as SorobanClient.Transaction, true),
-                        )
-                        .then((res) => {
-                            const hash = res.value().value().toString('hex');
-                            const id = SorobanService.getContactIdFromHash(hash);
-                            setPoolId(id);
-                        });
-                }
-                const hash = res.result.retval.value()[1].value().value().toString('hex');
-                const id = SorobanService.getContactIdFromHash(hash);
-
-                setPoolId(id);
+            SorobanService.getPools(account?.accountId(), base, counter).then((res) => {
+                setPools(res);
             });
         }
     }, [isLogged, base, counter]);
-
-    const getData = () => {
-        SorobanService.getTokenBalance(account?.accountId(), base, poolId).then((res) => {
-            setBaseShares(res);
-        });
-        SorobanService.getTokenBalance(account?.accountId(), counter, poolId).then((res) => {
-            setCounterShares(res);
-        });
-    };
-
-    useEffect(() => {
-        setPoolId(null);
-        setBaseShares(null);
-        setCounterShares(null);
-    }, [base, counter]);
-
-    useEffect(() => {
-        if (!poolId) {
-            return;
-        }
-
-        getData();
-    }, [poolId]);
 
     useEffect(() => {
         if (!!Number(debouncedAmount)) {
@@ -158,9 +122,11 @@ const Swap = ({ balances }) => {
                 account?.accountId(),
                 base,
                 counter,
+                pools,
                 debouncedAmount,
-            ).then((res) => {
-                setBaseAmount(res.toString());
+            ).then(({ amount, pool }) => {
+                setCounterAmount(amount.toString());
+                setBestPool(pool);
                 setEstimatePending(false);
             });
         } else {
@@ -175,18 +141,18 @@ const Swap = ({ balances }) => {
         setSwapPending(true);
         const SLIPPAGE = 0.01; // 1%
 
-        const maxBaseAmount = ((1 + SLIPPAGE) * Number(baseAmount)).toFixed(7);
+        const minCounterAmount = ((1 - SLIPPAGE) * Number(counterAmount)).toFixed(7);
 
-        SorobanService.getGiveAllowanceTx(account?.accountId(), poolId, base, maxBaseAmount)
+        SorobanService.getGiveAllowanceTx(account?.accountId(), bestPool[0], base, baseAmount)
             .then((tx) => account.signAndSubmitTx(tx as SorobanClient.Transaction, true))
             .then(() =>
                 SorobanService.getSwapTx(
                     account?.accountId(),
-                    poolId,
+                    bestPool[1],
                     base,
                     counter,
-                    counterAmount,
-                    maxBaseAmount,
+                    baseAmount,
+                    minCounterAmount,
                 ),
             )
             .then((tx) => account.signAndSubmitTx(tx as SorobanClient.Transaction, true))
@@ -194,15 +160,15 @@ const Swap = ({ balances }) => {
                 ModalService.openModal(SuccessModal, {
                     base,
                     counter,
-                    baseAmount: SorobanService.i128ToInt(res.value()),
-                    counterAmount: Number(counterAmount),
+                    baseAmount: baseAmount,
+                    counterAmount: SorobanService.i128ToInt(res.value()),
                     title: 'Success swap',
                     isSwap: true,
                 });
                 setSwapPending(false);
                 setBaseAmount('');
                 setCounterAmount('');
-                getData();
+                setBestPool(null);
             })
             .catch((e) => {
                 console.log(e);
@@ -254,7 +220,12 @@ const Swap = ({ balances }) => {
                         <Title>Swap assets</Title>
                     </Header>
                     <FormRow>
-                        <StyledInput value={baseAmount} label="From(estimated)" disabled />
+                        <StyledInput
+                            value={baseAmount}
+                            onChange={(e) => setBaseAmount(e.target.value)}
+                            label="From"
+                            disabled={!pools || !pools.length}
+                        />
 
                         <DropdownContainer>
                             <AssetDropdown
@@ -263,22 +234,14 @@ const Swap = ({ balances }) => {
                                 assetsList={assets}
                                 exclude={counter}
                                 label={baseAvailable}
-                                disabled={
-                                    poolId === null ||
-                                    baseShares === null ||
-                                    counterShares === null ||
-                                    estimatePending
-                                }
+                                disabled={estimatePending}
                                 withoutReset
                             />
                         </DropdownContainer>
                     </FormRow>
 
                     <SwapDivider>
-                        {poolId === null ||
-                        baseShares === null ||
-                        counterShares === null ||
-                        estimatePending ? (
+                        {estimatePending ? (
                             <PageLoader />
                         ) : (
                             <RevertButton onClick={() => revertAssets()}>
@@ -290,10 +253,9 @@ const Swap = ({ balances }) => {
                     <FormRow>
                         <StyledInput
                             value={counterAmount}
-                            onChange={(e) => setCounterAmount(e.target.value)}
-                            label="To"
+                            label="To(estimated)"
                             placeholder="0.0"
-                            disabled={!poolId || !baseShares || !counterShares}
+                            disabled
                         />
 
                         <DropdownContainer>
@@ -304,26 +266,21 @@ const Swap = ({ balances }) => {
                                 exclude={base}
                                 withoutReset
                                 label={counterAvailable}
-                                disabled={
-                                    poolId === null ||
-                                    baseShares === null ||
-                                    counterShares === null ||
-                                    estimatePending
-                                }
+                                disabled={estimatePending}
                             />
                         </DropdownContainer>
                     </FormRow>
 
-                    {baseShares === 0 && counterShares === 0 && (
+                    {pools && !pools.length && (
                         <Error>
                             <IconFail />
-                            Liquidity pool for this market is empty
+                            There are no liquidity pools for this market
                         </Error>
                     )}
 
                     <StyledButton
                         isBig
-                        disabled={!poolId || !baseShares || !counterShares || estimatePending}
+                        disabled={estimatePending}
                         pending={swapPending}
                         onClick={() => swapAssets()}
                     >

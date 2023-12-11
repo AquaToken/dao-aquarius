@@ -250,7 +250,8 @@ export default class StellarServiceClass {
     private startHorizonServer(): void {
         // @ts-ignore
         // settled in configs: prod.js and dev.js
-        this.server = new StellarSdk.Server(process.horizon.HORIZON_SERVER);
+        // this.server = new StellarSdk.Server(process.horizon.HORIZON_SERVER);
+        this.server = new StellarSdk.Server(HORIZON_SERVER.stellar);
     }
 
     loadAccount(publicKey: string): Promise<StellarSdk.AccountResponse> {
@@ -1016,7 +1017,7 @@ export default class StellarServiceClass {
     }
 
     updatePayments(accountId: string) {
-        if (!this.paymentsHistory.length) {
+        if (!this.paymentsHistory?.length) {
             return;
         }
 
