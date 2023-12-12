@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { commonMaxWidth, respondDown } from '../../common/mixins';
 import { Header, InOffers, Section, Title } from '../profile/AmmRewards/AmmRewards';
@@ -7,7 +8,6 @@ import { ModalService, SorobanService, ToastService } from '../../common/service
 import Pair from '../vote/components/common/Pair';
 import { formatBalance } from '../../common/helpers/helpers';
 import useAuthStore from '../../store/authStore/useAuthStore';
-import { useCallback, useEffect, useMemo, useState } from 'react';
 import * as SorobanClient from 'soroban-client';
 import BalancesBlock from './BalancesBlock/BalancesBlock';
 import AssetDropdown from '../vote/components/AssetDropdown/AssetDropdown';
@@ -16,10 +16,12 @@ import Button from '../../common/basics/Button';
 import DepositToPool from './DepositToPool/DepositToPool';
 import { CONTRACT_STATUS } from '../../common/services/soroban.service';
 import Plus from '../../common/assets/img/icon-plus.svg';
+import InfoIcon from '../../common/assets/img/icon-info.svg';
 import CreatePool from './CreatePool/CreatePool';
 import Table from '../../common/basics/Table';
 import { useUpdateIndex } from '../../common/hooks/useUpdateIndex';
 import WithdrawFromPool from './WithdrawFromPool/WithdrawFromPool';
+import Tooltip, { TOOLTIP_POSITION } from '../../common/basics/Tooltip';
 
 const Container = styled.main`
     height: 100%;
@@ -67,10 +69,21 @@ const ButtonCell = styled.div`
     align-items: flex-end;
 `;
 
+const TooltipInner = styled.div`
+    display: flex;
+    flex-direction: column;
+`;
+
 const PlusIcon = styled(Plus)`
     width: 1.6rem;
     height: 1.6rem;
     margin-left: 1rem;
+`;
+
+const CellA = styled.div`
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
 `;
 
 export const USDT = new SorobanClient.Asset(
@@ -161,6 +174,8 @@ const Amm = ({ balances }) => {
         );
     };
 
+    console.log(poolsData);
+
     const claim = (poolId) => {
         setClaimPendingId(poolId);
         SorobanService.claimRewards(account.accountId(), poolId)
@@ -241,6 +256,7 @@ const Amm = ({ balances }) => {
                             head={[
                                 { children: 'Pair', flexSize: 2 },
                                 { children: 'Fee', flexSize: 0.5 },
+                                { children: 'Slippage', flexSize: 0.5 },
                                 { children: 'Total locked in pool' },
                                 { children: 'Total daily rewards' },
                                 { children: 'Account shares' },
@@ -254,10 +270,9 @@ const Amm = ({ balances }) => {
                                     baseAmount,
                                     counterAmount,
                                     share,
-                                    fee,
                                     rewardsData,
                                     shareId,
-                                    type,
+                                    info,
                                 }) => ({
                                     key: id,
                                     rowItems: [
@@ -268,12 +283,49 @@ const Amm = ({ balances }) => {
                                                     counter={counterAsset}
                                                     withoutLink
                                                     mobileVerticalDirections
-                                                    customLabel={[type, '']}
+                                                    customLabel={[info.pool_type, '']}
                                                 />
                                             ),
                                             flexSize: 2,
                                         },
-                                        { children: `${fee / 100} %`, flexSize: 0.5 },
+                                        { children: `${info.fee / 100} %`, flexSize: 0.5 },
+                                        {
+                                            children: info.a ? (
+                                                <CellA>
+                                                    <span>{info.a}</span>
+                                                    <Tooltip
+                                                        content={
+                                                            <TooltipInner>
+                                                                <b>Slippage Tolerance Level:</b>
+                                                                <span>
+                                                                    “A” = 1-1000 -{'>'} very low
+                                                                </span>
+                                                                <span>
+                                                                    “A” = 1001 - 2000 -{'>'} low
+                                                                </span>
+                                                                <span>
+                                                                    “A” = 2001 - 3000 -{'>'} medium
+                                                                </span>
+                                                                <span>
+                                                                    “A” = 3001 - 4000 -{'>'} high
+                                                                </span>
+                                                                <span>
+                                                                    “A” = 4001 - 5000 -{'>'} very
+                                                                    high
+                                                                </span>
+                                                            </TooltipInner>
+                                                        }
+                                                        position={TOOLTIP_POSITION.top}
+                                                        showOnHover
+                                                    >
+                                                        <InfoIcon />
+                                                    </Tooltip>
+                                                </CellA>
+                                            ) : (
+                                                '-'
+                                            ),
+                                            flexSize: 0.5,
+                                        },
                                         {
                                             children: (
                                                 <InOffers>

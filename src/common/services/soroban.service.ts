@@ -31,6 +31,7 @@ enum AMM_CONTRACT_METHOD {
     POOL_TYPE = 'pool_type',
     FEE_FRACTION = 'get_fee_fraction',
     GET_REWARDS_INFO = 'get_rewards_info',
+    GET_INFO = 'get_info',
     GET_USER_REWARD = 'get_user_reward',
     CLAIM = 'claim',
 }
@@ -507,42 +508,6 @@ export default class SorobanServiceClass {
             });
     }
 
-    getPoolType(accountId, poolId: string) {
-        return this.buildSmartContactTx(accountId, poolId, AMM_CONTRACT_METHOD.POOL_TYPE)
-            .then(
-                (tx) =>
-                    this.server.simulateTransaction(
-                        tx,
-                    ) as Promise<SimulateTransactionSuccessResponse>,
-            )
-            .then(({ result }) => {
-                if (result) {
-                    // @ts-ignore
-                    return result.retval.value().toString();
-                }
-
-                throw new Error('getPoolType error');
-            });
-    }
-
-    getPoolFee(accountId, poolId: string) {
-        return this.buildSmartContactTx(accountId, poolId, AMM_CONTRACT_METHOD.FEE_FRACTION)
-            .then(
-                (tx) =>
-                    this.server.simulateTransaction(
-                        tx,
-                    ) as Promise<SimulateTransactionSuccessResponse>,
-            )
-            .then(({ result }) => {
-                if (result) {
-                    // @ts-ignore
-                    return result.retval.value().toString();
-                }
-
-                throw new Error('getPoolFee error');
-            });
-    }
-
     getPoolRewards(accountId: string, base: Asset, counter: Asset, poolId: string) {
         return this.buildSmartContactTx(
             accountId,
@@ -561,6 +526,34 @@ export default class SorobanServiceClass {
                     // @ts-ignore
                     return result.retval.value().reduce((acc, val) => {
                         acc[val.key().value().toString()] = this.i128ToInt(val.val().value());
+                        return acc;
+                    }, {});
+                }
+
+                throw new Error('getPoolRewards error');
+            });
+    }
+
+    getPoolInfo(accountId: string, poolId: string) {
+        return this.buildSmartContactTx(accountId, poolId, AMM_CONTRACT_METHOD.GET_INFO)
+            .then(
+                (tx) =>
+                    this.server.simulateTransaction(
+                        tx,
+                    ) as Promise<SimulateTransactionSuccessResponse>,
+            )
+            .then(({ result }) => {
+                if (result) {
+                    // @ts-ignore
+                    return result.retval.value().reduce((acc, val) => {
+                        console.log(val.val().value());
+                        acc[val.key().value().toString()] =
+                            typeof val.val().value() === 'number'
+                                ? val.val().value()
+                                : val.val().value().hi
+                                ? this.i128ToInt(val.val().value())
+                                : val.val().value().toString();
+
                         return acc;
                     }, {});
                 }
@@ -613,12 +606,11 @@ export default class SorobanServiceClass {
                     ),
                     this.getTokenBalance(accountId, base, poolId),
                     this.getTokenBalance(accountId, counter, poolId),
-                    this.getPoolType(accountId, poolId),
                     this.getPoolRewards(accountId, base, counter, poolId),
-                    this.getPoolFee(accountId, poolId),
+                    this.getPoolInfo(accountId, poolId),
                 ]);
             })
-            .then(([shareId, share, baseAmount, counterAmount, type, rewardsData, fee]) => ({
+            .then(([shareId, share, baseAmount, counterAmount, rewardsData, info]) => ({
                 id: poolId,
                 bytes: poolBytes,
                 base,
@@ -627,9 +619,8 @@ export default class SorobanServiceClass {
                 shareId,
                 baseAmount,
                 counterAmount,
-                type,
                 rewardsData,
-                fee,
+                info,
             }));
     }
 
