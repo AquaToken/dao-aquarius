@@ -148,7 +148,7 @@ const Swap = ({ balances }) => {
             .then(() =>
                 SorobanService.getSwapTx(
                     account?.accountId(),
-                    bestPool[1],
+                    bestPool[0],
                     base,
                     counter,
                     baseAmount,

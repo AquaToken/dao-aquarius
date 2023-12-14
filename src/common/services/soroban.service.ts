@@ -795,7 +795,7 @@ export default class SorobanServiceClass {
 
     getSwapTx(
         accountId: string,
-        poolBytes: Buffer,
+        poolId: string,
         base: Asset,
         counter: Asset,
         amount: string,
@@ -804,17 +804,15 @@ export default class SorobanServiceClass {
         const idA = this.getAssetContractId(base);
         const idB = this.getAssetContractId(counter);
 
-        const [a, b] = idA > idB ? [counter, base] : [base, counter];
+        const [indexA, indexB] = idA > idB ? [1, 0] : [0, 1];
 
         return this.buildSmartContactTx(
             accountId,
-            AMM_SMART_CONTACT_ID,
+            poolId,
             AMM_CONTRACT_METHOD.SWAP,
             this.publicKeyToScVal(accountId),
-            this.scValToArray([this.assetToScVal(a), this.assetToScVal(b)]),
-            this.assetToScVal(base),
-            this.assetToScVal(counter),
-            this.bytesToScVal(poolBytes),
+            this.amountToUint32(indexA),
+            this.amountToUint32(indexB),
             this.amountToUint128(amount),
             this.amountToUint128(minCounterAmount),
         ).then((tx) => this.server.prepareTransaction(tx));
