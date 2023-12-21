@@ -8,7 +8,7 @@ import { ModalService, SorobanService, ToastService } from '../../common/service
 import Pair from '../vote/components/common/Pair';
 import { formatBalance } from '../../common/helpers/helpers';
 import useAuthStore from '../../store/authStore/useAuthStore';
-import * as SorobanClient from 'soroban-client';
+import * as StellarSdk from '@stellar/stellar-sdk';
 import BalancesBlock from './BalancesBlock/BalancesBlock';
 import AssetDropdown from '../vote/components/AssetDropdown/AssetDropdown';
 import { Breakpoints, COLORS } from '../../common/styles';
@@ -86,15 +86,15 @@ const CellA = styled.div`
     align-items: center;
 `;
 
-export const USDT = new SorobanClient.Asset(
+export const USDT = new StellarSdk.Asset(
     'USDT',
     'GAHPYWLK6YRN7CVYZOO4H3VDRZ7PVF5UJGLZCSPAEIKJE2XSWF5LAGER',
 );
-export const USDC = new SorobanClient.Asset(
+export const USDC = new StellarSdk.Asset(
     'USDC',
     'GAHPYWLK6YRN7CVYZOO4H3VDRZ7PVF5UJGLZCSPAEIKJE2XSWF5LAGER',
 );
-export const AQUA = new SorobanClient.Asset(
+export const AQUA = new StellarSdk.Asset(
     'AQUA',
     'GAHPYWLK6YRN7CVYZOO4H3VDRZ7PVF5UJGLZCSPAEIKJE2XSWF5LAGER',
 );
@@ -174,12 +174,10 @@ const Amm = ({ balances }) => {
         );
     };
 
-    console.log(poolsData);
-
     const claim = (poolId) => {
         setClaimPendingId(poolId);
         SorobanService.claimRewards(account.accountId(), poolId)
-            .then((tx) => account.signAndSubmitTx(tx as SorobanClient.Transaction, true))
+            .then((tx) => account.signAndSubmitTx(tx, true))
             .then((res) => {
                 const value = SorobanService.i128ToInt(res.value());
 
@@ -330,10 +328,11 @@ const Amm = ({ balances }) => {
                                             children: (
                                                 <InOffers>
                                                     <div>
-                                                        {formatBalance(baseAmount)} {baseAsset.code}
+                                                        {formatBalance(baseAmount, true)}{' '}
+                                                        {baseAsset.code}
                                                     </div>
                                                     <div>
-                                                        {formatBalance(counterAmount)}{' '}
+                                                        {formatBalance(counterAmount, true)}{' '}
                                                         {counterAsset.code}
                                                     </div>
                                                 </InOffers>

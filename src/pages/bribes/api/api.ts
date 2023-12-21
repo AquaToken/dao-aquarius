@@ -1,5 +1,5 @@
 import axios from 'axios';
-import * as StellarSdk from 'stellar-sdk';
+import * as StellarSdk from '@stellar/stellar-sdk';
 import { UpcomingBribe } from './types';
 import { AssetSimple, ListResponse } from '../../../store/assetsStore/types';
 import { MarketKey } from '../../vote/api/types';

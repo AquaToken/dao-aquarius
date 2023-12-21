@@ -14,7 +14,7 @@ import Input from '../../../../../common/basics/Input';
 import { checkProposalStatus, publishProposal } from '../../../api/api';
 import { StellarService, ToastService } from '../../../../../common/services/globalServices';
 import { sha256 } from 'js-sha256';
-import { MemoHash } from 'stellar-base';
+import { MemoHash } from '@stellar/stellar-sdk';
 import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
 import { useHistory } from 'react-router-dom';
 import PaymentInProgressAlert from '../PaymentInProgressAlert/PaymentInProgressAlert';

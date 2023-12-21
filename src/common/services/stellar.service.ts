@@ -1,13 +1,13 @@
-import * as StellarSdk from 'stellar-sdk';
+import * as StellarSdk from '@stellar/stellar-sdk';
 import EventService from './event.service';
-import { Horizon } from 'stellar-sdk/lib/horizon_api';
-import { Memo, MemoType, OperationOptions, ServerApi } from 'stellar-sdk';
+import { Horizon, Memo, MemoType, OperationOptions } from '@stellar/stellar-sdk';
 import axios, { AxiosResponse } from 'axios';
 import { formatBalance, roundToPrecision } from '../helpers/helpers';
 import { PairStats } from '../../pages/vote/api/types';
 import { validateMarketKeys } from '../../pages/vote/api/api';
 import debounceFunction from '../helpers/debounceFunction';
 import { ToastService } from './globalServices';
+import { ServerApi } from '@stellar/stellar-sdk/lib/horizon';
 
 enum HORIZON_SERVER {
     stellar = 'https://horizon-testnet.stellar.org',
@@ -96,7 +96,7 @@ export const OP_THRESHOLDS = {
 };
 
 export default class StellarServiceClass {
-    server: StellarSdk.Server | null = null;
+    server: StellarSdk.Horizon.Server | null = null;
     event: EventService = new EventService();
     closeStream: () => void | null = null;
     closeEffectsStream: () => void | null = null;
@@ -192,7 +192,7 @@ export default class StellarServiceClass {
         return tx;
     }
 
-    submitXDR(xdr: string): Promise<Horizon.SubmitTransactionResponse> {
+    submitXDR(xdr: string): Promise<Horizon.HorizonApi.SubmitTransactionResponse> {
         const tx = new StellarSdk.Transaction(xdr, StellarSdk.Networks.PUBLIC);
         return this.submitTx(tx);
     }
@@ -243,7 +243,9 @@ export default class StellarServiceClass {
 
         return (
             masterKeyWeight <
-            account.thresholds[transactionThreshold as keyof Horizon.AccountThresholds]
+            account.thresholds[
+                transactionThreshold as keyof StellarSdk.Horizon.HorizonApi.AccountThresholds
+            ]
         );
     }
 
@@ -251,10 +253,10 @@ export default class StellarServiceClass {
         // @ts-ignore
         // settled in configs: prod.js and dev.js
         // this.server = new StellarSdk.Server(process.horizon.HORIZON_SERVER);
-        this.server = new StellarSdk.Server(HORIZON_SERVER.stellar);
+        this.server = new StellarSdk.Horizon.Server(HORIZON_SERVER.stellar);
     }
 
-    loadAccount(publicKey: string): Promise<StellarSdk.AccountResponse> {
+    loadAccount(publicKey: string): Promise<StellarSdk.Horizon.AccountResponse> {
         if (!this.server) {
             throw new Error("Horizon server isn't started");
         }
@@ -262,7 +264,7 @@ export default class StellarServiceClass {
     }
 
     resolveFederation(homeDomain: string, accountId: string): Promise<string> {
-        return StellarSdk.StellarTomlResolver.resolve(homeDomain)
+        return StellarSdk.StellarToml.Resolver.resolve(homeDomain)
             .then((toml) => {
                 if (!toml.FEDERATION_SERVER) {
                     throw new Error('Federation server not exists');
@@ -637,8 +639,8 @@ export default class StellarServiceClass {
     }
 
     balancesHasChanges(
-        prevBalances: Horizon.BalanceLineAsset[],
-        newBalances: Horizon.BalanceLineAsset[],
+        prevBalances: Horizon.HorizonApi.BalanceLineAsset[],
+        newBalances: Horizon.HorizonApi.BalanceLineAsset[],
     ): boolean {
         if (prevBalances.length !== newBalances.length) {
             return true;

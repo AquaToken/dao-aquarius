@@ -1,7 +1,7 @@
 import WalletConnectClient, { SIGN_CLIENT_EVENTS } from '@walletconnect/sign-client';
 import { PairingTypes, SessionTypes, SignClientTypes } from '@walletconnect/types';
 import { getInternalError, getSdkError } from '@walletconnect/utils';
-import * as StellarSdk from 'stellar-sdk';
+import * as StellarSdk from '@stellar/stellar-sdk';
 import QRModal from '../modals/WalletConnectModals/QRModal';
 import PairingModal from '../modals/WalletConnectModals/PairingModal';
 import SessionRequestModal from '../modals/WalletConnectModals/SessionRequestModal';

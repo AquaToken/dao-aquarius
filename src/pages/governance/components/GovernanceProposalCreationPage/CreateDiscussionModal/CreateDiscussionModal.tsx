@@ -12,7 +12,7 @@ import { Proposal } from '../../../api/types';
 import { formatBalance } from '../../../../../common/helpers/helpers';
 import { CREATE_DISCUSSION_COST } from '../../../pages/GovernanceMainPage';
 import { StellarService, ToastService } from '../../../../../common/services/globalServices';
-import { MemoHash } from 'stellar-base';
+import { MemoHash } from '@stellar/stellar-sdk';
 import { sha256 } from 'js-sha256';
 import useAuthStore from '../../../../../store/authStore/useAuthStore';
 import { useIsMounted } from '../../../../../common/hooks/useIsMounted';

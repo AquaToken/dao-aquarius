@@ -11,7 +11,7 @@ import { Breakpoints, COLORS } from '../../../../../common/styles';
 import useAuthStore from '../../../../../store/authStore/useAuthStore';
 import Button from '../../../../../common/basics/Button';
 import Pair from '../../common/Pair';
-import * as StellarSdk from 'stellar-sdk';
+import * as StellarSdk from '@stellar/stellar-sdk';
 import { StellarService, ToastService } from '../../../../../common/services/globalServices';
 import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
 import { BuildSignAndSubmitStatuses } from '../../../../../common/services/wallet-connect.service';
