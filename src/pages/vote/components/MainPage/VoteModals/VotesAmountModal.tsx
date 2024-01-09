@@ -28,7 +28,7 @@ import { PairStats } from '../../../api/types';
 import { AQUA, DOWN_ICE, SELECTED_PAIRS_ALIAS, UP_ICE } from '../MainPage';
 import VotesDurationModal from './VotesDurationModal';
 import Select, { Option } from '../../../../../common/basics/Select';
-import { Asset } from 'stellar-sdk';
+import { Asset } from '@stellar/stellar-sdk';
 import { LoginTypes } from '../../../../../store/authStore/types';
 import { BuildSignAndSubmitStatuses } from '../../../../../common/services/wallet-connect.service';
 import ErrorHandler from '../../../../../common/helpers/error-handler';

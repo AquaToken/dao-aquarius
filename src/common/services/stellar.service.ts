@@ -1,7 +1,6 @@
-import * as StellarSdk from 'stellar-sdk';
+import * as StellarSdk from '@stellar/stellar-sdk';
 import EventService from './event.service';
-import { Horizon } from 'stellar-sdk/lib/horizon_api';
-import { Memo, MemoType, OperationOptions, ServerApi } from 'stellar-sdk';
+import { Memo, MemoType, OperationOptions, Horizon } from '@stellar/stellar-sdk';
 import axios, { AxiosResponse } from 'axios';
 import { roundToPrecision } from '../helpers/helpers';
 import { PairStats } from '../../pages/vote/api/types';
@@ -91,7 +90,7 @@ export const OP_THRESHOLDS = {
 };
 
 export default class StellarServiceClass {
-    server: StellarSdk.Server | null = null;
+    server: StellarSdk.Horizon.Server | null = null;
     event: EventService = new EventService();
     closeStream: () => void | null = null;
     closeEffectsStream: () => void | null = null;
@@ -100,7 +99,7 @@ export default class StellarServiceClass {
     nextPayments = null;
     loadMorePaymentsPending = false;
     paymentsFullyLoaded = false;
-    private claimableBalances: ServerApi.ClaimableBalanceRecord[] | null = null;
+    private claimableBalances: Horizon.ServerApi.ClaimableBalanceRecord[] | null = null;
     private keypair: StellarSdk.Keypair | null = null;
 
     constructor() {
@@ -187,7 +186,7 @@ export default class StellarServiceClass {
         return tx;
     }
 
-    submitXDR(xdr: string): Promise<Horizon.SubmitTransactionResponse> {
+    submitXDR(xdr: string): Promise<Horizon.HorizonApi.SubmitTransactionResponse> {
         const tx = new StellarSdk.Transaction(xdr, StellarSdk.Networks.PUBLIC);
         return this.submitTx(tx);
     }
@@ -238,17 +237,17 @@ export default class StellarServiceClass {
 
         return (
             masterKeyWeight <
-            account.thresholds[transactionThreshold as keyof Horizon.AccountThresholds]
+            account.thresholds[transactionThreshold as keyof Horizon.HorizonApi.AccountThresholds]
         );
     }
 
     private startHorizonServer(): void {
         // @ts-ignore
         // settled in configs: prod.js and dev.js
-        this.server = new StellarSdk.Server(process.horizon.HORIZON_SERVER);
+        this.server = new StellarSdk.Horizon.Server(process.horizon.HORIZON_SERVER);
     }
 
-    loadAccount(publicKey: string): Promise<StellarSdk.AccountResponse> {
+    loadAccount(publicKey: string): Promise<StellarSdk.Horizon.AccountResponse> {
         if (!this.server) {
             throw new Error("Horizon server isn't started");
         }
@@ -256,7 +255,7 @@ export default class StellarServiceClass {
     }
 
     resolveFederation(homeDomain: string, accountId: string): Promise<string> {
-        return StellarSdk.StellarTomlResolver.resolve(homeDomain)
+        return StellarSdk.StellarToml.Resolver.resolve(homeDomain)
             .then((toml) => {
                 if (!toml.FEDERATION_SERVER) {
                     throw new Error('Federation server not exists');
@@ -360,9 +359,11 @@ export default class StellarServiceClass {
 
     getNextLocks(
         claims,
-        next: () => Promise<ServerApi.CollectionPage<ServerApi.ClaimableBalanceRecord>>,
+        next: () => Promise<
+            Horizon.ServerApi.CollectionPage<Horizon.ServerApi.ClaimableBalanceRecord>
+        >,
         limit: number,
-    ): Promise<ServerApi.ClaimableBalanceRecord[]> {
+    ): Promise<Horizon.ServerApi.ClaimableBalanceRecord[]> {
         return next().then((res) => {
             if (res.records.length === limit) {
                 return this.getNextLocks([...claims, ...res.records], res.next, limit);
@@ -373,7 +374,9 @@ export default class StellarServiceClass {
     }
 
     getNextClaimableBalances(
-        next: () => Promise<ServerApi.CollectionPage<ServerApi.ClaimableBalanceRecord>>,
+        next: () => Promise<
+            Horizon.ServerApi.CollectionPage<Horizon.ServerApi.ClaimableBalanceRecord>
+        >,
         limit,
     ) {
         next().then((res) => {
@@ -396,17 +399,20 @@ export default class StellarServiceClass {
             .stream({
                 onmessage: (res) => {
                     if (
-                        (res as unknown as ServerApi.EffectRecord).type ===
+                        (res as unknown as Horizon.ServerApi.EffectRecord).type ===
                             'claimable_balance_claimant_created' ||
-                        (res as unknown as ServerApi.EffectRecord).type ===
+                        (res as unknown as Horizon.ServerApi.EffectRecord).type ===
                             'claimable_balance_claimed' ||
-                        (res as unknown as ServerApi.EffectRecord).type ===
+                        (res as unknown as Horizon.ServerApi.EffectRecord).type ===
                             'claimable_balance_created'
                     ) {
                         this.getClaimableBalances(publicKey);
                     }
 
-                    if ((res as unknown as ServerApi.EffectRecord).type === 'account_credited') {
+                    if (
+                        (res as unknown as Horizon.ServerApi.EffectRecord).type ===
+                        'account_credited'
+                    ) {
                         this.debouncedUpdatePayments(publicKey);
                     }
                 },
@@ -424,7 +430,7 @@ export default class StellarServiceClass {
         }
     }
 
-    async getAccountOffers(publicKey: string): Promise<ServerApi.OfferRecord[]> {
+    async getAccountOffers(publicKey: string): Promise<Horizon.ServerApi.OfferRecord[]> {
         const OFFERS_LIMIT = 200;
         const { records, next } = await this.server
             .offers()
@@ -615,8 +621,8 @@ export default class StellarServiceClass {
     }
 
     balancesHasChanges(
-        prevBalances: Horizon.BalanceLineAsset[],
-        newBalances: Horizon.BalanceLineAsset[],
+        prevBalances: Horizon.HorizonApi.BalanceLineAsset[],
+        newBalances: Horizon.HorizonApi.BalanceLineAsset[],
     ): boolean {
         if (prevBalances.length !== newBalances.length) {
             return true;
@@ -710,7 +716,10 @@ export default class StellarServiceClass {
         });
     }
 
-    async getLiquidityPoolForAccount(id: string, limit): Promise<ServerApi.LiquidityPoolRecord[]> {
+    async getLiquidityPoolForAccount(
+        id: string,
+        limit,
+    ): Promise<Horizon.ServerApi.LiquidityPoolRecord[]> {
         const { records, next } = await this.server
             .liquidityPools()
             .forAccount(id)
@@ -923,7 +932,7 @@ export default class StellarServiceClass {
     getLiquidityPoolData(
         base: StellarSdk.Asset,
         counter: StellarSdk.Asset,
-    ): Promise<ServerApi.LiquidityPoolRecord | null> {
+    ): Promise<Horizon.ServerApi.LiquidityPoolRecord | null> {
         return this.server
             .liquidityPools()
             .forAssets(base, counter)

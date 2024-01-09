@@ -1,7 +1,7 @@
 import { Dispatch } from 'react';
 import { ASSETS_ACTIONS, AssetSimple } from './types';
 import { ASSET_CACHE } from './reducer';
-import * as StellarSdk from 'stellar-sdk';
+import * as StellarSdk from '@stellar/stellar-sdk';
 import { ActionResult } from '../types';
 import { getAssetsInfo, getAssetsRequest } from './api/api';
 

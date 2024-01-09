@@ -2,7 +2,7 @@ import useAuthStore from '../../store/authStore/useAuthStore';
 import { useEffect, useRef } from 'react';
 import { WalletConnectEvents } from '../services/wallet-connect.service';
 import { LoginTypes } from '../../store/authStore/types';
-import { Horizon } from 'stellar-sdk';
+import { Horizon } from '@stellar/stellar-sdk';
 import {
     LedgerService,
     StellarService,

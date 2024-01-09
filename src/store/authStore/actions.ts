@@ -2,7 +2,7 @@ import { AUTH_ACTIONS, LoginTypes } from './types';
 import { Dispatch } from 'react';
 import { SignClientTypes } from '@walletconnect/types';
 import AccountService from '../../common/services/account.service';
-import AccountRecord from 'stellar-sdk';
+import AccountRecord from '@stellar/stellar-sdk';
 import { StellarService } from '../../common/services/globalServices';
 import { ActionAsyncResult, ActionResult, ActionSimpleResult } from '../types';
 

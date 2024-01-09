@@ -8,7 +8,7 @@ import { COLORS } from '../../../../common/styles';
 import useOnClickOutside from '../../../../common/hooks/useOutsideClick';
 import Asset from './Asset';
 import { useDebounce } from '../../../../common/hooks/useDebounce';
-import * as StellarSdk from 'stellar-sdk';
+import * as StellarSdk from '@stellar/stellar-sdk';
 import { StellarService } from '../../../../common/services/globalServices';
 import { AssetSimple } from '../../../../store/assetsStore/types';
 import useAssetsStore from '../../../../store/assetsStore/useAssetsStore';

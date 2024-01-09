@@ -1,5 +1,5 @@
-import AccountRecord, * as StellarSdk from 'stellar-sdk';
-import { AccountResponse, Horizon } from 'stellar-sdk';
+import AccountRecord, * as StellarSdk from '@stellar/stellar-sdk';
+import { Horizon } from '@stellar/stellar-sdk';
 import { LoginTypes } from '../../store/authStore/types';
 import {
     LedgerService,
@@ -15,7 +15,7 @@ import SentToVault from '../modals/MultisigModals/SentToVault';
 
 const VAULT_MARKER = 'GA2T6GR7VXXXBETTERSAFETHANSORRYXXXPROTECTEDBYLOBSTRVAULT';
 
-export default class AccountService extends AccountResponse {
+export default class AccountService extends Horizon.AccountResponse {
     authType?: LoginTypes;
     num_sponsoring: number;
     num_sponsored: number;
@@ -42,7 +42,9 @@ export default class AccountService extends AccountResponse {
     async signAndSubmitTx(
         tx: StellarSdk.Transaction,
         withResult?: boolean,
-    ): Promise<Horizon.SubmitTransactionResponse | void | { status: BuildSignAndSubmitStatuses }> {
+    ): Promise<
+        Horizon.HorizonApi.SubmitTransactionResponse | void | { status: BuildSignAndSubmitStatuses }
+    > {
         if (this.authType === LoginTypes.public) {
             const xdr = tx.toEnvelope().toXDR('base64');
             ModalService.openModal(SignWithPublic, { xdr, account: this });
@@ -117,15 +119,15 @@ export default class AccountService extends AccountResponse {
         if (asset.isNative()) {
             const nativeBalance = this.balances.find(
                 ({ asset_type }) => asset_type === 'native',
-            ) as Horizon.BalanceLineNative;
+            ) as Horizon.HorizonApi.BalanceLineNative;
 
             return +nativeBalance.balance;
         }
         const assetBalance = this.balances.find(
             (balance) =>
-                (balance as Horizon.BalanceLineAsset).asset_code == asset.code &&
-                (balance as Horizon.BalanceLineAsset).asset_issuer === asset.issuer,
-        ) as Horizon.BalanceLineAsset;
+                (balance as Horizon.HorizonApi.BalanceLineAsset).asset_code == asset.code &&
+                (balance as Horizon.HorizonApi.BalanceLineAsset).asset_issuer === asset.issuer,
+        ) as Horizon.HorizonApi.BalanceLineAsset;
 
         if (!assetBalance) {
             return null;
@@ -136,8 +138,9 @@ export default class AccountService extends AccountResponse {
 
     getPoolBalance(id: string) {
         const poolBalance = this.balances.find(
-            (balance) => (balance as Horizon.BalanceLineLiquidityPool).liquidity_pool_id === id,
-        ) as Horizon.BalanceLineLiquidityPool;
+            (balance) =>
+                (balance as Horizon.HorizonApi.BalanceLineLiquidityPool).liquidity_pool_id === id,
+        ) as Horizon.HorizonApi.BalanceLineLiquidityPool;
 
         if (!poolBalance) {
             return null;
@@ -169,9 +172,10 @@ export default class AccountService extends AccountResponse {
     async getAmmAquaBalance(): Promise<number> {
         const aquaAlias = 'AQUA:GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA';
 
-        const liquidityPoolsBalances: Horizon.BalanceLineLiquidityPool[] = this.balances.filter(
-            (balance) => balance.asset_type === 'liquidity_pool_shares',
-        ) as Horizon.BalanceLineLiquidityPool[];
+        const liquidityPoolsBalances: Horizon.HorizonApi.BalanceLineLiquidityPool[] =
+            this.balances.filter(
+                (balance) => balance.asset_type === 'liquidity_pool_shares',
+            ) as Horizon.HorizonApi.BalanceLineLiquidityPool[];
 
         const liquidityPoolsForAccount = await StellarService.getLiquidityPoolForAccount(
             this.accountId(),
@@ -199,9 +203,9 @@ export default class AccountService extends AccountResponse {
     getAquaBalance(): number | null {
         const aquaBalance = this.balances.find(
             (balance) =>
-                (balance as Horizon.BalanceLineAsset).asset_code == AQUA_CODE &&
-                (balance as Horizon.BalanceLineAsset).asset_issuer === AQUA_ISSUER,
-        ) as Horizon.BalanceLineAsset;
+                (balance as Horizon.HorizonApi.BalanceLineAsset).asset_code == AQUA_CODE &&
+                (balance as Horizon.HorizonApi.BalanceLineAsset).asset_issuer === AQUA_ISSUER,
+        ) as Horizon.HorizonApi.BalanceLineAsset;
 
         if (!aquaBalance) {
             return null;
@@ -215,9 +219,9 @@ export default class AccountService extends AccountResponse {
     getAquaInOffers(): number | null {
         const aquaBalance = this.balances.find(
             (balance) =>
-                (balance as Horizon.BalanceLineAsset).asset_code == AQUA_CODE &&
-                (balance as Horizon.BalanceLineAsset).asset_issuer === AQUA_ISSUER,
-        ) as Horizon.BalanceLineAsset;
+                (balance as Horizon.HorizonApi.BalanceLineAsset).asset_code == AQUA_CODE &&
+                (balance as Horizon.HorizonApi.BalanceLineAsset).asset_issuer === AQUA_ISSUER,
+        ) as Horizon.HorizonApi.BalanceLineAsset;
 
         if (!aquaBalance) {
             return null;
@@ -229,7 +233,7 @@ export default class AccountService extends AccountResponse {
     getAvailableNativeBalance(): number | null {
         const nativeBalance = this.balances.find(
             ({ asset_type }) => asset_type === 'native',
-        ) as Horizon.BalanceLineNative;
+        ) as Horizon.HorizonApi.BalanceLineNative;
 
         const reserve = (2 + this.subentry_count + this.num_sponsoring - this.num_sponsored) * 0.5;
 
