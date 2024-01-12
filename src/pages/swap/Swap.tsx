@@ -15,9 +15,10 @@ import { useDebounce } from '../../common/hooks/useDebounce';
 import Button from '../../common/basics/Button';
 import { IconFail } from '../../common/basics/Icons';
 import { USDT, USDC } from '../amm/Amm';
-import * as SorobanClient from 'soroban-client';
 import SuccessModal from '../amm/SuccessModal/SuccessModal';
 import { CONTRACT_STATUS } from '../../common/services/soroban.service';
+import { Empty } from '../profile/YourVotes/YourVotes';
+import ChooseLoginMethodModal from '../../common/modals/ChooseLoginMethodModal';
 
 const Container = styled.main`
     background-color: ${COLORS.lightGray};
@@ -90,6 +91,15 @@ const RevertButton = styled.div`
     }
 `;
 
+const Section = styled.div`
+    flex: 1 0 auto;
+    ${flexAllCenter};
+`;
+
+const LoginButton = styled(Button)`
+    margin-top: 1rem;
+`;
+
 const Swap = ({ balances }) => {
     const { account, isLogged } = useAuthStore();
 
@@ -144,7 +154,7 @@ const Swap = ({ balances }) => {
         const minCounterAmount = ((1 - SLIPPAGE) * Number(counterAmount)).toFixed(7);
 
         SorobanService.getGiveAllowanceTx(account?.accountId(), bestPool[0], base, baseAmount)
-            .then((tx) => account.signAndSubmitTx(tx as SorobanClient.Transaction, true))
+            .then((tx) => account.signAndSubmitTx(tx, true))
             .then(() =>
                 SorobanService.getSwapTx(
                     account?.accountId(),
@@ -155,7 +165,7 @@ const Swap = ({ balances }) => {
                     minCounterAmount,
                 ),
             )
-            .then((tx) => account.signAndSubmitTx(tx as SorobanClient.Transaction, true))
+            .then((tx) => account.signAndSubmitTx(tx, true))
             .then((res) => {
                 ModalService.openModal(SuccessModal, {
                     base,
@@ -208,7 +218,18 @@ const Swap = ({ balances }) => {
     };
 
     if (!account || !assets) {
-        return <PageLoader />;
+        return (
+            <Section>
+                <Empty>
+                    <h3>Log in required.</h3>
+                    <span>To use the demo you need to log in.</span>
+
+                    <LoginButton onClick={() => ModalService.openModal(ChooseLoginMethodModal, {})}>
+                        Log in
+                    </LoginButton>
+                </Empty>
+            </Section>
+        );
     }
 
     return (

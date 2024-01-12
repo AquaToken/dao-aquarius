@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { commonMaxWidth, respondDown } from '../../common/mixins';
-import { Header, InOffers, Section, Title } from '../profile/AmmRewards/AmmRewards';
+import { commonMaxWidth, flexAllCenter, respondDown } from '../../common/mixins';
+import { Header, InOffers, Title } from '../profile/AmmRewards/AmmRewards';
 import PageLoader from '../../common/basics/PageLoader';
 import { ModalService, SorobanService, ToastService } from '../../common/services/globalServices';
 import Pair from '../vote/components/common/Pair';
@@ -22,6 +22,8 @@ import Table from '../../common/basics/Table';
 import { useUpdateIndex } from '../../common/hooks/useUpdateIndex';
 import WithdrawFromPool from './WithdrawFromPool/WithdrawFromPool';
 import Tooltip, { TOOLTIP_POSITION } from '../../common/basics/Tooltip';
+import { Empty } from '../profile/YourVotes/YourVotes';
+import ChooseLoginMethodModal from '../../common/modals/ChooseLoginMethodModal';
 
 const Container = styled.main`
     height: 100%;
@@ -84,6 +86,15 @@ const CellA = styled.div`
     display: flex;
     gap: 0.5rem;
     align-items: center;
+`;
+
+const Section = styled.div`
+    flex: 1 0 auto;
+    ${flexAllCenter};
+`;
+
+const LoginButton = styled(Button)`
+    margin-top: 1rem;
 `;
 
 export const USDT = new StellarSdk.Asset(
@@ -215,7 +226,18 @@ const Amm = ({ balances }) => {
     }, [balances]);
 
     if (!account || !assets) {
-        return <PageLoader />;
+        return (
+            <Section>
+                <Empty>
+                    <h3>Log in required.</h3>
+                    <span>To use the demo you need to log in.</span>
+
+                    <LoginButton onClick={() => ModalService.openModal(ChooseLoginMethodModal, {})}>
+                        Log in
+                    </LoginButton>
+                </Empty>
+            </Section>
+        );
     }
 
     return (
