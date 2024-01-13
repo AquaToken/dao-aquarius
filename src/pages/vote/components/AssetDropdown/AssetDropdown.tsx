@@ -223,7 +223,7 @@ const AssetDropdown = ({
     const resolveCurrencies = (domain: string) => {
         setSearchPending(true);
 
-        StellarSdk.StellarTomlResolver.resolve(domain)
+        StellarSdk.StellarToml.Resolver.resolve(domain)
             .then(({ CURRENCIES }) => {
                 if (CURRENCIES) {
                     const newCurrencies = CURRENCIES.filter(
