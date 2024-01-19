@@ -11,7 +11,6 @@ import { IconFail, IconSuccess, IconPending } from '../../../common/basics/Icons
 import { CONTRACT_STATUS } from '../../../common/services/soroban.service';
 import { SorobanService, ToastService } from '../../../common/services/globalServices';
 import useAuthStore from '../../../store/authStore/useAuthStore';
-import * as SorobanClient from 'soroban-client';
 import { USDC, USDT, AQUA } from '../Amm';
 
 const Container = styled.div`
@@ -65,7 +64,7 @@ const BalancesBlock = ({ balances }) => {
     const deploy = ({ asset, contractId }) => {
         setPendingId(contractId);
         return SorobanService.deployAssetContractTx(account.accountId(), asset)
-            .then((tx) => account.signAndSubmitTx(tx as SorobanClient.Transaction))
+            .then((tx) => account.signAndSubmitTx(tx))
             .then(() => {
                 setPendingId(null);
                 account.getBalances();
@@ -102,7 +101,7 @@ const BalancesBlock = ({ balances }) => {
         setPendingId(contractId);
         return SorobanService.restoreAssetContractTx(account.accountId(), asset)
             .then((tx) => {
-                return account.signAndSubmitTx(tx as SorobanClient.Transaction);
+                return account.signAndSubmitTx(tx);
             })
             .then(() => {
                 setPendingId(null);
@@ -120,7 +119,7 @@ const BalancesBlock = ({ balances }) => {
         setPendingId(contractId);
         return SorobanService.bumpAssetContractTx(account.accountId(), asset)
             .then((tx) => {
-                return account.signAndSubmitTx(tx as SorobanClient.Transaction);
+                return account.signAndSubmitTx(tx);
             })
             .then(() => {
                 setPendingId(null);
