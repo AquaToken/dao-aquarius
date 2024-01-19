@@ -6,10 +6,11 @@ import styled from 'styled-components';
 import { IconFail, IconPending, IconSuccess } from '../../basics/Icons';
 import { flexAllCenter, respondDown } from '../../mixins';
 import DotsLoader from '../../basics/DotsLoader';
-import { BuildSignAndSubmitStatuses, getSavedApp } from '../../services/wallet-connect.service';
+import { BuildSignAndSubmitStatuses } from '../../services/wallet-connect.service';
 import { Breakpoints, COLORS } from '../../styles';
 import { useIsMounted } from '../../hooks/useIsMounted';
 import { isMobile } from '../../helpers/browser';
+import { getCurrentWallet } from '../../helpers/wallet-connect-helpers';
 
 enum TX_STATUSES {
     pending = 'pending',
@@ -43,6 +44,7 @@ const Status = styled.div`
     margin-bottom: 3.2rem;
     background-color: ${COLORS.lightGray};
     ${flexAllCenter};
+    text-align: center;
 `;
 
 const RightButton = styled(Button)`
@@ -89,7 +91,7 @@ const RequestModal = ({ params, close }: ModalProps<RequestModalProps>) => {
             });
     }, []);
 
-    const savedApp = getSavedApp();
+    const savedApp = getCurrentWallet();
 
     return (
         <>

@@ -246,7 +246,9 @@ const GovernanceMainPage = (): JSX.Element => {
 
     const onLinkClick = () => {
         if (!isLogged) {
-            ModalService.openModal(ChooseLoginMethodModal, {});
+            ModalService.openModal(ChooseLoginMethodModal, {
+                redirectURL: GovernanceRoutes.create,
+            });
             return;
         }
 
@@ -268,8 +270,16 @@ const GovernanceMainPage = (): JSX.Element => {
     const history = useHistory();
 
     const setFilterValue = (value) => {
-        if ((value === PROPOSAL_FILTER.MY || value === PROPOSAL_FILTER.MY_VOTES) && !isLogged) {
-            ModalService.openModal(ChooseLoginMethodModal, {});
+        if (value === PROPOSAL_FILTER.MY && !isLogged) {
+            ModalService.openModal(ChooseLoginMethodModal, {
+                redirectURL: `${GovernanceRoutes.main}?${UrlParams.filter}=${PROPOSAL_FILTER.MY}`,
+            });
+            return;
+        }
+        if (value === PROPOSAL_FILTER.MY_VOTES && !isLogged) {
+            ModalService.openModal(ChooseLoginMethodModal, {
+                redirectURL: `${GovernanceRoutes.main}?${UrlParams.filter}=${PROPOSAL_FILTER.MY_VOTES}`,
+            });
             return;
         }
         setProposals(null);

@@ -1,18 +1,9 @@
 import * as React from 'react';
-import styled from 'styled-components';
-import {
-    Cell,
-    ExternalLinkStyled,
-    Header,
-    Section,
-    Table,
-    TableBodyRow,
-    Title,
-} from '../AmmRewards/AmmRewards';
 import { useEffect, useMemo, useState } from 'react';
+import styled from 'styled-components';
+import { ExternalLinkStyled, Header, Section, Title } from '../AmmRewards/AmmRewards';
 import { StellarService, ToastService } from '../../../common/services/globalServices';
 import { StellarEvents } from '../../../common/services/stellar.service';
-import { TableBody, TableHead, TableHeadRow } from '../../vote/components/MainPage/Table/Table';
 import PageLoader from '../../../common/basics/PageLoader';
 import { Empty } from '../YourVotes/YourVotes';
 import { Link } from 'react-router-dom';
@@ -20,31 +11,56 @@ import { MainRoutes } from '../../../routes';
 import { formatBalance, getDateString } from '../../../common/helpers/helpers';
 import useAuthStore from '../../../store/authStore/useAuthStore';
 import Button from '../../../common/basics/Button';
-import { COLORS } from '../../../common/styles';
+import { Breakpoints, COLORS } from '../../../common/styles';
 import { LoginTypes } from '../../../store/authStore/types';
-import {
-    BuildSignAndSubmitStatuses,
-    openApp,
-} from '../../../common/services/wallet-connect.service';
+import { BuildSignAndSubmitStatuses } from '../../../common/services/wallet-connect.service';
 import ErrorHandler from '../../../common/helpers/error-handler';
-import { UnlockedBlock, UnlockedStats } from '../IceLocks/IceLocks';
 import Checkbox from '../../../common/basics/Checkbox';
+import Table, { CellAlign } from '../../../common/basics/Table';
+import { respondDown } from '../../../common/mixins';
+import { openCurrentWalletIfExist } from '../../../common/helpers/wallet-connect-helpers';
 
 const Container = styled.div`
     display: flex;
     flex-direction: column;
 `;
 
-const TableHeadRowStyled = styled(TableBodyRow)`
-    min-height: 5rem;
-`;
-
-const RightCell = styled(Cell)`
-    justify-content: flex-end;
-`;
-
 const Expired = styled.span`
     color: ${COLORS.grayText};
+`;
+
+const UnlockedBlock = styled.div`
+    display: flex;
+    justify-content: space-between;
+    border-radius: 0.5rem;
+    background: ${COLORS.lightGray};
+    padding: 4rem 2.1rem 4rem 4.8rem;
+    margin-top: 2.2rem;
+    margin-bottom: 3rem;
+
+    ${respondDown(Breakpoints.md)`
+        flex-direction: column;
+        background: ${COLORS.white};
+    `}
+`;
+
+const UnlockedStats = styled.div`
+    display: flex;
+    flex-direction: column;
+    font-size: 1.6rem;
+    line-height: 2.8rem;
+    color: ${COLORS.paragraphText};
+
+    span:last-child {
+        font-size: 1.4rem;
+        line-height: 2rem;
+        color: ${COLORS.grayText};
+    }
+
+    ${respondDown(Breakpoints.md)`
+        margin-bottom: 2rem;
+        text-align: center;
+    `}
 `;
 
 const ALL_ID = 'all';
@@ -108,7 +124,7 @@ const Airdrop2List = () => {
 
     const onSubmit = async (id?: string) => {
         if (account.authType === LoginTypes.walletConnect) {
-            openApp();
+            openCurrentWalletIfExist();
         }
         try {
             setPendingId(id || ALL_ID);
@@ -208,81 +224,79 @@ const Airdrop2List = () => {
                             </Button>
                         </UnlockedBlock>
                     )}
-                    <Table>
-                        <TableHead>
-                            <TableHeadRow>
-                                <Cell>Date received</Cell>
-                                <Cell>Amount</Cell>
-                                <RightCell>Claim back date</RightCell>
-                                <RightCell>Claim back expire</RightCell>
-                                <RightCell>Status</RightCell>
-                            </TableHeadRow>
-                        </TableHead>
-                        <TableBody>
-                            {filteredList.map((cb) => {
-                                const dateReceived = getDateString(
-                                    new Date(cb.last_modified_time).getTime(),
-                                    { withTime: true },
-                                );
-                                const claimantPredicates = cb.claimants.find(
-                                    ({ destination }) => destination === account.accountId(),
-                                )?.predicate?.and;
-                                const beforeTimestamp = claimantPredicates.find((predicate) =>
-                                    Boolean(predicate.not),
-                                )?.not?.abs_before_epoch;
-                                const expireTimestamp = claimantPredicates.find(
-                                    (predicate) => !Boolean(predicate.not),
-                                )?.abs_before_epoch;
+                    <Table
+                        head={[
+                            { children: 'Date received' },
+                            { children: 'Amount' },
+                            { children: 'Claim back date', align: CellAlign.Right },
+                            { children: 'Claim back expire', align: CellAlign.Right },
+                            { children: 'Status', align: CellAlign.Right },
+                        ]}
+                        body={filteredList.map((cb) => {
+                            const dateReceived = getDateString(
+                                new Date(cb.last_modified_time).getTime(),
+                                { withTime: true },
+                            );
+                            const claimantPredicates = cb.claimants.find(
+                                ({ destination }) => destination === account.accountId(),
+                            )?.predicate?.and;
+                            const beforeTimestamp = claimantPredicates.find((predicate) =>
+                                Boolean(predicate.not),
+                            )?.not?.abs_before_epoch;
+                            const expireTimestamp = claimantPredicates.find(
+                                (predicate) => !Boolean(predicate.not),
+                            )?.abs_before_epoch;
 
-                                const beforeDate = getDateString(+beforeTimestamp * 1000, {
-                                    withTime: true,
-                                });
-                                const expireDate = getDateString(+expireTimestamp * 1000, {
-                                    withTime: true,
-                                });
-                                const status =
-                                    Number(beforeTimestamp * 1000) > Date.now() ? (
-                                        <span>Upcoming</span>
-                                    ) : Number(expireTimestamp * 1000) < Date.now() ? (
-                                        <Expired>Expired</Expired>
-                                    ) : (
-                                        <Button
-                                            isSmall
-                                            disabled={Boolean(pendingId) && cb.id !== pendingId}
-                                            pending={cb.id === pendingId}
-                                            onClick={() => onSubmit(cb.id)}
-                                        >
-                                            CLAIM
-                                        </Button>
-                                    );
-
-                                return (
-                                    <TableHeadRowStyled key={cb.id}>
-                                        <Cell>
-                                            <label>Date received:</label>
-                                            {dateReceived}
-                                        </Cell>
-                                        <Cell>
-                                            <label>Amount:</label>
-                                            {formatBalance(cb.amount, true)} AQUA
-                                        </Cell>
-                                        <RightCell>
-                                            <label>Claim back date:</label>
-                                            {beforeDate}
-                                        </RightCell>
-                                        <RightCell>
-                                            <label>Claim back expire:</label>
-                                            {expireDate}
-                                        </RightCell>
-                                        <RightCell>
-                                            <label>Status:</label>
-                                            {status}
-                                        </RightCell>
-                                    </TableHeadRowStyled>
+                            const beforeDate = getDateString(+beforeTimestamp * 1000, {
+                                withTime: true,
+                            });
+                            const expireDate = getDateString(+expireTimestamp * 1000, {
+                                withTime: true,
+                            });
+                            const status =
+                                Number(beforeTimestamp * 1000) > Date.now() ? (
+                                    <span>Upcoming</span>
+                                ) : Number(expireTimestamp * 1000) < Date.now() ? (
+                                    <Expired>Expired</Expired>
+                                ) : (
+                                    <Button
+                                        isSmall
+                                        disabled={Boolean(pendingId) && cb.id !== pendingId}
+                                        pending={cb.id === pendingId}
+                                        onClick={() => onSubmit(cb.id)}
+                                    >
+                                        CLAIM
+                                    </Button>
                                 );
-                            })}
-                        </TableBody>
-                    </Table>
+
+                            return {
+                                key: cb.id,
+                                isNarrow: true,
+                                rowItems: [
+                                    { children: dateReceived, label: 'Date received:' },
+                                    {
+                                        children: `${formatBalance(cb.amount, true)} AQUA`,
+                                        label: 'Amount:',
+                                    },
+                                    {
+                                        children: beforeDate,
+                                        label: 'Claim back date:',
+                                        align: CellAlign.Right,
+                                    },
+                                    {
+                                        children: expireDate,
+                                        label: 'Claim back expire:',
+                                        align: CellAlign.Right,
+                                    },
+                                    {
+                                        children: status,
+                                        label: 'Status:',
+                                        align: CellAlign.Right,
+                                    },
+                                ],
+                            };
+                        })}
+                    />
                 </Section>
             ) : (
                 <Section>

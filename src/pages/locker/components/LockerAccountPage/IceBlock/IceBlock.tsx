@@ -204,7 +204,9 @@ const IceBlock = ({ account, locks }: IceBlockProps): JSX.Element => {
 
     const addTrustlines = () => {
         if (!isLogged) {
-            ModalService.openModal(ChooseLoginMethodModal, {});
+            ModalService.openModal(ChooseLoginMethodModal, {
+                callback: () => ModalService.openModal(AddIceTrustlinesModal, {}),
+            });
             return;
         }
         ModalService.openModal(AddIceTrustlinesModal, {});

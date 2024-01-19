@@ -7,17 +7,17 @@ import {
 } from '../../../../../common/modals/atoms/ModalAtoms';
 import { PairStats } from '../../../api/types';
 import styled from 'styled-components';
-import { flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
+import { respondDown } from '../../../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../../../common/styles';
 import { convertUTCToLocalDateIgnoringTimezone } from '../../../../bribes/pages/AddBribePage';
 import { formatBalance, getDateString } from '../../../../../common/helpers/helpers';
 import Aqua from '../../../../../common/assets/img/aqua-logo-small.svg';
 import Close from '../../../../../common/assets/img/icon-close-small-purple.svg';
 import ExternalLink from '../../../../../common/basics/ExternalLink';
-import { TableBody, TableHead, TableHeadRow } from '../Table/Table';
 import Asset from '../../AssetDropdown/Asset';
 import { StellarService } from '../../../../../common/services/globalServices';
 import Info from '../../../../../common/assets/img/icon-info.svg';
+import Table, { CellAlign } from '../../../../../common/basics/Table';
 
 const ModalContainer = styled.div`
     width: 80.6rem;
@@ -155,56 +155,6 @@ export const CloseButton = styled.div`
     }
 `;
 
-export const TableBodyRow = styled.div`
-    display: flex;
-    align-items: stretch;
-    width: 100%;
-    min-height: 5rem;
-    font-size: 1.6rem;
-    line-height: 2.8rem;
-    color: ${COLORS.paragraphText};
-    position: relative;
-
-    ${respondDown(Breakpoints.md)`
-            flex-direction: column;
-            background-color: ${COLORS.lightGray};
-            border-radius: 0.5rem;
-            margin-bottom: 1.6rem;
-            padding: 2.7rem 1.6rem 1.6rem;
-      `}
-`;
-
-export const TableCell = styled.div`
-    display: flex;
-    align-items: center;
-    flex: 2 0 0;
-    min-width: 14rem;
-    max-width: 100%;
-
-    label {
-        display: none;
-        color: ${COLORS.grayText};
-    }
-
-    ${respondDown(Breakpoints.md)`
-            ${flexRowSpaceBetween};
-            align-items: center;
-            margin-bottom: 1.6rem;
-            
-            label {
-                display: block;
-             }
-        `}
-`;
-
-export const RightAlignedCell = styled(TableCell)`
-    justify-content: flex-end;
-
-    ${respondDown(Breakpoints.md)`
-        justify-content: space-between;
-    `};
-`;
-
 export const ExternalLinkWeb = styled(ExternalLink)`
     ${respondDown(Breakpoints.md)`
          display: none;
@@ -284,38 +234,45 @@ const BribesModal = ({ params }: ModalProps<{ pair: PairStats }>) => {
                     </HowItWorks>
                 )}
             </BribeDetails>
-            <TableHead>
-                <TableHeadRow>
-                    <TableCell>Asset</TableCell>
-                    <RightAlignedCell>Reward per day</RightAlignedCell>
-                    <RightAlignedCell>AQUA amount</RightAlignedCell>
-                </TableHeadRow>
-            </TableHead>
-            <TableBody>
-                {pair.aggregated_bribes.map((bribe) => (
-                    <TableBodyRow key={bribe.asset_code + bribe.asset_issuer}>
-                        <TableCell>
-                            <label>Asset:</label>
-                            <Asset
-                                asset={StellarService.createAsset(
-                                    bribe.asset_code,
-                                    bribe.asset_issuer,
-                                )}
-                                inRow
-                                withMobileView
-                            />
-                        </TableCell>
-                        <RightAlignedCell>
-                            <label>Reward per day:</label>
-                            {formatBalance(+bribe.daily_amount, true)} {bribe.asset_code}
-                        </RightAlignedCell>
-                        <RightAlignedCell>
-                            <label>AQUA amount:</label>
-                            {formatBalance(+bribe.daily_aqua_equivalent, true)} AQUA
-                        </RightAlignedCell>
-                    </TableBodyRow>
-                ))}
-            </TableBody>
+            <Table
+                head={[
+                    { children: 'Asset' },
+                    { children: 'Reward per day', align: CellAlign.Right },
+                    { children: 'AQUA amount', align: CellAlign.Right },
+                ]}
+                body={pair.aggregated_bribes.map((bribe) => ({
+                    key: bribe.asset_code + bribe.asset_issuer,
+                    isNarrow: true,
+                    mobileBackground: COLORS.lightGray,
+                    rowItems: [
+                        {
+                            children: (
+                                <Asset
+                                    asset={StellarService.createAsset(
+                                        bribe.asset_code,
+                                        bribe.asset_issuer,
+                                    )}
+                                    inRow
+                                    withMobileView
+                                />
+                            ),
+                            label: 'Asset:',
+                        },
+                        {
+                            children: `${formatBalance(+bribe.daily_amount, true)} ${
+                                bribe.asset_code
+                            }`,
+                            align: CellAlign.Right,
+                            label: 'Reward per day:',
+                        },
+                        {
+                            children: `${formatBalance(+bribe.daily_aqua_equivalent, true)} AQUA`,
+                            align: CellAlign.Right,
+                            label: 'AQUA amount:',
+                        },
+                    ],
+                }))}
+            />
         </ModalContainer>
     );
 };

@@ -20,7 +20,7 @@ export type ProposalSimple = {
     logvote_set: LogVote[];
 };
 
-type LogVote = {
+export type LogVote = {
     account_issuer: string;
     amount: string;
     asset_code: string;

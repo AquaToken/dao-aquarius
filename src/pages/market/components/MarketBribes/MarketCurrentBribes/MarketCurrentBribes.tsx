@@ -12,15 +12,9 @@ import {
     ExternalLinkWeb,
     HowItWorksFooter,
     HowItWorksText,
-    RightAlignedCell,
-    TableCell,
 } from '../../../../vote/components/MainPage/BribesModal/BribesModal';
 import Close from '../../../../../common/assets/img/icon-close-small-purple.svg';
-import {
-    TableBody,
-    TableHead,
-    TableHeadRow,
-} from '../../../../vote/components/MainPage/Table/Table';
+
 import Asset from '../../../../vote/components/AssetDropdown/Asset';
 import { StellarService } from '../../../../../common/services/globalServices';
 import styled from 'styled-components';
@@ -28,6 +22,7 @@ import { Breakpoints, COLORS } from '../../../../../common/styles';
 import Aqua from '../../../../../common/assets/img/aqua-logo-small.svg';
 import Info from '../../../../../common/assets/img/icon-info.svg';
 import { respondDown } from '../../../../../common/mixins';
+import Table, { CellAlign } from '../../../../../common/basics/Table';
 
 const Container = styled.div`
     display: flex;
@@ -99,25 +94,6 @@ export const HowItWorks = styled.div`
         padding: 1.6rem;
         background-color: ${COLORS.lightGray};
     `}
-`;
-
-export const TableBodyRow = styled.div`
-    display: flex;
-    align-items: stretch;
-    width: 100%;
-    min-height: 5rem;
-    font-size: 1.6rem;
-    line-height: 2.8rem;
-    color: ${COLORS.paragraphText};
-    position: relative;
-
-    ${respondDown(Breakpoints.md)`
-            background: ${COLORS.white};
-            flex-direction: column;
-            border-radius: 0.5rem;
-            margin-bottom: 1.6rem;
-            padding: 2.7rem 1.6rem 1.6rem;
-      `}
 `;
 
 const Total = styled.div`
@@ -205,47 +181,69 @@ const MarketCurrentBribes = ({ extra, bribes }) => {
                     </HowItWorks>
                 )}
             </BribeDetails>
-            <TableHead>
-                <TableHeadRow>
-                    <TableCell>Asset</TableCell>
-                    <RightAlignedCell>Reward per day</RightAlignedCell>
-                    <RightAlignedCell>AQUA amount</RightAlignedCell>
-                </TableHeadRow>
-            </TableHead>
-            <TableBody>
-                {bribes.map((bribe) => (
-                    <TableBodyRow key={bribe.asset_code + bribe.asset_issuer}>
-                        <TableCell>
-                            <label>Asset:</label>
-                            <Asset
-                                asset={StellarService.createAsset(
-                                    bribe.asset_code,
-                                    bribe.asset_issuer,
-                                )}
-                                inRow
-                                withMobileView
-                            />
-                        </TableCell>
-                        <RightAlignedCell>
-                            <label>Reward per day:</label>
-                            {formatBalance(+bribe.daily_amount, true)} {bribe.asset_code}
-                        </RightAlignedCell>
-                        <RightAlignedCell>
-                            <label>AQUA amount:</label>
-                            {formatBalance(+bribe.daily_aqua_equivalent, true)} AQUA
-                        </RightAlignedCell>
-                    </TableBodyRow>
-                ))}
-                <TableBodyRow>
-                    <TableCell>Total reward per day:</TableCell>
-                    <RightAlignedCell />
-                    <RightAlignedCell>
-                        <Total>
-                            <AquaLogoSmall />≈{formatBalance(sum, true)} AQUA
-                        </Total>
-                    </RightAlignedCell>
-                </TableBodyRow>
-            </TableBody>
+
+            <Table
+                head={[
+                    { children: 'Asset' },
+                    { children: 'Reward per day', align: CellAlign.Right },
+                    { children: 'AQUA amount', align: CellAlign.Right },
+                ]}
+                body={[
+                    ...bribes.map((bribe) => ({
+                        isNarrow: true,
+                        key: bribe.asset_code + bribe.asset_issuer,
+                        mobileBackground: COLORS.lightGray,
+                        rowItems: [
+                            {
+                                children: (
+                                    <Asset
+                                        asset={StellarService.createAsset(
+                                            bribe.asset_code,
+                                            bribe.asset_issuer,
+                                        )}
+                                        inRow
+                                        withMobileView
+                                    />
+                                ),
+                                label: 'Asset:',
+                            },
+                            {
+                                children: `${formatBalance(+bribe.daily_amount, true)} ${
+                                    bribe.asset_code
+                                }`,
+                                label: 'Reward per day:',
+                                align: CellAlign.Right,
+                            },
+                            {
+                                children: `${formatBalance(
+                                    +bribe.daily_aqua_equivalent,
+                                    true,
+                                )} AQUA`,
+                                label: 'AQUA amount:',
+                                align: CellAlign.Right,
+                            },
+                        ],
+                    })),
+                    {
+                        isNarrow: true,
+                        key: 'total',
+                        mobileBackground: COLORS.lightGray,
+                        rowItems: [
+                            { children: 'Total reward per day:' },
+                            { children: '' },
+                            {
+                                children: (
+                                    <Total>
+                                        <AquaLogoSmall />≈{formatBalance(sum, true)} AQUA
+                                    </Total>
+                                ),
+                                align: CellAlign.Right,
+                                label: 'AQUA amount:',
+                            },
+                        ],
+                    },
+                ]}
+            />
         </Container>
     );
 };

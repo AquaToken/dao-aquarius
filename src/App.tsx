@@ -45,12 +45,17 @@ const App = () => {
     const [isAssetsUpdated, setIsAssetsUpdated] = useState(false);
     const [balances, setBalances] = useState(null);
 
-    const { isLogged, account, isRedirectEnabled, disableRedirect } = useAuthStore();
+    const { isLogged, account, redirectURL, disableRedirect, callback, removeAuthCallback } =
+        useAuthStore();
 
     useEffect(() => {
         const assetUpdateTimestamp = localStorage.getItem(UPDATE_ASSETS_DATE);
 
-        if (!assetUpdateTimestamp || Date.now() - Number(assetUpdateTimestamp) > UPDATE_PERIOD) {
+        if (
+            !assetUpdateTimestamp ||
+            Date.now() - Number(assetUpdateTimestamp) > UPDATE_PERIOD ||
+            !assetsInfo.size
+        ) {
             clearAssets();
             localStorage.setItem(UPDATE_ASSETS_DATE, Date.now().toString());
             setIsAssetsUpdated(true);
@@ -62,9 +67,11 @@ const App = () => {
     }, []);
 
     useEffect(() => {
-        WalletConnectService.loginIfSessionExist().then(() => {
-            setWcLoginChecked(true);
-        });
+        WalletConnectService.onAppStart(window.location.pathname === MainRoutes.walletConnect).then(
+            () => {
+                setWcLoginChecked(true);
+            },
+        );
     }, []);
 
     useEffect(() => {
@@ -98,34 +105,42 @@ const App = () => {
 
     useEffect(() => {
         if (isLogged) {
-            StellarService.startClaimableBalancesStream(account.accountId());
+            StellarService.startEffectsStream(account.accountId());
         } else {
-            StellarService.closeClaimableBalancesStream();
+            StellarService.stopEffectsStream();
         }
     }, [isLogged]);
 
     useEffect(() => {
-        if (isLogged && isRedirectEnabled) {
+        if (isLogged && Boolean(redirectURL)) {
             disableRedirect();
         }
-    }, [isLogged, isRedirectEnabled]);
+    }, [isLogged, redirectURL]);
+
+    useEffect(() => {
+        if (isLogged && Boolean(callback)) {
+            callback();
+            removeAuthCallback();
+        }
+    }, [isLogged, callback]);
 
     useEffect(() => {
         const userAgent = window.navigator.userAgent;
 
+        // Fix iOS functionality: tap on both sides of the dynamic island, and the phone will instantly scroll up
         if (userAgent.match(/iPad/i) || userAgent.match(/iPhone/i)) {
             document.documentElement.style.overflowX = 'unset';
             document.body.style.overflowX = 'unset';
         }
     }, []);
 
-    if (!isAssetsUpdated || !assetsInfo.size || !wcLoginChecked) {
+    if (!isAssetsUpdated || !wcLoginChecked) {
         return <PageLoader />;
     }
 
     return (
         <Router>
-            {isLogged && isRedirectEnabled && <Redirect to={MainRoutes.account} />}
+            {isLogged && Boolean(redirectURL) && <Redirect to={redirectURL} />}
             <Header>
                 <>
                     {/*<HeaderNavLink*/}
@@ -234,6 +249,12 @@ const App = () => {
                         <MarketPage />
                     </Route>
                     <Route path={MainRoutes.rewards}>
+                        <Title title="Aquarius Rewards">
+                            <RewardsPage />
+                        </Title>
+                    </Route>
+                    {/*TODO: Remove it later*/}
+                    <Route path={MainRoutes.rewardsV2}>
                         <Title title="Aquarius Rewards">
                             <RewardsPage />
                         </Title>

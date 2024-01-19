@@ -30,14 +30,12 @@ import VotesDurationModal from './VotesDurationModal';
 import Select, { Option } from '../../../../../common/basics/Select';
 import { Asset } from 'stellar-sdk';
 import { LoginTypes } from '../../../../../store/authStore/types';
-import {
-    BuildSignAndSubmitStatuses,
-    openApp,
-} from '../../../../../common/services/wallet-connect.service';
+import { BuildSignAndSubmitStatuses } from '../../../../../common/services/wallet-connect.service';
 import ErrorHandler from '../../../../../common/helpers/error-handler';
 import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
 import { Link } from 'react-router-dom';
 import { LockerRoutes } from '../../../../../routes';
+import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
 
 export const ContentRow = styled.div`
     ${flexRowSpaceBetween};
@@ -202,8 +200,13 @@ const TotalAmountRow = styled.div`
 const TotalAmount = styled.div`
     display: flex;
     align-items: center;
+    word-break: break-word;
+    width: 48rem;
+    justify-content: flex-end;
+
     svg {
         margin-left: 0.8rem;
+        min-width: 3.2rem;
     }
 `;
 
@@ -517,7 +520,7 @@ const VotesAmountModal = ({
         }
 
         if (targetAsset !== AQUA && account.authType === LoginTypes.walletConnect) {
-            openApp();
+            openCurrentWalletIfExist();
         }
 
         if (targetAsset !== AQUA) {

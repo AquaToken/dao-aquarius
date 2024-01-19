@@ -181,7 +181,7 @@ const PILLAR_OFFSET = 200;
 const FILLER_OFFSET = 100;
 
 const Roadmap = () => {
-    const [activeSlide, setActiveSlide] = useState(1);
+    const [activeSlide, setActiveSlide] = useState(completedStepsCount);
     const sliderRef = useRef(null);
     const pillarRef = useRef(null);
     const fillerRef = useRef(null);

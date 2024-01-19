@@ -14,13 +14,13 @@ import Input from '../../../../../common/basics/Input';
 import { checkProposalStatus, publishProposal } from '../../../api/api';
 import { StellarService, ToastService } from '../../../../../common/services/globalServices';
 import { sha256 } from 'js-sha256';
-import { MemoHash } from 'stellar-base';
+import { MemoHash } from '@stellar/stellar-sdk';
 import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
 import { useHistory } from 'react-router-dom';
 import PaymentInProgressAlert from '../PaymentInProgressAlert/PaymentInProgressAlert';
 import ErrorHandler from '../../../../../common/helpers/error-handler';
 import { LoginTypes } from '../../../../../store/authStore/types';
-import { openApp } from '../../../../../common/services/wallet-connect.service';
+import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
 
 const Description = styled(ModalDescription)`
     width: 52.8rem;
@@ -141,7 +141,7 @@ const PublishProposalModal = ({ params, close }) => {
         setLoading(true);
 
         if (account.authType === LoginTypes.walletConnect) {
-            openApp();
+            openCurrentWalletIfExist();
         }
 
         try {

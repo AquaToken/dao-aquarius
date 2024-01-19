@@ -1,7 +1,7 @@
 import LedgerTransport from '@ledgerhq/hw-transport-webusb';
 import LedgerStr from '@ledgerhq/hw-app-str';
 import Str from '@ledgerhq/hw-app-str';
-import * as StellarSdk from 'stellar-sdk';
+import * as StellarSdk from '@stellar/stellar-sdk';
 import { ModalService } from './globalServices';
 import EventService from './event.service';
 import LedgerError from '../modals/LedgerModals/LedgerError';

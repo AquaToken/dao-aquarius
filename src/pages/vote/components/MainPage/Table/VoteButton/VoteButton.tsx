@@ -77,7 +77,14 @@ const VoteButton = ({
         event.preventDefault();
         event.stopPropagation();
         if (!isLogged) {
-            ModalService.openModal(ChooseLoginMethodModal, {});
+            ModalService.openModal(ChooseLoginMethodModal, {
+                callback: () =>
+                    ModalService.openModal(VotesAmountModal, {
+                        pairs: [pair],
+                        isDownVoteModal: true,
+                        updatePairs: () => {},
+                    }),
+            });
             return;
         }
 

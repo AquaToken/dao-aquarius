@@ -14,7 +14,8 @@ export const initialState: AuthStore = {
     federationAddress: '',
     isFederationPending: false,
     metadata: null,
-    isRedirectEnabled: false,
+    redirectURL: undefined,
+    callback: undefined,
 };
 
 export default function authStore(state = initialState, action: ActionSimpleResult): AuthStore {
@@ -96,15 +97,33 @@ export default function authStore(state = initialState, action: ActionSimpleResu
             };
         }
         case AUTH_ACTIONS.ENABLE_REDIRECT: {
+            const { redirectURL } = action.payload as {
+                redirectURL: string;
+            };
             return {
                 ...state,
-                isRedirectEnabled: true,
+                redirectURL,
             };
         }
         case AUTH_ACTIONS.DISABLE_REDIRECT: {
             return {
                 ...state,
-                isRedirectEnabled: false,
+                redirectURL: undefined,
+            };
+        }
+        case AUTH_ACTIONS.ADD_AUTH_CALLBACK: {
+            const { callback } = action.payload as {
+                callback: void;
+            };
+            return {
+                ...state,
+                callback,
+            };
+        }
+        case AUTH_ACTIONS.REMOVE_AUTH_CALLBACK: {
+            return {
+                ...state,
+                callback: undefined,
             };
         }
         default: {

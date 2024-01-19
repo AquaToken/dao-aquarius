@@ -12,7 +12,7 @@ import { Proposal } from '../../../api/types';
 import { formatBalance } from '../../../../../common/helpers/helpers';
 import { CREATE_DISCUSSION_COST } from '../../../pages/GovernanceMainPage';
 import { StellarService, ToastService } from '../../../../../common/services/globalServices';
-import { MemoHash } from 'stellar-base';
+import { MemoHash } from '@stellar/stellar-sdk';
 import { sha256 } from 'js-sha256';
 import useAuthStore from '../../../../../store/authStore/useAuthStore';
 import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
@@ -22,7 +22,7 @@ import { Breakpoints } from '../../../../../common/styles';
 import PaymentInProgressAlert from '../PaymentInProgressAlert/PaymentInProgressAlert';
 import ErrorHandler from '../../../../../common/helpers/error-handler';
 import { LoginTypes } from '../../../../../store/authStore/types';
-import { openApp } from '../../../../../common/services/wallet-connect.service';
+import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
 
 const ProposalCost = styled.div`
     ${flexRowSpaceBetween};
@@ -103,7 +103,7 @@ const CreateDiscussionModal = ({
         setLoading(true);
 
         if (account.authType === LoginTypes.walletConnect) {
-            openApp();
+            openCurrentWalletIfExist();
         }
 
         try {

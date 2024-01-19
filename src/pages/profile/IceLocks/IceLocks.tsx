@@ -1,15 +1,7 @@
 import * as React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import {
-    Cell,
-    ExternalLinkStyled,
-    Header,
-    Section,
-    Table,
-    TableBodyRow,
-    Title,
-} from '../AmmRewards/AmmRewards';
+import { ExternalLinkStyled, Header, Section, Title } from '../AmmRewards/AmmRewards';
 import PageLoader from '../../../common/basics/PageLoader';
 import { getDistributionForAccount } from '../../locker/api/api';
 import useAuthStore from '../../../store/authStore/useAuthStore';
@@ -17,13 +9,9 @@ import { StellarService, ToastService } from '../../../common/services/globalSer
 import { StellarEvents } from '../../../common/services/stellar.service';
 import { formatBalance, getDateString, roundToPrecision } from '../../../common/helpers/helpers';
 import ProgressLine from '../../../common/basics/ProgressLine';
-import { TableBody, TableHead, TableHeadRow } from '../../vote/components/MainPage/Table/Table';
 import Button from '../../../common/basics/Button';
 import { LoginTypes } from '../../../store/authStore/types';
-import {
-    BuildSignAndSubmitStatuses,
-    openApp,
-} from '../../../common/services/wallet-connect.service';
+import { BuildSignAndSubmitStatuses } from '../../../common/services/wallet-connect.service';
 import ErrorHandler from '../../../common/helpers/error-handler';
 import { Empty } from '../YourVotes/YourVotes';
 import { Link } from 'react-router-dom';
@@ -32,56 +20,17 @@ import { Breakpoints, COLORS } from '../../../common/styles';
 import { flexRowSpaceBetween, respondDown } from '../../../common/mixins';
 import Info from '../../../common/assets/img/icon-info.svg';
 import Tooltip, { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
+import Table, { CellAlign } from '../../../common/basics/Table';
+import Checkbox from '../../../common/basics/Checkbox';
+import { openCurrentWalletIfExist } from '../../../common/helpers/wallet-connect-helpers';
 
 const Container = styled.div`
     display: flex;
     flex-direction: column;
 `;
 
-const TableHeadRowStyled = styled(TableBodyRow)`
-    min-height: 5rem;
-`;
-
-const RightCell = styled(Cell)`
-    justify-content: flex-end;
-`;
-
 const TableStyled = styled(Table)`
     margin-top: 2.5rem;
-`;
-
-export const UnlockedBlock = styled.div`
-    display: flex;
-    justify-content: space-between;
-    border-radius: 0.5rem;
-    background: ${COLORS.lightGray};
-    padding: 4rem 2.1rem 4rem 4.8rem;
-    margin-top: 2.2rem;
-    margin-bottom: 3rem;
-
-    ${respondDown(Breakpoints.md)`
-        flex-direction: column;
-        background: ${COLORS.white};
-    `}
-`;
-
-export const UnlockedStats = styled.div`
-    display: flex;
-    flex-direction: column;
-    font-size: 1.6rem;
-    line-height: 2.8rem;
-    color: ${COLORS.paragraphText};
-
-    span:last-child {
-        font-size: 1.4rem;
-        line-height: 2rem;
-        color: ${COLORS.grayText};
-    }
-
-    ${respondDown(Breakpoints.md)`
-        margin-bottom: 2rem;
-        text-align: center;
-    `}
 `;
 
 const Total = styled.div`
@@ -125,10 +74,27 @@ const TooltipTotal = styled(TooltipRow)`
     line-height: 2.8rem;
 `;
 
+const StyledButton = styled(Button)`
+    margin-top: 2rem;
+`;
+
+const SelectAll = styled(Checkbox)`
+    display: none;
+    margin-top: 2.8rem;
+    margin-bottom: 2.8rem;
+    margin-left: 1.6rem;
+    width: fit-content;
+
+    ${respondDown(Breakpoints.md)`
+        display: flex;
+    `}
+`;
+
 const ALL_ID = 'all';
 
 const IceLocks = ({ ammAquaBalance }) => {
     const [locks, setLocks] = useState(null);
+    const [selectedLocks, setSelectedLocks] = useState([]);
     const [distributions, setDistributions] = useState(null);
     const [aquaInVotes, setAquaInVotes] = useState(null);
 
@@ -169,23 +135,21 @@ const IceLocks = ({ ammAquaBalance }) => {
     const aquaBalance = account.getAquaBalance();
     const aquaInOffers = account.getAquaInOffers();
 
-    const { unlockedCount, unlockedSum, locksSum, unlockedIds } = useMemo(() => {
+    const { locksSum, unlockedIds } = useMemo(() => {
         if (!locks) {
-            return { unlockedCount: 0, unlockedSum: 0, locksSum: 0, unlockedIds: [] };
+            return { locksSum: 0, unlockedIds: [] };
         }
         return locks.reduce(
             (acc, lock) => {
                 const unlockTimestamp =
                     Number(lock.claimants[0]?.predicate?.not?.abs_before_epoch) * 1000;
                 if (unlockTimestamp && unlockTimestamp < Date.now()) {
-                    acc.unlockedCount += 1;
-                    acc.unlockedSum += Number(lock.amount);
                     acc.unlockedIds.push(lock.id);
                 }
                 acc.locksSum += Number(lock.amount);
                 return acc;
             },
-            { unlockedCount: 0, unlockedSum: 0, locksSum: 0, unlockedIds: [] },
+            { locksSum: 0, unlockedIds: [] },
         );
     }, [locks]);
 
@@ -220,13 +184,13 @@ const IceLocks = ({ ammAquaBalance }) => {
 
     const onSubmit = async (id?: string) => {
         if (account.authType === LoginTypes.walletConnect) {
-            openApp();
+            openCurrentWalletIfExist();
         }
         try {
             setPendingId(id || ALL_ID);
             const ops = id
                 ? StellarService.createClaimOperations(id, account.getAquaBalance() === null)
-                : unlockedIds.reduce((acc, cbId, index) => {
+                : selectedLocks.reduce((acc, cbId, index) => {
                       acc = [
                           ...acc,
                           ...StellarService.createClaimOperations(
@@ -259,6 +223,78 @@ const IceLocks = ({ ammAquaBalance }) => {
         }
     };
 
+    const selectLock = useCallback(
+        (id) => {
+            if (selectedLocks.includes(id)) {
+                return setSelectedLocks(selectedLocks.filter((lockId) => lockId !== id));
+            }
+            setSelectedLocks([...selectedLocks, id]);
+        },
+        [setSelectedLocks, selectedLocks],
+    );
+
+    const selectAll = useCallback(() => {
+        if (selectedLocks.length) {
+            return setSelectedLocks([]);
+        }
+        const all = locks.filter(({ id }) => unlockedIds.includes(id)).map(({ id }) => id);
+        setSelectedLocks(all);
+    }, [setSelectedLocks, selectedLocks, locks, unlockedIds]);
+
+    const getActionHeaderCell = useCallback(() => {
+        if (account.authType === LoginTypes.ledger) {
+            return { children: 'Status', align: CellAlign.Right };
+        }
+        return {
+            children: (
+                <Checkbox
+                    checked={Boolean(selectedLocks.length)}
+                    onChange={() => selectAll()}
+                    disabled={!unlockedIds.length}
+                />
+            ),
+            align: CellAlign.Center,
+            flexSize: 0.3,
+        };
+    }, [account, selectAll, selectedLocks, unlockedIds]);
+
+    const getActionCell = useCallback(
+        (lock) => {
+            if (account.authType === LoginTypes.ledger) {
+                return {
+                    children: !unlockedIds.includes(lock.id) ? (
+                        <span>Upcoming</span>
+                    ) : (
+                        <Button
+                            isSmall
+                            disabled={Boolean(pendingId) && lock.id !== pendingId}
+                            pending={lock.id === pendingId}
+                            onClick={() => onSubmit(lock.id)}
+                        >
+                            CLAIM
+                        </Button>
+                    ),
+                    label: 'Status:',
+                    align: CellAlign.Right,
+                };
+            }
+
+            return {
+                children: (
+                    <Checkbox
+                        checked={selectedLocks.includes(lock.id)}
+                        onChange={() => selectLock(lock.id)}
+                        disabled={!unlockedIds.includes(lock.id)}
+                    />
+                ),
+                align: CellAlign.Center,
+                flexSize: 0.3,
+                hideOnMobile: true,
+            };
+        },
+        [account, pendingId, selectedLocks, selectLock, unlockedIds],
+    );
+
     return (
         <Container>
             <Header>
@@ -270,24 +306,6 @@ const IceLocks = ({ ammAquaBalance }) => {
                     <PageLoader />
                 ) : locks.length ? (
                     <>
-                        {unlockedCount > 1 && account.authType !== LoginTypes.ledger && (
-                            <UnlockedBlock>
-                                <UnlockedStats>
-                                    <span>You have unclaimed locks</span>
-                                    <span>
-                                        {unlockedCount} locks for {formatBalance(unlockedSum, true)}{' '}
-                                        AQUA
-                                    </span>
-                                </UnlockedStats>
-                                <Button
-                                    onClick={() => onSubmit()}
-                                    pending={pendingId === ALL_ID}
-                                    disabled={Boolean(pendingId) && pendingId !== ALL_ID}
-                                >
-                                    CLAIM ALL
-                                </Button>
-                            </UnlockedBlock>
-                        )}
                         <ProgressLine
                             percent={+lockPercent}
                             leftLabel={`Locked: ${formatBalance(
@@ -353,73 +371,84 @@ const IceLocks = ({ ammAquaBalance }) => {
                                 </Tooltip>
                             }
                         />
-                        <TableStyled>
-                            <TableHead>
-                                <TableHeadRow>
-                                    <Cell>Lock start</Cell>
-                                    <Cell>Lock end</Cell>
-                                    <RightCell>AQUA locked</RightCell>
-                                    <RightCell>ICE received</RightCell>
-                                    <RightCell>Status</RightCell>
-                                </TableHeadRow>
-                            </TableHead>
-                            <TableBody>
-                                {locks.map((lock) => {
-                                    const lockEndTimestamp = new Date(
-                                        lock.claimants?.[0].predicate?.not?.abs_before,
-                                    ).getTime();
-                                    const status =
-                                        Number(lockEndTimestamp) > Date.now() ? (
-                                            <span>Upcoming</span>
-                                        ) : (
-                                            <Button
-                                                isSmall
-                                                disabled={
-                                                    Boolean(pendingId) && lock.id !== pendingId
-                                                }
-                                                pending={lock.id === pendingId}
-                                                onClick={() => onSubmit(lock.id)}
-                                            >
-                                                CLAIM
-                                            </Button>
-                                        );
-                                    return (
-                                        <TableHeadRowStyled key={lock.id}>
-                                            <Cell>
-                                                <label>Lock start:</label>
-                                                {getDateString(
-                                                    new Date(lock.last_modified_time).getTime(),
-                                                    { withTime: true },
-                                                )}
-                                            </Cell>
-                                            <Cell>
-                                                <label>Lock end:</label>
-                                                {getDateString(lockEndTimestamp, {
-                                                    withTime: true,
-                                                })}
-                                            </Cell>
-                                            <RightCell>
-                                                <label>AQUA locked:</label>
-                                                {formatBalance(+lock.amount, true)} AQUA
-                                            </RightCell>
-                                            <RightCell>
-                                                <label>ICE received :</label>
-                                                {getIceAmount(lock.id)
-                                                    ? `${formatBalance(
-                                                          getIceAmount(lock.id),
-                                                          true,
-                                                      )} ICE`
-                                                    : '-'}
-                                            </RightCell>
-                                            <RightCell>
-                                                <label>Status:</label>
-                                                {status}
-                                            </RightCell>
-                                        </TableHeadRowStyled>
-                                    );
-                                })}
-                            </TableBody>
-                        </TableStyled>
+                        {account.authType !== LoginTypes.ledger && (
+                            <SelectAll
+                                checked={Boolean(selectedLocks.length)}
+                                onChange={() => selectAll()}
+                                disabled={!unlockedIds.length}
+                                label="Select all"
+                            />
+                        )}
+                        <TableStyled
+                            head={[
+                                { children: 'Lock start' },
+                                { children: 'Lock end' },
+                                { children: 'AQUA locked', align: CellAlign.Right },
+                                { children: 'ICE received', align: CellAlign.Right },
+                                getActionHeaderCell(),
+                            ]}
+                            body={locks.map((lock) => {
+                                const lockEndTimestamp = new Date(
+                                    lock.claimants?.[0].predicate?.not?.abs_before,
+                                ).getTime();
+                                return {
+                                    key: lock.id,
+                                    isNarrow: true,
+                                    rowItems: [
+                                        {
+                                            children: (
+                                                <Checkbox
+                                                    checked={selectedLocks.includes(lock.id)}
+                                                    onChange={() => selectLock(lock.id)}
+                                                    disabled={!unlockedIds.includes(lock.id)}
+                                                />
+                                            ),
+                                            hideOnWeb: true,
+                                        },
+                                        {
+                                            children: `${getDateString(
+                                                new Date(lock.last_modified_time).getTime(),
+                                                { withTime: true },
+                                            )}`,
+                                            label: 'Lock start:',
+                                        },
+                                        {
+                                            children: `${getDateString(lockEndTimestamp, {
+                                                withTime: true,
+                                            })}`,
+                                            label: 'Lock end:',
+                                        },
+                                        {
+                                            children: `${formatBalance(+lock.amount, true)} AQUA`,
+                                            label: 'AQUA locked:',
+                                            align: CellAlign.Right,
+                                        },
+                                        {
+                                            children: getIceAmount(lock.id)
+                                                ? `${formatBalance(
+                                                      getIceAmount(lock.id),
+                                                      true,
+                                                  )} ICE`
+                                                : '-',
+                                            label: 'ICE received:',
+                                            align: CellAlign.Right,
+                                        },
+                                        getActionCell(lock),
+                                    ],
+                                };
+                            })}
+                        />
+                        {account.authType !== LoginTypes.ledger && (
+                            <StyledButton
+                                fullWidth
+                                isBig
+                                disabled={!selectedLocks.length}
+                                onClick={() => onSubmit()}
+                                pending={Boolean(pendingId)}
+                            >
+                                claim selected
+                            </StyledButton>
+                        )}
                     </>
                 ) : (
                     <Empty>

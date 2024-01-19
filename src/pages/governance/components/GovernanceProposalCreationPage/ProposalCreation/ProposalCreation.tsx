@@ -241,15 +241,6 @@ const ProposalCreation = ({
                                     onChange={(event) => {
                                         setDiscordChannelOwner(event.target.value);
                                     }}
-                                    pattern="^.{3,32}#[0-9]{4}$"
-                                    onInvalid={(e) =>
-                                        (e.target as HTMLInputElement).setCustomValidity(
-                                            'Format Nickname#0000',
-                                        )
-                                    }
-                                    onInput={(e) =>
-                                        (e.target as HTMLInputElement).setCustomValidity('')
-                                    }
                                 />
                             </SectionForm>
                         )}

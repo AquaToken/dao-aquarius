@@ -71,7 +71,9 @@ const CreateProposal = forwardRef(({}, ref: RefObject<HTMLDivElement>) => {
 
     const handleClick = () => {
         if (!isLogged) {
-            ModalService.openModal(ChooseLoginMethodModal, {});
+            ModalService.openModal(ChooseLoginMethodModal, {
+                redirectURL: GovernanceRoutes.create,
+            });
             return;
         }
 

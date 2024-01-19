@@ -2,7 +2,7 @@ import { AUTH_ACTIONS, LoginTypes } from './types';
 import { Dispatch } from 'react';
 import { SignClientTypes } from '@walletconnect/types';
 import AccountService from '../../common/services/account.service';
-import AccountRecord from 'stellar-sdk';
+import AccountRecord from '@stellar/stellar-sdk';
 import { StellarService } from '../../common/services/globalServices';
 import { ActionAsyncResult, ActionResult, ActionSimpleResult } from '../types';
 
@@ -67,10 +67,18 @@ export function updateAccount(
     return { type: AUTH_ACTIONS.UPDATE_ACCOUNT, payload: { account: wrappedAccount } };
 }
 
-export function enableRedirect(): ActionSimpleResult {
-    return { type: AUTH_ACTIONS.ENABLE_REDIRECT };
+export function enableRedirect(redirectURL: string): ActionSimpleResult {
+    return { type: AUTH_ACTIONS.ENABLE_REDIRECT, payload: { redirectURL } };
 }
 
 export function disableRedirect(): ActionSimpleResult {
     return { type: AUTH_ACTIONS.DISABLE_REDIRECT };
+}
+
+export function addAuthCallback(callback: void): ActionSimpleResult {
+    return { type: AUTH_ACTIONS.ADD_AUTH_CALLBACK, payload: { callback } };
+}
+
+export function removeAuthCallback(): ActionSimpleResult {
+    return { type: AUTH_ACTIONS.REMOVE_AUTH_CALLBACK };
 }

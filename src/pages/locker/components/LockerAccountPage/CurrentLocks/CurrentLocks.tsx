@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useCallback, useMemo } from 'react';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../../../../common/styles';
 import ProgressLine from '../../../../../common/basics/ProgressLine';
@@ -8,9 +9,9 @@ import {
     roundToPrecision,
 } from '../../../../../common/helpers/helpers';
 import { flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
-import { useCallback, useMemo } from 'react';
 import Tooltip, { TOOLTIP_POSITION } from '../../../../../common/basics/Tooltip';
 import Info from '../../../../../common/assets/img/icon-info.svg';
+import Table, { CellAlign } from '../../../../../common/basics/Table';
 
 const Container = styled.div`
     margin-top: 4rem;
@@ -33,50 +34,6 @@ const LocksList = styled.div`
     display: flex;
     flex-direction: column;
     margin-top: 8rem;
-`;
-
-const HeaderRow = styled.div`
-    display: flex;
-    flex-direction: row;
-    font-size: 1.4rem;
-    line-height: 2rem;
-    color: ${COLORS.grayText};
-    margin-bottom: 3.8rem;
-
-    ${respondDown(Breakpoints.md)`
-         font-size: 1.2rem;
-         line-height: 1.6rem;
-    `}
-`;
-
-const TableRow = styled.div`
-    display: flex;
-    flex-direction: row;
-    font-size: 1.6rem;
-    line-height: 2.8rem;
-    color: ${COLORS.paragraphText};
-
-    &:not(:last-child) {
-        margin-bottom: 2.2rem;
-    }
-
-    ${respondDown(Breakpoints.md)`
-        font-size: 1.4rem;
-        line-height: 2rem;
-    `}
-`;
-
-const TableCell = styled.div`
-    flex: 1;
-
-    ${respondDown(Breakpoints.md)`
-        flex: 2;
-    `}
-`;
-
-const TableCellAmount = styled.div`
-    flex: 2;
-    text-align: right;
 `;
 
 const InfoIcon = styled(Info)`
@@ -222,31 +179,52 @@ const CurrentLocks = ({
                 }
             />
             <LocksList>
-                <HeaderRow>
-                    <TableCell>Lock start </TableCell>
-                    <TableCell>Lock end</TableCell>
-                    <TableCellAmount>AQUA locked</TableCellAmount>
-                    <TableCellAmount>ICE received</TableCellAmount>
-                </HeaderRow>
-
-                {locks.map((lock) => (
-                    <TableRow key={lock.id}>
-                        <TableCell>
-                            {getDateString(new Date(lock.last_modified_time).getTime())}
-                        </TableCell>
-                        <TableCell>
-                            {getDateString(
-                                new Date(lock.claimants?.[0].predicate?.not?.abs_before).getTime(),
-                            )}
-                        </TableCell>
-                        <TableCellAmount>{formatBalance(lock.amount, true)} AQUA</TableCellAmount>
-                        <TableCellAmount>
-                            {getIceAmount(lock.id)
-                                ? `${formatBalance(getIceAmount(lock.id), true)} ICE`
-                                : '-'}
-                        </TableCellAmount>
-                    </TableRow>
-                ))}
+                <Table
+                    head={[
+                        { children: 'Lock start', flexSize: 1.5 },
+                        { children: 'Lock end', flexSize: 1.5 },
+                        { children: 'AQUA locked', flexSize: 2, align: CellAlign.Right },
+                        { children: 'ICE received', flexSize: 2, align: CellAlign.Right },
+                    ]}
+                    body={locks.map((lock) => ({
+                        key: lock.id,
+                        isNarrow: true,
+                        mobileBackground: COLORS.lightGray,
+                        mobileFontSize: '1.4rem',
+                        rowItems: [
+                            {
+                                children: getDateString(
+                                    new Date(lock.last_modified_time).getTime(),
+                                ),
+                                label: 'Lock start',
+                                flexSize: 1.5,
+                            },
+                            {
+                                children: getDateString(
+                                    new Date(
+                                        lock.claimants?.[0].predicate?.not?.abs_before,
+                                    ).getTime(),
+                                ),
+                                label: 'Lock end',
+                                flexSize: 1.5,
+                            },
+                            {
+                                children: `${formatBalance(lock.amount, true)} AQUA`,
+                                flexSize: 2,
+                                align: CellAlign.Right,
+                                label: 'AQUA locked',
+                            },
+                            {
+                                children: getIceAmount(lock.id)
+                                    ? `${formatBalance(getIceAmount(lock.id), true)} ICE`
+                                    : '-',
+                                flexSize: 2,
+                                align: CellAlign.Right,
+                                label: 'ICE received',
+                            },
+                        ],
+                    }))}
+                />
             </LocksList>
         </Container>
     );

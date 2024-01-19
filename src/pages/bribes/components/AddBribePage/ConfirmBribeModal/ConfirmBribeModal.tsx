@@ -16,13 +16,11 @@ import useAuthStore from '../../../../../store/authStore/useAuthStore';
 import { useState } from 'react';
 import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
 import ErrorHandler from '../../../../../common/helpers/error-handler';
-import {
-    BuildSignAndSubmitStatuses,
-    openApp,
-} from '../../../../../common/services/wallet-connect.service';
+import { BuildSignAndSubmitStatuses } from '../../../../../common/services/wallet-connect.service';
 import { LoginTypes } from '../../../../../store/authStore/types';
 import { addWeeks } from 'date-fns';
 import { AssetSimple } from '../../../../../store/assetsStore/types';
+import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
 
 const Container = styled.div`
     width: 52.8rem;
@@ -122,7 +120,7 @@ const ConfirmBribeModal = ({
         }
 
         if (account.authType === LoginTypes.walletConnect) {
-            openApp();
+            openCurrentWalletIfExist();
         }
 
         setPending(true);

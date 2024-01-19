@@ -41,7 +41,7 @@ const Container = styled.aside`
     margin-top: -48rem;
     z-index: 102;
 
-    ${respondDown(Breakpoints.md)`
+    ${respondDown(Breakpoints.lg)`
          float: unset;
          position: relative;
          width: calc(100% - 3.2rem);
@@ -132,7 +132,13 @@ const Sidebar = ({ votesData, base, counter, totalStats, onVoteClick, isPairSele
             });
             return;
         }
-        ModalService.openModal(ChooseLoginMethodModal, {});
+        ModalService.openModal(ChooseLoginMethodModal, {
+            callback: () =>
+                ModalService.openModal(CreatePairModal, {
+                    base: base,
+                    counter: counter,
+                }),
+        });
     };
     if (!votesData) {
         return (

@@ -1,23 +1,14 @@
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { COLORS } from '../../../../../common/styles';
-import { useEffect, useState } from 'react';
 import { getUpcomingBribesForMarket } from '../../../../vote/api/api';
 import PageLoader from '../../../../../common/basics/PageLoader';
-import {
-    TableBody,
-    TableHead,
-    TableHeadRow,
-} from '../../../../vote/components/MainPage/Table/Table';
-import {
-    RightAlignedCell,
-    TableCell,
-} from '../../../../vote/components/MainPage/BribesModal/BribesModal';
 import Asset from '../../../../vote/components/AssetDropdown/Asset';
 import { StellarService } from '../../../../../common/services/globalServices';
 import { formatBalance, getDateString } from '../../../../../common/helpers/helpers';
-import { TableBodyRow } from '../MarketCurrentBribes/MarketCurrentBribes';
 import { convertUTCToLocalDateIgnoringTimezone } from '../../../../bribes/pages/AddBribePage';
+import Table, { CellAlign } from '../../../../../common/basics/Table';
 
 const Container = styled.div`
     display: flex;
@@ -35,14 +26,6 @@ const Description = styled.div`
     color: ${COLORS.descriptionText};
     opacity: 0.7;
     margin-bottom: 3.2rem;
-`;
-
-const AssetCell = styled(TableCell)`
-    flex: 4;
-`;
-
-const PeriodCell = styled(RightAlignedCell)`
-    flex: 3;
 `;
 
 const MarketUpcomingBribes = ({ marketKey }) => {
@@ -77,56 +60,65 @@ const MarketUpcomingBribes = ({ marketKey }) => {
     return (
         <Container>
             <Description>Upcoming bribes</Description>
-            <TableHead>
-                <TableHeadRow>
-                    <AssetCell>Reward asset</AssetCell>
-                    <TableCell>Reward per day</TableCell>
-                    <RightAlignedCell>AQUA amount</RightAlignedCell>
-                    <PeriodCell>Period</PeriodCell>
-                </TableHeadRow>
-            </TableHead>
-            <TableBody>
-                {bribes.map((bribe) => {
+            <Table
+                head={[
+                    { children: 'Reward asset', flexSize: 4 },
+                    { children: 'Reward per day', flexSize: 2 },
+                    { children: 'AQUA amount', align: CellAlign.Right, flexSize: 2 },
+                    { children: 'Period', flexSize: 3, align: CellAlign.Right },
+                ]}
+                body={bribes.map((bribe) => {
                     const startUTC = convertUTCToLocalDateIgnoringTimezone(
                         new Date(bribe.start_at),
                     );
                     const stopUTC = convertUTCToLocalDateIgnoringTimezone(new Date(bribe.stop_at));
-                    return (
-                        <TableBodyRow key={bribe.asset_code + bribe.asset_issuer}>
-                            <AssetCell>
-                                <label>Reward asset:</label>
-                                <Asset
-                                    asset={StellarService.createAsset(
-                                        bribe.asset_code,
-                                        bribe.asset_issuer,
-                                    )}
-                                    inRow
-                                    withMobileView
-                                />
-                            </AssetCell>
-                            <TableCell>
-                                <label>Reward per day:</label>
-                                {formatBalance(+bribe.amount / 7, true)} {bribe.asset_code}
-                            </TableCell>
-                            <RightAlignedCell>
-                                <label>AQUA amount:</label>
-                                {formatBalance(
+                    return {
+                        key: bribe.asset_code + bribe.asset_issuer + startUTC,
+                        isNarrow: true,
+                        mobileBackground: COLORS.lightGray,
+                        rowItems: [
+                            {
+                                children: (
+                                    <Asset
+                                        asset={StellarService.createAsset(
+                                            bribe.asset_code,
+                                            bribe.asset_issuer,
+                                        )}
+                                        inRow
+                                        withMobileView
+                                    />
+                                ),
+                                label: 'Reward asset:',
+                                flexSize: 4,
+                            },
+                            {
+                                children: `${formatBalance(+bribe.amount / 7, true)} ${
+                                    bribe.asset_code
+                                }`,
+                                label: 'Reward per day:',
+                                flexSize: 2,
+                            },
+                            {
+                                children: `${formatBalance(
                                     +bribe.aqua_total_reward_amount_equivalent / 7,
                                     true,
-                                )}{' '}
-                                AQUA
-                            </RightAlignedCell>
-                            <PeriodCell>
-                                <label>Period:</label>
-                                {getDateString(startUTC.getTime(), {
+                                )} AQUA`,
+                                label: 'AQUA amount:',
+                                align: CellAlign.Right,
+                                flexSize: 2,
+                            },
+                            {
+                                children: `${getDateString(startUTC.getTime(), {
                                     withoutYear: true,
-                                })}{' '}
-                                - {getDateString(stopUTC.getTime() - 1)}
-                            </PeriodCell>
-                        </TableBodyRow>
-                    );
+                                })} - ${getDateString(stopUTC.getTime() - 1)}`,
+                                label: 'Period:',
+                                flexSize: 3,
+                                align: CellAlign.Right,
+                            },
+                        ],
+                    };
                 })}
-            </TableBody>
+            />
         </Container>
     );
 };

@@ -11,10 +11,7 @@ import { Breakpoints, COLORS } from '../../../../../common/styles';
 import Button from '../../../../../common/basics/Button';
 import { formatBalance, getDateString } from '../../../../../common/helpers/helpers';
 import { StellarService, ToastService } from '../../../../../common/services/globalServices';
-import {
-    BuildSignAndSubmitStatuses,
-    openApp,
-} from '../../../../../common/services/wallet-connect.service';
+import { BuildSignAndSubmitStatuses } from '../../../../../common/services/wallet-connect.service';
 import useAuthStore from '../../../../../store/authStore/useAuthStore';
 import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
 import { LoginTypes } from '../../../../../store/authStore/types';
@@ -22,6 +19,7 @@ import ErrorHandler from '../../../../../common/helpers/error-handler';
 import Aqua from '../../../../../common/assets/img/aqua-logo-small.svg';
 import Ice from '../../../../../common/assets/img/ice-logo.svg';
 import ArrowDown from '../../../../../common/assets/img/icon-arrow-down-purple.svg';
+import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
 
 const ModalContainer = styled.div`
     width: 52.8rem;
@@ -170,7 +168,7 @@ const LockAquaModal = ({
 
     const onSubmit = async () => {
         if (account.authType === LoginTypes.walletConnect) {
-            openApp();
+            openCurrentWalletIfExist();
         }
         try {
             setPending(true);

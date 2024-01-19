@@ -45,7 +45,7 @@ const DepositToPool = ({ params }) => {
     const [price, setPrice] = useState(null);
 
     useEffect(() => {
-        SorobanService.getPoolPrice(account?.accountId(), base, counter).then((res) => {
+        SorobanService.getPoolPrice(account?.accountId(), base, counter, poolId).then((res) => {
             setPrice(res);
         });
     }, []);
@@ -105,7 +105,8 @@ const DepositToPool = ({ params }) => {
             .then((tx) => account.signAndSubmitTx(tx as SorobanClient.Transaction, true))
             .then((res) => {
                 setPending(false);
-                const [baseResultAmount, counterResultAmount] = res.value();
+
+                const [baseResultAmount, counterResultAmount] = res.value()[0].value();
 
                 ModalService.confirmAllModals();
 

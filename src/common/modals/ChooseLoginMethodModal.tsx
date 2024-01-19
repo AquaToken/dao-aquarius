@@ -114,40 +114,57 @@ const TooltipText = styled.div`
 const ChooseLoginMethodModal = ({
     close,
     params,
-}: ModalProps<{ withRedirect?: boolean }>): JSX.Element => {
-    const { enableRedirect, disableRedirect } = useAuthStore();
+}: ModalProps<{ redirectURL?: string; callback?: () => void }>): JSX.Element => {
+    const { enableRedirect, disableRedirect, addAuthCallback, removeAuthCallback } = useAuthStore();
 
     useEffect(() => {
-        if (params.withRedirect) {
-            enableRedirect();
+        if (params.redirectURL) {
+            enableRedirect(params.redirectURL);
         } else {
             disableRedirect();
         }
     }, []);
 
+    useEffect(() => {
+        if (params.callback) {
+            addAuthCallback(params.callback);
+        } else {
+            removeAuthCallback();
+        }
+    }, []);
+
     const chooseMethod = (method: LoginTypes) => {
-        if (method === LoginTypes.secret) {
-            close();
-            ModalService.openModal(LoginWithSecret, {});
-        } else if (method === LoginTypes.walletConnect) {
-            if (isUaWebview(window?.navigator?.userAgent)) {
-                close();
-                WalletConnectService.autoLogin();
-            } else {
-                WalletConnectService.login();
-            }
-        } else if (method === LoginTypes.public) {
-            close();
-            ModalService.openModal(LoginWithPublic, {});
-        } else if (method === LoginTypes.ledger) {
-            LedgerService.isSupported.then((res) => {
-                if (res) {
+        switch (method) {
+            case LoginTypes.walletConnect:
+                // We make the assumption that if the application is open via WebView,
+                // then wallet knows how to process the custom postMessage
+                if (isUaWebview(window?.navigator?.userAgent)) {
                     close();
-                    ModalService.openModal(LedgerLogin, {});
+                    WalletConnectService.autoLogin();
                 } else {
-                    ToastService.showErrorToast('Ledger Wallet is not supported by your browser.');
+                    WalletConnectService.login();
                 }
-            });
+                break;
+            case LoginTypes.public:
+                close();
+                ModalService.openModal(LoginWithPublic, {});
+                break;
+            case LoginTypes.ledger:
+                LedgerService.isSupported.then((res) => {
+                    if (res) {
+                        close();
+                        ModalService.openModal(LedgerLogin, {});
+                    } else {
+                        ToastService.showErrorToast(
+                            'Ledger Wallet is not supported by your browser.',
+                        );
+                    }
+                });
+                break;
+            case LoginTypes.secret:
+                close();
+                ModalService.openModal(LoginWithSecret, {});
+                break;
         }
     };
 
@@ -155,30 +172,30 @@ const ChooseLoginMethodModal = ({
         <>
             <ModalTitle>Sign in</ModalTitle>
 
-            <LoginMethod onClick={() => chooseMethod(LoginTypes.walletConnect)}>
-                <WalletConnectLogoRelative>
-                    <WalletConnectLogo />
-                    <Tooltip>
-                        <LobstrLogo />
-                        <TooltipText>Available in LOBSTR wallet</TooltipText>
-                    </Tooltip>
-                </WalletConnectLogoRelative>
+            {/*<LoginMethod onClick={() => chooseMethod(LoginTypes.walletConnect)}>*/}
+            {/*    <WalletConnectLogoRelative>*/}
+            {/*        <WalletConnectLogo />*/}
+            {/*        <Tooltip>*/}
+            {/*            <LobstrLogo />*/}
+            {/*            <TooltipText>Available in LOBSTR wallet</TooltipText>*/}
+            {/*        </Tooltip>*/}
+            {/*    </WalletConnectLogoRelative>*/}
 
-                <LoginMethodName>WalletConnect</LoginMethodName>
-                <ArrowRight />
-            </LoginMethod>
+            {/*    <LoginMethodName>WalletConnect</LoginMethodName>*/}
+            {/*    <ArrowRight />*/}
+            {/*</LoginMethod>*/}
 
-            <LoginMethod onClick={() => chooseMethod(LoginTypes.public)}>
-                <StellarLogo />
-                <LoginMethodWithDescription>
-                    <LoginMethodName>Stellar Laboratory</LoginMethodName>
-                    <LoginMethodDescription>
-                        Sign with Freighter, Trezor, Albedo or others tools.
-                    </LoginMethodDescription>
-                </LoginMethodWithDescription>
+            {/*<LoginMethod onClick={() => chooseMethod(LoginTypes.public)}>*/}
+            {/*    <StellarLogo />*/}
+            {/*    <LoginMethodWithDescription>*/}
+            {/*        <LoginMethodName>Stellar Laboratory</LoginMethodName>*/}
+            {/*        <LoginMethodDescription>*/}
+            {/*            Sign with Freighter, Trezor, Albedo or others tools.*/}
+            {/*        </LoginMethodDescription>*/}
+            {/*    </LoginMethodWithDescription>*/}
 
-                <ArrowRight />
-            </LoginMethod>
+            {/*    <ArrowRight />*/}
+            {/*</LoginMethod>*/}
 
             {/*<LoginMethod onClick={() => chooseMethod(LoginTypes.ledger)}>*/}
             {/*    <Ledger />*/}

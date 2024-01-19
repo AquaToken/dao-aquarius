@@ -1,7 +1,7 @@
 import { Dispatch } from 'react';
 import { ASSETS_ACTIONS, AssetSimple } from './types';
 import { ASSET_CACHE } from './reducer';
-import * as StellarSdk from 'stellar-sdk';
+import * as StellarSdk from '@stellar/stellar-sdk';
 import { ActionResult } from '../types';
 import { getAssetsInfo, getAssetsRequest } from './api/api';
 
@@ -53,6 +53,15 @@ const HARDCODE = new Map([
             issuer: 'GAHPYWLK6YRN7CVYZOO4H3VDRZ7PVF5UJGLZCSPAEIKJE2XSWF5LAGER',
             image: 'https://static.ultrastellar.com/media/assets/img/c3380651-52e5-4054-9121-a438c60a1ec4.png',
             home_domain: 'ultrastellar.com',
+        },
+    ],
+    [
+        'AQUA:GAHPYWLK6YRN7CVYZOO4H3VDRZ7PVF5UJGLZCSPAEIKJE2XSWF5LAGER',
+        {
+            code: 'AQUA',
+            issuer: 'GAHPYWLK6YRN7CVYZOO4H3VDRZ7PVF5UJGLZCSPAEIKJE2XSWF5LAGER',
+            image: 'https://static.ultrastellar.com/media/assets/img/1878ee2d-2fd1-4e31-89a7-5a430f1596f8.png',
+            home_domain: 'aqua.network',
         },
     ],
     [

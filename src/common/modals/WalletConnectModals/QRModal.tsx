@@ -12,7 +12,7 @@ import { flexAllCenter, respondDown } from '../../mixins';
 import { Breakpoints, COLORS } from '../../styles';
 import Button from '../../basics/Button';
 import ArrowRight from '../../assets/img/icon-arrow-right.svg';
-import { clearApp, saveAppToLS } from '../../services/wallet-connect.service';
+import { clearCurrentWallet, saveCurrentWallet } from '../../helpers/wallet-connect-helpers';
 
 const Wrapper = styled.div`
     width: 52.8rem;
@@ -147,7 +147,7 @@ const QRModal = ({ params }: ModalProps<{ uri: string }>): JSX.Element => {
 
     useEffect(() => {
         if (modalState === ModalStates.qr) {
-            clearApp();
+            clearCurrentWallet();
         }
     }, [modalState]);
 
@@ -198,7 +198,7 @@ const QRModal = ({ params }: ModalProps<{ uri: string }>): JSX.Element => {
                         Open your WalletConnect-compatible app with Stellar support, like LOBSTR
                         wallet, and scan the QR code to connect.
                     </ModalDescription>
-                    <ExternalLink href="https://lobstr.zendesk.com/hc/en-us/articles/4406569953938-WalletConnect-How-to-log-in-and-use-your-Stellar-wallet-from-LOBSTR-with-other-services">
+                    <ExternalLink href="https://lobstr.freshdesk.com/support/solutions/articles/151000001589-walletconnect-how-[…]nd-use-your-stellar-wallet-from-lobstr-with-other-services">
                         How to connect LOBSTR wallet?
                     </ExternalLink>
 
@@ -217,7 +217,7 @@ const QRModal = ({ params }: ModalProps<{ uri: string }>): JSX.Element => {
                 (isAndroid() ? (
                     <AndroidButtonBlock
                         onClick={() => {
-                            saveAppToLS('Unknown', uri);
+                            saveCurrentWallet('Unknown', uri);
                             window.open(uri, '_blank');
                         }}
                     >
@@ -232,7 +232,7 @@ const QRModal = ({ params }: ModalProps<{ uri: string }>): JSX.Element => {
                                         key={wallet.id}
                                         onClick={() => {
                                             const link = formatIOSMobile(uri, wallet);
-                                            saveAppToLS(wallet.name, link);
+                                            saveCurrentWallet(wallet.name, link);
                                             window.open(link, '_blank');
                                         }}
                                     >

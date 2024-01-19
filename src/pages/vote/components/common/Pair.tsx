@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import * as StellarSdk from 'stellar-sdk';
+import * as StellarSdk from '@stellar/stellar-sdk';
 import { Breakpoints, COLORS } from '../../../../common/styles';
 import DotsLoader from '../../../../common/basics/DotsLoader';
 import AssetLogo, { bigLogoStyles, logoStyles } from '../AssetDropdown/AssetLogo';
@@ -10,6 +10,7 @@ import { flexAllCenter, respondDown } from '../../../../common/mixins';
 import {
     AuthRequiredLabel,
     BoostLabel,
+    CustomLabel,
     MaxRewardsLabel,
     NoLiquidityLabel,
     RewardLabel,
@@ -79,7 +80,6 @@ const AssetsDetails = styled.div<{
         mobileVerticalDirections &&
         respondDown(Breakpoints.md)`
               margin-left: 0;
-              width: calc(100vw - 6.4rem);
           `}
 `;
 
@@ -101,13 +101,15 @@ const AssetsCodes = styled.span<{ mobileVerticalDirections?: boolean; bigCodes?:
     ${({ mobileVerticalDirections }) =>
         mobileVerticalDirections &&
         respondDown(Breakpoints.md)`
-                font-weight: bold;
-                        font-size: 2.4rem;
-                        line-height: 2.8rem;
-                        color: ${COLORS.buttonBackground};
-                        margin-top: 0.7rem;
-                        margin-bottom: 0.4rem;
-            `}
+            font-weight: bold;
+            font-size: 2.4rem;
+            line-height: 2.8rem;
+            color: ${COLORS.buttonBackground};
+            margin-top: 0.7rem;
+            margin-bottom: 0.4rem;
+            display: flex;
+            flex-wrap: wrap;
+        `}
 `;
 
 const AssetsDomains = styled.span<{ mobileVerticalDirections?: boolean }>`
@@ -183,6 +185,7 @@ type PairProps = {
     baseAmount?: string;
     counterAmount?: string;
     isSwapResult?: boolean;
+    customLabel?: [string, string];
 };
 
 const Pair = ({
@@ -206,6 +209,7 @@ const Pair = ({
     baseAmount,
     counterAmount,
     isSwapResult,
+    customLabel,
 }: PairProps): JSX.Element => {
     const { assetsInfo } = useAssetsStore();
 
@@ -268,6 +272,7 @@ const Pair = ({
                     {isMaxRewards && !bottomLabels && <MaxRewardsLabel />}
                     {authRequired && !bottomLabels && <AuthRequiredLabel />}
                     {noLiquidity && !bottomLabels && <NoLiquidityLabel />}
+                    {customLabel && <CustomLabel title={customLabel[0]} text={customLabel[1]} />}
                     {!withoutLink && (
                         <LinkCustom
                             onClick={(e) => viewOnStellarX(e, baseInstance, counterInstance)}
@@ -304,6 +309,7 @@ const Pair = ({
                     {isMaxRewards && <MaxRewardsLabel />}
                     {authRequired && <AuthRequiredLabel />}
                     {noLiquidity && <NoLiquidityLabel />}
+                    {customLabel && <CustomLabel title={customLabel[0]} text={customLabel[1]} />}
                 </Labels>
             )}
         </Wrapper>

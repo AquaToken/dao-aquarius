@@ -10,7 +10,10 @@ import IconQR from '../../assets/img/icon-qr.svg';
 import IconDeepLink from '../../assets/img/icon-deep-link.svg';
 import IconArrowRight from '../../assets/img/icon-arrow-right-purple.svg';
 import { flexAllCenter, respondDown } from '../../mixins';
-import { getAppFromDeepLinkList, saveAppToLS } from '../../services/wallet-connect.service';
+import {
+    getWalletFromDeepLinkHistory,
+    saveCurrentWallet,
+} from '../../helpers/wallet-connect-helpers';
 
 type PairingModalParams = {
     pairings: PairingTypes.Struct[];
@@ -231,15 +234,15 @@ const PairingModal = ({ params }: ModalProps<PairingModalParams>): JSX.Element =
                 <NewConnectionButtonIcon />
             </NewConnectionButtonMobile>
             {currentPairings.map((pairing, index) => {
-                const app = getAppFromDeepLinkList(pairing.topic);
+                const wallet = getWalletFromDeepLinkHistory(pairing.topic);
                 const metadata = pairing.peerMetadata;
                 return (
                     <PairingBlock
                         key={pairing.topic}
                         onClick={() => {
-                            if (app) {
-                                saveAppToLS(app.name, app.uri);
-                                window.open(app.uri, '_blank');
+                            if (wallet) {
+                                saveCurrentWallet(wallet.name, wallet.uri);
+                                window.open(wallet.uri, '_blank');
                             }
                             connect(pairing);
                         }}
@@ -254,7 +257,7 @@ const PairingModal = ({ params }: ModalProps<PairingModalParams>): JSX.Element =
                                 <AppIconMobileWrap>
                                     <AppIconMobile src={metadata.icons[0]} alt="" />
                                     <LoginFlowIconWrap>
-                                        {Boolean(app) ? <IconDeepLink /> : <IconQR />}
+                                        {Boolean(wallet) ? <IconDeepLink /> : <IconQR />}
                                     </LoginFlowIconWrap>
                                 </AppIconMobileWrap>
 

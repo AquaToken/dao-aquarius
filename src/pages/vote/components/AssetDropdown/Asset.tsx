@@ -2,7 +2,7 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../../../common/styles';
 import DotsLoader from '../../../../common/basics/DotsLoader';
-import * as StellarSdk from 'stellar-sdk';
+import * as StellarSdk from '@stellar/stellar-sdk';
 import AssetLogo from './AssetLogo';
 import { flexAllCenter, respondDown } from '../../../../common/mixins';
 import Tooltip, { TOOLTIP_POSITION } from '../../../../common/basics/Tooltip';

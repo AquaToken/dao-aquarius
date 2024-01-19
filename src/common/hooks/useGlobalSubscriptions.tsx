@@ -1,8 +1,8 @@
 import useAuthStore from '../../store/authStore/useAuthStore';
 import { useEffect, useRef } from 'react';
-import WalletConnectServiceClass, { WalletConnectEvents } from '../services/wallet-connect.service';
+import { WalletConnectEvents } from '../services/wallet-connect.service';
 import { LoginTypes } from '../../store/authStore/types';
-import { Horizon } from 'stellar-sdk';
+import { Horizon } from '@stellar/stellar-sdk';
 import {
     LedgerService,
     SorobanService,
@@ -17,10 +17,6 @@ import { useSkipFirstRender } from './useSkipFirstRender';
 const UnfundedError = 'Not Found';
 
 export default function useGlobalSubscriptions(): void {
-    useEffect(() => {
-        WalletConnectServiceClass.checkVersion();
-    }, []);
-
     const {
         login,
         logout,
@@ -96,7 +92,7 @@ export default function useGlobalSubscriptions(): void {
             if (
                 type === StellarEvents.accountStream &&
                 StellarService.balancesHasChanges(
-                    accountRef.current.balances as Horizon.BalanceLineAsset[],
+                    accountRef.current.balances as Horizon.HorizonApi.BalanceLineAsset[],
                     newAccount.balances,
                 )
             ) {

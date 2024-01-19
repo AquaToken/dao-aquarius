@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { TableBody, TableHead, TableHeadRow } from '../../vote/components/MainPage/Table/Table';
 import Pair from '../../vote/components/common/Pair';
 import { StellarService } from '../../../common/services/globalServices';
 import { getSdexRewards } from '../api/api';
@@ -13,27 +12,21 @@ import { formatBalance } from '../../../common/helpers/helpers';
 import {
     AquaBalance,
     AquaLogo,
-    Cell,
     Container,
-    DailyRewards,
     ExternalLinkStyled,
     getSortFunction,
     Header,
     InOffers,
-    PairCell,
     Section,
+    StyledLabel,
     Summary,
-    Table,
-    TableBodyRow,
     Title,
     TOOLTIP_TEXT,
 } from '../AmmRewards/AmmRewards';
 import useAssetsStore from '../../../store/assetsStore/useAssetsStore';
-import { SortingHeader } from '../../bribes/components/BribesPage/BribesTable/BribesTable';
-import { IconSort } from '../../../common/basics/Icons';
 import DotsLoader from '../../../common/basics/DotsLoader';
-import Label from '../../../common/basics/Label';
 import BoostBanner from '../BoostBanner/BoostBanner';
+import Table, { CellAlign } from '../../../common/basics/Table';
 
 enum SortField {
     market = 'market',
@@ -181,82 +174,72 @@ const SdexRewards = ({ aquaUsdPrice }) => {
                 <PageLoader />
             ) : sorted.length ? (
                 <Section>
-                    <Table>
-                        <TableHead>
-                            <TableHeadRow>
-                                <PairCell>Pair</PairCell>
-                                <Cell>In offers</Cell>
-                                <Cell>
-                                    <SortingHeader
-                                        position="right"
-                                        onClick={() => changeSort(SortField.market)}
-                                    >
-                                        SDEX daily reward
-                                        <IconSort
-                                            isEnabled={sort === SortField.market}
-                                            isReversed={isSortReversed}
-                                        />
-                                    </SortingHeader>
-                                </Cell>
-                                <Cell>
-                                    <SortingHeader
-                                        position="right"
-                                        onClick={() => changeSort(SortField.your)}
-                                    >
-                                        Your daily reward
-                                        <IconSort
-                                            isEnabled={sort === SortField.your}
-                                            isReversed={isSortReversed}
-                                        />
-                                    </SortingHeader>
-                                </Cell>
-                            </TableHeadRow>
-                        </TableHead>
+                    <Table
+                        head={[
+                            { children: 'Pair', flexSize: 2.5 },
+                            { children: 'In offers' },
+                            {
+                                children: 'SDEX daily reward',
+                                align: CellAlign.Right,
+                                sort: {
+                                    onClick: () => changeSort(SortField.market),
+                                    isEnabled: sort === SortField.market,
+                                    isReversed: isSortReversed,
+                                },
+                            },
+                            {
+                                children: 'Your daily reward',
+                                align: CellAlign.Right,
+                                sort: {
+                                    onClick: () => changeSort(SortField.your),
+                                    isEnabled: sort === SortField.your,
+                                    isReversed: isSortReversed,
+                                },
+                                flexSize: 1.5,
+                            },
+                        ]}
+                        body={sorted.map(
+                            ({
+                                market_key: pair,
+                                maker_reward: reward,
+                                boosted_reward: boost,
+                                daily_sdex_reward: marketReward,
+                            }) => {
+                                const dailyReward = reward * 24;
 
-                        <TableBody>
-                            {sorted.map(
-                                ({
-                                    market_key: pair,
-                                    maker_reward: reward,
-                                    boosted_reward: boost,
-                                    daily_sdex_reward: marketReward,
-                                }) => {
-                                    const dailyReward = reward * 24;
+                                const boostValue = (reward / (reward - boost)).toFixed(2);
 
-                                    const boostValue = (reward / (reward - boost)).toFixed(2);
+                                const {
+                                    asset1_code: baseCode,
+                                    asset1_issuer: baseIssuer,
+                                    asset2_code: counterCode,
+                                    asset2_issuer: counterIssuer,
+                                } = pair;
 
-                                    const {
-                                        asset1_code: baseCode,
-                                        asset1_issuer: baseIssuer,
-                                        asset2_code: counterCode,
-                                        asset2_issuer: counterIssuer,
-                                    } = pair;
+                                const base = baseIssuer
+                                    ? StellarService.createAsset(baseCode, baseIssuer)
+                                    : StellarService.createLumen();
 
-                                    const base = baseIssuer
-                                        ? StellarService.createAsset(baseCode, baseIssuer)
-                                        : StellarService.createLumen();
+                                const counter = counterIssuer
+                                    ? StellarService.createAsset(counterCode, counterIssuer)
+                                    : StellarService.createLumen();
 
-                                    const counter = counterIssuer
-                                        ? StellarService.createAsset(counterCode, counterIssuer)
-                                        : StellarService.createLumen();
+                                const baseSum =
+                                    offersMap?.get(
+                                        `${getAssetString(counter)}/${getAssetString(base)}`,
+                                    ) || 0;
 
-                                    const baseSum =
-                                        offersMap?.get(
-                                            `${getAssetString(counter)}/${getAssetString(base)}`,
-                                        ) || 0;
+                                const counterSum =
+                                    offersMap?.get(
+                                        `${getAssetString(base)}/${getAssetString(counter)}`,
+                                    ) || 0;
 
-                                    const counterSum =
-                                        offersMap?.get(
-                                            `${getAssetString(base)}/${getAssetString(counter)}`,
-                                        ) || 0;
-
-                                    return (
-                                        <TableBodyRow
-                                            key={
-                                                baseCode + baseIssuer + counterCode + counterIssuer
-                                            }
-                                        >
-                                            <PairCell>
+                                return {
+                                    key: baseCode + baseIssuer + counterCode + counterIssuer,
+                                    mobileFontSize: '1.4rem',
+                                    rowItems: [
+                                        {
+                                            children: (
                                                 <Pair
                                                     base={base}
                                                     counter={counter}
@@ -264,48 +247,54 @@ const SdexRewards = ({ aquaUsdPrice }) => {
                                                     mobileVerticalDirections
                                                     withMarketLink
                                                 />
-                                            </PairCell>
-                                            <Cell>
-                                                <label>In offers:</label>
-                                                {offers ? (
-                                                    <InOffers>
-                                                        <div>
-                                                            {formatBalance(baseSum, true)}{' '}
-                                                            {base.code}
-                                                        </div>
-                                                        <div>
-                                                            {formatBalance(counterSum, true)}{' '}
-                                                            {counter.code}
-                                                        </div>
-                                                    </InOffers>
-                                                ) : (
-                                                    <DotsLoader />
-                                                )}
-                                            </Cell>
-                                            <Cell>
-                                                <label>SDEX daily reward:</label>
-                                                {formatBalance(marketReward, true)} AQUA
-                                            </Cell>
-                                            <Cell>
-                                                <label>Your daily reward:</label>
-
-                                                <DailyRewards>
-                                                    {formatBalance(dailyReward, true)} AQUA
-                                                </DailyRewards>
-                                                {Boolean(boost) && (
-                                                    <Label
-                                                        title={`Boosted ${boostValue}x`}
-                                                        text={TOOLTIP_TEXT}
-                                                        isBlue
-                                                    />
-                                                )}
-                                            </Cell>
-                                        </TableBodyRow>
-                                    );
-                                },
-                            )}
-                        </TableBody>
-                    </Table>
+                                            ),
+                                            flexSize: 2.5,
+                                        },
+                                        {
+                                            children: offers ? (
+                                                <InOffers>
+                                                    <div>
+                                                        {formatBalance(baseSum, true)} {base.code}
+                                                    </div>
+                                                    <div>
+                                                        {formatBalance(counterSum, true)}{' '}
+                                                        {counter.code}
+                                                    </div>
+                                                </InOffers>
+                                            ) : (
+                                                <DotsLoader />
+                                            ),
+                                            label: 'In offers:',
+                                        },
+                                        {
+                                            children: `${formatBalance(marketReward, true)} AQUA`,
+                                            label: 'SDEX daily reward:',
+                                            align: CellAlign.Right,
+                                        },
+                                        {
+                                            children: (
+                                                <>
+                                                    <span>
+                                                        {formatBalance(dailyReward, true)} AQUA
+                                                    </span>
+                                                    {Boolean(boost) && (
+                                                        <StyledLabel
+                                                            title={`Boosted ${boostValue}x`}
+                                                            text={TOOLTIP_TEXT}
+                                                            isBlue
+                                                        />
+                                                    )}
+                                                </>
+                                            ),
+                                            label: 'Your daily reward:',
+                                            align: CellAlign.Right,
+                                            flexSize: 1.5,
+                                        },
+                                    ],
+                                };
+                            },
+                        )}
+                    />
                 </Section>
             ) : (
                 <Section>
