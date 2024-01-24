@@ -179,7 +179,8 @@ const BalancesBlock = ({ balances }) => {
                                     </Status>
                                     <div>{ledgersBeforeExpire}</div>
                                     <div>
-                                        {status === CONTRACT_STATUS.EXPIRED &&
+                                        {
+                                            // status === CONTRACT_STATUS.EXPIRED &&
                                             !asset.isNative() && (
                                                 <Button
                                                     isSmall
@@ -192,8 +193,10 @@ const BalancesBlock = ({ balances }) => {
                                                 >
                                                     Restore
                                                 </Button>
-                                            )}
-                                        {status === CONTRACT_STATUS.NOT_FOUND &&
+                                            )
+                                        }
+                                        {
+                                            // status === CONTRACT_STATUS.NOT_FOUND &&
                                             !asset.isNative() && (
                                                 <Button
                                                     isSmall
@@ -206,19 +209,24 @@ const BalancesBlock = ({ balances }) => {
                                                 >
                                                     Deploy
                                                 </Button>
-                                            )}
-                                        {status === CONTRACT_STATUS.ACTIVE && !asset.isNative() && (
-                                            <Button
-                                                isSmall
-                                                pending={pendingId === contractId}
-                                                disabled={
-                                                    pendingId !== contractId && Boolean(pendingId)
-                                                }
-                                                onClick={() => bump({ asset, contractId })}
-                                            >
-                                                Bump
-                                            </Button>
-                                        )}
+                                            )
+                                        }
+                                        {
+                                            // status === CONTRACT_STATUS.ACTIVE &&
+                                            !asset.isNative() && (
+                                                <Button
+                                                    isSmall
+                                                    pending={pendingId === contractId}
+                                                    disabled={
+                                                        pendingId !== contractId &&
+                                                        Boolean(pendingId)
+                                                    }
+                                                    onClick={() => bump({ asset, contractId })}
+                                                >
+                                                    Bump
+                                                </Button>
+                                            )
+                                        }
                                     </div>
                                 </BalanceLine>
                             ),

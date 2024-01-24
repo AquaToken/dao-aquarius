@@ -129,6 +129,13 @@ const Amm = ({ balances }) => {
         getData();
     }, [pools]);
 
+    useEffect(() => {
+        console.log(
+            StellarSdk.StrKey.encodeContract('drEcUMN98RW7tzB6ZcIEXh2iNkYyt3YEM+WNtZYcOK8='),
+        );
+        console.log(StellarSdk.xdr.ContractDataEntry.fromXDR('c3dhcA==', 'hex'));
+    }, []);
+
     const getPools = useCallback(() => {
         setPools(null);
         setPoolsData(null);
