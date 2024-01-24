@@ -8,7 +8,7 @@ import { ModalService, SorobanService, ToastService } from './globalServices';
 import RestoreContractModal from '../modals/RestoreContractModal/RestoreContractModal';
 
 const SOROBAN_SERVER = 'https://soroban-testnet.stellar.org:443';
-export const AMM_SMART_CONTACT_ID = 'CDZ22HN4LJXVBN3INSJ77JCNSUTQ3AKYNRO3DHHICLV6DAZJZTJD5Y3U';
+export const AMM_SMART_CONTACT_ID = 'CDXQKTAS36T75O56MZO76JYFKK2Y2GWWMJO6BVSFKHLLTCI5ZZL3ALHZ';
 
 enum AMM_CONTRACT_METHOD {
     GET_POOLS = 'get_pools',
@@ -17,8 +17,10 @@ enum AMM_CONTRACT_METHOD {
     DEPOSIT = 'deposit',
     SHARE_ID = 'share_id',
     ESTIMATE_SWAP = 'estimate_swap',
+    ESTIMATE_SWAP_ROUTED = 'estimate_swap_routed',
     WITHDRAW = 'withdraw',
     SWAP = 'swap',
+    SWAP_ROUTED = 'swap_routed',
     GET_RESERVES = 'get_reserves',
     POOL_TYPE = 'pool_type',
     FEE_FRACTION = 'get_fee_fraction',
@@ -352,8 +354,6 @@ export default class SorobanServiceClass {
         const contractId = this.getAssetContractId(asset);
 
         const contract = new StellarSdk.Contract(contractId);
-
-        console.log(contract);
 
         return this.server
             .getAccount(publicKey)
@@ -690,24 +690,34 @@ export default class SorobanServiceClass {
         pools: [string, Buffer][],
         amount: string,
     ) {
-        return Promise.all(
-            pools.map(([poolId, poolBytes]) =>
-                this.getSwapEstimatedAmountForPool(
-                    accountId,
-                    base,
-                    counter,
-                    poolBytes,
-                    poolId,
-                    amount,
-                ),
-            ),
-        ).then((amounts) => {
-            const index = amounts.indexOf(Math.max(...amounts));
-            return {
-                pool: pools[index],
-                amount: amounts[index],
-            };
-        });
+        const idA = this.getAssetContractId(base);
+        const idB = this.getAssetContractId(counter);
+
+        const [a, b] = idA > idB ? [counter, base] : [base, counter];
+
+        return this.buildSmartContactTx(
+            accountId,
+            AMM_SMART_CONTACT_ID,
+            AMM_CONTRACT_METHOD.ESTIMATE_SWAP_ROUTED,
+            this.scValToArray([this.assetToScVal(a), this.assetToScVal(b)]),
+            this.assetToScVal(base),
+            this.assetToScVal(counter),
+            this.amountToUint128(amount),
+        )
+            .then((tx) => {
+                return this.server.simulateTransaction(
+                    tx,
+                ) as Promise<SimulateTransactionSuccessResponse>;
+            })
+            .then(({ result }) => {
+                if (result) {
+                    // @ts-ignore
+                    const [, , amount] = result.retval.value();
+                    return this.i128ToInt(amount.value() as xdr.Int128Parts);
+                }
+
+                return 0;
+            });
     }
 
     getSwapEstimatedAmountForPool(
@@ -758,18 +768,25 @@ export default class SorobanServiceClass {
         const idA = this.getAssetContractId(base);
         const idB = this.getAssetContractId(counter);
 
-        const [indexA, indexB] = idA > idB ? [1, 0] : [0, 1];
+        const [a, b] = idA > idB ? [counter, base] : [base, counter];
 
-        return this.buildSmartContactTx(
-            accountId,
-            poolId,
-            AMM_CONTRACT_METHOD.SWAP,
-            this.publicKeyToScVal(accountId),
-            this.amountToUint32(indexA),
-            this.amountToUint32(indexB),
-            this.amountToUint128(amount),
-            this.amountToUint128(minCounterAmount),
-        ).then((tx) => this.server.prepareTransaction(tx));
+        return this.server
+            .getLatestLedger()
+            .then(({ sequence }) => {
+                return this.buildSmartContactTx(
+                    accountId,
+                    AMM_SMART_CONTACT_ID,
+                    AMM_CONTRACT_METHOD.SWAP_ROUTED,
+                    this.publicKeyToScVal(accountId),
+                    this.scValToArray([this.assetToScVal(a), this.assetToScVal(b)]),
+                    this.assetToScVal(base),
+                    this.assetToScVal(counter),
+                    this.amountToUint128(amount),
+                    this.amountToUint128(minCounterAmount),
+                    xdr.ScVal.scvU32(sequence + 60),
+                );
+            })
+            .then((tx) => this.server.prepareTransaction(tx));
     }
 
     buildSmartContactTx(publicKey, contactId, method, ...args) {

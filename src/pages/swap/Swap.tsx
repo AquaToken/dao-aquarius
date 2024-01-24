@@ -111,13 +111,11 @@ const Swap = ({ balances }) => {
     const [counterAmount, setCounterAmount] = useState('');
     const [estimatePending, setEstimatePending] = useState(false);
     const [swapPending, setSwapPending] = useState(false);
-    const [bestPool, setBestPool] = useState(null);
 
     const debouncedAmount = useDebounce(baseAmount, 700);
 
     useEffect(() => {
         setPools(null);
-        setBestPool(null);
         if (isLogged) {
             SorobanService.getPools(account?.accountId(), base, counter).then((res) => {
                 setPools(res);
@@ -134,9 +132,8 @@ const Swap = ({ balances }) => {
                 counter,
                 pools,
                 debouncedAmount,
-            ).then(({ amount, pool }) => {
+            ).then((amount) => {
                 setCounterAmount(amount.toString());
-                setBestPool(pool);
                 setEstimatePending(false);
             });
         } else {
@@ -153,18 +150,14 @@ const Swap = ({ balances }) => {
 
         const minCounterAmount = ((1 - SLIPPAGE) * Number(counterAmount)).toFixed(7);
 
-        SorobanService.getGiveAllowanceTx(account?.accountId(), bestPool[0], base, baseAmount)
-            .then((tx) => account.signAndSubmitTx(tx, true))
-            .then(() =>
-                SorobanService.getSwapTx(
-                    account?.accountId(),
-                    bestPool[0],
-                    base,
-                    counter,
-                    baseAmount,
-                    minCounterAmount,
-                ),
-            )
+        SorobanService.getSwapTx(
+            account?.accountId(),
+            null,
+            base,
+            counter,
+            baseAmount,
+            minCounterAmount,
+        )
             .then((tx) => account.signAndSubmitTx(tx, true))
             .then((res) => {
                 ModalService.openModal(SuccessModal, {
@@ -178,7 +171,6 @@ const Swap = ({ balances }) => {
                 setSwapPending(false);
                 setBaseAmount('');
                 setCounterAmount('');
-                setBestPool(null);
             })
             .catch((e) => {
                 console.log(e);
