@@ -14,7 +14,6 @@ import {
 import Button from '../../../common/basics/Button';
 import useAuthStore from '../../../store/authStore/useAuthStore';
 import SuccessModal from '../SuccessModal/SuccessModal';
-import * as SorobanClient from 'soroban-client';
 
 const Container = styled.div`
     width: 52.3rem;
@@ -82,7 +81,7 @@ const DepositToPool = ({ params }) => {
             firstAsset,
             firstAssetAmount,
         )
-            .then((tx) => account.signAndSubmitTx(tx as SorobanClient.Transaction, true))
+            .then((tx) => account.signAndSubmitTx(tx, true))
             .then(() =>
                 SorobanService.getGiveAllowanceTx(
                     account?.accountId(),
@@ -91,7 +90,7 @@ const DepositToPool = ({ params }) => {
                     secondAssetAmount,
                 ),
             )
-            .then((tx) => account.signAndSubmitTx(tx as SorobanClient.Transaction, true))
+            .then((tx) => account.signAndSubmitTx(tx, true))
             .then(() =>
                 SorobanService.getDepositTx(
                     account?.accountId(),
@@ -102,7 +101,7 @@ const DepositToPool = ({ params }) => {
                     secondAssetAmount,
                 ),
             )
-            .then((tx) => account.signAndSubmitTx(tx as SorobanClient.Transaction, true))
+            .then((tx) => account.signAndSubmitTx(tx, true))
             .then((res) => {
                 setPending(false);
 
@@ -198,7 +197,7 @@ const DepositToPool = ({ params }) => {
                 <Button
                     onClick={() => onSubmit()}
                     pending={pending}
-                    disabled={!baseAmount || !counterAmount}
+                    disabled={!Number(baseAmount) || !Number(counterAmount)}
                 >
                     deposit
                 </Button>
