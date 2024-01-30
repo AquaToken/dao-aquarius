@@ -197,7 +197,7 @@ const DepositToPool = ({ params }) => {
                 <Button
                     onClick={() => onSubmit()}
                     pending={pending}
-                    disabled={!baseAmount || !counterAmount}
+                    disabled={!Number(baseAmount) || !Number(counterAmount)}
                 >
                     deposit
                 </Button>
