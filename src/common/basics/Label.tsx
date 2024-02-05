@@ -58,6 +58,10 @@ const LabelInner = styled.div<{
     cursor: help;
 `;
 
+const SCROLL_OFFSET = window.navigator.userAgent.indexOf('win') > -1 ? 20 : 0;
+
+console.log();
+
 const Label = ({
     title,
     text,
@@ -82,10 +86,12 @@ const Label = ({
             if (node !== null && isEnoughSpaceOnTop) {
                 setIsEnoughSpaceOnTop(
                     node.getBoundingClientRect().left > 0 &&
-                        node.getBoundingClientRect().right < window.innerWidth,
+                        node.getBoundingClientRect().right < window.innerWidth - SCROLL_OFFSET,
                 );
 
-                setIsRightOriented(node.getBoundingClientRect().right < window.innerWidth);
+                setIsRightOriented(
+                    node.getBoundingClientRect().right < window.innerWidth - SCROLL_OFFSET,
+                );
             }
         },
         [isEnoughSpaceOnTop],
