@@ -121,7 +121,7 @@ type Wallet = {
     };
 };
 
-const registryUrl = 'https://registry.walletconnect.com/api/v1/wallets';
+const registryUrl = `https://explorer-api.walletconnect.com/v3/wallets?projectId=${process.env.WALLET_CONNECT_PROJECT_ID}`;
 
 enum ModalStates {
     mobile = 'mobile',
