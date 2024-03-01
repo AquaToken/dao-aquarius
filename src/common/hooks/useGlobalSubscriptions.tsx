@@ -13,7 +13,7 @@ import { StellarEvents } from '../services/stellar.service';
 import { LedgerEvents } from '../services/ledger.service';
 import { useSkipFirstRender } from './useSkipFirstRender';
 
-const UnfundedError = 'Request failed with status code 404';
+const UnfundedErrors = ['Request failed with status code 404', 'Not Found'];
 
 export default function useGlobalSubscriptions(): void {
     const {
@@ -58,11 +58,11 @@ export default function useGlobalSubscriptions(): void {
     useEffect(() => {
         if (loginErrorText) {
             ToastService.showErrorToast(
-                loginErrorText === UnfundedError ? 'Activate your account' : loginErrorText,
+                UnfundedErrors.includes(loginErrorText) ? 'Activate your account' : loginErrorText,
             );
             clearLoginError();
         }
-        if (loginErrorText === UnfundedError) {
+        if (UnfundedErrors.includes(loginErrorText)) {
             WalletConnectService.logout();
         }
     }, [loginErrorText]);
