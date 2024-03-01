@@ -13,7 +13,7 @@ import { StellarEvents } from '../services/stellar.service';
 import { LedgerEvents } from '../services/ledger.service';
 import { useSkipFirstRender } from './useSkipFirstRender';
 
-const UnfundedError = 'Not Found';
+const UnfundedError = 'Request failed with status code 404';
 
 export default function useGlobalSubscriptions(): void {
     const {
