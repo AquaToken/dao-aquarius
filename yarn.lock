@@ -1592,36 +1592,38 @@
     "@stablelib/random" "^1.0.2"
     "@stablelib/wipe" "^1.0.1"
 
-"@stellar/js-xdr@^3.0.1":
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/@stellar/js-xdr/-/js-xdr-3.0.1.tgz#d500f1e1332210cd56e0ef95e44c54506d9f48f3"
-  integrity sha512-dp5Eh7Nr1YjiIeqpdkj2cQYxfoPudDAH3ck8MWggp48Htw66Z/hUssNYUQG/OftLjEmHT90Z/dtey2Y77DOxIw==
+"@stellar/js-xdr@^3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@stellar/js-xdr/-/js-xdr-3.1.0.tgz#37c23e6c913d011f750808f3d8b60174b633e137"
+  integrity sha512-mYTyFnhgyQgyvpAYZRO1LurUn2MxcIZRj74zZz/BxKEk7zrL4axhQ1ez0HL2BRi0wlG6cHn5BeD/t9Xcyp7CSQ==
 
-"@stellar/stellar-base@10.0.1":
-  version "10.0.1"
-  resolved "https://registry.yarnpkg.com/@stellar/stellar-base/-/stellar-base-10.0.1.tgz#cf4458e081f694109422521562e53e642c29991b"
-  integrity sha512-BDbx7VHOEQh+4J3Q+gStNXgPaNckVFmD4aOlBBGwxlF6vPFmVnW8IoJdkX7T58zpX55eWI6DXvEhDBlrqTlhAQ==
+"@stellar/stellar-base@^11.0.0":
+  version "11.0.0"
+  resolved "https://registry.yarnpkg.com/@stellar/stellar-base/-/stellar-base-11.0.0.tgz#9c2595f0aa1fe955191656fe9bda7a6b34ef82f0"
+  integrity sha512-KPTjaWJCG2m7hMCPRWFGGPaG5qOkgPLWvFVOhe1HUy7dlE4MxxPfdusz0mcLkf6VT7doqhLB1rIt0D9M2GgQcQ==
   dependencies:
-    "@stellar/js-xdr" "^3.0.1"
+    "@stellar/js-xdr" "^3.1.0"
     base32.js "^0.1.0"
     bignumber.js "^9.1.2"
     buffer "^6.0.3"
     sha.js "^2.3.6"
     tweetnacl "^1.0.3"
+    typescript "^5.3.3"
   optionalDependencies:
-    sodium-native "^4.0.1"
+    sodium-native "^4.0.8"
 
-"@stellar/stellar-sdk@^11.1.0":
-  version "11.1.0"
-  resolved "https://registry.yarnpkg.com/@stellar/stellar-sdk/-/stellar-sdk-11.1.0.tgz#4a619fa645a7392204b6e80cb0a7f3ef94cdd077"
-  integrity sha512-Ufw+4udr7lqyzPIhqSAzBTgcl/YlgFZLgeBlDr5ZZy1v+g7AT4dOZFurcCrHt7Pz8DGtVcxNX7GLxYLdOC3GIg==
+"@stellar/stellar-sdk@11.2.2":
+  version "11.2.2"
+  resolved "https://registry.yarnpkg.com/@stellar/stellar-sdk/-/stellar-sdk-11.2.2.tgz#e2768d519a05f396ff3f89f9fb7a7c5ed22c7c74"
+  integrity sha512-50dpxpZE2e87LjIln1EZnBh7r+JFWwyGs+NiGPOZ+LzJd2YRf54+YxzDX6ELVOrUqp2TRTLnzthXXTNFeVobFw==
   dependencies:
-    "@stellar/stellar-base" "10.0.1"
-    axios "^1.6.0"
+    "@stellar/stellar-base" "^11.0.0"
+    axios "^1.6.7"
     bignumber.js "^9.1.2"
     eventsource "^2.0.2"
     randombytes "^2.1.0"
     toml "^3.0.0"
+    typescript "^5.3.3"
     urijs "^1.19.1"
 
 "@svgr/babel-plugin-add-jsx-attribute@^5.4.0":
@@ -2858,12 +2860,12 @@ axios@^0.23.0:
   dependencies:
     follow-redirects "^1.14.4"
 
-axios@^1.6.0:
-  version "1.6.2"
-  resolved "https://registry.yarnpkg.com/axios/-/axios-1.6.2.tgz#de67d42c755b571d3e698df1b6504cde9b0ee9f2"
-  integrity sha512-7i24Ri4pmDRfJTR7LDBhsOTtcm+9kjX5WiY1X3wIisx6G9So3pfMkEiU7emUBe46oceVImccTEM3k6C5dbVW8A==
+axios@^1.6.7:
+  version "1.6.7"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-1.6.7.tgz#7b48c2e27c96f9c68a2f8f31e2ab19f59b06b0a7"
+  integrity sha512-/hDJGff6/c7u0hDkvkGxR/oy6CbCs8ziCsC7SqmhjfozqiJGc8Z11wrv9z9lYfY4K8l+H9TpjcMDX0xOZmx+RA==
   dependencies:
-    follow-redirects "^1.15.0"
+    follow-redirects "^1.15.4"
     form-data "^4.0.0"
     proxy-from-env "^1.1.0"
 
@@ -4567,10 +4569,15 @@ flatted@^3.2.7:
   resolved "https://registry.yarnpkg.com/flatted/-/flatted-3.2.9.tgz#7eb4c67ca1ba34232ca9d2d93e9886e611ad7daf"
   integrity sha512-36yxDn5H7OFZQla0/jFJmbIKTdZAQHngCedGxiMmpNfEZM0sdEeT+WczLQrjK6D7o2aiyLYDnkw0R3JK0Qv1RQ==
 
-follow-redirects@^1.0.0, follow-redirects@^1.14.4, follow-redirects@^1.15.0:
+follow-redirects@^1.0.0, follow-redirects@^1.14.4:
   version "1.15.2"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.15.2.tgz#b460864144ba63f2681096f274c4e57026da2c13"
   integrity sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==
+
+follow-redirects@^1.15.4:
+  version "1.15.5"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.15.5.tgz#54d4d6d062c0fa7d9d17feb008461550e3ba8020"
+  integrity sha512-vSFWUON1B+yAw1VN4xMfxgn5fTUiaOzAJCKBwIIgT/+7CuGy9+r+5gITvP62j3RmaD5Ph65UaERdOSRGUzZtgw==
 
 for-each@^0.3.3:
   version "0.3.3"
@@ -8035,10 +8042,10 @@ sockjs@^0.3.24:
     uuid "^8.3.2"
     websocket-driver "^0.7.4"
 
-sodium-native@^4.0.1:
-  version "4.0.4"
-  resolved "https://registry.yarnpkg.com/sodium-native/-/sodium-native-4.0.4.tgz#561b7c39c97789f8202d6fd224845fe2e8cd6879"
-  integrity sha512-faqOKw4WQKK7r/ybn6Lqo1F9+L5T6NlBJJYvpxbZPetpWylUVqz449mvlwIBKBqxEHbWakWuOlUt8J3Qpc4sWw==
+sodium-native@^4.0.8:
+  version "4.0.10"
+  resolved "https://registry.yarnpkg.com/sodium-native/-/sodium-native-4.0.10.tgz#24af8db06518807a8ddf4e5143d819f14bf7a837"
+  integrity sha512-vrJQt4gASntDbnltRRk9vN4rks1SehjM12HkqQtu250JtWT+/lo8oEOa1HvSq3+8hzJdYcCJuLR5qRGxoRDjAg==
   dependencies:
     node-gyp-build "^4.6.0"
 
@@ -8728,6 +8735,11 @@ typescript@^4.4.3:
   version "4.9.5"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.9.5.tgz#095979f9bcc0d09da324d58d03ce8f8374cbe65a"
   integrity sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==
+
+typescript@^5.3.3:
+  version "5.4.2"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.4.2.tgz#0ae9cebcfae970718474fe0da2c090cad6577372"
+  integrity sha512-+2/g0Fds1ERlP6JsakQQDXjZdZMM+rqpamFZJEKh4kwTIn3iDkgKtby0CeNd5ATNZ4Ry1ax15TMx0W2V+miizQ==
 
 uglify-js@3.4.x:
   version "3.4.10"

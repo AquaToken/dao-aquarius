@@ -7,8 +7,8 @@ import SimulateTransactionSuccessResponse = StellarSdk.SorobanRpc.Api.SimulateTr
 import { ModalService, SorobanService, ToastService } from './globalServices';
 import RestoreContractModal from '../modals/RestoreContractModal/RestoreContractModal';
 
-const SOROBAN_SERVER = 'https://soroban-testnet.stellar.org:443';
-export const AMM_SMART_CONTACT_ID = 'CBF2K5H3N7BY3M5LURJW7E2DS7TTBWMRQAAZTX5BBVHF7Y5TPC6QVHUY';
+const SOROBAN_SERVER = 'https://soroban-rpc.ultrastellar.com/';
+export const AMM_SMART_CONTACT_ID = 'CANMWW5DUNVYTZ3MZC66O6YNEXRULDI3JPQGBLJQQOVGZWB5PYONTTOD';
 
 enum AMM_CONTRACT_METHOD {
     GET_POOLS = 'get_pools',
@@ -35,15 +35,6 @@ enum ASSET_CONTRACT_METHOD {
     APPROVE_ALLOWANCE = 'approve',
     GET_BALANCE = 'balance',
 }
-
-const issuerKeypair = StellarSdk.Keypair.fromSecret(
-    'SBPQCB4DOUQ26OC43QNAA3ODZOGECHJUVHDHYRHKYPL4SA22RRYGHQCX',
-);
-const USDT = new StellarSdk.Asset('USDT', issuerKeypair.publicKey());
-const USDC = new StellarSdk.Asset('USDC', issuerKeypair.publicKey());
-const ETH = new StellarSdk.Asset('ETH', issuerKeypair.publicKey());
-const BTC = new StellarSdk.Asset('BTC', issuerKeypair.publicKey());
-const AQUA = new StellarSdk.Asset('AQUA', issuerKeypair.publicKey());
 
 export enum CONTRACT_STATUS {
     ACTIVE = 'active',
@@ -75,91 +66,6 @@ export default class SorobanServiceClass {
         if (this.keypair) {
             this.keypair = null;
         }
-    }
-
-    getAddTrustTx(accountId: string) {
-        return this.server.getAccount(accountId).then((acc) => {
-            return new StellarSdk.TransactionBuilder(acc, {
-                fee: BASE_FEE,
-                networkPassphrase: StellarSdk.Networks.TESTNET,
-            })
-                .addOperation(
-                    StellarSdk.Operation.changeTrust({
-                        asset: USDC,
-                    }),
-                )
-                .addOperation(
-                    StellarSdk.Operation.changeTrust({
-                        asset: USDT,
-                    }),
-                )
-                .addOperation(
-                    StellarSdk.Operation.changeTrust({
-                        asset: AQUA,
-                    }),
-                )
-                .addOperation(
-                    StellarSdk.Operation.changeTrust({
-                        asset: BTC,
-                    }),
-                )
-                .addOperation(
-                    StellarSdk.Operation.changeTrust({
-                        asset: ETH,
-                    }),
-                )
-                .setTimeout(StellarSdk.TimeoutInfinite)
-                .build();
-        });
-    }
-
-    getTestAssets(accountId) {
-        return this.server.getAccount(issuerKeypair.publicKey()).then((issuer) => {
-            const transaction = new StellarSdk.TransactionBuilder(issuer, {
-                fee: BASE_FEE,
-                networkPassphrase: StellarSdk.Networks.TESTNET,
-            })
-                .addOperation(
-                    StellarSdk.Operation.payment({
-                        destination: accountId,
-                        asset: USDT,
-                        amount: '10000',
-                    }),
-                )
-                .addOperation(
-                    StellarSdk.Operation.payment({
-                        destination: accountId,
-                        asset: USDC,
-                        amount: '10000',
-                    }),
-                )
-                .addOperation(
-                    StellarSdk.Operation.payment({
-                        destination: accountId,
-                        asset: ETH,
-                        amount: '10000',
-                    }),
-                )
-                .addOperation(
-                    StellarSdk.Operation.payment({
-                        destination: accountId,
-                        asset: BTC,
-                        amount: '10000',
-                    }),
-                )
-                .addOperation(
-                    StellarSdk.Operation.payment({
-                        destination: accountId,
-                        asset: AQUA,
-                        amount: '1000000',
-                    }),
-                )
-                .setTimeout(StellarSdk.TimeoutInfinite)
-                .build();
-
-            transaction.sign(issuerKeypair);
-            return this.submitTx(transaction);
-        });
     }
 
     processResponse(response: SendTransactionResponse, tx: StellarSdk.Transaction) {
@@ -216,7 +122,7 @@ export default class SorobanServiceClass {
         fee += parseInt(sim.restorePreamble.minResourceFee);
 
         const restoreTx = new StellarSdk.TransactionBuilder(account, { fee: fee.toString() })
-            .setNetworkPassphrase(StellarSdk.Networks.TESTNET)
+            .setNetworkPassphrase(StellarSdk.Networks.PUBLIC)
             // @ts-ignore
             .setSorobanData(sim.restorePreamble.transactionData.build())
             .addOperation(StellarSdk.Operation.restoreFootprint({}))
@@ -235,7 +141,7 @@ export default class SorobanServiceClass {
     }
 
     getAssetContractHash(asset: Asset): string {
-        const networkId: Buffer = Buffer.from(sha256.arrayBuffer(StellarSdk.Networks.TESTNET));
+        const networkId: Buffer = Buffer.from(sha256.arrayBuffer(StellarSdk.Networks.PUBLIC));
 
         const contractIdPreimage: xdr.ContractIdPreimage =
             xdr.ContractIdPreimage.contractIdPreimageFromAsset(asset.toXDRObject());
@@ -260,7 +166,6 @@ export default class SorobanServiceClass {
 
         return this.getContactIdFromHash(hash);
     }
-
     getContractData(
         contractId: string,
     ): Promise<{ status: CONTRACT_STATUS; ledgersBeforeExpire: number }> {
@@ -273,7 +178,6 @@ export default class SorobanServiceClass {
                 durability: xdr.ContractDataDurability.persistent(),
             }),
         );
-
         return this.server
             .getLedgerEntries(contractKey)
             .then(({ entries, latestLedger }) => {
@@ -312,7 +216,7 @@ export default class SorobanServiceClass {
             .then((acc) => {
                 const tx = new StellarSdk.TransactionBuilder(acc, {
                     fee: BASE_FEE,
-                    networkPassphrase: StellarSdk.Networks.TESTNET,
+                    networkPassphrase: StellarSdk.Networks.PUBLIC,
                 });
 
                 tx.addOperation(
@@ -336,7 +240,7 @@ export default class SorobanServiceClass {
             .then((acc) => {
                 return new StellarSdk.TransactionBuilder(acc, {
                     fee: BASE_FEE,
-                    networkPassphrase: StellarSdk.Networks.TESTNET,
+                    networkPassphrase: StellarSdk.Networks.PUBLIC,
                 })
                     .addOperation(StellarSdk.Operation.restoreFootprint({}))
                     .setSorobanData(
@@ -360,7 +264,7 @@ export default class SorobanServiceClass {
             .then((acc) => {
                 return new StellarSdk.TransactionBuilder(acc, {
                     fee: BASE_FEE,
-                    networkPassphrase: StellarSdk.Networks.TESTNET,
+                    networkPassphrase: StellarSdk.Networks.PUBLIC,
                 })
                     .addOperation(
                         StellarSdk.Operation.extendFootprintTtl({
@@ -666,6 +570,7 @@ export default class SorobanServiceClass {
                 this.amountToUint128(baseAmount),
                 this.amountToUint128(counterAmount),
             ]),
+            this.amountToUint128('0'),
         ).then((tx) => this.server.prepareTransaction(tx));
     }
 
@@ -795,7 +700,7 @@ export default class SorobanServiceClass {
 
             const builtTx = new StellarSdk.TransactionBuilder(acc, {
                 fee: BASE_FEE,
-                networkPassphrase: StellarSdk.Networks.TESTNET,
+                networkPassphrase: StellarSdk.Networks.PUBLIC,
             });
 
             if (args) {
