@@ -571,7 +571,13 @@ export default class SorobanServiceClass {
                 this.amountToUint128(counterAmount),
             ]),
             this.amountToUint128('0'),
-        ).then((tx) => this.server.prepareTransaction(tx));
+        ).then((tx) => {
+            console.log(
+                'Женя, вот тебе не просимулированная XDR: ',
+                tx.toEnvelope().toXDR('base64'),
+            );
+            return this.server.prepareTransaction(tx);
+        });
     }
 
     getWithdrawTx(accountId: string, poolId: string, shareAmount: string) {
