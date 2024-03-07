@@ -1,6 +1,5 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import * as SorobanClient from 'soroban-client';
 import { respondDown } from '../../../common/mixins';
 import { Breakpoints } from '../../../common/styles';
 import ToggleGroup from '../../../common/basics/ToggleGroup';
@@ -12,7 +11,7 @@ import Button from '../../../common/basics/Button';
 import { ModalService, SorobanService } from '../../../common/services/globalServices';
 import useAuthStore from '../../../store/authStore/useAuthStore';
 import { AMM_SMART_CONTACT_ID } from '../../../common/services/soroban.service';
-import { AQUA } from '../Amm';
+import { AQUA } from '../../vote/components/MainPage/MainPage';
 
 const Container = styled.div`
     width: 52.8rem;
@@ -78,7 +77,7 @@ const CreatePool = ({ params }) => {
         setPending(true);
         if (type !== POOL_TYPE.CONTSANT) {
             SorobanService.getGiveAllowanceTx(account.accountId(), AMM_SMART_CONTACT_ID, AQUA, '1')
-                .then((tx) => account.signAndSubmitTx(tx as SorobanClient.Transaction, true))
+                .then((tx) => account.signAndSubmitTx(tx, true))
                 .then(() =>
                     SorobanService.getInitStableSwapPoolTx(
                         account.accountId(),
@@ -89,7 +88,7 @@ const CreatePool = ({ params }) => {
                     ),
                 )
                 .then((tx) => {
-                    return account.signAndSubmitTx(tx as SorobanClient.Transaction).then(() => {
+                    return account.signAndSubmitTx(tx).then(() => {
                         setPending(false);
                         ModalService.confirmAllModals();
                     });
@@ -98,7 +97,7 @@ const CreatePool = ({ params }) => {
         }
 
         SorobanService.getInitConstantPoolTx(account.accountId(), base, counter, fee).then((tx) => {
-            return account.signAndSubmitTx(tx as SorobanClient.Transaction).then(() => {
+            return account.signAndSubmitTx(tx).then(() => {
                 setPending(false);
                 ModalService.confirmAllModals();
             });

@@ -24,7 +24,7 @@ const METADATA = {
     icons: [`https://aqua.network/favicon.png`],
 };
 
-const PUBNET = 'stellar:testnet';
+const PUBNET = 'stellar:pubnet';
 
 const STELLAR_METHODS = {
     SIGN_AND_SUBMIT: 'stellar_signAndSubmitXDR',

@@ -7,18 +7,23 @@ import AssetDropdown from '../vote/components/AssetDropdown/AssetDropdown';
 import { COLORS } from '../../common/styles';
 import useAuthStore from '../../store/authStore/useAuthStore';
 import { useEffect, useMemo, useState } from 'react';
-import { ModalService, SorobanService, ToastService } from '../../common/services/globalServices';
+import {
+    ModalService,
+    SorobanService,
+    StellarService,
+    ToastService,
+} from '../../common/services/globalServices';
 import PageLoader from '../../common/basics/PageLoader';
 import Input from '../../common/basics/Input';
 import SwapIcon from '../../common/assets/img/icon-arrows-circle.svg';
 import { useDebounce } from '../../common/hooks/useDebounce';
 import Button from '../../common/basics/Button';
 import { IconFail } from '../../common/basics/Icons';
-import { USDT, USDC } from '../amm/Amm';
 import SuccessModal from '../amm/SuccessModal/SuccessModal';
 import { CONTRACT_STATUS } from '../../common/services/soroban.service';
 import { Empty } from '../profile/YourVotes/YourVotes';
 import ChooseLoginMethodModal from '../../common/modals/ChooseLoginMethodModal';
+import { AQUA } from '../vote/components/MainPage/MainPage';
 
 const Container = styled.main`
     background-color: ${COLORS.lightGray};
@@ -103,8 +108,8 @@ const LoginButton = styled(Button)`
 const Swap = ({ balances }) => {
     const { account, isLogged } = useAuthStore();
 
-    const [base, setBase] = useState(USDT);
-    const [counter, setCounter] = useState(USDC);
+    const [base, setBase] = useState(StellarService.createLumen);
+    const [counter, setCounter] = useState(AQUA);
     const [pools, setPools] = useState(null);
 
     const [baseAmount, setBaseAmount] = useState('');
@@ -244,7 +249,6 @@ const Swap = ({ balances }) => {
                             <AssetDropdown
                                 asset={base}
                                 onUpdate={setBase}
-                                assetsList={assets}
                                 exclude={counter}
                                 label={baseAvailable}
                                 disabled={estimatePending}
@@ -275,7 +279,6 @@ const Swap = ({ balances }) => {
                             <AssetDropdown
                                 asset={counter}
                                 onUpdate={setCounter}
-                                assetsList={assets}
                                 exclude={base}
                                 withoutReset
                                 label={counterAvailable}

@@ -4,7 +4,12 @@ import styled from 'styled-components';
 import { commonMaxWidth, flexAllCenter, respondDown } from '../../common/mixins';
 import { Header, InOffers, Title } from '../profile/AmmRewards/AmmRewards';
 import PageLoader from '../../common/basics/PageLoader';
-import { ModalService, SorobanService, ToastService } from '../../common/services/globalServices';
+import {
+    ModalService,
+    SorobanService,
+    StellarService,
+    ToastService,
+} from '../../common/services/globalServices';
 import Pair from '../vote/components/common/Pair';
 import { formatBalance } from '../../common/helpers/helpers';
 import useAuthStore from '../../store/authStore/useAuthStore';
@@ -24,6 +29,7 @@ import WithdrawFromPool from './WithdrawFromPool/WithdrawFromPool';
 import Tooltip, { TOOLTIP_POSITION } from '../../common/basics/Tooltip';
 import { Empty } from '../profile/YourVotes/YourVotes';
 import ChooseLoginMethodModal from '../../common/modals/ChooseLoginMethodModal';
+import { AQUA } from '../vote/components/MainPage/MainPage';
 
 const Container = styled.main`
     height: 100%;
@@ -97,24 +103,11 @@ const LoginButton = styled(Button)`
     margin-top: 1rem;
 `;
 
-export const USDT = new StellarSdk.Asset(
-    'USDT',
-    'GAHPYWLK6YRN7CVYZOO4H3VDRZ7PVF5UJGLZCSPAEIKJE2XSWF5LAGER',
-);
-export const USDC = new StellarSdk.Asset(
-    'USDC',
-    'GAHPYWLK6YRN7CVYZOO4H3VDRZ7PVF5UJGLZCSPAEIKJE2XSWF5LAGER',
-);
-export const AQUA = new StellarSdk.Asset(
-    'AQUA',
-    'GAHPYWLK6YRN7CVYZOO4H3VDRZ7PVF5UJGLZCSPAEIKJE2XSWF5LAGER',
-);
-
 const Amm = ({ balances }) => {
     const { account, isLogged } = useAuthStore();
 
-    const [base, setBase] = useState(USDT);
-    const [counter, setCounter] = useState(USDC);
+    const [base, setBase] = useState(StellarService.createLumen);
+    const [counter, setCounter] = useState(AQUA);
     const [pools, setPools] = useState(null);
     const [poolsData, setPoolsData] = useState(null);
     const [userRewards, setUserRewards] = useState(null);
@@ -255,14 +248,12 @@ const Amm = ({ balances }) => {
                         <AssetDropdown
                             asset={base}
                             onUpdate={setBase}
-                            assetsList={assets}
                             exclude={counter}
                             withoutReset
                         />
                         <AssetDropdown
                             asset={counter}
                             onUpdate={setCounter}
-                            assetsList={assets}
                             exclude={base}
                             withoutReset
                         />
