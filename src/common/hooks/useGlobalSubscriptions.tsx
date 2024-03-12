@@ -90,7 +90,7 @@ export default function useGlobalSubscriptions(): void {
             if (
                 type === StellarEvents.accountStream &&
                 StellarService.balancesHasChanges(
-                    accountRef.current.balances as Horizon.BalanceLineAsset[],
+                    accountRef.current.balances as Horizon.HorizonApi.BalanceLineAsset[],
                     newAccount.balances,
                 )
             ) {
