@@ -3,7 +3,7 @@ export const steps = [
     {
         date: 'Q4 - 2020',
         title: 'Idea and discussion',
-        text: 'Aquarius began its evolution in the end of 2020 while exploring ideas to increase volume on SDEX. A series of internal discussions within Ultra Stellar, as well as exchanging feedback with many experts in the space, helped us shape the core ideas around the project.',
+        text: 'Aquarius began its evolution in the end of 2020 while exploring ideas to increase volume on SDEX. A series of internal discussions within our team, as well as exchanging feedback with many experts in the space, helped us shape the core ideas around the project.',
     },
     {
         date: 'Q2 - 2021',
