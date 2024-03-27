@@ -7,7 +7,7 @@ import SimulateTransactionSuccessResponse = StellarSdk.SorobanRpc.Api.SimulateTr
 import { ModalService, SorobanService, ToastService } from './globalServices';
 import RestoreContractModal from '../modals/RestoreContractModal/RestoreContractModal';
 
-const SOROBAN_SERVER = 'https://soroban-rpc.ultrastellar.com/';
+const SOROBAN_SERVER = 'https://soroban-rpc.aqua.network/';
 export const AMM_SMART_CONTACT_ID = 'CANMWW5DUNVYTZ3MZC66O6YNEXRULDI3JPQGBLJQQOVGZWB5PYONTTOD';
 
 enum AMM_CONTRACT_METHOD {
