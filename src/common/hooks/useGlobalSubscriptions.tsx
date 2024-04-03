@@ -5,6 +5,7 @@ import { LoginTypes } from '../../store/authStore/types';
 import { Horizon } from '@stellar/stellar-sdk';
 import {
     LedgerService,
+    LobstrExtensionService,
     StellarService,
     ToastService,
     WalletConnectService,
@@ -12,6 +13,7 @@ import {
 import { StellarEvents } from '../services/stellar.service';
 import { LedgerEvents } from '../services/ledger.service';
 import { useSkipFirstRender } from './useSkipFirstRender';
+import { LobstrExtensionEvents } from '../services/lobstr-extension.service';
 
 const UnfundedErrors = ['Request failed with status code 404', 'Not Found'];
 
@@ -54,6 +56,16 @@ export default function useGlobalSubscriptions(): void {
 
         return () => unsub();
     }, []);
+
+    useEffect(() => {
+        const unsub = LobstrExtensionService.event.sub((event) => {
+            if (event.type === LobstrExtensionEvents.login) {
+                login(event.publicKey, LoginTypes.lobstr);
+            }
+        });
+
+        return () => unsub();
+    });
 
     useEffect(() => {
         if (loginErrorText) {

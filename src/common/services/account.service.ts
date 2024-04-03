@@ -3,6 +3,7 @@ import { Horizon } from '@stellar/stellar-sdk';
 import { LoginTypes } from '../../store/authStore/types';
 import {
     LedgerService,
+    LobstrExtensionService,
     ModalService,
     StellarService,
     WalletConnectService,
@@ -59,6 +60,10 @@ export default class AccountService extends Horizon.AccountResponse {
 
         if (this.authType === LoginTypes.secret) {
             signedTx = StellarService.signWithSecret(tx);
+        }
+
+        if (this.authType === LoginTypes.lobstr) {
+            signedTx = await LobstrExtensionService.signTx(tx);
         }
 
         if (this.authType === LoginTypes.walletConnect && withResult) {

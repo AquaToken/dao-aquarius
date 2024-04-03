@@ -5,13 +5,14 @@ import { Breakpoints, COLORS } from '../styles';
 import ArrowRightIcon from '../assets/img/icon-arrow-right.svg';
 import KeyIcon from '../assets/img/icon-key.svg';
 import WalletConnectLogo from '../assets/img/wallet-connect-logo.svg';
-import LobstrLogo from '../assets/img/lobstr-logo.svg';
+import LobstrLogo from '../assets/img/lobstr-logo-black.svg';
 import Stellar from '../assets/img/xlm-logo.svg';
 import Ledger from '../assets/img/ledger-logo.svg';
 import { LoginTypes } from '../../store/authStore/types';
 import LoginWithSecret from './LoginWithSecret';
 import {
     LedgerService,
+    LobstrExtensionService,
     ModalService,
     ToastService,
     WalletConnectService,
@@ -22,6 +23,8 @@ import LedgerLogin from './LedgerModals/LedgerLogin';
 import isUaWebview from 'is-ua-webview';
 import { useEffect } from 'react';
 import useAuthStore from '../../store/authStore/useAuthStore';
+import { isChrome } from '../helpers/browser';
+import GetLobstrExtensionModal from './GetLobstrExtensionModal';
 
 const LoginMethod = styled.div`
     width: 52.8rem;
@@ -165,6 +168,24 @@ const ChooseLoginMethodModal = ({
                 close();
                 ModalService.openModal(LoginWithSecret, {});
                 break;
+            case LoginTypes.lobstr:
+                if (!isChrome()) {
+                    ToastService.showErrorToast(
+                        'LOBSTR | Signer extension is not supported by your browser. Use Google Chrome.',
+                    );
+                    return;
+                }
+                LobstrExtensionService.isConnected.then((res) => {
+                    if (res) {
+                        LobstrExtensionService.login().then(() => {
+                            close();
+                        });
+                    } else {
+                        close();
+                        ModalService.openModal(GetLobstrExtensionModal, {});
+                    }
+                });
+                break;
         }
     };
 
@@ -172,14 +193,14 @@ const ChooseLoginMethodModal = ({
         <>
             <ModalTitle>Sign in</ModalTitle>
 
+            <LoginMethod onClick={() => chooseMethod(LoginTypes.lobstr)}>
+                <LobstrLogo />
+                <LoginMethodName>LOBSTR | Signer extension</LoginMethodName>
+                <ArrowRight />
+            </LoginMethod>
+
             <LoginMethod onClick={() => chooseMethod(LoginTypes.walletConnect)}>
-                <WalletConnectLogoRelative>
-                    <WalletConnectLogo />
-                    <Tooltip>
-                        <LobstrLogo />
-                        <TooltipText>Available in LOBSTR wallet</TooltipText>
-                    </Tooltip>
-                </WalletConnectLogoRelative>
+                <WalletConnectLogo />
 
                 <LoginMethodName>WalletConnect</LoginMethodName>
                 <ArrowRight />
