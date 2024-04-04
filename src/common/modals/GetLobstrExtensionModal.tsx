@@ -30,7 +30,9 @@ const GetLobstrExtensionModal = () => {
             <ModalTitle>Install LOBSTR | Signer extension</ModalTitle>
             <ModalDescription>Don’t have the LOBSTR | Signer extension installed?</ModalDescription>
 
-            <ExternalLink>Get it on Chrome Web Store</ExternalLink>
+            <ExternalLink href="https://chromewebstore.google.com/detail/lobstr-signer-extension/ldiagbjmlmjiieclmdkagofdjcgodjle">
+                Get it on Chrome Web Store
+            </ExternalLink>
         </Container>
     );
 };
