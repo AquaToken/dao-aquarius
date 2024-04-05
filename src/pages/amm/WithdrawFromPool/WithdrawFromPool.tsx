@@ -45,9 +45,7 @@ const WithdrawFromPool = ({ params }) => {
 
         const amount = (share * (percent / 100)).toFixed(7);
 
-        SorobanService.getGiveAllowanceTx(account?.accountId(), poolId, shareId, amount)
-            .then((tx) => account.signAndSubmitTx(tx as SorobanClient.Transaction, true))
-            .then(() => SorobanService.getWithdrawTx(account?.accountId(), poolId, amount))
+        SorobanService.getWithdrawTx(account?.accountId(), poolId, amount)
             .then((tx) => account.signAndSubmitTx(tx as SorobanClient.Transaction, true))
             .then((res) => {
                 const [baseAmount, counterAmount] = res.value();
