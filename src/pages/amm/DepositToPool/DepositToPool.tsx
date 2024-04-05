@@ -75,32 +75,14 @@ const DepositToPool = ({ params }) => {
         const [firstAssetAmount, secondAssetAmount] =
             baseId > counterId ? [counterAmount, baseAmount] : [baseAmount, counterAmount];
 
-        SorobanService.getGiveAllowanceTx(
+        SorobanService.getDepositTx(
             account?.accountId(),
             poolId,
             firstAsset,
+            secondAsset,
             firstAssetAmount,
+            secondAssetAmount,
         )
-            .then((tx) => account.signAndSubmitTx(tx, true))
-            .then(() =>
-                SorobanService.getGiveAllowanceTx(
-                    account?.accountId(),
-                    poolId,
-                    secondAsset,
-                    secondAssetAmount,
-                ),
-            )
-            .then((tx) => account.signAndSubmitTx(tx, true))
-            .then(() =>
-                SorobanService.getDepositTx(
-                    account?.accountId(),
-                    poolId,
-                    firstAsset,
-                    secondAsset,
-                    firstAssetAmount,
-                    secondAssetAmount,
-                ),
-            )
             .then((tx) => account.signAndSubmitTx(tx, true))
             .then((res) => {
                 setPending(false);
