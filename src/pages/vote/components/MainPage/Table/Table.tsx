@@ -264,7 +264,11 @@ const VoteTable = ({
                                                 : false
                                         }
                                         mobileVerticalDirections
-                                        authRequired={pair.auth_required}
+                                        authRequired={
+                                            pair.auth_required ||
+                                            pair.auth_revocable ||
+                                            pair.auth_clawback_enabled
+                                        }
                                         noLiquidity={pair.no_liquidity}
                                         boosted={
                                             Number(pair.adjusted_votes_value) >

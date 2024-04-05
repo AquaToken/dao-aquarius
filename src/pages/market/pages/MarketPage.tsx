@@ -264,7 +264,11 @@ const MarketPage = () => {
                                 leftAlign
                                 bigCodes
                                 bottomLabels
-                                authRequired={votesData?.auth_required}
+                                authRequired={
+                                    votesData?.auth_required ||
+                                    votesData?.auth_revocable ||
+                                    votesData?.auth_clawback_enabled
+                                }
                                 noLiquidity={votesData?.no_liquidity}
                                 boosted={
                                     votesData
