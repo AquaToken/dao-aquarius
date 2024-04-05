@@ -8,7 +8,7 @@ import { ModalService, SorobanService, ToastService } from './globalServices';
 import RestoreContractModal from '../modals/RestoreContractModal/RestoreContractModal';
 
 const SOROBAN_SERVER = 'https://soroban-testnet.stellar.org:443';
-export const AMM_SMART_CONTACT_ID = 'CBF2K5H3N7BY3M5LURJW7E2DS7TTBWMRQAAZTX5BBVHF7Y5TPC6QVHUY';
+export const AMM_SMART_CONTACT_ID = 'CAQJ5YXGJE4HK33ABWPQXL4BB6AIHRRCTZXMOCD6YPQ4RKUQRO77JR54';
 
 enum AMM_CONTRACT_METHOD {
     GET_POOLS = 'get_pools',
@@ -666,6 +666,7 @@ export default class SorobanServiceClass {
                 this.amountToUint128(baseAmount),
                 this.amountToUint128(counterAmount),
             ]),
+            this.amountToUint128('0'),
         ).then((tx) => this.server.prepareTransaction(tx));
     }
 

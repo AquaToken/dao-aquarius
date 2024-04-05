@@ -1,6 +1,5 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import * as SorobanClient from 'soroban-client';
 import { respondDown } from '../../../common/mixins';
 import { Breakpoints } from '../../../common/styles';
 import { ModalDescription, ModalTitle } from '../../../common/modals/atoms/ModalAtoms';
@@ -45,10 +44,8 @@ const WithdrawFromPool = ({ params }) => {
 
         const amount = (share * (percent / 100)).toFixed(7);
 
-        SorobanService.getGiveAllowanceTx(account?.accountId(), poolId, shareId, amount)
-            .then((tx) => account.signAndSubmitTx(tx as SorobanClient.Transaction, true))
-            .then(() => SorobanService.getWithdrawTx(account?.accountId(), poolId, amount))
-            .then((tx) => account.signAndSubmitTx(tx as SorobanClient.Transaction, true))
+        SorobanService.getWithdrawTx(account?.accountId(), poolId, amount)
+            .then((tx) => account.signAndSubmitTx(tx, true))
             .then((res) => {
                 const [baseAmount, counterAmount] = res.value();
 
