@@ -299,7 +299,12 @@ const VoteTable = ({
                                         pair={pair}
                                         isPairSelected={isPairSelected(pair)}
                                         onButtonClick={() => selectPair(pair)}
-                                        disabled={pair.auth_required || pair.no_liquidity}
+                                        disabled={
+                                            pair.auth_required ||
+                                            pair.auth_revocable ||
+                                            pair.auth_clawback_enabled ||
+                                            pair.no_liquidity
+                                        }
                                     />
                                     {isYourVotes && (
                                         <Tooltip
