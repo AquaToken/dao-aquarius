@@ -293,7 +293,12 @@ const Sidebar = ({ votesData, base, counter, totalStats, onVoteClick, isPairSele
                 pair={votesData}
                 isPairSelected={isPairSelected}
                 onButtonClick={() => onVoteClick(votesData)}
-                disabled={false}
+                disabled={
+                    votesData.auth_required ||
+                    votesData.auth_revocable ||
+                    votesData.auth_clawback_enabled ||
+                    votesData.no_liquidity
+                }
                 withoutStats
             />
         </Container>
