@@ -23,7 +23,7 @@ import LedgerLogin from './LedgerModals/LedgerLogin';
 import isUaWebview from 'is-ua-webview';
 import { useEffect } from 'react';
 import useAuthStore from '../../store/authStore/useAuthStore';
-import { isChrome } from '../helpers/browser';
+import { isChrome, isMobile } from '../helpers/browser';
 import GetLobstrExtensionModal from './GetLobstrExtensionModal';
 
 const LoginMethod = styled.div`
@@ -193,11 +193,13 @@ const ChooseLoginMethodModal = ({
         <>
             <ModalTitle>Sign in</ModalTitle>
 
-            <LoginMethod onClick={() => chooseMethod(LoginTypes.lobstr)}>
-                <LobstrLogo />
-                <LoginMethodName>LOBSTR | Signer extension</LoginMethodName>
-                <ArrowRight />
-            </LoginMethod>
+            {!isMobile() && (
+                <LoginMethod onClick={() => chooseMethod(LoginTypes.lobstr)}>
+                    <LobstrLogo />
+                    <LoginMethodName>LOBSTR | Signer extension</LoginMethodName>
+                    <ArrowRight />
+                </LoginMethod>
+            )}
 
             <LoginMethod onClick={() => chooseMethod(LoginTypes.walletConnect)}>
                 <WalletConnectLogo />
