@@ -101,7 +101,7 @@ export default class AccountService extends Horizon.AccountResponse {
 
         ModalService.closeAllModals();
 
-        const xdr = tx.toEnvelope().toXDR('base64');
+        const xdr = signedTx.toEnvelope().toXDR('base64');
 
         if (!this.isVaultEnabled) {
             ModalService.openModal(SignWithPublic, { xdr, account: this });
