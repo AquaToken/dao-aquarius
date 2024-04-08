@@ -246,12 +246,14 @@ const Amm = ({ balances }) => {
                 <Header>
                     <PairSearch>
                         <AssetDropdown
+                            assetsList={assets}
                             asset={base}
                             onUpdate={setBase}
                             exclude={counter}
                             withoutReset
                         />
                         <AssetDropdown
+                            assetsList={assets}
                             asset={counter}
                             onUpdate={setCounter}
                             exclude={base}

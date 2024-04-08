@@ -190,7 +190,14 @@ const AssetDropdown = ({
 }: AssetDropdownProps) => {
     const { assets: knownAssets, assetsInfo, processNewAssets } = useAssetsStore();
 
-    const assets = assetsList || knownAssets;
+    const userAssets = assetsList?.length
+        ? assetsList.filter(
+              (asset) =>
+                  !knownAssets.find((a) => a.code === asset.code && a.issuer === asset.issuer),
+          )
+        : [];
+
+    const assets = [...knownAssets, ...userAssets];
 
     const [isOpen, setIsOpen] = useState(false);
     const [selectedAsset, setSelectedAsset] = useState(asset);
