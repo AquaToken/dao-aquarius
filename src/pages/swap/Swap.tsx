@@ -247,6 +247,7 @@ const Swap = ({ balances }) => {
 
                         <DropdownContainer>
                             <AssetDropdown
+                                assetsList={assets}
                                 asset={base}
                                 onUpdate={setBase}
                                 exclude={counter}
@@ -277,6 +278,7 @@ const Swap = ({ balances }) => {
 
                         <DropdownContainer>
                             <AssetDropdown
+                                assetsList={assets}
                                 asset={counter}
                                 onUpdate={setCounter}
                                 exclude={base}
