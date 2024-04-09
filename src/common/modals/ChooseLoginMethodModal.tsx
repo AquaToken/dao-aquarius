@@ -21,7 +21,7 @@ import { respondDown } from '../mixins';
 import LoginWithPublic from './LoginWithPublic';
 import LedgerLogin from './LedgerModals/LedgerLogin';
 import isUaWebview from 'is-ua-webview';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import useAuthStore from '../../store/authStore/useAuthStore';
 import { isChrome, isMobile } from '../helpers/browser';
 import GetLobstrExtensionModal from './GetLobstrExtensionModal';
@@ -118,6 +118,7 @@ const ChooseLoginMethodModal = ({
     close,
     params,
 }: ModalProps<{ redirectURL?: string; callback?: () => void }>): JSX.Element => {
+    const [pending, setPending] = useState(false);
     const { enableRedirect, disableRedirect, addAuthCallback, removeAuthCallback } = useAuthStore();
 
     useEffect(() => {
@@ -137,6 +138,9 @@ const ChooseLoginMethodModal = ({
     }, []);
 
     const chooseMethod = (method: LoginTypes) => {
+        if (pending) {
+            return;
+        }
         switch (method) {
             case LoginTypes.walletConnect:
                 // We make the assumption that if the application is open via WebView,
@@ -171,16 +175,19 @@ const ChooseLoginMethodModal = ({
             case LoginTypes.lobstr:
                 if (!isChrome()) {
                     ToastService.showErrorToast(
-                        'LOBSTR | Signer extension is not supported by your browser. Use Google Chrome.',
+                        'LOBSTR signer extension is not supported by your browser.',
                     );
                     return;
                 }
+                setPending(true);
                 LobstrExtensionService.isConnected.then((res) => {
                     if (res) {
+                        setPending(false);
                         LobstrExtensionService.login().then(() => {
                             close();
                         });
                     } else {
+                        setPending(false);
                         close();
                         ModalService.openModal(GetLobstrExtensionModal, {});
                     }
