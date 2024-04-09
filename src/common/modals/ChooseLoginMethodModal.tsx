@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import { ModalProps, ModalTitle } from './atoms/ModalAtoms';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../styles';
@@ -22,10 +23,16 @@ import { respondDown } from '../mixins';
 import LoginWithPublic from './LoginWithPublic';
 import LedgerLogin from './LedgerModals/LedgerLogin';
 import isUaWebview from 'is-ua-webview';
-import { useEffect, useState } from 'react';
 import useAuthStore from '../../store/authStore/useAuthStore';
 import { isChrome, isMobile } from '../helpers/browser';
 import GetLobstrExtensionModal from './GetLobstrExtensionModal';
+
+const BgStyled = styled(BG)`
+    ${respondDown(Breakpoints.md)`
+        width: 100vw;
+        height: 30vh;
+    `}
+`;
 
 const LoginMethod = styled.div`
     width: 52.8rem;
@@ -190,7 +197,7 @@ const ChooseLoginMethodModal = ({
                     } else {
                         setPending(false);
                         close();
-                        ModalService.openModal(GetLobstrExtensionModal, {}, false, <BG />);
+                        ModalService.openModal(GetLobstrExtensionModal, {}, false, <BgStyled />);
                     }
                 });
                 break;
