@@ -2,10 +2,9 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { respondDown } from '../mixins';
 import { Breakpoints } from '../styles';
-import { ModalDescription, ModalTitle } from './atoms/ModalAtoms';
+import { ModalDescription } from './atoms/ModalAtoms';
 import ExternalLink from '../basics/ExternalLink';
-
-import Logo from '../assets/img/lobstr-logo-color.svg';
+import Button from '../basics/Button';
 
 const Container = styled.div`
     width: 52.8rem;
@@ -17,22 +16,39 @@ const Container = styled.div`
       `}
 `;
 
-const Lobstr = styled(Logo)`
-    height: 4.5rem;
-    width: 4.5rem;
-    margin-bottom: 2.4rem;
+const Title = styled.h1`
+    font-size: 3.6rem;
+    line-height: 4.2rem;
+    font-weight: 400;
+    margin-bottom: 1.6rem;
+`;
+
+const StyledButton = styled(Button)`
+    margin-top: 5.4rem;
 `;
 
 const GetLobstrExtensionModal = () => {
     return (
         <Container>
-            <Lobstr />
-            <ModalTitle>Install LOBSTR | Signer extension</ModalTitle>
-            <ModalDescription>Don’t have the LOBSTR | Signer extension installed?</ModalDescription>
+            <Title>Install LOBSTR signer extension</Title>
+            <ModalDescription>
+                Connect your Stellar wallet from the LOBSTR mobile app to the signer extension.
+            </ModalDescription>
 
-            <ExternalLink href="https://chromewebstore.google.com/detail/lobstr-signer-extension/ldiagbjmlmjiieclmdkagofdjcgodjle">
-                Get it on Chrome Web Store
-            </ExternalLink>
+            <ExternalLink>How to connect LOBSTR wallet?</ExternalLink>
+
+            <StyledButton
+                isBig
+                fullWidth
+                onClick={() =>
+                    window.open(
+                        'https://chromewebstore.google.com/detail/lobstr-signer-extension/ldiagbjmlmjiieclmdkagofdjcgodjle',
+                        '_blank',
+                    )
+                }
+            >
+                Download extension
+            </StyledButton>
         </Container>
     );
 };

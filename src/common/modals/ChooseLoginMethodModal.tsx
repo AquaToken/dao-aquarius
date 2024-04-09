@@ -8,6 +8,7 @@ import WalletConnectLogo from '../assets/img/wallet-connect-logo.svg';
 import LobstrLogo from '../assets/img/lobstr-logo-black.svg';
 import Stellar from '../assets/img/xlm-logo.svg';
 import Ledger from '../assets/img/ledger-logo.svg';
+import BG from '../assets/img/get-extension-bg.svg';
 import { LoginTypes } from '../../store/authStore/types';
 import LoginWithSecret from './LoginWithSecret';
 import {
@@ -189,7 +190,7 @@ const ChooseLoginMethodModal = ({
                     } else {
                         setPending(false);
                         close();
-                        ModalService.openModal(GetLobstrExtensionModal, {});
+                        ModalService.openModal(GetLobstrExtensionModal, {}, false, <BG />);
                     }
                 });
                 break;
