@@ -38,7 +38,9 @@ const GetLobstrExtensionModal = () => {
                 LOBSTR app. You can install the LOBSTR signer extension from the Chrome Web Store.
             </ModalDescription>
 
-            <ExternalLink>How to sign in with LOBSTR signer extension?</ExternalLink>
+            <ExternalLink href="https://lobstr.freshdesk.com/a/solutions/articles/151000183963?portalId=151000006220">
+                How to sign in with LOBSTR signer extension?
+            </ExternalLink>
 
             <StyledButton
                 isBig
