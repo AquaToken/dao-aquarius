@@ -1,4 +1,4 @@
-export const completedStepsCount = 9;
+export const completedStepsCount = 11;
 export const steps = [
     {
         date: 'Q4 - 2020',
@@ -56,9 +56,9 @@ export const steps = [
         text: 'Using funding via the Stellar Community Fund, we are building new systems for Aquarius using Soroban smart contracts. First will be Aquarius AMMs, introducing new AMM types to Stellar in 2023.',
     },
     {
-        date: 'Q4 - 2023',
+        date: 'Q1 - 2024',
         title: 'Launch of Aquarius AMMs',
-        text: 'The deployment of Aquarius AMMs will aim to coincide with the launch of Soroban, expected around the Meridian conference this year (September 2023).',
+        text: 'Now Soroban smart contracts have launched on Stellar, Aquarius AMMs are expected to launch Q1 2024.',
     },
     {
         date: 'Q2 - 2024',
