@@ -182,9 +182,7 @@ const ChooseLoginMethodModal = ({
                 break;
             case LoginTypes.lobstr:
                 if (!isChrome()) {
-                    ToastService.showErrorToast(
-                        'LOBSTR signer extension is not supported by your browser.',
-                    );
+                    ToastService.showErrorToast('LOBSTR wallet is not supported by your browser.');
                     return;
                 }
                 setPending(true);
@@ -211,7 +209,7 @@ const ChooseLoginMethodModal = ({
             {!isMobile() && (
                 <LoginMethod onClick={() => chooseMethod(LoginTypes.lobstr)}>
                     <LobstrLogo />
-                    <LoginMethodName>LOBSTR | Signer extension</LoginMethodName>
+                    <LoginMethodName>LOBSTR WALLET</LoginMethodName>
                     <ArrowRight />
                 </LoginMethod>
             )}
