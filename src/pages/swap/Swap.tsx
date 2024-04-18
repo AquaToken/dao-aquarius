@@ -114,6 +114,7 @@ const Swap = ({ balances }) => {
 
     const [baseAmount, setBaseAmount] = useState('');
     const [counterAmount, setCounterAmount] = useState('');
+    const [bestPoolBytes, setBestPoolBytes] = useState(null);
     const [estimatePending, setEstimatePending] = useState(false);
     const [swapPending, setSwapPending] = useState(false);
 
@@ -131,18 +132,18 @@ const Swap = ({ balances }) => {
     useEffect(() => {
         if (!!Number(debouncedAmount)) {
             setEstimatePending(true);
-            SorobanService.getSwapEstimatedAmount(
-                account?.accountId(),
-                base,
-                counter,
-                pools,
-                debouncedAmount,
-            ).then((amount) => {
-                setCounterAmount(amount.toString());
-                setEstimatePending(false);
-            });
+
+            SorobanService.estimateSwap(account?.accountId(), base, counter, debouncedAmount).then(
+                // @ts-ignore
+                ([bytes, , amount]) => {
+                    setCounterAmount(SorobanService.i128ToInt(amount.value()).toString());
+                    setBestPoolBytes(bytes.value());
+                    setEstimatePending(false);
+                },
+            );
         } else {
             setBaseAmount('');
+            setBestPoolBytes(null);
         }
     }, [debouncedAmount]);
 
@@ -157,7 +158,7 @@ const Swap = ({ balances }) => {
 
         SorobanService.getSwapTx(
             account?.accountId(),
-            null,
+            bestPoolBytes,
             base,
             counter,
             baseAmount,
@@ -176,6 +177,7 @@ const Swap = ({ balances }) => {
                 setSwapPending(false);
                 setBaseAmount('');
                 setCounterAmount('');
+                setBestPoolBytes(null);
             })
             .catch((e) => {
                 console.log(e);
@@ -212,6 +214,7 @@ const Swap = ({ balances }) => {
         setCounter(term);
         setBaseAmount('');
         setCounterAmount('');
+        setBestPoolBytes(null);
     };
 
     if (!account || !assets) {
