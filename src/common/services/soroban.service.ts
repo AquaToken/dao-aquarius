@@ -16,11 +16,9 @@ enum AMM_CONTRACT_METHOD {
     INIT_STABLESWAP_POOL = 'init_stableswap_pool',
     DEPOSIT = 'deposit',
     SHARE_ID = 'share_id',
-    ESTIMATE_SWAP = 'estimate_swap',
     ESTIMATE_SWAP_ROUTED = 'estimate_swap_routed',
     WITHDRAW = 'withdraw',
     SWAP = 'swap',
-    SWAP_ROUTED = 'swap_routed',
     GET_RESERVES = 'get_reserves',
     POOL_TYPE = 'pool_type',
     FEE_FRACTION = 'get_fee_fraction',
@@ -684,13 +682,7 @@ export default class SorobanServiceClass {
         ).then((tx) => this.server.prepareTransaction(tx));
     }
 
-    getSwapEstimatedAmount(
-        accountId: string,
-        base: Asset,
-        counter: Asset,
-        pools: [string, Buffer][],
-        amount: string,
-    ) {
+    estimateSwap(accountId: string, base: Asset, counter: Asset, amount: string) {
         const idA = this.getAssetContractId(base);
         const idB = this.getAssetContractId(counter);
 
@@ -713,54 +705,15 @@ export default class SorobanServiceClass {
             .then(({ result }) => {
                 if (result) {
                     // @ts-ignore
-                    const [, , amount] = result.retval.value();
-                    return this.i128ToInt(amount.value() as xdr.Int128Parts);
+                    return result.retval.value();
                 }
-
-                return 0;
-            });
-    }
-
-    getSwapEstimatedAmountForPool(
-        accountId: string,
-        base: Asset,
-        counter: Asset,
-        poolBytes: Buffer,
-        poolId: string,
-        amount: string,
-    ) {
-        const idA = this.getAssetContractId(base);
-        const idB = this.getAssetContractId(counter);
-
-        const [a, b] = idA > idB ? [counter, base] : [base, counter];
-
-        return this.buildSmartContactTx(
-            accountId,
-            AMM_SMART_CONTACT_ID,
-            AMM_CONTRACT_METHOD.ESTIMATE_SWAP,
-            this.scValToArray([this.assetToScVal(a), this.assetToScVal(b)]),
-            this.assetToScVal(base),
-            this.assetToScVal(counter),
-            this.bytesToScVal(poolBytes),
-            this.amountToUint128(amount),
-        )
-            .then((tx) => {
-                return this.server.simulateTransaction(
-                    tx,
-                ) as Promise<SimulateTransactionSuccessResponse>;
-            })
-            .then(({ result }) => {
-                if (result) {
-                    return this.i128ToInt(result.retval.value() as xdr.Int128Parts);
-                }
-
                 return 0;
             });
     }
 
     getSwapTx(
         accountId: string,
-        poolId: string,
+        poolBytes: Buffer,
         base: Asset,
         counter: Asset,
         amount: string,
@@ -770,24 +723,18 @@ export default class SorobanServiceClass {
         const idB = this.getAssetContractId(counter);
 
         const [a, b] = idA > idB ? [counter, base] : [base, counter];
-
-        return this.server
-            .getLatestLedger()
-            .then(({ sequence }) => {
-                return this.buildSmartContactTx(
-                    accountId,
-                    AMM_SMART_CONTACT_ID,
-                    AMM_CONTRACT_METHOD.SWAP_ROUTED,
-                    this.publicKeyToScVal(accountId),
-                    this.scValToArray([this.assetToScVal(a), this.assetToScVal(b)]),
-                    this.assetToScVal(base),
-                    this.assetToScVal(counter),
-                    this.amountToUint128(amount),
-                    this.amountToUint128(minCounterAmount),
-                    xdr.ScVal.scvU32(sequence + 60),
-                );
-            })
-            .then((tx) => this.server.prepareTransaction(tx));
+        return this.buildSmartContactTx(
+            accountId,
+            AMM_SMART_CONTACT_ID,
+            AMM_CONTRACT_METHOD.SWAP,
+            this.publicKeyToScVal(accountId),
+            this.scValToArray([this.assetToScVal(a), this.assetToScVal(b)]),
+            this.assetToScVal(base),
+            this.assetToScVal(counter),
+            this.bytesToScVal(poolBytes),
+            this.amountToUint128(amount),
+            this.amountToUint128(minCounterAmount),
+        ).then((tx) => this.server.prepareTransaction(tx));
     }
 
     buildSmartContactTx(publicKey, contactId, method, ...args) {
