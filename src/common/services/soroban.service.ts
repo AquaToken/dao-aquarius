@@ -8,7 +8,7 @@ import { ModalService, SorobanService, ToastService } from './globalServices';
 import RestoreContractModal from '../modals/RestoreContractModal/RestoreContractModal';
 
 const SOROBAN_SERVER = 'https://soroban-rpc.aqua.network/';
-export const AMM_SMART_CONTACT_ID = 'CDT6GQYR4LLSZNBPFGBHFHBJ5TCPWGFKJI5IMRD5HAAEMHW7UN6Z57KM';
+export const AMM_SMART_CONTACT_ID = 'CC2B3GFLD5U6GQFPWZ5TOCC673QW2I3QKDIGCHXMTZZXKJE6MMOMUQF7';
 
 enum AMM_CONTRACT_METHOD {
     GET_POOLS = 'get_pools',
