@@ -312,7 +312,7 @@ const Amm = ({ balances }) => {
                                         {
                                             children: info.a ? (
                                                 <CellA>
-                                                    <span>{info.a}</span>
+                                                    <span>{info.a * 1e7}</span>
                                                     <Tooltip
                                                         content={
                                                             <TooltipInner>
