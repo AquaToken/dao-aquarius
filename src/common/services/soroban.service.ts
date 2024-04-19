@@ -341,7 +341,7 @@ export default class SorobanServiceClass {
             AMM_CONTRACT_METHOD.INIT_STABLESWAP_POOL,
             this.publicKeyToScVal(accountId),
             this.scValToArray([this.contractIdToScVal(aId), this.contractIdToScVal(bId)]),
-            this.amountToUint128(a.toFixed(7)),
+            new StellarSdk.XdrLargeInt('u128', Number(a).toFixed()).toU128(),
             this.amountToUint32(fee * 100),
             this.amountToUint32(0),
         ).then((tx) => this.server.prepareTransaction(tx));
