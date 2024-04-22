@@ -121,13 +121,15 @@ const Amm = ({ balances }) => {
 
     const [claimPendingId, setClaimPendingId] = useState(null);
 
+    const updateIndex = useUpdateIndex(5000);
+
     useEffect(() => {
         getPools();
     }, [isLogged, base, counter]);
 
     useEffect(() => {
         getData();
-    }, [pools]);
+    }, [pools, updateIndex]);
 
     const getPools = useCallback(() => {
         setPools(null);
@@ -197,8 +199,6 @@ const Amm = ({ balances }) => {
                 setClaimPendingId(null);
             });
     };
-
-    const updateIndex = useUpdateIndex(5000);
 
     useEffect(() => {
         if (!poolsData || !poolsData.length) {
