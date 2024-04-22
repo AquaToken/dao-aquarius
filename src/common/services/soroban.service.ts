@@ -644,12 +644,17 @@ export default class SorobanServiceClass {
             this.bytesToScVal(poolBytes),
             this.amountToUint128(amount),
             this.amountToUint128(minCounterAmount),
-        ).then((tx) => {
+        )
+            .then((tx) => {
                 console.log(
                     'Вот вам непросимулированная транзакция: ',
                     tx.toEnvelope().toXDR('base64'),
                 );
                 return this.server.prepareTransaction(tx);
+            })
+            .then((tx) => {
+                console.log('А вот просимулированная: ', tx.toEnvelope().toXDR('base64'));
+                return tx;
             });
     }
 
