@@ -209,7 +209,7 @@ const ChooseLoginMethodModal = ({
             {!isMobile() && (
                 <LoginMethod onClick={() => chooseMethod(LoginTypes.lobstr)}>
                     <LobstrLogo />
-                    <LoginMethodName>LOBSTR WALLET</LoginMethodName>
+                    <LoginMethodName>LOBSTR wallet</LoginMethodName>
                     <ArrowRight />
                 </LoginMethod>
             )}
