@@ -6,7 +6,7 @@ import { Header, InOffers, Title } from '../profile/AmmRewards/AmmRewards';
 import PageLoader from '../../common/basics/PageLoader';
 import { ModalService, SorobanService, ToastService } from '../../common/services/globalServices';
 import Pair from '../vote/components/common/Pair';
-import { formatBalance } from '../../common/helpers/helpers';
+import { formatBalance, getDateString } from '../../common/helpers/helpers';
 import useAuthStore from '../../store/authStore/useAuthStore';
 import * as StellarSdk from '@stellar/stellar-sdk';
 import BalancesBlock from './BalancesBlock/BalancesBlock';
@@ -161,6 +161,8 @@ const Amm = ({ balances }) => {
         });
     }, [pools]);
 
+    console.log(poolsData);
+
     const openCreatePoolModal = () => {
         ModalService.openModal(CreatePool, { base, counter }).then(({ isConfirmed }) => {
             if (isConfirmed) {
@@ -278,9 +280,10 @@ const Amm = ({ balances }) => {
                                 { children: 'Fee', flexSize: 0.5 },
                                 { children: 'Slippage', flexSize: 0.5 },
                                 { children: 'Total locked in pool' },
-                                { children: 'Total daily rewards' },
                                 { children: 'Account shares' },
+                                { children: 'Total daily rewards' },
                                 { children: 'Amount to claim' },
+                                { children: 'Rewards distribution end' },
                             ]}
                             body={poolsData.map(
                                 ({
@@ -293,6 +296,7 @@ const Amm = ({ balances }) => {
                                     rewardsData,
                                     shareId,
                                     info,
+                                    totalShares,
                                 }) => ({
                                     key: id,
                                     rowItems: [
@@ -357,7 +361,40 @@ const Amm = ({ balances }) => {
                                                         {formatBalance(counterAmount, true)}{' '}
                                                         {counterAsset.code}
                                                     </div>
+                                                    <div>
+                                                        {formatBalance(totalShares, true)} shares
+                                                    </div>
                                                 </InOffers>
+                                            ),
+                                        },
+                                        {
+                                            children: share ? (
+                                                <InOffers>
+                                                    <div>
+                                                        {formatBalance(
+                                                            (baseAmount * share) / totalShares,
+                                                            true,
+                                                        )}{' '}
+                                                        {baseAsset.code}
+                                                    </div>
+                                                    <div>
+                                                        {formatBalance(
+                                                            (counterAmount * share) / totalShares,
+                                                            true,
+                                                        )}{' '}
+                                                        {counterAsset.code}
+                                                    </div>
+                                                    <div>
+                                                        {formatBalance(share, true)} (
+                                                        {formatBalance(
+                                                            (share / totalShares) * 100,
+                                                            true,
+                                                        )}
+                                                        %) shares
+                                                    </div>
+                                                </InOffers>
+                                            ) : (
+                                                '-'
                                             ),
                                         },
                                         {
@@ -368,7 +405,6 @@ const Amm = ({ balances }) => {
                                                   )} AQUA`
                                                 : '-',
                                         },
-                                        { children: share ? formatBalance(share) : '-' },
                                         {
                                             children:
                                                 userRewards &&
@@ -378,6 +414,14 @@ const Amm = ({ balances }) => {
                                                           userRewards.get(id),
                                                           true,
                                                       )} AQUA`
+                                                    : '-',
+                                        },
+                                        {
+                                            children:
+                                                rewardsData && Boolean(rewardsData.exp_at)
+                                                    ? getDateString(rewardsData.exp_at * 1000, {
+                                                          withTime: true,
+                                                      })
                                                     : '-',
                                         },
                                     ],

@@ -25,6 +25,7 @@ enum AMM_CONTRACT_METHOD {
     GET_REWARDS_INFO = 'get_rewards_info',
     GET_INFO = 'get_info',
     GET_USER_REWARD = 'get_user_reward',
+    GET_TOTAL_SHARES = 'get_total_shares',
     CLAIM = 'claim',
 }
 
@@ -478,7 +479,12 @@ export default class SorobanServiceClass {
                 if (result) {
                     // @ts-ignore
                     return result.retval.value().reduce((acc, val) => {
-                        acc[val.key().value().toString()] = this.i128ToInt(val.val().value());
+                        const key = val.key().value().toString();
+                        if (key === 'exp_at' || key === 'last_time') {
+                            acc[key] = this.i128ToInt(val.val().value()) * 1e7;
+                            return acc;
+                        }
+                        acc[key] = this.i128ToInt(val.val().value());
                         return acc;
                     }, {});
                 }
@@ -511,6 +517,24 @@ export default class SorobanServiceClass {
                 }
 
                 throw new Error('getPoolRewards error');
+            });
+    }
+
+    getTotalShares(accountId: string, poolId: string) {
+        return this.buildSmartContactTx(accountId, poolId, AMM_CONTRACT_METHOD.GET_TOTAL_SHARES)
+            .then(
+                (tx) =>
+                    this.server.simulateTransaction(
+                        tx,
+                    ) as Promise<SimulateTransactionSuccessResponse>,
+            )
+            .then(({ result }) => {
+                if (result) {
+                    // @ts-ignore
+                    return this.i128ToInt(result.retval.value());
+                }
+
+                throw new Error('getTotalShares error');
             });
     }
 
@@ -560,20 +584,24 @@ export default class SorobanServiceClass {
                     this.getTokenBalance(accountId, counter, poolId),
                     this.getPoolRewards(accountId, base, counter, poolId),
                     this.getPoolInfo(accountId, poolId),
+                    this.getTotalShares(accountId, poolId),
                 ]);
             })
-            .then(([shareId, share, baseAmount, counterAmount, rewardsData, info]) => ({
-                id: poolId,
-                bytes: poolBytes,
-                base,
-                counter,
-                share,
-                shareId,
-                baseAmount,
-                counterAmount,
-                rewardsData,
-                info,
-            }));
+            .then(
+                ([shareId, share, baseAmount, counterAmount, rewardsData, info, totalShares]) => ({
+                    id: poolId,
+                    bytes: poolBytes,
+                    base,
+                    counter,
+                    share,
+                    shareId,
+                    baseAmount,
+                    counterAmount,
+                    rewardsData,
+                    info,
+                    totalShares,
+                }),
+            );
     }
 
     getTokenBalance(accountId, token: Asset | string, where: string) {
