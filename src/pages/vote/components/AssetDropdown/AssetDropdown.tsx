@@ -287,7 +287,7 @@ const AssetDropdown = ({
     }, [debouncedSearchText]);
 
     const onClickAsset = (asset) => {
-        onUpdate(asset);
+        onUpdate(new StellarSdk.Asset(asset.code, asset.issuer));
     };
 
     const resetAsset = (event) => {
