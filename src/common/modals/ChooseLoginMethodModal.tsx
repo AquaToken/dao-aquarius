@@ -1,17 +1,20 @@
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import { ModalProps, ModalTitle } from './atoms/ModalAtoms';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../styles';
 import ArrowRightIcon from '../assets/img/icon-arrow-right.svg';
 import KeyIcon from '../assets/img/icon-key.svg';
 import WalletConnectLogo from '../assets/img/wallet-connect-logo.svg';
-import LobstrLogo from '../assets/img/lobstr-logo.svg';
+import LobstrLogo from '../assets/img/lobstr-logo-black.svg';
 import Stellar from '../assets/img/xlm-logo.svg';
 import Ledger from '../assets/img/ledger-logo.svg';
+import BG from '../assets/img/get-extension-bg.svg';
 import { LoginTypes } from '../../store/authStore/types';
 import LoginWithSecret from './LoginWithSecret';
 import {
     LedgerService,
+    LobstrExtensionService,
     ModalService,
     ToastService,
     WalletConnectService,
@@ -20,8 +23,16 @@ import { respondDown } from '../mixins';
 import LoginWithPublic from './LoginWithPublic';
 import LedgerLogin from './LedgerModals/LedgerLogin';
 import isUaWebview from 'is-ua-webview';
-import { useEffect } from 'react';
 import useAuthStore from '../../store/authStore/useAuthStore';
+import { isChrome, isMobile } from '../helpers/browser';
+import GetLobstrExtensionModal from './GetLobstrExtensionModal';
+
+const BgStyled = styled(BG)`
+    ${respondDown(Breakpoints.md)`
+        width: 100vw;
+        height: 30vh;
+    `}
+`;
 
 const LoginMethod = styled.div`
     width: 52.8rem;
@@ -115,6 +126,7 @@ const ChooseLoginMethodModal = ({
     close,
     params,
 }: ModalProps<{ redirectURL?: string; callback?: () => void }>): JSX.Element => {
+    const [pending, setPending] = useState(false);
     const { enableRedirect, disableRedirect, addAuthCallback, removeAuthCallback } = useAuthStore();
 
     useEffect(() => {
@@ -134,6 +146,9 @@ const ChooseLoginMethodModal = ({
     }, []);
 
     const chooseMethod = (method: LoginTypes) => {
+        if (pending) {
+            return;
+        }
         switch (method) {
             case LoginTypes.walletConnect:
                 // We make the assumption that if the application is open via WebView,
@@ -165,6 +180,25 @@ const ChooseLoginMethodModal = ({
                 close();
                 ModalService.openModal(LoginWithSecret, {});
                 break;
+            case LoginTypes.lobstr:
+                if (!isChrome()) {
+                    ToastService.showErrorToast('LOBSTR wallet is not supported by your browser.');
+                    return;
+                }
+                setPending(true);
+                LobstrExtensionService.isConnected.then((res) => {
+                    if (res) {
+                        setPending(false);
+                        LobstrExtensionService.login().then(() => {
+                            close();
+                        });
+                    } else {
+                        setPending(false);
+                        close();
+                        ModalService.openModal(GetLobstrExtensionModal, {}, false, <BgStyled />);
+                    }
+                });
+                break;
         }
     };
 
@@ -172,14 +206,16 @@ const ChooseLoginMethodModal = ({
         <>
             <ModalTitle>Sign in</ModalTitle>
 
+            {!isMobile() && (
+                <LoginMethod onClick={() => chooseMethod(LoginTypes.lobstr)}>
+                    <LobstrLogo />
+                    <LoginMethodName>LOBSTR wallet</LoginMethodName>
+                    <ArrowRight />
+                </LoginMethod>
+            )}
+
             <LoginMethod onClick={() => chooseMethod(LoginTypes.walletConnect)}>
-                <WalletConnectLogoRelative>
-                    <WalletConnectLogo />
-                    <Tooltip>
-                        <LobstrLogo />
-                        <TooltipText>Available in LOBSTR wallet</TooltipText>
-                    </Tooltip>
-                </WalletConnectLogoRelative>
+                <WalletConnectLogo />
 
                 <LoginMethodName>WalletConnect</LoginMethodName>
                 <ArrowRight />

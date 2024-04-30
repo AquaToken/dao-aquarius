@@ -3,6 +3,7 @@ import { Horizon } from '@stellar/stellar-sdk';
 import { LoginTypes } from '../../store/authStore/types';
 import {
     LedgerService,
+    LobstrExtensionService,
     ModalService,
     StellarService,
     WalletConnectService,
@@ -61,6 +62,10 @@ export default class AccountService extends Horizon.AccountResponse {
             signedTx = StellarService.signWithSecret(tx);
         }
 
+        if (this.authType === LoginTypes.lobstr) {
+            signedTx = await LobstrExtensionService.signTx(tx);
+        }
+
         if (this.authType === LoginTypes.walletConnect && withResult) {
             const signedXDR = await WalletConnectService.signTx(tx);
             signedTx = new StellarSdk.Transaction(signedXDR, StellarSdk.Networks.PUBLIC);
@@ -96,7 +101,7 @@ export default class AccountService extends Horizon.AccountResponse {
 
         ModalService.closeAllModals();
 
-        const xdr = tx.toEnvelope().toXDR('base64');
+        const xdr = signedTx.toEnvelope().toXDR('base64');
 
         if (!this.isVaultEnabled) {
             ModalService.openModal(SignWithPublic, { xdr, account: this });

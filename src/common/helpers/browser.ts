@@ -5,6 +5,7 @@ import {
     NodeInfo,
     SearchBotDeviceInfo,
     ReactNativeInfo,
+    browserName,
 } from 'detect-browser';
 
 export function detectEnv(
@@ -34,4 +35,10 @@ export function isIOS(): boolean {
 export function isMobile(): boolean {
     const os = detectOS();
     return os ? isAndroid() || isIOS() : false;
+}
+
+export function isChrome(): boolean {
+    const browser = browserName(window?.navigator?.userAgent);
+
+    return browser === 'chrome';
 }
