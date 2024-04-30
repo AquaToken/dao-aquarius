@@ -28,9 +28,12 @@ const GetFreighterModal = () => {
         <Container>
             <Freighter />
             <ModalTitle>Install Freighter extension</ModalTitle>
-            <ModalDescription>Don’t have Freighter extension?</ModalDescription>
+            <ModalDescription>
+                Freighter is a non-custodial wallet extension for your browser. You can install the
+                extension from the web store.
+            </ModalDescription>
 
-            <ExternalLink href="https://www.freighter.app/">Download Freighter</ExternalLink>
+            <ExternalLink href="https://www.freighter.app/">Install Freighter</ExternalLink>
         </Container>
     );
 };
