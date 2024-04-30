@@ -9,10 +9,12 @@ import WalletConnectLogo from '../assets/img/wallet-connect-logo.svg';
 import LobstrLogo from '../assets/img/lobstr-logo-black.svg';
 import Stellar from '../assets/img/xlm-logo.svg';
 import Ledger from '../assets/img/ledger-logo.svg';
+import Freighter from '../assets/img/freighter-logo.svg';
 import BG from '../assets/img/get-extension-bg.svg';
 import { LoginTypes } from '../../store/authStore/types';
 import LoginWithSecret from './LoginWithSecret';
 import {
+    FreighterService,
     LedgerService,
     LobstrExtensionService,
     ModalService,
@@ -24,6 +26,7 @@ import LoginWithPublic from './LoginWithPublic';
 import LedgerLogin from './LedgerModals/LedgerLogin';
 import isUaWebview from 'is-ua-webview';
 import useAuthStore from '../../store/authStore/useAuthStore';
+import GetFreighterModal from './GetFreighterModal';
 import { isChrome, isMobile } from '../helpers/browser';
 import GetLobstrExtensionModal from './GetLobstrExtensionModal';
 
@@ -199,6 +202,19 @@ const ChooseLoginMethodModal = ({
                     }
                 });
                 break;
+
+            case LoginTypes.freighter:
+                FreighterService.isConnected.then((res) => {
+                    if (res) {
+                        FreighterService.login().then(() => {
+                            close();
+                        });
+                    } else {
+                        close();
+                        ModalService.openModal(GetFreighterModal, {});
+                    }
+                });
+                break;
         }
     };
 
@@ -226,7 +242,7 @@ const ChooseLoginMethodModal = ({
                 <LoginMethodWithDescription>
                     <LoginMethodName>Stellar Laboratory</LoginMethodName>
                     <LoginMethodDescription>
-                        Sign with Freighter, Trezor, Albedo or others tools.
+                        Sign with Trezor, Albedo or others tools.
                     </LoginMethodDescription>
                 </LoginMethodWithDescription>
 
@@ -241,6 +257,17 @@ const ChooseLoginMethodModal = ({
 
                 <ArrowRight />
             </LoginMethod>
+
+            {!isMobile() && (
+                <LoginMethod onClick={() => chooseMethod(LoginTypes.freighter)}>
+                    <Freighter />
+                    <LoginMethodWithDescription>
+                        <LoginMethodName>Freighter</LoginMethodName>
+                    </LoginMethodWithDescription>
+
+                    <ArrowRight />
+                </LoginMethod>
+            )}
 
             <LoginMethod onClick={() => chooseMethod(LoginTypes.secret)}>
                 <KeyIcon />

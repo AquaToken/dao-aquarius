@@ -4,6 +4,7 @@ import { WalletConnectEvents } from '../services/wallet-connect.service';
 import { LoginTypes } from '../../store/authStore/types';
 import { Horizon } from '@stellar/stellar-sdk';
 import {
+    FreighterService,
     LedgerService,
     LobstrExtensionService,
     StellarService,
@@ -14,6 +15,7 @@ import { StellarEvents } from '../services/stellar.service';
 import { LedgerEvents } from '../services/ledger.service';
 import { useSkipFirstRender } from './useSkipFirstRender';
 import { LobstrExtensionEvents } from '../services/lobstr-extension.service';
+import { FreighterEvents } from '../services/freighter.service';
 
 const UnfundedErrors = ['Request failed with status code 404', 'Not Found'];
 
@@ -61,6 +63,16 @@ export default function useGlobalSubscriptions(): void {
         const unsub = LobstrExtensionService.event.sub((event) => {
             if (event.type === LobstrExtensionEvents.login) {
                 login(event.publicKey, LoginTypes.lobstr);
+            }
+        });
+
+        return () => unsub();
+    });
+
+    useEffect(() => {
+        const unsub = FreighterService.event.sub((event) => {
+            if (event.type === FreighterEvents.login) {
+                login(event.publicKey, LoginTypes.freighter);
             }
         });
 

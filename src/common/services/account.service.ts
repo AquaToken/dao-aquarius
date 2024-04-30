@@ -2,6 +2,7 @@ import AccountRecord, * as StellarSdk from '@stellar/stellar-sdk';
 import { Horizon } from '@stellar/stellar-sdk';
 import { LoginTypes } from '../../store/authStore/types';
 import {
+    FreighterService,
     LedgerService,
     LobstrExtensionService,
     ModalService,
@@ -60,6 +61,10 @@ export default class AccountService extends Horizon.AccountResponse {
 
         if (this.authType === LoginTypes.secret) {
             signedTx = StellarService.signWithSecret(tx);
+        }
+
+        if (this.authType === LoginTypes.freighter) {
+            signedTx = await FreighterService.signTx(tx);
         }
 
         if (this.authType === LoginTypes.lobstr) {
