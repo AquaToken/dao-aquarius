@@ -33,18 +33,20 @@ export const RewardLabel = () => {
 export const AuthRequiredLabel = () => {
     return (
         <StyledLabel
-            title={'auth required'}
+            title={'asset flags'}
             text={
                 <span>
-                    “Authorization required” flag is enabled for one asset from the pair. With this
-                    flag set, an issuer can grant a limited permissions to transact with its asset.
+                    One of the assets in this pair has flags enabled. Most assets with “Required”,
+                    “Revocable”, and “Clawback Enabled” flags are currently banned from Aquarius.
+                    Learn more about flag
                     <a
                         rel="noopener noreferrer"
                         target="_blank"
                         href="https://developers.stellar.org/docs/glossary/accounts/#flags"
                     >
-                        More details.
+                        here
                     </a>
+                    .
                 </span>
             }
             isRed

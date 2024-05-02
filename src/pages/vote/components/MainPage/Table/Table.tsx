@@ -264,7 +264,11 @@ const VoteTable = ({
                                                 : false
                                         }
                                         mobileVerticalDirections
-                                        authRequired={pair.auth_required}
+                                        authRequired={
+                                            pair.auth_required ||
+                                            pair.auth_revocable ||
+                                            pair.auth_clawback_enabled
+                                        }
                                         noLiquidity={pair.no_liquidity}
                                         boosted={
                                             Number(pair.adjusted_votes_value) >
@@ -295,7 +299,12 @@ const VoteTable = ({
                                         pair={pair}
                                         isPairSelected={isPairSelected(pair)}
                                         onButtonClick={() => selectPair(pair)}
-                                        disabled={pair.auth_required || pair.no_liquidity}
+                                        disabled={
+                                            pair.auth_required ||
+                                            pair.auth_revocable ||
+                                            pair.auth_clawback_enabled ||
+                                            pair.no_liquidity
+                                        }
                                     />
                                     {isYourVotes && (
                                         <Tooltip

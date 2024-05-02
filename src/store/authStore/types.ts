@@ -21,6 +21,8 @@ export enum LoginTypes {
     walletConnect = 'wallet-connect',
     public = 'public',
     ledger = 'ledger',
+    lobstr = 'lobstr',
+    freighter = 'freighter',
 }
 
 export enum AUTH_ACTIONS {

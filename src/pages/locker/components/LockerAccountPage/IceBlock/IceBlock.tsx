@@ -13,7 +13,7 @@ import AddIceTrustlinesModal from '../AddIceTrustlinesModal/AddIceTrustlinesModa
 import useAuthStore from '../../../../../store/authStore/useAuthStore';
 import ChooseLoginMethodModal from '../../../../../common/modals/ChooseLoginMethodModal';
 import AccountService from '../../../../../common/services/account.service';
-import { ServerApi } from 'stellar-sdk';
+import { ServerApi } from '@stellar/stellar-sdk';
 import { DOWN_ICE, UP_ICE } from '../../../../vote/components/MainPage/MainPage';
 
 const Container = styled.div`

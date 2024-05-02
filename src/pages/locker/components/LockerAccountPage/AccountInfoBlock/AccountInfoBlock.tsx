@@ -5,6 +5,7 @@ import { flexRowSpaceBetween } from '../../../../../common/mixins';
 import { StellarService } from '../../../../../common/services/globalServices';
 import OtherAccountButton from './OtherAccountButton/OtherAccountButton';
 import AccountBlock from '../../../../../common/basics/AccountBlock';
+import useAuthStore from '../../../../../store/authStore/useAuthStore';
 
 const Wrapper = styled.div`
     ${flexRowSpaceBetween};
@@ -15,6 +16,8 @@ const Wrapper = styled.div`
 const AccountInfoBlock = ({ account }) => {
     const [federation, setFederation] = useState(null);
     const accountId = account.accountId();
+
+    const { isLogged } = useAuthStore();
 
     useEffect(() => {
         if (!account.home_domain) {
@@ -28,7 +31,7 @@ const AccountInfoBlock = ({ account }) => {
     return (
         <Wrapper>
             <AccountBlock federation={federation} accountId={accountId} />
-            <OtherAccountButton />
+            {!isLogged && <OtherAccountButton />}
         </Wrapper>
     );
 };

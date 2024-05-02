@@ -7,7 +7,7 @@ import AquaLogo from '../../../../../common/assets/img/aqua-logo-small.svg';
 import AccountService from '../../../../../common/services/account.service';
 import { formatBalance, roundToPrecision } from '../../../../../common/helpers/helpers';
 import PageLoader from '../../../../../common/basics/PageLoader';
-import { ServerApi } from 'stellar-sdk';
+import { ServerApi } from '@stellar/stellar-sdk';
 import { StellarService } from '../../../../../common/services/globalServices';
 import DotsLoader from '../../../../../common/basics/DotsLoader';
 

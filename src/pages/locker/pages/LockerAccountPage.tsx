@@ -18,11 +18,20 @@ import { getDistributionForAccount } from '../api/api';
 import IceBlock from '../components/LockerAccountPage/IceBlock/IceBlock';
 import { StellarEvents } from '../../../common/services/stellar.service';
 import { LockerRoutes } from '../../../routes';
+import StatisticBlock from '../components/LockerMainPage/StatisticBlock/StatisticBlock';
+import FreezeAQUA from '../components/LockerMainPage/FreezeAQUA/FreezeAQUA';
+import WhyFreezeAQUA from '../components/LockerMainPage/WhyFreezeAQUA/WhyFreezeAQUA';
+import FAQ from '../components/FAQ/FAQ';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
     background-color: ${COLORS.lightGray};
     padding: 2.5% 0 5%;
+`;
+
+const MainSection = styled.div`
+    ${commonMaxWidth};
+    width: 100%;
 `;
 
 const Container = styled.div`
@@ -186,45 +195,57 @@ const LockerAccountPage = () => {
     }
 
     return (
-        <MainBlock>
-            <Container>
-                <LeftColumn>
-                    <AccountInfoBlock account={account ?? currentAccount} />
-                    <Portfolio
-                        ammAquaBalance={ammAquaBalance}
-                        currentAccount={account ?? currentAccount}
-                        locks={locks}
-                    />
-
-                    <IceBlock account={account ?? currentAccount} locks={locks} />
-
-                    {Boolean(locks?.length) && Boolean(distributions) && (
-                        <CurrentLocks
-                            distributions={distributions}
-                            locks={locks}
-                            aquaBalance={
-                                account?.getAquaBalance() ?? currentAccount.getAquaBalance()
-                            }
+        <>
+            <MainBlock>
+                <Container>
+                    <LeftColumn>
+                        <AccountInfoBlock account={account ?? currentAccount} />
+                        <Portfolio
                             ammAquaBalance={ammAquaBalance}
-                            aquaInOffers={
-                                account?.getAquaInOffers() ?? currentAccount.getAquaInOffers()
-                            }
-                            aquaInVotes={aquaInVotes}
+                            currentAccount={account ?? currentAccount}
+                            locks={locks}
                         />
-                    )}
-                </LeftColumn>
 
-                <RightColumn>
-                    <LockAquaForm account={account ?? currentAccount} ref={fromRef} />
-                </RightColumn>
-            </Container>
-            {!hideBottomBlock && (
-                <ScrollToSidebarButton onClick={() => scrollToForm()}>
-                    <span>Lock AQUA</span>
-                    <ArrowDown />
-                </ScrollToSidebarButton>
-            )}
-        </MainBlock>
+                        <IceBlock account={account ?? currentAccount} locks={locks} />
+
+                        {Boolean(locks?.length) && Boolean(distributions) && (
+                            <CurrentLocks
+                                distributions={distributions}
+                                locks={locks}
+                                aquaBalance={
+                                    account?.getAquaBalance() ?? currentAccount.getAquaBalance()
+                                }
+                                ammAquaBalance={ammAquaBalance}
+                                aquaInOffers={
+                                    account?.getAquaInOffers() ?? currentAccount.getAquaInOffers()
+                                }
+                                aquaInVotes={aquaInVotes}
+                            />
+                        )}
+                    </LeftColumn>
+
+                    <RightColumn>
+                        <LockAquaForm account={account ?? currentAccount} ref={fromRef} />
+                    </RightColumn>
+                </Container>
+                {!hideBottomBlock && (
+                    <ScrollToSidebarButton onClick={() => scrollToForm()}>
+                        <span>Lock AQUA</span>
+                        <ArrowDown />
+                    </ScrollToSidebarButton>
+                )}
+            </MainBlock>
+            <MainSection>
+                <StatisticBlock />
+            </MainSection>
+            <MainSection>
+                <FreezeAQUA />
+            </MainSection>
+            <MainSection>
+                <WhyFreezeAQUA />
+            </MainSection>
+            <FAQ />
+        </>
     );
 };
 

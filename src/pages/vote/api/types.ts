@@ -39,6 +39,8 @@ export type MarketKey = {
     downvote_account_id: string;
     no_liquidity: boolean;
     auth_required: boolean;
+    auth_revocable: boolean;
+    auth_clawback_enabled: boolean;
     adjusted_votes_value: string;
 };
 

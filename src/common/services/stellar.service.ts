@@ -1,6 +1,6 @@
 import * as StellarSdk from '@stellar/stellar-sdk';
 import EventService from './event.service';
-import { Horizon, Memo, MemoType, OperationOptions } from '@stellar/stellar-sdk';
+import { Memo, MemoType, OperationOptions, Horizon } from '@stellar/stellar-sdk';
 import axios, { AxiosResponse } from 'axios';
 import { formatBalance, roundToPrecision } from '../helpers/helpers';
 import { PairStats } from '../../pages/vote/api/types';
@@ -105,7 +105,7 @@ export default class StellarServiceClass {
     nextPayments = null;
     loadMorePaymentsPending = false;
     paymentsFullyLoaded = false;
-    private claimableBalances: ServerApi.ClaimableBalanceRecord[] | null = null;
+    private claimableBalances: Horizon.ServerApi.ClaimableBalanceRecord[] | null = null;
     private keypair: StellarSdk.Keypair | null = null;
 
     constructor() {
@@ -252,7 +252,7 @@ export default class StellarServiceClass {
     private startHorizonServer(): void {
         // @ts-ignore
         // settled in configs: prod.js and dev.js
-        // this.server = new StellarSdk.Server(process.horizon.HORIZON_SERVER);
+        // this.server = new StellarSdk.Horizon.Server(process.horizon.HORIZON_SERVER);
         this.server = new StellarSdk.Horizon.Server(HORIZON_SERVER.stellar);
     }
 
@@ -368,9 +368,11 @@ export default class StellarServiceClass {
 
     getNextLocks(
         claims,
-        next: () => Promise<ServerApi.CollectionPage<ServerApi.ClaimableBalanceRecord>>,
+        next: () => Promise<
+            Horizon.ServerApi.CollectionPage<Horizon.ServerApi.ClaimableBalanceRecord>
+        >,
         limit: number,
-    ): Promise<ServerApi.ClaimableBalanceRecord[]> {
+    ): Promise<Horizon.ServerApi.ClaimableBalanceRecord[]> {
         return next().then((res) => {
             if (res.records.length === limit) {
                 return this.getNextLocks([...claims, ...res.records], res.next, limit);
@@ -381,7 +383,9 @@ export default class StellarServiceClass {
     }
 
     getNextClaimableBalances(
-        next: () => Promise<ServerApi.CollectionPage<ServerApi.ClaimableBalanceRecord>>,
+        next: () => Promise<
+            Horizon.ServerApi.CollectionPage<Horizon.ServerApi.ClaimableBalanceRecord>
+        >,
         limit,
     ) {
         next().then((res) => {
@@ -404,11 +408,11 @@ export default class StellarServiceClass {
             .stream({
                 onmessage: (res) => {
                     if (
-                        (res as unknown as ServerApi.EffectRecord).type ===
+                        (res as unknown as Horizon.ServerApi.EffectRecord).type ===
                             'claimable_balance_claimant_created' ||
-                        (res as unknown as ServerApi.EffectRecord).type ===
+                        (res as unknown as Horizon.ServerApi.EffectRecord).type ===
                             'claimable_balance_claimed' ||
-                        (res as unknown as ServerApi.EffectRecord).type ===
+                        (res as unknown as Horizon.ServerApi.EffectRecord).type ===
                             'claimable_balance_created'
                     ) {
                         this.getClaimableBalances(publicKey);
@@ -423,7 +427,10 @@ export default class StellarServiceClass {
                         );
                     }
 
-                    if ((res as unknown as ServerApi.EffectRecord).type === 'account_credited') {
+                    if (
+                        (res as unknown as Horizon.ServerApi.EffectRecord).type ===
+                        'account_credited'
+                    ) {
                         this.debouncedUpdatePayments(publicKey);
                         const { amount, asset_type, asset_code } = res as any;
 
@@ -448,7 +455,7 @@ export default class StellarServiceClass {
         }
     }
 
-    async getAccountOffers(publicKey: string): Promise<ServerApi.OfferRecord[]> {
+    async getAccountOffers(publicKey: string): Promise<Horizon.ServerApi.OfferRecord[]> {
         const OFFERS_LIMIT = 200;
         const { records, next } = await this.server
             .offers()
@@ -734,7 +741,10 @@ export default class StellarServiceClass {
         });
     }
 
-    async getLiquidityPoolForAccount(id: string, limit): Promise<ServerApi.LiquidityPoolRecord[]> {
+    async getLiquidityPoolForAccount(
+        id: string,
+        limit,
+    ): Promise<Horizon.ServerApi.LiquidityPoolRecord[]> {
         const { records, next } = await this.server
             .liquidityPools()
             .forAccount(id)
@@ -947,7 +957,7 @@ export default class StellarServiceClass {
     getLiquidityPoolData(
         base: StellarSdk.Asset,
         counter: StellarSdk.Asset,
-    ): Promise<ServerApi.LiquidityPoolRecord | null> {
+    ): Promise<Horizon.ServerApi.LiquidityPoolRecord | null> {
         return this.server
             .liquidityPools()
             .forAssets(base, counter)
