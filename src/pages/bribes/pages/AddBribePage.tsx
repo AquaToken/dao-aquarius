@@ -40,18 +40,18 @@ import { BribesRoutes } from '../../../routes';
 import { getMarketPair } from '../api/api';
 import { LoginTypes } from '../../../store/authStore/types';
 
-const MainBlock = styled.main`
+export const MainBlock = styled.main`
     flex: 1 0 auto;
 `;
 
-const Background = styled.div`
+export const Background = styled.div`
     width: 100%;
     background-color: ${COLORS.lightGray};
     padding: 7.7rem 0 14.3rem;
     ${flexAllCenter};
 `;
 
-const Content = styled.div`
+export const Content = styled.div`
     display: flex;
     flex-direction: column;
     width: 79.2rem;
@@ -61,7 +61,7 @@ const Content = styled.div`
     `}
 `;
 
-const Back = styled(Link)`
+export const Back = styled(Link)`
     display: flex;
     align-items: center;
     margin-bottom: 3.2rem;
@@ -73,7 +73,7 @@ const Back = styled(Link)`
       `}
 `;
 
-const BackButton = styled.div`
+export const BackButton = styled.div`
     ${flexAllCenter};
     width: 4.8rem;
     height: 4.8rem;
@@ -96,7 +96,7 @@ const BackButton = styled.div`
     }
 `;
 
-const Title = styled.span`
+export const Title = styled.span`
     font-weight: bold;
     font-size: 5.6rem;
     line-height: 6.4rem;
@@ -125,21 +125,21 @@ const ExternalLinkStyled = styled(ExternalLink)`
         `}
 `;
 
-const FormWrap = styled.div`
+export const FormWrap = styled.div`
     display: flex;
     flex-direction: column;
     margin-top: -7.7rem;
     ${flexAllCenter};
 `;
 
-const Form = styled.form`
+export const Form = styled.form`
     width: 100%;
     background: ${COLORS.white};
     box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
     border-radius: 0.5rem;
 `;
 
-const FormSectionTitle = styled.span`
+export const FormSectionTitle = styled.span`
     font-size: 3.6rem;
     line-height: 4.2rem;
     color: ${COLORS.buttonBackground};
@@ -153,7 +153,7 @@ const FormSectionDescription = styled.span`
     margin-bottom: 4.8rem;
 `;
 
-const FormSection = styled.section`
+export const FormSection = styled.section`
     display: flex;
     flex-direction: column;
     padding: 4.8rem;

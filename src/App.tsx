@@ -7,7 +7,7 @@ import useAssetsStore from './store/assetsStore/useAssetsStore';
 import useAuthStore from './store/authStore/useAuthStore';
 import { StellarService, WalletConnectService } from './common/services/globalServices';
 import Header, { HeaderNavLink } from './common/components/Header/Header';
-import { MainRoutes } from './routes';
+import { AmmRoutes, MainRoutes } from './routes';
 import PageLoader from './common/basics/PageLoader';
 import NotFoundPage from './common/components/NotFoundPage/NotFoundPage';
 import { Breakpoints, COLORS } from './common/styles';
@@ -199,13 +199,22 @@ const App = () => {
                     {/*    Airdrop*/}
                     {/*</HeaderNavLink>*/}
                     <HeaderNavLink
-                        to={MainRoutes.amm}
+                        to={AmmRoutes.analytics}
                         activeStyle={{
                             fontWeight: 700,
                         }}
                         title="AMM"
                     >
                         AMM
+                    </HeaderNavLink>
+                    <HeaderNavLink
+                        to={AmmRoutes.liquidity}
+                        activeStyle={{
+                            fontWeight: 700,
+                        }}
+                        title="AMM"
+                    >
+                        My liquidity
                     </HeaderNavLink>
                     <HeaderNavLink
                         to={MainRoutes.swap}

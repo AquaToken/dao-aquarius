@@ -106,6 +106,13 @@ export function processNewAssets(assets: AssetSimple[]) {
                     }
                 });
 
+            if (!cached.has(getAssetString(HARDCODE.values().next().value))) {
+                // @ts-ignore
+                [...HARDCODE.values()].forEach((asset) => {
+                    cached.set(getAssetString(asset), HARDCODE.get(getAssetString(asset)));
+                });
+            }
+
             localStorage.setItem(ASSET_CACHE, JSON.stringify(Array.from(cached.entries())));
 
             dispatch({ type: ASSETS_ACTIONS.UPDATE_ASSET_INFO, payload: { assetInfo: cached } });

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { commonMaxWidth, flexAllCenter } from '../../common/mixins';
-import BalancesBlock from '../amm/BalancesBlock/BalancesBlock';
+import BalancesBlock from '../amm/components/BalancesBlock/BalancesBlock';
 import { Header, Title } from '../profile/AmmRewards/AmmRewards';
 import AssetDropdown from '../vote/components/AssetDropdown/AssetDropdown';
 import { COLORS } from '../../common/styles';
@@ -11,14 +11,18 @@ import { ModalService, SorobanService, ToastService } from '../../common/service
 import PageLoader from '../../common/basics/PageLoader';
 import Input from '../../common/basics/Input';
 import SwapIcon from '../../common/assets/img/icon-arrows-circle.svg';
+import SettingsIcon from '../../common/assets/img/icon-settings.svg';
 import { useDebounce } from '../../common/hooks/useDebounce';
 import Button from '../../common/basics/Button';
 import { IconFail } from '../../common/basics/Icons';
-import { USDT, USDC } from '../amm/Amm';
-import SuccessModal from '../amm/SuccessModal/SuccessModal';
+import { USDT, USDC } from '../amm/AmmLegacy';
+import SuccessModal from '../amm/components/SuccessModal/SuccessModal';
 import { CONTRACT_STATUS } from '../../common/services/soroban.service';
 import { Empty } from '../profile/YourVotes/YourVotes';
 import ChooseLoginMethodModal from '../../common/modals/ChooseLoginMethodModal';
+import { formatBalance } from '../../common/helpers/helpers';
+import SwapConfirmModal from './SwapConfirmModal/SwapConfirmModal';
+import SwapSettingsModal from './SwapSettingsModal/SwapSettingsModal';
 
 const Container = styled.main`
     background-color: ${COLORS.lightGray};
@@ -50,6 +54,21 @@ const Form = styled.div`
 const FormRow = styled.div`
     display: flex;
     margin-top: 5rem;
+    position: relative;
+`;
+
+const Balance = styled.div`
+    position: absolute;
+    bottom: calc(100% + 1.2rem);
+    right: 0;
+    font-size: 1.6rem;
+    line-height: 1.8rem;
+    color: ${COLORS.paragraphText};
+`;
+
+const BalanceClickable = styled.span`
+    color: ${COLORS.purple};
+    cursor: pointer;
 `;
 
 const StyledInput = styled(Input)`
@@ -71,6 +90,7 @@ const SwapDivider = styled.div`
 const StyledButton = styled(Button)`
     margin-top: 4.8rem;
     margin-left: auto;
+    width: 45%;
 `;
 
 const Error = styled.div`
@@ -91,6 +111,21 @@ const RevertButton = styled.div`
     }
 `;
 
+const Prices = styled.div`
+    color: ${COLORS.grayText};
+    margin-top: 3rem;
+`;
+
+const SettingsButton = styled.div`
+    ${flexAllCenter};
+    border-radius: 0.3rem;
+    padding: 1rem;
+    cursor: pointer;
+
+    &:hover {
+        background-color: ${COLORS.lightGray};
+    }
+`;
 const Section = styled.div`
     flex: 1 0 auto;
     ${flexAllCenter};
@@ -111,24 +146,21 @@ const Swap = ({ balances }) => {
     const [counterAmount, setCounterAmount] = useState('');
     const [bestPoolBytes, setBestPoolBytes] = useState(null);
     const [estimatePending, setEstimatePending] = useState(false);
-    const [swapPending, setSwapPending] = useState(false);
 
     const debouncedAmount = useDebounce(baseAmount, 700);
 
     useEffect(() => {
         setPools(null);
-        if (isLogged) {
-            SorobanService.getPools(account?.accountId(), base, counter).then((res) => {
-                setPools(res);
-            });
-        }
-    }, [isLogged, base, counter]);
+        SorobanService.getPools(base, counter).then((res) => {
+            setPools(res);
+        });
+    }, [base, counter]);
 
     useEffect(() => {
         if (!!Number(debouncedAmount)) {
             setEstimatePending(true);
 
-            SorobanService.estimateSwap(account?.accountId(), base, counter, debouncedAmount).then(
+            SorobanService.estimateSwap(base, counter, debouncedAmount).then(
                 // @ts-ignore
                 ([bytes, , amount]) => {
                     setCounterAmount(SorobanService.i128ToInt(amount.value()).toString());
@@ -143,59 +175,26 @@ const Swap = ({ balances }) => {
     }, [debouncedAmount]);
 
     const swapAssets = () => {
+        if (!isLogged) {
+            return ModalService.openModal(ChooseLoginMethodModal, {});
+        }
         if (!counterAmount || !baseAmount) {
             return;
         }
-        setSwapPending(true);
-        const SLIPPAGE = 0.01; // 1%
-
-        const minCounterAmount = ((1 - SLIPPAGE) * Number(counterAmount)).toFixed(7);
-
-        SorobanService.getSwapTx(
-            account?.accountId(),
-            bestPoolBytes,
+        ModalService.openModal(SwapConfirmModal, {
             base,
             counter,
             baseAmount,
-            minCounterAmount,
-        )
-            .then((tx) => account.signAndSubmitTx(tx, true))
-            .then((res) => {
-                ModalService.openModal(SuccessModal, {
-                    base,
-                    counter,
-                    baseAmount: baseAmount,
-                    counterAmount: SorobanService.i128ToInt(res.value()),
-                    title: 'Success swap',
-                    isSwap: true,
-                });
-                setSwapPending(false);
+            counterAmount,
+            bestPoolBytes,
+        }).then(({ isConfirmed }) => {
+            if (isConfirmed) {
                 setBaseAmount('');
                 setCounterAmount('');
                 setBestPoolBytes(null);
-            })
-            .catch((e) => {
-                console.log(e);
-                ToastService.showErrorToast('Oops! Something went wrong');
-                setSwapPending(false);
-            });
+            }
+        });
     };
-
-    const baseAvailable = useMemo(() => {
-        if (!account) {
-            return null;
-        }
-
-        return `Available: ${account.getAssetBalance(base)} ${base.code}`;
-    }, [account, base]);
-
-    const counterAvailable = useMemo(() => {
-        if (!account) {
-            return null;
-        }
-
-        return `Available: ${account.getAssetBalance(counter)} ${counter.code}`;
-    }, [account, counter]);
 
     const assets = useMemo(() => {
         return balances
@@ -212,30 +211,33 @@ const Swap = ({ balances }) => {
         setBestPoolBytes(null);
     };
 
-    if (!account || !assets) {
-        return (
-            <Section>
-                <Empty>
-                    <h3>Log in required.</h3>
-                    <span>To use the demo you need to log in.</span>
-
-                    <LoginButton onClick={() => ModalService.openModal(ChooseLoginMethodModal, {})}>
-                        Log in
-                    </LoginButton>
-                </Empty>
-            </Section>
-        );
-    }
-
     return (
         <Container>
             <Content>
-                <BalancesBlock balances={balances} />
+                {Boolean(isLogged) && <BalancesBlock balances={balances} />}
                 <Form>
                     <Header>
                         <Title>Swap assets</Title>
+                        <SettingsButton
+                            onClick={() => ModalService.openModal(SwapSettingsModal, {})}
+                        >
+                            <SettingsIcon />
+                        </SettingsButton>
                     </Header>
                     <FormRow>
+                        {account && account.getAssetBalance(base) && (
+                            <Balance>
+                                Available:
+                                <BalanceClickable
+                                    onClick={() =>
+                                        setBaseAmount(account.getAssetBalance(base).toString())
+                                    }
+                                >
+                                    {' '}
+                                    {account.getAssetBalance(base)} {base.code}
+                                </BalanceClickable>
+                            </Balance>
+                        )}
                         <StyledInput
                             value={baseAmount}
                             onChange={(e) => setBaseAmount(e.target.value)}
@@ -249,7 +251,6 @@ const Swap = ({ balances }) => {
                                 onUpdate={setBase}
                                 assetsList={assets}
                                 exclude={counter}
-                                label={baseAvailable}
                                 disabled={estimatePending}
                                 withoutReset
                             />
@@ -267,6 +268,11 @@ const Swap = ({ balances }) => {
                     </SwapDivider>
 
                     <FormRow>
+                        {account && account.getAssetBalance(counter) && (
+                            <Balance>
+                                Balance: {account.getAssetBalance(counter)} {counter.code}
+                            </Balance>
+                        )}
                         <StyledInput
                             value={counterAmount}
                             label="To(estimated)"
@@ -281,11 +287,18 @@ const Swap = ({ balances }) => {
                                 assetsList={assets}
                                 exclude={base}
                                 withoutReset
-                                label={counterAvailable}
                                 disabled={estimatePending}
                             />
                         </DropdownContainer>
                     </FormRow>
+
+                    {baseAmount && counterAmount && (
+                        <Prices>
+                            1 {base.code} = {formatBalance(+counterAmount / +baseAmount)}{' '}
+                            {counter.code} / 1 {counter.code} ={' '}
+                            {formatBalance(+baseAmount / +counterAmount)} {base.code}
+                        </Prices>
+                    )}
 
                     {pools && !pools.length && (
                         <Error>
@@ -296,8 +309,7 @@ const Swap = ({ balances }) => {
 
                     <StyledButton
                         isBig
-                        disabled={estimatePending}
-                        pending={swapPending}
+                        disabled={estimatePending || !counterAmount}
                         onClick={() => swapAssets()}
                     >
                         SWAP ASSETS

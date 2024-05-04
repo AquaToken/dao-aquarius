@@ -6,6 +6,7 @@ import SendTransactionResponse = StellarSdk.SorobanRpc.Api.SendTransactionRespon
 import SimulateTransactionSuccessResponse = StellarSdk.SorobanRpc.Api.SimulateTransactionSuccessResponse;
 import { ModalService, SorobanService, ToastService } from './globalServices';
 import RestoreContractModal from '../modals/RestoreContractModal/RestoreContractModal';
+import { getAssetString } from '../../store/assetsStore/actions';
 
 const SOROBAN_SERVER = 'https://soroban-testnet.stellar.org:443';
 export const AMM_SMART_CONTACT_ID = 'CB7S3KMZ2GP46YU72WJKXFMSFLUB3MZYQL3LSIZMYTQTXIAS2EXUEANC';
@@ -33,7 +34,10 @@ enum ASSET_CONTRACT_METHOD {
     GET_ALLOWANCE = 'allowance',
     APPROVE_ALLOWANCE = 'approve',
     GET_BALANCE = 'balance',
+    NAME = 'name',
 }
+
+const ACCOUNT_FOR_SIMULATE = 'GCWUCUPZL3OEIKS4ATWSFRZNQC5X4JS3MVFNUZBKYFNJKIMHNMFEF33H';
 
 const issuerKeypair = StellarSdk.Keypair.fromSecret(
     'SBPQCB4DOUQ26OC43QNAA3ODZOGECHJUVHDHYRHKYPL4SA22RRYGHQCX',
@@ -53,6 +57,7 @@ export enum CONTRACT_STATUS {
 export default class SorobanServiceClass {
     server: StellarSdk.SorobanRpc.Server | null = null;
     keypair: Keypair | null = null;
+    assetsCache = new Map<string, Asset>();
 
     constructor() {
         this.startServer();
@@ -259,6 +264,26 @@ export default class SorobanServiceClass {
 
         return this.getContactIdFromHash(hash);
     }
+    getAssetFromContractId(id: string): Promise<Asset> {
+        if (this.assetsCache.has(id)) {
+            return Promise.resolve(this.assetsCache.get(id));
+        }
+        return (
+            this.buildSmartContactTx(ACCOUNT_FOR_SIMULATE, id, ASSET_CONTRACT_METHOD.NAME)
+                .then((tx) => this.simulateTx(tx))
+                // @ts-ignore
+                .then(({ result }) => {
+                    const [code, issuer] = result.retval.value().toString().split(':');
+                    const asset = issuer
+                        ? new StellarSdk.Asset(code, issuer)
+                        : StellarSdk.Asset.native();
+
+                    this.assetsCache.set(id, asset);
+
+                    return asset;
+                })
+        );
+    }
 
     getContractData(
         contractId: string,
@@ -377,11 +402,11 @@ export default class SorobanServiceClass {
             .then((tx) => this.server.prepareTransaction(tx));
     }
 
-    getPools(accountId: string, base: Asset, counter: Asset): Promise<null | Array<any>> {
+    getPools(base: Asset, counter: Asset): Promise<null | Array<any>> {
         const [aId, bId] = this.orderTokenIDS(base, counter);
 
         return this.buildSmartContactTx(
-            accountId,
+            ACCOUNT_FOR_SIMULATE,
             AMM_SMART_CONTACT_ID,
             AMM_CONTRACT_METHOD.GET_POOLS,
             this.scValToArray([this.contractIdToScVal(aId), this.contractIdToScVal(bId)]),
@@ -444,8 +469,8 @@ export default class SorobanServiceClass {
         ).then((tx) => this.server.prepareTransaction(tx));
     }
 
-    getPoolShareId(accountId, poolId: string) {
-        return this.buildSmartContactTx(accountId, poolId, AMM_CONTRACT_METHOD.SHARE_ID)
+    getPoolShareId(poolId: string) {
+        return this.buildSmartContactTx(ACCOUNT_FOR_SIMULATE, poolId, AMM_CONTRACT_METHOD.SHARE_ID)
             .then(
                 (tx) =>
                     this.server.simulateTransaction(
@@ -520,8 +545,12 @@ export default class SorobanServiceClass {
             });
     }
 
-    getTotalShares(accountId: string, poolId: string) {
-        return this.buildSmartContactTx(accountId, poolId, AMM_CONTRACT_METHOD.GET_TOTAL_SHARES)
+    getTotalShares(poolId: string) {
+        return this.buildSmartContactTx(
+            ACCOUNT_FOR_SIMULATE,
+            poolId,
+            AMM_CONTRACT_METHOD.GET_TOTAL_SHARES,
+        )
             .then(
                 (tx) =>
                     this.server.simulateTransaction(
@@ -571,20 +600,16 @@ export default class SorobanServiceClass {
     }
 
     getPoolData(accountId: string, base: Asset, counter: Asset, [poolId, poolBytes]) {
-        return this.getPoolShareId(accountId, poolId)
+        return this.getPoolShareId(poolId)
             .then((shareHash) => {
                 return Promise.all([
                     this.getContactIdFromHash(shareHash),
-                    this.getTokenBalance(
-                        accountId,
-                        this.getContactIdFromHash(shareHash),
-                        accountId,
-                    ),
-                    this.getTokenBalance(accountId, base, poolId),
-                    this.getTokenBalance(accountId, counter, poolId),
+                    this.getTokenBalance(this.getContactIdFromHash(shareHash), accountId),
+                    this.getTokenBalance(base, poolId),
+                    this.getTokenBalance(counter, poolId),
                     this.getPoolRewards(accountId, base, counter, poolId),
                     this.getPoolInfo(accountId, poolId),
-                    this.getTotalShares(accountId, poolId),
+                    this.getTotalShares(poolId),
                 ]);
             })
             .then(
@@ -604,9 +629,9 @@ export default class SorobanServiceClass {
             );
     }
 
-    getTokenBalance(accountId, token: Asset | string, where: string) {
+    getTokenBalance(token: Asset | string, where: string) {
         return this.buildSmartContactTx(
-            accountId,
+            ACCOUNT_FOR_SIMULATE,
             typeof token === 'string' ? token : this.getAssetContractId(token),
             ASSET_CONTRACT_METHOD.GET_BALANCE,
             StellarSdk.StrKey.isValidEd25519PublicKey(where)
@@ -710,14 +735,14 @@ export default class SorobanServiceClass {
         ).then((tx) => this.server.prepareTransaction(tx));
     }
 
-    estimateSwap(accountId: string, base: Asset, counter: Asset, amount: string) {
+    estimateSwap(base: Asset, counter: Asset, amount: string) {
         const idA = this.getAssetContractId(base);
         const idB = this.getAssetContractId(counter);
 
         const [a, b] = idA > idB ? [counter, base] : [base, counter];
 
         return this.buildSmartContactTx(
-            accountId,
+            ACCOUNT_FOR_SIMULATE,
             AMM_SMART_CONTACT_ID,
             AMM_CONTRACT_METHOD.ESTIMATE_SWAP_ROUTED,
             this.scValToArray([this.assetToScVal(a), this.assetToScVal(b)]),

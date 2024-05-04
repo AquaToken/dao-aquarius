@@ -1,17 +1,17 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { respondDown } from '../../../common/mixins';
-import { Breakpoints } from '../../../common/styles';
-import ToggleGroup from '../../../common/basics/ToggleGroup';
+import { respondDown } from '../../../../common/mixins';
+import { Breakpoints } from '../../../../common/styles';
+import ToggleGroup from '../../../../common/basics/ToggleGroup';
 import { useState } from 'react';
-import Pair from '../../vote/components/common/Pair';
-import { ModalDescription, ModalTitle } from '../../../common/modals/atoms/ModalAtoms';
-import Input from '../../../common/basics/Input';
-import Button from '../../../common/basics/Button';
-import { ModalService, SorobanService } from '../../../common/services/globalServices';
-import useAuthStore from '../../../store/authStore/useAuthStore';
-import { AMM_SMART_CONTACT_ID } from '../../../common/services/soroban.service';
-import { AQUA } from '../Amm';
+import Pair from '../../../vote/components/common/Pair';
+import { ModalDescription, ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
+import Input from '../../../../common/basics/Input';
+import Button from '../../../../common/basics/Button';
+import { ModalService, SorobanService } from '../../../../common/services/globalServices';
+import useAuthStore from '../../../../store/authStore/useAuthStore';
+import { AMM_SMART_CONTACT_ID } from '../../../../common/services/soroban.service';
+import { AQUA } from '../../AmmLegacy';
 
 const Container = styled.div`
     width: 52.8rem;

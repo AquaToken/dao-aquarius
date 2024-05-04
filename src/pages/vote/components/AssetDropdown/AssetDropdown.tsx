@@ -187,6 +187,7 @@ const AssetDropdown = ({
     assetsList,
     withoutReset,
     pending,
+    ...props
 }: AssetDropdownProps) => {
     const { assets: knownAssets, assetsInfo, processNewAssets } = useAssetsStore();
 
@@ -308,6 +309,7 @@ const AssetDropdown = ({
             isOpen={isOpen}
             ref={ref}
             disabled={!assets.length || disabled || pending}
+            {...props}
         >
             {Boolean(label) && <Label>{label}</Label>}
             {selectedAsset && !isOpen ? (

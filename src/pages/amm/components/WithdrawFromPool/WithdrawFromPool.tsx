@@ -1,19 +1,19 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { respondDown } from '../../../common/mixins';
-import { Breakpoints } from '../../../common/styles';
-import { ModalDescription, ModalTitle } from '../../../common/modals/atoms/ModalAtoms';
-import { useState } from 'react';
-import RangeInput from '../../../common/basics/RangeInput';
-import Button from '../../../common/basics/Button';
-import { formatBalance } from '../../../common/helpers/helpers';
+import { respondDown } from '../../../../common/mixins';
+import { Breakpoints } from '../../../../common/styles';
+import { ModalDescription, ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
+import { useMemo, useState } from 'react';
+import RangeInput from '../../../../common/basics/RangeInput';
+import Button from '../../../../common/basics/Button';
+import { formatBalance } from '../../../../common/helpers/helpers';
 import {
     ModalService,
     SorobanService,
     ToastService,
-} from '../../../common/services/globalServices';
+} from '../../../../common/services/globalServices';
 import SuccessModal from '../SuccessModal/SuccessModal';
-import useAuthStore from '../../../store/authStore/useAuthStore';
+import useAuthStore from '../../../../store/authStore/useAuthStore';
 
 const Container = styled.div`
     width: 52.3rem;
@@ -28,11 +28,21 @@ const StyledButton = styled(Button)`
 `;
 
 const WithdrawFromPool = ({ params }) => {
-    const { base, counter, share, poolId, shareId } = params;
+    const { pool } = params;
     const [percent, setPercent] = useState(100);
     const [pending, setPending] = useState(false);
 
     const { account } = useAuthStore();
+
+    const base = useMemo(() => {
+        return pool.assets[0];
+    }, [pool]);
+
+    const counter = useMemo(() => {
+        return pool.assets[1];
+    }, [pool]);
+
+    console.log(pool);
 
     const withdraw = () => {
         setPending(true);

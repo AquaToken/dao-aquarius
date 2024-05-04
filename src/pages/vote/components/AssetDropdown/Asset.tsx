@@ -57,6 +57,7 @@ const Asset = ({
     withMobileView,
     onlyLogo,
     onlyLogoSmall,
+    logoAndCode,
     ...props
 }: {
     asset: AssetSimple;
@@ -64,6 +65,7 @@ const Asset = ({
     withMobileView?: boolean;
     onlyLogo?: boolean;
     onlyLogoSmall?: boolean;
+    logoAndCode?: boolean;
 }): JSX.Element => {
     const { assetsInfo } = useAssetsStore();
 
@@ -78,6 +80,17 @@ const Asset = ({
 
     if (onlyLogoSmall) {
         return <AssetLogo logoUrl={assetInfo?.image} isSmall />;
+    }
+
+    if (logoAndCode) {
+        return (
+            <Container {...props}>
+                <AssetLogo logoUrl={assetInfo?.image} />
+                <AssetDetails inRow>
+                    <AssetCode inRow>{asset.code}</AssetCode>
+                </AssetDetails>
+            </Container>
+        );
     }
 
     return (

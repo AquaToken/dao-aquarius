@@ -1,18 +1,18 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { useState } from 'react';
-import { Header, Title } from '../../profile/AmmRewards/AmmRewards';
-import PageLoader from '../../../common/basics/PageLoader';
-import Asset from '../../vote/components/AssetDropdown/Asset';
-import { formatBalance } from '../../../common/helpers/helpers';
-import Button from '../../../common/basics/Button';
-import { COLORS } from '../../../common/styles';
-import { IconFail, IconSuccess, IconPending } from '../../../common/basics/Icons';
-import { CONTRACT_STATUS } from '../../../common/services/soroban.service';
-import { SorobanService, ToastService } from '../../../common/services/globalServices';
-import useAuthStore from '../../../store/authStore/useAuthStore';
+import { Header, Title } from '../../../profile/AmmRewards/AmmRewards';
+import PageLoader from '../../../../common/basics/PageLoader';
+import Asset from '../../../vote/components/AssetDropdown/Asset';
+import { formatBalance } from '../../../../common/helpers/helpers';
+import Button from '../../../../common/basics/Button';
+import { COLORS } from '../../../../common/styles';
+import { IconFail, IconSuccess, IconPending } from '../../../../common/basics/Icons';
+import { CONTRACT_STATUS } from '../../../../common/services/soroban.service';
+import { SorobanService, ToastService } from '../../../../common/services/globalServices';
+import useAuthStore from '../../../../store/authStore/useAuthStore';
 import * as SorobanClient from 'soroban-client';
-import { USDC, USDT, AQUA } from '../Amm';
+import { USDC, USDT, AQUA } from '../../AmmLegacy';
 
 const Container = styled.div`
     display: flex;

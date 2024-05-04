@@ -1,10 +1,10 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { flexAllCenter, respondDown } from '../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../common/styles';
-import { ModalTitle } from '../../../common/modals/atoms/ModalAtoms';
-import Pair from '../../vote/components/common/Pair';
-import Button from '../../../common/basics/Button';
+import { flexAllCenter, respondDown } from '../../../../common/mixins';
+import { Breakpoints, COLORS } from '../../../../common/styles';
+import { ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
+import Pair from '../../../vote/components/common/Pair';
+import Button from '../../../../common/basics/Button';
 
 const Container = styled.div`
     width: 52.3rem;
