@@ -190,7 +190,7 @@ const LoginButton = styled(Button)`
 const Liquidity = () => {
     const { account } = useAuthStore();
 
-    const [isOpen, setIsOpen] = useState(false);
+    const [expandedIndexes, setExpandedIndexes] = useState([]);
     const [pools, setPools] = useState(null);
 
     useEffect(() => {
@@ -203,6 +203,21 @@ const Liquidity = () => {
                 setPools(res);
             });
         }
+    };
+
+    const togglePool = (id) => {
+        if (expandedIndexes.includes(id)) {
+            return closePool(id);
+        }
+        openPool(id);
+    };
+
+    const openPool = (id) => {
+        setExpandedIndexes([...expandedIndexes, id]);
+    };
+
+    const closePool = (id) => {
+        setExpandedIndexes([...expandedIndexes.filter((i) => i !== id)]);
     };
 
     console.log(pools);
@@ -251,11 +266,13 @@ const Liquidity = () => {
                                             <span>$1.53</span>
                                             <span>Daily fee: {'<'}0.01%</span>
                                         </PoolStat>
-                                        <ExpandButton onClick={() => setIsOpen((val) => !val)}>
-                                            <ArrowDown $isOpen={isOpen} />
+                                        <ExpandButton onClick={() => togglePool(pool.address)}>
+                                            <ArrowDown
+                                                $isOpen={expandedIndexes.includes(pool.address)}
+                                            />
                                         </ExpandButton>
                                     </PoolMain>
-                                    {isOpen && (
+                                    {expandedIndexes.includes(pool.address) && (
                                         <ExpandedBlock>
                                             <ExpandedDataRow>
                                                 <span>Shares </span>
