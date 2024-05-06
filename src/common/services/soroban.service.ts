@@ -6,7 +6,6 @@ import SendTransactionResponse = StellarSdk.SorobanRpc.Api.SendTransactionRespon
 import SimulateTransactionSuccessResponse = StellarSdk.SorobanRpc.Api.SimulateTransactionSuccessResponse;
 import { ModalService, SorobanService, ToastService } from './globalServices';
 import RestoreContractModal from '../modals/RestoreContractModal/RestoreContractModal';
-import { getAssetString } from '../../store/assetsStore/actions';
 
 const SOROBAN_SERVER = 'https://soroban-testnet.stellar.org:443';
 export const AMM_SMART_CONTACT_ID = 'CB7S3KMZ2GP46YU72WJKXFMSFLUB3MZYQL3LSIZMYTQTXIAS2EXUEANC';
@@ -697,7 +696,7 @@ export default class SorobanServiceClass {
 
     getDepositTx(
         accountId: string,
-        poolId: string,
+        poolHash: string,
         a: Asset,
         b: Asset,
         aAmount: string,
@@ -707,26 +706,37 @@ export default class SorobanServiceClass {
         const idB = this.getAssetContractId(b);
 
         const [baseAmount, counterAmount] = idA > idB ? [bAmount, aAmount] : [aAmount, bAmount];
+        const [base, counter] = idA > idB ? [b, a] : [a, b];
 
         return this.buildSmartContactTx(
             accountId,
-            poolId,
+            AMM_SMART_CONTACT_ID,
             AMM_CONTRACT_METHOD.DEPOSIT,
             this.publicKeyToScVal(accountId),
+            this.scValToArray([this.assetToScVal(base), this.assetToScVal(counter)]),
+            this.hashToScVal(poolHash),
             this.scValToArray([
                 this.amountToUint128(baseAmount),
                 this.amountToUint128(counterAmount),
             ]),
             this.amountToUint128('0'),
-        ).then((tx) => this.server.prepareTransaction(tx));
+        ).then((tx) => {
+            console.log(tx.toEnvelope().toXDR('base64'));
+            return this.server.prepareTransaction(tx);
+        });
     }
 
-    getWithdrawTx(accountId: string, poolId: string, shareAmount: string) {
+    getWithdrawTx(accountId: string, poolHash: string, shareAmount: string, a: Asset, b: Asset) {
+        const idA = this.getAssetContractId(a);
+        const idB = this.getAssetContractId(b);
+        const [base, counter] = idA > idB ? [b, a] : [a, b];
         return this.buildSmartContactTx(
             accountId,
-            poolId,
+            AMM_SMART_CONTACT_ID,
             AMM_CONTRACT_METHOD.WITHDRAW,
             this.publicKeyToScVal(accountId),
+            this.scValToArray([this.assetToScVal(base), this.assetToScVal(counter)]),
+            this.hashToScVal(poolHash),
             this.amountToUint128(shareAmount),
             this.scValToArray([
                 this.amountToUint128('0.0000001'),
@@ -860,6 +870,10 @@ export default class SorobanServiceClass {
 
     bytesToScVal(bytes: Buffer): xdr.ScVal {
         return xdr.ScVal.scvBytes(bytes);
+    }
+
+    hashToScVal(hash: string): xdr.ScVal {
+        return xdr.ScVal.scvBytes(Buffer.from(binascii.unhexlify(hash), 'ascii'));
     }
 
     i128ToInt(val: xdr.Int128Parts): number {

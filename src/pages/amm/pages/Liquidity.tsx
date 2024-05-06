@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { getPools, getUserPools } from '../api/api';
+import { getUserPools } from '../api/api';
 import { Empty } from '../../profile/YourVotes/YourVotes';
-import { ModalService, StellarService } from '../../../common/services/globalServices';
+import { ModalService } from '../../../common/services/globalServices';
 import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
 import useAuthStore from '../../../store/authStore/useAuthStore';
 import styled from 'styled-components';
@@ -17,7 +17,10 @@ import { Breakpoints, COLORS } from '../../../common/styles';
 import Plus from '../../../common/assets/img/icon-plus.svg';
 import Arrow from '../../../common/assets/img/icon-arrow-down.svg';
 import Pair from '../../vote/components/common/Pair';
-import Down from '../../../common/assets/img/icon-arrow-down.svg';
+import PageLoader from '../../../common/basics/PageLoader';
+import { formatBalance } from '../../../common/helpers/helpers';
+import WithdrawFromPool from '../components/WithdrawFromPool/WithdrawFromPool';
+import DepositToPool from '../components/DepositToPool/DepositToPool';
 
 const Container = styled.main`
     height: 100%;
@@ -92,6 +95,7 @@ const ListTotal = styled.span`
 const PoolBlock = styled.div`
     display: flex;
     flex-direction: column;
+    margin: 2rem 0;
 `;
 
 const PoolMain = styled.div`
@@ -187,29 +191,36 @@ const Liquidity = () => {
     const { account } = useAuthStore();
 
     const [isOpen, setIsOpen] = useState(false);
+    const [pools, setPools] = useState(null);
 
     useEffect(() => {
-        if (account) {
-            getUserPools(account.accountId()).then((res) => {
-                console.log(res);
-            });
-        }
+        updateData();
     }, [account]);
 
-    // if (!account) {
-    //     return (
-    //         <Section>
-    //             <Empty>
-    //                 <h3>Log in required.</h3>
-    //                 <span>To use the demo you need to log in.</span>
-    //
-    //                 <LoginButton onClick={() => ModalService.openModal(ChooseLoginMethodModal, {})}>
-    //                     Log in
-    //                 </LoginButton>
-    //             </Empty>
-    //         </Section>
-    //     );
-    // }
+    const updateData = () => {
+        if (account) {
+            getUserPools(account.accountId()).then((res) => {
+                setPools(res);
+            });
+        }
+    };
+
+    console.log(pools);
+
+    if (!account) {
+        return (
+            <Section>
+                <Empty>
+                    <h3>Log in required.</h3>
+                    <span>To use the demo you need to log in.</span>
+
+                    <LoginButton onClick={() => ModalService.openModal(ChooseLoginMethodModal, {})}>
+                        Log in
+                    </LoginButton>
+                </Empty>
+            </Section>
+        );
+    }
     return (
         <Container>
             <Content>
@@ -227,37 +238,64 @@ const Liquidity = () => {
                             <span>$2.01</span>
                         </ListTotal>
                     </ListHeader>
-                    <PoolBlock>
-                        <PoolMain>
-                            <Pair
-                                base={StellarService.createLumen()}
-                                counter={StellarService.createLumen()}
-                            />
-                            <PoolStat>
-                                <span>$1.53</span>
-                                <span>Daily fee: {'<'}0.01%</span>
-                            </PoolStat>
-                            <ExpandButton onClick={() => setIsOpen((val) => !val)}>
-                                <ArrowDown $isOpen={isOpen} />
-                            </ExpandButton>
-                        </PoolMain>
-                        {isOpen && (
-                            <ExpandedBlock>
-                                <ExpandedDataRow>
-                                    <span>Fees </span>
-                                    <span>1.4%</span>
-                                </ExpandedDataRow>
-                                <ExpandedDataRow>
-                                    <span>Fees </span>
-                                    <span>1.4%</span>
-                                </ExpandedDataRow>
-                                <ExpandedDataRow>
-                                    <Button fullWidth>Remove liquidity</Button>
-                                    <Button fullWidth>Add liquidity</Button>
-                                </ExpandedDataRow>
-                            </ExpandedBlock>
-                        )}
-                    </PoolBlock>
+                    {!pools ? (
+                        <PageLoader />
+                    ) : Boolean(pools.length) ? (
+                        pools.map((pool) => {
+                            console.log(pool);
+                            return (
+                                <PoolBlock>
+                                    <PoolMain>
+                                        <Pair base={pool.assets[0]} counter={pool.assets[1]} />
+                                        <PoolStat>
+                                            <span>$1.53</span>
+                                            <span>Daily fee: {'<'}0.01%</span>
+                                        </PoolStat>
+                                        <ExpandButton onClick={() => setIsOpen((val) => !val)}>
+                                            <ArrowDown $isOpen={isOpen} />
+                                        </ExpandButton>
+                                    </PoolMain>
+                                    {isOpen && (
+                                        <ExpandedBlock>
+                                            <ExpandedDataRow>
+                                                <span>Shares </span>
+                                                <span>{formatBalance(pool.balance / 1e7)}</span>
+                                            </ExpandedDataRow>
+                                            <ExpandedDataRow>
+                                                <span>Fee</span>
+                                                <span>{pool.fee}%</span>
+                                            </ExpandedDataRow>
+                                            <ExpandedDataRow>
+                                                <Button
+                                                    fullWidth
+                                                    onClick={() =>
+                                                        ModalService.openModal(WithdrawFromPool, {
+                                                            pool,
+                                                            accountShare: pool.balance / 1e7,
+                                                        }).then(() => updateData())
+                                                    }
+                                                >
+                                                    Remove liquidity
+                                                </Button>
+                                                <Button
+                                                    fullWidth
+                                                    onClick={() =>
+                                                        ModalService.openModal(DepositToPool, {
+                                                            pool,
+                                                        }).then(() => updateData())
+                                                    }
+                                                >
+                                                    Add liquidity
+                                                </Button>
+                                            </ExpandedDataRow>
+                                        </ExpandedBlock>
+                                    )}
+                                </PoolBlock>
+                            );
+                        })
+                    ) : (
+                        <div>Your liquidity positions will appear here</div>
+                    )}
                 </PoolsList>
             </Content>
         </Container>

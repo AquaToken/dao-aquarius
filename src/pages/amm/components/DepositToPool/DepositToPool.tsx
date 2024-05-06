@@ -138,7 +138,7 @@ const DepositToPool = ({ params }) => {
 
         SorobanService.getDepositTx(
             account?.accountId(),
-            pool.address,
+            pool.index,
             firstAsset,
             secondAsset,
             firstAssetAmount,

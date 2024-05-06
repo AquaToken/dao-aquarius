@@ -6,6 +6,7 @@ import Liquidity from './pages/Liquidity';
 import PoolPage from './pages/PoolPage';
 import AmmLegacy from './AmmLegacy';
 import CreatePool from './pages/CreatePool';
+import BalancesBlock from './components/BalancesBlock/BalancesBlock';
 
 const Amm = ({ balances }) => {
     return (
@@ -24,6 +25,9 @@ const Amm = ({ balances }) => {
             </Route>
             <Route path={AmmRoutes.legacy}>
                 <AmmLegacy balances={balances} />
+            </Route>
+            <Route path={AmmRoutes.balances}>
+                <BalancesBlock balances={balances} />
             </Route>
             <Redirect to={AmmRoutes.analytics} />
         </Switch>

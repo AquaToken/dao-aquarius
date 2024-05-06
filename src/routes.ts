@@ -49,4 +49,5 @@ export const AmmRoutes = {
     liquidity: `${MainRoutes.amm}/liquidity/`,
     legacy: `${MainRoutes.amm}/legacy/`,
     create: `${MainRoutes.amm}/create-pool/`,
+    balances: `${MainRoutes.amm}/balances/`,
 };

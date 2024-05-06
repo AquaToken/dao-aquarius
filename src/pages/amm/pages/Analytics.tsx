@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { FilterOptions, getPools } from '../api/api';
-import { SorobanService } from '../../../common/services/globalServices';
 import styled from 'styled-components';
 import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween } from '../../../common/mixins';
 import PageLoader from '../../../common/basics/PageLoader';
@@ -13,7 +12,7 @@ import Input from '../../../common/basics/Input';
 import ToggleGroup from '../../../common/basics/ToggleGroup';
 import Table from '../../../common/basics/Table';
 import Pair from '../../vote/components/common/Pair';
-import { AmmRoutes, MarketRoutes } from '../../../routes';
+import { AmmRoutes } from '../../../routes';
 import { useHistory } from 'react-router-dom';
 import { formatBalance } from '../../../common/helpers/helpers';
 
@@ -95,7 +94,7 @@ const Analytics = () => {
     const history = useHistory();
 
     useEffect(() => {
-        getPools(filter).then((res) => {
+        getPools().then((res) => {
             setPools(res);
         });
     }, [filter]);
@@ -104,12 +103,16 @@ const Analytics = () => {
         history.push(`${AmmRoutes.analytics}${id}/`);
     };
 
+    const goToCreatePool = () => {
+        history.push(`${AmmRoutes.create}`);
+    };
+
     return (
         <Container>
             <Content>
                 <Header>
                     <Title>Analytics</Title>
-                    <Button>
+                    <Button onClick={() => goToCreatePool()}>
                         create pool <PlusIcon />
                     </Button>
                 </Header>

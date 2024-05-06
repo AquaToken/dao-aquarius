@@ -212,7 +212,7 @@ const App = () => {
                         activeStyle={{
                             fontWeight: 700,
                         }}
-                        title="AMM"
+                        title="My liquidity"
                     >
                         My liquidity
                     </HeaderNavLink>
@@ -224,6 +224,15 @@ const App = () => {
                         title="Swap"
                     >
                         Swap
+                    </HeaderNavLink>
+                    <HeaderNavLink
+                        to={AmmRoutes.balances}
+                        activeStyle={{
+                            fontWeight: 700,
+                        }}
+                        title="Balances"
+                    >
+                        Balances
                     </HeaderNavLink>
                 </>
             </Header>

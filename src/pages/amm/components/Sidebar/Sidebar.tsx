@@ -3,9 +3,14 @@ import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../../../common/styles';
 import { respondDown } from '../../../../common/mixins';
 import Button from '../../../../common/basics/Button';
-import { ModalService } from '../../../../common/services/globalServices';
+import { ModalService, SorobanService } from '../../../../common/services/globalServices';
 import DepositToPool from '../DepositToPool/DepositToPool';
 import WithdrawFromPool from '../WithdrawFromPool/WithdrawFromPool';
+import useAuthStore from '../../../../store/authStore/useAuthStore';
+import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
+import { useEffect, useState } from 'react';
+import PageLoader from '../../../../common/basics/PageLoader';
+import { formatBalance } from '../../../../common/helpers/helpers';
 
 const Container = styled.aside`
     float: right;
@@ -34,20 +39,54 @@ const Container = styled.aside`
 `;
 
 const Sidebar = ({ pool }) => {
+    const { isLogged, account } = useAuthStore();
+    const [accountShare, setAccountShare] = useState(null);
+
+    useEffect(() => {
+        if (!account) {
+            setAccountShare(null);
+            return;
+        }
+        SorobanService.getTokenBalance(pool.share_token_address, account.accountId()).then(
+            (res) => {
+                setAccountShare(res);
+            },
+        );
+    }, [account]);
     const openDepositModal = () => {
+        if (!isLogged) {
+            return ModalService.openModal(ChooseLoginMethodModal, {
+                callback: () => ModalService.openModal(DepositToPool, { pool }),
+            });
+        }
         ModalService.openModal(DepositToPool, { pool });
     };
     const openWithdrawModal = () => {
-        ModalService.openModal(WithdrawFromPool, { pool });
+        if (!isLogged) {
+            return ModalService.openModal(ChooseLoginMethodModal, {});
+        }
+        ModalService.openModal(WithdrawFromPool, { pool, accountShare });
     };
     return (
         <Container>
-            <Button isBig fullWidth onClick={() => openDepositModal()}>
-                Deposit
-            </Button>
-            <Button isBig fullWidth onClick={() => openWithdrawModal()}>
-                Withdraw
-            </Button>
+            {isLogged && accountShare === null ? (
+                <PageLoader />
+            ) : (
+                <>
+                    {isLogged && <h3>You have {formatBalance(accountShare)} shares</h3>}
+                    <Button isBig fullWidth onClick={() => openDepositModal()}>
+                        Deposit
+                    </Button>
+                    <Button
+                        isBig
+                        fullWidth
+                        onClick={() => openWithdrawModal()}
+                        disabled={accountShare === 0}
+                    >
+                        Withdraw
+                    </Button>
+                </>
+            )}
         </Container>
     );
 };

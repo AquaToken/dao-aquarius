@@ -14,6 +14,7 @@ import {
 } from '../../../../common/services/globalServices';
 import SuccessModal from '../SuccessModal/SuccessModal';
 import useAuthStore from '../../../../store/authStore/useAuthStore';
+import PageLoader from '../../../../common/basics/PageLoader';
 
 const Container = styled.div`
     width: 52.3rem;
@@ -28,7 +29,7 @@ const StyledButton = styled(Button)`
 `;
 
 const WithdrawFromPool = ({ params }) => {
-    const { pool } = params;
+    const { pool, accountShare } = params;
     const [percent, setPercent] = useState(100);
     const [pending, setPending] = useState(false);
 
@@ -52,9 +53,9 @@ const WithdrawFromPool = ({ params }) => {
 
         const [firstAsset] = baseId > counterId ? [counter, base] : [base, counter];
 
-        const amount = (share * (percent / 100)).toFixed(7);
+        const amount = (accountShare * (percent / 100)).toFixed(7);
 
-        SorobanService.getWithdrawTx(account?.accountId(), poolId, amount)
+        SorobanService.getWithdrawTx(account?.accountId(), pool.index, amount, base, counter)
             .then((tx) => account.signAndSubmitTx(tx, true))
             .then((res) => {
                 const [baseAmount, counterAmount] = res.value();
@@ -87,12 +88,18 @@ const WithdrawFromPool = ({ params }) => {
 
     return (
         <Container>
-            <ModalTitle>Withdraw</ModalTitle>
-            <ModalDescription>Available: {share} shares</ModalDescription>
-            <RangeInput onChange={setPercent} value={percent} />
-            <StyledButton fullWidth pending={pending} onClick={() => withdraw()}>
-                withdraw {formatBalance((share * percent) / 100)}
-            </StyledButton>
+            {accountShare === null ? (
+                <PageLoader />
+            ) : (
+                <>
+                    <ModalTitle>Withdraw</ModalTitle>
+                    <ModalDescription>Available: {accountShare} shares</ModalDescription>
+                    <RangeInput onChange={setPercent} value={percent} />
+                    <StyledButton fullWidth pending={pending} onClick={() => withdraw()}>
+                        withdraw {formatBalance((accountShare * percent) / 100)}
+                    </StyledButton>
+                </>
+            )}
         </Container>
     );
 };

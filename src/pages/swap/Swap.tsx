@@ -1,13 +1,12 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { commonMaxWidth, flexAllCenter } from '../../common/mixins';
-import BalancesBlock from '../amm/components/BalancesBlock/BalancesBlock';
 import { Header, Title } from '../profile/AmmRewards/AmmRewards';
 import AssetDropdown from '../vote/components/AssetDropdown/AssetDropdown';
 import { COLORS } from '../../common/styles';
 import useAuthStore from '../../store/authStore/useAuthStore';
 import { useEffect, useMemo, useState } from 'react';
-import { ModalService, SorobanService, ToastService } from '../../common/services/globalServices';
+import { ModalService, SorobanService } from '../../common/services/globalServices';
 import PageLoader from '../../common/basics/PageLoader';
 import Input from '../../common/basics/Input';
 import SwapIcon from '../../common/assets/img/icon-arrows-circle.svg';
@@ -16,9 +15,7 @@ import { useDebounce } from '../../common/hooks/useDebounce';
 import Button from '../../common/basics/Button';
 import { IconFail } from '../../common/basics/Icons';
 import { USDT, USDC } from '../amm/AmmLegacy';
-import SuccessModal from '../amm/components/SuccessModal/SuccessModal';
 import { CONTRACT_STATUS } from '../../common/services/soroban.service';
-import { Empty } from '../profile/YourVotes/YourVotes';
 import ChooseLoginMethodModal from '../../common/modals/ChooseLoginMethodModal';
 import { formatBalance } from '../../common/helpers/helpers';
 import SwapConfirmModal from './SwapConfirmModal/SwapConfirmModal';
@@ -126,14 +123,6 @@ const SettingsButton = styled.div`
         background-color: ${COLORS.lightGray};
     }
 `;
-const Section = styled.div`
-    flex: 1 0 auto;
-    ${flexAllCenter};
-`;
-
-const LoginButton = styled(Button)`
-    margin-top: 1rem;
-`;
 
 const Swap = ({ balances }) => {
     const { account, isLogged } = useAuthStore();
@@ -214,7 +203,6 @@ const Swap = ({ balances }) => {
     return (
         <Container>
             <Content>
-                {Boolean(isLogged) && <BalancesBlock balances={balances} />}
                 <Form>
                     <Header>
                         <Title>Swap assets</Title>

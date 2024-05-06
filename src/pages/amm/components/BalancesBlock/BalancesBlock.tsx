@@ -11,12 +11,17 @@ import { IconFail, IconSuccess, IconPending } from '../../../../common/basics/Ic
 import { CONTRACT_STATUS } from '../../../../common/services/soroban.service';
 import { SorobanService, ToastService } from '../../../../common/services/globalServices';
 import useAuthStore from '../../../../store/authStore/useAuthStore';
-import * as SorobanClient from 'soroban-client';
 import { USDC, USDT, AQUA } from '../../AmmLegacy';
+import { commonMaxWidth } from '../../../../common/mixins';
 
 const Container = styled.div`
     display: flex;
     flex-direction: column;
+`;
+
+const Content = styled.div`
+    ${commonMaxWidth};
+    width: 100%;
 `;
 
 const BalanceLine = styled.div`
@@ -56,7 +61,6 @@ const GetTokenButton = styled(Button)`
 `;
 
 const BalancesBlock = ({ balances }) => {
-    const [showBalances, setShowBalances] = useState(false);
     const [getTokenPending, setGetTokenPending] = useState(false);
     const { account } = useAuthStore();
 
@@ -65,7 +69,7 @@ const BalancesBlock = ({ balances }) => {
     const deploy = ({ asset, contractId }) => {
         setPendingId(contractId);
         return SorobanService.deployAssetContractTx(account.accountId(), asset)
-            .then((tx) => account.signAndSubmitTx(tx as SorobanClient.Transaction))
+            .then((tx) => account.signAndSubmitTx(tx))
             .then(() => {
                 setPendingId(null);
                 account.getBalances();
@@ -102,7 +106,7 @@ const BalancesBlock = ({ balances }) => {
         setPendingId(contractId);
         return SorobanService.restoreAssetContractTx(account.accountId(), asset)
             .then((tx) => {
-                return account.signAndSubmitTx(tx as SorobanClient.Transaction);
+                return account.signAndSubmitTx(tx);
             })
             .then(() => {
                 setPendingId(null);
@@ -120,7 +124,7 @@ const BalancesBlock = ({ balances }) => {
         setPendingId(contractId);
         return SorobanService.bumpAssetContractTx(account.accountId(), asset)
             .then((tx) => {
-                return account.signAndSubmitTx(tx as SorobanClient.Transaction);
+                return account.signAndSubmitTx(tx);
             })
             .then(() => {
                 setPendingId(null);
@@ -136,14 +140,11 @@ const BalancesBlock = ({ balances }) => {
 
     return (
         <Container>
-            <Header>
-                <Title>Balances</Title>
-                <Button isSmall onClick={() => setShowBalances((prevState) => !prevState)}>
-                    {showBalances ? 'Hide balances' : 'Show balances'}
-                </Button>
-            </Header>
-            {showBalances ? (
-                !balances ? (
+            <Content>
+                <Header>
+                    <Title>Balances</Title>
+                </Header>
+                {!balances ? (
                     <PageLoader />
                 ) : (
                     <div>
@@ -235,8 +236,8 @@ const BalancesBlock = ({ balances }) => {
                             </GetTokenButton>
                         )}
                     </div>
-                )
-            ) : null}
+                )}
+            </Content>
         </Container>
     );
 };

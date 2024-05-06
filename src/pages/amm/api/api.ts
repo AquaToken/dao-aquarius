@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { SorobanService } from '../../../common/services/globalServices';
 
-const API_URL = 'https://0061-103-175-215-255.ngrok-free.app';
+const API_URL = 'https://amm-api-testnet.aqua.network';
 
 export enum FilterOptions {
     all = 'all',
@@ -46,7 +46,9 @@ export const getPools = () => {
     return Promise.all([getPoolsInfo(), getPoolsStats(), getPoolsRewards()]).then(
         ([info, stats, rewards]) => {
             return info.map((poolInf) => {
+                // @ts-ignore
                 const poolStat = stats.find(({ pool_address }) => pool_address === poolInf.address);
+                // @ts-ignore
                 const poolRewards = rewards.find(
                     ({ pool_address }) => pool_address === poolInf.address,
                 );
@@ -84,5 +86,5 @@ export const getPool = (id: string) => {
 };
 
 export const getUserPools = (accountId: string) => {
-    return axios.get(`${API_URL}/pools/user/${accountId}/`).then(({ data }) => data);
+    return axios.get(`${API_URL}/pools/user/${accountId}/`).then(({ data }) => processPools(data));
 };
