@@ -21,7 +21,7 @@ const Amm = ({ balances }) => {
                 <Liquidity />
             </Route>
             <Route path={AmmRoutes.create}>
-                <CreatePool />
+                <CreatePool balances={balances} />
             </Route>
             <Route path={AmmRoutes.legacy}>
                 <AmmLegacy balances={balances} />

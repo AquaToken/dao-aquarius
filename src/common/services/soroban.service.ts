@@ -401,14 +401,12 @@ export default class SorobanServiceClass {
             .then((tx) => this.server.prepareTransaction(tx));
     }
 
-    getPools(base: Asset, counter: Asset): Promise<null | Array<any>> {
-        const [aId, bId] = this.orderTokenIDS(base, counter);
-
+    getPools(assets: Asset[]): Promise<null | Array<any>> {
         return this.buildSmartContactTx(
             ACCOUNT_FOR_SIMULATE,
             AMM_SMART_CONTACT_ID,
             AMM_CONTRACT_METHOD.GET_POOLS,
-            this.scValToArray([this.contractIdToScVal(aId), this.contractIdToScVal(bId)]),
+            this.scValToArray(this.orderTokens(assets).map((asset) => this.assetToScVal(asset))),
         )
             .then(
                 (tx) =>
@@ -447,21 +445,15 @@ export default class SorobanServiceClass {
         ).then((tx) => this.server.prepareTransaction(tx));
     }
 
-    getInitStableSwapPoolTx(
-        accountId: string,
-        base: Asset,
-        counter: Asset,
-        a: number,
-        fee: number,
-    ) {
-        const [aId, bId] = this.orderTokenIDS(base, counter);
+    getInitStableSwapPoolTx(accountId: string, assets: Asset[], a: number, fee: number) {
+        const orderedAssets = this.orderTokens(assets).map((asset) => this.assetToScVal(asset));
 
         return this.buildSmartContactTx(
             accountId,
             AMM_SMART_CONTACT_ID,
             AMM_CONTRACT_METHOD.INIT_STABLESWAP_POOL,
             this.publicKeyToScVal(accountId),
-            this.scValToArray([this.contractIdToScVal(aId), this.contractIdToScVal(bId)]),
+            this.scValToArray(orderedAssets),
             new StellarSdk.XdrLargeInt('u128', Number(a).toFixed()).toU128(),
             this.amountToUint32(fee * 100),
             this.amountToUint32(0),
@@ -886,5 +878,11 @@ export default class SorobanServiceClass {
         const idB = this.getAssetContractId(b);
 
         return idA > idB ? [idB, idA] : [idA, idB];
+    }
+
+    private orderTokens(assets: Asset[]) {
+        return assets.sort((a, b) =>
+            this.getAssetContractId(a).localeCompare(this.getAssetContractId(b)),
+        );
     }
 }

@@ -16,11 +16,8 @@ import Button from '../../../common/basics/Button';
 import { Breakpoints, COLORS } from '../../../common/styles';
 import Plus from '../../../common/assets/img/icon-plus.svg';
 import Arrow from '../../../common/assets/img/icon-arrow-down.svg';
-import Pair from '../../vote/components/common/Pair';
 import PageLoader from '../../../common/basics/PageLoader';
-import { formatBalance } from '../../../common/helpers/helpers';
-import WithdrawFromPool from '../components/WithdrawFromPool/WithdrawFromPool';
-import DepositToPool from '../components/DepositToPool/DepositToPool';
+import PoolsList from '../components/PoolsList/PoolsList';
 
 const Container = styled.main`
     height: 100%;
@@ -57,7 +54,7 @@ const PlusIcon = styled(Plus)`
     margin-left: 1rem;
 `;
 
-const PoolsList = styled.div`
+const PoolsListBlock = styled.div`
     display: flex;
     flex-direction: column;
     padding: 4.8rem;
@@ -92,92 +89,6 @@ const ListTotal = styled.span`
     }
 `;
 
-const PoolBlock = styled.div`
-    display: flex;
-    flex-direction: column;
-    margin: 2rem 0;
-`;
-
-const PoolMain = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 2.4rem;
-`;
-
-const PoolStat = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    font-size: 1.6rem;
-    font-weight: 700;
-    line-height: 2.8rem;
-    margin-left: auto;
-
-    span:last-child {
-        font-size: 1.4rem;
-        font-weight: 400;
-        line-height: 1.6rem;
-    }
-`;
-
-const ExpandButton = styled.div`
-    ${flexAllCenter};
-    background-color: ${COLORS.lightGray};
-    border-radius: 0.6rem;
-    height: 4.8rem;
-    width: 4.8rem;
-    cursor: pointer;
-
-    &:hover {
-        background-color: ${COLORS.gray};
-    }
-`;
-
-const ArrowDown = styled(Arrow)<{ $isOpen: boolean }>`
-    transform: ${({ $isOpen }) => ($isOpen ? 'rotate(180deg)' : 'unset')};
-    transform-origin: center;
-    transition: transform linear 200ms;
-`;
-
-const ExpandedBlock = styled.div`
-    display: flex;
-    flex-direction: column;
-    padding: 3rem 2.4rem;
-    border-radius: 0.6rem;
-    background-color: ${COLORS.lightGray};
-    margin-top: 2.4rem;
-    animation: open ease-in-out 200ms;
-    transform-origin: top;
-
-    @keyframes open {
-        0% {
-            transform: scaleY(0);
-        }
-        80% {
-            transform: scaleY(1.1);
-        }
-        100% {
-            transform: scaleY(1);
-        }
-    }
-`;
-
-const ExpandedDataRow = styled.div`
-    ${flexRowSpaceBetween};
-    color: ${COLORS.grayText};
-    gap: 0.8rem;
-
-    span:last-child {
-        font-size: 1.6rem;
-        line-height: 2.8rem;
-        color: ${COLORS.paragraphText};
-    }
-
-    &:not(:last-child) {
-        margin-bottom: 1.6rem;
-    }
-`;
-
 const Section = styled.div`
     flex: 1 0 auto;
     ${flexAllCenter};
@@ -190,7 +101,6 @@ const LoginButton = styled(Button)`
 const Liquidity = () => {
     const { account } = useAuthStore();
 
-    const [expandedIndexes, setExpandedIndexes] = useState([]);
     const [pools, setPools] = useState(null);
 
     useEffect(() => {
@@ -203,21 +113,6 @@ const Liquidity = () => {
                 setPools(res);
             });
         }
-    };
-
-    const togglePool = (id) => {
-        if (expandedIndexes.includes(id)) {
-            return closePool(id);
-        }
-        openPool(id);
-    };
-
-    const openPool = (id) => {
-        setExpandedIndexes([...expandedIndexes, id]);
-    };
-
-    const closePool = (id) => {
-        setExpandedIndexes([...expandedIndexes.filter((i) => i !== id)]);
     };
 
     console.log(pools);
@@ -245,7 +140,7 @@ const Liquidity = () => {
                         add liquidity <PlusIcon />
                     </Button>
                 </Header>
-                <PoolsList>
+                <PoolsListBlock>
                     <ListHeader>
                         <ListTitle>My liquidity positions</ListTitle>
                         <ListTotal>
@@ -256,64 +151,11 @@ const Liquidity = () => {
                     {!pools ? (
                         <PageLoader />
                     ) : Boolean(pools.length) ? (
-                        pools.map((pool) => {
-                            console.log(pool);
-                            return (
-                                <PoolBlock>
-                                    <PoolMain>
-                                        <Pair base={pool.assets[0]} counter={pool.assets[1]} />
-                                        <PoolStat>
-                                            <span>$1.53</span>
-                                            <span>Daily fee: {'<'}0.01%</span>
-                                        </PoolStat>
-                                        <ExpandButton onClick={() => togglePool(pool.address)}>
-                                            <ArrowDown
-                                                $isOpen={expandedIndexes.includes(pool.address)}
-                                            />
-                                        </ExpandButton>
-                                    </PoolMain>
-                                    {expandedIndexes.includes(pool.address) && (
-                                        <ExpandedBlock>
-                                            <ExpandedDataRow>
-                                                <span>Shares </span>
-                                                <span>{formatBalance(pool.balance / 1e7)}</span>
-                                            </ExpandedDataRow>
-                                            <ExpandedDataRow>
-                                                <span>Fee</span>
-                                                <span>{pool.fee}%</span>
-                                            </ExpandedDataRow>
-                                            <ExpandedDataRow>
-                                                <Button
-                                                    fullWidth
-                                                    onClick={() =>
-                                                        ModalService.openModal(WithdrawFromPool, {
-                                                            pool,
-                                                            accountShare: pool.balance / 1e7,
-                                                        }).then(() => updateData())
-                                                    }
-                                                >
-                                                    Remove liquidity
-                                                </Button>
-                                                <Button
-                                                    fullWidth
-                                                    onClick={() =>
-                                                        ModalService.openModal(DepositToPool, {
-                                                            pool,
-                                                        }).then(() => updateData())
-                                                    }
-                                                >
-                                                    Add liquidity
-                                                </Button>
-                                            </ExpandedDataRow>
-                                        </ExpandedBlock>
-                                    )}
-                                </PoolBlock>
-                            );
-                        })
+                        <PoolsList pools={pools} onUpdate={() => updateData()} />
                     ) : (
                         <div>Your liquidity positions will appear here</div>
                     )}
-                </PoolsList>
+                </PoolsListBlock>
             </Content>
         </Container>
     );

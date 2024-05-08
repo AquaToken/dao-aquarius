@@ -45,22 +45,32 @@ const Icons = styled.div`
     align-items: center;
 `;
 
-const BaseIcon = styled.div<{ isBig?: boolean; isCircleLogo?: boolean }>`
+const Icon = styled.div<{ hasNextLogo?: boolean; isBig?: boolean; isCircleLogo?: boolean }>`
     ${({ isBig, isCircleLogo }) => (isBig ? bigLogoStyles(isCircleLogo) : logoStyles)};
-    border: 0.3rem solid ${COLORS.white};
-    background-color: ${COLORS.white};
-    z-index: 1;
     box-sizing: content-box;
     position: relative;
+    border: ${({ hasNextLogo }) => (hasNextLogo ? `0.3rem solid ${COLORS.white}` : 'unset')};
+    background-color: ${({ hasNextLogo }) => (hasNextLogo ? COLORS.white : 'unset')};
+`;
+
+const BaseIcon = styled(Icon)`
+    z-index: 3;
     left: 0.5rem;
 `;
 
-const SecondIcon = styled.div<{ isBig?: boolean; isCircleLogo?: boolean }>`
-    ${({ isBig, isCircleLogo }) => (isBig ? bigLogoStyles(isCircleLogo) : logoStyles)};
-    z-index: 0;
-    box-sizing: content-box;
-    position: relative;
+const SecondIcon = styled(Icon)<{ isBig?: boolean }>`
+    z-index: 2;
     left: ${({ isBig }) => (isBig ? '-1.5rem' : '-0.5rem')};
+`;
+
+const ThirdIcon = styled(Icon)<{ isBig?: boolean }>`
+    z-index: 1;
+    left: ${({ isBig }) => (isBig ? '-2.5rem' : '-1.5rem')};
+`;
+
+const FourthIcon = styled(Icon)<{ isBig?: boolean }>`
+    z-index: 0;
+    left: ${({ isBig }) => (isBig ? '-3.5rem' : '-2.5rem')};
 `;
 
 const AssetsDetails = styled.div<{
@@ -167,6 +177,8 @@ const viewOnStellarX = (event, base: StellarSdk.Asset, counter: StellarSdk.Asset
 type PairProps = {
     base: AssetSimple;
     counter: AssetSimple;
+    thirdAsset?: AssetSimple;
+    fourthAsset?: AssetSimple;
     withoutDomains?: boolean;
     verticalDirections?: boolean;
     isRewardsOn?: boolean;
@@ -191,6 +203,8 @@ type PairProps = {
 const Pair = ({
     base,
     counter,
+    thirdAsset,
+    fourthAsset,
     withoutDomains,
     verticalDirections,
     leftAlign,
@@ -223,6 +237,24 @@ const Pair = ({
     const hasCounterInfo = isCounterNative || assetsInfo.has(getAssetString(counter));
     const counterInfo = isCounterNative ? LumenInfo : assetsInfo.get(getAssetString(counter));
 
+    const thirdAssetInstance = thirdAsset
+        ? new StellarSdk.Asset(thirdAsset.code, thirdAsset.issuer)
+        : StellarSdk.Asset.native();
+    const isThirdAssetNative = thirdAssetInstance.isNative();
+    const hasThirdAssetInfo = isThirdAssetNative || assetsInfo.has(getAssetString(thirdAsset));
+    const thirdAssetInfo = isThirdAssetNative
+        ? LumenInfo
+        : assetsInfo.get(getAssetString(thirdAsset));
+
+    const fourthAssetInstance = fourthAsset
+        ? new StellarSdk.Asset(fourthAsset?.code, fourthAsset?.issuer)
+        : StellarSdk.Asset.native();
+    const isFourthAssetNative = fourthAssetInstance.isNative();
+    const hasFourthAssetInfo = isFourthAssetNative || assetsInfo.has(getAssetString(fourthAsset));
+    const fourthAssetInfo = isFourthAssetNative
+        ? LumenInfo
+        : assetsInfo.get(getAssetString(fourthAsset));
+
     return (
         <Wrapper
             verticalDirections={verticalDirections}
@@ -234,6 +266,7 @@ const Pair = ({
                     key={baseInfo?.asset_string}
                     isBig={isBigLogo}
                     isCircleLogo={isCircleLogos}
+                    hasNextLogo
                 >
                     <AssetLogo
                         logoUrl={baseInfo?.image}
@@ -245,6 +278,7 @@ const Pair = ({
                     key={counterInfo?.asset_string}
                     isBig={isBigLogo}
                     isCircleLogo={isCircleLogos}
+                    hasNextLogo={Boolean(thirdAsset)}
                 >
                     <AssetLogo
                         logoUrl={counterInfo?.image}
@@ -252,6 +286,33 @@ const Pair = ({
                         isCircle={isCircleLogos}
                     />
                 </SecondIcon>
+                {thirdAsset && (
+                    <ThirdIcon
+                        key={thirdAssetInfo?.asset_string}
+                        isBig={isBigLogo}
+                        isCircleLogo={isCircleLogos}
+                        hasNextLogo={Boolean(thirdAsset)}
+                    >
+                        <AssetLogo
+                            logoUrl={thirdAssetInfo?.image}
+                            isBig={isBigLogo}
+                            isCircle={isCircleLogos}
+                        />
+                    </ThirdIcon>
+                )}
+                {fourthAsset && (
+                    <FourthIcon
+                        key={fourthAssetInfo?.asset_string}
+                        isBig={isBigLogo}
+                        isCircleLogo={isCircleLogos}
+                    >
+                        <AssetLogo
+                            logoUrl={fourthAssetInfo?.image}
+                            isBig={isBigLogo}
+                            isCircle={isCircleLogos}
+                        />
+                    </FourthIcon>
+                )}
             </Icons>
             <AssetsDetails
                 verticalDirections={verticalDirections}
@@ -266,6 +327,8 @@ const Pair = ({
                         {baseAmount ? formatBalance(+baseAmount) : ''} {base.code}{' '}
                         {isSwapResult ? <ArrowRight /> : '/'}{' '}
                         {counterAmount ? formatBalance(+counterAmount) : ''} {counter.code}
+                        {thirdAsset ? ` / ${thirdAsset.code} ` : ''}
+                        {fourthAsset ? ` / ${fourthAsset.code} ` : ''}
                     </span>
                     {boosted && !bottomLabels && <BoostLabel />}
                     {isRewardsOn && !bottomLabels && <RewardLabel />}
@@ -299,6 +362,28 @@ const Pair = ({
                         {hasBaseInfo ? baseInfo.home_domain ?? 'unknown' : <DotsLoader />}){' · '}
                         {counterInfo?.name || counter.code} (
                         {hasCounterInfo ? counterInfo.home_domain ?? 'unknown' : <DotsLoader />})
+                        {thirdAsset ? ' · ' : ''}
+                        {!thirdAsset ? '' : thirdAssetInfo?.name || thirdAsset.code}
+                        {thirdAsset ? '(' : ''}
+                        {!thirdAsset ? (
+                            ''
+                        ) : hasThirdAssetInfo ? (
+                            thirdAssetInfo.home_domain ?? 'unknown'
+                        ) : (
+                            <DotsLoader />
+                        )}
+                        {thirdAsset ? ')' : ''}
+                        {fourthAsset ? ' · ' : ''}
+                        {!fourthAsset ? '' : fourthAssetInfo?.name || thirdAsset.code}{' '}
+                        {fourthAsset ? '(' : ''}
+                        {!fourthAsset ? (
+                            ''
+                        ) : hasFourthAssetInfo ? (
+                            fourthAssetInfo.home_domain ?? 'unknown'
+                        ) : (
+                            <DotsLoader />
+                        )}
+                        {fourthAsset ? ')' : ''}
                     </AssetsDomains>
                 )}
             </AssetsDetails>

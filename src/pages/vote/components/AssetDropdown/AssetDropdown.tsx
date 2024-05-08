@@ -166,6 +166,7 @@ type AssetDropdownProps = {
     assetsList?: AssetSimple[];
     withoutReset?: boolean;
     pending?: boolean;
+    excludeList?: AssetSimple[];
 };
 
 const StyledAsset = styled(Asset)`
@@ -182,6 +183,7 @@ const AssetDropdown = ({
     disabled,
     onToggle,
     exclude,
+    excludeList,
     placeholder,
     label,
     assetsList,
@@ -293,15 +295,21 @@ const AssetDropdown = ({
         return [...assets, ...searchResults]
             .filter((assetItem) => {
                 const assetInfo = assetsInfo.get(getAssetString(assetItem));
+
                 return (
                     (assetItem.code.toLowerCase().includes(searchText.toLowerCase()) ||
                         assetItem.issuer?.toLowerCase().includes(searchText.toLowerCase()) ||
                         assetInfo?.home_domain?.toLowerCase().includes(searchText.toLowerCase())) &&
-                    !(assetItem.code === exclude?.code && assetItem.issuer === exclude?.issuer)
+                    !(assetItem.code === exclude?.code && assetItem.issuer === exclude?.issuer) &&
+                    !excludeList?.find(
+                        (excludeToken) =>
+                            excludeToken.code === assetItem.code &&
+                            assetItem.issuer === excludeToken.issuer,
+                    )
                 );
             })
             .sort((a, b) => a.code.localeCompare(b.code));
-    }, [assets, searchText, assetsInfo, searchResults, exclude]);
+    }, [assets, searchText, assetsInfo, searchResults, exclude, excludeList]);
 
     return (
         <DropDown

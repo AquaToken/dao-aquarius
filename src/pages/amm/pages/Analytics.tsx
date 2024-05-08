@@ -135,7 +135,7 @@ const Analytics = () => {
                             />
                             <Table
                                 head={[
-                                    { children: 'Assets', flexSize: 2.5 },
+                                    { children: 'Assets', flexSize: 4 },
                                     { children: 'Type' },
                                     { children: 'Fee' },
                                     { children: 'Daily reward' },
@@ -150,9 +150,11 @@ const Analytics = () => {
                                                 <Pair
                                                     base={pool.assets[0]}
                                                     counter={pool.assets[1]}
+                                                    thirdAsset={pool.assets[2]}
+                                                    fourthAsset={pool.assets[3]}
                                                 />
                                             ),
-                                            flexSize: 2.5,
+                                            flexSize: 3,
                                         },
                                         {
                                             children:
@@ -160,7 +162,7 @@ const Analytics = () => {
                                                     ? 'Stable swap'
                                                     : 'Constant product',
                                         },
-                                        { children: `${pool.fee}%` },
+                                        { children: `${pool.fee * 100}%` },
                                         {
                                             children: pool.tps
                                                 ? `${formatBalance(

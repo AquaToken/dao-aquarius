@@ -17,7 +17,6 @@ import DepositToPool from './components/DepositToPool/DepositToPool';
 import { CONTRACT_STATUS } from '../../common/services/soroban.service';
 import Plus from '../../common/assets/img/icon-plus.svg';
 import InfoIcon from '../../common/assets/img/icon-info.svg';
-import CreatePool from './components/CreatePool/CreatePool';
 import Table from '../../common/basics/Table';
 import { useUpdateIndex } from '../../common/hooks/useUpdateIndex';
 import WithdrawFromPool from './components/WithdrawFromPool/WithdrawFromPool';
@@ -163,14 +162,6 @@ const AmmLegacy = ({ balances }) => {
 
     console.log(poolsData);
 
-    const openCreatePoolModal = () => {
-        ModalService.openModal(CreatePool, { base, counter }).then(({ isConfirmed }) => {
-            if (isConfirmed) {
-                getPools();
-            }
-        });
-    };
-
     const openDepositModal = (poolId) => {
         ModalService.openModal(DepositToPool, { base, counter, poolId }).then(({ isConfirmed }) => {
             if (isConfirmed) {
@@ -248,9 +239,6 @@ const AmmLegacy = ({ balances }) => {
                 <BalancesBlock balances={balances} />
                 <Header>
                     <Title>Pools</Title>
-                    <Button onClick={() => openCreatePoolModal()}>
-                        create pool <PlusIcon />
-                    </Button>
                 </Header>
                 <Header>
                     <PairSearch>

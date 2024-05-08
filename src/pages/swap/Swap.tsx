@@ -140,7 +140,7 @@ const Swap = ({ balances }) => {
 
     useEffect(() => {
         setPools(null);
-        SorobanService.getPools(base, counter).then((res) => {
+        SorobanService.getPools([base, counter]).then((res) => {
             setPools(res);
         });
     }, [base, counter]);
