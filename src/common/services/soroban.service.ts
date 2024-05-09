@@ -7,6 +7,7 @@ import SimulateTransactionSuccessResponse = StellarSdk.SorobanRpc.Api.SimulateTr
 import { ModalService, SorobanService, ToastService } from './globalServices';
 import RestoreContractModal from '../modals/RestoreContractModal/RestoreContractModal';
 import { getAssetString } from '../../store/assetsStore/actions';
+import EventService from './event.service';
 
 const SOROBAN_SERVER = 'https://soroban-testnet.stellar.org:443';
 export const AMM_SMART_CONTACT_ID = 'CB7S3KMZ2GP46YU72WJKXFMSFLUB3MZYQL3LSIZMYTQTXIAS2EXUEANC';

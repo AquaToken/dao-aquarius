@@ -11,12 +11,15 @@ import {
     StellarService,
     ToastService,
     WalletConnectService,
+    AssetsService,
 } from '../services/globalServices';
 import { StellarEvents } from '../services/stellar.service';
 import { LedgerEvents } from '../services/ledger.service';
 import { useSkipFirstRender } from './useSkipFirstRender';
 import { LobstrExtensionEvents } from '../services/lobstr-extension.service';
 import { FreighterEvents } from '../services/freighter.service';
+import useAssetsStore from '../../store/assetsStore/useAssetsStore';
+import { AssetsEvent } from '../services/assets.service';
 
 const UnfundedErrors = ['Request failed with status code 404', 'Not Found'];
 
@@ -31,6 +34,8 @@ export default function useGlobalSubscriptions(): void {
         loginErrorText,
         clearLoginError,
     } = useAuthStore();
+
+    const { processNewAssets } = useAssetsStore();
 
     const accountRef = useRef(account);
 
@@ -79,6 +84,16 @@ export default function useGlobalSubscriptions(): void {
 
         return () => unsub();
     });
+
+    useEffect(() => {
+        const unsub = AssetsService.event.sub((event) => {
+            if (event.type === AssetsEvent.newAssets) {
+                processNewAssets(event.payload);
+            }
+        });
+
+        return () => unsub();
+    }, []);
 
     useEffect(() => {
         if (loginErrorText) {

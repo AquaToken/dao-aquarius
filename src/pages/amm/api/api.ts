@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { SorobanService } from '../../../common/services/globalServices';
+import { AssetsService, SorobanService } from '../../../common/services/globalServices';
+import { SorobanEvent } from '../../../common/services/soroban.service';
 
 const API_URL = 'https://amm-api-testnet.aqua.network';
 
@@ -18,6 +19,8 @@ const processPools = async (pools) => {
     const assets = await Promise.all(
         [...contracts].map((id) => SorobanService.getAssetFromContractId(id)),
     );
+
+    AssetsService.processAssets(assets);
 
     pools.forEach((pool) => {
         pool.assets = [];
