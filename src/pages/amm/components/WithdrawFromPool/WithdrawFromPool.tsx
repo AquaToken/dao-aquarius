@@ -138,6 +138,8 @@ const WithdrawFromPool = ({ params }) => {
                                 <span>
                                     {totalShares === null || reserves === null ? (
                                         <DotsLoader />
+                                    ) : totalShares === 0 ? (
+                                        '0'
                                     ) : (
                                         formatBalance(
                                             (((+percent / 100) * accountShare) / totalShares) *
