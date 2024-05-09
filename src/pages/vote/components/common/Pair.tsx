@@ -194,8 +194,7 @@ type PairProps = {
     withoutLink?: boolean;
     isMaxRewards?: boolean;
     withMarketLink?: boolean;
-    baseAmount?: string;
-    counterAmount?: string;
+    amounts?: string[];
     isSwapResult?: boolean;
     customLabel?: [string, string];
 };
@@ -220,8 +219,7 @@ const Pair = ({
     withoutLink,
     isMaxRewards,
     withMarketLink,
-    baseAmount,
-    counterAmount,
+    amounts,
     isSwapResult,
     customLabel,
 }: PairProps): JSX.Element => {
@@ -324,11 +322,15 @@ const Pair = ({
                     bigCodes={bigCodes}
                 >
                     <span>
-                        {baseAmount ? formatBalance(+baseAmount) : ''} {base.code}{' '}
+                        {amounts ? formatBalance(+amounts[0]) : ''} {base.code}{' '}
                         {isSwapResult ? <ArrowRight /> : '/'}{' '}
-                        {counterAmount ? formatBalance(+counterAmount) : ''} {counter.code}
-                        {thirdAsset ? ` / ${thirdAsset.code} ` : ''}
-                        {fourthAsset ? ` / ${fourthAsset.code} ` : ''}
+                        {amounts ? formatBalance(+amounts[1]) : ''} {counter.code}
+                        {thirdAsset
+                            ? ` / ${amounts ? formatBalance(+amounts[2]) : ''} ${thirdAsset.code} `
+                            : ''}
+                        {fourthAsset
+                            ? ` / ${amounts ? formatBalance(+amounts[3]) : ''} ${fourthAsset.code} `
+                            : ''}
                     </span>
                     {boosted && !bottomLabels && <BoostLabel />}
                     {isRewardsOn && !bottomLabels && <RewardLabel />}

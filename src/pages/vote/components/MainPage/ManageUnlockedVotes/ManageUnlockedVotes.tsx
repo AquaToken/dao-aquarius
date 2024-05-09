@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../../../../common/styles';
 import { StellarService } from '../../../../../common/services/globalServices';
-import { respondDown } from '../../../../../common/mixins';
+import { customScroll, respondDown } from '../../../../../common/mixins';
 import useAuthStore from '../../../../../store/authStore/useAuthStore';
 import Button from '../../../../../common/basics/Button';
 import { StellarEvents } from '../../../../../common/services/stellar.service';
@@ -16,20 +16,7 @@ const Container = styled.div`
     padding-right: 0.5rem;
     overflow: auto;
 
-    &::-webkit-scrollbar {
-        width: 0.5rem;
-    }
-
-    /* Track */
-    &::-webkit-scrollbar-track {
-        background: ${COLORS.white};
-    }
-
-    /* Handle */
-    &::-webkit-scrollbar-thumb {
-        background: ${COLORS.purple};
-        border-radius: 0.25rem;
-    }
+    ${customScroll};
 
     ${respondDown(Breakpoints.md)`
           width: 100%;

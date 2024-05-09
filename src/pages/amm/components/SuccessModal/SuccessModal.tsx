@@ -28,18 +28,19 @@ const StyledButton = styled(Button)`
 `;
 
 const SuccessModal = ({ params, close }) => {
-    const { base, counter, baseAmount, counterAmount, title, isSwap } = params;
+    const { assets, amounts, title, isSwap } = params;
     return (
         <Container>
             <ModalTitle>{title ?? 'Success'}</ModalTitle>
             <AssetsInfo>
                 <Pair
-                    base={base}
-                    counter={counter}
+                    base={assets[0]}
+                    counter={assets[1]}
+                    thirdAsset={assets[2]}
+                    fourthAsset={assets[3]}
                     verticalDirections
                     withoutLink
-                    baseAmount={baseAmount}
-                    counterAmount={counterAmount}
+                    amounts={amounts}
                     isSwapResult={isSwap}
                 />
             </AssetsInfo>

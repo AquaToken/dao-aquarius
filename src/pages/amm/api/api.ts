@@ -76,7 +76,10 @@ const getPoolStats = (id: string) => {
 };
 
 const getPoolRewards = (id: string) => {
-    return axios.get(`${API_URL}/pool-rewards/${id}/`).then(({ data }) => data);
+    return axios
+        .get(`${API_URL}/pool-rewards/${id}/`)
+        .then(({ data }) => data)
+        .catch(() => ({}));
 };
 
 export const getPool = (id: string) => {

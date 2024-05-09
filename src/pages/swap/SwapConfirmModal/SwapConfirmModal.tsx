@@ -71,10 +71,8 @@ const SwapConfirmModal = ({ params, confirm }) => {
             .then((res) => {
                 confirm();
                 ModalService.openModal(SuccessModal, {
-                    base,
-                    counter,
-                    baseAmount: baseAmount,
-                    counterAmount: SorobanService.i128ToInt(res.value()),
+                    assets: [base, counter],
+                    amounts: [baseAmount, SorobanService.i128ToInt(res.value())],
                     title: 'Success swap',
                     isSwap: true,
                 });

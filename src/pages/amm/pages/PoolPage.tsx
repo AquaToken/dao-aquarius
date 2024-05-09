@@ -1,12 +1,10 @@
 import * as React from 'react';
 import { useParams } from 'react-router-dom';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getPool } from '../api/api';
 import PageLoader from '../../../common/basics/PageLoader';
 import styled from 'styled-components';
-import { isRewardsOn, MAX_REWARDS_PERCENT } from '../../vote/components/MainPage/Table/Table';
 import Pair from '../../vote/components/common/Pair';
-import { SorobanService } from '../../../common/services/globalServices';
 import { Breakpoints, COLORS } from '../../../common/styles';
 import { commonMaxWidth, respondDown } from '../../../common/mixins';
 import Sidebar from '../components/Sidebar/Sidebar';
@@ -73,27 +71,11 @@ const PoolPage = () => {
     const [pool, setPool] = useState(null);
     const { poolAddress } = useParams<{ poolAddress: string }>();
 
-    const base = useMemo(() => {
-        if (!pool) {
-            return null;
-        }
-        return pool.assets[0];
-    }, [pool]);
-
-    const counter = useMemo(() => {
-        if (!pool) {
-            return null;
-        }
-        return pool.assets[1];
-    }, [pool]);
-
     useEffect(() => {
         getPool(poolAddress).then((res) => {
             setPool(res);
         });
     }, [poolAddress]);
-
-    console.log(pool);
 
     if (!pool) {
         return <PageLoader />;
@@ -104,8 +86,10 @@ const PoolPage = () => {
             <Background>
                 <Section>
                     <Pair
-                        base={base}
-                        counter={counter}
+                        base={pool.assets[0]}
+                        counter={pool.assets[1]}
+                        thirdAsset={pool.assets[2]}
+                        fourthAsset={pool.assets[3]}
                         verticalDirections
                         leftAlign
                         bigCodes

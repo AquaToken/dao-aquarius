@@ -1,9 +1,9 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { respondDown } from '../../../../common/mixins';
-import { Breakpoints } from '../../../../common/styles';
-import { ModalDescription, ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
-import { useMemo, useState } from 'react';
+import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
+import { Breakpoints, COLORS } from '../../../../common/styles';
+import { ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
+import { useEffect, useState } from 'react';
 import RangeInput from '../../../../common/basics/RangeInput';
 import Button from '../../../../common/basics/Button';
 import { formatBalance } from '../../../../common/helpers/helpers';
@@ -15,6 +15,10 @@ import {
 import SuccessModal from '../SuccessModal/SuccessModal';
 import useAuthStore from '../../../../store/authStore/useAuthStore';
 import PageLoader from '../../../../common/basics/PageLoader';
+import Pair from '../../../vote/components/common/Pair';
+import Input from '../../../../common/basics/Input';
+import DotsLoader from '../../../../common/basics/DotsLoader';
+import { getAssetString } from '../../../../store/assetsStore/actions';
 
 const Container = styled.div`
     width: 52.3rem;
@@ -24,57 +28,75 @@ const Container = styled.div`
     `}
 `;
 
+const PairContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    background-color: ${COLORS.lightGray};
+    border-radius: 0.6rem;
+    padding: 2.4rem;
+    margin: 4rem 0 1.6rem;
+`;
+
 const StyledButton = styled(Button)`
     margin-top: 5rem;
+    margin-left: auto;
+`;
+
+const InputStyled = styled(Input)`
+    margin-bottom: 3.2rem;
+    margin-top: 5rem;
+`;
+
+const Details = styled.div`
+    display: flex;
+    flex-direction: column;
+    margin-top: 3.2rem;
+`;
+
+const DescriptionRow = styled.div`
+    ${flexRowSpaceBetween};
+    margin-bottom: 1.6rem;
+    color: ${COLORS.grayText};
+
+    span:last-child {
+        color: ${COLORS.paragraphText};
+    }
 `;
 
 const WithdrawFromPool = ({ params }) => {
     const { pool, accountShare } = params;
-    const [percent, setPercent] = useState(100);
+    const [percent, setPercent] = useState('100');
     const [pending, setPending] = useState(false);
+    const [totalShares, setTotalShares] = useState(null);
+    const [reserves, setReserves] = useState(null);
 
     const { account } = useAuthStore();
 
-    const base = useMemo(() => {
-        return pool.assets[0];
-    }, [pool]);
+    useEffect(() => {
+        SorobanService.getTotalShares(pool.address).then((res) => {
+            setTotalShares(res);
+        });
+    }, []);
 
-    const counter = useMemo(() => {
-        return pool.assets[1];
-    }, [pool]);
-
-    console.log(pool);
+    useEffect(() => {
+        SorobanService.getPoolReserves(pool.assets, pool.address).then((res) => {
+            setReserves(res);
+        });
+    }, []);
 
     const withdraw = () => {
         setPending(true);
 
-        const baseId = SorobanService.getAssetContractId(base);
-        const counterId = SorobanService.getAssetContractId(counter);
+        const amount = (accountShare * (+percent / 100)).toFixed(7);
 
-        const [firstAsset] = baseId > counterId ? [counter, base] : [base, counter];
-
-        const amount = (accountShare * (percent / 100)).toFixed(7);
-
-        SorobanService.getWithdrawTx(account?.accountId(), pool.index, amount, base, counter)
+        SorobanService.getWithdrawTx(account?.accountId(), pool.index, amount, pool.assets)
             .then((tx) => account.signAndSubmitTx(tx, true))
             .then((res) => {
-                const [baseAmount, counterAmount] = res.value();
-
                 ModalService.confirmAllModals();
 
                 ModalService.openModal(SuccessModal, {
-                    base,
-                    counter,
-                    baseAmount: SorobanService.i128ToInt(
-                        baseId === SorobanService.getAssetContractId(firstAsset)
-                            ? baseAmount.value()
-                            : counterAmount.value(),
-                    ),
-                    counterAmount: SorobanService.i128ToInt(
-                        baseId === SorobanService.getAssetContractId(firstAsset)
-                            ? counterAmount.value()
-                            : baseAmount.value(),
-                    ),
+                    assets: pool.assets,
+                    amounts: res.value().map((val) => SorobanService.i128ToInt(val.value())),
                     title: 'Success withdraw',
                 });
                 setPending(false);
@@ -92,11 +114,43 @@ const WithdrawFromPool = ({ params }) => {
                 <PageLoader />
             ) : (
                 <>
-                    <ModalTitle>Withdraw</ModalTitle>
-                    <ModalDescription>Available: {accountShare} shares</ModalDescription>
-                    <RangeInput onChange={setPercent} value={percent} />
-                    <StyledButton fullWidth pending={pending} onClick={() => withdraw()}>
-                        withdraw {formatBalance((accountShare * percent) / 100)}
+                    <ModalTitle>Remove liquidity position</ModalTitle>
+                    <PairContainer>
+                        <Pair
+                            base={pool.assets[0]}
+                            counter={pool.assets[1]}
+                            thirdAsset={pool.assets[2]}
+                            fourthAsset={pool.assets[3]}
+                        />
+                    </PairContainer>
+                    <InputStyled
+                        label="Amount to remove"
+                        postfix="%"
+                        value={percent}
+                        onChange={({ target }) => setPercent(target.value)}
+                    />
+                    <RangeInput onChange={setPercent} value={+percent} />
+
+                    <Details>
+                        {pool.assets.map((asset) => (
+                            <DescriptionRow>
+                                <span>Will receive {asset.code}</span>
+                                <span>
+                                    {!totalShares || !reserves ? (
+                                        <DotsLoader />
+                                    ) : (
+                                        formatBalance(
+                                            (((+percent / 100) * accountShare) / totalShares) *
+                                                reserves.get(getAssetString(asset)),
+                                        )
+                                    )}
+                                </span>
+                            </DescriptionRow>
+                        ))}
+                    </Details>
+
+                    <StyledButton isBig pending={pending} onClick={() => withdraw()}>
+                        Remove
                     </StyledButton>
                 </>
             )}

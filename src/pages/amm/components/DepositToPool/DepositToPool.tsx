@@ -1,11 +1,11 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../../../common/styles';
-import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
+import { customScroll, flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
 import { ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
 import Input from '../../../../common/basics/Input';
 import Asset from '../../../vote/components/AssetDropdown/Asset';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
     ModalService,
     SorobanService,
@@ -17,12 +17,18 @@ import SuccessModal from '../SuccessModal/SuccessModal';
 import { formatBalance } from '../../../../common/helpers/helpers';
 import Pair from '../../../vote/components/common/Pair';
 import DotsLoader from '../../../../common/basics/DotsLoader';
+import { getAssetString } from '../../../../store/assetsStore/actions';
 
 const Container = styled.div`
     width: 52.3rem;
+    max-height: 80vh;
+    overflow: auto;
+
+    ${customScroll};
 
     ${respondDown(Breakpoints.md)`
         width: 100%;
+        max-height: 100vh;
     `}
 
     Button {
@@ -84,39 +90,16 @@ const DepositToPool = ({ params }) => {
     const { account } = useAuthStore();
     const { pool } = params;
 
-    const base = useMemo(() => {
-        return pool.assets[0];
-    }, [pool]);
-
-    const counter = useMemo(() => {
-        return pool.assets[1];
-    }, [pool]);
-
-    const [baseAmount, setBaseAmount] = useState('');
-    const [counterAmount, setCounterAmount] = useState('');
+    const [amounts, setAmounts] = useState(
+        new Map<string, string>(pool.assets.map((asset) => [getAssetString(asset), ''])),
+    );
     const [pending, setPending] = useState(false);
-    const [price, setPrice] = useState(null);
+    const [reserves, setReserves] = useState(null);
     const [shares, setShares] = useState(null);
-    const [basePooled, setBasePooled] = useState(null);
-    const [counterPooled, setCounterPooled] = useState(null);
 
     useEffect(() => {
-        SorobanService.getPoolPrice(account?.accountId(), base, counter, pool.address).then(
-            (res) => {
-                setPrice(res);
-            },
-        );
-    }, []);
-
-    useEffect(() => {
-        SorobanService.getTokenBalance(base, pool.address).then((res) => {
-            setBasePooled(res);
-        });
-    }, []);
-
-    useEffect(() => {
-        SorobanService.getTokenBalance(counter, pool.address).then((res) => {
-            setCounterPooled(res);
+        SorobanService.getPoolReserves(pool.assets, pool.address).then((res) => {
+            setReserves(res);
         });
     }, []);
 
@@ -128,43 +111,18 @@ const DepositToPool = ({ params }) => {
 
     const onSubmit = () => {
         setPending(true);
-
-        const baseId = SorobanService.getAssetContractId(base);
-        const counterId = SorobanService.getAssetContractId(counter);
-
-        const [firstAsset, secondAsset] = baseId > counterId ? [counter, base] : [base, counter];
-        const [firstAssetAmount, secondAssetAmount] =
-            baseId > counterId ? [counterAmount, baseAmount] : [baseAmount, counterAmount];
-
-        SorobanService.getDepositTx(
-            account?.accountId(),
-            pool.index,
-            firstAsset,
-            secondAsset,
-            firstAssetAmount,
-            secondAssetAmount,
-        )
+        SorobanService.getDepositTx(account?.accountId(), pool.index, pool.assets, amounts)
             .then((tx) => account.signAndSubmitTx(tx, true))
             .then((res) => {
                 setPending(false);
 
-                const [baseResultAmount, counterResultAmount] = res.value()[0].value();
+                const resultAmounts = res.value()[0].value();
 
                 ModalService.confirmAllModals();
 
                 ModalService.openModal(SuccessModal, {
-                    base,
-                    counter,
-                    baseAmount: SorobanService.i128ToInt(
-                        baseId === SorobanService.getAssetContractId(firstAsset)
-                            ? baseResultAmount.value()
-                            : counterResultAmount.value(),
-                    ),
-                    counterAmount: SorobanService.i128ToInt(
-                        baseId === SorobanService.getAssetContractId(firstAsset)
-                            ? counterResultAmount.value()
-                            : baseResultAmount.value(),
-                    ),
+                    assets: pool.assets,
+                    amounts: resultAmounts.map((value) => SorobanService.i128ToInt(value.value())),
                     title: 'Success deposit',
                 });
             })
@@ -175,86 +133,58 @@ const DepositToPool = ({ params }) => {
             });
     };
 
-    const onChangeBase = (value: string) => {
-        setBaseAmount(value);
+    const onChangeInput = (asset, value) => {
+        if (Number.isNaN(Number(value))) {
+            return;
+        }
+        setAmounts(new Map(amounts.set(getAssetString(asset), value)));
 
         // empty pool
-        if (Number.isNaN(price)) {
+        if (reserves.get(getAssetString(asset)) === 0) {
             return;
         }
 
-        // clear input
-        if (!Number(value)) {
-            return setCounterAmount('');
-        }
-
-        return setCounterAmount((+value / price).toFixed(7));
-    };
-
-    const onChangeCounter = (value: string) => {
-        setCounterAmount(value);
-
-        // empty pool
-        if (Number.isNaN(price)) {
-            return;
-        }
-
-        // clear input
-        if (!Number(value)) {
-            return setBaseAmount('');
-        }
-
-        return setBaseAmount((+value * price).toFixed(7));
+        pool.assets
+            .filter((token) => getAssetString(token) !== getAssetString(asset))
+            .forEach((token) => {
+                const newAmount = (
+                    (Number(value) * reserves.get(getAssetString(token))) /
+                    reserves.get(getAssetString(asset))
+                ).toFixed(7);
+                setAmounts(
+                    new Map(amounts.set(getAssetString(token), Number(newAmount).toString())),
+                );
+            });
     };
 
     return (
         <Container>
             <ModalTitle>Increase liquidity position</ModalTitle>
             <Form>
-                <FormRow>
-                    <Balance>
-                        Available:
-                        <BalanceClickable
-                            onClick={() => onChangeBase(account.getAssetBalance(base).toString())}
-                        >
-                            {' '}
-                            {formatBalance(account.getAssetBalance(base))} {base.code}
-                        </BalanceClickable>
-                    </Balance>
-                    <Input
-                        value={baseAmount}
-                        onChange={({ target }) => {
-                            onChangeBase(target.value);
-                        }}
-                        placeholder={`Enter ${base.code} amount`}
-                        label={`${base.code} Amount`}
-                        postfix={<Asset asset={base} logoAndCode />}
-                        disabled={price === null}
-                    />
-                </FormRow>
-                <FormRow>
-                    <Balance>
-                        Available:
-                        <BalanceClickable
-                            onClick={() =>
-                                onChangeCounter(account.getAssetBalance(counter).toString())
-                            }
-                        >
-                            {' '}
-                            {formatBalance(account.getAssetBalance(counter))} {counter.code}
-                        </BalanceClickable>
-                    </Balance>
-                    <Input
-                        value={counterAmount}
-                        onChange={({ target }) => {
-                            onChangeCounter(target.value);
-                        }}
-                        placeholder={`Enter ${counter.code} amount`}
-                        label={`${counter.code} Amount`}
-                        postfix={<Asset asset={counter} logoAndCode />}
-                        disabled={price === null}
-                    />
-                </FormRow>
+                {pool.assets.map((asset) => (
+                    <FormRow>
+                        <Balance>
+                            Available:
+                            <BalanceClickable
+                                onClick={() =>
+                                    onChangeInput(asset, account.getAssetBalance(asset).toString())
+                                }
+                            >
+                                {' '}
+                                {formatBalance(account.getAssetBalance(asset))} {asset.code}
+                            </BalanceClickable>
+                        </Balance>
+                        <Input
+                            value={amounts.get(getAssetString(asset))}
+                            onChange={({ target }) => {
+                                onChangeInput(asset, target.value);
+                            }}
+                            placeholder={`Enter ${asset.code} amount`}
+                            label={`${asset.code} Amount`}
+                            postfix={<Asset asset={asset} logoAndCode />}
+                        />
+                    </FormRow>
+                ))}
 
                 <DescriptionRow>
                     <span>Type</span>
@@ -266,37 +196,43 @@ const DepositToPool = ({ params }) => {
                 </DescriptionRow>
                 <DescriptionRow>
                     <span>Liquidity</span>
-                    <span>{formatBalance(pool.liquidity / 1e7, true)}</span>
+                    <span>{pool.liquidity ? formatBalance(pool.liquidity / 1e7, true) : '0'}</span>
                 </DescriptionRow>
 
                 <PoolInfo>
                     <PairWrap>
-                        <Pair base={base} counter={counter} />
+                        <Pair
+                            base={pool.assets[0]}
+                            counter={pool.assets[1]}
+                            thirdAsset={pool.assets[2]}
+                            fourthAsset={pool.assets[3]}
+                        />
                     </PairWrap>
 
                     <DescriptionRow>
                         <span>Pool shares</span>
                         <span>{shares !== null ? formatBalance(shares) : <DotsLoader />}</span>
                     </DescriptionRow>
-                    <DescriptionRow>
-                        <span>Pooled {base.code}</span>
-                        <span>
-                            {basePooled !== null ? formatBalance(basePooled) : <DotsLoader />}
-                        </span>
-                    </DescriptionRow>
-                    <DescriptionRow>
-                        <span>Pooled {counter.code}</span>
-                        <span>
-                            {counterPooled !== null ? formatBalance(counterPooled) : <DotsLoader />}
-                        </span>
-                    </DescriptionRow>
+                    {pool.assets.map((asset) => (
+                        <DescriptionRow>
+                            <span>Pooled {asset.code}</span>
+                            <span>
+                                {reserves !== null ? (
+                                    formatBalance(reserves.get(getAssetString(asset)))
+                                ) : (
+                                    <DotsLoader />
+                                )}
+                            </span>
+                        </DescriptionRow>
+                    ))}
                 </PoolInfo>
 
                 <Button
                     isBig
                     onClick={() => onSubmit()}
                     pending={pending}
-                    disabled={!Number(baseAmount) || !Number(counterAmount)}
+                    // @ts-ignore
+                    disabled={[...amounts.values()].some((value) => !Number(value))}
                 >
                     deposit
                 </Button>

@@ -6,6 +6,7 @@ import SendTransactionResponse = StellarSdk.SorobanRpc.Api.SendTransactionRespon
 import SimulateTransactionSuccessResponse = StellarSdk.SorobanRpc.Api.SimulateTransactionSuccessResponse;
 import { ModalService, SorobanService, ToastService } from './globalServices';
 import RestoreContractModal from '../modals/RestoreContractModal/RestoreContractModal';
+import { getAssetString } from '../../store/assetsStore/actions';
 
 const SOROBAN_SERVER = 'https://soroban-testnet.stellar.org:443';
 export const AMM_SMART_CONTACT_ID = 'CB7S3KMZ2GP46YU72WJKXFMSFLUB3MZYQL3LSIZMYTQTXIAS2EXUEANC';
@@ -660,26 +661,24 @@ export default class SorobanServiceClass {
         });
     }
 
-    getPoolPrice(accountId: string, a: Asset, b: Asset, poolId: string) {
-        const idA = this.getAssetContractId(a);
-        const idB = this.getAssetContractId(b);
-        const [base] = idA > idB ? [b, a] : [a, b];
-
-        return this.buildSmartContactTx(accountId, poolId, AMM_CONTRACT_METHOD.GET_RESERVES)
+    getPoolReserves(assets: Asset[], poolId: string) {
+        return this.buildSmartContactTx(
+            ACCOUNT_FOR_SIMULATE,
+            poolId,
+            AMM_CONTRACT_METHOD.GET_RESERVES,
+        )
             .then((tx) => {
                 return this.simulateTx(tx) as Promise<SimulateTransactionSuccessResponse>;
             })
             .then(({ result }) => {
                 if (result) {
-                    // @ts-ignore
-                    const [baseAmount, counterAmount] = result.retval.value();
-
-                    const baseAmountInt = this.i128ToInt(baseAmount.value());
-                    const counterAmountInt = this.i128ToInt(counterAmount.value());
-
-                    return this.getAssetContractId(base) === idA
-                        ? baseAmountInt / counterAmountInt
-                        : counterAmountInt / baseAmountInt;
+                    return this.orderTokens(assets).reduce((acc, asset, index) => {
+                        acc.set(
+                            getAssetString(asset),
+                            this.i128ToInt(result.retval.value()[index].value()),
+                        );
+                        return acc;
+                    }, new Map());
                 }
 
                 throw new Error('getPoolPrice fail');
@@ -689,28 +688,21 @@ export default class SorobanServiceClass {
     getDepositTx(
         accountId: string,
         poolHash: string,
-        a: Asset,
-        b: Asset,
-        aAmount: string,
-        bAmount: string,
+        assets: Asset[],
+        amounts: Map<string, string>,
     ) {
-        const idA = this.getAssetContractId(a);
-        const idB = this.getAssetContractId(b);
-
-        const [baseAmount, counterAmount] = idA > idB ? [bAmount, aAmount] : [aAmount, bAmount];
-        const [base, counter] = idA > idB ? [b, a] : [a, b];
-
         return this.buildSmartContactTx(
             accountId,
             AMM_SMART_CONTACT_ID,
             AMM_CONTRACT_METHOD.DEPOSIT,
             this.publicKeyToScVal(accountId),
-            this.scValToArray([this.assetToScVal(base), this.assetToScVal(counter)]),
+            this.scValToArray(this.orderTokens(assets).map((asset) => this.assetToScVal(asset))),
             this.hashToScVal(poolHash),
-            this.scValToArray([
-                this.amountToUint128(baseAmount),
-                this.amountToUint128(counterAmount),
-            ]),
+            this.scValToArray(
+                this.orderTokens(assets).map((asset) =>
+                    this.amountToUint128(amounts.get(getAssetString(asset))),
+                ),
+            ),
             this.amountToUint128('0'),
         ).then((tx) => {
             console.log(tx.toEnvelope().toXDR('base64'));
@@ -718,22 +710,16 @@ export default class SorobanServiceClass {
         });
     }
 
-    getWithdrawTx(accountId: string, poolHash: string, shareAmount: string, a: Asset, b: Asset) {
-        const idA = this.getAssetContractId(a);
-        const idB = this.getAssetContractId(b);
-        const [base, counter] = idA > idB ? [b, a] : [a, b];
+    getWithdrawTx(accountId: string, poolHash: string, shareAmount: string, assets: Asset[]) {
         return this.buildSmartContactTx(
             accountId,
             AMM_SMART_CONTACT_ID,
             AMM_CONTRACT_METHOD.WITHDRAW,
             this.publicKeyToScVal(accountId),
-            this.scValToArray([this.assetToScVal(base), this.assetToScVal(counter)]),
+            this.scValToArray(this.orderTokens(assets).map((asset) => this.assetToScVal(asset))),
             this.hashToScVal(poolHash),
             this.amountToUint128(shareAmount),
-            this.scValToArray([
-                this.amountToUint128('0.0000001'),
-                this.amountToUint128('0.0000001'),
-            ]),
+            this.scValToArray(assets.map(() => this.amountToUint128('0.0000001'))),
         ).then((tx) => this.server.prepareTransaction(tx));
     }
 
