@@ -110,6 +110,17 @@ const DepositToPool = ({ params }) => {
     }, []);
 
     const onSubmit = () => {
+        const insufficientBalanceTokens = pool.assets.filter(
+            (asset) => account.getAssetBalance(asset) < +amounts.get(getAssetString(asset)),
+        );
+        if (insufficientBalanceTokens) {
+            ToastService.showErrorToast(
+                `Insufficient balance ${insufficientBalanceTokens
+                    .map(({ code }) => code)
+                    .join(' ')}`,
+            );
+            return;
+        }
         setPending(true);
         SorobanService.getDepositTx(account?.accountId(), pool.index, pool.assets, amounts)
             .then((tx) => account.signAndSubmitTx(tx, true))
