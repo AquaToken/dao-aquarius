@@ -136,7 +136,7 @@ const WithdrawFromPool = ({ params }) => {
                             <DescriptionRow>
                                 <span>Will receive {asset.code}</span>
                                 <span>
-                                    {!totalShares || !reserves ? (
+                                    {totalShares === null || reserves === null ? (
                                         <DotsLoader />
                                     ) : (
                                         formatBalance(
