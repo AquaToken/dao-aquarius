@@ -113,7 +113,7 @@ const DepositToPool = ({ params }) => {
         const insufficientBalanceTokens = pool.assets.filter(
             (asset) => account.getAssetBalance(asset) < +amounts.get(getAssetString(asset)),
         );
-        if (insufficientBalanceTokens) {
+        if (!!insufficientBalanceTokens.length) {
             ToastService.showErrorToast(
                 `Insufficient balance ${insufficientBalanceTokens
                     .map(({ code }) => code)
