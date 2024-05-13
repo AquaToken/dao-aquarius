@@ -15,6 +15,7 @@ import Pair from '../../vote/components/common/Pair';
 import { AmmRoutes } from '../../../routes';
 import { useHistory } from 'react-router-dom';
 import { formatBalance } from '../../../common/helpers/helpers';
+import Pagination from '../../../common/basics/Pagination';
 
 const Container = styled.main`
     height: 100%;
@@ -87,17 +88,24 @@ const OPTIONS = [
     { label: 'Stable swap', value: FilterOptions.stable },
     { label: 'Constant product', value: FilterOptions.constant },
 ];
+
+const PAGE_SIZE = 10;
 const Analytics = () => {
     const [filter, setFilter] = useState(FilterOptions.all);
     const [pools, setPools] = useState(null);
-
+    const [page, setPage] = useState(1);
+    const [total, setTotal] = useState(0);
+    const [pending, setPending] = useState(false);
     const history = useHistory();
 
     useEffect(() => {
-        getPools().then((res) => {
-            setPools(res);
+        setPending(true);
+        getPools(filter, page, PAGE_SIZE).then(([pools, total]) => {
+            setPools(pools);
+            setTotal(total);
+            setPending(false);
         });
-    }, [filter]);
+    }, [filter, page]);
 
     const goToPoolPage = (id) => {
         history.push(`${AmmRoutes.analytics}${id}/`);
@@ -134,6 +142,7 @@ const Analytics = () => {
                                 onChange={setFilter}
                             />
                             <Table
+                                pending={pending}
                                 head={[
                                     { children: 'Assets', flexSize: 4 },
                                     { children: 'Type' },
@@ -174,6 +183,13 @@ const Analytics = () => {
                                         { children: pool.volume ? pool.volume / 1e7 : '-' },
                                     ],
                                 }))}
+                            />
+                            <Pagination
+                                pageSize={PAGE_SIZE}
+                                totalCount={total}
+                                onPageChange={setPage}
+                                currentPage={page}
+                                itemName="pools"
                             />
                         </TableBlock>
                     ) : (
