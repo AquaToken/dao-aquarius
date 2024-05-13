@@ -145,7 +145,7 @@ const Analytics = () => {
                                 pending={pending}
                                 head={[
                                     { children: 'Assets', flexSize: 4 },
-                                    { children: 'Type' },
+                                    { children: 'Type', flexSize: 2 },
                                     { children: 'Fee' },
                                     { children: 'Daily reward' },
                                     { children: 'TVL' },
@@ -163,13 +163,14 @@ const Analytics = () => {
                                                     fourthAsset={pool.assets[3]}
                                                 />
                                             ),
-                                            flexSize: 3,
+                                            flexSize: 4,
                                         },
                                         {
                                             children:
                                                 pool.pool_type === 'stable'
                                                     ? 'Stable swap'
                                                     : 'Constant product',
+                                            flexSize: 2,
                                         },
                                         { children: `${pool.fee * 100}%` },
                                         {
