@@ -99,6 +99,10 @@ const Analytics = () => {
     const history = useHistory();
 
     useEffect(() => {
+        setPage(1);
+    }, [filter]);
+
+    useEffect(() => {
         setPending(true);
         getPools(filter, page, PAGE_SIZE).then(([pools, total]) => {
             setPools(pools);

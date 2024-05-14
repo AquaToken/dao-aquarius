@@ -136,9 +136,9 @@ const Liquidity = () => {
             <Content>
                 <Header>
                     <Title>Liquidity overview</Title>
-                    <Button>
-                        add liquidity <PlusIcon />
-                    </Button>
+                    {/*<Button>*/}
+                    {/*    add liquidity <PlusIcon />*/}
+                    {/*</Button>*/}
                 </Header>
                 <PoolsListBlock>
                     <ListHeader>

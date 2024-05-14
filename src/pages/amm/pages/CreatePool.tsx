@@ -1,12 +1,8 @@
 import * as React from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import {
-    commonMaxWidth,
-    flexAllCenter,
-    flexRowSpaceBetween,
-    respondDown,
-} from '../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../common/styles';
+import { flexRowSpaceBetween } from '../../../common/mixins';
+import { COLORS } from '../../../common/styles';
 import { AmmRoutes } from '../../../routes';
 import ArrowLeft from '../../../common/assets/img/icon-arrow-left.svg';
 import Tick from '../../../common/assets/img/icon-tick-white.svg';
@@ -22,20 +18,16 @@ import {
     MainBlock,
     Title,
 } from '../../bribes/pages/AddBribePage';
-import { useEffect, useMemo, useState } from 'react';
 import AssetDropdown from '../../vote/components/AssetDropdown/AssetDropdown';
-import {
-    ModalService,
-    SorobanService,
-    ToastService,
-} from '../../../common/services/globalServices';
+import { SorobanService, ToastService } from '../../../common/services/globalServices';
 import Button from '../../../common/basics/Button';
 import Input from '../../../common/basics/Input';
 import ToggleGroup from '../../../common/basics/ToggleGroup';
 import useAuthStore from '../../../store/authStore/useAuthStore';
 import { CONTRACT_STATUS } from '../../../common/services/soroban.service';
 import PoolsList from '../components/PoolsList/PoolsList';
-import { getPools } from '../api/api';
+import { FilterOptions, getPools } from '../api/api';
+import { useHistory } from 'react-router-dom';
 
 const StyledForm = styled(Form)`
     padding: 0 4.8rem;
@@ -130,6 +122,8 @@ const CreatePool = ({ balances }) => {
 
     const { account } = useAuthStore();
 
+    const history = useHistory();
+
     useEffect(() => {
         if (type === PoolTypes.constant) {
             setAssetsCount(2);
@@ -145,10 +139,11 @@ const CreatePool = ({ balances }) => {
     }, [balances]);
 
     useEffect(() => {
-        getPools().then((res) => setPools(res));
+        getPools(FilterOptions.all, 1, 1000).then((res) => setPools(res[0]));
     }, []);
 
     const existingPools = useMemo(() => {
+        console.log(pools);
         if (!pools || !firstAsset || !secondAsset) {
             return [];
         }
@@ -192,16 +187,12 @@ const CreatePool = ({ balances }) => {
             Number(stableFee),
         )
             .then((tx) => {
-                return account.signAndSubmitTx(tx).then(() => {
+                return account.signAndSubmitTx(tx).then((res) => {
+                    const poolAddress = SorobanService.getContactIdFromHash(
+                        res.value()[1].value().value().toString('hex'),
+                    );
                     ToastService.showSuccessToast('Pool successfully created');
-                    setAssetsCount(2);
-                    setFirstAsset(null);
-                    setSecondAsset(null);
-                    setThirdAsset(null);
-                    setFourthAsset(null);
-                    setStableFee('0.06');
-                    setA('85');
-                    setPending(false);
+                    history.push(`${AmmRoutes.analytics}${poolAddress}`);
                 });
             })
             .catch(() => {
@@ -218,9 +209,12 @@ const CreatePool = ({ balances }) => {
             secondAsset,
             constantFee,
         ).then((tx) =>
-            account.signAndSubmitTx(tx).then(() => {
-                setPending(false);
-                ModalService.confirmAllModals();
+            account.signAndSubmitTx(tx).then((res) => {
+                const poolAddress = SorobanService.getContactIdFromHash(
+                    res.value()[1].value().value().toString('hex'),
+                );
+                ToastService.showSuccessToast('Pool successfully created');
+                history.push(`${AmmRoutes.analytics}${poolAddress}`);
             }),
         );
     };
