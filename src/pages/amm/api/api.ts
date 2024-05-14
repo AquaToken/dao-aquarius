@@ -88,6 +88,17 @@ const getPoolStats = (id: string) => {
     return axios.get(`${API_URL}/statistics/pool/${id}/`).then(({ data }) => data[0]);
 };
 
+const getPoolMembers = (id: string) => {
+    return (
+        axios
+            .get(`${API_URL}/pools/${id}/balances/?size=100`)
+            .then(({ data }) => data)
+            // @ts-ignore
+            .then((data) => ({ members: data.items }))
+            .catch(() => ({ members: [] }))
+    );
+};
+
 const getPoolRewards = (id: string) => {
     return axios
         .get(`${API_URL}/pool-rewards/${id}/`)
@@ -96,9 +107,12 @@ const getPoolRewards = (id: string) => {
 };
 
 export const getPool = (id: string) => {
-    return Promise.all([getPoolInfo(id), getPoolStats(id), getPoolRewards(id)]).then(
-        ([info, stats, rewards]) => Object.assign({}, info, stats, rewards),
-    );
+    return Promise.all([
+        getPoolInfo(id),
+        getPoolStats(id),
+        getPoolRewards(id),
+        getPoolMembers(id),
+    ]).then(([info, stats, rewards, members]) => Object.assign({}, info, stats, rewards, members));
 };
 
 export const getUserPools = (accountId: string) => {

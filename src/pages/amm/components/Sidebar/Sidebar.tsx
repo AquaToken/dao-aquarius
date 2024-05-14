@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../../../common/styles';
-import { respondDown } from '../../../../common/mixins';
+import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
 import Button from '../../../../common/basics/Button';
 import { ModalService, SorobanService } from '../../../../common/services/globalServices';
 import DepositToPool from '../DepositToPool/DepositToPool';
@@ -11,6 +11,7 @@ import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodM
 import { useEffect, useState } from 'react';
 import PageLoader from '../../../../common/basics/PageLoader';
 import { formatBalance } from '../../../../common/helpers/helpers';
+import Asset from '../../../vote/components/AssetDropdown/Asset';
 
 const Container = styled.aside`
     float: right;
@@ -23,8 +24,9 @@ const Container = styled.aside`
     background: ${COLORS.white};
     display: flex;
     flex-direction: column;
-    gap: 5rem;
+    gap: 1rem;
     margin-top: -18rem;
+    min-width: 35rem;
     z-index: 102;
 
     ${respondDown(Breakpoints.lg)`
@@ -38,9 +40,29 @@ const Container = styled.aside`
     `}
 `;
 
+const SidebarRow = styled.div`
+    ${flexRowSpaceBetween};
+    align-items: center;
+    color: ${COLORS.grayText};
+
+    span {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+    }
+
+    span:first-child {
+        font-size: 1.6rem;
+        line-height: 2.8rem;
+        color: ${COLORS.paragraphText};
+    }
+`;
+
 const Sidebar = ({ pool }) => {
     const { isLogged, account } = useAuthStore();
     const [accountShare, setAccountShare] = useState(null);
+
+    console.log(pool);
 
     useEffect(() => {
         if (!account) {
@@ -73,12 +95,39 @@ const Sidebar = ({ pool }) => {
                 <PageLoader />
             ) : (
                 <>
-                    {isLogged && <h3>You have {formatBalance(accountShare)} shares</h3>}
-                    <Button isBig fullWidth onClick={() => openDepositModal()}>
+                    {isLogged && (
+                        <>
+                            <SidebarRow>
+                                <span>Shares: </span>
+                                <span>
+                                    {formatBalance(accountShare, true)} (
+                                    {formatBalance(
+                                        (100 * accountShare) / (pool.total_share / 1e7),
+                                        true,
+                                    )}
+                                    %)
+                                </span>
+                            </SidebarRow>
+                            {pool.assets.map((asset, index) => (
+                                <SidebarRow>
+                                    <span>Pooled {asset.code}:</span>
+                                    <span>
+                                        {formatBalance(
+                                            ((pool.reserves[index] / 1e7) * accountShare) /
+                                                (pool.total_share / 1e7),
+                                            true,
+                                        )}{' '}
+                                        <Asset asset={asset} onlyLogoSmall />
+                                    </span>
+                                </SidebarRow>
+                            ))}
+                        </>
+                    )}
+
+                    <Button fullWidth onClick={() => openDepositModal()}>
                         Deposit
                     </Button>
                     <Button
-                        isBig
                         fullWidth
                         onClick={() => openWithdrawModal()}
                         disabled={accountShare === 0}

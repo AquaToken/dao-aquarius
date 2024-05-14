@@ -7,7 +7,6 @@ import SimulateTransactionSuccessResponse = StellarSdk.SorobanRpc.Api.SimulateTr
 import { ModalService, SorobanService, ToastService } from './globalServices';
 import RestoreContractModal from '../modals/RestoreContractModal/RestoreContractModal';
 import { getAssetString } from '../../store/assetsStore/actions';
-import EventService from './event.service';
 
 const SOROBAN_SERVER = 'https://soroban-testnet.stellar.org:443';
 export const AMM_SMART_CONTACT_ID = 'CB7S3KMZ2GP46YU72WJKXFMSFLUB3MZYQL3LSIZMYTQTXIAS2EXUEANC';
@@ -480,7 +479,7 @@ export default class SorobanServiceClass {
             });
     }
 
-    getPoolRewards(accountId: string, base: Asset, counter: Asset, poolId: string) {
+    getPoolRewards(accountId: string, poolId: string) {
         return this.buildSmartContactTx(
             accountId,
             poolId,
@@ -583,7 +582,7 @@ export default class SorobanServiceClass {
             });
     }
 
-    claimRewards(accountId: string, poolId: string) {
+    getClaimRewardsTx(accountId: string, poolId: string) {
         return this.buildSmartContactTx(
             accountId,
             poolId,
@@ -600,7 +599,7 @@ export default class SorobanServiceClass {
                     this.getTokenBalance(this.getContactIdFromHash(shareHash), accountId),
                     this.getTokenBalance(base, poolId),
                     this.getTokenBalance(counter, poolId),
-                    this.getPoolRewards(accountId, base, counter, poolId),
+                    this.getPoolRewards(accountId, poolId),
                     this.getPoolInfo(accountId, poolId),
                     this.getTotalShares(poolId),
                 ]);

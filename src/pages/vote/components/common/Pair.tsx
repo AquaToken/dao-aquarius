@@ -20,8 +20,9 @@ import { getAssetString } from '../../../../store/assetsStore/actions';
 import { LumenInfo } from '../../../../store/assetsStore/reducer';
 import useAssetsStore from '../../../../store/assetsStore/useAssetsStore';
 import { Link } from 'react-router-dom';
-import { MarketRoutes } from '../../../../routes';
+import { AmmRoutes, MarketRoutes } from '../../../../routes';
 import { formatBalance } from '../../../../common/helpers/helpers';
+import { useMemo } from 'react';
 
 const Wrapper = styled.div<{
     verticalDirections?: boolean;
@@ -40,37 +41,35 @@ const Wrapper = styled.div<{
         `}
 `;
 
-const Icons = styled.div`
+const Icons = styled.div<{
+    isBig: boolean;
+    assetsCount: number;
+    verticalDirections?: boolean;
+}>`
     display: flex;
     align-items: center;
+    min-width: 12rem;
+    justify-content: flex-end;
+    margin-left: ${({ verticalDirections, isBig, assetsCount }) =>
+        verticalDirections ? `-${(isBig ? 2 : 1) * assetsCount}rem` : '0'};
 `;
 
-const Icon = styled.div<{ hasNextLogo?: boolean; isBig?: boolean; isCircleLogo?: boolean }>`
+const Icon = styled.div<{
+    isBig?: boolean;
+    isCircleLogo?: boolean;
+    assetOrderNumber: number;
+    assetsCount: number;
+}>`
     ${({ isBig, isCircleLogo }) => (isBig ? bigLogoStyles(isCircleLogo) : logoStyles)};
     box-sizing: content-box;
     position: relative;
-    border: ${({ hasNextLogo }) => (hasNextLogo ? `0.3rem solid ${COLORS.white}` : 'unset')};
-    background-color: ${({ hasNextLogo }) => (hasNextLogo ? COLORS.white : 'unset')};
-`;
-
-const BaseIcon = styled(Icon)`
-    z-index: 3;
-    left: 0.5rem;
-`;
-
-const SecondIcon = styled(Icon)<{ isBig?: boolean }>`
-    z-index: 2;
-    left: ${({ isBig }) => (isBig ? '-1.5rem' : '-0.5rem')};
-`;
-
-const ThirdIcon = styled(Icon)<{ isBig?: boolean }>`
-    z-index: 1;
-    left: ${({ isBig }) => (isBig ? '-2.5rem' : '-1.5rem')};
-`;
-
-const FourthIcon = styled(Icon)<{ isBig?: boolean }>`
-    z-index: 0;
-    left: ${({ isBig }) => (isBig ? '-3.5rem' : '-2.5rem')};
+    border: ${({ assetOrderNumber, assetsCount }) =>
+        assetsCount > assetOrderNumber ? `0.3rem solid ${COLORS.white}` : 'unset'};
+    background-color: ${({ assetOrderNumber, assetsCount }) =>
+        assetsCount > assetOrderNumber ? COLORS.white : 'unset'};
+    z-index: ${({ assetOrderNumber, assetsCount }) => assetsCount - assetOrderNumber};
+    right: ${({ isBig, assetOrderNumber, assetsCount }) =>
+        `-${(assetsCount - assetOrderNumber) * (isBig ? 3 : 1)}rem`};
 `;
 
 const AssetsDetails = styled.div<{
@@ -197,6 +196,7 @@ type PairProps = {
     amounts?: string[];
     isSwapResult?: boolean;
     customLabel?: [string, string];
+    poolAddress?: string;
 };
 
 const Pair = ({
@@ -222,6 +222,7 @@ const Pair = ({
     amounts,
     isSwapResult,
     customLabel,
+    poolAddress,
 }: PairProps): JSX.Element => {
     const { assetsInfo } = useAssetsStore();
 
@@ -253,63 +254,83 @@ const Pair = ({
         ? LumenInfo
         : assetsInfo.get(getAssetString(fourthAsset));
 
+    const assetsCount = useMemo(() => {
+        if (Boolean(fourthAsset)) {
+            return 4;
+        }
+
+        if (Boolean(thirdAsset)) {
+            return 3;
+        }
+        return 2;
+    }, [thirdAsset, fourthAsset]);
+
     return (
         <Wrapper
             verticalDirections={verticalDirections}
             mobileVerticalDirections={mobileVerticalDirections}
             leftAlign={leftAlign}
         >
-            <Icons>
-                <BaseIcon
+            <Icons
+                isBig={isBigLogo}
+                verticalDirections={verticalDirections}
+                assetsCount={assetsCount}
+            >
+                <Icon
                     key={baseInfo?.asset_string}
                     isBig={isBigLogo}
                     isCircleLogo={isCircleLogos}
-                    hasNextLogo
+                    assetOrderNumber={1}
+                    assetsCount={assetsCount}
                 >
                     <AssetLogo
                         logoUrl={baseInfo?.image}
                         isBig={isBigLogo}
                         isCircle={isCircleLogos}
                     />
-                </BaseIcon>
-                <SecondIcon
+                </Icon>
+                <Icon
                     key={counterInfo?.asset_string}
                     isBig={isBigLogo}
                     isCircleLogo={isCircleLogos}
-                    hasNextLogo={Boolean(thirdAsset)}
+                    assetOrderNumber={2}
+                    assetsCount={assetsCount}
                 >
                     <AssetLogo
                         logoUrl={counterInfo?.image}
                         isBig={isBigLogo}
                         isCircle={isCircleLogos}
                     />
-                </SecondIcon>
+                </Icon>
                 {thirdAsset && (
-                    <ThirdIcon
+                    <Icon
                         key={thirdAssetInfo?.asset_string}
                         isBig={isBigLogo}
                         isCircleLogo={isCircleLogos}
-                        hasNextLogo={Boolean(thirdAsset)}
+                        assetOrderNumber={3}
+                        assetsCount={assetsCount}
                     >
                         <AssetLogo
                             logoUrl={thirdAssetInfo?.image}
                             isBig={isBigLogo}
                             isCircle={isCircleLogos}
                         />
-                    </ThirdIcon>
+                    </Icon>
                 )}
                 {fourthAsset && (
-                    <FourthIcon
+                    <Icon
                         key={fourthAssetInfo?.asset_string}
                         isBig={isBigLogo}
                         isCircleLogo={isCircleLogos}
+                        assetOrderNumber={4}
+                        assetsCount={assetsCount}
                     >
                         <AssetLogo
                             logoUrl={fourthAssetInfo?.image}
                             isBig={isBigLogo}
                             isCircle={isCircleLogos}
                         />
-                    </FourthIcon>
+                    </Icon>
                 )}
             </Icons>
             <AssetsDetails
@@ -353,6 +374,16 @@ const Pair = ({
                             to={`${MarketRoutes.main}/${assetToString(
                                 baseInstance,
                             )}/${assetToString(counterInstance)}`}
+                        >
+                            <External />
+                        </Link>
+                    )}
+                    {poolAddress && (
+                        <Link
+                            onClick={(e) => {
+                                e.stopPropagation();
+                            }}
+                            to={`${AmmRoutes.analytics}${poolAddress}/`}
                         >
                             <External />
                         </Link>

@@ -88,7 +88,7 @@ const SwapConfirmModal = ({ params, confirm }) => {
     return (
         <Container>
             <ModalTitle>Confirm swap</ModalTitle>
-            <ModalDescription>Please check all the details to create a bribe</ModalDescription>
+            <ModalDescription>Please check all the details to make a swap</ModalDescription>
             <AssetsInfo>
                 <Pair
                     verticalDirections

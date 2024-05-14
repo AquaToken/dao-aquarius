@@ -31,6 +31,7 @@ const PoolStat = styled.div`
     font-weight: 700;
     line-height: 2.8rem;
     margin-left: auto;
+    white-space: nowrap;
 
     span:last-child {
         font-size: 1.4rem;
@@ -45,6 +46,7 @@ const ExpandButton = styled.div`
     border-radius: 0.6rem;
     height: 4.8rem;
     width: 4.8rem;
+    min-width: 4.8rem;
     cursor: pointer;
 
     &:hover {
@@ -115,7 +117,7 @@ const PoolsList = ({ pools, onUpdate }) => {
     return (
         <>
             {pools.map((pool) => {
-                console.log(pool);
+                console.log(pool.address);
                 return (
                     <PoolBlock>
                         <PoolMain>
@@ -124,6 +126,8 @@ const PoolsList = ({ pools, onUpdate }) => {
                                 counter={pool.assets[1]}
                                 thirdAsset={pool.assets[2]}
                                 fourthAsset={pool.assets[3]}
+                                poolAddress={pool.address}
+                                withoutLink
                             />
                             <PoolStat>
                                 <span>$1.53</span>
@@ -149,7 +153,7 @@ const PoolsList = ({ pools, onUpdate }) => {
                                 )}
                                 <ExpandedDataRow>
                                     <span>Fee</span>
-                                    <span>{pool.fee}%</span>
+                                    <span>{pool.fee * 100}%</span>
                                 </ExpandedDataRow>
                                 <ExpandedDataRow>
                                     {Boolean(pool.balance) && (
