@@ -47,6 +47,7 @@ const USDC = new StellarSdk.Asset('USDC', issuerKeypair.publicKey());
 const ETH = new StellarSdk.Asset('ETH', issuerKeypair.publicKey());
 const BTC = new StellarSdk.Asset('BTC', issuerKeypair.publicKey());
 const AQUA = new StellarSdk.Asset('AQUA', issuerKeypair.publicKey());
+const DAI = new StellarSdk.Asset('DAI', issuerKeypair.publicKey());
 
 export enum CONTRACT_STATUS {
     ACTIVE = 'active',
@@ -104,6 +105,11 @@ export default class SorobanServiceClass {
                 )
                 .addOperation(
                     StellarSdk.Operation.changeTrust({
+                        asset: DAI,
+                    }),
+                )
+                .addOperation(
+                    StellarSdk.Operation.changeTrust({
                         asset: BTC,
                     }),
                 )
@@ -156,6 +162,13 @@ export default class SorobanServiceClass {
                         destination: accountId,
                         asset: AQUA,
                         amount: '1000000',
+                    }),
+                )
+                .addOperation(
+                    StellarSdk.Operation.payment({
+                        destination: accountId,
+                        asset: DAI,
+                        amount: '10000',
                     }),
                 )
                 .setTimeout(StellarSdk.TimeoutInfinite)

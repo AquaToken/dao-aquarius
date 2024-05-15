@@ -80,12 +80,15 @@ const Rewards = styled.div`
 const RewardsDescription = styled.div`
     display: flex;
     flex-direction: column;
-    color: ${COLORS.grayText};
+    color: ${COLORS.paragraphText};
+    font-weight: 700;
+    font-size: 2.6rem;
 
     span:first-child {
         font-size: 1.6rem;
         line-height: 2.8rem;
-        color: ${COLORS.paragraphText};
+        color: ${COLORS.titleText};
+        margin-bottom: 0.8rem;
     }
 `;
 
@@ -173,7 +176,7 @@ const PoolPage = () => {
                             <Rewards>
                                 <RewardsDescription>
                                     <span>You have unclaimed rewards</span>
-                                    <span>for {formatBalance(rewards.to_claim)} AQUA</span>
+                                    <span>{formatBalance(rewards.to_claim)} AQUA</span>
                                 </RewardsDescription>
                                 <Button isBig onClick={() => claim()} pending={claimPending}>
                                     Claim rewards
@@ -197,7 +200,7 @@ const PoolPage = () => {
                         </SectionRow>
                         {pool.assets.map((asset, index) => (
                             <SectionRow key={pool.tokens_addresses[index]}>
-                                <span>Total {asset.code} reserved:</span>
+                                <span>Total {asset.code}:</span>
                                 <span>
                                     {formatBalance(pool.reserves[index] / 1e7, true)} {asset.code}
                                 </span>

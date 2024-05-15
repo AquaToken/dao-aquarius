@@ -109,6 +109,11 @@ export const AQUA = new StellarSdk.Asset(
     'GAHPYWLK6YRN7CVYZOO4H3VDRZ7PVF5UJGLZCSPAEIKJE2XSWF5LAGER',
 );
 
+export const DAI = new StellarSdk.Asset(
+    'DAI',
+    'GAHPYWLK6YRN7CVYZOO4H3VDRZ7PVF5UJGLZCSPAEIKJE2XSWF5LAGER',
+);
+
 const AmmLegacy = ({ balances }) => {
     const { account, isLogged } = useAuthStore();
 

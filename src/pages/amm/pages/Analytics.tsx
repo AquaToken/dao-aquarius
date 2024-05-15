@@ -16,6 +16,9 @@ import { AmmRoutes } from '../../../routes';
 import { useHistory } from 'react-router-dom';
 import { formatBalance } from '../../../common/helpers/helpers';
 import Pagination from '../../../common/basics/Pagination';
+import useAuthStore from '../../../store/authStore/useAuthStore';
+import { ModalService } from '../../../common/services/globalServices';
+import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
 
 const Container = styled.main`
     height: 100%;
@@ -98,6 +101,8 @@ const Analytics = () => {
     const [pending, setPending] = useState(false);
     const history = useHistory();
 
+    const { isLogged } = useAuthStore();
+
     useEffect(() => {
         setPage(1);
     }, [filter]);
@@ -116,6 +121,12 @@ const Analytics = () => {
     };
 
     const goToCreatePool = () => {
+        if (!isLogged) {
+            ModalService.openModal(ChooseLoginMethodModal, {
+                redirectURL: AmmRoutes.create,
+            });
+            return;
+        }
         history.push(`${AmmRoutes.create}`);
     };
 
@@ -152,7 +163,7 @@ const Analytics = () => {
                                     { children: 'Type', flexSize: 2 },
                                     { children: 'Fee' },
                                     { children: 'Daily reward' },
-                                    { children: 'TVL' },
+                                    { children: 'TVL (XLM)' },
                                 ]}
                                 body={pools.map((pool) => ({
                                     key: pool.address,
@@ -178,9 +189,9 @@ const Analytics = () => {
                                         },
                                         { children: `${pool.fee * 100}%` },
                                         {
-                                            children: pool.tps
+                                            children: pool.liquidity
                                                 ? `${formatBalance(
-                                                      (pool.tps / 1e7) * 60 * 60 * 24,
+                                                      (pool.liquidity / 1e7) * 60 * 60 * 24,
                                                       true,
                                                   )} AQUA`
                                                 : '-',

@@ -246,16 +246,27 @@ const CreatePool = ({ balances }) => {
                                 isActive={type === PoolTypes.stable}
                                 onClick={() => setType(PoolTypes.stable)}
                             >
-                                Stable swap <Tick />
+                                <div>
+                                    <h3>Stable swap</h3>
+                                    <p>
+                                        Highly effecient AMM model for correlated assets (i.e.
+                                        stablecoins) that offers lower slippage.
+                                    </p>
+                                </div>
+                                <Tick />
                             </PoolType>
                             <PoolType
                                 isActive={type === PoolTypes.constant}
                                 onClick={() => setType(PoolTypes.constant)}
                             >
-                                Constant product
+                                <div>
+                                    <h3>Constant product</h3>
+                                    <p>Simple model for general purpose AMM pools (Uniswap v2).</p>
+                                </div>
                                 <Tick />
                             </PoolType>
                         </StyledFormSection>
+
                         <StyledFormSection>
                             <FormSectionTitle>Tokens in pool</FormSectionTitle>
                             <StyledAssetDropdown

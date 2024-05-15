@@ -36,10 +36,12 @@ const Divider = styled.div`
 `;
 
 export const SWAP_SLIPPAGE_ALIAS = 'swap-slippage';
-export const DEFAULT_SLIPPAGE = 1; // 1%
+export const DEFAULT_SLIPPAGE = '1'; // 1%
 
 const SwapSettingsModal = ({ close }) => {
-    const [slippage, setSlippage] = useState(DEFAULT_SLIPPAGE.toString());
+    const [slippage, setSlippage] = useState(
+        localStorage.getItem(SWAP_SLIPPAGE_ALIAS) || DEFAULT_SLIPPAGE,
+    );
 
     const onSave = () => {
         if (!Number(slippage) || Number(slippage) <= 0 || Number(slippage) > 10) {

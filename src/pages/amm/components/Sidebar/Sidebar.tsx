@@ -101,10 +101,12 @@ const Sidebar = ({ pool }) => {
                                 <span>Shares: </span>
                                 <span>
                                     {formatBalance(accountShare, true)} (
-                                    {formatBalance(
-                                        (100 * accountShare) / (pool.total_share / 1e7),
-                                        true,
-                                    )}
+                                    {Number(pool.total_share)
+                                        ? formatBalance(
+                                              (100 * accountShare) / (pool.total_share / 1e7),
+                                              true,
+                                          )
+                                        : '0'}
                                     %)
                                 </span>
                             </SidebarRow>
@@ -112,11 +114,13 @@ const Sidebar = ({ pool }) => {
                                 <SidebarRow>
                                     <span>Pooled {asset.code}:</span>
                                     <span>
-                                        {formatBalance(
-                                            ((pool.reserves[index] / 1e7) * accountShare) /
-                                                (pool.total_share / 1e7),
-                                            true,
-                                        )}{' '}
+                                        {Number(pool.total_share)
+                                            ? formatBalance(
+                                                  ((pool.reserves[index] / 1e7) * accountShare) /
+                                                      (pool.total_share / 1e7),
+                                                  true,
+                                              )
+                                            : '0'}{' '}
                                         <Asset asset={asset} onlyLogoSmall />
                                     </span>
                                 </SidebarRow>

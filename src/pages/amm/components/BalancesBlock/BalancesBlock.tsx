@@ -9,10 +9,16 @@ import Button from '../../../../common/basics/Button';
 import { COLORS } from '../../../../common/styles';
 import { IconFail, IconSuccess, IconPending } from '../../../../common/basics/Icons';
 import { CONTRACT_STATUS } from '../../../../common/services/soroban.service';
-import { SorobanService, ToastService } from '../../../../common/services/globalServices';
+import {
+    ModalService,
+    SorobanService,
+    ToastService,
+} from '../../../../common/services/globalServices';
 import useAuthStore from '../../../../store/authStore/useAuthStore';
-import { USDC, USDT, AQUA } from '../../AmmLegacy';
-import { commonMaxWidth } from '../../../../common/mixins';
+import { USDC, USDT, AQUA, DAI } from '../../AmmLegacy';
+import { commonMaxWidth, flexAllCenter } from '../../../../common/mixins';
+import { Empty } from '../../../profile/YourVotes/YourVotes';
+import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
 
 const Container = styled.div`
     display: flex;
@@ -22,6 +28,15 @@ const Container = styled.div`
 const Content = styled.div`
     ${commonMaxWidth};
     width: 100%;
+`;
+
+const Section = styled.div`
+    flex: 1 0 auto;
+    ${flexAllCenter};
+`;
+
+const LoginButton = styled(Button)`
+    margin-top: 1rem;
 `;
 
 const BalanceLine = styled.div`
@@ -85,7 +100,8 @@ const BalancesBlock = ({ balances }) => {
     const neededInTestAssets =
         account?.getAssetBalance(USDT) === null ||
         account?.getAssetBalance(USDC) === null ||
-        account?.getAssetBalance(AQUA) === null;
+        account?.getAssetBalance(AQUA) === null ||
+        account?.getAssetBalance(DAI) === null;
 
     const getTestTokens = () => {
         setGetTokenPending(true);
@@ -137,6 +153,21 @@ const BalancesBlock = ({ balances }) => {
                 setPendingId(null);
             });
     };
+
+    if (!account) {
+        return (
+            <Section>
+                <Empty>
+                    <h3>Log in required.</h3>
+                    <span>To use the demo you need to log in.</span>
+
+                    <LoginButton onClick={() => ModalService.openModal(ChooseLoginMethodModal, {})}>
+                        Log in
+                    </LoginButton>
+                </Empty>
+            </Section>
+        );
+    }
 
     return (
         <Container>

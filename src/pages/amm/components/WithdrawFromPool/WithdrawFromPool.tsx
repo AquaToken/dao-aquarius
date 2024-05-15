@@ -97,7 +97,7 @@ const WithdrawFromPool = ({ params }) => {
                 ModalService.openModal(SuccessModal, {
                     assets: pool.assets,
                     amounts: res.value().map((val) => SorobanService.i128ToInt(val.value())),
-                    title: 'Success withdraw',
+                    title: 'Withdraw Successful',
                 });
                 setPending(false);
             })
@@ -114,7 +114,7 @@ const WithdrawFromPool = ({ params }) => {
                 <PageLoader />
             ) : (
                 <>
-                    <ModalTitle>Remove liquidity position</ModalTitle>
+                    <ModalTitle>Remove liquidity</ModalTitle>
                     <PairContainer>
                         <Pair
                             base={pool.assets[0]}

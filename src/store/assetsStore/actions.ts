@@ -73,6 +73,15 @@ const HARDCODE = new Map([
             home_domain: 'ultrastellar.com',
         },
     ],
+    [
+        'DAI:GAHPYWLK6YRN7CVYZOO4H3VDRZ7PVF5UJGLZCSPAEIKJE2XSWF5LAGER',
+        {
+            code: 'DAI',
+            issuer: 'GAHPYWLK6YRN7CVYZOO4H3VDRZ7PVF5UJGLZCSPAEIKJE2XSWF5LAGER',
+            image: 'https://spark.fi/images/deposit---icon.png',
+            home_domain: 'makerdao.com',
+        },
+    ],
 ]);
 
 export const getAssetString = (asset) => `${asset.code}:${asset.issuer}`;

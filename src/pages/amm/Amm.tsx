@@ -7,8 +7,10 @@ import PoolPage from './pages/PoolPage';
 import AmmLegacy from './AmmLegacy';
 import CreatePool from './pages/CreatePool';
 import BalancesBlock from './components/BalancesBlock/BalancesBlock';
+import useAuthStore from '../../store/authStore/useAuthStore';
 
 const Amm = ({ balances }) => {
+    const { isLogged } = useAuthStore();
     return (
         <Switch>
             <Route exact path={AmmRoutes.analytics}>
@@ -21,7 +23,11 @@ const Amm = ({ balances }) => {
                 <Liquidity />
             </Route>
             <Route path={AmmRoutes.create}>
-                <CreatePool balances={balances} />
+                {isLogged ? (
+                    <CreatePool balances={balances} />
+                ) : (
+                    <Redirect to={AmmRoutes.analytics} />
+                )}
             </Route>
             <Route path={AmmRoutes.legacy}>
                 <AmmLegacy balances={balances} />

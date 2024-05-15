@@ -134,7 +134,7 @@ const DepositToPool = ({ params }) => {
                 ModalService.openModal(SuccessModal, {
                     assets: pool.assets,
                     amounts: resultAmounts.map((value) => SorobanService.i128ToInt(value.value())),
-                    title: 'Success deposit',
+                    title: 'Deposit Successful',
                 });
             })
             .catch((e) => {
@@ -170,7 +170,7 @@ const DepositToPool = ({ params }) => {
 
     return (
         <Container>
-            <ModalTitle>Increase liquidity position</ModalTitle>
+            <ModalTitle>Add liquidity</ModalTitle>
             <Form>
                 {pool.assets.map((asset) => (
                     <FormRow>
@@ -203,7 +203,7 @@ const DepositToPool = ({ params }) => {
                 </DescriptionRow>
                 <DescriptionRow>
                     <span>Fee</span>
-                    <span>{pool.fee} %</span>
+                    <span>{pool.fee * 100} %</span>
                 </DescriptionRow>
                 <DescriptionRow>
                     <span>Liquidity</span>
