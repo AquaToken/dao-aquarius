@@ -200,7 +200,7 @@ const Analytics = () => {
                                         },
                                         {
                                             children: pool.liquidity
-                                                ? formatBalance(pool.liquidity / 1e7, true)
+                                                ? `${formatBalance(pool.liquidity / 1e7, true)} XLM`
                                                 : '0',
                                         },
                                     ],
