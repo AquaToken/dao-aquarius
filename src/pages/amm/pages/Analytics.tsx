@@ -130,6 +130,8 @@ const Analytics = () => {
         history.push(`${AmmRoutes.create}`);
     };
 
+    console.log(pools);
+
     return (
         <Container>
             <Content>
@@ -189,14 +191,18 @@ const Analytics = () => {
                                         },
                                         { children: `${pool.fee * 100}%` },
                                         {
-                                            children: pool.liquidity
+                                            children: pool.tps
                                                 ? `${formatBalance(
-                                                      (pool.liquidity / 1e7) * 60 * 60 * 24,
+                                                      (pool.tps / 1e7) * 60 * 60 * 24,
                                                       true,
                                                   )} AQUA`
                                                 : '-',
                                         },
-                                        { children: pool.volume ? pool.volume / 1e7 : '-' },
+                                        {
+                                            children: pool.liquidity
+                                                ? formatBalance(pool.liquidity / 1e7, true)
+                                                : '0',
+                                        },
                                     ],
                                 }))}
                             />
