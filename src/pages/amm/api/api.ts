@@ -32,7 +32,7 @@ const processPools = async (pools) => {
     });
     return pools;
 };
-const getPoolsInfo = (filter: FilterOptions, page: number, size: number, search: string) => {
+const getPoolsInfo = (filter: FilterOptions, page: number, size: number, search?: string) => {
     let total = 0;
     return axios
         .get(
@@ -64,7 +64,7 @@ const getPoolsRewards = () => {
     return axios.get(`${API_URL}/pool-rewards/?size=1000`).then(({ data }) => data.items);
 };
 
-export const getPools = (filter: FilterOptions, page: number, size: number, search: string) => {
+export const getPools = (filter: FilterOptions, page: number, size: number, search?: string) => {
     let totalCount = 0;
     let pools;
     return getPoolsInfo(filter, page, size, search)
