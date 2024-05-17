@@ -19,6 +19,8 @@ import Pagination from '../../../common/basics/Pagination';
 import useAuthStore from '../../../store/authStore/useAuthStore';
 import { ModalService } from '../../../common/services/globalServices';
 import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
+import { useDebounce } from '../../../common/hooks/useDebounce';
+import { Empty } from '../../profile/YourVotes/YourVotes';
 
 const Container = styled.main`
     height: 100%;
@@ -99,6 +101,9 @@ const Analytics = () => {
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(0);
     const [pending, setPending] = useState(false);
+    const [search, setSearch] = useState('');
+
+    const debouncedSearch = useDebounce(search, 700);
     const history = useHistory();
 
     const { isLogged } = useAuthStore();
@@ -109,12 +114,12 @@ const Analytics = () => {
 
     useEffect(() => {
         setPending(true);
-        getPools(filter, page, PAGE_SIZE).then(([pools, total]) => {
+        getPools(filter, page, PAGE_SIZE, debouncedSearch).then(([pools, total]) => {
             setPools(pools);
             setTotal(total);
             setPending(false);
         });
-    }, [filter, page]);
+    }, [filter, page, debouncedSearch]);
 
     const goToPoolPage = (id) => {
         history.push(`${AmmRoutes.analytics}${id}/`);
@@ -130,8 +135,6 @@ const Analytics = () => {
         history.push(`${AmmRoutes.create}`);
     };
 
-    console.log(pools);
-
     return (
         <Container>
             <Content>
@@ -141,15 +144,18 @@ const Analytics = () => {
                         create pool <PlusIcon />
                     </Button>
                 </Header>
+
                 <Section>
                     {!pools ? (
                         <PageLoader />
-                    ) : pools.length ? (
+                    ) : (
                         <TableBlock>
                             <TableHeader>
                                 <TableTitle>Top pools</TableTitle>
                                 <StyledInput
-                                    placeholder="Search by pool name, pool address, token name or token address"
+                                    placeholder="Search by token name or token address"
+                                    value={search}
+                                    onChange={({ target }) => setSearch(target.value)}
                                     postfix={<Search />}
                                 />
                             </TableHeader>
@@ -158,64 +164,73 @@ const Analytics = () => {
                                 options={OPTIONS}
                                 onChange={setFilter}
                             />
-                            <Table
-                                pending={pending}
-                                head={[
-                                    { children: 'Assets', flexSize: 4 },
-                                    { children: 'Type', flexSize: 2 },
-                                    { children: 'Fee' },
-                                    { children: 'Daily reward' },
-                                    { children: 'TVL (XLM)' },
-                                ]}
-                                body={pools.map((pool) => ({
-                                    key: pool.address,
-                                    onRowClick: () => goToPoolPage(pool.address),
-                                    rowItems: [
-                                        {
-                                            children: (
-                                                <Pair
-                                                    base={pool.assets[0]}
-                                                    counter={pool.assets[1]}
-                                                    thirdAsset={pool.assets[2]}
-                                                    fourthAsset={pool.assets[3]}
-                                                />
-                                            ),
-                                            flexSize: 4,
-                                        },
-                                        {
-                                            children:
-                                                pool.pool_type === 'stable'
-                                                    ? 'Stable swap'
-                                                    : 'Constant product',
-                                            flexSize: 2,
-                                        },
-                                        { children: `${pool.fee * 100}%` },
-                                        {
-                                            children: pool.tps
-                                                ? `${formatBalance(
-                                                      (pool.tps / 1e7) * 60 * 60 * 24,
-                                                      true,
-                                                  )} AQUA`
-                                                : '-',
-                                        },
-                                        {
-                                            children: pool.liquidity
-                                                ? `${formatBalance(pool.liquidity / 1e7, true)} XLM`
-                                                : '0',
-                                        },
-                                    ],
-                                }))}
-                            />
-                            <Pagination
-                                pageSize={PAGE_SIZE}
-                                totalCount={total}
-                                onPageChange={setPage}
-                                currentPage={page}
-                                itemName="pools"
-                            />
+                            {pools.length ? (
+                                <>
+                                    <Table
+                                        pending={pending}
+                                        head={[
+                                            { children: 'Assets', flexSize: 4 },
+                                            { children: 'Type', flexSize: 2 },
+                                            { children: 'Fee' },
+                                            { children: 'Daily reward' },
+                                            { children: 'TVL (XLM)' },
+                                        ]}
+                                        body={pools.map((pool) => ({
+                                            key: pool.address,
+                                            onRowClick: () => goToPoolPage(pool.address),
+                                            rowItems: [
+                                                {
+                                                    children: (
+                                                        <Pair
+                                                            base={pool.assets[0]}
+                                                            counter={pool.assets[1]}
+                                                            thirdAsset={pool.assets[2]}
+                                                            fourthAsset={pool.assets[3]}
+                                                        />
+                                                    ),
+                                                    flexSize: 4,
+                                                },
+                                                {
+                                                    children:
+                                                        pool.pool_type === 'stable'
+                                                            ? 'Stable swap'
+                                                            : 'Constant product',
+                                                    flexSize: 2,
+                                                },
+                                                { children: `${pool.fee * 100}%` },
+                                                {
+                                                    children: pool.tps
+                                                        ? `${formatBalance(
+                                                              (pool.tps / 1e7) * 60 * 60 * 24,
+                                                              true,
+                                                          )} AQUA`
+                                                        : '-',
+                                                },
+                                                {
+                                                    children: pool.liquidity
+                                                        ? `${formatBalance(
+                                                              pool.liquidity / 1e7,
+                                                              true,
+                                                          )} XLM`
+                                                        : '0',
+                                                },
+                                            ],
+                                        }))}
+                                    />
+                                    <Pagination
+                                        pageSize={PAGE_SIZE}
+                                        totalCount={total}
+                                        onPageChange={setPage}
+                                        currentPage={page}
+                                        itemName="pools"
+                                    />{' '}
+                                </>
+                            ) : (
+                                <Empty>
+                                    <h3>There's nothing here.</h3>
+                                </Empty>
+                            )}
                         </TableBlock>
-                    ) : (
-                        <h3>There's nothing here.</h3>
                     )}
                 </Section>
             </Content>

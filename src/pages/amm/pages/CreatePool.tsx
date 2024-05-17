@@ -143,7 +143,6 @@ const CreatePool = ({ balances }) => {
     }, []);
 
     const existingPools = useMemo(() => {
-        console.log(pools);
         if (!pools || !firstAsset || !secondAsset) {
             return [];
         }
@@ -389,7 +388,11 @@ const CreatePool = ({ balances }) => {
                                     There are already pools with similar parameters, you can join
                                     one of them
                                 </FormDescription>
-                                <PoolsList pools={existingPools} onUpdate={() => {}} />
+                                <PoolsList
+                                    isUserList={false}
+                                    pools={existingPools}
+                                    onUpdate={() => {}}
+                                />
                             </StyledFormSection>
                         </StyledForm>
                     )}

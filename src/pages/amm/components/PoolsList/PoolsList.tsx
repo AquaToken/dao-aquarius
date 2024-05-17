@@ -2,7 +2,7 @@ import * as React from 'react';
 import Pair from '../../../vote/components/common/Pair';
 import { formatBalance } from '../../../../common/helpers/helpers';
 import Button from '../../../../common/basics/Button';
-import { ModalService } from '../../../../common/services/globalServices';
+import { ModalService, StellarService } from '../../../../common/services/globalServices';
 import WithdrawFromPool from '../WithdrawFromPool/WithdrawFromPool';
 import DepositToPool from '../DepositToPool/DepositToPool';
 import styled from 'styled-components';
@@ -10,6 +10,7 @@ import { flexAllCenter, flexRowSpaceBetween } from '../../../../common/mixins';
 import { COLORS } from '../../../../common/styles';
 import Arrow from '../../../../common/assets/img/icon-arrow-down.svg';
 import { useState } from 'react';
+import Asset from '../../../vote/components/AssetDropdown/Asset';
 
 const PoolBlock = styled.div`
     display: flex;
@@ -33,11 +34,11 @@ const PoolStat = styled.div`
     margin-left: auto;
     white-space: nowrap;
 
-    span:last-child {
-        font-size: 1.4rem;
-        font-weight: 400;
-        line-height: 1.6rem;
-    }
+    //span:last-child {
+    //    font-size: 1.4rem;
+    //    font-weight: 400;
+    //    line-height: 1.6rem;
+    //}
 `;
 
 const ExpandButton = styled.div`
@@ -92,13 +93,16 @@ const ExpandedDataRow = styled.div`
         font-size: 1.6rem;
         line-height: 2.8rem;
         color: ${COLORS.paragraphText};
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
     }
 
     &:not(:last-child) {
         margin-bottom: 1.6rem;
     }
 `;
-const PoolsList = ({ pools, onUpdate }) => {
+const PoolsList = ({ pools, onUpdate, isUserList }) => {
     const [expandedIndexes, setExpandedIndexes] = useState([]);
     const togglePool = (id) => {
         if (expandedIndexes.includes(id)) {
@@ -117,7 +121,9 @@ const PoolsList = ({ pools, onUpdate }) => {
     return (
         <>
             {pools.map((pool) => {
-                console.log(pool.address);
+                const balance = pool.balance / 1e7;
+                const liquidity = pool.liquidity / 1e7;
+                const totalShare = pool.total_share / 1e7;
                 return (
                     <PoolBlock>
                         <PoolMain>
@@ -130,8 +136,14 @@ const PoolsList = ({ pools, onUpdate }) => {
                                 withoutLink
                             />
                             <PoolStat>
-                                <span>$1.53</span>
-                                <span>Daily fee: {'<'}0.01%</span>
+                                <span>
+                                    {formatBalance(
+                                        isUserList ? (balance / totalShare) * liquidity : liquidity,
+                                        true,
+                                    )}{' '}
+                                    XLM
+                                </span>
+                                {/*<span>Daily fee: {'<'}0.01%</span>*/}
                             </PoolStat>
                             <ExpandButton onClick={() => togglePool(pool.address)}>
                                 <ArrowDown $isOpen={expandedIndexes.includes(pool.address)} />
@@ -141,14 +153,44 @@ const PoolsList = ({ pools, onUpdate }) => {
                             <ExpandedBlock>
                                 {Boolean(pool.balance) && (
                                     <ExpandedDataRow>
-                                        <span>Shares </span>
-                                        <span>{formatBalance(pool.balance / 1e7)}</span>
+                                        <span>Pool shares:</span>
+                                        <span>
+                                            {formatBalance(balance, true)} (
+                                            {Number(pool.total_share)
+                                                ? formatBalance((100 * balance) / totalShare, true)
+                                                : '0'}
+                                            %)
+                                        </span>
                                     </ExpandedDataRow>
                                 )}
+                                {pool.assets.map((asset, index) => (
+                                    <ExpandedDataRow key={asset.code + asset.issuer}>
+                                        <span>
+                                            {isUserList ? 'Pooled' : 'Total'} {asset.code}:
+                                        </span>
+                                        <span>
+                                            {!isUserList
+                                                ? formatBalance(pool.reserves[index] / 1e7)
+                                                : Number(pool.total_share)
+                                                ? formatBalance(
+                                                      ((pool.reserves[index] / 1e7) * balance) /
+                                                          totalShare,
+                                                  )
+                                                : '0'}{' '}
+                                            <Asset asset={asset} onlyLogoSmall />
+                                        </span>
+                                    </ExpandedDataRow>
+                                ))}
                                 {Boolean(pool.liquidity) && (
                                     <ExpandedDataRow>
-                                        <span>Liquidity</span>
-                                        <span>{formatBalance(pool.liquidity / 1e7)}</span>
+                                        <span>Total liquidity:</span>
+                                        <span>
+                                            {formatBalance(liquidity)}
+                                            <Asset
+                                                asset={StellarService.createLumen()}
+                                                onlyLogoSmall
+                                            />
+                                        </span>
                                     </ExpandedDataRow>
                                 )}
                                 <ExpandedDataRow>
@@ -162,7 +204,7 @@ const PoolsList = ({ pools, onUpdate }) => {
                                             onClick={() =>
                                                 ModalService.openModal(WithdrawFromPool, {
                                                     pool,
-                                                    accountShare: pool.balance / 1e7,
+                                                    accountShare: balance,
                                                 }).then(() => onUpdate())
                                             }
                                         >

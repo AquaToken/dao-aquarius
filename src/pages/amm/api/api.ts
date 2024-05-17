@@ -32,10 +32,10 @@ const processPools = async (pools) => {
     });
     return pools;
 };
-const getPoolsInfo = (filter: FilterOptions, page: number, size: number) => {
+const getPoolsInfo = (filter: FilterOptions, page: number, size: number, search: string) => {
     let total = 0;
     return axios
-        .get(`${API_URL}/pools/?pool_type=${filter}&page=${page}&size=${size}`)
+        .get(`${API_URL}/pools/?pool_type=${filter}&page=${page}&size=${size}&search=${search}`)
         .then(({ data }) => data)
         .then((res) => {
             // @ts-ignore
@@ -46,9 +46,13 @@ const getPoolsInfo = (filter: FilterOptions, page: number, size: number) => {
         .then((pools) => [pools, total]);
 };
 
-const getPoolsStats = () => {
-    // @ts-ignore
-    return axios.get(`${API_URL}/statistics/?size=1000`).then(({ data }) => data.items);
+const getPoolsStats = (pools: string[]) => {
+    return (
+        axios
+            .get(`${API_URL}/statistics/?pool__in=${pools.join(',')}`)
+            // @ts-ignore
+            .then(({ data }) => data.items)
+    );
 };
 
 const getPoolsRewards = () => {
@@ -56,12 +60,22 @@ const getPoolsRewards = () => {
     return axios.get(`${API_URL}/pool-rewards/?size=1000`).then(({ data }) => data.items);
 };
 
-export const getPools = (filter: FilterOptions, page: number, size: number) => {
+export const getPools = (filter: FilterOptions, page: number, size: number, search: string) => {
     let totalCount = 0;
-    return Promise.all([getPoolsInfo(filter, page, size), getPoolsStats(), getPoolsRewards()])
-        .then(([[info, total], stats, rewards]) => {
+    let pools;
+    return getPoolsInfo(filter, page, size, search)
+        .then(([info, total]) => {
+            // @ts-ignore
+            pools = info;
+            // @ts-ignore
             totalCount = total;
-            return info.map((poolInf) => {
+            return Promise.all([
+                getPoolsStats(pools.map((pool) => pool.address)),
+                getPoolsRewards(),
+            ]);
+        })
+        .then(([stats, rewards]) => {
+            return pools.map((poolInf) => {
                 // @ts-ignore
                 const poolStat = stats.find(({ pool_address }) => pool_address === poolInf.address);
                 // @ts-ignore
@@ -133,10 +147,28 @@ export const getPool = (id: string) => {
 };
 
 export const getUserPools = (accountId: string) => {
+    let pools;
     return (
         axios
             .get(`${API_URL}/pools/user/${accountId}/?size=1000`)
             // @ts-ignore
             .then(({ data }) => processPools(data.items))
+            .then((res) => {
+                pools = res;
+                return getPoolsStats(res.map((pool) => pool.address));
+            })
+            .then((stats) => {
+                return pools.map((poolInf) => {
+                    // @ts-ignore
+                    const poolStat = stats.find(
+                        ({ pool_address }) => pool_address === poolInf.address,
+                    );
+
+                    return {
+                        ...poolInf,
+                        ...poolStat,
+                    };
+                });
+            })
     );
 };

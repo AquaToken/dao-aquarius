@@ -62,8 +62,6 @@ const Sidebar = ({ pool }) => {
     const { isLogged, account } = useAuthStore();
     const [accountShare, setAccountShare] = useState(null);
 
-    console.log(pool);
-
     useEffect(() => {
         if (!account) {
             setAccountShare(null);

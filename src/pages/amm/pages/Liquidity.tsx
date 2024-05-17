@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { getUserPools } from '../api/api';
 import { Empty } from '../../profile/YourVotes/YourVotes';
 import { ModalService } from '../../../common/services/globalServices';
@@ -14,10 +14,9 @@ import {
 } from '../../../common/mixins';
 import Button from '../../../common/basics/Button';
 import { Breakpoints, COLORS } from '../../../common/styles';
-import Plus from '../../../common/assets/img/icon-plus.svg';
-import Arrow from '../../../common/assets/img/icon-arrow-down.svg';
 import PageLoader from '../../../common/basics/PageLoader';
 import PoolsList from '../components/PoolsList/PoolsList';
+import { formatBalance } from '../../../common/helpers/helpers';
 
 const Container = styled.main`
     height: 100%;
@@ -46,12 +45,6 @@ const Title = styled.h1`
     font-size: 5.6rem;
     font-weight: 700;
     line-height: 6.4rem;
-`;
-
-const PlusIcon = styled(Plus)`
-    width: 1.6rem;
-    height: 1.6rem;
-    margin-left: 1rem;
 `;
 
 const PoolsListBlock = styled.div`
@@ -115,7 +108,21 @@ const Liquidity = () => {
         }
     };
 
-    console.log(pools);
+    const totalLiquidity = useMemo(() => {
+        if (!pools) {
+            return <PageLoader />;
+        }
+
+        const total = pools.reduce((acc, pool) => {
+            const balance = pool.balance / 1e7;
+            const liquidity = pool.liquidity / 1e7;
+            const totalShare = pool.total_share / 1e7;
+
+            acc += (balance / totalShare) * liquidity;
+            return acc;
+        }, 0);
+        return formatBalance(total, true);
+    }, [pools]);
 
     if (!account) {
         return (
@@ -144,14 +151,14 @@ const Liquidity = () => {
                     <ListHeader>
                         <ListTitle>My liquidity positions</ListTitle>
                         <ListTotal>
-                            <span>Total:</span>
-                            <span>$2.01</span>
+                            <span>Total: </span>
+                            <span>{totalLiquidity} XLM</span>
                         </ListTotal>
                     </ListHeader>
                     {!pools ? (
                         <PageLoader />
                     ) : Boolean(pools.length) ? (
-                        <PoolsList pools={pools} onUpdate={() => updateData()} />
+                        <PoolsList isUserList pools={pools} onUpdate={() => updateData()} />
                     ) : (
                         <div>Your liquidity positions will appear here</div>
                     )}
