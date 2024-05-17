@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { AssetsService, SorobanService } from '../../../common/services/globalServices';
+import { AssetsService } from '../../../common/services/globalServices';
+import { Asset } from '@stellar/stellar-sdk';
 
 const API_URL = 'https://amm-api-testnet.aqua.network';
 
@@ -9,23 +10,25 @@ export enum FilterOptions {
     constant = 'constant_product',
 }
 
+const stringToAsset = (str: string): Asset => {
+    const [code, issuer] = str.split(':');
+
+    if (code === 'native') {
+        return Asset.native();
+    }
+    return new Asset(code, issuer);
+};
+
 const processPools = async (pools) => {
-    const contracts = pools.reduce((acc, item) => {
-        item.tokens_addresses.forEach((address) => acc.add(address));
+    const assetsStr = pools.reduce((acc, item) => {
+        item.tokens_str.forEach((str) => acc.add(str));
         return acc;
     }, new Set());
 
-    const assets = await Promise.all(
-        [...contracts].map((id) => SorobanService.getAssetFromContractId(id)),
-    );
-
-    AssetsService.processAssets(assets);
+    AssetsService.processAssets([...assetsStr].map((str) => stringToAsset(str)));
 
     pools.forEach((pool) => {
-        pool.assets = [];
-        pool.tokens_addresses.forEach((address, index) => {
-            pool.assets[index] = assets[[...contracts].findIndex((key) => key === address)];
-        });
+        pool.assets = pool.tokens_str.map((str) => stringToAsset(str));
     });
     return pools;
 };
@@ -106,13 +109,27 @@ const getPoolRewards = (id: string) => {
         .catch(() => ({}));
 };
 
+const getPoolEvents = (id) => {
+    return (
+        axios
+            .get(`${API_URL}/events/pool/${id}/?size=20`)
+            .then(({ data }) => data)
+            // @ts-ignore
+            .then((data) => ({ events: data.items }))
+            .catch(() => ({ events: [] }))
+    );
+};
+
 export const getPool = (id: string) => {
     return Promise.all([
         getPoolInfo(id),
         getPoolStats(id),
         getPoolRewards(id),
         getPoolMembers(id),
-    ]).then(([info, stats, rewards, members]) => Object.assign({}, info, stats, rewards, members));
+        getPoolEvents(id),
+    ]).then(([info, stats, rewards, members, events]) =>
+        Object.assign({}, info, stats, rewards, members, events),
+    );
 };
 
 export const getUserPools = (accountId: string) => {

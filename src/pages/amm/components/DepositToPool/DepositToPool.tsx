@@ -144,6 +144,8 @@ const DepositToPool = ({ params }) => {
             });
     };
 
+    console.log(pool);
+
     const onChangeInput = (asset, value) => {
         if (Number.isNaN(Number(value))) {
             return;

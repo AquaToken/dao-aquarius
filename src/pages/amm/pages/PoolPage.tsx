@@ -11,9 +11,10 @@ import Sidebar from '../components/Sidebar/Sidebar';
 import { SorobanService, ToastService } from '../../../common/services/globalServices';
 import useAuthStore from '../../../store/authStore/useAuthStore';
 import Button from '../../../common/basics/Button';
-import { formatBalance } from '../../../common/helpers/helpers';
+import { formatBalance, getDateString } from '../../../common/helpers/helpers';
 import { useUpdateIndex } from '../../../common/hooks/useUpdateIndex';
 import AccountViewer from '../../../common/basics/AccountViewer';
+import Table from '../../../common/basics/Table';
 
 const Container = styled.main`
     height: 100%;
@@ -40,6 +41,64 @@ const Background = styled.div`
         padding: 1.6rem 0;
     `}
 `;
+
+const Amounts = styled.span`
+    font-size: 1.4rem;
+`;
+
+const getEventTitle = (event, pool) => {
+    if (event.event_type === 'swap') {
+        const fromIndex = event.amounts.findIndex((amount) => amount > 0);
+        const toIndex = event.amounts.findIndex((amount) => amount < 0);
+
+        return `Swap ${pool.assets[fromIndex].code} to ${pool.assets[toIndex].code}`;
+    }
+
+    return event.event_type === 'deposit' ? 'Add liquidity' : 'Remove liquidity';
+};
+
+const getEventAmounts = (event, pool) => {
+    if (event.event_type === 'swap') {
+        const fromIndex = event.amounts.findIndex((amount) => amount > 0);
+        const toIndex = event.amounts.findIndex((amount) => amount < 0);
+
+        return (
+            <Amounts>
+                <span>
+                    {formatBalance(event.amounts[fromIndex] / 1e7)} {pool.assets[fromIndex].code}
+                </span>
+                <br />
+                <span>
+                    {formatBalance(Math.abs(event.amounts[toIndex] / 1e7))}{' '}
+                    {pool.assets[toIndex].code}
+                </span>
+            </Amounts>
+        );
+    }
+    return (
+        <Amounts>
+            {event.amounts.map((amount, index) => (
+                <span key={pool.tokens_str[index]}>
+                    <span>
+                        {formatBalance(amount / 1e7)} {pool.assets[index].code}
+                    </span>
+                    <br />
+                </span>
+            ))}
+        </Amounts>
+    );
+};
+
+const getEventTime = (timeStr) => {
+    const [date, time] = timeStr.split(' ');
+
+    const [year, month, day] = date.split('-');
+    const [hour, minute, second] = time.split(':');
+
+    return getDateString(new Date(Date.UTC(year, month - 1, day, hour, minute, second)).getTime(), {
+        withTime: true,
+    });
+};
 
 const Section = styled.section<{ smallTopPadding?: boolean }>`
     ${commonMaxWidth};
@@ -231,12 +290,39 @@ const PoolPage = () => {
                     </Section>
                 )}
 
-                <Section>
-                    <SectionWrap>
-                        <h3>Transactions</h3>
-                        <div>Coming soon</div>
-                    </SectionWrap>
-                </Section>
+                {Boolean(pool.events.length) && (
+                    <Section>
+                        <SectionWrap>
+                            <h3>Transactions</h3>
+                            <Table
+                                head={[
+                                    { children: 'Type' },
+                                    { children: 'Amounts' },
+                                    { children: 'Account', flexSize: 1.5 },
+                                    { children: 'Time' },
+                                ]}
+                                body={pool.events.map((event) => {
+                                    return {
+                                        key: event.ledger,
+                                        rowItems: [
+                                            { children: getEventTitle(event, pool) },
+                                            { children: getEventAmounts(event, pool) },
+                                            {
+                                                children: (
+                                                    <AccountViewer pubKey={event.account_address} />
+                                                ),
+                                                flexSize: 1.5,
+                                            },
+                                            {
+                                                children: getEventTime(event.ledger_close_at_str),
+                                            },
+                                        ],
+                                    };
+                                })}
+                            />
+                        </SectionWrap>
+                    </Section>
+                )}
             </Background>
         </MainBlock>
     );
