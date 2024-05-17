@@ -35,7 +35,11 @@ const processPools = async (pools) => {
 const getPoolsInfo = (filter: FilterOptions, page: number, size: number, search: string) => {
     let total = 0;
     return axios
-        .get(`${API_URL}/pools/?pool_type=${filter}&page=${page}&size=${size}&search=${search}`)
+        .get(
+            `${API_URL}/pools/?pool_type=${filter}&page=${page}&size=${size}&search=${
+                search ?? ''
+            }`,
+        )
         .then(({ data }) => data)
         .then((res) => {
             // @ts-ignore
