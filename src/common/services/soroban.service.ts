@@ -20,6 +20,7 @@ enum AMM_CONTRACT_METHOD {
     ESTIMATE_SWAP_ROUTED = 'estimate_swap_routed',
     WITHDRAW = 'withdraw',
     SWAP = 'swap',
+    SWAP_CHAINED = 'swap_chained',
     GET_RESERVES = 'get_reserves',
     POOL_TYPE = 'pool_type',
     FEE_FRACTION = 'get_fee_fraction',
@@ -206,7 +207,8 @@ export default class SorobanServiceClass {
                 if (resolver) {
                     resolver();
                 }
-                return ToastService.showErrorToast('Transaction was failed');
+                ToastService.showErrorToast('Transaction was failed');
+                throw new Error('Failed');
             }
 
             if (resolver) {
@@ -786,6 +788,25 @@ export default class SorobanServiceClass {
             this.assetToScVal(base),
             this.assetToScVal(counter),
             this.bytesToScVal(poolBytes),
+            this.amountToUint128(amount),
+            this.amountToUint128(minCounterAmount),
+        ).then((tx) => this.server.prepareTransaction(tx));
+    }
+
+    getSwapChainedTx(
+        accountId: string,
+        base: Asset,
+        chainedXDR: string,
+        amount: string,
+        minCounterAmount: string,
+    ) {
+        return this.buildSmartContactTx(
+            accountId,
+            AMM_SMART_CONTACT_ID,
+            AMM_CONTRACT_METHOD.SWAP_CHAINED,
+            this.publicKeyToScVal(accountId),
+            xdr.ScVal.fromXDR(chainedXDR, 'base64'),
+            this.assetToScVal(base),
             this.amountToUint128(amount),
             this.amountToUint128(minCounterAmount),
         ).then((tx) => this.server.prepareTransaction(tx));

@@ -10,7 +10,7 @@ export enum FilterOptions {
     constant = 'constant_product',
 }
 
-const stringToAsset = (str: string): Asset => {
+export const stringToAsset = (str: string): Asset => {
     const [code, issuer] = str.split(':');
 
     if (code === 'native') {
@@ -175,4 +175,15 @@ export const getUserPools = (accountId: string) => {
                 });
             })
     );
+};
+
+export const findSwapPath = (baseId: string, counterId: string, amount: string) => {
+    const headers = { 'Content-Type': 'application/json' };
+
+    const body = JSON.stringify({
+        token_in_address: baseId,
+        token_out_address: counterId,
+        amount: (+amount * 1e7).toString(),
+    });
+    return axios.post(`${API_URL}/pools/find-path/`, body, { headers }).then(({ data }) => data);
 };

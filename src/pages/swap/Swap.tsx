@@ -20,6 +20,7 @@ import ChooseLoginMethodModal from '../../common/modals/ChooseLoginMethodModal';
 import { formatBalance } from '../../common/helpers/helpers';
 import SwapConfirmModal from './SwapConfirmModal/SwapConfirmModal';
 import SwapSettingsModal from './SwapSettingsModal/SwapSettingsModal';
+import { findSwapPath } from '../amm/api/api';
 
 const Container = styled.main`
     background-color: ${COLORS.lightGray};
@@ -130,10 +131,13 @@ const Swap = ({ balances }) => {
     const [base, setBase] = useState(USDT);
     const [counter, setCounter] = useState(USDC);
     const [pools, setPools] = useState(null);
+    const [error, setError] = useState(false);
 
     const [baseAmount, setBaseAmount] = useState('');
     const [counterAmount, setCounterAmount] = useState('');
-    const [bestPoolBytes, setBestPoolBytes] = useState(null);
+    const [bestPathXDR, setBestPathXDR] = useState(null);
+    const [bestPath, setBestPath] = useState(null);
+    const [bestPools, setBestPools] = useState(null);
     const [estimatePending, setEstimatePending] = useState(false);
 
     const debouncedAmount = useDebounce(baseAmount, 700);
@@ -149,19 +153,29 @@ const Swap = ({ balances }) => {
         if (!!Number(debouncedAmount)) {
             setEstimatePending(true);
 
-            SorobanService.estimateSwap(base, counter, debouncedAmount).then(
-                // @ts-ignore
-                ([bytes, , amount]) => {
-                    setCounterAmount(SorobanService.i128ToInt(amount.value()).toString());
-                    setBestPoolBytes(bytes.value());
+            findSwapPath(
+                SorobanService.getAssetContractId(base),
+                SorobanService.getAssetContractId(counter),
+                debouncedAmount,
+            ).then((res) => {
+                if (!res.success) {
+                    setError(true);
                     setEstimatePending(false);
-                },
-            );
+                } else {
+                    setEstimatePending(false);
+                    setCounterAmount((res.amount / 1e7).toFixed(7));
+                    setBestPathXDR(res.swap_chain_xdr);
+                    setBestPath(res.tokens);
+                    setBestPools(res.pools);
+                }
+            });
         } else {
             setBaseAmount('');
-            setBestPoolBytes(null);
+            setBestPathXDR(null);
+            setBestPath(null);
+            setBestPools(null);
         }
-    }, [debouncedAmount]);
+    }, [debouncedAmount, base, counter]);
 
     const swapAssets = () => {
         if (!isLogged) {
@@ -175,12 +189,16 @@ const Swap = ({ balances }) => {
             counter,
             baseAmount,
             counterAmount,
-            bestPoolBytes,
+            bestPathXDR,
+            bestPath,
+            bestPools,
         }).then(({ isConfirmed }) => {
             if (isConfirmed) {
                 setBaseAmount('');
                 setCounterAmount('');
-                setBestPoolBytes(null);
+                setBestPathXDR(null);
+                setBestPath(null);
+                setBestPools(null);
             }
         });
     };
@@ -197,7 +215,9 @@ const Swap = ({ balances }) => {
         setCounter(term);
         setBaseAmount('');
         setCounterAmount('');
-        setBestPoolBytes(null);
+        setBestPathXDR(null);
+        setBestPath(null);
+        setBestPools(null);
     };
 
     return (
@@ -288,10 +308,10 @@ const Swap = ({ balances }) => {
                         </Prices>
                     )}
 
-                    {pools && !pools.length && (
+                    {error && (
                         <Error>
                             <IconFail />
-                            There are no liquidity pools for this market
+                            There are no exchange paths for the selected pairs.
                         </Error>
                     )}
 

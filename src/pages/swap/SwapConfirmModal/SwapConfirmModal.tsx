@@ -15,6 +15,7 @@ import {
 import SuccessModal from '../../amm/components/SuccessModal/SuccessModal';
 import useAuthStore from '../../../store/authStore/useAuthStore';
 import { SWAP_SLIPPAGE_ALIAS } from '../SwapSettingsModal/SwapSettingsModal';
+import { stringToAsset } from '../../amm/api/api';
 
 const Container = styled.div`
     width: 52.3rem;
@@ -48,7 +49,7 @@ const Divider = styled.div`
 `;
 
 const SwapConfirmModal = ({ params, confirm }) => {
-    const { base, counter, baseAmount, counterAmount, bestPoolBytes } = params;
+    const { base, counter, baseAmount, counterAmount, bestPathXDR, bestPath, bestPools } = params;
     const [swapPending, setSwapPending] = useState(false);
 
     const { account } = useAuthStore();
@@ -59,15 +60,17 @@ const SwapConfirmModal = ({ params, confirm }) => {
 
         const minCounterAmount = ((1 - Number(SLIPPAGE) / 100) * Number(counterAmount)).toFixed(7);
 
-        SorobanService.getSwapTx(
+        SorobanService.getSwapChainedTx(
             account?.accountId(),
-            bestPoolBytes,
             base,
-            counter,
+            bestPathXDR,
             baseAmount,
             minCounterAmount,
         )
-            .then((tx) => account.signAndSubmitTx(tx, true))
+            .then((tx) => {
+                console.log(tx.toEnvelope().toXDR('base64'));
+                return account.signAndSubmitTx(tx, true);
+            })
             .then((res) => {
                 confirm();
                 ModalService.openModal(SuccessModal, {
@@ -108,6 +111,16 @@ const SwapConfirmModal = ({ params, confirm }) => {
                     {baseAmount} {base.code}
                 </span>
             </DescriptionRow>
+            <DescriptionRow>
+                <span>Path</span>
+                <span>{bestPath.map((path) => stringToAsset(path).code).join(' => ')}</span>
+            </DescriptionRow>
+
+            <DescriptionRow>
+                <span>Pools</span>
+                <span>{bestPools.map((pool) => `C...${pool.slice(-3)}`).join(' => ')}</span>
+            </DescriptionRow>
+
             <DescriptionRow>
                 <span>You get (estimate)</span>
                 <span>
