@@ -46,7 +46,7 @@ const Title = styled.div`
 
 const Testnet = () => {
     const goToTestnet = () => {
-        window.open('https://testnet.aqua.network', '_blank');
+        window.open('https://testnet.aqua.network/amm/', '_blank');
     };
     return (
         <Container>
