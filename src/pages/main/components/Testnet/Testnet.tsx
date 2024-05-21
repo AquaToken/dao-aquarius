@@ -13,6 +13,7 @@ const Container = styled.section`
     position: relative;
     min-height: 0;
     margin-bottom: 7rem;
+    z-index: 20;
 `;
 
 const Wrapper = styled.div`
