@@ -27,6 +27,7 @@ const Wrapper = styled.div`
     ${respondDown(Breakpoints.md)`
         padding: 1.6rem;
         max-width: 55rem;
+        gap: 1.6rem
     `}
 `;
 
