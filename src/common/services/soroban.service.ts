@@ -1,7 +1,7 @@
 import * as StellarSdk from '@stellar/stellar-sdk';
 import { sha256 } from 'js-sha256';
 import binascii from 'binascii';
-import { xdr, Asset, Keypair, BASE_FEE, StrKey } from '@stellar/stellar-sdk';
+import { xdr, Asset, Keypair, StrKey } from '@stellar/stellar-sdk';
 import SendTransactionResponse = StellarSdk.SorobanRpc.Api.SendTransactionResponse;
 import SimulateTransactionSuccessResponse = StellarSdk.SorobanRpc.Api.SimulateTransactionSuccessResponse;
 import { ModalService, SorobanService, ToastService } from './globalServices';
@@ -9,6 +9,8 @@ import RestoreContractModal from '../modals/RestoreContractModal/RestoreContract
 
 const SOROBAN_SERVER = 'https://soroban-rpc.aqua.network/';
 export const AMM_SMART_CONTACT_ID = 'CC2B3GFLD5U6GQFPWZ5TOCC673QW2I3QKDIGCHXMTZZXKJE6MMOMUQF7';
+
+const BASE_FEE = '2000';
 
 enum AMM_CONTRACT_METHOD {
     GET_POOLS = 'get_pools',
