@@ -7,7 +7,6 @@ import Stellarterm from '../../../../common/assets/img/stellarterm-logo.svg';
 import Lumenswap from '../../../../common/assets/img/lumenswap.svg';
 import Ledger from '../../../../common/assets/img/ledger.svg';
 import Freighter from '../../../../common/assets/img/freighter.svg';
-import Liquid from '../../../../common/assets/img/liquid.svg';
 import Upbit from '../../../../common/assets/img/upbit.svg';
 import Bitnumb from '../../../../common/assets/img/bitnumb.svg';
 import Gopax from '../../../../common/assets/img/gopax.svg';
@@ -110,7 +109,8 @@ const Link = styled.a`
         transform: scale(1.07);
     }
 
-    svg {
+    svg,
+    img {
         margin: auto;
     }
 `;
@@ -156,9 +156,6 @@ const SupportedBy = () => {
                 </div>
             </TextExchanges>
             <IconsExchanges>
-                <Link href="https://www.liquid.com/" target="_blank">
-                    <Liquid />
-                </Link>
                 <Link href="https://sg.upbit.com/" target="_blank">
                     <Upbit />
                 </Link>
@@ -173,6 +170,14 @@ const SupportedBy = () => {
                 </Link>
                 <Link href="https://coinone.co.kr/" target="_blank">
                     <Coinone />
+                </Link>
+                <Link href="https://www.hanbitco.com/" target="_blank">
+                    <img
+                        src="https://www.hanbitco.com/logos/hanbitco_logo_black.png"
+                        height="15"
+                        width="90"
+                        alt="hanbitco"
+                    />
                 </Link>
             </IconsExchanges>
         </Container>
