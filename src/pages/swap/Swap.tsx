@@ -171,7 +171,7 @@ const Swap = ({ balances }) => {
 
     useEffect(() => {
         setCounterAmount('');
-    }, [baseAmount]);
+    }, [baseAmount, base, counter]);
 
     const swapAssets = () => {
         if (!isLogged) {
