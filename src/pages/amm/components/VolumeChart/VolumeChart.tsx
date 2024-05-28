@@ -6,7 +6,7 @@ import { COLORS } from '../../../../common/styles';
 import * as d3 from 'd3';
 import { transformDate } from '../LiquidityChart/LiquidityChart';
 import styled from 'styled-components';
-import { addDays, format, isToday, set } from 'date-fns';
+import { addDays, format, isAfter, set } from 'date-fns';
 
 const Axis = styled.g`
     font-size: 1.4rem;
@@ -44,15 +44,19 @@ const VolumeChart = ({
 
         const dateMap = new Map();
 
-        while (!isToday(date)) {
+        while (!isAfter(date, Date.now())) {
             dateMap.set(format(date, 'yyyy-MM-dd'), { date, volume: 0 });
             date = addDays(date, 1);
         }
+
+        console.log(dateMap);
 
         return [
             ...data
                 .reduce((acc, item) => {
                     const itemDate = item.datetime_str.split(' ')[0];
+
+                    console.log(itemDate);
 
                     acc.set(itemDate, {
                         date: acc.get(itemDate).date,
