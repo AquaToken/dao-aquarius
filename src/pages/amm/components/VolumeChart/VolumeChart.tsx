@@ -49,14 +49,10 @@ const VolumeChart = ({
             date = addDays(date, 1);
         }
 
-        console.log(dateMap);
-
         return [
             ...data
                 .reduce((acc, item) => {
                     const itemDate = item.datetime_str.split(' ')[0];
-
-                    console.log(itemDate);
 
                     acc.set(itemDate, {
                         date: acc.get(itemDate).date,
