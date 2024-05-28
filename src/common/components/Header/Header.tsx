@@ -165,6 +165,12 @@ const MyAquarius = styled(NavLink)`
     `}
 `;
 
+const TooltipStyled = styled(Tooltip)`
+    ${respondDown(Breakpoints.md)`
+        display: none;
+    `}
+`;
+
 const Header = ({ children }: { children?: JSX.Element }): JSX.Element => {
     const { isLogged } = useAuthStore();
 
@@ -186,9 +192,9 @@ const Header = ({ children }: { children?: JSX.Element }): JSX.Element => {
                 <Aqua />
             </MainLink>
 
-            <Tooltip content={<div>NEW</div>} position={TOOLTIP_POSITION.right} isShow>
+            <TooltipStyled content={<div>NEW</div>} position={TOOLTIP_POSITION.right} isShow>
                 <HeaderNavLinks>{children}</HeaderNavLinks>
-            </Tooltip>
+            </TooltipStyled>
 
             <RightBlock>
                 <MyAquarius
