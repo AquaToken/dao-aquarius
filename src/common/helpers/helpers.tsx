@@ -95,7 +95,31 @@ const getNumDecimals = (value: number): number => {
     return 0;
 };
 
-export const formatBalance = (balance: number, withRounding?: boolean): string => {
+function nFormatter(num, digits) {
+    const lookup = [
+        { value: 1, symbol: '' },
+        { value: 1e3, symbol: 'K' },
+        { value: 1e6, symbol: 'M' },
+        { value: 1e9, symbol: 'B' },
+        { value: 1e12, symbol: 'T' },
+        { value: 1e15, symbol: 'Q' },
+    ];
+    const rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
+    const item = lookup
+        .slice()
+        .reverse()
+        .find((i) => num >= i.value);
+    return item ? (num / item.value).toFixed(digits).replace(rx, '$1') + item.symbol : '0';
+}
+
+export const formatBalance = (
+    balance: number,
+    withRounding?: boolean,
+    withLetter?: boolean,
+): string => {
+    if (withLetter) {
+        return nFormatter(balance, 2);
+    }
     const precision = getNumDecimals(Math.abs(balance));
 
     return new Intl.NumberFormat('en-US', {

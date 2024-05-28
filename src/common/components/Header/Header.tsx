@@ -10,6 +10,7 @@ import useAuthStore from '../../../store/authStore/useAuthStore';
 import IconProfile from '../../assets/img/icon-profile.svg';
 import { ModalService } from '../../services/globalServices';
 import ChooseLoginMethodModal from '../../modals/ChooseLoginMethodModal';
+import Tooltip, { TOOLTIP_POSITION } from '../../basics/Tooltip';
 
 const HeaderBlock = styled.header`
     ${commonMaxWidth};
@@ -67,6 +68,9 @@ const MainLink = styled(NavLink)`
 
 const HeaderNavLinks = styled.div`
     display: flex;
+    padding: 1.6rem;
+    border: 0.1rem solid ${COLORS.tooltip};
+    border-radius: 0.6rem;
 
     a {
         color: ${COLORS.titleText};
@@ -182,7 +186,9 @@ const Header = ({ children }: { children?: JSX.Element }): JSX.Element => {
                 <Aqua />
             </MainLink>
 
-            <HeaderNavLinks>{children}</HeaderNavLinks>
+            <Tooltip content={<div>NEW</div>} position={TOOLTIP_POSITION.right} isShow>
+                <HeaderNavLinks>{children}</HeaderNavLinks>
+            </Tooltip>
 
             <RightBlock>
                 <MyAquarius

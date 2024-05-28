@@ -106,7 +106,12 @@ const getPoolInfo = (id: string) => {
 };
 
 const getPoolStats = (id: string) => {
-    return axios.get(`${API_URL}/statistics/pool/${id}/`).then(({ data }) => data[0]);
+    return (
+        axios
+            .get(`${API_URL}/statistics/pool/${id}/`)
+            // @ts-ignore
+            .then(({ data }) => ({ stats: data.items }))
+    );
 };
 
 const getPoolMembers = (id: string) => {

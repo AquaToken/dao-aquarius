@@ -1,12 +1,17 @@
 import * as React from 'react';
-import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { getPool } from '../api/api';
 import PageLoader from '../../../common/basics/PageLoader';
 import styled from 'styled-components';
 import Pair from '../../vote/components/common/Pair';
 import { Breakpoints, COLORS } from '../../../common/styles';
-import { commonMaxWidth, flexRowSpaceBetween, respondDown } from '../../../common/mixins';
+import {
+    commonMaxWidth,
+    flexAllCenter,
+    flexRowSpaceBetween,
+    respondDown,
+} from '../../../common/mixins';
 import Sidebar from '../components/Sidebar/Sidebar';
 import { SorobanService, ToastService } from '../../../common/services/globalServices';
 import useAuthStore from '../../../store/authStore/useAuthStore';
@@ -15,6 +20,8 @@ import { formatBalance, getDateString } from '../../../common/helpers/helpers';
 import { useUpdateIndex } from '../../../common/hooks/useUpdateIndex';
 import AccountViewer from '../../../common/basics/AccountViewer';
 import Table from '../../../common/basics/Table';
+import LiquidityChart from '../components/LiquidityChart/LiquidityChart';
+import VolumeChart from '../components/VolumeChart/VolumeChart';
 
 const Container = styled.main`
     height: 100%;
@@ -165,6 +172,24 @@ const SectionRow = styled.div`
     }
 `;
 
+const Charts = styled.div`
+    display: flex;
+    justify-content: space-evenly;
+    gap: 1.6rem;
+
+    ${respondDown(Breakpoints.xl)`
+        flex-direction: column;
+    `}
+`;
+
+const Chart = styled.div`
+    ${flexAllCenter};
+    background-color: ${COLORS.lightGray};
+    padding: 1.6rem;
+    border-radius: 0.6rem;
+    flex: 1;
+`;
+
 const PoolPage = () => {
     const [pool, setPool] = useState(null);
     const [rewards, setRewards] = useState(null);
@@ -174,6 +199,8 @@ const PoolPage = () => {
     const { account } = useAuthStore();
 
     const updateIndex = useUpdateIndex(5000);
+
+    console.log(pool);
 
     useEffect(() => {
         if (!pool) {
@@ -229,6 +256,7 @@ const PoolPage = () => {
                     />
                 </Section>
                 <Sidebar pool={pool} />
+
                 {rewards && Number(rewards.to_claim) && (
                     <Section>
                         <SectionWrap>
@@ -246,7 +274,15 @@ const PoolPage = () => {
                 )}
                 <Section>
                     <SectionWrap>
-                        <h3>Pool info</h3>
+                        <Charts>
+                            <Chart>
+                                <LiquidityChart data={pool.stats} />
+                            </Chart>
+                            <Chart>
+                                <VolumeChart data={pool.stats} />
+                            </Chart>
+                        </Charts>
+
                         <SectionRow>
                             <span>Type:</span>
                             <span>
@@ -280,12 +316,25 @@ const PoolPage = () => {
                     <Section>
                         <SectionWrap>
                             <h3>Pool members</h3>
-                            {pool.members.map((member) => (
-                                <SectionRow key={member.account_address}>
-                                    <AccountViewer pubKey={member.account_address} />
-                                    <span>{formatBalance(member.balance / 1e7, true)} shares</span>
-                                </SectionRow>
-                            ))}
+                            {pool.members
+                                .sort((a, b) => b.balance - a.balance)
+                                .map((member) => (
+                                    <SectionRow key={member.account_address}>
+                                        <AccountViewer pubKey={member.account_address} />
+                                        <span>
+                                            {formatBalance(member.balance / 1e7, true)} (
+                                            {Number(pool.total_share)
+                                                ? formatBalance(
+                                                      (100 * member.balance) /
+                                                          1e7 /
+                                                          (pool.total_share / 1e7),
+                                                      true,
+                                                  )
+                                                : '0'}
+                                            %)
+                                        </span>
+                                    </SectionRow>
+                                ))}
                         </SectionWrap>
                     </Section>
                 )}
