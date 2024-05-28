@@ -130,7 +130,6 @@ const Swap = ({ balances }) => {
 
     const [base, setBase] = useState(USDT);
     const [counter, setCounter] = useState(USDC);
-    const [pools, setPools] = useState(null);
     const [error, setError] = useState(false);
 
     const [baseAmount, setBaseAmount] = useState('');
@@ -143,20 +142,13 @@ const Swap = ({ balances }) => {
     const debouncedAmount = useDebounce(baseAmount, 700);
 
     useEffect(() => {
-        setPools(null);
-        SorobanService.getPools([base, counter]).then((res) => {
-            setPools(res);
-        });
-    }, [base, counter]);
-
-    useEffect(() => {
-        if (!!Number(debouncedAmount)) {
+        if (!!Number(debouncedAmount.current)) {
             setEstimatePending(true);
 
             findSwapPath(
                 SorobanService.getAssetContractId(base),
                 SorobanService.getAssetContractId(counter),
-                debouncedAmount,
+                debouncedAmount.current,
             ).then((res) => {
                 if (!res.success) {
                     setError(true);
@@ -176,6 +168,10 @@ const Swap = ({ balances }) => {
             setBestPools(null);
         }
     }, [debouncedAmount, base, counter]);
+
+    useEffect(() => {
+        setCounterAmount('');
+    }, [baseAmount]);
 
     const swapAssets = () => {
         if (!isLogged) {
@@ -250,7 +246,6 @@ const Swap = ({ balances }) => {
                             value={baseAmount}
                             onChange={(e) => setBaseAmount(e.target.value)}
                             label="From"
-                            disabled={!pools || !pools.length}
                         />
 
                         <DropdownContainer>
@@ -300,7 +295,7 @@ const Swap = ({ balances }) => {
                         </DropdownContainer>
                     </FormRow>
 
-                    {baseAmount && counterAmount && (
+                    {baseAmount && counterAmount && !estimatePending && (
                         <Prices>
                             1 {base.code} = {formatBalance(+counterAmount / +baseAmount)}{' '}
                             {counter.code} / 1 {counter.code} ={' '}

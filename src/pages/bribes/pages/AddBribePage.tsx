@@ -444,11 +444,11 @@ const AddBribePage = () => {
 
     useEffect(() => {
         setAquaEquivalent(null);
-        if (!debouncedAmount || !rewardAsset) {
+        if (!debouncedAmount.current || !rewardAsset) {
             return;
         }
 
-        if (Number(debouncedAmount) > MAX_AMOUNT) {
+        if (Number(debouncedAmount.current) > MAX_AMOUNT) {
             setAquaEquivalent('0');
             setIsInvalidAmount(true);
             return;
@@ -458,7 +458,7 @@ const AddBribePage = () => {
 
         StellarService.getAquaEquivalent(
             StellarService.createAsset(rewardAsset.code, rewardAsset.issuer),
-            debouncedAmount,
+            debouncedAmount.current,
         )
             .then((res) => {
                 setAquaEquivalent(res);
@@ -562,7 +562,7 @@ const AddBribePage = () => {
     const minDate = getMinDate();
 
     const amountInputPostfix =
-        debouncedAmount !== null && aquaEquivalent === null ? (
+        debouncedAmount.current !== null && aquaEquivalent === null ? (
             <LoaderStyled />
         ) : Number(aquaEquivalent) >= MINIMUM_AQUA_EQUIVALENT ? (
             <SuccessIcon />
@@ -697,7 +697,7 @@ const AddBribePage = () => {
                                             setAmount(target.value);
                                         }}
                                         postfix={
-                                            debouncedAmount && rewardAsset
+                                            debouncedAmount.current && rewardAsset
                                                 ? amountInputPostfix
                                                 : null
                                         }

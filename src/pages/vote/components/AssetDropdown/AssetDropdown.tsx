@@ -257,9 +257,9 @@ const AssetDropdown = ({
     };
 
     useEffect(() => {
-        if (StellarSdk.StrKey.isValidEd25519PublicKey(debouncedSearchText)) {
+        if (StellarSdk.StrKey.isValidEd25519PublicKey(debouncedSearchText.current)) {
             setSearchPending(true);
-            StellarService.loadAccount(debouncedSearchText)
+            StellarService.loadAccount(debouncedSearchText.current)
                 .then((account) => {
                     if (!account?.home_domain) {
                         setSearchPending(false);
@@ -275,8 +275,8 @@ const AssetDropdown = ({
             return;
         }
 
-        if (regexp.test(debouncedSearchText)) {
-            resolveCurrencies(debouncedSearchText);
+        if (regexp.test(debouncedSearchText.current)) {
+            resolveCurrencies(debouncedSearchText.current);
             return;
         }
         setSearchResults([]);

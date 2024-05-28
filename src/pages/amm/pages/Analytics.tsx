@@ -114,7 +114,7 @@ const Analytics = () => {
 
     useEffect(() => {
         setPending(true);
-        getPools(filter, page, PAGE_SIZE, debouncedSearch).then(([pools, total]) => {
+        getPools(filter, page, PAGE_SIZE, debouncedSearch.current).then(([pools, total]) => {
             setPools(pools);
             setTotal(total);
             setPending(false);
