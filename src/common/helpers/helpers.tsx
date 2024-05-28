@@ -117,7 +117,7 @@ export const formatBalance = (
     withRounding?: boolean,
     withLetter?: boolean,
 ): string => {
-    if (withLetter) {
+    if (withLetter && balance > 1000) {
         return nFormatter(balance, 2);
     }
     const precision = getNumDecimals(Math.abs(balance));

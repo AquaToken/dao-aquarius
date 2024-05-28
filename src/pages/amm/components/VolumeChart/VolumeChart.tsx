@@ -76,7 +76,7 @@ const VolumeChart = ({
     const y = d3
         .scaleLinear()
         .range([height - marginBottom, marginTop + height * 0.4])
-        .domain([0, d3.max(processedData, (d) => d.volume)]);
+        .domain([0, d3.max(processedData, (d) => d.volume) || 1]);
 
     useEffect(
         () =>
