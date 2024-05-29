@@ -2,12 +2,17 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { FilterOptions, getPools } from '../api/api';
 import styled from 'styled-components';
-import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween } from '../../../common/mixins';
+import {
+    commonMaxWidth,
+    flexAllCenter,
+    flexRowSpaceBetween,
+    respondDown,
+} from '../../../common/mixins';
 import PageLoader from '../../../common/basics/PageLoader';
 import Button from '../../../common/basics/Button';
 import Plus from '../../../common/assets/img/icon-plus.svg';
 import Search from '../../../common/assets/img/icon-search.svg';
-import { COLORS } from '../../../common/styles';
+import { Breakpoints, COLORS } from '../../../common/styles';
 import Input from '../../../common/basics/Input';
 import ToggleGroup from '../../../common/basics/ToggleGroup';
 import Table from '../../../common/basics/Table';
@@ -21,6 +26,7 @@ import { ModalService } from '../../../common/services/globalServices';
 import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
 import { useDebounce } from '../../../common/hooks/useDebounce';
 import { Empty } from '../../profile/YourVotes/YourVotes';
+import Select from '../../../common/basics/Select';
 
 const Container = styled.main`
     height: 100%;
@@ -38,6 +44,10 @@ const Content = styled.div`
     padding: 6.3rem 4rem 0;
     flex: 1 0 auto;
     background-color: ${COLORS.lightGray};
+
+    ${respondDown(Breakpoints.sm)`
+        padding: 2rem 1.6rem 0;
+    `}
 `;
 
 const Section = styled.div`
@@ -50,6 +60,11 @@ const Section = styled.div`
 const Header = styled.div`
     ${flexRowSpaceBetween};
     margin-bottom: 6.4rem;
+
+    ${respondDown(Breakpoints.sm)`
+        flex-direction: column;
+        gap: 5rem;
+    `}
 `;
 
 const Title = styled.h1`
@@ -67,10 +82,19 @@ const PlusIcon = styled(Plus)`
 const TableBlock = styled.div`
     padding: 5.2rem 3.2rem;
     width: 100%;
+
+    ${respondDown(Breakpoints.sm)`
+        padding: 3rem 1.6rem;
+    `}
 `;
 
 const TableHeader = styled.div`
     ${flexRowSpaceBetween};
+
+    ${respondDown(Breakpoints.sm)`
+        flex-direction: column;
+        gap: 5rem;
+    `}
 `;
 
 const TableTitle = styled.h3`
@@ -81,11 +105,27 @@ const TableTitle = styled.h3`
 
 const StyledInput = styled(Input)`
     width: 56rem;
+
+    ${respondDown(Breakpoints.sm)`
+        width: 100%;
+    `}
 `;
 
 const ToggleGroupStyled = styled(ToggleGroup)`
     width: fit-content;
     margin-top: 3.6rem;
+
+    ${respondDown(Breakpoints.sm)`
+        display: none;
+    `}
+`;
+
+const SelectStyled = styled(Select)`
+    margin-top: 3.6rem;
+    display: none;
+    ${respondDown(Breakpoints.sm)`
+        display: flex;
+    `}
 `;
 
 const OPTIONS = [
@@ -164,6 +204,7 @@ const Analytics = () => {
                                 options={OPTIONS}
                                 onChange={setFilter}
                             />
+                            <SelectStyled value={filter} options={OPTIONS} onChange={setFilter} />
                             {pools.length ? (
                                 <>
                                     <Table
@@ -178,6 +219,7 @@ const Analytics = () => {
                                         body={pools.map((pool) => ({
                                             key: pool.address,
                                             onRowClick: () => goToPoolPage(pool.address),
+                                            mobileBackground: COLORS.lightGray,
                                             rowItems: [
                                                 {
                                                     children: (
@@ -195,9 +237,10 @@ const Analytics = () => {
                                                         pool.pool_type === 'stable'
                                                             ? 'Stable swap'
                                                             : 'Constant product',
+                                                    label: 'Type:',
                                                     flexSize: 2,
                                                 },
-                                                { children: `${pool.fee * 100}%` },
+                                                { children: `${pool.fee * 100}%`, label: 'Fee:' },
                                                 {
                                                     children: pool.tps
                                                         ? `${formatBalance(
@@ -205,6 +248,7 @@ const Analytics = () => {
                                                               true,
                                                           )} AQUA`
                                                         : '-',
+                                                    label: 'Daily reward:',
                                                 },
                                                 {
                                                     children: pool.liquidity
@@ -213,6 +257,7 @@ const Analytics = () => {
                                                               true,
                                                           )} XLM`
                                                         : '0',
+                                                    label: 'TVL (XLM):',
                                                 },
                                             ],
                                         }))}

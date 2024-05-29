@@ -40,6 +40,11 @@ const PairContainer = styled.div`
 const StyledButton = styled(Button)`
     margin-top: 5rem;
     margin-left: auto;
+
+    ${respondDown(Breakpoints.sm)`
+        width: 100%;
+        margin-top: 2rem;
+    `}
 `;
 
 const InputStyled = styled(Input)`

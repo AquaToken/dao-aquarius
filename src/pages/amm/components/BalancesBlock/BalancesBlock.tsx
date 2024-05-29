@@ -6,7 +6,7 @@ import PageLoader from '../../../../common/basics/PageLoader';
 import Asset from '../../../vote/components/AssetDropdown/Asset';
 import { formatBalance } from '../../../../common/helpers/helpers';
 import Button from '../../../../common/basics/Button';
-import { COLORS } from '../../../../common/styles';
+import { Breakpoints } from '../../../../common/styles';
 import { IconFail, IconSuccess, IconPending } from '../../../../common/basics/Icons';
 import { CONTRACT_STATUS } from '../../../../common/services/soroban.service';
 import {
@@ -16,9 +16,10 @@ import {
 } from '../../../../common/services/globalServices';
 import useAuthStore from '../../../../store/authStore/useAuthStore';
 import { USDC, USDT, AQUA, DAI } from '../../AmmLegacy';
-import { commonMaxWidth, flexAllCenter } from '../../../../common/mixins';
+import { commonMaxWidth, flexAllCenter, respondDown } from '../../../../common/mixins';
 import { Empty } from '../../../profile/YourVotes/YourVotes';
 import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
+import Table from '../../../../common/basics/Table';
 
 const Container = styled.div`
     display: flex;
@@ -28,6 +29,12 @@ const Container = styled.div`
 const Content = styled.div`
     ${commonMaxWidth};
     width: 100%;
+    padding: 6.3rem 4rem;
+    flex: 1 0 auto;
+
+    ${respondDown(Breakpoints.sm)`
+        padding: 2rem 1.6rem 0;
+    `}
 `;
 
 const Section = styled.div`
@@ -37,28 +44,6 @@ const Section = styled.div`
 
 const LoginButton = styled(Button)`
     margin-top: 1rem;
-`;
-
-const BalanceLine = styled.div`
-    display: flex;
-    border-top: 0.1rem solid ${COLORS.gray};
-    padding: 0.4rem 0;
-    align-items: center;
-
-    &:first-child {
-        font-weight: 700;
-        margin-bottom: 2rem;
-        border-top: none;
-    }
-
-    &:last-child {
-        margin-bottom: 5rem;
-        border-bottom: 0.1rem solid ${COLORS.gray};
-    }
-
-    div {
-        flex: 1;
-    }
 `;
 
 const Status = styled.div`
@@ -178,85 +163,7 @@ const BalancesBlock = ({ balances }) => {
                 {!balances ? (
                     <PageLoader />
                 ) : (
-                    <div>
-                        <BalanceLine>
-                            <div>Asset</div>
-                            <div>Balance</div>
-                            <div>Contract status</div>
-                            <div>Ledgers before expiration</div>
-                            <div>Action</div>
-                        </BalanceLine>
-                        {balances.map(
-                            ({ asset, balance, status, contractId, ledgersBeforeExpire }) => (
-                                <BalanceLine key={contractId}>
-                                    <div>
-                                        <Asset asset={asset} />
-                                    </div>
-                                    <div>{formatBalance(+balance)}</div>
-                                    <Status>
-                                        {status === CONTRACT_STATUS.ACTIVE && (
-                                            <>
-                                                <IconSuccess /> Active
-                                            </>
-                                        )}
-                                        {status === CONTRACT_STATUS.EXPIRED && (
-                                            <>
-                                                <IconPending /> Expired
-                                            </>
-                                        )}
-                                        {status === CONTRACT_STATUS.NOT_FOUND && (
-                                            <>
-                                                <IconFail /> Not found
-                                            </>
-                                        )}
-                                    </Status>
-                                    <div>{ledgersBeforeExpire}</div>
-                                    <div>
-                                        {status === CONTRACT_STATUS.EXPIRED &&
-                                            !asset.isNative() && (
-                                                <Button
-                                                    isSmall
-                                                    pending={pendingId === contractId}
-                                                    disabled={
-                                                        pendingId !== contractId &&
-                                                        Boolean(pendingId)
-                                                    }
-                                                    onClick={() => restore({ asset, contractId })}
-                                                >
-                                                    Restore
-                                                </Button>
-                                            )}
-                                        {status === CONTRACT_STATUS.NOT_FOUND &&
-                                            !asset.isNative() && (
-                                                <Button
-                                                    isSmall
-                                                    pending={pendingId === contractId}
-                                                    disabled={
-                                                        pendingId !== contractId &&
-                                                        Boolean(pendingId)
-                                                    }
-                                                    onClick={() => deploy({ asset, contractId })}
-                                                >
-                                                    Deploy
-                                                </Button>
-                                            )}
-                                        {status === CONTRACT_STATUS.ACTIVE && !asset.isNative() && (
-                                            <Button
-                                                isSmall
-                                                pending={pendingId === contractId}
-                                                disabled={
-                                                    pendingId !== contractId && Boolean(pendingId)
-                                                }
-                                                onClick={() => bump({ asset, contractId })}
-                                            >
-                                                Bump
-                                            </Button>
-                                        )}
-                                    </div>
-                                </BalanceLine>
-                            ),
-                        )}
-
+                    <>
                         {neededInTestAssets && (
                             <GetTokenButton
                                 isBig
@@ -266,7 +173,107 @@ const BalancesBlock = ({ balances }) => {
                                 GET TEST TOKENS
                             </GetTokenButton>
                         )}
-                    </div>
+                        <Table
+                            head={[
+                                { children: 'Asset' },
+                                { children: 'Balance' },
+                                { children: 'Contract status' },
+                                { children: 'Ledgers before expiration' },
+                                { children: 'Action' },
+                            ]}
+                            body={balances.map(
+                                ({ asset, balance, status, contractId, ledgersBeforeExpire }) => ({
+                                    key: contractId,
+                                    isNarrow: true,
+                                    rowItems: [
+                                        { children: <Asset asset={asset} />, label: 'Asset:' },
+                                        { children: formatBalance(+balance), label: 'Balance:' },
+                                        {
+                                            children: (
+                                                <Status>
+                                                    {status === CONTRACT_STATUS.ACTIVE && (
+                                                        <>
+                                                            <IconSuccess /> Active
+                                                        </>
+                                                    )}
+                                                    {status === CONTRACT_STATUS.EXPIRED && (
+                                                        <>
+                                                            <IconPending /> Expired
+                                                        </>
+                                                    )}
+                                                    {status === CONTRACT_STATUS.NOT_FOUND && (
+                                                        <>
+                                                            <IconFail /> Not found
+                                                        </>
+                                                    )}
+                                                </Status>
+                                            ),
+                                            label: 'Contract status:',
+                                        },
+                                        {
+                                            children: ledgersBeforeExpire,
+                                            label: 'Ledgers before expiration:',
+                                        },
+                                        {
+                                            children: (
+                                                <>
+                                                    {status === CONTRACT_STATUS.EXPIRED &&
+                                                        !asset.isNative() && (
+                                                            <Button
+                                                                isSmall
+                                                                pending={pendingId === contractId}
+                                                                disabled={
+                                                                    pendingId !== contractId &&
+                                                                    Boolean(pendingId)
+                                                                }
+                                                                onClick={() =>
+                                                                    restore({ asset, contractId })
+                                                                }
+                                                            >
+                                                                Restore
+                                                            </Button>
+                                                        )}
+                                                    {status === CONTRACT_STATUS.NOT_FOUND &&
+                                                        !asset.isNative() && (
+                                                            <Button
+                                                                isSmall
+                                                                pending={pendingId === contractId}
+                                                                disabled={
+                                                                    pendingId !== contractId &&
+                                                                    Boolean(pendingId)
+                                                                }
+                                                                onClick={() =>
+                                                                    deploy({ asset, contractId })
+                                                                }
+                                                            >
+                                                                Deploy
+                                                            </Button>
+                                                        )}
+                                                    {status === CONTRACT_STATUS.ACTIVE &&
+                                                        !asset.isNative() && (
+                                                            <Button
+                                                                isSmall
+                                                                pending={pendingId === contractId}
+                                                                disabled={
+                                                                    pendingId !== contractId &&
+                                                                    Boolean(pendingId)
+                                                                }
+                                                                onClick={() =>
+                                                                    bump({ asset, contractId })
+                                                                }
+                                                            >
+                                                                Bump
+                                                            </Button>
+                                                        )}
+                                                </>
+                                            ),
+                                            label: 'Action:',
+                                        },
+                                    ],
+                                }),
+                            )}
+                        />
+                    </>
                 )}
             </Content>
         </Container>

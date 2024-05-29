@@ -34,17 +34,33 @@ const Content = styled.div`
     width: 100%;
     padding: 6.3rem 4rem 0;
     flex: 1 0 auto;
+
+    ${respondDown(Breakpoints.sm)`
+        padding: 2rem 1.6rem 0;
+    `}
 `;
 
 const Header = styled.div`
     ${flexRowSpaceBetween};
     margin-bottom: 6.4rem;
+
+    ${respondDown(Breakpoints.sm)`
+        margin-bottom: 2rem;
+    `}
 `;
 
 const Title = styled.h1`
     font-size: 5.6rem;
     font-weight: 700;
     line-height: 6.4rem;
+
+    ${respondDown(Breakpoints.md)`
+        font-size: 4rem;
+    `}
+
+    ${respondDown(Breakpoints.sm)`
+        font-size: 2.8rem;
+    `}
 `;
 
 const PoolsListBlock = styled.div`
@@ -65,12 +81,20 @@ const PoolsListBlock = styled.div`
 const ListHeader = styled.div`
     ${flexRowSpaceBetween};
     margin-bottom: 5.8rem;
+
+    ${respondDown(Breakpoints.sm)`
+        flex-direction: column;
+    `}
 `;
 
 const ListTitle = styled.h3`
     font-size: 3.6rem;
     line-height: 4.2rem;
     font-weight: 400;
+
+    ${respondDown(Breakpoints.sm)`
+        font-size: 2.8rem;
+    `}
 `;
 
 const ListTotal = styled.span`

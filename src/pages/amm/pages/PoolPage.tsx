@@ -51,6 +51,10 @@ const Background = styled.div`
 
 const Amounts = styled.span`
     font-size: 1.4rem;
+
+    ${respondDown(Breakpoints.md)`
+        text-align: right;
+    `}
 `;
 
 const getEventTitle = (event, pool) => {
@@ -141,6 +145,11 @@ const SectionWrap = styled.div`
 
 const Rewards = styled.div`
     ${flexRowSpaceBetween};
+
+    ${respondDown(Breakpoints.md)`
+        flex-direction: column;
+        gap: 2rem;
+    `}
 `;
 
 const RewardsDescription = styled.div`
@@ -320,7 +329,10 @@ const PoolPage = () => {
                                 .sort((a, b) => b.balance - a.balance)
                                 .map((member) => (
                                     <SectionRow key={member.account_address}>
-                                        <AccountViewer pubKey={member.account_address} />
+                                        <AccountViewer
+                                            pubKey={member.account_address}
+                                            narrowForMobile
+                                        />
                                         <span>
                                             {formatBalance(member.balance / 1e7, true)} (
                                             {Number(pool.total_share)
@@ -353,17 +365,29 @@ const PoolPage = () => {
                                 body={pool.events.map((event) => {
                                     return {
                                         key: event.ledger,
+                                        mobileBackground: COLORS.lightGray,
                                         rowItems: [
-                                            { children: getEventTitle(event, pool) },
-                                            { children: getEventAmounts(event, pool) },
+                                            {
+                                                children: getEventTitle(event, pool),
+                                                label: 'Type:',
+                                            },
+                                            {
+                                                children: getEventAmounts(event, pool),
+                                                label: 'Amounts:',
+                                            },
                                             {
                                                 children: (
-                                                    <AccountViewer pubKey={event.account_address} />
+                                                    <AccountViewer
+                                                        pubKey={event.account_address}
+                                                        narrowForMobile
+                                                    />
                                                 ),
                                                 flexSize: 1.5,
+                                                label: 'Account:',
                                             },
                                             {
                                                 children: getEventTime(event.ledger_close_at_str),
+                                                label: 'Time:',
                                             },
                                         ],
                                     };

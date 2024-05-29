@@ -1,11 +1,15 @@
 import * as React from 'react';
-import styled from 'styled-components';
-import { commonMaxWidth, flexAllCenter } from '../../common/mixins';
-import { Header, Title } from '../profile/AmmRewards/AmmRewards';
-import AssetDropdown from '../vote/components/AssetDropdown/AssetDropdown';
-import { COLORS } from '../../common/styles';
-import useAuthStore from '../../store/authStore/useAuthStore';
 import { useEffect, useMemo, useState } from 'react';
+import styled from 'styled-components';
+import {
+    commonMaxWidth,
+    flexAllCenter,
+    flexRowSpaceBetween,
+    respondDown,
+} from '../../common/mixins';
+import AssetDropdown from '../vote/components/AssetDropdown/AssetDropdown';
+import { Breakpoints, COLORS } from '../../common/styles';
+import useAuthStore from '../../store/authStore/useAuthStore';
 import { ModalService, SorobanService } from '../../common/services/globalServices';
 import PageLoader from '../../common/basics/PageLoader';
 import Input from '../../common/basics/Input';
@@ -14,7 +18,7 @@ import SettingsIcon from '../../common/assets/img/icon-settings.svg';
 import { useDebounce } from '../../common/hooks/useDebounce';
 import Button from '../../common/basics/Button';
 import { IconFail } from '../../common/basics/Icons';
-import { USDT, USDC } from '../amm/AmmLegacy';
+import { USDC, USDT } from '../amm/AmmLegacy';
 import { CONTRACT_STATUS } from '../../common/services/soroban.service';
 import ChooseLoginMethodModal from '../../common/modals/ChooseLoginMethodModal';
 import { formatBalance } from '../../common/helpers/helpers';
@@ -38,6 +42,26 @@ const Content = styled.div`
     ${commonMaxWidth};
     width: 100%;
     padding: 6.3rem 4rem 0;
+
+    ${respondDown(Breakpoints.md)`
+        padding: 2rem 1.6rem 0;
+    `}
+`;
+
+const Header = styled.div`
+    ${flexRowSpaceBetween};
+    margin-bottom: 4.8rem;
+`;
+
+export const Title = styled.h2`
+    font-size: 3.6rem;
+    line-height: 4.2rem;
+    color: ${COLORS.titleText};
+    font-weight: 400;
+
+    ${respondDown(Breakpoints.sm)`
+        font-size: 2.8rem;
+   `}
 `;
 
 const Form = styled.div`
@@ -47,12 +71,23 @@ const Form = styled.div`
     background: ${COLORS.white};
     box-shadow: 0 2rem 3rem 0 rgba(0, 6, 54, 0.06);
     padding: 6.4rem 4.8rem;
+
+    ${respondDown(Breakpoints.md)`
+        width: 100%;
+        padding: 1.6rem;
+    `}
 `;
 
 const FormRow = styled.div`
     display: flex;
     margin-top: 5rem;
     position: relative;
+
+    ${respondDown(Breakpoints.sm)`
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-top: 2rem;
+    `}
 `;
 
 const Balance = styled.div`
@@ -62,6 +97,10 @@ const Balance = styled.div`
     font-size: 1.6rem;
     line-height: 1.8rem;
     color: ${COLORS.paragraphText};
+
+    ${respondDown(Breakpoints.sm)`
+       font-size: 1.2rem;
+    `}
 `;
 
 const BalanceClickable = styled.span`
@@ -83,12 +122,21 @@ const SwapDivider = styled.div`
     justify-content: center;
     margin: 3rem 0 4rem;
     height: 4.8rem;
+
+    ${respondDown(Breakpoints.sm)`
+       margin: 1rem 0 0;
+    `}
 `;
 
 const StyledButton = styled(Button)`
     margin-top: 4.8rem;
     margin-left: auto;
     width: 45%;
+
+    ${respondDown(Breakpoints.sm)`
+        width: 100%;
+        margin-top: 2rem;
+    `}
 `;
 
 const Error = styled.div`
@@ -150,14 +198,19 @@ const Swap = ({ balances }) => {
                 SorobanService.getAssetContractId(counter),
                 debouncedAmount.current,
             ).then((res) => {
+                // @ts-ignore
                 if (!res.success) {
                     setError(true);
                     setEstimatePending(false);
                 } else {
                     setEstimatePending(false);
+                    // @ts-ignore
                     setCounterAmount((res.amount / 1e7).toFixed(7));
+                    // @ts-ignore
                     setBestPathXDR(res.swap_chain_xdr);
+                    // @ts-ignore
                     setBestPath(res.tokens);
+                    // @ts-ignore
                     setBestPools(res.pools);
                 }
             });

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState } from 'react';
 import Pair from '../../../vote/components/common/Pair';
 import { formatBalance } from '../../../../common/helpers/helpers';
 import Button from '../../../../common/basics/Button';
@@ -6,10 +7,9 @@ import { ModalService, StellarService } from '../../../../common/services/global
 import WithdrawFromPool from '../WithdrawFromPool/WithdrawFromPool';
 import DepositToPool from '../DepositToPool/DepositToPool';
 import styled from 'styled-components';
-import { flexAllCenter, flexRowSpaceBetween } from '../../../../common/mixins';
-import { COLORS } from '../../../../common/styles';
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
+import { Breakpoints, COLORS } from '../../../../common/styles';
 import Arrow from '../../../../common/assets/img/icon-arrow-down.svg';
-import { useState } from 'react';
 import Asset from '../../../vote/components/AssetDropdown/Asset';
 
 const PoolBlock = styled.div`
@@ -22,6 +22,13 @@ const PoolMain = styled.div`
     display: flex;
     align-items: center;
     gap: 2.4rem;
+
+    ${respondDown(Breakpoints.sm)`
+        padding: 1rem;
+        flex-direction: column;
+        background-color: ${COLORS.lightGray};
+        border-radius: 0.6rem;
+    `}
 `;
 
 const PoolStat = styled.div`
@@ -34,7 +41,9 @@ const PoolStat = styled.div`
     margin-left: auto;
     white-space: nowrap;
 
-    //span:last-child {
+    ${respondDown(Breakpoints.sm)`
+        margin-left: unset;
+    `}//span:last-child {
     //    font-size: 1.4rem;
     //    font-weight: 400;
     //    line-height: 1.6rem;
@@ -53,6 +62,10 @@ const ExpandButton = styled.div`
     &:hover {
         background-color: ${COLORS.gray};
     }
+
+    ${respondDown(Breakpoints.sm)`
+        width: 100%;
+    `}
 `;
 
 const ArrowDown = styled(Arrow)<{ $isOpen: boolean }>`
@@ -82,6 +95,10 @@ const ExpandedBlock = styled.div`
             transform: scaleY(1);
         }
     }
+
+    ${respondDown(Breakpoints.sm)`
+        margin-top: 0;
+    `}
 `;
 
 const ExpandedDataRow = styled.div`
@@ -102,6 +119,16 @@ const ExpandedDataRow = styled.div`
         margin-bottom: 1.6rem;
     }
 `;
+
+const Buttons = styled.div`
+    ${flexRowSpaceBetween};
+    gap: 0.8rem;
+
+    ${respondDown(Breakpoints.sm)`
+        flex-direction: column;
+    `}
+`;
+
 const PoolsList = ({ pools, onUpdate, isUserList }) => {
     const [expandedIndexes, setExpandedIndexes] = useState([]);
     const togglePool = (id) => {
@@ -197,7 +224,7 @@ const PoolsList = ({ pools, onUpdate, isUserList }) => {
                                     <span>Fee</span>
                                     <span>{pool.fee * 100}%</span>
                                 </ExpandedDataRow>
-                                <ExpandedDataRow>
+                                <Buttons>
                                     {Boolean(pool.balance) && (
                                         <Button
                                             fullWidth
@@ -222,7 +249,7 @@ const PoolsList = ({ pools, onUpdate, isUserList }) => {
                                     >
                                         Add liquidity
                                     </Button>
-                                </ExpandedDataRow>
+                                </Buttons>
                             </ExpandedBlock>
                         )}
                     </PoolBlock>

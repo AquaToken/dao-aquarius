@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { flexRowSpaceBetween } from '../../../common/mixins';
-import { COLORS } from '../../../common/styles';
+import { flexRowSpaceBetween, respondDown } from '../../../common/mixins';
+import { Breakpoints, COLORS } from '../../../common/styles';
 import { AmmRoutes } from '../../../routes';
 import ArrowLeft from '../../../common/assets/img/icon-arrow-left.svg';
 import Tick from '../../../common/assets/img/icon-tick-white.svg';
@@ -32,6 +32,11 @@ import { useHistory } from 'react-router-dom';
 const StyledForm = styled(Form)`
     padding: 0 4.8rem;
     margin-bottom: 5rem;
+
+    ${respondDown(Breakpoints.sm)`
+        padding: 1.6rem;
+        margin-bottom: 2rem;
+    `}
 `;
 
 const StyledFormSection = styled(FormSection)`
@@ -40,6 +45,10 @@ const StyledFormSection = styled(FormSection)`
     &:last-child {
         border-bottom: none;
     }
+
+    ${respondDown(Breakpoints.sm)`
+        padding: 1.6rem 0;
+    `}
 `;
 
 const FormDescription = styled.span`
@@ -59,6 +68,8 @@ const PoolType = styled.div<{ isActive?: boolean }>`
 
     svg {
         display: ${({ isActive }) => (isActive ? 'block' : 'none')};
+        width: 3rem;
+        margin-left: 0.4rem;
     }
 
     &:first-of-type {
@@ -88,10 +99,18 @@ const FormRow = styled.div`
     gap: 5.4rem;
     margin-top: 3.7rem;
     margin-bottom: 5.8rem;
+
+    ${respondDown(Breakpoints.sm)`
+        flex-direction: column;
+    `}
 `;
 
 const AddRowButton = styled(Button)`
     margin-top: 3.7rem;
+    width: fit-content;
+`;
+
+const ToggleGroupStyled = styled(ToggleGroup)`
     width: fit-content;
 `;
 
@@ -357,7 +376,7 @@ const CreatePool = ({ balances }) => {
                                 </FormRow>
                             ) : (
                                 <FormRow>
-                                    <ToggleGroup
+                                    <ToggleGroupStyled
                                         value={constantFee}
                                         options={FEE_OPTIONS}
                                         onChange={setConstantFee}

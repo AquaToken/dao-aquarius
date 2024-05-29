@@ -1,11 +1,11 @@
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../../../common/styles';
 import { customScroll, flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
 import { ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
 import Input from '../../../../common/basics/Input';
 import Asset from '../../../vote/components/AssetDropdown/Asset';
-import { useEffect, useState } from 'react';
 import {
     ModalService,
     SorobanService,
@@ -41,6 +41,12 @@ const Form = styled.div`
     display: flex;
     flex-direction: column;
     margin-top: 3rem;
+
+    ${respondDown(Breakpoints.sm)`
+        Button {
+            width: 100%;
+        }
+    `}
 `;
 
 const FormRow = styled.div`
@@ -66,6 +72,10 @@ const Balance = styled.div`
     font-size: 1.6rem;
     line-height: 1.8rem;
     color: ${COLORS.paragraphText};
+
+    ${respondDown(Breakpoints.sm)`
+        font-size: 1.2rem;
+    `}
 `;
 
 const BalanceClickable = styled.span`
@@ -80,6 +90,10 @@ const PoolInfo = styled.div`
     border-radius: 0.6rem;
     padding: 2.4rem;
     margin-bottom: 4.8rem;
+
+    ${respondDown(Breakpoints.sm)`
+        margin-bottom: 2rem;
+    `}
 `;
 
 const PairWrap = styled.div`
