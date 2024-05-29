@@ -120,6 +120,8 @@ const VolumeChart = ({
         setSelectedIndex(index);
     };
 
+    const selectedItem = processedData[selectedIndex] || processedData[processedData.length - 1];
+
     return (
         <svg width={width} height={height} ref={svg}>
             <g>
@@ -127,18 +129,11 @@ const VolumeChart = ({
                     Volume 24h
                 </GrayText>
                 <LiquidityValue x="16" y="63">
-                    {formatBalance(
-                        processedData[
-                            selectedIndex === null ? processedData.length - 1 : selectedIndex
-                        ]?.volume || 0,
-                        true,
-                        true,
-                    )}{' '}
-                    XLM
+                    {formatBalance(selectedItem.volume, true, true)} XLM
                 </LiquidityValue>
                 {selectedIndex !== null && (
                     <GrayText x="16" y="87">
-                        {getDateString(processedData[selectedIndex].date.getTime())}
+                        {getDateString(selectedItem.date.getTime())}
                     </GrayText>
                 )}
             </g>
