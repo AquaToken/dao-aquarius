@@ -130,7 +130,7 @@ const VolumeChart = ({
                     {formatBalance(
                         processedData[
                             selectedIndex === null ? processedData.length - 1 : selectedIndex
-                        ].volume,
+                        ]?.volume || 0,
                         true,
                         true,
                     )}{' '}
