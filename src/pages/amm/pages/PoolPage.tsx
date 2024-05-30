@@ -266,7 +266,7 @@ const PoolPage = () => {
                 </Section>
                 <Sidebar pool={pool} />
 
-                {rewards && Number(rewards.to_claim) && (
+                {Boolean(rewards && Number(rewards.to_claim)) && (
                     <Section>
                         <SectionWrap>
                             <Rewards>
