@@ -282,7 +282,7 @@ const Swap = ({ balances }) => {
                         </SettingsButton>
                     </Header>
                     <FormRow>
-                        {account && account.getAssetBalance(base) && (
+                        {account && account.getAssetBalance(base) !== null && (
                             <Balance>
                                 Available:
                                 <BalanceClickable
@@ -324,7 +324,7 @@ const Swap = ({ balances }) => {
                     </SwapDivider>
 
                     <FormRow>
-                        {account && account.getAssetBalance(counter) && (
+                        {account && account.getAssetBalance(counter) !== null && (
                             <Balance>
                                 Balance: {account.getAssetBalance(counter)} {counter.code}
                             </Balance>
