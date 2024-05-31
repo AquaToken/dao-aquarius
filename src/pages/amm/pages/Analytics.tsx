@@ -22,7 +22,7 @@ import { useHistory } from 'react-router-dom';
 import { formatBalance } from '../../../common/helpers/helpers';
 import Pagination from '../../../common/basics/Pagination';
 import useAuthStore from '../../../store/authStore/useAuthStore';
-import { ModalService } from '../../../common/services/globalServices';
+import { ModalService, StellarService } from '../../../common/services/globalServices';
 import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
 import { useDebounce } from '../../../common/hooks/useDebounce';
 import { Empty } from '../../profile/YourVotes/YourVotes';
@@ -186,7 +186,7 @@ const Analytics = () => {
                 </Header>
 
                 <Section>
-                    {!pools ? (
+                    {!pools || !StellarService.priceLumenUsd ? (
                         <PageLoader />
                     ) : (
                         <TableBlock>
@@ -214,7 +214,7 @@ const Analytics = () => {
                                             { children: 'Type', flexSize: 2 },
                                             { children: 'Fee' },
                                             { children: 'Daily reward' },
-                                            { children: 'TVL (XLM)' },
+                                            { children: 'TVL' },
                                         ]}
                                         body={pools.map((pool) => ({
                                             key: pool.address,
@@ -252,12 +252,13 @@ const Analytics = () => {
                                                 },
                                                 {
                                                     children: pool.liquidity
-                                                        ? `${formatBalance(
-                                                              pool.liquidity / 1e7,
+                                                        ? `$${formatBalance(
+                                                              (pool.liquidity / 1e7) *
+                                                                  StellarService.priceLumenUsd,
                                                               true,
-                                                          )} XLM`
+                                                          )}`
                                                         : '0',
-                                                    label: 'TVL (XLM):',
+                                                    label: 'TVL:',
                                                 },
                                             ],
                                         }))}

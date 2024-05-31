@@ -16,6 +16,7 @@ import SuccessModal from '../../amm/components/SuccessModal/SuccessModal';
 import useAuthStore from '../../../store/authStore/useAuthStore';
 import { SWAP_SLIPPAGE_ALIAS } from '../SwapSettingsModal/SwapSettingsModal';
 import { stringToAsset } from '../../amm/api/api';
+import { AmmRoutes } from '../../../routes';
 
 const Container = styled.div`
     width: 52.3rem;
@@ -46,6 +47,18 @@ const DescriptionRow = styled.div`
 const Divider = styled.div`
     border-bottom: 0.1rem dashed ${COLORS.gray};
     margin: 3.2rem 0;
+`;
+
+const PoolLink = styled.a`
+    color: ${COLORS.purple};
+    text-decoration: none;
+
+    &:not(:last-child):after {
+        color: ${COLORS.titleText};
+        content: ' => ';
+        text-decoration: none;
+        cursor: default;
+    }
 `;
 
 const SwapConfirmModal = ({ params, confirm }) => {
@@ -118,7 +131,14 @@ const SwapConfirmModal = ({ params, confirm }) => {
 
             <DescriptionRow>
                 <span>Pools</span>
-                <span>{bestPools.map((pool) => `C...${pool.slice(-3)}`).join(' => ')}</span>
+                <span>
+                    {bestPools.map((pool) => (
+                        <PoolLink
+                            href={`${AmmRoutes.analytics}${pool}`}
+                            target="_blank"
+                        >{`C...${pool.slice(-3)}`}</PoolLink>
+                    ))}
+                </span>
             </DescriptionRow>
 
             <DescriptionRow>

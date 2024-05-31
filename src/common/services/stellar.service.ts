@@ -105,6 +105,7 @@ export default class StellarServiceClass {
     nextPayments = null;
     loadMorePaymentsPending = false;
     paymentsFullyLoaded = false;
+    priceLumenUsd = null;
     private claimableBalances: Horizon.ServerApi.ClaimableBalanceRecord[] | null = null;
     private keypair: StellarSdk.Keypair | null = null;
 
@@ -114,12 +115,15 @@ export default class StellarServiceClass {
         this.updatePayments = this.updatePayments.bind(this);
 
         this.debouncedUpdatePayments = debounceFunction(this.updatePayments, 500);
+
+        this.updateLumenUsdPrice();
+
+        setInterval(() => this.updateLumenUsdPrice(), 5 * 60 * 1000);
     }
 
     get isClaimableBalancesLoaded() {
         return this.claimableBalances !== null;
     }
-
     loginWithSecret(secretKey: string): Promise<string> {
         return new Promise((resolve, reject) => {
             try {
@@ -949,9 +953,11 @@ export default class StellarServiceClass {
     }
 
     getLumenUsdPrice(): Promise<number> {
-        return axios.get<any>('https://api.stellarterm.com/v1/ticker.json').then(({ data }) => {
-            return data._meta.externalPrices.USD_XLM;
-        });
+        return axios
+            .get<any>(`https://api.stellarterm.com/v1/ticker.json?${Math.random()}`)
+            .then(({ data }) => {
+                return data._meta.externalPrices.USD_XLM;
+            });
     }
 
     getLiquidityPoolData(
@@ -1098,5 +1104,11 @@ export default class StellarServiceClass {
             result.push(...chunkResult);
         }
         return result;
+    }
+
+    private updateLumenUsdPrice() {
+        this.getLumenUsdPrice().then((res) => {
+            this.priceLumenUsd = res;
+        });
     }
 }

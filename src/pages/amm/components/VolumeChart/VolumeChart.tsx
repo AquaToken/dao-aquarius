@@ -7,6 +7,7 @@ import * as d3 from 'd3';
 import { transformDate } from '../LiquidityChart/LiquidityChart';
 import styled from 'styled-components';
 import { addDays, format, isAfter, set } from 'date-fns';
+import { StellarService } from '../../../../common/services/globalServices';
 
 const Axis = styled.g`
     font-size: 1.4rem;
@@ -129,7 +130,7 @@ const VolumeChart = ({
                     Volume 24h
                 </GrayText>
                 <LiquidityValue x="16" y="63">
-                    {formatBalance(selectedItem.volume, true, true)} XLM
+                    ${formatBalance(selectedItem.volume * StellarService.priceLumenUsd, true, true)}
                 </LiquidityValue>
                 {selectedIndex !== null && (
                     <GrayText x="16" y="87">

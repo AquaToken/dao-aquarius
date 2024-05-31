@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { getUserPools } from '../api/api';
 import { Empty } from '../../profile/YourVotes/YourVotes';
-import { ModalService } from '../../../common/services/globalServices';
+import { ModalService, StellarService } from '../../../common/services/globalServices';
 import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
 import useAuthStore from '../../../store/authStore/useAuthStore';
 import styled from 'styled-components';
@@ -145,7 +145,7 @@ const Liquidity = () => {
             acc += (balance / totalShare) * liquidity;
             return acc;
         }, 0);
-        return formatBalance(total, true);
+        return formatBalance(total * StellarService.priceLumenUsd, true);
     }, [pools]);
 
     if (!account) {
@@ -176,7 +176,7 @@ const Liquidity = () => {
                         <ListTitle>My liquidity positions</ListTitle>
                         <ListTotal>
                             <span>Total: </span>
-                            <span>{totalLiquidity} XLM</span>
+                            <span>${totalLiquidity}</span>
                         </ListTotal>
                     </ListHeader>
                     {!pools ? (

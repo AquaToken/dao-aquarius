@@ -5,6 +5,7 @@ import * as d3 from 'd3';
 import styled from 'styled-components';
 import { COLORS } from '../../../../common/styles';
 import { formatBalance, getDateString } from '../../../../common/helpers/helpers';
+import { StellarService } from '../../../../common/services/globalServices';
 
 const Axis = styled.g`
     font-size: 1.4rem;
@@ -113,13 +114,14 @@ const LiquidityChart = ({
                     Liquidity
                 </GrayText>
                 <LiquidityValue x="16" y="63">
+                    $
                     {formatBalance(
-                        data[selectedIndex === null ? data.length - 1 : selectedIndex].liquidity /
-                            1e7,
+                        (data[selectedIndex === null ? data.length - 1 : selectedIndex].liquidity /
+                            1e7) *
+                            StellarService.priceLumenUsd,
                         true,
                         true,
-                    )}{' '}
-                    XLM
+                    )}
                 </LiquidityValue>
                 {selectedIndex !== null && (
                     <GrayText x="16" y="87">

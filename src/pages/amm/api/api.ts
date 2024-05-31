@@ -34,10 +34,13 @@ const processPools = async (pools) => {
 };
 const getPoolsInfo = (filter: FilterOptions, page: number, size: number, search?: string) => {
     let total = 0;
+
+    const capitalizedSearch = search.toUpperCase() || '';
+
     return axios
         .get(
             `${API_URL}/pools/?pool_type=${filter}&page=${page}&size=${size}&search=${
-                search ?? ''
+                capitalizedSearch === 'XLM' ? 'native' : capitalizedSearch
             }`,
         )
         .then(({ data }) => data)

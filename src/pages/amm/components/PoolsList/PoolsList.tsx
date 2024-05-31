@@ -164,11 +164,13 @@ const PoolsList = ({ pools, onUpdate, isUserList }) => {
                             />
                             <PoolStat>
                                 <span>
+                                    $
                                     {formatBalance(
-                                        isUserList ? (balance / totalShare) * liquidity : liquidity,
+                                        (isUserList
+                                            ? (balance / totalShare) * liquidity
+                                            : liquidity) * StellarService.priceLumenUsd,
                                         true,
-                                    )}{' '}
-                                    XLM
+                                    )}
                                 </span>
                                 {/*<span>Daily fee: {'<'}0.01%</span>*/}
                             </PoolStat>
@@ -212,11 +214,11 @@ const PoolsList = ({ pools, onUpdate, isUserList }) => {
                                     <ExpandedDataRow>
                                         <span>Total liquidity:</span>
                                         <span>
-                                            {formatBalance(liquidity)}
-                                            <Asset
-                                                asset={StellarService.createLumen()}
-                                                onlyLogoSmall
-                                            />
+                                            $
+                                            {formatBalance(
+                                                liquidity * StellarService.priceLumenUsd,
+                                                true,
+                                            )}
                                         </span>
                                     </ExpandedDataRow>
                                 )}
