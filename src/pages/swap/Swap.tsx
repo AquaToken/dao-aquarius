@@ -197,23 +197,28 @@ const Swap = ({ balances }) => {
                 SorobanService.getAssetContractId(base),
                 SorobanService.getAssetContractId(counter),
                 debouncedAmount.current,
-            ).then((res) => {
-                // @ts-ignore
-                if (!res.success) {
+            )
+                .then((res) => {
+                    // @ts-ignore
+                    if (!res.success) {
+                        setError(true);
+                        setEstimatePending(false);
+                    } else {
+                        setEstimatePending(false);
+                        // @ts-ignore
+                        setCounterAmount((res.amount / 1e7).toFixed(7));
+                        // @ts-ignore
+                        setBestPathXDR(res.swap_chain_xdr);
+                        // @ts-ignore
+                        setBestPath(res.tokens);
+                        // @ts-ignore
+                        setBestPools(res.pools);
+                    }
+                })
+                .catch(() => {
                     setError(true);
                     setEstimatePending(false);
-                } else {
-                    setEstimatePending(false);
-                    // @ts-ignore
-                    setCounterAmount((res.amount / 1e7).toFixed(7));
-                    // @ts-ignore
-                    setBestPathXDR(res.swap_chain_xdr);
-                    // @ts-ignore
-                    setBestPath(res.tokens);
-                    // @ts-ignore
-                    setBestPools(res.pools);
-                }
-            });
+                });
         } else {
             setBaseAmount('');
             setBestPathXDR(null);
