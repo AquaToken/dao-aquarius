@@ -35,7 +35,7 @@ const processPools = async (pools) => {
 const getPoolsInfo = (filter: FilterOptions, page: number, size: number, search?: string) => {
     let total = 0;
 
-    const capitalizedSearch = search.toUpperCase() || '';
+    const capitalizedSearch = (search || '').toUpperCase();
 
     return axios
         .get(
