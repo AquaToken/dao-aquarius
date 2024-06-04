@@ -1,6 +1,6 @@
 /* eslint-disable prefer-spread */
 import { css, FlattenSimpleInterpolation, Interpolation } from 'styled-components';
-import { Breakpoints } from './styles';
+import { Breakpoints, COLORS } from './styles';
 
 export const textEllipsis = css`
     overflow: hidden;
@@ -19,6 +19,23 @@ export const flexRowSpaceBetween = css`
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+`;
+
+export const customScroll = css`
+    &::-webkit-scrollbar {
+        width: 0.5rem;
+    }
+
+    /* Track */
+    &::-webkit-scrollbar-track {
+        background: ${COLORS.white};
+    }
+
+    /* Handle */
+    &::-webkit-scrollbar-thumb {
+        background: ${COLORS.purple};
+        border-radius: 0.25rem;
+    }
 `;
 
 export const commonMaxWidth = css`

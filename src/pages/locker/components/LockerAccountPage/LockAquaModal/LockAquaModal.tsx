@@ -6,7 +6,7 @@ import {
     ModalTitle,
 } from '../../../../../common/modals/atoms/ModalAtoms';
 import styled from 'styled-components';
-import { flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
+import { customScroll, flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../../../common/styles';
 import Button from '../../../../../common/basics/Button';
 import { formatBalance, getDateString } from '../../../../../common/helpers/helpers';
@@ -25,6 +25,10 @@ const ModalContainer = styled.div`
     width: 52.8rem;
     display: flex;
     flex-direction: column;
+    ${customScroll};
+    overflow-y: auto;
+    max-height: 75vh;
+    padding: 0 1.5rem;
 
     ${respondDown(Breakpoints.md)`
         width: 100%;

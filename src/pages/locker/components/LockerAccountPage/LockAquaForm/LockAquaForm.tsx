@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { forwardRef, RefObject, useMemo, useState } from 'react';
+import { forwardRef, RefObject, useMemo, useRef, useState } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import { Breakpoints, COLORS, FONT_FAMILY } from '../../../../../common/styles';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
@@ -267,6 +267,8 @@ const LockAquaForm = forwardRef(
 
         const { isLogged } = useAuthStore();
 
+        const datePicker = useRef(null);
+
         const aquaBalance = account.getAquaBalance();
 
         const onLockPeriodPercentChange = (value) => {
@@ -330,6 +332,13 @@ const LockAquaForm = forwardRef(
             return Number(lockAmount) * (1 + boost);
         }, [lockAmount, lockPeriod]);
 
+        const resetForm = () => {
+            setLockPeriod(null);
+            setLockAmount('');
+            setLockPercent(0);
+            setLockPeriodPercent(0);
+        };
+
         const onSubmit = () => {
             if (lockPeriod - Date.now() > MAX_LOCK_PERIOD) {
                 ToastService.showErrorToast('The maximum allowed lock period is 10 years');
@@ -342,6 +351,10 @@ const LockAquaForm = forwardRef(
                             amount: lockAmount,
                             period: lockPeriod,
                             iceAmount,
+                        }).then(({ isConfirmed }) => {
+                            if (isConfirmed) {
+                                resetForm();
+                            }
                         }),
                 });
                 return;
@@ -350,6 +363,10 @@ const LockAquaForm = forwardRef(
                 amount: lockAmount,
                 period: lockPeriod,
                 iceAmount,
+            }).then(({ isConfirmed }) => {
+                if (isConfirmed) {
+                    resetForm();
+                }
             });
         };
 
@@ -386,7 +403,7 @@ const LockAquaForm = forwardRef(
                     <Label>Lock Period</Label>
                 </ContentRow>
 
-                <DatePickerContainer>
+                <DatePickerContainer ref={datePicker}>
                     <DatePicker
                         customInput={<Input />}
                         selected={lockPeriod ? new Date(lockPeriod) : null}
@@ -403,6 +420,12 @@ const LockAquaForm = forwardRef(
                                 },
                             },
                         ]}
+                        onCalendarOpen={() => {
+                            datePicker.current.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start',
+                            });
+                        }}
                     />
 
                     <GlobalStyle />
