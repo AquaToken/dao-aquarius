@@ -10,6 +10,15 @@ export enum FilterOptions {
     constant = 'constant_product',
 }
 
+export enum PoolsSortFields {
+    liquidityUp = '-liquidity',
+    liquidityDown = 'liquidity',
+    volumeUp = '-volume',
+    volumeDown = 'volume',
+    rewardsUp = '-reward',
+    rewardsDown = 'reward',
+}
+
 export const stringToAsset = (str: string): Asset => {
     const [code, issuer] = str.split(':');
 
@@ -32,14 +41,21 @@ const processPools = async (pools) => {
     });
     return pools;
 };
-const getPoolsInfo = (filter: FilterOptions, page: number, size: number, search?: string) => {
+
+export const getPools = (
+    filter: FilterOptions,
+    page: number,
+    size: number,
+    sort: PoolsSortFields,
+    search?: string,
+) => {
     let total = 0;
 
     const capitalizedSearch = (search || '').toUpperCase();
 
     return axios
         .get(
-            `${API_URL}/pools/?pool_type=${filter}&page=${page}&size=${size}&search=${
+            `${API_URL}/pools/?pool_type=${filter}&sort=${sort}&page=${page}&size=${size}&search=${
                 capitalizedSearch === 'XLM' ? 'native' : capitalizedSearch
             }`,
         )
@@ -51,53 +67,6 @@ const getPoolsInfo = (filter: FilterOptions, page: number, size: number, search?
             return processPools(res.items);
         })
         .then((pools) => [pools, total]);
-};
-
-const getPoolsStats = (pools: string[]) => {
-    return (
-        axios
-            .get(`${API_URL}/statistics/?pool__in=${pools.join(',')}`)
-            // @ts-ignore
-            .then(({ data }) => data.items)
-    );
-};
-
-const getPoolsRewards = () => {
-    // @ts-ignore
-    return axios.get(`${API_URL}/pool-rewards/?size=1000`).then(({ data }) => data.items);
-};
-
-export const getPools = (filter: FilterOptions, page: number, size: number, search?: string) => {
-    let totalCount = 0;
-    let pools;
-    return getPoolsInfo(filter, page, size, search)
-        .then(([info, total]) => {
-            // @ts-ignore
-            pools = info;
-            // @ts-ignore
-            totalCount = total;
-            return Promise.all([
-                getPoolsStats(pools.map((pool) => pool.address)),
-                getPoolsRewards(),
-            ]);
-        })
-        .then(([stats, rewards]) => {
-            return pools.map((poolInf) => {
-                // @ts-ignore
-                const poolStat = stats.find(({ pool_address }) => pool_address === poolInf.address);
-                // @ts-ignore
-                const poolRewards = rewards.find(
-                    ({ pool_address }) => pool_address === poolInf.address,
-                );
-
-                return {
-                    ...poolInf,
-                    ...poolStat,
-                    ...poolRewards,
-                };
-            });
-        })
-        .then((pools) => [pools, totalCount]);
 };
 
 const getPoolInfo = (id: string) => {
@@ -128,13 +97,6 @@ const getPoolMembers = (id: string) => {
     );
 };
 
-const getPoolRewards = (id: string) => {
-    return axios
-        .get(`${API_URL}/pool-rewards/${id}/`)
-        .then(({ data }) => data)
-        .catch(() => ({}));
-};
-
 const getPoolEvents = (id) => {
     return (
         axios
@@ -150,38 +112,17 @@ export const getPool = (id: string) => {
     return Promise.all([
         getPoolInfo(id),
         getPoolStats(id),
-        getPoolRewards(id),
         getPoolMembers(id),
         getPoolEvents(id),
-    ]).then(([info, stats, rewards, members, events]) =>
-        Object.assign({}, info, stats, rewards, members, events),
-    );
+    ]).then(([info, stats, members, events]) => Object.assign({}, info, stats, members, events));
 };
 
 export const getUserPools = (accountId: string) => {
-    let pools;
     return (
         axios
             .get(`${API_URL}/pools/user/${accountId}/?size=1000`)
             // @ts-ignore
             .then(({ data }) => processPools(data.items))
-            .then((res) => {
-                pools = res;
-                return getPoolsStats(res.map((pool) => pool.address));
-            })
-            .then((stats) => {
-                return pools.map((poolInf) => {
-                    // @ts-ignore
-                    const poolStat = stats.find(
-                        ({ pool_address }) => pool_address === poolInf.address,
-                    );
-
-                    return {
-                        ...poolInf,
-                        ...poolStat,
-                    };
-                });
-            })
     );
 };
 

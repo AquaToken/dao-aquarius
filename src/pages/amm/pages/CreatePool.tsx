@@ -26,7 +26,7 @@ import ToggleGroup from '../../../common/basics/ToggleGroup';
 import useAuthStore from '../../../store/authStore/useAuthStore';
 import { CONTRACT_STATUS } from '../../../common/services/soroban.service';
 import PoolsList from '../components/PoolsList/PoolsList';
-import { FilterOptions, getPools } from '../api/api';
+import { FilterOptions, getPools, PoolsSortFields } from '../api/api';
 import { useHistory } from 'react-router-dom';
 
 const StyledForm = styled(Form)`
@@ -158,7 +158,9 @@ const CreatePool = ({ balances }) => {
     }, [balances]);
 
     useEffect(() => {
-        getPools(FilterOptions.all, 1, 1000).then((res) => setPools(res[0]));
+        getPools(FilterOptions.all, 1, 1000, PoolsSortFields.liquidityUp).then((res) =>
+            setPools(res[0]),
+        );
     }, []);
 
     const existingPools = useMemo(() => {

@@ -18,13 +18,13 @@ import SettingsIcon from '../../common/assets/img/icon-settings.svg';
 import { useDebounce } from '../../common/hooks/useDebounce';
 import Button from '../../common/basics/Button';
 import { IconFail } from '../../common/basics/Icons';
-import { USDC, USDT } from '../amm/AmmLegacy';
 import { CONTRACT_STATUS } from '../../common/services/soroban.service';
 import ChooseLoginMethodModal from '../../common/modals/ChooseLoginMethodModal';
 import { formatBalance } from '../../common/helpers/helpers';
 import SwapConfirmModal from './SwapConfirmModal/SwapConfirmModal';
 import SwapSettingsModal from './SwapSettingsModal/SwapSettingsModal';
 import { findSwapPath } from '../amm/api/api';
+import { USDC, USDT } from '../amm/components/BalancesBlock/BalancesBlock';
 
 const Container = styled.main`
     background-color: ${COLORS.lightGray};

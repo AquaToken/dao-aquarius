@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { FilterOptions, getPools } from '../api/api';
+import { FilterOptions, getPools, PoolsSortFields } from '../api/api';
 import styled from 'styled-components';
 import {
     commonMaxWidth,
@@ -137,6 +137,7 @@ const OPTIONS = [
 const PAGE_SIZE = 10;
 const Analytics = () => {
     const [filter, setFilter] = useState(FilterOptions.all);
+    const [sort, setSort] = useState(PoolsSortFields.liquidityUp);
     const [pools, setPools] = useState(null);
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(0);
@@ -154,12 +155,17 @@ const Analytics = () => {
 
     useEffect(() => {
         setPending(true);
-        getPools(filter, page, PAGE_SIZE, debouncedSearch.current).then(([pools, total]) => {
+        getPools(filter, page, PAGE_SIZE, sort, debouncedSearch.current).then(([pools, total]) => {
             setPools(pools);
             setTotal(total);
             setPending(false);
         });
-    }, [filter, page, debouncedSearch]);
+    }, [filter, page, debouncedSearch, sort]);
+
+    const changeSort = (newSort) => {
+        setSort(newSort);
+        setPage(1);
+    };
 
     const goToPoolPage = (id) => {
         history.push(`${AmmRoutes.analytics}${id}/`);
@@ -213,8 +219,38 @@ const Analytics = () => {
                                             { children: 'Assets', flexSize: 4 },
                                             { children: 'Type', flexSize: 2 },
                                             { children: 'Fee' },
-                                            { children: 'Daily reward' },
-                                            { children: 'TVL' },
+                                            {
+                                                children: 'Daily reward',
+                                                sort: {
+                                                    onClick: () =>
+                                                        changeSort(
+                                                            sort === PoolsSortFields.rewardsUp
+                                                                ? PoolsSortFields.rewardsDown
+                                                                : PoolsSortFields.rewardsUp,
+                                                        ),
+                                                    isEnabled:
+                                                        sort === PoolsSortFields.rewardsUp ||
+                                                        sort === PoolsSortFields.rewardsDown,
+                                                    isReversed:
+                                                        sort === PoolsSortFields.rewardsDown,
+                                                },
+                                            },
+                                            {
+                                                children: 'TVL',
+                                                sort: {
+                                                    onClick: () =>
+                                                        changeSort(
+                                                            sort === PoolsSortFields.liquidityUp
+                                                                ? PoolsSortFields.liquidityDown
+                                                                : PoolsSortFields.liquidityUp,
+                                                        ),
+                                                    isEnabled:
+                                                        sort === PoolsSortFields.liquidityUp ||
+                                                        sort === PoolsSortFields.liquidityDown,
+                                                    isReversed:
+                                                        sort === PoolsSortFields.liquidityDown,
+                                                },
+                                            },
                                         ]}
                                         body={pools.map((pool) => ({
                                             key: pool.address,
@@ -242,9 +278,12 @@ const Analytics = () => {
                                                 },
                                                 { children: `${pool.fee * 100}%`, label: 'Fee:' },
                                                 {
-                                                    children: pool.tps
+                                                    children: pool.reward_tps
                                                         ? `${formatBalance(
-                                                              (pool.tps / 1e7) * 60 * 60 * 24,
+                                                              (+pool.reward_tps / 1e7) *
+                                                                  60 *
+                                                                  60 *
+                                                                  24,
                                                               true,
                                                           )} AQUA`
                                                         : '-',
