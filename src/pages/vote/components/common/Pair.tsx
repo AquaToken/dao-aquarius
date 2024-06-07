@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useMemo } from 'react';
 import styled from 'styled-components';
 import * as StellarSdk from '@stellar/stellar-sdk';
 import { Breakpoints, COLORS } from '../../../../common/styles';
@@ -22,7 +23,6 @@ import useAssetsStore from '../../../../store/assetsStore/useAssetsStore';
 import { Link } from 'react-router-dom';
 import { AmmRoutes, MarketRoutes } from '../../../../routes';
 import { formatBalance } from '../../../../common/helpers/helpers';
-import { useMemo } from 'react';
 
 const Wrapper = styled.div<{
     verticalDirections?: boolean;
@@ -45,13 +45,18 @@ const Icons = styled.div<{
     isBig: boolean;
     assetsCount: number;
     verticalDirections?: boolean;
+    mobileVerticalDirections?: boolean;
 }>`
     display: flex;
     align-items: center;
     min-width: 12rem;
     justify-content: flex-end;
-    margin-left: ${({ verticalDirections, isBig, assetsCount }) =>
-        verticalDirections ? `-${(isBig ? 2 : 1) * assetsCount}rem` : '0'};
+
+    ${({ mobileVerticalDirections, verticalDirections }) =>
+        (mobileVerticalDirections || verticalDirections) &&
+        respondDown(Breakpoints.md)`
+              justify-content: start;
+          `}
 `;
 
 const Icon = styled.div<{
@@ -59,6 +64,8 @@ const Icon = styled.div<{
     isCircleLogo?: boolean;
     assetOrderNumber: number;
     assetsCount: number;
+    verticalDirections?: boolean;
+    mobileVerticalDirections?: boolean;
 }>`
     ${({ isBig, isCircleLogo }) => (isBig ? bigLogoStyles(isCircleLogo) : logoStyles)};
     box-sizing: content-box;
@@ -68,8 +75,18 @@ const Icon = styled.div<{
     background-color: ${({ assetOrderNumber, assetsCount }) =>
         assetsCount > assetOrderNumber ? COLORS.white : 'unset'};
     z-index: ${({ assetOrderNumber, assetsCount }) => assetsCount - assetOrderNumber};
-    right: ${({ isBig, assetOrderNumber, assetsCount }) =>
-        `-${(assetsCount - assetOrderNumber) * (isBig ? 3 : 1)}rem`};
+    right: ${({ isBig, assetOrderNumber, assetsCount, verticalDirections }) =>
+        `${
+            (verticalDirections ? assetOrderNumber - 1 : -(assetsCount - assetOrderNumber)) *
+            (isBig ? 3 : 1)
+        }rem`};
+
+    ${({ mobileVerticalDirections }) =>
+        mobileVerticalDirections &&
+        respondDown(Breakpoints.md)`
+              right: ${({ isBig, assetOrderNumber }) =>
+                  `${(assetOrderNumber - 1) * (isBig ? 3 : 1)}rem`};
+          `}
 `;
 
 const AssetsDetails = styled.div<{
@@ -275,6 +292,7 @@ const Pair = ({
                 isBig={isBigLogo}
                 verticalDirections={verticalDirections}
                 assetsCount={assetsCount}
+                mobileVerticalDirections={mobileVerticalDirections}
             >
                 <Icon
                     key={baseInfo?.asset_string}
@@ -282,6 +300,8 @@ const Pair = ({
                     isCircleLogo={isCircleLogos}
                     assetOrderNumber={1}
                     assetsCount={assetsCount}
+                    mobileVerticalDirections={mobileVerticalDirections}
+                    verticalDirections={verticalDirections}
                 >
                     <AssetLogo
                         logoUrl={baseInfo?.image}
@@ -295,6 +315,8 @@ const Pair = ({
                     isCircleLogo={isCircleLogos}
                     assetOrderNumber={2}
                     assetsCount={assetsCount}
+                    mobileVerticalDirections={mobileVerticalDirections}
+                    verticalDirections={verticalDirections}
                 >
                     <AssetLogo
                         logoUrl={counterInfo?.image}
@@ -309,6 +331,8 @@ const Pair = ({
                         isCircleLogo={isCircleLogos}
                         assetOrderNumber={3}
                         assetsCount={assetsCount}
+                        mobileVerticalDirections={mobileVerticalDirections}
+                        verticalDirections={verticalDirections}
                     >
                         <AssetLogo
                             logoUrl={thirdAssetInfo?.image}
@@ -324,6 +348,8 @@ const Pair = ({
                         isCircleLogo={isCircleLogos}
                         assetOrderNumber={4}
                         assetsCount={assetsCount}
+                        mobileVerticalDirections={mobileVerticalDirections}
+                        verticalDirections={verticalDirections}
                     >
                         <AssetLogo
                             logoUrl={fourthAssetInfo?.image}

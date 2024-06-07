@@ -28,6 +28,7 @@ const PoolMain = styled.div`
         flex-direction: column;
         background-color: ${COLORS.lightGray};
         border-radius: 0.6rem;
+        align-items: unset;
     `}
 `;
 
@@ -41,8 +42,20 @@ const PoolStat = styled.div`
     margin-left: auto;
     white-space: nowrap;
 
+    label {
+        color: ${COLORS.grayText};
+        font-weight: 400;
+        display: none;
+    }
+
     ${respondDown(Breakpoints.sm)`
         margin-left: unset;
+        flex-direction: row;
+        justify-content: space-between;
+        
+        label {
+            display: block;
+        }
     `}//span:last-child {
     //    font-size: 1.4rem;
     //    font-weight: 400;
@@ -161,8 +174,10 @@ const PoolsList = ({ pools, onUpdate, isUserList }) => {
                                 fourthAsset={pool.assets[3]}
                                 poolAddress={pool.address}
                                 withoutLink
+                                mobileVerticalDirections
                             />
                             <PoolStat>
+                                <label>My Liquidity:</label>
                                 <span>
                                     $
                                     {formatBalance(
