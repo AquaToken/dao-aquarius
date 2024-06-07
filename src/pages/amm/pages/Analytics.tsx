@@ -125,6 +125,7 @@ const SelectStyled = styled(Select)`
     display: none;
     ${respondDown(Breakpoints.sm)`
         display: flex;
+        margin-bottom: 3.6rem;
     `}
 `;
 
