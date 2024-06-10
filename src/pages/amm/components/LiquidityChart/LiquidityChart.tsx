@@ -74,7 +74,7 @@ const LiquidityChart = ({
                 d3
                     .axisBottom()
                     .scale(x)
-                    .tickFormat(d3.timeFormat('%b %d'))
+                    .tickFormat(d3.timeFormat('%d'))
                     .ticks(d3.timeDay.filter((d) => d3.timeDay.count(0, d) % 3 === 0)),
             ),
         [gx, x],

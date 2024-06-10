@@ -85,7 +85,7 @@ const VolumeChart = ({
                 d3
                     .axisBottom()
                     .scale(x)
-                    .tickFormat(d3.timeFormat('%b %d'))
+                    .tickFormat(d3.timeFormat('%d'))
                     .tickValues(
                         x.domain().filter(function (d, i) {
                             return !(i % 4);
