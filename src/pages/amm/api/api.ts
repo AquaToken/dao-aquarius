@@ -82,7 +82,7 @@ const getPoolStats = (id: string) => {
         axios
             .get(`${API_URL}/statistics/pool/${id}/`)
             // @ts-ignore
-            .then(({ data }) => ({ stats: data.items }))
+            .then(({ data }) => ({ stats: data.items.reverse() }))
     );
 };
 
