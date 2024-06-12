@@ -9,7 +9,7 @@ import RestoreContractModal from '../modals/RestoreContractModal/RestoreContract
 import { getAssetString } from '../../store/assetsStore/actions';
 
 const SOROBAN_SERVER = 'https://soroban-testnet.stellar.org:443';
-export const AMM_SMART_CONTACT_ID = 'CB7S3KMZ2GP46YU72WJKXFMSFLUB3MZYQL3LSIZMYTQTXIAS2EXUEANC';
+export const AMM_SMART_CONTACT_ID = 'CCKTUGINX4LEGTAFWE2U6BK7C4NSKXNWTYXJ5FSGBUQXJUL7ZHQZWLCC';
 
 enum AMM_CONTRACT_METHOD {
     GET_POOLS = 'get_pools',

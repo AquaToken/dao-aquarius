@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { FilterOptions, getPools, PoolsSortFields } from '../api/api';
+import { FilterOptions, getPools, getTotalStats, PoolsSortFields } from '../api/api';
 import styled from 'styled-components';
 import {
     commonMaxWidth,
@@ -27,6 +27,8 @@ import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModa
 import { useDebounce } from '../../../common/hooks/useDebounce';
 import { Empty } from '../../profile/YourVotes/YourVotes';
 import Select from '../../../common/basics/Select';
+import VolumeChart from '../components/VolumeChart/VolumeChart';
+import LiquidityChart from '../components/LiquidityChart/LiquidityChart';
 
 const Container = styled.main`
     height: 100%;
@@ -55,6 +57,7 @@ const Section = styled.div`
     ${flexAllCenter};
     background-color: ${COLORS.white};
     width: 100%;
+    margin-bottom: 5rem;
 `;
 
 const Header = styled.div`
@@ -129,6 +132,25 @@ const SelectStyled = styled(Select)`
     `}
 `;
 
+const Charts = styled.div`
+    display: flex;
+    justify-content: space-evenly;
+    gap: 1.6rem;
+    padding: 3rem 0;
+
+    ${respondDown(Breakpoints.xl)`
+        flex-direction: column;
+    `}
+`;
+
+const Chart = styled.div`
+    ${flexAllCenter};
+    background-color: ${COLORS.lightGray};
+    padding: 1.6rem;
+    border-radius: 0.6rem;
+    flex: 1;
+`;
+
 const OPTIONS = [
     { label: 'All', value: FilterOptions.all },
     { label: 'Stable swap', value: FilterOptions.stable },
@@ -144,11 +166,18 @@ const Analytics = () => {
     const [total, setTotal] = useState(0);
     const [pending, setPending] = useState(false);
     const [search, setSearch] = useState('');
+    const [totalStats, setTotalStats] = useState(null);
 
     const debouncedSearch = useDebounce(search, 700);
     const history = useHistory();
 
     const { isLogged } = useAuthStore();
+
+    useEffect(() => {
+        getTotalStats().then((res) => {
+            setTotalStats(res);
+        });
+    }, []);
 
     useEffect(() => {
         setPage(1);
@@ -191,6 +220,19 @@ const Analytics = () => {
                         create pool <PlusIcon />
                     </Button>
                 </Header>
+
+                {totalStats && (
+                    <Section>
+                        <Charts>
+                            <Chart>
+                                <VolumeChart data={totalStats} width={576} height={320} />
+                            </Chart>
+                            <Chart>
+                                <LiquidityChart data={totalStats} width={576} height={320} />
+                            </Chart>
+                        </Charts>
+                    </Section>
+                )}
 
                 <Section>
                     {!pools || !StellarService.priceLumenUsd ? (

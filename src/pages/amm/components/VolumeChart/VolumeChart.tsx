@@ -36,7 +36,7 @@ const VolumeChart = ({
     marginLeft = 16,
 }) => {
     const processedData = useMemo(() => {
-        let date = set(transformDate(data[0].datetime_str), {
+        let date = set(transformDate(data[0].datetime_str || data[0].date_str), {
             hours: 0,
             minutes: 0,
             seconds: 0,
@@ -53,7 +53,7 @@ const VolumeChart = ({
         return [
             ...data
                 .reduce((acc, item) => {
-                    const itemDate = item.datetime_str.split(' ')[0];
+                    const itemDate = item.datetime_str?.split(' ')[0] || item.date_str;
 
                     acc.set(itemDate, {
                         date: acc.get(itemDate).date,

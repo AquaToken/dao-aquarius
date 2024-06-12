@@ -25,10 +25,10 @@ const LiquidityValue = styled.text`
 `;
 
 export const transformDate = (date_str) => {
-    const [date, time] = date_str.split(' ');
+    const [date, time = ''] = date_str.split(' ');
 
     const [year, month, day] = date.split('-');
-    const [hour, minute, second] = time.split(':');
+    const [hour = 0, minute = 0, second = 0] = time.split(':');
     return new Date(Date.UTC(year, month - 1, day, hour, minute, second));
 };
 
@@ -47,7 +47,9 @@ const LiquidityChart = ({
     const x = d3
         .scaleTime()
         .range([marginLeft, width - marginRight])
-        .domain(d3.extent(data, (d) => transformDate(d.datetime_str)) as [Date, Date]);
+        .domain(
+            d3.extent(data, (d) => transformDate(d.datetime_str || d.date_str)) as [Date, Date],
+        );
     const y = d3
         .scaleLinear()
         .range([height - marginBottom, marginTop + height * 0.4])
@@ -55,7 +57,7 @@ const LiquidityChart = ({
 
     const line = d3
         .line()
-        .x((d) => x(transformDate(d.datetime_str)))
+        .x((d) => x(transformDate(d.datetime_str || d.date_str)))
         .y((d) => y(d.liquidity / 1e7))
         .curve(d3.curveMonotoneX);
 
@@ -95,7 +97,7 @@ const LiquidityChart = ({
 
     const onMouseMove = (xCoord) => {
         const nearestIndex = d3.bisectCenter(
-            data.map((item) => transformDate(item.datetime_str)),
+            data.map((item) => transformDate(item.datetime_str || item.date_str)),
             x.invert(xCoord),
         );
         setSelectedIndex(nearestIndex);
@@ -125,9 +127,14 @@ const LiquidityChart = ({
                 </LiquidityValue>
                 {selectedIndex !== null && (
                     <GrayText x="16" y="87">
-                        {getDateString(transformDate(data[selectedIndex].datetime_str).getTime(), {
-                            withTime: true,
-                        })}
+                        {getDateString(
+                            transformDate(
+                                data[selectedIndex].datetime_str || data[selectedIndex].date_str,
+                            ).getTime(),
+                            {
+                                withTime: true,
+                            },
+                        )}
                     </GrayText>
                 )}
             </g>
@@ -141,9 +148,17 @@ const LiquidityChart = ({
                     <line
                         stroke={COLORS.border}
                         strokeWidth="1"
-                        x1={x(transformDate(data[selectedIndex].datetime_str))}
+                        x1={x(
+                            transformDate(
+                                data[selectedIndex].datetime_str || data[selectedIndex].date_str,
+                            ),
+                        )}
                         y1={height - marginBottom}
-                        x2={x(transformDate(data[selectedIndex].datetime_str))}
+                        x2={x(
+                            transformDate(
+                                data[selectedIndex].datetime_str || data[selectedIndex].date_str,
+                            ),
+                        )}
                         y2={height * 0.4}
                     />
                     <circle
@@ -151,7 +166,11 @@ const LiquidityChart = ({
                         strokeWidth="2"
                         r="2.5"
                         fill={COLORS.tooltip}
-                        cx={x(transformDate(data[selectedIndex].datetime_str))}
+                        cx={x(
+                            transformDate(
+                                data[selectedIndex].datetime_str || data[selectedIndex].date_str,
+                            ),
+                        )}
                         cy={y(data[selectedIndex].liquidity / 1e7)}
                     />
                 </g>

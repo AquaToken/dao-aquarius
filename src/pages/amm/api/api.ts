@@ -136,3 +136,12 @@ export const findSwapPath = (baseId: string, counterId: string, amount: string) 
     });
     return axios.post(`${API_URL}/pools/find-path/`, body, { headers }).then(({ data }) => data);
 };
+
+export const getTotalStats = () => {
+    return (
+        axios
+            .get(`${API_URL}/statistics/totals/`)
+            // @ts-ignore
+            .then(({ data }) => data.items.reverse())
+    );
+};
