@@ -24,12 +24,9 @@ import { createGlobalStyle } from 'styled-components';
 import AppGlobalStyle from './common/components/AppGlobalStyles';
 import Governance from './pages/governance/Governance';
 import Title from 'react-document-title';
-import ProjectPurposeModal, {
-    SHOW_PURPOSE_ALIAS,
-} from './pages/vote/components/common/ProjectPurposeModal';
-import TestnetPurposeModal, {
-    SHOW_PURPOSE_ALIAS_TESTNET,
-} from './common/modals/TestnetPurposeModal';
+import MainNetPurposeModal, {
+    SHOW_PURPOSE_ALIAS_MAIN_NET,
+} from './common/modals/MainNetPurposeModal';
 
 const MainPage = lazy(() => import('./pages/main/MainPage'));
 const LockerPage = lazy(() => import('./pages/locker/Locker'));
@@ -145,9 +142,9 @@ const App = () => {
     }, []);
 
     useEffect(() => {
-        const showPurpose = JSON.parse(localStorage.getItem(SHOW_PURPOSE_ALIAS_TESTNET) || 'true');
+        const showPurpose = JSON.parse(localStorage.getItem(SHOW_PURPOSE_ALIAS_MAIN_NET) || 'true');
         if (showPurpose) {
-            ModalService.openModal(TestnetPurposeModal, {}, false);
+            ModalService.openModal(MainNetPurposeModal, {}, false);
         }
     }, []);
 

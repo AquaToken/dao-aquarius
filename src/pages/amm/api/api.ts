@@ -2,7 +2,7 @@ import axios from 'axios';
 import { AssetsService } from '../../../common/services/globalServices';
 import { Asset } from '@stellar/stellar-sdk';
 
-const API_URL = 'https://amm-api-testnet.aqua.network';
+const API_URL = 'https://amm-api.aqua.network';
 
 export enum FilterOptions {
     all = '',

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { useState } from 'react';
-import * as StellarSdk from '@stellar/stellar-sdk';
 import { Header, Title } from '../../../profile/AmmRewards/AmmRewards';
 import PageLoader from '../../../../common/basics/PageLoader';
 import Asset from '../../../vote/components/AssetDropdown/Asset';
@@ -56,30 +55,7 @@ const Status = styled.div`
     }
 `;
 
-const GetTokenButton = styled(Button)`
-    margin: 5rem auto;
-`;
-
-export const USDT = new StellarSdk.Asset(
-    'USDT',
-    'GAHPYWLK6YRN7CVYZOO4H3VDRZ7PVF5UJGLZCSPAEIKJE2XSWF5LAGER',
-);
-export const USDC = new StellarSdk.Asset(
-    'USDC',
-    'GAHPYWLK6YRN7CVYZOO4H3VDRZ7PVF5UJGLZCSPAEIKJE2XSWF5LAGER',
-);
-export const AQUA = new StellarSdk.Asset(
-    'AQUA',
-    'GAHPYWLK6YRN7CVYZOO4H3VDRZ7PVF5UJGLZCSPAEIKJE2XSWF5LAGER',
-);
-
-export const DAI = new StellarSdk.Asset(
-    'DAI',
-    'GAHPYWLK6YRN7CVYZOO4H3VDRZ7PVF5UJGLZCSPAEIKJE2XSWF5LAGER',
-);
-
 const BalancesBlock = ({ balances }) => {
-    const [getTokenPending, setGetTokenPending] = useState(false);
     const { account } = useAuthStore();
 
     const [pendingId, setPendingId] = useState(null);
@@ -97,27 +73,6 @@ const BalancesBlock = ({ balances }) => {
                 console.log(e);
                 ToastService.showErrorToast('Oops! Something went wrong');
                 setPendingId(null);
-            });
-    };
-
-    const neededInTestAssets =
-        account?.getAssetBalance(USDT) === null ||
-        account?.getAssetBalance(USDC) === null ||
-        account?.getAssetBalance(AQUA) === null ||
-        account?.getAssetBalance(DAI) === null;
-
-    const getTestTokens = () => {
-        setGetTokenPending(true);
-
-        SorobanService.getAddTrustTx(account?.accountId())
-            .then((tx) => account.signAndSubmitTx(tx))
-            .then(() => SorobanService.getTestAssets(account?.accountId()))
-            .then(() => {
-                ToastService.showSuccessToast('Test tokens have been received');
-                setGetTokenPending(false);
-            })
-            .catch(() => {
-                setGetTokenPending(false);
             });
     };
 
@@ -182,15 +137,6 @@ const BalancesBlock = ({ balances }) => {
                     <PageLoader />
                 ) : (
                     <>
-                        {neededInTestAssets && (
-                            <GetTokenButton
-                                isBig
-                                onClick={() => getTestTokens()}
-                                pending={getTokenPending}
-                            >
-                                GET TEST TOKENS
-                            </GetTokenButton>
-                        )}
                         <Table
                             head={[
                                 { children: 'Asset' },

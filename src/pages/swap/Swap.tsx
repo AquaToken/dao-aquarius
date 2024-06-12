@@ -10,7 +10,7 @@ import {
 import AssetDropdown from '../vote/components/AssetDropdown/AssetDropdown';
 import { Breakpoints, COLORS } from '../../common/styles';
 import useAuthStore from '../../store/authStore/useAuthStore';
-import { ModalService, SorobanService } from '../../common/services/globalServices';
+import { ModalService, SorobanService, StellarService } from '../../common/services/globalServices';
 import PageLoader from '../../common/basics/PageLoader';
 import Input from '../../common/basics/Input';
 import SwapIcon from '../../common/assets/img/icon-arrows-circle.svg';
@@ -24,7 +24,7 @@ import { formatBalance } from '../../common/helpers/helpers';
 import SwapConfirmModal from './SwapConfirmModal/SwapConfirmModal';
 import SwapSettingsModal from './SwapSettingsModal/SwapSettingsModal';
 import { findSwapPath } from '../amm/api/api';
-import { USDC, USDT } from '../amm/components/BalancesBlock/BalancesBlock';
+import { AQUA_CODE, AQUA_ISSUER } from '../../common/services/stellar.service';
 
 const Container = styled.main`
     background-color: ${COLORS.lightGray};
@@ -176,8 +176,8 @@ const SettingsButton = styled.div`
 const Swap = ({ balances }) => {
     const { account, isLogged } = useAuthStore();
 
-    const [base, setBase] = useState(USDT);
-    const [counter, setCounter] = useState(USDC);
+    const [base, setBase] = useState(StellarService.createLumen());
+    const [counter, setCounter] = useState(StellarService.createAsset(AQUA_CODE, AQUA_ISSUER));
     const [error, setError] = useState(false);
 
     const [baseAmount, setBaseAmount] = useState('');

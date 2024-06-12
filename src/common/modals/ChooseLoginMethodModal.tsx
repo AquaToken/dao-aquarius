@@ -92,39 +92,6 @@ const StellarLogo = styled(Stellar)`
     min-width: 3.7rem;
 `;
 
-const WalletConnectLogoRelative = styled.div`
-    position: relative;
-`;
-
-const Tooltip = styled.div`
-    display: flex;
-    align-items: center;
-    position: absolute;
-    top: calc(100% + 1.2rem);
-    background-color: ${COLORS.tooltip};
-    white-space: nowrap;
-    padding: 0.4rem 0.7rem;
-    border-radius: 0.5rem;
-
-    &::after {
-        content: '';
-        position: absolute;
-        top: -0.3rem;
-        left: 1.7rem;
-        border-bottom: 0.3rem solid ${COLORS.tooltip};
-        border-left: 0.3rem solid ${COLORS.transparent};
-        border-right: 0.3rem solid ${COLORS.transparent};
-    }
-`;
-
-const TooltipText = styled.div`
-    margin-left: 0.5rem;
-    font-size: 1.2rem;
-    line-height: 1.4rem;
-    font-weight: bold;
-    color: ${COLORS.white};
-`;
-
 const ChooseLoginMethodModal = ({
     close,
     params,
@@ -222,41 +189,41 @@ const ChooseLoginMethodModal = ({
         <>
             <ModalTitle>Sign in</ModalTitle>
 
-            {/*{!isMobile() && (*/}
-            {/*    <LoginMethod onClick={() => chooseMethod(LoginTypes.lobstr)}>*/}
-            {/*        <LobstrLogo />*/}
-            {/*        <LoginMethodName>LOBSTR wallet</LoginMethodName>*/}
-            {/*        <ArrowRight />*/}
-            {/*    </LoginMethod>*/}
-            {/*)}*/}
+            {!isMobile() && (
+                <LoginMethod onClick={() => chooseMethod(LoginTypes.lobstr)}>
+                    <LobstrLogo />
+                    <LoginMethodName>LOBSTR wallet</LoginMethodName>
+                    <ArrowRight />
+                </LoginMethod>
+            )}
 
-            {/*<LoginMethod onClick={() => chooseMethod(LoginTypes.walletConnect)}>*/}
-            {/*    <WalletConnectLogo />*/}
+            <LoginMethod onClick={() => chooseMethod(LoginTypes.walletConnect)}>
+                <WalletConnectLogo />
 
-            {/*    <LoginMethodName>WalletConnect</LoginMethodName>*/}
-            {/*    <ArrowRight />*/}
-            {/*</LoginMethod>*/}
+                <LoginMethodName>WalletConnect</LoginMethodName>
+                <ArrowRight />
+            </LoginMethod>
 
-            {/*<LoginMethod onClick={() => chooseMethod(LoginTypes.public)}>*/}
-            {/*    <StellarLogo />*/}
-            {/*    <LoginMethodWithDescription>*/}
-            {/*        <LoginMethodName>Stellar Laboratory</LoginMethodName>*/}
-            {/*        <LoginMethodDescription>*/}
-            {/*            Sign with Trezor, Albedo or others tools.*/}
-            {/*        </LoginMethodDescription>*/}
-            {/*    </LoginMethodWithDescription>*/}
+            <LoginMethod onClick={() => chooseMethod(LoginTypes.public)}>
+                <StellarLogo />
+                <LoginMethodWithDescription>
+                    <LoginMethodName>Stellar Laboratory</LoginMethodName>
+                    <LoginMethodDescription>
+                        Sign with Trezor, Albedo or others tools.
+                    </LoginMethodDescription>
+                </LoginMethodWithDescription>
 
-            {/*    <ArrowRight />*/}
-            {/*</LoginMethod>*/}
+                <ArrowRight />
+            </LoginMethod>
 
-            {/*<LoginMethod onClick={() => chooseMethod(LoginTypes.ledger)}>*/}
-            {/*    <Ledger />*/}
-            {/*    <LoginMethodWithDescription>*/}
-            {/*        <LoginMethodName>Ledger</LoginMethodName>*/}
-            {/*    </LoginMethodWithDescription>*/}
+            <LoginMethod onClick={() => chooseMethod(LoginTypes.ledger)}>
+                <Ledger />
+                <LoginMethodWithDescription>
+                    <LoginMethodName>Ledger</LoginMethodName>
+                </LoginMethodWithDescription>
 
-            {/*    <ArrowRight />*/}
-            {/*</LoginMethod>*/}
+                <ArrowRight />
+            </LoginMethod>
 
             {!isMobile() && (
                 <LoginMethod onClick={() => chooseMethod(LoginTypes.freighter)}>

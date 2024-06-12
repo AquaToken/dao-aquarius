@@ -228,15 +228,16 @@ const CreatePool = ({ balances }) => {
             firstAsset,
             secondAsset,
             constantFee,
-        ).then((tx) =>
-            account.signAndSubmitTx(tx).then((res) => {
+        ).then((tx) => {
+            console.log(tx);
+            return account.signAndSubmitTx(tx).then((res) => {
                 const poolAddress = SorobanService.getContactIdFromHash(
                     res.value()[1].value().value().toString('hex'),
                 );
                 ToastService.showSuccessToast('Pool successfully created');
                 history.push(`${AmmRoutes.analytics}${poolAddress}`);
-            }),
-        );
+            });
+        });
     };
 
     return (

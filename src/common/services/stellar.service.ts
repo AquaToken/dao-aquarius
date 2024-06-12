@@ -10,7 +10,7 @@ import { ToastService } from './globalServices';
 import { ServerApi } from '@stellar/stellar-sdk/lib/horizon';
 
 enum HORIZON_SERVER {
-    stellar = 'https://horizon-testnet.stellar.org',
+    stellar = 'https://horizon.stellar.org',
 }
 
 const VAULT_API = 'https://vault.lobstr.co/api/transactions/';
