@@ -283,7 +283,7 @@ const AssetDropdown = ({
     }, [debouncedSearchText]);
 
     const onClickAsset = (asset) => {
-        onUpdate(asset);
+        onUpdate(StellarService.createAsset(asset.code, asset.issuer));
     };
 
     const resetAsset = (event) => {
