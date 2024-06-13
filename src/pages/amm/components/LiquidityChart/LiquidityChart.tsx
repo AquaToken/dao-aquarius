@@ -29,7 +29,7 @@ export const transformDate = (date_str) => {
 
     const [year, month, day] = date.split('-');
     const [hour = 0, minute = 0, second = 0] = time.split(':');
-    return new Date(Date.UTC(year, month - 1, day, hour, minute, second));
+    return new Date(year, month - 1, day, hour, minute, second);
 };
 
 const LiquidityChart = ({
@@ -134,7 +134,8 @@ const LiquidityChart = ({
                             {
                                 withTime: true,
                             },
-                        )}
+                        )}{' '}
+                        UTC
                     </GrayText>
                 )}
             </g>
