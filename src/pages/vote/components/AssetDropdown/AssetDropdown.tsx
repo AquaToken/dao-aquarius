@@ -310,7 +310,8 @@ const AssetDropdown = ({
 
             return (
                 (assetItem.code.toLowerCase().includes(searchText.toLowerCase()) ||
-                    assetItem.issuer?.toLowerCase().includes(searchText.toLowerCase()) ||
+                    (StellarSdk.StrKey.isValidEd25519PublicKey(searchText) &&
+                            assetItem.issuer?.toLowerCase().includes(searchText.toLowerCase())) ||
                     assetInfo?.home_domain?.toLowerCase().includes(searchText.toLowerCase())) &&
                 !(assetItem.code === exclude?.code && assetItem.issuer === exclude?.issuer) &&
                 !excludeList?.find(
