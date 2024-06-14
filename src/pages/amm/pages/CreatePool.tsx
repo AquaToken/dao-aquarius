@@ -125,6 +125,8 @@ const FEE_OPTIONS = [
     { value: 100, label: '1%' },
 ];
 
+const CREATE_STABLE_POOL_COST = 1; // 1 AQUA
+
 const CreatePool = ({ balances }) => {
     const [type, setType] = useState(PoolTypes.stable);
     const [assetsCount, setAssetsCount] = useState(2);
@@ -200,8 +202,10 @@ const CreatePool = ({ balances }) => {
             return;
         }
 
-        if (Number(account.getAquaBalance() < 1)) {
-            ToastService.showErrorToast('You need at least 1 AQUA to create pool');
+        if (Number(account.getAquaBalance() < CREATE_STABLE_POOL_COST)) {
+            ToastService.showErrorToast(
+                `You need at least ${CREATE_STABLE_POOL_COST} AQUA to create pool`,
+            );
             return;
         }
 
@@ -280,7 +284,8 @@ const CreatePool = ({ balances }) => {
                                         Highly effecient AMM model for correlated assets (i.e.
                                         stablecoins) that offers lower slippage.
                                         <br />
-                                        You need at least 1 AQUA to create pool.
+                                        You need at least {CREATE_STABLE_POOL_COST} AQUA to create
+                                        pool.
                                     </p>
                                 </div>
                                 <Tick />
