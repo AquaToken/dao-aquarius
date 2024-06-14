@@ -100,6 +100,19 @@ const PairWrap = styled.div`
     margin: 2.2rem 0;
 `;
 
+const FirstDeposit = styled.div`
+    border: 0.1rem solid ${COLORS.pinkRed};
+    background-color: ${COLORS.pinkRed}0f;
+    border-radius: 0.6rem;
+    padding: 2.4rem;
+    margin-bottom: 4.8rem;
+    font-weight: bold;
+
+    ${respondDown(Breakpoints.sm)`
+        margin-bottom: 2rem;
+    `}
+`;
+
 const DepositToPool = ({ params }) => {
     const { account } = useAuthStore();
     const { pool } = params;
@@ -224,33 +237,41 @@ const DepositToPool = ({ params }) => {
                     <span>{pool.liquidity ? formatBalance(pool.liquidity / 1e7, true) : '0'}</span>
                 </DescriptionRow>
 
-                <PoolInfo>
-                    <PairWrap>
-                        <Pair
-                            base={pool.assets[0]}
-                            counter={pool.assets[1]}
-                            thirdAsset={pool.assets[2]}
-                            fourthAsset={pool.assets[3]}
-                        />
-                    </PairWrap>
+                {shares === 0 ? (
+                    <FirstDeposit>
+                        ☝️ This is the first deposit into this pool. We recommend depositing tokens
+                        according to the market rate. Otherwise, traders may profit from your
+                        deposit, and you could lose money.
+                    </FirstDeposit>
+                ) : (
+                    <PoolInfo>
+                        <PairWrap>
+                            <Pair
+                                base={pool.assets[0]}
+                                counter={pool.assets[1]}
+                                thirdAsset={pool.assets[2]}
+                                fourthAsset={pool.assets[3]}
+                            />
+                        </PairWrap>
 
-                    <DescriptionRow>
-                        <span>Pool shares</span>
-                        <span>{shares !== null ? formatBalance(shares) : <DotsLoader />}</span>
-                    </DescriptionRow>
-                    {pool.assets.map((asset) => (
                         <DescriptionRow>
-                            <span>Pooled {asset.code}</span>
-                            <span>
-                                {reserves !== null ? (
-                                    formatBalance(reserves.get(getAssetString(asset)))
-                                ) : (
-                                    <DotsLoader />
-                                )}
-                            </span>
+                            <span>Pool shares</span>
+                            <span>{shares !== null ? formatBalance(shares) : <DotsLoader />}</span>
                         </DescriptionRow>
-                    ))}
-                </PoolInfo>
+                        {pool.assets.map((asset) => (
+                            <DescriptionRow>
+                                <span>Pooled {asset.code}</span>
+                                <span>
+                                    {reserves !== null ? (
+                                        formatBalance(reserves.get(getAssetString(asset)))
+                                    ) : (
+                                        <DotsLoader />
+                                    )}
+                                </span>
+                            </DescriptionRow>
+                        ))}
+                    </PoolInfo>
+                )}
 
                 <Button
                     isBig
