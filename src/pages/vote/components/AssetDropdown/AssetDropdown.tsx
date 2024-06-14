@@ -193,16 +193,20 @@ const AssetDropdown = ({
 }: AssetDropdownProps) => {
     const { assets: knownAssets, assetsInfo, processNewAssets } = useAssetsStore();
 
-    const unknownUserAssets =
-        assetsList?.filter(
-            (asset) =>
-                !knownAssets.find(
-                    (knownAsset) =>
-                        knownAsset.code === asset.code && knownAsset.issuer === asset.issuer,
-                ),
-        ) || [];
+    const userAssets = assetsList || [];
 
-    const assets = [...knownAssets, ...unknownUserAssets];
+    const assets = [
+        ...userAssets.sort((a, b) => a.code.localeCompare(b.code)),
+        ...(knownAssets
+            .filter(
+                (knownAsset) =>
+                    !userAssets.find(
+                        (asset) =>
+                            knownAsset.code === asset.code && knownAsset.issuer === asset.issuer,
+                    ),
+            )
+            .sort((a, b) => a.code.localeCompare(b.code)) || []),
+    ];
 
     const [isOpen, setIsOpen] = useState(false);
     const [selectedAsset, setSelectedAsset] = useState(asset);
@@ -301,23 +305,21 @@ const AssetDropdown = ({
     };
 
     const filteredAssets = useMemo(() => {
-        return [...assets, ...searchResults]
-            .filter((assetItem) => {
-                const assetInfo = assetsInfo.get(getAssetString(assetItem));
+        return [...assets, ...searchResults].filter((assetItem) => {
+            const assetInfo = assetsInfo.get(getAssetString(assetItem));
 
-                return (
-                    (assetItem.code.toLowerCase().includes(searchText.toLowerCase()) ||
-                        assetItem.issuer?.toLowerCase().includes(searchText.toLowerCase()) ||
-                        assetInfo?.home_domain?.toLowerCase().includes(searchText.toLowerCase())) &&
-                    !(assetItem.code === exclude?.code && assetItem.issuer === exclude?.issuer) &&
-                    !excludeList?.find(
-                        (excludeToken) =>
-                            excludeToken.code === assetItem.code &&
-                            assetItem.issuer === excludeToken.issuer,
-                    )
-                );
-            })
-            .sort((a, b) => a.code.localeCompare(b.code));
+            return (
+                (assetItem.code.toLowerCase().includes(searchText.toLowerCase()) ||
+                    assetItem.issuer?.toLowerCase().includes(searchText.toLowerCase()) ||
+                    assetInfo?.home_domain?.toLowerCase().includes(searchText.toLowerCase())) &&
+                !(assetItem.code === exclude?.code && assetItem.issuer === exclude?.issuer) &&
+                !excludeList?.find(
+                    (excludeToken) =>
+                        excludeToken.code === assetItem.code &&
+                        assetItem.issuer === excludeToken.issuer,
+                )
+            );
+        });
     }, [assets, searchText, assetsInfo, searchResults, exclude, excludeList]);
 
     return (
