@@ -6,6 +6,7 @@ import { Breakpoints, COLORS } from '../../../common/styles';
 import { AmmRoutes } from '../../../routes';
 import ArrowLeft from '../../../common/assets/img/icon-arrow-left.svg';
 import Tick from '../../../common/assets/img/icon-tick-white.svg';
+import Info from '../../../common/assets/img/icon-info.svg';
 import {
     Back,
     BackButton,
@@ -28,6 +29,7 @@ import { CONTRACT_STATUS } from '../../../common/services/soroban.service';
 import PoolsList from '../components/PoolsList/PoolsList';
 import { FilterOptions, getPools, PoolsSortFields } from '../api/api';
 import { useHistory } from 'react-router-dom';
+import Tooltip, { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
 
 const StyledForm = styled(Form)`
     padding: 0 4.8rem;
@@ -114,7 +116,21 @@ const ToggleGroupStyled = styled(ToggleGroup)`
     width: fit-content;
 `;
 
-enum PoolTypes {
+const InputLabel = styled.span`
+    display: flex;
+    align-items: center;
+
+    svg {
+        margin-left: 0.4rem;
+    }
+`;
+
+const TooltipInner = styled.div`
+    width: 20rem;
+    white-space: pre-line;
+`;
+
+const enum PoolTypes {
     stable = 'stable',
     constant = 'constant',
 }
@@ -386,7 +402,23 @@ const CreatePool = ({ balances }) => {
                                         onChange={(e) => setStableFee(e.target.value)}
                                     />
                                     <Input
-                                        label="A (1-5000)"
+                                        label={
+                                            <Tooltip
+                                                showOnHover
+                                                content={
+                                                    <TooltipInner>
+                                                        A - amplification coefficient. The greater
+                                                        this value, the more stable the pool ratio
+                                                        and the smaller the slippage.
+                                                    </TooltipInner>
+                                                }
+                                                position={TOOLTIP_POSITION.top}
+                                            >
+                                                <InputLabel>
+                                                    A (1-5000) <Info />
+                                                </InputLabel>
+                                            </Tooltip>
+                                        }
                                         value={a}
                                         onChange={(e) => setA(e.target.value)}
                                     />
