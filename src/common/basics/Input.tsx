@@ -82,7 +82,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     isMedium?: boolean;
     isRightAligned?: boolean;
     isCenterAligned?: boolean;
-    label?: string;
+    label?: string | React.ReactNode;
 }
 
 const Input = forwardRef(
