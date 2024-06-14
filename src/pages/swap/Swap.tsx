@@ -204,6 +204,7 @@ const Swap = ({ balances }) => {
                         setError(true);
                         setEstimatePending(false);
                     } else {
+                        setError(false);
                         setEstimatePending(false);
                         // @ts-ignore
                         setCounterAmount((res.amount / 1e7).toFixed(7));
