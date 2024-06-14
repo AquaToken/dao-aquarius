@@ -30,6 +30,7 @@ import PoolsList from '../components/PoolsList/PoolsList';
 import { FilterOptions, getPools, PoolsSortFields } from '../api/api';
 import { useHistory } from 'react-router-dom';
 import Tooltip, { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
+import ContractNotFound from '../components/ContractNotFound/ContractNotFound';
 
 const StyledForm = styled(Form)`
     padding: 0 4.8rem;
@@ -82,6 +83,7 @@ const PoolType = styled.div<{ isActive?: boolean }>`
 const DropdownContainer = styled.div`
     display: flex;
     position: relative;
+    flex-direction: column;
 `;
 
 const StyledAssetDropdown = styled(AssetDropdown)`
@@ -147,9 +149,13 @@ const CreatePool = ({ balances }) => {
     const [type, setType] = useState(PoolTypes.stable);
     const [assetsCount, setAssetsCount] = useState(2);
     const [firstAsset, setFirstAsset] = useState(null);
+    const [firstAssetStatus, setFirstAssetStatus] = useState(null);
     const [secondAsset, setSecondAsset] = useState(null);
+    const [secondAssetStatus, setSecondAssetStatus] = useState(null);
     const [thirdAsset, setThirdAsset] = useState(null);
+    const [thirdAssetStatus, setThirdAssetStatus] = useState(null);
     const [fourthAsset, setFourthAsset] = useState(null);
+    const [fourthAssetStatus, setFourthAssetStatus] = useState(null);
     const [constantFee, setConstantFee] = useState(10);
     const [stableFee, setStableFee] = useState('0.06');
     const [a, setA] = useState('85');
@@ -170,9 +176,7 @@ const CreatePool = ({ balances }) => {
     }, [type]);
 
     const assets = useMemo(() => {
-        return balances
-            ?.filter(({ status }) => status === CONTRACT_STATUS.ACTIVE)
-            .map(({ asset }) => asset);
+        return balances?.map(({ asset }) => asset);
     }, [balances]);
 
     useEffect(() => {
@@ -199,6 +203,54 @@ const CreatePool = ({ balances }) => {
             ),
         );
     }, [pools, firstAsset, secondAsset, thirdAsset, fourthAsset]);
+
+    useEffect(() => {
+        if (!firstAsset) {
+            setFirstAssetStatus(null);
+            return;
+        }
+        SorobanService.getContractData(SorobanService.getAssetContractId(firstAsset)).then(
+            ({ status }) => {
+                setFirstAssetStatus(status);
+            },
+        );
+    }, [firstAsset]);
+
+    useEffect(() => {
+        if (!secondAsset) {
+            setSecondAssetStatus(null);
+            return;
+        }
+        SorobanService.getContractData(SorobanService.getAssetContractId(secondAsset)).then(
+            ({ status }) => {
+                setSecondAssetStatus(status);
+            },
+        );
+    }, [secondAsset]);
+
+    useEffect(() => {
+        if (!thirdAsset) {
+            setThirdAssetStatus(null);
+            return;
+        }
+        SorobanService.getContractData(SorobanService.getAssetContractId(thirdAsset)).then(
+            ({ status }) => {
+                setThirdAssetStatus(status);
+            },
+        );
+    }, [thirdAsset]);
+
+    useEffect(() => {
+        if (!fourthAsset) {
+            setFourthAssetStatus(null);
+            return;
+        }
+        SorobanService.getContractData(SorobanService.getAssetContractId(fourthAsset)).then(
+            ({ status }) => {
+                setFourthAssetStatus(status);
+            },
+        );
+    }, [fourthAsset]);
 
     const createPool = () => {
         if (type === PoolTypes.stable) {
@@ -328,7 +380,14 @@ const CreatePool = ({ balances }) => {
                                 excludeList={[secondAsset, thirdAsset, fourthAsset].filter(
                                     (asset) => asset !== null,
                                 )}
+                                pending={firstAsset && firstAssetStatus === null}
                             />
+                            {firstAssetStatus === CONTRACT_STATUS.NOT_FOUND && (
+                                <ContractNotFound
+                                    asset={firstAsset}
+                                    onSuccess={() => setFirstAssetStatus(CONTRACT_STATUS.ACTIVE)}
+                                />
+                            )}
                             <StyledAssetDropdown
                                 label="Second asset"
                                 asset={secondAsset}
@@ -338,6 +397,12 @@ const CreatePool = ({ balances }) => {
                                     (asset) => asset !== null,
                                 )}
                             />
+                            {secondAssetStatus === CONTRACT_STATUS.NOT_FOUND && (
+                                <ContractNotFound
+                                    asset={secondAsset}
+                                    onSuccess={() => setSecondAssetStatus(CONTRACT_STATUS.ACTIVE)}
+                                />
+                            )}
                             {assetsCount >= 3 && (
                                 <DropdownContainer>
                                     {assetsCount === 3 && (
@@ -359,6 +424,14 @@ const CreatePool = ({ balances }) => {
                                             (asset) => asset !== null,
                                         )}
                                     />
+                                    {thirdAssetStatus === CONTRACT_STATUS.NOT_FOUND && (
+                                        <ContractNotFound
+                                            asset={thirdAsset}
+                                            onSuccess={() =>
+                                                setThirdAssetStatus(CONTRACT_STATUS.ACTIVE)
+                                            }
+                                        />
+                                    )}
                                 </DropdownContainer>
                             )}
                             {assetsCount >= 4 && (
@@ -380,6 +453,14 @@ const CreatePool = ({ balances }) => {
                                             (asset) => asset !== null,
                                         )}
                                     />
+                                    {fourthAssetStatus === CONTRACT_STATUS.NOT_FOUND && (
+                                        <ContractNotFound
+                                            asset={fourthAsset}
+                                            onSuccess={() =>
+                                                setFourthAssetStatus(CONTRACT_STATUS.ACTIVE)
+                                            }
+                                        />
+                                    )}
                                 </DropdownContainer>
                             )}
                             {type === PoolTypes.stable && assetsCount < 4 && (
@@ -441,7 +522,13 @@ const CreatePool = ({ balances }) => {
                                     !firstAsset ||
                                     !secondAsset ||
                                     (assetsCount > 2 && !thirdAsset) ||
-                                    (assetsCount === 4 && !fourthAsset)
+                                    (assetsCount === 4 && !fourthAsset) ||
+                                    [
+                                        firstAssetStatus,
+                                        secondAssetStatus,
+                                        thirdAssetStatus,
+                                        fourthAssetStatus,
+                                    ].some((status) => status === CONTRACT_STATUS.NOT_FOUND)
                                 }
                             >
                                 Create pool
