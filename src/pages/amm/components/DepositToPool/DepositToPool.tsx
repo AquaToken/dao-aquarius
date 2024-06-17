@@ -18,6 +18,7 @@ import { formatBalance } from '../../../../common/helpers/helpers';
 import Pair from '../../../vote/components/common/Pair';
 import DotsLoader from '../../../../common/basics/DotsLoader';
 import { getAssetString } from '../../../../store/assetsStore/actions';
+import { BuildSignAndSubmitStatuses } from '../../../../common/services/wallet-connect.service';
 
 const Container = styled.div`
     width: 52.3rem;
@@ -153,6 +154,14 @@ const DepositToPool = ({ params }) => {
             .then((tx) => account.signAndSubmitTx(tx, true))
             .then((res) => {
                 setPending(false);
+
+                if (
+                    (res as { status: BuildSignAndSubmitStatuses }).status ===
+                    BuildSignAndSubmitStatuses.pending
+                ) {
+                    ToastService.showSuccessToast('More signatures required to complete');
+                    return;
+                }
 
                 const resultAmounts = res.value()[0].value();
 

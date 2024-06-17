@@ -19,6 +19,7 @@ import Pair from '../../../vote/components/common/Pair';
 import Input from '../../../../common/basics/Input';
 import DotsLoader from '../../../../common/basics/DotsLoader';
 import { getAssetString } from '../../../../store/assetsStore/actions';
+import { BuildSignAndSubmitStatuses } from '../../../../common/services/wallet-connect.service';
 
 const Container = styled.div`
     width: 52.3rem;
@@ -98,6 +99,14 @@ const WithdrawFromPool = ({ params }) => {
             .then((tx) => account.signAndSubmitTx(tx, true))
             .then((res) => {
                 ModalService.confirmAllModals();
+
+                if (
+                    (res as { status: BuildSignAndSubmitStatuses }).status ===
+                    BuildSignAndSubmitStatuses.pending
+                ) {
+                    ToastService.showSuccessToast('More signatures required to complete');
+                    return;
+                }
 
                 ModalService.openModal(SuccessModal, {
                     assets: pool.assets,

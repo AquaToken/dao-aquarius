@@ -17,6 +17,7 @@ import useAuthStore from '../../../store/authStore/useAuthStore';
 import { SWAP_SLIPPAGE_ALIAS } from '../SwapSettingsModal/SwapSettingsModal';
 import { stringToAsset } from '../../amm/api/api';
 import { AmmRoutes } from '../../../routes';
+import { BuildSignAndSubmitStatuses } from '../../../common/services/wallet-connect.service';
 
 const Container = styled.div`
     width: 52.3rem;
@@ -86,6 +87,15 @@ const SwapConfirmModal = ({ params, confirm }) => {
             })
             .then((res) => {
                 confirm();
+
+                if (
+                    (res as { status: BuildSignAndSubmitStatuses }).status ===
+                    BuildSignAndSubmitStatuses.pending
+                ) {
+                    ToastService.showSuccessToast('More signatures required to complete');
+                    return;
+                }
+
                 ModalService.openModal(SuccessModal, {
                     assets: [base, counter],
                     amounts: [baseAmount, SorobanService.i128ToInt(res.value())],
