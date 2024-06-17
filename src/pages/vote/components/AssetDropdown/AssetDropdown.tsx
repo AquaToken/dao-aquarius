@@ -170,8 +170,11 @@ const StyledAsset = styled(Asset)`
     height: 6.6rem;
 `;
 
-const pattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?$/;
-const regexp = new RegExp(pattern);
+const domainPattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?$/;
+const domainRegexp = new RegExp(domainPattern);
+
+const codeIssuerPattern = /^[a-zA-Z0-9]{1,12}:[a-zA-Z0-9]{56}$/;
+const codeIssuerRegexp = new RegExp(codeIssuerPattern);
 
 const AssetDropdown = ({
     asset,
@@ -264,7 +267,24 @@ const AssetDropdown = ({
             return;
         }
 
-        if (regexp.test(debouncedSearchText)) {
+        if (codeIssuerRegexp.test(debouncedSearchText)) {
+            const [code, issuer] = debouncedSearchText.split(':');
+            if (!StellarSdk.StrKey.isValidEd25519PublicKey(issuer)) {
+                return;
+            }
+
+            const asset = StellarService.createAsset(code, issuer);
+
+            console.log(asset);
+
+            processNewAssets([asset]);
+            setSearchResults([asset]);
+
+            setSearchPending(false);
+            return;
+        }
+
+        if (domainRegexp.test(debouncedSearchText)) {
             resolveCurrencies(debouncedSearchText);
             return;
         }
@@ -285,7 +305,8 @@ const AssetDropdown = ({
             .filter((assetItem) => {
                 const assetInfo = assetsInfo.get(getAssetString(assetItem));
                 return (
-                    (assetItem.code.toLowerCase().includes(searchText.toLowerCase()) ||
+                    (getAssetString(assetItem) === searchText ||
+                        assetItem.code.toLowerCase().includes(searchText.toLowerCase()) ||
                         assetItem.issuer?.toLowerCase().includes(searchText.toLowerCase()) ||
                         assetInfo?.home_domain?.toLowerCase().includes(searchText.toLowerCase())) &&
                     !(assetItem.code === exclude?.code && assetItem.issuer === exclude?.issuer)
