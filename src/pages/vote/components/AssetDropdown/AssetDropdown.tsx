@@ -281,12 +281,13 @@ const AssetDropdown = ({
                         currentAsset.code === asset.code && asset.issuer === currentAsset.issuer,
                 )
             ) {
+                setSearchResults([]);
                 setSearchPending(false);
                 return;
             }
 
-            processNewAssets([asset]);
-            setSearchResults([asset]);
+            processNewAssets([currentAsset]);
+            setSearchResults([currentAsset]);
 
             setSearchPending(false);
             return;
