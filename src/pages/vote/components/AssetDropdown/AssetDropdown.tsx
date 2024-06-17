@@ -273,9 +273,17 @@ const AssetDropdown = ({
                 return;
             }
 
-            const asset = StellarService.createAsset(code, issuer);
+            const currentAsset = StellarService.createAsset(code, issuer);
 
-            console.log(asset);
+            if (
+                assets.find(
+                    (asset) =>
+                        currentAsset.code === asset.code && asset.issuer === currentAsset.issuer,
+                )
+            ) {
+                setSearchPending(false);
+                return;
+            }
 
             processNewAssets([asset]);
             setSearchResults([asset]);
