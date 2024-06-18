@@ -462,7 +462,8 @@ const Swap = ({ balances }) => {
                         disabled={
                             estimatePending ||
                             !counterAmount ||
-                            (account && account.getAssetBalance(counter) === null)
+                            (account && account.getAssetBalance(counter) === null) ||
+                            (account && account.getAssetBalance(base) === null)
                         }
                         onClick={() => swapAssets()}
                     >
