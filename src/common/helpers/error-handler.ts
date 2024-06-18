@@ -80,9 +80,6 @@ export default function ErrorHandler(error) {
     if (error?.message === 'cancelled_by_user' || error?.message === LEDGER_CANCEL_ERROR) {
         return 'Transaction cancelled by the user';
     }
-    if (error?.code !== undefined) {
-        return error?.message;
-    }
     if (error.error) {
         return error.error;
     }
