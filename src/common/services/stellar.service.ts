@@ -153,7 +153,7 @@ export default class StellarServiceClass {
 
         const tx = new StellarSdk.TransactionBuilder(newAccount, {
             fee: FEE.toString(),
-            networkPassphrase: StellarSdk.Networks.PUBLIC,
+            networkPassphrase: StellarSdk.Networks.TESTNET,
         }).setTimeout(TRANSACTION_TIMEOUT);
 
         if (Array.isArray(operations)) {

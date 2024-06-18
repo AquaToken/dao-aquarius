@@ -10,11 +10,17 @@ import {
 import AssetDropdown from '../vote/components/AssetDropdown/AssetDropdown';
 import { Breakpoints, COLORS } from '../../common/styles';
 import useAuthStore from '../../store/authStore/useAuthStore';
-import { ModalService, SorobanService } from '../../common/services/globalServices';
+import {
+    ModalService,
+    SorobanService,
+    StellarService,
+    ToastService,
+} from '../../common/services/globalServices';
 import PageLoader from '../../common/basics/PageLoader';
 import Input from '../../common/basics/Input';
 import SwapIcon from '../../common/assets/img/icon-arrows-circle.svg';
 import SettingsIcon from '../../common/assets/img/icon-settings.svg';
+import Plus from '../../common/assets/img/icon-plus.svg';
 import { useDebounce } from '../../common/hooks/useDebounce';
 import Button from '../../common/basics/Button';
 import { IconFail } from '../../common/basics/Icons';
@@ -25,6 +31,9 @@ import SwapConfirmModal from './SwapConfirmModal/SwapConfirmModal';
 import SwapSettingsModal from './SwapSettingsModal/SwapSettingsModal';
 import { findSwapPath } from '../amm/api/api';
 import { USDC, USDT } from '../amm/components/BalancesBlock/BalancesBlock';
+import Asset from '../vote/components/AssetDropdown/Asset';
+import { BuildSignAndSubmitStatuses } from '../../common/services/wallet-connect.service';
+import ErrorHandler from '../../common/helpers/error-handler';
 
 const Container = styled.main`
     background-color: ${COLORS.lightGray};
@@ -173,6 +182,42 @@ const SettingsButton = styled.div`
     }
 `;
 
+const TrustlineBlock = styled.div`
+    display: flex;
+    flex-direction: column;
+    padding: 3.2rem;
+    background-color: ${COLORS.lightGray};
+    margin-top: 1.6rem;
+    border-radius: 0.6rem;
+
+    p {
+        font-size: 1.6rem;
+        line-height: 2.8rem;
+        color: ${COLORS.grayText};
+    }
+`;
+
+const TrustlineBlockTitle = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 2.8rem;
+`;
+
+const TrustlineButton = styled(Button)`
+    width: fit-content;
+
+    ${respondDown(Breakpoints.sm)`
+        width: 100%;
+        margin-top: 2rem;
+    `}
+    svg {
+        margin-left: 0.8rem;
+    }
+`;
+
 const Swap = ({ balances }) => {
     const { account, isLogged } = useAuthStore();
 
@@ -186,6 +231,7 @@ const Swap = ({ balances }) => {
     const [bestPath, setBestPath] = useState(null);
     const [bestPools, setBestPools] = useState(null);
     const [estimatePending, setEstimatePending] = useState(false);
+    const [trustlinePending, setTrustlinePending] = useState(false);
 
     const debouncedAmount = useDebounce(baseAmount, 700);
 
@@ -273,6 +319,31 @@ const Swap = ({ balances }) => {
         setBestPathXDR(null);
         setBestPath(null);
         setBestPools(null);
+    };
+
+    const addTrust = async () => {
+        setTrustlinePending(true);
+        try {
+            const op = StellarService.createAddTrustOperation(counter);
+
+            const tx = await StellarService.buildTx(account, op);
+
+            const result = await account.signAndSubmitTx(tx);
+
+            if (
+                (result as { status: BuildSignAndSubmitStatuses })?.status ===
+                BuildSignAndSubmitStatuses.pending
+            ) {
+                ToastService.showSuccessToast('More signatures required to complete');
+                return;
+            }
+            ToastService.showSuccessToast('Trusline added successfully');
+            setTrustlinePending(false);
+        } catch (e) {
+            const errorText = ErrorHandler(e);
+            ToastService.showErrorToast(errorText);
+            setTrustlinePending(false);
+        }
     };
 
     return (
@@ -369,9 +440,30 @@ const Swap = ({ balances }) => {
                         </Error>
                     )}
 
+                    {account && account.getAssetBalance(counter) === null && (
+                        <TrustlineBlock>
+                            <TrustlineBlockTitle>
+                                <Asset asset={counter} onlyLogo />{' '}
+                                <span>{counter.code} trustline missing</span>
+                            </TrustlineBlockTitle>
+                            <p>
+                                You can't receive the {counter.code} asset because you haven't added
+                                this trustline. Please add the AQUA trustline to continue the
+                                transaction.
+                            </p>
+                            <TrustlineButton onClick={() => addTrust()} pending={trustlinePending}>
+                                add {counter.code} trustline <Plus />
+                            </TrustlineButton>
+                        </TrustlineBlock>
+                    )}
+
                     <StyledButton
                         isBig
-                        disabled={estimatePending || !counterAmount}
+                        disabled={
+                            estimatePending ||
+                            !counterAmount ||
+                            (account && account.getAssetBalance(counter) === null)
+                        }
                         onClick={() => swapAssets()}
                     >
                         SWAP ASSETS
