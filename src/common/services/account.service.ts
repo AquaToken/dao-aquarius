@@ -77,7 +77,7 @@ export default class AccountService extends Horizon.AccountResponse {
         if (this.authType === LoginTypes.ledger && !this.isMultisigEnabled) {
             const result = LedgerService.signTx(tx as StellarSdk.Transaction).then((signed) =>
                 // @ts-ignore
-                SorobanService.submitTx(signed),
+                StellarService.submitTx(signed),
             );
             ModalService.openModal(LedgerSignTx, { result });
             return result;
@@ -100,7 +100,7 @@ export default class AccountService extends Horizon.AccountResponse {
             if (this.authType === LoginTypes.ledger) {
                 ModalService.closeAllModals();
             }
-            return SorobanService.submitTx(signedTx);
+            return StellarService.submitTx(signedTx);
         }
 
         ModalService.closeAllModals();
