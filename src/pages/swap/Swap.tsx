@@ -448,8 +448,8 @@ const Swap = ({ balances }) => {
                             </TrustlineBlockTitle>
                             <p>
                                 You can't receive the {counter.code} asset because you haven't added
-                                this trustline. Please add the AQUA trustline to continue the
-                                transaction.
+                                this trustline. Please add the {counter.code} trustline to continue
+                                the transaction.
                             </p>
                             <TrustlineButton onClick={() => addTrust()} pending={trustlinePending}>
                                 add {counter.code} trustline <Plus />
