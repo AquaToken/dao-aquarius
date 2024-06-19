@@ -124,10 +124,12 @@ const FirstDeposit = styled.div`
 
 const TooltipInner = styled.span`
     color: ${COLORS.white}!important;
+    white-space: pre-line;
+    max-width: 30rem;
+    width: max-content;
 
     ${respondDown(Breakpoints.sm)`
         width: 12rem;
-        white-space: pre-line;
     `}
 `;
 
