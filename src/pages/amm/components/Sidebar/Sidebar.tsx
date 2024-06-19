@@ -76,10 +76,10 @@ const Sidebar = ({ pool }) => {
     const openDepositModal = () => {
         if (!isLogged) {
             return ModalService.openModal(ChooseLoginMethodModal, {
-                callback: () => ModalService.openModal(DepositToPool, { pool }),
+                callback: () => ModalService.openModal(DepositToPool, { pool, accountShare }),
             });
         }
-        ModalService.openModal(DepositToPool, { pool });
+        ModalService.openModal(DepositToPool, { pool, accountShare });
     };
     const openWithdrawModal = () => {
         if (!isLogged) {

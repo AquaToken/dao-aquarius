@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../../../common/styles';
 import { customScroll, flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
@@ -9,6 +9,7 @@ import Asset from '../../../vote/components/AssetDropdown/Asset';
 import {
     ModalService,
     SorobanService,
+    StellarService,
     ToastService,
 } from '../../../../common/services/globalServices';
 import Button from '../../../../common/basics/Button';
@@ -18,6 +19,8 @@ import { formatBalance } from '../../../../common/helpers/helpers';
 import Pair from '../../../vote/components/common/Pair';
 import DotsLoader from '../../../../common/basics/DotsLoader';
 import { getAssetString } from '../../../../store/assetsStore/actions';
+import Info from '../../../../common/assets/img/icon-info.svg';
+import Tooltip, { TOOLTIP_POSITION } from '../../../../common/basics/Tooltip';
 
 const Container = styled.div`
     width: 52.3rem;
@@ -59,6 +62,12 @@ const DescriptionRow = styled.div`
     ${flexRowSpaceBetween};
     margin-bottom: 1.6rem;
     color: ${COLORS.grayText};
+
+    span {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+    }
 
     span:last-child {
         color: ${COLORS.paragraphText};
@@ -113,28 +122,66 @@ const FirstDeposit = styled.div`
     `}
 `;
 
+const TooltipInner = styled.span`
+    color: ${COLORS.white}!important;
+
+    ${respondDown(Breakpoints.sm)`
+        width: 12rem;
+        white-space: pre-line;
+    `}
+`;
+
 const DepositToPool = ({ params }) => {
     const { account } = useAuthStore();
-    const { pool } = params;
+    const { pool, accountShare } = params;
 
-    const [amounts, setAmounts] = useState(
+    const [amounts, setAmounts] = useState<Map<string, string>>(
         new Map<string, string>(pool.assets.map((asset) => [getAssetString(asset), ''])),
     );
     const [pending, setPending] = useState(false);
-    const [reserves, setReserves] = useState(null);
-    const [shares, setShares] = useState(null);
 
-    useEffect(() => {
-        SorobanService.getPoolReserves(pool.assets, pool.address).then((res) => {
-            setReserves(res);
-        });
-    }, []);
+    const reserves: Map<string, number> = useMemo(() => {
+        return new Map(
+            pool.assets.map((asset, index) => [getAssetString(asset), pool.reserves[index] / 1e7]),
+        );
+    }, [pool]);
 
-    useEffect(() => {
-        SorobanService.getTotalShares(pool.address).then((res) => {
-            setShares(res);
+    const shares = useMemo(() => {
+        const firstAssetString = getAssetString(pool.assets[0]);
+
+        const amountBeforeDeposit =
+            (reserves.get(firstAssetString) * accountShare) / (pool.total_share / 1e7);
+
+        return `${formatBalance(
+            ((+amounts.get(firstAssetString) + amountBeforeDeposit) /
+                (reserves.get(firstAssetString) + +amounts.get(firstAssetString))) *
+                100,
+            true,
+        )}%`;
+    }, [amounts, pool, reserves, accountShare]);
+
+    const rates: Map<string, string> = useMemo(() => {
+        if (pool.total_share === 0) {
+            return null;
+        }
+        const map = new Map();
+        pool.assets.forEach((asset) => {
+            const otherAssets = pool.assets
+                .filter((token) => getAssetString(token) !== getAssetString(asset))
+                .map(
+                    (token) =>
+                        `${formatBalance(
+                            reserves.get(getAssetString(token)) /
+                                reserves.get(getAssetString(asset)),
+                            true,
+                        )} ${token.code}`,
+                );
+            map.set(getAssetString(asset), `1 ${asset.code} = ${otherAssets.join(' = ')}`);
         });
-    }, []);
+        return map;
+    }, [reserves, pool]);
+
+    console.log(rates);
 
     const onSubmit = () => {
         const insufficientBalanceTokens = pool.assets.filter(
@@ -178,7 +225,7 @@ const DepositToPool = ({ params }) => {
         setAmounts(new Map(amounts.set(getAssetString(asset), value)));
 
         // empty pool
-        if (reserves.get(getAssetString(asset)) === 0) {
+        if (pool.total_share === 0) {
             return;
         }
 
@@ -186,8 +233,8 @@ const DepositToPool = ({ params }) => {
             .filter((token) => getAssetString(token) !== getAssetString(asset))
             .forEach((token) => {
                 const newAmount = (
-                    (Number(value) * reserves.get(getAssetString(token))) /
-                    reserves.get(getAssetString(asset))
+                    (Number(value) * +reserves.get(getAssetString(token))) /
+                    +reserves.get(getAssetString(asset))
                 ).toFixed(7);
                 setAmounts(
                     new Map(amounts.set(getAssetString(token), Number(newAmount).toString())),
@@ -234,10 +281,17 @@ const DepositToPool = ({ params }) => {
                 </DescriptionRow>
                 <DescriptionRow>
                     <span>Liquidity</span>
-                    <span>{pool.liquidity ? formatBalance(pool.liquidity / 1e7, true) : '0'}</span>
+                    <span>
+                        {pool.liquidity
+                            ? `$${formatBalance(
+                                  (pool.liquidity * StellarService.priceLumenUsd) / 1e7,
+                                  true,
+                              )}`
+                            : '0'}
+                    </span>
                 </DescriptionRow>
 
-                {shares === 0 ? (
+                {pool.total_share === 0 ? (
                     <FirstDeposit>
                         ☝️ This is the first deposit into this pool. We recommend depositing tokens
                         according to the market rate. Otherwise, traders may profit from your
@@ -255,15 +309,32 @@ const DepositToPool = ({ params }) => {
                         </PairWrap>
 
                         <DescriptionRow>
-                            <span>Pool shares</span>
-                            <span>{shares !== null ? formatBalance(shares) : <DotsLoader />}</span>
+                            <span>Share of Pool</span>
+                            <span>{shares}</span>
                         </DescriptionRow>
                         {pool.assets.map((asset) => (
                             <DescriptionRow>
-                                <span>Pooled {asset.code}</span>
+                                <span>
+                                    Pooled {asset.code}{' '}
+                                    <Tooltip
+                                        content={
+                                            <TooltipInner>
+                                                {rates.get(getAssetString(asset))}
+                                            </TooltipInner>
+                                        }
+                                        position={TOOLTIP_POSITION.right}
+                                        showOnHover
+                                    >
+                                        <Info />
+                                    </Tooltip>
+                                </span>
                                 <span>
                                     {reserves !== null ? (
-                                        formatBalance(reserves.get(getAssetString(asset)))
+                                        formatBalance(
+                                            +reserves.get(getAssetString(asset)) +
+                                                +amounts.get(getAssetString(asset)),
+                                            true,
+                                        )
                                     ) : (
                                         <DotsLoader />
                                     )}
