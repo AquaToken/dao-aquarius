@@ -179,7 +179,7 @@ const DepositToPool = ({ params }) => {
                             true,
                         )} ${token.code}`,
                 );
-            map.set(getAssetString(asset), `1 ${asset.code} = ${otherAssets.join(' = ')}`);
+            map.set(getAssetString(asset), `1 ${asset.code} ≈ ${otherAssets.join(' ≈ ')}`);
         });
         return map;
     }, [reserves, pool]);
