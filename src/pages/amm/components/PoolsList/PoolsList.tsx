@@ -261,6 +261,7 @@ const PoolsList = ({ pools, onUpdate, isUserList }) => {
                                             e.preventDefault();
                                             ModalService.openModal(DepositToPool, {
                                                 pool,
+                                                accountShare: balance,
                                             }).then(() => onUpdate());
                                         }}
                                     >
