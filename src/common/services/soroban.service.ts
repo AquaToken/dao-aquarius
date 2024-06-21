@@ -449,14 +449,14 @@ export default class SorobanServiceClass {
     }
 
     getInitConstantPoolTx(accountId: string, base: Asset, counter: Asset, fee: number) {
-        const [aId, bId] = this.orderTokenIDS(base, counter);
-
         return this.buildSmartContactTx(
             accountId,
             AMM_SMART_CONTACT_ID,
             AMM_CONTRACT_METHOD.INIT_CONSTANT_POOL,
             this.publicKeyToScVal(accountId),
-            this.scValToArray([this.contractIdToScVal(aId), this.contractIdToScVal(bId)]),
+            this.scValToArray(
+                this.orderTokens([base, counter]).map((asset) => this.assetToScVal(asset)),
+            ),
             this.amountToUint32(fee),
         ).then((tx) => this.server.prepareTransaction(tx));
     }
@@ -891,13 +891,6 @@ export default class SorobanServiceClass {
     i128ToInt(val: xdr.Int128Parts): number {
         // @ts-ignore
         return ((Number(val.hi()._value) << 64) + Number(val.lo()._value)) / 1e7;
-    }
-
-    private orderTokenIDS(a: Asset, b: Asset) {
-        const idA = this.getAssetContractId(a);
-        const idB = this.getAssetContractId(b);
-
-        return idA > idB ? [idB, idA] : [idA, idB];
     }
 
     private orderTokens(assets: Asset[]) {
