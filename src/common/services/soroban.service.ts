@@ -894,8 +894,17 @@ export default class SorobanServiceClass {
     }
 
     private orderTokens(assets: Asset[]) {
-        return assets.sort((a, b) =>
-            this.getAssetContractId(a).localeCompare(this.getAssetContractId(b)),
-        );
+        for (let i = 0; i < assets.length; i++) {
+            for (let j = 0; j < assets.length - 1; j++) {
+                let hash1 = parseInt(this.getAssetContractHash(assets[j]), 16);
+                let hash2 = parseInt(this.getAssetContractHash(assets[j + 1]), 16);
+                if (hash1 > hash2) {
+                    let temp = assets[j];
+                    assets[j] = assets[j + 1];
+                    assets[j + 1] = temp;
+                }
+            }
+        }
+        return assets;
     }
 }
