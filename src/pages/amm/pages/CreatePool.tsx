@@ -275,7 +275,7 @@ const CreatePool = ({ balances }) => {
             Number(stableFee),
         )
             .then((tx) => {
-                return account.signAndSubmitTx(tx).then((res) => {
+                return account.signAndSubmitTx(tx, true).then((res) => {
                     const poolAddress = SorobanService.getContactIdFromHash(
                         res.value()[1].value().value().toString('hex'),
                     );
@@ -297,7 +297,7 @@ const CreatePool = ({ balances }) => {
             secondAsset,
             constantFee,
         ).then((tx) =>
-            account.signAndSubmitTx(tx).then((res) => {
+            account.signAndSubmitTx(tx, true).then((res) => {
                 const poolAddress = SorobanService.getContactIdFromHash(
                     res.value()[1].value().value().toString('hex'),
                 );
