@@ -20,8 +20,10 @@ import Pair from '../../../vote/components/common/Pair';
 import DotsLoader from '../../../../common/basics/DotsLoader';
 import { getAssetString } from '../../../../store/assetsStore/actions';
 import Info from '../../../../common/assets/img/icon-info.svg';
+import Arrow from '../../../../common/assets/img/icon-arrow-right-long.svg';
 import Tooltip, { TOOLTIP_POSITION } from '../../../../common/basics/Tooltip';
 import { BuildSignAndSubmitStatuses } from '../../../../common/services/wallet-connect.service';
+import Alert from '../../../../common/basics/Alert';
 
 const Container = styled.div`
     width: 52.3rem;
@@ -99,6 +101,7 @@ const PoolInfo = styled.div`
     background-color: ${COLORS.lightGray};
     border-radius: 0.6rem;
     padding: 2.4rem;
+    margin-top: 2.4rem;
     margin-bottom: 4.8rem;
 
     ${respondDown(Breakpoints.sm)`
@@ -108,19 +111,6 @@ const PoolInfo = styled.div`
 
 const PairWrap = styled.div`
     margin: 2.2rem 0;
-`;
-
-const FirstDeposit = styled.div`
-    border: 0.1rem solid ${COLORS.pinkRed};
-    background-color: ${COLORS.pinkRed}0f;
-    border-radius: 0.6rem;
-    padding: 2.4rem;
-    margin-bottom: 4.8rem;
-    font-weight: bold;
-
-    ${respondDown(Breakpoints.sm)`
-        margin-bottom: 2rem;
-    `}
 `;
 
 const TooltipInner = styled.span`
@@ -143,6 +133,11 @@ const DepositToPool = ({ params }) => {
     );
     const [pending, setPending] = useState(false);
 
+    const hasAllAmounts = useMemo(() => {
+        // @ts-ignore
+        return [...amounts.values()].every((value) => Boolean(+value));
+    }, [amounts]);
+
     const reserves: Map<string, number> = useMemo(() => {
         return new Map(
             pool.assets.map((asset, index) => [getAssetString(asset), pool.reserves[index] / 1e7]),
@@ -155,6 +150,32 @@ const DepositToPool = ({ params }) => {
         const amountBeforeDeposit =
             (reserves.get(firstAssetString) * accountShare) / (pool.total_share / 1e7);
 
+        if (pool.total_share === 0) {
+            return hasAllAmounts ? (
+                <span>
+                    0% <Arrow /> 100%
+                </span>
+            ) : (
+                <span>0%</span>
+            );
+        }
+
+        if (hasAllAmounts) {
+            return (
+                <span>
+                    {formatBalance((amountBeforeDeposit / (pool.total_share / 1e7)) * 100, true)}%
+                    <Arrow />
+                    {formatBalance(
+                        ((+amounts.get(firstAssetString) + amountBeforeDeposit) /
+                            (reserves.get(firstAssetString) + +amounts.get(firstAssetString))) *
+                            100,
+                        true,
+                    )}
+                    %
+                </span>
+            );
+        }
+
         return `${formatBalance(
             ((+amounts.get(firstAssetString) + amountBeforeDeposit) /
                 (reserves.get(firstAssetString) + +amounts.get(firstAssetString))) *
@@ -164,27 +185,29 @@ const DepositToPool = ({ params }) => {
     }, [amounts, pool, reserves, accountShare]);
 
     const rates: Map<string, string> = useMemo(() => {
-        if (pool.total_share === 0) {
+        if (pool.total_share === 0 && !hasAllAmounts) {
             return null;
         }
         const map = new Map();
+
         pool.assets.forEach((asset) => {
             const otherAssets = pool.assets
                 .filter((token) => getAssetString(token) !== getAssetString(asset))
                 .map(
                     (token) =>
                         `${formatBalance(
-                            reserves.get(getAssetString(token)) /
-                                reserves.get(getAssetString(asset)),
+                            pool.total_share === 0
+                                ? +amounts.get(getAssetString(token)) /
+                                      +amounts.get(getAssetString(asset))
+                                : reserves.get(getAssetString(token)) /
+                                      reserves.get(getAssetString(asset)),
                             true,
                         )} ${token.code}`,
                 );
             map.set(getAssetString(asset), `1 ${asset.code} ≈ ${otherAssets.join(' ≈ ')}`);
         });
         return map;
-    }, [reserves, pool]);
-
-    console.log(rates);
+    }, [reserves, pool, amounts]);
 
     const onSubmit = () => {
         const insufficientBalanceTokens = pool.assets.filter(
@@ -256,6 +279,14 @@ const DepositToPool = ({ params }) => {
     return (
         <Container>
             <ModalTitle>Add liquidity</ModalTitle>
+            {pool.total_share === 0 && (
+                <Alert
+                    title="This is the first deposit into this pool."
+                    text="We recommend depositing tokens
+                        according to the market rate. Otherwise, traders may profit from your
+                        deposit, and you could lose money."
+                />
+            )}
             <Form>
                 {pool.assets.map((asset) => (
                     <FormRow>
@@ -302,31 +333,25 @@ const DepositToPool = ({ params }) => {
                     </span>
                 </DescriptionRow>
 
-                {pool.total_share === 0 ? (
-                    <FirstDeposit>
-                        ☝️ This is the first deposit into this pool. We recommend depositing tokens
-                        according to the market rate. Otherwise, traders may profit from your
-                        deposit, and you could lose money.
-                    </FirstDeposit>
-                ) : (
-                    <PoolInfo>
-                        <PairWrap>
-                            <Pair
-                                base={pool.assets[0]}
-                                counter={pool.assets[1]}
-                                thirdAsset={pool.assets[2]}
-                                fourthAsset={pool.assets[3]}
-                            />
-                        </PairWrap>
+                <PoolInfo>
+                    <PairWrap>
+                        <Pair
+                            base={pool.assets[0]}
+                            counter={pool.assets[1]}
+                            thirdAsset={pool.assets[2]}
+                            fourthAsset={pool.assets[3]}
+                        />
+                    </PairWrap>
 
+                    <DescriptionRow>
+                        <span>Share of Pool</span>
+                        <span>{shares}</span>
+                    </DescriptionRow>
+                    {pool.assets.map((asset) => (
                         <DescriptionRow>
-                            <span>Share of Pool</span>
-                            <span>{shares}</span>
-                        </DescriptionRow>
-                        {pool.assets.map((asset) => (
-                            <DescriptionRow>
-                                <span>
-                                    Pooled {asset.code}{' '}
+                            <span>
+                                Pooled {asset.code}{' '}
+                                {Boolean(rates) && (
                                     <Tooltip
                                         content={
                                             <TooltipInner>
@@ -338,29 +363,34 @@ const DepositToPool = ({ params }) => {
                                     >
                                         <Info />
                                     </Tooltip>
-                                </span>
-                                <span>
-                                    {reserves !== null ? (
-                                        formatBalance(
-                                            +reserves.get(getAssetString(asset)) +
-                                                +amounts.get(getAssetString(asset)),
-                                            true,
-                                        )
-                                    ) : (
-                                        <DotsLoader />
-                                    )}
-                                </span>
-                            </DescriptionRow>
-                        ))}
-                    </PoolInfo>
-                )}
+                                )}
+                            </span>
+                            <span>
+                                {hasAllAmounts && (
+                                    <>
+                                        {formatBalance(+reserves.get(getAssetString(asset)), true)}
+                                        <Arrow />
+                                    </>
+                                )}
+                                {reserves !== null ? (
+                                    formatBalance(
+                                        +reserves.get(getAssetString(asset)) +
+                                            +amounts.get(getAssetString(asset)),
+                                        true,
+                                    )
+                                ) : (
+                                    <DotsLoader />
+                                )}
+                            </span>
+                        </DescriptionRow>
+                    ))}
+                </PoolInfo>
 
                 <Button
                     isBig
                     onClick={() => onSubmit()}
                     pending={pending}
-                    // @ts-ignore
-                    disabled={[...amounts.values()].some((value) => !Number(value))}
+                    disabled={!hasAllAmounts}
                 >
                     deposit
                 </Button>

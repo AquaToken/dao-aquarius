@@ -19,30 +19,29 @@ import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
 import { checkProposalStatus, createProposal, editProposal } from '../../../api/api';
 import { useHistory } from 'react-router-dom';
 import { Breakpoints } from '../../../../../common/styles';
-import PaymentInProgressAlert from '../PaymentInProgressAlert/PaymentInProgressAlert';
 import ErrorHandler from '../../../../../common/helpers/error-handler';
 import { LoginTypes } from '../../../../../store/authStore/types';
 import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
+import Alert from '../../../../../common/basics/Alert';
 
-const ProposalCost = styled.div`
-    ${flexRowSpaceBetween};
-    font-size: 1.6rem;
-    padding-bottom: 2.6rem;
+const Container = styled.div`
     width: 52.8rem;
-    margin-bottom: 2.4rem;
-    border-bottom: 1px dashed #e8e8ed;
 
     ${respondDown(Breakpoints.md)`
         width: 100%;
     `}
 `;
 
-const Description = styled(ModalDescription)`
-    width: 52.8rem;
+const ProposalCost = styled.div`
+    ${flexRowSpaceBetween};
+    font-size: 1.6rem;
+    padding-bottom: 2.6rem;
+    margin-bottom: 2.4rem;
+    border-bottom: 1px dashed #e8e8ed;
+`;
 
-    ${respondDown(Breakpoints.md)`
-        width: 100%;
-    `}
+const Description = styled(ModalDescription)`
+    width: 100%;
 `;
 
 const Label = styled.div`
@@ -161,7 +160,7 @@ const CreateDiscussionModal = ({
     };
 
     return (
-        <>
+        <Container>
             <ModalTitle>Create proposal discussion</ModalTitle>
             <Description>To create a proposal discussion, you need to pay {cost} AQUA</Description>
             <ProposalCost>
@@ -178,8 +177,14 @@ const CreateDiscussionModal = ({
             >
                 Confirm
             </Button>
-            {loading && <PaymentInProgressAlert />}
-        </>
+            {loading && (
+                <Alert
+                    title="Transaction submitting"
+                    text="Do not close this window. The window will close automatically when the
+                    transaction is signed"
+                />
+            )}
+        </Container>
     );
 };
 
