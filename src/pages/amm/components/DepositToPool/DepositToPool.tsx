@@ -149,7 +149,7 @@ const DepositToPool = ({ params }) => {
         const amountBeforeDeposit =
             (reserves.get(firstAssetString) * accountShare) / (pool.total_share / 1e7);
 
-        if (pool.total_share === 0) {
+        if (pool.total_share === 0 && hasAllAmounts) {
             return hasAllAmounts ? (
                 <span>
                     0% <Arrow /> 100%
@@ -162,7 +162,7 @@ const DepositToPool = ({ params }) => {
         if (hasAllAmounts) {
             return (
                 <span>
-                    {formatBalance((amountBeforeDeposit / (pool.total_share / 1e7)) * 100, true)}%
+                    {formatBalance((accountShare / (pool.total_share / 1e7)) * 100, true)}%
                     <Arrow />
                     {formatBalance(
                         ((+amounts.get(firstAssetString) + amountBeforeDeposit) /
