@@ -323,9 +323,7 @@ const SwapPage = ({ balances }) => {
     }, [balances]);
 
     const revertAssets = () => {
-        const term = base;
-        setBase(counter);
-        setCounter(term);
+        history.push(`${MainRoutes.swap}/${getAssetString(counter)}/${getAssetString(base)}`);
         setBaseAmount('');
         setCounterAmount('');
         setBestPathXDR(null);
