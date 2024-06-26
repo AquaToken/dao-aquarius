@@ -342,7 +342,7 @@ const BodyStyle = createGlobalStyle`
         body {
             background-color: ${COLORS.lightGray};
         } 
-    `}
+    `};
 `;
 
 const ProvidedApp = () => {
