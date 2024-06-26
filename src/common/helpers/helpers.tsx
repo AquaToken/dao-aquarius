@@ -1,3 +1,6 @@
+import { Asset } from '@stellar/stellar-sdk';
+import { StellarService } from '../services/globalServices';
+
 type GetDateStringConfig = {
     withTime?: boolean;
     withoutYear?: boolean;
@@ -125,4 +128,20 @@ export const formatBalance = (
     return new Intl.NumberFormat('en-US', {
         maximumFractionDigits: withRounding ? precision : 7,
     }).format(balance);
+};
+
+export const getAssetString = (asset: Asset): string => {
+    if (asset.isNative()) {
+        return 'native';
+    }
+    return `${asset.code}:${asset.issuer}`;
+};
+
+export const getAssetFromString = (assetStr: string): Asset => {
+    if (assetStr === 'native') {
+        return StellarService.createLumen();
+    }
+    const [code, issuer] = assetStr.split(':');
+
+    return StellarService.createAsset(code, issuer);
 };

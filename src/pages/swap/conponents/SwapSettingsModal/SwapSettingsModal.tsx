@@ -1,13 +1,13 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { respondDown } from '../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../common/styles';
-import { ModalDescription, ModalTitle } from '../../../common/modals/atoms/ModalAtoms';
-import ToggleGroup from '../../../common/basics/ToggleGroup';
+import { respondDown } from '../../../../common/mixins';
+import { Breakpoints, COLORS } from '../../../../common/styles';
+import { ModalDescription, ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
+import ToggleGroup from '../../../../common/basics/ToggleGroup';
 import { useState } from 'react';
-import Input from '../../../common/basics/Input';
-import Button from '../../../common/basics/Button';
-import { ToastService } from '../../../common/services/globalServices';
+import Input from '../../../../common/basics/Input';
+import Button from '../../../../common/basics/Button';
+import { ToastService } from '../../../../common/services/globalServices';
 
 const Container = styled.div`
     width: 52.3rem;

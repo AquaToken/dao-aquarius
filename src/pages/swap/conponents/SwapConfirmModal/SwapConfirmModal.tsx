@@ -1,22 +1,22 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../common/styles';
-import { ModalDescription, ModalTitle } from '../../../common/modals/atoms/ModalAtoms';
-import Pair from '../../vote/components/common/Pair';
-import { formatBalance } from '../../../common/helpers/helpers';
-import Button from '../../../common/basics/Button';
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
+import { Breakpoints, COLORS } from '../../../../common/styles';
+import { ModalDescription, ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
+import Pair from '../../../vote/components/common/Pair';
+import { formatBalance } from '../../../../common/helpers/helpers';
+import Button from '../../../../common/basics/Button';
 import { useState } from 'react';
 import {
     ModalService,
     SorobanService,
     ToastService,
-} from '../../../common/services/globalServices';
-import SuccessModal from '../../amm/components/SuccessModal/SuccessModal';
-import useAuthStore from '../../../store/authStore/useAuthStore';
+} from '../../../../common/services/globalServices';
+import SuccessModal from '../../../amm/components/SuccessModal/SuccessModal';
+import useAuthStore from '../../../../store/authStore/useAuthStore';
 import { SWAP_SLIPPAGE_ALIAS } from '../SwapSettingsModal/SwapSettingsModal';
-import { stringToAsset } from '../../amm/api/api';
-import { AmmRoutes } from '../../../routes';
+import { stringToAsset } from '../../../amm/api/api';
+import { AmmRoutes } from '../../../../routes';
 
 const Container = styled.div`
     width: 52.3rem;
