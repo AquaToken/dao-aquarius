@@ -17,7 +17,7 @@ import useAuthStore from '../../../../store/authStore/useAuthStore';
 import { SWAP_SLIPPAGE_ALIAS } from '../SwapSettingsModal/SwapSettingsModal';
 import { stringToAsset } from '../../../amm/api/api';
 import { AmmRoutes } from '../../../../routes';
-import { BuildSignAndSubmitStatuses } from '../../../common/services/wallet-connect.service';
+import { BuildSignAndSubmitStatuses } from '../../../../common/services/wallet-connect.service';
 
 const Container = styled.div`
     width: 52.3rem;

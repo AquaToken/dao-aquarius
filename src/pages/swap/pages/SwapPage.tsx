@@ -30,7 +30,6 @@ import { formatBalance, getAssetFromString, getAssetString } from '../../../comm
 import SwapConfirmModal from '../conponents/SwapConfirmModal/SwapConfirmModal';
 import SwapSettingsModal from '../conponents/SwapSettingsModal/SwapSettingsModal';
 import { findSwapPath } from '../../amm/api/api';
-import { USDC, USDT } from '../../amm/components/BalancesBlock/BalancesBlock';
 import Asset from '../../vote/components/AssetDropdown/Asset';
 import { BuildSignAndSubmitStatuses } from '../../../common/services/wallet-connect.service';
 import ErrorHandler from '../../../common/helpers/error-handler';
@@ -223,8 +222,8 @@ const TrustlineButton = styled(Button)`
 const SwapPage = ({ balances }) => {
     const { account, isLogged } = useAuthStore();
 
-    const [base, setBase] = useState(USDT);
-    const [counter, setCounter] = useState(USDC);
+    const [base, setBase] = useState(null);
+    const [counter, setCounter] = useState(null);
     const [error, setError] = useState(false);
 
     const [baseAmount, setBaseAmount] = useState('');
