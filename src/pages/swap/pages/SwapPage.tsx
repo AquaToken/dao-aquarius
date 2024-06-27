@@ -364,6 +364,10 @@ const SwapPage = ({ balances }) => {
         history.push(`${MainRoutes.swap}/${getAssetString(base)}/${getAssetString(asset)}`);
     };
 
+    if (!base || !counter) {
+        return <PageLoader />;
+    }
+
     return (
         <Container>
             <Content>
