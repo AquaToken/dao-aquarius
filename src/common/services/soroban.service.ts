@@ -7,6 +7,7 @@ import SimulateTransactionSuccessResponse = StellarSdk.SorobanRpc.Api.SimulateTr
 import { ModalService, SorobanService, ToastService } from './globalServices';
 import RestoreContractModal from '../modals/RestoreContractModal/RestoreContractModal';
 import { getAssetString } from '../../store/assetsStore/actions';
+import { SorobanErrorHandler } from '../helpers/error-handler';
 
 const SOROBAN_SERVER = 'https://soroban-rpc.aqua.network/';
 export const AMM_SMART_CONTACT_ID = 'CAZREK5UEVK74VYN5CM53RBAWC75FEXKVKS3MUDWVMX7Q3ZGCTLQIXVE';
@@ -78,9 +79,7 @@ export default class SorobanServiceClass {
             return this.getTx(response.hash, tx);
         }
         if (response.status !== 'PENDING') {
-            ToastService.showErrorToast(response.status);
-
-            throw new Error(response.status);
+            throw new Error(SorobanErrorHandler(response.errorResult.result().switch().name));
         }
         return this.getTx(response.hash, tx);
     }

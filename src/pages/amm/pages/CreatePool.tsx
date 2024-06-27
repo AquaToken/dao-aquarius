@@ -294,8 +294,8 @@ const CreatePool = ({ balances }) => {
                     history.push(`${AmmRoutes.analytics}${poolAddress}`);
                 });
             })
-            .catch(() => {
-                ToastService.showErrorToast('Something went wrong');
+            .catch((e) => {
+                ToastService.showErrorToast(e.message);
                 setPending(false);
             });
     };
@@ -307,15 +307,20 @@ const CreatePool = ({ balances }) => {
             firstAsset,
             secondAsset,
             constantFee,
-        ).then((tx) => {
-            return account.signAndSubmitTx(tx, true).then((res) => {
-                const poolAddress = SorobanService.getContactIdFromHash(
-                    res.value()[1].value().value().toString('hex'),
-                );
-                ToastService.showSuccessToast('Pool successfully created');
-                history.push(`${AmmRoutes.analytics}${poolAddress}`);
+        )
+            .then((tx) => {
+                return account.signAndSubmitTx(tx, true).then((res) => {
+                    const poolAddress = SorobanService.getContactIdFromHash(
+                        res.value()[1].value().value().toString('hex'),
+                    );
+                    ToastService.showSuccessToast('Pool successfully created');
+                    history.push(`${AmmRoutes.analytics}${poolAddress}`);
+                });
+            })
+            .catch((e) => {
+                ToastService.showErrorToast(e.message);
+                setPending(false);
             });
-        });
     };
 
     return (

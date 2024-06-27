@@ -2,6 +2,12 @@
 import { LEDGER_CANCEL_ERROR } from '../services/ledger.service';
 
 enum TRANSACTIONS_ERROR_CODES {
+    // TODO: Add this codes
+    // | 'txFeeBumpInnerSuccess'
+    // | 'txFailed'
+    // | 'txBadMinSeqAgeOrGap'
+    // | 'txMalformed'
+    // | 'txSorobanInvalid';
     'tx_too_early' = 'Ledger closeTime before minTime value in the transaction.',
     'tx_too_late' = 'Ledger closeTime after maxTime value in the transaction.',
     'tx_missing_operation' = 'No operation was specified.',
@@ -104,4 +110,12 @@ export default function ErrorHandler(error) {
         TRANSACTIONS_ERROR_CODES[data.extras.result_codes.transaction] ??
         'Oops. Something went wrong.'
     );
+}
+
+export function SorobanErrorHandler(errorName: string): string {
+    const snackCaseName = errorName.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
+
+    console.log(snackCaseName);
+
+    return TRANSACTIONS_ERROR_CODES[snackCaseName] ?? 'Oops. Something went wrong.';
 }
