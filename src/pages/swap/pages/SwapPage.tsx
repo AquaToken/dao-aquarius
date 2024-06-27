@@ -45,7 +45,7 @@ const Container = styled.main`
     flex-direction: column;
     scroll-behavior: smooth;
     overflow: auto;
-    padding-bottom: 6rem;
+    padding-bottom: 7rem;
 `;
 
 const Content = styled.div`
