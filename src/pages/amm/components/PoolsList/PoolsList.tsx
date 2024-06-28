@@ -162,9 +162,9 @@ const PoolsList = ({ pools, onUpdate, isUserList }) => {
     return (
         <>
             {pools.map((pool) => {
-                const balance = new BigNumber(pool.balance.toString()).div(1e7).toNumber();
-                const liquidity = new BigNumber(pool.liquidity.toString()).div(1e7).toNumber();
-                const totalShare = new BigNumber(pool.total_share.toString()).div(1e7).toNumber();
+                const balance = new BigNumber(pool.balance.toString()).div(1e7).toString();
+                const liquidity = new BigNumber(pool.liquidity.toString()).div(1e7).toString();
+                const totalShare = new BigNumber(pool.total_share.toString()).div(1e7).toString();
                 return (
                     <PoolBlock>
                         <PoolMain>
@@ -183,8 +183,8 @@ const PoolsList = ({ pools, onUpdate, isUserList }) => {
                                     $
                                     {formatBalance(
                                         (isUserList
-                                            ? (balance / totalShare) * liquidity
-                                            : liquidity) * StellarService.priceLumenUsd,
+                                            ? (+balance / +totalShare) * +liquidity
+                                            : +liquidity) * StellarService.priceLumenUsd,
                                         true,
                                     )}
                                 </span>
@@ -200,9 +200,12 @@ const PoolsList = ({ pools, onUpdate, isUserList }) => {
                                     <ExpandedDataRow>
                                         <span>Pool shares:</span>
                                         <span>
-                                            {formatBalance(balance, true)} (
+                                            {formatBalance(+balance, true)} (
                                             {Number(pool.total_share)
-                                                ? formatBalance((100 * balance) / totalShare, true)
+                                                ? formatBalance(
+                                                      (100 * +balance) / +totalShare,
+                                                      true,
+                                                  )
                                                 : '0'}
                                             %)
                                         </span>
@@ -218,8 +221,8 @@ const PoolsList = ({ pools, onUpdate, isUserList }) => {
                                                 ? formatBalance(pool.reserves[index] / 1e7)
                                                 : Number(pool.total_share)
                                                 ? formatBalance(
-                                                      ((pool.reserves[index] / 1e7) * balance) /
-                                                          totalShare,
+                                                      ((pool.reserves[index] / 1e7) * +balance) /
+                                                          +totalShare,
                                                   )
                                                 : '0'}{' '}
                                             <Asset asset={asset} onlyLogoSmall />
@@ -232,7 +235,7 @@ const PoolsList = ({ pools, onUpdate, isUserList }) => {
                                         <span>
                                             $
                                             {formatBalance(
-                                                liquidity * StellarService.priceLumenUsd,
+                                                +liquidity * StellarService.priceLumenUsd,
                                                 true,
                                             )}
                                         </span>
