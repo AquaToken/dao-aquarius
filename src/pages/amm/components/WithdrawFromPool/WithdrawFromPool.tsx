@@ -90,8 +90,6 @@ const WithdrawFromPool = ({ params }) => {
         });
     }, []);
 
-    console.log(accountShare);
-
     const withdraw = () => {
         setPending(true);
 

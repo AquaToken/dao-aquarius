@@ -656,10 +656,6 @@ export default class SorobanServiceClass {
             )
             .then(({ result }) => {
                 if (result) {
-                    console.log(
-                        result.retval.value(),
-                        this.i128ToInt(result.retval.value() as xdr.Int128Parts),
-                    );
                     return this.i128ToInt(result.retval.value() as xdr.Int128Parts);
                 }
 
