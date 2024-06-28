@@ -63,6 +63,7 @@
     "@stellar/stellar-sdk": "12.0.0-rc.1",
     "@walletconnect/sign-client": "2.6.0",
     "axios": "^0.23.0",
+    "bignumber.js": "^9.1.2",
     "binascii": "^0.0.2",
     "d3": "^7.9.0",
     "date-fns": "^2.28.0",

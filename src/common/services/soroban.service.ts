@@ -7,6 +7,7 @@ import SimulateTransactionSuccessResponse = StellarSdk.SorobanRpc.Api.SimulateTr
 import { ModalService, SorobanService, ToastService } from './globalServices';
 import RestoreContractModal from '../modals/RestoreContractModal/RestoreContractModal';
 import { getAssetString } from '../../store/assetsStore/actions';
+import BigNumber from 'bignumber.js';
 
 const SOROBAN_SERVER = 'https://soroban-testnet.stellar.org:443';
 export const AMM_SMART_CONTACT_ID = 'CCKTUGINX4LEGTAFWE2U6BK7C4NSKXNWTYXJ5FSGBUQXJUL7ZHQZWLCC';
@@ -513,7 +514,9 @@ export default class SorobanServiceClass {
                     return result.retval.value().reduce((acc, val) => {
                         const key = val.key().value().toString();
                         if (key === 'exp_at' || key === 'last_time') {
-                            acc[key] = this.i128ToInt(val.val().value()) * 1e7;
+                            acc[key] = new BigNumber(this.i128ToInt(val.val().value()).toString())
+                                .times(1e7)
+                                .toNumber();
                             return acc;
                         }
                         acc[key] = this.i128ToInt(val.val().value());
@@ -873,11 +876,17 @@ export default class SorobanServiceClass {
     }
 
     amountToToInt128(amount: string): xdr.ScVal {
-        return new StellarSdk.XdrLargeInt('u128', (Number(amount) * 1e7).toFixed()).toI128();
+        return new StellarSdk.XdrLargeInt(
+            'u128',
+            new BigNumber(amount).times(1e7).toFixed(),
+        ).toI128();
     }
 
     amountToUint128(amount: string): xdr.ScVal {
-        return new StellarSdk.XdrLargeInt('u128', (Number(amount) * 1e7).toFixed()).toU128();
+        return new StellarSdk.XdrLargeInt(
+            'u128',
+            new BigNumber(amount).times(1e7).toFixed(),
+        ).toU128();
     }
 
     bytesToScVal(bytes: Buffer): xdr.ScVal {
@@ -890,7 +899,9 @@ export default class SorobanServiceClass {
 
     i128ToInt(val: xdr.Int128Parts): number {
         // @ts-ignore
-        return ((Number(val.hi()._value) << 64) + Number(val.lo()._value)) / 1e7;
+        return new BigNumber(((Number(val.hi()._value) << 64) + Number(val.lo()._value)).toString())
+            .div(1e7)
+            .toNumber();
     }
 
     private orderTokens(assets: Asset[]) {
