@@ -11,6 +11,7 @@ import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../com
 import { Breakpoints, COLORS } from '../../../../common/styles';
 import Arrow from '../../../../common/assets/img/icon-arrow-down.svg';
 import Asset from '../../../vote/components/AssetDropdown/Asset';
+import BigNumber from 'bignumber.js';
 
 const PoolBlock = styled.div`
     display: flex;
@@ -161,9 +162,9 @@ const PoolsList = ({ pools, onUpdate, isUserList }) => {
     return (
         <>
             {pools.map((pool) => {
-                const balance = pool.balance / 1e7;
-                const liquidity = pool.liquidity / 1e7;
-                const totalShare = pool.total_share / 1e7;
+                const balance = new BigNumber(pool.balance.toString()).div(1e7).toNumber();
+                const liquidity = new BigNumber(pool.liquidity.toString()).div(1e7).toNumber();
+                const totalShare = new BigNumber(pool.total_share.toString()).div(1e7).toNumber();
                 return (
                     <PoolBlock>
                         <PoolMain>

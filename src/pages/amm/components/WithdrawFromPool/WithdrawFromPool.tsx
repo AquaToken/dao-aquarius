@@ -20,6 +20,7 @@ import Input from '../../../../common/basics/Input';
 import DotsLoader from '../../../../common/basics/DotsLoader';
 import { getAssetString } from '../../../../store/assetsStore/actions';
 import { BuildSignAndSubmitStatuses } from '../../../../common/services/wallet-connect.service';
+import BigNumber from 'bignumber.js';
 
 const Container = styled.div`
     width: 52.3rem;
@@ -93,7 +94,10 @@ const WithdrawFromPool = ({ params }) => {
     const withdraw = () => {
         setPending(true);
 
-        const amount = (accountShare * (+percent / 100)).toFixed(7);
+        const amount = new BigNumber(accountShare.toString())
+            .times(new BigNumber(percent))
+            .div(100)
+            .toFixed(7);
 
         SorobanService.getWithdrawTx(account?.accountId(), pool.index, amount, pool.assets)
             .then((tx) => account.signAndSubmitTx(tx, true))
