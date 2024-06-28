@@ -165,7 +165,7 @@ const PairSearch = styled.div`
     box-sizing: border-box;
 
     ${respondDown(Breakpoints.md)`
-        margin-top: 3rem;
+        margin-top: 5rem;
         flex-direction: column;
         box-shadow: unset;
         padding: 0;
@@ -188,7 +188,7 @@ const SwapButton = styled.div<{ disabled: boolean }>`
     }
 
     ${respondDown(Breakpoints.md)`
-        margin: 1.8rem 0;
+        margin: 1.8rem 0 3.6rem;
     `}
 `;
 
