@@ -238,7 +238,7 @@ const PoolPage = () => {
             .then((res) => {
                 const value = SorobanService.i128ToInt(res.value());
 
-                ToastService.showSuccessToast(`Claimed ${formatBalance(value)} AQUA`);
+                ToastService.showSuccessToast(`Claimed ${formatBalance(+value)} AQUA`);
                 setClaimPending(false);
             });
     };

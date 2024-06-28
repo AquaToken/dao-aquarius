@@ -656,6 +656,10 @@ export default class SorobanServiceClass {
             )
             .then(({ result }) => {
                 if (result) {
+                    console.log(
+                        result.retval.value(),
+                        this.i128ToInt(result.retval.value() as xdr.Int128Parts),
+                    );
                     return this.i128ToInt(result.retval.value() as xdr.Int128Parts);
                 }
 
@@ -897,11 +901,15 @@ export default class SorobanServiceClass {
         return xdr.ScVal.scvBytes(Buffer.from(binascii.unhexlify(hash), 'ascii'));
     }
 
-    i128ToInt(val: xdr.Int128Parts): number {
-        // @ts-ignore
-        return new BigNumber(((Number(val.hi()._value) << 64) + Number(val.lo()._value)).toString())
-            .div(1e7)
-            .toNumber();
+    i128ToInt(val: xdr.Int128Parts): string {
+        return (
+            // @ts-ignore
+            new BigNumber(val.hi()._value)
+                // @ts-ignore
+                .plus(val.lo()._value)
+                .div(1e7)
+                .toString()
+        );
     }
 
     private orderTokens(assets: Asset[]) {
