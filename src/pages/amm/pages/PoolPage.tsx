@@ -62,7 +62,7 @@ const getEventTitle = (event, pool) => {
         const fromIndex = event.amounts.findIndex((amount) => amount > 0);
         const toIndex = event.amounts.findIndex((amount) => amount < 0);
 
-        return `Swap ${pool.assets[fromIndex].code} to ${pool.assets[toIndex].code}`;
+        return `Swap ${pool.assets[fromIndex]?.code} to ${pool.assets[toIndex]?.code}`;
     }
 
     return event.event_type === 'deposit' ? 'Add liquidity' : 'Remove liquidity';
@@ -76,12 +76,12 @@ const getEventAmounts = (event, pool) => {
         return (
             <Amounts>
                 <span>
-                    {formatBalance(event.amounts[fromIndex] / 1e7)} {pool.assets[fromIndex].code}
+                    {formatBalance(event.amounts[fromIndex] / 1e7)} {pool.assets[fromIndex]?.code}
                 </span>
                 <br />
                 <span>
                     {formatBalance(Math.abs(event.amounts[toIndex] / 1e7))}{' '}
-                    {pool.assets[toIndex].code}
+                    {pool.assets[toIndex]?.code}
                 </span>
             </Amounts>
         );
