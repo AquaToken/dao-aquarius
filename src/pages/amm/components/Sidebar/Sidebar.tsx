@@ -85,7 +85,7 @@ const Sidebar = ({ pool }) => {
         if (!isLogged) {
             return ModalService.openModal(ChooseLoginMethodModal, {});
         }
-        ModalService.openModal(WithdrawFromPool, { pool, accountShare });
+        ModalService.openModal(WithdrawFromPool, { pool });
     };
     return (
         <Container>

@@ -252,7 +252,6 @@ const PoolsList = ({ pools, onUpdate, isUserList }) => {
                                             onClick={() =>
                                                 ModalService.openModal(WithdrawFromPool, {
                                                     pool,
-                                                    accountShare: balance,
                                                 }).then(() => onUpdate())
                                             }
                                         >

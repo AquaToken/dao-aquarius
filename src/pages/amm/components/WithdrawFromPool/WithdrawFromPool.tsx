@@ -71,7 +71,8 @@ const DescriptionRow = styled.div`
 `;
 
 const WithdrawFromPool = ({ params }) => {
-    const { pool, accountShare } = params;
+    const { pool } = params;
+    const [accountShare, setAccountShare] = useState(null);
     const [percent, setPercent] = useState('100');
     const [pending, setPending] = useState(false);
     const [totalShares, setTotalShares] = useState(null);
@@ -90,6 +91,18 @@ const WithdrawFromPool = ({ params }) => {
             setReserves(res);
         });
     }, []);
+
+    useEffect(() => {
+        if (!account) {
+            setAccountShare(null);
+            return;
+        }
+        SorobanService.getTokenBalance(pool.share_token_address, account.accountId()).then(
+            (res) => {
+                setAccountShare(res);
+            },
+        );
+    }, [account]);
 
     const withdraw = () => {
         setPending(true);
