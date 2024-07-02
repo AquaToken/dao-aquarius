@@ -48,7 +48,7 @@ const SuccessModal = ({ params, close }) => {
                     amounts={amounts}
                     isSwapResult={isSwap}
                 />
-                <ExternalLink href={`https://stellar.expert/explorer/testnet/tx/${hash}`}>
+                <ExternalLink href={`https://stellar.expert/explorer/public/tx/${hash}`}>
                     View on Explorer
                 </ExternalLink>
             </AssetsInfo>
