@@ -269,7 +269,7 @@ const PoolPage = () => {
                         withoutLink
                     />
                     <ExternalLinkStyled
-                        href={`https://stellar.expert/explorer/testnet/contract/${pool.address}`}
+                        href={`https://stellar.expert/explorer/public/contract/${pool.address}`}
                     >
                         View on Explorer
                     </ExternalLinkStyled>
