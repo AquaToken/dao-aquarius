@@ -146,7 +146,7 @@ const FEE_OPTIONS = [
 const CREATE_STABLE_POOL_COST = 1; // 1 AQUA
 
 const CreatePool = ({ balances }) => {
-    const [type, setType] = useState(PoolTypes.stable);
+    const [type, setType] = useState(PoolTypes.constant);
     const [assetsCount, setAssetsCount] = useState(2);
     const [firstAsset, setFirstAsset] = useState(null);
     const [firstAssetStatus, setFirstAssetStatus] = useState(null);
@@ -347,6 +347,16 @@ const CreatePool = ({ balances }) => {
                         <StyledFormSection>
                             <FormSectionTitle>Select pool type</FormSectionTitle>
                             <PoolType
+                                isActive={type === PoolTypes.constant}
+                                onClick={() => setType(PoolTypes.constant)}
+                            >
+                                <div>
+                                    <h3>Constant product</h3>
+                                    <p>Simple model for general purpose AMM pools (Uniswap v2).</p>
+                                </div>
+                                <Tick />
+                            </PoolType>
+                            <PoolType
                                 isActive={type === PoolTypes.stable}
                                 onClick={() => setType(PoolTypes.stable)}
                             >
@@ -359,16 +369,6 @@ const CreatePool = ({ balances }) => {
                                         You need at least {CREATE_STABLE_POOL_COST} AQUA to create
                                         pool.
                                     </p>
-                                </div>
-                                <Tick />
-                            </PoolType>
-                            <PoolType
-                                isActive={type === PoolTypes.constant}
-                                onClick={() => setType(PoolTypes.constant)}
-                            >
-                                <div>
-                                    <h3>Constant product</h3>
-                                    <p>Simple model for general purpose AMM pools (Uniswap v2).</p>
                                 </div>
                                 <Tick />
                             </PoolType>
