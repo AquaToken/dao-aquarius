@@ -220,9 +220,13 @@ const DepositToPool = ({ params }) => {
             );
             return;
         }
+        let hash: string;
         setPending(true);
         SorobanService.getDepositTx(account?.accountId(), pool.index, pool.assets, amounts)
-            .then((tx) => account.signAndSubmitTx(tx, true))
+            .then((tx) => {
+                hash = tx.hash().toString('hex');
+                return account.signAndSubmitTx(tx, true);
+            })
             .then((res) => {
                 setPending(false);
 
@@ -234,6 +238,7 @@ const DepositToPool = ({ params }) => {
                     assets: pool.assets,
                     amounts: resultAmounts.map((value) => SorobanService.i128ToInt(value.value())),
                     title: 'Deposit Successful',
+                    hash,
                 });
             })
             .catch((e) => {

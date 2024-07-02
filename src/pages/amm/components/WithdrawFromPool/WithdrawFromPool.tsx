@@ -110,9 +110,13 @@ const WithdrawFromPool = ({ params }) => {
             .times(new BigNumber(percent))
             .div(100)
             .toFixed(7);
+        let hash: string;
 
         SorobanService.getWithdrawTx(account?.accountId(), pool.index, amount, pool.assets)
-            .then((tx) => account.signAndSubmitTx(tx, true))
+            .then((tx) => {
+                hash = tx.hash().toString('hex');
+                return account.signAndSubmitTx(tx, true);
+            })
             .then((res) => {
                 ModalService.confirmAllModals();
 
@@ -120,6 +124,7 @@ const WithdrawFromPool = ({ params }) => {
                     assets: pool.assets,
                     amounts: res.value().map((val) => SorobanService.i128ToInt(val.value())),
                     title: 'Withdraw Successful',
+                    hash,
                 });
                 setPending(false);
             })
