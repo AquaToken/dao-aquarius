@@ -22,6 +22,7 @@ import AccountViewer from '../../../common/basics/AccountViewer';
 import Table from '../../../common/basics/Table';
 import LiquidityChart from '../components/LiquidityChart/LiquidityChart';
 import VolumeChart from '../components/VolumeChart/VolumeChart';
+import ExternalLink from '../../../common/basics/ExternalLink';
 
 const Container = styled.main`
     height: 100%;
@@ -199,6 +200,10 @@ const Chart = styled.div`
     flex: 1;
 `;
 
+const ExternalLinkStyled = styled(ExternalLink)`
+    margin-top: 1.6rem;
+`;
+
 const PoolPage = () => {
     const [pool, setPool] = useState(null);
     const [rewards, setRewards] = useState(null);
@@ -263,6 +268,11 @@ const PoolPage = () => {
                         isCircleLogos
                         withoutLink
                     />
+                    <ExternalLinkStyled
+                        href={`https://stellar.expert/explorer/testnet/contract/${pool.address}`}
+                    >
+                        View on Explorer
+                    </ExternalLinkStyled>
                 </Section>
                 <Sidebar pool={pool} />
 
