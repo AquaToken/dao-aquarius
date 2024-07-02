@@ -74,6 +74,8 @@ const SwapConfirmModal = ({ params, confirm }) => {
 
         const minCounterAmount = ((1 - Number(SLIPPAGE) / 100) * Number(counterAmount)).toFixed(7);
 
+        let hash: string;
+
         SorobanService.getSwapChainedTx(
             account?.accountId(),
             base,
@@ -83,6 +85,7 @@ const SwapConfirmModal = ({ params, confirm }) => {
         )
             .then((tx) => {
                 console.log(tx.toEnvelope().toXDR('base64'));
+                hash = tx.hash().toString('hex');
                 return account.signAndSubmitTx(tx, true);
             })
             .then((res) => {
@@ -101,6 +104,7 @@ const SwapConfirmModal = ({ params, confirm }) => {
                     amounts: [baseAmount, SorobanService.i128ToInt(res.value())],
                     title: 'Swap Successful',
                     isSwap: true,
+                    hash,
                 });
                 setSwapPending(false);
             })

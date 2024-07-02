@@ -50,7 +50,7 @@ const Icons = styled.div<{
     display: flex;
     align-items: center;
     min-width: 12rem;
-    justify-content: flex-end;
+    justify-content: ${({ verticalDirections }) => (verticalDirections ? 'center' : 'flex-end')};
 
     ${({ mobileVerticalDirections, verticalDirections }) =>
         (mobileVerticalDirections || verticalDirections) &&
