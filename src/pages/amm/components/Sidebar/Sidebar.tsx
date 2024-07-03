@@ -132,7 +132,7 @@ const Sidebar = ({ pool }) => {
                     <Button
                         fullWidth
                         onClick={() => openWithdrawModal()}
-                        disabled={accountShare === 0}
+                        disabled={Number(accountShare) === 0}
                     >
                         Withdraw
                     </Button>
