@@ -149,6 +149,11 @@ const Chart = styled.div`
     padding: 1.6rem;
     border-radius: 0.6rem;
     flex: 1;
+
+    ${respondDown(Breakpoints.xl)`
+        flex-direction: column;
+        background-color: ${COLORS.white};
+    `}
 `;
 
 const OPTIONS = [
@@ -225,10 +230,18 @@ const Analytics = () => {
                     <Section>
                         <Charts>
                             <Chart>
-                                <VolumeChart data={totalStats} width={576} height={320} />
+                                <VolumeChart
+                                    data={totalStats}
+                                    width={Math.min(576, +window.innerWidth - 64)}
+                                    height={320}
+                                />
                             </Chart>
                             <Chart>
-                                <LiquidityChart data={totalStats} width={576} height={320} />
+                                <LiquidityChart
+                                    data={totalStats}
+                                    width={Math.min(576, +window.innerWidth - 64)}
+                                    height={320}
+                                />
                             </Chart>
                         </Charts>
                     </Section>
