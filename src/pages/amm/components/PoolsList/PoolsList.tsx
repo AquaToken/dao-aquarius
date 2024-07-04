@@ -162,9 +162,9 @@ const PoolsList = ({ pools, onUpdate, isUserList }) => {
     return (
         <>
             {pools.map((pool) => {
-                const balance = new BigNumber(pool.balance.toString()).div(1e7).toString();
-                const liquidity = new BigNumber(pool.liquidity.toString()).div(1e7).toString();
-                const totalShare = new BigNumber(pool.total_share.toString()).div(1e7).toString();
+                const balance = new BigNumber(pool.balance?.toString()).div(1e7).toString();
+                const liquidity = new BigNumber(pool.liquidity?.toString()).div(1e7).toString();
+                const totalShare = new BigNumber(pool.total_share?.toString()).div(1e7).toString();
                 return (
                     <PoolBlock>
                         <PoolMain>
