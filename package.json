@@ -56,8 +56,8 @@
     "webpack-merge": "^5.8.0"
   },
   "dependencies": {
-    "@ledgerhq/hw-app-str": "^6.27.12",
-    "@ledgerhq/hw-transport-webusb": "^6.27.12",
+    "@ledgerhq/hw-app-str": "7.0.0",
+    "@ledgerhq/hw-transport-webusb": "6.29.0",
     "@lobstrco/signer-extension-api": "^1.0.0-beta.0",
     "@stellar/freighter-api": "^2.0.0",
     "@stellar/stellar-sdk": "^11.1.0",

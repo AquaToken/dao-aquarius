@@ -35,7 +35,8 @@ export default class LedgerServiceClass {
             await this.api.getAppConfiguration();
 
             const path = `44'/148'/${bipPath}'`;
-            const { publicKey } = await this.api.getPublicKey(path);
+            const { rawPublicKey } = await this.api.getPublicKey(path);
+            const publicKey = StellarSdk.StrKey.encodeEd25519PublicKey(rawPublicKey);
 
             if (!publicKey || publicKey === LEDGER_DEFAULT_ACCOUNT) {
                 throw new Error();
