@@ -35,7 +35,8 @@ export default class LedgerServiceClass {
             await this.api.getAppConfiguration();
 
             const path = `44'/148'/${bipPath}'`;
-            const { publicKey } = await this.api.getPublicKey(path);
+            const { rawPublicKey } = await this.api.getPublicKey(path);
+            const publicKey = StellarSdk.StrKey.encodeEd25519PublicKey(rawPublicKey);
 
             if (!publicKey || publicKey === LEDGER_DEFAULT_ACCOUNT) {
                 throw new Error();
@@ -56,15 +57,28 @@ export default class LedgerServiceClass {
     async signTx(tx: StellarSdk.Transaction) {
         await this.login(this.bipSlot);
 
-        const { signature } = await this.api.signTransaction(this.bipPath, tx.signatureBase());
+        const isSoroban = tx.operations.some(
+            (op) =>
+                op.type === 'invokeHostFunction' ||
+                op.type === 'restoreFootprint' ||
+                op.type === 'extendFootprintTtl',
+        );
 
-        const keypair = StellarSdk.Keypair.fromPublicKey(this.accountId);
-        const hint = keypair.signatureHint();
+        try {
+            const { signature } = isSoroban
+                ? await this.api.signHash(this.bipPath, tx.hash())
+                : await this.api.signTransaction(this.bipPath, tx.signatureBase());
 
-        const decorated = new StellarSdk.xdr.DecoratedSignature({ hint, signature });
+            const keypair = StellarSdk.Keypair.fromPublicKey(this.accountId);
+            const hint = keypair.signatureHint();
 
-        tx.signatures.push(decorated);
+            const decorated = new StellarSdk.xdr.DecoratedSignature({ hint, signature });
 
-        return tx;
+            tx.signatures.push(decorated);
+
+            return tx;
+        } catch (e) {
+            throw e.message;
+        }
     }
 }

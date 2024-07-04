@@ -295,7 +295,7 @@ const CreatePool = ({ balances }) => {
                 });
             })
             .catch((e) => {
-                ToastService.showErrorToast(e.message);
+                ToastService.showErrorToast(e.toString() ?? e.message);
                 setPending(false);
             });
     };
@@ -318,7 +318,7 @@ const CreatePool = ({ balances }) => {
                 });
             })
             .catch((e) => {
-                ToastService.showErrorToast(e.message);
+                ToastService.showErrorToast(e.toString() ?? e.message);
                 setPending(false);
             });
     };
