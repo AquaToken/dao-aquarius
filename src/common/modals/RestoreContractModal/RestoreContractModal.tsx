@@ -6,6 +6,7 @@ import { ModalDescription, ModalTitle } from '../atoms/ModalAtoms';
 import Button from '../../basics/Button';
 import useAuthStore from '../../../store/authStore/useAuthStore';
 import { useState } from 'react';
+import ExternalLink from '../../basics/ExternalLink';
 
 const Container = styled.div`
     width: 52.3rem;
@@ -28,6 +29,10 @@ const StyledButton = styled(Button)`
         `}
 `;
 
+const ExternalLinkStyled = styled(ExternalLink)`
+    margin-top: 1.6rem;
+`;
+
 const RestoreContractModal = ({ params, close }) => {
     const [pending, setPending] = useState(false);
     const { tx } = params;
@@ -43,10 +48,15 @@ const RestoreContractModal = ({ params, close }) => {
 
     return (
         <Container>
-            <Title>Some of the contracts expired</Title>
+            <Title>Contract expired</Title>
             <ModalDescription>
-                You can restore the contract by signing the transaction.
+                One or more ledger entries that need to be used in this transactions has expired.
+                You need to restore it first.
+                <ExternalLinkStyled href="https://stellar.org/blog/developers/not-all-data-is-equal-how-soroban-is-solving-state-bloat-with-state-expiration">
+                    Learn more
+                </ExternalLinkStyled>
             </ModalDescription>
+
             <StyledButton onClick={() => restore()} pending={pending}>
                 Restore
             </StyledButton>
