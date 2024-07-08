@@ -6,7 +6,6 @@ import { Breakpoints, COLORS } from '../../../common/styles';
 import { AmmRoutes } from '../../../routes';
 import ArrowLeft from '../../../common/assets/img/icon-arrow-left.svg';
 import Tick from '../../../common/assets/img/icon-tick-white.svg';
-import Info from '../../../common/assets/img/icon-info.svg';
 import {
     Back,
     BackButton,
@@ -29,7 +28,6 @@ import { CONTRACT_STATUS } from '../../../common/services/soroban.service';
 import PoolsList from '../components/PoolsList/PoolsList';
 import { FilterOptions, getPools, PoolsSortFields } from '../api/api';
 import { useHistory } from 'react-router-dom';
-import Tooltip, { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
 import ContractNotFound from '../components/ContractNotFound/ContractNotFound';
 
 const StyledForm = styled(Form)`
@@ -117,21 +115,6 @@ const AddRowButton = styled(Button)`
 const ToggleGroupStyled = styled(ToggleGroup)`
     width: fit-content;
 `;
-
-const InputLabel = styled.span`
-    display: flex;
-    align-items: center;
-
-    svg {
-        margin-left: 0.4rem;
-    }
-`;
-
-const TooltipInner = styled.div`
-    width: 20rem;
-    white-space: pre-line;
-`;
-
 const enum PoolTypes {
     stable = 'stable',
     constant = 'constant',
@@ -156,7 +139,6 @@ const CreatePool = ({ balances }) => {
     const [fourthAssetStatus, setFourthAssetStatus] = useState(null);
     const [constantFee, setConstantFee] = useState(10);
     const [stableFee, setStableFee] = useState('0.06');
-    const [a, setA] = useState('85');
     const [pending, setPending] = useState(false);
 
     const [pools, setPools] = useState(null);
@@ -258,10 +240,6 @@ const CreatePool = ({ balances }) => {
     };
 
     const createStablePool = () => {
-        if (!Number(a) || Number(a) < 1 || Number(a) > 5000) {
-            ToastService.showErrorToast('Incorrect A value');
-        }
-
         if (!Number(stableFee) || Number(stableFee) < 0.04 || Number(stableFee) > 1) {
             ToastService.showErrorToast('Incorrect Fee value');
         }
@@ -271,7 +249,6 @@ const CreatePool = ({ balances }) => {
         SorobanService.getInitStableSwapPoolTx(
             account.accountId(),
             [firstAsset, secondAsset, thirdAsset, fourthAsset].filter((asset) => asset !== null),
-            Number(a),
             Number(stableFee),
         )
             .then((tx) => {
@@ -466,27 +443,6 @@ const CreatePool = ({ balances }) => {
                                         label="Swap Fee (0.04 - 1%)"
                                         value={stableFee}
                                         onChange={(e) => setStableFee(e.target.value)}
-                                    />
-                                    <Input
-                                        label={
-                                            <Tooltip
-                                                showOnHover
-                                                content={
-                                                    <TooltipInner>
-                                                        A - amplification coefficient. The greater
-                                                        this value, the more stable the pool ratio
-                                                        and the smaller the slippage.
-                                                    </TooltipInner>
-                                                }
-                                                position={TOOLTIP_POSITION.top}
-                                            >
-                                                <InputLabel>
-                                                    A (1-5000) <Info />
-                                                </InputLabel>
-                                            </Tooltip>
-                                        }
-                                        value={a}
-                                        onChange={(e) => setA(e.target.value)}
                                     />
                                 </FormRow>
                             ) : (
