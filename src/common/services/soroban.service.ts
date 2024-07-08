@@ -354,7 +354,7 @@ export default class SorobanServiceClass {
         ).then((tx) => this.server.prepareTransaction(tx));
     }
 
-    getInitStableSwapPoolTx(accountId: string, assets: Asset[], a: number, fee: number) {
+    getInitStableSwapPoolTx(accountId: string, assets: Asset[], fee: number) {
         const orderedAssets = this.orderTokens(assets).map((asset) => this.assetToScVal(asset));
 
         return this.buildSmartContactTx(
@@ -363,7 +363,7 @@ export default class SorobanServiceClass {
             AMM_CONTRACT_METHOD.INIT_STABLESWAP_POOL,
             this.publicKeyToScVal(accountId),
             this.scValToArray(orderedAssets),
-            new StellarSdk.XdrLargeInt('u128', Number(a).toFixed()).toU128(),
+            new StellarSdk.XdrLargeInt('u128', Number(1500).toFixed()).toU128(),
             this.amountToUint32(fee * 100),
             this.amountToUint32(0),
         ).then((tx) => this.server.prepareTransaction(tx));

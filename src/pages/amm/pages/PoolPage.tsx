@@ -312,12 +312,6 @@ const PoolPage = () => {
                             <span>Fee:</span>
                             <span>{pool.fee * 100}%</span>
                         </SectionRow>
-                        {Boolean(pool.a) && (
-                            <SectionRow>
-                                <span>A:</span>
-                                <span>{pool.a}</span>
-                            </SectionRow>
-                        )}
                         {pool.assets.map((asset, index) => (
                             <SectionRow key={pool.tokens_addresses[index]}>
                                 <span>Total {asset.code}:</span>
