@@ -30,6 +30,10 @@ import { FilterOptions, getPools, PoolsSortFields } from '../api/api';
 import { useHistory } from 'react-router-dom';
 import ContractNotFound from '../components/ContractNotFound/ContractNotFound';
 
+const ErrorLabel = styled.span<{ isError?: boolean }>`
+    color: ${({ isError }) => (isError ? COLORS.pinkRed : COLORS.paragraphText)};
+`;
+
 const StyledForm = styled(Form)`
     padding: 0 4.8rem;
     margin-bottom: 5rem;
@@ -115,6 +119,7 @@ const AddRowButton = styled(Button)`
 const ToggleGroupStyled = styled(ToggleGroup)`
     width: fit-content;
 `;
+
 const enum PoolTypes {
     stable = 'stable',
     constant = 'constant',
@@ -125,6 +130,11 @@ const FEE_OPTIONS = [
     { value: 30, label: '0.3%' },
     { value: 100, label: '1%' },
 ];
+
+const STABLE_POOL_FEE_PERCENTS = {
+    min: '0.1',
+    max: '1',
+};
 
 const CreatePool = ({ balances }) => {
     const [type, setType] = useState(PoolTypes.constant);
@@ -138,7 +148,7 @@ const CreatePool = ({ balances }) => {
     const [fourthAsset, setFourthAsset] = useState(null);
     const [fourthAssetStatus, setFourthAssetStatus] = useState(null);
     const [constantFee, setConstantFee] = useState(10);
-    const [stableFee, setStableFee] = useState('0.06');
+    const [stableFee, setStableFee] = useState(STABLE_POOL_FEE_PERCENTS.min);
     const [pending, setPending] = useState(false);
 
     const [pools, setPools] = useState(null);
@@ -146,6 +156,11 @@ const CreatePool = ({ balances }) => {
     const { account } = useAuthStore();
 
     const history = useHistory();
+
+    const isStableFeeInputError =
+        stableFee &&
+        (Number(stableFee) < Number(STABLE_POOL_FEE_PERCENTS.min) ||
+            Number(stableFee) > Number(STABLE_POOL_FEE_PERCENTS.max));
 
     useEffect(() => {
         if (type === PoolTypes.constant) {
@@ -440,7 +455,15 @@ const CreatePool = ({ balances }) => {
                             {type === PoolTypes.stable ? (
                                 <FormRow>
                                     <Input
-                                        label="Swap Fee (0.04 - 1%)"
+                                        type="number"
+                                        label={
+                                            <ErrorLabel isError={isStableFeeInputError}>
+                                                {isStableFeeInputError
+                                                    ? `Percent fee should be in range ${STABLE_POOL_FEE_PERCENTS.min}% - ${STABLE_POOL_FEE_PERCENTS.max}%`
+                                                    : `Swap Fee (${STABLE_POOL_FEE_PERCENTS.min}% - ${STABLE_POOL_FEE_PERCENTS.max}%)`}
+                                            </ErrorLabel>
+                                        }
+                                        placeholder={STABLE_POOL_FEE_PERCENTS.min}
                                         value={stableFee}
                                         onChange={(e) => setStableFee(e.target.value)}
                                     />
@@ -469,7 +492,9 @@ const CreatePool = ({ balances }) => {
                                         secondAssetStatus,
                                         thirdAssetStatus,
                                         fourthAssetStatus,
-                                    ].some((status) => status === CONTRACT_STATUS.NOT_FOUND)
+                                    ].some((status) => status === CONTRACT_STATUS.NOT_FOUND) ||
+                                    isStableFeeInputError ||
+                                    !stableFee
                                 }
                             >
                                 Create pool
