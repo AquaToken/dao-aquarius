@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import {
     commonMaxWidth,
@@ -24,7 +24,6 @@ import Plus from '../../../common/assets/img/icon-plus.svg';
 import { useDebounce } from '../../../common/hooks/useDebounce';
 import Button from '../../../common/basics/Button';
 import { IconFail } from '../../../common/basics/Icons';
-import { CONTRACT_STATUS } from '../../../common/services/soroban.service';
 import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
 import { formatBalance, getAssetFromString, getAssetString } from '../../../common/helpers/helpers';
 import SwapConfirmModal from '../conponents/SwapConfirmModal/SwapConfirmModal';
@@ -122,8 +121,8 @@ const StyledInput = styled(Input)`
     flex: 1.2;
 `;
 
-const DropdownContainer = styled.div`
-    flex: 1;
+const DropdownContainer = styled.div<{ $isOpen: boolean }>`
+    ${({ $isOpen }) => ($isOpen ? `width: 100%; position: absolute;` : `flex: 1;`)}
 `;
 
 const SwapDivider = styled.div`
@@ -219,11 +218,13 @@ const TrustlineButton = styled(Button)`
     }
 `;
 
-const SwapPage = ({ balances }) => {
+const SwapPage = () => {
     const { account, isLogged } = useAuthStore();
 
     const [base, setBase] = useState(null);
+    const [isBaseDropdownOpen, setIsBaseDropdownOpen] = useState(false);
     const [counter, setCounter] = useState(null);
+    const [isCounterDropdownOpen, setIsCounterDropdownOpen] = useState(false);
     const [error, setError] = useState(false);
 
     const [baseAmount, setBaseAmount] = useState('');
@@ -315,12 +316,6 @@ const SwapPage = ({ balances }) => {
         });
     };
 
-    const assets = useMemo(() => {
-        return balances
-            ?.filter(({ status }) => status === CONTRACT_STATUS.ACTIVE)
-            .map(({ asset }) => asset);
-    }, [balances]);
-
     const revertAssets = () => {
         history.push(`${MainRoutes.swap}/${getAssetString(counter)}/${getAssetString(base)}`);
         setBaseAmount('');
@@ -399,14 +394,15 @@ const SwapPage = ({ balances }) => {
                             label="From"
                         />
 
-                        <DropdownContainer>
+                        <DropdownContainer $isOpen={isBaseDropdownOpen}>
                             <AssetDropdown
                                 asset={base}
                                 onUpdate={setSource}
-                                assetsList={assets}
                                 exclude={counter}
                                 disabled={estimatePending}
                                 withoutReset
+                                onToggle={(res) => setIsBaseDropdownOpen(res)}
+                                withBalances
                             />
                         </DropdownContainer>
                     </FormRow>
@@ -434,14 +430,15 @@ const SwapPage = ({ balances }) => {
                             disabled
                         />
 
-                        <DropdownContainer>
+                        <DropdownContainer $isOpen={isCounterDropdownOpen}>
                             <AssetDropdown
                                 asset={counter}
                                 onUpdate={setDestination}
-                                assetsList={assets}
                                 exclude={base}
                                 withoutReset
                                 disabled={estimatePending}
+                                onToggle={(res) => setIsCounterDropdownOpen(res)}
+                                withBalances
                             />
                         </DropdownContainer>
                     </FormRow>

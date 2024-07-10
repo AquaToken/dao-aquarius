@@ -6,11 +6,11 @@ import { AQUA_CODE, AQUA_ISSUER } from '../../common/services/stellar.service';
 import { getAssetString } from '../../common/helpers/helpers';
 import SwapPage from './pages/SwapPage';
 
-const Swap = ({ balances }) => {
+const Swap = () => {
     return (
         <Switch>
             <Route exact path={`${MainRoutes.swap}/:source/:destination/`}>
-                <SwapPage balances={balances} />
+                <SwapPage />
             </Route>
             <Route
                 component={() => (

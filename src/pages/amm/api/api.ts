@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { AssetsService } from '../../../common/services/globalServices';
 import { Asset } from '@stellar/stellar-sdk';
+import { getAssetString } from '../../../common/helpers/helpers';
 
 const API_URL = 'https://amm-api.aqua.network';
 
@@ -143,5 +144,23 @@ export const getTotalStats = () => {
             .get(`${API_URL}/statistics/totals/`)
             // @ts-ignore
             .then(({ data }) => data.items.reverse())
+    );
+};
+export const getNativePrices = (assets: Array<Asset>) => {
+    return (
+        axios
+            .get(
+                `${API_URL}/tokens/?name__in=${assets
+                    .map((asset) => getAssetString(asset))
+                    .join(',')}`,
+            )
+            // @ts-ignore
+            .then(({ data }) => data.items)
+            .then((prices) => {
+                return prices.reduce((acc, price) => {
+                    acc.set(price.name, price.price_xlm);
+                    return acc;
+                }, new Map());
+            })
     );
 };

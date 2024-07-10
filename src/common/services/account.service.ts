@@ -17,6 +17,8 @@ import SignWithPublic from '../modals/SignWithPublic';
 import LedgerSignTx from '../modals/LedgerModals/LedgerSignTx';
 import SentToVault from '../modals/MultisigModals/SentToVault';
 import { CONTRACT_STATUS } from './soroban.service';
+import { getNativePrices } from '../../pages/amm/api/api';
+import { getAssetString } from '../helpers/helpers';
 
 const VAULT_MARKER = 'GA2T6GR7VXXXBETTERSAFETHANSORRYXXXPROTECTEDBYLOBSTRVAULT';
 
@@ -256,6 +258,52 @@ export default class AccountService extends Horizon.AccountResponse {
         );
 
         return available > 0 ? available : 0;
+    }
+
+    async getSortedBalances() {
+        const assetsBalances = this.balances.filter(
+            (asset): asset is Horizon.HorizonApi.BalanceLineAsset =>
+                asset.asset_type !== 'liquidity_pool_shares' && asset.asset_type !== 'native',
+        );
+        const nativeBalanceInstance = this.balances.find(
+            ({ asset_type }) => asset_type === 'native',
+        );
+        const nativePrices = await getNativePrices(
+            assetsBalances.map(({ asset_code, asset_issuer }) =>
+                StellarService.createAsset(asset_code, asset_issuer),
+            ),
+        );
+
+        const balances = assetsBalances
+            .map((balance) => {
+                const asset = StellarService.createAsset(balance.asset_code, balance.asset_issuer);
+                const assetString = getAssetString(asset);
+
+                return {
+                    ...balance,
+                    nativeBalance: nativePrices.has(assetString)
+                        ? +balance.balance * nativePrices.get(assetString)
+                        : 0,
+                    code: balance.asset_code,
+                    issuer: balance.asset_issuer,
+                };
+            })
+            .sort(
+                (a, b) =>
+                    b.nativeBalance - a.nativeBalance ||
+                    +b.balance - +a.balance ||
+                    a.asset_code.localeCompare(b.asset_code),
+            );
+
+        return [
+            {
+                ...nativeBalanceInstance,
+                nativeBalance: +nativeBalanceInstance.balance,
+                code: 'XLM',
+                issuer: null,
+            },
+            ...balances,
+        ];
     }
 
     getBalances() {

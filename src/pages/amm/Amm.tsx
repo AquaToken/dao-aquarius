@@ -22,11 +22,7 @@ const Amm = ({ balances }) => {
                 <Liquidity />
             </Route>
             <Route path={AmmRoutes.create}>
-                {isLogged ? (
-                    <CreatePool balances={balances} />
-                ) : (
-                    <Redirect to={AmmRoutes.analytics} />
-                )}
+                {isLogged ? <CreatePool /> : <Redirect to={AmmRoutes.analytics} />}
             </Route>
             <Route path={AmmRoutes.balances}>
                 <BalancesBlock balances={balances} />

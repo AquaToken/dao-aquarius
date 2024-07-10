@@ -13,6 +13,9 @@ import { StellarService } from '../../../../common/services/globalServices';
 import { AssetSimple } from '../../../../store/assetsStore/types';
 import useAssetsStore from '../../../../store/assetsStore/useAssetsStore';
 import { getAssetString } from '../../../../store/assetsStore/actions';
+import useAuthStore from '../../../../store/authStore/useAuthStore';
+import { flexRowSpaceBetween } from '../../../../common/mixins';
+import { formatBalance } from '../../../../common/helpers/helpers';
 
 const DropDown = styled.div<{ isOpen: boolean; disabled: boolean }>`
     width: 100%;
@@ -117,9 +120,26 @@ const DropdownList = styled.div`
 
 const DropdownItem = styled.div`
     cursor: pointer;
+    ${flexRowSpaceBetween};
+    padding-right: 2.4rem;
 
     &:hover {
         background-color: ${COLORS.lightGray};
+    }
+`;
+
+const Balances = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    color: ${COLORS.grayText};
+    font-size: 1.4rem;
+    line-height: 2rem;
+
+    span:first-child {
+        font-size: 1.6rem;
+        line-height: 2.8rem;
+        color: ${COLORS.paragraphText};
     }
 `;
 
@@ -163,10 +183,10 @@ type AssetDropdownProps = {
     exclude?: AssetSimple;
     placeholder?: string;
     label?: string;
-    assetsList?: AssetSimple[];
     withoutReset?: boolean;
     pending?: boolean;
     excludeList?: AssetSimple[];
+    withBalances?: boolean;
 };
 
 const StyledAsset = styled(Asset)`
@@ -186,21 +206,33 @@ const AssetDropdown = ({
     excludeList,
     placeholder,
     label,
-    assetsList,
     withoutReset,
     pending,
+    withBalances,
     ...props
 }: AssetDropdownProps) => {
     const { assets: knownAssets, assetsInfo, processNewAssets } = useAssetsStore();
 
-    const userAssets = assetsList || [];
+    const { account } = useAuthStore();
+
+    const [balances, setBalances] = useState([]);
+
+    useEffect(() => {
+        if (!account) {
+            setBalances([]);
+            return;
+        }
+        account.getSortedBalances().then((res) => {
+            setBalances(res);
+        });
+    }, [account]);
 
     const assets = [
-        ...userAssets.sort((a, b) => a.code.localeCompare(b.code)),
+        ...balances,
         ...(knownAssets
             .filter(
                 (knownAsset) =>
-                    !userAssets.find(
+                    !balances.find(
                         (asset) =>
                             knownAsset.code === asset.code && knownAsset.issuer === asset.issuer,
                     ),
@@ -311,7 +343,7 @@ const AssetDropdown = ({
             return (
                 (assetItem.code.toLowerCase().includes(searchText.toLowerCase()) ||
                     (StellarSdk.StrKey.isValidEd25519PublicKey(searchText) &&
-                            assetItem.issuer?.toLowerCase().includes(searchText.toLowerCase())) ||
+                        assetItem.issuer?.toLowerCase().includes(searchText.toLowerCase())) ||
                     assetInfo?.home_domain?.toLowerCase().includes(searchText.toLowerCase())) &&
                 !(assetItem.code === exclude?.code && assetItem.issuer === exclude?.issuer) &&
                 !excludeList?.find(
@@ -374,6 +406,23 @@ const AssetDropdown = ({
                             key={assetItem.code + assetItem.issuer}
                         >
                             <StyledAsset asset={assetItem} />
+                            {withBalances && assetItem.balance ? (
+                                <Balances>
+                                    <span>
+                                        {formatBalance(assetItem.balance)} {assetItem.code}
+                                    </span>
+                                    <span>
+                                        $
+                                        {formatBalance(
+                                            +(
+                                                assetItem.nativeBalance *
+                                                StellarService.priceLumenUsd
+                                            ).toFixed(2),
+                                            true,
+                                        )}
+                                    </span>
+                                </Balances>
+                            ) : null}
                         </DropdownItem>
                     ))}
                     {!filteredAssets.length && <SearchEmpty>Asset not found.</SearchEmpty>}

@@ -128,7 +128,7 @@ const FEE_OPTIONS = [
 
 const CREATE_STABLE_POOL_COST = 1; // 1 AQUA
 
-const CreatePool = ({ balances }) => {
+const CreatePool = () => {
     const [type, setType] = useState(PoolTypes.constant);
     const [assetsCount, setAssetsCount] = useState(2);
     const [firstAsset, setFirstAsset] = useState(null);
@@ -156,10 +156,6 @@ const CreatePool = ({ balances }) => {
             setFourthAsset(null);
         }
     }, [type]);
-
-    const assets = useMemo(() => {
-        return balances?.map(({ asset }) => asset);
-    }, [balances]);
 
     useEffect(() => {
         getPools(FilterOptions.all, 1, 1000, PoolsSortFields.liquidityUp).then((res) =>
@@ -355,7 +351,6 @@ const CreatePool = ({ balances }) => {
                             <StyledAssetDropdown
                                 label="First asset"
                                 asset={firstAsset}
-                                assetsList={assets}
                                 onUpdate={setFirstAsset}
                                 excludeList={[secondAsset, thirdAsset, fourthAsset].filter(
                                     (asset) => asset !== null,
@@ -371,7 +366,6 @@ const CreatePool = ({ balances }) => {
                             <StyledAssetDropdown
                                 label="Second asset"
                                 asset={secondAsset}
-                                assetsList={assets}
                                 onUpdate={setSecondAsset}
                                 excludeList={[firstAsset, thirdAsset, fourthAsset].filter(
                                     (asset) => asset !== null,
@@ -398,7 +392,6 @@ const CreatePool = ({ balances }) => {
                                     <StyledAssetDropdown
                                         label="Third asset"
                                         asset={thirdAsset}
-                                        assetsList={assets}
                                         onUpdate={setThirdAsset}
                                         excludeList={[firstAsset, secondAsset, fourthAsset].filter(
                                             (asset) => asset !== null,
@@ -427,7 +420,6 @@ const CreatePool = ({ balances }) => {
                                     <StyledAssetDropdown
                                         label="Fourth asset"
                                         asset={fourthAsset}
-                                        assetsList={assets}
                                         onUpdate={setFourthAsset}
                                         excludeList={[firstAsset, secondAsset, thirdAsset].filter(
                                             (asset) => asset !== null,

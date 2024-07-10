@@ -322,7 +322,7 @@ const App = () => {
 
                     <Route path={MainRoutes.swap}>
                         <Title title="Swap">
-                            <SwapPage balances={balances} />
+                            <SwapPage />
                         </Title>
                     </Route>
 
