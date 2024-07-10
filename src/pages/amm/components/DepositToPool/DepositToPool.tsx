@@ -315,7 +315,7 @@ const DepositToPool = ({ params }) => {
                 </DescriptionRow>
                 <DescriptionRow>
                     <span>Fee</span>
-                    <span>{pool.fee * 100} %</span>
+                    <span>{(pool.fee * 100).toFixed(2)} %</span>
                 </DescriptionRow>
                 <DescriptionRow>
                     <span>Liquidity</span>
