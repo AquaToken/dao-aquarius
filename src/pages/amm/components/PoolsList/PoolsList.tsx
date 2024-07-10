@@ -243,7 +243,7 @@ const PoolsList = ({ pools, onUpdate, isUserList }) => {
                                 )}
                                 <ExpandedDataRow>
                                     <span>Fee</span>
-                                    <span>{pool.fee * 100}%</span>
+                                    <span>{(pool.fee * 100).toFixed(2)}%</span>
                                 </ExpandedDataRow>
                                 <Buttons>
                                     {Boolean(pool.balance) && (

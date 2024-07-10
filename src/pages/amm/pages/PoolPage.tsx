@@ -310,7 +310,7 @@ const PoolPage = () => {
                         </SectionRow>
                         <SectionRow>
                             <span>Fee:</span>
-                            <span>{pool.fee * 100}%</span>
+                            <span>{(pool.fee * 100).toFixed(2)}%</span>
                         </SectionRow>
                         {pool.assets.map((asset, index) => (
                             <SectionRow key={pool.tokens_addresses[index]}>

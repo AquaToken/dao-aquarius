@@ -333,7 +333,10 @@ const Analytics = () => {
                                                     label: 'Type:',
                                                     flexSize: 2,
                                                 },
-                                                { children: `${pool.fee * 100}%`, label: 'Fee:' },
+                                                {
+                                                    children: `${(pool.fee * 100).toFixed(2)}%`,
+                                                    label: 'Fee:',
+                                                },
                                                 {
                                                     children: pool.reward_tps
                                                         ? `${formatBalance(
