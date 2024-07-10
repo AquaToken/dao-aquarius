@@ -471,7 +471,7 @@ export default class SorobanServiceClass {
             AMM_CONTRACT_METHOD.INIT_STABLESWAP_POOL,
             this.publicKeyToScVal(accountId),
             this.scValToArray(orderedAssets),
-            this.amountToUint32(fee * 100),
+            this.amountToUint32(Math.floor(fee * 100)),
         ).then((tx) => this.server.prepareTransaction(tx));
     }
 
