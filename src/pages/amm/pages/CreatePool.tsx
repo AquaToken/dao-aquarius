@@ -271,9 +271,12 @@ const CreatePool = () => {
     };
 
     const createStablePool = () => {
-        if (Number(account.getAquaBalance() < CREATE_STABLE_POOL_COST)) {
+        if (
+            createInfo &&
+            Number(account.getAssetBalance(createInfo.token)) < Number(createInfo.stableFee)
+        ) {
             ToastService.showErrorToast(
-                `You need at least ${CREATE_STABLE_POOL_COST} AQUA to create pool`,
+                `You need at least ${createInfo.stableFee} ${createInfo.token.code} to create pool`,
             );
             return;
         }
@@ -301,6 +304,15 @@ const CreatePool = () => {
     };
 
     const createConstantPool = () => {
+        if (
+            createInfo &&
+            Number(account.getAssetBalance(createInfo.token)) < Number(createInfo.constantFee)
+        ) {
+            ToastService.showErrorToast(
+                `You need at least ${createInfo.constantFee} ${createInfo.token.code} to create pool`,
+            );
+            return;
+        }
         setPending(true);
         SorobanService.getInitConstantPoolTx(
             account.accountId(),
@@ -365,9 +377,6 @@ const CreatePool = () => {
                                     <p>
                                         Highly effecient AMM model for correlated assets (i.e.
                                         stablecoins) that offers lower slippage.
-                                        <br />
-                                        You need at least {CREATE_STABLE_POOL_COST} AQUA to create
-                                        pool.
                                     </p>
                                 </div>
                                 <Tick />
