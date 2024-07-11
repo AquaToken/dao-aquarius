@@ -24,12 +24,13 @@ import Button from '../../../common/basics/Button';
 import Input from '../../../common/basics/Input';
 import ToggleGroup from '../../../common/basics/ToggleGroup';
 import useAuthStore from '../../../store/authStore/useAuthStore';
-import { CONTRACT_STATUS } from '../../../common/services/soroban.service';
+import { CONTRACT_STATUS, POOL_TYPE } from '../../../common/services/soroban.service';
 import PoolsList from '../components/PoolsList/PoolsList';
 import { FilterOptions, getPools, PoolsSortFields } from '../api/api';
 import { useHistory } from 'react-router-dom';
 import ContractNotFound from '../components/ContractNotFound/ContractNotFound';
 import Tooltip, { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
+import Alert from '../../../common/basics/Alert';
 
 const ErrorLabel = styled.span<{ isError?: boolean }>`
     color: ${({ isError }) => (isError ? COLORS.pinkRed : COLORS.paragraphText)};
@@ -137,11 +138,6 @@ const TooltipInner = styled.span`
     `}
 `;
 
-const enum PoolTypes {
-    stable = 'stable',
-    constant = 'constant',
-}
-
 const FEE_OPTIONS = [
     { value: 10, label: '0.1%' },
     { value: 30, label: '0.3%' },
@@ -153,10 +149,8 @@ const STABLE_POOL_FEE_PERCENTS = {
     max: '1',
 };
 
-const CREATE_STABLE_POOL_COST = 1; // 1 AQUA
-
 const CreatePool = () => {
-    const [type, setType] = useState(PoolTypes.constant);
+    const [type, setType] = useState(POOL_TYPE.constant);
     const [assetsCount, setAssetsCount] = useState(2);
     const [firstAsset, setFirstAsset] = useState(null);
     const [firstAssetStatus, setFirstAssetStatus] = useState(null);
@@ -169,6 +163,7 @@ const CreatePool = () => {
     const [constantFee, setConstantFee] = useState(10);
     const [stableFee, setStableFee] = useState(STABLE_POOL_FEE_PERCENTS.min);
     const [pending, setPending] = useState(false);
+    const [createInfo, setCreateInfo] = useState(null);
 
     const [pools, setPools] = useState(null);
 
@@ -182,12 +177,18 @@ const CreatePool = () => {
             Number(stableFee) > Number(STABLE_POOL_FEE_PERCENTS.max));
 
     useEffect(() => {
-        if (type === PoolTypes.constant) {
+        if (type === POOL_TYPE.constant) {
             setAssetsCount(2);
             setThirdAsset(null);
             setFourthAsset(null);
         }
     }, [type]);
+
+    useEffect(() => {
+        SorobanService.getCreationFeeInfo().then((res) => {
+            setCreateInfo(res);
+        });
+    }, []);
 
     useEffect(() => {
         getPools(FilterOptions.all, 1, 1000, PoolsSortFields.liquidityUp).then((res) =>
@@ -263,7 +264,7 @@ const CreatePool = () => {
     }, [fourthAsset]);
 
     const createPool = () => {
-        if (type === PoolTypes.stable) {
+        if (type === POOL_TYPE.stable) {
             return createStablePool();
         }
         createConstantPool();
@@ -346,8 +347,8 @@ const CreatePool = () => {
                         <StyledFormSection>
                             <FormSectionTitle>Select pool type</FormSectionTitle>
                             <PoolType
-                                isActive={type === PoolTypes.constant}
-                                onClick={() => setType(PoolTypes.constant)}
+                                isActive={type === POOL_TYPE.constant}
+                                onClick={() => setType(POOL_TYPE.constant)}
                             >
                                 <div>
                                     <h3>Constant product</h3>
@@ -356,8 +357,8 @@ const CreatePool = () => {
                                 <Tick />
                             </PoolType>
                             <PoolType
-                                isActive={type === PoolTypes.stable}
-                                onClick={() => setType(PoolTypes.stable)}
+                                isActive={type === POOL_TYPE.stable}
+                                onClick={() => setType(POOL_TYPE.stable)}
                             >
                                 <div>
                                     <h3>Stable swap</h3>
@@ -371,6 +372,27 @@ const CreatePool = () => {
                                 </div>
                                 <Tick />
                             </PoolType>
+                            {createInfo &&
+                                Boolean(
+                                    Number(
+                                        type === POOL_TYPE.constant
+                                            ? createInfo.constantFee
+                                            : createInfo.stableFee,
+                                    ),
+                                ) && (
+                                    <Alert
+                                        title="There is a fee for creating a pool."
+                                        text={`It costs ${
+                                            type === POOL_TYPE.constant
+                                                ? createInfo.constantFee
+                                                : createInfo.stableFee
+                                        } ${createInfo.token.code} to create a ${
+                                            type === POOL_TYPE.constant
+                                                ? 'Constant product'
+                                                : 'Stable swap'
+                                        } pool`}
+                                    />
+                                )}
                         </StyledFormSection>
 
                         <StyledFormSection>
@@ -462,7 +484,7 @@ const CreatePool = () => {
                                     )}
                                 </DropdownContainer>
                             )}
-                            {type === PoolTypes.stable && assetsCount < 4 && (
+                            {type === POOL_TYPE.stable && assetsCount < 4 && (
                                 <TooltipStyled
                                     isShow={assetsCount === 3}
                                     content={
@@ -486,7 +508,7 @@ const CreatePool = () => {
                         </StyledFormSection>
                         <StyledFormSection>
                             <FormSectionTitle>Fees</FormSectionTitle>
-                            {type === PoolTypes.stable ? (
+                            {type === POOL_TYPE.stable ? (
                                 <FormRow>
                                     <Input
                                         type="number"
