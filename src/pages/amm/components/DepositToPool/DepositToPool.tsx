@@ -231,6 +231,10 @@ const DepositToPool = ({ params }) => {
             .then((res) => {
                 setPending(false);
 
+                if (!res) {
+                    return;
+                }
+
                 if (
                     (res as { status: BuildSignAndSubmitStatuses }).status ===
                     BuildSignAndSubmitStatuses.pending

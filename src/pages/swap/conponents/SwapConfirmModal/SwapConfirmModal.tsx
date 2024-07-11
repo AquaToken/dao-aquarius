@@ -91,6 +91,10 @@ const SwapConfirmModal = ({ params, confirm }) => {
             .then((res) => {
                 confirm();
 
+                if (!res) {
+                    return;
+                }
+
                 if (
                     (res as { status: BuildSignAndSubmitStatuses }).status ===
                     BuildSignAndSubmitStatuses.pending

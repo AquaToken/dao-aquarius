@@ -121,6 +121,10 @@ const WithdrawFromPool = ({ params }) => {
             .then((res) => {
                 ModalService.confirmAllModals();
 
+                if (!res) {
+                    return;
+                }
+
                 if (
                     (res as { status: BuildSignAndSubmitStatuses }).status ===
                     BuildSignAndSubmitStatuses.pending
