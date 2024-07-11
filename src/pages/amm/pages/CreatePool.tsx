@@ -29,6 +29,7 @@ import PoolsList from '../components/PoolsList/PoolsList';
 import { FilterOptions, getPools, PoolsSortFields } from '../api/api';
 import { useHistory } from 'react-router-dom';
 import ContractNotFound from '../components/ContractNotFound/ContractNotFound';
+import Tooltip, { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
 
 const ErrorLabel = styled.span<{ isError?: boolean }>`
     color: ${({ isError }) => (isError ? COLORS.pinkRed : COLORS.paragraphText)};
@@ -112,12 +113,28 @@ const FormRow = styled.div`
 `;
 
 const AddRowButton = styled(Button)`
-    margin-top: 3.7rem;
-    width: fit-content;
+    margin-right: auto;
 `;
 
 const ToggleGroupStyled = styled(ToggleGroup)`
     width: fit-content;
+`;
+
+const TooltipStyled = styled(Tooltip)`
+    margin-top: 3.7rem;
+`;
+
+const TooltipInner = styled.span`
+    font-size: 1.4rem;
+    line-height: 2rem;
+    text-transform: none;
+    font-weight: 400;
+    width: 20rem;
+    white-space: pre-line;
+
+    ${respondDown(Breakpoints.sm)`
+        width: 9rem;
+    `}
 `;
 
 const enum PoolTypes {
@@ -437,13 +454,25 @@ const CreatePool = ({ balances }) => {
                                 </DropdownContainer>
                             )}
                             {type === PoolTypes.stable && assetsCount < 4 && (
-                                <AddRowButton
-                                    likeDisabled
-                                    isPurpleText
-                                    onClick={() => setAssetsCount((count) => count + 1)}
+                                <TooltipStyled
+                                    isShow={assetsCount === 3}
+                                    content={
+                                        <TooltipInner>
+                                            Creating pools with 4 assets is temporarily disabled
+                                        </TooltipInner>
+                                    }
+                                    position={TOOLTIP_POSITION.right}
+                                    isError
                                 >
-                                    Add {assetsCount === 2 ? 'third' : 'fourth'} asset
-                                </AddRowButton>
+                                    <AddRowButton
+                                        likeDisabled
+                                        isPurpleText
+                                        disabled={assetsCount === 3}
+                                        onClick={() => setAssetsCount((count) => count + 1)}
+                                    >
+                                        Add {assetsCount === 2 ? 'third' : 'fourth'} asset
+                                    </AddRowButton>
+                                </TooltipStyled>
                             )}
                         </StyledFormSection>
                         <StyledFormSection>
