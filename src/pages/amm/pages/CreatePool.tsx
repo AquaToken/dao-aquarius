@@ -253,11 +253,6 @@ const CreatePool = () => {
     };
 
     const createStablePool = () => {
-        if (!Number(stableFee) || Number(stableFee) < 0.04 || Number(stableFee) > 1) {
-            ToastService.showErrorToast('Incorrect Fee value');
-            return;
-        }
-
         if (Number(account.getAquaBalance() < CREATE_STABLE_POOL_COST)) {
             ToastService.showErrorToast(
                 `You need at least ${CREATE_STABLE_POOL_COST} AQUA to create pool`,
