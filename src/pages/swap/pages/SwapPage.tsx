@@ -68,7 +68,7 @@ export const Title = styled.h2`
     color: ${COLORS.titleText};
     font-weight: 400;
 
-    ${respondDown(Breakpoints.sm)`
+    ${respondDown(Breakpoints.md)`
         font-size: 2.8rem;
    `}
 `;
@@ -84,6 +84,7 @@ const Form = styled.div`
     ${respondDown(Breakpoints.md)`
         width: 100%;
         padding: 1.6rem;
+        position: relative;
     `}
 `;
 
@@ -92,10 +93,11 @@ const FormRow = styled.div`
     margin-top: 5rem;
     position: relative;
 
-    ${respondDown(Breakpoints.sm)`
+    ${respondDown(Breakpoints.md)`
         flex-direction: column;
         gap: 0.5rem;
         margin-top: 2rem;
+        position: static;
     `}
 `;
 
@@ -107,7 +109,7 @@ const Balance = styled.div`
     line-height: 1.8rem;
     color: ${COLORS.paragraphText};
 
-    ${respondDown(Breakpoints.sm)`
+    ${respondDown(Breakpoints.md)`
        font-size: 1.2rem;
     `}
 `;
@@ -122,7 +124,16 @@ const StyledInput = styled(Input)`
 `;
 
 const DropdownContainer = styled.div<{ $isOpen: boolean }>`
-    ${({ $isOpen }) => ($isOpen ? `width: 100%; position: absolute;` : `flex: 1;`)}
+    ${({ $isOpen }) =>
+        $isOpen
+            ? `
+    width: 100%; 
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    `
+            : `flex: 1;`}
 `;
 
 const SwapDivider = styled.div`
@@ -132,7 +143,7 @@ const SwapDivider = styled.div`
     margin: 3rem 0 4rem;
     height: 4.8rem;
 
-    ${respondDown(Breakpoints.sm)`
+    ${respondDown(Breakpoints.md)`
        margin: 1rem 0 0;
     `}
 `;
@@ -142,7 +153,7 @@ const StyledButton = styled(Button)`
     margin-left: auto;
     width: 45%;
 
-    ${respondDown(Breakpoints.sm)`
+    ${respondDown(Breakpoints.md)`
         width: 100%;
         margin-top: 2rem;
     `}
@@ -209,7 +220,7 @@ const TrustlineBlockTitle = styled.div`
 const TrustlineButton = styled(Button)`
     width: fit-content;
 
-    ${respondDown(Breakpoints.sm)`
+    ${respondDown(Breakpoints.md)`
         width: 100%;
         margin-top: 2rem;
     `}
@@ -403,6 +414,7 @@ const SwapPage = () => {
                                 withoutReset
                                 onToggle={(res) => setIsBaseDropdownOpen(res)}
                                 withBalances
+                                longListOnMobile
                             />
                         </DropdownContainer>
                     </FormRow>
@@ -439,6 +451,7 @@ const SwapPage = () => {
                                 disabled={estimatePending}
                                 onToggle={(res) => setIsCounterDropdownOpen(res)}
                                 withBalances
+                                longListOnMobile
                             />
                         </DropdownContainer>
                     </FormRow>

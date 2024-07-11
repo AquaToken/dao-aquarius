@@ -453,6 +453,17 @@ const CreatePool = () => {
                                         label="Swap Fee (0.04 - 1%)"
                                         value={stableFee}
                                         onChange={(e) => setStableFee(e.target.value)}
+                                        type="number"
+                                        min={0.1}
+                                        max={1}
+                                        onInvalid={(e) =>
+                                            (e.target as HTMLInputElement).setCustomValidity(
+                                                'Value must be between 0.1 and 1',
+                                            )
+                                        }
+                                        onInput={(e) =>
+                                            (e.target as HTMLInputElement).setCustomValidity('')
+                                        }
                                     />
                                 </FormRow>
                             ) : (
@@ -469,18 +480,18 @@ const CreatePool = () => {
                                 fullWidth
                                 onClick={() => createPool()}
                                 pending={pending}
-                                disabled={
-                                    !firstAsset ||
-                                    !secondAsset ||
-                                    (assetsCount > 2 && !thirdAsset) ||
-                                    (assetsCount === 4 && !fourthAsset) ||
-                                    [
-                                        firstAssetStatus,
-                                        secondAssetStatus,
-                                        thirdAssetStatus,
-                                        fourthAssetStatus,
-                                    ].some((status) => status === CONTRACT_STATUS.NOT_FOUND)
-                                }
+                                // disabled={
+                                //     !firstAsset ||
+                                //     !secondAsset ||
+                                //     (assetsCount > 2 && !thirdAsset) ||
+                                //     (assetsCount === 4 && !fourthAsset) ||
+                                //     [
+                                //         firstAssetStatus,
+                                //         secondAssetStatus,
+                                //         thirdAssetStatus,
+                                //         fourthAssetStatus,
+                                //     ].some((status) => status === CONTRACT_STATUS.NOT_FOUND)
+                                // }
                             >
                                 Create pool
                             </Button>

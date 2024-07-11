@@ -1,10 +1,10 @@
 import * as React from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
 import ArrowDown from '../../../../common/assets/img/icon-arrow-down.svg';
 import Loader from '../../../../common/assets/img/loader.svg';
 import Fail from '../../../../common/assets/img/icon-fail.svg';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { COLORS } from '../../../../common/styles';
+import { Breakpoints, COLORS } from '../../../../common/styles';
 import useOnClickOutside from '../../../../common/hooks/useOutsideClick';
 import Asset from './Asset';
 import { useDebounce } from '../../../../common/hooks/useDebounce';
@@ -14,7 +14,7 @@ import { AssetSimple } from '../../../../store/assetsStore/types';
 import useAssetsStore from '../../../../store/assetsStore/useAssetsStore';
 import { getAssetString } from '../../../../store/assetsStore/actions';
 import useAuthStore from '../../../../store/authStore/useAuthStore';
-import { flexRowSpaceBetween } from '../../../../common/mixins';
+import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
 import { formatBalance } from '../../../../common/helpers/helpers';
 
 const DropDown = styled.div<{ isOpen: boolean; disabled: boolean }>`
@@ -75,7 +75,7 @@ const DropdownLoader = styled(Loader)`
     margin-right: ${({ $isOpen }) => ($isOpen ? '0' : '0.1rem')};
 `;
 
-const DropdownList = styled.div`
+const DropdownList = styled.div<{ longListOnMobile?: boolean }>`
     position: absolute;
     left: -0.2rem;
     top: calc(100% + 0.2rem);
@@ -89,6 +89,10 @@ const DropdownList = styled.div`
     max-height: 24rem;
     overflow-y: scroll;
     z-index: 2;
+
+    ${respondDown(Breakpoints.md)`
+        ${({ longListOnMobile }) => (longListOnMobile ? 'max-height: 42rem' : 'max-height: 24rem;')}
+    `}
 
     &::-webkit-scrollbar {
         width: 0.5rem;
@@ -187,6 +191,7 @@ type AssetDropdownProps = {
     pending?: boolean;
     excludeList?: AssetSimple[];
     withBalances?: boolean;
+    longListOnMobile?: boolean;
 };
 
 const StyledAsset = styled(Asset)`
@@ -209,6 +214,7 @@ const AssetDropdown = ({
     withoutReset,
     pending,
     withBalances,
+    longListOnMobile,
     ...props
 }: AssetDropdownProps) => {
     const { assets: knownAssets, assetsInfo, processNewAssets } = useAssetsStore();
@@ -399,7 +405,7 @@ const AssetDropdown = ({
                 <DropdownArrow $isOpen={isOpen} />
             )}
             {isOpen && (
-                <DropdownList>
+                <DropdownList longListOnMobile={longListOnMobile}>
                     {filteredAssets.map((assetItem) => (
                         <DropdownItem
                             onClick={() => onClickAsset(assetItem)}
