@@ -255,10 +255,6 @@ const CreatePool = ({ balances }) => {
     };
 
     const createStablePool = () => {
-        if (!Number(stableFee) || Number(stableFee) < 0.04 || Number(stableFee) > 1) {
-            ToastService.showErrorToast('Incorrect Fee value');
-        }
-
         setPending(true);
 
         SorobanService.getInitStableSwapPoolTx(
