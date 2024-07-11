@@ -31,6 +31,9 @@ enum AMM_CONTRACT_METHOD {
     GET_USER_REWARD = 'get_user_reward',
     GET_TOTAL_SHARES = 'get_total_shares',
     CLAIM = 'claim',
+    GET_STABLE_CREATION_FEE = 'get_stable_pool_payment_amount',
+    GET_CONSTANT_CREATION_FEE = 'get_standard_pool_payment_amount',
+    GET_CREATION_FEE_TOKEN = 'get_init_pool_payment_token',
 }
 
 enum ASSET_CONTRACT_METHOD {
@@ -56,6 +59,11 @@ export enum CONTRACT_STATUS {
     ACTIVE = 'active',
     EXPIRED = 'expired',
     NOT_FOUND = 'not_found',
+}
+
+export enum POOL_TYPE {
+    stable = 'stable',
+    constant = 'constant',
 }
 
 export default class SorobanServiceClass {
@@ -604,6 +612,47 @@ export default class SorobanServiceClass {
             AMM_CONTRACT_METHOD.CLAIM,
             this.publicKeyToScVal(accountId),
         ).then((tx) => this.prepareTransaction(tx));
+    }
+
+    getCreationFeeToken() {
+        return this.buildSmartContactTx(
+            ACCOUNT_FOR_SIMULATE,
+            AMM_SMART_CONTACT_ID,
+            AMM_CONTRACT_METHOD.GET_CREATION_FEE_TOKEN,
+        )
+            .then((tx) => this.simulateTx(tx) as Promise<SimulateTransactionSuccessResponse>)
+            .then(({ result }) => {
+                return this.getAssetFromContractId(
+                    // @ts-ignore
+                    this.getContactIdFromHash(result.retval.value().value().toString('hex')),
+                );
+            });
+    }
+
+    getCreationFee(type: POOL_TYPE) {
+        return this.buildSmartContactTx(
+            ACCOUNT_FOR_SIMULATE,
+            AMM_SMART_CONTACT_ID,
+            type === POOL_TYPE.constant
+                ? AMM_CONTRACT_METHOD.GET_CONSTANT_CREATION_FEE
+                : AMM_CONTRACT_METHOD.GET_STABLE_CREATION_FEE,
+        )
+            .then((tx) => this.simulateTx(tx) as Promise<SimulateTransactionSuccessResponse>)
+            .then(({ result }) => {
+                return this.i128ToInt(result.retval.value() as xdr.Int128Parts);
+            });
+    }
+
+    getCreationFeeInfo() {
+        return Promise.all([
+            this.getCreationFeeToken(),
+            this.getCreationFee(POOL_TYPE.constant),
+            this.getCreationFee(POOL_TYPE.stable),
+        ]).then(([token, constantFee, stableFee]) => ({
+            token,
+            constantFee,
+            stableFee,
+        }));
     }
 
     getPoolData(accountId: string, base: Asset, counter: Asset, [poolId, poolBytes]) {
