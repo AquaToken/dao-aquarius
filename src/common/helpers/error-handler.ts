@@ -76,6 +76,13 @@ enum OPERATIONS_ERROR_CODES {
     'op_bad_seq' = 'The specified bumpTo sequence number is not a valid sequence number. It must be between 0 and INT64_MAX (9223372036854775807 or 0x7fffffffffffffff).',
 }
 
+export enum KnownPrepareErrors {
+    // TODO: Add more codes
+    'Error(Contract, #205)' = 'Depositing is currently disabled for this pool. Please reach out to support.',
+    'Error(Contract, #206)' = 'Swapping is currently disabled for this pool. Please reach out to support.',
+    'Error(Contract, #207)' = 'Claiming is currently disabled for this pool. Please reach out to support.',
+}
+
 export default function ErrorHandler(error) {
     // wallet connect case
     if (error?.message === '') {
@@ -112,10 +119,23 @@ export default function ErrorHandler(error) {
     );
 }
 
+function findErrorCode(error: string) {
+    for (let str in KnownPrepareErrors) {
+        let index = error.indexOf(str);
+        if (index !== -1) {
+            return str;
+        }
+    }
+    return null;
+}
+
+export function SorobanPrepareTxErrorHandler(error: string) {
+    const code = findErrorCode(error);
+    return KnownPrepareErrors[code] ?? 'Oops. Something went wrong.';
+}
+
 export function SorobanErrorHandler(errorName: string): string {
     const snackCaseName = errorName.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
-
-    console.log(snackCaseName);
 
     return TRANSACTIONS_ERROR_CODES[snackCaseName] ?? 'Oops. Something went wrong.';
 }
