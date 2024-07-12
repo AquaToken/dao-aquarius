@@ -16,7 +16,6 @@ import Button from '../../../../common/basics/Button';
 import useAuthStore from '../../../../store/authStore/useAuthStore';
 import SuccessModal from '../SuccessModal/SuccessModal';
 import { formatBalance } from '../../../../common/helpers/helpers';
-import Pair from '../../../vote/components/common/Pair';
 import DotsLoader from '../../../../common/basics/DotsLoader';
 import { getAssetString } from '../../../../store/assetsStore/actions';
 import Info from '../../../../common/assets/img/icon-info.svg';
@@ -107,10 +106,6 @@ const PoolInfo = styled.div`
     ${respondDown(Breakpoints.sm)`
         margin-bottom: 2rem;
     `}
-`;
-
-const PairWrap = styled.div`
-    margin: 2.2rem 0;
 `;
 
 const TooltipInner = styled.span`
@@ -343,15 +338,6 @@ const DepositToPool = ({ params }) => {
                 </DescriptionRow>
 
                 <PoolInfo>
-                    <PairWrap>
-                        <Pair
-                            base={pool.assets[0]}
-                            counter={pool.assets[1]}
-                            thirdAsset={pool.assets[2]}
-                            fourthAsset={pool.assets[3]}
-                        />
-                    </PairWrap>
-
                     <DescriptionRow>
                         <span>Share of Pool</span>
                         <span>{shares}</span>
