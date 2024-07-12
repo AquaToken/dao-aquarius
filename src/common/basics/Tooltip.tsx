@@ -213,7 +213,7 @@ const Tooltip = ({
             }}
         >
             {children}
-            {(showOnHover ? onHover : isShow) && (
+            {(showOnHover ? onHover && isShow !== false : isShow) && (
                 <TooltipBody
                     position={position}
                     isError={isError}

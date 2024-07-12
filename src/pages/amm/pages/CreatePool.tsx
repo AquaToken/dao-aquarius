@@ -480,6 +480,7 @@ const CreatePool = ({ balances }) => {
                             {type === POOL_TYPE.stable && assetsCount < 4 && (
                                 <TooltipStyled
                                     isShow={assetsCount === 3}
+                                    showOnHover
                                     content={
                                         <TooltipInner>
                                             Creating pools with 4 assets is temporarily disabled
