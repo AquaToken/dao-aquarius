@@ -31,6 +31,7 @@ import { useHistory } from 'react-router-dom';
 import ContractNotFound from '../components/ContractNotFound/ContractNotFound';
 import Tooltip, { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
 import Alert from '../../../common/basics/Alert';
+import { formatBalance } from '../../../common/helpers/helpers';
 
 const ErrorLabel = styled.span<{ isError?: boolean }>`
     color: ${({ isError }) => (isError ? COLORS.pinkRed : COLORS.paragraphText)};
@@ -136,6 +137,17 @@ const TooltipInner = styled.span`
     ${respondDown(Breakpoints.sm)`
         width: 9rem;
     `}
+`;
+
+const CreationFee = styled.div`
+    ${flexRowSpaceBetween};
+    font-size: 1.6rem;
+    margin-top: -2rem;
+    margin-bottom: 3.2rem;
+
+    span:last-child {
+        color: ${COLORS.grayText};
+    }
 `;
 
 const FEE_OPTIONS = [
@@ -361,27 +373,10 @@ const CreatePool = ({ balances }) => {
                                 </div>
                                 <Tick />
                             </PoolType>
-                            {createInfo &&
-                                Boolean(
-                                    Number(
-                                        type === POOL_TYPE.constant
-                                            ? createInfo.constantFee
-                                            : createInfo.stableFee,
-                                    ),
-                                ) && (
-                                    <Alert
-                                        title="There is a fee for creating a pool."
-                                        text={`It costs ${
-                                            type === POOL_TYPE.constant
-                                                ? createInfo.constantFee
-                                                : createInfo.stableFee
-                                        } ${createInfo.token.code} to create a ${
-                                            type === POOL_TYPE.constant
-                                                ? 'Constant product'
-                                                : 'Stable swap'
-                                        } pool`}
-                                    />
-                                )}
+                            <Alert
+                                title="Note:"
+                                text="Stable pools are designed for assets that have 1:1 price ratio to each other (e.g. ETH/yETH, USDC/yUSDC). We don't recommend creating stable pools for volatile assets."
+                            />
                         </StyledFormSection>
 
                         <StyledFormSection>
@@ -527,6 +522,27 @@ const CreatePool = ({ balances }) => {
                                     />
                                 </FormRow>
                             )}
+
+                            {createInfo &&
+                                Boolean(
+                                    Number(
+                                        type === POOL_TYPE.stable
+                                            ? createInfo.stableFee
+                                            : createInfo.constantFee,
+                                    ),
+                                ) && (
+                                    <CreationFee>
+                                        <span>Pool creation fee:</span>
+                                        <span>
+                                            {formatBalance(
+                                                type === POOL_TYPE.stable
+                                                    ? createInfo.stableFee
+                                                    : createInfo.constantFee,
+                                            )}{' '}
+                                            {createInfo.token.code}
+                                        </span>
+                                    </CreationFee>
+                                )}
                             <Button
                                 isBig
                                 fullWidth
