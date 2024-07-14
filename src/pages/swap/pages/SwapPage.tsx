@@ -34,6 +34,7 @@ import { BuildSignAndSubmitStatuses } from '../../../common/services/wallet-conn
 import ErrorHandler from '../../../common/helpers/error-handler';
 import { useHistory, useParams } from 'react-router-dom';
 import { MainRoutes } from '../../../routes';
+import { AQUA_CODE, AQUA_ISSUER } from '../../../common/services/stellar.service';
 
 const Container = styled.main`
     background-color: ${COLORS.lightGray};
@@ -253,6 +254,15 @@ const SwapPage = () => {
 
     useEffect(() => {
         const { source, destination } = params;
+
+        if (source === destination) {
+            history.replace(
+                `${MainRoutes.swap}/${getAssetString(
+                    StellarService.createLumen(),
+                )}/${getAssetString(StellarService.createAsset(AQUA_CODE, AQUA_ISSUER))}`,
+            );
+            return;
+        }
 
         setBase(getAssetFromString(source));
         setCounter(getAssetFromString(destination));
