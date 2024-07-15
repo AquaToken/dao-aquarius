@@ -1,5 +1,5 @@
 import AccountRecord, * as StellarSdk from '@stellar/stellar-sdk';
-import { Horizon } from '@stellar/stellar-sdk';
+import { Asset, Horizon } from '@stellar/stellar-sdk';
 import { LoginTypes } from '../../store/authStore/types';
 import {
     FreighterService,
@@ -131,7 +131,7 @@ export default class AccountService extends Horizon.AccountResponse {
                 ({ asset_type }) => asset_type === 'native',
             ) as Horizon.HorizonApi.BalanceLineNative;
 
-            return +nativeBalance.balance;
+            return Number(nativeBalance.balance) - Number(nativeBalance.selling_liabilities);
         }
         const assetBalance = this.balances.find(
             (balance) =>
@@ -258,7 +258,89 @@ export default class AccountService extends Horizon.AccountResponse {
         return available > 0 ? available : 0;
     }
 
+    getAvailableForSwapBalance(asset: Asset) {
+        const FEE_RESERVE = 1; // reserve for fee
+        if (asset.isNative()) {
+            const available = this.getAvailableNativeBalance();
+
+            return Math.max(available - FEE_RESERVE, 0);
+        }
+
+        return this.getAssetBalance(asset);
+    }
+
+    getReservesForSwap(asset: Asset): { label: string; value: number }[] {
+        if (!asset.isNative()) {
+            const { selling_liabilities } = this.balances.find(
+                (balance) =>
+                    (balance as Horizon.HorizonApi.BalanceLineAsset).asset_code == asset.code &&
+                    (balance as Horizon.HorizonApi.BalanceLineAsset).asset_issuer === asset.issuer,
+            ) as Horizon.HorizonApi.BalanceLineAsset;
+
+            return [
+                {
+                    label: `${asset.code} in active offers`,
+                    value: Number(selling_liabilities),
+                },
+            ];
+        }
+
+        const { selling_liabilities } = this.balances.find(
+            ({ asset_type }) => asset_type === 'native',
+        ) as Horizon.HorizonApi.BalanceLineNative;
+
+        const { entriesTrustlines, entriesLiquidityTrustlines } = this.balances.reduce(
+            (acc, balance) => {
+                if (
+                    balance.asset_type === 'credit_alphanum4' ||
+                    balance.asset_type === 'credit_alphanum12'
+                ) {
+                    acc.entriesTrustlines += 1;
+                    return acc;
+                } else if (balance.asset_type === 'liquidity_pool_shares') {
+                    acc.entriesLiquidityTrustlines += 1;
+                    return acc;
+                }
+                return acc;
+            },
+            {
+                entriesTrustlines: 0,
+                entriesLiquidityTrustlines: 0,
+            },
+        );
+
+        const entriesOffers = Object.keys(this.offers).length;
+        const entriesSigners = this.signers.length - 1;
+        const entriesOthers =
+            this.subentry_count -
+            entriesTrustlines -
+            entriesLiquidityTrustlines * 2 -
+            entriesOffers -
+            entriesSigners;
+        const numSponsoring = this.num_sponsoring;
+        const numSponsored = this.num_sponsored;
+
+        const items = [
+            { label: 'Base reserve', value: 1 },
+            { label: 'Fee reserve', value: 1 },
+            { label: 'XLM in active offers', value: Number(selling_liabilities) },
+            { label: 'Trustlines', value: entriesTrustlines * 0.5 },
+            { label: 'Liquidity pool trustlines', value: entriesLiquidityTrustlines },
+            { label: 'Offers', value: entriesOffers * 0.5 },
+            { label: 'Signers', value: entriesSigners * 0.5 },
+            { label: 'Account data', value: entriesOthers * 0.5 },
+            { label: 'Sponsoring entries for others', value: numSponsoring * 0.5 },
+            { label: 'Entries sponsored for account', value: -numSponsored * 0.5 },
+        ];
+
+        return [
+            ...items,
+            { label: 'Total', value: items.reduce((acc, item) => acc + item.value, 0) },
+        ];
+    }
+
     getBalances() {
+        ``;
         return Promise.all(
             this.balances
                 .filter(
