@@ -245,6 +245,10 @@ const PoolPage = () => {
 
                 ToastService.showSuccessToast(`Claimed ${formatBalance(+value)} AQUA`);
                 setClaimPending(false);
+            })
+            .catch((err) => {
+                ToastService.showErrorToast(err);
+                setClaimPending(false);
             });
     };
 
