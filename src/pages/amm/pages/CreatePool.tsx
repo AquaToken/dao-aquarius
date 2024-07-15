@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { flexRowSpaceBetween, respondDown } from '../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../common/styles';
@@ -216,16 +216,21 @@ const CreatePool = () => {
             (asset) => asset !== null,
         );
 
-        return pools.filter((pool) =>
-            selectedAssets.every(
-                (asset) =>
-                    !!pool.assets.find(
-                        (poolAsset) =>
-                            poolAsset.code === asset.code && poolAsset.issuer === asset.issuer,
-                    ),
-            ),
+        return pools.filter(
+            (pool) =>
+                selectedAssets.every(
+                    (asset) =>
+                        !!pool.assets.find(
+                            (poolAsset) =>
+                                poolAsset.code === asset.code && poolAsset.issuer === asset.issuer,
+                        ),
+                ) &&
+                selectedAssets.length === pool.assets.length &&
+                type === pool.pool_type &&
+                +(type === POOL_TYPE.constant ? constantFee / 100 : stableFee) ===
+                    +(pool.fee * 100).toFixed(2),
         );
-    }, [pools, firstAsset, secondAsset, thirdAsset, fourthAsset]);
+    }, [pools, firstAsset, secondAsset, thirdAsset, fourthAsset, type, stableFee, constantFee]);
 
     useEffect(() => {
         if (!firstAsset) {
@@ -262,6 +267,14 @@ const CreatePool = () => {
             },
         );
     }, [thirdAsset]);
+
+    const existingPoolsRef = useRef(null);
+
+    useEffect(() => {
+        if (existingPools.length && existingPoolsRef.current) {
+            existingPoolsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }, [existingPools, existingPoolsRef]);
 
     useEffect(() => {
         if (!fourthAsset) {
@@ -576,7 +589,8 @@ const CreatePool = () => {
                                         fourthAssetStatus,
                                     ].some((status) => status === CONTRACT_STATUS.NOT_FOUND) ||
                                     isStableFeeInputError ||
-                                    !stableFee
+                                    !stableFee ||
+                                    Boolean(existingPools.length)
                                 }
                             >
                                 Create pool
@@ -584,12 +598,17 @@ const CreatePool = () => {
                         </StyledFormSection>
                     </StyledForm>
                     {Boolean(existingPools.length) && (
-                        <StyledForm>
+                        <StyledForm ref={existingPoolsRef}>
                             <StyledFormSection>
                                 <FormSectionTitle>Existing pools</FormSectionTitle>
                                 <FormDescription>
-                                    There are already pools with similar parameters, you can join
-                                    one of them
+                                    {type === POOL_TYPE.constant
+                                        ? 'Constant product'
+                                        : 'Stable swap'}{' '}
+                                    pool{' '}
+                                    {existingPools[0].assets.map(({ code }) => code).join(' / ')}{' '}
+                                    with fee = {(existingPools[0].fee * 100).toFixed(2)}% already
+                                    exists.
                                 </FormDescription>
                                 <PoolsList
                                     isUserList={false}
