@@ -91,7 +91,7 @@ const Form = styled.div`
     `}
 `;
 
-const FormRow = styled.div`
+const FormRow = styled.div<{ $isOpen?: boolean }>`
     display: flex;
     margin-top: 5rem;
     position: relative;
@@ -100,11 +100,12 @@ const FormRow = styled.div`
         flex-direction: column;
         gap: 0.5rem;
         margin-top: 2rem;
-        position: static;
+        position: ${({ $isOpen }) => ($isOpen ? 'static' : 'relative')};
     `}
 `;
 
-const Balance = styled.div`
+const Balance = styled.div<{ isHidden?: boolean }>`
+    visibility: ${({ isHidden }) => (isHidden ? 'hidden' : 'unset')};
     position: absolute;
     bottom: calc(100% + 1.2rem);
     right: 0;
@@ -493,9 +494,9 @@ const SwapPage = () => {
                         )}
                     </SwapDivider>
 
-                    <FormRow>
+                    <FormRow $isOpen={isCounterDropdownOpen}>
                         {account && account.getAssetBalance(counter) !== null && (
-                            <Balance>
+                            <Balance isHidden={isCounterDropdownOpen}>
                                 Balance: {formatBalance(account.getAssetBalance(counter))}{' '}
                                 {counter.code}
                             </Balance>

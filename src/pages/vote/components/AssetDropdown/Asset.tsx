@@ -4,7 +4,7 @@ import { Breakpoints, COLORS } from '../../../../common/styles';
 import DotsLoader from '../../../../common/basics/DotsLoader';
 import * as StellarSdk from '@stellar/stellar-sdk';
 import AssetLogo from './AssetLogo';
-import { flexAllCenter, respondDown } from '../../../../common/mixins';
+import { flexAllCenter, respondDown, textEllipsis } from '../../../../common/mixins';
 import Tooltip, { TOOLTIP_POSITION } from '../../../../common/basics/Tooltip';
 import Info from '../../../../common/assets/img/icon-info.svg';
 import { AssetSimple } from '../../../../store/assetsStore/types';
@@ -21,6 +21,7 @@ const Container = styled.div`
 
 const AssetDetails = styled.div<{ inRow?: boolean }>`
     display: flex;
+    width: 100%;
     flex-direction: ${({ inRow }) => (inRow ? 'row' : 'column')};
     margin-left: ${({ inRow }) => (inRow ? '0.8rem' : '1.6rem')};
 `;
@@ -38,7 +39,9 @@ const AssetDomain = styled.span<{ withMobileView?: boolean; inRow?: boolean }>`
     line-height: ${({ inRow }) => (inRow ? '2.8rem' : '2rem')};
 
     ${respondDown(Breakpoints.md)`
+        white-space: nowrap;
         ${({ withMobileView }) => withMobileView && 'display: none;'}
+        ${textEllipsis};
     `}
 `;
 

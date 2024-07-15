@@ -11,6 +11,7 @@ export const logoStyles = css`
     width: 3.2rem;
     max-height: 3.2rem;
     max-width: 3.2rem;
+    min-width: 3.2rem;
     border-radius: 50%;
 `;
 
@@ -19,6 +20,7 @@ const smallLogoStyles = (isCircle: boolean) => css`
     width: 1.6rem;
     max-height: 1.6rem;
     max-width: 1.6rem;
+    min-width: 1.6rem;
     border-radius: ${isCircle ? '50%' : '0.1rem'};
 `;
 
@@ -27,6 +29,7 @@ export const bigLogoStyles = (isCircle: boolean) => css`
     width: 8rem;
     max-height: 8rem;
     max-width: 8rem;
+    min-width: 8rem;
     border-radius: ${isCircle ? '50%' : '0.5rem'};
 `;
 

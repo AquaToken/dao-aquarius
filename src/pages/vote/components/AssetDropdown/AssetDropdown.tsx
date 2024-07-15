@@ -145,6 +145,16 @@ const Balances = styled.div`
         line-height: 2.8rem;
         color: ${COLORS.paragraphText};
     }
+
+    ${respondDown(Breakpoints.md)`
+        font-size: 1.2rem;
+        
+        span:first-child {
+            font-size: 1.2rem;
+            line-height: 2rem;
+            white-space: nowrap;
+        }
+    `}
 `;
 
 const SearchEmpty = styled.div`
@@ -194,9 +204,10 @@ type AssetDropdownProps = {
     longListOnMobile?: boolean;
 };
 
-const StyledAsset = styled(Asset)`
+const StyledAsset = styled(Asset)<{ $withBalances?: boolean }>`
     padding: 0.9rem 2.4rem;
     height: 6.6rem;
+    width: ${({ $withBalances }) => ($withBalances ? '50%' : '100%')};
 `;
 
 const pattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?$/;
@@ -411,7 +422,10 @@ const AssetDropdown = ({
                             onClick={() => onClickAsset(assetItem)}
                             key={assetItem.code + assetItem.issuer}
                         >
-                            <StyledAsset asset={assetItem} />
+                            <StyledAsset
+                                asset={assetItem}
+                                $withBalances={withBalances && assetItem.balance}
+                            />
                             {withBalances && assetItem.balance ? (
                                 <Balances>
                                     <span>
