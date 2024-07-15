@@ -300,7 +300,7 @@ export default class AccountService extends Horizon.AccountResponse {
                 ...nativeBalanceInstance,
                 nativeBalance: +nativeBalanceInstance.balance,
                 code: 'XLM',
-                issuer: null,
+                issuer: undefined,
             },
             ...balances,
         ];
