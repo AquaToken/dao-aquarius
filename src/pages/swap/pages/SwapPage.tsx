@@ -496,7 +496,7 @@ const SwapPage = () => {
 
                     <FormRow $isOpen={isCounterDropdownOpen}>
                         {account && account.getAssetBalance(counter) !== null && (
-                            <Balance isHidden={isCounterDropdownOpen}>
+                            <Balance isHidden={isCounterDropdownOpen && +window.innerWidth < 992}>
                                 Balance: {formatBalance(account.getAssetBalance(counter))}{' '}
                                 {counter.code}
                             </Balance>
