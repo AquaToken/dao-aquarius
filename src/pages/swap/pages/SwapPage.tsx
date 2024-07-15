@@ -21,6 +21,7 @@ import Input from '../../../common/basics/Input';
 import SwapIcon from '../../../common/assets/img/icon-arrows-circle.svg';
 import SettingsIcon from '../../../common/assets/img/icon-settings.svg';
 import Plus from '../../../common/assets/img/icon-plus.svg';
+import Info from '../../../common/assets/img/icon-info.svg';
 import { useDebounce } from '../../../common/hooks/useDebounce';
 import Button from '../../../common/basics/Button';
 import { IconFail } from '../../../common/basics/Icons';
@@ -35,6 +36,7 @@ import ErrorHandler from '../../../common/helpers/error-handler';
 import { useHistory, useParams } from 'react-router-dom';
 import { MainRoutes } from '../../../routes';
 import { AQUA_CODE, AQUA_ISSUER } from '../../../common/services/stellar.service';
+import Tooltip, { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
 
 const Container = styled.main`
     background-color: ${COLORS.lightGray};
@@ -54,7 +56,7 @@ const Content = styled.div`
     padding: 6.3rem 4rem 0;
 
     ${respondDown(Breakpoints.md)`
-        padding: 2rem 1.6rem 0;
+        padding: 4rem 1.6rem 0;
     `}
 `;
 
@@ -109,6 +111,12 @@ const Balance = styled.div`
     font-size: 1.6rem;
     line-height: 1.8rem;
     color: ${COLORS.paragraphText};
+    display: inline-flex;
+    align-items: center;
+
+    svg {
+        margin-left: 0.4rem;
+    }
 
     ${respondDown(Breakpoints.md)`
        font-size: 1.2rem;
@@ -227,6 +235,24 @@ const TrustlineButton = styled(Button)`
     `}
     svg {
         margin-left: 0.8rem;
+    }
+`;
+
+const TooltipInner = styled.div`
+    display: flex;
+    flex-direction: column;
+    color: ${COLORS.white};
+    font-size: 1.2rem;
+    line-height: 2rem;
+`;
+
+const TooltipRow = styled.div`
+    display: flex;
+    justify-content: space-between;
+    gap: 1.2rem;
+
+    &:last-child:not(:first-child) {
+        font-weight: 700;
     }
 `;
 
@@ -401,12 +427,40 @@ const SwapPage = () => {
                                 Available:
                                 <BalanceClickable
                                     onClick={() =>
-                                        setBaseAmount(account.getAssetBalance(base).toString())
+                                        setBaseAmount(
+                                            account.getAvailableForSwapBalance(base).toString(),
+                                        )
                                     }
                                 >
                                     {' '}
-                                    {account.getAssetBalance(base)} {base.code}
+                                    {formatBalance(account.getAvailableForSwapBalance(base))}{' '}
+                                    {base.code}
                                 </BalanceClickable>
+                                <Tooltip
+                                    showOnHover
+                                    isDark
+                                    position={
+                                        +window.innerWidth < 992
+                                            ? TOOLTIP_POSITION.left
+                                            : TOOLTIP_POSITION.right
+                                    }
+                                    content={
+                                        <TooltipInner>
+                                            {account
+                                                .getReservesForSwap(base)
+                                                .map(({ label, value }) => (
+                                                    <TooltipRow key={label}>
+                                                        <span>{label}</span>
+                                                        <span>
+                                                            {value} {base.code}
+                                                        </span>
+                                                    </TooltipRow>
+                                                ))}
+                                        </TooltipInner>
+                                    }
+                                >
+                                    <Info />
+                                </Tooltip>
                             </Balance>
                         )}
                         <StyledInput
@@ -442,7 +496,8 @@ const SwapPage = () => {
                     <FormRow>
                         {account && account.getAssetBalance(counter) !== null && (
                             <Balance>
-                                Balance: {account.getAssetBalance(counter)} {counter.code}
+                                Balance: {formatBalance(account.getAssetBalance(counter))}{' '}
+                                {counter.code}
                             </Balance>
                         )}
                         <StyledInput
