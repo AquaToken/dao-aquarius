@@ -318,6 +318,7 @@ export default class AccountService extends Horizon.AccountResponse {
     }
 
     getReservesForSwap(asset: Asset): { label: string; value: number }[] {
+        console.log(asset, this.balances);
         if (!asset.isNative()) {
             const { selling_liabilities } = this.balances.find(
                 (balance) =>
