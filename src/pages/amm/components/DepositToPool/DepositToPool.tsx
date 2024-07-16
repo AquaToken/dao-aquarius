@@ -271,7 +271,14 @@ const DepositToPool = ({ params }) => {
         if (Number.isNaN(Number(value))) {
             return;
         }
-        setAmounts(new Map(amounts.set(getAssetString(asset), value)));
+        const [integerPart, fractionalPart] = value.split('.');
+
+        const roundedValue =
+            fractionalPart && fractionalPart.length > 7
+                ? `${integerPart}.${fractionalPart.slice(0, 7)}`
+                : value;
+
+        setAmounts(new Map(amounts.set(getAssetString(asset), roundedValue)));
 
         // empty pool
         if (pool.total_share === 0) {
@@ -282,7 +289,7 @@ const DepositToPool = ({ params }) => {
             .filter((token) => getAssetString(token) !== getAssetString(asset))
             .forEach((token) => {
                 const newAmount = (
-                    (Number(value) * +reserves.get(getAssetString(token))) /
+                    (Number(roundedValue) * +reserves.get(getAssetString(token))) /
                     +reserves.get(getAssetString(asset))
                 ).toFixed(7);
                 setAmounts(

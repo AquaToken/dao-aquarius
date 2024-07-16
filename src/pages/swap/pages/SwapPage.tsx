@@ -316,10 +316,10 @@ const SwapPage = ({ balances }) => {
                     setEstimatePending(false);
                 });
         } else {
-            setBaseAmount('');
             setBestPathXDR(null);
             setBestPath(null);
             setBestPools(null);
+            setCounterAmount('');
         }
     }, [debouncedAmount, base, counter]);
 
@@ -363,7 +363,13 @@ const SwapPage = ({ balances }) => {
         if (Number.isNaN(Number(value))) {
             return;
         }
-        setBaseAmount(value);
+        const [integerPart, fractionalPart] = value.split('.');
+        const roundedValue =
+            fractionalPart && fractionalPart.length > 7
+                ? `${integerPart}.${fractionalPart.slice(0, 7)}`
+                : value;
+
+        setBaseAmount(roundedValue);
     };
 
     const revertAssets = () => {
