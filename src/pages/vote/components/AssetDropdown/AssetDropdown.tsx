@@ -144,6 +144,7 @@ const Balances = styled.div`
         font-size: 1.6rem;
         line-height: 2.8rem;
         color: ${COLORS.paragraphText};
+        text-align: right;
     }
 
     ${respondDown(Breakpoints.md)`
