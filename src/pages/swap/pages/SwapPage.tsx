@@ -126,6 +126,7 @@ const Balance = styled.div`
 const BalanceClickable = styled.span`
     color: ${COLORS.purple};
     cursor: pointer;
+    margin-left: 0.4rem;
 `;
 
 const StyledInput = styled(Input)`
@@ -423,7 +424,7 @@ const SwapPage = ({ balances }) => {
                                 <BalanceClickable
                                     onClick={() =>
                                         setBaseAmount(
-                                            account.getAvailableForSwapBalance(base).toString(),
+                                            account.getAvailableForSwapBalance(base).toFixed(7),
                                         )
                                     }
                                 >
