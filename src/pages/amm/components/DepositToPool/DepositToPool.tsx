@@ -82,6 +82,12 @@ const Balance = styled.div`
     font-size: 1.6rem;
     line-height: 1.8rem;
     color: ${COLORS.paragraphText};
+    display: flex;
+    align-items: center;
+
+    svg {
+        margin-left: 0.4rem;
+    }
 
     ${respondDown(Breakpoints.sm)`
         font-size: 1.2rem;
@@ -116,6 +122,24 @@ const TooltipInner = styled.span`
     ${respondDown(Breakpoints.sm)`
         width: 12rem;
     `}
+`;
+
+const TooltipInnerBalance = styled.div`
+    display: flex;
+    flex-direction: column;
+    color: ${COLORS.white};
+    font-size: 1.2rem;
+    line-height: 2rem;
+`;
+
+const TooltipRow = styled.div`
+    display: flex;
+    justify-content: space-between;
+    gap: 1.2rem;
+
+    &:last-child:not(:first-child) {
+        font-weight: 700;
+    }
 `;
 
 const DepositToPool = ({ params }) => {
@@ -281,17 +305,44 @@ const DepositToPool = ({ params }) => {
             <Form>
                 {pool.assets.map((asset) => (
                     <FormRow>
-                        <Balance>
-                            Available:
-                            <BalanceClickable
-                                onClick={() =>
-                                    onChangeInput(asset, account.getAssetBalance(asset).toFixed(7))
-                                }
-                            >
-                                {' '}
-                                {formatBalance(account.getAssetBalance(asset))} {asset.code}
-                            </BalanceClickable>
-                        </Balance>
+                        {account && account.getAssetBalance(asset) !== null && (
+                            <Balance>
+                                Available:
+                                <BalanceClickable
+                                    onClick={() =>
+                                        onChangeInput(
+                                            asset,
+                                            account.getAvailableForSwapBalance(asset).toFixed(7),
+                                        )
+                                    }
+                                >
+                                    {' '}
+                                    {formatBalance(account.getAvailableForSwapBalance(asset))}{' '}
+                                    {asset.code}
+                                </BalanceClickable>
+                                <Tooltip
+                                    showOnHover
+                                    isDark
+                                    position={TOOLTIP_POSITION.left}
+                                    content={
+                                        <TooltipInnerBalance>
+                                            {account
+                                                .getReservesForSwap(asset)
+                                                .map(({ label, value }) => (
+                                                    <TooltipRow key={label}>
+                                                        <span>{label}</span>
+                                                        <span>
+                                                            {value} {asset.code}
+                                                        </span>
+                                                    </TooltipRow>
+                                                ))}
+                                        </TooltipInnerBalance>
+                                    }
+                                >
+                                    <Info />
+                                </Tooltip>
+                            </Balance>
+                        )}
                         <Input
                             value={amounts.get(getAssetString(asset))}
                             onChange={({ target }) => {
