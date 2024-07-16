@@ -23,6 +23,7 @@ import Table from '../../../common/basics/Table';
 import LiquidityChart from '../components/LiquidityChart/LiquidityChart';
 import VolumeChart from '../components/VolumeChart/VolumeChart';
 import ExternalLink from '../../../common/basics/ExternalLink';
+import { BuildSignAndSubmitStatuses } from '../../../common/services/wallet-connect.service';
 
 const Container = styled.main`
     height: 100%;
@@ -239,8 +240,19 @@ const PoolPage = () => {
         setClaimPending(true);
 
         SorobanService.getClaimRewardsTx(account.accountId(), pool.address)
-            .then((tx) => account.signAndSubmitTx(tx))
+            .then((tx) => account.signAndSubmitTx(tx, true))
             .then((res) => {
+                if (!res) {
+                    return;
+                }
+
+                if (
+                    (res as { status: BuildSignAndSubmitStatuses }).status ===
+                    BuildSignAndSubmitStatuses.pending
+                ) {
+                    ToastService.showSuccessToast('More signatures required to complete');
+                    return;
+                }
                 const value = SorobanService.i128ToInt(res.value());
 
                 ToastService.showSuccessToast(`Claimed ${formatBalance(+value)} AQUA`);
