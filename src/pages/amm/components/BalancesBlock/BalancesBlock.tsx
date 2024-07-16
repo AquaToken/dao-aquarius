@@ -20,6 +20,7 @@ import { commonMaxWidth, flexAllCenter, respondDown } from '../../../../common/m
 import { Empty } from '../../../profile/YourVotes/YourVotes';
 import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
 import Table from '../../../../common/basics/Table';
+import { BuildSignAndSubmitStatuses } from '../../../../common/services/wallet-connect.service';
 
 const Container = styled.div`
     display: flex;
@@ -88,8 +89,15 @@ const BalancesBlock = ({ balances }) => {
         setPendingId(contractId);
         return SorobanService.deployAssetContractTx(account.accountId(), asset)
             .then((tx) => account.signAndSubmitTx(tx))
-            .then(() => {
+            .then((res) => {
                 setPendingId(null);
+                if (
+                    (res as { status: BuildSignAndSubmitStatuses })?.status ===
+                    BuildSignAndSubmitStatuses.pending
+                ) {
+                    ToastService.showSuccessToast('More signatures required to complete');
+                    return;
+                }
                 account.getBalances();
                 ToastService.showSuccessToast('Contract has been deployed!');
             })
@@ -127,8 +135,15 @@ const BalancesBlock = ({ balances }) => {
             .then((tx) => {
                 return account.signAndSubmitTx(tx);
             })
-            .then(() => {
+            .then((res) => {
                 setPendingId(null);
+                if (
+                    (res as { status: BuildSignAndSubmitStatuses })?.status ===
+                    BuildSignAndSubmitStatuses.pending
+                ) {
+                    ToastService.showSuccessToast('More signatures required to complete');
+                    return;
+                }
                 account.getBalances();
                 ToastService.showSuccessToast('Contract has been restored!');
             })
@@ -145,8 +160,15 @@ const BalancesBlock = ({ balances }) => {
             .then((tx) => {
                 return account.signAndSubmitTx(tx);
             })
-            .then(() => {
+            .then((res) => {
                 setPendingId(null);
+                if (
+                    (res as { status: BuildSignAndSubmitStatuses })?.status ===
+                    BuildSignAndSubmitStatuses.pending
+                ) {
+                    ToastService.showSuccessToast('More signatures required to complete');
+                    return;
+                }
                 account.getBalances();
                 ToastService.showSuccessToast('Contract has been bumped!');
             })
