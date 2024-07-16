@@ -359,6 +359,13 @@ const SwapPage = ({ balances }) => {
             .map(({ asset }) => asset);
     }, [balances]);
 
+    const onAmountChange = (value) => {
+        if (Number.isNaN(Number(value))) {
+            return;
+        }
+        setBaseAmount(value);
+    };
+
     const revertAssets = () => {
         history.push(`${MainRoutes.swap}/${getAssetString(counter)}/${getAssetString(base)}`);
         setBaseAmount('');
@@ -461,7 +468,7 @@ const SwapPage = ({ balances }) => {
                         )}
                         <StyledInput
                             value={baseAmount}
-                            onChange={(e) => setBaseAmount(e.target.value)}
+                            onChange={(e) => onAmountChange(e.target.value)}
                             label="From"
                         />
 
