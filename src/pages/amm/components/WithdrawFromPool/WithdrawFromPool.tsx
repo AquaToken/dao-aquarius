@@ -104,7 +104,15 @@ const WithdrawFromPool = ({ params }) => {
         );
     }, [account]);
 
+    const onInputChange = (value) => {
+        if (Number.isNaN(Number(value))) {
+            return;
+        }
+        setPercent(value);
+    };
+
     const withdraw = () => {
+        // TODO: Add trustline validation
         setPending(true);
 
         const amount = new BigNumber(accountShare.toString())
@@ -167,7 +175,7 @@ const WithdrawFromPool = ({ params }) => {
                         label="Amount to remove"
                         postfix="%"
                         value={percent}
-                        onChange={({ target }) => setPercent(target.value)}
+                        onChange={({ target }) => onInputChange(target.value)}
                     />
                     <RangeInput onChange={setPercent} value={+percent} />
 
