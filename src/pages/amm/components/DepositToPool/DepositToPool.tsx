@@ -275,7 +275,7 @@ const DepositToPool = ({ params }) => {
                     +reserves.get(getAssetString(asset))
                 ).toFixed(7);
                 setAmounts(
-                    new Map(amounts.set(getAssetString(token), Number(newAmount).toString())),
+                    new Map(amounts.set(getAssetString(token), Number(newAmount).toFixed(7))),
                 );
             });
     };
@@ -298,7 +298,7 @@ const DepositToPool = ({ params }) => {
                             Available:
                             <BalanceClickable
                                 onClick={() =>
-                                    onChangeInput(asset, account.getAssetBalance(asset).toString())
+                                    onChangeInput(asset, account.getAssetBalance(asset).toFixed(7))
                                 }
                             >
                                 {' '}
