@@ -317,7 +317,9 @@ const AssetDropdown = ({
                     (getAssetString(assetItem) === searchText ||
                         assetItem.code.toLowerCase().includes(searchText.toLowerCase()) ||
                         assetItem.issuer?.toLowerCase().includes(searchText.toLowerCase()) ||
-                        assetInfo?.home_domain?.toLowerCase().includes(searchText.toLowerCase())) &&
+                        assetInfo?.home_domain
+                            ?.toLowerCase()
+                            .includes(searchText.toLowerCase().replace('www.', ''))) &&
                     !(assetItem.code === exclude?.code && assetItem.issuer === exclude?.issuer)
                 );
             })
