@@ -5,11 +5,7 @@ import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-d
 import useGlobalSubscriptions from './common/hooks/useGlobalSubscriptions';
 import useAssetsStore from './store/assetsStore/useAssetsStore';
 import useAuthStore from './store/authStore/useAuthStore';
-import {
-    ModalService,
-    StellarService,
-    WalletConnectService,
-} from './common/services/globalServices';
+import { StellarService, WalletConnectService } from './common/services/globalServices';
 import Header, { HeaderNavLink, NavLinksDivider } from './common/components/Header/Header';
 import { AmmRoutes, MainRoutes } from './routes';
 import PageLoader from './common/basics/PageLoader';
@@ -24,9 +20,6 @@ import { createGlobalStyle } from 'styled-components';
 import AppGlobalStyle from './common/components/AppGlobalStyles';
 import Governance from './pages/governance/Governance';
 import Title from 'react-document-title';
-import MainNetPurposeModal, {
-    SHOW_PURPOSE_ALIAS_MAIN_NET,
-} from './common/modals/MainNetPurposeModal';
 
 const MainPage = lazy(() => import('./pages/main/MainPage'));
 const LockerPage = lazy(() => import('./pages/locker/Locker'));
@@ -126,13 +119,6 @@ const App = () => {
         if (userAgent.match(/iPad/i) || userAgent.match(/iPhone/i)) {
             document.documentElement.style.overflowX = 'unset';
             document.body.style.overflowX = 'unset';
-        }
-    }, []);
-
-    useEffect(() => {
-        const showPurpose = JSON.parse(localStorage.getItem(SHOW_PURPOSE_ALIAS_MAIN_NET) || 'true');
-        if (showPurpose) {
-            ModalService.openModal(MainNetPurposeModal, {}, false);
         }
     }, []);
 
