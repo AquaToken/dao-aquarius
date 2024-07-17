@@ -126,7 +126,11 @@ const Sidebar = ({ pool }) => {
                         </>
                     )}
 
-                    <Button fullWidth onClick={() => openDepositModal()}>
+                    <Button
+                        fullWidth
+                        onClick={() => openDepositModal()}
+                        disabled={pool.deposit_killed}
+                    >
                         Deposit
                     </Button>
                     <Button

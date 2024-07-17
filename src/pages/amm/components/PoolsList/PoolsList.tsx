@@ -267,6 +267,7 @@ const PoolsList = ({ pools, onUpdate, isUserList }) => {
                                                 accountShare: balance,
                                             }).then(() => onUpdate());
                                         }}
+                                        disabled={pool.deposit_killed}
                                     >
                                         Add liquidity
                                     </Button>

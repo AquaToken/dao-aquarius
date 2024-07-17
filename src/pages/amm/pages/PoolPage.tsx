@@ -300,7 +300,12 @@ const PoolPage = () => {
                                     <span>You have unclaimed rewards</span>
                                     <span>{formatBalance(rewards.to_claim)} AQUA</span>
                                 </RewardsDescription>
-                                <Button isBig onClick={() => claim()} pending={claimPending}>
+                                <Button
+                                    isBig
+                                    onClick={() => claim()}
+                                    pending={claimPending}
+                                    disabled={pool.claim_killed}
+                                >
                                     Claim rewards
                                 </Button>
                             </Rewards>
