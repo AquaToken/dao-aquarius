@@ -6,62 +6,12 @@ import { ModalService, StellarService } from '../../../common/services/globalSer
 import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
 import useAuthStore from '../../../store/authStore/useAuthStore';
 import styled from 'styled-components';
-import {
-    commonMaxWidth,
-    flexAllCenter,
-    flexRowSpaceBetween,
-    respondDown,
-} from '../../../common/mixins';
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../common/mixins';
 import Button from '../../../common/basics/Button';
 import { Breakpoints, COLORS } from '../../../common/styles';
 import PageLoader from '../../../common/basics/PageLoader';
 import PoolsList from '../components/PoolsList/PoolsList';
 import { formatBalance } from '../../../common/helpers/helpers';
-
-const Container = styled.main`
-    height: 100%;
-    position: relative;
-    display: flex;
-    flex: 1 0 auto;
-    flex-direction: column;
-    scroll-behavior: smooth;
-    overflow: auto;
-    background-color: ${COLORS.lightGray};
-`;
-
-const Content = styled.div`
-    ${commonMaxWidth};
-    width: 100%;
-    padding: 6.3rem 4rem 0;
-    flex: 1 0 auto;
-
-    ${respondDown(Breakpoints.sm)`
-        padding: 2rem 1.6rem 0;
-    `}
-`;
-
-const Header = styled.div`
-    ${flexRowSpaceBetween};
-    margin-bottom: 6.4rem;
-
-    ${respondDown(Breakpoints.sm)`
-        margin-bottom: 2rem;
-    `}
-`;
-
-const Title = styled.h1`
-    font-size: 5.6rem;
-    font-weight: 700;
-    line-height: 6.4rem;
-
-    ${respondDown(Breakpoints.md)`
-        font-size: 4rem;
-    `}
-
-    ${respondDown(Breakpoints.sm)`
-        font-size: 2.8rem;
-    `}
-`;
 
 const PoolsListBlock = styled.div`
     display: flex;
@@ -163,32 +113,22 @@ const Liquidity = () => {
         );
     }
     return (
-        <Container>
-            <Content>
-                <Header>
-                    <Title>Liquidity overview</Title>
-                    {/*<Button>*/}
-                    {/*    add liquidity <PlusIcon />*/}
-                    {/*</Button>*/}
-                </Header>
-                <PoolsListBlock>
-                    <ListHeader>
-                        <ListTitle>My liquidity positions</ListTitle>
-                        <ListTotal>
-                            <span>Total: </span>
-                            <span>${totalLiquidity}</span>
-                        </ListTotal>
-                    </ListHeader>
-                    {!pools ? (
-                        <PageLoader />
-                    ) : Boolean(pools.length) ? (
-                        <PoolsList isUserList pools={pools} onUpdate={() => updateData()} />
-                    ) : (
-                        <div>Your liquidity positions will appear here</div>
-                    )}
-                </PoolsListBlock>
-            </Content>
-        </Container>
+        <PoolsListBlock>
+            <ListHeader>
+                <ListTitle>My liquidity positions</ListTitle>
+                <ListTotal>
+                    <span>Total: </span>
+                    <span>${totalLiquidity}</span>
+                </ListTotal>
+            </ListHeader>
+            {!pools ? (
+                <PageLoader />
+            ) : Boolean(pools.length) ? (
+                <PoolsList isUserList pools={pools} onUpdate={() => updateData()} />
+            ) : (
+                <div>Your liquidity positions will appear here</div>
+            )}
+        </PoolsListBlock>
     );
 };
 

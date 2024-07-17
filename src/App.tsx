@@ -10,7 +10,7 @@ import {
     StellarService,
     WalletConnectService,
 } from './common/services/globalServices';
-import Header, { HeaderNavLink } from './common/components/Header/Header';
+import Header, { HeaderNavLink, NavLinksDivider } from './common/components/Header/Header';
 import { AmmRoutes, MainRoutes } from './routes';
 import PageLoader from './common/basics/PageLoader';
 import NotFoundPage from './common/components/NotFoundPage/NotFoundPage';
@@ -50,7 +50,6 @@ const App = () => {
 
     const { getAssets, assets, processNewAssets, assetsInfo, clearAssets } = useAssetsStore();
     const [isAssetsUpdated, setIsAssetsUpdated] = useState(false);
-    const [balances, setBalances] = useState(null);
 
     const { isLogged, account, redirectURL, disableRedirect, callback, removeAuthCallback } =
         useAuthStore();
@@ -100,17 +99,6 @@ const App = () => {
     }, [assets]);
 
     useEffect(() => {
-        if (account) {
-            account.getBalances().then((res) => {
-                setBalances(res);
-                processNewAssets(res.map(({ asset }) => asset));
-            });
-            return;
-        }
-        setBalances(null);
-    }, [account]);
-
-    useEffect(() => {
         if (isLogged) {
             StellarService.startEffectsStream(account.accountId());
         } else {
@@ -157,52 +145,52 @@ const App = () => {
             {isLogged && Boolean(redirectURL) && <Redirect to={redirectURL} />}
             <Header>
                 <>
-                    {/*<HeaderNavLink*/}
-                    {/*    to={MainRoutes.vote}*/}
-                    {/*    exact*/}
-                    {/*    activeStyle={{*/}
-                    {/*        fontWeight: 700,*/}
-                    {/*    }}*/}
-                    {/*    title="Voting"*/}
-                    {/*>*/}
-                    {/*    Voting*/}
-                    {/*</HeaderNavLink>*/}
-                    {/*<HeaderNavLink*/}
-                    {/*    to={MainRoutes.rewards}*/}
-                    {/*    activeStyle={{*/}
-                    {/*        fontWeight: 700,*/}
-                    {/*    }}*/}
-                    {/*    title="Rewards"*/}
-                    {/*>*/}
-                    {/*    Rewards*/}
-                    {/*</HeaderNavLink>*/}
-                    {/*<HeaderNavLink*/}
-                    {/*    to={MainRoutes.bribes}*/}
-                    {/*    activeStyle={{*/}
-                    {/*        fontWeight: 700,*/}
-                    {/*    }}*/}
-                    {/*    title="Bribes"*/}
-                    {/*>*/}
-                    {/*    Bribes*/}
-                    {/*</HeaderNavLink>*/}
-                    {/*<HeaderNavLink*/}
-                    {/*    to={MainRoutes.locker}*/}
-                    {/*    activeStyle={{*/}
-                    {/*        fontWeight: 700,*/}
-                    {/*    }}*/}
-                    {/*    title="Locker"*/}
-                    {/*>*/}
-                    {/*    Locker*/}
-                    {/*</HeaderNavLink>*/}
-                    {/*<HeaderNavLink*/}
-                    {/*    to={MainRoutes.governance}*/}
-                    {/*    activeStyle={{*/}
-                    {/*        fontWeight: 700,*/}
-                    {/*    }}*/}
-                    {/*    title="Governance"*/}
-                    {/*>*/}
-                    {/*    Governance*/}
-                    {/*</HeaderNavLink>*/}
+                    <HeaderNavLink
+                        to={MainRoutes.vote}
+                        exact
+                        activeStyle={{
+                            fontWeight: 700,
+                        }}
+                        title="Voting"
+                    >
+                        Voting
+                    </HeaderNavLink>
+                    <HeaderNavLink
+                        to={MainRoutes.rewards}
+                        activeStyle={{
+                            fontWeight: 700,
+                        }}
+                        title="Rewards"
+                    >
+                        Rewards
+                    </HeaderNavLink>
+                    <HeaderNavLink
+                        to={MainRoutes.bribes}
+                        activeStyle={{
+                            fontWeight: 700,
+                        }}
+                        title="Bribes"
+                    >
+                        Bribes
+                    </HeaderNavLink>
+                    <HeaderNavLink
+                        to={MainRoutes.locker}
+                        activeStyle={{
+                            fontWeight: 700,
+                        }}
+                        title="Locker"
+                    >
+                        Locker
+                    </HeaderNavLink>
+                    <HeaderNavLink
+                        to={MainRoutes.governance}
+                        activeStyle={{
+                            fontWeight: 700,
+                        }}
+                        title="Governance"
+                    >
+                        Governance
+                    </HeaderNavLink>
                     {/*<HeaderNavLink*/}
                     {/*    to={MainRoutes.airdrop2}*/}
                     {/*    activeStyle={{*/}
@@ -212,6 +200,7 @@ const App = () => {
                     {/*>*/}
                     {/*    Airdrop*/}
                     {/*</HeaderNavLink>*/}
+                    <NavLinksDivider />
                     <HeaderNavLink
                         to={AmmRoutes.analytics}
                         activeStyle={{
@@ -222,15 +211,6 @@ const App = () => {
                         AMM
                     </HeaderNavLink>
                     <HeaderNavLink
-                        to={AmmRoutes.liquidity}
-                        activeStyle={{
-                            fontWeight: 700,
-                        }}
-                        title="My liquidity"
-                    >
-                        My liquidity
-                    </HeaderNavLink>
-                    <HeaderNavLink
                         to={MainRoutes.swap}
                         activeStyle={{
                             fontWeight: 700,
@@ -238,15 +218,6 @@ const App = () => {
                         title="Swap"
                     >
                         Swap
-                    </HeaderNavLink>
-                    <HeaderNavLink
-                        to={AmmRoutes.balances}
-                        activeStyle={{
-                            fontWeight: 700,
-                        }}
-                        title="Balances"
-                    >
-                        Balances
                     </HeaderNavLink>
                 </>
             </Header>
@@ -315,8 +286,8 @@ const App = () => {
                     </Route>
 
                     <Route path={MainRoutes.amm}>
-                        <Title title="AMM Example">
-                            <AmmPage balances={balances} />
+                        <Title title="AMM">
+                            <AmmPage />
                         </Title>
                     </Route>
 

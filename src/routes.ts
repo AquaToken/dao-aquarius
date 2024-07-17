@@ -46,7 +46,5 @@ export const MarketRoutes = {
 
 export const AmmRoutes = {
     analytics: `${MainRoutes.amm}/analytics/`,
-    liquidity: `${MainRoutes.amm}/liquidity/`,
     create: `${MainRoutes.amm}/create-pool/`,
-    balances: `${MainRoutes.amm}/balances/`,
 };

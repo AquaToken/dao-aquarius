@@ -7,6 +7,8 @@ import Button from '../../basics/Button';
 import useAuthStore from '../../../store/authStore/useAuthStore';
 import { useState } from 'react';
 import ExternalLink from '../../basics/ExternalLink';
+import ErrorHandler from '../../helpers/error-handler';
+import { ToastService } from '../../services/globalServices';
 
 const Container = styled.div`
     width: 52.3rem;
@@ -40,10 +42,17 @@ const RestoreContractModal = ({ params, close }) => {
 
     const restore = () => {
         setPending(true);
-        account.signAndSubmitTx(tx).then(() => {
-            setPending(false);
-            close();
-        });
+        account
+            .signAndSubmitTx(tx)
+            .then(() => {
+                setPending(false);
+                close();
+            })
+            .catch((e) => {
+                const errorText = ErrorHandler(e);
+                ToastService.showErrorToast(errorText);
+                setPending(false);
+            });
     };
 
     return (

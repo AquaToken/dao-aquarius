@@ -16,7 +16,6 @@ import { BuildSignAndSubmitStatuses } from './wallet-connect.service';
 import SignWithPublic from '../modals/SignWithPublic';
 import LedgerSignTx from '../modals/LedgerModals/LedgerSignTx';
 import SentToVault from '../modals/MultisigModals/SentToVault';
-import { CONTRACT_STATUS } from './soroban.service';
 import { getNativePrices } from '../../pages/amm/api/api';
 import { getAssetString } from '../helpers/helpers';
 
@@ -286,6 +285,7 @@ export default class AccountService extends Horizon.AccountResponse {
                         : 0,
                     code: balance.asset_code,
                     issuer: balance.asset_issuer,
+                    asset: StellarService.createAsset(balance.asset_code, balance.asset_issuer),
                 };
             })
             .sort(
@@ -301,6 +301,7 @@ export default class AccountService extends Horizon.AccountResponse {
                 nativeBalance: +nativeBalanceInstance.balance,
                 code: 'XLM',
                 issuer: undefined,
+                asset: StellarService.createLumen(),
             },
             ...balances,
         ];
@@ -385,55 +386,6 @@ export default class AccountService extends Horizon.AccountResponse {
             ...items,
             { label: 'Total', value: items.reduce((acc, item) => acc + item.value, 0) },
         ];
-    }
-
-    getBalances() {
-        ``;
-        return Promise.all(
-            this.balances
-                .filter(
-                    ({ asset_type }) =>
-                        asset_type !== 'liquidity_pool_shares' && asset_type !== 'native',
-                )
-                .map((balance) => {
-                    const asset = SorobanService.getAsset(
-                        (balance as Horizon.HorizonApi.BalanceLineAsset).asset_code,
-                        (balance as Horizon.HorizonApi.BalanceLineAsset).asset_issuer,
-                    );
-                    return {
-                        contractId: SorobanService.getAssetContractId(asset),
-                        asset,
-                        balance: balance.balance,
-                    };
-                })
-                .map(async ({ contractId, asset, balance }) => {
-                    const { ledgersBeforeExpire, status } = await SorobanService.getContractData(
-                        contractId,
-                    );
-                    return {
-                        status,
-                        ledgersBeforeExpire,
-                        contractId,
-                        asset,
-                        balance,
-                    };
-                }),
-        ).then((balances) => {
-            const nativeBalance = this.balances.find(
-                ({ asset_type }) => asset_type === 'native',
-            ).balance;
-            const native = StellarSdk.Asset.native();
-            const contractId = SorobanService.getAssetContractId(native);
-            return [
-                {
-                    asset: native,
-                    balance: nativeBalance,
-                    status: CONTRACT_STATUS.ACTIVE,
-                    contractId,
-                },
-                ...balances.sort((a, b) => +b.balance - +a.balance),
-            ];
-        });
     }
 
     async signContact(tx: StellarSdk.Transaction, isSimulate?: boolean): Promise<any> {

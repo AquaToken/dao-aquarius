@@ -123,6 +123,15 @@ export default function useGlobalSubscriptions(): void {
     }, [isLogged]);
 
     useEffect(() => {
+        if (account) {
+            account.getSortedBalances().then((res) => {
+                processNewAssets(res.map(({ asset }) => asset));
+            });
+            return;
+        }
+    }, [account]);
+
+    useEffect(() => {
         accountRef.current = account;
     }, [account]);
 

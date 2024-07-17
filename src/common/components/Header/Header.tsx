@@ -10,7 +10,6 @@ import useAuthStore from '../../../store/authStore/useAuthStore';
 import IconProfile from '../../assets/img/icon-profile.svg';
 import { ModalService } from '../../services/globalServices';
 import ChooseLoginMethodModal from '../../modals/ChooseLoginMethodModal';
-import Tooltip, { TOOLTIP_POSITION } from '../../basics/Tooltip';
 
 const HeaderBlock = styled.header`
     ${commonMaxWidth};
@@ -58,6 +57,26 @@ export const HeaderNavLink = styled(NavLink)`
     `}
 `;
 
+export const NavLinksDivider = styled.div`
+    height: 2.4rem;
+    width: 0;
+    border-left: 0.1rem solid ${COLORS.gray};
+    margin-right: 4rem;
+
+    ${respondDown(Breakpoints.xl)`
+        margin-right: 2.2rem;
+    `}
+
+    ${respondDown(Breakpoints.lg)`
+        margin-right: 2rem;
+        height: 2rem;
+    `}
+
+    ${respondDown(Breakpoints.md)`
+        display: none;
+    `}
+`;
+
 const MainLink = styled(NavLink)`
     height: 4.4rem;
 
@@ -69,8 +88,6 @@ const MainLink = styled(NavLink)`
 const HeaderNavLinks = styled.div`
     display: flex;
     padding: 1.6rem;
-    border: 0.1rem solid ${COLORS.tooltip};
-    border-radius: 0.6rem;
 
     a {
         color: ${COLORS.titleText};
@@ -165,12 +182,6 @@ const MyAquarius = styled(NavLink)`
     `}
 `;
 
-const TooltipStyled = styled(Tooltip)`
-    ${respondDown(Breakpoints.md)`
-        display: none;
-    `}
-`;
-
 const Header = ({ children }: { children?: JSX.Element }): JSX.Element => {
     const { isLogged } = useAuthStore();
 
@@ -192,9 +203,7 @@ const Header = ({ children }: { children?: JSX.Element }): JSX.Element => {
                 <Aqua />
             </MainLink>
 
-            <TooltipStyled content={<div>NEW</div>} position={TOOLTIP_POSITION.right} isShow>
-                <HeaderNavLinks>{children}</HeaderNavLinks>
-            </TooltipStyled>
+            <HeaderNavLinks>{children}</HeaderNavLinks>
 
             <RightBlock>
                 <MyAquarius
