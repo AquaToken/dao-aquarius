@@ -60,6 +60,7 @@ const BalancesBlock = () => {
                                     children: `${formatBalance(+balance)} ${code}`,
                                     label: 'Balance:',
                                     align: CellAlign.Right,
+                                    mobileStyle: { textAlign: 'right' },
                                 },
                                 {
                                     children: nativeBalance
