@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Breakpoints, COLORS } from '../styles';
 import { respondDown } from '../mixins';
 import Button from '../basics/Button';
-import { ModalDescription, ModalTitle } from './atoms/ModalAtoms';
+import { ModalTitle } from './atoms/ModalAtoms';
 import Checkbox from '../basics/Checkbox';
 import Alert from '../basics/Alert';
 
@@ -40,15 +40,8 @@ const MainNetPurposeModal = ({ close }) => {
 
     return (
         <Container>
-            <ModalTitle>Aquarius AMM</ModalTitle>
-            <ModalDescription>
-                <p></p>
-            </ModalDescription>
-
-            <Alert
-                title="Warning: experimental functionality"
-                text="You are about to start using new functionality written on Soroban with real money on Pubnet. Although the Aquarius team has done its best to address risks the funds are still at risk as the contract audit is still in progress. Use at your own risk."
-            />
+            <ModalTitle>Warning: experimental functionality</ModalTitle>
+            <Alert text="You are about to start using new functionality written on Soroban with real money on Pubnet. Although the Aquarius team has done its best to address risks the funds are still at risk as the contract audit is still in progress. Use at your own risk." />
 
             <CheckboxBlock>
                 <Checkbox label="Don’t show again" checked={checked} onChange={setChecked} />

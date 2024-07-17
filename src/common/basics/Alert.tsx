@@ -45,7 +45,12 @@ const Text = styled.span`
     color: ${COLORS.grayText};
 `;
 
-const Alert = ({ title, text }) => {
+interface AlertProps {
+    title?: string;
+    text: string | React.ReactNode;
+}
+
+const Alert = ({ title, text }: AlertProps) => {
     return (
         <Container>
             <IconWrapper>
