@@ -122,7 +122,7 @@ const WithdrawFromPool = ({ params }) => {
         // TODO: Add trustline validation
 
         if (Number(percent) <= 0 || Number(percent) > 100) {
-            ToastService.showErrorToast('Value must be between 0 and 100');
+            ToastService.showErrorToast('Value must be between 0.1 and 100');
             return;
         }
 
