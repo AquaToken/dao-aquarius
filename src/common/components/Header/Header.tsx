@@ -73,7 +73,7 @@ export const NavLinksDivider = styled.div`
     `}
 
     ${respondDown(Breakpoints.md)`
-        border-left: none;
+         border-left: none;
          margin-right: 0;
          height: 0;
          width: 20rem;

@@ -108,11 +108,24 @@ const WithdrawFromPool = ({ params }) => {
         if (Number.isNaN(Number(value))) {
             return;
         }
-        setPercent(value);
+        const [integerPart, fractionalPart] = value.split('.');
+
+        const roundedValue =
+            fractionalPart && fractionalPart.length > 1
+                ? `${integerPart}.${fractionalPart.slice(0, 1)}`
+                : value;
+
+        setPercent(roundedValue);
     };
 
     const withdraw = () => {
         // TODO: Add trustline validation
+
+        if (Number(percent) <= 0 || Number(percent) > 100) {
+            ToastService.showErrorToast('Value must be between 0 and 100');
+            return;
+        }
+
         setPending(true);
 
         const amount = new BigNumber(accountShare.toString())
@@ -127,8 +140,6 @@ const WithdrawFromPool = ({ params }) => {
                 return account.signAndSubmitTx(tx, true);
             })
             .then((res) => {
-                ModalService.confirmAllModals();
-
                 if (!res) {
                     return;
                 }
