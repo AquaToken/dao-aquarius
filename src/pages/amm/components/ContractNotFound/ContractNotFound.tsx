@@ -5,6 +5,7 @@ import { COLORS } from '../../../../common/styles';
 import { useState } from 'react';
 import { SorobanService, ToastService } from '../../../../common/services/globalServices';
 import useAuthStore from '../../../../store/authStore/useAuthStore';
+import ErrorHandler from '../../../../common/helpers/error-handler';
 
 const Container = styled.div`
     color: ${COLORS.pinkRed};
@@ -27,9 +28,10 @@ const ContractNotFound = ({ asset, onSuccess }) => {
             .then(() => {
                 onSuccess();
             })
-            .catch(() => {
+            .catch((e) => {
+                const errorText = ErrorHandler(e);
+                ToastService.showErrorToast(errorText);
                 setPending(false);
-                ToastService.showErrorToast('Something went wrong');
             });
     };
     return (
