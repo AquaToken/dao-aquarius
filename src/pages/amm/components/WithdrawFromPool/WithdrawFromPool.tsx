@@ -105,7 +105,7 @@ const WithdrawFromPool = ({ params }) => {
     }, [account]);
 
     const onInputChange = (value) => {
-        if (Number.isNaN(Number(value))) {
+        if (Number.isNaN(Number(value)) || Number(value) > 100) {
             return;
         }
         const [integerPart, fractionalPart] = value.split('.');
@@ -120,11 +120,6 @@ const WithdrawFromPool = ({ params }) => {
 
     const withdraw = () => {
         // TODO: Add trustline validation
-
-        if (Number(percent) <= 0 || Number(percent) > 100) {
-            ToastService.showErrorToast('Value must be between 0.1 and 100');
-            return;
-        }
 
         setPending(true);
 
