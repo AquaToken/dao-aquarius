@@ -9,6 +9,7 @@ import IceBlock from './components/IceBlock/IceBlock';
 import Roadmap from './components/Roadmap/Roadmap';
 import Community from '../../common/components/Community/Community';
 import Subscribe from '../../common/components/Subscribe/Subscribe';
+import Testnet from './components/Testnet/Testnet';
 
 const Container = styled.div`
     height: 100%;
@@ -28,6 +29,8 @@ const Container = styled.div`
 const MainPage = () => {
     return (
         <Container>
+            <Testnet />
+
             <MainBlock />
 
             <SupportedBy />

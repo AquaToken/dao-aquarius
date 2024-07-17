@@ -161,16 +161,17 @@ const PairSearch = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0 4.8rem;
+    padding: 1rem 4.8rem 0;
     box-sizing: border-box;
 
     ${respondDown(Breakpoints.md)`
-        margin-top: 3rem;
+        margin-top: 5rem;
         flex-direction: column;
         box-shadow: unset;
         padding: 0;
         margin-bottom: 8rem; 
         background: ${COLORS.transparent};
+        padding-top: 5rem;
     `}
 `;
 
@@ -187,7 +188,7 @@ const SwapButton = styled.div<{ disabled: boolean }>`
     }
 
     ${respondDown(Breakpoints.md)`
-        margin: 1.8rem 0;
+        margin: 1.8rem 0 3.6rem;
     `}
 `;
 
@@ -869,6 +870,8 @@ const MainPage = (): JSX.Element => {
                         asset={searchBase}
                         onUpdate={changeBaseSearch}
                         exclude={searchCounter}
+                        label="Search asset by name, domain or issuer"
+                        placeholder="AQUA or aqua.network or AQUA:GBNZ...AQUA"
                     />
                     <SwapButton disabled={!searchCounter} onClick={() => swapAssets()}>
                         <ArrowsIcon />
@@ -895,6 +898,8 @@ const MainPage = (): JSX.Element => {
                             disabled={!searchBase}
                             onToggle={setIsCounterSearchActive}
                             exclude={searchBase}
+                            label="Search asset by name, domain or issuer"
+                            placeholder="AQUA or aqua.network or AQUA:GBNZ...AQUA"
                         />
                     </TooltipFullWidth>
                 </PairSearch>

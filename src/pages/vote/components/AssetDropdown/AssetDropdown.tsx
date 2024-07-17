@@ -211,8 +211,11 @@ const StyledAsset = styled(Asset)<{ $withBalances?: boolean }>`
     width: ${({ $withBalances }) => ($withBalances ? '50%' : '100%')};
 `;
 
-const pattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?$/;
-const regexp = new RegExp(pattern);
+const domainPattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?$/;
+const domainRegexp = new RegExp(domainPattern);
+
+const codeIssuerPattern = /^[a-zA-Z0-9]{1,12}:[a-zA-Z0-9]{56}$/;
+const codeIssuerRegexp = new RegExp(codeIssuerPattern);
 
 const AssetDropdown = ({
     asset,
@@ -338,8 +341,34 @@ const AssetDropdown = ({
             return;
         }
 
-        if (regexp.test(debouncedSearchText.current)) {
-            resolveCurrencies(debouncedSearchText.current);
+        if (codeIssuerRegexp.test(debouncedSearchText)) {
+            const [code, issuer] = debouncedSearchText.split(':');
+            if (!StellarSdk.StrKey.isValidEd25519PublicKey(issuer)) {
+                return;
+            }
+
+            const currentAsset = StellarService.createAsset(code, issuer);
+
+            if (
+                assets.find(
+                    (asset) =>
+                        currentAsset.code === asset.code && asset.issuer === currentAsset.issuer,
+                )
+            ) {
+                setSearchResults([]);
+                setSearchPending(false);
+                return;
+            }
+
+            processNewAssets([currentAsset]);
+            setSearchResults([currentAsset]);
+
+            setSearchPending(false);
+            return;
+        }
+
+        if (domainRegexp.test(debouncedSearchText)) {
+            resolveCurrencies(debouncedSearchText);
             return;
         }
         setSearchResults([]);
@@ -359,7 +388,8 @@ const AssetDropdown = ({
             const assetInfo = assetsInfo.get(getAssetString(assetItem));
 
             return (
-                (assetItem.code.toLowerCase().includes(searchText.toLowerCase()) ||
+                (getAssetString(assetItem) === searchText ||
+                        assetItem.code.toLowerCase().includes(searchText.toLowerCase()) ||
                     (StellarSdk.StrKey.isValidEd25519PublicKey(searchText) &&
                         assetItem.issuer?.toLowerCase().includes(searchText.toLowerCase())) ||
                     assetInfo?.home_domain?.toLowerCase().includes(searchText.toLowerCase())) &&

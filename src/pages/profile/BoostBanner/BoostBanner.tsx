@@ -80,7 +80,9 @@ const BoostBanner = () => {
                 <Title>
                     Get the <Label title={'boost'} isBlue /> to your reward
                 </Title>
-                <Description>Freeze your AQUA into ICE and get reward boosting!</Description>
+                <Description>
+                    Freeze your AQUA into ICE and boost your rewards by up to 250%!
+                </Description>
             </Content>
             <StyledLink to={LockerRoutes.main}>
                 <Button fullWidth>GET THE BOOST</Button>

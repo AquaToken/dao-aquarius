@@ -162,7 +162,7 @@ const Sidebar = ({ votesData, base, counter, totalStats, onVoteClick, isPairSele
         : null;
 
     const total = +votesData.upvote_value + +votesData.downvote_value || 0;
-    const result = +votesData.upvote_value - +votesData.downvote_value;
+    const result = +votesData.upvote_value - +votesData.downvote_value || 0;
 
     const upAqua =
         votesData.extra?.upvote_assets.find(({ asset }) => asset === `${AQUA_CODE}:${AQUA_ISSUER}`)

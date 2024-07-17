@@ -23,6 +23,19 @@ const Questions = () => {
                 }
             />
             <Question
+                question={
+                    'Will I get my ICE, upvoteICE, downvoteICE and governICE immediately after locking AQUA?'
+                }
+                answer={
+                    <span>
+                        The tokens will be credited to your wallet balance not later than in 2
+                        hours. The reason is that the ICE tokens distribution is a scheduled
+                        operation that runs every 2 hours. If you're lucky enough you'll get your
+                        ICE within minutes.
+                    </span>
+                }
+            />
+            <Question
                 question={'What are the benefits of freezing AQUA?'}
                 answer={
                     <span>
