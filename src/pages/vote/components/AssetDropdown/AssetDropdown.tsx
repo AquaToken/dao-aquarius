@@ -16,7 +16,6 @@ import { getAssetString } from '../../../../store/assetsStore/actions';
 import useAuthStore from '../../../../store/authStore/useAuthStore';
 import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
 import { formatBalance } from '../../../../common/helpers/helpers';
-
 const DropDown = styled.div<{ isOpen: boolean; disabled: boolean }>`
     width: 100%;
     display: flex;
@@ -341,8 +340,8 @@ const AssetDropdown = ({
             return;
         }
 
-        if (codeIssuerRegexp.test(debouncedSearchText)) {
-            const [code, issuer] = debouncedSearchText.split(':');
+        if (codeIssuerRegexp.test(debouncedSearchText.current)) {
+            const [code, issuer] = debouncedSearchText.current.split(':');
             if (!StellarSdk.StrKey.isValidEd25519PublicKey(issuer)) {
                 return;
             }
@@ -367,12 +366,12 @@ const AssetDropdown = ({
             return;
         }
 
-        if (domainRegexp.test(debouncedSearchText)) {
-            resolveCurrencies(debouncedSearchText);
+        if (domainRegexp.test(debouncedSearchText.current)) {
+            resolveCurrencies(debouncedSearchText.current);
             return;
         }
         setSearchResults([]);
-    }, [debouncedSearchText]);
+    }, [debouncedSearchText.current]);
 
     const onClickAsset = (asset) => {
         onUpdate(StellarService.createAsset(asset.code, asset.issuer));
@@ -389,7 +388,7 @@ const AssetDropdown = ({
 
             return (
                 (getAssetString(assetItem) === searchText ||
-                        assetItem.code.toLowerCase().includes(searchText.toLowerCase()) ||
+                    assetItem.code.toLowerCase().includes(searchText.toLowerCase()) ||
                     (StellarSdk.StrKey.isValidEd25519PublicKey(searchText) &&
                         assetItem.issuer?.toLowerCase().includes(searchText.toLowerCase())) ||
                     assetInfo?.home_domain?.toLowerCase().includes(searchText.toLowerCase())) &&
