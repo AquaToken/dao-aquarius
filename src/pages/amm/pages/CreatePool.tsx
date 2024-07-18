@@ -360,6 +360,20 @@ const CreatePool = () => {
             });
     };
 
+    const onStableFeeChane = (value) => {
+        if (Number.isNaN(Number(value))) {
+            return;
+        }
+        const [integerPart, fractionalPart] = value.split('.');
+
+        const roundedValue =
+            fractionalPart && fractionalPart.length > 2
+                ? `${integerPart}.${fractionalPart.slice(0, 2)}`
+                : value;
+
+        setStableFee(roundedValue);
+    };
+
     return (
         <MainBlock>
             <Background>
@@ -529,7 +543,6 @@ const CreatePool = () => {
                             {type === POOL_TYPE.stable ? (
                                 <FormRow>
                                     <Input
-                                        type="number"
                                         label={
                                             <ErrorLabel isError={isStableFeeInputError}>
                                                 {isStableFeeInputError
@@ -539,7 +552,7 @@ const CreatePool = () => {
                                         }
                                         placeholder={STABLE_POOL_FEE_PERCENTS.min}
                                         value={stableFee}
-                                        onChange={(e) => setStableFee(e.target.value)}
+                                        onChange={(e) => onStableFeeChane(e.target.value)}
                                     />
                                 </FormRow>
                             ) : (
