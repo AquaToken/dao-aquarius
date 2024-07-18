@@ -371,7 +371,7 @@ export default class AccountService extends Horizon.AccountResponse {
 
         const items = [
             { label: 'Base reserve', value: 1 },
-            { label: 'Fee reserve', value: 1 },
+            { label: 'Fee reserve', value: 2 },
             { label: 'XLM in active offers', value: Number(selling_liabilities) },
             { label: 'Trustlines', value: entriesTrustlines * 0.5 },
             { label: 'Liquidity pool trustlines', value: entriesLiquidityTrustlines },
