@@ -13,6 +13,7 @@ const Container = styled.div`
 
     ${respondDown(Breakpoints.md)`
         width: 100%;
+        padding-top: 4rem;
     `}
 `;
 
