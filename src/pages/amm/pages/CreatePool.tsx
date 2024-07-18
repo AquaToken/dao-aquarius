@@ -33,6 +33,7 @@ import Tooltip, { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
 import Alert from '../../../common/basics/Alert';
 import { formatBalance } from '../../../common/helpers/helpers';
 import { PoolProcessed } from '../api/types';
+import { BuildSignAndSubmitStatuses } from '../../../common/services/wallet-connect.service';
 
 const ErrorLabel = styled.span<{ isError?: boolean }>`
     color: ${({ isError }) => (isError ? COLORS.pinkRed : COLORS.paragraphText)};
@@ -316,6 +317,17 @@ const CreatePool = () => {
         )
             .then((tx) => {
                 return account.signAndSubmitTx(tx, true).then((res) => {
+                    if (!res) {
+                        return;
+                    }
+
+                    if (
+                        (res as { status: BuildSignAndSubmitStatuses }).status ===
+                        BuildSignAndSubmitStatuses.pending
+                    ) {
+                        ToastService.showSuccessToast('More signatures required to complete');
+                        return;
+                    }
                     const poolAddress = SorobanService.getContactIdFromHash(
                         res.value()[1].value().value().toString('hex'),
                     );
@@ -348,6 +360,17 @@ const CreatePool = () => {
         )
             .then((tx) => {
                 return account.signAndSubmitTx(tx, true).then((res) => {
+                    if (!res) {
+                        return;
+                    }
+
+                    if (
+                        (res as { status: BuildSignAndSubmitStatuses }).status ===
+                        BuildSignAndSubmitStatuses.pending
+                    ) {
+                        ToastService.showSuccessToast('More signatures required to complete');
+                        return;
+                    }
                     const poolAddress = SorobanService.getContactIdFromHash(
                         res.value()[1].value().value().toString('hex'),
                     );
