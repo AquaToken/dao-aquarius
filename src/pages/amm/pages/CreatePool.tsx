@@ -317,6 +317,7 @@ const CreatePool = () => {
         )
             .then((tx) => {
                 return account.signAndSubmitTx(tx, true).then((res) => {
+                    setPending(false);
                     if (!res) {
                         return;
                     }
@@ -360,6 +361,7 @@ const CreatePool = () => {
         )
             .then((tx) => {
                 return account.signAndSubmitTx(tx, true).then((res) => {
+                    setPending(false);
                     if (!res) {
                         return;
                     }
