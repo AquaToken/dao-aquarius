@@ -29,6 +29,7 @@ import { Empty } from '../../profile/YourVotes/YourVotes';
 import Select from '../../../common/basics/Select';
 import VolumeChart from '../components/VolumeChart/VolumeChart';
 import LiquidityChart from '../components/LiquidityChart/LiquidityChart';
+import { PoolProcessed } from '../api/types';
 
 const Container = styled.main`
     height: 100%;
@@ -166,7 +167,7 @@ const PAGE_SIZE = 10;
 const Analytics = () => {
     const [filter, setFilter] = useState(FilterOptions.all);
     const [sort, setSort] = useState(PoolsSortFields.liquidityUp);
-    const [pools, setPools] = useState(null);
+    const [pools, setPools] = useState<PoolProcessed[] | null>(null);
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(0);
     const [pending, setPending] = useState(false);
@@ -190,11 +191,13 @@ const Analytics = () => {
 
     useEffect(() => {
         setPending(true);
-        getPools(filter, page, PAGE_SIZE, sort, debouncedSearch.current).then(([pools, total]) => {
-            setPools(pools);
-            setTotal(total);
-            setPending(false);
-        });
+        getPools(filter, page, PAGE_SIZE, sort, debouncedSearch.current).then(
+            ({ pools, total }) => {
+                setPools(pools);
+                setTotal(total);
+                setPending(false);
+            },
+        );
     }, [filter, page, debouncedSearch, sort]);
 
     const changeSort = (newSort) => {

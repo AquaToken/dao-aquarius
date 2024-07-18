@@ -1,7 +1,20 @@
 import axios from 'axios';
 import { AssetsService } from '../../../common/services/globalServices';
 import { Asset } from '@stellar/stellar-sdk';
-import { getAssetString } from '../../../common/helpers/helpers';
+import { getAssetFromString, getAssetString } from '../../../common/helpers/helpers';
+import {
+    FindSwapPath,
+    ListResponse,
+    NativePrice,
+    Pool,
+    PoolBalance,
+    PoolEvent,
+    PoolExtended,
+    PoolProcessed,
+    PoolStatistics,
+    PoolUser,
+    PoolUserProcessed,
+} from './types';
 
 const API_URL = 'https://amm-api.aqua.network';
 
@@ -20,114 +33,98 @@ export enum PoolsSortFields {
     rewardsDown = 'reward',
 }
 
-export const stringToAsset = (str: string): Asset => {
-    const [code, issuer] = str.split(':');
-
-    if (code === 'native') {
-        return Asset.native();
-    }
-    return new Asset(code, issuer);
-};
-
-const processPools = async (pools) => {
-    const assetsStr = pools.reduce((acc, item) => {
+const processPools = async (pools: Array<Pool | PoolUser>): Promise<Array<PoolProcessed>> => {
+    const assetsStr: Set<string> = pools.reduce((acc: Set<string>, item: Pool | PoolUser) => {
         item.tokens_str.forEach((str) => acc.add(str));
         return acc;
-    }, new Set());
+    }, new Set<string>());
 
-    AssetsService.processAssets([...assetsStr].map((str) => stringToAsset(str)));
+    // @ts-ignore
+    AssetsService.processAssets([...assetsStr].map((str) => getAssetFromString(str)));
 
-    pools.forEach((pool) => {
-        pool.assets = pool.tokens_str.map((str) => stringToAsset(str));
+    return pools.map((pool) => {
+        return { ...pool, assets: pool.tokens_str.map((str) => getAssetFromString(str)) };
     });
-    return pools;
 };
 
-export const getPools = (
+export const getPools = async (
     filter: FilterOptions,
     page: number,
     size: number,
     sort: PoolsSortFields,
     search?: string,
-) => {
-    let total = 0;
-
+): Promise<{ total: number; pools: PoolProcessed[] }> => {
     const capitalizedSearch = (search || '').toUpperCase();
 
-    return axios
-        .get(
-            `${API_URL}/pools/?pool_type=${filter}&sort=${sort}&page=${page}&size=${size}&search=${
-                capitalizedSearch === 'XLM' ? 'native' : capitalizedSearch
-            }`,
-        )
-        .then(({ data }) => data)
-        .then((res) => {
-            // @ts-ignore
-            total = res.total;
-            // @ts-ignore
-            return processPools(res.items);
-        })
-        .then((pools) => [pools, total]);
-};
-
-const getPoolInfo = (id: string) => {
-    return axios
-        .get(`${API_URL}/pools/${id}/`)
-        .then(({ data }) => data)
-        .then((res) => processPools([res]))
-        .then(([res]) => res);
-};
-
-const getPoolStats = (id: string) => {
-    return (
-        axios
-            .get(`${API_URL}/statistics/pool/${id}/`)
-            // @ts-ignore
-            .then(({ data }) => ({ stats: data.items.reverse() }))
+    const { data } = await axios.get<ListResponse<Pool>>(
+        `${API_URL}/pools/?pool_type=${filter}&sort=${sort}&page=${page}&size=${size}&search=${
+            capitalizedSearch === 'XLM' ? 'native' : capitalizedSearch
+        }`,
     );
+    const processed = await processPools(data.items);
+    return { pools: processed, total: data.total };
 };
 
-const getPoolMembers = (id: string) => {
-    return (
-        axios
-            .get(`${API_URL}/pools/${id}/balances/?size=100`)
-            .then(({ data }) => data)
-            // @ts-ignore
-            .then((data) => ({ members: data.items }))
-            .catch(() => ({ members: [] }))
-    );
+const getPoolInfo = async (id: string): Promise<PoolProcessed> => {
+    const { data } = await axios.get<Pool>(`${API_URL}/pools/${id}/`);
+    const [processed] = await processPools([data]);
+    return processed;
 };
 
-const getPoolEvents = (id) => {
-    return (
-        axios
-            .get(`${API_URL}/events/pool/${id}/?size=20`)
-            .then(({ data }) => data)
-            // @ts-ignore
-            .then((data) => ({ events: data.items }))
-            .catch(() => ({ events: [] }))
-    );
+const getPoolStats = async (id: string): Promise<{ stats: PoolStatistics[] }> => {
+    try {
+        const { data } = await axios.get<ListResponse<PoolStatistics>>(
+            `${API_URL}/statistics/pool/${id}/`,
+        );
+        return { stats: data.items.reverse() };
+    } catch {
+        return { stats: [] };
+    }
 };
 
-export const getPool = (id: string) => {
-    return Promise.all([
+const getPoolMembers = async (id: string): Promise<{ members: PoolBalance[] }> => {
+    try {
+        const { data } = await axios.get<ListResponse<PoolBalance>>(
+            `${API_URL}/pools/${id}/balances/?size=100`,
+        );
+        return { members: data.items };
+    } catch {
+        return { members: [] };
+    }
+};
+
+const getPoolEvents = async (id: string): Promise<{ events: PoolEvent[] }> => {
+    try {
+        const { data } = await axios.get<ListResponse<PoolEvent>>(
+            `${API_URL}/events/pool/${id}/?size=20`,
+        );
+        return { events: data.items };
+    } catch {
+        return { events: [] };
+    }
+};
+
+export const getPool = async (id: string): Promise<PoolExtended> => {
+    const [info, stats, members, events] = await Promise.all([
         getPoolInfo(id),
         getPoolStats(id),
         getPoolMembers(id),
         getPoolEvents(id),
-    ]).then(([info, stats, members, events]) => Object.assign({}, info, stats, members, events));
+    ]);
+    return Object.assign({}, info, stats, members, events);
 };
 
-export const getUserPools = (accountId: string) => {
-    return (
-        axios
-            .get(`${API_URL}/pools/user/${accountId}/?size=1000`)
-            // @ts-ignore
-            .then(({ data }) => processPools(data.items))
-    );
+export const getUserPools = (accountId: string): Promise<PoolUserProcessed[]> => {
+    return axios
+        .get<ListResponse<PoolUser>>(`${API_URL}/pools/user/${accountId}/?size=1000`)
+        .then(({ data }) => processPools(data.items) as Promise<PoolUserProcessed[]>);
 };
 
-export const findSwapPath = (baseId: string, counterId: string, amount: string) => {
+export const findSwapPath = async (
+    baseId: string,
+    counterId: string,
+    amount: string,
+): Promise<FindSwapPath> => {
     const headers = { 'Content-Type': 'application/json' };
 
     const body = JSON.stringify({
@@ -135,32 +132,23 @@ export const findSwapPath = (baseId: string, counterId: string, amount: string) 
         token_out_address: counterId,
         amount: (+amount * 1e7).toString(),
     });
-    return axios.post(`${API_URL}/pools/find-path/`, body, { headers }).then(({ data }) => data);
+    const { data } = await axios.post<FindSwapPath>(`${API_URL}/pools/find-path/`, body, {
+        headers,
+    });
+    return data;
 };
 
-export const getTotalStats = () => {
-    return (
-        axios
-            .get(`${API_URL}/statistics/totals/`)
-            // @ts-ignore
-            .then(({ data }) => data.items.reverse())
-    );
+export const getTotalStats = async (): Promise<PoolStatistics[]> => {
+    const { data } = await axios.get<ListResponse<PoolStatistics>>(`${API_URL}/statistics/totals/`);
+    return data.items.reverse();
 };
-export const getNativePrices = (assets: Array<Asset>) => {
-    return (
-        axios
-            .get(
-                `${API_URL}/tokens/?name__in=${assets
-                    .map((asset) => getAssetString(asset))
-                    .join(',')}`,
-            )
-            // @ts-ignore
-            .then(({ data }) => data.items)
-            .then((prices) => {
-                return prices.reduce((acc, price) => {
-                    acc.set(price.name, price.price_xlm);
-                    return acc;
-                }, new Map());
-            })
+export const getNativePrices = async (assets: Array<Asset>): Promise<Map<string, string>> => {
+    const { data } = await axios.get<ListResponse<NativePrice>>(
+        `${API_URL}/tokens/?name__in=${assets.map((asset) => getAssetString(asset)).join(',')}`,
     );
+    const prices = data.items;
+    return prices.reduce((acc, price) => {
+        acc.set(price.name, price.price_xlm);
+        return acc;
+    }, new Map());
 };

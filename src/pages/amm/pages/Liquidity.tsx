@@ -12,6 +12,7 @@ import { Breakpoints, COLORS } from '../../../common/styles';
 import PageLoader from '../../../common/basics/PageLoader';
 import PoolsList from '../components/PoolsList/PoolsList';
 import { formatBalance } from '../../../common/helpers/helpers';
+import { PoolUserProcessed } from '../api/types';
 
 const PoolsListBlock = styled.div`
     display: flex;
@@ -68,7 +69,7 @@ const LoginButton = styled(Button)`
 const Liquidity = () => {
     const { account } = useAuthStore();
 
-    const [pools, setPools] = useState(null);
+    const [pools, setPools] = useState<PoolUserProcessed[] | null>(null);
 
     useEffect(() => {
         updateData();

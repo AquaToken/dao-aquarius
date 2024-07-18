@@ -32,6 +32,7 @@ import ContractNotFound from '../components/ContractNotFound/ContractNotFound';
 import Tooltip, { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
 import Alert from '../../../common/basics/Alert';
 import { formatBalance } from '../../../common/helpers/helpers';
+import { PoolProcessed } from '../api/types';
 
 const ErrorLabel = styled.span<{ isError?: boolean }>`
     color: ${({ isError }) => (isError ? COLORS.pinkRed : COLORS.paragraphText)};
@@ -177,7 +178,7 @@ const CreatePool = () => {
     const [pending, setPending] = useState(false);
     const [createInfo, setCreateInfo] = useState(null);
 
-    const [pools, setPools] = useState(null);
+    const [pools, setPools] = useState<PoolProcessed[] | null>(null);
 
     const { account } = useAuthStore();
 
@@ -204,7 +205,7 @@ const CreatePool = () => {
 
     useEffect(() => {
         getPools(FilterOptions.all, 1, 1000, PoolsSortFields.liquidityUp).then((res) =>
-            setPools(res[0]),
+            setPools(res.pools),
         );
     }, []);
 
@@ -623,11 +624,7 @@ const CreatePool = () => {
                                     with fee = {(existingPools[0].fee * 100).toFixed(2)}% already
                                     exists.
                                 </FormDescription>
-                                <PoolsList
-                                    isUserList={false}
-                                    pools={existingPools}
-                                    onUpdate={() => {}}
-                                />
+                                <PoolsList pools={existingPools} onUpdate={() => {}} />
                             </StyledFormSection>
                         </StyledForm>
                     )}

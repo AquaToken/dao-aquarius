@@ -24,16 +24,7 @@ import LiquidityChart from '../components/LiquidityChart/LiquidityChart';
 import VolumeChart from '../components/VolumeChart/VolumeChart';
 import ExternalLink from '../../../common/basics/ExternalLink';
 import { BuildSignAndSubmitStatuses } from '../../../common/services/wallet-connect.service';
-
-const Container = styled.main`
-    height: 100%;
-    position: relative;
-    display: flex;
-    flex: 1 0 auto;
-    flex-direction: column;
-    scroll-behavior: smooth;
-    overflow: auto;
-`;
+import { PoolExtended } from '../api/types';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -206,7 +197,7 @@ const ExternalLinkStyled = styled(ExternalLink)`
 `;
 
 const PoolPage = () => {
-    const [pool, setPool] = useState(null);
+    const [pool, setPool] = useState<PoolExtended | null>(null);
     const [rewards, setRewards] = useState(null);
     const { poolAddress } = useParams<{ poolAddress: string }>();
     const [claimPending, setClaimPending] = useState(false);
@@ -214,8 +205,6 @@ const PoolPage = () => {
     const { account } = useAuthStore();
 
     const updateIndex = useUpdateIndex(5000);
-
-    console.log(pool);
 
     useEffect(() => {
         if (!pool) {

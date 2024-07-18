@@ -4,7 +4,7 @@ import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../com
 import { Breakpoints, COLORS } from '../../../../common/styles';
 import { ModalDescription, ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
 import Pair from '../../../vote/components/common/Pair';
-import { formatBalance } from '../../../../common/helpers/helpers';
+import { formatBalance, getAssetFromString } from '../../../../common/helpers/helpers';
 import Button from '../../../../common/basics/Button';
 import { useState } from 'react';
 import {
@@ -15,7 +15,6 @@ import {
 import SuccessModal from '../../../amm/components/SuccessModal/SuccessModal';
 import useAuthStore from '../../../../store/authStore/useAuthStore';
 import { SWAP_SLIPPAGE_ALIAS } from '../SwapSettingsModal/SwapSettingsModal';
-import { stringToAsset } from '../../../amm/api/api';
 import { AmmRoutes } from '../../../../routes';
 import { BuildSignAndSubmitStatuses } from '../../../../common/services/wallet-connect.service';
 
@@ -144,7 +143,7 @@ const SwapConfirmModal = ({ params, confirm }) => {
             </DescriptionRow>
             <DescriptionRow>
                 <span>Path</span>
-                <span>{bestPath.map((path) => stringToAsset(path).code).join(' => ')}</span>
+                <span>{bestPath.map((path) => getAssetFromString(path).code).join(' => ')}</span>
             </DescriptionRow>
 
             <DescriptionRow>

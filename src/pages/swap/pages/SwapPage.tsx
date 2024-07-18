@@ -306,20 +306,15 @@ const SwapPage = () => {
                 debouncedAmount.current,
             )
                 .then((res) => {
-                    // @ts-ignore
                     if (!res.success) {
                         setError(true);
                         setEstimatePending(false);
                     } else {
                         setError(false);
                         setEstimatePending(false);
-                        // @ts-ignore
                         setCounterAmount((res.amount / 1e7).toFixed(7));
-                        // @ts-ignore
                         setBestPathXDR(res.swap_chain_xdr);
-                        // @ts-ignore
                         setBestPath(res.tokens);
-                        // @ts-ignore
                         setBestPools(res.pools);
                     }
                 })
