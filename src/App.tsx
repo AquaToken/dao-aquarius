@@ -6,7 +6,11 @@ import useGlobalSubscriptions from './common/hooks/useGlobalSubscriptions';
 import useAssetsStore from './store/assetsStore/useAssetsStore';
 import useAuthStore from './store/authStore/useAuthStore';
 import { StellarService, WalletConnectService } from './common/services/globalServices';
-import Header, { HeaderNavLink, NavLinksDivider } from './common/components/Header/Header';
+import Header, {
+    HeaderNavLink,
+    HeaderNewNavLinks,
+    NavLinksDivider,
+} from './common/components/Header/Header';
 import { AmmRoutes, MainRoutes } from './routes';
 import PageLoader from './common/basics/PageLoader';
 import NotFoundPage from './common/components/NotFoundPage/NotFoundPage';
@@ -131,6 +135,28 @@ const App = () => {
             {isLogged && Boolean(redirectURL) && <Redirect to={redirectURL} />}
             <Header>
                 <>
+                    <HeaderNewNavLinks>
+                        <HeaderNavLink
+                            to={AmmRoutes.analytics}
+                            activeStyle={{
+                                fontWeight: 700,
+                            }}
+                            title="Pools"
+                        >
+                            Pools
+                        </HeaderNavLink>
+                        <HeaderNavLink
+                            to={MainRoutes.swap}
+                            activeStyle={{
+                                fontWeight: 700,
+                            }}
+                            title="Swap"
+                        >
+                            Swap
+                        </HeaderNavLink>
+                    </HeaderNewNavLinks>
+
+                    <NavLinksDivider />
                     <HeaderNavLink
                         to={MainRoutes.vote}
                         exact
@@ -176,34 +202,6 @@ const App = () => {
                         title="Governance"
                     >
                         Governance
-                    </HeaderNavLink>
-                    {/*<HeaderNavLink*/}
-                    {/*    to={MainRoutes.airdrop2}*/}
-                    {/*    activeStyle={{*/}
-                    {/*        fontWeight: 700,*/}
-                    {/*    }}*/}
-                    {/*    title="Airdrop"*/}
-                    {/*>*/}
-                    {/*    Airdrop*/}
-                    {/*</HeaderNavLink>*/}
-                    <NavLinksDivider />
-                    <HeaderNavLink
-                        to={AmmRoutes.analytics}
-                        activeStyle={{
-                            fontWeight: 700,
-                        }}
-                        title="AMM"
-                    >
-                        AMM
-                    </HeaderNavLink>
-                    <HeaderNavLink
-                        to={MainRoutes.swap}
-                        activeStyle={{
-                            fontWeight: 700,
-                        }}
-                        title="Swap"
-                    >
-                        Swap
                     </HeaderNavLink>
                 </>
             </Header>
@@ -272,7 +270,7 @@ const App = () => {
                     </Route>
 
                     <Route path={MainRoutes.amm}>
-                        <Title title="AMM">
+                        <Title title="Pools">
                             <AmmPage />
                         </Title>
                     </Route>

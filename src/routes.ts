@@ -11,7 +11,7 @@ export enum MainRoutes {
     airdrop2 = '/airdrop2',
     account = '/account',
     walletConnect = '/wallet-connect',
-    amm = '/amm',
+    amm = '/pools',
     swap = '/swap',
 }
 
