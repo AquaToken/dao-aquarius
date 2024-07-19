@@ -221,7 +221,7 @@ const MyAquarius = styled(NavLink)`
         color: ${COLORS.purple};
     }
 
-    ${respondDown(Breakpoints.lg)`
+    ${respondDown(Breakpoints.xl)`
         width: 4.8rem;
         div {
             display: none;

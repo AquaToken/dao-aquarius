@@ -119,7 +119,18 @@ const WithdrawFromPool = ({ params }) => {
     };
 
     const withdraw = () => {
-        // TODO: Add trustline validation
+        const noTrustAssets = pool.assets.filter(
+            (asset) => account.getAssetBalance(asset) === null,
+        );
+
+        if (noTrustAssets.length) {
+            ToastService.showErrorToast(
+                `${noTrustAssets.map(({ code }) => code).join(', ')} trustline${
+                    noTrustAssets.length > 1 ? 's' : ''
+                } missing. Please provide it in your wallet.`,
+            );
+            return;
+        }
 
         setPending(true);
 
