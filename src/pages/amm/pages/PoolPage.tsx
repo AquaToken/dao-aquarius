@@ -248,7 +248,7 @@ const PoolPage = () => {
                 setClaimPending(false);
             })
             .catch((err) => {
-                ToastService.showErrorToast(err);
+                ToastService.showErrorToast(err.message ?? err.toString());
                 setClaimPending(false);
             });
     };

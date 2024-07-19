@@ -168,7 +168,9 @@ const WithdrawFromPool = ({ params }) => {
             })
             .catch((e) => {
                 console.log(e);
-                ToastService.showErrorToast(e.toString() ?? 'Oops! Something went wrong');
+                ToastService.showErrorToast(
+                    e.message ?? e.toString() ?? 'Oops! Something went wrong',
+                );
                 setPending(false);
             });
     };

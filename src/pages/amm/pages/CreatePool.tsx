@@ -337,7 +337,7 @@ const CreatePool = () => {
                 });
             })
             .catch((e) => {
-                ToastService.showErrorToast(e.toString() ?? e.message);
+                ToastService.showErrorToast(e.message ?? e.toString());
                 setPending(false);
             });
     };
@@ -381,7 +381,7 @@ const CreatePool = () => {
                 });
             })
             .catch((e) => {
-                ToastService.showErrorToast(e.toString() ?? e.message);
+                ToastService.showErrorToast(e.message ?? e.toString());
                 setPending(false);
             });
     };
