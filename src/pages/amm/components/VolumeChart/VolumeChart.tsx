@@ -36,7 +36,7 @@ const VolumeChart = ({
     marginLeft = 16,
 }) => {
     const processedData = useMemo(() => {
-        let date = set(transformDate(data[0].datetime_str || data[0].date_str), {
+        let date = set(transformDate(data[0]?.datetime_str || data[0]?.date_str), {
             hours: 0,
             minutes: 0,
             seconds: 0,
@@ -130,11 +130,12 @@ const VolumeChart = ({
                     Volume 24h
                 </GrayText>
                 <LiquidityValue x="16" y="63">
-                    ${formatBalance(selectedItem.volume * StellarService.priceLumenUsd, true, true)}
+                    $
+                    {formatBalance(selectedItem?.volume * StellarService.priceLumenUsd, true, true)}
                 </LiquidityValue>
                 {selectedIndex !== null && (
                     <GrayText x="16" y="87">
-                        {getDateString(selectedItem.date.getTime())}
+                        {getDateString(selectedItem?.date?.getTime())}
                     </GrayText>
                 )}
             </g>

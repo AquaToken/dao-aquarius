@@ -118,7 +118,7 @@ const LiquidityChart = ({
                 <LiquidityValue x="16" y="63">
                     $
                     {formatBalance(
-                        (data[selectedIndex === null ? data.length - 1 : selectedIndex].liquidity /
+                        (data[selectedIndex === null ? data.length - 1 : selectedIndex]?.liquidity /
                             1e7) *
                             StellarService.priceLumenUsd,
                         true,
@@ -129,8 +129,8 @@ const LiquidityChart = ({
                     <GrayText x="16" y="87">
                         {getDateString(
                             transformDate(
-                                data[selectedIndex].datetime_str || data[selectedIndex].date_str,
-                            ).getTime(),
+                                data[selectedIndex]?.datetime_str || data[selectedIndex]?.date_str,
+                            )?.getTime(),
                             {
                                 withTime: true,
                             },
@@ -151,13 +151,13 @@ const LiquidityChart = ({
                         strokeWidth="1"
                         x1={x(
                             transformDate(
-                                data[selectedIndex].datetime_str || data[selectedIndex].date_str,
+                                data[selectedIndex]?.datetime_str || data[selectedIndex]?.date_str,
                             ),
                         )}
                         y1={height - marginBottom}
                         x2={x(
                             transformDate(
-                                data[selectedIndex].datetime_str || data[selectedIndex].date_str,
+                                data[selectedIndex]?.datetime_str || data[selectedIndex]?.date_str,
                             ),
                         )}
                         y2={height * 0.4}
@@ -169,7 +169,7 @@ const LiquidityChart = ({
                         fill={COLORS.tooltip}
                         cx={x(
                             transformDate(
-                                data[selectedIndex].datetime_str || data[selectedIndex].date_str,
+                                data[selectedIndex]?.datetime_str || data[selectedIndex]?.date_str,
                             ),
                         )}
                         cy={y(data[selectedIndex].liquidity / 1e7)}
