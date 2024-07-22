@@ -6,7 +6,7 @@ import { ModalDescription, ModalTitle } from '../../../../common/modals/atoms/Mo
 import Pair from '../../../vote/components/common/Pair';
 import { formatBalance, getAssetFromString } from '../../../../common/helpers/helpers';
 import Button from '../../../../common/basics/Button';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
     ModalService,
     SorobanService,
@@ -15,8 +15,10 @@ import {
 import SuccessModal from '../../../amm/components/SuccessModal/SuccessModal';
 import useAuthStore from '../../../../store/authStore/useAuthStore';
 import { SWAP_SLIPPAGE_ALIAS } from '../SwapSettingsModal/SwapSettingsModal';
-import { AmmRoutes } from '../../../../routes';
 import { BuildSignAndSubmitStatuses } from '../../../../common/services/wallet-connect.service';
+import { getPathPoolsFee } from '../../../amm/api/api';
+import PageLoader from '../../../../common/basics/PageLoader';
+import PathPool from './PathPool/PathPool';
 
 const Container = styled.div`
     width: 52.3rem;
@@ -49,23 +51,28 @@ const Divider = styled.div`
     margin: 3.2rem 0;
 `;
 
-const PoolLink = styled.a`
-    color: ${COLORS.purple};
-    text-decoration: none;
+const Pools = styled.div`
+    display: flex;
+    flex-wrap: wrap;
 
-    &:not(:last-child):after {
-        color: ${COLORS.titleText};
-        content: ' => ';
-        text-decoration: none;
-        cursor: default;
-    }
+    ${respondDown(Breakpoints.md)`
+        flex-direction: column;
+        width: 100%;
+    `}
 `;
 
 const SwapConfirmModal = ({ params, confirm }) => {
     const { base, counter, baseAmount, counterAmount, bestPathXDR, bestPath, bestPools } = params;
+    const [fees, setFees] = useState(null);
     const [swapPending, setSwapPending] = useState(false);
 
     const { account } = useAuthStore();
+
+    useEffect(() => {
+        getPathPoolsFee(bestPools).then((res) => {
+            setFees(res);
+        });
+    }, []);
 
     const swap = () => {
         setSwapPending(true);
@@ -120,6 +127,14 @@ const SwapConfirmModal = ({ params, confirm }) => {
             });
     };
 
+    if (!fees) {
+        return (
+            <Container>
+                <PageLoader />
+            </Container>
+        );
+    }
+
     return (
         <Container>
             <ModalTitle>Confirm swap</ModalTitle>
@@ -144,23 +159,6 @@ const SwapConfirmModal = ({ params, confirm }) => {
                 </span>
             </DescriptionRow>
             <DescriptionRow>
-                <span>Path</span>
-                <span>{bestPath.map((path) => getAssetFromString(path).code).join(' => ')}</span>
-            </DescriptionRow>
-
-            <DescriptionRow>
-                <span>Pools</span>
-                <span>
-                    {bestPools.map((pool) => (
-                        <PoolLink
-                            href={`${AmmRoutes.analytics}${pool}`}
-                            target="_blank"
-                        >{`C...${pool.slice(-3)}`}</PoolLink>
-                    ))}
-                </span>
-            </DescriptionRow>
-
-            <DescriptionRow>
                 <span>You get (estimate)</span>
                 <span>
                     {counterAmount} {counter.code}
@@ -172,6 +170,25 @@ const SwapConfirmModal = ({ params, confirm }) => {
                     1 {base.code} = {formatBalance(+counterAmount / +baseAmount)} {counter.code}
                 </span>
             </DescriptionRow>
+
+            <DescriptionRow>
+                <span>Pools:</span>
+                <span />
+            </DescriptionRow>
+
+            <Pools>
+                {bestPools.map((pool, index) => (
+                    <PathPool
+                        key={pool}
+                        base={getAssetFromString(bestPath[index])}
+                        counter={getAssetFromString(bestPath[index + 1])}
+                        fee={fees.get(pool)}
+                        address={pool}
+                        isLastPool={index === bestPools.length - 1}
+                    />
+                ))}
+            </Pools>
+
             <Divider />
             <Button fullWidth isBig pending={swapPending} onClick={() => swap()}>
                 Confirm Swap

@@ -33,7 +33,7 @@ export enum PoolsSortFields {
     rewardsDown = 'reward',
 }
 
-const processPools = async (pools: Array<Pool | PoolUser>): Promise<Array<PoolProcessed>> => {
+const processPools = (pools: Array<Pool | PoolUser>): Array<PoolProcessed> => {
     const assetsStr: Set<string> = pools.reduce((acc: Set<string>, item: Pool | PoolUser) => {
         item.tokens_str.forEach((str) => acc.add(str));
         return acc;
@@ -117,7 +117,7 @@ export const getPool = async (id: string): Promise<PoolExtended> => {
 export const getUserPools = (accountId: string): Promise<PoolUserProcessed[]> => {
     return axios
         .get<ListResponse<PoolUser>>(`${API_URL}/pools/user/${accountId}/?size=1000`)
-        .then(({ data }) => processPools(data.items) as Promise<PoolUserProcessed[]>);
+        .then(({ data }) => processPools(data.items) as PoolUserProcessed[]);
 };
 
 export const findSwapPath = async (
@@ -149,6 +149,17 @@ export const getNativePrices = async (assets: Array<Asset>): Promise<Map<string,
     const prices = data.items;
     return prices.reduce((acc, price) => {
         acc.set(price.name, price.price_xlm);
+        return acc;
+    }, new Map());
+};
+
+export const getPathPoolsFee = async (addresses: Array<string>): Promise<Map<string, Pool>> => {
+    const { data } = await axios.get<ListResponse<Pool>>(
+        `${API_URL}/pools/?address__in=${addresses.join(',')}`,
+    );
+
+    return processPools(data.items).reduce((acc, pool) => {
+        acc.set(pool.address, pool.fee);
         return acc;
     }, new Map());
 };

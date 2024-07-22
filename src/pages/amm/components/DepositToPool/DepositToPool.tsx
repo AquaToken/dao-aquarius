@@ -294,6 +294,8 @@ const DepositToPool = ({ params }) => {
 
         setAmounts(new Map(amounts.set(getAssetString(asset), roundedValue)));
 
+        console.log(pool.total_share);
+
         // empty pool
         if (Number(pool.total_share) === 0) {
             return;
