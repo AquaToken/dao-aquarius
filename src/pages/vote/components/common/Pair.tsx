@@ -52,8 +52,8 @@ const Icons = styled.div<{
     min-width: 12rem;
     justify-content: ${({ verticalDirections }) => (verticalDirections ? 'center' : 'flex-end')};
 
-    ${({ mobileVerticalDirections, verticalDirections }) =>
-        (mobileVerticalDirections || verticalDirections) &&
+    ${({ mobileVerticalDirections }) =>
+        mobileVerticalDirections &&
         respondDown(Breakpoints.md)`
               justify-content: start;
           `}
