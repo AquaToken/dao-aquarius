@@ -15,23 +15,23 @@ export type Pool = {
     address: string;
     share_token_address: string;
     tokens_addresses: string[];
-    reserves: number[];
+    reserves: string[];
     pool_type: PoolType;
-    fee: number;
+    fee: string;
     a: number | null;
     deposit_killed: boolean;
     swap_killed: boolean;
     claim_killed: boolean;
     share_token_decimals: number;
     tokens_str: string[];
-    volume: number;
-    liquidity: number;
-    reward_tps: number;
-    total_share?: 3000000000.0;
+    volume: string;
+    liquidity: string;
+    reward_tps: string;
+    total_share?: string;
 };
 
 export interface PoolUser extends Pool {
-    balance: number;
+    balance: string;
 }
 
 export interface PoolProcessed extends Pool {
@@ -43,13 +43,13 @@ export interface PoolUserProcessed extends PoolUser {
 }
 
 export type PoolStatistics = {
-    volume: number;
-    liquidity: number;
+    volume: string;
+    liquidity: string;
     date_str: string;
 };
 
 export type PoolBalance = {
-    balance: number;
+    balance: string;
     account_address: string;
 };
 
@@ -58,7 +58,7 @@ export type PoolEventType = 'deposit' | 'withdraw' | 'swap';
 export type PoolEvent = {
     event_type: PoolEventType;
     ledger: number;
-    amounts: number[];
+    amounts: string[];
     transaction_hash: string;
     ledger_close_at_str: string;
     account_address: string;
@@ -83,5 +83,5 @@ export type FindSwapPath = {
     swap_chain_xdr: string;
     pools: string[];
     tokens: string[];
-    amount: number;
+    amount: string;
 };

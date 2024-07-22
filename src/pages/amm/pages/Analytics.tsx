@@ -337,7 +337,9 @@ const Analytics = () => {
                                                     flexSize: 2,
                                                 },
                                                 {
-                                                    children: `${(pool.fee * 100).toFixed(2)}%`,
+                                                    children: `${(Number(pool.fee) * 100).toFixed(
+                                                        2,
+                                                    )}%`,
                                                     label: 'Fee:',
                                                 },
                                                 {
@@ -355,7 +357,7 @@ const Analytics = () => {
                                                 {
                                                     children: pool.liquidity
                                                         ? `$${formatBalance(
-                                                              (pool.liquidity / 1e7) *
+                                                              (Number(pool.liquidity) / 1e7) *
                                                                   StellarService.priceLumenUsd,
                                                               true,
                                                           )}`

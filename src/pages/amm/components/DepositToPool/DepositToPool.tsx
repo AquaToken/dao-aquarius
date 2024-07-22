@@ -169,7 +169,7 @@ const DepositToPool = ({ params }) => {
         const amountBeforeDeposit =
             (reserves.get(firstAssetString) * accountShare) / (pool.total_share / 1e7);
 
-        if (pool.total_share === 0 && hasAllAmounts) {
+        if (Number(pool.total_share) === 0 && hasAllAmounts) {
             return hasAllAmounts ? (
                 <span>
                     0% <Arrow /> 100%
@@ -204,7 +204,7 @@ const DepositToPool = ({ params }) => {
     }, [amounts, pool, reserves, accountShare]);
 
     const rates: Map<string, string> = useMemo(() => {
-        if (pool.total_share === 0 && !hasAllAmounts) {
+        if (Number(pool.total_share) === 0 && !hasAllAmounts) {
             return null;
         }
         const map = new Map();
@@ -215,7 +215,7 @@ const DepositToPool = ({ params }) => {
                 .map(
                     (token) =>
                         `${formatBalance(
-                            pool.total_share === 0
+                            Number(pool.total_share) === 0
                                 ? +amounts.get(getAssetString(token)) /
                                       +amounts.get(getAssetString(asset))
                                 : reserves.get(getAssetString(token)) /
@@ -295,7 +295,7 @@ const DepositToPool = ({ params }) => {
         setAmounts(new Map(amounts.set(getAssetString(asset), roundedValue)));
 
         // empty pool
-        if (pool.total_share === 0) {
+        if (Number(pool.total_share) === 0) {
             return;
         }
 
@@ -315,7 +315,7 @@ const DepositToPool = ({ params }) => {
     return (
         <Container>
             <ModalTitle>Add liquidity</ModalTitle>
-            {pool.total_share === 0 && (
+            {Number(pool.total_share) === 0 && (
                 <Alert
                     title="This is the first deposit into this pool."
                     text="We recommend depositing tokens

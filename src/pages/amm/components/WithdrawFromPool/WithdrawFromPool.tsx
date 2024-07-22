@@ -2,7 +2,7 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../../common/styles';
-import { ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
+import { ModalProps, ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
 import { useEffect, useState } from 'react';
 import RangeInput from '../../../../common/basics/RangeInput';
 import Button from '../../../../common/basics/Button';
@@ -21,6 +21,7 @@ import DotsLoader from '../../../../common/basics/DotsLoader';
 import { getAssetString } from '../../../../store/assetsStore/actions';
 import { BuildSignAndSubmitStatuses } from '../../../../common/services/wallet-connect.service';
 import BigNumber from 'bignumber.js';
+import { PoolExtended } from '../../api/types';
 
 const Container = styled.div`
     width: 52.3rem;
@@ -70,7 +71,7 @@ const DescriptionRow = styled.div`
     }
 `;
 
-const WithdrawFromPool = ({ params }) => {
+const WithdrawFromPool = ({ params }: ModalProps<{ pool: PoolExtended }>) => {
     const { pool } = params;
     const [accountShare, setAccountShare] = useState(null);
     const [percent, setPercent] = useState('100');
@@ -205,7 +206,7 @@ const WithdrawFromPool = ({ params }) => {
                                 <span>
                                     {totalShares === null || reserves === null ? (
                                         <DotsLoader />
-                                    ) : totalShares === 0 ? (
+                                    ) : Number(totalShares) === 0 ? (
                                         '0'
                                     ) : (
                                         formatBalance(

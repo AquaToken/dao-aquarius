@@ -320,19 +320,19 @@ const PoolPage = () => {
                         </SectionRow>
                         <SectionRow>
                             <span>Fee:</span>
-                            <span>{(pool.fee * 100).toFixed(2)}%</span>
+                            <span>{(Number(pool.fee) * 100).toFixed(2)}%</span>
                         </SectionRow>
                         {pool.assets.map((asset, index) => (
                             <SectionRow key={pool.tokens_addresses[index]}>
                                 <span>Total {asset.code}:</span>
                                 <span>
-                                    {formatBalance(pool.reserves[index] / 1e7, true)} {asset.code}
+                                    {formatBalance(+pool.reserves[index] / 1e7, true)} {asset.code}
                                 </span>
                             </SectionRow>
                         ))}
                         <SectionRow>
                             <span>Total share:</span>
-                            <span>{formatBalance(pool.total_share / 1e7, true)}</span>
+                            <span>{formatBalance(+pool.total_share / 1e7, true)}</span>
                         </SectionRow>
                         <SectionRow>
                             <span>Members: </span>
@@ -346,7 +346,7 @@ const PoolPage = () => {
                         <SectionWrap>
                             <h3>Pool members</h3>
                             {pool.members
-                                .sort((a, b) => b.balance - a.balance)
+                                .sort((a, b) => Number(b.balance) - Number(a.balance))
                                 .map((member) => (
                                     <SectionRow key={member.account_address}>
                                         <AccountViewer
@@ -354,12 +354,12 @@ const PoolPage = () => {
                                             narrowForMobile
                                         />
                                         <span>
-                                            {formatBalance(member.balance / 1e7, true)} (
+                                            {formatBalance(Number(member.balance) / 1e7, true)} (
                                             {Number(pool.total_share)
                                                 ? formatBalance(
-                                                      (100 * member.balance) /
+                                                      (100 * Number(member.balance)) /
                                                           1e7 /
-                                                          (pool.total_share / 1e7),
+                                                          (Number(pool.total_share) / 1e7),
                                                       true,
                                                   )
                                                 : '0'}

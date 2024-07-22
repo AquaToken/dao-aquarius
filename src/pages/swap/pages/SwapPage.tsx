@@ -312,7 +312,7 @@ const SwapPage = () => {
                     } else {
                         setError(false);
                         setEstimatePending(false);
-                        setCounterAmount((res.amount / 1e7).toFixed(7));
+                        setCounterAmount((Number(res.amount) / 1e7).toFixed(7));
                         setBestPathXDR(res.swap_chain_xdr);
                         setBestPath(res.tokens);
                         setBestPools(res.pools);

@@ -12,6 +12,7 @@ import { useEffect, useState } from 'react';
 import PageLoader from '../../../../common/basics/PageLoader';
 import { formatBalance } from '../../../../common/helpers/helpers';
 import Asset from '../../../vote/components/AssetDropdown/Asset';
+import { PoolExtended } from '../../api/types';
 
 const Container = styled.aside`
     float: right;
@@ -58,7 +59,7 @@ const SidebarRow = styled.div`
     }
 `;
 
-const Sidebar = ({ pool }) => {
+const Sidebar = ({ pool }: { pool: PoolExtended }) => {
     const { isLogged, account } = useAuthStore();
     const [accountShare, setAccountShare] = useState(null);
 
@@ -101,7 +102,8 @@ const Sidebar = ({ pool }) => {
                                     {formatBalance(accountShare, true)} (
                                     {Number(pool.total_share)
                                         ? formatBalance(
-                                              (100 * accountShare) / (pool.total_share / 1e7),
+                                              (100 * accountShare) /
+                                                  (Number(pool.total_share) / 1e7),
                                               true,
                                           )
                                         : '0'}
@@ -114,8 +116,9 @@ const Sidebar = ({ pool }) => {
                                     <span>
                                         {Number(pool.total_share)
                                             ? formatBalance(
-                                                  ((pool.reserves[index] / 1e7) * accountShare) /
-                                                      (pool.total_share / 1e7),
+                                                  ((Number(pool.reserves[index]) / 1e7) *
+                                                      accountShare) /
+                                                      (Number(pool.total_share) / 1e7),
                                                   true,
                                               )
                                             : '0'}{' '}

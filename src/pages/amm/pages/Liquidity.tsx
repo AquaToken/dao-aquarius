@@ -89,9 +89,9 @@ const Liquidity = () => {
         }
 
         const total = pools.reduce((acc, pool) => {
-            const balance = pool.balance / 1e7;
-            const liquidity = pool.liquidity / 1e7;
-            const totalShare = pool.total_share / 1e7;
+            const balance = Number(pool.balance) / 1e7;
+            const liquidity = Number(pool.liquidity) / 1e7;
+            const totalShare = Number(pool.total_share) / 1e7;
 
             acc += (balance / totalShare) * liquidity;
             return acc;

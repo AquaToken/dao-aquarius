@@ -230,7 +230,7 @@ const CreatePool = () => {
                 selectedAssets.length === pool.assets.length &&
                 type === pool.pool_type &&
                 +(type === POOL_TYPE.constant ? constantFee / 100 : stableFee) ===
-                    +(pool.fee * 100).toFixed(2),
+                    +(Number(pool.fee) * 100).toFixed(2),
         );
     }, [pools, firstAsset, secondAsset, thirdAsset, fourthAsset, type, stableFee, constantFee]);
 
@@ -646,8 +646,8 @@ const CreatePool = () => {
                                         : 'Stable swap'}{' '}
                                     pool{' '}
                                     {existingPools[0].assets.map(({ code }) => code).join(' / ')}{' '}
-                                    with fee = {(existingPools[0].fee * 100).toFixed(2)}% already
-                                    exists.
+                                    with fee = {(Number(existingPools[0].fee) * 100).toFixed(2)}%
+                                    already exists.
                                 </FormDescription>
                                 <PoolsList pools={existingPools} onUpdate={() => {}} />
                             </StyledFormSection>
