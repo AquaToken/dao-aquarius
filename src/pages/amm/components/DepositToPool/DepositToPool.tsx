@@ -23,6 +23,9 @@ import Arrow from '../../../../common/assets/img/icon-arrow-right-long.svg';
 import Tooltip, { TOOLTIP_POSITION } from '../../../../common/basics/Tooltip';
 import { BuildSignAndSubmitStatuses } from '../../../../common/services/wallet-connect.service';
 import Alert from '../../../../common/basics/Alert';
+import MainNetPurposeModal, {
+    SHOW_PURPOSE_ALIAS_MAIN_NET,
+} from '../../../../common/modals/MainNetPurposeModal';
 
 const Container = styled.div`
     width: 52.3rem;
@@ -281,6 +284,19 @@ const DepositToPool = ({ params }) => {
             });
     };
 
+    const submitWithWarning = () => {
+        const showPurpose = JSON.parse(localStorage.getItem(SHOW_PURPOSE_ALIAS_MAIN_NET) || 'true');
+        if (showPurpose) {
+            ModalService.openModal(MainNetPurposeModal, {}, false).then(({ isConfirmed }) => {
+                if (isConfirmed) {
+                    onSubmit();
+                }
+            });
+            return;
+        }
+        onSubmit();
+    };
+
     const onChangeInput = (asset, value) => {
         if (Number.isNaN(Number(value))) {
             return;
@@ -444,7 +460,7 @@ const DepositToPool = ({ params }) => {
 
                 <Button
                     isBig
-                    onClick={() => onSubmit()}
+                    onClick={() => submitWithWarning()}
                     pending={pending}
                     disabled={!hasAllAmounts}
                 >

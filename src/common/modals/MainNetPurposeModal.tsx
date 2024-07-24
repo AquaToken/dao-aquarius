@@ -42,7 +42,7 @@ const MainNetPurposeModal = ({ close }) => {
     return (
         <Container>
             <ModalTitle>Warning: experimental functionality</ModalTitle>
-            <Alert text="You are about to start using new functionality written on Soroban with real money on Pubnet. Although the Aquarius team has done its best to address risks the funds are still at risk as the contract audit is still in progress. Use at your own risk." />
+            <Alert text="You are about to send real funds to a Soroban smart contract that isn't yet audited. Use this functionality at your own risk." />
 
             <CheckboxBlock>
                 <Checkbox label="Don’t show again" checked={checked} onChange={setChecked} />

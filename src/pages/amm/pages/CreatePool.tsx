@@ -19,7 +19,11 @@ import {
     Title,
 } from '../../bribes/pages/AddBribePage';
 import AssetDropdown from '../../vote/components/AssetDropdown/AssetDropdown';
-import { SorobanService, ToastService } from '../../../common/services/globalServices';
+import {
+    ModalService,
+    SorobanService,
+    ToastService,
+} from '../../../common/services/globalServices';
 import Button from '../../../common/basics/Button';
 import Input from '../../../common/basics/Input';
 import ToggleGroup from '../../../common/basics/ToggleGroup';
@@ -34,6 +38,9 @@ import Alert from '../../../common/basics/Alert';
 import { formatBalance } from '../../../common/helpers/helpers';
 import { PoolProcessed } from '../api/types';
 import { BuildSignAndSubmitStatuses } from '../../../common/services/wallet-connect.service';
+import MainNetPurposeModal, {
+    SHOW_PURPOSE_ALIAS_MAIN_NET,
+} from '../../../common/modals/MainNetPurposeModal';
 
 const ErrorLabel = styled.span<{ isError?: boolean }>`
     color: ${({ isError }) => (isError ? COLORS.pinkRed : COLORS.paragraphText)};
@@ -295,6 +302,19 @@ const CreatePool = () => {
             return createStablePool();
         }
         createConstantPool();
+    };
+
+    const createPoolWithWarning = () => {
+        const showPurpose = JSON.parse(localStorage.getItem(SHOW_PURPOSE_ALIAS_MAIN_NET) || 'true');
+        if (showPurpose) {
+            ModalService.openModal(MainNetPurposeModal, {}, false).then(({ isConfirmed }) => {
+                if (isConfirmed) {
+                    createPool();
+                }
+            });
+            return;
+        }
+        createPool();
     };
 
     const createStablePool = () => {
@@ -614,7 +634,7 @@ const CreatePool = () => {
                             <Button
                                 isBig
                                 fullWidth
-                                onClick={() => createPool()}
+                                onClick={() => createPoolWithWarning()}
                                 pending={pending}
                                 disabled={
                                     !firstAsset ||

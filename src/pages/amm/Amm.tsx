@@ -5,19 +5,7 @@ import Analytics from './pages/Analytics';
 import PoolPage from './pages/PoolPage';
 import CreatePool from './pages/CreatePool';
 import useAuthStore from '../../store/authStore/useAuthStore';
-import { useEffect } from 'react';
-import { ModalService } from '../../common/services/globalServices';
-import MainNetPurposeModal, {
-    SHOW_PURPOSE_ALIAS_MAIN_NET,
-} from '../../common/modals/MainNetPurposeModal';
-
 const Amm = () => {
-    useEffect(() => {
-        const showPurpose = JSON.parse(localStorage.getItem(SHOW_PURPOSE_ALIAS_MAIN_NET) || 'true');
-        if (showPurpose) {
-            ModalService.openModal(MainNetPurposeModal, {}, false);
-        }
-    }, []);
     const { isLogged } = useAuthStore();
     return (
         <Switch>

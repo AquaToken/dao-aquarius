@@ -37,6 +37,9 @@ import { useHistory, useParams } from 'react-router-dom';
 import { MainRoutes } from '../../../routes';
 import { AQUA_CODE, AQUA_ISSUER } from '../../../common/services/stellar.service';
 import Tooltip, { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
+import MainNetPurposeModal, {
+    SHOW_PURPOSE_ALIAS_MAIN_NET,
+} from '../../../common/modals/MainNetPurposeModal';
 
 const Container = styled.main`
     background-color: ${COLORS.lightGray};
@@ -360,6 +363,19 @@ const SwapPage = () => {
         });
     };
 
+    const submitWithWarning = () => {
+        const showPurpose = JSON.parse(localStorage.getItem(SHOW_PURPOSE_ALIAS_MAIN_NET) || 'true');
+        if (showPurpose) {
+            ModalService.openModal(MainNetPurposeModal, {}, false).then(({ isConfirmed }) => {
+                if (isConfirmed) {
+                    swapAssets();
+                }
+            });
+            return;
+        }
+        swapAssets();
+    };
+
     const onAmountChange = (value) => {
         if (Number.isNaN(Number(value))) {
             return;
@@ -571,7 +587,7 @@ const SwapPage = () => {
                             (account && account.getAssetBalance(counter) === null) ||
                             (account && account.getAssetBalance(base) === null)
                         }
-                        onClick={() => swapAssets()}
+                        onClick={() => submitWithWarning()}
                     >
                         SWAP ASSETS
                     </StyledButton>
