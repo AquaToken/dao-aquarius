@@ -28,7 +28,7 @@ const StyledButton = styled(Button)`
 
 export const SHOW_PURPOSE_ALIAS_MAIN_NET = 'show purpose main net';
 
-const MainNetPurposeModal = ({ confirm }) => {
+const MainNetWarningModal = ({ confirm }) => {
     const [checked, setChecked] = useState(false);
 
     useEffect(() => {
@@ -55,4 +55,4 @@ const MainNetPurposeModal = ({ confirm }) => {
     );
 };
 
-export default MainNetPurposeModal;
+export default MainNetWarningModal;

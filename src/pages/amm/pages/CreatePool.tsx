@@ -38,9 +38,9 @@ import Alert from '../../../common/basics/Alert';
 import { formatBalance } from '../../../common/helpers/helpers';
 import { PoolProcessed } from '../api/types';
 import { BuildSignAndSubmitStatuses } from '../../../common/services/wallet-connect.service';
-import MainNetPurposeModal, {
+import MainNetWarningModal, {
     SHOW_PURPOSE_ALIAS_MAIN_NET,
-} from '../../../common/modals/MainNetPurposeModal';
+} from '../../../common/modals/MainNetWarningModal';
 
 const ErrorLabel = styled.span<{ isError?: boolean }>`
     color: ${({ isError }) => (isError ? COLORS.pinkRed : COLORS.paragraphText)};
@@ -307,7 +307,7 @@ const CreatePool = () => {
     const createPoolWithWarning = () => {
         const showPurpose = JSON.parse(localStorage.getItem(SHOW_PURPOSE_ALIAS_MAIN_NET) || 'true');
         if (showPurpose) {
-            ModalService.openModal(MainNetPurposeModal, {}, false).then(({ isConfirmed }) => {
+            ModalService.openModal(MainNetWarningModal, {}, false).then(({ isConfirmed }) => {
                 if (isConfirmed) {
                     createPool();
                 }

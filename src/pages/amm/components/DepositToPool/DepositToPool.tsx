@@ -23,9 +23,9 @@ import Arrow from '../../../../common/assets/img/icon-arrow-right-long.svg';
 import Tooltip, { TOOLTIP_POSITION } from '../../../../common/basics/Tooltip';
 import { BuildSignAndSubmitStatuses } from '../../../../common/services/wallet-connect.service';
 import Alert from '../../../../common/basics/Alert';
-import MainNetPurposeModal, {
+import MainNetWarningModal, {
     SHOW_PURPOSE_ALIAS_MAIN_NET,
-} from '../../../../common/modals/MainNetPurposeModal';
+} from '../../../../common/modals/MainNetWarningModal';
 
 const Container = styled.div`
     width: 52.3rem;
@@ -154,6 +154,7 @@ const DepositToPool = ({ params }) => {
         new Map<string, string>(pool.assets.map((asset) => [getAssetString(asset), ''])),
     );
     const [pending, setPending] = useState(false);
+    const [awareOfWarning, setAwareOfWarning] = useState(false);
 
     const hasAllAmounts = useMemo(() => {
         // @ts-ignore
@@ -286,10 +287,10 @@ const DepositToPool = ({ params }) => {
 
     const submitWithWarning = () => {
         const showPurpose = JSON.parse(localStorage.getItem(SHOW_PURPOSE_ALIAS_MAIN_NET) || 'true');
-        if (showPurpose) {
-            ModalService.openModal(MainNetPurposeModal, {}).then(({ isConfirmed }) => {
+        if (showPurpose && !awareOfWarning) {
+            ModalService.openModal(MainNetWarningModal, {}).then(({ isConfirmed }) => {
                 if (isConfirmed) {
-                    onSubmit();
+                    setAwareOfWarning(true);
                 }
             });
             return;

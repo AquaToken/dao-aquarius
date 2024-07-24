@@ -37,9 +37,9 @@ import { useHistory, useParams } from 'react-router-dom';
 import { MainRoutes } from '../../../routes';
 import { AQUA_CODE, AQUA_ISSUER } from '../../../common/services/stellar.service';
 import Tooltip, { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
-import MainNetPurposeModal, {
+import MainNetWarningModal, {
     SHOW_PURPOSE_ALIAS_MAIN_NET,
-} from '../../../common/modals/MainNetPurposeModal';
+} from '../../../common/modals/MainNetWarningModal';
 
 const Container = styled.main`
     background-color: ${COLORS.lightGray};
@@ -366,7 +366,7 @@ const SwapPage = () => {
     const submitWithWarning = () => {
         const showPurpose = JSON.parse(localStorage.getItem(SHOW_PURPOSE_ALIAS_MAIN_NET) || 'true');
         if (showPurpose) {
-            ModalService.openModal(MainNetPurposeModal, {}, false).then(({ isConfirmed }) => {
+            ModalService.openModal(MainNetWarningModal, {}, false).then(({ isConfirmed }) => {
                 if (isConfirmed) {
                     swapAssets();
                 }
