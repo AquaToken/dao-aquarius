@@ -22,6 +22,7 @@ export default class ModalServiceClass {
         params: unknown,
         hideClose = false,
         backgroundImage = null,
+        disableClickOutside = false,
     ): Promise<T> {
         this.id += 1;
         let resolver: (unknown) => void = undefined;
@@ -49,6 +50,7 @@ export default class ModalServiceClass {
                 hideClose={hideClose}
                 triggerClosePromise={triggerClosePromise}
                 backgroundImage={backgroundImage}
+                disableClickOutside={disableClickOutside}
             >
                 {modalTemplateElement}
             </ModalBody>
@@ -61,6 +63,7 @@ export default class ModalServiceClass {
 
         this.event.trigger(this.modals);
 
+        // @ts-ignore
         return promise.then(({ result, id: modalId }) => {
             this.modals = this.modals.filter(({ id }) => id !== modalId);
             this.event.trigger(this.modals);

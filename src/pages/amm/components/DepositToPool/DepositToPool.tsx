@@ -287,7 +287,7 @@ const DepositToPool = ({ params }) => {
     const submitWithWarning = () => {
         const showPurpose = JSON.parse(localStorage.getItem(SHOW_PURPOSE_ALIAS_MAIN_NET) || 'true');
         if (showPurpose) {
-            ModalService.openModal(MainNetPurposeModal, {}, false).then(({ isConfirmed }) => {
+            ModalService.openModal(MainNetPurposeModal, {}).then(({ isConfirmed }) => {
                 if (isConfirmed) {
                     onSubmit();
                 }

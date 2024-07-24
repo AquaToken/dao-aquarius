@@ -281,7 +281,7 @@ export default class AccountService extends Horizon.AccountResponse {
                 return {
                     ...balance,
                     nativeBalance: nativePrices.has(assetString)
-                        ? +balance.balance * nativePrices.get(assetString)
+                        ? +balance.balance * +nativePrices.get(assetString)
                         : 0,
                     code: balance.asset_code,
                     issuer: balance.asset_issuer,

@@ -268,10 +268,16 @@ const PoolsList = ({ pools, onUpdate, isUserList }: PoolsListProps) => {
                                         fullWidth
                                         onClick={(e) => {
                                             e.preventDefault();
-                                            ModalService.openModal(DepositToPool, {
-                                                pool,
-                                                accountShare: balance,
-                                            }).then(() => onUpdate());
+                                            ModalService.openModal(
+                                                DepositToPool,
+                                                {
+                                                    pool,
+                                                    accountShare: balance,
+                                                },
+                                                false,
+                                                null,
+                                                true,
+                                            ).then(() => onUpdate());
                                         }}
                                         disabled={pool.deposit_killed}
                                     >

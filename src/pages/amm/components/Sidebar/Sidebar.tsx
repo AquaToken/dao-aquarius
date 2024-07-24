@@ -77,10 +77,17 @@ const Sidebar = ({ pool }: { pool: PoolExtended }) => {
     const openDepositModal = () => {
         if (!isLogged) {
             return ModalService.openModal(ChooseLoginMethodModal, {
-                callback: () => ModalService.openModal(DepositToPool, { pool, accountShare }),
+                callback: () =>
+                    ModalService.openModal(
+                        DepositToPool,
+                        { pool, accountShare },
+                        false,
+                        null,
+                        true,
+                    ),
             });
         }
-        ModalService.openModal(DepositToPool, { pool, accountShare });
+        ModalService.openModal(DepositToPool, { pool, accountShare }, false, null, true);
     };
     const openWithdrawModal = () => {
         if (!isLogged) {

@@ -28,7 +28,7 @@ const StyledButton = styled(Button)`
 
 export const SHOW_PURPOSE_ALIAS_MAIN_NET = 'show purpose main net';
 
-const MainNetPurposeModal = ({ close }) => {
+const MainNetPurposeModal = ({ confirm }) => {
     const [checked, setChecked] = useState(false);
 
     useEffect(() => {
@@ -48,7 +48,7 @@ const MainNetPurposeModal = ({ close }) => {
                 <Checkbox label="Don’t show again" checked={checked} onChange={setChecked} />
             </CheckboxBlock>
 
-            <StyledButton fullWidth onClick={() => close()}>
+            <StyledButton fullWidth onClick={() => confirm()}>
                 I understand
             </StyledButton>
         </Container>
