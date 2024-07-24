@@ -302,6 +302,13 @@ const DepositToPool = ({ params }) => {
         if (Number.isNaN(Number(value))) {
             return;
         }
+
+        if (value === '') {
+            pool.assets.forEach((token) => {
+                setAmounts(new Map(amounts.set(getAssetString(token), '')));
+            });
+            return;
+        }
         const [integerPart, fractionalPart] = value.split('.');
 
         const roundedValue =
