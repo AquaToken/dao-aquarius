@@ -132,10 +132,8 @@ const LockerAccountPage = () => {
 
     useEffect(() => {
         if (!isLogged) {
-            StellarService.stopEffectsStream();
             return;
         }
-        StellarService.startEffectsStream(account.accountId());
 
         const unsub = StellarService.event.sub(({ type }) => {
             if (type === StellarEvents.claimableUpdate) {
