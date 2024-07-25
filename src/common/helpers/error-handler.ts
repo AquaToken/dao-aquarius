@@ -90,7 +90,11 @@ export default function ErrorHandler(error) {
     }
 
     //wallet connect case and Ledger case
-    if (error?.message === 'cancelled_by_user' || error?.message === LEDGER_CANCEL_ERROR) {
+    if (
+        error?.message === 'cancelled_by_user' ||
+        error?.message === 'Transaction cancelled by the user' ||
+        error?.message === LEDGER_CANCEL_ERROR
+    ) {
         return 'Transaction cancelled by the user';
     }
     if (error.error) {
