@@ -90,7 +90,6 @@ const SwapConfirmModal = ({ params, confirm }) => {
             minCounterAmount,
         )
             .then((tx) => {
-                console.log(tx.toEnvelope().toXDR('base64'));
                 hash = tx.hash().toString('hex');
                 return account.signAndSubmitTx(tx, true);
             })

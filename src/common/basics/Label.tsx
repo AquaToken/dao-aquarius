@@ -60,8 +60,6 @@ const LabelInner = styled.div<{
 
 const SCROLL_OFFSET = window.navigator.userAgent.indexOf('win') > -1 ? 20 : 0;
 
-console.log();
-
 const Label = ({
     title,
     text,

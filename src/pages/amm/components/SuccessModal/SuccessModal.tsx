@@ -33,7 +33,6 @@ const StyledButton = styled(Button)`
 
 const SuccessModal = ({ params, close }) => {
     const { assets, amounts, title, isSwap, hash } = params;
-    console.log(hash);
     return (
         <Container>
             <ModalTitle>{title ?? 'Success'}</ModalTitle>

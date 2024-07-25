@@ -96,7 +96,6 @@ export default class SorobanServiceClass {
 
     getTx(hash: string, tx: StellarSdk.Transaction, resolver?: (value?: any) => void) {
         return this.server.getTransaction(hash).then((res) => {
-            console.log('TX', res);
             if (res.status === 'SUCCESS') {
                 if (resolver) {
                     resolver(res.returnValue);
