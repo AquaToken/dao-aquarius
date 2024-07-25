@@ -85,7 +85,7 @@ const getPoolStats = async (id: string): Promise<{ stats: PoolStatistics[] }> =>
 const getPoolMembers = async (id: string): Promise<{ members: PoolBalance[] }> => {
     try {
         const { data } = await axios.get<ListResponse<PoolBalance>>(
-            `${API_URL}/pools/${id}/balances/?size=100`,
+            `${API_URL}/pools/${id}/balances/?sort=-balance&size=20 `,
         );
         return { members: data.items };
     } catch {
