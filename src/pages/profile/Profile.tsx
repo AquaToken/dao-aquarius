@@ -16,6 +16,8 @@ import IceLocks from './IceLocks/IceLocks';
 import useAuthStore from '../../store/authStore/useAuthStore';
 import { StellarService } from '../../common/services/globalServices';
 import PaymentsHistory from './PaymentsHistory/PaymentsHistory';
+import Liquidity from '../amm/pages/Liquidity';
+import BalancesBlock from '../amm/components/BalancesBlock/BalancesBlock';
 
 const Container = styled.div`
     height: 100%;
@@ -42,7 +44,7 @@ const ControlsWrapper = styled.div`
 const ToggleGroupStyled = styled(ToggleGroup)`
     width: min-content;
 
-    ${respondDown(Breakpoints.md)`
+    ${respondDown(Breakpoints.xl)`
         display: none;
     `}
 `;
@@ -50,7 +52,7 @@ const ToggleGroupStyled = styled(ToggleGroup)`
 const SelectStyled = styled(Select)`
     display: none;
 
-    ${respondDown(Breakpoints.md)`
+    ${respondDown(Breakpoints.xl)`
         display: flex;
     `}
 `;
@@ -72,6 +74,8 @@ const Content = styled.div`
 `;
 
 enum Tabs {
+    liquidity = 'liquidity',
+    balances = 'balances',
     sdex = 'sdex',
     amm = 'amm',
     your = 'your',
@@ -82,6 +86,8 @@ enum Tabs {
 }
 
 const OPTIONS = [
+    { label: 'Balances', value: Tabs.balances },
+    { label: 'My liquidity', value: Tabs.liquidity },
     { label: 'SDEX rewards', value: Tabs.sdex },
     { label: 'AMM rewards', value: Tabs.amm },
     { label: 'Liquidity Votes', value: Tabs.your },
@@ -92,7 +98,7 @@ const OPTIONS = [
 ];
 
 const Profile = () => {
-    const [selectedTab, setSelectedTab] = useState(Tabs.sdex);
+    const [selectedTab, setSelectedTab] = useState(Tabs.balances);
     const [ammAquaBalance, setAmmAquaBalance] = useState(null);
     const [aquaUsdPrice, setAquaUsdPrice] = useState(null);
 
@@ -127,6 +133,8 @@ const Profile = () => {
 
             <ContentWrap>
                 <Content>
+                    {selectedTab === Tabs.liquidity && <Liquidity />}
+                    {selectedTab === Tabs.balances && <BalancesBlock />}
                     {selectedTab === Tabs.amm && <AmmRewards aquaUsdPrice={aquaUsdPrice} />}
                     {selectedTab === Tabs.sdex && <SdexRewards aquaUsdPrice={aquaUsdPrice} />}
                     {selectedTab === Tabs.your && <YourVotes />}

@@ -1,10 +1,10 @@
 import * as React from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
 import ArrowDown from '../../../../common/assets/img/icon-arrow-down.svg';
 import Loader from '../../../../common/assets/img/loader.svg';
 import Fail from '../../../../common/assets/img/icon-fail.svg';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { COLORS } from '../../../../common/styles';
+import { Breakpoints, COLORS } from '../../../../common/styles';
 import useOnClickOutside from '../../../../common/hooks/useOutsideClick';
 import Asset from './Asset';
 import { useDebounce } from '../../../../common/hooks/useDebounce';
@@ -13,7 +13,9 @@ import { StellarService } from '../../../../common/services/globalServices';
 import { AssetSimple } from '../../../../store/assetsStore/types';
 import useAssetsStore from '../../../../store/assetsStore/useAssetsStore';
 import { getAssetString } from '../../../../store/assetsStore/actions';
-
+import useAuthStore from '../../../../store/authStore/useAuthStore';
+import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
+import { formatBalance } from '../../../../common/helpers/helpers';
 const DropDown = styled.div<{ isOpen: boolean; disabled: boolean }>`
     width: 100%;
     display: flex;
@@ -72,7 +74,7 @@ const DropdownLoader = styled(Loader)`
     margin-right: ${({ $isOpen }) => ($isOpen ? '0' : '0.1rem')};
 `;
 
-const DropdownList = styled.div`
+const DropdownList = styled.div<{ longListOnMobile?: boolean }>`
     position: absolute;
     left: -0.2rem;
     top: calc(100% + 0.2rem);
@@ -86,6 +88,10 @@ const DropdownList = styled.div`
     max-height: 24rem;
     overflow-y: scroll;
     z-index: 2;
+
+    ${respondDown(Breakpoints.md)`
+        ${({ longListOnMobile }) => (longListOnMobile ? 'max-height: 42rem' : 'max-height: 24rem;')}
+    `}
 
     &::-webkit-scrollbar {
         width: 0.5rem;
@@ -117,10 +123,38 @@ const DropdownList = styled.div`
 
 const DropdownItem = styled.div`
     cursor: pointer;
+    ${flexRowSpaceBetween};
+    padding-right: 2.4rem;
 
     &:hover {
         background-color: ${COLORS.lightGray};
     }
+`;
+
+const Balances = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    color: ${COLORS.grayText};
+    font-size: 1.4rem;
+    line-height: 2rem;
+
+    span:first-child {
+        font-size: 1.6rem;
+        line-height: 2.8rem;
+        color: ${COLORS.paragraphText};
+        text-align: right;
+    }
+
+    ${respondDown(Breakpoints.md)`
+        font-size: 1.2rem;
+        
+        span:first-child {
+            font-size: 1.2rem;
+            line-height: 2rem;
+            white-space: nowrap;
+        }
+    `}
 `;
 
 const SearchEmpty = styled.div`
@@ -163,11 +197,17 @@ type AssetDropdownProps = {
     exclude?: AssetSimple;
     placeholder?: string;
     label?: string;
+    withoutReset?: boolean;
+    pending?: boolean;
+    excludeList?: AssetSimple[];
+    withBalances?: boolean;
+    longListOnMobile?: boolean;
 };
 
-const StyledAsset = styled(Asset)`
+const StyledAsset = styled(Asset)<{ $withBalances?: boolean }>`
     padding: 0.9rem 2.4rem;
     height: 6.6rem;
+    width: ${({ $withBalances }) => ($withBalances ? '50%' : '100%')};
 `;
 
 const domainPattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?$/;
@@ -182,10 +222,43 @@ const AssetDropdown = ({
     disabled,
     onToggle,
     exclude,
+    excludeList,
     placeholder,
     label,
+    withoutReset,
+    pending,
+    withBalances,
+    longListOnMobile,
+    ...props
 }: AssetDropdownProps) => {
-    const { assets, assetsInfo, processNewAssets } = useAssetsStore();
+    const { assets: knownAssets, assetsInfo, processNewAssets } = useAssetsStore();
+
+    const { account } = useAuthStore();
+
+    const [balances, setBalances] = useState([]);
+
+    useEffect(() => {
+        if (!account) {
+            setBalances([]);
+            return;
+        }
+        account.getSortedBalances().then((res) => {
+            setBalances(res);
+        });
+    }, [account]);
+
+    const assets = [
+        ...balances,
+        ...(knownAssets
+            .filter(
+                (knownAsset) =>
+                    !balances.find(
+                        (asset) =>
+                            knownAsset.code === asset.code && knownAsset.issuer === asset.issuer,
+                    ),
+            )
+            .sort((a, b) => a.code.localeCompare(b.code)) || []),
+    ];
 
     const [isOpen, setIsOpen] = useState(false);
     const [selectedAsset, setSelectedAsset] = useState(asset);
@@ -249,9 +322,9 @@ const AssetDropdown = ({
     };
 
     useEffect(() => {
-        if (StellarSdk.StrKey.isValidEd25519PublicKey(debouncedSearchText)) {
+        if (StellarSdk.StrKey.isValidEd25519PublicKey(debouncedSearchText.current)) {
             setSearchPending(true);
-            StellarService.loadAccount(debouncedSearchText)
+            StellarService.loadAccount(debouncedSearchText.current)
                 .then((account) => {
                     if (!account?.home_domain) {
                         setSearchPending(false);
@@ -267,8 +340,8 @@ const AssetDropdown = ({
             return;
         }
 
-        if (codeIssuerRegexp.test(debouncedSearchText)) {
-            const [code, issuer] = debouncedSearchText.split(':');
+        if (codeIssuerRegexp.test(debouncedSearchText.current)) {
+            const [code, issuer] = debouncedSearchText.current.split(':');
             if (!StellarSdk.StrKey.isValidEd25519PublicKey(issuer)) {
                 return;
             }
@@ -293,15 +366,15 @@ const AssetDropdown = ({
             return;
         }
 
-        if (domainRegexp.test(debouncedSearchText)) {
-            resolveCurrencies(debouncedSearchText);
+        if (domainRegexp.test(debouncedSearchText.current)) {
+            resolveCurrencies(debouncedSearchText.current);
             return;
         }
         setSearchResults([]);
-    }, [debouncedSearchText]);
+    }, [debouncedSearchText.current]);
 
     const onClickAsset = (asset) => {
-        onUpdate(asset);
+        onUpdate(StellarService.createAsset(asset.code, asset.issuer));
     };
 
     const resetAsset = (event) => {
@@ -310,28 +383,34 @@ const AssetDropdown = ({
     };
 
     const filteredAssets = useMemo(() => {
-        return [...assets, ...searchResults]
-            .filter((assetItem) => {
-                const assetInfo = assetsInfo.get(getAssetString(assetItem));
-                return (
-                    (getAssetString(assetItem) === searchText ||
-                        assetItem.code.toLowerCase().includes(searchText.toLowerCase()) ||
-                        assetItem.issuer?.toLowerCase().includes(searchText.toLowerCase()) ||
-                        assetInfo?.home_domain
-                            ?.toLowerCase()
-                            .includes(searchText.toLowerCase().replace('www.', ''))) &&
-                    !(assetItem.code === exclude?.code && assetItem.issuer === exclude?.issuer)
-                );
-            })
-            .sort((a, b) => a.code.localeCompare(b.code));
-    }, [assets, searchText, assetsInfo, searchResults, exclude]);
+        return [...assets, ...searchResults].filter((assetItem) => {
+            const assetInfo = assetsInfo.get(getAssetString(assetItem));
+
+            return (
+                (getAssetString(assetItem) === searchText ||
+                    assetItem.code.toLowerCase().includes(searchText.toLowerCase()) ||
+                    (StellarSdk.StrKey.isValidEd25519PublicKey(searchText) &&
+                        assetItem.issuer?.toLowerCase().includes(searchText.toLowerCase())) ||
+                    assetInfo?.home_domain
+                        ?.toLowerCase()
+                        .includes(searchText.toLowerCase().replace('www.', ''))) &&
+                !(assetItem.code === exclude?.code && assetItem.issuer === exclude?.issuer) &&
+                !excludeList?.find(
+                    (excludeToken) =>
+                        excludeToken.code === assetItem.code &&
+                        assetItem.issuer === excludeToken.issuer,
+                )
+            );
+        });
+    }, [assets, searchText, assetsInfo, searchResults, exclude, excludeList]);
 
     return (
         <DropDown
             onClick={() => toggleDropdown()}
             isOpen={isOpen}
             ref={ref}
-            disabled={!assets.length || disabled}
+            disabled={!assets.length || disabled || pending}
+            {...props}
         >
             {Boolean(label) && <Label>{label}</Label>}
             {selectedAsset && !isOpen ? (
@@ -344,7 +423,7 @@ const AssetDropdown = ({
                         }
                     }}
                     placeholder={placeholder ?? 'Search asset or enter home domain'}
-                    $disabled={!assets.length || disabled}
+                    $disabled={!assets.length || disabled || pending}
                     value={searchText}
                     onChange={(e) => {
                         setSearchText(e.target.value);
@@ -353,7 +432,7 @@ const AssetDropdown = ({
                 />
             )}
 
-            {selectedAsset && (
+            {!withoutReset && selectedAsset && (
                 <div
                     onClick={(e) => {
                         resetAsset(e);
@@ -363,19 +442,39 @@ const AssetDropdown = ({
                 </div>
             )}
 
-            {!assets.length || searchPending ? (
+            {!assets.length || searchPending || pending ? (
                 <DropdownLoader />
             ) : (
                 <DropdownArrow $isOpen={isOpen} />
             )}
             {isOpen && (
-                <DropdownList>
+                <DropdownList longListOnMobile={longListOnMobile}>
                     {filteredAssets.map((assetItem) => (
                         <DropdownItem
                             onClick={() => onClickAsset(assetItem)}
                             key={assetItem.code + assetItem.issuer}
                         >
-                            <StyledAsset asset={assetItem} />
+                            <StyledAsset
+                                asset={assetItem}
+                                $withBalances={withBalances && assetItem.balance}
+                            />
+                            {withBalances && assetItem.balance ? (
+                                <Balances>
+                                    <span>
+                                        {formatBalance(assetItem.balance)} {assetItem.code}
+                                    </span>
+                                    <span>
+                                        $
+                                        {formatBalance(
+                                            +(
+                                                assetItem.nativeBalance *
+                                                StellarService.priceLumenUsd
+                                            ).toFixed(2),
+                                            true,
+                                        )}
+                                    </span>
+                                </Balances>
+                            ) : null}
                         </DropdownItem>
                     ))}
                     {!filteredAssets.length && <SearchEmpty>Asset not found.</SearchEmpty>}

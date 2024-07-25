@@ -22,6 +22,7 @@ export const flexRowSpaceBetween = css`
 `;
 
 export const customScroll = css`
+    padding-right: 1rem;
     &::-webkit-scrollbar {
         width: 0.5rem;
     }

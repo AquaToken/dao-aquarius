@@ -1,8 +1,8 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import { flexAllCenter, respondDown } from '../../../../../common/mixins';
-import IconAlert from '../../../../../common/assets/img/icon-alert.svg';
+import IconAlert from '../assets/img/icon-alert.svg';
+import { COLORS } from '../styles';
+import { flexAllCenter } from '../mixins';
 
 const Container = styled.div`
     display: flex;
@@ -10,11 +10,7 @@ const Container = styled.div`
     border-radius: 0.5rem;
     padding: 3.2rem 2.4rem;
     margin-top: 2.1rem;
-    width: 52.8rem;
-
-    ${respondDown(Breakpoints.md)`
-        width: 100%;
-    `}
+    width: 100%;
 `;
 
 const IconWrapper = styled.div`
@@ -49,21 +45,23 @@ const Text = styled.span`
     color: ${COLORS.grayText};
 `;
 
-const PaymentInProgressAlert = () => {
+interface AlertProps {
+    title?: string;
+    text: string | React.ReactNode;
+}
+
+const Alert = ({ title, text }: AlertProps) => {
     return (
         <Container>
             <IconWrapper>
                 <IconAlert />
             </IconWrapper>
             <Content>
-                <Title>Transaction submitting</Title>
-                <Text>
-                    Do not close this window. The window will close automatically when the
-                    transaction is signed
-                </Text>
+                <Title>{title}</Title>
+                <Text>{text}</Text>
             </Content>
         </Container>
     );
 };
 
-export default PaymentInProgressAlert;
+export default Alert;

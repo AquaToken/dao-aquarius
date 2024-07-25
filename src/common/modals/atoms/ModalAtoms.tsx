@@ -115,6 +115,7 @@ export const ModalBody = ({
     hideClose,
     triggerClosePromise,
     backgroundImage,
+    disableClickOutside,
 }: {
     resolver: (unknown) => void;
     children: JSX.Element;
@@ -122,6 +123,7 @@ export const ModalBody = ({
     hideClose: boolean;
     triggerClosePromise: Promise<unknown>;
     backgroundImage: JSX.Element | null;
+    disableClickOutside: boolean;
 }): JSX.Element => {
     const [isShow, setIsShow] = useState(true);
     const [resolvedData, setResolvedData] = useState(null);
@@ -138,7 +140,7 @@ export const ModalBody = ({
     });
 
     useOnClickOutside(ref, () => {
-        if (!hideClose) {
+        if (!hideClose && !disableClickOutside) {
             close();
         }
     });

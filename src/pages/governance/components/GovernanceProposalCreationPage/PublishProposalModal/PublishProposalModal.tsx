@@ -17,12 +17,12 @@ import { sha256 } from 'js-sha256';
 import { MemoHash } from '@stellar/stellar-sdk';
 import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
 import { useHistory } from 'react-router-dom';
-import PaymentInProgressAlert from '../PaymentInProgressAlert/PaymentInProgressAlert';
 import ErrorHandler from '../../../../../common/helpers/error-handler';
 import { LoginTypes } from '../../../../../store/authStore/types';
 import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
+import Alert from '../../../../../common/basics/Alert';
 
-const Description = styled(ModalDescription)`
+const Container = styled.div`
     width: 52.8rem;
 
     ${respondDown(Breakpoints.md)`
@@ -30,17 +30,17 @@ const Description = styled(ModalDescription)`
     `}
 `;
 
+const Description = styled(ModalDescription)`
+    width: 100%;
+`;
+
 const ProposalCost = styled.div`
     ${flexRowSpaceBetween};
     font-size: 1.6rem;
     padding-bottom: 2.6rem;
-    width: 52.8rem;
     margin-bottom: 2.4rem;
     border-bottom: 1px dashed #e8e8ed;
-
-    ${respondDown(Breakpoints.md)`
-        width: 100%;
-    `}
+    width: 100%;
 `;
 
 const Label = styled.div`
@@ -190,7 +190,7 @@ const PublishProposalModal = ({ params, close }) => {
         }
     };
     return (
-        <>
+        <Container>
             <ModalTitle>Publish proposal</ModalTitle>
             <Description>
                 To publish a proposal you need pay <b>{cost} AQUA</b>. After publication, you will
@@ -221,8 +221,14 @@ const PublishProposalModal = ({ params, close }) => {
             >
                 Confirm
             </Button>
-            {loading && <PaymentInProgressAlert />}
-        </>
+            {loading && (
+                <Alert
+                    title="Transaction submitting"
+                    text="Do not close this window. The window will close automatically when the
+                    transaction is signed"
+                />
+            )}
+        </Container>
     );
 };
 

@@ -13,6 +13,8 @@ export enum TOOLTIP_POSITION {
 const ChildrenBlock = styled.div`
     position: relative;
     display: flex;
+    width: fit-content;
+    height: fit-content;
 `;
 
 const TooltipTop = (isError, isSuccess, isWhite, isDark, isBlue) => css`
@@ -211,7 +213,7 @@ const Tooltip = ({
             }}
         >
             {children}
-            {(showOnHover ? onHover : isShow) && (
+            {(showOnHover ? onHover && isShow !== false : isShow) && (
                 <TooltipBody
                     position={position}
                     isError={isError}

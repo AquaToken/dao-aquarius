@@ -2,6 +2,12 @@
 import { LEDGER_CANCEL_ERROR } from '../services/ledger.service';
 
 enum TRANSACTIONS_ERROR_CODES {
+    // TODO: Add this codes
+    // | 'txFeeBumpInnerSuccess'
+    // | 'txFailed'
+    // | 'txBadMinSeqAgeOrGap'
+    // | 'txMalformed'
+    // | 'txSorobanInvalid';
     'tx_too_early' = 'Ledger closeTime before minTime value in the transaction.',
     'tx_too_late' = 'Ledger closeTime after maxTime value in the transaction.',
     'tx_missing_operation' = 'No operation was specified.',
@@ -70,6 +76,13 @@ enum OPERATIONS_ERROR_CODES {
     'op_bad_seq' = 'The specified bumpTo sequence number is not a valid sequence number. It must be between 0 and INT64_MAX (9223372036854775807 or 0x7fffffffffffffff).',
 }
 
+export enum KnownPrepareErrors {
+    // TODO: Add more codes
+    'Error(Contract, #205)' = 'Depositing is currently disabled for this pool. Please reach out to support.',
+    'Error(Contract, #206)' = 'Swapping is currently disabled for this pool. Please reach out to support.',
+    'Error(Contract, #207)' = 'Claiming is currently disabled for this pool. Please reach out to support.',
+}
+
 export default function ErrorHandler(error) {
     // wallet connect case
     if (error?.message === '') {
@@ -79,9 +92,6 @@ export default function ErrorHandler(error) {
     //wallet connect case and Ledger case
     if (error?.message === 'cancelled_by_user' || error?.message === LEDGER_CANCEL_ERROR) {
         return 'Transaction cancelled by the user';
-    }
-    if (error?.code !== undefined) {
-        return error?.message;
     }
     if (error.error) {
         return error.error;
@@ -107,4 +117,25 @@ export default function ErrorHandler(error) {
         TRANSACTIONS_ERROR_CODES[data.extras.result_codes.transaction] ??
         'Oops. Something went wrong.'
     );
+}
+
+function findErrorCode(error: string) {
+    for (let str in KnownPrepareErrors) {
+        let index = error.indexOf(str);
+        if (index !== -1) {
+            return str;
+        }
+    }
+    return null;
+}
+
+export function SorobanPrepareTxErrorHandler(error: string) {
+    const code = findErrorCode(error);
+    return KnownPrepareErrors[code] ?? 'Oops. Something went wrong.';
+}
+
+export function SorobanErrorHandler(errorName: string): string {
+    const snackCaseName = errorName.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
+
+    return TRANSACTIONS_ERROR_CODES[snackCaseName] ?? 'Oops. Something went wrong.';
 }

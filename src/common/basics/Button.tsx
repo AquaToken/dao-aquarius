@@ -11,6 +11,7 @@ const ButtonBody = styled.button<{
     isSquare?: boolean;
     isSmall?: boolean;
     isWhite?: boolean;
+    isPurpleText?: boolean;
 }>`
     ${flexAllCenter};
     width: ${({ fullWidth, isSquare, isBig }) => {
@@ -90,8 +91,17 @@ const ButtonBody = styled.button<{
     }
 `;
 
-const ButtonLoader = styled.div<{ pending?: boolean; likeDisabled?: boolean; isWhite?: boolean }>`
-    color: ${({ likeDisabled, isWhite }) => {
+const ButtonLoader = styled.div<{
+    pending?: boolean;
+    likeDisabled?: boolean;
+    isWhite?: boolean;
+    isPurpleText?: boolean;
+}>`
+    color: ${({ likeDisabled, isWhite, isPurpleText }) => {
+        if (isPurpleText) {
+            return COLORS.purple;
+        }
+
         if (likeDisabled) {
             return COLORS.placeholder;
         }
@@ -146,6 +156,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     isSquare?: boolean;
     isSmall?: boolean;
     isWhite?: boolean;
+    isPurpleText?: boolean;
 }
 
 const Button = ({
@@ -157,6 +168,7 @@ const Button = ({
     likeDisabled,
     isSquare,
     isWhite,
+    isPurpleText,
     ...props
 }: ButtonProps): JSX.Element => {
     return (
@@ -170,7 +182,12 @@ const Button = ({
             isWhite={isWhite}
             {...props}
         >
-            <ButtonLoader pending={pending} likeDisabled={likeDisabled} isWhite={isWhite}>
+            <ButtonLoader
+                pending={pending}
+                likeDisabled={likeDisabled}
+                isWhite={isWhite}
+                isPurpleText={isPurpleText}
+            >
                 {children}
             </ButtonLoader>
         </ButtonBody>

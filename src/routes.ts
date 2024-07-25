@@ -11,6 +11,8 @@ export enum MainRoutes {
     airdrop2 = '/airdrop2',
     account = '/account',
     walletConnect = '/wallet-connect',
+    amm = '/pools',
+    swap = '/swap',
 }
 
 //TODO: Replace constants with enums after TS 5.0 release
@@ -40,4 +42,9 @@ export const BribesRoutes = {
 
 export const MarketRoutes = {
     main: `${MainRoutes.market}`,
+};
+
+export const AmmRoutes = {
+    analytics: `${MainRoutes.amm}/analytics/`,
+    create: `${MainRoutes.amm}/create-pool/`,
 };

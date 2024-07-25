@@ -2,10 +2,16 @@ import * as StellarSdk from '@stellar/stellar-sdk';
 import EventService from './event.service';
 import { Memo, MemoType, OperationOptions, Horizon } from '@stellar/stellar-sdk';
 import axios, { AxiosResponse } from 'axios';
-import { roundToPrecision } from '../helpers/helpers';
+import { formatBalance, roundToPrecision } from '../helpers/helpers';
 import { PairStats } from '../../pages/vote/api/types';
 import { validateMarketKeys } from '../../pages/vote/api/api';
 import debounceFunction from '../helpers/debounceFunction';
+import { ToastService } from './globalServices';
+import { ServerApi } from '@stellar/stellar-sdk/lib/horizon';
+
+enum HORIZON_SERVER {
+    stellar = 'https://horizon.stellar.org',
+}
 
 const VAULT_API = 'https://vault.lobstr.co/api/transactions/';
 
@@ -99,6 +105,7 @@ export default class StellarServiceClass {
     nextPayments = null;
     loadMorePaymentsPending = false;
     paymentsFullyLoaded = false;
+    priceLumenUsd = null;
     private claimableBalances: Horizon.ServerApi.ClaimableBalanceRecord[] | null = null;
     private keypair: StellarSdk.Keypair | null = null;
 
@@ -108,12 +115,15 @@ export default class StellarServiceClass {
         this.updatePayments = this.updatePayments.bind(this);
 
         this.debouncedUpdatePayments = debounceFunction(this.updatePayments, 500);
+
+        this.updateLumenUsdPrice();
+
+        setInterval(() => this.updateLumenUsdPrice(), 5 * 60 * 1000);
     }
 
     get isClaimableBalancesLoaded() {
         return this.claimableBalances !== null;
     }
-
     loginWithSecret(secretKey: string): Promise<string> {
         return new Promise((resolve, reject) => {
             try {
@@ -237,14 +247,17 @@ export default class StellarServiceClass {
 
         return (
             masterKeyWeight <
-            account.thresholds[transactionThreshold as keyof Horizon.HorizonApi.AccountThresholds]
+            account.thresholds[
+                transactionThreshold as keyof StellarSdk.Horizon.HorizonApi.AccountThresholds
+            ]
         );
     }
 
     private startHorizonServer(): void {
         // @ts-ignore
         // settled in configs: prod.js and dev.js
-        this.server = new StellarSdk.Horizon.Server(process.horizon.HORIZON_SERVER);
+        // this.server = new StellarSdk.Horizon.Server(process.horizon.HORIZON_SERVER);
+        this.server = new StellarSdk.Horizon.Server(HORIZON_SERVER.stellar);
     }
 
     loadAccount(publicKey: string): Promise<StellarSdk.Horizon.AccountResponse> {
@@ -408,12 +421,28 @@ export default class StellarServiceClass {
                     ) {
                         this.getClaimableBalances(publicKey);
                     }
+                    if ((res as unknown as ServerApi.EffectRecord).type === 'account_debited') {
+                        const { amount, asset_type, asset_code } = res as any;
+
+                        ToastService.showSuccessToast(
+                            `Payment sent: ${formatBalance(amount)} ${
+                                asset_type === 'native' ? 'XLM' : asset_code
+                            }`,
+                        );
+                    }
 
                     if (
                         (res as unknown as Horizon.ServerApi.EffectRecord).type ===
                         'account_credited'
                     ) {
                         this.debouncedUpdatePayments(publicKey);
+                        const { amount, asset_type, asset_code } = res as any;
+
+                        ToastService.showSuccessToast(
+                            `Payment received: ${formatBalance(amount)} ${
+                                asset_type === 'native' ? 'XLM' : asset_code
+                            }`,
+                        );
                     }
                 },
             });
@@ -924,9 +953,11 @@ export default class StellarServiceClass {
     }
 
     getLumenUsdPrice(): Promise<number> {
-        return axios.get<any>('https://api.stellarterm.com/v1/ticker.json').then(({ data }) => {
-            return data._meta.externalPrices.USD_XLM;
-        });
+        return axios
+            .get<any>(`https://api.stellarterm.com/v1/ticker.json?${Math.random()}`)
+            .then(({ data }) => {
+                return data._meta.externalPrices.USD_XLM;
+            });
     }
 
     getLiquidityPoolData(
@@ -1004,7 +1035,7 @@ export default class StellarServiceClass {
     }
 
     updatePayments(accountId: string) {
-        if (!this.paymentsHistory.length) {
+        if (!this.paymentsHistory?.length) {
             return;
         }
 
@@ -1073,5 +1104,11 @@ export default class StellarServiceClass {
             result.push(...chunkResult);
         }
         return result;
+    }
+
+    private updateLumenUsdPrice() {
+        this.getLumenUsdPrice().then((res) => {
+            this.priceLumenUsd = res;
+        });
     }
 }

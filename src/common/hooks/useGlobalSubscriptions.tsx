@@ -6,16 +6,20 @@ import { Horizon } from '@stellar/stellar-sdk';
 import {
     FreighterService,
     LedgerService,
+    SorobanService,
     LobstrExtensionService,
     StellarService,
     ToastService,
     WalletConnectService,
+    AssetsService,
 } from '../services/globalServices';
 import { StellarEvents } from '../services/stellar.service';
 import { LedgerEvents } from '../services/ledger.service';
 import { useSkipFirstRender } from './useSkipFirstRender';
 import { LobstrExtensionEvents } from '../services/lobstr-extension.service';
 import { FreighterEvents } from '../services/freighter.service';
+import useAssetsStore from '../../store/assetsStore/useAssetsStore';
+import { AssetsEvent } from '../services/assets.service';
 
 const UnfundedErrors = ['Request failed with status code 404', 'Not Found'];
 
@@ -30,6 +34,8 @@ export default function useGlobalSubscriptions(): void {
         loginErrorText,
         clearLoginError,
     } = useAuthStore();
+
+    const { processNewAssets } = useAssetsStore();
 
     const accountRef = useRef(account);
 
@@ -80,6 +86,16 @@ export default function useGlobalSubscriptions(): void {
     });
 
     useEffect(() => {
+        const unsub = AssetsService.event.sub((event) => {
+            if (event.type === AssetsEvent.newAssets) {
+                processNewAssets(event.payload);
+            }
+        });
+
+        return () => unsub();
+    }, []);
+
+    useEffect(() => {
         if (loginErrorText) {
             ToastService.showErrorToast(
                 UnfundedErrors.includes(loginErrorText) ? 'Activate your account' : loginErrorText,
@@ -100,10 +116,20 @@ export default function useGlobalSubscriptions(): void {
             ToastService.showSuccessToast('Logged in');
         } else {
             StellarService.logoutWithSecret();
+            SorobanService.logoutWithSecret();
             StellarService.closeAccountStream();
             ToastService.showSuccessToast('Logged out');
         }
     }, [isLogged]);
+
+    useEffect(() => {
+        if (account) {
+            account.getSortedBalances().then((res) => {
+                processNewAssets(res.map(({ asset }) => asset));
+            });
+            return;
+        }
+    }, [account]);
 
     useEffect(() => {
         accountRef.current = account;

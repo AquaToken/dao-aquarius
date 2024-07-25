@@ -38,6 +38,50 @@ const Aqua = styled(AquaLogo)`
     `}
 `;
 
+export const HeaderNewNavLinks = styled.div`
+    display: flex;
+    border: 0.1rem solid ${COLORS.transparent};
+    padding: 0.8rem 1.6rem;
+    border-radius: 2.1rem;
+    background: linear-gradient(to top, white, white),
+        linear-gradient(to top, ${COLORS.purple} 0%, ${COLORS.white} 50%);
+    background-clip: padding-box, border-box;
+    background-origin: padding-box, border-box;
+    position: relative;
+
+    a:last-child {
+        margin-bottom: 0;
+    }
+
+    &::after {
+        content: 'New';
+        position: absolute;
+        top: calc(100% - 1rem);
+        left: 50%;
+        transform: translate(-50%);
+        color: ${COLORS.white};
+        background-color: ${COLORS.purple};
+        font-weight: 700;
+        padding: 0.3rem 0.8rem;
+        border-radius: 3.3rem;
+    }
+
+    ${respondDown(Breakpoints.md)`
+        padding: 0.5rem 4rem;
+        border-radius: 1rem;
+        flex-direction: column;
+        background: linear-gradient(to left, white, white), linear-gradient(to left, ${COLORS.purple} 0, ${COLORS.white} 10%);
+        background-clip: padding-box, border-box;
+        background-origin: padding-box, border-box;
+        
+         &::after {
+            top: 50%;
+            left: calc(100%);
+            transform: translate(-50%, -50%);
+        }
+    `}
+`;
+
 export const HeaderNavLink = styled(NavLink)`
     color: ${COLORS.titleText};
     text-decoration: none;
@@ -57,6 +101,31 @@ export const HeaderNavLink = styled(NavLink)`
     `}
 `;
 
+export const NavLinksDivider = styled.div`
+    height: 2.4rem;
+    width: 0;
+    border-left: 0.1rem solid ${COLORS.gray};
+    margin: 0 4rem;
+
+    ${respondDown(Breakpoints.xl)`
+        margin-right: 2.2rem;
+    `}
+
+    ${respondDown(Breakpoints.lg)`
+        margin-right: 2rem;
+        height: 2rem;
+    `}
+
+    ${respondDown(Breakpoints.md)`
+         border-left: none;
+         margin-right: 0;
+         height: 0;
+         width: 20rem;
+         margin: 2.4rem 0;
+         border-top: 0.1rem solid ${COLORS.gray};
+    `}
+`;
+
 const MainLink = styled(NavLink)`
     height: 4.4rem;
 
@@ -67,6 +136,8 @@ const MainLink = styled(NavLink)`
 
 const HeaderNavLinks = styled.div`
     display: flex;
+    padding: 1.6rem;
+    align-items: center;
 
     a {
         color: ${COLORS.titleText};
@@ -150,7 +221,7 @@ const MyAquarius = styled(NavLink)`
         color: ${COLORS.purple};
     }
 
-    ${respondDown(Breakpoints.lg)`
+    ${respondDown(Breakpoints.xl)`
         width: 4.8rem;
         div {
             display: none;

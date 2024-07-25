@@ -92,39 +92,6 @@ const StellarLogo = styled(Stellar)`
     min-width: 3.7rem;
 `;
 
-const WalletConnectLogoRelative = styled.div`
-    position: relative;
-`;
-
-const Tooltip = styled.div`
-    display: flex;
-    align-items: center;
-    position: absolute;
-    top: calc(100% + 1.2rem);
-    background-color: ${COLORS.tooltip};
-    white-space: nowrap;
-    padding: 0.4rem 0.7rem;
-    border-radius: 0.5rem;
-
-    &::after {
-        content: '';
-        position: absolute;
-        top: -0.3rem;
-        left: 1.7rem;
-        border-bottom: 0.3rem solid ${COLORS.tooltip};
-        border-left: 0.3rem solid ${COLORS.transparent};
-        border-right: 0.3rem solid ${COLORS.transparent};
-    }
-`;
-
-const TooltipText = styled.div`
-    margin-left: 0.5rem;
-    font-size: 1.2rem;
-    line-height: 1.4rem;
-    font-weight: bold;
-    color: ${COLORS.white};
-`;
-
 const ChooseLoginMethodModal = ({
     close,
     params,

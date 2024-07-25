@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { useEffect, useState } from 'react';
 import useAuthStore from '../../store/authStore/useAuthStore';
 import { LoginTypes } from '../../store/authStore/types';
-import { StellarService, ToastService } from '../services/globalServices';
+import { SorobanService, ToastService } from '../services/globalServices';
 import { Breakpoints } from '../styles';
 import { respondDown } from '../mixins';
 
@@ -45,7 +45,7 @@ const LoginWithSecret = ({ close }: ModalProps<never>): JSX.Element => {
     const { login, isLogged, isLoginPending } = useAuthStore();
 
     const onSubmit = () => {
-        StellarService.loginWithSecret(secretKey)
+        SorobanService.loginWithSecret(secretKey)
             .then((pubKey) => {
                 login(pubKey, LoginTypes.secret);
             })
