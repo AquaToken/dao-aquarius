@@ -466,10 +466,12 @@ const CreatePool = () => {
                                 </div>
                                 <Tick />
                             </PoolType>
-                            <Alert
-                                title="Note:"
-                                text="Stable pools are designed for assets that have 1:1 price ratio to each other (e.g. ETH/yETH, USDC/yUSDC). We don't recommend creating stable pools for volatile assets."
-                            />
+                            {type === POOL_TYPE.stable && (
+                                <Alert
+                                    title="Note:"
+                                    text="Stable pools are designed for assets that have 1:1 price ratio to each other (e.g. ETH/yETH, USDC/yUSDC). We don't recommend creating stable pools for volatile assets."
+                                />
+                            )}
                         </StyledFormSection>
 
                         <StyledFormSection>
