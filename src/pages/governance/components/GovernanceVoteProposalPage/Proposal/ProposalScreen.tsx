@@ -9,7 +9,6 @@ import IconEdit from '../../../../../common/assets/img/icon-edit.svg';
 import AccountViewer from '../../../../../common/basics/AccountViewer';
 import { commonMaxWidth, flexAllCenter, respondDown } from '../../../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../../../common/styles';
-import { Link } from 'react-router-dom';
 import CurrentResults from '../CurrentResults/CurrentResults';
 import Votes from '../Votes/Votes';
 import { getDateString } from '../../../../../common/helpers/helpers';
@@ -20,6 +19,7 @@ import { useIsOnViewport, useIsOverScrolled } from '../../../../../common/hooks/
 import useAuthStore from '../../../../../store/authStore/useAuthStore';
 import Versions from '../Versions/Versions';
 import { GovernanceRoutes } from '../../../../../routes';
+import CircleButton from '../../../../../common/basics/CircleButton';
 
 const ProposalQuestion = styled.div`
     width: 100%;
@@ -38,27 +38,6 @@ const BackTo = styled.div`
     margin-bottom: 5rem;
 `;
 
-export const BackButton = styled(Link)`
-    ${flexAllCenter};
-    width: 4.8rem;
-    height: 4.8rem;
-    background-color: ${COLORS.white};
-    box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
-    border-radius: 50%;
-    text-decoration: none;
-    border: none;
-    cursor: pointer;
-    transition: all ease 200ms;
-    z-index: 1;
-
-    &:hover {
-        background-color: ${COLORS.lightGray};
-    }
-
-    &:active {
-        transform: scale(0.9);
-    }
-`;
 const EditButtonLabel = styled.div`
     margin-left: auto;
 `;
@@ -339,22 +318,16 @@ const ProposalScreen = ({
                     <LeftContent>
                         <BackTo>
                             {status === null ? (
-                                <>
-                                    <BackButton
-                                        as="button"
-                                        onClick={() => setScreenState(statePage.creation)}
-                                    >
-                                        <ArrowLeft />
-                                    </BackButton>
-                                    <span>Back to edit proposal</span>
-                                </>
+                                <CircleButton
+                                    label="Back to edit proposal"
+                                    onClick={() => setScreenState(statePage.creation)}
+                                >
+                                    <ArrowLeft />
+                                </CircleButton>
                             ) : (
-                                <>
-                                    <BackButton to={GovernanceRoutes.main}>
-                                        <ArrowLeft />
-                                    </BackButton>
-                                    <span>Proposals</span>
-                                </>
+                                <CircleButton to={GovernanceRoutes.main} label="Proposals">
+                                    <ArrowLeft />
+                                </CircleButton>
                             )}
 
                             {isLogged &&
@@ -363,9 +336,11 @@ const ProposalScreen = ({
                                 !version && (
                                     <>
                                         <EditButtonLabel>Edit proposal</EditButtonLabel>
-                                        <BackButton to={`${GovernanceRoutes.edit}/${proposal.id}`}>
+                                        <CircleButton
+                                            to={`${GovernanceRoutes.edit}/${proposal.id}`}
+                                        >
                                             <IconEdit />
-                                        </BackButton>
+                                        </CircleButton>
                                     </>
                                 )}
                         </BackTo>

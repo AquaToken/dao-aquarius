@@ -1,22 +1,25 @@
 import * as React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { AmmRoutes } from '../../routes';
-import Analytics from './pages/Analytics';
-import PoolPage from './pages/PoolPage';
-import CreatePool from './pages/CreatePool';
 import useAuthStore from '../../store/authStore/useAuthStore';
+import { lazy } from 'react';
+
+const AnalyticsPage = lazy(() => import('./pages/Analytics'));
+const PoolPageLazy = lazy(() => import('./pages/PoolPage'));
+const CreatePoolPage = lazy(() => import('./pages/CreatePool'));
+
 const Amm = () => {
     const { isLogged } = useAuthStore();
     return (
         <Switch>
             <Route exact path={AmmRoutes.analytics}>
-                <Analytics />
+                <AnalyticsPage />
             </Route>
             <Route exact path={`${AmmRoutes.analytics}:poolAddress`}>
-                <PoolPage />
+                <PoolPageLazy />
             </Route>
             <Route path={AmmRoutes.create}>
-                {isLogged ? <CreatePool /> : <Redirect to={AmmRoutes.analytics} />}
+                {isLogged ? <CreatePoolPage /> : <Redirect to={AmmRoutes.analytics} />}
             </Route>
             <Redirect to={AmmRoutes.analytics} />
         </Switch>

@@ -39,6 +39,7 @@ import { formatBalance } from '../../../common/helpers/helpers';
 import { BribesRoutes } from '../../../routes';
 import { getMarketPair } from '../api/api';
 import { LoginTypes } from '../../../store/authStore/types';
+import CircleButton from '../../../common/basics/CircleButton';
 
 export const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -71,29 +72,6 @@ export const Back = styled(Link)`
     ${respondDown(Breakpoints.md)`
           padding: 0 1.6rem;
       `}
-`;
-
-export const BackButton = styled.div`
-    ${flexAllCenter};
-    width: 4.8rem;
-    height: 4.8rem;
-    background-color: ${COLORS.white};
-    box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
-    border-radius: 50%;
-    text-decoration: none;
-    border: none;
-    cursor: pointer;
-    transition: all ease 200ms;
-    z-index: 1;
-    margin-right: 1.6rem;
-
-    &:hover {
-        background-color: ${COLORS.lightGray};
-    }
-
-    &:active {
-        transform: scale(0.9);
-    }
 `;
 
 export const Title = styled.span`
@@ -597,10 +575,9 @@ const AddBribePage = () => {
             <Background>
                 <Content>
                     <Back to={BribesRoutes.bribes}>
-                        <BackButton>
+                        <CircleButton label="Bribes">
                             <ArrowLeft />
-                        </BackButton>
-                        <span>Bribes</span>
+                        </CircleButton>
                     </Back>
                     <Title>Create Bribe</Title>
                     <Description>

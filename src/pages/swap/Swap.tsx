@@ -4,13 +4,15 @@ import { MainRoutes } from '../../routes';
 import { StellarService } from '../../common/services/globalServices';
 import { AQUA_CODE, AQUA_ISSUER } from '../../common/services/stellar.service';
 import { getAssetString } from '../../common/helpers/helpers';
-import SwapPage from './pages/SwapPage';
+import { lazy } from 'react';
+
+const SwapPageLazy = lazy(() => import('./pages/SwapPage'));
 
 const Swap = () => {
     return (
         <Switch>
             <Route exact path={`${MainRoutes.swap}/:source/:destination/`}>
-                <SwapPage />
+                <SwapPageLazy />
             </Route>
             <Route
                 component={() => (

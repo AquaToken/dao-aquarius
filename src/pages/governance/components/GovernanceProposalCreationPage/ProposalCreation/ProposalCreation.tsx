@@ -14,10 +14,10 @@ import {
     CREATE_PROPOSAL_COST,
 } from '../../../pages/GovernanceMainPage';
 import { respondDown } from '../../../../../common/mixins';
-import { BackButton } from '../../GovernanceVoteProposalPage/Proposal/ProposalScreen';
 import ArrowLeft from '../../../../../common/assets/img/icon-arrow-left.svg';
 import { useParams } from 'react-router-dom';
 import { GovernanceRoutes } from '../../../../../routes';
+import CircleButton from '../../../../../common/basics/CircleButton';
 
 const Background = styled.div`
     width: 100%;
@@ -177,16 +177,16 @@ const ProposalCreation = ({
             <Background>
                 <Container>
                     <BackTo>
-                        <BackButton
+                        <CircleButton
                             to={
                                 isEdit
                                     ? `${GovernanceRoutes.proposal}/${id}`
                                     : GovernanceRoutes.main
                             }
+                            label={isEdit ? 'Back to discussion' : 'Back to proposals'}
                         >
                             <ArrowLeft />
-                        </BackButton>
-                        {isEdit ? 'Back to discussion' : 'Back to proposals'}
+                        </CircleButton>
                     </BackTo>
 
                     <Title>{isEdit ? 'Edit proposal' : 'New proposal'}</Title>

@@ -46,11 +46,13 @@ const Icons = styled.div<{
     assetsCount: number;
     verticalDirections?: boolean;
     mobileVerticalDirections?: boolean;
+    leftAlign?: boolean;
 }>`
     display: flex;
     align-items: center;
     min-width: 12rem;
-    justify-content: ${({ verticalDirections }) => (verticalDirections ? 'center' : 'flex-end')};
+    justify-content: ${({ verticalDirections, leftAlign }) =>
+        leftAlign ? 'flex-start' : verticalDirections ? 'center' : 'flex-end'};
 
     ${({ mobileVerticalDirections }) =>
         mobileVerticalDirections &&
@@ -293,6 +295,7 @@ const Pair = ({
                 verticalDirections={verticalDirections}
                 assetsCount={assetsCount}
                 mobileVerticalDirections={mobileVerticalDirections}
+                leftAlign={leftAlign}
             >
                 <Icon
                     key={baseInfo?.asset_string}

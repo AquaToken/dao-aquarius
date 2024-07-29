@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { ModalService, StellarService } from '../../../common/services/globalServices';
 import NotFoundPage from '../../../common/components/NotFoundPage/NotFoundPage';
 import { Breakpoints, COLORS } from '../../../common/styles';
-import { commonMaxWidth, flexAllCenter, respondDown } from '../../../common/mixins';
+import { commonMaxWidth, respondDown } from '../../../common/mixins';
 import { getFilteredPairsList, getTotalVotingStats } from '../../vote/api/api';
 import Pair from '../../vote/components/common/Pair';
 import PageLoader from '../../../common/basics/PageLoader';
@@ -26,6 +26,7 @@ import useAssetsStore from '../../../store/assetsStore/useAssetsStore';
 import Title from 'react-document-title';
 import VotesAmountModal from '../../vote/components/MainPage/VoteModals/VotesAmountModal';
 import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
+import CircleButton from '../../../common/basics/CircleButton';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -43,36 +44,8 @@ const Background = styled.div`
     `}
 `;
 
-const Back = styled.div`
-    display: flex;
-    align-items: center;
+const BackButton = styled(CircleButton)`
     margin-bottom: 3.2rem;
-    text-decoration: none;
-    color: ${COLORS.paragraphText};
-    cursor: pointer;
-`;
-
-const BackButton = styled.div`
-    ${flexAllCenter};
-    width: 4.8rem;
-    height: 4.8rem;
-    background-color: ${COLORS.white};
-    box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
-    border-radius: 50%;
-    text-decoration: none;
-    border: none;
-    cursor: pointer;
-    transition: all ease 200ms;
-    z-index: 1;
-    margin-right: 1.6rem;
-
-    &:hover {
-        background-color: ${COLORS.lightGray};
-    }
-
-    &:active {
-        transform: scale(0.9);
-    }
 `;
 
 const MarketSection = styled.section<{ smallTopPadding?: boolean }>`
@@ -302,18 +275,17 @@ const MarketPage = () => {
                                 isCircleLogos
                                 withoutLink
                             />
-                            <Back
+
+                            <BackButton
+                                label="Back to pairs"
                                 onClick={() => {
                                     history.length
                                         ? history.goBack()
                                         : history.push(VoteRoutes.main);
                                 }}
                             >
-                                <BackButton>
-                                    <ArrowLeft />
-                                </BackButton>
-                                <span>Back to pairs</span>
-                            </Back>
+                                <ArrowLeft />
+                            </BackButton>
                         </Header>
                     </MarketSection>
                 </Background>

@@ -2,6 +2,20 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { flexAllCenter } from '../mixins';
 import { COLORS } from '../styles';
+import { Link } from 'react-router-dom';
+
+const WrapperDiv = styled.div`
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+`;
+
+const WrapperLink = styled(Link)`
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    cursor: pointer;
+`;
 
 const CircleButtonContainer = styled.button`
     ${flexAllCenter};
@@ -24,12 +38,26 @@ const CircleButtonContainer = styled.button`
     }
 `;
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+const Label = styled.span`
+    margin-left: 1.6rem;
+    color: ${COLORS.paragraphText};
+`;
+
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLDivElement> {
     children: string | JSX.Element;
+    label?: string;
+    to?: string;
 }
 
-const CircleButton = ({ children, ...props }: ButtonProps): JSX.Element => {
-    return <CircleButtonContainer {...props}>{children}</CircleButtonContainer>;
+const CircleButton = ({ children, label, to, ...props }: ButtonProps): JSX.Element => {
+    const Wrapper = (to ? WrapperLink : WrapperDiv) as React.ElementType;
+
+    return (
+        <Wrapper to={to} {...props}>
+            <CircleButtonContainer>{children}</CircleButtonContainer>
+            {Boolean(label) && <Label>{label}</Label>}
+        </Wrapper>
+    );
 };
 
 export default CircleButton;
