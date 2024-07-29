@@ -154,7 +154,6 @@ const DepositToPool = ({ params }) => {
         new Map<string, string>(pool.assets.map((asset) => [getAssetString(asset), ''])),
     );
     const [pending, setPending] = useState(false);
-    const [awareOfWarning, setAwareOfWarning] = useState(false);
 
     const hasAllAmounts = useMemo(() => {
         // @ts-ignore
@@ -287,10 +286,10 @@ const DepositToPool = ({ params }) => {
 
     const submitWithWarning = () => {
         const showPurpose = JSON.parse(localStorage.getItem(SHOW_PURPOSE_ALIAS_MAIN_NET) || 'true');
-        if (showPurpose && !awareOfWarning) {
+        if (showPurpose) {
             ModalService.openModal(MainNetWarningModal, {}).then(({ isConfirmed }) => {
                 if (isConfirmed) {
-                    setAwareOfWarning(true);
+                    onSubmit();
                 }
             });
             return;
