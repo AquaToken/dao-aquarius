@@ -56,8 +56,8 @@ const VolumeChart = ({
                     const itemDate = item.datetime_str?.split(' ')[0] || item.date_str;
 
                     acc.set(itemDate, {
-                        date: acc.get(itemDate).date,
-                        volume: acc.get(itemDate).volume + item.volume / 1e7,
+                        date: acc.get(itemDate)?.date || itemDate,
+                        volume: +acc.get(itemDate)?.volume + item.volume / 1e7,
                     });
                     return acc;
                 }, dateMap)
