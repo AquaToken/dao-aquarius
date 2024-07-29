@@ -12,11 +12,11 @@ const Amm = () => {
             <Route exact path={AmmRoutes.analytics}>
                 <Analytics />
             </Route>
-            <Route exact path={`${AmmRoutes.analytics}:poolAddress`}>
-                <PoolPage />
-            </Route>
             <Route path={AmmRoutes.create}>
                 {isLogged ? <CreatePool /> : <Redirect to={AmmRoutes.analytics} />}
+            </Route>
+            <Route exact path={`${AmmRoutes.analytics}:poolAddress`}>
+                <PoolPage />
             </Route>
             <Redirect to={AmmRoutes.analytics} />
         </Switch>
