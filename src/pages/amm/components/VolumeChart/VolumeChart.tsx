@@ -127,17 +127,12 @@ const VolumeChart = ({
         <svg width={width} height={height} ref={svg}>
             <g>
                 <GrayText x="16" y="32">
-                    Volume 24h
+                    Daily volume: {getDateString(selectedItem?.date?.getTime())}
                 </GrayText>
                 <LiquidityValue x="16" y="63">
                     $
                     {formatBalance(selectedItem?.volume * StellarService.priceLumenUsd, true, true)}
                 </LiquidityValue>
-                {selectedIndex !== null && (
-                    <GrayText x="16" y="87">
-                        {getDateString(selectedItem?.date?.getTime())}
-                    </GrayText>
-                )}
             </g>
 
             {processedData.map((item, i) => (
