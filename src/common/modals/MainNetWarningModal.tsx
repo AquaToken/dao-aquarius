@@ -42,7 +42,23 @@ const MainNetWarningModal = ({ confirm }) => {
     return (
         <Container>
             <ModalTitle>Warning: experimental functionality</ModalTitle>
-            <Alert text="You are about to send real funds to a Soroban smart contract that isn't yet audited. Use this functionality at your own risk." />
+            <Alert
+                text={
+                    <p>
+                        Please be informed that you can lose all your deposited funds.
+                        <br />
+                        <br />
+                        The protocol team has done its best to ensure the safety of the funds and is
+                        already working on the Soroban smart contract audits. The last audit took
+                        place in March 2024 addressing only basic functionality that was
+                        significantly improved since then.
+                        <br />
+                        <br />
+                        Clicking "I understand" you waive any claim to the protocol and the Aquarius
+                        team related to possible loss.
+                    </p>
+                }
+            />
 
             <CheckboxBlock>
                 <Checkbox label="Don’t show again" checked={checked} onChange={setChecked} />
