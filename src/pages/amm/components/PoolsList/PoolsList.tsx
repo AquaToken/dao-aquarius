@@ -173,7 +173,7 @@ const PoolsList = ({ pools, onUpdate, isUserList }: PoolsListProps) => {
                 const liquidity = new BigNumber(pool.liquidity?.toString()).div(1e7).toString();
                 const totalShare = new BigNumber(pool.total_share?.toString()).div(1e7).toString();
                 return (
-                    <PoolBlock>
+                    <PoolBlock key={pool.address}>
                         <PoolMain>
                             <Pair
                                 base={pool.assets[0]}

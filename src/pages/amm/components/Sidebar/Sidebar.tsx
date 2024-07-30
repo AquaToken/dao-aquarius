@@ -10,7 +10,7 @@ import useAuthStore from '../../../../store/authStore/useAuthStore';
 import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
 import { useEffect, useState } from 'react';
 import PageLoader from '../../../../common/basics/PageLoader';
-import { formatBalance } from '../../../../common/helpers/helpers';
+import { formatBalance, getAssetString } from '../../../../common/helpers/helpers';
 import Asset from '../../../vote/components/AssetDropdown/Asset';
 import { PoolExtended } from '../../api/types';
 
@@ -118,7 +118,7 @@ const Sidebar = ({ pool }: { pool: PoolExtended }) => {
                                 </span>
                             </SidebarRow>
                             {pool.assets.map((asset, index) => (
-                                <SidebarRow>
+                                <SidebarRow key={getAssetString(asset)}>
                                     <span>Pooled {asset.code}:</span>
                                     <span>
                                         {Number(pool.total_share)

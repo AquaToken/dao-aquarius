@@ -348,7 +348,7 @@ const DepositToPool = ({ params }) => {
             )}
             <Form>
                 {pool.assets.map((asset) => (
-                    <FormRow>
+                    <FormRow key={getAssetString(asset)}>
                         {account && account.getAssetBalance(asset) !== null && (
                             <Balance>
                                 Available:
@@ -425,7 +425,7 @@ const DepositToPool = ({ params }) => {
                         <span>{shares}</span>
                     </DescriptionRow>
                     {pool.assets.map((asset) => (
-                        <DescriptionRow>
+                        <DescriptionRow key={getAssetString(asset)}>
                             <span>
                                 Pooled {asset.code}{' '}
                                 {Boolean(rates) && (
