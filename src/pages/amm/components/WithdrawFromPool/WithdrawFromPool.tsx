@@ -201,7 +201,7 @@ const WithdrawFromPool = ({ params }: ModalProps<{ pool: PoolExtended }>) => {
 
                     <Details>
                         {pool.assets.map((asset) => (
-                            <DescriptionRow>
+                            <DescriptionRow key={getAssetString(asset)}>
                                 <span>Will receive {asset.code}</span>
                                 <span>
                                     {totalShares === null || reserves === null ? (
