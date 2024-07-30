@@ -1,4 +1,4 @@
-import { isConnected, requestAccess, signTransaction } from '@stellar/freighter-api';
+import { isConnected, signTransaction, requestAccess, isAllowed } from '@stellar/freighter-api';
 import * as StellarSdk from '@stellar/stellar-sdk';
 import EventService from './event.service';
 
@@ -12,7 +12,13 @@ export default class FreighterServiceClass {
     }
 
     async login() {
-        const publicKey = await requestAccess();
+        let publicKey = await requestAccess();
+        const isAccessGranted = await isAllowed();
+
+        // After idle timeout freighter don't return public key, we try again
+        if (!publicKey && isAccessGranted) {
+            publicKey = await requestAccess();
+        }
 
         this.event.trigger({
             type: FreighterEvents.login,
