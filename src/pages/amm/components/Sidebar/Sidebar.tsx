@@ -26,7 +26,7 @@ const Container = styled.aside`
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    margin-top: -18rem;
+    margin-top: -32rem;
     min-width: 35rem;
     z-index: 102;
 

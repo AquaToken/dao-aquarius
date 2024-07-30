@@ -8,7 +8,6 @@ import ArrowLeft from '../../../common/assets/img/icon-arrow-left.svg';
 import Tick from '../../../common/assets/img/icon-tick-white.svg';
 import {
     Back,
-    BackButton,
     Background,
     Content,
     Form,
@@ -41,6 +40,7 @@ import { BuildSignAndSubmitStatuses } from '../../../common/services/wallet-conn
 import MainNetWarningModal, {
     SHOW_PURPOSE_ALIAS_MAIN_NET,
 } from '../../../common/modals/MainNetWarningModal';
+import CircleButton from '../../../common/basics/CircleButton';
 
 const ErrorLabel = styled.span<{ isError?: boolean }>`
     color: ${({ isError }) => (isError ? COLORS.pinkRed : COLORS.paragraphText)};
@@ -425,10 +425,9 @@ const CreatePool = () => {
             <Background>
                 <Content>
                     <Back to={AmmRoutes.analytics}>
-                        <BackButton>
+                        <CircleButton label="Pools">
                             <ArrowLeft />
-                        </BackButton>
-                        <span>Pools</span>
+                        </CircleButton>
                     </Back>
                     <Title>Create Pool</Title>
                 </Content>

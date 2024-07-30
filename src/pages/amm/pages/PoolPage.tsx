@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { getPool } from '../api/api';
 import PageLoader from '../../../common/basics/PageLoader';
 import styled from 'styled-components';
@@ -25,6 +25,9 @@ import VolumeChart from '../components/VolumeChart/VolumeChart';
 import ExternalLink from '../../../common/basics/ExternalLink';
 import { BuildSignAndSubmitStatuses } from '../../../common/services/wallet-connect.service';
 import { PoolExtended } from '../api/types';
+import CircleButton from '../../../common/basics/CircleButton';
+import ArrowLeft from '../../../common/assets/img/icon-arrow-left.svg';
+import { AmmRoutes } from '../../../routes';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -39,6 +42,14 @@ const Background = styled.div`
 
     ${respondDown(Breakpoints.md)`
         padding: 1.6rem 0;
+    `}
+`;
+
+const BackButton = styled(CircleButton)`
+    margin-bottom: 7.2rem;
+
+    ${respondDown(Breakpoints.md)`
+        margin-bottom: 3.2rem;
     `}
 `;
 
@@ -204,6 +215,8 @@ const PoolPage = () => {
 
     const { account } = useAuthStore();
 
+    const history = useHistory();
+
     const updateIndex = useUpdateIndex(5000);
 
     useEffect(() => {
@@ -261,6 +274,14 @@ const PoolPage = () => {
         <MainBlock>
             <Background>
                 <Section>
+                    <BackButton
+                        label="Pools"
+                        onClick={() => {
+                            history.length ? history.goBack() : history.push(AmmRoutes.analytics);
+                        }}
+                    >
+                        <ArrowLeft />
+                    </BackButton>
                     <Pair
                         base={pool.assets[0]}
                         counter={pool.assets[1]}
