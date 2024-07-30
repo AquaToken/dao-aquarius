@@ -370,6 +370,7 @@ const SwapPage = () => {
                 setBestPathXDR(null);
                 setBestPath(null);
                 setBestPools(null);
+                setIsPriceReverted(false);
             }
         });
     };
@@ -407,6 +408,7 @@ const SwapPage = () => {
         setBestPathXDR(null);
         setBestPath(null);
         setBestPools(null);
+        setIsPriceReverted(false);
     };
 
     const addTrust = async () => {
