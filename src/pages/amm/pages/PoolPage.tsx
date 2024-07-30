@@ -336,7 +336,7 @@ const PoolPage = () => {
                         </SectionRow>
                         <SectionRow>
                             <span>Members: </span>
-                            <span>{pool.members.length}</span>
+                            <span>{pool.membersCount}</span>
                         </SectionRow>
                     </SectionWrap>
                 </Section>
