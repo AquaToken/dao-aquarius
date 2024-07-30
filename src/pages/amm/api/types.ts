@@ -68,6 +68,7 @@ export interface PoolExtended extends PoolProcessed {
     stats: PoolStatistics[];
     events: PoolEvent[];
     members: PoolBalance[];
+    membersCount: number;
 }
 
 export type NativePrice = {
