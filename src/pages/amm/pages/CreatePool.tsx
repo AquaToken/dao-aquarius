@@ -41,6 +41,7 @@ import { BuildSignAndSubmitStatuses } from '../../../common/services/wallet-conn
 import MainNetWarningModal, {
     SHOW_PURPOSE_ALIAS_MAIN_NET,
 } from '../../../common/modals/MainNetWarningModal';
+import Checkbox from '../../../common/basics/Checkbox';
 
 const ErrorLabel = styled.span<{ isError?: boolean }>`
     color: ${({ isError }) => (isError ? COLORS.pinkRed : COLORS.paragraphText)};
@@ -149,14 +150,25 @@ const TooltipInner = styled.span`
 `;
 
 const CreationFee = styled.div`
-    ${flexRowSpaceBetween};
     font-size: 1.6rem;
     margin-top: -2rem;
     margin-bottom: 3.2rem;
+    padding: 3rem 2.4rem;
+    background-color: ${COLORS.lightGray};
+`;
 
+const CreationFeeRow = styled.div`
+    ${flexRowSpaceBetween};
+    padding-bottom: 3rem;
+    border-bottom: 0.1rem dashed ${COLORS.gray};
     span:last-child {
         color: ${COLORS.grayText};
     }
+`;
+
+const StyledCheckbox = styled(Checkbox)`
+    margin: 3rem 0 0 auto;
+    width: fit-content;
 `;
 
 const FEE_OPTIONS = [
@@ -185,6 +197,8 @@ const CreatePool = () => {
     const [stableFee, setStableFee] = useState(STABLE_POOL_FEE_PERCENTS.min);
     const [pending, setPending] = useState(false);
     const [createInfo, setCreateInfo] = useState(null);
+
+    const [agreeWithFee, setAgreeWithFee] = useState(false);
 
     const [pools, setPools] = useState<PoolProcessed[] | null>(null);
 
@@ -622,15 +636,22 @@ const CreatePool = () => {
                                     ),
                                 ) && (
                                     <CreationFee>
-                                        <span>Pool creation fee:</span>
-                                        <span>
-                                            {formatBalance(
-                                                type === POOL_TYPE.stable
-                                                    ? createInfo.stableFee
-                                                    : createInfo.constantFee,
-                                            )}{' '}
-                                            {createInfo.token.code}
-                                        </span>
+                                        <CreationFeeRow>
+                                            <span>Pool creation fee:</span>
+                                            <span>
+                                                {formatBalance(
+                                                    type === POOL_TYPE.stable
+                                                        ? createInfo.stableFee
+                                                        : createInfo.constantFee,
+                                                )}{' '}
+                                                {createInfo.token.code}
+                                            </span>
+                                        </CreationFeeRow>
+                                        <StyledCheckbox
+                                            checked={agreeWithFee}
+                                            onChange={setAgreeWithFee}
+                                            label="I acknowledge the fee"
+                                        />
                                     </CreationFee>
                                 )}
                             <Button
@@ -639,6 +660,7 @@ const CreatePool = () => {
                                 onClick={() => createPoolWithWarning()}
                                 pending={pending}
                                 disabled={
+                                    !agreeWithFee ||
                                     !firstAsset ||
                                     !secondAsset ||
                                     (assetsCount > 2 && !thirdAsset) ||
