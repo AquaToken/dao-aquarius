@@ -22,6 +22,7 @@ import SwapIcon from '../../../common/assets/img/icon-arrows-circle.svg';
 import SettingsIcon from '../../../common/assets/img/icon-settings.svg';
 import Plus from '../../../common/assets/img/icon-plus.svg';
 import Info from '../../../common/assets/img/icon-info.svg';
+import Revert from '../../../common/assets/img/icon-revert.svg';
 import { useDebounce } from '../../../common/hooks/useDebounce';
 import Button from '../../../common/basics/Button';
 import { IconFail } from '../../../common/basics/Icons';
@@ -194,6 +195,14 @@ const RevertButton = styled.div`
 const Prices = styled.div`
     color: ${COLORS.grayText};
     margin-top: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    cursor: pointer;
+
+    svg {
+        margin-left: 0.6rem;
+    }
 `;
 
 const SettingsButton = styled.div`
@@ -278,6 +287,8 @@ const SwapPage = () => {
     const [estimatePending, setEstimatePending] = useState(false);
     const [trustlinePending, setTrustlinePending] = useState(false);
 
+    const [isPriceReverted, setIsPriceReverted] = useState(false);
+
     const debouncedAmount = useDebounce(baseAmount, 700);
 
     const params = useParams<{ source: string; destination: string }>();
@@ -359,6 +370,7 @@ const SwapPage = () => {
                 setBestPathXDR(null);
                 setBestPath(null);
                 setBestPools(null);
+                setIsPriceReverted(false);
             }
         });
     };
@@ -396,6 +408,7 @@ const SwapPage = () => {
         setBestPathXDR(null);
         setBestPath(null);
         setBestPools(null);
+        setIsPriceReverted(false);
     };
 
     const addTrust = async () => {
@@ -548,10 +561,15 @@ const SwapPage = () => {
                     </FormRow>
 
                     {baseAmount && counterAmount && !estimatePending && (
-                        <Prices>
-                            1 {base.code} = {formatBalance(+counterAmount / +baseAmount)}{' '}
-                            {counter.code} / 1 {counter.code} ={' '}
-                            {formatBalance(+baseAmount / +counterAmount)} {base.code}
+                        <Prices onClick={() => setIsPriceReverted((prevState) => !prevState)}>
+                            {isPriceReverted
+                                ? `1 ${counter.code} = ${formatBalance(
+                                      +baseAmount / +counterAmount,
+                                  )} ${base.code}`
+                                : `1 ${base.code} = ${formatBalance(
+                                      +counterAmount / +baseAmount,
+                                  )} ${counter.code}`}
+                            <Revert />
                         </Prices>
                     )}
 
