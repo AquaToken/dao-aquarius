@@ -208,27 +208,27 @@ const App = () => {
             <Suspense fallback={<PageLoader />}>
                 <Switch>
                     <Route exact path={MainRoutes.main}>
-                        <Title title="Liquidity management layer for Stellar | Aquarius">
+                        <Title title="Aquarius">
                             <MainPage />
                         </Title>
                     </Route>
                     <Route path={MainRoutes.locker}>
-                        <Title title="Aquarius Locker">
+                        <Title title="Locker">
                             <LockerPage />
                         </Title>
                     </Route>
                     <Route path={MainRoutes.governance}>
-                        <Title title="Aquarius Governance">
+                        <Title title="Governance">
                             <Governance />
                         </Title>
                     </Route>
                     <Route path={MainRoutes.vote}>
-                        <Title title="Aquarius Voting Tool">
+                        <Title title="Voting">
                             <VotePage />
                         </Title>
                     </Route>
                     <Route path={MainRoutes.bribes}>
-                        <Title title="Aquarius Bribes">
+                        <Title title="Bribes">
                             <BribesPage />
                         </Title>
                     </Route>
@@ -236,23 +236,17 @@ const App = () => {
                         <MarketPage />
                     </Route>
                     <Route path={MainRoutes.rewards}>
-                        <Title title="Aquarius Rewards">
-                            <RewardsPage />
-                        </Title>
-                    </Route>
-                    {/*TODO: Remove it later*/}
-                    <Route path={MainRoutes.rewardsV2}>
-                        <Title title="Aquarius Rewards">
+                        <Title title="Rewards">
                             <RewardsPage />
                         </Title>
                     </Route>
                     <Route path={MainRoutes.airdrop}>
-                        <Title title="Aquarius Airdrop">
+                        <Title title="Airdrop">
                             <AirdropPage />
                         </Title>
                     </Route>
                     <Route path={MainRoutes.airdrop2}>
-                        <Title title="Aquarius Airdrop #2">
+                        <Title title="Airdrop #2">
                             <Airdrop2Page />
                         </Title>
                     </Route>
