@@ -225,7 +225,7 @@ const MarketPage = () => {
     }
 
     return (
-        <Title title={`Market: ${baseAsset.code} / ${counterAsset.code}`}>
+        <Title title={`Staging: Market: ${baseAsset.code} / ${counterAsset.code}`}>
             <MainBlock>
                 <Background>
                     <MarketSection>

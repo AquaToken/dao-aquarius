@@ -208,27 +208,27 @@ const App = () => {
             <Suspense fallback={<PageLoader />}>
                 <Switch>
                     <Route exact path={MainRoutes.main}>
-                        <Title title="Aquarius">
+                        <Title title="Staging: Aquarius">
                             <MainPage />
                         </Title>
                     </Route>
                     <Route path={MainRoutes.locker}>
-                        <Title title="Locker">
+                        <Title title="Staging: Locker">
                             <LockerPage />
                         </Title>
                     </Route>
                     <Route path={MainRoutes.governance}>
-                        <Title title="Governance">
+                        <Title title="Staging: Governance">
                             <Governance />
                         </Title>
                     </Route>
                     <Route path={MainRoutes.vote}>
-                        <Title title="Voting">
+                        <Title title="Staging: Voting">
                             <VotePage />
                         </Title>
                     </Route>
                     <Route path={MainRoutes.bribes}>
-                        <Title title="Bribes">
+                        <Title title="Staging: Bribes">
                             <BribesPage />
                         </Title>
                     </Route>
@@ -236,41 +236,41 @@ const App = () => {
                         <MarketPage />
                     </Route>
                     <Route path={MainRoutes.rewards}>
-                        <Title title="Rewards">
+                        <Title title="Staging: Rewards">
                             <RewardsPage />
                         </Title>
                     </Route>
                     <Route path={MainRoutes.airdrop}>
-                        <Title title="Airdrop">
+                        <Title title="Staging: Airdrop">
                             <AirdropPage />
                         </Title>
                     </Route>
                     <Route path={MainRoutes.airdrop2}>
-                        <Title title="Airdrop #2">
+                        <Title title="Staging: Airdrop #2">
                             <Airdrop2Page />
                         </Title>
                     </Route>
 
                     <Route path={MainRoutes.account}>
-                        <Title title="My Aquarius">
+                        <Title title="Staging: My Aquarius">
                             {isLogged ? <ProfilePage /> : <Redirect to={MainRoutes.main} />}
                         </Title>
                     </Route>
 
                     <Route path={MainRoutes.walletConnect}>
-                        <Title title="WalletConnect">
+                        <Title title="Staging: WalletConnect">
                             <WalletConnectPage />
                         </Title>
                     </Route>
 
                     <Route path={MainRoutes.amm}>
-                        <Title title="Pools">
+                        <Title title="Staging: Pools">
                             <AmmPage />
                         </Title>
                     </Route>
 
                     <Route path={MainRoutes.swap}>
-                        <Title title="Swap">
+                        <Title title="Staging: Swap">
                             <SwapPage />
                         </Title>
                     </Route>
