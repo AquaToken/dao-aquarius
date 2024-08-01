@@ -235,6 +235,7 @@ const Analytics = () => {
                             <Chart>
                                 <VolumeChart
                                     data={totalStats}
+                                    isGlobalStat
                                     width={Math.min(576, +window.innerWidth - 64)}
                                     height={320}
                                 />
