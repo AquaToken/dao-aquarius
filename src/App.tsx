@@ -5,7 +5,11 @@ import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-d
 import useGlobalSubscriptions from './common/hooks/useGlobalSubscriptions';
 import useAssetsStore from './store/assetsStore/useAssetsStore';
 import useAuthStore from './store/authStore/useAuthStore';
-import { StellarService, WalletConnectService } from './common/services/globalServices';
+import {
+    ModalService,
+    StellarService,
+    WalletConnectService,
+} from './common/services/globalServices';
 import Header, {
     HeaderNavLink,
     HeaderNewNavLinks,
@@ -20,10 +24,14 @@ import { respondDown } from './common/mixins';
 import Provider from './store';
 import ModalContainer from './common/modals/atoms/ModalContainer';
 import Footer from './common/components/Footer/Footer';
-import { createGlobalStyle } from 'styled-components';
+import styled, { createGlobalStyle } from 'styled-components';
 import AppGlobalStyle from './common/components/AppGlobalStyles';
 import Governance from './pages/governance/Governance';
 import Title from 'react-document-title';
+import LiveOnSorobanAlert, {
+    LIVE_ON_SOROBAN_SHOWED_ALIAS,
+} from './common/modals/LiveOnSorobanAlert';
+import LiveOnSorobanImage from './common/assets/img/live-on-soroban.svg';
 
 const MainPage = lazy(() => import('./pages/main/MainPage'));
 const LockerPage = lazy(() => import('./pages/locker/Locker'));
@@ -40,6 +48,10 @@ const SwapPage = lazy(() => import('./pages/swap/Swap'));
 
 const UPDATE_ASSETS_DATE = 'update assets timestamp';
 const UPDATE_PERIOD = 24 * 60 * 60 * 1000;
+
+const BgStyled = styled(LiveOnSorobanImage)`
+    object-position: center center;
+`;
 
 const App = () => {
     const [wcLoginChecked, setWcLoginChecked] = useState(false);
@@ -123,6 +135,13 @@ const App = () => {
         if (userAgent.match(/iPad/i) || userAgent.match(/iPhone/i)) {
             document.documentElement.style.overflowX = 'unset';
             document.body.style.overflowX = 'unset';
+        }
+    }, []);
+
+    useEffect(() => {
+        const isShowed = localStorage.getItem(LIVE_ON_SOROBAN_SHOWED_ALIAS) || false;
+        if (!isShowed) {
+            ModalService.openModal(LiveOnSorobanAlert, {}, false, <BgStyled />);
         }
     }, []);
 
