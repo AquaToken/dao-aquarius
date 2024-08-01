@@ -1,19 +1,25 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { COLORS } from '../../../../common/styles';
+import { Breakpoints, COLORS } from '../../../../common/styles';
 import { getNativePrices } from '../../../amm/api/api';
 import { formatBalance, getAssetString } from '../../../../common/helpers/helpers';
 import { StellarService } from '../../../../common/services/globalServices';
 import { Asset } from '@stellar/stellar-sdk';
 import Warning from '../../../../common/assets/img/icon-warning.svg';
 import Tooltip, { TOOLTIP_POSITION } from '../../../../common/basics/Tooltip';
+import { respondDown } from '../../../../common/mixins';
 
 const Container = styled.div`
     display: flex;
     align-items: center;
     font-size: 1.6rem;
     color: ${COLORS.grayText};
+
+    ${respondDown(Breakpoints.md)`
+        font-size: 1.2rem;
+        flex-direction: column;
+    `}
 `;
 
 const Percent = styled.div<{ percent: number }>`
@@ -42,6 +48,10 @@ const TooltipInner = styled.span`
     white-space: pre-wrap;
     font-size: 1.4rem;
     line-height: 2rem;
+
+    ${respondDown(Breakpoints.md)`
+        width: 20rem;
+    `}
 `;
 
 interface Props {
@@ -79,10 +89,12 @@ const AmountUsdEquivalent = ({ amount, asset, sourceAmount, sourceAsset }: Props
             return null;
         }
 
-        return (
+        const result = (
             ((Number(amount) * price) / (Number(sourceAmount) * priceSource) - 1) *
             100
         ).toFixed(1);
+
+        return result === '-0.0' ? '0.0' : result;
     }, [price, priceSource, amount, sourceAmount]);
 
     if (!price || (sourceAsset && !priceSource)) {
@@ -91,11 +103,14 @@ const AmountUsdEquivalent = ({ amount, asset, sourceAmount, sourceAsset }: Props
 
     return (
         <Container>
-            ≈ $
-            {formatBalance(
-                +(Number(amount) * Number(price) * StellarService.priceLumenUsd).toFixed(2),
-                true,
-            )}
+            <span>
+                ≈ $
+                {formatBalance(
+                    +(Number(amount) * Number(price) * StellarService.priceLumenUsd).toFixed(2),
+                    true,
+                )}
+            </span>
+
             {percent ? (
                 <Percent percent={Number(percent)}>
                     ({Number(percent) > 0 ? '+' : ''}
@@ -105,12 +120,16 @@ const AmountUsdEquivalent = ({ amount, asset, sourceAmount, sourceAsset }: Props
                             showOnHover
                             content={
                                 <TooltipInner>
-                                    Swapping these tokens in the the submitted amount will create a
+                                    Swapping these tokens in the submitted amount will create a
                                     significant price impact misbalancing one or more pool ratios
                                     and thus reducing your outcome.
                                 </TooltipInner>
                             }
-                            position={TOOLTIP_POSITION.bottom}
+                            position={
+                                +window.innerWidth <= 992
+                                    ? TOOLTIP_POSITION.left
+                                    : TOOLTIP_POSITION.bottom
+                            }
                         >
                             <Warning />
                         </Tooltip>
