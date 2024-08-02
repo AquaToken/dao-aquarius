@@ -325,6 +325,7 @@ const Analytics = () => {
                                                             thirdAsset={pool.assets[2]}
                                                             fourthAsset={pool.assets[3]}
                                                             mobileVerticalDirections
+                                                            withoutLink
                                                         />
                                                     ),
                                                     flexSize: 4,
