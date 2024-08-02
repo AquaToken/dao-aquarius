@@ -513,10 +513,12 @@ const SwapPage = () => {
                             onChange={(e) => onAmountChange(e.target.value)}
                             label="From"
                             postfix={
-                                <AmountUsdEquivalent
-                                    amount={debouncedAmount.current}
-                                    asset={base}
-                                />
+                                Boolean(baseAmount) ? (
+                                    <AmountUsdEquivalent
+                                        amount={debouncedAmount.current}
+                                        asset={base}
+                                    />
+                                ) : null
                             }
                         />
 
