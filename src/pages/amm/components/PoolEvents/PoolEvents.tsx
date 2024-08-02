@@ -67,7 +67,7 @@ const getEventAmounts = (event, pool) => {
     );
 };
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 5;
 const getEventTime = (timeStr) => {
     const [date, time] = timeStr.split(' ');
 
