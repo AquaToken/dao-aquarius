@@ -644,7 +644,7 @@ export default class SorobanServiceClass {
                     this.amountToUint128(amounts.get(getAssetString(asset))),
                 ),
             ),
-            this.amountToUint128('0'),
+            this.amountToUint128('0.0000001'),
         ).then((tx) => this.prepareTransaction(tx));
     }
 
