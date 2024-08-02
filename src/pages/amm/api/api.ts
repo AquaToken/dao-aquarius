@@ -82,38 +82,54 @@ const getPoolStats = async (id: string): Promise<{ stats: PoolStatistics[] }> =>
     }
 };
 
-const getPoolMembers = async (
+export const getPoolMembers = async (
     id: string,
-): Promise<{ members: PoolBalance[]; membersCount: number }> => {
+    page: number,
+    size: number,
+): Promise<{ members: PoolBalance[]; total: number }> => {
     try {
         const { data } = await axios.get<ListResponse<PoolBalance>>(
-            `${API_URL}/pools/${id}/balances/?sort=-balance&size=20 `,
+            `${API_URL}/pools/${id}/balances/?sort=-balance&size=${size}&page=${page} `,
         );
-        return { members: data.items, membersCount: data.total };
+        return { members: data.items, total: data.total };
     } catch {
-        return { members: [], membersCount: 0 };
+        return { members: [], total: 0 };
     }
 };
 
-const getPoolEvents = async (id: string): Promise<{ events: PoolEvent[] }> => {
+const getPoolMembersCount = async (id: string): Promise<{ membersCount: number }> => {
+    try {
+        const { data } = await axios.get<ListResponse<PoolBalance>>(
+            `${API_URL}/pools/${id}/balances/?size=1 `,
+        );
+        return { membersCount: data.total };
+    } catch {
+        return { membersCount: 0 };
+    }
+};
+
+export const getPoolEvents = async (
+    id: string,
+    page: number,
+    size: number,
+): Promise<{ events: PoolEvent[]; total: number }> => {
     try {
         const { data } = await axios.get<ListResponse<PoolEvent>>(
-            `${API_URL}/events/pool/${id}/?size=20`,
+            `${API_URL}/events/pool/${id}/?size=${size}&page=${page}`,
         );
-        return { events: data.items };
+        return { events: data.items, total: data.total };
     } catch {
-        return { events: [] };
+        return { events: [], total: 0 };
     }
 };
 
 export const getPool = async (id: string): Promise<PoolExtended> => {
-    const [info, stats, members, events] = await Promise.all([
+    const [info, stats, membersCount] = await Promise.all([
         getPoolInfo(id),
         getPoolStats(id),
-        getPoolMembers(id),
-        getPoolEvents(id),
+        getPoolMembersCount(id),
     ]);
-    return Object.assign({}, info, stats, members, events);
+    return Object.assign({}, info, stats, membersCount);
 };
 
 export const getUserPools = (accountId: string): Promise<PoolUserProcessed[]> => {
