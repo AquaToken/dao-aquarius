@@ -16,10 +16,8 @@ import Sidebar from '../components/Sidebar/Sidebar';
 import { SorobanService, ToastService } from '../../../common/services/globalServices';
 import useAuthStore from '../../../store/authStore/useAuthStore';
 import Button from '../../../common/basics/Button';
-import { formatBalance, getDateString } from '../../../common/helpers/helpers';
+import { formatBalance } from '../../../common/helpers/helpers';
 import { useUpdateIndex } from '../../../common/hooks/useUpdateIndex';
-import AccountViewer from '../../../common/basics/AccountViewer';
-import Table from '../../../common/basics/Table';
 import LiquidityChart from '../components/LiquidityChart/LiquidityChart';
 import VolumeChart from '../components/VolumeChart/VolumeChart';
 import ExternalLink from '../../../common/basics/ExternalLink';
@@ -28,6 +26,8 @@ import { PoolExtended } from '../api/types';
 import CircleButton from '../../../common/basics/CircleButton';
 import ArrowLeft from '../../../common/assets/img/icon-arrow-left.svg';
 import { AmmRoutes } from '../../../routes';
+import PoolMembers from '../components/PoolMembers/PoolMembers';
+import PoolEvents from '../components/PoolEvents/PoolEvents';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -52,68 +52,6 @@ const BackButton = styled(CircleButton)`
         margin-bottom: 3.2rem;
     `}
 `;
-
-const Amounts = styled.span`
-    font-size: 1.4rem;
-
-    ${respondDown(Breakpoints.md)`
-        text-align: right;
-    `}
-`;
-
-const getEventTitle = (event, pool) => {
-    if (event.event_type === 'swap') {
-        const fromIndex = event.amounts.findIndex((amount) => amount > 0);
-        const toIndex = event.amounts.findIndex((amount) => amount < 0);
-
-        return `Swap ${pool.assets[fromIndex]?.code} to ${pool.assets[toIndex]?.code}`;
-    }
-
-    return event.event_type === 'deposit' ? 'Add liquidity' : 'Remove liquidity';
-};
-
-const getEventAmounts = (event, pool) => {
-    if (event.event_type === 'swap') {
-        const fromIndex = event.amounts.findIndex((amount) => amount > 0);
-        const toIndex = event.amounts.findIndex((amount) => amount < 0);
-
-        return (
-            <Amounts>
-                <span>
-                    {formatBalance(event.amounts[fromIndex] / 1e7)} {pool.assets[fromIndex]?.code}
-                </span>
-                <br />
-                <span>
-                    {formatBalance(Math.abs(event.amounts[toIndex] / 1e7))}{' '}
-                    {pool.assets[toIndex]?.code}
-                </span>
-            </Amounts>
-        );
-    }
-    return (
-        <Amounts>
-            {event.amounts.map((amount, index) => (
-                <span key={pool.tokens_str[index]}>
-                    <span>
-                        {formatBalance(amount / 1e7)} {pool.assets[index].code}
-                    </span>
-                    <br />
-                </span>
-            ))}
-        </Amounts>
-    );
-};
-
-const getEventTime = (timeStr) => {
-    const [date, time] = timeStr.split(' ');
-
-    const [year, month, day] = date.split('-');
-    const [hour, minute, second] = time.split(':');
-
-    return getDateString(new Date(Date.UTC(year, month - 1, day, hour, minute, second)).getTime(), {
-        withTime: true,
-    });
-};
 
 const Section = styled.section<{ smallTopPadding?: boolean }>`
     ${commonMaxWidth};
@@ -362,81 +300,17 @@ const PoolPage = () => {
                     </SectionWrap>
                 </Section>
 
-                {Boolean(pool.members.length) && (
-                    <Section>
-                        <SectionWrap>
-                            <h3>Pool members</h3>
-                            {pool.members
-                                .sort((a, b) => Number(b.balance) - Number(a.balance))
-                                .map((member) => (
-                                    <SectionRow key={member.account_address}>
-                                        <AccountViewer
-                                            pubKey={member.account_address}
-                                            narrowForMobile
-                                        />
-                                        <span>
-                                            {formatBalance(Number(member.balance) / 1e7, true)} (
-                                            {Number(pool.total_share)
-                                                ? formatBalance(
-                                                      (100 * Number(member.balance)) /
-                                                          1e7 /
-                                                          (Number(pool.total_share) / 1e7),
-                                                      true,
-                                                  )
-                                                : '0'}
-                                            %)
-                                        </span>
-                                    </SectionRow>
-                                ))}
-                        </SectionWrap>
-                    </Section>
-                )}
+                <Section>
+                    <SectionWrap>
+                        <PoolMembers poolId={pool.address} totalShare={pool.total_share} />
+                    </SectionWrap>
+                </Section>
 
-                {Boolean(pool.events.length) && (
-                    <Section>
-                        <SectionWrap>
-                            <h3>Transactions</h3>
-                            <Table
-                                head={[
-                                    { children: 'Type' },
-                                    { children: 'Amounts' },
-                                    { children: 'Account', flexSize: 1.5 },
-                                    { children: 'Time' },
-                                ]}
-                                body={pool.events.map((event, index) => {
-                                    return {
-                                        key: `${event.ledger}-${index}`,
-                                        mobileBackground: COLORS.lightGray,
-                                        rowItems: [
-                                            {
-                                                children: getEventTitle(event, pool),
-                                                label: 'Type:',
-                                            },
-                                            {
-                                                children: getEventAmounts(event, pool),
-                                                label: 'Amounts:',
-                                            },
-                                            {
-                                                children: (
-                                                    <AccountViewer
-                                                        pubKey={event.account_address}
-                                                        narrowForMobile
-                                                    />
-                                                ),
-                                                flexSize: 1.5,
-                                                label: 'Account:',
-                                            },
-                                            {
-                                                children: getEventTime(event.ledger_close_at_str),
-                                                label: 'Time:',
-                                            },
-                                        ],
-                                    };
-                                })}
-                            />
-                        </SectionWrap>
-                    </Section>
-                )}
+                <Section>
+                    <SectionWrap>
+                        <PoolEvents pool={pool} />
+                    </SectionWrap>
+                </Section>
             </Background>
         </MainBlock>
     );
