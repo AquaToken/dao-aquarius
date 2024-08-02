@@ -18,6 +18,7 @@ import LedgerSignTx from '../modals/LedgerModals/LedgerSignTx';
 import SentToVault from '../modals/MultisigModals/SentToVault';
 import { getNativePrices } from '../../pages/amm/api/api';
 import { getAssetString } from '../helpers/helpers';
+import BigNumber from 'bignumber.js';
 
 const VAULT_MARKER = 'GA2T6GR7VXXXBETTERSAFETHANSORRYXXXPROTECTEDBYLOBSTRVAULT';
 
@@ -126,13 +127,15 @@ export default class AccountService extends Horizon.AccountResponse {
             });
     }
 
-    getAssetBalance(asset) {
+    getAssetBalance(asset: Asset): number | null {
         if (asset.isNative()) {
             const nativeBalance = this.balances.find(
                 ({ asset_type }) => asset_type === 'native',
             ) as Horizon.HorizonApi.BalanceLineNative;
 
-            return Number(nativeBalance.balance) - Number(nativeBalance.selling_liabilities);
+            return new BigNumber(nativeBalance.balance)
+                .minus(nativeBalance.selling_liabilities)
+                .toNumber();
         }
         const assetBalance = this.balances.find(
             (balance) =>
@@ -144,7 +147,9 @@ export default class AccountService extends Horizon.AccountResponse {
             return null;
         }
 
-        return Number(assetBalance.balance) - Number(assetBalance.selling_liabilities);
+        return new BigNumber(assetBalance.balance)
+            .minus(assetBalance.selling_liabilities)
+            .toNumber();
     }
 
     getPoolBalance(id: string) {
@@ -222,9 +227,7 @@ export default class AccountService extends Horizon.AccountResponse {
             return null;
         }
 
-        return Number(
-            (Number(aquaBalance.balance) - Number(aquaBalance.selling_liabilities)).toFixed(7),
-        );
+        return new BigNumber(aquaBalance.balance).minus(aquaBalance.selling_liabilities).toNumber();
     }
 
     getAquaInOffers(): number | null {
@@ -248,13 +251,10 @@ export default class AccountService extends Horizon.AccountResponse {
 
         const reserve = (2 + this.subentry_count + this.num_sponsoring - this.num_sponsored) * 0.5;
 
-        const available = Number(
-            (
-                Number(nativeBalance.balance) -
-                reserve -
-                Number(nativeBalance.selling_liabilities)
-            ).toFixed(7),
-        );
+        const available = new BigNumber(nativeBalance.balance)
+            .minus(new BigNumber(reserve))
+            .minus(new BigNumber(nativeBalance.selling_liabilities))
+            .toNumber();
 
         return available > 0 ? available : 0;
     }
@@ -308,7 +308,7 @@ export default class AccountService extends Horizon.AccountResponse {
     }
 
     getAvailableForSwapBalance(asset: Asset) {
-        const FEE_RESERVE = 1; // reserve for fee
+        const FEE_RESERVE = 2; // reserve for fee
         if (asset.isNative()) {
             const available = this.getAvailableNativeBalance();
 
