@@ -9,6 +9,7 @@ import { COLORS } from '../../../../common/styles';
 import Pagination from '../../../../common/basics/Pagination';
 import PageLoader from '../../../../common/basics/PageLoader';
 import { Empty } from '../../../profile/YourVotes/YourVotes';
+import { useUpdateIndex } from '../../../../common/hooks/useUpdateIndex';
 
 const PAGE_SIZE = 10;
 
@@ -33,12 +34,19 @@ const PoolMembers = ({ poolId, totalShare }: { poolId: string; totalShare: strin
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(null);
 
+    const updateIndex = useUpdateIndex(5000);
+
     useEffect(() => {
-        getPoolMembers(poolId, page, PAGE_SIZE).then(({ members, total }) => {
-            setMembers(members);
-            setTotal(total);
-        });
-    }, [page]);
+        getPoolMembers(poolId, page, PAGE_SIZE).then(
+            ({ members, total, page: pageFromResponse }) => {
+                if (pageFromResponse !== page) {
+                    return;
+                }
+                setMembers(members);
+                setTotal(total);
+            },
+        );
+    }, [page, updateIndex]);
 
     if (!members) {
         return <PageLoader />;
