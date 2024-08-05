@@ -97,7 +97,7 @@ const AmountUsdEquivalent = ({ amount, asset, sourceAmount, sourceAsset }: Props
         return result === '-0.0' ? '0.0' : result;
     }, [price, priceSource, amount, sourceAmount]);
 
-    if (!price || (sourceAsset && !priceSource)) {
+    if (!amount || !price || (sourceAsset && !priceSource)) {
         return null;
     }
 
