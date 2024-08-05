@@ -13,7 +13,11 @@ import {
     respondDown,
 } from '../../../common/mixins';
 import Sidebar from '../components/Sidebar/Sidebar';
-import { SorobanService, ToastService } from '../../../common/services/globalServices';
+import {
+    SorobanService,
+    StellarService,
+    ToastService,
+} from '../../../common/services/globalServices';
 import useAuthStore from '../../../store/authStore/useAuthStore';
 import Button from '../../../common/basics/Button';
 import { formatBalance } from '../../../common/helpers/helpers';
@@ -28,6 +32,8 @@ import ArrowLeft from '../../../common/assets/img/icon-arrow-left.svg';
 import { AmmRoutes } from '../../../routes';
 import PoolMembers from '../components/PoolMembers/PoolMembers';
 import PoolEvents from '../components/PoolEvents/PoolEvents';
+import { AQUA_CODE, AQUA_ISSUER } from '../../../common/services/stellar.service';
+import NoTrustline from '../../../common/components/NoTrustline/NoTrustline';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -252,11 +258,19 @@ const PoolPage = () => {
                                     isBig
                                     onClick={() => claim()}
                                     pending={claimPending}
-                                    disabled={pool.claim_killed}
+                                    disabled={
+                                        pool.claim_killed ||
+                                        account?.getAssetBalance(
+                                            StellarService.createAsset(AQUA_CODE, AQUA_ISSUER),
+                                        ) === null
+                                    }
                                 >
                                     Claim rewards
                                 </Button>
                             </Rewards>
+                            <NoTrustline
+                                asset={StellarService.createAsset(AQUA_CODE, AQUA_ISSUER)}
+                            />
                         </SectionWrap>
                     </Section>
                 )}

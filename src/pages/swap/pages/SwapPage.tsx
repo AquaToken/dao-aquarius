@@ -14,13 +14,11 @@ import {
     ModalService,
     SorobanService,
     StellarService,
-    ToastService,
 } from '../../../common/services/globalServices';
 import PageLoader from '../../../common/basics/PageLoader';
 import Input from '../../../common/basics/Input';
 import SwapIcon from '../../../common/assets/img/icon-arrows-circle.svg';
 import SettingsIcon from '../../../common/assets/img/icon-settings.svg';
-import Plus from '../../../common/assets/img/icon-plus.svg';
 import Info from '../../../common/assets/img/icon-info.svg';
 import Revert from '../../../common/assets/img/icon-revert.svg';
 import { useDebounce } from '../../../common/hooks/useDebounce';
@@ -31,9 +29,6 @@ import { formatBalance, getAssetFromString, getAssetString } from '../../../comm
 import SwapConfirmModal from '../components/SwapConfirmModal/SwapConfirmModal';
 import SwapSettingsModal from '../components/SwapSettingsModal/SwapSettingsModal';
 import { findSwapPath } from '../../amm/api/api';
-import Asset from '../../vote/components/AssetDropdown/Asset';
-import { BuildSignAndSubmitStatuses } from '../../../common/services/wallet-connect.service';
-import ErrorHandler from '../../../common/helpers/error-handler';
 import { useHistory, useParams } from 'react-router-dom';
 import { MainRoutes } from '../../../routes';
 import { AQUA_CODE, AQUA_ISSUER } from '../../../common/services/stellar.service';
@@ -42,6 +37,7 @@ import MainNetWarningModal, {
     SHOW_PURPOSE_ALIAS_MAIN_NET,
 } from '../../../common/modals/MainNetWarningModal';
 import AmountUsdEquivalent from '../components/AmountUsdEquivalent/AmountUsdEquivalent';
+import NoTrustline from '../../../common/components/NoTrustline/NoTrustline';
 
 const Container = styled.main`
     background-color: ${COLORS.lightGray};
@@ -219,42 +215,6 @@ const SettingsButton = styled.div`
     }
 `;
 
-const TrustlineBlock = styled.div`
-    display: flex;
-    flex-direction: column;
-    padding: 3.2rem;
-    background-color: ${COLORS.lightGray};
-    margin-top: 1.6rem;
-    border-radius: 0.6rem;
-
-    p {
-        font-size: 1.6rem;
-        line-height: 2.8rem;
-        color: ${COLORS.grayText};
-    }
-`;
-
-const TrustlineBlockTitle = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    font-size: 1.6rem;
-    font-weight: 700;
-    line-height: 2.8rem;
-`;
-
-const TrustlineButton = styled(Button)`
-    width: fit-content;
-
-    ${respondDown(Breakpoints.md)`
-        width: 100%;
-        margin-top: 2rem;
-    `}
-    svg {
-        margin-left: 0.8rem;
-    }
-`;
-
 const TooltipInner = styled.div`
     display: flex;
     flex-direction: column;
@@ -288,7 +248,6 @@ const SwapPage = () => {
     const [bestPath, setBestPath] = useState(null);
     const [bestPools, setBestPools] = useState(null);
     const [estimatePending, setEstimatePending] = useState(false);
-    const [trustlinePending, setTrustlinePending] = useState(false);
 
     const [isPriceReverted, setIsPriceReverted] = useState(false);
 
@@ -416,31 +375,6 @@ const SwapPage = () => {
         setBestPath(null);
         setBestPools(null);
         setIsPriceReverted(false);
-    };
-
-    const addTrust = async () => {
-        setTrustlinePending(true);
-        try {
-            const op = StellarService.createAddTrustOperation(counter);
-
-            const tx = await StellarService.buildTx(account, op);
-
-            const result = await account.signAndSubmitTx(tx);
-
-            if (
-                (result as { status: BuildSignAndSubmitStatuses })?.status ===
-                BuildSignAndSubmitStatuses.pending
-            ) {
-                ToastService.showSuccessToast('More signatures required to complete');
-                return;
-            }
-            ToastService.showSuccessToast('Trusline added successfully');
-            setTrustlinePending(false);
-        } catch (e) {
-            const errorText = ErrorHandler(e);
-            ToastService.showErrorToast(errorText);
-            setTrustlinePending(false);
-        }
     };
 
     const setSource = (asset) => {
@@ -603,22 +537,7 @@ const SwapPage = () => {
                         </Error>
                     )}
 
-                    {account && account.getAssetBalance(counter) === null && (
-                        <TrustlineBlock>
-                            <TrustlineBlockTitle>
-                                <Asset asset={counter} onlyLogo />{' '}
-                                <span>{counter.code} trustline missing</span>
-                            </TrustlineBlockTitle>
-                            <p>
-                                You can't receive the {counter.code} asset because you haven't added
-                                this trustline. Please add the {counter.code} trustline to continue
-                                the transaction.
-                            </p>
-                            <TrustlineButton onClick={() => addTrust()} pending={trustlinePending}>
-                                add {counter.code} trustline <Plus />
-                            </TrustlineButton>
-                        </TrustlineBlock>
-                    )}
+                    <NoTrustline asset={counter} />
 
                     <StyledButton
                         isBig
