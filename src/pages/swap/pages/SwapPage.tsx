@@ -325,6 +325,7 @@ const SwapPage = () => {
                 .then((res) => {
                     if (!res.success) {
                         setError(true);
+                        setCounterAmount('');
                         setEstimatePending(false);
                     } else {
                         setError(false);
