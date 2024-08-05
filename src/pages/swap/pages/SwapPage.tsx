@@ -28,8 +28,8 @@ import Button from '../../../common/basics/Button';
 import { IconFail } from '../../../common/basics/Icons';
 import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
 import { formatBalance, getAssetFromString, getAssetString } from '../../../common/helpers/helpers';
-import SwapConfirmModal from '../conponents/SwapConfirmModal/SwapConfirmModal';
-import SwapSettingsModal from '../conponents/SwapSettingsModal/SwapSettingsModal';
+import SwapConfirmModal from '../components/SwapConfirmModal/SwapConfirmModal';
+import SwapSettingsModal from '../components/SwapSettingsModal/SwapSettingsModal';
 import { findSwapPath } from '../../amm/api/api';
 import Asset from '../../vote/components/AssetDropdown/Asset';
 import { BuildSignAndSubmitStatuses } from '../../../common/services/wallet-connect.service';
@@ -41,6 +41,7 @@ import Tooltip, { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
 import MainNetWarningModal, {
     SHOW_PURPOSE_ALIAS_MAIN_NET,
 } from '../../../common/modals/MainNetWarningModal';
+import AmountUsdEquivalent from '../components/AmountUsdEquivalent/AmountUsdEquivalent';
 
 const Container = styled.main`
     background-color: ${COLORS.lightGray};
@@ -135,7 +136,8 @@ const BalanceClickable = styled.span`
 `;
 
 const StyledInput = styled(Input)`
-    flex: 1.2;
+    flex: 1.4;
+    z-index: 50;
 `;
 
 const DropdownContainer = styled.div<{ $isOpen: boolean }>`
@@ -147,6 +149,7 @@ const DropdownContainer = styled.div<{ $isOpen: boolean }>`
     top: 0;
     left: 0;
     right: 0;
+    z-index: 100;
     `
             : `flex: 1;`}
 `;
@@ -322,10 +325,14 @@ const SwapPage = () => {
                 .then((res) => {
                     if (!res.success) {
                         setError(true);
+                        setCounterAmount('');
                         setEstimatePending(false);
                     } else {
                         setError(false);
                         setEstimatePending(false);
+                        if (!baseAmount) {
+                            return;
+                        }
                         setCounterAmount((Number(res.amount) / 1e7).toFixed(7));
                         setBestPathXDR(res.swap_chain_xdr);
                         setBestPath(res.tokens);
@@ -506,6 +513,14 @@ const SwapPage = () => {
                             value={baseAmount}
                             onChange={(e) => onAmountChange(e.target.value)}
                             label="From"
+                            postfix={
+                                Boolean(baseAmount) ? (
+                                    <AmountUsdEquivalent
+                                        amount={debouncedAmount.current}
+                                        asset={base}
+                                    />
+                                ) : null
+                            }
                         />
 
                         <DropdownContainer $isOpen={isBaseDropdownOpen}>
@@ -543,6 +558,14 @@ const SwapPage = () => {
                             value={counterAmount}
                             label="To(estimated)"
                             placeholder="0.0"
+                            postfix={
+                                <AmountUsdEquivalent
+                                    amount={counterAmount}
+                                    asset={counter}
+                                    sourceAmount={baseAmount}
+                                    sourceAsset={base}
+                                />
+                            }
                             disabled
                         />
 
