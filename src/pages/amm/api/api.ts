@@ -74,7 +74,7 @@ const getPoolInfo = async (id: string): Promise<PoolProcessed> => {
 const getPoolStats = async (id: string): Promise<{ stats: PoolStatistics[] }> => {
     try {
         const { data } = await axios.get<ListResponse<PoolStatistics>>(
-            `${API_URL}/statistics/pool/${id}/`,
+            `${API_URL}/statistics/pool/${id}/?size=1000`,
         );
         return { stats: data.items.reverse() };
     } catch {
