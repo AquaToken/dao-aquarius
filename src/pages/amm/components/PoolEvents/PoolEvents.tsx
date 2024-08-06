@@ -98,7 +98,7 @@ const PoolEvents = ({ pool }: { pool: PoolExtended }) => {
     if (!events.length) {
         return (
             <div>
-                <Title>Pool members</Title>
+                <Title>Transactions</Title>
                 <Empty>
                     <h3>There's nothing here.</h3>
                 </Empty>
