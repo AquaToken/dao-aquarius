@@ -3,6 +3,12 @@ const webpack = require('webpack');
 const { merge } = require('webpack-merge');
 const commonConfig = require('./common');
 
+const dotenv = require('dotenv');
+
+const wcProjectId = dotenv.config().parsed
+    ? dotenv.config().parsed.WALLET_CONNECT_PROJECT_ID
+    : null;
+
 module.exports = merge(commonConfig, {
     mode: 'development',
     entry: [
@@ -18,6 +24,10 @@ module.exports = merge(commonConfig, {
     devtool: 'cheap-module-source-map',
     plugins: [
         new webpack.DefinePlugin({
+            'process.env': JSON.stringify({
+                WALLET_CONNECT_PROJECT_ID: wcProjectId,
+                SENTRY_CONTEXT: null,
+            }),
             'process.horizon': JSON.stringify({
                 HORIZON_SERVER: 'https://horizon.stellar.org',
             }),

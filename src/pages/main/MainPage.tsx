@@ -9,6 +9,7 @@ import IceBlock from './components/IceBlock/IceBlock';
 import Roadmap from './components/Roadmap/Roadmap';
 import Community from '../../common/components/Community/Community';
 import Subscribe from '../../common/components/Subscribe/Subscribe';
+import { useEffect } from 'react';
 
 const Container = styled.div`
     height: 100%;
