@@ -119,8 +119,13 @@ const SwapConfirmModal = ({ params, confirm }) => {
             })
             .catch((e) => {
                 console.log(e);
+
+                const errorMessage = e.message ?? e.toString() ?? 'Oops! Something went wrong';
+
                 ToastService.showErrorToast(
-                    e.message ?? e.toString() ?? 'Oops! Something went wrong',
+                    errorMessage === 'The amount is too small to deposit to this pool'
+                        ? 'Price expired, please submit a swap again'
+                        : errorMessage,
                 );
                 setSwapPending(false);
             });
