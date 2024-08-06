@@ -86,14 +86,14 @@ export const getPoolMembers = async (
     id: string,
     page: number,
     size: number,
-): Promise<{ members: PoolBalance[]; total: number }> => {
+): Promise<{ members: PoolBalance[]; total: number; page: number }> => {
     try {
         const { data } = await axios.get<ListResponse<PoolBalance>>(
             `${API_URL}/pools/${id}/balances/?sort=-balance&size=${size}&page=${page} `,
         );
-        return { members: data.items, total: data.total };
+        return { members: data.items, total: data.total, page: data.page };
     } catch {
-        return { members: [], total: 0 };
+        return { members: [], total: 0, page: 1 };
     }
 };
 
@@ -112,14 +112,14 @@ export const getPoolEvents = async (
     id: string,
     page: number,
     size: number,
-): Promise<{ events: PoolEvent[]; total: number }> => {
+): Promise<{ events: PoolEvent[]; total: number; page: number }> => {
     try {
         const { data } = await axios.get<ListResponse<PoolEvent>>(
             `${API_URL}/events/pool/${id}/?size=${size}&page=${page}`,
         );
-        return { events: data.items, total: data.total };
+        return { events: data.items, total: data.total, page: data.page };
     } catch {
-        return { events: [], total: 0 };
+        return { events: [], total: 0, page: 1 };
     }
 };
 

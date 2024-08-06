@@ -11,6 +11,7 @@ import { formatBalance, getDateString } from '../../../../common/helpers/helpers
 import { respondDown } from '../../../../common/mixins';
 import { PoolExtended } from '../../api/types';
 import Pagination from '../../../../common/basics/Pagination';
+import { useUpdateIndex } from '../../../../common/hooks/useUpdateIndex';
 
 const Title = styled.h3`
     margin-bottom: 2.4rem;
@@ -84,12 +85,19 @@ const PoolEvents = ({ pool }: { pool: PoolExtended }) => {
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(null);
 
+    const updateIndex = useUpdateIndex(5000);
+
     useEffect(() => {
-        getPoolEvents(pool.address, page, PAGE_SIZE).then(({ events, total }) => {
-            setEvents(events);
-            setTotal(total);
-        });
-    }, [page]);
+        getPoolEvents(pool.address, page, PAGE_SIZE).then(
+            ({ events, total, page: pageFromResponse }) => {
+                if (pageFromResponse !== page) {
+                    return;
+                }
+                setEvents(events);
+                setTotal(total);
+            },
+        );
+    }, [page, updateIndex]);
 
     if (!events) {
         return <PageLoader />;
