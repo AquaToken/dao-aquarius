@@ -169,8 +169,11 @@ const WithdrawFromPool = ({ params }: ModalProps<{ pool: PoolExtended }>) => {
             })
             .catch((e) => {
                 console.log(e);
+                const errorMessage = e.message ?? e.toString() ?? 'Oops! Something went wrong';
                 ToastService.showErrorToast(
-                    e.message ?? e.toString() ?? 'Oops! Something went wrong',
+                    errorMessage === 'The amount is too small to deposit to this pool'
+                        ? 'The amount is too small to withdraw from this pool'
+                        : errorMessage,
                 );
                 setPending(false);
             });
