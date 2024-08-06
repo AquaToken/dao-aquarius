@@ -11,7 +11,7 @@ import { SorobanErrorHandler, SorobanPrepareTxErrorHandler } from '../helpers/er
 import BigNumber from 'bignumber.js';
 
 const SOROBAN_SERVER = 'https://soroban-rpc.aqua.network/';
-export const AMM_SMART_CONTACT_ID = 'CBQDHNBFBZYE4MKPWBSJOPIYLW4SFSXAXUTSXJN76GNKYVYPCKWC6QUK';
+export const AMM_SMART_CONTACT_ID = 'CA7RQDMMV6E53P5EDZA5GPWBZ33AMW2ZNO42XLI2RGRIAP4QXIARUOJQ';
 
 enum AMM_CONTRACT_METHOD {
     GET_POOLS = 'get_pools',

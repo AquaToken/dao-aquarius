@@ -16,7 +16,7 @@ import {
     PoolUserProcessed,
 } from './types';
 
-const API_URL = 'https://amm-api.aqua.network';
+const API_URL = 'https://amm-api-staging.aqua.network';
 
 export enum FilterOptions {
     all = '',
