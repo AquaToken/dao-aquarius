@@ -12,6 +12,19 @@ const branchName =
     childProcess.execSync('git rev-parse --abbrev-ref HEAD').toString().trim();
 
 const isMaster = branchName === 'master';
+const isStaging = branchName === 'staging';
+
+let context = null;
+switch (true) {
+    case isMaster: {
+        context = 'production';
+        break;
+    }
+    case isStaging: {
+        context = 'staging';
+        break;
+    }
+}
 
 module.exports = merge(commonConfig, {
     mode: 'production',
@@ -33,6 +46,10 @@ module.exports = merge(commonConfig, {
             ],
         }),
         new webpack.DefinePlugin({
+            'process.env': JSON.stringify({
+                WALLET_CONNECT_PROJECT_ID: process.env.WALLET_CONNECT_PROJECT_ID,
+                SENTRY_CONTEXT: context,
+            }),
             'process.horizon': JSON.stringify({
                 HORIZON_SERVER: isMaster
                     ? 'https://aqua.network/horizon'

@@ -32,6 +32,8 @@ import LiveOnSorobanAlert, {
     LIVE_ON_SOROBAN_SHOWED_ALIAS,
 } from './common/modals/LiveOnSorobanAlert';
 import LiveOnSorobanImage from './common/assets/img/live-on-soroban.svg';
+import ErrorBoundary from './common/components/ErrorBoundary/ErrorBoundary';
+import SentryService from './common/services/sentry.service';
 
 const MainPage = lazy(() => import('./pages/main/MainPage'));
 const LockerPage = lazy(() => import('./pages/locker/Locker'));
@@ -116,6 +118,20 @@ const App = () => {
     }, [isLogged]);
 
     useEffect(() => {
+        if (isLogged) {
+            SentryService.setSentryContext({
+                publicKey: account.accountId(),
+                authType: account.authType,
+            });
+        } else {
+            SentryService.setSentryContext({
+                publicKey: null,
+                authType: null,
+            });
+        }
+    }, [isLogged]);
+
+    useEffect(() => {
         if (isLogged && Boolean(redirectURL)) {
             disableRedirect();
         }
@@ -151,156 +167,158 @@ const App = () => {
 
     return (
         <Router>
-            {isLogged && Boolean(redirectURL) && <Redirect to={redirectURL} />}
-            <Header>
-                <>
-                    <HeaderNewNavLinks>
+            <ErrorBoundary>
+                {isLogged && Boolean(redirectURL) && <Redirect to={redirectURL} />}
+                <Header>
+                    <>
+                        <HeaderNewNavLinks>
+                            <HeaderNavLink
+                                to={AmmRoutes.analytics}
+                                activeStyle={{
+                                    fontWeight: 700,
+                                }}
+                                title="Pools"
+                            >
+                                Pools
+                            </HeaderNavLink>
+                            <HeaderNavLink
+                                to={MainRoutes.swap}
+                                activeStyle={{
+                                    fontWeight: 700,
+                                }}
+                                title="Swap"
+                            >
+                                Swap
+                            </HeaderNavLink>
+                        </HeaderNewNavLinks>
+
+                        <NavLinksDivider />
                         <HeaderNavLink
-                            to={AmmRoutes.analytics}
+                            to={MainRoutes.vote}
+                            exact
                             activeStyle={{
                                 fontWeight: 700,
                             }}
-                            title="Pools"
+                            title="Voting"
                         >
-                            Pools
+                            Voting
                         </HeaderNavLink>
                         <HeaderNavLink
-                            to={MainRoutes.swap}
+                            to={MainRoutes.rewards}
                             activeStyle={{
                                 fontWeight: 700,
                             }}
-                            title="Swap"
+                            title="Rewards"
                         >
-                            Swap
+                            Rewards
                         </HeaderNavLink>
-                    </HeaderNewNavLinks>
+                        <HeaderNavLink
+                            to={MainRoutes.bribes}
+                            activeStyle={{
+                                fontWeight: 700,
+                            }}
+                            title="Bribes"
+                        >
+                            Bribes
+                        </HeaderNavLink>
+                        <HeaderNavLink
+                            to={MainRoutes.locker}
+                            activeStyle={{
+                                fontWeight: 700,
+                            }}
+                            title="Locker"
+                        >
+                            Locker
+                        </HeaderNavLink>
+                        <HeaderNavLink
+                            to={MainRoutes.governance}
+                            activeStyle={{
+                                fontWeight: 700,
+                            }}
+                            title="Governance"
+                        >
+                            Governance
+                        </HeaderNavLink>
+                    </>
+                </Header>
+                <Suspense fallback={<PageLoader />}>
+                    <Switch>
+                        <Route exact path={MainRoutes.main}>
+                            <Title title="Staging: Aquarius">
+                                <MainPage />
+                            </Title>
+                        </Route>
+                        <Route path={MainRoutes.locker}>
+                            <Title title="Staging: Locker">
+                                <LockerPage />
+                            </Title>
+                        </Route>
+                        <Route path={MainRoutes.governance}>
+                            <Title title="Staging: Governance">
+                                <Governance />
+                            </Title>
+                        </Route>
+                        <Route path={MainRoutes.vote}>
+                            <Title title="Staging: Voting">
+                                <VotePage />
+                            </Title>
+                        </Route>
+                        <Route path={MainRoutes.bribes}>
+                            <Title title="Staging: Bribes">
+                                <BribesPage />
+                            </Title>
+                        </Route>
+                        <Route path={MainRoutes.market}>
+                            <MarketPage />
+                        </Route>
+                        <Route path={MainRoutes.rewards}>
+                            <Title title="Staging: Rewards">
+                                <RewardsPage />
+                            </Title>
+                        </Route>
+                        <Route path={MainRoutes.airdrop}>
+                            <Title title="Staging: Airdrop">
+                                <AirdropPage />
+                            </Title>
+                        </Route>
+                        <Route path={MainRoutes.airdrop2}>
+                            <Title title="Staging: Airdrop #2">
+                                <Airdrop2Page />
+                            </Title>
+                        </Route>
 
-                    <NavLinksDivider />
-                    <HeaderNavLink
-                        to={MainRoutes.vote}
-                        exact
-                        activeStyle={{
-                            fontWeight: 700,
-                        }}
-                        title="Voting"
-                    >
-                        Voting
-                    </HeaderNavLink>
-                    <HeaderNavLink
-                        to={MainRoutes.rewards}
-                        activeStyle={{
-                            fontWeight: 700,
-                        }}
-                        title="Rewards"
-                    >
-                        Rewards
-                    </HeaderNavLink>
-                    <HeaderNavLink
-                        to={MainRoutes.bribes}
-                        activeStyle={{
-                            fontWeight: 700,
-                        }}
-                        title="Bribes"
-                    >
-                        Bribes
-                    </HeaderNavLink>
-                    <HeaderNavLink
-                        to={MainRoutes.locker}
-                        activeStyle={{
-                            fontWeight: 700,
-                        }}
-                        title="Locker"
-                    >
-                        Locker
-                    </HeaderNavLink>
-                    <HeaderNavLink
-                        to={MainRoutes.governance}
-                        activeStyle={{
-                            fontWeight: 700,
-                        }}
-                        title="Governance"
-                    >
-                        Governance
-                    </HeaderNavLink>
-                </>
-            </Header>
-            <Suspense fallback={<PageLoader />}>
-                <Switch>
-                    <Route exact path={MainRoutes.main}>
-                        <Title title="Staging: Aquarius">
-                            <MainPage />
-                        </Title>
-                    </Route>
-                    <Route path={MainRoutes.locker}>
-                        <Title title="Staging: Locker">
-                            <LockerPage />
-                        </Title>
-                    </Route>
-                    <Route path={MainRoutes.governance}>
-                        <Title title="Staging: Governance">
-                            <Governance />
-                        </Title>
-                    </Route>
-                    <Route path={MainRoutes.vote}>
-                        <Title title="Staging: Voting">
-                            <VotePage />
-                        </Title>
-                    </Route>
-                    <Route path={MainRoutes.bribes}>
-                        <Title title="Staging: Bribes">
-                            <BribesPage />
-                        </Title>
-                    </Route>
-                    <Route path={MainRoutes.market}>
-                        <MarketPage />
-                    </Route>
-                    <Route path={MainRoutes.rewards}>
-                        <Title title="Staging: Rewards">
-                            <RewardsPage />
-                        </Title>
-                    </Route>
-                    <Route path={MainRoutes.airdrop}>
-                        <Title title="Staging: Airdrop">
-                            <AirdropPage />
-                        </Title>
-                    </Route>
-                    <Route path={MainRoutes.airdrop2}>
-                        <Title title="Staging: Airdrop #2">
-                            <Airdrop2Page />
-                        </Title>
-                    </Route>
+                        <Route path={MainRoutes.account}>
+                            <Title title="Staging: My Aquarius">
+                                {isLogged ? <ProfilePage /> : <Redirect to={MainRoutes.main} />}
+                            </Title>
+                        </Route>
 
-                    <Route path={MainRoutes.account}>
-                        <Title title="Staging: My Aquarius">
-                            {isLogged ? <ProfilePage /> : <Redirect to={MainRoutes.main} />}
-                        </Title>
-                    </Route>
+                        <Route path={MainRoutes.walletConnect}>
+                            <Title title="Staging: WalletConnect">
+                                <WalletConnectPage />
+                            </Title>
+                        </Route>
 
-                    <Route path={MainRoutes.walletConnect}>
-                        <Title title="Staging: WalletConnect">
-                            <WalletConnectPage />
-                        </Title>
-                    </Route>
+                        <Route path={MainRoutes.amm}>
+                            <Title title="Staging: Pools">
+                                <AmmPage />
+                            </Title>
+                        </Route>
 
-                    <Route path={MainRoutes.amm}>
-                        <Title title="Staging: Pools">
-                            <AmmPage />
-                        </Title>
-                    </Route>
+                        <Route path={MainRoutes.swap}>
+                            <Title title="Staging: Swap">
+                                <SwapPage />
+                            </Title>
+                        </Route>
 
-                    <Route path={MainRoutes.swap}>
-                        <Title title="Staging: Swap">
-                            <SwapPage />
-                        </Title>
-                    </Route>
+                        <Route component={NotFoundPage} />
+                    </Switch>
+                </Suspense>
+                <Footer />
 
-                    <Route component={NotFoundPage} />
-                </Switch>
-            </Suspense>
-            <Footer />
-
-            <ModalContainer />
-            <ToastContainer />
+                <ModalContainer />
+                <ToastContainer />
+            </ErrorBoundary>
         </Router>
     );
 };

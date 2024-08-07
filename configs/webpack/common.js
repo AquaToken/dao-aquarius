@@ -3,12 +3,6 @@ const webpack = require('webpack');
 const { resolve } = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-const dotenv = require('dotenv');
-
-const wcProjectId = dotenv.config().parsed
-    ? dotenv.config().parsed.WALLET_CONNECT_PROJECT_ID
-    : null;
-
 module.exports = {
     resolve: {
         extensions: ['.js', '.jsx', '.ts', '.tsx'],
@@ -44,11 +38,6 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({ template: 'index.html.ejs' }),
-        new webpack.DefinePlugin({
-            'process.env': JSON.stringify({
-                WALLET_CONNECT_PROJECT_ID: wcProjectId || process.env.WALLET_CONNECT_PROJECT_ID,
-            }),
-        }),
         new webpack.ProvidePlugin({
             Buffer: ['buffer', 'Buffer'],
         }),
