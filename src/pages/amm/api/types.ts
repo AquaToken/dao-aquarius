@@ -28,6 +28,8 @@ export type Pool = {
     liquidity: string;
     reward_tps: string;
     total_share?: string;
+    apy: string;
+    rewards_apy: string;
 };
 
 export interface PoolUser extends Pool {

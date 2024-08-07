@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { respondDown } from '../mixins';
+import { flexAllCenter, respondDown } from '../mixins';
 import { Breakpoints, COLORS } from '../styles';
 import * as React from 'react';
 import { useCallback, useState } from 'react';
@@ -17,7 +17,7 @@ const TooltipInner = styled.div`
     }
 
     ${respondDown(Breakpoints.md)`
-        width: 20rem;
+        width: 15rem;
     `}
 `;
 
@@ -31,11 +31,13 @@ const LabelInner = styled.div<{
     isGreen?: boolean;
     isDark?: boolean;
     isBlue?: boolean;
+    isWhite?: boolean;
 }>`
+    ${flexAllCenter};
     height: 1.6rem;
     padding: 0 0.4rem;
     border-radius: 0.3rem;
-    background: ${({ isRed, isGreen, isDark, isBlue }) => {
+    background: ${({ isRed, isGreen, isDark, isBlue, isWhite }) => {
         if (isRed) {
             return COLORS.pinkRed;
         }
@@ -48,14 +50,19 @@ const LabelInner = styled.div<{
         if (isBlue) {
             return COLORS.blue;
         }
+        if (isWhite) {
+            return COLORS.white;
+        }
         return COLORS.purple;
     }};
-    color: ${COLORS.white};
+    color: ${({ isWhite }) => (isWhite ? COLORS.purple : COLORS.white)};
+    border: ${({ isWhite }) => (isWhite ? `0.1rem solid ${COLORS.purple}` : 'none')};
     text-transform: uppercase;
     font-weight: 500;
     font-size: 0.8rem;
     line-height: 1.8rem;
     cursor: help;
+    white-space: nowrap;
 `;
 
 const SCROLL_OFFSET = window.navigator.userAgent.indexOf('win') > -1 ? 20 : 0;
@@ -67,6 +74,7 @@ const Label = ({
     isRed,
     isDark,
     isBlue,
+    isWhite,
     ...props
 }: {
     title: string;
@@ -75,6 +83,7 @@ const Label = ({
     isRed?: boolean;
     isDark?: boolean;
     isBlue?: boolean;
+    isWhite?: boolean;
 }) => {
     const [isEnoughSpaceOnTop, setIsEnoughSpaceOnTop] = useState(true);
     const [isRightOriented, setIsRightOriented] = useState(true);
@@ -97,7 +106,13 @@ const Label = ({
 
     if (!text) {
         return (
-            <LabelInner isGreen={isGreen} isRed={isRed} isDark={isDark} isBlue={isBlue}>
+            <LabelInner
+                isGreen={isGreen}
+                isRed={isRed}
+                isDark={isDark}
+                isBlue={isBlue}
+                isWhite={isWhite}
+            >
                 {title}
             </LabelInner>
         );
@@ -125,6 +140,7 @@ const Label = ({
                     isRed={isRed}
                     isDark={isDark}
                     isBlue={isBlue}
+                    isWhite={isWhite}
                     {...props}
                 >
                     {title}
