@@ -638,7 +638,8 @@ const CreatePool = () => {
                                             Pool fees are paid by users who swap assets to users who
                                             provided liquidity to this pool. Creation of the pool
                                             doesn't give a creator any benefit. A typical use case
-                                            for pool creation is when.
+                                            for pool creation is when an asset issuer creates needs
+                                            more exposure to the market.
                                         </TooltipInner>
                                     }
                                     position={TOOLTIP_POSITION.top}
