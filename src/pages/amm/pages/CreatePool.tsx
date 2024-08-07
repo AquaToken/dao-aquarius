@@ -6,12 +6,14 @@ import { Breakpoints, COLORS } from '../../../common/styles';
 import { AmmRoutes } from '../../../routes';
 import ArrowLeft from '../../../common/assets/img/icon-arrow-left.svg';
 import Tick from '../../../common/assets/img/icon-tick-white.svg';
+import Info from '../../../common/assets/img/icon-info.svg';
 import {
     Back,
     Background,
     Content,
     Form,
     FormSection,
+    FormSectionDescription,
     FormSectionTitle,
     FormWrap,
     MainBlock,
@@ -69,6 +71,18 @@ const StyledFormSection = styled(FormSection)`
     `}
 `;
 
+const StyledFormSectionDescription = styled(FormSectionDescription)`
+    margin-top: 0.8rem;
+    display: flex;
+    align-items: center;
+    margin-bottom: 0;
+
+    svg {
+        margin: 0 0.8rem;
+        cursor: help;
+    }
+`;
+
 const FormDescription = styled.span`
     font-size: 1.6rem;
     line-height: 2.8rem;
@@ -118,10 +132,16 @@ const FormRow = styled.div`
     gap: 5.4rem;
     margin-top: 3.7rem;
     margin-bottom: 5.8rem;
+    padding-bottom: 5.8rem;
+    border-bottom: 0.1rem solid ${COLORS.gray};
 
     ${respondDown(Breakpoints.sm)`
         flex-direction: column;
     `}
+`;
+
+const StyledInput = styled(Input)`
+    margin-top: 1.6rem;
 `;
 
 const AddRowButton = styled(Button)`
@@ -143,6 +163,7 @@ const TooltipInner = styled.span`
     font-weight: 400;
     width: 20rem;
     white-space: pre-line;
+    color: ${COLORS.white}!important;
 
     ${respondDown(Breakpoints.sm)`
         width: 9rem;
@@ -151,7 +172,6 @@ const TooltipInner = styled.span`
 
 const CreationFee = styled.div`
     font-size: 1.6rem;
-    margin-top: -2rem;
     margin-bottom: 3.2rem;
     padding: 3rem 2.4rem;
     background-color: ${COLORS.lightGray};
@@ -161,8 +181,16 @@ const CreationFeeRow = styled.div`
     ${flexRowSpaceBetween};
     padding-bottom: 3rem;
     border-bottom: 0.1rem dashed ${COLORS.gray};
-    span:last-child {
+
+    span:first-child {
+        display: flex;
+        align-items: center;
         color: ${COLORS.grayText};
+
+        svg {
+            margin: 0 0.8rem;
+            cursor: help;
+        }
     }
 `;
 
@@ -601,9 +629,26 @@ const CreatePool = () => {
                         </StyledFormSection>
                         <StyledFormSection>
                             <FormSectionTitle>Fees</FormSectionTitle>
+                            <StyledFormSectionDescription>
+                                Pool swap fees
+                                <Tooltip
+                                    showOnHover
+                                    content={
+                                        <TooltipInner>
+                                            Pool fees are paid by users who swap assets to users who
+                                            provided liquidity to this pool. Creation of the pool
+                                            doesn't give a creator any benefit. A typical use case
+                                            for pool creation is when.
+                                        </TooltipInner>
+                                    }
+                                    position={TOOLTIP_POSITION.top}
+                                >
+                                    <Info />
+                                </Tooltip>
+                            </StyledFormSectionDescription>
                             {type === POOL_TYPE.stable ? (
                                 <FormRow>
-                                    <Input
+                                    <StyledInput
                                         label={
                                             <ErrorLabel isError={isStableFeeInputError}>
                                                 {isStableFeeInputError
@@ -636,7 +681,24 @@ const CreatePool = () => {
                                 ) && (
                                     <CreationFee>
                                         <CreationFeeRow>
-                                            <span>Pool creation fee:</span>
+                                            <span>
+                                                Pool creation fee
+                                                <Tooltip
+                                                    showOnHover
+                                                    content={
+                                                        <TooltipInner>
+                                                            Pool creation fee is introduced to
+                                                            prevent abuse and spam activities and
+                                                            ensure that creators have valid reasons
+                                                            to create a pool (e.g. support their
+                                                            project token).
+                                                        </TooltipInner>
+                                                    }
+                                                    position={TOOLTIP_POSITION.top}
+                                                >
+                                                    <Info />
+                                                </Tooltip>
+                                            </span>
                                             <span>
                                                 {formatBalance(
                                                     type === POOL_TYPE.stable
