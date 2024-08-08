@@ -306,11 +306,7 @@ const Pair = ({
                     mobileVerticalDirections={mobileVerticalDirections}
                     verticalDirections={verticalDirections}
                 >
-                    <AssetLogo
-                        logoUrl={baseInfo?.image}
-                        isBig={isBigLogo}
-                        isCircle={isCircleLogos}
-                    />
+                    <AssetLogo asset={base} isBig={isBigLogo} isCircle={isCircleLogos} />
                 </Icon>
                 <Icon
                     key={counterInfo?.asset_string}
@@ -321,11 +317,7 @@ const Pair = ({
                     mobileVerticalDirections={mobileVerticalDirections}
                     verticalDirections={verticalDirections}
                 >
-                    <AssetLogo
-                        logoUrl={counterInfo?.image}
-                        isBig={isBigLogo}
-                        isCircle={isCircleLogos}
-                    />
+                    <AssetLogo asset={counter} isBig={isBigLogo} isCircle={isCircleLogos} />
                 </Icon>
                 {thirdAsset && (
                     <Icon
@@ -337,11 +329,7 @@ const Pair = ({
                         mobileVerticalDirections={mobileVerticalDirections}
                         verticalDirections={verticalDirections}
                     >
-                        <AssetLogo
-                            logoUrl={thirdAssetInfo?.image}
-                            isBig={isBigLogo}
-                            isCircle={isCircleLogos}
-                        />
+                        <AssetLogo asset={thirdAsset} isBig={isBigLogo} isCircle={isCircleLogos} />
                     </Icon>
                 )}
                 {fourthAsset && (
@@ -354,11 +342,7 @@ const Pair = ({
                         mobileVerticalDirections={mobileVerticalDirections}
                         verticalDirections={verticalDirections}
                     >
-                        <AssetLogo
-                            logoUrl={fourthAssetInfo?.image}
-                            isBig={isBigLogo}
-                            isCircle={isCircleLogos}
-                        />
+                        <AssetLogo asset={fourthAsset} isBig={isBigLogo} isCircle={isCircleLogos} />
                     </Icon>
                 )}
             </Icons>

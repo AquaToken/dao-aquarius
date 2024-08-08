@@ -5,14 +5,19 @@ import { flexAllCenter } from '../../../../common/mixins';
 import { COLORS } from '../../../../common/styles';
 import Loader from '../../../../common/assets/img/loader.svg';
 import { useState } from 'react';
+import { AssetSimple } from '../../../../store/assetsStore/types';
+import * as StellarSdk from '@stellar/stellar-sdk';
+import { LumenInfo } from '../../../../store/assetsStore/reducer';
+import { getAssetString } from '../../../../store/assetsStore/actions';
+import useAssetsStore from '../../../../store/assetsStore/useAssetsStore';
 
-export const logoStyles = css`
+export const logoStyles = (isCircle: boolean = true) => css`
     height: 3.2rem;
     width: 3.2rem;
     max-height: 3.2rem;
     max-width: 3.2rem;
     min-width: 3.2rem;
-    border-radius: 50%;
+    border-radius: ${isCircle ? '50%' : '0.1rem'};
 `;
 
 const smallLogoStyles = (isCircle: boolean) => css`
@@ -41,7 +46,7 @@ const Logo = styled.img<{ isSmall?: boolean; isBig?: boolean; isCircle?: boolean
         if (isBig) {
             return bigLogoStyles(isCircle);
         }
-        return logoStyles;
+        return logoStyles(isCircle);
     }}
 `;
 
@@ -53,7 +58,7 @@ const Unknown = styled(UnknownLogo)<{ $isSmall?: boolean; $isBig?: boolean; $isC
         if ($isBig) {
             return bigLogoStyles($isCircle);
         }
-        return logoStyles;
+        return logoStyles($isCircle);
     }}
 `;
 
@@ -65,7 +70,7 @@ const LogoLoaderContainer = styled.div<{ isSmall?: boolean; isBig?: boolean; isC
         if (isBig) {
             return bigLogoStyles(isCircle);
         }
-        return logoStyles;
+        return logoStyles(isCircle);
     }}
     ${flexAllCenter};
     background-color: ${COLORS.descriptionText};
@@ -78,17 +83,24 @@ const LogoLoader = styled(Loader)`
 `;
 
 const AssetLogo = ({
-    logoUrl,
+    asset,
     isSmall,
     isBig,
     isCircle,
 }: {
-    logoUrl: string | null | undefined;
+    asset: AssetSimple;
     isSmall?: boolean;
     isBig?: boolean;
     isCircle?: boolean;
 }) => {
     const [isErrorLoad, setIsErrorLoad] = useState(false);
+
+    const { assetsInfo } = useAssetsStore();
+
+    const assetInstance = new StellarSdk.Asset(asset.code, asset.issuer);
+    const isNative = assetInstance.isNative();
+    const assetInfo = isNative ? LumenInfo : assetsInfo.get(getAssetString(asset));
+    const logoUrl = assetInfo?.image;
 
     if (logoUrl === undefined) {
         return (
@@ -99,7 +111,7 @@ const AssetLogo = ({
     }
 
     if (logoUrl === null || isErrorLoad) {
-        return <Unknown $isSmall={isSmall} $isBig={isBig} $isCircl={isCircle} />;
+        return <Unknown $isSmall={isSmall} $isBig={isBig} $isCircle={isCircle} />;
     }
 
     return (

@@ -12,6 +12,7 @@ import {
     Content,
     Form,
     FormSection,
+    FormSectionDescription,
     FormSectionTitle,
     FormWrap,
     MainBlock,
@@ -42,6 +43,8 @@ import MainNetWarningModal, {
 } from '../../../common/modals/MainNetWarningModal';
 import CircleButton from '../../../common/basics/CircleButton';
 import Checkbox from '../../../common/basics/Checkbox';
+import PageLoader from '../../../common/basics/PageLoader';
+import AssetLogo from '../../vote/components/AssetDropdown/AssetLogo';
 
 const ErrorLabel = styled.span<{ isError?: boolean }>`
     color: ${({ isError }) => (isError ? COLORS.pinkRed : COLORS.paragraphText)};
@@ -116,12 +119,18 @@ const RemoveButton = styled.div`
 const FormRow = styled.div`
     display: flex;
     gap: 5.4rem;
-    margin-top: 3.7rem;
-    margin-bottom: 5.8rem;
 
     ${respondDown(Breakpoints.sm)`
         flex-direction: column;
     `}
+`;
+
+const InputStyled = styled(Input)`
+    margin-top: 3.2rem;
+`;
+
+const FormSectionDescriptionStyled = styled(FormSectionDescription)`
+    margin-bottom: 3.7rem;
 `;
 
 const AddRowButton = styled(Button)`
@@ -151,23 +160,22 @@ const TooltipInner = styled.span`
 
 const CreationFee = styled.div`
     font-size: 1.6rem;
-    margin-top: -2rem;
+    margin-top: -1.3rem;
     margin-bottom: 3.2rem;
-    padding: 3rem 2.4rem;
+    padding: 2.4rem;
     background-color: ${COLORS.lightGray};
+    ${flexRowSpaceBetween};
 `;
 
-const CreationFeeRow = styled.div`
-    ${flexRowSpaceBetween};
-    padding-bottom: 3rem;
-    border-bottom: 0.1rem dashed ${COLORS.gray};
-    span:last-child {
-        color: ${COLORS.grayText};
-    }
+const CreationFeeCost = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 1.6rem;
+    line-height: 2.8rem;
 `;
 
 const StyledCheckbox = styled(Checkbox)`
-    margin: 3rem 0 0 auto;
     width: fit-content;
 `;
 
@@ -434,6 +442,10 @@ const CreatePool = () => {
         setStableFee(roundedValue);
     };
 
+    if (!createInfo) {
+        return <PageLoader />;
+    }
+
     return (
         <MainBlock>
             <Background>
@@ -600,10 +612,16 @@ const CreatePool = () => {
                             )}
                         </StyledFormSection>
                         <StyledFormSection>
-                            <FormSectionTitle>Fees</FormSectionTitle>
+                            <FormSectionTitle>Fees swap fees</FormSectionTitle>
+                            <FormSectionDescriptionStyled>
+                                Pool fees are paid by users who swap assets to users who provided
+                                liquidity to this pool. Creation of the pool doesn't give a creator
+                                any benefit. A typical use case for pool creation is when an asset
+                                issuer creates needs more exposure to the market.
+                            </FormSectionDescriptionStyled>
                             {type === POOL_TYPE.stable ? (
                                 <FormRow>
-                                    <Input
+                                    <InputStyled
                                         label={
                                             <ErrorLabel isError={isStableFeeInputError}>
                                                 {isStableFeeInputError
@@ -625,34 +643,33 @@ const CreatePool = () => {
                                     />
                                 </FormRow>
                             )}
+                        </StyledFormSection>
 
-                            {createInfo &&
-                                Boolean(
-                                    Number(
-                                        type === POOL_TYPE.stable
-                                            ? createInfo.stableFee
-                                            : createInfo.constantFee,
-                                    ),
-                                ) && (
-                                    <CreationFee>
-                                        <CreationFeeRow>
-                                            <span>Pool creation fee:</span>
-                                            <span>
-                                                {formatBalance(
-                                                    type === POOL_TYPE.stable
-                                                        ? createInfo.stableFee
-                                                        : createInfo.constantFee,
-                                                )}{' '}
-                                                {createInfo.token.code}
-                                            </span>
-                                        </CreationFeeRow>
-                                        <StyledCheckbox
-                                            checked={agreeWithFee}
-                                            onChange={setAgreeWithFee}
-                                            label="I acknowledge the fee"
-                                        />
-                                    </CreationFee>
-                                )}
+                        <StyledFormSection>
+                            <FormSectionTitle>Fees creation fee</FormSectionTitle>
+                            <FormSectionDescriptionStyled>
+                                Pool creation fee is introduced to prevent abuse and spam activities
+                                and ensure that creators have valid reasons to create a pool (e.g.
+                                support their project token).
+                            </FormSectionDescriptionStyled>
+                            <CreationFee>
+                                <CreationFeeCost>
+                                    <AssetLogo asset={createInfo.token} isCircle={false} />
+                                    <span>
+                                        {formatBalance(
+                                            type === POOL_TYPE.stable
+                                                ? createInfo.stableFee
+                                                : createInfo.constantFee,
+                                        )}{' '}
+                                        {createInfo.token.code}
+                                    </span>
+                                </CreationFeeCost>
+                                <StyledCheckbox
+                                    checked={agreeWithFee}
+                                    onChange={setAgreeWithFee}
+                                    label="I acknowledge the fee"
+                                />
+                            </CreationFee>
                             <Button
                                 isBig
                                 fullWidth
