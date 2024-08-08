@@ -165,6 +165,13 @@ const CreationFee = styled.div`
     padding: 2.4rem;
     background-color: ${COLORS.lightGray};
     ${flexRowSpaceBetween};
+
+    ${respondDown(Breakpoints.md)`
+        flex-direction: column;
+        gap: 4rem;
+        justify-content: flex-start;
+        align-items: flex-start;
+    `}
 `;
 
 const CreationFeeCost = styled.div`
