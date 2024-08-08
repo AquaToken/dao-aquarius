@@ -619,7 +619,7 @@ const CreatePool = () => {
                             )}
                         </StyledFormSection>
                         <StyledFormSection>
-                            <FormSectionTitle>Fees swap fees</FormSectionTitle>
+                            <FormSectionTitle>Pool swap fees</FormSectionTitle>
                             <FormSectionDescriptionStyled>
                                 Pool fees are paid by users who swap assets to users who provided
                                 liquidity to this pool. Creation of the pool doesn't give a creator
@@ -653,7 +653,7 @@ const CreatePool = () => {
                         </StyledFormSection>
 
                         <StyledFormSection>
-                            <FormSectionTitle>Fees creation fee</FormSectionTitle>
+                            <FormSectionTitle>Pool creation fee</FormSectionTitle>
                             <FormSectionDescriptionStyled>
                                 Pool creation fee is introduced to prevent abuse and spam activities
                                 and ensure that creators have valid reasons to create a pool (e.g.
