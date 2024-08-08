@@ -23,7 +23,7 @@ interface TableItem {
     children: React.ReactNode | string;
     align?: CellAlign;
     flexSize?: number;
-    label?: string;
+    label?: string | React.ReactNode;
     labelColor?: string;
     color?: string;
     hideOnWeb?: boolean;

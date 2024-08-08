@@ -12,10 +12,11 @@ import PageLoader from '../../../common/basics/PageLoader';
 import Button from '../../../common/basics/Button';
 import Plus from '../../../common/assets/img/icon-plus.svg';
 import Search from '../../../common/assets/img/icon-search.svg';
+import Info from '../../../common/assets/img/icon-info.svg';
 import { Breakpoints, COLORS } from '../../../common/styles';
 import Input from '../../../common/basics/Input';
 import ToggleGroup from '../../../common/basics/ToggleGroup';
-import Table from '../../../common/basics/Table';
+import Table, { CellAlign } from '../../../common/basics/Table';
 import Pair from '../../vote/components/common/Pair';
 import { AmmRoutes } from '../../../routes';
 import { useHistory } from 'react-router-dom';
@@ -30,6 +31,7 @@ import Select from '../../../common/basics/Select';
 import VolumeChart from '../components/VolumeChart/VolumeChart';
 import LiquidityChart from '../components/LiquidityChart/LiquidityChart';
 import { PoolProcessed } from '../api/types';
+import Tooltip, { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
 
 const Container = styled.main`
     height: 100%;
@@ -131,6 +133,20 @@ const SelectStyled = styled(Select)`
         display: flex;
         margin-bottom: 3.6rem;
     `}
+`;
+
+const TitleWithTooltip = styled.span`
+    display: flex;
+    align-items: center;
+
+    svg {
+        margin: 0 0.4rem;
+    }
+`;
+
+const TooltipInner = styled.span`
+    width: 20rem;
+    white-space: pre-wrap;
 `;
 
 const Charts = styled.div`
@@ -277,8 +293,11 @@ const Analytics = () => {
                                         pending={pending}
                                         head={[
                                             { children: 'Assets', flexSize: 4 },
-                                            { children: 'Type', flexSize: 2 },
-                                            { children: 'Fee' },
+                                            {
+                                                children: 'Fee',
+                                                flexSize: 2,
+                                                align: CellAlign.Right,
+                                            },
                                             {
                                                 children: 'Daily reward',
                                                 sort: {
@@ -294,6 +313,8 @@ const Analytics = () => {
                                                     isReversed:
                                                         sort === PoolsSortFields.rewardsDown,
                                                 },
+                                                flexSize: 2,
+                                                align: CellAlign.Right,
                                             },
                                             {
                                                 children: 'TVL',
@@ -310,6 +331,63 @@ const Analytics = () => {
                                                     isReversed:
                                                         sort === PoolsSortFields.liquidityDown,
                                                 },
+                                                align: CellAlign.Right,
+                                                flexSize: 2,
+                                            },
+                                            {
+                                                children: (
+                                                    <TitleWithTooltip>
+                                                        LP APY
+                                                        <Tooltip
+                                                            showOnHover
+                                                            content={
+                                                                <TooltipInner>
+                                                                    Projection of annual yield for
+                                                                    liquidity providers. The yield
+                                                                    is accrued based on the LP token
+                                                                    price growth in relation to the
+                                                                    deposited tokens, and is
+                                                                    generated via swap fees. This
+                                                                    type of reward is paid to all
+                                                                    liquidity providers in all
+                                                                    pools.
+                                                                </TooltipInner>
+                                                            }
+                                                            position={TOOLTIP_POSITION.top}
+                                                        >
+                                                            <Info />
+                                                        </Tooltip>
+                                                    </TitleWithTooltip>
+                                                ),
+                                                flexSize: 2,
+                                                align: CellAlign.Right,
+                                            },
+                                            {
+                                                children: (
+                                                    <TitleWithTooltip>
+                                                        Rewards APY
+                                                        <Tooltip
+                                                            showOnHover
+                                                            content={
+                                                                <TooltipInner>
+                                                                    Projection of additional annual
+                                                                    rewards in AQUA distributed by
+                                                                    Aquarius team. These rewards are
+                                                                    paid to liquidity providers to
+                                                                    pools that are included to the
+                                                                    "rewards zone" - now it's done
+                                                                    by the Aquarius team but later
+                                                                    will be based on users' voting.
+                                                                </TooltipInner>
+                                                            }
+                                                            position={TOOLTIP_POSITION.top}
+                                                        >
+                                                            <Info />
+                                                        </Tooltip>
+                                                    </TitleWithTooltip>
+                                                ),
+                                                flexSize: 2,
+                                                align: CellAlign.Right,
                                             },
                                         ]}
                                         body={pools.map((pool) => ({
@@ -326,23 +404,26 @@ const Analytics = () => {
                                                             fourthAsset={pool.assets[3]}
                                                             mobileVerticalDirections
                                                             withoutLink
+                                                            customLabel={[
+                                                                pool.pool_type === 'stable'
+                                                                    ? 'Stable swap'
+                                                                    : 'Constant product',
+                                                                pool.pool_type === 'stable'
+                                                                    ? 'Highly effecient AMM model for correlated assets (i.e.stablecoins) that offers lower slippage.'
+                                                                    : 'Simple model for general purpose AMM pools (Uniswap v2).',
+                                                            ]}
                                                         />
                                                     ),
                                                     flexSize: 4,
                                                 },
-                                                {
-                                                    children:
-                                                        pool.pool_type === 'stable'
-                                                            ? 'Stable swap'
-                                                            : 'Constant product',
-                                                    label: 'Type:',
-                                                    flexSize: 2,
-                                                },
+
                                                 {
                                                     children: `${(Number(pool.fee) * 100).toFixed(
                                                         2,
                                                     )}%`,
                                                     label: 'Fee:',
+                                                    flexSize: 2,
+                                                    align: CellAlign.Right,
                                                 },
                                                 {
                                                     children: pool.reward_tps
@@ -355,6 +436,8 @@ const Analytics = () => {
                                                           )} AQUA`
                                                         : '-',
                                                     label: 'Daily reward:',
+                                                    flexSize: 2,
+                                                    align: CellAlign.Right,
                                                 },
                                                 {
                                                     children: pool.liquidity
@@ -365,6 +448,72 @@ const Analytics = () => {
                                                           )}`
                                                         : '0',
                                                     label: 'TVL:',
+                                                    align: CellAlign.Right,
+                                                    flexSize: 2,
+                                                },
+                                                {
+                                                    children: `${(Number(pool.apy) * 100).toFixed(
+                                                        2,
+                                                    )}%`,
+                                                    label: (
+                                                        <TitleWithTooltip>
+                                                            LP APY
+                                                            <Tooltip
+                                                                showOnHover
+                                                                content={
+                                                                    <TooltipInner>
+                                                                        Projection of annual yield
+                                                                        for liquidity providers. The
+                                                                        yield is accrued based on
+                                                                        the LP token price growth in
+                                                                        relation to the deposited
+                                                                        tokens, and is generated via
+                                                                        swap fees. This type of
+                                                                        reward is paid to all
+                                                                        liquidity providers in all
+                                                                        pools.
+                                                                    </TooltipInner>
+                                                                }
+                                                                position={TOOLTIP_POSITION.top}
+                                                            >
+                                                                <Info />
+                                                            </Tooltip>
+                                                        </TitleWithTooltip>
+                                                    ),
+                                                    flexSize: 2,
+                                                    align: CellAlign.Right,
+                                                },
+                                                {
+                                                    children: `${(
+                                                        Number(pool.rewards_apy) * 100
+                                                    ).toFixed(2)}%`,
+                                                    label: (
+                                                        <TitleWithTooltip>
+                                                            Rewards APY
+                                                            <Tooltip
+                                                                showOnHover
+                                                                content={
+                                                                    <TooltipInner>
+                                                                        Projection of additional
+                                                                        annual rewards in AQUA
+                                                                        distributed by Aquarius
+                                                                        team. These rewards are paid
+                                                                        to liquidity providers to
+                                                                        pools that are included to
+                                                                        the "rewards zone" - now
+                                                                        it's done by the Aquarius
+                                                                        team but later will be based
+                                                                        on users' voting.
+                                                                    </TooltipInner>
+                                                                }
+                                                                position={TOOLTIP_POSITION.top}
+                                                            >
+                                                                <Info />
+                                                            </Tooltip>
+                                                        </TitleWithTooltip>
+                                                    ),
+                                                    flexSize: 2,
+                                                    align: CellAlign.Right,
                                                 },
                                             ],
                                         }))}
