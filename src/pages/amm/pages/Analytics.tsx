@@ -223,7 +223,7 @@ const Analytics = () => {
         <Container>
             <Content>
                 <Header>
-                    <Title>Analytics</Title>
+                    <Title>Pools</Title>
                     <Button onClick={() => goToCreatePool()}>
                         create pool <PlusIcon />
                     </Button>
