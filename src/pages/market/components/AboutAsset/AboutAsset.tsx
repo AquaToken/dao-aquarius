@@ -120,7 +120,7 @@ const AboutAsset = ({ asset }) => {
         <Container>
             <Title>About {asset.code}</Title>
             <AssetCard>
-                <AssetLogo logoUrl={assetInfo?.image} isBig />
+                <AssetLogo asset={asset} isBig />
                 <AssetInfo>
                     <AssetCode>
                         {asset.code} ({assetInfo?.name || asset.code})

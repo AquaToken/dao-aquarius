@@ -78,17 +78,17 @@ const Asset = ({
     const assetInfo = isNative ? LumenInfo : assetsInfo.get(getAssetString(asset));
 
     if (onlyLogo) {
-        return <AssetLogo logoUrl={assetInfo?.image} />;
+        return <AssetLogo asset={asset} />;
     }
 
     if (onlyLogoSmall) {
-        return <AssetLogo logoUrl={assetInfo?.image} isSmall />;
+        return <AssetLogo asset={asset} isSmall />;
     }
 
     if (logoAndCode) {
         return (
             <Container {...props}>
-                <AssetLogo logoUrl={assetInfo?.image} />
+                <AssetLogo asset={asset} />
                 <AssetDetails inRow>
                     <AssetCode inRow>{asset.code}</AssetCode>
                 </AssetDetails>
@@ -98,7 +98,7 @@ const Asset = ({
 
     return (
         <Container {...props}>
-            <AssetLogo logoUrl={assetInfo?.image} isSmall={inRow} />
+            <AssetLogo asset={asset} isSmall={inRow} />
             <AssetDetails inRow={inRow}>
                 <AssetCode inRow={inRow}>{asset.code}</AssetCode>
                 <AssetDomain withMobileView={withMobileView} inRow={inRow}>

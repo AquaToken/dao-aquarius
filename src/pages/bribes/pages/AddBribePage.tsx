@@ -124,7 +124,7 @@ export const FormSectionTitle = styled.span`
     margin-bottom: 0.8rem;
 `;
 
-const FormSectionDescription = styled.span`
+export const FormSectionDescription = styled.span`
     font-size: 1.6rem;
     line-height: 2.8rem;
     color: ${COLORS.grayText};
