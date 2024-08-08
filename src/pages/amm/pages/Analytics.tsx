@@ -357,6 +357,18 @@ const Analytics = () => {
                                                         </Tooltip>
                                                     </TitleWithTooltip>
                                                 ),
+                                                sort: {
+                                                    onClick: () =>
+                                                        changeSort(
+                                                            sort === PoolsSortFields.apyUp
+                                                                ? PoolsSortFields.apyDown
+                                                                : PoolsSortFields.apyUp,
+                                                        ),
+                                                    isEnabled:
+                                                        sort === PoolsSortFields.apyUp ||
+                                                        sort === PoolsSortFields.apyDown,
+                                                    isReversed: sort === PoolsSortFields.apyDown,
+                                                },
                                                 flexSize: 2,
                                                 align: CellAlign.Right,
                                             },
@@ -384,6 +396,19 @@ const Analytics = () => {
                                                         </Tooltip>
                                                     </TitleWithTooltip>
                                                 ),
+                                                sort: {
+                                                    onClick: () =>
+                                                        changeSort(
+                                                            sort === PoolsSortFields.rewardsApyUp
+                                                                ? PoolsSortFields.rewardsApyDown
+                                                                : PoolsSortFields.rewardsApyUp,
+                                                        ),
+                                                    isEnabled:
+                                                        sort === PoolsSortFields.rewardsApyUp ||
+                                                        sort === PoolsSortFields.rewardsApyDown,
+                                                    isReversed:
+                                                        sort === PoolsSortFields.rewardsApyDown,
+                                                },
                                                 flexSize: 2,
                                                 align: CellAlign.Right,
                                             },

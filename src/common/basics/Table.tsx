@@ -318,9 +318,12 @@ const Table = forwardRef(
                 <TableHead>
                     <TableHeadRow withPadding={Boolean(virtualScrollProps)}>
                         {head.map(
-                            ({ children, sort, align, flexSize, hideOnWeb, hideOnMobile }) => (
+                            (
+                                { children, sort, align, flexSize, hideOnWeb, hideOnMobile },
+                                index,
+                            ) => (
                                 <HeadCell
-                                    key={children.toString()}
+                                    key={`${children.toString()}_${index}`}
                                     align={align}
                                     withSort={Boolean(sort)}
                                     onClick={() => sort?.onClick()}

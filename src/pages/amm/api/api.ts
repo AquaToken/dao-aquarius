@@ -31,6 +31,10 @@ export enum PoolsSortFields {
     volumeDown = 'volume',
     rewardsUp = '-reward',
     rewardsDown = 'reward',
+    apyUp = '-apy',
+    apyDown = 'apy',
+    rewardsApyUp = '-rewards_apy',
+    rewardsApyDown = 'rewards_apy',
 }
 
 const processPools = (pools: Array<Pool | PoolUser>): Array<PoolProcessed> => {
