@@ -174,7 +174,7 @@ const Analytics = () => {
     const [search, setSearch] = useState('');
     const [totalStats, setTotalStats] = useState(null);
 
-    const debouncedSearch = useDebounce(search, 700);
+    const debouncedSearch = useDebounce(search, 700, true);
     const history = useHistory();
 
     const { isLogged } = useAuthStore();
@@ -191,13 +191,11 @@ const Analytics = () => {
 
     useEffect(() => {
         setPending(true);
-        getPools(filter, page, PAGE_SIZE, sort, debouncedSearch.current).then(
-            ({ pools, total }) => {
-                setPools(pools);
-                setTotal(total);
-                setPending(false);
-            },
-        );
+        getPools(filter, page, PAGE_SIZE, sort, debouncedSearch).then(({ pools, total }) => {
+            setPools(pools);
+            setTotal(total);
+            setPending(false);
+        });
     }, [filter, page, debouncedSearch, sort]);
 
     const changeSort = (newSort) => {
