@@ -23,7 +23,7 @@ interface TableItem {
     children: React.ReactNode | string;
     align?: CellAlign;
     flexSize?: number;
-    label?: string;
+    label?: string | React.ReactNode;
     labelColor?: string;
     color?: string;
     hideOnWeb?: boolean;
@@ -318,9 +318,12 @@ const Table = forwardRef(
                 <TableHead>
                     <TableHeadRow withPadding={Boolean(virtualScrollProps)}>
                         {head.map(
-                            ({ children, sort, align, flexSize, hideOnWeb, hideOnMobile }) => (
+                            (
+                                { children, sort, align, flexSize, hideOnWeb, hideOnMobile },
+                                index,
+                            ) => (
                                 <HeadCell
-                                    key={children.toString()}
+                                    key={`${children.toString()}_${index}`}
                                     align={align}
                                     withSort={Boolean(sort)}
                                     onClick={() => sort?.onClick()}
