@@ -1,15 +1,16 @@
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import AccountViewer from '../../../../common/basics/AccountViewer';
 import { formatBalance } from '../../../../common/helpers/helpers';
-import { useEffect, useState } from 'react';
 import { getPoolMembers } from '../../api/api';
 import styled from 'styled-components';
-import { flexRowSpaceBetween } from '../../../../common/mixins';
-import { COLORS } from '../../../../common/styles';
+import { respondDown } from '../../../../common/mixins';
+import { Breakpoints, COLORS } from '../../../../common/styles';
 import Pagination from '../../../../common/basics/Pagination';
 import PageLoader from '../../../../common/basics/PageLoader';
 import { Empty } from '../../../profile/YourVotes/YourVotes';
 import { useUpdateIndex } from '../../../../common/hooks/useUpdateIndex';
+import LinkIcon from '../../../../common/assets/img/icon-external-link.svg';
 
 const PAGE_SIZE = 10;
 
@@ -17,18 +18,42 @@ const Title = styled.h3`
     margin-bottom: 2.4rem;
 `;
 const Row = styled.div`
-    ${flexRowSpaceBetween};
+    display: flex;
     align-items: center;
     color: ${COLORS.grayText};
     margin: 1rem 0;
     height: 2.8rem;
 
-    span:first-child {
-        font-size: 1.6rem;
-        line-height: 2.8rem;
-        color: ${COLORS.paragraphText};
+    span:last-child {
+        margin-left: auto;
     }
+
+    ${respondDown(Breakpoints.md)`
+        font-size: 1rem;
+    `}
 `;
+
+const LinkToExpert = styled.a`
+    display: flex;
+    align-items: center;
+    font-size: 1.4rem;
+    line-height: 2rem;
+    color: ${COLORS.paragraphText};
+    text-decoration: none;
+
+    svg {
+        margin-left: 0.4rem;
+    }
+
+    ${respondDown(Breakpoints.md)`
+        font-size: 1rem;
+        
+        svg {
+            margin-bottom: 0.2rem;
+        }
+    `}
+`;
+
 const PoolMembers = ({ poolId, totalShare }: { poolId: string; totalShare: string }) => {
     const [members, setMembers] = useState(null);
     const [page, setPage] = useState(1);
@@ -69,7 +94,14 @@ const PoolMembers = ({ poolId, totalShare }: { poolId: string; totalShare: strin
                 .sort((a, b) => Number(b.balance) - Number(a.balance))
                 .map((member) => (
                     <Row key={member.account_address}>
-                        <AccountViewer pubKey={member.account_address} narrowForMobile />
+                        <LinkToExpert
+                            href={`https://stellar.expert/explorer/public/account/${member.account_address}`}
+                            target="_blank"
+                        >
+                            <AccountViewer pubKey={member.account_address} />
+                            <LinkIcon />
+                        </LinkToExpert>
+
                         <span>
                             {formatBalance(Number(member.balance) / 1e7, true)} (
                             {Number(totalShare)
