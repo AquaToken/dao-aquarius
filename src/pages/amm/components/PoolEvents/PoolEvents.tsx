@@ -12,6 +12,8 @@ import { respondDown } from '../../../../common/mixins';
 import { PoolExtended } from '../../api/types';
 import Pagination from '../../../../common/basics/Pagination';
 import { useUpdateIndex } from '../../../../common/hooks/useUpdateIndex';
+import LinkIcon from '../../../../common/assets/img/icon-external-link.svg';
+import ExternalLink from '../../../../common/basics/ExternalLink';
 
 const Title = styled.h3`
     margin-bottom: 2.4rem;
@@ -123,6 +125,7 @@ const PoolEvents = ({ pool }: { pool: PoolExtended }) => {
                     { children: 'Amounts' },
                     { children: 'Account', flexSize: 1.5 },
                     { children: 'Time' },
+                    { children: '', flexSize: 0.2 },
                 ]}
                 body={events.map((event, index) => {
                     return {
@@ -147,6 +150,30 @@ const PoolEvents = ({ pool }: { pool: PoolExtended }) => {
                             {
                                 children: getEventTime(event.ledger_close_at_str),
                                 label: 'Time:',
+                            },
+                            {
+                                children: (
+                                    <a
+                                        href={`https://stellar.expert/explorer/public/tx/${event.transaction_hash}`}
+                                        target="_blank"
+                                    >
+                                        <LinkIcon />
+                                    </a>
+                                ),
+                                label: 'Time:',
+                                flexSize: 0.2,
+                                hideOnMobile: true,
+                            },
+                            {
+                                children: (
+                                    <ExternalLink
+                                        href={`https://stellar.expert/explorer/public/tx/${event.transaction_hash}`}
+                                    >
+                                        View on Explorer
+                                    </ExternalLink>
+                                ),
+                                flexSize: 0.2,
+                                hideOnWeb: true,
                             },
                         ],
                     };
