@@ -36,10 +36,12 @@ const Row = styled.div`
 const LinkToExpert = styled.a`
     display: flex;
     align-items: center;
+    justify-content: space-between;
     font-size: 1.4rem;
     line-height: 2rem;
     color: ${COLORS.paragraphText};
     text-decoration: none;
+    width: 22rem;
 
     svg {
         margin-left: 0.4rem;
@@ -47,6 +49,7 @@ const LinkToExpert = styled.a`
 
     ${respondDown(Breakpoints.md)`
         font-size: 1rem;
+        width: 17rem;
         
         svg {
             margin-bottom: 0.2rem;
