@@ -1,4 +1,4 @@
-export const completedStepsCount = 11;
+export const completedStepsCount = 14;
 export const steps = [
     {
         date: 'Q4 - 2020',
