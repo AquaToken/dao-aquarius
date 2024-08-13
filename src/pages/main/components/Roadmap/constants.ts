@@ -57,17 +57,27 @@ export const steps = [
     },
     {
         date: 'Q1 - 2024',
-        title: 'Launch of Aquarius AMMs',
-        text: 'Now Soroban smart contracts have launched on Stellar, Aquarius AMMs are expected to launch Q1 2024.',
+        title: 'First audit of Aquarius AMM',
+        text: 'The AMM smart contracts were thoroughly audited by CoinFabrik which paved the way to the initial release of the dApp.',
     },
     {
         date: 'Q2 - 2024',
+        title: 'Launch of Aquarius AMMs on Testnet',
+        text: 'The dApp was released on Stellar Testnet   to test the AMM contracts with an interface, address challenges and edge cases.',
+    },
+    {
+        date: 'Q3 - 2024',
+        title: 'Launch of Aquarius AMMs on Pubnet',
+        text: 'The dApp went live on Stellar Pubnet in July and in two weeks reached more than $300K TVL and started the first AQUA reward distribution for liquidity providers.',
+    },
+    {
+        date: 'Q4 - 2024',
         title: 'Decentralization of reward engines',
         text: 'Continued exploration of Soroban smart contracts will see a more decentralized Aquarius emerge. We plan to move the rewards engines over to Soroban, allowing hourly AQUA rewards to distribute via smart contracts.',
     },
     {
-        date: 'Q4 - 2024',
-        title: 'Improvements to AMMs and engines',
-        text: 'As Soroban continues to mature, we will improve upon our AMMs and reward distribution engines. New features can also be explored, and further movements toward a fully operational DAO can be achieved.',
+        date: 'Q1 - 2025',
+        title: 'Further migration to Soroban',
+        text: 'All the existing Aquarius functionality including locking AQUA, voting and bribing will be migrated to Soroban and decentralized.',
     },
 ];
