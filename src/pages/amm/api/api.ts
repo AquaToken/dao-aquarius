@@ -166,7 +166,7 @@ export const getTotalStats = async (): Promise<PoolStatistics[]> => {
 };
 export const getNativePrices = async (
     assets: Array<Asset>,
-    batchSize: number = 100,
+    batchSize: number = 50,
 ): Promise<Map<string, string>> => {
     const batches = [];
 
