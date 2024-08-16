@@ -164,15 +164,33 @@ export const getTotalStats = async (): Promise<PoolStatistics[]> => {
     const { data } = await axios.get<ListResponse<PoolStatistics>>(`${API_URL}/statistics/totals/`);
     return data.items.reverse();
 };
-export const getNativePrices = async (assets: Array<Asset>): Promise<Map<string, string>> => {
-    const { data } = await axios.get<ListResponse<NativePrice>>(
-        `${API_URL}/tokens/?name__in=${assets.map((asset) => getAssetString(asset)).join(',')}`,
-    );
-    const prices = data.items;
-    return prices.reduce((acc, price) => {
-        acc.set(price.name, price.price_xlm);
-        return acc;
-    }, new Map());
+export const getNativePrices = async (
+    assets: Array<Asset>,
+    batchSize: number = 100,
+): Promise<Map<string, string>> => {
+    const batches = [];
+
+    // Split assets into batches of 100
+    for (let i = 0; i < assets.length; i += batchSize) {
+        const batch = assets.slice(i, i + batchSize);
+        batches.push(batch);
+    }
+
+    const allPrices = new Map<string, string>();
+
+    // Process each batch
+    for (const batch of batches) {
+        const { data } = await axios.get<ListResponse<NativePrice>>(
+            `${API_URL}/tokens/?name__in=${batch.map((asset) => getAssetString(asset)).join(',')}`,
+        );
+        const prices = data.items;
+
+        prices.forEach((price) => {
+            allPrices.set(price.name, price.price_xlm);
+        });
+    }
+
+    return allPrices;
 };
 
 export const getPathPoolsFee = async (addresses: Array<string>): Promise<Map<string, Pool>> => {
