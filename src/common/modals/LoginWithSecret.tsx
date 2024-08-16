@@ -73,6 +73,7 @@ const LoginWithSecret = ({ close }: ModalProps<never>): JSX.Element => {
                     placeholder="SXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
                     maxLength={56}
                     value={secretKey}
+                    type="password"
                     onChange={({ target }) => setSecretKey(target.value)}
                 />
                 <StyledButton
