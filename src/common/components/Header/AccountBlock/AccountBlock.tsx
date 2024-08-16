@@ -166,7 +166,11 @@ const AccountBlock = ({ navLinks }: { navLinks?: JSX.Element }): JSX.Element => 
     const menuRef = useRef(null);
     useOnClickOutside(menuRef, () => setIsMenuOpen(false));
 
-    const signIn = () => {
+    const signIn = (e) => {
+        // Fix for 1password
+        if (!e.nativeEvent.pointerType) {
+            return;
+        }
         ModalService.openModal(ChooseLoginMethodModal, {});
     };
 
@@ -177,7 +181,7 @@ const AccountBlock = ({ navLinks }: { navLinks?: JSX.Element }): JSX.Element => 
     if (!isLogged) {
         return (
             <>
-                <SignInButton onClick={() => signIn()} pending={isLoginPending}>
+                <SignInButton onClick={(e) => signIn(e)} pending={isLoginPending}>
                     sign in
                 </SignInButton>
                 <MobileMenu onClick={() => toggleMenu()}>
