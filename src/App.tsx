@@ -12,6 +12,7 @@ import {
 } from './common/services/globalServices';
 import Header, {
     HeaderNavLink,
+    HeaderNavLinkWithCount,
     HeaderNewNavLinks,
     NavLinksDivider,
 } from './common/components/Header/Header';
@@ -34,6 +35,7 @@ import LiveOnSorobanAlert, {
 import LiveOnSorobanImage from './common/assets/img/live-on-soroban.svg';
 import ErrorBoundary from './common/components/ErrorBoundary/ErrorBoundary';
 import SentryService from './common/services/sentry.service';
+import { getActiveProposalsCount } from './pages/governance/api/api';
 
 const MainPage = lazy(() => import('./pages/main/MainPage'));
 const LockerPage = lazy(() => import('./pages/locker/Locker'));
@@ -61,6 +63,7 @@ const App = () => {
 
     const { getAssets, assets, processNewAssets, assetsInfo, clearAssets } = useAssetsStore();
     const [isAssetsUpdated, setIsAssetsUpdated] = useState(false);
+    const [activeProposalsCount, setActiveProposalsCount] = useState(0);
 
     const { isLogged, account, redirectURL, disableRedirect, callback, removeAuthCallback } =
         useAuthStore();
@@ -96,6 +99,12 @@ const App = () => {
 
         return () => window.removeEventListener('online', reloadIfNotLoaded);
     }, [wcLoginChecked, isAssetsUpdated]);
+
+    useEffect(() => {
+        getActiveProposalsCount().then((res) => {
+            setActiveProposalsCount(res);
+        });
+    }, []);
 
     const reloadIfNotLoaded = () => {
         if (!wcLoginChecked || !isAssetsUpdated) {
@@ -230,15 +239,16 @@ const App = () => {
                         >
                             Locker
                         </HeaderNavLink>
-                        <HeaderNavLink
+                        <HeaderNavLinkWithCount
                             to={MainRoutes.governance}
                             activeStyle={{
                                 fontWeight: 700,
                             }}
                             title="Governance"
+                            count={activeProposalsCount}
                         >
                             Governance
-                        </HeaderNavLink>
+                        </HeaderNavLinkWithCount>
                     </>
                 </Header>
                 <Suspense fallback={<PageLoader />}>

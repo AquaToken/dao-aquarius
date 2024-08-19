@@ -101,6 +101,31 @@ export const HeaderNavLink = styled(NavLink)`
     `}
 `;
 
+export const HeaderNavLinkWithCount = styled(HeaderNavLink)<{ count: number }>`
+    ${({ count }) =>
+        Boolean(count) &&
+        `
+            position: relative;
+            
+            &::before {
+                content: attr(count);
+                position: absolute;
+                left: calc(100% + 0.4rem);
+                bottom: 1rem;
+                text-transform: uppercase;
+                height: 1.6rem;
+                padding: 0 0.6rem;
+                border-radius: 0.3rem;
+                background: ${COLORS.purple};
+                color: ${COLORS.white};
+                font-weight: 700;
+                font-size: 0.8rem;
+                line-height: 1.8rem;
+                white-space: nowrap;
+            }
+    `}
+`;
+
 export const NavLinksDivider = styled.div`
     height: 2.4rem;
     width: 0;

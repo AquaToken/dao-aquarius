@@ -17,7 +17,7 @@ export enum PROPOSAL_FILTER {
 
 export const getProposalsRequest = (
     filter: PROPOSAL_FILTER,
-    pubkey: string,
+    pubkey?: string,
 ): Promise<AxiosResponse<ListResponse<ProposalSimple>>> => {
     const params = new URLSearchParams();
     if (filter === PROPOSAL_FILTER.ACTIVE) {
@@ -34,6 +34,15 @@ export const getProposalsRequest = (
     }
 
     return axios.get(`${apiURL}/proposal/`, { params });
+};
+
+export const getActiveProposalsCount = (): Promise<number> => {
+    return Promise.all([
+        getProposalsRequest(PROPOSAL_FILTER.ACTIVE),
+        getProposalsRequest(PROPOSAL_FILTER.DISCUSSION),
+    ]).then(([active, discussion]) => {
+        return active.data.count + discussion.data.count;
+    });
 };
 
 export const getProposalRequest = (id: string): Promise<AxiosResponse<Proposal>> => {
