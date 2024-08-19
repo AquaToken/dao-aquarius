@@ -110,17 +110,17 @@ export const HeaderNavLinkWithCount = styled(HeaderNavLink)<{ count: number }>`
             &::before {
                 content: attr(count);
                 position: absolute;
-                left: calc(100% + 0.4rem);
-                bottom: 1rem;
+                left: 100%;
+                bottom: 1.2rem;
                 text-transform: uppercase;
-                height: 1.6rem;
-                padding: 0 0.6rem;
-                border-radius: 0.3rem;
+                height: 1.5rem;
+                padding: 0 0.5rem;
+                border-radius: 0.4rem;
                 background: ${COLORS.purple};
                 color: ${COLORS.white};
                 font-weight: 700;
                 font-size: 0.8rem;
-                line-height: 1.8rem;
+                line-height: 1.6rem;
                 white-space: nowrap;
             }
     `}
