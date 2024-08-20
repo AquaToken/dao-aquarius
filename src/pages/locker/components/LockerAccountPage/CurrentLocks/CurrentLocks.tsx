@@ -193,9 +193,9 @@ const CurrentLocks = ({
                         mobileFontSize: '1.4rem',
                         rowItems: [
                             {
-                                children: getDateString(
-                                    new Date(lock.last_modified_time).getTime(),
-                                ),
+                                children: lock.last_modified_time
+                                    ? getDateString(new Date(lock.last_modified_time).getTime())
+                                    : 'No data',
                                 label: 'Lock start',
                                 flexSize: 1.5,
                             },
