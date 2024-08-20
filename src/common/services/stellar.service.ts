@@ -8,6 +8,7 @@ import { validateMarketKeys } from '../../pages/vote/api/api';
 import debounceFunction from '../helpers/debounceFunction';
 import { ToastService } from './globalServices';
 import { ServerApi } from '@stellar/stellar-sdk/lib/horizon';
+import BigNumber from 'bignumber.js';
 
 enum HORIZON_SERVER {
     stellar = 'https://horizon.stellar.org',
@@ -941,6 +942,20 @@ export default class StellarServiceClass {
     createAddTrustOperation(asset) {
         return StellarSdk.Operation.changeTrust({
             asset,
+        });
+    }
+
+    createWithdrawOperation(poolId, share, base, counter, baseAmount, counterAmount) {
+        const SLIPPAGE = 0.001; //0.1%
+        const [amountA, amountB] = StellarSdk.Asset.compare(base, counter)
+            ? [baseAmount, counterAmount]
+            : [counterAmount, baseAmount];
+
+        return StellarSdk.Operation.liquidityPoolWithdraw({
+            liquidityPoolId: poolId,
+            amount: share,
+            minAmountA: new BigNumber(amountA).times(1 - SLIPPAGE).toFixed(7),
+            minAmountB: new BigNumber(amountB).times(1 - SLIPPAGE).toFixed(7),
         });
     }
 

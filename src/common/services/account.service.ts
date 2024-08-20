@@ -46,15 +46,32 @@ export default class AccountService extends Horizon.AccountResponse {
         return Boolean(vaultMarker);
     }
 
-    async signAndSubmitTx(tx: StellarSdk.Transaction, withResult?: boolean): Promise<any> {
+    async signAndSubmitTx(
+        tx: StellarSdk.Transaction,
+        withResult?: boolean,
+        callback?: () => void,
+    ): Promise<any> {
+        function callCallbackIfExist() {
+            if (callback) {
+                callback();
+            }
+        }
         if (this.authType === LoginTypes.public) {
             const xdr = tx.toEnvelope().toXDR('base64');
-            ModalService.openModal(SignWithPublic, { xdr, account: this });
+
+            ModalService.openModal(SignWithPublic, { xdr, account: this }).then(() => {
+                callCallbackIfExist();
+            });
             return Promise.resolve({ status: BuildSignAndSubmitStatuses.pending });
         }
 
         if (this.authType === LoginTypes.walletConnect && !withResult) {
-            return WalletConnectService.signAndSubmitTx(tx as StellarSdk.Transaction);
+            return WalletConnectService.signAndSubmitTx(tx as StellarSdk.Transaction).then(
+                (res) => {
+                    callCallbackIfExist();
+                    return res;
+                },
+            );
         }
 
         let signedTx;
@@ -77,9 +94,14 @@ export default class AccountService extends Horizon.AccountResponse {
         }
 
         if (this.authType === LoginTypes.ledger && !this.isMultisigEnabled) {
-            const result = LedgerService.signTx(tx as StellarSdk.Transaction).then((signed) =>
-                withResult ? SorobanService.submitTx(signed) : StellarService.submitTx(signed),
-            );
+            const result = LedgerService.signTx(tx as StellarSdk.Transaction)
+                .then((signed) =>
+                    withResult ? SorobanService.submitTx(signed) : StellarService.submitTx(signed),
+                )
+                .then((res) => {
+                    callCallbackIfExist();
+                    return res;
+                });
             ModalService.openModal(LedgerSignTx, { result });
             return result;
         }
@@ -101,9 +123,12 @@ export default class AccountService extends Horizon.AccountResponse {
             if (this.authType === LoginTypes.ledger) {
                 ModalService.closeAllModals();
             }
-            return withResult
-                ? SorobanService.submitTx(signedTx)
-                : StellarService.submitTx(signedTx);
+            return (
+                withResult ? SorobanService.submitTx(signedTx) : StellarService.submitTx(signedTx)
+            ).then((res) => {
+                callCallbackIfExist();
+                return res;
+            });
         }
 
         ModalService.closeAllModals();
@@ -111,18 +136,24 @@ export default class AccountService extends Horizon.AccountResponse {
         const xdr = signedTx.toEnvelope().toXDR('base64');
 
         if (!this.isVaultEnabled) {
-            ModalService.openModal(SignWithPublic, { xdr, account: this });
+            ModalService.openModal(SignWithPublic, { xdr, account: this }).then(() => {
+                callCallbackIfExist();
+            });
 
             return Promise.resolve({ status: BuildSignAndSubmitStatuses.pending });
         }
 
         return StellarService.sendToVault(xdr)
             .then(() => {
-                ModalService.openModal(SentToVault, {});
+                ModalService.openModal(SentToVault, {}).then(() => {
+                    callCallbackIfExist();
+                });
                 return Promise.resolve({ status: BuildSignAndSubmitStatuses.pending });
             })
             .catch(() => {
-                ModalService.openModal(SignWithPublic, { xdr, account: this });
+                ModalService.openModal(SignWithPublic, { xdr, account: this }).then(() => {
+                    callCallbackIfExist();
+                });
                 return Promise.resolve({ status: BuildSignAndSubmitStatuses.pending });
             });
     }

@@ -69,7 +69,7 @@ const Icon = styled.div<{
     verticalDirections?: boolean;
     mobileVerticalDirections?: boolean;
 }>`
-    ${({ isBig, isCircleLogo }) => (isBig ? bigLogoStyles(isCircleLogo) : logoStyles)};
+    ${({ isBig, isCircleLogo }) => (isBig ? bigLogoStyles(isCircleLogo) : logoStyles())};
     box-sizing: content-box;
     position: relative;
     border: ${({ assetOrderNumber, assetsCount }) =>
