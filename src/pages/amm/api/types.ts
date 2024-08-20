@@ -48,6 +48,13 @@ export type PoolStatistics = {
     volume: string;
     liquidity: string;
     date_str: string;
+    volume_usd: string;
+    liquidity_usd: string;
+};
+
+export type PoolVolume24h = {
+    volume: string;
+    volume_usd: string;
 };
 
 export type PoolBalance = {

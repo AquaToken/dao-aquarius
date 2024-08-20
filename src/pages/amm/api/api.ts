@@ -14,6 +14,7 @@ import {
     PoolStatistics,
     PoolUser,
     PoolUserProcessed,
+    PoolVolume24h,
 } from './types';
 
 const API_URL = 'https://amm-api-staging.aqua.network';
@@ -163,6 +164,11 @@ export const findSwapPath = async (
 export const getTotalStats = async (): Promise<PoolStatistics[]> => {
     const { data } = await axios.get<ListResponse<PoolStatistics>>(`${API_URL}/statistics/totals/`);
     return data.items.reverse();
+};
+
+export const getVolume24h = async (): Promise<PoolVolume24h> => {
+    const { data } = await axios.get<PoolVolume24h>(`${API_URL}/statistics/24h/`);
+    return data;
 };
 export const getNativePrices = async (
     assets: Array<Asset>,

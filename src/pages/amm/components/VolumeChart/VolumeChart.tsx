@@ -6,9 +6,8 @@ import { COLORS } from '../../../../common/styles';
 import * as d3 from 'd3';
 import { transformDate } from '../LiquidityChart/LiquidityChart';
 import styled from 'styled-components';
-import { addDays, format, isAfter, isEqual, set, subDays } from 'date-fns';
+import { addDays, format, isAfter, set, subDays } from 'date-fns';
 import { StellarService } from '../../../../common/services/globalServices';
-import { convertUTCToLocalDateIgnoringTimezone } from '../../../bribes/pages/AddBribePage';
 
 const Axis = styled.g`
     font-size: 1.4rem;
@@ -29,6 +28,7 @@ const LiquidityValue = styled.text`
 
 const VolumeChart = ({
     data,
+    volume24h = null,
     isGlobalStat = false,
     width = 312,
     height = 264,
@@ -44,8 +44,7 @@ const VolumeChart = ({
                 date: transformDate(item.date_str),
                 volume: item.volume / 1e7,
             }));
-            const last = copy.pop();
-            return [copy, last];
+            return [copy, volume24h];
         }
 
         let date = set(transformDate(data[0]?.datetime_str), {
@@ -57,17 +56,7 @@ const VolumeChart = ({
 
         const dateMap = new Map();
 
-        while (
-            !isEqual(
-                date,
-                set(convertUTCToLocalDateIgnoringTimezone(new Date()), {
-                    hours: 0,
-                    minutes: 0,
-                    seconds: 0,
-                    milliseconds: 0,
-                }),
-            )
-        ) {
+        while (!isAfter(date, Date.now())) {
             dateMap.set(format(date, 'yyyy-MM-dd'), { date, volume: 0 });
             date = addDays(date, 1);
         }
