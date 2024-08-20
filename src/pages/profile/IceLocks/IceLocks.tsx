@@ -406,10 +406,12 @@ const IceLocks = ({ ammAquaBalance }) => {
                                             hideOnWeb: true,
                                         },
                                         {
-                                            children: `${getDateString(
-                                                new Date(lock.last_modified_time).getTime(),
-                                                { withTime: true },
-                                            )}`,
+                                            children: lock.last_modified_time
+                                                ? `${getDateString(
+                                                      new Date(lock.last_modified_time).getTime(),
+                                                      { withTime: true },
+                                                  )}`
+                                                : 'No data',
                                             label: 'Lock start:',
                                         },
                                         {
