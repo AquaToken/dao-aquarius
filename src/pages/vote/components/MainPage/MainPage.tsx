@@ -234,18 +234,6 @@ const Header = styled.header`
     `}
 `;
 
-const TitleHeader = styled.h3`
-    font-weight: bold;
-    font-size: 5.6rem;
-    line-height: 6.4rem;
-    color: ${COLORS.titleText};
-    margin-right: 3.6rem;
-
-    ${respondDown(Breakpoints.md)`
-         display: none;
-    `}
-`;
-
 const ToggleGroupStyled = styled(ToggleGroup)`
     ${respondDown(Breakpoints.md)`
         width: 100%;
@@ -904,7 +892,6 @@ const MainPage = (): JSX.Element => {
                     </TooltipFullWidth>
                 </PairSearch>
                 <Header ref={headerRef}>
-                    <TitleHeader>Explore</TitleHeader>
                     <ToggleGroupStyled
                         value={sort}
                         onChange={(option) => changeSort(option)}
