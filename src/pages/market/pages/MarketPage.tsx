@@ -27,6 +27,7 @@ import Title from 'react-document-title';
 import VotesAmountModal from '../../vote/components/MainPage/VoteModals/VotesAmountModal';
 import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
 import CircleButton from '../../../common/basics/CircleButton';
+import MigrateToSorobanBanner from '../../../common/components/MigrateToSorobanBanner/MigrateToSorobanBanner';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -287,25 +288,27 @@ const MarketPage = () => {
                                 <ArrowLeft />
                             </BackButton>
                         </Header>
+                        <MigrateToSorobanBanner base={baseAsset} counter={counterAsset} />
                     </MarketSection>
                 </Background>
+
                 <NavPanel>
                     <NavContent>
                         <NavItem
-                            active={!isMarketStatRefOverScrolled}
-                            onClick={() => scrollToRef(MarketStatRef)}
-                        >
-                            Market stats
-                        </NavItem>
-                        <NavItem
-                            active={isMarketStatRefOverScrolled && !isAmmStatRefOverScrolled}
+                            active={!isAmmStatRefOverScrolled}
                             onClick={() => scrollToRef(AmmStatRef)}
                         >
                             AMM stats
                         </NavItem>
+                        <NavItem
+                            active={!isMarketStatRefOverScrolled && isAmmStatRefOverScrolled}
+                            onClick={() => scrollToRef(MarketStatRef)}
+                        >
+                            Market stats
+                        </NavItem>
                         {votesData && (
                             <NavItem
-                                active={isAmmStatRefOverScrolled && !isRewardsRefOverScrolled}
+                                active={isMarketStatRefOverScrolled && !isRewardsRefOverScrolled}
                                 onClick={() => scrollToRef(RewardsRef)}
                             >
                                 Rewards
@@ -353,11 +356,11 @@ const MarketPage = () => {
                     onVoteClick={onVoteClick}
                     isPairSelected={false}
                 />
-                <MarketSection smallTopPadding ref={MarketStatRef}>
-                    <TradeStats base={baseAsset} counter={counterAsset} />
-                </MarketSection>
-                <MarketSection ref={AmmStatRef}>
+                <MarketSection smallTopPadding ref={AmmStatRef}>
                     <AmmStats base={baseAsset} counter={counterAsset} />
+                </MarketSection>
+                <MarketSection ref={MarketStatRef}>
+                    <TradeStats base={baseAsset} counter={counterAsset} />
                 </MarketSection>
                 {votesData && (
                     <MarketSection ref={RewardsRef}>

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../../../common/styles';
 import { customScroll, flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
@@ -27,10 +27,11 @@ import MainNetWarningModal, {
     SHOW_PURPOSE_ALIAS_MAIN_NET,
 } from '../../../../common/modals/MainNetWarningModal';
 
-const Container = styled.div`
-    width: 52.3rem;
+const Container = styled.div<{ isModal: boolean }>`
+    width: ${({ isModal }) => (isModal ? '52.3rem' : '100%')};
     max-height: 80vh;
     overflow: auto;
+    padding-top: ${({ isModal }) => (isModal ? '0' : '4rem')};
 
     ${customScroll};
 
@@ -101,16 +102,17 @@ const Balance = styled.div`
 const BalanceClickable = styled.span`
     color: ${COLORS.purple};
     cursor: pointer;
+    margin-left: 0.4rem;
 `;
 
-const PoolInfo = styled.div`
+const PoolInfo = styled.div<{ isModal: boolean }>`
     display: flex;
     flex-direction: column;
     background-color: ${COLORS.lightGray};
     border-radius: 0.6rem;
-    padding: 2.4rem;
-    margin-top: 2.4rem;
-    margin-bottom: 4.8rem;
+    padding: ${({ isModal }) => (isModal ? '2.4rem;' : '0')};
+    margin-top: ${({ isModal }) => (isModal ? '2.4rem;' : '0')};
+    margin-bottom: ${({ isModal }) => (isModal ? '4.8rem;' : '0')};
 
     ${respondDown(Breakpoints.sm)`
         margin-bottom: 2rem;
@@ -132,8 +134,8 @@ const TooltipInnerBalance = styled.div`
     display: flex;
     flex-direction: column;
     color: ${COLORS.white};
-    font-size: 1.2rem;
-    line-height: 2rem;
+    font-size: 1.3rem;
+    line-height: 1.3rem;
 `;
 
 const TooltipRow = styled.div`
@@ -148,7 +150,27 @@ const TooltipRow = styled.div`
 
 const DepositToPool = ({ params }) => {
     const { account } = useAuthStore();
-    const { pool, accountShare } = params;
+    const { pool, isModal = true, baseAmount, counterAmount, base, counter } = params;
+
+    const [accountShare, setAccountShare] = useState(null);
+
+    useEffect(() => {
+        if (!account) {
+            setAccountShare(null);
+            return;
+        }
+        SorobanService.getTokenBalance(pool.share_token_address, account.accountId()).then(
+            (res) => {
+                setAccountShare(res);
+            },
+        );
+    }, [account]);
+
+    const reserves: Map<string, number> = useMemo(() => {
+        return new Map(
+            pool.assets.map((asset, index) => [getAssetString(asset), pool.reserves[index] / 1e7]),
+        );
+    }, [pool]);
 
     const [amounts, setAmounts] = useState<Map<string, string>>(
         new Map<string, string>(pool.assets.map((asset) => [getAssetString(asset), ''])),
@@ -159,12 +181,6 @@ const DepositToPool = ({ params }) => {
         // @ts-ignore
         return [...amounts.values()].every((value) => Boolean(+value));
     }, [amounts]);
-
-    const reserves: Map<string, number> = useMemo(() => {
-        return new Map(
-            pool.assets.map((asset, index) => [getAssetString(asset), pool.reserves[index] / 1e7]),
-        );
-    }, [pool]);
 
     const shares = useMemo(() => {
         const firstAssetString = getAssetString(pool.assets[0]);
@@ -335,9 +351,25 @@ const DepositToPool = ({ params }) => {
             });
     };
 
+    useEffect(() => {
+        if (!baseAmount || !counterAmount) {
+            return;
+        }
+        const newCounterAmount = (
+            (Number(baseAmount) * +reserves.get(getAssetString(counter))) /
+            +reserves.get(getAssetString(base))
+        ).toFixed(7);
+
+        if (+newCounterAmount >= +counterAmount) {
+            onChangeInput(counter, counterAmount);
+        } else {
+            onChangeInput(base, baseAmount);
+        }
+    }, []);
+
     return (
-        <Container>
-            <ModalTitle>Add liquidity</ModalTitle>
+        <Container isModal={isModal}>
+            {isModal && <ModalTitle>Add liquidity</ModalTitle>}
             {Number(pool.total_share) === 0 && (
                 <Alert
                     title="This is the first deposit into this pool."
@@ -399,27 +431,33 @@ const DepositToPool = ({ params }) => {
                     </FormRow>
                 ))}
 
-                <DescriptionRow>
-                    <span>Type</span>
-                    <span>{pool.pool_type === 'stable' ? 'Stable swap' : 'Constant product'}</span>
-                </DescriptionRow>
-                <DescriptionRow>
-                    <span>Fee</span>
-                    <span>{(pool.fee * 100).toFixed(2)} %</span>
-                </DescriptionRow>
-                <DescriptionRow>
-                    <span>Liquidity</span>
-                    <span>
-                        {pool.liquidity
-                            ? `$${formatBalance(
-                                  (pool.liquidity * StellarService.priceLumenUsd) / 1e7,
-                                  true,
-                              )}`
-                            : '0'}
-                    </span>
-                </DescriptionRow>
+                {isModal && (
+                    <>
+                        <DescriptionRow>
+                            <span>Type</span>
+                            <span>
+                                {pool.pool_type === 'stable' ? 'Stable swap' : 'Constant product'}
+                            </span>
+                        </DescriptionRow>
+                        <DescriptionRow>
+                            <span>Fee</span>
+                            <span>{(pool.fee * 100).toFixed(2)} %</span>
+                        </DescriptionRow>
+                        <DescriptionRow>
+                            <span>Liquidity</span>
+                            <span>
+                                {pool.liquidity
+                                    ? `$${formatBalance(
+                                          (pool.liquidity * StellarService.priceLumenUsd) / 1e7,
+                                          true,
+                                      )}`
+                                    : '0'}
+                            </span>
+                        </DescriptionRow>
+                    </>
+                )}
 
-                <PoolInfo>
+                <PoolInfo isModal={isModal}>
                     <DescriptionRow>
                         <span>Share of Pool</span>
                         <span>{shares}</span>

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { AssetsService } from '../../../common/services/globalServices';
+import { AssetsService, SorobanService } from '../../../common/services/globalServices';
 import { Asset } from '@stellar/stellar-sdk';
 import { getAssetFromString, getAssetString } from '../../../common/helpers/helpers';
 import {
@@ -208,4 +208,19 @@ export const getPathPoolsFee = async (addresses: Array<string>): Promise<Map<str
         acc.set(pool.address, pool.fee);
         return acc;
     }, new Map());
+};
+
+export const getPoolsToMigrate = async (base: Asset, counter: Asset): Promise<Pool[] | null> => {
+    const { data } = await axios.get<ListResponse<Pool>>(
+        `${API_URL}/pools?tokens__in=${SorobanService.getAssetContractId(
+            base,
+        )},${SorobanService.getAssetContractId(counter)}`,
+    );
+
+    const pools = data.items.filter((item) => item.tokens_str.length === 2);
+
+    if (!pools.length) {
+        return null;
+    }
+    return processPools(pools);
 };

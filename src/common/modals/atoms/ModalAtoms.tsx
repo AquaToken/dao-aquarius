@@ -191,6 +191,14 @@ export const ModalBody = ({
     );
 };
 
+export const ModalContainer = styled.div<{ isWide?: boolean }>`
+    width: ${({ isWide }) => (isWide ? '75.2rem' : '52.3rem')};
+
+    ${respondDown(Breakpoints.md)`
+        width: 100%;
+    `}
+`;
+
 export const ModalTitle = styled.h3`
     font-size: 3.6rem;
     line-height: 4.2rem;

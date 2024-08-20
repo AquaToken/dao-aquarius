@@ -31,7 +31,7 @@ const Container = styled.div`
     `}
 `;
 
-const PairContainer = styled.div`
+export const PairContainer = styled.div`
     display: flex;
     flex-direction: column;
     background-color: ${COLORS.lightGray};
