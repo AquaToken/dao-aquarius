@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { FilterOptions, getPools, getTotalStats, PoolsSortFields } from '../api/api';
+import { FilterOptions, getPools, getTotalStats, getVolume24h, PoolsSortFields } from '../api/api';
 import styled from 'styled-components';
 import {
     commonMaxWidth,
@@ -189,6 +189,7 @@ const Analytics = () => {
     const [pending, setPending] = useState(false);
     const [search, setSearch] = useState('');
     const [totalStats, setTotalStats] = useState(null);
+    const [volume24h, setVolume24h] = useState(null);
 
     const debouncedSearch = useDebounce(search, 700, true);
     const history = useHistory();
@@ -198,6 +199,12 @@ const Analytics = () => {
     useEffect(() => {
         getTotalStats().then((res) => {
             setTotalStats(res);
+        });
+    }, []);
+
+    useEffect(() => {
+        getVolume24h().then((res) => {
+            setVolume24h(res);
         });
     }, []);
 
@@ -243,12 +250,13 @@ const Analytics = () => {
                     </Button>
                 </Header>
 
-                {totalStats && (
+                {totalStats && volume24h && (
                     <Section>
                         <Charts>
                             <Chart>
                                 <VolumeChart
                                     data={totalStats}
+                                    volume24h={volume24h}
                                     isGlobalStat
                                     width={Math.min(576, +window.innerWidth - 64)}
                                     height={320}
