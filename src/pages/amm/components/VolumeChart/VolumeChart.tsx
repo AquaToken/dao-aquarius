@@ -44,7 +44,8 @@ const VolumeChart = ({
                 date: transformDate(item.date_str),
                 volume: item.volume / 1e7,
             }));
-            return [copy, volume24h];
+
+            return [copy, volume24h.map((item) => ({ ...item, volume: item.volume / 1e7 }))];
         }
 
         let date = set(transformDate(data[0]?.datetime_str), {
