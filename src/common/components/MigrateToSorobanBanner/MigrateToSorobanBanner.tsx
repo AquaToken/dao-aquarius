@@ -65,7 +65,7 @@ const MigrateToSorobanBanner = ({ base, counter }) => {
         });
     }, []);
 
-    if (!pool || !account?.getPoolBalance(pool.id) || !poolsToMigrate) {
+    if (!pool || !Number(account?.getPoolBalance(pool.id)) || !poolsToMigrate) {
         return null;
     }
 

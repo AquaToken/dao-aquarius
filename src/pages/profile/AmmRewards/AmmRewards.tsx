@@ -293,7 +293,7 @@ const AmmRewards = ({ aquaUsdPrice }) => {
                                 ).toFixed(2);
 
                                 const poolBalance = account.getPoolBalance(id);
-                                const percent = poolBalance / Number(totalShares);
+                                const percent = Number(poolBalance) / Number(totalShares);
                                 const basePooled = reserve_a_amount * percent;
                                 const counterPooled = reserve_b_amount * percent;
 
@@ -332,13 +332,13 @@ const AmmRewards = ({ aquaUsdPrice }) => {
                                             children: (
                                                 <InOffers>
                                                     {formatBalance(
-                                                        account.getPoolBalance(id),
+                                                        Number(account.getPoolBalance(id)),
                                                         true,
                                                     )}
                                                     <Percent>
                                                         {getSharesPercent(
                                                             Number(totalShares),
-                                                            account.getPoolBalance(id),
+                                                            Number(account.getPoolBalance(id)),
                                                         )}
                                                     </Percent>
                                                 </InOffers>

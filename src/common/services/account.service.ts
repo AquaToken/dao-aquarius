@@ -193,7 +193,7 @@ export default class AccountService extends Horizon.AccountResponse {
             return null;
         }
 
-        return Number(poolBalance.balance);
+        return new BigNumber(poolBalance.balance).toFixed(7);
     }
 
     hasAllIceTrustlines() {
