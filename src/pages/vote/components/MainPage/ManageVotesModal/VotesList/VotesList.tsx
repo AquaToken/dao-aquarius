@@ -343,9 +343,11 @@ const VotesList = ({
                             flexSize: 1.5,
                         },
                         {
-                            children: getDateString(new Date(claim.last_modified_time).getTime(), {
-                                withTime: true,
-                            }),
+                            children: claim.last_modified_time
+                                ? getDateString(new Date(claim.last_modified_time).getTime(), {
+                                      withTime: true,
+                                  })
+                                : 'No data',
                             label: 'Vote date:',
                         },
                         {

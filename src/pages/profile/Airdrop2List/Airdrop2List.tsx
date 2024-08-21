@@ -233,10 +233,11 @@ const Airdrop2List = () => {
                             { children: 'Status', align: CellAlign.Right },
                         ]}
                         body={filteredList.map((cb) => {
-                            const dateReceived = getDateString(
-                                new Date(cb.last_modified_time).getTime(),
-                                { withTime: true },
-                            );
+                            const dateReceived = cb.last_modified_time
+                                ? getDateString(new Date(cb.last_modified_time).getTime(), {
+                                      withTime: true,
+                                  })
+                                : 'No data';
                             const claimantPredicates = cb.claimants.find(
                                 ({ destination }) => destination === account.accountId(),
                             )?.predicate?.and;
