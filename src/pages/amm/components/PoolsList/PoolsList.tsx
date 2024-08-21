@@ -228,7 +228,7 @@ const PoolsList = ({
                                 counter={pool.assets[1]}
                                 thirdAsset={pool.assets[2]}
                                 fourthAsset={pool.assets[3]}
-                                poolAddress={pool.address}
+                                poolAddress={!withDeposit && pool.address}
                                 withoutLink
                                 mobileVerticalDirections
                             />
