@@ -8,6 +8,7 @@ import { validateMarketKeys } from '../../pages/vote/api/api';
 import debounceFunction from '../helpers/debounceFunction';
 import { ToastService } from './globalServices';
 import { ServerApi } from '@stellar/stellar-sdk/lib/horizon';
+import { getPoolInfo } from '../../pages/amm/api/api';
 
 enum HORIZON_SERVER {
     stellar = 'https://horizon.stellar.org',
@@ -108,7 +109,7 @@ export default class StellarServiceClass {
     priceLumenUsd = null;
     private claimableBalances: Horizon.ServerApi.ClaimableBalanceRecord[] | null = null;
     private keypair: StellarSdk.Keypair | null = null;
-
+    private poolsRewardsNoteHash = new Map<string, any>();
     constructor() {
         this.startHorizonServer();
         this.loadMorePayments = this.loadMorePayments.bind(this);
@@ -1065,34 +1066,69 @@ export default class StellarServiceClass {
 
     private processPayments(payments) {
         const filtered = payments.filter(
-            ({ from }) =>
-                from === AMM_REWARDS_KEY || from === SDEX_REWARDS_KEY || from === BRIBE_REWARDS_KEY,
+            ({ from, type, parameters }) =>
+                from === AMM_REWARDS_KEY ||
+                from === SDEX_REWARDS_KEY ||
+                from === BRIBE_REWARDS_KEY ||
+                (type === 'invoke_host_function' &&
+                    parameters?.some(
+                        ({ type, value }) =>
+                            type === 'Sym' &&
+                            // @ts-ignore
+                            StellarSdk.xdr.ScVal.fromXDR(value, 'base64').value()?.toString?.() ===
+                                'claim',
+                    )),
         );
 
-        this.loadMemo(filtered);
+        this.loadNotes(filtered);
 
         return filtered.map((payment) => {
-            switch (payment.from) {
-                case AMM_REWARDS_KEY:
+            switch (true) {
+                case payment.from === AMM_REWARDS_KEY:
                     payment.title = 'AMM Reward';
                     break;
-                case SDEX_REWARDS_KEY:
+                case payment.from === SDEX_REWARDS_KEY:
                     payment.title = 'SDEX Reward';
                     break;
-                case BRIBE_REWARDS_KEY:
+                case payment.from === BRIBE_REWARDS_KEY:
                     payment.title = 'Bribe Reward';
+                    break;
+
+                case payment.type === 'invoke_host_function':
+                    payment.title = 'Claim Reward';
+                    payment.amount = payment.asset_balance_changes[0].amount;
                     break;
             }
             return payment;
         });
     }
 
-    private loadMemo(payments) {
+    private loadNotes(payments) {
         this.chunkFunction(payments, (payment) => {
+            if (payment.type === 'invoke_host_function') {
+                return this.getClaimRewardsNote(payment);
+            }
             return payment.transaction().then(({ memo }) => {
                 payment.memo = memo;
                 this.event.trigger({ type: StellarEvents.paymentsHistoryUpdate });
             });
+        });
+    }
+
+    private getClaimRewardsNote(payment) {
+        const poolId = payment.asset_balance_changes[0].from;
+
+        if (this.poolsRewardsNoteHash.has(poolId)) {
+            payment.memo = this.poolsRewardsNoteHash.get(poolId);
+            this.event.trigger({ type: StellarEvents.paymentsHistoryUpdate });
+            return;
+        }
+
+        return getPoolInfo(poolId).then((poolInfo) => {
+            const note = `Rewards for pool: ${poolInfo.assets.map(({ code }) => code).join('/')}`;
+            this.poolsRewardsNoteHash.set(poolId, note);
+            payment.memo = note;
+            this.event.trigger({ type: StellarEvents.paymentsHistoryUpdate });
         });
     }
 
