@@ -65,12 +65,21 @@ const PoolLiquidity = styled.div`
 const PoolStats = styled.div`
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
     width: 50%;
+    gap: 1.4rem;
 
     div {
         display: flex;
         flex-direction: column;
+
+        &:nth-child(1) {
+            flex: 1;
+        }
+
+        &:nth-child(2),
+        &:nth-child(3) {
+            flex: 2;
+        }
 
         span {
             white-space: nowrap;
