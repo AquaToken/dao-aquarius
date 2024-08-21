@@ -957,13 +957,12 @@ export default class StellarServiceClass {
         const ops = [];
         const SLIPPAGE = 0.001; //0.1%
 
-        const [assetA, assetB] = StellarSdk.Asset.compare(base, counter)
-            ? [base, counter]
-            : [counter, base];
+        const [assetA, assetB] = [base, counter].sort((a, b) => StellarSdk.Asset.compare(a, b));
 
-        const [amountA, amountB] = StellarSdk.Asset.compare(base, counter)
-            ? [baseAmount, counterAmount]
-            : [counterAmount, baseAmount];
+        const [amountA, amountB] =
+            assetA.code === base.code && assetA.issuer === base.issuer
+                ? [baseAmount, counterAmount]
+                : [counterAmount, baseAmount];
 
         ops.push(
             StellarSdk.Operation.liquidityPoolWithdraw({
