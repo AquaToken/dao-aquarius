@@ -1124,12 +1124,21 @@ export default class StellarServiceClass {
             return;
         }
 
-        return getPoolInfo(poolId).then((poolInfo) => {
-            const note = `Rewards for pool: ${poolInfo.assets.map(({ code }) => code).join('/')}`;
-            this.poolsRewardsNoteHash.set(poolId, note);
-            payment.memo = note;
-            this.event.trigger({ type: StellarEvents.paymentsHistoryUpdate });
-        });
+        return getPoolInfo(poolId)
+            .then((poolInfo) => {
+                const note = `Rewards for pool: ${poolInfo.assets
+                    .map(({ code }) => code)
+                    .join('/')}`;
+                this.poolsRewardsNoteHash.set(poolId, note);
+                payment.memo = note;
+                this.event.trigger({ type: StellarEvents.paymentsHistoryUpdate });
+            })
+            .catch(() => {
+                const note = 'Rewards for unknown pool';
+                this.poolsRewardsNoteHash.set(poolId, note);
+                payment.memo = note;
+                this.event.trigger({ type: StellarEvents.paymentsHistoryUpdate });
+            });
     }
 
     private async chunkFunction(array, promiseFunction, chunkSize = 10) {
