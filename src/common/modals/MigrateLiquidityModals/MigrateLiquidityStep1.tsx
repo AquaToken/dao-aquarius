@@ -1,19 +1,21 @@
 import * as React from 'react';
+import { useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { COLORS } from '../../styles';
+import { Breakpoints, COLORS } from '../../styles';
 import { ModalContainer, ModalTitle } from '../atoms/ModalAtoms';
 import Pair from '../../../pages/vote/components/common/Pair';
 import { PairContainer } from '../../../pages/amm/components/WithdrawFromPool/WithdrawFromPool';
 import Input from '../../basics/Input';
 import RangeInput from '../../basics/RangeInput';
 import Button from '../../basics/Button';
-import { useMemo, useState } from 'react';
 import AssetLogo from '../../../pages/vote/components/AssetDropdown/AssetLogo';
 import useAuthStore from '../../../store/authStore/useAuthStore';
 import { formatBalance, getAssetString } from '../../helpers/helpers';
 import BigNumber from 'bignumber.js';
-import { ModalService, StellarService } from '../../services/globalServices';
+import { ModalService, StellarService, ToastService } from '../../services/globalServices';
 import MigrateLiquidityStep2 from './MigrateLiquidityStep2';
+import ErrorHandler from '../../helpers/error-handler';
+import { respondDown } from '../../mixins';
 
 export const Stepper = styled.div`
     font-size: 1.4rem;
@@ -38,6 +40,12 @@ const AmountRow = styled.div<{ isFirst?: boolean }>`
     justify-content: space-between;
     color: ${COLORS.grayText};
     margin-top: ${({ isFirst }) => (isFirst ? '3rem' : '1.2rem')};
+
+    ${respondDown(Breakpoints.md)`
+        span:first-child {
+            display: none;
+        }
+    `}
 `;
 
 const Amounts = styled.span`
@@ -48,10 +56,18 @@ const Amounts = styled.span`
     span {
         margin-left: 0.8rem;
     }
+
+    ${respondDown(Breakpoints.md)`
+        font-size: 1.2rem;
+    `}
 `;
 
 const AmountWithdraw = styled.span`
     color: ${COLORS.paragraphText};
+
+    ${respondDown(Breakpoints.md)`
+        font-size: 1.4rem;
+    `}
 `;
 
 const MigrateLiquidityStep1 = ({ params }) => {
@@ -115,16 +131,18 @@ const MigrateLiquidityStep1 = ({ params }) => {
 
     const submit = async () => {
         setPending(true);
-        const op = StellarService.createWithdrawOperation(
+
+        const ops = StellarService.createWithdrawOperation(
             pool.id,
             amountsToWithdraw.shareToWithdraw,
             base,
             counter,
             amountsToWithdraw.baseAmount,
             amountsToWithdraw.counterAmount,
+            Number(percent) === 100,
         );
 
-        const tx = await StellarService.buildTx(account, op);
+        const tx = await StellarService.buildTx(account, ops);
 
         account
             .signAndSubmitTx(tx, false, () =>
@@ -137,9 +155,12 @@ const MigrateLiquidityStep1 = ({ params }) => {
                 }),
             )
             .then(() => {
+                ToastService.showSuccessToast('Withdrawal successfully');
                 setPending(false);
             })
-            .catch(() => {
+            .catch((e) => {
+                const errorText = ErrorHandler(e);
+                ToastService.showErrorToast(errorText);
                 setPending(false);
             });
     };

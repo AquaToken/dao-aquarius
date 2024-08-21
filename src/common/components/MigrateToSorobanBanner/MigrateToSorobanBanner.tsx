@@ -33,6 +33,7 @@ const Info = styled.div`
     font-weight: 700;
     line-height: 2.8rem;
     justify-content: center;
+    margin-right: auto;
 
     span:last-child {
         font-size: 1.6rem;
@@ -43,6 +44,7 @@ const Info = styled.div`
 
     ${respondDown(Breakpoints.xl)`
         text-align: center;
+        margin-right: unset;
     `}
 `;
 
@@ -76,10 +78,7 @@ const MigrateToSorobanBanner = ({ base, counter }) => {
             <Soroban />
             <Info>
                 <span>Ready for the Soroban migration!</span>
-                <span>
-                    You have liquidity in this pool in classic AMM and can migrate it to Soroban
-                    pool
-                </span>
+                <span>You have liquidity in classic AMM and can migrate it to Soroban pool</span>
             </Info>
             <Button onClick={() => migrate()}>migrate</Button>
         </Container>
