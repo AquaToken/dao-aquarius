@@ -70,7 +70,7 @@ export const getPools = async (
     return { pools: processed, total: data.total };
 };
 
-const getPoolInfo = async (id: string): Promise<PoolProcessed> => {
+export const getPoolInfo = async (id: string): Promise<PoolProcessed> => {
     const { data } = await axios.get<Pool>(`${API_URL}/pools/${id}/`);
     const [processed] = await processPools([data]);
     return processed;
