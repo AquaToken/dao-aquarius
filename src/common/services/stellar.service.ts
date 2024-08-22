@@ -8,6 +8,7 @@ import { validateMarketKeys } from '../../pages/vote/api/api';
 import debounceFunction from '../helpers/debounceFunction';
 import { ToastService } from './globalServices';
 import { ServerApi } from '@stellar/stellar-sdk/lib/horizon';
+import BigNumber from 'bignumber.js';
 
 enum HORIZON_SERVER {
     stellar = 'https://horizon.stellar.org',
@@ -942,6 +943,50 @@ export default class StellarServiceClass {
         return StellarSdk.Operation.changeTrust({
             asset,
         });
+    }
+
+    createWithdrawOperation(
+        poolId,
+        share,
+        base,
+        counter,
+        baseAmount,
+        counterAmount,
+        withRemoveTrust,
+    ) {
+        const ops = [];
+        const SLIPPAGE = 0.001; //0.1%
+
+        const [assetA, assetB] = [base, counter].sort((a, b) => StellarSdk.Asset.compare(a, b));
+
+        const [amountA, amountB] =
+            assetA.code === base.code && assetA.issuer === base.issuer
+                ? [baseAmount, counterAmount]
+                : [counterAmount, baseAmount];
+
+        ops.push(
+            StellarSdk.Operation.liquidityPoolWithdraw({
+                liquidityPoolId: poolId,
+                amount: share,
+                minAmountA: new BigNumber(amountA).times(1 - SLIPPAGE).toFixed(7),
+                minAmountB: new BigNumber(amountB).times(1 - SLIPPAGE).toFixed(7),
+            }),
+        );
+
+        if (withRemoveTrust) {
+            ops.push(
+                StellarSdk.Operation.changeTrust({
+                    asset: new StellarSdk.LiquidityPoolAsset(
+                        assetA,
+                        assetB,
+                        StellarSdk.LiquidityPoolFeeV18,
+                    ),
+                    limit: '0',
+                }),
+            );
+        }
+
+        return ops;
     }
 
     getTradeAggregations(base, counter, startDate, endDate, resolution, limit) {

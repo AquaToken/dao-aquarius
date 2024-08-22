@@ -34,6 +34,7 @@ import PoolMembers from '../components/PoolMembers/PoolMembers';
 import PoolEvents from '../components/PoolEvents/PoolEvents';
 import { AQUA_CODE, AQUA_ISSUER } from '../../../common/services/stellar.service';
 import NoTrustline from '../../../common/components/NoTrustline/NoTrustline';
+import MigrateToSorobanBanner from '../../../common/components/MigrateToSorobanBanner/MigrateToSorobanBanner';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -246,6 +247,12 @@ const PoolPage = () => {
                 </Section>
                 <Sidebar pool={pool} />
 
+                {pool.assets.length === 2 && (
+                    <Section>
+                        <MigrateToSorobanBanner base={pool.assets[0]} counter={pool.assets[1]} />
+                    </Section>
+                )}
+
                 {Boolean(rewards && Number(rewards.to_claim)) && (
                     <Section>
                         <SectionWrap>
@@ -255,7 +262,6 @@ const PoolPage = () => {
                                     <span>{formatBalance(rewards.to_claim)} AQUA</span>
                                 </RewardsDescription>
                                 <Button
-                                    isBig
                                     onClick={() => claim()}
                                     pending={claimPending}
                                     disabled={
