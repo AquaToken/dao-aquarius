@@ -62,7 +62,7 @@ const PaymentsHistory = () => {
                         head={[
                             { children: 'Time' },
                             { children: 'Reward type' },
-                            { children: 'Memo note', flexSize: 2 },
+                            { children: 'Note', flexSize: 2 },
                             { children: 'Amount', align: CellAlign.Right },
                             { children: '', align: CellAlign.Right },
                         ]}
@@ -87,7 +87,7 @@ const PaymentsHistory = () => {
                                     {
                                         children: item.memo || <DotsLoader />,
                                         flexSize: 2,
-                                        label: 'Memo note',
+                                        label: 'Note',
                                         mobileStyle: {
                                             textAlign: 'right',
                                         },
