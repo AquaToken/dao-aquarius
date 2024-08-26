@@ -120,7 +120,7 @@ const SignWithPublic = ({ params }: ModalProps<{ xdr: string; account: AccountSe
                 supported methods (Ledger, Trezor, Freighter, Albedo or secret key).
             </ModalDescription>
             <a
-                href={`https://laboratory.stellar.org/#txsigner?xdr=${encodeURIComponent(
+                href={`https://old-lab.stellar.org/#txsigner?xdr=${encodeURIComponent(
                     xdr,
                 )}&network=public`}
                 rel="noreferrer noopener"
