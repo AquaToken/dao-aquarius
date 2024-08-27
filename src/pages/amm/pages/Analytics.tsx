@@ -32,6 +32,7 @@ import VolumeChart from '../components/VolumeChart/VolumeChart';
 import LiquidityChart from '../components/LiquidityChart/LiquidityChart';
 import { PoolProcessed } from '../api/types';
 import Tooltip, { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
+import { POOL_TYPE } from '../../../common/services/soroban.service';
 
 const Container = styled.main`
     height: 100%;
@@ -175,8 +176,8 @@ const Chart = styled.div`
 
 const OPTIONS = [
     { label: 'All', value: FilterOptions.all },
-    { label: 'Stable swap', value: FilterOptions.stable },
-    { label: 'Constant product', value: FilterOptions.constant },
+    { label: 'Stable', value: FilterOptions.stable },
+    { label: 'Volatile', value: FilterOptions.constant },
 ];
 
 const PAGE_SIZE = 10;
@@ -435,14 +436,7 @@ const Analytics = () => {
                                                             fourthAsset={pool.assets[3]}
                                                             mobileVerticalDirections
                                                             withoutLink
-                                                            customLabel={[
-                                                                pool.pool_type === 'stable'
-                                                                    ? 'Stable swap'
-                                                                    : 'Constant product',
-                                                                pool.pool_type === 'stable'
-                                                                    ? 'Highly effecient AMM model for correlated assets (i.e.stablecoins) that offers lower slippage.'
-                                                                    : 'Simple model for general purpose AMM pools (Uniswap v2).',
-                                                            ]}
+                                                            poolType={pool.pool_type as POOL_TYPE}
                                                         />
                                                     ),
                                                     flexSize: 4,

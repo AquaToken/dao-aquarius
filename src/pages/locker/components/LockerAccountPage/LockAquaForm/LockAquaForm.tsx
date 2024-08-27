@@ -479,7 +479,7 @@ const LockAquaForm = forwardRef(
                                 </TooltipInner>
                             }
                             position={TOOLTIP_POSITION.left}
-                            isWhite
+                            background={COLORS.white}
                             showOnHover
                         >
                             <span>

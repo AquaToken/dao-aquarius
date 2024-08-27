@@ -398,7 +398,7 @@ const DepositToPool = ({ params }) => {
                                 </BalanceClickable>
                                 <Tooltip
                                     showOnHover
-                                    isDark
+                                    background={COLORS.titleText}
                                     position={TOOLTIP_POSITION.left}
                                     content={
                                         <TooltipInnerBalance>
@@ -435,9 +435,7 @@ const DepositToPool = ({ params }) => {
                     <>
                         <DescriptionRow>
                             <span>Type</span>
-                            <span>
-                                {pool.pool_type === 'stable' ? 'Stable swap' : 'Constant product'}
-                            </span>
+                            <span>{pool.pool_type === 'stable' ? 'Stable' : 'Volatile'}</span>
                         </DescriptionRow>
                         <DescriptionRow>
                             <span>Fee</span>

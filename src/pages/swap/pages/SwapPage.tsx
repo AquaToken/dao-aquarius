@@ -418,7 +418,7 @@ const SwapPage = () => {
                                 </BalanceClickable>
                                 <Tooltip
                                     showOnHover
-                                    isDark
+                                    background={COLORS.titleText}
                                     position={
                                         +window.innerWidth < 992
                                             ? TOOLTIP_POSITION.left

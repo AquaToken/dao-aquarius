@@ -293,9 +293,7 @@ const PoolPage = () => {
 
                         <SectionRow>
                             <span>Type:</span>
-                            <span>
-                                {pool.pool_type === 'stable' ? 'Stable swap' : 'Constant product'}
-                            </span>
+                            <span>{pool.pool_type === 'stable' ? 'Stable' : 'Volatile'}</span>
                         </SectionRow>
                         <SectionRow>
                             <span>Fee:</span>

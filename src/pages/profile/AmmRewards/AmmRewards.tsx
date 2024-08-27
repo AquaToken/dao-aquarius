@@ -361,7 +361,7 @@ const AmmRewards = ({ aquaUsdPrice }) => {
                                                         <StyledLabel
                                                             title={`Boosted ${boostValue}x`}
                                                             text={TOOLTIP_TEXT}
-                                                            isBlue
+                                                            background={COLORS.blue}
                                                         />
                                                     )}
                                                 </>

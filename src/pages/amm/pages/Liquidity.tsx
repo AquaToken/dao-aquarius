@@ -13,6 +13,8 @@ import PageLoader from '../../../common/basics/PageLoader';
 import PoolsList from '../components/PoolsList/PoolsList';
 import { formatBalance } from '../../../common/helpers/helpers';
 import { PoolUserProcessed } from '../api/types';
+import ToggleGroup from '../../../common/basics/ToggleGroup';
+import Select from '../../../common/basics/Select';
 
 const PoolsListBlock = styled.div`
     display: flex;
@@ -31,7 +33,7 @@ const PoolsListBlock = styled.div`
 
 const ListHeader = styled.div`
     ${flexRowSpaceBetween};
-    margin-bottom: 5.8rem;
+    margin-bottom: 2rem;
 
     ${respondDown(Breakpoints.sm)`
         flex-direction: column;
@@ -66,10 +68,52 @@ const LoginButton = styled(Button)`
     margin-top: 1rem;
 `;
 
+const ToggleGroupStyled = styled(ToggleGroup)`
+    width: fit-content;
+    margin-bottom: 4rem;
+
+    ${respondDown(Breakpoints.md)`
+        display: none;
+    `}
+`;
+
+const SelectStyled = styled(Select)`
+    display: none;
+    margin-bottom: 4rem;
+
+    ${respondDown(Breakpoints.md)`
+        display: flex;
+    `}
+`;
+
+enum FilterValues {
+    all = '',
+    soroban = 'soroban',
+    classic = 'classic',
+}
+
+const FilterOptions = [
+    { label: 'All pools', value: FilterValues.all },
+    { label: 'Soroban pools', value: FilterValues.soroban },
+    { label: 'Classic pools', value: FilterValues.classic },
+];
+
 const Liquidity = () => {
     const { account } = useAuthStore();
 
-    const [pools, setPools] = useState<PoolUserProcessed[] | null>(null);
+    const [pools, setPools] = useState<PoolUserProcessed[]>([]);
+    const [classicPools, setClassicPools] = useState([]);
+    const [filter, setFilter] = useState(FilterValues.all);
+
+    const filteredPools = useMemo(() => {
+        if (filter === FilterValues.classic) {
+            return classicPools;
+        }
+        if (filter === FilterValues.soroban) {
+            return pools;
+        }
+        return [...pools, ...classicPools];
+    }, [classicPools, pools, filter]);
 
     useEffect(() => {
         updateData();
@@ -80,15 +124,15 @@ const Liquidity = () => {
             getUserPools(account.accountId()).then((res) => {
                 setPools(res);
             });
+
+            account?.getClassicPools().then((res) => {
+                setClassicPools(res);
+            });
         }
     };
 
     const totalLiquidity = useMemo(() => {
-        if (!pools) {
-            return <PageLoader />;
-        }
-
-        const total = pools.reduce((acc, pool) => {
+        const total = [...pools, ...classicPools].reduce((acc, pool) => {
             const balance = Number(pool.balance) / 1e7;
             const liquidity = Number(pool.liquidity) / 1e7;
             const totalShare = Number(pool.total_share) / 1e7;
@@ -97,7 +141,7 @@ const Liquidity = () => {
             return acc;
         }, 0);
         return formatBalance(total * StellarService.priceLumenUsd, true);
-    }, [pools]);
+    }, [pools, classicPools]);
 
     if (!account) {
         return (
@@ -122,10 +166,12 @@ const Liquidity = () => {
                     <span>${totalLiquidity}</span>
                 </ListTotal>
             </ListHeader>
-            {!pools ? (
+            <ToggleGroupStyled value={filter} options={FilterOptions} onChange={setFilter} />
+            <SelectStyled value={filter} options={FilterOptions} onChange={setFilter} />
+            {!filteredPools ? (
                 <PageLoader />
-            ) : Boolean(pools.length) ? (
-                <PoolsList isUserList pools={pools} onUpdate={() => updateData()} />
+            ) : Boolean(filteredPools.length) ? (
+                <PoolsList isUserList pools={filteredPools} onUpdate={() => updateData()} />
             ) : (
                 <div>Your liquidity positions will appear here</div>
             )}
