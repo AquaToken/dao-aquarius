@@ -198,20 +198,14 @@ export default class AccountService extends Horizon.AccountResponse {
     }
 
     async getClassicPools() {
-        const pools = this.balances
-            .filter(
-                (balance): balance is Horizon.HorizonApi.BalanceLineLiquidityPool =>
-                    balance.asset_type === 'liquidity_pool_shares',
-            )
-            .map((balance) => ({
-                ...balance,
-                balance: new BigNumber(balance.balance).times(1e7).toFixed(7),
-            }));
-
         const liquidityPoolsForAccount = await StellarService.getLiquidityPoolForAccount(
             this.accountId(),
             200,
         );
+
+        if (!liquidityPoolsForAccount.length) {
+            return [];
+        }
 
         const assetsSet = new Set();
 
@@ -252,10 +246,23 @@ export default class AccountService extends Horizon.AccountResponse {
             }, 0);
         });
 
-        return pools.map((pool) => {
-            const lp = liquidityPoolsForAccount.find(({ id }) => id === pool.liquidity_pool_id);
-            return { ...pool, ...lp, pool_type: POOL_TYPE.classic };
-        });
+        const pools = this.balances
+            .filter(
+                (balance): balance is Horizon.HorizonApi.BalanceLineLiquidityPool =>
+                    balance.asset_type === 'liquidity_pool_shares',
+            )
+            .map((balance) => ({
+                ...balance,
+                balance: new BigNumber(balance.balance).times(1e7).toFixed(7),
+            }));
+
+        return pools
+            .map((pool) => {
+                const lp = liquidityPoolsForAccount.find(({ id }) => id === pool.liquidity_pool_id);
+
+                return lp ? { ...pool, ...lp, pool_type: POOL_TYPE.classic } : null;
+            })
+            .filter((item) => Boolean(item));
     }
 
     hasAllIceTrustlines() {
