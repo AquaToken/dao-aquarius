@@ -361,7 +361,7 @@ const IceLocks = ({ ammAquaBalance }) => {
                                             ? TOOLTIP_POSITION.top
                                             : TOOLTIP_POSITION.left
                                     }
-                                    isWhite
+                                    background={COLORS.white}
                                     showOnHover
                                 >
                                     <Total>

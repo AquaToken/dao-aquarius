@@ -928,7 +928,7 @@ const MainPage = (): JSX.Element => {
                                     }
                                     position={TOOLTIP_POSITION.top}
                                     showOnHover
-                                    isWhite
+                                    background={COLORS.white}
                                 >
                                     <>
                                         <Dot>·</Dot>

@@ -27,6 +27,7 @@ import useAssetsStore from '../../../store/assetsStore/useAssetsStore';
 import DotsLoader from '../../../common/basics/DotsLoader';
 import BoostBanner from '../BoostBanner/BoostBanner';
 import Table, { CellAlign } from '../../../common/basics/Table';
+import { COLORS } from '../../../common/styles';
 
 enum SortField {
     market = 'market',
@@ -281,7 +282,7 @@ const SdexRewards = ({ aquaUsdPrice }) => {
                                                         <StyledLabel
                                                             title={`Boosted ${boostValue}x`}
                                                             text={TOOLTIP_TEXT}
-                                                            isBlue
+                                                            background={COLORS.blue}
                                                         />
                                                     )}
                                                 </>

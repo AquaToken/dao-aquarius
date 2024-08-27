@@ -20,6 +20,9 @@ export const COLORS = {
     orange: '#FF8F00',
     border: '#E9E6ED',
     blue: '#2E30F0',
+    classicPool: '#4F345B',
+    constantPool: '#B0632A',
+    stablePool: '#2AA3B0',
 };
 
 export const FONT_FAMILY = {

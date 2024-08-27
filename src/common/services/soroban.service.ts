@@ -55,6 +55,7 @@ export enum CONTRACT_STATUS {
 export enum POOL_TYPE {
     stable = 'stable',
     constant = 'constant_product',
+    classic = 'classic',
 }
 
 export default class SorobanServiceClass {

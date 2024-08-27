@@ -248,7 +248,7 @@ const VoteAmount = ({ pair, totalStats }: { pair: PairStats; totalStats: TotalSt
                 </TooltipWrap>
             }
             position={TOOLTIP_POSITION.top}
-            isWhite
+            background={COLORS.white}
             showOnHover
         >
             <label>Votes:</label>

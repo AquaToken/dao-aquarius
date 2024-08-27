@@ -46,8 +46,8 @@ const LiveOnSorobanAlert = ({ confirm }) => {
         <Container>
             <ModalTitle>Aquarius is live on Soroban!</ModalTitle>
             <ModalDescription>
-                We have launched our AMM protocol on Pubnet. Constant product and Stable pools, as
-                well as multihop token swap are ready to be tried in action.
+                We have launched our AMM protocol on Pubnet. Volatile and Stable pools, as well as
+                multihop token swap are ready to be tried in action.
             </ModalDescription>
             <i>
                 The functionality is in early access mode, the audits are expected to be done soon.

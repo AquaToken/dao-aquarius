@@ -11,10 +11,12 @@ import { flexAllCenter, respondDown } from '../../../../common/mixins';
 import {
     AuthRequiredLabel,
     BoostLabel,
-    CustomLabel,
+    ClassicPoolLabel,
+    ConstantPoolLabel,
     MaxRewardsLabel,
     NoLiquidityLabel,
     RewardLabel,
+    StablePoolLabel,
 } from './Labels';
 import { AssetSimple } from '../../../../store/assetsStore/types';
 import { getAssetString } from '../../../../store/assetsStore/actions';
@@ -23,6 +25,7 @@ import useAssetsStore from '../../../../store/assetsStore/useAssetsStore';
 import { Link } from 'react-router-dom';
 import { AmmRoutes, MarketRoutes } from '../../../../routes';
 import { formatBalance } from '../../../../common/helpers/helpers';
+import { POOL_TYPE } from '../../../../common/services/soroban.service';
 
 const Wrapper = styled.div<{
     verticalDirections?: boolean;
@@ -214,8 +217,8 @@ type PairProps = {
     withMarketLink?: boolean;
     amounts?: string[];
     isSwapResult?: boolean;
-    customLabel?: [string, string];
     poolAddress?: string;
+    poolType?: POOL_TYPE;
 };
 
 const Pair = ({
@@ -240,8 +243,8 @@ const Pair = ({
     withMarketLink,
     amounts,
     isSwapResult,
-    customLabel,
     poolAddress,
+    poolType,
 }: PairProps): JSX.Element => {
     const { assetsInfo } = useAssetsStore();
 
@@ -371,7 +374,9 @@ const Pair = ({
                     {isMaxRewards && !bottomLabels && <MaxRewardsLabel />}
                     {authRequired && !bottomLabels && <AuthRequiredLabel />}
                     {noLiquidity && !bottomLabels && <NoLiquidityLabel />}
-                    {customLabel && <CustomLabel title={customLabel[0]} text={customLabel[1]} />}
+                    {poolType === POOL_TYPE.classic && <ClassicPoolLabel />}
+                    {poolType === POOL_TYPE.stable && <StablePoolLabel />}
+                    {poolType === POOL_TYPE.constant && <ConstantPoolLabel />}
                     {!withoutLink && (
                         <LinkCustom
                             onClick={(e) => viewOnStellarX(e, baseInstance, counterInstance)}
@@ -440,7 +445,9 @@ const Pair = ({
                     {isMaxRewards && <MaxRewardsLabel />}
                     {authRequired && <AuthRequiredLabel />}
                     {noLiquidity && <NoLiquidityLabel />}
-                    {customLabel && <CustomLabel title={customLabel[0]} text={customLabel[1]} />}
+                    {poolType === POOL_TYPE.classic && <ClassicPoolLabel />}
+                    {poolType === POOL_TYPE.stable && <StablePoolLabel />}
+                    {poolType === POOL_TYPE.constant && <ConstantPoolLabel />}
                 </Labels>
             )}
         </Wrapper>
