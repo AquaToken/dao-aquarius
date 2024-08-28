@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../../../common/styles';
 import { customScroll, flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
@@ -29,7 +29,7 @@ import MainNetWarningModal, {
 
 const Container = styled.div<{ isModal: boolean }>`
     width: ${({ isModal }) => (isModal ? '52.3rem' : '100%')};
-    max-height: 80vh;
+    max-height: 82vh;
     overflow: auto;
     padding-top: ${({ isModal }) => (isModal ? '0' : '4rem')};
 
@@ -182,45 +182,45 @@ const DepositToPool = ({ params }) => {
         return [...amounts.values()].every((value) => Boolean(+value));
     }, [amounts]);
 
-    const shares = useMemo(() => {
+    const { sharesBefore, sharesAfter } = useMemo(() => {
         const firstAssetString = getAssetString(pool.assets[0]);
 
         const amountBeforeDeposit =
             (reserves.get(firstAssetString) * accountShare) / (pool.total_share / 1e7);
 
-        if (Number(pool.total_share) === 0 && hasAllAmounts) {
-            return hasAllAmounts ? (
-                <span>
-                    0% <Arrow /> 100%
-                </span>
-            ) : (
-                <span>0%</span>
-            );
+        if (Number(pool.total_share) === 0) {
+            return {
+                sharesBefore: 0,
+                sharesAfter: hasAllAmounts ? 100 : null,
+            };
         }
 
         if (hasAllAmounts) {
-            return (
-                <span>
-                    {formatBalance((accountShare / (pool.total_share / 1e7)) * 100, true)}%
-                    <Arrow />
-                    {formatBalance(
-                        ((+amounts.get(firstAssetString) + amountBeforeDeposit) /
-                            (reserves.get(firstAssetString) + +amounts.get(firstAssetString))) *
-                            100,
-                        true,
-                    )}
-                    %
-                </span>
-            );
+            return {
+                sharesBefore: (accountShare / (pool.total_share / 1e7)) * 100,
+                sharesAfter:
+                    ((+amounts.get(firstAssetString) + amountBeforeDeposit) /
+                        (reserves.get(firstAssetString) + +amounts.get(firstAssetString))) *
+                    100,
+            };
         }
 
-        return `${formatBalance(
-            ((+amounts.get(firstAssetString) + amountBeforeDeposit) /
-                (reserves.get(firstAssetString) + +amounts.get(firstAssetString))) *
-                100,
-            true,
-        )}%`;
+        return {
+            sharesBefore: (accountShare / (pool.total_share / 1e7)) * 100,
+            sharesAfter: null,
+        };
     }, [amounts, pool, reserves, accountShare]);
+
+    const getDailyRewards = useCallback(
+        (percent) => {
+            const secondsInDay = 60 * 60 * 24;
+
+            const poolDailyRewards = (Number(pool.reward_tps) / 1e7) * secondsInDay;
+
+            return (poolDailyRewards * percent) / 100;
+        },
+        [pool],
+    );
 
     const rates: Map<string, string> = useMemo(() => {
         if (Number(pool.total_share) === 0 && !hasAllAmounts) {
@@ -460,8 +460,30 @@ const DepositToPool = ({ params }) => {
                 <PoolInfo isModal={isModal}>
                     <DescriptionRow>
                         <span>Share of Pool</span>
-                        <span>{shares}</span>
+                        <span>
+                            {formatBalance(sharesBefore, true)}%
+                            {sharesAfter && (
+                                <>
+                                    <Arrow />
+                                    {formatBalance(sharesAfter, true)}%
+                                </>
+                            )}
+                        </span>
                     </DescriptionRow>
+                    {Boolean(Number(pool.reward_tps)) && (
+                        <DescriptionRow>
+                            <span>Daily rewards</span>
+                            <span>
+                                {formatBalance(getDailyRewards(sharesBefore), true)} AQUA
+                                {sharesAfter && (
+                                    <>
+                                        <Arrow />
+                                        {formatBalance(getDailyRewards(sharesAfter), true)} AQUA
+                                    </>
+                                )}
+                            </span>
+                        </DescriptionRow>
+                    )}
                     {pool.assets.map((asset) => (
                         <DescriptionRow key={getAssetString(asset)}>
                             <span>
