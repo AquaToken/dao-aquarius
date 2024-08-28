@@ -282,14 +282,16 @@ const PoolPage = () => {
                 )}
                 <Section>
                     <SectionWrap>
-                        <Charts>
-                            <Chart>
-                                <LiquidityChart data={pool.stats} />
-                            </Chart>
-                            <Chart>
-                                <VolumeChart data={pool.stats} />
-                            </Chart>
-                        </Charts>
+                        {Boolean(pool.stats.length) && (
+                            <Charts>
+                                <Chart>
+                                    <LiquidityChart data={pool.stats} />
+                                </Chart>
+                                <Chart>
+                                    <VolumeChart data={pool.stats} />
+                                </Chart>
+                            </Charts>
+                        )}
 
                         <SectionRow>
                             <span>Type:</span>
