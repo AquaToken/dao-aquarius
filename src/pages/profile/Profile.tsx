@@ -90,7 +90,7 @@ const OPTIONS = [
     { label: 'My liquidity', value: Tabs.liquidity },
     { label: 'SDEX rewards', value: Tabs.sdex },
     { label: 'AMM rewards', value: Tabs.amm },
-    { label: 'MyLiquidity Votes', value: Tabs.your },
+    { label: 'My Liquidity Votes', value: Tabs.your },
     { label: 'Governance Votes', value: Tabs.governance },
     { label: 'Airdrop #2', value: Tabs.airdrop2 },
     { label: 'ICE locks', value: Tabs.iceLocks },

@@ -472,7 +472,7 @@ export default class AccountService extends Horizon.AccountResponse {
             { label: 'Fee reserve', value: 2 },
             { label: 'XLM in active offers', value: Number(selling_liabilities) },
             { label: 'Trustlines', value: entriesTrustlines * 0.5 },
-            { label: 'MyLiquidity pool trustlines', value: entriesLiquidityTrustlines },
+            { label: 'My liquidity pool trustlines', value: entriesLiquidityTrustlines },
             { label: 'Offers', value: entriesOffers * 0.5 },
             { label: 'Signers', value: entriesSigners * 0.5 },
             { label: 'Account data', value: entriesOthers * 0.5 },
