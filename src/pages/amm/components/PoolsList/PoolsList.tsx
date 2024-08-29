@@ -233,7 +233,7 @@ const PoolsList = ({
                 const liquidity = new BigNumber(pool.liquidity?.toString()).div(1e7).toString();
                 const totalShare = new BigNumber(pool.total_share?.toString()).div(1e7).toString();
                 return (
-                    <PoolBlock key={pool.address}>
+                    <PoolBlock key={pool.address ?? pool.id}>
                         <PoolMain>
                             <Pair
                                 base={pool.assets[0]}
@@ -302,6 +302,7 @@ const PoolsList = ({
                                             counterAmount,
                                             base,
                                             counter,
+                                            onUpdate,
                                         }}
                                     />
                                 ) : (
@@ -373,7 +374,10 @@ const PoolsList = ({
                                             )}
 
                                             {pool.pool_type === POOL_TYPE.classic ? (
-                                                <MigratePoolButton pool={pool} />
+                                                <MigratePoolButton
+                                                    pool={pool}
+                                                    onUpdate={() => onUpdate()}
+                                                />
                                             ) : (
                                                 <Button
                                                     fullWidth
@@ -383,11 +387,12 @@ const PoolsList = ({
                                                             DepositToPool,
                                                             {
                                                                 pool,
+                                                                onUpdate,
                                                             },
                                                             false,
                                                             null,
                                                             true,
-                                                        ).then(() => onUpdate());
+                                                        );
                                                     }}
                                                     disabled={pool.deposit_killed}
                                                 >

@@ -1,30 +1,37 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import { getUserPools } from '../api/api';
-import { Empty } from '../../profile/YourVotes/YourVotes';
-import { ModalService, StellarService } from '../../../common/services/globalServices';
-import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
-import useAuthStore from '../../../store/authStore/useAuthStore';
+import { getUserPools } from '../../api/api';
+import { Empty } from '../../../profile/YourVotes/YourVotes';
+import { ModalService, StellarService } from '../../../../common/services/globalServices';
+import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
+import useAuthStore from '../../../../store/authStore/useAuthStore';
 import styled from 'styled-components';
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../common/mixins';
-import Button from '../../../common/basics/Button';
-import { Breakpoints, COLORS } from '../../../common/styles';
-import PageLoader from '../../../common/basics/PageLoader';
-import PoolsList from '../components/PoolsList/PoolsList';
-import { formatBalance } from '../../../common/helpers/helpers';
-import { PoolUserProcessed } from '../api/types';
-import ToggleGroup from '../../../common/basics/ToggleGroup';
-import Select from '../../../common/basics/Select';
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
+import Button from '../../../../common/basics/Button';
+import { Breakpoints, COLORS } from '../../../../common/styles';
+import PageLoader from '../../../../common/basics/PageLoader';
+import PoolsList from '../PoolsList/PoolsList';
+import { formatBalance } from '../../../../common/helpers/helpers';
+import { PoolUserProcessed } from '../../api/types';
+import ToggleGroup from '../../../../common/basics/ToggleGroup';
+import Select from '../../../../common/basics/Select';
+import { POOL_TYPE } from '../../../../common/services/soroban.service';
 
-const PoolsListBlock = styled.div`
+const PoolsListBlock = styled.div<{ onlyList: boolean }>`
     display: flex;
     flex-direction: column;
-    padding: 4.8rem;
     background-color: ${COLORS.white};
-    box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
-    border-radius: 0.5rem;
-    max-width: 80rem;
-    margin: 0 auto 5rem;
+    margin: 3.6rem auto 5rem;
+
+    ${({ onlyList }) =>
+        !onlyList &&
+        `
+        padding: 4.8rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
+        max-width: 80rem;
+        margin-top: 0;
+    `}
 
     ${respondDown(Breakpoints.md)`
         padding: 3.2rem 1.6rem;
@@ -88,17 +95,24 @@ const SelectStyled = styled(Select)`
 
 enum FilterValues {
     all = '',
-    soroban = 'soroban',
+    volatile = 'volatile',
+    stable = 'stable',
     classic = 'classic',
 }
 
 const FilterOptions = [
-    { label: 'All pools', value: FilterValues.all },
-    { label: 'Soroban pools', value: FilterValues.soroban },
-    { label: 'Classic pools', value: FilterValues.classic },
+    { label: 'All', value: FilterValues.all },
+    { label: 'Volatile', value: FilterValues.volatile },
+    { label: 'Stable', value: FilterValues.stable },
+    { label: 'Classic', value: FilterValues.classic },
 ];
 
-const Liquidity = () => {
+interface MyLiquidityProps {
+    setTotal?: (total: number) => void;
+    onlyList?: boolean;
+}
+
+const MyLiquidity = ({ setTotal, onlyList }: MyLiquidityProps) => {
     const { account } = useAuthStore();
 
     const [pools, setPools] = useState<PoolUserProcessed[]>([]);
@@ -109,8 +123,11 @@ const Liquidity = () => {
         if (filter === FilterValues.classic) {
             return classicPools;
         }
-        if (filter === FilterValues.soroban) {
-            return pools;
+        if (filter === FilterValues.volatile) {
+            return pools.filter(({ pool_type }) => pool_type === POOL_TYPE.constant);
+        }
+        if (filter === FilterValues.stable) {
+            return pools.filter(({ pool_type }) => pool_type === POOL_TYPE.stable);
         }
         return [...pools, ...classicPools];
     }, [classicPools, pools, filter]);
@@ -132,7 +149,7 @@ const Liquidity = () => {
     };
 
     const totalLiquidity = useMemo(() => {
-        const total = [...pools, ...classicPools].reduce((acc, pool) => {
+        const totalXlm = [...pools, ...classicPools].reduce((acc, pool) => {
             const balance = Number(pool.balance) / 1e7;
             const liquidity = Number(pool.liquidity) / 1e7;
             const totalShare = Number(pool.total_share) / 1e7;
@@ -140,7 +157,13 @@ const Liquidity = () => {
             acc += (balance / totalShare) * liquidity;
             return acc;
         }, 0);
-        return formatBalance(total * StellarService.priceLumenUsd, true);
+
+        const totalUsd = totalXlm * StellarService.priceLumenUsd;
+
+        if (setTotal) {
+            setTotal(totalUsd);
+        }
+        return totalUsd;
     }, [pools, classicPools]);
 
     if (!account) {
@@ -158,14 +181,16 @@ const Liquidity = () => {
         );
     }
     return (
-        <PoolsListBlock>
-            <ListHeader>
-                <ListTitle>My liquidity positions</ListTitle>
-                <ListTotal>
-                    <span>Total: </span>
-                    <span>${totalLiquidity}</span>
-                </ListTotal>
-            </ListHeader>
+        <PoolsListBlock onlyList={onlyList}>
+            {!onlyList && (
+                <ListHeader>
+                    <ListTitle>My liquidity positions</ListTitle>
+                    <ListTotal>
+                        <span>Total: </span>
+                        <span>${formatBalance(totalLiquidity, true)}</span>
+                    </ListTotal>
+                </ListHeader>
+            )}
             <ToggleGroupStyled value={filter} options={FilterOptions} onChange={setFilter} />
             <SelectStyled value={filter} options={FilterOptions} onChange={setFilter} />
             {!filteredPools ? (
@@ -179,4 +204,4 @@ const Liquidity = () => {
     );
 };
 
-export default Liquidity;
+export default MyLiquidity;

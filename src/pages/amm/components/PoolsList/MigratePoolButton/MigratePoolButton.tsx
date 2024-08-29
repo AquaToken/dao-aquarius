@@ -5,7 +5,7 @@ import Button from '../../../../../common/basics/Button';
 import { ModalService } from '../../../../../common/services/globalServices';
 import MigrateLiquidityStep1 from '../../../../../common/modals/MigrateLiquidityModals/MigrateLiquidityStep1';
 
-const MigratePoolButton = ({ pool }) => {
+const MigratePoolButton = ({ pool, onUpdate }) => {
     const [poolsToMigrate, setPoolsToMigrate] = useState(null);
 
     const [base, counter] = pool.assets;
@@ -24,6 +24,7 @@ const MigratePoolButton = ({ pool }) => {
                     poolsToMigrate,
                     base,
                     counter,
+                    onUpdate,
                 });
             }}
             disabled={!poolsToMigrate}

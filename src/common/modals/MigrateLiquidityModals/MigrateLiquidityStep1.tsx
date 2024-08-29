@@ -72,7 +72,7 @@ const AmountWithdraw = styled.span`
 `;
 
 const MigrateLiquidityStep1 = ({ params, confirm }) => {
-    const { base, counter, pool, poolsToMigrate } = params;
+    const { base, counter, pool, poolsToMigrate, onUpdate } = params;
 
     const { account } = useAuthStore();
 
@@ -154,11 +154,16 @@ const MigrateLiquidityStep1 = ({ params, confirm }) => {
                           counter,
                           baseAmount: amountsToWithdraw.baseAmount,
                           counterAmount: amountsToWithdraw.counterAmount,
+                          onUpdate,
                       })
                     : void 0,
             )
             .then((res) => {
                 setPending(false);
+
+                if (onUpdate) {
+                    onUpdate();
+                }
 
                 if (!poolsToMigrate) {
                     confirm();

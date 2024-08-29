@@ -150,7 +150,7 @@ const TooltipRow = styled.div`
 
 const DepositToPool = ({ params }) => {
     const { account } = useAuthStore();
-    const { pool, isModal = true, baseAmount, counterAmount, base, counter } = params;
+    const { pool, isModal = true, baseAmount, counterAmount, base, counter, onUpdate } = params;
 
     const [accountShare, setAccountShare] = useState(null);
 
@@ -271,6 +271,10 @@ const DepositToPool = ({ params }) => {
 
                 if (!res) {
                     return;
+                }
+
+                if (onUpdate) {
+                    onUpdate();
                 }
 
                 if (

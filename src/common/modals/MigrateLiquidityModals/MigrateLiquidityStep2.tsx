@@ -16,7 +16,7 @@ const Content = styled.div`
     `}
 `;
 const MigrateLiquidityStep2 = ({ params }) => {
-    const { poolsToMigrate, baseAmount, counterAmount, base, counter } = params;
+    const { poolsToMigrate, baseAmount, counterAmount, base, counter, onUpdate } = params;
 
     return (
         <ModalContainer isWide>
@@ -30,7 +30,7 @@ const MigrateLiquidityStep2 = ({ params }) => {
                     counterAmount={counterAmount}
                     base={base}
                     counter={counter}
-                    onUpdate={() => {}}
+                    onUpdate={() => onUpdate()}
                 />
             </Content>
         </ModalContainer>
