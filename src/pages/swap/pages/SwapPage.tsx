@@ -14,6 +14,7 @@ import {
     ModalService,
     SorobanService,
     StellarService,
+    ToastService,
 } from '../../../common/services/globalServices';
 import PageLoader from '../../../common/basics/PageLoader';
 import Input from '../../../common/basics/Input';
@@ -319,6 +320,10 @@ const SwapPage = () => {
             return ModalService.openModal(ChooseLoginMethodModal, {});
         }
         if (!counterAmount || !baseAmount) {
+            return;
+        }
+        if (Number(baseAmount) > account.getAssetBalance(base)) {
+            ToastService.showErrorToast(`Insufficient ${base.code} balance`);
             return;
         }
         ModalService.openModal(SwapConfirmModal, {

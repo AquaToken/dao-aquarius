@@ -1,5 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
+import * as StellarSdk from '@stellar/stellar-sdk';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../../common/styles';
 import { ModalDescription, ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
@@ -19,6 +20,7 @@ import { BuildSignAndSubmitStatuses } from '../../../../common/services/wallet-c
 import { getPathPoolsFee } from '../../../amm/api/api';
 import PageLoader from '../../../../common/basics/PageLoader';
 import PathPool from './PathPool/PathPool';
+import DotsLoader from '../../../../common/basics/DotsLoader';
 
 const Container = styled.div`
     width: 52.3rem;
@@ -61,16 +63,41 @@ const Pools = styled.div`
     `}
 `;
 
+const STROOP = 0.0000001;
+
 const SwapConfirmModal = ({ params, confirm }) => {
     const { base, counter, baseAmount, counterAmount, bestPathXDR, bestPath, bestPools } = params;
     const [fees, setFees] = useState(null);
     const [swapPending, setSwapPending] = useState(false);
+    const [txFee, setTxFee] = useState(null);
 
     const { account } = useAuthStore();
 
     useEffect(() => {
-        getPathPoolsFee(bestPools).then((res) => {
-            setFees(res);
+        getPathPoolsFee(bestPools)
+            .then((res) => {
+                setFees(res);
+            })
+            .catch(() => {
+                setFees(0);
+            });
+    }, []);
+
+    useEffect(() => {
+        SorobanService.getSwapChainedTx(
+            account?.accountId(),
+            base,
+            bestPathXDR,
+            baseAmount,
+            '0',
+        ).then((res) => {
+            SorobanService.simulateTx(res).then(
+                ({
+                    minResourceFee,
+                }: StellarSdk.SorobanRpc.Api.SimulateTransactionSuccessResponse) => {
+                    setTxFee(minResourceFee);
+                },
+            );
         });
     }, []);
 
@@ -172,6 +199,19 @@ const SwapConfirmModal = ({ params, confirm }) => {
                 <span>Exchange rate</span>
                 <span>
                     1 {base.code} = {formatBalance(+counterAmount / +baseAmount)} {counter.code}
+                </span>
+            </DescriptionRow>
+
+            <DescriptionRow>
+                <span>Maximum transaction fee:</span>
+                <span>
+                    {txFee !== null ? (
+                        `${formatBalance(
+                            STROOP * (Number(txFee) + Number(StellarSdk.BASE_FEE)),
+                        )} XLM`
+                    ) : (
+                        <DotsLoader />
+                    )}
                 </span>
             </DescriptionRow>
 
