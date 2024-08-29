@@ -195,6 +195,12 @@ const Analytics = () => {
         setMyTotal(null);
     }, [activeTab]);
 
+    useEffect(() => {
+        if (!isLogged) {
+            setActiveTab(Tabs.top);
+        }
+    }, [isLogged]);
+
     const goToCreatePool = () => {
         if (!isLogged) {
             ModalService.openModal(ChooseLoginMethodModal, {
