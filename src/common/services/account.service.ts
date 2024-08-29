@@ -225,8 +225,6 @@ export default class AccountService extends Horizon.AccountResponse {
             // @ts-ignore
             lp.total_share = new BigNumber(lp.total_shares).times(1e7).toFixed(7);
             // @ts-ignore
-            lp.address = lp.id;
-            // @ts-ignore
             lp.fee = 0.003;
         });
 
@@ -474,7 +472,7 @@ export default class AccountService extends Horizon.AccountResponse {
             { label: 'Fee reserve', value: 2 },
             { label: 'XLM in active offers', value: Number(selling_liabilities) },
             { label: 'Trustlines', value: entriesTrustlines * 0.5 },
-            { label: 'Liquidity pool trustlines', value: entriesLiquidityTrustlines },
+            { label: 'MyLiquidity pool trustlines', value: entriesLiquidityTrustlines },
             { label: 'Offers', value: entriesOffers * 0.5 },
             { label: 'Signers', value: entriesSigners * 0.5 },
             { label: 'Account data', value: entriesOthers * 0.5 },

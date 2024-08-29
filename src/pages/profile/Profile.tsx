@@ -16,7 +16,7 @@ import IceLocks from './IceLocks/IceLocks';
 import useAuthStore from '../../store/authStore/useAuthStore';
 import { StellarService } from '../../common/services/globalServices';
 import PaymentsHistory from './PaymentsHistory/PaymentsHistory';
-import Liquidity from '../amm/pages/Liquidity';
+import MyLiquidity from '../amm/components/MyLiquidity/MyLiquidity';
 import BalancesBlock from '../amm/components/BalancesBlock/BalancesBlock';
 
 const Container = styled.div`
@@ -90,7 +90,7 @@ const OPTIONS = [
     { label: 'My liquidity', value: Tabs.liquidity },
     { label: 'SDEX rewards', value: Tabs.sdex },
     { label: 'AMM rewards', value: Tabs.amm },
-    { label: 'Liquidity Votes', value: Tabs.your },
+    { label: 'MyLiquidity Votes', value: Tabs.your },
     { label: 'Governance Votes', value: Tabs.governance },
     { label: 'Airdrop #2', value: Tabs.airdrop2 },
     { label: 'ICE locks', value: Tabs.iceLocks },
@@ -133,7 +133,7 @@ const Profile = () => {
 
             <ContentWrap>
                 <Content>
-                    {selectedTab === Tabs.liquidity && <Liquidity />}
+                    {selectedTab === Tabs.liquidity && <MyLiquidity />}
                     {selectedTab === Tabs.balances && <BalancesBlock />}
                     {selectedTab === Tabs.amm && <AmmRewards aquaUsdPrice={aquaUsdPrice} />}
                     {selectedTab === Tabs.sdex && <SdexRewards aquaUsdPrice={aquaUsdPrice} />}
