@@ -102,8 +102,8 @@ enum FilterValues {
 
 const FilterOptions = [
     { label: 'All', value: FilterValues.all },
-    { label: 'Volatile', value: FilterValues.volatile },
     { label: 'Stable', value: FilterValues.stable },
+    { label: 'Volatile', value: FilterValues.volatile },
     { label: 'Classic', value: FilterValues.classic },
 ];
 
