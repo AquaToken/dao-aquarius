@@ -74,9 +74,13 @@ const SwapConfirmModal = ({ params, confirm }) => {
     const { account } = useAuthStore();
 
     useEffect(() => {
-        getPathPoolsFee(bestPools).then((res) => {
-            setFees(res);
-        });
+        getPathPoolsFee(bestPools)
+            .then((res) => {
+                setFees(res);
+            })
+            .catch(() => {
+                setFees(0);
+            });
     }, []);
 
     useEffect(() => {
@@ -201,7 +205,7 @@ const SwapConfirmModal = ({ params, confirm }) => {
             <DescriptionRow>
                 <span>Maximum transaction fee:</span>
                 <span>
-                    {txFee ? (
+                    {txFee !== null ? (
                         `${formatBalance(
                             STROOP * (Number(txFee) + Number(StellarSdk.BASE_FEE)),
                         )} XLM`
