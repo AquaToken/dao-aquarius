@@ -21,7 +21,7 @@ const PoolsListBlock = styled.div<{ onlyList: boolean }>`
     display: flex;
     flex-direction: column;
     background-color: ${COLORS.white};
-    margin: 3.6rem auto 5rem;
+    margin: 4.8rem auto 5rem;
 
     ${({ onlyList }) =>
         !onlyList &&
