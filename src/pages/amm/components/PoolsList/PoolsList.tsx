@@ -287,11 +287,11 @@ const PoolsList = ({
                                     </span>
                                 </PoolLiquidity>
                             )}
-                            <ExpandButton onClick={() => togglePool(pool.address)}>
+                            <ExpandButton onClick={() => togglePool(pool.address ?? pool.id)}>
                                 <ArrowDown $isOpen={expandedIndexes.includes(pool.address)} />
                             </ExpandButton>
                         </PoolMain>
-                        {expandedIndexes.includes(pool.address) && (
+                        {expandedIndexes.includes(pool.address ?? pool.id) && (
                             <ExpandedBlock withoutTopPadding={withDeposit}>
                                 {withDeposit ? (
                                     <DepositToPool
