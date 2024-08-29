@@ -78,7 +78,7 @@ const BoostBanner = () => {
             <FreezeAquaImg />
             <Content>
                 <Title>
-                    Get the <Label title={'boost'} isBlue /> to your reward
+                    Get the <Label title={'boost'} background={COLORS.blue} /> to your reward
                 </Title>
                 <Description>
                     Freeze your AQUA into ICE and boost your rewards by up to 250%!

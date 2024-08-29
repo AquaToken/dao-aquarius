@@ -27,38 +27,18 @@ const LabelWrap = styled.div`
 `;
 
 const LabelInner = styled.div<{
-    isRed?: boolean;
-    isGreen?: boolean;
-    isDark?: boolean;
-    isBlue?: boolean;
-    isWhite?: boolean;
+    background: string;
+    color: string;
 }>`
     ${flexAllCenter};
     height: 1.6rem;
     padding: 0 0.4rem;
     border-radius: 0.3rem;
-    background: ${({ isRed, isGreen, isDark, isBlue, isWhite }) => {
-        if (isRed) {
-            return COLORS.pinkRed;
-        }
-        if (isGreen) {
-            return COLORS.green;
-        }
-        if (isDark) {
-            return COLORS.titleText;
-        }
-        if (isBlue) {
-            return COLORS.blue;
-        }
-        if (isWhite) {
-            return COLORS.white;
-        }
-        return COLORS.purple;
-    }};
-    color: ${({ isWhite }) => (isWhite ? COLORS.purple : COLORS.white)};
-    border: ${({ isWhite }) => (isWhite ? `0.1rem solid ${COLORS.purple}` : 'none')};
+    background: ${({ background }) => background};
+    color: ${({ color }) => color};
+    border: ${({ color }) => `0.1rem solid ${color}`};
     text-transform: uppercase;
-    font-weight: 500;
+    font-weight: 700;
     font-size: 0.8rem;
     line-height: 1.8rem;
     cursor: help;
@@ -70,20 +50,14 @@ const SCROLL_OFFSET = window.navigator.userAgent.indexOf('win') > -1 ? 20 : 0;
 const Label = ({
     title,
     text,
-    isGreen,
-    isRed,
-    isDark,
-    isBlue,
-    isWhite,
+    background = COLORS.purple,
+    color = COLORS.white,
     ...props
 }: {
     title: string;
     text?: string | React.ReactNode;
-    isGreen?: boolean;
-    isRed?: boolean;
-    isDark?: boolean;
-    isBlue?: boolean;
-    isWhite?: boolean;
+    background?: string;
+    color?: string;
 }) => {
     const [isEnoughSpaceOnTop, setIsEnoughSpaceOnTop] = useState(true);
     const [isRightOriented, setIsRightOriented] = useState(true);
@@ -106,13 +80,7 @@ const Label = ({
 
     if (!text) {
         return (
-            <LabelInner
-                isGreen={isGreen}
-                isRed={isRed}
-                isDark={isDark}
-                isBlue={isBlue}
-                isWhite={isWhite}
-            >
+            <LabelInner background={background} color={color}>
                 {title}
             </LabelInner>
         );
@@ -128,21 +96,12 @@ const Label = ({
                     ? TOOLTIP_POSITION.right
                     : TOOLTIP_POSITION.left
             }
-            isSuccess={isGreen}
-            isError={isRed}
-            isDark={isDark}
-            isBlue={isBlue}
+            background={background}
+            color={color}
             showOnHover
         >
             <LabelWrap>
-                <LabelInner
-                    isGreen={isGreen}
-                    isRed={isRed}
-                    isDark={isDark}
-                    isBlue={isBlue}
-                    isWhite={isWhite}
-                    {...props}
-                >
+                <LabelInner background={background} color={color} {...props}>
                     {title}
                 </LabelInner>
             </LabelWrap>

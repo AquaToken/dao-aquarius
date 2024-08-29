@@ -150,7 +150,7 @@ const TooltipRow = styled.div`
 
 const DepositToPool = ({ params }) => {
     const { account } = useAuthStore();
-    const { pool, isModal = true, baseAmount, counterAmount, base, counter } = params;
+    const { pool, isModal = true, baseAmount, counterAmount, base, counter, onUpdate } = params;
 
     const [accountShare, setAccountShare] = useState(null);
 
@@ -271,6 +271,10 @@ const DepositToPool = ({ params }) => {
 
                 if (!res) {
                     return;
+                }
+
+                if (onUpdate) {
+                    onUpdate();
                 }
 
                 if (
@@ -398,7 +402,7 @@ const DepositToPool = ({ params }) => {
                                 </BalanceClickable>
                                 <Tooltip
                                     showOnHover
-                                    isDark
+                                    background={COLORS.titleText}
                                     position={TOOLTIP_POSITION.left}
                                     content={
                                         <TooltipInnerBalance>
@@ -435,9 +439,7 @@ const DepositToPool = ({ params }) => {
                     <>
                         <DescriptionRow>
                             <span>Type</span>
-                            <span>
-                                {pool.pool_type === 'stable' ? 'Stable swap' : 'Constant product'}
-                            </span>
+                            <span>{pool.pool_type === 'stable' ? 'Stable' : 'Volatile'}</span>
                         </DescriptionRow>
                         <DescriptionRow>
                             <span>Fee</span>

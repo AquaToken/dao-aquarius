@@ -14,6 +14,9 @@ import Asset from '../../../vote/components/AssetDropdown/Asset';
 import BigNumber from 'bignumber.js';
 import { PoolProcessed, PoolUserProcessed } from '../../api/types';
 import { AssetSimple } from '../../../../store/assetsStore/types';
+import { POOL_TYPE } from '../../../../common/services/soroban.service';
+import MigrateLiquidityStep1 from '../../../../common/modals/MigrateLiquidityModals/MigrateLiquidityStep1';
+import MigratePoolButton from './MigratePoolButton/MigratePoolButton';
 
 const PoolBlock = styled.div`
     display: flex;
@@ -230,7 +233,7 @@ const PoolsList = ({
                 const liquidity = new BigNumber(pool.liquidity?.toString()).div(1e7).toString();
                 const totalShare = new BigNumber(pool.total_share?.toString()).div(1e7).toString();
                 return (
-                    <PoolBlock key={pool.address}>
+                    <PoolBlock key={pool.address ?? pool.id}>
                         <PoolMain>
                             <Pair
                                 base={pool.assets[0]}
@@ -240,6 +243,7 @@ const PoolsList = ({
                                 poolAddress={!withDeposit && pool.address}
                                 withoutLink
                                 mobileVerticalDirections
+                                poolType={pool.pool_type}
                             />
                             {!isUserList ? (
                                 <PoolStats>
@@ -298,6 +302,7 @@ const PoolsList = ({
                                             counterAmount,
                                             base,
                                             counter,
+                                            onUpdate,
                                         }}
                                     />
                                 ) : (
@@ -347,32 +352,53 @@ const PoolsList = ({
                                                 <Button
                                                     fullWidth
                                                     onClick={() =>
-                                                        ModalService.openModal(WithdrawFromPool, {
-                                                            pool,
-                                                        }).then(() => onUpdate())
+                                                        pool.pool_type === POOL_TYPE.classic
+                                                            ? ModalService.openModal(
+                                                                  MigrateLiquidityStep1,
+                                                                  {
+                                                                      pool,
+                                                                      base: pool.assets[0],
+                                                                      counter: pool.assets[1],
+                                                                  },
+                                                              ).then(() => onUpdate())
+                                                            : ModalService.openModal(
+                                                                  WithdrawFromPool,
+                                                                  {
+                                                                      pool,
+                                                                  },
+                                                              ).then(() => onUpdate())
                                                     }
                                                 >
                                                     Remove liquidity
                                                 </Button>
                                             )}
-                                            <Button
-                                                fullWidth
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-                                                    ModalService.openModal(
-                                                        DepositToPool,
-                                                        {
-                                                            pool,
-                                                        },
-                                                        false,
-                                                        null,
-                                                        true,
-                                                    ).then(() => onUpdate());
-                                                }}
-                                                disabled={pool.deposit_killed}
-                                            >
-                                                Add liquidity
-                                            </Button>
+
+                                            {pool.pool_type === POOL_TYPE.classic ? (
+                                                <MigratePoolButton
+                                                    pool={pool}
+                                                    onUpdate={() => onUpdate()}
+                                                />
+                                            ) : (
+                                                <Button
+                                                    fullWidth
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        ModalService.openModal(
+                                                            DepositToPool,
+                                                            {
+                                                                pool,
+                                                                onUpdate,
+                                                            },
+                                                            false,
+                                                            null,
+                                                            true,
+                                                        );
+                                                    }}
+                                                    disabled={pool.deposit_killed}
+                                                >
+                                                    Add liquidity
+                                                </Button>
+                                            )}
                                         </Buttons>
                                     </>
                                 )}

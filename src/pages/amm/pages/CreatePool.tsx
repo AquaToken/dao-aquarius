@@ -480,7 +480,7 @@ const CreatePool = () => {
                                 onClick={() => setType(POOL_TYPE.constant)}
                             >
                                 <div>
-                                    <h3>Constant product</h3>
+                                    <h3>Volatile</h3>
                                     <p>Simple model for general purpose AMM pools (Uniswap v2).</p>
                                 </div>
                                 <Tick />
@@ -490,7 +490,7 @@ const CreatePool = () => {
                                 onClick={() => setType(POOL_TYPE.stable)}
                             >
                                 <div>
-                                    <h3>Stable swap</h3>
+                                    <h3>Stable</h3>
                                     <p>
                                         Highly effecient AMM model for correlated assets (i.e.
                                         stablecoins) that offers lower slippage.
@@ -605,7 +605,7 @@ const CreatePool = () => {
                                         </TooltipInner>
                                     }
                                     position={TOOLTIP_POSITION.right}
-                                    isError
+                                    background={COLORS.pinkRed}
                                 >
                                     <AddRowButton
                                         likeDisabled
@@ -708,10 +708,7 @@ const CreatePool = () => {
                             <StyledFormSection>
                                 <FormSectionTitle>Existing pools</FormSectionTitle>
                                 <FormDescription>
-                                    {type === POOL_TYPE.constant
-                                        ? 'Constant product'
-                                        : 'Stable swap'}{' '}
-                                    pool{' '}
+                                    {type === POOL_TYPE.constant ? 'Volatile' : 'Stable'} pool{' '}
                                     {existingPools[0].assets.map(({ code }) => code).join(' / ')}{' '}
                                     with fee = {(Number(existingPools[0].fee) * 100).toFixed(2)}%
                                     already exists.

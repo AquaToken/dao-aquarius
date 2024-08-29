@@ -16,6 +16,7 @@ import { ModalService, StellarService, ToastService } from '../../services/globa
 import MigrateLiquidityStep2 from './MigrateLiquidityStep2';
 import ErrorHandler from '../../helpers/error-handler';
 import { respondDown } from '../../mixins';
+import { BuildSignAndSubmitStatuses } from '../../services/wallet-connect.service';
 
 export const Stepper = styled.div`
     font-size: 1.4rem;
@@ -70,8 +71,8 @@ const AmountWithdraw = styled.span`
     `}
 `;
 
-const MigrateLiquidityStep1 = ({ params }) => {
-    const { base, counter, pool, poolsToMigrate } = params;
+const MigrateLiquidityStep1 = ({ params, confirm }) => {
+    const { base, counter, pool, poolsToMigrate, onUpdate } = params;
 
     const { account } = useAuthStore();
 
@@ -146,17 +147,36 @@ const MigrateLiquidityStep1 = ({ params }) => {
 
         account
             .signAndSubmitTx(tx, false, () =>
-                ModalService.openModal(MigrateLiquidityStep2, {
-                    poolsToMigrate,
-                    base,
-                    counter,
-                    baseAmount: amountsToWithdraw.baseAmount,
-                    counterAmount: amountsToWithdraw.counterAmount,
-                }),
+                poolsToMigrate
+                    ? ModalService.openModal(MigrateLiquidityStep2, {
+                          poolsToMigrate,
+                          base,
+                          counter,
+                          baseAmount: amountsToWithdraw.baseAmount,
+                          counterAmount: amountsToWithdraw.counterAmount,
+                          onUpdate,
+                      })
+                    : void 0,
             )
-            .then(() => {
-                ToastService.showSuccessToast('Withdrawal successfully');
+            .then((res) => {
                 setPending(false);
+
+                if (onUpdate) {
+                    onUpdate();
+                }
+
+                if (!poolsToMigrate) {
+                    confirm();
+                }
+
+                if (
+                    (res as { status: BuildSignAndSubmitStatuses })?.status ===
+                    BuildSignAndSubmitStatuses.pending
+                ) {
+                    ToastService.showSuccessToast('More signatures required to complete');
+                    return;
+                }
+                ToastService.showSuccessToast('Withdrawal successfully');
             })
             .catch((e) => {
                 const errorText = ErrorHandler(e);
@@ -167,7 +187,7 @@ const MigrateLiquidityStep1 = ({ params }) => {
 
     return (
         <ModalContainer isWide>
-            <Stepper>STEP 1/2</Stepper>
+            {Boolean(poolsToMigrate) && <Stepper>STEP 1/2</Stepper>}
             <ModalTitle>Withdraw from classic pool</ModalTitle>
             <PairContainer>
                 <Pair base={base} counter={counter} verticalDirections withoutLink />

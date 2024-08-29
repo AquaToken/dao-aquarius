@@ -168,7 +168,7 @@ const CurrentLocks = ({
                         position={
                             +window.innerWidth > 992 ? TOOLTIP_POSITION.top : TOOLTIP_POSITION.left
                         }
-                        isWhite
+                        background={COLORS.white}
                         showOnHover
                     >
                         <Total>

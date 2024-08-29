@@ -17,8 +17,9 @@ import SignWithPublic from '../modals/SignWithPublic';
 import LedgerSignTx from '../modals/LedgerModals/LedgerSignTx';
 import SentToVault from '../modals/MultisigModals/SentToVault';
 import { getNativePrices } from '../../pages/amm/api/api';
-import { getAssetString } from '../helpers/helpers';
+import { getAssetFromString, getAssetString } from '../helpers/helpers';
 import BigNumber from 'bignumber.js';
+import { POOL_TYPE } from './soroban.service';
 
 const VAULT_MARKER = 'GA2T6GR7VXXXBETTERSAFETHANSORRYXXXPROTECTEDBYLOBSTRVAULT';
 
@@ -194,6 +195,72 @@ export default class AccountService extends Horizon.AccountResponse {
         }
 
         return new BigNumber(poolBalance.balance).toFixed(7);
+    }
+
+    async getClassicPools() {
+        const liquidityPoolsForAccount = await StellarService.getLiquidityPoolForAccount(
+            this.accountId(),
+            200,
+        );
+
+        if (!liquidityPoolsForAccount.length) {
+            return [];
+        }
+
+        const assetsSet = new Set();
+
+        liquidityPoolsForAccount.forEach((lp) => {
+            // @ts-ignore
+            lp.assets = lp.reserves.map((reserve) => {
+                assetsSet.add(reserve.asset);
+                return getAssetFromString(reserve.asset);
+            });
+            // @ts-ignore
+            lp.reserves = [
+                ...lp.reserves.map((reserve) =>
+                    new BigNumber(reserve.amount).times(1e7).toFixed(7),
+                ),
+                ...lp.reserves,
+            ];
+            // @ts-ignore
+            lp.total_share = new BigNumber(lp.total_shares).times(1e7).toFixed(7);
+            // @ts-ignore
+            lp.fee = 0.003;
+        });
+
+        const prices = await getNativePrices(
+            [...assetsSet].map((str) => getAssetFromString(str as string)),
+        );
+
+        liquidityPoolsForAccount.forEach((lp) => {
+            // @ts-ignore
+            lp.liquidity = lp.assets.reduce((acc, asset, index) => {
+                // @ts-ignore
+                const price = prices.get(getAssetString(asset)) ?? 0;
+
+                const amount = Number(lp.reserves[index]) * Number(price);
+
+                return acc + amount;
+            }, 0);
+        });
+
+        const pools = this.balances
+            .filter(
+                (balance): balance is Horizon.HorizonApi.BalanceLineLiquidityPool =>
+                    balance.asset_type === 'liquidity_pool_shares',
+            )
+            .map((balance) => ({
+                ...balance,
+                balance: new BigNumber(balance.balance).times(1e7).toFixed(7),
+            }));
+
+        return pools
+            .map((pool) => {
+                const lp = liquidityPoolsForAccount.find(({ id }) => id === pool.liquidity_pool_id);
+
+                return lp ? { ...pool, ...lp, pool_type: POOL_TYPE.classic } : null;
+            })
+            .filter((item) => Boolean(item));
     }
 
     hasAllIceTrustlines() {
@@ -405,7 +472,7 @@ export default class AccountService extends Horizon.AccountResponse {
             { label: 'Fee reserve', value: 2 },
             { label: 'XLM in active offers', value: Number(selling_liabilities) },
             { label: 'Trustlines', value: entriesTrustlines * 0.5 },
-            { label: 'Liquidity pool trustlines', value: entriesLiquidityTrustlines },
+            { label: 'MyLiquidity pool trustlines', value: entriesLiquidityTrustlines },
             { label: 'Offers', value: entriesOffers * 0.5 },
             { label: 'Signers', value: entriesSigners * 0.5 },
             { label: 'Account data', value: entriesOthers * 0.5 },
