@@ -107,7 +107,7 @@ const ListTitles = styled.h3`
 
 const ListTab = styled.span<{ isActive: boolean }>`
     cursor: pointer;
-    color: ${({ isActive }) => (isActive ? COLORS.titleText : COLORS.gray)};
+    color: ${({ isActive }) => (isActive ? COLORS.titleText : `${COLORS.titleText}4D`)};
 
     &:hover {
         color: ${({ isActive }) => (isActive ? COLORS.titleText : COLORS.placeholder)};
