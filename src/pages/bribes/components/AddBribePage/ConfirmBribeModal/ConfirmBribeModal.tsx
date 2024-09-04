@@ -7,7 +7,7 @@ import {
     ModalProps,
     ModalTitle,
 } from '../../../../../common/modals/atoms/ModalAtoms';
-import Pair from '../../../../vote/components/common/Pair';
+import Market from '../../../../vote/components/common/Market';
 import { formatBalance, getDateString } from '../../../../../common/helpers/helpers';
 import Button from '../../../../../common/basics/Button';
 import Asset from '../../../../vote/components/AssetDropdown/Asset';
@@ -170,7 +170,7 @@ const ConfirmBribeModal = ({
             <ModalTitle>Confirm bribe</ModalTitle>
             <ModalDescription>Please check all the details to create a bribe</ModalDescription>
             <PairBlock>
-                <Pair base={base} counter={counter} verticalDirections />
+                <Market assets={[base, counter]} verticalDirections />
             </PairBlock>
             <BribeInfo>
                 <InfoRow>

@@ -23,7 +23,7 @@ import { formatBalance, roundToPrecision } from '../../../../../common/helpers/h
 import ExternalLink from '../../../../../common/basics/ExternalLink';
 import GetAquaModal from '../../../../../common/modals/GetAquaModal/GetAquaModal';
 import CloseIcon from '../../../../../common/assets/img/icon-close-small.svg';
-import Pair from '../../common/Pair';
+import Market from '../../common/Market';
 import { PairStats } from '../../../api/types';
 import { AQUA, DOWN_ICE, SELECTED_PAIRS_ALIAS, UP_ICE } from '../MainPage';
 import VotesDurationModal from './VotesDurationModal';
@@ -555,16 +555,18 @@ const VotesAmountModal = ({
                 </ModalDescription>
                 {(isDownVoteModal || isSingleVoteForModal) && (
                     <AssetsInfoBlock>
-                        <Pair
+                        <Market
                             verticalDirections
-                            base={{
-                                code: pairs[0].asset1_code,
-                                issuer: pairs[0].asset1_issuer,
-                            }}
-                            counter={{
-                                code: pairs[0].asset2_code,
-                                issuer: pairs[0].asset2_issuer,
-                            }}
+                            assets={[
+                                {
+                                    code: pairs[0].asset1_code,
+                                    issuer: pairs[0].asset1_issuer,
+                                },
+                                {
+                                    code: pairs[0].asset2_code,
+                                    issuer: pairs[0].asset2_issuer,
+                                },
+                            ]}
                         />
                     </AssetsInfoBlock>
                 )}
@@ -627,15 +629,17 @@ const VotesAmountModal = ({
                             {selectedPairs.map((pair) => (
                                 <PairBlock key={pair.market_key}>
                                     <AssetsInfo>
-                                        <Pair
-                                            base={{
-                                                code: pair.asset1_code,
-                                                issuer: pair.asset1_issuer,
-                                            }}
-                                            counter={{
-                                                code: pair.asset2_code,
-                                                issuer: pair.asset2_issuer,
-                                            }}
+                                        <Market
+                                            assets={[
+                                                {
+                                                    code: pair.asset1_code,
+                                                    issuer: pair.asset1_issuer,
+                                                },
+                                                {
+                                                    code: pair.asset2_code,
+                                                    issuer: pair.asset2_issuer,
+                                                },
+                                            ]}
                                             withoutDomains
                                         />
                                     </AssetsInfo>

@@ -10,7 +10,7 @@ import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../../
 import { Breakpoints, COLORS } from '../../../../../common/styles';
 import useAuthStore from '../../../../../store/authStore/useAuthStore';
 import Button from '../../../../../common/basics/Button';
-import Pair from '../../common/Pair';
+import Market from '../../common/Market';
 import * as StellarSdk from '@stellar/stellar-sdk';
 import { StellarService, ToastService } from '../../../../../common/services/globalServices';
 import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
@@ -153,7 +153,7 @@ const CreatePairModal = ({
                 return;
             }
             ToastService.showSuccessToast(
-                'Pair has been created! You will be able to see your pair in the list within 10 minutes',
+                'Market has been created! You will be able to see your pair in the list within 10 minutes',
                 20000,
             );
         } catch (e) {
@@ -175,17 +175,7 @@ const CreatePairModal = ({
             </Description>
             <div>
                 <AssetsInfo>
-                    <Pair
-                        verticalDirections
-                        base={{
-                            code: base.code,
-                            issuer: base.issuer,
-                        }}
-                        counter={{
-                            code: counter.code,
-                            issuer: counter.issuer,
-                        }}
-                    />
+                    <Market verticalDirections assets={[base, counter]} />
                 </AssetsInfo>
                 <ContentRow>
                     <Label>Pair creating:</Label>

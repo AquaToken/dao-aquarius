@@ -3,7 +3,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { LoginTypes } from '../../../../../../store/authStore/types';
 import Table, { CellAlign } from '../../../../../../common/basics/Table';
 import { Breakpoints, COLORS } from '../../../../../../common/styles';
-import Pair from '../../../common/Pair';
+import Market from '../../../common/Market';
 import { formatBalance, getDateString } from '../../../../../../common/helpers/helpers';
 import Tooltip, { TOOLTIP_POSITION } from '../../../../../../common/basics/Tooltip';
 import Dislike from '../../../../../../common/assets/img/icon-dislike-gray.svg';
@@ -320,15 +320,17 @@ const VotesList = ({
                                             Boolean(pendingId)
                                         }
                                     />
-                                    <Pair
-                                        base={{
-                                            code: pair?.asset1_code || claim.asset1_code,
-                                            issuer: pair?.asset1_issuer || claim.asset1_issuer,
-                                        }}
-                                        counter={{
-                                            code: pair?.asset2_code || claim.asset2_code,
-                                            issuer: pair?.asset2_issuer || claim.asset2_issuer,
-                                        }}
+                                    <Market
+                                        assets={[
+                                            {
+                                                code: pair?.asset1_code || claim.asset1_code,
+                                                issuer: pair?.asset1_issuer || claim.asset1_issuer,
+                                            },
+                                            {
+                                                code: pair?.asset2_code || claim.asset2_code,
+                                                issuer: pair?.asset2_issuer || claim.asset2_issuer,
+                                            },
+                                        ]}
                                         withoutDomains
                                         withoutLink
                                     />

@@ -5,7 +5,7 @@ import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../../
 import { Breakpoints, COLORS } from '../../../../../common/styles';
 import Button from '../../../../../common/basics/Button';
 import Plus from '../../../../../common/assets/img/icon-plus.svg';
-import Pair from '../../../../vote/components/common/Pair';
+import Market from '../../../../vote/components/common/Market';
 import Asset from '../../../../vote/components/AssetDropdown/Asset';
 import { useHistory } from 'react-router-dom';
 import { StellarService } from '../../../../../common/services/globalServices';
@@ -192,7 +192,7 @@ const BribesTable = () => {
             <Table
                 pending={bribes && loading}
                 head={[
-                    { children: 'Market Pair', flexSize: 3 },
+                    { children: 'Market Market', flexSize: 3 },
                     { children: 'Reward asset', flexSize: 2 },
                     {
                         children: 'Reward per day',
@@ -229,6 +229,14 @@ const BribesTable = () => {
                 body={bribes.map((item) => {
                     const startUTC = convertUTCToLocalDateIgnoringTimezone(new Date(item.start_at));
                     const stopUTC = convertUTCToLocalDateIgnoringTimezone(new Date(item.stop_at));
+                    const base = {
+                        code: item.asset1_code,
+                        issuer: item.asset1_issuer,
+                    };
+                    const counter = {
+                        code: item.asset2_code,
+                        issuer: item.asset2_issuer,
+                    };
                     const rewardAsset = StellarService.createAsset(
                         item.asset_code,
                         item.asset_issuer,
@@ -240,17 +248,7 @@ const BribesTable = () => {
                         rowItems: [
                             {
                                 children: (
-                                    <Pair
-                                        base={{
-                                            code: item.asset1_code,
-                                            issuer: item.asset1_issuer,
-                                        }}
-                                        counter={{
-                                            code: item.asset2_code,
-                                            issuer: item.asset2_issuer,
-                                        }}
-                                        mobileVerticalDirections
-                                    />
+                                    <Market assets={[base, counter]} mobileVerticalDirections />
                                 ),
                                 flexSize: 3,
                             },

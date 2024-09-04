@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../styles';
 import { ModalContainer, ModalTitle } from '../atoms/ModalAtoms';
-import Pair from '../../../pages/vote/components/common/Pair';
+import Market from '../../../pages/vote/components/common/Market';
 import { PairContainer } from '../../../pages/amm/components/WithdrawFromPool/WithdrawFromPool';
 import Input from '../../basics/Input';
 import RangeInput from '../../basics/RangeInput';
@@ -190,7 +190,7 @@ const MigrateLiquidityStep1 = ({ params, confirm }) => {
             {Boolean(poolsToMigrate) && <Stepper>STEP 1/2</Stepper>}
             <ModalTitle>Withdraw from classic pool</ModalTitle>
             <PairContainer>
-                <Pair base={base} counter={counter} verticalDirections withoutLink />
+                <Market assets={[base, counter]} verticalDirections withoutLink />
             </PairContainer>
             <StyledInput
                 label="Amount to migrate"

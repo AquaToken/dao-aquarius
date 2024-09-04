@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import Pair from '../../vote/components/common/Pair';
+import Market from '../../vote/components/common/Market';
 import { StellarService } from '../../../common/services/globalServices';
 import { getSdexRewards } from '../api/api';
 import useAuthStore from '../../../store/authStore/useAuthStore';
@@ -241,9 +241,8 @@ const SdexRewards = ({ aquaUsdPrice }) => {
                                     rowItems: [
                                         {
                                             children: (
-                                                <Pair
-                                                    base={base}
-                                                    counter={counter}
+                                                <Market
+                                                    assets={[base, counter]}
                                                     withoutLink
                                                     mobileVerticalDirections
                                                     withMarketLink

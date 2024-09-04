@@ -15,7 +15,7 @@ import {
 import SuccessModal from '../SuccessModal/SuccessModal';
 import useAuthStore from '../../../../store/authStore/useAuthStore';
 import PageLoader from '../../../../common/basics/PageLoader';
-import Pair from '../../../vote/components/common/Pair';
+import Market from '../../../vote/components/common/Market';
 import Input from '../../../../common/basics/Input';
 import DotsLoader from '../../../../common/basics/DotsLoader';
 import { getAssetString } from '../../../../store/assetsStore/actions';
@@ -187,12 +187,7 @@ const WithdrawFromPool = ({ params }: ModalProps<{ pool: PoolExtended }>) => {
                 <>
                     <ModalTitle>Remove liquidity</ModalTitle>
                     <PairContainer>
-                        <Pair
-                            base={pool.assets[0]}
-                            counter={pool.assets[1]}
-                            thirdAsset={pool.assets[2]}
-                            fourthAsset={pool.assets[3]}
-                        />
+                        <Market assets={pool.assets} />
                     </PairContainer>
                     <InputStyled
                         label="Amount to remove"

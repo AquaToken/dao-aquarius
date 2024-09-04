@@ -33,7 +33,7 @@ import PageLoader from '../../../../common/basics/PageLoader';
 import Tooltip, { TOOLTIP_POSITION } from '../../../../common/basics/Tooltip';
 import { PairStats } from '../../api/types';
 import CreatePairModal from './CreatePairModal/CreatePairModal';
-import Pair from '../common/Pair';
+import Market from '../common/Market';
 import Button from '../../../../common/basics/Button';
 import { formatBalance, getTimeAgoValue } from '../../../../common/helpers/helpers';
 import { Option } from '../../../../common/basics/Select';
@@ -962,7 +962,7 @@ const MainPage = (): JSX.Element => {
                     !pairsLoading && <SearchEnabled>No pairs found</SearchEnabled>}
                 {searchBase && searchCounter && !pairs.length && (
                     <CreatePair onClick={() => goToMarketPage()}>
-                        <Pair base={searchBase} counter={searchCounter} mobileVerticalDirections />
+                        <Market assets={[searchBase, searchCounter]} mobileVerticalDirections />
                         <Tooltip
                             content={
                                 <BeFirst>
