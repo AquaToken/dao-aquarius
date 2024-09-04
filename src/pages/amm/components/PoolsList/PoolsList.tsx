@@ -319,6 +319,25 @@ const PoolsList = ({
                                                 </span>
                                             </ExpandedDataRow>
                                         )}
+
+                                        {pool.pool_type !== POOL_TYPE.classic && isUserList && (
+                                            <ExpandedDataRow>
+                                                <span>Daily rewards:</span>
+                                                <span>
+                                                    {formatBalance(
+                                                        ((+pool.reward_tps / 1e7) *
+                                                            60 *
+                                                            60 *
+                                                            24 *
+                                                            +balance) /
+                                                            +totalShare,
+                                                        true,
+                                                    )}{' '}
+                                                    AQUA
+                                                </span>
+                                            </ExpandedDataRow>
+                                        )}
+
                                         {pool.assets.map((asset, index) => (
                                             <ExpandedDataRow key={asset.code + asset.issuer}>
                                                 <span>
