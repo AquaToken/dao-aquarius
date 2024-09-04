@@ -22,7 +22,7 @@ import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModa
 import { useDebounce } from '../../../common/hooks/useDebounce';
 import VolumeChart from '../components/VolumeChart/VolumeChart';
 import LiquidityChart from '../components/LiquidityChart/LiquidityChart';
-import TopPools from '../components/TopPools/TopPools';
+import AllPools from '../components/AllPools/AllPools';
 import MyLiquidity from '../components/MyLiquidity/MyLiquidity';
 
 const Container = styled.main`
@@ -262,7 +262,7 @@ const Analytics = () => {
                                     isActive={activeTab === Tabs.top}
                                     onClick={() => setTab(Tabs.top)}
                                 >
-                                    Top pools
+                                    All pools
                                 </ListTab>
                                 <ListTab
                                     isActive={activeTab === Tabs.my}
@@ -286,7 +286,7 @@ const Analytics = () => {
                                 </ListTotal>
                             )}
                         </ListHeader>
-                        {activeTab === Tabs.top && <TopPools search={debouncedSearch} />}
+                        {activeTab === Tabs.top && <AllPools search={debouncedSearch} />}
                         {activeTab === Tabs.my && (
                             <MyLiquidity onlyList setTotal={(val) => setMyTotal(val)} />
                         )}
