@@ -59,7 +59,7 @@ const OPTIONS = [
     { label: 'Stable', value: FilterOptions.stable },
     { label: 'Volatile', value: FilterOptions.constant },
 ];
-const TopPools = ({ search }) => {
+const AllPools = ({ search }) => {
     const [filter, setFilter] = useState(FilterOptions.all);
     const [sort, setSort] = useState(PoolsSortFields.liquidityUp);
     const [pools, setPools] = useState<PoolProcessed[] | null>(null);
@@ -101,7 +101,7 @@ const TopPools = ({ search }) => {
                     <Table
                         pending={pending}
                         head={[
-                            { children: 'Assets', flexSize: 4 },
+                            { children: 'Pool', flexSize: 4 },
                             {
                                 children: 'Fee',
                                 flexSize: 2,
@@ -334,4 +334,4 @@ const TopPools = ({ search }) => {
     );
 };
 
-export default TopPools;
+export default AllPools;
