@@ -4,7 +4,7 @@ import { useHistory, useParams } from 'react-router-dom';
 import { getPool } from '../api/api';
 import PageLoader from '../../../common/basics/PageLoader';
 import styled from 'styled-components';
-import Pair from '../../vote/components/common/Pair';
+import Market from '../../vote/components/common/Market';
 import { Breakpoints, COLORS } from '../../../common/styles';
 import {
     commonMaxWidth,
@@ -227,11 +227,8 @@ const PoolPage = () => {
                     >
                         <ArrowLeft />
                     </BackButton>
-                    <Pair
-                        base={pool.assets[0]}
-                        counter={pool.assets[1]}
-                        thirdAsset={pool.assets[2]}
-                        fourthAsset={pool.assets[3]}
+                    <Market
+                        assets={pool.assets}
                         verticalDirections
                         leftAlign
                         bigCodes

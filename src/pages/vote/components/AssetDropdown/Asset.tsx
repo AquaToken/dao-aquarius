@@ -26,9 +26,9 @@ const AssetDetails = styled.div<{ inRow?: boolean }>`
     margin-left: ${({ inRow }) => (inRow ? '0.8rem' : '1.6rem')};
 `;
 
-const AssetCode = styled.span<{ inRow?: boolean }>`
-    font-size: 1.6rem;
-    line-height: 2.8rem;
+const AssetCode = styled.span<{ inRow?: boolean; isBig?: boolean }>`
+    font-size: ${({ isBig }) => (isBig ? '3.6rem' : '1.6rem')};
+    line-height: ${({ isBig }) => (isBig ? '4.2rem' : '2.8rem')};
     color: ${COLORS.paragraphText};
     margin-right: ${({ inRow }) => (inRow ? '0.3rem' : '0')};
 `;
@@ -58,6 +58,7 @@ const Asset = ({
     asset,
     inRow,
     withMobileView,
+    isBig,
     onlyLogo,
     onlyLogoSmall,
     logoAndCode,
@@ -69,6 +70,7 @@ const Asset = ({
     onlyLogo?: boolean;
     onlyLogoSmall?: boolean;
     logoAndCode?: boolean;
+    isBig?: boolean;
 }): JSX.Element => {
     const { assetsInfo } = useAssetsStore();
 
@@ -98,9 +100,11 @@ const Asset = ({
 
     return (
         <Container {...props}>
-            <AssetLogo asset={asset} isSmall={inRow} />
+            <AssetLogo asset={asset} isSmall={inRow} isBig={isBig} />
             <AssetDetails inRow={inRow}>
-                <AssetCode inRow={inRow}>{asset.code}</AssetCode>
+                <AssetCode inRow={inRow} isBig={isBig}>
+                    {asset.code}
+                </AssetCode>
                 <AssetDomain withMobileView={withMobileView} inRow={inRow}>
                     {inRow ? '' : assetInfo?.name || asset.code} (
                     {hasAssetInfo ? assetInfo.home_domain ?? 'unknown' : <DotsLoader />})

@@ -7,8 +7,8 @@ import { useState } from 'react';
 import LightWeightChart, { PeriodOptions } from './LightWeightChart/LightWeightChart';
 import DailyStats from './DailyStats/DailyStats';
 import ExternalLink from '../../../../common/basics/ExternalLink';
-import { assetToString } from '../../../vote/components/common/Pair';
 import Select from '../../../../common/basics/Select';
+import { getAssetString } from '../../../../common/helpers/helpers';
 
 const Container = styled.div`
     display: flex;
@@ -86,7 +86,7 @@ const TradeStats = ({ base, counter }) => {
             <LightWeightChart base={base} counter={counter} period={period} />
 
             <ExternalLinkStyled
-                href={`https://stellarx.com/markets/${assetToString(base)}/${assetToString(
+                href={`https://stellarx.com/markets/${getAssetString(base)}/${getAssetString(
                     counter,
                 )}`}
             >

@@ -7,7 +7,7 @@ import {
 } from '../../../../../common/modals/atoms/ModalAtoms';
 import { StellarService } from '../../../../../common/services/globalServices';
 import useAuthStore from '../../../../../store/authStore/useAuthStore';
-import Pair from '../../common/Pair';
+import Market from '../../common/Market';
 import { PairStats } from '../../../api/types';
 import styled from 'styled-components';
 import { flexAllCenter, respondDown } from '../../../../../common/mixins';
@@ -59,6 +59,9 @@ const ManageVotesModal = ({ params }: ModalProps<{ pair: PairStats }>) => {
     const { pair } = params;
     const { account } = useAuthStore();
 
+    const base = { code: pair.asset1_code, issuer: pair.asset1_issuer };
+    const counter = { code: pair.asset2_code, issuer: pair.asset2_issuer };
+
     useEffect(() => {
         setClaims(StellarService.getPairVotes(pair, account.accountId())?.reverse());
     }, []);
@@ -74,11 +77,7 @@ const ManageVotesModal = ({ params }: ModalProps<{ pair: PairStats }>) => {
                 View your votes for a pair and claim unlocked votes back
             </ModalDescription>
             <PairBlock>
-                <Pair
-                    verticalDirections
-                    base={{ code: pair.asset1_code, issuer: pair.asset1_issuer }}
-                    counter={{ code: pair.asset2_code, issuer: pair.asset2_issuer }}
-                />
+                <Market verticalDirections assets={[base, counter]} />
             </PairBlock>
 
             <VotesList votes={claims} pair={pair} />

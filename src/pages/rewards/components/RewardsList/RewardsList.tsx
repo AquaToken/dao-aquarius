@@ -11,7 +11,7 @@ import Info from '../../../../common/assets/img/icon-info.svg';
 import Link from '../../../../common/assets/img/icon-external-link.svg';
 import { formatBalance, getTimeAgoValue } from '../../../../common/helpers/helpers';
 import Tooltip, { TOOLTIP_POSITION } from '../../../../common/basics/Tooltip';
-import Pair from '../../../vote/components/common/Pair';
+import Market from '../../../vote/components/common/Market';
 import { MarketRoutes } from '../../../../routes';
 import Table, { CellAlign } from '../../../../common/basics/Table';
 
@@ -242,15 +242,17 @@ const RewardsList = () => {
                         rowItems: [
                             {
                                 children: (
-                                    <Pair
-                                        base={{
-                                            code: market_key.asset1_code,
-                                            issuer: market_key.asset1_issuer,
-                                        }}
-                                        counter={{
-                                            code: market_key.asset2_code,
-                                            issuer: market_key.asset2_issuer,
-                                        }}
+                                    <Market
+                                        assets={[
+                                            {
+                                                code: market_key.asset1_code,
+                                                issuer: market_key.asset1_issuer,
+                                            },
+                                            {
+                                                code: market_key.asset2_code,
+                                                issuer: market_key.asset2_issuer,
+                                            },
+                                        ]}
                                         withoutLink
                                         mobileVerticalDirections
                                     />

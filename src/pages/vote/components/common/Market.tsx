@@ -1,9 +1,7 @@
 import * as React from 'react';
-import { useMemo } from 'react';
 import styled from 'styled-components';
 import * as StellarSdk from '@stellar/stellar-sdk';
 import { Breakpoints, COLORS } from '../../../../common/styles';
-import DotsLoader from '../../../../common/basics/DotsLoader';
 import AssetLogo, { bigLogoStyles, logoStyles } from '../AssetDropdown/AssetLogo';
 import External from '../../../../common/assets/img/icon-external-link.svg';
 import Arrow from '../../../../common/assets/img/icon-link-arrow.svg';
@@ -26,6 +24,8 @@ import { Link } from 'react-router-dom';
 import { AmmRoutes, MarketRoutes } from '../../../../routes';
 import { formatBalance } from '../../../../common/helpers/helpers';
 import { POOL_TYPE } from '../../../../common/services/soroban.service';
+import { ModalService, StellarService } from '../../../../common/services/globalServices';
+import AssetInfoModal from '../../../../common/modals/AssetInfoModal/AssetInfoModal';
 
 const Wrapper = styled.div<{
     verticalDirections?: boolean;
@@ -124,7 +124,6 @@ const AssetsCodes = styled.span<{ mobileVerticalDirections?: boolean; bigCodes?:
     align-items: center;
 
     span {
-        margin-right: 1rem;
         display: flex;
         align-items: center;
     }
@@ -178,28 +177,26 @@ const ArrowRight = styled(Arrow)`
     margin: 0 0.5rem;
 `;
 
-export const assetToString = (asset: StellarSdk.Asset) => {
-    if (asset.isNative()) {
-        return 'native';
+const Domain = styled.span`
+    cursor: pointer;
+    &:hover {
+        text-decoration: underline;
+        text-decoration-style: dashed;
     }
+`;
 
-    return `${asset.code}:${asset.issuer}`;
-};
-
-const viewOnStellarX = (event, base: StellarSdk.Asset, counter: StellarSdk.Asset) => {
+const viewOnStellarX = (event, assets: StellarSdk.Asset[]) => {
+    const [base, counter] = assets;
     event.preventDefault();
     event.stopPropagation();
     window.open(
-        `https://stellarx.com/markets/${assetToString(counter)}/${assetToString(base)}`,
+        `https://stellarx.com/markets/${getAssetString(counter)}/${getAssetString(base)}`,
         '_blank',
     );
 };
 
 type PairProps = {
-    base: AssetSimple;
-    counter: AssetSimple;
-    thirdAsset?: AssetSimple;
-    fourthAsset?: AssetSimple;
+    assets: AssetSimple[];
     withoutDomains?: boolean;
     verticalDirections?: boolean;
     isRewardsOn?: boolean;
@@ -221,11 +218,8 @@ type PairProps = {
     poolType?: POOL_TYPE;
 };
 
-const Pair = ({
-    base,
-    counter,
-    thirdAsset,
-    fourthAsset,
+const Market = ({
+    assets: assetsSimple,
     withoutDomains,
     verticalDirections,
     leftAlign,
@@ -248,44 +242,40 @@ const Pair = ({
 }: PairProps): JSX.Element => {
     const { assetsInfo } = useAssetsStore();
 
-    const baseInstance = new StellarSdk.Asset(base.code, base.issuer);
-    const isBaseNative = baseInstance.isNative();
-    const hasBaseInfo = isBaseNative || assetsInfo.has(getAssetString(base));
-    const baseInfo = isBaseNative ? LumenInfo : assetsInfo.get(getAssetString(base));
+    const assets = assetsSimple.map(({ code, issuer }) => StellarService.createAsset(code, issuer));
 
-    const counterInstance = new StellarSdk.Asset(counter.code, counter.issuer);
-    const isCounterNative = counterInstance.isNative();
-    const hasCounterInfo = isCounterNative || assetsInfo.has(getAssetString(counter));
-    const counterInfo = isCounterNative ? LumenInfo : assetsInfo.get(getAssetString(counter));
-
-    const thirdAssetInstance = thirdAsset
-        ? new StellarSdk.Asset(thirdAsset.code, thirdAsset.issuer)
-        : StellarSdk.Asset.native();
-    const isThirdAssetNative = thirdAssetInstance.isNative();
-    const hasThirdAssetInfo = isThirdAssetNative || assetsInfo.has(getAssetString(thirdAsset));
-    const thirdAssetInfo = isThirdAssetNative
-        ? LumenInfo
-        : assetsInfo.get(getAssetString(thirdAsset));
-
-    const fourthAssetInstance = fourthAsset
-        ? new StellarSdk.Asset(fourthAsset?.code, fourthAsset?.issuer)
-        : StellarSdk.Asset.native();
-    const isFourthAssetNative = fourthAssetInstance.isNative();
-    const hasFourthAssetInfo = isFourthAssetNative || assetsInfo.has(getAssetString(fourthAsset));
-    const fourthAssetInfo = isFourthAssetNative
-        ? LumenInfo
-        : assetsInfo.get(getAssetString(fourthAsset));
-
-    const assetsCount = useMemo(() => {
-        if (Boolean(fourthAsset)) {
-            return 4;
+    const getAssetDetails = (asset: StellarSdk.Asset) => {
+        if (asset.isNative()) {
+            return [LumenInfo.name, LumenInfo.home_domain];
         }
 
-        if (Boolean(thirdAsset)) {
-            return 3;
-        }
-        return 2;
-    }, [thirdAsset, fourthAsset]);
+        const { name, home_domain } = assetsInfo.get(getAssetString(asset)) || {};
+
+        return [
+            name ?? asset.code,
+            home_domain ?? `${asset.issuer.slice(0, 4)}...${asset.issuer.slice(-4)}`,
+        ];
+    };
+
+    const labels = (
+        <>
+            {boosted && <BoostLabel />}
+            {isRewardsOn && <RewardLabel />}
+            {isMaxRewards && <MaxRewardsLabel />}
+            {authRequired && <AuthRequiredLabel />}
+            {noLiquidity && <NoLiquidityLabel />}
+            {poolType === POOL_TYPE.classic && <ClassicPoolLabel />}
+            {poolType === POOL_TYPE.stable && <StablePoolLabel />}
+            {poolType === POOL_TYPE.constant && <ConstantPoolLabel />}
+        </>
+    );
+
+    const onDomainClick = (e: React.MouseEvent, asset: StellarSdk.Asset) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        ModalService.openModal(AssetInfoModal, { asset });
+    };
 
     return (
         <Wrapper
@@ -296,58 +286,23 @@ const Pair = ({
             <Icons
                 isBig={isBigLogo}
                 verticalDirections={verticalDirections}
-                assetsCount={assetsCount}
+                assetsCount={assets.length}
                 mobileVerticalDirections={mobileVerticalDirections}
                 leftAlign={leftAlign}
             >
-                <Icon
-                    key={baseInfo?.asset_string}
-                    isBig={isBigLogo}
-                    isCircleLogo={isCircleLogos}
-                    assetOrderNumber={1}
-                    assetsCount={assetsCount}
-                    mobileVerticalDirections={mobileVerticalDirections}
-                    verticalDirections={verticalDirections}
-                >
-                    <AssetLogo asset={base} isBig={isBigLogo} isCircle={isCircleLogos} />
-                </Icon>
-                <Icon
-                    key={counterInfo?.asset_string}
-                    isBig={isBigLogo}
-                    isCircleLogo={isCircleLogos}
-                    assetOrderNumber={2}
-                    assetsCount={assetsCount}
-                    mobileVerticalDirections={mobileVerticalDirections}
-                    verticalDirections={verticalDirections}
-                >
-                    <AssetLogo asset={counter} isBig={isBigLogo} isCircle={isCircleLogos} />
-                </Icon>
-                {thirdAsset && (
+                {assets.map((asset, index) => (
                     <Icon
-                        key={thirdAssetInfo?.asset_string}
+                        key={getAssetString(asset)}
                         isBig={isBigLogo}
                         isCircleLogo={isCircleLogos}
-                        assetOrderNumber={3}
-                        assetsCount={assetsCount}
+                        assetOrderNumber={index + 1}
+                        assetsCount={assets.length}
                         mobileVerticalDirections={mobileVerticalDirections}
                         verticalDirections={verticalDirections}
                     >
-                        <AssetLogo asset={thirdAsset} isBig={isBigLogo} isCircle={isCircleLogos} />
+                        <AssetLogo asset={asset} isBig={isBigLogo} isCircle={isCircleLogos} />
                     </Icon>
-                )}
-                {fourthAsset && (
-                    <Icon
-                        key={fourthAssetInfo?.asset_string}
-                        isBig={isBigLogo}
-                        isCircleLogo={isCircleLogos}
-                        assetOrderNumber={4}
-                        assetsCount={assetsCount}
-                        mobileVerticalDirections={mobileVerticalDirections}
-                        verticalDirections={verticalDirections}
-                    >
-                        <AssetLogo asset={fourthAsset} isBig={isBigLogo} isCircle={isCircleLogos} />
-                    </Icon>
-                )}
+                ))}
             </Icons>
             <AssetsDetails
                 verticalDirections={verticalDirections}
@@ -359,28 +314,19 @@ const Pair = ({
                     bigCodes={bigCodes}
                 >
                     <span>
-                        {amounts ? formatBalance(+amounts[0]) : ''} {base.code}{' '}
-                        {isSwapResult ? <ArrowRight /> : '/'}{' '}
-                        {amounts ? formatBalance(+amounts[1]) : ''} {counter.code}
-                        {thirdAsset
-                            ? ` / ${amounts ? formatBalance(+amounts[2]) : ''} ${thirdAsset.code} `
-                            : ''}
-                        {fourthAsset
-                            ? ` / ${amounts ? formatBalance(+amounts[3]) : ''} ${fourthAsset.code} `
-                            : ''}
+                        {assets.map((asset, index) => (
+                            <React.Fragment key={getAssetString(asset)}>
+                                {index > 0 ? isSwapResult ? <ArrowRight /> : ' / ' : ''}
+                                {amounts ? `${formatBalance(Number(amounts[index]))} ` : ''}
+                                {asset.code}
+                            </React.Fragment>
+                        ))}
                     </span>
-                    {boosted && !bottomLabels && <BoostLabel />}
-                    {isRewardsOn && !bottomLabels && <RewardLabel />}
-                    {isMaxRewards && !bottomLabels && <MaxRewardsLabel />}
-                    {authRequired && !bottomLabels && <AuthRequiredLabel />}
-                    {noLiquidity && !bottomLabels && <NoLiquidityLabel />}
-                    {poolType === POOL_TYPE.classic && <ClassicPoolLabel />}
-                    {poolType === POOL_TYPE.stable && <StablePoolLabel />}
-                    {poolType === POOL_TYPE.constant && <ConstantPoolLabel />}
+
+                    {!bottomLabels && labels}
+
                     {!withoutLink && (
-                        <LinkCustom
-                            onClick={(e) => viewOnStellarX(e, baseInstance, counterInstance)}
-                        >
+                        <LinkCustom onClick={(e) => viewOnStellarX(e, assets)}>
                             <External />
                         </LinkCustom>
                     )}
@@ -389,9 +335,9 @@ const Pair = ({
                             onClick={(e) => {
                                 e.stopPropagation();
                             }}
-                            to={`${MarketRoutes.main}/${assetToString(
-                                baseInstance,
-                            )}/${assetToString(counterInstance)}`}
+                            to={`${MarketRoutes.main}/${getAssetString(assets[0])}/${getAssetString(
+                                assets[1],
+                            )}`}
                         >
                             <External />
                         </Link>
@@ -409,49 +355,29 @@ const Pair = ({
                 </AssetsCodes>
                 {!withoutDomains && (
                     <AssetsDomains mobileVerticalDirections={mobileVerticalDirections}>
-                        {baseInfo?.name || base.code} (
-                        {hasBaseInfo ? baseInfo.home_domain ?? 'unknown' : <DotsLoader />}){' · '}
-                        {counterInfo?.name || counter.code} (
-                        {hasCounterInfo ? counterInfo.home_domain ?? 'unknown' : <DotsLoader />})
-                        {thirdAsset ? ' · ' : ''}
-                        {!thirdAsset ? '' : thirdAssetInfo?.name || thirdAsset.code}
-                        {thirdAsset ? '(' : ''}
-                        {!thirdAsset ? (
-                            ''
-                        ) : hasThirdAssetInfo ? (
-                            thirdAssetInfo.home_domain ?? 'unknown'
-                        ) : (
-                            <DotsLoader />
-                        )}
-                        {thirdAsset ? ')' : ''}
-                        {fourthAsset ? ' · ' : ''}
-                        {!fourthAsset ? '' : fourthAssetInfo?.name || thirdAsset.code}{' '}
-                        {fourthAsset ? '(' : ''}
-                        {!fourthAsset ? (
-                            ''
-                        ) : hasFourthAssetInfo ? (
-                            fourthAssetInfo.home_domain ?? 'unknown'
-                        ) : (
-                            <DotsLoader />
-                        )}
-                        {fourthAsset ? ')' : ''}
+                        {assets.map((asset, index) => {
+                            const [name, domain] = getAssetDetails(asset);
+                            return (
+                                <span key={getAssetString(asset)}>
+                                    {index > 0 ? ' · ' : ''}
+                                    {name} (
+                                    {asset.isNative() ? (
+                                        domain
+                                    ) : (
+                                        <Domain onClick={(e) => onDomainClick(e, asset)}>
+                                            {domain}
+                                        </Domain>
+                                    )}
+                                    )
+                                </span>
+                            );
+                        })}
                     </AssetsDomains>
                 )}
             </AssetsDetails>
-            {bottomLabels && (
-                <Labels>
-                    {boosted && <BoostLabel />}
-                    {isRewardsOn && <RewardLabel />}
-                    {isMaxRewards && <MaxRewardsLabel />}
-                    {authRequired && <AuthRequiredLabel />}
-                    {noLiquidity && <NoLiquidityLabel />}
-                    {poolType === POOL_TYPE.classic && <ClassicPoolLabel />}
-                    {poolType === POOL_TYPE.stable && <StablePoolLabel />}
-                    {poolType === POOL_TYPE.constant && <ConstantPoolLabel />}
-                </Labels>
-            )}
+            {bottomLabels && <Labels>{labels}</Labels>}
         </Wrapper>
     );
 };
 
-export default Pair;
+export default Market;

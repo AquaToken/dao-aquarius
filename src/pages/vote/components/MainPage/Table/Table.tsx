@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../../../../common/styles';
 import { PairStats, TotalStats } from '../../../api/types';
 import { formatBalance } from '../../../../../common/helpers/helpers';
-import Pair from '../../common/Pair';
+import Market from '../../common/Market';
 import { flexAllCenter, respondDown } from '../../../../../common/mixins';
 import VoteButton from './VoteButton/VoteButton';
 import VoteAmount from './VoteAmount/VoteAmount';
@@ -234,15 +234,17 @@ const VoteTable = ({
                         {
                             children: (
                                 <PairWrapper>
-                                    <Pair
-                                        base={{
-                                            code: pair.asset1_code,
-                                            issuer: pair.asset1_issuer,
-                                        }}
-                                        counter={{
-                                            code: pair.asset2_code,
-                                            issuer: pair.asset2_issuer,
-                                        }}
+                                    <Market
+                                        assets={[
+                                            {
+                                                code: pair.asset1_code,
+                                                issuer: pair.asset1_issuer,
+                                            },
+                                            {
+                                                code: pair.asset2_code,
+                                                issuer: pair.asset2_issuer,
+                                            },
+                                        ]}
                                         isRewardsOn={
                                             (isRewardsOn(
                                                 pair.votes_value,

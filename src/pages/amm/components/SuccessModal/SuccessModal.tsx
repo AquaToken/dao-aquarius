@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { flexAllCenter, respondDown } from '../../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../../common/styles';
 import { ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
-import Pair from '../../../vote/components/common/Pair';
+import Market from '../../../vote/components/common/Market';
 import Button from '../../../../common/basics/Button';
 import ExternalLink from '../../../../common/basics/ExternalLink';
 
@@ -37,11 +37,8 @@ const SuccessModal = ({ params, close }) => {
         <Container>
             <ModalTitle>{title ?? 'Success'}</ModalTitle>
             <AssetsInfo>
-                <Pair
-                    base={assets[0]}
-                    counter={assets[1]}
-                    thirdAsset={assets[2]}
-                    fourthAsset={assets[3]}
+                <Market
+                    assets={assets}
                     verticalDirections
                     withoutLink
                     amounts={amounts}

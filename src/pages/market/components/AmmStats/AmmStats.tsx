@@ -6,8 +6,7 @@ import { Breakpoints, COLORS } from '../../../../common/styles';
 import { respondDown } from '../../../../common/mixins';
 import ExternalLink from '../../../../common/basics/ExternalLink';
 import PageLoader from '../../../../common/basics/PageLoader';
-import { formatBalance } from '../../../../common/helpers/helpers';
-import { assetToString } from '../../../vote/components/common/Pair';
+import { formatBalance, getAssetString } from '../../../../common/helpers/helpers';
 
 const Container = styled.div`
     display: flex;
@@ -131,14 +130,14 @@ const AmmStats = ({ base, counter }) => {
         if (!stats) {
             return null;
         }
-        return stats.reserves.find(({ asset }) => asset === assetToString(base));
+        return stats.reserves.find(({ asset }) => asset === getAssetString(base));
     }, [stats, base]);
 
     const counterReserve = useMemo(() => {
         if (!stats) {
             return null;
         }
-        return stats.reserves.find(({ asset }) => asset === assetToString(counter));
+        return stats.reserves.find(({ asset }) => asset === getAssetString(counter));
     }, [stats, counter]);
 
     const liquidity = useMemo(() => {
@@ -222,9 +221,9 @@ const AmmStats = ({ base, counter }) => {
                         </StatsColumn>
                     </Stats>
                     <ExternalLinkStyled
-                        href={`https://www.stellarx.com/amm/analytics/${assetToString(
+                        href={`https://www.stellarx.com/amm/analytics/${getAssetString(
                             base,
-                        )}/${assetToString(counter)}`}
+                        )}/${getAssetString(counter)}`}
                     >
                         See AMM on StellarX
                     </ExternalLinkStyled>

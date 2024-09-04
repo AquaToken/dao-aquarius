@@ -4,7 +4,7 @@ import * as StellarSdk from '@stellar/stellar-sdk';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../../common/styles';
 import { ModalDescription, ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
-import Pair from '../../../vote/components/common/Pair';
+import Market from '../../../vote/components/common/Market';
 import { formatBalance, getAssetFromString } from '../../../../common/helpers/helpers';
 import Button from '../../../../common/basics/Button';
 import { useEffect, useState } from 'react';
@@ -171,17 +171,7 @@ const SwapConfirmModal = ({ params, confirm }) => {
             <ModalTitle>Confirm swap</ModalTitle>
             <ModalDescription>Please check all the details to make a swap</ModalDescription>
             <AssetsInfo>
-                <Pair
-                    verticalDirections
-                    base={{
-                        code: base.code,
-                        issuer: base.issuer,
-                    }}
-                    counter={{
-                        code: counter.code,
-                        issuer: counter.issuer,
-                    }}
-                />
+                <Market verticalDirections assets={[base, counter]} />
             </AssetsInfo>
             <DescriptionRow>
                 <span>You give</span>
