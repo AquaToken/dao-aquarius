@@ -54,6 +54,12 @@ const InfoIcon = styled.div<{ withMobileView?: boolean }>`
     `}
 `;
 
+const DomainLink = styled.a`
+    color: ${COLORS.purple};
+    text-decoration: none;
+    cursor: pointer;
+`;
+
 const Asset = ({
     asset,
     inRow,
@@ -62,6 +68,7 @@ const Asset = ({
     onlyLogo,
     onlyLogoSmall,
     logoAndCode,
+    hasDomainLink,
     ...props
 }: {
     asset: AssetSimple;
@@ -71,6 +78,7 @@ const Asset = ({
     onlyLogoSmall?: boolean;
     logoAndCode?: boolean;
     isBig?: boolean;
+    hasDomainLink?: boolean;
 }): JSX.Element => {
     const { assetsInfo } = useAssetsStore();
 
@@ -98,6 +106,18 @@ const Asset = ({
         );
     }
 
+    const domain = hasAssetInfo ? (
+        (assetInfo.home_domain && hasDomainLink ? (
+            <DomainLink href={`https://${assetInfo.home_domain}`} target="_blank">
+                {assetInfo.home_domain}
+            </DomainLink>
+        ) : (
+            assetInfo.home_domain
+        )) ?? 'unknown'
+    ) : (
+        <DotsLoader />
+    );
+
     return (
         <Container {...props}>
             <AssetLogo asset={asset} isSmall={inRow} isBig={isBig} />
@@ -106,8 +126,7 @@ const Asset = ({
                     {asset.code}
                 </AssetCode>
                 <AssetDomain withMobileView={withMobileView} inRow={inRow}>
-                    {inRow ? '' : assetInfo?.name || asset.code} (
-                    {hasAssetInfo ? assetInfo.home_domain ?? 'unknown' : <DotsLoader />})
+                    {inRow ? '' : assetInfo?.name || asset.code} ({domain})
                 </AssetDomain>
                 <Tooltip
                     content={
