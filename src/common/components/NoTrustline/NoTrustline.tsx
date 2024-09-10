@@ -48,7 +48,7 @@ const TrustlineButton = styled(Button)`
     }
 `;
 
-const NoTrustline = ({ asset }: { asset: AssetType }) => {
+const NoTrustline = ({ asset, onlyButton }: { asset: AssetType; onlyButton?: boolean }) => {
     const [trustlinePending, setTrustlinePending] = useState(false);
 
     const { account } = useAuthStore();
@@ -80,6 +80,14 @@ const NoTrustline = ({ asset }: { asset: AssetType }) => {
 
     if (!account || account.getAssetBalance(asset) !== null) {
         return null;
+    }
+
+    if (onlyButton) {
+        return (
+            <Button isBig likeDisabled onClick={() => addTrust()} pending={trustlinePending}>
+                add trustline
+            </Button>
+        );
     }
     return (
         <TrustlineBlock>
