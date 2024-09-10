@@ -158,7 +158,7 @@ const AssetInfoModal = ({ params, close }) => {
 
     return (
         <ModalContainer isWide>
-            <Asset asset={asset} isBig />
+            <Asset asset={asset} isBig hasDomainLink />
             <Description>{desc}</Description>
             <Links>
                 {tomlInfo.DOCUMENTATION?.ORG_TWITTER && (
