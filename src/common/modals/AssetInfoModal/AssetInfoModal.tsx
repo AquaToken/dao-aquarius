@@ -18,6 +18,12 @@ import PageLoader from '../../basics/PageLoader';
 import { AssetDetails } from '../../api/types';
 import { respondDown } from '../../mixins';
 import DotsLoader from '../../basics/DotsLoader';
+import Button from '../../basics/Button';
+import { MainRoutes } from '../../../routes';
+import { StellarService } from '../../services/globalServices';
+import { AQUA_CODE, AQUA_ISSUER } from '../../services/stellar.service';
+import { Link } from 'react-router-dom';
+import NoTrustline from '../../components/NoTrustline/NoTrustline';
 
 const Description = styled.p`
     font-size: 1.6rem;
@@ -36,7 +42,7 @@ const Links = styled.div`
     `}
 `;
 
-const Link = styled.a`
+const ContactLink = styled.a`
     display: flex;
     align-items: center;
     color: ${COLORS.purple};
@@ -80,7 +86,24 @@ const Changes = styled.span<{ isPositive?: boolean }>`
     }
 `;
 
-const AssetInfoModal = ({ params }) => {
+const Buttons = styled.div`
+    display: flex;
+    margin-top: 3.2rem;
+    gap: 1.2rem;
+
+    Button {
+        flex: 1;
+    }
+`;
+
+const LinkStyled = styled(Link)`
+    display: flex;
+    flex: 1;
+
+    text-decoration: none;
+`;
+
+const AssetInfoModal = ({ params, close }) => {
     const { asset } = params;
 
     const [tomlInfo, setTomlInfo] = useState<StellarToml.Api.StellarToml>({});
@@ -112,8 +135,8 @@ const AssetInfoModal = ({ params }) => {
         if (!expertData) {
             return <DotsLoader />;
         }
-        const lastPrice = expertData?.price7d[expertData.price7d.length - 1]?.[1] ?? 0;
-        const prevPrice = expertData?.price7d[expertData.price7d.length - 2]?.[1] ?? 0;
+        const lastPrice = expertData?.price7d?.[expertData.price7d?.length - 1]?.[1] ?? 0;
+        const prevPrice = expertData?.price7d?.[expertData.price7d?.length - 2]?.[1] ?? 0;
 
         if (!prevPrice || !lastPrice) {
             return <span>-</span>;
@@ -139,39 +162,39 @@ const AssetInfoModal = ({ params }) => {
             <Description>{desc}</Description>
             <Links>
                 {tomlInfo.DOCUMENTATION?.ORG_TWITTER && (
-                    <Link
+                    <ContactLink
                         target="_blank"
                         href={`https://x.com/${tomlInfo.DOCUMENTATION.ORG_TWITTER}`}
                     >
                         <X />
                         {tomlInfo.DOCUMENTATION.ORG_TWITTER}
-                    </Link>
+                    </ContactLink>
                 )}
                 {tomlInfo.DOCUMENTATION?.ORG_GITHUB && (
-                    <Link
+                    <ContactLink
                         target="_blank"
                         href={`https://github.com/${tomlInfo.DOCUMENTATION.ORG_GITHUB}`}
                     >
                         <Git />
                         {tomlInfo.DOCUMENTATION.ORG_GITHUB}
-                    </Link>
+                    </ContactLink>
                 )}
                 {tomlInfo.DOCUMENTATION?.ORG_OFFICIAL_EMAIL && (
-                    <Link
+                    <ContactLink
                         target="_blank"
                         href={`mailto:${tomlInfo.DOCUMENTATION.ORG_OFFICIAL_EMAIL}`}
                     >
                         <Mail />
                         {tomlInfo.DOCUMENTATION.ORG_OFFICIAL_EMAIL}
-                    </Link>
+                    </ContactLink>
                 )}
-                <Link
+                <ContactLink
                     target="_blank"
                     href={`https://stellar.expert/explorer/public/asset/${asset.code}-${asset.issuer}`}
                 >
                     <External />
                     StellarExpert
-                </Link>
+                </ContactLink>
             </Links>
             {expertData !== undefined ? (
                 Boolean(expertData) ? (
@@ -202,7 +225,7 @@ const AssetInfoModal = ({ params }) => {
                             <span>
                                 $
                                 {formatBalance(
-                                    expertData.price7d[expertData.price7d.length - 1]?.[1] ?? 0,
+                                    expertData.price7d?.[expertData.price7d.length - 1]?.[1] ?? 0,
                                     true,
                                 )}
                             </span>
@@ -216,6 +239,27 @@ const AssetInfoModal = ({ params }) => {
             ) : (
                 <PageLoader />
             )}
+            <Buttons>
+                <LinkStyled
+                    to={`${MainRoutes.swap}/${getAssetString(asset)}/${getAssetString(
+                        asset.code === AQUA_CODE && asset.issuer === AQUA_ISSUER
+                            ? StellarService.createLumen()
+                            : StellarService.createAsset(AQUA_CODE, AQUA_ISSUER),
+                    )}`}
+                    onClick={() => close()}
+                >
+                    <Button isBig>swap</Button>
+                </LinkStyled>
+
+                <LinkStyled
+                    to={`${MainRoutes.vote}/?base=${getAssetString(asset)}`}
+                    onClick={() => close()}
+                >
+                    <Button isBig>vote</Button>
+                </LinkStyled>
+
+                <NoTrustline asset={asset} onlyButton />
+            </Buttons>
         </ModalContainer>
     );
 };
