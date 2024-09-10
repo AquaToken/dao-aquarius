@@ -89,7 +89,7 @@ const ListBlock = styled.div`
 const ListHeader = styled.div`
     ${flexRowSpaceBetween};
 
-    ${respondDown(Breakpoints.sm)`
+    ${respondDown(Breakpoints.md)`
         flex-direction: column;
         gap: 5rem;
     `}
@@ -108,6 +108,7 @@ const ListTitles = styled.h3`
 const ListTab = styled.span<{ isActive: boolean }>`
     cursor: pointer;
     color: ${({ isActive }) => (isActive ? COLORS.titleText : `${COLORS.titleText}4D`)};
+    white-space: nowrap;
 
     &:hover {
         color: ${({ isActive }) => (isActive ? COLORS.titleText : COLORS.placeholder)};
@@ -122,8 +123,9 @@ const ListTab = styled.span<{ isActive: boolean }>`
 
 const StyledInput = styled(Input)`
     width: 56rem;
+    margin-left: 2.4rem;
 
-    ${respondDown(Breakpoints.sm)`
+    ${respondDown(Breakpoints.md)`
         width: 100%;
     `}
 `;
