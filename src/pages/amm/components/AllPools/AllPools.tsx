@@ -228,6 +228,7 @@ const AllPools = ({ search }) => {
                                             mobileVerticalDirections
                                             withoutLink
                                             poolType={pool.pool_type as POOL_TYPE}
+                                            isRewardsPoolOn={Boolean(Number(pool.reward_tps))}
                                         />
                                     ),
                                     flexSize: 4,
