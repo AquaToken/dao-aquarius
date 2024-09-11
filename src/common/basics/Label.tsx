@@ -97,7 +97,7 @@ const Label = ({
                     : TOOLTIP_POSITION.left
             }
             background={background}
-            color={color}
+            color={background === COLORS.white ? COLORS.titleText : color}
             showOnHover
         >
             <LabelWrap>
