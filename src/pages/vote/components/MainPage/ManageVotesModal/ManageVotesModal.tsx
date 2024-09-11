@@ -74,7 +74,7 @@ const ManageVotesModal = ({ params }: ModalProps<{ pair: PairStats }>) => {
         <Container>
             <ModalTitle>Manage your votes</ModalTitle>
             <ModalDescription>
-                View your votes for a pair and claim unlocked votes back
+                View your votes for a market and claim unlocked votes back
             </ModalDescription>
             <PairBlock>
                 <Market verticalDirections assets={[base, counter]} />

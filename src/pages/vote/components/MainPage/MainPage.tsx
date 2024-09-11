@@ -844,7 +844,7 @@ const MainPage = (): JSX.Element => {
     return (
         <MainBlock>
             <Background>
-                <Title>Vote For Your Favorite Pairs</Title>
+                <Title>Vote For Your Favorite Markets</Title>
                 <Description>
                     Lock your AQUA or ICE to create immutable and transparent votes direct on the
                     Stellar blockchain
@@ -870,7 +870,7 @@ const MainPage = (): JSX.Element => {
                             <TooltipContent>
                                 <span>&#128075;</span>
                                 <span>
-                                    Can&apos;t find your pair below? Try to type second asset into
+                                    Can&apos;t find your market below? Try to type second asset into
                                     this field
                                 </span>
                             </TooltipContent>
@@ -953,13 +953,13 @@ const MainPage = (): JSX.Element => {
                 </Header>
                 {!pairsLoading && searchBase && !searchCounter && (
                     <SearchEnabled>
-                        {pairs.length ? 'Search results' : 'No pairs found'}
+                        {pairs.length ? 'Search results' : 'No markets found'}
                     </SearchEnabled>
                 )}
                 {sort === SortTypes.yourVotes &&
                     !pairs.length &&
                     StellarService.isClaimableBalancesLoaded &&
-                    !pairsLoading && <SearchEnabled>No pairs found</SearchEnabled>}
+                    !pairsLoading && <SearchEnabled>No markets found</SearchEnabled>}
                 {searchBase && searchCounter && !pairs.length && (
                     <CreatePair onClick={() => goToMarketPage()}>
                         <Market assets={[searchBase, searchCounter]} mobileVerticalDirections />
@@ -967,13 +967,13 @@ const MainPage = (): JSX.Element => {
                             content={
                                 <BeFirst>
                                     <div>&#128293;</div>
-                                    <div>Be the first to vote for rewards on this pair!</div>
+                                    <div>Be the first to vote for rewards on this market!</div>
                                 </BeFirst>
                             }
                             position={TOOLTIP_POSITION.bottom}
                             isShow={true}
                         >
-                            <Button onClick={(e) => createPair(e)}>create pair</Button>
+                            <Button onClick={(e) => createPair(e)}>create market</Button>
                         </Tooltip>
                     </CreatePair>
                 )}

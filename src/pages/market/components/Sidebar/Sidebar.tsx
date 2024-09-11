@@ -143,9 +143,9 @@ const Sidebar = ({ votesData, base, counter, totalStats, onVoteClick, isPairSele
     if (!votesData) {
         return (
             <Container>
-                <Title>Create a new pair!</Title>
+                <Title>Create a new market!</Title>
                 <CreatePair>
-                    This pair has not yet been created in the voting tool, be the first to do it!
+                    This market has not yet been created in the voting tool, be the first to do it!
                 </CreatePair>
                 <Button onClick={() => createPair()}>Create pair</Button>
             </Container>
@@ -218,7 +218,7 @@ const Sidebar = ({ votesData, base, counter, totalStats, onVoteClick, isPairSele
     return (
         <Container>
             <Title>
-                Market pair {base.code}/{counter.code}
+                Market {base.code}/{counter.code}
             </Title>
             <Row>
                 <Label>Users voted</Label>

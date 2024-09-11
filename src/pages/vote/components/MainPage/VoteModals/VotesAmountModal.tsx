@@ -490,7 +490,7 @@ const VotesAmountModal = ({
         }
         if (Object.values(pairsAmount).length > Number(nativeBalance)) {
             ToastService.showErrorToast(
-                `A vote for each pair requires a reserve of 1 XLM on your account. Your available balance of ${formattedNativeBalance} XLM is not enough to cover the votes for the pairs you selected.`,
+                `A vote for each market requires a reserve of 1 XLM on your account. Your available balance of ${formattedNativeBalance} XLM is not enough to cover the votes for the markets you selected.`,
                 20000,
             );
             return;
@@ -543,14 +543,14 @@ const VotesAmountModal = ({
             <Scrollable scrollDisabled={isDownVoteModal || isSingleVoteForModal}>
                 <ModalTitle>
                     {isDownVoteModal
-                        ? 'Downvote pair'
+                        ? 'Downvote market'
                         : isSingleVoteForModal
-                        ? 'Upvote pair'
-                        : 'Selected Pairs'}
+                        ? 'Upvote market'
+                        : 'Selected Markets'}
                 </ModalTitle>
                 <ModalDescription>
                     {isDownVoteModal
-                        ? `Submit ${targetAsset.code} against a pair if you think it has no place in the market`
+                        ? `Submit ${targetAsset.code} against a market if you think it has no place in the reward zone`
                         : `Lock your ${targetAsset.code} in the network to complete your vote`}
                 </ModalDescription>
                 {(isDownVoteModal || isSingleVoteForModal) && (

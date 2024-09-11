@@ -538,7 +538,7 @@ const SwapPage = () => {
                     {error && (
                         <Error>
                             <IconFail />
-                            There are no exchange paths for the selected pair.
+                            There are no exchange paths for the selected market.
                         </Error>
                     )}
 

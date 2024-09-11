@@ -42,7 +42,7 @@ export const AuthRequiredLabel = () => {
             title={'asset flags'}
             text={
                 <span>
-                    One of the assets in this pair has flags enabled. Most assets with “Required”,
+                    One of the assets in this market has flags enabled. Most assets with “Required”,
                     “Revocable”, and “Clawback Enabled” flags are currently banned from Aquarius.
                     Learn more about flag
                     <a
@@ -65,7 +65,7 @@ export const NoLiquidityLabel = () => {
         <StyledLabel
             title={'no liquidity'}
             text={
-                'This market pair is not eligible for AQUA rewards at the moment, as it failed the liquidity test (no path payment from XLM).'
+                'This market is not eligible for AQUA rewards at the moment, as it failed the liquidity test (no path payment from XLM).'
             }
             background={COLORS.pinkRed}
         />
