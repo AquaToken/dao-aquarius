@@ -604,7 +604,7 @@ const AddBribePage = () => {
                         <FormSection>
                             <FormSectionTitle>Select market</FormSectionTitle>
                             <FormSectionDescription>
-                                Choose the assets to define a market pair for your bribe.
+                                Choose the assets to define a market for your bribe.
                             </FormSectionDescription>
                             <FormRow>
                                 <AssetDropdown
@@ -632,7 +632,7 @@ const AddBribePage = () => {
                                         createPair();
                                     }}
                                 >
-                                    create pair
+                                    create market
                                 </NextButton>
                             )}
                             {step === CreateStep.pair && (

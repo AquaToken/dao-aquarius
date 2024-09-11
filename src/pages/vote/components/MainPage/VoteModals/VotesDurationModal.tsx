@@ -147,7 +147,9 @@ const VotesDurationModal = ({ params, close }) => {
 
     return (
         <>
-            <ModalTitle>{isDownVoteModal ? 'Select Downvote Period' : 'Selected Pairs'}</ModalTitle>
+            <ModalTitle>
+                {isDownVoteModal ? 'Select Downvote Period' : 'Selected Markets'}
+            </ModalTitle>
             <ModalDescription>
                 {isDownVoteModal
                     ? `Enter the period for which your ${asset.code} will be locked to voting`

@@ -75,13 +75,13 @@ const YourVotes = ({ votesData }) => {
             {claims.length ? (
                 <>
                     <Description>
-                        View your votes for a pair and claim unlocked votes back
+                        View your votes for a market and claim unlocked votes back
                     </Description>
 
                     <VotesList votes={claims} pair={votesData} />
                 </>
             ) : (
-                <Description>You didn't vote for this pair</Description>
+                <Description>You didn't vote for this market</Description>
             )}
         </Container>
     );

@@ -290,7 +290,7 @@ const VotesList = ({
             )}
             <Table
                 head={[
-                    { children: 'Pair', hideOnWeb: Boolean(pair), flexSize: 1.5 },
+                    { children: 'Market', hideOnWeb: Boolean(pair), flexSize: 1.5 },
                     { children: 'Vote date' },
                     { children: 'Amount', align: CellAlign.Right },
                     {

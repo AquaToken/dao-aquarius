@@ -211,7 +211,7 @@ const VoteTable = ({
         <Table
             pending={loading || !totalStats}
             head={[
-                { children: 'Pair', flexSize: 2 },
+                { children: 'Market', flexSize: 2 },
                 { children: 'Users Voted', flexSize: 0.5 },
                 { children: 'Votes' },
                 { children: 'Your Vote', align: CellAlign.Right, flexSize: 1.5 },

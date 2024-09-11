@@ -128,7 +128,7 @@ const About = () => {
                 <Title>What is Aquarius?</Title>
                 <Description>
                     Aquarius is designed to supercharge trading on Stellar, bring more liquidity and
-                    give control over how it is distributed across various market pairs. It adds
+                    give control over how it is distributed across various markets. It adds
                     incentives for SDEX traders ("market maker rewards") and rewards for AMM
                     liquidity providers. Aquarius allows community to set rewards for selected
                     markets through on-chain voting.
@@ -137,10 +137,10 @@ const About = () => {
                 <Title>What is AQUA token?</Title>
                 <Description>
                     AQUA is the currency for rewards and on-chain voting in Aquarius. AQUA holders
-                    can vote for market pairs that need more liquidity and select trusted assets.
-                    Traders and LPs earn AQUA on selected market pairs. AQUA will play an important
-                    role in projects built on Stellar. Majority of AQUA tokens will be distributed
-                    to network participants and market makers. Contact email for institutional
+                    can vote for markets that need more liquidity and select trusted assets. Traders
+                    and LPs earn AQUA on selected markets. AQUA will play an important role in
+                    projects built on Stellar. Majority of AQUA tokens will be distributed to
+                    network participants and market makers. Contact email for institutional
                     investors - tokens@aqua.network.
                 </Description>
 
@@ -156,9 +156,9 @@ const About = () => {
                     <About2 />
                     <ContentTitle>Governance for token holders</ContentTitle>
                     <ContentText>
-                        Token holders will vote for market pairs requiring liquidity to allocate
-                        rewards. AQUA is also an utility token to govern the Aquarius protocol
-                        through on-chain DAO voting.
+                        Token holders will vote for markets requiring liquidity to allocate rewards.
+                        AQUA is also an utility token to govern the Aquarius protocol through
+                        on-chain DAO voting.
                     </ContentText>
                 </ContentBlock>
                 <ContentBlock>

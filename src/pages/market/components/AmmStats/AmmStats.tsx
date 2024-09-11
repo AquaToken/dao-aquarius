@@ -229,7 +229,7 @@ const AmmStats = ({ base, counter }) => {
                     </ExternalLinkStyled>
                 </>
             ) : (
-                <Description>AMM statistics for this pair were not found</Description>
+                <Description>AMM statistics for this market were not found</Description>
             )}
         </Container>
     );
