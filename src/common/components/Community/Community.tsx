@@ -175,11 +175,11 @@ const Community = () => {
                             </ItemContent>
                         </Item>
                     </Link>
-                    <Link href="https://twitter.com/aqua_token" target="_blank">
+                    <Link href="https://x.com/aqua_token" target="_blank">
                         <Item>
                             <ItemContent>
                                 <Twitter />
-                                <ItemTitle>Twitter</ItemTitle>
+                                <ItemTitle>X</ItemTitle>
                             </ItemContent>
                         </Item>
                     </Link>
