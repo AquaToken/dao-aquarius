@@ -53,7 +53,9 @@ const BalancesBlock = () => {
                             isNarrow: true,
                             rowItems: [
                                 {
-                                    children: <Asset asset={asset} withMobileView />,
+                                    children: (
+                                        <Asset asset={asset} withMobileView hasAssetDetailsLink />
+                                    ),
                                     label: 'Asset:',
                                 },
                                 {

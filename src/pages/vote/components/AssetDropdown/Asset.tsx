@@ -11,6 +11,9 @@ import { AssetSimple } from '../../../../store/assetsStore/types';
 import { getAssetString } from '../../../../store/assetsStore/actions';
 import { LumenInfo } from '../../../../store/assetsStore/reducer';
 import useAssetsStore from '../../../../store/assetsStore/useAssetsStore';
+import { useMemo } from 'react';
+import { ModalService } from '../../../../common/services/globalServices';
+import AssetInfoModal from '../../../../common/modals/AssetInfoModal/AssetInfoModal';
 
 const Container = styled.div`
     display: flex;
@@ -60,6 +63,14 @@ const DomainLink = styled.a`
     cursor: pointer;
 `;
 
+const DomainDetails = styled.span`
+    cursor: pointer;
+    &:hover {
+        text-decoration: underline;
+        text-decoration-style: dashed;
+    }
+`;
+
 const Asset = ({
     asset,
     inRow,
@@ -69,6 +80,7 @@ const Asset = ({
     onlyLogoSmall,
     logoAndCode,
     hasDomainLink,
+    hasAssetDetailsLink,
     ...props
 }: {
     asset: AssetSimple;
@@ -79,6 +91,7 @@ const Asset = ({
     logoAndCode?: boolean;
     isBig?: boolean;
     hasDomainLink?: boolean;
+    hasAssetDetailsLink?: boolean;
 }): JSX.Element => {
     const { assetsInfo } = useAssetsStore();
 
@@ -106,17 +119,32 @@ const Asset = ({
         );
     }
 
-    const domain = hasAssetInfo ? (
-        (assetInfo.home_domain && hasDomainLink ? (
-            <DomainLink href={`https://${assetInfo.home_domain}`} target="_blank">
-                {assetInfo.home_domain}
-            </DomainLink>
-        ) : (
-            assetInfo.home_domain
-        )) ?? 'unknown'
-    ) : (
-        <DotsLoader />
-    );
+    const domain = useMemo(() => {
+        if (!assetInfo) {
+            return <DotsLoader />;
+        }
+
+        const domainView =
+            assetInfo.home_domain ?? `${asset.issuer.slice(0, 4)}...${asset.issuer.slice(-4)}`;
+
+        if (hasDomainLink && assetInfo.home_domain) {
+            return (
+                <DomainLink href={`https://${assetInfo.home_domain}`} target="_blank">
+                    {domainView}
+                </DomainLink>
+            );
+        }
+
+        if (hasAssetDetailsLink) {
+            return (
+                <DomainDetails onClick={() => ModalService.openModal(AssetInfoModal, { asset })}>
+                    {domainView}
+                </DomainDetails>
+            );
+        }
+
+        return domainView;
+    }, [assetInfo, asset]);
 
     return (
         <Container {...props}>

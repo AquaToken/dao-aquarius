@@ -91,16 +91,20 @@ const Buttons = styled.div`
     margin-top: 3.2rem;
     gap: 1.2rem;
 
-    Button {
-        flex: 1;
-    }
+    ${respondDown(Breakpoints.md)`
+        flex-direction: column;
+    `}
 `;
 
 const LinkStyled = styled(Link)`
     display: flex;
     flex: 1;
-
     text-decoration: none;
+
+    Button {
+        width: 100%;
+        flex: 1;
+    }
 `;
 
 const AssetInfoModal = ({ params, close }) => {
