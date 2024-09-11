@@ -179,7 +179,7 @@ const Community = () => {
                         <Item>
                             <ItemContent>
                                 <Twitter />
-                                <ItemTitle>@aqua_token</ItemTitle>
+                                <ItemTitle>X</ItemTitle>
                             </ItemContent>
                         </Item>
                     </Link>
