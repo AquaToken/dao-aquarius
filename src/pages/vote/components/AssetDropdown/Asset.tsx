@@ -11,6 +11,9 @@ import { AssetSimple } from '../../../../store/assetsStore/types';
 import { getAssetString } from '../../../../store/assetsStore/actions';
 import { LumenInfo } from '../../../../store/assetsStore/reducer';
 import useAssetsStore from '../../../../store/assetsStore/useAssetsStore';
+import { useMemo } from 'react';
+import { ModalService } from '../../../../common/services/globalServices';
+import AssetInfoModal from '../../../../common/modals/AssetInfoModal/AssetInfoModal';
 
 const Container = styled.div`
     display: flex;
@@ -26,9 +29,9 @@ const AssetDetails = styled.div<{ inRow?: boolean }>`
     margin-left: ${({ inRow }) => (inRow ? '0.8rem' : '1.6rem')};
 `;
 
-const AssetCode = styled.span<{ inRow?: boolean }>`
-    font-size: 1.6rem;
-    line-height: 2.8rem;
+const AssetCode = styled.span<{ inRow?: boolean; isBig?: boolean }>`
+    font-size: ${({ isBig }) => (isBig ? '3.6rem' : '1.6rem')};
+    line-height: ${({ isBig }) => (isBig ? '4.2rem' : '2.8rem')};
     color: ${COLORS.paragraphText};
     margin-right: ${({ inRow }) => (inRow ? '0.3rem' : '0')};
 `;
@@ -54,13 +57,30 @@ const InfoIcon = styled.div<{ withMobileView?: boolean }>`
     `}
 `;
 
+const DomainLink = styled.a`
+    color: ${COLORS.purple};
+    text-decoration: none;
+    cursor: pointer;
+`;
+
+const DomainDetails = styled.span`
+    cursor: pointer;
+    &:hover {
+        text-decoration: underline;
+        text-decoration-style: dashed;
+    }
+`;
+
 const Asset = ({
     asset,
     inRow,
     withMobileView,
+    isBig,
     onlyLogo,
     onlyLogoSmall,
     logoAndCode,
+    hasDomainLink,
+    hasAssetDetailsLink,
     ...props
 }: {
     asset: AssetSimple;
@@ -69,6 +89,9 @@ const Asset = ({
     onlyLogo?: boolean;
     onlyLogoSmall?: boolean;
     logoAndCode?: boolean;
+    isBig?: boolean;
+    hasDomainLink?: boolean;
+    hasAssetDetailsLink?: boolean;
 }): JSX.Element => {
     const { assetsInfo } = useAssetsStore();
 
@@ -96,14 +119,42 @@ const Asset = ({
         );
     }
 
+    const domain = useMemo(() => {
+        if (!assetInfo) {
+            return <DotsLoader />;
+        }
+
+        const domainView =
+            assetInfo.home_domain ?? `${asset.issuer.slice(0, 4)}...${asset.issuer.slice(-4)}`;
+
+        if (hasDomainLink && assetInfo.home_domain) {
+            return (
+                <DomainLink href={`https://${assetInfo.home_domain}`} target="_blank">
+                    {domainView}
+                </DomainLink>
+            );
+        }
+
+        if (hasAssetDetailsLink) {
+            return (
+                <DomainDetails onClick={() => ModalService.openModal(AssetInfoModal, { asset })}>
+                    {domainView}
+                </DomainDetails>
+            );
+        }
+
+        return domainView;
+    }, [assetInfo, asset]);
+
     return (
         <Container {...props}>
-            <AssetLogo asset={asset} isSmall={inRow} />
+            <AssetLogo asset={asset} isSmall={inRow} isBig={isBig} />
             <AssetDetails inRow={inRow}>
-                <AssetCode inRow={inRow}>{asset.code}</AssetCode>
+                <AssetCode inRow={inRow} isBig={isBig}>
+                    {asset.code}
+                </AssetCode>
                 <AssetDomain withMobileView={withMobileView} inRow={inRow}>
-                    {inRow ? '' : assetInfo?.name || asset.code} (
-                    {hasAssetInfo ? assetInfo.home_domain ?? 'unknown' : <DotsLoader />})
+                    {inRow ? '' : assetInfo?.name || asset.code} ({domain})
                 </AssetDomain>
                 <Tooltip
                     content={

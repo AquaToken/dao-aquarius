@@ -6,7 +6,7 @@ import { FilterOptions, getPools, PoolsSortFields } from '../../api/api';
 import Tooltip, { TOOLTIP_POSITION } from '../../../../common/basics/Tooltip';
 import Info from '../../../../common/assets/img/icon-info.svg';
 import { Breakpoints, COLORS } from '../../../../common/styles';
-import Pair from '../../../vote/components/common/Pair';
+import Market from '../../../vote/components/common/Market';
 import { POOL_TYPE } from '../../../../common/services/soroban.service';
 import { formatBalance } from '../../../../common/helpers/helpers';
 import Pagination from '../../../../common/basics/Pagination';
@@ -223,11 +223,8 @@ const AllPools = ({ search }) => {
                             rowItems: [
                                 {
                                     children: (
-                                        <Pair
-                                            base={pool.assets[0]}
-                                            counter={pool.assets[1]}
-                                            thirdAsset={pool.assets[2]}
-                                            fourthAsset={pool.assets[3]}
+                                        <Market
+                                            assets={pool.assets}
                                             mobileVerticalDirections
                                             withoutLink
                                             poolType={pool.pool_type as POOL_TYPE}

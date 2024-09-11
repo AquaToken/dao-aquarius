@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../../common/styles';
 import { flexRowSpaceBetween, respondDown } from '../../../common/mixins';
-import Pair from '../../vote/components/common/Pair';
+import Market from '../../vote/components/common/Market';
 import { StellarService } from '../../../common/services/globalServices';
 import { getAmmRewards } from '../api/api';
 import useAuthStore from '../../../store/authStore/useAuthStore';
@@ -303,9 +303,8 @@ const AmmRewards = ({ aquaUsdPrice }) => {
                                     rowItems: [
                                         {
                                             children: (
-                                                <Pair
-                                                    base={base}
-                                                    counter={counter}
+                                                <Market
+                                                    assets={[base, counter]}
                                                     withoutLink
                                                     withMarketLink
                                                     mobileVerticalDirections

@@ -103,7 +103,7 @@ const ButtonLoader = styled.div<{
         }
 
         if (likeDisabled) {
-            return COLORS.placeholder;
+            return COLORS.titleText;
         }
 
         if (isWhite) {

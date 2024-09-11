@@ -7,7 +7,7 @@ import NotFoundPage from '../../../common/components/NotFoundPage/NotFoundPage';
 import { Breakpoints, COLORS } from '../../../common/styles';
 import { commonMaxWidth, respondDown } from '../../../common/mixins';
 import { getFilteredPairsList, getTotalVotingStats } from '../../vote/api/api';
-import Pair from '../../vote/components/common/Pair';
+import Market from '../../vote/components/common/Market';
 import PageLoader from '../../../common/basics/PageLoader';
 import { isRewardsOn, MAX_REWARDS_PERCENT } from '../../vote/components/MainPage/Table/Table';
 import AboutAsset from '../components/AboutAsset/AboutAsset';
@@ -231,9 +231,8 @@ const MarketPage = () => {
                 <Background>
                     <MarketSection>
                         <Header>
-                            <Pair
-                                base={baseAsset}
-                                counter={counterAsset}
+                            <Market
+                                assets={[baseAsset, counterAsset]}
                                 verticalDirections
                                 leftAlign
                                 bigCodes

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
-import Pair from '../../../vote/components/common/Pair';
+import Market from '../../../vote/components/common/Market';
 import { formatBalance } from '../../../../common/helpers/helpers';
 import Button from '../../../../common/basics/Button';
 import { ModalService, StellarService } from '../../../../common/services/globalServices';
@@ -235,11 +235,8 @@ const PoolsList = ({
                 return (
                     <PoolBlock key={pool.address ?? pool.id}>
                         <PoolMain>
-                            <Pair
-                                base={pool.assets[0]}
-                                counter={pool.assets[1]}
-                                thirdAsset={pool.assets[2]}
-                                fourthAsset={pool.assets[3]}
+                            <Market
+                                assets={pool.assets}
                                 poolAddress={!withDeposit && pool.address}
                                 withoutLink
                                 mobileVerticalDirections
