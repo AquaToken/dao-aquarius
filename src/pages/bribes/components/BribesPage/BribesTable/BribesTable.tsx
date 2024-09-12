@@ -192,7 +192,7 @@ const BribesTable = () => {
             <Table
                 pending={bribes && loading}
                 head={[
-                    { children: 'Market Market', flexSize: 3 },
+                    { children: 'Market', flexSize: 3 },
                     { children: 'Reward asset', flexSize: 2 },
                     {
                         children: 'Reward per day',
