@@ -12,7 +12,7 @@ import { getPoolInfo } from '../../pages/amm/api/api';
 import BigNumber from 'bignumber.js';
 
 enum HORIZON_SERVER {
-    stellar = 'https://horizon.stellar.org',
+    stellar = 'https://horizon-testnet.stellar.org',
 }
 
 const VAULT_API = 'https://vault.lobstr.co/api/transactions/';

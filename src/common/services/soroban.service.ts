@@ -10,8 +10,8 @@ import { getAssetString } from '../../store/assetsStore/actions';
 import { SorobanErrorHandler, SorobanPrepareTxErrorHandler } from '../helpers/error-handler';
 import BigNumber from 'bignumber.js';
 
-const SOROBAN_SERVER = 'https://soroban-rpc.aqua.network/';
-export const AMM_SMART_CONTACT_ID = 'CBQDHNBFBZYE4MKPWBSJOPIYLW4SFSXAXUTSXJN76GNKYVYPCKWC6QUK';
+const SOROBAN_SERVER = 'https://soroban-testnet.stellar.org:443';
+export const AMM_SMART_CONTACT_ID = 'CCKTUGINX4LEGTAFWE2U6BK7C4NSKXNWTYXJ5FSGBUQXJUL7ZHQZWLCC';
 
 enum AMM_CONTRACT_METHOD {
     GET_POOLS = 'get_pools',

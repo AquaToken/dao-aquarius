@@ -17,7 +17,7 @@ import {
     PoolVolume24h,
 } from './types';
 
-const API_URL = 'https://amm-api.aqua.network';
+const API_URL = 'https://amm-api-testnet.aqua.network';
 
 export enum FilterOptions {
     all = '',
