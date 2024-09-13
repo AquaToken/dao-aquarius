@@ -160,18 +160,26 @@ const AssetInfoModal = ({ params, close }) => {
         );
     }, [expertData]);
 
+    const xLink = useMemo(() => {
+        if (!tomlInfo?.DOCUMENTATION?.ORG_TWITTER) {
+            return null;
+        }
+
+        if (!tomlInfo?.DOCUMENTATION?.ORG_TWITTER.startsWith('https://')) {
+            return tomlInfo?.DOCUMENTATION?.ORG_TWITTER;
+        }
+        return tomlInfo?.DOCUMENTATION?.ORG_TWITTER.split('/')[3];
+    }, [tomlInfo]);
+
     return (
         <ModalContainer isWide>
             <Asset asset={asset} isBig hasDomainLink />
             <Description>{desc}</Description>
             <Links>
-                {tomlInfo.DOCUMENTATION?.ORG_TWITTER && (
-                    <ContactLink
-                        target="_blank"
-                        href={`https://x.com/${tomlInfo.DOCUMENTATION.ORG_TWITTER}`}
-                    >
+                {xLink && (
+                    <ContactLink target="_blank" href={`https://x.com/${xLink}`}>
                         <X />
-                        {tomlInfo.DOCUMENTATION.ORG_TWITTER}
+                        {xLink}
                     </ContactLink>
                 )}
                 {tomlInfo.DOCUMENTATION?.ORG_GITHUB && (
