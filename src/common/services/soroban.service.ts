@@ -137,7 +137,7 @@ export default class SorobanServiceClass {
         fee += parseInt(sim.restorePreamble.minResourceFee);
 
         const restoreTx = new StellarSdk.TransactionBuilder(account, { fee: fee.toString() })
-            .setNetworkPassphrase(StellarSdk.Networks.PUBLIC)
+            .setNetworkPassphrase(StellarSdk.Networks.TESTNET)
             // @ts-ignore
             .setSorobanData(sim.restorePreamble.transactionData.build())
             .addOperation(StellarSdk.Operation.restoreFootprint({}))
@@ -156,7 +156,7 @@ export default class SorobanServiceClass {
     }
 
     getAssetContractHash(asset: Asset): string {
-        const networkId: Buffer = Buffer.from(sha256.arrayBuffer(StellarSdk.Networks.PUBLIC));
+        const networkId: Buffer = Buffer.from(sha256.arrayBuffer(StellarSdk.Networks.TESTNET));
 
         const contractIdPreimage: xdr.ContractIdPreimage =
             xdr.ContractIdPreimage.contractIdPreimageFromAsset(asset.toXDRObject());
@@ -253,7 +253,7 @@ export default class SorobanServiceClass {
             .then((acc) => {
                 const tx = new StellarSdk.TransactionBuilder(acc, {
                     fee: BASE_FEE,
-                    networkPassphrase: StellarSdk.Networks.PUBLIC,
+                    networkPassphrase: StellarSdk.Networks.TESTNET,
                 });
 
                 tx.addOperation(
@@ -277,7 +277,7 @@ export default class SorobanServiceClass {
             .then((acc) => {
                 return new StellarSdk.TransactionBuilder(acc, {
                     fee: BASE_FEE,
-                    networkPassphrase: StellarSdk.Networks.PUBLIC,
+                    networkPassphrase: StellarSdk.Networks.TESTNET,
                 })
                     .addOperation(StellarSdk.Operation.restoreFootprint({}))
                     .setSorobanData(
@@ -301,7 +301,7 @@ export default class SorobanServiceClass {
             .then((acc) => {
                 return new StellarSdk.TransactionBuilder(acc, {
                     fee: BASE_FEE,
-                    networkPassphrase: StellarSdk.Networks.PUBLIC,
+                    networkPassphrase: StellarSdk.Networks.TESTNET,
                 })
                     .addOperation(
                         StellarSdk.Operation.extendFootprintTtl({
@@ -716,7 +716,7 @@ export default class SorobanServiceClass {
 
             const builtTx = new StellarSdk.TransactionBuilder(acc, {
                 fee: BASE_FEE,
-                networkPassphrase: StellarSdk.Networks.PUBLIC,
+                networkPassphrase: StellarSdk.Networks.TESTNET,
             });
 
             if (args) {

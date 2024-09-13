@@ -155,7 +155,7 @@ export default class StellarServiceClass {
 
         const tx = new StellarSdk.TransactionBuilder(newAccount, {
             fee: FEE.toString(),
-            networkPassphrase: StellarSdk.Networks.PUBLIC,
+            networkPassphrase: StellarSdk.Networks.TESTNET,
         }).setTimeout(TRANSACTION_TIMEOUT);
 
         if (Array.isArray(operations)) {
@@ -199,7 +199,7 @@ export default class StellarServiceClass {
     }
 
     submitXDR(xdr: string): Promise<Horizon.HorizonApi.SubmitTransactionResponse> {
-        const tx = new StellarSdk.Transaction(xdr, StellarSdk.Networks.PUBLIC);
+        const tx = new StellarSdk.Transaction(xdr, StellarSdk.Networks.TESTNET);
         return this.submitTx(tx);
     }
 
@@ -709,7 +709,7 @@ export default class StellarServiceClass {
                 if (data.status !== 'revised') {
                     throw new Error('Incorrect status');
                 }
-                return new StellarSdk.Transaction(data.tx, StellarSdk.Networks.PUBLIC);
+                return new StellarSdk.Transaction(data.tx, StellarSdk.Networks.TESTNET);
             });
     }
 
@@ -830,7 +830,7 @@ export default class StellarServiceClass {
 
         const transactionBuilder = new StellarSdk.TransactionBuilder(updatedAccount, {
             fee: FEE,
-            networkPassphrase: StellarSdk.Networks.PUBLIC,
+            networkPassphrase: StellarSdk.Networks.TESTNET,
         });
 
         this.addMarketKeyOperations(

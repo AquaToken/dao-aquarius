@@ -91,7 +91,7 @@ export default class AccountService extends Horizon.AccountResponse {
 
         if (this.authType === LoginTypes.walletConnect && withResult) {
             const signedXDR = await WalletConnectService.signTx(tx as StellarSdk.Transaction);
-            signedTx = new StellarSdk.Transaction(signedXDR, StellarSdk.Networks.PUBLIC);
+            signedTx = new StellarSdk.Transaction(signedXDR, StellarSdk.Networks.TESTNET);
         }
 
         if (this.authType === LoginTypes.ledger && !this.isMultisigEnabled) {
