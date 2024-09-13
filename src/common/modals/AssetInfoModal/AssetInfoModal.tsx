@@ -171,6 +171,17 @@ const AssetInfoModal = ({ params, close }) => {
         return tomlInfo?.DOCUMENTATION?.ORG_TWITTER.split('/')[3];
     }, [tomlInfo]);
 
+    const gitLink = useMemo(() => {
+        if (!tomlInfo?.DOCUMENTATION?.ORG_GITHUB) {
+            return null;
+        }
+
+        if (!tomlInfo?.DOCUMENTATION?.ORG_GITHUB.startsWith('https://')) {
+            return tomlInfo?.DOCUMENTATION?.ORG_GITHUB;
+        }
+        return tomlInfo?.DOCUMENTATION?.ORG_GITHUB.split('/')[3];
+    }, [tomlInfo]);
+
     return (
         <ModalContainer isWide>
             <Asset asset={asset} isBig hasDomainLink />
@@ -182,13 +193,10 @@ const AssetInfoModal = ({ params, close }) => {
                         {xLink}
                     </ContactLink>
                 )}
-                {tomlInfo.DOCUMENTATION?.ORG_GITHUB && (
-                    <ContactLink
-                        target="_blank"
-                        href={`https://github.com/${tomlInfo.DOCUMENTATION.ORG_GITHUB}`}
-                    >
+                {gitLink && (
+                    <ContactLink target="_blank" href={`https://github.com/${gitLink}`}>
                         <Git />
-                        {tomlInfo.DOCUMENTATION.ORG_GITHUB}
+                        {gitLink}
                     </ContactLink>
                 )}
                 {tomlInfo.DOCUMENTATION?.ORG_OFFICIAL_EMAIL && (
