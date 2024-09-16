@@ -6,10 +6,9 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import { respondDown } from '../../../../../common/mixins';
 import Input from '../../../../../common/basics/Input';
-import Tooltip, { TOOLTIP_POSITION } from '../../../../../common/basics/Tooltip';
 import { formatBalance } from '../../../../../common/helpers/helpers';
-import Info from '../../../../../common/assets/img/icon-info.svg';
 import { Asset } from '@stellar/stellar-sdk';
+import PercentButtons from '../PercentButtons/PercentButtons';
 
 const Container = styled.div<{ $isOpen?: boolean }>`
     display: flex;
@@ -31,7 +30,7 @@ const Balance = styled.div<{ isHidden?: boolean }>`
     right: 0;
     font-size: 1.6rem;
     line-height: 1.8rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.grayText};
     display: inline-flex;
     align-items: center;
 
@@ -41,7 +40,6 @@ const Balance = styled.div<{ isHidden?: boolean }>`
 
     ${respondDown(Breakpoints.md)`
        font-size: 1.2rem;
-       flex-direction: column;
     `}
 `;
 
@@ -62,58 +60,6 @@ const DropdownContainer = styled.div<{ $isOpen: boolean }>`
     z-index: 100;
     `
             : `flex: 1;`}
-`;
-
-const TooltipInner = styled.div`
-    display: flex;
-    flex-direction: column;
-    color: ${COLORS.white};
-    font-size: 1.2rem;
-    line-height: 2rem;
-`;
-
-const TooltipRow = styled.div`
-    display: flex;
-    justify-content: space-between;
-    gap: 1.2rem;
-
-    &:last-child:not(:first-child) {
-        font-weight: 700;
-    }
-`;
-
-const Buttons = styled.div`
-    display: flex;
-    margin: 0 0.8rem;
-    border: 0.1rem solid ${COLORS.transparent};
-    border-radius: 0.3rem;
-    background: linear-gradient(to left, white, white) padding-box padding-box,
-        linear-gradient(
-                to right,
-                ${COLORS.gray} 0px,
-                ${COLORS.white} 3%,
-                ${COLORS.white} 97%,
-                ${COLORS.gray} 100%
-            )
-            border-box border-box;
-    background-clip: padding-box, border-box;
-    background-origin: padding-box, border-box;
-`;
-
-const PercentButton = styled.div`
-    padding: 0 0.4rem;
-    font-size: 1.4rem;
-    line-height: 1.6rem;
-    color: ${COLORS.purple};
-    cursor: pointer;
-
-    &:not(:last-child) {
-        border-right: 0.1rem solid ${COLORS.gray};
-    }
-`;
-
-const Row = styled.div`
-    display: flex;
 `;
 
 interface SwapFormRowProps {
@@ -152,41 +98,7 @@ const SwapFormRow = ({
                 <Balance>
                     {isBase ? 'Available: ' : 'Balance: '}
                     {formatBalance(account.getAssetBalance(asset))} {asset.code}
-                    {isBase && (
-                        <Row>
-                            <Buttons>
-                                <PercentButton onClick={() => setPercent(25)}>25%</PercentButton>
-                                <PercentButton onClick={() => setPercent(50)}>50%</PercentButton>
-                                <PercentButton onClick={() => setPercent(75)}>75%</PercentButton>
-                                <PercentButton onClick={() => setPercent(100)}>100%</PercentButton>
-                            </Buttons>
-                            <Tooltip
-                                showOnHover
-                                background={COLORS.titleText}
-                                position={
-                                    +window.innerWidth < 992
-                                        ? TOOLTIP_POSITION.left
-                                        : TOOLTIP_POSITION.right
-                                }
-                                content={
-                                    <TooltipInner>
-                                        {account
-                                            .getReservesForSwap(asset)
-                                            .map(({ label, value }) => (
-                                                <TooltipRow key={label}>
-                                                    <span>{label}</span>
-                                                    <span>
-                                                        {value} {asset.code}
-                                                    </span>
-                                                </TooltipRow>
-                                            ))}
-                                    </TooltipInner>
-                                }
-                            >
-                                <Info />
-                            </Tooltip>
-                        </Row>
-                    )}
+                    {isBase && <PercentButtons asset={asset} setPercent={setPercent} />}
                 </Balance>
             )}
             <StyledInput
@@ -210,6 +122,7 @@ const SwapFormRow = ({
                     longListOnMobile
                 />
             </DropdownContainer>
+            {isBase && <PercentButtons asset={asset} setPercent={setPercent} isMobile />}
         </Container>
     );
 };

@@ -18,7 +18,7 @@ const Title = styled.h2`
     font-weight: 400;
 
     ${respondDown(Breakpoints.md)`
-        font-size: 2.8rem;
+        font-size: 2rem;
    `}
 `;
 
