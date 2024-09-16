@@ -138,6 +138,7 @@ const RangeInput = ({
     const onMarkClick = (e, value) => {
         e.stopPropagation();
         setValue(value);
+        onChange(value);
     };
 
     const onMouseMove = (e) => {
