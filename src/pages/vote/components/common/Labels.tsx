@@ -27,6 +27,15 @@ export const RewardLabel = () => {
     );
 };
 
+export const RewardPoolLabel = () => {
+    return (
+        <StyledLabel
+            title={'rewards'}
+            text="Pools marked with the REWARDS badge have additional AQUA rewards for liquidity providers."
+        />
+    );
+};
+
 export const AuthRequiredLabel = () => {
     return (
         <StyledLabel
