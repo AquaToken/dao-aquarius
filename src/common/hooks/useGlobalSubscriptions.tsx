@@ -1,6 +1,6 @@
 import useAuthStore from '../../store/authStore/useAuthStore';
 import { useEffect, useRef } from 'react';
-import { WalletConnectEvents } from '../services/wallet-connect.service';
+import { WalletConnectEvents } from 'types/wallet-connect';
 import { LoginTypes } from '../../store/authStore/types';
 import { Horizon } from '@stellar/stellar-sdk';
 import {
@@ -40,7 +40,7 @@ export default function useGlobalSubscriptions(): void {
     const accountRef = useRef(account);
 
     useEffect(() => {
-        const unsub = WalletConnectService.event.sub((event) => {
+        const unsub = WalletConnectService.event.sub(event => {
             if (event.type === WalletConnectEvents.login) {
                 login(event.publicKey, LoginTypes.walletConnect, event.metadata, event.topic);
             }
@@ -53,7 +53,7 @@ export default function useGlobalSubscriptions(): void {
     }, []);
 
     useEffect(() => {
-        const unsub = LedgerService.event.sub((event) => {
+        const unsub = LedgerService.event.sub(event => {
             if (event.type === LedgerEvents.login) {
                 login(event.publicKey, LoginTypes.ledger);
             }
@@ -66,7 +66,7 @@ export default function useGlobalSubscriptions(): void {
     }, []);
 
     useEffect(() => {
-        const unsub = LobstrExtensionService.event.sub((event) => {
+        const unsub = LobstrExtensionService.event.sub(event => {
             if (event.type === LobstrExtensionEvents.login) {
                 login(event.publicKey, LoginTypes.lobstr);
             }
@@ -76,7 +76,7 @@ export default function useGlobalSubscriptions(): void {
     });
 
     useEffect(() => {
-        const unsub = FreighterService.event.sub((event) => {
+        const unsub = FreighterService.event.sub(event => {
             if (event.type === FreighterEvents.login) {
                 login(event.publicKey, LoginTypes.freighter);
             }
@@ -86,7 +86,7 @@ export default function useGlobalSubscriptions(): void {
     });
 
     useEffect(() => {
-        const unsub = AssetsService.event.sub((event) => {
+        const unsub = AssetsService.event.sub(event => {
             if (event.type === AssetsEvent.newAssets) {
                 processNewAssets(event.payload);
             }
@@ -124,7 +124,7 @@ export default function useGlobalSubscriptions(): void {
 
     useEffect(() => {
         if (account) {
-            account.getSortedBalances().then((res) => {
+            account.getSortedBalances().then(res => {
                 processNewAssets(res.map(({ asset }) => asset));
             });
             return;

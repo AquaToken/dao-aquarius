@@ -4,7 +4,7 @@ const { resolve } = require('path');
 const childProcess = require('child_process');
 const webpack = require('webpack');
 
-const commonConfig = require('./common');
+const commonConfig = require('./webpack-common');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const branchName =

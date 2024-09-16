@@ -1,7 +1,9 @@
 // shared config (dev and prod)
 const webpack = require('webpack');
-const { resolve } = require('path');
+const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+const rootDir = path.resolve(__dirname, '../src');
 
 module.exports = {
     resolve: {
@@ -13,8 +15,22 @@ module.exports = {
             url: false,
             buffer: require.resolve('buffer/'),
         },
+        alias: {
+            common: path.resolve(rootDir, 'common/'),
+            assets: path.resolve(rootDir, 'common/assets/'),
+            constants: path.resolve(rootDir, 'constants/'),
+            helpers: path.resolve(rootDir, 'common/helpers/'),
+            hooks: path.resolve(rootDir, 'common/hooks/'),
+            services: path.resolve(rootDir, 'common/services/'),
+            store: path.resolve(rootDir, 'store/'),
+            types: path.resolve(rootDir, 'types/'),
+            basics: path.resolve(rootDir, 'common/basics/'),
+            components: path.resolve(rootDir, 'common/components/'),
+            modals: path.resolve(rootDir, 'common/modals/'),
+            pages: path.resolve(rootDir, 'pages/'),
+        },
     },
-    context: resolve(__dirname, `../../src`),
+    context: rootDir,
     module: {
         rules: [
             {

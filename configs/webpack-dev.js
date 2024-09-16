@@ -1,7 +1,7 @@
 // development config
 const webpack = require('webpack');
 const { merge } = require('webpack-merge');
-const commonConfig = require('./common');
+const commonConfig = require('./webpack-common');
 
 const dotenv = require('dotenv');
 

@@ -15,47 +15,21 @@ import {
     sessionExistsInStorage,
 } from '../helpers/wallet-connect-helpers';
 
-// =================================== CONSTANTS ===============================================
+import {
+    CLIENT_TIMEOUT_MESSAGE,
+    CONNECTION_REJECTED_MESSAGE,
+    CONNECTION_TIMEOUT,
+    CONNECTION_TIMEOUT_ERROR,
+    INTERNET_CONNECTION_ERROR,
+    METADATA,
+    PUBNET,
+    REQUIRED_NAMESPACES,
+    SESSION_TIMEOUT_ERROR,
+    STELLAR_METHODS,
+} from 'constants/wallet-connect';
+import { WalletConnectEvents } from 'types/wallet-connect';
 
-const METADATA = {
-    name: 'Aquarius',
-    description: 'Aquarius - liquidity management layer for Stellar',
-    url: 'https://aqua.network',
-    icons: [`https://aqua.network/favicon.png`],
-};
-
-const PUBNET = 'stellar:pubnet';
-
-const STELLAR_METHODS = {
-    SIGN_AND_SUBMIT: 'stellar_signAndSubmitXDR',
-    SIGN: 'stellar_signXDR',
-};
-
-const REQUIRED_NAMESPACES = {
-    stellar: {
-        chains: [PUBNET],
-        methods: Object.values(STELLAR_METHODS),
-        events: [],
-    },
-};
-
-const INTERNET_CONNECTION_ERROR = 'Make sure you are connected to the internet and try again.';
-const SESSION_TIMEOUT_ERROR = 'Session failed to settle after 300 seconds';
-const PAIRING_TIMEOUT_ERROR = 'Pairing failed to settle after 300 seconds';
-const CLIENT_TIMEOUT_MESSAGE = 'Connection timeout';
-const CONNECTION_REJECTED_MESSAGE = 'Connection cancelled by the user';
-const CONNECTION_TIMEOUT_ERROR =
-    'Connection could not be established. Please try connecting again.';
-
-const CONNECTION_TIMEOUT = 60000;
-
-// ==================================================================================================
-
-export enum WalletConnectEvents {
-    login = 'login',
-    logout = 'logout',
-}
-
+// TODO:  Move to WC types, add function to check pending status
 export enum BuildSignAndSubmitStatuses {
     success = 'success',
     pending = 'pending',
@@ -113,7 +87,7 @@ export default class WalletConnectServiceClass {
 
             //  disconnect all the established sessions
             if (disconnectAll) {
-                this.client.session.getAll().forEach((session) => {
+                this.client.session.getAll().forEach(session => {
                     disconnectPromises.push(
                         this.client.disconnect({
                             topic: session.topic,
@@ -184,7 +158,7 @@ export default class WalletConnectServiceClass {
                 .getAll({ active: true })
                 .filter(({ peerMetadata }) => Boolean(peerMetadata))
                 .slice(0, -3)
-                .forEach((pairing) => {
+                .forEach(pairing => {
                     deletePromises.push(
                         this.client.pairing.delete(pairing.topic, getInternalError('UNKNOWN_TYPE')),
                     );
