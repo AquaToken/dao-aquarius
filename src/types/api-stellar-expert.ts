@@ -1,4 +1,4 @@
-export type AssetDetails = {
+export type ExpertAssetData = {
     asset: string;
     created: number;
     supply: number;

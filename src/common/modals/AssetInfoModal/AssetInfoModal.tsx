@@ -1,13 +1,15 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { ModalContainer } from '../atoms/ModalAtoms';
+import { ExpertAssetData } from 'types/api-stellar-expert';
+
+import { getAssetDetails } from 'api/stellar-expert';
 import Asset from '../../../pages/vote/components/AssetDropdown/Asset';
 import useAssetsStore from '../../../store/assetsStore/useAssetsStore';
 import { formatBalance, getAssetString, getDateString } from '../../helpers/helpers';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../styles';
 import { StellarToml } from '@stellar/stellar-sdk';
-import { getAssetDetails } from '../../api/api';
 import X from '../../assets/img/twitter16.svg';
 import Git from '../../assets/img/github16.svg';
 import Mail from '../../assets/img/email16.svg';
@@ -15,7 +17,6 @@ import External from '../../assets/img/icon-external-link-black.svg';
 import Positive from '../../assets/img/icon-positive-changes.svg';
 import Negative from '../../assets/img/icon-negative-changes.svg';
 import PageLoader from '../../basics/PageLoader';
-import { AssetDetails } from '../../api/types';
 import { respondDown } from '../../mixins';
 import DotsLoader from '../../basics/DotsLoader';
 import Button from '../../basics/Button';
@@ -111,7 +112,7 @@ const AssetInfoModal = ({ params, close }) => {
     const { asset } = params;
 
     const [tomlInfo, setTomlInfo] = useState<StellarToml.Api.StellarToml>({});
-    const [expertData, setExpertData] = useState<AssetDetails>(undefined);
+    const [expertData, setExpertData] = useState<ExpertAssetData>(undefined);
 
     const { assetsInfo } = useAssetsStore();
 
@@ -119,7 +120,7 @@ const AssetInfoModal = ({ params, close }) => {
 
     useEffect(() => {
         StellarToml.Resolver.resolve(home_domain)
-            .then((res) => {
+            .then(res => {
                 setTomlInfo(res);
             })
             .catch(() => {
@@ -127,7 +128,7 @@ const AssetInfoModal = ({ params, close }) => {
             });
 
         getAssetDetails(asset)
-            .then((details) => {
+            .then(details => {
                 setExpertData(details);
             })
             .catch(() => {

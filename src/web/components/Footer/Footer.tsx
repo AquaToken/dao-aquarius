@@ -1,8 +1,10 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import AquaLogo from '../../assets/img/aqua-logo.svg';
-import { Breakpoints, COLORS } from '../../styles';
-import { commonMaxWidth, respondDown } from '../../mixins';
+
+import AquaLogo from 'assets/img/aqua-logo.svg';
+
+import { commonMaxWidth, respondDown } from '../../../common/mixins';
+import { Breakpoints, COLORS } from '../../../common/styles';
 
 const FooterBlock = styled.footer`
     ${commonMaxWidth};
@@ -49,23 +51,21 @@ const Aqua = styled(AquaLogo)`
     `}
 `;
 
-const Footer = (): JSX.Element => {
-    return (
-        <FooterBlock>
-            <HelpfulLine>
-                <a href="https://aqua.network" target="_blank" rel="noreferrer noopener">
-                    <Aqua />
-                </a>
-            </HelpfulLine>
-            <CopyrightLine>
-                <div>© 2024 aqua.network</div>
-                <div>
-                    Aquarius runs on Stellar. AQUA tokens are issued on Stellar. The project is
-                    unaffiliated with the Stellar Development Foundation.
-                </div>
-            </CopyrightLine>
-        </FooterBlock>
-    );
-};
+const Footer = (): JSX.Element => (
+    <FooterBlock>
+        <HelpfulLine>
+            <a href="https://aqua.network" target="_blank" rel="noreferrer noopener">
+                <Aqua />
+            </a>
+        </HelpfulLine>
+        <CopyrightLine>
+            <div>© {new Date().getFullYear()} aqua.network</div>
+            <div>
+                Aquarius runs on Stellar. AQUA tokens are issued on Stellar. The project is
+                unaffiliated with the Stellar Development Foundation.
+            </div>
+        </CopyrightLine>
+    </FooterBlock>
+);
 
 export default Footer;

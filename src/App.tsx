@@ -24,7 +24,7 @@ import ToastContainer from './common/toasts/ToastContainer';
 import { respondDown } from './common/mixins';
 import Provider from './store';
 import ModalContainer from './common/modals/atoms/ModalContainer';
-import Footer from './common/components/Footer/Footer';
+import Footer from 'components/Footer';
 import styled, { createGlobalStyle } from 'styled-components';
 import AppGlobalStyle from './common/components/AppGlobalStyles';
 import Governance from './pages/governance/Governance';
@@ -101,7 +101,7 @@ const App = () => {
     }, [wcLoginChecked, isAssetsUpdated]);
 
     useEffect(() => {
-        getActiveProposalsCount().then((res) => {
+        getActiveProposalsCount().then(res => {
             setActiveProposalsCount(res);
         });
     }, []);

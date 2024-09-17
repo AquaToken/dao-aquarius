@@ -1,26 +1,26 @@
 {
     "include": ["**/*.ts", "**/*.tsx"],
     "compilerOptions": {
-        "jsx": "react",
+        "jsx": "react-jsx",
         "target": "ES2022",
         "resolveJsonModule": true,
         "module": "CommonJS",
-        "baseUrl": "src",
+        "baseUrl": "./src",
         "paths": {
             // TODO: refactor project structure
-            "common/*": ["common/*"],
-            "api/*": ["common/api/*"],
+            "api/*": ["api/*"],
             "assets/*": ["common/assets/*"],
             "constants/*": ["constants/*"],
             "helpers/*": ["common/helpers/*"],
             "hooks/*": ["common/hooks/*"],
             "services/*": ["common/services/*"],
+            "selectors/*": ["selectors/*"],
             "store/*": ["store/*"],
             "types/*": ["types/*"],
 
             // components
             "basics/*": ["common/basics/*"],
-            "components/*": ["common/components/*"],
+            "components/*": ["web/components/*"],
             "modals/*": ["common/modals/*"],
             "pages/*": ["pages/*"]
         }
