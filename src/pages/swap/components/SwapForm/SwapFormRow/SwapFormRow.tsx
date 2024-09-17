@@ -97,7 +97,12 @@ const SwapFormRow = ({
             {account && account.getAssetBalance(asset) !== null && (
                 <Balance>
                     {isBase ? 'Available: ' : 'Balance: '}
-                    {formatBalance(account.getAssetBalance(asset))} {asset.code}
+                    {formatBalance(
+                        isBase
+                            ? account.getAvailableForSwapBalance(asset)
+                            : account.getAssetBalance(asset),
+                    )}{' '}
+                    {asset.code}
                     {isBase && <PercentButtons asset={asset} setPercent={setPercent} />}
                 </Balance>
             )}
