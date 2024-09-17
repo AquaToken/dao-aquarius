@@ -87,7 +87,7 @@ const SwapFormRow = ({
     const [isOpen, setIsOpen] = useState(false);
 
     const setPercent = (percent: number) => {
-        const available = account.getAssetBalance(asset);
+        const available = account.getAvailableForSwapBalance(asset);
 
         setAmount(((available * percent) / 100).toFixed(7));
     };
