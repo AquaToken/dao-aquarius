@@ -507,13 +507,18 @@ const DepositToPool = ({ params }) => {
                             <span>
                                 {hasAllAmounts && (
                                     <>
-                                        {formatBalance(+reserves.get(getAssetString(asset)), true)}
+                                        {formatBalance(
+                                            (+reserves.get(getAssetString(asset)) * accountShare) /
+                                                (pool.total_share / 1e7),
+                                            true,
+                                        )}
                                         <Arrow />
                                     </>
                                 )}
                                 {reserves !== null ? (
                                     formatBalance(
-                                        +reserves.get(getAssetString(asset)) +
+                                        (+reserves.get(getAssetString(asset)) * accountShare) /
+                                            (pool.total_share / 1e7) +
                                             +amounts.get(getAssetString(asset)),
                                         true,
                                     )
