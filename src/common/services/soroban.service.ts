@@ -11,7 +11,7 @@ import { SorobanErrorHandler, SorobanPrepareTxErrorHandler } from '../helpers/er
 import BigNumber from 'bignumber.js';
 
 const SOROBAN_SERVER = 'https://soroban-testnet.stellar.org:443';
-export const AMM_SMART_CONTACT_ID = 'CCKTUGINX4LEGTAFWE2U6BK7C4NSKXNWTYXJ5FSGBUQXJUL7ZHQZWLCC';
+export const AMM_SMART_CONTACT_ID = 'CDMSJQ4TPCTAYDRYN46FVMYIWV2A4ZTHCWWIN2NW3QZIFPJWBBEGDKDY';
 
 enum AMM_CONTRACT_METHOD {
     GET_POOLS = 'get_pools',
