@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import { AQUA_NETWORK_URL } from 'constants/urls';
 
-import AquaLogo from 'assets/icons/aqua-logo.svg';
+import AquaLogo from 'assets/aqua-logo.svg';
 
 import { commonMaxWidth, respondDown } from '../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../common/styles';

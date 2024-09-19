@@ -16,10 +16,10 @@ import { ExpertAssetData } from 'types/api-stellar-expert';
 import { respondDown, respondUp } from 'web/mixins';
 import { Breakpoints, COLORS, FONT_FAMILY } from 'web/styles';
 
-import InvestAmmImage from 'assets/icons/landing-about-amm-80.svg';
-import FreezeIceImage from 'assets/icons/landing-about-ice-80.svg';
-import VoteMarketsImage from 'assets/icons/landing-about-vote-markets-80.svg';
-import VoteProposalsImage from 'assets/icons/landing-about-vote-proposals-80.svg';
+import InvestAmmImage from 'assets/landing-about-amm-80.svg';
+import FreezeIceImage from 'assets/landing-about-ice-80.svg';
+import VoteMarketsImage from 'assets/landing-about-vote-markets-80.svg';
+import VoteProposalsImage from 'assets/landing-about-vote-proposals-80.svg';
 
 import Changes24 from 'basics/Changes24';
 import DotsLoader from 'basics/DotsLoader';

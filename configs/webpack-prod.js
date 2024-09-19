@@ -32,7 +32,7 @@ module.exports = merge(commonConfig, {
     entry: ['@babel/polyfill', `./index.tsx`],
     output: {
         filename: 'js/bundle.[contenthash].min.js',
-        path: resolve(__dirname, '../../dist'),
+        path: resolve(__dirname, '../dist'),
         publicPath: '/',
     },
     devtool: 'source-map',
@@ -42,11 +42,8 @@ module.exports = merge(commonConfig, {
                 //TODO: Remove unnecessary copyies after refactor
                 { from: '../src/assets/icons', to: 'assets/img' },
                 { from: '../src/assets/img', to: 'assets/img' },
-                { from: '../src/common/static/img', to: 'assets/img' },
-                {
-                    from: '../src/common/static',
-                    to: '',
-                },
+                { from: '../src/web/.static/img', to: 'assets/img' },
+                { from: '../src/web/.static', to: '' },
             ],
         }),
         new webpack.DefinePlugin({

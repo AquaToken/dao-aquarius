@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { NavLink } from 'react-router-dom';
-import AquaLogo from 'assets/icons/aqua-logo.svg';
+import AquaLogo from 'assets/aqua-logo.svg';
 import styled from 'styled-components';
 import { Breakpoints, COLORS, Z_INDEX } from '../../styles';
 import { commonMaxWidth, respondDown } from '../../mixins';
