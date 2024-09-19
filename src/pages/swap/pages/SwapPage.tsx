@@ -1,39 +1,14 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { commonMaxWidth, flexAllCenter, respondDown } from '../../../common/mixins';
-import AssetDropdown from '../../vote/components/AssetDropdown/AssetDropdown';
+import { commonMaxWidth, respondDown } from '../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../common/styles';
-import useAuthStore from '../../../store/authStore/useAuthStore';
-import {
-    ModalService,
-    SorobanService,
-    StellarService,
-    ToastService,
-} from '../../../common/services/globalServices';
+import { StellarService } from '../../../common/services/globalServices';
 import PageLoader from '../../../common/basics/PageLoader';
-import Input from '../../../common/basics/Input';
-import SwapIcon from '../../../common/assets/img/icon-arrows-circle.svg';
-
-import Revert from '../../../common/assets/img/icon-revert.svg';
-import { useDebounce } from '../../../common/hooks/useDebounce';
-import Button from '../../../common/basics/Button';
-import { IconFail } from '../../../common/basics/Icons';
-import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
-import { formatBalance, getAssetFromString, getAssetString } from '../../../common/helpers/helpers';
-import SwapConfirmModal from '../components/SwapConfirmModal/SwapConfirmModal';
-import { findSwapPath } from '../../amm/api/api';
+import { getAssetFromString, getAssetString } from '../../../common/helpers/helpers';
 import { useHistory, useParams } from 'react-router-dom';
 import { MainRoutes } from '../../../routes';
 import { AQUA_CODE, AQUA_ISSUER } from '../../../common/services/stellar.service';
-import Tooltip, { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
-import MainNetWarningModal, {
-    SHOW_PURPOSE_ALIAS_MAIN_NET,
-} from '../../../common/modals/MainNetWarningModal';
-import AmountUsdEquivalent from '../components/SwapForm/AmountUsdEquivalent/AmountUsdEquivalent';
-import NoTrustline from '../../../common/components/NoTrustline/NoTrustline';
-import SwapFormHeader from '../components/SwapForm/SwapFormHeader/SwapFormHeader';
-import SwapFormRow from '../components/SwapForm/SwapFormRow/SwapFormRow';
 import SwapForm from '../components/SwapForm/SwapForm';
 
 const Container = styled.main`
