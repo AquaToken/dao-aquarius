@@ -40,8 +40,8 @@ module.exports = merge(commonConfig, {
         new CopyWebpackPlugin({
             patterns: [
                 //TODO: Remove unnecessary copyies after refactor
-                { from: '../src/assets/icons', to: 'assets/img' },
-                { from: '../src/assets/img', to: 'assets/img' },
+                { from: '../src/assets', to: 'assets/img' },
+                { from: '../src/common/static/img', to: 'assets/img' },
                 { from: '../src/web/.static/img', to: 'assets/img' },
                 { from: '../src/web/.static', to: '' },
             ],
