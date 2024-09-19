@@ -26,10 +26,13 @@ module.exports = {
             selectors: path.resolve(rootDir, 'selectors/'),
             store: path.resolve(rootDir, 'store/'),
             types: path.resolve(rootDir, 'types/'),
-            basics: path.resolve(rootDir, 'common/basics/'),
+            basics: path.resolve(rootDir, 'web/basics/'),
             components: path.resolve(rootDir, 'web/components/'),
             modals: path.resolve(rootDir, 'common/modals/'),
             pages: path.resolve(rootDir, 'pages/'),
+
+            //TEMP solution, styles should be moved out after common refactor
+            common: path.resolve(rootDir, 'common/'),
         },
     },
     context: rootDir,

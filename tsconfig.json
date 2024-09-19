@@ -19,7 +19,7 @@
             "types/*": ["types/*"],
 
             // components
-            "basics/*": ["common/basics/*"],
+            "basics/*": ["web/basics/*"],
             "components/*": ["web/components/*"],
             "modals/*": ["common/modals/*"],
             "pages/*": ["pages/*"]

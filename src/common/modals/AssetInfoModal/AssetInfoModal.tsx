@@ -1,30 +1,30 @@
-import * as React from 'react';
-import { useEffect, useMemo, useState } from 'react';
-import { ModalContainer } from '../atoms/ModalAtoms';
-import { ExpertAssetData } from 'types/api-stellar-expert';
+import { StellarToml } from '@stellar/stellar-sdk';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import styled from 'styled-components';
 
 import { getAssetDetails } from 'api/stellar-expert';
+
+import { ExpertAssetData } from 'types/api-stellar-expert';
+
+import Changes24 from 'basics/Changes24';
+
 import Asset from '../../../pages/vote/components/AssetDropdown/Asset';
-import useAssetsStore from '../../../store/assetsStore/useAssetsStore';
-import { formatBalance, getAssetString, getDateString } from '../../helpers/helpers';
-import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../styles';
-import { StellarToml } from '@stellar/stellar-sdk';
-import X from '../../assets/img/twitter16.svg';
-import Git from '../../assets/img/github16.svg';
-import Mail from '../../assets/img/email16.svg';
-import External from '../../assets/img/icon-external-link-black.svg';
-import Positive from '../../assets/img/icon-positive-changes.svg';
-import Negative from '../../assets/img/icon-negative-changes.svg';
-import PageLoader from '../../basics/PageLoader';
-import { respondDown } from '../../mixins';
-import DotsLoader from '../../basics/DotsLoader';
-import Button from '../../basics/Button';
 import { MainRoutes } from '../../../routes';
+import useAssetsStore from '../../../store/assetsStore/useAssetsStore';
+import Mail from '../../assets/img/email16.svg';
+import Git from '../../assets/img/github16.svg';
+import External from '../../assets/img/icon-external-link-black.svg';
+import X from '../../assets/img/twitter16.svg';
+import Button from '../../basics/Button';
+import PageLoader from '../../basics/PageLoader';
+import NoTrustline from '../../components/NoTrustline/NoTrustline';
+import { formatBalance, getAssetString, getDateString } from '../../helpers/helpers';
+import { respondDown } from '../../mixins';
 import { StellarService } from '../../services/globalServices';
 import { AQUA_CODE, AQUA_ISSUER } from '../../services/stellar.service';
-import { Link } from 'react-router-dom';
-import NoTrustline from '../../components/NoTrustline/NoTrustline';
+import { Breakpoints, COLORS } from '../../styles';
+import { ModalContainer } from '../atoms/ModalAtoms';
 
 const Description = styled.p`
     font-size: 1.6rem;
@@ -77,16 +77,6 @@ const Detail = styled.div`
     }
 `;
 
-const Changes = styled.span<{ isPositive?: boolean }>`
-    display: flex;
-    align-items: center;
-    color: ${({ isPositive }) => (isPositive ? COLORS.green : COLORS.pinkRed)}!important;
-
-    svg {
-        margin-right: 0.4rem;
-    }
-`;
-
 const Buttons = styled.div`
     display: flex;
     margin-top: 3.2rem;
@@ -136,31 +126,6 @@ const AssetInfoModal = ({ params, close }) => {
             });
     }, []);
 
-    const changes24 = useMemo(() => {
-        if (!expertData) {
-            return <DotsLoader />;
-        }
-        const lastPrice = expertData?.price7d?.[expertData.price7d?.length - 1]?.[1] ?? 0;
-        const prevPrice = expertData?.price7d?.[expertData.price7d?.length - 2]?.[1] ?? 0;
-
-        if (!prevPrice || !lastPrice) {
-            return <span>-</span>;
-        }
-
-        const changes = formatBalance((lastPrice / prevPrice - 1) * 100, true);
-
-        if (!Number(changes)) {
-            return <span>0.00</span>;
-        }
-
-        return (
-            <Changes isPositive={Number(changes) > 0}>
-                {Number(changes) > 0 ? <Positive /> : <Negative />}
-                {Math.abs(Number(changes))} %
-            </Changes>
-        );
-    }, [expertData]);
-
     return (
         <ModalContainer isWide>
             <Asset asset={asset} isBig hasDomainLink />
@@ -202,7 +167,7 @@ const AssetInfoModal = ({ params, close }) => {
                 </ContactLink>
             </Links>
             {expertData !== undefined ? (
-                Boolean(expertData) ? (
+                expertData ? (
                     <Details>
                         <Detail>
                             <span>Asset holders:</span>
@@ -237,7 +202,7 @@ const AssetInfoModal = ({ params, close }) => {
                         </Detail>
                         <Detail>
                             <span>24h change:</span>
-                            <span>{changes24}</span>
+                            <Changes24 expertData={expertData} />
                         </Detail>
                     </Details>
                 ) : null
