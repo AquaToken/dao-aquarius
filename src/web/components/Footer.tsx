@@ -2,10 +2,10 @@ import styled from 'styled-components';
 
 import { AQUA_NETWORK_URL } from 'constants/urls';
 
-import AquaLogo from 'assets/aqua-logo.svg';
+import { commonMaxWidth, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
 
-import { commonMaxWidth, respondDown } from '../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../common/styles';
+import AquaLogo from 'assets/aqua-logo.svg';
 
 const FooterBlock = styled.footer`
     ${commonMaxWidth};

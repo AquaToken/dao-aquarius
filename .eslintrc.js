@@ -66,7 +66,7 @@ module.exports = {
                     },
                     {
                         group: 'internal',
-                        pattern: 'selectors/**',
+                        pattern: 'helpers/**',
                         position: 'before',
                     },
 
