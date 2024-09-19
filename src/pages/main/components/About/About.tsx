@@ -11,6 +11,7 @@ import { getDateString } from 'helpers/date';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
+import { IceStatistics } from 'types/api-ice-locker';
 import { ExpertAssetData } from 'types/api-stellar-expert';
 
 import { respondDown, respondUp } from 'web/mixins';
@@ -24,6 +25,7 @@ import VoteProposalsImage from 'assets/landing-about-vote-proposals-80.svg';
 import Changes24 from 'basics/Changes24';
 import DotsLoader from 'basics/DotsLoader';
 
+import PageLoader from '../../../../common/basics/PageLoader';
 import { formatBalance } from '../../../../common/helpers/helpers';
 import Asset from '../../../vote/components/AssetDropdown/Asset';
 
@@ -32,6 +34,7 @@ const WhatIsSection = styled.section`
     justify-content: center;
     flex: auto;
     margin: 16.5rem 0;
+
     position: relative;
 
     ${respondDown(Breakpoints.md)`
@@ -97,6 +100,7 @@ const Description = styled.div`
 
 const AquaSection = styled(WhatIsSection)`
     margin-top: 0;
+    margin-bottom: 0;
     background-color: ${COLORS.lightGray};
 `;
 
@@ -225,7 +229,7 @@ const About = (): JSX.Element => {
 
     const aquaStellarAsset = getStellarAsset(code, issuer);
 
-    const [iceStats, setIceStats] = useState(null);
+    const [iceStats, setIceStats] = useState<IceStatistics>(null);
     const [expertData, setExpertData] = useState<ExpertAssetData>(undefined);
 
     useEffect(() => {
@@ -261,72 +265,86 @@ const About = (): JSX.Element => {
                 <AquaWrapper>
                     <AquaInfoContainer id="aqua-token">
                         <AquaTokenStats>
-                            <AquaWithPriceBlock>
-                                <Asset asset={aquaAsset} isBig />
-                                <AquaPriceBlock>
-                                    <AquaPrice>
-                                        $
-                                        {formatBalance(
-                                            expertData?.price7d?.[
-                                                expertData?.price7d.length - 1
-                                            ]?.[1] ?? 0,
-                                            true,
-                                        )}
-                                    </AquaPrice>
-                                    <Changes24 expertData={expertData} />
-                                </AquaPriceBlock>
-                            </AquaWithPriceBlock>
-                            <AquaDivider />
-                            <AquaStatsBlock>
-                                <StatWrapper>
-                                    <StatsTitle>First transaction: </StatsTitle>
-                                    <StatsDescription>
-                                        {getDateString(new Date(first_transaction).getTime())}
-                                    </StatsDescription>
-                                </StatWrapper>
-                                <StatWrapper>
-                                    <StatsTitle> Payments volume: </StatsTitle>
-                                    <StatsDescription>
-                                        {expertData ? (
-                                            formatBalance(expertData?.payments_amount / 1e7, true)
-                                        ) : (
-                                            <DotsLoader />
-                                        )}
-                                    </StatsDescription>
-                                </StatWrapper>
-                                <StatWrapper>
-                                    <StatsTitle>Traded volume:</StatsTitle>
-                                    <StatsDescription>
-                                        {expertData ? (
-                                            formatBalance(
-                                                expertData?.traded_amount / 1e7,
-                                                true,
-                                                false,
-                                            )
-                                        ) : (
-                                            <DotsLoader />
-                                        )}
-                                    </StatsDescription>
-                                </StatWrapper>
-                                <StatWrapper>
-                                    <StatsTitle>Total frozen:</StatsTitle>
-                                    <StatsDescription>
-                                        {iceStats ? (
-                                            formatBalance(iceStats.aqua_lock_amount, true)
-                                        ) : (
-                                            <DotsLoader />
-                                        )}
-                                    </StatsDescription>
-                                </StatWrapper>
-                                <StatWrapper>
-                                    <StatsTitle>Total locked in AMM:</StatsTitle>
-                                    <StatsDescription></StatsDescription>
-                                </StatWrapper>
-                                <StatWrapper>
-                                    <StatsTitle>Daily rewards:</StatsTitle>
-                                    <StatsDescription></StatsDescription>
-                                </StatWrapper>
-                            </AquaStatsBlock>
+                            {!aquaAsset ? (
+                                <PageLoader />
+                            ) : (
+                                <>
+                                    <AquaWithPriceBlock>
+                                        <Asset asset={aquaAsset} isBig />
+                                        <AquaPriceBlock>
+                                            <AquaPrice>
+                                                $
+                                                {formatBalance(
+                                                    expertData?.price7d?.[
+                                                        expertData?.price7d.length - 1
+                                                    ]?.[1] ?? 0,
+                                                    true,
+                                                )}
+                                            </AquaPrice>
+                                            <Changes24 expertData={expertData} />
+                                        </AquaPriceBlock>
+                                    </AquaWithPriceBlock>
+                                    <AquaDivider />
+                                    <AquaStatsBlock>
+                                        <StatWrapper>
+                                            <StatsTitle>First transaction: </StatsTitle>
+                                            <StatsDescription>
+                                                {getDateString(
+                                                    new Date(first_transaction).getTime(),
+                                                )}
+                                            </StatsDescription>
+                                        </StatWrapper>
+                                        <StatWrapper>
+                                            <StatsTitle> Payments volume: </StatsTitle>
+                                            <StatsDescription>
+                                                {expertData ? (
+                                                    formatBalance(
+                                                        expertData?.payments_amount / 1e7,
+                                                        true,
+                                                    )
+                                                ) : (
+                                                    <DotsLoader />
+                                                )}
+                                            </StatsDescription>
+                                        </StatWrapper>
+                                        <StatWrapper>
+                                            <StatsTitle>Traded volume:</StatsTitle>
+                                            <StatsDescription>
+                                                {expertData ? (
+                                                    formatBalance(
+                                                        expertData?.traded_amount / 1e7,
+                                                        true,
+                                                        false,
+                                                    )
+                                                ) : (
+                                                    <DotsLoader />
+                                                )}
+                                            </StatsDescription>
+                                        </StatWrapper>
+                                        <StatWrapper>
+                                            <StatsTitle>Total frozen:</StatsTitle>
+                                            <StatsDescription>
+                                                {iceStats ? (
+                                                    formatBalance(
+                                                        Number(iceStats.aqua_lock_amount),
+                                                        true,
+                                                    )
+                                                ) : (
+                                                    <DotsLoader />
+                                                )}
+                                            </StatsDescription>
+                                        </StatWrapper>
+                                        <StatWrapper>
+                                            <StatsTitle>Total locked in AMM:</StatsTitle>
+                                            <StatsDescription></StatsDescription>
+                                        </StatWrapper>
+                                        <StatWrapper>
+                                            <StatsTitle>Daily rewards:</StatsTitle>
+                                            <StatsDescription></StatsDescription>
+                                        </StatWrapper>
+                                    </AquaStatsBlock>
+                                </>
+                            )}
                         </AquaTokenStats>
                         <AquaTokenStatsDescription>
                             <Title>AQUA token</Title>
