@@ -225,7 +225,7 @@ const About = (): JSX.Element => {
 
     const aquaStellarAsset = getStellarAsset(code, issuer);
 
-    const [statistics, setStatistics] = useState(null);
+    const [iceStats, setIceStats] = useState(null);
     const [expertData, setExpertData] = useState<ExpertAssetData>(undefined);
 
     useEffect(() => {
@@ -238,7 +238,7 @@ const About = (): JSX.Element => {
             });
 
         getIceStatistics().then(res => {
-            setStatistics(res);
+            setIceStats(res);
         });
     }, []);
 
@@ -311,8 +311,8 @@ const About = (): JSX.Element => {
                                 <StatWrapper>
                                     <StatsTitle>Total frozen:</StatsTitle>
                                     <StatsDescription>
-                                        {statistics ? (
-                                            formatBalance(statistics.aqua_lock_amount, true)
+                                        {iceStats ? (
+                                            formatBalance(iceStats.aqua_lock_amount, true)
                                         ) : (
                                             <DotsLoader />
                                         )}
