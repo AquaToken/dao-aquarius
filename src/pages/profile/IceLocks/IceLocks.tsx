@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { ExternalLinkStyled, Header, Section, Title } from '../AmmRewards/AmmRewards';
 import PageLoader from '../../../common/basics/PageLoader';
-import { getDistributionForAccount } from '../../locker/api/api';
+import { getDistributionForAccount } from '../../../api/ice-locker';
 import useAuthStore from '../../../store/authStore/useAuthStore';
 import { StellarService, ToastService } from '../../../common/services/globalServices';
 import { StellarEvents } from '../../../common/services/stellar.service';
@@ -107,7 +107,7 @@ const IceLocks = ({ ammAquaBalance }) => {
     }, []);
 
     useEffect(() => {
-        StellarService.getAquaInLiquidityVotes(account.accountId()).then((res) => {
+        StellarService.getAquaInLiquidityVotes(account.accountId()).then(res => {
             setAquaInVotes(res);
         });
     }, []);
@@ -117,7 +117,7 @@ const IceLocks = ({ ammAquaBalance }) => {
             if (type === StellarEvents.claimableUpdate) {
                 setLocks(StellarService.getLocks(account.accountId()));
 
-                StellarService.getAquaInLiquidityVotes(account.accountId()).then((res) => {
+                StellarService.getAquaInLiquidityVotes(account.accountId()).then(res => {
                     setAquaInVotes(res);
                 });
             }
@@ -127,7 +127,7 @@ const IceLocks = ({ ammAquaBalance }) => {
     }, []);
 
     useEffect(() => {
-        getDistributionForAccount(account.accountId()).then((res) => {
+        getDistributionForAccount(account.accountId()).then(res => {
             setDistributions(res);
         });
     }, []);
@@ -175,8 +175,8 @@ const IceLocks = ({ ammAquaBalance }) => {
     }, [total]);
 
     const getIceAmount = useCallback(
-        (balanceId) => {
-            return distributions.find((distribution) => distribution.balance_id === balanceId)
+        balanceId => {
+            return distributions.find(distribution => distribution.balance_id === balanceId)
                 ?.distributed_amount;
         },
         [distributions, locks],
@@ -224,9 +224,9 @@ const IceLocks = ({ ammAquaBalance }) => {
     };
 
     const selectLock = useCallback(
-        (id) => {
+        id => {
             if (selectedLocks.includes(id)) {
-                return setSelectedLocks(selectedLocks.filter((lockId) => lockId !== id));
+                return setSelectedLocks(selectedLocks.filter(lockId => lockId !== id));
             }
             setSelectedLocks([...selectedLocks, id]);
         },
@@ -259,7 +259,7 @@ const IceLocks = ({ ammAquaBalance }) => {
     }, [account, selectAll, selectedLocks, unlockedIds]);
 
     const getActionCell = useCallback(
-        (lock) => {
+        lock => {
             if (account.authType === LoginTypes.ledger) {
                 return {
                     children: !unlockedIds.includes(lock.id) ? (
@@ -387,7 +387,7 @@ const IceLocks = ({ ammAquaBalance }) => {
                                 { children: 'ICE received', align: CellAlign.Right },
                                 getActionHeaderCell(),
                             ]}
-                            body={locks.map((lock) => {
+                            body={locks.map(lock => {
                                 const lockEndTimestamp = new Date(
                                     lock.claimants?.[0].predicate?.not?.abs_before,
                                 ).getTime();

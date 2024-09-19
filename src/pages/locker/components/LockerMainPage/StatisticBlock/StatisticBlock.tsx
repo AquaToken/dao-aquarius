@@ -6,7 +6,7 @@ import Aqua from '../../../../../common/assets/img/aqua-logo-small.svg';
 import Ice from '../../../../../common/assets/img/ice-logo.svg';
 import { formatBalance } from '../../../../../common/helpers/helpers';
 import { useEffect, useState } from 'react';
-import { getStatistics } from '../../../api/api';
+import { getIceStatistics } from 'api/ice-locker';
 import DotsLoader from '../../../../../common/basics/DotsLoader';
 
 const Container = styled.div`
@@ -73,14 +73,14 @@ const StatisticBlock = () => {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            setUpdateIndex((prev) => prev + 1);
+            setUpdateIndex(prev => prev + 1);
         }, UPDATE_INTERVAL);
 
         return () => clearInterval(interval);
     }, []);
 
     useEffect(() => {
-        getStatistics().then((res) => {
+        getIceStatistics().then(res => {
             setStatistics(res);
         });
     }, [updateIndex]);

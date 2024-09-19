@@ -1,10 +1,12 @@
 // =================================== CONSTANTS ===============================================
 
+import { AQUA_NETWORK_URL } from './urls';
+
 export const METADATA = {
     name: 'Aquarius',
     description: 'Aquarius - liquidity management layer for Stellar',
-    url: 'https://aqua.network',
-    icons: [`https://aqua.network/favicon.png`],
+    url: AQUA_NETWORK_URL,
+    icons: [`${AQUA_NETWORK_URL}/favicon.png`],
 };
 
 export const PUBNET = 'stellar:pubnet';

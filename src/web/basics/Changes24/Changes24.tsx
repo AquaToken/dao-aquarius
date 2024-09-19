@@ -3,11 +3,12 @@ import styled from 'styled-components';
 
 import { ExpertAssetData } from 'types/api-stellar-expert';
 
-import { COLORS } from 'common/styles';
-import { formatBalance } from 'helpers/helpers';
+import { COLORS } from 'web/styles';
 
-import Negative from 'assets/img/icon-negative-changes.svg';
-import Positive from 'assets/img/icon-positive-changes.svg';
+import IconNegative from 'assets/icons/icon-arrow-negative-16.svg';
+import IconPositive from 'assets/icons/icon-arrow-positive-16.svg';
+
+import { formatBalance } from '../../../common/helpers/helpers';
 
 const Changes = styled.span<{ isPositive?: boolean }>`
     display: flex;
@@ -41,7 +42,7 @@ const Changes24 = ({ expertData }: Props): JSX.Element => {
 
     return (
         <Changes isPositive={Number(change24hString) > 0}>
-            {Number(change24hString) > 0 ? <Positive /> : <Negative />}
+            {Number(change24hString) > 0 ? <IconPositive /> : <IconNegative />}
             {Math.abs(Number(change24hString))} %
         </Changes>
     );

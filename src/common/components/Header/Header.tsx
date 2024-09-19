@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { NavLink } from 'react-router-dom';
-import AquaLogo from '../../assets/img/aqua-logo.svg';
+import AquaLogo from 'assets/icons/aqua-logo.svg';
 import styled from 'styled-components';
 import { Breakpoints, COLORS, Z_INDEX } from '../../styles';
 import { commonMaxWidth, respondDown } from '../../mixins';
@@ -260,7 +260,7 @@ const MyAquarius = styled(NavLink)`
 const Header = ({ children }: { children?: JSX.Element }): JSX.Element => {
     const { isLogged } = useAuthStore();
 
-    const onMyAquariusClick = (e) => {
+    const onMyAquariusClick = e => {
         if (!isLogged) {
             e.preventDefault();
             e.stopPropagation();

@@ -6,7 +6,7 @@ export type ListResponse<T> = {
 
 type DistributionStatus = 'distrib' | 'closed';
 
-export type Distribution = {
+export type AccountIceDistribution = {
     balance_id: string;
     destination: string;
     status: DistributionStatus;
@@ -19,7 +19,7 @@ export type Distribution = {
     paging_token: string;
 };
 
-export type Statistics = {
+export type IceStatistics = {
     aqua_lock_accounts: number;
     aqua_lock_amount: string;
     aqua_lock_count: number;

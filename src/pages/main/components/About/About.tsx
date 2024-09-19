@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { getIceStatistics } from 'api/ice-locker';
 import { getAssetDetails } from 'api/stellar-expert';
 
 import { AQUA_ASSET_STRING } from 'constants/assets';
@@ -12,17 +13,18 @@ import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
 import { ExpertAssetData } from 'types/api-stellar-expert';
 
-import { respondDown, respondUp } from 'common/mixins';
-import { Breakpoints, COLORS, FONT_FAMILY } from 'common/styles';
-import { formatBalance } from 'helpers/helpers';
+import { respondDown, respondUp } from 'web/mixins';
+import { Breakpoints, COLORS, FONT_FAMILY } from 'web/styles';
 
-import InvestAmmImage from 'assets/img/landing-about-amm-80.svg';
-import FreezeIceImage from 'assets/img/landing-about-ice-80.svg';
-import VoteMarketsImage from 'assets/img/landing-about-vote-markets-80.svg';
-import VoteProposalsImage from 'assets/img/landing-about-vote-proposals-80.svg';
+import InvestAmmImage from 'assets/icons/landing-about-amm-80.svg';
+import FreezeIceImage from 'assets/icons/landing-about-ice-80.svg';
+import VoteMarketsImage from 'assets/icons/landing-about-vote-markets-80.svg';
+import VoteProposalsImage from 'assets/icons/landing-about-vote-proposals-80.svg';
 
 import Changes24 from 'basics/Changes24';
+import DotsLoader from 'basics/DotsLoader';
 
+import { formatBalance } from '../../../../common/helpers/helpers';
 import Asset from '../../../vote/components/AssetDropdown/Asset';
 
 const WhatIsSection = styled.section`
@@ -185,21 +187,46 @@ const AquaPrice = styled.div`
 
 const AquaDivider = styled.hr`
     width: 100%;
-    margin: 3.2rem 0;
+    margin-top: 3.2rem;
+    margin-bottom: 0;
     border: 0;
     border-top: 1px solid rgba(232, 232, 237, 1);
 `;
 
+const AquaStatsBlock = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+`;
+
+const StatWrapper = styled.div`
+    flex: 1 1 33.33%;
+    display: flex;
+    flex-direction: column;
+    margin-top: 3.2rem;
+    max-width: 14rem;
+`;
+
+const StatsTitle = styled.span`
+    color: ${COLORS.grayText};
+    font-size: 1.4rem;
+    line-height: 1.6rem;
+`;
+
+const StatsDescription = styled.span`
+    margin-top: 0.8rem;
+`;
+
 const About = (): JSX.Element => {
     const { assetsInfo } = useAssetsStore();
-    console.log(assetsInfo.get(AQUA_ASSET_STRING));
+
     const aquaAsset = assetsInfo.get(AQUA_ASSET_STRING);
     const { first_transaction, code, issuer } = aquaAsset;
 
     const aquaStellarAsset = getStellarAsset(code, issuer);
 
+    const [statistics, setStatistics] = useState(null);
     const [expertData, setExpertData] = useState<ExpertAssetData>(undefined);
-    console.log(expertData);
 
     useEffect(() => {
         getAssetDetails(aquaStellarAsset)
@@ -209,7 +236,12 @@ const About = (): JSX.Element => {
             .catch(() => {
                 setExpertData(null);
             });
+
+        getIceStatistics().then(res => {
+            setStatistics(res);
+        });
     }, []);
+
     return (
         <>
             <WhatIsSection>
@@ -245,11 +277,56 @@ const About = (): JSX.Element => {
                                 </AquaPriceBlock>
                             </AquaWithPriceBlock>
                             <AquaDivider />
-                            First transaction:{' '}
-                            {getDateString(new Date(first_transaction).getTime())}
-                            Payments volume: {expertData?.payments_amount / 1e7}
-                            Traded volume: {expertData?.traded_amount / 1e7}
-                            Total frozen: Total locked in AMM: Daily rewards:
+                            <AquaStatsBlock>
+                                <StatWrapper>
+                                    <StatsTitle>First transaction: </StatsTitle>
+                                    <StatsDescription>
+                                        {getDateString(new Date(first_transaction).getTime())}
+                                    </StatsDescription>
+                                </StatWrapper>
+                                <StatWrapper>
+                                    <StatsTitle> Payments volume: </StatsTitle>
+                                    <StatsDescription>
+                                        {expertData ? (
+                                            formatBalance(expertData?.payments_amount / 1e7, true)
+                                        ) : (
+                                            <DotsLoader />
+                                        )}
+                                    </StatsDescription>
+                                </StatWrapper>
+                                <StatWrapper>
+                                    <StatsTitle>Traded volume:</StatsTitle>
+                                    <StatsDescription>
+                                        {expertData ? (
+                                            formatBalance(
+                                                expertData?.traded_amount / 1e7,
+                                                true,
+                                                false,
+                                            )
+                                        ) : (
+                                            <DotsLoader />
+                                        )}
+                                    </StatsDescription>
+                                </StatWrapper>
+                                <StatWrapper>
+                                    <StatsTitle>Total frozen:</StatsTitle>
+                                    <StatsDescription>
+                                        {statistics ? (
+                                            formatBalance(statistics.aqua_lock_amount, true)
+                                        ) : (
+                                            <DotsLoader />
+                                        )}
+                                    </StatsDescription>
+                                </StatWrapper>
+                                <StatWrapper>
+                                    <StatsTitle>Total locked in AMM:</StatsTitle>
+                                    <StatsDescription></StatsDescription>
+                                </StatWrapper>
+                                <StatWrapper>
+                                    <StatsTitle>Daily rewards:</StatsTitle>
+                                    <StatsDescription></StatsDescription>
+                                </StatWrapper>
+                            </AquaStatsBlock>
                         </AquaTokenStats>
                         <AquaTokenStatsDescription>
                             <Title>AQUA token</Title>

@@ -1,11 +1,12 @@
 // production config
-const { merge } = require('webpack-merge');
-const { resolve } = require('path');
-const childProcess = require('child_process');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const webpack = require('webpack');
+const { merge } = require('webpack-merge');
+
+const childProcess = require('child_process');
+const { resolve } = require('path');
 
 const commonConfig = require('./webpack-common');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const branchName =
     process.env.BRANCH ||
@@ -38,6 +39,9 @@ module.exports = merge(commonConfig, {
     plugins: [
         new CopyWebpackPlugin({
             patterns: [
+                //TODO: Remove unnecessary copyies after refactor
+                { from: '../src/assets/icons', to: 'assets/img' },
+                { from: '../src/assets/img', to: 'assets/img' },
                 { from: '../src/common/static/img', to: 'assets/img' },
                 {
                     from: '../src/common/static',

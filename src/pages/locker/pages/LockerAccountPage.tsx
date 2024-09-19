@@ -14,7 +14,7 @@ import CurrentLocks from '../components/LockerAccountPage/CurrentLocks/CurrentLo
 import LockAquaForm from '../components/LockerAccountPage/LockAquaForm/LockAquaForm';
 import { useIsOnViewport } from '../../../common/hooks/useIsOnViewport';
 import ArrowDown from '../../../common/assets/img/icon-arrow-down.svg';
-import { getDistributionForAccount } from '../api/api';
+import { getDistributionForAccount } from '../../../api/ice-locker';
 import IceBlock from '../components/LockerAccountPage/IceBlock/IceBlock';
 import { StellarEvents } from '../../../common/services/stellar.service';
 import { LockerRoutes } from '../../../routes';
@@ -115,7 +115,7 @@ const LockerAccountPage = () => {
             return;
         }
         setCurrentAccount(null);
-        StellarService.loadAccount(accountId).then((res) => {
+        StellarService.loadAccount(accountId).then(res => {
             setCurrentAccount(new AccountService(res, null));
         });
     }, [accountId]);
@@ -125,7 +125,7 @@ const LockerAccountPage = () => {
             return;
         }
         setLocks(null);
-        StellarService.getAccountLocks(accountId).then((res) => {
+        StellarService.getAccountLocks(accountId).then(res => {
             setLocks(res);
         });
     }, [accountId]);
@@ -137,11 +137,11 @@ const LockerAccountPage = () => {
 
         const unsub = StellarService.event.sub(({ type }) => {
             if (type === StellarEvents.claimableUpdate) {
-                StellarService.getAccountLocks(accountId).then((res) => {
+                StellarService.getAccountLocks(accountId).then(res => {
                     setLocks(res);
                 });
 
-                StellarService.getAquaInLiquidityVotes(accountId).then((res) => {
+                StellarService.getAquaInLiquidityVotes(accountId).then(res => {
                     setAquaInVotes(res);
                 });
             }
@@ -154,7 +154,7 @@ const LockerAccountPage = () => {
         if (!currentAccount) {
             return;
         }
-        currentAccount.getAmmAquaBalance().then((res) => {
+        currentAccount.getAmmAquaBalance().then(res => {
             setAmmAquaBalance(res);
         });
     }, [currentAccount]);
@@ -163,7 +163,7 @@ const LockerAccountPage = () => {
         if (!currentAccount) {
             return;
         }
-        StellarService.getAquaInLiquidityVotes(currentAccount.accountId()).then((res) => {
+        StellarService.getAquaInLiquidityVotes(currentAccount.accountId()).then(res => {
             setAquaInVotes(res);
         });
     }, [currentAccount]);
@@ -172,7 +172,7 @@ const LockerAccountPage = () => {
         if (!currentAccount) {
             return;
         }
-        getDistributionForAccount(currentAccount.accountId()).then((res) => {
+        getDistributionForAccount(currentAccount.accountId()).then(res => {
             setDistributions(res);
         });
     }, [currentAccount]);

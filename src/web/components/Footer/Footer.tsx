@@ -1,7 +1,8 @@
-import * as React from 'react';
 import styled from 'styled-components';
 
-import AquaLogo from 'assets/img/aqua-logo.svg';
+import { AQUA_NETWORK_URL } from 'constants/urls';
+
+import AquaLogo from 'assets/icons/aqua-logo.svg';
 
 import { commonMaxWidth, respondDown } from '../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../common/styles';
@@ -54,7 +55,7 @@ const Aqua = styled(AquaLogo)`
 const Footer = (): JSX.Element => (
     <FooterBlock>
         <HelpfulLine>
-            <a href="https://aqua.network" target="_blank" rel="noreferrer noopener">
+            <a href={AQUA_NETWORK_URL} target="_blank" rel="noreferrer noopener">
                 <Aqua />
             </a>
         </HelpfulLine>

@@ -9,11 +9,10 @@
         "paths": {
             // TODO: refactor project structure
             "api/*": ["api/*"],
-            "assets/*": ["common/assets/*"],
+            "assets/*": ["assets/*"],
             "constants/*": ["constants/*"],
-            "helpers/*": ["common/helpers/*"],
-            "hooks/*": ["common/hooks/*"],
-            "services/*": ["common/services/*"],
+            "hooks/*": ["hooks/*"],
+            "services/*": ["services/*"],
             "selectors/*": ["selectors/*"],
             "store/*": ["store/*"],
             "types/*": ["types/*"],
@@ -21,7 +20,6 @@
             // components
             "basics/*": ["web/basics/*"],
             "components/*": ["web/components/*"],
-            "modals/*": ["common/modals/*"],
             "pages/*": ["pages/*"]
         }
     }
