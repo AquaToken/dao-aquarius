@@ -39,9 +39,6 @@ module.exports = merge(commonConfig, {
     plugins: [
         new CopyWebpackPlugin({
             patterns: [
-                //TODO: Remove unnecessary copyies after refactor
-                { from: '../src/assets', to: 'assets/img' },
-                { from: '../src/common/static/img', to: 'assets/img' },
                 { from: '../src/web/.static/img', to: 'assets/img' },
                 { from: '../src/web/.static', to: '' },
             ],

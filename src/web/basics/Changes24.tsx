@@ -8,7 +8,7 @@ import { COLORS } from 'web/styles';
 import IconNegative from 'assets/icon-arrow-negative-16.svg';
 import IconPositive from 'assets/icon-arrow-positive-16.svg';
 
-import { formatBalance } from '../../../common/helpers/helpers';
+import { formatBalance } from '../../common/helpers/helpers';
 
 const Changes = styled.span<{ isPositive?: boolean }>`
     display: flex;

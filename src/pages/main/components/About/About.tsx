@@ -6,13 +6,12 @@ import { getAssetDetails } from 'api/stellar-expert';
 
 import { AQUA_ASSET_STRING } from 'constants/assets';
 
-import { getStellarAsset } from 'selectors/assets';
-import { getDateString } from 'selectors/date';
-
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
 import { ExpertAssetData } from 'types/api-stellar-expert';
 
+import { getStellarAsset } from 'helpers/assets';
+import { getDateString } from 'helpers/date';
 import { respondDown, respondUp } from 'web/mixins';
 import { Breakpoints, COLORS, FONT_FAMILY } from 'web/styles';
 

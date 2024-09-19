@@ -12,8 +12,8 @@
             "assets/*": ["assets/*"],
             "constants/*": ["constants/*"],
             "hooks/*": ["hooks/*"],
+            "helpers/*": ["helpers/*"],
             "services/*": ["services/*"],
-            "selectors/*": ["selectors/*"],
             "store/*": ["store/*"],
             "types/*": ["types/*"],
 
