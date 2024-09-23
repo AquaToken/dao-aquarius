@@ -11,6 +11,8 @@ import { useState } from 'react';
 import { StellarService, ToastService } from '../../services/globalServices';
 import { BuildSignAndSubmitStatuses } from '../../services/wallet-connect.service';
 import ErrorHandler from '../../helpers/error-handler';
+import { LoginTypes } from '../../../store/authStore/types';
+import { openCurrentWalletIfExist } from '../../helpers/wallet-connect-helpers';
 
 const TrustlineBlock = styled.div`
     display: flex;
@@ -54,6 +56,9 @@ const NoTrustline = ({ asset, onlyButton }: { asset: AssetType; onlyButton?: boo
     const { account } = useAuthStore();
 
     const addTrust = async () => {
+        if (account.authType === LoginTypes.walletConnect) {
+            openCurrentWalletIfExist();
+        }
         setTrustlinePending(true);
         try {
             const op = StellarService.createAddTrustOperation(asset);

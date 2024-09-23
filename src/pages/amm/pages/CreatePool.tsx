@@ -45,6 +45,8 @@ import CircleButton from '../../../common/basics/CircleButton';
 import Checkbox from '../../../common/basics/Checkbox';
 import PageLoader from '../../../common/basics/PageLoader';
 import AssetLogo from '../../vote/components/AssetDropdown/AssetLogo';
+import { LoginTypes } from '../../../store/authStore/types';
+import { openCurrentWalletIfExist } from '../../../common/helpers/wallet-connect-helpers';
 
 const ErrorLabel = styled.span<{ isError?: boolean }>`
     color: ${({ isError }) => (isError ? COLORS.pinkRed : COLORS.paragraphText)};
@@ -357,6 +359,10 @@ const CreatePool = () => {
             return;
         }
 
+        if (account.authType === LoginTypes.walletConnect) {
+            openCurrentWalletIfExist();
+        }
+
         setPending(true);
 
         SorobanService.getInitStableSwapPoolTx(
@@ -400,6 +406,9 @@ const CreatePool = () => {
                 `You need at least ${createInfo.constantFee} ${createInfo.token.code} to create pool`,
             );
             return;
+        }
+        if (account.authType === LoginTypes.walletConnect) {
+            openCurrentWalletIfExist();
         }
         setPending(true);
         SorobanService.getInitConstantPoolTx(
