@@ -35,6 +35,8 @@ import PoolEvents from '../components/PoolEvents/PoolEvents';
 import { AQUA_CODE, AQUA_ISSUER } from '../../../common/services/stellar.service';
 import NoTrustline from '../../../common/components/NoTrustline/NoTrustline';
 import MigrateToSorobanBanner from '../../../common/components/MigrateToSorobanBanner/MigrateToSorobanBanner';
+import { LoginTypes } from '../../../store/authStore/types';
+import { openCurrentWalletIfExist } from '../../../common/helpers/wallet-connect-helpers';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -184,6 +186,9 @@ const PoolPage = () => {
     }, [poolAddress, updateIndex]);
 
     const claim = () => {
+        if (account.authType === LoginTypes.walletConnect) {
+            openCurrentWalletIfExist();
+        }
         setClaimPending(true);
 
         SorobanService.getClaimRewardsTx(account.accountId(), pool.address)

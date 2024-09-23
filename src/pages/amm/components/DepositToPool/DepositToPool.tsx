@@ -26,6 +26,8 @@ import Alert from '../../../../common/basics/Alert';
 import MainNetWarningModal, {
     SHOW_PURPOSE_ALIAS_MAIN_NET,
 } from '../../../../common/modals/MainNetWarningModal';
+import { LoginTypes } from '../../../../store/authStore/types';
+import { openCurrentWalletIfExist } from '../../../../common/helpers/wallet-connect-helpers';
 
 const Container = styled.div<{ isModal: boolean }>`
     width: ${({ isModal }) => (isModal ? '52.3rem' : '100%')};
@@ -260,6 +262,9 @@ const DepositToPool = ({ params }) => {
             return;
         }
         let hash: string;
+        if (account.authType === LoginTypes.walletConnect) {
+            openCurrentWalletIfExist();
+        }
         setPending(true);
         SorobanService.getDepositTx(account?.accountId(), pool.index, pool.assets, amounts)
             .then((tx) => {

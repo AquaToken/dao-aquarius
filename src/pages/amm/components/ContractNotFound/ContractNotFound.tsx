@@ -6,6 +6,8 @@ import { useState } from 'react';
 import { SorobanService, ToastService } from '../../../../common/services/globalServices';
 import useAuthStore from '../../../../store/authStore/useAuthStore';
 import ErrorHandler from '../../../../common/helpers/error-handler';
+import { LoginTypes } from '../../../../store/authStore/types';
+import { openCurrentWalletIfExist } from '../../../../common/helpers/wallet-connect-helpers';
 
 const Container = styled.div`
     color: ${COLORS.pinkRed};
@@ -21,6 +23,9 @@ const ContractNotFound = ({ asset, onSuccess }) => {
     const { account } = useAuthStore();
 
     const deploy = () => {
+        if (account.authType === LoginTypes.walletConnect) {
+            openCurrentWalletIfExist();
+        }
         setPending(true);
 
         SorobanService.deployAssetContractTx(account.accountId(), asset)

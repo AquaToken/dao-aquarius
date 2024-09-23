@@ -21,6 +21,8 @@ import { getPathPoolsFee } from '../../../amm/api/api';
 import PageLoader from '../../../../common/basics/PageLoader';
 import PathPool from './PathPool/PathPool';
 import DotsLoader from '../../../../common/basics/DotsLoader';
+import { LoginTypes } from '../../../../store/authStore/types';
+import { openCurrentWalletIfExist } from '../../../../common/helpers/wallet-connect-helpers';
 
 const Container = styled.div`
     width: 52.3rem;
@@ -102,6 +104,9 @@ const SwapConfirmModal = ({ params, confirm }) => {
     }, []);
 
     const swap = () => {
+        if (account.authType === LoginTypes.walletConnect) {
+            openCurrentWalletIfExist();
+        }
         setSwapPending(true);
         const SLIPPAGE = localStorage.getItem(SWAP_SLIPPAGE_ALIAS) || '1'; // 1%
 
