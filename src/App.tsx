@@ -164,11 +164,14 @@ const App = () => {
     }, []);
 
     useEffect(() => {
+        if (!wcLoginChecked) {
+            return;
+        }
         const isShowed = localStorage.getItem(LIVE_ON_SOROBAN_SHOWED_ALIAS) || false;
         if (!isShowed) {
             ModalService.openModal(LiveOnSorobanAlert, {}, false, <BgStyled />);
         }
-    }, []);
+    }, [wcLoginChecked]);
 
     if (!isAssetsUpdated || !wcLoginChecked) {
         return <PageLoader />;

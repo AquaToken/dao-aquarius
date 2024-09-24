@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
@@ -141,7 +142,7 @@ const AquaInfoBlock = styled.div`
 `;
 
 const AquaTokenStats = styled(AquaInfoBlock)`
-    box-shadow: 0px 20px 30px 0px rgba(0, 6, 54, 0.06);
+    box-shadow: 0 2rem 3rem 0 rgba(0, 6, 54, 0.06);
     background-color: ${COLORS.white};
 
     ${respondUp(Breakpoints.md)`
@@ -156,7 +157,7 @@ const AquaTokenStatsDescription = styled(AquaInfoBlock)`
     ${respondUp(Breakpoints.md)`
         max-width: 63.8rem;
         flex-basis: unset;
-        padding: 3.6rem 0px 3.6rem 6.2rem;
+        padding: 3.6rem 0 3.6rem 6.2rem;
     `}
 `;
 
@@ -221,7 +222,7 @@ const StatsDescription = styled.span`
     margin-top: 0.8rem;
 `;
 
-const About = (): JSX.Element => {
+const About = (): React.ReactElement => {
     const { assetsInfo } = useAssetsStore();
 
     const aquaAsset = assetsInfo.get(AQUA_ASSET_STRING);
