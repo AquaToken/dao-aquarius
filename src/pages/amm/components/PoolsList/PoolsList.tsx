@@ -241,6 +241,7 @@ const PoolsList = ({
                                 withoutLink
                                 mobileVerticalDirections
                                 poolType={pool.pool_type}
+                                isRewardsPoolOn={Boolean(Number(pool.reward_tps))}
                             />
                             {!isUserList ? (
                                 <PoolStats>

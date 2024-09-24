@@ -63,8 +63,8 @@ export default class WalletConnectServiceClass {
     //
     //  If we want to disconnect all the established sessions, we pass the parameter disconnectAll.
     //  Used for the auto-connect page
-    onAppStart(disconnectAll: boolean): Promise<any> {
-        if (!sessionExistsInStorage()) {
+    async onAppStart(disconnectAll: boolean): Promise<any> {
+        if (!(await sessionExistsInStorage())) {
             return Promise.resolve();
         }
 
@@ -361,7 +361,7 @@ export default class WalletConnectServiceClass {
                 projectId: process.env.WALLET_CONNECT_PROJECT_ID,
                 metadata: this.selfMeta,
             }),
-            new Promise((resolve, reject) => {
+            new Promise((_, reject) => {
                 setTimeout(() => {
                     reject(CLIENT_TIMEOUT_MESSAGE);
                 }, CONNECTION_TIMEOUT);

@@ -1,7 +1,55 @@
 // Constants
 const WC_CURRENT_WALLET_ALIAS = 'WC_APP';
 const WC_DEEP_LINK_HISTORY_ALIAS = 'WC_DEEP_LINK_APPS';
-const WC_SESSION_ALIAS = 'wc@2:client:0.3//session';
+const WC_INDEXED_DB_ALIAS = 'WALLET_CONNECT_V2_INDEXED_DB';
+const WC_SESSION_ALIAS = 'wc@2:client:0.3:session';
+const WC_STORE_NAME = 'keyvaluestorage';
+
+const hasWalletConnectDB = async (): Promise<boolean> => {
+    try {
+        const databases = await indexedDB.databases();
+        return databases.some(({ name }) => name === WC_INDEXED_DB_ALIAS);
+    } catch {
+        return false;
+    }
+};
+
+const openWalletConnectDB = async (): Promise<IDBDatabase> => {
+    const hasDB = await hasWalletConnectDB();
+
+    if (!hasDB) {
+        return Promise.reject();
+    }
+
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open(WC_INDEXED_DB_ALIAS, 1);
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject();
+    });
+};
+
+const getFromWalletConnectDB = async (key: string): Promise<any> => {
+    try {
+        const db = await openWalletConnectDB();
+
+        const store = db.transaction(WC_STORE_NAME, 'readonly').objectStore(WC_STORE_NAME);
+
+        return new Promise((resolve) => {
+            const request = store.get(key);
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => resolve(null);
+        });
+    } catch {
+        return null;
+    }
+};
+
+// Checking whether there is a saved session in the WalletConnect storage before client initialization
+export const sessionExistsInStorage = async (): Promise<boolean> => {
+    const sessionList = JSON.parse(await getFromWalletConnectDB(WC_SESSION_ALIAS)) || [];
+
+    return Boolean(sessionList.length);
+};
 
 function getLocalStorage(): Storage | undefined {
     let res: Storage | undefined = undefined;
@@ -97,19 +145,6 @@ export const getWalletFromDeepLinkHistory = (topic) => {
     const history = getDeepLinkHistory();
 
     return history.has(topic) ? JSON.parse(history.get(topic)) : null;
-};
-
-// Checking whether there is a saved session in the WalletConnect storage before client initialization
-export const sessionExistsInStorage = (): boolean => {
-    const LS = getLocalStorage();
-
-    if (!LS) {
-        return;
-    }
-
-    const sessionList = JSON.parse(LS.getItem(WC_SESSION_ALIAS) || '[]');
-
-    return Boolean(sessionList.length);
 };
 
 // Method for sending the URI to the wallet using custom postMessage if the dapp is open in the WebView

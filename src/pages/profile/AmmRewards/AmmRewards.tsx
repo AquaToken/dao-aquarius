@@ -236,7 +236,7 @@ const AmmRewards = ({ aquaUsdPrice }) => {
                 <Section>
                     <Table
                         head={[
-                            { children: 'Pair', flexSize: 2.5 },
+                            { children: 'Market', flexSize: 2.5 },
                             { children: 'Pooled' },
                             { children: 'Pool shares' },
                             {

@@ -65,7 +65,7 @@
     "@sentry/react": "^8.23.0",
     "@stellar/freighter-api": "^2.0.0",
     "@stellar/stellar-sdk": "12.0.0-rc.1",
-    "@walletconnect/sign-client": "2.6.0",
+    "@walletconnect/sign-client": "2.16.2",
     "axios": "^0.23.0",
     "bignumber.js": "^9.1.2",
     "binascii": "^0.0.2",
@@ -86,6 +86,6 @@
     "styled-components": "^5.3.1"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=18.0.0"
   }
 }

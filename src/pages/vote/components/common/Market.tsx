@@ -14,6 +14,7 @@ import {
     MaxRewardsLabel,
     NoLiquidityLabel,
     RewardLabel,
+    RewardPoolLabel,
     StablePoolLabel,
 } from './Labels';
 import { AssetSimple } from '../../../../store/assetsStore/types';
@@ -200,6 +201,7 @@ type PairProps = {
     withoutDomains?: boolean;
     verticalDirections?: boolean;
     isRewardsOn?: boolean;
+    isRewardsPoolOn?: boolean;
     mobileVerticalDirections?: boolean;
     authRequired?: boolean;
     noLiquidity?: boolean;
@@ -224,6 +226,7 @@ const Market = ({
     verticalDirections,
     leftAlign,
     isRewardsOn,
+    isRewardsPoolOn,
     mobileVerticalDirections,
     authRequired,
     noLiquidity,
@@ -259,14 +262,15 @@ const Market = ({
 
     const labels = (
         <>
-            {boosted && <BoostLabel />}
-            {isRewardsOn && <RewardLabel />}
-            {isMaxRewards && <MaxRewardsLabel />}
-            {authRequired && <AuthRequiredLabel />}
-            {noLiquidity && <NoLiquidityLabel />}
             {poolType === POOL_TYPE.classic && <ClassicPoolLabel />}
             {poolType === POOL_TYPE.stable && <StablePoolLabel />}
             {poolType === POOL_TYPE.constant && <ConstantPoolLabel />}
+            {boosted && <BoostLabel />}
+            {isRewardsOn && <RewardLabel />}
+            {isRewardsPoolOn && <RewardPoolLabel />}
+            {isMaxRewards && <MaxRewardsLabel />}
+            {authRequired && <AuthRequiredLabel />}
+            {noLiquidity && <NoLiquidityLabel />}
         </>
     );
 

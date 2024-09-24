@@ -127,7 +127,7 @@ const VoteButton = ({
                     {isPairSelected ? <TickStyled /> : <Like />}
                 </Button>
                 <Tooltip
-                    content={<TooltipInner>Downvote this pair</TooltipInner>}
+                    content={<TooltipInner>Downvote this market</TooltipInner>}
                     position={TOOLTIP_POSITION.top}
                     showOnHover
                 >
@@ -159,7 +159,7 @@ const VoteButton = ({
                 {isPairSelected ? <IconTick /> : <IconLike />}
             </Button>
             <Tooltip
-                content={<TooltipInner>Downvote this pair</TooltipInner>}
+                content={<TooltipInner>Downvote this market</TooltipInner>}
                 position={TOOLTIP_POSITION.top}
                 showOnHover
             >

@@ -277,7 +277,7 @@ const MarketPage = () => {
                             />
 
                             <BackButton
-                                label="Back to pairs"
+                                label="Back to markets"
                                 onClick={() => {
                                     history.length
                                         ? history.goBack()

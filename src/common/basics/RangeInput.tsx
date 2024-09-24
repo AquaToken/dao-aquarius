@@ -48,6 +48,11 @@ const Mark = styled.div.attrs<{ percent: number; value: number; disabled: boolea
     top: 50%;
     box-sizing: border-box;
     z-index: 1;
+    transition: transform 0.1s ease-in;
+
+    &:hover {
+        transform: scale(2) translate(-25%, -25%) rotate(45deg);
+    }
 `;
 
 const Thumb = styled.div.attrs<{ value: number; isDrag: boolean; disabled?: boolean }>(
@@ -130,6 +135,12 @@ const RangeInput = ({
         }
     };
 
+    const onMarkClick = (e, value) => {
+        e.stopPropagation();
+        setValue(value);
+        onChange(value);
+    };
+
     const onMouseMove = (e) => {
         if (!isMouseDrag) {
             return;
@@ -169,11 +180,36 @@ const RangeInput = ({
             disabled={disabled}
             ref={ref}
         >
-            <Mark percent={0} value={value} disabled={disabled} />
-            <Mark percent={25} value={value} disabled={disabled} />
-            <Mark percent={50} value={value} disabled={disabled} />
-            <Mark percent={75} value={value} disabled={disabled} />
-            <Mark percent={100} value={value} disabled={disabled} />
+            <Mark
+                percent={0}
+                value={value}
+                disabled={disabled}
+                onClick={(e) => onMarkClick(e, 0)}
+            />
+            <Mark
+                percent={25}
+                value={value}
+                disabled={disabled}
+                onClick={(e) => onMarkClick(e, 25)}
+            />
+            <Mark
+                percent={50}
+                value={value}
+                disabled={disabled}
+                onClick={(e) => onMarkClick(e, 50)}
+            />
+            <Mark
+                percent={75}
+                value={value}
+                disabled={disabled}
+                onClick={(e) => onMarkClick(e, 75)}
+            />
+            <Mark
+                percent={100}
+                value={value}
+                disabled={disabled}
+                onClick={(e) => onMarkClick(e, 100)}
+            />
             <Thumb
                 disabled={disabled}
                 value={value}

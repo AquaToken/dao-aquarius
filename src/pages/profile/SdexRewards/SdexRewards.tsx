@@ -177,7 +177,7 @@ const SdexRewards = ({ aquaUsdPrice }) => {
                 <Section>
                     <Table
                         head={[
-                            { children: 'Pair', flexSize: 2.5 },
+                            { children: 'Market', flexSize: 2.5 },
                             { children: 'In offers' },
                             {
                                 children: 'SDEX daily reward',

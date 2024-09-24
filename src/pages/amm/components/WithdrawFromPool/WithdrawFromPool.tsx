@@ -22,6 +22,8 @@ import { getAssetString } from '../../../../store/assetsStore/actions';
 import { BuildSignAndSubmitStatuses } from '../../../../common/services/wallet-connect.service';
 import BigNumber from 'bignumber.js';
 import { PoolExtended } from '../../api/types';
+import { LoginTypes } from '../../../../store/authStore/types';
+import { openCurrentWalletIfExist } from '../../../../common/helpers/wallet-connect-helpers';
 
 const Container = styled.div`
     width: 52.3rem;
@@ -131,6 +133,9 @@ const WithdrawFromPool = ({ params }: ModalProps<{ pool: PoolExtended }>) => {
                 } missing. Please provide it in your wallet.`,
             );
             return;
+        }
+        if (account.authType === LoginTypes.walletConnect) {
+            openCurrentWalletIfExist();
         }
 
         setPending(true);

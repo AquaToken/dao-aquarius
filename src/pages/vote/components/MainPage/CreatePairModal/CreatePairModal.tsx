@@ -153,7 +153,7 @@ const CreatePairModal = ({
                 return;
             }
             ToastService.showSuccessToast(
-                'Market has been created! You will be able to see your pair in the list within 10 minutes',
+                'Market has been created! You will be able to see your market in the list within 10 minutes',
                 20000,
             );
         } catch (e) {
@@ -171,7 +171,7 @@ const CreatePairModal = ({
             <Description>
                 To create a pair, you first need to pay for the trustlines for transactions. Once
                 it’s done, please allow up to 10 minutes for our systems to correctly add the new
-                market pair and make it available for anyone to vote.
+                market and make it available for anyone to vote.
             </Description>
             <div>
                 <AssetsInfo>
@@ -218,7 +218,7 @@ const CreatePairModal = ({
                     </Tooltip>
                 </ContentRow>
                 <StyledButton fullWidth onClick={() => onSubmit()} pending={pending}>
-                    Create pair
+                    Create market
                 </StyledButton>
             </div>
         </>
