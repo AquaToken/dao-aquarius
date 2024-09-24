@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { getIceStatistics } from 'api/ice-locker';
@@ -38,9 +39,9 @@ const WhatIsSection = styled.section`
 
     position: relative;
 
-    ${respondDown(Breakpoints.md)`
-        padding-top: 6rem;
-        margin-bottom: 3rem;
+    ${respondDown(Breakpoints.xl)`
+        padding: 8rem 0 8rem;
+        margin: 0;
     `}
 `;
 
@@ -49,7 +50,7 @@ const Wrapper = styled.div`
     max-width: 110rem;
     padding: 0 10rem;
 
-    ${respondDown(Breakpoints.md)`
+    ${respondDown(Breakpoints.xl)`
         padding: 0 1.6rem;
         max-width: 55rem;
         margin-left: 0;
@@ -62,7 +63,7 @@ const Title = styled.div`
     color: ${COLORS.titleText};
     margin-bottom: 3rem;
 
-    ${respondDown(Breakpoints.md)`
+    ${respondDown(Breakpoints.xl)`
         font-size: 2.9rem;
         line-height: 3.4rem;
         margin-bottom: 1.6rem;
@@ -92,7 +93,7 @@ const Description = styled.div`
     font-size: 1.6rem;
     line-height: 2.8rem;
 
-    ${respondDown(Breakpoints.md)`
+    ${respondDown(Breakpoints.xl)`
         font-size: 1.4rem;
         line-height: 2.5rem;
         margin-bottom: 4rem;
@@ -103,6 +104,7 @@ const AquaSection = styled(WhatIsSection)`
     margin-top: 0;
     margin-bottom: 0;
     background-color: ${COLORS.lightGray};
+    padding-top: 0;
 `;
 
 const AquaWrapper = styled(Wrapper)`
@@ -111,10 +113,11 @@ const AquaWrapper = styled(Wrapper)`
     max-width: 121.5rem;
     background-color: ${COLORS.lightGray};
 
-    ${respondDown(Breakpoints.md)`
+    ${respondDown(Breakpoints.xl)`
         display: flex;
         flex-direction: column;
         align-items: center;
+        margin: 0 0 10rem;
     `}
 `;
 
@@ -124,7 +127,7 @@ const AquaInfoContainer = styled.div`
     flex-flow: row wrap;
     width: 100%;
 
-    ${respondDown(Breakpoints.md)`
+    ${respondDown(Breakpoints.xl)`
         justify-content: center;
     `}
 `;
@@ -136,8 +139,9 @@ const AquaInfoBlock = styled.div`
     max-width: 57.7rem;
     padding: 6.2rem;
 
-    ${respondDown(Breakpoints.md)`
+    ${respondDown(Breakpoints.xl)`
         flex-basis: 100%;
+        padding: 6.2rem 1.6rem;
     `}
 `;
 
@@ -145,14 +149,14 @@ const AquaTokenStats = styled(AquaInfoBlock)`
     box-shadow: 0 2rem 3rem 0 rgba(0, 6, 54, 0.06);
     background-color: ${COLORS.white};
 
-    ${respondUp(Breakpoints.md)`
+    ${respondUp(Breakpoints.xl)`
         min-width: 57.7rem;
         flex-basis: unset;
     `}
 `;
 
 const AquaTokenStatsDescription = styled(AquaInfoBlock)`
-    padding: 3.6rem 6.2rem 3.6rem 6.2rem;
+    padding: 5.2rem 1.6rem 5.2rem 1.6rem;
 
     ${respondUp(Breakpoints.md)`
         max-width: 63.8rem;
@@ -210,6 +214,10 @@ const StatWrapper = styled.div`
     flex-direction: column;
     margin-top: 3.2rem;
     max-width: 14rem;
+
+    ${respondDown(Breakpoints.xl)`
+        flex: 1 1 50%;
+    `}
 `;
 
 const StatsTitle = styled.span`
@@ -225,13 +233,24 @@ const StatsDescription = styled.span`
 const About = (): React.ReactElement => {
     const { assetsInfo } = useAssetsStore();
 
+    const location = useLocation();
+
     const aquaAsset = assetsInfo.get(AQUA_ASSET_STRING);
-    const { first_transaction, code, issuer } = aquaAsset;
+    const { first_transaction, code, issuer } = aquaAsset || {};
 
     const aquaStellarAsset = getStellarAsset(code, issuer);
 
     const [iceStats, setIceStats] = useState<IceStatistics>(null);
     const [expertData, setExpertData] = useState<ExpertAssetData>(undefined);
+
+    const aquaTokenRef = useRef(null);
+
+    useEffect(() => {
+        console.log(location.hash);
+        if (location.hash === '#token' && aquaTokenRef.current) {
+            aquaTokenRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }, [location, aquaTokenRef]);
 
     useEffect(() => {
         getAssetDetails(aquaStellarAsset)
@@ -262,7 +281,7 @@ const About = (): React.ReactElement => {
                 </Wrapper>
             </WhatIsSection>
 
-            <AquaSection>
+            <AquaSection ref={aquaTokenRef}>
                 <AquaWrapper>
                     <AquaInfoContainer id="aqua-token">
                         <AquaTokenStats>

@@ -10,7 +10,7 @@ export enum TOOLTIP_POSITION {
     right = 'right',
 }
 
-const ChildrenBlock = styled.div`
+const ChildrenBlock = styled(props => <div {...props} />)`
     position: relative;
     display: flex;
     width: fit-content;
@@ -119,23 +119,23 @@ const Tooltip = ({
     background = COLORS.tooltip,
     color = COLORS.white,
     ...props
-}: TooltipProps): JSX.Element => {
+}: TooltipProps): React.ReactNode => {
     const [onHover, setOnHover] = useState(false);
 
     return (
         <ChildrenBlock
             {...props}
-            onMouseEnter={(e) => {
+            onMouseEnter={e => {
                 e.stopPropagation();
                 setOnHover(true);
             }}
-            onMouseLeave={(e) => {
+            onMouseLeave={e => {
                 e.stopPropagation();
                 setOnHover(false);
             }}
-            onClick={(e) => {
+            onClick={e => {
                 e.stopPropagation();
-                setOnHover((value) => !value);
+                setOnHover(value => !value);
             }}
         >
             {children}

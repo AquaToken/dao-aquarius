@@ -1,4 +1,6 @@
-import { Asset } from '@stellar/stellar-sdk';
+import { Asset } from 'types/stellar';
+
+import { StellarService } from '../common/services/globalServices';
 
 export const getAssetString = (asset: Asset): string => {
     if (asset.isNative()) {
@@ -9,8 +11,8 @@ export const getAssetString = (asset: Asset): string => {
 
 export const getStellarAsset = (code: string, issuer: string): Asset => {
     if (!issuer) {
-        return Asset.native();
+        return StellarService.createLumen();
     }
 
-    return new Asset(code, issuer);
+    return StellarService.createAsset(code, issuer);
 };

@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react';
+import * as React from 'react';
 import styled from 'styled-components';
 
 const DOTS_COUNT = 3;
 const DOT_SYMBOL = '.';
 const DOTS = new Array(DOTS_COUNT).fill(DOT_SYMBOL);
 
-const Dot = styled.span<{ isVisible: boolean }>`
-    visibility: ${({ isVisible }) => (isVisible ? 'visible' : 'hidden')};
+const Dot = styled.span<{ $isVisible: boolean }>`
+    visibility: ${({ $isVisible }) => ($isVisible ? 'visible' : 'hidden')};
 `;
 
-const DotsLoader = (): JSX.Element => {
+const DotsLoader = (): React.ReactElement => {
     const [currentIndex, setCurrentIndex] = useState(0);
 
     useEffect(() => {
@@ -26,7 +27,7 @@ const DotsLoader = (): JSX.Element => {
                 const isVisible = index <= currentIndex;
 
                 return (
-                    <Dot key={index} isVisible={isVisible}>
+                    <Dot key={index} $isVisible={isVisible}>
                         {dot}
                     </Dot>
                 );

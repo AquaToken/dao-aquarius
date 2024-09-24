@@ -27,9 +27,9 @@ const AccountBlockContainer = styled.div`
     align-items: center;
 `;
 
-const AccountBlockWeb = styled(AccountBlockContainer)<{ isMenuOpen: boolean }>`
+const AccountBlockWeb = styled(AccountBlockContainer)<{ $isMenuOpen: boolean }>`
     padding: 2.4rem;
-    box-shadow: ${({ isMenuOpen }) => (isMenuOpen ? '0 2rem 3rem rgba(0, 6, 54, 0.06)' : 'none')};
+    box-shadow: ${({ $isMenuOpen }) => ($isMenuOpen ? '0 2rem 3rem rgba(0, 6, 54, 0.06)' : 'none')};
     cursor: pointer;
 
     ${respondDown(Breakpoints.md)`
@@ -77,9 +77,9 @@ const AccountAddresses = styled.div`
     `}
 `;
 
-const Arrow = styled.div<{ isMenuOpen: boolean }>`
+const Arrow = styled.div<{ $isMenuOpen: boolean }>`
     transform-origin: center;
-    transform: ${({ isMenuOpen }) => (isMenuOpen ? 'rotate(180deg)' : 'none')};
+    transform: ${({ $isMenuOpen }) => ($isMenuOpen ? 'rotate(180deg)' : 'none')};
     transition: transform linear 200ms;
     height: 1.6rem;
     width: 1.6rem;
@@ -166,7 +166,7 @@ const AccountBlock = ({ navLinks }: { navLinks?: JSX.Element }): JSX.Element => 
     const menuRef = useRef(null);
     useOnClickOutside(menuRef, () => setIsMenuOpen(false));
 
-    const signIn = (e) => {
+    const signIn = e => {
         // Fix for 1password
         if (!e.nativeEvent.pointerType) {
             return;
@@ -175,13 +175,13 @@ const AccountBlock = ({ navLinks }: { navLinks?: JSX.Element }): JSX.Element => 
     };
 
     const toggleMenu = () => {
-        setIsMenuOpen((prevState) => !prevState);
+        setIsMenuOpen(prevState => !prevState);
     };
 
     if (!isLogged) {
         return (
             <>
-                <SignInButton onClick={(e) => signIn(e)} pending={isLoginPending}>
+                <SignInButton onClick={e => signIn(e)} pending={isLoginPending}>
                     sign in
                 </SignInButton>
                 <MobileMenu onClick={() => toggleMenu()}>
@@ -209,7 +209,7 @@ const AccountBlock = ({ navLinks }: { navLinks?: JSX.Element }): JSX.Element => 
 
     return (
         <Wrapper ref={menuRef}>
-            <AccountBlockWeb onClick={() => toggleMenu()} isMenuOpen={isMenuOpen}>
+            <AccountBlockWeb onClick={() => toggleMenu()} $isMenuOpen={isMenuOpen}>
                 <IconsBlock>
                     <Identicon pubKey={accountId} />
                     {loginType === LoginTypes.walletConnect && (
@@ -224,7 +224,7 @@ const AccountBlock = ({ navLinks }: { navLinks?: JSX.Element }): JSX.Element => 
                     <AccountPublic>{accountIdView}</AccountPublic>
                 </AccountAddresses>
 
-                <Arrow isMenuOpen={isMenuOpen}>
+                <Arrow $isMenuOpen={isMenuOpen}>
                     <ArrowDown />
                 </Arrow>
             </AccountBlockWeb>

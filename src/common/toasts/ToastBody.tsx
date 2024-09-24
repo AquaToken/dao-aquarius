@@ -8,7 +8,7 @@ import { TOAST_TYPE } from '../services/toast.service';
 import { IconFail, IconSuccess } from '../basics/Icons';
 import { respondDown } from '../mixins';
 
-const ToastBody = styled.div<{ isShow: boolean }>`
+const ToastBody = styled.div<{ $isShow: boolean }>`
     width: 36.2rem;
     min-height: 12rem;
     display: flex;
@@ -17,8 +17,8 @@ const ToastBody = styled.div<{ isShow: boolean }>`
     background: ${COLORS.white};
     box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
     border-radius: 1rem;
-    animation: ${({ isShow }) =>
-        isShow ? 'openingToast ease-in-out 0.8s' : 'closingToast linear 0.4s'};
+    animation: ${({ $isShow }) =>
+        $isShow ? 'openingToast ease-in-out 0.8s' : 'closingToast linear 0.4s'};
     margin-bottom: 2rem;
     margin-right: 2rem;
     position: relative;
@@ -26,8 +26,8 @@ const ToastBody = styled.div<{ isShow: boolean }>`
 
     ${respondDown(Breakpoints.md)`
         max-width: calc(100vw - 4rem);
-        animation: ${({ isShow }) =>
-            isShow ? 'openingToast ease-in-out 0.8s' : 'closingToastBottom linear 0.4s'};
+        animation: ${({ $isShow }) =>
+            $isShow ? 'openingToast ease-in-out 0.8s' : 'closingToastBottom linear 0.4s'};
         min-height: 8rem;
         box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.2);
     `};
@@ -113,15 +113,15 @@ const CloseButton = styled(IconClose)`
     cursor: pointer;
 `;
 
-const Loader = styled.div<{ pause: boolean; delay: number }>`
+const Loader = styled.div<{ $pause: boolean; $delay: number }>`
     position: absolute;
     bottom: 0;
     left: 0;
     width: 0;
     height: 0.4rem;
     background: ${COLORS.purple};
-    animation: ${({ delay }) => `load linear ${delay / 1000}s`};
-    animation-play-state: ${({ pause }) => (pause ? 'paused' : 'running')};
+    animation: ${({ $delay }) => `load linear ${$delay / 1000}s`};
+    animation-play-state: ${({ $pause }) => ($pause ? 'paused' : 'running')};
 
     @keyframes load {
         0% {
@@ -175,16 +175,16 @@ export const Toast = ({ text, resolver, delay, type }: ToastProps): JSX.Element 
     }, []);
 
     useLayoutEffect(() => {
-        ref.current.addEventListener('animationend', (e) => transitionHandler(e), true);
+        ref.current.addEventListener('animationend', e => transitionHandler(e), true);
 
         return () => {
-            ref.current.removeEventListener('animationend', (e) => transitionHandler(e), true);
+            ref.current.removeEventListener('animationend', e => transitionHandler(e), true);
         };
     });
 
     return (
         <ToastBody
-            isShow={isShow}
+            $isShow={isShow}
             ref={ref}
             onMouseEnter={() => {
                 setOnHover(true);
@@ -205,7 +205,7 @@ export const Toast = ({ text, resolver, delay, type }: ToastProps): JSX.Element 
             {type === TOAST_TYPE.error && <IconFail />}
             <ToastText>{text}</ToastText>
 
-            <Loader pause={onHover} delay={delay} />
+            <Loader $pause={onHover} $delay={delay} />
         </ToastBody>
     );
 };

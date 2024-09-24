@@ -1,11 +1,13 @@
 import * as React from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
+
+import Tooltip, { TOOLTIP_POSITION } from './Tooltip';
+
 import CopyIcon from '../assets/img/icon-copy.svg';
 import { COLORS } from '../styles';
-import Tooltip, { TOOLTIP_POSITION } from './Tooltip';
-import { useEffect, useRef, useState } from 'react';
 
-const CopyButtonContainer = styled.div`
+const CopyButtonContainer = styled(props => <div {...props} />)`
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -19,18 +21,20 @@ const CopyIconStyled = styled(CopyIcon)`
     margin-left: 0.8rem;
 `;
 
+interface CopyButtonProps extends React.DOMAttributes<HTMLDivElement> {
+    text: string;
+    children: React.ReactNode;
+    withoutLogo?: boolean;
+}
+
 const CopyButton = ({
     text,
     children,
     withoutLogo,
     ...props
-}: {
-    text: string;
-    children: React.ReactNode;
-    withoutLogo?: boolean;
-}): JSX.Element => {
+}: CopyButtonProps): React.ReactNode => {
     const [isShowTooltip, setIsShowTooltip] = useState(false);
-    const timerRef = useRef(null);
+    const timerRef = useRef<number | null>(null);
 
     const copyText = () => {
         clearTimeout(timerRef.current);
@@ -59,7 +63,6 @@ const CopyButton = ({
             content={<span>Copied!</span>}
             position={TOOLTIP_POSITION.top}
             isShow={isShowTooltip}
-            {...props}
         >
             <CopyButtonContainer onClick={() => copyText()} {...props}>
                 {children}

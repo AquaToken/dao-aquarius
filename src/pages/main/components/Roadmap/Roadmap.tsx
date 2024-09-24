@@ -151,10 +151,10 @@ const SlideDate = styled.div`
     margin-bottom: 3.2rem;
 `;
 
-const SlideProgress = styled.div<{ active?: boolean }>`
+const SlideProgress = styled.div<{ $active?: boolean }>`
     width: 3.2rem;
     height: 3.2rem;
-    background: ${({ active }) => (active ? COLORS.tooltip : COLORS.white)};
+    background: ${({ $active }) => ($active ? COLORS.tooltip : COLORS.white)};
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -193,7 +193,7 @@ const Roadmap = () => {
     const isMobile = useRef(null);
 
     const initSlider = () => {
-        isMobile.current = window.innerWidth < 992;
+        isMobile.current = +window.innerWidth < 992;
 
         const slidesCount = steps.length;
 
@@ -229,7 +229,7 @@ const Roadmap = () => {
         if (activeSlide + 1 > (isMobile.current ? steps.length : steps.length - 2)) {
             return;
         }
-        setActiveSlide((prevState) => prevState + 1);
+        setActiveSlide(prevState => prevState + 1);
     };
 
     const previousSlide = () => {
@@ -237,7 +237,7 @@ const Roadmap = () => {
             return;
         }
 
-        setActiveSlide((prevState) => prevState - 1);
+        setActiveSlide(prevState => prevState - 1);
     };
 
     return (
@@ -265,7 +265,7 @@ const Roadmap = () => {
                             {steps.map(({ date, title, text }, index) => (
                                 <Slide key={date}>
                                     <SlideDate>{date}</SlideDate>
-                                    <SlideProgress active={index + 1 <= completedStepsCount}>
+                                    <SlideProgress $active={index + 1 <= completedStepsCount}>
                                         <IconTick />
                                     </SlideProgress>
                                     <SlideTitle>{title}</SlideTitle>

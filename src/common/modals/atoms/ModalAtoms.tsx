@@ -2,7 +2,14 @@ import styled from 'styled-components';
 import { Breakpoints, COLORS, Z_INDEX } from '../../styles';
 import { flexAllCenter, respondDown } from '../../mixins';
 import * as React from 'react';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import {
+    DetailedReactHTMLElement,
+    HTMLAttributes,
+    useEffect,
+    useLayoutEffect,
+    useRef,
+    useState,
+} from 'react';
 import CloseIcon from '../../assets/img/icon-close.svg';
 import useOnClickOutside from '../../hooks/useOutsideClick';
 
@@ -26,12 +33,12 @@ const ModalWrapper = styled.div`
     `};
 `;
 
-const ModalInner = styled.div<{ withBackground: boolean; isShow: boolean }>`
+const ModalInner = styled.div<{ $withBackground: boolean; $isShow: boolean }>`
     border-radius: 1rem;
     background: ${COLORS.white};
     box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
-    padding: ${({ withBackground }) => (withBackground ? '0 0 1rem' : '6.4rem 0 1rem')};
-    animation: ${({ isShow }) => (isShow ? 'opening 300ms' : 'closing 300ms')};
+    padding: ${({ $withBackground }) => ($withBackground ? '0 0 1rem' : '6.4rem 0 1rem')};
+    animation: ${({ $isShow }) => ($isShow ? 'opening 300ms' : 'closing 300ms')};
     position: relative;
 
     ${respondDown(Breakpoints.md)`
@@ -41,7 +48,7 @@ const ModalInner = styled.div<{ withBackground: boolean; isShow: boolean }>`
         left: 0;
         right: 0;
         border-radius: 0;
-        padding: ${({ withBackground }) => (withBackground ? '0 0 1rem' : '3.2rem 0 1rem')};
+        padding: ${({ $withBackground }) => ($withBackground ? '0 0 1rem' : '3.2rem 0 1rem')};
         overflow-y: auto;
     `};
 
@@ -76,14 +83,15 @@ const ModalContent = styled.div`
     `};
 `;
 
-const CloseButton = styled.div<{ withBackground: boolean }>`
+const CloseButton = styled.div<{ $withBackground: boolean }>`
     position: absolute;
     top: 0;
     right: 0;
     cursor: pointer;
     padding: 2.5rem;
     box-sizing: border-box;
-    background-color: ${({ withBackground }) => (withBackground ? COLORS.white : COLORS.lightGray)};
+    background-color: ${({ $withBackground }) =>
+        $withBackground ? COLORS.white : COLORS.lightGray};
     border-radius: 1rem;
 
     ${respondDown(Breakpoints.md)`
@@ -118,11 +126,11 @@ export const ModalBody = ({
     disableClickOutside,
 }: {
     resolver: (unknown) => void;
-    children: JSX.Element;
+    children: DetailedReactHTMLElement<HTMLAttributes<HTMLElement>, HTMLElement>;
     params: unknown;
     hideClose: boolean;
     triggerClosePromise: Promise<unknown>;
-    backgroundImage: JSX.Element | null;
+    backgroundImage: React.ReactNode | null;
     disableClickOutside: boolean;
 }): JSX.Element => {
     const [isShow, setIsShow] = useState(true);
@@ -157,7 +165,7 @@ export const ModalBody = ({
         }
     };
 
-    const confirm = (data) => {
+    const confirm = data => {
         setIsShow(false);
         setResolvedData({ ...data, isConfirmed: true });
     };
@@ -168,7 +176,7 @@ export const ModalBody = ({
     };
 
     useEffect(() => {
-        triggerClosePromise.then((res) => {
+        triggerClosePromise.then(res => {
             setIsShow(false);
             setResolvedData(res);
         });
@@ -176,15 +184,15 @@ export const ModalBody = ({
 
     return (
         <ModalWrapper>
-            <ModalInner ref={ref} isShow={isShow} withBackground={Boolean(backgroundImage)}>
+            <ModalInner ref={ref} $isShow={isShow} $withBackground={Boolean(backgroundImage)}>
                 {backgroundImage && <BackgroundBlock>{backgroundImage}</BackgroundBlock>}
                 {!hideClose && (
-                    <CloseButton onClick={() => close()} withBackground={Boolean(backgroundImage)}>
+                    <CloseButton onClick={() => close()} $withBackground={Boolean(backgroundImage)}>
                         <CloseIcon />
                     </CloseButton>
                 )}
                 <ModalContent>
-                    {React.cloneElement(children, { confirm, close, params })}
+                    {React.cloneElement(children, { confirm, close, params } as any)}
                 </ModalContent>
             </ModalInner>
         </ModalWrapper>

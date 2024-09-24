@@ -10,10 +10,10 @@ import IconPositive from 'assets/icon-arrow-positive-16.svg';
 
 import { formatBalance } from '../../common/helpers/helpers';
 
-const Changes = styled.span<{ isPositive?: boolean }>`
+const Changes = styled.span<{ $isPositive?: boolean }>`
     display: flex;
     align-items: center;
-    color: ${({ isPositive }) => (isPositive ? COLORS.green : COLORS.pinkRed)}!important;
+    color: ${({ $isPositive }) => ($isPositive ? COLORS.green : COLORS.pinkRed)}!important;
 
     svg {
         margin-right: 0.4rem;
@@ -41,7 +41,7 @@ const Changes24 = ({ expertData }: Props): JSX.Element => {
     }
 
     return (
-        <Changes isPositive={Number(change24hString) > 0}>
+        <Changes $isPositive={Number(change24hString) > 0}>
             {Number(change24hString) > 0 ? <IconPositive /> : <IconNegative />}
             {Math.abs(Number(change24hString))} %
         </Changes>

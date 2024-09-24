@@ -1,9 +1,9 @@
-import { Asset } from '@stellar/stellar-sdk';
 import axios from 'axios';
 
 import { API_URL_STELLAR_EXPERT } from 'constants/api';
 
 import type { ExpertAssetData } from 'types/api-stellar-expert';
+import { Asset } from 'types/stellar';
 
 export const getAssetDetails = (asset: Asset): Promise<ExpertAssetData> =>
     axios

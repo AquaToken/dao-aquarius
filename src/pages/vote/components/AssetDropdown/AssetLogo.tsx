@@ -1,17 +1,18 @@
+import * as StellarSdk from '@stellar/stellar-sdk';
 import * as React from 'react';
+import { useState } from 'react';
 import styled, { css } from 'styled-components';
+
 import UnknownLogo from '../../../../common/assets/img/asset-unknown-logo.svg';
+import Loader from '../../../../common/assets/img/loader.svg';
 import { flexAllCenter } from '../../../../common/mixins';
 import { COLORS } from '../../../../common/styles';
-import Loader from '../../../../common/assets/img/loader.svg';
-import { useState } from 'react';
-import { AssetSimple } from '../../../../store/assetsStore/types';
-import * as StellarSdk from '@stellar/stellar-sdk';
-import { LumenInfo } from '../../../../store/assetsStore/reducer';
 import { getAssetString } from '../../../../store/assetsStore/actions';
+import { LumenInfo } from '../../../../store/assetsStore/reducer';
+import { AssetSimple } from '../../../../store/assetsStore/types';
 import useAssetsStore from '../../../../store/assetsStore/useAssetsStore';
 
-export const logoStyles = (isCircle: boolean = true) => css`
+export const logoStyles = (isCircle = true) => css`
     height: 3.2rem;
     width: 3.2rem;
     max-height: 3.2rem;
@@ -38,15 +39,15 @@ export const bigLogoStyles = (isCircle: boolean) => css`
     border-radius: ${isCircle ? '50%' : '0.5rem'};
 `;
 
-const Logo = styled.img<{ isSmall?: boolean; isBig?: boolean; isCircle?: boolean }>`
-    ${({ isSmall, isBig, isCircle }) => {
-        if (isSmall) {
-            return smallLogoStyles(isCircle);
+const Logo = styled.img<{ $isSmall?: boolean; $isBig?: boolean; $isCircle?: boolean }>`
+    ${({ $isSmall, $isBig, $isCircle }) => {
+        if ($isSmall) {
+            return smallLogoStyles($isCircle);
         }
-        if (isBig) {
-            return bigLogoStyles(isCircle);
+        if ($isBig) {
+            return bigLogoStyles($isCircle);
         }
-        return logoStyles(isCircle);
+        return logoStyles($isCircle);
     }}
 `;
 
@@ -62,15 +63,19 @@ const Unknown = styled(UnknownLogo)<{ $isSmall?: boolean; $isBig?: boolean; $isC
     }}
 `;
 
-const LogoLoaderContainer = styled.div<{ isSmall?: boolean; isBig?: boolean; isCircle?: boolean }>`
-    ${({ isSmall, isBig, isCircle }) => {
-        if (isSmall) {
-            return smallLogoStyles(isCircle);
+const LogoLoaderContainer = styled.div<{
+    $isSmall?: boolean;
+    $isBig?: boolean;
+    $isCircle?: boolean;
+}>`
+    ${({ $isSmall, $isBig, $isCircle }) => {
+        if ($isSmall) {
+            return smallLogoStyles($isCircle);
         }
-        if (isBig) {
-            return bigLogoStyles(isCircle);
+        if ($isBig) {
+            return bigLogoStyles($isCircle);
         }
-        return logoStyles(isCircle);
+        return logoStyles($isCircle);
     }}
     ${flexAllCenter};
     background-color: ${COLORS.descriptionText};
@@ -104,7 +109,7 @@ const AssetLogo = ({
 
     if (logoUrl === undefined) {
         return (
-            <LogoLoaderContainer isSmall={isSmall} isBig={isBig} isCircle={isCircle}>
+            <LogoLoaderContainer $isSmall={isSmall} $isBig={isBig} $isCircle={isCircle}>
                 <LogoLoader />
             </LogoLoaderContainer>
         );
@@ -118,9 +123,9 @@ const AssetLogo = ({
         <Logo
             src={logoUrl}
             alt=""
-            isSmall={isSmall}
-            isBig={isBig}
-            isCircle={isCircle}
+            $isSmall={isSmall}
+            $isBig={isBig}
+            $isCircle={isCircle}
             onError={() => {
                 setIsErrorLoad(true);
             }}
