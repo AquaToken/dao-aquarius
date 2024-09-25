@@ -5,9 +5,9 @@
   "scripts": {
     "build": "yarn run clean-dist && webpack --config=configs/webpack-prod.js",
     "clean-dist": "rimraf dist/*",
-    "prettier-fix": "prettier --write '**/*.{js,jsx,ts,tsx,json,css,md}'",
-    "eslint-fix": "eslint '**/*.{js,jsx,ts,tsx}' --quiet --fix",
-    "lint-fix": "yarn prettier-fix & yarn lint-fix",
+    "prettier-fix": "prettier --write 'src/**/*.{js,jsx,ts,tsx,json,css,md}'",
+    "eslint-fix": "eslint 'src/**/*.{js,jsx,ts,tsx}' --quiet --fix",
+    "lint-fix": "yarn run prettier-fix && yarn run eslint-fix",
     "start": "yarn run start-dev",
     "start-dev": "webpack serve --config=configs/webpack-dev.js",
     "start-prod": "yarn run build && node express.js",
