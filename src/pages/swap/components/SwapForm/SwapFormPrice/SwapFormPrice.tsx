@@ -1,7 +1,9 @@
 import * as React from 'react';
-import { formatBalance } from '../../../../../common/helpers/helpers';
-import Revert from 'assets/icon-revert.svg';
 import styled from 'styled-components';
+
+import Revert from 'assets/icon-revert.svg';
+
+import { formatBalance } from '../../../../../common/helpers/helpers';
 import { COLORS } from '../../../../../common/styles';
 
 const Container = styled.div`

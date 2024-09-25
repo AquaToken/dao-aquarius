@@ -1,25 +1,27 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
+import styled from 'styled-components';
+
+import VotesAmountModal, { ContentRow, Label } from './VotesAmountModal';
+
+import Button from '../../../../../common/basics/Button';
+import Select, { Option } from '../../../../../common/basics/Select';
+import ErrorHandler from '../../../../../common/helpers/error-handler';
+import { getDateString } from '../../../../../common/helpers/helpers';
+import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
+import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
+import { respondDown } from '../../../../../common/mixins';
+import { ModalDescription, ModalTitle } from '../../../../../common/modals/atoms/ModalAtoms';
 import {
     ModalService,
     StellarService,
     ToastService,
 } from '../../../../../common/services/globalServices';
-import { SELECTED_PAIRS_ALIAS } from '../MainPage';
 import { BuildSignAndSubmitStatuses } from '../../../../../common/services/wallet-connect.service';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
-import Select, { Option } from '../../../../../common/basics/Select';
-import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
-import { ModalDescription, ModalTitle } from '../../../../../common/modals/atoms/ModalAtoms';
-import { getDateString } from '../../../../../common/helpers/helpers';
-import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../../../../common/styles';
-import VotesAmountModal, { ContentRow, Label } from './VotesAmountModal';
-import Button from '../../../../../common/basics/Button';
-import { respondDown } from '../../../../../common/mixins';
 import { LoginTypes } from '../../../../../store/authStore/types';
-import ErrorHandler from '../../../../../common/helpers/error-handler';
-import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
+import useAuthStore from '../../../../../store/authStore/useAuthStore';
+import { SELECTED_PAIRS_ALIAS } from '../MainPage';
 
 const ClaimBack = styled.div`
     margin: 2rem 0 3.2rem;

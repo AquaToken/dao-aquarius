@@ -1,24 +1,26 @@
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
+
 import BackgroundImageLeft from 'assets/background-left.svg';
 import BackgroundImageRight from 'assets/background-right.svg';
-import { Breakpoints, COLORS } from '../../../common/styles';
-import { commonMaxWidth, flexAllCenter, respondDown } from '../../../common/mixins';
-import PageLoader from '../../../common/basics/PageLoader';
-import { getProposalsRequest, PROPOSAL_FILTER } from '../api/api';
-import ToggleGroup from '../../../common/basics/ToggleGroup';
-import CreateProposal from '../components/GovernanceMainPage/CreateProposal/CreateProposal';
-import Select from '../../../common/basics/Select';
-import ProposalPreview from '../components/GovernanceMainPage/ProposalPreview/ProposalPreview';
-import FAQ from '../components/GovernanceMainPage/FAQ/FAQ';
-import { useHistory, useLocation } from 'react-router-dom';
-import useAuthStore from '../../../store/authStore/useAuthStore';
-import { ModalService } from '../../../common/services/globalServices';
-import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
-import { useIsOnViewport } from '../../../common/hooks/useIsOnViewport';
 import ArrowDown from 'assets/icon-arrow-down.svg';
+
+import PageLoader from '../../../common/basics/PageLoader';
+import Select from '../../../common/basics/Select';
+import ToggleGroup from '../../../common/basics/ToggleGroup';
+import { useIsOnViewport } from '../../../common/hooks/useIsOnViewport';
+import { commonMaxWidth, flexAllCenter, respondDown } from '../../../common/mixins';
+import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
+import { ModalService } from '../../../common/services/globalServices';
+import { Breakpoints, COLORS } from '../../../common/styles';
 import { GovernanceRoutes } from '../../../routes';
+import useAuthStore from '../../../store/authStore/useAuthStore';
+import { getProposalsRequest, PROPOSAL_FILTER } from '../api/api';
+import CreateProposal from '../components/GovernanceMainPage/CreateProposal/CreateProposal';
+import FAQ from '../components/GovernanceMainPage/FAQ/FAQ';
+import ProposalPreview from '../components/GovernanceMainPage/ProposalPreview/ProposalPreview';
 
 export const CREATE_DISCUSSION_COST = 100000;
 export const CREATE_PROPOSAL_COST = 900000;
@@ -220,7 +222,7 @@ const EmptyLink = styled.span`
     cursor: pointer;
 `;
 
-const scrollToRef = (ref) => {
+const scrollToRef = ref => {
     ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
 
@@ -260,7 +262,7 @@ const GovernanceMainPage = (): JSX.Element => {
             return;
         }
         setLoading(true);
-        getProposalsRequest(filter, account?.accountId()).then((result) => {
+        getProposalsRequest(filter, account?.accountId()).then(result => {
             setProposals(result.data.results.reverse());
             setLoading(false);
         });
@@ -269,7 +271,7 @@ const GovernanceMainPage = (): JSX.Element => {
     const location = useLocation();
     const history = useHistory();
 
-    const setFilterValue = (value) => {
+    const setFilterValue = value => {
         if (value === PROPOSAL_FILTER.MY && !isLogged) {
             ModalService.openModal(ChooseLoginMethodModal, {
                 redirectURL: `${GovernanceRoutes.main}?${UrlParams.filter}=${PROPOSAL_FILTER.MY}`,
@@ -354,7 +356,7 @@ const GovernanceMainPage = (): JSX.Element => {
                                 <PageLoader />
                             ) : proposals.length ? (
                                 <div>
-                                    {proposals.map((proposal) => {
+                                    {proposals.map(proposal => {
                                         return (
                                             <ProposalPreview
                                                 key={proposal.id}

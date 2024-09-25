@@ -1,7 +1,7 @@
-import { logger } from './middlewares';
-import authStates from './authStore';
-import { ActionSimpleResult, State } from './types';
 import assetStore from './assetsStore';
+import authStates from './authStore';
+import { logger } from './middlewares';
+import { ActionSimpleResult, State } from './types';
 
 export const initialState: State = {
     authStore: authStates.initialState,

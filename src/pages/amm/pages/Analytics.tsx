@@ -1,29 +1,31 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { getTotalStats, getVolume24h } from '../api/api';
+import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
+
+import Plus from 'assets/icon-plus.svg';
+import Search from 'assets/icon-search.svg';
+
+import Button from '../../../common/basics/Button';
+import Input from '../../../common/basics/Input';
+import { formatBalance } from '../../../common/helpers/helpers';
+import { useDebounce } from '../../../common/hooks/useDebounce';
 import {
     commonMaxWidth,
     flexAllCenter,
     flexRowSpaceBetween,
     respondDown,
 } from '../../../common/mixins';
-import Button from '../../../common/basics/Button';
-import Plus from 'assets/icon-plus.svg';
-import Search from 'assets/icon-search.svg';
-import { Breakpoints, COLORS } from '../../../common/styles';
-import Input from '../../../common/basics/Input';
-import { AmmRoutes } from '../../../routes';
-import { useHistory } from 'react-router-dom';
-import { formatBalance } from '../../../common/helpers/helpers';
-import useAuthStore from '../../../store/authStore/useAuthStore';
-import { ModalService } from '../../../common/services/globalServices';
 import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
-import { useDebounce } from '../../../common/hooks/useDebounce';
-import VolumeChart from '../components/VolumeChart/VolumeChart';
-import LiquidityChart from '../components/LiquidityChart/LiquidityChart';
+import { ModalService } from '../../../common/services/globalServices';
+import { Breakpoints, COLORS } from '../../../common/styles';
+import { AmmRoutes } from '../../../routes';
+import useAuthStore from '../../../store/authStore/useAuthStore';
+import { getTotalStats, getVolume24h } from '../api/api';
 import AllPools from '../components/AllPools/AllPools';
+import LiquidityChart from '../components/LiquidityChart/LiquidityChart';
 import MyLiquidity from '../components/MyLiquidity/MyLiquidity';
+import VolumeChart from '../components/VolumeChart/VolumeChart';
 
 const Container = styled.main`
     height: 100%;
@@ -181,13 +183,13 @@ const Analytics = () => {
     const { isLogged } = useAuthStore();
 
     useEffect(() => {
-        getTotalStats().then((res) => {
+        getTotalStats().then(res => {
             setTotalStats(res);
         });
     }, []);
 
     useEffect(() => {
-        getVolume24h().then((res) => {
+        getVolume24h().then(res => {
             setVolume24h(res);
         });
     }, []);
@@ -290,7 +292,7 @@ const Analytics = () => {
                         </ListHeader>
                         {activeTab === Tabs.top && <AllPools search={debouncedSearch} />}
                         {activeTab === Tabs.my && (
-                            <MyLiquidity onlyList setTotal={(val) => setMyTotal(val)} />
+                            <MyLiquidity onlyList setTotal={val => setMyTotal(val)} />
                         )}
                     </ListBlock>
                 </Section>

@@ -1,5 +1,6 @@
 import { isConnected, getPublicKey, signTransaction } from '@lobstrco/signer-extension-api';
 import * as StellarSdk from '@stellar/stellar-sdk';
+
 import EventService from './event.service';
 
 export enum LobstrExtensionEvents {

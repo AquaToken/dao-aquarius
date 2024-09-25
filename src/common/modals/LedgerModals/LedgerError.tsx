@@ -1,10 +1,11 @@
 import * as React from 'react';
 import styled from 'styled-components';
+
+import Button from '../../basics/Button';
+import { IconFail } from '../../basics/Icons';
 import { respondDown } from '../../mixins';
 import { Breakpoints } from '../../styles';
 import { ModalDescription, ModalTitle } from '../atoms/ModalAtoms';
-import Button from '../../basics/Button';
-import { IconFail } from '../../basics/Icons';
 
 const Container = styled.div`
     width: 52.3rem;

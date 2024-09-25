@@ -2,9 +2,10 @@ import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
+import CopyIcon from 'assets/icon-copy.svg';
+
 import Tooltip, { TOOLTIP_POSITION } from './Tooltip';
 
-import CopyIcon from 'assets/icon-copy.svg';
 import { COLORS } from '../styles';
 
 const CopyButtonContainer = styled(props => <div {...props} />)`

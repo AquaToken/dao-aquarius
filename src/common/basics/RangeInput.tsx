@@ -1,7 +1,8 @@
 import * as React from 'react';
-import styled from 'styled-components';
-import { COLORS } from '../styles';
 import { useEffect, useRef, useState } from 'react';
+import styled from 'styled-components';
+
+import { COLORS } from '../styles';
 
 const Pillar = styled.div.attrs<{ value: number; disabled?: boolean }>(({ value, disabled }) => ({
     style: {
@@ -141,7 +142,7 @@ const RangeInput = ({
         onChange(value);
     };
 
-    const onMouseMove = (e) => {
+    const onMouseMove = e => {
         if (!isMouseDrag) {
             return;
         }
@@ -172,7 +173,7 @@ const RangeInput = ({
     return (
         <Pillar
             value={value}
-            onClick={(e) => {
+            onClick={e => {
                 const position = getClickPosition(e as unknown as MouseEvent, ref.current);
                 setValue(position);
                 onChange(position);
@@ -180,45 +181,40 @@ const RangeInput = ({
             disabled={disabled}
             ref={ref}
         >
-            <Mark
-                percent={0}
-                value={value}
-                disabled={disabled}
-                onClick={(e) => onMarkClick(e, 0)}
-            />
+            <Mark percent={0} value={value} disabled={disabled} onClick={e => onMarkClick(e, 0)} />
             <Mark
                 percent={25}
                 value={value}
                 disabled={disabled}
-                onClick={(e) => onMarkClick(e, 25)}
+                onClick={e => onMarkClick(e, 25)}
             />
             <Mark
                 percent={50}
                 value={value}
                 disabled={disabled}
-                onClick={(e) => onMarkClick(e, 50)}
+                onClick={e => onMarkClick(e, 50)}
             />
             <Mark
                 percent={75}
                 value={value}
                 disabled={disabled}
-                onClick={(e) => onMarkClick(e, 75)}
+                onClick={e => onMarkClick(e, 75)}
             />
             <Mark
                 percent={100}
                 value={value}
                 disabled={disabled}
-                onClick={(e) => onMarkClick(e, 100)}
+                onClick={e => onMarkClick(e, 100)}
             />
             <Thumb
                 disabled={disabled}
                 value={value}
                 isDrag={isMouseDrag}
-                onMouseDown={(e) => {
+                onMouseDown={e => {
                     e.stopPropagation();
                     setIsMouseDrag(true);
                 }}
-                onTouchStart={(e) => {
+                onTouchStart={e => {
                     e.stopPropagation();
                     setIsMouseDrag(true);
                 }}

@@ -1,10 +1,12 @@
 import * as React from 'react';
-import PoolsList from '../../../pages/amm/components/PoolsList/PoolsList';
-import { ModalContainer, ModalTitle } from '../atoms/ModalAtoms';
-import { Stepper } from './MigrateLiquidityStep1';
 import styled from 'styled-components';
+
+import { Stepper } from './MigrateLiquidityStep1';
+
+import PoolsList from '../../../pages/amm/components/PoolsList/PoolsList';
 import { customScroll, respondDown } from '../../mixins';
 import { Breakpoints } from '../../styles';
+import { ModalContainer, ModalTitle } from '../atoms/ModalAtoms';
 
 const Content = styled.div`
     max-height: 60vh;

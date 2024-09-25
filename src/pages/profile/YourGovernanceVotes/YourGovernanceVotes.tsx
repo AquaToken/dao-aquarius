@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+
+import PageLoader from '../../../common/basics/PageLoader';
+import { GovernanceRoutes } from '../../../routes';
 import useAuthStore from '../../../store/authStore/useAuthStore';
 import { getProposalsRequest, PROPOSAL_FILTER } from '../../governance/api/api';
 import ProposalPreview from '../../governance/components/GovernanceMainPage/ProposalPreview/ProposalPreview';
 import { Container, Header, Title } from '../AmmRewards/AmmRewards';
-import PageLoader from '../../../common/basics/PageLoader';
-import { Link } from 'react-router-dom';
-import { GovernanceRoutes } from '../../../routes';
 import { Empty, Section } from '../YourVotes/YourVotes';
 
 const YourGovernanceVotes = () => {
@@ -15,7 +16,7 @@ const YourGovernanceVotes = () => {
     const { account } = useAuthStore();
 
     useEffect(() => {
-        getProposalsRequest(PROPOSAL_FILTER.MY_VOTES, account.accountId()).then((res) => {
+        getProposalsRequest(PROPOSAL_FILTER.MY_VOTES, account.accountId()).then(res => {
             setProposals(res.data.results.reverse());
         });
     }, []);
@@ -29,7 +30,7 @@ const YourGovernanceVotes = () => {
             {!proposals ? (
                 <PageLoader />
             ) : proposals.length ? (
-                proposals.map((proposal) => {
+                proposals.map(proposal => {
                     return <ProposalPreview key={proposal.id} proposal={proposal} withMyVotes />;
                 })
             ) : (

@@ -1,5 +1,6 @@
 import { isConnected, signTransaction, requestAccess, isAllowed } from '@stellar/freighter-api';
 import * as StellarSdk from '@stellar/stellar-sdk';
+
 import EventService from './event.service';
 
 export enum FreighterEvents {

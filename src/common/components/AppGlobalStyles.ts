@@ -1,4 +1,5 @@
 import { createGlobalStyle } from 'styled-components';
+
 import { COLORS, FONT_FAMILY } from '../styles';
 
 const AppGlobalStyle = createGlobalStyle`

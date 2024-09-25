@@ -1,7 +1,8 @@
 import * as React from 'react';
-import Question from '../../../../../common/basics/Question';
-import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import styled from 'styled-components';
+
+import Question from '../../../../../common/basics/Question';
 import { VoteRoutes } from '../../../../../routes';
 
 const Container = styled.div`

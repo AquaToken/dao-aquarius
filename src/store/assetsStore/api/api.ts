@@ -1,4 +1,5 @@
 import axios from 'axios';
+
 import { ListResponse } from '../../../pages/vote/api/types';
 import { Asset } from '../types';
 
@@ -10,7 +11,7 @@ export const getAssetsRequest = () => {
         const issuerOrgs = data.issuer_orgs;
 
         return issuerOrgs.reduce((acc, anchor) => {
-            anchor.assets.forEach((asset) => {
+            anchor.assets.forEach(asset => {
                 if (!asset.disabled && !anchor.disabled && !asset.unlisted) {
                     acc.push(asset);
                 }
@@ -28,7 +29,7 @@ export const getAssetsInfo = async (
     // Function to fetch a batch of assets
     const fetchBatch = async (batch: Array<{ code: string; issuer: string }>) => {
         const params = new URLSearchParams();
-        batch.forEach((asset) => params.append('asset', `${asset.code}:${asset.issuer}`));
+        batch.forEach(asset => params.append('asset', `${asset.code}:${asset.issuer}`));
 
         const { data } = await axios.get<ListResponse<Asset>>(assetsInfoUrl, { params });
         return data.results;

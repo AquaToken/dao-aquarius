@@ -1,20 +1,22 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
+
+import IconDislike from 'assets/icon-dislike-black.svg';
+import IconLike from 'assets/icon-like-white.svg';
+import IconTick from 'assets/icon-tick.svg';
+
+import Button from '../../../../../../common/basics/Button';
+import Tooltip, { TOOLTIP_POSITION } from '../../../../../../common/basics/Tooltip';
+import { formatBalance } from '../../../../../../common/helpers/helpers';
+import { flexRowSpaceBetween } from '../../../../../../common/mixins';
+import ChooseLoginMethodModal from '../../../../../../common/modals/ChooseLoginMethodModal';
 import { ModalService, StellarService } from '../../../../../../common/services/globalServices';
 import { StellarEvents } from '../../../../../../common/services/stellar.service';
-import { formatBalance } from '../../../../../../common/helpers/helpers';
 import useAuthStore from '../../../../../../store/authStore/useAuthStore';
-import Button from '../../../../../../common/basics/Button';
-import IconTick from 'assets/icon-tick.svg';
-import IconLike from 'assets/icon-like-white.svg';
-import IconDislike from 'assets/icon-dislike-black.svg';
-import { flexRowSpaceBetween } from '../../../../../../common/mixins';
 import { PairStats } from '../../../../api/types';
-import ChooseLoginMethodModal from '../../../../../../common/modals/ChooseLoginMethodModal';
-import VotesAmountModal from '../../VoteModals/VotesAmountModal';
-import Tooltip, { TOOLTIP_POSITION } from '../../../../../../common/basics/Tooltip';
 import { AQUA, DOWN_ICE, UP_ICE } from '../../MainPage';
+import VotesAmountModal from '../../VoteModals/VotesAmountModal';
 
 const iconStyles = css`
     margin-left: 1.6rem;
@@ -73,7 +75,7 @@ const VoteButton = ({
 
     const [balanceDown, setBalanceDown] = useState(isLogged ? getDownVotesValue() : null);
 
-    const downVote = (event) => {
+    const downVote = event => {
         event.preventDefault();
         event.stopPropagation();
         if (!isLogged) {
@@ -115,7 +117,7 @@ const VoteButton = ({
         return (
             <Container>
                 <Button
-                    onClick={(e) => {
+                    onClick={e => {
                         e.preventDefault();
                         e.stopPropagation();
                         onButtonClick();
@@ -135,7 +137,7 @@ const VoteButton = ({
                         isSquare
                         likeDisabled
                         disabled={disabled}
-                        onClick={(e) => downVote(e)}
+                        onClick={e => downVote(e)}
                     >
                         <IconDislike />
                     </DownvoteButton>
@@ -147,7 +149,7 @@ const VoteButton = ({
         <Container>
             <Balance>{formatBalance((+balanceUp || 0) - (+balanceDown || 0), true)}</Balance>
             <Button
-                onClick={(e) => {
+                onClick={e => {
                     e.preventDefault();
                     e.stopPropagation();
                     onButtonClick();
@@ -167,7 +169,7 @@ const VoteButton = ({
                     isSquare
                     likeDisabled
                     disabled={disabled}
-                    onClick={(e) => downVote(e)}
+                    onClick={e => downVote(e)}
                 >
                     <IconDislike />
                 </DownvoteButton>

@@ -1,16 +1,18 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import AccountViewer from '../../../../common/basics/AccountViewer';
-import { formatBalance } from '../../../../common/helpers/helpers';
-import { getPoolMembers } from '../../api/api';
 import styled from 'styled-components';
+
+import LinkIcon from 'assets/icon-external-link.svg';
+
+import AccountViewer from '../../../../common/basics/AccountViewer';
+import PageLoader from '../../../../common/basics/PageLoader';
+import Pagination from '../../../../common/basics/Pagination';
+import { formatBalance } from '../../../../common/helpers/helpers';
+import { useUpdateIndex } from '../../../../common/hooks/useUpdateIndex';
 import { respondDown } from '../../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../../common/styles';
-import Pagination from '../../../../common/basics/Pagination';
-import PageLoader from '../../../../common/basics/PageLoader';
 import { Empty } from '../../../profile/YourVotes/YourVotes';
-import { useUpdateIndex } from '../../../../common/hooks/useUpdateIndex';
-import LinkIcon from 'assets/icon-external-link.svg';
+import { getPoolMembers } from '../../api/api';
 
 const PAGE_SIZE = 10;
 
@@ -95,7 +97,7 @@ const PoolMembers = ({ poolId, totalShare }: { poolId: string; totalShare: strin
             <Title>Pool members</Title>
             {members
                 .sort((a, b) => Number(b.balance) - Number(a.balance))
-                .map((member) => (
+                .map(member => (
                     <Row key={member.account_address}>
                         <LinkToExpert
                             href={`https://stellar.expert/explorer/public/account/${member.account_address}`}

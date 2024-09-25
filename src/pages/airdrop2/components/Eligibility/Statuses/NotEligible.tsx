@@ -1,7 +1,9 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { COLORS } from '../../../../../common/styles';
+
 import Fail from 'assets/icon-fail-white.svg';
+
+import { COLORS } from '../../../../../common/styles';
 
 const Container = styled.div`
     display: flex;

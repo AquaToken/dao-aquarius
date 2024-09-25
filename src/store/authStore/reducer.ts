@@ -1,5 +1,7 @@
-import { AUTH_ACTIONS, AuthStore, LoginTypes } from './types';
 import { SignClientTypes } from '@walletconnect/types';
+
+import { AUTH_ACTIONS, AuthStore, LoginTypes } from './types';
+
 import AccountService from '../../common/services/account.service';
 import { ActionSimpleResult } from '../types';
 

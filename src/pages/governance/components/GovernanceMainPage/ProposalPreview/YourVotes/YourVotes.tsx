@@ -1,29 +1,31 @@
 import * as React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import Table, { CellAlign } from '../../../../../../common/basics/Table';
-import { Breakpoints, COLORS } from '../../../../../../common/styles';
-import { formatBalance, getDateString } from '../../../../../../common/helpers/helpers';
-import { LoginTypes } from '../../../../../../store/authStore/types';
-import DotsLoader from '../../../../../../common/basics/DotsLoader';
+import styled from 'styled-components';
+
+import Aqua from 'assets/aqua-logo-small.svg';
+import Ice from 'assets/ice-logo.svg';
+import IconFail from 'assets/icon-fail.svg';
+import IconSuccess from 'assets/icon-success.svg';
+
 import Button from '../../../../../../common/basics/Button';
-import { BuildSignAndSubmitStatuses } from '../../../../../../common/services/wallet-connect.service';
+import Checkbox from '../../../../../../common/basics/Checkbox';
+import DotsLoader from '../../../../../../common/basics/DotsLoader';
+import Table, { CellAlign } from '../../../../../../common/basics/Table';
+import ErrorHandler from '../../../../../../common/helpers/error-handler';
+import { formatBalance, getDateString } from '../../../../../../common/helpers/helpers';
+import { openCurrentWalletIfExist } from '../../../../../../common/helpers/wallet-connect-helpers';
+import { respondDown } from '../../../../../../common/mixins';
 import { StellarService, ToastService } from '../../../../../../common/services/globalServices';
 import {
     GOV_ICE_CODE,
     ICE_ISSUER,
     StellarEvents,
 } from '../../../../../../common/services/stellar.service';
-import ErrorHandler from '../../../../../../common/helpers/error-handler';
+import { BuildSignAndSubmitStatuses } from '../../../../../../common/services/wallet-connect.service';
+import { Breakpoints, COLORS } from '../../../../../../common/styles';
+import { LoginTypes } from '../../../../../../store/authStore/types';
 import useAuthStore from '../../../../../../store/authStore/useAuthStore';
-import styled from 'styled-components';
-import Aqua from 'assets/aqua-logo-small.svg';
-import Ice from 'assets/ice-logo.svg';
-import IconFail from 'assets/icon-fail.svg';
-import IconSuccess from 'assets/icon-success.svg';
-import Checkbox from '../../../../../../common/basics/Checkbox';
-import { respondDown } from '../../../../../../common/mixins';
 import { LogVote } from '../../../../api/types';
-import { openCurrentWalletIfExist } from '../../../../../../common/helpers/wallet-connect-helpers';
 
 const AquaLogo = styled(Aqua)`
     height: 1.6rem;
@@ -82,7 +84,7 @@ const YourVotes = ({ proposal }) => {
     useEffect(() => {
         const unsub = StellarService.event.sub(({ type }) => {
             if (type === StellarEvents.claimableUpdate) {
-                setClaimUpdateId((prevState) => prevState + 1);
+                setClaimUpdateId(prevState => prevState + 1);
             }
         });
 
@@ -141,7 +143,7 @@ const YourVotes = ({ proposal }) => {
                     isSmall
                     pending={balanceId === pendingId}
                     disabled={Boolean(pendingId) && balanceId !== pendingId}
-                    onClick={(event) => claimBack(event, vote)}
+                    onClick={event => claimBack(event, vote)}
                 >
                     claim
                 </Button>
@@ -171,11 +173,11 @@ const YourVotes = ({ proposal }) => {
     );
 
     const selectAll = useCallback(
-        (event) => {
+        event => {
             event.stopPropagation();
             event.preventDefault();
 
-            if (Boolean(selectedClaims.size)) {
+            if (selectedClaims.size) {
                 return setSelectedClaims(new Map());
             }
 
@@ -273,7 +275,7 @@ const YourVotes = ({ proposal }) => {
                         hideOnMobile: isLedgerAuth,
                     },
                 ]}
-                body={proposal.logvote_set.map((log) => ({
+                body={proposal.logvote_set.map(log => ({
                     key: log.claimable_balance_id,
                     isNarrow: true,
                     mobileBackground: COLORS.lightGray,
@@ -347,8 +349,8 @@ const YourVotes = ({ proposal }) => {
                 <StyledButton
                     fullWidth
                     isBig
-                    onClick={(e) => claimBack(e)}
-                    disabled={!Boolean(selectedClaims.size)}
+                    onClick={e => claimBack(e)}
+                    disabled={!selectedClaims.size}
                     pending={Boolean(pendingId)}
                 >
                     claim selected

@@ -1,31 +1,33 @@
 import * as React from 'react';
-import { LoginTypes } from '../../../../store/authStore/types';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { Breakpoints, COLORS, Z_INDEX } from '../../../styles';
-import IconLogout from 'assets/icon-logout.svg';
-import IconPlus from 'assets/icon-plus.svg';
+
 import Aqua from 'assets/aqua-logo-small.svg';
 import Ice from 'assets/ice-logo.svg';
 import IconCopy from 'assets/icon-copy.svg';
 import External from 'assets/icon-external-link.svg';
+import IconLogout from 'assets/icon-logout.svg';
+import IconPlus from 'assets/icon-plus.svg';
+
+import { LockerRoutes } from '../../../../routes';
+import { LoginTypes } from '../../../../store/authStore/types';
 import useAuthStore from '../../../../store/authStore/useAuthStore';
+import Button from '../../../basics/Button';
+import CircleButton from '../../../basics/CircleButton';
+import CopyButton from '../../../basics/CopyButton';
+import Identicon from '../../../basics/Identicon';
+import { formatBalance } from '../../../helpers/helpers';
+import { respondDown } from '../../../mixins';
+import ChooseLoginMethodModal from '../../../modals/ChooseLoginMethodModal';
+import GetAquaModal from '../../../modals/GetAquaModal/GetAquaModal';
 import {
     ModalService,
     StellarService,
     WalletConnectService,
 } from '../../../services/globalServices';
-import { formatBalance } from '../../../helpers/helpers';
-import { respondDown } from '../../../mixins';
-import CircleButton from '../../../basics/CircleButton';
-import GetAquaModal from '../../../modals/GetAquaModal/GetAquaModal';
-import Button from '../../../basics/Button';
-import Identicon from '../../../basics/Identicon';
-import ChooseLoginMethodModal from '../../../modals/ChooseLoginMethodModal';
 import { ICE_CODE, ICE_ISSUER } from '../../../services/stellar.service';
-import CopyButton from '../../../basics/CopyButton';
+import { Breakpoints, COLORS, Z_INDEX } from '../../../styles';
 import SocialLinks from '../../SocialLinks/SocialLinks';
-import { Link } from 'react-router-dom';
-import { LockerRoutes } from '../../../../routes';
 
 const MenuBlock = styled.div`
     position: absolute;
@@ -230,7 +232,7 @@ const AppMenu = ({
 
     return (
         <MenuBlock
-            onClick={(e) => {
+            onClick={e => {
                 e.stopPropagation();
             }}
         >

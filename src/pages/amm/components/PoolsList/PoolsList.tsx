@@ -1,22 +1,25 @@
+import BigNumber from 'bignumber.js';
 import * as React from 'react';
 import { useState } from 'react';
-import Market from '../../../vote/components/common/Market';
-import { formatBalance } from '../../../../common/helpers/helpers';
-import Button from '../../../../common/basics/Button';
-import { ModalService, StellarService } from '../../../../common/services/globalServices';
-import WithdrawFromPool from '../WithdrawFromPool/WithdrawFromPool';
-import DepositToPool from '../DepositToPool/DepositToPool';
 import styled from 'styled-components';
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../common/styles';
+
 import Arrow from 'assets/icon-arrow-down.svg';
-import Asset from '../../../vote/components/AssetDropdown/Asset';
-import BigNumber from 'bignumber.js';
-import { PoolProcessed, PoolUserProcessed } from '../../api/types';
-import { AssetSimple } from '../../../../store/assetsStore/types';
-import { POOL_TYPE } from '../../../../common/services/soroban.service';
-import MigrateLiquidityStep1 from '../../../../common/modals/MigrateLiquidityModals/MigrateLiquidityStep1';
+
 import MigratePoolButton from './MigratePoolButton/MigratePoolButton';
+
+import Button from '../../../../common/basics/Button';
+import { formatBalance } from '../../../../common/helpers/helpers';
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
+import MigrateLiquidityStep1 from '../../../../common/modals/MigrateLiquidityModals/MigrateLiquidityStep1';
+import { ModalService, StellarService } from '../../../../common/services/globalServices';
+import { POOL_TYPE } from '../../../../common/services/soroban.service';
+import { Breakpoints, COLORS } from '../../../../common/styles';
+import { AssetSimple } from '../../../../store/assetsStore/types';
+import Asset from '../../../vote/components/AssetDropdown/Asset';
+import Market from '../../../vote/components/common/Market';
+import { PoolProcessed, PoolUserProcessed } from '../../api/types';
+import DepositToPool from '../DepositToPool/DepositToPool';
+import WithdrawFromPool from '../WithdrawFromPool/WithdrawFromPool';
 
 const PoolBlock = styled.div`
     display: flex;
@@ -212,23 +215,23 @@ const PoolsList = ({
     counter,
 }: PoolsListProps) => {
     const [expandedIndexes, setExpandedIndexes] = useState([]);
-    const togglePool = (id) => {
+    const togglePool = id => {
         if (expandedIndexes.includes(id)) {
             return closePool(id);
         }
         openPool(id);
     };
 
-    const openPool = (id) => {
+    const openPool = id => {
         setExpandedIndexes(withDeposit ? [id] : [...expandedIndexes, id]);
     };
 
-    const closePool = (id) => {
-        setExpandedIndexes(withDeposit ? [] : [...expandedIndexes.filter((i) => i !== id)]);
+    const closePool = id => {
+        setExpandedIndexes(withDeposit ? [] : [...expandedIndexes.filter(i => i !== id)]);
     };
     return (
         <>
-            {pools.map((pool) => {
+            {pools.map(pool => {
                 const balance = new BigNumber((pool.balance ?? 0).toString()).div(1e7).toString();
                 const liquidity = new BigNumber(pool.liquidity?.toString()).div(1e7).toString();
                 const totalShare = new BigNumber(pool.total_share?.toString()).div(1e7).toString();
@@ -398,7 +401,7 @@ const PoolsList = ({
                                             ) : (
                                                 <Button
                                                     fullWidth
-                                                    onClick={(e) => {
+                                                    onClick={e => {
                                                         e.preventDefault();
                                                         ModalService.openModal(
                                                             DepositToPool,

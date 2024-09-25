@@ -1,11 +1,12 @@
 import * as React from 'react';
-import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../common/styles';
 import { useEffect, useMemo, useState } from 'react';
+import styled from 'styled-components';
+
 import PageLoader from '../../../../common/basics/PageLoader';
-import { getRewards } from '../../../vote/api/api';
-import { respondDown } from '../../../../common/mixins';
 import { formatBalance } from '../../../../common/helpers/helpers';
+import { respondDown } from '../../../../common/mixins';
+import { Breakpoints, COLORS } from '../../../../common/styles';
+import { getRewards } from '../../../vote/api/api';
 
 const Container = styled.div`
     display: flex;
@@ -75,7 +76,7 @@ const Rewards = ({ base, counter }) => {
     const [rewards, setRewards] = useState(null);
 
     useEffect(() => {
-        getRewards().then((res) => {
+        getRewards().then(res => {
             setRewards(res);
         });
     }, []);
@@ -85,7 +86,7 @@ const Rewards = ({ base, counter }) => {
             return null;
         }
         return rewards.find(
-            (reward) =>
+            reward =>
                 (reward.market_key.asset1_code === base.code &&
                     reward.market_key.asset1_issuer === (base.issuer || '') &&
                     reward.market_key.asset2_code === counter.code &&

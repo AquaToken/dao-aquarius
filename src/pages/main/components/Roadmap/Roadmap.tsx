@@ -1,12 +1,15 @@
 import * as React from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { respondDown } from '../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../common/styles';
+
 import ArrowLeft from 'assets/icon-arrow-left.svg';
 import ArrowRight from 'assets/icon-arrow-right.svg';
 import IconTick from 'assets/icon-tick-white.svg';
+
 import { completedStepsCount, steps } from './constants';
-import { useEffect, useRef, useState } from 'react';
+
+import { respondDown } from '../../../../common/mixins';
+import { Breakpoints, COLORS } from '../../../../common/styles';
 
 const Container = styled.section`
     padding-top: 16rem;

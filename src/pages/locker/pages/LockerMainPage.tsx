@@ -1,12 +1,13 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import Purpose from '../components/LockerMainPage/Purpose/Purpose';
-import AccountInput from '../components/AccountInput/AccountInput';
+
 import { commonMaxWidth } from '../../../common/mixins';
-import StatisticBlock from '../components/LockerMainPage/StatisticBlock/StatisticBlock';
-import FreezeAQUA from '../components/LockerMainPage/FreezeAQUA/FreezeAQUA';
-import WhyFreezeAQUA from '../components/LockerMainPage/WhyFreezeAQUA/WhyFreezeAQUA';
+import AccountInput from '../components/AccountInput/AccountInput';
 import FAQ from '../components/FAQ/FAQ';
+import FreezeAQUA from '../components/LockerMainPage/FreezeAQUA/FreezeAQUA';
+import Purpose from '../components/LockerMainPage/Purpose/Purpose';
+import StatisticBlock from '../components/LockerMainPage/StatisticBlock/StatisticBlock';
+import WhyFreezeAQUA from '../components/LockerMainPage/WhyFreezeAQUA/WhyFreezeAQUA';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;

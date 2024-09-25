@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { ModalDescription, ModalTitle } from '../../../../../common/modals/atoms/ModalAtoms';
 import styled from 'styled-components';
+
 import Button from '../../../../../common/basics/Button';
-import { ModalService } from '../../../../../common/services/globalServices';
-import GetAquaModal from '../../../../../common/modals/GetAquaModal/GetAquaModal';
 import { formatBalance } from '../../../../../common/helpers/helpers';
 import { respondDown } from '../../../../../common/mixins';
+import { ModalDescription, ModalTitle } from '../../../../../common/modals/atoms/ModalAtoms';
+import GetAquaModal from '../../../../../common/modals/GetAquaModal/GetAquaModal';
+import { ModalService } from '../../../../../common/services/globalServices';
 import { Breakpoints } from '../../../../../common/styles';
 
 const StyledButton = styled(Button)`

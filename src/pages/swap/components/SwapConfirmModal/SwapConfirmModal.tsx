@@ -1,28 +1,30 @@
-import * as React from 'react';
-import styled from 'styled-components';
 import * as StellarSdk from '@stellar/stellar-sdk';
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import { ModalDescription, ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
-import Market from '../../../vote/components/common/Market';
-import { formatBalance, getAssetFromString } from '../../../../common/helpers/helpers';
-import Button from '../../../../common/basics/Button';
+import * as React from 'react';
 import { useEffect, useState } from 'react';
+import styled from 'styled-components';
+
+import PathPool from './PathPool/PathPool';
+
+import Button from '../../../../common/basics/Button';
+import DotsLoader from '../../../../common/basics/DotsLoader';
+import PageLoader from '../../../../common/basics/PageLoader';
+import { formatBalance, getAssetFromString } from '../../../../common/helpers/helpers';
+import { openCurrentWalletIfExist } from '../../../../common/helpers/wallet-connect-helpers';
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
+import { ModalDescription, ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
 import {
     ModalService,
     SorobanService,
     ToastService,
 } from '../../../../common/services/globalServices';
-import SuccessModal from '../../../amm/components/SuccessModal/SuccessModal';
-import useAuthStore from '../../../../store/authStore/useAuthStore';
-import { SWAP_SLIPPAGE_ALIAS } from '../SwapSettingsModal/SwapSettingsModal';
 import { BuildSignAndSubmitStatuses } from '../../../../common/services/wallet-connect.service';
-import { getPathPoolsFee } from '../../../amm/api/api';
-import PageLoader from '../../../../common/basics/PageLoader';
-import PathPool from './PathPool/PathPool';
-import DotsLoader from '../../../../common/basics/DotsLoader';
+import { Breakpoints, COLORS } from '../../../../common/styles';
 import { LoginTypes } from '../../../../store/authStore/types';
-import { openCurrentWalletIfExist } from '../../../../common/helpers/wallet-connect-helpers';
+import useAuthStore from '../../../../store/authStore/useAuthStore';
+import { getPathPoolsFee } from '../../../amm/api/api';
+import SuccessModal from '../../../amm/components/SuccessModal/SuccessModal';
+import Market from '../../../vote/components/common/Market';
+import { SWAP_SLIPPAGE_ALIAS } from '../SwapSettingsModal/SwapSettingsModal';
 
 const Container = styled.div`
     width: 52.3rem;
@@ -77,7 +79,7 @@ const SwapConfirmModal = ({ params, confirm }) => {
 
     useEffect(() => {
         getPathPoolsFee(bestPools)
-            .then((res) => {
+            .then(res => {
                 setFees(res);
             })
             .catch(() => {
@@ -92,7 +94,7 @@ const SwapConfirmModal = ({ params, confirm }) => {
             bestPathXDR,
             baseAmount,
             '0',
-        ).then((res) => {
+        ).then(res => {
             SorobanService.simulateTx(res).then(
                 ({
                     minResourceFee,
@@ -121,11 +123,11 @@ const SwapConfirmModal = ({ params, confirm }) => {
             baseAmount,
             minCounterAmount,
         )
-            .then((tx) => {
+            .then(tx => {
                 hash = tx.hash().toString('hex');
                 return account.signAndSubmitTx(tx, true);
             })
-            .then((res) => {
+            .then(res => {
                 confirm();
 
                 if (!res) {
@@ -149,7 +151,7 @@ const SwapConfirmModal = ({ params, confirm }) => {
                 });
                 setSwapPending(false);
             })
-            .catch((e) => {
+            .catch(e => {
                 console.log(e);
 
                 const errorMessage = e.message ?? e.toString() ?? 'Oops! Something went wrong';

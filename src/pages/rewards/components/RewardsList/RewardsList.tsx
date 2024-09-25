@@ -1,19 +1,21 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
+
+import Link from 'assets/icon-external-link.svg';
+import Info from 'assets/icon-info.svg';
+
+import PageLoader from '../../../../common/basics/PageLoader';
+import Table, { CellAlign } from '../../../../common/basics/Table';
+import Tooltip, { TOOLTIP_POSITION } from '../../../../common/basics/Tooltip';
+import { formatBalance, getTimeAgoValue } from '../../../../common/helpers/helpers';
 import { respondDown } from '../../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../../common/styles';
-import { getRewards, RewardsSort } from '../../api/api';
-import useAssetsStore from '../../../../store/assetsStore/useAssetsStore';
-import { useHistory, useLocation } from 'react-router-dom';
-import PageLoader from '../../../../common/basics/PageLoader';
-import Info from 'assets/icon-info.svg';
-import Link from 'assets/icon-external-link.svg';
-import { formatBalance, getTimeAgoValue } from '../../../../common/helpers/helpers';
-import Tooltip, { TOOLTIP_POSITION } from '../../../../common/basics/Tooltip';
-import Market from '../../../vote/components/common/Market';
 import { MarketRoutes } from '../../../../routes';
-import Table, { CellAlign } from '../../../../common/basics/Table';
+import useAssetsStore from '../../../../store/assetsStore/useAssetsStore';
+import Market from '../../../vote/components/common/Market';
+import { getRewards, RewardsSort } from '../../api/api';
 
 const Container = styled.section`
     position: relative;
@@ -116,7 +118,7 @@ const RewardsList = () => {
             return;
         }
         setLoading(true);
-        getRewards(sort).then((res) => {
+        getRewards(sort).then(res => {
             setRewards(res);
             setLoading(false);
             const assets = res.reduce((acc, item) => {
@@ -141,7 +143,7 @@ const RewardsList = () => {
         setSort(params.get(UrlParams.sort));
     }, [location]);
 
-    const changeSort = (sortValue) => {
+    const changeSort = sortValue => {
         const params = new URLSearchParams(location.search);
         params.set(UrlParams.sort, sortValue);
         history.push({ pathname: location.pathname, search: params.toString() });
@@ -279,10 +281,11 @@ const RewardsList = () => {
                                                 market_key.asset2_issuer,
                                             )}`}
                                             target="_blank"
-                                            onClick={(e) => {
+                                            onClick={e => {
                                                 e.stopPropagation();
                                             }}
                                             title="StellarX"
+                                            rel="noreferrer"
                                         >
                                             <LinkIcon />
                                         </a>
@@ -311,10 +314,11 @@ const RewardsList = () => {
                                                 market_key.asset2_issuer,
                                             )}`}
                                             target="_blank"
-                                            onClick={(e) => {
+                                            onClick={e => {
                                                 e.stopPropagation();
                                             }}
                                             title="StellarX"
+                                            rel="noreferrer"
                                         >
                                             <LinkIcon />
                                         </a>

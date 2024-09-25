@@ -1,14 +1,15 @@
-import * as React from 'react';
-import styled from 'styled-components';
-import PageLoader from '../../../../../common/basics/PageLoader';
-import { useEffect, useRef, useState } from 'react';
-import { COLORS } from '../../../../../common/styles';
-import { StellarService } from '../../../../../common/services/globalServices';
 import { createChart, CrosshairMode, LineStyle } from 'lightweight-charts';
-import { convertLocalDateToUTCIgnoringTimezone } from '../../../../bribes/pages/AddBribePage';
-import { useDebounce } from '../../../../../common/hooks/useDebounce';
+import * as React from 'react';
+import { useEffect, useRef, useState } from 'react';
+import styled from 'styled-components';
+
+import PageLoader from '../../../../../common/basics/PageLoader';
 import { formatBalance } from '../../../../../common/helpers/helpers';
+import { useDebounce } from '../../../../../common/hooks/useDebounce';
 import { flexAllCenter } from '../../../../../common/mixins';
+import { StellarService } from '../../../../../common/services/globalServices';
+import { COLORS } from '../../../../../common/styles';
+import { convertLocalDateToUTCIgnoringTimezone } from '../../../../bribes/pages/AddBribePage';
 
 const Chart = styled.div`
     display: flex;
@@ -185,7 +186,7 @@ const LightWeightChart = ({ base, counter, period }) => {
         const startDate = endDate - AGGREGATIONS_DEPS[period];
 
         StellarService.getTradeAggregations(base, counter, startDate, endDate, period, LIMIT).then(
-            (res) => {
+            res => {
                 setTradeAggregations(res.records);
                 if (res.records.length === LIMIT) {
                     setNextTradeAggregations(res.next);
@@ -204,7 +205,7 @@ const LightWeightChart = ({ base, counter, period }) => {
         chartData.current = data;
 
         histogram.setData(
-            data.map((item) => ({
+            data.map(item => ({
                 ...item,
                 color:
                     +item.open <= +item.close ? 'rgba(76, 175, 80, 0.5)' : 'rgba(239, 83, 80, 0.5)',
@@ -310,11 +311,11 @@ const LightWeightChart = ({ base, counter, period }) => {
 
     const timeRangeHandler = ({ from }) => {
         if (from === chartData.current[0].time) {
-            setUpdateId((prevState) => prevState + 1);
+            setUpdateId(prevState => prevState + 1);
         }
     };
 
-    const crosshairHandler = (res) => {
+    const crosshairHandler = res => {
         const currentItem = chartData.current?.find(({ time }) => res.time === time);
 
         if (currentItem) {
@@ -329,7 +330,7 @@ const LightWeightChart = ({ base, counter, period }) => {
 
         setNextLoading(true);
 
-        nextTradeAggregations.then((res) => {
+        nextTradeAggregations.then(res => {
             setNextTradeAggregations(res.records.length === LIMIT ? res.next : null);
 
             const data = processNextData(res.records, chartData.current, period);
@@ -337,7 +338,7 @@ const LightWeightChart = ({ base, counter, period }) => {
             chartData.current = data;
 
             histogram.setData(
-                data.map((item) => ({
+                data.map(item => ({
                     ...item,
                     color:
                         +item.open <= +item.close

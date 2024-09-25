@@ -7,15 +7,16 @@ import { getAssetDetails } from 'api/stellar-expert';
 
 import { ExpertAssetData } from 'types/api-stellar-expert';
 
+import Mail from 'assets/email16.svg';
+import Git from 'assets/github16.svg';
+import External from 'assets/icon-external-link-black.svg';
+import X from 'assets/twitter16.svg';
+
 import Changes24 from 'basics/Changes24';
 
 import Asset from '../../../pages/vote/components/AssetDropdown/Asset';
 import { MainRoutes } from '../../../routes';
 import useAssetsStore from '../../../store/assetsStore/useAssetsStore';
-import Mail from 'assets/email16.svg';
-import Git from 'assets/github16.svg';
-import External from 'assets/icon-external-link-black.svg';
-import X from 'assets/twitter16.svg';
 import Button from '../../basics/Button';
 import PageLoader from '../../basics/PageLoader';
 import NoTrustline from '../../components/NoTrustline/NoTrustline';

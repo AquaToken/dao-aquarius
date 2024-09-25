@@ -1,28 +1,30 @@
 import * as React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { ExternalLinkStyled, Header, Section, Title } from '../AmmRewards/AmmRewards';
-import PageLoader from '../../../common/basics/PageLoader';
+
+import Info from 'assets/icon-info.svg';
+
 import { getDistributionForAccount } from '../../../api/ice-locker';
-import useAuthStore from '../../../store/authStore/useAuthStore';
+import Button from '../../../common/basics/Button';
+import Checkbox from '../../../common/basics/Checkbox';
+import PageLoader from '../../../common/basics/PageLoader';
+import ProgressLine from '../../../common/basics/ProgressLine';
+import Table, { CellAlign } from '../../../common/basics/Table';
+import Tooltip, { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
+import ErrorHandler from '../../../common/helpers/error-handler';
+import { formatBalance, getDateString, roundToPrecision } from '../../../common/helpers/helpers';
+import { openCurrentWalletIfExist } from '../../../common/helpers/wallet-connect-helpers';
+import { flexRowSpaceBetween, respondDown } from '../../../common/mixins';
 import { StellarService, ToastService } from '../../../common/services/globalServices';
 import { StellarEvents } from '../../../common/services/stellar.service';
-import { formatBalance, getDateString, roundToPrecision } from '../../../common/helpers/helpers';
-import ProgressLine from '../../../common/basics/ProgressLine';
-import Button from '../../../common/basics/Button';
-import { LoginTypes } from '../../../store/authStore/types';
 import { BuildSignAndSubmitStatuses } from '../../../common/services/wallet-connect.service';
-import ErrorHandler from '../../../common/helpers/error-handler';
-import { Empty } from '../YourVotes/YourVotes';
-import { Link } from 'react-router-dom';
-import { MainRoutes } from '../../../routes';
 import { Breakpoints, COLORS } from '../../../common/styles';
-import { flexRowSpaceBetween, respondDown } from '../../../common/mixins';
-import Info from 'assets/icon-info.svg';
-import Tooltip, { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
-import Table, { CellAlign } from '../../../common/basics/Table';
-import Checkbox from '../../../common/basics/Checkbox';
-import { openCurrentWalletIfExist } from '../../../common/helpers/wallet-connect-helpers';
+import { MainRoutes } from '../../../routes';
+import { LoginTypes } from '../../../store/authStore/types';
+import useAuthStore from '../../../store/authStore/useAuthStore';
+import { ExternalLinkStyled, Header, Section, Title } from '../AmmRewards/AmmRewards';
+import { Empty } from '../YourVotes/YourVotes';
 
 const Container = styled.div`
     display: flex;

@@ -1,18 +1,19 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import AssetLogo from '../../../vote/components/AssetDropdown/AssetLogo';
-import { Breakpoints, COLORS } from '../../../../common/styles';
+
+import AccountViewer from '../../../../common/basics/AccountViewer';
+import CopyButton from '../../../../common/basics/CopyButton';
 import DotsLoader from '../../../../common/basics/DotsLoader';
 import ExternalLink from '../../../../common/basics/ExternalLink';
-import CopyButton from '../../../../common/basics/CopyButton';
-import AccountViewer from '../../../../common/basics/AccountViewer';
+import PageLoader from '../../../../common/basics/PageLoader';
 import { formatBalance, getDateString } from '../../../../common/helpers/helpers';
 import { respondDown } from '../../../../common/mixins';
-import useAssetsStore from '../../../../store/assetsStore/useAssetsStore';
+import { Breakpoints, COLORS } from '../../../../common/styles';
 import { getAssetString } from '../../../../store/assetsStore/actions';
 import { LumenInfo } from '../../../../store/assetsStore/reducer';
 import { Asset } from '../../../../store/assetsStore/types';
-import PageLoader from '../../../../common/basics/PageLoader';
+import useAssetsStore from '../../../../store/assetsStore/useAssetsStore';
+import AssetLogo from '../../../vote/components/AssetDropdown/AssetLogo';
 
 const Container = styled.div`
     display: flex;

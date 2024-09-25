@@ -1,7 +1,8 @@
 import * as React from 'react';
-import Question from '../../../../../common/basics/Question';
-import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import styled from 'styled-components';
+
+import Question from '../../../../../common/basics/Question';
 import { GovernanceRoutes } from '../../../../../routes';
 
 const Container = styled.div`
@@ -47,6 +48,7 @@ const Questions = () => {
                         <a
                             href="https://medium.com/aquarius-aqua/airdrop-2-participating-exchanges-daec43175387"
                             target="_blank"
+                            rel="noreferrer"
                         >
                             this Medium article
                         </a>{' '}

@@ -1,24 +1,27 @@
 import * as React from 'react';
+import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import { PairStats, TotalStats } from '../../../api/types';
-import { formatBalance } from '../../../../../common/helpers/helpers';
-import Market from '../../common/Market';
-import { flexAllCenter, respondDown } from '../../../../../common/mixins';
-import VoteButton from './VoteButton/VoteButton';
-import VoteAmount from './VoteAmount/VoteAmount';
-import Button from '../../../../../common/basics/Button';
-import ManageIcon from 'assets/icon-manage.svg';
-import Tooltip, { TOOLTIP_POSITION } from '../../../../../common/basics/Tooltip';
-import { ModalService, StellarService } from '../../../../../common/services/globalServices';
-import ManageVotesModal from '../ManageVotesModal/ManageVotesModal';
+
 import Aqua from 'assets/aqua-logo-small.svg';
 import ArrowRight from 'assets/icon-arrow-right.svg';
-import Asset from '../../AssetDropdown/Asset';
-import BribesModal from '../BribesModal/BribesModal';
-import { useHistory } from 'react-router-dom';
-import { MarketRoutes } from '../../../../../routes';
+import ManageIcon from 'assets/icon-manage.svg';
+
+import VoteAmount from './VoteAmount/VoteAmount';
+import VoteButton from './VoteButton/VoteButton';
+
+import Button from '../../../../../common/basics/Button';
 import Table, { CellAlign } from '../../../../../common/basics/Table';
+import Tooltip, { TOOLTIP_POSITION } from '../../../../../common/basics/Tooltip';
+import { formatBalance } from '../../../../../common/helpers/helpers';
+import { flexAllCenter, respondDown } from '../../../../../common/mixins';
+import { ModalService, StellarService } from '../../../../../common/services/globalServices';
+import { Breakpoints, COLORS } from '../../../../../common/styles';
+import { MarketRoutes } from '../../../../../routes';
+import { PairStats, TotalStats } from '../../../api/types';
+import Asset from '../../AssetDropdown/Asset';
+import Market from '../../common/Market';
+import BribesModal from '../BribesModal/BribesModal';
+import ManageVotesModal from '../ManageVotesModal/ManageVotesModal';
 
 const ManageButton = styled(Button)`
     margin-left: 0.8rem;
@@ -188,7 +191,7 @@ const VoteTable = ({
     }
 
     const isPairSelected = ({ market_key: marketKey }: PairStats): boolean => {
-        return selectedPairs.some((pair) => pair.market_key === marketKey);
+        return selectedPairs.some(pair => pair.market_key === marketKey);
     };
 
     const manageVotes = (event, pair) => {
@@ -203,7 +206,7 @@ const VoteTable = ({
         ModalService.openModal(BribesModal, { pair });
     };
 
-    const goToMarketPage = (pair) => {
+    const goToMarketPage = pair => {
         history.push(`${MarketRoutes.main}/${pair.asset1}/${pair.asset2}`);
     };
 
@@ -216,7 +219,7 @@ const VoteTable = ({
                 { children: 'Votes' },
                 { children: 'Your Vote', align: CellAlign.Right, flexSize: 1.5 },
             ]}
-            body={pairs.map((pair) => {
+            body={pairs.map(pair => {
                 const hasBribes = pair.aggregated_bribes?.length;
                 const sum = hasBribes
                     ? pair.aggregated_bribes.reduce((acc, bribe) => {
@@ -317,7 +320,7 @@ const VoteTable = ({
                                             <ManageButton
                                                 isSquare
                                                 likeDisabled
-                                                onClick={(e) => manageVotes(e, pair)}
+                                                onClick={e => manageVotes(e, pair)}
                                             >
                                                 <ManageIcon />
                                             </ManageButton>
@@ -330,7 +333,7 @@ const VoteTable = ({
                         },
                     ],
                     afterRow: hasBribes ? (
-                        <BribeInfo key={pair.account_id} onClick={(e) => showBribes(e, pair)}>
+                        <BribeInfo key={pair.account_id} onClick={e => showBribes(e, pair)}>
                             <BribeInfoRow>
                                 <span>Daily bribe amount:</span>
                                 <BribeAquaSum>

@@ -1,26 +1,28 @@
 import * as React from 'react';
 import { forwardRef, RefObject, useMemo, useRef, useState } from 'react';
+import DatePicker from 'react-datepicker';
 import styled, { createGlobalStyle } from 'styled-components';
-import { Breakpoints, COLORS, FONT_FAMILY } from '../../../../../common/styles';
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
-import AccountService from '../../../../../common/services/account.service';
-import Input from '../../../../../common/basics/Input';
+
 import Aqua from 'assets/aqua-logo-small.svg';
 import Ice from 'assets/ice-logo.svg';
 import Info from 'assets/icon-info.svg';
+
+import Button from '../../../../../common/basics/Button';
+import Input from '../../../../../common/basics/Input';
 import RangeInput from '../../../../../common/basics/RangeInput';
 import {
     formatBalance,
     getDateString,
     roundToPrecision,
 } from '../../../../../common/helpers/helpers';
-import Button from '../../../../../common/basics/Button';
-import DatePicker from 'react-datepicker';
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
+import AccountService from '../../../../../common/services/account.service';
+
 import 'react-datepicker/dist/react-datepicker.css';
 import { ModalService, ToastService } from '../../../../../common/services/globalServices';
+import { Breakpoints, COLORS, FONT_FAMILY } from '../../../../../common/styles';
 import useAuthStore from '../../../../../store/authStore/useAuthStore';
 import ChooseLoginMethodModal from '../../../../../common/modals/ChooseLoginMethodModal';
-import LockAquaModal from '../LockAquaModal/LockAquaModal';
 import {
     MAX_BOOST,
     MAX_BOOST_PERIOD,
@@ -28,6 +30,7 @@ import {
     MIN_BOOST_PERIOD,
     roundMsToDays,
 } from '../IceBlock/IceBlock';
+import LockAquaModal from '../LockAquaModal/LockAquaModal';
 import Tooltip, { TOOLTIP_POSITION } from '../../../../../common/basics/Tooltip';
 
 const Container = styled.div`
@@ -271,14 +274,14 @@ const LockAquaForm = forwardRef(
 
         const aquaBalance = account.getAquaBalance();
 
-        const onLockPeriodPercentChange = (value) => {
+        const onLockPeriodPercentChange = value => {
             setLockPeriodPercent(value);
             const period = (MAX_BOOST_PERIOD * value) / 100;
 
             setLockPeriod(period + Date.now());
         };
 
-        const onLockPeriodChange = (value) => {
+        const onLockPeriodChange = value => {
             setLockPeriod(value);
             if (value < Date.now()) {
                 setLockPeriodPercent(0);
@@ -296,7 +299,7 @@ const LockAquaForm = forwardRef(
             setLockPeriodPercent(+percent);
         };
 
-        const onAmountChange = (value) => {
+        const onAmountChange = value => {
             if (Number.isNaN(Number(value))) {
                 return;
             }
@@ -314,7 +317,7 @@ const LockAquaForm = forwardRef(
             setLockPercent(+percent);
         };
 
-        const onLockPercentChange = (value) => {
+        const onLockPercentChange = value => {
             setLockPercent(value);
 
             const newAmount = (value * aquaBalance) / 100;
@@ -386,7 +389,7 @@ const LockAquaForm = forwardRef(
 
                 <StyledInput
                     value={lockAmount}
-                    onChange={(e) => onAmountChange(e.target.value)}
+                    onChange={e => onAmountChange(e.target.value)}
                     placeholder="Enter lock amount"
                     style={{ paddingRight: '11rem' }}
                     postfix={
@@ -407,7 +410,7 @@ const LockAquaForm = forwardRef(
                     <DatePicker
                         customInput={<Input />}
                         selected={lockPeriod ? new Date(lockPeriod) : null}
-                        onChange={(res) => {
+                        onChange={res => {
                             onLockPeriodChange(res?.getTime() ?? null);
                         }}
                         dateFormat="MM.dd.yyyy"

@@ -1,12 +1,14 @@
 import * as React from 'react';
-import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../common/styles';
-import FreezeAqua from 'assets/freeze-aqua-banner.svg';
-import Label from '../../../common/basics/Label';
-import Button from '../../../common/basics/Button';
 import { Link } from 'react-router-dom';
-import { LockerRoutes } from '../../../routes';
+import styled from 'styled-components';
+
+import FreezeAqua from 'assets/freeze-aqua-banner.svg';
+
+import Button from '../../../common/basics/Button';
+import Label from '../../../common/basics/Label';
 import { respondDown } from '../../../common/mixins';
+import { Breakpoints, COLORS } from '../../../common/styles';
+import { LockerRoutes } from '../../../routes';
 
 const Container = styled.div`
     display: flex;

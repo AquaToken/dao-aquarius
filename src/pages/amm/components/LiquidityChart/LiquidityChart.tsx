@@ -1,11 +1,11 @@
+import * as d3 from 'd3';
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
-
-import * as d3 from 'd3';
 import styled from 'styled-components';
-import { COLORS } from '../../../../common/styles';
+
 import { formatBalance, getDateString } from '../../../../common/helpers/helpers';
 import { StellarService } from '../../../../common/services/globalServices';
+import { COLORS } from '../../../../common/styles';
 
 const Axis = styled.g`
     font-size: 1.4rem;
@@ -24,7 +24,7 @@ const LiquidityValue = styled.text`
     font-weight: 700;
 `;
 
-export const transformDate = (date_str) => {
+export const transformDate = date_str => {
     const [date, time = ''] = date_str.split(' ');
 
     const [year, month, day] = date.split('-');
@@ -47,21 +47,19 @@ const LiquidityChart = ({
     const x = d3
         .scaleTime()
         .range([marginLeft, width - marginRight])
-        .domain(
-            d3.extent(data, (d) => transformDate(d.datetime_str || d.date_str)) as [Date, Date],
-        );
+        .domain(d3.extent(data, d => transformDate(d.datetime_str || d.date_str)) as [Date, Date]);
     const y = d3
         .scaleLinear()
         .range([height - marginBottom, marginTop + height * 0.4])
-        .domain([d3.min(data, (d) => d.liquidity / 1e7), d3.max(data, (d) => d.liquidity / 1e7)]);
+        .domain([d3.min(data, d => d.liquidity / 1e7), d3.max(data, d => d.liquidity / 1e7)]);
 
     const line = d3
         .line()
-        .x((d) => x(transformDate(d.datetime_str || d.date_str)))
-        .y((d) => y(d.liquidity / 1e7))
+        .x(d => x(transformDate(d.datetime_str || d.date_str)))
+        .y(d => y(d.liquidity / 1e7))
         .curve(d3.curveMonotoneX);
 
-    const path = (data) => {
+    const path = data => {
         const lineValues = line(data).slice(1);
         const splitedValues = lineValues.split(',');
 
@@ -77,7 +75,7 @@ const LiquidityChart = ({
                     .axisBottom()
                     .scale(x)
                     .tickFormat(d3.timeFormat('%d'))
-                    .ticks(d3.timeDay.filter((d) => d3.timeDay.count(0, d) % 3 === 0)),
+                    .ticks(d3.timeDay.filter(d => d3.timeDay.count(0, d) % 3 === 0)),
             ),
         [gx, x],
     );
@@ -87,7 +85,7 @@ const LiquidityChart = ({
             return;
         }
         d3.select(svg.current)
-            .on('mousemove touchmove', (event) => {
+            .on('mousemove touchmove', event => {
                 onMouseMove(event.offsetX);
             })
             .on('mouseout', () => {
@@ -95,9 +93,9 @@ const LiquidityChart = ({
             });
     }, [svg]);
 
-    const onMouseMove = (xCoord) => {
+    const onMouseMove = xCoord => {
         const nearestIndex = d3.bisectCenter(
-            data.map((item) => transformDate(item.datetime_str || item.date_str)),
+            data.map(item => transformDate(item.datetime_str || item.date_str)),
             x.invert(xCoord),
         );
         setSelectedIndex(nearestIndex);

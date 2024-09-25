@@ -1,7 +1,8 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
-import { COLORS } from '../styles';
+
 import { flexAllCenter } from '../mixins';
+import { COLORS } from '../styles';
 
 const Container = styled.div`
     width: 100%;

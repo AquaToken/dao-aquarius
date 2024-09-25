@@ -1,18 +1,28 @@
+import isUaWebview from 'is-ua-webview';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { ModalProps, ModalTitle } from './atoms/ModalAtoms';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../styles';
-import ArrowRightIcon from 'assets/icon-arrow-right.svg';
-import KeyIcon from 'assets/icon-key.svg';
-import WalletConnectLogo from 'assets/wallet-connect-logo.svg';
-import LobstrLogo from 'assets/lobstr-logo-black.svg';
-import Stellar from 'assets/xlm-logo.svg';
-import Ledger from 'assets/ledger-logo.svg';
+
 import Freighter from 'assets/freighter-logo.svg';
 import BG from 'assets/get-extension-bg.svg';
-import { LoginTypes } from '../../store/authStore/types';
+import ArrowRightIcon from 'assets/icon-arrow-right.svg';
+import KeyIcon from 'assets/icon-key.svg';
+import Ledger from 'assets/ledger-logo.svg';
+import LobstrLogo from 'assets/lobstr-logo-black.svg';
+import WalletConnectLogo from 'assets/wallet-connect-logo.svg';
+import Stellar from 'assets/xlm-logo.svg';
+
+import { ModalProps, ModalTitle } from './atoms/ModalAtoms';
+import GetFreighterModal from './GetFreighterModal';
+import GetLobstrExtensionModal from './GetLobstrExtensionModal';
+import LedgerLogin from './LedgerModals/LedgerLogin';
+import LoginWithPublic from './LoginWithPublic';
 import LoginWithSecret from './LoginWithSecret';
+
+import { LoginTypes } from '../../store/authStore/types';
+import useAuthStore from '../../store/authStore/useAuthStore';
+import { isChrome, isMobile } from '../helpers/browser';
+import { respondDown } from '../mixins';
 import {
     FreighterService,
     LedgerService,
@@ -21,14 +31,7 @@ import {
     ToastService,
     WalletConnectService,
 } from '../services/globalServices';
-import { respondDown } from '../mixins';
-import LoginWithPublic from './LoginWithPublic';
-import LedgerLogin from './LedgerModals/LedgerLogin';
-import isUaWebview from 'is-ua-webview';
-import useAuthStore from '../../store/authStore/useAuthStore';
-import GetFreighterModal from './GetFreighterModal';
-import { isChrome, isMobile } from '../helpers/browser';
-import GetLobstrExtensionModal from './GetLobstrExtensionModal';
+import { Breakpoints, COLORS } from '../styles';
 
 const BgStyled = styled(BG)`
     ${respondDown(Breakpoints.md)`
@@ -135,7 +138,7 @@ const ChooseLoginMethodModal = ({
                 ModalService.openModal(LoginWithPublic, {});
                 break;
             case LoginTypes.ledger:
-                LedgerService.isSupported.then((res) => {
+                LedgerService.isSupported.then(res => {
                     if (res) {
                         close();
                         ModalService.openModal(LedgerLogin, {});
@@ -156,7 +159,7 @@ const ChooseLoginMethodModal = ({
                     return;
                 }
                 setPending(true);
-                LobstrExtensionService.isConnected.then((res) => {
+                LobstrExtensionService.isConnected.then(res => {
                     if (res) {
                         setPending(false);
                         LobstrExtensionService.login().then(() => {
@@ -171,7 +174,7 @@ const ChooseLoginMethodModal = ({
                 break;
 
             case LoginTypes.freighter:
-                FreighterService.isConnected.then((res) => {
+                FreighterService.isConnected.then(res => {
                     if (res) {
                         FreighterService.login().then(() => {
                             close();

@@ -1,10 +1,12 @@
 import * as React from 'react';
-import { ModalService } from '../../../../../common/services/globalServices';
-import SwapSettingsModal from '../../SwapSettingsModal/SwapSettingsModal';
-import SettingsIcon from 'assets/icon-settings.svg';
 import styled from 'styled-components';
+
+import SettingsIcon from 'assets/icon-settings.svg';
+
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
+import { ModalService } from '../../../../../common/services/globalServices';
 import { Breakpoints, COLORS } from '../../../../../common/styles';
+import SwapSettingsModal from '../../SwapSettingsModal/SwapSettingsModal';
 
 const Container = styled.div`
     ${flexRowSpaceBetween};

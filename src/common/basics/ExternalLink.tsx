@@ -1,7 +1,9 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { COLORS } from '../styles';
+
 import LinkArrowIcon from 'assets/icon-link-arrow.svg';
+
+import { COLORS } from '../styles';
 
 const LinkBody = styled.a`
     display: flex;

@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { MAX_REWARDS_PERCENT, MIN_REWARDS_PERCENT } from '../MainPage/Table/Table';
-import Label from '../../../../common/basics/Label';
 import styled from 'styled-components';
+
+import Label from '../../../../common/basics/Label';
 import { COLORS } from '../../../../common/styles';
+import { MAX_REWARDS_PERCENT, MIN_REWARDS_PERCENT } from '../MainPage/Table/Table';
 
 const StyledLabel = styled(Label)`
     margin: 0 0.5rem;

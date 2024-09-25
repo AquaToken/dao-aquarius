@@ -1,20 +1,22 @@
+import { ServerApi } from '@stellar/stellar-sdk';
 import * as React from 'react';
 import { useCallback } from 'react';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import { respondDown } from '../../../../../common/mixins';
+
 import IceLogo from 'assets/ice-logo.svg';
-import { formatBalance } from '../../../../../common/helpers/helpers';
-import ExternalLink from '../../../../../common/basics/ExternalLink';
-import { GOV_ICE_CODE, ICE_CODE, ICE_ISSUER } from '../../../../../common/services/stellar.service';
-import { ModalService, StellarService } from '../../../../../common/services/globalServices';
+
 import Button from '../../../../../common/basics/Button';
-import AddIceTrustlinesModal from '../AddIceTrustlinesModal/AddIceTrustlinesModal';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
+import ExternalLink from '../../../../../common/basics/ExternalLink';
+import { formatBalance } from '../../../../../common/helpers/helpers';
+import { respondDown } from '../../../../../common/mixins';
 import ChooseLoginMethodModal from '../../../../../common/modals/ChooseLoginMethodModal';
 import AccountService from '../../../../../common/services/account.service';
-import { ServerApi } from '@stellar/stellar-sdk';
+import { ModalService, StellarService } from '../../../../../common/services/globalServices';
+import { GOV_ICE_CODE, ICE_CODE, ICE_ISSUER } from '../../../../../common/services/stellar.service';
+import { Breakpoints, COLORS } from '../../../../../common/styles';
+import useAuthStore from '../../../../../store/authStore/useAuthStore';
 import { DOWN_ICE, UP_ICE } from '../../../../vote/components/MainPage/MainPage';
+import AddIceTrustlinesModal from '../AddIceTrustlinesModal/AddIceTrustlinesModal';
 
 const Container = styled.div`
     margin-top: 4rem;
@@ -166,7 +168,7 @@ export const MAX_BOOST_PERIOD = 3 * 365 * 24 * 60 * 60 * 1000;
 export const MIN_BOOST_PERIOD = 24 * 60 * 60 * 1000;
 export const MAX_LOCK_PERIOD = 10 * 365 * 24 * 60 * 60 * 1000;
 
-export const roundMsToDays = (timestamp) => {
+export const roundMsToDays = timestamp => {
     return Math.floor(timestamp / (24 * 60 * 60 * 1000));
 };
 

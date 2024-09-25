@@ -1,14 +1,16 @@
+import { Asset } from '@stellar/stellar-sdk';
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
+
+import Warning from 'assets/icon-warning.svg';
+
+import Tooltip, { TOOLTIP_POSITION } from '../../../../../common/basics/Tooltip';
+import { formatBalance, getAssetString } from '../../../../../common/helpers/helpers';
+import { respondDown } from '../../../../../common/mixins';
+import { StellarService } from '../../../../../common/services/globalServices';
 import { Breakpoints, COLORS } from '../../../../../common/styles';
 import { getNativePrices } from '../../../../amm/api/api';
-import { formatBalance, getAssetString } from '../../../../../common/helpers/helpers';
-import { StellarService } from '../../../../../common/services/globalServices';
-import { Asset } from '@stellar/stellar-sdk';
-import Warning from 'assets/icon-warning.svg';
-import Tooltip, { TOOLTIP_POSITION } from '../../../../../common/basics/Tooltip';
-import { respondDown } from '../../../../../common/mixins';
 
 const Container = styled.div`
     display: flex;
@@ -72,7 +74,7 @@ const AmountUsdEquivalent = ({ amount, asset, sourceAmount, sourceAsset }: Props
             return;
         }
 
-        getNativePrices(sourceAsset ? [asset, sourceAsset] : [asset]).then((res) => {
+        getNativePrices(sourceAsset ? [asset, sourceAsset] : [asset]).then(res => {
             setPrice(res.has(getAssetString(asset)) ? res.get(getAssetString(asset)) : null);
             if (sourceAsset) {
                 setPriceSource(

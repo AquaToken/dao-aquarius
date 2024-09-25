@@ -1,11 +1,13 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { respondDown } from '../mixins';
-import { Breakpoints } from '../styles';
-import { ModalDescription, ModalTitle } from './atoms/ModalAtoms';
-import ExternalLink from '../basics/ExternalLink';
 
 import Logo from 'assets/freighter-logo.svg';
+
+import { ModalDescription, ModalTitle } from './atoms/ModalAtoms';
+
+import ExternalLink from '../basics/ExternalLink';
+import { respondDown } from '../mixins';
+import { Breakpoints } from '../styles';
 
 const Container = styled.div`
     width: 52.8rem;

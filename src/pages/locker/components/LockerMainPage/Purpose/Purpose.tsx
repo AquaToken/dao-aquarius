@@ -1,8 +1,10 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import { commonMaxWidth, respondDown } from '../../../../../common/mixins';
+
 import LockerMainImage from 'assets/locker-main.svg';
+
+import { commonMaxWidth, respondDown } from '../../../../../common/mixins';
+import { Breakpoints, COLORS } from '../../../../../common/styles';
 
 const Container = styled.div`
     background-color: ${COLORS.buttonBackground};

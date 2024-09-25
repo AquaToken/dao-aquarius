@@ -1,25 +1,27 @@
 import * as React from 'react';
 import { useState } from 'react';
+import styled from 'styled-components';
+
+import Aqua from 'assets/aqua-logo-small.svg';
+import Ice from 'assets/ice-logo.svg';
+import ArrowDown from 'assets/icon-arrow-down-purple.svg';
+
+import Button from '../../../../../common/basics/Button';
+import ErrorHandler from '../../../../../common/helpers/error-handler';
+import { formatBalance, getDateString } from '../../../../../common/helpers/helpers';
+import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
+import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
+import { customScroll, flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
 import {
     ModalDescription,
     ModalProps,
     ModalTitle,
 } from '../../../../../common/modals/atoms/ModalAtoms';
-import styled from 'styled-components';
-import { customScroll, flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import Button from '../../../../../common/basics/Button';
-import { formatBalance, getDateString } from '../../../../../common/helpers/helpers';
 import { StellarService, ToastService } from '../../../../../common/services/globalServices';
 import { BuildSignAndSubmitStatuses } from '../../../../../common/services/wallet-connect.service';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
-import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
+import { Breakpoints, COLORS } from '../../../../../common/styles';
 import { LoginTypes } from '../../../../../store/authStore/types';
-import ErrorHandler from '../../../../../common/helpers/error-handler';
-import Aqua from 'assets/aqua-logo-small.svg';
-import Ice from 'assets/ice-logo.svg';
-import ArrowDown from 'assets/icon-arrow-down-purple.svg';
-import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
+import useAuthStore from '../../../../../store/authStore/useAuthStore';
 
 const ModalContainer = styled.div`
     width: 52.8rem;
@@ -167,7 +169,7 @@ const LockAquaModal = ({
     const unlistedIceAssets = account.getUntrustedIceAssets();
 
     const toggleShowMore = () => {
-        setShowMore((prevState) => !prevState);
+        setShowMore(prevState => !prevState);
     };
 
     const onSubmit = async () => {
@@ -180,7 +182,7 @@ const LockAquaModal = ({
             const ops = [StellarService.createLockOperation(account.accountId(), amount, period)];
 
             if (unlistedIceAssets.length) {
-                unlistedIceAssets.forEach((asset) => {
+                unlistedIceAssets.forEach(asset => {
                     ops.push(StellarService.createAddTrustOperation(asset));
                 });
             }
@@ -252,7 +254,7 @@ const LockAquaModal = ({
                     </ShowMoreBlock>
                     {showMore && (
                         <AssetsBlock>
-                            {unlistedIceAssets.map((asset) => (
+                            {unlistedIceAssets.map(asset => (
                                 <AssetLine key={asset.code}>
                                     <AssetName>
                                         <IceLogo />

@@ -1,19 +1,16 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../common/styles';
-import { commonMaxWidth, respondDown } from '../../../common/mixins';
+
 import Aqua from 'assets/aqua-logo-small.svg';
 import Ice from 'assets/ice-logo.svg';
-import Lumen from 'assets/xlm-logo.svg';
 import Info from 'assets/icon-info.svg';
+import Lumen from 'assets/xlm-logo.svg';
+
+import DotsLoader from '../../../common/basics/DotsLoader';
+import Tooltip, { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
 import { formatBalance } from '../../../common/helpers/helpers';
-import {
-    AdditionalInfo,
-    AdditionalInfoDescription,
-    BalanceLabel,
-} from '../../locker/components/LockerAccountPage/Portfolio/Portfolio';
-import useAuthStore from '../../../store/authStore/useAuthStore';
+import { commonMaxWidth, respondDown } from '../../../common/mixins';
 import { StellarService } from '../../../common/services/globalServices';
 import {
     DOWN_ICE_CODE,
@@ -23,8 +20,13 @@ import {
     StellarEvents,
     UP_ICE_CODE,
 } from '../../../common/services/stellar.service';
-import DotsLoader from '../../../common/basics/DotsLoader';
-import Tooltip, { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
+import { Breakpoints, COLORS } from '../../../common/styles';
+import useAuthStore from '../../../store/authStore/useAuthStore';
+import {
+    AdditionalInfo,
+    AdditionalInfoDescription,
+    BalanceLabel,
+} from '../../locker/components/LockerAccountPage/Portfolio/Portfolio';
 
 const Container = styled.div`
     ${commonMaxWidth};
@@ -280,15 +282,15 @@ const Balances = ({ ammAquaBalance }) => {
     const { account } = useAuthStore();
 
     useEffect(() => {
-        StellarService.getAquaInLiquidityVotes(account.accountId()).then((res) => {
+        StellarService.getAquaInLiquidityVotes(account.accountId()).then(res => {
             setAquaInVotes(res);
         });
     }, []);
 
     useEffect(() => {
-        const unsub = StellarService.event.sub((event) => {
+        const unsub = StellarService.event.sub(event => {
             if (event.type === StellarEvents.claimableUpdate) {
-                StellarService.getAquaInLiquidityVotes(account.accountId()).then((res) => {
+                StellarService.getAquaInLiquidityVotes(account.accountId()).then(res => {
                     setAquaInVotes(res);
                 });
                 setLocks(StellarService.getLocks(account.accountId()));

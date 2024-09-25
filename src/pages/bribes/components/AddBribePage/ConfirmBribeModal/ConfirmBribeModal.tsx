@@ -1,26 +1,27 @@
+import { addWeeks } from 'date-fns';
 import * as React from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
+
+import Button from '../../../../../common/basics/Button';
+import ErrorHandler from '../../../../../common/helpers/error-handler';
+import { formatBalance, getDateString } from '../../../../../common/helpers/helpers';
+import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
+import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
 import { flexAllCenter, respondDown } from '../../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
 import {
     ModalDescription,
     ModalProps,
     ModalTitle,
 } from '../../../../../common/modals/atoms/ModalAtoms';
-import Market from '../../../../vote/components/common/Market';
-import { formatBalance, getDateString } from '../../../../../common/helpers/helpers';
-import Button from '../../../../../common/basics/Button';
-import Asset from '../../../../vote/components/AssetDropdown/Asset';
 import { StellarService, ToastService } from '../../../../../common/services/globalServices';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
-import { useState } from 'react';
-import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
-import ErrorHandler from '../../../../../common/helpers/error-handler';
 import { BuildSignAndSubmitStatuses } from '../../../../../common/services/wallet-connect.service';
-import { LoginTypes } from '../../../../../store/authStore/types';
-import { addWeeks } from 'date-fns';
+import { Breakpoints, COLORS } from '../../../../../common/styles';
 import { AssetSimple } from '../../../../../store/assetsStore/types';
-import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
+import { LoginTypes } from '../../../../../store/authStore/types';
+import useAuthStore from '../../../../../store/authStore/useAuthStore';
+import Asset from '../../../../vote/components/AssetDropdown/Asset';
+import Market from '../../../../vote/components/common/Market';
 
 const Container = styled.div`
     width: 52.8rem;

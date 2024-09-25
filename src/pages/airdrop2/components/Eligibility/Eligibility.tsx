@@ -1,17 +1,19 @@
 import * as React from 'react';
 import { forwardRef, RefObject, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import PageLoader from '../../../../common/basics/PageLoader';
-import AccountBlock from '../../../../common/basics/AccountBlock';
-import { StellarService } from '../../../../common/services/globalServices';
-import { AccountEligibility } from '../../api/types';
+
+import ExpectedReward from './ExpectedReward/ExpectedReward';
+import SnapshotHoldings from './SnapshotHoldings/SnapshotHoldings';
 import Eligible from './Statuses/Eligible';
 import NotEligible from './Statuses/NotEligible';
-import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
+
+import AccountBlock from '../../../../common/basics/AccountBlock';
 import ExternalLink from '../../../../common/basics/ExternalLink';
-import SnapshotHoldings from './SnapshotHoldings/SnapshotHoldings';
-import ExpectedReward from './ExpectedReward/ExpectedReward';
+import PageLoader from '../../../../common/basics/PageLoader';
+import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
+import { StellarService } from '../../../../common/services/globalServices';
+import { Breakpoints, COLORS } from '../../../../common/styles';
+import { AccountEligibility } from '../../api/types';
 
 const Container = styled.section`
     padding: 0 1.6rem;
@@ -70,10 +72,10 @@ const Eligibility = forwardRef(
             setFederation(null);
             if (accountEligibility) {
                 StellarService.loadAccount(accountEligibility.account_id)
-                    .then((account) =>
+                    .then(account =>
                         StellarService.resolveFederation(account.home_domain, account.account_id),
                     )
-                    .then((res) => {
+                    .then(res => {
                         setFederation(res);
                     });
             }

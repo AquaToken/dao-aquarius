@@ -1,17 +1,19 @@
 import * as React from 'react';
 import { useCallback, useMemo } from 'react';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
+
+import Info from 'assets/icon-info.svg';
+
 import ProgressLine from '../../../../../common/basics/ProgressLine';
+import Table, { CellAlign } from '../../../../../common/basics/Table';
+import Tooltip, { TOOLTIP_POSITION } from '../../../../../common/basics/Tooltip';
 import {
     formatBalance,
     getDateString,
     roundToPrecision,
 } from '../../../../../common/helpers/helpers';
 import { flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
-import Tooltip, { TOOLTIP_POSITION } from '../../../../../common/basics/Tooltip';
-import Info from 'assets/icon-info.svg';
-import Table, { CellAlign } from '../../../../../common/basics/Table';
+import { Breakpoints, COLORS } from '../../../../../common/styles';
 
 const Container = styled.div`
     margin-top: 4rem;
@@ -112,8 +114,8 @@ const CurrentLocks = ({
     }, [total]);
 
     const getIceAmount = useCallback(
-        (balanceId) => {
-            return distributions.find((distribution) => distribution.balance_id === balanceId)
+        balanceId => {
+            return distributions.find(distribution => distribution.balance_id === balanceId)
                 ?.distributed_amount;
         },
         [distributions, locks],
@@ -186,7 +188,7 @@ const CurrentLocks = ({
                         { children: 'AQUA locked', flexSize: 2, align: CellAlign.Right },
                         { children: 'ICE received', flexSize: 2, align: CellAlign.Right },
                     ]}
-                    body={locks.map((lock) => ({
+                    body={locks.map(lock => ({
                         key: lock.id,
                         isNarrow: true,
                         mobileBackground: COLORS.lightGray,

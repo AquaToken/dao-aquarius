@@ -1,15 +1,17 @@
 import * as StellarSdk from '@stellar/stellar-sdk';
-import EventService from './event.service';
 import { Memo, MemoType, OperationOptions, Horizon } from '@stellar/stellar-sdk';
-import axios, { AxiosResponse } from 'axios';
-import { formatBalance, roundToPrecision } from '../helpers/helpers';
-import { PairStats } from '../../pages/vote/api/types';
-import { validateMarketKeys } from '../../pages/vote/api/api';
-import debounceFunction from '../helpers/debounceFunction';
-import { ToastService } from './globalServices';
 import { ServerApi } from '@stellar/stellar-sdk/lib/horizon';
-import { getPoolInfo } from '../../pages/amm/api/api';
+import axios, { AxiosResponse } from 'axios';
 import BigNumber from 'bignumber.js';
+
+import EventService from './event.service';
+import { ToastService } from './globalServices';
+
+import { getPoolInfo } from '../../pages/amm/api/api';
+import { validateMarketKeys } from '../../pages/vote/api/api';
+import { PairStats } from '../../pages/vote/api/types';
+import debounceFunction from '../helpers/debounceFunction';
+import { formatBalance, roundToPrecision } from '../helpers/helpers';
 
 enum HORIZON_SERVER {
     stellar = 'https://horizon.stellar.org',
@@ -159,7 +161,7 @@ export default class StellarServiceClass {
         }).setTimeout(TRANSACTION_TIMEOUT);
 
         if (Array.isArray(operations)) {
-            operations.forEach((op) => {
+            operations.forEach(op => {
                 tx.addOperation(op);
             });
         } else {
@@ -244,7 +246,7 @@ export default class StellarServiceClass {
         }, THRESHOLDS.LOW);
 
         const masterKeyWeight = account.signers.find(
-            (signer) => signer.key === account.account_id,
+            signer => signer.key === account.account_id,
         ).weight;
 
         return (
@@ -271,14 +273,14 @@ export default class StellarServiceClass {
 
     resolveFederation(homeDomain: string, accountId: string): Promise<string> {
         return StellarSdk.StellarToml.Resolver.resolve(homeDomain)
-            .then((toml) => {
+            .then(toml => {
                 if (!toml.FEDERATION_SERVER) {
                     throw new Error('Federation server not exists');
                 }
 
                 return toml.FEDERATION_SERVER;
             })
-            .then((server) => {
+            .then(server => {
                 const params = new URLSearchParams();
                 params.append('q', accountId);
                 params.append('type', 'id');
@@ -296,7 +298,7 @@ export default class StellarServiceClass {
             .accountId(publicKey)
             .cursor('now')
             .stream({
-                onmessage: (result) => {
+                onmessage: result => {
                     this.event.trigger({ type: StellarEvents.accountStream, account: result });
                 },
             });
@@ -316,7 +318,7 @@ export default class StellarServiceClass {
             .order('desc')
             .limit(limit)
             .call()
-            .then((claimable) => {
+            .then(claimable => {
                 this.claimableBalances = claimable.records;
                 this.event.trigger({ type: StellarEvents.claimableUpdate });
 
@@ -330,7 +332,7 @@ export default class StellarServiceClass {
         return this.server
             .orderbook(this.createAsset(AQUA_CODE, AQUA_ISSUER), this.createLumen())
             .call()
-            .then((res) => {
+            .then(res => {
                 return (+res.asks[0].price + +res.bids[0].price) / 2;
             });
     }
@@ -341,7 +343,7 @@ export default class StellarServiceClass {
         }
 
         return this.claimableBalances.filter(
-            (claim) =>
+            claim =>
                 claim.claimants.length === 1 &&
                 claim.claimants[0].destination === publicKey &&
                 claim.asset === `${AQUA_CODE}:${AQUA_ISSUER}`,
@@ -356,15 +358,15 @@ export default class StellarServiceClass {
             .order('desc')
             .limit(LOCKS_LIMIT)
             .call()
-            .then((claimable) => {
+            .then(claimable => {
                 if (claimable.records.length === LOCKS_LIMIT) {
                     return this.getNextLocks(claimable.records, claimable.next, LOCKS_LIMIT);
                 }
                 return claimable.records;
             })
-            .then((records) => {
+            .then(records => {
                 return records.filter(
-                    (claim) =>
+                    claim =>
                         claim.claimants.length === 1 &&
                         claim.claimants[0].destination === publicKey &&
                         claim.asset === `${AQUA_CODE}:${AQUA_ISSUER}`,
@@ -379,7 +381,7 @@ export default class StellarServiceClass {
         >,
         limit: number,
     ): Promise<Horizon.ServerApi.ClaimableBalanceRecord[]> {
-        return next().then((res) => {
+        return next().then(res => {
             if (res.records.length === limit) {
                 return this.getNextLocks([...claims, ...res.records], res.next, limit);
             }
@@ -394,7 +396,7 @@ export default class StellarServiceClass {
         >,
         limit,
     ) {
-        next().then((res) => {
+        next().then(res => {
             this.claimableBalances = [...this.claimableBalances, ...res.records];
             this.event.trigger({ type: StellarEvents.claimableUpdate });
 
@@ -412,7 +414,7 @@ export default class StellarServiceClass {
             .forAccount(publicKey)
             .cursor('now')
             .stream({
-                onmessage: (res) => {
+                onmessage: res => {
                     if (
                         (res as unknown as Horizon.ServerApi.EffectRecord).type ===
                             'claimable_balance_claimant_created' ||
@@ -486,11 +488,9 @@ export default class StellarServiceClass {
             if (claim.claimants.length !== 2) {
                 return acc;
             }
-            const hasMarker = claim.claimants.some(
-                (claimant) => claimant.destination === marketKey,
-            );
+            const hasMarker = claim.claimants.some(claimant => claimant.destination === marketKey);
             const hasSelfClaim = claim.claimants.some(
-                (claimant) => claimant.destination === accountId,
+                claimant => claimant.destination === accountId,
             );
             const isAqua = claim.asset === `${asset.code}:${asset.issuer}`;
 
@@ -511,14 +511,12 @@ export default class StellarServiceClass {
                 return acc;
             }
             const hasForMarker = claim.claimants.some(
-                (claimant) => claimant.destination === proposal.vote_for_issuer,
+                claimant => claimant.destination === proposal.vote_for_issuer,
             );
             const hasAgainstMarker = claim.claimants.some(
-                (claimant) => claimant.destination === proposal.vote_against_issuer,
+                claimant => claimant.destination === proposal.vote_against_issuer,
             );
-            const selfClaim = claim.claimants.find(
-                (claimant) => claimant.destination === accountId,
-            );
+            const selfClaim = claim.claimants.find(claimant => claimant.destination === accountId);
             const isAqua = claim.asset === `${AQUA_CODE}:${AQUA_ISSUER}`;
             const isGovIce = claim.asset === `${GOV_ICE_CODE}:${ICE_ISSUER}`;
 
@@ -545,14 +543,12 @@ export default class StellarServiceClass {
                 return acc;
             }
             const hasUpMarker = claim.claimants.some(
-                (claimant) => claimant.destination === pair.account_id,
+                claimant => claimant.destination === pair.account_id,
             );
             const hasDownMarker = claim.claimants.some(
-                (claimant) => claimant.destination === pair.downvote_account_id,
+                claimant => claimant.destination === pair.downvote_account_id,
             );
-            const selfClaim = claim.claimants.find(
-                (claimant) => claimant.destination === accountId,
-            );
+            const selfClaim = claim.claimants.find(claimant => claimant.destination === accountId);
             const isAqua = claim.asset === `${AQUA_CODE}:${AQUA_ISSUER}`;
             const isUpIce = claim.asset === `${UP_ICE_CODE}:${ICE_ISSUER}`;
             const isDownIce = claim.asset === `${DOWN_ICE_CODE}:${ICE_ISSUER}`;
@@ -582,25 +578,23 @@ export default class StellarServiceClass {
 
         const keys = this.getKeysSimilarToMarketKeys(accountId);
 
-        return validateMarketKeys(keys).then((marketPairs) => {
+        return validateMarketKeys(keys).then(marketPairs => {
             return this.claimableBalances.reduce((acc, claim) => {
                 if (claim.claimants.length !== 2) {
                     return acc;
                 }
-                const hasUpMarker = claim.claimants.some((claimant) =>
-                    Boolean(marketPairs.find((pair) => pair.account_id === claimant.destination)),
+                const hasUpMarker = claim.claimants.some(claimant =>
+                    Boolean(marketPairs.find(pair => pair.account_id === claimant.destination)),
                 );
 
-                const hasDownMarker = claim.claimants.some((claimant) =>
+                const hasDownMarker = claim.claimants.some(claimant =>
                     Boolean(
-                        marketPairs.find(
-                            (pair) => pair.downvote_account_id === claimant.destination,
-                        ),
+                        marketPairs.find(pair => pair.downvote_account_id === claimant.destination),
                     ),
                 );
 
                 const selfClaim = claim.claimants.find(
-                    (claimant) => claimant.destination === accountId,
+                    claimant => claimant.destination === accountId,
                 );
                 const isAqua = claim.asset === `${AQUA_CODE}:${AQUA_ISSUER}`;
 
@@ -617,7 +611,7 @@ export default class StellarServiceClass {
             return null;
         }
 
-        return this.claimableBalances.filter((cb) => cb.sponsor === AIRDROP_2_SPONSOR);
+        return this.claimableBalances.filter(cb => cb.sponsor === AIRDROP_2_SPONSOR);
     }
 
     getKeysSimilarToMarketKeys(accountId: string): string[] {
@@ -633,11 +627,11 @@ export default class StellarServiceClass {
             const isUpIce = claim.asset === `${UP_ICE_CODE}:${ICE_ISSUER}`;
             const isDownIce = claim.asset === `${DOWN_ICE_CODE}:${ICE_ISSUER}`;
             const hasSelfClaim = claim.claimants.some(
-                (claimant) => claimant.destination === accountId,
+                claimant => claimant.destination === accountId,
             );
             if ((isAqua || isUpIce || isDownIce) && hasSelfClaim) {
                 const similarToMarketKey = claim.claimants.find(
-                    (claimant) => claimant.destination !== accountId,
+                    claimant => claimant.destination !== accountId,
                 );
 
                 if (!similarToMarketKey) {
@@ -664,7 +658,7 @@ export default class StellarServiceClass {
                 return acc;
             }
             const hasNewEqualBalance = newBalances.find(
-                (newBalance) =>
+                newBalance =>
                     newBalance.asset_code === balance.asset_code &&
                     newBalance.asset_issuer === balance.asset_issuer &&
                     newBalance.balance === balance.balance &&
@@ -929,7 +923,7 @@ export default class StellarServiceClass {
         return this.server
             .strictSendPaths(asset, amount, [new StellarSdk.Asset(AQUA_CODE, AQUA_ISSUER)])
             .call()
-            .then((res) => {
+            .then(res => {
                 if (!res.records.length) {
                     return '0';
                 }
@@ -1097,7 +1091,7 @@ export default class StellarServiceClass {
                 const firstHistoryId = this.paymentsHistory[0].id;
 
                 const recordsFirstCommonIndex = processed.findIndex(
-                    (record) => record.id === firstHistoryId,
+                    record => record.id === firstHistoryId,
                 );
 
                 this.paymentsHistory = [
@@ -1127,7 +1121,7 @@ export default class StellarServiceClass {
 
         this.loadNotes(filtered);
 
-        return filtered.map((payment) => {
+        return filtered.map(payment => {
             switch (true) {
                 case payment.from === AMM_REWARDS_KEY:
                     payment.title = 'AMM Reward';
@@ -1149,7 +1143,7 @@ export default class StellarServiceClass {
     }
 
     private loadNotes(payments) {
-        this.chunkFunction(payments, (payment) => {
+        this.chunkFunction(payments, payment => {
             if (payment.type === 'invoke_host_function') {
                 return this.getClaimRewardsNote(payment);
             }
@@ -1170,7 +1164,7 @@ export default class StellarServiceClass {
         }
 
         return getPoolInfo(poolId)
-            .then((poolInfo) => {
+            .then(poolInfo => {
                 const note = `Rewards for pool: ${poolInfo.assets
                     .map(({ code }) => code)
                     .join('/')}`;
@@ -1190,14 +1184,14 @@ export default class StellarServiceClass {
         const result = [];
         for (let i = 0; i < array.length; i += chunkSize) {
             const chunk = array.slice(i, i + chunkSize);
-            const chunkResult = await Promise.all(chunk.map((item) => promiseFunction(item)));
+            const chunkResult = await Promise.all(chunk.map(item => promiseFunction(item)));
             result.push(...chunkResult);
         }
         return result;
     }
 
     private updateLumenUsdPrice() {
-        this.getLumenUsdPrice().then((res) => {
+        this.getLumenUsdPrice().then(res => {
             this.priceLumenUsd = res;
         });
     }

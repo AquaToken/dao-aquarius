@@ -1,8 +1,10 @@
 import * as React from 'react';
 import styled from 'styled-components';
+
 import Aqua from 'assets/aqua-logo-small.svg';
-import { formatBalance } from '../../../../common/helpers/helpers';
+
 import DotsLoader from '../../../../common/basics/DotsLoader';
+import { formatBalance } from '../../../../common/helpers/helpers';
 import { respondDown } from '../../../../common/mixins';
 import { Breakpoints } from '../../../../common/styles';
 

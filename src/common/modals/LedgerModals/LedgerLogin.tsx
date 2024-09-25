@@ -1,12 +1,13 @@
 import * as React from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
+
+import Button from '../../basics/Button';
+import Input from '../../basics/Input';
 import { respondDown } from '../../mixins';
+import { LedgerService } from '../../services/globalServices';
 import { Breakpoints } from '../../styles';
 import { ModalDescription, ModalTitle } from '../atoms/ModalAtoms';
-import Input from '../../basics/Input';
-import Button from '../../basics/Button';
-import { useState } from 'react';
-import { LedgerService } from '../../services/globalServices';
 
 const Container = styled.div`
     width: 52.3rem;
@@ -55,7 +56,7 @@ const LedgerLogin = ({ close }) => {
             </ModalDescription>
 
             <form
-                onSubmit={(event) => {
+                onSubmit={event => {
                     event.preventDefault();
                     event.stopPropagation();
                     onSubmit();
@@ -63,19 +64,19 @@ const LedgerLogin = ({ close }) => {
             >
                 <Input
                     value={path}
-                    onChange={(e) => setPath(e.target.value)}
+                    onChange={e => setPath(e.target.value)}
                     prefixCustom={<Prefix>Path: 44'/148'/</Prefix>}
                     style={{ padding: '0rem 12.8rem' }}
                     placeholder="0"
                     type="number"
                     min="0"
                     max="2147483647"
-                    onInvalid={(e) =>
+                    onInvalid={e =>
                         (e.target as HTMLInputElement).setCustomValidity(
                             'Only integer less or equal 2147483647',
                         )
                     }
-                    onInput={(e) => (e.target as HTMLInputElement).setCustomValidity('')}
+                    onInput={e => (e.target as HTMLInputElement).setCustomValidity('')}
                 />
 
                 <StyledButton isBig type="submit" pending={pending}>

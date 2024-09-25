@@ -1,48 +1,50 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
+import styled, { css } from 'styled-components';
+
+import Aqua from 'assets/aqua-logo-small.svg';
+import Ice from 'assets/ice-logo.svg';
+import Fail from 'assets/icon-fail.svg';
+import Success from 'assets/icon-success.svg';
+
+import Button from '../../../../../common/basics/Button';
+import ExternalLink from '../../../../../common/basics/ExternalLink';
+import Input from '../../../../../common/basics/Input';
+import RangeInput from '../../../../../common/basics/RangeInput';
+import Select from '../../../../../common/basics/Select';
+import ErrorHandler from '../../../../../common/helpers/error-handler';
+import {
+    formatBalance,
+    getDateString,
+    roundToPrecision,
+} from '../../../../../common/helpers/helpers';
+import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
+import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
+import { flexAllCenter, flexRowSpaceBetween } from '../../../../../common/mixins';
 import {
     ModalDescription,
     ModalProps,
     ModalTitle,
 } from '../../../../../common/modals/atoms/ModalAtoms';
-import styled, { css } from 'styled-components';
-import { flexAllCenter, flexRowSpaceBetween } from '../../../../../common/mixins';
-import { COLORS } from '../../../../../common/styles';
-import Fail from 'assets/icon-fail.svg';
-import Success from 'assets/icon-success.svg';
-import Aqua from 'assets/aqua-logo-small.svg';
-import Ice from 'assets/ice-logo.svg';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
-import Input from '../../../../../common/basics/Input';
-import RangeInput from '../../../../../common/basics/RangeInput';
-import Button from '../../../../../common/basics/Button';
+import GetAquaModal from '../../../../../common/modals/GetAquaModal/GetAquaModal';
 import {
     ModalService,
     StellarService,
     ToastService,
 } from '../../../../../common/services/globalServices';
 import {
-    formatBalance,
-    getDateString,
-    roundToPrecision,
-} from '../../../../../common/helpers/helpers';
-import ExternalLink from '../../../../../common/basics/ExternalLink';
-import GetAquaModal from '../../../../../common/modals/GetAquaModal/GetAquaModal';
-import { SimpleProposalOptions } from '../../../pages/GovernanceVoteProposalPage';
-import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
-import ErrorHandler from '../../../../../common/helpers/error-handler';
-import { BuildSignAndSubmitStatuses } from '../../../../../common/services/wallet-connect.service';
-import { LoginTypes } from '../../../../../store/authStore/types';
-import {
     AQUA_CODE,
     AQUA_ISSUER,
     GOV_ICE_CODE,
     ICE_ISSUER,
 } from '../../../../../common/services/stellar.service';
-import Select from '../../../../../common/basics/Select';
-import { Link } from 'react-router-dom';
+import { BuildSignAndSubmitStatuses } from '../../../../../common/services/wallet-connect.service';
+import { COLORS } from '../../../../../common/styles';
 import { LockerRoutes } from '../../../../../routes';
-import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
+import { LoginTypes } from '../../../../../store/authStore/types';
+import useAuthStore from '../../../../../store/authStore/useAuthStore';
+import { SimpleProposalOptions } from '../../../pages/GovernanceVoteProposalPage';
 
 const MINIMUM_AMOUNT = 0.0000001;
 const MINIMUM_ICE_AMOUNT = 10;
@@ -187,7 +189,7 @@ const ConfirmVoteModal = ({
         setPercent(0);
     }, [targetAsset]);
 
-    const onRangeChange = (percent) => {
+    const onRangeChange = percent => {
         setPercent(percent);
 
         const amountValue = (targetBalance * percent) / 100;
@@ -195,7 +197,7 @@ const ConfirmVoteModal = ({
         setAmount(roundToPrecision(amountValue, 7));
     };
 
-    const onInputChange = (value) => {
+    const onInputChange = value => {
         if (Number.isNaN(Number(value))) {
             return;
         }
@@ -297,7 +299,7 @@ const ConfirmVoteModal = ({
             <ContentRow>
                 <StyledInput
                     value={amount}
-                    onChange={(e) => {
+                    onChange={e => {
                         onInputChange(e.target.value);
                     }}
                     placeholder="Enter amount"

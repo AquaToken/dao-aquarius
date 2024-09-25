@@ -1,8 +1,9 @@
 import * as React from 'react';
+import createStellarIdenticon from 'stellar-identicon-js';
 import styled from 'styled-components';
+
 import { flexAllCenter } from '../mixins';
 import { COLORS } from '../styles';
-import createStellarIdenticon from 'stellar-identicon-js';
 
 const Account = styled.div`
     display: flex;

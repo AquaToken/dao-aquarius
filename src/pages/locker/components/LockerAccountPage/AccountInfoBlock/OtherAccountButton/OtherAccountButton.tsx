@@ -1,9 +1,11 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { flexAllCenter, respondDown } from '../../../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../../../common/styles';
+
 import ArrowsCircle from 'assets/icon-arrows-circle.svg';
+
+import { flexAllCenter, respondDown } from '../../../../../../common/mixins';
 import { ModalService } from '../../../../../../common/services/globalServices';
+import { Breakpoints, COLORS } from '../../../../../../common/styles';
 import AccountInput from '../../../AccountInput/AccountInput';
 
 const Wrapper = styled.div`

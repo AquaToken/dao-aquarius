@@ -1,14 +1,15 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { ModalDescription, ModalProps, ModalTitle } from '../atoms/ModalAtoms';
-import Button from '../../basics/Button';
 import styled from 'styled-components';
-import { IconFail, IconPending, IconSuccess } from '../../basics/Icons';
-import { flexAllCenter, respondDown } from '../../mixins';
+
+import Button from '../../basics/Button';
 import DotsLoader from '../../basics/DotsLoader';
+import { IconFail, IconPending, IconSuccess } from '../../basics/Icons';
+import { useIsMounted } from '../../hooks/useIsMounted';
+import { flexAllCenter, respondDown } from '../../mixins';
 import { BuildSignAndSubmitStatuses } from '../../services/wallet-connect.service';
 import { Breakpoints, COLORS } from '../../styles';
-import { useIsMounted } from '../../hooks/useIsMounted';
+import { ModalDescription, ModalProps, ModalTitle } from '../atoms/ModalAtoms';
 
 enum TX_STATUSES {
     pending = 'pending',

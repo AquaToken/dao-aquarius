@@ -9,17 +9,12 @@ import Success from 'assets/icon-success.svg';
 import NativeVotingButton from './VotingButton/VotingButton';
 
 import Button from '../../../../../common/basics/Button';
+import ExternalLink from '../../../../../common/basics/ExternalLink';
 import {
     formatBalance,
     getDateString,
     roundToPrecision,
 } from '../../../../../common/helpers/helpers';
-import NotEnoughAquaModal from '../../GovernanceMainPage/NotEnoughAquaModal/NotEnoughAquaModal';
-import { CREATE_DISCUSSION_COST, CREATE_PROPOSAL_COST } from '../../../pages/GovernanceMainPage';
-import ProposalStatus, {
-    PROPOSAL_STATUS,
-} from '../../GovernanceMainPage/ProposalStatus/ProposalStatus';
-import ExternalLink from '../../../../../common/basics/ExternalLink';
 import { flexAllCenter, respondDown } from '../../../../../common/mixins';
 import ChooseLoginMethodModal from '../../../../../common/modals/ChooseLoginMethodModal';
 import { ModalService } from '../../../../../common/services/globalServices';
@@ -27,7 +22,12 @@ import { Breakpoints, COLORS } from '../../../../../common/styles';
 import { GovernanceRoutes } from '../../../../../routes';
 import useAuthStore from '../../../../../store/authStore/useAuthStore';
 import { Proposal } from '../../../api/types';
+import { CREATE_DISCUSSION_COST, CREATE_PROPOSAL_COST } from '../../../pages/GovernanceMainPage';
 import { SimpleProposalOptions } from '../../../pages/GovernanceVoteProposalPage';
+import NotEnoughAquaModal from '../../GovernanceMainPage/NotEnoughAquaModal/NotEnoughAquaModal';
+import ProposalStatus, {
+    PROPOSAL_STATUS,
+} from '../../GovernanceMainPage/ProposalStatus/ProposalStatus';
 import CreateDiscussionModal from '../../GovernanceProposalCreationPage/CreateDiscussionModal/CreateDiscussionModal';
 import PublishProposalModal from '../../GovernanceProposalCreationPage/PublishProposalModal/PublishProposalModal';
 import ConfirmVoteModal from '../ConfirmVoteModal/ConfirmVoteModal';

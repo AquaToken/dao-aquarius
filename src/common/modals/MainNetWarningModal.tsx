@@ -1,12 +1,14 @@
 import * as React from 'react';
-import styled from 'styled-components';
 import { useEffect, useState } from 'react';
-import { Breakpoints, COLORS } from '../styles';
-import { respondDown } from '../mixins';
-import Button from '../basics/Button';
+import styled from 'styled-components';
+
 import { ModalTitle } from './atoms/ModalAtoms';
-import Checkbox from '../basics/Checkbox';
+
 import Alert from '../basics/Alert';
+import Button from '../basics/Button';
+import Checkbox from '../basics/Checkbox';
+import { respondDown } from '../mixins';
+import { Breakpoints, COLORS } from '../styles';
 
 const Container = styled.div`
     width: 52.8rem;

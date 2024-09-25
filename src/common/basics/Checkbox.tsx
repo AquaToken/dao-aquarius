@@ -1,8 +1,10 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { COLORS } from '../styles';
-import { flexAllCenter } from '../mixins';
+
 import Tick from 'assets/icon-checkbox-tick.svg';
+
+import { flexAllCenter } from '../mixins';
+import { COLORS } from '../styles';
 
 const CheckboxContainer = styled.div<{ disabled?: boolean }>`
     display: flex;
@@ -51,7 +53,7 @@ const Checkbox = ({
 }) => {
     return (
         <CheckboxContainer
-            onClick={(event) => onChange(!checked, event)}
+            onClick={event => onChange(!checked, event)}
             disabled={disabled}
             {...props}
         >

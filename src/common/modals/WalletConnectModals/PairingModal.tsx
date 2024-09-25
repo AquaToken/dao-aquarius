@@ -1,19 +1,21 @@
-import * as React from 'react';
-import { useState } from 'react';
 import { PairingTypes } from '@walletconnect/types';
-import { ModalDescription, ModalProps, ModalTitle } from '../atoms/ModalAtoms';
+import { useState } from 'react';
+import * as React from 'react';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../styles';
+
+import IconArrowRight from 'assets/icon-arrow-right-purple.svg';
 import IconCloseSmall from 'assets/icon-close-small.svg';
+import IconDeepLink from 'assets/icon-deep-link.svg';
 import IconPlus from 'assets/icon-plus.svg';
 import IconQR from 'assets/icon-qr.svg';
-import IconDeepLink from 'assets/icon-deep-link.svg';
-import IconArrowRight from 'assets/icon-arrow-right-purple.svg';
-import { flexAllCenter, respondDown } from '../../mixins';
+
 import {
     getWalletFromDeepLinkHistory,
     saveCurrentWallet,
 } from '../../helpers/wallet-connect-helpers';
+import { flexAllCenter, respondDown } from '../../mixins';
+import { Breakpoints, COLORS } from '../../styles';
+import { ModalDescription, ModalProps, ModalTitle } from '../atoms/ModalAtoms';
 
 type PairingModalParams = {
     pairings: PairingTypes.Struct[];
@@ -221,7 +223,7 @@ const PairingModal = ({ params }: ModalProps<PairingModalParams>): JSX.Element =
     ): void => {
         event.stopPropagation();
         deletePairing(topic).then(() => {
-            setCurrentPairings(currentPairings.filter((pairing) => pairing.topic !== topic));
+            setCurrentPairings(currentPairings.filter(pairing => pairing.topic !== topic));
         });
     };
 
@@ -247,7 +249,7 @@ const PairingModal = ({ params }: ModalProps<PairingModalParams>): JSX.Element =
                             connect(pairing);
                         }}
                     >
-                        <DeleteButtonMobile onClick={(e) => handleDeletePairing(e, pairing.topic)}>
+                        <DeleteButtonMobile onClick={e => handleDeletePairing(e, pairing.topic)}>
                             <IconCloseSmall />
                         </DeleteButtonMobile>
                         <AppIconWeb src={metadata.icons[0]} alt="" />
@@ -257,7 +259,7 @@ const PairingModal = ({ params }: ModalProps<PairingModalParams>): JSX.Element =
                                 <AppIconMobileWrap>
                                     <AppIconMobile src={metadata.icons[0]} alt="" />
                                     <LoginFlowIconWrap>
-                                        {Boolean(wallet) ? <IconDeepLink /> : <IconQR />}
+                                        {wallet ? <IconDeepLink /> : <IconQR />}
                                     </LoginFlowIconWrap>
                                 </AppIconMobileWrap>
 
@@ -275,7 +277,7 @@ const PairingModal = ({ params }: ModalProps<PairingModalParams>): JSX.Element =
                             </ConnectButton>
                         </AppInfoBlock>
 
-                        <DeleteButtonWeb onClick={(e) => handleDeletePairing(e, pairing.topic)} />
+                        <DeleteButtonWeb onClick={e => handleDeletePairing(e, pairing.topic)} />
                     </PairingBlock>
                 );
             })}

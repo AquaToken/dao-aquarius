@@ -1,22 +1,24 @@
+import BigNumber from 'bignumber.js';
 import * as React from 'react';
 import { useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../styles';
-import { ModalContainer, ModalTitle } from '../atoms/ModalAtoms';
-import Market from '../../../pages/vote/components/common/Market';
+
+import MigrateLiquidityStep2 from './MigrateLiquidityStep2';
+
 import { PairContainer } from '../../../pages/amm/components/WithdrawFromPool/WithdrawFromPool';
+import AssetLogo from '../../../pages/vote/components/AssetDropdown/AssetLogo';
+import Market from '../../../pages/vote/components/common/Market';
+import useAuthStore from '../../../store/authStore/useAuthStore';
+import Button from '../../basics/Button';
 import Input from '../../basics/Input';
 import RangeInput from '../../basics/RangeInput';
-import Button from '../../basics/Button';
-import AssetLogo from '../../../pages/vote/components/AssetDropdown/AssetLogo';
-import useAuthStore from '../../../store/authStore/useAuthStore';
-import { formatBalance, getAssetString } from '../../helpers/helpers';
-import BigNumber from 'bignumber.js';
-import { ModalService, StellarService, ToastService } from '../../services/globalServices';
-import MigrateLiquidityStep2 from './MigrateLiquidityStep2';
 import ErrorHandler from '../../helpers/error-handler';
+import { formatBalance, getAssetString } from '../../helpers/helpers';
 import { respondDown } from '../../mixins';
+import { ModalService, StellarService, ToastService } from '../../services/globalServices';
 import { BuildSignAndSubmitStatuses } from '../../services/wallet-connect.service';
+import { Breakpoints, COLORS } from '../../styles';
+import { ModalContainer, ModalTitle } from '../atoms/ModalAtoms';
 
 export const Stepper = styled.div`
     font-size: 1.4rem;
@@ -107,9 +109,9 @@ const MigrateLiquidityStep1 = ({ params, confirm }) => {
         const balance = account.getPoolBalance(pool.id);
         const sharePart = new BigNumber(balance).div(new BigNumber(pool.total_shares));
 
-        const baseTotal = pool.reserves.find((reserve) => reserve.asset === getAssetString(base));
+        const baseTotal = pool.reserves.find(reserve => reserve.asset === getAssetString(base));
         const counterTotal = pool.reserves.find(
-            (reserve) => reserve.asset === getAssetString(counter),
+            reserve => reserve.asset === getAssetString(counter),
         );
 
         const baseUserTotal = sharePart.times(new BigNumber(baseTotal.amount));
@@ -158,7 +160,7 @@ const MigrateLiquidityStep1 = ({ params, confirm }) => {
                       })
                     : void 0,
             )
-            .then((res) => {
+            .then(res => {
                 setPending(false);
 
                 if (onUpdate) {
@@ -178,7 +180,7 @@ const MigrateLiquidityStep1 = ({ params, confirm }) => {
                 }
                 ToastService.showSuccessToast('Withdrawal successfully');
             })
-            .catch((e) => {
+            .catch(e => {
                 const errorText = ErrorHandler(e);
                 ToastService.showErrorToast(errorText);
                 setPending(false);
@@ -195,7 +197,7 @@ const MigrateLiquidityStep1 = ({ params, confirm }) => {
             <StyledInput
                 label="Amount to migrate"
                 value={percent.toString()}
-                onChange={(e) => setPercentValue(e)}
+                onChange={e => setPercentValue(e)}
                 postfix="%"
             />
             <RangeInput onChange={setPercent} value={Number(percent)} />

@@ -1,12 +1,14 @@
 import * as React from 'react';
-import { ModalDescription, ModalProps, ModalTitle } from '../atoms/ModalAtoms';
+import styled, { css } from 'styled-components';
+
 import Aqua from 'assets/aqua-logo-small.svg';
 import ArrowsIcon from 'assets/icon-arrows-circle.svg';
-import styled, { css } from 'styled-components';
-import { flexAllCenter, respondDown } from '../../mixins';
-import { Breakpoints, COLORS } from '../../styles';
+
 import DotsLoader from '../../basics/DotsLoader';
+import { flexAllCenter, respondDown } from '../../mixins';
 import { WalletConnectService } from '../../services/globalServices';
+import { Breakpoints, COLORS } from '../../styles';
+import { ModalDescription, ModalProps, ModalTitle } from '../atoms/ModalAtoms';
 
 const Container = styled.div`
     width: 52.3rem;

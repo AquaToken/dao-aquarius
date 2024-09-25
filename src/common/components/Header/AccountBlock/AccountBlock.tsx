@@ -1,19 +1,21 @@
 import * as React from 'react';
 import { useRef, useState } from 'react';
-import useAuthStore from '../../../../store/authStore/useAuthStore';
 import styled, { createGlobalStyle } from 'styled-components';
-import { Breakpoints, COLORS } from '../../../styles';
-import Identicon from '../../../basics/Identicon';
+
 import ArrowDown from 'assets/icon-arrow-down.svg';
 import CloseIcon from 'assets/icon-close-small.svg';
+import MobileMenuIcon from 'assets/icon-mobile-menu.svg';
+
+import { LoginTypes } from '../../../../store/authStore/types';
+import useAuthStore from '../../../../store/authStore/useAuthStore';
+import Button from '../../../basics/Button';
+import Identicon from '../../../basics/Identicon';
 import useOnClickOutside from '../../../hooks/useOutsideClick';
 import { flexAllCenter, respondDown, textEllipsis } from '../../../mixins';
-import AppMenu from '../AppMenu/AppMenu';
-import { LoginTypes } from '../../../../store/authStore/types';
-import Button from '../../../basics/Button';
-import { ModalService } from '../../../services/globalServices';
 import ChooseLoginMethodModal from '../../../modals/ChooseLoginMethodModal';
-import MobileMenuIcon from 'assets/icon-mobile-menu.svg';
+import { ModalService } from '../../../services/globalServices';
+import { Breakpoints, COLORS } from '../../../styles';
+import AppMenu from '../AppMenu/AppMenu';
 
 const Wrapper = styled.div`
     position: relative;

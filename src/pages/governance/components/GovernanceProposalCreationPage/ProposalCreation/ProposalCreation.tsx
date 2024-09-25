@@ -1,23 +1,24 @@
 import * as React from 'react';
 import { useState } from 'react';
+import ReactQuill from 'react-quill';
+import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import Input from '../../../../../common/basics/Input';
-import ReactQuill from 'react-quill';
+import ArrowLeft from 'assets/icon-arrow-left.svg';
+
 import Button from '../../../../../common/basics/Button';
-import { ReactQuillCSS } from '../../../Governance';
+import CircleButton from '../../../../../common/basics/CircleButton';
+import Input from '../../../../../common/basics/Input';
 import { formatBalance } from '../../../../../common/helpers/helpers';
+import { respondDown } from '../../../../../common/mixins';
+import { Breakpoints, COLORS } from '../../../../../common/styles';
+import { GovernanceRoutes } from '../../../../../routes';
+import { ReactQuillCSS } from '../../../Governance';
 import {
     APPROVED_PROPOSAL_REWARD,
     CREATE_DISCUSSION_COST,
     CREATE_PROPOSAL_COST,
 } from '../../../pages/GovernanceMainPage';
-import { respondDown } from '../../../../../common/mixins';
-import ArrowLeft from 'assets/icon-arrow-left.svg';
-import { useParams } from 'react-router-dom';
-import { GovernanceRoutes } from '../../../../../routes';
-import CircleButton from '../../../../../common/basics/CircleButton';
 
 const Background = styled.div`
     width: 100%;
@@ -210,7 +211,7 @@ const ProposalCreation = ({
             </Background>
             <Container>
                 <form
-                    onSubmit={(event) => {
+                    onSubmit={event => {
                         event.preventDefault();
                         event.stopPropagation();
                         onSubmit();
@@ -226,7 +227,7 @@ const ProposalCreation = ({
                                 placeholder="Less than 140 characters"
                                 maxLength={140}
                                 value={title}
-                                onChange={(event) => {
+                                onChange={event => {
                                     setTitle(event.target.value);
                                 }}
                             />
@@ -238,7 +239,7 @@ const ProposalCreation = ({
                                     placeholder="Nickname#0000"
                                     value={discordChannelOwner}
                                     maxLength={64}
-                                    onChange={(event) => {
+                                    onChange={event => {
                                         setDiscordChannelOwner(event.target.value);
                                     }}
                                 />

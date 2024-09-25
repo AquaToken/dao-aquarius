@@ -1,11 +1,13 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { respondDown } from '../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../common/styles';
+
 import Lobstr from 'assets/lobstr-name-logo.svg';
+import StellarTerm from 'assets/stellarterm-logo.svg';
 import StellarX from 'assets/stellarx-logo.svg';
 import Vault from 'assets/vault-logo.svg';
-import StellarTerm from 'assets/stellarterm-logo.svg';
+
+import { respondDown } from '../../../../common/mixins';
+import { Breakpoints, COLORS } from '../../../../common/styles';
 
 const Container = styled.section`
     display: flex;
@@ -76,19 +78,19 @@ const SupportedBy = () => {
                 <Title>Supported by:</Title>
 
                 <ImageBlock>
-                    <a href="https://lobstr.co/" target="_blank">
+                    <a href="https://lobstr.co/" target="_blank" rel="noreferrer">
                         <Lobstr />
                     </a>
 
-                    <a href="https://www.stellarx.com/" target="_blank">
+                    <a href="https://www.stellarx.com/" target="_blank" rel="noreferrer">
                         <StellarX />
                     </a>
 
-                    <a href="https://vault.lobstr.co/" target="_blank">
+                    <a href="https://vault.lobstr.co/" target="_blank" rel="noreferrer">
                         <Vault />
                     </a>
 
-                    <a href="https://stellarterm.com/" target="_blank">
+                    <a href="https://stellarterm.com/" target="_blank" rel="noreferrer">
                         <StellarTerm />
                     </a>
                 </ImageBlock>

@@ -1,15 +1,17 @@
 import * as React from 'react';
-import styled from 'styled-components';
-import { respondDown } from '../../common/mixins';
-import { Breakpoints, COLORS } from '../../common/styles';
-import TotalRewards from './components/TotalRewards/TotalRewards';
 import { useEffect, useState } from 'react';
+import styled from 'styled-components';
+
 import { getTotalRewards } from './api/api';
 import DividedRewards from './components/DividedRewards/DividedRewards';
-import RewardsList from './components/RewardsList/RewardsList';
 import FAQ from './components/FAQ/FAQ';
+import RewardsList from './components/RewardsList/RewardsList';
+import TotalRewards from './components/TotalRewards/TotalRewards';
+
 import Community from '../../common/components/Community/Community';
 import Subscribe from '../../common/components/Subscribe/Subscribe';
+import { respondDown } from '../../common/mixins';
+import { Breakpoints, COLORS } from '../../common/styles';
 
 const Container = styled.div`
     height: 100%;
@@ -30,7 +32,7 @@ const Rewards = () => {
     const [totalRewards, setTotalRewards] = useState(null);
 
     useEffect(() => {
-        getTotalRewards().then((res) => {
+        getTotalRewards().then(res => {
             setTotalRewards(res);
         });
     }, []);

@@ -1,21 +1,22 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import { getUserPools } from '../../api/api';
-import { Empty } from '../../../profile/YourVotes/YourVotes';
-import { ModalService, StellarService } from '../../../../common/services/globalServices';
-import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
-import useAuthStore from '../../../../store/authStore/useAuthStore';
 import styled from 'styled-components';
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
+
 import Button from '../../../../common/basics/Button';
-import { Breakpoints, COLORS } from '../../../../common/styles';
 import PageLoader from '../../../../common/basics/PageLoader';
-import PoolsList from '../PoolsList/PoolsList';
-import { formatBalance } from '../../../../common/helpers/helpers';
-import { PoolUserProcessed } from '../../api/types';
-import ToggleGroup from '../../../../common/basics/ToggleGroup';
 import Select from '../../../../common/basics/Select';
+import ToggleGroup from '../../../../common/basics/ToggleGroup';
+import { formatBalance } from '../../../../common/helpers/helpers';
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
+import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
+import { ModalService, StellarService } from '../../../../common/services/globalServices';
 import { POOL_TYPE } from '../../../../common/services/soroban.service';
+import { Breakpoints, COLORS } from '../../../../common/styles';
+import useAuthStore from '../../../../store/authStore/useAuthStore';
+import { Empty } from '../../../profile/YourVotes/YourVotes';
+import { getUserPools } from '../../api/api';
+import { PoolUserProcessed } from '../../api/types';
+import PoolsList from '../PoolsList/PoolsList';
 
 const PoolsListBlock = styled.div<{ onlyList: boolean }>`
     display: flex;
@@ -138,11 +139,11 @@ const MyLiquidity = ({ setTotal, onlyList }: MyLiquidityProps) => {
 
     const updateData = () => {
         if (account) {
-            getUserPools(account.accountId()).then((res) => {
+            getUserPools(account.accountId()).then(res => {
                 setPools(res);
             });
 
-            account?.getClassicPools().then((res) => {
+            account?.getClassicPools().then(res => {
                 setClassicPools(res);
             });
         }
@@ -195,7 +196,7 @@ const MyLiquidity = ({ setTotal, onlyList }: MyLiquidityProps) => {
             <SelectStyled value={filter} options={FilterOptions} onChange={setFilter} />
             {!filteredPools ? (
                 <PageLoader />
-            ) : Boolean(filteredPools.length) ? (
+            ) : filteredPools.length ? (
                 <PoolsList isUserList pools={filteredPools} onUpdate={() => updateData()} />
             ) : (
                 <div>Your liquidity positions will appear here</div>

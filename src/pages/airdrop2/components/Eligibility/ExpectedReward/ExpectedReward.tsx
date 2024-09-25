@@ -1,12 +1,14 @@
 import * as React from 'react';
-import { AccountEligibility } from '../../../api/types';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import Aqua from 'assets/aqua-logo-small.svg';
+
 import AquaGray from 'assets/aqua-logo-gray.svg';
+import Aqua from 'assets/aqua-logo-small.svg';
 import Down from 'assets/icon-arrow-down-long.svg';
+
 import { formatBalance } from '../../../../../common/helpers/helpers';
 import { respondDown } from '../../../../../common/mixins';
+import { Breakpoints, COLORS } from '../../../../../common/styles';
+import { AccountEligibility } from '../../../api/types';
 
 const Container = styled.div`
     margin-top: 2rem;

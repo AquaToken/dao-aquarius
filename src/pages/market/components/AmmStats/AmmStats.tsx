@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import { StellarService } from '../../../../common/services/globalServices';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import { respondDown } from '../../../../common/mixins';
+
 import ExternalLink from '../../../../common/basics/ExternalLink';
 import PageLoader from '../../../../common/basics/PageLoader';
 import { formatBalance, getAssetString } from '../../../../common/helpers/helpers';
+import { respondDown } from '../../../../common/mixins';
+import { StellarService } from '../../../../common/services/globalServices';
+import { Breakpoints, COLORS } from '../../../../common/styles';
 
 const Container = styled.div`
     display: flex;
@@ -95,18 +96,18 @@ const AmmStats = ({ base, counter }) => {
     const [counterPriceLoading, setCounterPriceLoading] = useState(true);
 
     useEffect(() => {
-        StellarService.getLumenUsdPrice().then((res) => {
+        StellarService.getLumenUsdPrice().then(res => {
             setPriceLoading(false);
             setLumenUsdPrice(res);
         });
 
-        StellarService.getLiquidityPoolData(base, counter).then((res) => {
+        StellarService.getLiquidityPoolData(base, counter).then(res => {
             setStatsLoading(false);
             setStats(res);
         });
 
         if (!base.isNative()) {
-            StellarService.getAssetLumenPrice(base).then((res) => {
+            StellarService.getAssetLumenPrice(base).then(res => {
                 setBaseLumenPrice(res);
                 setBasePriceLoading(false);
             });
@@ -116,7 +117,7 @@ const AmmStats = ({ base, counter }) => {
         }
 
         if (!counter.isNative()) {
-            StellarService.getAssetLumenPrice(counter).then((res) => {
+            StellarService.getAssetLumenPrice(counter).then(res => {
                 setCounterLumenPrice(res);
                 setCounterPriceLoading(false);
             });

@@ -1,14 +1,16 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { respondDown } from '../../mixins';
-import { Breakpoints, COLORS } from '../../styles';
+
+import Discord from 'assets/discord-styled.svg';
+import Email from 'assets/email-styled.svg';
+import Github from 'assets/github-styled.svg';
+import Medium from 'assets/medium-styled.svg';
+import Reddit from 'assets/reddit-styled.svg';
 import Telegram from 'assets/telegram-styled.svg';
 import Twitter from 'assets/twitter-styled.svg';
-import Github from 'assets/github-styled.svg';
-import Discord from 'assets/discord-styled.svg';
-import Reddit from 'assets/reddit-styled.svg';
-import Medium from 'assets/medium-styled.svg';
-import Email from 'assets/email-styled.svg';
+
+import { respondDown } from '../../mixins';
+import { Breakpoints, COLORS } from '../../styles';
 
 const Container = styled.section`
     padding-top: 16rem;

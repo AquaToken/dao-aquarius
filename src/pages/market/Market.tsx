@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { lazy } from 'react';
 import { Route, Switch } from 'react-router-dom';
+
 import NotFoundPage from '../../common/components/NotFoundPage/NotFoundPage';
 import { MarketRoutes } from '../../routes';
 

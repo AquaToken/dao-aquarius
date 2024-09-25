@@ -1,8 +1,9 @@
 import * as React from 'react';
 import styled from 'styled-components';
+
+import { formatBalance } from '../../../../../common/helpers/helpers';
 import { flexRowSpaceBetween } from '../../../../../common/mixins';
 import { COLORS } from '../../../../../common/styles';
-import { formatBalance } from '../../../../../common/helpers/helpers';
 
 const Container = styled.div`
     display: flex;

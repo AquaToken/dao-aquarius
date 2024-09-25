@@ -1,15 +1,17 @@
+import { ServerApi } from '@stellar/stellar-sdk';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import { flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
+
 import AquaLogo from 'assets/aqua-logo-small.svg';
-import AccountService from '../../../../../common/services/account.service';
-import { formatBalance, roundToPrecision } from '../../../../../common/helpers/helpers';
-import PageLoader from '../../../../../common/basics/PageLoader';
-import { ServerApi } from '@stellar/stellar-sdk';
-import { StellarService } from '../../../../../common/services/globalServices';
+
 import DotsLoader from '../../../../../common/basics/DotsLoader';
+import PageLoader from '../../../../../common/basics/PageLoader';
+import { formatBalance, roundToPrecision } from '../../../../../common/helpers/helpers';
+import { flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
+import AccountService from '../../../../../common/services/account.service';
+import { StellarService } from '../../../../../common/services/globalServices';
+import { Breakpoints, COLORS } from '../../../../../common/styles';
 
 const Container = styled.div`
     margin-top: 6.3rem;
@@ -117,7 +119,7 @@ const Portfolio = ({
     const [price, setPrice] = useState(null);
 
     useEffect(() => {
-        StellarService.getAquaPrice().then((res) => {
+        StellarService.getAquaPrice().then(res => {
             setPrice(res);
         });
     }, []);

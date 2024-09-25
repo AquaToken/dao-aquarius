@@ -1,5 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
+
 import { COLORS } from '../../../../../../common/styles';
 
 const ButtonBody = styled.button<{ isVoteFor?: boolean }>`

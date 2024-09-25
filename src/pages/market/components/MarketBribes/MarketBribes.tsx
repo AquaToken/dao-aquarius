@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../common/styles';
+
 import MarketCurrentBribes from './MarketCurrentBribes/MarketCurrentBribes';
-import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
-import ToggleGroup from '../../../../common/basics/ToggleGroup';
 import MarketUpcomingBribes from './MarketUpcomingBribes/MarketUpcomingBribes';
+
+import ToggleGroup from '../../../../common/basics/ToggleGroup';
+import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
+import { Breakpoints, COLORS } from '../../../../common/styles';
 
 const Container = styled.div`
     display: flex;

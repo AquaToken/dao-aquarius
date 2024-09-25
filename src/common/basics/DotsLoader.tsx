@@ -1,6 +1,6 @@
 import * as React from 'react';
-import styled from 'styled-components';
 import { useEffect, useState } from 'react';
+import styled from 'styled-components';
 
 const DOTS_COUNT = 3;
 const DOT_SYMBOL = '.';
@@ -15,7 +15,7 @@ const DotsLoader = (): JSX.Element => {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            setCurrentIndex((prevIndex) => (prevIndex + 1) % DOTS_COUNT);
+            setCurrentIndex(prevIndex => (prevIndex + 1) % DOTS_COUNT);
         }, 300);
 
         return () => clearInterval(interval);

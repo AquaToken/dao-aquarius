@@ -34,7 +34,7 @@ const getFromWalletConnectDB = async (key: string): Promise<any> => {
 
         const store = db.transaction(WC_STORE_NAME, 'readonly').objectStore(WC_STORE_NAME);
 
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
             const request = store.get(key);
             request.onsuccess = () => resolve(request.result);
             request.onerror = () => resolve(null);
@@ -117,7 +117,7 @@ const getDeepLinkHistory = () => {
 
 // Deep Link functional
 // Set connection history by deep link.
-const setDeepLinkHistory = (list) => {
+const setDeepLinkHistory = list => {
     const LS = getLocalStorage();
     if (!LS) {
         return;
@@ -141,7 +141,7 @@ export const savePairingToDeepLinkHistory = (topic: string) => {
 
 // Deep Link functional
 // Get the wallet data from the history by the pairing id
-export const getWalletFromDeepLinkHistory = (topic) => {
+export const getWalletFromDeepLinkHistory = topic => {
     const history = getDeepLinkHistory();
 
     return history.has(topic) ? JSON.parse(history.get(topic)) : null;
@@ -149,7 +149,7 @@ export const getWalletFromDeepLinkHistory = (topic) => {
 
 // Method for sending the URI to the wallet using custom postMessage if the dapp is open in the WebView
 // It is used for the functionality of auto-connection with the LOBSTR wallet
-export const sendUriToWalletWebView = (URI) => {
+export const sendUriToWalletWebView = URI => {
     const stringify = JSON.stringify(URI);
 
     try {

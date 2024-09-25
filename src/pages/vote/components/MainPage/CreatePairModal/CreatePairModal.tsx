@@ -1,25 +1,27 @@
+import * as StellarSdk from '@stellar/stellar-sdk';
 import * as React from 'react';
 import { useState } from 'react';
+import styled from 'styled-components';
+
+import Info from 'assets/icon-info.svg';
+
+import Button from '../../../../../common/basics/Button';
+import Tooltip, { TOOLTIP_POSITION } from '../../../../../common/basics/Tooltip';
+import ErrorHandler from '../../../../../common/helpers/error-handler';
+import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
+import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
 import {
     ModalDescription,
     ModalProps,
     ModalTitle,
 } from '../../../../../common/modals/atoms/ModalAtoms';
-import styled from 'styled-components';
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
-import Button from '../../../../../common/basics/Button';
-import Market from '../../common/Market';
-import * as StellarSdk from '@stellar/stellar-sdk';
 import { StellarService, ToastService } from '../../../../../common/services/globalServices';
-import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
 import { BuildSignAndSubmitStatuses } from '../../../../../common/services/wallet-connect.service';
-import Info from 'assets/icon-info.svg';
-import Tooltip, { TOOLTIP_POSITION } from '../../../../../common/basics/Tooltip';
-import ErrorHandler from '../../../../../common/helpers/error-handler';
+import { Breakpoints, COLORS } from '../../../../../common/styles';
 import { LoginTypes } from '../../../../../store/authStore/types';
-import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
+import useAuthStore from '../../../../../store/authStore/useAuthStore';
+import Market from '../../common/Market';
 
 const ContentRow = styled.div`
     display: flex;

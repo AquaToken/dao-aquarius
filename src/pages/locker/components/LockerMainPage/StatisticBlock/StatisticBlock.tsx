@@ -1,13 +1,16 @@
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import { respondDown } from '../../../../../common/mixins';
+
+import { getIceStatistics } from 'api/ice-locker';
+
 import Aqua from 'assets/aqua-logo-small.svg';
 import Ice from 'assets/ice-logo.svg';
-import { formatBalance } from '../../../../../common/helpers/helpers';
-import { useEffect, useState } from 'react';
-import { getIceStatistics } from 'api/ice-locker';
+
 import DotsLoader from '../../../../../common/basics/DotsLoader';
+import { formatBalance } from '../../../../../common/helpers/helpers';
+import { respondDown } from '../../../../../common/mixins';
+import { Breakpoints, COLORS } from '../../../../../common/styles';
 
 const Container = styled.div`
     display: flex;

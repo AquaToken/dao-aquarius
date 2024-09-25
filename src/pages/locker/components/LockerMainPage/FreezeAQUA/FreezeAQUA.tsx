@@ -1,9 +1,11 @@
 import * as React from 'react';
 import styled from 'styled-components';
+
 import FreezeAquaImage from 'assets/freeze-aqua.svg';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
+
 import ExternalLink from '../../../../../common/basics/ExternalLink';
 import { respondDown } from '../../../../../common/mixins';
+import { Breakpoints, COLORS } from '../../../../../common/styles';
 
 const Container = styled.div`
     display: flex;

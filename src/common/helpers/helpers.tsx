@@ -1,4 +1,5 @@
 import { Asset } from '@stellar/stellar-sdk';
+
 import { StellarService } from '../services/globalServices';
 
 type GetDateStringConfig = {
@@ -56,9 +57,7 @@ export const getTimeAgoValue = (timestamp: string | number): string => {
         const remainingHours = Math.floor((timeFromTimestamp % day) / hour);
 
         return `${daysAgo} day${daysAgo === 1 ? '' : 's'} ${
-            Boolean(remainingHours)
-                ? `${remainingHours} hour${remainingHours === 1 ? ' ' : 's '}`
-                : ''
+            remainingHours ? `${remainingHours} hour${remainingHours === 1 ? ' ' : 's '}` : ''
         }ago`;
     }
 
@@ -111,7 +110,7 @@ function nFormatter(num, digits) {
     const item = lookup
         .slice()
         .reverse()
-        .find((i) => num >= i.value);
+        .find(i => num >= i.value);
     return item ? (num / item.value).toFixed(digits).replace(rx, '$1') + item.symbol : '0';
 }
 

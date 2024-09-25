@@ -1,14 +1,16 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
-import Reddit from 'assets/reddit.svg';
+
 import Discord from 'assets/discord.svg';
-import Medium from 'assets/medium.svg';
+import Email from 'assets/email.svg';
 import Github from 'assets/github.svg';
+import Medium from 'assets/medium.svg';
+import Reddit from 'assets/reddit.svg';
 import Telegram from 'assets/telegram.svg';
 import Twitter from 'assets/twitter.svg';
-import Email from 'assets/email.svg';
-import { Breakpoints, COLORS } from '../../styles';
+
 import { respondDown } from '../../mixins';
+import { Breakpoints, COLORS } from '../../styles';
 
 const VerticalStyles = css`
     position: absolute;
@@ -78,22 +80,22 @@ const Line = styled.div`
 const SocialLinks = ({ isHorizontal }: { isHorizontal?: boolean }) => {
     return (
         <Container isHorizontal={isHorizontal}>
-            <a href="https://www.reddit.com/r/AquariusAqua/" target="_blank">
+            <a href="https://www.reddit.com/r/AquariusAqua/" target="_blank" rel="noreferrer">
                 <Reddit />
             </a>
-            <a href="https://discord.gg/sgzFscHp4C" target="_blank">
+            <a href="https://discord.gg/sgzFscHp4C" target="_blank" rel="noreferrer">
                 <Discord />
             </a>
-            <a href="https://medium.com/aquarius-aqua" target="_blank">
+            <a href="https://medium.com/aquarius-aqua" target="_blank" rel="noreferrer">
                 <Medium />
             </a>
-            <a href="https://github.com/AquaToken" target="_blank">
+            <a href="https://github.com/AquaToken" target="_blank" rel="noreferrer">
                 <Github />
             </a>
-            <a href="https://t.me/aquarius_official_community" target="_blank">
+            <a href="https://t.me/aquarius_official_community" target="_blank" rel="noreferrer">
                 <Telegram />
             </a>
-            <a href="https://x.com/aqua_token" target="_blank">
+            <a href="https://x.com/aqua_token" target="_blank" rel="noreferrer">
                 <Twitter />
             </a>
             <a href="mailto:hello@aqua.network">

@@ -1,5 +1,6 @@
-import axios from 'axios';
 import * as StellarSdk from '@stellar/stellar-sdk';
+import axios from 'axios';
+
 import {
     ListResponse,
     MarketBribes,
@@ -10,6 +11,7 @@ import {
     TotalStats,
     UpcomingBribe,
 } from './types';
+
 import { AssetSimple } from '../../../store/assetsStore/types';
 const marketKeysUrl = 'https://marketkeys-tracker.aqua.network/api/market-keys/';
 const votingTrackerUrl = 'https://voting-tracker.aqua.network/api/voting-snapshot/';
@@ -49,7 +51,7 @@ const addKeysToMarketVotes = async (votes: MarketVotes[], count) => {
     const params = new URLSearchParams();
     const bribesParams = new URLSearchParams();
 
-    votes.forEach((marketVotes) => {
+    votes.forEach(marketVotes => {
         params.append('account_id', marketVotes.market_key);
         bribesParams.append('market_key', marketVotes.market_key);
     });
@@ -61,12 +63,12 @@ const addKeysToMarketVotes = async (votes: MarketVotes[], count) => {
         }),
     ]);
 
-    const pairs = votes.map((marketVotes) => {
+    const pairs = votes.map(marketVotes => {
         const marketKey = marketsKeys.data.results.find(
-            (key) => key.account_id === marketVotes.market_key,
+            key => key.account_id === marketVotes.market_key,
         );
 
-        const bribe = bribes.data.results.find((key) => key.market_key === marketVotes.market_key);
+        const bribe = bribes.data.results.find(key => key.market_key === marketVotes.market_key);
 
         return { ...marketVotes, ...marketKey, ...bribe };
     });
@@ -80,7 +82,7 @@ export const updateVotesForMarketKeys = async (pairs: PairStats[]): Promise<Pair
     }
     const params = new URLSearchParams();
 
-    pairs.forEach((pair) => {
+    pairs.forEach(pair => {
         params.append('market_key', pair.market_key);
     });
 
@@ -88,9 +90,9 @@ export const updateVotesForMarketKeys = async (pairs: PairStats[]): Promise<Pair
         params,
     });
 
-    return pairs.map((pair) => {
+    return pairs.map(pair => {
         const marketVotes = marketsVotes.data.results.find(
-            (vote) => vote.market_key === pair.account_id,
+            vote => vote.market_key === pair.account_id,
         );
 
         if (marketVotes) {
@@ -109,7 +111,7 @@ export const validateMarketKeys = async (keys: string[]): Promise<MarketKey[]> =
     const paramsUp = new URLSearchParams();
     const paramsDown = new URLSearchParams();
 
-    keys.forEach((key) => {
+    keys.forEach(key => {
         paramsUp.append('account_id', key);
         paramsDown.append('downvote_account_id', key);
     });
@@ -124,7 +126,7 @@ export const validateMarketKeys = async (keys: string[]): Promise<MarketKey[]> =
     ]);
 
     return [...marketKeysUp.data.results, ...marketKeysDown.data.results].filter(
-        (value, index, self) => index === self.findIndex((t) => t.account_id === value.account_id),
+        (value, index, self) => index === self.findIndex(t => t.account_id === value.account_id),
     );
 };
 
@@ -137,7 +139,7 @@ export const getUserPairsList = async (keys: string[]) => {
 
     const marketVotesParams = new URLSearchParams();
 
-    marketKeys.forEach((marketKey) => {
+    marketKeys.forEach(marketKey => {
         marketVotesParams.append('market_key', marketKey.account_id);
     });
 
@@ -150,14 +152,12 @@ export const getUserPairsList = async (keys: string[]) => {
         }),
     ]);
 
-    return marketKeys.map((marketKey) => {
+    return marketKeys.map(marketKey => {
         const marketVotes = marketsVotes.data.results.find(
-            (vote) => vote.market_key === marketKey.account_id,
+            vote => vote.market_key === marketKey.account_id,
         );
 
-        const bribe = bribes.data.results.find(
-            (bribe) => bribe.market_key === marketKey.account_id,
-        );
+        const bribe = bribes.data.results.find(bribe => bribe.market_key === marketKey.account_id);
 
         if (marketVotes) {
             return { ...marketKey, ...marketVotes, ...bribe };
@@ -179,7 +179,7 @@ export const getPairsWithBribes = async (pageSize: number, page: number) => {
     const votesParams = new URLSearchParams();
     const keysParams = new URLSearchParams();
 
-    bribes.data.results.forEach((bribe) => {
+    bribes.data.results.forEach(bribe => {
         votesParams.append('market_key', bribe.market_key);
         keysParams.append('account_id', bribe.market_key);
     });
@@ -191,13 +191,11 @@ export const getPairsWithBribes = async (pageSize: number, page: number) => {
         axios.get<ListResponse<MarketKey>>(marketKeysUrl, { params: keysParams }),
     ]);
 
-    const pairs = bribes.data.results.map((bribe) => {
-        const marketKey = marketsKeys.data.results.find(
-            (key) => key.account_id === bribe.market_key,
-        );
+    const pairs = bribes.data.results.map(bribe => {
+        const marketKey = marketsKeys.data.results.find(key => key.account_id === bribe.market_key);
 
         const marketVote = marketsVotes.data.results.find(
-            (vote) => vote.market_key === bribe.market_key,
+            vote => vote.market_key === bribe.market_key,
         );
 
         return { ...bribe, ...marketKey, ...marketVote };
@@ -252,7 +250,7 @@ export const getFilteredPairsList = async (
     const marketVotesParams = new URLSearchParams();
     const bribesParams = new URLSearchParams();
 
-    marketKeys.forEach((marketKey) => {
+    marketKeys.forEach(marketKey => {
         marketVotesParams.append('market_key', marketKey.account_id);
         bribesParams.append('market_key', marketKey.account_id);
     });
@@ -266,12 +264,12 @@ export const getFilteredPairsList = async (
         }),
     ]);
 
-    const pairs = marketKeys.map((marketKey) => {
+    const pairs = marketKeys.map(marketKey => {
         const marketVotes = marketsVotes.data.results.find(
-            (vote) => vote.market_key === marketKey.account_id,
+            vote => vote.market_key === marketKey.account_id,
         );
 
-        const bribe = bribes.data.results.find((key) => key.market_key === marketKey.account_id);
+        const bribe = bribes.data.results.find(key => key.market_key === marketKey.account_id);
 
         if (marketVotes) {
             return { ...marketKey, ...marketVotes, ...bribe };
@@ -287,7 +285,7 @@ export const getTotalVotingStats = (): Promise<TotalStats> => {
     return axios.get<TotalStats>(`${votingTrackerUrl}stats/`).then(({ data }) => data);
 };
 
-export const getUpcomingBribesForMarket = (marketKey) => {
+export const getUpcomingBribesForMarket = marketKey => {
     return axios
         .get<ListResponse<UpcomingBribe>>(
             `${bribesApiUrl}pending-bribes/?limit=200&ordering=start_at&market_key=${marketKey}`,
@@ -298,7 +296,7 @@ export const getUpcomingBribesForMarket = (marketKey) => {
 };
 
 export const getRewards = (): Promise<Rewards[]> => {
-    return axios.get<ListResponse<Rewards>>(rewardsApi).then((res) => {
+    return axios.get<ListResponse<Rewards>>(rewardsApi).then(res => {
         return res.data.results;
     });
 };

@@ -17,7 +17,7 @@ export default class EventService {
     }
 
     trigger(...args: unknown[]): void {
-        this.listeners.forEach((callback) => {
+        this.listeners.forEach(callback => {
             callback(...args);
         });
     }

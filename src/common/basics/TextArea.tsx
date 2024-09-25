@@ -1,7 +1,8 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { COLORS } from '../styles';
+
 import { textEllipsis } from '../mixins';
+import { COLORS } from '../styles';
 
 const StyledArea = styled.textarea`
     height: 34.8rem;

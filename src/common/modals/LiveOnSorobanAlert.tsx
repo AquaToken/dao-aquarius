@@ -1,11 +1,13 @@
 import * as React from 'react';
-import { ModalDescription, ModalTitle } from './atoms/ModalAtoms';
+import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
+
+import { ModalDescription, ModalTitle } from './atoms/ModalAtoms';
+
+import { MainRoutes } from '../../routes';
+import Button from '../basics/Button';
 import { respondDown } from '../mixins';
 import { Breakpoints } from '../styles';
-import Button from '../basics/Button';
-import { useHistory } from 'react-router-dom';
-import { MainRoutes } from '../../routes';
 
 const Container = styled.div`
     width: 52.8rem;
@@ -37,7 +39,7 @@ export const LIVE_ON_SOROBAN_SHOWED_ALIAS = 'live_on_soroban_showed';
 
 const LiveOnSorobanAlert = ({ confirm }) => {
     const history = useHistory();
-    const onSubmit = (route) => {
+    const onSubmit = route => {
         history.push(route);
         localStorage.setItem(LIVE_ON_SOROBAN_SHOWED_ALIAS, 'true');
         confirm();

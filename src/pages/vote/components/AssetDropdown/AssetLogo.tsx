@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components';
 
 import UnknownLogo from 'assets/asset-unknown-logo.svg';
 import Loader from 'assets/loader.svg';
+
 import { flexAllCenter } from '../../../../common/mixins';
 import { COLORS } from '../../../../common/styles';
 import { getAssetString } from '../../../../store/assetsStore/actions';

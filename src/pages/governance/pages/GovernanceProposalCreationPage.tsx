@@ -1,18 +1,20 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import styled from 'styled-components';
-import ProposalCreation from '../components/GovernanceProposalCreationPage/ProposalCreation/ProposalCreation';
-import ProposalScreen from '../components/GovernanceVoteProposalPage/Proposal/ProposalScreen';
-import useAuthStore from '../../../store/authStore/useAuthStore';
-import { respondDown } from '../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../common/styles';
 import { useHistory, useParams } from 'react-router-dom';
-import { getProposalRequest } from '../api/api';
-import { ModalService, ToastService } from '../../../common/services/globalServices';
+import styled from 'styled-components';
+
 import { CREATE_DISCUSSION_COST } from './GovernanceMainPage';
+
+import { respondDown } from '../../../common/mixins';
+import { ModalService, ToastService } from '../../../common/services/globalServices';
+import { Breakpoints, COLORS } from '../../../common/styles';
+import { GovernanceRoutes } from '../../../routes';
+import useAuthStore from '../../../store/authStore/useAuthStore';
+import { getProposalRequest } from '../api/api';
 import NotEnoughAquaModal from '../components/GovernanceMainPage/NotEnoughAquaModal/NotEnoughAquaModal';
 import CreateDiscussionModal from '../components/GovernanceProposalCreationPage/CreateDiscussionModal/CreateDiscussionModal';
-import { GovernanceRoutes } from '../../../routes';
+import ProposalCreation from '../components/GovernanceProposalCreationPage/ProposalCreation/ProposalCreation';
+import ProposalScreen from '../components/GovernanceVoteProposalPage/Proposal/ProposalScreen';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -39,7 +41,7 @@ const GovernanceProposalCreationPage = ({ isEdit }: { isEdit?: boolean }): JSX.E
             return;
         }
         getProposalRequest(id)
-            .then((response) => {
+            .then(response => {
                 setTitle(response.data.title);
                 setText(response.data.text);
                 setDiscordChannel(response.data.discord_channel_name ?? '');

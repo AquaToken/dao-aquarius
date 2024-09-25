@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { getPoolsToMigrate } from '../../../api/api';
+
 import Button from '../../../../../common/basics/Button';
-import { ModalService } from '../../../../../common/services/globalServices';
 import MigrateLiquidityStep1 from '../../../../../common/modals/MigrateLiquidityModals/MigrateLiquidityStep1';
+import { ModalService } from '../../../../../common/services/globalServices';
+import { getPoolsToMigrate } from '../../../api/api';
 
 const MigratePoolButton = ({ pool, onUpdate }) => {
     const [poolsToMigrate, setPoolsToMigrate] = useState(null);
@@ -11,7 +12,7 @@ const MigratePoolButton = ({ pool, onUpdate }) => {
     const [base, counter] = pool.assets;
 
     useEffect(() => {
-        getPoolsToMigrate(base, counter).then((res) => {
+        getPoolsToMigrate(base, counter).then(res => {
             setPoolsToMigrate(res);
         });
     }, []);

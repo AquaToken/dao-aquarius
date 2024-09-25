@@ -1,5 +1,6 @@
 /* eslint-disable prefer-spread */
 import { css, FlattenSimpleInterpolation, Interpolation } from 'styled-components';
+
 import { Breakpoints, COLORS } from './styles';
 
 export const textEllipsis = css`

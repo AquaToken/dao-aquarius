@@ -1,24 +1,26 @@
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
-import styled from 'styled-components';
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import Button from '../../../../../common/basics/Button';
-import Plus from 'assets/icon-plus.svg';
-import Market from '../../../../vote/components/common/Market';
-import Asset from '../../../../vote/components/AssetDropdown/Asset';
 import { useHistory } from 'react-router-dom';
-import { StellarService } from '../../../../../common/services/globalServices';
-import PageLoader from '../../../../../common/basics/PageLoader';
-import { formatBalance, getDateString } from '../../../../../common/helpers/helpers';
-import Pagination from '../../../../../common/basics/Pagination';
-import { convertUTCToLocalDateIgnoringTimezone } from '../../../pages/AddBribePage';
+import styled from 'styled-components';
+
+import Plus from 'assets/icon-plus.svg';
+
+import Button from '../../../../../common/basics/Button';
 import Checkbox from '../../../../../common/basics/Checkbox';
+import PageLoader from '../../../../../common/basics/PageLoader';
+import Pagination from '../../../../../common/basics/Pagination';
 import Select from '../../../../../common/basics/Select';
-import useAssetsStore from '../../../../../store/assetsStore/useAssetsStore';
-import { BribesRoutes, MarketRoutes } from '../../../../../routes';
-import { BribeSortFields, getBribes } from '../../../api/api';
 import Table, { CellAlign } from '../../../../../common/basics/Table';
+import { formatBalance, getDateString } from '../../../../../common/helpers/helpers';
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
+import { StellarService } from '../../../../../common/services/globalServices';
+import { Breakpoints, COLORS } from '../../../../../common/styles';
+import { BribesRoutes, MarketRoutes } from '../../../../../routes';
+import useAssetsStore from '../../../../../store/assetsStore/useAssetsStore';
+import Asset from '../../../../vote/components/AssetDropdown/Asset';
+import Market from '../../../../vote/components/common/Market';
+import { BribeSortFields, getBribes } from '../../../api/api';
+import { convertUTCToLocalDateIgnoringTimezone } from '../../../pages/AddBribePage';
 
 const Container = styled.div`
     display: flex;
@@ -118,7 +120,7 @@ const BribesTable = () => {
 
     const { processNewAssets } = useAssetsStore();
 
-    const processAssetsFromPairs = (bribes) => {
+    const processAssetsFromPairs = bribes => {
         const assets = bribes.reduce((acc, item) => {
             const rewardAsset = StellarService.createAsset(item.asset_code, item.asset_issuer);
             return [
@@ -134,7 +136,7 @@ const BribesTable = () => {
 
     useEffect(() => {
         setLoading(true);
-        getBribes(PAGE_SIZE, page, sort, !filterByAmount).then((res) => {
+        getBribes(PAGE_SIZE, page, sort, !filterByAmount).then(res => {
             setCount(res.count);
             setBribes(res.bribes);
             processAssetsFromPairs(res.bribes);
@@ -151,7 +153,7 @@ const BribesTable = () => {
         headerRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }, [page]);
 
-    const changeSort = (newSort) => {
+    const changeSort = newSort => {
         setSort(newSort);
         setPage(1);
     };
@@ -181,7 +183,7 @@ const BribesTable = () => {
             <CheckboxStyled
                 label={'Show bribes smaller than 100,000 AQUA'}
                 checked={filterByAmount}
-                onChange={(value) => {
+                onChange={value => {
                     setFilterByAmount(value);
                     setPage(1);
                 }}
@@ -226,7 +228,7 @@ const BribesTable = () => {
                         },
                     },
                 ]}
-                body={bribes.map((item) => {
+                body={bribes.map(item => {
                     const startUTC = convertUTCToLocalDateIgnoringTimezone(new Date(item.start_at));
                     const stopUTC = convertUTCToLocalDateIgnoringTimezone(new Date(item.stop_at));
                     const base = {

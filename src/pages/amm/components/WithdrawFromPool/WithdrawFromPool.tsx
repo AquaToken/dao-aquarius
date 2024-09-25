@@ -1,29 +1,31 @@
+import BigNumber from 'bignumber.js';
 import * as React from 'react';
-import styled from 'styled-components';
-import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import { ModalProps, ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
 import { useEffect, useState } from 'react';
-import RangeInput from '../../../../common/basics/RangeInput';
+import styled from 'styled-components';
+
+import { getAssetString } from 'store/assetsStore/actions';
+import { LoginTypes } from 'store/authStore/types';
+
 import Button from '../../../../common/basics/Button';
+import DotsLoader from '../../../../common/basics/DotsLoader';
+import Input from '../../../../common/basics/Input';
+import PageLoader from '../../../../common/basics/PageLoader';
+import RangeInput from '../../../../common/basics/RangeInput';
 import { formatBalance } from '../../../../common/helpers/helpers';
+import { openCurrentWalletIfExist } from '../../../../common/helpers/wallet-connect-helpers';
+import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
+import { ModalProps, ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
 import {
     ModalService,
     SorobanService,
     ToastService,
 } from '../../../../common/services/globalServices';
-import SuccessModal from '../SuccessModal/SuccessModal';
-import useAuthStore from '../../../../store/authStore/useAuthStore';
-import PageLoader from '../../../../common/basics/PageLoader';
-import Market from '../../../vote/components/common/Market';
-import Input from '../../../../common/basics/Input';
-import DotsLoader from '../../../../common/basics/DotsLoader';
-import { getAssetString } from '../../../../store/assetsStore/actions';
 import { BuildSignAndSubmitStatuses } from '../../../../common/services/wallet-connect.service';
-import BigNumber from 'bignumber.js';
+import { Breakpoints, COLORS } from '../../../../common/styles';
+import useAuthStore from '../../../../store/authStore/useAuthStore';
+import Market from '../../../vote/components/common/Market';
 import { PoolExtended } from '../../api/types';
-import { LoginTypes } from '../../../../store/authStore/types';
-import { openCurrentWalletIfExist } from '../../../../common/helpers/wallet-connect-helpers';
+import SuccessModal from '../SuccessModal/SuccessModal';
 
 const Container = styled.div`
     width: 52.3rem;
@@ -84,13 +86,13 @@ const WithdrawFromPool = ({ params }: ModalProps<{ pool: PoolExtended }>) => {
     const { account } = useAuthStore();
 
     useEffect(() => {
-        SorobanService.getTotalShares(pool.address).then((res) => {
+        SorobanService.getTotalShares(pool.address).then(res => {
             setTotalShares(res);
         });
     }, []);
 
     useEffect(() => {
-        SorobanService.getPoolReserves(pool.assets, pool.address).then((res) => {
+        SorobanService.getPoolReserves(pool.assets, pool.address).then(res => {
             setReserves(res);
         });
     }, []);
@@ -100,14 +102,12 @@ const WithdrawFromPool = ({ params }: ModalProps<{ pool: PoolExtended }>) => {
             setAccountShare(null);
             return;
         }
-        SorobanService.getTokenBalance(pool.share_token_address, account.accountId()).then(
-            (res) => {
-                setAccountShare(res);
-            },
-        );
+        SorobanService.getTokenBalance(pool.share_token_address, account.accountId()).then(res => {
+            setAccountShare(res);
+        });
     }, [account]);
 
-    const onInputChange = (value) => {
+    const onInputChange = value => {
         if (Number.isNaN(Number(value)) || Number(value) > 100) {
             return;
         }
@@ -122,9 +122,7 @@ const WithdrawFromPool = ({ params }: ModalProps<{ pool: PoolExtended }>) => {
     };
 
     const withdraw = () => {
-        const noTrustAssets = pool.assets.filter(
-            (asset) => account.getAssetBalance(asset) === null,
-        );
+        const noTrustAssets = pool.assets.filter(asset => account.getAssetBalance(asset) === null);
 
         if (noTrustAssets.length) {
             ToastService.showErrorToast(
@@ -147,11 +145,11 @@ const WithdrawFromPool = ({ params }: ModalProps<{ pool: PoolExtended }>) => {
         let hash: string;
 
         SorobanService.getWithdrawTx(account?.accountId(), pool.index, amount, pool.assets)
-            .then((tx) => {
+            .then(tx => {
                 hash = tx.hash().toString('hex');
                 return account.signAndSubmitTx(tx, true);
             })
-            .then((res) => {
+            .then(res => {
                 if (!res) {
                     return;
                 }
@@ -166,13 +164,13 @@ const WithdrawFromPool = ({ params }: ModalProps<{ pool: PoolExtended }>) => {
 
                 ModalService.openModal(SuccessModal, {
                     assets: pool.assets,
-                    amounts: res.value().map((val) => SorobanService.i128ToInt(val.value())),
+                    amounts: res.value().map(val => SorobanService.i128ToInt(val.value())),
                     title: 'Withdraw Successful',
                     hash,
                 });
                 setPending(false);
             })
-            .catch((e) => {
+            .catch(e => {
                 console.log(e);
                 const errorMessage = e.message ?? e.toString() ?? 'Oops! Something went wrong';
                 ToastService.showErrorToast(
@@ -203,7 +201,7 @@ const WithdrawFromPool = ({ params }: ModalProps<{ pool: PoolExtended }>) => {
                     <RangeInput onChange={setPercent} value={+percent} />
 
                     <Details>
-                        {pool.assets.map((asset) => (
+                        {pool.assets.map(asset => (
                             <DescriptionRow key={getAssetString(asset)}>
                                 <span>Will receive {asset.code}</span>
                                 <span>

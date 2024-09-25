@@ -1,14 +1,18 @@
 import * as StellarSdk from '@stellar/stellar-sdk';
-import { sha256 } from 'js-sha256';
-import binascii from 'binascii';
 import { xdr, Asset, Keypair, BASE_FEE, StrKey } from '@stellar/stellar-sdk';
-import SendTransactionResponse = StellarSdk.SorobanRpc.Api.SendTransactionResponse;
+import BigNumber from 'bignumber.js';
+import binascii from 'binascii';
+import { sha256 } from 'js-sha256';
+
 import SimulateTransactionSuccessResponse = StellarSdk.SorobanRpc.Api.SimulateTransactionSuccessResponse;
+
 import { ModalService, SorobanService, ToastService } from './globalServices';
-import RestoreContractModal from '../modals/RestoreContractModal/RestoreContractModal';
+
 import { getAssetString } from '../../store/assetsStore/actions';
 import { SorobanErrorHandler, SorobanPrepareTxErrorHandler } from '../helpers/error-handler';
-import BigNumber from 'bignumber.js';
+import RestoreContractModal from '../modals/RestoreContractModal/RestoreContractModal';
+
+import SendTransactionResponse = StellarSdk.SorobanRpc.Api.SendTransactionResponse;
 
 const SOROBAN_SERVER = 'https://soroban-rpc.aqua.network/';
 export const AMM_SMART_CONTACT_ID = 'CBQDHNBFBZYE4MKPWBSJOPIYLW4SFSXAXUTSXJN76GNKYVYPCKWC6QUK';
@@ -96,7 +100,7 @@ export default class SorobanServiceClass {
     }
 
     getTx(hash: string, tx: StellarSdk.Transaction, resolver?: (value?: any) => void) {
-        return this.server.getTransaction(hash).then((res) => {
+        return this.server.getTransaction(hash).then(res => {
             if (res.status === 'SUCCESS') {
                 if (resolver) {
                     resolver(res.returnValue);
@@ -117,7 +121,7 @@ export default class SorobanServiceClass {
                 return setTimeout(() => this.getTx(hash, tx, resolver), 1000);
             }
 
-            return new Promise((resolve) => {
+            return new Promise(resolve => {
                 setTimeout(() => this.getTx(hash, tx, resolve), 1000);
             });
         });
@@ -187,7 +191,7 @@ export default class SorobanServiceClass {
         }
         return (
             this.buildSmartContactTx(ACCOUNT_FOR_SIMULATE, id, ASSET_CONTRACT_METHOD.NAME)
-                .then((tx) => this.simulateTx(tx))
+                .then(tx => this.simulateTx(tx))
                 // @ts-ignore
                 .then(({ result }) => {
                     const [code, issuer] = result.retval.value().toString().split(':');
@@ -238,7 +242,7 @@ export default class SorobanServiceClass {
                     ledgersBeforeExpire: Math.max(contractExp - latestLedger, 0),
                 };
             })
-            .catch((e) => {
+            .catch(e => {
                 console.log(e);
                 return {
                     status: CONTRACT_STATUS.NOT_FOUND,
@@ -250,7 +254,7 @@ export default class SorobanServiceClass {
     deployAssetContractTx(publicKey: string, asset: Asset) {
         return this.server
             .getAccount(publicKey)
-            .then((acc) => {
+            .then(acc => {
                 const tx = new StellarSdk.TransactionBuilder(acc, {
                     fee: BASE_FEE,
                     networkPassphrase: StellarSdk.Networks.PUBLIC,
@@ -264,7 +268,7 @@ export default class SorobanServiceClass {
 
                 return tx.setTimeout(StellarSdk.TimeoutInfinite).build();
             })
-            .then((tx) => this.prepareTransaction(tx));
+            .then(tx => this.prepareTransaction(tx));
     }
 
     restoreAssetContractTx(publicKey: string, asset: Asset) {
@@ -274,7 +278,7 @@ export default class SorobanServiceClass {
 
         return this.server
             .getAccount(publicKey)
-            .then((acc) => {
+            .then(acc => {
                 return new StellarSdk.TransactionBuilder(acc, {
                     fee: BASE_FEE,
                     networkPassphrase: StellarSdk.Networks.PUBLIC,
@@ -288,7 +292,7 @@ export default class SorobanServiceClass {
                     .setTimeout(StellarSdk.TimeoutInfinite)
                     .build();
             })
-            .then((tx) => this.prepareTransaction(tx));
+            .then(tx => this.prepareTransaction(tx));
     }
 
     bumpAssetContractTx(publicKey: string, asset: Asset) {
@@ -298,7 +302,7 @@ export default class SorobanServiceClass {
 
         return this.server
             .getAccount(publicKey)
-            .then((acc) => {
+            .then(acc => {
                 return new StellarSdk.TransactionBuilder(acc, {
                     fee: BASE_FEE,
                     networkPassphrase: StellarSdk.Networks.PUBLIC,
@@ -316,7 +320,7 @@ export default class SorobanServiceClass {
                     .setTimeout(StellarSdk.TimeoutInfinite)
                     .build();
             })
-            .then((tx) => this.prepareTransaction(tx));
+            .then(tx => this.prepareTransaction(tx));
     }
 
     getPools(assets: Asset[]): Promise<null | Array<any>> {
@@ -324,15 +328,15 @@ export default class SorobanServiceClass {
             ACCOUNT_FOR_SIMULATE,
             AMM_SMART_CONTACT_ID,
             AMM_CONTRACT_METHOD.GET_POOLS,
-            this.scValToArray(this.orderTokens(assets).map((asset) => this.assetToScVal(asset))),
+            this.scValToArray(this.orderTokens(assets).map(asset => this.assetToScVal(asset))),
         )
             .then(
-                (tx) =>
+                tx =>
                     this.server.simulateTransaction(
                         tx,
                     ) as Promise<SimulateTransactionSuccessResponse>,
             )
-            .then((res) => {
+            .then(res => {
                 if (!res.result) {
                     return [];
                 }
@@ -343,7 +347,7 @@ export default class SorobanServiceClass {
                     return [];
                 }
 
-                return hashArray.map((item) => [
+                return hashArray.map(item => [
                     SorobanService.getContactIdFromHash(item.val().value().value().toString('hex')),
                     item.key().value(),
                 ]);
@@ -357,14 +361,14 @@ export default class SorobanServiceClass {
             AMM_CONTRACT_METHOD.INIT_CONSTANT_POOL,
             this.publicKeyToScVal(accountId),
             this.scValToArray(
-                this.orderTokens([base, counter]).map((asset) => this.assetToScVal(asset)),
+                this.orderTokens([base, counter]).map(asset => this.assetToScVal(asset)),
             ),
             this.amountToUint32(fee),
-        ).then((tx) => this.prepareTransaction(tx));
+        ).then(tx => this.prepareTransaction(tx));
     }
 
     getInitStableSwapPoolTx(accountId: string, assets: Asset[], fee: number) {
-        const orderedAssets = this.orderTokens(assets).map((asset) => this.assetToScVal(asset));
+        const orderedAssets = this.orderTokens(assets).map(asset => this.assetToScVal(asset));
 
         return this.buildSmartContactTx(
             accountId,
@@ -373,13 +377,13 @@ export default class SorobanServiceClass {
             this.publicKeyToScVal(accountId),
             this.scValToArray(orderedAssets),
             this.amountToUint32(fee * 100),
-        ).then((tx) => this.prepareTransaction(tx));
+        ).then(tx => this.prepareTransaction(tx));
     }
 
     getPoolShareId(poolId: string) {
         return this.buildSmartContactTx(ACCOUNT_FOR_SIMULATE, poolId, AMM_CONTRACT_METHOD.SHARE_ID)
             .then(
-                (tx) =>
+                tx =>
                     this.server.simulateTransaction(
                         tx,
                     ) as Promise<SimulateTransactionSuccessResponse>,
@@ -402,7 +406,7 @@ export default class SorobanServiceClass {
             this.publicKeyToScVal(accountId),
         )
             .then(
-                (tx) =>
+                tx =>
                     this.server.simulateTransaction(
                         tx,
                     ) as Promise<SimulateTransactionSuccessResponse>,
@@ -430,7 +434,7 @@ export default class SorobanServiceClass {
     getPoolInfo(accountId: string, poolId: string) {
         return this.buildSmartContactTx(accountId, poolId, AMM_CONTRACT_METHOD.GET_INFO)
             .then(
-                (tx) =>
+                tx =>
                     this.server.simulateTransaction(
                         tx,
                     ) as Promise<SimulateTransactionSuccessResponse>,
@@ -461,7 +465,7 @@ export default class SorobanServiceClass {
             AMM_CONTRACT_METHOD.GET_TOTAL_SHARES,
         )
             .then(
-                (tx) =>
+                tx =>
                     this.server.simulateTransaction(
                         tx,
                     ) as Promise<SimulateTransactionSuccessResponse>,
@@ -484,7 +488,7 @@ export default class SorobanServiceClass {
             this.publicKeyToScVal(accountId),
         )
             .then(
-                (tx) =>
+                tx =>
                     this.server.simulateTransaction(
                         tx,
                     ) as Promise<SimulateTransactionSuccessResponse>,
@@ -505,7 +509,7 @@ export default class SorobanServiceClass {
             poolId,
             AMM_CONTRACT_METHOD.CLAIM,
             this.publicKeyToScVal(accountId),
-        ).then((tx) => this.prepareTransaction(tx));
+        ).then(tx => this.prepareTransaction(tx));
     }
 
     getCreationFeeToken() {
@@ -514,7 +518,7 @@ export default class SorobanServiceClass {
             AMM_SMART_CONTACT_ID,
             AMM_CONTRACT_METHOD.GET_CREATION_FEE_TOKEN,
         )
-            .then((tx) => this.simulateTx(tx) as Promise<SimulateTransactionSuccessResponse>)
+            .then(tx => this.simulateTx(tx) as Promise<SimulateTransactionSuccessResponse>)
             .then(({ result }) => {
                 return this.getAssetFromContractId(
                     // @ts-ignore
@@ -531,7 +535,7 @@ export default class SorobanServiceClass {
                 ? AMM_CONTRACT_METHOD.GET_CONSTANT_CREATION_FEE
                 : AMM_CONTRACT_METHOD.GET_STABLE_CREATION_FEE,
         )
-            .then((tx) => this.simulateTx(tx) as Promise<SimulateTransactionSuccessResponse>)
+            .then(tx => this.simulateTx(tx) as Promise<SimulateTransactionSuccessResponse>)
             .then(({ result }) => {
                 return this.i128ToInt(result.retval.value() as xdr.Int128Parts);
             });
@@ -551,7 +555,7 @@ export default class SorobanServiceClass {
 
     getPoolData(accountId: string, base: Asset, counter: Asset, [poolId, poolBytes]) {
         return this.getPoolShareId(poolId)
-            .then((shareHash) => {
+            .then(shareHash => {
                 return Promise.all([
                     this.getContactIdFromHash(shareHash),
                     this.getTokenBalance(this.getContactIdFromHash(shareHash), accountId),
@@ -589,7 +593,7 @@ export default class SorobanServiceClass {
                 : this.contractIdToScVal(where),
         )
             .then(
-                (tx) =>
+                tx =>
                     this.server.simulateTransaction(
                         tx,
                     ) as Promise<SimulateTransactionSuccessResponse>,
@@ -609,7 +613,7 @@ export default class SorobanServiceClass {
             poolId,
             AMM_CONTRACT_METHOD.GET_RESERVES,
         )
-            .then((tx) => {
+            .then(tx => {
                 return this.simulateTx(tx) as Promise<SimulateTransactionSuccessResponse>;
             })
             .then(({ result }) => {
@@ -638,15 +642,15 @@ export default class SorobanServiceClass {
             AMM_SMART_CONTACT_ID,
             AMM_CONTRACT_METHOD.DEPOSIT,
             this.publicKeyToScVal(accountId),
-            this.scValToArray(this.orderTokens(assets).map((asset) => this.assetToScVal(asset))),
+            this.scValToArray(this.orderTokens(assets).map(asset => this.assetToScVal(asset))),
             this.hashToScVal(poolHash),
             this.scValToArray(
-                this.orderTokens(assets).map((asset) =>
+                this.orderTokens(assets).map(asset =>
                     this.amountToUint128(amounts.get(getAssetString(asset))),
                 ),
             ),
             this.amountToUint128('0.0000001'),
-        ).then((tx) => this.prepareTransaction(tx));
+        ).then(tx => this.prepareTransaction(tx));
     }
 
     getWithdrawTx(accountId: string, poolHash: string, shareAmount: string, assets: Asset[]) {
@@ -655,11 +659,11 @@ export default class SorobanServiceClass {
             AMM_SMART_CONTACT_ID,
             AMM_CONTRACT_METHOD.WITHDRAW,
             this.publicKeyToScVal(accountId),
-            this.scValToArray(this.orderTokens(assets).map((asset) => this.assetToScVal(asset))),
+            this.scValToArray(this.orderTokens(assets).map(asset => this.assetToScVal(asset))),
             this.hashToScVal(poolHash),
             this.amountToUint128(shareAmount),
             this.scValToArray(assets.map(() => this.amountToUint128('0.0000001'))),
-        ).then((tx) => this.prepareTransaction(tx));
+        ).then(tx => this.prepareTransaction(tx));
     }
 
     estimateSwap(base: Asset, counter: Asset, amount: string) {
@@ -677,7 +681,7 @@ export default class SorobanServiceClass {
             this.assetToScVal(counter),
             this.amountToUint128(amount),
         )
-            .then((tx) => {
+            .then(tx => {
                 return this.server.simulateTransaction(
                     tx,
                 ) as Promise<SimulateTransactionSuccessResponse>;
@@ -707,11 +711,11 @@ export default class SorobanServiceClass {
             this.assetToScVal(base),
             this.amountToUint128(amount),
             this.amountToUint128(minCounterAmount),
-        ).then((tx) => this.prepareTransaction(tx));
+        ).then(tx => this.prepareTransaction(tx));
     }
 
     buildSmartContactTx(publicKey, contactId, method, ...args) {
-        return this.server.getAccount(publicKey).then((acc) => {
+        return this.server.getAccount(publicKey).then(acc => {
             const contract = new StellarSdk.Contract(contactId);
 
             const builtTx = new StellarSdk.TransactionBuilder(acc, {
@@ -735,7 +739,7 @@ export default class SorobanServiceClass {
     }
 
     submitTx(tx: StellarSdk.Transaction) {
-        return this.server.sendTransaction(tx).then((res) => this.processResponse(res, tx));
+        return this.server.sendTransaction(tx).then(res => this.processResponse(res, tx));
     }
 
     simulateTx(tx: StellarSdk.Transaction) {
@@ -743,7 +747,7 @@ export default class SorobanServiceClass {
     }
 
     prepareTransaction(tx: StellarSdk.Transaction) {
-        return this.server.prepareTransaction(tx).catch((err) => {
+        return this.server.prepareTransaction(tx).catch(err => {
             throw SorobanPrepareTxErrorHandler(err);
         });
     }

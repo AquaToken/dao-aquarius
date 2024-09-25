@@ -1,9 +1,11 @@
 import * as React from 'react';
-import styled from 'styled-components';
-import { flexRowSpaceBetween } from '../mixins';
-import Down from 'assets/icon-arrow-down.svg';
-import { COLORS } from '../styles';
 import { useState } from 'react';
+import styled from 'styled-components';
+
+import Down from 'assets/icon-arrow-down.svg';
+
+import { flexRowSpaceBetween } from '../mixins';
+import { COLORS } from '../styles';
 
 const Container = styled.div`
     display: flex;
@@ -62,7 +64,7 @@ const Question = ({ question, answer }: { question: string; answer: JSX.Element 
     const [isOpen, setIsOpen] = useState(false);
 
     const toggle = () => {
-        setIsOpen((prevState) => !prevState);
+        setIsOpen(prevState => !prevState);
     };
     return (
         <Container onClick={() => toggle()}>

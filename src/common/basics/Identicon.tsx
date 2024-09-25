@@ -1,6 +1,7 @@
 import * as React from 'react';
 import createStellarIdenticon from 'stellar-identicon-js';
 import styled from 'styled-components';
+
 import { COLORS } from '../styles';
 
 const IdenticonBlock = styled.div`

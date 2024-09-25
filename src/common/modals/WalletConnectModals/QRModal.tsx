@@ -1,18 +1,20 @@
+import axios from 'axios';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import QRCode from 'react-qr-code';
-import { ModalDescription, ModalProps, ModalTitle } from '../atoms/ModalAtoms';
-import ExternalLink from '../../basics/ExternalLink';
-import CopyButton from '../../basics/CopyButton';
 import styled from 'styled-components';
-import { isAndroid, isIOS, isMobile } from '../../helpers/browser';
-import axios from 'axios';
+
+import ArrowRight from 'assets/icon-arrow-right.svg';
+
+import Button from '../../basics/Button';
+import CopyButton from '../../basics/CopyButton';
+import ExternalLink from '../../basics/ExternalLink';
 import ToggleGroup from '../../basics/ToggleGroup';
+import { isAndroid, isIOS, isMobile } from '../../helpers/browser';
+import { clearCurrentWallet, saveCurrentWallet } from '../../helpers/wallet-connect-helpers';
 import { flexAllCenter, respondDown } from '../../mixins';
 import { Breakpoints, COLORS } from '../../styles';
-import Button from '../../basics/Button';
-import ArrowRight from 'assets/icon-arrow-right.svg';
-import { clearCurrentWallet, saveCurrentWallet } from '../../helpers/wallet-connect-helpers';
+import { ModalDescription, ModalProps, ModalTitle } from '../atoms/ModalAtoms';
 
 const Wrapper = styled.div`
     width: 52.8rem;
@@ -157,7 +159,7 @@ const QRModal = ({ params }: ModalProps<{ uri: string }>): JSX.Element => {
                 .get<{ listings: Listings }>(registryUrl)
                 .then(({ data }) => {
                     return Object.values(data.listings).filter(
-                        (wallet) =>
+                        wallet =>
                             wallet.versions.includes('2') &&
                             wallet.chains.includes('stellar:pubnet') &&
                             // TODO remove this hardcode
@@ -165,7 +167,7 @@ const QRModal = ({ params }: ModalProps<{ uri: string }>): JSX.Element => {
                             wallet.name !== 'SafePal',
                     );
                 })
-                .then((res) => {
+                .then(res => {
                     setWallets(res);
                 });
         }

@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { forwardRef, RefObject, useMemo } from 'react';
-import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../styles';
-import { flexAllCenter, respondDown } from '../mixins';
-import PageLoader from './PageLoader';
-import { IconSort } from './Icons';
 import { List, AutoSizer, InfiniteLoader } from 'react-virtualized';
+import styled from 'styled-components';
+
+import { IconSort } from './Icons';
+import PageLoader from './PageLoader';
+
+import { flexAllCenter, respondDown } from '../mixins';
+import { Breakpoints, COLORS } from '../styles';
 
 interface Sort {
     onClick: () => void;
@@ -344,13 +346,13 @@ const Table = forwardRef(
                     </TableHeadRow>
                 </TableHead>
                 <TableBody withScroll={Boolean(virtualScrollProps)}>
-                    {Boolean(virtualScrollProps) ? (
+                    {virtualScrollProps ? (
                         <AutoSizer>
                             {({ height, width }) => (
                                 <InfiniteLoader
                                     isRowLoaded={() => {}}
                                     rowCount={body.length}
-                                    loadMoreRows={(e) => {
+                                    loadMoreRows={e => {
                                         if (
                                             e.stopIndex + virtualScrollProps.loadMoreOffset >
                                             body.length
@@ -383,7 +385,7 @@ const Table = forwardRef(
                             )}
                         </AutoSizer>
                     ) : (
-                        body?.map((row) => <Row row={row} key={row.key} />)
+                        body?.map(row => <Row row={row} key={row.key} />)
                     )}
                 </TableBody>
             </Container>

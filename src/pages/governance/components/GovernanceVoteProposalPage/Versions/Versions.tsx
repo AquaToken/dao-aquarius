@@ -1,12 +1,14 @@
 import * as React from 'react';
-import { Proposal } from '../../../api/types';
-import styled from 'styled-components';
-import { COLORS } from '../../../../../common/styles';
-import { getDateString } from '../../../../../common/helpers/helpers';
-import ExternalLinkIcon from 'assets/icon-external-link.svg';
-import { flexAllCenter } from '../../../../../common/mixins';
 import { Link } from 'react-router-dom';
+import styled from 'styled-components';
+
+import ExternalLinkIcon from 'assets/icon-external-link.svg';
+
+import { getDateString } from '../../../../../common/helpers/helpers';
+import { flexAllCenter } from '../../../../../common/mixins';
+import { COLORS } from '../../../../../common/styles';
 import { GovernanceRoutes } from '../../../../../routes';
+import { Proposal } from '../../../api/types';
 
 const Container = styled.div`
     display: flex;
@@ -81,7 +83,7 @@ const Versions = ({ proposal }: { proposal: Proposal }) => {
                 <Item>Date/Time</Item>
                 <Item />
             </HeadRow>
-            {versions.map((version) => (
+            {versions.map(version => (
                 <Row key={version.version}>
                     <Item>
                         v{version.version}.0

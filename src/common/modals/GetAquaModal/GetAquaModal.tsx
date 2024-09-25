@@ -1,17 +1,19 @@
 import * as React from 'react';
-import { ModalDescription, ModalTitle } from '../atoms/ModalAtoms';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { flexRowSpaceBetween, respondDown } from '../../mixins';
-import { Breakpoints, COLORS } from '../../styles';
-import ExternalLink from '../../basics/ExternalLink';
+
 import ArrowRight from 'assets/icon-arrow-right.svg';
 import LobstrLogo from 'assets/lobstr-name-logo.svg';
-import StellarXLogo from 'assets/stellarx-logo.svg';
 import StellarTermLogo from 'assets/stellarterm-logo.svg';
+import StellarXLogo from 'assets/stellarx-logo.svg';
+
+import { MainRoutes } from '../../../routes';
 import AccountViewer from '../../basics/AccountViewer';
 import CopyButton from '../../basics/CopyButton';
-import { MainRoutes } from '../../../routes';
-import { Link } from 'react-router-dom';
+import ExternalLink from '../../basics/ExternalLink';
+import { flexRowSpaceBetween, respondDown } from '../../mixins';
+import { Breakpoints, COLORS } from '../../styles';
+import { ModalDescription, ModalTitle } from '../atoms/ModalAtoms';
 
 const Container = styled.div`
     width: 67.2rem;

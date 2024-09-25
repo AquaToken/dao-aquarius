@@ -1,41 +1,44 @@
 import * as React from 'react';
 import { lazy, Suspense, useEffect, useState } from 'react';
+import Title from 'react-document-title';
 import { hot } from 'react-hot-loader';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
-import useGlobalSubscriptions from './common/hooks/useGlobalSubscriptions';
-import useAssetsStore from './store/assetsStore/useAssetsStore';
-import useAuthStore from './store/authStore/useAuthStore';
-import {
-    ModalService,
-    StellarService,
-    WalletConnectService,
-} from './common/services/globalServices';
+import styled, { createGlobalStyle } from 'styled-components';
+
+import LiveOnSorobanImage from 'assets/live-on-soroban.svg';
+
+import Footer from 'components/Footer';
+
+import PageLoader from './common/basics/PageLoader';
+import AppGlobalStyle from './common/components/AppGlobalStyles';
+import ErrorBoundary from './common/components/ErrorBoundary/ErrorBoundary';
 import Header, {
     HeaderNavLink,
     HeaderNavLinkWithCount,
     HeaderNewNavLinks,
     NavLinksDivider,
 } from './common/components/Header/Header';
-import { AmmRoutes, MainRoutes } from './routes';
-import PageLoader from './common/basics/PageLoader';
 import NotFoundPage from './common/components/NotFoundPage/NotFoundPage';
-import { Breakpoints, COLORS } from './common/styles';
-import ToastContainer from './common/toasts/ToastContainer';
+import useGlobalSubscriptions from './common/hooks/useGlobalSubscriptions';
 import { respondDown } from './common/mixins';
-import Provider from './store';
 import ModalContainer from './common/modals/atoms/ModalContainer';
-import Footer from 'components/Footer';
-import styled, { createGlobalStyle } from 'styled-components';
-import AppGlobalStyle from './common/components/AppGlobalStyles';
-import Governance from './pages/governance/Governance';
-import Title from 'react-document-title';
 import LiveOnSorobanAlert, {
     LIVE_ON_SOROBAN_SHOWED_ALIAS,
 } from './common/modals/LiveOnSorobanAlert';
-import LiveOnSorobanImage from 'assets/live-on-soroban.svg';
-import ErrorBoundary from './common/components/ErrorBoundary/ErrorBoundary';
+import {
+    ModalService,
+    StellarService,
+    WalletConnectService,
+} from './common/services/globalServices';
 import SentryService from './common/services/sentry.service';
+import { Breakpoints, COLORS } from './common/styles';
+import ToastContainer from './common/toasts/ToastContainer';
 import { getActiveProposalsCount } from './pages/governance/api/api';
+import Governance from './pages/governance/Governance';
+import { AmmRoutes, MainRoutes } from './routes';
+import Provider from './store';
+import useAssetsStore from './store/assetsStore/useAssetsStore';
+import useAuthStore from './store/authStore/useAuthStore';
 
 const MainPage = lazy(() => import('./pages/main/MainPage'));
 const LockerPage = lazy(() => import('./pages/locker/Locker'));

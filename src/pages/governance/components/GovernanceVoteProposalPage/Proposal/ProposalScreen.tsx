@@ -1,25 +1,27 @@
 import * as React from 'react';
 import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import Sidebar from '../Sidebar/Sidebar';
-import ArrowLeft from 'assets/icon-arrow-left.svg';
+
 import ArrowDown from 'assets/icon-arrow-down.svg';
-import ExternalIcon from 'assets/icon-external-link.svg';
+import ArrowLeft from 'assets/icon-arrow-left.svg';
 import IconEdit from 'assets/icon-edit.svg';
+import ExternalIcon from 'assets/icon-external-link.svg';
+
 import AccountViewer from '../../../../../common/basics/AccountViewer';
+import CircleButton from '../../../../../common/basics/CircleButton';
+import ExternalLink from '../../../../../common/basics/ExternalLink';
+import { getDateString } from '../../../../../common/helpers/helpers';
+import { useIsOnViewport, useIsOverScrolled } from '../../../../../common/hooks/useIsOnViewport';
 import { commonMaxWidth, flexAllCenter, respondDown } from '../../../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../../../common/styles';
-import CurrentResults from '../CurrentResults/CurrentResults';
-import Votes from '../Votes/Votes';
-import { getDateString } from '../../../../../common/helpers/helpers';
+import { GovernanceRoutes } from '../../../../../routes';
+import useAuthStore from '../../../../../store/authStore/useAuthStore';
 import { Proposal } from '../../../api/types';
 import { statePage } from '../../../pages/GovernanceProposalCreationPage';
-import ExternalLink from '../../../../../common/basics/ExternalLink';
-import { useIsOnViewport, useIsOverScrolled } from '../../../../../common/hooks/useIsOnViewport';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
+import CurrentResults from '../CurrentResults/CurrentResults';
+import Sidebar from '../Sidebar/Sidebar';
 import Versions from '../Versions/Versions';
-import { GovernanceRoutes } from '../../../../../routes';
-import CircleButton from '../../../../../common/basics/CircleButton';
+import Votes from '../Votes/Votes';
 
 const ProposalQuestion = styled.div`
     width: 100%;
@@ -253,7 +255,7 @@ const DiscordChannelOwner = styled.div`
     }
 `;
 
-const scrollToRef = (ref) => {
+const scrollToRef = ref => {
     ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
 
@@ -279,7 +281,7 @@ const ProposalScreen = ({
     } = proposal;
 
     const currentVersionProposal = version
-        ? proposal.history_proposal.find((history) => history.version === Number(version))
+        ? proposal.history_proposal.find(history => history.version === Number(version))
         : null;
 
     const startDateView = getDateString(new Date(startDate).getTime(), { withTime: true });
@@ -304,10 +306,10 @@ const ProposalScreen = ({
 
     const { isLogged, account } = useAuthStore();
 
-    const discordName = Boolean(id) ? `Proposal #${id}` : '';
+    const discordName = id ? `Proposal #${id}` : '';
     const discordUrl =
         discordChannelUrl ||
-        (Boolean(id)
+        (id
             ? 'https://discord.com/channels/862710317825392660/1046931670458187836'
             : 'https://discord.gg/sgzFscHp4C');
 
@@ -407,7 +409,7 @@ const ProposalScreen = ({
                     <Title>Discussion</Title>
                     <DetailsDescription>
                         Participate in the discussion of this proposal on Discord
-                        {Boolean(discordName) ? ` (${discordName}).` : '.'}
+                        {discordName ? ` (${discordName}).` : '.'}
                         {Boolean(discordUsername) && (
                             <DiscordChannelOwner>
                                 <div>Discussion owner:</div>
@@ -468,10 +470,10 @@ const ProposalScreen = ({
                                 </Column>
                                 <Column>
                                     <DetailsTitle>
-                                        {Boolean(version) ? 'Deprecated version:' : 'Latest edit:'}
+                                        {version ? 'Deprecated version:' : 'Latest edit:'}
                                     </DetailsTitle>
                                     <DetailsDescription>
-                                        {Boolean(version)
+                                        {version
                                             ? `v${
                                                   currentVersionProposal.version
                                               }.0 on ${getDateString(
@@ -492,12 +494,10 @@ const ProposalScreen = ({
                                 </Column>
                                 <Column>
                                     <DetailsTitle>
-                                        {Boolean(version)
-                                            ? 'Latest version:'
-                                            : 'Discussion lifetime:'}
+                                        {version ? 'Latest version:' : 'Discussion lifetime:'}
                                     </DetailsTitle>
                                     <DetailsDescription>
-                                        {Boolean(version)
+                                        {version
                                             ? `v${proposal.version}.0 on ${getDateString(
                                                   new Date(proposal.last_updated_at).getTime(),
                                                   {

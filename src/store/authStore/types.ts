@@ -1,4 +1,5 @@
 import { SignClientTypes } from '@walletconnect/types';
+
 import AccountService from '../../common/services/account.service';
 
 export interface AuthStore {

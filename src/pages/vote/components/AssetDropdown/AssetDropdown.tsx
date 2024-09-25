@@ -1,21 +1,24 @@
+import * as StellarSdk from '@stellar/stellar-sdk';
 import * as React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
+
 import ArrowDown from 'assets/icon-arrow-down.svg';
-import Loader from 'assets/loader.svg';
 import Fail from 'assets/icon-fail.svg';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import useOnClickOutside from '../../../../common/hooks/useOutsideClick';
+import Loader from 'assets/loader.svg';
+
 import Asset from './Asset';
+
+import { formatBalance } from '../../../../common/helpers/helpers';
 import { useDebounce } from '../../../../common/hooks/useDebounce';
-import * as StellarSdk from '@stellar/stellar-sdk';
+import useOnClickOutside from '../../../../common/hooks/useOutsideClick';
+import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
 import { StellarService } from '../../../../common/services/globalServices';
+import { Breakpoints, COLORS } from '../../../../common/styles';
+import { getAssetString } from '../../../../store/assetsStore/actions';
 import { AssetSimple } from '../../../../store/assetsStore/types';
 import useAssetsStore from '../../../../store/assetsStore/useAssetsStore';
-import { getAssetString } from '../../../../store/assetsStore/actions';
 import useAuthStore from '../../../../store/authStore/useAuthStore';
-import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
-import { formatBalance } from '../../../../common/helpers/helpers';
 const DropDown = styled.div<{ isOpen: boolean; disabled: boolean }>`
     width: 100%;
     display: flex;
@@ -242,7 +245,7 @@ const AssetDropdown = ({
             setBalances([]);
             return;
         }
-        account.getSortedBalances().then((res) => {
+        account.getSortedBalances().then(res => {
             setBalances(res);
         });
     }, [account]);
@@ -251,9 +254,9 @@ const AssetDropdown = ({
         ...balances,
         ...(knownAssets
             .filter(
-                (knownAsset) =>
+                knownAsset =>
                     !balances.find(
-                        (asset) =>
+                        asset =>
                             knownAsset.code === asset.code && knownAsset.issuer === asset.issuer,
                     ),
             )
@@ -285,7 +288,7 @@ const AssetDropdown = ({
     useOnClickOutside(ref, () => setIsOpen(false));
 
     const toggleDropdown = () => {
-        setIsOpen((prev) => !prev);
+        setIsOpen(prev => !prev);
     };
 
     useEffect(() => {
@@ -303,9 +306,9 @@ const AssetDropdown = ({
             .then(({ CURRENCIES }) => {
                 if (CURRENCIES) {
                     const newCurrencies = CURRENCIES.filter(
-                        (currency) =>
+                        currency =>
                             !assets.find(
-                                (asset) =>
+                                asset =>
                                     asset.code === currency.code &&
                                     asset.issuer === currency.issuer,
                             ),
@@ -325,7 +328,7 @@ const AssetDropdown = ({
         if (StellarSdk.StrKey.isValidEd25519PublicKey(debouncedSearchText.current)) {
             setSearchPending(true);
             StellarService.loadAccount(debouncedSearchText.current)
-                .then((account) => {
+                .then(account => {
                     if (!account?.home_domain) {
                         setSearchPending(false);
                         setSearchResults([]);
@@ -350,7 +353,7 @@ const AssetDropdown = ({
 
             if (
                 assets.find(
-                    (asset) =>
+                    asset =>
                         currentAsset.code === asset.code && asset.issuer === currentAsset.issuer,
                 )
             ) {
@@ -373,17 +376,17 @@ const AssetDropdown = ({
         setSearchResults([]);
     }, [debouncedSearchText.current]);
 
-    const onClickAsset = (asset) => {
+    const onClickAsset = asset => {
         onUpdate(StellarService.createAsset(asset.code, asset.issuer));
     };
 
-    const resetAsset = (event) => {
+    const resetAsset = event => {
         event.stopPropagation();
         onUpdate(null);
     };
 
     const filteredAssets = useMemo(() => {
-        return [...assets, ...searchResults].filter((assetItem) => {
+        return [...assets, ...searchResults].filter(assetItem => {
             const assetInfo = assetsInfo.get(getAssetString(assetItem));
 
             return (
@@ -396,7 +399,7 @@ const AssetDropdown = ({
                         .includes(searchText.toLowerCase().replace('www.', ''))) &&
                 !(assetItem.code === exclude?.code && assetItem.issuer === exclude?.issuer) &&
                 !excludeList?.find(
-                    (excludeToken) =>
+                    excludeToken =>
                         excludeToken.code === assetItem.code &&
                         assetItem.issuer === excludeToken.issuer,
                 )
@@ -417,7 +420,7 @@ const AssetDropdown = ({
                 <StyledAsset asset={selectedAsset} />
             ) : (
                 <DropdownSearch
-                    onClick={(e) => {
+                    onClick={e => {
                         if (isOpen) {
                             e.stopPropagation();
                         }
@@ -425,7 +428,7 @@ const AssetDropdown = ({
                     placeholder={placeholder ?? 'Search asset or enter home domain'}
                     $disabled={!assets.length || disabled || pending}
                     value={searchText}
-                    onChange={(e) => {
+                    onChange={e => {
                         setSearchText(e.target.value);
                     }}
                     ref={inputRef}
@@ -434,7 +437,7 @@ const AssetDropdown = ({
 
             {!withoutReset && selectedAsset && (
                 <div
-                    onClick={(e) => {
+                    onClick={e => {
                         resetAsset(e);
                     }}
                 >
@@ -449,7 +452,7 @@ const AssetDropdown = ({
             )}
             {isOpen && (
                 <DropdownList longListOnMobile={longListOnMobile}>
-                    {filteredAssets.map((assetItem) => (
+                    {filteredAssets.map(assetItem => (
                         <DropdownItem
                             onClick={() => onClickAsset(assetItem)}
                             key={assetItem.code + assetItem.issuer}

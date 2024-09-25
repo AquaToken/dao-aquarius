@@ -1,16 +1,17 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { ModalDescription, ModalProps, ModalTitle } from '../atoms/ModalAtoms';
-import Button from '../../basics/Button';
 import styled from 'styled-components';
-import { IconFail, IconPending, IconSuccess } from '../../basics/Icons';
-import { flexAllCenter, respondDown } from '../../mixins';
+
+import Button from '../../basics/Button';
 import DotsLoader from '../../basics/DotsLoader';
-import { BuildSignAndSubmitStatuses } from '../../services/wallet-connect.service';
-import { Breakpoints, COLORS } from '../../styles';
-import { useIsMounted } from '../../hooks/useIsMounted';
+import { IconFail, IconPending, IconSuccess } from '../../basics/Icons';
 import { isMobile } from '../../helpers/browser';
 import { getCurrentWallet } from '../../helpers/wallet-connect-helpers';
+import { useIsMounted } from '../../hooks/useIsMounted';
+import { flexAllCenter, respondDown } from '../../mixins';
+import { BuildSignAndSubmitStatuses } from '../../services/wallet-connect.service';
+import { Breakpoints, COLORS } from '../../styles';
+import { ModalDescription, ModalProps, ModalTitle } from '../atoms/ModalAtoms';
 
 enum TX_STATUSES {
     pending = 'pending',
@@ -71,7 +72,7 @@ const RequestModal = ({ params, close }: ModalProps<RequestModalProps>) => {
 
     useEffect(() => {
         result
-            .then((result) => {
+            .then(result => {
                 if (!result || !isMounted.current) {
                     return;
                 }

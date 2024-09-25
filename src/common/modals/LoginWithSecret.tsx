@@ -1,14 +1,16 @@
 import * as React from 'react';
-import { ModalDescription, ModalProps, ModalTitle } from './atoms/ModalAtoms';
-import Input from '../basics/Input';
-import Button from '../basics/Button';
-import styled from 'styled-components';
 import { useEffect, useState } from 'react';
-import useAuthStore from '../../store/authStore/useAuthStore';
+import styled from 'styled-components';
+
+import { ModalDescription, ModalProps, ModalTitle } from './atoms/ModalAtoms';
+
 import { LoginTypes } from '../../store/authStore/types';
+import useAuthStore from '../../store/authStore/useAuthStore';
+import Button from '../basics/Button';
+import Input from '../basics/Input';
+import { respondDown } from '../mixins';
 import { SorobanService, ToastService } from '../services/globalServices';
 import { Breakpoints } from '../styles';
-import { respondDown } from '../mixins';
 
 const LoginWithSecretBody = styled.div`
     width: 52.8rem;
@@ -46,7 +48,7 @@ const LoginWithSecret = ({ close }: ModalProps<never>): JSX.Element => {
 
     const onSubmit = () => {
         SorobanService.loginWithSecret(secretKey)
-            .then((pubKey) => {
+            .then(pubKey => {
                 login(pubKey, LoginTypes.secret);
             })
             .catch(() => {

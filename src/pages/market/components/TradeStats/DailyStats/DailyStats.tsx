@@ -1,11 +1,12 @@
 import * as React from 'react';
-import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
 import { useEffect, useMemo, useState } from 'react';
-import { StellarService } from '../../../../../common/services/globalServices';
-import { respondDown } from '../../../../../common/mixins';
+import styled from 'styled-components';
+
 import DotsLoader from '../../../../../common/basics/DotsLoader';
 import { formatBalance } from '../../../../../common/helpers/helpers';
+import { respondDown } from '../../../../../common/mixins';
+import { StellarService } from '../../../../../common/services/globalServices';
+import { Breakpoints, COLORS } from '../../../../../common/styles';
 
 const Details = styled.div`
     display: flex;
@@ -64,7 +65,7 @@ const DailyStats = ({ base, counter }) => {
             endDate + RESOLUTION_15_MIN,
             RESOLUTION_15_MIN,
             100,
-        ).then((res) => {
+        ).then(res => {
             setLast15MinutesTrades(res.records);
         });
 
@@ -75,7 +76,7 @@ const DailyStats = ({ base, counter }) => {
             endDate + RESOLUTION_MINUTE,
             RESOLUTION_MINUTE,
             1,
-        ).then((res) => {
+        ).then(res => {
             setLastMinuteTrade(res.records);
         });
     }, []);

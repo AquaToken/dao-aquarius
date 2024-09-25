@@ -1,6 +1,7 @@
 import axios from 'axios';
-import { Rewards, TotalRewards } from '../../vote/api/types';
+
 import { ListResponse } from '../../../store/assetsStore/types';
+import { Rewards, TotalRewards } from '../../vote/api/types';
 
 const rewardsApi = 'https://reward-api.aqua.network/api/rewards/';
 

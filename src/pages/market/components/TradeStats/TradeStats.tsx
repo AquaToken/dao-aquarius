@@ -1,14 +1,16 @@
 import * as React from 'react';
-import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
-import ToggleGroup from '../../../../common/basics/ToggleGroup';
 import { useState } from 'react';
-import LightWeightChart, { PeriodOptions } from './LightWeightChart/LightWeightChart';
+import styled from 'styled-components';
+
 import DailyStats from './DailyStats/DailyStats';
+import LightWeightChart, { PeriodOptions } from './LightWeightChart/LightWeightChart';
+
 import ExternalLink from '../../../../common/basics/ExternalLink';
 import Select from '../../../../common/basics/Select';
+import ToggleGroup from '../../../../common/basics/ToggleGroup';
 import { getAssetString } from '../../../../common/helpers/helpers';
+import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
+import { Breakpoints, COLORS } from '../../../../common/styles';
 
 const Container = styled.div`
     display: flex;

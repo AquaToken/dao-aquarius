@@ -1,9 +1,11 @@
-import LedgerTransport from '@ledgerhq/hw-transport-webusb';
 import LedgerStr from '@ledgerhq/hw-app-str';
 import Str from '@ledgerhq/hw-app-str';
+import LedgerTransport from '@ledgerhq/hw-transport-webusb';
 import * as StellarSdk from '@stellar/stellar-sdk';
-import { ModalService } from './globalServices';
+
 import EventService from './event.service';
+import { ModalService } from './globalServices';
+
 import LedgerError from '../modals/LedgerModals/LedgerError';
 
 const LEDGER_DEFAULT_ACCOUNT = 'GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF';
@@ -58,7 +60,7 @@ export default class LedgerServiceClass {
         await this.login(this.bipSlot);
 
         const isSoroban = tx.operations.some(
-            (op) =>
+            op =>
                 op.type === 'invokeHostFunction' ||
                 op.type === 'restoreFootprint' ||
                 op.type === 'extendFootprintTtl',

@@ -1,14 +1,15 @@
 import * as React from 'react';
-import styled from 'styled-components';
-import { respondDown } from '../../mixins';
-import { Breakpoints } from '../../styles';
-import { ModalDescription, ModalTitle } from '../atoms/ModalAtoms';
-import Button from '../../basics/Button';
-import useAuthStore from '../../../store/authStore/useAuthStore';
 import { useState } from 'react';
+import styled from 'styled-components';
+
+import useAuthStore from '../../../store/authStore/useAuthStore';
+import Button from '../../basics/Button';
 import ExternalLink from '../../basics/ExternalLink';
 import ErrorHandler from '../../helpers/error-handler';
+import { respondDown } from '../../mixins';
 import { ToastService } from '../../services/globalServices';
+import { Breakpoints } from '../../styles';
+import { ModalDescription, ModalTitle } from '../atoms/ModalAtoms';
 
 const Container = styled.div`
     width: 52.3rem;
@@ -48,7 +49,7 @@ const RestoreContractModal = ({ params, close }) => {
                 setPending(false);
                 close();
             })
-            .catch((e) => {
+            .catch(e => {
                 const errorText = ErrorHandler(e);
                 ToastService.showErrorToast(errorText);
                 setPending(false);

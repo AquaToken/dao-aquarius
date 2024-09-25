@@ -1,9 +1,11 @@
 import * as React from 'react';
-import styled from 'styled-components';
-import { COLORS } from '../styles';
-import ArrowDown from 'assets/icon-arrow-down.svg';
 import { useEffect, useRef, useState } from 'react';
+import styled from 'styled-components';
+
+import ArrowDown from 'assets/icon-arrow-down.svg';
+
 import useOnClickOutside from '../hooks/useOutsideClick';
+import { COLORS } from '../styles';
 
 const DropDown = styled.div<{ isOpen: boolean; disabled: boolean }>`
     width: 100%;
@@ -120,7 +122,7 @@ const Select = <T,>({
 }: SelectProps<T>): JSX.Element => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedOption, setSelectedOption] = useState(
-        options.find((option) => option.value === value),
+        options.find(option => option.value === value),
     );
 
     const selectRef = useRef(null);
@@ -128,7 +130,7 @@ const Select = <T,>({
     useOnClickOutside(selectRef, () => setIsOpen(false));
 
     const toggle = () => {
-        setIsOpen((prev) => !prev);
+        setIsOpen(prev => !prev);
     };
 
     const onSelect = (item: Option<T>) => {
@@ -136,7 +138,7 @@ const Select = <T,>({
     };
 
     useEffect(() => {
-        setSelectedOption(options.find((option) => option.value === value));
+        setSelectedOption(options.find(option => option.value === value));
     }, [value]);
 
     return (
@@ -159,7 +161,7 @@ const Select = <T,>({
 
             {isOpen && (
                 <DropdownList>
-                    {options.map((option) => (
+                    {options.map(option => (
                         <DropdownItem
                             key={option.value.toString()}
                             onClick={() => onSelect(option)}

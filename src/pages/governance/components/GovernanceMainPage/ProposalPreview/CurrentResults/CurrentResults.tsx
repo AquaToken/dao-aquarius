@@ -1,9 +1,10 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { COLORS } from '../../../../../../common/styles';
-import { flexAllCenter } from '../../../../../../common/mixins';
-import { ProposalSimple } from '../../../../api/types';
+
 import { roundToPrecision } from '../../../../../../common/helpers/helpers';
+import { flexAllCenter } from '../../../../../../common/mixins';
+import { COLORS } from '../../../../../../common/styles';
+import { ProposalSimple } from '../../../../api/types';
 import { SummaryTitle, SummaryValue } from '../ProposalPreview';
 
 const ProgressLine = styled.div`

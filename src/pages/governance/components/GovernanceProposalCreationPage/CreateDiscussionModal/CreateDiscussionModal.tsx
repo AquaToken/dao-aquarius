@@ -1,28 +1,29 @@
+import { MemoHash } from '@stellar/stellar-sdk';
+import { sha256 } from 'js-sha256';
 import * as React from 'react';
 import { useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import styled from 'styled-components';
+
+import Alert from '../../../../../common/basics/Alert';
+import Button from '../../../../../common/basics/Button';
+import ErrorHandler from '../../../../../common/helpers/error-handler';
+import { formatBalance } from '../../../../../common/helpers/helpers';
+import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
+import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
+import { flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
 import {
     ModalDescription,
     ModalProps,
     ModalTitle,
 } from '../../../../../common/modals/atoms/ModalAtoms';
-import styled from 'styled-components';
-import Button from '../../../../../common/basics/Button';
-import { flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
-import { Proposal } from '../../../api/types';
-import { formatBalance } from '../../../../../common/helpers/helpers';
-import { CREATE_DISCUSSION_COST } from '../../../pages/GovernanceMainPage';
 import { StellarService, ToastService } from '../../../../../common/services/globalServices';
-import { MemoHash } from '@stellar/stellar-sdk';
-import { sha256 } from 'js-sha256';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
-import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
-import { checkProposalStatus, createProposal, editProposal } from '../../../api/api';
-import { useHistory } from 'react-router-dom';
 import { Breakpoints } from '../../../../../common/styles';
-import ErrorHandler from '../../../../../common/helpers/error-handler';
 import { LoginTypes } from '../../../../../store/authStore/types';
-import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
-import Alert from '../../../../../common/basics/Alert';
+import useAuthStore from '../../../../../store/authStore/useAuthStore';
+import { checkProposalStatus, createProposal, editProposal } from '../../../api/api';
+import { Proposal } from '../../../api/types';
+import { CREATE_DISCUSSION_COST } from '../../../pages/GovernanceMainPage';
 
 const Container = styled.div`
     width: 52.8rem;
@@ -67,7 +68,7 @@ const CreateDiscussionModal = ({
 
     const isMounted = useIsMounted();
 
-    const checkStatus = (id) => {
+    const checkStatus = id => {
         return new Promise((resolve, reject) => {
             async function check() {
                 if (!isMounted.current) {
@@ -129,7 +130,7 @@ const CreateDiscussionModal = ({
                       start_at,
                       end_at,
                       transaction_hash: tx.hash().toString('hex'),
-                      discord_username: Boolean(discord_username) ? discord_username : null,
+                      discord_username: discord_username ? discord_username : null,
                       envelope_xdr: tx.toEnvelope().toXDR('base64'),
                   });
 

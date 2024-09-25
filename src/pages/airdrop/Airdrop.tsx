@@ -1,11 +1,13 @@
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+
+import Success from 'assets/icon-success-green.svg';
+
+import ExternalLink from '../../common/basics/ExternalLink';
+import SocialLinks from '../../common/components/SocialLinks/SocialLinks';
 import { respondDown } from '../../common/mixins';
 import { Breakpoints, COLORS } from '../../common/styles';
-import SocialLinks from '../../common/components/SocialLinks/SocialLinks';
-import ExternalLink from '../../common/basics/ExternalLink';
-import Success from 'assets/icon-success-green.svg';
-import { Link } from 'react-router-dom';
 import { MainRoutes } from '../../routes';
 
 const Container = styled.div`

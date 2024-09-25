@@ -1,7 +1,8 @@
 import * as React from 'react';
-import styled, { css } from 'styled-components';
-import { COLORS, Z_INDEX } from '../styles';
 import { useState } from 'react';
+import styled, { css } from 'styled-components';
+
+import { COLORS, Z_INDEX } from '../styles';
 
 export enum TOOLTIP_POSITION {
     top = 'top',

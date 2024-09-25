@@ -1,7 +1,18 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { convertUTCToLocalDateIgnoringTimezone } from '../../../../bribes/pages/AddBribePage';
+import styled from 'styled-components';
+
+import Aqua from 'assets/aqua-logo-small.svg';
+import Close from 'assets/icon-close-small-purple.svg';
+import Info from 'assets/icon-info.svg';
+
+import Table, { CellAlign } from '../../../../../common/basics/Table';
 import { formatBalance, getDateString } from '../../../../../common/helpers/helpers';
+import { respondDown } from '../../../../../common/mixins';
+import { StellarService } from '../../../../../common/services/globalServices';
+import { Breakpoints, COLORS } from '../../../../../common/styles';
+import { convertUTCToLocalDateIgnoringTimezone } from '../../../../bribes/pages/AddBribePage';
+import Asset from '../../../../vote/components/AssetDropdown/Asset';
 import {
     BribeDetail,
     BribeDetailsMain,
@@ -13,16 +24,6 @@ import {
     HowItWorksFooter,
     HowItWorksText,
 } from '../../../../vote/components/MainPage/BribesModal/BribesModal';
-import Close from 'assets/icon-close-small-purple.svg';
-
-import Asset from '../../../../vote/components/AssetDropdown/Asset';
-import { StellarService } from '../../../../../common/services/globalServices';
-import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import Aqua from 'assets/aqua-logo-small.svg';
-import Info from 'assets/icon-info.svg';
-import { respondDown } from '../../../../../common/mixins';
-import Table, { CellAlign } from '../../../../../common/basics/Table';
 
 const Container = styled.div`
     display: flex;
@@ -189,7 +190,7 @@ const MarketCurrentBribes = ({ extra, bribes }) => {
                     { children: 'AQUA amount', align: CellAlign.Right },
                 ]}
                 body={[
-                    ...bribes.map((bribe) => ({
+                    ...bribes.map(bribe => ({
                         isNarrow: true,
                         key: bribe.asset_code + bribe.asset_issuer,
                         mobileBackground: COLORS.lightGray,

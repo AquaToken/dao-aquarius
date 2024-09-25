@@ -1,19 +1,21 @@
 import * as React from 'react';
-import Table from '../../../../common/basics/Table';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import AccountViewer from '../../../../common/basics/AccountViewer';
-import styled from 'styled-components';
 import { useEffect, useState } from 'react';
+import styled from 'styled-components';
+
+import LinkIcon from 'assets/icon-external-link.svg';
+
+import AccountViewer from '../../../../common/basics/AccountViewer';
+import ExternalLink from '../../../../common/basics/ExternalLink';
 import PageLoader from '../../../../common/basics/PageLoader';
+import Pagination from '../../../../common/basics/Pagination';
+import Table from '../../../../common/basics/Table';
+import { formatBalance, getDateString } from '../../../../common/helpers/helpers';
+import { useUpdateIndex } from '../../../../common/hooks/useUpdateIndex';
+import { respondDown } from '../../../../common/mixins';
+import { Breakpoints, COLORS } from '../../../../common/styles';
 import { Empty } from '../../../profile/YourVotes/YourVotes';
 import { getPoolEvents } from '../../api/api';
-import { formatBalance, getDateString } from '../../../../common/helpers/helpers';
-import { respondDown } from '../../../../common/mixins';
 import { PoolExtended } from '../../api/types';
-import Pagination from '../../../../common/basics/Pagination';
-import { useUpdateIndex } from '../../../../common/hooks/useUpdateIndex';
-import LinkIcon from 'assets/icon-external-link.svg';
-import ExternalLink from '../../../../common/basics/ExternalLink';
 
 const Title = styled.h3`
     margin-bottom: 2.4rem;
@@ -29,8 +31,8 @@ const Amounts = styled.span`
 
 const getEventTitle = (event, pool) => {
     if (event.event_type === 'swap') {
-        const fromIndex = event.amounts.findIndex((amount) => amount > 0);
-        const toIndex = event.amounts.findIndex((amount) => amount < 0);
+        const fromIndex = event.amounts.findIndex(amount => amount > 0);
+        const toIndex = event.amounts.findIndex(amount => amount < 0);
 
         return `Swap ${pool.assets[fromIndex]?.code} to ${pool.assets[toIndex]?.code}`;
     }
@@ -40,8 +42,8 @@ const getEventTitle = (event, pool) => {
 
 const getEventAmounts = (event, pool) => {
     if (event.event_type === 'swap') {
-        const fromIndex = event.amounts.findIndex((amount) => amount > 0);
-        const toIndex = event.amounts.findIndex((amount) => amount < 0);
+        const fromIndex = event.amounts.findIndex(amount => amount > 0);
+        const toIndex = event.amounts.findIndex(amount => amount < 0);
 
         return (
             <Amounts>
@@ -71,7 +73,7 @@ const getEventAmounts = (event, pool) => {
 };
 
 const PAGE_SIZE = 5;
-const getEventTime = (timeStr) => {
+const getEventTime = timeStr => {
     const [date, time] = timeStr.split(' ');
 
     const [year, month, day] = date.split('-');
@@ -156,6 +158,7 @@ const PoolEvents = ({ pool }: { pool: PoolExtended }) => {
                                     <a
                                         href={`https://stellar.expert/explorer/public/tx/${event.transaction_hash}`}
                                         target="_blank"
+                                        rel="noreferrer"
                                     >
                                         <LinkIcon />
                                     </a>

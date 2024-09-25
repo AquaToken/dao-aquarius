@@ -1,7 +1,12 @@
 import * as React from 'react';
-import useAuthStore from '../../../store/authStore/useAuthStore';
-import Identicon from '../../../common/basics/Identicon';
 import styled from 'styled-components';
+
+import Copy from 'assets/icon-copy.svg';
+import External from 'assets/icon-external-link.svg';
+import MyAquarius from 'assets/my-aquarius.svg';
+
+import CopyButton from '../../../common/basics/CopyButton';
+import Identicon from '../../../common/basics/Identicon';
 import {
     commonMaxWidth,
     flexAllCenter,
@@ -10,10 +15,7 @@ import {
 } from '../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../common/styles';
 import { LoginTypes } from '../../../store/authStore/types';
-import Copy from 'assets/icon-copy.svg';
-import External from 'assets/icon-external-link.svg';
-import CopyButton from '../../../common/basics/CopyButton';
-import MyAquarius from 'assets/my-aquarius.svg';
+import useAuthStore from '../../../store/authStore/useAuthStore';
 
 const Container = styled.div`
     display: flex;
@@ -178,6 +180,7 @@ const AccountInfo = () => {
                             <a
                                 target="_blank"
                                 href={`https://stellar.expert/explorer/public/account/${account.accountId()}`}
+                                rel="noreferrer"
                             >
                                 <ButtonBlock>
                                     Explorer

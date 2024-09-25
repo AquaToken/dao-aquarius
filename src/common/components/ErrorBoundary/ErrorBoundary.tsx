@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { PropsWithChildren, ErrorInfo } from 'react';
-import { withRouter } from 'react-router-dom';
 import { RouteComponentProps } from 'react-router';
-import SentryService from '../../services/sentry.service';
+import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
-import { flexAllCenter } from '../../mixins';
-import { COLORS } from '../../styles';
+
 import Button from '../../basics/Button';
+import { flexAllCenter } from '../../mixins';
+import SentryService from '../../services/sentry.service';
+import { COLORS } from '../../styles';
 
 interface State {
     isError: boolean;

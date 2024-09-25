@@ -1,11 +1,13 @@
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import { respondDown } from '../../../../common/mixins';
+
 import Ice from 'assets/ice-logo.svg';
 import Arrow from 'assets/icon-link-arrow.svg';
+
 import Button from '../../../../common/basics/Button';
-import { Link } from 'react-router-dom';
+import { respondDown } from '../../../../common/mixins';
+import { Breakpoints, COLORS } from '../../../../common/styles';
 import { MainRoutes } from '../../../../routes';
 
 const Container = styled.section`
@@ -157,6 +159,7 @@ const IceBlock = () => {
                             <a
                                 target="_blank"
                                 href="https://medium.com/aquarius-aqua/ice-the-next-stage-of-aquarius-810edc7cf3bb"
+                                rel="noreferrer"
                             >
                                 <StyledButton isBig>Learn more</StyledButton>
                             </a>

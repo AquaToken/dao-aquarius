@@ -1,25 +1,50 @@
 import * as React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
+
+import Aqua from 'assets/aqua-logo-small.svg';
 import BackgroundImageLeft from 'assets/background-left.svg';
 import BackgroundImageRight from 'assets/background-right.svg';
+import Ice from 'assets/ice-logo.svg';
+import Arrows from 'assets/icon-arrows-circle.svg';
 import Info from 'assets/icon-info.svg';
-import { Breakpoints, COLORS } from '../../../../common/styles';
+
+import CreatePairModal from './CreatePairModal/CreatePairModal';
+import FloatingButton from './FloatingButton/FloatingButton';
+import Table from './Table/Table';
+import VotesAmountModal from './VoteModals/VotesAmountModal';
+
+import Button from '../../../../common/basics/Button';
+import DotsLoader from '../../../../common/basics/DotsLoader';
+import PageLoader from '../../../../common/basics/PageLoader';
+import Pagination from '../../../../common/basics/Pagination';
+import { Option } from '../../../../common/basics/Select';
+import ToggleGroup from '../../../../common/basics/ToggleGroup';
+import Tooltip, { TOOLTIP_POSITION } from '../../../../common/basics/Tooltip';
+import { formatBalance, getTimeAgoValue } from '../../../../common/helpers/helpers';
 import {
     commonMaxWidth,
     flexAllCenter,
     flexRowSpaceBetween,
     respondDown,
 } from '../../../../common/mixins';
-import ToggleGroup from '../../../../common/basics/ToggleGroup';
-import Table from './Table/Table';
-import FloatingButton from './FloatingButton/FloatingButton';
-import VotesAmountModal from './VoteModals/VotesAmountModal';
-import { ModalService, StellarService } from '../../../../common/services/globalServices';
 import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
+import { ModalService, StellarService } from '../../../../common/services/globalServices';
+import {
+    AQUA_CODE,
+    AQUA_ISSUER,
+    DOWN_ICE_CODE,
+    ICE_ISSUER,
+    StellarEvents,
+    UP_ICE_CODE,
+} from '../../../../common/services/stellar.service';
+import { Breakpoints, COLORS } from '../../../../common/styles';
+import { MainRoutes, MarketRoutes } from '../../../../routes';
+import { getAssetString } from '../../../../store/assetsStore/actions';
+import useAssetsStore from '../../../../store/assetsStore/useAssetsStore';
+import { LoginTypes } from '../../../../store/authStore/types';
 import useAuthStore from '../../../../store/authStore/useAuthStore';
-import AssetDropdown from '../AssetDropdown/AssetDropdown';
-import Arrows from 'assets/icon-arrows-circle.svg';
 import {
     getFilteredPairsList,
     getPairsList,
@@ -29,31 +54,9 @@ import {
     SortTypes,
     updateVotesForMarketKeys,
 } from '../../api/api';
-import PageLoader from '../../../../common/basics/PageLoader';
-import Tooltip, { TOOLTIP_POSITION } from '../../../../common/basics/Tooltip';
 import { PairStats } from '../../api/types';
-import CreatePairModal from './CreatePairModal/CreatePairModal';
+import AssetDropdown from '../AssetDropdown/AssetDropdown';
 import Market from '../common/Market';
-import Button from '../../../../common/basics/Button';
-import { formatBalance, getTimeAgoValue } from '../../../../common/helpers/helpers';
-import { Option } from '../../../../common/basics/Select';
-import Pagination from '../../../../common/basics/Pagination';
-import {
-    AQUA_CODE,
-    AQUA_ISSUER,
-    DOWN_ICE_CODE,
-    ICE_ISSUER,
-    StellarEvents,
-    UP_ICE_CODE,
-} from '../../../../common/services/stellar.service';
-import DotsLoader from '../../../../common/basics/DotsLoader';
-import { useHistory, useLocation } from 'react-router-dom';
-import useAssetsStore from '../../../../store/assetsStore/useAssetsStore';
-import { MainRoutes, MarketRoutes } from '../../../../routes';
-import { LoginTypes } from '../../../../store/authStore/types';
-import Ice from 'assets/ice-logo.svg';
-import Aqua from 'assets/aqua-logo-small.svg';
-import { getAssetString } from '../../../../store/assetsStore/actions';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -382,7 +385,7 @@ enum UrlParams {
     counter = 'counter',
 }
 
-const assetToUrlParams = (asset) => {
+const assetToUrlParams = asset => {
     const assetInstance = StellarService.createAsset(asset.code, asset.issuer);
 
     if (assetInstance.isNative()) {
@@ -392,7 +395,7 @@ const assetToUrlParams = (asset) => {
     return `${assetInstance.code}:${assetInstance.issuer}`;
 };
 
-const assetFromUrlParams = (params) => {
+const assetFromUrlParams = params => {
     if (params === 'native') {
         return StellarService.createLumen();
     }
@@ -402,7 +405,7 @@ const assetFromUrlParams = (params) => {
     return StellarService.createAsset(code, issuer);
 };
 
-export const getAssetsFromPairs = (pairs) => {
+export const getAssetsFromPairs = pairs => {
     return pairs.reduce((acc, item) => {
         const bribeAssets =
             item.aggregated_bribes?.reduce((accum, bribe) => {
@@ -515,7 +518,7 @@ const MainPage = (): JSX.Element => {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            setUpdateIndex((prev) => prev + 1);
+            setUpdateIndex(prev => prev + 1);
         }, UPDATE_INTERVAL);
 
         return () => {
@@ -526,7 +529,7 @@ const MainPage = (): JSX.Element => {
     useEffect(() => {
         const unsub = StellarService.event.sub(({ type }) => {
             if (type === StellarEvents.claimableUpdate) {
-                setClaimUpdateId((prevState) => prevState + 1);
+                setClaimUpdateId(prevState => prevState + 1);
             }
         });
 
@@ -567,7 +570,7 @@ const MainPage = (): JSX.Element => {
         });
     };
 
-    const processAssetsFromPairs = (pairs) => {
+    const processAssetsFromPairs = pairs => {
         const assets = getAssetsFromPairs(pairs);
 
         processNewAssets(assets);
@@ -592,7 +595,7 @@ const MainPage = (): JSX.Element => {
 
         const keys = StellarService.getKeysSimilarToMarketKeys(account.accountId());
 
-        getUserPairsList(keys).then((result) => {
+        getUserPairsList(keys).then(result => {
             setPairs(result);
             processAssetsFromPairs(result);
             setCount(result.length);
@@ -612,7 +615,7 @@ const MainPage = (): JSX.Element => {
 
         const keys = StellarService.getKeysSimilarToMarketKeys(account.accountId());
 
-        getUserPairsList(keys).then((result) => {
+        getUserPairsList(keys).then(result => {
             setPairs(result);
             processAssetsFromPairs(result);
             setCount(result.length);
@@ -647,7 +650,7 @@ const MainPage = (): JSX.Element => {
         }
 
         setPairsLoading(true);
-        getPairsList(sort, PAGE_SIZE, page).then((result) => {
+        getPairsList(sort, PAGE_SIZE, page).then(result => {
             setPairs(result.pairs);
             setCount(result.count);
             processAssetsFromPairs(result.pairs);
@@ -662,7 +665,7 @@ const MainPage = (): JSX.Element => {
         }
 
         setPairsLoading(true);
-        getPairsWithBribes(PAGE_SIZE, page).then((result) => {
+        getPairsWithBribes(PAGE_SIZE, page).then(result => {
             setPairs(result.pairs);
             setCount(result.count);
             processAssetsFromPairs(result.pairs);
@@ -676,7 +679,7 @@ const MainPage = (): JSX.Element => {
             return;
         }
         setPairsLoading(true);
-        getFilteredPairsList(searchBase, searchCounter, PAGE_SIZE, page).then((result) => {
+        getFilteredPairsList(searchBase, searchCounter, PAGE_SIZE, page).then(result => {
             setPairs(result.pairs);
             processAssetsFromPairs(result.pairs);
             setCount(result.count);
@@ -693,7 +696,7 @@ const MainPage = (): JSX.Element => {
         }
     }, [isLogged]);
 
-    const changeSort = (sortValue) => {
+    const changeSort = sortValue => {
         if (!isLogged && sortValue === SortTypes.yourVotes) {
             ModalService.openModal(ChooseLoginMethodModal, {
                 redirectURL: `${MainRoutes.vote}?${UrlParams.sort}=${SortTypes.yourVotes}`,
@@ -708,7 +711,7 @@ const MainPage = (): JSX.Element => {
         setPage(1);
     };
 
-    const changeBaseSearch = (asset) => {
+    const changeBaseSearch = asset => {
         const params = new URLSearchParams(location.search);
         params.delete(UrlParams.sort);
         if (asset) {
@@ -724,7 +727,7 @@ const MainPage = (): JSX.Element => {
         setPage(1);
     };
 
-    const changeCounterSearch = (asset) => {
+    const changeCounterSearch = asset => {
         const params = new URLSearchParams(location.search);
         params.delete(UrlParams.sort);
         if (asset) {
@@ -757,7 +760,7 @@ const MainPage = (): JSX.Element => {
         });
     };
 
-    const changePage = (page) => {
+    const changePage = page => {
         setPage(page);
         setChangePageLoading(true);
     };
@@ -783,7 +786,7 @@ const MainPage = (): JSX.Element => {
     if (!pairs) {
         return <PageLoader />;
     }
-    const createPair = (e) => {
+    const createPair = e => {
         e.preventDefault();
         e.stopPropagation();
         if (isLogged) {
@@ -811,14 +814,14 @@ const MainPage = (): JSX.Element => {
             return;
         }
         const isPairSelected = chosenPairs.some(
-            (chosenPair) => chosenPair.market_key === pair.market_key,
+            chosenPair => chosenPair.market_key === pair.market_key,
         );
 
         let updatedPairs;
 
         if (isPairSelected) {
             updatedPairs = chosenPairs.filter(
-                (chosenPair) => chosenPair.market_key !== pair.market_key,
+                chosenPair => chosenPair.market_key !== pair.market_key,
             );
         } else {
             updatedPairs = [...chosenPairs, pair];
@@ -876,9 +879,7 @@ const MainPage = (): JSX.Element => {
                             </TooltipContent>
                         }
                         position={TOOLTIP_POSITION.bottom}
-                        isShow={
-                            Boolean(searchBase) && !Boolean(searchCounter) && !isCounterSearchActive
-                        }
+                        isShow={Boolean(searchBase) && !searchCounter && !isCounterSearchActive}
                     >
                         <AssetDropdown
                             asset={searchCounter}
@@ -894,10 +895,10 @@ const MainPage = (): JSX.Element => {
                 <Header ref={headerRef}>
                     <ToggleGroupStyled
                         value={sort}
-                        onChange={(option) => changeSort(option)}
+                        onChange={option => changeSort(option)}
                         options={options}
                     />
-                    {Boolean(pairs.length && pairs.some((pair) => Boolean(pair.timestamp))) && (
+                    {Boolean(pairs.length && pairs.some(pair => Boolean(pair.timestamp))) && (
                         <StatusUpdate>
                             {totalStats ? (
                                 <Tooltip
@@ -945,7 +946,7 @@ const MainPage = (): JSX.Element => {
                             <LastUpdated>
                                 Last updated{' '}
                                 {getTimeAgoValue(
-                                    pairs.find((pair) => Boolean(pair.timestamp)).timestamp,
+                                    pairs.find(pair => Boolean(pair.timestamp)).timestamp,
                                 )}
                             </LastUpdated>
                         </StatusUpdate>
@@ -973,7 +974,7 @@ const MainPage = (): JSX.Element => {
                             position={TOOLTIP_POSITION.bottom}
                             isShow={true}
                         >
-                            <Button onClick={(e) => createPair(e)}>create market</Button>
+                            <Button onClick={e => createPair(e)}>create market</Button>
                         </Tooltip>
                     </CreatePair>
                 )}
@@ -989,7 +990,7 @@ const MainPage = (): JSX.Element => {
                     <Pagination
                         pageSize={PAGE_SIZE}
                         totalCount={count}
-                        onPageChange={(page) => changePage(page)}
+                        onPageChange={page => changePage(page)}
                         currentPage={page}
                         itemName="pairs"
                     />

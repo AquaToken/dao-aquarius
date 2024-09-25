@@ -1,11 +1,12 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { flexAllCenter, respondDown } from '../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import { ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
-import Market from '../../../vote/components/common/Market';
+
 import Button from '../../../../common/basics/Button';
 import ExternalLink from '../../../../common/basics/ExternalLink';
+import { flexAllCenter, respondDown } from '../../../../common/mixins';
+import { ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
+import { Breakpoints, COLORS } from '../../../../common/styles';
+import Market from '../../../vote/components/common/Market';
 
 const Container = styled.div`
     width: 52.3rem;

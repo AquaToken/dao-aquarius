@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { ModalDescription, ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
-import Button from '../../../../common/basics/Button';
 import styled from 'styled-components';
-import { respondDown } from '../../../../common/mixins';
-import { Breakpoints } from '../../../../common/styles';
+
+import Button from '../../../../common/basics/Button';
 import ExternalLink from '../../../../common/basics/ExternalLink';
+import { respondDown } from '../../../../common/mixins';
+import { ModalDescription, ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
+import { Breakpoints } from '../../../../common/styles';
 
 const Container = styled.div`
     display: flex;

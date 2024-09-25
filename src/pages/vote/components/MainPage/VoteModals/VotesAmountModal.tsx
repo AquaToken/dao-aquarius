@@ -1,41 +1,44 @@
+import { Asset } from '@stellar/stellar-sdk';
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
+import styled from 'styled-components';
+
+import Aqua from 'assets/aqua-logo-small.svg';
+import Ice from 'assets/ice-logo.svg';
+import CloseIcon from 'assets/icon-close-small.svg';
+
+import VotesDurationModal from './VotesDurationModal';
+
+import Button from '../../../../../common/basics/Button';
+import ExternalLink from '../../../../../common/basics/ExternalLink';
+import Input from '../../../../../common/basics/Input';
+import RangeInput from '../../../../../common/basics/RangeInput';
+import Select, { Option } from '../../../../../common/basics/Select';
+import ErrorHandler from '../../../../../common/helpers/error-handler';
+import { formatBalance, roundToPrecision } from '../../../../../common/helpers/helpers';
+import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
+import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
 import {
     ModalDescription,
     ModalProps,
     ModalTitle,
 } from '../../../../../common/modals/atoms/ModalAtoms';
-import styled from 'styled-components';
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import Aqua from 'assets/aqua-logo-small.svg';
-import Ice from 'assets/ice-logo.svg';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
-import Input from '../../../../../common/basics/Input';
-import RangeInput from '../../../../../common/basics/RangeInput';
-import Button from '../../../../../common/basics/Button';
+import GetAquaModal from '../../../../../common/modals/GetAquaModal/GetAquaModal';
 import {
     ModalService,
     StellarService,
     ToastService,
 } from '../../../../../common/services/globalServices';
-import { formatBalance, roundToPrecision } from '../../../../../common/helpers/helpers';
-import ExternalLink from '../../../../../common/basics/ExternalLink';
-import GetAquaModal from '../../../../../common/modals/GetAquaModal/GetAquaModal';
-import CloseIcon from 'assets/icon-close-small.svg';
-import Market from '../../common/Market';
-import { PairStats } from '../../../api/types';
-import { AQUA, DOWN_ICE, SELECTED_PAIRS_ALIAS, UP_ICE } from '../MainPage';
-import VotesDurationModal from './VotesDurationModal';
-import Select, { Option } from '../../../../../common/basics/Select';
-import { Asset } from '@stellar/stellar-sdk';
-import { LoginTypes } from '../../../../../store/authStore/types';
 import { BuildSignAndSubmitStatuses } from '../../../../../common/services/wallet-connect.service';
-import ErrorHandler from '../../../../../common/helpers/error-handler';
-import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
-import { Link } from 'react-router-dom';
+import { Breakpoints, COLORS } from '../../../../../common/styles';
 import { LockerRoutes } from '../../../../../routes';
-import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
+import { LoginTypes } from '../../../../../store/authStore/types';
+import useAuthStore from '../../../../../store/authStore/useAuthStore';
+import { PairStats } from '../../../api/types';
+import Market from '../../common/Market';
+import { AQUA, DOWN_ICE, SELECTED_PAIRS_ALIAS, UP_ICE } from '../MainPage';
 
 export const ContentRow = styled.div`
     ${flexRowSpaceBetween};
@@ -323,7 +326,7 @@ const VotesAmountModal = ({
         };
     }, [targetAsset]);
 
-    const onRangeChange = (percent) => {
+    const onRangeChange = percent => {
         setPercent(percent);
 
         const amountValue = roundToPrecision((targetBalance * percent) / 100, 7);
@@ -341,7 +344,7 @@ const VotesAmountModal = ({
         );
     };
 
-    const onInputChange = (value) => {
+    const onInputChange = value => {
         if (Number.isNaN(Number(value))) {
             return;
         }
@@ -383,7 +386,7 @@ const VotesAmountModal = ({
     };
 
     const deletePair = (deletedPair: PairStats) => {
-        const updatedPairs = selectedPairs.filter((pair) => pair[keyType] !== deletedPair[keyType]);
+        const updatedPairs = selectedPairs.filter(pair => pair[keyType] !== deletedPair[keyType]);
 
         setSelectedPairs(updatedPairs);
         localStorage.setItem(SELECTED_PAIRS_ALIAS, JSON.stringify(updatedPairs));
@@ -504,7 +507,7 @@ const VotesAmountModal = ({
 
         if (
             Object.values(pairsAmount).some(
-                (value) =>
+                value =>
                     !value ||
                     !Number(value) ||
                     value < MINIMUM_AMOUNT ||
@@ -595,7 +598,7 @@ const VotesAmountModal = ({
                 <AmountRow>
                     <AmountInput
                         value={amount}
-                        onChange={(e) => {
+                        onChange={e => {
                             onInputChange(e.target.value);
                         }}
                         placeholder="Enter voting power"
@@ -626,7 +629,7 @@ const VotesAmountModal = ({
                             )}
                         </ContentRow>
                         <PairsList>
-                            {selectedPairs.map((pair) => (
+                            {selectedPairs.map(pair => (
                                 <PairBlock key={pair.market_key}>
                                     <AssetsInfo>
                                         <Market
@@ -645,7 +648,7 @@ const VotesAmountModal = ({
                                     </AssetsInfo>
                                     <StyledInput
                                         value={pairsAmount[pair[keyType]]}
-                                        onChange={(e) => {
+                                        onChange={e => {
                                             onPairInputChange(e.target.value, pair[keyType]);
                                         }}
                                         onFocus={() => {

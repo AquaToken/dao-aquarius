@@ -1,6 +1,3 @@
-import styled from 'styled-components';
-import { Breakpoints, COLORS, Z_INDEX } from '../../styles';
-import { flexAllCenter, respondDown } from '../../mixins';
 import * as React from 'react';
 import {
     DetailedReactHTMLElement,
@@ -10,8 +7,13 @@ import {
     useRef,
     useState,
 } from 'react';
+import styled from 'styled-components';
+
 import CloseIcon from 'assets/icon-close.svg';
+
 import useOnClickOutside from '../../hooks/useOutsideClick';
+import { flexAllCenter, respondDown } from '../../mixins';
+import { Breakpoints, COLORS, Z_INDEX } from '../../styles';
 
 const ModalWrapper = styled.div`
     position: fixed;

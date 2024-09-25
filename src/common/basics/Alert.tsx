@@ -1,8 +1,10 @@
 import * as React from 'react';
 import styled from 'styled-components';
+
 import IconAlert from 'assets/icon-alert.svg';
-import { COLORS } from '../styles';
+
 import { flexAllCenter } from '../mixins';
+import { COLORS } from '../styles';
 
 const Container = styled.div`
     display: flex;

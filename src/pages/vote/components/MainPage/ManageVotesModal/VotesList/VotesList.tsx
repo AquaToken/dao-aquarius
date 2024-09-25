@@ -1,29 +1,31 @@
 import * as React from 'react';
 import { useCallback, useMemo, useState } from 'react';
-import { LoginTypes } from '../../../../../../store/authStore/types';
-import Table, { CellAlign } from '../../../../../../common/basics/Table';
-import { Breakpoints, COLORS } from '../../../../../../common/styles';
-import Market from '../../../common/Market';
-import { formatBalance, getDateString } from '../../../../../../common/helpers/helpers';
-import Tooltip, { TOOLTIP_POSITION } from '../../../../../../common/basics/Tooltip';
+import styled from 'styled-components';
+
 import Dislike from 'assets/icon-dislike-gray.svg';
-import { BuildSignAndSubmitStatuses } from '../../../../../../common/services/wallet-connect.service';
+import LinkIcon from 'assets/icon-external-link.svg';
+
+import Button from '../../../../../../common/basics/Button';
+import Checkbox from '../../../../../../common/basics/Checkbox';
+import Table, { CellAlign } from '../../../../../../common/basics/Table';
+import Tooltip, { TOOLTIP_POSITION } from '../../../../../../common/basics/Tooltip';
+import ErrorHandler from '../../../../../../common/helpers/error-handler';
+import { formatBalance, getDateString } from '../../../../../../common/helpers/helpers';
+import { openCurrentWalletIfExist } from '../../../../../../common/helpers/wallet-connect-helpers';
+import { useIsMounted } from '../../../../../../common/hooks/useIsMounted';
+import { respondDown } from '../../../../../../common/mixins';
+import { StellarService, ToastService } from '../../../../../../common/services/globalServices';
 import {
     DOWN_ICE_CODE,
     ICE_ISSUER,
     UP_ICE_CODE,
 } from '../../../../../../common/services/stellar.service';
-import { StellarService, ToastService } from '../../../../../../common/services/globalServices';
-import ErrorHandler from '../../../../../../common/helpers/error-handler';
-import { useIsMounted } from '../../../../../../common/hooks/useIsMounted';
-import Checkbox from '../../../../../../common/basics/Checkbox';
+import { BuildSignAndSubmitStatuses } from '../../../../../../common/services/wallet-connect.service';
+import { Breakpoints, COLORS } from '../../../../../../common/styles';
+import { LoginTypes } from '../../../../../../store/authStore/types';
 import useAuthStore from '../../../../../../store/authStore/useAuthStore';
-import styled from 'styled-components';
-import { respondDown } from '../../../../../../common/mixins';
-import Button from '../../../../../../common/basics/Button';
-import LinkIcon from 'assets/icon-external-link.svg';
 import { MarketPair } from '../../../../../profile/api/types';
-import { openCurrentWalletIfExist } from '../../../../../../common/helpers/wallet-connect-helpers';
+import Market from '../../../common/Market';
 
 const CheckboxMobile = styled(Checkbox)`
     display: none;
@@ -84,7 +86,7 @@ const TooltipStyled = styled(Tooltip)`
 
 export const goToStellarExpert = ({ transactions }) => {
     const tab = window.open('', '_blank');
-    transactions().then((res) => {
+    transactions().then(res => {
         const hash = res?.records?.[0]?.hash;
         if (hash) {
             tab.location.href = `https://stellar.expert/explorer/public/tx/${hash}`;
@@ -110,7 +112,7 @@ const VotesList = ({
     const isMounted = useIsMounted();
 
     const selectClaim = useCallback(
-        (claim) => {
+        claim => {
             if (selectedClaims.has(claim.id)) {
                 selectedClaims.delete(claim.id);
             } else {
@@ -140,7 +142,7 @@ const VotesList = ({
         if (!claims) {
             return true;
         }
-        return claims.every((claim) => new Date(claim.claimBackDate) > new Date());
+        return claims.every(claim => new Date(claim.claimBackDate) > new Date());
     }, [claims]);
 
     const getActionHeadCell = useCallback(() => {
@@ -164,7 +166,7 @@ const VotesList = ({
     }, [account, selectedClaims, selectAll, pendingId]);
 
     const getActionBlock = useCallback(
-        (claim) => {
+        claim => {
             if (account.authType === LoginTypes.ledger) {
                 return {
                     children: (
@@ -252,9 +254,7 @@ const VotesList = ({
             if (isMounted.current) {
                 setPendingId(null);
                 setClaims(
-                    claims.filter((cb) =>
-                        claim ? claim.id !== cb.id : !selectedClaims.has(cb.id),
-                    ),
+                    claims.filter(cb => (claim ? claim.id !== cb.id : !selectedClaims.has(cb.id))),
                 );
                 setSelectedClaims(new Map());
             }
@@ -301,7 +301,7 @@ const VotesList = ({
                     getActionHeadCell(),
                     { children: '', align: CellAlign.Center, flexSize: 0.1 },
                 ]}
-                body={claims.map((claim) => ({
+                body={claims.map(claim => ({
                     key: claim.id,
                     isNarrow: true,
                     mobileBackground: COLORS.lightGray,
@@ -413,7 +413,7 @@ const VotesList = ({
             />
             {account.authType !== LoginTypes.ledger && (
                 <StyledButton
-                    disabled={!Boolean(selectedClaims.size)}
+                    disabled={!selectedClaims.size}
                     fullWidth
                     isBig
                     pending={Boolean(pendingId)}

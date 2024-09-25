@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { ComponentClass, FunctionComponent } from 'react';
-import { ModalBody } from '../modals/atoms/ModalAtoms';
+
 import EventService from './event.service';
+
+import { ModalBody } from '../modals/atoms/ModalAtoms';
 
 type Modals = Array<{
     id: number;
@@ -27,9 +29,9 @@ export default class ModalServiceClass {
         this.id += 1;
         let resolver: (unknown) => void = undefined;
 
-        const promise = new Promise((resolve) => {
+        const promise = new Promise(resolve => {
             const id = this.id;
-            resolver = (data) => {
+            resolver = data => {
                 resolve({ id, result: data });
             };
         });
@@ -38,7 +40,7 @@ export default class ModalServiceClass {
 
         let triggerClose: (unknown) => void = undefined;
 
-        const triggerClosePromise = new Promise((resolve) => {
+        const triggerClosePromise = new Promise(resolve => {
             triggerClose = resolve;
         });
 

@@ -3,9 +3,10 @@ import * as React from 'react';
 import { useMemo } from 'react';
 import styled from 'styled-components';
 
+import Info from 'assets/icon-info.svg';
+
 import AssetLogo from './AssetLogo';
 
-import Info from 'assets/icon-info.svg';
 import DotsLoader from '../../../../common/basics/DotsLoader';
 import Tooltip, { TOOLTIP_POSITION } from '../../../../common/basics/Tooltip';
 import { flexAllCenter, respondDown, textEllipsis } from '../../../../common/mixins';

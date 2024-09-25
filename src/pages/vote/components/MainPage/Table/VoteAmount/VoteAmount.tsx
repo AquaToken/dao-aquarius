@@ -1,15 +1,15 @@
 import * as React from 'react';
-import Tooltip, { TOOLTIP_POSITION } from '../../../../../../common/basics/Tooltip';
-import { formatBalance, roundToPrecision } from '../../../../../../common/helpers/helpers';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../../../common/styles';
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../../../common/mixins';
-import { PairStats, TotalStats } from '../../../../api/types';
+
+import Aqua from 'assets/aqua-logo-small.svg';
+import Ice from 'assets/ice-logo.svg';
+import IconDown from 'assets/icon-down-percent.svg';
 import InfoIcon from 'assets/icon-info.svg';
 import IconUp from 'assets/icon-up-percent.svg';
-import IconDown from 'assets/icon-down-percent.svg';
-import Ice from 'assets/ice-logo.svg';
-import Aqua from 'assets/aqua-logo-small.svg';
+
+import Tooltip, { TOOLTIP_POSITION } from '../../../../../../common/basics/Tooltip';
+import { formatBalance, roundToPrecision } from '../../../../../../common/helpers/helpers';
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../../../common/mixins';
 import {
     AQUA_CODE,
     AQUA_ISSUER,
@@ -17,6 +17,8 @@ import {
     ICE_ISSUER,
     UP_ICE_CODE,
 } from '../../../../../../common/services/stellar.service';
+import { Breakpoints, COLORS } from '../../../../../../common/styles';
+import { PairStats, TotalStats } from '../../../../api/types';
 
 const TooltipStyled = styled(Tooltip)`
     label {

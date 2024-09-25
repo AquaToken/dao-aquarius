@@ -1,33 +1,35 @@
 import * as React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../common/styles';
+
+import Arrow from 'assets/icon-arrow-right-long.svg';
+import Info from 'assets/icon-info.svg';
+
+import Alert from '../../../../common/basics/Alert';
+import Button from '../../../../common/basics/Button';
+import DotsLoader from '../../../../common/basics/DotsLoader';
+import Input from '../../../../common/basics/Input';
+import Tooltip, { TOOLTIP_POSITION } from '../../../../common/basics/Tooltip';
+import { formatBalance } from '../../../../common/helpers/helpers';
+import { openCurrentWalletIfExist } from '../../../../common/helpers/wallet-connect-helpers';
 import { customScroll, flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
 import { ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
-import Input from '../../../../common/basics/Input';
-import Asset from '../../../vote/components/AssetDropdown/Asset';
+import MainNetWarningModal, {
+    SHOW_PURPOSE_ALIAS_MAIN_NET,
+} from '../../../../common/modals/MainNetWarningModal';
 import {
     ModalService,
     SorobanService,
     StellarService,
     ToastService,
 } from '../../../../common/services/globalServices';
-import Button from '../../../../common/basics/Button';
-import useAuthStore from '../../../../store/authStore/useAuthStore';
-import SuccessModal from '../SuccessModal/SuccessModal';
-import { formatBalance } from '../../../../common/helpers/helpers';
-import DotsLoader from '../../../../common/basics/DotsLoader';
-import { getAssetString } from '../../../../store/assetsStore/actions';
-import Info from 'assets/icon-info.svg';
-import Arrow from 'assets/icon-arrow-right-long.svg';
-import Tooltip, { TOOLTIP_POSITION } from '../../../../common/basics/Tooltip';
 import { BuildSignAndSubmitStatuses } from '../../../../common/services/wallet-connect.service';
-import Alert from '../../../../common/basics/Alert';
-import MainNetWarningModal, {
-    SHOW_PURPOSE_ALIAS_MAIN_NET,
-} from '../../../../common/modals/MainNetWarningModal';
+import { Breakpoints, COLORS } from '../../../../common/styles';
+import { getAssetString } from '../../../../store/assetsStore/actions';
 import { LoginTypes } from '../../../../store/authStore/types';
-import { openCurrentWalletIfExist } from '../../../../common/helpers/wallet-connect-helpers';
+import useAuthStore from '../../../../store/authStore/useAuthStore';
+import Asset from '../../../vote/components/AssetDropdown/Asset';
+import SuccessModal from '../SuccessModal/SuccessModal';
 
 const Container = styled.div<{ isModal: boolean }>`
     width: ${({ isModal }) => (isModal ? '52.3rem' : '100%')};
@@ -161,11 +163,9 @@ const DepositToPool = ({ params }) => {
             setAccountShare(null);
             return;
         }
-        SorobanService.getTokenBalance(pool.share_token_address, account.accountId()).then(
-            (res) => {
-                setAccountShare(res);
-            },
-        );
+        SorobanService.getTokenBalance(pool.share_token_address, account.accountId()).then(res => {
+            setAccountShare(res);
+        });
     }, [account]);
 
     const reserves: Map<string, number> = useMemo(() => {
@@ -175,13 +175,13 @@ const DepositToPool = ({ params }) => {
     }, [pool]);
 
     const [amounts, setAmounts] = useState<Map<string, string>>(
-        new Map<string, string>(pool.assets.map((asset) => [getAssetString(asset), ''])),
+        new Map<string, string>(pool.assets.map(asset => [getAssetString(asset), ''])),
     );
     const [pending, setPending] = useState(false);
 
     const hasAllAmounts = useMemo(() => {
         // @ts-ignore
-        return [...amounts.values()].every((value) => Boolean(+value));
+        return [...amounts.values()].every(value => Boolean(+value));
     }, [amounts]);
 
     const { sharesBefore, sharesAfter } = useMemo(() => {
@@ -214,7 +214,7 @@ const DepositToPool = ({ params }) => {
     }, [amounts, pool, reserves, accountShare]);
 
     const getDailyRewards = useCallback(
-        (percent) => {
+        percent => {
             const secondsInDay = 60 * 60 * 24;
 
             const poolDailyRewards = (Number(pool.reward_tps) / 1e7) * secondsInDay;
@@ -230,11 +230,11 @@ const DepositToPool = ({ params }) => {
         }
         const map = new Map();
 
-        pool.assets.forEach((asset) => {
+        pool.assets.forEach(asset => {
             const otherAssets = pool.assets
-                .filter((token) => getAssetString(token) !== getAssetString(asset))
+                .filter(token => getAssetString(token) !== getAssetString(asset))
                 .map(
-                    (token) =>
+                    token =>
                         `${formatBalance(
                             Number(pool.total_share) === 0
                                 ? +amounts.get(getAssetString(token)) /
@@ -251,9 +251,9 @@ const DepositToPool = ({ params }) => {
 
     const onSubmit = () => {
         const insufficientBalanceTokens = pool.assets.filter(
-            (asset) => account.getAssetBalance(asset) < +amounts.get(getAssetString(asset)),
+            asset => account.getAssetBalance(asset) < +amounts.get(getAssetString(asset)),
         );
-        if (!!insufficientBalanceTokens.length) {
+        if (insufficientBalanceTokens.length) {
             ToastService.showErrorToast(
                 `Insufficient balance ${insufficientBalanceTokens
                     .map(({ code }) => code)
@@ -267,11 +267,11 @@ const DepositToPool = ({ params }) => {
         }
         setPending(true);
         SorobanService.getDepositTx(account?.accountId(), pool.index, pool.assets, amounts)
-            .then((tx) => {
+            .then(tx => {
                 hash = tx.hash().toString('hex');
                 return account.signAndSubmitTx(tx, true);
             })
-            .then((res) => {
+            .then(res => {
                 setPending(false);
 
                 if (!res) {
@@ -296,12 +296,12 @@ const DepositToPool = ({ params }) => {
 
                 ModalService.openModal(SuccessModal, {
                     assets: pool.assets,
-                    amounts: resultAmounts.map((value) => SorobanService.i128ToInt(value.value())),
+                    amounts: resultAmounts.map(value => SorobanService.i128ToInt(value.value())),
                     title: 'Deposit Successful',
                     hash,
                 });
             })
-            .catch((e) => {
+            .catch(e => {
                 ToastService.showErrorToast(
                     e.message ?? e.toString() ?? 'Oops! Something went wrong',
                 );
@@ -328,7 +328,7 @@ const DepositToPool = ({ params }) => {
         }
 
         if (value === '') {
-            pool.assets.forEach((token) => {
+            pool.assets.forEach(token => {
                 setAmounts(new Map(amounts.set(getAssetString(token), '')));
             });
             return;
@@ -348,8 +348,8 @@ const DepositToPool = ({ params }) => {
         }
 
         pool.assets
-            .filter((token) => getAssetString(token) !== getAssetString(asset))
-            .forEach((token) => {
+            .filter(token => getAssetString(token) !== getAssetString(asset))
+            .forEach(token => {
                 const newAmount = (
                     (Number(roundedValue) * +reserves.get(getAssetString(token))) /
                     +reserves.get(getAssetString(asset))
@@ -388,7 +388,7 @@ const DepositToPool = ({ params }) => {
                 />
             )}
             <Form>
-                {pool.assets.map((asset) => (
+                {pool.assets.map(asset => (
                     <FormRow key={getAssetString(asset)}>
                         {account && account.getAssetBalance(asset) !== null && (
                             <Balance>
@@ -491,7 +491,7 @@ const DepositToPool = ({ params }) => {
                             </span>
                         </DescriptionRow>
                     )}
-                    {pool.assets.map((asset) => (
+                    {pool.assets.map(asset => (
                         <DescriptionRow key={getAssetString(asset)}>
                             <span>
                                 Pooled {asset.code}{' '}

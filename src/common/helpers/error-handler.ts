@@ -114,7 +114,7 @@ export default function ErrorHandler(error) {
     if (data.extras.result_codes.transaction === 'tx_failed') {
         return (
             OPERATIONS_ERROR_CODES[
-                data.extras.result_codes.operations.find((op) => op !== 'op_success')
+                data.extras.result_codes.operations.find(op => op !== 'op_success')
             ] ?? 'Oops. Something went wrong.'
         );
     }
@@ -140,7 +140,7 @@ export function SorobanPrepareTxErrorHandler(error: string) {
 }
 
 export function SorobanErrorHandler(errorName: string): string {
-    const snackCaseName = errorName.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
+    const snackCaseName = errorName.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
 
     return TRANSACTIONS_ERROR_CODES[snackCaseName] ?? 'Oops. Something went wrong.';
 }

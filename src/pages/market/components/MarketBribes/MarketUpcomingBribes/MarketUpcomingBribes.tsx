@@ -1,14 +1,15 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { COLORS } from '../../../../../common/styles';
-import { getUpcomingBribesForMarket } from '../../../../vote/api/api';
+
 import PageLoader from '../../../../../common/basics/PageLoader';
-import Asset from '../../../../vote/components/AssetDropdown/Asset';
-import { StellarService } from '../../../../../common/services/globalServices';
-import { formatBalance, getDateString } from '../../../../../common/helpers/helpers';
-import { convertUTCToLocalDateIgnoringTimezone } from '../../../../bribes/pages/AddBribePage';
 import Table, { CellAlign } from '../../../../../common/basics/Table';
+import { formatBalance, getDateString } from '../../../../../common/helpers/helpers';
+import { StellarService } from '../../../../../common/services/globalServices';
+import { COLORS } from '../../../../../common/styles';
+import { convertUTCToLocalDateIgnoringTimezone } from '../../../../bribes/pages/AddBribePage';
+import { getUpcomingBribesForMarket } from '../../../../vote/api/api';
+import Asset from '../../../../vote/components/AssetDropdown/Asset';
 
 const Container = styled.div`
     display: flex;
@@ -33,7 +34,7 @@ const MarketUpcomingBribes = ({ marketKey }) => {
 
     useEffect(() => {
         getUpcomingBribesForMarket(marketKey)
-            .then((res) => {
+            .then(res => {
                 setBribes(res);
             })
             .catch(() => {
@@ -67,7 +68,7 @@ const MarketUpcomingBribes = ({ marketKey }) => {
                     { children: 'AQUA amount', align: CellAlign.Right, flexSize: 2 },
                     { children: 'Period', flexSize: 3, align: CellAlign.Right },
                 ]}
-                body={bribes.map((bribe) => {
+                body={bribes.map(bribe => {
                     const startUTC = convertUTCToLocalDateIgnoringTimezone(
                         new Date(bribe.start_at),
                     );

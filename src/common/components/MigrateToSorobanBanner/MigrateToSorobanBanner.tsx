@@ -1,14 +1,16 @@
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../styles';
+
 import Soroban from 'assets/soroban.svg';
+
+import { getPoolsToMigrate } from '../../../pages/amm/api/api';
+import useAuthStore from '../../../store/authStore/useAuthStore';
 import Button from '../../basics/Button';
 import { respondDown } from '../../mixins';
-import { useEffect, useState } from 'react';
-import { ModalService, StellarService } from '../../services/globalServices';
-import useAuthStore from '../../../store/authStore/useAuthStore';
-import { getPoolsToMigrate } from '../../../pages/amm/api/api';
 import MigrateLiquidityStep1 from '../../modals/MigrateLiquidityModals/MigrateLiquidityStep1';
+import { ModalService, StellarService } from '../../services/globalServices';
+import { Breakpoints, COLORS } from '../../styles';
 
 const Container = styled.div`
     display: flex;
@@ -54,13 +56,13 @@ const MigrateToSorobanBanner = ({ base, counter }) => {
     const [poolsToMigrate, setPoolsToMigrate] = useState(null);
 
     useEffect(() => {
-        StellarService.getLiquidityPoolData(base, counter).then((res) => {
+        StellarService.getLiquidityPoolData(base, counter).then(res => {
             setPool(res);
         });
     }, []);
 
     useEffect(() => {
-        getPoolsToMigrate(base, counter).then((res) => {
+        getPoolsToMigrate(base, counter).then(res => {
             setPoolsToMigrate(res);
         });
     }, []);

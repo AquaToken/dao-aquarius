@@ -1,8 +1,10 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { COLORS } from '../../../../../common/styles';
+
 import ArrowRight from 'assets/icon-arrow-right.svg';
+
 import { flexAllCenter } from '../../../../../common/mixins';
+import { COLORS } from '../../../../../common/styles';
 
 const FloatingButtonBody = styled.button`
     position: sticky;

@@ -1,19 +1,7 @@
+import * as StellarSdk from '@stellar/stellar-sdk';
 import WalletConnectClient, { SIGN_CLIENT_EVENTS } from '@walletconnect/sign-client';
 import { PairingTypes, SessionTypes, SignClientTypes } from '@walletconnect/types';
 import { getInternalError, getSdkError } from '@walletconnect/utils';
-import * as StellarSdk from '@stellar/stellar-sdk';
-import QRModal from '../modals/WalletConnectModals/QRModal';
-import PairingModal from '../modals/WalletConnectModals/PairingModal';
-import SessionRequestModal from '../modals/WalletConnectModals/SessionRequestModal';
-import EventService from './event.service';
-import { ModalService, ToastService } from './globalServices';
-import RequestModal from '../modals/WalletConnectModals/RequestModal';
-import {
-    clearCurrentWallet,
-    savePairingToDeepLinkHistory,
-    sendUriToWalletWebView,
-    sessionExistsInStorage,
-} from '../helpers/wallet-connect-helpers';
 
 import {
     CLIENT_TIMEOUT_MESSAGE,
@@ -28,7 +16,22 @@ import {
     SESSION_TIMEOUT_ERROR,
     STELLAR_METHODS,
 } from 'constants/wallet-connect';
+
 import { WalletConnectEvents } from 'types/wallet-connect';
+
+import EventService from './event.service';
+import { ModalService, ToastService } from './globalServices';
+
+import {
+    clearCurrentWallet,
+    savePairingToDeepLinkHistory,
+    sendUriToWalletWebView,
+    sessionExistsInStorage,
+} from '../helpers/wallet-connect-helpers';
+import PairingModal from '../modals/WalletConnectModals/PairingModal';
+import QRModal from '../modals/WalletConnectModals/QRModal';
+import RequestModal from '../modals/WalletConnectModals/RequestModal';
+import SessionRequestModal from '../modals/WalletConnectModals/SessionRequestModal';
 
 // TODO:  Move to WC types, add function to check pending status
 export enum BuildSignAndSubmitStatuses {

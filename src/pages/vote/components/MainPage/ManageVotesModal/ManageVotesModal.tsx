@@ -1,18 +1,20 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
+import styled from 'styled-components';
+
+import VotesList from './VotesList/VotesList';
+
+import { flexAllCenter, respondDown } from '../../../../../common/mixins';
 import {
     ModalDescription,
     ModalProps,
     ModalTitle,
 } from '../../../../../common/modals/atoms/ModalAtoms';
 import { StellarService } from '../../../../../common/services/globalServices';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
-import Market from '../../common/Market';
-import { PairStats } from '../../../api/types';
-import styled from 'styled-components';
-import { flexAllCenter, respondDown } from '../../../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../../../common/styles';
-import VotesList from './VotesList/VotesList';
+import useAuthStore from '../../../../../store/authStore/useAuthStore';
+import { PairStats } from '../../../api/types';
+import Market from '../../common/Market';
 
 const Container = styled.div`
     width: 80.6rem;

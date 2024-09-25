@@ -1,8 +1,10 @@
 import * as React from 'react';
-import styled from 'styled-components';
-import { COLORS } from '../styles';
 import { useEffect, useState } from 'react';
+import styled from 'styled-components';
+
 import { Option } from './Select';
+
+import { COLORS } from '../styles';
 
 const ToggleBlock = styled.div`
     background-color: ${COLORS.gray};
@@ -51,22 +53,22 @@ const ToggleGroup = <T,>({
     onChange: (value: T) => void;
 }): JSX.Element => {
     const [selectedOption, setSelectedOption] = useState(
-        options.find((option) => option.value === value),
+        options.find(option => option.value === value),
     );
 
     useEffect(() => {
-        setSelectedOption(options.find((option) => option.value === value));
+        setSelectedOption(options.find(option => option.value === value));
     }, [value]);
 
     return (
         <ToggleBlock {...props}>
-            {options.map((item) => {
+            {options.map(item => {
                 const isSelected = selectedOption?.value === item.value;
                 return (
                     <VoteOption
                         key={item.value.toString()}
                         isChecked={isSelected}
-                        onClick={(e) => {
+                        onClick={e => {
                             e.preventDefault();
                             onChange(item.value);
                         }}

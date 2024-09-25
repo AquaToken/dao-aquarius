@@ -1,9 +1,11 @@
 import * as React from 'react';
-import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../styles';
-import { flexAllCenter, respondDown } from '../../mixins';
-import LinkArrowIcon from 'assets/icon-link-arrow.svg';
 import { Link } from 'react-router-dom';
+import styled from 'styled-components';
+
+import LinkArrowIcon from 'assets/icon-link-arrow.svg';
+
+import { flexAllCenter, respondDown } from '../../mixins';
+import { Breakpoints, COLORS } from '../../styles';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;

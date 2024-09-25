@@ -1,15 +1,17 @@
 import * as React from 'react';
-import { ModalDescription, ModalProps, ModalTitle } from './atoms/ModalAtoms';
-import Input from '../basics/Input';
-import Button from '../basics/Button';
-import styled from 'styled-components';
 import { useEffect, useState } from 'react';
-import useAuthStore from '../../store/authStore/useAuthStore';
-import { LoginTypes } from '../../store/authStore/types';
-import { StellarService, ToastService } from '../services/globalServices';
 import { useLocation } from 'react-router-dom';
-import { Breakpoints } from '../styles';
+import styled from 'styled-components';
+
+import { ModalDescription, ModalProps, ModalTitle } from './atoms/ModalAtoms';
+
+import { LoginTypes } from '../../store/authStore/types';
+import useAuthStore from '../../store/authStore/useAuthStore';
+import Button from '../basics/Button';
+import Input from '../basics/Input';
 import { respondDown } from '../mixins';
+import { StellarService, ToastService } from '../services/globalServices';
+import { Breakpoints } from '../styles';
 
 const LoginWithSecretBody = styled.div`
     width: 52.8rem;

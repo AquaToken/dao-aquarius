@@ -1,16 +1,16 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Redirect, useParams } from 'react-router-dom';
-import { getProposalRequest, UPDATE_INTERVAL } from '../api/api';
-import PageLoader from '../../../common/basics/PageLoader';
-import { Proposal } from '../api/types';
-
-import ProposalScreen from '../components/GovernanceVoteProposalPage/Proposal/ProposalScreen';
-import NotFoundPage from '../../../common/components/NotFoundPage/NotFoundPage';
 import styled from 'styled-components';
+
+import PageLoader from '../../../common/basics/PageLoader';
+import NotFoundPage from '../../../common/components/NotFoundPage/NotFoundPage';
 import { respondDown } from '../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../common/styles';
 import { GovernanceRoutes } from '../../../routes';
+import { getProposalRequest, UPDATE_INTERVAL } from '../api/api';
+import { Proposal } from '../api/types';
+import ProposalScreen from '../components/GovernanceVoteProposalPage/Proposal/ProposalScreen';
 
 const Main = styled.main`
     ${respondDown(Breakpoints.md)`
@@ -37,7 +37,7 @@ const GovernanceVoteProposalPage = (): JSX.Element => {
 
     useEffect(() => {
         getProposalRequest(id)
-            .then((response) => {
+            .then(response => {
                 setProposal(response.data);
             })
             .catch(() => {
@@ -47,7 +47,7 @@ const GovernanceVoteProposalPage = (): JSX.Element => {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            setUpdateIndex((prev) => prev + 1);
+            setUpdateIndex(prev => prev + 1);
         }, UPDATE_INTERVAL);
 
         return () => clearInterval(interval);
@@ -64,7 +64,7 @@ const GovernanceVoteProposalPage = (): JSX.Element => {
     if (
         Number(version) === proposal.version ||
         (Boolean(version) &&
-            !proposal.history_proposal.find((history) => history.version === Number(version)))
+            !proposal.history_proposal.find(history => history.version === Number(version)))
     ) {
         return <Redirect to={`${GovernanceRoutes.proposal}/${proposal.id}`} />;
     }

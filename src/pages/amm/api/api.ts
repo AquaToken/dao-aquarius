@@ -1,7 +1,6 @@
-import axios from 'axios';
-import { AssetsService, SorobanService } from '../../../common/services/globalServices';
 import { Asset } from '@stellar/stellar-sdk';
-import { getAssetFromString, getAssetString } from '../../../common/helpers/helpers';
+import axios from 'axios';
+
 import {
     FindSwapPath,
     ListResponse,
@@ -16,6 +15,9 @@ import {
     PoolUserProcessed,
     PoolVolume24h,
 } from './types';
+
+import { getAssetFromString, getAssetString } from '../../../common/helpers/helpers';
+import { AssetsService, SorobanService } from '../../../common/services/globalServices';
 
 const API_URL = 'https://amm-api.aqua.network';
 
@@ -40,15 +42,15 @@ export enum PoolsSortFields {
 
 const processPools = (pools: Array<Pool | PoolUser>): Array<PoolProcessed> => {
     const assetsStr: Set<string> = pools.reduce((acc: Set<string>, item: Pool | PoolUser) => {
-        item.tokens_str.forEach((str) => acc.add(str));
+        item.tokens_str.forEach(str => acc.add(str));
         return acc;
     }, new Set<string>());
 
     // @ts-ignore
-    AssetsService.processAssets([...assetsStr].map((str) => getAssetFromString(str)));
+    AssetsService.processAssets([...assetsStr].map(str => getAssetFromString(str)));
 
-    return pools.map((pool) => {
-        return { ...pool, assets: pool.tokens_str.map((str) => getAssetFromString(str)) };
+    return pools.map(pool => {
+        return { ...pool, assets: pool.tokens_str.map(str => getAssetFromString(str)) };
     });
 };
 
@@ -187,11 +189,11 @@ export const getNativePrices = async (
     // Process each batch
     for (const batch of batches) {
         const { data } = await axios.get<ListResponse<NativePrice>>(
-            `${API_URL}/tokens/?name__in=${batch.map((asset) => getAssetString(asset)).join(',')}`,
+            `${API_URL}/tokens/?name__in=${batch.map(asset => getAssetString(asset)).join(',')}`,
         );
         const prices = data.items;
 
-        prices.forEach((price) => {
+        prices.forEach(price => {
             allPrices.set(price.name, price.price_xlm);
         });
     }
@@ -217,7 +219,7 @@ export const getPoolsToMigrate = async (base: Asset, counter: Asset): Promise<Po
         )},${SorobanService.getAssetContractId(counter)}`,
     );
 
-    const pools = data.items.filter((item) => item.tokens_str.length === 2);
+    const pools = data.items.filter(item => item.tokens_str.length === 2);
 
     if (!pools.length) {
         return null;

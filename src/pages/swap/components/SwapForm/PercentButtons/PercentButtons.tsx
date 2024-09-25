@@ -1,11 +1,13 @@
-import * as React from 'react';
-import Tooltip, { TOOLTIP_POSITION } from '../../../../../common/basics/Tooltip';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import Info from 'assets/icon-info.svg';
-import styled from 'styled-components';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
 import { Asset } from '@stellar/stellar-sdk';
+import * as React from 'react';
+import styled from 'styled-components';
+
+import Info from 'assets/icon-info.svg';
+
+import Tooltip, { TOOLTIP_POSITION } from '../../../../../common/basics/Tooltip';
 import { respondDown } from '../../../../../common/mixins';
+import { Breakpoints, COLORS } from '../../../../../common/styles';
+import useAuthStore from '../../../../../store/authStore/useAuthStore';
 
 const Container = styled.div<{ isMobile: boolean }>`
     display: ${({ isMobile }) => (isMobile ? 'none' : 'flex')};

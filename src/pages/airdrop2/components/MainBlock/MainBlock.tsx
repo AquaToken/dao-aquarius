@@ -1,9 +1,11 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../common/styles';
+
 import Image from 'assets/airdrop2-image.svg';
 import Airdrop from 'assets/airdrop2.svg';
+
 import { respondDown } from '../../../../common/mixins';
+import { Breakpoints, COLORS } from '../../../../common/styles';
 
 const Container = styled.section`
     position: relative;

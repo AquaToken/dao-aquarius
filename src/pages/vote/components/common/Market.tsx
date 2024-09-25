@@ -1,11 +1,11 @@
-import * as React from 'react';
-import styled from 'styled-components';
 import * as StellarSdk from '@stellar/stellar-sdk';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import AssetLogo, { bigLogoStyles, logoStyles } from '../AssetDropdown/AssetLogo';
+import * as React from 'react';
+import { Link } from 'react-router-dom';
+import styled from 'styled-components';
+
 import External from 'assets/icon-external-link.svg';
 import Arrow from 'assets/icon-link-arrow.svg';
-import { flexAllCenter, respondDown } from '../../../../common/mixins';
+
 import {
     AuthRequiredLabel,
     BoostLabel,
@@ -17,16 +17,19 @@ import {
     RewardPoolLabel,
     StablePoolLabel,
 } from './Labels';
-import { AssetSimple } from '../../../../store/assetsStore/types';
+
+import { formatBalance } from '../../../../common/helpers/helpers';
+import { flexAllCenter, respondDown } from '../../../../common/mixins';
+import AssetInfoModal from '../../../../common/modals/AssetInfoModal/AssetInfoModal';
+import { ModalService, StellarService } from '../../../../common/services/globalServices';
+import { POOL_TYPE } from '../../../../common/services/soroban.service';
+import { Breakpoints, COLORS } from '../../../../common/styles';
+import { AmmRoutes, MarketRoutes } from '../../../../routes';
 import { getAssetString } from '../../../../store/assetsStore/actions';
 import { LumenInfo } from '../../../../store/assetsStore/reducer';
+import { AssetSimple } from '../../../../store/assetsStore/types';
 import useAssetsStore from '../../../../store/assetsStore/useAssetsStore';
-import { Link } from 'react-router-dom';
-import { AmmRoutes, MarketRoutes } from '../../../../routes';
-import { formatBalance } from '../../../../common/helpers/helpers';
-import { POOL_TYPE } from '../../../../common/services/soroban.service';
-import { ModalService, StellarService } from '../../../../common/services/globalServices';
-import AssetInfoModal from '../../../../common/modals/AssetInfoModal/AssetInfoModal';
+import AssetLogo, { bigLogoStyles, logoStyles } from '../AssetDropdown/AssetLogo';
 
 const Wrapper = styled.div<{
     verticalDirections?: boolean;
@@ -330,13 +333,13 @@ const Market = ({
                     {!bottomLabels && labels}
 
                     {!withoutLink && (
-                        <LinkCustom onClick={(e) => viewOnStellarX(e, assets)}>
+                        <LinkCustom onClick={e => viewOnStellarX(e, assets)}>
                             <External />
                         </LinkCustom>
                     )}
                     {withMarketLink && (
                         <Link
-                            onClick={(e) => {
+                            onClick={e => {
                                 e.stopPropagation();
                             }}
                             to={`${MarketRoutes.main}/${getAssetString(assets[0])}/${getAssetString(
@@ -348,7 +351,7 @@ const Market = ({
                     )}
                     {poolAddress && (
                         <Link
-                            onClick={(e) => {
+                            onClick={e => {
                                 e.stopPropagation();
                             }}
                             to={`${AmmRoutes.analytics}${poolAddress}/`}
@@ -368,7 +371,7 @@ const Market = ({
                                     {asset.isNative() ? (
                                         domain
                                     ) : (
-                                        <Domain onClick={(e) => onDomainClick(e, asset)}>
+                                        <Domain onClick={e => onDomainClick(e, asset)}>
                                             {domain}
                                         </Domain>
                                     )}

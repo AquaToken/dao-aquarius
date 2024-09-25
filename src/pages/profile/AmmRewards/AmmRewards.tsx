@@ -1,24 +1,26 @@
 import * as React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../common/styles';
-import { flexRowSpaceBetween, respondDown } from '../../../common/mixins';
-import Market from '../../vote/components/common/Market';
-import { StellarService } from '../../../common/services/globalServices';
-import { getAmmRewards } from '../api/api';
-import useAuthStore from '../../../store/authStore/useAuthStore';
-import PageLoader from '../../../common/basics/PageLoader';
-import { Empty } from '../YourVotes/YourVotes';
 import { Link } from 'react-router-dom';
-import { MainRoutes } from '../../../routes';
-import ExternalLink from '../../../common/basics/ExternalLink';
-import { formatBalance } from '../../../common/helpers/helpers';
-import useAssetsStore from '../../../store/assetsStore/useAssetsStore';
+import styled from 'styled-components';
+
 import Aqua from 'assets/aqua-logo-small.svg';
+
 import DotsLoader from '../../../common/basics/DotsLoader';
+import ExternalLink from '../../../common/basics/ExternalLink';
 import Label from '../../../common/basics/Label';
-import BoostBanner from '../BoostBanner/BoostBanner';
+import PageLoader from '../../../common/basics/PageLoader';
 import Table, { CellAlign } from '../../../common/basics/Table';
+import { formatBalance } from '../../../common/helpers/helpers';
+import { flexRowSpaceBetween, respondDown } from '../../../common/mixins';
+import { StellarService } from '../../../common/services/globalServices';
+import { Breakpoints, COLORS } from '../../../common/styles';
+import { MainRoutes } from '../../../routes';
+import useAssetsStore from '../../../store/assetsStore/useAssetsStore';
+import useAuthStore from '../../../store/authStore/useAuthStore';
+import Market from '../../vote/components/common/Market';
+import { getAmmRewards } from '../api/api';
+import BoostBanner from '../BoostBanner/BoostBanner';
+import { Empty } from '../YourVotes/YourVotes';
 
 export const Container = styled.div`
     display: flex;
@@ -136,7 +138,7 @@ const AmmRewards = ({ aquaUsdPrice }) => {
     const { processNewAssets } = useAssetsStore();
 
     useEffect(() => {
-        getAmmRewards(account.accountId()).then((res) => {
+        getAmmRewards(account.accountId()).then(res => {
             setAmmRewards(res);
 
             const assets = res.reduce((acc, { market_pair: pair }) => {
@@ -200,9 +202,9 @@ const AmmRewards = ({ aquaUsdPrice }) => {
     }, [ammRewards, sort, isSortReversed]);
 
     const changeSort = useCallback(
-        (sortField) => {
+        sortField => {
             if (sortField === sort) {
-                setIsSortReversed((prevState) => !prevState);
+                setIsSortReversed(prevState => !prevState);
                 return;
             }
             setSort(sortField);

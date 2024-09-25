@@ -1,12 +1,15 @@
 import * as React from 'react';
 import { lazy, useEffect } from 'react';
 import { Route, Switch } from 'react-router-dom';
-import { ModalService } from '../../common/services/globalServices';
-import NotFoundPage from '../../common/components/NotFoundPage/NotFoundPage';
-import ProjectPurposeModal, { SHOW_PURPOSE_ALIAS } from './components/common/ProjectPurposeModal';
-import BG from 'assets/purpose-modal-background.svg';
 import styled from 'styled-components';
+
+import BG from 'assets/purpose-modal-background.svg';
+
+import ProjectPurposeModal, { SHOW_PURPOSE_ALIAS } from './components/common/ProjectPurposeModal';
+
+import NotFoundPage from '../../common/components/NotFoundPage/NotFoundPage';
 import { respondDown } from '../../common/mixins';
+import { ModalService } from '../../common/services/globalServices';
 import { Breakpoints } from '../../common/styles';
 import { VoteRoutes } from '../../routes';
 

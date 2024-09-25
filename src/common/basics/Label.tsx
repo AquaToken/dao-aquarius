@@ -1,9 +1,11 @@
-import styled from 'styled-components';
-import { flexAllCenter, respondDown } from '../mixins';
-import { Breakpoints, COLORS } from '../styles';
 import * as React from 'react';
 import { useCallback, useState } from 'react';
+import styled from 'styled-components';
+
 import Tooltip, { TOOLTIP_POSITION } from './Tooltip';
+
+import { flexAllCenter, respondDown } from '../mixins';
+import { Breakpoints, COLORS } from '../styles';
 
 const TooltipInner = styled.div`
     width: 28.8rem;
@@ -63,7 +65,7 @@ const Label = ({
     const [isRightOriented, setIsRightOriented] = useState(true);
 
     const ref = useCallback(
-        (node) => {
+        node => {
             if (node !== null && isEnoughSpaceOnTop) {
                 setIsEnoughSpaceOnTop(
                     node.getBoundingClientRect().left > 0 &&

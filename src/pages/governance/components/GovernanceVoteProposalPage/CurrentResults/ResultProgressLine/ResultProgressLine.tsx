@@ -1,11 +1,13 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
-import { COLORS } from '../../../../../../common/styles';
-import { formatBalance } from '../../../../../../common/helpers/helpers';
-import { SimpleProposalResultsLabels } from '../../../../pages/GovernanceVoteProposalPage';
-import Success from 'assets/icon-success.svg';
+
 import Fail from 'assets/icon-fail.svg';
+import Success from 'assets/icon-success.svg';
+
+import { formatBalance } from '../../../../../../common/helpers/helpers';
 import { flexAllCenter } from '../../../../../../common/mixins';
+import { COLORS } from '../../../../../../common/styles';
+import { SimpleProposalResultsLabels } from '../../../../pages/GovernanceVoteProposalPage';
 
 const ProgressLine = styled.div`
     width: 100%;

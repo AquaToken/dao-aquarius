@@ -1,19 +1,21 @@
 import * as React from 'react';
-import styled from 'styled-components';
-import { respondDown } from '../../common/mixins';
-import { Breakpoints, COLORS } from '../../common/styles';
-import MainBlock from './components/MainBlock/MainBlock';
-import Conditions from './components/Conditions/Conditions';
 import { useRef, useState } from 'react';
-import useAuthStore from '../../store/authStore/useAuthStore';
+import styled from 'styled-components';
+
 import { getAccountEligibility } from './api/api';
+import Conditions from './components/Conditions/Conditions';
 import Eligibility from './components/Eligibility/Eligibility';
-import { StellarService, ToastService } from '../../common/services/globalServices';
+import FAQ from './components/FAQ/FAQ';
+import MainBlock from './components/MainBlock/MainBlock';
 import SnapshotStats from './components/SnapshotStats/SnapshotStats';
 import SupportedBy from './components/SupportedBy/SupportedBy';
-import FAQ from './components/FAQ/FAQ';
+
 import Community from '../../common/components/Community/Community';
 import Subscribe from '../../common/components/Subscribe/Subscribe';
+import { respondDown } from '../../common/mixins';
+import { StellarService, ToastService } from '../../common/services/globalServices';
+import { Breakpoints, COLORS } from '../../common/styles';
+import useAuthStore from '../../store/authStore/useAuthStore';
 
 const Container = styled.div`
     ${respondDown(Breakpoints.md)`
@@ -41,7 +43,7 @@ const Airdrop2 = () => {
         }
         setLoading(true);
         getAccountEligibility(accountId)
-            .then((res) => {
+            .then(res => {
                 setAccountEligibility(res);
             })
             .catch(() => {

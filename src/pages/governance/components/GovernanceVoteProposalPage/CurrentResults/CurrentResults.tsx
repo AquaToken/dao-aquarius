@@ -1,14 +1,17 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import ResultProgressLine from './ResultProgressLine/ResultProgressLine';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import { roundToPrecision } from '../../../../../common/helpers/helpers';
-import { SimpleProposalResultsLabels } from '../../../pages/GovernanceVoteProposalPage';
-import { Proposal } from '../../../api/types';
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
+
 import Fail from 'assets/icon-fail.svg';
 import Info from 'assets/icon-info.svg';
+
+import ResultProgressLine from './ResultProgressLine/ResultProgressLine';
+
 import Tooltip, { TOOLTIP_POSITION } from '../../../../../common/basics/Tooltip';
+import { roundToPrecision } from '../../../../../common/helpers/helpers';
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
+import { Breakpoints, COLORS } from '../../../../../common/styles';
+import { Proposal } from '../../../api/types';
+import { SimpleProposalResultsLabels } from '../../../pages/GovernanceVoteProposalPage';
 
 const ResultBlock = styled.div`
     width: 100%;
@@ -137,7 +140,7 @@ const CurrentResults = ({ proposal }: { proposal: Proposal }): JSX.Element => {
                 {!isEnd && <span>Updating every 5 min</span>}
             </Header>
 
-            {results?.map((result) => {
+            {results?.map(result => {
                 return <ResultProgressLine key={result.label} result={result} />;
             })}
             <Quorum>

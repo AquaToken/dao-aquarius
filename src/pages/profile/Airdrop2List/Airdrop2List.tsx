@@ -1,24 +1,25 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { ExternalLinkStyled, Header, Section, Title } from '../AmmRewards/AmmRewards';
+
+import Button from '../../../common/basics/Button';
+import Checkbox from '../../../common/basics/Checkbox';
+import PageLoader from '../../../common/basics/PageLoader';
+import Table, { CellAlign } from '../../../common/basics/Table';
+import ErrorHandler from '../../../common/helpers/error-handler';
+import { formatBalance, getDateString } from '../../../common/helpers/helpers';
+import { openCurrentWalletIfExist } from '../../../common/helpers/wallet-connect-helpers';
+import { respondDown } from '../../../common/mixins';
 import { StellarService, ToastService } from '../../../common/services/globalServices';
 import { StellarEvents } from '../../../common/services/stellar.service';
-import PageLoader from '../../../common/basics/PageLoader';
-import { Empty } from '../YourVotes/YourVotes';
-import { Link } from 'react-router-dom';
-import { MainRoutes } from '../../../routes';
-import { formatBalance, getDateString } from '../../../common/helpers/helpers';
-import useAuthStore from '../../../store/authStore/useAuthStore';
-import Button from '../../../common/basics/Button';
-import { Breakpoints, COLORS } from '../../../common/styles';
-import { LoginTypes } from '../../../store/authStore/types';
 import { BuildSignAndSubmitStatuses } from '../../../common/services/wallet-connect.service';
-import ErrorHandler from '../../../common/helpers/error-handler';
-import Checkbox from '../../../common/basics/Checkbox';
-import Table, { CellAlign } from '../../../common/basics/Table';
-import { respondDown } from '../../../common/mixins';
-import { openCurrentWalletIfExist } from '../../../common/helpers/wallet-connect-helpers';
+import { Breakpoints, COLORS } from '../../../common/styles';
+import { MainRoutes } from '../../../routes';
+import { LoginTypes } from '../../../store/authStore/types';
+import useAuthStore from '../../../store/authStore/useAuthStore';
+import { ExternalLinkStyled, Header, Section, Title } from '../AmmRewards/AmmRewards';
+import { Empty } from '../YourVotes/YourVotes';
 
 const Container = styled.div`
     display: flex;
@@ -77,7 +78,7 @@ const Airdrop2List = () => {
     }, []);
 
     useEffect(() => {
-        const unsub = StellarService.event.sub((event) => {
+        const unsub = StellarService.event.sub(event => {
             if (event.type === StellarEvents.claimableUpdate) {
                 setList(StellarService.getAirdrop2Claims());
             }
@@ -97,14 +98,12 @@ const Airdrop2List = () => {
                 )?.predicate?.and;
                 const beforeTimestamp =
                     Number(
-                        claimantPredicates.find((predicate) => Boolean(predicate.not))?.not
+                        claimantPredicates.find(predicate => Boolean(predicate.not))?.not
                             ?.abs_before_epoch,
                     ) * 1000;
                 const expireTimestamp =
-                    Number(
-                        claimantPredicates.find((predicate) => !Boolean(predicate.not))
-                            ?.abs_before_epoch,
-                    ) * 1000;
+                    Number(claimantPredicates.find(predicate => !predicate.not)?.abs_before_epoch) *
+                    1000;
 
                 if (
                     beforeTimestamp &&
@@ -172,15 +171,13 @@ const Airdrop2List = () => {
         }
 
         return [...list]
-            .filter((cb) => {
+            .filter(cb => {
                 const claimantPredicates = cb.claimants.find(
                     ({ destination }) => destination === account.accountId(),
                 )?.predicate?.and;
                 const expireTimestamp =
-                    Number(
-                        claimantPredicates.find((predicate) => !Boolean(predicate.not))
-                            ?.abs_before_epoch,
-                    ) * 1000;
+                    Number(claimantPredicates.find(predicate => !predicate.not)?.abs_before_epoch) *
+                    1000;
 
                 return expireTimestamp > Date.now();
             })
@@ -195,7 +192,7 @@ const Airdrop2List = () => {
                     <Checkbox
                         label={'Show expired'}
                         checked={showExpired}
-                        onChange={(value) => {
+                        onChange={value => {
                             setShowExpired(value);
                         }}
                     />
@@ -232,7 +229,7 @@ const Airdrop2List = () => {
                             { children: 'Claim back expire', align: CellAlign.Right },
                             { children: 'Status', align: CellAlign.Right },
                         ]}
-                        body={filteredList.map((cb) => {
+                        body={filteredList.map(cb => {
                             const dateReceived = cb.last_modified_time
                                 ? getDateString(new Date(cb.last_modified_time).getTime(), {
                                       withTime: true,
@@ -241,11 +238,11 @@ const Airdrop2List = () => {
                             const claimantPredicates = cb.claimants.find(
                                 ({ destination }) => destination === account.accountId(),
                             )?.predicate?.and;
-                            const beforeTimestamp = claimantPredicates.find((predicate) =>
+                            const beforeTimestamp = claimantPredicates.find(predicate =>
                                 Boolean(predicate.not),
                             )?.not?.abs_before_epoch;
                             const expireTimestamp = claimantPredicates.find(
-                                (predicate) => !Boolean(predicate.not),
+                                predicate => !predicate.not,
                             )?.abs_before_epoch;
 
                             const beforeDate = getDateString(+beforeTimestamp * 1000, {

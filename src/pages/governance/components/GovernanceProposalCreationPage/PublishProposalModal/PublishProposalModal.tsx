@@ -1,26 +1,27 @@
-import * as React from 'react';
-import { ModalDescription, ModalTitle } from '../../../../../common/modals/atoms/ModalAtoms';
-import Button from '../../../../../common/basics/Button';
-import styled from 'styled-components';
-import { flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
-import { Breakpoints } from '../../../../../common/styles';
-import { useEffect, useMemo, useState } from 'react';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
-import { formatBalance, getDateString } from '../../../../../common/helpers/helpers';
-import { APPROVED_PROPOSAL_REWARD, CREATE_PROPOSAL_COST } from '../../../pages/GovernanceMainPage';
-import Select, { Option } from '../../../../../common/basics/Select';
-import { DAY } from '../ProposalCreation/ProposalCreation';
-import Input from '../../../../../common/basics/Input';
-import { checkProposalStatus, publishProposal } from '../../../api/api';
-import { StellarService, ToastService } from '../../../../../common/services/globalServices';
-import { sha256 } from 'js-sha256';
 import { MemoHash } from '@stellar/stellar-sdk';
-import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
+import { sha256 } from 'js-sha256';
+import * as React from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import ErrorHandler from '../../../../../common/helpers/error-handler';
-import { LoginTypes } from '../../../../../store/authStore/types';
-import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
+import styled from 'styled-components';
+
 import Alert from '../../../../../common/basics/Alert';
+import Button from '../../../../../common/basics/Button';
+import Input from '../../../../../common/basics/Input';
+import Select, { Option } from '../../../../../common/basics/Select';
+import ErrorHandler from '../../../../../common/helpers/error-handler';
+import { formatBalance, getDateString } from '../../../../../common/helpers/helpers';
+import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
+import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
+import { flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
+import { ModalDescription, ModalTitle } from '../../../../../common/modals/atoms/ModalAtoms';
+import { StellarService, ToastService } from '../../../../../common/services/globalServices';
+import { Breakpoints } from '../../../../../common/styles';
+import { LoginTypes } from '../../../../../store/authStore/types';
+import useAuthStore from '../../../../../store/authStore/useAuthStore';
+import { checkProposalStatus, publishProposal } from '../../../api/api';
+import { APPROVED_PROPOSAL_REWARD, CREATE_PROPOSAL_COST } from '../../../pages/GovernanceMainPage';
+import { DAY } from '../ProposalCreation/ProposalCreation';
 
 const Container = styled.div`
     width: 52.8rem;
@@ -100,7 +101,7 @@ const PublishProposalModal = ({ params, close }) => {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            setUpdateIndex((prev) => prev + 1);
+            setUpdateIndex(prev => prev + 1);
         }, 10000);
 
         return () => clearInterval(interval);
@@ -108,7 +109,7 @@ const PublishProposalModal = ({ params, close }) => {
 
     const endDate = useMemo(() => Date.now() + period, [updateIndex, period]);
 
-    const checkStatus = (id) => {
+    const checkStatus = id => {
         return new Promise((resolve, reject) => {
             async function check() {
                 if (!isMounted.current) {

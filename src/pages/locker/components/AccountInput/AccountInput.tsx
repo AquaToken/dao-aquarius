@@ -1,14 +1,15 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import Input from '../../../../common/basics/Input';
-import Button from '../../../../common/basics/Button';
-import { StellarService, ToastService } from '../../../../common/services/globalServices';
 import { useHistory } from 'react-router-dom';
+import styled from 'styled-components';
+
+import Button from '../../../../common/basics/Button';
+import Input from '../../../../common/basics/Input';
 import { respondDown } from '../../../../common/mixins';
-import useAuthStore from '../../../../store/authStore/useAuthStore';
+import { StellarService, ToastService } from '../../../../common/services/globalServices';
+import { Breakpoints, COLORS } from '../../../../common/styles';
 import { LockerRoutes } from '../../../../routes';
+import useAuthStore from '../../../../store/authStore/useAuthStore';
 
 const Container = styled.form<{ isModal: boolean }>`
     display: flex;
@@ -93,7 +94,7 @@ const AccountInput = ({ params, close }: { params?: any; close?: any }) => {
         }
     }, [isLogged]);
 
-    const onSubmit = (e) => {
+    const onSubmit = e => {
         e.preventDefault();
         if (!StellarService.isValidPublicKey(value)) {
             ToastService.showErrorToast('Invalid public key');
@@ -118,7 +119,7 @@ const AccountInput = ({ params, close }: { params?: any; close?: any }) => {
                 <Input
                     placeholder="Enter your public key (starts with G)"
                     value={value}
-                    onChange={(e) => {
+                    onChange={e => {
                         setValue(e.target.value);
                     }}
                 />

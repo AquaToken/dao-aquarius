@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { lazy } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
-import { LockerRoutes } from '../../routes';
+
 import NotFoundPage from '../../common/components/NotFoundPage/NotFoundPage';
+import { LockerRoutes } from '../../routes';
 import useAuthStore from '../../store/authStore/useAuthStore';
 
 const LockerMainPage = lazy(() => import('./pages/LockerMainPage'));

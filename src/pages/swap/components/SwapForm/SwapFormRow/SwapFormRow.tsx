@@ -1,13 +1,14 @@
+import { Asset } from '@stellar/stellar-sdk';
 import * as React from 'react';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import AssetDropdown from '../../../../vote/components/AssetDropdown/AssetDropdown';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
 import { useState } from 'react';
 import styled from 'styled-components';
-import { respondDown } from '../../../../../common/mixins';
+
 import Input from '../../../../../common/basics/Input';
 import { formatBalance } from '../../../../../common/helpers/helpers';
-import { Asset } from '@stellar/stellar-sdk';
+import { respondDown } from '../../../../../common/mixins';
+import { Breakpoints, COLORS } from '../../../../../common/styles';
+import useAuthStore from '../../../../../store/authStore/useAuthStore';
+import AssetDropdown from '../../../../vote/components/AssetDropdown/AssetDropdown';
 import PercentButtons from '../PercentButtons/PercentButtons';
 
 const Container = styled.div<{ $isOpen?: boolean }>`
@@ -108,7 +109,7 @@ const SwapFormRow = ({
             )}
             <StyledInput
                 value={amount}
-                onChange={(e) => setAmount(e.target.value)}
+                onChange={e => setAmount(e.target.value)}
                 label={isBase ? 'From' : 'To(estimated)'}
                 placeholder={isBase ? '' : '0.0'}
                 postfix={inputPostfix}
@@ -122,7 +123,7 @@ const SwapFormRow = ({
                     exclude={exclude}
                     disabled={pending}
                     withoutReset
-                    onToggle={(res) => setIsOpen(res)}
+                    onToggle={res => setIsOpen(res)}
                     withBalances
                     longListOnMobile
                 />

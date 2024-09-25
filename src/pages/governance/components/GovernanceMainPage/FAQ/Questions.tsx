@@ -1,6 +1,7 @@
 import * as React from 'react';
-import Question from '../../../../../common/basics/Question';
 import styled from 'styled-components';
+
+import Question from '../../../../../common/basics/Question';
 import { formatBalance } from '../../../../../common/helpers/helpers';
 import {
     APPROVED_PROPOSAL_REWARD,

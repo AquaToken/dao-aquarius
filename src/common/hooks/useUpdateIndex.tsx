@@ -5,7 +5,7 @@ export const useUpdateIndex = (ms: number) => {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            setIndex((prev) => prev + 1);
+            setIndex(prev => prev + 1);
         }, ms);
 
         return () => clearInterval(interval);

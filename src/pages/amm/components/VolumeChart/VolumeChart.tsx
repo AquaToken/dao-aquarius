@@ -1,13 +1,13 @@
+import * as d3 from 'd3';
+import { addDays, format, isAfter, set, subDays } from 'date-fns';
 import * as React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { formatBalance, getDateString } from '../../../../common/helpers/helpers';
-import { COLORS } from '../../../../common/styles';
-
-import * as d3 from 'd3';
-import { transformDate } from '../LiquidityChart/LiquidityChart';
 import styled from 'styled-components';
-import { addDays, format, isAfter, set, subDays } from 'date-fns';
+
+import { formatBalance, getDateString } from '../../../../common/helpers/helpers';
 import { StellarService } from '../../../../common/services/globalServices';
+import { COLORS } from '../../../../common/styles';
+import { transformDate } from '../LiquidityChart/LiquidityChart';
 
 const Axis = styled.g`
     font-size: 1.4rem;
@@ -39,7 +39,7 @@ const VolumeChart = ({
 }) => {
     const [daily, last24] = useMemo(() => {
         if (isGlobalStat) {
-            const copy = [...data].map((item) => ({
+            const copy = [...data].map(item => ({
                 ...item,
                 date: transformDate(item.date_str),
                 volume: item.volume / 1e7,
@@ -65,7 +65,7 @@ const VolumeChart = ({
         }
 
         const last24Volume = data
-            .filter((item) => isAfter(transformDate(item.datetime_str), subDays(Date.now(), 1)))
+            .filter(item => isAfter(transformDate(item.datetime_str), subDays(Date.now(), 1)))
             .reduce((acc, item) => acc + item.volume / 1e7, 0);
 
         return [
@@ -97,12 +97,12 @@ const VolumeChart = ({
     const x = d3
         .scaleBand()
         .rangeRound([marginLeft, width - marginRight])
-        .domain(daily.map((d) => d.date));
+        .domain(daily.map(d => d.date));
 
     const y = d3
         .scaleLinear()
         .range([height - marginBottom, marginTop + height * 0.4])
-        .domain([0, d3.max(daily, (d) => d.volume) || 1]);
+        .domain([0, d3.max(daily, d => d.volume) || 1]);
 
     useEffect(
         () =>
@@ -125,7 +125,7 @@ const VolumeChart = ({
             return;
         }
         d3.select(svg.current)
-            .on('mousemove touchmove', (event) => {
+            .on('mousemove touchmove', event => {
                 onMouseMove(event);
             })
             .on('mouseout', () => {
@@ -133,7 +133,7 @@ const VolumeChart = ({
             });
     }, [svg]);
 
-    const onMouseMove = (event) => {
+    const onMouseMove = event => {
         if (
             event.offsetX < marginLeft ||
             event.offsetX >= x.bandwidth() * daily.length + marginLeft

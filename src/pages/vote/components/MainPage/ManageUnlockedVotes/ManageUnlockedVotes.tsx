@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import { StellarService } from '../../../../../common/services/globalServices';
-import { customScroll, respondDown } from '../../../../../common/mixins';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
+
 import Button from '../../../../../common/basics/Button';
-import { StellarEvents } from '../../../../../common/services/stellar.service';
+import { customScroll, respondDown } from '../../../../../common/mixins';
 import { ModalDescription, ModalTitle } from '../../../../../common/modals/atoms/ModalAtoms';
+import { StellarService } from '../../../../../common/services/globalServices';
+import { StellarEvents } from '../../../../../common/services/stellar.service';
+import { Breakpoints, COLORS } from '../../../../../common/styles';
+import useAuthStore from '../../../../../store/authStore/useAuthStore';
 import VotesList from '../ManageVotesModal/VotesList/VotesList';
 
 const Container = styled.div`
@@ -43,7 +44,7 @@ const ClaimAllModal = ({ params, close }) => {
     useEffect(() => {
         const unsub = StellarService.event.sub(({ type }) => {
             if (type === StellarEvents.claimableUpdate) {
-                setUpdateId((prevState) => prevState + 1);
+                setUpdateId(prevState => prevState + 1);
             }
         });
 
@@ -55,8 +56,8 @@ const ClaimAllModal = ({ params, close }) => {
             acc = [
                 ...acc,
                 ...StellarService.getPairVotes(pair, account.accountId())
-                    .filter((claim) => new Date(claim.claimBackDate) < new Date())
-                    .map((item) => ({ ...pair, ...item })),
+                    .filter(claim => new Date(claim.claimBackDate) < new Date())
+                    .map(item => ({ ...pair, ...item })),
             ];
             return acc;
         }, []);

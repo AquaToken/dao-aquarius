@@ -1,10 +1,12 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../common/styles';
+
 import Aqua from 'assets/aqua-logo-small.svg';
-import { formatBalance } from '../../../../common/helpers/helpers';
+
 import DotsLoader from '../../../../common/basics/DotsLoader';
+import { formatBalance } from '../../../../common/helpers/helpers';
 import { respondDown } from '../../../../common/mixins';
+import { Breakpoints, COLORS } from '../../../../common/styles';
 
 const Container = styled.section`
     position: relative;

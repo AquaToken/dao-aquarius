@@ -1,14 +1,21 @@
 import * as React from 'react';
-import SwapFormHeader from './SwapFormHeader/SwapFormHeader';
-import SwapFormRow from './SwapFormRow/SwapFormRow';
-import AmountUsdEquivalent from './AmountUsdEquivalent/AmountUsdEquivalent';
-import { getAssetString } from '../../../../common/helpers/helpers';
-import NoTrustline from '../../../../common/components/NoTrustline/NoTrustline';
+import { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import { respondDown } from '../../../../common/mixins';
+
+import AmountUsdEquivalent from './AmountUsdEquivalent/AmountUsdEquivalent';
+import SwapFormDivider from './SwapFormDivider/SwapFormDivider';
+import SwapFormError from './SwapFormError/SwapFormError';
+import SwapFormHeader from './SwapFormHeader/SwapFormHeader';
+import SwapFormPrice from './SwapFormPrice/SwapFormPrice';
+import SwapFormRow from './SwapFormRow/SwapFormRow';
+
 import Button from '../../../../common/basics/Button';
-import { MainRoutes } from '../../../../routes';
+import NoTrustline from '../../../../common/components/NoTrustline/NoTrustline';
+import { getAssetString } from '../../../../common/helpers/helpers';
+import { useDebounce } from '../../../../common/hooks/useDebounce';
+import { respondDown } from '../../../../common/mixins';
+import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
 import MainNetWarningModal, {
     SHOW_PURPOSE_ALIAS_MAIN_NET,
 } from '../../../../common/modals/MainNetWarningModal';
@@ -17,16 +24,11 @@ import {
     SorobanService,
     ToastService,
 } from '../../../../common/services/globalServices';
-import { useEffect, useState } from 'react';
-import { useDebounce } from '../../../../common/hooks/useDebounce';
-import { findSwapPath } from '../../../amm/api/api';
-import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
-import SwapConfirmModal from '../SwapConfirmModal/SwapConfirmModal';
-import { useHistory } from 'react-router-dom';
+import { Breakpoints, COLORS } from '../../../../common/styles';
+import { MainRoutes } from '../../../../routes';
 import useAuthStore from '../../../../store/authStore/useAuthStore';
-import SwapFormDivider from './SwapFormDivider/SwapFormDivider';
-import SwapFormPrice from './SwapFormPrice/SwapFormPrice';
-import SwapFormError from './SwapFormError/SwapFormError';
+import { findSwapPath } from '../../../amm/api/api';
+import SwapConfirmModal from '../SwapConfirmModal/SwapConfirmModal';
 
 const Form = styled.div`
     margin: 0 auto;
@@ -72,7 +74,7 @@ const SwapForm = ({ base, counter }) => {
     const { account, isLogged } = useAuthStore();
 
     useEffect(() => {
-        if (!!Number(debouncedAmount.current)) {
+        if (Number(debouncedAmount.current)) {
             setEstimatePending(true);
 
             findSwapPath(
@@ -80,7 +82,7 @@ const SwapForm = ({ base, counter }) => {
                 SorobanService.getAssetContractId(counter),
                 debouncedAmount.current,
             )
-                .then((res) => {
+                .then(res => {
                     if (!res.success) {
                         setError(true);
                         setCounterAmount('');
@@ -156,7 +158,7 @@ const SwapForm = ({ base, counter }) => {
         swapAssets();
     };
 
-    const onAmountChange = (value) => {
+    const onAmountChange = value => {
         if (Number.isNaN(Number(value))) {
             return;
         }
@@ -178,11 +180,11 @@ const SwapForm = ({ base, counter }) => {
         setBestPools(null);
         setIsPriceReverted(false);
     };
-    const setSource = (asset) => {
+    const setSource = asset => {
         history.push(`${MainRoutes.swap}/${getAssetString(asset)}/${getAssetString(counter)}`);
     };
 
-    const setDestination = (asset) => {
+    const setDestination = asset => {
         history.push(`${MainRoutes.swap}/${getAssetString(base)}/${getAssetString(asset)}`);
     };
     return (
@@ -198,7 +200,7 @@ const SwapForm = ({ base, counter }) => {
                 exclude={counter}
                 pending={estimatePending}
                 inputPostfix={
-                    Boolean(baseAmount) ? (
+                    baseAmount ? (
                         <AmountUsdEquivalent amount={debouncedAmount.current} asset={base} />
                     ) : null
                 }

@@ -1,8 +1,9 @@
 import * as React from 'react';
-import styled from 'styled-components';
-import { COLORS } from '../styles';
-import { textEllipsis } from '../mixins';
 import { forwardRef, RefObject } from 'react';
+import styled from 'styled-components';
+
+import { textEllipsis } from '../mixins';
+import { COLORS } from '../styles';
 
 const InputWrapper = styled.div`
     position: relative;
@@ -94,7 +95,7 @@ const Input = forwardRef(
             <InputWrapper className={className}>
                 {Boolean(label) && <Label>{label}</Label>}
                 {prefixCustom && <Prefix>{prefixCustom}</Prefix>}
-                <StyledInput ref={ref} {...props} onWheel={(e) => e.currentTarget.blur()} />
+                <StyledInput ref={ref} {...props} onWheel={e => e.currentTarget.blur()} />
                 {postfix && <Postfix>{postfix}</Postfix>}
             </InputWrapper>
         );

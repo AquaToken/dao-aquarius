@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { COLORS } from '../../../../common/styles';
-import { StellarService } from '../../../../common/services/globalServices';
-import useAuthStore from '../../../../store/authStore/useAuthStore';
-import { StellarEvents } from '../../../../common/services/stellar.service';
+
 import PageLoader from '../../../../common/basics/PageLoader';
+import { StellarService } from '../../../../common/services/globalServices';
+import { StellarEvents } from '../../../../common/services/stellar.service';
+import { COLORS } from '../../../../common/styles';
+import useAuthStore from '../../../../store/authStore/useAuthStore';
 import VotesList from '../../../vote/components/MainPage/ManageVotesModal/VotesList/VotesList';
 
 const Container = styled.div`

@@ -1,10 +1,11 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../common/styles';
+
+import Button from '../../../../common/basics/Button';
 import ExternalLink from '../../../../common/basics/ExternalLink';
 import Input from '../../../../common/basics/Input';
-import Button from '../../../../common/basics/Button';
 import { respondDown } from '../../../../common/mixins';
+import { Breakpoints, COLORS } from '../../../../common/styles';
 
 const Container = styled.section`
     position: relative;
@@ -199,11 +200,11 @@ const Conditions = ({ accountId, setAccountId, checkAccount }) => {
                     <Input
                         placeholder="Enter your public key (starts with G)"
                         value={accountId}
-                        onChange={(e) => setAccountId(e.target.value)}
+                        onChange={e => setAccountId(e.target.value)}
                     />
                     <StyledButton
                         isBig
-                        onClick={(e) => {
+                        onClick={e => {
                             e.preventDefault();
                             checkAccount();
                         }}

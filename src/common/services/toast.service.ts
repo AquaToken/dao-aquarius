@@ -22,7 +22,7 @@ export default class ToastServiceClass {
         this.id += 1;
         let resolver: (unknown) => void = undefined;
 
-        const promise = new Promise((resolve) => {
+        const promise = new Promise(resolve => {
             const id = this.id;
             resolver = () => {
                 resolve({ id });
@@ -46,7 +46,7 @@ export default class ToastServiceClass {
         this.event.trigger(this.toasts);
 
         promise.then(({ id }) => {
-            this.toasts = this.toasts.filter((toast) => toast.id !== id);
+            this.toasts = this.toasts.filter(toast => toast.id !== id);
             this.event.trigger(this.toasts);
         });
     }

@@ -1,13 +1,14 @@
 import * as React from 'react';
-import Button from '../../../../common/basics/Button';
-import styled from 'styled-components';
-import { COLORS } from '../../../../common/styles';
 import { useState } from 'react';
-import { SorobanService, ToastService } from '../../../../common/services/globalServices';
-import useAuthStore from '../../../../store/authStore/useAuthStore';
+import styled from 'styled-components';
+
+import Button from '../../../../common/basics/Button';
 import ErrorHandler from '../../../../common/helpers/error-handler';
-import { LoginTypes } from '../../../../store/authStore/types';
 import { openCurrentWalletIfExist } from '../../../../common/helpers/wallet-connect-helpers';
+import { SorobanService, ToastService } from '../../../../common/services/globalServices';
+import { COLORS } from '../../../../common/styles';
+import { LoginTypes } from '../../../../store/authStore/types';
+import useAuthStore from '../../../../store/authStore/useAuthStore';
 
 const Container = styled.div`
     color: ${COLORS.pinkRed};
@@ -29,11 +30,11 @@ const ContractNotFound = ({ asset, onSuccess }) => {
         setPending(true);
 
         SorobanService.deployAssetContractTx(account.accountId(), asset)
-            .then((tx) => account.signAndSubmitTx(tx))
+            .then(tx => account.signAndSubmitTx(tx))
             .then(() => {
                 onSuccess();
             })
-            .catch((e) => {
+            .catch(e => {
                 const errorText = ErrorHandler(e);
                 ToastService.showErrorToast(errorText);
                 setPending(false);

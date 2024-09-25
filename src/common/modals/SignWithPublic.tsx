@@ -1,17 +1,20 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { ModalDescription, ModalProps, ModalTitle } from './atoms/ModalAtoms';
 import styled from 'styled-components';
-import AccountBlock from '../basics/AccountBlock';
-import { StellarService } from '../services/globalServices';
-import AccountService from '../services/account.service';
-import { flexAllCenter, respondDown } from '../mixins';
-import { Breakpoints, COLORS } from '../styles';
-import Stellar from 'assets/xlm-logo.svg';
+
 import ArrowRight from 'assets/icon-arrow-right.svg';
-import CopyButton from '../basics/CopyButton';
-import XdrLogo from 'assets/icon-xdr.svg';
 import Copy from 'assets/icon-copy.svg';
+import XdrLogo from 'assets/icon-xdr.svg';
+import Stellar from 'assets/xlm-logo.svg';
+
+import { ModalDescription, ModalProps, ModalTitle } from './atoms/ModalAtoms';
+
+import AccountBlock from '../basics/AccountBlock';
+import CopyButton from '../basics/CopyButton';
+import { flexAllCenter, respondDown } from '../mixins';
+import AccountService from '../services/account.service';
+import { StellarService } from '../services/globalServices';
+import { Breakpoints, COLORS } from '../styles';
 
 const Container = styled.div`
     width: 52.8rem;
@@ -106,7 +109,7 @@ const SignWithPublic = ({ params }: ModalProps<{ xdr: string; account: AccountSe
         if (!account.home_domain) {
             return;
         }
-        StellarService.resolveFederation(account.home_domain, accountId).then((res) => {
+        StellarService.resolveFederation(account.home_domain, accountId).then(res => {
             setFederation(res);
         });
     }, []);

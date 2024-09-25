@@ -1,14 +1,20 @@
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
-import { formatBalance } from '../../../../common/helpers/helpers';
-import IconUp from 'assets/icon-up-percent.svg';
-import IconDown from 'assets/icon-down-percent.svg';
-import Ice from 'assets/ice-logo.svg';
+
 import Aqua from 'assets/aqua-logo-small.svg';
-import { getPercent } from '../../../vote/components/MainPage/Table/VoteAmount/VoteAmount';
+import Ice from 'assets/ice-logo.svg';
+import IconDown from 'assets/icon-down-percent.svg';
+import IconUp from 'assets/icon-up-percent.svg';
+
 import VotesProgressLine from './VotesProgressLine/VotesProgressLine';
+
+import Button from '../../../../common/basics/Button';
+import DotsLoader from '../../../../common/basics/DotsLoader';
+import { formatBalance } from '../../../../common/helpers/helpers';
+import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
+import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
+import { ModalService, StellarService } from '../../../../common/services/globalServices';
 import {
     AQUA_CODE,
     AQUA_ISSUER,
@@ -17,15 +23,12 @@ import {
     StellarEvents,
     UP_ICE_CODE,
 } from '../../../../common/services/stellar.service';
-import VoteButton from '../../../vote/components/MainPage/Table/VoteButton/VoteButton';
-import { useEffect, useState } from 'react';
-import { ModalService, StellarService } from '../../../../common/services/globalServices';
-import { AQUA, DOWN_ICE, UP_ICE } from '../../../vote/components/MainPage/MainPage';
+import { Breakpoints, COLORS } from '../../../../common/styles';
 import useAuthStore from '../../../../store/authStore/useAuthStore';
-import DotsLoader from '../../../../common/basics/DotsLoader';
-import Button from '../../../../common/basics/Button';
 import CreatePairModal from '../../../vote/components/MainPage/CreatePairModal/CreatePairModal';
-import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
+import { AQUA, DOWN_ICE, UP_ICE } from '../../../vote/components/MainPage/MainPage';
+import { getPercent } from '../../../vote/components/MainPage/Table/VoteAmount/VoteAmount';
+import VoteButton from '../../../vote/components/MainPage/Table/VoteButton/VoteButton';
 
 const Container = styled.aside`
     float: right;

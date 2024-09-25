@@ -1,10 +1,12 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
+
+import OtherAccountButton from './OtherAccountButton/OtherAccountButton';
+
+import AccountBlock from '../../../../../common/basics/AccountBlock';
 import { flexRowSpaceBetween } from '../../../../../common/mixins';
 import { StellarService } from '../../../../../common/services/globalServices';
-import OtherAccountButton from './OtherAccountButton/OtherAccountButton';
-import AccountBlock from '../../../../../common/basics/AccountBlock';
 import useAuthStore from '../../../../../store/authStore/useAuthStore';
 
 const Wrapper = styled.div`
@@ -23,7 +25,7 @@ const AccountInfoBlock = ({ account }) => {
         if (!account.home_domain) {
             return;
         }
-        StellarService.resolveFederation(account.home_domain, accountId).then((res) => {
+        StellarService.resolveFederation(account.home_domain, accountId).then(res => {
             setFederation(res);
         });
     }, []);

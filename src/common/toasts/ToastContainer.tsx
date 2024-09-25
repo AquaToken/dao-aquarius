@@ -1,10 +1,12 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
+
 import { Toast } from './ToastBody';
-import { Breakpoints, Z_INDEX } from '../styles';
-import { ToastService } from '../services/globalServices';
+
 import { respondDown } from '../mixins';
+import { ToastService } from '../services/globalServices';
+import { Breakpoints, Z_INDEX } from '../styles';
 
 const Container = styled.div`
     position: fixed;
@@ -22,7 +24,7 @@ const ToastContainer = (): JSX.Element => {
     const [toasts, setToasts] = useState(ToastService.toasts);
 
     useEffect(() => {
-        const unsub = ToastService.event.sub((toasts) => {
+        const unsub = ToastService.event.sub(toasts => {
             setToasts(toasts);
         });
 
@@ -31,7 +33,7 @@ const ToastContainer = (): JSX.Element => {
 
     return (
         <Container>
-            {toasts.map((toast) => (
+            {toasts.map(toast => (
                 <Toast {...toast} key={toast.id} />
             ))}
         </Container>

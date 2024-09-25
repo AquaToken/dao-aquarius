@@ -1,10 +1,12 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
-import { Breakpoints, COLORS } from '../styles';
+
 import Left from 'assets/icon-arrow-left.svg';
 import Right from 'assets/icon-arrow-right.svg';
+
 import { flexAllCenter, respondDown } from '../mixins';
+import { Breakpoints, COLORS } from '../styles';
 
 const Container = styled.div`
     width: 100%;
@@ -141,7 +143,7 @@ const Pagination = ({
             </PaginationState>
             <PaginationControls>
                 <ArrowLeft onClick={() => prevPage()} />
-                {visiblePages.map((pageItem) => (
+                {visiblePages.map(pageItem => (
                     <PageButton
                         key={pageItem}
                         isActive={page === pageItem}

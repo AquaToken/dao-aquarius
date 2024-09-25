@@ -1,13 +1,15 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import Stars from 'assets/main-stars.svg';
+
 import Background from 'assets/main-screen-img.svg';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import { respondDown } from '../../../../common/mixins';
+import Stars from 'assets/main-stars.svg';
+
 import Button from '../../../../common/basics/Button';
-import { ModalService } from '../../../../common/services/globalServices';
-import GetAquaModal from '../../../../common/modals/GetAquaModal/GetAquaModal';
 import SocialLinks from '../../../../common/components/SocialLinks/SocialLinks';
+import { respondDown } from '../../../../common/mixins';
+import GetAquaModal from '../../../../common/modals/GetAquaModal/GetAquaModal';
+import { ModalService } from '../../../../common/services/globalServices';
+import { Breakpoints, COLORS } from '../../../../common/styles';
 
 const Main = styled.section`
     display: flex;

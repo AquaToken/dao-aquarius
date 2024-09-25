@@ -1,5 +1,6 @@
-import EventService from './event.service';
 import { Asset } from '@stellar/stellar-sdk';
+
+import EventService from './event.service';
 
 export enum AssetsEvent {
     newAssets = 'newAssets',

@@ -1,18 +1,19 @@
 import * as React from 'react';
-import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
-import Button from '../../../../common/basics/Button';
-import { ModalService, SorobanService } from '../../../../common/services/globalServices';
-import DepositToPool from '../DepositToPool/DepositToPool';
-import WithdrawFromPool from '../WithdrawFromPool/WithdrawFromPool';
-import useAuthStore from '../../../../store/authStore/useAuthStore';
-import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
 import { useEffect, useState } from 'react';
+import styled from 'styled-components';
+
+import Button from '../../../../common/basics/Button';
 import PageLoader from '../../../../common/basics/PageLoader';
 import { formatBalance, getAssetString } from '../../../../common/helpers/helpers';
+import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
+import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
+import { ModalService, SorobanService } from '../../../../common/services/globalServices';
+import { Breakpoints, COLORS } from '../../../../common/styles';
+import useAuthStore from '../../../../store/authStore/useAuthStore';
 import Asset from '../../../vote/components/AssetDropdown/Asset';
 import { PoolExtended } from '../../api/types';
+import DepositToPool from '../DepositToPool/DepositToPool';
+import WithdrawFromPool from '../WithdrawFromPool/WithdrawFromPool';
 
 const Container = styled.aside`
     float: right;
@@ -68,11 +69,9 @@ const Sidebar = ({ pool }: { pool: PoolExtended }) => {
             setAccountShare(null);
             return;
         }
-        SorobanService.getTokenBalance(pool.share_token_address, account.accountId()).then(
-            (res) => {
-                setAccountShare(res);
-            },
-        );
+        SorobanService.getTokenBalance(pool.share_token_address, account.accountId()).then(res => {
+            setAccountShare(res);
+        });
     }, [account]);
     const openDepositModal = () => {
         if (!isLogged) {

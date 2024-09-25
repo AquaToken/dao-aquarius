@@ -1,6 +1,7 @@
 import AccountRecord, * as StellarSdk from '@stellar/stellar-sdk';
 import { Asset, Horizon } from '@stellar/stellar-sdk';
-import { LoginTypes } from '../../store/authStore/types';
+import BigNumber from 'bignumber.js';
+
 import {
     FreighterService,
     LedgerService,
@@ -11,15 +12,16 @@ import {
     ToastService,
     WalletConnectService,
 } from './globalServices';
+import { POOL_TYPE } from './soroban.service';
 import { AQUA_CODE, AQUA_ISSUER, ICE_ASSETS } from './stellar.service';
 import { BuildSignAndSubmitStatuses } from './wallet-connect.service';
-import SignWithPublic from '../modals/SignWithPublic';
+
+import { getNativePrices } from '../../pages/amm/api/api';
+import { LoginTypes } from '../../store/authStore/types';
+import { getAssetFromString, getAssetString } from '../helpers/helpers';
 import LedgerSignTx from '../modals/LedgerModals/LedgerSignTx';
 import SentToVault from '../modals/MultisigModals/SentToVault';
-import { getNativePrices } from '../../pages/amm/api/api';
-import { getAssetFromString, getAssetString } from '../helpers/helpers';
-import BigNumber from 'bignumber.js';
-import { POOL_TYPE } from './soroban.service';
+import SignWithPublic from '../modals/SignWithPublic';
 
 const VAULT_MARKER = 'GA2T6GR7VXXXBETTERSAFETHANSORRYXXXPROTECTEDBYLOBSTRVAULT';
 
@@ -67,12 +69,10 @@ export default class AccountService extends Horizon.AccountResponse {
         }
 
         if (this.authType === LoginTypes.walletConnect && !withResult) {
-            return WalletConnectService.signAndSubmitTx(tx as StellarSdk.Transaction).then(
-                (res) => {
-                    callCallbackIfExist();
-                    return res;
-                },
-            );
+            return WalletConnectService.signAndSubmitTx(tx as StellarSdk.Transaction).then(res => {
+                callCallbackIfExist();
+                return res;
+            });
         }
 
         let signedTx;
@@ -96,10 +96,10 @@ export default class AccountService extends Horizon.AccountResponse {
 
         if (this.authType === LoginTypes.ledger && !this.isMultisigEnabled) {
             const result = LedgerService.signTx(tx as StellarSdk.Transaction)
-                .then((signed) =>
+                .then(signed =>
                     withResult ? SorobanService.submitTx(signed) : StellarService.submitTx(signed),
                 )
-                .then((res) => {
+                .then(res => {
                     callCallbackIfExist();
                     return res;
                 });
@@ -126,7 +126,7 @@ export default class AccountService extends Horizon.AccountResponse {
             }
             return (
                 withResult ? SorobanService.submitTx(signedTx) : StellarService.submitTx(signedTx)
-            ).then((res) => {
+            ).then(res => {
                 callCallbackIfExist();
                 return res;
             });
@@ -170,7 +170,7 @@ export default class AccountService extends Horizon.AccountResponse {
                 .toNumber();
         }
         const assetBalance = this.balances.find(
-            (balance) =>
+            balance =>
                 (balance as Horizon.HorizonApi.BalanceLineAsset).asset_code == asset.code &&
                 (balance as Horizon.HorizonApi.BalanceLineAsset).asset_issuer === asset.issuer,
         ) as Horizon.HorizonApi.BalanceLineAsset;
@@ -186,7 +186,7 @@ export default class AccountService extends Horizon.AccountResponse {
 
     getPoolBalance(id: string) {
         const poolBalance = this.balances.find(
-            (balance) =>
+            balance =>
                 (balance as Horizon.HorizonApi.BalanceLineLiquidityPool).liquidity_pool_id === id,
         ) as Horizon.HorizonApi.BalanceLineLiquidityPool;
 
@@ -209,17 +209,15 @@ export default class AccountService extends Horizon.AccountResponse {
 
         const assetsSet = new Set();
 
-        liquidityPoolsForAccount.forEach((lp) => {
+        liquidityPoolsForAccount.forEach(lp => {
             // @ts-ignore
-            lp.assets = lp.reserves.map((reserve) => {
+            lp.assets = lp.reserves.map(reserve => {
                 assetsSet.add(reserve.asset);
                 return getAssetFromString(reserve.asset);
             });
             // @ts-ignore
             lp.reserves = [
-                ...lp.reserves.map((reserve) =>
-                    new BigNumber(reserve.amount).times(1e7).toFixed(7),
-                ),
+                ...lp.reserves.map(reserve => new BigNumber(reserve.amount).times(1e7).toFixed(7)),
                 ...lp.reserves,
             ];
             // @ts-ignore
@@ -229,10 +227,10 @@ export default class AccountService extends Horizon.AccountResponse {
         });
 
         const prices = await getNativePrices(
-            [...assetsSet].map((str) => getAssetFromString(str as string)),
+            [...assetsSet].map(str => getAssetFromString(str as string)),
         );
 
-        liquidityPoolsForAccount.forEach((lp) => {
+        liquidityPoolsForAccount.forEach(lp => {
             // @ts-ignore
             lp.liquidity = lp.assets.reduce((acc, asset, index) => {
                 // @ts-ignore
@@ -249,26 +247,26 @@ export default class AccountService extends Horizon.AccountResponse {
                 (balance): balance is Horizon.HorizonApi.BalanceLineLiquidityPool =>
                     balance.asset_type === 'liquidity_pool_shares',
             )
-            .map((balance) => ({
+            .map(balance => ({
                 ...balance,
                 balance: new BigNumber(balance.balance).times(1e7).toFixed(7),
             }));
 
         return pools
-            .map((pool) => {
+            .map(pool => {
                 const lp = liquidityPoolsForAccount.find(({ id }) => id === pool.liquidity_pool_id);
 
                 return lp ? { ...pool, ...lp, pool_type: POOL_TYPE.classic } : null;
             })
-            .filter((item) => Boolean(item));
+            .filter(item => Boolean(item));
     }
 
     hasAllIceTrustlines() {
-        return ICE_ASSETS.map((asset) => {
+        return ICE_ASSETS.map(asset => {
             const [code, issuer] = asset.split(':');
             const stellarAsset = StellarService.createAsset(code, issuer);
             return this.getAssetBalance(stellarAsset);
-        }).every((asset) => asset !== null);
+        }).every(asset => asset !== null);
     }
 
     getUntrustedIceAssets() {
@@ -288,7 +286,7 @@ export default class AccountService extends Horizon.AccountResponse {
 
         const liquidityPoolsBalances: Horizon.HorizonApi.BalanceLineLiquidityPool[] =
             this.balances.filter(
-                (balance) => balance.asset_type === 'liquidity_pool_shares',
+                balance => balance.asset_type === 'liquidity_pool_shares',
             ) as Horizon.HorizonApi.BalanceLineLiquidityPool[];
 
         const liquidityPoolsForAccount = await StellarService.getLiquidityPoolForAccount(
@@ -316,7 +314,7 @@ export default class AccountService extends Horizon.AccountResponse {
 
     getAquaBalance(): number | null {
         const aquaBalance = this.balances.find(
-            (balance) =>
+            balance =>
                 (balance as Horizon.HorizonApi.BalanceLineAsset).asset_code == AQUA_CODE &&
                 (balance as Horizon.HorizonApi.BalanceLineAsset).asset_issuer === AQUA_ISSUER,
         ) as Horizon.HorizonApi.BalanceLineAsset;
@@ -330,7 +328,7 @@ export default class AccountService extends Horizon.AccountResponse {
 
     getAquaInOffers(): number | null {
         const aquaBalance = this.balances.find(
-            (balance) =>
+            balance =>
                 (balance as Horizon.HorizonApi.BalanceLineAsset).asset_code == AQUA_CODE &&
                 (balance as Horizon.HorizonApi.BalanceLineAsset).asset_issuer === AQUA_ISSUER,
         ) as Horizon.HorizonApi.BalanceLineAsset;
@@ -372,7 +370,7 @@ export default class AccountService extends Horizon.AccountResponse {
         );
 
         const balances = assetsBalances
-            .map((balance) => {
+            .map(balance => {
                 const asset = StellarService.createAsset(balance.asset_code, balance.asset_issuer);
                 const assetString = getAssetString(asset);
 
@@ -419,7 +417,7 @@ export default class AccountService extends Horizon.AccountResponse {
     getReservesForSwap(asset: Asset): { label: string; value: number }[] {
         if (!asset.isNative()) {
             const { selling_liabilities } = this.balances.find(
-                (balance) =>
+                balance =>
                     (balance as Horizon.HorizonApi.BalanceLineAsset).asset_code == asset.code &&
                     (balance as Horizon.HorizonApi.BalanceLineAsset).asset_issuer === asset.issuer,
             ) as Horizon.HorizonApi.BalanceLineAsset;

@@ -1,20 +1,23 @@
 import * as React from 'react';
-import { ProposalSimple } from '../../../api/types';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import ProposalStatus, { PROPOSAL_STATUS } from '../ProposalStatus/ProposalStatus';
+
+import IconFail from 'assets/icon-fail.svg';
+import IconSuccess from 'assets/icon-success.svg';
+
+import CurrentResults from './CurrentResults/CurrentResults';
+import YourVotes from './YourVotes/YourVotes';
+
 import {
     formatBalance,
     getDateString,
     roundToPrecision,
 } from '../../../../../common/helpers/helpers';
-import IconFail from 'assets/icon-fail.svg';
-import IconSuccess from 'assets/icon-success.svg';
-import CurrentResults from './CurrentResults/CurrentResults';
-import { Link } from 'react-router-dom';
 import { flexAllCenter, respondDown } from '../../../../../common/mixins';
+import { Breakpoints, COLORS } from '../../../../../common/styles';
 import { GovernanceRoutes } from '../../../../../routes';
-import YourVotes from './YourVotes/YourVotes';
+import { ProposalSimple } from '../../../api/types';
+import ProposalStatus, { PROPOSAL_STATUS } from '../ProposalStatus/ProposalStatus';
 
 const Container = styled.div`
     display: flex;

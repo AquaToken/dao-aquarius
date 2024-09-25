@@ -1,27 +1,29 @@
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
-import useAuthStore from '../../../store/authStore/useAuthStore';
-import { StellarService } from '../../../common/services/globalServices';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../common/styles';
-import { commonMaxWidth, respondDown } from '../../../common/mixins';
-import AccountInfoBlock from '../components/LockerAccountPage/AccountInfoBlock/AccountInfoBlock';
-import PageLoader from '../../../common/basics/PageLoader';
-import AccountService from '../../../common/services/account.service';
-import Portfolio from '../components/LockerAccountPage/Portfolio/Portfolio';
-import CurrentLocks from '../components/LockerAccountPage/CurrentLocks/CurrentLocks';
-import LockAquaForm from '../components/LockerAccountPage/LockAquaForm/LockAquaForm';
-import { useIsOnViewport } from '../../../common/hooks/useIsOnViewport';
+
 import ArrowDown from 'assets/icon-arrow-down.svg';
+
 import { getDistributionForAccount } from '../../../api/ice-locker';
-import IceBlock from '../components/LockerAccountPage/IceBlock/IceBlock';
+import PageLoader from '../../../common/basics/PageLoader';
+import { useIsOnViewport } from '../../../common/hooks/useIsOnViewport';
+import { commonMaxWidth, respondDown } from '../../../common/mixins';
+import AccountService from '../../../common/services/account.service';
+import { StellarService } from '../../../common/services/globalServices';
 import { StellarEvents } from '../../../common/services/stellar.service';
+import { Breakpoints, COLORS } from '../../../common/styles';
 import { LockerRoutes } from '../../../routes';
-import StatisticBlock from '../components/LockerMainPage/StatisticBlock/StatisticBlock';
-import FreezeAQUA from '../components/LockerMainPage/FreezeAQUA/FreezeAQUA';
-import WhyFreezeAQUA from '../components/LockerMainPage/WhyFreezeAQUA/WhyFreezeAQUA';
+import useAuthStore from '../../../store/authStore/useAuthStore';
 import FAQ from '../components/FAQ/FAQ';
+import AccountInfoBlock from '../components/LockerAccountPage/AccountInfoBlock/AccountInfoBlock';
+import CurrentLocks from '../components/LockerAccountPage/CurrentLocks/CurrentLocks';
+import IceBlock from '../components/LockerAccountPage/IceBlock/IceBlock';
+import LockAquaForm from '../components/LockerAccountPage/LockAquaForm/LockAquaForm';
+import Portfolio from '../components/LockerAccountPage/Portfolio/Portfolio';
+import FreezeAQUA from '../components/LockerMainPage/FreezeAQUA/FreezeAQUA';
+import StatisticBlock from '../components/LockerMainPage/StatisticBlock/StatisticBlock';
+import WhyFreezeAQUA from '../components/LockerMainPage/WhyFreezeAQUA/WhyFreezeAQUA';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;

@@ -1,33 +1,35 @@
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
+import Title from 'react-document-title';
 import { useHistory, useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { ModalService, StellarService } from '../../../common/services/globalServices';
-import NotFoundPage from '../../../common/components/NotFoundPage/NotFoundPage';
-import { Breakpoints, COLORS } from '../../../common/styles';
-import { commonMaxWidth, respondDown } from '../../../common/mixins';
-import { getFilteredPairsList, getTotalVotingStats } from '../../vote/api/api';
-import Market from '../../vote/components/common/Market';
-import PageLoader from '../../../common/basics/PageLoader';
-import { isRewardsOn, MAX_REWARDS_PERCENT } from '../../vote/components/MainPage/Table/Table';
-import AboutAsset from '../components/AboutAsset/AboutAsset';
-import MarketBribes from '../components/MarketBribes/MarketBribes';
-import Sidebar from '../components/Sidebar/Sidebar';
-import { PairStats } from '../../vote/api/types';
-import useAuthStore from '../../../store/authStore/useAuthStore';
-import YourVotes from '../components/YourVotes/YourVotes';
-import TradeStats from '../components/TradeStats/TradeStats';
-import Rewards from '../components/Rewards/Rewards';
-import { useIsOverScrolled } from '../../../common/hooks/useIsOnViewport';
+
 import ArrowLeft from 'assets/icon-arrow-left.svg';
-import AmmStats from '../components/AmmStats/AmmStats';
+
+import CircleButton from '../../../common/basics/CircleButton';
+import PageLoader from '../../../common/basics/PageLoader';
+import MigrateToSorobanBanner from '../../../common/components/MigrateToSorobanBanner/MigrateToSorobanBanner';
+import NotFoundPage from '../../../common/components/NotFoundPage/NotFoundPage';
+import { useIsOverScrolled } from '../../../common/hooks/useIsOnViewport';
+import { commonMaxWidth, respondDown } from '../../../common/mixins';
+import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
+import { ModalService, StellarService } from '../../../common/services/globalServices';
+import { Breakpoints, COLORS } from '../../../common/styles';
 import { VoteRoutes } from '../../../routes';
 import useAssetsStore from '../../../store/assetsStore/useAssetsStore';
-import Title from 'react-document-title';
+import useAuthStore from '../../../store/authStore/useAuthStore';
+import { getFilteredPairsList, getTotalVotingStats } from '../../vote/api/api';
+import { PairStats } from '../../vote/api/types';
+import Market from '../../vote/components/common/Market';
+import { isRewardsOn, MAX_REWARDS_PERCENT } from '../../vote/components/MainPage/Table/Table';
 import VotesAmountModal from '../../vote/components/MainPage/VoteModals/VotesAmountModal';
-import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
-import CircleButton from '../../../common/basics/CircleButton';
-import MigrateToSorobanBanner from '../../../common/components/MigrateToSorobanBanner/MigrateToSorobanBanner';
+import AboutAsset from '../components/AboutAsset/AboutAsset';
+import AmmStats from '../components/AmmStats/AmmStats';
+import MarketBribes from '../components/MarketBribes/MarketBribes';
+import Rewards from '../components/Rewards/Rewards';
+import Sidebar from '../components/Sidebar/Sidebar';
+import TradeStats from '../components/TradeStats/TradeStats';
+import YourVotes from '../components/YourVotes/YourVotes';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -137,7 +139,7 @@ const isValidPathAsset = (pathAsset: string) => {
     }
 };
 
-const scrollToRef = (ref) => {
+const scrollToRef = ref => {
     ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
 
@@ -174,13 +176,13 @@ const MarketPage = () => {
     }, []);
 
     useEffect(() => {
-        getTotalVotingStats().then((res) => {
+        getTotalVotingStats().then(res => {
             setTotalStats(res);
         });
     }, []);
 
     useEffect(() => {
-        getFilteredPairsList(baseAsset, counterAsset, 1, 1).then((res) => {
+        getFilteredPairsList(baseAsset, counterAsset, 1, 1).then(res => {
             setVotesData(res.pairs[0]);
         });
     }, []);

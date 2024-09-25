@@ -1,17 +1,19 @@
 import * as React from 'react';
-import styled from 'styled-components';
-import { COLORS } from '../../../../../common/styles';
-import AquaLogo from 'assets/aqua-logo-small.svg';
-import ExternalLink from '../../../../../common/basics/ExternalLink';
-import Button from '../../../../../common/basics/Button';
-import { ModalService } from '../../../../../common/services/globalServices';
-import ChooseLoginMethodModal from '../../../../../common/modals/ChooseLoginMethodModal';
-import { useHistory } from 'react-router-dom';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
 import { forwardRef, RefObject } from 'react';
+import { useHistory } from 'react-router-dom';
+import styled from 'styled-components';
+
+import AquaLogo from 'assets/aqua-logo-small.svg';
+
+import Button from '../../../../../common/basics/Button';
+import ExternalLink from '../../../../../common/basics/ExternalLink';
 import { formatBalance } from '../../../../../common/helpers/helpers';
-import { APPROVED_PROPOSAL_REWARD } from '../../../pages/GovernanceMainPage';
+import ChooseLoginMethodModal from '../../../../../common/modals/ChooseLoginMethodModal';
+import { ModalService } from '../../../../../common/services/globalServices';
+import { COLORS } from '../../../../../common/styles';
 import { GovernanceRoutes } from '../../../../../routes';
+import useAuthStore from '../../../../../store/authStore/useAuthStore';
+import { APPROVED_PROPOSAL_REWARD } from '../../../pages/GovernanceMainPage';
 
 const Container = styled.div`
     flex: 1;

@@ -1,11 +1,13 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import Asset from '../../../../vote/components/AssetDropdown/Asset';
-import { AssetSimple } from '../../../../../store/assetsStore/types';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
+
 import RightIcon from 'assets/icon-arrow-right-long.svg';
-import { AmmRoutes } from '../../../../../routes';
+
 import { respondDown } from '../../../../../common/mixins';
+import { Breakpoints, COLORS } from '../../../../../common/styles';
+import { AmmRoutes } from '../../../../../routes';
+import { AssetSimple } from '../../../../../store/assetsStore/types';
+import Asset from '../../../../vote/components/AssetDropdown/Asset';
 
 const Container = styled.div`
     width: 25%;

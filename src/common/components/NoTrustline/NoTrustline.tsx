@@ -1,18 +1,20 @@
-import * as React from 'react';
 import { Asset as AssetType } from '@stellar/stellar-sdk';
-import useAuthStore from '../../../store/authStore/useAuthStore';
-import Asset from '../../../pages/vote/components/AssetDropdown/Asset';
-import Plus from 'assets/icon-plus.svg';
-import styled from 'styled-components';
-import Button from '../../basics/Button';
-import { respondDown } from '../../mixins';
-import { Breakpoints, COLORS } from '../../styles';
+import * as React from 'react';
 import { useState } from 'react';
+import styled from 'styled-components';
+
+import Plus from 'assets/icon-plus.svg';
+
+import Asset from '../../../pages/vote/components/AssetDropdown/Asset';
+import { LoginTypes } from '../../../store/authStore/types';
+import useAuthStore from '../../../store/authStore/useAuthStore';
+import Button from '../../basics/Button';
+import ErrorHandler from '../../helpers/error-handler';
+import { openCurrentWalletIfExist } from '../../helpers/wallet-connect-helpers';
+import { respondDown } from '../../mixins';
 import { StellarService, ToastService } from '../../services/globalServices';
 import { BuildSignAndSubmitStatuses } from '../../services/wallet-connect.service';
-import ErrorHandler from '../../helpers/error-handler';
-import { LoginTypes } from '../../../store/authStore/types';
-import { openCurrentWalletIfExist } from '../../helpers/wallet-connect-helpers';
+import { Breakpoints, COLORS } from '../../styles';
 
 const TrustlineBlock = styled.div`
     display: flex;
