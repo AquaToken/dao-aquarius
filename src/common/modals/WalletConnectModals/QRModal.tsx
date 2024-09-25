@@ -11,7 +11,7 @@ import ToggleGroup from '../../basics/ToggleGroup';
 import { flexAllCenter, respondDown } from '../../mixins';
 import { Breakpoints, COLORS } from '../../styles';
 import Button from '../../basics/Button';
-import ArrowRight from '../../assets/img/icon-arrow-right.svg';
+import ArrowRight from 'assets/icon-arrow-right.svg';
 import { clearCurrentWallet, saveCurrentWallet } from '../../helpers/wallet-connect-helpers';
 
 const Wrapper = styled.div`

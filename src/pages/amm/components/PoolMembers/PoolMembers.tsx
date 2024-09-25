@@ -10,7 +10,7 @@ import Pagination from '../../../../common/basics/Pagination';
 import PageLoader from '../../../../common/basics/PageLoader';
 import { Empty } from '../../../profile/YourVotes/YourVotes';
 import { useUpdateIndex } from '../../../../common/hooks/useUpdateIndex';
-import LinkIcon from '../../../../common/assets/img/icon-external-link.svg';
+import LinkIcon from 'assets/icon-external-link.svg';
 
 const PAGE_SIZE = 10;
 

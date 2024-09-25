@@ -4,7 +4,7 @@ import { respondDown } from '../../../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../../../common/styles';
 import { ModalDescription, ModalTitle } from '../../../../../common/modals/atoms/ModalAtoms';
 import useAuthStore from '../../../../../store/authStore/useAuthStore';
-import Ice from '../../../../../common/assets/img/ice-logo.svg';
+import Ice from 'assets/ice-logo.svg';
 import Button from '../../../../../common/basics/Button';
 import { StellarService, ToastService } from '../../../../../common/services/globalServices';
 import { LoginTypes } from '../../../../../store/authStore/types';

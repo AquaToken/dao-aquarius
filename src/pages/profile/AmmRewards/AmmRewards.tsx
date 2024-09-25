@@ -14,7 +14,7 @@ import { MainRoutes } from '../../../routes';
 import ExternalLink from '../../../common/basics/ExternalLink';
 import { formatBalance } from '../../../common/helpers/helpers';
 import useAssetsStore from '../../../store/assetsStore/useAssetsStore';
-import Aqua from '../../../common/assets/img/aqua-logo-small.svg';
+import Aqua from 'assets/aqua-logo-small.svg';
 import DotsLoader from '../../../common/basics/DotsLoader';
 import Label from '../../../common/basics/Label';
 import BoostBanner from '../BoostBanner/BoostBanner';

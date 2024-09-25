@@ -4,8 +4,8 @@ import styled from 'styled-components';
 import { flexRowSpaceBetween, respondDown } from '../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../common/styles';
 import { AmmRoutes } from '../../../routes';
-import ArrowLeft from '../../../common/assets/img/icon-arrow-left.svg';
-import Tick from '../../../common/assets/img/icon-tick-white.svg';
+import ArrowLeft from 'assets/icon-arrow-left.svg';
+import Tick from 'assets/icon-tick-white.svg';
 import {
     Back,
     Background,

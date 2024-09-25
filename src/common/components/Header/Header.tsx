@@ -7,7 +7,7 @@ import { commonMaxWidth, respondDown } from '../../mixins';
 import { MainRoutes } from '../../../routes';
 import AccountBlock from './AccountBlock/AccountBlock';
 import useAuthStore from '../../../store/authStore/useAuthStore';
-import IconProfile from '../../assets/img/icon-profile.svg';
+import IconProfile from 'assets/icon-profile.svg';
 import { ModalService } from '../../services/globalServices';
 import ChooseLoginMethodModal from '../../modals/ChooseLoginMethodModal';
 

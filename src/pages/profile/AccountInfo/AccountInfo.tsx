@@ -10,10 +10,10 @@ import {
 } from '../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../common/styles';
 import { LoginTypes } from '../../../store/authStore/types';
-import Copy from '../../../common/assets/img/icon-copy.svg';
-import External from '../../../common/assets/img/icon-external-link.svg';
+import Copy from 'assets/icon-copy.svg';
+import External from 'assets/icon-external-link.svg';
 import CopyButton from '../../../common/basics/CopyButton';
-import MyAquarius from '../../../common/assets/img/my-aquarius.svg';
+import MyAquarius from 'assets/my-aquarius.svg';
 
 const Container = styled.div`
     display: flex;

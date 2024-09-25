@@ -2,10 +2,10 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { respondDown } from '../../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../../common/styles';
-import Lobstr from '../../../../common/assets/img/lobstr-name-logo.svg';
-import StellarX from '../../../../common/assets/img/stellarx-logo.svg';
-import Vault from '../../../../common/assets/img/vault-logo.svg';
-import StellarTerm from '../../../../common/assets/img/stellarterm-logo.svg';
+import Lobstr from 'assets/lobstr-name-logo.svg';
+import StellarX from 'assets/stellarx-logo.svg';
+import Vault from 'assets/vault-logo.svg';
+import StellarTerm from 'assets/stellarterm-logo.svg';
 
 const Container = styled.section`
     display: flex;

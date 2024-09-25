@@ -3,10 +3,10 @@ import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../../common/styles';
 import { commonMaxWidth, respondDown } from '../../../common/mixins';
-import Aqua from '../../../common/assets/img/aqua-logo-small.svg';
-import Ice from '../../../common/assets/img/ice-logo.svg';
-import Lumen from '../../../common/assets/img/xlm-logo.svg';
-import Info from '../../../common/assets/img/icon-info.svg';
+import Aqua from 'assets/aqua-logo-small.svg';
+import Ice from 'assets/ice-logo.svg';
+import Lumen from 'assets/xlm-logo.svg';
+import Info from 'assets/icon-info.svg';
 import { formatBalance } from '../../../common/helpers/helpers';
 import {
     AdditionalInfo,

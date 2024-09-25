@@ -1,12 +1,12 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
-import Reddit from '../../assets/img/reddit.svg';
-import Discord from '../../assets/img/discord.svg';
-import Medium from '../../assets/img/medium.svg';
-import Github from '../../assets/img/github.svg';
-import Telegram from '../../assets/img/telegram.svg';
-import Twitter from '../../assets/img/twitter.svg';
-import Email from '../../assets/img/email.svg';
+import Reddit from 'assets/reddit.svg';
+import Discord from 'assets/discord.svg';
+import Medium from 'assets/medium.svg';
+import Github from 'assets/github.svg';
+import Telegram from 'assets/telegram.svg';
+import Twitter from 'assets/twitter.svg';
+import Email from 'assets/email.svg';
 import { Breakpoints, COLORS } from '../../styles';
 import { respondDown } from '../../mixins';
 

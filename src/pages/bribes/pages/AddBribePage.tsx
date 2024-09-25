@@ -5,12 +5,12 @@ import { Breakpoints, COLORS, FONT_FAMILY } from '../../../common/styles';
 import { flexAllCenter, respondDown } from '../../../common/mixins';
 import ExternalLink from '../../../common/basics/ExternalLink';
 import AssetDropdown from '../../vote/components/AssetDropdown/AssetDropdown';
-import Dash from '../../../common/assets/img/icon-dash.svg';
-import Success from '../../../common/assets/img/icon-success.svg';
-import Fail from '../../../common/assets/img/icon-fail.svg';
-import Loader from '../../../common/assets/img/loader.svg';
-import Minus from '../../../common/assets/img/icon-minus.svg';
-import Plus from '../../../common/assets/img/icon-plus.svg';
+import Dash from 'assets/icon-dash.svg';
+import Success from 'assets/icon-success.svg';
+import Fail from 'assets/icon-fail.svg';
+import Loader from 'assets/loader.svg';
+import Minus from 'assets/icon-minus.svg';
+import Plus from 'assets/icon-plus.svg';
 import Button from '../../../common/basics/Button';
 import Input from '../../../common/basics/Input';
 import DatePicker from 'react-datepicker';
@@ -22,7 +22,7 @@ import useAuthStore from '../../../store/authStore/useAuthStore';
 import ConfirmBribeModal from '../components/AddBribePage/ConfirmBribeModal/ConfirmBribeModal';
 import { useDebounce } from '../../../common/hooks/useDebounce';
 import Tooltip, { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
-import ArrowLeft from '../../../common/assets/img/icon-arrow-left.svg';
+import ArrowLeft from 'assets/icon-arrow-left.svg';
 import { Link } from 'react-router-dom';
 import {
     addWeeks,

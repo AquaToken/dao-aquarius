@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../styles';
-import IconClose from '../assets/img/icon-close-small.svg';
+import IconClose from 'assets/icon-close-small.svg';
 import Timer from '../services/timer.service';
 import { TOAST_TYPE } from '../services/toast.service';
 import { IconFail, IconSuccess } from '../basics/Icons';

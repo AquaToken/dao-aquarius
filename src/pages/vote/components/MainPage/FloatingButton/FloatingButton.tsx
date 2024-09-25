@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { COLORS } from '../../../../../common/styles';
-import ArrowRight from '../../../../../common/assets/img/icon-arrow-right.svg';
+import ArrowRight from 'assets/icon-arrow-right.svg';
 import { flexAllCenter } from '../../../../../common/mixins';
 
 const FloatingButtonBody = styled.button`

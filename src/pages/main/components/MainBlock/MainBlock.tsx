@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import Stars from '../../../../common/assets/img/main-stars.svg';
-import Background from '../../../../common/assets/img/main-screen-img.svg';
+import Stars from 'assets/main-stars.svg';
+import Background from 'assets/main-screen-img.svg';
 import { Breakpoints, COLORS } from '../../../../common/styles';
 import { respondDown } from '../../../../common/mixins';
 import Button from '../../../../common/basics/Button';

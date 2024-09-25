@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { COLORS } from '../styles';
-import ArrowDown from '../assets/img/icon-arrow-down.svg';
+import ArrowDown from 'assets/icon-arrow-down.svg';
 import { useEffect, useRef, useState } from 'react';
 import useOnClickOutside from '../hooks/useOutsideClick';
 

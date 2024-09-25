@@ -2,9 +2,9 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../../../../common/styles';
 import { respondDown } from '../../../../../common/mixins';
-import Image1 from '../../../../../common/assets/img/why-freeze-aqua-1.svg';
-import Image2 from '../../../../../common/assets/img/why-freeze-aqua-2.svg';
-import Image3 from '../../../../../common/assets/img/why-freeze-aqua-3.svg';
+import Image1 from 'assets/why-freeze-aqua-1.svg';
+import Image2 from 'assets/why-freeze-aqua-2.svg';
+import Image3 from 'assets/why-freeze-aqua-3.svg';
 
 const Container = styled.div`
     display: flex;

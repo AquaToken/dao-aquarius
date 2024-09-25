@@ -8,8 +8,8 @@ import {
     getDateString,
     roundToPrecision,
 } from '../../../../../common/helpers/helpers';
-import IconFail from '../../../../../common/assets/img/icon-fail.svg';
-import IconSuccess from '../../../../../common/assets/img/icon-success.svg';
+import IconFail from 'assets/icon-fail.svg';
+import IconSuccess from 'assets/icon-success.svg';
 import CurrentResults from './CurrentResults/CurrentResults';
 import { Link } from 'react-router-dom';
 import { flexAllCenter, respondDown } from '../../../../../common/mixins';

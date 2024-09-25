@@ -16,10 +16,10 @@ import {
 import ErrorHandler from '../../../../../../common/helpers/error-handler';
 import useAuthStore from '../../../../../../store/authStore/useAuthStore';
 import styled from 'styled-components';
-import Aqua from '../../../../../../common/assets/img/aqua-logo-small.svg';
-import Ice from '../../../../../../common/assets/img/ice-logo.svg';
-import IconFail from '../../../../../../common/assets/img/icon-fail.svg';
-import IconSuccess from '../../../../../../common/assets/img/icon-success.svg';
+import Aqua from 'assets/aqua-logo-small.svg';
+import Ice from 'assets/ice-logo.svg';
+import IconFail from 'assets/icon-fail.svg';
+import IconSuccess from 'assets/icon-success.svg';
 import Checkbox from '../../../../../../common/basics/Checkbox';
 import { respondDown } from '../../../../../../common/mixins';
 import { LogVote } from '../../../../api/types';

@@ -10,7 +10,7 @@ import {
 } from '../../../../../common/helpers/helpers';
 import { flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
 import Tooltip, { TOOLTIP_POSITION } from '../../../../../common/basics/Tooltip';
-import Info from '../../../../../common/assets/img/icon-info.svg';
+import Info from 'assets/icon-info.svg';
 import Table, { CellAlign } from '../../../../../common/basics/Table';
 
 const Container = styled.div`

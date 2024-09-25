@@ -6,7 +6,7 @@ import { getNativePrices } from '../../../../amm/api/api';
 import { formatBalance, getAssetString } from '../../../../../common/helpers/helpers';
 import { StellarService } from '../../../../../common/services/globalServices';
 import { Asset } from '@stellar/stellar-sdk';
-import Warning from '../../../../../common/assets/img/icon-warning.svg';
+import Warning from 'assets/icon-warning.svg';
 import Tooltip, { TOOLTIP_POSITION } from '../../../../../common/basics/Tooltip';
 import { respondDown } from '../../../../../common/mixins';
 

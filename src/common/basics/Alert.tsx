@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import IconAlert from '../assets/img/icon-alert.svg';
+import IconAlert from 'assets/icon-alert.svg';
 import { COLORS } from '../styles';
 import { flexAllCenter } from '../mixins';
 

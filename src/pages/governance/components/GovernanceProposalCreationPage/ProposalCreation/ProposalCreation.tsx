@@ -14,7 +14,7 @@ import {
     CREATE_PROPOSAL_COST,
 } from '../../../pages/GovernanceMainPage';
 import { respondDown } from '../../../../../common/mixins';
-import ArrowLeft from '../../../../../common/assets/img/icon-arrow-left.svg';
+import ArrowLeft from 'assets/icon-arrow-left.svg';
 import { useParams } from 'react-router-dom';
 import { GovernanceRoutes } from '../../../../../routes';
 import CircleButton from '../../../../../common/basics/CircleButton';

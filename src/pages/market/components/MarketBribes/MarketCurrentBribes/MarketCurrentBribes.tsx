@@ -13,14 +13,14 @@ import {
     HowItWorksFooter,
     HowItWorksText,
 } from '../../../../vote/components/MainPage/BribesModal/BribesModal';
-import Close from '../../../../../common/assets/img/icon-close-small-purple.svg';
+import Close from 'assets/icon-close-small-purple.svg';
 
 import Asset from '../../../../vote/components/AssetDropdown/Asset';
 import { StellarService } from '../../../../../common/services/globalServices';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../../../../common/styles';
-import Aqua from '../../../../../common/assets/img/aqua-logo-small.svg';
-import Info from '../../../../../common/assets/img/icon-info.svg';
+import Aqua from 'assets/aqua-logo-small.svg';
+import Info from 'assets/icon-info.svg';
 import { respondDown } from '../../../../../common/mixins';
 import Table, { CellAlign } from '../../../../../common/basics/Table';
 

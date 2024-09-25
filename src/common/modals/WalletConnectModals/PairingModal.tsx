@@ -4,11 +4,11 @@ import { PairingTypes } from '@walletconnect/types';
 import { ModalDescription, ModalProps, ModalTitle } from '../atoms/ModalAtoms';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../styles';
-import IconCloseSmall from '../../assets/img/icon-close-small.svg';
-import IconPlus from '../../assets/img/icon-plus.svg';
-import IconQR from '../../assets/img/icon-qr.svg';
-import IconDeepLink from '../../assets/img/icon-deep-link.svg';
-import IconArrowRight from '../../assets/img/icon-arrow-right-purple.svg';
+import IconCloseSmall from 'assets/icon-close-small.svg';
+import IconPlus from 'assets/icon-plus.svg';
+import IconQR from 'assets/icon-qr.svg';
+import IconDeepLink from 'assets/icon-deep-link.svg';
+import IconArrowRight from 'assets/icon-arrow-right-purple.svg';
 import { flexAllCenter, respondDown } from '../../mixins';
 import {
     getWalletFromDeepLinkHistory,

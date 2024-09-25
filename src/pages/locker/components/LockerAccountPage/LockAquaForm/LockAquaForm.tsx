@@ -5,9 +5,9 @@ import { Breakpoints, COLORS, FONT_FAMILY } from '../../../../../common/styles';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
 import AccountService from '../../../../../common/services/account.service';
 import Input from '../../../../../common/basics/Input';
-import Aqua from '../../../../../common/assets/img/aqua-logo-small.svg';
-import Ice from '../../../../../common/assets/img/ice-logo.svg';
-import Info from '../../../../../common/assets/img/icon-info.svg';
+import Aqua from 'assets/aqua-logo-small.svg';
+import Ice from 'assets/ice-logo.svg';
+import Info from 'assets/icon-info.svg';
 import RangeInput from '../../../../../common/basics/RangeInput';
 import {
     formatBalance,

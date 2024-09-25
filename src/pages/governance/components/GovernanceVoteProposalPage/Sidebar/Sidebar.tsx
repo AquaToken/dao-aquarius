@@ -1,20 +1,14 @@
 import * as React from 'react';
 import { forwardRef, RefObject, useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
 import styled, { css } from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
+
+import Fail from 'assets/icon-fail.svg';
+import Success from 'assets/icon-success.svg';
+
 import NativeVotingButton from './VotingButton/VotingButton';
-import Success from '../../../../../common/assets/img/icon-success.svg';
-import Fail from '../../../../../common/assets/img/icon-fail.svg';
-import { ModalService } from '../../../../../common/services/globalServices';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
-import ChooseLoginMethodModal from '../../../../../common/modals/ChooseLoginMethodModal';
-import ConfirmVoteModal from '../ConfirmVoteModal/ConfirmVoteModal';
-// import CheckedIcon from '../../../../common/assets/img/icon-checked.svg';
-import { SimpleProposalOptions } from '../../../pages/GovernanceVoteProposalPage';
-import { Proposal } from '../../../api/types';
+
 import Button from '../../../../../common/basics/Button';
-import CreateDiscussionModal from '../../GovernanceProposalCreationPage/CreateDiscussionModal/CreateDiscussionModal';
-import { flexAllCenter, respondDown } from '../../../../../common/mixins';
 import {
     formatBalance,
     getDateString,
@@ -26,9 +20,17 @@ import ProposalStatus, {
     PROPOSAL_STATUS,
 } from '../../GovernanceMainPage/ProposalStatus/ProposalStatus';
 import ExternalLink from '../../../../../common/basics/ExternalLink';
-import { Link, useParams } from 'react-router-dom';
-import PublishProposalModal from '../../GovernanceProposalCreationPage/PublishProposalModal/PublishProposalModal';
+import { flexAllCenter, respondDown } from '../../../../../common/mixins';
+import ChooseLoginMethodModal from '../../../../../common/modals/ChooseLoginMethodModal';
+import { ModalService } from '../../../../../common/services/globalServices';
+import { Breakpoints, COLORS } from '../../../../../common/styles';
 import { GovernanceRoutes } from '../../../../../routes';
+import useAuthStore from '../../../../../store/authStore/useAuthStore';
+import { Proposal } from '../../../api/types';
+import { SimpleProposalOptions } from '../../../pages/GovernanceVoteProposalPage';
+import CreateDiscussionModal from '../../GovernanceProposalCreationPage/CreateDiscussionModal/CreateDiscussionModal';
+import PublishProposalModal from '../../GovernanceProposalCreationPage/PublishProposalModal/PublishProposalModal';
+import ConfirmVoteModal from '../ConfirmVoteModal/ConfirmVoteModal';
 
 const SidebarBlock = styled.aside`
     top: 2rem;
@@ -249,7 +251,7 @@ const Sidebar = forwardRef(
         const { isLogged, account } = useAuthStore();
         const { version } = useParams<{ version?: string }>();
 
-        const onVoteClick = (option) => {
+        const onVoteClick = option => {
             if (isLogged) {
                 ModalService.openModal(ConfirmVoteModal, option);
                 return;
@@ -424,7 +426,7 @@ const Sidebar = forwardRef(
         if (status === 'DISCUSSION') {
             if (version) {
                 const versionDate = proposal.history_proposal.find(
-                    (history) => history.version === Number(version),
+                    history => history.version === Number(version),
                 ).created_at;
                 return (
                     <SidebarBlock ref={ref} {...props}>

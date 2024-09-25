@@ -9,8 +9,8 @@ import {
     respondDown,
 } from '../../../common/mixins';
 import Button from '../../../common/basics/Button';
-import Plus from '../../../common/assets/img/icon-plus.svg';
-import Search from '../../../common/assets/img/icon-search.svg';
+import Plus from 'assets/icon-plus.svg';
+import Search from 'assets/icon-search.svg';
 import { Breakpoints, COLORS } from '../../../common/styles';
 import Input from '../../../common/basics/Input';
 import { AmmRoutes } from '../../../routes';

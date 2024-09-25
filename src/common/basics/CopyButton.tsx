@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import Tooltip, { TOOLTIP_POSITION } from './Tooltip';
 
-import CopyIcon from '../assets/img/icon-copy.svg';
+import CopyIcon from 'assets/icon-copy.svg';
 import { COLORS } from '../styles';
 
 const CopyButtonContainer = styled(props => <div {...props} />)`

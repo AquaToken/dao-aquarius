@@ -32,7 +32,7 @@ import Title from 'react-document-title';
 import LiveOnSorobanAlert, {
     LIVE_ON_SOROBAN_SHOWED_ALIAS,
 } from './common/modals/LiveOnSorobanAlert';
-import LiveOnSorobanImage from './common/assets/img/live-on-soroban.svg';
+import LiveOnSorobanImage from 'assets/live-on-soroban.svg';
 import ErrorBoundary from './common/components/ErrorBoundary/ErrorBoundary';
 import SentryService from './common/services/sentry.service';
 import { getActiveProposalsCount } from './pages/governance/api/api';

@@ -2,8 +2,8 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { flexAllCenter } from '../../../../../common/mixins';
 import { COLORS } from '../../../../../common/styles';
-import IconSuccess from '../../../../../common/assets/img/icon-success.svg';
-import IconPending from '../../../../../common/assets/img/icon-pending.svg';
+import IconSuccess from 'assets/icon-success.svg';
+import IconPending from 'assets/icon-pending.svg';
 
 export enum PROPOSAL_STATUS {
     DISCUSSION = 'discussion',

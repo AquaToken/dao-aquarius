@@ -4,7 +4,7 @@ import PageLoader from '../../../../common/basics/PageLoader';
 import Table, { CellAlign } from '../../../../common/basics/Table';
 import { FilterOptions, getPools, PoolsSortFields } from '../../api/api';
 import Tooltip, { TOOLTIP_POSITION } from '../../../../common/basics/Tooltip';
-import Info from '../../../../common/assets/img/icon-info.svg';
+import Info from 'assets/icon-info.svg';
 import { Breakpoints, COLORS } from '../../../../common/styles';
 import Market from '../../../vote/components/common/Market';
 import { POOL_TYPE } from '../../../../common/services/soroban.service';

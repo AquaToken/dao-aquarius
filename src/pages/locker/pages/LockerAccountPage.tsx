@@ -13,7 +13,7 @@ import Portfolio from '../components/LockerAccountPage/Portfolio/Portfolio';
 import CurrentLocks from '../components/LockerAccountPage/CurrentLocks/CurrentLocks';
 import LockAquaForm from '../components/LockerAccountPage/LockAquaForm/LockAquaForm';
 import { useIsOnViewport } from '../../../common/hooks/useIsOnViewport';
-import ArrowDown from '../../../common/assets/img/icon-arrow-down.svg';
+import ArrowDown from 'assets/icon-arrow-down.svg';
 import { getDistributionForAccount } from '../../../api/ice-locker';
 import IceBlock from '../components/LockerAccountPage/IceBlock/IceBlock';
 import { StellarEvents } from '../../../common/services/stellar.service';

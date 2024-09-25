@@ -6,8 +6,8 @@ import { roundToPrecision } from '../../../../../common/helpers/helpers';
 import { SimpleProposalResultsLabels } from '../../../pages/GovernanceVoteProposalPage';
 import { Proposal } from '../../../api/types';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
-import Fail from '../../../../../common/assets/img/icon-fail.svg';
-import Info from '../../../../../common/assets/img/icon-info.svg';
+import Fail from 'assets/icon-fail.svg';
+import Info from 'assets/icon-info.svg';
 import Tooltip, { TOOLTIP_POSITION } from '../../../../../common/basics/Tooltip';
 
 const ResultBlock = styled.div`

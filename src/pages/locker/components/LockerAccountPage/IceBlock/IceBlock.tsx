@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../../../../common/styles';
 import { respondDown } from '../../../../../common/mixins';
-import IceLogo from '../../../../../common/assets/img/ice-logo.svg';
+import IceLogo from 'assets/ice-logo.svg';
 import { formatBalance } from '../../../../../common/helpers/helpers';
 import ExternalLink from '../../../../../common/basics/ExternalLink';
 import { GOV_ICE_CODE, ICE_CODE, ICE_ISSUER } from '../../../../../common/services/stellar.service';

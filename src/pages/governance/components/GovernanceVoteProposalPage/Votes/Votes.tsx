@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../../../../common/styles';
-import ExternalLinkIcon from '../../../../../common/assets/img/icon-external-link.svg';
+import ExternalLinkIcon from 'assets/icon-external-link.svg';
 import AccountViewer from '../../../../../common/basics/AccountViewer';
 import Solution from '../Solution/Solution';
 import { formatBalance, getDateString } from '../../../../../common/helpers/helpers';
@@ -10,11 +10,11 @@ import { IconSort } from '../../../../../common/basics/Icons';
 import { useParams } from 'react-router-dom';
 import { Vote } from '../../../api/types';
 import { getVotes, getVoteTxHash, UPDATE_INTERVAL, VoteFields } from '../../../api/api';
-import Loader from '../../../../../common/assets/img/loader.svg';
+import Loader from 'assets/loader.svg';
 import { flexAllCenter, respondDown } from '../../../../../common/mixins';
 import Pagination from '../../../../../common/basics/Pagination';
-import Aqua from '../../../../../common/assets/img/aqua-logo-small.svg';
-import Ice from '../../../../../common/assets/img/ice-logo.svg';
+import Aqua from 'assets/aqua-logo-small.svg';
+import Ice from 'assets/ice-logo.svg';
 
 const VotesBlock = styled.div`
     width: 100%;

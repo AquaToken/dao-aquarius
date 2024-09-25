@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../../../common/styles';
 import Button from '../../../../../common/basics/Button';
-import Plus from '../../../../../common/assets/img/icon-plus.svg';
+import Plus from 'assets/icon-plus.svg';
 import Market from '../../../../vote/components/common/Market';
 import Asset from '../../../../vote/components/AssetDropdown/Asset';
 import { useHistory } from 'react-router-dom';

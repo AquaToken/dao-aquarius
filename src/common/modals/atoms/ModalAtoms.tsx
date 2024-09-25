@@ -10,7 +10,7 @@ import {
     useRef,
     useState,
 } from 'react';
-import CloseIcon from '../../assets/img/icon-close.svg';
+import CloseIcon from 'assets/icon-close.svg';
 import useOnClickOutside from '../../hooks/useOutsideClick';
 
 const ModalWrapper = styled.div`

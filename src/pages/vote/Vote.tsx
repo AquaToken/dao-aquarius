@@ -4,7 +4,7 @@ import { Route, Switch } from 'react-router-dom';
 import { ModalService } from '../../common/services/globalServices';
 import NotFoundPage from '../../common/components/NotFoundPage/NotFoundPage';
 import ProjectPurposeModal, { SHOW_PURPOSE_ALIAS } from './components/common/ProjectPurposeModal';
-import BG from '../../common/assets/img/purpose-modal-background.svg';
+import BG from 'assets/purpose-modal-background.svg';
 import styled from 'styled-components';
 import { respondDown } from '../../common/mixins';
 import { Breakpoints } from '../../common/styles';

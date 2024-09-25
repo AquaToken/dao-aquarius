@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
-import ArrowDown from '../../../../common/assets/img/icon-arrow-down.svg';
-import Loader from '../../../../common/assets/img/loader.svg';
-import Fail from '../../../../common/assets/img/icon-fail.svg';
+import ArrowDown from 'assets/icon-arrow-down.svg';
+import Loader from 'assets/loader.svg';
+import Fail from 'assets/icon-fail.svg';
 import { Breakpoints, COLORS } from '../../../../common/styles';
 import useOnClickOutside from '../../../../common/hooks/useOutsideClick';
 import Asset from './Asset';

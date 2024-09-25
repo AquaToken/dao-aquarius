@@ -2,9 +2,9 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { COLORS } from '../styles';
 import { flexAllCenter } from '../mixins';
-import Success from '../assets/img/icon-success.svg';
-import Fail from '../assets/img/icon-fail.svg';
-import Pending from '../assets/img/icon-pending.svg';
+import Success from 'assets/icon-success.svg';
+import Fail from 'assets/icon-fail.svg';
+import Pending from 'assets/icon-pending.svg';
 
 const IconBlock = styled.div<{ $isBig?: boolean }>`
     height: ${({ $isBig }) => ($isBig ? '5.6rem' : '4rem')};

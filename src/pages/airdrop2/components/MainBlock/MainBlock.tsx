@@ -1,8 +1,8 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../../../common/styles';
-import Image from '../../../../common/assets/img/airdrop2-image.svg';
-import Airdrop from '../../../../common/assets/img/airdrop2.svg';
+import Image from 'assets/airdrop2-image.svg';
+import Airdrop from 'assets/airdrop2.svg';
 import { respondDown } from '../../../../common/mixins';
 
 const Container = styled.section`

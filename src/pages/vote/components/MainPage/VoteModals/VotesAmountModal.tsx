@@ -8,8 +8,8 @@ import {
 import styled from 'styled-components';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../../../common/styles';
-import Aqua from '../../../../../common/assets/img/aqua-logo-small.svg';
-import Ice from '../../../../../common/assets/img/ice-logo.svg';
+import Aqua from 'assets/aqua-logo-small.svg';
+import Ice from 'assets/ice-logo.svg';
 import useAuthStore from '../../../../../store/authStore/useAuthStore';
 import Input from '../../../../../common/basics/Input';
 import RangeInput from '../../../../../common/basics/RangeInput';
@@ -22,7 +22,7 @@ import {
 import { formatBalance, roundToPrecision } from '../../../../../common/helpers/helpers';
 import ExternalLink from '../../../../../common/basics/ExternalLink';
 import GetAquaModal from '../../../../../common/modals/GetAquaModal/GetAquaModal';
-import CloseIcon from '../../../../../common/assets/img/icon-close-small.svg';
+import CloseIcon from 'assets/icon-close-small.svg';
 import Market from '../../common/Market';
 import { PairStats } from '../../../api/types';
 import { AQUA, DOWN_ICE, SELECTED_PAIRS_ALIAS, UP_ICE } from '../MainPage';

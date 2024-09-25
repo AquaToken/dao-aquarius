@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../styles';
-import Soroban from '../../assets/img/soroban.svg';
+import Soroban from 'assets/soroban.svg';
 import Button from '../../basics/Button';
 import { respondDown } from '../../mixins';
 import { useEffect, useState } from 'react';

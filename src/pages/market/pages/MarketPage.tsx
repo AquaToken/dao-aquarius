@@ -19,7 +19,7 @@ import YourVotes from '../components/YourVotes/YourVotes';
 import TradeStats from '../components/TradeStats/TradeStats';
 import Rewards from '../components/Rewards/Rewards';
 import { useIsOverScrolled } from '../../../common/hooks/useIsOnViewport';
-import ArrowLeft from '../../../common/assets/img/icon-arrow-left.svg';
+import ArrowLeft from 'assets/icon-arrow-left.svg';
 import AmmStats from '../components/AmmStats/AmmStats';
 import { VoteRoutes } from '../../../routes';
 import useAssetsStore from '../../../store/assetsStore/useAssetsStore';

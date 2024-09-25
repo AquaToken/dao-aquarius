@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import * as StellarSdk from '@stellar/stellar-sdk';
 import { Breakpoints, COLORS } from '../../../../common/styles';
 import AssetLogo, { bigLogoStyles, logoStyles } from '../AssetDropdown/AssetLogo';
-import External from '../../../../common/assets/img/icon-external-link.svg';
-import Arrow from '../../../../common/assets/img/icon-link-arrow.svg';
+import External from 'assets/icon-external-link.svg';
+import Arrow from 'assets/icon-link-arrow.svg';
 import { flexAllCenter, respondDown } from '../../../../common/mixins';
 import {
     AuthRequiredLabel,

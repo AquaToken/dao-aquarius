@@ -6,9 +6,9 @@ import { StellarEvents } from '../../../../../../common/services/stellar.service
 import { formatBalance } from '../../../../../../common/helpers/helpers';
 import useAuthStore from '../../../../../../store/authStore/useAuthStore';
 import Button from '../../../../../../common/basics/Button';
-import IconTick from '../../../../../../common/assets/img/icon-tick.svg';
-import IconLike from '../../../../../../common/assets/img/icon-like-white.svg';
-import IconDislike from '../../../../../../common/assets/img/icon-dislike-black.svg';
+import IconTick from 'assets/icon-tick.svg';
+import IconLike from 'assets/icon-like-white.svg';
+import IconDislike from 'assets/icon-dislike-black.svg';
 import { flexRowSpaceBetween } from '../../../../../../common/mixins';
 import { PairStats } from '../../../../api/types';
 import ChooseLoginMethodModal from '../../../../../../common/modals/ChooseLoginMethodModal';

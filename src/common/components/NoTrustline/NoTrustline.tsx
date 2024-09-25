@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Asset as AssetType } from '@stellar/stellar-sdk';
 import useAuthStore from '../../../store/authStore/useAuthStore';
 import Asset from '../../../pages/vote/components/AssetDropdown/Asset';
-import Plus from '../../assets/img/icon-plus.svg';
+import Plus from 'assets/icon-plus.svg';
 import styled from 'styled-components';
 import Button from '../../basics/Button';
 import { respondDown } from '../../mixins';

@@ -11,12 +11,12 @@ import { respondDown } from '../../../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../../../common/styles';
 import { convertUTCToLocalDateIgnoringTimezone } from '../../../../bribes/pages/AddBribePage';
 import { formatBalance, getDateString } from '../../../../../common/helpers/helpers';
-import Aqua from '../../../../../common/assets/img/aqua-logo-small.svg';
-import Close from '../../../../../common/assets/img/icon-close-small-purple.svg';
+import Aqua from 'assets/aqua-logo-small.svg';
+import Close from 'assets/icon-close-small-purple.svg';
 import ExternalLink from '../../../../../common/basics/ExternalLink';
 import Asset from '../../AssetDropdown/Asset';
 import { StellarService } from '../../../../../common/services/globalServices';
-import Info from '../../../../../common/assets/img/icon-info.svg';
+import Info from 'assets/icon-info.svg';
 import Table, { CellAlign } from '../../../../../common/basics/Table';
 
 const ModalContainer = styled.div`

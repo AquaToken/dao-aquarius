@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { formatBalance } from '../../../../../common/helpers/helpers';
-import Revert from '../../../../../common/assets/img/icon-revert.svg';
+import Revert from 'assets/icon-revert.svg';
 import styled from 'styled-components';
 import { COLORS } from '../../../../../common/styles';
 

@@ -1,17 +1,17 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../../../common/styles';
-import Lobstr from '../../../../common/assets/img/lobstr-name-logo.svg';
-import StellarX from '../../../../common/assets/img/stellarx-logo.svg';
-import Stellarterm from '../../../../common/assets/img/stellarterm-logo.svg';
-import Lumenswap from '../../../../common/assets/img/lumenswap.svg';
-import Ledger from '../../../../common/assets/img/ledger.svg';
-import Freighter from '../../../../common/assets/img/freighter.svg';
-import Upbit from '../../../../common/assets/img/upbit.svg';
-import Bitnumb from '../../../../common/assets/img/bitnumb.svg';
-import Gopax from '../../../../common/assets/img/gopax.svg';
-import Probit from '../../../../common/assets/img/probit.svg';
-import Coinone from '../../../../common/assets/img/coinone.svg';
+import Lobstr from 'assets/lobstr-name-logo.svg';
+import StellarX from 'assets/stellarx-logo.svg';
+import Stellarterm from 'assets/stellarterm-logo.svg';
+import Lumenswap from 'assets/lumenswap.svg';
+import Ledger from 'assets/ledger.svg';
+import Freighter from 'assets/freighter.svg';
+import Upbit from 'assets/upbit.svg';
+import Bitnumb from 'assets/bitnumb.svg';
+import Gopax from 'assets/gopax.svg';
+import Probit from 'assets/probit.svg';
+import Coinone from 'assets/coinone.svg';
 import ExternalLink from '../../../../common/basics/ExternalLink';
 import { respondDown } from '../../../../common/mixins';
 

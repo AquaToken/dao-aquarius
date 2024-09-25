@@ -3,8 +3,8 @@ import styled, { css } from 'styled-components';
 import { COLORS } from '../../../../../../common/styles';
 import { formatBalance } from '../../../../../../common/helpers/helpers';
 import { SimpleProposalResultsLabels } from '../../../../pages/GovernanceVoteProposalPage';
-import Success from '../../../../../../common/assets/img/icon-success.svg';
-import Fail from '../../../../../../common/assets/img/icon-fail.svg';
+import Success from 'assets/icon-success.svg';
+import Fail from 'assets/icon-fail.svg';
 import { flexAllCenter } from '../../../../../../common/mixins';
 
 const ProgressLine = styled.div`

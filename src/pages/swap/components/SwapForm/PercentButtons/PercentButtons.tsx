@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Tooltip, { TOOLTIP_POSITION } from '../../../../../common/basics/Tooltip';
 import { Breakpoints, COLORS } from '../../../../../common/styles';
-import Info from '../../../../../common/assets/img/icon-info.svg';
+import Info from 'assets/icon-info.svg';
 import styled from 'styled-components';
 import useAuthStore from '../../../../../store/authStore/useAuthStore';
 import { Asset } from '@stellar/stellar-sdk';

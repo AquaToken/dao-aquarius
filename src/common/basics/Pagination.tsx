@@ -2,8 +2,8 @@ import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { Breakpoints, COLORS } from '../styles';
-import Left from '../assets/img/icon-arrow-left.svg';
-import Right from '../assets/img/icon-arrow-right.svg';
+import Left from 'assets/icon-arrow-left.svg';
+import Right from 'assets/icon-arrow-right.svg';
 import { flexAllCenter, respondDown } from '../mixins';
 
 const Container = styled.div`

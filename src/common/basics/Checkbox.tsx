@@ -2,7 +2,7 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { COLORS } from '../styles';
 import { flexAllCenter } from '../mixins';
-import Tick from '../assets/img/icon-checkbox-tick.svg';
+import Tick from 'assets/icon-checkbox-tick.svg';
 
 const CheckboxContainer = styled.div<{ disabled?: boolean }>`
     display: flex;

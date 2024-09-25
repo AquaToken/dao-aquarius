@@ -12,7 +12,7 @@ import { respondDown } from '../../../../common/mixins';
 import { PoolExtended } from '../../api/types';
 import Pagination from '../../../../common/basics/Pagination';
 import { useUpdateIndex } from '../../../../common/hooks/useUpdateIndex';
-import LinkIcon from '../../../../common/assets/img/icon-external-link.svg';
+import LinkIcon from 'assets/icon-external-link.svg';
 import ExternalLink from '../../../../common/basics/ExternalLink';
 
 const Title = styled.h3`

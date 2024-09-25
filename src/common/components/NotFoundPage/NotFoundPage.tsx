@@ -2,7 +2,7 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../styles';
 import { flexAllCenter, respondDown } from '../../mixins';
-import LinkArrowIcon from '../../assets/img/icon-link-arrow.svg';
+import LinkArrowIcon from 'assets/icon-link-arrow.svg';
 import { Link } from 'react-router-dom';
 
 const MainBlock = styled.main`

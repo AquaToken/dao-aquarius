@@ -3,10 +3,10 @@ import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../../../common/styles';
 import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
 import { formatBalance } from '../../../../common/helpers/helpers';
-import IconUp from '../../../../common/assets/img/icon-up-percent.svg';
-import IconDown from '../../../../common/assets/img/icon-down-percent.svg';
-import Ice from '../../../../common/assets/img/ice-logo.svg';
-import Aqua from '../../../../common/assets/img/aqua-logo-small.svg';
+import IconUp from 'assets/icon-up-percent.svg';
+import IconDown from 'assets/icon-down-percent.svg';
+import Ice from 'assets/ice-logo.svg';
+import Aqua from 'assets/aqua-logo-small.svg';
 import { getPercent } from '../../../vote/components/MainPage/Table/VoteAmount/VoteAmount';
 import VotesProgressLine from './VotesProgressLine/VotesProgressLine';
 import {

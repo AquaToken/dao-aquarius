@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { COLORS } from '../../../../../common/styles';
-import AquaLogo from '../../../../../common/assets/img/aqua-logo-small.svg';
+import AquaLogo from 'assets/aqua-logo-small.svg';
 import ExternalLink from '../../../../../common/basics/ExternalLink';
 import Button from '../../../../../common/basics/Button';
 import { ModalService } from '../../../../../common/services/globalServices';

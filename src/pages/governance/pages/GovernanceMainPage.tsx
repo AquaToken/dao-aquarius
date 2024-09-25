@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import BackgroundImageLeft from '../../../common/assets/img/background-left.svg';
-import BackgroundImageRight from '../../../common/assets/img/background-right.svg';
+import BackgroundImageLeft from 'assets/background-left.svg';
+import BackgroundImageRight from 'assets/background-right.svg';
 import { Breakpoints, COLORS } from '../../../common/styles';
 import { commonMaxWidth, flexAllCenter, respondDown } from '../../../common/mixins';
 import PageLoader from '../../../common/basics/PageLoader';
@@ -17,7 +17,7 @@ import useAuthStore from '../../../store/authStore/useAuthStore';
 import { ModalService } from '../../../common/services/globalServices';
 import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
 import { useIsOnViewport } from '../../../common/hooks/useIsOnViewport';
-import ArrowDown from '../../../common/assets/img/icon-arrow-down.svg';
+import ArrowDown from 'assets/icon-arrow-down.svg';
 import { GovernanceRoutes } from '../../../routes';
 
 export const CREATE_DISCUSSION_COST = 100000;

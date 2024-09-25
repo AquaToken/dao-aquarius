@@ -18,7 +18,7 @@ import { Link } from 'react-router-dom';
 import { MainRoutes } from '../../../routes';
 import { Breakpoints, COLORS } from '../../../common/styles';
 import { flexRowSpaceBetween, respondDown } from '../../../common/mixins';
-import Info from '../../../common/assets/img/icon-info.svg';
+import Info from 'assets/icon-info.svg';
 import Tooltip, { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
 import Table, { CellAlign } from '../../../common/basics/Table';
 import Checkbox from '../../../common/basics/Checkbox';

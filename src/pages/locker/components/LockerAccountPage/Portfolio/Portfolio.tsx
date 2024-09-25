@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../../../../common/styles';
 import { flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
-import AquaLogo from '../../../../../common/assets/img/aqua-logo-small.svg';
+import AquaLogo from 'assets/aqua-logo-small.svg';
 import AccountService from '../../../../../common/services/account.service';
 import { formatBalance, roundToPrecision } from '../../../../../common/helpers/helpers';
 import PageLoader from '../../../../../common/basics/PageLoader';

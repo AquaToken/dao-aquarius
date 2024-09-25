@@ -8,10 +8,10 @@ import {
 import styled, { css } from 'styled-components';
 import { flexAllCenter, flexRowSpaceBetween } from '../../../../../common/mixins';
 import { COLORS } from '../../../../../common/styles';
-import Fail from '../../../../../common/assets/img/icon-fail.svg';
-import Success from '../../../../../common/assets/img/icon-success.svg';
-import Aqua from '../../../../../common/assets/img/aqua-logo-small.svg';
-import Ice from '../../../../../common/assets/img/ice-logo.svg';
+import Fail from 'assets/icon-fail.svg';
+import Success from 'assets/icon-success.svg';
+import Aqua from 'assets/aqua-logo-small.svg';
+import Ice from 'assets/ice-logo.svg';
 import useAuthStore from '../../../../../store/authStore/useAuthStore';
 import Input from '../../../../../common/basics/Input';
 import RangeInput from '../../../../../common/basics/RangeInput';

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import PageLoader from '../../../../../common/basics/PageLoader';
-import SwapIcon from '../../../../../common/assets/img/icon-arrows-circle.svg';
+import SwapIcon from 'assets/icon-arrows-circle.svg';
 import styled from 'styled-components';
 import { flexAllCenter, respondDown } from '../../../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../../../common/styles';

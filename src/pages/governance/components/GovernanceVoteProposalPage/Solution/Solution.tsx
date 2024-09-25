@@ -2,8 +2,8 @@ import * as React from 'react';
 import styled, { css } from 'styled-components';
 import { COLORS } from '../../../../../common/styles';
 
-import Success from '../../../../../common/assets/img/icon-success.svg';
-import Fail from '../../../../../common/assets/img/icon-fail.svg';
+import Success from 'assets/icon-success.svg';
+import Fail from 'assets/icon-fail.svg';
 import { VoteChoiceSimple } from '../../../api/types';
 
 const SolutionBlock = styled.div`

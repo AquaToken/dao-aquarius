@@ -15,7 +15,7 @@ import * as StellarSdk from '@stellar/stellar-sdk';
 import { StellarService, ToastService } from '../../../../../common/services/globalServices';
 import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
 import { BuildSignAndSubmitStatuses } from '../../../../../common/services/wallet-connect.service';
-import Info from '../../../../../common/assets/img/icon-info.svg';
+import Info from 'assets/icon-info.svg';
 import Tooltip, { TOOLTIP_POSITION } from '../../../../../common/basics/Tooltip';
 import ErrorHandler from '../../../../../common/helpers/error-handler';
 import { LoginTypes } from '../../../../../store/authStore/types';

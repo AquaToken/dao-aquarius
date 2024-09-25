@@ -28,7 +28,7 @@ import ExternalLink from '../../../common/basics/ExternalLink';
 import { BuildSignAndSubmitStatuses } from '../../../common/services/wallet-connect.service';
 import { PoolExtended } from '../api/types';
 import CircleButton from '../../../common/basics/CircleButton';
-import ArrowLeft from '../../../common/assets/img/icon-arrow-left.svg';
+import ArrowLeft from 'assets/icon-arrow-left.svg';
 import { AmmRoutes } from '../../../routes';
 import PoolMembers from '../components/PoolMembers/PoolMembers';
 import PoolEvents from '../components/PoolEvents/PoolEvents';

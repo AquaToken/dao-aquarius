@@ -1,9 +1,9 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../../../../common/styles';
-import Aqua from '../../../../../common/assets/img/aqua-logo-small.svg';
-import Xlm from '../../../../../common/assets/img/xlm-logo.svg';
-import YXlm from '../../../../../common/assets/img/yxlm-logo.svg';
+import Aqua from 'assets/aqua-logo-small.svg';
+import Xlm from 'assets/xlm-logo.svg';
+import YXlm from 'assets/yxlm-logo.svg';
 import { BalanceLabel } from '../../../../locker/components/LockerAccountPage/Portfolio/Portfolio';
 import ExternalLink from '../../../../../common/basics/ExternalLink';
 import { LockerRoutes } from '../../../../../routes';

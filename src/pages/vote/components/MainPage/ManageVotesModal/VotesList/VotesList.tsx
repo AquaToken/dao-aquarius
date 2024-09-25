@@ -6,7 +6,7 @@ import { Breakpoints, COLORS } from '../../../../../../common/styles';
 import Market from '../../../common/Market';
 import { formatBalance, getDateString } from '../../../../../../common/helpers/helpers';
 import Tooltip, { TOOLTIP_POSITION } from '../../../../../../common/basics/Tooltip';
-import Dislike from '../../../../../../common/assets/img/icon-dislike-gray.svg';
+import Dislike from 'assets/icon-dislike-gray.svg';
 import { BuildSignAndSubmitStatuses } from '../../../../../../common/services/wallet-connect.service';
 import {
     DOWN_ICE_CODE,
@@ -21,7 +21,7 @@ import useAuthStore from '../../../../../../store/authStore/useAuthStore';
 import styled from 'styled-components';
 import { respondDown } from '../../../../../../common/mixins';
 import Button from '../../../../../../common/basics/Button';
-import LinkIcon from '../../../../../../common/assets/img/icon-external-link.svg';
+import LinkIcon from 'assets/icon-external-link.svg';
 import { MarketPair } from '../../../../../profile/api/types';
 import { openCurrentWalletIfExist } from '../../../../../../common/helpers/wallet-connect-helpers';
 

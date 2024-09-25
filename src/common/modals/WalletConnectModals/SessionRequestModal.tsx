@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ModalDescription, ModalProps, ModalTitle } from '../atoms/ModalAtoms';
-import Aqua from '../../assets/img/aqua-logo-small.svg';
-import ArrowsIcon from '../../assets/img/icon-arrows-circle.svg';
+import Aqua from 'assets/aqua-logo-small.svg';
+import ArrowsIcon from 'assets/icon-arrows-circle.svg';
 import styled, { css } from 'styled-components';
 import { flexAllCenter, respondDown } from '../../mixins';
 import { Breakpoints, COLORS } from '../../styles';

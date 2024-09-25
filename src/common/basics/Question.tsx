@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { flexRowSpaceBetween } from '../mixins';
-import Down from '../assets/img/icon-arrow-down.svg';
+import Down from 'assets/icon-arrow-down.svg';
 import { COLORS } from '../styles';
 import { useState } from 'react';
 

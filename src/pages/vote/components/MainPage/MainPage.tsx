@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
-import BackgroundImageLeft from '../../../../common/assets/img/background-left.svg';
-import BackgroundImageRight from '../../../../common/assets/img/background-right.svg';
-import Info from '../../../../common/assets/img/icon-info.svg';
+import BackgroundImageLeft from 'assets/background-left.svg';
+import BackgroundImageRight from 'assets/background-right.svg';
+import Info from 'assets/icon-info.svg';
 import { Breakpoints, COLORS } from '../../../../common/styles';
 import {
     commonMaxWidth,
@@ -19,7 +19,7 @@ import { ModalService, StellarService } from '../../../../common/services/global
 import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
 import useAuthStore from '../../../../store/authStore/useAuthStore';
 import AssetDropdown from '../AssetDropdown/AssetDropdown';
-import Arrows from '../../../../common/assets/img/icon-arrows-circle.svg';
+import Arrows from 'assets/icon-arrows-circle.svg';
 import {
     getFilteredPairsList,
     getPairsList,
@@ -51,8 +51,8 @@ import { useHistory, useLocation } from 'react-router-dom';
 import useAssetsStore from '../../../../store/assetsStore/useAssetsStore';
 import { MainRoutes, MarketRoutes } from '../../../../routes';
 import { LoginTypes } from '../../../../store/authStore/types';
-import Ice from '../../../../common/assets/img/ice-logo.svg';
-import Aqua from '../../../../common/assets/img/aqua-logo-small.svg';
+import Ice from 'assets/ice-logo.svg';
+import Aqua from 'assets/aqua-logo-small.svg';
 import { getAssetString } from '../../../../store/assetsStore/actions';
 
 const MainBlock = styled.main`

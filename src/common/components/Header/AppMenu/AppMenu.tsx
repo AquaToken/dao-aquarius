@@ -2,12 +2,12 @@ import * as React from 'react';
 import { LoginTypes } from '../../../../store/authStore/types';
 import styled from 'styled-components';
 import { Breakpoints, COLORS, Z_INDEX } from '../../../styles';
-import IconLogout from '../../../assets/img/icon-logout.svg';
-import IconPlus from '../../../assets/img/icon-plus.svg';
-import Aqua from '../../../assets/img/aqua-logo-small.svg';
-import Ice from '../../../assets/img/ice-logo.svg';
-import IconCopy from '../../../assets/img/icon-copy.svg';
-import External from '../../../assets/img/icon-external-link.svg';
+import IconLogout from 'assets/icon-logout.svg';
+import IconPlus from 'assets/icon-plus.svg';
+import Aqua from 'assets/aqua-logo-small.svg';
+import Ice from 'assets/ice-logo.svg';
+import IconCopy from 'assets/icon-copy.svg';
+import External from 'assets/icon-external-link.svg';
 import useAuthStore from '../../../../store/authStore/useAuthStore';
 import {
     ModalService,

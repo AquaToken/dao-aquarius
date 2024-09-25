@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../../common/styles';
-import FreezeAqua from '../../../common/assets/img/freeze-aqua-banner.svg';
+import FreezeAqua from 'assets/freeze-aqua-banner.svg';
 import Label from '../../../common/basics/Label';
 import Button from '../../../common/basics/Button';
 import { Link } from 'react-router-dom';

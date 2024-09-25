@@ -7,11 +7,11 @@ import { StellarService } from '../services/globalServices';
 import AccountService from '../services/account.service';
 import { flexAllCenter, respondDown } from '../mixins';
 import { Breakpoints, COLORS } from '../styles';
-import Stellar from '../assets/img/xlm-logo.svg';
-import ArrowRight from '../assets/img/icon-arrow-right.svg';
+import Stellar from 'assets/xlm-logo.svg';
+import ArrowRight from 'assets/icon-arrow-right.svg';
 import CopyButton from '../basics/CopyButton';
-import XdrLogo from '../assets/img/icon-xdr.svg';
-import Copy from '../assets/img/icon-copy.svg';
+import XdrLogo from 'assets/icon-xdr.svg';
+import Copy from 'assets/icon-copy.svg';
 
 const Container = styled.div`
     width: 52.8rem;

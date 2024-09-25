@@ -5,11 +5,11 @@ import styled from 'styled-components';
 import { Breakpoints, COLORS } from '../../../../../../common/styles';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../../../common/mixins';
 import { PairStats, TotalStats } from '../../../../api/types';
-import InfoIcon from '../../../../../../common/assets/img/icon-info.svg';
-import IconUp from '../../../../../../common/assets/img/icon-up-percent.svg';
-import IconDown from '../../../../../../common/assets/img/icon-down-percent.svg';
-import Ice from '../../../../../../common/assets/img/ice-logo.svg';
-import Aqua from '../../../../../../common/assets/img/aqua-logo-small.svg';
+import InfoIcon from 'assets/icon-info.svg';
+import IconUp from 'assets/icon-up-percent.svg';
+import IconDown from 'assets/icon-down-percent.svg';
+import Ice from 'assets/ice-logo.svg';
+import Aqua from 'assets/aqua-logo-small.svg';
 import {
     AQUA_CODE,
     AQUA_ISSUER,

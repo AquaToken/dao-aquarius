@@ -5,7 +5,7 @@ import { Breakpoints } from '../styles';
 import { ModalDescription, ModalTitle } from './atoms/ModalAtoms';
 import ExternalLink from '../basics/ExternalLink';
 
-import Logo from '../assets/img/freighter-logo.svg';
+import Logo from 'assets/freighter-logo.svg';
 
 const Container = styled.div`
     width: 52.8rem;

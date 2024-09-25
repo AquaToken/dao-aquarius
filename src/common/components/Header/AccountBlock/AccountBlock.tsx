@@ -4,8 +4,8 @@ import useAuthStore from '../../../../store/authStore/useAuthStore';
 import styled, { createGlobalStyle } from 'styled-components';
 import { Breakpoints, COLORS } from '../../../styles';
 import Identicon from '../../../basics/Identicon';
-import ArrowDown from '../../../assets/img/icon-arrow-down.svg';
-import CloseIcon from '../../../assets/img/icon-close-small.svg';
+import ArrowDown from 'assets/icon-arrow-down.svg';
+import CloseIcon from 'assets/icon-close-small.svg';
 import useOnClickOutside from '../../../hooks/useOutsideClick';
 import { flexAllCenter, respondDown, textEllipsis } from '../../../mixins';
 import AppMenu from '../AppMenu/AppMenu';
@@ -13,7 +13,7 @@ import { LoginTypes } from '../../../../store/authStore/types';
 import Button from '../../../basics/Button';
 import { ModalService } from '../../../services/globalServices';
 import ChooseLoginMethodModal from '../../../modals/ChooseLoginMethodModal';
-import MobileMenuIcon from '../../../assets/img/icon-mobile-menu.svg';
+import MobileMenuIcon from 'assets/icon-mobile-menu.svg';
 
 const Wrapper = styled.div`
     position: relative;

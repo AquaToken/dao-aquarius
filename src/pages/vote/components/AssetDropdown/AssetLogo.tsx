@@ -3,8 +3,8 @@ import * as React from 'react';
 import { useState } from 'react';
 import styled, { css } from 'styled-components';
 
-import UnknownLogo from '../../../../common/assets/img/asset-unknown-logo.svg';
-import Loader from '../../../../common/assets/img/loader.svg';
+import UnknownLogo from 'assets/asset-unknown-logo.svg';
+import Loader from 'assets/loader.svg';
 import { flexAllCenter } from '../../../../common/mixins';
 import { COLORS } from '../../../../common/styles';
 import { getAssetString } from '../../../../store/assetsStore/actions';
