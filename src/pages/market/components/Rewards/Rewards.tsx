@@ -2,7 +2,8 @@ import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
-import PageLoader from '../../../../common/basics/PageLoader';
+import PageLoader from 'basics/loaders/PageLoader';
+
 import { formatBalance } from '../../../../common/helpers/helpers';
 import { respondDown } from '../../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../../common/styles';

@@ -2,9 +2,10 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import AccountBlock from 'basics/AccountBlock';
+
 import OtherAccountButton from './OtherAccountButton/OtherAccountButton';
 
-import AccountBlock from '../../../../../common/basics/AccountBlock';
 import { flexRowSpaceBetween } from '../../../../../common/mixins';
 import { StellarService } from '../../../../../common/services/globalServices';
 import useAuthStore from '../../../../../store/authStore/useAuthStore';

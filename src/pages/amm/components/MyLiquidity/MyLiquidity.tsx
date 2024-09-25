@@ -2,10 +2,11 @@ import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
-import Button from '../../../../common/basics/Button';
-import PageLoader from '../../../../common/basics/PageLoader';
-import Select from '../../../../common/basics/Select';
-import ToggleGroup from '../../../../common/basics/ToggleGroup';
+import Button from 'basics/buttons/Button';
+import Select from 'basics/inputs/Select';
+import ToggleGroup from 'basics/inputs/ToggleGroup';
+import PageLoader from 'basics/loaders/PageLoader';
+
 import { formatBalance } from '../../../../common/helpers/helpers';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
 import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';

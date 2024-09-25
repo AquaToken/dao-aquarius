@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 
-import Button from '../../../../../common/basics/Button';
+import Button from 'basics/buttons/Button';
+
 import MigrateLiquidityStep1 from '../../../../../common/modals/MigrateLiquidityModals/MigrateLiquidityStep1';
 import { ModalService } from '../../../../../common/services/globalServices';
 import { getPoolsToMigrate } from '../../../api/api';

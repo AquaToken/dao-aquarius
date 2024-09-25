@@ -10,18 +10,19 @@ import Ice from 'assets/ice-logo.svg';
 import Arrows from 'assets/icon-arrows-circle.svg';
 import Info from 'assets/icon-info.svg';
 
+import Button from 'basics/buttons/Button';
+import { Option } from 'basics/inputs/Select';
+import ToggleGroup from 'basics/inputs/ToggleGroup';
+import DotsLoader from 'basics/loaders/DotsLoader';
+import PageLoader from 'basics/loaders/PageLoader';
+import Pagination from 'basics/Pagination';
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
 import CreatePairModal from './CreatePairModal/CreatePairModal';
 import FloatingButton from './FloatingButton/FloatingButton';
 import Table from './Table/Table';
 import VotesAmountModal from './VoteModals/VotesAmountModal';
 
-import Button from '../../../../common/basics/Button';
-import DotsLoader from '../../../../common/basics/DotsLoader';
-import PageLoader from '../../../../common/basics/PageLoader';
-import Pagination from '../../../../common/basics/Pagination';
-import { Option } from '../../../../common/basics/Select';
-import ToggleGroup from '../../../../common/basics/ToggleGroup';
-import Tooltip, { TOOLTIP_POSITION } from '../../../../common/basics/Tooltip';
 import { formatBalance, getTimeAgoValue } from '../../../../common/helpers/helpers';
 import {
     commonMaxWidth,
@@ -405,12 +406,16 @@ const assetFromUrlParams = params => {
     return StellarService.createAsset(code, issuer);
 };
 
-export const getAssetsFromPairs = pairs => {
-    return pairs.reduce((acc, item) => {
+export const getAssetsFromPairs = pairs =>
+    pairs.reduce((acc, item) => {
         const bribeAssets =
-            item.aggregated_bribes?.reduce((accum, bribe) => {
-                return [...accum, { code: bribe.asset_code, issuer: bribe.asset_issuer }];
-            }, []) ?? [];
+            item.aggregated_bribes?.reduce(
+                (accum, bribe) => [
+                    ...accum,
+                    { code: bribe.asset_code, issuer: bribe.asset_issuer },
+                ],
+                [],
+            ) ?? [];
 
         return [
             ...acc,
@@ -419,7 +424,6 @@ export const getAssetsFromPairs = pairs => {
             { code: item.asset2_code, issuer: item.asset2_issuer },
         ];
     }, []);
-};
 
 const MainPage = (): JSX.Element => {
     const [updateIndex, setUpdateIndex] = useState(0);

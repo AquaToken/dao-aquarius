@@ -4,9 +4,10 @@ import styled from 'styled-components';
 
 import Soroban from 'assets/soroban.svg';
 
+import Button from 'basics/buttons/Button';
+
 import { getPoolsToMigrate } from '../../../pages/amm/api/api';
 import useAuthStore from '../../../store/authStore/useAuthStore';
-import Button from '../../basics/Button';
 import { respondDown } from '../../mixins';
 import MigrateLiquidityStep1 from '../../modals/MigrateLiquidityModals/MigrateLiquidityStep1';
 import { ModalService, StellarService } from '../../services/globalServices';

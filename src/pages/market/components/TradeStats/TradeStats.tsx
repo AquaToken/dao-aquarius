@@ -2,12 +2,13 @@ import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
 
+import ExternalLink from 'basics/ExternalLink';
+import Select from 'basics/inputs/Select';
+import ToggleGroup from 'basics/inputs/ToggleGroup';
+
 import DailyStats from './DailyStats/DailyStats';
 import LightWeightChart, { PeriodOptions } from './LightWeightChart/LightWeightChart';
 
-import ExternalLink from '../../../../common/basics/ExternalLink';
-import Select from '../../../../common/basics/Select';
-import ToggleGroup from '../../../../common/basics/ToggleGroup';
 import { getAssetString } from '../../../../common/helpers/helpers';
 import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../../common/styles';

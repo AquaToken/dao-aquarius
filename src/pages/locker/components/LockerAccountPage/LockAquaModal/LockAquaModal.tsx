@@ -6,7 +6,8 @@ import Aqua from 'assets/aqua-logo-small.svg';
 import Ice from 'assets/ice-logo.svg';
 import ArrowDown from 'assets/icon-arrow-down-purple.svg';
 
-import Button from '../../../../../common/basics/Button';
+import Button from 'basics/buttons/Button';
+
 import ErrorHandler from '../../../../../common/helpers/error-handler';
 import { formatBalance, getDateString } from '../../../../../common/helpers/helpers';
 import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';

@@ -1,10 +1,10 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import IconAlert from 'assets/icon-alert.svg';
+import { flexAllCenter } from 'web/mixins';
+import { COLORS } from 'web/styles';
 
-import { flexAllCenter } from '../mixins';
-import { COLORS } from '../styles';
+import IconAlert from 'assets/icon-alert.svg';
 
 const Container = styled.div`
     display: flex;
@@ -52,18 +52,16 @@ interface AlertProps {
     text: string | React.ReactNode;
 }
 
-const Alert = ({ title, text }: AlertProps) => {
-    return (
-        <Container>
-            <IconWrapper>
-                <IconAlert />
-            </IconWrapper>
-            <Content>
-                <Title>{title}</Title>
-                <Text>{text}</Text>
-            </Content>
-        </Container>
-    );
-};
+const Alert = ({ title, text }: AlertProps) => (
+    <Container>
+        <IconWrapper>
+            <IconAlert />
+        </IconWrapper>
+        <Content>
+            <Title>{title}</Title>
+            <Text>{text}</Text>
+        </Content>
+    </Container>
+);
 
 export default Alert;

@@ -2,10 +2,10 @@ import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
 
-import Down from 'assets/icon-arrow-down.svg';
+import { flexRowSpaceBetween } from 'web/mixins';
+import { COLORS } from 'web/styles';
 
-import { flexRowSpaceBetween } from '../mixins';
-import { COLORS } from '../styles';
+import Down from 'assets/icon-arrow-down.svg';
 
 const Container = styled.div`
     display: flex;
@@ -60,7 +60,13 @@ const Answer = styled.div`
     }
 `;
 
-const Question = ({ question, answer }: { question: string; answer: JSX.Element }) => {
+const Question = ({
+    question,
+    answer,
+}: {
+    question: string;
+    answer: React.ReactNode;
+}): React.ReactNode => {
     const [isOpen, setIsOpen] = useState(false);
 
     const toggle = () => {

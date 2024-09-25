@@ -6,11 +6,12 @@ import styled from 'styled-components';
 import { getAssetString } from 'store/assetsStore/actions';
 import { LoginTypes } from 'store/authStore/types';
 
-import Button from '../../../../common/basics/Button';
-import DotsLoader from '../../../../common/basics/DotsLoader';
-import Input from '../../../../common/basics/Input';
-import PageLoader from '../../../../common/basics/PageLoader';
-import RangeInput from '../../../../common/basics/RangeInput';
+import Button from 'basics/buttons/Button';
+import Input from 'basics/inputs/Input';
+import RangeInput from 'basics/inputs/RangeInput';
+import DotsLoader from 'basics/loaders/DotsLoader';
+import PageLoader from 'basics/loaders/PageLoader';
+
 import { formatBalance } from '../../../../common/helpers/helpers';
 import { openCurrentWalletIfExist } from '../../../../common/helpers/wallet-connect-helpers';
 import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';

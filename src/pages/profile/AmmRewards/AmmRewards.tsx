@@ -5,11 +5,12 @@ import styled from 'styled-components';
 
 import Aqua from 'assets/aqua-logo-small.svg';
 
-import DotsLoader from '../../../common/basics/DotsLoader';
-import ExternalLink from '../../../common/basics/ExternalLink';
-import Label from '../../../common/basics/Label';
-import PageLoader from '../../../common/basics/PageLoader';
-import Table, { CellAlign } from '../../../common/basics/Table';
+import ExternalLink from 'basics/ExternalLink';
+import Label from 'basics/Label';
+import DotsLoader from 'basics/loaders/DotsLoader';
+import PageLoader from 'basics/loaders/PageLoader';
+import Table, { CellAlign } from 'basics/Table';
+
 import { formatBalance } from '../../../common/helpers/helpers';
 import { flexRowSpaceBetween, respondDown } from '../../../common/mixins';
 import { StellarService } from '../../../common/services/globalServices';
@@ -124,9 +125,8 @@ enum SortField {
     your = 'your',
 }
 
-export const getSortFunction = (value1, value2, isSortReversed) => {
-    return isSortReversed ? value1 - value2 : value2 - value1;
-};
+export const getSortFunction = (value1, value2, isSortReversed) =>
+    isSortReversed ? value1 - value2 : value2 - value1;
 
 const AmmRewards = ({ aquaUsdPrice }) => {
     const { account } = useAuthStore();

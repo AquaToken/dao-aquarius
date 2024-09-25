@@ -2,9 +2,9 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { Option } from './Select';
+import { COLORS } from 'web/styles';
 
-import { COLORS } from '../styles';
+import { Option } from 'basics/inputs/Select';
 
 const ToggleBlock = styled.div`
     background-color: ${COLORS.gray};
@@ -15,7 +15,7 @@ const ToggleBlock = styled.div`
     color: ${COLORS.paragraphText};
 `;
 
-const VoteOption = styled.label<{ isChecked: boolean }>`
+const VoteOption = styled.label<{ $isChecked: boolean }>`
     display: flex;
     align-items: center;
     justify-content: center;
@@ -30,11 +30,11 @@ const VoteOption = styled.label<{ isChecked: boolean }>`
 
     transition: all ease 200ms;
 
-    ${({ isChecked }: { isChecked: boolean }) =>
-        isChecked ? `background-color: ${COLORS.white};` : `background-color: ${COLORS.gray};`};
+    ${({ $isChecked }: { $isChecked: boolean }) =>
+        $isChecked ? `background-color: ${COLORS.white};` : `background-color: ${COLORS.gray};`};
     &:hover {
-        ${({ isChecked }: { isChecked: boolean }) =>
-            !isChecked &&
+        ${({ $isChecked }: { $isChecked: boolean }) =>
+            !$isChecked &&
             `cursor: pointer;
              background: ${COLORS.white};
              box-shadow: 0px 20px 30px rgba(0, 6, 54, 0.06);
@@ -51,7 +51,7 @@ const ToggleGroup = <T,>({
     value: T;
     options: Option<T>[];
     onChange: (value: T) => void;
-}): JSX.Element => {
+}): React.ReactNode => {
     const [selectedOption, setSelectedOption] = useState(
         options.find(option => option.value === value),
     );
@@ -67,8 +67,8 @@ const ToggleGroup = <T,>({
                 return (
                     <VoteOption
                         key={item.value.toString()}
-                        isChecked={isSelected}
-                        onClick={e => {
+                        $isChecked={isSelected}
+                        onClick={(e: React.MouseEvent) => {
                             e.preventDefault();
                             onChange(item.value);
                         }}

@@ -2,7 +2,8 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import PageLoader from '../../../../common/basics/PageLoader';
+import PageLoader from 'basics/loaders/PageLoader';
+
 import { StellarService } from '../../../../common/services/globalServices';
 import { StellarEvents } from '../../../../common/services/stellar.service';
 import { COLORS } from '../../../../common/styles';

@@ -2,7 +2,8 @@ import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
-import DotsLoader from '../../../../../common/basics/DotsLoader';
+import DotsLoader from 'basics/loaders/DotsLoader';
+
 import { formatBalance } from '../../../../../common/helpers/helpers';
 import { respondDown } from '../../../../../common/mixins';
 import { StellarService } from '../../../../../common/services/globalServices';

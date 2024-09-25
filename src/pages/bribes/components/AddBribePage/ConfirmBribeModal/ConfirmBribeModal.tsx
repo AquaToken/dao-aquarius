@@ -3,7 +3,8 @@ import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
 
-import Button from '../../../../../common/basics/Button';
+import Button from 'basics/buttons/Button';
+
 import ErrorHandler from '../../../../../common/helpers/error-handler';
 import { formatBalance, getDateString } from '../../../../../common/helpers/helpers';
 import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';

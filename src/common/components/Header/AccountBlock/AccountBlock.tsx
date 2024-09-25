@@ -6,10 +6,11 @@ import ArrowDown from 'assets/icon-arrow-down.svg';
 import CloseIcon from 'assets/icon-close-small.svg';
 import MobileMenuIcon from 'assets/icon-mobile-menu.svg';
 
+import Button from 'basics/buttons/Button';
+import Identicon from 'basics/Identicon';
+
 import { LoginTypes } from '../../../../store/authStore/types';
 import useAuthStore from '../../../../store/authStore/useAuthStore';
-import Button from '../../../basics/Button';
-import Identicon from '../../../basics/Identicon';
 import useOnClickOutside from '../../../hooks/useOutsideClick';
 import { flexAllCenter, respondDown, textEllipsis } from '../../../mixins';
 import ChooseLoginMethodModal from '../../../modals/ChooseLoginMethodModal';

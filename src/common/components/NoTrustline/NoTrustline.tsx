@@ -5,10 +5,11 @@ import styled from 'styled-components';
 
 import Plus from 'assets/icon-plus.svg';
 
+import Button from 'basics/buttons/Button';
+
 import Asset from '../../../pages/vote/components/AssetDropdown/Asset';
 import { LoginTypes } from '../../../store/authStore/types';
 import useAuthStore from '../../../store/authStore/useAuthStore';
-import Button from '../../basics/Button';
 import ErrorHandler from '../../helpers/error-handler';
 import { openCurrentWalletIfExist } from '../../helpers/wallet-connect-helpers';
 import { respondDown } from '../../mixins';

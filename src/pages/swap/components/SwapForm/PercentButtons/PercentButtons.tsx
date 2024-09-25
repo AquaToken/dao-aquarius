@@ -4,7 +4,8 @@ import styled from 'styled-components';
 
 import Info from 'assets/icon-info.svg';
 
-import Tooltip, { TOOLTIP_POSITION } from '../../../../../common/basics/Tooltip';
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
 import { respondDown } from '../../../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../../../common/styles';
 import useAuthStore from '../../../../../store/authStore/useAuthStore';

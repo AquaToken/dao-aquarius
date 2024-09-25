@@ -8,9 +8,10 @@ import Ice from 'assets/ice-logo.svg';
 import ExternalLinkIcon from 'assets/icon-external-link.svg';
 import Loader from 'assets/loader.svg';
 
-import AccountViewer from '../../../../../common/basics/AccountViewer';
-import { IconSort } from '../../../../../common/basics/Icons';
-import Pagination from '../../../../../common/basics/Pagination';
+import { IconSort } from 'basics/Icons';
+import Pagination from 'basics/Pagination';
+import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
+
 import { formatBalance, getDateString } from '../../../../../common/helpers/helpers';
 import { flexAllCenter, respondDown } from '../../../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../../../common/styles';
@@ -258,7 +259,7 @@ const Votes = (): JSX.Element => {
                                 })}
                             </CellDate>
                             <CellAcc>
-                                <AccountViewer pubKey={account} narrowForMobile />
+                                <PublicKeyWithIcon pubKey={account} narrowForMobile />
                             </CellAcc>
                             <CellSolution>
                                 <Solution choice={voteChoice} />

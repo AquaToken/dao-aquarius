@@ -1,8 +1,8 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { textEllipsis } from '../mixins';
-import { COLORS } from '../styles';
+import { textEllipsis } from 'web/mixins';
+import { COLORS } from 'web/styles';
 
 const StyledArea = styled.textarea`
     height: 34.8rem;
@@ -34,8 +34,8 @@ const StyledArea = styled.textarea`
     }
 `;
 
-const TextArea = ({ ...props }: React.TextareaHTMLAttributes<HTMLTextAreaElement>): JSX.Element => {
-    return <StyledArea {...props} />;
-};
+const TextArea = ({
+    ...props
+}: React.TextareaHTMLAttributes<HTMLTextAreaElement>): React.ReactNode => <StyledArea {...props} />;
 
 export default TextArea;

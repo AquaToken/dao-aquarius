@@ -2,8 +2,8 @@ import * as React from 'react';
 import createStellarIdenticon from 'stellar-identicon-js';
 import styled from 'styled-components';
 
-import { flexAllCenter } from '../mixins';
-import { COLORS } from '../styles';
+import { flexAllCenter } from 'web/mixins';
+import { COLORS } from 'web/styles';
 
 const Account = styled.div`
     display: flex;
@@ -46,7 +46,12 @@ const Federation = styled.span`
     opacity: 0.7;
 `;
 
-const AccountBlock = ({ accountId, federation }) => {
+interface AccountBlockProps {
+    accountId: string;
+    federation?: string;
+}
+
+const AccountBlock = ({ accountId, federation }: AccountBlockProps): React.ReactNode => {
     const url = createStellarIdenticon(accountId).toDataURL();
     const truncatedKey = `${accountId.slice(0, 8)}...${accountId.slice(-8)}`;
     return (

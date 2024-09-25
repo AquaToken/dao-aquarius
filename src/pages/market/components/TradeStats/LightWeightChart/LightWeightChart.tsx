@@ -3,7 +3,8 @@ import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import PageLoader from '../../../../../common/basics/PageLoader';
+import PageLoader from 'basics/loaders/PageLoader';
+
 import { formatBalance } from '../../../../../common/helpers/helpers';
 import { useDebounce } from '../../../../../common/hooks/useDebounce';
 import { flexAllCenter } from '../../../../../common/mixins';
@@ -75,11 +76,10 @@ const AGGREGATIONS_DEPS = {
     [PeriodOptions.week]: 5 * 12 * 31 * 24 * 60 * 60 * 1000,
 };
 
-const getTime = (timestamp, period) => {
-    return period >= PeriodOptions.day
+const getTime = (timestamp, period) =>
+    period >= PeriodOptions.day
         ? new Date(+timestamp).getTime() / 1000
         : convertLocalDateToUTCIgnoringTimezone(new Date(+timestamp)).getTime() / 1000;
-};
 
 const processChartData = (tradeAggregations, period) => {
     const nullTrades = [];
@@ -88,17 +88,15 @@ const processChartData = (tradeAggregations, period) => {
 
     const formattedTradeAggregations = copyTradeAggregations
         .reverse()
-        .map(({ open, close, timestamp, high, low, base_volume }, index) => {
-            return {
-                open: index === 0 ? +open : +copyTradeAggregations[index - 1].close,
-                close: +close,
-                time: getTime(timestamp, period),
-                timestamp: +timestamp,
-                high: +high,
-                low: +low,
-                value: +base_volume,
-            };
-        });
+        .map(({ open, close, timestamp, high, low, base_volume }, index) => ({
+            open: index === 0 ? +open : +copyTradeAggregations[index - 1].close,
+            close: +close,
+            time: getTime(timestamp, period),
+            timestamp: +timestamp,
+            high: +high,
+            low: +low,
+            value: +base_volume,
+        }));
 
     copyTradeAggregations.forEach(({ open, close, timestamp, high, low, base_volume }, index) => {
         if (index !== 0 && timestamp - copyTradeAggregations[index - 1].timestamp > period) {

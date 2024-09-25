@@ -7,10 +7,11 @@ import Ice from 'assets/ice-logo.svg';
 import IconFail from 'assets/icon-fail.svg';
 import IconSuccess from 'assets/icon-success.svg';
 
-import Button from '../../../../../../common/basics/Button';
-import Checkbox from '../../../../../../common/basics/Checkbox';
-import DotsLoader from '../../../../../../common/basics/DotsLoader';
-import Table, { CellAlign } from '../../../../../../common/basics/Table';
+import Button from 'basics/buttons/Button';
+import Checkbox from 'basics/inputs/Checkbox';
+import DotsLoader from 'basics/loaders/DotsLoader';
+import Table, { CellAlign } from 'basics/Table';
+
 import ErrorHandler from '../../../../../../common/helpers/error-handler';
 import { formatBalance, getDateString } from '../../../../../../common/helpers/helpers';
 import { openCurrentWalletIfExist } from '../../../../../../common/helpers/wallet-connect-helpers';

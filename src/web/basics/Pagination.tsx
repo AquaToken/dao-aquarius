@@ -2,11 +2,11 @@ import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
+import { flexAllCenter, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Left from 'assets/icon-arrow-left.svg';
 import Right from 'assets/icon-arrow-right.svg';
-
-import { flexAllCenter, respondDown } from '../mixins';
-import { Breakpoints, COLORS } from '../styles';
 
 const Container = styled.div`
     width: 100%;
@@ -61,7 +61,7 @@ const BlackText = styled.span`
 type PaginationProps = {
     pageSize: number;
     totalCount: number;
-    onPageChange: (number) => void;
+    onPageChange: (page: number) => void;
     currentPage: number;
     itemName: string;
 };
@@ -96,7 +96,7 @@ const Pagination = ({
     onPageChange,
     currentPage,
     itemName,
-}: PaginationProps) => {
+}: PaginationProps): React.ReactNode => {
     const [page, setPage] = useState(currentPage);
     const currentItems = `${(page - 1) * pageSize + 1} - ${
         page * pageSize > totalCount ? totalCount : page * pageSize

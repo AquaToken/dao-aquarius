@@ -3,10 +3,11 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import Button from '../../../common/basics/Button';
-import Checkbox from '../../../common/basics/Checkbox';
-import PageLoader from '../../../common/basics/PageLoader';
-import Table, { CellAlign } from '../../../common/basics/Table';
+import Button from 'basics/buttons/Button';
+import Checkbox from 'basics/inputs/Checkbox';
+import PageLoader from 'basics/loaders/PageLoader';
+import Table, { CellAlign } from 'basics/Table';
+
 import ErrorHandler from '../../../common/helpers/error-handler';
 import { formatBalance, getDateString } from '../../../common/helpers/helpers';
 import { openCurrentWalletIfExist } from '../../../common/helpers/wallet-connect-helpers';
@@ -190,7 +191,7 @@ const Airdrop2List = () => {
                 <Title>Airdrop #2 claims</Title>
                 {Boolean(list?.length) && (
                     <Checkbox
-                        label={'Show expired'}
+                        label="Show expired"
                         checked={showExpired}
                         onChange={value => {
                             setShowExpired(value);

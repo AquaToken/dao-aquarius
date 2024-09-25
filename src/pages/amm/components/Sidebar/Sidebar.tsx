@@ -2,8 +2,9 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import Button from '../../../../common/basics/Button';
-import PageLoader from '../../../../common/basics/PageLoader';
+import Button from 'basics/buttons/Button';
+import PageLoader from 'basics/loaders/PageLoader';
+
 import { formatBalance, getAssetString } from '../../../../common/helpers/helpers';
 import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
 import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';

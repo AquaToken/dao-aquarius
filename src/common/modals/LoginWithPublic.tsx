@@ -3,12 +3,13 @@ import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
+import Button from 'basics/buttons/Button';
+import Input from 'basics/inputs/Input';
+
 import { ModalDescription, ModalProps, ModalTitle } from './atoms/ModalAtoms';
 
 import { LoginTypes } from '../../store/authStore/types';
 import useAuthStore from '../../store/authStore/useAuthStore';
-import Button from '../basics/Button';
-import Input from '../basics/Input';
 import { respondDown } from '../mixins';
 import { StellarService, ToastService } from '../services/globalServices';
 import { Breakpoints } from '../styles';

@@ -4,7 +4,8 @@ import styled from 'styled-components';
 
 import IconClose from 'assets/icon-close-small.svg';
 
-import { IconFail, IconSuccess } from '../basics/Icons';
+import { IconFail, IconSuccess } from 'basics/Icons';
+
 import { respondDown } from '../mixins';
 import Timer from '../services/timer.service';
 import { TOAST_TYPE } from '../services/toast.service';

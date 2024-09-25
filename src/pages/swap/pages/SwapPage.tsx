@@ -3,7 +3,8 @@ import { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
-import PageLoader from '../../../common/basics/PageLoader';
+import PageLoader from 'basics/loaders/PageLoader';
+
 import { getAssetFromString, getAssetString } from '../../../common/helpers/helpers';
 import { commonMaxWidth, respondDown } from '../../../common/mixins';
 import { StellarService } from '../../../common/services/globalServices';

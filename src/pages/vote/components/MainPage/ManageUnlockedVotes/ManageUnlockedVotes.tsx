@@ -2,7 +2,8 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import Button from '../../../../../common/basics/Button';
+import Button from 'basics/buttons/Button';
+
 import { customScroll, respondDown } from '../../../../../common/mixins';
 import { ModalDescription, ModalTitle } from '../../../../../common/modals/atoms/ModalAtoms';
 import { StellarService } from '../../../../../common/services/globalServices';

@@ -6,9 +6,10 @@ import styled from 'styled-components';
 
 import ArrowLeft from 'assets/icon-arrow-left.svg';
 
-import Button from '../../../../../common/basics/Button';
-import CircleButton from '../../../../../common/basics/CircleButton';
-import Input from '../../../../../common/basics/Input';
+import Button from 'basics/buttons/Button';
+import CircleButton from 'basics/buttons/CircleButton';
+import Input from 'basics/inputs/Input';
+
 import { formatBalance } from '../../../../../common/helpers/helpers';
 import { respondDown } from '../../../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../../../common/styles';

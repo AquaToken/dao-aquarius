@@ -2,20 +2,22 @@ import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import { COLORS } from '../styles';
+import { COLORS } from 'web/styles';
 
-const Pillar = styled.div.attrs<{ value: number; disabled?: boolean }>(({ value, disabled }) => ({
-    style: {
-        background: `linear-gradient(to right, ${
-            disabled ? COLORS.gray : COLORS.titleText
-        } 0% ${value}%, ${COLORS.gray} ${value}% 100%)`,
-    },
-}))<{ value: number; disabled?: boolean }>`
+const Pillar = styled.div.attrs<{ $value: number; $disabled?: boolean }>(
+    ({ $value, $disabled }) => ({
+        style: {
+            background: `linear-gradient(to right, ${
+                $disabled ? COLORS.gray : COLORS.titleText
+            } 0% ${$value}%, ${COLORS.gray} ${$value}% 100%)`,
+        },
+    }),
+)<{ $value: number; $disabled?: boolean }>`
     width: calc(100% - 1rem);
     height: 0.2rem;
     position: relative;
     margin: 0.7rem auto;
-    pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
+    pointer-events: ${({ $disabled }) => ($disabled ? 'none' : 'auto')};
     cursor: pointer;
 
     // increase clickable area
@@ -30,17 +32,17 @@ const Pillar = styled.div.attrs<{ value: number; disabled?: boolean }>(({ value,
     }
 `;
 
-const Mark = styled.div.attrs<{ percent: number; value: number; disabled: boolean }>(
-    ({ percent, value, disabled }) => ({
+const Mark = styled.div.attrs<{ $percent: number; $value: number; $disabled: boolean }>(
+    ({ $percent, $value, $disabled }) => ({
         style: {
-            background: !disabled && value >= percent ? COLORS.titleText : COLORS.gray,
+            background: !$disabled && $value >= $percent ? COLORS.titleText : COLORS.gray,
             border: `0.1rem solid ${
-                !disabled && value >= percent ? COLORS.titleText : COLORS.white
+                !$disabled && $value >= $percent ? COLORS.titleText : COLORS.white
             }`,
-            left: `${percent}%`,
+            left: `${$percent}%`,
         },
     }),
-)<{ percent: number; value: number; disabled: boolean }>`
+)<{ $percent: number; $value: number; $disabled: boolean }>`
     height: 0.8rem;
     width: 0.8rem;
     border-radius: 0.2rem;
@@ -56,19 +58,19 @@ const Mark = styled.div.attrs<{ percent: number; value: number; disabled: boolea
     }
 `;
 
-const Thumb = styled.div.attrs<{ value: number; isDrag: boolean; disabled?: boolean }>(
-    ({ value, isDrag }) => ({
+const Thumb = styled.div.attrs<{ $value: number; $isDrag: boolean; $disabled?: boolean }>(
+    ({ $value, $isDrag }) => ({
         style: {
-            cursor: isDrag ? 'grabbing' : 'grab',
-            left: `${value}%`,
+            cursor: $isDrag ? 'grabbing' : 'grab',
+            left: `${$value}%`,
         },
     }),
-)<{ value: number; isDrag: boolean; disabled?: boolean }>`
+)<{ $value: number; $isDrag: boolean; $disabled?: boolean }>`
     height: 1.6rem;
     width: 1.6rem;
     border: 0.2rem solid ${COLORS.white};
-    background: ${({ disabled }) => (disabled ? COLORS.gray : COLORS.titleText)};
-    pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
+    background: ${({ $disabled }) => ($disabled ? COLORS.gray : COLORS.titleText)};
+    pointer-events: ${({ $disabled }) => ($disabled ? 'none' : 'auto')};
     border-radius: 0.5rem;
     transform: translate(-50%, -50%) rotate(45deg);
     position: absolute;
@@ -77,21 +79,25 @@ const Thumb = styled.div.attrs<{ value: number; isDrag: boolean; disabled?: bool
     z-index: 2;
 `;
 
-const CurrentValue = styled.div.attrs<{ value: number; disabled: boolean }>(({ value }) => ({
+const CurrentValue = styled.div.attrs<{ $value: number; $disabled: boolean }>(({ $value }) => ({
     style: {
-        left: `${value}%`,
+        left: `${$value}%`,
     },
-}))<{ value: number; disabled: boolean }>`
+}))<{ $value: number; $disabled: boolean }>`
     position: absolute;
     top: -2.5rem;
-    transform: ${({ value }) => `translateX(-${value < 99 ? 50 : 80}%)`};
-    color: ${({ disabled }) => (disabled ? COLORS.placeholder : COLORS.titleText)};
+    transform: ${({ $value }) => `translateX(-${$value < 99 ? 50 : 80}%)`};
+    color: ${({ $disabled }) => ($disabled ? COLORS.placeholder : COLORS.titleText)};
 `;
 
-const getClickPosition = (event: TouchEvent | MouseEvent, ref) => {
+const getClickPosition = (
+    event: React.TouchEvent | React.MouseEvent | MouseEvent | TouchEvent,
+    ref: HTMLDivElement,
+) => {
     const { left, right } = ref.getBoundingClientRect();
 
-    const xPosition = (event as MouseEvent).clientX || (event as TouchEvent).touches[0].clientX;
+    const xPosition =
+        (event as React.MouseEvent).clientX || (event as React.TouchEvent).touches[0].clientX;
 
     const percent = ((xPosition - left) / (right - left)) * 100;
 
@@ -114,7 +120,7 @@ const RangeInput = ({
     disabled,
     withoutPercent,
 }: {
-    onChange: (number) => void;
+    onChange: (value: number) => void;
     value: number;
     disabled?: boolean;
     withoutPercent?: boolean;
@@ -136,13 +142,13 @@ const RangeInput = ({
         }
     };
 
-    const onMarkClick = (e, value) => {
+    const onMarkClick = (e: React.MouseEvent | React.TouchEvent, value: number) => {
         e.stopPropagation();
         setValue(value);
         onChange(value);
     };
 
-    const onMouseMove = e => {
+    const onMouseMove = (e: React.MouseEvent | React.TouchEvent | MouseEvent | TouchEvent) => {
         if (!isMouseDrag) {
             return;
         }
@@ -172,55 +178,60 @@ const RangeInput = ({
 
     return (
         <Pillar
-            value={value}
-            onClick={e => {
-                const position = getClickPosition(e as unknown as MouseEvent, ref.current);
+            $value={value}
+            onClick={(e: React.MouseEvent) => {
+                const position = getClickPosition(e as React.MouseEvent, ref.current);
                 setValue(position);
                 onChange(position);
             }}
-            disabled={disabled}
+            $disabled={disabled}
             ref={ref}
         >
-            <Mark percent={0} value={value} disabled={disabled} onClick={e => onMarkClick(e, 0)} />
             <Mark
-                percent={25}
-                value={value}
-                disabled={disabled}
-                onClick={e => onMarkClick(e, 25)}
+                $percent={0}
+                $value={value}
+                $disabled={disabled}
+                onClick={(e: React.MouseEvent) => onMarkClick(e, 0)}
             />
             <Mark
-                percent={50}
-                value={value}
-                disabled={disabled}
-                onClick={e => onMarkClick(e, 50)}
+                $percent={25}
+                $value={value}
+                $disabled={disabled}
+                onClick={(e: React.MouseEvent) => onMarkClick(e, 25)}
             />
             <Mark
-                percent={75}
-                value={value}
-                disabled={disabled}
-                onClick={e => onMarkClick(e, 75)}
+                $percent={50}
+                $value={value}
+                $disabled={disabled}
+                onClick={(e: React.MouseEvent) => onMarkClick(e, 50)}
             />
             <Mark
-                percent={100}
-                value={value}
-                disabled={disabled}
-                onClick={e => onMarkClick(e, 100)}
+                $percent={75}
+                $value={value}
+                $disabled={disabled}
+                onClick={(e: React.MouseEvent) => onMarkClick(e, 75)}
+            />
+            <Mark
+                $percent={100}
+                $value={value}
+                $disabled={disabled}
+                onClick={(e: React.MouseEvent) => onMarkClick(e, 100)}
             />
             <Thumb
-                disabled={disabled}
-                value={value}
-                isDrag={isMouseDrag}
-                onMouseDown={e => {
+                $disabled={disabled}
+                $value={value}
+                $isDrag={isMouseDrag}
+                onMouseDown={(e: React.MouseEvent) => {
                     e.stopPropagation();
                     setIsMouseDrag(true);
                 }}
-                onTouchStart={e => {
+                onTouchStart={(e: React.TouchEvent) => {
                     e.stopPropagation();
                     setIsMouseDrag(true);
                 }}
             />
             {!withoutPercent && (
-                <CurrentValue value={value} disabled={disabled}>
+                <CurrentValue $value={value} $disabled={disabled}>
                     {value}%
                 </CurrentValue>
             )}

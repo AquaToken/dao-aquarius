@@ -3,11 +3,12 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import Button from 'basics/buttons/Button';
+import DotsLoader from 'basics/loaders/DotsLoader';
+import PageLoader from 'basics/loaders/PageLoader';
+
 import PathPool from './PathPool/PathPool';
 
-import Button from '../../../../common/basics/Button';
-import DotsLoader from '../../../../common/basics/DotsLoader';
-import PageLoader from '../../../../common/basics/PageLoader';
 import { formatBalance, getAssetFromString } from '../../../../common/helpers/helpers';
 import { openCurrentWalletIfExist } from '../../../../common/helpers/wallet-connect-helpers';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../common/mixins';

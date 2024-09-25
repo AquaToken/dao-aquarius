@@ -5,9 +5,10 @@ import styled from 'styled-components';
 
 import Arrow from 'assets/icon-arrow-down.svg';
 
+import Button from 'basics/buttons/Button';
+
 import MigratePoolButton from './MigratePoolButton/MigratePoolButton';
 
-import Button from '../../../../common/basics/Button';
 import { formatBalance } from '../../../../common/helpers/helpers';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
 import MigrateLiquidityStep1 from '../../../../common/modals/MigrateLiquidityModals/MigrateLiquidityStep1';

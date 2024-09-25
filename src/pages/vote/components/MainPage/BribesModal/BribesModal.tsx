@@ -6,8 +6,9 @@ import Aqua from 'assets/aqua-logo-small.svg';
 import Close from 'assets/icon-close-small-purple.svg';
 import Info from 'assets/icon-info.svg';
 
-import ExternalLink from '../../../../../common/basics/ExternalLink';
-import Table, { CellAlign } from '../../../../../common/basics/Table';
+import ExternalLink from 'basics/ExternalLink';
+import Table, { CellAlign } from 'basics/Table';
+
 import { formatBalance, getDateString } from '../../../../../common/helpers/helpers';
 import { respondDown } from '../../../../../common/mixins';
 import {

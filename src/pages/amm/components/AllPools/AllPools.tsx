@@ -5,12 +5,13 @@ import styled from 'styled-components';
 
 import Info from 'assets/icon-info.svg';
 
-import PageLoader from '../../../../common/basics/PageLoader';
-import Pagination from '../../../../common/basics/Pagination';
-import Select from '../../../../common/basics/Select';
-import Table, { CellAlign } from '../../../../common/basics/Table';
-import ToggleGroup from '../../../../common/basics/ToggleGroup';
-import Tooltip, { TOOLTIP_POSITION } from '../../../../common/basics/Tooltip';
+import Select from 'basics/inputs/Select';
+import ToggleGroup from 'basics/inputs/ToggleGroup';
+import PageLoader from 'basics/loaders/PageLoader';
+import Pagination from 'basics/Pagination';
+import Table, { CellAlign } from 'basics/Table';
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
 import { formatBalance } from '../../../../common/helpers/helpers';
 import { respondDown } from '../../../../common/mixins';
 import { StellarService } from '../../../../common/services/globalServices';

@@ -6,8 +6,9 @@ import styled from 'styled-components';
 
 import ArrowLeft from 'assets/icon-arrow-left.svg';
 
-import CircleButton from '../../../common/basics/CircleButton';
-import PageLoader from '../../../common/basics/PageLoader';
+import CircleButton from 'basics/buttons/CircleButton';
+import PageLoader from 'basics/loaders/PageLoader';
+
 import MigrateToSorobanBanner from '../../../common/components/MigrateToSorobanBanner/MigrateToSorobanBanner';
 import NotFoundPage from '../../../common/components/NotFoundPage/NotFoundPage';
 import { useIsOverScrolled } from '../../../common/hooks/useIsOnViewport';

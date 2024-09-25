@@ -2,10 +2,10 @@ import * as React from 'react';
 import createStellarIdenticon from 'stellar-identicon-js';
 import styled from 'styled-components';
 
-import { respondDown } from '../mixins';
-import { Breakpoints, COLORS } from '../styles';
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
 
-const AccountViewerBlock = styled.div`
+const Container = styled.div`
     display: flex;
     align-items: center;
     color: ${COLORS.paragraphText};
@@ -17,42 +17,42 @@ const IdenticonImage = styled.img`
     margin-right: 0.8rem;
 `;
 
-const KeyWeb = styled.span<{ narrowForMobile?: boolean }>`
-    ${({ narrowForMobile }) =>
-        narrowForMobile &&
+const KeyWeb = styled.span<{ $narrowForMobile?: boolean }>`
+    ${({ $narrowForMobile }) =>
+        $narrowForMobile &&
         respondDown(Breakpoints.lg)`
         display: none;
     `}
 `;
 
-const KeyMobile = styled.span<{ narrowForMobile?: boolean }>`
+const KeyMobile = styled.span<{ $narrowForMobile?: boolean }>`
     display: none;
 
-    ${({ narrowForMobile }) =>
-        narrowForMobile &&
+    ${({ $narrowForMobile }) =>
+        $narrowForMobile &&
         respondDown(Breakpoints.lg)`
         display: inline;
     `}
 `;
 
-const AccountViewer = ({
+const PublicKeyWithIcon = ({
     pubKey,
     narrowForMobile,
 }: {
     pubKey: string;
     narrowForMobile?: boolean;
-}): JSX.Element => {
+}): React.ReactNode => {
     const url = createStellarIdenticon(pubKey).toDataURL();
     const truncatedKeyWeb = `${pubKey.slice(0, 8)}...${pubKey.slice(-8)}`;
     const truncatedKeyMobile = `G...${pubKey.slice(-3)}`;
 
     return (
-        <AccountViewerBlock>
+        <Container>
             <IdenticonImage src={url} alt="IdentIcon" />
-            <KeyWeb narrowForMobile={narrowForMobile}>{truncatedKeyWeb}</KeyWeb>
-            <KeyMobile narrowForMobile={narrowForMobile}>{truncatedKeyMobile}</KeyMobile>
-        </AccountViewerBlock>
+            <KeyWeb $narrowForMobile={narrowForMobile}>{truncatedKeyWeb}</KeyWeb>
+            <KeyMobile $narrowForMobile={narrowForMobile}>{truncatedKeyMobile}</KeyMobile>
+        </Container>
     );
 };
 
-export default AccountViewer;
+export default PublicKeyWithIcon;

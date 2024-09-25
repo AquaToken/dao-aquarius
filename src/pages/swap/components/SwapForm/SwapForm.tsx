@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
+import Button from 'basics/buttons/Button';
+
 import AmountUsdEquivalent from './AmountUsdEquivalent/AmountUsdEquivalent';
 import SwapFormDivider from './SwapFormDivider/SwapFormDivider';
 import SwapFormError from './SwapFormError/SwapFormError';
@@ -10,7 +12,6 @@ import SwapFormHeader from './SwapFormHeader/SwapFormHeader';
 import SwapFormPrice from './SwapFormPrice/SwapFormPrice';
 import SwapFormRow from './SwapFormRow/SwapFormRow';
 
-import Button from '../../../../common/basics/Button';
 import NoTrustline from '../../../../common/components/NoTrustline/NoTrustline';
 import { getAssetString } from '../../../../common/helpers/helpers';
 import { useDebounce } from '../../../../common/hooks/useDebounce';

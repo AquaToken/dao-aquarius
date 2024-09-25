@@ -4,7 +4,8 @@ import styled, { css } from 'styled-components';
 import Aqua from 'assets/aqua-logo-small.svg';
 import ArrowsIcon from 'assets/icon-arrows-circle.svg';
 
-import DotsLoader from '../../basics/DotsLoader';
+import DotsLoader from 'basics/loaders/DotsLoader';
+
 import { flexAllCenter, respondDown } from '../../mixins';
 import { WalletConnectService } from '../../services/globalServices';
 import { Breakpoints, COLORS } from '../../styles';

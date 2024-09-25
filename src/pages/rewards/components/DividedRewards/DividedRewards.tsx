@@ -3,7 +3,8 @@ import styled from 'styled-components';
 
 import Aqua from 'assets/aqua-logo-small.svg';
 
-import DotsLoader from '../../../../common/basics/DotsLoader';
+import DotsLoader from 'basics/loaders/DotsLoader';
+
 import { formatBalance } from '../../../../common/helpers/helpers';
 import { respondDown } from '../../../../common/mixins';
 import { Breakpoints } from '../../../../common/styles';
@@ -99,42 +100,40 @@ const Description = styled.div`
     `}
 `;
 
-const DividedRewards = ({ totalRewards }) => {
-    return (
-        <Container>
-            <Card>
-                <AquaLogo />
-                <div>
-                    <Amount>
-                        {totalRewards ? (
-                            `${formatBalance(totalRewards.total_daily_sdex_reward)} AQUA`
-                        ) : (
-                            <DotsLoader />
-                        )}
-                    </Amount>
-                    <Description>
-                        <b>SDEX</b> daily reward
-                    </Description>
-                </div>
-            </Card>
+const DividedRewards = ({ totalRewards }) => (
+    <Container>
+        <Card>
+            <AquaLogo />
+            <div>
+                <Amount>
+                    {totalRewards ? (
+                        `${formatBalance(totalRewards.total_daily_sdex_reward)} AQUA`
+                    ) : (
+                        <DotsLoader />
+                    )}
+                </Amount>
+                <Description>
+                    <b>SDEX</b> daily reward
+                </Description>
+            </div>
+        </Card>
 
-            <Card>
-                <AquaLogo />
-                <div>
-                    <Amount>
-                        {totalRewards ? (
-                            `${formatBalance(totalRewards.total_daily_amm_reward)} AQUA`
-                        ) : (
-                            <DotsLoader />
-                        )}
-                    </Amount>
-                    <Description>
-                        <b>AMM</b> daily reward
-                    </Description>
-                </div>
-            </Card>
-        </Container>
-    );
-};
+        <Card>
+            <AquaLogo />
+            <div>
+                <Amount>
+                    {totalRewards ? (
+                        `${formatBalance(totalRewards.total_daily_amm_reward)} AQUA`
+                    ) : (
+                        <DotsLoader />
+                    )}
+                </Amount>
+                <Description>
+                    <b>AMM</b> daily reward
+                </Description>
+            </div>
+        </Card>
+    </Container>
+);
 
 export default DividedRewards;

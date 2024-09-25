@@ -2,8 +2,9 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import PageLoader from '../../../../common/basics/PageLoader';
-import Table, { CellAlign } from '../../../../common/basics/Table';
+import PageLoader from 'basics/loaders/PageLoader';
+import Table, { CellAlign } from 'basics/Table';
+
 import { formatBalance, getAssetString } from '../../../../common/helpers/helpers';
 import { respondDown } from '../../../../common/mixins';
 import { StellarService } from '../../../../common/services/globalServices';

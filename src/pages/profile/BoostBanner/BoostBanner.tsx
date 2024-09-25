@@ -4,8 +4,9 @@ import styled from 'styled-components';
 
 import FreezeAqua from 'assets/freeze-aqua-banner.svg';
 
-import Button from '../../../common/basics/Button';
-import Label from '../../../common/basics/Label';
+import Button from 'basics/buttons/Button';
+import Label from 'basics/Label';
+
 import { respondDown } from '../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../common/styles';
 import { LockerRoutes } from '../../../routes';
@@ -74,23 +75,21 @@ const StyledLink = styled(Link)`
     `}
 `;
 
-const BoostBanner = () => {
-    return (
-        <Container>
-            <FreezeAquaImg />
-            <Content>
-                <Title>
-                    Get the <Label title={'boost'} background={COLORS.blue} /> to your reward
-                </Title>
-                <Description>
-                    Freeze your AQUA into ICE and boost your rewards by up to 250%!
-                </Description>
-            </Content>
-            <StyledLink to={LockerRoutes.main}>
-                <Button fullWidth>GET THE BOOST</Button>
-            </StyledLink>
-        </Container>
-    );
-};
+const BoostBanner = () => (
+    <Container>
+        <FreezeAquaImg />
+        <Content>
+            <Title>
+                Get the <Label title="boost" background={COLORS.blue} /> to your reward
+            </Title>
+            <Description>
+                Freeze your AQUA into ICE and boost your rewards by up to 250%!
+            </Description>
+        </Content>
+        <StyledLink to={LockerRoutes.main}>
+            <Button fullWidth>GET THE BOOST</Button>
+        </StyledLink>
+    </Container>
+);
 
 export default BoostBanner;

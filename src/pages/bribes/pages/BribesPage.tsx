@@ -5,8 +5,9 @@ import styled from 'styled-components';
 import Bribes from 'assets/bribes.svg';
 import Plus from 'assets/icon-plus.svg';
 
-import Button from '../../../common/basics/Button';
-import ExternalLink from '../../../common/basics/ExternalLink';
+import Button from 'basics/buttons/Button';
+import ExternalLink from 'basics/ExternalLink';
+
 import { commonMaxWidth, respondDown } from '../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../common/styles';
 import { BribesRoutes } from '../../../routes';

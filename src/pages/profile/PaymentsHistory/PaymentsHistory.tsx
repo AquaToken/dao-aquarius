@@ -3,10 +3,11 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import DotsLoader from '../../../common/basics/DotsLoader';
-import ExternalLink from '../../../common/basics/ExternalLink';
-import PageLoader from '../../../common/basics/PageLoader';
-import Table, { CellAlign } from '../../../common/basics/Table';
+import ExternalLink from 'basics/ExternalLink';
+import DotsLoader from 'basics/loaders/DotsLoader';
+import PageLoader from 'basics/loaders/PageLoader';
+import Table, { CellAlign } from 'basics/Table';
+
 import { formatBalance, getDateString } from '../../../common/helpers/helpers';
 import { StellarService } from '../../../common/services/globalServices';
 import { StellarEvents } from '../../../common/services/stellar.service';

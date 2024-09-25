@@ -3,7 +3,8 @@ import styled from 'styled-components';
 
 import SwapIcon from 'assets/icon-arrows-circle.svg';
 
-import PageLoader from '../../../../../common/basics/PageLoader';
+import PageLoader from 'basics/loaders/PageLoader';
+
 import { flexAllCenter, respondDown } from '../../../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../../../common/styles';
 
@@ -30,18 +31,16 @@ const RevertButton = styled.div`
     }
 `;
 
-const SwapFormDivider = ({ pending, onRevert }) => {
-    return (
-        <Container>
-            {pending ? (
-                <PageLoader />
-            ) : (
-                <RevertButton onClick={() => onRevert()}>
-                    <SwapIcon />
-                </RevertButton>
-            )}
-        </Container>
-    );
-};
+const SwapFormDivider = ({ pending, onRevert }) => (
+    <Container>
+        {pending ? (
+            <PageLoader />
+        ) : (
+            <RevertButton onClick={() => onRevert()}>
+                <SwapIcon />
+            </RevertButton>
+        )}
+    </Container>
+);
 
 export default SwapFormDivider;

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 
-import { flexAllCenter } from '../mixins';
-import { COLORS } from '../styles';
+import { flexAllCenter } from 'web/mixins';
+import { COLORS } from 'web/styles';
 
 const Container = styled.div`
     width: 100%;
@@ -34,9 +34,9 @@ const Outer = styled.div`
     background-color: ${COLORS.gray};
 `;
 
-const Inner = styled.div<{ width: string }>`
+const Inner = styled.div<{ $width: string }>`
     ${progressLineStyles};
-    width: ${({ width }) => width};
+    width: ${({ $width }) => $width};
     background-color: ${COLORS.purple};
 `;
 
@@ -48,18 +48,16 @@ const ProgressLine = ({
     percent: number;
     leftLabel: string;
     rightLabel: string | React.ReactNode;
-}): JSX.Element => {
-    return (
-        <Container>
-            <Labels>
-                <LeftLabel>{leftLabel}</LeftLabel>
-                <span>{rightLabel}</span>
-            </Labels>
-            <Outer>
-                <Inner width={`${percent}%` || '0'} />
-            </Outer>
-        </Container>
-    );
-};
+}): React.ReactNode => (
+    <Container>
+        <Labels>
+            <LeftLabel>{leftLabel}</LeftLabel>
+            <span>{rightLabel}</span>
+        </Labels>
+        <Outer>
+            <Inner $width={`${percent}%` || '0'} />
+        </Outer>
+    </Container>
+);
 
 export default ProgressLine;

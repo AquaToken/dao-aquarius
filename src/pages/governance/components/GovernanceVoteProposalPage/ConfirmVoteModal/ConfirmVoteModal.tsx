@@ -8,11 +8,12 @@ import Ice from 'assets/ice-logo.svg';
 import Fail from 'assets/icon-fail.svg';
 import Success from 'assets/icon-success.svg';
 
-import Button from '../../../../../common/basics/Button';
-import ExternalLink from '../../../../../common/basics/ExternalLink';
-import Input from '../../../../../common/basics/Input';
-import RangeInput from '../../../../../common/basics/RangeInput';
-import Select from '../../../../../common/basics/Select';
+import Button from 'basics/buttons/Button';
+import ExternalLink from 'basics/ExternalLink';
+import Input from 'basics/inputs/Input';
+import RangeInput from 'basics/inputs/RangeInput';
+import Select from 'basics/inputs/Select';
+
 import ErrorHandler from '../../../../../common/helpers/error-handler';
 import {
     formatBalance,
@@ -169,9 +170,7 @@ const ConfirmVoteModal = ({
     const [pending, setPending] = useState(false);
     const [targetAsset, setTargetAsset] = useState(AQUA);
 
-    const targetBalance = useMemo(() => {
-        return account?.getAssetBalance(targetAsset);
-    }, [targetAsset]);
+    const targetBalance = useMemo(() => account?.getAssetBalance(targetAsset), [targetAsset]);
 
     const hasTrustLine = targetBalance !== null;
     const hasTargetBalance = targetBalance !== 0;

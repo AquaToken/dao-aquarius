@@ -5,8 +5,9 @@ import styled from 'styled-components';
 
 import AquaLogo from 'assets/aqua-logo-small.svg';
 
-import Button from '../../../../../common/basics/Button';
-import ExternalLink from '../../../../../common/basics/ExternalLink';
+import Button from 'basics/buttons/Button';
+import ExternalLink from 'basics/ExternalLink';
+
 import { formatBalance } from '../../../../../common/helpers/helpers';
 import ChooseLoginMethodModal from '../../../../../common/modals/ChooseLoginMethodModal';
 import { ModalService } from '../../../../../common/services/globalServices';

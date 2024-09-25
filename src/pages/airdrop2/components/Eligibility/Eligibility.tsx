@@ -2,14 +2,15 @@ import * as React from 'react';
 import { forwardRef, RefObject, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import AccountBlock from 'basics/AccountBlock';
+import ExternalLink from 'basics/ExternalLink';
+import PageLoader from 'basics/loaders/PageLoader';
+
 import ExpectedReward from './ExpectedReward/ExpectedReward';
 import SnapshotHoldings from './SnapshotHoldings/SnapshotHoldings';
 import Eligible from './Statuses/Eligible';
 import NotEligible from './Statuses/NotEligible';
 
-import AccountBlock from '../../../../common/basics/AccountBlock';
-import ExternalLink from '../../../../common/basics/ExternalLink';
-import PageLoader from '../../../../common/basics/PageLoader';
 import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
 import { StellarService } from '../../../../common/services/globalServices';
 import { Breakpoints, COLORS } from '../../../../common/styles';

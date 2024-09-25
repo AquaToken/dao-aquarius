@@ -13,7 +13,8 @@ import Stellarterm from 'assets/stellarterm-logo.svg';
 import StellarX from 'assets/stellarx-logo.svg';
 import Upbit from 'assets/upbit.svg';
 
-import ExternalLink from '../../../../common/basics/ExternalLink';
+import ExternalLink from 'basics/ExternalLink';
+
 import { respondDown } from '../../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../../common/styles';
 
@@ -117,73 +118,71 @@ const Link = styled.a`
     }
 `;
 
-const SupportedBy = () => {
-    return (
-        <Container>
-            <TextWallets>
-                <h4>Supported wallets</h4>
-                <div>
-                    AQUA is supported by all wallets on the Stellar network, choose the one you
-                    like. We recommend using LOBSTR for mobile and StellarX for desktop.
-                </div>
-            </TextWallets>
-            <IconsWallets>
-                <Link href="https://lobstr.co/" target="_blank">
-                    <Lobstr />
-                </Link>
-                <Link href="https://www.stellarx.com/" target="_blank">
-                    <StellarX />
-                </Link>
-                <Link href="https://stellarterm.com/" target="_blank">
-                    <Stellarterm />
-                </Link>
-                <Link href="https://lumenswap.io/" target="_blank">
-                    <Lumenswap />
-                </Link>
-                <Link href="https://www.ledger.com/" target="_blank">
-                    <Ledger />
-                </Link>
-                <Link href="https://www.freighter.app/" target="_blank">
-                    <Freighter />
-                </Link>
-            </IconsWallets>
-            <TextExchanges>
-                <h4>Supported exchanges</h4>
-                <div>
-                    We are working to make sure AQUA airdrop is supported by major exchanges. Keep
-                    an eye on announcements on Twitter and refer to our Medium article.
-                    <ExternalLink href="https://medium.com/aquarius-aqua/airdrop-2-participating-exchanges-daec43175387">
-                        View full list
-                    </ExternalLink>
-                </div>
-            </TextExchanges>
-            <IconsExchanges>
-                <Link href="https://sg.upbit.com/" target="_blank">
-                    <Upbit />
-                </Link>
-                <Link href="https://www.bithumb.com/" target="_blank">
-                    <Bitnumb />
-                </Link>
-                <Link href="https://www.gopax.co.kr/" target="_blank">
-                    <Gopax />
-                </Link>
-                <Link href="https://www.probit.com/" target="_blank">
-                    <Probit />
-                </Link>
-                <Link href="https://coinone.co.kr/" target="_blank">
-                    <Coinone />
-                </Link>
-                <Link href="https://www.hanbitco.com/" target="_blank">
-                    <img
-                        src="https://www.hanbitco.com/logos/hanbitco_logo_black.png"
-                        height="15"
-                        width="90"
-                        alt="hanbitco"
-                    />
-                </Link>
-            </IconsExchanges>
-        </Container>
-    );
-};
+const SupportedBy = () => (
+    <Container>
+        <TextWallets>
+            <h4>Supported wallets</h4>
+            <div>
+                AQUA is supported by all wallets on the Stellar network, choose the one you like. We
+                recommend using LOBSTR for mobile and StellarX for desktop.
+            </div>
+        </TextWallets>
+        <IconsWallets>
+            <Link href="https://lobstr.co/" target="_blank">
+                <Lobstr />
+            </Link>
+            <Link href="https://www.stellarx.com/" target="_blank">
+                <StellarX />
+            </Link>
+            <Link href="https://stellarterm.com/" target="_blank">
+                <Stellarterm />
+            </Link>
+            <Link href="https://lumenswap.io/" target="_blank">
+                <Lumenswap />
+            </Link>
+            <Link href="https://www.ledger.com/" target="_blank">
+                <Ledger />
+            </Link>
+            <Link href="https://www.freighter.app/" target="_blank">
+                <Freighter />
+            </Link>
+        </IconsWallets>
+        <TextExchanges>
+            <h4>Supported exchanges</h4>
+            <div>
+                We are working to make sure AQUA airdrop is supported by major exchanges. Keep an
+                eye on announcements on Twitter and refer to our Medium article.
+                <ExternalLink href="https://medium.com/aquarius-aqua/airdrop-2-participating-exchanges-daec43175387">
+                    View full list
+                </ExternalLink>
+            </div>
+        </TextExchanges>
+        <IconsExchanges>
+            <Link href="https://sg.upbit.com/" target="_blank">
+                <Upbit />
+            </Link>
+            <Link href="https://www.bithumb.com/" target="_blank">
+                <Bitnumb />
+            </Link>
+            <Link href="https://www.gopax.co.kr/" target="_blank">
+                <Gopax />
+            </Link>
+            <Link href="https://www.probit.com/" target="_blank">
+                <Probit />
+            </Link>
+            <Link href="https://coinone.co.kr/" target="_blank">
+                <Coinone />
+            </Link>
+            <Link href="https://www.hanbitco.com/" target="_blank">
+                <img
+                    src="https://www.hanbitco.com/logos/hanbitco_logo_black.png"
+                    height="15"
+                    width="90"
+                    alt="hanbitco"
+                />
+            </Link>
+        </IconsExchanges>
+    </Container>
+);
 
 export default SupportedBy;

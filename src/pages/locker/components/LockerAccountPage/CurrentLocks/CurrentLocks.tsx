@@ -4,9 +4,10 @@ import styled from 'styled-components';
 
 import Info from 'assets/icon-info.svg';
 
-import ProgressLine from '../../../../../common/basics/ProgressLine';
-import Table, { CellAlign } from '../../../../../common/basics/Table';
-import Tooltip, { TOOLTIP_POSITION } from '../../../../../common/basics/Tooltip';
+import ProgressLine from 'basics/ProgressLine';
+import Table, { CellAlign } from 'basics/Table';
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
 import {
     formatBalance,
     getDateString,
@@ -92,32 +93,28 @@ const CurrentLocks = ({
         return acc;
     }, 0);
 
-    const total = useMemo(() => {
-        return locksSum + aquaBalance + aquaInOffers + ammAquaBalance + aquaInVotes;
-    }, [locksSum, aquaBalance, aquaInOffers, ammAquaBalance, aquaInVotes]);
+    const total = useMemo(
+        () => locksSum + aquaBalance + aquaInOffers + ammAquaBalance + aquaInVotes,
+        [locksSum, aquaBalance, aquaInOffers, ammAquaBalance, aquaInVotes],
+    );
 
-    const availablePercent = useMemo(() => {
-        return roundToPrecision((aquaBalance / total) * 100, 2);
-    }, [total]);
-    const inOffersPercent = useMemo(() => {
-        return roundToPrecision((aquaInOffers / total) * 100, 2);
-    }, [total]);
-    const inVotesPercent = useMemo(() => {
-        return roundToPrecision((aquaInVotes / total) * 100, 2);
-    }, [total]);
-    const ammPercent = useMemo(() => {
-        return roundToPrecision((ammAquaBalance / total) * 100, 2);
-    }, [total]);
+    const availablePercent = useMemo(
+        () => roundToPrecision((aquaBalance / total) * 100, 2),
+        [total],
+    );
+    const inOffersPercent = useMemo(
+        () => roundToPrecision((aquaInOffers / total) * 100, 2),
+        [total],
+    );
+    const inVotesPercent = useMemo(() => roundToPrecision((aquaInVotes / total) * 100, 2), [total]);
+    const ammPercent = useMemo(() => roundToPrecision((ammAquaBalance / total) * 100, 2), [total]);
 
-    const lockPercent = useMemo(() => {
-        return roundToPrecision((locksSum / total) * 100, 2);
-    }, [total]);
+    const lockPercent = useMemo(() => roundToPrecision((locksSum / total) * 100, 2), [total]);
 
     const getIceAmount = useCallback(
-        balanceId => {
-            return distributions.find(distribution => distribution.balance_id === balanceId)
-                ?.distributed_amount;
-        },
+        balanceId =>
+            distributions.find(distribution => distribution.balance_id === balanceId)
+                ?.distributed_amount,
         [distributions, locks],
     );
 

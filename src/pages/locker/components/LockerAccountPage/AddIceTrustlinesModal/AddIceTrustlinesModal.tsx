@@ -4,7 +4,8 @@ import styled from 'styled-components';
 
 import Ice from 'assets/ice-logo.svg';
 
-import Button from '../../../../../common/basics/Button';
+import Button from 'basics/buttons/Button';
+
 import ErrorHandler from '../../../../../common/helpers/error-handler';
 import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
 import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
@@ -78,9 +79,7 @@ const AddIceTrustlinesModal = ({ confirm }) => {
         try {
             setPending(true);
 
-            const ops = unlistedAssets.map(asset => {
-                return StellarService.createAddTrustOperation(asset);
-            });
+            const ops = unlistedAssets.map(asset => StellarService.createAddTrustOperation(asset));
             const tx = await StellarService.buildTx(account, ops);
 
             const result = await account.signAndSubmitTx(tx);

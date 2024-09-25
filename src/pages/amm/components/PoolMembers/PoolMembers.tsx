@@ -4,9 +4,10 @@ import styled from 'styled-components';
 
 import LinkIcon from 'assets/icon-external-link.svg';
 
-import AccountViewer from '../../../../common/basics/AccountViewer';
-import PageLoader from '../../../../common/basics/PageLoader';
-import Pagination from '../../../../common/basics/Pagination';
+import PageLoader from 'basics/loaders/PageLoader';
+import Pagination from 'basics/Pagination';
+import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
+
 import { formatBalance } from '../../../../common/helpers/helpers';
 import { useUpdateIndex } from '../../../../common/hooks/useUpdateIndex';
 import { respondDown } from '../../../../common/mixins';
@@ -103,7 +104,7 @@ const PoolMembers = ({ poolId, totalShare }: { poolId: string; totalShare: strin
                             href={`https://stellar.expert/explorer/public/account/${member.account_address}`}
                             target="_blank"
                         >
-                            <AccountViewer pubKey={member.account_address} />
+                            <PublicKeyWithIcon pubKey={member.account_address} />
                             <LinkIcon />
                         </LinkToExpert>
 

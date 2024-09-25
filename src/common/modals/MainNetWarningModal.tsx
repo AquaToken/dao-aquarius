@@ -2,11 +2,12 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import Alert from 'basics/Alert';
+import Button from 'basics/buttons/Button';
+import Checkbox from 'basics/inputs/Checkbox';
+
 import { ModalTitle } from './atoms/ModalAtoms';
 
-import Alert from '../basics/Alert';
-import Button from '../basics/Button';
-import Checkbox from '../basics/Checkbox';
 import { respondDown } from '../mixins';
 import { Breakpoints, COLORS } from '../styles';
 

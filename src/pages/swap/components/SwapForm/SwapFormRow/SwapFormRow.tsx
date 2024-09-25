@@ -3,7 +3,8 @@ import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
 
-import Input from '../../../../../common/basics/Input';
+import Input from 'basics/inputs/Input';
+
 import { formatBalance } from '../../../../../common/helpers/helpers';
 import { respondDown } from '../../../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../../../common/styles';

@@ -6,10 +6,11 @@ import styled from 'styled-components';
 
 import ArrowRight from 'assets/icon-arrow-right.svg';
 
-import Button from '../../basics/Button';
-import CopyButton from '../../basics/CopyButton';
-import ExternalLink from '../../basics/ExternalLink';
-import ToggleGroup from '../../basics/ToggleGroup';
+import Button from 'basics/buttons/Button';
+import CopyButton from 'basics/buttons/CopyButton';
+import ExternalLink from 'basics/ExternalLink';
+import ToggleGroup from 'basics/inputs/ToggleGroup';
+
 import { isAndroid, isIOS, isMobile } from '../../helpers/browser';
 import { clearCurrentWallet, saveCurrentWallet } from '../../helpers/wallet-connect-helpers';
 import { flexAllCenter, respondDown } from '../../mixins';
@@ -157,16 +158,16 @@ const QRModal = ({ params }: ModalProps<{ uri: string }>): JSX.Element => {
         if (isIOS()) {
             axios
                 .get<{ listings: Listings }>(registryUrl)
-                .then(({ data }) => {
-                    return Object.values(data.listings).filter(
+                .then(({ data }) =>
+                    Object.values(data.listings).filter(
                         wallet =>
                             wallet.versions.includes('2') &&
                             wallet.chains.includes('stellar:pubnet') &&
                             // TODO remove this hardcode
                             // Hide "SafePal" until they fix compatibility issues
                             wallet.name !== 'SafePal',
-                    );
-                })
+                    ),
+                )
                 .then(res => {
                     setWallets(res);
                 });

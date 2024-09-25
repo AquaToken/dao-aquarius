@@ -7,10 +7,11 @@ import LobstrLogo from 'assets/lobstr-name-logo.svg';
 import StellarTermLogo from 'assets/stellarterm-logo.svg';
 import StellarXLogo from 'assets/stellarx-logo.svg';
 
+import CopyButton from 'basics/buttons/CopyButton';
+import ExternalLink from 'basics/ExternalLink';
+import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
+
 import { MainRoutes } from '../../../routes';
-import AccountViewer from '../../basics/AccountViewer';
-import CopyButton from '../../basics/CopyButton';
-import ExternalLink from '../../basics/ExternalLink';
 import { flexRowSpaceBetween, respondDown } from '../../mixins';
 import { Breakpoints, COLORS } from '../../styles';
 import { ModalDescription, ModalTitle } from '../atoms/ModalAtoms';
@@ -142,109 +143,101 @@ const Scrolled = styled.div`
     }
 `;
 
-const GetAquaModal = ({ close }): JSX.Element => {
-    return (
-        <Scrolled>
-            <Container>
-                <ModalTitle>Get AQUA token</ModalTitle>
-                <ModalDescription>AQUA is the utility token of Aquarius project.</ModalDescription>
-                <AssetInfo>
-                    <div>
-                        <GrayText>Asset code</GrayText>
-                        <BoldText>AQUA</BoldText>
-                    </div>
-                    <div>
-                        <GrayText>Home domain</GrayText>
-                        <BoldText>aqua.network</BoldText>
-                    </div>
-                    <div>
-                        <GrayText>Issuer address</GrayText>
-                        <BoldText>
-                            <CopyButton
-                                text={'GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA'}
-                            >
-                                <AccountViewer
-                                    pubKey={
-                                        'GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA'
-                                    }
-                                />
-                            </CopyButton>
-                        </BoldText>
-                    </div>
-                </AssetInfo>
-                <InfoRow>
-                    <ExternalLink href="https://stellar.expert/explorer/public/asset/AQUA-GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA-1">
-                        View on Network Explorer
-                    </ExternalLink>
-                    <Text>
-                        Make sure the home domain is &quot;aqua.network&quot; when you add AQUA.
-                    </Text>
-                </InfoRow>
-                <InfoRow>
-                    <Text>
-                        Airdrop #2 snapshot was taken on January 15th, 2022 00:00 UTC. See if your
-                        account is eligible to claim some AQUA.
-                    </Text>
+const GetAquaModal = ({ close }): JSX.Element => (
+    <Scrolled>
+        <Container>
+            <ModalTitle>Get AQUA token</ModalTitle>
+            <ModalDescription>AQUA is the utility token of Aquarius project.</ModalDescription>
+            <AssetInfo>
+                <div>
+                    <GrayText>Asset code</GrayText>
+                    <BoldText>AQUA</BoldText>
+                </div>
+                <div>
+                    <GrayText>Home domain</GrayText>
+                    <BoldText>aqua.network</BoldText>
+                </div>
+                <div>
+                    <GrayText>Issuer address</GrayText>
+                    <BoldText>
+                        <CopyButton text="GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA">
+                            <PublicKeyWithIcon pubKey="GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA" />
+                        </CopyButton>
+                    </BoldText>
+                </div>
+            </AssetInfo>
+            <InfoRow>
+                <ExternalLink href="https://stellar.expert/explorer/public/asset/AQUA-GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA-1">
+                    View on Network Explorer
+                </ExternalLink>
+                <Text>
+                    Make sure the home domain is &quot;aqua.network&quot; when you add AQUA.
+                </Text>
+            </InfoRow>
+            <InfoRow>
+                <Text>
+                    Airdrop #2 snapshot was taken on January 15th, 2022 00:00 UTC. See if your
+                    account is eligible to claim some AQUA.
+                </Text>
 
-                    <ExternalLink asDiv onClick={() => close()}>
-                        <Link to={MainRoutes.airdrop2}>Learn more</Link>
-                    </ExternalLink>
-                </InfoRow>
-            </Container>
-            <TrustedPlatformsBlock>
-                <ModalTitle>Get on trusted platforms</ModalTitle>
-                <ModalDescription>
-                    We suggest using trusted platforms for greater security
-                </ModalDescription>
-                <PlatfomLink
-                    href="https://lobstr.co/trade/AQUA:GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA"
-                    target="_blank"
-                >
-                    <LinkBody>
-                        <LobstrLogo />
-                        <LinkContent>
-                            <LinkTitle>Lobstr.co</LinkTitle>
-                            <LinkDescription>
-                                Trading platform built on the Stellar network.
-                            </LinkDescription>
-                        </LinkContent>
-                    </LinkBody>
+                <ExternalLink asDiv onClick={() => close()}>
+                    <Link to={MainRoutes.airdrop2}>Learn more</Link>
+                </ExternalLink>
+            </InfoRow>
+        </Container>
+        <TrustedPlatformsBlock>
+            <ModalTitle>Get on trusted platforms</ModalTitle>
+            <ModalDescription>
+                We suggest using trusted platforms for greater security
+            </ModalDescription>
+            <PlatfomLink
+                href="https://lobstr.co/trade/AQUA:GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA"
+                target="_blank"
+            >
+                <LinkBody>
+                    <LobstrLogo />
+                    <LinkContent>
+                        <LinkTitle>Lobstr.co</LinkTitle>
+                        <LinkDescription>
+                            Trading platform built on the Stellar network.
+                        </LinkDescription>
+                    </LinkContent>
+                </LinkBody>
 
-                    <ArrowRight />
-                </PlatfomLink>
-                <PlatfomLink
-                    href="https://www.stellarx.com/markets/native/AQUA:GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA"
-                    target="_blank"
-                >
-                    <LinkBody>
-                        <StellarXLogo />
-                        <LinkContent>
-                            <LinkTitle>Stellarx.com</LinkTitle>
-                            <LinkDescription>
-                                Trading platform built on the Stellar network.
-                            </LinkDescription>
-                        </LinkContent>
-                    </LinkBody>
-                    <ArrowRight />
-                </PlatfomLink>
-                <PlatfomLink
-                    href="https://stellarterm.com/exchange/AQUA-GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA/XLM-native"
-                    target="_blank"
-                >
-                    <LinkBody>
-                        <StellarTermLogo />
-                        <LinkContent>
-                            <LinkTitle>Stellarterm.com</LinkTitle>
-                            <LinkDescription>
-                                Light trading client for the Stellar network.
-                            </LinkDescription>
-                        </LinkContent>
-                    </LinkBody>
-                    <ArrowRight />
-                </PlatfomLink>
-            </TrustedPlatformsBlock>
-        </Scrolled>
-    );
-};
+                <ArrowRight />
+            </PlatfomLink>
+            <PlatfomLink
+                href="https://www.stellarx.com/markets/native/AQUA:GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA"
+                target="_blank"
+            >
+                <LinkBody>
+                    <StellarXLogo />
+                    <LinkContent>
+                        <LinkTitle>Stellarx.com</LinkTitle>
+                        <LinkDescription>
+                            Trading platform built on the Stellar network.
+                        </LinkDescription>
+                    </LinkContent>
+                </LinkBody>
+                <ArrowRight />
+            </PlatfomLink>
+            <PlatfomLink
+                href="https://stellarterm.com/exchange/AQUA-GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA/XLM-native"
+                target="_blank"
+            >
+                <LinkBody>
+                    <StellarTermLogo />
+                    <LinkContent>
+                        <LinkTitle>Stellarterm.com</LinkTitle>
+                        <LinkDescription>
+                            Light trading client for the Stellar network.
+                        </LinkDescription>
+                    </LinkContent>
+                </LinkBody>
+                <ArrowRight />
+            </PlatfomLink>
+        </TrustedPlatformsBlock>
+    </Scrolled>
+);
 
 export default GetAquaModal;

@@ -7,9 +7,10 @@ import Aqua from 'assets/aqua-logo-small.svg';
 import Ice from 'assets/ice-logo.svg';
 import Info from 'assets/icon-info.svg';
 
-import Button from '../../../../../common/basics/Button';
-import Input from '../../../../../common/basics/Input';
-import RangeInput from '../../../../../common/basics/RangeInput';
+import Button from 'basics/buttons/Button';
+import Input from 'basics/inputs/Input';
+import RangeInput from 'basics/inputs/RangeInput';
+
 import {
     formatBalance,
     getDateString,
@@ -31,7 +32,8 @@ import {
     roundMsToDays,
 } from '../IceBlock/IceBlock';
 import LockAquaModal from '../LockAquaModal/LockAquaModal';
-import Tooltip, { TOOLTIP_POSITION } from '../../../../../common/basics/Tooltip';
+
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 const Container = styled.div`
     background: ${COLORS.white};

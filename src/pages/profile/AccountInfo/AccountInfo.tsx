@@ -5,8 +5,9 @@ import Copy from 'assets/icon-copy.svg';
 import External from 'assets/icon-external-link.svg';
 import MyAquarius from 'assets/my-aquarius.svg';
 
-import CopyButton from '../../../common/basics/CopyButton';
-import Identicon from '../../../common/basics/Identicon';
+import CopyButton from 'basics/buttons/CopyButton';
+import Identicon from 'basics/Identicon';
+
 import {
     commonMaxWidth,
     flexAllCenter,

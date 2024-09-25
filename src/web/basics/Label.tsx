@@ -2,10 +2,10 @@ import * as React from 'react';
 import { useCallback, useState } from 'react';
 import styled from 'styled-components';
 
-import Tooltip, { TOOLTIP_POSITION } from './Tooltip';
+import { flexAllCenter, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
 
-import { flexAllCenter, respondDown } from '../mixins';
-import { Breakpoints, COLORS } from '../styles';
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 const TooltipInner = styled.div`
     width: 28.8rem;
@@ -29,16 +29,16 @@ const LabelWrap = styled.div`
 `;
 
 const LabelInner = styled.div<{
-    background: string;
-    color: string;
+    $background: string;
+    $color: string;
 }>`
     ${flexAllCenter};
     height: 1.6rem;
     padding: 0 0.4rem;
     border-radius: 0.3rem;
-    background: ${({ background }) => background};
-    color: ${({ color }) => color};
-    border: ${({ color }) => `0.1rem solid ${color}`};
+    background: ${({ $background }) => $background};
+    color: ${({ $color }) => $color};
+    border: ${({ $color }) => `0.1rem solid ${$color}`};
     text-transform: uppercase;
     font-weight: 700;
     font-size: 0.8rem;
@@ -49,23 +49,25 @@ const LabelInner = styled.div<{
 
 const SCROLL_OFFSET = window.navigator.userAgent.indexOf('win') > -1 ? 20 : 0;
 
+interface LabelProps {
+    title: string;
+    text?: string | React.ReactNode;
+    background?: string;
+    color?: string;
+}
+
 const Label = ({
     title,
     text,
     background = COLORS.purple,
     color = COLORS.white,
     ...props
-}: {
-    title: string;
-    text?: string | React.ReactNode;
-    background?: string;
-    color?: string;
-}) => {
+}: LabelProps): React.ReactNode => {
     const [isEnoughSpaceOnTop, setIsEnoughSpaceOnTop] = useState(true);
     const [isRightOriented, setIsRightOriented] = useState(true);
 
     const ref = useCallback(
-        node => {
+        (node: HTMLDivElement) => {
             if (node !== null && isEnoughSpaceOnTop) {
                 setIsEnoughSpaceOnTop(
                     node.getBoundingClientRect().left > 0 &&
@@ -82,7 +84,7 @@ const Label = ({
 
     if (!text) {
         return (
-            <LabelInner background={background} color={color}>
+            <LabelInner $background={background} $color={color}>
                 {title}
             </LabelInner>
         );
@@ -103,7 +105,7 @@ const Label = ({
             showOnHover
         >
             <LabelWrap>
-                <LabelInner background={background} color={color} {...props}>
+                <LabelInner $background={background} $color={color} {...props}>
                     {title}
                 </LabelInner>
             </LabelWrap>

@@ -6,8 +6,9 @@ import IconDislike from 'assets/icon-dislike-black.svg';
 import IconLike from 'assets/icon-like-white.svg';
 import IconTick from 'assets/icon-tick.svg';
 
-import Button from '../../../../../../common/basics/Button';
-import Tooltip, { TOOLTIP_POSITION } from '../../../../../../common/basics/Tooltip';
+import Button from 'basics/buttons/Button';
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
 import { formatBalance } from '../../../../../../common/helpers/helpers';
 import { flexRowSpaceBetween } from '../../../../../../common/mixins';
 import ChooseLoginMethodModal from '../../../../../../common/modals/ChooseLoginMethodModal';

@@ -6,14 +6,15 @@ import styled from 'styled-components';
 import ArrowLeft from 'assets/icon-arrow-left.svg';
 import Tick from 'assets/icon-tick-white.svg';
 
-import Alert from '../../../common/basics/Alert';
-import Button from '../../../common/basics/Button';
-import Checkbox from '../../../common/basics/Checkbox';
-import CircleButton from '../../../common/basics/CircleButton';
-import Input from '../../../common/basics/Input';
-import PageLoader from '../../../common/basics/PageLoader';
-import ToggleGroup from '../../../common/basics/ToggleGroup';
-import Tooltip, { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
+import Alert from 'basics/Alert';
+import Button from 'basics/buttons/Button';
+import CircleButton from 'basics/buttons/CircleButton';
+import Checkbox from 'basics/inputs/Checkbox';
+import Input from 'basics/inputs/Input';
+import ToggleGroup from 'basics/inputs/ToggleGroup';
+import PageLoader from 'basics/loaders/PageLoader';
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
 import { formatBalance } from '../../../common/helpers/helpers';
 import { openCurrentWalletIfExist } from '../../../common/helpers/wallet-connect-helpers';
 import { flexRowSpaceBetween, respondDown } from '../../../common/mixins';
@@ -372,8 +373,8 @@ const CreatePool = () => {
             [firstAsset, secondAsset, thirdAsset, fourthAsset].filter(asset => asset !== null),
             Number(stableFee),
         )
-            .then(tx => {
-                return account.signAndSubmitTx(tx, true).then(res => {
+            .then(tx =>
+                account.signAndSubmitTx(tx, true).then(res => {
                     setPending(false);
                     if (!res) {
                         return;
@@ -391,8 +392,8 @@ const CreatePool = () => {
                     );
                     ToastService.showSuccessToast('Pool successfully created');
                     history.push(`${AmmRoutes.analytics}${poolAddress}`);
-                });
-            })
+                }),
+            )
             .catch(e => {
                 ToastService.showErrorToast(e.message ?? e.toString());
                 setPending(false);
@@ -419,8 +420,8 @@ const CreatePool = () => {
             secondAsset,
             constantFee,
         )
-            .then(tx => {
-                return account.signAndSubmitTx(tx, true).then(res => {
+            .then(tx =>
+                account.signAndSubmitTx(tx, true).then(res => {
                     setPending(false);
                     if (!res) {
                         return;
@@ -438,8 +439,8 @@ const CreatePool = () => {
                     );
                     ToastService.showSuccessToast('Pool successfully created');
                     history.push(`${AmmRoutes.analytics}${poolAddress}`);
-                });
-            })
+                }),
+            )
             .catch(e => {
                 ToastService.showErrorToast(e.message ?? e.toString());
                 setPending(false);

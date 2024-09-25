@@ -5,8 +5,9 @@ import styled from 'styled-components';
 
 import ArrowDown from 'assets/icon-arrow-down.svg';
 
+import PageLoader from 'basics/loaders/PageLoader';
+
 import { getDistributionForAccount } from '../../../api/ice-locker';
-import PageLoader from '../../../common/basics/PageLoader';
 import { useIsOnViewport } from '../../../common/hooks/useIsOnViewport';
 import { commonMaxWidth, respondDown } from '../../../common/mixins';
 import AccountService from '../../../common/services/account.service';

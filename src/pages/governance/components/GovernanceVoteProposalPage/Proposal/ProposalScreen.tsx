@@ -7,9 +7,10 @@ import ArrowLeft from 'assets/icon-arrow-left.svg';
 import IconEdit from 'assets/icon-edit.svg';
 import ExternalIcon from 'assets/icon-external-link.svg';
 
-import AccountViewer from '../../../../../common/basics/AccountViewer';
-import CircleButton from '../../../../../common/basics/CircleButton';
-import ExternalLink from '../../../../../common/basics/ExternalLink';
+import CircleButton from 'basics/buttons/CircleButton';
+import ExternalLink from 'basics/ExternalLink';
+import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
+
 import { getDateString } from '../../../../../common/helpers/helpers';
 import { useIsOnViewport, useIsOverScrolled } from '../../../../../common/hooks/useIsOnViewport';
 import { commonMaxWidth, flexAllCenter, respondDown } from '../../../../../common/mixins';
@@ -444,7 +445,7 @@ const ProposalScreen = ({
                                     <DetailsTitle>Proposed by:</DetailsTitle>
                                     <DetailsDescription>
                                         <AccountBlock>
-                                            <AccountViewer pubKey={proposedBy} />
+                                            <PublicKeyWithIcon pubKey={proposedBy} />
                                             <ExternalButton
                                                 onClick={() => viewOnStellarExpert(proposedBy)}
                                             >

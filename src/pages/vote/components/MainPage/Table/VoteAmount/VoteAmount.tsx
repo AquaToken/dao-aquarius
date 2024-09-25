@@ -7,7 +7,8 @@ import IconDown from 'assets/icon-down-percent.svg';
 import InfoIcon from 'assets/icon-info.svg';
 import IconUp from 'assets/icon-up-percent.svg';
 
-import Tooltip, { TOOLTIP_POSITION } from '../../../../../../common/basics/Tooltip';
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
 import { formatBalance, roundToPrecision } from '../../../../../../common/helpers/helpers';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../../../common/mixins';
 import {

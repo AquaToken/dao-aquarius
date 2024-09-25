@@ -2,7 +2,8 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import PageLoader from '../../../common/basics/PageLoader';
+import PageLoader from 'basics/loaders/PageLoader';
+
 import { GovernanceRoutes } from '../../../routes';
 import useAuthStore from '../../../store/authStore/useAuthStore';
 import { getProposalsRequest, PROPOSAL_FILTER } from '../../governance/api/api';
@@ -30,9 +31,9 @@ const YourGovernanceVotes = () => {
             {!proposals ? (
                 <PageLoader />
             ) : proposals.length ? (
-                proposals.map(proposal => {
-                    return <ProposalPreview key={proposal.id} proposal={proposal} withMyVotes />;
-                })
+                proposals.map(proposal => (
+                    <ProposalPreview key={proposal.id} proposal={proposal} withMyVotes />
+                ))
             ) : (
                 <Section>
                     <Empty>

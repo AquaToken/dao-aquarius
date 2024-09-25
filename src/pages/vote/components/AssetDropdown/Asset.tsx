@@ -5,10 +5,11 @@ import styled from 'styled-components';
 
 import Info from 'assets/icon-info.svg';
 
+import DotsLoader from 'basics/loaders/DotsLoader';
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
 import AssetLogo from './AssetLogo';
 
-import DotsLoader from '../../../../common/basics/DotsLoader';
-import Tooltip, { TOOLTIP_POSITION } from '../../../../common/basics/Tooltip';
 import { flexAllCenter, respondDown, textEllipsis } from '../../../../common/mixins';
 import AssetInfoModal from '../../../../common/modals/AssetInfoModal/AssetInfoModal';
 import { ModalService } from '../../../../common/services/globalServices';

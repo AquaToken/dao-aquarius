@@ -4,7 +4,8 @@ import { RouteComponentProps } from 'react-router';
 import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 
-import Button from '../../basics/Button';
+import Button from 'basics/buttons/Button';
+
 import { flexAllCenter } from '../../mixins';
 import SentryService from '../../services/sentry.service';
 import { COLORS } from '../../styles';

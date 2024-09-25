@@ -3,8 +3,9 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import Button from '../../../common/basics/Button';
-import PageLoader from '../../../common/basics/PageLoader';
+import Button from 'basics/buttons/Button';
+import PageLoader from 'basics/loaders/PageLoader';
+
 import { formatBalance } from '../../../common/helpers/helpers';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../common/mixins';
 import { ModalService, StellarService } from '../../../common/services/globalServices';

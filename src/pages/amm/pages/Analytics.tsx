@@ -6,8 +6,9 @@ import styled from 'styled-components';
 import Plus from 'assets/icon-plus.svg';
 import Search from 'assets/icon-search.svg';
 
-import Button from '../../../common/basics/Button';
-import Input from '../../../common/basics/Input';
+import Button from 'basics/buttons/Button';
+import Input from 'basics/inputs/Input';
+
 import { formatBalance } from '../../../common/helpers/helpers';
 import { useDebounce } from '../../../common/hooks/useDebounce';
 import {

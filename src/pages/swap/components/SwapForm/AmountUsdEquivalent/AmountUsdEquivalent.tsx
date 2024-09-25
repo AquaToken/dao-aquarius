@@ -5,7 +5,8 @@ import styled from 'styled-components';
 
 import Warning from 'assets/icon-warning.svg';
 
-import Tooltip, { TOOLTIP_POSITION } from '../../../../../common/basics/Tooltip';
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
 import { formatBalance, getAssetString } from '../../../../../common/helpers/helpers';
 import { respondDown } from '../../../../../common/mixins';
 import { StellarService } from '../../../../../common/services/globalServices';

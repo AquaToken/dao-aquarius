@@ -2,9 +2,10 @@ import * as React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import DotsLoader from '../../../common/basics/DotsLoader';
-import PageLoader from '../../../common/basics/PageLoader';
-import Table, { CellAlign } from '../../../common/basics/Table';
+import DotsLoader from 'basics/loaders/DotsLoader';
+import PageLoader from 'basics/loaders/PageLoader';
+import Table, { CellAlign } from 'basics/Table';
+
 import { formatBalance } from '../../../common/helpers/helpers';
 import { StellarService } from '../../../common/services/globalServices';
 import { COLORS } from '../../../common/styles';

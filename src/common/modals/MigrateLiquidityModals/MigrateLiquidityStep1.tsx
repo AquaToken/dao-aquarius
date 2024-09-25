@@ -3,15 +3,16 @@ import * as React from 'react';
 import { useMemo, useState } from 'react';
 import styled from 'styled-components';
 
+import Button from 'basics/buttons/Button';
+import Input from 'basics/inputs/Input';
+import RangeInput from 'basics/inputs/RangeInput';
+
 import MigrateLiquidityStep2 from './MigrateLiquidityStep2';
 
 import { PairContainer } from '../../../pages/amm/components/WithdrawFromPool/WithdrawFromPool';
 import AssetLogo from '../../../pages/vote/components/AssetDropdown/AssetLogo';
 import Market from '../../../pages/vote/components/common/Market';
 import useAuthStore from '../../../store/authStore/useAuthStore';
-import Button from '../../basics/Button';
-import Input from '../../basics/Input';
-import RangeInput from '../../basics/RangeInput';
 import ErrorHandler from '../../helpers/error-handler';
 import { formatBalance, getAssetString } from '../../helpers/helpers';
 import { respondDown } from '../../mixins';

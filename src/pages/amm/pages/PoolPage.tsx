@@ -5,10 +5,11 @@ import styled from 'styled-components';
 
 import ArrowLeft from 'assets/icon-arrow-left.svg';
 
-import Button from '../../../common/basics/Button';
-import CircleButton from '../../../common/basics/CircleButton';
-import ExternalLink from '../../../common/basics/ExternalLink';
-import PageLoader from '../../../common/basics/PageLoader';
+import Button from 'basics/buttons/Button';
+import CircleButton from 'basics/buttons/CircleButton';
+import ExternalLink from 'basics/ExternalLink';
+import PageLoader from 'basics/loaders/PageLoader';
+
 import MigrateToSorobanBanner from '../../../common/components/MigrateToSorobanBanner/MigrateToSorobanBanner';
 import NoTrustline from '../../../common/components/NoTrustline/NoTrustline';
 import { formatBalance } from '../../../common/helpers/helpers';

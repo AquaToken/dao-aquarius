@@ -2,10 +2,11 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import Button from 'basics/buttons/Button';
+import Select, { Option } from 'basics/inputs/Select';
+
 import VotesAmountModal, { ContentRow, Label } from './VotesAmountModal';
 
-import Button from '../../../../../common/basics/Button';
-import Select, { Option } from '../../../../../common/basics/Select';
 import ErrorHandler from '../../../../../common/helpers/error-handler';
 import { getDateString } from '../../../../../common/helpers/helpers';
 import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';

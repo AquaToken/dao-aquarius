@@ -2,6 +2,9 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import Select from 'basics/inputs/Select';
+import ToggleGroup from 'basics/inputs/ToggleGroup';
+
 import AccountInfo from './AccountInfo/AccountInfo';
 import Airdrop2List from './Airdrop2List/Airdrop2List';
 import AmmRewards from './AmmRewards/AmmRewards';
@@ -12,8 +15,6 @@ import SdexRewards from './SdexRewards/SdexRewards';
 import YourGovernanceVotes from './YourGovernanceVotes/YourGovernanceVotes';
 import YourVotes from './YourVotes/YourVotes';
 
-import Select from '../../common/basics/Select';
-import ToggleGroup from '../../common/basics/ToggleGroup';
 import { commonMaxWidth, respondDown } from '../../common/mixins';
 import { StellarService } from '../../common/services/globalServices';
 import { Breakpoints, COLORS } from '../../common/styles';

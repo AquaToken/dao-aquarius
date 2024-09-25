@@ -4,7 +4,8 @@ import styled from 'styled-components';
 import Background from 'assets/main-screen-img.svg';
 import Stars from 'assets/main-stars.svg';
 
-import Button from '../../../../common/basics/Button';
+import Button from 'basics/buttons/Button';
+
 import SocialLinks from '../../../../common/components/SocialLinks/SocialLinks';
 import { respondDown } from '../../../../common/mixins';
 import GetAquaModal from '../../../../common/modals/GetAquaModal/GetAquaModal';
@@ -130,24 +131,22 @@ const StyledButton = styled(Button)`
     `}
 `;
 
-const MainBlock = () => {
-    return (
-        <Main>
-            <SocialLinks />
-            <StarsImage />
-            <StyledBackground />
-            <TextBlock>
-                <Title>New Horizons</Title>
-                <Description>
-                    Aquarius adds liquidity management layer to Stellar and powers new generation of
-                    DeFi projects.
-                </Description>
-                <StyledButton onClick={() => ModalService.openModal(GetAquaModal, {})} isBig>
-                    Get AQUA tokens
-                </StyledButton>
-            </TextBlock>
-        </Main>
-    );
-};
+const MainBlock = () => (
+    <Main>
+        <SocialLinks />
+        <StarsImage />
+        <StyledBackground />
+        <TextBlock>
+            <Title>New Horizons</Title>
+            <Description>
+                Aquarius adds liquidity management layer to Stellar and powers new generation of
+                DeFi projects.
+            </Description>
+            <StyledButton onClick={() => ModalService.openModal(GetAquaModal, {})} isBig>
+                Get AQUA tokens
+            </StyledButton>
+        </TextBlock>
+    </Main>
+);
 
 export default MainBlock;

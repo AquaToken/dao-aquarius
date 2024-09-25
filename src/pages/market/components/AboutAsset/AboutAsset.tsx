@@ -1,11 +1,12 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import AccountViewer from '../../../../common/basics/AccountViewer';
-import CopyButton from '../../../../common/basics/CopyButton';
-import DotsLoader from '../../../../common/basics/DotsLoader';
-import ExternalLink from '../../../../common/basics/ExternalLink';
-import PageLoader from '../../../../common/basics/PageLoader';
+import CopyButton from 'basics/buttons/CopyButton';
+import ExternalLink from 'basics/ExternalLink';
+import DotsLoader from 'basics/loaders/DotsLoader';
+import PageLoader from 'basics/loaders/PageLoader';
+import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
+
 import { formatBalance, getDateString } from '../../../../common/helpers/helpers';
 import { respondDown } from '../../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../../common/styles';
@@ -180,7 +181,7 @@ const AboutAsset = ({ asset }) => {
                             <AssetDetailTitle>Issuer</AssetDetailTitle>
                             <AssetDetailValue>
                                 <CopyButton text={asset.issuer}>
-                                    <AccountViewer pubKey={asset.issuer} />
+                                    <PublicKeyWithIcon pubKey={asset.issuer} />
                                 </CopyButton>
                             </AssetDetailValue>
                         </AssetDetail>

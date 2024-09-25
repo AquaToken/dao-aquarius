@@ -25,9 +25,9 @@ import VoteMarketsImage from 'assets/landing-about-vote-markets-80.svg';
 import VoteProposalsImage from 'assets/landing-about-vote-proposals-80.svg';
 
 import Changes24 from 'basics/Changes24';
-import DotsLoader from 'basics/DotsLoader';
+import DotsLoader from 'basics/loaders/DotsLoader';
+import PageLoader from 'basics/loaders/PageLoader';
 
-import PageLoader from '../../../../common/basics/PageLoader';
 import { formatBalance } from '../../../../common/helpers/helpers';
 import Asset from '../../../vote/components/AssetDropdown/Asset';
 

@@ -1,8 +1,9 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import Button from '../../../../common/basics/Button';
-import ExternalLink from '../../../../common/basics/ExternalLink';
+import Button from 'basics/buttons/Button';
+import ExternalLink from 'basics/ExternalLink';
+
 import { respondDown } from '../../../../common/mixins';
 import { ModalDescription, ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
 import { Breakpoints } from '../../../../common/styles';
@@ -26,26 +27,22 @@ const Links = styled.div`
     }
 `;
 
-const TemporarilyNotWork = ({ close }) => {
-    return (
-        <Container>
-            <ModalTitle>Maintenance in progress</ModalTitle>
-            <ModalDescription>
-                Proposal creation is temporarily disabled as we preparing to roll out a set of
-                upgrades to the governance process. Please return shortly. In the meantime, we
-                recommend sharing your ideas on our Discord to get the feedback from the community.
-            </ModalDescription>
-            <Links>
-                <ExternalLink href="https://discord.com/invite/sgzFscHp4C">
-                    Discord chat
-                </ExternalLink>
-                <ExternalLink href="https://t.me/aquarius_official_community">
-                    Telegram chat
-                </ExternalLink>
-            </Links>
-            <Button onClick={() => close()}>ok</Button>
-        </Container>
-    );
-};
+const TemporarilyNotWork = ({ close }) => (
+    <Container>
+        <ModalTitle>Maintenance in progress</ModalTitle>
+        <ModalDescription>
+            Proposal creation is temporarily disabled as we preparing to roll out a set of upgrades
+            to the governance process. Please return shortly. In the meantime, we recommend sharing
+            your ideas on our Discord to get the feedback from the community.
+        </ModalDescription>
+        <Links>
+            <ExternalLink href="https://discord.com/invite/sgzFscHp4C">Discord chat</ExternalLink>
+            <ExternalLink href="https://t.me/aquarius_official_community">
+                Telegram chat
+            </ExternalLink>
+        </Links>
+        <Button onClick={() => close()}>ok</Button>
+    </Container>
+);
 
 export default TemporarilyNotWork;

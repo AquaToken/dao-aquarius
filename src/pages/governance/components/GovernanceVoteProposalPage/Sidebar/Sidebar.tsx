@@ -6,10 +6,11 @@ import styled, { css } from 'styled-components';
 import Fail from 'assets/icon-fail.svg';
 import Success from 'assets/icon-success.svg';
 
+import Button from 'basics/buttons/Button';
+import ExternalLink from 'basics/ExternalLink';
+
 import NativeVotingButton from './VotingButton/VotingButton';
 
-import Button from '../../../../../common/basics/Button';
-import ExternalLink from '../../../../../common/basics/ExternalLink';
 import {
     formatBalance,
     getDateString,

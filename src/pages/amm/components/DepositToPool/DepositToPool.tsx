@@ -5,11 +5,12 @@ import styled from 'styled-components';
 import Arrow from 'assets/icon-arrow-right-long.svg';
 import Info from 'assets/icon-info.svg';
 
-import Alert from '../../../../common/basics/Alert';
-import Button from '../../../../common/basics/Button';
-import DotsLoader from '../../../../common/basics/DotsLoader';
-import Input from '../../../../common/basics/Input';
-import Tooltip, { TOOLTIP_POSITION } from '../../../../common/basics/Tooltip';
+import Alert from 'basics/Alert';
+import Button from 'basics/buttons/Button';
+import Input from 'basics/inputs/Input';
+import DotsLoader from 'basics/loaders/DotsLoader';
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
 import { formatBalance } from '../../../../common/helpers/helpers';
 import { openCurrentWalletIfExist } from '../../../../common/helpers/wallet-connect-helpers';
 import { customScroll, flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
@@ -168,21 +169,28 @@ const DepositToPool = ({ params }) => {
         });
     }, [account]);
 
-    const reserves: Map<string, number> = useMemo(() => {
-        return new Map(
-            pool.assets.map((asset, index) => [getAssetString(asset), pool.reserves[index] / 1e7]),
-        );
-    }, [pool]);
+    const reserves: Map<string, number> = useMemo(
+        () =>
+            new Map(
+                pool.assets.map((asset, index) => [
+                    getAssetString(asset),
+                    pool.reserves[index] / 1e7,
+                ]),
+            ),
+        [pool],
+    );
 
     const [amounts, setAmounts] = useState<Map<string, string>>(
         new Map<string, string>(pool.assets.map(asset => [getAssetString(asset), ''])),
     );
     const [pending, setPending] = useState(false);
 
-    const hasAllAmounts = useMemo(() => {
-        // @ts-ignore
-        return [...amounts.values()].every(value => Boolean(+value));
-    }, [amounts]);
+    const hasAllAmounts = useMemo(
+        () =>
+            // @ts-ignore
+            [...amounts.values()].every(value => Boolean(+value)),
+        [amounts],
+    );
 
     const { sharesBefore, sharesAfter } = useMemo(() => {
         const firstAssetString = getAssetString(pool.assets[0]);

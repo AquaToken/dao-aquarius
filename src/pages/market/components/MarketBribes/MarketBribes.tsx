@@ -2,10 +2,11 @@ import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
 
+import ToggleGroup from 'basics/inputs/ToggleGroup';
+
 import MarketCurrentBribes from './MarketCurrentBribes/MarketCurrentBribes';
 import MarketUpcomingBribes from './MarketUpcomingBribes/MarketUpcomingBribes';
 
-import ToggleGroup from '../../../../common/basics/ToggleGroup';
 import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../../common/styles';
 

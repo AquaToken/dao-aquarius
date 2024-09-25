@@ -1,10 +1,12 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { flexAllCenter } from '../mixins';
-import { COLORS } from '../styles';
+import { flexAllCenter } from 'web/mixins';
+import { COLORS } from 'web/styles';
 
-const ButtonBody = styled(props => <button {...props} />)<{
+const ButtonBody = styled((props: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
+    <button {...props} />
+))<{
     $isBig?: boolean;
     $pending?: boolean;
     $fullWidth?: boolean;

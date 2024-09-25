@@ -6,9 +6,10 @@ import styled from 'styled-components';
 import Link from 'assets/icon-external-link.svg';
 import Info from 'assets/icon-info.svg';
 
-import PageLoader from '../../../../common/basics/PageLoader';
-import Table, { CellAlign } from '../../../../common/basics/Table';
-import Tooltip, { TOOLTIP_POSITION } from '../../../../common/basics/Tooltip';
+import PageLoader from 'basics/loaders/PageLoader';
+import Table, { CellAlign } from 'basics/Table';
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
 import { formatBalance, getTimeAgoValue } from '../../../../common/helpers/helpers';
 import { respondDown } from '../../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../../common/styles';

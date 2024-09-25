@@ -1,8 +1,9 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import Button from '../../../../common/basics/Button';
-import ExternalLink from '../../../../common/basics/ExternalLink';
+import Button from 'basics/buttons/Button';
+import ExternalLink from 'basics/ExternalLink';
+
 import { flexAllCenter, respondDown } from '../../../../common/mixins';
 import { ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
 import { Breakpoints, COLORS } from '../../../../common/styles';

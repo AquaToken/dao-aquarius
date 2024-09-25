@@ -2,9 +2,10 @@ import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
 
+import Button from 'basics/buttons/Button';
+import ExternalLink from 'basics/ExternalLink';
+
 import useAuthStore from '../../../store/authStore/useAuthStore';
-import Button from '../../basics/Button';
-import ExternalLink from '../../basics/ExternalLink';
 import ErrorHandler from '../../helpers/error-handler';
 import { respondDown } from '../../mixins';
 import { ToastService } from '../../services/globalServices';

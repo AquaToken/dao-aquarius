@@ -5,10 +5,11 @@ import styled from 'styled-components';
 import Dislike from 'assets/icon-dislike-gray.svg';
 import LinkIcon from 'assets/icon-external-link.svg';
 
-import Button from '../../../../../../common/basics/Button';
-import Checkbox from '../../../../../../common/basics/Checkbox';
-import Table, { CellAlign } from '../../../../../../common/basics/Table';
-import Tooltip, { TOOLTIP_POSITION } from '../../../../../../common/basics/Tooltip';
+import Button from 'basics/buttons/Button';
+import Checkbox from 'basics/inputs/Checkbox';
+import Table, { CellAlign } from 'basics/Table';
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
 import ErrorHandler from '../../../../../../common/helpers/error-handler';
 import { formatBalance, getDateString } from '../../../../../../common/helpers/helpers';
 import { openCurrentWalletIfExist } from '../../../../../../common/helpers/wallet-connect-helpers';

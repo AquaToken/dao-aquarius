@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import styled, { css } from 'styled-components';
 
-import { COLORS, Z_INDEX } from '../styles';
+import { COLORS, Z_INDEX } from 'web/styles';
 
 export enum TOOLTIP_POSITION {
     top = 'top',
@@ -11,7 +11,7 @@ export enum TOOLTIP_POSITION {
     right = 'right',
 }
 
-const ChildrenBlock = styled(props => <div {...props} />)`
+const ChildrenBlock = styled((props: React.DOMAttributes<HTMLDivElement>) => <div {...props} />)`
     position: relative;
     display: flex;
     width: fit-content;
@@ -71,9 +71,9 @@ const TooltipRight = (background: string) => css`
 `;
 
 const TooltipBody = styled.div<{
-    position: TOOLTIP_POSITION;
-    background: string;
-    color: string;
+    $position: TOOLTIP_POSITION;
+    $background: string;
+    $color: string;
 }>`
     position: absolute;
     display: flex;
@@ -81,8 +81,8 @@ const TooltipBody = styled.div<{
     align-items: center;
     justify-content: center;
     padding: 0.9rem 1.2rem;
-    color: ${({ color }) => color};
-    background-color: ${({ background }) => background};
+    color: ${({ $color }) => $color};
+    background-color: ${({ $background }) => $background};
     box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
     border-radius: 0.5rem;
     white-space: nowrap;
@@ -94,11 +94,11 @@ const TooltipBody = styled.div<{
         position: absolute;
     }
 
-    ${({ position, background }) =>
-        (position === TOOLTIP_POSITION.top && TooltipTop(background)) ||
-        (position === TOOLTIP_POSITION.bottom && TooltipBottom(background)) ||
-        (position === TOOLTIP_POSITION.left && TooltipLeft(background)) ||
-        (position === TOOLTIP_POSITION.right && TooltipRight(background))}
+    ${({ $position, $background }) =>
+        ($position === TOOLTIP_POSITION.top && TooltipTop($background)) ||
+        ($position === TOOLTIP_POSITION.bottom && TooltipBottom($background)) ||
+        ($position === TOOLTIP_POSITION.left && TooltipLeft($background)) ||
+        ($position === TOOLTIP_POSITION.right && TooltipRight($background))}
 `;
 
 interface TooltipProps extends React.DOMAttributes<HTMLDivElement> {
@@ -126,22 +126,22 @@ const Tooltip = ({
     return (
         <ChildrenBlock
             {...props}
-            onMouseEnter={e => {
+            onMouseEnter={(e: React.MouseEvent) => {
                 e.stopPropagation();
                 setOnHover(true);
             }}
-            onMouseLeave={e => {
+            onMouseLeave={(e: React.MouseEvent) => {
                 e.stopPropagation();
                 setOnHover(false);
             }}
-            onClick={e => {
+            onClick={(e: React.MouseEvent) => {
                 e.stopPropagation();
                 setOnHover(value => !value);
             }}
         >
             {children}
             {(showOnHover ? onHover && isShow !== false : isShow) && (
-                <TooltipBody position={position} background={background} color={color}>
+                <TooltipBody $position={position} $background={background} $color={color}>
                     {content}
                 </TooltipBody>
             )}

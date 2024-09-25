@@ -5,8 +5,9 @@ import styled from 'styled-components';
 
 import AquaLogo from 'assets/aqua-logo-small.svg';
 
-import DotsLoader from '../../../../../common/basics/DotsLoader';
-import PageLoader from '../../../../../common/basics/PageLoader';
+import DotsLoader from 'basics/loaders/DotsLoader';
+import PageLoader from 'basics/loaders/PageLoader';
+
 import { formatBalance, roundToPrecision } from '../../../../../common/helpers/helpers';
 import { flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
 import AccountService from '../../../../../common/services/account.service';

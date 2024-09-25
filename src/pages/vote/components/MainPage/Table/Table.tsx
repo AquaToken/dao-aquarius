@@ -6,12 +6,13 @@ import Aqua from 'assets/aqua-logo-small.svg';
 import ArrowRight from 'assets/icon-arrow-right.svg';
 import ManageIcon from 'assets/icon-manage.svg';
 
+import Button from 'basics/buttons/Button';
+import Table, { CellAlign } from 'basics/Table';
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
 import VoteAmount from './VoteAmount/VoteAmount';
 import VoteButton from './VoteButton/VoteButton';
 
-import Button from '../../../../../common/basics/Button';
-import Table, { CellAlign } from '../../../../../common/basics/Table';
-import Tooltip, { TOOLTIP_POSITION } from '../../../../../common/basics/Tooltip';
 import { formatBalance } from '../../../../../common/helpers/helpers';
 import { flexAllCenter, respondDown } from '../../../../../common/mixins';
 import { ModalService, StellarService } from '../../../../../common/services/globalServices';
@@ -190,9 +191,8 @@ const VoteTable = ({
         return null;
     }
 
-    const isPairSelected = ({ market_key: marketKey }: PairStats): boolean => {
-        return selectedPairs.some(pair => pair.market_key === marketKey);
-    };
+    const isPairSelected = ({ market_key: marketKey }: PairStats): boolean =>
+        selectedPairs.some(pair => pair.market_key === marketKey);
 
     const manageVotes = (event, pair) => {
         event.preventDefault();

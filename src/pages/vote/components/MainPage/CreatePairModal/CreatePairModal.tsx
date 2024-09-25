@@ -5,8 +5,9 @@ import styled from 'styled-components';
 
 import Info from 'assets/icon-info.svg';
 
-import Button from '../../../../../common/basics/Button';
-import Tooltip, { TOOLTIP_POSITION } from '../../../../../common/basics/Tooltip';
+import Button from 'basics/buttons/Button';
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
 import ErrorHandler from '../../../../../common/helpers/error-handler';
 import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
 import { useIsMounted } from '../../../../../common/hooks/useIsMounted';

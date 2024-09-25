@@ -12,9 +12,10 @@ import Plus from 'assets/icon-plus.svg';
 import Success from 'assets/icon-success.svg';
 import Loader from 'assets/loader.svg';
 
-import Button from '../../../common/basics/Button';
-import ExternalLink from '../../../common/basics/ExternalLink';
-import Input from '../../../common/basics/Input';
+import Button from 'basics/buttons/Button';
+import ExternalLink from 'basics/ExternalLink';
+import Input from 'basics/inputs/Input';
+
 import { flexAllCenter, respondDown } from '../../../common/mixins';
 import { Breakpoints, COLORS, FONT_FAMILY } from '../../../common/styles';
 import useAuthStore from '../../../store/authStore/useAuthStore';
@@ -27,7 +28,8 @@ import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModa
 import { getMarketPair } from '../api/api';
 import ConfirmBribeModal from '../components/AddBribePage/ConfirmBribeModal/ConfirmBribeModal';
 import { useDebounce } from '../../../common/hooks/useDebounce';
-import Tooltip, { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
+
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import {
     addWeeks,
@@ -44,7 +46,8 @@ import {
 import { formatBalance } from '../../../common/helpers/helpers';
 import { BribesRoutes } from '../../../routes';
 import { LoginTypes } from '../../../store/authStore/types';
-import CircleButton from '../../../common/basics/CircleButton';
+
+import CircleButton from 'basics/buttons/CircleButton';
 
 export const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -322,8 +325,8 @@ const DurationButton = styled.div`
     }
 `;
 
-export const convertUTCToLocalDateIgnoringTimezone = (utcDate: Date) => {
-    return new Date(
+export const convertUTCToLocalDateIgnoringTimezone = (utcDate: Date) =>
+    new Date(
         utcDate.getUTCFullYear(),
         utcDate.getUTCMonth(),
         utcDate.getUTCDate(),
@@ -332,7 +335,6 @@ export const convertUTCToLocalDateIgnoringTimezone = (utcDate: Date) => {
         utcDate.getUTCSeconds(),
         utcDate.getUTCMilliseconds(),
     );
-};
 
 export function convertLocalDateToUTCIgnoringTimezone(date: Date) {
     const timestamp = Date.UTC(

@@ -4,9 +4,10 @@ import styled from 'styled-components';
 import Fail from 'assets/icon-fail.svg';
 import Info from 'assets/icon-info.svg';
 
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
 import ResultProgressLine from './ResultProgressLine/ResultProgressLine';
 
-import Tooltip, { TOOLTIP_POSITION } from '../../../../../common/basics/Tooltip';
 import { roundToPrecision } from '../../../../../common/helpers/helpers';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../../../common/styles';
@@ -140,9 +141,9 @@ const CurrentResults = ({ proposal }: { proposal: Proposal }): JSX.Element => {
                 {!isEnd && <span>Updating every 5 min</span>}
             </Header>
 
-            {results?.map(result => {
-                return <ResultProgressLine key={result.label} result={result} />;
-            })}
+            {results?.map(result => (
+                <ResultProgressLine key={result.label} result={result} />
+            ))}
             <Quorum>
                 <Label>Participation Rate:</Label>
                 <QuorumResult isApproved={isApproved}>

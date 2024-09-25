@@ -7,10 +7,11 @@ import Copy from 'assets/icon-copy.svg';
 import XdrLogo from 'assets/icon-xdr.svg';
 import Stellar from 'assets/xlm-logo.svg';
 
+import AccountBlock from 'basics/AccountBlock';
+import CopyButton from 'basics/buttons/CopyButton';
+
 import { ModalDescription, ModalProps, ModalTitle } from './atoms/ModalAtoms';
 
-import AccountBlock from '../basics/AccountBlock';
-import CopyButton from '../basics/CopyButton';
 import { flexAllCenter, respondDown } from '../mixins';
 import AccountService from '../services/account.service';
 import { StellarService } from '../services/globalServices';

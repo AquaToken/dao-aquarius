@@ -5,10 +5,11 @@ import { useEffect, useMemo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
-import Alert from '../../../../../common/basics/Alert';
-import Button from '../../../../../common/basics/Button';
-import Input from '../../../../../common/basics/Input';
-import Select, { Option } from '../../../../../common/basics/Select';
+import Alert from 'basics/Alert';
+import Button from 'basics/buttons/Button';
+import Input from 'basics/inputs/Input';
+import Select, { Option } from 'basics/inputs/Select';
+
 import ErrorHandler from '../../../../../common/helpers/error-handler';
 import { formatBalance, getDateString } from '../../../../../common/helpers/helpers';
 import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
@@ -109,8 +110,8 @@ const PublishProposalModal = ({ params, close }) => {
 
     const endDate = useMemo(() => Date.now() + period, [updateIndex, period]);
 
-    const checkStatus = id => {
-        return new Promise((resolve, reject) => {
+    const checkStatus = id =>
+        new Promise((resolve, reject) => {
             async function check() {
                 if (!isMounted.current) {
                     reject();
@@ -132,7 +133,6 @@ const PublishProposalModal = ({ params, close }) => {
 
             check();
         });
-    };
 
     const onSubmit = async () => {
         if (loading) {

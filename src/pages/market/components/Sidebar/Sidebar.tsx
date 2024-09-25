@@ -7,10 +7,11 @@ import Ice from 'assets/ice-logo.svg';
 import IconDown from 'assets/icon-down-percent.svg';
 import IconUp from 'assets/icon-up-percent.svg';
 
+import Button from 'basics/buttons/Button';
+import DotsLoader from 'basics/loaders/DotsLoader';
+
 import VotesProgressLine from './VotesProgressLine/VotesProgressLine';
 
-import Button from '../../../../common/basics/Button';
-import DotsLoader from '../../../../common/basics/DotsLoader';
 import { formatBalance } from '../../../../common/helpers/helpers';
 import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
 import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
@@ -130,16 +131,16 @@ const Sidebar = ({ votesData, base, counter, totalStats, onVoteClick, isPairSele
     const createPair = () => {
         if (isLogged) {
             ModalService.openModal(CreatePairModal, {
-                base: base,
-                counter: counter,
+                base,
+                counter,
             });
             return;
         }
         ModalService.openModal(ChooseLoginMethodModal, {
             callback: () =>
                 ModalService.openModal(CreatePairModal, {
-                    base: base,
-                    counter: counter,
+                    base,
+                    counter,
                 }),
         });
     };

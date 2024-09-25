@@ -1,9 +1,10 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
+import Contacts from 'basics/Contacts';
+
 import Questions from './Questions/Questions';
 
-import Contacts from '../../../../common/basics/Contacts';
 import { commonMaxWidth, respondDown } from '../../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../../common/styles';
 
@@ -20,13 +21,11 @@ const Container = styled.div`
     `}
 `;
 
-const FAQ = (): JSX.Element => {
-    return (
-        <Container>
-            <Contacts />
-            <Questions />
-        </Container>
-    );
-};
+const FAQ = (): JSX.Element => (
+    <Container>
+        <Contacts />
+        <Questions />
+    </Container>
+);
 
 export default FAQ;

@@ -5,12 +5,13 @@ import styled from 'styled-components';
 
 import Plus from 'assets/icon-plus.svg';
 
-import Button from '../../../../../common/basics/Button';
-import Checkbox from '../../../../../common/basics/Checkbox';
-import PageLoader from '../../../../../common/basics/PageLoader';
-import Pagination from '../../../../../common/basics/Pagination';
-import Select from '../../../../../common/basics/Select';
-import Table, { CellAlign } from '../../../../../common/basics/Table';
+import Button from 'basics/buttons/Button';
+import Checkbox from 'basics/inputs/Checkbox';
+import Select from 'basics/inputs/Select';
+import PageLoader from 'basics/loaders/PageLoader';
+import Pagination from 'basics/Pagination';
+import Table, { CellAlign } from 'basics/Table';
+
 import { formatBalance, getDateString } from '../../../../../common/helpers/helpers';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
 import { StellarService } from '../../../../../common/services/globalServices';
@@ -181,7 +182,7 @@ const BribesTable = () => {
             </TitleBlock>
 
             <CheckboxStyled
-                label={'Show bribes smaller than 100,000 AQUA'}
+                label="Show bribes smaller than 100,000 AQUA"
                 checked={filterByAmount}
                 onChange={value => {
                     setFilterByAmount(value);

@@ -2,13 +2,15 @@ import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
+import { COLORS } from 'web/styles';
+
 import CopyIcon from 'assets/icon-copy.svg';
 
-import Tooltip, { TOOLTIP_POSITION } from './Tooltip';
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
-import { COLORS } from '../styles';
-
-const CopyButtonContainer = styled(props => <div {...props} />)`
+const CopyButtonContainer = styled((props: React.DOMAttributes<HTMLDivElement>) => (
+    <div {...props} />
+))`
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -35,9 +37,9 @@ const CopyButton = ({
     ...props
 }: CopyButtonProps): React.ReactNode => {
     const [isShowTooltip, setIsShowTooltip] = useState(false);
-    const timerRef = useRef<number | null>(null);
+    const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-    const copyText = () => {
+    const copyText = async () => {
         clearTimeout(timerRef.current);
         if (!navigator.clipboard) {
             const el = document.createElement('textarea');
@@ -47,7 +49,7 @@ const CopyButton = ({
             document.execCommand('copy');
             document.body.removeChild(el);
         } else {
-            navigator.clipboard.writeText(text);
+            await navigator.clipboard.writeText(text);
         }
 
         setIsShowTooltip(true);

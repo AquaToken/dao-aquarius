@@ -1,9 +1,9 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import LinkArrowIcon from 'assets/icon-link-arrow.svg';
+import { COLORS } from 'web/styles';
 
-import { COLORS } from '../styles';
+import LinkArrowIcon from 'assets/icon-link-arrow.svg';
 
 const LinkBody = styled.a`
     display: flex;
@@ -38,11 +38,11 @@ const LinkArrow = styled(LinkArrowIcon)`
 `;
 
 interface ExternalLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement & HTMLDivElement> {
-    children: string | JSX.Element;
+    children: string | React.ReactNode;
     asDiv?: boolean;
 }
 
-const ExternalLink = ({ children, asDiv, ...props }: ExternalLinkProps): JSX.Element => {
+const ExternalLink = ({ children, asDiv, ...props }: ExternalLinkProps): React.ReactNode => {
     if (asDiv) {
         return (
             <LinkBodyDiv {...props}>

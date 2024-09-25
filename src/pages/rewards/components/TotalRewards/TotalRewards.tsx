@@ -3,7 +3,8 @@ import styled from 'styled-components';
 
 import Aqua from 'assets/aqua-logo-small.svg';
 
-import DotsLoader from '../../../../common/basics/DotsLoader';
+import DotsLoader from 'basics/loaders/DotsLoader';
+
 import { formatBalance } from '../../../../common/helpers/helpers';
 import { respondDown } from '../../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../../common/styles';
@@ -96,29 +97,27 @@ const Description = styled.div`
     `}
 `;
 
-const TotalRewards = ({ totalRewards }) => {
-    return (
-        <Container>
-            <PreTitle>Total daily reward:</PreTitle>
+const TotalRewards = ({ totalRewards }) => (
+    <Container>
+        <PreTitle>Total daily reward:</PreTitle>
 
-            <Title>
-                <AquaLogo />
-                {totalRewards ? (
-                    `${formatBalance(
-                        totalRewards.total_daily_sdex_reward + totalRewards.total_daily_amm_reward,
-                    )} AQUA`
-                ) : (
-                    <DotsLoader />
-                )}
-            </Title>
-            <Description>
-                The core use case of Aquarius is to increase liquidity on Stellar. We plan to
-                achieve this by incentivizing SDEX market makers & AMM liquidity providers. This
-                page tracks AQUA rewards on different markets and how they are distributed between
-                SDEX markets and AMM pools.
-            </Description>
-        </Container>
-    );
-};
+        <Title>
+            <AquaLogo />
+            {totalRewards ? (
+                `${formatBalance(
+                    totalRewards.total_daily_sdex_reward + totalRewards.total_daily_amm_reward,
+                )} AQUA`
+            ) : (
+                <DotsLoader />
+            )}
+        </Title>
+        <Description>
+            The core use case of Aquarius is to increase liquidity on Stellar. We plan to achieve
+            this by incentivizing SDEX market makers & AMM liquidity providers. This page tracks
+            AQUA rewards on different markets and how they are distributed between SDEX markets and
+            AMM pools.
+        </Description>
+    </Container>
+);
 
 export default TotalRewards;

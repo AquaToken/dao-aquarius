@@ -9,13 +9,14 @@ import External from 'assets/icon-external-link.svg';
 import IconLogout from 'assets/icon-logout.svg';
 import IconPlus from 'assets/icon-plus.svg';
 
+import Button from 'basics/buttons/Button';
+import CircleButton from 'basics/buttons/CircleButton';
+import CopyButton from 'basics/buttons/CopyButton';
+import Identicon from 'basics/Identicon';
+
 import { LockerRoutes } from '../../../../routes';
 import { LoginTypes } from '../../../../store/authStore/types';
 import useAuthStore from '../../../../store/authStore/useAuthStore';
-import Button from '../../../basics/Button';
-import CircleButton from '../../../basics/CircleButton';
-import CopyButton from '../../../basics/CopyButton';
-import Identicon from '../../../basics/Identicon';
 import { formatBalance } from '../../../helpers/helpers';
 import { respondDown } from '../../../mixins';
 import ChooseLoginMethodModal from '../../../modals/ChooseLoginMethodModal';

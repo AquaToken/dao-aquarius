@@ -2,8 +2,8 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { flexAllCenter } from '../mixins';
-import { COLORS } from '../styles';
+import { flexAllCenter } from 'web/mixins';
+import { COLORS } from 'web/styles';
 
 const WrapperDiv = styled.div`
     display: flex;
@@ -45,12 +45,12 @@ const Label = styled.span`
 `;
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLDivElement> {
-    children: string | JSX.Element;
+    children: string | React.ReactNode;
     label?: string;
     to?: string;
 }
 
-const CircleButton = ({ children, label, to, ...props }: ButtonProps): JSX.Element => {
+const CircleButton = ({ children, label, to, ...props }: ButtonProps): React.ReactNode => {
     const Wrapper = (to ? WrapperLink : WrapperDiv) as React.ElementType;
 
     return (

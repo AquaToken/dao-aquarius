@@ -2,7 +2,8 @@ import * as React from 'react';
 import { useEffect } from 'react';
 import { Redirect, useLocation } from 'react-router-dom';
 
-import PageLoader from '../../common/basics/PageLoader';
+import PageLoader from 'basics/loaders/PageLoader';
+
 import { WalletConnectService } from '../../common/services/globalServices';
 import { MainRoutes } from '../../routes';
 import useAuthStore from '../../store/authStore/useAuthStore';

@@ -4,11 +4,12 @@ import styled from 'styled-components';
 
 import LinkIcon from 'assets/icon-external-link.svg';
 
-import AccountViewer from '../../../../common/basics/AccountViewer';
-import ExternalLink from '../../../../common/basics/ExternalLink';
-import PageLoader from '../../../../common/basics/PageLoader';
-import Pagination from '../../../../common/basics/Pagination';
-import Table from '../../../../common/basics/Table';
+import ExternalLink from 'basics/ExternalLink';
+import PageLoader from 'basics/loaders/PageLoader';
+import Pagination from 'basics/Pagination';
+import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
+import Table from 'basics/Table';
+
 import { formatBalance, getDateString } from '../../../../common/helpers/helpers';
 import { useUpdateIndex } from '../../../../common/hooks/useUpdateIndex';
 import { respondDown } from '../../../../common/mixins';
@@ -129,58 +130,56 @@ const PoolEvents = ({ pool }: { pool: PoolExtended }) => {
                     { children: 'Time' },
                     { children: '', flexSize: 0.2 },
                 ]}
-                body={events.map((event, index) => {
-                    return {
-                        key: `${event.ledger}-${index}`,
-                        mobileBackground: COLORS.lightGray,
-                        rowItems: [
-                            {
-                                children: getEventTitle(event, pool),
-                                label: 'Type:',
-                            },
-                            {
-                                children: getEventAmounts(event, pool),
-                                label: 'Amounts:',
-                            },
-                            {
-                                children: (
-                                    <AccountViewer pubKey={event.account_address} narrowForMobile />
-                                ),
-                                flexSize: 1.5,
-                                label: 'Account:',
-                            },
-                            {
-                                children: getEventTime(event.ledger_close_at_str),
-                                label: 'Time:',
-                            },
-                            {
-                                children: (
-                                    <a
-                                        href={`https://stellar.expert/explorer/public/tx/${event.transaction_hash}`}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                    >
-                                        <LinkIcon />
-                                    </a>
-                                ),
-                                label: 'Time:',
-                                flexSize: 0.2,
-                                hideOnMobile: true,
-                            },
-                            {
-                                children: (
-                                    <ExternalLink
-                                        href={`https://stellar.expert/explorer/public/tx/${event.transaction_hash}`}
-                                    >
-                                        View on Explorer
-                                    </ExternalLink>
-                                ),
-                                flexSize: 0.2,
-                                hideOnWeb: true,
-                            },
-                        ],
-                    };
-                })}
+                body={events.map((event, index) => ({
+                    key: `${event.ledger}-${index}`,
+                    mobileBackground: COLORS.lightGray,
+                    rowItems: [
+                        {
+                            children: getEventTitle(event, pool),
+                            label: 'Type:',
+                        },
+                        {
+                            children: getEventAmounts(event, pool),
+                            label: 'Amounts:',
+                        },
+                        {
+                            children: (
+                                <PublicKeyWithIcon pubKey={event.account_address} narrowForMobile />
+                            ),
+                            flexSize: 1.5,
+                            label: 'Account:',
+                        },
+                        {
+                            children: getEventTime(event.ledger_close_at_str),
+                            label: 'Time:',
+                        },
+                        {
+                            children: (
+                                <a
+                                    href={`https://stellar.expert/explorer/public/tx/${event.transaction_hash}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                >
+                                    <LinkIcon />
+                                </a>
+                            ),
+                            label: 'Time:',
+                            flexSize: 0.2,
+                            hideOnMobile: true,
+                        },
+                        {
+                            children: (
+                                <ExternalLink
+                                    href={`https://stellar.expert/explorer/public/tx/${event.transaction_hash}`}
+                                >
+                                    View on Explorer
+                                </ExternalLink>
+                            ),
+                            flexSize: 0.2,
+                            hideOnWeb: true,
+                        },
+                    ],
+                }))}
             />
             <Pagination
                 pageSize={PAGE_SIZE}

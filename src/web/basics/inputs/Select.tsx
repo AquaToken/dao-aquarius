@@ -2,12 +2,13 @@ import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
+import { COLORS } from 'web/styles';
+
 import ArrowDown from 'assets/icon-arrow-down.svg';
 
-import useOnClickOutside from '../hooks/useOutsideClick';
-import { COLORS } from '../styles';
+import useOnClickOutside from '../../../common/hooks/useOutsideClick';
 
-const DropDown = styled.div<{ isOpen: boolean; disabled: boolean }>`
+const DropDown = styled.div<{ $isOpen: boolean; $disabled: boolean }>`
     width: 100%;
     display: flex;
     flex-direction: row;
@@ -15,12 +16,12 @@ const DropDown = styled.div<{ isOpen: boolean; disabled: boolean }>`
     height: 6.6rem;
     position: relative;
     cursor: pointer;
-    border: ${({ isOpen }) =>
-        isOpen ? `0.2rem solid ${COLORS.purple}` : `0.1rem solid ${COLORS.gray}`};
-    border-radius: ${({ isOpen }) => (isOpen ? '0.5rem 0.5rem 0 0' : '0.5rem')};
-    padding: ${({ isOpen }) => (isOpen ? '0.1rem' : '0.2rem')};
+    border: ${({ $isOpen }) =>
+        $isOpen ? `0.2rem solid ${COLORS.purple}` : `0.1rem solid ${COLORS.gray}`};
+    border-radius: ${({ $isOpen }) => ($isOpen ? '0.5rem 0.5rem 0 0' : '0.5rem')};
+    padding: ${({ $isOpen }) => ($isOpen ? '0.1rem' : '0.2rem')};
     box-sizing: border-box;
-    pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
+    pointer-events: ${({ $disabled }) => ($disabled ? 'none' : 'auto')};
     font-size: 1.4rem;
 `;
 
@@ -101,7 +102,7 @@ const DropdownList = styled.div`
 export type Option<T> = {
     label: string;
     value: T;
-    icon?: JSX.Element;
+    icon?: React.ReactNode;
 };
 
 type SelectProps<T> = {
@@ -119,7 +120,7 @@ const Select = <T,>({
     disabled,
     placeholder,
     ...props
-}: SelectProps<T>): JSX.Element => {
+}: SelectProps<T>): React.ReactNode => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedOption, setSelectedOption] = useState(
         options.find(option => option.value === value),
@@ -143,8 +144,8 @@ const Select = <T,>({
 
     return (
         <DropDown
-            isOpen={isOpen}
-            disabled={disabled}
+            $isOpen={isOpen}
+            $disabled={disabled}
             ref={selectRef}
             onClick={() => toggle()}
             {...props}

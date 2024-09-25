@@ -5,8 +5,9 @@ import styled from 'styled-components';
 
 import IceLogo from 'assets/ice-logo.svg';
 
-import Button from '../../../../../common/basics/Button';
-import ExternalLink from '../../../../../common/basics/ExternalLink';
+import Button from 'basics/buttons/Button';
+import ExternalLink from 'basics/ExternalLink';
+
 import { formatBalance } from '../../../../../common/helpers/helpers';
 import { respondDown } from '../../../../../common/mixins';
 import ChooseLoginMethodModal from '../../../../../common/modals/ChooseLoginMethodModal';
@@ -168,9 +169,7 @@ export const MAX_BOOST_PERIOD = 3 * 365 * 24 * 60 * 60 * 1000;
 export const MIN_BOOST_PERIOD = 24 * 60 * 60 * 1000;
 export const MAX_LOCK_PERIOD = 10 * 365 * 24 * 60 * 60 * 1000;
 
-export const roundMsToDays = timestamp => {
-    return Math.floor(timestamp / (24 * 60 * 60 * 1000));
-};
+export const roundMsToDays = timestamp => Math.floor(timestamp / (24 * 60 * 60 * 1000));
 
 interface IceBlockProps {
     account: AccountService;
@@ -190,19 +189,21 @@ const IceBlock = ({ account, locks }: IceBlockProps): JSX.Element => {
         StellarService.createAsset(GOV_ICE_CODE, ICE_ISSUER),
     );
 
-    const getIceAmount = useCallback(() => {
-        return locks.reduce((acc, lock) => {
-            const remainingPeriod = Math.max(
-                roundMsToDays(new Date(lock.claimants[0].predicate.not.abs_before).getTime()) -
-                    roundMsToDays(Date.now()),
-                0,
-            );
-            const boost =
-                Math.min(remainingPeriod / roundMsToDays(MAX_BOOST_PERIOD), 1) * MAX_BOOST;
-            const distributedAmount = Number(lock.amount) * (1 + boost);
-            return acc + distributedAmount;
-        }, 0);
-    }, [locks]);
+    const getIceAmount = useCallback(
+        () =>
+            locks.reduce((acc, lock) => {
+                const remainingPeriod = Math.max(
+                    roundMsToDays(new Date(lock.claimants[0].predicate.not.abs_before).getTime()) -
+                        roundMsToDays(Date.now()),
+                    0,
+                );
+                const boost =
+                    Math.min(remainingPeriod / roundMsToDays(MAX_BOOST_PERIOD), 1) * MAX_BOOST;
+                const distributedAmount = Number(lock.amount) * (1 + boost);
+                return acc + distributedAmount;
+            }, 0),
+        [locks],
+    );
 
     const addTrustlines = () => {
         if (!isLogged) {

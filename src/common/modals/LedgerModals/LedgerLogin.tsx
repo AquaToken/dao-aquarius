@@ -2,8 +2,9 @@ import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
 
-import Button from '../../basics/Button';
-import Input from '../../basics/Input';
+import Button from 'basics/buttons/Button';
+import Input from 'basics/inputs/Input';
+
 import { respondDown } from '../../mixins';
 import { LedgerService } from '../../services/globalServices';
 import { Breakpoints } from '../../styles';

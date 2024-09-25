@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { forwardRef, RefObject, useMemo } from 'react';
-import { List, AutoSizer, InfiniteLoader } from 'react-virtualized';
+import * as Virtualized from 'react-virtualized';
 import styled from 'styled-components';
 
-import { IconSort } from './Icons';
-import PageLoader from './PageLoader';
+import { flexAllCenter, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
 
-import { flexAllCenter, respondDown } from '../mixins';
-import { Breakpoints, COLORS } from '../styles';
+import { IconSort } from 'basics/Icons';
+import PageLoader from 'basics/loaders/PageLoader';
 
 interface Sort {
     onClick: () => void;
@@ -30,8 +30,8 @@ interface TableItem {
     color?: string;
     hideOnWeb?: boolean;
     hideOnMobile?: boolean;
-    style?: any;
-    mobileStyle?: any;
+    style?: React.CSSProperties;
+    mobileStyle?: React.CSSProperties;
 }
 
 interface TableHeadItem extends TableItem {
@@ -95,7 +95,7 @@ const TableHead = styled.div`
     `}
 `;
 
-const TableHeadRow = styled.div<{ withPadding: boolean }>`
+const TableHeadRow = styled.div<{ $withPadding: boolean }>`
     display: flex;
     align-items: stretch;
     width: 100%;
@@ -104,7 +104,7 @@ const TableHeadRow = styled.div<{ withPadding: boolean }>`
     line-height: 2rem;
     color: ${COLORS.grayText};
     white-space: nowrap;
-    padding-right: ${({ withPadding }) => (withPadding ? '1.5rem' : 'unset')};
+    padding-right: ${({ $withPadding }) => ($withPadding ? '1.5rem' : 'unset')};
 
     ${respondDown(Breakpoints.md)`
         flex-direction: column;
@@ -115,19 +115,19 @@ const TableHeadRow = styled.div<{ withPadding: boolean }>`
 `;
 
 const Cell = styled.div<{
-    align?: CellAlign;
-    flexSize?: number;
-    label?: string;
-    labelColor?: string;
-    color?: string;
-    hideOnWeb?: boolean;
-    hideOnMobile?: boolean;
+    $align?: CellAlign;
+    $flexSize?: number;
+    $label?: string;
+    $labelColor?: string;
+    $color?: string;
+    $hideOnWeb?: boolean;
+    $hideOnMobile?: boolean;
 }>`
-    display: ${({ hideOnWeb }) => (hideOnWeb ? 'none' : 'flex')};
+    display: ${({ $hideOnWeb }) => ($hideOnWeb ? 'none' : 'flex')};
     align-items: center;
-    color: ${({ color }) => color ?? COLORS.paragraphText};
-    justify-content: ${({ align }) => {
-        switch (align) {
+    color: ${({ $color }) => $color ?? COLORS.paragraphText};
+    justify-content: ${({ $align }) => {
+        switch ($align) {
             case CellAlign.Left:
                 return 'flex-start';
             case CellAlign.Center:
@@ -139,15 +139,15 @@ const Cell = styled.div<{
         }
     }};
 
-    flex: ${({ flexSize }) => flexSize ?? 1};
+    flex: ${({ $flexSize }) => $flexSize ?? 1};
 
     label {
         display: none;
-        color: ${({ labelColor }) => labelColor ?? COLORS.grayText};
+        color: ${({ $labelColor }) => $labelColor ?? COLORS.grayText};
     }
 
     ${respondDown(Breakpoints.md)`
-        display: ${({ hideOnMobile }) => (hideOnMobile ? 'none' : 'flex')};
+        display: ${({ $hideOnMobile }) => ($hideOnMobile ? 'none' : 'flex')};
         align-items: center;
         margin-bottom: 1.6rem;
           
@@ -160,31 +160,31 @@ const Cell = styled.div<{
     `}
 `;
 
-const HeadCell = styled(Cell)<{ withSort?: boolean }>`
+const HeadCell = styled(Cell)<{ $withSort?: boolean }>`
     color: ${COLORS.grayText};
-    cursor: ${({ withSort }) => (withSort ? 'pointer' : 'unset')};
+    cursor: ${({ $withSort }) => ($withSort ? 'pointer' : 'unset')};
 
     & > svg {
         margin-left: 0.4rem;
     }
 
     &:hover {
-        color: ${({ withSort }) => (withSort ? COLORS.purple : COLORS.grayText)};
+        color: ${({ $withSort }) => ($withSort ? COLORS.purple : COLORS.grayText)};
     }
 `;
 
-const TableBody = styled.div<{ withScroll }>`
+const TableBody = styled.div<{ $withScroll: boolean }>`
     display: flex;
     flex-direction: column;
 
-    height: ${({ withScroll }) => (withScroll ? '36rem' : 'unset')};
+    height: ${({ $withScroll }) => ($withScroll ? '36rem' : 'unset')};
 
     ${respondDown(Breakpoints.md)`
-        height: ${({ withScroll }) => (withScroll ? '50rem' : 'unset')};
+        height: ${({ $withScroll }) => ($withScroll ? '50rem' : 'unset')};
     `}
 `;
 
-const ListStyled = styled(List)`
+const ListStyled = styled(Virtualized.List)`
     padding-right: 1rem;
 
     &::-webkit-scrollbar {
@@ -204,45 +204,45 @@ const ListStyled = styled(List)`
 `;
 
 const TableRowWrap = styled.div<{
-    isClickable?: boolean;
-    mobileBackground?: string;
+    $isClickable?: boolean;
+    $mobileBackground?: string;
 }>`
     border-radius: 0.5rem;
-    cursor: ${({ isClickable }) => (isClickable ? 'pointer' : 'unset')};
+    cursor: ${({ $isClickable }) => ($isClickable ? 'pointer' : 'unset')};
     border: 0.1rem solid ${COLORS.transparent};
-    padding: ${({ isClickable }) => (isClickable ? '0.8rem' : 'unset')};
+    padding: ${({ $isClickable }) => ($isClickable ? '0.8rem' : 'unset')};
 
     &:hover {
-        background: ${({ isClickable }) => (isClickable ? COLORS.lightGray : 'unset')};
+        background: ${({ $isClickable }) => ($isClickable ? COLORS.lightGray : 'unset')};
         border: 0.1rem solid
-            ${({ isClickable }) => (isClickable ? COLORS.gray : COLORS.transparent)};
+            ${({ $isClickable }) => ($isClickable ? COLORS.gray : COLORS.transparent)};
     }
 
     ${respondDown(Breakpoints.md)`
         flex-direction: column;
-        background: ${({ mobileBackground }) => mobileBackground ?? COLORS.white};
+        background: ${({ $mobileBackground }) => $mobileBackground ?? COLORS.white};
         padding: 2.7rem 1.6rem 1.6rem;
         margin-bottom: 1.6rem;
         
         &:hover {
-            background: ${({ isClickable, mobileBackground }) =>
-                isClickable ? COLORS.lightGray : mobileBackground ?? COLORS.white};
+            background: ${({ $isClickable, $mobileBackground }) =>
+                $isClickable ? COLORS.lightGray : $mobileBackground ?? COLORS.white};
         }
     `}
 `;
 
-const TableRow = styled.div<{ isNarrow?: boolean; mobileFontSize?: string }>`
+const TableRow = styled.div<{ $isNarrow?: boolean; $mobileFontSize?: string }>`
     display: flex;
     align-items: stretch;
     width: 100%;
-    min-height: ${({ isNarrow }) => (isNarrow ? '5rem' : '9.6rem')};
+    min-height: ${({ $isNarrow }) => ($isNarrow ? '5rem' : '9.6rem')};
     font-size: 1.6rem;
     line-height: 2.8rem;
     position: relative;
 
     ${respondDown(Breakpoints.md)`
         flex-direction: column;
-        font-size: ${({ mobileFontSize }) => mobileFontSize ?? '1.6rem'};
+        font-size: ${({ $mobileFontSize }) => $mobileFontSize ?? '1.6rem'};
     `}
 `;
 
@@ -251,14 +251,14 @@ const CellContent = styled.div`
     align-items: center;
 `;
 
-const Row = ({ row, style }: { row: any; style?: any }) => (
+const Row = ({ row, style }: { row: TableRow; style?: React.CSSProperties }): React.ReactNode => (
     <TableRowWrap
-        mobileBackground={row.mobileBackground}
-        isClickable={Boolean(row.onRowClick)}
+        $mobileBackground={row.mobileBackground}
+        $isClickable={Boolean(row.onRowClick)}
         onClick={() => row.onRowClick?.()}
         style={style}
     >
-        <TableRow isNarrow={row.isNarrow} mobileFontSize={row.mobileFontSize}>
+        <TableRow $isNarrow={row.isNarrow} $mobileFontSize={row.mobileFontSize}>
             {row?.rowItems.map(
                 (
                     {
@@ -276,13 +276,13 @@ const Row = ({ row, style }: { row: any; style?: any }) => (
                     index,
                 ) => (
                     <Cell
-                        align={align}
-                        color={color}
-                        labelColor={labelColor}
-                        flexSize={flexSize}
                         key={`${row.key}_${index}`}
-                        hideOnWeb={hideOnWeb}
-                        hideOnMobile={hideOnMobile}
+                        $align={align}
+                        $color={color}
+                        $labelColor={labelColor}
+                        $flexSize={flexSize}
+                        $hideOnWeb={hideOnWeb}
+                        $hideOnMobile={hideOnMobile}
                     >
                         {Boolean(label) && <label>{label}</label>}
                         <CellContent style={+window.innerWidth > 992 ? style : mobileStyle}>
@@ -318,7 +318,7 @@ const Table = forwardRef(
                     </TableLoader>
                 )}
                 <TableHead>
-                    <TableHeadRow withPadding={Boolean(virtualScrollProps)}>
+                    <TableHeadRow $withPadding={Boolean(virtualScrollProps)}>
                         {head.map(
                             (
                                 { children, sort, align, flexSize, hideOnWeb, hideOnMobile },
@@ -326,12 +326,12 @@ const Table = forwardRef(
                             ) => (
                                 <HeadCell
                                     key={`${children.toString()}_${index}`}
-                                    align={align}
-                                    withSort={Boolean(sort)}
                                     onClick={() => sort?.onClick()}
-                                    flexSize={flexSize}
-                                    hideOnWeb={hideOnWeb}
-                                    hideOnMobile={hideOnMobile}
+                                    $align={align}
+                                    $withSort={Boolean(sort)}
+                                    $flexSize={flexSize}
+                                    $hideOnWeb={hideOnWeb}
+                                    $hideOnMobile={hideOnMobile}
                                 >
                                     {children}
                                     {Boolean(sort) && (
@@ -345,20 +345,21 @@ const Table = forwardRef(
                         )}
                     </TableHeadRow>
                 </TableHead>
-                <TableBody withScroll={Boolean(virtualScrollProps)}>
+                <TableBody $withScroll={Boolean(virtualScrollProps)}>
                     {virtualScrollProps ? (
-                        <AutoSizer>
+                        <Virtualized.AutoSizer>
                             {({ height, width }) => (
-                                <InfiniteLoader
-                                    isRowLoaded={() => {}}
+                                <Virtualized.InfiniteLoader
+                                    isRowLoaded={() => true}
                                     rowCount={body.length}
-                                    loadMoreRows={e => {
+                                    loadMoreRows={(e: Virtualized.IndexRange) => {
                                         if (
                                             e.stopIndex + virtualScrollProps.loadMoreOffset >
                                             body.length
                                         ) {
                                             virtualScrollProps.loadMore();
                                         }
+                                        return Promise.resolve();
                                     }}
                                 >
                                     {({ onRowsRendered, registerChild }) => (
@@ -381,9 +382,9 @@ const Table = forwardRef(
                                             )}
                                         />
                                     )}
-                                </InfiniteLoader>
+                                </Virtualized.InfiniteLoader>
                             )}
-                        </AutoSizer>
+                        </Virtualized.AutoSizer>
                     ) : (
                         body?.map(row => <Row row={row} key={row.key} />)
                     )}
@@ -392,5 +393,7 @@ const Table = forwardRef(
         );
     },
 );
+
+Table.displayName = 'Table';
 
 export default Table;

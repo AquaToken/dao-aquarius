@@ -12,13 +12,13 @@ import Git from 'assets/github16.svg';
 import External from 'assets/icon-external-link-black.svg';
 import X from 'assets/twitter16.svg';
 
+import Button from 'basics/buttons/Button';
 import Changes24 from 'basics/Changes24';
+import PageLoader from 'basics/loaders/PageLoader';
 
 import Asset from '../../../pages/vote/components/AssetDropdown/Asset';
 import { MainRoutes } from '../../../routes';
 import useAssetsStore from '../../../store/assetsStore/useAssetsStore';
-import Button from '../../basics/Button';
-import PageLoader from '../../basics/PageLoader';
 import NoTrustline from '../../components/NoTrustline/NoTrustline';
 import { formatBalance, getAssetString, getDateString } from '../../helpers/helpers';
 import { respondDown } from '../../mixins';

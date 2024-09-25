@@ -3,9 +3,10 @@ import styled from 'styled-components';
 
 import Logo from 'assets/freighter-logo.svg';
 
+import ExternalLink from 'basics/ExternalLink';
+
 import { ModalDescription, ModalTitle } from './atoms/ModalAtoms';
 
-import ExternalLink from '../basics/ExternalLink';
 import { respondDown } from '../mixins';
 import { Breakpoints } from '../styles';
 
@@ -25,19 +26,17 @@ const Freighter = styled(Logo)`
     margin-bottom: 2.4rem;
 `;
 
-const GetFreighterModal = () => {
-    return (
-        <Container>
-            <Freighter />
-            <ModalTitle>Install Freighter extension</ModalTitle>
-            <ModalDescription>
-                Freighter is a non-custodial wallet extension for your browser. You can install the
-                extension from the web store.
-            </ModalDescription>
+const GetFreighterModal = () => (
+    <Container>
+        <Freighter />
+        <ModalTitle>Install Freighter extension</ModalTitle>
+        <ModalDescription>
+            Freighter is a non-custodial wallet extension for your browser. You can install the
+            extension from the web store.
+        </ModalDescription>
 
-            <ExternalLink href="https://www.freighter.app/">Install Freighter</ExternalLink>
-        </Container>
-    );
-};
+        <ExternalLink href="https://www.freighter.app/">Install Freighter</ExternalLink>
+    </Container>
+);
 
 export default GetFreighterModal;

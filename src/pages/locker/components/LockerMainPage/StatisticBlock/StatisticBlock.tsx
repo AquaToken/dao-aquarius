@@ -7,7 +7,8 @@ import { getIceStatistics } from 'api/ice-locker';
 import Aqua from 'assets/aqua-logo-small.svg';
 import Ice from 'assets/ice-logo.svg';
 
-import DotsLoader from '../../../../../common/basics/DotsLoader';
+import DotsLoader from 'basics/loaders/DotsLoader';
+
 import { formatBalance } from '../../../../../common/helpers/helpers';
 import { respondDown } from '../../../../../common/mixins';
 import { Breakpoints, COLORS } from '../../../../../common/styles';

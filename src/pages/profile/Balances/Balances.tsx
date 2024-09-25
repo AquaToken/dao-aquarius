@@ -7,8 +7,9 @@ import Ice from 'assets/ice-logo.svg';
 import Info from 'assets/icon-info.svg';
 import Lumen from 'assets/xlm-logo.svg';
 
-import DotsLoader from '../../../common/basics/DotsLoader';
-import Tooltip, { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
+import DotsLoader from 'basics/loaders/DotsLoader';
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
 import { formatBalance } from '../../../common/helpers/helpers';
 import { commonMaxWidth, respondDown } from '../../../common/mixins';
 import { StellarService } from '../../../common/services/globalServices';

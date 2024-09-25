@@ -2,9 +2,10 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import Button from '../../basics/Button';
-import DotsLoader from '../../basics/DotsLoader';
-import { IconFail, IconPending, IconSuccess } from '../../basics/Icons';
+import Button from 'basics/buttons/Button';
+import { IconFail, IconPending, IconSuccess } from 'basics/Icons';
+import DotsLoader from 'basics/loaders/DotsLoader';
+
 import { isMobile } from '../../helpers/browser';
 import { getCurrentWallet } from '../../helpers/wallet-connect-helpers';
 import { useIsMounted } from '../../hooks/useIsMounted';

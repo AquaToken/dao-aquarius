@@ -2,8 +2,8 @@ import * as React from 'react';
 import { forwardRef, RefObject } from 'react';
 import styled from 'styled-components';
 
-import { textEllipsis } from '../mixins';
-import { COLORS } from '../styles';
+import { textEllipsis } from 'web/mixins';
+import { COLORS } from 'web/styles';
 
 const InputWrapper = styled.div`
     position: relative;
@@ -12,14 +12,14 @@ const InputWrapper = styled.div`
 
 const StyledInput = styled.input<{
     ref: RefObject<HTMLInputElement>;
-    isMedium?: boolean;
-    isRightAligned?: boolean;
-    isCenterAligned?: boolean;
+    $isMedium?: boolean;
+    $isRightAligned?: boolean;
+    $isCenterAligned?: boolean;
 }>`
-    height: ${({ isMedium }) => (isMedium ? '4rem' : '6.6rem')};
-    padding: ${({ isMedium }) => (isMedium ? `1.1rem 1.6rem` : `2.4rem 6.5rem 2.4rem 2.4rem`)};
-    text-align: ${({ isRightAligned, isCenterAligned }) =>
-        isRightAligned ? `right` : isCenterAligned ? 'center' : 'start'};
+    height: ${({ $isMedium }) => ($isMedium ? '4rem' : '6.6rem')};
+    padding: ${({ $isMedium }) => ($isMedium ? `1.1rem 1.6rem` : `2.4rem 6.5rem 2.4rem 2.4rem`)};
+    text-align: ${({ $isRightAligned, $isCenterAligned }) =>
+        $isRightAligned ? `right` : $isCenterAligned ? 'center' : 'start'};
     width: 100%;
     border: 0.1rem solid ${COLORS.gray};
     border-radius: 0.5rem;
@@ -88,18 +88,34 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 
 const Input = forwardRef(
     (
-        { postfix, prefixCustom, className, label, ...props }: InputProps,
+        {
+            postfix,
+            prefixCustom,
+            className,
+            label,
+            isMedium,
+            isRightAligned,
+            isCenterAligned,
+            ...props
+        }: InputProps,
         ref: RefObject<HTMLInputElement>,
-    ) => {
-        return (
-            <InputWrapper className={className}>
-                {Boolean(label) && <Label>{label}</Label>}
-                {prefixCustom && <Prefix>{prefixCustom}</Prefix>}
-                <StyledInput ref={ref} {...props} onWheel={e => e.currentTarget.blur()} />
-                {postfix && <Postfix>{postfix}</Postfix>}
-            </InputWrapper>
-        );
-    },
+    ): React.ReactNode => (
+        <InputWrapper className={className}>
+            {Boolean(label) && <Label>{label}</Label>}
+            {prefixCustom && <Prefix>{prefixCustom}</Prefix>}
+            <StyledInput
+                ref={ref}
+                $isMedium={isMedium}
+                $isRightAligned={isRightAligned}
+                $isCenterAligned={isCenterAligned}
+                {...props}
+                onWheel={(e: React.WheelEvent) => (e.currentTarget as HTMLElement).blur()}
+            />
+            {postfix && <Postfix>{postfix}</Postfix>}
+        </InputWrapper>
+    ),
 );
+
+Input.displayName = 'Input';
 
 export default Input;

@@ -2,9 +2,10 @@ import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
 
-import Button from '../../../../common/basics/Button';
-import Input from '../../../../common/basics/Input';
-import ToggleGroup from '../../../../common/basics/ToggleGroup';
+import Button from 'basics/buttons/Button';
+import Input from 'basics/inputs/Input';
+import ToggleGroup from 'basics/inputs/ToggleGroup';
+
 import { respondDown } from '../../../../common/mixins';
 import { ModalDescription, ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
 import { ToastService } from '../../../../common/services/globalServices';

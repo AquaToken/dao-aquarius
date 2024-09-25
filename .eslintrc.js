@@ -104,6 +104,7 @@ module.exports = {
             },
         ],
         'import/prefer-default-export': 0,
+        'import/no-named-as-default': 0,
         'max-classes-per-file': 0,
         'no-console': [
             1,
@@ -138,7 +139,7 @@ module.exports = {
         'react/jsx-props-no-spreading': 0,
         'react/jsx-uses-react': 0,
         'react/no-access-state-in-setstate': 1,
-        'react/no-array-index-key': 1,
+        'react/no-array-index-key': 0,
         'react/no-unescaped-entities': 0,
         'react/no-unused-prop-types': 1,
         'react/no-unused-state': 1,

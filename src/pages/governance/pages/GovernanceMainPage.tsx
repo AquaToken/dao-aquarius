@@ -7,9 +7,10 @@ import BackgroundImageLeft from 'assets/background-left.svg';
 import BackgroundImageRight from 'assets/background-right.svg';
 import ArrowDown from 'assets/icon-arrow-down.svg';
 
-import PageLoader from '../../../common/basics/PageLoader';
-import Select from '../../../common/basics/Select';
-import ToggleGroup from '../../../common/basics/ToggleGroup';
+import Select from 'basics/inputs/Select';
+import ToggleGroup from 'basics/inputs/ToggleGroup';
+import PageLoader from 'basics/loaders/PageLoader';
+
 import { useIsOnViewport } from '../../../common/hooks/useIsOnViewport';
 import { commonMaxWidth, flexAllCenter, respondDown } from '../../../common/mixins';
 import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
@@ -356,15 +357,13 @@ const GovernanceMainPage = (): JSX.Element => {
                                 <PageLoader />
                             ) : proposals.length ? (
                                 <div>
-                                    {proposals.map(proposal => {
-                                        return (
-                                            <ProposalPreview
-                                                key={proposal.id}
-                                                proposal={proposal}
-                                                withMyVotes={filter === PROPOSAL_FILTER.MY_VOTES}
-                                            />
-                                        );
-                                    })}
+                                    {proposals.map(proposal => (
+                                        <ProposalPreview
+                                            key={proposal.id}
+                                            proposal={proposal}
+                                            withMyVotes={filter === PROPOSAL_FILTER.MY_VOTES}
+                                        />
+                                    ))}
                                 </div>
                             ) : (
                                 <EmptyList>

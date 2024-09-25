@@ -7,9 +7,10 @@ import styled, { createGlobalStyle } from 'styled-components';
 
 import LiveOnSorobanImage from 'assets/live-on-soroban.svg';
 
+import PageLoader from 'basics/loaders/PageLoader';
+
 import Footer from 'components/Footer';
 
-import PageLoader from './common/basics/PageLoader';
 import AppGlobalStyle from './common/components/AppGlobalStyles';
 import ErrorBoundary from './common/components/ErrorBoundary/ErrorBoundary';
 import Header, {
@@ -347,15 +348,13 @@ const BodyStyle = createGlobalStyle`
     `};
 `;
 
-const ProvidedApp = () => {
-    return (
-        <Provider>
-            <AppGlobalStyle />
-            <BodyStyle />
-            <App />
-        </Provider>
-    );
-};
+const ProvidedApp = () => (
+    <Provider>
+        <AppGlobalStyle />
+        <BodyStyle />
+        <App />
+    </Provider>
+);
 
 declare let module: Record<string, unknown>;
 

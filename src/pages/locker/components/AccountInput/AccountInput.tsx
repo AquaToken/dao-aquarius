@@ -3,8 +3,9 @@ import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
-import Button from '../../../../common/basics/Button';
-import Input from '../../../../common/basics/Input';
+import Button from 'basics/buttons/Button';
+import Input from 'basics/inputs/Input';
+
 import { respondDown } from '../../../../common/mixins';
 import { StellarService, ToastService } from '../../../../common/services/globalServices';
 import { Breakpoints, COLORS } from '../../../../common/styles';

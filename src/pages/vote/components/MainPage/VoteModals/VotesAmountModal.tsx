@@ -8,13 +8,14 @@ import Aqua from 'assets/aqua-logo-small.svg';
 import Ice from 'assets/ice-logo.svg';
 import CloseIcon from 'assets/icon-close-small.svg';
 
+import Button from 'basics/buttons/Button';
+import ExternalLink from 'basics/ExternalLink';
+import Input from 'basics/inputs/Input';
+import RangeInput from 'basics/inputs/RangeInput';
+import Select, { Option } from 'basics/inputs/Select';
+
 import VotesDurationModal from './VotesDurationModal';
 
-import Button from '../../../../../common/basics/Button';
-import ExternalLink from '../../../../../common/basics/ExternalLink';
-import Input from '../../../../../common/basics/Input';
-import RangeInput from '../../../../../common/basics/RangeInput';
-import Select, { Option } from '../../../../../common/basics/Select';
 import ErrorHandler from '../../../../../common/helpers/error-handler';
 import { formatBalance, roundToPrecision } from '../../../../../common/helpers/helpers';
 import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
@@ -287,16 +288,15 @@ const VotesAmountModal = ({
     );
     const [isHandleEdit, setIsHandleEdit] = useState(false);
 
-    const OPTIONS: Option<Asset>[] = useMemo(() => {
-        return [
+    const OPTIONS: Option<Asset>[] = useMemo(
+        () => [
             { label: 'AQUA', value: AQUA, icon: <AquaLogo /> },
             { label: 'ICE', value: isDownVoteModal ? DOWN_ICE : UP_ICE, icon: <IceLogo /> },
-        ];
-    }, [isDownVoteModal]);
+        ],
+        [isDownVoteModal],
+    );
 
-    const targetBalance = useMemo(() => {
-        return account?.getAssetBalance(targetAsset);
-    }, [targetAsset]);
+    const targetBalance = useMemo(() => account?.getAssetBalance(targetAsset), [targetAsset]);
 
     const nativeBalance = account?.getAvailableNativeBalance();
     const formattedNativeBalance = formatBalance(nativeBalance);
@@ -320,11 +320,12 @@ const VotesAmountModal = ({
         }
     }, []);
 
-    useEffect(() => {
-        return () => {
+    useEffect(
+        () => () => {
             resetForm();
-        };
-    }, [targetAsset]);
+        },
+        [targetAsset],
+    );
 
     const onRangeChange = percent => {
         setPercent(percent);

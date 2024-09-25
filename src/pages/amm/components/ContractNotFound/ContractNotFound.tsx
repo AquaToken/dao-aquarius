@@ -2,7 +2,8 @@ import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
 
-import Button from '../../../../common/basics/Button';
+import Button from 'basics/buttons/Button';
+
 import ErrorHandler from '../../../../common/helpers/error-handler';
 import { openCurrentWalletIfExist } from '../../../../common/helpers/wallet-connect-helpers';
 import { SorobanService, ToastService } from '../../../../common/services/globalServices';

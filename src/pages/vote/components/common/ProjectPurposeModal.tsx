@@ -2,8 +2,9 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import Button from '../../../../common/basics/Button';
-import Checkbox from '../../../../common/basics/Checkbox';
+import Button from 'basics/buttons/Button';
+import Checkbox from 'basics/inputs/Checkbox';
+
 import { respondDown } from '../../../../common/mixins';
 import { ModalDescription, ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
 import { Breakpoints, COLORS } from '../../../../common/styles';
