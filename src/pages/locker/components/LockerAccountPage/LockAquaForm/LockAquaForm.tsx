@@ -1,7 +1,16 @@
 import * as React from 'react';
 import { forwardRef, RefObject, useMemo, useRef, useState } from 'react';
 import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import styled, { createGlobalStyle } from 'styled-components';
+
+import { getDateString } from 'helpers/date';
+import { formatBalance, roundToPrecision } from 'helpers/format-number';
+
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS, FONT_FAMILY } from 'web/styles';
 
 import Aqua from 'assets/aqua-logo-small.svg';
 import Ice from 'assets/ice-logo.svg';
@@ -10,20 +19,11 @@ import Info from 'assets/icon-info.svg';
 import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
 import RangeInput from 'basics/inputs/RangeInput';
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
-import {
-    formatBalance,
-    getDateString,
-    roundToPrecision,
-} from '../../../../../common/helpers/helpers';
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
-import AccountService from '../../../../../common/services/account.service';
-
-import 'react-datepicker/dist/react-datepicker.css';
-import { ModalService, ToastService } from '../../../../../common/services/globalServices';
-import { Breakpoints, COLORS, FONT_FAMILY } from '../../../../../common/styles';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
 import ChooseLoginMethodModal from '../../../../../common/modals/ChooseLoginMethodModal';
+import AccountService from '../../../../../common/services/account.service';
+import { ModalService, ToastService } from '../../../../../common/services/globalServices';
 import {
     MAX_BOOST,
     MAX_BOOST_PERIOD,
@@ -32,8 +32,6 @@ import {
     roundMsToDays,
 } from '../IceBlock/IceBlock';
 import LockAquaModal from '../LockAquaModal/LockAquaModal';
-
-import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 const Container = styled.div`
     background: ${COLORS.white};
@@ -507,5 +505,7 @@ const LockAquaForm = forwardRef(
         );
     },
 );
+
+LockAquaForm.displayName = 'LockAquaForm';
 
 export default LockAquaForm;

@@ -1,11 +1,11 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
+import { flexAllCenter } from 'web/mixins';
+import { COLORS } from 'web/styles';
+
 import IconPending from 'assets/icon-pending.svg';
 import IconSuccess from 'assets/icon-success.svg';
-
-import { flexAllCenter } from '../../../../../common/mixins';
-import { COLORS } from '../../../../../common/styles';
 
 export enum PROPOSAL_STATUS {
     DISCUSSION = 'discussion',
@@ -107,16 +107,14 @@ const DeprecatedIcon = styled(IconPending)`
     }
 `;
 
-const ProposalStatus = ({ status, ...props }: { status: PROPOSAL_STATUS }) => {
-    return (
-        <Container status={status} {...props}>
-            {status === PROPOSAL_STATUS.ACTIVE && <ActiveIcon />}
-            {status === PROPOSAL_STATUS.DISCUSSION && <DiscussionIcon />}
-            {status === PROPOSAL_STATUS.DEPRECATED && <DeprecatedIcon />}
-            {status === PROPOSAL_STATUS.EXPIRED && <DeprecatedIcon />}
-            {StatusLabels[status]}
-        </Container>
-    );
-};
+const ProposalStatus = ({ status, ...props }: { status: PROPOSAL_STATUS }) => (
+    <Container status={status} {...props}>
+        {status === PROPOSAL_STATUS.ACTIVE && <ActiveIcon />}
+        {status === PROPOSAL_STATUS.DISCUSSION && <DiscussionIcon />}
+        {status === PROPOSAL_STATUS.DEPRECATED && <DeprecatedIcon />}
+        {status === PROPOSAL_STATUS.EXPIRED && <DeprecatedIcon />}
+        {StatusLabels[status]}
+    </Container>
+);
 
 export default ProposalStatus;

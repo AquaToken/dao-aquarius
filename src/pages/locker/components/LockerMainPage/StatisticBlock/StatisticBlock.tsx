@@ -4,14 +4,15 @@ import styled from 'styled-components';
 
 import { getIceStatistics } from 'api/ice-locker';
 
+import { formatBalance } from 'helpers/format-number';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Aqua from 'assets/aqua-logo-small.svg';
 import Ice from 'assets/ice-logo.svg';
 
 import DotsLoader from 'basics/loaders/DotsLoader';
-
-import { formatBalance } from '../../../../../common/helpers/helpers';
-import { respondDown } from '../../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
 
 const Container = styled.div`
     display: flex;

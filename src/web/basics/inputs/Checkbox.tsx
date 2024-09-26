@@ -3,8 +3,8 @@ import styled from 'styled-components';
 
 import Tick from 'assets/icon-checkbox-tick.svg';
 
-import { flexAllCenter } from '../../../common/mixins';
-import { COLORS } from '../../../common/styles';
+import { flexAllCenter } from '../../mixins';
+import { COLORS } from '../../styles';
 
 const CheckboxContainer = styled.div<{ $disabled?: boolean }>`
     display: flex;

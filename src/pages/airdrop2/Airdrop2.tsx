@@ -2,6 +2,11 @@ import * as React from 'react';
 import { useRef, useState } from 'react';
 import styled from 'styled-components';
 
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import { getAccountEligibility } from './api/api';
 import Conditions from './components/Conditions/Conditions';
 import Eligibility from './components/Eligibility/Eligibility';
@@ -12,10 +17,7 @@ import SupportedBy from './components/SupportedBy/SupportedBy';
 
 import Community from '../../common/components/Community/Community';
 import Subscribe from '../../common/components/Subscribe/Subscribe';
-import { respondDown } from '../../common/mixins';
 import { StellarService, ToastService } from '../../common/services/globalServices';
-import { Breakpoints, COLORS } from '../../common/styles';
-import useAuthStore from '../../store/authStore/useAuthStore';
 
 const Container = styled.div`
     ${respondDown(Breakpoints.md)`

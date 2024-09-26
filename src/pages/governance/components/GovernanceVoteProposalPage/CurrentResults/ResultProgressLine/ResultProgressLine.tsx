@@ -1,12 +1,14 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 
+import { formatBalance } from 'helpers/format-number';
+
+import { flexAllCenter } from 'web/mixins';
+import { COLORS } from 'web/styles';
+
 import Fail from 'assets/icon-fail.svg';
 import Success from 'assets/icon-success.svg';
 
-import { formatBalance } from '../../../../../../common/helpers/helpers';
-import { flexAllCenter } from '../../../../../../common/mixins';
-import { COLORS } from '../../../../../../common/styles';
 import { SimpleProposalResultsLabels } from '../../../../pages/GovernanceVoteProposalPage';
 
 const ProgressLine = styled.div`

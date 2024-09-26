@@ -3,26 +3,37 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { getAssetFromString } from 'helpers/assets';
+import { formatBalance } from 'helpers/format-number';
+import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
+
+import { LoginTypes } from 'store/authStore/types';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { Asset, Int128Parts } from 'types/stellar';
+
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Button from 'basics/buttons/Button';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
 
+import { getPathPoolsFee } from 'pages/amm/api/api';
+
 import PathPool from './PathPool/PathPool';
 
-import { formatBalance, getAssetFromString } from '../../../../common/helpers/helpers';
-import { openCurrentWalletIfExist } from '../../../../common/helpers/wallet-connect-helpers';
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
-import { ModalDescription, ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
+import {
+    ModalDescription,
+    ModalProps,
+    ModalTitle,
+} from '../../../../common/modals/atoms/ModalAtoms';
 import {
     ModalService,
     SorobanService,
     ToastService,
 } from '../../../../common/services/globalServices';
 import { BuildSignAndSubmitStatuses } from '../../../../common/services/wallet-connect.service';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import { LoginTypes } from '../../../../store/authStore/types';
-import useAuthStore from '../../../../store/authStore/useAuthStore';
-import { getPathPoolsFee } from '../../../amm/api/api';
 import SuccessModal from '../../../amm/components/SuccessModal/SuccessModal';
 import Market from '../../../vote/components/common/Market';
 import { SWAP_SLIPPAGE_ALIAS } from '../SwapSettingsModal/SwapSettingsModal';
@@ -70,7 +81,20 @@ const Pools = styled.div`
 
 const STROOP = 0.0000001;
 
-const SwapConfirmModal = ({ params, confirm }) => {
+interface SwapConfirmModalParams {
+    base: Asset;
+    counter: Asset;
+    baseAmount: string;
+    counterAmount: string;
+    bestPathXDR: string;
+    bestPath: string[];
+    bestPools: string[];
+}
+
+const SwapConfirmModal = ({
+    params,
+    confirm,
+}: ModalProps<SwapConfirmModalParams>): React.ReactNode => {
     const { base, counter, baseAmount, counterAmount, bestPathXDR, bestPath, bestPools } = params;
     const [fees, setFees] = useState(null);
     const [swapPending, setSwapPending] = useState(false);
@@ -128,7 +152,7 @@ const SwapConfirmModal = ({ params, confirm }) => {
                 hash = tx.hash().toString('hex');
                 return account.signAndSubmitTx(tx, true);
             })
-            .then(res => {
+            .then((res: { value?: () => Int128Parts; status?: BuildSignAndSubmitStatuses }) => {
                 confirm();
 
                 if (!res) {
@@ -153,8 +177,6 @@ const SwapConfirmModal = ({ params, confirm }) => {
                 setSwapPending(false);
             })
             .catch(e => {
-                console.log(e);
-
                 const errorMessage = e.message ?? e.toString() ?? 'Oops! Something went wrong';
 
                 ToastService.showErrorToast(

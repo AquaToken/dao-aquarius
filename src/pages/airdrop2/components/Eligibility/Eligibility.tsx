@@ -2,6 +2,9 @@ import * as React from 'react';
 import { forwardRef, RefObject, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import AccountBlock from 'basics/AccountBlock';
 import ExternalLink from 'basics/ExternalLink';
 import PageLoader from 'basics/loaders/PageLoader';
@@ -11,9 +14,7 @@ import SnapshotHoldings from './SnapshotHoldings/SnapshotHoldings';
 import Eligible from './Statuses/Eligible';
 import NotEligible from './Statuses/NotEligible';
 
-import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
 import { StellarService } from '../../../../common/services/globalServices';
-import { Breakpoints, COLORS } from '../../../../common/styles';
 import { AccountEligibility } from '../../api/types';
 
 const Container = styled.section`
@@ -126,5 +127,7 @@ const Eligibility = forwardRef(
         );
     },
 );
+
+Eligibility.displayName = 'Eligibility';
 
 export default Eligibility;

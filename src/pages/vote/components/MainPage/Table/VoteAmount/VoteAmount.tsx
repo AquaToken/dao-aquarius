@@ -1,6 +1,11 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
+import { formatBalance, roundToPrecision } from 'helpers/format-number';
+
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Aqua from 'assets/aqua-logo-small.svg';
 import Ice from 'assets/ice-logo.svg';
 import IconDown from 'assets/icon-down-percent.svg';
@@ -9,8 +14,8 @@ import IconUp from 'assets/icon-up-percent.svg';
 
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
-import { formatBalance, roundToPrecision } from '../../../../../../common/helpers/helpers';
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../../../common/mixins';
+import { PairStats, TotalStats } from 'pages/vote/api/types';
+
 import {
     AQUA_CODE,
     AQUA_ISSUER,
@@ -18,8 +23,6 @@ import {
     ICE_ISSUER,
     UP_ICE_CODE,
 } from '../../../../../../common/services/stellar.service';
-import { Breakpoints, COLORS } from '../../../../../../common/styles';
-import { PairStats, TotalStats } from '../../../../api/types';
 
 const TooltipStyled = styled(Tooltip)`
     label {

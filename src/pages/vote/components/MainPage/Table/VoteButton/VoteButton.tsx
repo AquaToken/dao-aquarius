@@ -2,6 +2,12 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 
+import { formatBalance } from 'helpers/format-number';
+
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { flexRowSpaceBetween } from 'web/mixins';
+
 import IconDislike from 'assets/icon-dislike-black.svg';
 import IconLike from 'assets/icon-like-white.svg';
 import IconTick from 'assets/icon-tick.svg';
@@ -9,13 +15,11 @@ import IconTick from 'assets/icon-tick.svg';
 import Button from 'basics/buttons/Button';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
-import { formatBalance } from '../../../../../../common/helpers/helpers';
-import { flexRowSpaceBetween } from '../../../../../../common/mixins';
+import { PairStats } from 'pages/vote/api/types';
+
 import ChooseLoginMethodModal from '../../../../../../common/modals/ChooseLoginMethodModal';
 import { ModalService, StellarService } from '../../../../../../common/services/globalServices';
 import { StellarEvents } from '../../../../../../common/services/stellar.service';
-import useAuthStore from '../../../../../../store/authStore/useAuthStore';
-import { PairStats } from '../../../../api/types';
 import { AQUA, DOWN_ICE, UP_ICE } from '../../MainPage';
 import VotesAmountModal from '../../VoteModals/VotesAmountModal';
 

@@ -2,19 +2,18 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { getDateString } from 'helpers/date';
+import { formatBalance, roundToPrecision } from 'helpers/format-number';
+
+import { flexAllCenter, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import IconFail from 'assets/icon-fail.svg';
 import IconSuccess from 'assets/icon-success.svg';
 
 import CurrentResults from './CurrentResults/CurrentResults';
 import YourVotes from './YourVotes/YourVotes';
 
-import {
-    formatBalance,
-    getDateString,
-    roundToPrecision,
-} from '../../../../../common/helpers/helpers';
-import { flexAllCenter, respondDown } from '../../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
 import { GovernanceRoutes } from '../../../../../routes';
 import { ProposalSimple } from '../../../api/types';
 import ProposalStatus, { PROPOSAL_STATUS } from '../ProposalStatus/ProposalStatus';

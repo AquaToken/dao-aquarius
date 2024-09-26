@@ -1,15 +1,13 @@
 import axios from 'axios';
 
-import { ListResponse } from '../../../store/assetsStore/types';
+import { ListResponse } from 'store/assetsStore/types';
+
 import { Rewards, TotalRewards } from '../../vote/api/types';
 
 const rewardsApi = 'https://reward-api.aqua.network/api/rewards/';
 
-export const getTotalRewards = (): Promise<TotalRewards> => {
-    return axios.get<TotalRewards>(`${rewardsApi}total/`).then(({ data }) => {
-        return data;
-    });
-};
+export const getTotalRewards = (): Promise<TotalRewards> =>
+    axios.get<TotalRewards>(`${rewardsApi}total/`).then(({ data }) => data);
 
 export enum RewardsSort {
     sdexUp = '-daily_sdex_reward',
@@ -20,8 +18,7 @@ export enum RewardsSort {
     totalDown = 'daily_total_reward',
 }
 
-export const getRewards = (sort): Promise<Rewards[]> => {
-    return axios
+export const getRewards = (sort): Promise<Rewards[]> =>
+    axios
         .get<ListResponse<Rewards>>(`${rewardsApi}?ordering=${sort}&page=1&page_size=200`)
         .then(({ data }) => data.results);
-};

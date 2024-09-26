@@ -1,12 +1,13 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
+import { respondDown } from 'web/mixins';
+import { Breakpoints } from 'web/styles';
+
 import Button from 'basics/buttons/Button';
 import { IconFail } from 'basics/Icons';
 
-import { respondDown } from '../../mixins';
-import { Breakpoints } from '../../styles';
-import { ModalDescription, ModalTitle } from '../atoms/ModalAtoms';
+import { ModalDescription, ModalProps, ModalTitle } from '../atoms/ModalAtoms';
 
 const Container = styled.div`
     width: 52.3rem;
@@ -29,7 +30,7 @@ const StyledButton = styled(Button)`
         `}
 `;
 
-const LedgerError = ({ close }) => (
+const LedgerError = ({ close }: ModalProps<never>) => (
     <Container>
         <IconFail />
         <Title>Ledger app is unavailable</Title>

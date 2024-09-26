@@ -30,3 +30,39 @@ export const getDateString = (timestamp: number, config?: GetDateStringConfig): 
         withTime ? `, ${hours == 24 ? '00' : `0${hours}`.slice(-2)}:${`0${minutes}`.slice(-2)}` : ''
     }`;
 };
+
+export const getTimeAgoValue = (timestamp: string | number): string => {
+    const minute = 60 * 1000;
+    const hour = 60 * minute;
+    const day = 24 * hour;
+    const timeFromTimestamp = Date.now() - new Date(timestamp).getTime();
+
+    const minutesAgo = Math.floor(timeFromTimestamp / minute);
+    const hoursAgo = Math.floor(timeFromTimestamp / hour);
+    const daysAgo = Math.floor(timeFromTimestamp / day);
+
+    if (timeFromTimestamp < hour) {
+        return `${minutesAgo} minute${minutesAgo === 1 ? '' : 's'} ago`;
+    }
+
+    if (timeFromTimestamp < day) {
+        return `${hoursAgo} hour${hoursAgo === 1 ? '' : 's'} ago`;
+    }
+
+    if (timeFromTimestamp < 3 * day) {
+        const remainingHours = Math.floor((timeFromTimestamp % day) / hour);
+
+        return `${daysAgo} day${daysAgo === 1 ? '' : 's'} ${
+            remainingHours ? `${remainingHours} hour${remainingHours === 1 ? ' ' : 's '}` : ''
+        }ago`;
+    }
+
+    return `${daysAgo} day${daysAgo === 1 ? '' : 's'} ago`;
+};
+
+export const getTimeString = (timestamp: number): string => {
+    const date = new Date(timestamp);
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    return `${hours == 24 ? '00' : `0${hours}`.slice(-2)}:${`0${minutes}`.slice(-2)}`;
+};

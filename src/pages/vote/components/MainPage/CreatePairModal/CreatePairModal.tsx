@@ -3,15 +3,23 @@ import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
 
+import ErrorHandler from 'helpers/error-handler';
+import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
+
+import { LoginTypes } from 'store/authStore/types';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { Asset } from 'types/stellar';
+
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Info from 'assets/icon-info.svg';
 
 import Button from 'basics/buttons/Button';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
-import ErrorHandler from '../../../../../common/helpers/error-handler';
-import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
 import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
 import {
     ModalDescription,
     ModalProps,
@@ -19,9 +27,6 @@ import {
 } from '../../../../../common/modals/atoms/ModalAtoms';
 import { StellarService, ToastService } from '../../../../../common/services/globalServices';
 import { BuildSignAndSubmitStatuses } from '../../../../../common/services/wallet-connect.service';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import { LoginTypes } from '../../../../../store/authStore/types';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
 import Market from '../../common/Market';
 
 const ContentRow = styled.div`
@@ -104,10 +109,12 @@ const StyledButton = styled(Button)`
     margin-top: 3.2rem;
 `;
 
-const CreatePairModal = ({
-    params,
-    close,
-}: ModalProps<{ base: any; counter: any }>): JSX.Element => {
+interface CreatePairModalParams {
+    base: Asset;
+    counter: Asset;
+}
+
+const CreatePairModal = ({ params, close }: ModalProps<CreatePairModalParams>): React.ReactNode => {
     const isMounted = useIsMounted();
 
     const { account } = useAuthStore();

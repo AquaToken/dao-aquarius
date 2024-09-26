@@ -2,17 +2,21 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { formatBalance } from 'helpers/format-number';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import LinkIcon from 'assets/icon-external-link.svg';
 
 import PageLoader from 'basics/loaders/PageLoader';
 import Pagination from 'basics/Pagination';
 import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
 
-import { formatBalance } from '../../../../common/helpers/helpers';
+import { PoolBalance } from 'pages/amm/api/types';
+import { Empty } from 'pages/profile/YourVotes/YourVotes';
+
 import { useUpdateIndex } from '../../../../common/hooks/useUpdateIndex';
-import { respondDown } from '../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import { Empty } from '../../../profile/YourVotes/YourVotes';
 import { getPoolMembers } from '../../api/api';
 
 const PAGE_SIZE = 10;
@@ -61,7 +65,7 @@ const LinkToExpert = styled.a`
 `;
 
 const PoolMembers = ({ poolId, totalShare }: { poolId: string; totalShare: string }) => {
-    const [members, setMembers] = useState(null);
+    const [members, setMembers] = useState<PoolBalance[]>(null);
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(null);
 

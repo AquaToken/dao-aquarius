@@ -2,13 +2,14 @@ import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
 
+import { respondDown } from 'web/mixins';
+import { Breakpoints } from 'web/styles';
+
 import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
 
-import { respondDown } from '../../mixins';
 import { LedgerService } from '../../services/globalServices';
-import { Breakpoints } from '../../styles';
-import { ModalDescription, ModalTitle } from '../atoms/ModalAtoms';
+import { ModalDescription, ModalProps, ModalTitle } from '../atoms/ModalAtoms';
 
 const Container = styled.div`
     width: 52.3rem;
@@ -31,7 +32,7 @@ const StyledButton = styled(Button)`
         `}
 `;
 
-const LedgerLogin = ({ close }) => {
+const LedgerLogin = ({ close }: ModalProps<never>) => {
     const [path, setPath] = useState('');
     const [pending, setPending] = useState(false);
     const onSubmit = () => {

@@ -1,22 +1,18 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
+import { LoginTypes } from 'store/authStore/types';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Copy from 'assets/icon-copy.svg';
 import External from 'assets/icon-external-link.svg';
 import MyAquarius from 'assets/my-aquarius.svg';
 
 import CopyButton from 'basics/buttons/CopyButton';
 import Identicon from 'basics/Identicon';
-
-import {
-    commonMaxWidth,
-    flexAllCenter,
-    flexRowSpaceBetween,
-    respondDown,
-} from '../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../common/styles';
-import { LoginTypes } from '../../../store/authStore/types';
-import useAuthStore from '../../../store/authStore/useAuthStore';
 
 const Container = styled.div`
     display: flex;

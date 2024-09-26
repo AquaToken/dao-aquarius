@@ -2,6 +2,12 @@ import * as React from 'react';
 import { useRef, useState } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 
+import { LoginTypes } from 'store/authStore/types';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { flexAllCenter, respondDown, textEllipsis } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import ArrowDown from 'assets/icon-arrow-down.svg';
 import CloseIcon from 'assets/icon-close-small.svg';
 import MobileMenuIcon from 'assets/icon-mobile-menu.svg';
@@ -9,13 +15,9 @@ import MobileMenuIcon from 'assets/icon-mobile-menu.svg';
 import Button from 'basics/buttons/Button';
 import Identicon from 'basics/Identicon';
 
-import { LoginTypes } from '../../../../store/authStore/types';
-import useAuthStore from '../../../../store/authStore/useAuthStore';
 import useOnClickOutside from '../../../hooks/useOutsideClick';
-import { flexAllCenter, respondDown, textEllipsis } from '../../../mixins';
 import ChooseLoginMethodModal from '../../../modals/ChooseLoginMethodModal';
 import { ModalService } from '../../../services/globalServices';
-import { Breakpoints, COLORS } from '../../../styles';
 import AppMenu from '../AppMenu/AppMenu';
 
 const Wrapper = styled.div`

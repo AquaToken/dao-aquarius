@@ -2,13 +2,16 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { flexRowSpaceBetween } from 'web/mixins';
+
 import AccountBlock from 'basics/AccountBlock';
 
 import OtherAccountButton from './OtherAccountButton/OtherAccountButton';
 
-import { flexRowSpaceBetween } from '../../../../../common/mixins';
+import AccountService from '../../../../../common/services/account.service';
 import { StellarService } from '../../../../../common/services/globalServices';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
 
 const Wrapper = styled.div`
     ${flexRowSpaceBetween};
@@ -16,7 +19,11 @@ const Wrapper = styled.div`
     margin-top: 7rem;
 `;
 
-const AccountInfoBlock = ({ account }) => {
+interface AccountInfoBlockProps {
+    account: AccountService;
+}
+
+const AccountInfoBlock = ({ account }: AccountInfoBlockProps) => {
     const [federation, setFederation] = useState(null);
     const accountId = account.accountId();
 

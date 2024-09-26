@@ -2,16 +2,19 @@ import * as React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+import { formatBalance } from 'helpers/format-number';
+
+import useAssetsStore from 'store/assetsStore/useAssetsStore';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { COLORS } from 'web/styles';
+
 import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
 import Table, { CellAlign } from 'basics/Table';
 
-import { formatBalance } from '../../../common/helpers/helpers';
 import { StellarService } from '../../../common/services/globalServices';
-import { COLORS } from '../../../common/styles';
 import { MainRoutes } from '../../../routes';
-import useAssetsStore from '../../../store/assetsStore/useAssetsStore';
-import useAuthStore from '../../../store/authStore/useAuthStore';
 import Market from '../../vote/components/common/Market';
 import {
     AquaBalance,
@@ -52,7 +55,11 @@ const getAssetString = (asset): string => {
     return assetType === 'native' ? 'native' : `${assetCode}:${assetIssuer}`;
 };
 
-const SdexRewards = ({ aquaUsdPrice }) => {
+interface SdexRewardsProps {
+    aquaUsdPrice: number;
+}
+
+const SdexRewards = ({ aquaUsdPrice }: SdexRewardsProps): React.ReactNode => {
     const { account } = useAuthStore();
 
     const [sdexRewards, setSdexRewards] = useState(null);

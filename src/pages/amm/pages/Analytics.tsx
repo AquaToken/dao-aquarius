@@ -3,25 +3,23 @@ import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { formatBalance } from 'helpers/format-number';
+
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Plus from 'assets/icon-plus.svg';
 import Search from 'assets/icon-search.svg';
 
 import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
 
-import { formatBalance } from '../../../common/helpers/helpers';
 import { useDebounce } from '../../../common/hooks/useDebounce';
-import {
-    commonMaxWidth,
-    flexAllCenter,
-    flexRowSpaceBetween,
-    respondDown,
-} from '../../../common/mixins';
 import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
 import { ModalService } from '../../../common/services/globalServices';
-import { Breakpoints, COLORS } from '../../../common/styles';
 import { AmmRoutes } from '../../../routes';
-import useAuthStore from '../../../store/authStore/useAuthStore';
 import { getTotalStats, getVolume24h } from '../api/api';
 import AllPools from '../components/AllPools/AllPools';
 import LiquidityChart from '../components/LiquidityChart/LiquidityChart';

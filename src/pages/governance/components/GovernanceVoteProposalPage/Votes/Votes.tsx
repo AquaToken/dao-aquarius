@@ -3,6 +3,12 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { getDateString } from 'helpers/date';
+import { formatBalance } from 'helpers/format-number';
+
+import { flexAllCenter, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Aqua from 'assets/aqua-logo-small.svg';
 import Ice from 'assets/ice-logo.svg';
 import ExternalLinkIcon from 'assets/icon-external-link.svg';
@@ -12,9 +18,6 @@ import { IconSort } from 'basics/Icons';
 import Pagination from 'basics/Pagination';
 import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
 
-import { formatBalance, getDateString } from '../../../../../common/helpers/helpers';
-import { flexAllCenter, respondDown } from '../../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
 import { getVotes, getVoteTxHash, UPDATE_INTERVAL, VoteFields } from '../../../api/api';
 import { Vote } from '../../../api/types';
 import Solution from '../Solution/Solution';

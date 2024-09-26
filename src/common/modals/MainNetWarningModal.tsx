@@ -2,14 +2,14 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Alert from 'basics/Alert';
 import Button from 'basics/buttons/Button';
 import Checkbox from 'basics/inputs/Checkbox';
 
-import { ModalTitle } from './atoms/ModalAtoms';
-
-import { respondDown } from '../mixins';
-import { Breakpoints, COLORS } from '../styles';
+import { ModalProps, ModalTitle } from './atoms/ModalAtoms';
 
 const Container = styled.div`
     width: 52.8rem;
@@ -31,7 +31,7 @@ const StyledButton = styled(Button)`
 
 export const SHOW_PURPOSE_ALIAS_MAIN_NET = 'show purpose main net';
 
-const MainNetWarningModal = ({ confirm }) => {
+const MainNetWarningModal = ({ confirm }: ModalProps<never>) => {
     const [checked, setChecked] = useState(false);
 
     useEffect(() => {

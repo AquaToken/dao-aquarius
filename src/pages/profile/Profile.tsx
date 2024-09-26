@@ -2,6 +2,11 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { commonMaxWidth, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Select from 'basics/inputs/Select';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
 
@@ -15,10 +20,7 @@ import SdexRewards from './SdexRewards/SdexRewards';
 import YourGovernanceVotes from './YourGovernanceVotes/YourGovernanceVotes';
 import YourVotes from './YourVotes/YourVotes';
 
-import { commonMaxWidth, respondDown } from '../../common/mixins';
 import { StellarService } from '../../common/services/globalServices';
-import { Breakpoints, COLORS } from '../../common/styles';
-import useAuthStore from '../../store/authStore/useAuthStore';
 import BalancesBlock from '../amm/components/BalancesBlock/BalancesBlock';
 import MyLiquidity from '../amm/components/MyLiquidity/MyLiquidity';
 

@@ -2,6 +2,12 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { getDateString } from 'helpers/date';
+import { formatBalance } from 'helpers/format-number';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import LinkIcon from 'assets/icon-external-link.svg';
 
 import ExternalLink from 'basics/ExternalLink';
@@ -10,13 +16,11 @@ import Pagination from 'basics/Pagination';
 import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
 import Table from 'basics/Table';
 
-import { formatBalance, getDateString } from '../../../../common/helpers/helpers';
+import { Empty } from 'pages/profile/YourVotes/YourVotes';
+
 import { useUpdateIndex } from '../../../../common/hooks/useUpdateIndex';
-import { respondDown } from '../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import { Empty } from '../../../profile/YourVotes/YourVotes';
 import { getPoolEvents } from '../../api/api';
-import { PoolExtended } from '../../api/types';
+import { PoolEvent, PoolExtended } from '../../api/types';
 
 const Title = styled.h3`
     margin-bottom: 2.4rem;
@@ -30,10 +34,10 @@ const Amounts = styled.span`
     `}
 `;
 
-const getEventTitle = (event, pool) => {
+const getEventTitle = (event: PoolEvent, pool: PoolExtended) => {
     if (event.event_type === 'swap') {
-        const fromIndex = event.amounts.findIndex(amount => amount > 0);
-        const toIndex = event.amounts.findIndex(amount => amount < 0);
+        const fromIndex = event.amounts.findIndex(amount => +amount > 0);
+        const toIndex = event.amounts.findIndex(amount => +amount < 0);
 
         return `Swap ${pool.assets[fromIndex]?.code} to ${pool.assets[toIndex]?.code}`;
     }
@@ -41,19 +45,19 @@ const getEventTitle = (event, pool) => {
     return event.event_type === 'deposit' ? 'Add liquidity' : 'Remove liquidity';
 };
 
-const getEventAmounts = (event, pool) => {
+const getEventAmounts = (event: PoolEvent, pool: PoolExtended) => {
     if (event.event_type === 'swap') {
-        const fromIndex = event.amounts.findIndex(amount => amount > 0);
-        const toIndex = event.amounts.findIndex(amount => amount < 0);
+        const fromIndex = event.amounts.findIndex(amount => +amount > 0);
+        const toIndex = event.amounts.findIndex(amount => +amount < 0);
 
         return (
             <Amounts>
                 <span>
-                    {formatBalance(event.amounts[fromIndex] / 1e7)} {pool.assets[fromIndex]?.code}
+                    {formatBalance(+event.amounts[fromIndex] / 1e7)} {pool.assets[fromIndex]?.code}
                 </span>
                 <br />
                 <span>
-                    {formatBalance(Math.abs(event.amounts[toIndex] / 1e7))}{' '}
+                    {formatBalance(Math.abs(+event.amounts[toIndex] / 1e7))}{' '}
                     {pool.assets[toIndex]?.code}
                 </span>
             </Amounts>
@@ -64,7 +68,7 @@ const getEventAmounts = (event, pool) => {
             {event.amounts.map((amount, index) => (
                 <span key={pool.tokens_str[index]}>
                     <span>
-                        {formatBalance(amount / 1e7)} {pool.assets[index].code}
+                        {formatBalance(+amount / 1e7)} {pool.assets[index].code}
                     </span>
                     <br />
                 </span>
@@ -74,15 +78,18 @@ const getEventAmounts = (event, pool) => {
 };
 
 const PAGE_SIZE = 5;
-const getEventTime = timeStr => {
+const getEventTime = (timeStr: string) => {
     const [date, time] = timeStr.split(' ');
 
     const [year, month, day] = date.split('-');
     const [hour, minute, second] = time.split(':');
 
-    return getDateString(new Date(Date.UTC(year, month - 1, day, hour, minute, second)).getTime(), {
-        withTime: true,
-    });
+    return getDateString(
+        new Date(Date.UTC(+year, +month - 1, +day, +hour, +minute, +second)).getTime(),
+        {
+            withTime: true,
+        },
+    );
 };
 
 const PoolEvents = ({ pool }: { pool: PoolExtended }) => {
@@ -130,7 +137,7 @@ const PoolEvents = ({ pool }: { pool: PoolExtended }) => {
                     { children: 'Time' },
                     { children: '', flexSize: 0.2 },
                 ]}
-                body={events.map((event, index) => ({
+                body={events.map((event: PoolEvent, index: number) => ({
                     key: `${event.ledger}-${index}`,
                     mobileBackground: COLORS.lightGray,
                     rowItems: [

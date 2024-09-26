@@ -2,14 +2,19 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { getDateString } from 'helpers/date';
+import { formatBalance } from 'helpers/format-number';
+
+import { COLORS } from 'web/styles';
+
 import PageLoader from 'basics/loaders/PageLoader';
 import Table, { CellAlign } from 'basics/Table';
 
-import { formatBalance, getDateString } from '../../../../../common/helpers/helpers';
+import { UpcomingBribe } from 'pages/bribes/api/types';
+import { convertUTCToLocalDateIgnoringTimezone } from 'pages/bribes/pages/AddBribePage';
+import { getUpcomingBribesForMarket } from 'pages/vote/api/api';
+
 import { StellarService } from '../../../../../common/services/globalServices';
-import { COLORS } from '../../../../../common/styles';
-import { convertUTCToLocalDateIgnoringTimezone } from '../../../../bribes/pages/AddBribePage';
-import { getUpcomingBribesForMarket } from '../../../../vote/api/api';
 import Asset from '../../../../vote/components/AssetDropdown/Asset';
 
 const Container = styled.div`
@@ -30,8 +35,12 @@ const Description = styled.div`
     margin-bottom: 3.2rem;
 `;
 
-const MarketUpcomingBribes = ({ marketKey }) => {
-    const [bribes, setBribes] = useState(null);
+interface MarketUpcomingBribes {
+    marketKey: string;
+}
+
+const MarketUpcomingBribes = ({ marketKey }: MarketUpcomingBribes): React.ReactNode => {
+    const [bribes, setBribes] = useState<UpcomingBribe[]>(null);
 
     useEffect(() => {
         getUpcomingBribesForMarket(marketKey)

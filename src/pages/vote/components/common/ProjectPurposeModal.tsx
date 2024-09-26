@@ -2,12 +2,17 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Button from 'basics/buttons/Button';
 import Checkbox from 'basics/inputs/Checkbox';
 
-import { respondDown } from '../../../../common/mixins';
-import { ModalDescription, ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
-import { Breakpoints, COLORS } from '../../../../common/styles';
+import {
+    ModalDescription,
+    ModalProps,
+    ModalTitle,
+} from '../../../../common/modals/atoms/ModalAtoms';
 
 const Container = styled.div`
     width: 52.8rem;
@@ -28,7 +33,7 @@ const StyledButton = styled(Button)`
 
 export const SHOW_PURPOSE_ALIAS = 'show purpose';
 
-const ProjectPurposeModal = ({ close }) => {
+const ProjectPurposeModal = ({ close }: ModalProps<never>) => {
     const [checked, setChecked] = useState(false);
 
     useEffect(() => {

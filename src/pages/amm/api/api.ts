@@ -1,6 +1,8 @@
 import { Asset } from '@stellar/stellar-sdk';
 import axios from 'axios';
 
+import { getAssetFromString, getAssetString } from 'helpers/assets';
+
 import {
     FindSwapPath,
     ListResponse,
@@ -16,7 +18,6 @@ import {
     PoolVolume24h,
 } from './types';
 
-import { getAssetFromString, getAssetString } from '../../../common/helpers/helpers';
 import { AssetsService, SorobanService } from '../../../common/services/globalServices';
 
 const API_URL = 'https://amm-api.aqua.network';
@@ -49,9 +50,10 @@ const processPools = (pools: Array<Pool | PoolUser>): Array<PoolProcessed> => {
     // @ts-ignore
     AssetsService.processAssets([...assetsStr].map(str => getAssetFromString(str)));
 
-    return pools.map(pool => {
-        return { ...pool, assets: pool.tokens_str.map(str => getAssetFromString(str)) };
-    });
+    return pools.map(pool => ({
+        ...pool,
+        assets: pool.tokens_str.map(str => getAssetFromString(str)),
+    }));
 };
 
 export const getPools = async (
@@ -139,11 +141,10 @@ export const getPool = async (id: string): Promise<PoolExtended> => {
     return Object.assign({}, info, stats, membersCount);
 };
 
-export const getUserPools = (accountId: string): Promise<PoolUserProcessed[]> => {
-    return axios
+export const getUserPools = (accountId: string): Promise<PoolUserProcessed[]> =>
+    axios
         .get<ListResponse<PoolUser>>(`${API_URL}/pools/user/${accountId}/?size=1000`)
         .then(({ data }) => processPools(data.items) as PoolUserProcessed[]);
-};
 
 export const findSwapPath = async (
     baseId: string,

@@ -3,11 +3,12 @@ import { useEffect, useState } from 'react';
 import { Redirect, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import PageLoader from 'basics/loaders/PageLoader';
 
 import NotFoundPage from '../../../common/components/NotFoundPage/NotFoundPage';
-import { respondDown } from '../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../common/styles';
 import { GovernanceRoutes } from '../../../routes';
 import { getProposalRequest, UPDATE_INTERVAL } from '../api/api';
 import { Proposal } from '../api/types';

@@ -3,14 +3,17 @@ import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
 
-import { respondDown } from '../../../../common/mixins';
+import { ModalProps } from '../../../../common/modals/atoms/ModalAtoms';
 import { StellarService, ToastService } from '../../../../common/services/globalServices';
-import { Breakpoints, COLORS } from '../../../../common/styles';
 import { LockerRoutes } from '../../../../routes';
-import useAuthStore from '../../../../store/authStore/useAuthStore';
 
 const Container = styled.form<{ isModal: boolean }>`
     display: flex;
@@ -82,7 +85,11 @@ const StyledButton = styled(Button)<{ isModal: boolean }>`
     `}
 `;
 
-const AccountInput = ({ params, close }: { params?: any; close?: any }) => {
+interface AccountInputParams {
+    isModal?: boolean;
+}
+
+const AccountInput = ({ params, close }: ModalProps<AccountInputParams>) => {
     const { isLogged, logout, account } = useAuthStore();
 
     const isModal = params?.isModal ?? false;
@@ -95,7 +102,7 @@ const AccountInput = ({ params, close }: { params?: any; close?: any }) => {
         }
     }, [isLogged]);
 
-    const onSubmit = e => {
+    const onSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!StellarService.isValidPublicKey(value)) {
             ToastService.showErrorToast('Invalid public key');

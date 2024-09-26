@@ -1,6 +1,8 @@
 import * as StellarSdk from '@stellar/stellar-sdk';
 import axios from 'axios';
 
+import { AssetSimple } from 'store/assetsStore/types';
+
 import {
     ListResponse,
     MarketBribes,
@@ -12,7 +14,6 @@ import {
     UpcomingBribe,
 } from './types';
 
-import { AssetSimple } from '../../../store/assetsStore/types';
 const marketKeysUrl = 'https://marketkeys-tracker.aqua.network/api/market-keys/';
 const votingTrackerUrl = 'https://voting-tracker.aqua.network/api/voting-snapshot/';
 const bribesApiUrl = 'https://bribes-api.aqua.network/api/';
@@ -33,18 +34,6 @@ const getPairUrl = (sortType: SortTypes, pageSize: number, page: number): string
         case SortTypes.topVoted:
             return `${votingTrackerUrl}top-volume/?limit=${pageSize}&page=${page}`;
     }
-};
-
-export const getPairsList = async (
-    sortType: SortTypes,
-    pageSize: number,
-    page: number,
-): Promise<{ pairs: PairStats[]; count: number }> => {
-    const url = getPairUrl(sortType, pageSize, page);
-
-    const marketsVotes = await axios.get<ListResponse<MarketVotes>>(url);
-
-    return addKeysToMarketVotes(marketsVotes.data.results, marketsVotes.data.count);
 };
 
 const addKeysToMarketVotes = async (votes: MarketVotes[], count) => {
@@ -74,6 +63,18 @@ const addKeysToMarketVotes = async (votes: MarketVotes[], count) => {
     });
 
     return { count, pairs };
+};
+
+export const getPairsList = async (
+    sortType: SortTypes,
+    pageSize: number,
+    page: number,
+): Promise<{ pairs: PairStats[]; count: number }> => {
+    const url = getPairUrl(sortType, pageSize, page);
+
+    const marketsVotes = await axios.get<ListResponse<MarketVotes>>(url);
+
+    return addKeysToMarketVotes(marketsVotes.data.results, marketsVotes.data.count);
 };
 
 export const updateVotesForMarketKeys = async (pairs: PairStats[]): Promise<PairStats[]> => {
@@ -281,22 +282,15 @@ export const getFilteredPairsList = async (
     return { count, pairs };
 };
 
-export const getTotalVotingStats = (): Promise<TotalStats> => {
-    return axios.get<TotalStats>(`${votingTrackerUrl}stats/`).then(({ data }) => data);
-};
+export const getTotalVotingStats = (): Promise<TotalStats> =>
+    axios.get<TotalStats>(`${votingTrackerUrl}stats/`).then(({ data }) => data);
 
-export const getUpcomingBribesForMarket = marketKey => {
-    return axios
+export const getUpcomingBribesForMarket = (marketKey: string): Promise<UpcomingBribe[]> =>
+    axios
         .get<ListResponse<UpcomingBribe>>(
             `${bribesApiUrl}pending-bribes/?limit=200&ordering=start_at&market_key=${marketKey}`,
         )
-        .then(({ data }) => {
-            return data.results;
-        });
-};
+        .then(({ data }) => data.results);
 
-export const getRewards = (): Promise<Rewards[]> => {
-    return axios.get<ListResponse<Rewards>>(rewardsApi).then(res => {
-        return res.data.results;
-    });
-};
+export const getRewards = (): Promise<Rewards[]> =>
+    axios.get<ListResponse<Rewards>>(rewardsApi).then(res => res.data.results);

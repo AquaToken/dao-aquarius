@@ -4,14 +4,15 @@ import { ServerApi } from '@stellar/stellar-sdk/lib/horizon';
 import axios, { AxiosResponse } from 'axios';
 import BigNumber from 'bignumber.js';
 
+import debounceFunction from 'helpers/debounce-function';
+import { formatBalance, roundToPrecision } from 'helpers/format-number';
+
+import { getPoolInfo } from 'pages/amm/api/api';
+import { validateMarketKeys } from 'pages/vote/api/api';
+import { PairStats } from 'pages/vote/api/types';
+
 import EventService from './event.service';
 import { ToastService } from './globalServices';
-
-import { getPoolInfo } from '../../pages/amm/api/api';
-import { validateMarketKeys } from '../../pages/vote/api/api';
-import { PairStats } from '../../pages/vote/api/types';
-import debounceFunction from '../helpers/debounceFunction';
-import { formatBalance, roundToPrecision } from '../helpers/helpers';
 
 enum HORIZON_SERVER {
     stellar = 'https://horizon.stellar.org',
@@ -112,7 +113,7 @@ export default class StellarServiceClass {
     priceLumenUsd = null;
     private claimableBalances: Horizon.ServerApi.ClaimableBalanceRecord[] | null = null;
     private keypair: StellarSdk.Keypair | null = null;
-    private poolsRewardsNoteHash = new Map<string, any>();
+    private poolsRewardsNoteHash = new Map<string, unknown>();
     constructor() {
         this.startHorizonServer();
         this.loadMorePayments = this.loadMorePayments.bind(this);
@@ -332,9 +333,7 @@ export default class StellarServiceClass {
         return this.server
             .orderbook(this.createAsset(AQUA_CODE, AQUA_ISSUER), this.createLumen())
             .call()
-            .then(res => {
-                return (+res.asks[0].price + +res.bids[0].price) / 2;
-            });
+            .then(res => (+res.asks[0].price + +res.bids[0].price) / 2);
     }
 
     getLocks(publicKey: string) {
@@ -364,14 +363,14 @@ export default class StellarServiceClass {
                 }
                 return claimable.records;
             })
-            .then(records => {
-                return records.filter(
+            .then(records =>
+                records.filter(
                     claim =>
                         claim.claimants.length === 1 &&
                         claim.claimants[0].destination === publicKey &&
                         claim.asset === `${AQUA_CODE}:${AQUA_ISSUER}`,
-                );
-            });
+                ),
+            );
     }
 
     getNextLocks(
@@ -578,8 +577,8 @@ export default class StellarServiceClass {
 
         const keys = this.getKeysSimilarToMarketKeys(accountId);
 
-        return validateMarketKeys(keys).then(marketPairs => {
-            return this.claimableBalances.reduce((acc, claim) => {
+        return validateMarketKeys(keys).then(marketPairs =>
+            this.claimableBalances.reduce((acc, claim) => {
                 if (claim.claimants.length !== 2) {
                     return acc;
                 }
@@ -602,8 +601,8 @@ export default class StellarServiceClass {
                     acc += Number(claim.amount);
                 }
                 return acc;
-            }, 0);
-        });
+            }, 0),
+        );
     }
 
     getAirdrop2Claims() {
@@ -995,9 +994,7 @@ export default class StellarServiceClass {
     getLumenUsdPrice(): Promise<number> {
         return axios
             .get<any>(`https://api.stellarterm.com/v1/ticker.json?${Math.random()}`)
-            .then(({ data }) => {
-                return data._meta.externalPrices.USD_XLM;
-            });
+            .then(({ data }) => data._meta.externalPrices.USD_XLM);
     }
 
     getLiquidityPoolData(

@@ -3,17 +3,20 @@ import { forwardRef, RefObject } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { formatBalance } from 'helpers/format-number';
+
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { COLORS } from 'web/styles';
+
 import AquaLogo from 'assets/aqua-logo-small.svg';
 
 import Button from 'basics/buttons/Button';
 import ExternalLink from 'basics/ExternalLink';
 
-import { formatBalance } from '../../../../../common/helpers/helpers';
 import ChooseLoginMethodModal from '../../../../../common/modals/ChooseLoginMethodModal';
 import { ModalService } from '../../../../../common/services/globalServices';
-import { COLORS } from '../../../../../common/styles';
 import { GovernanceRoutes } from '../../../../../routes';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
 import { APPROVED_PROPOSAL_REWARD } from '../../../pages/GovernanceMainPage';
 
 const Container = styled.div`
@@ -68,7 +71,7 @@ const ChangedProcessText = styled.div`
     margin: 1.6rem 0;
 `;
 
-const CreateProposal = forwardRef(({}, ref: RefObject<HTMLDivElement>) => {
+const CreateProposal = forwardRef((_, ref: RefObject<HTMLDivElement>) => {
     const history = useHistory();
     const { isLogged } = useAuthStore();
 
@@ -106,5 +109,7 @@ const CreateProposal = forwardRef(({}, ref: RefObject<HTMLDivElement>) => {
         </Container>
     );
 });
+
+CreateProposal.displayName = 'CreateProposal';
 
 export default CreateProposal;

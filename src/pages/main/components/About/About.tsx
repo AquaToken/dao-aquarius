@@ -10,6 +10,7 @@ import { AQUA_ASSET_STRING } from 'constants/assets';
 
 import { getStellarAsset } from 'helpers/assets';
 import { getDateString } from 'helpers/date';
+import { formatBalance } from 'helpers/format-number';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
@@ -28,7 +29,6 @@ import Changes24 from 'basics/Changes24';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
 
-import { formatBalance } from '../../../../common/helpers/helpers';
 import Asset from '../../../vote/components/AssetDropdown/Asset';
 
 const WhatIsSection = styled.section`
@@ -246,7 +246,6 @@ const About = (): React.ReactElement => {
     const aquaTokenRef = useRef(null);
 
     useEffect(() => {
-        console.log(location.hash);
         if (location.hash === '#token' && aquaTokenRef.current) {
             aquaTokenRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }

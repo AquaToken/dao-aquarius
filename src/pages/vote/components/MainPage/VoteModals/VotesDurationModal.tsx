@@ -2,26 +2,37 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { getDateString } from 'helpers/date';
+import ErrorHandler from 'helpers/error-handler';
+import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
+
+import { LoginTypes } from 'store/authStore/types';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { Asset } from 'types/stellar';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Button from 'basics/buttons/Button';
 import Select, { Option } from 'basics/inputs/Select';
 
+import { PairStats } from 'pages/vote/api/types';
+
 import VotesAmountModal, { ContentRow, Label } from './VotesAmountModal';
 
-import ErrorHandler from '../../../../../common/helpers/error-handler';
-import { getDateString } from '../../../../../common/helpers/helpers';
-import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
 import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
-import { respondDown } from '../../../../../common/mixins';
-import { ModalDescription, ModalTitle } from '../../../../../common/modals/atoms/ModalAtoms';
+import {
+    ModalDescription,
+    ModalProps,
+    ModalTitle,
+} from '../../../../../common/modals/atoms/ModalAtoms';
 import {
     ModalService,
     StellarService,
     ToastService,
 } from '../../../../../common/services/globalServices';
 import { BuildSignAndSubmitStatuses } from '../../../../../common/services/wallet-connect.service';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import { LoginTypes } from '../../../../../store/authStore/types';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
 import { SELECTED_PAIRS_ALIAS } from '../MainPage';
 
 const ClaimBack = styled.div`
@@ -72,7 +83,15 @@ const PeriodOptions: Option<number>[] = [
     { label: '6 Month', value: 6 * MONTH },
 ];
 
-const VotesDurationModal = ({ params, close }) => {
+interface VotesDurationModalParams {
+    pairsAmounts: { [key: string]: string };
+    updatePairs: () => void;
+    isDownVoteModal: boolean;
+    pairs: PairStats[];
+    asset: Asset;
+}
+
+const VotesDurationModal = ({ params, close }: ModalProps<VotesDurationModalParams>) => {
     const [votePeriod, setVotePeriod] = useState(MONTH);
     const [pending, setPending] = useState(false);
     const { pairsAmounts, updatePairs, isDownVoteModal, pairs, asset } = params;

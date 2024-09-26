@@ -3,12 +3,15 @@ import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
 
+import { formatBalance } from 'helpers/format-number';
+
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Input from 'basics/inputs/Input';
 
-import { formatBalance } from '../../../../../common/helpers/helpers';
-import { respondDown } from '../../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
 import AssetDropdown from '../../../../vote/components/AssetDropdown/AssetDropdown';
 import PercentButtons from '../PercentButtons/PercentButtons';
 

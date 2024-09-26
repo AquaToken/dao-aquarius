@@ -11,6 +11,9 @@ import PageLoader from 'basics/loaders/PageLoader';
 
 import Footer from 'components/Footer';
 
+import { getActiveProposalsCount } from 'pages/governance/api/api';
+import Governance from 'pages/governance/Governance';
+
 import AppGlobalStyle from './common/components/AppGlobalStyles';
 import ErrorBoundary from './common/components/ErrorBoundary/ErrorBoundary';
 import Header, {
@@ -21,7 +24,6 @@ import Header, {
 } from './common/components/Header/Header';
 import NotFoundPage from './common/components/NotFoundPage/NotFoundPage';
 import useGlobalSubscriptions from './common/hooks/useGlobalSubscriptions';
-import { respondDown } from './common/mixins';
 import ModalContainer from './common/modals/atoms/ModalContainer';
 import LiveOnSorobanAlert, {
     LIVE_ON_SOROBAN_SHOWED_ALIAS,
@@ -32,27 +34,26 @@ import {
     WalletConnectService,
 } from './common/services/globalServices';
 import SentryService from './common/services/sentry.service';
-import { Breakpoints, COLORS } from './common/styles';
 import ToastContainer from './common/toasts/ToastContainer';
-import { getActiveProposalsCount } from './pages/governance/api/api';
-import Governance from './pages/governance/Governance';
 import { AmmRoutes, MainRoutes } from './routes';
 import Provider from './store';
 import useAssetsStore from './store/assetsStore/useAssetsStore';
 import useAuthStore from './store/authStore/useAuthStore';
+import { respondDown } from './web/mixins';
+import { Breakpoints, COLORS } from './web/styles';
 
-const MainPage = lazy(() => import('./pages/main/MainPage'));
-const LockerPage = lazy(() => import('./pages/locker/Locker'));
-const VotePage = lazy(() => import('./pages/vote/Vote'));
-const BribesPage = lazy(() => import('./pages/bribes/Bribes'));
-const MarketPage = lazy(() => import('./pages/market/Market'));
-const RewardsPage = lazy(() => import('./pages/rewards/Rewards'));
-const AirdropPage = lazy(() => import('./pages/airdrop/Airdrop'));
-const Airdrop2Page = lazy(() => import('./pages/airdrop2/Airdrop2'));
-const ProfilePage = lazy(() => import('./pages/profile/Profile'));
-const WalletConnectPage = lazy(() => import('./pages/wallet-connect/WalletConnect'));
-const AmmPage = lazy(() => import('./pages/amm/Amm'));
-const SwapPage = lazy(() => import('./pages/swap/Swap'));
+const MainPage = lazy(() => import('pages/main/MainPage'));
+const LockerPage = lazy(() => import('pages/locker/Locker'));
+const VotePage = lazy(() => import('pages/vote/Vote'));
+const BribesPage = lazy(() => import('pages/bribes/Bribes'));
+const MarketPage = lazy(() => import('pages/market/Market'));
+const RewardsPage = lazy(() => import('pages/rewards/Rewards'));
+const AirdropPage = lazy(() => import('pages/airdrop/Airdrop'));
+const Airdrop2Page = lazy(() => import('pages/airdrop2/Airdrop2'));
+const ProfilePage = lazy(() => import('pages/profile/Profile'));
+const WalletConnectPage = lazy(() => import('pages/wallet-connect/WalletConnect'));
+const AmmPage = lazy(() => import('pages/amm/Amm'));
+const SwapPage = lazy(() => import('pages/swap/Swap'));
 
 const UPDATE_ASSETS_DATE = 'update assets timestamp';
 const UPDATE_PERIOD = 24 * 60 * 60 * 1000;
@@ -98,6 +99,12 @@ const App = () => {
         );
     }, []);
 
+    const reloadIfNotLoaded = () => {
+        if (!wcLoginChecked || !isAssetsUpdated) {
+            window.location.reload();
+        }
+    };
+
     useEffect(() => {
         window.addEventListener('online', reloadIfNotLoaded);
 
@@ -109,12 +116,6 @@ const App = () => {
             setActiveProposalsCount(res);
         });
     }, []);
-
-    const reloadIfNotLoaded = () => {
-        if (!wcLoginChecked || !isAssetsUpdated) {
-            window.location.reload();
-        }
-    };
 
     useEffect(() => {
         if (assets.length) {

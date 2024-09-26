@@ -2,14 +2,22 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { customScroll, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Button from 'basics/buttons/Button';
 
-import { customScroll, respondDown } from '../../../../../common/mixins';
-import { ModalDescription, ModalTitle } from '../../../../../common/modals/atoms/ModalAtoms';
+import { PairStats } from 'pages/vote/api/types';
+
+import {
+    ModalDescription,
+    ModalProps,
+    ModalTitle,
+} from '../../../../../common/modals/atoms/ModalAtoms';
 import { StellarService } from '../../../../../common/services/globalServices';
 import { StellarEvents } from '../../../../../common/services/stellar.service';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
 import VotesList from '../ManageVotesModal/VotesList/VotesList';
 
 const Container = styled.div`
@@ -36,7 +44,11 @@ const EmptyList = styled.span`
     font-size: 1.6rem;
 `;
 
-const ClaimAllModal = ({ params, close }) => {
+interface ClaimAllModalParams {
+    pairs: PairStats[];
+}
+
+const ClaimAllModal = ({ params, close }: ModalProps<ClaimAllModalParams>) => {
     const [claims, setClaims] = useState(null);
     const [updateId, setUpdateId] = useState(1);
     const { pairs } = params;

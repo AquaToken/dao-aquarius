@@ -3,6 +3,14 @@ import { forwardRef, RefObject, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
+import { getDateString } from 'helpers/date';
+import { formatBalance, roundToPrecision } from 'helpers/format-number';
+
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { flexAllCenter, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Fail from 'assets/icon-fail.svg';
 import Success from 'assets/icon-success.svg';
 
@@ -11,17 +19,9 @@ import ExternalLink from 'basics/ExternalLink';
 
 import NativeVotingButton from './VotingButton/VotingButton';
 
-import {
-    formatBalance,
-    getDateString,
-    roundToPrecision,
-} from '../../../../../common/helpers/helpers';
-import { flexAllCenter, respondDown } from '../../../../../common/mixins';
 import ChooseLoginMethodModal from '../../../../../common/modals/ChooseLoginMethodModal';
 import { ModalService } from '../../../../../common/services/globalServices';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
 import { GovernanceRoutes } from '../../../../../routes';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
 import { Proposal } from '../../../api/types';
 import { CREATE_DISCUSSION_COST, CREATE_PROPOSAL_COST } from '../../../pages/GovernanceMainPage';
 import { SimpleProposalOptions } from '../../../pages/GovernanceVoteProposalPage';
@@ -582,5 +582,7 @@ const Sidebar = forwardRef(
         );
     },
 );
+
+Sidebar.displayName = 'Sidebar';
 
 export default Sidebar;

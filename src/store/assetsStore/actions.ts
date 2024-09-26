@@ -1,10 +1,13 @@
 import * as StellarSdk from '@stellar/stellar-sdk';
 import { Dispatch } from 'react';
 
+import { getAssetString } from 'helpers/assets';
+
 import { getAssetsInfo, getAssetsRequest } from './api/api';
 import { ASSET_CACHE } from './reducer';
 import { ASSETS_ACTIONS, AssetSimple } from './types';
 
+import { StellarService } from '../../common/services/globalServices';
 import { ActionResult } from '../types';
 
 export function clearAssets() {
@@ -29,15 +32,13 @@ export function getAssets() {
     };
 }
 
-export const getAssetString = asset => `${asset.code}:${asset.issuer}`;
-
 export function processNewAssets(assets: AssetSimple[]) {
     return (dispatch: Dispatch<ActionResult>): void => {
         const cached = new Map(JSON.parse(localStorage.getItem(ASSET_CACHE) || '[]'));
 
         const newAssets = assets.filter(
             asset =>
-                !cached.has(getAssetString(asset)) &&
+                !cached.has(getAssetString(StellarService.createAsset(asset.code, asset.issuer))) &&
                 !new StellarSdk.Asset(asset.code, asset.issuer).isNative(),
         );
 
@@ -47,7 +48,10 @@ export function processNewAssets(assets: AssetSimple[]) {
 
         getAssetsInfo(newAssets).then(res => {
             res.forEach(info => {
-                cached.set(getAssetString(info), info);
+                cached.set(
+                    getAssetString(StellarService.createAsset(info.code, info.issuer)),
+                    info,
+                );
             });
 
             localStorage.setItem(ASSET_CACHE, JSON.stringify(Array.from(cached.entries())));

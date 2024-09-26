@@ -1,6 +1,6 @@
 import { createGlobalStyle } from 'styled-components';
 
-import { COLORS, FONT_FAMILY } from '../styles';
+import { COLORS, FONT_FAMILY } from 'web/styles';
 
 const AppGlobalStyle = createGlobalStyle`
   * {

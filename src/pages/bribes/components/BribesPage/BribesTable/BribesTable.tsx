@@ -3,6 +3,14 @@ import { useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { getDateString } from 'helpers/date';
+import { formatBalance } from 'helpers/format-number';
+
+import useAssetsStore from 'store/assetsStore/useAssetsStore';
+
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Plus from 'assets/icon-plus.svg';
 
 import Button from 'basics/buttons/Button';
@@ -12,12 +20,8 @@ import PageLoader from 'basics/loaders/PageLoader';
 import Pagination from 'basics/Pagination';
 import Table, { CellAlign } from 'basics/Table';
 
-import { formatBalance, getDateString } from '../../../../../common/helpers/helpers';
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
 import { StellarService } from '../../../../../common/services/globalServices';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
 import { BribesRoutes, MarketRoutes } from '../../../../../routes';
-import useAssetsStore from '../../../../../store/assetsStore/useAssetsStore';
 import Asset from '../../../../vote/components/AssetDropdown/Asset';
 import Market from '../../../../vote/components/common/Market';
 import { BribeSortFields, getBribes } from '../../../api/api';

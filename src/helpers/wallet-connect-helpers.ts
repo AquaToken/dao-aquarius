@@ -28,7 +28,7 @@ const openWalletConnectDB = async (): Promise<IDBDatabase> => {
     });
 };
 
-const getFromWalletConnectDB = async (key: string): Promise<any> => {
+const getFromWalletConnectDB = async (key: string): Promise<string> => {
     try {
         const db = await openWalletConnectDB();
 
@@ -61,7 +61,7 @@ function getLocalStorage(): Storage | undefined {
 
 // Deep Link functional
 // Save wallet data connected via Deep Link
-export const saveCurrentWallet = (name, uri) => {
+export const saveCurrentWallet = (name: string, uri: string) => {
     const focusUri = uri.split('?')[0];
     const LS = getLocalStorage();
     if (LS) {
@@ -117,7 +117,7 @@ const getDeepLinkHistory = () => {
 
 // Deep Link functional
 // Set connection history by deep link.
-const setDeepLinkHistory = list => {
+const setDeepLinkHistory = (list: Map<string, string>) => {
     const LS = getLocalStorage();
     if (!LS) {
         return;
@@ -141,35 +141,44 @@ export const savePairingToDeepLinkHistory = (topic: string) => {
 
 // Deep Link functional
 // Get the wallet data from the history by the pairing id
-export const getWalletFromDeepLinkHistory = topic => {
+export const getWalletFromDeepLinkHistory = (topic: string) => {
     const history = getDeepLinkHistory();
 
     return history.has(topic) ? JSON.parse(history.get(topic)) : null;
 };
 
+interface Window {
+    webkit?: {
+        messageHandlers?: {
+            submitToiOS: {
+                postMessage: (msg: string) => void;
+            };
+        };
+    };
+    android?: {
+        postMessage?: (msg: string) => void;
+    };
+}
+
 // Method for sending the URI to the wallet using custom postMessage if the dapp is open in the WebView
 // It is used for the functionality of auto-connection with the LOBSTR wallet
-export const sendUriToWalletWebView = URI => {
+export const sendUriToWalletWebView = (URI: string) => {
     const stringify = JSON.stringify(URI);
 
     try {
         // IOS
-        // @ts-ignore
-        if (window.webkit) {
-            // @ts-ignore
-            window.webkit.messageHandlers.submitToiOS.postMessage(stringify);
+        if ((window as Window).webkit) {
+            (window as Window).webkit.messageHandlers.submitToiOS.postMessage(stringify);
         }
 
         // android
-        // @ts-ignore
-        if (window.android) {
-            // @ts-ignore
-            window.android.postMessage(stringify);
+        if ((window as Window).android) {
+            (window as Window).android.postMessage(stringify);
         }
 
         // web logger
         console.log(stringify);
-    } catch (e) {
+    } catch {
         // do nothing
     }
 };

@@ -4,6 +4,12 @@ import Title from 'react-document-title';
 import { useHistory, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
+import useAssetsStore from 'store/assetsStore/useAssetsStore';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { commonMaxWidth, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import ArrowLeft from 'assets/icon-arrow-left.svg';
 
 import CircleButton from 'basics/buttons/CircleButton';
@@ -12,13 +18,9 @@ import PageLoader from 'basics/loaders/PageLoader';
 import MigrateToSorobanBanner from '../../../common/components/MigrateToSorobanBanner/MigrateToSorobanBanner';
 import NotFoundPage from '../../../common/components/NotFoundPage/NotFoundPage';
 import { useIsOverScrolled } from '../../../common/hooks/useIsOnViewport';
-import { commonMaxWidth, respondDown } from '../../../common/mixins';
 import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
 import { ModalService, StellarService } from '../../../common/services/globalServices';
-import { Breakpoints, COLORS } from '../../../common/styles';
 import { VoteRoutes } from '../../../routes';
-import useAssetsStore from '../../../store/assetsStore/useAssetsStore';
-import useAuthStore from '../../../store/authStore/useAuthStore';
 import { getFilteredPairsList, getTotalVotingStats } from '../../vote/api/api';
 import { PairStats } from '../../vote/api/types';
 import Market from '../../vote/components/common/Market';
@@ -156,10 +158,6 @@ const MarketPage = () => {
 
     const isValidAssets = isValidPathAsset(base) && isValidPathAsset(counter) && base !== counter;
 
-    if (!isValidAssets) {
-        return <NotFoundPage />;
-    }
-
     const [baseCode, baseIssuer] = base.split(':');
     const [counterCode, counterIssuer] = counter.split(':');
 
@@ -173,16 +171,25 @@ const MarketPage = () => {
             : StellarService.createAsset(counterCode, counterIssuer);
 
     useEffect(() => {
+        if (!isValidAssets) {
+            return;
+        }
         processNewAssets([baseAsset, counterAsset]);
     }, []);
 
     useEffect(() => {
+        if (!isValidAssets) {
+            return;
+        }
         getTotalVotingStats().then(res => {
             setTotalStats(res);
         });
     }, []);
 
     useEffect(() => {
+        if (!isValidAssets) {
+            return;
+        }
         getFilteredPairsList(baseAsset, counterAsset, 1, 1).then(res => {
             setVotesData(res.pairs[0]);
         });
@@ -223,6 +230,10 @@ const MarketPage = () => {
     const isAboutCounterRefOverScrolled = useIsOverScrolled(AboutCounterRef, 50);
     const isBribesRefOverScrolled = useIsOverScrolled(BribesRef, 50);
     const isYourVotesRefOverScrolled = useIsOverScrolled(YourVotesRef, 50);
+
+    if (!isValidAssets) {
+        return <NotFoundPage />;
+    }
 
     if (votesData === null || !totalStats) {
         return <PageLoader />;

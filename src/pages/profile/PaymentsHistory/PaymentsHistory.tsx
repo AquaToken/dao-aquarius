@@ -3,17 +3,21 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { getDateString } from 'helpers/date';
+import { formatBalance } from 'helpers/format-number';
+
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { COLORS } from 'web/styles';
+
 import ExternalLink from 'basics/ExternalLink';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
 import Table, { CellAlign } from 'basics/Table';
 
-import { formatBalance, getDateString } from '../../../common/helpers/helpers';
 import { StellarService } from '../../../common/services/globalServices';
 import { StellarEvents } from '../../../common/services/stellar.service';
-import { COLORS } from '../../../common/styles';
 import { MainRoutes } from '../../../routes';
-import useAuthStore from '../../../store/authStore/useAuthStore';
 import { ExternalLinkStyled, Header, Section, Title } from '../AmmRewards/AmmRewards';
 import { Empty } from '../YourVotes/YourVotes';
 

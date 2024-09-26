@@ -1,7 +1,8 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { commonMaxWidth } from '../../../common/mixins';
+import { commonMaxWidth } from 'web/mixins';
+
 import AccountInput from '../components/AccountInput/AccountInput';
 import FAQ from '../components/FAQ/FAQ';
 import FreezeAQUA from '../components/LockerMainPage/FreezeAQUA/FreezeAQUA';
@@ -18,27 +19,25 @@ const MainSection = styled.div`
     width: 100%;
 `;
 
-const LockerMainPage = (): JSX.Element => {
-    return (
-        <>
-            <MainBlock>
-                <Purpose />
-                <MainSection>
-                    <AccountInput />
-                </MainSection>
-            </MainBlock>
+const LockerMainPage = (): React.ReactNode => (
+    <>
+        <MainBlock>
+            <Purpose />
             <MainSection>
-                <StatisticBlock />
+                <AccountInput close={() => {}} confirm={() => {}} />
             </MainSection>
-            <MainSection>
-                <FreezeAQUA />
-            </MainSection>
-            <MainSection>
-                <WhyFreezeAQUA />
-            </MainSection>
-            <FAQ />
-        </>
-    );
-};
+        </MainBlock>
+        <MainSection>
+            <StatisticBlock />
+        </MainSection>
+        <MainSection>
+            <FreezeAQUA />
+        </MainSection>
+        <MainSection>
+            <WhyFreezeAQUA />
+        </MainSection>
+        <FAQ />
+    </>
+);
 
 export default LockerMainPage;

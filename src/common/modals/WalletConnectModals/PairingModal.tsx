@@ -1,7 +1,12 @@
-import { PairingTypes } from '@walletconnect/types';
+import * as WalletConnect from '@walletconnect/types';
 import { useState } from 'react';
 import * as React from 'react';
 import styled from 'styled-components';
+
+import { getWalletFromDeepLinkHistory, saveCurrentWallet } from 'helpers/wallet-connect-helpers';
+
+import { flexAllCenter, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
 
 import IconArrowRight from 'assets/icon-arrow-right-purple.svg';
 import IconCloseSmall from 'assets/icon-close-small.svg';
@@ -9,18 +14,12 @@ import IconDeepLink from 'assets/icon-deep-link.svg';
 import IconPlus from 'assets/icon-plus.svg';
 import IconQR from 'assets/icon-qr.svg';
 
-import {
-    getWalletFromDeepLinkHistory,
-    saveCurrentWallet,
-} from '../../helpers/wallet-connect-helpers';
-import { flexAllCenter, respondDown } from '../../mixins';
-import { Breakpoints, COLORS } from '../../styles';
 import { ModalDescription, ModalProps, ModalTitle } from '../atoms/ModalAtoms';
 
 type PairingModalParams = {
-    pairings: PairingTypes.Struct[];
+    pairings: WalletConnect.PairingTypes.Struct[];
     deletePairing: (topic: string) => Promise<void>;
-    connect: (pairing?: PairingTypes.Struct) => Promise<void>;
+    connect: (pairing?: WalletConnect.PairingTypes.Struct) => Promise<void>;
 };
 
 const ModalBlock = styled.div`
@@ -212,15 +211,12 @@ const NewConnectionButtonIcon = styled(IconPlus)`
     margin-left: 0.8rem;
 `;
 
-const PairingModal = ({ params }: ModalProps<PairingModalParams>): JSX.Element => {
+const PairingModal = ({ params }: ModalProps<PairingModalParams>): React.ReactNode => {
     const { pairings, deletePairing, connect } = params;
 
     const [currentPairings, setCurrentPairings] = useState(pairings);
 
-    const handleDeletePairing = (
-        event: MouseEvent | React.MouseEvent<HTMLDivElement>,
-        topic: string,
-    ): void => {
+    const handleDeletePairing = (event: MouseEvent | React.MouseEvent, topic: string): void => {
         event.stopPropagation();
         deletePairing(topic).then(() => {
             setCurrentPairings(currentPairings.filter(pairing => pairing.topic !== topic));
@@ -241,15 +237,17 @@ const PairingModal = ({ params }: ModalProps<PairingModalParams>): JSX.Element =
                 return (
                     <PairingBlock
                         key={pairing.topic}
-                        onClick={() => {
+                        onClick={async () => {
                             if (wallet) {
                                 saveCurrentWallet(wallet.name, wallet.uri);
                                 window.open(wallet.uri, '_blank');
                             }
-                            connect(pairing);
+                            await connect(pairing);
                         }}
                     >
-                        <DeleteButtonMobile onClick={e => handleDeletePairing(e, pairing.topic)}>
+                        <DeleteButtonMobile
+                            onClick={(e: React.MouseEvent) => handleDeletePairing(e, pairing.topic)}
+                        >
                             <IconCloseSmall />
                         </DeleteButtonMobile>
                         <AppIconWeb src={metadata.icons[0]} alt="" />
@@ -277,7 +275,9 @@ const PairingModal = ({ params }: ModalProps<PairingModalParams>): JSX.Element =
                             </ConnectButton>
                         </AppInfoBlock>
 
-                        <DeleteButtonWeb onClick={e => handleDeletePairing(e, pairing.topic)} />
+                        <DeleteButtonWeb
+                            onClick={(e: React.MouseEvent) => handleDeletePairing(e, pairing.topic)}
+                        />
                     </PairingBlock>
                 );
             })}

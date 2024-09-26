@@ -2,13 +2,14 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import FreezeAqua from 'assets/freeze-aqua-banner.svg';
 
 import Button from 'basics/buttons/Button';
 import Label from 'basics/Label';
 
-import { respondDown } from '../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../common/styles';
 import { LockerRoutes } from '../../../routes';
 
 const Container = styled.div`

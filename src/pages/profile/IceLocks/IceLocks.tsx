@@ -3,6 +3,19 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { getDistributionForAccount } from 'api/ice-locker';
+
+import { getDateString } from 'helpers/date';
+import ErrorHandler from 'helpers/error-handler';
+import { formatBalance, roundToPrecision } from 'helpers/format-number';
+import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
+
+import { LoginTypes } from 'store/authStore/types';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Info from 'assets/icon-info.svg';
 
 import Button from 'basics/buttons/Button';
@@ -12,18 +25,10 @@ import ProgressLine from 'basics/ProgressLine';
 import Table, { CellAlign } from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
-import { getDistributionForAccount } from '../../../api/ice-locker';
-import ErrorHandler from '../../../common/helpers/error-handler';
-import { formatBalance, getDateString, roundToPrecision } from '../../../common/helpers/helpers';
-import { openCurrentWalletIfExist } from '../../../common/helpers/wallet-connect-helpers';
-import { flexRowSpaceBetween, respondDown } from '../../../common/mixins';
 import { StellarService, ToastService } from '../../../common/services/globalServices';
 import { StellarEvents } from '../../../common/services/stellar.service';
 import { BuildSignAndSubmitStatuses } from '../../../common/services/wallet-connect.service';
-import { Breakpoints, COLORS } from '../../../common/styles';
 import { MainRoutes } from '../../../routes';
-import { LoginTypes } from '../../../store/authStore/types';
-import useAuthStore from '../../../store/authStore/useAuthStore';
 import { ExternalLinkStyled, Header, Section, Title } from '../AmmRewards/AmmRewards';
 import { Empty } from '../YourVotes/YourVotes';
 
@@ -95,7 +100,11 @@ const SelectAll = styled(Checkbox)`
 
 const ALL_ID = 'all';
 
-const IceLocks = ({ ammAquaBalance }) => {
+interface IceLocksProps {
+    ammAquaBalance: number;
+}
+
+const IceLocks = ({ ammAquaBalance }: IceLocksProps): React.ReactNode => {
     const [locks, setLocks] = useState(null);
     const [selectedLocks, setSelectedLocks] = useState([]);
     const [distributions, setDistributions] = useState(null);

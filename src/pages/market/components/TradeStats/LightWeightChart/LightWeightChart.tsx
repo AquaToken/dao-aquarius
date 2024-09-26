@@ -3,14 +3,19 @@ import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
+import { formatBalance } from 'helpers/format-number';
+
+import { Asset } from 'types/stellar';
+
+import { flexAllCenter } from 'web/mixins';
+import { COLORS } from 'web/styles';
+
 import PageLoader from 'basics/loaders/PageLoader';
 
-import { formatBalance } from '../../../../../common/helpers/helpers';
+import { convertLocalDateToUTCIgnoringTimezone } from 'pages/bribes/pages/AddBribePage';
+
 import { useDebounce } from '../../../../../common/hooks/useDebounce';
-import { flexAllCenter } from '../../../../../common/mixins';
 import { StellarService } from '../../../../../common/services/globalServices';
-import { COLORS } from '../../../../../common/styles';
-import { convertLocalDateToUTCIgnoringTimezone } from '../../../../bribes/pages/AddBribePage';
 
 const Chart = styled.div`
     display: flex;
@@ -98,7 +103,7 @@ const processChartData = (tradeAggregations, period) => {
             value: +base_volume,
         }));
 
-    copyTradeAggregations.forEach(({ open, close, timestamp, high, low, base_volume }, index) => {
+    copyTradeAggregations.forEach(({ timestamp }, index) => {
         if (index !== 0 && timestamp - copyTradeAggregations[index - 1].timestamp > period) {
             for (
                 let i = +copyTradeAggregations[index - 1].timestamp + period;
@@ -151,7 +156,13 @@ const processNextData = (newData, oldData, period) => {
 
 const LIMIT = 50;
 
-const LightWeightChart = ({ base, counter, period }) => {
+interface LightWeightChartProps {
+    base: Asset;
+    counter: Asset;
+    period: number;
+}
+
+const LightWeightChart = ({ base, counter, period }: LightWeightChartProps): React.ReactNode => {
     const [loading, setLoading] = useState(false);
     const [nextLoading, setNextLoading] = useState(false);
     const [tradeAggregations, setTradeAggregations] = useState(null);
@@ -166,52 +177,19 @@ const LightWeightChart = ({ base, counter, period }) => {
 
     const chartData = useRef(null);
 
-    useEffect(() => {
-        createLWChart();
-
-        return () => {
-            if (chart) {
-                chart.unsubscribeVisibleTimeRangeChange(timeRangeHandler);
-                chart.unsubscribeCrosshairMove(crosshairHandler);
-            }
-        };
-    }, []);
-
-    useEffect(() => {
-        setNextTradeAggregations(null);
-        setLoading(true);
-        const endDate = Date.now();
-        const startDate = endDate - AGGREGATIONS_DEPS[period];
-
-        StellarService.getTradeAggregations(base, counter, startDate, endDate, period, LIMIT).then(
-            res => {
-                setTradeAggregations(res.records);
-                if (res.records.length === LIMIT) {
-                    setNextTradeAggregations(res.next);
-                }
-                setLoading(false);
-            },
-        );
-    }, [period]);
-
-    useEffect(() => {
-        if (loading || !tradeAggregations) {
-            return;
+    const timeRangeHandler = ({ from }) => {
+        if (from === chartData.current[0].time) {
+            setUpdateId(prevState => prevState + 1);
         }
+    };
 
-        const data = processChartData(tradeAggregations, period);
-        chartData.current = data;
+    const crosshairHandler = res => {
+        const currentItem = chartData.current?.find(({ time }) => res.time === time);
 
-        histogram.setData(
-            data.map(item => ({
-                ...item,
-                color:
-                    +item.open <= +item.close ? 'rgba(76, 175, 80, 0.5)' : 'rgba(239, 83, 80, 0.5)',
-            })),
-        );
-        candlestick.setData(data);
-        chart.timeScale().fitContent();
-    }, [loading, tradeAggregations]);
+        if (currentItem) {
+            setHoveredItem(currentItem);
+        }
+    };
 
     const createLWChart = () => {
         if (chart) {
@@ -307,19 +285,52 @@ const LightWeightChart = ({ base, counter, period }) => {
         chartInstance.subscribeCrosshairMove(crosshairHandler);
     };
 
-    const timeRangeHandler = ({ from }) => {
-        if (from === chartData.current[0].time) {
-            setUpdateId(prevState => prevState + 1);
-        }
-    };
+    useEffect(() => {
+        createLWChart();
 
-    const crosshairHandler = res => {
-        const currentItem = chartData.current?.find(({ time }) => res.time === time);
+        return () => {
+            if (chart) {
+                chart.unsubscribeVisibleTimeRangeChange(timeRangeHandler);
+                chart.unsubscribeCrosshairMove(crosshairHandler);
+            }
+        };
+    }, []);
 
-        if (currentItem) {
-            setHoveredItem(currentItem);
+    useEffect(() => {
+        setNextTradeAggregations(null);
+        setLoading(true);
+        const endDate = Date.now();
+        const startDate = endDate - AGGREGATIONS_DEPS[period];
+
+        StellarService.getTradeAggregations(base, counter, startDate, endDate, period, LIMIT).then(
+            res => {
+                setTradeAggregations(res.records);
+                if (res.records.length === LIMIT) {
+                    setNextTradeAggregations(res.next);
+                }
+                setLoading(false);
+            },
+        );
+    }, [period]);
+
+    useEffect(() => {
+        if (loading || !tradeAggregations) {
+            return;
         }
-    };
+
+        const data = processChartData(tradeAggregations, period);
+        chartData.current = data;
+
+        histogram.setData(
+            data.map(item => ({
+                ...item,
+                color:
+                    +item.open <= +item.close ? 'rgba(76, 175, 80, 0.5)' : 'rgba(239, 83, 80, 0.5)',
+            })),
+        );
+        candlestick.setData(data);
+        chart.timeScale().fitContent();
+    }, [loading, tradeAggregations]);
 
     const loadMore = () => {
         if (!nextTradeAggregations || nextLoading) {

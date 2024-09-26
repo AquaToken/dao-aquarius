@@ -4,6 +4,16 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+import ErrorHandler from 'helpers/error-handler';
+import { formatBalance, roundToPrecision } from 'helpers/format-number';
+import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
+
+import { LoginTypes } from 'store/authStore/types';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Aqua from 'assets/aqua-logo-small.svg';
 import Ice from 'assets/ice-logo.svg';
 import CloseIcon from 'assets/icon-close-small.svg';
@@ -16,11 +26,7 @@ import Select, { Option } from 'basics/inputs/Select';
 
 import VotesDurationModal from './VotesDurationModal';
 
-import ErrorHandler from '../../../../../common/helpers/error-handler';
-import { formatBalance, roundToPrecision } from '../../../../../common/helpers/helpers';
-import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
 import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
 import {
     ModalDescription,
     ModalProps,
@@ -33,10 +39,7 @@ import {
     ToastService,
 } from '../../../../../common/services/globalServices';
 import { BuildSignAndSubmitStatuses } from '../../../../../common/services/wallet-connect.service';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
 import { LockerRoutes } from '../../../../../routes';
-import { LoginTypes } from '../../../../../store/authStore/types';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
 import { PairStats } from '../../../api/types';
 import Market from '../../common/Market';
 import { AQUA, DOWN_ICE, SELECTED_PAIRS_ALIAS, UP_ICE } from '../MainPage';
@@ -254,7 +257,7 @@ const VotesAmountModal = ({
 }: ModalProps<{
     pairs: PairStats[];
     updatePairs?: () => void;
-    pairsAmounts?: {};
+    pairsAmounts?: { [key: string]: string };
     isDownVoteModal?: boolean;
     isSingleVoteForModal?: boolean;
     asset: Asset;
@@ -319,6 +322,18 @@ const VotesAmountModal = ({
             setPercent(+percentValue);
         }
     }, []);
+
+    const resetForm = () => {
+        setAmount('');
+        setPercent(0);
+        setPairsAmount(
+            selectedPairs.reduce((acc, pair) => {
+                acc[pair[keyType]] = '';
+                return acc;
+            }, {}),
+        );
+        setIsHandleEdit(false);
+    };
 
     useEffect(
         () => () => {
@@ -425,18 +440,6 @@ const VotesAmountModal = ({
         );
     };
 
-    const resetForm = () => {
-        setAmount('');
-        setPercent(0);
-        setPairsAmount(
-            selectedPairs.reduce((acc, pair) => {
-                acc[pair[keyType]] = '';
-                return acc;
-            }, {}),
-        );
-        setIsHandleEdit(false);
-    };
-
     const confirmVotes = async () => {
         try {
             setPending(true);
@@ -511,8 +514,8 @@ const VotesAmountModal = ({
                 value =>
                     !value ||
                     !Number(value) ||
-                    value < MINIMUM_AMOUNT ||
-                    (targetAsset !== AQUA && value < MINIMUM_ICE_AMOUNT),
+                    +value < MINIMUM_AMOUNT ||
+                    (targetAsset !== AQUA && +value < MINIMUM_ICE_AMOUNT),
             )
         ) {
             ToastService.showErrorToast(

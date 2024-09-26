@@ -3,13 +3,15 @@ import { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import { CREATE_DISCUSSION_COST } from './GovernanceMainPage';
 
-import { respondDown } from '../../../common/mixins';
 import { ModalService, ToastService } from '../../../common/services/globalServices';
-import { Breakpoints, COLORS } from '../../../common/styles';
 import { GovernanceRoutes } from '../../../routes';
-import useAuthStore from '../../../store/authStore/useAuthStore';
 import { getProposalRequest } from '../api/api';
 import NotEnoughAquaModal from '../components/GovernanceMainPage/NotEnoughAquaModal/NotEnoughAquaModal';
 import CreateDiscussionModal from '../components/GovernanceProposalCreationPage/CreateDiscussionModal/CreateDiscussionModal';
@@ -32,9 +34,16 @@ export enum statePage {
 const defaultText =
     '<p><strong>Summary</strong></p><p>Insert your short summary here.</p><p><br></p><p><strong>Motivation</strong></p><p>Insert proposal motivation here.</p><p><br></p><p><strong>Specification</strong></p><p>Insert proposal specification here. Describe the implementation plan.</p>';
 
-const GovernanceProposalCreationPage = ({ isEdit }: { isEdit?: boolean }): JSX.Element => {
+const GovernanceProposalCreationPage = ({ isEdit }: { isEdit?: boolean }): React.ReactNode => {
     const { id } = useParams<{ id?: string }>();
     const history = useHistory();
+
+    const [title, setTitle] = useState('');
+    const [text, setText] = useState(defaultText);
+    const [screenState, setScreenState] = useState(statePage.creation);
+    const [discordChannel, setDiscordChannel] = useState('');
+    const [discordChannelUrl, setDiscordChannelUrl] = useState('');
+    const [discordChannelOwner, setDiscordChannelOwner] = useState('');
 
     useEffect(() => {
         if (!isEdit) {
@@ -53,13 +62,6 @@ const GovernanceProposalCreationPage = ({ isEdit }: { isEdit?: boolean }): JSX.E
                 history.push(`${GovernanceRoutes.proposal}/${id}`);
             });
     }, [isEdit]);
-
-    const [title, setTitle] = useState('');
-    const [text, setText] = useState(defaultText);
-    const [screenState, setScreenState] = useState(statePage.creation);
-    const [discordChannel, setDiscordChannel] = useState('');
-    const [discordChannelUrl, setDiscordChannelUrl] = useState('');
-    const [discordChannelOwner, setDiscordChannelOwner] = useState('');
 
     const { account } = useAuthStore();
     const accountId = account?.accountId();

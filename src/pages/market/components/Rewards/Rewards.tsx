@@ -2,12 +2,16 @@ import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
+import { formatBalance } from 'helpers/format-number';
+
+import { Asset } from 'types/stellar';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import PageLoader from 'basics/loaders/PageLoader';
 
-import { formatBalance } from '../../../../common/helpers/helpers';
-import { respondDown } from '../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import { getRewards } from '../../../vote/api/api';
+import { getRewards } from 'pages/vote/api/api';
 
 const Container = styled.div`
     display: flex;
@@ -73,7 +77,12 @@ const DetailValue = styled.span`
     white-space: nowrap;
 `;
 
-const Rewards = ({ base, counter }) => {
+interface RewardsProps {
+    base: Asset;
+    counter: Asset;
+}
+
+const Rewards = ({ base, counter }: RewardsProps): React.ReactNode => {
     const [rewards, setRewards] = useState(null);
 
     useEffect(() => {

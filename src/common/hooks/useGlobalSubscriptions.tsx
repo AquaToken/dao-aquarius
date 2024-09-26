@@ -1,13 +1,14 @@
 import { Horizon } from '@stellar/stellar-sdk';
 import { useEffect, useRef } from 'react';
 
+import useAssetsStore from 'store/assetsStore/useAssetsStore';
+import { LoginTypes } from 'store/authStore/types';
+import useAuthStore from 'store/authStore/useAuthStore';
+
 import { WalletConnectEvents } from 'types/wallet-connect';
 
 import { useSkipFirstRender } from './useSkipFirstRender';
 
-import useAssetsStore from '../../store/assetsStore/useAssetsStore';
-import { LoginTypes } from '../../store/authStore/types';
-import useAuthStore from '../../store/authStore/useAuthStore';
 import { AssetsEvent } from '../services/assets.service';
 import { FreighterEvents } from '../services/freighter.service';
 import {

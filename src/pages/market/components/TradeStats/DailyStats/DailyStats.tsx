@@ -2,12 +2,16 @@ import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
+import { formatBalance } from 'helpers/format-number';
+
+import { Asset } from 'types/stellar';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import DotsLoader from 'basics/loaders/DotsLoader';
 
-import { formatBalance } from '../../../../../common/helpers/helpers';
-import { respondDown } from '../../../../../common/mixins';
 import { StellarService } from '../../../../../common/services/globalServices';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
 
 const Details = styled.div`
     display: flex;
@@ -51,7 +55,12 @@ const PERIOD_24H = 24 * 60 * 60 * 1000;
 const RESOLUTION_MINUTE = 60 * 1000;
 const RESOLUTION_15_MIN = 15 * 60 * 1000;
 
-const DailyStats = ({ base, counter }) => {
+interface DailyStatsProps {
+    base: Asset;
+    counter: Asset;
+}
+
+const DailyStats = ({ base, counter }: DailyStatsProps): React.ReactNode => {
     const [last15MinutesTrades, setLast15MinutesTrades] = useState(null);
     const [lastMinuteTrade, setLastMinuteTrade] = useState(null);
 

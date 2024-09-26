@@ -2,14 +2,19 @@ import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
 
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
 
-import { respondDown } from '../../../../common/mixins';
-import { ModalDescription, ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
+import {
+    ModalDescription,
+    ModalProps,
+    ModalTitle,
+} from '../../../../common/modals/atoms/ModalAtoms';
 import { ToastService } from '../../../../common/services/globalServices';
-import { Breakpoints, COLORS } from '../../../../common/styles';
 
 const Container = styled.div`
     width: 52.3rem;
@@ -40,7 +45,7 @@ const Divider = styled.div`
 export const SWAP_SLIPPAGE_ALIAS = 'swap-slippage';
 export const DEFAULT_SLIPPAGE = '1'; // 1%
 
-const SwapSettingsModal = ({ close }) => {
+const SwapSettingsModal = ({ close }: ModalProps<never>): React.ReactNode => {
     const [slippage, setSlippage] = useState(
         localStorage.getItem(SWAP_SLIPPAGE_ALIAS) || DEFAULT_SLIPPAGE,
     );

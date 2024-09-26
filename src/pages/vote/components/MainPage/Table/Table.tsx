@@ -2,6 +2,11 @@ import * as React from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { formatBalance } from 'helpers/format-number';
+
+import { flexAllCenter, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Aqua from 'assets/aqua-logo-small.svg';
 import ArrowRight from 'assets/icon-arrow-right.svg';
 import ManageIcon from 'assets/icon-manage.svg';
@@ -13,10 +18,7 @@ import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 import VoteAmount from './VoteAmount/VoteAmount';
 import VoteButton from './VoteButton/VoteButton';
 
-import { formatBalance } from '../../../../../common/helpers/helpers';
-import { flexAllCenter, respondDown } from '../../../../../common/mixins';
 import { ModalService, StellarService } from '../../../../../common/services/globalServices';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
 import { MarketRoutes } from '../../../../../routes';
 import { PairStats, TotalStats } from '../../../api/types';
 import Asset from '../../AssetDropdown/Asset';

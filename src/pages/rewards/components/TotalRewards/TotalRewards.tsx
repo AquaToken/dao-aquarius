@@ -1,13 +1,16 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
+import { formatBalance } from 'helpers/format-number';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Aqua from 'assets/aqua-logo-small.svg';
 
 import DotsLoader from 'basics/loaders/DotsLoader';
 
-import { formatBalance } from '../../../../common/helpers/helpers';
-import { respondDown } from '../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../common/styles';
+import { TotalRewards as TotalRewardsType } from 'pages/vote/api/types';
 
 const Container = styled.section`
     position: relative;
@@ -97,7 +100,11 @@ const Description = styled.div`
     `}
 `;
 
-const TotalRewards = ({ totalRewards }) => (
+interface TotalRewardsProps {
+    totalRewards: TotalRewardsType;
+}
+
+const TotalRewards = ({ totalRewards }: TotalRewardsProps): React.ReactNode => (
     <Container>
         <PreTitle>Total daily reward:</PreTitle>
 

@@ -2,6 +2,9 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import ArrowRight from 'assets/icon-arrow-right.svg';
 import LobstrLogo from 'assets/lobstr-name-logo.svg';
 import StellarTermLogo from 'assets/stellarterm-logo.svg';
@@ -12,9 +15,7 @@ import ExternalLink from 'basics/ExternalLink';
 import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
 
 import { MainRoutes } from '../../../routes';
-import { flexRowSpaceBetween, respondDown } from '../../mixins';
-import { Breakpoints, COLORS } from '../../styles';
-import { ModalDescription, ModalTitle } from '../atoms/ModalAtoms';
+import { ModalDescription, ModalProps, ModalTitle } from '../atoms/ModalAtoms';
 
 const Container = styled.div`
     width: 67.2rem;
@@ -143,7 +144,7 @@ const Scrolled = styled.div`
     }
 `;
 
-const GetAquaModal = ({ close }): JSX.Element => (
+const GetAquaModal = ({ close }: ModalProps<never>): React.ReactNode => (
     <Scrolled>
         <Container>
             <ModalTitle>Get AQUA token</ModalTitle>

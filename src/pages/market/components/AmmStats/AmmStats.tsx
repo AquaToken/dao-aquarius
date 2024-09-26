@@ -2,13 +2,18 @@ import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
+import { getAssetString } from 'helpers/assets';
+import { formatBalance } from 'helpers/format-number';
+
+import { Asset } from 'types/stellar';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import ExternalLink from 'basics/ExternalLink';
 import PageLoader from 'basics/loaders/PageLoader';
 
-import { formatBalance, getAssetString } from '../../../../common/helpers/helpers';
-import { respondDown } from '../../../../common/mixins';
 import { StellarService } from '../../../../common/services/globalServices';
-import { Breakpoints, COLORS } from '../../../../common/styles';
 
 const Container = styled.div`
     display: flex;
@@ -84,7 +89,12 @@ const ExternalLinkStyled = styled(ExternalLink)`
     margin-top: 4rem;
 `;
 
-const AmmStats = ({ base, counter }) => {
+interface AmmStatsProps {
+    base: Asset;
+    counter: Asset;
+}
+
+const AmmStats = ({ base, counter }: AmmStatsProps): React.ReactNode => {
     const [lumenUsdPrice, setLumenUsdPrice] = useState(null);
     const [stats, setStats] = useState(null);
 

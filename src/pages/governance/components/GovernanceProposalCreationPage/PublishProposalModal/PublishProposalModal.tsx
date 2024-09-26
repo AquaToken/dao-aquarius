@@ -5,21 +5,31 @@ import { useEffect, useMemo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { getDateString } from 'helpers/date';
+import ErrorHandler from 'helpers/error-handler';
+import { formatBalance } from 'helpers/format-number';
+import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
+
+import { LoginTypes } from 'store/authStore/types';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints } from 'web/styles';
+
 import Alert from 'basics/Alert';
 import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
 import Select, { Option } from 'basics/inputs/Select';
 
-import ErrorHandler from '../../../../../common/helpers/error-handler';
-import { formatBalance, getDateString } from '../../../../../common/helpers/helpers';
-import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
+import { ProposalSimple } from 'pages/governance/api/types';
+
 import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
-import { flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
-import { ModalDescription, ModalTitle } from '../../../../../common/modals/atoms/ModalAtoms';
+import {
+    ModalDescription,
+    ModalProps,
+    ModalTitle,
+} from '../../../../../common/modals/atoms/ModalAtoms';
 import { StellarService, ToastService } from '../../../../../common/services/globalServices';
-import { Breakpoints } from '../../../../../common/styles';
-import { LoginTypes } from '../../../../../store/authStore/types';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
 import { checkProposalStatus, publishProposal } from '../../../api/api';
 import { APPROVED_PROPOSAL_REWARD, CREATE_PROPOSAL_COST } from '../../../pages/GovernanceMainPage';
 import { DAY } from '../ProposalCreation/ProposalCreation';
@@ -84,7 +94,14 @@ const Options: Option<number>[] = [
     { label: '7 days', value: DAY * 7 },
 ];
 
-const PublishProposalModal = ({ params, close }) => {
+interface PublishProposalModalParams {
+    proposal: ProposalSimple;
+}
+
+const PublishProposalModal = ({
+    params,
+    close,
+}: ModalProps<PublishProposalModalParams>): React.ReactNode => {
     const [loading, setLoading] = useState(false);
     const [period, setPeriod] = useState(DAY * 3);
     const [updateIndex, setUpdateIndex] = useState(0);
@@ -110,7 +127,7 @@ const PublishProposalModal = ({ params, close }) => {
 
     const endDate = useMemo(() => Date.now() + period, [updateIndex, period]);
 
-    const checkStatus = id =>
+    const checkStatus = (id: number) =>
         new Promise((resolve, reject) => {
             async function check() {
                 if (!isMounted.current) {

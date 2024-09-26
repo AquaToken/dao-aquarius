@@ -1,9 +1,9 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import Fail from 'assets/icon-fail-white.svg';
+import { COLORS } from 'web/styles';
 
-import { COLORS } from '../../../../../common/styles';
+import Fail from 'assets/icon-fail-white.svg';
 
 const Container = styled.div`
     display: flex;
@@ -21,13 +21,11 @@ const Container = styled.div`
     }
 `;
 
-const NotEligible = () => {
-    return (
-        <Container>
-            <Fail />
-            Not eligible for airdrop
-        </Container>
-    );
-};
+const NotEligible = () => (
+    <Container>
+        <Fail />
+        Not eligible for airdrop
+    </Container>
+);
 
 export default NotEligible;

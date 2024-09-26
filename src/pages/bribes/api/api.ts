@@ -1,9 +1,10 @@
 import * as StellarSdk from '@stellar/stellar-sdk';
 import axios from 'axios';
 
+import { AssetSimple, ListResponse } from 'store/assetsStore/types';
+
 import { UpcomingBribe } from './types';
 
-import { AssetSimple, ListResponse } from '../../../store/assetsStore/types';
 import { MarketKey } from '../../vote/api/types';
 const marketKeysUrl = 'https://marketkeys-tracker.aqua.network/api/market-keys/';
 const bribesApiUrl = 'https://bribes-api.aqua.network/api/';
@@ -13,12 +14,11 @@ const getAssetParam = (asset: AssetSimple) =>
         ? 'native'
         : `${asset.code}:${asset.issuer}`;
 
-export const getMarketPair = (base, counter) => {
-    return axios
+export const getMarketPair = (base, counter) =>
+    axios
         .get<MarketKey>(`${marketKeysUrl}${getAssetParam(base)}-${getAssetParam(counter)}`)
         .then(({ data }) => data)
         .catch(() => null);
-};
 
 export enum BribeSortFields {
     aquaAmountUp = '-aqua_total_reward_amount_equivalent',

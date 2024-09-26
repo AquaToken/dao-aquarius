@@ -1,12 +1,12 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
+import { commonMaxWidth, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Contacts from 'basics/Contacts';
 
 import Questions from './Questions/Questions';
-
-import { commonMaxWidth, respondDown } from '../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../common/styles';
 
 const Container = styled.div`
     ${commonMaxWidth};

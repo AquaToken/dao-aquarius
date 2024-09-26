@@ -1,12 +1,15 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
+import { Asset } from 'types/stellar';
+
+import { flexAllCenter, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Button from 'basics/buttons/Button';
 import ExternalLink from 'basics/ExternalLink';
 
-import { flexAllCenter, respondDown } from '../../../../common/mixins';
-import { ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
-import { Breakpoints, COLORS } from '../../../../common/styles';
+import { ModalProps, ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
 import Market from '../../../vote/components/common/Market';
 
 const Container = styled.div`
@@ -33,7 +36,15 @@ const StyledButton = styled(Button)`
     margin-top: 4.8rem;
 `;
 
-const SuccessModal = ({ params, close }) => {
+interface SuccessModalParams {
+    assets: Asset[];
+    amounts: string[];
+    title: string;
+    isSwap?: boolean;
+    hash?: string;
+}
+
+const SuccessModal = ({ params, close }: ModalProps<SuccessModalParams>) => {
     const { assets, amounts, title, isSwap, hash } = params;
     return (
         <Container>

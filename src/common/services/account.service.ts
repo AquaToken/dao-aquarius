@@ -2,6 +2,13 @@ import AccountRecord, * as StellarSdk from '@stellar/stellar-sdk';
 import { Asset, Horizon } from '@stellar/stellar-sdk';
 import BigNumber from 'bignumber.js';
 
+import { getAssetFromString, getAssetString } from 'helpers/assets';
+
+import { LoginTypes } from 'store/authStore/types';
+
+import { getNativePrices } from 'pages/amm/api/api';
+import { PoolClassicProcessed } from 'pages/amm/api/types';
+
 import {
     FreighterService,
     LedgerService,
@@ -9,16 +16,12 @@ import {
     ModalService,
     SorobanService,
     StellarService,
-    ToastService,
     WalletConnectService,
 } from './globalServices';
 import { POOL_TYPE } from './soroban.service';
 import { AQUA_CODE, AQUA_ISSUER, ICE_ASSETS } from './stellar.service';
 import { BuildSignAndSubmitStatuses } from './wallet-connect.service';
 
-import { getNativePrices } from '../../pages/amm/api/api';
-import { LoginTypes } from '../../store/authStore/types';
-import { getAssetFromString, getAssetString } from '../helpers/helpers';
 import LedgerSignTx from '../modals/LedgerModals/LedgerSignTx';
 import SentToVault from '../modals/MultisigModals/SentToVault';
 import SignWithPublic from '../modals/SignWithPublic';
@@ -53,7 +56,7 @@ export default class AccountService extends Horizon.AccountResponse {
         tx: StellarSdk.Transaction,
         withResult?: boolean,
         callback?: () => void,
-    ): Promise<any> {
+    ): Promise<unknown> {
         function callCallbackIfExist() {
             if (callback) {
                 callback();
@@ -90,7 +93,7 @@ export default class AccountService extends Horizon.AccountResponse {
         }
 
         if (this.authType === LoginTypes.walletConnect && withResult) {
-            const signedXDR = await WalletConnectService.signTx(tx as StellarSdk.Transaction);
+            const signedXDR: string = await WalletConnectService.signTx(tx);
             signedTx = new StellarSdk.Transaction(signedXDR, StellarSdk.Networks.PUBLIC);
         }
 
@@ -197,7 +200,7 @@ export default class AccountService extends Horizon.AccountResponse {
         return new BigNumber(poolBalance.balance).toFixed(7);
     }
 
-    async getClassicPools() {
+    async getClassicPools(): Promise<PoolClassicProcessed[]> {
         const liquidityPoolsForAccount = await StellarService.getLiquidityPoolForAccount(
             this.accountId(),
             200,
@@ -210,20 +213,18 @@ export default class AccountService extends Horizon.AccountResponse {
         const assetsSet = new Set();
 
         liquidityPoolsForAccount.forEach(lp => {
-            // @ts-ignore
-            lp.assets = lp.reserves.map(reserve => {
+            (lp as unknown as PoolClassicProcessed).assets = lp.reserves.map(reserve => {
                 assetsSet.add(reserve.asset);
                 return getAssetFromString(reserve.asset);
             });
-            // @ts-ignore
-            lp.reserves = [
+            (lp as unknown as PoolClassicProcessed).reserves = [
                 ...lp.reserves.map(reserve => new BigNumber(reserve.amount).times(1e7).toFixed(7)),
                 ...lp.reserves,
             ];
-            // @ts-ignore
-            lp.total_share = new BigNumber(lp.total_shares).times(1e7).toFixed(7);
-            // @ts-ignore
-            lp.fee = 0.003;
+            (lp as unknown as PoolClassicProcessed).total_share = new BigNumber(lp.total_shares)
+                .times(1e7)
+                .toFixed(7);
+            (lp as unknown as PoolClassicProcessed).fee = 0.003;
         });
 
         const prices = await getNativePrices(
@@ -231,15 +232,17 @@ export default class AccountService extends Horizon.AccountResponse {
         );
 
         liquidityPoolsForAccount.forEach(lp => {
-            // @ts-ignore
-            lp.liquidity = lp.assets.reduce((acc, asset, index) => {
-                // @ts-ignore
-                const price = prices.get(getAssetString(asset)) ?? 0;
+            (lp as unknown as PoolClassicProcessed).liquidity = (
+                lp as unknown as PoolClassicProcessed
+            ).assets
+                .reduce((acc, asset, index) => {
+                    const price = prices.get(getAssetString(asset)) ?? 0;
 
-                const amount = Number(lp.reserves[index]) * Number(price);
+                    const amount = Number(lp.reserves[index]) * Number(price);
 
-                return acc + amount;
-            }, 0);
+                    return acc + amount;
+                }, 0)
+                .toString();
         });
 
         const pools = this.balances
@@ -258,7 +261,7 @@ export default class AccountService extends Horizon.AccountResponse {
 
                 return lp ? { ...pool, ...lp, pool_type: POOL_TYPE.classic } : null;
             })
-            .filter(item => Boolean(item));
+            .filter(item => Boolean(item)) as unknown as PoolClassicProcessed[];
     }
 
     hasAllIceTrustlines() {
@@ -482,24 +485,5 @@ export default class AccountService extends Horizon.AccountResponse {
             ...items,
             { label: 'Total', value: items.reduce((acc, item) => acc + item.value, 0) },
         ];
-    }
-
-    async signContact(tx: StellarSdk.Transaction, isSimulate?: boolean): Promise<any> {
-        if (this.authType === LoginTypes.walletConnect || this.authType === LoginTypes.ledger) {
-            ToastService.showErrorToast('');
-        }
-        if (this.authType === LoginTypes.public) {
-            const xdr = tx.toEnvelope().toXDR('base64');
-            ModalService.openModal(SignWithPublic, { xdr, account: this });
-            return Promise.resolve({ status: BuildSignAndSubmitStatuses.pending });
-        }
-
-        if (this.authType === LoginTypes.secret) {
-            const signedTx = SorobanService.signWithSecret(tx);
-
-            return isSimulate
-                ? SorobanService.simulateTx(signedTx)
-                : SorobanService.submitTx(signedTx);
-        }
     }
 }

@@ -2,13 +2,14 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Success from 'assets/icon-success-green.svg';
 
 import ExternalLink from 'basics/ExternalLink';
 
 import SocialLinks from '../../common/components/SocialLinks/SocialLinks';
-import { respondDown } from '../../common/mixins';
-import { Breakpoints, COLORS } from '../../common/styles';
 import { MainRoutes } from '../../routes';
 
 const Container = styled.div`

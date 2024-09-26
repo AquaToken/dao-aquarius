@@ -3,6 +3,14 @@ import { useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { getTimeAgoValue } from 'helpers/date';
+import { formatBalance } from 'helpers/format-number';
+
+import useAssetsStore from 'store/assetsStore/useAssetsStore';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Link from 'assets/icon-external-link.svg';
 import Info from 'assets/icon-info.svg';
 
@@ -10,11 +18,7 @@ import PageLoader from 'basics/loaders/PageLoader';
 import Table, { CellAlign } from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
-import { formatBalance, getTimeAgoValue } from '../../../../common/helpers/helpers';
-import { respondDown } from '../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../common/styles';
 import { MarketRoutes } from '../../../../routes';
-import useAssetsStore from '../../../../store/assetsStore/useAssetsStore';
 import Market from '../../../vote/components/common/Market';
 import { getRewards, RewardsSort } from '../../api/api';
 

@@ -3,6 +3,11 @@ import { useEffect, useRef, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { commonMaxWidth, flexAllCenter, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import BackgroundImageLeft from 'assets/background-left.svg';
 import BackgroundImageRight from 'assets/background-right.svg';
 import ArrowDown from 'assets/icon-arrow-down.svg';
@@ -12,12 +17,9 @@ import ToggleGroup from 'basics/inputs/ToggleGroup';
 import PageLoader from 'basics/loaders/PageLoader';
 
 import { useIsOnViewport } from '../../../common/hooks/useIsOnViewport';
-import { commonMaxWidth, flexAllCenter, respondDown } from '../../../common/mixins';
 import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
 import { ModalService } from '../../../common/services/globalServices';
-import { Breakpoints, COLORS } from '../../../common/styles';
 import { GovernanceRoutes } from '../../../routes';
-import useAuthStore from '../../../store/authStore/useAuthStore';
 import { getProposalsRequest, PROPOSAL_FILTER } from '../api/api';
 import CreateProposal from '../components/GovernanceMainPage/CreateProposal/CreateProposal';
 import FAQ from '../components/GovernanceMainPage/FAQ/FAQ';
@@ -247,6 +249,9 @@ const GovernanceMainPage = (): JSX.Element => {
 
     const { isLogged, account } = useAuthStore();
 
+    const location = useLocation();
+    const history = useHistory();
+
     const onLinkClick = () => {
         if (!isLogged) {
             ModalService.openModal(ChooseLoginMethodModal, {
@@ -268,9 +273,6 @@ const GovernanceMainPage = (): JSX.Element => {
             setLoading(false);
         });
     }, [filter]);
-
-    const location = useLocation();
-    const history = useHistory();
 
     const setFilterValue = value => {
         if (value === PROPOSAL_FILTER.MY && !isLogged) {

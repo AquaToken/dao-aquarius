@@ -4,6 +4,12 @@ import { useEffect, useState } from 'react';
 import QRCode from 'react-qr-code';
 import styled from 'styled-components';
 
+import { isAndroid, isIOS, isMobile } from 'helpers/browser';
+import { clearCurrentWallet, saveCurrentWallet } from 'helpers/wallet-connect-helpers';
+
+import { flexAllCenter, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import ArrowRight from 'assets/icon-arrow-right.svg';
 
 import Button from 'basics/buttons/Button';
@@ -11,10 +17,6 @@ import CopyButton from 'basics/buttons/CopyButton';
 import ExternalLink from 'basics/ExternalLink';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
 
-import { isAndroid, isIOS, isMobile } from '../../helpers/browser';
-import { clearCurrentWallet, saveCurrentWallet } from '../../helpers/wallet-connect-helpers';
-import { flexAllCenter, respondDown } from '../../mixins';
-import { Breakpoints, COLORS } from '../../styles';
 import { ModalDescription, ModalProps, ModalTitle } from '../atoms/ModalAtoms';
 
 const Wrapper = styled.div`

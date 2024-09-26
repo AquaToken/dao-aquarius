@@ -1,11 +1,12 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import SettingsIcon from 'assets/icon-settings.svg';
 
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
 import { ModalService } from '../../../../../common/services/globalServices';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
 import SwapSettingsModal from '../../SwapSettingsModal/SwapSettingsModal';
 
 const Container = styled.div`
@@ -35,15 +36,13 @@ const StyledButton = styled.div`
     }
 `;
 
-const SwapFormHeader = () => {
-    return (
-        <Container>
-            <Title>Swap assets</Title>
-            <StyledButton onClick={() => ModalService.openModal(SwapSettingsModal, {})}>
-                <SettingsIcon />
-            </StyledButton>
-        </Container>
-    );
-};
+const SwapFormHeader = () => (
+    <Container>
+        <Title>Swap assets</Title>
+        <StyledButton onClick={() => ModalService.openModal(SwapSettingsModal, {})}>
+            <SettingsIcon />
+        </StyledButton>
+    </Container>
+);
 
 export default SwapFormHeader;

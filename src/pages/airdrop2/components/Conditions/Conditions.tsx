@@ -1,12 +1,12 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Button from 'basics/buttons/Button';
 import ExternalLink from 'basics/ExternalLink';
 import Input from 'basics/inputs/Input';
-
-import { respondDown } from '../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../common/styles';
 
 const Container = styled.section`
     position: relative;
@@ -166,7 +166,17 @@ const StyledButton = styled(Button)`
     `}
 `;
 
-const Conditions = ({ accountId, setAccountId, checkAccount }) => (
+interface ConditionsProps {
+    accountId: string;
+    setAccountId: (value: string) => void;
+    checkAccount: () => void;
+}
+
+const Conditions = ({
+    accountId,
+    setAccountId,
+    checkAccount,
+}: ConditionsProps): React.ReactNode => (
     <Container>
         <Heading>Snapshot Done! 📸</Heading>
         <LedgerLink>
@@ -204,7 +214,7 @@ const Conditions = ({ accountId, setAccountId, checkAccount }) => (
                 />
                 <StyledButton
                     isBig
-                    onClick={e => {
+                    onClick={(e: React.MouseEvent) => {
                         e.preventDefault();
                         checkAccount();
                     }}

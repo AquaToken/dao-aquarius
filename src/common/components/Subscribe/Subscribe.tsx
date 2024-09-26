@@ -2,11 +2,11 @@ import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
 
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
-
-import { respondDown } from '../../mixins';
-import { Breakpoints, COLORS } from '../../styles';
 
 const Container = styled.section`
     padding-top: 3.2rem;
@@ -136,7 +136,6 @@ const Subscribe = () => {
                         </Description>
                     </Header>
                     <FormContainer>
-                        {/*// @ts-ignore*/}
                         <Form onSubmit={handleSubmit}>
                             <input type="hidden" name="form-name" value="subscribe" />
 

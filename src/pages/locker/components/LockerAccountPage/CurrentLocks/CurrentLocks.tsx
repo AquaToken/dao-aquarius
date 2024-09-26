@@ -2,19 +2,20 @@ import * as React from 'react';
 import { useCallback, useMemo } from 'react';
 import styled from 'styled-components';
 
+import { getDateString } from 'helpers/date';
+import { formatBalance, roundToPrecision } from 'helpers/format-number';
+
+import { AccountIceDistribution } from 'types/api-ice-locker';
+import { ClaimableBalance } from 'types/stellar';
+
+import { flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Info from 'assets/icon-info.svg';
 
 import ProgressLine from 'basics/ProgressLine';
 import Table, { CellAlign } from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
-
-import {
-    formatBalance,
-    getDateString,
-    roundToPrecision,
-} from '../../../../../common/helpers/helpers';
-import { flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
 
 const Container = styled.div`
     margin-top: 4rem;
@@ -80,6 +81,15 @@ const Total = styled.div`
     `}
 `;
 
+interface CurrentLocksProps {
+    locks: ClaimableBalance[];
+    aquaBalance: number;
+    distributions: AccountIceDistribution[];
+    ammAquaBalance: number;
+    aquaInOffers: number;
+    aquaInVotes: number;
+}
+
 const CurrentLocks = ({
     locks,
     aquaBalance,
@@ -87,7 +97,7 @@ const CurrentLocks = ({
     ammAquaBalance,
     aquaInOffers,
     aquaInVotes,
-}) => {
+}: CurrentLocksProps): React.ReactNode => {
     const locksSum = locks.reduce((acc, lock) => {
         acc += Number(lock.amount);
         return acc;
@@ -208,14 +218,14 @@ const CurrentLocks = ({
                                 flexSize: 1.5,
                             },
                             {
-                                children: `${formatBalance(lock.amount, true)} AQUA`,
+                                children: `${formatBalance(Number(lock.amount), true)} AQUA`,
                                 flexSize: 2,
                                 align: CellAlign.Right,
                                 label: 'AQUA locked',
                             },
                             {
                                 children: getIceAmount(lock.id)
-                                    ? `${formatBalance(getIceAmount(lock.id), true)} ICE`
+                                    ? `${formatBalance(Number(getIceAmount(lock.id)), true)} ICE`
                                     : '-',
                                 flexSize: 2,
                                 align: CellAlign.Right,

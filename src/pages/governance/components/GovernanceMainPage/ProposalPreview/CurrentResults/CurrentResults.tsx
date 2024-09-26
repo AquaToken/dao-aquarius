@@ -1,9 +1,11 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { roundToPrecision } from '../../../../../../common/helpers/helpers';
-import { flexAllCenter } from '../../../../../../common/mixins';
-import { COLORS } from '../../../../../../common/styles';
+import { roundToPrecision } from 'helpers/format-number';
+
+import { flexAllCenter } from 'web/mixins';
+import { COLORS } from 'web/styles';
+
 import { ProposalSimple } from '../../../../api/types';
 import { SummaryTitle, SummaryValue } from '../ProposalPreview';
 

@@ -2,6 +2,13 @@ import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
+import { formatBalance } from 'helpers/format-number';
+
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { commonMaxWidth, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Aqua from 'assets/aqua-logo-small.svg';
 import Ice from 'assets/ice-logo.svg';
 import Info from 'assets/icon-info.svg';
@@ -10,8 +17,6 @@ import Lumen from 'assets/xlm-logo.svg';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
-import { formatBalance } from '../../../common/helpers/helpers';
-import { commonMaxWidth, respondDown } from '../../../common/mixins';
 import { StellarService } from '../../../common/services/globalServices';
 import {
     DOWN_ICE_CODE,
@@ -21,8 +26,6 @@ import {
     StellarEvents,
     UP_ICE_CODE,
 } from '../../../common/services/stellar.service';
-import { Breakpoints, COLORS } from '../../../common/styles';
-import useAuthStore from '../../../store/authStore/useAuthStore';
 import {
     AdditionalInfo,
     AdditionalInfoDescription,
@@ -276,7 +279,11 @@ const TooltipInner = styled.div`
     white-space: pre-wrap;
 `;
 
-const Balances = ({ ammAquaBalance }) => {
+interface BalancesProps {
+    ammAquaBalance: number;
+}
+
+const Balances = ({ ammAquaBalance }: BalancesProps): React.ReactNode => {
     const [locks, setLocks] = useState(null);
     const [aquaInVotes, setAquaInVotes] = useState(null);
 

@@ -3,13 +3,21 @@ import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
 
+import { getDateString } from 'helpers/date';
+import ErrorHandler from 'helpers/error-handler';
+import { formatBalance } from 'helpers/format-number';
+import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
+
+import { AssetSimple } from 'store/assetsStore/types';
+import { LoginTypes } from 'store/authStore/types';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { flexAllCenter, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Button from 'basics/buttons/Button';
 
-import ErrorHandler from '../../../../../common/helpers/error-handler';
-import { formatBalance, getDateString } from '../../../../../common/helpers/helpers';
-import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
 import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
-import { flexAllCenter, respondDown } from '../../../../../common/mixins';
 import {
     ModalDescription,
     ModalProps,
@@ -17,10 +25,6 @@ import {
 } from '../../../../../common/modals/atoms/ModalAtoms';
 import { StellarService, ToastService } from '../../../../../common/services/globalServices';
 import { BuildSignAndSubmitStatuses } from '../../../../../common/services/wallet-connect.service';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import { AssetSimple } from '../../../../../store/assetsStore/types';
-import { LoginTypes } from '../../../../../store/authStore/types';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
 import Asset from '../../../../vote/components/AssetDropdown/Asset';
 import Market from '../../../../vote/components/common/Market';
 

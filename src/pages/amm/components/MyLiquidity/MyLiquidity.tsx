@@ -2,19 +2,23 @@ import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
+import { formatBalance } from 'helpers/format-number';
+
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Button from 'basics/buttons/Button';
 import Select from 'basics/inputs/Select';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
 import PageLoader from 'basics/loaders/PageLoader';
 
-import { formatBalance } from '../../../../common/helpers/helpers';
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
+import { Empty } from 'pages/profile/YourVotes/YourVotes';
+
 import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
 import { ModalService, StellarService } from '../../../../common/services/globalServices';
 import { POOL_TYPE } from '../../../../common/services/soroban.service';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import useAuthStore from '../../../../store/authStore/useAuthStore';
-import { Empty } from '../../../profile/YourVotes/YourVotes';
 import { getUserPools } from '../../api/api';
 import { PoolUserProcessed } from '../../api/types';
 import PoolsList from '../PoolsList/PoolsList';
@@ -134,10 +138,6 @@ const MyLiquidity = ({ setTotal, onlyList }: MyLiquidityProps) => {
         return [...pools, ...classicPools];
     }, [classicPools, pools, filter]);
 
-    useEffect(() => {
-        updateData();
-    }, [account]);
-
     const updateData = () => {
         if (account) {
             getUserPools(account.accountId()).then(res => {
@@ -149,6 +149,10 @@ const MyLiquidity = ({ setTotal, onlyList }: MyLiquidityProps) => {
             });
         }
     };
+
+    useEffect(() => {
+        updateData();
+    }, [account]);
 
     const totalLiquidity = useMemo(() => {
         const totalXlm = [...pools, ...classicPools].reduce((acc, pool) => {

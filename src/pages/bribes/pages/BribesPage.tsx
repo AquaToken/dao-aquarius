@@ -2,14 +2,15 @@ import * as React from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { commonMaxWidth, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Bribes from 'assets/bribes.svg';
 import Plus from 'assets/icon-plus.svg';
 
 import Button from 'basics/buttons/Button';
 import ExternalLink from 'basics/ExternalLink';
 
-import { commonMaxWidth, respondDown } from '../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../common/styles';
 import { BribesRoutes } from '../../../routes';
 import BribesTable from '../components/BribesPage/BribesTable/BribesTable';
 import FAQ from '../components/BribesPage/FAQ/FAQ';

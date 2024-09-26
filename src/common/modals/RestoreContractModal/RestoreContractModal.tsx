@@ -2,15 +2,20 @@ import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
 
+import ErrorHandler from 'helpers/error-handler';
+
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { Transaction } from 'types/stellar';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints } from 'web/styles';
+
 import Button from 'basics/buttons/Button';
 import ExternalLink from 'basics/ExternalLink';
 
-import useAuthStore from '../../../store/authStore/useAuthStore';
-import ErrorHandler from '../../helpers/error-handler';
-import { respondDown } from '../../mixins';
 import { ToastService } from '../../services/globalServices';
-import { Breakpoints } from '../../styles';
-import { ModalDescription, ModalTitle } from '../atoms/ModalAtoms';
+import { ModalDescription, ModalProps, ModalTitle } from '../atoms/ModalAtoms';
 
 const Container = styled.div`
     width: 52.3rem;
@@ -37,7 +42,11 @@ const ExternalLinkStyled = styled(ExternalLink)`
     margin-top: 1.6rem;
 `;
 
-const RestoreContractModal = ({ params, close }) => {
+interface RestoreContractModalParams {
+    tx: Transaction;
+}
+
+const RestoreContractModal = ({ params, close }: ModalProps<RestoreContractModalParams>) => {
     const [pending, setPending] = useState(false);
     const { tx } = params;
     const { account } = useAuthStore();

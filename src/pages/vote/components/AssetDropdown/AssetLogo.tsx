@@ -3,15 +3,17 @@ import * as React from 'react';
 import { useState } from 'react';
 import styled, { css } from 'styled-components';
 
+import { getAssetString } from 'helpers/assets';
+
+import { LumenInfo } from 'store/assetsStore/reducer';
+import { AssetSimple } from 'store/assetsStore/types';
+import useAssetsStore from 'store/assetsStore/useAssetsStore';
+
+import { flexAllCenter } from 'web/mixins';
+import { COLORS } from 'web/styles';
+
 import UnknownLogo from 'assets/asset-unknown-logo.svg';
 import Loader from 'assets/loader.svg';
-
-import { flexAllCenter } from '../../../../common/mixins';
-import { COLORS } from '../../../../common/styles';
-import { getAssetString } from '../../../../store/assetsStore/actions';
-import { LumenInfo } from '../../../../store/assetsStore/reducer';
-import { AssetSimple } from '../../../../store/assetsStore/types';
-import useAssetsStore from '../../../../store/assetsStore/useAssetsStore';
 
 export const logoStyles = (isCircle = true) => css`
     height: 3.2rem;
@@ -105,7 +107,7 @@ const AssetLogo = ({
 
     const assetInstance = new StellarSdk.Asset(asset.code, asset.issuer);
     const isNative = assetInstance.isNative();
-    const assetInfo = isNative ? LumenInfo : assetsInfo.get(getAssetString(asset));
+    const assetInfo = isNative ? LumenInfo : assetsInfo.get(getAssetString(assetInstance));
     const logoUrl = assetInfo?.image;
 
     if (logoUrl === undefined) {

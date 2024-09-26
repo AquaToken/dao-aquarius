@@ -3,6 +3,14 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { formatBalance } from 'helpers/format-number';
+
+import useAssetsStore from 'store/assetsStore/useAssetsStore';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Aqua from 'assets/aqua-logo-small.svg';
 
 import ExternalLink from 'basics/ExternalLink';
@@ -11,13 +19,8 @@ import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
 import Table, { CellAlign } from 'basics/Table';
 
-import { formatBalance } from '../../../common/helpers/helpers';
-import { flexRowSpaceBetween, respondDown } from '../../../common/mixins';
 import { StellarService } from '../../../common/services/globalServices';
-import { Breakpoints, COLORS } from '../../../common/styles';
 import { MainRoutes } from '../../../routes';
-import useAssetsStore from '../../../store/assetsStore/useAssetsStore';
-import useAuthStore from '../../../store/authStore/useAuthStore';
 import Market from '../../vote/components/common/Market';
 import { getAmmRewards } from '../api/api';
 import BoostBanner from '../BoostBanner/BoostBanner';
@@ -128,7 +131,11 @@ enum SortField {
 export const getSortFunction = (value1, value2, isSortReversed) =>
     isSortReversed ? value1 - value2 : value2 - value1;
 
-const AmmRewards = ({ aquaUsdPrice }) => {
+interface AmmRewardsProps {
+    aquaUsdPrice: number;
+}
+
+const AmmRewards = ({ aquaUsdPrice }: AmmRewardsProps): React.ReactNode => {
     const { account } = useAuthStore();
 
     const [ammRewards, setAmmRewards] = useState(null);

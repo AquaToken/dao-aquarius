@@ -1,6 +1,6 @@
 import * as StellarSdk from '@stellar/stellar-sdk';
 import WalletConnectClient, { SIGN_CLIENT_EVENTS } from '@walletconnect/sign-client';
-import { PairingTypes, SessionTypes, SignClientTypes } from '@walletconnect/types';
+import * as WalletConnectTypes from '@walletconnect/types';
 import { getInternalError, getSdkError } from '@walletconnect/utils';
 
 import {
@@ -17,17 +17,18 @@ import {
     STELLAR_METHODS,
 } from 'constants/wallet-connect';
 
-import { WalletConnectEvents } from 'types/wallet-connect';
-
-import EventService from './event.service';
-import { ModalService, ToastService } from './globalServices';
-
 import {
     clearCurrentWallet,
     savePairingToDeepLinkHistory,
     sendUriToWalletWebView,
     sessionExistsInStorage,
-} from '../helpers/wallet-connect-helpers';
+} from 'helpers/wallet-connect-helpers';
+
+import { WalletConnectEvents } from 'types/wallet-connect';
+
+import EventService from './event.service';
+import { ModalService, ToastService } from './globalServices';
+
 import PairingModal from '../modals/WalletConnectModals/PairingModal';
 import QRModal from '../modals/WalletConnectModals/QRModal';
 import RequestModal from '../modals/WalletConnectModals/RequestModal';
@@ -40,9 +41,9 @@ export enum BuildSignAndSubmitStatuses {
 }
 
 export default class WalletConnectServiceClass {
-    appMeta: SignClientTypes.Metadata | null = null;
+    appMeta: WalletConnectTypes.SignClientTypes.Metadata | null = null;
     client: WalletConnectClient | null = null;
-    session: SessionTypes.Struct | null = null;
+    session: WalletConnectTypes.SessionTypes.Struct | null = null;
     event: EventService = new EventService();
     selfMeta = METADATA;
     isOffline = false;
@@ -66,7 +67,7 @@ export default class WalletConnectServiceClass {
     //
     //  If we want to disconnect all the established sessions, we pass the parameter disconnectAll.
     //  Used for the auto-connect page
-    async onAppStart(disconnectAll: boolean): Promise<any> {
+    async onAppStart(disconnectAll: boolean): Promise<unknown> {
         if (!(await sessionExistsInStorage())) {
             return Promise.resolve();
         }
@@ -106,19 +107,19 @@ export default class WalletConnectServiceClass {
             this.listenWalletConnectEvents();
 
             return this.checkPersistedState();
-        } catch (e) {
+        } catch {
             ToastService.showErrorToast('WalletConnect initialization failed');
             return true;
         }
     }
 
-    async checkPersistedState(): Promise<boolean> {
+    checkPersistedState(): boolean {
         if (!this.client.session.length) {
             clearCurrentWallet();
             return false;
         }
 
-        this.session = await this.client.session.getAll()[0];
+        this.session = this.client.session.getAll()[0];
 
         this.processSessionAndTriggerEvent();
 
@@ -128,7 +129,7 @@ export default class WalletConnectServiceClass {
     }
 
     listenWalletConnectEvents(): void {
-        this.client.on(SIGN_CLIENT_EVENTS.session_delete, ({ topic }: any) => {
+        this.client.on(SIGN_CLIENT_EVENTS.session_delete, ({ topic }: { topic: string }) => {
             this.onSessionDeleted(topic);
         });
     }
@@ -210,7 +211,10 @@ export default class WalletConnectServiceClass {
     }
 
     // if this is an auto-connect don't show QR-modal, just send URI to the WebView
-    async connect(pairing?: PairingTypes.Struct, isAutoConnect?: boolean): Promise<void> {
+    async connect(
+        pairing?: WalletConnectTypes.PairingTypes.Struct,
+        isAutoConnect?: boolean,
+    ): Promise<void> {
         if (this.isOffline) {
             ToastService.showErrorToast(INTERNET_CONNECTION_ERROR);
             return;
@@ -299,7 +303,7 @@ export default class WalletConnectServiceClass {
         }
     }
 
-    signAndSubmitTx(tx: StellarSdk.Transaction): Promise<any> {
+    signAndSubmitTx(tx: StellarSdk.Transaction): Promise<unknown> {
         const xdr = tx.toEnvelope().toXDR('base64');
 
         const request = this.client.request({
@@ -321,7 +325,7 @@ export default class WalletConnectServiceClass {
         return request;
     }
 
-    signTx(tx: StellarSdk.Transaction): Promise<any> {
+    signTx(tx: StellarSdk.Transaction): Promise<string> {
         const xdr = tx.toEnvelope().toXDR('base64');
 
         const request = this.client.request({

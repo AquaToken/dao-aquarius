@@ -2,6 +2,9 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { flexAllCenter, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import ArrowRight from 'assets/icon-arrow-right.svg';
 import Copy from 'assets/icon-copy.svg';
 import XdrLogo from 'assets/icon-xdr.svg';
@@ -12,10 +15,8 @@ import CopyButton from 'basics/buttons/CopyButton';
 
 import { ModalDescription, ModalProps, ModalTitle } from './atoms/ModalAtoms';
 
-import { flexAllCenter, respondDown } from '../mixins';
 import AccountService from '../services/account.service';
 import { StellarService } from '../services/globalServices';
-import { Breakpoints, COLORS } from '../styles';
 
 const Container = styled.div`
     width: 52.8rem;

@@ -3,14 +3,15 @@ import { lazy, useEffect } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { respondDown } from 'web/mixins';
+import { Breakpoints } from 'web/styles';
+
 import BG from 'assets/purpose-modal-background.svg';
 
 import ProjectPurposeModal, { SHOW_PURPOSE_ALIAS } from './components/common/ProjectPurposeModal';
 
 import NotFoundPage from '../../common/components/NotFoundPage/NotFoundPage';
-import { respondDown } from '../../common/mixins';
 import { ModalService } from '../../common/services/globalServices';
-import { Breakpoints } from '../../common/styles';
 import { VoteRoutes } from '../../routes';
 
 const MainPage = lazy(() => import('./components/MainPage/MainPage'));

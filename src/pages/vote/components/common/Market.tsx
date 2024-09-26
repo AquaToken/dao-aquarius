@@ -3,6 +3,16 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { getAssetString } from 'helpers/assets';
+import { formatBalance } from 'helpers/format-number';
+
+import { LumenInfo } from 'store/assetsStore/reducer';
+import { AssetSimple } from 'store/assetsStore/types';
+import useAssetsStore from 'store/assetsStore/useAssetsStore';
+
+import { flexAllCenter, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import External from 'assets/icon-external-link.svg';
 import Arrow from 'assets/icon-link-arrow.svg';
 
@@ -18,17 +28,10 @@ import {
     StablePoolLabel,
 } from './Labels';
 
-import { formatBalance } from '../../../../common/helpers/helpers';
-import { flexAllCenter, respondDown } from '../../../../common/mixins';
 import AssetInfoModal from '../../../../common/modals/AssetInfoModal/AssetInfoModal';
 import { ModalService, StellarService } from '../../../../common/services/globalServices';
 import { POOL_TYPE } from '../../../../common/services/soroban.service';
-import { Breakpoints, COLORS } from '../../../../common/styles';
 import { AmmRoutes, MarketRoutes } from '../../../../routes';
-import { getAssetString } from '../../../../store/assetsStore/actions';
-import { LumenInfo } from '../../../../store/assetsStore/reducer';
-import { AssetSimple } from '../../../../store/assetsStore/types';
-import useAssetsStore from '../../../../store/assetsStore/useAssetsStore';
 import AssetLogo, { bigLogoStyles, logoStyles } from '../AssetDropdown/AssetLogo';
 
 const Wrapper = styled.div<{

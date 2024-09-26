@@ -2,14 +2,19 @@ import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
 
+import ErrorHandler from 'helpers/error-handler';
+import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
+
+import { LoginTypes } from 'store/authStore/types';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { Asset } from 'types/stellar';
+
+import { COLORS } from 'web/styles';
+
 import Button from 'basics/buttons/Button';
 
-import ErrorHandler from '../../../../common/helpers/error-handler';
-import { openCurrentWalletIfExist } from '../../../../common/helpers/wallet-connect-helpers';
 import { SorobanService, ToastService } from '../../../../common/services/globalServices';
-import { COLORS } from '../../../../common/styles';
-import { LoginTypes } from '../../../../store/authStore/types';
-import useAuthStore from '../../../../store/authStore/useAuthStore';
 
 const Container = styled.div`
     color: ${COLORS.pinkRed};
@@ -19,7 +24,12 @@ const Container = styled.div`
     gap: 1rem;
 `;
 
-const ContractNotFound = ({ asset, onSuccess }) => {
+interface ContractNotFoundProps {
+    asset: Asset;
+    onSuccess?: () => void;
+}
+
+const ContractNotFound = ({ asset, onSuccess }: ContractNotFoundProps): React.ReactNode => {
     const [pending, setPending] = useState(false);
 
     const { account } = useAuthStore();

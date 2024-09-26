@@ -1,6 +1,11 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
+import { roundToPrecision } from 'helpers/format-number';
+
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Fail from 'assets/icon-fail.svg';
 import Info from 'assets/icon-info.svg';
 
@@ -8,9 +13,6 @@ import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import ResultProgressLine from './ResultProgressLine/ResultProgressLine';
 
-import { roundToPrecision } from '../../../../../common/helpers/helpers';
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
 import { Proposal } from '../../../api/types';
 import { SimpleProposalResultsLabels } from '../../../pages/GovernanceVoteProposalPage';
 

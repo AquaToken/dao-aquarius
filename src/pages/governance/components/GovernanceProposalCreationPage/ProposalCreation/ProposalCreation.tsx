@@ -4,15 +4,17 @@ import ReactQuill from 'react-quill';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { formatBalance } from 'helpers/format-number';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import ArrowLeft from 'assets/icon-arrow-left.svg';
 
 import Button from 'basics/buttons/Button';
 import CircleButton from 'basics/buttons/CircleButton';
 import Input from 'basics/inputs/Input';
 
-import { formatBalance } from '../../../../../common/helpers/helpers';
-import { respondDown } from '../../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
 import { GovernanceRoutes } from '../../../../../routes';
 import { ReactQuillCSS } from '../../../Governance';
 import {
@@ -151,12 +153,12 @@ interface proposalCreationProps {
     setText: (value: string) => void;
     hasData: boolean;
     onSubmit: () => void;
-    discordChannel: string;
-    setDiscordChannel: (value: string) => void;
+    // discordChannel: string;
+    // setDiscordChannel: (value: string) => void;
     discordChannelOwner: string;
     setDiscordChannelOwner: (value: string) => void;
-    discordChannelUrl: string;
-    setDiscordChannelUrl: (value: string) => void;
+    // discordChannelUrl: string;
+    // setDiscordChannelUrl: (value: string) => void;
     isEdit?: boolean;
 }
 
@@ -170,7 +172,7 @@ const ProposalCreation = ({
     discordChannelOwner,
     setDiscordChannelOwner,
     isEdit,
-}: proposalCreationProps): JSX.Element => {
+}: proposalCreationProps): React.ReactNode => {
     const [textFocused, setTextFocused] = useState(false);
     const { id } = useParams<{ id?: string }>();
 

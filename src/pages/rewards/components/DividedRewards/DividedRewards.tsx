@@ -1,13 +1,16 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
+import { formatBalance } from 'helpers/format-number';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints } from 'web/styles';
+
 import Aqua from 'assets/aqua-logo-small.svg';
 
 import DotsLoader from 'basics/loaders/DotsLoader';
 
-import { formatBalance } from '../../../../common/helpers/helpers';
-import { respondDown } from '../../../../common/mixins';
-import { Breakpoints } from '../../../../common/styles';
+import { TotalRewards } from 'pages/vote/api/types';
 
 const Container = styled.section`
     position: relative;
@@ -100,7 +103,11 @@ const Description = styled.div`
     `}
 `;
 
-const DividedRewards = ({ totalRewards }) => (
+interface DividedRewardsProps {
+    totalRewards: TotalRewards;
+}
+
+const DividedRewards = ({ totalRewards }: DividedRewardsProps): React.ReactNode => (
     <Container>
         <Card>
             <AquaLogo />

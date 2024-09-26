@@ -1,9 +1,10 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { formatBalance } from '../../../../../common/helpers/helpers';
-import { flexRowSpaceBetween } from '../../../../../common/mixins';
-import { COLORS } from '../../../../../common/styles';
+import { formatBalance } from 'helpers/format-number';
+
+import { flexRowSpaceBetween } from 'web/mixins';
+import { COLORS } from 'web/styles';
 
 const Container = styled.div`
     display: flex;
@@ -55,7 +56,19 @@ const AquaLine = styled.div<{ width: number; hasIceVotes: boolean }>`
     background: ${COLORS.purple};
 `;
 
-const VotesProgressLine = ({ label, total, iceVotes, aquaVotes }) => {
+interface VotesProgressLineProps {
+    label: string;
+    total: number;
+    iceVotes: number;
+    aquaVotes: number;
+}
+
+const VotesProgressLine = ({
+    label,
+    total,
+    iceVotes,
+    aquaVotes,
+}: VotesProgressLineProps): React.ReactNode => {
     const icePercent = iceVotes === 0 ? 0 : Math.max((iceVotes / total) * 100, 1);
     const aquaPercent = aquaVotes === 0 ? 0 : Math.max((aquaVotes / total) * 100, 1);
 

@@ -2,6 +2,12 @@ import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
 
+import { getDateString } from 'helpers/date';
+import { formatBalance } from 'helpers/format-number';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Aqua from 'assets/aqua-logo-small.svg';
 import Close from 'assets/icon-close-small-purple.svg';
 import Info from 'assets/icon-info.svg';
@@ -9,16 +15,14 @@ import Info from 'assets/icon-info.svg';
 import ExternalLink from 'basics/ExternalLink';
 import Table, { CellAlign } from 'basics/Table';
 
-import { formatBalance, getDateString } from '../../../../../common/helpers/helpers';
-import { respondDown } from '../../../../../common/mixins';
+import { convertUTCToLocalDateIgnoringTimezone } from 'pages/bribes/pages/AddBribePage';
+
 import {
     ModalDescription,
     ModalProps,
     ModalTitle,
 } from '../../../../../common/modals/atoms/ModalAtoms';
 import { StellarService } from '../../../../../common/services/globalServices';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import { convertUTCToLocalDateIgnoringTimezone } from '../../../../bribes/pages/AddBribePage';
 import { PairStats } from '../../../api/types';
 import Asset from '../../AssetDropdown/Asset';
 

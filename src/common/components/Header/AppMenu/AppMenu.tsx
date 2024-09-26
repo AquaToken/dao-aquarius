@@ -2,6 +2,14 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { formatBalance } from 'helpers/format-number';
+
+import { LoginTypes } from 'store/authStore/types';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS, Z_INDEX } from 'web/styles';
+
 import Aqua from 'assets/aqua-logo-small.svg';
 import Ice from 'assets/ice-logo.svg';
 import IconCopy from 'assets/icon-copy.svg';
@@ -15,10 +23,6 @@ import CopyButton from 'basics/buttons/CopyButton';
 import Identicon from 'basics/Identicon';
 
 import { LockerRoutes } from '../../../../routes';
-import { LoginTypes } from '../../../../store/authStore/types';
-import useAuthStore from '../../../../store/authStore/useAuthStore';
-import { formatBalance } from '../../../helpers/helpers';
-import { respondDown } from '../../../mixins';
 import ChooseLoginMethodModal from '../../../modals/ChooseLoginMethodModal';
 import GetAquaModal from '../../../modals/GetAquaModal/GetAquaModal';
 import {
@@ -27,7 +31,6 @@ import {
     WalletConnectService,
 } from '../../../services/globalServices';
 import { ICE_CODE, ICE_ISSUER } from '../../../services/stellar.service';
-import { Breakpoints, COLORS, Z_INDEX } from '../../../styles';
 import SocialLinks from '../../SocialLinks/SocialLinks';
 
 const MenuBlock = styled.div`

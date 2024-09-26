@@ -2,8 +2,9 @@ import * as React from 'react';
 import { lazy } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 
+import useAuthStore from 'store/authStore/useAuthStore';
+
 import { AmmRoutes } from '../../routes';
-import useAuthStore from '../../store/authStore/useAuthStore';
 
 const AnalyticsPage = lazy(() => import('./pages/Analytics'));
 const PoolPageLazy = lazy(() => import('./pages/PoolPage'));

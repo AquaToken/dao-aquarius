@@ -2,17 +2,19 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { flexAllCenter, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import VotesList from './VotesList/VotesList';
 
-import { flexAllCenter, respondDown } from '../../../../../common/mixins';
 import {
     ModalDescription,
     ModalProps,
     ModalTitle,
 } from '../../../../../common/modals/atoms/ModalAtoms';
 import { StellarService } from '../../../../../common/services/globalServices';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
 import { PairStats } from '../../../api/types';
 import Market from '../../common/Market';
 

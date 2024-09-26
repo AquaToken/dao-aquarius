@@ -1,9 +1,10 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
+import { formatBalance } from 'helpers/format-number';
+
 import Question from 'basics/Question';
 
-import { formatBalance } from '../../../../../common/helpers/helpers';
 import {
     APPROVED_PROPOSAL_REWARD,
     CREATE_DISCUSSION_COST,

@@ -2,15 +2,19 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { getAssetString } from 'helpers/assets';
+import { formatBalance } from 'helpers/format-number';
+
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Button from 'basics/buttons/Button';
 import PageLoader from 'basics/loaders/PageLoader';
 
-import { formatBalance, getAssetString } from '../../../../common/helpers/helpers';
-import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
 import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
 import { ModalService, SorobanService } from '../../../../common/services/globalServices';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import useAuthStore from '../../../../store/authStore/useAuthStore';
 import Asset from '../../../vote/components/AssetDropdown/Asset';
 import { PoolExtended } from '../../api/types';
 import DepositToPool from '../DepositToPool/DepositToPool';

@@ -3,17 +3,20 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { formatBalance } from 'helpers/format-number';
+
+import useAssetsStore from 'store/assetsStore/useAssetsStore';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Button from 'basics/buttons/Button';
 import PageLoader from 'basics/loaders/PageLoader';
 
-import { formatBalance } from '../../../common/helpers/helpers';
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../common/mixins';
 import { ModalService, StellarService } from '../../../common/services/globalServices';
 import { StellarEvents } from '../../../common/services/stellar.service';
-import { Breakpoints, COLORS } from '../../../common/styles';
 import { VoteRoutes } from '../../../routes';
-import useAssetsStore from '../../../store/assetsStore/useAssetsStore';
-import useAuthStore from '../../../store/authStore/useAuthStore';
 import { getTotalVotingStats, getUserPairsList } from '../../vote/api/api';
 import { PairStats } from '../../vote/api/types';
 import { getAssetsFromPairs } from '../../vote/components/MainPage/MainPage';

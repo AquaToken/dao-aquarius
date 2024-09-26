@@ -2,13 +2,14 @@ import * as React from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { respondDown } from 'web/mixins';
+import { Breakpoints } from 'web/styles';
+
 import Button from 'basics/buttons/Button';
 
-import { ModalDescription, ModalTitle } from './atoms/ModalAtoms';
+import { ModalDescription, ModalProps, ModalTitle } from './atoms/ModalAtoms';
 
 import { MainRoutes } from '../../routes';
-import { respondDown } from '../mixins';
-import { Breakpoints } from '../styles';
 
 const Container = styled.div`
     width: 52.8rem;
@@ -38,9 +39,10 @@ const ButtonStyled = styled(Button)`
 
 export const LIVE_ON_SOROBAN_SHOWED_ALIAS = 'live_on_soroban_showed';
 
-const LiveOnSorobanAlert = ({ confirm }) => {
+const LiveOnSorobanAlert = ({ confirm }: ModalProps<never>) => {
     const history = useHistory();
-    const onSubmit = route => {
+
+    const onSubmit = (route: string) => {
         history.push(route);
         localStorage.setItem(LIVE_ON_SOROBAN_SHOWED_ALIAS, 'true');
         confirm();

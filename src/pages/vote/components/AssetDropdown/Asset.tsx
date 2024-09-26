@@ -3,6 +3,15 @@ import * as React from 'react';
 import { useMemo } from 'react';
 import styled from 'styled-components';
 
+import { getAssetString } from 'helpers/assets';
+
+import { LumenInfo } from 'store/assetsStore/reducer';
+import { AssetSimple } from 'store/assetsStore/types';
+import useAssetsStore from 'store/assetsStore/useAssetsStore';
+
+import { flexAllCenter, respondDown, textEllipsis } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Info from 'assets/icon-info.svg';
 
 import DotsLoader from 'basics/loaders/DotsLoader';
@@ -10,16 +19,10 @@ import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import AssetLogo from './AssetLogo';
 
-import { flexAllCenter, respondDown, textEllipsis } from '../../../../common/mixins';
 import AssetInfoModal from '../../../../common/modals/AssetInfoModal/AssetInfoModal';
 import { ModalService } from '../../../../common/services/globalServices';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import { getAssetString } from '../../../../store/assetsStore/actions';
-import { LumenInfo } from '../../../../store/assetsStore/reducer';
-import { AssetSimple } from '../../../../store/assetsStore/types';
-import useAssetsStore from '../../../../store/assetsStore/useAssetsStore';
 
-const Container = styled(props => <div {...props} />)`
+const Container = styled((props: React.DOMAttributes<HTMLDivElement>) => <div {...props} />)`
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -101,27 +104,8 @@ const Asset = ({
 
     const assetInstance = new StellarSdk.Asset(asset.code, asset.issuer);
     const isNative = assetInstance.isNative();
-    const hasAssetInfo = isNative || assetsInfo.has(getAssetString(asset));
-    const assetInfo = isNative ? LumenInfo : assetsInfo.get(getAssetString(asset));
-
-    if (onlyLogo) {
-        return <AssetLogo asset={asset} />;
-    }
-
-    if (onlyLogoSmall) {
-        return <AssetLogo asset={asset} isSmall />;
-    }
-
-    if (logoAndCode) {
-        return (
-            <Container {...props}>
-                <AssetLogo asset={asset} />
-                <AssetDetails inRow>
-                    <AssetCode inRow>{asset.code}</AssetCode>
-                </AssetDetails>
-            </Container>
-        );
-    }
+    const hasAssetInfo = isNative || assetsInfo.has(getAssetString(assetInstance));
+    const assetInfo = isNative ? LumenInfo : assetsInfo.get(getAssetString(assetInstance));
 
     const domain = useMemo(() => {
         if (!assetInfo) {
@@ -149,6 +133,25 @@ const Asset = ({
 
         return domainView;
     }, [assetInfo, asset]);
+
+    if (onlyLogo) {
+        return <AssetLogo asset={asset} />;
+    }
+
+    if (onlyLogoSmall) {
+        return <AssetLogo asset={asset} isSmall />;
+    }
+
+    if (logoAndCode) {
+        return (
+            <Container {...props}>
+                <AssetLogo asset={asset} />
+                <AssetDetails inRow>
+                    <AssetCode inRow>{asset.code}</AssetCode>
+                </AssetDetails>
+            </Container>
+        );
+    }
 
     return (
         <Container {...props}>

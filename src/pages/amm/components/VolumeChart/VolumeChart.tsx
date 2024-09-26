@@ -4,9 +4,14 @@ import * as React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import { formatBalance, getDateString } from '../../../../common/helpers/helpers';
+import { getDateString } from 'helpers/date';
+import { formatBalance } from 'helpers/format-number';
+
+import { COLORS } from 'web/styles';
+
+import { PoolStatistics, PoolVolume24h } from 'pages/amm/api/types';
+
 import { StellarService } from '../../../../common/services/globalServices';
-import { COLORS } from '../../../../common/styles';
 import { transformDate } from '../LiquidityChart/LiquidityChart';
 
 const Axis = styled.g`
@@ -26,6 +31,18 @@ const LiquidityValue = styled.text`
     font-weight: 700;
 `;
 
+interface VolumeChartProps {
+    data: PoolStatistics[];
+    volume24h?: PoolVolume24h;
+    isGlobalStat?: boolean;
+    width?: number;
+    height?: number;
+    marginTop?: number;
+    marginRight?: number;
+    marginBottom?: number;
+    marginLeft?: number;
+}
+
 const VolumeChart = ({
     data,
     volume24h = null,
@@ -36,16 +53,16 @@ const VolumeChart = ({
     marginRight = 16,
     marginBottom = 32,
     marginLeft = 16,
-}) => {
+}: VolumeChartProps): React.ReactNode => {
     const [daily, last24] = useMemo(() => {
         if (isGlobalStat) {
             const copy = [...data].map(item => ({
                 ...item,
                 date: transformDate(item.date_str),
-                volume: item.volume / 1e7,
+                volume: Number(item.volume) / 1e7,
             }));
 
-            volume24h.volume = volume24h.volume / 1e7;
+            volume24h.volume = (Number(volume24h.volume) / 1e7).toString();
 
             return [copy, volume24h];
         }
@@ -66,7 +83,7 @@ const VolumeChart = ({
 
         const last24Volume = data
             .filter(item => isAfter(transformDate(item.datetime_str), subDays(Date.now(), 1)))
-            .reduce((acc, item) => acc + item.volume / 1e7, 0);
+            .reduce((acc, item) => acc + Number(item.volume) / 1e7, 0);
 
         return [
             [
@@ -80,7 +97,7 @@ const VolumeChart = ({
 
                         acc.set(itemDate, {
                             date: acc.get(itemDate)?.date || itemDate,
-                            volume: +acc.get(itemDate)?.volume + item.volume / 1e7,
+                            volume: +acc.get(itemDate)?.volume + Number(item.volume) / 1e7,
                         });
                         return acc;
                     }, dateMap)
@@ -120,19 +137,6 @@ const VolumeChart = ({
         [gx, x],
     );
 
-    useEffect(() => {
-        if (!svg.current) {
-            return;
-        }
-        d3.select(svg.current)
-            .on('mousemove touchmove', event => {
-                onMouseMove(event);
-            })
-            .on('mouseout', () => {
-                setSelectedIndex(null);
-            });
-    }, [svg]);
-
     const onMouseMove = event => {
         if (
             event.offsetX < marginLeft ||
@@ -145,6 +149,19 @@ const VolumeChart = ({
 
         setSelectedIndex(index);
     };
+
+    useEffect(() => {
+        if (!svg.current) {
+            return;
+        }
+        d3.select(svg.current)
+            .on('mousemove touchmove', event => {
+                onMouseMove(event);
+            })
+            .on('mouseout', () => {
+                setSelectedIndex(null);
+            });
+    }, [svg]);
 
     const selectedItem = daily[selectedIndex];
 

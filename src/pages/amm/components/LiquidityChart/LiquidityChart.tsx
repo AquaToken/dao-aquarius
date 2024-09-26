@@ -3,9 +3,14 @@ import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import { formatBalance, getDateString } from '../../../../common/helpers/helpers';
+import { getDateString } from 'helpers/date';
+import { formatBalance } from 'helpers/format-number';
+
+import { COLORS } from 'web/styles';
+
+import { PoolStatistics } from 'pages/amm/api/types';
+
 import { StellarService } from '../../../../common/services/globalServices';
-import { COLORS } from '../../../../common/styles';
 
 const Axis = styled.g`
     font-size: 1.4rem;
@@ -32,6 +37,16 @@ export const transformDate = date_str => {
     return new Date(year, month - 1, day, hour, minute, second);
 };
 
+interface LiquidityChartProps {
+    data: PoolStatistics[];
+    width?: number;
+    height?: number;
+    marginTop?: number;
+    marginRight?: number;
+    marginBottom?: number;
+    marginLeft?: number;
+}
+
 const LiquidityChart = ({
     data,
     width = 312,
@@ -40,7 +55,7 @@ const LiquidityChart = ({
     marginRight = 16,
     marginBottom = 32,
     marginLeft = 16,
-}) => {
+}: LiquidityChartProps) => {
     const [selectedIndex, setSelectedIndex] = useState(null);
     const svg = useRef();
     const gx = useRef();
@@ -51,12 +66,15 @@ const LiquidityChart = ({
     const y = d3
         .scaleLinear()
         .range([height - marginBottom, marginTop + height * 0.4])
-        .domain([d3.min(data, d => d.liquidity / 1e7), d3.max(data, d => d.liquidity / 1e7)]);
+        .domain([
+            d3.min(data, d => Number(d.liquidity) / 1e7),
+            d3.max(data, d => Number(d.liquidity) / 1e7),
+        ]);
 
     const line = d3
         .line()
         .x(d => x(transformDate(d.datetime_str || d.date_str)))
-        .y(d => y(d.liquidity / 1e7))
+        .y(d => y(Number(d.liquidity) / 1e7))
         .curve(d3.curveMonotoneX);
 
     const path = data => {
@@ -170,7 +188,7 @@ const LiquidityChart = ({
                                 data[selectedIndex]?.datetime_str || data[selectedIndex]?.date_str,
                             ),
                         )}
-                        cy={y(data[selectedIndex].liquidity / 1e7)}
+                        cy={y(Number(data[selectedIndex].liquidity) / 1e7)}
                     />
                 </g>
             )}

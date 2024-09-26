@@ -3,16 +3,18 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { formatBalance, roundToPrecision } from 'helpers/format-number';
+
+import { flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import AquaLogo from 'assets/aqua-logo-small.svg';
 
 import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
 
-import { formatBalance, roundToPrecision } from '../../../../../common/helpers/helpers';
-import { flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
 import AccountService from '../../../../../common/services/account.service';
 import { StellarService } from '../../../../../common/services/globalServices';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
 
 const Container = styled.div`
     margin-top: 6.3rem;

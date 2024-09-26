@@ -3,15 +3,19 @@ import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
+import { getAssetString } from 'helpers/assets';
+import { formatBalance } from 'helpers/format-number';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Warning from 'assets/icon-warning.svg';
 
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
-import { formatBalance, getAssetString } from '../../../../../common/helpers/helpers';
-import { respondDown } from '../../../../../common/mixins';
+import { getNativePrices } from 'pages/amm/api/api';
+
 import { StellarService } from '../../../../../common/services/globalServices';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import { getNativePrices } from '../../../../amm/api/api';
 
 const Container = styled.div`
     display: flex;

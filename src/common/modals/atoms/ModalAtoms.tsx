@@ -9,11 +9,12 @@ import {
 } from 'react';
 import styled from 'styled-components';
 
+import { flexAllCenter, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS, Z_INDEX } from 'web/styles';
+
 import CloseIcon from 'assets/icon-close.svg';
 
 import useOnClickOutside from '../../hooks/useOutsideClick';
-import { flexAllCenter, respondDown } from '../../mixins';
-import { Breakpoints, COLORS, Z_INDEX } from '../../styles';
 
 const ModalWrapper = styled.div`
     position: fixed;
@@ -110,7 +111,7 @@ const BackgroundBlock = styled.div`
 `;
 
 type ModalClose = () => void;
-type ModalConfirm = (unknown) => void;
+type ModalConfirm = (value?: unknown) => void;
 
 export interface ModalProps<T> {
     confirm: ModalConfirm;
@@ -127,27 +128,27 @@ export const ModalBody = ({
     backgroundImage,
     disableClickOutside,
 }: {
-    resolver: (unknown) => void;
+    resolver: (value: unknown) => void;
     children: DetailedReactHTMLElement<HTMLAttributes<HTMLElement>, HTMLElement>;
     params: unknown;
     hideClose: boolean;
     triggerClosePromise: Promise<unknown>;
     backgroundImage: React.ReactNode | null;
     disableClickOutside: boolean;
-}): JSX.Element => {
+}): React.ReactNode => {
     const [isShow, setIsShow] = useState(true);
     const [resolvedData, setResolvedData] = useState(null);
     const ref = useRef(null);
 
-    useLayoutEffect(() => {
-        ref.current.addEventListener('animationend', transitionHandler);
-        document.addEventListener('keydown', clickHandler, false);
+    const confirm = (data: object) => {
+        setIsShow(false);
+        setResolvedData({ ...data, isConfirmed: true });
+    };
 
-        return () => {
-            ref.current.removeEventListener('animationend', transitionHandler);
-            document.removeEventListener('keydown', clickHandler, false);
-        };
-    });
+    const close = () => {
+        setIsShow(false);
+        setResolvedData({ isConfirmed: false });
+    };
 
     useOnClickOutside(ref, () => {
         if (!hideClose && !disableClickOutside) {
@@ -167,15 +168,15 @@ export const ModalBody = ({
         }
     };
 
-    const confirm = data => {
-        setIsShow(false);
-        setResolvedData({ ...data, isConfirmed: true });
-    };
+    useLayoutEffect(() => {
+        ref.current.addEventListener('animationend', transitionHandler);
+        document.addEventListener('keydown', clickHandler, false);
 
-    const close = () => {
-        setIsShow(false);
-        setResolvedData({ isConfirmed: false });
-    };
+        return () => {
+            ref.current.removeEventListener('animationend', transitionHandler);
+            document.removeEventListener('keydown', clickHandler, false);
+        };
+    });
 
     useEffect(() => {
         triggerClosePromise.then(res => {
@@ -194,7 +195,10 @@ export const ModalBody = ({
                     </CloseButton>
                 )}
                 <ModalContent>
-                    {React.cloneElement(children, { confirm, close, params } as any)}
+                    {React.cloneElement(children, { confirm, close, params } as Partial<
+                        HTMLAttributes<HTMLElement>
+                    > &
+                        ModalProps<unknown>)}
                 </ModalContent>
             </ModalInner>
         </ModalWrapper>

@@ -2,18 +2,21 @@ import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
 
+import { getDateString } from 'helpers/date';
+import { formatBalance } from 'helpers/format-number';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Aqua from 'assets/aqua-logo-small.svg';
 import Close from 'assets/icon-close-small-purple.svg';
 import Info from 'assets/icon-info.svg';
 
 import Table, { CellAlign } from 'basics/Table';
 
-import { formatBalance, getDateString } from '../../../../../common/helpers/helpers';
-import { respondDown } from '../../../../../common/mixins';
-import { StellarService } from '../../../../../common/services/globalServices';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import { convertUTCToLocalDateIgnoringTimezone } from '../../../../bribes/pages/AddBribePage';
-import Asset from '../../../../vote/components/AssetDropdown/Asset';
+import { Bribe } from 'pages/bribes/api/types';
+import { convertUTCToLocalDateIgnoringTimezone } from 'pages/bribes/pages/AddBribePage';
+import { MarketVotesExtra } from 'pages/vote/api/types';
 import {
     BribeDetail,
     BribeDetailsMain,
@@ -24,7 +27,10 @@ import {
     ExternalLinkWeb,
     HowItWorksFooter,
     HowItWorksText,
-} from '../../../../vote/components/MainPage/BribesModal/BribesModal';
+} from 'pages/vote/components/MainPage/BribesModal/BribesModal';
+
+import { StellarService } from '../../../../../common/services/globalServices';
+import Asset from '../../../../vote/components/AssetDropdown/Asset';
 
 const Container = styled.div`
     display: flex;
@@ -103,7 +109,12 @@ const Total = styled.div`
     align-items: center;
 `;
 
-const MarketCurrentBribes = ({ extra, bribes }) => {
+interface MarketCurrentBribes {
+    bribes: Bribe[];
+    extra: MarketVotesExtra;
+}
+
+const MarketCurrentBribes = ({ extra, bribes }: MarketCurrentBribes) => {
     const [showHowItWorks, setShowHowItWorks] = useState(false);
     if (!bribes) {
         return (

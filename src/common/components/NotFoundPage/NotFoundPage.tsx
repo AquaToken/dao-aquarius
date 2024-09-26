@@ -2,10 +2,10 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import LinkArrowIcon from 'assets/icon-link-arrow.svg';
+import { flexAllCenter, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
 
-import { flexAllCenter, respondDown } from '../../mixins';
-import { Breakpoints, COLORS } from '../../styles';
+import LinkArrowIcon from 'assets/icon-link-arrow.svg';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -50,18 +50,16 @@ const LinkArrow = styled(LinkArrowIcon)`
     margin-left: 1rem;
 `;
 
-const NotFoundPage = (): JSX.Element => {
-    return (
-        <MainBlock>
-            <div>
-                <Title>Page not found</Title>
-                <Description>This page does not exist or was recently moved.</Description>
-                <StyledLink to="/">
-                    Go to Home Page <LinkArrow />
-                </StyledLink>
-            </div>
-        </MainBlock>
-    );
-};
+const NotFoundPage = (): JSX.Element => (
+    <MainBlock>
+        <div>
+            <Title>Page not found</Title>
+            <Description>This page does not exist or was recently moved.</Description>
+            <StyledLink to="/">
+                Go to Home Page <LinkArrow />
+            </StyledLink>
+        </div>
+    </MainBlock>
+);
 
 export default NotFoundPage;

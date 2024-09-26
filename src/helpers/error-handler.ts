@@ -1,5 +1,10 @@
 // https://developers.stellar.org/docs/glossary/transactions/#result-codes
-import { LEDGER_CANCEL_ERROR } from '../services/ledger.service';
+
+import { AxiosError } from 'axios';
+
+import { TxFailed } from 'types/stellar';
+
+import { LEDGER_CANCEL_ERROR } from '../common/services/ledger.service';
 
 enum TRANSACTIONS_ERROR_CODES {
     // TODO: Add this codes
@@ -47,7 +52,7 @@ enum OPERATIONS_ERROR_CODES {
     'op_under_dest_min' = 'The paths that could send destination amount of destination asset would fall short of destination min.',
     'op_sell_no_trust' = 'The account creating the offer does not have a trustline for the asset it is selling.',
     'op_buy_no_trust' = 'The account creating the offer does not have a trustline for the asset it is buying.',
-    'sell_not_authorized' = 'The account creating the offer is not authorized to buy this asset.',
+    'sell_not_authorized' = 'The account creating the offer is not authorized to sell this asset.',
     'buy_not_authorized' = 'The account creating the offer is not authorized to buy this asset.',
     'op_sell_no_issuer' = 'The issuer of selling asset does not exist.',
     'buy_no_issuer' = 'The issuer of buying asset does not exist.',
@@ -63,6 +68,7 @@ enum OPERATIONS_ERROR_CODES {
     'op_invalid_limit' = 'The limit is not sufficient to hold the current balance of the trustline and still satisfy its buying liabilities.',
     'op_self_not_allowed' = 'The source account attempted to create a trustline for itself, which is not allowed.',
     'op_no_trust_line' = 'The trustor does not have a trustline with the issuer performing this operation.',
+    // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
     'op_no_trustline' = 'The trustor does not have a trustline with the issuer performing this operation.',
     'op_not_required' = 'The source account (issuer performing this operation) does not require trust. In other words, it does not have to have the flag AUTH_REQUIRED_FLAG set.',
     'op_cant_revoke' = 'The source account is trying to revoke the trustline of the trustor, but it cannot do so.',
@@ -84,49 +90,55 @@ export enum KnownPrepareErrors {
     'Error(Contract, #2006)' = 'The amount is too small to deposit to this pool',
 }
 
-export default function ErrorHandler(error) {
+type UnknownError = {
+    error?: string;
+};
+
+export default function ErrorHandler(error: TxFailed | Error | AxiosError) {
     // wallet connect case
-    if (error?.message === '') {
+    if ((error as Error)?.message === '') {
         return 'Transaction request timeout';
     }
 
     //wallet connect case and Ledger case
     if (
-        error?.message === 'cancelled_by_user' ||
-        error?.message === 'Transaction cancelled by the user' ||
-        error?.message === LEDGER_CANCEL_ERROR
+        (error as Error)?.message === 'cancelled_by_user' ||
+        (error as Error)?.message === 'Transaction cancelled by the user' ||
+        (error as Error)?.message === LEDGER_CANCEL_ERROR
     ) {
         return 'Transaction cancelled by the user';
     }
-    if (error.error) {
-        return error.error;
+    if ((error as UnknownError)?.error) {
+        return (error as UnknownError).error;
     }
-    if (!error.response) {
+    if (!(error as AxiosError).response) {
         return error.toString();
     }
-    const { data } = error.response;
+    const { data } = (error as AxiosError).response;
     if (!data) {
-        return `clientError - ${error.message}`;
+        return `clientError - ${(error as AxiosError).message}`;
     }
-    if (!data.extras || !data.extras.result_codes) {
-        return `unknownResponse - ${error.message}`;
+    if (!(data as TxFailed).extras || !(data as TxFailed).extras.result_codes) {
+        return `unknownResponse - ${(error as AxiosError).message}`;
     }
-    if (data.extras.result_codes.transaction === 'tx_failed') {
+    if ((data as TxFailed).extras.result_codes.transaction === 'tx_failed') {
         return (
             OPERATIONS_ERROR_CODES[
-                data.extras.result_codes.operations.find(op => op !== 'op_success')
+                (data as TxFailed).extras.result_codes.operations.find(
+                    (op: string) => op !== 'op_success',
+                )
             ] ?? 'Oops. Something went wrong.'
         );
     }
     return (
-        TRANSACTIONS_ERROR_CODES[data.extras.result_codes.transaction] ??
+        TRANSACTIONS_ERROR_CODES[(data as TxFailed).extras.result_codes.transaction] ??
         'Oops. Something went wrong.'
     );
 }
 
 function findErrorCode(error: string) {
-    for (let str in KnownPrepareErrors) {
-        let index = error.indexOf(str);
+    for (const str in KnownPrepareErrors) {
+        const index = error.indexOf(str);
         if (index !== -1) {
             return str;
         }

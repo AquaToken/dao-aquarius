@@ -1,36 +1,3 @@
-import * as React from 'react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import DatePicker from 'react-datepicker';
-import { Link } from 'react-router-dom';
-import styled, { createGlobalStyle } from 'styled-components';
-
-import ArrowLeft from 'assets/icon-arrow-left.svg';
-import Dash from 'assets/icon-dash.svg';
-import Fail from 'assets/icon-fail.svg';
-import Minus from 'assets/icon-minus.svg';
-import Plus from 'assets/icon-plus.svg';
-import Success from 'assets/icon-success.svg';
-import Loader from 'assets/loader.svg';
-
-import Button from 'basics/buttons/Button';
-import ExternalLink from 'basics/ExternalLink';
-import Input from 'basics/inputs/Input';
-
-import { flexAllCenter, respondDown } from '../../../common/mixins';
-import { Breakpoints, COLORS, FONT_FAMILY } from '../../../common/styles';
-import useAuthStore from '../../../store/authStore/useAuthStore';
-import AssetDropdown from '../../vote/components/AssetDropdown/AssetDropdown';
-
-import 'react-datepicker/dist/react-datepicker.css';
-import { ModalService, StellarService } from '../../../common/services/globalServices';
-import CreatePairModal from '../../vote/components/MainPage/CreatePairModal/CreatePairModal';
-import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
-import { getMarketPair } from '../api/api';
-import ConfirmBribeModal from '../components/AddBribePage/ConfirmBribeModal/ConfirmBribeModal';
-import { useDebounce } from '../../../common/hooks/useDebounce';
-
-import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
-
 import {
     addWeeks,
     endOfWeek,
@@ -42,12 +9,43 @@ import {
     startOfDay,
     startOfWeek,
 } from 'date-fns';
+import * as React from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { Link } from 'react-router-dom';
+import styled, { createGlobalStyle } from 'styled-components';
 
-import { formatBalance } from '../../../common/helpers/helpers';
-import { BribesRoutes } from '../../../routes';
-import { LoginTypes } from '../../../store/authStore/types';
+import { formatBalance } from 'helpers/format-number';
 
+import { LoginTypes } from 'store/authStore/types';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { flexAllCenter, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS, FONT_FAMILY } from 'web/styles';
+
+import ArrowLeft from 'assets/icon-arrow-left.svg';
+import Dash from 'assets/icon-dash.svg';
+import Fail from 'assets/icon-fail.svg';
+import Minus from 'assets/icon-minus.svg';
+import Plus from 'assets/icon-plus.svg';
+import Success from 'assets/icon-success.svg';
+import Loader from 'assets/loader.svg';
+
+import Button from 'basics/buttons/Button';
 import CircleButton from 'basics/buttons/CircleButton';
+import ExternalLink from 'basics/ExternalLink';
+import Input from 'basics/inputs/Input';
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import { useDebounce } from '../../../common/hooks/useDebounce';
+import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
+import { ModalService, StellarService } from '../../../common/services/globalServices';
+import { BribesRoutes } from '../../../routes';
+import AssetDropdown from '../../vote/components/AssetDropdown/AssetDropdown';
+import CreatePairModal from '../../vote/components/MainPage/CreatePairModal/CreatePairModal';
+import { getMarketPair } from '../api/api';
+import ConfirmBribeModal from '../components/AddBribePage/ConfirmBribeModal/ConfirmBribeModal';
 
 export const MainBlock = styled.main`
     flex: 1 0 auto;

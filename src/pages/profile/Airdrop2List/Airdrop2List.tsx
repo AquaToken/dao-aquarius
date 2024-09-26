@@ -3,22 +3,26 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { getDateString } from 'helpers/date';
+import ErrorHandler from 'helpers/error-handler';
+import { formatBalance } from 'helpers/format-number';
+import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
+
+import { LoginTypes } from 'store/authStore/types';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Button from 'basics/buttons/Button';
 import Checkbox from 'basics/inputs/Checkbox';
 import PageLoader from 'basics/loaders/PageLoader';
 import Table, { CellAlign } from 'basics/Table';
 
-import ErrorHandler from '../../../common/helpers/error-handler';
-import { formatBalance, getDateString } from '../../../common/helpers/helpers';
-import { openCurrentWalletIfExist } from '../../../common/helpers/wallet-connect-helpers';
-import { respondDown } from '../../../common/mixins';
 import { StellarService, ToastService } from '../../../common/services/globalServices';
 import { StellarEvents } from '../../../common/services/stellar.service';
 import { BuildSignAndSubmitStatuses } from '../../../common/services/wallet-connect.service';
-import { Breakpoints, COLORS } from '../../../common/styles';
 import { MainRoutes } from '../../../routes';
-import { LoginTypes } from '../../../store/authStore/types';
-import useAuthStore from '../../../store/authStore/useAuthStore';
 import { ExternalLinkStyled, Header, Section, Title } from '../AmmRewards/AmmRewards';
 import { Empty } from '../YourVotes/YourVotes';
 

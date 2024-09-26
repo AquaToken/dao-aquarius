@@ -3,6 +3,11 @@ import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { formatBalance } from 'helpers/format-number';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Info from 'assets/icon-info.svg';
 
 import Select from 'basics/inputs/Select';
@@ -12,13 +17,11 @@ import Pagination from 'basics/Pagination';
 import Table, { CellAlign } from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
-import { formatBalance } from '../../../../common/helpers/helpers';
-import { respondDown } from '../../../../common/mixins';
+import { Empty } from 'pages/profile/YourVotes/YourVotes';
+
 import { StellarService } from '../../../../common/services/globalServices';
 import { POOL_TYPE } from '../../../../common/services/soroban.service';
-import { Breakpoints, COLORS } from '../../../../common/styles';
 import { AmmRoutes } from '../../../../routes';
-import { Empty } from '../../../profile/YourVotes/YourVotes';
 import Market from '../../../vote/components/common/Market';
 import { FilterOptions, getPools, PoolsSortFields } from '../../api/api';
 import { PoolProcessed } from '../../api/types';
@@ -62,7 +65,12 @@ const OPTIONS = [
     { label: 'Stable', value: FilterOptions.stable },
     { label: 'Volatile', value: FilterOptions.constant },
 ];
-const AllPools = ({ search }) => {
+
+interface AllPoolsProps {
+    search: string;
+}
+
+const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
     const [filter, setFilter] = useState(FilterOptions.all);
     const [sort, setSort] = useState(PoolsSortFields.liquidityUp);
     const [pools, setPools] = useState<PoolProcessed[] | null>(null);
@@ -85,12 +93,12 @@ const AllPools = ({ search }) => {
         });
     }, [filter, page, search, sort]);
 
-    const changeSort = newSort => {
+    const changeSort = (newSort: PoolsSortFields) => {
         setSort(newSort);
         setPage(1);
     };
 
-    const goToPoolPage = id => {
+    const goToPoolPage = (id: string) => {
         history.push(`${AmmRoutes.analytics}${id}/`);
     };
     return !pools || !StellarService.priceLumenUsd ? (

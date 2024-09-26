@@ -3,7 +3,18 @@ import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { getAssetString } from 'helpers/assets';
+
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { Asset } from 'types/stellar';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Button from 'basics/buttons/Button';
+
+import { findSwapPath } from 'pages/amm/api/api';
 
 import AmountUsdEquivalent from './AmountUsdEquivalent/AmountUsdEquivalent';
 import SwapFormDivider from './SwapFormDivider/SwapFormDivider';
@@ -13,9 +24,7 @@ import SwapFormPrice from './SwapFormPrice/SwapFormPrice';
 import SwapFormRow from './SwapFormRow/SwapFormRow';
 
 import NoTrustline from '../../../../common/components/NoTrustline/NoTrustline';
-import { getAssetString } from '../../../../common/helpers/helpers';
 import { useDebounce } from '../../../../common/hooks/useDebounce';
-import { respondDown } from '../../../../common/mixins';
 import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
 import MainNetWarningModal, {
     SHOW_PURPOSE_ALIAS_MAIN_NET,
@@ -25,10 +34,7 @@ import {
     SorobanService,
     ToastService,
 } from '../../../../common/services/globalServices';
-import { Breakpoints, COLORS } from '../../../../common/styles';
 import { MainRoutes } from '../../../../routes';
-import useAuthStore from '../../../../store/authStore/useAuthStore';
-import { findSwapPath } from '../../../amm/api/api';
 import SwapConfirmModal from '../SwapConfirmModal/SwapConfirmModal';
 
 const Form = styled.div`
@@ -57,7 +63,12 @@ const StyledButton = styled(Button)`
     `}
 `;
 
-const SwapForm = ({ base, counter }) => {
+interface SwapFormProps {
+    base: Asset;
+    counter: Asset;
+}
+
+const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
     const [error, setError] = useState(false);
 
     const [baseAmount, setBaseAmount] = useState('');

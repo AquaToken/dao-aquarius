@@ -2,14 +2,15 @@ import * as React from 'react';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import IconClose from 'assets/icon-close-small.svg';
 
 import { IconFail, IconSuccess } from 'basics/Icons';
 
-import { respondDown } from '../mixins';
 import Timer from '../services/timer.service';
 import { TOAST_TYPE } from '../services/toast.service';
-import { Breakpoints, COLORS } from '../styles';
 
 const ToastBody = styled.div<{ $isShow: boolean }>`
     width: 36.2rem;

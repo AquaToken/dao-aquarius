@@ -3,22 +3,25 @@ import * as React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
 
+import { getAssetString } from 'helpers/assets';
+import { formatBalance } from 'helpers/format-number';
+
+import { AssetSimple } from 'store/assetsStore/types';
+import useAssetsStore from 'store/assetsStore/useAssetsStore';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import ArrowDown from 'assets/icon-arrow-down.svg';
 import Fail from 'assets/icon-fail.svg';
 import Loader from 'assets/loader.svg';
 
 import Asset from './Asset';
 
-import { formatBalance } from '../../../../common/helpers/helpers';
 import { useDebounce } from '../../../../common/hooks/useDebounce';
 import useOnClickOutside from '../../../../common/hooks/useOutsideClick';
-import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
 import { StellarService } from '../../../../common/services/globalServices';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import { getAssetString } from '../../../../store/assetsStore/actions';
-import { AssetSimple } from '../../../../store/assetsStore/types';
-import useAssetsStore from '../../../../store/assetsStore/useAssetsStore';
-import useAuthStore from '../../../../store/authStore/useAuthStore';
 const DropDown = styled.div<{ isOpen: boolean; disabled: boolean }>`
     width: 100%;
     display: flex;
@@ -385,27 +388,33 @@ const AssetDropdown = ({
         onUpdate(null);
     };
 
-    const filteredAssets = useMemo(() => {
-        return [...assets, ...searchResults].filter(assetItem => {
-            const assetInfo = assetsInfo.get(getAssetString(assetItem));
+    const filteredAssets = useMemo(
+        () =>
+            [...assets, ...searchResults].filter(assetItem => {
+                const assetInfo = assetsInfo.get(
+                    getAssetString(StellarService.createAsset(assetItem.code, assetItem.issuer)),
+                );
 
-            return (
-                (getAssetString(assetItem) === searchText ||
-                    assetItem.code.toLowerCase().includes(searchText.toLowerCase()) ||
-                    (StellarSdk.StrKey.isValidEd25519PublicKey(searchText) &&
-                        assetItem.issuer?.toLowerCase().includes(searchText.toLowerCase())) ||
-                    assetInfo?.home_domain
-                        ?.toLowerCase()
-                        .includes(searchText.toLowerCase().replace('www.', ''))) &&
-                !(assetItem.code === exclude?.code && assetItem.issuer === exclude?.issuer) &&
-                !excludeList?.find(
-                    excludeToken =>
-                        excludeToken.code === assetItem.code &&
-                        assetItem.issuer === excludeToken.issuer,
-                )
-            );
-        });
-    }, [assets, searchText, assetsInfo, searchResults, exclude, excludeList]);
+                return (
+                    (getAssetString(
+                        StellarService.createAsset(assetItem.code, assetItem.issuer),
+                    ) === searchText ||
+                        assetItem.code.toLowerCase().includes(searchText.toLowerCase()) ||
+                        (StellarSdk.StrKey.isValidEd25519PublicKey(searchText) &&
+                            assetItem.issuer?.toLowerCase().includes(searchText.toLowerCase())) ||
+                        assetInfo?.home_domain
+                            ?.toLowerCase()
+                            .includes(searchText.toLowerCase().replace('www.', ''))) &&
+                    !(assetItem.code === exclude?.code && assetItem.issuer === exclude?.issuer) &&
+                    !excludeList?.find(
+                        excludeToken =>
+                            excludeToken.code === assetItem.code &&
+                            assetItem.issuer === excludeToken.issuer,
+                    )
+                );
+            }),
+        [assets, searchText, assetsInfo, searchResults, exclude, excludeList],
+    );
 
     return (
         <DropDown

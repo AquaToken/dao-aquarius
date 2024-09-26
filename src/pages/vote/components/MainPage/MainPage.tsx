@@ -3,6 +3,17 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { getAssetString } from 'helpers/assets';
+import { getTimeAgoValue } from 'helpers/date';
+import { formatBalance } from 'helpers/format-number';
+
+import useAssetsStore from 'store/assetsStore/useAssetsStore';
+import { LoginTypes } from 'store/authStore/types';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Aqua from 'assets/aqua-logo-small.svg';
 import BackgroundImageLeft from 'assets/background-left.svg';
 import BackgroundImageRight from 'assets/background-right.svg';
@@ -23,13 +34,6 @@ import FloatingButton from './FloatingButton/FloatingButton';
 import Table from './Table/Table';
 import VotesAmountModal from './VoteModals/VotesAmountModal';
 
-import { formatBalance, getTimeAgoValue } from '../../../../common/helpers/helpers';
-import {
-    commonMaxWidth,
-    flexAllCenter,
-    flexRowSpaceBetween,
-    respondDown,
-} from '../../../../common/mixins';
 import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
 import { ModalService, StellarService } from '../../../../common/services/globalServices';
 import {
@@ -40,12 +44,7 @@ import {
     StellarEvents,
     UP_ICE_CODE,
 } from '../../../../common/services/stellar.service';
-import { Breakpoints, COLORS } from '../../../../common/styles';
 import { MainRoutes, MarketRoutes } from '../../../../routes';
-import { getAssetString } from '../../../../store/assetsStore/actions';
-import useAssetsStore from '../../../../store/assetsStore/useAssetsStore';
-import { LoginTypes } from '../../../../store/authStore/types';
-import useAuthStore from '../../../../store/authStore/useAuthStore';
 import {
     getFilteredPairsList,
     getPairsList,
@@ -144,11 +143,11 @@ const Description = styled.div`
     z-index: 1;
 `;
 
-const ExploreBlock = styled.div<{ hasChosenPairs: boolean }>`
+const ExploreBlock = styled.div<{ $hasChosenPairs: boolean }>`
     position: relative;
     padding: 0 4rem;
     ${commonMaxWidth};
-    padding-bottom: ${({ hasChosenPairs }) => (hasChosenPairs ? '0' : '6.6rem')};
+    padding-bottom: ${({ $hasChosenPairs }) => ($hasChosenPairs ? '0' : '6.6rem')};
 
     ${respondDown(Breakpoints.md)`
         padding: 0 1.6rem;
@@ -425,7 +424,7 @@ export const getAssetsFromPairs = pairs =>
         ];
     }, []);
 
-const MainPage = (): JSX.Element => {
+const MainPage = (): React.ReactNode => {
     const [updateIndex, setUpdateIndex] = useState(0);
     const { processNewAssets } = useAssetsStore();
     const [chosenPairs, setChosenPairs] = useState(getCachedChosenPairs());
@@ -500,7 +499,7 @@ const MainPage = (): JSX.Element => {
             try {
                 const asset = assetFromUrlParams(params.get(UrlParams.base));
                 setSearchBase(asset);
-            } catch (e) {
+            } catch {
                 params.delete(UrlParams.base);
                 history.replace({ search: params.toString() });
             }
@@ -511,7 +510,7 @@ const MainPage = (): JSX.Element => {
             try {
                 const asset = assetFromUrlParams(params.get(UrlParams.counter));
                 setSearchCounter(asset);
-            } catch (e) {
+            } catch {
                 params.delete(UrlParams.counter);
                 history.replace({ search: params.toString() });
             }
@@ -578,6 +577,21 @@ const MainPage = (): JSX.Element => {
         const assets = getAssetsFromPairs(pairs);
 
         processNewAssets(assets);
+    };
+
+    const changeSort = sortValue => {
+        if (!isLogged && sortValue === SortTypes.yourVotes) {
+            ModalService.openModal(ChooseLoginMethodModal, {
+                redirectURL: `${MainRoutes.vote}?${UrlParams.sort}=${SortTypes.yourVotes}`,
+            });
+            return;
+        }
+        const params = new URLSearchParams(location.search);
+        params.set(UrlParams.sort, sortValue);
+        params.delete(UrlParams.base);
+        params.delete(UrlParams.counter);
+        history.push({ pathname: location.pathname, search: params.toString() });
+        setPage(1);
     };
 
     useEffect(() => {
@@ -699,21 +713,6 @@ const MainPage = (): JSX.Element => {
             setChosenPairs([]);
         }
     }, [isLogged]);
-
-    const changeSort = sortValue => {
-        if (!isLogged && sortValue === SortTypes.yourVotes) {
-            ModalService.openModal(ChooseLoginMethodModal, {
-                redirectURL: `${MainRoutes.vote}?${UrlParams.sort}=${SortTypes.yourVotes}`,
-            });
-            return;
-        }
-        const params = new URLSearchParams(location.search);
-        params.set(UrlParams.sort, sortValue);
-        params.delete(UrlParams.base);
-        params.delete(UrlParams.counter);
-        history.push({ pathname: location.pathname, search: params.toString() });
-        setPage(1);
-    };
 
     const changeBaseSearch = asset => {
         const params = new URLSearchParams(location.search);
@@ -859,7 +858,7 @@ const MainPage = (): JSX.Element => {
                 <BackgroundLeft />
                 <BackgroundRight />
             </Background>
-            <ExploreBlock hasChosenPairs={hasChosenPairs}>
+            <ExploreBlock $hasChosenPairs={hasChosenPairs}>
                 <PairSearch>
                     <AssetDropdown
                         asset={searchBase}

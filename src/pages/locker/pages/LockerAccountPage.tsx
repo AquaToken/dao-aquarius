@@ -3,19 +3,22 @@ import { useEffect, useRef, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { getDistributionForAccount } from 'api/ice-locker';
+
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { commonMaxWidth, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import ArrowDown from 'assets/icon-arrow-down.svg';
 
 import PageLoader from 'basics/loaders/PageLoader';
 
-import { getDistributionForAccount } from '../../../api/ice-locker';
 import { useIsOnViewport } from '../../../common/hooks/useIsOnViewport';
-import { commonMaxWidth, respondDown } from '../../../common/mixins';
 import AccountService from '../../../common/services/account.service';
 import { StellarService } from '../../../common/services/globalServices';
 import { StellarEvents } from '../../../common/services/stellar.service';
-import { Breakpoints, COLORS } from '../../../common/styles';
 import { LockerRoutes } from '../../../routes';
-import useAuthStore from '../../../store/authStore/useAuthStore';
 import FAQ from '../components/FAQ/FAQ';
 import AccountInfoBlock from '../components/LockerAccountPage/AccountInfoBlock/AccountInfoBlock';
 import CurrentLocks from '../components/LockerAccountPage/CurrentLocks/CurrentLocks';
@@ -91,7 +94,7 @@ const ScrollToSidebarButton = styled.div`
     `}
 `;
 
-const LockerAccountPage = () => {
+const LockerAccountPage = (): React.ReactNode => {
     const [currentAccount, setCurrentAccount] = useState(null);
     const [ammAquaBalance, setAmmAquaBalance] = useState(null);
     const [locks, setLocks] = useState(null);
@@ -157,7 +160,7 @@ const LockerAccountPage = () => {
         if (!currentAccount) {
             return;
         }
-        currentAccount.getAmmAquaBalance().then(res => {
+        currentAccount.getAmmAquaBalance().then((res: number | null) => {
             setAmmAquaBalance(res);
         });
     }, [currentAccount]);

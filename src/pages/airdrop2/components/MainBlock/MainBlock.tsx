@@ -1,11 +1,11 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Image from 'assets/airdrop2-image.svg';
 import Airdrop from 'assets/airdrop2.svg';
-
-import { respondDown } from '../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../common/styles';
 
 const Container = styled.section`
     position: relative;
@@ -65,14 +65,12 @@ const AirdropMain = styled(Airdrop)`
     `}
 `;
 
-const MainBlock = () => {
-    return (
-        <Container>
-            <BackgroundImage />
-            <AirdropMain />
-            <BackgroundImageRight />
-        </Container>
-    );
-};
+const MainBlock = () => (
+    <Container>
+        <BackgroundImage />
+        <AirdropMain />
+        <BackgroundImageRight />
+    </Container>
+);
 
 export default MainBlock;

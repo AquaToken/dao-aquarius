@@ -1,6 +1,9 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Discord from 'assets/discord-styled.svg';
 import Email from 'assets/email-styled.svg';
 import Github from 'assets/github-styled.svg';
@@ -8,9 +11,6 @@ import Medium from 'assets/medium-styled.svg';
 import Reddit from 'assets/reddit-styled.svg';
 import Telegram from 'assets/telegram-styled.svg';
 import Twitter from 'assets/twitter-styled.svg';
-
-import { respondDown } from '../../mixins';
-import { Breakpoints, COLORS } from '../../styles';
 
 const Container = styled.section`
     padding-top: 16rem;
@@ -151,84 +151,82 @@ const ItemTitle = styled.span`
     `}
 `;
 
-const Community = () => {
-    return (
-        <Container>
-            <Wrapper>
-                <Title>Join AQUA community</Title>
-                <Description>
-                    Learn more about Aquarius, follow the project updates, chat with the team and
-                    other community members.
-                </Description>
-                <Links>
-                    <Link href="https://t.me/aquarius_official_community" target="_blank">
-                        <Item>
-                            <ItemContent>
-                                <Telegram />
-                                <ItemTitle>Telegram chat</ItemTitle>
-                            </ItemContent>
-                        </Item>
-                    </Link>
-                    <Link href="https://t.me/aqua_token" target="_blank">
-                        <Item>
-                            <ItemContent>
-                                <Telegram />
-                                <ItemTitle>Telegram news</ItemTitle>
-                            </ItemContent>
-                        </Item>
-                    </Link>
-                    <Link href="https://x.com/aqua_token" target="_blank">
-                        <Item>
-                            <ItemContent>
-                                <Twitter />
-                                <ItemTitle>X</ItemTitle>
-                            </ItemContent>
-                        </Item>
-                    </Link>
-                    <Link href="https://github.com/AquaToken" target="_blank">
-                        <Item>
-                            <ItemContent>
-                                <Github />
-                                <ItemTitle>GitHub</ItemTitle>
-                            </ItemContent>
-                        </Item>
-                    </Link>
-                    <Link href="https://discord.gg/sgzFscHp4C" target="_blank">
-                        <Item>
-                            <ItemContent>
-                                <Discord />
-                                <ItemTitle>Discord</ItemTitle>
-                            </ItemContent>
-                        </Item>
-                    </Link>
-                    <Link href="https://www.reddit.com/r/AquariusAqua/" target="_blank">
-                        <Item>
-                            <ItemContent>
-                                <Reddit />
-                                <ItemTitle>Reddit</ItemTitle>
-                            </ItemContent>
-                        </Item>
-                    </Link>
-                    <Link href="https://medium.com/aquarius-aqua" target="_blank">
-                        <Item>
-                            <ItemContent>
-                                <Medium />
-                                <ItemTitle>Medium</ItemTitle>
-                            </ItemContent>
-                        </Item>
-                    </Link>
-                    <Link href="mailto:hello@aqua.network" target="_blank">
-                        <Item>
-                            <ItemContent>
-                                <Email />
-                                <ItemTitle>hello@aqua.network</ItemTitle>
-                            </ItemContent>
-                        </Item>
-                    </Link>
-                </Links>
-            </Wrapper>
-        </Container>
-    );
-};
+const Community = () => (
+    <Container>
+        <Wrapper>
+            <Title>Join AQUA community</Title>
+            <Description>
+                Learn more about Aquarius, follow the project updates, chat with the team and other
+                community members.
+            </Description>
+            <Links>
+                <Link href="https://t.me/aquarius_official_community" target="_blank">
+                    <Item>
+                        <ItemContent>
+                            <Telegram />
+                            <ItemTitle>Telegram chat</ItemTitle>
+                        </ItemContent>
+                    </Item>
+                </Link>
+                <Link href="https://t.me/aqua_token" target="_blank">
+                    <Item>
+                        <ItemContent>
+                            <Telegram />
+                            <ItemTitle>Telegram news</ItemTitle>
+                        </ItemContent>
+                    </Item>
+                </Link>
+                <Link href="https://x.com/aqua_token" target="_blank">
+                    <Item>
+                        <ItemContent>
+                            <Twitter />
+                            <ItemTitle>X</ItemTitle>
+                        </ItemContent>
+                    </Item>
+                </Link>
+                <Link href="https://github.com/AquaToken" target="_blank">
+                    <Item>
+                        <ItemContent>
+                            <Github />
+                            <ItemTitle>GitHub</ItemTitle>
+                        </ItemContent>
+                    </Item>
+                </Link>
+                <Link href="https://discord.gg/sgzFscHp4C" target="_blank">
+                    <Item>
+                        <ItemContent>
+                            <Discord />
+                            <ItemTitle>Discord</ItemTitle>
+                        </ItemContent>
+                    </Item>
+                </Link>
+                <Link href="https://www.reddit.com/r/AquariusAqua/" target="_blank">
+                    <Item>
+                        <ItemContent>
+                            <Reddit />
+                            <ItemTitle>Reddit</ItemTitle>
+                        </ItemContent>
+                    </Item>
+                </Link>
+                <Link href="https://medium.com/aquarius-aqua" target="_blank">
+                    <Item>
+                        <ItemContent>
+                            <Medium />
+                            <ItemTitle>Medium</ItemTitle>
+                        </ItemContent>
+                    </Item>
+                </Link>
+                <Link href="mailto:hello@aqua.network" target="_blank">
+                    <Item>
+                        <ItemContent>
+                            <Email />
+                            <ItemTitle>hello@aqua.network</ItemTitle>
+                        </ItemContent>
+                    </Item>
+                </Link>
+            </Links>
+        </Wrapper>
+    </Container>
+);
 
 export default Community;

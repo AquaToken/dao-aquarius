@@ -3,6 +3,17 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { formatBalance } from 'helpers/format-number';
+import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
+
+import { LoginTypes } from 'store/authStore/types';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { Transaction } from 'types/stellar';
+
+import { flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import ArrowLeft from 'assets/icon-arrow-left.svg';
 import Tick from 'assets/icon-tick-white.svg';
 
@@ -15,9 +26,6 @@ import ToggleGroup from 'basics/inputs/ToggleGroup';
 import PageLoader from 'basics/loaders/PageLoader';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
-import { formatBalance } from '../../../common/helpers/helpers';
-import { openCurrentWalletIfExist } from '../../../common/helpers/wallet-connect-helpers';
-import { flexRowSpaceBetween, respondDown } from '../../../common/mixins';
 import MainNetWarningModal, {
     SHOW_PURPOSE_ALIAS_MAIN_NET,
 } from '../../../common/modals/MainNetWarningModal';
@@ -28,10 +36,7 @@ import {
 } from '../../../common/services/globalServices';
 import { CONTRACT_STATUS, POOL_TYPE } from '../../../common/services/soroban.service';
 import { BuildSignAndSubmitStatuses } from '../../../common/services/wallet-connect.service';
-import { Breakpoints, COLORS } from '../../../common/styles';
 import { AmmRoutes } from '../../../routes';
-import { LoginTypes } from '../../../store/authStore/types';
-import useAuthStore from '../../../store/authStore/useAuthStore';
 import {
     Back,
     Background,
@@ -331,25 +336,33 @@ const CreatePool = () => {
         );
     }, [fourthAsset]);
 
-    const createPool = () => {
-        if (type === POOL_TYPE.stable) {
-            return createStablePool();
-        }
-        createConstantPool();
-    };
-
-    const createPoolWithWarning = () => {
-        const showPurpose = JSON.parse(localStorage.getItem(SHOW_PURPOSE_ALIAS_MAIN_NET) || 'true');
-        if (showPurpose) {
-            ModalService.openModal(MainNetWarningModal, {}, false).then(({ isConfirmed }) => {
-                if (isConfirmed) {
-                    createPool();
+    const signAndSubmitCreation = (tx: Transaction) =>
+        account.signAndSubmitTx(tx, true).then(
+            (res: {
+                status?: BuildSignAndSubmitStatuses;
+                value: () => {
+                    value: () => { value: () => { toString: (format: string) => string } };
+                }[];
+            }) => {
+                setPending(false);
+                if (!res) {
+                    return;
                 }
-            });
-            return;
-        }
-        createPool();
-    };
+
+                if (
+                    (res as { status: BuildSignAndSubmitStatuses }).status ===
+                    BuildSignAndSubmitStatuses.pending
+                ) {
+                    ToastService.showSuccessToast('More signatures required to complete');
+                    return;
+                }
+                const poolAddress = SorobanService.getContactIdFromHash(
+                    res.value()[1].value().value().toString('hex'),
+                );
+                ToastService.showSuccessToast('Pool successfully created');
+                history.push(`${AmmRoutes.analytics}${poolAddress}`);
+            },
+        );
 
     const createStablePool = () => {
         if (
@@ -373,27 +386,7 @@ const CreatePool = () => {
             [firstAsset, secondAsset, thirdAsset, fourthAsset].filter(asset => asset !== null),
             Number(stableFee),
         )
-            .then(tx =>
-                account.signAndSubmitTx(tx, true).then(res => {
-                    setPending(false);
-                    if (!res) {
-                        return;
-                    }
-
-                    if (
-                        (res as { status: BuildSignAndSubmitStatuses }).status ===
-                        BuildSignAndSubmitStatuses.pending
-                    ) {
-                        ToastService.showSuccessToast('More signatures required to complete');
-                        return;
-                    }
-                    const poolAddress = SorobanService.getContactIdFromHash(
-                        res.value()[1].value().value().toString('hex'),
-                    );
-                    ToastService.showSuccessToast('Pool successfully created');
-                    history.push(`${AmmRoutes.analytics}${poolAddress}`);
-                }),
-            )
+            .then(tx => signAndSubmitCreation(tx))
             .catch(e => {
                 ToastService.showErrorToast(e.message ?? e.toString());
                 setPending(false);
@@ -420,34 +413,21 @@ const CreatePool = () => {
             secondAsset,
             constantFee,
         )
-            .then(tx =>
-                account.signAndSubmitTx(tx, true).then(res => {
-                    setPending(false);
-                    if (!res) {
-                        return;
-                    }
-
-                    if (
-                        (res as { status: BuildSignAndSubmitStatuses }).status ===
-                        BuildSignAndSubmitStatuses.pending
-                    ) {
-                        ToastService.showSuccessToast('More signatures required to complete');
-                        return;
-                    }
-                    const poolAddress = SorobanService.getContactIdFromHash(
-                        res.value()[1].value().value().toString('hex'),
-                    );
-                    ToastService.showSuccessToast('Pool successfully created');
-                    history.push(`${AmmRoutes.analytics}${poolAddress}`);
-                }),
-            )
+            .then(tx => signAndSubmitCreation(tx))
             .catch(e => {
                 ToastService.showErrorToast(e.message ?? e.toString());
                 setPending(false);
             });
     };
 
-    const onStableFeeChane = value => {
+    const createPool = () => {
+        if (type === POOL_TYPE.stable) {
+            return createStablePool();
+        }
+        createConstantPool();
+    };
+
+    const onStableFeeChane = (value: string) => {
         if (Number.isNaN(Number(value))) {
             return;
         }
@@ -459,6 +439,19 @@ const CreatePool = () => {
                 : value;
 
         setStableFee(roundedValue);
+    };
+
+    const createPoolWithWarning = () => {
+        const showPurpose = JSON.parse(localStorage.getItem(SHOW_PURPOSE_ALIAS_MAIN_NET) || 'true');
+        if (showPurpose) {
+            ModalService.openModal(MainNetWarningModal, {}, false).then(({ isConfirmed }) => {
+                if (isConfirmed) {
+                    createPool();
+                }
+            });
+            return;
+        }
+        createPool();
     };
 
     if (!createInfo) {
@@ -480,7 +473,7 @@ const CreatePool = () => {
             <FormWrap>
                 <Content>
                     <StyledForm
-                        onSubmit={event => {
+                        onSubmit={(event: React.SyntheticEvent<HTMLFormElement>) => {
                             event.preventDefault();
                             event.stopPropagation();
                         }}
@@ -650,7 +643,9 @@ const CreatePool = () => {
                                         }
                                         placeholder={STABLE_POOL_FEE_PERCENTS.min}
                                         value={stableFee}
-                                        onChange={e => onStableFeeChane(e.target.value)}
+                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                            onStableFeeChane(e.target.value)
+                                        }
                                     />
                                 </FormRow>
                             ) : (

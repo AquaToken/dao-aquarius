@@ -1,6 +1,9 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import About from './components/About/About';
 import IceBlock from './components/IceBlock/IceBlock';
 import MainBlock from './components/MainBlock/MainBlock';
@@ -9,8 +12,6 @@ import SupportedBy from './components/SupportedBy/SupportedBy';
 
 import Community from '../../common/components/Community/Community';
 import Subscribe from '../../common/components/Subscribe/Subscribe';
-import { respondDown } from '../../common/mixins';
-import { Breakpoints, COLORS } from '../../common/styles';
 
 const Container = styled.div`
     height: 100%;

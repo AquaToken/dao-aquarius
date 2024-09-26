@@ -1,14 +1,20 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
+import { formatBalance } from 'helpers/format-number';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints } from 'web/styles';
+
 import Button from 'basics/buttons/Button';
 
-import { formatBalance } from '../../../../../common/helpers/helpers';
-import { respondDown } from '../../../../../common/mixins';
-import { ModalDescription, ModalTitle } from '../../../../../common/modals/atoms/ModalAtoms';
+import {
+    ModalDescription,
+    ModalProps,
+    ModalTitle,
+} from '../../../../../common/modals/atoms/ModalAtoms';
 import GetAquaModal from '../../../../../common/modals/GetAquaModal/GetAquaModal';
 import { ModalService } from '../../../../../common/services/globalServices';
-import { Breakpoints } from '../../../../../common/styles';
 
 const StyledButton = styled(Button)`
     margin-top: 7.2rem;
@@ -24,7 +30,14 @@ const BoldText = styled.span`
     font-weight: bold;
 `;
 
-const NotEnoughAquaModal = ({ close, params }): JSX.Element => {
+interface NotEnoughAquaModalParams {
+    cost: number;
+}
+
+const NotEnoughAquaModal = ({
+    close,
+    params,
+}: ModalProps<NotEnoughAquaModalParams>): React.ReactNode => {
     const { cost } = params;
     return (
         <>

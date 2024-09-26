@@ -1,12 +1,17 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
+import { respondDown } from 'web/mixins';
+import { Breakpoints } from 'web/styles';
+
 import Button from 'basics/buttons/Button';
 import ExternalLink from 'basics/ExternalLink';
 
-import { respondDown } from '../../../../common/mixins';
-import { ModalDescription, ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
-import { Breakpoints } from '../../../../common/styles';
+import {
+    ModalDescription,
+    ModalProps,
+    ModalTitle,
+} from '../../../../common/modals/atoms/ModalAtoms';
 
 const Container = styled.div`
     display: flex;
@@ -27,7 +32,7 @@ const Links = styled.div`
     }
 `;
 
-const TemporarilyNotWork = ({ close }) => (
+const TemporarilyNotWork = ({ close }: ModalProps<never>) => (
     <Container>
         <ModalTitle>Maintenance in progress</ModalTitle>
         <ModalDescription>

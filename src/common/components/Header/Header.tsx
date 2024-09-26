@@ -2,17 +2,19 @@ import * as React from 'react';
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { commonMaxWidth, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS, Z_INDEX } from 'web/styles';
+
 import AquaLogo from 'assets/aqua-logo.svg';
 import IconProfile from 'assets/icon-profile.svg';
 
 import AccountBlock from './AccountBlock/AccountBlock';
 
 import { MainRoutes } from '../../../routes';
-import useAuthStore from '../../../store/authStore/useAuthStore';
-import { commonMaxWidth, respondDown } from '../../mixins';
 import ChooseLoginMethodModal from '../../modals/ChooseLoginMethodModal';
 import { ModalService } from '../../services/globalServices';
-import { Breakpoints, COLORS, Z_INDEX } from '../../styles';
 
 const HeaderBlock = styled.header`
     ${commonMaxWidth};

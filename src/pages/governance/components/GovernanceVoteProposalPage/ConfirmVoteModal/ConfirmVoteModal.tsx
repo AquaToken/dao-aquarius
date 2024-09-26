@@ -3,6 +3,17 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
+import { getDateString } from 'helpers/date';
+import ErrorHandler from 'helpers/error-handler';
+import { formatBalance, roundToPrecision } from 'helpers/format-number';
+import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
+
+import { LoginTypes } from 'store/authStore/types';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { flexAllCenter, flexRowSpaceBetween } from 'web/mixins';
+import { COLORS } from 'web/styles';
+
 import Aqua from 'assets/aqua-logo-small.svg';
 import Ice from 'assets/ice-logo.svg';
 import Fail from 'assets/icon-fail.svg';
@@ -14,15 +25,7 @@ import Input from 'basics/inputs/Input';
 import RangeInput from 'basics/inputs/RangeInput';
 import Select from 'basics/inputs/Select';
 
-import ErrorHandler from '../../../../../common/helpers/error-handler';
-import {
-    formatBalance,
-    getDateString,
-    roundToPrecision,
-} from '../../../../../common/helpers/helpers';
-import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
 import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
-import { flexAllCenter, flexRowSpaceBetween } from '../../../../../common/mixins';
 import {
     ModalDescription,
     ModalProps,
@@ -41,10 +44,7 @@ import {
     ICE_ISSUER,
 } from '../../../../../common/services/stellar.service';
 import { BuildSignAndSubmitStatuses } from '../../../../../common/services/wallet-connect.service';
-import { COLORS } from '../../../../../common/styles';
 import { LockerRoutes } from '../../../../../routes';
-import { LoginTypes } from '../../../../../store/authStore/types';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
 import { SimpleProposalOptions } from '../../../pages/GovernanceVoteProposalPage';
 
 const MINIMUM_AMOUNT = 0.0000001;

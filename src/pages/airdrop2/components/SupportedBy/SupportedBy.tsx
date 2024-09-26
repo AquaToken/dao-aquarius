@@ -1,6 +1,9 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Bitnumb from 'assets/bitnumb.svg';
 import Coinone from 'assets/coinone.svg';
 import Freighter from 'assets/freighter.svg';
@@ -14,9 +17,6 @@ import StellarX from 'assets/stellarx-logo.svg';
 import Upbit from 'assets/upbit.svg';
 
 import ExternalLink from 'basics/ExternalLink';
-
-import { respondDown } from '../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../common/styles';
 
 const Container = styled.section`
     position: relative;

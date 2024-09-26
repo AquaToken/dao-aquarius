@@ -2,6 +2,13 @@ import * as React from 'react';
 import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 
+import { getDateString } from 'helpers/date';
+
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { commonMaxWidth, flexAllCenter, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import ArrowDown from 'assets/icon-arrow-down.svg';
 import ArrowLeft from 'assets/icon-arrow-left.svg';
 import IconEdit from 'assets/icon-edit.svg';
@@ -11,12 +18,8 @@ import CircleButton from 'basics/buttons/CircleButton';
 import ExternalLink from 'basics/ExternalLink';
 import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
 
-import { getDateString } from '../../../../../common/helpers/helpers';
 import { useIsOnViewport, useIsOverScrolled } from '../../../../../common/hooks/useIsOnViewport';
-import { commonMaxWidth, flexAllCenter, respondDown } from '../../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
 import { GovernanceRoutes } from '../../../../../routes';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
 import { Proposal } from '../../../api/types';
 import { statePage } from '../../../pages/GovernanceProposalCreationPage';
 import CurrentResults from '../CurrentResults/CurrentResults';

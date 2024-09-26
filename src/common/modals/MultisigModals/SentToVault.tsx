@@ -1,13 +1,14 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
+import { respondDown } from 'web/mixins';
+import { Breakpoints } from 'web/styles';
+
 import Vault from 'assets/vault.svg';
 
 import Button from 'basics/buttons/Button';
 
-import { respondDown } from '../../mixins';
-import { Breakpoints } from '../../styles';
-import { ModalDescription, ModalTitle } from '../atoms/ModalAtoms';
+import { ModalDescription, ModalProps, ModalTitle } from '../atoms/ModalAtoms';
 
 const Container = styled.div`
     width: 52.3rem;
@@ -30,7 +31,7 @@ const StyledButton = styled(Button)`
         `}
 `;
 
-const SentToVault = ({ close }) => (
+const SentToVault = ({ close }: ModalProps<never>) => (
     <Container>
         <Vault />
         <Title>More signatures required</Title>

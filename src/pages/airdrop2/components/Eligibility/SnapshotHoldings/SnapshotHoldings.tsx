@@ -2,6 +2,11 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { formatBalance } from 'helpers/format-number';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Aqua from 'assets/aqua-logo-small.svg';
 import Xlm from 'assets/xlm-logo.svg';
 import YXlm from 'assets/yxlm-logo.svg';
@@ -10,9 +15,6 @@ import ExternalLink from 'basics/ExternalLink';
 
 import { BalanceLabel } from 'pages/locker/components/LockerAccountPage/Portfolio/Portfolio';
 
-import { formatBalance } from '../../../../../common/helpers/helpers';
-import { respondDown } from '../../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
 import { LockerRoutes } from '../../../../../routes';
 import { AccountEligibility } from '../../../api/types';
 

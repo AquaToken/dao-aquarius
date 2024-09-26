@@ -3,6 +3,14 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { isChrome, isMobile } from 'helpers/browser';
+
+import { LoginTypes } from 'store/authStore/types';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Freighter from 'assets/freighter-logo.svg';
 import BG from 'assets/get-extension-bg.svg';
 import ArrowRightIcon from 'assets/icon-arrow-right.svg';
@@ -19,10 +27,6 @@ import LedgerLogin from './LedgerModals/LedgerLogin';
 import LoginWithPublic from './LoginWithPublic';
 import LoginWithSecret from './LoginWithSecret';
 
-import { LoginTypes } from '../../store/authStore/types';
-import useAuthStore from '../../store/authStore/useAuthStore';
-import { isChrome, isMobile } from '../helpers/browser';
-import { respondDown } from '../mixins';
 import {
     FreighterService,
     LedgerService,
@@ -31,7 +35,6 @@ import {
     ToastService,
     WalletConnectService,
 } from '../services/globalServices';
-import { Breakpoints, COLORS } from '../styles';
 
 const BgStyled = styled(BG)`
     ${respondDown(Breakpoints.md)`

@@ -1,13 +1,13 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
+import { respondDown } from 'web/mixins';
+import { Breakpoints } from 'web/styles';
+
 import Button from 'basics/buttons/Button';
 import ExternalLink from 'basics/ExternalLink';
 
 import { ModalDescription } from './atoms/ModalAtoms';
-
-import { respondDown } from '../mixins';
-import { Breakpoints } from '../styles';
 
 const Container = styled.div`
     width: 52.8rem;

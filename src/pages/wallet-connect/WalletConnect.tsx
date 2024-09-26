@@ -2,11 +2,12 @@ import * as React from 'react';
 import { useEffect } from 'react';
 import { Redirect, useLocation } from 'react-router-dom';
 
+import useAuthStore from 'store/authStore/useAuthStore';
+
 import PageLoader from 'basics/loaders/PageLoader';
 
 import { WalletConnectService } from '../../common/services/globalServices';
 import { MainRoutes } from '../../routes';
-import useAuthStore from '../../store/authStore/useAuthStore';
 
 // URL example: https://aqua.network/wallet-connect?redirect=vote
 

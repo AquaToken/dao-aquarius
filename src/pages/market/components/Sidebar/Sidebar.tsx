@@ -2,6 +2,15 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { formatBalance } from 'helpers/format-number';
+
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { Asset } from 'types/stellar';
+
+import { flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Aqua from 'assets/aqua-logo-small.svg';
 import Ice from 'assets/ice-logo.svg';
 import IconDown from 'assets/icon-down-percent.svg';
@@ -10,10 +19,12 @@ import IconUp from 'assets/icon-up-percent.svg';
 import Button from 'basics/buttons/Button';
 import DotsLoader from 'basics/loaders/DotsLoader';
 
+import { PairStats, TotalStats } from 'pages/vote/api/types';
+import { AQUA, DOWN_ICE, UP_ICE } from 'pages/vote/components/MainPage/MainPage';
+import { getPercent } from 'pages/vote/components/MainPage/Table/VoteAmount/VoteAmount';
+
 import VotesProgressLine from './VotesProgressLine/VotesProgressLine';
 
-import { formatBalance } from '../../../../common/helpers/helpers';
-import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
 import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
 import { ModalService, StellarService } from '../../../../common/services/globalServices';
 import {
@@ -24,11 +35,7 @@ import {
     StellarEvents,
     UP_ICE_CODE,
 } from '../../../../common/services/stellar.service';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import useAuthStore from '../../../../store/authStore/useAuthStore';
 import CreatePairModal from '../../../vote/components/MainPage/CreatePairModal/CreatePairModal';
-import { AQUA, DOWN_ICE, UP_ICE } from '../../../vote/components/MainPage/MainPage';
-import { getPercent } from '../../../vote/components/MainPage/Table/VoteAmount/VoteAmount';
 import VoteButton from '../../../vote/components/MainPage/Table/VoteButton/VoteButton';
 
 const Container = styled.aside`
@@ -125,7 +132,23 @@ const IceLogo = styled(Ice)`
     margin-right: 0.8rem;
 `;
 
-const Sidebar = ({ votesData, base, counter, totalStats, onVoteClick, isPairSelected }) => {
+interface SidebarProps {
+    votesData: PairStats;
+    base: Asset;
+    counter: Asset;
+    totalStats: TotalStats;
+    onVoteClick: (value: PairStats) => void;
+    isPairSelected: boolean;
+}
+
+const Sidebar = ({
+    votesData,
+    base,
+    counter,
+    totalStats,
+    onVoteClick,
+    isPairSelected,
+}: SidebarProps): React.ReactNode => {
     const { isLogged, account } = useAuthStore();
 
     const createPair = () => {

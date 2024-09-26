@@ -2,6 +2,18 @@ import * as React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
+import { getAssetString } from 'helpers/assets';
+import { formatBalance } from 'helpers/format-number';
+import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
+
+import { LoginTypes } from 'store/authStore/types';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { Asset as AssetType, Int128Parts } from 'types/stellar';
+
+import { customScroll, flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Arrow from 'assets/icon-arrow-right-long.svg';
 import Info from 'assets/icon-info.svg';
 
@@ -11,10 +23,9 @@ import Input from 'basics/inputs/Input';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
-import { formatBalance } from '../../../../common/helpers/helpers';
-import { openCurrentWalletIfExist } from '../../../../common/helpers/wallet-connect-helpers';
-import { customScroll, flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
-import { ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
+import { PoolExtended } from 'pages/amm/api/types';
+
+import { ModalProps, ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
 import MainNetWarningModal, {
     SHOW_PURPOSE_ALIAS_MAIN_NET,
 } from '../../../../common/modals/MainNetWarningModal';
@@ -25,10 +36,6 @@ import {
     ToastService,
 } from '../../../../common/services/globalServices';
 import { BuildSignAndSubmitStatuses } from '../../../../common/services/wallet-connect.service';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import { getAssetString } from '../../../../store/assetsStore/actions';
-import { LoginTypes } from '../../../../store/authStore/types';
-import useAuthStore from '../../../../store/authStore/useAuthStore';
 import Asset from '../../../vote/components/AssetDropdown/Asset';
 import SuccessModal from '../SuccessModal/SuccessModal';
 
@@ -153,7 +160,17 @@ const TooltipRow = styled.div`
     }
 `;
 
-const DepositToPool = ({ params }) => {
+interface DepositToPoolParams {
+    pool: PoolExtended;
+    isModal: boolean;
+    baseAmount: string;
+    counterAmount: string;
+    base: AssetType;
+    counter: AssetType;
+    onUpdate: () => void;
+}
+
+const DepositToPool = ({ params }: ModalProps<DepositToPoolParams>) => {
     const { account } = useAuthStore();
     const { pool, isModal = true, baseAmount, counterAmount, base, counter, onUpdate } = params;
 
@@ -174,7 +191,7 @@ const DepositToPool = ({ params }) => {
             new Map(
                 pool.assets.map((asset, index) => [
                     getAssetString(asset),
-                    pool.reserves[index] / 1e7,
+                    Number(pool.reserves[index]) / 1e7,
                 ]),
             ),
         [pool],
@@ -186,9 +203,7 @@ const DepositToPool = ({ params }) => {
     const [pending, setPending] = useState(false);
 
     const hasAllAmounts = useMemo(
-        () =>
-            // @ts-ignore
-            [...amounts.values()].every(value => Boolean(+value)),
+        () => [...amounts.values()].every(value => Boolean(+value)),
         [amounts],
     );
 
@@ -196,7 +211,7 @@ const DepositToPool = ({ params }) => {
         const firstAssetString = getAssetString(pool.assets[0]);
 
         const amountBeforeDeposit =
-            (reserves.get(firstAssetString) * accountShare) / (pool.total_share / 1e7);
+            (reserves.get(firstAssetString) * accountShare) / (Number(pool.total_share) / 1e7);
 
         if (Number(pool.total_share) === 0) {
             return {
@@ -207,7 +222,7 @@ const DepositToPool = ({ params }) => {
 
         if (hasAllAmounts) {
             return {
-                sharesBefore: (accountShare / (pool.total_share / 1e7)) * 100,
+                sharesBefore: (accountShare / (Number(pool.total_share) / 1e7)) * 100,
                 sharesAfter:
                     ((+amounts.get(firstAssetString) + amountBeforeDeposit) /
                         (reserves.get(firstAssetString) + +amounts.get(firstAssetString))) *
@@ -216,13 +231,13 @@ const DepositToPool = ({ params }) => {
         }
 
         return {
-            sharesBefore: (accountShare / (pool.total_share / 1e7)) * 100,
+            sharesBefore: (accountShare / (Number(pool.total_share) / 1e7)) * 100,
             sharesAfter: null,
         };
     }, [amounts, pool, reserves, accountShare]);
 
     const getDailyRewards = useCallback(
-        percent => {
+        (percent: number) => {
             const secondsInDay = 60 * 60 * 24;
 
             const poolDailyRewards = (Number(pool.reward_tps) / 1e7) * secondsInDay;
@@ -279,7 +294,7 @@ const DepositToPool = ({ params }) => {
                 hash = tx.hash().toString('hex');
                 return account.signAndSubmitTx(tx, true);
             })
-            .then(res => {
+            .then((res: { value?: () => unknown; status?: BuildSignAndSubmitStatuses }) => {
                 setPending(false);
 
                 if (!res) {
@@ -304,7 +319,9 @@ const DepositToPool = ({ params }) => {
 
                 ModalService.openModal(SuccessModal, {
                     assets: pool.assets,
-                    amounts: resultAmounts.map(value => SorobanService.i128ToInt(value.value())),
+                    amounts: resultAmounts.map(value =>
+                        SorobanService.i128ToInt(value.value() as Int128Parts),
+                    ),
                     title: 'Deposit Successful',
                     hash,
                 });
@@ -330,7 +347,7 @@ const DepositToPool = ({ params }) => {
         onSubmit();
     };
 
-    const onChangeInput = (asset, value) => {
+    const onChangeInput = (asset: AssetType, value: string) => {
         if (Number.isNaN(Number(value))) {
             return;
         }
@@ -456,14 +473,15 @@ const DepositToPool = ({ params }) => {
                         </DescriptionRow>
                         <DescriptionRow>
                             <span>Fee</span>
-                            <span>{(pool.fee * 100).toFixed(2)} %</span>
+                            <span>{(Number(pool.fee) * 100).toFixed(2)} %</span>
                         </DescriptionRow>
                         <DescriptionRow>
                             <span>Liquidity</span>
                             <span>
                                 {pool.liquidity
                                     ? `$${formatBalance(
-                                          (pool.liquidity * StellarService.priceLumenUsd) / 1e7,
+                                          (Number(pool.liquidity) * StellarService.priceLumenUsd) /
+                                              1e7,
                                           true,
                                       )}`
                                     : '0'}
@@ -524,7 +542,7 @@ const DepositToPool = ({ params }) => {
                                             ? formatBalance(
                                                   (+reserves.get(getAssetString(asset)) *
                                                       accountShare) /
-                                                      (pool.total_share / 1e7),
+                                                      (Number(pool.total_share) / 1e7),
                                                   true,
                                               )
                                             : 0}
@@ -536,7 +554,7 @@ const DepositToPool = ({ params }) => {
                                         (+pool.total_share
                                             ? (+reserves.get(getAssetString(asset)) *
                                                   accountShare) /
-                                              (pool.total_share / 1e7)
+                                              (Number(pool.total_share) / 1e7)
                                             : 0) + +amounts.get(getAssetString(asset)),
                                         true,
                                     )

@@ -1,14 +1,15 @@
 import * as React from 'react';
 import { PropsWithChildren, ErrorInfo } from 'react';
-import { RouteComponentProps } from 'react-router';
+import * as Router from 'react-router';
 import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { flexAllCenter } from 'web/mixins';
+import { COLORS } from 'web/styles';
+
 import Button from 'basics/buttons/Button';
 
-import { flexAllCenter } from '../../mixins';
 import SentryService from '../../services/sentry.service';
-import { COLORS } from '../../styles';
 
 interface State {
     isError: boolean;
@@ -26,7 +27,7 @@ const Title = styled.h3`
     margin-bottom: 5rem;
 `;
 
-class ErrorBoundary extends React.Component<PropsWithChildren<RouteComponentProps>, State> {
+class ErrorBoundary extends React.Component<PropsWithChildren<Router.RouteComponentProps>, State> {
     public state = { isError: false };
 
     private unsubscribe: VoidFunction | null = null;

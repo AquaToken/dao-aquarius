@@ -3,23 +3,31 @@ import * as React from 'react';
 import { useMemo, useState } from 'react';
 import styled from 'styled-components';
 
+import { getAssetString } from 'helpers/assets';
+import ErrorHandler from 'helpers/error-handler';
+import { formatBalance } from 'helpers/format-number';
+
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { Asset, PoolClassic } from 'types/stellar';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
 import RangeInput from 'basics/inputs/RangeInput';
 
+import { Pool } from 'pages/amm/api/types';
+import { PairContainer } from 'pages/amm/components/WithdrawFromPool/WithdrawFromPool';
+import AssetLogo from 'pages/vote/components/AssetDropdown/AssetLogo';
+import Market from 'pages/vote/components/common/Market';
+
 import MigrateLiquidityStep2 from './MigrateLiquidityStep2';
 
-import { PairContainer } from '../../../pages/amm/components/WithdrawFromPool/WithdrawFromPool';
-import AssetLogo from '../../../pages/vote/components/AssetDropdown/AssetLogo';
-import Market from '../../../pages/vote/components/common/Market';
-import useAuthStore from '../../../store/authStore/useAuthStore';
-import ErrorHandler from '../../helpers/error-handler';
-import { formatBalance, getAssetString } from '../../helpers/helpers';
-import { respondDown } from '../../mixins';
 import { ModalService, StellarService, ToastService } from '../../services/globalServices';
 import { BuildSignAndSubmitStatuses } from '../../services/wallet-connect.service';
-import { Breakpoints, COLORS } from '../../styles';
-import { ModalContainer, ModalTitle } from '../atoms/ModalAtoms';
+import { ModalContainer, ModalProps, ModalTitle } from '../atoms/ModalAtoms';
 
 export const Stepper = styled.div`
     font-size: 1.4rem;
@@ -74,7 +82,15 @@ const AmountWithdraw = styled.span`
     `}
 `;
 
-const MigrateLiquidityStep1 = ({ params, confirm }) => {
+interface MigrateLiquidityStep1Params {
+    poolsToMigrate: Pool[];
+    base: Asset;
+    counter: Asset;
+    pool: PoolClassic;
+    onUpdate: () => void;
+}
+
+const MigrateLiquidityStep1 = ({ params, confirm }: ModalProps<MigrateLiquidityStep1Params>) => {
     const { base, counter, pool, poolsToMigrate, onUpdate } = params;
 
     const { account } = useAuthStore();
@@ -198,7 +214,7 @@ const MigrateLiquidityStep1 = ({ params, confirm }) => {
             <StyledInput
                 label="Amount to migrate"
                 value={percent.toString()}
-                onChange={e => setPercentValue(e)}
+                onChange={(e: React.SyntheticEvent<HTMLInputElement>) => setPercentValue(e)}
                 postfix="%"
             />
             <RangeInput onChange={setPercent} value={Number(percent)} />

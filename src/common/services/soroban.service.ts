@@ -4,12 +4,14 @@ import BigNumber from 'bignumber.js';
 import binascii from 'binascii';
 import { sha256 } from 'js-sha256';
 
+import { getAssetString } from 'helpers/assets';
+
 import SimulateTransactionSuccessResponse = StellarSdk.SorobanRpc.Api.SimulateTransactionSuccessResponse;
+
+import { SorobanErrorHandler, SorobanPrepareTxErrorHandler } from 'helpers/error-handler';
 
 import { ModalService, SorobanService, ToastService } from './globalServices';
 
-import { getAssetString } from '../../store/assetsStore/actions';
-import { SorobanErrorHandler, SorobanPrepareTxErrorHandler } from '../helpers/error-handler';
 import RestoreContractModal from '../modals/RestoreContractModal/RestoreContractModal';
 
 import SendTransactionResponse = StellarSdk.SorobanRpc.Api.SendTransactionResponse;
@@ -278,8 +280,8 @@ export default class SorobanServiceClass {
 
         return this.server
             .getAccount(publicKey)
-            .then(acc => {
-                return new StellarSdk.TransactionBuilder(acc, {
+            .then(acc =>
+                new StellarSdk.TransactionBuilder(acc, {
                     fee: BASE_FEE,
                     networkPassphrase: StellarSdk.Networks.PUBLIC,
                 })
@@ -290,8 +292,8 @@ export default class SorobanServiceClass {
                             .build(),
                     )
                     .setTimeout(StellarSdk.TimeoutInfinite)
-                    .build();
-            })
+                    .build(),
+            )
             .then(tx => this.prepareTransaction(tx));
     }
 
@@ -302,8 +304,8 @@ export default class SorobanServiceClass {
 
         return this.server
             .getAccount(publicKey)
-            .then(acc => {
-                return new StellarSdk.TransactionBuilder(acc, {
+            .then(acc =>
+                new StellarSdk.TransactionBuilder(acc, {
                     fee: BASE_FEE,
                     networkPassphrase: StellarSdk.Networks.PUBLIC,
                 })
@@ -318,8 +320,8 @@ export default class SorobanServiceClass {
                             .build(),
                     )
                     .setTimeout(StellarSdk.TimeoutInfinite)
-                    .build();
-            })
+                    .build(),
+            )
             .then(tx => this.prepareTransaction(tx));
     }
 
@@ -519,12 +521,12 @@ export default class SorobanServiceClass {
             AMM_CONTRACT_METHOD.GET_CREATION_FEE_TOKEN,
         )
             .then(tx => this.simulateTx(tx) as Promise<SimulateTransactionSuccessResponse>)
-            .then(({ result }) => {
-                return this.getAssetFromContractId(
+            .then(({ result }) =>
+                this.getAssetFromContractId(
                     // @ts-ignore
                     this.getContactIdFromHash(result.retval.value().value().toString('hex')),
-                );
-            });
+                ),
+            );
     }
 
     getCreationFee(type: POOL_TYPE) {
@@ -536,9 +538,7 @@ export default class SorobanServiceClass {
                 : AMM_CONTRACT_METHOD.GET_STABLE_CREATION_FEE,
         )
             .then(tx => this.simulateTx(tx) as Promise<SimulateTransactionSuccessResponse>)
-            .then(({ result }) => {
-                return this.i128ToInt(result.retval.value() as xdr.Int128Parts);
-            });
+            .then(({ result }) => this.i128ToInt(result.retval.value() as xdr.Int128Parts));
     }
 
     getCreationFeeInfo() {
@@ -555,8 +555,8 @@ export default class SorobanServiceClass {
 
     getPoolData(accountId: string, base: Asset, counter: Asset, [poolId, poolBytes]) {
         return this.getPoolShareId(poolId)
-            .then(shareHash => {
-                return Promise.all([
+            .then(shareHash =>
+                Promise.all([
                     this.getContactIdFromHash(shareHash),
                     this.getTokenBalance(this.getContactIdFromHash(shareHash), accountId),
                     this.getTokenBalance(base, poolId),
@@ -564,8 +564,8 @@ export default class SorobanServiceClass {
                     this.getPoolRewards(accountId, poolId),
                     this.getPoolInfo(accountId, poolId),
                     this.getTotalShares(poolId),
-                ]);
-            })
+                ]),
+            )
             .then(
                 ([shareId, share, baseAmount, counterAmount, rewardsData, info, totalShares]) => ({
                     id: poolId,
@@ -613,9 +613,7 @@ export default class SorobanServiceClass {
             poolId,
             AMM_CONTRACT_METHOD.GET_RESERVES,
         )
-            .then(tx => {
-                return this.simulateTx(tx) as Promise<SimulateTransactionSuccessResponse>;
-            })
+            .then(tx => this.simulateTx(tx) as Promise<SimulateTransactionSuccessResponse>)
             .then(({ result }) => {
                 if (result) {
                     return this.orderTokens(assets).reduce((acc, asset, index) => {
@@ -681,11 +679,12 @@ export default class SorobanServiceClass {
             this.assetToScVal(counter),
             this.amountToUint128(amount),
         )
-            .then(tx => {
-                return this.server.simulateTransaction(
-                    tx,
-                ) as Promise<SimulateTransactionSuccessResponse>;
-            })
+            .then(
+                tx =>
+                    this.server.simulateTransaction(
+                        tx,
+                    ) as Promise<SimulateTransactionSuccessResponse>,
+            )
             .then(({ result }) => {
                 if (result) {
                     // @ts-ignore
@@ -816,10 +815,10 @@ export default class SorobanServiceClass {
     private orderTokens(assets: Asset[]) {
         for (let i = 0; i < assets.length; i++) {
             for (let j = 0; j < assets.length - 1; j++) {
-                let hash1 = parseInt(this.getAssetContractHash(assets[j]), 16);
-                let hash2 = parseInt(this.getAssetContractHash(assets[j + 1]), 16);
+                const hash1 = parseInt(this.getAssetContractHash(assets[j]), 16);
+                const hash2 = parseInt(this.getAssetContractHash(assets[j + 1]), 16);
                 if (hash1 > hash2) {
-                    let temp = assets[j];
+                    const temp = assets[j];
                     assets[j] = assets[j + 1];
                     assets[j + 1] = temp;
                 }

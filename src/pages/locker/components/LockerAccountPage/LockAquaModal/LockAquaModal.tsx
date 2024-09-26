@@ -2,17 +2,24 @@ import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
 
+import { getDateString } from 'helpers/date';
+import ErrorHandler from 'helpers/error-handler';
+import { formatBalance } from 'helpers/format-number';
+import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
+
+import { LoginTypes } from 'store/authStore/types';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { customScroll, flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Aqua from 'assets/aqua-logo-small.svg';
 import Ice from 'assets/ice-logo.svg';
 import ArrowDown from 'assets/icon-arrow-down-purple.svg';
 
 import Button from 'basics/buttons/Button';
 
-import ErrorHandler from '../../../../../common/helpers/error-handler';
-import { formatBalance, getDateString } from '../../../../../common/helpers/helpers';
-import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
 import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
-import { customScroll, flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
 import {
     ModalDescription,
     ModalProps,
@@ -20,9 +27,6 @@ import {
 } from '../../../../../common/modals/atoms/ModalAtoms';
 import { StellarService, ToastService } from '../../../../../common/services/globalServices';
 import { BuildSignAndSubmitStatuses } from '../../../../../common/services/wallet-connect.service';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import { LoginTypes } from '../../../../../store/authStore/types';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
 
 const ModalContainer = styled.div`
     width: 52.8rem;

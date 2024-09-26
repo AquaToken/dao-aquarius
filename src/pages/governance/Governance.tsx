@@ -3,9 +3,10 @@ import { lazy } from 'react';
 import reactQuillCSS from 'react-quill/dist/quill.snow.css';
 import { Redirect, Route, Switch } from 'react-router-dom';
 
+import useAuthStore from 'store/authStore/useAuthStore';
+
 import NotFoundPage from '../../common/components/NotFoundPage/NotFoundPage';
 import { GovernanceRoutes } from '../../routes';
-import useAuthStore from '../../store/authStore/useAuthStore';
 
 export const ReactQuillCSS = reactQuillCSS;
 

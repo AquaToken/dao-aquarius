@@ -2,20 +2,27 @@ import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
 
+import ErrorHandler from 'helpers/error-handler';
+import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
+
+import { LoginTypes } from 'store/authStore/types';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Ice from 'assets/ice-logo.svg';
 
 import Button from 'basics/buttons/Button';
 
-import ErrorHandler from '../../../../../common/helpers/error-handler';
-import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
 import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
-import { respondDown } from '../../../../../common/mixins';
-import { ModalDescription, ModalTitle } from '../../../../../common/modals/atoms/ModalAtoms';
+import {
+    ModalDescription,
+    ModalProps,
+    ModalTitle,
+} from '../../../../../common/modals/atoms/ModalAtoms';
 import { StellarService, ToastService } from '../../../../../common/services/globalServices';
 import { BuildSignAndSubmitStatuses } from '../../../../../common/services/wallet-connect.service';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import { LoginTypes } from '../../../../../store/authStore/types';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
 
 const ModalContainer = styled.div`
     width: 52.8rem;
@@ -65,7 +72,7 @@ const AssetsBlock = styled.div`
     border-bottom: 0.1rem dashed ${COLORS.gray};
 `;
 
-const AddIceTrustlinesModal = ({ confirm }) => {
+const AddIceTrustlinesModal = ({ confirm }: ModalProps<never>) => {
     const [pending, setPending] = useState(false);
     const { account } = useAuthStore();
     const isMounted = useIsMounted();

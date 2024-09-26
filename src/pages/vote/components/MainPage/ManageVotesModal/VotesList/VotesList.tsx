@@ -2,6 +2,17 @@ import * as React from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
+import { getDateString } from 'helpers/date';
+import ErrorHandler from 'helpers/error-handler';
+import { formatBalance } from 'helpers/format-number';
+import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
+
+import { LoginTypes } from 'store/authStore/types';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Dislike from 'assets/icon-dislike-gray.svg';
 import LinkIcon from 'assets/icon-external-link.svg';
 
@@ -10,11 +21,9 @@ import Checkbox from 'basics/inputs/Checkbox';
 import Table, { CellAlign } from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
-import ErrorHandler from '../../../../../../common/helpers/error-handler';
-import { formatBalance, getDateString } from '../../../../../../common/helpers/helpers';
-import { openCurrentWalletIfExist } from '../../../../../../common/helpers/wallet-connect-helpers';
+import { MarketPair } from 'pages/profile/api/types';
+
 import { useIsMounted } from '../../../../../../common/hooks/useIsMounted';
-import { respondDown } from '../../../../../../common/mixins';
 import { StellarService, ToastService } from '../../../../../../common/services/globalServices';
 import {
     DOWN_ICE_CODE,
@@ -22,10 +31,6 @@ import {
     UP_ICE_CODE,
 } from '../../../../../../common/services/stellar.service';
 import { BuildSignAndSubmitStatuses } from '../../../../../../common/services/wallet-connect.service';
-import { Breakpoints, COLORS } from '../../../../../../common/styles';
-import { LoginTypes } from '../../../../../../store/authStore/types';
-import useAuthStore from '../../../../../../store/authStore/useAuthStore';
-import { MarketPair } from '../../../../../profile/api/types';
 import Market from '../../../common/Market';
 
 const CheckboxMobile = styled(Checkbox)`

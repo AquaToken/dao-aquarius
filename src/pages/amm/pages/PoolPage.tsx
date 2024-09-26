@@ -3,6 +3,17 @@ import { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { formatBalance } from 'helpers/format-number';
+import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
+
+import { LoginTypes } from 'store/authStore/types';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { Int128Parts } from 'types/stellar';
+
+import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import ArrowLeft from 'assets/icon-arrow-left.svg';
 
 import Button from 'basics/buttons/Button';
@@ -12,15 +23,7 @@ import PageLoader from 'basics/loaders/PageLoader';
 
 import MigrateToSorobanBanner from '../../../common/components/MigrateToSorobanBanner/MigrateToSorobanBanner';
 import NoTrustline from '../../../common/components/NoTrustline/NoTrustline';
-import { formatBalance } from '../../../common/helpers/helpers';
-import { openCurrentWalletIfExist } from '../../../common/helpers/wallet-connect-helpers';
 import { useUpdateIndex } from '../../../common/hooks/useUpdateIndex';
-import {
-    commonMaxWidth,
-    flexAllCenter,
-    flexRowSpaceBetween,
-    respondDown,
-} from '../../../common/mixins';
 import {
     SorobanService,
     StellarService,
@@ -28,10 +31,7 @@ import {
 } from '../../../common/services/globalServices';
 import { AQUA_CODE, AQUA_ISSUER } from '../../../common/services/stellar.service';
 import { BuildSignAndSubmitStatuses } from '../../../common/services/wallet-connect.service';
-import { Breakpoints, COLORS } from '../../../common/styles';
 import { AmmRoutes } from '../../../routes';
-import { LoginTypes } from '../../../store/authStore/types';
-import useAuthStore from '../../../store/authStore/useAuthStore';
 import Market from '../../vote/components/common/Market';
 import { getPool } from '../api/api';
 import { PoolExtended } from '../api/types';
@@ -196,7 +196,7 @@ const PoolPage = () => {
 
         SorobanService.getClaimRewardsTx(account.accountId(), pool.address)
             .then(tx => account.signAndSubmitTx(tx, true))
-            .then(res => {
+            .then((res: { status?: BuildSignAndSubmitStatuses; value: () => Int128Parts }) => {
                 if (!res) {
                     return;
                 }

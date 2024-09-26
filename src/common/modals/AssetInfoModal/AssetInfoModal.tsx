@@ -1,11 +1,22 @@
 import { StellarToml } from '@stellar/stellar-sdk';
+import * as React from 'react';
 import { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { getAssetDetails } from 'api/stellar-expert';
 
+import { getAssetString } from 'helpers/assets';
+import { getDateString } from 'helpers/date';
+import { formatBalance } from 'helpers/format-number';
+
+import useAssetsStore from 'store/assetsStore/useAssetsStore';
+
 import { ExpertAssetData } from 'types/api-stellar-expert';
+import { Asset as AssetType } from 'types/stellar';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
 
 import Mail from 'assets/email16.svg';
 import Git from 'assets/github16.svg';
@@ -18,14 +29,10 @@ import PageLoader from 'basics/loaders/PageLoader';
 
 import Asset from '../../../pages/vote/components/AssetDropdown/Asset';
 import { MainRoutes } from '../../../routes';
-import useAssetsStore from '../../../store/assetsStore/useAssetsStore';
 import NoTrustline from '../../components/NoTrustline/NoTrustline';
-import { formatBalance, getAssetString, getDateString } from '../../helpers/helpers';
-import { respondDown } from '../../mixins';
 import { StellarService } from '../../services/globalServices';
 import { AQUA_CODE, AQUA_ISSUER } from '../../services/stellar.service';
-import { Breakpoints, COLORS } from '../../styles';
-import { ModalContainer } from '../atoms/ModalAtoms';
+import { ModalContainer, ModalProps } from '../atoms/ModalAtoms';
 
 const Description = styled.p`
     font-size: 1.6rem;
@@ -99,7 +106,11 @@ const LinkStyled = styled(Link)`
     }
 `;
 
-const AssetInfoModal = ({ params, close }) => {
+interface AssetInfoModalParams {
+    asset: AssetType;
+}
+
+const AssetInfoModal = ({ params, close }: ModalProps<AssetInfoModalParams>): React.ReactNode => {
     const { asset } = params;
 
     const [tomlInfo, setTomlInfo] = useState<StellarToml.Api.StellarToml>({});
