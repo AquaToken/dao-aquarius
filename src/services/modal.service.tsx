@@ -3,11 +3,11 @@ import { ComponentClass, FunctionComponent } from 'react';
 
 import EventService from './event.service';
 
-import { ModalBody } from '../modals/atoms/ModalAtoms';
+import { ModalBody } from '../common/modals/atoms/ModalAtoms';
 
 type Modals = Array<{
     id: number;
-    modal: JSX.Element;
+    modal: React.ReactNode;
     closeModal: ({ isConfirmed }) => void;
     name: string;
 }>;
@@ -20,14 +20,14 @@ export default class ModalServiceClass {
         modalTemplate:
             | FunctionComponent<unknown>
             | ComponentClass<unknown>
-            | ((unknown) => JSX.Element),
+            | ((value: unknown) => React.ReactNode),
         params: unknown,
         hideClose = false,
         backgroundImage = null,
         disableClickOutside = false,
     ): Promise<T> {
         this.id += 1;
-        let resolver: (unknown) => void = undefined;
+        let resolver: (value: unknown) => void = undefined;
 
         const promise = new Promise(resolve => {
             const id = this.id;
@@ -38,7 +38,7 @@ export default class ModalServiceClass {
 
         const modalTemplateElement = React.createElement(modalTemplate);
 
-        let triggerClose: (unknown) => void = undefined;
+        let triggerClose: (value: unknown) => void = undefined;
 
         const triggerClosePromise = new Promise(resolve => {
             triggerClose = resolve;
@@ -54,7 +54,12 @@ export default class ModalServiceClass {
                 backgroundImage={backgroundImage}
                 disableClickOutside={disableClickOutside}
             >
-                {modalTemplateElement}
+                {
+                    modalTemplateElement as React.DetailedReactHTMLElement<
+                        React.HTMLAttributes<HTMLElement>,
+                        HTMLElement
+                    >
+                }
             </ModalBody>
         );
 
@@ -65,7 +70,6 @@ export default class ModalServiceClass {
 
         this.event.trigger(this.modals);
 
-        // @ts-ignore
         return promise.then(({ result, id: modalId }) => {
             this.modals = this.modals.filter(({ id }) => id !== modalId);
             this.event.trigger(this.modals);

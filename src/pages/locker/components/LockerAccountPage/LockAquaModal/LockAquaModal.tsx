@@ -11,6 +11,8 @@ import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { useIsMounted } from 'hooks/useIsMounted';
+import { StellarService, ToastService } from 'services/globalServices';
+import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 import { customScroll, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -25,8 +27,6 @@ import {
     ModalProps,
     ModalTitle,
 } from '../../../../../common/modals/atoms/ModalAtoms';
-import { StellarService, ToastService } from '../../../../../common/services/globalServices';
-import { BuildSignAndSubmitStatuses } from '../../../../../common/services/wallet-connect.service';
 
 const ModalContainer = styled.div`
     width: 52.8rem;

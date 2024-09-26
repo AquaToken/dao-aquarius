@@ -8,6 +8,7 @@ import { formatBalance } from 'helpers/format-number';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
+import { StellarService } from 'services/globalServices';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -20,7 +21,6 @@ import PageLoader from 'basics/loaders/PageLoader';
 import Pagination from 'basics/Pagination';
 import Table, { CellAlign } from 'basics/Table';
 
-import { StellarService } from '../../../../../common/services/globalServices';
 import { BribesRoutes, MarketRoutes } from '../../../../../routes';
 import Asset from '../../../../vote/components/AssetDropdown/Asset';
 import Market from '../../../../vote/components/common/Market';

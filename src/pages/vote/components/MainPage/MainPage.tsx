@@ -11,6 +11,15 @@ import useAssetsStore from 'store/assetsStore/useAssetsStore';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { ModalService, StellarService } from 'services/globalServices';
+import {
+    AQUA_CODE,
+    AQUA_ISSUER,
+    DOWN_ICE_CODE,
+    ICE_ISSUER,
+    StellarEvents,
+    UP_ICE_CODE,
+} from 'services/stellar.service';
 import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -35,15 +44,6 @@ import Table from './Table/Table';
 import VotesAmountModal from './VoteModals/VotesAmountModal';
 
 import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
-import { ModalService, StellarService } from '../../../../common/services/globalServices';
-import {
-    AQUA_CODE,
-    AQUA_ISSUER,
-    DOWN_ICE_CODE,
-    ICE_ISSUER,
-    StellarEvents,
-    UP_ICE_CODE,
-} from '../../../../common/services/stellar.service';
 import { MainRoutes, MarketRoutes } from '../../../../routes';
 import {
     getFilteredPairsList,

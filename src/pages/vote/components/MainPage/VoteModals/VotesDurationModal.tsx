@@ -12,6 +12,8 @@ import useAuthStore from 'store/authStore/useAuthStore';
 import { Asset } from 'types/stellar';
 
 import { useIsMounted } from 'hooks/useIsMounted';
+import { ModalService, StellarService, ToastService } from 'services/globalServices';
+import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -27,12 +29,6 @@ import {
     ModalProps,
     ModalTitle,
 } from '../../../../../common/modals/atoms/ModalAtoms';
-import {
-    ModalService,
-    StellarService,
-    ToastService,
-} from '../../../../../common/services/globalServices';
-import { BuildSignAndSubmitStatuses } from '../../../../../common/services/wallet-connect.service';
 import { SELECTED_PAIRS_ALIAS } from '../MainPage';
 
 const ClaimBack = styled.div`

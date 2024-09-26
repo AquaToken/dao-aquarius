@@ -12,6 +12,9 @@ import useAuthStore from 'store/authStore/useAuthStore';
 import { Int128Parts } from 'types/stellar';
 
 import { useUpdateIndex } from 'hooks/useUpdateIndex';
+import { SorobanService, StellarService, ToastService } from 'services/globalServices';
+import { AQUA_CODE, AQUA_ISSUER } from 'services/stellar.service';
+import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -24,13 +27,6 @@ import PageLoader from 'basics/loaders/PageLoader';
 
 import MigrateToSorobanBanner from '../../../common/components/MigrateToSorobanBanner/MigrateToSorobanBanner';
 import NoTrustline from '../../../common/components/NoTrustline/NoTrustline';
-import {
-    SorobanService,
-    StellarService,
-    ToastService,
-} from '../../../common/services/globalServices';
-import { AQUA_CODE, AQUA_ISSUER } from '../../../common/services/stellar.service';
-import { BuildSignAndSubmitStatuses } from '../../../common/services/wallet-connect.service';
 import { AmmRoutes } from '../../../routes';
 import Market from '../../vote/components/common/Market';
 import { getPool } from '../api/api';

@@ -12,6 +12,9 @@ import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { useIsMounted } from 'hooks/useIsMounted';
+import { ModalService, StellarService, ToastService } from 'services/globalServices';
+import { AQUA_CODE, AQUA_ISSUER, GOV_ICE_CODE, ICE_ISSUER } from 'services/stellar.service';
+import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 import { flexAllCenter, flexRowSpaceBetween } from 'web/mixins';
 import { COLORS } from 'web/styles';
 
@@ -32,18 +35,6 @@ import {
     ModalTitle,
 } from '../../../../../common/modals/atoms/ModalAtoms';
 import GetAquaModal from '../../../../../common/modals/GetAquaModal/GetAquaModal';
-import {
-    ModalService,
-    StellarService,
-    ToastService,
-} from '../../../../../common/services/globalServices';
-import {
-    AQUA_CODE,
-    AQUA_ISSUER,
-    GOV_ICE_CODE,
-    ICE_ISSUER,
-} from '../../../../../common/services/stellar.service';
-import { BuildSignAndSubmitStatuses } from '../../../../../common/services/wallet-connect.service';
 import { LockerRoutes } from '../../../../../routes';
 import { SimpleProposalOptions } from '../../../pages/GovernanceVoteProposalPage';
 

@@ -20,7 +20,7 @@ export default class ToastServiceClass {
 
     private showToast(type: TOAST_TYPE, text: string, delay = 10000): void {
         this.id += 1;
-        let resolver: (unknown) => void = undefined;
+        let resolver: (value: unknown) => void = undefined;
 
         const promise = new Promise(resolve => {
             const id = this.id;
@@ -45,7 +45,7 @@ export default class ToastServiceClass {
         }
         this.event.trigger(this.toasts);
 
-        promise.then(({ id }) => {
+        promise.then(({ id }: { id: number }) => {
             this.toasts = this.toasts.filter(toast => toast.id !== id);
             this.event.trigger(this.toasts);
         });

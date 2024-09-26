@@ -4,6 +4,8 @@ import styled from 'styled-components';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { StellarService } from 'services/globalServices';
+import { StellarEvents } from 'services/stellar.service';
 import { customScroll, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -16,8 +18,6 @@ import {
     ModalProps,
     ModalTitle,
 } from '../../../../../common/modals/atoms/ModalAtoms';
-import { StellarService } from '../../../../../common/services/globalServices';
-import { StellarEvents } from '../../../../../common/services/stellar.service';
 import VotesList from '../ManageVotesModal/VotesList/VotesList';
 
 const Container = styled.div`

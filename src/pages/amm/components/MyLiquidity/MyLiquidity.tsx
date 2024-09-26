@@ -6,6 +6,8 @@ import { formatBalance } from 'helpers/format-number';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { ModalService, StellarService } from 'services/globalServices';
+import { POOL_TYPE } from 'services/soroban.service';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -17,8 +19,6 @@ import PageLoader from 'basics/loaders/PageLoader';
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
 
 import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
-import { ModalService, StellarService } from '../../../../common/services/globalServices';
-import { POOL_TYPE } from '../../../../common/services/soroban.service';
 import { getUserPools } from '../../api/api';
 import { PoolUserProcessed } from '../../api/types';
 import PoolsList from '../PoolsList/PoolsList';

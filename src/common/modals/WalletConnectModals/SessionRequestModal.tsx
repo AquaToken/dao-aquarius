@@ -1,6 +1,7 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 
+import { WalletConnectService } from 'services/globalServices';
 import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -9,7 +10,6 @@ import ArrowsIcon from 'assets/icon-arrows-circle.svg';
 
 import DotsLoader from 'basics/loaders/DotsLoader';
 
-import { WalletConnectService } from '../../services/globalServices';
 import { ModalDescription, ModalProps, ModalTitle } from '../atoms/ModalAtoms';
 
 const Container = styled.div`

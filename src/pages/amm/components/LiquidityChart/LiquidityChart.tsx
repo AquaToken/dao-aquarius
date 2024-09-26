@@ -6,11 +6,10 @@ import styled from 'styled-components';
 import { getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 
+import { StellarService } from 'services/globalServices';
 import { COLORS } from 'web/styles';
 
 import { PoolStatistics } from 'pages/amm/api/types';
-
-import { StellarService } from '../../../../common/services/globalServices';
 
 const Axis = styled.g`
     font-size: 1.4rem;

@@ -2,12 +2,11 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { ToastService } from 'services/globalServices';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, Z_INDEX } from 'web/styles';
 
 import { Toast } from './ToastBody';
-
-import { ToastService } from '../services/globalServices';
 
 const Container = styled.div`
     position: fixed;

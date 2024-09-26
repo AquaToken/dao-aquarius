@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import { formatBalance } from 'helpers/format-number';
 
+import { ModalService } from 'services/globalServices';
 import { respondDown } from 'web/mixins';
 import { Breakpoints } from 'web/styles';
 
@@ -14,7 +15,6 @@ import {
     ModalTitle,
 } from '../../../../../common/modals/atoms/ModalAtoms';
 import GetAquaModal from '../../../../../common/modals/GetAquaModal/GetAquaModal';
-import { ModalService } from '../../../../../common/services/globalServices';
 
 const StyledButton = styled(Button)`
     margin-top: 7.2rem;

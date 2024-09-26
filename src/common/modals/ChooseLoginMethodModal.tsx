@@ -8,6 +8,14 @@ import { isChrome, isMobile } from 'helpers/browser';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import {
+    FreighterService,
+    LedgerService,
+    LobstrExtensionService,
+    ModalService,
+    ToastService,
+    WalletConnectService,
+} from 'services/globalServices';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -26,15 +34,6 @@ import GetLobstrExtensionModal from './GetLobstrExtensionModal';
 import LedgerLogin from './LedgerModals/LedgerLogin';
 import LoginWithPublic from './LoginWithPublic';
 import LoginWithSecret from './LoginWithSecret';
-
-import {
-    FreighterService,
-    LedgerService,
-    LobstrExtensionService,
-    ModalService,
-    ToastService,
-    WalletConnectService,
-} from '../services/globalServices';
 
 const BgStyled = styled(BG)`
     ${respondDown(Breakpoints.md)`

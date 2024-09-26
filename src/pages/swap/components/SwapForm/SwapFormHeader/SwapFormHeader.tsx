@@ -1,12 +1,12 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
+import { ModalService } from 'services/globalServices';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import SettingsIcon from 'assets/icon-settings.svg';
 
-import { ModalService } from '../../../../../common/services/globalServices';
 import SwapSettingsModal from '../../SwapSettingsModal/SwapSettingsModal';
 
 const Container = styled.div`

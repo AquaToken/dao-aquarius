@@ -4,8 +4,9 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 
 import { getAssetString } from 'helpers/assets';
 
-import { StellarService } from '../../common/services/globalServices';
-import { AQUA_CODE, AQUA_ISSUER } from '../../common/services/stellar.service';
+import { StellarService } from 'services/globalServices';
+import { AQUA_CODE, AQUA_ISSUER } from 'services/stellar.service';
+
 import { MainRoutes } from '../../routes';
 
 const SwapPageLazy = lazy(() => import('./pages/SwapPage'));

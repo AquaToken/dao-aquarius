@@ -22,9 +22,9 @@ import { POOL_TYPE } from './soroban.service';
 import { AQUA_CODE, AQUA_ISSUER, ICE_ASSETS } from './stellar.service';
 import { BuildSignAndSubmitStatuses } from './wallet-connect.service';
 
-import LedgerSignTx from '../modals/LedgerModals/LedgerSignTx';
-import SentToVault from '../modals/MultisigModals/SentToVault';
-import SignWithPublic from '../modals/SignWithPublic';
+import LedgerSignTx from '../common/modals/LedgerModals/LedgerSignTx';
+import SentToVault from '../common/modals/MultisigModals/SentToVault';
+import SignWithPublic from '../common/modals/SignWithPublic';
 
 const VAULT_MARKER = 'GA2T6GR7VXXXBETTERSAFETHANSORRYXXXPROTECTEDBYLOBSTRVAULT';
 

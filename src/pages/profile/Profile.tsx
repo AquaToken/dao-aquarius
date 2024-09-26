@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { StellarService } from 'services/globalServices';
 import { commonMaxWidth, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -20,7 +21,6 @@ import SdexRewards from './SdexRewards/SdexRewards';
 import YourGovernanceVotes from './YourGovernanceVotes/YourGovernanceVotes';
 import YourVotes from './YourVotes/YourVotes';
 
-import { StellarService } from '../../common/services/globalServices';
 import BalancesBlock from '../amm/components/BalancesBlock/BalancesBlock';
 import MyLiquidity from '../amm/components/MyLiquidity/MyLiquidity';
 

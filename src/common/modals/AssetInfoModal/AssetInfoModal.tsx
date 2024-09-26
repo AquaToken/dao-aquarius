@@ -15,6 +15,8 @@ import useAssetsStore from 'store/assetsStore/useAssetsStore';
 import { ExpertAssetData } from 'types/api-stellar-expert';
 import { Asset as AssetType } from 'types/stellar';
 
+import { StellarService } from 'services/globalServices';
+import { AQUA_CODE, AQUA_ISSUER } from 'services/stellar.service';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -30,8 +32,6 @@ import PageLoader from 'basics/loaders/PageLoader';
 import Asset from '../../../pages/vote/components/AssetDropdown/Asset';
 import { MainRoutes } from '../../../routes';
 import NoTrustline from '../../components/NoTrustline/NoTrustline';
-import { StellarService } from '../../services/globalServices';
-import { AQUA_CODE, AQUA_ISSUER } from '../../services/stellar.service';
 import { ModalContainer, ModalProps } from '../atoms/ModalAtoms';
 
 const Description = styled.p`

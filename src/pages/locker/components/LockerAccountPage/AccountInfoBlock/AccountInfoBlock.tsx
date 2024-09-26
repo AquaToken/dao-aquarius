@@ -4,14 +4,13 @@ import styled from 'styled-components';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import AccountService from 'services/account.service';
+import { StellarService } from 'services/globalServices';
 import { flexRowSpaceBetween } from 'web/mixins';
 
 import AccountBlock from 'basics/AccountBlock';
 
 import OtherAccountButton from './OtherAccountButton/OtherAccountButton';
-
-import AccountService from '../../../../../common/services/account.service';
-import { StellarService } from '../../../../../common/services/globalServices';
 
 const Wrapper = styled.div`
     ${flexRowSpaceBetween};

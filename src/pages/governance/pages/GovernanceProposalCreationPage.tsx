@@ -5,12 +5,12 @@ import styled from 'styled-components';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { ModalService, ToastService } from 'services/globalServices';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import { CREATE_DISCUSSION_COST } from './GovernanceMainPage';
 
-import { ModalService, ToastService } from '../../../common/services/globalServices';
 import { GovernanceRoutes } from '../../../routes';
 import { getProposalRequest } from '../api/api';
 import NotEnoughAquaModal from '../components/GovernanceMainPage/NotEnoughAquaModal/NotEnoughAquaModal';

@@ -7,11 +7,11 @@ import styled from 'styled-components';
 import { getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 
+import { StellarService } from 'services/globalServices';
 import { COLORS } from 'web/styles';
 
 import { PoolStatistics, PoolVolume24h } from 'pages/amm/api/types';
 
-import { StellarService } from '../../../../common/services/globalServices';
 import { transformDate } from '../LiquidityChart/LiquidityChart';
 
 const Axis = styled.g`

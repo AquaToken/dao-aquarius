@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const Sentry = process.env.SENTRY_CONTEXT ? require('@sentry/react') : null;
 export default class SentryService {
     static initSentry() {

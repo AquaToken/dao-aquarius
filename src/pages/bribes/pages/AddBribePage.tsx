@@ -22,6 +22,7 @@ import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { useDebounce } from 'hooks/useDebounce';
+import { ModalService, StellarService } from 'services/globalServices';
 import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS, FONT_FAMILY } from 'web/styles';
 
@@ -40,7 +41,6 @@ import Input from 'basics/inputs/Input';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
-import { ModalService, StellarService } from '../../../common/services/globalServices';
 import { BribesRoutes } from '../../../routes';
 import AssetDropdown from '../../vote/components/AssetDropdown/AssetDropdown';
 import CreatePairModal from '../../vote/components/MainPage/CreatePairModal/CreatePairModal';

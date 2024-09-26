@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { StellarService, ToastService } from 'services/globalServices';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -17,7 +18,6 @@ import SupportedBy from './components/SupportedBy/SupportedBy';
 
 import Community from '../../common/components/Community/Community';
 import Subscribe from '../../common/components/Subscribe/Subscribe';
-import { StellarService, ToastService } from '../../common/services/globalServices';
 
 const Container = styled.div`
     ${respondDown(Breakpoints.md)`

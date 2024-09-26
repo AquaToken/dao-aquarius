@@ -1,6 +1,6 @@
-import { SignClientTypes } from '@walletconnect/types';
+import * as WalletConnectTypes from '@walletconnect/types';
 
-import AccountService from '../../common/services/account.service';
+import AccountService from 'services/account.service';
 
 export interface AuthStore {
     isLogged: boolean;
@@ -11,7 +11,7 @@ export interface AuthStore {
     loginErrorText: string;
     federationAddress: string;
     isFederationPending: boolean;
-    metadata: SignClientTypes.Metadata | null;
+    metadata: WalletConnectTypes.SignClientTypes.Metadata | null;
     loginPendingTopic?: string;
     redirectURL?: string;
     callback?: () => void;

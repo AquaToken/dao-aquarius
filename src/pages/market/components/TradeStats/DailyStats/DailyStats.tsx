@@ -6,12 +6,11 @@ import { formatBalance } from 'helpers/format-number';
 
 import { Asset } from 'types/stellar';
 
+import { StellarService } from 'services/globalServices';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import DotsLoader from 'basics/loaders/DotsLoader';
-
-import { StellarService } from '../../../../../common/services/globalServices';
 
 const Details = styled.div`
     display: flex;

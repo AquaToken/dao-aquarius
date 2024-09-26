@@ -9,6 +9,7 @@ import { LumenInfo } from 'store/assetsStore/reducer';
 import { AssetSimple } from 'store/assetsStore/types';
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
+import { ModalService } from 'services/globalServices';
 import { flexAllCenter, respondDown, textEllipsis } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -20,7 +21,6 @@ import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 import AssetLogo from './AssetLogo';
 
 import AssetInfoModal from '../../../../common/modals/AssetInfoModal/AssetInfoModal';
-import { ModalService } from '../../../../common/services/globalServices';
 
 const Container = styled((props: React.DOMAttributes<HTMLDivElement>) => <div {...props} />)`
     display: flex;

@@ -5,10 +5,10 @@ import styled from 'styled-components';
 
 import { formatBalance } from 'helpers/format-number';
 
-import { AssetSimple } from 'store/assetsStore/types';
-
 import { Asset as AssetType } from 'types/stellar';
 
+import { ModalService, StellarService } from 'services/globalServices';
+import { POOL_TYPE } from 'services/soroban.service';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -19,11 +19,14 @@ import Button from 'basics/buttons/Button';
 import MigratePoolButton from './MigratePoolButton/MigratePoolButton';
 
 import MigrateLiquidityStep1 from '../../../../common/modals/MigrateLiquidityModals/MigrateLiquidityStep1';
-import { ModalService, StellarService } from '../../../../common/services/globalServices';
-import { POOL_TYPE } from '../../../../common/services/soroban.service';
 import Asset from '../../../vote/components/AssetDropdown/Asset';
 import Market from '../../../vote/components/common/Market';
-import { PoolClassicProcessed, PoolProcessed, PoolUserProcessed } from '../../api/types';
+import {
+    PoolClassicProcessed,
+    PoolExtended,
+    PoolProcessed,
+    PoolUserProcessed,
+} from '../../api/types';
 import DepositToPool from '../DepositToPool/DepositToPool';
 import WithdrawFromPool from '../WithdrawFromPool/WithdrawFromPool';
 
@@ -208,8 +211,8 @@ interface PoolsListProps {
     withDeposit?: boolean;
     baseAmount?: string;
     counterAmount?: string;
-    base?: AssetSimple;
-    counter?: AssetSimple;
+    base?: AssetType;
+    counter?: AssetType;
 }
 
 const PoolsList = ({
@@ -333,7 +336,7 @@ const PoolsList = ({
                                 {withDeposit ? (
                                     <DepositToPool
                                         params={{
-                                            pool,
+                                            pool: pool as PoolExtended,
                                             isModal: false,
                                             baseAmount,
                                             counterAmount,
@@ -341,6 +344,8 @@ const PoolsList = ({
                                             counter,
                                             onUpdate,
                                         }}
+                                        confirm={() => void 0}
+                                        close={() => void 0}
                                     />
                                 ) : (
                                     <>

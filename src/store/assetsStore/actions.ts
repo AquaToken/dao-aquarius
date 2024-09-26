@@ -3,11 +3,12 @@ import { Dispatch } from 'react';
 
 import { getAssetString } from 'helpers/assets';
 
+import { StellarService } from 'services/globalServices';
+
 import { getAssetsInfo, getAssetsRequest } from './api/api';
 import { ASSET_CACHE } from './reducer';
 import { ASSETS_ACTIONS, AssetSimple } from './types';
 
-import { StellarService } from '../../common/services/globalServices';
 import { ActionResult } from '../types';
 
 export function clearAssets() {

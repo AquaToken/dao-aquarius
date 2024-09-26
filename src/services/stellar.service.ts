@@ -1,6 +1,5 @@
 import * as StellarSdk from '@stellar/stellar-sdk';
 import { Memo, MemoType, OperationOptions, Horizon } from '@stellar/stellar-sdk';
-import { ServerApi } from '@stellar/stellar-sdk/lib/horizon';
 import axios, { AxiosResponse } from 'axios';
 import BigNumber from 'bignumber.js';
 
@@ -259,7 +258,6 @@ export default class StellarServiceClass {
     }
 
     private startHorizonServer(): void {
-        // @ts-ignore
         // settled in configs: prod.js and dev.js
         // this.server = new StellarSdk.Horizon.Server(process.horizon.HORIZON_SERVER);
         this.server = new StellarSdk.Horizon.Server(HORIZON_SERVER.stellar);
@@ -424,11 +422,18 @@ export default class StellarServiceClass {
                     ) {
                         this.getClaimableBalances(publicKey);
                     }
-                    if ((res as unknown as ServerApi.EffectRecord).type === 'account_debited') {
-                        const { amount, asset_type, asset_code } = res as any;
+                    if (
+                        (res as unknown as Horizon.ServerApi.EffectRecord).type ===
+                        'account_debited'
+                    ) {
+                        const { amount, asset_type, asset_code } = res as unknown as {
+                            amount: string;
+                            asset_type: string;
+                            asset_code: string;
+                        };
 
                         ToastService.showSuccessToast(
-                            `Payment sent: ${formatBalance(amount)} ${
+                            `Payment sent: ${formatBalance(Number(amount))} ${
                                 asset_type === 'native' ? 'XLM' : asset_code
                             }`,
                         );
@@ -439,10 +444,14 @@ export default class StellarServiceClass {
                         'account_credited'
                     ) {
                         this.debouncedUpdatePayments(publicKey);
-                        const { amount, asset_type, asset_code } = res as any;
+                        const { amount, asset_type, asset_code } = res as unknown as {
+                            amount: string;
+                            asset_type: string;
+                            asset_code: string;
+                        };
 
                         ToastService.showSuccessToast(
-                            `Payment received: ${formatBalance(amount)} ${
+                            `Payment received: ${formatBalance(Number(amount))} ${
                                 asset_type === 'native' ? 'XLM' : asset_code
                             }`,
                         );
@@ -993,7 +1002,9 @@ export default class StellarServiceClass {
 
     getLumenUsdPrice(): Promise<number> {
         return axios
-            .get<any>(`https://api.stellarterm.com/v1/ticker.json?${Math.random()}`)
+            .get<{ _meta: { externalPrices: { USD_XLM: number } } }>(
+                `https://api.stellarterm.com/v1/ticker.json?${Math.random()}`,
+            )
             .then(({ data }) => data._meta.externalPrices.USD_XLM);
     }
 

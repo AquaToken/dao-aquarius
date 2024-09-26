@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import { formatBalance } from 'helpers/format-number';
 
+import { ModalService, StellarService } from 'services/globalServices';
 import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -18,7 +19,6 @@ import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 import VoteAmount from './VoteAmount/VoteAmount';
 import VoteButton from './VoteButton/VoteButton';
 
-import { ModalService, StellarService } from '../../../../../common/services/globalServices';
 import { MarketRoutes } from '../../../../../routes';
 import { PairStats, TotalStats } from '../../../api/types';
 import Asset from '../../AssetDropdown/Asset';

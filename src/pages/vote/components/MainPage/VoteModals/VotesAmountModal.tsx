@@ -12,6 +12,8 @@ import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { useIsMounted } from 'hooks/useIsMounted';
+import { ModalService, StellarService, ToastService } from 'services/globalServices';
+import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -33,12 +35,6 @@ import {
     ModalTitle,
 } from '../../../../../common/modals/atoms/ModalAtoms';
 import GetAquaModal from '../../../../../common/modals/GetAquaModal/GetAquaModal';
-import {
-    ModalService,
-    StellarService,
-    ToastService,
-} from '../../../../../common/services/globalServices';
-import { BuildSignAndSubmitStatuses } from '../../../../../common/services/wallet-connect.service';
 import { LockerRoutes } from '../../../../../routes';
 import { PairStats } from '../../../api/types';
 import Market from '../../common/Market';

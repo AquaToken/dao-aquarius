@@ -9,6 +9,8 @@ import { formatBalance, roundToPrecision } from 'helpers/format-number';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import AccountService from 'services/account.service';
+import { ModalService, ToastService } from 'services/globalServices';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS, FONT_FAMILY } from 'web/styles';
 
@@ -22,8 +24,6 @@ import RangeInput from 'basics/inputs/RangeInput';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import ChooseLoginMethodModal from '../../../../../common/modals/ChooseLoginMethodModal';
-import AccountService from '../../../../../common/services/account.service';
-import { ModalService, ToastService } from '../../../../../common/services/globalServices';
 import {
     MAX_BOOST,
     MAX_BOOST_PERIOD,

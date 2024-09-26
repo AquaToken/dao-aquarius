@@ -11,6 +11,9 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { Transaction } from 'types/stellar';
 
+import { ModalService, SorobanService, ToastService } from 'services/globalServices';
+import { CONTRACT_STATUS, POOL_TYPE } from 'services/soroban.service';
+import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 import { flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -29,13 +32,6 @@ import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 import MainNetWarningModal, {
     SHOW_PURPOSE_ALIAS_MAIN_NET,
 } from '../../../common/modals/MainNetWarningModal';
-import {
-    ModalService,
-    SorobanService,
-    ToastService,
-} from '../../../common/services/globalServices';
-import { CONTRACT_STATUS, POOL_TYPE } from '../../../common/services/soroban.service';
-import { BuildSignAndSubmitStatuses } from '../../../common/services/wallet-connect.service';
 import { AmmRoutes } from '../../../routes';
 import {
     Back,

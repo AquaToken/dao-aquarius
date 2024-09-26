@@ -2,6 +2,8 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import AccountService from 'services/account.service';
+import { StellarService } from 'services/globalServices';
 import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -14,9 +16,6 @@ import AccountBlock from 'basics/AccountBlock';
 import CopyButton from 'basics/buttons/CopyButton';
 
 import { ModalDescription, ModalProps, ModalTitle } from './atoms/ModalAtoms';
-
-import AccountService from '../services/account.service';
-import { StellarService } from '../services/globalServices';
 
 const Container = styled.div`
     width: 52.8rem;

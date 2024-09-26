@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
 
+import { ToastService } from 'services/globalServices';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -14,7 +15,6 @@ import {
     ModalProps,
     ModalTitle,
 } from '../../../../common/modals/atoms/ModalAtoms';
-import { ToastService } from '../../../../common/services/globalServices';
 
 const Container = styled.div`
     width: 52.3rem;

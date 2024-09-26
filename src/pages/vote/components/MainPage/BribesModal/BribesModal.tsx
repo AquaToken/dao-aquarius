@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 
+import { StellarService } from 'services/globalServices';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -22,7 +23,6 @@ import {
     ModalProps,
     ModalTitle,
 } from '../../../../../common/modals/atoms/ModalAtoms';
-import { StellarService } from '../../../../../common/services/globalServices';
 import { PairStats } from '../../../api/types';
 import Asset from '../../AssetDropdown/Asset';
 

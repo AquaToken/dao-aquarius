@@ -5,13 +5,13 @@ import styled from 'styled-components';
 
 import { getAssetFromString, getAssetString } from 'helpers/assets';
 
+import { StellarService } from 'services/globalServices';
+import { AQUA_CODE, AQUA_ISSUER } from 'services/stellar.service';
 import { commonMaxWidth, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import PageLoader from 'basics/loaders/PageLoader';
 
-import { StellarService } from '../../../common/services/globalServices';
-import { AQUA_CODE, AQUA_ISSUER } from '../../../common/services/stellar.service';
 import { MainRoutes } from '../../../routes';
 import SwapForm from '../components/SwapForm/SwapForm';
 

@@ -7,6 +7,8 @@ import { formatBalance } from 'helpers/format-number';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { ModalService, StellarService, WalletConnectService } from 'services/globalServices';
+import { ICE_CODE, ICE_ISSUER } from 'services/stellar.service';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS, Z_INDEX } from 'web/styles';
 
@@ -25,12 +27,6 @@ import Identicon from 'basics/Identicon';
 import { LockerRoutes } from '../../../../routes';
 import ChooseLoginMethodModal from '../../../modals/ChooseLoginMethodModal';
 import GetAquaModal from '../../../modals/GetAquaModal/GetAquaModal';
-import {
-    ModalService,
-    StellarService,
-    WalletConnectService,
-} from '../../../services/globalServices';
-import { ICE_CODE, ICE_ISSUER } from '../../../services/stellar.service';
 import SocialLinks from '../../SocialLinks/SocialLinks';
 
 const MenuBlock = styled.div`

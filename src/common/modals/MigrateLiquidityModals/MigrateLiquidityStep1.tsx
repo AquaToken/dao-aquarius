@@ -11,6 +11,8 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { Asset, PoolClassic } from 'types/stellar';
 
+import { ModalService, StellarService, ToastService } from 'services/globalServices';
+import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -25,8 +27,6 @@ import Market from 'pages/vote/components/common/Market';
 
 import MigrateLiquidityStep2 from './MigrateLiquidityStep2';
 
-import { ModalService, StellarService, ToastService } from '../../services/globalServices';
-import { BuildSignAndSubmitStatuses } from '../../services/wallet-connect.service';
 import { ModalContainer, ModalProps, ModalTitle } from '../atoms/ModalAtoms';
 
 export const Stepper = styled.div`

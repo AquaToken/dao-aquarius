@@ -4,7 +4,7 @@ import { AxiosError } from 'axios';
 
 import { TxFailed } from 'types/stellar';
 
-import { LEDGER_CANCEL_ERROR } from '../common/services/ledger.service';
+import { LEDGER_CANCEL_ERROR } from 'services/ledger.service';
 
 enum TRANSACTIONS_ERROR_CODES {
     // TODO: Add this codes

@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import { getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 
+import { StellarService } from 'services/globalServices';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -14,8 +15,6 @@ import Warning from 'assets/icon-warning.svg';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import { getNativePrices } from 'pages/amm/api/api';
-
-import { StellarService } from '../../../../../common/services/globalServices';
 
 const Container = styled.div`
     display: flex;

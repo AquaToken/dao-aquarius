@@ -10,6 +10,9 @@ import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { StellarService, ToastService } from 'services/globalServices';
+import { GOV_ICE_CODE, ICE_ISSUER, StellarEvents } from 'services/stellar.service';
+import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -23,13 +26,6 @@ import Checkbox from 'basics/inputs/Checkbox';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import Table, { CellAlign } from 'basics/Table';
 
-import { StellarService, ToastService } from '../../../../../../common/services/globalServices';
-import {
-    GOV_ICE_CODE,
-    ICE_ISSUER,
-    StellarEvents,
-} from '../../../../../../common/services/stellar.service';
-import { BuildSignAndSubmitStatuses } from '../../../../../../common/services/wallet-connect.service';
 import { LogVote, ProposalSimple } from '../../../../api/types';
 
 const AquaLogo = styled(Aqua)`

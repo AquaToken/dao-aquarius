@@ -14,6 +14,7 @@ import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { useIsMounted } from 'hooks/useIsMounted';
+import { StellarService, ToastService } from 'services/globalServices';
 import { flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints } from 'web/styles';
 
@@ -29,7 +30,6 @@ import {
     ModalProps,
     ModalTitle,
 } from '../../../../../common/modals/atoms/ModalAtoms';
-import { StellarService, ToastService } from '../../../../../common/services/globalServices';
 import { checkProposalStatus, publishProposal } from '../../../api/api';
 import { APPROVED_PROPOSAL_REWARD, CREATE_PROPOSAL_COST } from '../../../pages/GovernanceMainPage';
 import { DAY } from '../ProposalCreation/ProposalCreation';

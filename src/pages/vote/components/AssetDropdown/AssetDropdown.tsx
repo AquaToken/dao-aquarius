@@ -12,6 +12,7 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { useDebounce } from 'hooks/useDebounce';
 import useOnClickOutside from 'hooks/useOutsideClick';
+import { StellarService } from 'services/globalServices';
 import { flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -21,7 +22,6 @@ import Loader from 'assets/loader.svg';
 
 import Asset from './Asset';
 
-import { StellarService } from '../../../../common/services/globalServices';
 const DropDown = styled.div<{ isOpen: boolean; disabled: boolean }>`
     width: 100%;
     display: flex;

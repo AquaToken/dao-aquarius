@@ -8,14 +8,13 @@ import { formatBalance } from 'helpers/format-number';
 import { Asset } from 'types/stellar';
 
 import { useDebounce } from 'hooks/useDebounce';
+import { StellarService } from 'services/globalServices';
 import { flexAllCenter } from 'web/mixins';
 import { COLORS } from 'web/styles';
 
 import PageLoader from 'basics/loaders/PageLoader';
 
 import { convertLocalDateToUTCIgnoringTimezone } from 'pages/bribes/pages/AddBribePage';
-
-import { StellarService } from '../../../../../common/services/globalServices';
 
 const Chart = styled.div`
     display: flex;

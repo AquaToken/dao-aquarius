@@ -7,6 +7,7 @@ import { formatBalance } from 'helpers/format-number';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { StellarService } from 'services/globalServices';
 import { respondDown } from 'web/mixins';
 import { Breakpoints } from 'web/styles';
 
@@ -15,7 +16,6 @@ import Table, { CellAlign } from 'basics/Table';
 
 import { Container, Header, Section, Title } from 'pages/profile/AmmRewards/AmmRewards';
 
-import { StellarService } from '../../../../common/services/globalServices';
 import Asset from '../../../vote/components/AssetDropdown/Asset';
 
 const StyledContainer = styled(Container)`

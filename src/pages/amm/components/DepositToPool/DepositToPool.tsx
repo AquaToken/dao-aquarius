@@ -11,6 +11,13 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { Asset as AssetType, Int128Parts } from 'types/stellar';
 
+import {
+    ModalService,
+    SorobanService,
+    StellarService,
+    ToastService,
+} from 'services/globalServices';
+import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 import { customScroll, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -29,13 +36,6 @@ import { ModalProps, ModalTitle } from '../../../../common/modals/atoms/ModalAto
 import MainNetWarningModal, {
     SHOW_PURPOSE_ALIAS_MAIN_NET,
 } from '../../../../common/modals/MainNetWarningModal';
-import {
-    ModalService,
-    SorobanService,
-    StellarService,
-    ToastService,
-} from '../../../../common/services/globalServices';
-import { BuildSignAndSubmitStatuses } from '../../../../common/services/wallet-connect.service';
 import Asset from '../../../vote/components/AssetDropdown/Asset';
 import SuccessModal from '../SuccessModal/SuccessModal';
 

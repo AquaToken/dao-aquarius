@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 
+import { StellarService } from 'services/globalServices';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -29,7 +30,6 @@ import {
     HowItWorksText,
 } from 'pages/vote/components/MainPage/BribesModal/BribesModal';
 
-import { StellarService } from '../../../../../common/services/globalServices';
 import Asset from '../../../../vote/components/AssetDropdown/Asset';
 
 const Container = styled.div`

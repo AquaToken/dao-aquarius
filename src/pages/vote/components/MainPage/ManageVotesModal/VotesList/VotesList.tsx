@@ -14,6 +14,9 @@ import { Transaction } from 'types/stellar';
 import { Vote } from 'types/voting-tool';
 
 import { useIsMounted } from 'hooks/useIsMounted';
+import { StellarService, ToastService } from 'services/globalServices';
+import { DOWN_ICE_CODE, ICE_ISSUER, UP_ICE_CODE } from 'services/stellar.service';
+import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -27,13 +30,6 @@ import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import { MarketPair } from 'pages/profile/api/types';
 
-import { StellarService, ToastService } from '../../../../../../common/services/globalServices';
-import {
-    DOWN_ICE_CODE,
-    ICE_ISSUER,
-    UP_ICE_CODE,
-} from '../../../../../../common/services/stellar.service';
-import { BuildSignAndSubmitStatuses } from '../../../../../../common/services/wallet-connect.service';
 import Market from '../../../common/Market';
 
 const CheckboxMobile = styled(Checkbox)`

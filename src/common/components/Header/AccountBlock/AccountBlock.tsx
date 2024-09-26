@@ -6,6 +6,7 @@ import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import useOnClickOutside from 'hooks/useOutsideClick';
+import { ModalService } from 'services/globalServices';
 import { flexAllCenter, respondDown, textEllipsis } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -17,7 +18,6 @@ import Button from 'basics/buttons/Button';
 import Identicon from 'basics/Identicon';
 
 import ChooseLoginMethodModal from '../../../modals/ChooseLoginMethodModal';
-import { ModalService } from '../../../services/globalServices';
 import AppMenu from '../AppMenu/AppMenu';
 
 const Wrapper = styled.div`

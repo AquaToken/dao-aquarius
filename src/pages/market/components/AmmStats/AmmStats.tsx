@@ -7,13 +7,12 @@ import { formatBalance } from 'helpers/format-number';
 
 import { Asset } from 'types/stellar';
 
+import { StellarService } from 'services/globalServices';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import ExternalLink from 'basics/ExternalLink';
 import PageLoader from 'basics/loaders/PageLoader';
-
-import { StellarService } from '../../../../common/services/globalServices';
 
 const Container = styled.div`
     display: flex;

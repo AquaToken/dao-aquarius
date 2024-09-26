@@ -2,7 +2,7 @@ export default class EventService {
     private id: number = 0;
     private listeners = new Map();
 
-    sub(callback: (unknown: any) => unknown): () => void {
+    sub(callback: (value: unknown) => unknown): () => void {
         this.id += 1;
 
         const listenId = this.id;

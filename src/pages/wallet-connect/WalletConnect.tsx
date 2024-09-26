@@ -4,9 +4,10 @@ import { Redirect, useLocation } from 'react-router-dom';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { WalletConnectService } from 'services/globalServices';
+
 import PageLoader from 'basics/loaders/PageLoader';
 
-import { WalletConnectService } from '../../common/services/globalServices';
 import { MainRoutes } from '../../routes';
 
 // URL example: https://aqua.network/wallet-connect?redirect=vote

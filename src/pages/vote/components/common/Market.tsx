@@ -10,6 +10,8 @@ import { LumenInfo } from 'store/assetsStore/reducer';
 import { AssetSimple } from 'store/assetsStore/types';
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
+import { ModalService, StellarService } from 'services/globalServices';
+import { POOL_TYPE } from 'services/soroban.service';
 import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -29,8 +31,6 @@ import {
 } from './Labels';
 
 import AssetInfoModal from '../../../../common/modals/AssetInfoModal/AssetInfoModal';
-import { ModalService, StellarService } from '../../../../common/services/globalServices';
-import { POOL_TYPE } from '../../../../common/services/soroban.service';
 import { AmmRoutes, MarketRoutes } from '../../../../routes';
 import AssetLogo, { bigLogoStyles, logoStyles } from '../AssetDropdown/AssetLogo';
 

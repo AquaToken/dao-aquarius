@@ -1,6 +1,6 @@
 import { Asset } from 'types/stellar';
 
-import { StellarService } from '../common/services/globalServices';
+import { StellarService } from 'services/globalServices';
 
 export const getAssetString = (asset: Asset): string => {
     if (asset.isNative()) {

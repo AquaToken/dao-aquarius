@@ -12,6 +12,8 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { Asset, Int128Parts } from 'types/stellar';
 
+import { ModalService, SorobanService, ToastService } from 'services/globalServices';
+import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -28,12 +30,6 @@ import {
     ModalProps,
     ModalTitle,
 } from '../../../../common/modals/atoms/ModalAtoms';
-import {
-    ModalService,
-    SorobanService,
-    ToastService,
-} from '../../../../common/services/globalServices';
-import { BuildSignAndSubmitStatuses } from '../../../../common/services/wallet-connect.service';
 import SuccessModal from '../../../amm/components/SuccessModal/SuccessModal';
 import Market from '../../../vote/components/common/Market';
 import { SWAP_SLIPPAGE_ALIAS } from '../SwapSettingsModal/SwapSettingsModal';

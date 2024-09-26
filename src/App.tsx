@@ -5,6 +5,8 @@ import { hot } from 'react-hot-loader';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import styled, { createGlobalStyle } from 'styled-components';
 
+import { ModalService, StellarService, WalletConnectService } from 'services/globalServices';
+
 import LiveOnSorobanImage from 'assets/live-on-soroban.svg';
 
 import PageLoader from 'basics/loaders/PageLoader';
@@ -27,15 +29,10 @@ import ModalContainer from './common/modals/atoms/ModalContainer';
 import LiveOnSorobanAlert, {
     LIVE_ON_SOROBAN_SHOWED_ALIAS,
 } from './common/modals/LiveOnSorobanAlert';
-import {
-    ModalService,
-    StellarService,
-    WalletConnectService,
-} from './common/services/globalServices';
-import SentryService from './common/services/sentry.service';
 import ToastContainer from './common/toasts/ToastContainer';
 import useGlobalSubscriptions from './hooks/useGlobalSubscriptions';
 import { AmmRoutes, MainRoutes } from './routes';
+import SentryService from './services/sentry.service';
 import Provider from './store';
 import useAssetsStore from './store/assetsStore/useAssetsStore';
 import useAuthStore from './store/authStore/useAuthStore';

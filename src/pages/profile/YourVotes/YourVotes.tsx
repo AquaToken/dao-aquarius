@@ -8,14 +8,14 @@ import { formatBalance } from 'helpers/format-number';
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { ModalService, StellarService } from 'services/globalServices';
+import { StellarEvents } from 'services/stellar.service';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Button from 'basics/buttons/Button';
 import PageLoader from 'basics/loaders/PageLoader';
 
-import { ModalService, StellarService } from '../../../common/services/globalServices';
-import { StellarEvents } from '../../../common/services/stellar.service';
 import { VoteRoutes } from '../../../routes';
 import { getTotalVotingStats, getUserPairsList } from '../../vote/api/api';
 import { PairStats } from '../../vote/api/types';

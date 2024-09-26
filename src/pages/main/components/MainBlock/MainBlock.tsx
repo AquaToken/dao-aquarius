@@ -1,6 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
+import { ModalService } from 'services/globalServices';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -11,7 +12,6 @@ import Button from 'basics/buttons/Button';
 
 import SocialLinks from '../../../../common/components/SocialLinks/SocialLinks';
 import GetAquaModal from '../../../../common/modals/GetAquaModal/GetAquaModal';
-import { ModalService } from '../../../../common/services/globalServices';
 
 const Main = styled.section`
     display: flex;

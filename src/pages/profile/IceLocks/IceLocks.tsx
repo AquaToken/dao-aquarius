@@ -13,6 +13,9 @@ import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { StellarService, ToastService } from 'services/globalServices';
+import { StellarEvents } from 'services/stellar.service';
+import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 import { flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -25,9 +28,6 @@ import ProgressLine from 'basics/ProgressLine';
 import Table, { CellAlign } from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
-import { StellarService, ToastService } from '../../../common/services/globalServices';
-import { StellarEvents } from '../../../common/services/stellar.service';
-import { BuildSignAndSubmitStatuses } from '../../../common/services/wallet-connect.service';
 import { MainRoutes } from '../../../routes';
 import { ExternalLinkStyled, Header, Section, Title } from '../AmmRewards/AmmRewards';
 import { Empty } from '../YourVotes/YourVotes';

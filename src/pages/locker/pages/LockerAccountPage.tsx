@@ -8,6 +8,9 @@ import { getDistributionForAccount } from 'api/ice-locker';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { useIsOnViewport } from 'hooks/useIsOnViewport';
+import AccountService from 'services/account.service';
+import { StellarService } from 'services/globalServices';
+import { StellarEvents } from 'services/stellar.service';
 import { commonMaxWidth, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -15,9 +18,6 @@ import ArrowDown from 'assets/icon-arrow-down.svg';
 
 import PageLoader from 'basics/loaders/PageLoader';
 
-import AccountService from '../../../common/services/account.service';
-import { StellarService } from '../../../common/services/globalServices';
-import { StellarEvents } from '../../../common/services/stellar.service';
 import { LockerRoutes } from '../../../routes';
 import FAQ from '../components/FAQ/FAQ';
 import AccountInfoBlock from '../components/LockerAccountPage/AccountInfoBlock/AccountInfoBlock';

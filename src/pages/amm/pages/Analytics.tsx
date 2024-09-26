@@ -8,6 +8,7 @@ import { formatBalance } from 'helpers/format-number';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { useDebounce } from 'hooks/useDebounce';
+import { ModalService } from 'services/globalServices';
 import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -18,7 +19,6 @@ import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
 
 import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
-import { ModalService } from '../../../common/services/globalServices';
 import { AmmRoutes } from '../../../routes';
 import { getTotalStats, getVolume24h } from '../api/api';
 import AllPools from '../components/AllPools/AllPools';

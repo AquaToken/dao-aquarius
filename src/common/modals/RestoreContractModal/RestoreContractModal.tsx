@@ -8,13 +8,13 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { Transaction } from 'types/stellar';
 
+import { ToastService } from 'services/globalServices';
 import { respondDown } from 'web/mixins';
 import { Breakpoints } from 'web/styles';
 
 import Button from 'basics/buttons/Button';
 import ExternalLink from 'basics/ExternalLink';
 
-import { ToastService } from '../../services/globalServices';
 import { ModalDescription, ModalProps, ModalTitle } from '../atoms/ModalAtoms';
 
 const Container = styled.div`

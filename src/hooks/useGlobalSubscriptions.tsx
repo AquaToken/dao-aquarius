@@ -7,10 +7,8 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { WalletConnectEvents } from 'types/wallet-connect';
 
-import { useSkipFirstRender } from './useSkipFirstRender';
-
-import { AssetsEvent } from '../common/services/assets.service';
-import { FreighterEvents } from '../common/services/freighter.service';
+import { AssetsEvent } from 'services/assets.service';
+import { FreighterEvents } from 'services/freighter.service';
 import {
     FreighterService,
     LedgerService,
@@ -20,10 +18,12 @@ import {
     ToastService,
     WalletConnectService,
     AssetsService,
-} from '../common/services/globalServices';
-import { LedgerEvents } from '../common/services/ledger.service';
-import { LobstrExtensionEvents } from '../common/services/lobstr-extension.service';
-import { StellarEvents } from '../common/services/stellar.service';
+} from 'services/globalServices';
+import { LedgerEvents } from 'services/ledger.service';
+import { LobstrExtensionEvents } from 'services/lobstr-extension.service';
+import { StellarEvents } from 'services/stellar.service';
+
+import { useSkipFirstRender } from './useSkipFirstRender';
 
 const UnfundedErrors = ['Request failed with status code 404', 'Not Found'];
 

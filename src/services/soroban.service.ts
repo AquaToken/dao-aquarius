@@ -5,16 +5,11 @@ import binascii from 'binascii';
 import { sha256 } from 'js-sha256';
 
 import { getAssetString } from 'helpers/assets';
-
-import SimulateTransactionSuccessResponse = StellarSdk.SorobanRpc.Api.SimulateTransactionSuccessResponse;
-
 import { SorobanErrorHandler, SorobanPrepareTxErrorHandler } from 'helpers/error-handler';
 
-import { ModalService, SorobanService, ToastService } from './globalServices';
+import { ModalService, ToastService } from './globalServices';
 
-import RestoreContractModal from '../modals/RestoreContractModal/RestoreContractModal';
-
-import SendTransactionResponse = StellarSdk.SorobanRpc.Api.SendTransactionResponse;
+import RestoreContractModal from '../common/modals/RestoreContractModal/RestoreContractModal';
 
 const SOROBAN_SERVER = 'https://soroban-rpc.aqua.network/';
 export const AMM_SMART_CONTACT_ID = 'CBQDHNBFBZYE4MKPWBSJOPIYLW4SFSXAXUTSXJN76GNKYVYPCKWC6QUK';
@@ -91,7 +86,10 @@ export default class SorobanServiceClass {
         }
     }
 
-    processResponse(response: SendTransactionResponse, tx: StellarSdk.Transaction) {
+    processResponse(
+        response: StellarSdk.SorobanRpc.Api.SendTransactionResponse,
+        tx: StellarSdk.Transaction,
+    ) {
         if (response.status === 'DUPLICATE') {
             return this.getTx(response.hash, tx);
         }
@@ -101,7 +99,7 @@ export default class SorobanServiceClass {
         return this.getTx(response.hash, tx);
     }
 
-    getTx(hash: string, tx: StellarSdk.Transaction, resolver?: (value?: any) => void) {
+    getTx(hash: string, tx: StellarSdk.Transaction, resolver?: (value?: unknown) => void) {
         return this.server.getTransaction(hash).then(res => {
             if (res.status === 'SUCCESS') {
                 if (resolver) {
@@ -132,20 +130,27 @@ export default class SorobanServiceClass {
     async tryRestore(tx: StellarSdk.Transaction) {
         const sim = await this.server.simulateTransaction(tx);
 
-        // @ts-ignore
-        if (!sim.restorePreamble) {
+        if (
+            !(sim as StellarSdk.SorobanRpc.Api.SimulateTransactionRestoreResponse).restorePreamble
+        ) {
             return;
         }
 
         const account = await this.server.getAccount(tx.source);
         let fee = parseInt(BASE_FEE);
-        // @ts-ignore
-        fee += parseInt(sim.restorePreamble.minResourceFee);
+
+        fee += parseInt(
+            (sim as StellarSdk.SorobanRpc.Api.SimulateTransactionRestoreResponse).restorePreamble
+                .minResourceFee,
+        );
 
         const restoreTx = new StellarSdk.TransactionBuilder(account, { fee: fee.toString() })
             .setNetworkPassphrase(StellarSdk.Networks.PUBLIC)
-            // @ts-ignore
-            .setSorobanData(sim.restorePreamble.transactionData.build())
+            .setSorobanData(
+                (
+                    sim as StellarSdk.SorobanRpc.Api.SimulateTransactionRestoreResponse
+                ).restorePreamble.transactionData.build(),
+            )
             .addOperation(StellarSdk.Operation.restoreFootprint({}))
             .setTimeout(StellarSdk.TimeoutInfinite)
             .build();
@@ -191,21 +196,23 @@ export default class SorobanServiceClass {
         if (this.assetsCache.has(id)) {
             return Promise.resolve(this.assetsCache.get(id));
         }
-        return (
-            this.buildSmartContactTx(ACCOUNT_FOR_SIMULATE, id, ASSET_CONTRACT_METHOD.NAME)
-                .then(tx => this.simulateTx(tx))
-                // @ts-ignore
-                .then(({ result }) => {
-                    const [code, issuer] = result.retval.value().toString().split(':');
-                    const asset = issuer
-                        ? new StellarSdk.Asset(code, issuer)
-                        : StellarSdk.Asset.native();
+        return this.buildSmartContactTx(ACCOUNT_FOR_SIMULATE, id, ASSET_CONTRACT_METHOD.NAME)
+            .then(
+                tx =>
+                    this.simulateTx(
+                        tx,
+                    ) as Promise<StellarSdk.SorobanRpc.Api.SimulateTransactionSuccessResponse>,
+            )
+            .then(({ result }) => {
+                const [code, issuer] = (result.retval.value() as unknown).toString().split(':');
+                const asset = issuer
+                    ? new StellarSdk.Asset(code, issuer)
+                    : StellarSdk.Asset.native();
 
-                    this.assetsCache.set(id, asset);
+                this.assetsCache.set(id, asset);
 
-                    return asset;
-                })
-        );
+                return asset;
+            });
     }
 
     getContractData(
@@ -233,7 +240,6 @@ export default class SorobanServiceClass {
 
                 const [entry] = entries;
 
-                // @ts-ignore
                 const contractExp = entry.liveUntilLedgerSeq;
 
                 return {
@@ -273,88 +279,88 @@ export default class SorobanServiceClass {
             .then(tx => this.prepareTransaction(tx));
     }
 
-    restoreAssetContractTx(publicKey: string, asset: Asset) {
-        const contractId = this.getAssetContractId(asset);
+    // restoreAssetContractTx(publicKey: string, asset: Asset) {
+    //     const contractId = this.getAssetContractId(asset);
+    //
+    //     const contract = new StellarSdk.Contract(contractId);
+    //
+    //     return this.server
+    //         .getAccount(publicKey)
+    //         .then(acc =>
+    //             new StellarSdk.TransactionBuilder(acc, {
+    //                 fee: BASE_FEE,
+    //                 networkPassphrase: StellarSdk.Networks.PUBLIC,
+    //             })
+    //                 .addOperation(StellarSdk.Operation.restoreFootprint({}))
+    //                 .setSorobanData(
+    //                     new StellarSdk.SorobanDataBuilder()
+    //                         .setReadWrite([contract.getFootprint()])
+    //                         .build(),
+    //                 )
+    //                 .setTimeout(StellarSdk.TimeoutInfinite)
+    //                 .build(),
+    //         )
+    //         .then(tx => this.prepareTransaction(tx));
+    // }
 
-        const contract = new StellarSdk.Contract(contractId);
+    // bumpAssetContractTx(publicKey: string, asset: Asset) {
+    //     const contractId = this.getAssetContractId(asset);
+    //
+    //     const contract = new StellarSdk.Contract(contractId);
+    //
+    //     return this.server
+    //         .getAccount(publicKey)
+    //         .then(acc =>
+    //             new StellarSdk.TransactionBuilder(acc, {
+    //                 fee: BASE_FEE,
+    //                 networkPassphrase: StellarSdk.Networks.PUBLIC,
+    //             })
+    //                 .addOperation(
+    //                     StellarSdk.Operation.extendFootprintTtl({
+    //                         extendTo: 500000,
+    //                     }),
+    //                 )
+    //                 .setSorobanData(
+    //                     new StellarSdk.SorobanDataBuilder()
+    //                         .setReadOnly([contract.getFootprint()])
+    //                         .build(),
+    //                 )
+    //                 .setTimeout(StellarSdk.TimeoutInfinite)
+    //                 .build(),
+    //         )
+    //         .then(tx => this.prepareTransaction(tx));
+    // }
 
-        return this.server
-            .getAccount(publicKey)
-            .then(acc =>
-                new StellarSdk.TransactionBuilder(acc, {
-                    fee: BASE_FEE,
-                    networkPassphrase: StellarSdk.Networks.PUBLIC,
-                })
-                    .addOperation(StellarSdk.Operation.restoreFootprint({}))
-                    .setSorobanData(
-                        new StellarSdk.SorobanDataBuilder()
-                            .setReadWrite([contract.getFootprint()])
-                            .build(),
-                    )
-                    .setTimeout(StellarSdk.TimeoutInfinite)
-                    .build(),
-            )
-            .then(tx => this.prepareTransaction(tx));
-    }
-
-    bumpAssetContractTx(publicKey: string, asset: Asset) {
-        const contractId = this.getAssetContractId(asset);
-
-        const contract = new StellarSdk.Contract(contractId);
-
-        return this.server
-            .getAccount(publicKey)
-            .then(acc =>
-                new StellarSdk.TransactionBuilder(acc, {
-                    fee: BASE_FEE,
-                    networkPassphrase: StellarSdk.Networks.PUBLIC,
-                })
-                    .addOperation(
-                        StellarSdk.Operation.extendFootprintTtl({
-                            extendTo: 500000,
-                        }),
-                    )
-                    .setSorobanData(
-                        new StellarSdk.SorobanDataBuilder()
-                            .setReadOnly([contract.getFootprint()])
-                            .build(),
-                    )
-                    .setTimeout(StellarSdk.TimeoutInfinite)
-                    .build(),
-            )
-            .then(tx => this.prepareTransaction(tx));
-    }
-
-    getPools(assets: Asset[]): Promise<null | Array<any>> {
-        return this.buildSmartContactTx(
-            ACCOUNT_FOR_SIMULATE,
-            AMM_SMART_CONTACT_ID,
-            AMM_CONTRACT_METHOD.GET_POOLS,
-            this.scValToArray(this.orderTokens(assets).map(asset => this.assetToScVal(asset))),
-        )
-            .then(
-                tx =>
-                    this.server.simulateTransaction(
-                        tx,
-                    ) as Promise<SimulateTransactionSuccessResponse>,
-            )
-            .then(res => {
-                if (!res.result) {
-                    return [];
-                }
-
-                const hashArray = res.result.retval.value() as Array<any>;
-
-                if (!hashArray.length) {
-                    return [];
-                }
-
-                return hashArray.map(item => [
-                    SorobanService.getContactIdFromHash(item.val().value().value().toString('hex')),
-                    item.key().value(),
-                ]);
-            });
-    }
+    // getPools(assets: Asset[]): Promise<null | Array<unknown>> {
+    //     return this.buildSmartContactTx(
+    //         ACCOUNT_FOR_SIMULATE,
+    //         AMM_SMART_CONTACT_ID,
+    //         AMM_CONTRACT_METHOD.GET_POOLS,
+    //         this.scValToArray(this.orderTokens(assets).map(asset => this.assetToScVal(asset))),
+    //     )
+    //         .then(
+    //             tx =>
+    //                 this.server.simulateTransaction(
+    //                     tx,
+    //                 ) as Promise<StellarSdk.SorobanRpc.Api.SimulateTransactionSuccessResponse>,
+    //         )
+    //         .then(res => {
+    //             if (!res.result) {
+    //                 return [];
+    //             }
+    //
+    //             const hashArray = res.result.retval.value() as Array<unknown>;
+    //
+    //             if (!hashArray.length) {
+    //                 return [];
+    //             }
+    //
+    //             return hashArray.map(item => [
+    //                 SorobanService.getContactIdFromHash(item.val().value().value().toString('hex')),
+    //                 item.key().value(),
+    //             ]);
+    //         });
+    // }
 
     getInitConstantPoolTx(accountId: string, base: Asset, counter: Asset, fee: number) {
         return this.buildSmartContactTx(
@@ -388,12 +394,17 @@ export default class SorobanServiceClass {
                 tx =>
                     this.server.simulateTransaction(
                         tx,
-                    ) as Promise<SimulateTransactionSuccessResponse>,
+                    ) as Promise<StellarSdk.SorobanRpc.Api.SimulateTransactionSuccessResponse>,
             )
             .then(({ result }) => {
                 if (result) {
-                    // @ts-ignore
-                    return result.retval.value().value().toString('hex');
+                    return (
+                        result.retval.value() as {
+                            value: () => { toString: (format: string) => string };
+                        }
+                    )
+                        .value()
+                        ?.toString('hex') as string;
                 }
 
                 throw new Error('getPoolShareId error');
@@ -411,12 +422,12 @@ export default class SorobanServiceClass {
                 tx =>
                     this.server.simulateTransaction(
                         tx,
-                    ) as Promise<SimulateTransactionSuccessResponse>,
+                    ) as Promise<StellarSdk.SorobanRpc.Api.SimulateTransactionSuccessResponse>,
             )
             .then(({ result }) => {
                 if (result) {
-                    // @ts-ignore
-                    return result.retval.value().reduce((acc, val) => {
+                    return (result.retval.value() as unknown[]).reduce((acc, val) => {
+                        // @ts-ignore
                         const key = val.key().value().toString();
                         if (key === 'exp_at' || key === 'last_time') {
                             acc[key] = new BigNumber(this.i128ToInt(val.val().value()).toString())
@@ -439,7 +450,7 @@ export default class SorobanServiceClass {
                 tx =>
                     this.server.simulateTransaction(
                         tx,
-                    ) as Promise<SimulateTransactionSuccessResponse>,
+                    ) as Promise<StellarSdk.SorobanRpc.Api.SimulateTransactionSuccessResponse>,
             )
             .then(({ result }) => {
                 if (result) {
@@ -470,40 +481,38 @@ export default class SorobanServiceClass {
                 tx =>
                     this.server.simulateTransaction(
                         tx,
-                    ) as Promise<SimulateTransactionSuccessResponse>,
+                    ) as Promise<StellarSdk.SorobanRpc.Api.SimulateTransactionSuccessResponse>,
             )
             .then(({ result }) => {
                 if (result) {
-                    // @ts-ignore
-                    return this.i128ToInt(result.retval.value());
+                    return this.i128ToInt(result.retval.value() as StellarSdk.xdr.Int128Parts);
                 }
 
                 throw new Error('getTotalShares error');
             });
     }
 
-    getUserRewardsAmount(accountId: string, poolId: string) {
-        return this.buildSmartContactTx(
-            accountId,
-            poolId,
-            AMM_CONTRACT_METHOD.GET_USER_REWARD,
-            this.publicKeyToScVal(accountId),
-        )
-            .then(
-                tx =>
-                    this.server.simulateTransaction(
-                        tx,
-                    ) as Promise<SimulateTransactionSuccessResponse>,
-            )
-            .then(({ result }) => {
-                if (result) {
-                    // @ts-ignore
-                    return this.i128ToInt(result.retval.value());
-                }
-
-                throw new Error('getUserRewardsAmount error');
-            });
-    }
+    // getUserRewardsAmount(accountId: string, poolId: string) {
+    //     return this.buildSmartContactTx(
+    //         accountId,
+    //         poolId,
+    //         AMM_CONTRACT_METHOD.GET_USER_REWARD,
+    //         this.publicKeyToScVal(accountId),
+    //     )
+    //         .then(
+    //             tx =>
+    //                 this.server.simulateTransaction(
+    //                     tx,
+    //                 ) as Promise<StellarSdk.SorobanRpc.Api.SimulateTransactionSuccessResponse>,
+    //         )
+    //         .then(({ result }) => {
+    //             if (result) {
+    //                 return this.i128ToInt(result.retval.value() as StellarSdk.xdr.Int128Parts);
+    //             }
+    //
+    //             throw new Error('getUserRewardsAmount error');
+    //         });
+    // }
 
     getClaimRewardsTx(accountId: string, poolId: string) {
         return this.buildSmartContactTx(
@@ -520,7 +529,12 @@ export default class SorobanServiceClass {
             AMM_SMART_CONTACT_ID,
             AMM_CONTRACT_METHOD.GET_CREATION_FEE_TOKEN,
         )
-            .then(tx => this.simulateTx(tx) as Promise<SimulateTransactionSuccessResponse>)
+            .then(
+                tx =>
+                    this.simulateTx(
+                        tx,
+                    ) as Promise<StellarSdk.SorobanRpc.Api.SimulateTransactionSuccessResponse>,
+            )
             .then(({ result }) =>
                 this.getAssetFromContractId(
                     // @ts-ignore
@@ -537,7 +551,12 @@ export default class SorobanServiceClass {
                 ? AMM_CONTRACT_METHOD.GET_CONSTANT_CREATION_FEE
                 : AMM_CONTRACT_METHOD.GET_STABLE_CREATION_FEE,
         )
-            .then(tx => this.simulateTx(tx) as Promise<SimulateTransactionSuccessResponse>)
+            .then(
+                tx =>
+                    this.simulateTx(
+                        tx,
+                    ) as Promise<StellarSdk.SorobanRpc.Api.SimulateTransactionSuccessResponse>,
+            )
             .then(({ result }) => this.i128ToInt(result.retval.value() as xdr.Int128Parts));
     }
 
@@ -553,35 +572,35 @@ export default class SorobanServiceClass {
         }));
     }
 
-    getPoolData(accountId: string, base: Asset, counter: Asset, [poolId, poolBytes]) {
-        return this.getPoolShareId(poolId)
-            .then(shareHash =>
-                Promise.all([
-                    this.getContactIdFromHash(shareHash),
-                    this.getTokenBalance(this.getContactIdFromHash(shareHash), accountId),
-                    this.getTokenBalance(base, poolId),
-                    this.getTokenBalance(counter, poolId),
-                    this.getPoolRewards(accountId, poolId),
-                    this.getPoolInfo(accountId, poolId),
-                    this.getTotalShares(poolId),
-                ]),
-            )
-            .then(
-                ([shareId, share, baseAmount, counterAmount, rewardsData, info, totalShares]) => ({
-                    id: poolId,
-                    bytes: poolBytes,
-                    base,
-                    counter,
-                    share,
-                    shareId,
-                    baseAmount,
-                    counterAmount,
-                    rewardsData,
-                    info,
-                    totalShares,
-                }),
-            );
-    }
+    // getPoolData(accountId: string, base: Asset, counter: Asset, [poolId, poolBytes]) {
+    //     return this.getPoolShareId(poolId)
+    //         .then(shareHash =>
+    //             Promise.all([
+    //                 this.getContactIdFromHash(shareHash),
+    //                 this.getTokenBalance(this.getContactIdFromHash(shareHash), accountId),
+    //                 this.getTokenBalance(base, poolId),
+    //                 this.getTokenBalance(counter, poolId),
+    //                 this.getPoolRewards(accountId, poolId),
+    //                 this.getPoolInfo(accountId, poolId),
+    //                 this.getTotalShares(poolId),
+    //             ]),
+    //         )
+    //         .then(
+    //             ([shareId, share, baseAmount, counterAmount, rewardsData, info, totalShares]) => ({
+    //                 id: poolId,
+    //                 bytes: poolBytes,
+    //                 base,
+    //                 counter,
+    //                 share,
+    //                 shareId,
+    //                 baseAmount,
+    //                 counterAmount,
+    //                 rewardsData,
+    //                 info,
+    //                 totalShares,
+    //             }),
+    //         );
+    // }
 
     getTokenBalance(token: Asset | string, where: string) {
         return this.buildSmartContactTx(
@@ -596,7 +615,7 @@ export default class SorobanServiceClass {
                 tx =>
                     this.server.simulateTransaction(
                         tx,
-                    ) as Promise<SimulateTransactionSuccessResponse>,
+                    ) as Promise<StellarSdk.SorobanRpc.Api.SimulateTransactionSuccessResponse>,
             )
             .then(({ result }) => {
                 if (result) {
@@ -613,7 +632,12 @@ export default class SorobanServiceClass {
             poolId,
             AMM_CONTRACT_METHOD.GET_RESERVES,
         )
-            .then(tx => this.simulateTx(tx) as Promise<SimulateTransactionSuccessResponse>)
+            .then(
+                tx =>
+                    this.simulateTx(
+                        tx,
+                    ) as Promise<StellarSdk.SorobanRpc.Api.SimulateTransactionSuccessResponse>,
+            )
             .then(({ result }) => {
                 if (result) {
                     return this.orderTokens(assets).reduce((acc, asset, index) => {
@@ -664,35 +688,34 @@ export default class SorobanServiceClass {
         ).then(tx => this.prepareTransaction(tx));
     }
 
-    estimateSwap(base: Asset, counter: Asset, amount: string) {
-        const idA = this.getAssetContractId(base);
-        const idB = this.getAssetContractId(counter);
-
-        const [a, b] = idA > idB ? [counter, base] : [base, counter];
-
-        return this.buildSmartContactTx(
-            ACCOUNT_FOR_SIMULATE,
-            AMM_SMART_CONTACT_ID,
-            AMM_CONTRACT_METHOD.ESTIMATE_SWAP_ROUTED,
-            this.scValToArray([this.assetToScVal(a), this.assetToScVal(b)]),
-            this.assetToScVal(base),
-            this.assetToScVal(counter),
-            this.amountToUint128(amount),
-        )
-            .then(
-                tx =>
-                    this.server.simulateTransaction(
-                        tx,
-                    ) as Promise<SimulateTransactionSuccessResponse>,
-            )
-            .then(({ result }) => {
-                if (result) {
-                    // @ts-ignore
-                    return result.retval.value();
-                }
-                return 0;
-            });
-    }
+    // estimateSwap(base: Asset, counter: Asset, amount: string) {
+    //     const idA = this.getAssetContractId(base);
+    //     const idB = this.getAssetContractId(counter);
+    //
+    //     const [a, b] = idA > idB ? [counter, base] : [base, counter];
+    //
+    //     return this.buildSmartContactTx(
+    //         ACCOUNT_FOR_SIMULATE,
+    //         AMM_SMART_CONTACT_ID,
+    //         AMM_CONTRACT_METHOD.ESTIMATE_SWAP_ROUTED,
+    //         this.scValToArray([this.assetToScVal(a), this.assetToScVal(b)]),
+    //         this.assetToScVal(base),
+    //         this.assetToScVal(counter),
+    //         this.amountToUint128(amount),
+    //     )
+    //         .then(
+    //             tx =>
+    //                 this.server.simulateTransaction(
+    //                     tx,
+    //                 ) as Promise<StellarSdk.SorobanRpc.Api.SimulateTransactionSuccessResponse>,
+    //         )
+    //         .then(({ result }) => {
+    //             if (result) {
+    //                 return result.retval.value();
+    //             }
+    //             return 0;
+    //         });
+    // }
 
     getSwapChainedTx(
         accountId: string,

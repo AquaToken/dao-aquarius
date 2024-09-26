@@ -2,6 +2,7 @@ import * as React from 'react';
 import { forwardRef, RefObject, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { StellarService } from 'services/globalServices';
 import { flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -14,7 +15,6 @@ import SnapshotHoldings from './SnapshotHoldings/SnapshotHoldings';
 import Eligible from './Statuses/Eligible';
 import NotEligible from './Statuses/NotEligible';
 
-import { StellarService } from '../../../../common/services/globalServices';
 import { AccountEligibility } from '../../api/types';
 
 const Container = styled.section`

@@ -10,6 +10,7 @@ import useAuthStore from 'store/authStore/useAuthStore';
 import { Asset } from 'types/stellar';
 
 import { useDebounce } from 'hooks/useDebounce';
+import { ModalService, SorobanService, ToastService } from 'services/globalServices';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -29,11 +30,6 @@ import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodM
 import MainNetWarningModal, {
     SHOW_PURPOSE_ALIAS_MAIN_NET,
 } from '../../../../common/modals/MainNetWarningModal';
-import {
-    ModalService,
-    SorobanService,
-    ToastService,
-} from '../../../../common/services/globalServices';
 import { MainRoutes } from '../../../../routes';
 import SwapConfirmModal from '../SwapConfirmModal/SwapConfirmModal';
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 
-import { ModalService } from '../../services/globalServices';
+import { ModalService } from 'services/globalServices';
 
 const ModalContainer = (): JSX.Element => {
     const [modals, setModals] = useState(ModalService.modals);

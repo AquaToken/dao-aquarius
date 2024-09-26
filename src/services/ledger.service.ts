@@ -6,7 +6,7 @@ import * as StellarSdk from '@stellar/stellar-sdk';
 import EventService from './event.service';
 import { ModalService } from './globalServices';
 
-import LedgerError from '../modals/LedgerModals/LedgerError';
+import LedgerError from '../common/modals/LedgerModals/LedgerError';
 
 const LEDGER_DEFAULT_ACCOUNT = 'GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF';
 export const LEDGER_CANCEL_ERROR = 'Transaction approval request was rejected';
@@ -51,7 +51,7 @@ export default class LedgerServiceClass {
                 type: LedgerEvents.login,
                 publicKey,
             });
-        } catch (e) {
+        } catch {
             ModalService.openModal(LedgerError, {});
         }
     }

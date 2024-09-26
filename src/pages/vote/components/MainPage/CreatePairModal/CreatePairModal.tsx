@@ -12,6 +12,8 @@ import useAuthStore from 'store/authStore/useAuthStore';
 import { Asset } from 'types/stellar';
 
 import { useIsMounted } from 'hooks/useIsMounted';
+import { StellarService, ToastService } from 'services/globalServices';
+import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -25,8 +27,6 @@ import {
     ModalProps,
     ModalTitle,
 } from '../../../../../common/modals/atoms/ModalAtoms';
-import { StellarService, ToastService } from '../../../../../common/services/globalServices';
-import { BuildSignAndSubmitStatuses } from '../../../../../common/services/wallet-connect.service';
 import Market from '../../common/Market';
 
 const ContentRow = styled.div`

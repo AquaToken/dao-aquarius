@@ -5,6 +5,8 @@ import styled from 'styled-components';
 
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
 
+import AccountService from 'services/account.service';
+import { StellarService } from 'services/globalServices';
 import { flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -12,9 +14,6 @@ import AquaLogo from 'assets/aqua-logo-small.svg';
 
 import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
-
-import AccountService from '../../../../../common/services/account.service';
-import { StellarService } from '../../../../../common/services/globalServices';
 
 const Container = styled.div`
     margin-top: 6.3rem;

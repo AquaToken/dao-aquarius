@@ -10,11 +10,10 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { Asset } from 'types/stellar';
 
+import { SorobanService, ToastService } from 'services/globalServices';
 import { COLORS } from 'web/styles';
 
 import Button from 'basics/buttons/Button';
-
-import { SorobanService, ToastService } from '../../../../common/services/globalServices';
 
 const Container = styled.div`
     color: ${COLORS.pinkRed};

@@ -7,6 +7,9 @@ import { formatBalance } from 'helpers/format-number';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import AccountService from 'services/account.service';
+import { ModalService, StellarService } from 'services/globalServices';
+import { GOV_ICE_CODE, ICE_CODE, ICE_ISSUER } from 'services/stellar.service';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -18,9 +21,6 @@ import ExternalLink from 'basics/ExternalLink';
 import { DOWN_ICE, UP_ICE } from 'pages/vote/components/MainPage/MainPage';
 
 import ChooseLoginMethodModal from '../../../../../common/modals/ChooseLoginMethodModal';
-import AccountService from '../../../../../common/services/account.service';
-import { ModalService, StellarService } from '../../../../../common/services/globalServices';
-import { GOV_ICE_CODE, ICE_CODE, ICE_ISSUER } from '../../../../../common/services/stellar.service';
 import AddIceTrustlinesModal from '../AddIceTrustlinesModal/AddIceTrustlinesModal';
 
 const Container = styled.div`

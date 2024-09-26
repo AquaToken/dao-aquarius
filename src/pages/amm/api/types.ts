@@ -2,7 +2,7 @@ import { Asset } from '@stellar/stellar-sdk';
 
 import { PoolClassic, PoolClassicReserves } from 'types/stellar';
 
-import { POOL_TYPE } from '../../../common/services/soroban.service';
+import { POOL_TYPE } from 'services/soroban.service';
 
 export type ListResponse<T> = {
     items: T[];

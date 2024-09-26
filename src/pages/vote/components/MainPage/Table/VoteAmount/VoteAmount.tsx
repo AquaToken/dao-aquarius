@@ -3,6 +3,13 @@ import styled from 'styled-components';
 
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
 
+import {
+    AQUA_CODE,
+    AQUA_ISSUER,
+    DOWN_ICE_CODE,
+    ICE_ISSUER,
+    UP_ICE_CODE,
+} from 'services/stellar.service';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -15,14 +22,6 @@ import IconUp from 'assets/icon-up-percent.svg';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import { PairStats, TotalStats } from 'pages/vote/api/types';
-
-import {
-    AQUA_CODE,
-    AQUA_ISSUER,
-    DOWN_ICE_CODE,
-    ICE_ISSUER,
-    UP_ICE_CODE,
-} from '../../../../../../common/services/stellar.service';
 
 const TooltipStyled = styled(Tooltip)`
     label {

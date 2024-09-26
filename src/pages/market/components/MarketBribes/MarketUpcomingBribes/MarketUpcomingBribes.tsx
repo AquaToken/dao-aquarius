@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 
+import { StellarService } from 'services/globalServices';
 import { COLORS } from 'web/styles';
 
 import PageLoader from 'basics/loaders/PageLoader';
@@ -14,7 +15,6 @@ import { UpcomingBribe } from 'pages/bribes/api/types';
 import { convertUTCToLocalDateIgnoringTimezone } from 'pages/bribes/pages/AddBribePage';
 import { getUpcomingBribesForMarket } from 'pages/vote/api/api';
 
-import { StellarService } from '../../../../../common/services/globalServices';
 import Asset from '../../../../vote/components/AssetDropdown/Asset';
 
 const Container = styled.div`

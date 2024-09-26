@@ -8,6 +8,15 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { Asset } from 'types/stellar';
 
+import { ModalService, StellarService } from 'services/globalServices';
+import {
+    AQUA_CODE,
+    AQUA_ISSUER,
+    DOWN_ICE_CODE,
+    ICE_ISSUER,
+    StellarEvents,
+    UP_ICE_CODE,
+} from 'services/stellar.service';
 import { flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -26,15 +35,6 @@ import { getPercent } from 'pages/vote/components/MainPage/Table/VoteAmount/Vote
 import VotesProgressLine from './VotesProgressLine/VotesProgressLine';
 
 import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
-import { ModalService, StellarService } from '../../../../common/services/globalServices';
-import {
-    AQUA_CODE,
-    AQUA_ISSUER,
-    DOWN_ICE_CODE,
-    ICE_ISSUER,
-    StellarEvents,
-    UP_ICE_CODE,
-} from '../../../../common/services/stellar.service';
 import CreatePairModal from '../../../vote/components/MainPage/CreatePairModal/CreatePairModal';
 import VoteButton from '../../../vote/components/MainPage/Table/VoteButton/VoteButton';
 

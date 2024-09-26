@@ -1,12 +1,12 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
+import { ModalService } from 'services/globalServices';
 import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import ArrowsCircle from 'assets/icon-arrows-circle.svg';
 
-import { ModalService } from '../../../../../../common/services/globalServices';
 import AccountInput from '../../../AccountInput/AccountInput';
 
 const Wrapper = styled.div`

@@ -5,6 +5,8 @@ import styled from 'styled-components';
 
 import { formatBalance } from 'helpers/format-number';
 
+import { StellarService } from 'services/globalServices';
+import { POOL_TYPE } from 'services/soroban.service';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -19,8 +21,6 @@ import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
 
-import { StellarService } from '../../../../common/services/globalServices';
-import { POOL_TYPE } from '../../../../common/services/soroban.service';
 import { AmmRoutes } from '../../../../routes';
 import Market from '../../../vote/components/common/Market';
 import { FilterOptions, getPools, PoolsSortFields } from '../../api/api';

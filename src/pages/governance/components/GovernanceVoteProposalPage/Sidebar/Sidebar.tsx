@@ -8,6 +8,7 @@ import { formatBalance, roundToPrecision } from 'helpers/format-number';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { ModalService } from 'services/globalServices';
 import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -20,7 +21,6 @@ import ExternalLink from 'basics/ExternalLink';
 import NativeVotingButton from './VotingButton/VotingButton';
 
 import ChooseLoginMethodModal from '../../../../../common/modals/ChooseLoginMethodModal';
-import { ModalService } from '../../../../../common/services/globalServices';
 import { GovernanceRoutes } from '../../../../../routes';
 import { Proposal } from '../../../api/types';
 import { CREATE_DISCUSSION_COST, CREATE_PROPOSAL_COST } from '../../../pages/GovernanceMainPage';

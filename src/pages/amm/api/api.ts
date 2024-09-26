@@ -3,6 +3,8 @@ import axios from 'axios';
 
 import { getAssetFromString, getAssetString } from 'helpers/assets';
 
+import { AssetsService, SorobanService } from 'services/globalServices';
+
 import {
     FindSwapPath,
     ListResponse,
@@ -17,8 +19,6 @@ import {
     PoolUserProcessed,
     PoolVolume24h,
 } from './types';
-
-import { AssetsService, SorobanService } from '../../../common/services/globalServices';
 
 const API_URL = 'https://amm-api.aqua.network';
 

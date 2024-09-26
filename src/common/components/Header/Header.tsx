@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { ModalService } from 'services/globalServices';
 import { commonMaxWidth, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS, Z_INDEX } from 'web/styles';
 
@@ -14,7 +15,6 @@ import AccountBlock from './AccountBlock/AccountBlock';
 
 import { MainRoutes } from '../../../routes';
 import ChooseLoginMethodModal from '../../modals/ChooseLoginMethodModal';
-import { ModalService } from '../../services/globalServices';
 
 const HeaderBlock = styled.header`
     ${commonMaxWidth};
