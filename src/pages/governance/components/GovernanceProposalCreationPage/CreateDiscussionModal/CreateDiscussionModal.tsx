@@ -12,13 +12,13 @@ import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { useIsMounted } from 'hooks/useIsMounted';
 import { flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints } from 'web/styles';
 
 import Alert from 'basics/Alert';
 import Button from 'basics/buttons/Button';
 
-import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
 import {
     ModalDescription,
     ModalProps,

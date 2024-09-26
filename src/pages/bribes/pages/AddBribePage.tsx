@@ -21,6 +21,7 @@ import { formatBalance } from 'helpers/format-number';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { useDebounce } from 'hooks/useDebounce';
 import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS, FONT_FAMILY } from 'web/styles';
 
@@ -38,7 +39,6 @@ import ExternalLink from 'basics/ExternalLink';
 import Input from 'basics/inputs/Input';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
-import { useDebounce } from '../../../common/hooks/useDebounce';
 import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
 import { ModalService, StellarService } from '../../../common/services/globalServices';
 import { BribesRoutes } from '../../../routes';

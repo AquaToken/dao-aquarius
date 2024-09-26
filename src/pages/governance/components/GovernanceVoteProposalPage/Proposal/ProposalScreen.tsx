@@ -6,6 +6,7 @@ import { getDateString } from 'helpers/date';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { useIsOnViewport, useIsOverScrolled } from 'hooks/useIsOnViewport';
 import { commonMaxWidth, flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -18,7 +19,6 @@ import CircleButton from 'basics/buttons/CircleButton';
 import ExternalLink from 'basics/ExternalLink';
 import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
 
-import { useIsOnViewport, useIsOverScrolled } from '../../../../../common/hooks/useIsOnViewport';
 import { GovernanceRoutes } from '../../../../../routes';
 import { Proposal } from '../../../api/types';
 import { statePage } from '../../../pages/GovernanceProposalCreationPage';

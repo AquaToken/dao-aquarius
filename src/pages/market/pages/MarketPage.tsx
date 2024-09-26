@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { useIsOverScrolled } from 'hooks/useIsOnViewport';
 import { commonMaxWidth, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -17,7 +18,6 @@ import PageLoader from 'basics/loaders/PageLoader';
 
 import MigrateToSorobanBanner from '../../../common/components/MigrateToSorobanBanner/MigrateToSorobanBanner';
 import NotFoundPage from '../../../common/components/NotFoundPage/NotFoundPage';
-import { useIsOverScrolled } from '../../../common/hooks/useIsOnViewport';
 import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
 import { ModalService, StellarService } from '../../../common/services/globalServices';
 import { VoteRoutes } from '../../../routes';

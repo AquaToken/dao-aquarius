@@ -5,6 +5,7 @@ import styled from 'styled-components';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { useIsOnViewport } from 'hooks/useIsOnViewport';
 import { commonMaxWidth, flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -16,7 +17,6 @@ import Select from 'basics/inputs/Select';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
 import PageLoader from 'basics/loaders/PageLoader';
 
-import { useIsOnViewport } from '../../../common/hooks/useIsOnViewport';
 import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
 import { ModalService } from '../../../common/services/globalServices';
 import { GovernanceRoutes } from '../../../routes';

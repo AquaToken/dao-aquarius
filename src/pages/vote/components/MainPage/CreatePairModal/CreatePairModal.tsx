@@ -11,6 +11,7 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { Asset } from 'types/stellar';
 
+import { useIsMounted } from 'hooks/useIsMounted';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -19,7 +20,6 @@ import Info from 'assets/icon-info.svg';
 import Button from 'basics/buttons/Button';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
-import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
 import {
     ModalDescription,
     ModalProps,

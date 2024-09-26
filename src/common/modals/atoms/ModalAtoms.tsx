@@ -9,12 +9,11 @@ import {
 } from 'react';
 import styled from 'styled-components';
 
+import useOnClickOutside from 'hooks/useOutsideClick';
 import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS, Z_INDEX } from 'web/styles';
 
 import CloseIcon from 'assets/icon-close.svg';
-
-import useOnClickOutside from '../../hooks/useOutsideClick';
 
 const ModalWrapper = styled.div`
     position: fixed;

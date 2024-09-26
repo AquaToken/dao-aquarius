@@ -7,6 +7,7 @@ import { getDistributionForAccount } from 'api/ice-locker';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { useIsOnViewport } from 'hooks/useIsOnViewport';
 import { commonMaxWidth, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -14,7 +15,6 @@ import ArrowDown from 'assets/icon-arrow-down.svg';
 
 import PageLoader from 'basics/loaders/PageLoader';
 
-import { useIsOnViewport } from '../../../common/hooks/useIsOnViewport';
 import AccountService from '../../../common/services/account.service';
 import { StellarService } from '../../../common/services/globalServices';
 import { StellarEvents } from '../../../common/services/stellar.service';

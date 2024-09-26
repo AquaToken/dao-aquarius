@@ -11,6 +11,7 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { Int128Parts } from 'types/stellar';
 
+import { useUpdateIndex } from 'hooks/useUpdateIndex';
 import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -23,7 +24,6 @@ import PageLoader from 'basics/loaders/PageLoader';
 
 import MigrateToSorobanBanner from '../../../common/components/MigrateToSorobanBanner/MigrateToSorobanBanner';
 import NoTrustline from '../../../common/components/NoTrustline/NoTrustline';
-import { useUpdateIndex } from '../../../common/hooks/useUpdateIndex';
 import {
     SorobanService,
     StellarService,

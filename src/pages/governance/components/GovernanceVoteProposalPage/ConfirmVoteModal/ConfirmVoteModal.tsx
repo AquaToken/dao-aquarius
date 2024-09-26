@@ -11,6 +11,7 @@ import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { useIsMounted } from 'hooks/useIsMounted';
 import { flexAllCenter, flexRowSpaceBetween } from 'web/mixins';
 import { COLORS } from 'web/styles';
 
@@ -25,7 +26,6 @@ import Input from 'basics/inputs/Input';
 import RangeInput from 'basics/inputs/RangeInput';
 import Select from 'basics/inputs/Select';
 
-import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
 import {
     ModalDescription,
     ModalProps,

@@ -5,6 +5,7 @@ import styled, { createGlobalStyle } from 'styled-components';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import useOnClickOutside from 'hooks/useOutsideClick';
 import { flexAllCenter, respondDown, textEllipsis } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -15,7 +16,6 @@ import MobileMenuIcon from 'assets/icon-mobile-menu.svg';
 import Button from 'basics/buttons/Button';
 import Identicon from 'basics/Identicon';
 
-import useOnClickOutside from '../../../hooks/useOutsideClick';
 import ChooseLoginMethodModal from '../../../modals/ChooseLoginMethodModal';
 import { ModalService } from '../../../services/globalServices';
 import AppMenu from '../AppMenu/AppMenu';

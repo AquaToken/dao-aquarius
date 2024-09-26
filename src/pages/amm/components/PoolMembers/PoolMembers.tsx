@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import { formatBalance } from 'helpers/format-number';
 
+import { useUpdateIndex } from 'hooks/useUpdateIndex';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -16,7 +17,6 @@ import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
 import { PoolBalance } from 'pages/amm/api/types';
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
 
-import { useUpdateIndex } from '../../../../common/hooks/useUpdateIndex';
 import { getPoolMembers } from '../../api/api';
 
 const PAGE_SIZE = 10;

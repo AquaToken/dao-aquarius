@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useEffect, useState } from 'react';
 
 // In case we want to call the renderer every time the timeout expires,

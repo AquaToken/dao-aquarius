@@ -11,6 +11,7 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { Asset } from 'types/stellar';
 
+import { useIsMounted } from 'hooks/useIsMounted';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -21,7 +22,6 @@ import { PairStats } from 'pages/vote/api/types';
 
 import VotesAmountModal, { ContentRow, Label } from './VotesAmountModal';
 
-import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
 import {
     ModalDescription,
     ModalProps,

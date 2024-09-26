@@ -9,6 +9,7 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { Asset } from 'types/stellar';
 
+import { useDebounce } from 'hooks/useDebounce';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -24,7 +25,6 @@ import SwapFormPrice from './SwapFormPrice/SwapFormPrice';
 import SwapFormRow from './SwapFormRow/SwapFormRow';
 
 import NoTrustline from '../../../../common/components/NoTrustline/NoTrustline';
-import { useDebounce } from '../../../../common/hooks/useDebounce';
 import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
 import MainNetWarningModal, {
     SHOW_PURPOSE_ALIAS_MAIN_NET,

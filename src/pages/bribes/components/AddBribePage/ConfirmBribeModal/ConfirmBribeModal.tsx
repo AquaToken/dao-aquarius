@@ -12,12 +12,12 @@ import { AssetSimple } from 'store/assetsStore/types';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { useIsMounted } from 'hooks/useIsMounted';
 import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Button from 'basics/buttons/Button';
 
-import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
 import {
     ModalDescription,
     ModalProps,

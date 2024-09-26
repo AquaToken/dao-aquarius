@@ -23,7 +23,6 @@ import Header, {
     NavLinksDivider,
 } from './common/components/Header/Header';
 import NotFoundPage from './common/components/NotFoundPage/NotFoundPage';
-import useGlobalSubscriptions from './common/hooks/useGlobalSubscriptions';
 import ModalContainer from './common/modals/atoms/ModalContainer';
 import LiveOnSorobanAlert, {
     LIVE_ON_SOROBAN_SHOWED_ALIAS,
@@ -35,6 +34,7 @@ import {
 } from './common/services/globalServices';
 import SentryService from './common/services/sentry.service';
 import ToastContainer from './common/toasts/ToastContainer';
+import useGlobalSubscriptions from './hooks/useGlobalSubscriptions';
 import { AmmRoutes, MainRoutes } from './routes';
 import Provider from './store';
 import useAssetsStore from './store/assetsStore/useAssetsStore';

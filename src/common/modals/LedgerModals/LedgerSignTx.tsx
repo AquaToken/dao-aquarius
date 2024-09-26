@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { useIsMounted } from 'hooks/useIsMounted';
 import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -9,7 +10,6 @@ import Button from 'basics/buttons/Button';
 import { IconFail, IconPending, IconSuccess } from 'basics/Icons';
 import DotsLoader from 'basics/loaders/DotsLoader';
 
-import { useIsMounted } from '../../hooks/useIsMounted';
 import { BuildSignAndSubmitStatuses } from '../../services/wallet-connect.service';
 import { ModalDescription, ModalProps, ModalTitle } from '../atoms/ModalAtoms';
 

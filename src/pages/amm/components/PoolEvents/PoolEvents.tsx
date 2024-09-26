@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 
+import { useUpdateIndex } from 'hooks/useUpdateIndex';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -18,7 +19,6 @@ import Table from 'basics/Table';
 
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
 
-import { useUpdateIndex } from '../../../../common/hooks/useUpdateIndex';
 import { getPoolEvents } from '../../api/api';
 import { PoolEvent, PoolExtended } from '../../api/types';
 

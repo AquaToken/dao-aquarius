@@ -11,6 +11,7 @@ import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { useIsMounted } from 'hooks/useIsMounted';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -26,7 +27,6 @@ import Select, { Option } from 'basics/inputs/Select';
 
 import VotesDurationModal from './VotesDurationModal';
 
-import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
 import {
     ModalDescription,
     ModalProps,
@@ -488,7 +488,7 @@ const VotesAmountModal = ({
         }
     };
 
-    const onSubmit = async () => {
+    const onSubmit = () => {
         if (Number(amount) > Number(targetBalance)) {
             ToastService.showErrorToast(
                 `The value must be less or equal than ${formattedTargetBalance} ${targetAsset.code}`,

@@ -2,11 +2,10 @@ import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
+import useOnClickOutside from 'hooks/useOutsideClick';
 import { COLORS } from 'web/styles';
 
 import ArrowDown from 'assets/icon-arrow-down.svg';
-
-import useOnClickOutside from '../../../common/hooks/useOutsideClick';
 
 const DropDown = styled.div<{ $isOpen: boolean; $disabled: boolean }>`
     width: 100%;
