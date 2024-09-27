@@ -6,6 +6,8 @@ import { formatBalance } from 'helpers/format-number';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { ClaimableBalance } from 'types/stellar';
+
 import { StellarService } from 'services/globalServices';
 import {
     DOWN_ICE_CODE,
@@ -284,7 +286,7 @@ interface BalancesProps {
 }
 
 const Balances = ({ ammAquaBalance }: BalancesProps): React.ReactNode => {
-    const [locks, setLocks] = useState(null);
+    const [locks, setLocks] = useState<ClaimableBalance[]>(null);
     const [aquaInVotes, setAquaInVotes] = useState(null);
 
     const { account } = useAuthStore();
@@ -296,7 +298,7 @@ const Balances = ({ ammAquaBalance }: BalancesProps): React.ReactNode => {
     }, []);
 
     useEffect(() => {
-        const unsub = StellarService.event.sub(event => {
+        const unsub = StellarService.event.sub((event: { type: StellarEvents }) => {
             if (event.type === StellarEvents.claimableUpdate) {
                 StellarService.getAquaInLiquidityVotes(account.accountId()).then(res => {
                     setAquaInVotes(res);
@@ -319,7 +321,7 @@ const Balances = ({ ammAquaBalance }: BalancesProps): React.ReactNode => {
         if (!locks) {
             return null;
         }
-        return locks.reduce((acc, lock) => {
+        return locks.reduce((acc: number, lock: ClaimableBalance) => {
             acc += Number(lock.amount);
             return acc;
         }, 0);
