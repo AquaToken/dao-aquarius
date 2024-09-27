@@ -14,8 +14,9 @@ import Stellar from 'assets/xlm-logo.svg';
 
 import AccountBlock from 'basics/AccountBlock';
 import CopyButton from 'basics/buttons/CopyButton';
+import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
 
-import { ModalDescription, ModalProps, ModalTitle } from './atoms/ModalAtoms';
+import { ModalProps } from 'components/ModalBody';
 
 const Container = styled.div`
     width: 52.8rem;

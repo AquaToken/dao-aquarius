@@ -6,12 +6,15 @@ import { Asset } from 'types/stellar';
 import { customScroll, respondDown } from 'web/mixins';
 import { Breakpoints } from 'web/styles';
 
+import { ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
+
+import { ModalProps } from 'components/ModalBody';
+
 import { PoolProcessed } from 'pages/amm/api/types';
 
 import { Stepper } from './MigrateLiquidityStep1';
 
 import PoolsList from '../../../pages/amm/components/PoolsList/PoolsList';
-import { ModalContainer, ModalProps, ModalTitle } from '../atoms/ModalAtoms';
 
 const Content = styled.div`
     max-height: 60vh;
@@ -35,7 +38,7 @@ const MigrateLiquidityStep2 = ({ params }: ModalProps<MigrateLiquidityStep2Param
     const { poolsToMigrate, baseAmount, counterAmount, base, counter, onUpdate } = params;
 
     return (
-        <ModalContainer $isWide>
+        <ModalWrapper $isWide>
             <Stepper>STEP 2/2</Stepper>
             <ModalTitle>Deposit to Soroban pool</ModalTitle>
             <Content>
@@ -49,7 +52,7 @@ const MigrateLiquidityStep2 = ({ params }: ModalProps<MigrateLiquidityStep2Param
                     onUpdate={() => onUpdate()}
                 />
             </Content>
-        </ModalContainer>
+        </ModalWrapper>
     );
 };
 

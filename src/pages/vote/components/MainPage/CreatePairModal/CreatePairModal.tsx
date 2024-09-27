@@ -20,13 +20,11 @@ import { Breakpoints, COLORS } from 'web/styles';
 import Info from 'assets/icon-info.svg';
 
 import Button from 'basics/buttons/Button';
+import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
-import {
-    ModalDescription,
-    ModalProps,
-    ModalTitle,
-} from '../../../../../common/modals/atoms/ModalAtoms';
+import { ModalProps } from 'components/ModalBody';
+
 import Market from '../../common/Market';
 
 const ContentRow = styled.div`

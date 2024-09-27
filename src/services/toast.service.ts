@@ -5,9 +5,17 @@ export enum TOAST_TYPE {
     error = 'error',
 }
 
+export type Toast = {
+    text: string;
+    type: TOAST_TYPE;
+    id: number;
+    resolver: (value?: unknown) => void;
+    delay: number;
+};
+
 export default class ToastServiceClass {
     id = 1;
-    toasts = [];
+    toasts: Toast[] = [];
     event = new EventService();
 
     showSuccessToast(text: string, delay?: number): void {

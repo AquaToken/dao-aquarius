@@ -14,15 +14,13 @@ import Close from 'assets/icon-close-small-purple.svg';
 import Info from 'assets/icon-info.svg';
 
 import ExternalLink from 'basics/ExternalLink';
+import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
 import Table, { CellAlign } from 'basics/Table';
+
+import { ModalProps } from 'components/ModalBody';
 
 import { convertUTCToLocalDateIgnoringTimezone } from 'pages/bribes/pages/AddBribePage';
 
-import {
-    ModalDescription,
-    ModalProps,
-    ModalTitle,
-} from '../../../../../common/modals/atoms/ModalAtoms';
 import { PairStats } from '../../../api/types';
 import Asset from '../../AssetDropdown/Asset';
 

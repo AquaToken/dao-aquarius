@@ -12,7 +12,8 @@ import { Breakpoints, COLORS } from 'web/styles';
 import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
 
-import { ModalProps } from '../../../../common/modals/atoms/ModalAtoms';
+import { ModalProps } from 'components/ModalBody';
+
 import { LockerRoutes } from '../../../../routes';
 
 const Container = styled.form<{ $isModal: boolean }>`

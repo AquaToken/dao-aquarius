@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { ComponentClass, FunctionComponent } from 'react';
 
-import EventService from './event.service';
+import { ModalBody } from 'components/ModalBody';
 
-import { ModalBody } from '../common/modals/atoms/ModalAtoms';
+import EventService from './event.service';
 
 export type Modals = Array<{
     id: number;

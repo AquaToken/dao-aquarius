@@ -22,14 +22,12 @@ import Alert from 'basics/Alert';
 import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
 import Select, { Option } from 'basics/inputs/Select';
+import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+
+import { ModalProps } from 'components/ModalBody';
 
 import { ProposalSimple } from 'pages/governance/api/types';
 
-import {
-    ModalDescription,
-    ModalProps,
-    ModalTitle,
-} from '../../../../../common/modals/atoms/ModalAtoms';
 import { checkProposalStatus, publishProposal } from '../../../api/api';
 import { APPROVED_PROPOSAL_REWARD, CREATE_PROPOSAL_COST } from '../../../pages/GovernanceMainPage';
 import { DAY } from '../ProposalCreation/ProposalCreation';

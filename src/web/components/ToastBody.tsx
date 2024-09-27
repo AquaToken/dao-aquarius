@@ -5,12 +5,13 @@ import styled from 'styled-components';
 import Timer from 'helpers/timer';
 
 import { TOAST_TYPE } from 'services/toast.service';
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
 
 import IconClose from 'assets/icon-close-small.svg';
 
 import { IconFail, IconSuccess } from 'basics/Icons';
+
+import { respondDown } from '../mixins';
+import { Breakpoints, COLORS } from '../styles';
 
 const ToastBody = styled.div<{ $isShow: boolean }>`
     width: 36.2rem;
@@ -147,12 +148,12 @@ const ToastText = styled.span`
 
 type ToastProps = {
     text: string;
-    resolver: () => void;
+    resolver: (value?: unknown) => void;
     delay: number;
     type: TOAST_TYPE;
 };
 
-export const Toast = ({ text, resolver, delay, type }: ToastProps): JSX.Element => {
+export const Toast = ({ text, resolver, delay, type }: ToastProps): React.ReactNode => {
     const [isShow, setIsShow] = useState(true);
     const [onHover, setOnHover] = useState(false);
     const ref = useRef(null);
@@ -179,10 +180,18 @@ export const Toast = ({ text, resolver, delay, type }: ToastProps): JSX.Element 
     }, []);
 
     useLayoutEffect(() => {
-        ref.current.addEventListener('animationend', e => transitionHandler(e), true);
+        ref.current.addEventListener(
+            'animationend',
+            (e: AnimationEvent) => transitionHandler(e),
+            true,
+        );
 
         return () => {
-            ref.current.removeEventListener('animationend', e => transitionHandler(e), true);
+            ref.current.removeEventListener(
+                'animationend',
+                (e: AnimationEvent) => transitionHandler(e),
+                true,
+            );
         };
     });
 

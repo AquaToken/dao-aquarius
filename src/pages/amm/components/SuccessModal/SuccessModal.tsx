@@ -8,8 +8,10 @@ import { Breakpoints, COLORS } from 'web/styles';
 
 import Button from 'basics/buttons/Button';
 import ExternalLink from 'basics/ExternalLink';
+import { ModalTitle } from 'basics/ModalAtoms';
 
-import { ModalProps, ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
+import { ModalProps } from 'components/ModalBody';
+
 import Market from '../../../vote/components/common/Market';
 
 const Container = styled.div`

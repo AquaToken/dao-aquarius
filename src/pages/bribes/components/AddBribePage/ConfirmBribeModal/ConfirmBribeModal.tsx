@@ -19,12 +19,10 @@ import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Button from 'basics/buttons/Button';
+import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
 
-import {
-    ModalDescription,
-    ModalProps,
-    ModalTitle,
-} from '../../../../../common/modals/atoms/ModalAtoms';
+import { ModalProps } from 'components/ModalBody';
+
 import Asset from '../../../../vote/components/AssetDropdown/Asset';
 import Market from '../../../../vote/components/common/Market';
 

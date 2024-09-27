@@ -28,7 +28,10 @@ import LobstrLogo from 'assets/lobstr-logo-black.svg';
 import WalletConnectLogo from 'assets/wallet-connect-logo.svg';
 import Stellar from 'assets/xlm-logo.svg';
 
-import { ModalProps, ModalTitle } from './atoms/ModalAtoms';
+import { ModalTitle } from 'basics/ModalAtoms';
+
+import { ModalProps } from 'components/ModalBody';
+
 import GetFreighterModal from './GetFreighterModal';
 import GetLobstrExtensionModal from './GetLobstrExtensionModal';
 import LedgerLogin from './LedgerModals/LedgerLogin';

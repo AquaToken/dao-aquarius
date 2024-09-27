@@ -20,16 +20,14 @@ import { Breakpoints, COLORS } from 'web/styles';
 import Button from 'basics/buttons/Button';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
+import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+
+import { ModalProps } from 'components/ModalBody';
 
 import { getPathPoolsFee } from 'pages/amm/api/api';
 
 import PathPool from './PathPool/PathPool';
 
-import {
-    ModalDescription,
-    ModalProps,
-    ModalTitle,
-} from '../../../../common/modals/atoms/ModalAtoms';
 import SuccessModal from '../../../amm/components/SuccessModal/SuccessModal';
 import Market from '../../../vote/components/common/Market';
 import { SWAP_SLIPPAGE_ALIAS } from '../SwapSettingsModal/SwapSettingsModal';

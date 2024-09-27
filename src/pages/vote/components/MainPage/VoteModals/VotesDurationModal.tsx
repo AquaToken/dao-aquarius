@@ -19,16 +19,14 @@ import { Breakpoints, COLORS } from 'web/styles';
 
 import Button from 'basics/buttons/Button';
 import Select, { Option } from 'basics/inputs/Select';
+import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+
+import { ModalProps } from 'components/ModalBody';
 
 import { PairStats } from 'pages/vote/api/types';
 
 import VotesAmountModal, { ContentRow, Label } from './VotesAmountModal';
 
-import {
-    ModalDescription,
-    ModalProps,
-    ModalTitle,
-} from '../../../../../common/modals/atoms/ModalAtoms';
 import { SELECTED_PAIRS_ALIAS } from '../MainPage';
 
 const ClaimBack = styled.div`

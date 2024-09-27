@@ -12,10 +12,12 @@ import StellarXLogo from 'assets/stellarx-logo.svg';
 
 import CopyButton from 'basics/buttons/CopyButton';
 import ExternalLink from 'basics/ExternalLink';
+import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
 import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
 
+import { ModalProps } from 'components/ModalBody';
+
 import { MainRoutes } from '../../../routes';
-import { ModalDescription, ModalProps, ModalTitle } from '../atoms/ModalAtoms';
 
 const Container = styled.div`
     width: 67.2rem;

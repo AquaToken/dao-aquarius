@@ -8,13 +8,12 @@ import { StellarService } from 'services/globalServices';
 import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
+import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+
+import { ModalProps } from 'components/ModalBody';
+
 import VotesList from './VotesList/VotesList';
 
-import {
-    ModalDescription,
-    ModalProps,
-    ModalTitle,
-} from '../../../../../common/modals/atoms/ModalAtoms';
 import { PairStats } from '../../../api/types';
 import Market from '../../common/Market';
 

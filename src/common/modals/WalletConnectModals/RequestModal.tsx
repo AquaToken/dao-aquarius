@@ -13,8 +13,9 @@ import { Breakpoints, COLORS } from 'web/styles';
 import Button from 'basics/buttons/Button';
 import { IconFail, IconPending, IconSuccess } from 'basics/Icons';
 import DotsLoader from 'basics/loaders/DotsLoader';
+import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
 
-import { ModalDescription, ModalProps, ModalTitle } from '../atoms/ModalAtoms';
+import { ModalProps } from 'components/ModalBody';
 
 enum TX_STATUSES {
     pending = 'pending',

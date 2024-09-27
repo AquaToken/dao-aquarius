@@ -28,11 +28,13 @@ import Alert from 'basics/Alert';
 import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
 import DotsLoader from 'basics/loaders/DotsLoader';
+import { ModalTitle } from 'basics/ModalAtoms';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import { ModalProps } from 'components/ModalBody';
 
 import { PoolExtended } from 'pages/amm/api/types';
 
-import { ModalProps, ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
 import MainNetWarningModal, {
     SHOW_PURPOSE_ALIAS_MAIN_NET,
 } from '../../../../common/modals/MainNetWarningModal';

@@ -19,6 +19,9 @@ import { Breakpoints, COLORS } from 'web/styles';
 import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
 import RangeInput from 'basics/inputs/RangeInput';
+import { ModalWrapper, ModalTitle } from 'basics/ModalAtoms';
+
+import { ModalProps } from 'components/ModalBody';
 
 import { Pool } from 'pages/amm/api/types';
 import { PairContainer } from 'pages/amm/components/WithdrawFromPool/WithdrawFromPool';
@@ -26,8 +29,6 @@ import AssetLogo from 'pages/vote/components/AssetDropdown/AssetLogo';
 import Market from 'pages/vote/components/common/Market';
 
 import MigrateLiquidityStep2 from './MigrateLiquidityStep2';
-
-import { ModalContainer, ModalProps, ModalTitle } from '../atoms/ModalAtoms';
 
 export const Stepper = styled.div`
     font-size: 1.4rem;
@@ -205,7 +206,7 @@ const MigrateLiquidityStep1 = ({ params, confirm }: ModalProps<MigrateLiquidityS
     };
 
     return (
-        <ModalContainer $isWide>
+        <ModalWrapper $isWide>
             {Boolean(poolsToMigrate) && <Stepper>STEP 1/2</Stepper>}
             <ModalTitle>Withdraw from classic pool</ModalTitle>
             <PairContainer>
@@ -257,7 +258,7 @@ const MigrateLiquidityStep1 = ({ params, confirm }: ModalProps<MigrateLiquidityS
             >
                 withdraw
             </StyledButton>
-        </ModalContainer>
+        </ModalWrapper>
     );
 };
 

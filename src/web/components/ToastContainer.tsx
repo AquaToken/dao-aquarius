@@ -3,10 +3,12 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { ToastService } from 'services/globalServices';
-import { respondDown } from 'web/mixins';
-import { Breakpoints, Z_INDEX } from 'web/styles';
+import { Toast as ToastType } from 'services/toast.service';
 
 import { Toast } from './ToastBody';
+
+import { respondDown } from '../mixins';
+import { Breakpoints, Z_INDEX } from '../styles';
 
 const Container = styled.div`
     position: fixed;
@@ -20,11 +22,11 @@ const Container = styled.div`
     `}
 `;
 
-const ToastContainer = (): JSX.Element => {
-    const [toasts, setToasts] = useState(ToastService.toasts);
+const ToastContainer = (): React.ReactNode => {
+    const [toasts, setToasts] = useState<ToastType[]>(ToastService.toasts);
 
     useEffect(() => {
-        const unsub = ToastService.event.sub(toasts => {
+        const unsub = ToastService.event.sub((toasts: ToastType[]) => {
             setToasts(toasts);
         });
 

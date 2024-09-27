@@ -14,7 +14,9 @@ import IconDeepLink from 'assets/icon-deep-link.svg';
 import IconPlus from 'assets/icon-plus.svg';
 import IconQR from 'assets/icon-qr.svg';
 
-import { ModalDescription, ModalProps, ModalTitle } from '../atoms/ModalAtoms';
+import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+
+import { ModalProps } from 'components/ModalBody';
 
 type PairingModalParams = {
     pairings: WalletConnect.PairingTypes.Struct[];

@@ -19,12 +19,10 @@ import { Breakpoints } from 'web/styles';
 
 import Alert from 'basics/Alert';
 import Button from 'basics/buttons/Button';
+import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
 
-import {
-    ModalDescription,
-    ModalProps,
-    ModalTitle,
-} from '../../../../../common/modals/atoms/ModalAtoms';
+import { ModalProps } from 'components/ModalBody';
+
 import { checkProposalStatus, createProposal, editProposal } from '../../../api/api';
 import { Proposal } from '../../../api/types';
 import { CREATE_DISCUSSION_COST } from '../../../pages/GovernanceMainPage';

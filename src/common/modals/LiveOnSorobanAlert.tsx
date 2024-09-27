@@ -6,8 +6,9 @@ import { respondDown } from 'web/mixins';
 import { Breakpoints } from 'web/styles';
 
 import Button from 'basics/buttons/Button';
+import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
 
-import { ModalDescription, ModalProps, ModalTitle } from './atoms/ModalAtoms';
+import { ModalProps } from 'components/ModalBody';
 
 import { MainRoutes } from '../../routes';
 

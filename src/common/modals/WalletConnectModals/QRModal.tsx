@@ -16,8 +16,9 @@ import Button from 'basics/buttons/Button';
 import CopyButton from 'basics/buttons/CopyButton';
 import ExternalLink from 'basics/ExternalLink';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
+import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
 
-import { ModalDescription, ModalProps, ModalTitle } from '../atoms/ModalAtoms';
+import { ModalProps } from 'components/ModalBody';
 
 const Wrapper = styled.div`
     width: 52.8rem;

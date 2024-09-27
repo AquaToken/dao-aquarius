@@ -9,8 +9,9 @@ import Aqua from 'assets/aqua-logo-small.svg';
 import ArrowsIcon from 'assets/icon-arrows-circle.svg';
 
 import DotsLoader from 'basics/loaders/DotsLoader';
+import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
 
-import { ModalDescription, ModalProps, ModalTitle } from '../atoms/ModalAtoms';
+import { ModalProps } from 'components/ModalBody';
 
 const Container = styled.div`
     width: 52.3rem;

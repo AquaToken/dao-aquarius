@@ -6,8 +6,7 @@ import { Breakpoints } from 'web/styles';
 
 import Button from 'basics/buttons/Button';
 import ExternalLink from 'basics/ExternalLink';
-
-import { ModalDescription } from './atoms/ModalAtoms';
+import { ModalDescription } from 'basics/ModalAtoms';
 
 const Container = styled.div`
     width: 52.8rem;

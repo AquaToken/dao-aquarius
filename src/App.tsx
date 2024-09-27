@@ -11,6 +11,8 @@ import LiveOnSorobanImage from 'assets/live-on-soroban.svg';
 import PageLoader from 'basics/loaders/PageLoader';
 
 import Footer from 'components/Footer';
+import ModalContainer from 'components/ModalContainer';
+import ToastContainer from 'components/ToastContainer';
 
 import { getActiveProposalsCount } from 'pages/governance/api/api';
 import Governance from 'pages/governance/Governance';
@@ -24,11 +26,9 @@ import Header, {
     NavLinksDivider,
 } from './common/components/Header/Header';
 import NotFoundPage from './common/components/NotFoundPage/NotFoundPage';
-import ModalContainer from './common/modals/atoms/ModalContainer';
 import LiveOnSorobanAlert, {
     LIVE_ON_SOROBAN_SHOWED_ALIAS,
 } from './common/modals/LiveOnSorobanAlert';
-import ToastContainer from './common/toasts/ToastContainer';
 import useGlobalSubscriptions from './hooks/useGlobalSubscriptions';
 import { AmmRoutes, MainRoutes } from './routes';
 import SentryService from './services/sentry.service';

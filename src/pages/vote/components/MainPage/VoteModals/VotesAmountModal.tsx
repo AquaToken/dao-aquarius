@@ -26,14 +26,12 @@ import ExternalLink from 'basics/ExternalLink';
 import Input from 'basics/inputs/Input';
 import RangeInput from 'basics/inputs/RangeInput';
 import Select, { Option } from 'basics/inputs/Select';
+import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+
+import { ModalProps } from 'components/ModalBody';
 
 import VotesDurationModal from './VotesDurationModal';
 
-import {
-    ModalDescription,
-    ModalProps,
-    ModalTitle,
-} from '../../../../../common/modals/atoms/ModalAtoms';
 import GetAquaModal from '../../../../../common/modals/GetAquaModal/GetAquaModal';
 import { LockerRoutes } from '../../../../../routes';
 import { PairStats } from '../../../api/types';

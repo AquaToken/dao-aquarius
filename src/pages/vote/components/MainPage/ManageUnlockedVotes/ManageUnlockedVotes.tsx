@@ -10,14 +10,12 @@ import { customScroll, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Button from 'basics/buttons/Button';
+import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+
+import { ModalProps } from 'components/ModalBody';
 
 import { PairStats } from 'pages/vote/api/types';
 
-import {
-    ModalDescription,
-    ModalProps,
-    ModalTitle,
-} from '../../../../../common/modals/atoms/ModalAtoms';
 import VotesList from '../ManageVotesModal/VotesList/VotesList';
 
 const Container = styled.div`

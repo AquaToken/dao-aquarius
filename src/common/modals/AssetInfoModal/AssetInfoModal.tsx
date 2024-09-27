@@ -28,11 +28,13 @@ import X from 'assets/twitter16.svg';
 import Button from 'basics/buttons/Button';
 import Changes24 from 'basics/Changes24';
 import PageLoader from 'basics/loaders/PageLoader';
+import { ModalWrapper } from 'basics/ModalAtoms';
+
+import { ModalProps } from 'components/ModalBody';
 
 import Asset from '../../../pages/vote/components/AssetDropdown/Asset';
 import { MainRoutes } from '../../../routes';
 import NoTrustline from '../../components/NoTrustline/NoTrustline';
-import { ModalContainer, ModalProps } from '../atoms/ModalAtoms';
 
 const Description = styled.p`
     font-size: 1.6rem;
@@ -161,7 +163,7 @@ const AssetInfoModal = ({ params, close }: ModalProps<AssetInfoModalParams>): Re
     }, [tomlInfo]);
 
     return (
-        <ModalContainer $isWide>
+        <ModalWrapper $isWide>
             <Asset asset={asset} isBig hasDomainLink />
             <Description>{desc}</Description>
             <Links>
@@ -258,7 +260,7 @@ const AssetInfoModal = ({ params, close }: ModalProps<AssetInfoModalParams>): Re
 
                 <NoTrustline asset={asset} onlyButton />
             </Buttons>
-        </ModalContainer>
+        </ModalWrapper>
     );
 };
 

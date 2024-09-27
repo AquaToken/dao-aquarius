@@ -22,8 +22,10 @@ import Input from 'basics/inputs/Input';
 import RangeInput from 'basics/inputs/RangeInput';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
+import { ModalTitle } from 'basics/ModalAtoms';
 
-import { ModalProps, ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
+import { ModalProps } from 'components/ModalBody';
+
 import Market from '../../../vote/components/common/Market';
 import { PoolExtended } from '../../api/types';
 import SuccessModal from '../SuccessModal/SuccessModal';

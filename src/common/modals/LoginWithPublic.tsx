@@ -12,8 +12,9 @@ import { Breakpoints } from 'web/styles';
 
 import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
+import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
 
-import { ModalDescription, ModalProps, ModalTitle } from './atoms/ModalAtoms';
+import { ModalProps } from 'components/ModalBody';
 
 const LoginWithSecretBody = styled.div`
     width: 52.8rem;

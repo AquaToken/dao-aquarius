@@ -17,12 +17,9 @@ import { Breakpoints, COLORS } from 'web/styles';
 import Ice from 'assets/ice-logo.svg';
 
 import Button from 'basics/buttons/Button';
+import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
 
-import {
-    ModalDescription,
-    ModalProps,
-    ModalTitle,
-} from '../../../../../common/modals/atoms/ModalAtoms';
+import { ModalProps } from 'components/ModalBody';
 
 const ModalContainer = styled.div`
     width: 52.8rem;
