@@ -1,4 +1,3 @@
-import { ServerApi } from '@stellar/stellar-sdk';
 import * as React from 'react';
 import { useCallback } from 'react';
 import styled from 'styled-components';
@@ -6,6 +5,8 @@ import styled from 'styled-components';
 import { formatBalance } from 'helpers/format-number';
 
 import useAuthStore from 'store/authStore/useAuthStore';
+
+import { ClaimableBalance } from 'types/stellar';
 
 import AccountService from 'services/account.service';
 import { ModalService, StellarService } from 'services/globalServices';
@@ -173,14 +174,14 @@ export const MAX_BOOST_PERIOD = 3 * 365 * 24 * 60 * 60 * 1000;
 export const MIN_BOOST_PERIOD = 24 * 60 * 60 * 1000;
 export const MAX_LOCK_PERIOD = 10 * 365 * 24 * 60 * 60 * 1000;
 
-export const roundMsToDays = timestamp => Math.floor(timestamp / (24 * 60 * 60 * 1000));
+export const roundMsToDays = (timestamp: number) => Math.floor(timestamp / (24 * 60 * 60 * 1000));
 
 interface IceBlockProps {
     account: AccountService;
-    locks: ServerApi.ClaimableBalanceRecord[];
+    locks: ClaimableBalance[];
 }
 
-const IceBlock = ({ account, locks }: IceBlockProps): JSX.Element => {
+const IceBlock = ({ account, locks }: IceBlockProps): React.ReactNode => {
     const { isLogged } = useAuthStore();
 
     const iceBalance = Number(
