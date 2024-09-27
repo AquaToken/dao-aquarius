@@ -68,8 +68,8 @@ const Amount = styled.div`
     `}
 `;
 
-const Percent = styled.div<{ isBoosted: boolean }>`
-    color: ${({ isBoosted }) => (isBoosted ? COLORS.green : COLORS.grayText)};
+const Percent = styled.div<{ $isBoosted: boolean }>`
+    color: ${({ $isBoosted }) => ($isBoosted ? COLORS.green : COLORS.grayText)};
     font-size: 1.4rem;
     line-height: 2rem;
     display: flex;
@@ -89,8 +89,8 @@ const Percents = styled.div`
     `}
 `;
 
-const PercentMobile = styled.span<{ isBoosted: boolean }>`
-    color: ${({ isBoosted }) => (isBoosted ? COLORS.green : COLORS.grayText)};
+const PercentMobile = styled.span<{ $isBoosted: boolean }>`
+    color: ${({ $isBoosted }) => ($isBoosted ? COLORS.green : COLORS.grayText)};
 
     font-size: 1.2rem;
     line-height: 1.4rem;
@@ -261,12 +261,12 @@ const VoteAmount = ({ pair, totalStats }: { pair: PairStats; totalStats: TotalSt
                 <AmountRow>
                     {pair.votes_value ? formatBalance(+pair.votes_value, true) : null}
                     <Percents>
-                        <PercentMobile isBoosted={boosted}>{percentBoostedValue}</PercentMobile>
+                        <PercentMobile $isBoosted={boosted}>{percentBoostedValue}</PercentMobile>
                     </Percents>
                     <Info />
                 </AmountRow>
 
-                <Percent isBoosted={boosted}>{percentBoostedValue}</Percent>
+                <Percent $isBoosted={boosted}>{percentBoostedValue}</Percent>
             </Amount>
             <InfoMobile />
         </TooltipStyled>

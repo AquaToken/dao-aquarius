@@ -146,10 +146,10 @@ const ArrowDown = styled(Arrow)<{ $isOpen: boolean }>`
     transition: transform linear 200ms;
 `;
 
-const ExpandedBlock = styled.div<{ withoutTopPadding?: boolean }>`
+const ExpandedBlock = styled.div<{ $withoutTopPadding?: boolean }>`
     display: flex;
     flex-direction: column;
-    padding: ${({ withoutTopPadding }) => (withoutTopPadding ? '0 2.4rem 2rem' : '3rem 2.4rem')};
+    padding: ${({ $withoutTopPadding }) => ($withoutTopPadding ? '0 2.4rem 2rem' : '3rem 2.4rem')};
     border-radius: 0.6rem;
     background-color: ${COLORS.lightGray};
     margin-top: 2.4rem;
@@ -332,7 +332,7 @@ const PoolsList = ({
                         {expandedIndexes.includes(
                             (pool as SorobanPool).address ?? (pool as PoolClassicProcessed).id,
                         ) && (
-                            <ExpandedBlock withoutTopPadding={withDeposit}>
+                            <ExpandedBlock $withoutTopPadding={withDeposit}>
                                 {withDeposit ? (
                                     <DepositToPool
                                         params={{

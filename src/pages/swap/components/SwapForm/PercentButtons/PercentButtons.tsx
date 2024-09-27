@@ -11,12 +11,12 @@ import Info from 'assets/icon-info.svg';
 
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
-const Container = styled.div<{ isMobile: boolean }>`
-    display: ${({ isMobile }) => (isMobile ? 'none' : 'flex')};
+const Container = styled.div<{ $isMobile: boolean }>`
+    display: ${({ $isMobile }) => ($isMobile ? 'none' : 'flex')};
 
     ${respondDown(Breakpoints.sm)`
         width: 100%;
-        display: ${({ isMobile }) => (!isMobile ? 'none' : 'flex')};
+        display: ${({ $isMobile }) => (!$isMobile ? 'none' : 'flex')};
         margin-top: 0.4rem;
     `}
 `;
@@ -92,7 +92,7 @@ const PercentButtons = ({ setPercent, asset, isMobile }: PercentButtonsProps) =>
         return null;
     }
     return (
-        <Container isMobile={isMobile}>
+        <Container $isMobile={isMobile}>
             <Buttons>
                 <PercentButton onClick={() => setPercent(25)}>25%</PercentButton>
                 <PercentButton onClick={() => setPercent(50)}>50%</PercentButton>

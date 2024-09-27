@@ -27,12 +27,12 @@ const Title = styled.div`
     margin-bottom: 0.8rem;
 `;
 
-const WithoutBoost = styled.div<{ hasBoost: boolean }>`
+const WithoutBoost = styled.div<{ $hasBoost: boolean }>`
     display: flex;
     align-items: center;
     font-size: 3.6rem;
     line-height: 4.2rem;
-    color: ${({ hasBoost }) => (hasBoost ? COLORS.grayText : COLORS.titleText)};
+    color: ${({ $hasBoost }) => ($hasBoost ? COLORS.grayText : COLORS.titleText)};
     position: relative;
 
     svg {
@@ -166,7 +166,7 @@ const ExpectedReward = ({ accountEligibility }: { accountEligibility: AccountEli
         <Container>
             <Title>Expected Airdrop #2 reward</Title>
 
-            <WithoutBoost hasBoost={hasBoost}>
+            <WithoutBoost $hasBoost={hasBoost}>
                 {hasBoost ? <AquaGray /> : <Aqua />}
                 {formatBalance(+accountEligibility.raw_airdrop_reward, true)} AQUA
                 {hasBoost && (

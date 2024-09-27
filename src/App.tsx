@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { lazy, Suspense, useEffect, useState } from 'react';
 import Title from 'react-document-title';
-import { hot } from 'react-hot-loader';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import styled, { createGlobalStyle } from 'styled-components';
 
@@ -354,6 +353,4 @@ const ProvidedApp = () => (
     </Provider>
 );
 
-declare let module: Record<string, unknown>;
-
-export default hot(module)(ProvidedApp);
+export default ProvidedApp;

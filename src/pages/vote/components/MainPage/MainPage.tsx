@@ -178,13 +178,13 @@ const PairSearch = styled.div`
     `}
 `;
 
-const SwapButton = styled.div<{ disabled: boolean }>`
+const SwapButton = styled.div<{ $disabled: boolean }>`
     margin: 0 3.6rem;
     padding: 0.8rem;
     width: 3.2rem;
     height: 3.2rem;
     border-radius: 0.4rem;
-    cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+    cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
 
     &:hover {
         background: ${COLORS.lightGray};
@@ -867,7 +867,7 @@ const MainPage = (): React.ReactNode => {
                         label="Search asset by name, domain or issuer"
                         placeholder="AQUA or aqua.network or AQUA:GBNZ...AQUA"
                     />
-                    <SwapButton disabled={!searchCounter} onClick={() => swapAssets()}>
+                    <SwapButton $disabled={!searchCounter} onClick={() => swapAssets()}>
                         <ArrowsIcon />
                     </SwapButton>
 

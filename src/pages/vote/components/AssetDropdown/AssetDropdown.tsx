@@ -10,6 +10,8 @@ import { AssetSimple } from 'store/assetsStore/types';
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { Asset as AssetType } from 'types/stellar';
+
 import { useDebounce } from 'hooks/useDebounce';
 import useOnClickOutside from 'hooks/useOutsideClick';
 import { StellarService } from 'services/globalServices';
@@ -22,7 +24,7 @@ import Loader from 'assets/loader.svg';
 
 import Asset from './Asset';
 
-const DropDown = styled.div<{ isOpen: boolean; disabled: boolean }>`
+const DropDown = styled.div<{ $isOpen: boolean; $disabled: boolean }>`
     width: 100%;
     display: flex;
     flex-direction: row;
@@ -30,12 +32,12 @@ const DropDown = styled.div<{ isOpen: boolean; disabled: boolean }>`
     height: 6.6rem;
     position: relative;
     cursor: pointer;
-    border: ${({ isOpen }) =>
-        isOpen ? `0.2rem solid ${COLORS.purple}` : `0.1rem solid ${COLORS.gray}`};
-    border-radius: ${({ isOpen }) => (isOpen ? '0.5rem 0.5rem 0 0' : '0.5rem')};
-    padding: ${({ isOpen }) => (isOpen ? '0.1rem' : '0.2rem')};
+    border: ${({ $isOpen }) =>
+        $isOpen ? `0.2rem solid ${COLORS.purple}` : `0.1rem solid ${COLORS.gray}`};
+    border-radius: ${({ $isOpen }) => ($isOpen ? '0.5rem 0.5rem 0 0' : '0.5rem')};
+    padding: ${({ $isOpen }) => ($isOpen ? '0.1rem' : '0.2rem')};
     box-sizing: border-box;
-    pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
+    pointer-events: ${({ $disabled }) => ($disabled ? 'none' : 'auto')};
     font-size: 1.4rem;
     background: ${COLORS.white};
 `;
@@ -80,7 +82,7 @@ const DropdownLoader = styled(Loader)`
     margin-right: ${({ $isOpen }) => ($isOpen ? '0' : '0.1rem')};
 `;
 
-const DropdownList = styled.div<{ longListOnMobile?: boolean }>`
+const DropdownList = styled.div<{ $longListOnMobile?: boolean }>`
     position: absolute;
     left: -0.2rem;
     top: calc(100% + 0.2rem);
@@ -96,7 +98,8 @@ const DropdownList = styled.div<{ longListOnMobile?: boolean }>`
     z-index: 2;
 
     ${respondDown(Breakpoints.md)`
-        ${({ longListOnMobile }) => (longListOnMobile ? 'max-height: 42rem' : 'max-height: 24rem;')}
+        ${({ $longListOnMobile }) =>
+            $longListOnMobile ? 'max-height: 42rem' : 'max-height: 24rem;'}
     `}
 
     &::-webkit-scrollbar {
@@ -197,9 +200,9 @@ const Label = styled.div`
 
 type AssetDropdownProps = {
     asset: AssetSimple;
-    onUpdate: (asset) => void;
+    onUpdate: (asset: AssetType) => void;
     disabled?: boolean;
-    onToggle?: (boolean) => void;
+    onToggle?: (value: boolean) => void;
     exclude?: AssetSimple;
     placeholder?: string;
     label?: string;
@@ -216,7 +219,7 @@ const StyledAsset = styled(Asset)<{ $withBalances?: boolean }>`
     width: ${({ $withBalances }) => ($withBalances ? '50%' : '100%')};
 `;
 
-const domainPattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?$/;
+const domainPattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
 const domainRegexp = new RegExp(domainPattern);
 
 const codeIssuerPattern = /^[a-zA-Z0-9]{1,12}:[a-zA-Z0-9]{56}$/;
@@ -379,11 +382,11 @@ const AssetDropdown = ({
         setSearchResults([]);
     }, [debouncedSearchText.current]);
 
-    const onClickAsset = asset => {
+    const onClickAsset = (asset: AssetSimple) => {
         onUpdate(StellarService.createAsset(asset.code, asset.issuer));
     };
 
-    const resetAsset = event => {
+    const resetAsset = (event: React.MouseEvent) => {
         event.stopPropagation();
         onUpdate(null);
     };
@@ -419,9 +422,9 @@ const AssetDropdown = ({
     return (
         <DropDown
             onClick={() => toggleDropdown()}
-            isOpen={isOpen}
+            $isOpen={isOpen}
             ref={ref}
-            disabled={!assets.length || disabled || pending}
+            $disabled={!assets.length || disabled || pending}
             {...props}
         >
             {Boolean(label) && <Label>{label}</Label>}
@@ -429,7 +432,7 @@ const AssetDropdown = ({
                 <StyledAsset asset={selectedAsset} />
             ) : (
                 <DropdownSearch
-                    onClick={e => {
+                    onClick={(e: React.MouseEvent) => {
                         if (isOpen) {
                             e.stopPropagation();
                         }
@@ -437,7 +440,7 @@ const AssetDropdown = ({
                     placeholder={placeholder ?? 'Search asset or enter home domain'}
                     $disabled={!assets.length || disabled || pending}
                     value={searchText}
-                    onChange={e => {
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         setSearchText(e.target.value);
                     }}
                     ref={inputRef}
@@ -446,7 +449,7 @@ const AssetDropdown = ({
 
             {!withoutReset && selectedAsset && (
                 <div
-                    onClick={e => {
+                    onClick={(e: React.MouseEvent) => {
                         resetAsset(e);
                     }}
                 >
@@ -460,7 +463,7 @@ const AssetDropdown = ({
                 <DropdownArrow $isOpen={isOpen} />
             )}
             {isOpen && (
-                <DropdownList longListOnMobile={longListOnMobile}>
+                <DropdownList $longListOnMobile={longListOnMobile}>
                     {filteredAssets.map(assetItem => (
                         <DropdownItem
                             onClick={() => onClickAsset(assetItem)}

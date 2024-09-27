@@ -51,16 +51,16 @@ const HorizontalStyles = css`
     `}
 `;
 
-const Container = styled.div<{ isHorizontal?: boolean }>`
-    ${({ isHorizontal }) => (isHorizontal ? HorizontalStyles : VerticalStyles)};
+const Container = styled.div<{ $isHorizontal?: boolean }>`
+    ${({ $isHorizontal }) => ($isHorizontal ? HorizontalStyles : VerticalStyles)};
 
     a:hover svg path:not(.white) {
         fill: ${COLORS.purple};
     }
 `;
 
-const StayInTouch = styled.div<{ isHorizontal?: boolean }>`
-    display: ${({ isHorizontal }) => (isHorizontal ? 'none' : 'flex')};
+const StayInTouch = styled.div<{ $isHorizontal?: boolean }>`
+    display: ${({ $isHorizontal }) => ($isHorizontal ? 'none' : 'flex')};
     align-items: center;
     font-size: 1.6rem;
     line-height: 1.9rem;
@@ -78,7 +78,7 @@ const Line = styled.div`
 `;
 
 const SocialLinks = ({ isHorizontal }: { isHorizontal?: boolean }) => (
-    <Container isHorizontal={isHorizontal}>
+    <Container $isHorizontal={isHorizontal}>
         <a href="https://www.reddit.com/r/AquariusAqua/" target="_blank" rel="noreferrer">
             <Reddit />
         </a>
@@ -100,7 +100,7 @@ const SocialLinks = ({ isHorizontal }: { isHorizontal?: boolean }) => (
         <a href="mailto:hello@aqua.network">
             <Email />
         </a>
-        <StayInTouch isHorizontal={isHorizontal}>
+        <StayInTouch $isHorizontal={isHorizontal}>
             Stay in touch <Line />
         </StayInTouch>
     </Container>

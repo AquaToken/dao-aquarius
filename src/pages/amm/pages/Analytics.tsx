@@ -106,13 +106,13 @@ const ListTitles = styled.h3`
     `}
 `;
 
-const ListTab = styled.span<{ isActive: boolean }>`
+const ListTab = styled.span<{ $isActive: boolean }>`
     cursor: pointer;
-    color: ${({ isActive }) => (isActive ? COLORS.titleText : `${COLORS.titleText}4D`)};
+    color: ${({ $isActive }) => ($isActive ? COLORS.titleText : `${COLORS.titleText}4D`)};
     white-space: nowrap;
 
     &:hover {
-        color: ${({ isActive }) => (isActive ? COLORS.titleText : COLORS.placeholder)};
+        color: ${({ $isActive }) => ($isActive ? COLORS.titleText : COLORS.placeholder)};
     }
 
     &:first-child {
@@ -262,13 +262,13 @@ const Analytics = () => {
                         <ListHeader>
                             <ListTitles>
                                 <ListTab
-                                    isActive={activeTab === Tabs.top}
+                                    $isActive={activeTab === Tabs.top}
                                     onClick={() => setTab(Tabs.top)}
                                 >
                                     All pools
                                 </ListTab>
                                 <ListTab
-                                    isActive={activeTab === Tabs.my}
+                                    $isActive={activeTab === Tabs.my}
                                     onClick={() => setTab(Tabs.my)}
                                 >
                                     My liquidity

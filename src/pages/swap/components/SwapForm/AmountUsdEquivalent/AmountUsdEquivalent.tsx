@@ -28,7 +28,7 @@ const Container = styled.div`
     `}
 `;
 
-const Percent = styled.div<{ percent: number }>`
+const Percent = styled.div<{ $percent: number }>`
     display: flex;
     align-items: center;
     margin-left: 0.4rem;
@@ -36,12 +36,12 @@ const Percent = styled.div<{ percent: number }>`
     svg {
         margin-left: 0.4rem;
     }
-    color: ${({ percent }) => {
-        if (percent > 0) {
+    color: ${({ $percent }) => {
+        if ($percent > 0) {
             return COLORS.green;
         }
 
-        if (percent <= -10) {
+        if ($percent <= -10) {
             return COLORS.pinkRed;
         }
 
@@ -118,7 +118,7 @@ const AmountUsdEquivalent = ({ amount, asset, sourceAmount, sourceAsset }: Props
             </span>
 
             {percent ? (
-                <Percent percent={Number(percent)}>
+                <Percent $percent={Number(percent)}>
                     ({Number(percent) > 0 ? '+' : ''}
                     {percent}%)
                     {Number(percent) <= -10 ? (

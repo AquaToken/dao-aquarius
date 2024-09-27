@@ -35,11 +35,11 @@ const Outer = styled.div`
     background-color: ${COLORS.pinkRed};
 `;
 
-const Inner = styled.div<{ width: string }>`
+const Inner = styled.div<{ $width: string }>`
     height: 0.8rem;
-    border-radius: ${({ width }) => (width === '100%' ? '0.8rem' : '0.8rem 0 0 0.8rem')};
-    border-right: ${({ width }) => (width === '100%' ? 'none' : `0.1rem solid ${COLORS.white}`)};
-    width: ${({ width }) => width};
+    border-radius: ${({ $width }) => ($width === '100%' ? '0.8rem' : '0.8rem 0 0 0.8rem')};
+    border-right: ${({ $width }) => ($width === '100%' ? 'none' : `0.1rem solid ${COLORS.white}`)};
+    width: ${({ $width }) => $width};
     background-color: ${COLORS.purple};
 `;
 
@@ -66,7 +66,7 @@ const CurrentResults = ({ proposal }: { proposal: ProposalSimple }) => {
                 <span>Against {roundToPrecision(100 - percentFor, 2)}%</span>
             </Label>
             <Outer>
-                <Inner width={`${percentFor}%`} />
+                <Inner $width={`${percentFor}%`} />
             </Outer>
         </ProgressLine>
     );

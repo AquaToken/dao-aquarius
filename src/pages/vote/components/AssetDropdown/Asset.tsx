@@ -146,8 +146,8 @@ const Asset = ({
         return (
             <Container {...props}>
                 <AssetLogo asset={asset} />
-                <AssetDetails inRow>
-                    <AssetCode inRow>{asset.code}</AssetCode>
+                <AssetDetails $inRow>
+                    <AssetCode $inRow>{asset.code}</AssetCode>
                 </AssetDetails>
             </Container>
         );

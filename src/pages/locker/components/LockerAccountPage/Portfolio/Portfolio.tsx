@@ -1,9 +1,10 @@
-import { ServerApi } from '@stellar/stellar-sdk';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
+
+import { ClaimableBalance } from 'types/stellar';
 
 import AccountService from 'services/account.service';
 import { StellarService } from 'services/globalServices';
@@ -81,7 +82,7 @@ export const AdditionalInfoColumn = styled.div`
     padding-top: 3.2rem;
 `;
 
-export const BalanceLabel = styled.div<{ color: string; textColor: string }>`
+export const BalanceLabel = styled.div<{ $color: string; $textColor: string }>`
     width: min-content;
     height: 1.9rem;
     border-radius: 0.3rem;
@@ -89,8 +90,8 @@ export const BalanceLabel = styled.div<{ color: string; textColor: string }>`
     line-height: 1.9rem;
     font-size: 1rem;
     font-weight: bold;
-    background: ${({ color }) => color};
-    color: ${({ textColor }) => textColor};
+    background: ${({ $color }) => $color};
+    color: ${({ $textColor }) => $textColor};
     margin-right: 0.7rem;
     padding: 0 0.8rem;
 `;
@@ -116,7 +117,7 @@ const Portfolio = ({
 }: {
     ammAquaBalance: number;
     currentAccount: AccountService;
-    locks: ServerApi.ClaimableBalanceRecord[];
+    locks: ClaimableBalance[];
 }) => {
     const [price, setPrice] = useState(null);
 
@@ -155,7 +156,7 @@ const Portfolio = ({
             </BalanceRow>
             <AdditionalInfo>
                 <AdditionalInfoColumn>
-                    <BalanceLabel color={COLORS.yellow} textColor={COLORS.titleText}>
+                    <BalanceLabel $color={COLORS.yellow} $textColor={COLORS.titleText}>
                         AMM
                     </BalanceLabel>
                     <AdditionalInfoBalance>
@@ -164,7 +165,7 @@ const Portfolio = ({
                     <AdditionalInfoDescription>in AMM pool</AdditionalInfoDescription>
                 </AdditionalInfoColumn>
                 <AdditionalInfoColumn>
-                    <BalanceLabel color={COLORS.purple} textColor={COLORS.white}>
+                    <BalanceLabel $color={COLORS.purple} $textColor={COLORS.white}>
                         LOCK
                     </BalanceLabel>
                     <AdditionalInfoBalance>

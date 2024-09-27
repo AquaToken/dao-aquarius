@@ -199,7 +199,7 @@ const QRModal = ({ params }: ModalProps<{ uri: string }>): JSX.Element => {
 
             {modalState === ModalStates.qr && (
                 <>
-                    <ModalDescription smallMarginBottom>
+                    <ModalDescription $smallMarginBottom>
                         Open your WalletConnect-compatible app with Stellar support, like LOBSTR
                         wallet, and scan the QR code to connect.
                     </ModalDescription>

@@ -38,21 +38,21 @@ const Pillar = styled.div`
     background: ${COLORS.gray};
 `;
 
-const IceLine = styled.div<{ width: number; hasAquaVotes: boolean }>`
+const IceLine = styled.div<{ $width: number; $hasAquaVotes: boolean }>`
     display: flex;
-    width: ${({ width }) => `${width}%`};
+    width: ${({ $width }) => `${$width}%`};
     height: 0.8rem;
-    border-radius: ${({ hasAquaVotes }) => (!hasAquaVotes ? '0.8rem' : '0.8rem 0 0 0.8rem')};
-    border-right: ${({ hasAquaVotes }) =>
-        !hasAquaVotes ? 'none' : `0.1rem solid ${COLORS.white}`};
+    border-radius: ${({ $hasAquaVotes }) => (!$hasAquaVotes ? '0.8rem' : '0.8rem 0 0 0.8rem')};
+    border-right: ${({ $hasAquaVotes }) =>
+        !$hasAquaVotes ? 'none' : `0.1rem solid ${COLORS.white}`};
     background: ${COLORS.blue};
 `;
 
-const AquaLine = styled.div<{ width: number; hasIceVotes: boolean }>`
+const AquaLine = styled.div<{ $width: number; $hasIceVotes: boolean }>`
     display: flex;
-    width: ${({ width }) => `${width}%`};
+    width: ${({ $width }) => `${$width}%`};
     height: 0.8rem;
-    border-radius: ${({ hasIceVotes }) => (hasIceVotes ? '0 0.8rem 0.8rem 0' : '0.8rem')};
+    border-radius: ${({ $hasIceVotes }) => ($hasIceVotes ? '0 0.8rem 0.8rem 0' : '0.8rem')};
     background: ${COLORS.purple};
 `;
 
@@ -79,8 +79,8 @@ const VotesProgressLine = ({
                 <Sum>{formatBalance(iceVotes + aquaVotes, true)}</Sum>
             </Header>
             <Pillar>
-                <IceLine width={icePercent} hasAquaVotes={aquaPercent !== 0} />
-                <AquaLine width={aquaPercent} hasIceVotes={icePercent !== 0} />
+                <IceLine $width={icePercent} $hasAquaVotes={aquaPercent !== 0} />
+                <AquaLine $width={aquaPercent} $hasIceVotes={icePercent !== 0} />
             </Pillar>
         </Container>
     );

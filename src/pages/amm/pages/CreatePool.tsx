@@ -52,8 +52,8 @@ import { PoolProcessed } from '../api/types';
 import ContractNotFound from '../components/ContractNotFound/ContractNotFound';
 import PoolsList from '../components/PoolsList/PoolsList';
 
-const ErrorLabel = styled.span<{ isError?: boolean }>`
-    color: ${({ isError }) => (isError ? COLORS.pinkRed : COLORS.paragraphText)};
+const ErrorLabel = styled.span<{ $isError?: boolean }>`
+    color: ${({ $isError }) => ($isError ? COLORS.pinkRed : COLORS.paragraphText)};
 `;
 
 const StyledForm = styled(Form)`
@@ -84,17 +84,17 @@ const FormDescription = styled.span`
     color: ${COLORS.grayText};
 `;
 
-const PoolType = styled.div<{ isActive?: boolean }>`
+const PoolType = styled.div<{ $isActive?: boolean }>`
     ${flexRowSpaceBetween};
     cursor: pointer;
     width: 100%;
     padding: 3.7rem 3.2rem;
     border-radius: 1rem;
-    background-color: ${({ isActive }) => (isActive ? COLORS.purple : COLORS.lightGray)};
-    color: ${({ isActive }) => (isActive ? COLORS.white : COLORS.paragraphText)};
+    background-color: ${({ $isActive }) => ($isActive ? COLORS.purple : COLORS.lightGray)};
+    color: ${({ $isActive }) => ($isActive ? COLORS.white : COLORS.paragraphText)};
 
     svg {
-        display: ${({ isActive }) => (isActive ? 'block' : 'none')};
+        display: ${({ $isActive }) => ($isActive ? 'block' : 'none')};
         width: 3rem;
         margin-left: 0.4rem;
     }
@@ -477,7 +477,7 @@ const CreatePool = () => {
                         <StyledFormSection>
                             <FormSectionTitle>Select pool type</FormSectionTitle>
                             <PoolType
-                                isActive={type === POOL_TYPE.constant}
+                                $isActive={type === POOL_TYPE.constant}
                                 onClick={() => setType(POOL_TYPE.constant)}
                             >
                                 <div>
@@ -487,7 +487,7 @@ const CreatePool = () => {
                                 <Tick />
                             </PoolType>
                             <PoolType
-                                isActive={type === POOL_TYPE.stable}
+                                $isActive={type === POOL_TYPE.stable}
                                 onClick={() => setType(POOL_TYPE.stable)}
                             >
                                 <div>
@@ -631,7 +631,7 @@ const CreatePool = () => {
                                 <FormRow>
                                     <InputStyled
                                         label={
-                                            <ErrorLabel isError={isStableFeeInputError}>
+                                            <ErrorLabel $isError={isStableFeeInputError}>
                                                 {isStableFeeInputError
                                                     ? `Percent fee should be in range ${STABLE_POOL_FEE_PERCENTS.min}% - ${STABLE_POOL_FEE_PERCENTS.max}%`
                                                     : `Swap Fee (${STABLE_POOL_FEE_PERCENTS.min}% - ${STABLE_POOL_FEE_PERCENTS.max}%)`}

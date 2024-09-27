@@ -204,8 +204,8 @@ export const ModalBody = ({
     );
 };
 
-export const ModalContainer = styled.div<{ isWide?: boolean }>`
-    width: ${({ isWide }) => (isWide ? '75.2rem' : '52.3rem')};
+export const ModalContainer = styled.div<{ $isWide?: boolean }>`
+    width: ${({ $isWide }) => ($isWide ? '75.2rem' : '52.3rem')};
 
     ${respondDown(Breakpoints.md)`
         width: 100%;
@@ -225,11 +225,11 @@ export const ModalTitle = styled.h3`
     `};
 `;
 
-export const ModalDescription = styled.div<{ smallMarginBottom?: boolean }>`
+export const ModalDescription = styled.div<{ $smallMarginBottom?: boolean }>`
     font-size: 1.6rem;
     line-height: 2.8rem;
     color: ${COLORS.descriptionText};
-    margin-bottom: ${({ smallMarginBottom }) => (smallMarginBottom ? '2.4rem' : '4rem')};
+    margin-bottom: ${({ $smallMarginBottom }) => ($smallMarginBottom ? '2.4rem' : '4rem')};
 
     ${respondDown(Breakpoints.md)`
          margin-bottom: 2.4rem;

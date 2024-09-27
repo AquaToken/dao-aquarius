@@ -46,8 +46,8 @@ const DetailValue = styled.span`
     white-space: nowrap;
 `;
 
-const Change = styled.div<{ isPositive: boolean }>`
-    color: ${({ isPositive }) => (isPositive ? COLORS.purple : COLORS.pinkRed)};
+const Change = styled.div<{ $isPositive: boolean }>`
+    color: ${({ $isPositive }) => ($isPositive ? COLORS.purple : COLORS.pinkRed)};
 `;
 
 const PERIOD_24H = 24 * 60 * 60 * 1000;
@@ -148,7 +148,7 @@ const DailyStats = ({ base, counter }: DailyStatsProps): React.ReactNode => {
                         change24 === '-' ? (
                             '-'
                         ) : (
-                            <Change isPositive={Number(change24) >= 0}>{change24}%</Change>
+                            <Change $isPositive={Number(change24) >= 0}>{change24}%</Change>
                         )
                     ) : (
                         <DotsLoader />

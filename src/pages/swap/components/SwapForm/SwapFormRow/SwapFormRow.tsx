@@ -28,8 +28,8 @@ const Container = styled.div<{ $isOpen?: boolean }>`
     `}
 `;
 
-const Balance = styled.div<{ isHidden?: boolean }>`
-    visibility: ${({ isHidden }) => (isHidden ? 'hidden' : 'unset')};
+const Balance = styled.div<{ $isHidden?: boolean }>`
+    visibility: ${({ $isHidden }) => ($isHidden ? 'hidden' : 'unset')};
     position: absolute;
     bottom: calc(100% + 1.2rem);
     right: 0;
@@ -100,7 +100,7 @@ const SwapFormRow = ({
     return (
         <Container $isOpen={!isBase && isOpen}>
             {account && account.getAssetBalance(asset) !== null && (
-                <Balance>
+                <Balance $isHidden={!isBase && isOpen}>
                     {isBase ? 'Available: ' : 'Balance: '}
                     {formatBalance(
                         isBase

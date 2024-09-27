@@ -39,11 +39,11 @@ import MainNetWarningModal, {
 import Asset from '../../../vote/components/AssetDropdown/Asset';
 import SuccessModal from '../SuccessModal/SuccessModal';
 
-const Container = styled.div<{ isModal: boolean }>`
-    width: ${({ isModal }) => (isModal ? '52.3rem' : '100%')};
+const Container = styled.div<{ $isModal: boolean }>`
+    width: ${({ $isModal }) => ($isModal ? '52.3rem' : '100%')};
     max-height: 82vh;
     overflow: auto;
-    padding-top: ${({ isModal }) => (isModal ? '0' : '4rem')};
+    padding-top: ${({ $isModal }) => ($isModal ? '0' : '4rem')};
 
     ${customScroll};
 
@@ -117,14 +117,14 @@ const BalanceClickable = styled.span`
     margin-left: 0.4rem;
 `;
 
-const PoolInfo = styled.div<{ isModal: boolean }>`
+const PoolInfo = styled.div<{ $isModal: boolean }>`
     display: flex;
     flex-direction: column;
     background-color: ${COLORS.lightGray};
     border-radius: 0.6rem;
-    padding: ${({ isModal }) => (isModal ? '2.4rem;' : '0')};
-    margin-top: ${({ isModal }) => (isModal ? '2.4rem;' : '0')};
-    margin-bottom: ${({ isModal }) => (isModal ? '4.8rem;' : '0')};
+    padding: ${({ $isModal }) => ($isModal ? '2.4rem;' : '0')};
+    margin-top: ${({ $isModal }) => ($isModal ? '2.4rem;' : '0')};
+    margin-bottom: ${({ $isModal }) => ($isModal ? '4.8rem;' : '0')};
 
     ${respondDown(Breakpoints.sm)`
         margin-bottom: 2rem;
@@ -402,7 +402,7 @@ const DepositToPool = ({ params }: ModalProps<DepositToPoolParams>) => {
     }, []);
 
     return (
-        <Container isModal={isModal}>
+        <Container $isModal={isModal}>
             {isModal && <ModalTitle>Add liquidity</ModalTitle>}
             {Number(pool.total_share) === 0 && (
                 <Alert
@@ -490,7 +490,7 @@ const DepositToPool = ({ params }: ModalProps<DepositToPoolParams>) => {
                     </>
                 )}
 
-                <PoolInfo isModal={isModal}>
+                <PoolInfo $isModal={isModal}>
                     <DescriptionRow>
                         <span>Share of Pool</span>
                         <span>

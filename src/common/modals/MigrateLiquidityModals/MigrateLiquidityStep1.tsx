@@ -46,12 +46,12 @@ const StyledButton = styled(Button)`
     margin-left: auto;
 `;
 
-const AmountRow = styled.div<{ isFirst?: boolean }>`
+const AmountRow = styled.div<{ $isFirst?: boolean }>`
     display: flex;
     align-items: center;
     justify-content: space-between;
     color: ${COLORS.grayText};
-    margin-top: ${({ isFirst }) => (isFirst ? '3rem' : '1.2rem')};
+    margin-top: ${({ $isFirst }) => ($isFirst ? '3rem' : '1.2rem')};
 
     ${respondDown(Breakpoints.md)`
         span:first-child {
@@ -205,7 +205,7 @@ const MigrateLiquidityStep1 = ({ params, confirm }: ModalProps<MigrateLiquidityS
     };
 
     return (
-        <ModalContainer isWide>
+        <ModalContainer $isWide>
             {Boolean(poolsToMigrate) && <Stepper>STEP 1/2</Stepper>}
             <ModalTitle>Withdraw from classic pool</ModalTitle>
             <PairContainer>
@@ -218,7 +218,7 @@ const MigrateLiquidityStep1 = ({ params, confirm }: ModalProps<MigrateLiquidityS
                 postfix="%"
             />
             <RangeInput onChange={setPercent} value={Number(percent)} />
-            <AmountRow isFirst>
+            <AmountRow $isFirst>
                 <span>{base.code} amount</span>
                 <Amounts>
                     <AssetLogo asset={base} />

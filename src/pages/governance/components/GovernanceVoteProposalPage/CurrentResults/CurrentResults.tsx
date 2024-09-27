@@ -85,9 +85,9 @@ const StatusTag = styled.div`
     `}
 `;
 
-const QuorumResult = styled.div<{ isApproved: boolean }>`
+const QuorumResult = styled.div<{ $isApproved: boolean }>`
     margin: 0 0.8rem 0 auto;
-    color: ${({ isApproved }) => (isApproved ? COLORS.titleText : COLORS.pinkRed)};
+    color: ${({ $isApproved }) => ($isApproved ? COLORS.titleText : COLORS.pinkRed)};
 `;
 
 const getResultsData = (proposal: Proposal) => {
@@ -148,7 +148,7 @@ const CurrentResults = ({ proposal }: { proposal: Proposal }): JSX.Element => {
             ))}
             <Quorum>
                 <Label>Participation Rate:</Label>
-                <QuorumResult isApproved={isApproved}>
+                <QuorumResult $isApproved={isApproved}>
                     {roundToPrecision(percentVote, 2)}%
                 </QuorumResult>
                 <Label>(&gt;{proposal.percent_for_quorum}% needed)</Label>

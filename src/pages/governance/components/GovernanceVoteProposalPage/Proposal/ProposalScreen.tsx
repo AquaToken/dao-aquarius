@@ -222,12 +222,12 @@ const TabNavContent = styled.div`
     width: 100%;
 `;
 
-const TabNavItem = styled.div<{ active?: boolean }>`
+const TabNavItem = styled.div<{ $active?: boolean }>`
     padding: 1.7rem 0 1.3rem;
-    color: ${({ active }) => (active ? COLORS.purple : COLORS.grayText)};
-    font-weight: ${({ active }) => (active ? 700 : 400)};
-    border-bottom: ${({ active }) =>
-        active ? `0.1rem solid ${COLORS.purple}` : `0.1rem solid ${COLORS.transparent}`};
+    color: ${({ $active }) => ($active ? COLORS.purple : COLORS.grayText)};
+    font-weight: ${({ $active }) => ($active ? 700 : 400)};
+    border-bottom: ${({ $active }) =>
+        $active ? `0.1rem solid ${COLORS.purple}` : `0.1rem solid ${COLORS.transparent}`};
     cursor: pointer;
 
     &:hover {
@@ -361,26 +361,26 @@ const ProposalScreen = ({
                 <TabNav>
                     <TabNavContent>
                         <TabNavItem
-                            active={!isProposalOverScrolled}
+                            $active={!isProposalOverScrolled}
                             onClick={() => scrollToRef(proposalRef)}
                         >
                             Proposal
                         </TabNavItem>
                         <TabNavItem
-                            active={isProposalOverScrolled && !isDiscussionOverScrolled}
+                            $active={isProposalOverScrolled && !isDiscussionOverScrolled}
                             onClick={() => scrollToRef(discussionRef)}
                         >
                             Discussion
                         </TabNavItem>
                         <TabNavItem
-                            active={isDiscussionOverScrolled && !isDetailsOverScrolled}
+                            $active={isDiscussionOverScrolled && !isDetailsOverScrolled}
                             onClick={() => scrollToRef(detailsRef)}
                         >
                             Details
                         </TabNavItem>
                         {(status === 'VOTING' || status === 'VOTED') && (
                             <TabNavItem
-                                active={isDetailsOverScrolled}
+                                $active={isDetailsOverScrolled}
                                 onClick={() => scrollToRef(resultsRef)}
                             >
                                 Results
@@ -388,7 +388,7 @@ const ProposalScreen = ({
                         )}
                         {status === 'DISCUSSION' && Boolean(proposal.history_proposal.length) && (
                             <TabNavItem
-                                active={isDetailsOverScrolled}
+                                $active={isDetailsOverScrolled}
                                 onClick={() => scrollToRef(resultsRef)}
                             >
                                 Versions

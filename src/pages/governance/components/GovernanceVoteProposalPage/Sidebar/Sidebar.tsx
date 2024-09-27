@@ -193,14 +193,14 @@ const Title = styled.span`
     margin-top: 2.2rem;
 `;
 
-const Winner = styled.div<{ isVoteFor?: boolean }>`
+const Winner = styled.div<{ $isVoteFor?: boolean }>`
     height: 3.5rem;
     padding: 0 1.5rem;
     ${flexAllCenter};
     width: min-content;
     white-space: nowrap;
     border-radius: 1.75rem;
-    background-color: ${({ isVoteFor }) => (isVoteFor ? COLORS.purple : COLORS.pinkRed)};
+    background-color: ${({ $isVoteFor }) => ($isVoteFor ? COLORS.purple : COLORS.pinkRed)};
     color: ${COLORS.white};
     font-weight: 400;
     margin-top: 1rem;
@@ -349,7 +349,7 @@ const Sidebar = forwardRef(
                                     Canceled
                                 </Canceled>
                             ) : (
-                                <Winner isVoteFor={isVoteForWon}>
+                                <Winner $isVoteFor={isVoteForWon}>
                                     {isVoteForWon ? <SuccessIcon /> : <FailIcon />}
                                     <BoldText>{isVoteForWon ? 'For' : 'Against'}</BoldText>
                                 </Winner>

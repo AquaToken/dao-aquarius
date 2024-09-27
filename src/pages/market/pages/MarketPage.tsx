@@ -54,9 +54,9 @@ const BackButton = styled(CircleButton)`
     margin-bottom: 3.2rem;
 `;
 
-const MarketSection = styled.section<{ smallTopPadding?: boolean }>`
+const MarketSection = styled.section<{ $smallTopPadding?: boolean }>`
     ${commonMaxWidth};
-    padding-top: ${({ smallTopPadding }) => (smallTopPadding ? '2rem' : '2.8rem')};
+    padding-top: ${({ $smallTopPadding }) => ($smallTopPadding ? '2rem' : '2.8rem')};
     padding-left: 4rem;
     padding-right: calc(10vw + 20rem);
     width: 100%;
@@ -105,12 +105,12 @@ const NavContent = styled.div`
     display: flex;
 `;
 
-const NavItem = styled.div<{ active?: boolean }>`
+const NavItem = styled.div<{ $active?: boolean }>`
     padding: 1.7rem 0 1.3rem;
-    color: ${({ active }) => (active ? COLORS.purple : COLORS.grayText)};
-    font-weight: ${({ active }) => (active ? 700 : 400)};
-    border-bottom: ${({ active }) =>
-        active ? `0.1rem solid ${COLORS.purple}` : `0.1rem solid ${COLORS.transparent}`};
+    color: ${({ $active }) => ($active ? COLORS.purple : COLORS.grayText)};
+    font-weight: ${({ $active }) => ($active ? 700 : 400)};
+    border-bottom: ${({ $active }) =>
+        $active ? `0.1rem solid ${COLORS.purple}` : `0.1rem solid ${COLORS.transparent}`};
     cursor: pointer;
 
     &:hover {
@@ -308,27 +308,27 @@ const MarketPage = () => {
                 <NavPanel>
                     <NavContent>
                         <NavItem
-                            active={!isAmmStatRefOverScrolled}
+                            $active={!isAmmStatRefOverScrolled}
                             onClick={() => scrollToRef(AmmStatRef)}
                         >
                             AMM stats
                         </NavItem>
                         <NavItem
-                            active={!isMarketStatRefOverScrolled && isAmmStatRefOverScrolled}
+                            $active={!isMarketStatRefOverScrolled && isAmmStatRefOverScrolled}
                             onClick={() => scrollToRef(MarketStatRef)}
                         >
                             Market stats
                         </NavItem>
                         {votesData && (
                             <NavItem
-                                active={isMarketStatRefOverScrolled && !isRewardsRefOverScrolled}
+                                $active={isMarketStatRefOverScrolled && !isRewardsRefOverScrolled}
                                 onClick={() => scrollToRef(RewardsRef)}
                             >
                                 Rewards
                             </NavItem>
                         )}
                         <NavItem
-                            active={
+                            $active={
                                 isMarketStatRefOverScrolled &&
                                 isRewardsRefOverScrolled &&
                                 !isAboutBaseRefOverScrolled
@@ -338,14 +338,14 @@ const MarketPage = () => {
                             {baseAsset.code}
                         </NavItem>
                         <NavItem
-                            active={isAboutBaseRefOverScrolled && !isAboutCounterRefOverScrolled}
+                            $active={isAboutBaseRefOverScrolled && !isAboutCounterRefOverScrolled}
                             onClick={() => scrollToRef(AboutCounterRef)}
                         >
                             {counterAsset.code}
                         </NavItem>
                         {votesData && (
                             <NavItem
-                                active={isAboutCounterRefOverScrolled && !isBribesRefOverScrolled}
+                                $active={isAboutCounterRefOverScrolled && !isBribesRefOverScrolled}
                                 onClick={() => scrollToRef(BribesRef)}
                             >
                                 Bribes
@@ -353,7 +353,7 @@ const MarketPage = () => {
                         )}
                         {isLogged && votesData && (
                             <NavItem
-                                active={isBribesRefOverScrolled && !isYourVotesRefOverScrolled}
+                                $active={isBribesRefOverScrolled && !isYourVotesRefOverScrolled}
                                 onClick={() => scrollToRef(YourVotesRef)}
                             >
                                 Your votes
@@ -369,7 +369,7 @@ const MarketPage = () => {
                     onVoteClick={onVoteClick}
                     isPairSelected={false}
                 />
-                <MarketSection smallTopPadding ref={AmmStatRef}>
+                <MarketSection $smallTopPadding ref={AmmStatRef}>
                     <AmmStats base={baseAsset} counter={counterAsset} />
                 </MarketSection>
                 <MarketSection ref={MarketStatRef}>

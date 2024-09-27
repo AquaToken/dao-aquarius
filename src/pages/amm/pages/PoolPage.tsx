@@ -61,9 +61,9 @@ const BackButton = styled(CircleButton)`
     `}
 `;
 
-const Section = styled.section<{ smallTopPadding?: boolean }>`
+const Section = styled.section<{ $smallTopPadding?: boolean }>`
     ${commonMaxWidth};
-    padding-top: ${({ smallTopPadding }) => (smallTopPadding ? '2rem' : '2.8rem')};
+    padding-top: ${({ $smallTopPadding }) => ($smallTopPadding ? '2rem' : '2.8rem')};
     padding-left: 4rem;
     padding-right: calc(10vw + 20rem);
     width: 100%;

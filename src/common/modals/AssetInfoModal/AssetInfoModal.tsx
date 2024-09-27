@@ -161,7 +161,7 @@ const AssetInfoModal = ({ params, close }: ModalProps<AssetInfoModalParams>): Re
     }, [tomlInfo]);
 
     return (
-        <ModalContainer isWide>
+        <ModalContainer $isWide>
             <Asset asset={asset} isBig hasDomainLink />
             <Description>{desc}</Description>
             <Links>

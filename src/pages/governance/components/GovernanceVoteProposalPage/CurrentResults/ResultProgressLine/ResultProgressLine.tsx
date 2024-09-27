@@ -56,10 +56,10 @@ const Outer = styled.div`
     background-color: ${COLORS.gray};
 `;
 
-const Inner = styled.div<{ width: string; isAgainst: boolean }>`
+const Inner = styled.div<{ $width: string; $isAgainst: boolean }>`
     ${progressLineStyles};
-    width: ${({ width }) => width};
-    background-color: ${({ isAgainst }) => (isAgainst ? COLORS.pinkRed : COLORS.purple)};
+    width: ${({ $width }) => $width};
+    background-color: ${({ $isAgainst }) => ($isAgainst ? COLORS.pinkRed : COLORS.purple)};
 `;
 
 const ResultProgressLine = ({
@@ -85,8 +85,8 @@ const ResultProgressLine = ({
             </Label>
             <Outer>
                 <Inner
-                    width={percentage || '0'}
-                    isAgainst={label === SimpleProposalResultsLabels.votesAgainst}
+                    $width={percentage || '0'}
+                    $isAgainst={label === SimpleProposalResultsLabels.votesAgainst}
                 />
             </Outer>
         </ProgressLine>

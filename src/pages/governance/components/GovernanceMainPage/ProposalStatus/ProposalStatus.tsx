@@ -23,11 +23,11 @@ const StatusLabels = {
     [PROPOSAL_STATUS.EXPIRED]: 'Expired',
 };
 
-const Container = styled.div<{ status: PROPOSAL_STATUS }>`
+const Container = styled.div<{ $status: PROPOSAL_STATUS }>`
     ${flexAllCenter};
     height: 3.2rem;
-    padding: ${({ status }) => {
-        switch (status) {
+    padding: ${({ $status }) => {
+        switch ($status) {
             case PROPOSAL_STATUS.CLOSED:
                 return '0 1.4rem';
             default:
@@ -36,8 +36,8 @@ const Container = styled.div<{ status: PROPOSAL_STATUS }>`
     }};
     border-radius: 1.6rem;
     width: min-content;
-    background-color: ${({ status }) => {
-        switch (status) {
+    background-color: ${({ $status }) => {
+        switch ($status) {
             case PROPOSAL_STATUS.DISCUSSION:
                 return COLORS.orange;
             case PROPOSAL_STATUS.ACTIVE:
@@ -50,8 +50,8 @@ const Container = styled.div<{ status: PROPOSAL_STATUS }>`
                 return COLORS.placeholder;
         }
     }};
-    color: ${({ status }) => {
-        switch (status) {
+    color: ${({ $status }) => {
+        switch ($status) {
             case PROPOSAL_STATUS.DISCUSSION:
                 return COLORS.white;
             case PROPOSAL_STATUS.ACTIVE:
@@ -108,7 +108,7 @@ const DeprecatedIcon = styled(IconPending)`
 `;
 
 const ProposalStatus = ({ status, ...props }: { status: PROPOSAL_STATUS }) => (
-    <Container status={status} {...props}>
+    <Container $status={status} {...props}>
         {status === PROPOSAL_STATUS.ACTIVE && <ActiveIcon />}
         {status === PROPOSAL_STATUS.DISCUSSION && <DiscussionIcon />}
         {status === PROPOSAL_STATUS.DEPRECATED && <DeprecatedIcon />}

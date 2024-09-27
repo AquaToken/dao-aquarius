@@ -35,7 +35,7 @@ const MigrateLiquidityStep2 = ({ params }: ModalProps<MigrateLiquidityStep2Param
     const { poolsToMigrate, baseAmount, counterAmount, base, counter, onUpdate } = params;
 
     return (
-        <ModalContainer isWide>
+        <ModalContainer $isWide>
             <Stepper>STEP 2/2</Stepper>
             <ModalTitle>Deposit to Soroban pool</ModalTitle>
             <Content>

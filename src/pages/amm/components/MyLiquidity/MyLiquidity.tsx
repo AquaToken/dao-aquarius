@@ -23,14 +23,14 @@ import { getUserPools } from '../../api/api';
 import { PoolUserProcessed } from '../../api/types';
 import PoolsList from '../PoolsList/PoolsList';
 
-const PoolsListBlock = styled.div<{ onlyList: boolean }>`
+const PoolsListBlock = styled.div<{ $onlyList: boolean }>`
     display: flex;
     flex-direction: column;
     background-color: ${COLORS.white};
     margin: 4.8rem auto 5rem;
 
-    ${({ onlyList }) =>
-        !onlyList &&
+    ${({ $onlyList }) =>
+        !$onlyList &&
         `
         padding: 4.8rem;
         border-radius: 0.5rem;
@@ -187,7 +187,7 @@ const MyLiquidity = ({ setTotal, onlyList }: MyLiquidityProps) => {
         );
     }
     return (
-        <PoolsListBlock onlyList={onlyList}>
+        <PoolsListBlock $onlyList={onlyList}>
             {!onlyList && (
                 <ListHeader>
                     <ListTitle>My liquidity positions</ListTitle>

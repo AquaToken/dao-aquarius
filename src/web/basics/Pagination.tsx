@@ -66,10 +66,10 @@ type PaginationProps = {
     itemName: string;
 };
 
-const PageButton = styled.span<{ isActive: boolean }>`
+const PageButton = styled.span<{ $isActive: boolean }>`
     padding: 0 1.2rem;
     cursor: pointer;
-    color: ${({ isActive }) => (isActive ? COLORS.paragraphText : COLORS.grayText)};
+    color: ${({ $isActive }) => ($isActive ? COLORS.paragraphText : COLORS.grayText)};
 `;
 
 const PAGES_CONTROLS_COUNT = 3;
@@ -146,7 +146,7 @@ const Pagination = ({
                 {visiblePages.map(pageItem => (
                     <PageButton
                         key={pageItem}
-                        isActive={page === pageItem}
+                        $isActive={page === pageItem}
                         onClick={() => onPageClick(pageItem)}
                     >
                         {pageItem}

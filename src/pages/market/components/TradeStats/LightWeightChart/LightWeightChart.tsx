@@ -35,12 +35,12 @@ const Loader = styled.div`
     z-index: 100;
 `;
 
-const Statistic = styled.div<{ isUp: boolean }>`
+const Statistic = styled.div<{ $isUp: boolean }>`
     position: absolute;
     left: 2.4rem;
     top: 0.8rem;
     z-index: 2;
-    color: ${({ isUp }) => (isUp ? '#4caf50' : '#ef5350')};
+    color: ${({ $isUp }) => ($isUp ? '#4caf50' : '#ef5350')};
 `;
 
 const StatisticLabel = styled.span`
@@ -366,7 +366,7 @@ const LightWeightChart = ({ base, counter, period }: LightWeightChartProps): Rea
     return (
         <Chart id="lightweight">
             {hoveredItem && (
-                <Statistic isUp={hoveredItem.open <= hoveredItem.close}>
+                <Statistic $isUp={hoveredItem.open <= hoveredItem.close}>
                     <StatisticLabel>
                         {base.code}/{counter.code}
                     </StatisticLabel>
