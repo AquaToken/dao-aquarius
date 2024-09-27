@@ -4,9 +4,7 @@ import styled from 'styled-components';
 import { flexAllCenter } from 'web/mixins';
 import { COLORS } from 'web/styles';
 
-const ButtonBody = styled((props: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
-    <button {...props} />
-))<{
+const ButtonBody = styled.button<{
     $isBig?: boolean;
     $pending?: boolean;
     $fullWidth?: boolean;
@@ -114,7 +112,7 @@ const ButtonLoader = styled.div<{
         }
 
         return COLORS.white;
-    }}}
+    }};
 
     ${({ $pending }) =>
         $pending
@@ -137,7 +135,7 @@ const ButtonLoader = styled.div<{
     `
             : `
         ${flexAllCenter};
-    `}
+    `};
 
     @keyframes rainbow_animation {
         0% {
