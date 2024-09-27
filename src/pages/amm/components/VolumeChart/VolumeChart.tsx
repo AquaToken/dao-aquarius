@@ -123,10 +123,14 @@ const VolumeChart = ({
 
     useEffect(
         () =>
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-expect-error
             void d3.select(gx.current).call(
                 d3
-                    .axisBottom()
+                    .axisBottom(x)
                     .scale(x)
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-expect-error
                     .tickFormat(d3.timeFormat('%d'))
                     .tickValues(
                         x.domain().filter(function (d, i) {

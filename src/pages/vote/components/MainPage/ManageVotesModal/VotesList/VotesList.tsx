@@ -29,6 +29,7 @@ import Table, { CellAlign } from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import { MarketPair } from 'pages/profile/api/types';
+import { PairStats } from 'pages/vote/api/types';
 
 import Market from '../../../common/Market';
 
@@ -328,12 +329,20 @@ const VotesList = ({ votes, pair, withoutClaimDate }: VotesListProps): React.Rea
                                     <Market
                                         assets={[
                                             {
-                                                code: pair?.asset1_code || claim.asset1_code,
-                                                issuer: pair?.asset1_issuer || claim.asset1_issuer,
+                                                code:
+                                                    pair?.asset1_code ||
+                                                    (claim as unknown as PairStats).asset1_code,
+                                                issuer:
+                                                    pair?.asset1_issuer ||
+                                                    (claim as unknown as PairStats).asset1_issuer,
                                             },
                                             {
-                                                code: pair?.asset2_code || claim.asset2_code,
-                                                issuer: pair?.asset2_issuer || claim.asset2_issuer,
+                                                code:
+                                                    pair?.asset2_code ||
+                                                    (claim as unknown as PairStats).asset2_code,
+                                                issuer:
+                                                    pair?.asset2_issuer ||
+                                                    (claim as unknown as PairStats).asset2_issuer,
                                             },
                                         ]}
                                         withoutDomains
