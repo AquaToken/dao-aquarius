@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import Timer from 'helpers/timer';
 
+import useAnimationEnd from 'hooks/useAnimationEnd';
 import { TOAST_TYPE } from 'services/toast.service';
 
 import IconClose from 'assets/icon-close-small.svg';
@@ -158,7 +159,7 @@ export const Toast = ({ text, resolver, delay, type }: ToastProps): React.ReactN
     const [onHover, setOnHover] = useState(false);
     const ref = useRef(null);
 
-    const transitionHandler = ({ animationName }) => {
+    const transitionHandler = (animationName: string) => {
         if (
             !isShow &&
             (animationName === 'closingToast' || animationName === 'closingToastBottom')
@@ -179,21 +180,7 @@ export const Toast = ({ text, resolver, delay, type }: ToastProps): React.ReactN
         return () => timer.current.clear();
     }, []);
 
-    useLayoutEffect(() => {
-        ref.current.addEventListener(
-            'animationend',
-            (e: AnimationEvent) => transitionHandler(e),
-            true,
-        );
-
-        return () => {
-            ref.current.removeEventListener(
-                'animationend',
-                (e: AnimationEvent) => transitionHandler(e),
-                true,
-            );
-        };
-    });
+    useAnimationEnd(ref, transitionHandler);
 
     return (
         <ToastBody
