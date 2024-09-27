@@ -152,6 +152,23 @@ export const ModalBody = ({
         }
     };
 
+    useLayoutEffect(() => {
+        function checkAnimation(animationRef: React.RefObject<HTMLElement>) {
+            const computedStyle = getComputedStyle(animationRef.current);
+            const animationDuration = parseFloat(computedStyle.animationDuration) * 1000;
+            const animationDelay = parseFloat(computedStyle.animationDelay) * 1000;
+
+            const totalTime = animationDuration + animationDelay;
+
+            const offset = 50;
+
+            setTimeout(() => {
+                transitionHandler();
+            }, totalTime - offset);
+        }
+        requestAnimationFrame(() => checkAnimation(ref));
+    });
+
     const clickHandler = ({ key }) => {
         if (!hideClose && key === 'Escape') {
             close();
@@ -159,11 +176,9 @@ export const ModalBody = ({
     };
 
     useLayoutEffect(() => {
-        ref.current.addEventListener('animationend', transitionHandler);
         document.addEventListener('keydown', clickHandler, false);
 
         return () => {
-            ref.current.removeEventListener('animationend', transitionHandler);
             document.removeEventListener('keydown', clickHandler, false);
         };
     });
