@@ -2,13 +2,13 @@ import * as React from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { ModalProps } from 'types/modal';
+
 import { respondDown } from 'web/mixins';
 import { Breakpoints } from 'web/styles';
 
 import Button from 'basics/buttons/Button';
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
-
-import { ModalProps } from 'components/ModalBody';
 
 import { MainRoutes } from '../../routes';
 

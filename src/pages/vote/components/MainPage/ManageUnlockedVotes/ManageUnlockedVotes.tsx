@@ -4,6 +4,8 @@ import styled from 'styled-components';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { ModalProps } from 'types/modal';
+
 import { StellarService } from 'services/globalServices';
 import { StellarEvents } from 'services/stellar.service';
 import { customScroll, respondDown } from 'web/mixins';
@@ -11,8 +13,6 @@ import { Breakpoints, COLORS } from 'web/styles';
 
 import Button from 'basics/buttons/Button';
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
-
-import { ModalProps } from 'components/ModalBody';
 
 import { PairStats } from 'pages/vote/api/types';
 

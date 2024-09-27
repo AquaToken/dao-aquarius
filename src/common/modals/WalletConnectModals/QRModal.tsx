@@ -7,6 +7,8 @@ import styled from 'styled-components';
 import { isAndroid, isIOS, isMobile } from 'helpers/browser';
 import { clearCurrentWallet, saveCurrentWallet } from 'helpers/wallet-connect-helpers';
 
+import { ModalProps } from 'types/modal';
+
 import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -17,8 +19,6 @@ import CopyButton from 'basics/buttons/CopyButton';
 import ExternalLink from 'basics/ExternalLink';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
-
-import { ModalProps } from 'components/ModalBody';
 
 const Wrapper = styled.div`
     width: 52.8rem;

@@ -13,6 +13,7 @@ import { formatBalance } from 'helpers/format-number';
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
 import { ExpertAssetData } from 'types/api-stellar-expert';
+import { ModalProps } from 'types/modal';
 import { Asset as AssetType } from 'types/stellar';
 
 import { StellarService } from 'services/globalServices';
@@ -29,8 +30,6 @@ import Button from 'basics/buttons/Button';
 import Changes24 from 'basics/Changes24';
 import PageLoader from 'basics/loaders/PageLoader';
 import { ModalWrapper } from 'basics/ModalAtoms';
-
-import { ModalProps } from 'components/ModalBody';
 
 import Asset from '../../../pages/vote/components/AssetDropdown/Asset';
 import { MainRoutes } from '../../../routes';

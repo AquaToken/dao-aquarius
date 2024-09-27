@@ -1,6 +1,8 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 
+import { ModalProps } from 'types/modal';
+
 import { WalletConnectService } from 'services/globalServices';
 import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -10,8 +12,6 @@ import ArrowsIcon from 'assets/icon-arrows-circle.svg';
 
 import DotsLoader from 'basics/loaders/DotsLoader';
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
-
-import { ModalProps } from 'components/ModalBody';
 
 const Container = styled.div`
     width: 52.3rem;

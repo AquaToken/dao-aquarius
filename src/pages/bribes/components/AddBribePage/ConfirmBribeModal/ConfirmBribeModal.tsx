@@ -12,6 +12,8 @@ import { AssetSimple } from 'store/assetsStore/types';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { ModalProps } from 'types/modal';
+
 import { useIsMounted } from 'hooks/useIsMounted';
 import { StellarService, ToastService } from 'services/globalServices';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
@@ -20,8 +22,6 @@ import { Breakpoints, COLORS } from 'web/styles';
 
 import Button from 'basics/buttons/Button';
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
-
-import { ModalProps } from 'components/ModalBody';
 
 import Asset from '../../../../vote/components/AssetDropdown/Asset';
 import Market from '../../../../vote/components/common/Market';

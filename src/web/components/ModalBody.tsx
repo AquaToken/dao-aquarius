@@ -9,6 +9,8 @@ import {
 } from 'react';
 import styled from 'styled-components';
 
+import { ModalProps } from 'types/modal';
+
 import useAnimationEnd from 'hooks/useAnimationEnd';
 import useOnClickOutside from 'hooks/useOutsideClick';
 
@@ -110,15 +112,6 @@ const BackgroundBlock = styled.div`
     margin-bottom: 4rem;
     border-radius: 1rem 1rem 0 0;
 `;
-
-type ModalClose = () => void;
-type ModalConfirm = (value?: unknown) => void;
-
-export interface ModalProps<T> {
-    confirm: ModalConfirm;
-    close: ModalClose;
-    params?: T;
-}
 
 export const ModalBody = ({
     resolver,

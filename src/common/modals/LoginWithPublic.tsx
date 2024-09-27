@@ -6,6 +6,8 @@ import styled from 'styled-components';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { ModalProps } from 'types/modal';
+
 import { StellarService, ToastService } from 'services/globalServices';
 import { respondDown } from 'web/mixins';
 import { Breakpoints } from 'web/styles';
@@ -13,8 +15,6 @@ import { Breakpoints } from 'web/styles';
 import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
-
-import { ModalProps } from 'components/ModalBody';
 
 const LoginWithSecretBody = styled.div`
     width: 52.8rem;

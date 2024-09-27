@@ -2,6 +2,8 @@ import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
 
+import { ModalProps } from 'types/modal';
+
 import { ToastService } from 'services/globalServices';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -10,8 +12,6 @@ import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
-
-import { ModalProps } from 'components/ModalBody';
 
 const Container = styled.div`
     width: 52.3rem;

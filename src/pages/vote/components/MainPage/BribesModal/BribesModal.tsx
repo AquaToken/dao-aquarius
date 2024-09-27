@@ -5,6 +5,8 @@ import styled from 'styled-components';
 import { getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 
+import { ModalProps } from 'types/modal';
+
 import { StellarService } from 'services/globalServices';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -16,8 +18,6 @@ import Info from 'assets/icon-info.svg';
 import ExternalLink from 'basics/ExternalLink';
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
 import Table, { CellAlign } from 'basics/Table';
-
-import { ModalProps } from 'components/ModalBody';
 
 import { convertUTCToLocalDateIgnoringTimezone } from 'pages/bribes/pages/AddBribePage';
 

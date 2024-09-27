@@ -8,6 +8,8 @@ import { isChrome, isMobile } from 'helpers/browser';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { ModalProps } from 'types/modal';
+
 import {
     FreighterService,
     LedgerService,
@@ -29,8 +31,6 @@ import WalletConnectLogo from 'assets/wallet-connect-logo.svg';
 import Stellar from 'assets/xlm-logo.svg';
 
 import { ModalTitle } from 'basics/ModalAtoms';
-
-import { ModalProps } from 'components/ModalBody';
 
 import GetFreighterModal from './GetFreighterModal';
 import GetLobstrExtensionModal from './GetLobstrExtensionModal';

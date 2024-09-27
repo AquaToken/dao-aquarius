@@ -2,6 +2,8 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { ModalProps } from 'types/modal';
+
 import AccountService from 'services/account.service';
 import { StellarService } from 'services/globalServices';
 import { flexAllCenter, respondDown } from 'web/mixins';
@@ -15,8 +17,6 @@ import Stellar from 'assets/xlm-logo.svg';
 import AccountBlock from 'basics/AccountBlock';
 import CopyButton from 'basics/buttons/CopyButton';
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
-
-import { ModalProps } from 'components/ModalBody';
 
 const Container = styled.div`
     width: 52.8rem;

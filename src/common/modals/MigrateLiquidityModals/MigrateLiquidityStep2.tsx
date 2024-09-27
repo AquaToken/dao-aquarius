@@ -1,14 +1,13 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
+import { ModalProps } from 'types/modal';
 import { Asset } from 'types/stellar';
 
 import { customScroll, respondDown } from 'web/mixins';
 import { Breakpoints } from 'web/styles';
 
 import { ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
-
-import { ModalProps } from 'components/ModalBody';
 
 import { PoolProcessed } from 'pages/amm/api/types';
 

@@ -11,6 +11,8 @@ import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { ModalProps } from 'types/modal';
+
 import { useIsMounted } from 'hooks/useIsMounted';
 import { ModalService, StellarService, ToastService } from 'services/globalServices';
 import { AQUA_CODE, AQUA_ISSUER, GOV_ICE_CODE, ICE_ISSUER } from 'services/stellar.service';
@@ -29,8 +31,6 @@ import Input from 'basics/inputs/Input';
 import RangeInput from 'basics/inputs/RangeInput';
 import Select from 'basics/inputs/Select';
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
-
-import { ModalProps } from 'components/ModalBody';
 
 import GetAquaModal from '../../../../../common/modals/GetAquaModal/GetAquaModal';
 import { LockerRoutes } from '../../../../../routes';

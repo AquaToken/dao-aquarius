@@ -1,6 +1,8 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
+import { ModalProps } from 'types/modal';
+
 import { respondDown } from 'web/mixins';
 import { Breakpoints } from 'web/styles';
 
@@ -8,8 +10,6 @@ import Vault from 'assets/vault.svg';
 
 import Button from 'basics/buttons/Button';
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
-
-import { ModalProps } from 'components/ModalBody';
 
 const Container = styled.div`
     width: 52.3rem;

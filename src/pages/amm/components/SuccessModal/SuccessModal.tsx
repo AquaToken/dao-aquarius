@@ -1,6 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
+import { ModalProps } from 'types/modal';
 import { Asset } from 'types/stellar';
 
 import { flexAllCenter, respondDown } from 'web/mixins';
@@ -9,8 +10,6 @@ import { Breakpoints, COLORS } from 'web/styles';
 import Button from 'basics/buttons/Button';
 import ExternalLink from 'basics/ExternalLink';
 import { ModalTitle } from 'basics/ModalAtoms';
-
-import { ModalProps } from 'components/ModalBody';
 
 import Market from '../../../vote/components/common/Market';
 

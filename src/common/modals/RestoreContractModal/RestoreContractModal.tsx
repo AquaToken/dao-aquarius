@@ -6,6 +6,7 @@ import ErrorHandler from 'helpers/error-handler';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { ModalProps } from 'types/modal';
 import { Transaction } from 'types/stellar';
 
 import { ToastService } from 'services/globalServices';
@@ -15,8 +16,6 @@ import { Breakpoints } from 'web/styles';
 import Button from 'basics/buttons/Button';
 import ExternalLink from 'basics/ExternalLink';
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
-
-import { ModalProps } from 'components/ModalBody';
 
 const Container = styled.div`
     width: 52.3rem;

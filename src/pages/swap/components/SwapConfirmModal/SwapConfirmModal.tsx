@@ -10,6 +10,7 @@ import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { ModalProps } from 'types/modal';
 import { Asset, Int128Parts } from 'types/stellar';
 
 import { ModalService, SorobanService, ToastService } from 'services/globalServices';
@@ -21,8 +22,6 @@ import Button from 'basics/buttons/Button';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
-
-import { ModalProps } from 'components/ModalBody';
 
 import { getPathPoolsFee } from 'pages/amm/api/api';
 

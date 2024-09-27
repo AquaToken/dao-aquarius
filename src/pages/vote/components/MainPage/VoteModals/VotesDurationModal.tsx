@@ -9,6 +9,7 @@ import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { ModalProps } from 'types/modal';
 import { Asset } from 'types/stellar';
 
 import { useIsMounted } from 'hooks/useIsMounted';
@@ -20,8 +21,6 @@ import { Breakpoints, COLORS } from 'web/styles';
 import Button from 'basics/buttons/Button';
 import Select, { Option } from 'basics/inputs/Select';
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
-
-import { ModalProps } from 'components/ModalBody';
 
 import { PairStats } from 'pages/vote/api/types';
 

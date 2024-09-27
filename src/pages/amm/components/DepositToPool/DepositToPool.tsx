@@ -9,6 +9,7 @@ import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { ModalProps } from 'types/modal';
 import { Asset as AssetType, Int128Parts } from 'types/stellar';
 
 import {
@@ -30,8 +31,6 @@ import Input from 'basics/inputs/Input';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import { ModalTitle } from 'basics/ModalAtoms';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
-
-import { ModalProps } from 'components/ModalBody';
 
 import { PoolExtended } from 'pages/amm/api/types';
 
