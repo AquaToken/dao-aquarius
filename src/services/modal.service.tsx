@@ -5,7 +5,7 @@ import EventService from './event.service';
 
 import { ModalBody } from '../common/modals/atoms/ModalAtoms';
 
-type Modals = Array<{
+export type Modals = Array<{
     id: number;
     modal: React.ReactNode;
     closeModal: ({ isConfirmed }) => void;

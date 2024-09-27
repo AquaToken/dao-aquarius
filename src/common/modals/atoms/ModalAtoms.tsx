@@ -139,21 +139,10 @@ export const ModalBody = ({
     const [resolvedData, setResolvedData] = useState(null);
     const ref = useRef(null);
 
-    const confirm = (data: object) => {
-        setIsShow(false);
-        setResolvedData({ ...data, isConfirmed: true });
-    };
-
     const close = () => {
         setIsShow(false);
         setResolvedData({ isConfirmed: false });
     };
-
-    useOnClickOutside(ref, () => {
-        if (!hideClose && !disableClickOutside) {
-            close();
-        }
-    });
 
     const transitionHandler = () => {
         if (!isShow) {
@@ -175,6 +164,17 @@ export const ModalBody = ({
             ref.current.removeEventListener('animationend', transitionHandler);
             document.removeEventListener('keydown', clickHandler, false);
         };
+    });
+
+    const confirm = (data: object) => {
+        setIsShow(false);
+        setResolvedData({ ...data, isConfirmed: true });
+    };
+
+    useOnClickOutside(ref, () => {
+        if (!hideClose && !disableClickOutside) {
+            close();
+        }
     });
 
     useEffect(() => {
