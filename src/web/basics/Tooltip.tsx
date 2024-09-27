@@ -11,7 +11,7 @@ export enum TOOLTIP_POSITION {
     right = 'right',
 }
 
-const ChildrenBlock = styled((props: React.DOMAttributes<HTMLDivElement>) => <div {...props} />)`
+const ChildrenBlock = styled.div`
     position: relative;
     display: flex;
     width: fit-content;

@@ -22,7 +22,7 @@ import AssetLogo from './AssetLogo';
 
 import AssetInfoModal from '../../../../common/modals/AssetInfoModal/AssetInfoModal';
 
-const Container = styled((props: React.DOMAttributes<HTMLDivElement>) => <div {...props} />)`
+const Container = styled.div`
     display: flex;
     flex-direction: row;
     align-items: center;

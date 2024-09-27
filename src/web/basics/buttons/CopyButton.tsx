@@ -8,9 +8,7 @@ import CopyIcon from 'assets/icon-copy.svg';
 
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
-const CopyButtonContainer = styled((props: React.DOMAttributes<HTMLDivElement>) => (
-    <div {...props} />
-))`
+const CopyButtonContainer = styled.div`
     display: flex;
     flex-direction: row;
     align-items: center;
