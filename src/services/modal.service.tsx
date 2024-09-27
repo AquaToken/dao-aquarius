@@ -10,6 +10,7 @@ export type Modals = Array<{
     modal: React.ReactNode;
     closeModal: ({ isConfirmed }) => void;
     name: string;
+    state: { isActive: boolean };
 }>;
 export default class ModalServiceClass {
     modals: Modals = [];
@@ -44,8 +45,11 @@ export default class ModalServiceClass {
             triggerClose = resolve;
         });
 
+        const state = { isActive: true };
+
         const wrapped = (
             <ModalBody
+                state={state}
                 resolver={resolver}
                 params={params}
                 key={this.id}
@@ -64,14 +68,29 @@ export default class ModalServiceClass {
         );
 
         this.modals = [
-            ...this.modals,
-            { id: this.id, modal: wrapped, closeModal: triggerClose, name: modalTemplate.name },
+            ...this.modals.map(modal => {
+                modal.state.isActive = false;
+                return modal;
+            }),
+            {
+                id: this.id,
+                modal: wrapped,
+                closeModal: triggerClose,
+                name: modalTemplate.name,
+                state,
+            },
         ];
 
         this.event.trigger(this.modals);
 
         return promise.then(({ result, id: modalId }) => {
-            this.modals = this.modals.filter(({ id }) => id !== modalId);
+            const newModals = this.modals.filter(({ id }) => id !== modalId);
+
+            newModals.map((modal, index) => {
+                modal.state.isActive = index === newModals.length - 1;
+                return modal;
+            });
+            this.modals = newModals;
             this.event.trigger(this.modals);
             return result;
         });

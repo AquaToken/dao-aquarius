@@ -126,6 +126,7 @@ export const ModalBody = ({
     triggerClosePromise,
     backgroundImage,
     disableClickOutside,
+    state,
 }: {
     resolver: (value: unknown) => void;
     children: DetailedReactHTMLElement<HTMLAttributes<HTMLElement>, HTMLElement>;
@@ -134,6 +135,7 @@ export const ModalBody = ({
     triggerClosePromise: Promise<unknown>;
     backgroundImage: React.ReactNode | null;
     disableClickOutside: boolean;
+    state: { isActive: boolean };
 }): React.ReactNode => {
     const [isShow, setIsShow] = useState(true);
     const [resolvedData, setResolvedData] = useState(null);
@@ -172,7 +174,7 @@ export const ModalBody = ({
     };
 
     useOnClickOutside(ref, () => {
-        if (!hideClose && !disableClickOutside) {
+        if (!hideClose && !disableClickOutside && state.isActive) {
             close();
         }
     });
