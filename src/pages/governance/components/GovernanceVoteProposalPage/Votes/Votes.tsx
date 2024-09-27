@@ -89,7 +89,12 @@ const ExternalLink = styled.a`
     cursor: pointer;
 `;
 
-const SortingHeader = styled.button`
+enum SortingHeaderPosition {
+    left = 'left',
+    right = 'right',
+}
+
+const SortingHeader = styled.button<{ $position: SortingHeaderPosition }>`
     background: none;
     border: none;
     cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
@@ -100,9 +105,9 @@ const SortingHeader = styled.button`
 
     display: flex;
     align-items: center;
-    justify-content: ${({ position }: { position?: string }) => {
-        if (position === 'right') return 'flex-end';
-        if (position === 'left') return 'flex-start';
+    justify-content: ${({ $position }) => {
+        if ($position === SortingHeaderPosition.right) return 'flex-end';
+        if ($position === SortingHeaderPosition.left) return 'flex-start';
         return 'center';
     }};
 
@@ -149,7 +154,7 @@ const onVoteLinkClick = (url: string) => {
 
 const PAGE_SIZE = 10;
 
-const Votes = (): JSX.Element => {
+const Votes = (): React.ReactNode => {
     const [updateIndex, setUpdateIndex] = useState(0);
     const [sort, setSort] = useState(VoteFields.date);
     const [isReversedSort, setIsReversedSort] = useState(false);
@@ -175,7 +180,7 @@ const Votes = (): JSX.Element => {
         return () => clearInterval(interval);
     }, []);
 
-    const changeSort = newSort => {
+    const changeSort = (newSort: VoteFields) => {
         const isEqualSort = sort === newSort;
         setSort(newSort);
         setPage(1);
@@ -200,7 +205,10 @@ const Votes = (): JSX.Element => {
             <VotesList>
                 <HeaderRow>
                     <CellDate>
-                        <SortingHeader position="left" onClick={() => changeSort(VoteFields.date)}>
+                        <SortingHeader
+                            $position={SortingHeaderPosition.left}
+                            onClick={() => changeSort(VoteFields.date)}
+                        >
                             Date{' '}
                             <IconSort
                                 isEnabled={sort === VoteFields.date}
@@ -210,7 +218,7 @@ const Votes = (): JSX.Element => {
                     </CellDate>
                     <CellAcc>
                         <SortingHeader
-                            position="left"
+                            $position={SortingHeaderPosition.left}
                             onClick={() => changeSort(VoteFields.account)}
                         >
                             Account{' '}
@@ -222,7 +230,7 @@ const Votes = (): JSX.Element => {
                     </CellAcc>
                     <CellSolution>
                         <SortingHeader
-                            position="left"
+                            $position={SortingHeaderPosition.left}
                             onClick={() => changeSort(VoteFields.solution)}
                         >
                             Vote{' '}
@@ -234,7 +242,7 @@ const Votes = (): JSX.Element => {
                     </CellSolution>
                     <CellAmount>
                         <SortingHeader
-                            position="right"
+                            $position={SortingHeaderPosition.right}
                             onClick={() => changeSort(VoteFields.amount)}
                         >
                             Voted{' '}
