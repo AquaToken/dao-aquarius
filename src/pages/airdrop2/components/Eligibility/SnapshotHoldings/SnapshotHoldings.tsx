@@ -122,7 +122,7 @@ const SnapshotHoldings = ({ accountEligibility }: { accountEligibility: AccountE
                 <Amount>{formatBalance(+accountEligibility.aqua_balance, true)} AQUA</Amount>
                 {Boolean(Number(accountEligibility.aqua_pool_balance)) && (
                     <AmmAmount>
-                        <BalanceLabel color={COLORS.yellow} textColor={COLORS.titleText}>
+                        <BalanceLabel $color={COLORS.yellow} $textColor={COLORS.titleText}>
                             AMM
                         </BalanceLabel>
                         {formatBalance(+accountEligibility.aqua_pool_balance, true)} AQUA
@@ -137,7 +137,7 @@ const SnapshotHoldings = ({ accountEligibility }: { accountEligibility: AccountE
                 <Amount>{formatBalance(+accountEligibility.native_balance, true)} XLM</Amount>
                 {Boolean(Number(accountEligibility.native_pool_balance)) && (
                     <AmmAmount>
-                        <BalanceLabel color={COLORS.yellow} textColor={COLORS.titleText}>
+                        <BalanceLabel $color={COLORS.yellow} $textColor={COLORS.titleText}>
                             AMM
                         </BalanceLabel>
                         {formatBalance(+accountEligibility.native_pool_balance, true)} XLM
@@ -152,7 +152,7 @@ const SnapshotHoldings = ({ accountEligibility }: { accountEligibility: AccountE
                 <Amount>{formatBalance(+accountEligibility.yxlm_balance, true)} yXLM</Amount>
                 {Boolean(Number(accountEligibility.yxlm_pool_balance)) && (
                     <AmmAmount>
-                        <BalanceLabel color={COLORS.yellow} textColor={COLORS.titleText}>
+                        <BalanceLabel $color={COLORS.yellow} $textColor={COLORS.titleText}>
                             AMM
                         </BalanceLabel>
                         {formatBalance(+accountEligibility.yxlm_pool_balance, true)} yXLM

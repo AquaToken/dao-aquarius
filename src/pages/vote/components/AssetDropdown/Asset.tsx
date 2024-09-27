@@ -172,7 +172,7 @@ const Asset = ({
                     position={TOOLTIP_POSITION.left}
                     showOnHover
                 >
-                    <InfoIcon withMobileView={withMobileView}>
+                    <InfoIcon $withMobileView={withMobileView}>
                         <Info />
                     </InfoIcon>
                 </Tooltip>

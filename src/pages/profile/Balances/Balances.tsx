@@ -347,7 +347,7 @@ const Balances = ({ ammAquaBalance }: BalancesProps): React.ReactNode => {
                         </BalanceValue>
                         <AdditionalInfo>
                             <InfoColumn>
-                                <BalanceLabel color={COLORS.yellow} textColor={COLORS.titleText}>
+                                <BalanceLabel $color={COLORS.yellow} $textColor={COLORS.titleText}>
                                     AMM
                                 </BalanceLabel>
                                 <AdditionalInfoBalance>
@@ -362,7 +362,7 @@ const Balances = ({ ammAquaBalance }: BalancesProps): React.ReactNode => {
                                 </AdditionalInfoDescription>
                             </InfoColumn>
                             <InfoColumn>
-                                <BalanceLabel color={COLORS.purple} textColor={COLORS.white}>
+                                <BalanceLabel $color={COLORS.purple} $textColor={COLORS.white}>
                                     LOCK
                                 </BalanceLabel>
                                 <AdditionalInfoBalance>
@@ -375,7 +375,7 @@ const Balances = ({ ammAquaBalance }: BalancesProps): React.ReactNode => {
                                 <AdditionalInfoDescription>AQUA locked</AdditionalInfoDescription>
                             </InfoColumn>
                             <InfoColumn>
-                                <BalanceLabel color={COLORS.purple} textColor={COLORS.white}>
+                                <BalanceLabel $color={COLORS.purple} $textColor={COLORS.white}>
                                     VOTE
                                 </BalanceLabel>
                                 <AdditionalInfoBalance>
