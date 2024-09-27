@@ -1,4 +1,4 @@
-export default function (func: () => void, delay: number) {
+export default function (func: (value: unknown) => void, delay: number) {
     let timer: NodeJS.Timeout;
     return (...args: unknown[]) => {
         clearTimeout(timer);

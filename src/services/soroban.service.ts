@@ -427,14 +427,19 @@ export default class SorobanServiceClass {
             .then(({ result }) => {
                 if (result) {
                     return (result.retval.value() as unknown[]).reduce((acc, val) => {
-                        // @ts-ignore
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-expect-error
                         const key = val.key().value().toString();
                         if (key === 'exp_at' || key === 'last_time') {
+                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                            // @ts-expect-error
                             acc[key] = new BigNumber(this.i128ToInt(val.val().value()).toString())
                                 .times(1e7)
                                 .toNumber();
                             return acc;
                         }
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-expect-error
                         acc[key] = this.i128ToInt(val.val().value());
                         return acc;
                     }, {});
@@ -454,7 +459,8 @@ export default class SorobanServiceClass {
             )
             .then(({ result }) => {
                 if (result) {
-                    // @ts-ignore
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-expect-error
                     return result.retval.value().reduce((acc, val) => {
                         acc[val.key().value().toString()] =
                             typeof val.val().value() === 'number'
@@ -537,7 +543,8 @@ export default class SorobanServiceClass {
             )
             .then(({ result }) =>
                 this.getAssetFromContractId(
-                    // @ts-ignore
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-expect-error
                     this.getContactIdFromHash(result.retval.value().value().toString('hex')),
                 ),
             );
@@ -826,9 +833,11 @@ export default class SorobanServiceClass {
 
     i128ToInt(val: xdr.Int128Parts): string {
         return (
-            // @ts-ignore
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-expect-error
             new BigNumber(val.hi()._value)
-                // @ts-ignore
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-expect-error
                 .plus(val.lo()._value)
                 .div(1e7)
                 .toString()

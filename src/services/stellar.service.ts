@@ -1121,7 +1121,8 @@ export default class StellarServiceClass {
                     parameters?.some(
                         ({ type, value }) =>
                             type === 'Sym' &&
-                            // @ts-ignore
+                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                            // @ts-expect-error
                             StellarSdk.xdr.ScVal.fromXDR(value, 'base64').value()?.toString?.() ===
                                 'claim',
                     )),
