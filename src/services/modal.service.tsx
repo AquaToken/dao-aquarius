@@ -86,11 +86,10 @@ export default class ModalServiceClass {
         return promise.then(({ result, id: modalId }) => {
             const newModals = this.modals.filter(({ id }) => id !== modalId);
 
-            newModals.map((modal, index) => {
+            this.modals = newModals.map((modal, index) => {
                 modal.state.isActive = index === newModals.length - 1;
                 return modal;
             });
-            this.modals = newModals;
             this.event.trigger(this.modals);
             return result;
         });
