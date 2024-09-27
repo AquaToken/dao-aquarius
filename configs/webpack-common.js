@@ -59,10 +59,6 @@ module.exports = {
             Buffer: ['buffer', 'Buffer'],
         }),
     ],
-    externals: {
-        react: 'React',
-        'react-dom': 'ReactDOM',
-    },
     performance: {
         hints: false,
     },
