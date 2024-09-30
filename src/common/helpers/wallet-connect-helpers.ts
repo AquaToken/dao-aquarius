@@ -46,7 +46,7 @@ const getFromWalletConnectDB = async (key: string): Promise<any> => {
 
 // Checking whether there is a saved session in the WalletConnect storage before client initialization
 export const sessionExistsInStorage = async (): Promise<boolean> => {
-    const sessionList = JSON.parse(await getFromWalletConnectDB(WC_SESSION_ALIAS)) || [];
+    const sessionList = JSON.parse((await getFromWalletConnectDB(WC_SESSION_ALIAS)) || '[]');
 
     return Boolean(sessionList.length);
 };
