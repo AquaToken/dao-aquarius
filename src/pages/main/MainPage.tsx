@@ -4,14 +4,14 @@ import styled from 'styled-components';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
+import Community from 'components/Community';
+import Subscribe from 'components/Subscribe';
+
 import About from './components/About/About';
 import IceBlock from './components/IceBlock/IceBlock';
 import MainBlock from './components/MainBlock/MainBlock';
 import Roadmap from './components/Roadmap/Roadmap';
 import SupportedBy from './components/SupportedBy/SupportedBy';
-
-import Community from '../../common/components/Community/Community';
-import Subscribe from '../../common/components/Subscribe/Subscribe';
 
 const Container = styled.div`
     height: 100%;

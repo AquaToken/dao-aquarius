@@ -2,10 +2,10 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { flexAllCenter, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import LinkArrowIcon from 'assets/icon-link-arrow.svg';
+
+import { flexAllCenter, respondDown } from '../mixins';
+import { Breakpoints, COLORS } from '../styles';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -50,7 +50,7 @@ const LinkArrow = styled(LinkArrowIcon)`
     margin-left: 1rem;
 `;
 
-const NotFoundPage = (): JSX.Element => (
+const NotFoundPage = (): React.ReactNode => (
     <MainBlock>
         <div>
             <Title>Page not found</Title>

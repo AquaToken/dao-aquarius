@@ -1,9 +1,6 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import Discord from 'assets/discord.svg';
 import Email from 'assets/email.svg';
 import Github from 'assets/github.svg';
@@ -11,6 +8,9 @@ import Medium from 'assets/medium.svg';
 import Reddit from 'assets/reddit.svg';
 import Telegram from 'assets/telegram.svg';
 import Twitter from 'assets/twitter.svg';
+
+import { respondDown } from '../mixins';
+import { Breakpoints, COLORS } from '../styles';
 
 const VerticalStyles = css`
     position: absolute;

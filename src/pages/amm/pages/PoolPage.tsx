@@ -25,8 +25,9 @@ import CircleButton from 'basics/buttons/CircleButton';
 import ExternalLink from 'basics/ExternalLink';
 import PageLoader from 'basics/loaders/PageLoader';
 
-import MigrateToSorobanBanner from '../../../common/components/MigrateToSorobanBanner/MigrateToSorobanBanner';
-import NoTrustline from '../../../common/components/NoTrustline/NoTrustline';
+import MigrateToSorobanBanner from 'components/MigrateToSorobanBanner';
+import NoTrustline from 'components/NoTrustline';
+
 import { AmmRoutes } from '../../../routes';
 import Market from '../../vote/components/common/Market';
 import { getPool } from '../api/api';

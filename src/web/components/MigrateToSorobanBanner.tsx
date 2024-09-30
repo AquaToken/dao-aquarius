@@ -7,8 +7,6 @@ import useAuthStore from 'store/authStore/useAuthStore';
 import { Asset } from 'types/stellar';
 
 import { ModalService, StellarService } from 'services/globalServices';
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
 
 import Soroban from 'assets/soroban.svg';
 
@@ -16,7 +14,9 @@ import Button from 'basics/buttons/Button';
 
 import { getPoolsToMigrate } from 'pages/amm/api/api';
 
-import MigrateLiquidityStep1 from '../../modals/MigrateLiquidityModals/MigrateLiquidityStep1';
+import MigrateLiquidityStep1 from '../../common/modals/MigrateLiquidityModals/MigrateLiquidityStep1';
+import { respondDown } from '../mixins';
+import { Breakpoints, COLORS } from '../styles';
 
 const Container = styled.div`
     display: flex;

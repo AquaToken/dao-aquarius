@@ -9,8 +9,6 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService, StellarService, WalletConnectService } from 'services/globalServices';
 import { ICE_CODE, ICE_ISSUER } from 'services/stellar.service';
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS, Z_INDEX } from 'web/styles';
 
 import Aqua from 'assets/aqua-logo-small.svg';
 import Ice from 'assets/ice-logo.svg';
@@ -24,10 +22,13 @@ import CircleButton from 'basics/buttons/CircleButton';
 import CopyButton from 'basics/buttons/CopyButton';
 import Identicon from 'basics/Identicon';
 
-import { LockerRoutes } from '../../../../routes';
-import ChooseLoginMethodModal from '../../../modals/ChooseLoginMethodModal';
-import GetAquaModal from '../../../modals/GetAquaModal/GetAquaModal';
-import SocialLinks from '../../SocialLinks/SocialLinks';
+import SocialLinks from 'components/SocialLinks';
+
+import ChooseLoginMethodModal from '../../common/modals/ChooseLoginMethodModal';
+import GetAquaModal from '../../common/modals/GetAquaModal/GetAquaModal';
+import { LockerRoutes } from '../../routes';
+import { respondDown } from '../mixins';
+import { Breakpoints, COLORS, Z_INDEX } from '../styles';
 
 const MenuBlock = styled.div`
     position: absolute;
@@ -213,8 +214,8 @@ const AppMenu = ({
     navLinks,
 }: {
     closeMenu: () => void;
-    navLinks?: JSX.Element;
-}): JSX.Element => {
+    navLinks?: React.ReactNode;
+}): React.ReactNode => {
     const { logout, loginType, account, isLogged, metadata, federationAddress, isLoginPending } =
         useAuthStore();
     const aquaBalance = account?.getAquaBalance();
@@ -232,7 +233,7 @@ const AppMenu = ({
 
     return (
         <MenuBlock
-            onClick={e => {
+            onClick={(e: React.MouseEvent) => {
                 e.stopPropagation();
             }}
         >

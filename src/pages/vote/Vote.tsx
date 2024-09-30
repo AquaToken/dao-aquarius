@@ -9,9 +9,10 @@ import { Breakpoints } from 'web/styles';
 
 import BG from 'assets/purpose-modal-background.svg';
 
+import NotFoundPage from 'components/NotFoundPage';
+
 import ProjectPurposeModal, { SHOW_PURPOSE_ALIAS } from './components/common/ProjectPurposeModal';
 
-import NotFoundPage from '../../common/components/NotFoundPage/NotFoundPage';
 import { VoteRoutes } from '../../routes';
 
 const MainPage = lazy(() => import('./components/MainPage/MainPage'));

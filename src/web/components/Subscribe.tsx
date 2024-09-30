@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { FormEvent, useState } from 'react';
 import styled from 'styled-components';
-
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
 
 import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
+
+import { respondDown } from '../mixins';
+import { Breakpoints, COLORS } from '../styles';
 
 const Container = styled.section`
     padding-top: 3.2rem;
@@ -106,15 +106,15 @@ const StyledButton = styled(Button)`
     `}
 `;
 
-const encode = data =>
+const encode = (data: { [key: string]: string }) =>
     Object.keys(data)
         .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(data[key]))
         .join('&');
 
-const Subscribe = () => {
+const Subscribe = (): React.ReactNode => {
     const [email, setEmail] = useState('');
 
-    const handleSubmit = e => {
+    const handleSubmit = (e: React.SyntheticEvent<FormEvent>) => {
         fetch('/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },

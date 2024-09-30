@@ -10,22 +10,21 @@ import LiveOnSorobanImage from 'assets/live-on-soroban.svg';
 
 import PageLoader from 'basics/loaders/PageLoader';
 
+import ErrorBoundary from 'components/ErrorBoundary';
 import Footer from 'components/Footer';
-import ModalContainer from 'components/ModalContainer';
-import ToastContainer from 'components/ToastContainer';
-
-import { getActiveProposalsCount } from 'pages/governance/api/api';
-import Governance from 'pages/governance/Governance';
-
-import AppGlobalStyle from './common/components/AppGlobalStyles';
-import ErrorBoundary from './common/components/ErrorBoundary/ErrorBoundary';
 import Header, {
     HeaderNavLink,
     HeaderNavLinkWithCount,
     HeaderNewNavLinks,
     NavLinksDivider,
-} from './common/components/Header/Header';
-import NotFoundPage from './common/components/NotFoundPage/NotFoundPage';
+} from 'components/Header';
+import ModalContainer from 'components/ModalContainer';
+import NotFoundPage from 'components/NotFoundPage';
+import ToastContainer from 'components/ToastContainer';
+
+import { getActiveProposalsCount } from 'pages/governance/api/api';
+import Governance from 'pages/governance/Governance';
+
 import LiveOnSorobanAlert, {
     LIVE_ON_SOROBAN_SHOWED_ALIAS,
 } from './common/modals/LiveOnSorobanAlert';
@@ -35,6 +34,7 @@ import SentryService from './services/sentry.service';
 import Provider from './store';
 import useAssetsStore from './store/assetsStore/useAssetsStore';
 import useAuthStore from './store/authStore/useAuthStore';
+import AppGlobalStyle from './web/AppGlobalStyles';
 import { respondDown } from './web/mixins';
 import { Breakpoints, COLORS } from './web/styles';
 

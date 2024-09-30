@@ -7,8 +7,6 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import useOnClickOutside from 'hooks/useOutsideClick';
 import { ModalService } from 'services/globalServices';
-import { flexAllCenter, respondDown, textEllipsis } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
 
 import ArrowDown from 'assets/icon-arrow-down.svg';
 import CloseIcon from 'assets/icon-close-small.svg';
@@ -17,8 +15,11 @@ import MobileMenuIcon from 'assets/icon-mobile-menu.svg';
 import Button from 'basics/buttons/Button';
 import Identicon from 'basics/Identicon';
 
-import ChooseLoginMethodModal from '../../../modals/ChooseLoginMethodModal';
-import AppMenu from '../AppMenu/AppMenu';
+import AppMenu from './AppMenu';
+
+import ChooseLoginMethodModal from '../../common/modals/ChooseLoginMethodModal';
+import { flexAllCenter, respondDown, textEllipsis } from '../mixins';
+import { Breakpoints, COLORS } from '../styles';
 
 const Wrapper = styled.div`
     position: relative;
@@ -164,16 +165,16 @@ const BodyStyle = createGlobalStyle`
     }
 `;
 
-const AccountBlock = ({ navLinks }: { navLinks?: JSX.Element }): JSX.Element => {
+const AccountBlock = ({ navLinks }: { navLinks?: React.ReactNode }): React.ReactNode => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const { account, federationAddress, loginType, metadata, isLogged, isLoginPending } =
         useAuthStore();
     const menuRef = useRef(null);
     useOnClickOutside(menuRef, () => setIsMenuOpen(false));
 
-    const signIn = e => {
+    const signIn = (e: React.MouseEvent) => {
         // Fix for 1password
-        if (!e.nativeEvent.pointerType) {
+        if (!(e as React.PointerEvent).nativeEvent.pointerType) {
             return;
         }
         ModalService.openModal(ChooseLoginMethodModal, {});
@@ -186,7 +187,7 @@ const AccountBlock = ({ navLinks }: { navLinks?: JSX.Element }): JSX.Element => 
     if (!isLogged) {
         return (
             <>
-                <SignInButton onClick={e => signIn(e)} pending={isLoginPending}>
+                <SignInButton onClick={(e: React.MouseEvent) => signIn(e)} pending={isLoginPending}>
                     sign in
                 </SignInButton>
                 <MobileMenu onClick={() => toggleMenu()}>

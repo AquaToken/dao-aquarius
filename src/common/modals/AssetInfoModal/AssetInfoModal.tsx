@@ -31,9 +31,10 @@ import Changes24 from 'basics/Changes24';
 import PageLoader from 'basics/loaders/PageLoader';
 import { ModalWrapper } from 'basics/ModalAtoms';
 
+import NoTrustline from 'components/NoTrustline';
+
 import Asset from '../../../pages/vote/components/AssetDropdown/Asset';
 import { MainRoutes } from '../../../routes';
-import NoTrustline from '../../components/NoTrustline/NoTrustline';
 
 const Description = styled.p`
     font-size: 1.6rem;

@@ -9,7 +9,8 @@ import Success from 'assets/icon-success-green.svg';
 
 import ExternalLink from 'basics/ExternalLink';
 
-import SocialLinks from '../../common/components/SocialLinks/SocialLinks';
+import SocialLinks from 'components/SocialLinks';
+
 import { MainRoutes } from '../../routes';
 
 const Container = styled.div`

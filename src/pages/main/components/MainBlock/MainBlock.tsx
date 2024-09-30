@@ -10,7 +10,8 @@ import Stars from 'assets/main-stars.svg';
 
 import Button from 'basics/buttons/Button';
 
-import SocialLinks from '../../../../common/components/SocialLinks/SocialLinks';
+import SocialLinks from 'components/SocialLinks';
+
 import GetAquaModal from '../../../../common/modals/GetAquaModal/GetAquaModal';
 
 const Main = styled.section`

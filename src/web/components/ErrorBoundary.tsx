@@ -5,10 +5,11 @@ import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 
 import SentryService from 'services/sentry.service';
-import { flexAllCenter } from 'web/mixins';
-import { COLORS } from 'web/styles';
 
 import Button from 'basics/buttons/Button';
+
+import { flexAllCenter } from '../mixins';
+import { COLORS } from '../styles';
 
 interface State {
     isError: boolean;

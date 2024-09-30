@@ -17,8 +17,9 @@ import ArrowLeft from 'assets/icon-arrow-left.svg';
 import CircleButton from 'basics/buttons/CircleButton';
 import PageLoader from 'basics/loaders/PageLoader';
 
-import MigrateToSorobanBanner from '../../../common/components/MigrateToSorobanBanner/MigrateToSorobanBanner';
-import NotFoundPage from '../../../common/components/NotFoundPage/NotFoundPage';
+import MigrateToSorobanBanner from 'components/MigrateToSorobanBanner';
+import NotFoundPage from 'components/NotFoundPage';
+
 import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
 import { VoteRoutes } from '../../../routes';
 import { getFilteredPairsList, getTotalVotingStats } from '../../vote/api/api';

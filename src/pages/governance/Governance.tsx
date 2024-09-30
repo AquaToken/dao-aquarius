@@ -5,7 +5,8 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import NotFoundPage from '../../common/components/NotFoundPage/NotFoundPage';
+import NotFoundPage from 'components/NotFoundPage';
+
 import { GovernanceRoutes } from '../../routes';
 
 export const ReactQuillCSS = reactQuillCSS;

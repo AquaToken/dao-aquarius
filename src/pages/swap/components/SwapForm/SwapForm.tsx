@@ -16,6 +16,8 @@ import { Breakpoints, COLORS } from 'web/styles';
 
 import Button from 'basics/buttons/Button';
 
+import NoTrustline from 'components/NoTrustline';
+
 import { findSwapPath } from 'pages/amm/api/api';
 
 import AmountUsdEquivalent from './AmountUsdEquivalent/AmountUsdEquivalent';
@@ -25,7 +27,6 @@ import SwapFormHeader from './SwapFormHeader/SwapFormHeader';
 import SwapFormPrice from './SwapFormPrice/SwapFormPrice';
 import SwapFormRow from './SwapFormRow/SwapFormRow';
 
-import NoTrustline from '../../../../common/components/NoTrustline/NoTrustline';
 import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
 import MainNetWarningModal, {
     SHOW_PURPOSE_ALIAS_MAIN_NET,

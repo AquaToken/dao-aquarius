@@ -5,16 +5,16 @@ import styled from 'styled-components';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService } from 'services/globalServices';
-import { commonMaxWidth, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS, Z_INDEX } from 'web/styles';
 
 import AquaLogo from 'assets/aqua-logo.svg';
 import IconProfile from 'assets/icon-profile.svg';
 
-import AccountBlock from './AccountBlock/AccountBlock';
+import AccountBlock from './AccountBlock';
 
-import { MainRoutes } from '../../../routes';
-import ChooseLoginMethodModal from '../../modals/ChooseLoginMethodModal';
+import ChooseLoginMethodModal from '../../common/modals/ChooseLoginMethodModal';
+import { MainRoutes } from '../../routes';
+import { commonMaxWidth, respondDown } from '../mixins';
+import { Breakpoints, COLORS, Z_INDEX } from '../styles';
 
 const HeaderBlock = styled.header`
     ${commonMaxWidth};
@@ -262,10 +262,10 @@ const MyAquarius = styled(NavLink)`
     `}
 `;
 
-const Header = ({ children }: { children?: JSX.Element }): JSX.Element => {
+const Header = ({ children }: { children?: React.ReactNode }): React.ReactNode => {
     const { isLogged } = useAuthStore();
 
-    const onMyAquariusClick = e => {
+    const onMyAquariusClick = (e: React.MouseEvent) => {
         if (!isLogged) {
             e.preventDefault();
             e.stopPropagation();
