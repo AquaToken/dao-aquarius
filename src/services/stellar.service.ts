@@ -15,9 +15,6 @@ import { PairStats } from 'pages/vote/api/types';
 
 import EventService from './event.service';
 import { ToastService } from './globalServices';
-import { ServerApi } from '@stellar/stellar-sdk/lib/horizon';
-import BigNumber from 'bignumber.js';
-import { getPoolInfo } from '../../pages/amm/api/api';
 
 enum HORIZON_SERVER {
     stellar = 'https://horizon.stellar.org',
