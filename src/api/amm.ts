@@ -233,6 +233,7 @@ export const getPoolsToMigrate = async (base: Asset, counter: Asset): Promise<Po
     return processPools(pools);
 };
 
+// TODO: remove this method when this data is placed on the backend
 export const getAmmRewards = async (): Promise<number> => {
     const { data } = await axios.get<ListResponse<PoolRewards>>(`${API_AMM_BACKEND}/pool-rewards/`);
 
@@ -241,6 +242,7 @@ export const getAmmRewards = async (): Promise<number> => {
     return sumTps * 60 * 60 * 24;
 };
 
+// TODO: remove this method when this data is placed on the backend
 export const getAquaInPoolsSum = async (): Promise<number> => {
     const AQUA = StellarService.createAsset(AQUA_CODE, AQUA_ISSUER);
     const { data } = await axios.get<ListResponse<Pool>>(
