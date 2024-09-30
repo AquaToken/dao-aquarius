@@ -1,20 +1,14 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../common/styles';
-import { commonMaxWidth, respondDown } from '../../../common/mixins';
-import Aqua from '../../../common/assets/img/aqua-logo-small.svg';
-import Ice from '../../../common/assets/img/ice-logo.svg';
-import Lumen from '../../../common/assets/img/xlm-logo.svg';
-import Info from '../../../common/assets/img/icon-info.svg';
-import { formatBalance } from '../../../common/helpers/helpers';
-import {
-    AdditionalInfo,
-    AdditionalInfoDescription,
-    BalanceLabel,
-} from '../../locker/components/LockerAccountPage/Portfolio/Portfolio';
-import useAuthStore from '../../../store/authStore/useAuthStore';
-import { StellarService } from '../../../common/services/globalServices';
+
+import { formatBalance } from 'helpers/format-number';
+
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { ClaimableBalance } from 'types/stellar';
+
+import { StellarService } from 'services/globalServices';
 import {
     DOWN_ICE_CODE,
     GOV_ICE_CODE,
@@ -22,9 +16,23 @@ import {
     ICE_ISSUER,
     StellarEvents,
     UP_ICE_CODE,
-} from '../../../common/services/stellar.service';
-import DotsLoader from '../../../common/basics/DotsLoader';
-import Tooltip, { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
+} from 'services/stellar.service';
+import { commonMaxWidth, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Aqua from 'assets/aqua-logo-small.svg';
+import Ice from 'assets/ice-logo.svg';
+import Info from 'assets/icon-info.svg';
+import Lumen from 'assets/xlm-logo.svg';
+
+import DotsLoader from 'basics/loaders/DotsLoader';
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import {
+    AdditionalInfo,
+    AdditionalInfoDescription,
+    BalanceLabel,
+} from '../../locker/components/LockerAccountPage/Portfolio/Portfolio';
 
 const Container = styled.div`
     ${commonMaxWidth};
@@ -273,22 +281,26 @@ const TooltipInner = styled.div`
     white-space: pre-wrap;
 `;
 
-const Balances = ({ ammAquaBalance }) => {
-    const [locks, setLocks] = useState(null);
+interface BalancesProps {
+    ammAquaBalance: number;
+}
+
+const Balances = ({ ammAquaBalance }: BalancesProps): React.ReactNode => {
+    const [locks, setLocks] = useState<ClaimableBalance[]>(null);
     const [aquaInVotes, setAquaInVotes] = useState(null);
 
     const { account } = useAuthStore();
 
     useEffect(() => {
-        StellarService.getAquaInLiquidityVotes(account.accountId()).then((res) => {
+        StellarService.getAquaInLiquidityVotes(account.accountId()).then(res => {
             setAquaInVotes(res);
         });
     }, []);
 
     useEffect(() => {
-        const unsub = StellarService.event.sub((event) => {
+        const unsub = StellarService.event.sub((event: { type: StellarEvents }) => {
             if (event.type === StellarEvents.claimableUpdate) {
-                StellarService.getAquaInLiquidityVotes(account.accountId()).then((res) => {
+                StellarService.getAquaInLiquidityVotes(account.accountId()).then(res => {
                     setAquaInVotes(res);
                 });
                 setLocks(StellarService.getLocks(account.accountId()));
@@ -309,7 +321,7 @@ const Balances = ({ ammAquaBalance }) => {
         if (!locks) {
             return null;
         }
-        return locks.reduce((acc, lock) => {
+        return locks.reduce((acc: number, lock: ClaimableBalance) => {
             acc += Number(lock.amount);
             return acc;
         }, 0);
@@ -337,7 +349,7 @@ const Balances = ({ ammAquaBalance }) => {
                         </BalanceValue>
                         <AdditionalInfo>
                             <InfoColumn>
-                                <BalanceLabel color={COLORS.yellow} textColor={COLORS.titleText}>
+                                <BalanceLabel $color={COLORS.yellow} $textColor={COLORS.titleText}>
                                     AMM
                                 </BalanceLabel>
                                 <AdditionalInfoBalance>
@@ -352,7 +364,7 @@ const Balances = ({ ammAquaBalance }) => {
                                 </AdditionalInfoDescription>
                             </InfoColumn>
                             <InfoColumn>
-                                <BalanceLabel color={COLORS.purple} textColor={COLORS.white}>
+                                <BalanceLabel $color={COLORS.purple} $textColor={COLORS.white}>
                                     LOCK
                                 </BalanceLabel>
                                 <AdditionalInfoBalance>
@@ -365,7 +377,7 @@ const Balances = ({ ammAquaBalance }) => {
                                 <AdditionalInfoDescription>AQUA locked</AdditionalInfoDescription>
                             </InfoColumn>
                             <InfoColumn>
-                                <BalanceLabel color={COLORS.purple} textColor={COLORS.white}>
+                                <BalanceLabel $color={COLORS.purple} $textColor={COLORS.white}>
                                     VOTE
                                 </BalanceLabel>
                                 <AdditionalInfoBalance>

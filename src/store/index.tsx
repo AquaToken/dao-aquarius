@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { createContext, useContext, useReducer, useCallback } from 'react';
-import mainReducer, { initialState } from './reducers';
+
 import { actionHandler } from './middlewares';
+import mainReducer, { initialState } from './reducers';
 import { ContextProps } from './types';
 
 export const GlobalStore = createContext({} as ContextProps);

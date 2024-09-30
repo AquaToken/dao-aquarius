@@ -1,17 +1,27 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { getPoolsToMigrate } from '../../../api/api';
-import Button from '../../../../../common/basics/Button';
-import { ModalService } from '../../../../../common/services/globalServices';
-import MigrateLiquidityStep1 from '../../../../../common/modals/MigrateLiquidityModals/MigrateLiquidityStep1';
 
-const MigratePoolButton = ({ pool, onUpdate }) => {
-    const [poolsToMigrate, setPoolsToMigrate] = useState(null);
+import { getPoolsToMigrate } from 'api/amm';
+
+import { Pool, PoolClassicProcessed } from 'types/amm';
+
+import { ModalService } from 'services/globalServices';
+import MigrateLiquidityStep1 from 'web/modals/migrate-liquidity/MigrateLiquidityStep1';
+
+import Button from 'basics/buttons/Button';
+
+interface MigratePoolButtonProps {
+    pool: PoolClassicProcessed;
+    onUpdate: () => void;
+}
+
+const MigratePoolButton = ({ pool, onUpdate }: MigratePoolButtonProps) => {
+    const [poolsToMigrate, setPoolsToMigrate] = useState<Pool[]>(null);
 
     const [base, counter] = pool.assets;
 
     useEffect(() => {
-        getPoolsToMigrate(base, counter).then((res) => {
+        getPoolsToMigrate(base, counter).then(res => {
             setPoolsToMigrate(res);
         });
     }, []);

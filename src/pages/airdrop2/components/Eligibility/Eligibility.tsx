@@ -1,17 +1,21 @@
 import * as React from 'react';
 import { forwardRef, RefObject, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import PageLoader from '../../../../common/basics/PageLoader';
-import AccountBlock from '../../../../common/basics/AccountBlock';
-import { StellarService } from '../../../../common/services/globalServices';
-import { AccountEligibility } from '../../api/types';
+
+import { StellarService } from 'services/globalServices';
+import { flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import AccountBlock from 'basics/AccountBlock';
+import ExternalLink from 'basics/ExternalLink';
+import PageLoader from 'basics/loaders/PageLoader';
+
+import ExpectedReward from './ExpectedReward/ExpectedReward';
+import SnapshotHoldings from './SnapshotHoldings/SnapshotHoldings';
 import Eligible from './Statuses/Eligible';
 import NotEligible from './Statuses/NotEligible';
-import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
-import ExternalLink from '../../../../common/basics/ExternalLink';
-import SnapshotHoldings from './SnapshotHoldings/SnapshotHoldings';
-import ExpectedReward from './ExpectedReward/ExpectedReward';
+
+import { AccountEligibility } from '../../api/types';
 
 const Container = styled.section`
     padding: 0 1.6rem;
@@ -70,10 +74,10 @@ const Eligibility = forwardRef(
             setFederation(null);
             if (accountEligibility) {
                 StellarService.loadAccount(accountEligibility.account_id)
-                    .then((account) =>
+                    .then(account =>
                         StellarService.resolveFederation(account.home_domain, account.account_id),
                     )
-                    .then((res) => {
+                    .then(res => {
                         setFederation(res);
                     });
             }
@@ -123,5 +127,7 @@ const Eligibility = forwardRef(
         );
     },
 );
+
+Eligibility.displayName = 'Eligibility';
 
 export default Eligibility;

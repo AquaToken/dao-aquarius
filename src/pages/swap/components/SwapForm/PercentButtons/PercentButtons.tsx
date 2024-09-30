@@ -1,18 +1,22 @@
-import * as React from 'react';
-import Tooltip, { TOOLTIP_POSITION } from '../../../../../common/basics/Tooltip';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import Info from '../../../../../common/assets/img/icon-info.svg';
-import styled from 'styled-components';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
 import { Asset } from '@stellar/stellar-sdk';
-import { respondDown } from '../../../../../common/mixins';
+import * as React from 'react';
+import styled from 'styled-components';
 
-const Container = styled.div<{ isMobile: boolean }>`
-    display: ${({ isMobile }) => (isMobile ? 'none' : 'flex')};
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Info from 'assets/icon-info.svg';
+
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+const Container = styled.div<{ $isMobile: boolean }>`
+    display: ${({ $isMobile }) => ($isMobile ? 'none' : 'flex')};
 
     ${respondDown(Breakpoints.sm)`
         width: 100%;
-        display: ${({ isMobile }) => (!isMobile ? 'none' : 'flex')};
+        display: ${({ $isMobile }) => (!$isMobile ? 'none' : 'flex')};
         margin-top: 0.4rem;
     `}
 `;
@@ -88,7 +92,7 @@ const PercentButtons = ({ setPercent, asset, isMobile }: PercentButtonsProps) =>
         return null;
     }
     return (
-        <Container isMobile={isMobile}>
+        <Container $isMobile={isMobile}>
             <Buttons>
                 <PercentButton onClick={() => setPercent(25)}>25%</PercentButton>
                 <PercentButton onClick={() => setPercent(50)}>50%</PercentButton>

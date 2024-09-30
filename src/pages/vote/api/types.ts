@@ -5,6 +5,11 @@ export type ListResponse<T> = {
     results: T[];
 };
 
+export type MarketVotesExtra = {
+    downvote_assets: MarketVotesAssetStats[];
+    upvote_assets: MarketVotesAssetStats[];
+};
+
 export type MarketVotes = {
     market_key: string;
     rank: number;
@@ -13,10 +18,7 @@ export type MarketVotes = {
     voting_amount: number;
     upvote_value: string;
     downvote_value: string;
-    extra: {
-        downvote_assets: MarketVotesAssetStats[];
-        upvote_assets: MarketVotesAssetStats[];
-    };
+    extra: MarketVotesExtra;
 };
 
 type MarketVotesAssetStats = {

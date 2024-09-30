@@ -3,7 +3,7 @@ export type AssetSimple = {
     issuer: string;
 };
 
-export type Asset = {
+export type AssetInfo = {
     asset_string: string | null;
     code: string | undefined;
     home_domain: string | null;
@@ -32,7 +32,7 @@ export type AssetsStore = {
     isLoading: boolean;
     errorLoading: boolean;
     assets: AssetSimple[];
-    assetsInfo: Map<string, Asset>;
+    assetsInfo: Map<string, AssetInfo>;
 };
 
 export type ListResponse<T> = {

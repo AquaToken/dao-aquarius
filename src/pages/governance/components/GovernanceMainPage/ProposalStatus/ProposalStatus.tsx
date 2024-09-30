@@ -1,9 +1,11 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { flexAllCenter } from '../../../../../common/mixins';
-import { COLORS } from '../../../../../common/styles';
-import IconSuccess from '../../../../../common/assets/img/icon-success.svg';
-import IconPending from '../../../../../common/assets/img/icon-pending.svg';
+
+import { flexAllCenter } from 'web/mixins';
+import { COLORS } from 'web/styles';
+
+import IconPending from 'assets/icon-pending.svg';
+import IconSuccess from 'assets/icon-success.svg';
 
 export enum PROPOSAL_STATUS {
     DISCUSSION = 'discussion',
@@ -21,11 +23,11 @@ const StatusLabels = {
     [PROPOSAL_STATUS.EXPIRED]: 'Expired',
 };
 
-const Container = styled.div<{ status: PROPOSAL_STATUS }>`
+const Container = styled.div<{ $status: PROPOSAL_STATUS }>`
     ${flexAllCenter};
     height: 3.2rem;
-    padding: ${({ status }) => {
-        switch (status) {
+    padding: ${({ $status }) => {
+        switch ($status) {
             case PROPOSAL_STATUS.CLOSED:
                 return '0 1.4rem';
             default:
@@ -34,8 +36,8 @@ const Container = styled.div<{ status: PROPOSAL_STATUS }>`
     }};
     border-radius: 1.6rem;
     width: min-content;
-    background-color: ${({ status }) => {
-        switch (status) {
+    background-color: ${({ $status }) => {
+        switch ($status) {
             case PROPOSAL_STATUS.DISCUSSION:
                 return COLORS.orange;
             case PROPOSAL_STATUS.ACTIVE:
@@ -48,8 +50,8 @@ const Container = styled.div<{ status: PROPOSAL_STATUS }>`
                 return COLORS.placeholder;
         }
     }};
-    color: ${({ status }) => {
-        switch (status) {
+    color: ${({ $status }) => {
+        switch ($status) {
             case PROPOSAL_STATUS.DISCUSSION:
                 return COLORS.white;
             case PROPOSAL_STATUS.ACTIVE:
@@ -105,16 +107,14 @@ const DeprecatedIcon = styled(IconPending)`
     }
 `;
 
-const ProposalStatus = ({ status, ...props }: { status: PROPOSAL_STATUS }) => {
-    return (
-        <Container status={status} {...props}>
-            {status === PROPOSAL_STATUS.ACTIVE && <ActiveIcon />}
-            {status === PROPOSAL_STATUS.DISCUSSION && <DiscussionIcon />}
-            {status === PROPOSAL_STATUS.DEPRECATED && <DeprecatedIcon />}
-            {status === PROPOSAL_STATUS.EXPIRED && <DeprecatedIcon />}
-            {StatusLabels[status]}
-        </Container>
-    );
-};
+const ProposalStatus = ({ status, ...props }: { status: PROPOSAL_STATUS }) => (
+    <Container $status={status} {...props}>
+        {status === PROPOSAL_STATUS.ACTIVE && <ActiveIcon />}
+        {status === PROPOSAL_STATUS.DISCUSSION && <DiscussionIcon />}
+        {status === PROPOSAL_STATUS.DEPRECATED && <DeprecatedIcon />}
+        {status === PROPOSAL_STATUS.EXPIRED && <DeprecatedIcon />}
+        {StatusLabels[status]}
+    </Container>
+);
 
 export default ProposalStatus;

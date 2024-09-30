@@ -1,24 +1,30 @@
 import * as React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../common/styles';
-import { flexRowSpaceBetween, respondDown } from '../../../common/mixins';
-import Market from '../../vote/components/common/Market';
-import { StellarService } from '../../../common/services/globalServices';
-import { getAmmRewards } from '../api/api';
-import useAuthStore from '../../../store/authStore/useAuthStore';
-import PageLoader from '../../../common/basics/PageLoader';
-import { Empty } from '../YourVotes/YourVotes';
 import { Link } from 'react-router-dom';
+import styled from 'styled-components';
+
+import { formatBalance } from 'helpers/format-number';
+
+import useAssetsStore from 'store/assetsStore/useAssetsStore';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { StellarService } from 'services/globalServices';
+import { flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Aqua from 'assets/aqua-logo-small.svg';
+
+import ExternalLink from 'basics/ExternalLink';
+import Label from 'basics/Label';
+import DotsLoader from 'basics/loaders/DotsLoader';
+import PageLoader from 'basics/loaders/PageLoader';
+import Table, { CellAlign } from 'basics/Table';
+
 import { MainRoutes } from '../../../routes';
-import ExternalLink from '../../../common/basics/ExternalLink';
-import { formatBalance } from '../../../common/helpers/helpers';
-import useAssetsStore from '../../../store/assetsStore/useAssetsStore';
-import Aqua from '../../../common/assets/img/aqua-logo-small.svg';
-import DotsLoader from '../../../common/basics/DotsLoader';
-import Label from '../../../common/basics/Label';
+import Market from '../../vote/components/common/Market';
+import { getAmmRewards } from '../api/api';
 import BoostBanner from '../BoostBanner/BoostBanner';
-import Table, { CellAlign } from '../../../common/basics/Table';
+import { Empty } from '../YourVotes/YourVotes';
 
 export const Container = styled.div`
     display: flex;
@@ -122,11 +128,14 @@ enum SortField {
     your = 'your',
 }
 
-export const getSortFunction = (value1, value2, isSortReversed) => {
-    return isSortReversed ? value1 - value2 : value2 - value1;
-};
+export const getSortFunction = (value1, value2, isSortReversed) =>
+    isSortReversed ? value1 - value2 : value2 - value1;
 
-const AmmRewards = ({ aquaUsdPrice }) => {
+interface AmmRewardsProps {
+    aquaUsdPrice: number;
+}
+
+const AmmRewards = ({ aquaUsdPrice }: AmmRewardsProps): React.ReactNode => {
     const { account } = useAuthStore();
 
     const [ammRewards, setAmmRewards] = useState(null);
@@ -136,7 +145,7 @@ const AmmRewards = ({ aquaUsdPrice }) => {
     const { processNewAssets } = useAssetsStore();
 
     useEffect(() => {
-        getAmmRewards(account.accountId()).then((res) => {
+        getAmmRewards(account.accountId()).then(res => {
             setAmmRewards(res);
 
             const assets = res.reduce((acc, { market_pair: pair }) => {
@@ -200,9 +209,9 @@ const AmmRewards = ({ aquaUsdPrice }) => {
     }, [ammRewards, sort, isSortReversed]);
 
     const changeSort = useCallback(
-        (sortField) => {
+        sortField => {
             if (sortField === sort) {
-                setIsSortReversed((prevState) => !prevState);
+                setIsSortReversed(prevState => !prevState);
                 return;
             }
             setSort(sortField);

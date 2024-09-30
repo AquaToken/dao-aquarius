@@ -1,11 +1,15 @@
 import * as React from 'react';
-import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import { respondDown } from '../../../../common/mixins';
-import Ice from '../../../../common/assets/img/ice-logo.svg';
-import Arrow from '../../../../common/assets/img/icon-link-arrow.svg';
-import Button from '../../../../common/basics/Button';
 import { Link } from 'react-router-dom';
+import styled from 'styled-components';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Ice from 'assets/ice-logo.svg';
+import Arrow from 'assets/icon-link-arrow.svg';
+
+import Button from 'basics/buttons/Button';
+
 import { MainRoutes } from '../../../../routes';
 
 const Container = styled.section`
@@ -136,48 +140,47 @@ const StyledButton = styled(Button)`
     }
 `;
 
-const IceBlock = () => {
-    return (
-        <Container>
-            <Wrapper>
-                <div>
-                    <Title>ICE tokens</Title>
-                    <Description>
-                        Freeze your AQUA to ICE tokens securely on the Stellar network with our AQUA
-                        locker tool. ICE tokens bring a whole new dimension to Aquarius, creating a
-                        way for AQUA holders to increase rewards earned from SDEX market making and
-                        AMM liquidity provision and boost voting flexibility & power.
-                    </Description>
-                </div>
-                <Column>
-                    <FirstBlock>
+const IceBlock = () => (
+    <Container>
+        <Wrapper>
+            <div>
+                <Title>ICE tokens</Title>
+                <Description>
+                    Freeze your AQUA to ICE tokens securely on the Stellar network with our AQUA
+                    locker tool. ICE tokens bring a whole new dimension to Aquarius, creating a way
+                    for AQUA holders to increase rewards earned from SDEX market making and AMM
+                    liquidity provision and boost voting flexibility & power.
+                </Description>
+            </div>
+            <Column>
+                <FirstBlock>
+                    <BlockColumn>
+                        <IceLogo />
+                        <BlockTitle>Turn AQUA into ICE with just a few clicks</BlockTitle>
+                        <a
+                            target="_blank"
+                            href="https://medium.com/aquarius-aqua/ice-the-next-stage-of-aquarius-810edc7cf3bb"
+                            rel="noreferrer"
+                        >
+                            <StyledButton isBig>Learn more</StyledButton>
+                        </a>
+                    </BlockColumn>
+                </FirstBlock>
+                <Link
+                    onClick={() => setTimeout(() => window.scrollTo(0, 0))}
+                    to={MainRoutes.locker}
+                >
+                    <Block>
                         <BlockColumn>
-                            <IceLogo />
-                            <BlockTitle>Turn AQUA into ICE with just a few clicks</BlockTitle>
-                            <a
-                                target="_blank"
-                                href="https://medium.com/aquarius-aqua/ice-the-next-stage-of-aquarius-810edc7cf3bb"
-                            >
-                                <StyledButton isBig>Learn more</StyledButton>
-                            </a>
+                            <BlockTitle>Locker Tool</BlockTitle>
+                            <BlockDescription>Click here to freeze AQUA</BlockDescription>
                         </BlockColumn>
-                    </FirstBlock>
-                    <Link
-                        onClick={() => setTimeout(() => window.scrollTo(0, 0))}
-                        to={MainRoutes.locker}
-                    >
-                        <Block>
-                            <BlockColumn>
-                                <BlockTitle>Locker Tool</BlockTitle>
-                                <BlockDescription>Click here to freeze AQUA</BlockDescription>
-                            </BlockColumn>
-                            <Arrow />
-                        </Block>
-                    </Link>
-                </Column>
-            </Wrapper>
-        </Container>
-    );
-};
+                        <Arrow />
+                    </Block>
+                </Link>
+            </Column>
+        </Wrapper>
+    </Container>
+);
 
 export default IceBlock;

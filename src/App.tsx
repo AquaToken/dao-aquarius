@@ -1,54 +1,55 @@
 import * as React from 'react';
 import { lazy, Suspense, useEffect, useState } from 'react';
-import { hot } from 'react-hot-loader';
+import Title from 'react-document-title';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
-import useGlobalSubscriptions from './common/hooks/useGlobalSubscriptions';
-import useAssetsStore from './store/assetsStore/useAssetsStore';
-import useAuthStore from './store/authStore/useAuthStore';
-import {
-    ModalService,
-    StellarService,
-    WalletConnectService,
-} from './common/services/globalServices';
+import styled, { createGlobalStyle } from 'styled-components';
+
+import { ModalService, StellarService, WalletConnectService } from 'services/globalServices';
+import AppGlobalStyle from 'web/AppGlobalStyles';
+import { respondDown } from 'web/mixins';
+import LiveOnSorobanAlert, {
+    LIVE_ON_SOROBAN_SHOWED_ALIAS,
+} from 'web/modals/alerts/LiveOnSorobanAlert';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import LiveOnSorobanImage from 'assets/live-on-soroban.svg';
+
+import PageLoader from 'basics/loaders/PageLoader';
+
+import ErrorBoundary from 'components/ErrorBoundary';
+import Footer from 'components/Footer';
 import Header, {
     HeaderNavLink,
     HeaderNavLinkWithCount,
     HeaderNewNavLinks,
     NavLinksDivider,
-} from './common/components/Header/Header';
-import { AmmRoutes, MainRoutes } from './routes';
-import PageLoader from './common/basics/PageLoader';
-import NotFoundPage from './common/components/NotFoundPage/NotFoundPage';
-import { Breakpoints, COLORS } from './common/styles';
-import ToastContainer from './common/toasts/ToastContainer';
-import { respondDown } from './common/mixins';
-import Provider from './store';
-import ModalContainer from './common/modals/atoms/ModalContainer';
-import Footer from './common/components/Footer/Footer';
-import styled, { createGlobalStyle } from 'styled-components';
-import AppGlobalStyle from './common/components/AppGlobalStyles';
-import Governance from './pages/governance/Governance';
-import Title from 'react-document-title';
-import LiveOnSorobanAlert, {
-    LIVE_ON_SOROBAN_SHOWED_ALIAS,
-} from './common/modals/LiveOnSorobanAlert';
-import LiveOnSorobanImage from './common/assets/img/live-on-soroban.svg';
-import ErrorBoundary from './common/components/ErrorBoundary/ErrorBoundary';
-import SentryService from './common/services/sentry.service';
-import { getActiveProposalsCount } from './pages/governance/api/api';
+} from 'components/Header';
+import ModalContainer from 'components/ModalContainer';
+import NotFoundPage from 'components/NotFoundPage';
+import ToastContainer from 'components/ToastContainer';
 
-const MainPage = lazy(() => import('./pages/main/MainPage'));
-const LockerPage = lazy(() => import('./pages/locker/Locker'));
-const VotePage = lazy(() => import('./pages/vote/Vote'));
-const BribesPage = lazy(() => import('./pages/bribes/Bribes'));
-const MarketPage = lazy(() => import('./pages/market/Market'));
-const RewardsPage = lazy(() => import('./pages/rewards/Rewards'));
-const AirdropPage = lazy(() => import('./pages/airdrop/Airdrop'));
-const Airdrop2Page = lazy(() => import('./pages/airdrop2/Airdrop2'));
-const ProfilePage = lazy(() => import('./pages/profile/Profile'));
-const WalletConnectPage = lazy(() => import('./pages/wallet-connect/WalletConnect'));
-const AmmPage = lazy(() => import('./pages/amm/Amm'));
-const SwapPage = lazy(() => import('./pages/swap/Swap'));
+import { getActiveProposalsCount } from 'pages/governance/api/api';
+import Governance from 'pages/governance/Governance';
+
+import useGlobalSubscriptions from './hooks/useGlobalSubscriptions';
+import { AmmRoutes, MainRoutes } from './routes';
+import SentryService from './services/sentry.service';
+import Provider from './store';
+import useAssetsStore from './store/assetsStore/useAssetsStore';
+import useAuthStore from './store/authStore/useAuthStore';
+
+const MainPage = lazy(() => import('pages/main/MainPage'));
+const LockerPage = lazy(() => import('pages/locker/Locker'));
+const VotePage = lazy(() => import('pages/vote/Vote'));
+const BribesPage = lazy(() => import('pages/bribes/Bribes'));
+const MarketPage = lazy(() => import('pages/market/Market'));
+const RewardsPage = lazy(() => import('pages/rewards/Rewards'));
+const AirdropPage = lazy(() => import('pages/airdrop/Airdrop'));
+const Airdrop2Page = lazy(() => import('pages/airdrop2/Airdrop2'));
+const ProfilePage = lazy(() => import('pages/profile/Profile'));
+const WalletConnectPage = lazy(() => import('pages/wallet-connect/WalletConnect'));
+const AmmPage = lazy(() => import('pages/amm/Amm'));
+const SwapPage = lazy(() => import('pages/swap/Swap'));
 
 const UPDATE_ASSETS_DATE = 'update assets timestamp';
 const UPDATE_PERIOD = 24 * 60 * 60 * 1000;
@@ -94,6 +95,12 @@ const App = () => {
         );
     }, []);
 
+    const reloadIfNotLoaded = () => {
+        if (!wcLoginChecked || !isAssetsUpdated) {
+            window.location.reload();
+        }
+    };
+
     useEffect(() => {
         window.addEventListener('online', reloadIfNotLoaded);
 
@@ -101,16 +108,10 @@ const App = () => {
     }, [wcLoginChecked, isAssetsUpdated]);
 
     useEffect(() => {
-        getActiveProposalsCount().then((res) => {
+        getActiveProposalsCount().then(res => {
             setActiveProposalsCount(res);
         });
     }, []);
-
-    const reloadIfNotLoaded = () => {
-        if (!wcLoginChecked || !isAssetsUpdated) {
-            window.location.reload();
-        }
-    };
 
     useEffect(() => {
         if (assets.length) {
@@ -164,11 +165,14 @@ const App = () => {
     }, []);
 
     useEffect(() => {
+        if (!wcLoginChecked) {
+            return;
+        }
         const isShowed = localStorage.getItem(LIVE_ON_SOROBAN_SHOWED_ALIAS) || false;
         if (!isShowed) {
             ModalService.openModal(LiveOnSorobanAlert, {}, false, <BgStyled />);
         }
-    }, []);
+    }, [wcLoginChecked]);
 
     if (!isAssetsUpdated || !wcLoginChecked) {
         return <PageLoader />;
@@ -341,16 +345,12 @@ const BodyStyle = createGlobalStyle`
     `};
 `;
 
-const ProvidedApp = () => {
-    return (
-        <Provider>
-            <AppGlobalStyle />
-            <BodyStyle />
-            <App />
-        </Provider>
-    );
-};
+const ProvidedApp = () => (
+    <Provider>
+        <AppGlobalStyle />
+        <BodyStyle />
+        <App />
+    </Provider>
+);
 
-declare let module: Record<string, unknown>;
-
-export default hot(module)(ProvidedApp);
+export default ProvidedApp;

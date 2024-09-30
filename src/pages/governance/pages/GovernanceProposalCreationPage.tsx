@@ -1,18 +1,22 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import styled from 'styled-components';
-import ProposalCreation from '../components/GovernanceProposalCreationPage/ProposalCreation/ProposalCreation';
-import ProposalScreen from '../components/GovernanceVoteProposalPage/Proposal/ProposalScreen';
-import useAuthStore from '../../../store/authStore/useAuthStore';
-import { respondDown } from '../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../common/styles';
 import { useHistory, useParams } from 'react-router-dom';
-import { getProposalRequest } from '../api/api';
-import { ModalService, ToastService } from '../../../common/services/globalServices';
+import styled from 'styled-components';
+
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { ModalService, ToastService } from 'services/globalServices';
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import { CREATE_DISCUSSION_COST } from './GovernanceMainPage';
+
+import { GovernanceRoutes } from '../../../routes';
+import { getProposalRequest } from '../api/api';
 import NotEnoughAquaModal from '../components/GovernanceMainPage/NotEnoughAquaModal/NotEnoughAquaModal';
 import CreateDiscussionModal from '../components/GovernanceProposalCreationPage/CreateDiscussionModal/CreateDiscussionModal';
-import { GovernanceRoutes } from '../../../routes';
+import ProposalCreation from '../components/GovernanceProposalCreationPage/ProposalCreation/ProposalCreation';
+import ProposalScreen from '../components/GovernanceVoteProposalPage/Proposal/ProposalScreen';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -30,16 +34,23 @@ export enum statePage {
 const defaultText =
     '<p><strong>Summary</strong></p><p>Insert your short summary here.</p><p><br></p><p><strong>Motivation</strong></p><p>Insert proposal motivation here.</p><p><br></p><p><strong>Specification</strong></p><p>Insert proposal specification here. Describe the implementation plan.</p>';
 
-const GovernanceProposalCreationPage = ({ isEdit }: { isEdit?: boolean }): JSX.Element => {
+const GovernanceProposalCreationPage = ({ isEdit }: { isEdit?: boolean }): React.ReactNode => {
     const { id } = useParams<{ id?: string }>();
     const history = useHistory();
+
+    const [title, setTitle] = useState('');
+    const [text, setText] = useState(defaultText);
+    const [screenState, setScreenState] = useState(statePage.creation);
+    const [discordChannel, setDiscordChannel] = useState('');
+    const [discordChannelUrl, setDiscordChannelUrl] = useState('');
+    const [discordChannelOwner, setDiscordChannelOwner] = useState('');
 
     useEffect(() => {
         if (!isEdit) {
             return;
         }
         getProposalRequest(id)
-            .then((response) => {
+            .then(response => {
                 setTitle(response.data.title);
                 setText(response.data.text);
                 setDiscordChannel(response.data.discord_channel_name ?? '');
@@ -51,13 +62,6 @@ const GovernanceProposalCreationPage = ({ isEdit }: { isEdit?: boolean }): JSX.E
                 history.push(`${GovernanceRoutes.proposal}/${id}`);
             });
     }, [isEdit]);
-
-    const [title, setTitle] = useState('');
-    const [text, setText] = useState(defaultText);
-    const [screenState, setScreenState] = useState(statePage.creation);
-    const [discordChannel, setDiscordChannel] = useState('');
-    const [discordChannelUrl, setDiscordChannelUrl] = useState('');
-    const [discordChannelOwner, setDiscordChannelOwner] = useState('');
 
     const { account } = useAuthStore();
     const accountId = account?.accountId();

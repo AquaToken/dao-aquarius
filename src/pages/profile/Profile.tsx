@@ -1,23 +1,28 @@
 import * as React from 'react';
-import styled from 'styled-components';
-import AccountInfo from './AccountInfo/AccountInfo';
-import { commonMaxWidth, respondDown } from '../../common/mixins';
-import { Breakpoints, COLORS } from '../../common/styles';
-import ToggleGroup from '../../common/basics/ToggleGroup';
 import { useEffect, useState } from 'react';
-import YourVotes from './YourVotes/YourVotes';
-import Select from '../../common/basics/Select';
+import styled from 'styled-components';
+
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { StellarService } from 'services/globalServices';
+import { commonMaxWidth, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Select from 'basics/inputs/Select';
+import ToggleGroup from 'basics/inputs/ToggleGroup';
+
+import AccountInfo from './AccountInfo/AccountInfo';
+import Airdrop2List from './Airdrop2List/Airdrop2List';
 import AmmRewards from './AmmRewards/AmmRewards';
+import Balances from './Balances/Balances';
+import IceLocks from './IceLocks/IceLocks';
+import PaymentsHistory from './PaymentsHistory/PaymentsHistory';
 import SdexRewards from './SdexRewards/SdexRewards';
 import YourGovernanceVotes from './YourGovernanceVotes/YourGovernanceVotes';
-import Balances from './Balances/Balances';
-import Airdrop2List from './Airdrop2List/Airdrop2List';
-import IceLocks from './IceLocks/IceLocks';
-import useAuthStore from '../../store/authStore/useAuthStore';
-import { StellarService } from '../../common/services/globalServices';
-import PaymentsHistory from './PaymentsHistory/PaymentsHistory';
-import MyLiquidity from '../amm/components/MyLiquidity/MyLiquidity';
+import YourVotes from './YourVotes/YourVotes';
+
 import BalancesBlock from '../amm/components/BalancesBlock/BalancesBlock';
+import MyLiquidity from '../amm/components/MyLiquidity/MyLiquidity';
 
 const Container = styled.div`
     height: 100%;
@@ -105,7 +110,7 @@ const Profile = () => {
     const { account } = useAuthStore();
 
     useEffect(() => {
-        account.getAmmAquaBalance().then((res) => {
+        account.getAmmAquaBalance().then(res => {
             setAmmAquaBalance(res);
         });
     }, []);

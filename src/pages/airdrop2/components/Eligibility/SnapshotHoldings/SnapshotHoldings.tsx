@@ -1,16 +1,22 @@
 import * as React from 'react';
-import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import Aqua from '../../../../../common/assets/img/aqua-logo-small.svg';
-import Xlm from '../../../../../common/assets/img/xlm-logo.svg';
-import YXlm from '../../../../../common/assets/img/yxlm-logo.svg';
-import { BalanceLabel } from '../../../../locker/components/LockerAccountPage/Portfolio/Portfolio';
-import ExternalLink from '../../../../../common/basics/ExternalLink';
-import { LockerRoutes } from '../../../../../routes';
 import { Link } from 'react-router-dom';
+import styled from 'styled-components';
+
+import { formatBalance } from 'helpers/format-number';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Aqua from 'assets/aqua-logo-small.svg';
+import Xlm from 'assets/xlm-logo.svg';
+import YXlm from 'assets/yxlm-logo.svg';
+
+import ExternalLink from 'basics/ExternalLink';
+
+import { BalanceLabel } from 'pages/locker/components/LockerAccountPage/Portfolio/Portfolio';
+
+import { LockerRoutes } from '../../../../../routes';
 import { AccountEligibility } from '../../../api/types';
-import { formatBalance } from '../../../../../common/helpers/helpers';
-import { respondDown } from '../../../../../common/mixins';
 
 const Container = styled.div`
     display: block;
@@ -102,79 +108,77 @@ const LockAmount = styled.div`
     `}
 `;
 
-const SnapshotHoldings = ({ accountEligibility }: { accountEligibility: AccountEligibility }) => {
-    return (
-        <Container>
-            <Title>Snapshot holdings</Title>
-            <Date>January 15, 2022 00:00:00 UTC</Date>
+const SnapshotHoldings = ({ accountEligibility }: { accountEligibility: AccountEligibility }) => (
+    <Container>
+        <Title>Snapshot holdings</Title>
+        <Date>January 15, 2022 00:00:00 UTC</Date>
 
-            <Balances>
-                <div>
-                    <Asset>
-                        <Aqua />
-                        AQUA
-                    </Asset>
-                    <Amount>{formatBalance(+accountEligibility.aqua_balance, true)} AQUA</Amount>
-                    {Boolean(Number(accountEligibility.aqua_pool_balance)) && (
-                        <AmmAmount>
-                            <BalanceLabel color={COLORS.yellow} textColor={COLORS.titleText}>
-                                AMM
-                            </BalanceLabel>
-                            {formatBalance(+accountEligibility.aqua_pool_balance, true)} AQUA
-                        </AmmAmount>
-                    )}
-                </div>
-                <div>
-                    <Asset>
-                        <Xlm />
-                        XLM
-                    </Asset>
-                    <Amount>{formatBalance(+accountEligibility.native_balance, true)} XLM</Amount>
-                    {Boolean(Number(accountEligibility.native_pool_balance)) && (
-                        <AmmAmount>
-                            <BalanceLabel color={COLORS.yellow} textColor={COLORS.titleText}>
-                                AMM
-                            </BalanceLabel>
-                            {formatBalance(+accountEligibility.native_pool_balance, true)} XLM
-                        </AmmAmount>
-                    )}
-                </div>
-                <div>
-                    <Asset>
-                        <YXlm />
-                        yXLM
-                    </Asset>
-                    <Amount>{formatBalance(+accountEligibility.yxlm_balance, true)} yXLM</Amount>
-                    {Boolean(Number(accountEligibility.yxlm_pool_balance)) && (
-                        <AmmAmount>
-                            <BalanceLabel color={COLORS.yellow} textColor={COLORS.titleText}>
-                                AMM
-                            </BalanceLabel>
-                            {formatBalance(+accountEligibility.yxlm_pool_balance, true)} yXLM
-                        </AmmAmount>
-                    )}
-                </div>
-            </Balances>
+        <Balances>
+            <div>
+                <Asset>
+                    <Aqua />
+                    AQUA
+                </Asset>
+                <Amount>{formatBalance(+accountEligibility.aqua_balance, true)} AQUA</Amount>
+                {Boolean(Number(accountEligibility.aqua_pool_balance)) && (
+                    <AmmAmount>
+                        <BalanceLabel $color={COLORS.yellow} $textColor={COLORS.titleText}>
+                            AMM
+                        </BalanceLabel>
+                        {formatBalance(+accountEligibility.aqua_pool_balance, true)} AQUA
+                    </AmmAmount>
+                )}
+            </div>
+            <div>
+                <Asset>
+                    <Xlm />
+                    XLM
+                </Asset>
+                <Amount>{formatBalance(+accountEligibility.native_balance, true)} XLM</Amount>
+                {Boolean(Number(accountEligibility.native_pool_balance)) && (
+                    <AmmAmount>
+                        <BalanceLabel $color={COLORS.yellow} $textColor={COLORS.titleText}>
+                            AMM
+                        </BalanceLabel>
+                        {formatBalance(+accountEligibility.native_pool_balance, true)} XLM
+                    </AmmAmount>
+                )}
+            </div>
+            <div>
+                <Asset>
+                    <YXlm />
+                    yXLM
+                </Asset>
+                <Amount>{formatBalance(+accountEligibility.yxlm_balance, true)} yXLM</Amount>
+                {Boolean(Number(accountEligibility.yxlm_pool_balance)) && (
+                    <AmmAmount>
+                        <BalanceLabel $color={COLORS.yellow} $textColor={COLORS.titleText}>
+                            AMM
+                        </BalanceLabel>
+                        {formatBalance(+accountEligibility.yxlm_pool_balance, true)} yXLM
+                    </AmmAmount>
+                )}
+            </div>
+        </Balances>
 
-            {Boolean(Number(accountEligibility.aqua_lock_balance)) && (
-                <LockAmount>
-                    <div>
-                        AQUA locked:{' '}
-                        <b>{formatBalance(+accountEligibility.aqua_lock_balance, true)} AQUA</b>
-                    </div>
-                    <ExternalLink asDiv>
-                        <Link
-                            to={`${
-                                LockerRoutes.main
-                            }/${'GACCUBVEQDNC453CIF5XSB4PCF7IRQTET2Y4FOXV44TUEWI6Z65GXQ47'}`}
-                        >
-                            View locks history
-                        </Link>
-                    </ExternalLink>
-                </LockAmount>
-            )}
-        </Container>
-    );
-};
+        {Boolean(Number(accountEligibility.aqua_lock_balance)) && (
+            <LockAmount>
+                <div>
+                    AQUA locked:{' '}
+                    <b>{formatBalance(+accountEligibility.aqua_lock_balance, true)} AQUA</b>
+                </div>
+                <ExternalLink asDiv>
+                    <Link
+                        to={`${
+                            LockerRoutes.main
+                        }/${'GACCUBVEQDNC453CIF5XSB4PCF7IRQTET2Y4FOXV44TUEWI6Z65GXQ47'}`}
+                    >
+                        View locks history
+                    </Link>
+                </ExternalLink>
+            </LockAmount>
+        )}
+    </Container>
+);
 
 export default SnapshotHoldings;

@@ -1,11 +1,15 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import Asset from '../../../../vote/components/AssetDropdown/Asset';
-import { AssetSimple } from '../../../../../store/assetsStore/types';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import RightIcon from '../../../../../common/assets/img/icon-arrow-right-long.svg';
+
+import { AssetSimple } from 'store/assetsStore/types';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import RightIcon from 'assets/icon-arrow-right-long.svg';
+
 import { AmmRoutes } from '../../../../../routes';
-import { respondDown } from '../../../../../common/mixins';
+import Asset from '../../../../vote/components/AssetDropdown/Asset';
 
 const Container = styled.div`
     width: 25%;
@@ -58,6 +62,12 @@ const ArrowRight = styled(RightIcon)`
     `}
 `;
 
+const Fee = styled.div`
+    font-size: 1.6rem;
+    line-height: 1.8rem;
+    color: ${COLORS.grayText};
+`;
+
 interface PathPoolProps {
     base: AssetSimple;
     counter: AssetSimple;
@@ -66,25 +76,17 @@ interface PathPoolProps {
     isLastPool: boolean;
 }
 
-const Fee = styled.div`
-    font-size: 1.6rem;
-    line-height: 1.8rem;
-    color: ${COLORS.grayText};
-`;
-
-const PathPool = ({ base, counter, fee, address, isLastPool }: PathPoolProps) => {
-    return (
-        <Container>
-            <Pool onClick={() => window.open(`${AmmRoutes.analytics}${address}`)}>
-                <PoolAssets>
-                    <Asset asset={base} onlyLogo />
-                    <Asset asset={counter} onlyLogo />
-                </PoolAssets>
-                <Fee>{(Number(fee) * 100).toFixed(2)}%</Fee>
-            </Pool>
-            {!isLastPool && <ArrowRight />}
-        </Container>
-    );
-};
+const PathPool = ({ base, counter, fee, address, isLastPool }: PathPoolProps): React.ReactNode => (
+    <Container>
+        <Pool onClick={() => window.open(`${AmmRoutes.analytics}${address}`)}>
+            <PoolAssets>
+                <Asset asset={base} onlyLogo />
+                <Asset asset={counter} onlyLogo />
+            </PoolAssets>
+            <Fee>{(Number(fee) * 100).toFixed(2)}%</Fee>
+        </Pool>
+        {!isLastPool && <ArrowRight />}
+    </Container>
+);
 
 export default PathPool;

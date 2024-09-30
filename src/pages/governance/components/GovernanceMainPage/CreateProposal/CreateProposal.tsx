@@ -1,17 +1,23 @@
 import * as React from 'react';
-import styled from 'styled-components';
-import { COLORS } from '../../../../../common/styles';
-import AquaLogo from '../../../../../common/assets/img/aqua-logo-small.svg';
-import ExternalLink from '../../../../../common/basics/ExternalLink';
-import Button from '../../../../../common/basics/Button';
-import { ModalService } from '../../../../../common/services/globalServices';
-import ChooseLoginMethodModal from '../../../../../common/modals/ChooseLoginMethodModal';
-import { useHistory } from 'react-router-dom';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
 import { forwardRef, RefObject } from 'react';
-import { formatBalance } from '../../../../../common/helpers/helpers';
-import { APPROVED_PROPOSAL_REWARD } from '../../../pages/GovernanceMainPage';
+import { useHistory } from 'react-router-dom';
+import styled from 'styled-components';
+
+import { formatBalance } from 'helpers/format-number';
+
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { ModalService } from 'services/globalServices';
+import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
+import { COLORS } from 'web/styles';
+
+import AquaLogo from 'assets/aqua-logo-small.svg';
+
+import Button from 'basics/buttons/Button';
+import ExternalLink from 'basics/ExternalLink';
+
 import { GovernanceRoutes } from '../../../../../routes';
+import { APPROVED_PROPOSAL_REWARD } from '../../../pages/GovernanceMainPage';
 
 const Container = styled.div`
     flex: 1;
@@ -65,7 +71,7 @@ const ChangedProcessText = styled.div`
     margin: 1.6rem 0;
 `;
 
-const CreateProposal = forwardRef(({}, ref: RefObject<HTMLDivElement>) => {
+const CreateProposal = forwardRef((_, ref: RefObject<HTMLDivElement>) => {
     const history = useHistory();
     const { isLogged } = useAuthStore();
 
@@ -103,5 +109,7 @@ const CreateProposal = forwardRef(({}, ref: RefObject<HTMLDivElement>) => {
         </Container>
     );
 });
+
+CreateProposal.displayName = 'CreateProposal';
 
 export default CreateProposal;

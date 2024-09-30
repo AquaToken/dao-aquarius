@@ -1,18 +1,26 @@
 import * as React from 'react';
 import styled from 'styled-components';
+
+import { getAssetString } from 'helpers/assets';
+import { getDateString } from 'helpers/date';
+import { formatBalance } from 'helpers/format-number';
+
+import { LumenInfo } from 'store/assetsStore/reducer';
+import { AssetInfo } from 'store/assetsStore/types';
+import useAssetsStore from 'store/assetsStore/useAssetsStore';
+
+import { Asset } from 'types/stellar';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import CopyButton from 'basics/buttons/CopyButton';
+import ExternalLink from 'basics/ExternalLink';
+import DotsLoader from 'basics/loaders/DotsLoader';
+import PageLoader from 'basics/loaders/PageLoader';
+import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
+
 import AssetLogo from '../../../vote/components/AssetDropdown/AssetLogo';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import DotsLoader from '../../../../common/basics/DotsLoader';
-import ExternalLink from '../../../../common/basics/ExternalLink';
-import CopyButton from '../../../../common/basics/CopyButton';
-import AccountViewer from '../../../../common/basics/AccountViewer';
-import { formatBalance, getDateString } from '../../../../common/helpers/helpers';
-import { respondDown } from '../../../../common/mixins';
-import useAssetsStore from '../../../../store/assetsStore/useAssetsStore';
-import { getAssetString } from '../../../../store/assetsStore/actions';
-import { LumenInfo } from '../../../../store/assetsStore/reducer';
-import { Asset } from '../../../../store/assetsStore/types';
-import PageLoader from '../../../../common/basics/PageLoader';
 
 const Container = styled.div`
     display: flex;
@@ -35,7 +43,7 @@ const AssetCard = styled.div`
     margin-bottom: 3.3rem;
 `;
 
-const AssetInfo = styled.div`
+const AssetInfoBlock = styled.div`
     display: flex;
     flex-direction: column;
     margin-left: 2.5rem;
@@ -105,12 +113,18 @@ const AssetDetailValue = styled.span`
     white-space: nowrap;
 `;
 
-const AboutAsset = ({ asset }) => {
+interface AboutAssetProps {
+    asset: Asset;
+}
+
+const AboutAsset = ({ asset }: AboutAssetProps) => {
     const { assetsInfo } = useAssetsStore();
 
     const isNative = asset.isNative();
     const hasAssetInfo = isNative || assetsInfo.has(getAssetString(asset));
-    const assetInfo: Partial<Asset> = isNative ? LumenInfo : assetsInfo.get(getAssetString(asset));
+    const assetInfo: Partial<AssetInfo> = isNative
+        ? LumenInfo
+        : assetsInfo.get(getAssetString(asset));
 
     if (!assetInfo) {
         return <PageLoader />;
@@ -121,7 +135,7 @@ const AboutAsset = ({ asset }) => {
             <Title>About {asset.code}</Title>
             <AssetCard>
                 <AssetLogo asset={asset} isBig />
-                <AssetInfo>
+                <AssetInfoBlock>
                     <AssetCode>
                         {asset.code} ({assetInfo?.name || asset.code})
                     </AssetCode>
@@ -134,7 +148,7 @@ const AboutAsset = ({ asset }) => {
                     ) : (
                         <DotsLoader />
                     )}
-                </AssetInfo>
+                </AssetInfoBlock>
             </AssetCard>
             <Description>{assetInfo.desc}</Description>
             <ExternalLink
@@ -179,7 +193,7 @@ const AboutAsset = ({ asset }) => {
                             <AssetDetailTitle>Issuer</AssetDetailTitle>
                             <AssetDetailValue>
                                 <CopyButton text={asset.issuer}>
-                                    <AccountViewer pubKey={asset.issuer} />
+                                    <PublicKeyWithIcon pubKey={asset.issuer} />
                                 </CopyButton>
                             </AssetDetailValue>
                         </AssetDetail>

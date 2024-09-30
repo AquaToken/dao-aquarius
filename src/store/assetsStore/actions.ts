@@ -1,9 +1,15 @@
-import { Dispatch } from 'react';
-import { ASSETS_ACTIONS, AssetSimple } from './types';
-import { ASSET_CACHE } from './reducer';
 import * as StellarSdk from '@stellar/stellar-sdk';
-import { ActionResult } from '../types';
+import { Dispatch } from 'react';
+
+import { getAssetString } from 'helpers/assets';
+
+import { StellarService } from 'services/globalServices';
+
 import { getAssetsInfo, getAssetsRequest } from './api/api';
+import { ASSET_CACHE } from './reducer';
+import { ASSETS_ACTIONS, AssetSimple } from './types';
+
+import { ActionResult } from '../types';
 
 export function clearAssets() {
     localStorage.setItem(ASSET_CACHE, '[]');
@@ -15,7 +21,7 @@ export function getAssets() {
         dispatch({ type: ASSETS_ACTIONS.GET_ASSETS_START });
 
         getAssetsRequest()
-            .then((assets) => {
+            .then(assets => {
                 dispatch({
                     type: ASSETS_ACTIONS.GET_ASSETS_SUCCESS,
                     payload: { assets: [StellarSdk.Asset.native(), ...assets] },
@@ -27,15 +33,13 @@ export function getAssets() {
     };
 }
 
-export const getAssetString = (asset) => `${asset.code}:${asset.issuer}`;
-
 export function processNewAssets(assets: AssetSimple[]) {
     return (dispatch: Dispatch<ActionResult>): void => {
         const cached = new Map(JSON.parse(localStorage.getItem(ASSET_CACHE) || '[]'));
 
         const newAssets = assets.filter(
-            (asset) =>
-                !cached.has(getAssetString(asset)) &&
+            asset =>
+                !cached.has(getAssetString(StellarService.createAsset(asset.code, asset.issuer))) &&
                 !new StellarSdk.Asset(asset.code, asset.issuer).isNative(),
         );
 
@@ -43,9 +47,12 @@ export function processNewAssets(assets: AssetSimple[]) {
             return;
         }
 
-        getAssetsInfo(newAssets).then((res) => {
-            res.forEach((info) => {
-                cached.set(getAssetString(info), info);
+        getAssetsInfo(newAssets).then(res => {
+            res.forEach(info => {
+                cached.set(
+                    getAssetString(StellarService.createAsset(info.code, info.issuer)),
+                    info,
+                );
             });
 
             localStorage.setItem(ASSET_CACHE, JSON.stringify(Array.from(cached.entries())));

@@ -1,19 +1,25 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { ExternalLinkStyled, Header, Section, Title } from '../AmmRewards/AmmRewards';
-import Table, { CellAlign } from '../../../common/basics/Table';
-import { StellarService } from '../../../common/services/globalServices';
-import useAuthStore from '../../../store/authStore/useAuthStore';
-import { StellarEvents } from '../../../common/services/stellar.service';
-import { formatBalance, getDateString } from '../../../common/helpers/helpers';
-import PageLoader from '../../../common/basics/PageLoader';
-import DotsLoader from '../../../common/basics/DotsLoader';
-import { COLORS } from '../../../common/styles';
-import ExternalLink from '../../../common/basics/ExternalLink';
-import { Empty } from '../YourVotes/YourVotes';
 import { Link } from 'react-router-dom';
+import styled from 'styled-components';
+
+import { getDateString } from 'helpers/date';
+import { formatBalance } from 'helpers/format-number';
+
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { StellarService } from 'services/globalServices';
+import { StellarEvents } from 'services/stellar.service';
+import { COLORS } from 'web/styles';
+
+import ExternalLink from 'basics/ExternalLink';
+import DotsLoader from 'basics/loaders/DotsLoader';
+import PageLoader from 'basics/loaders/PageLoader';
+import Table, { CellAlign } from 'basics/Table';
+
 import { MainRoutes } from '../../../routes';
+import { ExternalLinkStyled, Header, Section, Title } from '../AmmRewards/AmmRewards';
+import { Empty } from '../YourVotes/YourVotes';
 
 const Container = styled.div`
     display: flex;
@@ -66,7 +72,7 @@ const PaymentsHistory = () => {
                             { children: 'Amount', align: CellAlign.Right },
                             { children: '', align: CellAlign.Right },
                         ]}
-                        body={history.map((item) => {
+                        body={history.map(item => {
                             const opId = item._links.effects.href.split('/')[4];
                             return {
                                 key: item.id,

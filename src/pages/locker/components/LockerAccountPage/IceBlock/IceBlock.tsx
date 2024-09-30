@@ -1,20 +1,28 @@
 import * as React from 'react';
 import { useCallback } from 'react';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import { respondDown } from '../../../../../common/mixins';
-import IceLogo from '../../../../../common/assets/img/ice-logo.svg';
-import { formatBalance } from '../../../../../common/helpers/helpers';
-import ExternalLink from '../../../../../common/basics/ExternalLink';
-import { GOV_ICE_CODE, ICE_CODE, ICE_ISSUER } from '../../../../../common/services/stellar.service';
-import { ModalService, StellarService } from '../../../../../common/services/globalServices';
-import Button from '../../../../../common/basics/Button';
+
+import { formatBalance } from 'helpers/format-number';
+
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { ClaimableBalance } from 'types/stellar';
+
+import AccountService from 'services/account.service';
+import { ModalService, StellarService } from 'services/globalServices';
+import { GOV_ICE_CODE, ICE_CODE, ICE_ISSUER } from 'services/stellar.service';
+import { respondDown } from 'web/mixins';
+import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import IceLogo from 'assets/ice-logo.svg';
+
+import Button from 'basics/buttons/Button';
+import ExternalLink from 'basics/ExternalLink';
+
+import { DOWN_ICE, UP_ICE } from 'pages/vote/components/MainPage/MainPage';
+
 import AddIceTrustlinesModal from '../AddIceTrustlinesModal/AddIceTrustlinesModal';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
-import ChooseLoginMethodModal from '../../../../../common/modals/ChooseLoginMethodModal';
-import AccountService from '../../../../../common/services/account.service';
-import { ServerApi } from '@stellar/stellar-sdk';
-import { DOWN_ICE, UP_ICE } from '../../../../vote/components/MainPage/MainPage';
 
 const Container = styled.div`
     margin-top: 4rem;
@@ -166,16 +174,14 @@ export const MAX_BOOST_PERIOD = 3 * 365 * 24 * 60 * 60 * 1000;
 export const MIN_BOOST_PERIOD = 24 * 60 * 60 * 1000;
 export const MAX_LOCK_PERIOD = 10 * 365 * 24 * 60 * 60 * 1000;
 
-export const roundMsToDays = (timestamp) => {
-    return Math.floor(timestamp / (24 * 60 * 60 * 1000));
-};
+export const roundMsToDays = (timestamp: number) => Math.floor(timestamp / (24 * 60 * 60 * 1000));
 
 interface IceBlockProps {
     account: AccountService;
-    locks: ServerApi.ClaimableBalanceRecord[];
+    locks: ClaimableBalance[];
 }
 
-const IceBlock = ({ account, locks }: IceBlockProps): JSX.Element => {
+const IceBlock = ({ account, locks }: IceBlockProps): React.ReactNode => {
     const { isLogged } = useAuthStore();
 
     const iceBalance = Number(
@@ -188,19 +194,21 @@ const IceBlock = ({ account, locks }: IceBlockProps): JSX.Element => {
         StellarService.createAsset(GOV_ICE_CODE, ICE_ISSUER),
     );
 
-    const getIceAmount = useCallback(() => {
-        return locks.reduce((acc, lock) => {
-            const remainingPeriod = Math.max(
-                roundMsToDays(new Date(lock.claimants[0].predicate.not.abs_before).getTime()) -
-                    roundMsToDays(Date.now()),
-                0,
-            );
-            const boost =
-                Math.min(remainingPeriod / roundMsToDays(MAX_BOOST_PERIOD), 1) * MAX_BOOST;
-            const distributedAmount = Number(lock.amount) * (1 + boost);
-            return acc + distributedAmount;
-        }, 0);
-    }, [locks]);
+    const getIceAmount = useCallback(
+        () =>
+            locks.reduce((acc, lock) => {
+                const remainingPeriod = Math.max(
+                    roundMsToDays(new Date(lock.claimants[0].predicate.not.abs_before).getTime()) -
+                        roundMsToDays(Date.now()),
+                    0,
+                );
+                const boost =
+                    Math.min(remainingPeriod / roundMsToDays(MAX_BOOST_PERIOD), 1) * MAX_BOOST;
+                const distributedAmount = Number(lock.amount) * (1 + boost);
+                return acc + distributedAmount;
+            }, 0),
+        [locks],
+    );
 
     const addTrustlines = () => {
         if (!isLogged) {

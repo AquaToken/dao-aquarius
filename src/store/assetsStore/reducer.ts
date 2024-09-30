@@ -1,9 +1,10 @@
-import { Asset, ASSETS_ACTIONS, AssetsStore } from './types';
+import { AssetInfo, ASSETS_ACTIONS, AssetsStore } from './types';
+
 import { ActionSimpleResult } from '../types';
 
 export const ASSET_CACHE = 'assets';
 
-export const LumenInfo: Partial<Asset> = {
+export const LumenInfo: Partial<AssetInfo> = {
     code: 'XLM',
     issuer: undefined,
     name: 'Stellar Lumens',
@@ -32,11 +33,11 @@ export default function proposalStore(
             };
         }
         case ASSETS_ACTIONS.GET_ASSETS_SUCCESS: {
-            const { assets } = action.payload as { assets: any[] };
+            const { assets } = action.payload as { assets: AssetInfo[] };
             return {
                 ...state,
                 isLoading: false,
-                assets: assets,
+                assets,
             };
         }
         case ASSETS_ACTIONS.GET_ASSETS_FAIL: {
@@ -48,7 +49,7 @@ export default function proposalStore(
         }
 
         case ASSETS_ACTIONS.UPDATE_ASSET_INFO: {
-            const { assetInfo } = action.payload as { assetInfo: Map<string, Asset> };
+            const { assetInfo } = action.payload as { assetInfo: Map<string, AssetInfo> };
             return {
                 ...state,
                 assetsInfo: assetInfo,

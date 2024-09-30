@@ -1,34 +1,37 @@
 import * as React from 'react';
 import { forwardRef, RefObject, useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
 import styled, { css } from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
+
+import { getDateString } from 'helpers/date';
+import { formatBalance, roundToPrecision } from 'helpers/format-number';
+
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { ModalService } from 'services/globalServices';
+import { flexAllCenter, respondDown } from 'web/mixins';
+import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Fail from 'assets/icon-fail.svg';
+import Success from 'assets/icon-success.svg';
+
+import Button from 'basics/buttons/Button';
+import ExternalLink from 'basics/ExternalLink';
+
 import NativeVotingButton from './VotingButton/VotingButton';
-import Success from '../../../../../common/assets/img/icon-success.svg';
-import Fail from '../../../../../common/assets/img/icon-fail.svg';
-import { ModalService } from '../../../../../common/services/globalServices';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
-import ChooseLoginMethodModal from '../../../../../common/modals/ChooseLoginMethodModal';
-import ConfirmVoteModal from '../ConfirmVoteModal/ConfirmVoteModal';
-// import CheckedIcon from '../../../../common/assets/img/icon-checked.svg';
-import { SimpleProposalOptions } from '../../../pages/GovernanceVoteProposalPage';
+
+import { GovernanceRoutes } from '../../../../../routes';
 import { Proposal } from '../../../api/types';
-import Button from '../../../../../common/basics/Button';
-import CreateDiscussionModal from '../../GovernanceProposalCreationPage/CreateDiscussionModal/CreateDiscussionModal';
-import { flexAllCenter, respondDown } from '../../../../../common/mixins';
-import {
-    formatBalance,
-    getDateString,
-    roundToPrecision,
-} from '../../../../../common/helpers/helpers';
-import NotEnoughAquaModal from '../../GovernanceMainPage/NotEnoughAquaModal/NotEnoughAquaModal';
 import { CREATE_DISCUSSION_COST, CREATE_PROPOSAL_COST } from '../../../pages/GovernanceMainPage';
+import { SimpleProposalOptions } from '../../../pages/GovernanceVoteProposalPage';
+import NotEnoughAquaModal from '../../GovernanceMainPage/NotEnoughAquaModal/NotEnoughAquaModal';
 import ProposalStatus, {
     PROPOSAL_STATUS,
 } from '../../GovernanceMainPage/ProposalStatus/ProposalStatus';
-import ExternalLink from '../../../../../common/basics/ExternalLink';
-import { Link, useParams } from 'react-router-dom';
+import CreateDiscussionModal from '../../GovernanceProposalCreationPage/CreateDiscussionModal/CreateDiscussionModal';
 import PublishProposalModal from '../../GovernanceProposalCreationPage/PublishProposalModal/PublishProposalModal';
-import { GovernanceRoutes } from '../../../../../routes';
+import ConfirmVoteModal from '../ConfirmVoteModal/ConfirmVoteModal';
 
 const SidebarBlock = styled.aside`
     top: 2rem;
@@ -190,14 +193,14 @@ const Title = styled.span`
     margin-top: 2.2rem;
 `;
 
-const Winner = styled.div<{ isVoteFor?: boolean }>`
+const Winner = styled.div<{ $isVoteFor?: boolean }>`
     height: 3.5rem;
     padding: 0 1.5rem;
     ${flexAllCenter};
     width: min-content;
     white-space: nowrap;
     border-radius: 1.75rem;
-    background-color: ${({ isVoteFor }) => (isVoteFor ? COLORS.purple : COLORS.pinkRed)};
+    background-color: ${({ $isVoteFor }) => ($isVoteFor ? COLORS.purple : COLORS.pinkRed)};
     color: ${COLORS.white};
     font-weight: 400;
     margin-top: 1rem;
@@ -249,7 +252,7 @@ const Sidebar = forwardRef(
         const { isLogged, account } = useAuthStore();
         const { version } = useParams<{ version?: string }>();
 
-        const onVoteClick = (option) => {
+        const onVoteClick = option => {
             if (isLogged) {
                 ModalService.openModal(ConfirmVoteModal, option);
                 return;
@@ -346,7 +349,7 @@ const Sidebar = forwardRef(
                                     Canceled
                                 </Canceled>
                             ) : (
-                                <Winner isVoteFor={isVoteForWon}>
+                                <Winner $isVoteFor={isVoteForWon}>
                                     {isVoteForWon ? <SuccessIcon /> : <FailIcon />}
                                     <BoldText>{isVoteForWon ? 'For' : 'Against'}</BoldText>
                                 </Winner>
@@ -424,7 +427,7 @@ const Sidebar = forwardRef(
         if (status === 'DISCUSSION') {
             if (version) {
                 const versionDate = proposal.history_proposal.find(
-                    (history) => history.version === Number(version),
+                    history => history.version === Number(version),
                 ).created_at;
                 return (
                     <SidebarBlock ref={ref} {...props}>
@@ -579,5 +582,7 @@ const Sidebar = forwardRef(
         );
     },
 );
+
+Sidebar.displayName = 'Sidebar';
 
 export default Sidebar;

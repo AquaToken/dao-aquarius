@@ -1,8 +1,11 @@
 import * as React from 'react';
-import { formatBalance } from '../../../../../common/helpers/helpers';
-import Revert from '../../../../../common/assets/img/icon-revert.svg';
 import styled from 'styled-components';
-import { COLORS } from '../../../../../common/styles';
+
+import { formatBalance } from 'helpers/format-number';
+
+import { COLORS } from 'web/styles';
+
+import Revert from 'assets/icon-revert.svg';
 
 const Container = styled.div`
     color: ${COLORS.grayText};

@@ -1,14 +1,18 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { commonMaxWidth, respondDown } from '../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../common/styles';
-import { StellarService } from '../../../common/services/globalServices';
-import PageLoader from '../../../common/basics/PageLoader';
-import { getAssetFromString, getAssetString } from '../../../common/helpers/helpers';
 import { useHistory, useParams } from 'react-router-dom';
+import styled from 'styled-components';
+
+import { getAssetFromString, getAssetString } from 'helpers/assets';
+
+import { StellarService } from 'services/globalServices';
+import { AQUA_CODE, AQUA_ISSUER } from 'services/stellar.service';
+import { commonMaxWidth, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import PageLoader from 'basics/loaders/PageLoader';
+
 import { MainRoutes } from '../../../routes';
-import { AQUA_CODE, AQUA_ISSUER } from '../../../common/services/stellar.service';
 import SwapForm from '../components/SwapForm/SwapForm';
 
 const Container = styled.main`

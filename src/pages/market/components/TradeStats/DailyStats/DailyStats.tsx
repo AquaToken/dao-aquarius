@@ -1,11 +1,16 @@
 import * as React from 'react';
-import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
 import { useEffect, useMemo, useState } from 'react';
-import { StellarService } from '../../../../../common/services/globalServices';
-import { respondDown } from '../../../../../common/mixins';
-import DotsLoader from '../../../../../common/basics/DotsLoader';
-import { formatBalance } from '../../../../../common/helpers/helpers';
+import styled from 'styled-components';
+
+import { formatBalance } from 'helpers/format-number';
+
+import { Asset } from 'types/stellar';
+
+import { StellarService } from 'services/globalServices';
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import DotsLoader from 'basics/loaders/DotsLoader';
 
 const Details = styled.div`
     display: flex;
@@ -41,15 +46,20 @@ const DetailValue = styled.span`
     white-space: nowrap;
 `;
 
-const Change = styled.div<{ isPositive: boolean }>`
-    color: ${({ isPositive }) => (isPositive ? COLORS.purple : COLORS.pinkRed)};
+const Change = styled.div<{ $isPositive: boolean }>`
+    color: ${({ $isPositive }) => ($isPositive ? COLORS.purple : COLORS.pinkRed)};
 `;
 
 const PERIOD_24H = 24 * 60 * 60 * 1000;
 const RESOLUTION_MINUTE = 60 * 1000;
 const RESOLUTION_15_MIN = 15 * 60 * 1000;
 
-const DailyStats = ({ base, counter }) => {
+interface DailyStatsProps {
+    base: Asset;
+    counter: Asset;
+}
+
+const DailyStats = ({ base, counter }: DailyStatsProps): React.ReactNode => {
     const [last15MinutesTrades, setLast15MinutesTrades] = useState(null);
     const [lastMinuteTrade, setLastMinuteTrade] = useState(null);
 
@@ -64,7 +74,7 @@ const DailyStats = ({ base, counter }) => {
             endDate + RESOLUTION_15_MIN,
             RESOLUTION_15_MIN,
             100,
-        ).then((res) => {
+        ).then(res => {
             setLast15MinutesTrades(res.records);
         });
 
@@ -75,7 +85,7 @@ const DailyStats = ({ base, counter }) => {
             endDate + RESOLUTION_MINUTE,
             RESOLUTION_MINUTE,
             1,
-        ).then((res) => {
+        ).then(res => {
             setLastMinuteTrade(res.records);
         });
     }, []);
@@ -138,7 +148,7 @@ const DailyStats = ({ base, counter }) => {
                         change24 === '-' ? (
                             '-'
                         ) : (
-                            <Change isPositive={Number(change24) >= 0}>{change24}%</Change>
+                            <Change $isPositive={Number(change24) >= 0}>{change24}%</Change>
                         )
                     ) : (
                         <DotsLoader />

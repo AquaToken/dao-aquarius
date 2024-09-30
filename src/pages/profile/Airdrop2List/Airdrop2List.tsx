@@ -1,24 +1,30 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import styled from 'styled-components';
-import { ExternalLinkStyled, Header, Section, Title } from '../AmmRewards/AmmRewards';
-import { StellarService, ToastService } from '../../../common/services/globalServices';
-import { StellarEvents } from '../../../common/services/stellar.service';
-import PageLoader from '../../../common/basics/PageLoader';
-import { Empty } from '../YourVotes/YourVotes';
 import { Link } from 'react-router-dom';
+import styled from 'styled-components';
+
+import { getDateString } from 'helpers/date';
+import ErrorHandler from 'helpers/error-handler';
+import { formatBalance } from 'helpers/format-number';
+import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
+
+import { LoginTypes } from 'store/authStore/types';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { StellarService, ToastService } from 'services/globalServices';
+import { StellarEvents } from 'services/stellar.service';
+import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Button from 'basics/buttons/Button';
+import Checkbox from 'basics/inputs/Checkbox';
+import PageLoader from 'basics/loaders/PageLoader';
+import Table, { CellAlign } from 'basics/Table';
+
 import { MainRoutes } from '../../../routes';
-import { formatBalance, getDateString } from '../../../common/helpers/helpers';
-import useAuthStore from '../../../store/authStore/useAuthStore';
-import Button from '../../../common/basics/Button';
-import { Breakpoints, COLORS } from '../../../common/styles';
-import { LoginTypes } from '../../../store/authStore/types';
-import { BuildSignAndSubmitStatuses } from '../../../common/services/wallet-connect.service';
-import ErrorHandler from '../../../common/helpers/error-handler';
-import Checkbox from '../../../common/basics/Checkbox';
-import Table, { CellAlign } from '../../../common/basics/Table';
-import { respondDown } from '../../../common/mixins';
-import { openCurrentWalletIfExist } from '../../../common/helpers/wallet-connect-helpers';
+import { ExternalLinkStyled, Header, Section, Title } from '../AmmRewards/AmmRewards';
+import { Empty } from '../YourVotes/YourVotes';
 
 const Container = styled.div`
     display: flex;
@@ -77,7 +83,7 @@ const Airdrop2List = () => {
     }, []);
 
     useEffect(() => {
-        const unsub = StellarService.event.sub((event) => {
+        const unsub = StellarService.event.sub(event => {
             if (event.type === StellarEvents.claimableUpdate) {
                 setList(StellarService.getAirdrop2Claims());
             }
@@ -97,14 +103,12 @@ const Airdrop2List = () => {
                 )?.predicate?.and;
                 const beforeTimestamp =
                     Number(
-                        claimantPredicates.find((predicate) => Boolean(predicate.not))?.not
+                        claimantPredicates.find(predicate => Boolean(predicate.not))?.not
                             ?.abs_before_epoch,
                     ) * 1000;
                 const expireTimestamp =
-                    Number(
-                        claimantPredicates.find((predicate) => !Boolean(predicate.not))
-                            ?.abs_before_epoch,
-                    ) * 1000;
+                    Number(claimantPredicates.find(predicate => !predicate.not)?.abs_before_epoch) *
+                    1000;
 
                 if (
                     beforeTimestamp &&
@@ -172,15 +176,13 @@ const Airdrop2List = () => {
         }
 
         return [...list]
-            .filter((cb) => {
+            .filter(cb => {
                 const claimantPredicates = cb.claimants.find(
                     ({ destination }) => destination === account.accountId(),
                 )?.predicate?.and;
                 const expireTimestamp =
-                    Number(
-                        claimantPredicates.find((predicate) => !Boolean(predicate.not))
-                            ?.abs_before_epoch,
-                    ) * 1000;
+                    Number(claimantPredicates.find(predicate => !predicate.not)?.abs_before_epoch) *
+                    1000;
 
                 return expireTimestamp > Date.now();
             })
@@ -193,9 +195,9 @@ const Airdrop2List = () => {
                 <Title>Airdrop #2 claims</Title>
                 {Boolean(list?.length) && (
                     <Checkbox
-                        label={'Show expired'}
+                        label="Show expired"
                         checked={showExpired}
-                        onChange={(value) => {
+                        onChange={value => {
                             setShowExpired(value);
                         }}
                     />
@@ -232,7 +234,7 @@ const Airdrop2List = () => {
                             { children: 'Claim back expire', align: CellAlign.Right },
                             { children: 'Status', align: CellAlign.Right },
                         ]}
-                        body={filteredList.map((cb) => {
+                        body={filteredList.map(cb => {
                             const dateReceived = cb.last_modified_time
                                 ? getDateString(new Date(cb.last_modified_time).getTime(), {
                                       withTime: true,
@@ -241,11 +243,11 @@ const Airdrop2List = () => {
                             const claimantPredicates = cb.claimants.find(
                                 ({ destination }) => destination === account.accountId(),
                             )?.predicate?.and;
-                            const beforeTimestamp = claimantPredicates.find((predicate) =>
+                            const beforeTimestamp = claimantPredicates.find(predicate =>
                                 Boolean(predicate.not),
                             )?.not?.abs_before_epoch;
                             const expireTimestamp = claimantPredicates.find(
-                                (predicate) => !Boolean(predicate.not),
+                                predicate => !predicate.not,
                             )?.abs_before_epoch;
 
                             const beforeDate = getDateString(+beforeTimestamp * 1000, {

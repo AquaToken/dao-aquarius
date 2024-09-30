@@ -1,11 +1,41 @@
 import * as React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import { flexRowSpaceBetween, respondDown } from '../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../common/styles';
+
+import { FilterOptions, getPools, PoolsSortFields } from 'api/amm';
+
+import { formatBalance } from 'helpers/format-number';
+import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
+
+import { LoginTypes } from 'store/authStore/types';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { PoolProcessed } from 'types/amm';
+import { Transaction } from 'types/stellar';
+
+import { ModalService, SorobanService, ToastService } from 'services/globalServices';
+import { CONTRACT_STATUS, POOL_TYPE } from 'services/soroban.service';
+import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
+import { flexRowSpaceBetween, respondDown } from 'web/mixins';
+import MainNetWarningModal, {
+    SHOW_PURPOSE_ALIAS_MAIN_NET,
+} from 'web/modals/alerts/MainNetWarningModal';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import ArrowLeft from 'assets/icon-arrow-left.svg';
+import Tick from 'assets/icon-tick-white.svg';
+
+import Alert from 'basics/Alert';
+import Button from 'basics/buttons/Button';
+import CircleButton from 'basics/buttons/CircleButton';
+import Checkbox from 'basics/inputs/Checkbox';
+import Input from 'basics/inputs/Input';
+import ToggleGroup from 'basics/inputs/ToggleGroup';
+import PageLoader from 'basics/loaders/PageLoader';
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
 import { AmmRoutes } from '../../../routes';
-import ArrowLeft from '../../../common/assets/img/icon-arrow-left.svg';
-import Tick from '../../../common/assets/img/icon-tick-white.svg';
 import {
     Back,
     Background,
@@ -19,37 +49,12 @@ import {
     Title,
 } from '../../bribes/pages/AddBribePage';
 import AssetDropdown from '../../vote/components/AssetDropdown/AssetDropdown';
-import {
-    ModalService,
-    SorobanService,
-    ToastService,
-} from '../../../common/services/globalServices';
-import Button from '../../../common/basics/Button';
-import Input from '../../../common/basics/Input';
-import ToggleGroup from '../../../common/basics/ToggleGroup';
-import useAuthStore from '../../../store/authStore/useAuthStore';
-import { CONTRACT_STATUS, POOL_TYPE } from '../../../common/services/soroban.service';
-import PoolsList from '../components/PoolsList/PoolsList';
-import { FilterOptions, getPools, PoolsSortFields } from '../api/api';
-import { useHistory } from 'react-router-dom';
-import ContractNotFound from '../components/ContractNotFound/ContractNotFound';
-import Tooltip, { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
-import Alert from '../../../common/basics/Alert';
-import { formatBalance } from '../../../common/helpers/helpers';
-import { PoolProcessed } from '../api/types';
-import { BuildSignAndSubmitStatuses } from '../../../common/services/wallet-connect.service';
-import MainNetWarningModal, {
-    SHOW_PURPOSE_ALIAS_MAIN_NET,
-} from '../../../common/modals/MainNetWarningModal';
-import CircleButton from '../../../common/basics/CircleButton';
-import Checkbox from '../../../common/basics/Checkbox';
-import PageLoader from '../../../common/basics/PageLoader';
 import AssetLogo from '../../vote/components/AssetDropdown/AssetLogo';
-import { LoginTypes } from '../../../store/authStore/types';
-import { openCurrentWalletIfExist } from '../../../common/helpers/wallet-connect-helpers';
+import ContractNotFound from '../components/ContractNotFound/ContractNotFound';
+import PoolsList from '../components/PoolsList/PoolsList';
 
-const ErrorLabel = styled.span<{ isError?: boolean }>`
-    color: ${({ isError }) => (isError ? COLORS.pinkRed : COLORS.paragraphText)};
+const ErrorLabel = styled.span<{ $isError?: boolean }>`
+    color: ${({ $isError }) => ($isError ? COLORS.pinkRed : COLORS.paragraphText)};
 `;
 
 const StyledForm = styled(Form)`
@@ -80,17 +85,17 @@ const FormDescription = styled.span`
     color: ${COLORS.grayText};
 `;
 
-const PoolType = styled.div<{ isActive?: boolean }>`
+const PoolType = styled.div<{ $isActive?: boolean }>`
     ${flexRowSpaceBetween};
     cursor: pointer;
     width: 100%;
     padding: 3.7rem 3.2rem;
     border-radius: 1rem;
-    background-color: ${({ isActive }) => (isActive ? COLORS.purple : COLORS.lightGray)};
-    color: ${({ isActive }) => (isActive ? COLORS.white : COLORS.paragraphText)};
+    background-color: ${({ $isActive }) => ($isActive ? COLORS.purple : COLORS.lightGray)};
+    color: ${({ $isActive }) => ($isActive ? COLORS.white : COLORS.paragraphText)};
 
     svg {
-        display: ${({ isActive }) => (isActive ? 'block' : 'none')};
+        display: ${({ $isActive }) => ($isActive ? 'block' : 'none')};
         width: 3rem;
         margin-left: 0.4rem;
     }
@@ -237,13 +242,13 @@ const CreatePool = () => {
     }, [type]);
 
     useEffect(() => {
-        SorobanService.getCreationFeeInfo().then((res) => {
+        SorobanService.getCreationFeeInfo().then(res => {
             setCreateInfo(res);
         });
     }, []);
 
     useEffect(() => {
-        getPools(FilterOptions.all, 1, 1000, PoolsSortFields.liquidityUp).then((res) =>
+        getPools(FilterOptions.all, 1, 1000, PoolsSortFields.liquidityUp).then(res =>
             setPools(res.pools),
         );
     }, []);
@@ -253,15 +258,15 @@ const CreatePool = () => {
             return [];
         }
         const selectedAssets = [firstAsset, secondAsset, thirdAsset, fourthAsset].filter(
-            (asset) => asset !== null,
+            asset => asset !== null,
         );
 
         return pools.filter(
-            (pool) =>
+            pool =>
                 selectedAssets.every(
-                    (asset) =>
+                    asset =>
                         !!pool.assets.find(
-                            (poolAsset) =>
+                            poolAsset =>
                                 poolAsset.code === asset.code && poolAsset.issuer === asset.issuer,
                         ),
                 ) &&
@@ -328,25 +333,33 @@ const CreatePool = () => {
         );
     }, [fourthAsset]);
 
-    const createPool = () => {
-        if (type === POOL_TYPE.stable) {
-            return createStablePool();
-        }
-        createConstantPool();
-    };
-
-    const createPoolWithWarning = () => {
-        const showPurpose = JSON.parse(localStorage.getItem(SHOW_PURPOSE_ALIAS_MAIN_NET) || 'true');
-        if (showPurpose) {
-            ModalService.openModal(MainNetWarningModal, {}, false).then(({ isConfirmed }) => {
-                if (isConfirmed) {
-                    createPool();
+    const signAndSubmitCreation = (tx: Transaction) =>
+        account.signAndSubmitTx(tx, true).then(
+            (res: {
+                status?: BuildSignAndSubmitStatuses;
+                value: () => {
+                    value: () => { value: () => { toString: (format: string) => string } };
+                }[];
+            }) => {
+                setPending(false);
+                if (!res) {
+                    return;
                 }
-            });
-            return;
-        }
-        createPool();
-    };
+
+                if (
+                    (res as { status: BuildSignAndSubmitStatuses }).status ===
+                    BuildSignAndSubmitStatuses.pending
+                ) {
+                    ToastService.showSuccessToast('More signatures required to complete');
+                    return;
+                }
+                const poolAddress = SorobanService.getContactIdFromHash(
+                    res.value()[1].value().value().toString('hex'),
+                );
+                ToastService.showSuccessToast('Pool successfully created');
+                history.push(`${AmmRoutes.analytics}${poolAddress}`);
+            },
+        );
 
     const createStablePool = () => {
         if (
@@ -367,31 +380,11 @@ const CreatePool = () => {
 
         SorobanService.getInitStableSwapPoolTx(
             account.accountId(),
-            [firstAsset, secondAsset, thirdAsset, fourthAsset].filter((asset) => asset !== null),
+            [firstAsset, secondAsset, thirdAsset, fourthAsset].filter(asset => asset !== null),
             Number(stableFee),
         )
-            .then((tx) => {
-                return account.signAndSubmitTx(tx, true).then((res) => {
-                    setPending(false);
-                    if (!res) {
-                        return;
-                    }
-
-                    if (
-                        (res as { status: BuildSignAndSubmitStatuses }).status ===
-                        BuildSignAndSubmitStatuses.pending
-                    ) {
-                        ToastService.showSuccessToast('More signatures required to complete');
-                        return;
-                    }
-                    const poolAddress = SorobanService.getContactIdFromHash(
-                        res.value()[1].value().value().toString('hex'),
-                    );
-                    ToastService.showSuccessToast('Pool successfully created');
-                    history.push(`${AmmRoutes.analytics}${poolAddress}`);
-                });
-            })
-            .catch((e) => {
+            .then(tx => signAndSubmitCreation(tx))
+            .catch(e => {
                 ToastService.showErrorToast(e.message ?? e.toString());
                 setPending(false);
             });
@@ -417,34 +410,21 @@ const CreatePool = () => {
             secondAsset,
             constantFee,
         )
-            .then((tx) => {
-                return account.signAndSubmitTx(tx, true).then((res) => {
-                    setPending(false);
-                    if (!res) {
-                        return;
-                    }
-
-                    if (
-                        (res as { status: BuildSignAndSubmitStatuses }).status ===
-                        BuildSignAndSubmitStatuses.pending
-                    ) {
-                        ToastService.showSuccessToast('More signatures required to complete');
-                        return;
-                    }
-                    const poolAddress = SorobanService.getContactIdFromHash(
-                        res.value()[1].value().value().toString('hex'),
-                    );
-                    ToastService.showSuccessToast('Pool successfully created');
-                    history.push(`${AmmRoutes.analytics}${poolAddress}`);
-                });
-            })
-            .catch((e) => {
+            .then(tx => signAndSubmitCreation(tx))
+            .catch(e => {
                 ToastService.showErrorToast(e.message ?? e.toString());
                 setPending(false);
             });
     };
 
-    const onStableFeeChane = (value) => {
+    const createPool = () => {
+        if (type === POOL_TYPE.stable) {
+            return createStablePool();
+        }
+        createConstantPool();
+    };
+
+    const onStableFeeChane = (value: string) => {
         if (Number.isNaN(Number(value))) {
             return;
         }
@@ -456,6 +436,19 @@ const CreatePool = () => {
                 : value;
 
         setStableFee(roundedValue);
+    };
+
+    const createPoolWithWarning = () => {
+        const showPurpose = JSON.parse(localStorage.getItem(SHOW_PURPOSE_ALIAS_MAIN_NET) || 'true');
+        if (showPurpose) {
+            ModalService.openModal(MainNetWarningModal, {}, false).then(({ isConfirmed }) => {
+                if (isConfirmed) {
+                    createPool();
+                }
+            });
+            return;
+        }
+        createPool();
     };
 
     if (!createInfo) {
@@ -477,7 +470,7 @@ const CreatePool = () => {
             <FormWrap>
                 <Content>
                     <StyledForm
-                        onSubmit={(event) => {
+                        onSubmit={(event: React.SyntheticEvent<HTMLFormElement>) => {
                             event.preventDefault();
                             event.stopPropagation();
                         }}
@@ -485,7 +478,7 @@ const CreatePool = () => {
                         <StyledFormSection>
                             <FormSectionTitle>Select pool type</FormSectionTitle>
                             <PoolType
-                                isActive={type === POOL_TYPE.constant}
+                                $isActive={type === POOL_TYPE.constant}
                                 onClick={() => setType(POOL_TYPE.constant)}
                             >
                                 <div>
@@ -495,7 +488,7 @@ const CreatePool = () => {
                                 <Tick />
                             </PoolType>
                             <PoolType
-                                isActive={type === POOL_TYPE.stable}
+                                $isActive={type === POOL_TYPE.stable}
                                 onClick={() => setType(POOL_TYPE.stable)}
                             >
                                 <div>
@@ -522,7 +515,7 @@ const CreatePool = () => {
                                 asset={firstAsset}
                                 onUpdate={setFirstAsset}
                                 excludeList={[secondAsset, thirdAsset, fourthAsset].filter(
-                                    (asset) => asset !== null,
+                                    asset => asset !== null,
                                 )}
                                 pending={firstAsset && firstAssetStatus === null}
                             />
@@ -537,7 +530,7 @@ const CreatePool = () => {
                                 asset={secondAsset}
                                 onUpdate={setSecondAsset}
                                 excludeList={[firstAsset, thirdAsset, fourthAsset].filter(
-                                    (asset) => asset !== null,
+                                    asset => asset !== null,
                                 )}
                             />
                             {secondAssetStatus === CONTRACT_STATUS.NOT_FOUND && (
@@ -563,7 +556,7 @@ const CreatePool = () => {
                                         asset={thirdAsset}
                                         onUpdate={setThirdAsset}
                                         excludeList={[firstAsset, secondAsset, fourthAsset].filter(
-                                            (asset) => asset !== null,
+                                            asset => asset !== null,
                                         )}
                                     />
                                     {thirdAssetStatus === CONTRACT_STATUS.NOT_FOUND && (
@@ -591,7 +584,7 @@ const CreatePool = () => {
                                         asset={fourthAsset}
                                         onUpdate={setFourthAsset}
                                         excludeList={[firstAsset, secondAsset, thirdAsset].filter(
-                                            (asset) => asset !== null,
+                                            asset => asset !== null,
                                         )}
                                     />
                                     {fourthAssetStatus === CONTRACT_STATUS.NOT_FOUND && (
@@ -620,7 +613,7 @@ const CreatePool = () => {
                                         likeDisabled
                                         isPurpleText
                                         disabled={assetsCount === 3}
-                                        onClick={() => setAssetsCount((count) => count + 1)}
+                                        onClick={() => setAssetsCount(count => count + 1)}
                                     >
                                         Add {assetsCount === 2 ? 'third' : 'fourth'} asset
                                     </AddRowButton>
@@ -639,7 +632,7 @@ const CreatePool = () => {
                                 <FormRow>
                                     <InputStyled
                                         label={
-                                            <ErrorLabel isError={isStableFeeInputError}>
+                                            <ErrorLabel $isError={isStableFeeInputError}>
                                                 {isStableFeeInputError
                                                     ? `Percent fee should be in range ${STABLE_POOL_FEE_PERCENTS.min}% - ${STABLE_POOL_FEE_PERCENTS.max}%`
                                                     : `Swap Fee (${STABLE_POOL_FEE_PERCENTS.min}% - ${STABLE_POOL_FEE_PERCENTS.max}%)`}
@@ -647,7 +640,9 @@ const CreatePool = () => {
                                         }
                                         placeholder={STABLE_POOL_FEE_PERCENTS.min}
                                         value={stableFee}
-                                        onChange={(e) => onStableFeeChane(e.target.value)}
+                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                            onStableFeeChane(e.target.value)
+                                        }
                                     />
                                 </FormRow>
                             ) : (
@@ -702,7 +697,7 @@ const CreatePool = () => {
                                         secondAssetStatus,
                                         thirdAssetStatus,
                                         fourthAssetStatus,
-                                    ].some((status) => status === CONTRACT_STATUS.NOT_FOUND) ||
+                                    ].some(status => status === CONTRACT_STATUS.NOT_FOUND) ||
                                     isStableFeeInputError ||
                                     !stableFee ||
                                     Boolean(existingPools.length)
