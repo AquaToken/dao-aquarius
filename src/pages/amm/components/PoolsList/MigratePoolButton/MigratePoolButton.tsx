@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 
+import { getPoolsToMigrate } from 'api/amm';
+
+import { Pool, PoolClassicProcessed } from 'types/amm';
+
 import { ModalService } from 'services/globalServices';
 import MigrateLiquidityStep1 from 'web/modals/migrate-liquidity/MigrateLiquidityStep1';
 
 import Button from 'basics/buttons/Button';
-
-import { Pool, PoolClassicProcessed } from 'pages/amm/api/types';
-
-import { getPoolsToMigrate } from '../../../api/api';
 
 interface MigratePoolButtonProps {
     pool: PoolClassicProcessed;

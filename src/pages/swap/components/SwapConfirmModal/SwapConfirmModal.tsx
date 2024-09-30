@@ -3,6 +3,8 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { getPathPoolsFee } from 'api/amm';
+
 import { getAssetFromString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
@@ -22,8 +24,6 @@ import Button from 'basics/buttons/Button';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
-
-import { getPathPoolsFee } from 'pages/amm/api/api';
 
 import PathPool from './PathPool/PathPool';
 

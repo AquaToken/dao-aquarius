@@ -1,12 +1,12 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
+import { PoolProcessed } from 'types/amm';
 import { ModalProps } from 'types/modal';
 import { Asset } from 'types/stellar';
 
 import { ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
-import { PoolProcessed } from 'pages/amm/api/types';
 import PoolsList from 'pages/amm/components/PoolsList/PoolsList';
 
 import { Stepper } from './MigrateLiquidityStep1';

@@ -17,3 +17,5 @@ export type Transaction = StellarSdk.Transaction;
 export type TxFailed = StellarSdk.Horizon.HorizonApi.ErrorResponseData.TransactionFailed;
 
 export type Int128Parts = StellarSdk.xdr.Int128Parts;
+
+export type StellarToml = StellarSdk.StellarToml.Api.StellarToml;

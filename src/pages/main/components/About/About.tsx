@@ -3,20 +3,25 @@ import { useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { getAmmRewards, getAquaInPoolsSum } from 'api/amm';
+import { getAquaCirculatingSupply } from 'api/cmc';
 import { getIceStatistics } from 'api/ice-locker';
+import { getTotalRewards } from 'api/rewards';
 import { getAssetDetails } from 'api/stellar-expert';
 
 import { AQUA_ASSET_STRING } from 'constants/assets';
 
-import { getStellarAsset } from 'helpers/assets';
 import { getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
+import { getPercentValue } from 'helpers/number';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
 import { IceStatistics } from 'types/api-ice-locker';
 import { ExpertAssetData } from 'types/api-stellar-expert';
 
+import { StellarService } from 'services/globalServices';
+import { AQUA_CODE, AQUA_ISSUER } from 'services/stellar.service';
 import { respondDown, respondUp } from 'web/mixins';
 import { Breakpoints, COLORS, FONT_FAMILY } from 'web/styles';
 
@@ -236,12 +241,13 @@ const About = (): React.ReactElement => {
     const location = useLocation();
 
     const aquaAsset = assetsInfo.get(AQUA_ASSET_STRING);
-    const { first_transaction, code, issuer } = aquaAsset || {};
-
-    const aquaStellarAsset = getStellarAsset(code, issuer);
+    const { first_transaction, liquidity_pools_amount } = aquaAsset || {};
 
     const [iceStats, setIceStats] = useState<IceStatistics>(null);
     const [expertData, setExpertData] = useState<ExpertAssetData>(undefined);
+    const [totalRewards, setTotalRewards] = useState<number>(null);
+    const [aquaInSorobanAmm, setAquaInSorobanAmm] = useState<number>(null);
+    const [aquaCirculatingSupply, setAquaCirculatingSupply] = useState<number>(null);
 
     const aquaTokenRef = useRef(null);
 
@@ -252,7 +258,7 @@ const About = (): React.ReactElement => {
     }, [location, aquaTokenRef]);
 
     useEffect(() => {
-        getAssetDetails(aquaStellarAsset)
+        getAssetDetails(StellarService.createAsset(AQUA_CODE, AQUA_ISSUER))
             .then(data => {
                 setExpertData(data);
             })
@@ -262,6 +268,20 @@ const About = (): React.ReactElement => {
 
         getIceStatistics().then(res => {
             setIceStats(res);
+        });
+
+        Promise.all([getAmmRewards(), getTotalRewards()]).then(
+            ([ammRewards, { total_daily_amm_reward, total_daily_sdex_reward }]) => {
+                setTotalRewards(ammRewards + total_daily_amm_reward + total_daily_sdex_reward);
+            },
+        );
+
+        getAquaInPoolsSum().then(res => {
+            setAquaInSorobanAmm(res);
+        });
+
+        getAquaCirculatingSupply().then(res => {
+            setAquaCirculatingSupply(res);
         });
     }, []);
 
@@ -314,7 +334,7 @@ const About = (): React.ReactElement => {
                                             </StatsDescription>
                                         </StatWrapper>
                                         <StatWrapper>
-                                            <StatsTitle> Payments volume: </StatsTitle>
+                                            <StatsTitle>Payments volume: </StatsTitle>
                                             <StatsDescription>
                                                 {expertData ? (
                                                     formatBalance(
@@ -343,11 +363,14 @@ const About = (): React.ReactElement => {
                                         <StatWrapper>
                                             <StatsTitle>Total frozen:</StatsTitle>
                                             <StatsDescription>
-                                                {iceStats ? (
-                                                    formatBalance(
+                                                {iceStats && aquaCirculatingSupply !== null ? (
+                                                    `${formatBalance(
                                                         Number(iceStats.aqua_lock_amount),
                                                         true,
-                                                    )
+                                                    )}(${getPercentValue(
+                                                        Number(iceStats.aqua_lock_amount),
+                                                        aquaCirculatingSupply,
+                                                    )}%)`
                                                 ) : (
                                                     <DotsLoader />
                                                 )}
@@ -355,11 +378,32 @@ const About = (): React.ReactElement => {
                                         </StatWrapper>
                                         <StatWrapper>
                                             <StatsTitle>Total locked in AMM:</StatsTitle>
-                                            <StatsDescription></StatsDescription>
+                                            <StatsDescription>
+                                                {aquaInSorobanAmm !== null &&
+                                                aquaCirculatingSupply !== null &&
+                                                Number(liquidity_pools_amount) ? (
+                                                    `${formatBalance(
+                                                        aquaInSorobanAmm +
+                                                            Number(liquidity_pools_amount),
+                                                        true,
+                                                    )}(${getPercentValue(
+                                                        Number(liquidity_pools_amount),
+                                                        aquaCirculatingSupply,
+                                                    )}%)`
+                                                ) : (
+                                                    <DotsLoader />
+                                                )}
+                                            </StatsDescription>
                                         </StatWrapper>
                                         <StatWrapper>
                                             <StatsTitle>Daily rewards:</StatsTitle>
-                                            <StatsDescription></StatsDescription>
+                                            <StatsDescription>
+                                                {totalRewards ? (
+                                                    formatBalance(totalRewards, true)
+                                                ) : (
+                                                    <DotsLoader />
+                                                )}
+                                            </StatsDescription>
                                         </StatWrapper>
                                     </AquaStatsBlock>
                                 </>

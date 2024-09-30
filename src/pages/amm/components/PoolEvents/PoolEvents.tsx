@@ -2,8 +2,12 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { getPoolEvents } from 'api/amm';
+
 import { getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
+
+import { PoolEvent, PoolExtended } from 'types/amm';
 
 import { useUpdateIndex } from 'hooks/useUpdateIndex';
 import { respondDown } from 'web/mixins';
@@ -18,9 +22,6 @@ import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
 import Table from 'basics/Table';
 
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
-
-import { getPoolEvents } from '../../api/api';
-import { PoolEvent, PoolExtended } from '../../api/types';
 
 const Title = styled.h3`
     margin-bottom: 2.4rem;

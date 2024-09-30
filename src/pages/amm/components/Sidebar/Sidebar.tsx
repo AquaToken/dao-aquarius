@@ -7,6 +7,8 @@ import { formatBalance } from 'helpers/format-number';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { PoolExtended } from 'types/amm';
+
 import { ModalService, SorobanService } from 'services/globalServices';
 import { flexRowSpaceBetween, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
@@ -16,7 +18,6 @@ import Button from 'basics/buttons/Button';
 import PageLoader from 'basics/loaders/PageLoader';
 
 import Asset from '../../../vote/components/AssetDropdown/Asset';
-import { PoolExtended } from '../../api/types';
 import DepositToPool from '../DepositToPool/DepositToPool';
 import WithdrawFromPool from '../WithdrawFromPool/WithdrawFromPool';
 

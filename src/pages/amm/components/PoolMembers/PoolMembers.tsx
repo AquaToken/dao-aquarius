@@ -2,7 +2,11 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { getPoolMembers } from 'api/amm';
+
 import { formatBalance } from 'helpers/format-number';
+
+import { PoolBalance } from 'types/amm';
 
 import { useUpdateIndex } from 'hooks/useUpdateIndex';
 import { respondDown } from 'web/mixins';
@@ -14,10 +18,7 @@ import PageLoader from 'basics/loaders/PageLoader';
 import Pagination from 'basics/Pagination';
 import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
 
-import { PoolBalance } from 'pages/amm/api/types';
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
-
-import { getPoolMembers } from '../../api/api';
 
 const PAGE_SIZE = 10;
 

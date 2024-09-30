@@ -2,6 +2,8 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { getPoolsToMigrate } from 'api/amm';
+
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { Asset } from 'types/stellar';
@@ -11,8 +13,6 @@ import { ModalService, StellarService } from 'services/globalServices';
 import Soroban from 'assets/soroban.svg';
 
 import Button from 'basics/buttons/Button';
-
-import { getPoolsToMigrate } from 'pages/amm/api/api';
 
 import { respondDown } from '../mixins';
 import MigrateLiquidityStep1 from '../modals/migrate-liquidity/MigrateLiquidityStep1';

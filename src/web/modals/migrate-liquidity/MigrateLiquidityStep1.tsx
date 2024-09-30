@@ -9,6 +9,7 @@ import { formatBalance } from 'helpers/format-number';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { Pool } from 'types/amm';
 import { ModalProps } from 'types/modal';
 import { Asset, PoolClassic } from 'types/stellar';
 
@@ -20,7 +21,6 @@ import Input from 'basics/inputs/Input';
 import RangeInput from 'basics/inputs/RangeInput';
 import { ModalWrapper, ModalTitle } from 'basics/ModalAtoms';
 
-import { Pool } from 'pages/amm/api/types';
 import { PairContainer } from 'pages/amm/components/WithdrawFromPool/WithdrawFromPool';
 import AssetLogo from 'pages/vote/components/AssetDropdown/AssetLogo';
 import Market from 'pages/vote/components/common/Market';

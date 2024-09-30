@@ -7,10 +7,10 @@ import styled from 'styled-components';
 import { getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 
+import { PoolStatistics, PoolVolume24h } from 'types/amm';
+
 import { StellarService } from 'services/globalServices';
 import { COLORS } from 'web/styles';
-
-import { PoolStatistics, PoolVolume24h } from 'pages/amm/api/types';
 
 import { transformDate } from '../LiquidityChart/LiquidityChart';
 

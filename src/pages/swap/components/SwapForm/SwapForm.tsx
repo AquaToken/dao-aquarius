@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { findSwapPath } from 'api/amm';
+
 import { getAssetString } from 'helpers/assets';
 
 import useAuthStore from 'store/authStore/useAuthStore';
@@ -21,8 +23,6 @@ import { Breakpoints, COLORS } from 'web/styles';
 import Button from 'basics/buttons/Button';
 
 import NoTrustline from 'components/NoTrustline';
-
-import { findSwapPath } from 'pages/amm/api/api';
 
 import AmountUsdEquivalent from './AmountUsdEquivalent/AmountUsdEquivalent';
 import SwapFormDivider from './SwapFormDivider/SwapFormDivider';

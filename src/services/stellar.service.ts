@@ -3,10 +3,13 @@ import { Memo, MemoType, OperationOptions, Horizon } from '@stellar/stellar-sdk'
 import axios, { AxiosResponse } from 'axios';
 import BigNumber from 'bignumber.js';
 
+import { getPoolInfo } from 'api/amm';
+
 import debounceFunction from 'helpers/debounce-function';
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
 
-import { getPoolInfo } from 'pages/amm/api/api';
+import { StellarToml } from 'types/stellar';
+
 import { validateMarketKeys } from 'pages/vote/api/api';
 import { PairStats } from 'pages/vote/api/types';
 
@@ -289,6 +292,10 @@ export default class StellarServiceClass {
             .then(
                 (result: AxiosResponse<{ stellar_address: string }>) => result.data.stellar_address,
             );
+    }
+
+    resolveToml(homeDomain: string): Promise<StellarToml> {
+        return StellarSdk.StellarToml.Resolver.resolve(homeDomain);
     }
 
     startAccountStream(publicKey: string): void {

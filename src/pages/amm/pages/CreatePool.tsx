@@ -3,12 +3,15 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { FilterOptions, getPools, PoolsSortFields } from 'api/amm';
+
 import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { PoolProcessed } from 'types/amm';
 import { Transaction } from 'types/stellar';
 
 import { ModalService, SorobanService, ToastService } from 'services/globalServices';
@@ -47,8 +50,6 @@ import {
 } from '../../bribes/pages/AddBribePage';
 import AssetDropdown from '../../vote/components/AssetDropdown/AssetDropdown';
 import AssetLogo from '../../vote/components/AssetDropdown/AssetLogo';
-import { FilterOptions, getPools, PoolsSortFields } from '../api/api';
-import { PoolProcessed } from '../api/types';
 import ContractNotFound from '../components/ContractNotFound/ContractNotFound';
 import PoolsList from '../components/PoolsList/PoolsList';
 

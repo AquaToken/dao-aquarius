@@ -3,7 +3,11 @@ import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { FilterOptions, getPools, PoolsSortFields } from 'api/amm';
+
 import { formatBalance } from 'helpers/format-number';
+
+import { PoolProcessed } from 'types/amm';
 
 import { StellarService } from 'services/globalServices';
 import { POOL_TYPE } from 'services/soroban.service';
@@ -23,8 +27,6 @@ import { Empty } from 'pages/profile/YourVotes/YourVotes';
 
 import { AmmRoutes } from '../../../../routes';
 import Market from '../../../vote/components/common/Market';
-import { FilterOptions, getPools, PoolsSortFields } from '../../api/api';
-import { PoolProcessed } from '../../api/types';
 
 const ToggleGroupStyled = styled(ToggleGroup)`
     width: fit-content;

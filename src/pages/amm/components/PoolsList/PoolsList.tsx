@@ -5,6 +5,7 @@ import styled from 'styled-components';
 
 import { formatBalance } from 'helpers/format-number';
 
+import { PoolClassicProcessed, PoolExtended, PoolProcessed, PoolUserProcessed } from 'types/amm';
 import { Asset as AssetType } from 'types/stellar';
 
 import { ModalService, StellarService } from 'services/globalServices';
@@ -21,12 +22,6 @@ import MigratePoolButton from './MigratePoolButton/MigratePoolButton';
 
 import Asset from '../../../vote/components/AssetDropdown/Asset';
 import Market from '../../../vote/components/common/Market';
-import {
-    PoolClassicProcessed,
-    PoolExtended,
-    PoolProcessed,
-    PoolUserProcessed,
-} from '../../api/types';
 import DepositToPool from '../DepositToPool/DepositToPool';
 import WithdrawFromPool from '../WithdrawFromPool/WithdrawFromPool';
 

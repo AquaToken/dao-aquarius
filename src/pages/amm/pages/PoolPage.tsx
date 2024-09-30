@@ -3,12 +3,15 @@ import { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { getPool } from 'api/amm';
+
 import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { PoolExtended } from 'types/amm';
 import { Int128Parts } from 'types/stellar';
 
 import { useUpdateIndex } from 'hooks/useUpdateIndex';
@@ -30,8 +33,6 @@ import NoTrustline from 'components/NoTrustline';
 
 import { AmmRoutes } from '../../../routes';
 import Market from '../../vote/components/common/Market';
-import { getPool } from '../api/api';
-import { PoolExtended } from '../api/types';
 import LiquidityChart from '../components/LiquidityChart/LiquidityChart';
 import PoolEvents from '../components/PoolEvents/PoolEvents';
 import PoolMembers from '../components/PoolMembers/PoolMembers';

@@ -3,6 +3,8 @@ import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
+import { getNativePrices } from 'api/amm';
+
 import { getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 
@@ -13,8 +15,6 @@ import { Breakpoints, COLORS } from 'web/styles';
 import Warning from 'assets/icon-warning.svg';
 
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
-
-import { getNativePrices } from 'pages/amm/api/api';
 
 const Container = styled.div`
     display: flex;

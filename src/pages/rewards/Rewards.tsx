@@ -2,13 +2,14 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { getTotalRewards } from 'api/rewards';
+
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Community from 'components/Community';
 import Subscribe from 'components/Subscribe';
 
-import { getTotalRewards } from './api/api';
 import DividedRewards from './components/DividedRewards/DividedRewards';
 import FAQ from './components/FAQ/FAQ';
 import RewardsList from './components/RewardsList/RewardsList';

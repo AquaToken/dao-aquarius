@@ -2,9 +2,13 @@ import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
+import { getUserPools } from 'api/amm';
+
 import { formatBalance } from 'helpers/format-number';
 
 import useAuthStore from 'store/authStore/useAuthStore';
+
+import { PoolUserProcessed } from 'types/amm';
 
 import { ModalService, StellarService } from 'services/globalServices';
 import { POOL_TYPE } from 'services/soroban.service';
@@ -19,8 +23,6 @@ import PageLoader from 'basics/loaders/PageLoader';
 
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
 
-import { getUserPools } from '../../api/api';
-import { PoolUserProcessed } from '../../api/types';
 import PoolsList from '../PoolsList/PoolsList';
 
 const PoolsListBlock = styled.div<{ $onlyList: boolean }>`

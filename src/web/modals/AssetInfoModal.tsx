@@ -1,4 +1,3 @@
-import { StellarToml } from '@stellar/stellar-sdk';
 import * as React from 'react';
 import { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
@@ -14,7 +13,7 @@ import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
 import { ExpertAssetData } from 'types/api-stellar-expert';
 import { ModalProps } from 'types/modal';
-import { Asset as AssetType } from 'types/stellar';
+import { Asset as AssetType, StellarToml as StellarTomlType } from 'types/stellar';
 
 import { StellarService } from 'services/globalServices';
 import { AQUA_CODE, AQUA_ISSUER } from 'services/stellar.service';
@@ -116,7 +115,7 @@ interface AssetInfoModalParams {
 const AssetInfoModal = ({ params, close }: ModalProps<AssetInfoModalParams>): React.ReactNode => {
     const { asset } = params;
 
-    const [tomlInfo, setTomlInfo] = useState<StellarToml.Api.StellarToml>({});
+    const [tomlInfo, setTomlInfo] = useState<StellarTomlType>({});
     const [expertData, setExpertData] = useState<ExpertAssetData>(undefined);
 
     const { assetsInfo } = useAssetsStore();
@@ -124,7 +123,7 @@ const AssetInfoModal = ({ params, close }: ModalProps<AssetInfoModalParams>): Re
     const { desc, home_domain } = assetsInfo.get(getAssetString(asset)) || {};
 
     useEffect(() => {
-        StellarToml.Resolver.resolve(home_domain)
+        StellarService.resolveToml(home_domain)
             .then(res => {
                 setTomlInfo(res);
             })

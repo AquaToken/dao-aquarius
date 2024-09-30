@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { getRewards, RewardsSort } from 'api/rewards';
+
 import { getTimeAgoValue } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 
@@ -20,7 +22,6 @@ import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import { MarketRoutes } from '../../../../routes';
 import Market from '../../../vote/components/common/Market';
-import { getRewards, RewardsSort } from '../../api/api';
 
 const Container = styled.section`
     position: relative;

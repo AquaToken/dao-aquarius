@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { getTotalStats, getVolume24h } from 'api/amm';
+
 import { formatBalance } from 'helpers/format-number';
 
 import useAuthStore from 'store/authStore/useAuthStore';
@@ -20,7 +22,6 @@ import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
 
 import { AmmRoutes } from '../../../routes';
-import { getTotalStats, getVolume24h } from '../api/api';
 import AllPools from '../components/AllPools/AllPools';
 import LiquidityChart from '../components/LiquidityChart/LiquidityChart';
 import MyLiquidity from '../components/MyLiquidity/MyLiquidity';

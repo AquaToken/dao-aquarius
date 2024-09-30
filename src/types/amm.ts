@@ -34,6 +34,12 @@ export type Pool = {
     rewards_apy: string;
 };
 
+export type PoolRewards = {
+    tps: string;
+    pool_address: string;
+    expired_at_str: string;
+};
+
 export interface PoolUser extends Pool {
     balance: string;
 }

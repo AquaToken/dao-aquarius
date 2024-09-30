@@ -2,16 +2,17 @@ import AccountRecord, * as StellarSdk from '@stellar/stellar-sdk';
 import { Asset, Horizon } from '@stellar/stellar-sdk';
 import BigNumber from 'bignumber.js';
 
+import { getNativePrices } from 'api/amm';
+
 import { getAssetFromString, getAssetString } from 'helpers/assets';
 
 import { LoginTypes } from 'store/authStore/types';
 
+import { PoolClassicProcessed } from 'types/amm';
+
 import LedgerSignTx from 'web/modals/ledger/LedgerSignTx';
 import SentToVault from 'web/modals/SentToVault';
 import SignWithPublic from 'web/modals/SignWithPublic';
-
-import { getNativePrices } from 'pages/amm/api/api';
-import { PoolClassicProcessed } from 'pages/amm/api/types';
 
 import {
     FreighterService,

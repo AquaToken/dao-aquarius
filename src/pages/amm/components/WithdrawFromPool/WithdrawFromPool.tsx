@@ -10,6 +10,7 @@ import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { PoolExtended } from 'types/amm';
 import { ModalProps } from 'types/modal';
 import { Int128Parts } from 'types/stellar';
 
@@ -26,7 +27,6 @@ import PageLoader from 'basics/loaders/PageLoader';
 import { ModalTitle } from 'basics/ModalAtoms';
 
 import Market from '../../../vote/components/common/Market';
-import { PoolExtended } from '../../api/types';
 import SuccessModal from '../SuccessModal/SuccessModal';
 
 const Container = styled.div`
