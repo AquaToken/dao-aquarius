@@ -10,12 +10,13 @@ import { ModalProps } from 'types/modal';
 import { Transaction } from 'types/stellar';
 
 import { ToastService } from 'services/globalServices';
-import { respondDown } from 'web/mixins';
-import { Breakpoints } from 'web/styles';
 
 import Button from 'basics/buttons/Button';
 import ExternalLink from 'basics/ExternalLink';
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+
+import { respondDown } from '../mixins';
+import { Breakpoints } from '../styles';
 
 const Container = styled.div`
     width: 52.3rem;

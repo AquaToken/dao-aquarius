@@ -4,14 +4,15 @@ import styled, { css } from 'styled-components';
 import { ModalProps } from 'types/modal';
 
 import { WalletConnectService } from 'services/globalServices';
-import { flexAllCenter, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
 
 import Aqua from 'assets/aqua-logo-small.svg';
 import ArrowsIcon from 'assets/icon-arrows-circle.svg';
 
 import DotsLoader from 'basics/loaders/DotsLoader';
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+
+import { flexAllCenter, respondDown } from '../../mixins';
+import { Breakpoints, COLORS } from '../../styles';
 
 const Container = styled.div`
     width: 52.3rem;
@@ -51,7 +52,7 @@ const Connecting = styled.div`
 
 const SessionRequestModal = ({
     params,
-}: ModalProps<{ icon: string; name: string }>): JSX.Element => {
+}: ModalProps<{ icon: string; name: string }>): React.ReactNode => {
     const { icon, name } = params;
     return (
         <Container>

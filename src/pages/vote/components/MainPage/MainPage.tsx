@@ -21,6 +21,7 @@ import {
     UP_ICE_CODE,
 } from 'services/stellar.service';
 import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
+import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Aqua from 'assets/aqua-logo-small.svg';
@@ -43,7 +44,6 @@ import FloatingButton from './FloatingButton/FloatingButton';
 import Table from './Table/Table';
 import VotesAmountModal from './VoteModals/VotesAmountModal';
 
-import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
 import { MainRoutes, MarketRoutes } from '../../../../routes';
 import {
     getFilteredPairsList,

@@ -4,13 +4,13 @@ import styled from 'styled-components';
 
 import { ModalProps } from 'types/modal';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import Alert from 'basics/Alert';
 import Button from 'basics/buttons/Button';
 import Checkbox from 'basics/inputs/Checkbox';
 import { ModalTitle } from 'basics/ModalAtoms';
+
+import { respondDown } from '../../mixins';
+import { Breakpoints, COLORS } from '../../styles';
 
 const Container = styled.div`
     width: 52.8rem;

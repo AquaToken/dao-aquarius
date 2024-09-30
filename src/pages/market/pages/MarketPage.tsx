@@ -10,6 +10,7 @@ import useAuthStore from 'store/authStore/useAuthStore';
 import { useIsOverScrolled } from 'hooks/useIsOnViewport';
 import { ModalService, StellarService } from 'services/globalServices';
 import { commonMaxWidth, respondDown } from 'web/mixins';
+import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import ArrowLeft from 'assets/icon-arrow-left.svg';
@@ -20,7 +21,6 @@ import PageLoader from 'basics/loaders/PageLoader';
 import MigrateToSorobanBanner from 'components/MigrateToSorobanBanner';
 import NotFoundPage from 'components/NotFoundPage';
 
-import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
 import { VoteRoutes } from '../../../routes';
 import { getFilteredPairsList, getTotalVotingStats } from '../../vote/api/api';
 import { PairStats } from '../../vote/api/types';

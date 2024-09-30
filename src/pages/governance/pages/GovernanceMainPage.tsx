@@ -8,6 +8,7 @@ import useAuthStore from 'store/authStore/useAuthStore';
 import { useIsOnViewport } from 'hooks/useIsOnViewport';
 import { ModalService } from 'services/globalServices';
 import { commonMaxWidth, flexAllCenter, respondDown } from 'web/mixins';
+import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import BackgroundImageLeft from 'assets/background-left.svg';
@@ -18,7 +19,6 @@ import Select from 'basics/inputs/Select';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
 import PageLoader from 'basics/loaders/PageLoader';
 
-import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
 import { GovernanceRoutes } from '../../../routes';
 import { getProposalsRequest, PROPOSAL_FILTER } from '../api/api';
 import CreateProposal from '../components/GovernanceMainPage/CreateProposal/CreateProposal';

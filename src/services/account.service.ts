@@ -6,6 +6,10 @@ import { getAssetFromString, getAssetString } from 'helpers/assets';
 
 import { LoginTypes } from 'store/authStore/types';
 
+import LedgerSignTx from 'web/modals/ledger/LedgerSignTx';
+import SentToVault from 'web/modals/SentToVault';
+import SignWithPublic from 'web/modals/SignWithPublic';
+
 import { getNativePrices } from 'pages/amm/api/api';
 import { PoolClassicProcessed } from 'pages/amm/api/types';
 
@@ -21,10 +25,6 @@ import {
 import { POOL_TYPE } from './soroban.service';
 import { AQUA_CODE, AQUA_ISSUER, ICE_ASSETS } from './stellar.service';
 import { BuildSignAndSubmitStatuses } from './wallet-connect.service';
-
-import LedgerSignTx from '../common/modals/LedgerModals/LedgerSignTx';
-import SentToVault from '../common/modals/MultisigModals/SentToVault';
-import SignWithPublic from '../common/modals/SignWithPublic';
 
 const VAULT_MARKER = 'GA2T6GR7VXXXBETTERSAFETHANSORRYXXXPROTECTEDBYLOBSTRVAULT';
 

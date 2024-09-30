@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import { ModalService } from 'services/globalServices';
 import { respondDown } from 'web/mixins';
+import GetAquaModal from 'web/modals/GetAquaModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Background from 'assets/main-screen-img.svg';
@@ -11,8 +12,6 @@ import Stars from 'assets/main-stars.svg';
 import Button from 'basics/buttons/Button';
 
 import SocialLinks from 'components/SocialLinks';
-
-import GetAquaModal from '../../../../common/modals/GetAquaModal/GetAquaModal';
 
 const Main = styled.section`
     display: flex;

@@ -18,6 +18,7 @@ import {
     UP_ICE_CODE,
 } from 'services/stellar.service';
 import { flexRowSpaceBetween, respondDown } from 'web/mixins';
+import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Aqua from 'assets/aqua-logo-small.svg';
@@ -34,7 +35,6 @@ import { getPercent } from 'pages/vote/components/MainPage/Table/VoteAmount/Vote
 
 import VotesProgressLine from './VotesProgressLine/VotesProgressLine';
 
-import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
 import CreatePairModal from '../../../vote/components/MainPage/CreatePairModal/CreatePairModal';
 import VoteButton from '../../../vote/components/MainPage/Table/VoteButton/VoteButton';
 

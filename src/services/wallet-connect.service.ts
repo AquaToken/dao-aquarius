@@ -26,13 +26,13 @@ import {
 
 import { WalletConnectEvents } from 'types/wallet-connect';
 
+import PairingModal from 'web/modals/wallet-connect/PairingModal';
+import QRModal from 'web/modals/wallet-connect/QRModal';
+import RequestModal from 'web/modals/wallet-connect/RequestModal';
+import SessionRequestModal from 'web/modals/wallet-connect/SessionRequestModal';
+
 import EventService from './event.service';
 import { ModalService, ToastService } from './globalServices';
-
-import PairingModal from '../common/modals/WalletConnectModals/PairingModal';
-import QRModal from '../common/modals/WalletConnectModals/QRModal';
-import RequestModal from '../common/modals/WalletConnectModals/RequestModal';
-import SessionRequestModal from '../common/modals/WalletConnectModals/SessionRequestModal';
 
 // TODO:  Move to WC types, add function to check pending status
 export enum BuildSignAndSubmitStatuses {

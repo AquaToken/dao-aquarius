@@ -10,6 +10,7 @@ import { Asset as AssetType } from 'types/stellar';
 import { ModalService, StellarService } from 'services/globalServices';
 import { POOL_TYPE } from 'services/soroban.service';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
+import MigrateLiquidityStep1 from 'web/modals/migrate-liquidity/MigrateLiquidityStep1';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Arrow from 'assets/icon-arrow-down.svg';
@@ -18,7 +19,6 @@ import Button from 'basics/buttons/Button';
 
 import MigratePoolButton from './MigratePoolButton/MigratePoolButton';
 
-import MigrateLiquidityStep1 from '../../../../common/modals/MigrateLiquidityModals/MigrateLiquidityStep1';
 import Asset from '../../../vote/components/AssetDropdown/Asset';
 import Market from '../../../vote/components/common/Market';
 import {

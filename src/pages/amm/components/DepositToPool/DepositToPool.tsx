@@ -20,6 +20,9 @@ import {
 } from 'services/globalServices';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 import { customScroll, flexRowSpaceBetween, respondDown } from 'web/mixins';
+import MainNetWarningModal, {
+    SHOW_PURPOSE_ALIAS_MAIN_NET,
+} from 'web/modals/alerts/MainNetWarningModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Arrow from 'assets/icon-arrow-right-long.svg';
@@ -34,9 +37,6 @@ import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import { PoolExtended } from 'pages/amm/api/types';
 
-import MainNetWarningModal, {
-    SHOW_PURPOSE_ALIAS_MAIN_NET,
-} from '../../../../common/modals/MainNetWarningModal';
 import Asset from '../../../vote/components/AssetDropdown/Asset';
 import SuccessModal from '../SuccessModal/SuccessModal';
 

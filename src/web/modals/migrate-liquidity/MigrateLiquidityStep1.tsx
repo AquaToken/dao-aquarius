@@ -14,8 +14,6 @@ import { Asset, PoolClassic } from 'types/stellar';
 
 import { ModalService, StellarService, ToastService } from 'services/globalServices';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
 
 import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
@@ -28,6 +26,9 @@ import AssetLogo from 'pages/vote/components/AssetDropdown/AssetLogo';
 import Market from 'pages/vote/components/common/Market';
 
 import MigrateLiquidityStep2 from './MigrateLiquidityStep2';
+
+import { respondDown } from '../../mixins';
+import { Breakpoints, COLORS } from '../../styles';
 
 export const Stepper = styled.div`
     font-size: 1.4rem;

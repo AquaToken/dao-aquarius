@@ -3,12 +3,13 @@ import styled from 'styled-components';
 
 import { ModalProps } from 'types/modal';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints } from 'web/styles';
+import Vault from 'assets/vault.svg';
 
 import Button from 'basics/buttons/Button';
-import { IconFail } from 'basics/Icons';
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+
+import { respondDown } from '../mixins';
+import { Breakpoints } from '../styles';
 
 const Container = styled.div`
     width: 52.3rem;
@@ -31,17 +32,13 @@ const StyledButton = styled(Button)`
         `}
 `;
 
-const LedgerError = ({ close }: ModalProps<never>) => (
+const SentToVault = ({ close }: ModalProps<never>) => (
     <Container>
-        <IconFail />
-        <Title>Ledger app is unavailable</Title>
-        <ModalDescription>
-            Could not access your Ledger account. Ensure your Ledger is not locked after the idle
-            timeout, the Stellar app is opened, and the firmware version is updated. If it still
-            does not work, make sure that your Ledger device is not used on another site.
-        </ModalDescription>
+        <Vault />
+        <Title>More signatures required</Title>
+        <ModalDescription>Transaction has been sent to your Lobstr Vault</ModalDescription>
         <StyledButton onClick={() => close()}>Close</StyledButton>
     </Container>
 );
 
-export default LedgerError;
+export default SentToVault;

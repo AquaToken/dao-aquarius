@@ -17,8 +17,8 @@ import Identicon from 'basics/Identicon';
 
 import AppMenu from './AppMenu';
 
-import ChooseLoginMethodModal from '../../common/modals/ChooseLoginMethodModal';
 import { flexAllCenter, respondDown, textEllipsis } from '../mixins';
+import ChooseLoginMethodModal from '../modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from '../styles';
 
 const Wrapper = styled.div`

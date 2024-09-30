@@ -3,10 +3,10 @@ import Str from '@ledgerhq/hw-app-str';
 import LedgerTransport from '@ledgerhq/hw-transport-webusb';
 import * as StellarSdk from '@stellar/stellar-sdk';
 
+import LedgerError from 'web/modals/ledger/LedgerError';
+
 import EventService from './event.service';
 import { ModalService } from './globalServices';
-
-import LedgerError from '../common/modals/LedgerModals/LedgerError';
 
 const LEDGER_DEFAULT_ACCOUNT = 'GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF';
 export const LEDGER_CANCEL_ERROR = 'Transaction approval request was rejected';

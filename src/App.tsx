@@ -5,6 +5,12 @@ import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-d
 import styled, { createGlobalStyle } from 'styled-components';
 
 import { ModalService, StellarService, WalletConnectService } from 'services/globalServices';
+import AppGlobalStyle from 'web/AppGlobalStyles';
+import { respondDown } from 'web/mixins';
+import LiveOnSorobanAlert, {
+    LIVE_ON_SOROBAN_SHOWED_ALIAS,
+} from 'web/modals/alerts/LiveOnSorobanAlert';
+import { Breakpoints, COLORS } from 'web/styles';
 
 import LiveOnSorobanImage from 'assets/live-on-soroban.svg';
 
@@ -25,18 +31,12 @@ import ToastContainer from 'components/ToastContainer';
 import { getActiveProposalsCount } from 'pages/governance/api/api';
 import Governance from 'pages/governance/Governance';
 
-import LiveOnSorobanAlert, {
-    LIVE_ON_SOROBAN_SHOWED_ALIAS,
-} from './common/modals/LiveOnSorobanAlert';
 import useGlobalSubscriptions from './hooks/useGlobalSubscriptions';
 import { AmmRoutes, MainRoutes } from './routes';
 import SentryService from './services/sentry.service';
 import Provider from './store';
 import useAssetsStore from './store/assetsStore/useAssetsStore';
 import useAuthStore from './store/authStore/useAuthStore';
-import AppGlobalStyle from './web/AppGlobalStyles';
-import { respondDown } from './web/mixins';
-import { Breakpoints, COLORS } from './web/styles';
 
 const MainPage = lazy(() => import('pages/main/MainPage'));
 const LockerPage = lazy(() => import('pages/locker/Locker'));

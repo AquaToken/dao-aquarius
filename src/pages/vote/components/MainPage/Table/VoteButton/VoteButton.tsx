@@ -9,6 +9,7 @@ import useAuthStore from 'store/authStore/useAuthStore';
 import { ModalService, StellarService } from 'services/globalServices';
 import { StellarEvents } from 'services/stellar.service';
 import { flexRowSpaceBetween } from 'web/mixins';
+import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 
 import IconDislike from 'assets/icon-dislike-black.svg';
 import IconLike from 'assets/icon-like-white.svg';
@@ -19,7 +20,6 @@ import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import { PairStats } from 'pages/vote/api/types';
 
-import ChooseLoginMethodModal from '../../../../../../common/modals/ChooseLoginMethodModal';
 import { AQUA, DOWN_ICE, UP_ICE } from '../../MainPage';
 import VotesAmountModal from '../../VoteModals/VotesAmountModal';
 

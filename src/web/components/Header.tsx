@@ -11,9 +11,9 @@ import IconProfile from 'assets/icon-profile.svg';
 
 import AccountBlock from './AccountBlock';
 
-import ChooseLoginMethodModal from '../../common/modals/ChooseLoginMethodModal';
 import { MainRoutes } from '../../routes';
 import { commonMaxWidth, respondDown } from '../mixins';
+import ChooseLoginMethodModal from '../modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS, Z_INDEX } from '../styles';
 
 const HeaderBlock = styled.header`

@@ -4,16 +4,15 @@ import styled from 'styled-components';
 import { ModalProps } from 'types/modal';
 import { Asset } from 'types/stellar';
 
-import { customScroll, respondDown } from 'web/mixins';
-import { Breakpoints } from 'web/styles';
-
 import { ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 import { PoolProcessed } from 'pages/amm/api/types';
+import PoolsList from 'pages/amm/components/PoolsList/PoolsList';
 
 import { Stepper } from './MigrateLiquidityStep1';
 
-import PoolsList from '../../../pages/amm/components/PoolsList/PoolsList';
+import { customScroll, respondDown } from '../../mixins';
+import { Breakpoints } from '../../styles';
 
 const Content = styled.div`
     max-height: 60vh;

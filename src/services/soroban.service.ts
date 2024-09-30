@@ -7,9 +7,9 @@ import { sha256 } from 'js-sha256';
 import { getAssetString } from 'helpers/assets';
 import { SorobanErrorHandler, SorobanPrepareTxErrorHandler } from 'helpers/error-handler';
 
-import { ModalService, ToastService } from './globalServices';
+import RestoreContractModal from 'web/modals/RestoreContractModal';
 
-import RestoreContractModal from '../common/modals/RestoreContractModal/RestoreContractModal';
+import { ModalService, ToastService } from './globalServices';
 
 const SOROBAN_SERVER = 'https://soroban-rpc.aqua.network/';
 export const AMM_SMART_CONTACT_ID = 'CBQDHNBFBZYE4MKPWBSJOPIYLW4SFSXAXUTSXJN76GNKYVYPCKWC6QUK';

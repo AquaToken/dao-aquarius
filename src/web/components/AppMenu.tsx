@@ -24,10 +24,10 @@ import Identicon from 'basics/Identicon';
 
 import SocialLinks from 'components/SocialLinks';
 
-import ChooseLoginMethodModal from '../../common/modals/ChooseLoginMethodModal';
-import GetAquaModal from '../../common/modals/GetAquaModal/GetAquaModal';
 import { LockerRoutes } from '../../routes';
 import { respondDown } from '../mixins';
+import ChooseLoginMethodModal from '../modals/auth/ChooseLoginMethodModal';
+import GetAquaModal from '../modals/GetAquaModal';
 import { Breakpoints, COLORS, Z_INDEX } from '../styles';
 
 const MenuBlock = styled.div`

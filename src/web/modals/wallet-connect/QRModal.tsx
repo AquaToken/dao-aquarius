@@ -9,9 +9,6 @@ import { clearCurrentWallet, saveCurrentWallet } from 'helpers/wallet-connect-he
 
 import { ModalProps } from 'types/modal';
 
-import { flexAllCenter, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import ArrowRight from 'assets/icon-arrow-right.svg';
 
 import Button from 'basics/buttons/Button';
@@ -19,6 +16,9 @@ import CopyButton from 'basics/buttons/CopyButton';
 import ExternalLink from 'basics/ExternalLink';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+
+import { flexAllCenter, respondDown } from '../../mixins';
+import { Breakpoints, COLORS } from '../../styles';
 
 const Wrapper = styled.div`
     width: 52.8rem;
@@ -145,7 +145,7 @@ function formatIOSMobile(uri: string, wallet: Wallet) {
         : '';
 }
 
-const QRModal = ({ params }: ModalProps<{ uri: string }>): JSX.Element => {
+const QRModal = ({ params }: ModalProps<{ uri: string }>): React.ReactNode => {
     const { uri } = params;
 
     const [wallets, setWallets] = useState(null);

@@ -12,6 +12,7 @@ import AccountService from 'services/account.service';
 import { ModalService, StellarService } from 'services/globalServices';
 import { GOV_ICE_CODE, ICE_CODE, ICE_ISSUER } from 'services/stellar.service';
 import { respondDown } from 'web/mixins';
+import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import IceLogo from 'assets/ice-logo.svg';
@@ -21,7 +22,6 @@ import ExternalLink from 'basics/ExternalLink';
 
 import { DOWN_ICE, UP_ICE } from 'pages/vote/components/MainPage/MainPage';
 
-import ChooseLoginMethodModal from '../../../../../common/modals/ChooseLoginMethodModal';
 import AddIceTrustlinesModal from '../AddIceTrustlinesModal/AddIceTrustlinesModal';
 
 const Container = styled.div`

@@ -4,13 +4,12 @@ import styled from 'styled-components';
 
 import { ModalProps } from 'types/modal';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints } from 'web/styles';
-
 import Button from 'basics/buttons/Button';
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
 
-import { MainRoutes } from '../../routes';
+import { MainRoutes } from '../../../routes';
+import { respondDown } from '../../mixins';
+import { Breakpoints } from '../../styles';
 
 const Container = styled.div`
     width: 52.8rem;

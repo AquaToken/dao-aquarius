@@ -13,6 +13,7 @@ import useAssetsStore from 'store/assetsStore/useAssetsStore';
 import { ModalService, StellarService } from 'services/globalServices';
 import { POOL_TYPE } from 'services/soroban.service';
 import { flexAllCenter, respondDown } from 'web/mixins';
+import AssetInfoModal from 'web/modals/AssetInfoModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import External from 'assets/icon-external-link.svg';
@@ -30,7 +31,6 @@ import {
     StablePoolLabel,
 } from './Labels';
 
-import AssetInfoModal from '../../../../common/modals/AssetInfoModal/AssetInfoModal';
 import { AmmRoutes, MarketRoutes } from '../../../../routes';
 import AssetLogo, { bigLogoStyles, logoStyles } from '../AssetDropdown/AssetLogo';
 

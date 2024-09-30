@@ -18,8 +18,6 @@ import { Asset as AssetType } from 'types/stellar';
 
 import { StellarService } from 'services/globalServices';
 import { AQUA_CODE, AQUA_ISSUER } from 'services/stellar.service';
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
 
 import Mail from 'assets/email16.svg';
 import Git from 'assets/github16.svg';
@@ -33,8 +31,11 @@ import { ModalWrapper } from 'basics/ModalAtoms';
 
 import NoTrustline from 'components/NoTrustline';
 
-import Asset from '../../../pages/vote/components/AssetDropdown/Asset';
-import { MainRoutes } from '../../../routes';
+import Asset from 'pages/vote/components/AssetDropdown/Asset';
+
+import { MainRoutes } from '../../routes';
+import { respondDown } from '../mixins';
+import { Breakpoints, COLORS } from '../styles';
 
 const Description = styled.p`
     font-size: 1.6rem;

@@ -17,6 +17,7 @@ import { useIsMounted } from 'hooks/useIsMounted';
 import { ModalService, StellarService, ToastService } from 'services/globalServices';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
+import GetAquaModal from 'web/modals/GetAquaModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Aqua from 'assets/aqua-logo-small.svg';
@@ -32,7 +33,6 @@ import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
 
 import VotesDurationModal from './VotesDurationModal';
 
-import GetAquaModal from '../../../../../common/modals/GetAquaModal/GetAquaModal';
 import { LockerRoutes } from '../../../../../routes';
 import { PairStats } from '../../../api/types';
 import Market from '../../common/Market';

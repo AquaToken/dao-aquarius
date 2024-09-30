@@ -10,6 +10,7 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService } from 'services/globalServices';
 import { flexAllCenter, respondDown } from 'web/mixins';
+import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Fail from 'assets/icon-fail.svg';
@@ -20,7 +21,6 @@ import ExternalLink from 'basics/ExternalLink';
 
 import NativeVotingButton from './VotingButton/VotingButton';
 
-import ChooseLoginMethodModal from '../../../../../common/modals/ChooseLoginMethodModal';
 import { GovernanceRoutes } from '../../../../../routes';
 import { Proposal } from '../../../api/types';
 import { CREATE_DISCUSSION_COST, CREATE_PROPOSAL_COST } from '../../../pages/GovernanceMainPage';

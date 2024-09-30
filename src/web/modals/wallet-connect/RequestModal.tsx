@@ -9,13 +9,14 @@ import { ModalProps } from 'types/modal';
 
 import { useIsMounted } from 'hooks/useIsMounted';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
-import { flexAllCenter, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
 
 import Button from 'basics/buttons/Button';
 import { IconFail, IconPending, IconSuccess } from 'basics/Icons';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+
+import { flexAllCenter, respondDown } from '../../mixins';
+import { Breakpoints, COLORS } from '../../styles';
 
 enum TX_STATUSES {
     pending = 'pending',

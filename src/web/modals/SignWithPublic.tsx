@@ -6,8 +6,6 @@ import { ModalProps } from 'types/modal';
 
 import AccountService from 'services/account.service';
 import { StellarService } from 'services/globalServices';
-import { flexAllCenter, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
 
 import ArrowRight from 'assets/icon-arrow-right.svg';
 import Copy from 'assets/icon-copy.svg';
@@ -17,6 +15,9 @@ import Stellar from 'assets/xlm-logo.svg';
 import AccountBlock from 'basics/AccountBlock';
 import CopyButton from 'basics/buttons/CopyButton';
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+
+import { flexAllCenter, respondDown } from '../mixins';
+import { Breakpoints, COLORS } from '../styles';
 
 const Container = styled.div`
     width: 52.8rem;

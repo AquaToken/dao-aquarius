@@ -4,9 +4,6 @@ import styled from 'styled-components';
 
 import { ModalProps } from 'types/modal';
 
-import { flexRowSpaceBetween, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import ArrowRight from 'assets/icon-arrow-right.svg';
 import LobstrLogo from 'assets/lobstr-name-logo.svg';
 import StellarTermLogo from 'assets/stellarterm-logo.svg';
@@ -17,7 +14,9 @@ import ExternalLink from 'basics/ExternalLink';
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
 import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
 
-import { MainRoutes } from '../../../routes';
+import { MainRoutes } from '../../routes';
+import { flexRowSpaceBetween, respondDown } from '../mixins';
+import { Breakpoints, COLORS } from '../styles';
 
 const Container = styled.div`
     width: 67.2rem;

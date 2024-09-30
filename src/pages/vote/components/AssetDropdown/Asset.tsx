@@ -11,6 +11,7 @@ import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
 import { ModalService } from 'services/globalServices';
 import { flexAllCenter, respondDown, textEllipsis } from 'web/mixins';
+import AssetInfoModal from 'web/modals/AssetInfoModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Info from 'assets/icon-info.svg';
@@ -19,8 +20,6 @@ import DotsLoader from 'basics/loaders/DotsLoader';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import AssetLogo from './AssetLogo';
-
-import AssetInfoModal from '../../../../common/modals/AssetInfoModal/AssetInfoModal';
 
 const Container = styled.div`
     display: flex;

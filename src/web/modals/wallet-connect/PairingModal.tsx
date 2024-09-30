@@ -7,9 +7,6 @@ import { getWalletFromDeepLinkHistory, saveCurrentWallet } from 'helpers/wallet-
 
 import { ModalProps } from 'types/modal';
 
-import { flexAllCenter, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import IconArrowRight from 'assets/icon-arrow-right-purple.svg';
 import IconCloseSmall from 'assets/icon-close-small.svg';
 import IconDeepLink from 'assets/icon-deep-link.svg';
@@ -17,6 +14,9 @@ import IconPlus from 'assets/icon-plus.svg';
 import IconQR from 'assets/icon-qr.svg';
 
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+
+import { flexAllCenter, respondDown } from '../../mixins';
+import { Breakpoints, COLORS } from '../../styles';
 
 type PairingModalParams = {
     pairings: WalletConnect.PairingTypes.Struct[];

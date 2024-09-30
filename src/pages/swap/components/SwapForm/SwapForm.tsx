@@ -12,6 +12,10 @@ import { Asset } from 'types/stellar';
 import { useDebounce } from 'hooks/useDebounce';
 import { ModalService, SorobanService, ToastService } from 'services/globalServices';
 import { respondDown } from 'web/mixins';
+import MainNetWarningModal, {
+    SHOW_PURPOSE_ALIAS_MAIN_NET,
+} from 'web/modals/alerts/MainNetWarningModal';
+import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Button from 'basics/buttons/Button';
@@ -27,10 +31,6 @@ import SwapFormHeader from './SwapFormHeader/SwapFormHeader';
 import SwapFormPrice from './SwapFormPrice/SwapFormPrice';
 import SwapFormRow from './SwapFormRow/SwapFormRow';
 
-import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
-import MainNetWarningModal, {
-    SHOW_PURPOSE_ALIAS_MAIN_NET,
-} from '../../../../common/modals/MainNetWarningModal';
 import { MainRoutes } from '../../../../routes';
 import SwapConfirmModal from '../SwapConfirmModal/SwapConfirmModal';
 

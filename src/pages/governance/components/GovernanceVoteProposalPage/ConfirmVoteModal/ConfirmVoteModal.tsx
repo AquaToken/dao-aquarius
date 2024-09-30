@@ -18,6 +18,7 @@ import { ModalService, StellarService, ToastService } from 'services/globalServi
 import { AQUA_CODE, AQUA_ISSUER, GOV_ICE_CODE, ICE_ISSUER } from 'services/stellar.service';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 import { flexAllCenter, flexRowSpaceBetween } from 'web/mixins';
+import GetAquaModal from 'web/modals/GetAquaModal';
 import { COLORS } from 'web/styles';
 
 import Aqua from 'assets/aqua-logo-small.svg';
@@ -32,7 +33,6 @@ import RangeInput from 'basics/inputs/RangeInput';
 import Select from 'basics/inputs/Select';
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
 
-import GetAquaModal from '../../../../../common/modals/GetAquaModal/GetAquaModal';
 import { LockerRoutes } from '../../../../../routes';
 import { SimpleProposalOptions } from '../../../pages/GovernanceVoteProposalPage';
 

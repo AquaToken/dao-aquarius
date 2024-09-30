@@ -14,8 +14,8 @@ import Button from 'basics/buttons/Button';
 
 import { getPoolsToMigrate } from 'pages/amm/api/api';
 
-import MigrateLiquidityStep1 from '../../common/modals/MigrateLiquidityModals/MigrateLiquidityStep1';
 import { respondDown } from '../mixins';
+import MigrateLiquidityStep1 from '../modals/migrate-liquidity/MigrateLiquidityStep1';
 import { Breakpoints, COLORS } from '../styles';
 
 const Container = styled.div`

@@ -9,6 +9,7 @@ import useAuthStore from 'store/authStore/useAuthStore';
 import { ModalService, StellarService } from 'services/globalServices';
 import { POOL_TYPE } from 'services/soroban.service';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
+import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Button from 'basics/buttons/Button';
@@ -18,7 +19,6 @@ import PageLoader from 'basics/loaders/PageLoader';
 
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
 
-import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
 import { getUserPools } from '../../api/api';
 import { PoolUserProcessed } from '../../api/types';
 import PoolsList from '../PoolsList/PoolsList';

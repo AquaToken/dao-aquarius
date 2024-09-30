@@ -18,8 +18,6 @@ import {
     ToastService,
     WalletConnectService,
 } from 'services/globalServices';
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
 
 import Freighter from 'assets/freighter-logo.svg';
 import BG from 'assets/get-extension-bg.svg';
@@ -32,11 +30,14 @@ import Stellar from 'assets/xlm-logo.svg';
 
 import { ModalTitle } from 'basics/ModalAtoms';
 
-import GetFreighterModal from './GetFreighterModal';
-import GetLobstrExtensionModal from './GetLobstrExtensionModal';
-import LedgerLogin from './LedgerModals/LedgerLogin';
 import LoginWithPublic from './LoginWithPublic';
 import LoginWithSecret from './LoginWithSecret';
+
+import { respondDown } from '../../mixins';
+import { Breakpoints, COLORS } from '../../styles';
+import GetFreighterModal from '../GetFreighterModal';
+import GetLobstrExtensionModal from '../GetLobstrExtensionModal';
+import LedgerLogin from '../ledger/LedgerLogin';
 
 const BgStyled = styled(BG)`
     ${respondDown(Breakpoints.md)`
@@ -103,7 +104,7 @@ const StellarLogo = styled(Stellar)`
 const ChooseLoginMethodModal = ({
     close,
     params,
-}: ModalProps<{ redirectURL?: string; callback?: () => void }>): JSX.Element => {
+}: ModalProps<{ redirectURL?: string; callback?: () => void }>): React.ReactNode => {
     const [pending, setPending] = useState(false);
     const { enableRedirect, disableRedirect, addAuthCallback, removeAuthCallback } = useAuthStore();
 

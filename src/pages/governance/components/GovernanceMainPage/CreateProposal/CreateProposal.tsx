@@ -8,6 +8,7 @@ import { formatBalance } from 'helpers/format-number';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService } from 'services/globalServices';
+import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { COLORS } from 'web/styles';
 
 import AquaLogo from 'assets/aqua-logo-small.svg';
@@ -15,7 +16,6 @@ import AquaLogo from 'assets/aqua-logo-small.svg';
 import Button from 'basics/buttons/Button';
 import ExternalLink from 'basics/ExternalLink';
 
-import ChooseLoginMethodModal from '../../../../../common/modals/ChooseLoginMethodModal';
 import { GovernanceRoutes } from '../../../../../routes';
 import { APPROVED_PROPOSAL_REWARD } from '../../../pages/GovernanceMainPage';
 

@@ -15,6 +15,9 @@ import { ModalService, SorobanService, ToastService } from 'services/globalServi
 import { CONTRACT_STATUS, POOL_TYPE } from 'services/soroban.service';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 import { flexRowSpaceBetween, respondDown } from 'web/mixins';
+import MainNetWarningModal, {
+    SHOW_PURPOSE_ALIAS_MAIN_NET,
+} from 'web/modals/alerts/MainNetWarningModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import ArrowLeft from 'assets/icon-arrow-left.svg';
@@ -29,9 +32,6 @@ import ToggleGroup from 'basics/inputs/ToggleGroup';
 import PageLoader from 'basics/loaders/PageLoader';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
-import MainNetWarningModal, {
-    SHOW_PURPOSE_ALIAS_MAIN_NET,
-} from '../../../common/modals/MainNetWarningModal';
 import { AmmRoutes } from '../../../routes';
 import {
     Back,
