@@ -25,6 +25,7 @@ import { AQUA_CODE, AQUA_ISSUER } from 'services/stellar.service';
 import { respondDown, respondUp } from 'web/mixins';
 import { Breakpoints, COLORS, FONT_FAMILY } from 'web/styles';
 
+import Info from 'assets/icon-info.svg';
 import InvestAmmImage from 'assets/landing-about-amm-80.svg';
 import FreezeIceImage from 'assets/landing-about-ice-80.svg';
 import VoteMarketsImage from 'assets/landing-about-vote-markets-80.svg';
@@ -33,6 +34,7 @@ import VoteProposalsImage from 'assets/landing-about-vote-proposals-80.svg';
 import Changes24 from 'basics/Changes24';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import Asset from '../../../vote/components/AssetDropdown/Asset';
 
@@ -229,6 +231,21 @@ const StatsTitle = styled.span`
     color: ${COLORS.grayText};
     font-size: 1.4rem;
     line-height: 1.6rem;
+    display: flex;
+    align-items: center;
+
+    svg {
+        margin: 0 0.4rem;
+    }
+`;
+
+const TooltipInner = styled.span`
+    width: 15rem;
+    white-space: wrap;
+
+    ${respondDown(Breakpoints.sm)`
+        width: 8rem;
+    `}
 `;
 
 const StatsDescription = styled.span`
@@ -361,7 +378,22 @@ const About = (): React.ReactElement => {
                                             </StatsDescription>
                                         </StatWrapper>
                                         <StatWrapper>
-                                            <StatsTitle>Total frozen:</StatsTitle>
+                                            <StatsTitle>
+                                                Total frozen:
+                                                <Tooltip
+                                                    content={
+                                                        <TooltipInner>
+                                                            AQUA holders can lock/freeze their
+                                                            tokens and receive ICE tokens with
+                                                            greater voting power
+                                                        </TooltipInner>
+                                                    }
+                                                    position={TOOLTIP_POSITION.top}
+                                                    showOnHover
+                                                >
+                                                    <Info />
+                                                </Tooltip>
+                                            </StatsTitle>
                                             <StatsDescription>
                                                 {iceStats && aquaCirculatingSupply !== null ? (
                                                     `${formatBalance(
@@ -396,7 +428,21 @@ const About = (): React.ReactElement => {
                                             </StatsDescription>
                                         </StatWrapper>
                                         <StatWrapper>
-                                            <StatsTitle>Daily rewards:</StatsTitle>
+                                            <StatsTitle>
+                                                Daily rewards:
+                                                <Tooltip
+                                                    content={
+                                                        <TooltipInner>
+                                                            Aquarius distributes AQUA tokens to the
+                                                            liquidity providers every day
+                                                        </TooltipInner>
+                                                    }
+                                                    position={TOOLTIP_POSITION.top}
+                                                    showOnHover
+                                                >
+                                                    <Info />
+                                                </Tooltip>
+                                            </StatsTitle>
                                             <StatsDescription>
                                                 {totalRewards ? (
                                                     formatBalance(totalRewards, true)
