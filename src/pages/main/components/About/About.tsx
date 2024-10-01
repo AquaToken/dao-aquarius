@@ -222,8 +222,8 @@ const StatWrapper = styled.div`
     margin-top: 3.2rem;
     max-width: 14rem;
 
-    ${respondDown(Breakpoints.xl)`
-        flex: 1 1 50%;
+    ${respondDown(Breakpoints.sm)`
+        min-width: 50%;
     `}
 `;
 
@@ -243,8 +243,8 @@ const TooltipInner = styled.span`
     width: 15rem;
     white-space: wrap;
 
-    ${respondDown(Breakpoints.sm)`
-        width: 8rem;
+    ${respondDown(Breakpoints.xs)`
+        width: 13rem;
     `}
 `;
 
