@@ -77,7 +77,7 @@ const DescriptionRow = styled.div`
     }
 `;
 
-const WithdrawFromPool = ({ params }: ModalProps<{ pool: PoolExtended }>) => {
+const WithdrawFromPool = ({ params, close }: ModalProps<{ pool: PoolExtended }>) => {
     const { pool } = params;
     const [accountShare, setAccountShare] = useState(null);
     const [percent, setPercent] = useState('100');
@@ -156,6 +156,7 @@ const WithdrawFromPool = ({ params }: ModalProps<{ pool: PoolExtended }>) => {
                     value?: () => { value: () => Int128Parts }[];
                     status?: BuildSignAndSubmitStatuses;
                 }) => {
+                    setPending(false);
                     if (!res) {
                         return;
                     }
@@ -168,13 +169,14 @@ const WithdrawFromPool = ({ params }: ModalProps<{ pool: PoolExtended }>) => {
                         return;
                     }
 
+                    close();
+
                     ModalService.openModal(SuccessModal, {
                         assets: pool.assets,
                         amounts: res.value().map(val => SorobanService.i128ToInt(val.value())),
                         title: 'Withdraw Successful',
                         hash,
                     });
-                    setPending(false);
                 },
             )
             .catch(e => {
