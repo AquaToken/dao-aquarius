@@ -1,11 +1,12 @@
 import * as StellarSdk from '@stellar/stellar-sdk';
 import { Dispatch } from 'react';
 
+import { getAssetsInfo, getAssetsRequest } from 'api/assets';
+
 import { getAssetString } from 'helpers/assets';
 
 import { StellarService } from 'services/globalServices';
 
-import { getAssetsInfo, getAssetsRequest } from './api/api';
 import { ASSET_CACHE } from './reducer';
 import { ASSETS_ACTIONS, AssetSimple } from './types';
 

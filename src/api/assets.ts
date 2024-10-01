@@ -1,13 +1,14 @@
 import axios from 'axios';
 
-import { ListResponse } from '../../../pages/vote/api/types';
-import { Asset } from '../types';
+import { API_ASSETS_INFO, API_ASSETS_LIST_URL } from 'constants/api';
 
-const assetsListUrl = 'https://fed.stellarterm.com/issuer_orgs/';
-const assetsInfoUrl = 'https://assets.aqua.network/api/v1/assets/';
+import { AssetInfo } from 'types/asset-info';
+import { AssetsList } from 'types/assets-list';
 
-export const getAssetsRequest = () => {
-    return axios.get<{ issuer_orgs: any[] }>(assetsListUrl).then(({ data }) => {
+import { ListResponse } from 'pages/vote/api/types';
+
+export const getAssetsRequest = () =>
+    axios.get<AssetsList>(API_ASSETS_LIST_URL).then(({ data }) => {
         const issuerOrgs = data.issuer_orgs;
 
         return issuerOrgs.reduce((acc, anchor) => {
@@ -20,18 +21,17 @@ export const getAssetsRequest = () => {
             return acc;
         }, []);
     });
-};
 
 export const getAssetsInfo = async (
     assets: Array<{ code: string; issuer: string }>,
     batchSize: number = 100,
-): Promise<Asset[]> => {
+): Promise<AssetInfo[]> => {
     // Function to fetch a batch of assets
     const fetchBatch = async (batch: Array<{ code: string; issuer: string }>) => {
         const params = new URLSearchParams();
         batch.forEach(asset => params.append('asset', `${asset.code}:${asset.issuer}`));
 
-        const { data } = await axios.get<ListResponse<Asset>>(assetsInfoUrl, { params });
+        const { data } = await axios.get<ListResponse<AssetInfo>>(API_ASSETS_INFO, { params });
         return data.results;
     };
 

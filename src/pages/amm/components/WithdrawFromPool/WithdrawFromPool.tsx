@@ -161,6 +161,8 @@ const WithdrawFromPool = ({ params, close }: ModalProps<{ pool: PoolExtended }>)
                         return;
                     }
 
+                    close();
+
                     if (
                         (res as { status: BuildSignAndSubmitStatuses }).status ===
                         BuildSignAndSubmitStatuses.pending
@@ -168,8 +170,6 @@ const WithdrawFromPool = ({ params, close }: ModalProps<{ pool: PoolExtended }>)
                         ToastService.showSuccessToast('More signatures required to complete');
                         return;
                     }
-
-                    close();
 
                     ModalService.openModal(SuccessModal, {
                         assets: pool.assets,
