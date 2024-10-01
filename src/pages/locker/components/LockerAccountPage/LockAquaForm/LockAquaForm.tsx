@@ -125,6 +125,9 @@ const EmptyDate = styled.div`
 `;
 
 const GlobalStyle = createGlobalStyle`
+    div.react-datepicker-wrapper {
+        width: 100%;
+    }
     div.react-datepicker {
         font-family: ${FONT_FAMILY.roboto};
         font-size: 1.6rem;
