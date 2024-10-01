@@ -301,6 +301,8 @@ const DepositToPool = ({ params, close }: ModalProps<DepositToPoolParams>) => {
                     return;
                 }
 
+                close();
+
                 if (onUpdate) {
                     onUpdate();
                 }
@@ -314,8 +316,6 @@ const DepositToPool = ({ params, close }: ModalProps<DepositToPoolParams>) => {
                 }
 
                 const resultAmounts = res.value()[0].value();
-
-                close();
 
                 ModalService.openModal(SuccessModal, {
                     assets: pool.assets,

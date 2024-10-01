@@ -6,9 +6,9 @@ import { getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 
 import { LumenInfo } from 'store/assetsStore/reducer';
-import { AssetInfo } from 'store/assetsStore/types';
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
+import { AssetInfo } from 'types/asset-info';
 import { Asset } from 'types/stellar';
 
 import { respondDown } from 'web/mixins';
