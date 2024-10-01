@@ -496,9 +496,8 @@ const About = (): React.ReactElement => {
                             <Description>
                                 Freeze your AQUA into ICE to increase your voting power. In exchange
                                 for each AQUA token you’ll get <b>ICE, upvoteICE, downvoteICE</b>{' '}
-                                and
-                                <b>governICE</b> tokens designed for specific usage. Keeping your
-                                AQUA frozen increases the efficiency of your investment.
+                                and <b>governICE</b> tokens designed for specific usage. Keeping
+                                your AQUA frozen increases the efficiency of your investment.
                             </Description>
                         </AquaInfoBlockData>
 
