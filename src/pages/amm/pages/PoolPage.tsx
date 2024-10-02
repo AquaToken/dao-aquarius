@@ -320,6 +320,12 @@ const PoolPage = () => {
                             <span>Members: </span>
                             <span>{pool.membersCount}</span>
                         </SectionRow>
+                        <SectionRow>
+                            <span>Daily reward: </span>
+                            <span>
+                                {formatBalance((+pool.reward_tps / 1e7) * 60 * 60 * 24, true)} AQUA
+                            </span>
+                        </SectionRow>
                     </SectionWrap>
                 </Section>
 
