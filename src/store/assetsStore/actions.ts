@@ -27,8 +27,8 @@ export function getAssets() {
                     type: ASSETS_ACTIONS.GET_ASSETS_SUCCESS,
                     payload: {
                         assets: [
-                            StellarService.createLumen(),
                             StellarService.createAsset(AQUA_CODE, AQUA_ISSUER),
+                            StellarService.createLumen(),
                             StellarService.createAsset(USDC_CODE, USDC_ISSUER),
                             ...assets
                                 .filter(
