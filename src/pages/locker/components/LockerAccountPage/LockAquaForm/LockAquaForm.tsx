@@ -401,6 +401,7 @@ const LockAquaForm = forwardRef(
                             <span>AQUA</span>
                         </InputPostfix>
                     }
+                    inputMode="decimal"
                 />
 
                 <RangeInput onChange={onLockPercentChange} value={lockPercent} />

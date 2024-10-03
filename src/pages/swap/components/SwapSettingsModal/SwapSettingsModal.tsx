@@ -81,6 +81,7 @@ const SwapSettingsModal = ({ close }: ModalProps<never>): React.ReactNode => {
                     postfix="%"
                     value={slippage}
                     onChange={({ target }) => setSlippage(target.value)}
+                    inputMode="decimal"
                 />
             </FormRow>
 
