@@ -11,6 +11,7 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { PoolUserProcessed } from 'types/amm';
 
+import { useUpdateIndex } from 'hooks/useUpdateIndex';
 import { ModalService, StellarService } from 'services/globalServices';
 import { POOL_TYPE } from 'services/soroban.service';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
@@ -130,6 +131,8 @@ const MyLiquidity = ({ setTotal, onlyList }: MyLiquidityProps) => {
     const [classicPools, setClassicPools] = useState([]);
     const [filter, setFilter] = useState(FilterValues.all);
 
+    const updateIndex = useUpdateIndex(5000);
+
     const filteredPools = useMemo(() => {
         if (filter === FilterValues.classic) {
             return classicPools;
@@ -157,7 +160,7 @@ const MyLiquidity = ({ setTotal, onlyList }: MyLiquidityProps) => {
 
     useEffect(() => {
         updateData();
-    }, [account]);
+    }, [account, updateIndex]);
 
     const totalLiquidity = useMemo(() => {
         const totalXlm = [...pools, ...classicPools].reduce((acc, pool) => {
