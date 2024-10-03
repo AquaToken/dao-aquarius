@@ -99,7 +99,12 @@ export default class SorobanServiceClass {
         return this.getTx(response.hash, tx);
     }
 
-    getTx(hash: string, tx: StellarSdk.Transaction, resolver?: (value?: unknown) => void) {
+    getTx(
+        hash: string,
+        tx: StellarSdk.Transaction,
+        resolver?: (value?: unknown) => void,
+        rejecter?: () => void,
+    ) {
         return this.server.getTransaction(hash).then(res => {
             if (res.status === 'SUCCESS') {
                 if (resolver) {
@@ -110,19 +115,19 @@ export default class SorobanServiceClass {
 
             if (res.status === 'FAILED') {
                 this.tryRestore(tx);
-                if (resolver) {
-                    resolver();
+                if (rejecter) {
+                    rejecter();
                 }
                 ToastService.showErrorToast('Transaction was failed');
-                throw new Error('Failed');
+                return;
             }
 
             if (resolver) {
-                return setTimeout(() => this.getTx(hash, tx, resolver), 1000);
+                return setTimeout(() => this.getTx(hash, tx, resolver, rejecter), 1000);
             }
 
-            return new Promise(resolve => {
-                setTimeout(() => this.getTx(hash, tx, resolve), 1000);
+            return new Promise((resolve, reject) => {
+                setTimeout(() => this.getTx(hash, tx, resolve, reject), 1000);
             });
         });
     }
