@@ -217,6 +217,7 @@ const MigrateLiquidityStep1 = ({ params, confirm }: ModalProps<MigrateLiquidityS
                 value={percent.toString()}
                 onChange={(e: React.SyntheticEvent<HTMLInputElement>) => setPercentValue(e)}
                 postfix="%"
+                inputMode="decimal"
             />
             <RangeInput onChange={setPercent} value={Number(percent)} />
             <AmountRow $isFirst>

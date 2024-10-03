@@ -648,6 +648,7 @@ const CreatePool = () => {
                                         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                             onStableFeeChane(e.target.value)
                                         }
+                                        inputMode="decimal"
                                     />
                                 </FormRow>
                             ) : (

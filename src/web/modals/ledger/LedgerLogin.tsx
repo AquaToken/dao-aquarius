@@ -81,6 +81,7 @@ const LedgerLogin = ({ close }: ModalProps<never>) => {
                         )
                     }
                     onInput={e => (e.target as HTMLInputElement).setCustomValidity('')}
+                    inputMode="decimal"
                 />
 
                 <StyledButton isBig type="submit" pending={pending}>

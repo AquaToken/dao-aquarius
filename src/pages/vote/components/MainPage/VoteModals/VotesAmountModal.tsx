@@ -601,6 +601,7 @@ const VotesAmountModal = ({
                         }}
                         placeholder="Enter voting power"
                         disabled={!hasTrustLine || !hasTargetBalance || isHandleEdit}
+                        inputMode="decimal"
                     />
 
                     <AssetSelect options={OPTIONS} value={targetAsset} onChange={setTargetAsset} />
@@ -654,6 +655,7 @@ const VotesAmountModal = ({
                                         }}
                                         isMedium
                                         isRightAligned
+                                        inputMode="decimal"
                                     />
                                     <CloseButton
                                         onClick={() => {

@@ -292,6 +292,7 @@ const ConfirmVoteModal = ({
                     }}
                     placeholder="Enter amount"
                     disabled={!hasTrustLine || !hasTargetBalance}
+                    inputMode="decimal"
                 />
 
                 <StyledSelect options={OPTIONS} value={targetAsset} onChange={setTargetAsset} />

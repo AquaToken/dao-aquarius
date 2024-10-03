@@ -118,6 +118,7 @@ const SwapFormRow = ({
                 placeholder={isBase ? '' : '0.0'}
                 postfix={inputPostfix}
                 disabled={!isBase}
+                inputMode="decimal"
             />
 
             <DropdownContainer $isOpen={isOpen}>
