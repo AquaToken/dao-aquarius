@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { getUserPools } from 'api/amm';
@@ -21,8 +22,10 @@ import Select from 'basics/inputs/Select';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
 import PageLoader from 'basics/loaders/PageLoader';
 
+import { ExternalLinkStyled } from 'pages/profile/AmmRewards/AmmRewards';
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
 
+import { MainRoutes } from '../../../../routes';
 import PoolsList from '../PoolsList/PoolsList';
 
 const PoolsListBlock = styled.div<{ $onlyList: boolean }>`
@@ -206,7 +209,16 @@ const MyLiquidity = ({ setTotal, onlyList }: MyLiquidityProps) => {
             ) : filteredPools.length ? (
                 <PoolsList isUserList pools={filteredPools} onUpdate={() => updateData()} />
             ) : (
-                <div>Your liquidity positions will appear here</div>
+                <Section>
+                    <Empty>
+                        <h3>There's nothing here.</h3>
+                        <span>It looks like you don’t have any active liquidity positions.</span>
+
+                        <ExternalLinkStyled asDiv>
+                            <Link to={MainRoutes.amm}>Browse pools</Link>
+                        </ExternalLinkStyled>
+                    </Empty>
+                </Section>
             )}
         </PoolsListBlock>
     );
