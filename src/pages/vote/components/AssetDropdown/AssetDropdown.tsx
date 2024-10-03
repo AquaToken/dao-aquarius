@@ -258,15 +258,12 @@ const AssetDropdown = ({
 
     const assets = [
         ...balances,
-        ...(knownAssets
-            .filter(
-                knownAsset =>
-                    !balances.find(
-                        asset =>
-                            knownAsset.code === asset.code && knownAsset.issuer === asset.issuer,
-                    ),
-            )
-            .sort((a, b) => a.code.localeCompare(b.code)) || []),
+        ...(knownAssets.filter(
+            knownAsset =>
+                !balances.find(
+                    asset => knownAsset.code === asset.code && knownAsset.issuer === asset.issuer,
+                ),
+        ) || []),
     ];
 
     const [isOpen, setIsOpen] = useState(false);
