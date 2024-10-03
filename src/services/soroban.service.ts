@@ -114,7 +114,6 @@ export default class SorobanServiceClass {
             }
 
             if (res.status === 'FAILED') {
-                this.tryRestore(tx);
                 if (rejecter) {
                     rejecter();
                 }
@@ -138,7 +137,7 @@ export default class SorobanServiceClass {
         if (
             !(sim as StellarSdk.SorobanRpc.Api.SimulateTransactionRestoreResponse).restorePreamble
         ) {
-            return;
+            return Promise.resolve();
         }
 
         const account = await this.server.getAccount(tx.source);
@@ -161,6 +160,8 @@ export default class SorobanServiceClass {
             .build();
 
         ModalService.openModal(RestoreContractModal, { tx: restoreTx });
+
+        return Promise.reject({ message: 'Something expired' });
     }
 
     getAsset(code, issuer): Asset {
@@ -781,9 +782,11 @@ export default class SorobanServiceClass {
     }
 
     prepareTransaction(tx: StellarSdk.Transaction) {
-        return this.server.prepareTransaction(tx).catch(err => {
-            throw SorobanPrepareTxErrorHandler(err);
-        });
+        return this.tryRestore(tx).then(() =>
+            this.server.prepareTransaction(tx).catch(err => {
+                throw SorobanPrepareTxErrorHandler(err);
+            }),
+        );
     }
 
     private startServer(): void {
