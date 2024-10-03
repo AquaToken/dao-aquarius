@@ -334,32 +334,37 @@ const CreatePool = () => {
     }, [fourthAsset]);
 
     const signAndSubmitCreation = (tx: Transaction) =>
-        account.signAndSubmitTx(tx, true).then(
-            (res: {
-                status?: BuildSignAndSubmitStatuses;
-                value: () => {
-                    value: () => { value: () => { toString: (format: string) => string } };
-                }[];
-            }) => {
-                setPending(false);
-                if (!res) {
-                    return;
-                }
+        account
+            .signAndSubmitTx(tx, true)
+            .then(
+                (res: {
+                    status?: BuildSignAndSubmitStatuses;
+                    value: () => {
+                        value: () => { value: () => { toString: (format: string) => string } };
+                    }[];
+                }) => {
+                    setPending(false);
+                    if (!res) {
+                        return;
+                    }
 
-                if (
-                    (res as { status: BuildSignAndSubmitStatuses }).status ===
-                    BuildSignAndSubmitStatuses.pending
-                ) {
-                    ToastService.showSuccessToast('More signatures required to complete');
-                    return;
-                }
-                const poolAddress = SorobanService.getContactIdFromHash(
-                    res.value()[1].value().value().toString('hex'),
-                );
-                ToastService.showSuccessToast('Pool successfully created');
-                history.push(`${AmmRoutes.analytics}${poolAddress}`);
-            },
-        );
+                    if (
+                        (res as { status: BuildSignAndSubmitStatuses }).status ===
+                        BuildSignAndSubmitStatuses.pending
+                    ) {
+                        ToastService.showSuccessToast('More signatures required to complete');
+                        return;
+                    }
+                    const poolAddress = SorobanService.getContactIdFromHash(
+                        res.value()[1].value().value().toString('hex'),
+                    );
+                    ToastService.showSuccessToast('Pool successfully created');
+                    history.push(`${AmmRoutes.analytics}${poolAddress}`);
+                },
+            )
+            .catch(() => {
+                setPending(false);
+            });
 
     const createStablePool = () => {
         if (
