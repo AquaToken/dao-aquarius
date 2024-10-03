@@ -1,4 +1,3 @@
-import * as StellarSdk from '@stellar/stellar-sdk';
 import { Dispatch } from 'react';
 
 import { getAssetsInfo, getAssetsRequest } from 'api/assets';
@@ -6,6 +5,7 @@ import { getAssetsInfo, getAssetsRequest } from 'api/assets';
 import { getAssetString } from 'helpers/assets';
 
 import { StellarService } from 'services/globalServices';
+import { AQUA_CODE, AQUA_ISSUER, USDC_CODE, USDC_ISSUER } from 'services/stellar.service';
 
 import { ASSET_CACHE } from './reducer';
 import { ASSETS_ACTIONS, AssetSimple } from './types';
@@ -25,7 +25,24 @@ export function getAssets() {
             .then(assets => {
                 dispatch({
                     type: ASSETS_ACTIONS.GET_ASSETS_SUCCESS,
-                    payload: { assets: [StellarSdk.Asset.native(), ...assets] },
+                    payload: {
+                        assets: [
+                            StellarService.createLumen(),
+                            StellarService.createAsset(AQUA_CODE, AQUA_ISSUER),
+                            StellarService.createAsset(USDC_CODE, USDC_ISSUER),
+                            ...assets
+                                .filter(
+                                    asset =>
+                                        !(
+                                            (asset.code === AQUA_CODE &&
+                                                asset.issuer === AQUA_ISSUER) ||
+                                            (asset.code === USDC_CODE &&
+                                                asset.issuer === USDC_ISSUER)
+                                        ),
+                                )
+                                .sort((a, b) => a.code.localeCompare(b.code)),
+                        ],
+                    },
                 });
             })
             .catch(() => {
@@ -41,7 +58,7 @@ export function processNewAssets(assets: AssetSimple[]) {
         const newAssets = assets.filter(
             asset =>
                 !cached.has(getAssetString(StellarService.createAsset(asset.code, asset.issuer))) &&
-                !new StellarSdk.Asset(asset.code, asset.issuer).isNative(),
+                !StellarService.createAsset(asset.code, asset.issuer).isNative(),
         );
 
         if (!newAssets.length) {
