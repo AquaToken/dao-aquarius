@@ -1,7 +1,9 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { COLORS } from '../../../../../common/styles';
-import Success from '../../../../../common/assets/img/icon-success-white.svg';
+
+import { COLORS } from 'web/styles';
+
+import Success from 'assets/icon-success-white.svg';
 
 const Container = styled.div`
     display: flex;
@@ -23,13 +25,11 @@ const Container = styled.div`
     }
 `;
 
-const Eligible = () => {
-    return (
-        <Container>
-            <Success />
-            Eligible for airdrop
-        </Container>
-    );
-};
+const Eligible = () => (
+    <Container>
+        <Success />
+        Eligible for airdrop
+    </Container>
+);
 
 export default Eligible;

@@ -1,8 +1,10 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import { commonMaxWidth, respondDown } from '../../../../../common/mixins';
-import LockerMainImage from '../../../../../common/assets/img/locker-main.svg';
+
+import { commonMaxWidth, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import LockerMainImage from 'assets/locker-main.svg';
 
 const Container = styled.div`
     background-color: ${COLORS.buttonBackground};
@@ -62,23 +64,21 @@ const Description = styled.span`
     color: ${COLORS.white};
 `;
 
-const Purpose = (): JSX.Element => {
-    return (
-        <Container>
-            <Content>
-                <TextContainer>
-                    <Title>Freeze your AQUA into ICE!</Title>
-                    <Description>
-                        ICE brings entirely new benefits to the Aquarius ecosystem, giving those who
-                        freeze AQUA increased voting power for liquidity & governance voting,
-                        boosted yields when providing liquidity for markets receiving SDEX & AMM
-                        rewards, and expanded freedom within the Aquarius ecosystem.
-                    </Description>
-                </TextContainer>
-                <Image />
-            </Content>
-        </Container>
-    );
-};
+const Purpose = (): JSX.Element => (
+    <Container>
+        <Content>
+            <TextContainer>
+                <Title>Freeze your AQUA into ICE!</Title>
+                <Description>
+                    ICE brings entirely new benefits to the Aquarius ecosystem, giving those who
+                    freeze AQUA increased voting power for liquidity & governance voting, boosted
+                    yields when providing liquidity for markets receiving SDEX & AMM rewards, and
+                    expanded freedom within the Aquarius ecosystem.
+                </Description>
+            </TextContainer>
+            <Image />
+        </Content>
+    </Container>
+);
 
 export default Purpose;

@@ -1,14 +1,20 @@
 import * as React from 'react';
 import styled from 'styled-components';
+
+import { roundToPrecision } from 'helpers/format-number';
+
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Fail from 'assets/icon-fail.svg';
+import Info from 'assets/icon-info.svg';
+
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
 import ResultProgressLine from './ResultProgressLine/ResultProgressLine';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import { roundToPrecision } from '../../../../../common/helpers/helpers';
-import { SimpleProposalResultsLabels } from '../../../pages/GovernanceVoteProposalPage';
+
 import { Proposal } from '../../../api/types';
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
-import Fail from '../../../../../common/assets/img/icon-fail.svg';
-import Info from '../../../../../common/assets/img/icon-info.svg';
-import Tooltip, { TOOLTIP_POSITION } from '../../../../../common/basics/Tooltip';
+import { SimpleProposalResultsLabels } from '../../../pages/GovernanceVoteProposalPage';
 
 const ResultBlock = styled.div`
     width: 100%;
@@ -79,9 +85,9 @@ const StatusTag = styled.div`
     `}
 `;
 
-const QuorumResult = styled.div<{ isApproved: boolean }>`
+const QuorumResult = styled.div<{ $isApproved: boolean }>`
     margin: 0 0.8rem 0 auto;
-    color: ${({ isApproved }) => (isApproved ? COLORS.titleText : COLORS.pinkRed)};
+    color: ${({ $isApproved }) => ($isApproved ? COLORS.titleText : COLORS.pinkRed)};
 `;
 
 const getResultsData = (proposal: Proposal) => {
@@ -137,12 +143,12 @@ const CurrentResults = ({ proposal }: { proposal: Proposal }): JSX.Element => {
                 {!isEnd && <span>Updating every 5 min</span>}
             </Header>
 
-            {results?.map((result) => {
-                return <ResultProgressLine key={result.label} result={result} />;
-            })}
+            {results?.map(result => (
+                <ResultProgressLine key={result.label} result={result} />
+            ))}
             <Quorum>
                 <Label>Participation Rate:</Label>
-                <QuorumResult isApproved={isApproved}>
+                <QuorumResult $isApproved={isApproved}>
                     {roundToPrecision(percentVote, 2)}%
                 </QuorumResult>
                 <Label>(&gt;{proposal.percent_for_quorum}% needed)</Label>

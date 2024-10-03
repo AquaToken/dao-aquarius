@@ -1,29 +1,3 @@
-import * as React from 'react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import styled, { createGlobalStyle } from 'styled-components';
-import { Breakpoints, COLORS, FONT_FAMILY } from '../../../common/styles';
-import { flexAllCenter, respondDown } from '../../../common/mixins';
-import ExternalLink from '../../../common/basics/ExternalLink';
-import AssetDropdown from '../../vote/components/AssetDropdown/AssetDropdown';
-import Dash from '../../../common/assets/img/icon-dash.svg';
-import Success from '../../../common/assets/img/icon-success.svg';
-import Fail from '../../../common/assets/img/icon-fail.svg';
-import Loader from '../../../common/assets/img/loader.svg';
-import Minus from '../../../common/assets/img/icon-minus.svg';
-import Plus from '../../../common/assets/img/icon-plus.svg';
-import Button from '../../../common/basics/Button';
-import Input from '../../../common/basics/Input';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import { ModalService, StellarService } from '../../../common/services/globalServices';
-import CreatePairModal from '../../vote/components/MainPage/CreatePairModal/CreatePairModal';
-import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
-import useAuthStore from '../../../store/authStore/useAuthStore';
-import ConfirmBribeModal from '../components/AddBribePage/ConfirmBribeModal/ConfirmBribeModal';
-import { useDebounce } from '../../../common/hooks/useDebounce';
-import Tooltip, { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
-import ArrowLeft from '../../../common/assets/img/icon-arrow-left.svg';
-import { Link } from 'react-router-dom';
 import {
     addWeeks,
     endOfWeek,
@@ -35,11 +9,43 @@ import {
     startOfDay,
     startOfWeek,
 } from 'date-fns';
-import { formatBalance } from '../../../common/helpers/helpers';
+import * as React from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { Link } from 'react-router-dom';
+import styled, { createGlobalStyle } from 'styled-components';
+
+import { formatBalance } from 'helpers/format-number';
+
+import { LoginTypes } from 'store/authStore/types';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { useDebounce } from 'hooks/useDebounce';
+import { ModalService, StellarService } from 'services/globalServices';
+import { flexAllCenter, respondDown } from 'web/mixins';
+import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
+import { Breakpoints, COLORS, FONT_FAMILY } from 'web/styles';
+
+import ArrowLeft from 'assets/icon-arrow-left.svg';
+import Dash from 'assets/icon-dash.svg';
+import Fail from 'assets/icon-fail.svg';
+import Minus from 'assets/icon-minus.svg';
+import Plus from 'assets/icon-plus.svg';
+import Success from 'assets/icon-success.svg';
+import Loader from 'assets/loader.svg';
+
+import Button from 'basics/buttons/Button';
+import CircleButton from 'basics/buttons/CircleButton';
+import ExternalLink from 'basics/ExternalLink';
+import Input from 'basics/inputs/Input';
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
 import { BribesRoutes } from '../../../routes';
+import AssetDropdown from '../../vote/components/AssetDropdown/AssetDropdown';
+import CreatePairModal from '../../vote/components/MainPage/CreatePairModal/CreatePairModal';
 import { getMarketPair } from '../api/api';
-import { LoginTypes } from '../../../store/authStore/types';
-import CircleButton from '../../../common/basics/CircleButton';
+import ConfirmBribeModal from '../components/AddBribePage/ConfirmBribeModal/ConfirmBribeModal';
 
 export const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -317,8 +323,8 @@ const DurationButton = styled.div`
     }
 `;
 
-export const convertUTCToLocalDateIgnoringTimezone = (utcDate: Date) => {
-    return new Date(
+export const convertUTCToLocalDateIgnoringTimezone = (utcDate: Date) =>
+    new Date(
         utcDate.getUTCFullYear(),
         utcDate.getUTCMonth(),
         utcDate.getUTCDate(),
@@ -327,7 +333,6 @@ export const convertUTCToLocalDateIgnoringTimezone = (utcDate: Date) => {
         utcDate.getUTCSeconds(),
         utcDate.getUTCMilliseconds(),
     );
-};
 
 export function convertLocalDateToUTCIgnoringTimezone(date: Date) {
     const timestamp = Date.UTC(
@@ -413,7 +418,7 @@ const AddBribePage = () => {
 
         setPairInfo(undefined);
 
-        getMarketPair(base, counter).then((res) => {
+        getMarketPair(base, counter).then(res => {
             setPairInfo(res);
         });
     }, [base, counter]);
@@ -438,7 +443,7 @@ const AddBribePage = () => {
             StellarService.createAsset(rewardAsset.code, rewardAsset.issuer),
             debouncedAmount.current,
         )
-            .then((res) => {
+            .then(res => {
                 setAquaEquivalent(res);
             })
             .catch(() => {
@@ -594,7 +599,7 @@ const AddBribePage = () => {
             <FormWrap>
                 <Content>
                     <Form
-                        onSubmit={(event) => {
+                        onSubmit={event => {
                             event.preventDefault();
                             event.stopPropagation();
                             onSubmit();
@@ -627,7 +632,7 @@ const AddBribePage = () => {
                                 <NextButton
                                     isBig
                                     fullWidth
-                                    onClick={(e) => {
+                                    onClick={e => {
                                         e.preventDefault();
                                         createPair();
                                     }}
@@ -729,12 +734,12 @@ const AddBribePage = () => {
                                                 ? '[1-5]'
                                                 : '[0-9]$|^[1-9][0-9]$|^(100)$'
                                         }
-                                        onInvalid={(e) =>
+                                        onInvalid={e =>
                                             (e.target as HTMLInputElement).setCustomValidity(
                                                 `Only integer less or equal ${maxDuration}`,
                                             )
                                         }
-                                        onInput={(e) =>
+                                        onInput={e =>
                                             (e.target as HTMLInputElement).setCustomValidity('')
                                         }
                                     />
@@ -742,7 +747,7 @@ const AddBribePage = () => {
                                         customInput={<Input label="Start date" />}
                                         calendarStartDay={1}
                                         selected={selectedDate || null}
-                                        onChange={(res) => {
+                                        onChange={res => {
                                             setSelectedDate(res);
                                             const { start } = getWeekStartFromDay(
                                                 res,
@@ -750,7 +755,7 @@ const AddBribePage = () => {
                                             );
                                             setStartDate(start);
                                         }}
-                                        filterDate={(date) => date.getDay() === 1}
+                                        filterDate={date => date.getDay() === 1}
                                         dateFormat="MM.dd.yyyy"
                                         placeholderText="MM.DD.YYYY"
                                         disabledKeyboardNavigation

@@ -1,11 +1,15 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
-import { COLORS } from '../../../../../../common/styles';
-import { formatBalance } from '../../../../../../common/helpers/helpers';
+
+import { formatBalance } from 'helpers/format-number';
+
+import { flexAllCenter } from 'web/mixins';
+import { COLORS } from 'web/styles';
+
+import Fail from 'assets/icon-fail.svg';
+import Success from 'assets/icon-success.svg';
+
 import { SimpleProposalResultsLabels } from '../../../../pages/GovernanceVoteProposalPage';
-import Success from '../../../../../../common/assets/img/icon-success.svg';
-import Fail from '../../../../../../common/assets/img/icon-fail.svg';
-import { flexAllCenter } from '../../../../../../common/mixins';
 
 const ProgressLine = styled.div`
     width: 100%;
@@ -52,10 +56,10 @@ const Outer = styled.div`
     background-color: ${COLORS.gray};
 `;
 
-const Inner = styled.div<{ width: string; isAgainst: boolean }>`
+const Inner = styled.div<{ $width: string; $isAgainst: boolean }>`
     ${progressLineStyles};
-    width: ${({ width }) => width};
-    background-color: ${({ isAgainst }) => (isAgainst ? COLORS.pinkRed : COLORS.purple)};
+    width: ${({ $width }) => $width};
+    background-color: ${({ $isAgainst }) => ($isAgainst ? COLORS.pinkRed : COLORS.purple)};
 `;
 
 const ResultProgressLine = ({
@@ -81,8 +85,8 @@ const ResultProgressLine = ({
             </Label>
             <Outer>
                 <Inner
-                    width={percentage || '0'}
-                    isAgainst={label === SimpleProposalResultsLabels.votesAgainst}
+                    $width={percentage || '0'}
+                    $isAgainst={label === SimpleProposalResultsLabels.votesAgainst}
                 />
             </Outer>
         </ProgressLine>

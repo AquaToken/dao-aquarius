@@ -1,41 +1,42 @@
+import { Asset } from '@stellar/stellar-sdk';
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import {
-    ModalDescription,
-    ModalProps,
-    ModalTitle,
-} from '../../../../../common/modals/atoms/ModalAtoms';
-import styled from 'styled-components';
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import Aqua from '../../../../../common/assets/img/aqua-logo-small.svg';
-import Ice from '../../../../../common/assets/img/ice-logo.svg';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
-import Input from '../../../../../common/basics/Input';
-import RangeInput from '../../../../../common/basics/RangeInput';
-import Button from '../../../../../common/basics/Button';
-import {
-    ModalService,
-    StellarService,
-    ToastService,
-} from '../../../../../common/services/globalServices';
-import { formatBalance, roundToPrecision } from '../../../../../common/helpers/helpers';
-import ExternalLink from '../../../../../common/basics/ExternalLink';
-import GetAquaModal from '../../../../../common/modals/GetAquaModal/GetAquaModal';
-import CloseIcon from '../../../../../common/assets/img/icon-close-small.svg';
-import Market from '../../common/Market';
-import { PairStats } from '../../../api/types';
-import { AQUA, DOWN_ICE, SELECTED_PAIRS_ALIAS, UP_ICE } from '../MainPage';
-import VotesDurationModal from './VotesDurationModal';
-import Select, { Option } from '../../../../../common/basics/Select';
-import { Asset } from '@stellar/stellar-sdk';
-import { LoginTypes } from '../../../../../store/authStore/types';
-import { BuildSignAndSubmitStatuses } from '../../../../../common/services/wallet-connect.service';
-import ErrorHandler from '../../../../../common/helpers/error-handler';
-import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
 import { Link } from 'react-router-dom';
+import styled from 'styled-components';
+
+import ErrorHandler from 'helpers/error-handler';
+import { formatBalance, roundToPrecision } from 'helpers/format-number';
+import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
+
+import { LoginTypes } from 'store/authStore/types';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { ModalProps } from 'types/modal';
+
+import { useIsMounted } from 'hooks/useIsMounted';
+import { ModalService, StellarService, ToastService } from 'services/globalServices';
+import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
+import GetAquaModal from 'web/modals/GetAquaModal';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Aqua from 'assets/aqua-logo-small.svg';
+import Ice from 'assets/ice-logo.svg';
+import CloseIcon from 'assets/icon-close-small.svg';
+
+import Button from 'basics/buttons/Button';
+import ExternalLink from 'basics/ExternalLink';
+import Input from 'basics/inputs/Input';
+import RangeInput from 'basics/inputs/RangeInput';
+import Select, { Option } from 'basics/inputs/Select';
+import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+
+import VotesDurationModal from './VotesDurationModal';
+
 import { LockerRoutes } from '../../../../../routes';
-import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
+import { PairStats } from '../../../api/types';
+import Market from '../../common/Market';
+import { AQUA, DOWN_ICE, SELECTED_PAIRS_ALIAS, UP_ICE } from '../MainPage';
 
 export const ContentRow = styled.div`
     ${flexRowSpaceBetween};
@@ -250,7 +251,7 @@ const VotesAmountModal = ({
 }: ModalProps<{
     pairs: PairStats[];
     updatePairs?: () => void;
-    pairsAmounts?: {};
+    pairsAmounts?: { [key: string]: string };
     isDownVoteModal?: boolean;
     isSingleVoteForModal?: boolean;
     asset: Asset;
@@ -284,16 +285,15 @@ const VotesAmountModal = ({
     );
     const [isHandleEdit, setIsHandleEdit] = useState(false);
 
-    const OPTIONS: Option<Asset>[] = useMemo(() => {
-        return [
+    const OPTIONS: Option<Asset>[] = useMemo(
+        () => [
             { label: 'AQUA', value: AQUA, icon: <AquaLogo /> },
             { label: 'ICE', value: isDownVoteModal ? DOWN_ICE : UP_ICE, icon: <IceLogo /> },
-        ];
-    }, [isDownVoteModal]);
+        ],
+        [isDownVoteModal],
+    );
 
-    const targetBalance = useMemo(() => {
-        return account?.getAssetBalance(targetAsset);
-    }, [targetAsset]);
+    const targetBalance = useMemo(() => account?.getAssetBalance(targetAsset), [targetAsset]);
 
     const nativeBalance = account?.getAvailableNativeBalance();
     const formattedNativeBalance = formatBalance(nativeBalance);
@@ -317,13 +317,26 @@ const VotesAmountModal = ({
         }
     }, []);
 
-    useEffect(() => {
-        return () => {
-            resetForm();
-        };
-    }, [targetAsset]);
+    const resetForm = () => {
+        setAmount('');
+        setPercent(0);
+        setPairsAmount(
+            selectedPairs.reduce((acc, pair) => {
+                acc[pair[keyType]] = '';
+                return acc;
+            }, {}),
+        );
+        setIsHandleEdit(false);
+    };
 
-    const onRangeChange = (percent) => {
+    useEffect(
+        () => () => {
+            resetForm();
+        },
+        [targetAsset],
+    );
+
+    const onRangeChange = percent => {
         setPercent(percent);
 
         const amountValue = roundToPrecision((targetBalance * percent) / 100, 7);
@@ -341,7 +354,7 @@ const VotesAmountModal = ({
         );
     };
 
-    const onInputChange = (value) => {
+    const onInputChange = value => {
         if (Number.isNaN(Number(value))) {
             return;
         }
@@ -383,7 +396,7 @@ const VotesAmountModal = ({
     };
 
     const deletePair = (deletedPair: PairStats) => {
-        const updatedPairs = selectedPairs.filter((pair) => pair[keyType] !== deletedPair[keyType]);
+        const updatedPairs = selectedPairs.filter(pair => pair[keyType] !== deletedPair[keyType]);
 
         setSelectedPairs(updatedPairs);
         localStorage.setItem(SELECTED_PAIRS_ALIAS, JSON.stringify(updatedPairs));
@@ -419,18 +432,6 @@ const VotesAmountModal = ({
                 return acc;
             }, {}),
         );
-    };
-
-    const resetForm = () => {
-        setAmount('');
-        setPercent(0);
-        setPairsAmount(
-            selectedPairs.reduce((acc, pair) => {
-                acc[pair[keyType]] = '';
-                return acc;
-            }, {}),
-        );
-        setIsHandleEdit(false);
     };
 
     const confirmVotes = async () => {
@@ -481,7 +482,7 @@ const VotesAmountModal = ({
         }
     };
 
-    const onSubmit = async () => {
+    const onSubmit = () => {
         if (Number(amount) > Number(targetBalance)) {
             ToastService.showErrorToast(
                 `The value must be less or equal than ${formattedTargetBalance} ${targetAsset.code}`,
@@ -504,11 +505,11 @@ const VotesAmountModal = ({
 
         if (
             Object.values(pairsAmount).some(
-                (value) =>
+                value =>
                     !value ||
                     !Number(value) ||
-                    value < MINIMUM_AMOUNT ||
-                    (targetAsset !== AQUA && value < MINIMUM_ICE_AMOUNT),
+                    +value < MINIMUM_AMOUNT ||
+                    (targetAsset !== AQUA && +value < MINIMUM_ICE_AMOUNT),
             )
         ) {
             ToastService.showErrorToast(
@@ -595,7 +596,7 @@ const VotesAmountModal = ({
                 <AmountRow>
                     <AmountInput
                         value={amount}
-                        onChange={(e) => {
+                        onChange={e => {
                             onInputChange(e.target.value);
                         }}
                         placeholder="Enter voting power"
@@ -626,7 +627,7 @@ const VotesAmountModal = ({
                             )}
                         </ContentRow>
                         <PairsList>
-                            {selectedPairs.map((pair) => (
+                            {selectedPairs.map(pair => (
                                 <PairBlock key={pair.market_key}>
                                     <AssetsInfo>
                                         <Market
@@ -645,7 +646,7 @@ const VotesAmountModal = ({
                                     </AssetsInfo>
                                     <StyledInput
                                         value={pairsAmount[pair[keyType]]}
-                                        onChange={(e) => {
+                                        onChange={e => {
                                             onPairInputChange(e.target.value, pair[keyType]);
                                         }}
                                         onFocus={() => {

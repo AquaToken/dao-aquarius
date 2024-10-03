@@ -1,11 +1,17 @@
 import * as React from 'react';
-import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../common/styles';
 import { useEffect, useMemo, useState } from 'react';
-import PageLoader from '../../../../common/basics/PageLoader';
-import { getRewards } from '../../../vote/api/api';
-import { respondDown } from '../../../../common/mixins';
-import { formatBalance } from '../../../../common/helpers/helpers';
+import styled from 'styled-components';
+
+import { formatBalance } from 'helpers/format-number';
+
+import { Asset } from 'types/stellar';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import PageLoader from 'basics/loaders/PageLoader';
+
+import { getRewards } from 'pages/vote/api/api';
 
 const Container = styled.div`
     display: flex;
@@ -71,11 +77,16 @@ const DetailValue = styled.span`
     white-space: nowrap;
 `;
 
-const Rewards = ({ base, counter }) => {
+interface RewardsProps {
+    base: Asset;
+    counter: Asset;
+}
+
+const Rewards = ({ base, counter }: RewardsProps): React.ReactNode => {
     const [rewards, setRewards] = useState(null);
 
     useEffect(() => {
-        getRewards().then((res) => {
+        getRewards().then(res => {
             setRewards(res);
         });
     }, []);
@@ -85,7 +96,7 @@ const Rewards = ({ base, counter }) => {
             return null;
         }
         return rewards.find(
-            (reward) =>
+            reward =>
                 (reward.market_key.asset1_code === base.code &&
                     reward.market_key.asset1_issuer === (base.issuer || '') &&
                     reward.market_key.asset2_code === counter.code &&

@@ -1,14 +1,14 @@
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
-import { formatBalance } from '../../../../common/helpers/helpers';
-import IconUp from '../../../../common/assets/img/icon-up-percent.svg';
-import IconDown from '../../../../common/assets/img/icon-down-percent.svg';
-import Ice from '../../../../common/assets/img/ice-logo.svg';
-import Aqua from '../../../../common/assets/img/aqua-logo-small.svg';
-import { getPercent } from '../../../vote/components/MainPage/Table/VoteAmount/VoteAmount';
-import VotesProgressLine from './VotesProgressLine/VotesProgressLine';
+
+import { formatBalance } from 'helpers/format-number';
+
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { Asset } from 'types/stellar';
+
+import { ModalService, StellarService } from 'services/globalServices';
 import {
     AQUA_CODE,
     AQUA_ISSUER,
@@ -16,16 +16,27 @@ import {
     ICE_ISSUER,
     StellarEvents,
     UP_ICE_CODE,
-} from '../../../../common/services/stellar.service';
-import VoteButton from '../../../vote/components/MainPage/Table/VoteButton/VoteButton';
-import { useEffect, useState } from 'react';
-import { ModalService, StellarService } from '../../../../common/services/globalServices';
-import { AQUA, DOWN_ICE, UP_ICE } from '../../../vote/components/MainPage/MainPage';
-import useAuthStore from '../../../../store/authStore/useAuthStore';
-import DotsLoader from '../../../../common/basics/DotsLoader';
-import Button from '../../../../common/basics/Button';
+} from 'services/stellar.service';
+import { flexRowSpaceBetween, respondDown } from 'web/mixins';
+import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Aqua from 'assets/aqua-logo-small.svg';
+import Ice from 'assets/ice-logo.svg';
+import IconDown from 'assets/icon-down-percent.svg';
+import IconUp from 'assets/icon-up-percent.svg';
+
+import Button from 'basics/buttons/Button';
+import DotsLoader from 'basics/loaders/DotsLoader';
+
+import { PairStats, TotalStats } from 'pages/vote/api/types';
+import { AQUA, DOWN_ICE, UP_ICE } from 'pages/vote/components/MainPage/MainPage';
+import { getPercent } from 'pages/vote/components/MainPage/Table/VoteAmount/VoteAmount';
+
+import VotesProgressLine from './VotesProgressLine/VotesProgressLine';
+
 import CreatePairModal from '../../../vote/components/MainPage/CreatePairModal/CreatePairModal';
-import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
+import VoteButton from '../../../vote/components/MainPage/Table/VoteButton/VoteButton';
 
 const Container = styled.aside`
     float: right;
@@ -121,22 +132,38 @@ const IceLogo = styled(Ice)`
     margin-right: 0.8rem;
 `;
 
-const Sidebar = ({ votesData, base, counter, totalStats, onVoteClick, isPairSelected }) => {
+interface SidebarProps {
+    votesData: PairStats;
+    base: Asset;
+    counter: Asset;
+    totalStats: TotalStats;
+    onVoteClick: (value: PairStats) => void;
+    isPairSelected: boolean;
+}
+
+const Sidebar = ({
+    votesData,
+    base,
+    counter,
+    totalStats,
+    onVoteClick,
+    isPairSelected,
+}: SidebarProps): React.ReactNode => {
     const { isLogged, account } = useAuthStore();
 
     const createPair = () => {
         if (isLogged) {
             ModalService.openModal(CreatePairModal, {
-                base: base,
-                counter: counter,
+                base,
+                counter,
             });
             return;
         }
         ModalService.openModal(ChooseLoginMethodModal, {
             callback: () =>
                 ModalService.openModal(CreatePairModal, {
-                    base: base,
-                    counter: counter,
+                    base,
+                    counter,
                 }),
         });
     };

@@ -1,11 +1,16 @@
 import * as React from 'react';
-import styled from 'styled-components';
-import { respondDown } from '../../common/mixins';
-import { Breakpoints, COLORS } from '../../common/styles';
-import SocialLinks from '../../common/components/SocialLinks/SocialLinks';
-import ExternalLink from '../../common/basics/ExternalLink';
-import Success from '../../common/assets/img/icon-success-green.svg';
 import { Link } from 'react-router-dom';
+import styled from 'styled-components';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Success from 'assets/icon-success-green.svg';
+
+import ExternalLink from 'basics/ExternalLink';
+
+import SocialLinks from 'components/SocialLinks';
+
 import { MainRoutes } from '../../routes';
 
 const Container = styled.div`
@@ -245,47 +250,45 @@ const Phases = styled.div`
     `}
 `;
 
-const Airdrop = () => {
-    return (
-        <Container>
-            <Socials>
-                <SocialLinks />
-            </Socials>
-            <Main>
-                <Title>Airdrop distributions complete</Title>
-                <Description>
-                    Both the Initial Airdrop & Airdrop #2 have been distributed in full. Eligible
-                    users can claim their airdrop rewards monthly until March 2025.
-                </Description>
-                <Cards>
-                    <Card>
-                        <Heading>AQUA Airdrop #2</Heading>
-                        <Label>⚡ Snapshot & distribution complete!</Label>
-                        <Text>
-                            XLM, yXLM & AQUA holders got a share of <b>15,000,000,000 AQUA</b> based
-                            on their balances at the time of the January 15th 2022 snapshot. Rewards
-                            have been distributed and can be claimed monthly inside of eligible
-                            Stellar wallets.
-                        </Text>
-                        <ExternalLink asDiv>
-                            <Link to={MainRoutes.airdrop2}>Read more</Link>
-                        </ExternalLink>
-                    </Card>
-                    <Card>
-                        <Heading>Initial Airdrop</Heading>
-                        <Phases>
-                            <Success />
-                            <b>All 5</b> phases were completed!
-                        </Phases>
-                        <Text>
-                            The initial 5 billion AQUA airdrop was successfully distributed. All
-                            unclaimed funds were sent to the Aquarius DAO fund.
-                        </Text>
-                    </Card>
-                </Cards>
-            </Main>
-        </Container>
-    );
-};
+const Airdrop = () => (
+    <Container>
+        <Socials>
+            <SocialLinks />
+        </Socials>
+        <Main>
+            <Title>Airdrop distributions complete</Title>
+            <Description>
+                Both the Initial Airdrop & Airdrop #2 have been distributed in full. Eligible users
+                can claim their airdrop rewards monthly until March 2025.
+            </Description>
+            <Cards>
+                <Card>
+                    <Heading>AQUA Airdrop #2</Heading>
+                    <Label>⚡ Snapshot & distribution complete!</Label>
+                    <Text>
+                        XLM, yXLM & AQUA holders got a share of <b>15,000,000,000 AQUA</b> based on
+                        their balances at the time of the January 15th 2022 snapshot. Rewards have
+                        been distributed and can be claimed monthly inside of eligible Stellar
+                        wallets.
+                    </Text>
+                    <ExternalLink asDiv>
+                        <Link to={MainRoutes.airdrop2}>Read more</Link>
+                    </ExternalLink>
+                </Card>
+                <Card>
+                    <Heading>Initial Airdrop</Heading>
+                    <Phases>
+                        <Success />
+                        <b>All 5</b> phases were completed!
+                    </Phases>
+                    <Text>
+                        The initial 5 billion AQUA airdrop was successfully distributed. All
+                        unclaimed funds were sent to the Aquarius DAO fund.
+                    </Text>
+                </Card>
+            </Cards>
+        </Main>
+    </Container>
+);
 
 export default Airdrop;

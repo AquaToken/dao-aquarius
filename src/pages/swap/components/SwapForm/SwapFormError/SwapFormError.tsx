@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { IconFail } from '../../../../../common/basics/Icons';
 import styled from 'styled-components';
+
+import { IconFail } from 'basics/Icons';
 
 const Container = styled.div`
     display: flex;

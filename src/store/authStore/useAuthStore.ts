@@ -1,11 +1,13 @@
-import * as actions from './actions';
-import bindActions from '../bindActions';
-import { AuthStore, LoginTypes } from './types';
-import { SignClientTypes } from '@walletconnect/types';
 import AccountRecord from '@stellar/stellar-sdk';
-import { ActionAsyncResult, ActionSimpleResult } from '../types';
-import { useGlobalStore } from '../index';
+import { SignClientTypes } from '@walletconnect/types';
+
+import * as actions from './actions';
 import { addAuthCallback, removeAuthCallback } from './actions';
+import { AuthStore, LoginTypes } from './types';
+
+import bindActions from '../bindActions';
+import { useGlobalStore } from '../index';
+import { ActionAsyncResult, ActionSimpleResult } from '../types';
 
 type AuthActions = {
     login: (

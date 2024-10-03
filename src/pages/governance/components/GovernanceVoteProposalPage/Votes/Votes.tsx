@@ -1,20 +1,26 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import ExternalLinkIcon from '../../../../../common/assets/img/icon-external-link.svg';
-import AccountViewer from '../../../../../common/basics/AccountViewer';
-import Solution from '../Solution/Solution';
-import { formatBalance, getDateString } from '../../../../../common/helpers/helpers';
-import { IconSort } from '../../../../../common/basics/Icons';
 import { useParams } from 'react-router-dom';
-import { Vote } from '../../../api/types';
+import styled from 'styled-components';
+
+import { getDateString } from 'helpers/date';
+import { formatBalance } from 'helpers/format-number';
+
+import { flexAllCenter, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Aqua from 'assets/aqua-logo-small.svg';
+import Ice from 'assets/ice-logo.svg';
+import ExternalLinkIcon from 'assets/icon-external-link.svg';
+import Loader from 'assets/loader.svg';
+
+import { IconSort } from 'basics/Icons';
+import Pagination from 'basics/Pagination';
+import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
+
 import { getVotes, getVoteTxHash, UPDATE_INTERVAL, VoteFields } from '../../../api/api';
-import Loader from '../../../../../common/assets/img/loader.svg';
-import { flexAllCenter, respondDown } from '../../../../../common/mixins';
-import Pagination from '../../../../../common/basics/Pagination';
-import Aqua from '../../../../../common/assets/img/aqua-logo-small.svg';
-import Ice from '../../../../../common/assets/img/ice-logo.svg';
+import { Vote } from '../../../api/types';
+import Solution from '../Solution/Solution';
 
 const VotesBlock = styled.div`
     width: 100%;
@@ -83,7 +89,12 @@ const ExternalLink = styled.a`
     cursor: pointer;
 `;
 
-const SortingHeader = styled.button`
+enum SortingHeaderPosition {
+    left = 'left',
+    right = 'right',
+}
+
+const SortingHeader = styled.button<{ $position: SortingHeaderPosition }>`
     background: none;
     border: none;
     cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
@@ -94,9 +105,9 @@ const SortingHeader = styled.button`
 
     display: flex;
     align-items: center;
-    justify-content: ${({ position }: { position?: string }) => {
-        if (position === 'right') return 'flex-end';
-        if (position === 'left') return 'flex-start';
+    justify-content: ${({ $position }) => {
+        if ($position === SortingHeaderPosition.right) return 'flex-end';
+        if ($position === SortingHeaderPosition.left) return 'flex-start';
         return 'center';
     }};
 
@@ -143,7 +154,7 @@ const onVoteLinkClick = (url: string) => {
 
 const PAGE_SIZE = 10;
 
-const Votes = (): JSX.Element => {
+const Votes = (): React.ReactNode => {
     const [updateIndex, setUpdateIndex] = useState(0);
     const [sort, setSort] = useState(VoteFields.date);
     const [isReversedSort, setIsReversedSort] = useState(false);
@@ -155,7 +166,7 @@ const Votes = (): JSX.Element => {
     const { id } = useParams<{ id?: string }>();
 
     useEffect(() => {
-        getVotes(id, PAGE_SIZE, page, sort, isReversedSort).then((result) => {
+        getVotes(id, PAGE_SIZE, page, sort, isReversedSort).then(result => {
             setTotalVotes(result.data.count);
             setVotes(result.data.results);
         });
@@ -163,13 +174,13 @@ const Votes = (): JSX.Element => {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            setUpdateIndex((prev) => prev + 1);
+            setUpdateIndex(prev => prev + 1);
         }, UPDATE_INTERVAL);
 
         return () => clearInterval(interval);
     }, []);
 
-    const changeSort = (newSort) => {
+    const changeSort = (newSort: VoteFields) => {
         const isEqualSort = sort === newSort;
         setSort(newSort);
         setPage(1);
@@ -194,7 +205,10 @@ const Votes = (): JSX.Element => {
             <VotesList>
                 <HeaderRow>
                     <CellDate>
-                        <SortingHeader position="left" onClick={() => changeSort(VoteFields.date)}>
+                        <SortingHeader
+                            $position={SortingHeaderPosition.left}
+                            onClick={() => changeSort(VoteFields.date)}
+                        >
                             Date{' '}
                             <IconSort
                                 isEnabled={sort === VoteFields.date}
@@ -204,7 +218,7 @@ const Votes = (): JSX.Element => {
                     </CellDate>
                     <CellAcc>
                         <SortingHeader
-                            position="left"
+                            $position={SortingHeaderPosition.left}
                             onClick={() => changeSort(VoteFields.account)}
                         >
                             Account{' '}
@@ -216,7 +230,7 @@ const Votes = (): JSX.Element => {
                     </CellAcc>
                     <CellSolution>
                         <SortingHeader
-                            position="left"
+                            $position={SortingHeaderPosition.left}
                             onClick={() => changeSort(VoteFields.solution)}
                         >
                             Vote{' '}
@@ -228,7 +242,7 @@ const Votes = (): JSX.Element => {
                     </CellSolution>
                     <CellAmount>
                         <SortingHeader
-                            position="right"
+                            $position={SortingHeaderPosition.right}
                             onClick={() => changeSort(VoteFields.amount)}
                         >
                             Voted{' '}
@@ -239,7 +253,7 @@ const Votes = (): JSX.Element => {
                         </SortingHeader>
                     </CellAmount>
                 </HeaderRow>
-                {votes?.map((vote) => {
+                {votes?.map(vote => {
                     const {
                         account_issuer: account,
                         vote_choice: voteChoice,
@@ -256,7 +270,7 @@ const Votes = (): JSX.Element => {
                                 })}
                             </CellDate>
                             <CellAcc>
-                                <AccountViewer pubKey={account} narrowForMobile />
+                                <PublicKeyWithIcon pubKey={account} narrowForMobile />
                             </CellAcc>
                             <CellSolution>
                                 <Solution choice={voteChoice} />
@@ -275,7 +289,7 @@ const Votes = (): JSX.Element => {
                     pageSize={PAGE_SIZE}
                     currentPage={page}
                     itemName="votes"
-                    onPageChange={(res) => {
+                    onPageChange={res => {
                         setPage(res);
                     }}
                     totalCount={totalVotes}

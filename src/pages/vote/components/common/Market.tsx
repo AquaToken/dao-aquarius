@@ -1,11 +1,24 @@
-import * as React from 'react';
-import styled from 'styled-components';
 import * as StellarSdk from '@stellar/stellar-sdk';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import AssetLogo, { bigLogoStyles, logoStyles } from '../AssetDropdown/AssetLogo';
-import External from '../../../../common/assets/img/icon-external-link.svg';
-import Arrow from '../../../../common/assets/img/icon-link-arrow.svg';
-import { flexAllCenter, respondDown } from '../../../../common/mixins';
+import * as React from 'react';
+import { Link } from 'react-router-dom';
+import styled from 'styled-components';
+
+import { getAssetString } from 'helpers/assets';
+import { formatBalance } from 'helpers/format-number';
+
+import { LumenInfo } from 'store/assetsStore/reducer';
+import { AssetSimple } from 'store/assetsStore/types';
+import useAssetsStore from 'store/assetsStore/useAssetsStore';
+
+import { ModalService, StellarService } from 'services/globalServices';
+import { POOL_TYPE } from 'services/soroban.service';
+import { flexAllCenter, respondDown } from 'web/mixins';
+import AssetInfoModal from 'web/modals/AssetInfoModal';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import External from 'assets/icon-external-link.svg';
+import Arrow from 'assets/icon-link-arrow.svg';
+
 import {
     AuthRequiredLabel,
     BoostLabel,
@@ -17,28 +30,21 @@ import {
     RewardPoolLabel,
     StablePoolLabel,
 } from './Labels';
-import { AssetSimple } from '../../../../store/assetsStore/types';
-import { getAssetString } from '../../../../store/assetsStore/actions';
-import { LumenInfo } from '../../../../store/assetsStore/reducer';
-import useAssetsStore from '../../../../store/assetsStore/useAssetsStore';
-import { Link } from 'react-router-dom';
+
 import { AmmRoutes, MarketRoutes } from '../../../../routes';
-import { formatBalance } from '../../../../common/helpers/helpers';
-import { POOL_TYPE } from '../../../../common/services/soroban.service';
-import { ModalService, StellarService } from '../../../../common/services/globalServices';
-import AssetInfoModal from '../../../../common/modals/AssetInfoModal/AssetInfoModal';
+import AssetLogo, { bigLogoStyles, logoStyles } from '../AssetDropdown/AssetLogo';
 
 const Wrapper = styled.div<{
-    verticalDirections?: boolean;
-    mobileVerticalDirections?: boolean;
-    leftAlign?: boolean;
+    $verticalDirections?: boolean;
+    $mobileVerticalDirections?: boolean;
+    $leftAlign?: boolean;
 }>`
     display: flex;
-    ${({ verticalDirections }) => verticalDirections && 'flex-direction: column;'};
-    align-items: ${({ leftAlign }) => (leftAlign ? 'flex-start' : 'center')};
+    ${({ $verticalDirections }) => $verticalDirections && 'flex-direction: column;'};
+    align-items: ${({ $leftAlign }) => ($leftAlign ? 'flex-start' : 'center')};
 
-    ${({ mobileVerticalDirections }) =>
-        mobileVerticalDirections &&
+    ${({ $mobileVerticalDirections }) =>
+        $mobileVerticalDirections &&
         respondDown(Breakpoints.md)`
             flex-direction: column;
             align-items: flex-start;
@@ -46,79 +52,79 @@ const Wrapper = styled.div<{
 `;
 
 const Icons = styled.div<{
-    isBig: boolean;
-    assetsCount: number;
-    verticalDirections?: boolean;
-    mobileVerticalDirections?: boolean;
-    leftAlign?: boolean;
+    $isBig: boolean;
+    $assetsCount: number;
+    $verticalDirections?: boolean;
+    $mobileVerticalDirections?: boolean;
+    $leftAlign?: boolean;
 }>`
     display: flex;
     align-items: center;
     min-width: 12rem;
-    justify-content: ${({ verticalDirections, leftAlign }) =>
-        leftAlign ? 'flex-start' : verticalDirections ? 'center' : 'flex-end'};
+    justify-content: ${({ $verticalDirections, $leftAlign }) =>
+        $leftAlign ? 'flex-start' : $verticalDirections ? 'center' : 'flex-end'};
 
-    ${({ mobileVerticalDirections }) =>
-        mobileVerticalDirections &&
+    ${({ $mobileVerticalDirections }) =>
+        $mobileVerticalDirections &&
         respondDown(Breakpoints.md)`
               justify-content: start;
           `}
 `;
 
 const Icon = styled.div<{
-    isBig?: boolean;
-    isCircleLogo?: boolean;
-    assetOrderNumber: number;
-    assetsCount: number;
-    verticalDirections?: boolean;
-    mobileVerticalDirections?: boolean;
+    $isBig?: boolean;
+    $isCircleLogo?: boolean;
+    $assetOrderNumber: number;
+    $assetsCount: number;
+    $verticalDirections?: boolean;
+    $mobileVerticalDirections?: boolean;
 }>`
-    ${({ isBig, isCircleLogo }) => (isBig ? bigLogoStyles(isCircleLogo) : logoStyles())};
+    ${({ $isBig, $isCircleLogo }) => ($isBig ? bigLogoStyles($isCircleLogo) : logoStyles())};
     box-sizing: content-box;
     position: relative;
-    border: ${({ assetOrderNumber, assetsCount }) =>
-        assetsCount > assetOrderNumber ? `0.3rem solid ${COLORS.white}` : 'unset'};
-    background-color: ${({ assetOrderNumber, assetsCount }) =>
-        assetsCount > assetOrderNumber ? COLORS.white : 'unset'};
-    z-index: ${({ assetOrderNumber, assetsCount }) => assetsCount - assetOrderNumber};
-    right: ${({ isBig, assetOrderNumber, assetsCount, verticalDirections }) =>
+    border: ${({ $assetOrderNumber, $assetsCount }) =>
+        $assetsCount > $assetOrderNumber ? `0.3rem solid ${COLORS.white}` : 'unset'};
+    background-color: ${({ $assetOrderNumber, $assetsCount }) =>
+        $assetsCount > $assetOrderNumber ? COLORS.white : 'unset'};
+    z-index: ${({ $assetOrderNumber, $assetsCount }) => $assetsCount - $assetOrderNumber};
+    right: ${({ $isBig, $assetOrderNumber, $assetsCount, $verticalDirections }) =>
         `${
-            (verticalDirections ? assetOrderNumber - 1 : -(assetsCount - assetOrderNumber)) *
-            (isBig ? 3 : 1)
+            ($verticalDirections ? $assetOrderNumber - 1 : -($assetsCount - $assetOrderNumber)) *
+            ($isBig ? 3 : 1)
         }rem`};
 
-    ${({ mobileVerticalDirections }) =>
-        mobileVerticalDirections &&
+    ${({ $mobileVerticalDirections }) =>
+        $mobileVerticalDirections &&
         respondDown(Breakpoints.md)`
-              right: ${({ isBig, assetOrderNumber }) =>
-                  `${(assetOrderNumber - 1) * (isBig ? 3 : 1)}rem`};
+              right: ${({ $isBig, $assetOrderNumber }) =>
+                  `${($assetOrderNumber - 1) * ($isBig ? 3 : 1)}rem`};
           `}
 `;
 
 const AssetsDetails = styled.div<{
-    verticalDirections?: boolean;
-    mobileVerticalDirections?: boolean;
-    leftAlign?: boolean;
+    $verticalDirections?: boolean;
+    $mobileVerticalDirections?: boolean;
+    $leftAlign?: boolean;
 }>`
     display: flex;
     flex-direction: column;
-    ${({ verticalDirections, leftAlign }) =>
-        verticalDirections
-            ? `align-items: ${leftAlign ? 'flex-start' : 'center'};
+    ${({ $verticalDirections, $leftAlign }) =>
+        $verticalDirections
+            ? `align-items: ${$leftAlign ? 'flex-start' : 'center'};
         margin-top: 2rem;`
             : 'margin-left: 1.6rem;'};
 
-    ${({ mobileVerticalDirections }) =>
-        mobileVerticalDirections &&
+    ${({ $mobileVerticalDirections }) =>
+        $mobileVerticalDirections &&
         respondDown(Breakpoints.md)`
               margin-left: 0;
           `}
 `;
 
-const AssetsCodes = styled.span<{ mobileVerticalDirections?: boolean; bigCodes?: boolean }>`
-    font-size: ${({ bigCodes }) => (bigCodes ? '5.6rem' : '1.6rem')};
-    line-height: ${({ bigCodes }) => (bigCodes ? '6.4rem' : '2.8rem')};
-    font-weight: ${({ bigCodes }) => (bigCodes ? '700' : '400')};
+const AssetsCodes = styled.span<{ $mobileVerticalDirections?: boolean; $bigCodes?: boolean }>`
+    font-size: ${({ $bigCodes }) => ($bigCodes ? '5.6rem' : '1.6rem')};
+    line-height: ${({ $bigCodes }) => ($bigCodes ? '6.4rem' : '2.8rem')};
+    font-weight: ${({ $bigCodes }) => ($bigCodes ? '700' : '400')};
     color: ${COLORS.paragraphText};
     display: flex;
     flex-direction: row;
@@ -129,8 +135,8 @@ const AssetsCodes = styled.span<{ mobileVerticalDirections?: boolean; bigCodes?:
         align-items: center;
     }
 
-    ${({ mobileVerticalDirections }) =>
-        mobileVerticalDirections &&
+    ${({ $mobileVerticalDirections }) =>
+        $mobileVerticalDirections &&
         respondDown(Breakpoints.md)`
             font-weight: bold;
             font-size: 2.4rem;
@@ -143,7 +149,7 @@ const AssetsCodes = styled.span<{ mobileVerticalDirections?: boolean; bigCodes?:
         `}
 `;
 
-const AssetsDomains = styled.span<{ mobileVerticalDirections?: boolean }>`
+const AssetsDomains = styled.span<{ $mobileVerticalDirections?: boolean }>`
     color: ${COLORS.grayText};
     font-size: 1.4rem;
     line-height: 2rem;
@@ -153,8 +159,8 @@ const AssetsDomains = styled.span<{ mobileVerticalDirections?: boolean }>`
         text-align: center;
     `}
 
-    ${({ mobileVerticalDirections }) =>
-        mobileVerticalDirections &&
+    ${({ $mobileVerticalDirections }) =>
+        $mobileVerticalDirections &&
         respondDown(Breakpoints.md)`
                   font-size: 1.2rem;
                   white-space: wrap;
@@ -283,39 +289,39 @@ const Market = ({
 
     return (
         <Wrapper
-            verticalDirections={verticalDirections}
-            mobileVerticalDirections={mobileVerticalDirections}
-            leftAlign={leftAlign}
+            $verticalDirections={verticalDirections}
+            $mobileVerticalDirections={mobileVerticalDirections}
+            $leftAlign={leftAlign}
         >
             <Icons
-                isBig={isBigLogo}
-                verticalDirections={verticalDirections}
-                assetsCount={assets.length}
-                mobileVerticalDirections={mobileVerticalDirections}
-                leftAlign={leftAlign}
+                $isBig={isBigLogo}
+                $verticalDirections={verticalDirections}
+                $assetsCount={assets.length}
+                $mobileVerticalDirections={mobileVerticalDirections}
+                $leftAlign={leftAlign}
             >
                 {assets.map((asset, index) => (
                     <Icon
                         key={getAssetString(asset)}
-                        isBig={isBigLogo}
-                        isCircleLogo={isCircleLogos}
-                        assetOrderNumber={index + 1}
-                        assetsCount={assets.length}
-                        mobileVerticalDirections={mobileVerticalDirections}
-                        verticalDirections={verticalDirections}
+                        $isBig={isBigLogo}
+                        $isCircleLogo={isCircleLogos}
+                        $assetOrderNumber={index + 1}
+                        $assetsCount={assets.length}
+                        $mobileVerticalDirections={mobileVerticalDirections}
+                        $verticalDirections={verticalDirections}
                     >
                         <AssetLogo asset={asset} isBig={isBigLogo} isCircle={isCircleLogos} />
                     </Icon>
                 ))}
             </Icons>
             <AssetsDetails
-                verticalDirections={verticalDirections}
-                mobileVerticalDirections={mobileVerticalDirections}
-                leftAlign={leftAlign}
+                $verticalDirections={verticalDirections}
+                $mobileVerticalDirections={mobileVerticalDirections}
+                $leftAlign={leftAlign}
             >
                 <AssetsCodes
-                    mobileVerticalDirections={mobileVerticalDirections}
-                    bigCodes={bigCodes}
+                    $mobileVerticalDirections={mobileVerticalDirections}
+                    $bigCodes={bigCodes}
                 >
                     <span>
                         {assets.map((asset, index) => (
@@ -330,13 +336,13 @@ const Market = ({
                     {!bottomLabels && labels}
 
                     {!withoutLink && (
-                        <LinkCustom onClick={(e) => viewOnStellarX(e, assets)}>
+                        <LinkCustom onClick={e => viewOnStellarX(e, assets)}>
                             <External />
                         </LinkCustom>
                     )}
                     {withMarketLink && (
                         <Link
-                            onClick={(e) => {
+                            onClick={e => {
                                 e.stopPropagation();
                             }}
                             to={`${MarketRoutes.main}/${getAssetString(assets[0])}/${getAssetString(
@@ -348,7 +354,7 @@ const Market = ({
                     )}
                     {poolAddress && (
                         <Link
-                            onClick={(e) => {
+                            onClick={e => {
                                 e.stopPropagation();
                             }}
                             to={`${AmmRoutes.analytics}${poolAddress}/`}
@@ -358,7 +364,7 @@ const Market = ({
                     )}
                 </AssetsCodes>
                 {!withoutDomains && (
-                    <AssetsDomains mobileVerticalDirections={mobileVerticalDirections}>
+                    <AssetsDomains $mobileVerticalDirections={mobileVerticalDirections}>
                         {assets.map((asset, index) => {
                             const [name, domain] = getAssetDetails(asset);
                             return (
@@ -368,7 +374,7 @@ const Market = ({
                                     {asset.isNative() ? (
                                         domain
                                     ) : (
-                                        <Domain onClick={(e) => onDomainClick(e, asset)}>
+                                        <Domain onClick={e => onDomainClick(e, asset)}>
                                             {domain}
                                         </Domain>
                                     )}

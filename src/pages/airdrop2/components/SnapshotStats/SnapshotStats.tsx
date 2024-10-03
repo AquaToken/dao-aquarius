@@ -1,12 +1,16 @@
 import * as React from 'react';
-import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import { respondDown } from '../../../../common/mixins';
 import { useEffect, useState } from 'react';
+import styled from 'styled-components';
+
+import { formatBalance } from 'helpers/format-number';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import ExternalLink from 'basics/ExternalLink';
+import PageLoader from 'basics/loaders/PageLoader';
+
 import { getAirdropStats } from '../../api/api';
-import PageLoader from '../../../../common/basics/PageLoader';
-import { formatBalance } from '../../../../common/helpers/helpers';
-import ExternalLink from '../../../../common/basics/ExternalLink';
 
 const Container = styled.section`
     position: relative;
@@ -119,7 +123,7 @@ const SnapshotStats = () => {
     const [stats, setStats] = useState(null);
 
     useEffect(() => {
-        getAirdropStats().then((res) => {
+        getAirdropStats().then(res => {
             setStats(res);
         });
     }, []);

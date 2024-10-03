@@ -1,25 +1,31 @@
 import * as React from 'react';
 import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import Sidebar from '../Sidebar/Sidebar';
-import ArrowLeft from '../../../../../common/assets/img/icon-arrow-left.svg';
-import ArrowDown from '../../../../../common/assets/img/icon-arrow-down.svg';
-import ExternalIcon from '../../../../../common/assets/img/icon-external-link.svg';
-import IconEdit from '../../../../../common/assets/img/icon-edit.svg';
-import AccountViewer from '../../../../../common/basics/AccountViewer';
-import { commonMaxWidth, flexAllCenter, respondDown } from '../../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import CurrentResults from '../CurrentResults/CurrentResults';
-import Votes from '../Votes/Votes';
-import { getDateString } from '../../../../../common/helpers/helpers';
+
+import { getDateString } from 'helpers/date';
+
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { useIsOnViewport, useIsOverScrolled } from 'hooks/useIsOnViewport';
+import { commonMaxWidth, flexAllCenter, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import ArrowDown from 'assets/icon-arrow-down.svg';
+import ArrowLeft from 'assets/icon-arrow-left.svg';
+import IconEdit from 'assets/icon-edit.svg';
+import ExternalIcon from 'assets/icon-external-link.svg';
+
+import CircleButton from 'basics/buttons/CircleButton';
+import ExternalLink from 'basics/ExternalLink';
+import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
+
+import { GovernanceRoutes } from '../../../../../routes';
 import { Proposal } from '../../../api/types';
 import { statePage } from '../../../pages/GovernanceProposalCreationPage';
-import ExternalLink from '../../../../../common/basics/ExternalLink';
-import { useIsOnViewport, useIsOverScrolled } from '../../../../../common/hooks/useIsOnViewport';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
+import CurrentResults from '../CurrentResults/CurrentResults';
+import Sidebar from '../Sidebar/Sidebar';
 import Versions from '../Versions/Versions';
-import { GovernanceRoutes } from '../../../../../routes';
-import CircleButton from '../../../../../common/basics/CircleButton';
+import Votes from '../Votes/Votes';
 
 const ProposalQuestion = styled.div`
     width: 100%;
@@ -216,12 +222,12 @@ const TabNavContent = styled.div`
     width: 100%;
 `;
 
-const TabNavItem = styled.div<{ active?: boolean }>`
+const TabNavItem = styled.div<{ $active?: boolean }>`
     padding: 1.7rem 0 1.3rem;
-    color: ${({ active }) => (active ? COLORS.purple : COLORS.grayText)};
-    font-weight: ${({ active }) => (active ? 700 : 400)};
-    border-bottom: ${({ active }) =>
-        active ? `0.1rem solid ${COLORS.purple}` : `0.1rem solid ${COLORS.transparent}`};
+    color: ${({ $active }) => ($active ? COLORS.purple : COLORS.grayText)};
+    font-weight: ${({ $active }) => ($active ? 700 : 400)};
+    border-bottom: ${({ $active }) =>
+        $active ? `0.1rem solid ${COLORS.purple}` : `0.1rem solid ${COLORS.transparent}`};
     cursor: pointer;
 
     &:hover {
@@ -253,7 +259,7 @@ const DiscordChannelOwner = styled.div`
     }
 `;
 
-const scrollToRef = (ref) => {
+const scrollToRef = ref => {
     ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
 
@@ -279,7 +285,7 @@ const ProposalScreen = ({
     } = proposal;
 
     const currentVersionProposal = version
-        ? proposal.history_proposal.find((history) => history.version === Number(version))
+        ? proposal.history_proposal.find(history => history.version === Number(version))
         : null;
 
     const startDateView = getDateString(new Date(startDate).getTime(), { withTime: true });
@@ -304,10 +310,10 @@ const ProposalScreen = ({
 
     const { isLogged, account } = useAuthStore();
 
-    const discordName = Boolean(id) ? `Proposal #${id}` : '';
+    const discordName = id ? `Proposal #${id}` : '';
     const discordUrl =
         discordChannelUrl ||
-        (Boolean(id)
+        (id
             ? 'https://discord.com/channels/862710317825392660/1046931670458187836'
             : 'https://discord.gg/sgzFscHp4C');
 
@@ -355,26 +361,26 @@ const ProposalScreen = ({
                 <TabNav>
                     <TabNavContent>
                         <TabNavItem
-                            active={!isProposalOverScrolled}
+                            $active={!isProposalOverScrolled}
                             onClick={() => scrollToRef(proposalRef)}
                         >
                             Proposal
                         </TabNavItem>
                         <TabNavItem
-                            active={isProposalOverScrolled && !isDiscussionOverScrolled}
+                            $active={isProposalOverScrolled && !isDiscussionOverScrolled}
                             onClick={() => scrollToRef(discussionRef)}
                         >
                             Discussion
                         </TabNavItem>
                         <TabNavItem
-                            active={isDiscussionOverScrolled && !isDetailsOverScrolled}
+                            $active={isDiscussionOverScrolled && !isDetailsOverScrolled}
                             onClick={() => scrollToRef(detailsRef)}
                         >
                             Details
                         </TabNavItem>
                         {(status === 'VOTING' || status === 'VOTED') && (
                             <TabNavItem
-                                active={isDetailsOverScrolled}
+                                $active={isDetailsOverScrolled}
                                 onClick={() => scrollToRef(resultsRef)}
                             >
                                 Results
@@ -382,7 +388,7 @@ const ProposalScreen = ({
                         )}
                         {status === 'DISCUSSION' && Boolean(proposal.history_proposal.length) && (
                             <TabNavItem
-                                active={isDetailsOverScrolled}
+                                $active={isDetailsOverScrolled}
                                 onClick={() => scrollToRef(resultsRef)}
                             >
                                 Versions
@@ -407,7 +413,7 @@ const ProposalScreen = ({
                     <Title>Discussion</Title>
                     <DetailsDescription>
                         Participate in the discussion of this proposal on Discord
-                        {Boolean(discordName) ? ` (${discordName}).` : '.'}
+                        {discordName ? ` (${discordName}).` : '.'}
                         {Boolean(discordUsername) && (
                             <DiscordChannelOwner>
                                 <div>Discussion owner:</div>
@@ -442,7 +448,7 @@ const ProposalScreen = ({
                                     <DetailsTitle>Proposed by:</DetailsTitle>
                                     <DetailsDescription>
                                         <AccountBlock>
-                                            <AccountViewer pubKey={proposedBy} />
+                                            <PublicKeyWithIcon pubKey={proposedBy} />
                                             <ExternalButton
                                                 onClick={() => viewOnStellarExpert(proposedBy)}
                                             >
@@ -468,10 +474,10 @@ const ProposalScreen = ({
                                 </Column>
                                 <Column>
                                     <DetailsTitle>
-                                        {Boolean(version) ? 'Deprecated version:' : 'Latest edit:'}
+                                        {version ? 'Deprecated version:' : 'Latest edit:'}
                                     </DetailsTitle>
                                     <DetailsDescription>
-                                        {Boolean(version)
+                                        {version
                                             ? `v${
                                                   currentVersionProposal.version
                                               }.0 on ${getDateString(
@@ -492,12 +498,10 @@ const ProposalScreen = ({
                                 </Column>
                                 <Column>
                                     <DetailsTitle>
-                                        {Boolean(version)
-                                            ? 'Latest version:'
-                                            : 'Discussion lifetime:'}
+                                        {version ? 'Latest version:' : 'Discussion lifetime:'}
                                     </DetailsTitle>
                                     <DetailsDescription>
-                                        {Boolean(version)
+                                        {version
                                             ? `v${proposal.version}.0 on ${getDateString(
                                                   new Date(proposal.last_updated_at).getTime(),
                                                   {

@@ -1,14 +1,21 @@
 import * as React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import Market from '../../vote/components/common/Market';
-import { StellarService } from '../../../common/services/globalServices';
-import { getSdexRewards } from '../api/api';
-import useAuthStore from '../../../store/authStore/useAuthStore';
-import PageLoader from '../../../common/basics/PageLoader';
-import { Empty } from '../YourVotes/YourVotes';
 import { Link } from 'react-router-dom';
+
+import { formatBalance } from 'helpers/format-number';
+
+import useAssetsStore from 'store/assetsStore/useAssetsStore';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { StellarService } from 'services/globalServices';
+import { COLORS } from 'web/styles';
+
+import DotsLoader from 'basics/loaders/DotsLoader';
+import PageLoader from 'basics/loaders/PageLoader';
+import Table, { CellAlign } from 'basics/Table';
+
 import { MainRoutes } from '../../../routes';
-import { formatBalance } from '../../../common/helpers/helpers';
+import Market from '../../vote/components/common/Market';
 import {
     AquaBalance,
     AquaLogo,
@@ -23,11 +30,9 @@ import {
     Title,
     TOOLTIP_TEXT,
 } from '../AmmRewards/AmmRewards';
-import useAssetsStore from '../../../store/assetsStore/useAssetsStore';
-import DotsLoader from '../../../common/basics/DotsLoader';
+import { getSdexRewards } from '../api/api';
 import BoostBanner from '../BoostBanner/BoostBanner';
-import Table, { CellAlign } from '../../../common/basics/Table';
-import { COLORS } from '../../../common/styles';
+import { Empty } from '../YourVotes/YourVotes';
 
 enum SortField {
     market = 'market',
@@ -50,7 +55,11 @@ const getAssetString = (asset): string => {
     return assetType === 'native' ? 'native' : `${assetCode}:${assetIssuer}`;
 };
 
-const SdexRewards = ({ aquaUsdPrice }) => {
+interface SdexRewardsProps {
+    aquaUsdPrice: number;
+}
+
+const SdexRewards = ({ aquaUsdPrice }: SdexRewardsProps): React.ReactNode => {
     const { account } = useAuthStore();
 
     const [sdexRewards, setSdexRewards] = useState(null);
@@ -61,13 +70,13 @@ const SdexRewards = ({ aquaUsdPrice }) => {
     const { processNewAssets } = useAssetsStore();
 
     useEffect(() => {
-        StellarService.getAccountOffers(account.accountId()).then((res) => {
+        StellarService.getAccountOffers(account.accountId()).then(res => {
             setOffers(res);
         });
     }, []);
 
     useEffect(() => {
-        getSdexRewards(account.accountId()).then((res) => {
+        getSdexRewards(account.accountId()).then(res => {
             setSdexRewards(res);
 
             const assets = res.reduce((acc, { market_key: pair }) => {
@@ -141,9 +150,9 @@ const SdexRewards = ({ aquaUsdPrice }) => {
     }, [sdexRewards, sort, isSortReversed]);
 
     const changeSort = useCallback(
-        (sortField) => {
+        sortField => {
             if (sortField === sort) {
-                setIsSortReversed((prevState) => !prevState);
+                setIsSortReversed(prevState => !prevState);
                 return;
             }
             setSort(sortField);

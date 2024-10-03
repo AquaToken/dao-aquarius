@@ -1,12 +1,15 @@
 import * as React from 'react';
-import styled from 'styled-components';
-import { respondDown } from '../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import ArrowLeft from '../../../../common/assets/img/icon-arrow-left.svg';
-import ArrowRight from '../../../../common/assets/img/icon-arrow-right.svg';
-import IconTick from '../../../../common/assets/img/icon-tick-white.svg';
-import { completedStepsCount, steps } from './constants';
 import { useEffect, useRef, useState } from 'react';
+import styled from 'styled-components';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import ArrowLeft from 'assets/icon-arrow-left.svg';
+import ArrowRight from 'assets/icon-arrow-right.svg';
+import IconTick from 'assets/icon-tick-white.svg';
+
+import { completedStepsCount, steps } from './constants';
 
 const Container = styled.section`
     padding-top: 16rem;
@@ -151,10 +154,10 @@ const SlideDate = styled.div`
     margin-bottom: 3.2rem;
 `;
 
-const SlideProgress = styled.div<{ active?: boolean }>`
+const SlideProgress = styled.div<{ $active?: boolean }>`
     width: 3.2rem;
     height: 3.2rem;
-    background: ${({ active }) => (active ? COLORS.tooltip : COLORS.white)};
+    background: ${({ $active }) => ($active ? COLORS.tooltip : COLORS.white)};
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -193,7 +196,7 @@ const Roadmap = () => {
     const isMobile = useRef(null);
 
     const initSlider = () => {
-        isMobile.current = window.innerWidth < 992;
+        isMobile.current = +window.innerWidth < 992;
 
         const slidesCount = steps.length;
 
@@ -229,7 +232,7 @@ const Roadmap = () => {
         if (activeSlide + 1 > (isMobile.current ? steps.length : steps.length - 2)) {
             return;
         }
-        setActiveSlide((prevState) => prevState + 1);
+        setActiveSlide(prevState => prevState + 1);
     };
 
     const previousSlide = () => {
@@ -237,7 +240,7 @@ const Roadmap = () => {
             return;
         }
 
-        setActiveSlide((prevState) => prevState - 1);
+        setActiveSlide(prevState => prevState - 1);
     };
 
     return (
@@ -265,7 +268,7 @@ const Roadmap = () => {
                             {steps.map(({ date, title, text }, index) => (
                                 <Slide key={date}>
                                     <SlideDate>{date}</SlideDate>
-                                    <SlideProgress active={index + 1 <= completedStepsCount}>
+                                    <SlideProgress $active={index + 1 <= completedStepsCount}>
                                         <IconTick />
                                     </SlideProgress>
                                     <SlideTitle>{title}</SlideTitle>

@@ -1,9 +1,12 @@
 import * as React from 'react';
-import PageLoader from '../../../../../common/basics/PageLoader';
-import SwapIcon from '../../../../../common/assets/img/icon-arrows-circle.svg';
 import styled from 'styled-components';
-import { flexAllCenter, respondDown } from '../../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
+
+import { flexAllCenter, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import SwapIcon from 'assets/icon-arrows-circle.svg';
+
+import PageLoader from 'basics/loaders/PageLoader';
 
 const Container = styled.div`
     display: flex;
@@ -28,18 +31,21 @@ const RevertButton = styled.div`
     }
 `;
 
-const SwapFormDivider = ({ pending, onRevert }) => {
-    return (
-        <Container>
-            {pending ? (
-                <PageLoader />
-            ) : (
-                <RevertButton onClick={() => onRevert()}>
-                    <SwapIcon />
-                </RevertButton>
-            )}
-        </Container>
-    );
-};
+interface SwapFormDividerProps {
+    pending: boolean;
+    onRevert: () => void;
+}
+
+const SwapFormDivider = ({ pending, onRevert }: SwapFormDividerProps): React.ReactNode => (
+    <Container>
+        {pending ? (
+            <PageLoader />
+        ) : (
+            <RevertButton onClick={() => onRevert()}>
+                <SwapIcon />
+            </RevertButton>
+        )}
+    </Container>
+);
 
 export default SwapFormDivider;

@@ -1,29 +1,33 @@
-import * as React from 'react';
-import styled from 'styled-components';
-import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import { ModalProps, ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
-import { useEffect, useState } from 'react';
-import RangeInput from '../../../../common/basics/RangeInput';
-import Button from '../../../../common/basics/Button';
-import { formatBalance } from '../../../../common/helpers/helpers';
-import {
-    ModalService,
-    SorobanService,
-    ToastService,
-} from '../../../../common/services/globalServices';
-import SuccessModal from '../SuccessModal/SuccessModal';
-import useAuthStore from '../../../../store/authStore/useAuthStore';
-import PageLoader from '../../../../common/basics/PageLoader';
-import Market from '../../../vote/components/common/Market';
-import Input from '../../../../common/basics/Input';
-import DotsLoader from '../../../../common/basics/DotsLoader';
-import { getAssetString } from '../../../../store/assetsStore/actions';
-import { BuildSignAndSubmitStatuses } from '../../../../common/services/wallet-connect.service';
 import BigNumber from 'bignumber.js';
-import { PoolExtended } from '../../api/types';
-import { LoginTypes } from '../../../../store/authStore/types';
-import { openCurrentWalletIfExist } from '../../../../common/helpers/wallet-connect-helpers';
+import * as React from 'react';
+import { useEffect, useState } from 'react';
+import styled from 'styled-components';
+
+import { getAssetString } from 'helpers/assets';
+import { formatBalance } from 'helpers/format-number';
+import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
+
+import { LoginTypes } from 'store/authStore/types';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { PoolExtended } from 'types/amm';
+import { ModalProps } from 'types/modal';
+import { Int128Parts } from 'types/stellar';
+
+import { ModalService, SorobanService, ToastService } from 'services/globalServices';
+import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
+import { flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Button from 'basics/buttons/Button';
+import Input from 'basics/inputs/Input';
+import RangeInput from 'basics/inputs/RangeInput';
+import DotsLoader from 'basics/loaders/DotsLoader';
+import PageLoader from 'basics/loaders/PageLoader';
+import { ModalTitle } from 'basics/ModalAtoms';
+
+import Market from '../../../vote/components/common/Market';
+import SuccessModal from '../SuccessModal/SuccessModal';
 
 const Container = styled.div`
     width: 52.3rem;
@@ -73,7 +77,7 @@ const DescriptionRow = styled.div`
     }
 `;
 
-const WithdrawFromPool = ({ params }: ModalProps<{ pool: PoolExtended }>) => {
+const WithdrawFromPool = ({ params, close }: ModalProps<{ pool: PoolExtended }>) => {
     const { pool } = params;
     const [accountShare, setAccountShare] = useState(null);
     const [percent, setPercent] = useState('100');
@@ -84,13 +88,13 @@ const WithdrawFromPool = ({ params }: ModalProps<{ pool: PoolExtended }>) => {
     const { account } = useAuthStore();
 
     useEffect(() => {
-        SorobanService.getTotalShares(pool.address).then((res) => {
+        SorobanService.getTotalShares(pool.address).then(res => {
             setTotalShares(res);
         });
     }, []);
 
     useEffect(() => {
-        SorobanService.getPoolReserves(pool.assets, pool.address).then((res) => {
+        SorobanService.getPoolReserves(pool.assets, pool.address).then(res => {
             setReserves(res);
         });
     }, []);
@@ -100,14 +104,12 @@ const WithdrawFromPool = ({ params }: ModalProps<{ pool: PoolExtended }>) => {
             setAccountShare(null);
             return;
         }
-        SorobanService.getTokenBalance(pool.share_token_address, account.accountId()).then(
-            (res) => {
-                setAccountShare(res);
-            },
-        );
+        SorobanService.getTokenBalance(pool.share_token_address, account.accountId()).then(res => {
+            setAccountShare(res);
+        });
     }, [account]);
 
-    const onInputChange = (value) => {
+    const onInputChange = (value: string) => {
         if (Number.isNaN(Number(value)) || Number(value) > 100) {
             return;
         }
@@ -122,9 +124,7 @@ const WithdrawFromPool = ({ params }: ModalProps<{ pool: PoolExtended }>) => {
     };
 
     const withdraw = () => {
-        const noTrustAssets = pool.assets.filter(
-            (asset) => account.getAssetBalance(asset) === null,
-        );
+        const noTrustAssets = pool.assets.filter(asset => account.getAssetBalance(asset) === null);
 
         if (noTrustAssets.length) {
             ToastService.showErrorToast(
@@ -147,33 +147,39 @@ const WithdrawFromPool = ({ params }: ModalProps<{ pool: PoolExtended }>) => {
         let hash: string;
 
         SorobanService.getWithdrawTx(account?.accountId(), pool.index, amount, pool.assets)
-            .then((tx) => {
+            .then(tx => {
                 hash = tx.hash().toString('hex');
                 return account.signAndSubmitTx(tx, true);
             })
-            .then((res) => {
-                if (!res) {
-                    return;
-                }
+            .then(
+                (res: {
+                    value?: () => { value: () => Int128Parts }[];
+                    status?: BuildSignAndSubmitStatuses;
+                }) => {
+                    setPending(false);
+                    if (!res) {
+                        return;
+                    }
 
-                if (
-                    (res as { status: BuildSignAndSubmitStatuses }).status ===
-                    BuildSignAndSubmitStatuses.pending
-                ) {
-                    ToastService.showSuccessToast('More signatures required to complete');
-                    return;
-                }
+                    close();
 
-                ModalService.openModal(SuccessModal, {
-                    assets: pool.assets,
-                    amounts: res.value().map((val) => SorobanService.i128ToInt(val.value())),
-                    title: 'Withdraw Successful',
-                    hash,
-                });
-                setPending(false);
-            })
-            .catch((e) => {
-                console.log(e);
+                    if (
+                        (res as { status: BuildSignAndSubmitStatuses }).status ===
+                        BuildSignAndSubmitStatuses.pending
+                    ) {
+                        ToastService.showSuccessToast('More signatures required to complete');
+                        return;
+                    }
+
+                    ModalService.openModal(SuccessModal, {
+                        assets: pool.assets,
+                        amounts: res.value().map(val => SorobanService.i128ToInt(val.value())),
+                        title: 'Withdraw Successful',
+                        hash,
+                    });
+                },
+            )
+            .catch(e => {
                 const errorMessage = e.message ?? e.toString() ?? 'Oops! Something went wrong';
                 ToastService.showErrorToast(
                     errorMessage === 'The amount is too small to deposit to this pool'
@@ -200,10 +206,10 @@ const WithdrawFromPool = ({ params }: ModalProps<{ pool: PoolExtended }>) => {
                         value={percent}
                         onChange={({ target }) => onInputChange(target.value)}
                     />
-                    <RangeInput onChange={setPercent} value={+percent} />
+                    <RangeInput onChange={value => setPercent(value.toString())} value={+percent} />
 
                     <Details>
-                        {pool.assets.map((asset) => (
+                        {pool.assets.map(asset => (
                             <DescriptionRow key={getAssetString(asset)}>
                                 <span>Will receive {asset.code}</span>
                                 <span>

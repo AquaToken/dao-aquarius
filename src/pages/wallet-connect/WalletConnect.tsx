@@ -1,10 +1,14 @@
 import * as React from 'react';
-import PageLoader from '../../common/basics/PageLoader';
 import { useEffect } from 'react';
-import { WalletConnectService } from '../../common/services/globalServices';
 import { Redirect, useLocation } from 'react-router-dom';
+
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { WalletConnectService } from 'services/globalServices';
+
+import PageLoader from 'basics/loaders/PageLoader';
+
 import { MainRoutes } from '../../routes';
-import useAuthStore from '../../store/authStore/useAuthStore';
 
 // URL example: https://aqua.network/wallet-connect?redirect=vote
 

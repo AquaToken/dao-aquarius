@@ -1,42 +1,43 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
-import { getPool } from '../api/api';
-import PageLoader from '../../../common/basics/PageLoader';
 import styled from 'styled-components';
-import Market from '../../vote/components/common/Market';
-import { Breakpoints, COLORS } from '../../../common/styles';
-import {
-    commonMaxWidth,
-    flexAllCenter,
-    flexRowSpaceBetween,
-    respondDown,
-} from '../../../common/mixins';
-import Sidebar from '../components/Sidebar/Sidebar';
-import {
-    SorobanService,
-    StellarService,
-    ToastService,
-} from '../../../common/services/globalServices';
-import useAuthStore from '../../../store/authStore/useAuthStore';
-import Button from '../../../common/basics/Button';
-import { formatBalance } from '../../../common/helpers/helpers';
-import { useUpdateIndex } from '../../../common/hooks/useUpdateIndex';
-import LiquidityChart from '../components/LiquidityChart/LiquidityChart';
-import VolumeChart from '../components/VolumeChart/VolumeChart';
-import ExternalLink from '../../../common/basics/ExternalLink';
-import { BuildSignAndSubmitStatuses } from '../../../common/services/wallet-connect.service';
-import { PoolExtended } from '../api/types';
-import CircleButton from '../../../common/basics/CircleButton';
-import ArrowLeft from '../../../common/assets/img/icon-arrow-left.svg';
+
+import { getPool } from 'api/amm';
+
+import { formatBalance } from 'helpers/format-number';
+import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
+
+import { LoginTypes } from 'store/authStore/types';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { PoolExtended } from 'types/amm';
+import { Int128Parts } from 'types/stellar';
+
+import { useUpdateIndex } from 'hooks/useUpdateIndex';
+import { SorobanService, StellarService, ToastService } from 'services/globalServices';
+import { AQUA_CODE, AQUA_ISSUER } from 'services/stellar.service';
+import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
+import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import ArrowLeft from 'assets/icon-arrow-left.svg';
+
+import Button from 'basics/buttons/Button';
+import CircleButton from 'basics/buttons/CircleButton';
+import ExternalLink from 'basics/ExternalLink';
+import PageLoader from 'basics/loaders/PageLoader';
+
+import MigrateToSorobanBanner from 'components/MigrateToSorobanBanner';
+import NoTrustline from 'components/NoTrustline';
+
 import { AmmRoutes } from '../../../routes';
-import PoolMembers from '../components/PoolMembers/PoolMembers';
+import Market from '../../vote/components/common/Market';
+import LiquidityChart from '../components/LiquidityChart/LiquidityChart';
 import PoolEvents from '../components/PoolEvents/PoolEvents';
-import { AQUA_CODE, AQUA_ISSUER } from '../../../common/services/stellar.service';
-import NoTrustline from '../../../common/components/NoTrustline/NoTrustline';
-import MigrateToSorobanBanner from '../../../common/components/MigrateToSorobanBanner/MigrateToSorobanBanner';
-import { LoginTypes } from '../../../store/authStore/types';
-import { openCurrentWalletIfExist } from '../../../common/helpers/wallet-connect-helpers';
+import PoolMembers from '../components/PoolMembers/PoolMembers';
+import Sidebar from '../components/Sidebar/Sidebar';
+import VolumeChart from '../components/VolumeChart/VolumeChart';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -62,9 +63,9 @@ const BackButton = styled(CircleButton)`
     `}
 `;
 
-const Section = styled.section<{ smallTopPadding?: boolean }>`
+const Section = styled.section<{ $smallTopPadding?: boolean }>`
     ${commonMaxWidth};
-    padding-top: ${({ smallTopPadding }) => (smallTopPadding ? '2rem' : '2.8rem')};
+    padding-top: ${({ $smallTopPadding }) => ($smallTopPadding ? '2rem' : '2.8rem')};
     padding-left: 4rem;
     padding-right: calc(10vw + 20rem);
     width: 100%;
@@ -174,13 +175,13 @@ const PoolPage = () => {
             setRewards(null);
             return;
         }
-        SorobanService.getPoolRewards(account.accountId(), pool.address).then((res) => {
+        SorobanService.getPoolRewards(account.accountId(), pool.address).then(res => {
             setRewards(res);
         });
     }, [account, pool, updateIndex]);
 
     useEffect(() => {
-        getPool(poolAddress).then((res) => {
+        getPool(poolAddress).then(res => {
             setPool(res);
         });
     }, [poolAddress, updateIndex]);
@@ -192,8 +193,8 @@ const PoolPage = () => {
         setClaimPending(true);
 
         SorobanService.getClaimRewardsTx(account.accountId(), pool.address)
-            .then((tx) => account.signAndSubmitTx(tx, true))
-            .then((res) => {
+            .then(tx => account.signAndSubmitTx(tx, true))
+            .then((res: { status?: BuildSignAndSubmitStatuses; value: () => Int128Parts }) => {
                 if (!res) {
                     return;
                 }
@@ -210,7 +211,7 @@ const PoolPage = () => {
                 ToastService.showSuccessToast(`Claimed ${formatBalance(+value)} AQUA`);
                 setClaimPending(false);
             })
-            .catch((err) => {
+            .catch(err => {
                 ToastService.showErrorToast(err.message ?? err.toString());
                 setClaimPending(false);
             });

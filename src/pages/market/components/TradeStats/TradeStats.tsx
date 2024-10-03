@@ -1,14 +1,20 @@
 import * as React from 'react';
-import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
-import ToggleGroup from '../../../../common/basics/ToggleGroup';
 import { useState } from 'react';
-import LightWeightChart, { PeriodOptions } from './LightWeightChart/LightWeightChart';
+import styled from 'styled-components';
+
+import { getAssetString } from 'helpers/assets';
+
+import { Asset } from 'types/stellar';
+
+import { flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import ExternalLink from 'basics/ExternalLink';
+import Select from 'basics/inputs/Select';
+import ToggleGroup from 'basics/inputs/ToggleGroup';
+
 import DailyStats from './DailyStats/DailyStats';
-import ExternalLink from '../../../../common/basics/ExternalLink';
-import Select from '../../../../common/basics/Select';
-import { getAssetString } from '../../../../common/helpers/helpers';
+import LightWeightChart, { PeriodOptions } from './LightWeightChart/LightWeightChart';
 
 const Container = styled.div`
     display: flex;
@@ -69,7 +75,12 @@ const OPTIONS = [
     { label: '1w', value: PeriodOptions.week },
 ];
 
-const TradeStats = ({ base, counter }) => {
+interface TradeStatsProps {
+    base: Asset;
+    counter: Asset;
+}
+
+const TradeStats = ({ base, counter }: TradeStatsProps): React.ReactNode => {
     const [period, setPeriod] = useState(PeriodOptions.hour);
 
     return (

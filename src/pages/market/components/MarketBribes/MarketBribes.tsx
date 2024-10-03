@@ -1,10 +1,18 @@
 import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../common/styles';
+
+import { Asset } from 'types/stellar';
+
+import { flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import ToggleGroup from 'basics/inputs/ToggleGroup';
+
+import { Bribe } from 'pages/bribes/api/types';
+import { MarketVotesExtra } from 'pages/vote/api/types';
+
 import MarketCurrentBribes from './MarketCurrentBribes/MarketCurrentBribes';
-import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
-import ToggleGroup from '../../../../common/basics/ToggleGroup';
 import MarketUpcomingBribes from './MarketUpcomingBribes/MarketUpcomingBribes';
 
 const Container = styled.div`
@@ -46,7 +54,15 @@ const OPTIONS = [
     { label: 'Upcoming', value: BribeBlockStates.upcoming },
 ];
 
-const MarketBribes = ({ base, counter, bribes, extra, marketKey }) => {
+interface MarketBribesProps {
+    base: Asset;
+    counter: Asset;
+    bribes: Bribe[];
+    extra: MarketVotesExtra;
+    marketKey: string;
+}
+
+const MarketBribes = ({ base, counter, bribes, extra, marketKey }: MarketBribesProps) => {
     const [blockState, setBlockState] = useState(BribeBlockStates.current);
     return (
         <Container>

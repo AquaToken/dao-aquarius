@@ -1,25 +1,32 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import {
-    ModalService,
-    StellarService,
-    ToastService,
-} from '../../../../../common/services/globalServices';
-import { SELECTED_PAIRS_ALIAS } from '../MainPage';
-import { BuildSignAndSubmitStatuses } from '../../../../../common/services/wallet-connect.service';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
-import Select, { Option } from '../../../../../common/basics/Select';
-import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
-import { ModalDescription, ModalTitle } from '../../../../../common/modals/atoms/ModalAtoms';
-import { getDateString } from '../../../../../common/helpers/helpers';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
+
+import { getDateString } from 'helpers/date';
+import ErrorHandler from 'helpers/error-handler';
+import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
+
+import { LoginTypes } from 'store/authStore/types';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { ModalProps } from 'types/modal';
+import { Asset } from 'types/stellar';
+
+import { useIsMounted } from 'hooks/useIsMounted';
+import { ModalService, StellarService, ToastService } from 'services/globalServices';
+import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Button from 'basics/buttons/Button';
+import Select, { Option } from 'basics/inputs/Select';
+import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+
+import { PairStats } from 'pages/vote/api/types';
+
 import VotesAmountModal, { ContentRow, Label } from './VotesAmountModal';
-import Button from '../../../../../common/basics/Button';
-import { respondDown } from '../../../../../common/mixins';
-import { LoginTypes } from '../../../../../store/authStore/types';
-import ErrorHandler from '../../../../../common/helpers/error-handler';
-import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
+
+import { SELECTED_PAIRS_ALIAS } from '../MainPage';
 
 const ClaimBack = styled.div`
     margin: 2rem 0 3.2rem;
@@ -69,7 +76,15 @@ const PeriodOptions: Option<number>[] = [
     { label: '6 Month', value: 6 * MONTH },
 ];
 
-const VotesDurationModal = ({ params, close }) => {
+interface VotesDurationModalParams {
+    pairsAmounts: { [key: string]: string };
+    updatePairs: () => void;
+    isDownVoteModal: boolean;
+    pairs: PairStats[];
+    asset: Asset;
+}
+
+const VotesDurationModal = ({ params, close }: ModalProps<VotesDurationModalParams>) => {
     const [votePeriod, setVotePeriod] = useState(MONTH);
     const [pending, setPending] = useState(false);
     const { pairsAmounts, updatePairs, isDownVoteModal, pairs, asset } = params;

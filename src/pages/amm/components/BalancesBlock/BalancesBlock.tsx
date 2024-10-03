@@ -1,15 +1,22 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Container, Header, Section, Title } from '../../../profile/AmmRewards/AmmRewards';
-import PageLoader from '../../../../common/basics/PageLoader';
-import Asset from '../../../vote/components/AssetDropdown/Asset';
-import { formatBalance, getAssetString } from '../../../../common/helpers/helpers';
-import useAuthStore from '../../../../store/authStore/useAuthStore';
-import Table, { CellAlign } from '../../../../common/basics/Table';
-import { StellarService } from '../../../../common/services/globalServices';
 import styled from 'styled-components';
-import { respondDown } from '../../../../common/mixins';
-import { Breakpoints } from '../../../../common/styles';
+
+import { getAssetString } from 'helpers/assets';
+import { formatBalance } from 'helpers/format-number';
+
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { StellarService } from 'services/globalServices';
+import { respondDown } from 'web/mixins';
+import { Breakpoints } from 'web/styles';
+
+import PageLoader from 'basics/loaders/PageLoader';
+import Table, { CellAlign } from 'basics/Table';
+
+import { Container, Header, Section, Title } from 'pages/profile/AmmRewards/AmmRewards';
+
+import Asset from '../../../vote/components/AssetDropdown/Asset';
 
 const StyledContainer = styled(Container)`
     width: 70%;
@@ -29,7 +36,7 @@ const BalancesBlock = () => {
         if (!account) {
             return;
         }
-        account.getSortedBalances().then((res) => {
+        account.getSortedBalances().then(res => {
             setBalances(res);
         });
     }, [account]);

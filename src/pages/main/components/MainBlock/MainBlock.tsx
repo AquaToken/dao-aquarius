@@ -1,13 +1,17 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import Stars from '../../../../common/assets/img/main-stars.svg';
-import Background from '../../../../common/assets/img/main-screen-img.svg';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import { respondDown } from '../../../../common/mixins';
-import Button from '../../../../common/basics/Button';
-import { ModalService } from '../../../../common/services/globalServices';
-import GetAquaModal from '../../../../common/modals/GetAquaModal/GetAquaModal';
-import SocialLinks from '../../../../common/components/SocialLinks/SocialLinks';
+
+import { ModalService } from 'services/globalServices';
+import { respondDown } from 'web/mixins';
+import GetAquaModal from 'web/modals/GetAquaModal';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Background from 'assets/main-screen-img.svg';
+import Stars from 'assets/main-stars.svg';
+
+import Button from 'basics/buttons/Button';
+
+import SocialLinks from 'components/SocialLinks';
 
 const Main = styled.section`
     display: flex;
@@ -128,24 +132,22 @@ const StyledButton = styled(Button)`
     `}
 `;
 
-const MainBlock = () => {
-    return (
-        <Main>
-            <SocialLinks />
-            <StarsImage />
-            <StyledBackground />
-            <TextBlock>
-                <Title>New Horizons</Title>
-                <Description>
-                    Aquarius adds liquidity management layer to Stellar and powers new generation of
-                    DeFi projects.
-                </Description>
-                <StyledButton onClick={() => ModalService.openModal(GetAquaModal, {})} isBig>
-                    Get AQUA tokens
-                </StyledButton>
-            </TextBlock>
-        </Main>
-    );
-};
+const MainBlock = () => (
+    <Main>
+        <SocialLinks />
+        <StarsImage />
+        <StyledBackground />
+        <TextBlock>
+            <Title>New Horizons</Title>
+            <Description>
+                Aquarius adds liquidity management layer to Stellar and powers new generation of
+                DeFi projects.
+            </Description>
+            <StyledButton onClick={() => ModalService.openModal(GetAquaModal, {})} isBig>
+                Get AQUA tokens
+            </StyledButton>
+        </TextBlock>
+    </Main>
+);
 
 export default MainBlock;

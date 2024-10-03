@@ -1,6 +1,9 @@
+import * as WalletConnectTypes from '@walletconnect/types';
+
+import AccountService from 'services/account.service';
+
 import { AUTH_ACTIONS, AuthStore, LoginTypes } from './types';
-import { SignClientTypes } from '@walletconnect/types';
-import AccountService from '../../common/services/account.service';
+
 import { ActionSimpleResult } from '../types';
 
 export const initialState: AuthStore = {
@@ -30,7 +33,7 @@ export default function authStore(state = initialState, action: ActionSimpleResu
             const { account, loginType, metadata, topic } = action.payload as {
                 account: AccountService;
                 loginType: LoginTypes;
-                metadata?: SignClientTypes.Metadata;
+                metadata?: WalletConnectTypes.SignClientTypes.Metadata;
                 topic?: string;
             };
             if (topic && state.loginPendingTopic !== topic) {
@@ -113,7 +116,7 @@ export default function authStore(state = initialState, action: ActionSimpleResu
         }
         case AUTH_ACTIONS.ADD_AUTH_CALLBACK: {
             const { callback } = action.payload as {
-                callback: void;
+                callback: () => void;
             };
             return {
                 ...state,

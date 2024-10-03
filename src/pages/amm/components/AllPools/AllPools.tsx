@@ -1,24 +1,32 @@
 import * as React from 'react';
-import { StellarService } from '../../../../common/services/globalServices';
-import PageLoader from '../../../../common/basics/PageLoader';
-import Table, { CellAlign } from '../../../../common/basics/Table';
-import { FilterOptions, getPools, PoolsSortFields } from '../../api/api';
-import Tooltip, { TOOLTIP_POSITION } from '../../../../common/basics/Tooltip';
-import Info from '../../../../common/assets/img/icon-info.svg';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import Market from '../../../vote/components/common/Market';
-import { POOL_TYPE } from '../../../../common/services/soroban.service';
-import { formatBalance } from '../../../../common/helpers/helpers';
-import Pagination from '../../../../common/basics/Pagination';
-import { Empty } from '../../../profile/YourVotes/YourVotes';
-import { AmmRoutes } from '../../../../routes';
 import { useEffect, useState } from 'react';
-import { PoolProcessed } from '../../api/types';
-import styled from 'styled-components';
-import ToggleGroup from '../../../../common/basics/ToggleGroup';
-import { respondDown } from '../../../../common/mixins';
-import Select from '../../../../common/basics/Select';
 import { useHistory } from 'react-router-dom';
+import styled from 'styled-components';
+
+import { FilterOptions, getPools, PoolsSortFields } from 'api/amm';
+
+import { formatBalance } from 'helpers/format-number';
+
+import { PoolProcessed } from 'types/amm';
+
+import { StellarService } from 'services/globalServices';
+import { POOL_TYPE } from 'services/soroban.service';
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Info from 'assets/icon-info.svg';
+
+import Select from 'basics/inputs/Select';
+import ToggleGroup from 'basics/inputs/ToggleGroup';
+import PageLoader from 'basics/loaders/PageLoader';
+import Pagination from 'basics/Pagination';
+import Table, { CellAlign } from 'basics/Table';
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import { Empty } from 'pages/profile/YourVotes/YourVotes';
+
+import { AmmRoutes } from '../../../../routes';
+import Market from '../../../vote/components/common/Market';
 
 const ToggleGroupStyled = styled(ToggleGroup)`
     width: fit-content;
@@ -59,7 +67,12 @@ const OPTIONS = [
     { label: 'Stable', value: FilterOptions.stable },
     { label: 'Volatile', value: FilterOptions.constant },
 ];
-const AllPools = ({ search }) => {
+
+interface AllPoolsProps {
+    search: string;
+}
+
+const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
     const [filter, setFilter] = useState(FilterOptions.all);
     const [sort, setSort] = useState(PoolsSortFields.liquidityUp);
     const [pools, setPools] = useState<PoolProcessed[] | null>(null);
@@ -82,12 +95,12 @@ const AllPools = ({ search }) => {
         });
     }, [filter, page, search, sort]);
 
-    const changeSort = (newSort) => {
+    const changeSort = (newSort: PoolsSortFields) => {
         setSort(newSort);
         setPage(1);
     };
 
-    const goToPoolPage = (id) => {
+    const goToPoolPage = (id: string) => {
         history.push(`${AmmRoutes.analytics}${id}/`);
     };
     return !pools || !StellarService.priceLumenUsd ? (
@@ -216,7 +229,7 @@ const AllPools = ({ search }) => {
                                 align: CellAlign.Right,
                             },
                         ]}
-                        body={pools.map((pool) => ({
+                        body={pools.map(pool => ({
                             key: pool.address,
                             onRowClick: () => goToPoolPage(pool.address),
                             mobileBackground: COLORS.lightGray,

@@ -1,10 +1,16 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import Aqua from '../../../../common/assets/img/aqua-logo-small.svg';
-import { formatBalance } from '../../../../common/helpers/helpers';
-import DotsLoader from '../../../../common/basics/DotsLoader';
-import { respondDown } from '../../../../common/mixins';
+
+import { formatBalance } from 'helpers/format-number';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Aqua from 'assets/aqua-logo-small.svg';
+
+import DotsLoader from 'basics/loaders/DotsLoader';
+
+import { TotalRewards as TotalRewardsType } from 'pages/vote/api/types';
 
 const Container = styled.section`
     position: relative;
@@ -94,29 +100,31 @@ const Description = styled.div`
     `}
 `;
 
-const TotalRewards = ({ totalRewards }) => {
-    return (
-        <Container>
-            <PreTitle>Total daily reward:</PreTitle>
+interface TotalRewardsProps {
+    totalRewards: TotalRewardsType;
+}
 
-            <Title>
-                <AquaLogo />
-                {totalRewards ? (
-                    `${formatBalance(
-                        totalRewards.total_daily_sdex_reward + totalRewards.total_daily_amm_reward,
-                    )} AQUA`
-                ) : (
-                    <DotsLoader />
-                )}
-            </Title>
-            <Description>
-                The core use case of Aquarius is to increase liquidity on Stellar. We plan to
-                achieve this by incentivizing SDEX market makers & AMM liquidity providers. This
-                page tracks AQUA rewards on different markets and how they are distributed between
-                SDEX markets and AMM pools.
-            </Description>
-        </Container>
-    );
-};
+const TotalRewards = ({ totalRewards }: TotalRewardsProps): React.ReactNode => (
+    <Container>
+        <PreTitle>Total daily reward:</PreTitle>
+
+        <Title>
+            <AquaLogo />
+            {totalRewards ? (
+                `${formatBalance(
+                    totalRewards.total_daily_sdex_reward + totalRewards.total_daily_amm_reward,
+                )} AQUA`
+            ) : (
+                <DotsLoader />
+            )}
+        </Title>
+        <Description>
+            The core use case of Aquarius is to increase liquidity on Stellar. We plan to achieve
+            this by incentivizing SDEX market makers & AMM liquidity providers. This page tracks
+            AQUA rewards on different markets and how they are distributed between SDEX markets and
+            AMM pools.
+        </Description>
+    </Container>
+);
 
 export default TotalRewards;

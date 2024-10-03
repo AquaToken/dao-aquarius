@@ -1,29 +1,31 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { getTotalStats, getVolume24h } from '../api/api';
-import styled from 'styled-components';
-import {
-    commonMaxWidth,
-    flexAllCenter,
-    flexRowSpaceBetween,
-    respondDown,
-} from '../../../common/mixins';
-import Button from '../../../common/basics/Button';
-import Plus from '../../../common/assets/img/icon-plus.svg';
-import Search from '../../../common/assets/img/icon-search.svg';
-import { Breakpoints, COLORS } from '../../../common/styles';
-import Input from '../../../common/basics/Input';
-import { AmmRoutes } from '../../../routes';
 import { useHistory } from 'react-router-dom';
-import { formatBalance } from '../../../common/helpers/helpers';
-import useAuthStore from '../../../store/authStore/useAuthStore';
-import { ModalService } from '../../../common/services/globalServices';
-import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
-import { useDebounce } from '../../../common/hooks/useDebounce';
-import VolumeChart from '../components/VolumeChart/VolumeChart';
-import LiquidityChart from '../components/LiquidityChart/LiquidityChart';
+import styled from 'styled-components';
+
+import { getTotalStats, getVolume24h } from 'api/amm';
+
+import { formatBalance } from 'helpers/format-number';
+
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { useDebounce } from 'hooks/useDebounce';
+import { ModalService } from 'services/globalServices';
+import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
+import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Plus from 'assets/icon-plus.svg';
+import Search from 'assets/icon-search.svg';
+
+import Button from 'basics/buttons/Button';
+import Input from 'basics/inputs/Input';
+
+import { AmmRoutes } from '../../../routes';
 import AllPools from '../components/AllPools/AllPools';
+import LiquidityChart from '../components/LiquidityChart/LiquidityChart';
 import MyLiquidity from '../components/MyLiquidity/MyLiquidity';
+import VolumeChart from '../components/VolumeChart/VolumeChart';
 
 const Container = styled.main`
     height: 100%;
@@ -105,13 +107,13 @@ const ListTitles = styled.h3`
     `}
 `;
 
-const ListTab = styled.span<{ isActive: boolean }>`
+const ListTab = styled.span<{ $isActive: boolean }>`
     cursor: pointer;
-    color: ${({ isActive }) => (isActive ? COLORS.titleText : `${COLORS.titleText}4D`)};
+    color: ${({ $isActive }) => ($isActive ? COLORS.titleText : `${COLORS.titleText}4D`)};
     white-space: nowrap;
 
     &:hover {
-        color: ${({ isActive }) => (isActive ? COLORS.titleText : COLORS.placeholder)};
+        color: ${({ $isActive }) => ($isActive ? COLORS.titleText : COLORS.placeholder)};
     }
 
     &:first-child {
@@ -181,13 +183,13 @@ const Analytics = () => {
     const { isLogged } = useAuthStore();
 
     useEffect(() => {
-        getTotalStats().then((res) => {
+        getTotalStats().then(res => {
             setTotalStats(res);
         });
     }, []);
 
     useEffect(() => {
-        getVolume24h().then((res) => {
+        getVolume24h().then(res => {
             setVolume24h(res);
         });
     }, []);
@@ -261,13 +263,13 @@ const Analytics = () => {
                         <ListHeader>
                             <ListTitles>
                                 <ListTab
-                                    isActive={activeTab === Tabs.top}
+                                    $isActive={activeTab === Tabs.top}
                                     onClick={() => setTab(Tabs.top)}
                                 >
                                     All pools
                                 </ListTab>
                                 <ListTab
-                                    isActive={activeTab === Tabs.my}
+                                    $isActive={activeTab === Tabs.my}
                                     onClick={() => setTab(Tabs.my)}
                                 >
                                     My liquidity
@@ -290,7 +292,7 @@ const Analytics = () => {
                         </ListHeader>
                         {activeTab === Tabs.top && <AllPools search={debouncedSearch} />}
                         {activeTab === Tabs.my && (
-                            <MyLiquidity onlyList setTotal={(val) => setMyTotal(val)} />
+                            <MyLiquidity onlyList setTotal={val => setMyTotal(val)} />
                         )}
                     </ListBlock>
                 </Section>

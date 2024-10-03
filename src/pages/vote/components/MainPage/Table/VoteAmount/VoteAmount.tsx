@@ -1,22 +1,27 @@
 import * as React from 'react';
-import Tooltip, { TOOLTIP_POSITION } from '../../../../../../common/basics/Tooltip';
-import { formatBalance, roundToPrecision } from '../../../../../../common/helpers/helpers';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../../../common/styles';
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../../../common/mixins';
-import { PairStats, TotalStats } from '../../../../api/types';
-import InfoIcon from '../../../../../../common/assets/img/icon-info.svg';
-import IconUp from '../../../../../../common/assets/img/icon-up-percent.svg';
-import IconDown from '../../../../../../common/assets/img/icon-down-percent.svg';
-import Ice from '../../../../../../common/assets/img/ice-logo.svg';
-import Aqua from '../../../../../../common/assets/img/aqua-logo-small.svg';
+
+import { formatBalance, roundToPrecision } from 'helpers/format-number';
+
 import {
     AQUA_CODE,
     AQUA_ISSUER,
     DOWN_ICE_CODE,
     ICE_ISSUER,
     UP_ICE_CODE,
-} from '../../../../../../common/services/stellar.service';
+} from 'services/stellar.service';
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Aqua from 'assets/aqua-logo-small.svg';
+import Ice from 'assets/ice-logo.svg';
+import IconDown from 'assets/icon-down-percent.svg';
+import InfoIcon from 'assets/icon-info.svg';
+import IconUp from 'assets/icon-up-percent.svg';
+
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import { PairStats, TotalStats } from 'pages/vote/api/types';
 
 const TooltipStyled = styled(Tooltip)`
     label {
@@ -63,8 +68,8 @@ const Amount = styled.div`
     `}
 `;
 
-const Percent = styled.div<{ isBoosted: boolean }>`
-    color: ${({ isBoosted }) => (isBoosted ? COLORS.green : COLORS.grayText)};
+const Percent = styled.div<{ $isBoosted: boolean }>`
+    color: ${({ $isBoosted }) => ($isBoosted ? COLORS.green : COLORS.grayText)};
     font-size: 1.4rem;
     line-height: 2rem;
     display: flex;
@@ -84,8 +89,8 @@ const Percents = styled.div`
     `}
 `;
 
-const PercentMobile = styled.span<{ isBoosted: boolean }>`
-    color: ${({ isBoosted }) => (isBoosted ? COLORS.green : COLORS.grayText)};
+const PercentMobile = styled.span<{ $isBoosted: boolean }>`
+    color: ${({ $isBoosted }) => ($isBoosted ? COLORS.green : COLORS.grayText)};
 
     font-size: 1.2rem;
     line-height: 1.4rem;
@@ -256,12 +261,12 @@ const VoteAmount = ({ pair, totalStats }: { pair: PairStats; totalStats: TotalSt
                 <AmountRow>
                     {pair.votes_value ? formatBalance(+pair.votes_value, true) : null}
                     <Percents>
-                        <PercentMobile isBoosted={boosted}>{percentBoostedValue}</PercentMobile>
+                        <PercentMobile $isBoosted={boosted}>{percentBoostedValue}</PercentMobile>
                     </Percents>
                     <Info />
                 </AmountRow>
 
-                <Percent isBoosted={boosted}>{percentBoostedValue}</Percent>
+                <Percent $isBoosted={boosted}>{percentBoostedValue}</Percent>
             </Amount>
             <InfoMobile />
         </TooltipStyled>

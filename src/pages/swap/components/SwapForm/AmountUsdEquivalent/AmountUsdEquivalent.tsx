@@ -1,14 +1,20 @@
+import { Asset } from '@stellar/stellar-sdk';
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import { getNativePrices } from '../../../../amm/api/api';
-import { formatBalance, getAssetString } from '../../../../../common/helpers/helpers';
-import { StellarService } from '../../../../../common/services/globalServices';
-import { Asset } from '@stellar/stellar-sdk';
-import Warning from '../../../../../common/assets/img/icon-warning.svg';
-import Tooltip, { TOOLTIP_POSITION } from '../../../../../common/basics/Tooltip';
-import { respondDown } from '../../../../../common/mixins';
+
+import { getNativePrices } from 'api/amm';
+
+import { getAssetString } from 'helpers/assets';
+import { formatBalance } from 'helpers/format-number';
+
+import { StellarService } from 'services/globalServices';
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Warning from 'assets/icon-warning.svg';
+
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 const Container = styled.div`
     display: flex;
@@ -22,7 +28,7 @@ const Container = styled.div`
     `}
 `;
 
-const Percent = styled.div<{ percent: number }>`
+const Percent = styled.div<{ $percent: number }>`
     display: flex;
     align-items: center;
     margin-left: 0.4rem;
@@ -30,12 +36,12 @@ const Percent = styled.div<{ percent: number }>`
     svg {
         margin-left: 0.4rem;
     }
-    color: ${({ percent }) => {
-        if (percent > 0) {
+    color: ${({ $percent }) => {
+        if ($percent > 0) {
             return COLORS.green;
         }
 
-        if (percent <= -10) {
+        if ($percent <= -10) {
             return COLORS.pinkRed;
         }
 
@@ -72,7 +78,7 @@ const AmountUsdEquivalent = ({ amount, asset, sourceAmount, sourceAsset }: Props
             return;
         }
 
-        getNativePrices(sourceAsset ? [asset, sourceAsset] : [asset]).then((res) => {
+        getNativePrices(sourceAsset ? [asset, sourceAsset] : [asset]).then(res => {
             setPrice(res.has(getAssetString(asset)) ? res.get(getAssetString(asset)) : null);
             if (sourceAsset) {
                 setPriceSource(
@@ -112,7 +118,7 @@ const AmountUsdEquivalent = ({ amount, asset, sourceAmount, sourceAsset }: Props
             </span>
 
             {percent ? (
-                <Percent percent={Number(percent)}>
+                <Percent $percent={Number(percent)}>
                     ({Number(percent) > 0 ? '+' : ''}
                     {percent}%)
                     {Number(percent) <= -10 ? (

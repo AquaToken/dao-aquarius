@@ -1,8 +1,10 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { COLORS } from '../../../../../common/styles';
-import ArrowRight from '../../../../../common/assets/img/icon-arrow-right.svg';
-import { flexAllCenter } from '../../../../../common/mixins';
+
+import { flexAllCenter } from 'web/mixins';
+import { COLORS } from 'web/styles';
+
+import ArrowRight from 'assets/icon-arrow-right.svg';
 
 const FloatingButtonBody = styled.button`
     position: sticky;
@@ -84,17 +86,15 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     children: React.ReactNode;
 }
 
-const FloatingButton = ({ children, ...props }: ButtonProps): JSX.Element => {
-    return (
-        <FloatingButtonBody {...props}>
-            <VotesCounter>{children}</VotesCounter>
-            <InfoBlock>
-                Chosen Pairs
-                <Description>Complete voting</Description>
-            </InfoBlock>
-            <ArrowRight />
-        </FloatingButtonBody>
-    );
-};
+const FloatingButton = ({ children, ...props }: ButtonProps): JSX.Element => (
+    <FloatingButtonBody {...props}>
+        <VotesCounter>{children}</VotesCounter>
+        <InfoBlock>
+            Chosen Pairs
+            <Description>Complete voting</Description>
+        </InfoBlock>
+        <ArrowRight />
+    </FloatingButtonBody>
+);
 
 export default FloatingButton;

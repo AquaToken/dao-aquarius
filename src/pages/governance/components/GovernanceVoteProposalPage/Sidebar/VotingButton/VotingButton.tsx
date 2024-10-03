@@ -1,6 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { COLORS } from '../../../../../../common/styles';
+
+import { COLORS } from 'web/styles';
 
 const ButtonBody = styled.button<{ isVoteFor?: boolean }>`
     display: flex;
@@ -41,12 +42,10 @@ interface VotingButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement
     isVoteFor?: boolean;
 }
 
-const VotingButton = ({ isVoteFor, children, ...props }: VotingButtonProps): JSX.Element => {
-    return (
-        <ButtonBody isVoteFor={isVoteFor} {...props}>
-            {children}
-        </ButtonBody>
-    );
-};
+const VotingButton = ({ isVoteFor, children, ...props }: VotingButtonProps): JSX.Element => (
+    <ButtonBody isVoteFor={isVoteFor} {...props}>
+        {children}
+    </ButtonBody>
+);
 
 export default VotingButton;

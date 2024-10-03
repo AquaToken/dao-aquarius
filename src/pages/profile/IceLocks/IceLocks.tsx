@@ -1,28 +1,36 @@
 import * as React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import styled from 'styled-components';
-import { ExternalLinkStyled, Header, Section, Title } from '../AmmRewards/AmmRewards';
-import PageLoader from '../../../common/basics/PageLoader';
-import { getDistributionForAccount } from '../../locker/api/api';
-import useAuthStore from '../../../store/authStore/useAuthStore';
-import { StellarService, ToastService } from '../../../common/services/globalServices';
-import { StellarEvents } from '../../../common/services/stellar.service';
-import { formatBalance, getDateString, roundToPrecision } from '../../../common/helpers/helpers';
-import ProgressLine from '../../../common/basics/ProgressLine';
-import Button from '../../../common/basics/Button';
-import { LoginTypes } from '../../../store/authStore/types';
-import { BuildSignAndSubmitStatuses } from '../../../common/services/wallet-connect.service';
-import ErrorHandler from '../../../common/helpers/error-handler';
-import { Empty } from '../YourVotes/YourVotes';
 import { Link } from 'react-router-dom';
+import styled from 'styled-components';
+
+import { getDistributionForAccount } from 'api/ice-locker';
+
+import { getDateString } from 'helpers/date';
+import ErrorHandler from 'helpers/error-handler';
+import { formatBalance, roundToPrecision } from 'helpers/format-number';
+import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
+
+import { LoginTypes } from 'store/authStore/types';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { StellarService, ToastService } from 'services/globalServices';
+import { StellarEvents } from 'services/stellar.service';
+import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
+import { flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Info from 'assets/icon-info.svg';
+
+import Button from 'basics/buttons/Button';
+import Checkbox from 'basics/inputs/Checkbox';
+import PageLoader from 'basics/loaders/PageLoader';
+import ProgressLine from 'basics/ProgressLine';
+import Table, { CellAlign } from 'basics/Table';
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
 import { MainRoutes } from '../../../routes';
-import { Breakpoints, COLORS } from '../../../common/styles';
-import { flexRowSpaceBetween, respondDown } from '../../../common/mixins';
-import Info from '../../../common/assets/img/icon-info.svg';
-import Tooltip, { TOOLTIP_POSITION } from '../../../common/basics/Tooltip';
-import Table, { CellAlign } from '../../../common/basics/Table';
-import Checkbox from '../../../common/basics/Checkbox';
-import { openCurrentWalletIfExist } from '../../../common/helpers/wallet-connect-helpers';
+import { ExternalLinkStyled, Header, Section, Title } from '../AmmRewards/AmmRewards';
+import { Empty } from '../YourVotes/YourVotes';
 
 const Container = styled.div`
     display: flex;
@@ -92,7 +100,11 @@ const SelectAll = styled(Checkbox)`
 
 const ALL_ID = 'all';
 
-const IceLocks = ({ ammAquaBalance }) => {
+interface IceLocksProps {
+    ammAquaBalance: number;
+}
+
+const IceLocks = ({ ammAquaBalance }: IceLocksProps): React.ReactNode => {
     const [locks, setLocks] = useState(null);
     const [selectedLocks, setSelectedLocks] = useState([]);
     const [distributions, setDistributions] = useState(null);
@@ -107,7 +119,7 @@ const IceLocks = ({ ammAquaBalance }) => {
     }, []);
 
     useEffect(() => {
-        StellarService.getAquaInLiquidityVotes(account.accountId()).then((res) => {
+        StellarService.getAquaInLiquidityVotes(account.accountId()).then(res => {
             setAquaInVotes(res);
         });
     }, []);
@@ -117,7 +129,7 @@ const IceLocks = ({ ammAquaBalance }) => {
             if (type === StellarEvents.claimableUpdate) {
                 setLocks(StellarService.getLocks(account.accountId()));
 
-                StellarService.getAquaInLiquidityVotes(account.accountId()).then((res) => {
+                StellarService.getAquaInLiquidityVotes(account.accountId()).then(res => {
                     setAquaInVotes(res);
                 });
             }
@@ -127,7 +139,7 @@ const IceLocks = ({ ammAquaBalance }) => {
     }, []);
 
     useEffect(() => {
-        getDistributionForAccount(account.accountId()).then((res) => {
+        getDistributionForAccount(account.accountId()).then(res => {
             setDistributions(res);
         });
     }, []);
@@ -153,32 +165,28 @@ const IceLocks = ({ ammAquaBalance }) => {
         );
     }, [locks]);
 
-    const total = useMemo(() => {
-        return locksSum + aquaBalance + aquaInOffers + ammAquaBalance + aquaInVotes;
-    }, [locksSum, aquaBalance, aquaInOffers, ammAquaBalance, aquaInVotes]);
+    const total = useMemo(
+        () => locksSum + aquaBalance + aquaInOffers + ammAquaBalance + aquaInVotes,
+        [locksSum, aquaBalance, aquaInOffers, ammAquaBalance, aquaInVotes],
+    );
 
-    const availablePercent = useMemo(() => {
-        return roundToPrecision((aquaBalance / total) * 100, 2);
-    }, [total]);
-    const inOffersPercent = useMemo(() => {
-        return roundToPrecision((aquaInOffers / total) * 100, 2);
-    }, [total]);
-    const inVotesPercent = useMemo(() => {
-        return roundToPrecision((aquaInVotes / total) * 100, 2);
-    }, [total]);
-    const ammPercent = useMemo(() => {
-        return roundToPrecision((ammAquaBalance / total) * 100, 2);
-    }, [total]);
+    const availablePercent = useMemo(
+        () => roundToPrecision((aquaBalance / total) * 100, 2),
+        [total],
+    );
+    const inOffersPercent = useMemo(
+        () => roundToPrecision((aquaInOffers / total) * 100, 2),
+        [total],
+    );
+    const inVotesPercent = useMemo(() => roundToPrecision((aquaInVotes / total) * 100, 2), [total]);
+    const ammPercent = useMemo(() => roundToPrecision((ammAquaBalance / total) * 100, 2), [total]);
 
-    const lockPercent = useMemo(() => {
-        return roundToPrecision((locksSum / total) * 100, 2);
-    }, [total]);
+    const lockPercent = useMemo(() => roundToPrecision((locksSum / total) * 100, 2), [total]);
 
     const getIceAmount = useCallback(
-        (balanceId) => {
-            return distributions.find((distribution) => distribution.balance_id === balanceId)
-                ?.distributed_amount;
-        },
+        balanceId =>
+            distributions.find(distribution => distribution.balance_id === balanceId)
+                ?.distributed_amount,
         [distributions, locks],
     );
 
@@ -224,9 +232,9 @@ const IceLocks = ({ ammAquaBalance }) => {
     };
 
     const selectLock = useCallback(
-        (id) => {
+        id => {
             if (selectedLocks.includes(id)) {
-                return setSelectedLocks(selectedLocks.filter((lockId) => lockId !== id));
+                return setSelectedLocks(selectedLocks.filter(lockId => lockId !== id));
             }
             setSelectedLocks([...selectedLocks, id]);
         },
@@ -259,7 +267,7 @@ const IceLocks = ({ ammAquaBalance }) => {
     }, [account, selectAll, selectedLocks, unlockedIds]);
 
     const getActionCell = useCallback(
-        (lock) => {
+        lock => {
             if (account.authType === LoginTypes.ledger) {
                 return {
                     children: !unlockedIds.includes(lock.id) ? (
@@ -387,7 +395,7 @@ const IceLocks = ({ ammAquaBalance }) => {
                                 { children: 'ICE received', align: CellAlign.Right },
                                 getActionHeaderCell(),
                             ]}
-                            body={locks.map((lock) => {
+                            body={locks.map(lock => {
                                 const lockEndTimestamp = new Date(
                                     lock.claimants?.[0].predicate?.not?.abs_before,
                                 ).getTime();
