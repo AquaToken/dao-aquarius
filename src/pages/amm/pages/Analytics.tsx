@@ -183,6 +183,10 @@ const Analytics = () => {
     const { isLogged } = useAuthStore();
 
     useEffect(() => {
+        document.body.scrollTo(0, 0);
+    }, []);
+
+    useEffect(() => {
         getTotalStats().then(res => {
             setTotalStats(res);
         });
@@ -292,7 +296,11 @@ const Analytics = () => {
                         </ListHeader>
                         {activeTab === Tabs.top && <AllPools search={debouncedSearch} />}
                         {activeTab === Tabs.my && (
-                            <MyLiquidity onlyList setTotal={val => setMyTotal(val)} />
+                            <MyLiquidity
+                                onlyList
+                                setTotal={val => setMyTotal(val)}
+                                backToAllPools={() => setTab(Tabs.top)}
+                            />
                         )}
                     </ListBlock>
                 </Section>
