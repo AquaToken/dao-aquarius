@@ -461,6 +461,7 @@ const DepositToPool = ({ params, close }: ModalProps<DepositToPoolParams>) => {
                             placeholder={`Enter ${asset.code} amount`}
                             label={`${asset.code} Amount`}
                             postfix={<Asset asset={asset} logoAndCode />}
+                            inputMode="decimal"
                         />
                     </FormRow>
                 ))}

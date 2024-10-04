@@ -683,6 +683,7 @@ const AddBribePage = () => {
                                                 ? amountInputPostfix
                                                 : null
                                         }
+                                        inputMode="decimal"
                                     />
                                 </FormRow>
                                 {step === CreateStep.bribeAmount && (

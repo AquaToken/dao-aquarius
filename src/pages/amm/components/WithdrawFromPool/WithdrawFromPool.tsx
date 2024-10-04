@@ -205,6 +205,7 @@ const WithdrawFromPool = ({ params, close }: ModalProps<{ pool: PoolExtended }>)
                         postfix="%"
                         value={percent}
                         onChange={({ target }) => onInputChange(target.value)}
+                        inputMode="decimal"
                     />
                     <RangeInput onChange={value => setPercent(value.toString())} value={+percent} />
 
