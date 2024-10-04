@@ -197,6 +197,7 @@ const MigrateLiquidityStep1 = ({ params, confirm }: ModalProps<MigrateLiquidityS
                     return;
                 }
                 ToastService.showSuccessToast('Withdrawal successfully');
+                confirm();
             })
             .catch(e => {
                 const errorText = ErrorHandler(e);

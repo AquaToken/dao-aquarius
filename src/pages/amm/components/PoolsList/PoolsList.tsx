@@ -208,6 +208,7 @@ interface PoolsListProps {
     counterAmount?: string;
     base?: AssetType;
     counter?: AssetType;
+    onConfirm?: () => void;
 }
 
 const PoolsList = ({
@@ -219,6 +220,7 @@ const PoolsList = ({
     counterAmount,
     base,
     counter,
+    onConfirm,
 }: PoolsListProps) => {
     const [expandedIndexes, setExpandedIndexes] = useState([]);
 
@@ -339,7 +341,11 @@ const PoolsList = ({
                                             counter,
                                             onUpdate,
                                         }}
-                                        confirm={() => void 0}
+                                        confirm={() => {
+                                            if (onConfirm) {
+                                                onConfirm();
+                                            }
+                                        }}
                                         close={() => void 0}
                                     />
                                 ) : (
