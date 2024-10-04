@@ -170,7 +170,7 @@ interface DepositToPoolParams {
     onUpdate: () => void;
 }
 
-const DepositToPool = ({ params, close }: ModalProps<DepositToPoolParams>) => {
+const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => {
     const { account } = useAuthStore();
     const { pool, isModal = true, baseAmount, counterAmount, base, counter, onUpdate } = params;
 
@@ -301,7 +301,7 @@ const DepositToPool = ({ params, close }: ModalProps<DepositToPoolParams>) => {
                     return;
                 }
 
-                close();
+                confirm();
 
                 if (onUpdate) {
                     onUpdate();

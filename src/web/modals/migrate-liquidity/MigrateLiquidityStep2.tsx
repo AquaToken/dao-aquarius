@@ -32,7 +32,7 @@ interface MigrateLiquidityStep2Params {
     onUpdate: () => void;
 }
 
-const MigrateLiquidityStep2 = ({ params }: ModalProps<MigrateLiquidityStep2Params>) => {
+const MigrateLiquidityStep2 = ({ params, confirm }: ModalProps<MigrateLiquidityStep2Params>) => {
     const { poolsToMigrate, baseAmount, counterAmount, base, counter, onUpdate } = params;
 
     return (
@@ -48,6 +48,7 @@ const MigrateLiquidityStep2 = ({ params }: ModalProps<MigrateLiquidityStep2Param
                     base={base}
                     counter={counter}
                     onUpdate={() => onUpdate()}
+                    onConfirm={() => confirm()}
                 />
             </Content>
         </ModalWrapper>
