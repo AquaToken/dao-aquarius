@@ -121,9 +121,10 @@ const FilterOptions = [
 interface MyLiquidityProps {
     setTotal?: (total: number) => void;
     onlyList?: boolean;
+    backToAllPools?: () => void;
 }
 
-const MyLiquidity = ({ setTotal, onlyList }: MyLiquidityProps) => {
+const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) => {
     const { account } = useAuthStore();
 
     const [pools, setPools] = useState<PoolUserProcessed[]>([]);
@@ -215,7 +216,16 @@ const MyLiquidity = ({ setTotal, onlyList }: MyLiquidityProps) => {
                         <span>It looks like you don’t have any active liquidity positions.</span>
 
                         <ExternalLinkStyled asDiv>
-                            <Link to={MainRoutes.amm}>Browse pools</Link>
+                            <Link
+                                to={MainRoutes.amm}
+                                onClick={() => {
+                                    if (backToAllPools) {
+                                        backToAllPools();
+                                    }
+                                }}
+                            >
+                                Browse pools
+                            </Link>
                         </ExternalLinkStyled>
                     </Empty>
                 </Section>
