@@ -20,11 +20,10 @@ import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
+import Asset from 'basics/Asset';
 import Button from 'basics/buttons/Button';
+import Market from 'basics/Market';
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
-
-import Asset from '../../../../vote/components/AssetDropdown/Asset';
-import Market from '../../../../vote/components/common/Market';
 
 const Container = styled.div`
     width: 52.8rem;

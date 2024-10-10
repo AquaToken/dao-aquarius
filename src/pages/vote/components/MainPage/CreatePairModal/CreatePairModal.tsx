@@ -21,10 +21,9 @@ import { Breakpoints, COLORS } from 'web/styles';
 import Info from 'assets/icon-info.svg';
 
 import Button from 'basics/buttons/Button';
+import Market from 'basics/Market';
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
-
-import Market from '../../common/Market';
 
 const ContentRow = styled.div`
     display: flex;

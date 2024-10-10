@@ -18,10 +18,10 @@ import ExternalLink from 'basics/ExternalLink';
 import Label from 'basics/Label';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
+import Market from 'basics/Market';
 import Table, { CellAlign } from 'basics/Table';
 
 import { MainRoutes } from '../../../routes';
-import Market from '../../vote/components/common/Market';
 import { getAmmRewards } from '../api/api';
 import BoostBanner from '../BoostBanner/BoostBanner';
 import { Empty } from '../YourVotes/YourVotes';

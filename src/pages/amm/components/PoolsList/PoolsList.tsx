@@ -16,12 +16,12 @@ import { Breakpoints, COLORS } from 'web/styles';
 
 import Arrow from 'assets/icon-arrow-down.svg';
 
+import Asset from 'basics/Asset';
 import Button from 'basics/buttons/Button';
+import Market from 'basics/Market';
 
 import MigratePoolButton from './MigratePoolButton/MigratePoolButton';
 
-import Asset from '../../../vote/components/AssetDropdown/Asset';
-import Market from '../../../vote/components/common/Market';
 import DepositToPool from '../DepositToPool/DepositToPool';
 import WithdrawFromPool from '../WithdrawFromPool/WithdrawFromPool';
 

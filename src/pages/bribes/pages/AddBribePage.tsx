@@ -35,6 +35,7 @@ import Plus from 'assets/icon-plus.svg';
 import Success from 'assets/icon-success.svg';
 import Loader from 'assets/loader.svg';
 
+import AssetDropdown from 'basics/AssetDropdown';
 import Button from 'basics/buttons/Button';
 import CircleButton from 'basics/buttons/CircleButton';
 import ExternalLink from 'basics/ExternalLink';
@@ -42,7 +43,6 @@ import Input from 'basics/inputs/Input';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import { BribesRoutes } from '../../../routes';
-import AssetDropdown from '../../vote/components/AssetDropdown/AssetDropdown';
 import CreatePairModal from '../../vote/components/MainPage/CreatePairModal/CreatePairModal';
 import { getMarketPair } from '../api/api';
 import ConfirmBribeModal from '../components/AddBribePage/ConfirmBribeModal/ConfirmBribeModal';
@@ -236,6 +236,9 @@ const TooltipInner = styled.span`
 `;
 
 const GlobalStyle = createGlobalStyle`
+    div.react-datepicker-wrapper {
+        width: 100%;
+    }
     div.react-datepicker {
         font-family: ${FONT_FAMILY.roboto};
         font-size: 1.6rem;

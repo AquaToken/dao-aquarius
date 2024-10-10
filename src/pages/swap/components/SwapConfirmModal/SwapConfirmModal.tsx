@@ -23,12 +23,12 @@ import { Breakpoints, COLORS } from 'web/styles';
 import Button from 'basics/buttons/Button';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
+import Market from 'basics/Market';
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
 
 import PathPool from './PathPool/PathPool';
 
 import SuccessModal from '../../../amm/components/SuccessModal/SuccessModal';
-import Market from '../../../vote/components/common/Market';
 import { SWAP_SLIPPAGE_ALIAS } from '../SwapSettingsModal/SwapSettingsModal';
 
 const Container = styled.div`

@@ -30,13 +30,13 @@ import Arrow from 'assets/icon-arrow-right-long.svg';
 import Info from 'assets/icon-info.svg';
 
 import Alert from 'basics/Alert';
+import Asset from 'basics/Asset';
 import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import { ModalTitle } from 'basics/ModalAtoms';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
-import Asset from '../../../vote/components/AssetDropdown/Asset';
 import SuccessModal from '../SuccessModal/SuccessModal';
 
 const Container = styled.div<{ $isModal: boolean }>`

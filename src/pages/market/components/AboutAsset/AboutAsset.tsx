@@ -14,13 +14,12 @@ import { Asset } from 'types/stellar';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
+import AssetLogo from 'basics/AssetLogo';
 import CopyButton from 'basics/buttons/CopyButton';
 import ExternalLink from 'basics/ExternalLink';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
 import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
-
-import AssetLogo from '../../../vote/components/AssetDropdown/AssetLogo';
 
 const Container = styled.div`
     display: flex;

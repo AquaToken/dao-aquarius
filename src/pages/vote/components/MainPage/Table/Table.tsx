@@ -12,7 +12,9 @@ import Aqua from 'assets/aqua-logo-small.svg';
 import ArrowRight from 'assets/icon-arrow-right.svg';
 import ManageIcon from 'assets/icon-manage.svg';
 
+import Asset from 'basics/Asset';
 import Button from 'basics/buttons/Button';
+import Market from 'basics/Market';
 import Table, { CellAlign } from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
@@ -21,8 +23,6 @@ import VoteButton from './VoteButton/VoteButton';
 
 import { MarketRoutes } from '../../../../../routes';
 import { PairStats, TotalStats } from '../../../api/types';
-import Asset from '../../AssetDropdown/Asset';
-import Market from '../../common/Market';
 import BribesModal from '../BribesModal/BribesModal';
 import ManageVotesModal from '../ManageVotesModal/ManageVotesModal';
 

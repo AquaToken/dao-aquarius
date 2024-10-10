@@ -14,9 +14,8 @@ import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import Plus from 'assets/icon-plus.svg';
 
+import Asset from 'basics/Asset';
 import Button from 'basics/buttons/Button';
-
-import Asset from 'pages/vote/components/AssetDropdown/Asset';
 
 import { respondDown } from '../mixins';
 import { Breakpoints, COLORS } from '../styles';

@@ -17,11 +17,11 @@ import Link from 'assets/icon-external-link.svg';
 import Info from 'assets/icon-info.svg';
 
 import PageLoader from 'basics/loaders/PageLoader';
+import Market from 'basics/Market';
 import Table, { CellAlign } from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import { MarketRoutes } from '../../../../routes';
-import Market from '../../../vote/components/common/Market';
 
 const Container = styled.section`
     position: relative;

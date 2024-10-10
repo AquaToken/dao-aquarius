@@ -10,12 +10,12 @@ import { StellarService } from 'services/globalServices';
 import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
+import Market from 'basics/Market';
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
 
 import VotesList from './VotesList/VotesList';
 
 import { PairStats } from '../../../api/types';
-import Market from '../../common/Market';
 
 const Container = styled.div`
     width: 80.6rem;

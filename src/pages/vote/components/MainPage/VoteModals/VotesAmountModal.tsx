@@ -29,13 +29,13 @@ import ExternalLink from 'basics/ExternalLink';
 import Input from 'basics/inputs/Input';
 import RangeInput from 'basics/inputs/RangeInput';
 import Select, { Option } from 'basics/inputs/Select';
+import Market from 'basics/Market';
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
 
 import VotesDurationModal from './VotesDurationModal';
 
 import { LockerRoutes } from '../../../../../routes';
 import { PairStats } from '../../../api/types';
-import Market from '../../common/Market';
 import { AQUA, DOWN_ICE, SELECTED_PAIRS_ALIAS, UP_ICE } from '../MainPage';
 
 export const ContentRow = styled.div`

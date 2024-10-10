@@ -19,6 +19,7 @@ import { Breakpoints, COLORS } from 'web/styles';
 import External from 'assets/icon-external-link.svg';
 import Arrow from 'assets/icon-link-arrow.svg';
 
+import AssetLogo, { bigLogoStyles, logoStyles } from 'basics/AssetLogo';
 import {
     AuthRequiredLabel,
     BoostLabel,
@@ -29,10 +30,9 @@ import {
     RewardLabel,
     RewardPoolLabel,
     StablePoolLabel,
-} from './Labels';
+} from 'basics/Labels';
 
-import { AmmRoutes, MarketRoutes } from '../../../../routes';
-import AssetLogo, { bigLogoStyles, logoStyles } from '../AssetDropdown/AssetLogo';
+import { AmmRoutes, MarketRoutes } from '../../routes';
 
 const Wrapper = styled.div<{
     $verticalDirections?: boolean;
@@ -192,7 +192,7 @@ const Domain = styled.span`
     }
 `;
 
-const viewOnStellarX = (event, assets: StellarSdk.Asset[]) => {
+const viewOnStellarX = (event: React.MouseEvent, assets: StellarSdk.Asset[]) => {
     const [base, counter] = assets;
     event.preventDefault();
     event.stopPropagation();
@@ -248,7 +248,7 @@ const Market = ({
     isSwapResult,
     poolAddress,
     poolType,
-}: PairProps): JSX.Element => {
+}: PairProps): React.ReactNode => {
     const { assetsInfo } = useAssetsStore();
 
     const assets = assetsSimple.map(({ code, issuer }) => StellarService.createAsset(code, issuer));
@@ -336,7 +336,7 @@ const Market = ({
                     {!bottomLabels && labels}
 
                     {!withoutLink && (
-                        <LinkCustom onClick={e => viewOnStellarX(e, assets)}>
+                        <LinkCustom onClick={(e: React.MouseEvent) => viewOnStellarX(e, assets)}>
                             <External />
                         </LinkCustom>
                     )}
@@ -374,7 +374,11 @@ const Market = ({
                                     {asset.isNative() ? (
                                         domain
                                     ) : (
-                                        <Domain onClick={e => onDomainClick(e, asset)}>
+                                        <Domain
+                                            onClick={(e: React.MouseEvent) =>
+                                                onDomainClick(e, asset)
+                                            }
+                                        >
                                             {domain}
                                         </Domain>
                                     )}

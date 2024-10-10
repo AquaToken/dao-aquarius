@@ -16,10 +16,9 @@ import { Breakpoints, COLORS } from 'web/styles';
 
 import Info from 'assets/icon-info.svg';
 
+import AssetLogo from 'basics/AssetLogo';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
-
-import AssetLogo from './AssetLogo';
 
 const Container = styled.div`
     display: flex;
