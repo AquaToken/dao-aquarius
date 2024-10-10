@@ -117,7 +117,7 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                             { children: 'Pool', flexSize: 4 },
                             {
                                 children: 'Fee',
-                                flexSize: 2,
+                                flexSize: 1.5,
                                 align: CellAlign.Right,
                             },
                             {
@@ -250,7 +250,7 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                                 {
                                     children: `${(Number(pool.fee) * 100).toFixed(2)}%`,
                                     label: 'Fee:',
-                                    flexSize: 2,
+                                    flexSize: 1.5,
                                     align: CellAlign.Right,
                                 },
                                 {
