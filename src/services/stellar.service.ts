@@ -8,7 +8,7 @@ import { getPoolInfo } from 'api/amm';
 import debounceFunction from 'helpers/debounce-function';
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
 
-import { StellarToml } from 'types/stellar';
+import { Asset, StellarToml } from 'types/stellar';
 
 import { validateMarketKeys } from 'pages/vote/api/api';
 import { PairStats } from 'pages/vote/api/types';
@@ -184,7 +184,7 @@ export default class StellarServiceClass {
         return new StellarSdk.Memo(type, value);
     }
 
-    createAsset(code: string, issuer: string) {
+    createAsset(code: string, issuer: string): Asset {
         return new StellarSdk.Asset(code, issuer);
     }
 

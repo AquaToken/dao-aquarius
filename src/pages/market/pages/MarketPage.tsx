@@ -17,6 +17,7 @@ import ArrowLeft from 'assets/icon-arrow-left.svg';
 
 import CircleButton from 'basics/buttons/CircleButton';
 import PageLoader from 'basics/loaders/PageLoader';
+import Market from 'basics/Market';
 
 import MigrateToSorobanBanner from 'components/MigrateToSorobanBanner';
 import NotFoundPage from 'components/NotFoundPage';
@@ -24,7 +25,6 @@ import NotFoundPage from 'components/NotFoundPage';
 import { VoteRoutes } from '../../../routes';
 import { getFilteredPairsList, getTotalVotingStats } from '../../vote/api/api';
 import { PairStats } from '../../vote/api/types';
-import Market from '../../vote/components/common/Market';
 import { isRewardsOn, MAX_REWARDS_PERCENT } from '../../vote/components/MainPage/Table/Table';
 import VotesAmountModal from '../../vote/components/MainPage/VoteModals/VotesAmountModal';
 import AboutAsset from '../components/AboutAsset/AboutAsset';

@@ -14,10 +14,10 @@ import { flexRowSpaceBetween, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
+import Asset from 'basics/Asset';
 import Button from 'basics/buttons/Button';
 import PageLoader from 'basics/loaders/PageLoader';
 
-import Asset from '../../../vote/components/AssetDropdown/Asset';
 import DepositToPool from '../DepositToPool/DepositToPool';
 import WithdrawFromPool from '../WithdrawFromPool/WithdrawFromPool';
 

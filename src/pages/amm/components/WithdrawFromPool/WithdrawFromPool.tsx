@@ -24,9 +24,9 @@ import Input from 'basics/inputs/Input';
 import RangeInput from 'basics/inputs/RangeInput';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
+import Market from 'basics/Market';
 import { ModalTitle } from 'basics/ModalAtoms';
 
-import Market from '../../../vote/components/common/Market';
 import SuccessModal from '../SuccessModal/SuccessModal';
 
 const Container = styled.div`

@@ -11,6 +11,8 @@ import useAssetsStore from 'store/assetsStore/useAssetsStore';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { Asset } from 'types/stellar';
+
 import { ModalService, StellarService } from 'services/globalServices';
 import {
     AQUA_CODE,
@@ -28,14 +30,15 @@ import Aqua from 'assets/aqua-logo-small.svg';
 import BackgroundImageLeft from 'assets/background-left.svg';
 import BackgroundImageRight from 'assets/background-right.svg';
 import Ice from 'assets/ice-logo.svg';
-import Arrows from 'assets/icon-arrows-circle.svg';
 import Info from 'assets/icon-info.svg';
 
+import AssetDropdown from 'basics/AssetDropdown';
 import Button from 'basics/buttons/Button';
 import { Option } from 'basics/inputs/Select';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
+import Market from 'basics/Market';
 import Pagination from 'basics/Pagination';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
@@ -55,8 +58,6 @@ import {
     updateVotesForMarketKeys,
 } from '../../api/api';
 import { PairStats } from '../../api/types';
-import AssetDropdown from '../AssetDropdown/AssetDropdown';
-import Market from '../common/Market';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -145,9 +146,8 @@ const Description = styled.div`
 
 const ExploreBlock = styled.div<{ $hasChosenPairs: boolean }>`
     position: relative;
-    padding: 0 4rem;
     ${commonMaxWidth};
-    padding-bottom: ${({ $hasChosenPairs }) => ($hasChosenPairs ? '0' : '6.6rem')};
+    padding: 0 4rem ${({ $hasChosenPairs }) => ($hasChosenPairs ? '0' : '6.6rem')};
 
     ${respondDown(Breakpoints.md)`
         padding: 0 1.6rem;
@@ -178,56 +178,8 @@ const PairSearch = styled.div`
     `}
 `;
 
-const SwapButton = styled.div<{ $disabled: boolean }>`
-    margin: 0 3.6rem;
-    padding: 0.8rem;
-    width: 3.2rem;
-    height: 3.2rem;
-    border-radius: 0.4rem;
-    cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
-
-    &:hover {
-        background: ${COLORS.lightGray};
-    }
-
-    ${respondDown(Breakpoints.md)`
-        margin: 1.8rem 0 3.6rem;
-    `}
-`;
-
-const ArrowsIcon = styled(Arrows)`
-    min-width: 1.6rem;
-    min-height: 1.6rem;
-`;
-
-const TooltipFullWidth = styled(Tooltip)`
-    width: 100%;
-`;
-
-const TooltipContent = styled.div`
-    display: flex;
-    ${flexAllCenter};
-    width: 30rem;
-    white-space: pre-wrap;
-    font-size: 1.6rem;
-    line-height: 2.4rem;
-    padding: 0.8rem;
-
-    span:first-child {
-        margin-right: 1.2rem;
-    }
-
-    ${respondDown(Breakpoints.md)`
-        width: 25rem;
-        font-size: 1.2rem;
-        line-height: 1.4rem;
-        padding: 0.3rem;
-    `}
-`;
-
 const Header = styled.header`
     display: flex;
-    //justify-content: space-between;
     align-items: center;
     margin: 5.4rem 0;
 
@@ -385,7 +337,7 @@ enum UrlParams {
     counter = 'counter',
 }
 
-const assetToUrlParams = asset => {
+const assetToUrlParams = (asset: Asset) => {
     const assetInstance = StellarService.createAsset(asset.code, asset.issuer);
 
     if (assetInstance.isNative()) {
@@ -395,7 +347,7 @@ const assetToUrlParams = asset => {
     return `${assetInstance.code}:${assetInstance.issuer}`;
 };
 
-const assetFromUrlParams = params => {
+const assetFromUrlParams = (params: string) => {
     if (params === 'native') {
         return StellarService.createLumen();
     }
@@ -436,7 +388,6 @@ const MainPage = (): React.ReactNode => {
     const [searchCounter, setSearchCounter] = useState(null);
     const [pairsLoading, setPairsLoading] = useState(false);
     const [changePageLoading, setChangePageLoading] = useState(false);
-    const [isCounterSearchActive, setIsCounterSearchActive] = useState(false);
     const [totalStats, setTotalStats] = useState(null);
 
     const [pairs, setPairs] = useState(null);
@@ -579,7 +530,7 @@ const MainPage = (): React.ReactNode => {
         processNewAssets(assets);
     };
 
-    const changeSort = sortValue => {
+    const changeSort = (sortValue: SortTypes) => {
         if (!isLogged && sortValue === SortTypes.yourVotes) {
             ModalService.openModal(ChooseLoginMethodModal, {
                 redirectURL: `${MainRoutes.vote}?${UrlParams.sort}=${SortTypes.yourVotes}`,
@@ -714,56 +665,34 @@ const MainPage = (): React.ReactNode => {
         }
     }, [isLogged]);
 
-    const changeBaseSearch = asset => {
+    const changeSearch = (assets: Asset[]): void => {
+        const [base, counter] = assets;
+
         const params = new URLSearchParams(location.search);
         params.delete(UrlParams.sort);
-        if (asset) {
-            params.set(UrlParams.base, assetToUrlParams(asset));
+
+        if (base) {
+            params.set(UrlParams.base, assetToUrlParams(base));
         } else {
             params.delete(UrlParams.base);
         }
-        history.push({
-            pathname: location.pathname,
-            search: decodeURIComponent(params.toString()),
-        });
-        setPairsLoading(true);
-        setPage(1);
-    };
 
-    const changeCounterSearch = asset => {
-        const params = new URLSearchParams(location.search);
-        params.delete(UrlParams.sort);
-        if (asset) {
-            params.set(UrlParams.counter, assetToUrlParams(asset));
+        if (counter) {
+            params.set(UrlParams.counter, assetToUrlParams(counter));
         } else {
             params.delete(UrlParams.counter);
         }
+
         history.push({
             pathname: location.pathname,
             search: decodeURIComponent(params.toString()),
         });
+
         setPairsLoading(true);
         setPage(1);
     };
 
-    const swapAssets = () => {
-        if (!searchCounter) {
-            return;
-        }
-        const params = new URLSearchParams(location.search);
-        const base = params.get(UrlParams.base);
-        const counter = params.get(UrlParams.counter);
-
-        params.set(UrlParams.base, counter);
-        params.set(UrlParams.counter, base);
-
-        history.push({
-            pathname: location.pathname,
-            search: decodeURIComponent(params.toString()),
-        });
-    };
-
-    const changePage = page => {
+    const changePage = (page: number) => {
         setPage(page);
         setChangePageLoading(true);
     };
@@ -789,7 +718,7 @@ const MainPage = (): React.ReactNode => {
     if (!pairs) {
         return <PageLoader />;
     }
-    const createPair = e => {
+    const createPair = (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
         if (isLogged) {
@@ -861,44 +790,21 @@ const MainPage = (): React.ReactNode => {
             <ExploreBlock $hasChosenPairs={hasChosenPairs}>
                 <PairSearch>
                     <AssetDropdown
-                        asset={searchBase}
-                        onUpdate={changeBaseSearch}
-                        exclude={searchCounter}
+                        assetsList={[searchBase, searchCounter].filter(Boolean)}
+                        onUpdate={(assets: Asset[]) => {
+                            changeSearch(assets);
+                        }}
+                        excludeList={[searchBase, searchCounter].filter(Boolean)}
                         label="Search asset by name, domain or issuer"
                         placeholder="AQUA or aqua.network or AQUA:GBNZ...AQUA"
+                        disabled={searchBase && searchCounter}
+                        withChips
                     />
-                    <SwapButton $disabled={!searchCounter} onClick={() => swapAssets()}>
-                        <ArrowsIcon />
-                    </SwapButton>
-
-                    <TooltipFullWidth
-                        content={
-                            <TooltipContent>
-                                <span>&#128075;</span>
-                                <span>
-                                    Can&apos;t find your market below? Try to type second asset into
-                                    this field
-                                </span>
-                            </TooltipContent>
-                        }
-                        position={TOOLTIP_POSITION.bottom}
-                        isShow={Boolean(searchBase) && !searchCounter && !isCounterSearchActive}
-                    >
-                        <AssetDropdown
-                            asset={searchCounter}
-                            onUpdate={changeCounterSearch}
-                            disabled={!searchBase}
-                            onToggle={setIsCounterSearchActive}
-                            exclude={searchBase}
-                            label="Search asset by name, domain or issuer"
-                            placeholder="AQUA or aqua.network or AQUA:GBNZ...AQUA"
-                        />
-                    </TooltipFullWidth>
                 </PairSearch>
                 <Header ref={headerRef}>
                     <ToggleGroupStyled
                         value={sort}
-                        onChange={option => changeSort(option)}
+                        onChange={(option: SortTypes) => changeSort(option)}
                         options={options}
                     />
                     {Boolean(pairs.length && pairs.some(pair => Boolean(pair.timestamp))) && (

@@ -25,13 +25,12 @@ import LinkIcon from 'assets/icon-external-link.svg';
 
 import Button from 'basics/buttons/Button';
 import Checkbox from 'basics/inputs/Checkbox';
+import Market from 'basics/Market';
 import Table, { CellAlign } from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import { MarketPair } from 'pages/profile/api/types';
 import { PairStats } from 'pages/vote/api/types';
-
-import Market from '../../../common/Market';
 
 const CheckboxMobile = styled(Checkbox)`
     display: none;

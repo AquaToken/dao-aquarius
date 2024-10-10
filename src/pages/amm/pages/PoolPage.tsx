@@ -27,12 +27,12 @@ import Button from 'basics/buttons/Button';
 import CircleButton from 'basics/buttons/CircleButton';
 import ExternalLink from 'basics/ExternalLink';
 import PageLoader from 'basics/loaders/PageLoader';
+import Market from 'basics/Market';
 
 import MigrateToSorobanBanner from 'components/MigrateToSorobanBanner';
 import NoTrustline from 'components/NoTrustline';
 
 import { AmmRoutes } from '../../../routes';
-import Market from '../../vote/components/common/Market';
 import LiquidityChart from '../components/LiquidityChart/LiquidityChart';
 import PoolEvents from '../components/PoolEvents/PoolEvents';
 import PoolMembers from '../components/PoolMembers/PoolMembers';

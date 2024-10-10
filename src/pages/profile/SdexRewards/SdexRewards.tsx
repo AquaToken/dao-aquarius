@@ -12,10 +12,10 @@ import { COLORS } from 'web/styles';
 
 import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
+import Market from 'basics/Market';
 import Table, { CellAlign } from 'basics/Table';
 
 import { MainRoutes } from '../../../routes';
-import Market from '../../vote/components/common/Market';
 import {
     AquaBalance,
     AquaLogo,

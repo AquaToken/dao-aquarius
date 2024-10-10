@@ -15,6 +15,7 @@ import Aqua from 'assets/aqua-logo-small.svg';
 import Close from 'assets/icon-close-small-purple.svg';
 import Info from 'assets/icon-info.svg';
 
+import Asset from 'basics/Asset';
 import ExternalLink from 'basics/ExternalLink';
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
 import Table, { CellAlign } from 'basics/Table';
@@ -22,7 +23,6 @@ import Table, { CellAlign } from 'basics/Table';
 import { convertUTCToLocalDateIgnoringTimezone } from 'pages/bribes/pages/AddBribePage';
 
 import { PairStats } from '../../../api/types';
-import Asset from '../../AssetDropdown/Asset';
 
 const ModalContainer = styled.div`
     width: 80.6rem;

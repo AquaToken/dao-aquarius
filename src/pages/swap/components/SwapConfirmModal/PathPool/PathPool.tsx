@@ -8,8 +8,9 @@ import { Breakpoints, COLORS } from 'web/styles';
 
 import RightIcon from 'assets/icon-arrow-right-long.svg';
 
+import Asset from 'basics/Asset';
+
 import { AmmRoutes } from '../../../../../routes';
-import Asset from '../../../../vote/components/AssetDropdown/Asset';
 
 const Container = styled.div`
     width: 25%;

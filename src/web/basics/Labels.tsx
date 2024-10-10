@@ -5,7 +5,10 @@ import { COLORS } from 'web/styles';
 
 import Label from 'basics/Label';
 
-import { MAX_REWARDS_PERCENT, MIN_REWARDS_PERCENT } from '../MainPage/Table/Table';
+import {
+    MAX_REWARDS_PERCENT,
+    MIN_REWARDS_PERCENT,
+} from 'pages/vote/components/MainPage/Table/Table';
 
 const StyledLabel = styled(Label)`
     margin: 0 0.5rem;

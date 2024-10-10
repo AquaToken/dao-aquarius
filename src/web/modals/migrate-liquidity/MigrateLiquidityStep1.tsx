@@ -16,14 +16,14 @@ import { Asset, PoolClassic } from 'types/stellar';
 import { ModalService, StellarService, ToastService } from 'services/globalServices';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
+import AssetLogo from 'basics/AssetLogo';
 import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
 import RangeInput from 'basics/inputs/RangeInput';
+import Market from 'basics/Market';
 import { ModalWrapper, ModalTitle } from 'basics/ModalAtoms';
 
 import { PairContainer } from 'pages/amm/components/WithdrawFromPool/WithdrawFromPool';
-import AssetLogo from 'pages/vote/components/AssetDropdown/AssetLogo';
-import Market from 'pages/vote/components/common/Market';
 
 import MigrateLiquidityStep2 from './MigrateLiquidityStep2';
 

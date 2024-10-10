@@ -9,9 +9,8 @@ import { Breakpoints, COLORS } from 'web/styles';
 
 import Button from 'basics/buttons/Button';
 import ExternalLink from 'basics/ExternalLink';
+import Market from 'basics/Market';
 import { ModalTitle } from 'basics/ModalAtoms';
-
-import Market from '../../../vote/components/common/Market';
 
 const Container = styled.div`
     width: 52.3rem;
