@@ -22,7 +22,9 @@ const Container = styled.div`
 `;
 
 const Prefix = styled.div`
+    margin-top: 0.1rem;
     font-size: 1.6rem;
+    padding-right: 0.2rem;
 `;
 
 const StyledButton = styled(Button)`
@@ -70,7 +72,6 @@ const LedgerLogin = ({ close }: ModalProps<never>) => {
                     value={path}
                     onChange={e => setPath(e.target.value)}
                     prefixCustom={<Prefix>Path: 44'/148'/</Prefix>}
-                    style={{ padding: '0rem 12.8rem' }}
                     placeholder="0"
                     type="number"
                     min="0"
