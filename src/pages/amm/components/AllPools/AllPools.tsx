@@ -19,6 +19,7 @@ import Info from 'assets/icon-info.svg';
 import Select from 'basics/inputs/Select';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
 import PageLoader from 'basics/loaders/PageLoader';
+import Market from 'basics/Market';
 import Pagination from 'basics/Pagination';
 import Table, { CellAlign } from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
@@ -26,7 +27,6 @@ import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
 
 import { AmmRoutes } from '../../../../routes';
-import Market from '../../../vote/components/common/Market';
 
 const ToggleGroupStyled = styled(ToggleGroup)`
     width: fit-content;

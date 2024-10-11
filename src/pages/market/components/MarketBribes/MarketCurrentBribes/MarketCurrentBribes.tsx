@@ -13,6 +13,7 @@ import Aqua from 'assets/aqua-logo-small.svg';
 import Close from 'assets/icon-close-small-purple.svg';
 import Info from 'assets/icon-info.svg';
 
+import Asset from 'basics/Asset';
 import Table, { CellAlign } from 'basics/Table';
 
 import { Bribe } from 'pages/bribes/api/types';
@@ -29,8 +30,6 @@ import {
     HowItWorksFooter,
     HowItWorksText,
 } from 'pages/vote/components/MainPage/BribesModal/BribesModal';
-
-import Asset from '../../../../vote/components/AssetDropdown/Asset';
 
 const Container = styled.div`
     display: flex;

@@ -22,9 +22,11 @@ import ArrowDown from 'assets/icon-arrow-down.svg';
 import Fail from 'assets/icon-fail.svg';
 import Loader from 'assets/loader.svg';
 
-import Asset from './Asset';
+import Asset from 'basics/Asset';
+import AssetLogo from 'basics/AssetLogo';
+import Input from 'basics/inputs/Input';
 
-const DropDown = styled.div<{ $isOpen: boolean; $disabled: boolean }>`
+const DropDown = styled.div<{ $isOpen: boolean }>`
     width: 100%;
     display: flex;
     flex-direction: row;
@@ -37,24 +39,8 @@ const DropDown = styled.div<{ $isOpen: boolean; $disabled: boolean }>`
     border-radius: ${({ $isOpen }) => ($isOpen ? '0.5rem 0.5rem 0 0' : '0.5rem')};
     padding: ${({ $isOpen }) => ($isOpen ? '0.1rem' : '0.2rem')};
     box-sizing: border-box;
-    pointer-events: ${({ $disabled }) => ($disabled ? 'none' : 'auto')};
     font-size: 1.4rem;
     background: ${COLORS.white};
-`;
-
-const DropdownSearch = styled.input<{ $disabled: boolean }>`
-    border: none;
-    height: 100%;
-    width: 100%;
-    padding: 2.4rem 5rem 2.4rem 2.4rem;
-    box-sizing: border-box;
-    cursor: pointer;
-    font-size: 1.6rem;
-    pointer-events: ${({ $disabled }) => ($disabled ? 'none' : 'auto')};
-
-    &:focus {
-        cursor: auto;
-    }
 `;
 
 const iconStyles = css`
@@ -189,18 +175,85 @@ const Reset = styled(Fail)`
     cursor: pointer;
 `;
 
-const Label = styled.div`
+const Label = styled.div<{ $isOpen?: boolean }>`
     position: absolute;
-    bottom: calc(100% + 1.2rem);
-    left: 0;
+    bottom: ${({ $isOpen }) => ($isOpen ? 'calc(100% + 1.3rem)' : 'calc(100% + 1.2rem)')};
+    left: ${({ $isOpen }) => ($isOpen ? '0' : '0.1rem')};
     font-size: 1.6rem;
     line-height: 1.8rem;
     color: ${COLORS.paragraphText};
 `;
 
+const StyledAsset = styled(Asset)<{ $withBalances?: boolean }>`
+    padding: 0.9rem 2.4rem;
+    height: 6.6rem;
+    width: ${({ $withBalances }) => ($withBalances ? '50%' : '100%')};
+`;
+
+const Chips = styled.div`
+    display: flex;
+`;
+
+const ChipsItem = styled.div`
+    display: flex;
+    align-items: center;
+    padding: 0.8rem 1.6rem;
+    background-color: ${COLORS.lightGray};
+    border-radius: 0.4rem;
+    margin-right: 0.5rem;
+
+    span {
+        margin-left: 0.8rem;
+        margin-right: 1.6rem;
+        font-size: 1.6rem;
+        line-height: 2.8rem;
+        color: ${COLORS.paragraphText};
+    }
+
+    ${respondDown(Breakpoints.xs)`
+        padding: 0.8rem;
+        span {
+            display: none;
+        }
+        
+        svg {
+            margin-left: 0.4rem;
+        }
+    `}
+`;
+
+const ResetChips = styled(Fail)`
+    rect {
+        fill: ${COLORS.paragraphText};
+    }
+    height: 1.6rem;
+    width: 1.6rem;
+    cursor: pointer;
+`;
+
+const StyledInput = styled(Input)<{ $isOpen?: boolean }>`
+    input {
+        background-color: ${COLORS.transparent};
+        border: 0.1rem solid ${COLORS.transparent};
+
+        &:active,
+        &:focus,
+        &:disabled {
+            border: 0.1rem solid ${COLORS.transparent};
+        }
+    }
+`;
+
+const domainPattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
+const domainRegexp = new RegExp(domainPattern);
+
+const codeIssuerPattern = /^[a-zA-Z0-9]{1,12}:[a-zA-Z0-9]{56}$/;
+const codeIssuerRegexp = new RegExp(codeIssuerPattern);
+
 type AssetDropdownProps = {
-    asset: AssetSimple;
-    onUpdate: (asset: AssetType) => void;
+    asset?: AssetSimple;
+    assetsList?: AssetSimple[];
+    onUpdate?: (asset: AssetType | AssetType[]) => void;
     disabled?: boolean;
     onToggle?: (value: boolean) => void;
     exclude?: AssetSimple;
@@ -211,22 +264,13 @@ type AssetDropdownProps = {
     excludeList?: AssetSimple[];
     withBalances?: boolean;
     longListOnMobile?: boolean;
+    withChips?: boolean;
+    chipsCount?: number;
 };
-
-const StyledAsset = styled(Asset)<{ $withBalances?: boolean }>`
-    padding: 0.9rem 2.4rem;
-    height: 6.6rem;
-    width: ${({ $withBalances }) => ($withBalances ? '50%' : '100%')};
-`;
-
-const domainPattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
-const domainRegexp = new RegExp(domainPattern);
-
-const codeIssuerPattern = /^[a-zA-Z0-9]{1,12}:[a-zA-Z0-9]{56}$/;
-const codeIssuerRegexp = new RegExp(codeIssuerPattern);
 
 const AssetDropdown = ({
     asset,
+    assetsList,
     onUpdate,
     disabled,
     onToggle,
@@ -238,6 +282,7 @@ const AssetDropdown = ({
     pending,
     withBalances,
     longListOnMobile,
+    withChips,
     ...props
 }: AssetDropdownProps) => {
     const { assets: knownAssets, assetsInfo, processNewAssets } = useAssetsStore();
@@ -268,6 +313,9 @@ const AssetDropdown = ({
 
     const [isOpen, setIsOpen] = useState(false);
     const [selectedAsset, setSelectedAsset] = useState(asset);
+    const [selectedAssets, setSelectedAssets] = useState(
+        assetsList?.map(asset => StellarService.createAsset(asset.code, asset.issuer)) || [],
+    );
     const [searchText, setSearchText] = useState('');
 
     const [searchPending, setSearchPending] = useState(false);
@@ -278,6 +326,12 @@ const AssetDropdown = ({
     useEffect(() => {
         setSelectedAsset(asset);
     }, [asset]);
+
+    useEffect(() => {
+        setSelectedAssets(
+            assetsList?.map(asset => StellarService.createAsset(asset.code, asset.issuer)) || [],
+        );
+    }, [assetsList]);
 
     useEffect(() => {
         if (onToggle) {
@@ -291,6 +345,9 @@ const AssetDropdown = ({
     useOnClickOutside(ref, () => setIsOpen(false));
 
     const toggleDropdown = () => {
+        if (!assets.length || disabled || pending) {
+            return;
+        }
         setIsOpen(prev => !prev);
     };
 
@@ -380,12 +437,21 @@ const AssetDropdown = ({
     }, [debouncedSearchText.current]);
 
     const onClickAsset = (asset: AssetSimple) => {
-        onUpdate(StellarService.createAsset(asset.code, asset.issuer));
+        const stellarAsset = StellarService.createAsset(asset.code, asset.issuer);
+        onUpdate(withChips ? [...selectedAssets, stellarAsset] : stellarAsset);
     };
 
-    const resetAsset = (event: React.MouseEvent) => {
+    const resetAll = (event: React.MouseEvent) => {
         event.stopPropagation();
-        onUpdate(null);
+        onUpdate(withChips ? [] : null);
+    };
+
+    const resetAsset = (event: React.MouseEvent, asset: AssetType) => {
+        event.stopPropagation();
+        const newList = selectedAssets.filter(
+            ({ code, issuer }) => code !== asset.code && issuer !== asset.issuer,
+        );
+        onUpdate(newList);
     };
 
     const filteredAssets = useMemo(
@@ -417,37 +483,49 @@ const AssetDropdown = ({
     );
 
     return (
-        <DropDown
-            onClick={() => toggleDropdown()}
-            $isOpen={isOpen}
-            ref={ref}
-            $disabled={!assets.length || disabled || pending}
-            {...props}
-        >
-            {Boolean(label) && <Label>{label}</Label>}
+        <DropDown onClick={() => toggleDropdown()} $isOpen={isOpen} ref={ref} {...props}>
+            {Boolean(label) && <Label $isOpen={isOpen}>{label}</Label>}
             {selectedAsset && !isOpen ? (
                 <StyledAsset asset={selectedAsset} />
             ) : (
-                <DropdownSearch
+                <StyledInput
                     onClick={(e: React.MouseEvent) => {
                         if (isOpen) {
                             e.stopPropagation();
                         }
                     }}
+                    $isOpen={isOpen}
                     placeholder={placeholder ?? 'Search asset or enter home domain'}
-                    $disabled={!assets.length || disabled || pending}
+                    disabled={!assets.length || disabled || pending}
                     value={searchText}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         setSearchText(e.target.value);
                     }}
+                    prefixCustom={
+                        <Chips>
+                            {selectedAssets.map(asset => (
+                                <ChipsItem key={`${asset.code}-${asset.issuer}`}>
+                                    <AssetLogo
+                                        asset={asset}
+                                        isCircle
+                                        isSmall={+window.innerWidth < 480}
+                                    />
+                                    <span>{asset.code}</span>
+                                    <ResetChips
+                                        onClick={(e: React.MouseEvent) => resetAsset(e, asset)}
+                                    />
+                                </ChipsItem>
+                            ))}
+                        </Chips>
+                    }
                     ref={inputRef}
                 />
             )}
 
-            {!withoutReset && selectedAsset && (
+            {!withoutReset && (selectedAsset || Boolean(selectedAssets.length)) && (
                 <div
                     onClick={(e: React.MouseEvent) => {
-                        resetAsset(e);
+                        resetAll(e);
                     }}
                 >
                     <Reset />

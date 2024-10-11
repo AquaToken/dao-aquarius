@@ -10,9 +10,9 @@ import useAuthStore from 'store/authStore/useAuthStore';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
+import AssetDropdown from 'basics/AssetDropdown';
 import Input from 'basics/inputs/Input';
 
-import AssetDropdown from '../../../../vote/components/AssetDropdown/AssetDropdown';
 import PercentButtons from '../PercentButtons/PercentButtons';
 
 const Container = styled.div<{ $isOpen?: boolean }>`

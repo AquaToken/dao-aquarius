@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { forwardRef, RefObject } from 'react';
+import { forwardRef, RefObject, useLayoutEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { textEllipsis } from 'web/mixins';
@@ -15,6 +15,7 @@ const StyledInput = styled.input<{
     $isMedium?: boolean;
     $isRightAligned?: boolean;
     $isCenterAligned?: boolean;
+    $paddingLeft?: string;
 }>`
     height: ${({ $isMedium }) => ($isMedium ? '4rem' : '6.6rem')};
     padding: ${({ $isMedium }) => ($isMedium ? `1.1rem 1.6rem` : `2.4rem 6.5rem 2.4rem 2.4rem`)};
@@ -28,6 +29,7 @@ const StyledInput = styled.input<{
     color: ${COLORS.paragraphText};
     box-sizing: border-box;
     ${textEllipsis};
+    padding-left: ${({ $paddingLeft }) => $paddingLeft};
 
     /* Chrome, Safari, Edge, Opera */
     &::-webkit-outer-spin-button,
@@ -99,21 +101,40 @@ const Input = forwardRef(
             ...props
         }: InputProps,
         ref: RefObject<HTMLInputElement>,
-    ): React.ReactNode => (
-        <InputWrapper className={className}>
-            {Boolean(label) && <Label>{label}</Label>}
-            {prefixCustom && <Prefix>{prefixCustom}</Prefix>}
-            <StyledInput
-                ref={ref}
-                $isMedium={isMedium}
-                $isRightAligned={isRightAligned}
-                $isCenterAligned={isCenterAligned}
-                {...props}
-                onWheel={(e: React.WheelEvent) => (e.currentTarget as HTMLElement).blur()}
-            />
-            {postfix && <Postfix>{postfix}</Postfix>}
-        </InputWrapper>
-    ),
+    ): React.ReactNode => {
+        const prefixRef = useRef(null);
+        const [paddingLeft, setPaddingLeft] = useState(isMedium ? '1.6rem' : '2.4rem');
+
+        const updatePaddingLeft = () => {
+            if (!prefixRef.current) {
+                setPaddingLeft(isMedium ? '1.6rem' : '2.4rem');
+            } else {
+                const width = prefixRef.current.getBoundingClientRect().width;
+                setPaddingLeft(`${width / 10 + 2.4}rem`);
+            }
+        };
+
+        useLayoutEffect(() => {
+            updatePaddingLeft();
+        }, [prefixCustom, isMedium]);
+
+        return (
+            <InputWrapper className={className}>
+                {Boolean(label) && <Label>{label}</Label>}
+                <Prefix ref={prefixRef}>{prefixCustom}</Prefix>
+                <StyledInput
+                    ref={ref}
+                    $isMedium={isMedium}
+                    $isRightAligned={isRightAligned}
+                    $isCenterAligned={isCenterAligned}
+                    $paddingLeft={paddingLeft}
+                    {...props}
+                    onWheel={(e: React.WheelEvent) => (e.currentTarget as HTMLElement).blur()}
+                />
+                {postfix && <Postfix>{postfix}</Postfix>}
+            </InputWrapper>
+        );
+    },
 );
 
 Input.displayName = 'Input';

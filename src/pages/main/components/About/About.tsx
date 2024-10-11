@@ -31,12 +31,11 @@ import FreezeIceImage from 'assets/landing-about-ice-80.svg';
 import VoteMarketsImage from 'assets/landing-about-vote-markets-80.svg';
 import VoteProposalsImage from 'assets/landing-about-vote-proposals-80.svg';
 
+import Asset from 'basics/Asset';
 import Changes24 from 'basics/Changes24';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
-
-import Asset from '../../../vote/components/AssetDropdown/Asset';
 
 const WhatIsSection = styled.section`
     display: flex;

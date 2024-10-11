@@ -8,14 +8,13 @@ import { formatBalance } from 'helpers/format-number';
 import { StellarService } from 'services/globalServices';
 import { COLORS } from 'web/styles';
 
+import Asset from 'basics/Asset';
 import PageLoader from 'basics/loaders/PageLoader';
 import Table, { CellAlign } from 'basics/Table';
 
 import { UpcomingBribe } from 'pages/bribes/api/types';
 import { convertUTCToLocalDateIgnoringTimezone } from 'pages/bribes/pages/AddBribePage';
 import { getUpcomingBribesForMarket } from 'pages/vote/api/api';
-
-import Asset from '../../../../vote/components/AssetDropdown/Asset';
 
 const Container = styled.div`
     display: flex;

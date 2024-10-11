@@ -5,13 +5,12 @@ import styled from 'styled-components';
 
 import { ModalService } from 'services/globalServices';
 import { respondDown } from 'web/mixins';
+import VotingPurposeModal, { SHOW_PURPOSE_ALIAS } from 'web/modals/alerts/VotingPurposeModal';
 import { Breakpoints } from 'web/styles';
 
 import BG from 'assets/purpose-modal-background.svg';
 
 import NotFoundPage from 'components/NotFoundPage';
-
-import ProjectPurposeModal, { SHOW_PURPOSE_ALIAS } from './components/common/ProjectPurposeModal';
 
 import { VoteRoutes } from '../../routes';
 
@@ -30,7 +29,7 @@ const Vote = () => {
     useEffect(() => {
         const showPurpose = JSON.parse(localStorage.getItem(SHOW_PURPOSE_ALIAS) || 'true');
         if (showPurpose) {
-            ModalService.openModal(ProjectPurposeModal, {}, false, <ModalBG />);
+            ModalService.openModal(VotingPurposeModal, {}, false, <ModalBG />);
         }
     }, []);
 

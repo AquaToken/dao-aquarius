@@ -4,12 +4,12 @@ import styled from 'styled-components';
 
 import { ModalProps } from 'types/modal';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import Button from 'basics/buttons/Button';
 import Checkbox from 'basics/inputs/Checkbox';
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+
+import { respondDown } from '../../mixins';
+import { Breakpoints, COLORS } from '../../styles';
 
 const Container = styled.div`
     width: 52.8rem;
@@ -30,7 +30,7 @@ const StyledButton = styled(Button)`
 
 export const SHOW_PURPOSE_ALIAS = 'show purpose';
 
-const ProjectPurposeModal = ({ close }: ModalProps<never>) => {
+const VotingPurposeModal = ({ close }: ModalProps<never>) => {
     const [checked, setChecked] = useState(false);
 
     useEffect(() => {
@@ -61,4 +61,4 @@ const ProjectPurposeModal = ({ close }: ModalProps<never>) => {
     );
 };
 
-export default ProjectPurposeModal;
+export default VotingPurposeModal;

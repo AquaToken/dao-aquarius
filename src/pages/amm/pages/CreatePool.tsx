@@ -27,6 +27,8 @@ import ArrowLeft from 'assets/icon-arrow-left.svg';
 import Tick from 'assets/icon-tick-white.svg';
 
 import Alert from 'basics/Alert';
+import AssetDropdown from 'basics/AssetDropdown';
+import AssetLogo from 'basics/AssetLogo';
 import Button from 'basics/buttons/Button';
 import CircleButton from 'basics/buttons/CircleButton';
 import Checkbox from 'basics/inputs/Checkbox';
@@ -48,8 +50,6 @@ import {
     MainBlock,
     Title,
 } from '../../bribes/pages/AddBribePage';
-import AssetDropdown from '../../vote/components/AssetDropdown/AssetDropdown';
-import AssetLogo from '../../vote/components/AssetDropdown/AssetLogo';
 import ContractNotFound from '../components/ContractNotFound/ContractNotFound';
 import PoolsList from '../components/PoolsList/PoolsList';
 

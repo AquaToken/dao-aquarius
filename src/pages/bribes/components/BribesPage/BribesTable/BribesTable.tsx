@@ -14,16 +14,16 @@ import { Breakpoints, COLORS } from 'web/styles';
 
 import Plus from 'assets/icon-plus.svg';
 
+import Asset from 'basics/Asset';
 import Button from 'basics/buttons/Button';
 import Checkbox from 'basics/inputs/Checkbox';
 import Select from 'basics/inputs/Select';
 import PageLoader from 'basics/loaders/PageLoader';
+import Market from 'basics/Market';
 import Pagination from 'basics/Pagination';
 import Table, { CellAlign } from 'basics/Table';
 
 import { BribesRoutes, MarketRoutes } from '../../../../../routes';
-import Asset from '../../../../vote/components/AssetDropdown/Asset';
-import Market from '../../../../vote/components/common/Market';
 import { BribeSortFields, getBribes } from '../../../api/api';
 import { convertUTCToLocalDateIgnoringTimezone } from '../../../pages/AddBribePage';
 
