@@ -605,12 +605,13 @@ const MainPage = (): React.ReactNode => {
             );
             return;
         }
-        Promise.all([updateVotesForMarketKeys(pairs), getTotalVotingStats()]).then(
-            ([pairsResult, totalStatsResult]) => {
-                setPairs(pairsResult);
-                setTotalStats(totalStatsResult);
-            },
-        );
+        Promise.all([
+            pairs ? updateVotesForMarketKeys(pairs) : Promise.resolve([]),
+            getTotalVotingStats(),
+        ]).then(([pairsResult, totalStatsResult]) => {
+            setPairs(pairsResult);
+            setTotalStats(totalStatsResult);
+        });
     }, [updateIndex]);
 
     useEffect(() => {
