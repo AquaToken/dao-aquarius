@@ -116,6 +116,8 @@ const VolumeChart = ({
         .rangeRound([marginLeft, width - marginRight])
         .domain(daily.map(d => d.date));
 
+    console.log(daily.map(d => d.date));
+
     const y = d3
         .scaleLinear()
         .range([height - marginBottom, marginTop + height * 0.4])
@@ -142,16 +144,23 @@ const VolumeChart = ({
     );
 
     const onMouseMove = event => {
-        if (
-            event.offsetX < marginLeft ||
-            event.offsetX >= x.bandwidth() * daily.length + marginLeft
-        ) {
-            return setSelectedIndex(null);
+        const [mouseX] = d3.pointer(event);
+
+        // Check if the mouse position is within the chart bounds
+        if (mouseX < marginLeft || mouseX > width - marginRight) {
+            setSelectedIndex(null);
+            return;
         }
 
-        const index = Math.floor((event.offsetX - marginLeft) / x.bandwidth());
+        // Find the closest index based on the x-scale
+        const date = x.domain().find(d => {
+            const posX = x(d) + x.bandwidth() / 2;
+            return mouseX >= posX - x.bandwidth() / 2 && mouseX < posX + x.bandwidth() / 2;
+        });
 
-        setSelectedIndex(index);
+        // Set the selected index to the matching date index
+        const index = daily.findIndex(item => item.date === date);
+        setSelectedIndex(index !== -1 ? index : null);
     };
 
     useEffect(() => {
