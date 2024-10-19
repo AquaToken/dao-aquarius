@@ -116,8 +116,6 @@ const VolumeChart = ({
         .rangeRound([marginLeft, width - marginRight])
         .domain(daily.map(d => d.date));
 
-    console.log(daily.map(d => d.date));
-
     const y = d3
         .scaleLinear()
         .range([height - marginBottom, marginTop + height * 0.4])
