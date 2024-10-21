@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
 
-import { getDateString } from 'helpers/date';
+import { convertLocalDateToUTCIgnoringTimezone, getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 
 import { ModalProps } from 'types/modal';
@@ -19,8 +19,6 @@ import Asset from 'basics/Asset';
 import ExternalLink from 'basics/ExternalLink';
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
 import Table, { CellAlign } from 'basics/Table';
-
-import { convertUTCToLocalDateIgnoringTimezone } from 'pages/bribes/pages/AddBribePage';
 
 import { PairStats } from '../../../api/types';
 
@@ -184,8 +182,8 @@ const BribesModal = ({ params }: ModalProps<{ pair: PairStats }>) => {
     }, 0);
     const { start_at, stop_at } = pair.aggregated_bribes[0];
 
-    const startUTC = convertUTCToLocalDateIgnoringTimezone(new Date(start_at));
-    const stopUTC = convertUTCToLocalDateIgnoringTimezone(new Date(stop_at));
+    const startUTC = convertLocalDateToUTCIgnoringTimezone(new Date(start_at));
+    const stopUTC = convertLocalDateToUTCIgnoringTimezone(new Date(stop_at));
 
     const aquaBribePrice = Number(sum / Number(pair.upvote_value)) * 1000;
     return (

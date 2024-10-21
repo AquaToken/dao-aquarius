@@ -16,6 +16,10 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { Link } from 'react-router-dom';
 import styled, { createGlobalStyle } from 'styled-components';
 
+import {
+    convertLocalDateToUTCIgnoringTimezone,
+    convertUTCToLocalDateIgnoringTimezone,
+} from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 
 import { LoginTypes } from 'store/authStore/types';
@@ -326,45 +330,20 @@ const DurationButton = styled.div`
     }
 `;
 
-export const convertUTCToLocalDateIgnoringTimezone = (utcDate: Date) =>
-    new Date(
-        utcDate.getUTCFullYear(),
-        utcDate.getUTCMonth(),
-        utcDate.getUTCDate(),
-        utcDate.getUTCHours(),
-        utcDate.getUTCMinutes(),
-        utcDate.getUTCSeconds(),
-        utcDate.getUTCMilliseconds(),
-    );
-
-export function convertLocalDateToUTCIgnoringTimezone(date: Date) {
-    const timestamp = Date.UTC(
-        date.getFullYear(),
-        date.getMonth(),
-        date.getDate(),
-        date.getHours(),
-        date.getMinutes(),
-        date.getSeconds(),
-        date.getMilliseconds(),
-    );
-
-    return new Date(timestamp);
-}
-
 export const getWeekStartFromDay = (date: Date, duration: number) => {
     const startWeek = startOfWeek(date, { weekStartsOn: 1 });
     const endWeek = endOfWeek(date, { weekStartsOn: 1 });
     const endPeriod = addWeeks(endWeek, duration - 1);
 
     return {
-        start: convertLocalDateToUTCIgnoringTimezone(startWeek),
-        end: convertLocalDateToUTCIgnoringTimezone(endPeriod),
+        start: convertUTCToLocalDateIgnoringTimezone(startWeek),
+        end: convertUTCToLocalDateIgnoringTimezone(endPeriod),
     };
 };
 
 const getMinDate = () => {
     const now = Date.now();
-    const collectDate = convertLocalDateToUTCIgnoringTimezone(
+    const collectDate = convertUTCToLocalDateIgnoringTimezone(
         setHours(startOfDay(isSunday(now) ? now : nextSunday(now)), 18),
     );
 
@@ -538,7 +517,7 @@ const AddBribePage = () => {
             return;
         }
         const { end } = getWeekStartFromDay(
-            convertUTCToLocalDateIgnoringTimezone(startDate),
+            convertLocalDateToUTCIgnoringTimezone(startDate),
             Number(duration),
         );
 

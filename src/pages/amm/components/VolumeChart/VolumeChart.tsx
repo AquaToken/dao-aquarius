@@ -4,7 +4,7 @@ import * as React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import { getDateString } from 'helpers/date';
+import { convertLocalDateToUTCIgnoringTimezone, getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 
 import { PoolStatistics, PoolVolume24h } from 'types/amm';
@@ -82,7 +82,12 @@ const VolumeChart = ({
         }
 
         const last24Volume = data
-            .filter(item => isAfter(transformDate(item.datetime_str), subDays(Date.now(), 1)))
+            .filter(item =>
+                isAfter(
+                    transformDate(item.datetime_str),
+                    subDays(convertLocalDateToUTCIgnoringTimezone(new Date()), 1),
+                ),
+            )
             .reduce((acc, item) => acc + Number(item.volume) / 1e7, 0);
 
         return [
