@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { getDateString } from 'helpers/date';
+import { convertLocalDateToUTCIgnoringTimezone, getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
@@ -25,7 +25,6 @@ import Table, { CellAlign } from 'basics/Table';
 
 import { BribesRoutes, MarketRoutes } from '../../../../../routes';
 import { BribeSortFields, getBribes } from '../../../api/api';
-import { convertUTCToLocalDateIgnoringTimezone } from '../../../pages/AddBribePage';
 
 const Container = styled.div`
     display: flex;
@@ -234,8 +233,8 @@ const BribesTable = () => {
                     },
                 ]}
                 body={bribes.map(item => {
-                    const startUTC = convertUTCToLocalDateIgnoringTimezone(new Date(item.start_at));
-                    const stopUTC = convertUTCToLocalDateIgnoringTimezone(new Date(item.stop_at));
+                    const startUTC = convertLocalDateToUTCIgnoringTimezone(new Date(item.start_at));
+                    const stopUTC = convertLocalDateToUTCIgnoringTimezone(new Date(item.stop_at));
                     const base = {
                         code: item.asset1_code,
                         issuer: item.asset1_issuer,

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
 
-import { getDateString } from 'helpers/date';
+import { convertLocalDateToUTCIgnoringTimezone, getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 
 import { StellarService } from 'services/globalServices';
@@ -17,7 +17,6 @@ import Asset from 'basics/Asset';
 import Table, { CellAlign } from 'basics/Table';
 
 import { Bribe } from 'pages/bribes/api/types';
-import { convertUTCToLocalDateIgnoringTimezone } from 'pages/bribes/pages/AddBribePage';
 import { MarketVotesExtra } from 'pages/vote/api/types';
 import {
     BribeDetail,
@@ -125,8 +124,8 @@ const MarketCurrentBribes = ({ extra, bribes }: MarketCurrentBribes) => {
 
     const { start_at, stop_at } = bribes[0];
 
-    const startUTC = convertUTCToLocalDateIgnoringTimezone(new Date(start_at));
-    const stopUTC = convertUTCToLocalDateIgnoringTimezone(new Date(stop_at));
+    const startUTC = convertLocalDateToUTCIgnoringTimezone(new Date(start_at));
+    const stopUTC = convertLocalDateToUTCIgnoringTimezone(new Date(stop_at));
 
     const { upvoteSum, upvoteCount } = extra.upvote_assets.reduce(
         (acc, { votes_count, votes_sum }) => {

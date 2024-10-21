@@ -66,3 +66,28 @@ export const getTimeString = (timestamp: number): string => {
     const minutes = date.getMinutes();
     return `${hours == 24 ? '00' : `0${hours}`.slice(-2)}:${`0${minutes}`.slice(-2)}`;
 };
+
+export const convertLocalDateToUTCIgnoringTimezone = (utcDate: Date) =>
+    new Date(
+        utcDate.getUTCFullYear(),
+        utcDate.getUTCMonth(),
+        utcDate.getUTCDate(),
+        utcDate.getUTCHours(),
+        utcDate.getUTCMinutes(),
+        utcDate.getUTCSeconds(),
+        utcDate.getUTCMilliseconds(),
+    );
+
+export function convertUTCToLocalDateIgnoringTimezone(date: Date) {
+    const timestamp = Date.UTC(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate(),
+        date.getHours(),
+        date.getMinutes(),
+        date.getSeconds(),
+        date.getMilliseconds(),
+    );
+
+    return new Date(timestamp);
+}
