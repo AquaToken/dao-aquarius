@@ -34,7 +34,7 @@ const MenuBlock = styled.div`
     position: absolute;
     width: 100%;
     top: 100%;
-    left: 0;
+    right: 0;
     background-color: ${COLORS.white};
     box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
     cursor: auto;
@@ -42,6 +42,7 @@ const MenuBlock = styled.div`
     z-index: ${Z_INDEX.accountMenu};
     display: flex;
     flex-direction: column;
+    min-width: 29.5rem;
 
     ${respondDown(Breakpoints.md)`
         position: fixed;
