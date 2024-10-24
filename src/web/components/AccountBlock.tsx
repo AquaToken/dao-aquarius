@@ -172,11 +172,7 @@ const AccountBlock = ({ navLinks }: { navLinks?: React.ReactNode }): React.React
     const menuRef = useRef(null);
     useOnClickOutside(menuRef, () => setIsMenuOpen(false));
 
-    const signIn = (e: React.MouseEvent) => {
-        // Fix for 1password
-        if (!(e as React.PointerEvent).nativeEvent.pointerType) {
-            return;
-        }
+    const signIn = () => {
         ModalService.openModal(ChooseLoginMethodModal, {});
     };
 
@@ -187,7 +183,7 @@ const AccountBlock = ({ navLinks }: { navLinks?: React.ReactNode }): React.React
     if (!isLogged) {
         return (
             <>
-                <SignInButton onClick={(e: React.MouseEvent) => signIn(e)} pending={isLoginPending}>
+                <SignInButton onClick={() => signIn()} pending={isLoginPending}>
                     sign in
                 </SignInButton>
                 <MobileMenu onClick={() => toggleMenu()}>
