@@ -58,6 +58,11 @@ const TooltipStyled = styled(Tooltip)`
     a {
         margin: 0 !important;
     }
+
+    ${respondDown(Breakpoints.md)`
+        margin-right: 0;
+        margin-bottom: 2.4rem;
+    `}
 `;
 
 const App = () => {
