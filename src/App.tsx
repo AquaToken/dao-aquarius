@@ -15,10 +15,11 @@ import { Breakpoints, COLORS } from 'web/styles';
 import LiveOnSorobanImage from 'assets/live-on-soroban.svg';
 
 import PageLoader from 'basics/loaders/PageLoader';
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import ErrorBoundary from 'components/ErrorBoundary';
 import Footer from 'components/Footer';
-import Header, { HeaderNavLink, HeaderNewNavLinks, NavLinksDivider } from 'components/Header';
+import Header, { HeaderNavLink, NavLinksDivider } from 'components/Header';
 import ModalContainer from 'components/ModalContainer';
 import NotFoundPage from 'components/NotFoundPage';
 import ToastContainer from 'components/ToastContainer';
@@ -50,6 +51,13 @@ const UPDATE_PERIOD = 24 * 60 * 60 * 1000;
 
 const BgStyled = styled(LiveOnSorobanImage)`
     object-position: center center;
+`;
+
+const TooltipStyled = styled(Tooltip)`
+    margin-right: 2rem;
+    a {
+        margin: 0 !important;
+    }
 `;
 
 const App = () => {
@@ -223,18 +231,25 @@ const App = () => {
 
                         <NavLinksDivider />
 
-                        <HeaderNewNavLinks>
+                        <TooltipStyled
+                            position={TOOLTIP_POSITION.bottom}
+                            content="Soon"
+                            showOnHover
+                        >
                             <HeaderNavLink
-                                to=""
                                 activeStyle={{
                                     fontWeight: 700,
                                 }}
                                 title="Buy AQUA"
+                                onClick={(e: React.MouseEvent) => {
+                                    e.preventDefault();
+                                }}
+                                to=""
                                 $disabled
                             >
                                 Buy AQUA
                             </HeaderNavLink>
-                        </HeaderNewNavLinks>
+                        </TooltipStyled>
 
                         <HeaderNavLink
                             to={MainRoutes.locker}
