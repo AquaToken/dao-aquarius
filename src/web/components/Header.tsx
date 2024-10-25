@@ -94,11 +94,10 @@ export const HeaderNewNavLinks = styled.div`
 `;
 
 export const HeaderNavLink = styled(NavLink)<{ $disabled?: boolean }>`
-    color: ${COLORS.titleText};
+    color: ${({ $disabled }) => ($disabled ? COLORS.grayText : COLORS.titleText)}!important;
     text-decoration: none;
     font-size: 1.6rem;
     line-height: 2.4rem;
-    pointer-events: ${({ $disabled }) => ($disabled ? 'none' : 'unset')};
     font-weight: ${({ $disabled }) => ($disabled ? '400!important' : 'unset')};
     white-space: nowrap;
 
