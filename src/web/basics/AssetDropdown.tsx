@@ -23,7 +23,7 @@ import Fail from 'assets/icon-fail.svg';
 import Loader from 'assets/loader.svg';
 
 import Asset from 'basics/Asset';
-import AssetLogo from 'basics/AssetLogo';
+import Chips from 'basics/Chips';
 import Input from 'basics/inputs/Input';
 
 const DropDown = styled.div<{ $isOpen: boolean }>`
@@ -190,47 +190,6 @@ const StyledAsset = styled(Asset)<{ $withBalances?: boolean }>`
     width: ${({ $withBalances }) => ($withBalances ? '50%' : '100%')};
 `;
 
-const Chips = styled.div`
-    display: flex;
-`;
-
-const ChipsItem = styled.div`
-    display: flex;
-    align-items: center;
-    padding: 0.8rem 1.6rem;
-    background-color: ${COLORS.lightGray};
-    border-radius: 0.4rem;
-    margin-right: 0.5rem;
-
-    span {
-        margin-left: 0.8rem;
-        margin-right: 1.6rem;
-        font-size: 1.6rem;
-        line-height: 2.8rem;
-        color: ${COLORS.paragraphText};
-    }
-
-    ${respondDown(Breakpoints.xs)`
-        padding: 0.8rem;
-        span {
-            display: none;
-        }
-        
-        svg {
-            margin-left: 0.4rem;
-        }
-    `}
-`;
-
-const ResetChips = styled(Fail)`
-    rect {
-        fill: ${COLORS.paragraphText};
-    }
-    height: 1.6rem;
-    width: 1.6rem;
-    cursor: pointer;
-`;
-
 const StyledInput = styled(Input)<{ $isOpen?: boolean }>`
     input {
         background-color: ${COLORS.transparent};
@@ -242,6 +201,23 @@ const StyledInput = styled(Input)<{ $isOpen?: boolean }>`
             border: 0.1rem solid ${COLORS.transparent};
         }
     }
+`;
+
+const ChipsWeb = styled(Chips)`
+    ${respondDown(Breakpoints.sm)`
+        display: none;
+    `}
+`;
+
+const ChipsMobile = styled(Chips)`
+    display: none;
+    width: 100%;
+    flex-wrap: wrap;
+    margin-top: 0.8rem;
+
+    ${respondDown(Breakpoints.sm)`
+        display: flex;
+    `}
 `;
 
 const domainPattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
@@ -483,94 +459,82 @@ const AssetDropdown = ({
     );
 
     return (
-        <DropDown onClick={() => toggleDropdown()} $isOpen={isOpen} ref={ref} {...props}>
-            {Boolean(label) && <Label $isOpen={isOpen}>{label}</Label>}
-            {selectedAsset && !isOpen ? (
-                <StyledAsset asset={selectedAsset} />
-            ) : (
-                <StyledInput
-                    onClick={(e: React.MouseEvent) => {
-                        if (isOpen) {
-                            e.stopPropagation();
-                        }
-                    }}
-                    $isOpen={isOpen}
-                    placeholder={placeholder ?? 'Search asset or enter home domain'}
-                    disabled={!assets.length || disabled || pending}
-                    value={searchText}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        setSearchText(e.target.value);
-                    }}
-                    prefixCustom={
-                        <Chips>
-                            {selectedAssets.map(asset => (
-                                <ChipsItem key={`${asset.code}-${asset.issuer}`}>
-                                    <AssetLogo
-                                        asset={asset}
-                                        isCircle
-                                        isSmall={+window.innerWidth < 480}
-                                    />
-                                    <span>{asset.code}</span>
-                                    <ResetChips
-                                        onClick={(e: React.MouseEvent) => resetAsset(e, asset)}
-                                    />
-                                </ChipsItem>
-                            ))}
-                        </Chips>
-                    }
-                    ref={inputRef}
-                />
-            )}
+        <>
+            <DropDown onClick={() => toggleDropdown()} $isOpen={isOpen} ref={ref} {...props}>
+                {Boolean(label) && <Label $isOpen={isOpen}>{label}</Label>}
+                {selectedAsset && !isOpen ? (
+                    <StyledAsset asset={selectedAsset} />
+                ) : (
+                    <StyledInput
+                        onClick={(e: React.MouseEvent) => {
+                            if (isOpen) {
+                                e.stopPropagation();
+                            }
+                        }}
+                        $isOpen={isOpen}
+                        placeholder={placeholder ?? 'Search asset or enter home domain'}
+                        disabled={!assets.length || disabled || pending}
+                        value={searchText}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                            setSearchText(e.target.value);
+                        }}
+                        prefixCustom={<ChipsWeb assets={selectedAssets} resetAsset={resetAsset} />}
+                        ref={inputRef}
+                    />
+                )}
 
-            {!withoutReset && (selectedAsset || Boolean(selectedAssets.length)) && (
-                <div
-                    onClick={(e: React.MouseEvent) => {
-                        resetAll(e);
-                    }}
-                >
-                    <Reset />
-                </div>
-            )}
+                {!withoutReset && (selectedAsset || Boolean(selectedAssets.length)) && (
+                    <div
+                        onClick={(e: React.MouseEvent) => {
+                            resetAll(e);
+                        }}
+                    >
+                        <Reset />
+                    </div>
+                )}
 
-            {!assets.length || searchPending || pending ? (
-                <DropdownLoader />
-            ) : (
-                <DropdownArrow $isOpen={isOpen} />
-            )}
-            {isOpen && (
-                <DropdownList $longListOnMobile={longListOnMobile}>
-                    {filteredAssets.map(assetItem => (
-                        <DropdownItem
-                            onClick={() => onClickAsset(assetItem)}
-                            key={assetItem.code + assetItem.issuer}
-                        >
-                            <StyledAsset
-                                asset={assetItem}
-                                $withBalances={withBalances && assetItem.balance}
-                            />
-                            {withBalances && assetItem.balance ? (
-                                <Balances>
-                                    <span>
-                                        {formatBalance(assetItem.balance)} {assetItem.code}
-                                    </span>
-                                    <span>
-                                        $
-                                        {formatBalance(
-                                            +(
-                                                assetItem.nativeBalance *
-                                                StellarService.priceLumenUsd
-                                            ).toFixed(2),
-                                            true,
-                                        )}
-                                    </span>
-                                </Balances>
-                            ) : null}
-                        </DropdownItem>
-                    ))}
-                    {!filteredAssets.length && <SearchEmpty>Asset not found.</SearchEmpty>}
-                </DropdownList>
-            )}
-        </DropDown>
+                {!assets.length || searchPending || pending ? (
+                    <DropdownLoader />
+                ) : (
+                    <DropdownArrow $isOpen={isOpen} />
+                )}
+
+                {isOpen && (
+                    <DropdownList $longListOnMobile={longListOnMobile}>
+                        {filteredAssets.map(assetItem => (
+                            <DropdownItem
+                                onClick={() => onClickAsset(assetItem)}
+                                key={assetItem.code + assetItem.issuer}
+                            >
+                                <StyledAsset
+                                    asset={assetItem}
+                                    $withBalances={withBalances && assetItem.balance}
+                                />
+                                {withBalances && assetItem.balance ? (
+                                    <Balances>
+                                        <span>
+                                            {formatBalance(assetItem.balance)} {assetItem.code}
+                                        </span>
+                                        <span>
+                                            $
+                                            {formatBalance(
+                                                +(
+                                                    assetItem.nativeBalance *
+                                                    StellarService.priceLumenUsd
+                                                ).toFixed(2),
+                                                true,
+                                            )}
+                                        </span>
+                                    </Balances>
+                                ) : null}
+                            </DropdownItem>
+                        ))}
+                        {!filteredAssets.length && <SearchEmpty>Asset not found.</SearchEmpty>}
+                    </DropdownList>
+                )}
+            </DropDown>
+            <ChipsMobile assets={selectedAssets} resetAsset={resetAsset} />
+        </>
     );
 };
 
