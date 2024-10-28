@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 
@@ -8,12 +7,13 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService, StellarService } from 'services/globalServices';
 import { StellarEvents } from 'services/stellar.service';
+
 import { flexRowSpaceBetween } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 
 import IconDislike from 'assets/icon-dislike-black.svg';
 import IconLike from 'assets/icon-like-white.svg';
-import IconTick from 'assets/icon-tick.svg';
+import IconTick from 'assets/icon-tick-16.svg';
 
 import Button from 'basics/buttons/Button';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
