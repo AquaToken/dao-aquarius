@@ -5,18 +5,20 @@ import styled from 'styled-components';
 
 import { getAssetDetails } from 'api/stellar-expert';
 
+import { AQUA_CODE, AQUA_ISSUER } from 'constants/assets';
+import { MainRoutes } from 'constants/routes';
+
 import { getAssetString } from 'helpers/assets';
 import { getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
+import { StellarService } from 'services/globalServices';
+
 import { ExpertAssetData } from 'types/api-stellar-expert';
 import { ModalProps } from 'types/modal';
 import { Asset as AssetType, StellarToml as StellarTomlType } from 'types/stellar';
-
-import { StellarService } from 'services/globalServices';
-import { AQUA_CODE, AQUA_ISSUER } from 'services/stellar.service';
 
 import Mail from 'assets/email16.svg';
 import Git from 'assets/github16.svg';
@@ -31,7 +33,6 @@ import { ModalWrapper } from 'basics/ModalAtoms';
 
 import NoTrustline from 'components/NoTrustline';
 
-import { MainRoutes } from '../../routes';
 import { respondDown } from '../mixins';
 import { Breakpoints, COLORS } from '../styles';
 

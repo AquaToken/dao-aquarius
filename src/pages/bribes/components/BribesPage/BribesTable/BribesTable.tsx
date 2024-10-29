@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { BribesRoutes, MarketRoutes } from 'constants/routes';
+
 import { getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 
@@ -23,7 +25,6 @@ import Market from 'basics/Market';
 import Pagination from 'basics/Pagination';
 import Table, { CellAlign } from 'basics/Table';
 
-import { BribesRoutes, MarketRoutes } from '../../../../../routes';
 import { BribeSortFields, getBribes } from '../../../api/api';
 import { convertUTCToLocalDateIgnoringTimezone } from '../../../pages/AddBribePage';
 

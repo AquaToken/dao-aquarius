@@ -5,6 +5,8 @@ import styled from 'styled-components';
 
 import { FilterOptions, getPools, PoolsSortFields } from 'api/amm';
 
+import { AmmRoutes } from 'constants/routes';
+
 import { formatBalance } from 'helpers/format-number';
 
 import { PoolProcessed } from 'types/amm';
@@ -25,8 +27,6 @@ import Table, { CellAlign } from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
-
-import { AmmRoutes } from '../../../../routes';
 
 const ToggleGroupStyled = styled(ToggleGroup)`
     width: fit-content;

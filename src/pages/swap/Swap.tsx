@@ -1,13 +1,12 @@
-import * as React from 'react';
 import { lazy } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
+
+import { AQUA_CODE, AQUA_ISSUER } from 'constants/assets';
+import { MainRoutes } from 'constants/routes';
 
 import { getAssetString } from 'helpers/assets';
 
 import { StellarService } from 'services/globalServices';
-import { AQUA_CODE, AQUA_ISSUER } from 'services/stellar.service';
-
-import { MainRoutes } from '../../routes';
 
 const SwapPageLazy = lazy(() => import('./pages/SwapPage'));
 

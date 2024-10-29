@@ -16,6 +16,8 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { Link } from 'react-router-dom';
 import styled, { createGlobalStyle } from 'styled-components';
 
+import { BribesRoutes } from 'constants/routes';
+
 import { formatBalance } from 'helpers/format-number';
 
 import { LoginTypes } from 'store/authStore/types';
@@ -42,7 +44,6 @@ import ExternalLink from 'basics/ExternalLink';
 import Input from 'basics/inputs/Input';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
-import { BribesRoutes } from '../../../routes';
 import CreatePairModal from '../../vote/components/MainPage/CreatePairModal/CreatePairModal';
 import { getMarketPair } from '../api/api';
 import ConfirmBribeModal from '../components/AddBribePage/ConfirmBribeModal/ConfirmBribeModal';

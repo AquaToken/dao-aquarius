@@ -5,6 +5,8 @@ import styled from 'styled-components';
 import { flexAllCenter } from 'web/mixins';
 import { COLORS } from 'web/styles';
 
+import BlankButton from './BlankButton';
+
 const WrapperDiv = styled.div`
     display: flex;
     align-items: center;
@@ -18,7 +20,7 @@ const WrapperLink = styled(Link)`
     cursor: pointer;
 `;
 
-const CircleButtonContainer = styled.button`
+const CircleButtonContainer = styled(BlankButton)`
     ${flexAllCenter};
     height: 4.8rem;
     width: 4.8rem;

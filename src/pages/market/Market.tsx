@@ -1,10 +1,9 @@
-import * as React from 'react';
 import { lazy } from 'react';
 import { Route, Switch } from 'react-router-dom';
 
-import NotFoundPage from 'components/NotFoundPage';
+import { MarketRoutes } from 'constants/routes';
 
-import { MarketRoutes } from '../../routes';
+import NotFoundPage from 'components/NotFoundPage';
 
 const MarketPage = lazy(() => import('./pages/MarketPage'));
 

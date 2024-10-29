@@ -2,6 +2,8 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { MainRoutes } from 'constants/routes';
+
 import { ModalProps } from 'types/modal';
 
 import ArrowRight from 'assets/icon-arrow-right.svg';
@@ -14,7 +16,6 @@ import ExternalLink from 'basics/ExternalLink';
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
 import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
 
-import { MainRoutes } from '../../routes';
 import { flexRowSpaceBetween, respondDown } from '../mixins';
 import { Breakpoints, COLORS } from '../styles';
 

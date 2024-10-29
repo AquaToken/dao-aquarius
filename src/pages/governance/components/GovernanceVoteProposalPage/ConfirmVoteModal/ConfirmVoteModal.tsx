@@ -1,22 +1,26 @@
-import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled, { css } from 'styled-components';
+
+import { AQUA_CODE, AQUA_ISSUER } from 'constants/assets';
+import { LockerRoutes } from 'constants/routes';
 
 import { getDateString } from 'helpers/date';
 import ErrorHandler from 'helpers/error-handler';
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
+import { useIsMounted } from 'hooks/useIsMounted';
+
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { ModalService, StellarService, ToastService } from 'services/globalServices';
+import { GOV_ICE_CODE, ICE_ISSUER } from 'services/stellar.service';
+import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
+
 import { ModalProps } from 'types/modal';
 
-import { useIsMounted } from 'hooks/useIsMounted';
-import { ModalService, StellarService, ToastService } from 'services/globalServices';
-import { AQUA_CODE, AQUA_ISSUER, GOV_ICE_CODE, ICE_ISSUER } from 'services/stellar.service';
-import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 import { flexAllCenter, flexRowSpaceBetween } from 'web/mixins';
 import GetAquaModal from 'web/modals/GetAquaModal';
 import { COLORS } from 'web/styles';
@@ -33,7 +37,6 @@ import RangeInput from 'basics/inputs/RangeInput';
 import Select from 'basics/inputs/Select';
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
 
-import { LockerRoutes } from '../../../../../routes';
 import { SimpleProposalOptions } from '../../../pages/GovernanceVoteProposalPage';
 
 const MINIMUM_AMOUNT = 0.0000001;

@@ -3,6 +3,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { MainRoutes, MarketRoutes } from 'constants/routes';
+
 import { getAssetString } from 'helpers/assets';
 import { getTimeAgoValue } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
@@ -47,7 +49,6 @@ import FloatingButton from './FloatingButton/FloatingButton';
 import Table from './Table/Table';
 import VotesAmountModal from './VoteModals/VotesAmountModal';
 
-import { MainRoutes, MarketRoutes } from '../../../../routes';
 import {
     getFilteredPairsList,
     getPairsList,

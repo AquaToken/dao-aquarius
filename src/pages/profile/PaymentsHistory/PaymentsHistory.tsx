@@ -1,7 +1,8 @@
-import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+
+import { MainRoutes } from 'constants/routes';
 
 import { getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
@@ -17,7 +18,6 @@ import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
 import Table, { CellAlign } from 'basics/Table';
 
-import { MainRoutes } from '../../../routes';
 import { ExternalLinkStyled, Header, Section, Title } from '../AmmRewards/AmmRewards';
 import { Empty } from '../YourVotes/YourVotes';
 

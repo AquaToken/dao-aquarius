@@ -3,6 +3,8 @@ import { forwardRef, RefObject, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
+import { GovernanceRoutes } from 'constants/routes';
+
 import { getDateString } from 'helpers/date';
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
 
@@ -21,7 +23,6 @@ import ExternalLink from 'basics/ExternalLink';
 
 import NativeVotingButton from './VotingButton/VotingButton';
 
-import { GovernanceRoutes } from '../../../../../routes';
 import { Proposal } from '../../../api/types';
 import { CREATE_DISCUSSION_COST, CREATE_PROPOSAL_COST } from '../../../pages/GovernanceMainPage';
 import { SimpleProposalOptions } from '../../../pages/GovernanceVoteProposalPage';

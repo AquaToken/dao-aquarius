@@ -4,7 +4,10 @@ import BigNumber from 'bignumber.js';
 
 import { getNativePrices } from 'api/amm';
 
+import { AQUA_CODE, AQUA_ISSUER } from 'constants/assets';
+
 import { getAssetFromString, getAssetString } from 'helpers/assets';
+import { getNetworkPassphrase } from 'helpers/env';
 
 import { LoginTypes } from 'store/authStore/types';
 
@@ -24,7 +27,7 @@ import {
     WalletConnectService,
 } from './globalServices';
 import { POOL_TYPE } from './soroban.service';
-import { AQUA_CODE, AQUA_ISSUER, ICE_ASSETS } from './stellar.service';
+import { ICE_ASSETS } from './stellar.service';
 import { BuildSignAndSubmitStatuses } from './wallet-connect.service';
 
 const VAULT_MARKER = 'GA2T6GR7VXXXBETTERSAFETHANSORRYXXXPROTECTEDBYLOBSTRVAULT';
@@ -95,7 +98,7 @@ export default class AccountService extends Horizon.AccountResponse {
 
         if (this.authType === LoginTypes.walletConnect && withResult) {
             const signedXDR: string = await WalletConnectService.signTx(tx);
-            signedTx = new StellarSdk.Transaction(signedXDR, StellarSdk.Networks.PUBLIC);
+            signedTx = new StellarSdk.Transaction(signedXDR, getNetworkPassphrase());
         }
 
         if (this.authType === LoginTypes.ledger && !this.isMultisigEnabled) {

@@ -1,8 +1,9 @@
 import { Asset } from '@stellar/stellar-sdk';
-import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+
+import { LockerRoutes } from 'constants/routes';
 
 import ErrorHandler from 'helpers/error-handler';
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
@@ -34,7 +35,6 @@ import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
 
 import VotesDurationModal from './VotesDurationModal';
 
-import { LockerRoutes } from '../../../../../routes';
 import { PairStats } from '../../../api/types';
 import { AQUA, DOWN_ICE, SELECTED_PAIRS_ALIAS, UP_ICE } from '../MainPage';
 

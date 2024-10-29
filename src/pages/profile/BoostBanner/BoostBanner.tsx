@@ -1,16 +1,15 @@
-import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+
+import { LockerRoutes } from 'constants/routes';
 
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import FreezeAqua from 'assets/freeze-aqua-banner.svg';
 
-import Button from 'basics/buttons/Button';
+import { Button } from 'basics/buttons';
 import Label from 'basics/Label';
-
-import { LockerRoutes } from '../../../routes';
 
 const Container = styled.div`
     display: flex;
@@ -81,7 +80,7 @@ const BoostBanner = () => (
         <FreezeAquaImg />
         <Content>
             <Title>
-                Get the <Label title="boost" background={COLORS.blue} /> to your reward
+                Get the <Label labelText="boost" background={COLORS.blue} /> to your reward
             </Title>
             <Description>
                 Freeze your AQUA into ICE and boost your rewards by up to 250%!

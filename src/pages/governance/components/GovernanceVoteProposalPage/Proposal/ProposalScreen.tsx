@@ -2,6 +2,8 @@ import * as React from 'react';
 import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 
+import { GovernanceRoutes } from 'constants/routes';
+
 import { getDateString } from 'helpers/date';
 
 import useAuthStore from 'store/authStore/useAuthStore';
@@ -19,7 +21,6 @@ import CircleButton from 'basics/buttons/CircleButton';
 import ExternalLink from 'basics/ExternalLink';
 import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
 
-import { GovernanceRoutes } from '../../../../../routes';
 import { Proposal } from '../../../api/types';
 import { statePage } from '../../../pages/GovernanceProposalCreationPage';
 import CurrentResults from '../CurrentResults/CurrentResults';

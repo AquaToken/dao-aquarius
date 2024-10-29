@@ -2,10 +2,11 @@ import { Dispatch } from 'react';
 
 import { getAssetsInfo, getAssetsRequest } from 'api/assets';
 
+import { AQUA_CODE, AQUA_ISSUER, USDC_CODE, USDC_ISSUER } from 'constants/assets';
+
 import { getAssetString } from 'helpers/assets';
 
 import { StellarService } from 'services/globalServices';
-import { AQUA_CODE, AQUA_ISSUER, USDC_CODE, USDC_ISSUER } from 'services/stellar.service';
 
 import { ASSET_CACHE } from './reducer';
 import { ASSETS_ACTIONS, AssetSimple } from './types';

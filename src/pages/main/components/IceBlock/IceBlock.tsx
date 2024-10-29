@@ -2,6 +2,8 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { MainRoutes } from 'constants/routes';
+
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -9,8 +11,6 @@ import Ice from 'assets/ice-logo.svg';
 import Arrow from 'assets/icon-link-arrow.svg';
 
 import Button from 'basics/buttons/Button';
-
-import { MainRoutes } from '../../../../routes';
 
 const Container = styled.section`
     width: 100%;

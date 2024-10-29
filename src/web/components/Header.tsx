@@ -2,6 +2,8 @@ import * as React from 'react';
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { MainRoutes } from 'constants/routes';
+
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService } from 'services/globalServices';
@@ -11,7 +13,6 @@ import IconProfile from 'assets/icon-profile.svg';
 
 import AccountBlock from './AccountBlock';
 
-import { MainRoutes } from '../../routes';
 import { commonMaxWidth, respondDown } from '../mixins';
 import ChooseLoginMethodModal from '../modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS, Z_INDEX } from '../styles';

@@ -1,14 +1,17 @@
-import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import Title from 'react-document-title';
 import { useHistory, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { VoteRoutes } from 'constants/routes';
+
+import { useIsOverScrolled } from 'hooks/useIsOnViewport';
+
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { useIsOverScrolled } from 'hooks/useIsOnViewport';
 import { ModalService, StellarService } from 'services/globalServices';
+
 import { commonMaxWidth, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -22,7 +25,6 @@ import Market from 'basics/Market';
 import MigrateToSorobanBanner from 'components/MigrateToSorobanBanner';
 import NotFoundPage from 'components/NotFoundPage';
 
-import { VoteRoutes } from '../../../routes';
 import { getFilteredPairsList, getTotalVotingStats } from '../../vote/api/api';
 import { PairStats } from '../../vote/api/types';
 import { isRewardsOn, MAX_REWARDS_PERCENT } from '../../vote/components/MainPage/Table/Table';

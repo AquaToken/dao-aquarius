@@ -9,7 +9,7 @@ import { getIceStatistics } from 'api/ice-locker';
 import { getTotalRewards } from 'api/rewards';
 import { getAssetDetails } from 'api/stellar-expert';
 
-import { AQUA_ASSET_STRING } from 'constants/assets';
+import { AQUA_ASSET_STRING, AQUA_CODE, AQUA_ISSUER } from 'constants/assets';
 
 import { getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
@@ -17,11 +17,11 @@ import { getPercentValue } from 'helpers/number';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
+import { StellarService } from 'services/globalServices';
+
 import { IceStatistics } from 'types/api-ice-locker';
 import { ExpertAssetData } from 'types/api-stellar-expert';
 
-import { StellarService } from 'services/globalServices';
-import { AQUA_CODE, AQUA_ISSUER } from 'services/stellar.service';
 import { respondDown, respondUp } from 'web/mixins';
 import { Breakpoints, COLORS, FONT_FAMILY } from 'web/styles';
 

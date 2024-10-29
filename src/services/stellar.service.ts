@@ -6,7 +6,9 @@ import BigNumber from 'bignumber.js';
 import { getPoolInfo } from 'api/amm';
 
 import debounceFunction from 'helpers/debounce-function';
+import { getNetworkPassphrase } from 'helpers/env';
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
+import { getHorizonUrl } from 'helpers/url';
 
 import { Asset, StellarToml } from 'types/stellar';
 
@@ -15,10 +17,6 @@ import { PairStats } from 'pages/vote/api/types';
 
 import EventService from './event.service';
 import { ToastService } from './globalServices';
-
-enum HORIZON_SERVER {
-    stellar = 'https://horizon.stellar.org',
-}
 
 const VAULT_API = 'https://vault.lobstr.co/api/transactions/';
 
@@ -40,10 +38,9 @@ export enum StellarEvents {
     paymentsHistoryUpdate = 'payments history update',
 }
 
+// TODO: refactor, move to consts
 export const AQUA_CODE = 'AQUA';
 export const AQUA_ISSUER = 'GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA';
-export const USDC_CODE = 'USDC';
-export const USDC_ISSUER = 'GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN';
 export const yXLM_CODE = 'yXLM';
 export const yXLM_ISSUER = 'GARDNV3Q7YGT4AKSDF25LT32YSCCW4EV22Y2TV3I2PU2MMXJTEDL5T55';
 
@@ -162,7 +159,7 @@ export default class StellarServiceClass {
 
         const tx = new StellarSdk.TransactionBuilder(newAccount, {
             fee: FEE.toString(),
-            networkPassphrase: StellarSdk.Networks.PUBLIC,
+            networkPassphrase: getNetworkPassphrase(),
         }).setTimeout(TRANSACTION_TIMEOUT);
 
         if (Array.isArray(operations)) {
@@ -206,7 +203,7 @@ export default class StellarServiceClass {
     }
 
     submitXDR(xdr: string): Promise<Horizon.HorizonApi.SubmitTransactionResponse> {
-        const tx = new StellarSdk.Transaction(xdr, StellarSdk.Networks.PUBLIC);
+        const tx = new StellarSdk.Transaction(xdr, getNetworkPassphrase());
         return this.submitTx(tx);
     }
 
@@ -265,7 +262,7 @@ export default class StellarServiceClass {
     private startHorizonServer(): void {
         // settled in configs: prod.js and dev.js
         // this.server = new StellarSdk.Horizon.Server(process.horizon.HORIZON_SERVER);
-        this.server = new StellarSdk.Horizon.Server(HORIZON_SERVER.stellar);
+        this.server = new StellarSdk.Horizon.Server(getHorizonUrl());
     }
 
     loadAccount(publicKey: string): Promise<StellarSdk.Horizon.AccountResponse> {
@@ -720,7 +717,7 @@ export default class StellarServiceClass {
                 if (data.status !== 'revised') {
                     throw new Error('Incorrect status');
                 }
-                return new StellarSdk.Transaction(data.tx, StellarSdk.Networks.PUBLIC);
+                return new StellarSdk.Transaction(data.tx, getNetworkPassphrase());
             });
     }
 
@@ -841,7 +838,7 @@ export default class StellarServiceClass {
 
         const transactionBuilder = new StellarSdk.TransactionBuilder(updatedAccount, {
             fee: FEE,
-            networkPassphrase: StellarSdk.Networks.PUBLIC,
+            networkPassphrase: getNetworkPassphrase(),
         });
 
         this.addMarketKeyOperations(

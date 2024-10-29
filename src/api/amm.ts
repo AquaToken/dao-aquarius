@@ -2,8 +2,11 @@ import { Asset } from '@stellar/stellar-sdk';
 import axios from 'axios';
 
 import { API_AMM_BACKEND } from 'constants/api';
+import { AQUA_CODE, AQUA_ISSUER } from 'constants/assets';
 
 import { getAssetFromString, getAssetString } from 'helpers/assets';
+
+import { AssetsService, SorobanService, StellarService } from 'services/globalServices';
 
 import {
     FindSwapPath,
@@ -20,9 +23,6 @@ import {
     PoolUserProcessed,
     PoolVolume24h,
 } from 'types/amm';
-
-import { AssetsService, SorobanService, StellarService } from 'services/globalServices';
-import { AQUA_CODE, AQUA_ISSUER } from 'services/stellar.service';
 
 export enum FilterOptions {
     all = '',
@@ -150,7 +150,7 @@ export const getUserPools = (accountId: string): Promise<PoolUserProcessed[]> =>
 export const findSwapPath = async (
     baseId: string,
     counterId: string,
-    amount: string,
+    amount: string | number,
 ): Promise<FindSwapPath> => {
     const headers = { 'Content-Type': 'application/json' };
 

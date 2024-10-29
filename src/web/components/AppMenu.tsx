@@ -2,6 +2,8 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { LockerRoutes } from 'constants/routes';
+
 import { formatBalance } from 'helpers/format-number';
 
 import { LoginTypes } from 'store/authStore/types';
@@ -24,7 +26,6 @@ import Identicon from 'basics/Identicon';
 
 import SocialLinks from 'components/SocialLinks';
 
-import { LockerRoutes } from '../../routes';
 import { respondDown } from '../mixins';
 import ChooseLoginMethodModal from '../modals/auth/ChooseLoginMethodModal';
 import GetAquaModal from '../modals/GetAquaModal';
