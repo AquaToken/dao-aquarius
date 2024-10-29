@@ -1,32 +1,59 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import { getIsTestnetEnv, setProductionEnv } from 'helpers/env';
+import { ENV_PRODUCTION, ENV_TESTNET } from 'constants/env';
+
+import { getEnv, getIsTestnetEnv, setProductionEnv } from 'helpers/env';
+import Timer from 'helpers/timer';
+
+import { ToastService } from 'services/globalServices';
 
 import { flexAllCenter } from 'web/mixins';
 import { COLORS } from 'web/styles';
 
-import { Button } from 'basics/buttons';
+import { ToggleGroup } from 'basics/inputs';
 
 const Container = styled.div`
     ${flexAllCenter};
     background-color: ${COLORS.lightGray};
+    padding: 0 4rem;
+    box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
 `;
+
+const OPTIONS = [
+    { label: 'Testnet', value: ENV_TESTNET },
+    { label: 'Production', value: ENV_PRODUCTION },
+];
+
+const SWITCH_TIMEOUT = 5000;
 
 const TestnetBanner = (): JSX.Element => {
     const [isTestnet, setIsTestnet] = useState(getIsTestnetEnv());
+    const currentEnv = getEnv();
+    const [toggleValue, setToggleValue] = useState(currentEnv);
 
-    const onClickSwitch = () => {
+    const close = () => {
         setProductionEnv();
         setIsTestnet(false);
     };
 
+    const timer = useRef(new Timer(close, SWITCH_TIMEOUT));
+
+    const onClickSwitch = value => {
+        timer.current.clear();
+        setToggleValue(value);
+        if (value === currentEnv) {
+            return;
+        }
+        ToastService.showSuccessToast(
+            `You will be switched to ${value} in ${SWITCH_TIMEOUT / 1000} sec`,
+        );
+        timer.current.start();
+    };
+
     return isTestnet ? (
         <Container>
-            Running on Testnet
-            <Button isSmall onClick={onClickSwitch}>
-                Switch to main network
-            </Button>
+            <ToggleGroup value={toggleValue} options={OPTIONS} onChange={onClickSwitch} />
         </Container>
     ) : null;
 };
