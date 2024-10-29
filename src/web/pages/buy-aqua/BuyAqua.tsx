@@ -108,9 +108,6 @@ const BuyAqua = (): JSX.Element => {
     const baseContract = getMoonpayBaseContract();
     const counterContract = getMoonpayCounterContract();
 
-    console.log('Base contract ' + baseContract);
-    console.log('Counter contract ' + counterContract);
-
     const isTestnet = getIsTestnetEnv();
     const counterCurrencyCode = isTestnet ? DEFAULT_BUY_CRYPTO_CODE_TEST : DEFAULT_BUY_CRYPTO_CODE;
 
@@ -127,11 +124,14 @@ const BuyAqua = (): JSX.Element => {
     };
 
     useEffect(() => {
+        console.log('Base contract ' + baseContract);
+        console.log('Counter contract ' + counterContract);
         getMoonpayCurrencies()
             .then(currencies => {
                 setAvailableCurrencies(currencies.filter(currency => currency.type === 'fiat'));
                 const usd = currencies.find(currency => currency.code === 'usd');
-                console.log('selected currency ' + usd);
+                console.log('selected currency:' + usd);
+                console.log(usd);
                 setCurrentCurrency(usd);
                 onChangeInput(usd.minBuyAmount);
             })
@@ -156,13 +156,13 @@ const BuyAqua = (): JSX.Element => {
         })
             .then(quote => {
                 setQuote(quote);
-                console.log('moonpay quote: ' + quote);
+                console.log('moonpay quote: ');
+                console.log(quote);
                 return quote;
             })
             .then((quote: MoonpayQuote) => {
                 findSwapPath(baseContract, counterContract, quote.quoteCurrencyAmount)
                     .then(res => {
-                        console.log(res);
                         if (res.success) {
                             // setError(false);
                             // setEstimatePending(false);

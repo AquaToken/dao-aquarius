@@ -4,8 +4,10 @@ import BigNumber from 'bignumber.js';
 import binascii from 'binascii';
 import { sha256 } from 'js-sha256';
 
+import { CONTRACTS } from 'constants/soroban';
+
 import { getAssetString } from 'helpers/assets';
-import { getNetworkPassphrase } from 'helpers/env';
+import { getEnv, getNetworkPassphrase } from 'helpers/env';
 import { SorobanErrorHandler, SorobanPrepareTxErrorHandler } from 'helpers/error-handler';
 import { getSorobanUrl } from 'helpers/url';
 
@@ -13,7 +15,7 @@ import RestoreContractModal from 'web/modals/RestoreContractModal';
 
 import { ModalService, ToastService } from './globalServices';
 
-export const AMM_SMART_CONTACT_ID = 'CBQDHNBFBZYE4MKPWBSJOPIYLW4SFSXAXUTSXJN76GNKYVYPCKWC6QUK';
+export const AMM_SMART_CONTACT_ID = CONTRACTS[getEnv()].amm;
 
 enum AMM_CONTRACT_METHOD {
     GET_POOLS = 'get_pools',

@@ -3,7 +3,7 @@ import axios from 'axios';
 import { API_URLS } from 'constants/api';
 
 import { getEnv } from 'helpers/env';
-import { getMoonpayKeyByEnv } from 'helpers/moonpay';
+import { getMoonpayBaseContract, getMoonpayKeyByEnv } from 'helpers/moonpay';
 
 import { MoonpayCurrencies, MoonpayQuote } from 'types/api-moonpay';
 
@@ -59,16 +59,16 @@ export type ProxyAddressResponse = {
 export const getMoonpayProxyAddress = (publicKey: string): Promise<string> => {
     const env = getEnv();
     const baseUrl = API_URLS[env].onRampProxy;
+    const aquaContract = getMoonpayBaseContract();
 
     const headers = {
         Accept: 'application/json',
         'Content-Type': 'application/json',
     };
-    const TESTNET_AQUA_CONTRACT = 'CDNVQW44C3HALYNVQ4SOBXY5EWYTGVYXX6JPESOLQDABJI5FC5LTRRUE';
 
     const body = JSON.stringify({
         destination: publicKey,
-        token_to_buy: TESTNET_AQUA_CONTRACT,
+        token_to_buy: aquaContract,
     });
 
     return axios
