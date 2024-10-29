@@ -1,14 +1,18 @@
 import { useEffect } from 'react';
+import { Redirect } from 'react-router';
 
-import { setTestnetEnv } from 'helpers/env';
+import { MainRoutes } from 'constants/routes';
+
+import { getIsProductionEnv, setTestnetEnv } from 'helpers/env';
 
 const TestnetSwitcher = (): JSX.Element => {
     useEffect(() => {
-        window.history.back();
-        setTestnetEnv();
+        if (getIsProductionEnv()) {
+            setTestnetEnv();
+        }
     }, []);
 
-    return null;
+    return <Redirect to={MainRoutes.main} />;
 };
 
 export default TestnetSwitcher;
