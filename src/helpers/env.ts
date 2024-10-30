@@ -2,7 +2,12 @@ import { ENV_PRODUCTION, ENV_TESTNET } from 'constants/env';
 import { LS_ENV_NAME } from 'constants/local-storage';
 import { NETWORK_PASSPHRASES } from 'constants/stellar';
 
-export const getEnv = () => localStorage.getItem(LS_ENV_NAME) || ENV_PRODUCTION;
+import { Environment } from 'types/env';
+
+export const getEnv = (): Environment => {
+    const env = localStorage.getItem(LS_ENV_NAME);
+    return (env as Environment) || ENV_PRODUCTION;
+};
 export const getIsTestnetEnv = () => getEnv() === ENV_TESTNET;
 export const getIsProductionEnv = () => getEnv() === ENV_PRODUCTION;
 export const setTestnetEnv = () => {

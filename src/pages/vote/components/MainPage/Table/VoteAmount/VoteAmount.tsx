@@ -1,15 +1,10 @@
-import * as React from 'react';
 import styled from 'styled-components';
 
+import { getAquaAssetData } from 'helpers/assets';
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
 
-import {
-    AQUA_CODE,
-    AQUA_ISSUER,
-    DOWN_ICE_CODE,
-    ICE_ISSUER,
-    UP_ICE_CODE,
-} from 'services/stellar.service';
+import { DOWN_ICE_CODE, ICE_ISSUER, UP_ICE_CODE } from 'services/stellar.service';
+
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -176,6 +171,8 @@ export const getPercent = (value: string, total: string): string => {
 };
 
 const VoteAmount = ({ pair, totalStats }: { pair: PairStats; totalStats: TotalStats }) => {
+    const { aquaAssetString } = getAquaAssetData();
+
     if (!pair.votes_value) {
         return null;
     }
@@ -190,11 +187,9 @@ const VoteAmount = ({ pair, totalStats }: { pair: PairStats; totalStats: TotalSt
         : null;
 
     const upAqua =
-        pair.extra.upvote_assets.find(({ asset }) => asset === `${AQUA_CODE}:${AQUA_ISSUER}`)
-            ?.votes_sum ?? 0;
+        pair.extra.upvote_assets.find(({ asset }) => asset === aquaAssetString)?.votes_sum ?? 0;
     const downAqua =
-        pair.extra.downvote_assets.find(({ asset }) => asset === `${AQUA_CODE}:${AQUA_ISSUER}`)
-            ?.votes_sum ?? 0;
+        pair.extra.downvote_assets.find(({ asset }) => asset === aquaAssetString)?.votes_sum ?? 0;
     const upIce =
         pair.extra.upvote_assets.find(({ asset }) => asset === `${UP_ICE_CODE}:${ICE_ISSUER}`)
             ?.votes_sum ?? 0;

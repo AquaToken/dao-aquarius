@@ -9,15 +9,12 @@ import { getIceStatistics } from 'api/ice-locker';
 import { getTotalRewards } from 'api/rewards';
 import { getAssetDetails } from 'api/stellar-expert';
 
-import { AQUA_ASSET_STRING, AQUA_CODE, AQUA_ISSUER } from 'constants/assets';
-
+import { getAquaAssetData } from 'helpers/assets';
 import { getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 import { getPercentValue } from 'helpers/number';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
-
-import { StellarService } from 'services/globalServices';
 
 import { IceStatistics } from 'types/api-ice-locker';
 import { ExpertAssetData } from 'types/api-stellar-expert';
@@ -256,7 +253,9 @@ const About = (): React.ReactElement => {
 
     const location = useLocation();
 
-    const aquaAsset = assetsInfo.get(AQUA_ASSET_STRING);
+    const { aquaStellarAsset, aquaAssetString } = getAquaAssetData();
+
+    const aquaAsset = assetsInfo.get(aquaAssetString);
     const { first_transaction, liquidity_pools_amount } = aquaAsset || {};
 
     const [iceStats, setIceStats] = useState<IceStatistics>(null);
@@ -274,7 +273,7 @@ const About = (): React.ReactElement => {
     }, [location, aquaTokenRef]);
 
     useEffect(() => {
-        getAssetDetails(StellarService.createAsset(AQUA_CODE, AQUA_ISSUER))
+        getAssetDetails(aquaStellarAsset)
             .then(data => {
                 setExpertData(data);
             })

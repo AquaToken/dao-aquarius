@@ -1,2 +1,2 @@
-export const ENV_TESTNET = 'testnet';
-export const ENV_PRODUCTION = 'production';
+export const ENV_TESTNET = 'testnet' as const;
+export const ENV_PRODUCTION = 'production' as const;

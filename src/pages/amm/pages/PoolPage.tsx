@@ -4,9 +4,9 @@ import styled from 'styled-components';
 
 import { getPool } from 'api/amm';
 
-import { AQUA_CODE, AQUA_ISSUER } from 'constants/assets';
 import { AmmRoutes } from 'constants/routes';
 
+import { getAquaAssetData } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
@@ -15,7 +15,7 @@ import { useUpdateIndex } from 'hooks/useUpdateIndex';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { SorobanService, StellarService, ToastService } from 'services/globalServices';
+import { SorobanService, ToastService } from 'services/globalServices';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { PoolExtended } from 'types/amm';
@@ -169,6 +169,8 @@ const PoolPage = () => {
 
     const updateIndex = useUpdateIndex(5000);
 
+    const { aquaStellarAsset } = getAquaAssetData();
+
     useEffect(() => {
         if (!pool) {
             return;
@@ -271,17 +273,13 @@ const PoolPage = () => {
                                     pending={claimPending}
                                     disabled={
                                         pool.claim_killed ||
-                                        account?.getAssetBalance(
-                                            StellarService.createAsset(AQUA_CODE, AQUA_ISSUER),
-                                        ) === null
+                                        account?.getAssetBalance(aquaStellarAsset) === null
                                     }
                                 >
                                     Claim rewards
                                 </Button>
                             </Rewards>
-                            <NoTrustline
-                                asset={StellarService.createAsset(AQUA_CODE, AQUA_ISSUER)}
-                            />
+                            <NoTrustline asset={aquaStellarAsset} />
                         </SectionWrap>
                     </Section>
                 )}

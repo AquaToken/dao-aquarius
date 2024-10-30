@@ -5,8 +5,9 @@ import styled from 'styled-components';
 
 import { getMoonpayFederationMemo, getMoonpayProxyAddress } from 'api/moonpay';
 
-import { AQUA_CODE } from 'constants/assets';
 import { MainRoutes } from 'constants/routes';
+
+import { getAquaAssetData } from 'helpers/assets';
 
 import { StellarService } from 'services/globalServices';
 
@@ -92,6 +93,8 @@ const BuyAquaConfirmModal = ({
     } = quote;
     console.log(quote);
 
+    const { aquaCode } = getAquaAssetData();
+
     const onClickConfirm = () => {
         setIsLoading(true);
         getMoonpayFederationMemo(userAddress)
@@ -115,7 +118,7 @@ const BuyAquaConfirmModal = ({
         },
         {
             description: 'Payment route',
-            value: `${baseCurrencyCode.toUpperCase()} - ${quoteCurrencyCode.toUpperCase()} - ${AQUA_CODE}`,
+            value: `${baseCurrencyCode.toUpperCase()} - ${quoteCurrencyCode.toUpperCase()} - ${aquaCode}`,
         },
         {
             description: 'Network fee',

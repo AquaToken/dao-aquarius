@@ -1,9 +1,33 @@
+import { AssetsEnvData } from 'types/env';
+
+import { ENV_PRODUCTION, ENV_TESTNET } from './env';
+
 export const AQUA_CODE = 'AQUA';
+export const AQUA_CODE_TESTNET = 'AQUA';
 export const AQUA_ISSUER = 'GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA';
-export const AQUA_ASSET_STRING = 'AQUA:GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA';
+export const AQUA_ISSUER_TESTNET = 'GAHPYWLK6YRN7CVYZOO4H3VDRZ7PVF5UJGLZCSPAEIKJE2XSWF5LAGER';
+export const AQUA_ASSET_STRING = `${AQUA_CODE}:${AQUA_ISSUER}`;
+export const AQUA_ASSET_STRING_TESTNET = `${AQUA_CODE_TESTNET}:${AQUA_ISSUER_TESTNET}`;
 
 export const USDC_CODE = 'USDC';
 export const USDC_ISSUER = 'GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN';
+
+export const ASSETS_ENV_DATA: AssetsEnvData = {
+    [ENV_PRODUCTION]: {
+        aqua: {
+            aquaCode: AQUA_CODE,
+            aquaIssuer: AQUA_ISSUER,
+            aquaAssetString: AQUA_ASSET_STRING,
+        },
+    },
+    [ENV_TESTNET]: {
+        aqua: {
+            aquaCode: AQUA_CODE_TESTNET,
+            aquaIssuer: AQUA_ISSUER_TESTNET,
+            aquaAssetString: AQUA_ASSET_STRING_TESTNET,
+        },
+    },
+};
 
 export const TESTNET_ASSETS = new Map([
     [

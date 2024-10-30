@@ -7,7 +7,7 @@ import { getMoonpayBuyQuote, getMoonpayCurrencies } from 'api/moonpay';
 import { DEFAULT_BUY_CRYPTO_CODE, DEFAULT_BUY_CRYPTO_CODE_TEST } from 'constants/moonpay';
 
 import { getIsTestnetEnv } from 'helpers/env';
-import { getMoonpayBaseContract, getMoonpayCounterContract } from 'helpers/moonpay';
+import { getAquaContract, getXlmContract } from 'helpers/soroban';
 
 import { useDebounce } from 'hooks/useDebounce';
 
@@ -105,8 +105,8 @@ const BuyAqua = (): JSX.Element => {
 
     const debouncedAmount = useDebounce(baseAmount, 700, true);
 
-    const baseContract = getMoonpayBaseContract();
-    const counterContract = getMoonpayCounterContract();
+    const baseContract = getAquaContract();
+    const counterContract = getXlmContract();
 
     const isTestnet = getIsTestnetEnv();
     const counterCurrencyCode = isTestnet ? DEFAULT_BUY_CRYPTO_CODE_TEST : DEFAULT_BUY_CRYPTO_CODE;

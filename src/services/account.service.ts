@@ -4,10 +4,10 @@ import BigNumber from 'bignumber.js';
 
 import { getNativePrices } from 'api/amm';
 
-import { AQUA_CODE, AQUA_ISSUER } from 'constants/assets';
+import { ASSETS_ENV_DATA } from 'constants/assets';
 
 import { getAssetFromString, getAssetString } from 'helpers/assets';
-import { getNetworkPassphrase } from 'helpers/env';
+import { getEnv, getNetworkPassphrase } from 'helpers/env';
 
 import { LoginTypes } from 'store/authStore/types';
 
@@ -31,6 +31,7 @@ import { ICE_ASSETS } from './stellar.service';
 import { BuildSignAndSubmitStatuses } from './wallet-connect.service';
 
 const VAULT_MARKER = 'GA2T6GR7VXXXBETTERSAFETHANSORRYXXXPROTECTEDBYLOBSTRVAULT';
+const { aquaCode, aquaIssuer } = ASSETS_ENV_DATA[getEnv()].aqua;
 
 export default class AccountService extends Horizon.AccountResponse {
     authType?: LoginTypes;
@@ -322,8 +323,8 @@ export default class AccountService extends Horizon.AccountResponse {
     getAquaBalance(): number | null {
         const aquaBalance = this.balances.find(
             balance =>
-                (balance as Horizon.HorizonApi.BalanceLineAsset).asset_code == AQUA_CODE &&
-                (balance as Horizon.HorizonApi.BalanceLineAsset).asset_issuer === AQUA_ISSUER,
+                (balance as Horizon.HorizonApi.BalanceLineAsset).asset_code == aquaCode &&
+                (balance as Horizon.HorizonApi.BalanceLineAsset).asset_issuer === aquaIssuer,
         ) as Horizon.HorizonApi.BalanceLineAsset;
 
         if (!aquaBalance) {
@@ -336,8 +337,8 @@ export default class AccountService extends Horizon.AccountResponse {
     getAquaInOffers(): number | null {
         const aquaBalance = this.balances.find(
             balance =>
-                (balance as Horizon.HorizonApi.BalanceLineAsset).asset_code == AQUA_CODE &&
-                (balance as Horizon.HorizonApi.BalanceLineAsset).asset_issuer === AQUA_ISSUER,
+                (balance as Horizon.HorizonApi.BalanceLineAsset).asset_code == aquaCode &&
+                (balance as Horizon.HorizonApi.BalanceLineAsset).asset_issuer === aquaIssuer,
         ) as Horizon.HorizonApi.BalanceLineAsset;
 
         if (!aquaBalance) {

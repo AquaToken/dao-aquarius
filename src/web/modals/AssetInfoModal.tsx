@@ -5,10 +5,9 @@ import styled from 'styled-components';
 
 import { getAssetDetails } from 'api/stellar-expert';
 
-import { AQUA_CODE, AQUA_ISSUER } from 'constants/assets';
 import { MainRoutes } from 'constants/routes';
 
-import { getAssetString } from 'helpers/assets';
+import { getAquaAssetData, getAssetString } from 'helpers/assets';
 import { getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 
@@ -121,6 +120,7 @@ const AssetInfoModal = ({ params, close }: ModalProps<AssetInfoModalParams>): Re
     const { assetsInfo } = useAssetsStore();
 
     const { desc, home_domain } = assetsInfo.get(getAssetString(asset)) || {};
+    const { aquaCode, aquaIssuer, aquaStellarAsset } = getAquaAssetData();
 
     useEffect(() => {
         StellarService.resolveToml(home_domain)
@@ -242,9 +242,9 @@ const AssetInfoModal = ({ params, close }: ModalProps<AssetInfoModalParams>): Re
             <Buttons>
                 <LinkStyled
                     to={`${MainRoutes.swap}/${getAssetString(asset)}/${getAssetString(
-                        asset.code === AQUA_CODE && asset.issuer === AQUA_ISSUER
+                        asset.code === aquaCode && asset.issuer === aquaIssuer
                             ? StellarService.createLumen()
-                            : StellarService.createAsset(AQUA_CODE, AQUA_ISSUER),
+                            : aquaStellarAsset,
                     )}`}
                     onClick={() => close()}
                 >

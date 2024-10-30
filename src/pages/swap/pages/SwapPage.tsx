@@ -2,10 +2,9 @@ import { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { AQUA_CODE, AQUA_ISSUER } from 'constants/assets';
 import { MainRoutes } from 'constants/routes';
 
-import { getAssetFromString, getAssetString } from 'helpers/assets';
+import { getAquaAssetData, getAssetFromString, getAssetString } from 'helpers/assets';
 
 import { StellarService } from 'services/globalServices';
 
@@ -45,6 +44,7 @@ const SwapPage = () => {
 
     const params = useParams<{ source: string; destination: string }>();
     const history = useHistory();
+    const { aquaAssetString } = getAquaAssetData();
 
     useEffect(() => {
         const { source, destination } = params;
@@ -53,7 +53,7 @@ const SwapPage = () => {
             history.replace(
                 `${MainRoutes.swap}/${getAssetString(
                     StellarService.createLumen(),
-                )}/${getAssetString(StellarService.createAsset(AQUA_CODE, AQUA_ISSUER))}`,
+                )}/${aquaAssetString}`,
             );
             return;
         }

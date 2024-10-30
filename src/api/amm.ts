@@ -1,12 +1,10 @@
 import { Asset } from '@stellar/stellar-sdk';
 import axios from 'axios';
 
-import { AQUA_CODE, AQUA_ISSUER } from 'constants/assets';
-
-import { getAssetFromString, getAssetString } from 'helpers/assets';
+import { getAquaAssetData, getAssetFromString, getAssetString } from 'helpers/assets';
 import { getAmmAquaUrl } from 'helpers/url';
 
-import { AssetsService, SorobanService, StellarService } from 'services/globalServices';
+import { AssetsService, SorobanService } from 'services/globalServices';
 
 import {
     FindSwapPath,
@@ -271,13 +269,14 @@ export const getAmmRewards = async (): Promise<number> => {
 export const getAquaInPoolsSum = async (): Promise<number> => {
     const baseUrl = getAmmAquaUrl();
 
-    const AQUA = StellarService.createAsset(AQUA_CODE, AQUA_ISSUER);
+    const { aquaContract, aquaAssetString } = getAquaAssetData();
+
     const { data } = await axios.get<ListResponse<Pool>>(
-        `${baseUrl}/pools/?&search=${SorobanService.getAssetContractId(AQUA)}&size=500`,
+        `${baseUrl}/pools/?&search=${aquaContract}&size=500`,
     );
 
     return data.items.reduce((acc, item) => {
-        const aquaIndex = item.tokens_str.findIndex(str => str === getAssetString(AQUA));
+        const aquaIndex = item.tokens_str.findIndex(str => str === aquaAssetString);
 
         return acc + Number(item.reserves[aquaIndex]) / 1e7;
     }, 0);

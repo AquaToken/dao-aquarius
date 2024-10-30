@@ -5,8 +5,10 @@ import BigNumber from 'bignumber.js';
 
 import { getPoolInfo } from 'api/amm';
 
+import { ASSETS_ENV_DATA } from 'constants/assets';
+
 import debounceFunction from 'helpers/debounce-function';
-import { getNetworkPassphrase } from 'helpers/env';
+import { getEnv, getNetworkPassphrase } from 'helpers/env';
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
 import { getHorizonUrl } from 'helpers/url';
 
@@ -37,10 +39,8 @@ export enum StellarEvents {
     claimableUpdate = 'claimable update',
     paymentsHistoryUpdate = 'payments history update',
 }
+const { aquaCode, aquaIssuer, aquaAssetString } = ASSETS_ENV_DATA[getEnv()].aqua;
 
-// TODO: refactor, move to consts
-export const AQUA_CODE = 'AQUA';
-export const AQUA_ISSUER = 'GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA';
 export const yXLM_CODE = 'yXLM';
 export const yXLM_ISSUER = 'GARDNV3Q7YGT4AKSDF25LT32YSCCW4EV22Y2TV3I2PU2MMXJTEDL5T55';
 
@@ -335,7 +335,7 @@ export default class StellarServiceClass {
 
     getAquaPrice() {
         return this.server
-            .orderbook(this.createAsset(AQUA_CODE, AQUA_ISSUER), this.createLumen())
+            .orderbook(this.createAsset(aquaCode, aquaIssuer), this.createLumen())
             .call()
             .then(res => (+res.asks[0].price + +res.bids[0].price) / 2);
     }
@@ -349,7 +349,7 @@ export default class StellarServiceClass {
             claim =>
                 claim.claimants.length === 1 &&
                 claim.claimants[0].destination === publicKey &&
-                claim.asset === `${AQUA_CODE}:${AQUA_ISSUER}`,
+                claim.asset === aquaAssetString,
         );
     }
 
@@ -372,7 +372,7 @@ export default class StellarServiceClass {
                     claim =>
                         claim.claimants.length === 1 &&
                         claim.claimants[0].destination === publicKey &&
-                        claim.asset === `${AQUA_CODE}:${AQUA_ISSUER}`,
+                        claim.asset === aquaAssetString,
                 ),
             );
     }
@@ -531,7 +531,7 @@ export default class StellarServiceClass {
                 claimant => claimant.destination === proposal.vote_against_issuer,
             );
             const selfClaim = claim.claimants.find(claimant => claimant.destination === accountId);
-            const isAqua = claim.asset === `${AQUA_CODE}:${AQUA_ISSUER}`;
+            const isAqua = claim.asset === aquaAssetString;
             const isGovIce = claim.asset === `${GOV_ICE_CODE}:${ICE_ISSUER}`;
 
             if ((hasForMarker || hasAgainstMarker) && Boolean(selfClaim) && (isAqua || isGovIce)) {
@@ -563,7 +563,7 @@ export default class StellarServiceClass {
                 claimant => claimant.destination === pair.downvote_account_id,
             );
             const selfClaim = claim.claimants.find(claimant => claimant.destination === accountId);
-            const isAqua = claim.asset === `${AQUA_CODE}:${AQUA_ISSUER}`;
+            const isAqua = claim.asset === aquaAssetString;
             const isUpIce = claim.asset === `${UP_ICE_CODE}:${ICE_ISSUER}`;
             const isDownIce = claim.asset === `${DOWN_ICE_CODE}:${ICE_ISSUER}`;
 
@@ -610,7 +610,7 @@ export default class StellarServiceClass {
                 const selfClaim = claim.claimants.find(
                     claimant => claimant.destination === accountId,
                 );
-                const isAqua = claim.asset === `${AQUA_CODE}:${AQUA_ISSUER}`;
+                const isAqua = claim.asset === aquaAssetString;
 
                 if ((hasUpMarker || hasDownMarker) && Boolean(selfClaim) && isAqua) {
                     acc += Number(claim.amount);
@@ -637,7 +637,7 @@ export default class StellarServiceClass {
             if (claim.claimants.length !== 2) {
                 return acc;
             }
-            const isAqua = claim.asset === `${AQUA_CODE}:${AQUA_ISSUER}`;
+            const isAqua = claim.asset === aquaAssetString;
             const isUpIce = claim.asset === `${UP_ICE_CODE}:${ICE_ISSUER}`;
             const isDownIce = claim.asset === `${DOWN_ICE_CODE}:${ICE_ISSUER}`;
             const hasSelfClaim = claim.claimants.some(
@@ -688,7 +688,7 @@ export default class StellarServiceClass {
         return StellarSdk.Operation.createClaimableBalance({
             source: publicKey,
             amount: amount.toString(),
-            asset: asset ?? new StellarSdk.Asset(AQUA_CODE, AQUA_ISSUER),
+            asset: asset ?? new StellarSdk.Asset(aquaCode, aquaIssuer),
             claimants: [
                 new StellarSdk.Claimant(
                     marketKey,
@@ -743,7 +743,7 @@ export default class StellarServiceClass {
         return StellarSdk.Operation.createClaimableBalance({
             source: publicKey,
             amount: amount.toString(),
-            asset: new StellarSdk.Asset(AQUA_CODE, AQUA_ISSUER),
+            asset: new StellarSdk.Asset(aquaCode, aquaIssuer),
             claimants: [
                 new StellarSdk.Claimant(
                     publicKey,
@@ -785,8 +785,8 @@ export default class StellarServiceClass {
     createBurnAquaOperation(amount: string) {
         return StellarSdk.Operation.payment({
             amount,
-            asset: new StellarSdk.Asset(AQUA_CODE, AQUA_ISSUER),
-            destination: AQUA_ISSUER,
+            asset: new StellarSdk.Asset(aquaCode, aquaIssuer),
+            destination: aquaIssuer,
         });
     }
 
@@ -899,7 +899,7 @@ export default class StellarServiceClass {
 
         if (withTrust) {
             const trustOp = StellarSdk.Operation.changeTrust({
-                asset: new StellarSdk.Asset(AQUA_CODE, AQUA_ISSUER),
+                asset: new StellarSdk.Asset(aquaCode, aquaIssuer),
             });
             ops.push(trustOp);
         }
@@ -935,7 +935,7 @@ export default class StellarServiceClass {
 
     getAquaEquivalent(asset, amount) {
         return this.server
-            .strictSendPaths(asset, amount, [new StellarSdk.Asset(AQUA_CODE, AQUA_ISSUER)])
+            .strictSendPaths(asset, amount, [new StellarSdk.Asset(aquaCode, aquaIssuer)])
             .call()
             .then(res => {
                 if (!res.records.length) {

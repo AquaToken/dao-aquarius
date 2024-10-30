@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import { MainRoutes, MarketRoutes } from 'constants/routes';
 
-import { getAssetString } from 'helpers/assets';
+import { getAquaAssetData, getAssetString } from 'helpers/assets';
 import { getTimeAgoValue } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 
@@ -13,17 +13,11 @@ import useAssetsStore from 'store/assetsStore/useAssetsStore';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { ModalService, StellarService } from 'services/globalServices';
+import { DOWN_ICE_CODE, ICE_ISSUER, StellarEvents, UP_ICE_CODE } from 'services/stellar.service';
+
 import { Asset } from 'types/stellar';
 
-import { ModalService, StellarService } from 'services/globalServices';
-import {
-    AQUA_CODE,
-    AQUA_ISSUER,
-    DOWN_ICE_CODE,
-    ICE_ISSUER,
-    StellarEvents,
-    UP_ICE_CODE,
-} from 'services/stellar.service';
 import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -328,7 +322,6 @@ const options: Option<SortTypes>[] = [
 const PAGE_SIZE = 20;
 const UPDATE_INTERVAL = 60 * 1000; // 1 minute
 
-export const AQUA = StellarService?.createAsset(AQUA_CODE, AQUA_ISSUER);
 export const UP_ICE = StellarService?.createAsset(UP_ICE_CODE, ICE_ISSUER);
 export const DOWN_ICE = StellarService?.createAsset(DOWN_ICE_CODE, ICE_ISSUER);
 
@@ -391,6 +384,7 @@ const MainPage = (): React.ReactNode => {
     const [changePageLoading, setChangePageLoading] = useState(false);
     const [totalStats, setTotalStats] = useState(null);
 
+    const { aquaAssetString } = getAquaAssetData();
     const [pairs, setPairs] = useState(null);
     const [count, setCount] = useState(0);
 
@@ -710,7 +704,7 @@ const MainPage = (): React.ReactNode => {
         const { assets } = totalStats;
 
         return {
-            totalAqua: +assets.find(({ asset }) => asset === getAssetString(AQUA))?.votes_sum,
+            totalAqua: +assets.find(({ asset }) => asset === aquaAssetString)?.votes_sum,
             totalUpIce: +assets.find(({ asset }) => asset === getAssetString(UP_ICE))?.votes_sum,
             totalDownIce: +assets.find(({ asset }) => asset === getAssetString(DOWN_ICE))
                 ?.votes_sum,
