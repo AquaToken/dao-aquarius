@@ -60,6 +60,7 @@ export interface CryptoCurrency {
 }
 
 export type MoonpayCurrencies = (FiatCurrency | CryptoCurrency)[];
+export type MoonpayCurrency = FiatCurrency | CryptoCurrency;
 
 export interface QuoteCurrency {
     id: string;

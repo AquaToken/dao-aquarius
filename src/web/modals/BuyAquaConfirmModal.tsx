@@ -9,6 +9,8 @@ import { MainRoutes } from 'constants/routes';
 
 import { getAquaAssetData } from 'helpers/assets';
 
+import useAuthStore from 'store/authStore/useAuthStore';
+
 import { StellarService } from 'services/globalServices';
 
 import { MoonpayQuote } from 'types/api-moonpay';
@@ -75,14 +77,16 @@ const BuyAquaConfirmModal = ({
     params,
     close,
 }: ModalProps<BuyAquaCurrencyModalParams>): JSX.Element => {
+    const { account } = useAuthStore();
+
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [proxyFederation, setProxyFederation] = useState('');
     const [proxyAddress, setProxyAddress] = useState('');
-    const [userAddress, setUserAddress] = useState('');
+    const [userAddress, setUserAddress] = useState(account?.accountId());
 
     const { quote, counterAmount, counterCurrencyCode } = params;
-
+    console.log(userAddress);
     const {
         baseCurrencyAmount,
         baseCurrencyCode,
@@ -141,7 +145,7 @@ const BuyAquaConfirmModal = ({
     const isConfirmDisabled = isLoading || !userAddress;
 
     const onChangeInput = value => {
-        if (!StellarService.isValidPublicKey(value)) {
+        if (!StellarService.isValidPublicKey(value) && value !== '') {
             return;
         }
 
@@ -174,6 +178,7 @@ const BuyAquaConfirmModal = ({
                                 </ListItem>
                             ))}
                         </ListWrapper>
+
                         <Input
                             value={userAddress}
                             onChange={({ target }) => onChangeInput(target.value)}

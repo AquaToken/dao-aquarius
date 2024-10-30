@@ -4,7 +4,11 @@ import styled from 'styled-components';
 import { findSwapPath } from 'api/amm';
 import { getMoonpayBuyQuote, getMoonpayCurrencies } from 'api/moonpay';
 
-import { DEFAULT_BUY_CRYPTO_CODE, DEFAULT_BUY_CRYPTO_CODE_TEST } from 'constants/moonpay';
+import {
+    MOONPAY_CURRENCY_PREFIXES,
+    DEFAULT_BUY_CRYPTO_CODE,
+    DEFAULT_BUY_CRYPTO_CODE_TEST,
+} from 'constants/moonpay';
 
 import { getIsTestnetEnv } from 'helpers/env';
 import { getAquaContract, getXlmContract } from 'helpers/soroban';
@@ -15,7 +19,7 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService, ToastService } from 'services/globalServices';
 
-import { MoonpayCurrencies, MoonpayQuote } from 'types/api-moonpay';
+import { MoonpayCurrencies, MoonpayCurrency, MoonpayQuote } from 'types/api-moonpay';
 
 import {
     cardBoxShadow,
@@ -29,9 +33,10 @@ import BuyAquaCurrencyModal from 'web/modals/BuyAquaCurrencyModal';
 import { COLORS } from 'web/styles';
 
 import ArrowRight from 'assets/icon-arrow-right.svg';
+import SwapIcon from 'assets/icon-arrows-circle.svg';
 
-import { BlankButton, Button } from 'basics/buttons';
-import { Input } from 'basics/inputs';
+import { BlankButton, Button, CircleButton } from 'basics/buttons';
+import { BlankInput, Input } from 'basics/inputs';
 import { PageLoader } from 'basics/loaders';
 
 const Wrapper = styled.div`
@@ -77,6 +82,15 @@ const Label = styled.span`
     opacity: 0.7;
 `;
 
+const BaseCurrencyLabel = styled(Label)`
+    margin-bottom: 0.8rem;
+`;
+
+const CounterCurrencyLabel = styled(Label)`
+    margin-top: 3.2rem;
+    margin-bottom: 1.6rem;
+`;
+
 const ButtonSelect = styled(BlankButton)`
     ${flexAllCenter};
     background-color: ${COLORS.lightGray};
@@ -91,6 +105,23 @@ const ButtonSelect = styled(BlankButton)`
 const ButtonArrowIcon = styled(ArrowRight)`
     transform: rotate(90deg);
     margin-left: 0.8rem;
+`;
+
+const SwitchButton = styled(CircleButton)`
+    transform: rotate(90deg);
+    margin-top: 3.2rem;
+`;
+
+const AmountInput = styled(BlankInput)`
+    text-align: center;
+    color: ${COLORS.titleText};
+    caret-color: ${COLORS.purple};
+    font-size: 5.4rem;
+    font-weight: 700;
+
+    &:focus {
+        border: none;
+    }
 `;
 
 const BuyAqua = (): JSX.Element => {
@@ -113,14 +144,22 @@ const BuyAqua = (): JSX.Element => {
 
     const isContinueDisabled = !baseAmount || isLoadingRates;
 
-    const onChangeInput = value => {
-        if (Number.isNaN(Number(value))) {
+    const currencyPrefix = MOONPAY_CURRENCY_PREFIXES[currentCurrency?.code];
+    const amountInputValue = !baseAmount ? '' : `${currencyPrefix}${baseAmount}`;
+
+    const onChangeInput = (value, newCurrency?: MoonpayCurrency) => {
+        const newPrefix = MOONPAY_CURRENCY_PREFIXES[newCurrency?.code] || currencyPrefix;
+        const pureValue = value.toString().replace(newPrefix, '');
+
+        if (Number.isNaN(Number(pureValue))) {
             return;
         }
-        if (value) {
+
+        if (pureValue) {
             setIsLoadingRates(true);
         }
-        setBaseAmount(value);
+
+        setBaseAmount(pureValue);
     };
 
     useEffect(() => {
@@ -130,12 +169,13 @@ const BuyAqua = (): JSX.Element => {
             .then(currencies => {
                 setAvailableCurrencies(currencies.filter(currency => currency.type === 'fiat'));
                 const usd = currencies.find(currency => currency.code === 'usd');
-                console.log('selected currency:' + usd);
+                console.log('selected currency:');
                 console.log(usd);
                 setCurrentCurrency(usd);
-                onChangeInput(usd.minBuyAmount);
+                onChangeInput(usd.minBuyAmount, usd);
             })
             .catch(e => {
+                console.log(e);
                 ToastService.showErrorToast(e.message ?? e.toString());
             })
             .finally(() => {
@@ -192,7 +232,7 @@ const BuyAqua = (): JSX.Element => {
 
     const onChooseCurrency = currency => {
         setCurrentCurrency(currency);
-        onChangeInput(currency.minBuyAmount);
+        onChangeInput(currency.minBuyAmount, currency);
     };
 
     const openCurrencyModal = () => {
@@ -231,15 +271,25 @@ const BuyAqua = (): JSX.Element => {
                     </Label>
                 </HeaderContainer>
                 <ContentContainer>
-                    <Label>{currentCurrency.code.toUpperCase()} amount:</Label>
-                    <Input
-                        value={baseAmount}
+                    <BaseCurrencyLabel>
+                        {currentCurrency.code.toUpperCase()} amount:
+                    </BaseCurrencyLabel>
+                    <AmountInput
+                        autoFocus
+                        value={amountInputValue}
                         onChange={({ target }) => onChangeInput(target.value)}
-                        placeholder={`Enter ${currentCurrency.code} amount`}
+                        placeholder={`Enter ${currencyPrefix} amount`}
                         inputMode="decimal"
                     />
-                    {isLoadingRates && <PageLoader />}
-                    <Label>{counterAmount} AQUA</Label>
+
+                    {isLoadingRates ? (
+                        <PageLoader />
+                    ) : (
+                        <SwitchButton onClick={() => {}} disabled>
+                            <SwapIcon />
+                        </SwitchButton>
+                    )}
+                    <CounterCurrencyLabel>{counterAmount} AQUA</CounterCurrencyLabel>
                 </ContentContainer>
                 <FooterContainer>
                     <Button
