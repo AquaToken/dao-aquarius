@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { findSwapPath } from 'api/amm';
-import { getMoonpayBuyQuote, getMoonpayCurrencies } from 'api/moonpay';
+import { getMoonpayBuyQuote, getMoonpayCurrencies, getMoonpayProxyFees } from 'api/moonpay';
 
 import {
     MOONPAY_CURRENCY_PREFIXES,
@@ -10,7 +10,9 @@ import {
     DEFAULT_BUY_CRYPTO_CODE_TEST,
 } from 'constants/moonpay';
 
+import { getAquaAssetData } from 'helpers/assets';
 import { getIsTestnetEnv } from 'helpers/env';
+import { formatBalance, roundToPrecision } from 'helpers/format-number';
 import { getAquaContract, getXlmContract } from 'helpers/soroban';
 
 import { useDebounce } from 'hooks/useDebounce';
@@ -133,6 +135,7 @@ const BuyAqua = (): JSX.Element => {
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingRates, setIsLoadingRates] = useState(true);
     const [quote, setQuote] = useState<MoonpayQuote>(null);
+    const [proxyFee, setProxyFee] = useState<number>(0);
 
     const debouncedAmount = useDebounce(baseAmount, 700, true);
 
@@ -140,29 +143,42 @@ const BuyAqua = (): JSX.Element => {
     const counterContract = getXlmContract();
 
     const isTestnet = getIsTestnetEnv();
+    const { aquaCode } = getAquaAssetData();
+
     const counterCurrencyCode = isTestnet ? DEFAULT_BUY_CRYPTO_CODE_TEST : DEFAULT_BUY_CRYPTO_CODE;
 
-    const isContinueDisabled = !baseAmount || isLoadingRates;
+    const isContinueDisabled = Number(baseAmount) === 0 || isLoadingRates;
 
     const currencyPrefix = MOONPAY_CURRENCY_PREFIXES[currentCurrency?.code];
     const amountInputValue = !baseAmount ? '' : `${currencyPrefix}${baseAmount}`;
 
     const onChangeInput = (value, newCurrency?: MoonpayCurrency) => {
+        const precision = newCurrency?.precision || currentCurrency?.precision;
         const newPrefix = MOONPAY_CURRENCY_PREFIXES[newCurrency?.code] || currencyPrefix;
         const pureValue = value.toString().replace(newPrefix, '');
+        const pureeValueNum = Number(pureValue);
 
-        if (Number.isNaN(Number(pureValue))) {
+        if (Number.isNaN(pureeValueNum)) {
             return;
         }
 
-        if (pureValue) {
+        if (pureValue && pureeValueNum !== 0) {
             setIsLoadingRates(true);
         }
 
-        setBaseAmount(pureValue);
+        setBaseAmount(roundToPrecision(pureValue, precision));
     };
 
     useEffect(() => {
+        getMoonpayProxyFees()
+            .then(fee => {
+                setProxyFee(fee);
+            })
+            .catch(e => {
+                console.log(e);
+                ToastService.showErrorToast(e.message ?? e.toString());
+            });
+
         console.log('Base contract ' + baseContract);
         console.log('Counter contract ' + counterContract);
         getMoonpayCurrencies()
@@ -184,7 +200,8 @@ const BuyAqua = (): JSX.Element => {
     }, []);
 
     useEffect(() => {
-        if (!currentCurrency && !baseAmount) {
+        if (!currentCurrency || !baseAmount || Number(baseAmount) === 0) {
+            setIsLoadingRates(false);
             return;
         }
         setIsLoadingRates(true);
@@ -209,7 +226,7 @@ const BuyAqua = (): JSX.Element => {
                             // if (!baseAmount) {
                             //     return;
                             // }
-                            setCounterAmount((Number(res.amount) / 1e7).toFixed(7));
+                            setCounterAmount(Number(res.amount) / 1e7);
                             // setBestPathXDR(res.swap_chain_xdr);
                             // setBestPath(res.tokens);
                             // setBestPools(res.pools);
@@ -248,6 +265,7 @@ const BuyAqua = (): JSX.Element => {
             quote,
             counterAmount,
             counterCurrencyCode,
+            proxyFee,
         });
     };
 
@@ -259,7 +277,7 @@ const BuyAqua = (): JSX.Element => {
         <Wrapper>
             <Container>
                 <HeaderContainer>
-                    <HeaderTitle>Buy AQUA</HeaderTitle>
+                    <HeaderTitle>Buy {aquaCode}</HeaderTitle>
                     <Label>
                         <Wrapper>
                             For:
@@ -289,7 +307,9 @@ const BuyAqua = (): JSX.Element => {
                             <SwapIcon />
                         </SwitchButton>
                     )}
-                    <CounterCurrencyLabel>{counterAmount} AQUA</CounterCurrencyLabel>
+                    <CounterCurrencyLabel>
+                        {formatBalance(counterAmount, true)} {aquaCode}
+                    </CounterCurrencyLabel>
                 </ContentContainer>
                 <FooterContainer>
                     <Button

@@ -5,9 +5,11 @@ import styled from 'styled-components';
 
 import { getMoonpayFederationMemo, getMoonpayProxyAddress } from 'api/moonpay';
 
+import { MOONPAY_CURRENCY_PREFIXES } from 'constants/moonpay';
 import { MainRoutes } from 'constants/routes';
 
 import { getAquaAssetData } from 'helpers/assets';
+import { formatBalance } from 'helpers/format-number';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
@@ -18,6 +20,10 @@ import { ModalProps } from 'types/modal';
 
 import { flexAllCenter, flexColumn, flexRowSpaceBetween, respondDown, respondUp } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
+
+import AquaLogoSmall from 'assets/aqua-logo-small.svg';
+// TODO: same icon as assets/icon-arrow-right-long, add colors
+import IconArrowRight from 'assets/icon-link-arrow.svg';
 
 import { Button } from 'basics/buttons';
 import { Input } from 'basics/inputs';
@@ -34,8 +40,11 @@ const Container = styled.div`
     `}
 `;
 
-const TermsWrapper = styled.div`
+const CenteredWrapper = styled.div`
     ${flexAllCenter};
+`;
+
+const TermsWrapper = styled(CenteredWrapper)`
     margin-top: 1.6rem;
     font-size: 1rem;
     line-height: 1.8rem;
@@ -53,11 +62,11 @@ const ListItem = styled.div`
     padding: 1rem 0;
 `;
 
-const ListDescription = styled.div`
+const GrayText = styled.div`
     color: ${COLORS.grayText};
 `;
 
-const ListValue = styled.div`
+const TitleText = styled.div`
     color: ${COLORS.titleText};
 `;
 
@@ -67,10 +76,45 @@ const StyledModalDescription = styled(ModalDescription)`
     `};
 `;
 
+const AquaBlock = styled.div`
+    display: flex;
+    background-color: ${COLORS.lightGray};
+    padding: 2.4rem;
+`;
+
+const AquaLogo = styled(AquaLogoSmall)`
+    width: 5.6rem;
+    height: 5.6rem;
+    margin-right: 1.6rem;
+`;
+
+const AquaInfoBlock = styled.div`
+    ${flexColumn};
+    flex: 1;
+`;
+
+const AquaDescription = styled.div`
+    color: ${COLORS.descriptionText};
+    font-size: 1.6rem;
+    line-height: 2.8rem;
+`;
+
+const AquaValue = styled.div`
+    color: ${COLORS.paragraphText};
+    font-size: 1.6rem;
+    line-height: 2.8rem;
+`;
+
+const StyledIconArrowRight = styled(IconArrowRight)`
+    margin: 0 0.8rem;
+    height: 100%;
+`;
+
 interface BuyAquaCurrencyModalParams {
     quote: MoonpayQuote;
     counterAmount: number;
     counterCurrencyCode: string;
+    proxyFee: number;
 }
 
 const BuyAquaConfirmModal = ({
@@ -85,7 +129,7 @@ const BuyAquaConfirmModal = ({
     const [proxyAddress, setProxyAddress] = useState('');
     const [userAddress, setUserAddress] = useState(account?.accountId());
 
-    const { quote, counterAmount, counterCurrencyCode } = params;
+    const { quote, counterAmount, counterCurrencyCode, proxyFee } = params;
     console.log(userAddress);
     const {
         baseCurrencyAmount,
@@ -98,6 +142,7 @@ const BuyAquaConfirmModal = ({
     console.log(quote);
 
     const { aquaCode } = getAquaAssetData();
+    const currencyPrefix = MOONPAY_CURRENCY_PREFIXES[baseCurrencyCode];
 
     const onClickConfirm = () => {
         setIsLoading(true);
@@ -122,15 +167,25 @@ const BuyAquaConfirmModal = ({
         },
         {
             description: 'Payment route',
-            value: `${baseCurrencyCode.toUpperCase()} - ${quoteCurrencyCode.toUpperCase()} - ${aquaCode}`,
+            value: (
+                <CenteredWrapper>
+                    {baseCurrencyCode.toUpperCase()} <StyledIconArrowRight />
+                    {quoteCurrencyCode.toUpperCase()} <StyledIconArrowRight />
+                    {aquaCode}
+                </CenteredWrapper>
+            ),
         },
         {
             description: 'Network fee',
-            value: networkFeeAmount,
+            value: `${networkFeeAmount} ${baseCurrencyCode.toUpperCase()}`,
         },
         {
             description: 'Card processing fee',
-            value: '-',
+            value: `${feeAmount} ${baseCurrencyCode.toUpperCase()}`,
+        },
+        {
+            description: 'Proxy fee',
+            value: `${proxyFee} ${quoteCurrencyCode.toUpperCase()}`,
         },
         {
             description: 'Est. processing time',
@@ -169,12 +224,27 @@ const BuyAquaConfirmModal = ({
                 />
                 {!isConfirmed && (
                     <>
+                        <AquaBlock>
+                            <AquaLogo />
+                            <AquaInfoBlock>
+                                <AquaDescription>Buying: </AquaDescription>
+                                <AquaValue>
+                                    {formatBalance(counterAmount, true)} {aquaCode}
+                                </AquaValue>
+                            </AquaInfoBlock>
+                            <AquaInfoBlock>
+                                <AquaDescription>For: </AquaDescription>
+                                <AquaValue>
+                                    {currencyPrefix}
+                                    {formatBalance(baseCurrencyAmount, true)}
+                                </AquaValue>
+                            </AquaInfoBlock>
+                        </AquaBlock>
                         <ListWrapper>
-                            Buying {counterAmount} AQUA For {baseCurrencyAmount} {baseCurrencyCode}
                             {listValues.map(({ description, value }) => (
                                 <ListItem key={description}>
-                                    <ListDescription>{description}</ListDescription>
-                                    <ListValue>{value}</ListValue>
+                                    <GrayText>{description}</GrayText>
+                                    <TitleText>{value}</TitleText>
                                 </ListItem>
                             ))}
                         </ListWrapper>

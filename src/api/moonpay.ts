@@ -6,7 +6,14 @@ import { getEnv } from 'helpers/env';
 import { getMoonpayKeyByEnv } from 'helpers/moonpay';
 import { getAquaContract } from 'helpers/soroban';
 
-import { MoonpayCurrencies, MoonpayQuote } from 'types/api-moonpay';
+import {
+    MoonpayCurrencies,
+    MoonpayQuote,
+    GetProxyAddressResponse,
+    GetProxyMemoResponse,
+    GetMoonpayBuyQuoteParams,
+    GetMoonpayProxyFee,
+} from 'types/api-moonpay';
 
 export const getMoonpayCurrencies = (): Promise<MoonpayCurrencies> => {
     const env = getEnv();
@@ -17,17 +24,11 @@ export const getMoonpayCurrencies = (): Promise<MoonpayCurrencies> => {
         .then(result => result.data);
 };
 
-type getMoonpayBuyQuoteParams = {
-    cryptoCode: string;
-    baseCurrencyCode: string;
-    baseCurrencyAmount: string;
-};
-
 export const getMoonpayBuyQuote = ({
     cryptoCode,
     baseCurrencyCode,
     baseCurrencyAmount,
-}: getMoonpayBuyQuoteParams): Promise<MoonpayQuote> => {
+}: GetMoonpayBuyQuoteParams): Promise<MoonpayQuote> => {
     const env = getEnv();
     const baseUrl = API_URLS[env].moonpay;
 
@@ -38,27 +39,20 @@ export const getMoonpayBuyQuote = ({
         .then(result => result.data);
 };
 
-export type ProxyFederationResponse = {
-    account_id: string;
-    memo: string;
-};
-
 export const getMoonpayFederationMemo = (
     publicKey: string,
-): Promise<ProxyFederationResponse['memo']> => {
+): Promise<GetProxyMemoResponse['memo']> => {
     const env = getEnv();
     const baseUrl = API_URLS[env].onRampProxy;
 
     return axios
-        .get<ProxyFederationResponse>(`${baseUrl}/federation/?type=id&q=${publicKey}`)
+        .get<GetProxyMemoResponse>(`${baseUrl}/federation/?type=id&q=${publicKey}`)
         .then(res => res.data.memo);
 };
 
-export type ProxyAddressResponse = {
-    address: string;
-};
-
-export const getMoonpayProxyAddress = (publicKey: string): Promise<string> => {
+export const getMoonpayProxyAddress = (
+    publicKey: string,
+): Promise<GetProxyAddressResponse['address']> => {
     const env = getEnv();
     const baseUrl = API_URLS[env].onRampProxy;
     const aquaContract = getAquaContract();
@@ -74,8 +68,17 @@ export const getMoonpayProxyAddress = (publicKey: string): Promise<string> => {
     });
 
     return axios
-        .post<ProxyAddressResponse>(`${baseUrl}/api/pool/proxy/generate/`, body, {
+        .post<GetProxyAddressResponse>(`${baseUrl}/api/pool/proxy/generate/`, body, {
             headers,
         })
         .then(res => res.data.address);
+};
+
+export const getMoonpayProxyFees = (): Promise<GetMoonpayProxyFee['operational']> => {
+    const env = getEnv();
+    const baseUrl = API_URLS[env].onRampProxy;
+
+    return axios
+        .get<GetMoonpayProxyFee>(`${baseUrl}/api/pool/proxy/fees/`)
+        .then(res => res.data.operational / 1e7);
 };

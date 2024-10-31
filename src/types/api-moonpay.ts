@@ -113,3 +113,22 @@ export interface MoonpayQuote {
     expiresIn: number;
     expiresAt: string;
 }
+
+export type GetMoonpayBuyQuoteParams = {
+    cryptoCode: string;
+    baseCurrencyCode: string;
+    baseCurrencyAmount: string;
+};
+
+export type GetProxyMemoResponse = {
+    account_id: string;
+    memo: string;
+};
+
+export type GetProxyAddressResponse = {
+    address: string;
+};
+
+export type GetMoonpayProxyFee = {
+    operational: number;
+};
