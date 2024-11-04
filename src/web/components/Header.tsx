@@ -53,13 +53,15 @@ export const HeaderNewNavLinks = styled.div`
     background-clip: padding-box, border-box;
     background-origin: padding-box, border-box;
     position: relative;
+    margin-right: 1.6rem;
 
     a:last-child {
         margin-bottom: 0;
     }
 
     &::after {
-        content: 'New';
+        content: 'Soon';
+        white-space: nowrap;
         position: absolute;
         top: calc(100% - 1rem);
         left: 50%;
@@ -78,20 +80,26 @@ export const HeaderNewNavLinks = styled.div`
         background: linear-gradient(to left, white, white), linear-gradient(to left, ${COLORS.purple} 0, ${COLORS.white} 10%);
         background-clip: padding-box, border-box;
         background-origin: padding-box, border-box;
+        margin-bottom: 2.4rem;
+        margin-right: 0;
         
          &::after {
             top: 50%;
             left: calc(100%);
             transform: translate(-50%, -50%);
+            font-size: 1rem;
+            padding: 0.1rem 0.8rem;
         }
     `}
 `;
 
-export const HeaderNavLink = styled(NavLink)`
-    color: ${COLORS.titleText};
+export const HeaderNavLink = styled(NavLink)<{ $disabled?: boolean }>`
+    color: ${({ $disabled }) => ($disabled ? COLORS.grayText : COLORS.titleText)}!important;
     text-decoration: none;
     font-size: 1.6rem;
     line-height: 2.4rem;
+    font-weight: ${({ $disabled }) => ($disabled ? '400!important' : 'unset')};
+    white-space: nowrap;
 
     &:not(:last-child) {
         margin-right: 2.4rem;
@@ -106,36 +114,11 @@ export const HeaderNavLink = styled(NavLink)`
     `}
 `;
 
-export const HeaderNavLinkWithCount = styled(HeaderNavLink)<{ count: number }>`
-    ${({ count }) =>
-        Boolean(count) &&
-        `
-            position: relative;
-            
-            &::before {
-                content: attr(count);
-                position: absolute;
-                left: 100%;
-                bottom: 1.2rem;
-                text-transform: uppercase;
-                height: 1.5rem;
-                padding: 0 0.5rem;
-                border-radius: 0.4rem;
-                background: ${COLORS.purple};
-                color: ${COLORS.white};
-                font-weight: 700;
-                font-size: 0.8rem;
-                line-height: 1.6rem;
-                white-space: nowrap;
-            }
-    `}
-`;
-
 export const NavLinksDivider = styled.div`
     height: 2.4rem;
     width: 0;
     border-left: 0.1rem solid ${COLORS.gray};
-    margin: 0 4rem;
+    margin: 0 2.4rem 0 0.8rem;
 
     ${respondDown(Breakpoints.xl)`
         margin-right: 2.2rem;
@@ -172,10 +155,6 @@ const HeaderNavLinks = styled.div`
     a {
         color: ${COLORS.titleText};
         text-decoration: none;
-
-        &:not(:last-child) {
-            margin-right: 4rem;
-        }
 
         &:hover {
             color: ${COLORS.purple};

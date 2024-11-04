@@ -78,7 +78,7 @@ const AccountAddresses = styled.div`
     flex-direction: column;
     justify-content: center;
 
-    ${respondDown(Breakpoints.md)`
+    ${respondDown(Breakpoints.lg)`
         display: none;
     `}
 `;

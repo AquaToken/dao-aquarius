@@ -15,20 +15,15 @@ import { Breakpoints, COLORS } from 'web/styles';
 import LiveOnSorobanImage from 'assets/live-on-soroban.svg';
 
 import PageLoader from 'basics/loaders/PageLoader';
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import ErrorBoundary from 'components/ErrorBoundary';
 import Footer from 'components/Footer';
-import Header, {
-    HeaderNavLink,
-    HeaderNavLinkWithCount,
-    HeaderNewNavLinks,
-    NavLinksDivider,
-} from 'components/Header';
+import Header, { HeaderNavLink, NavLinksDivider } from 'components/Header';
 import ModalContainer from 'components/ModalContainer';
 import NotFoundPage from 'components/NotFoundPage';
 import ToastContainer from 'components/ToastContainer';
 
-import { getActiveProposalsCount } from 'pages/governance/api/api';
 import Governance from 'pages/governance/Governance';
 
 import useGlobalSubscriptions from './hooks/useGlobalSubscriptions';
@@ -58,13 +53,24 @@ const BgStyled = styled(LiveOnSorobanImage)`
     object-position: center center;
 `;
 
+const TooltipStyled = styled(Tooltip)`
+    margin-right: 2rem;
+    a {
+        margin: 0 !important;
+    }
+
+    ${respondDown(Breakpoints.md)`
+        margin-right: 0;
+        margin-bottom: 2.4rem;
+    `}
+`;
+
 const App = () => {
     const [wcLoginChecked, setWcLoginChecked] = useState(false);
     useGlobalSubscriptions();
 
     const { getAssets, assets, processNewAssets, assetsInfo, clearAssets } = useAssetsStore();
     const [isAssetsUpdated, setIsAssetsUpdated] = useState(false);
-    const [activeProposalsCount, setActiveProposalsCount] = useState(0);
 
     const { isLogged, account, redirectURL, disableRedirect, callback, removeAuthCallback } =
         useAuthStore();
@@ -106,12 +112,6 @@ const App = () => {
 
         return () => window.removeEventListener('online', reloadIfNotLoaded);
     }, [wcLoginChecked, isAssetsUpdated]);
-
-    useEffect(() => {
-        getActiveProposalsCount().then(res => {
-            setActiveProposalsCount(res);
-        });
-    }, []);
 
     useEffect(() => {
         if (assets.length) {
@@ -184,28 +184,27 @@ const App = () => {
                 {isLogged && Boolean(redirectURL) && <Redirect to={redirectURL} />}
                 <Header>
                     <>
-                        <HeaderNewNavLinks>
-                            <HeaderNavLink
-                                to={AmmRoutes.analytics}
-                                activeStyle={{
-                                    fontWeight: 700,
-                                }}
-                                title="Pools"
-                            >
-                                Pools
-                            </HeaderNavLink>
-                            <HeaderNavLink
-                                to={MainRoutes.swap}
-                                activeStyle={{
-                                    fontWeight: 700,
-                                }}
-                                title="Swap"
-                            >
-                                Swap
-                            </HeaderNavLink>
-                        </HeaderNewNavLinks>
+                        <HeaderNavLink
+                            to={AmmRoutes.analytics}
+                            activeStyle={{
+                                fontWeight: 700,
+                            }}
+                            title="Pools"
+                        >
+                            Pools
+                        </HeaderNavLink>
+                        <HeaderNavLink
+                            to={MainRoutes.swap}
+                            activeStyle={{
+                                fontWeight: 700,
+                            }}
+                            title="Swap"
+                        >
+                            Swap
+                        </HeaderNavLink>
 
                         <NavLinksDivider />
+
                         <HeaderNavLink
                             to={MainRoutes.vote}
                             exact
@@ -234,25 +233,38 @@ const App = () => {
                         >
                             Bribes
                         </HeaderNavLink>
+
+                        <NavLinksDivider />
+
+                        <TooltipStyled
+                            position={TOOLTIP_POSITION.bottom}
+                            content="Soon"
+                            showOnHover
+                        >
+                            <HeaderNavLink
+                                activeStyle={{
+                                    fontWeight: 700,
+                                }}
+                                title="Buy AQUA"
+                                onClick={(e: React.MouseEvent) => {
+                                    e.preventDefault();
+                                }}
+                                to=""
+                                $disabled
+                            >
+                                Buy AQUA
+                            </HeaderNavLink>
+                        </TooltipStyled>
+
                         <HeaderNavLink
                             to={MainRoutes.locker}
                             activeStyle={{
                                 fontWeight: 700,
                             }}
-                            title="Locker"
+                            title="Lock AQUA"
                         >
-                            Locker
+                            Lock AQUA
                         </HeaderNavLink>
-                        <HeaderNavLinkWithCount
-                            to={MainRoutes.governance}
-                            activeStyle={{
-                                fontWeight: 700,
-                            }}
-                            title="Governance"
-                            count={activeProposalsCount}
-                        >
-                            Governance
-                        </HeaderNavLinkWithCount>
                     </>
                 </Header>
                 <Suspense fallback={<PageLoader />}>
