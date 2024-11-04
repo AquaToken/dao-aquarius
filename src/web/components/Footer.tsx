@@ -105,7 +105,7 @@ const linkStyles = css`
 `;
 
 const DocsLink = styled.a`
-    ${linkStyles};}
+    ${linkStyles};
 `;
 
 const GovernanceLink = styled(Link)`
