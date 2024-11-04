@@ -146,7 +146,6 @@ const ExploreBlock = styled.div<{ $hasChosenPairs: boolean }>`
 
     ${respondDown(Breakpoints.md)`
         padding: 0 1.6rem;
-        background: ${COLORS.lightGray};
     `}
 `;
 
@@ -163,13 +162,12 @@ const PairSearch = styled.div`
     box-sizing: border-box;
 
     ${respondDown(Breakpoints.md)`
-        margin-top: 5rem;
-        flex-direction: column;
-        box-shadow: unset;
-        padding: 0;
-        margin-bottom: 8rem; 
-        background: ${COLORS.transparent};
+        margin-top: -3rem;
+        padding: 1.6rem;
+        margin-bottom: 8rem;
         padding-top: 5rem;
+        flex-direction: column;
+        height: unset;
     `}
 `;
 

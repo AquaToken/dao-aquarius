@@ -5,12 +5,13 @@ import styled from 'styled-components';
 
 import { BribesRoutes, MarketRoutes } from 'constants/routes';
 
-import { getDateString } from 'helpers/date';
+import { getDateString, convertLocalDateToUTCIgnoringTimezone } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
 import { StellarService } from 'services/globalServices';
+
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -26,7 +27,6 @@ import Pagination from 'basics/Pagination';
 import Table, { CellAlign } from 'basics/Table';
 
 import { BribeSortFields, getBribes } from '../../../api/api';
-import { convertUTCToLocalDateIgnoringTimezone } from '../../../pages/AddBribePage';
 
 const Container = styled.div`
     display: flex;
@@ -235,8 +235,8 @@ const BribesTable = () => {
                     },
                 ]}
                 body={bribes.map(item => {
-                    const startUTC = convertUTCToLocalDateIgnoringTimezone(new Date(item.start_at));
-                    const stopUTC = convertUTCToLocalDateIgnoringTimezone(new Date(item.stop_at));
+                    const startUTC = convertLocalDateToUTCIgnoringTimezone(new Date(item.start_at));
+                    const stopUTC = convertLocalDateToUTCIgnoringTimezone(new Date(item.stop_at));
                     const base = {
                         code: item.asset1_code,
                         issuer: item.asset1_issuer,

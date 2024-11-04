@@ -16,7 +16,7 @@ import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
 import { respondDown } from '../../mixins';
 import { Breakpoints } from '../../styles';
 
-const LoginWithSecretBody = styled.div`
+const LoginWithSecretBody = styled.form`
     width: 52.8rem;
     display: flex;
     flex-direction: column;
@@ -50,7 +50,8 @@ const LoginWithSecret = ({ close }: ModalProps<never>): React.ReactNode => {
 
     const { login, isLogged, isLoginPending } = useAuthStore();
 
-    const onSubmit = () => {
+    const onSubmit = (e: React.MouseEvent) => {
+        e.preventDefault();
         SorobanService.loginWithSecret(secretKey)
             .then(pubKey => {
                 login(pubKey, LoginTypes.secret);
@@ -83,9 +84,10 @@ const LoginWithSecret = ({ close }: ModalProps<never>): React.ReactNode => {
                     onChange={({ target }) => setSecretKey(target.value)}
                 />
                 <StyledButton
+                    type="submit"
                     isBig
                     disabled={!secretKey}
-                    onClick={() => onSubmit()}
+                    onClick={(e: React.MouseEvent) => onSubmit(e)}
                     pending={isLoginPending ?? undefined}
                 >
                     connect

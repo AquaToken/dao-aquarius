@@ -18,13 +18,19 @@ import styled, { createGlobalStyle } from 'styled-components';
 
 import { BribesRoutes } from 'constants/routes';
 
+import {
+    convertLocalDateToUTCIgnoringTimezone,
+    convertUTCToLocalDateIgnoringTimezone,
+} from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
+
+import { useDebounce } from 'hooks/useDebounce';
 
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { useDebounce } from 'hooks/useDebounce';
 import { ModalService, StellarService } from 'services/globalServices';
+
 import { flexAllCenter, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS, FONT_FAMILY } from 'web/styles';
@@ -327,45 +333,20 @@ const DurationButton = styled.div`
     }
 `;
 
-export const convertUTCToLocalDateIgnoringTimezone = (utcDate: Date) =>
-    new Date(
-        utcDate.getUTCFullYear(),
-        utcDate.getUTCMonth(),
-        utcDate.getUTCDate(),
-        utcDate.getUTCHours(),
-        utcDate.getUTCMinutes(),
-        utcDate.getUTCSeconds(),
-        utcDate.getUTCMilliseconds(),
-    );
-
-export function convertLocalDateToUTCIgnoringTimezone(date: Date) {
-    const timestamp = Date.UTC(
-        date.getFullYear(),
-        date.getMonth(),
-        date.getDate(),
-        date.getHours(),
-        date.getMinutes(),
-        date.getSeconds(),
-        date.getMilliseconds(),
-    );
-
-    return new Date(timestamp);
-}
-
 export const getWeekStartFromDay = (date: Date, duration: number) => {
     const startWeek = startOfWeek(date, { weekStartsOn: 1 });
     const endWeek = endOfWeek(date, { weekStartsOn: 1 });
     const endPeriod = addWeeks(endWeek, duration - 1);
 
     return {
-        start: convertLocalDateToUTCIgnoringTimezone(startWeek),
-        end: convertLocalDateToUTCIgnoringTimezone(endPeriod),
+        start: convertUTCToLocalDateIgnoringTimezone(startWeek),
+        end: convertUTCToLocalDateIgnoringTimezone(endPeriod),
     };
 };
 
 const getMinDate = () => {
     const now = Date.now();
-    const collectDate = convertLocalDateToUTCIgnoringTimezone(
+    const collectDate = convertUTCToLocalDateIgnoringTimezone(
         setHours(startOfDay(isSunday(now) ? now : nextSunday(now)), 18),
     );
 
@@ -539,7 +520,7 @@ const AddBribePage = () => {
             return;
         }
         const { end } = getWeekStartFromDay(
-            convertUTCToLocalDateIgnoringTimezone(startDate),
+            convertLocalDateToUTCIgnoringTimezone(startDate),
             Number(duration),
         );
 

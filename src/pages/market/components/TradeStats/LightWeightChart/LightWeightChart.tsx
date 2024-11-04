@@ -3,6 +3,7 @@ import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
+import { convertUTCToLocalDateIgnoringTimezone } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 
 import { Asset } from 'types/stellar';
@@ -13,8 +14,6 @@ import { flexAllCenter } from 'web/mixins';
 import { COLORS } from 'web/styles';
 
 import PageLoader from 'basics/loaders/PageLoader';
-
-import { convertLocalDateToUTCIgnoringTimezone } from 'pages/bribes/pages/AddBribePage';
 
 const Chart = styled.div`
     display: flex;
@@ -83,7 +82,7 @@ const AGGREGATIONS_DEPS = {
 const getTime = (timestamp, period) =>
     period >= PeriodOptions.day
         ? new Date(+timestamp).getTime() / 1000
-        : convertLocalDateToUTCIgnoringTimezone(new Date(+timestamp)).getTime() / 1000;
+        : convertUTCToLocalDateIgnoringTimezone(new Date(+timestamp)).getTime() / 1000;
 
 const processChartData = (tradeAggregations, period) => {
     const nullTrades = [];

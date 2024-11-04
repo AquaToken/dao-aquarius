@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { getDateString } from 'helpers/date';
+import { convertLocalDateToUTCIgnoringTimezone, getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 
 import { StellarService } from 'services/globalServices';
@@ -13,7 +13,6 @@ import PageLoader from 'basics/loaders/PageLoader';
 import Table, { CellAlign } from 'basics/Table';
 
 import { UpcomingBribe } from 'pages/bribes/api/types';
-import { convertUTCToLocalDateIgnoringTimezone } from 'pages/bribes/pages/AddBribePage';
 import { getUpcomingBribesForMarket } from 'pages/vote/api/api';
 
 const Container = styled.div`
@@ -78,10 +77,10 @@ const MarketUpcomingBribes = ({ marketKey }: MarketUpcomingBribes): React.ReactN
                     { children: 'Period', flexSize: 3, align: CellAlign.Right },
                 ]}
                 body={bribes.map(bribe => {
-                    const startUTC = convertUTCToLocalDateIgnoringTimezone(
+                    const startUTC = convertLocalDateToUTCIgnoringTimezone(
                         new Date(bribe.start_at),
                     );
-                    const stopUTC = convertUTCToLocalDateIgnoringTimezone(new Date(bribe.stop_at));
+                    const stopUTC = convertLocalDateToUTCIgnoringTimezone(new Date(bribe.stop_at));
                     return {
                         key: bribe.asset_code + bribe.asset_issuer + startUTC,
                         isNarrow: true,

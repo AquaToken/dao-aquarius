@@ -4,7 +4,7 @@ import * as React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import { getDateString } from 'helpers/date';
+import { convertLocalDateToUTCIgnoringTimezone, getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 
 import { PoolStatistics, PoolVolume24h } from 'types/amm';
@@ -82,7 +82,12 @@ const VolumeChart = ({
         }
 
         const last24Volume = data
-            .filter(item => isAfter(transformDate(item.datetime_str), subDays(Date.now(), 1)))
+            .filter(item =>
+                isAfter(
+                    transformDate(item.datetime_str),
+                    subDays(convertLocalDateToUTCIgnoringTimezone(new Date()), 1),
+                ),
+            )
             .reduce((acc, item) => acc + Number(item.volume) / 1e7, 0);
 
         return [
@@ -142,16 +147,23 @@ const VolumeChart = ({
     );
 
     const onMouseMove = event => {
-        if (
-            event.offsetX < marginLeft ||
-            event.offsetX >= x.bandwidth() * daily.length + marginLeft
-        ) {
-            return setSelectedIndex(null);
+        const [mouseX] = d3.pointer(event);
+
+        // Check if the mouse position is within the chart bounds
+        if (mouseX < marginLeft || mouseX > width - marginRight) {
+            setSelectedIndex(null);
+            return;
         }
 
-        const index = Math.floor((event.offsetX - marginLeft) / x.bandwidth());
+        // Find the closest index based on the x-scale
+        const date = x.domain().find(d => {
+            const posX = x(d) + x.bandwidth() / 2;
+            return mouseX >= posX - x.bandwidth() / 2 && mouseX < posX + x.bandwidth() / 2;
+        });
 
-        setSelectedIndex(index);
+        // Set the selected index to the matching date index
+        const index = daily.findIndex(item => item.date === date);
+        setSelectedIndex(index !== -1 ? index : null);
     };
 
     useEffect(() => {
