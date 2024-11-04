@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
+import { MainRoutes } from 'constants/routes';
 import { AQUA_NETWORK_URL } from 'constants/urls';
 
 import { commonMaxWidth, flexAllCenter, respondDown } from 'web/mixins';
@@ -13,8 +14,6 @@ import Docs from 'assets/icon-docs.svg';
 import Governance from 'assets/icon-governance.svg';
 
 import { getActiveProposalsCount } from 'pages/governance/api/api';
-
-import { MainRoutes } from '../../routes';
 
 const FooterBlock = styled.footer`
     ${commonMaxWidth};
@@ -36,11 +35,11 @@ const HelpfulLine = styled.div`
     justify-content: space-between;
     width: 100%;
     align-items: center;
-    
+
     ${respondDown(Breakpoints.xs)`
         flex-direction: column;
         align-items: flex-start;
-    `}}
+    `}
 `;
 
 const CopyrightLine = styled(HelpfulLine)`
@@ -105,7 +104,7 @@ const linkStyles = css`
 `;
 
 const DocsLink = styled.a`
-    ${linkStyles};}
+    ${linkStyles};
 `;
 
 const GovernanceLink = styled(Link)`
