@@ -37,7 +37,6 @@ const CurrencyWrapper = styled(BlankButton)`
     ${flexAllCenter};
     width: 100%;
     padding: 1rem 0.8rem;
-    cursor: pointer;
 
     &:hover {
         background-color: ${COLORS.lightGray};
@@ -101,16 +100,25 @@ const BuyAquaCurrencyModal = ({
                 postfix={<Search />}
                 autoFocus
             />
+
             <CustomModalDescription>
-                {filteredCurrencies.map(currency => (
-                    <CurrencyWrapper key={currency.code} onClick={() => onClickCurrency(currency)}>
-                        <Label labelSize="big" labelText={currency.code} />
-                        <CurrencyNameBlock>
-                            {currency.name}{' '}
-                            {currentCurrency.code === currency.code && <PurpleTickIcon />}
-                        </CurrencyNameBlock>
-                    </CurrencyWrapper>
-                ))}
+                {filteredCurrencies.map(currency => {
+                    const isSelected = currentCurrency.code === currency.code;
+
+                    return (
+                        <CurrencyWrapper
+                            key={currency.code}
+                            disabled={isSelected}
+                            onClick={() => onClickCurrency(currency)}
+                        >
+                            <Label labelSize="big" labelText={currency.code} />
+
+                            <CurrencyNameBlock>
+                                {currency.name} {isSelected && <PurpleTickIcon />}
+                            </CurrencyNameBlock>
+                        </CurrencyWrapper>
+                    );
+                })}
             </CustomModalDescription>
         </Container>
     );

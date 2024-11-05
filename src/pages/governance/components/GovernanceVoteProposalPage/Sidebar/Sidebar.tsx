@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { forwardRef, RefObject, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import styled, { css } from 'styled-components';
@@ -11,6 +10,7 @@ import { formatBalance, roundToPrecision } from 'helpers/format-number';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService } from 'services/globalServices';
+
 import { flexAllCenter, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -80,7 +80,7 @@ const SidebarTemplateTitle = styled(SidebarTitle)`
 const SidebarDescription = styled.div`
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: #000427;
+    color: ${COLORS.descriptionText};
     opacity: 0.7;
     margin-bottom: 4rem;
     margin-top: 1rem;

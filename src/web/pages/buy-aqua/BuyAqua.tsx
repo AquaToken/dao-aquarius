@@ -35,21 +35,23 @@ import BuyAquaConfirmModal from 'web/modals/BuyAquaConfirmModal';
 import BuyAquaCurrencyModal from 'web/modals/BuyAquaCurrencyModal';
 import { COLORS } from 'web/styles';
 
-import ArrowRight from 'assets/icon-arrow-right.svg';
+import IconArrowRight from 'assets/icon-arrow-right.svg';
 
 import { BlankButton, Button } from 'basics/buttons';
 import { BlankInput } from 'basics/inputs';
 import { CircleLoader, PageLoader } from 'basics/loaders';
 
-const Wrapper = styled.div`
+import NoTrustline from 'components/NoTrustline';
+
+const CenteredWrapper = styled.div`
     ${flexAllCenter};
 `;
 
 const Container = styled.div`
     ${cardBoxShadow};
     ${flexColumn};
+    background-color: ${COLORS.white};
     width: 62.4rem;
-    height: 44rem;
     margin-top: 14.4rem;
     margin-bottom: 18rem;
     padding: 4.8rem;
@@ -109,10 +111,11 @@ const ButtonSelect = styled(BlankButton)`
     line-height: 2.8rem;
 `;
 
-const ButtonArrowIcon = styled(ArrowRight)`
+const ButtonArrowIcon = styled(IconArrowRight)`
     transform: rotate(90deg);
     margin-left: 0.8rem;
 `;
+
 const CircleLoader2 = styled(CircleLoader)`
     line-height: 2.8rem;
 `;
@@ -128,9 +131,8 @@ const AmountInput = styled(BlankInput)`
         border: none;
     }
 `;
-
 const BuyAqua = (): JSX.Element => {
-    const { isLogged } = useAuthStore();
+    const { isLogged, account } = useAuthStore();
     const [availableCurrencies, setAvailableCurrencies] = useState<MoonpayCurrencies>(null);
     const [currentCurrency, setCurrentCurrency] = useState(null);
     const [baseAmount, setBaseAmount] = useState('');
@@ -140,13 +142,16 @@ const BuyAqua = (): JSX.Element => {
     const [quote, setQuote] = useState<MoonpayQuote>(null);
     const [proxyFee, setProxyFee] = useState<number>(0);
 
+    const { aquaCode, aquaStellarAsset } = getAquaAssetData();
+
     const debouncedAmount = useDebounce(baseAmount, 700, true);
+
+    const hasTrustline = account?.getAssetBalance(aquaStellarAsset) !== null;
 
     const baseContract = getAquaContract();
     const counterContract = getXlmContract();
 
     const isTestnet = getIsTestnetEnv();
-    const { aquaCode } = getAquaAssetData();
 
     const counterCurrencyCode = isTestnet ? DEFAULT_BUY_CRYPTO_CODE_TEST : DEFAULT_BUY_CRYPTO_CODE;
 
@@ -154,7 +159,9 @@ const BuyAqua = (): JSX.Element => {
     const amountInputValue = !baseAmount ? '' : `${currencyPrefix}${baseAmount}`;
     const isWrongAmount =
         baseAmount > currentCurrency?.maxBuyAmount || baseAmount < currentCurrency?.minBuyAmount;
-    const isContinueDisabled = Number(baseAmount) === 0 || isLoadingRates || isWrongAmount;
+    const isContinueDisabled = isLogged
+        ? Number(baseAmount) === 0 || isLoadingRates || isWrongAmount || !hasTrustline
+        : false;
 
     const onChangeInput = (value, newCurrency?: MoonpayCurrency) => {
         const precision = newCurrency?.precision || currentCurrency?.precision;
@@ -179,23 +186,17 @@ const BuyAqua = (): JSX.Element => {
                 setProxyFee(fee);
             })
             .catch(e => {
-                console.log(e);
                 ToastService.showErrorToast(e.message ?? e.toString());
             });
 
-        console.log('Base contract ' + baseContract);
-        console.log('Counter contract ' + counterContract);
         getMoonpayCurrencies()
             .then(currencies => {
                 setAvailableCurrencies(currencies.filter(currency => currency.type === 'fiat'));
                 const usd = currencies.find(currency => currency.code === 'usd');
-                console.log('selected currency:');
-                console.log(usd);
                 setCurrentCurrency(usd);
                 onChangeInput(usd.minBuyAmount, usd);
             })
             .catch(e => {
-                console.log(e);
                 ToastService.showErrorToast(e.message ?? e.toString());
             })
             .finally(() => {
@@ -217,8 +218,6 @@ const BuyAqua = (): JSX.Element => {
         })
             .then(quote => {
                 setQuote(quote);
-                console.log('moonpay quote: ');
-                console.log(quote);
                 return quote;
             })
             .then((quote: MoonpayQuote) => {
@@ -270,18 +269,18 @@ const BuyAqua = (): JSX.Element => {
     }
 
     return (
-        <Wrapper>
+        <CenteredWrapper>
             <Container>
                 <HeaderContainer>
                     <HeaderTitle>Buy {aquaCode}</HeaderTitle>
                     <Label>
-                        <Wrapper>
+                        <CenteredWrapper>
                             For:
                             <ButtonSelect onClick={() => openCurrencyModal()}>
                                 {currentCurrency.code.toUpperCase()} - {currentCurrency.name}{' '}
                                 <ButtonArrowIcon />
                             </ButtonSelect>
-                        </Wrapper>
+                        </CenteredWrapper>
                     </Label>
                 </HeaderContainer>
                 <ContentContainer>
@@ -311,6 +310,7 @@ const BuyAqua = (): JSX.Element => {
                             )}
                         </CounterCurrencyLabel>
                     )}
+                    <NoTrustline asset={aquaStellarAsset} />
                 </ContentContainer>
                 <FooterContainer>
                     <Button
@@ -323,7 +323,7 @@ const BuyAqua = (): JSX.Element => {
                     </Button>
                 </FooterContainer>
             </Container>
-        </Wrapper>
+        </CenteredWrapper>
     );
 };
 
