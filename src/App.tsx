@@ -249,25 +249,15 @@ const App = () => {
 
                         <NavLinksDivider />
 
-                        <TooltipStyled
-                            position={TOOLTIP_POSITION.bottom}
-                            content="Soon"
-                            showOnHover
+                        <HeaderNavLink
+                            activeStyle={{
+                                fontWeight: 700,
+                            }}
+                            title="Buy AQUA"
+                            to={MainRoutes.buyAqua}
                         >
-                            <HeaderNavLink
-                                activeStyle={{
-                                    fontWeight: 700,
-                                }}
-                                title="Buy AQUA"
-                                onClick={(e: React.MouseEvent) => {
-                                    e.preventDefault();
-                                }}
-                                to=""
-                                $disabled
-                            >
-                                Buy AQUA
-                            </HeaderNavLink>
-                        </TooltipStyled>
+                            Buy AQUA
+                        </HeaderNavLink>
 
                         <HeaderNavLink
                             to={MainRoutes.locker}

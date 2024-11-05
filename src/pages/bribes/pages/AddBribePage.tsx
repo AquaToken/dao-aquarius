@@ -9,7 +9,6 @@ import {
     startOfDay,
     startOfWeek,
 } from 'date-fns';
-import * as React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -41,13 +40,13 @@ import Fail from 'assets/icon-fail.svg';
 import Minus from 'assets/icon-minus.svg';
 import Plus from 'assets/icon-plus.svg';
 import Success from 'assets/icon-success.svg';
-import Loader from 'assets/loader.svg';
 
 import AssetDropdown from 'basics/AssetDropdown';
 import Button from 'basics/buttons/Button';
 import CircleButton from 'basics/buttons/CircleButton';
 import ExternalLink from 'basics/ExternalLink';
 import Input from 'basics/inputs/Input';
+import { CircleLoader } from 'basics/loaders';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import CreatePairModal from '../../vote/components/MainPage/CreatePairModal/CreatePairModal';
@@ -226,11 +225,6 @@ const PlusIcon = styled(Plus)`
     width: 1.6rem;
     height: 1.6rem;
     color: ${COLORS.purple};
-`;
-
-const LoaderStyled = styled(Loader)`
-    width: 1.6rem;
-    height: 1.6rem;
 `;
 
 const TooltipInner = styled.span`
@@ -531,7 +525,7 @@ const AddBribePage = () => {
 
     const amountInputPostfix =
         debouncedAmount.current !== null && aquaEquivalent === null ? (
-            <LoaderStyled />
+            <CircleLoader size="small" />
         ) : Number(aquaEquivalent) >= MINIMUM_AQUA_EQUIVALENT ? (
             <SuccessIcon />
         ) : isInvalidAmount ? (

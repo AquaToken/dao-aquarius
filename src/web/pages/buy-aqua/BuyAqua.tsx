@@ -30,16 +30,16 @@ import {
     flexColumnCenter,
     flexRowSpaceBetween,
 } from 'web/mixins';
+import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import BuyAquaConfirmModal from 'web/modals/BuyAquaConfirmModal';
 import BuyAquaCurrencyModal from 'web/modals/BuyAquaCurrencyModal';
 import { COLORS } from 'web/styles';
 
 import ArrowRight from 'assets/icon-arrow-right.svg';
-import SwapIcon from 'assets/icon-arrows-circle.svg';
 
-import { BlankButton, Button, CircleButton } from 'basics/buttons';
-import { BlankInput, Input } from 'basics/inputs';
-import { PageLoader } from 'basics/loaders';
+import { BlankButton, Button } from 'basics/buttons';
+import { BlankInput } from 'basics/inputs';
+import { CircleLoader, PageLoader } from 'basics/loaders';
 
 const Wrapper = styled.div`
     ${flexAllCenter};
@@ -49,7 +49,7 @@ const Container = styled.div`
     ${cardBoxShadow};
     ${flexColumn};
     width: 62.4rem;
-    height: 50.4rem;
+    height: 44rem;
     margin-top: 14.4rem;
     margin-bottom: 18rem;
     padding: 4.8rem;
@@ -90,7 +90,12 @@ const BaseCurrencyLabel = styled(Label)`
 
 const CounterCurrencyLabel = styled(Label)`
     margin-top: 3.2rem;
+    height: 2.8rem;
     margin-bottom: 1.6rem;
+`;
+
+const ErrorCounterCurrencyLabel = styled(CounterCurrencyLabel)`
+    color: ${COLORS.pinkRed};
 `;
 
 const ButtonSelect = styled(BlankButton)`
@@ -108,10 +113,8 @@ const ButtonArrowIcon = styled(ArrowRight)`
     transform: rotate(90deg);
     margin-left: 0.8rem;
 `;
-
-const SwitchButton = styled(CircleButton)`
-    transform: rotate(90deg);
-    margin-top: 3.2rem;
+const CircleLoader2 = styled(CircleLoader)`
+    line-height: 2.8rem;
 `;
 
 const AmountInput = styled(BlankInput)`
@@ -147,22 +150,23 @@ const BuyAqua = (): JSX.Element => {
 
     const counterCurrencyCode = isTestnet ? DEFAULT_BUY_CRYPTO_CODE_TEST : DEFAULT_BUY_CRYPTO_CODE;
 
-    const isContinueDisabled = Number(baseAmount) === 0 || isLoadingRates;
-
     const currencyPrefix = MOONPAY_CURRENCY_PREFIXES[currentCurrency?.code];
     const amountInputValue = !baseAmount ? '' : `${currencyPrefix}${baseAmount}`;
+    const isWrongAmount =
+        baseAmount > currentCurrency?.maxBuyAmount || baseAmount < currentCurrency?.minBuyAmount;
+    const isContinueDisabled = Number(baseAmount) === 0 || isLoadingRates || isWrongAmount;
 
     const onChangeInput = (value, newCurrency?: MoonpayCurrency) => {
         const precision = newCurrency?.precision || currentCurrency?.precision;
         const newPrefix = MOONPAY_CURRENCY_PREFIXES[newCurrency?.code] || currencyPrefix;
         const pureValue = value.toString().replace(newPrefix, '');
-        const pureeValueNum = Number(pureValue);
+        const pureValueNum = Number(pureValue);
 
-        if (Number.isNaN(pureeValueNum)) {
+        if (Number.isNaN(pureValueNum)) {
             return;
         }
 
-        if (pureValue && pureeValueNum !== 0) {
+        if (pureValue && pureValueNum !== 0) {
             setIsLoadingRates(true);
         }
 
@@ -200,7 +204,7 @@ const BuyAqua = (): JSX.Element => {
     }, []);
 
     useEffect(() => {
-        if (!currentCurrency || !baseAmount || Number(baseAmount) === 0) {
+        if (!currentCurrency || !baseAmount || Number(baseAmount) === 0 || isWrongAmount) {
             setIsLoadingRates(false);
             return;
         }
@@ -221,19 +225,7 @@ const BuyAqua = (): JSX.Element => {
                 findSwapPath(baseContract, counterContract, quote.quoteCurrencyAmount)
                     .then(res => {
                         if (res.success) {
-                            // setError(false);
-                            // setEstimatePending(false);
-                            // if (!baseAmount) {
-                            //     return;
-                            // }
                             setCounterAmount(Number(res.amount) / 1e7);
-                            // setBestPathXDR(res.swap_chain_xdr);
-                            // setBestPath(res.tokens);
-                            // setBestPools(res.pools);
-                        } else {
-                            // setError(true);
-                            // setCounterAmount('');
-                            // setEstimatePending(false);
                         }
                     })
                     .catch(e => ToastService.showErrorToast(e.message ?? e.toString()))
@@ -245,7 +237,7 @@ const BuyAqua = (): JSX.Element => {
                 ToastService.showErrorToast(e.message ?? e.toString());
                 setIsLoadingRates(false);
             });
-    }, [debouncedAmount, currentCurrency]);
+    }, [debouncedAmount]);
 
     const onChooseCurrency = currency => {
         setCurrentCurrency(currency);
@@ -267,6 +259,10 @@ const BuyAqua = (): JSX.Element => {
             counterCurrencyCode,
             proxyFee,
         });
+    };
+
+    const openSignInModal = () => {
+        ModalService.openModal(ChooseLoginMethodModal, {});
     };
 
     if (isLoading) {
@@ -300,25 +296,30 @@ const BuyAqua = (): JSX.Element => {
                         inputMode="decimal"
                     />
 
-                    {isLoadingRates ? (
-                        <PageLoader />
+                    {isWrongAmount ? (
+                        <ErrorCounterCurrencyLabel>
+                            Min - {currencyPrefix}
+                            {currentCurrency.minBuyAmount}. Max - {currencyPrefix}
+                            {currentCurrency.maxBuyAmount}
+                        </ErrorCounterCurrencyLabel>
                     ) : (
-                        <SwitchButton onClick={() => {}} disabled>
-                            <SwapIcon />
-                        </SwitchButton>
+                        <CounterCurrencyLabel>
+                            {isLoadingRates ? (
+                                <CircleLoader2 size="small" />
+                            ) : (
+                                `${formatBalance(counterAmount, true)} ${aquaCode}`
+                            )}
+                        </CounterCurrencyLabel>
                     )}
-                    <CounterCurrencyLabel>
-                        {formatBalance(counterAmount, true)} {aquaCode}
-                    </CounterCurrencyLabel>
                 </ContentContainer>
                 <FooterContainer>
                     <Button
                         isBig
                         fullWidth
                         disabled={isContinueDisabled}
-                        onClick={() => openConfirmModal()}
+                        onClick={isLogged ? openConfirmModal : openSignInModal}
                     >
-                        Continue
+                        {isLogged ? 'Continue' : 'Connect wallet'}
                     </Button>
                 </FooterContainer>
             </Container>

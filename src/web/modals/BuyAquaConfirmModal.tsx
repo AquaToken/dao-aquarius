@@ -44,13 +44,6 @@ const CenteredWrapper = styled.div`
     ${flexAllCenter};
 `;
 
-const TermsWrapper = styled(CenteredWrapper)`
-    margin-top: 1.6rem;
-    font-size: 1rem;
-    line-height: 1.8rem;
-    color: ${COLORS.grayText};
-`;
-
 const ListWrapper = styled.div`
     ${flexColumn};
     margin-top: 3.2rem;
@@ -127,9 +120,10 @@ const BuyAquaConfirmModal = ({
     const [isLoading, setIsLoading] = useState(false);
     const [proxyFederation, setProxyFederation] = useState('');
     const [proxyAddress, setProxyAddress] = useState('');
-    const [userAddress, setUserAddress] = useState(account?.accountId());
 
     const { quote, counterAmount, counterCurrencyCode, proxyFee } = params;
+    const userAddress = account?.accountId();
+
     console.log(userAddress);
     const {
         baseCurrencyAmount,
@@ -199,14 +193,6 @@ const BuyAquaConfirmModal = ({
 
     const isConfirmDisabled = isLoading || !userAddress;
 
-    const onChangeInput = value => {
-        if (!StellarService.isValidPublicKey(value) && value !== '') {
-            return;
-        }
-
-        setUserAddress(value);
-    };
-
     return (
         <Container>
             <ModalTitle>{isConfirmed ? 'Enter payment information' : 'Get AQUA'}</ModalTitle>
@@ -219,7 +205,8 @@ const BuyAquaConfirmModal = ({
                     baseCurrencyCode={baseCurrencyCode}
                     baseCurrencyAmount={baseCurrencyAmount.toString()}
                     defaultCurrencyCode={counterCurrencyCode}
-                    onLogin={async () => console.log('Customer logged in!')}
+                    // Can be used for some statistics or analytics tracking
+                    // onLogin={async () => console.log('Customer logged in!')}
                     visible={isConfirmed}
                 />
                 {!isConfirmed && (
@@ -249,12 +236,6 @@ const BuyAquaConfirmModal = ({
                             ))}
                         </ListWrapper>
 
-                        <Input
-                            value={userAddress}
-                            onChange={({ target }) => onChangeInput(target.value)}
-                            placeholder="Enter stellar address"
-                            inputMode="decimal"
-                        />
                         <Button
                             isBig
                             fullWidth
@@ -263,12 +244,6 @@ const BuyAquaConfirmModal = ({
                         >
                             {isLoading ? <PageLoader /> : 'Confirm order'}
                         </Button>
-                        <TermsWrapper>
-                            By clicking Confirm Order you agree to our{' '}
-                            <NavLink to={MainRoutes.vote} exact title="Terms and Conditions">
-                                Terms and Conditions
-                            </NavLink>
-                        </TermsWrapper>
                     </>
                 )}
             </StyledModalDescription>
