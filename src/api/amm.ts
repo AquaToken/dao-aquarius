@@ -23,7 +23,6 @@ import {
 
 import { AssetsService, SorobanService, StellarService } from 'services/globalServices';
 import { AQUA_CODE, AQUA_ISSUER } from 'services/stellar.service';
-const API_URL = 'https://amm-api-testnet.aqua.network';
 
 export enum FilterOptions {
     all = '',
