@@ -51,8 +51,6 @@ export function getAssets() {
     };
 }
 
-export const getAssetString = (asset) => `${asset.code}:${asset.issuer}`;
-
 const HARDCODE = new Map([
     [
         'USDC:GAHPYWLK6YRN7CVYZOO4H3VDRZ7PVF5UJGLZCSPAEIKJE2XSWF5LAGER',
@@ -133,8 +131,8 @@ export function processNewAssets(assets: AssetSimple[]) {
             });
 
             assets
-                .filter((asset) => !cached.has(getAssetString(asset)))
-                .forEach((asset) => {
+                .filter(asset => !cached.has(getAssetString(asset)))
+                .forEach(asset => {
                     if (HARDCODE.has(getAssetString(asset))) {
                         cached.set(getAssetString(asset), HARDCODE.get(getAssetString(asset)));
                     } else {
@@ -144,7 +142,7 @@ export function processNewAssets(assets: AssetSimple[]) {
 
             if (!cached.has(getAssetString(HARDCODE.values().next().value))) {
                 // @ts-ignore
-                [...HARDCODE.values()].forEach((asset) => {
+                [...HARDCODE.values()].forEach(asset => {
                     cached.set(getAssetString(asset), HARDCODE.get(getAssetString(asset)));
                 });
             }
