@@ -1,13 +1,21 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import { StellarService } from '../../../../../common/services/globalServices';
-import { customScroll, respondDown } from '../../../../../common/mixins';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
-import Button from '../../../../../common/basics/Button';
-import { StellarEvents } from '../../../../../common/services/stellar.service';
-import { ModalDescription, ModalTitle } from '../../../../../common/modals/atoms/ModalAtoms';
+
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { ModalProps } from 'types/modal';
+
+import { StellarService } from 'services/globalServices';
+import { StellarEvents } from 'services/stellar.service';
+import { customScroll, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Button from 'basics/buttons/Button';
+import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+
+import { PairStats } from 'pages/vote/api/types';
+
 import VotesList from '../ManageVotesModal/VotesList/VotesList';
 
 const Container = styled.div`
@@ -34,7 +42,11 @@ const EmptyList = styled.span`
     font-size: 1.6rem;
 `;
 
-const ClaimAllModal = ({ params, close }) => {
+interface ClaimAllModalParams {
+    pairs: PairStats[];
+}
+
+const ClaimAllModal = ({ params, close }: ModalProps<ClaimAllModalParams>) => {
     const [claims, setClaims] = useState(null);
     const [updateId, setUpdateId] = useState(1);
     const { pairs } = params;
@@ -43,7 +55,7 @@ const ClaimAllModal = ({ params, close }) => {
     useEffect(() => {
         const unsub = StellarService.event.sub(({ type }) => {
             if (type === StellarEvents.claimableUpdate) {
-                setUpdateId((prevState) => prevState + 1);
+                setUpdateId(prevState => prevState + 1);
             }
         });
 
@@ -55,8 +67,8 @@ const ClaimAllModal = ({ params, close }) => {
             acc = [
                 ...acc,
                 ...StellarService.getPairVotes(pair, account.accountId())
-                    .filter((claim) => new Date(claim.claimBackDate) < new Date())
-                    .map((item) => ({ ...pair, ...item })),
+                    .filter(claim => new Date(claim.claimBackDate) < new Date())
+                    .map(item => ({ ...pair, ...item })),
             ];
             return acc;
         }, []);

@@ -1,11 +1,16 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { flexRowSpaceBetween } from '../../../../../common/mixins';
-import { StellarService } from '../../../../../common/services/globalServices';
+
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import AccountService from 'services/account.service';
+import { StellarService } from 'services/globalServices';
+import { flexRowSpaceBetween } from 'web/mixins';
+
+import AccountBlock from 'basics/AccountBlock';
+
 import OtherAccountButton from './OtherAccountButton/OtherAccountButton';
-import AccountBlock from '../../../../../common/basics/AccountBlock';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
 
 const Wrapper = styled.div`
     ${flexRowSpaceBetween};
@@ -13,7 +18,11 @@ const Wrapper = styled.div`
     margin-top: 7rem;
 `;
 
-const AccountInfoBlock = ({ account }) => {
+interface AccountInfoBlockProps {
+    account: AccountService;
+}
+
+const AccountInfoBlock = ({ account }: AccountInfoBlockProps) => {
     const [federation, setFederation] = useState(null);
     const accountId = account.accountId();
 
@@ -23,7 +32,7 @@ const AccountInfoBlock = ({ account }) => {
         if (!account.home_domain) {
             return;
         }
-        StellarService.resolveFederation(account.home_domain, accountId).then((res) => {
+        StellarService.resolveFederation(account.home_domain, accountId).then(res => {
             setFederation(res);
         });
     }, []);

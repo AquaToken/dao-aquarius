@@ -1,18 +1,25 @@
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import { flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
-import Button from '../../../../common/basics/Button';
-import { ModalService, SorobanService } from '../../../../common/services/globalServices';
+
+import { getAssetString } from 'helpers/assets';
+import { formatBalance } from 'helpers/format-number';
+
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { PoolExtended } from 'types/amm';
+
+import { ModalService, SorobanService } from 'services/globalServices';
+import { flexRowSpaceBetween, respondDown } from 'web/mixins';
+import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Asset from 'basics/Asset';
+import Button from 'basics/buttons/Button';
+import PageLoader from 'basics/loaders/PageLoader';
+
 import DepositToPool from '../DepositToPool/DepositToPool';
 import WithdrawFromPool from '../WithdrawFromPool/WithdrawFromPool';
-import useAuthStore from '../../../../store/authStore/useAuthStore';
-import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
-import { useEffect, useState } from 'react';
-import PageLoader from '../../../../common/basics/PageLoader';
-import { formatBalance, getAssetString } from '../../../../common/helpers/helpers';
-import Asset from '../../../vote/components/AssetDropdown/Asset';
-import { PoolExtended } from '../../api/types';
 
 const Container = styled.aside`
     float: right;
@@ -68,11 +75,9 @@ const Sidebar = ({ pool }: { pool: PoolExtended }) => {
             setAccountShare(null);
             return;
         }
-        SorobanService.getTokenBalance(pool.share_token_address, account.accountId()).then(
-            (res) => {
-                setAccountShare(res);
-            },
-        );
+        SorobanService.getTokenBalance(pool.share_token_address, account.accountId()).then(res => {
+            setAccountShare(res);
+        });
     }, [account]);
     const openDepositModal = () => {
         if (!isLogged) {

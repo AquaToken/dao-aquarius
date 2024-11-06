@@ -1,33 +1,39 @@
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
+import Title from 'react-document-title';
 import { useHistory, useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { ModalService, StellarService } from '../../../common/services/globalServices';
-import NotFoundPage from '../../../common/components/NotFoundPage/NotFoundPage';
-import { Breakpoints, COLORS } from '../../../common/styles';
-import { commonMaxWidth, respondDown } from '../../../common/mixins';
-import { getFilteredPairsList, getTotalVotingStats } from '../../vote/api/api';
-import Market from '../../vote/components/common/Market';
-import PageLoader from '../../../common/basics/PageLoader';
-import { isRewardsOn, MAX_REWARDS_PERCENT } from '../../vote/components/MainPage/Table/Table';
-import AboutAsset from '../components/AboutAsset/AboutAsset';
-import MarketBribes from '../components/MarketBribes/MarketBribes';
-import Sidebar from '../components/Sidebar/Sidebar';
-import { PairStats } from '../../vote/api/types';
-import useAuthStore from '../../../store/authStore/useAuthStore';
-import YourVotes from '../components/YourVotes/YourVotes';
-import TradeStats from '../components/TradeStats/TradeStats';
-import Rewards from '../components/Rewards/Rewards';
-import { useIsOverScrolled } from '../../../common/hooks/useIsOnViewport';
-import ArrowLeft from '../../../common/assets/img/icon-arrow-left.svg';
-import AmmStats from '../components/AmmStats/AmmStats';
+
+import useAssetsStore from 'store/assetsStore/useAssetsStore';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { useIsOverScrolled } from 'hooks/useIsOnViewport';
+import { ModalService, StellarService } from 'services/globalServices';
+import { commonMaxWidth, respondDown } from 'web/mixins';
+import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import ArrowLeft from 'assets/icon-arrow-left.svg';
+
+import CircleButton from 'basics/buttons/CircleButton';
+import PageLoader from 'basics/loaders/PageLoader';
+import Market from 'basics/Market';
+
+import MigrateToSorobanBanner from 'components/MigrateToSorobanBanner';
+import NotFoundPage from 'components/NotFoundPage';
+
 import { VoteRoutes } from '../../../routes';
-import useAssetsStore from '../../../store/assetsStore/useAssetsStore';
-import Title from 'react-document-title';
+import { getFilteredPairsList, getTotalVotingStats } from '../../vote/api/api';
+import { PairStats } from '../../vote/api/types';
+import { isRewardsOn, MAX_REWARDS_PERCENT } from '../../vote/components/MainPage/Table/Table';
 import VotesAmountModal from '../../vote/components/MainPage/VoteModals/VotesAmountModal';
-import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
-import CircleButton from '../../../common/basics/CircleButton';
-import MigrateToSorobanBanner from '../../../common/components/MigrateToSorobanBanner/MigrateToSorobanBanner';
+import AboutAsset from '../components/AboutAsset/AboutAsset';
+import AmmStats from '../components/AmmStats/AmmStats';
+import MarketBribes from '../components/MarketBribes/MarketBribes';
+import Rewards from '../components/Rewards/Rewards';
+import Sidebar from '../components/Sidebar/Sidebar';
+import TradeStats from '../components/TradeStats/TradeStats';
+import YourVotes from '../components/YourVotes/YourVotes';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -49,9 +55,9 @@ const BackButton = styled(CircleButton)`
     margin-bottom: 3.2rem;
 `;
 
-const MarketSection = styled.section<{ smallTopPadding?: boolean }>`
+const MarketSection = styled.section<{ $smallTopPadding?: boolean }>`
     ${commonMaxWidth};
-    padding-top: ${({ smallTopPadding }) => (smallTopPadding ? '2rem' : '2.8rem')};
+    padding-top: ${({ $smallTopPadding }) => ($smallTopPadding ? '2rem' : '2.8rem')};
     padding-left: 4rem;
     padding-right: calc(10vw + 20rem);
     width: 100%;
@@ -100,12 +106,12 @@ const NavContent = styled.div`
     display: flex;
 `;
 
-const NavItem = styled.div<{ active?: boolean }>`
+const NavItem = styled.div<{ $active?: boolean }>`
     padding: 1.7rem 0 1.3rem;
-    color: ${({ active }) => (active ? COLORS.purple : COLORS.grayText)};
-    font-weight: ${({ active }) => (active ? 700 : 400)};
-    border-bottom: ${({ active }) =>
-        active ? `0.1rem solid ${COLORS.purple}` : `0.1rem solid ${COLORS.transparent}`};
+    color: ${({ $active }) => ($active ? COLORS.purple : COLORS.grayText)};
+    font-weight: ${({ $active }) => ($active ? 700 : 400)};
+    border-bottom: ${({ $active }) =>
+        $active ? `0.1rem solid ${COLORS.purple}` : `0.1rem solid ${COLORS.transparent}`};
     cursor: pointer;
 
     &:hover {
@@ -137,7 +143,7 @@ const isValidPathAsset = (pathAsset: string) => {
     }
 };
 
-const scrollToRef = (ref) => {
+const scrollToRef = ref => {
     ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
 
@@ -153,10 +159,6 @@ const MarketPage = () => {
 
     const isValidAssets = isValidPathAsset(base) && isValidPathAsset(counter) && base !== counter;
 
-    if (!isValidAssets) {
-        return <NotFoundPage />;
-    }
-
     const [baseCode, baseIssuer] = base.split(':');
     const [counterCode, counterIssuer] = counter.split(':');
 
@@ -170,17 +172,26 @@ const MarketPage = () => {
             : StellarService.createAsset(counterCode, counterIssuer);
 
     useEffect(() => {
+        if (!isValidAssets) {
+            return;
+        }
         processNewAssets([baseAsset, counterAsset]);
     }, []);
 
     useEffect(() => {
-        getTotalVotingStats().then((res) => {
+        if (!isValidAssets) {
+            return;
+        }
+        getTotalVotingStats().then(res => {
             setTotalStats(res);
         });
     }, []);
 
     useEffect(() => {
-        getFilteredPairsList(baseAsset, counterAsset, 1, 1).then((res) => {
+        if (!isValidAssets) {
+            return;
+        }
+        getFilteredPairsList(baseAsset, counterAsset, 1, 1).then(res => {
             setVotesData(res.pairs[0]);
         });
     }, []);
@@ -220,6 +231,10 @@ const MarketPage = () => {
     const isAboutCounterRefOverScrolled = useIsOverScrolled(AboutCounterRef, 50);
     const isBribesRefOverScrolled = useIsOverScrolled(BribesRef, 50);
     const isYourVotesRefOverScrolled = useIsOverScrolled(YourVotesRef, 50);
+
+    if (!isValidAssets) {
+        return <NotFoundPage />;
+    }
 
     if (votesData === null || !totalStats) {
         return <PageLoader />;
@@ -277,7 +292,7 @@ const MarketPage = () => {
                             />
 
                             <BackButton
-                                label="Back to pairs"
+                                label="Back to markets"
                                 onClick={() => {
                                     history.length
                                         ? history.goBack()
@@ -294,27 +309,27 @@ const MarketPage = () => {
                 <NavPanel>
                     <NavContent>
                         <NavItem
-                            active={!isAmmStatRefOverScrolled}
+                            $active={!isAmmStatRefOverScrolled}
                             onClick={() => scrollToRef(AmmStatRef)}
                         >
                             AMM stats
                         </NavItem>
                         <NavItem
-                            active={!isMarketStatRefOverScrolled && isAmmStatRefOverScrolled}
+                            $active={!isMarketStatRefOverScrolled && isAmmStatRefOverScrolled}
                             onClick={() => scrollToRef(MarketStatRef)}
                         >
                             Market stats
                         </NavItem>
                         {votesData && (
                             <NavItem
-                                active={isMarketStatRefOverScrolled && !isRewardsRefOverScrolled}
+                                $active={isMarketStatRefOverScrolled && !isRewardsRefOverScrolled}
                                 onClick={() => scrollToRef(RewardsRef)}
                             >
                                 Rewards
                             </NavItem>
                         )}
                         <NavItem
-                            active={
+                            $active={
                                 isMarketStatRefOverScrolled &&
                                 isRewardsRefOverScrolled &&
                                 !isAboutBaseRefOverScrolled
@@ -324,14 +339,14 @@ const MarketPage = () => {
                             {baseAsset.code}
                         </NavItem>
                         <NavItem
-                            active={isAboutBaseRefOverScrolled && !isAboutCounterRefOverScrolled}
+                            $active={isAboutBaseRefOverScrolled && !isAboutCounterRefOverScrolled}
                             onClick={() => scrollToRef(AboutCounterRef)}
                         >
                             {counterAsset.code}
                         </NavItem>
                         {votesData && (
                             <NavItem
-                                active={isAboutCounterRefOverScrolled && !isBribesRefOverScrolled}
+                                $active={isAboutCounterRefOverScrolled && !isBribesRefOverScrolled}
                                 onClick={() => scrollToRef(BribesRef)}
                             >
                                 Bribes
@@ -339,7 +354,7 @@ const MarketPage = () => {
                         )}
                         {isLogged && votesData && (
                             <NavItem
-                                active={isBribesRefOverScrolled && !isYourVotesRefOverScrolled}
+                                $active={isBribesRefOverScrolled && !isYourVotesRefOverScrolled}
                                 onClick={() => scrollToRef(YourVotesRef)}
                             >
                                 Your votes
@@ -355,7 +370,7 @@ const MarketPage = () => {
                     onVoteClick={onVoteClick}
                     isPairSelected={false}
                 />
-                <MarketSection smallTopPadding ref={AmmStatRef}>
+                <MarketSection $smallTopPadding ref={AmmStatRef}>
                     <AmmStats base={baseAsset} counter={counterAsset} />
                 </MarketSection>
                 <MarketSection ref={MarketStatRef}>

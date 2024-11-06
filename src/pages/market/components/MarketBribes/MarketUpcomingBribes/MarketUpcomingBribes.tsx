@@ -1,14 +1,19 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { COLORS } from '../../../../../common/styles';
-import { getUpcomingBribesForMarket } from '../../../../vote/api/api';
-import PageLoader from '../../../../../common/basics/PageLoader';
-import Asset from '../../../../vote/components/AssetDropdown/Asset';
-import { StellarService } from '../../../../../common/services/globalServices';
-import { formatBalance, getDateString } from '../../../../../common/helpers/helpers';
-import { convertUTCToLocalDateIgnoringTimezone } from '../../../../bribes/pages/AddBribePage';
-import Table, { CellAlign } from '../../../../../common/basics/Table';
+
+import { convertLocalDateToUTCIgnoringTimezone, getDateString } from 'helpers/date';
+import { formatBalance } from 'helpers/format-number';
+
+import { StellarService } from 'services/globalServices';
+import { COLORS } from 'web/styles';
+
+import Asset from 'basics/Asset';
+import PageLoader from 'basics/loaders/PageLoader';
+import Table, { CellAlign } from 'basics/Table';
+
+import { UpcomingBribe } from 'pages/bribes/api/types';
+import { getUpcomingBribesForMarket } from 'pages/vote/api/api';
 
 const Container = styled.div`
     display: flex;
@@ -28,12 +33,16 @@ const Description = styled.div`
     margin-bottom: 3.2rem;
 `;
 
-const MarketUpcomingBribes = ({ marketKey }) => {
-    const [bribes, setBribes] = useState(null);
+interface MarketUpcomingBribes {
+    marketKey: string;
+}
+
+const MarketUpcomingBribes = ({ marketKey }: MarketUpcomingBribes): React.ReactNode => {
+    const [bribes, setBribes] = useState<UpcomingBribe[]>(null);
 
     useEffect(() => {
         getUpcomingBribesForMarket(marketKey)
-            .then((res) => {
+            .then(res => {
                 setBribes(res);
             })
             .catch(() => {
@@ -67,11 +76,11 @@ const MarketUpcomingBribes = ({ marketKey }) => {
                     { children: 'AQUA amount', align: CellAlign.Right, flexSize: 2 },
                     { children: 'Period', flexSize: 3, align: CellAlign.Right },
                 ]}
-                body={bribes.map((bribe) => {
-                    const startUTC = convertUTCToLocalDateIgnoringTimezone(
+                body={bribes.map(bribe => {
+                    const startUTC = convertLocalDateToUTCIgnoringTimezone(
                         new Date(bribe.start_at),
                     );
-                    const stopUTC = convertUTCToLocalDateIgnoringTimezone(new Date(bribe.stop_at));
+                    const stopUTC = convertLocalDateToUTCIgnoringTimezone(new Date(bribe.stop_at));
                     return {
                         key: bribe.asset_code + bribe.asset_issuer + startUTC,
                         isNarrow: true,

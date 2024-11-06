@@ -1,23 +1,28 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../common/styles';
-import useAuthStore from '../../../store/authStore/useAuthStore';
-import { ModalService, StellarService } from '../../../common/services/globalServices';
-import { StellarEvents } from '../../../common/services/stellar.service';
+
+import { formatBalance } from 'helpers/format-number';
+
+import useAssetsStore from 'store/assetsStore/useAssetsStore';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { ModalService, StellarService } from 'services/globalServices';
+import { StellarEvents } from 'services/stellar.service';
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Button from 'basics/buttons/Button';
+import PageLoader from 'basics/loaders/PageLoader';
+
+import { VoteRoutes } from '../../../routes';
 import { getTotalVotingStats, getUserPairsList } from '../../vote/api/api';
 import { PairStats } from '../../vote/api/types';
-import Table from '../../vote/components/MainPage/Table/Table';
-import PageLoader from '../../../common/basics/PageLoader';
-import { formatBalance } from '../../../common/helpers/helpers';
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../common/mixins';
-import Button from '../../../common/basics/Button';
-import VotesAmountModal from '../../vote/components/MainPage/VoteModals/VotesAmountModal';
-import ManageUnlockedVotes from '../../vote/components/MainPage/ManageUnlockedVotes/ManageUnlockedVotes';
-import useAssetsStore from '../../../store/assetsStore/useAssetsStore';
 import { getAssetsFromPairs } from '../../vote/components/MainPage/MainPage';
-import { Link } from 'react-router-dom';
-import { VoteRoutes } from '../../../routes';
+import ManageUnlockedVotes from '../../vote/components/MainPage/ManageUnlockedVotes/ManageUnlockedVotes';
+import Table from '../../vote/components/MainPage/Table/Table';
+import VotesAmountModal from '../../vote/components/MainPage/VoteModals/VotesAmountModal';
 
 const Container = styled.div`
     display: flex;
@@ -114,7 +119,7 @@ const YourVotes = () => {
 
     const { processNewAssets } = useAssetsStore();
 
-    const processAssetsFromPairs = (pairs) => {
+    const processAssetsFromPairs = pairs => {
         const assets = getAssetsFromPairs(pairs);
 
         processNewAssets(assets);
@@ -126,7 +131,7 @@ const YourVotes = () => {
         }
         const unsub = StellarService.event.sub(({ type }) => {
             if (type === StellarEvents.claimableUpdate) {
-                setUpdateId((prevState) => prevState + 1);
+                setUpdateId(prevState => prevState + 1);
             }
         });
 
@@ -140,7 +145,7 @@ const YourVotes = () => {
         }
         const keys = StellarService.getKeysSimilarToMarketKeys(account.accountId());
 
-        getUserPairsList(keys).then((res) => {
+        getUserPairsList(keys).then(res => {
             setVotes(res);
             processAssetsFromPairs(res);
             const processedClaims = res.reduce(
@@ -148,7 +153,7 @@ const YourVotes = () => {
                     const pairUnclaimedVotes = StellarService.getPairVotes(
                         pair as PairStats,
                         account.accountId(),
-                    ).filter((claim) => new Date(claim.claimBackDate) < new Date());
+                    ).filter(claim => new Date(claim.claimBackDate) < new Date());
 
                     const sum = pairUnclaimedVotes.reduce((votesSum, claim) => {
                         votesSum += Number(claim.amount);
@@ -167,12 +172,12 @@ const YourVotes = () => {
     }, [updateId, isLogged]);
 
     useEffect(() => {
-        getTotalVotingStats().then((res) => {
+        getTotalVotingStats().then(res => {
             setTotalStats(res);
         });
     }, []);
 
-    const startVote = (pair) => {
+    const startVote = pair => {
         if (isLogged) {
             ModalService.openModal(VotesAmountModal, {
                 pairs: [pair],

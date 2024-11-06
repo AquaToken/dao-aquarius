@@ -1,25 +1,31 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import Input from '../../../../common/basics/Input';
-import Button from '../../../../common/basics/Button';
-import { StellarService, ToastService } from '../../../../common/services/globalServices';
 import { useHistory } from 'react-router-dom';
-import { respondDown } from '../../../../common/mixins';
-import useAuthStore from '../../../../store/authStore/useAuthStore';
+import styled from 'styled-components';
+
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { ModalProps } from 'types/modal';
+
+import { StellarService, ToastService } from 'services/globalServices';
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Button from 'basics/buttons/Button';
+import Input from 'basics/inputs/Input';
+
 import { LockerRoutes } from '../../../../routes';
 
-const Container = styled.form<{ isModal: boolean }>`
+const Container = styled.form<{ $isModal: boolean }>`
     display: flex;
-    flex-direction: ${({ isModal }) => (isModal ? 'column' : 'row')};
+    flex-direction: ${({ $isModal }) => ($isModal ? 'column' : 'row')};
     background-color: ${COLORS.white};
-    box-shadow: ${({ isModal }) => (isModal ? 'unset' : '0 2rem 3rem rgba(0, 6, 54, 0.06)')};
+    box-shadow: ${({ $isModal }) => ($isModal ? 'unset' : '0 2rem 3rem rgba(0, 6, 54, 0.06)')};
     border-radius: 1rem;
-    padding: ${({ isModal }) => (isModal ? '0' : '4.8rem')};
-    width: ${({ isModal }) => (isModal ? '48rem' : 'unset')};
-    margin: ${({ isModal }) => (isModal ? '0' : '-8rem 4rem 0')};
-    gap: ${({ isModal }) => (isModal ? '0' : '6rem')};
+    padding: ${({ $isModal }) => ($isModal ? '0' : '4.8rem')};
+    width: ${({ $isModal }) => ($isModal ? '48rem' : 'unset')};
+    margin: ${({ $isModal }) => ($isModal ? '0' : '-8rem 4rem 0')};
+    gap: ${({ $isModal }) => ($isModal ? '0' : '6rem')};
 
     ${respondDown(Breakpoints.xl)`
         margin: 0;
@@ -40,10 +46,10 @@ const TextBlock = styled.div`
     width: 100%;
 `;
 
-const InputBlock = styled.div<{ isModal: boolean }>`
-    width: ${({ isModal }) => (isModal ? '100%' : '130%')};
-    padding-bottom: ${({ isModal }) => (isModal ? '4rem' : '0')};
-    border-bottom: ${({ isModal }) => (isModal ? `0.1rem dashed ${COLORS.gray}` : 'none')};
+const InputBlock = styled.div<{ $isModal: boolean }>`
+    width: ${({ $isModal }) => ($isModal ? '100%' : '130%')};
+    padding-bottom: ${({ $isModal }) => ($isModal ? '4rem' : '0')};
+    border-bottom: ${({ $isModal }) => ($isModal ? `0.1rem dashed ${COLORS.gray}` : 'none')};
 
     ${respondDown(Breakpoints.md)`
         width: 100%;
@@ -59,20 +65,20 @@ const Title = styled.span`
     margin-bottom: 0.8rem;
 `;
 
-const Description = styled.span<{ isModal: boolean }>`
+const Description = styled.span<{ $isModal: boolean }>`
     font-size: 1.4rem;
     line-height: 2rem;
     color: ${COLORS.descriptionText};
-    margin-bottom: ${({ isModal }) => (isModal ? '4rem' : '0')};
+    margin-bottom: ${({ $isModal }) => ($isModal ? '4rem' : '0')};
 
     ${respondDown(Breakpoints.md)`
         margin-bottom: 4rem;
     `}
 `;
 
-const StyledButton = styled(Button)<{ isModal: boolean }>`
+const StyledButton = styled(Button)<{ $isModal: boolean }>`
     width: 100%;
-    margin-top: ${({ isModal }) => (isModal ? '4rem' : '0')};
+    margin-top: ${({ $isModal }) => ($isModal ? '4rem' : '0')};
     padding: 0;
 
     ${respondDown(Breakpoints.md)`
@@ -80,7 +86,11 @@ const StyledButton = styled(Button)<{ isModal: boolean }>`
     `}
 `;
 
-const AccountInput = ({ params, close }: { params?: any; close?: any }) => {
+interface AccountInputParams {
+    isModal?: boolean;
+}
+
+const AccountInput = ({ params, close }: ModalProps<AccountInputParams>) => {
     const { isLogged, logout, account } = useAuthStore();
 
     const isModal = params?.isModal ?? false;
@@ -93,7 +103,7 @@ const AccountInput = ({ params, close }: { params?: any; close?: any }) => {
         }
     }, [isLogged]);
 
-    const onSubmit = (e) => {
+    const onSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!StellarService.isValidPublicKey(value)) {
             ToastService.showErrorToast('Invalid public key');
@@ -109,21 +119,21 @@ const AccountInput = ({ params, close }: { params?: any; close?: any }) => {
     };
 
     return (
-        <Container isModal={isModal} onSubmit={onSubmit}>
+        <Container $isModal={isModal} onSubmit={onSubmit}>
             <TextBlock>
                 <Title>{isModal ? 'Switch account' : 'Check your account'}</Title>
-                <Description isModal={isModal}>Track your AQUA locks and ICE balance.</Description>
+                <Description $isModal={isModal}>Track your AQUA locks and ICE balance.</Description>
             </TextBlock>
-            <InputBlock isModal={isModal}>
+            <InputBlock $isModal={isModal}>
                 <Input
                     placeholder="Enter your public key (starts with G)"
                     value={value}
-                    onChange={(e) => {
+                    onChange={e => {
                         setValue(e.target.value);
                     }}
                 />
             </InputBlock>
-            <StyledButton isBig disabled={!value} isModal={isModal} type="submit">
+            <StyledButton isBig disabled={!value} $isModal={isModal} type="submit">
                 {isModal ? 'Continue' : "let's start"}
             </StyledButton>
         </Container>

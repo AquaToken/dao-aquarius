@@ -1,10 +1,12 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import ExternalLink from '../../../../common/basics/ExternalLink';
-import Input from '../../../../common/basics/Input';
-import Button from '../../../../common/basics/Button';
-import { respondDown } from '../../../../common/mixins';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Button from 'basics/buttons/Button';
+import ExternalLink from 'basics/ExternalLink';
+import Input from 'basics/inputs/Input';
 
 const Container = styled.section`
     position: relative;
@@ -164,56 +166,64 @@ const StyledButton = styled(Button)`
     `}
 `;
 
-const Conditions = ({ accountId, setAccountId, checkAccount }) => {
-    return (
-        <Container>
-            <Heading>Snapshot Done! 📸</Heading>
-            <LedgerLink>
-                <span>Taken at ledger</span>
-                <ExternalLink href="https://horizon.stellar.org/ledgers/39185028">
-                    #39185028
-                </ExternalLink>
-            </LedgerLink>
+interface ConditionsProps {
+    accountId: string;
+    setAccountId: (value: string) => void;
+    checkAccount: () => void;
+}
 
-            <Cards>
-                <Card>
-                    <Heading>Jan. 15, 2022</Heading>
-                    <Description>
-                        Snapshot of the Stellar network was taken at 00:00:00 UTC.
-                    </Description>
-                </Card>
-                <Divider />
-                <Card>
-                    <Heading>{'>'}500 XLM</Heading>
-                    <Description>
-                        And at least 1 AQUA in your Stellar wallet to be eligible.
-                    </Description>
-                </Card>
-            </Cards>
-            <FormBlock>
-                <HorizontalDivider />
-                <FormDescription>
-                    Check your Stellar addresses to see if they're eligible
-                </FormDescription>
-                <Form>
-                    <Input
-                        placeholder="Enter your public key (starts with G)"
-                        value={accountId}
-                        onChange={(e) => setAccountId(e.target.value)}
-                    />
-                    <StyledButton
-                        isBig
-                        onClick={(e) => {
-                            e.preventDefault();
-                            checkAccount();
-                        }}
-                    >
-                        Check
-                    </StyledButton>
-                </Form>
-            </FormBlock>
-        </Container>
-    );
-};
+const Conditions = ({
+    accountId,
+    setAccountId,
+    checkAccount,
+}: ConditionsProps): React.ReactNode => (
+    <Container>
+        <Heading>Snapshot Done! 📸</Heading>
+        <LedgerLink>
+            <span>Taken at ledger</span>
+            <ExternalLink href="https://horizon.stellar.org/ledgers/39185028">
+                #39185028
+            </ExternalLink>
+        </LedgerLink>
+
+        <Cards>
+            <Card>
+                <Heading>Jan. 15, 2022</Heading>
+                <Description>
+                    Snapshot of the Stellar network was taken at 00:00:00 UTC.
+                </Description>
+            </Card>
+            <Divider />
+            <Card>
+                <Heading>{'>'}500 XLM</Heading>
+                <Description>
+                    And at least 1 AQUA in your Stellar wallet to be eligible.
+                </Description>
+            </Card>
+        </Cards>
+        <FormBlock>
+            <HorizontalDivider />
+            <FormDescription>
+                Check your Stellar addresses to see if they're eligible
+            </FormDescription>
+            <Form>
+                <Input
+                    placeholder="Enter your public key (starts with G)"
+                    value={accountId}
+                    onChange={e => setAccountId(e.target.value)}
+                />
+                <StyledButton
+                    isBig
+                    onClick={(e: React.MouseEvent) => {
+                        e.preventDefault();
+                        checkAccount();
+                    }}
+                >
+                    Check
+                </StyledButton>
+            </Form>
+        </FormBlock>
+    </Container>
+);
 
 export default Conditions;

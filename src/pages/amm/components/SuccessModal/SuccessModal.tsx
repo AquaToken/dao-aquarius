@@ -1,11 +1,16 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { flexAllCenter, respondDown } from '../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import { ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
-import Market from '../../../vote/components/common/Market';
-import Button from '../../../../common/basics/Button';
-import ExternalLink from '../../../../common/basics/ExternalLink';
+
+import { ModalProps } from 'types/modal';
+import { Asset } from 'types/stellar';
+
+import { flexAllCenter, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Button from 'basics/buttons/Button';
+import ExternalLink from 'basics/ExternalLink';
+import Market from 'basics/Market';
+import { ModalTitle } from 'basics/ModalAtoms';
 
 const Container = styled.div`
     width: 52.3rem;
@@ -31,7 +36,15 @@ const StyledButton = styled(Button)`
     margin-top: 4.8rem;
 `;
 
-const SuccessModal = ({ params, close }) => {
+interface SuccessModalParams {
+    assets: Asset[];
+    amounts: string[];
+    title: string;
+    isSwap?: boolean;
+    hash?: string;
+}
+
+const SuccessModal = ({ params, close }: ModalProps<SuccessModalParams>) => {
     const { assets, amounts, title, isSwap, hash } = params;
     return (
         <Container>

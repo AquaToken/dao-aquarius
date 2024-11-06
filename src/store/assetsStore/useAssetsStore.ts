@@ -1,8 +1,9 @@
 import * as actions from './actions';
-import bindActions from '../bindActions';
 import { AssetsStore } from './types';
-import { ActionAsyncResult, ActionSimpleResult } from '../types';
+
+import bindActions from '../bindActions';
 import { useGlobalStore } from '../index';
+import { ActionAsyncResult, ActionSimpleResult } from '../types';
 
 type AssetsActions = {
     getAssets: () => ActionAsyncResult;

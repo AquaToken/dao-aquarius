@@ -1,18 +1,25 @@
 import * as React from 'react';
-import styled from 'styled-components';
-import { respondDown } from '../../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import { ModalDescription, ModalTitle } from '../../../../../common/modals/atoms/ModalAtoms';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
-import Ice from '../../../../../common/assets/img/ice-logo.svg';
-import Button from '../../../../../common/basics/Button';
-import { StellarService, ToastService } from '../../../../../common/services/globalServices';
-import { LoginTypes } from '../../../../../store/authStore/types';
-import { BuildSignAndSubmitStatuses } from '../../../../../common/services/wallet-connect.service';
 import { useState } from 'react';
-import ErrorHandler from '../../../../../common/helpers/error-handler';
-import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
-import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
+import styled from 'styled-components';
+
+import ErrorHandler from 'helpers/error-handler';
+import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
+
+import { LoginTypes } from 'store/authStore/types';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { ModalProps } from 'types/modal';
+
+import { useIsMounted } from 'hooks/useIsMounted';
+import { StellarService, ToastService } from 'services/globalServices';
+import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Ice from 'assets/ice-logo.svg';
+
+import Button from 'basics/buttons/Button';
+import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
 
 const ModalContainer = styled.div`
     width: 52.8rem;
@@ -62,7 +69,7 @@ const AssetsBlock = styled.div`
     border-bottom: 0.1rem dashed ${COLORS.gray};
 `;
 
-const AddIceTrustlinesModal = ({ confirm }) => {
+const AddIceTrustlinesModal = ({ confirm }: ModalProps<never>) => {
     const [pending, setPending] = useState(false);
     const { account } = useAuthStore();
     const isMounted = useIsMounted();
@@ -76,9 +83,7 @@ const AddIceTrustlinesModal = ({ confirm }) => {
         try {
             setPending(true);
 
-            const ops = unlistedAssets.map((asset) => {
-                return StellarService.createAddTrustOperation(asset);
-            });
+            const ops = unlistedAssets.map(asset => StellarService.createAddTrustOperation(asset));
             const tx = await StellarService.buildTx(account, ops);
 
             const result = await account.signAndSubmitTx(tx);
@@ -113,7 +118,7 @@ const AddIceTrustlinesModal = ({ confirm }) => {
                 trustline will reserve 0.5 XLM of your wallet balance.
             </ModalDescription>
             <AssetsBlock>
-                {unlistedAssets.map((asset) => (
+                {unlistedAssets.map(asset => (
                     <AssetLine key={asset.code}>
                         <AssetName>
                             <IceLogo />

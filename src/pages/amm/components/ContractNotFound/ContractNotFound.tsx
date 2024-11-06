@@ -1,11 +1,19 @@
 import * as React from 'react';
-import Button from '../../../../common/basics/Button';
-import styled from 'styled-components';
-import { COLORS } from '../../../../common/styles';
 import { useState } from 'react';
-import { SorobanService, ToastService } from '../../../../common/services/globalServices';
-import useAuthStore from '../../../../store/authStore/useAuthStore';
-import ErrorHandler from '../../../../common/helpers/error-handler';
+import styled from 'styled-components';
+
+import ErrorHandler from 'helpers/error-handler';
+import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
+
+import { LoginTypes } from 'store/authStore/types';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { Asset } from 'types/stellar';
+
+import { SorobanService, ToastService } from 'services/globalServices';
+import { COLORS } from 'web/styles';
+
+import Button from 'basics/buttons/Button';
 
 const Container = styled.div`
     color: ${COLORS.pinkRed};
@@ -15,20 +23,28 @@ const Container = styled.div`
     gap: 1rem;
 `;
 
-const ContractNotFound = ({ asset, onSuccess }) => {
+interface ContractNotFoundProps {
+    asset: Asset;
+    onSuccess?: () => void;
+}
+
+const ContractNotFound = ({ asset, onSuccess }: ContractNotFoundProps): React.ReactNode => {
     const [pending, setPending] = useState(false);
 
     const { account } = useAuthStore();
 
     const deploy = () => {
+        if (account.authType === LoginTypes.walletConnect) {
+            openCurrentWalletIfExist();
+        }
         setPending(true);
 
         SorobanService.deployAssetContractTx(account.accountId(), asset)
-            .then((tx) => account.signAndSubmitTx(tx))
+            .then(tx => account.signAndSubmitTx(tx))
             .then(() => {
                 onSuccess();
             })
-            .catch((e) => {
+            .catch(e => {
                 const errorText = ErrorHandler(e);
                 ToastService.showErrorToast(errorText);
                 setPending(false);

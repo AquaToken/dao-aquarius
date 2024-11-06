@@ -1,18 +1,21 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import {
-    ModalDescription,
-    ModalProps,
-    ModalTitle,
-} from '../../../../../common/modals/atoms/ModalAtoms';
-import { StellarService } from '../../../../../common/services/globalServices';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
-import Market from '../../common/Market';
-import { PairStats } from '../../../api/types';
 import styled from 'styled-components';
-import { flexAllCenter, respondDown } from '../../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
+
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { ModalProps } from 'types/modal';
+
+import { StellarService } from 'services/globalServices';
+import { flexAllCenter, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Market from 'basics/Market';
+import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+
 import VotesList from './VotesList/VotesList';
+
+import { PairStats } from '../../../api/types';
 
 const Container = styled.div`
     width: 80.6rem;
@@ -74,7 +77,7 @@ const ManageVotesModal = ({ params }: ModalProps<{ pair: PairStats }>) => {
         <Container>
             <ModalTitle>Manage your votes</ModalTitle>
             <ModalDescription>
-                View your votes for a pair and claim unlocked votes back
+                View your votes for a market and claim unlocked votes back
             </ModalDescription>
             <PairBlock>
                 <Market verticalDirections assets={[base, counter]} />

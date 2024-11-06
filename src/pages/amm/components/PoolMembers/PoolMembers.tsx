@@ -1,16 +1,24 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import AccountViewer from '../../../../common/basics/AccountViewer';
-import { formatBalance } from '../../../../common/helpers/helpers';
-import { getPoolMembers } from '../../api/api';
 import styled from 'styled-components';
-import { respondDown } from '../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import Pagination from '../../../../common/basics/Pagination';
-import PageLoader from '../../../../common/basics/PageLoader';
-import { Empty } from '../../../profile/YourVotes/YourVotes';
-import { useUpdateIndex } from '../../../../common/hooks/useUpdateIndex';
-import LinkIcon from '../../../../common/assets/img/icon-external-link.svg';
+
+import { getPoolMembers } from 'api/amm';
+
+import { formatBalance } from 'helpers/format-number';
+
+import { PoolBalance } from 'types/amm';
+
+import { useUpdateIndex } from 'hooks/useUpdateIndex';
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import LinkIcon from 'assets/icon-external-link.svg';
+
+import PageLoader from 'basics/loaders/PageLoader';
+import Pagination from 'basics/Pagination';
+import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
+
+import { Empty } from 'pages/profile/YourVotes/YourVotes';
 
 const PAGE_SIZE = 10;
 
@@ -58,7 +66,7 @@ const LinkToExpert = styled.a`
 `;
 
 const PoolMembers = ({ poolId, totalShare }: { poolId: string; totalShare: string }) => {
-    const [members, setMembers] = useState(null);
+    const [members, setMembers] = useState<PoolBalance[]>(null);
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(null);
 
@@ -95,13 +103,13 @@ const PoolMembers = ({ poolId, totalShare }: { poolId: string; totalShare: strin
             <Title>Pool members</Title>
             {members
                 .sort((a, b) => Number(b.balance) - Number(a.balance))
-                .map((member) => (
+                .map(member => (
                     <Row key={member.account_address}>
                         <LinkToExpert
                             href={`https://stellar.expert/explorer/public/account/${member.account_address}`}
                             target="_blank"
                         >
-                            <AccountViewer pubKey={member.account_address} />
+                            <PublicKeyWithIcon pubKey={member.account_address} />
                             <LinkIcon />
                         </LinkToExpert>
 

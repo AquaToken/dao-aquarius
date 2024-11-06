@@ -1,15 +1,20 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import { flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
-import AquaLogo from '../../../../../common/assets/img/aqua-logo-small.svg';
-import AccountService from '../../../../../common/services/account.service';
-import { formatBalance, roundToPrecision } from '../../../../../common/helpers/helpers';
-import PageLoader from '../../../../../common/basics/PageLoader';
-import { ServerApi } from '@stellar/stellar-sdk';
-import { StellarService } from '../../../../../common/services/globalServices';
-import DotsLoader from '../../../../../common/basics/DotsLoader';
+
+import { formatBalance, roundToPrecision } from 'helpers/format-number';
+
+import { ClaimableBalance } from 'types/stellar';
+
+import AccountService from 'services/account.service';
+import { StellarService } from 'services/globalServices';
+import { flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import AquaLogo from 'assets/aqua-logo-small.svg';
+
+import DotsLoader from 'basics/loaders/DotsLoader';
+import PageLoader from 'basics/loaders/PageLoader';
 
 const Container = styled.div`
     margin-top: 6.3rem;
@@ -77,7 +82,7 @@ export const AdditionalInfoColumn = styled.div`
     padding-top: 3.2rem;
 `;
 
-export const BalanceLabel = styled.div<{ color: string; textColor: string }>`
+export const BalanceLabel = styled.div<{ $color: string; $textColor: string }>`
     width: min-content;
     height: 1.9rem;
     border-radius: 0.3rem;
@@ -85,8 +90,8 @@ export const BalanceLabel = styled.div<{ color: string; textColor: string }>`
     line-height: 1.9rem;
     font-size: 1rem;
     font-weight: bold;
-    background: ${({ color }) => color};
-    color: ${({ textColor }) => textColor};
+    background: ${({ $color }) => $color};
+    color: ${({ $textColor }) => $textColor};
     margin-right: 0.7rem;
     padding: 0 0.8rem;
 `;
@@ -112,12 +117,12 @@ const Portfolio = ({
 }: {
     ammAquaBalance: number;
     currentAccount: AccountService;
-    locks: ServerApi.ClaimableBalanceRecord[];
+    locks: ClaimableBalance[];
 }) => {
     const [price, setPrice] = useState(null);
 
     useEffect(() => {
-        StellarService.getAquaPrice().then((res) => {
+        StellarService.getAquaPrice().then(res => {
             setPrice(res);
         });
     }, []);
@@ -151,7 +156,7 @@ const Portfolio = ({
             </BalanceRow>
             <AdditionalInfo>
                 <AdditionalInfoColumn>
-                    <BalanceLabel color={COLORS.yellow} textColor={COLORS.titleText}>
+                    <BalanceLabel $color={COLORS.yellow} $textColor={COLORS.titleText}>
                         AMM
                     </BalanceLabel>
                     <AdditionalInfoBalance>
@@ -160,7 +165,7 @@ const Portfolio = ({
                     <AdditionalInfoDescription>in AMM pool</AdditionalInfoDescription>
                 </AdditionalInfoColumn>
                 <AdditionalInfoColumn>
-                    <BalanceLabel color={COLORS.purple} textColor={COLORS.white}>
+                    <BalanceLabel $color={COLORS.purple} $textColor={COLORS.white}>
                         LOCK
                     </BalanceLabel>
                     <AdditionalInfoBalance>

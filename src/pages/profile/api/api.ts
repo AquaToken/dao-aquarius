@@ -1,6 +1,8 @@
 import axios from 'axios';
-import { ListResponse } from '../../vote/api/types';
+
 import { AmmReward, SdexReward } from './types';
+
+import { ListResponse } from '../../vote/api/types';
 
 const API_URL = 'https://profile-api.aqua.network/api/';
 

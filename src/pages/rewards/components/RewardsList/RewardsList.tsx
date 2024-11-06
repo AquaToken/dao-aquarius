@@ -1,19 +1,27 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { respondDown } from '../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import { getRewards, RewardsSort } from '../../api/api';
-import useAssetsStore from '../../../../store/assetsStore/useAssetsStore';
 import { useHistory, useLocation } from 'react-router-dom';
-import PageLoader from '../../../../common/basics/PageLoader';
-import Info from '../../../../common/assets/img/icon-info.svg';
-import Link from '../../../../common/assets/img/icon-external-link.svg';
-import { formatBalance, getTimeAgoValue } from '../../../../common/helpers/helpers';
-import Tooltip, { TOOLTIP_POSITION } from '../../../../common/basics/Tooltip';
-import Market from '../../../vote/components/common/Market';
+import styled from 'styled-components';
+
+import { getRewards, RewardsSort } from 'api/rewards';
+
+import { getTimeAgoValue } from 'helpers/date';
+import { formatBalance } from 'helpers/format-number';
+
+import useAssetsStore from 'store/assetsStore/useAssetsStore';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Link from 'assets/icon-external-link.svg';
+import Info from 'assets/icon-info.svg';
+
+import PageLoader from 'basics/loaders/PageLoader';
+import Market from 'basics/Market';
+import Table, { CellAlign } from 'basics/Table';
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
 import { MarketRoutes } from '../../../../routes';
-import Table, { CellAlign } from '../../../../common/basics/Table';
 
 const Container = styled.section`
     position: relative;
@@ -116,7 +124,7 @@ const RewardsList = () => {
             return;
         }
         setLoading(true);
-        getRewards(sort).then((res) => {
+        getRewards(sort).then(res => {
             setRewards(res);
             setLoading(false);
             const assets = res.reduce((acc, item) => {
@@ -141,7 +149,7 @@ const RewardsList = () => {
         setSort(params.get(UrlParams.sort));
     }, [location]);
 
-    const changeSort = (sortValue) => {
+    const changeSort = sortValue => {
         const params = new URLSearchParams(location.search);
         params.set(UrlParams.sort, sortValue);
         history.push({ pathname: location.pathname, search: params.toString() });
@@ -279,10 +287,11 @@ const RewardsList = () => {
                                                 market_key.asset2_issuer,
                                             )}`}
                                             target="_blank"
-                                            onClick={(e) => {
+                                            onClick={e => {
                                                 e.stopPropagation();
                                             }}
                                             title="StellarX"
+                                            rel="noreferrer"
                                         >
                                             <LinkIcon />
                                         </a>
@@ -311,10 +320,11 @@ const RewardsList = () => {
                                                 market_key.asset2_issuer,
                                             )}`}
                                             target="_blank"
-                                            onClick={(e) => {
+                                            onClick={e => {
                                                 e.stopPropagation();
                                             }}
                                             title="StellarX"
+                                            rel="noreferrer"
                                         >
                                             <LinkIcon />
                                         </a>

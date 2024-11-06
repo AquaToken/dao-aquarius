@@ -1,4 +1,5 @@
 import axios from 'axios';
+
 import { AccountEligibility, AirdropStats } from './types';
 
 const AirdropApi = 'https://airdrop2-checker-api.aqua.network/api/snapshot/';

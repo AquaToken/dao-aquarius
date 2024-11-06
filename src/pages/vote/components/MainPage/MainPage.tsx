@@ -1,25 +1,53 @@
 import * as React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
-import BackgroundImageLeft from '../../../../common/assets/img/background-left.svg';
-import BackgroundImageRight from '../../../../common/assets/img/background-right.svg';
-import Info from '../../../../common/assets/img/icon-info.svg';
-import { Breakpoints, COLORS } from '../../../../common/styles';
+
+import { getAssetString } from 'helpers/assets';
+import { getTimeAgoValue } from 'helpers/date';
+import { formatBalance } from 'helpers/format-number';
+
+import useAssetsStore from 'store/assetsStore/useAssetsStore';
+import { LoginTypes } from 'store/authStore/types';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { Asset } from 'types/stellar';
+
+import { ModalService, StellarService } from 'services/globalServices';
 import {
-    commonMaxWidth,
-    flexAllCenter,
-    flexRowSpaceBetween,
-    respondDown,
-} from '../../../../common/mixins';
-import ToggleGroup from '../../../../common/basics/ToggleGroup';
-import Table from './Table/Table';
+    AQUA_CODE,
+    AQUA_ISSUER,
+    DOWN_ICE_CODE,
+    ICE_ISSUER,
+    StellarEvents,
+    UP_ICE_CODE,
+} from 'services/stellar.service';
+import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
+import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Aqua from 'assets/aqua-logo-small.svg';
+import BackgroundImageLeft from 'assets/background-left.svg';
+import BackgroundImageRight from 'assets/background-right.svg';
+import Ice from 'assets/ice-logo.svg';
+import Info from 'assets/icon-info.svg';
+
+import AssetDropdown from 'basics/AssetDropdown';
+import Button from 'basics/buttons/Button';
+import { Option } from 'basics/inputs/Select';
+import ToggleGroup from 'basics/inputs/ToggleGroup';
+import DotsLoader from 'basics/loaders/DotsLoader';
+import PageLoader from 'basics/loaders/PageLoader';
+import Market from 'basics/Market';
+import Pagination from 'basics/Pagination';
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import CreatePairModal from './CreatePairModal/CreatePairModal';
 import FloatingButton from './FloatingButton/FloatingButton';
+import Table from './Table/Table';
 import VotesAmountModal from './VoteModals/VotesAmountModal';
-import { ModalService, StellarService } from '../../../../common/services/globalServices';
-import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
-import useAuthStore from '../../../../store/authStore/useAuthStore';
-import AssetDropdown from '../AssetDropdown/AssetDropdown';
-import Arrows from '../../../../common/assets/img/icon-arrows-circle.svg';
+
+import { MainRoutes, MarketRoutes } from '../../../../routes';
 import {
     getFilteredPairsList,
     getPairsList,
@@ -29,31 +57,7 @@ import {
     SortTypes,
     updateVotesForMarketKeys,
 } from '../../api/api';
-import PageLoader from '../../../../common/basics/PageLoader';
-import Tooltip, { TOOLTIP_POSITION } from '../../../../common/basics/Tooltip';
 import { PairStats } from '../../api/types';
-import CreatePairModal from './CreatePairModal/CreatePairModal';
-import Market from '../common/Market';
-import Button from '../../../../common/basics/Button';
-import { formatBalance, getTimeAgoValue } from '../../../../common/helpers/helpers';
-import { Option } from '../../../../common/basics/Select';
-import Pagination from '../../../../common/basics/Pagination';
-import {
-    AQUA_CODE,
-    AQUA_ISSUER,
-    DOWN_ICE_CODE,
-    ICE_ISSUER,
-    StellarEvents,
-    UP_ICE_CODE,
-} from '../../../../common/services/stellar.service';
-import DotsLoader from '../../../../common/basics/DotsLoader';
-import { useHistory, useLocation } from 'react-router-dom';
-import useAssetsStore from '../../../../store/assetsStore/useAssetsStore';
-import { MainRoutes, MarketRoutes } from '../../../../routes';
-import { LoginTypes } from '../../../../store/authStore/types';
-import Ice from '../../../../common/assets/img/ice-logo.svg';
-import Aqua from '../../../../common/assets/img/aqua-logo-small.svg';
-import { getAssetString } from '../../../../store/assetsStore/actions';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -140,15 +144,13 @@ const Description = styled.div`
     z-index: 1;
 `;
 
-const ExploreBlock = styled.div<{ hasChosenPairs: boolean }>`
+const ExploreBlock = styled.div<{ $hasChosenPairs: boolean }>`
     position: relative;
-    padding: 0 4rem;
     ${commonMaxWidth};
-    padding-bottom: ${({ hasChosenPairs }) => (hasChosenPairs ? '0' : '6.6rem')};
+    padding: 0 4rem ${({ $hasChosenPairs }) => ($hasChosenPairs ? '0' : '6.6rem')};
 
     ${respondDown(Breakpoints.md)`
         padding: 0 1.6rem;
-        background: ${COLORS.lightGray};
     `}
 `;
 
@@ -165,66 +167,17 @@ const PairSearch = styled.div`
     box-sizing: border-box;
 
     ${respondDown(Breakpoints.md)`
-        margin-top: 5rem;
-        flex-direction: column;
-        box-shadow: unset;
-        padding: 0;
-        margin-bottom: 8rem; 
-        background: ${COLORS.transparent};
+        margin-top: -3rem;
+        padding: 1.6rem;
+        margin-bottom: 8rem;
         padding-top: 5rem;
-    `}
-`;
-
-const SwapButton = styled.div<{ disabled: boolean }>`
-    margin: 0 3.6rem;
-    padding: 0.8rem;
-    width: 3.2rem;
-    height: 3.2rem;
-    border-radius: 0.4rem;
-    cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
-
-    &:hover {
-        background: ${COLORS.lightGray};
-    }
-
-    ${respondDown(Breakpoints.md)`
-        margin: 1.8rem 0 3.6rem;
-    `}
-`;
-
-const ArrowsIcon = styled(Arrows)`
-    min-width: 1.6rem;
-    min-height: 1.6rem;
-`;
-
-const TooltipFullWidth = styled(Tooltip)`
-    width: 100%;
-`;
-
-const TooltipContent = styled.div`
-    display: flex;
-    ${flexAllCenter};
-    width: 30rem;
-    white-space: pre-wrap;
-    font-size: 1.6rem;
-    line-height: 2.4rem;
-    padding: 0.8rem;
-
-    span:first-child {
-        margin-right: 1.2rem;
-    }
-
-    ${respondDown(Breakpoints.md)`
-        width: 25rem;
-        font-size: 1.2rem;
-        line-height: 1.4rem;
-        padding: 0.3rem;
+        flex-direction: column;
+        height: unset;
     `}
 `;
 
 const Header = styled.header`
     display: flex;
-    //justify-content: space-between;
     align-items: center;
     margin: 5.4rem 0;
 
@@ -382,7 +335,7 @@ enum UrlParams {
     counter = 'counter',
 }
 
-const assetToUrlParams = (asset) => {
+const assetToUrlParams = (asset: Asset) => {
     const assetInstance = StellarService.createAsset(asset.code, asset.issuer);
 
     if (assetInstance.isNative()) {
@@ -392,7 +345,7 @@ const assetToUrlParams = (asset) => {
     return `${assetInstance.code}:${assetInstance.issuer}`;
 };
 
-const assetFromUrlParams = (params) => {
+const assetFromUrlParams = (params: string) => {
     if (params === 'native') {
         return StellarService.createLumen();
     }
@@ -402,12 +355,16 @@ const assetFromUrlParams = (params) => {
     return StellarService.createAsset(code, issuer);
 };
 
-export const getAssetsFromPairs = (pairs) => {
-    return pairs.reduce((acc, item) => {
+export const getAssetsFromPairs = pairs =>
+    pairs.reduce((acc, item) => {
         const bribeAssets =
-            item.aggregated_bribes?.reduce((accum, bribe) => {
-                return [...accum, { code: bribe.asset_code, issuer: bribe.asset_issuer }];
-            }, []) ?? [];
+            item.aggregated_bribes?.reduce(
+                (accum, bribe) => [
+                    ...accum,
+                    { code: bribe.asset_code, issuer: bribe.asset_issuer },
+                ],
+                [],
+            ) ?? [];
 
         return [
             ...acc,
@@ -416,9 +373,8 @@ export const getAssetsFromPairs = (pairs) => {
             { code: item.asset2_code, issuer: item.asset2_issuer },
         ];
     }, []);
-};
 
-const MainPage = (): JSX.Element => {
+const MainPage = (): React.ReactNode => {
     const [updateIndex, setUpdateIndex] = useState(0);
     const { processNewAssets } = useAssetsStore();
     const [chosenPairs, setChosenPairs] = useState(getCachedChosenPairs());
@@ -430,7 +386,6 @@ const MainPage = (): JSX.Element => {
     const [searchCounter, setSearchCounter] = useState(null);
     const [pairsLoading, setPairsLoading] = useState(false);
     const [changePageLoading, setChangePageLoading] = useState(false);
-    const [isCounterSearchActive, setIsCounterSearchActive] = useState(false);
     const [totalStats, setTotalStats] = useState(null);
 
     const [pairs, setPairs] = useState(null);
@@ -493,7 +448,7 @@ const MainPage = (): JSX.Element => {
             try {
                 const asset = assetFromUrlParams(params.get(UrlParams.base));
                 setSearchBase(asset);
-            } catch (e) {
+            } catch {
                 params.delete(UrlParams.base);
                 history.replace({ search: params.toString() });
             }
@@ -504,7 +459,7 @@ const MainPage = (): JSX.Element => {
             try {
                 const asset = assetFromUrlParams(params.get(UrlParams.counter));
                 setSearchCounter(asset);
-            } catch (e) {
+            } catch {
                 params.delete(UrlParams.counter);
                 history.replace({ search: params.toString() });
             }
@@ -515,7 +470,7 @@ const MainPage = (): JSX.Element => {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            setUpdateIndex((prev) => prev + 1);
+            setUpdateIndex(prev => prev + 1);
         }, UPDATE_INTERVAL);
 
         return () => {
@@ -526,7 +481,7 @@ const MainPage = (): JSX.Element => {
     useEffect(() => {
         const unsub = StellarService.event.sub(({ type }) => {
             if (type === StellarEvents.claimableUpdate) {
-                setClaimUpdateId((prevState) => prevState + 1);
+                setClaimUpdateId(prevState => prevState + 1);
             }
         });
 
@@ -567,10 +522,25 @@ const MainPage = (): JSX.Element => {
         });
     };
 
-    const processAssetsFromPairs = (pairs) => {
+    const processAssetsFromPairs = pairs => {
         const assets = getAssetsFromPairs(pairs);
 
         processNewAssets(assets);
+    };
+
+    const changeSort = (sortValue: SortTypes) => {
+        if (!isLogged && sortValue === SortTypes.yourVotes) {
+            ModalService.openModal(ChooseLoginMethodModal, {
+                redirectURL: `${MainRoutes.vote}?${UrlParams.sort}=${SortTypes.yourVotes}`,
+            });
+            return;
+        }
+        const params = new URLSearchParams(location.search);
+        params.set(UrlParams.sort, sortValue);
+        params.delete(UrlParams.base);
+        params.delete(UrlParams.counter);
+        history.push({ pathname: location.pathname, search: params.toString() });
+        setPage(1);
     };
 
     useEffect(() => {
@@ -592,7 +562,7 @@ const MainPage = (): JSX.Element => {
 
         const keys = StellarService.getKeysSimilarToMarketKeys(account.accountId());
 
-        getUserPairsList(keys).then((result) => {
+        getUserPairsList(keys).then(result => {
             setPairs(result);
             processAssetsFromPairs(result);
             setCount(result.length);
@@ -612,7 +582,7 @@ const MainPage = (): JSX.Element => {
 
         const keys = StellarService.getKeysSimilarToMarketKeys(account.accountId());
 
-        getUserPairsList(keys).then((result) => {
+        getUserPairsList(keys).then(result => {
             setPairs(result);
             processAssetsFromPairs(result);
             setCount(result.length);
@@ -633,12 +603,13 @@ const MainPage = (): JSX.Element => {
             );
             return;
         }
-        Promise.all([updateVotesForMarketKeys(pairs), getTotalVotingStats()]).then(
-            ([pairsResult, totalStatsResult]) => {
-                setPairs(pairsResult);
-                setTotalStats(totalStatsResult);
-            },
-        );
+        Promise.all([
+            pairs ? updateVotesForMarketKeys(pairs) : Promise.resolve([]),
+            getTotalVotingStats(),
+        ]).then(([pairsResult, totalStatsResult]) => {
+            setPairs(pairsResult);
+            setTotalStats(totalStatsResult);
+        });
     }, [updateIndex]);
 
     useEffect(() => {
@@ -647,7 +618,7 @@ const MainPage = (): JSX.Element => {
         }
 
         setPairsLoading(true);
-        getPairsList(sort, PAGE_SIZE, page).then((result) => {
+        getPairsList(sort, PAGE_SIZE, page).then(result => {
             setPairs(result.pairs);
             setCount(result.count);
             processAssetsFromPairs(result.pairs);
@@ -662,7 +633,7 @@ const MainPage = (): JSX.Element => {
         }
 
         setPairsLoading(true);
-        getPairsWithBribes(PAGE_SIZE, page).then((result) => {
+        getPairsWithBribes(PAGE_SIZE, page).then(result => {
             setPairs(result.pairs);
             setCount(result.count);
             processAssetsFromPairs(result.pairs);
@@ -676,7 +647,7 @@ const MainPage = (): JSX.Element => {
             return;
         }
         setPairsLoading(true);
-        getFilteredPairsList(searchBase, searchCounter, PAGE_SIZE, page).then((result) => {
+        getFilteredPairsList(searchBase, searchCounter, PAGE_SIZE, page).then(result => {
             setPairs(result.pairs);
             processAssetsFromPairs(result.pairs);
             setCount(result.count);
@@ -693,71 +664,34 @@ const MainPage = (): JSX.Element => {
         }
     }, [isLogged]);
 
-    const changeSort = (sortValue) => {
-        if (!isLogged && sortValue === SortTypes.yourVotes) {
-            ModalService.openModal(ChooseLoginMethodModal, {
-                redirectURL: `${MainRoutes.vote}?${UrlParams.sort}=${SortTypes.yourVotes}`,
-            });
-            return;
-        }
-        const params = new URLSearchParams(location.search);
-        params.set(UrlParams.sort, sortValue);
-        params.delete(UrlParams.base);
-        params.delete(UrlParams.counter);
-        history.push({ pathname: location.pathname, search: params.toString() });
-        setPage(1);
-    };
+    const changeSearch = (assets: Asset[]): void => {
+        const [base, counter] = assets;
 
-    const changeBaseSearch = (asset) => {
         const params = new URLSearchParams(location.search);
         params.delete(UrlParams.sort);
-        if (asset) {
-            params.set(UrlParams.base, assetToUrlParams(asset));
+
+        if (base) {
+            params.set(UrlParams.base, assetToUrlParams(base));
         } else {
             params.delete(UrlParams.base);
         }
-        history.push({
-            pathname: location.pathname,
-            search: decodeURIComponent(params.toString()),
-        });
-        setPairsLoading(true);
-        setPage(1);
-    };
 
-    const changeCounterSearch = (asset) => {
-        const params = new URLSearchParams(location.search);
-        params.delete(UrlParams.sort);
-        if (asset) {
-            params.set(UrlParams.counter, assetToUrlParams(asset));
+        if (counter) {
+            params.set(UrlParams.counter, assetToUrlParams(counter));
         } else {
             params.delete(UrlParams.counter);
         }
+
         history.push({
             pathname: location.pathname,
             search: decodeURIComponent(params.toString()),
         });
+
         setPairsLoading(true);
         setPage(1);
     };
 
-    const swapAssets = () => {
-        if (!searchCounter) {
-            return;
-        }
-        const params = new URLSearchParams(location.search);
-        const base = params.get(UrlParams.base);
-        const counter = params.get(UrlParams.counter);
-
-        params.set(UrlParams.base, counter);
-        params.set(UrlParams.counter, base);
-
-        history.push({
-            pathname: location.pathname,
-            search: decodeURIComponent(params.toString()),
-        });
-    };
-
-    const changePage = (page) => {
+    const changePage = (page: number) => {
         setPage(page);
         setChangePageLoading(true);
     };
@@ -783,7 +717,7 @@ const MainPage = (): JSX.Element => {
     if (!pairs) {
         return <PageLoader />;
     }
-    const createPair = (e) => {
+    const createPair = (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
         if (isLogged) {
@@ -811,14 +745,14 @@ const MainPage = (): JSX.Element => {
             return;
         }
         const isPairSelected = chosenPairs.some(
-            (chosenPair) => chosenPair.market_key === pair.market_key,
+            chosenPair => chosenPair.market_key === pair.market_key,
         );
 
         let updatedPairs;
 
         if (isPairSelected) {
             updatedPairs = chosenPairs.filter(
-                (chosenPair) => chosenPair.market_key !== pair.market_key,
+                chosenPair => chosenPair.market_key !== pair.market_key,
             );
         } else {
             updatedPairs = [...chosenPairs, pair];
@@ -844,7 +778,7 @@ const MainPage = (): JSX.Element => {
     return (
         <MainBlock>
             <Background>
-                <Title>Vote For Your Favorite Pairs</Title>
+                <Title>Vote For Your Favorite Markets</Title>
                 <Description>
                     Lock your AQUA or ICE to create immutable and transparent votes direct on the
                     Stellar blockchain
@@ -852,52 +786,27 @@ const MainPage = (): JSX.Element => {
                 <BackgroundLeft />
                 <BackgroundRight />
             </Background>
-            <ExploreBlock hasChosenPairs={hasChosenPairs}>
+            <ExploreBlock $hasChosenPairs={hasChosenPairs}>
                 <PairSearch>
                     <AssetDropdown
-                        asset={searchBase}
-                        onUpdate={changeBaseSearch}
-                        exclude={searchCounter}
+                        assetsList={[searchBase, searchCounter].filter(Boolean)}
+                        onUpdate={(assets: Asset[]) => {
+                            changeSearch(assets);
+                        }}
+                        excludeList={[searchBase, searchCounter].filter(Boolean)}
                         label="Search asset by name, domain or issuer"
                         placeholder="AQUA or aqua.network or AQUA:GBNZ...AQUA"
+                        disabled={searchBase && searchCounter}
+                        withChips
                     />
-                    <SwapButton disabled={!searchCounter} onClick={() => swapAssets()}>
-                        <ArrowsIcon />
-                    </SwapButton>
-
-                    <TooltipFullWidth
-                        content={
-                            <TooltipContent>
-                                <span>&#128075;</span>
-                                <span>
-                                    Can&apos;t find your pair below? Try to type second asset into
-                                    this field
-                                </span>
-                            </TooltipContent>
-                        }
-                        position={TOOLTIP_POSITION.bottom}
-                        isShow={
-                            Boolean(searchBase) && !Boolean(searchCounter) && !isCounterSearchActive
-                        }
-                    >
-                        <AssetDropdown
-                            asset={searchCounter}
-                            onUpdate={changeCounterSearch}
-                            disabled={!searchBase}
-                            onToggle={setIsCounterSearchActive}
-                            exclude={searchBase}
-                            label="Search asset by name, domain or issuer"
-                            placeholder="AQUA or aqua.network or AQUA:GBNZ...AQUA"
-                        />
-                    </TooltipFullWidth>
                 </PairSearch>
                 <Header ref={headerRef}>
                     <ToggleGroupStyled
                         value={sort}
-                        onChange={(option) => changeSort(option)}
+                        onChange={(option: SortTypes) => changeSort(option)}
                         options={options}
                     />
-                    {Boolean(pairs.length && pairs.some((pair) => Boolean(pair.timestamp))) && (
+                    {Boolean(pairs.length && pairs.some(pair => Boolean(pair.timestamp))) && (
                         <StatusUpdate>
                             {totalStats ? (
                                 <Tooltip
@@ -945,7 +854,7 @@ const MainPage = (): JSX.Element => {
                             <LastUpdated>
                                 Last updated{' '}
                                 {getTimeAgoValue(
-                                    pairs.find((pair) => Boolean(pair.timestamp)).timestamp,
+                                    pairs.find(pair => Boolean(pair.timestamp)).timestamp,
                                 )}
                             </LastUpdated>
                         </StatusUpdate>
@@ -953,13 +862,13 @@ const MainPage = (): JSX.Element => {
                 </Header>
                 {!pairsLoading && searchBase && !searchCounter && (
                     <SearchEnabled>
-                        {pairs.length ? 'Search results' : 'No pairs found'}
+                        {pairs.length ? 'Search results' : 'No markets found'}
                     </SearchEnabled>
                 )}
                 {sort === SortTypes.yourVotes &&
                     !pairs.length &&
                     StellarService.isClaimableBalancesLoaded &&
-                    !pairsLoading && <SearchEnabled>No pairs found</SearchEnabled>}
+                    !pairsLoading && <SearchEnabled>No markets found</SearchEnabled>}
                 {searchBase && searchCounter && !pairs.length && (
                     <CreatePair onClick={() => goToMarketPage()}>
                         <Market assets={[searchBase, searchCounter]} mobileVerticalDirections />
@@ -967,13 +876,13 @@ const MainPage = (): JSX.Element => {
                             content={
                                 <BeFirst>
                                     <div>&#128293;</div>
-                                    <div>Be the first to vote for rewards on this pair!</div>
+                                    <div>Be the first to vote for rewards on this market!</div>
                                 </BeFirst>
                             }
                             position={TOOLTIP_POSITION.bottom}
                             isShow={true}
                         >
-                            <Button onClick={(e) => createPair(e)}>create pair</Button>
+                            <Button onClick={e => createPair(e)}>create market</Button>
                         </Tooltip>
                     </CreatePair>
                 )}
@@ -989,7 +898,7 @@ const MainPage = (): JSX.Element => {
                     <Pagination
                         pageSize={PAGE_SIZE}
                         totalCount={count}
-                        onPageChange={(page) => changePage(page)}
+                        onPageChange={page => changePage(page)}
                         currentPage={page}
                         itemName="pairs"
                     />

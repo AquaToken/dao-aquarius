@@ -1,9 +1,12 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { COLORS } from '../../../../../../common/styles';
-import { flexAllCenter } from '../../../../../../common/mixins';
+
+import { roundToPrecision } from 'helpers/format-number';
+
+import { flexAllCenter } from 'web/mixins';
+import { COLORS } from 'web/styles';
+
 import { ProposalSimple } from '../../../../api/types';
-import { roundToPrecision } from '../../../../../../common/helpers/helpers';
 import { SummaryTitle, SummaryValue } from '../ProposalPreview';
 
 const ProgressLine = styled.div`
@@ -32,11 +35,11 @@ const Outer = styled.div`
     background-color: ${COLORS.pinkRed};
 `;
 
-const Inner = styled.div<{ width: string }>`
+const Inner = styled.div<{ $width: string }>`
     height: 0.8rem;
-    border-radius: ${({ width }) => (width === '100%' ? '0.8rem' : '0.8rem 0 0 0.8rem')};
-    border-right: ${({ width }) => (width === '100%' ? 'none' : `0.1rem solid ${COLORS.white}`)};
-    width: ${({ width }) => width};
+    border-radius: ${({ $width }) => ($width === '100%' ? '0.8rem' : '0.8rem 0 0 0.8rem')};
+    border-right: ${({ $width }) => ($width === '100%' ? 'none' : `0.1rem solid ${COLORS.white}`)};
+    width: ${({ $width }) => $width};
     background-color: ${COLORS.purple};
 `;
 
@@ -63,7 +66,7 @@ const CurrentResults = ({ proposal }: { proposal: ProposalSimple }) => {
                 <span>Against {roundToPrecision(100 - percentFor, 2)}%</span>
             </Label>
             <Outer>
-                <Inner width={`${percentFor}%`} />
+                <Inner $width={`${percentFor}%`} />
             </Outer>
         </ProgressLine>
     );

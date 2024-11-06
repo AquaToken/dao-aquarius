@@ -1,26 +1,35 @@
-import * as React from 'react';
-import styled from 'styled-components';
 import * as StellarSdk from '@stellar/stellar-sdk';
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import { ModalDescription, ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
-import Market from '../../../vote/components/common/Market';
-import { formatBalance, getAssetFromString } from '../../../../common/helpers/helpers';
-import Button from '../../../../common/basics/Button';
+import * as React from 'react';
 import { useEffect, useState } from 'react';
-import {
-    ModalService,
-    SorobanService,
-    ToastService,
-} from '../../../../common/services/globalServices';
-import SuccessModal from '../../../amm/components/SuccessModal/SuccessModal';
-import useAuthStore from '../../../../store/authStore/useAuthStore';
-import { SWAP_SLIPPAGE_ALIAS } from '../SwapSettingsModal/SwapSettingsModal';
-import { BuildSignAndSubmitStatuses } from '../../../../common/services/wallet-connect.service';
-import { getPathPoolsFee } from '../../../amm/api/api';
-import PageLoader from '../../../../common/basics/PageLoader';
+import styled from 'styled-components';
+
+import { getPathPoolsFee } from 'api/amm';
+
+import { getAssetFromString } from 'helpers/assets';
+import { formatBalance } from 'helpers/format-number';
+import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
+
+import { LoginTypes } from 'store/authStore/types';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { ModalProps } from 'types/modal';
+import { Asset, Int128Parts } from 'types/stellar';
+
+import { ModalService, SorobanService, ToastService } from 'services/globalServices';
+import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Button from 'basics/buttons/Button';
+import DotsLoader from 'basics/loaders/DotsLoader';
+import PageLoader from 'basics/loaders/PageLoader';
+import Market from 'basics/Market';
+import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+
 import PathPool from './PathPool/PathPool';
-import DotsLoader from '../../../../common/basics/DotsLoader';
+
+import SuccessModal from '../../../amm/components/SuccessModal/SuccessModal';
+import { SWAP_SLIPPAGE_ALIAS } from '../SwapSettingsModal/SwapSettingsModal';
 
 const Container = styled.div`
     width: 52.3rem;
@@ -65,7 +74,20 @@ const Pools = styled.div`
 
 const STROOP = 0.0000001;
 
-const SwapConfirmModal = ({ params, confirm }) => {
+interface SwapConfirmModalParams {
+    base: Asset;
+    counter: Asset;
+    baseAmount: string;
+    counterAmount: string;
+    bestPathXDR: string;
+    bestPath: string[];
+    bestPools: string[];
+}
+
+const SwapConfirmModal = ({
+    params,
+    confirm,
+}: ModalProps<SwapConfirmModalParams>): React.ReactNode => {
     const { base, counter, baseAmount, counterAmount, bestPathXDR, bestPath, bestPools } = params;
     const [fees, setFees] = useState(null);
     const [swapPending, setSwapPending] = useState(false);
@@ -75,7 +97,7 @@ const SwapConfirmModal = ({ params, confirm }) => {
 
     useEffect(() => {
         getPathPoolsFee(bestPools)
-            .then((res) => {
+            .then(res => {
                 setFees(res);
             })
             .catch(() => {
@@ -90,7 +112,7 @@ const SwapConfirmModal = ({ params, confirm }) => {
             bestPathXDR,
             baseAmount,
             '0',
-        ).then((res) => {
+        ).then(res => {
             SorobanService.simulateTx(res).then(
                 ({
                     minResourceFee,
@@ -102,6 +124,9 @@ const SwapConfirmModal = ({ params, confirm }) => {
     }, []);
 
     const swap = () => {
+        if (account.authType === LoginTypes.walletConnect) {
+            openCurrentWalletIfExist();
+        }
         setSwapPending(true);
         const SLIPPAGE = localStorage.getItem(SWAP_SLIPPAGE_ALIAS) || '1'; // 1%
 
@@ -116,11 +141,11 @@ const SwapConfirmModal = ({ params, confirm }) => {
             baseAmount,
             minCounterAmount,
         )
-            .then((tx) => {
+            .then(tx => {
                 hash = tx.hash().toString('hex');
                 return account.signAndSubmitTx(tx, true);
             })
-            .then((res) => {
+            .then((res: { value?: () => Int128Parts; status?: BuildSignAndSubmitStatuses }) => {
                 confirm();
 
                 if (!res) {
@@ -144,9 +169,7 @@ const SwapConfirmModal = ({ params, confirm }) => {
                 });
                 setSwapPending(false);
             })
-            .catch((e) => {
-                console.log(e);
-
+            .catch(e => {
                 const errorMessage = e.message ?? e.toString() ?? 'Oops! Something went wrong';
 
                 ToastService.showErrorToast(

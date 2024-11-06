@@ -1,25 +1,29 @@
+import * as StellarSdk from '@stellar/stellar-sdk';
 import * as React from 'react';
 import { useState } from 'react';
-import {
-    ModalDescription,
-    ModalProps,
-    ModalTitle,
-} from '../../../../../common/modals/atoms/ModalAtoms';
 import styled from 'styled-components';
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
-import Button from '../../../../../common/basics/Button';
-import Market from '../../common/Market';
-import * as StellarSdk from '@stellar/stellar-sdk';
-import { StellarService, ToastService } from '../../../../../common/services/globalServices';
-import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
-import { BuildSignAndSubmitStatuses } from '../../../../../common/services/wallet-connect.service';
-import Info from '../../../../../common/assets/img/icon-info.svg';
-import Tooltip, { TOOLTIP_POSITION } from '../../../../../common/basics/Tooltip';
-import ErrorHandler from '../../../../../common/helpers/error-handler';
-import { LoginTypes } from '../../../../../store/authStore/types';
-import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
+
+import ErrorHandler from 'helpers/error-handler';
+import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
+
+import { LoginTypes } from 'store/authStore/types';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { ModalProps } from 'types/modal';
+import { Asset } from 'types/stellar';
+
+import { useIsMounted } from 'hooks/useIsMounted';
+import { StellarService, ToastService } from 'services/globalServices';
+import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Info from 'assets/icon-info.svg';
+
+import Button from 'basics/buttons/Button';
+import Market from 'basics/Market';
+import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 const ContentRow = styled.div`
     display: flex;
@@ -101,10 +105,12 @@ const StyledButton = styled(Button)`
     margin-top: 3.2rem;
 `;
 
-const CreatePairModal = ({
-    params,
-    close,
-}: ModalProps<{ base: any; counter: any }>): JSX.Element => {
+interface CreatePairModalParams {
+    base: Asset;
+    counter: Asset;
+}
+
+const CreatePairModal = ({ params, close }: ModalProps<CreatePairModalParams>): React.ReactNode => {
     const isMounted = useIsMounted();
 
     const { account } = useAuthStore();
@@ -153,7 +159,7 @@ const CreatePairModal = ({
                 return;
             }
             ToastService.showSuccessToast(
-                'Market has been created! You will be able to see your pair in the list within 10 minutes',
+                'Market has been created! You will be able to see your market in the list within 10 minutes',
                 20000,
             );
         } catch (e) {
@@ -171,7 +177,7 @@ const CreatePairModal = ({
             <Description>
                 To create a pair, you first need to pay for the trustlines for transactions. Once
                 it’s done, please allow up to 10 minutes for our systems to correctly add the new
-                market pair and make it available for anyone to vote.
+                market and make it available for anyone to vote.
             </Description>
             <div>
                 <AssetsInfo>
@@ -218,7 +224,7 @@ const CreatePairModal = ({
                     </Tooltip>
                 </ContentRow>
                 <StyledButton fullWidth onClick={() => onSubmit()} pending={pending}>
-                    Create pair
+                    Create market
                 </StyledButton>
             </div>
         </>

@@ -1,29 +1,36 @@
 import * as React from 'react';
 import { useCallback, useMemo, useState } from 'react';
-import { LoginTypes } from '../../../../../../store/authStore/types';
-import Table, { CellAlign } from '../../../../../../common/basics/Table';
-import { Breakpoints, COLORS } from '../../../../../../common/styles';
-import Market from '../../../common/Market';
-import { formatBalance, getDateString } from '../../../../../../common/helpers/helpers';
-import Tooltip, { TOOLTIP_POSITION } from '../../../../../../common/basics/Tooltip';
-import Dislike from '../../../../../../common/assets/img/icon-dislike-gray.svg';
-import { BuildSignAndSubmitStatuses } from '../../../../../../common/services/wallet-connect.service';
-import {
-    DOWN_ICE_CODE,
-    ICE_ISSUER,
-    UP_ICE_CODE,
-} from '../../../../../../common/services/stellar.service';
-import { StellarService, ToastService } from '../../../../../../common/services/globalServices';
-import ErrorHandler from '../../../../../../common/helpers/error-handler';
-import { useIsMounted } from '../../../../../../common/hooks/useIsMounted';
-import Checkbox from '../../../../../../common/basics/Checkbox';
-import useAuthStore from '../../../../../../store/authStore/useAuthStore';
 import styled from 'styled-components';
-import { respondDown } from '../../../../../../common/mixins';
-import Button from '../../../../../../common/basics/Button';
-import LinkIcon from '../../../../../../common/assets/img/icon-external-link.svg';
-import { MarketPair } from '../../../../../profile/api/types';
-import { openCurrentWalletIfExist } from '../../../../../../common/helpers/wallet-connect-helpers';
+
+import { getDateString } from 'helpers/date';
+import ErrorHandler from 'helpers/error-handler';
+import { formatBalance } from 'helpers/format-number';
+import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
+
+import { LoginTypes } from 'store/authStore/types';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { Transaction } from 'types/stellar';
+import { Vote } from 'types/voting-tool';
+
+import { useIsMounted } from 'hooks/useIsMounted';
+import { StellarService, ToastService } from 'services/globalServices';
+import { DOWN_ICE_CODE, ICE_ISSUER, UP_ICE_CODE } from 'services/stellar.service';
+import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Dislike from 'assets/icon-dislike-gray.svg';
+import LinkIcon from 'assets/icon-external-link.svg';
+
+import Button from 'basics/buttons/Button';
+import Checkbox from 'basics/inputs/Checkbox';
+import Market from 'basics/Market';
+import Table, { CellAlign } from 'basics/Table';
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import { MarketPair } from 'pages/profile/api/types';
+import { PairStats } from 'pages/vote/api/types';
 
 const CheckboxMobile = styled(Checkbox)`
     display: none;
@@ -84,7 +91,7 @@ const TooltipStyled = styled(Tooltip)`
 
 export const goToStellarExpert = ({ transactions }) => {
     const tab = window.open('', '_blank');
-    transactions().then((res) => {
+    transactions().then((res: { records: Transaction[] }) => {
         const hash = res?.records?.[0]?.hash;
         if (hash) {
             tab.location.href = `https://stellar.expert/explorer/public/tx/${hash}`;
@@ -92,15 +99,13 @@ export const goToStellarExpert = ({ transactions }) => {
     });
 };
 
-const VotesList = ({
-    votes,
-    pair,
-    withoutClaimDate,
-}: {
-    votes: any[];
+interface VotesListProps {
+    votes: Vote[];
     pair?: MarketPair;
     withoutClaimDate?: boolean;
-}) => {
+}
+
+const VotesList = ({ votes, pair, withoutClaimDate }: VotesListProps): React.ReactNode => {
     const [pendingId, setPendingId] = useState(null);
     const [claims, setClaims] = useState(votes);
     const [selectedClaims, setSelectedClaims] = useState(new Map());
@@ -110,7 +115,7 @@ const VotesList = ({
     const isMounted = useIsMounted();
 
     const selectClaim = useCallback(
-        (claim) => {
+        (claim: Vote) => {
             if (selectedClaims.has(claim.id)) {
                 selectedClaims.delete(claim.id);
             } else {
@@ -140,7 +145,7 @@ const VotesList = ({
         if (!claims) {
             return true;
         }
-        return claims.every((claim) => new Date(claim.claimBackDate) > new Date());
+        return claims.every(claim => new Date(claim.claimBackDate) > new Date());
     }, [claims]);
 
     const getActionHeadCell = useCallback(() => {
@@ -163,46 +168,7 @@ const VotesList = ({
         };
     }, [account, selectedClaims, selectAll, pendingId]);
 
-    const getActionBlock = useCallback(
-        (claim) => {
-            if (account.authType === LoginTypes.ledger) {
-                return {
-                    children: (
-                        <ClaimButton
-                            isSmall
-                            onClick={() => onSubmit(claim)}
-                            disabled={
-                                (Boolean(pendingId) && claim.id !== pendingId) ||
-                                new Date(claim.claimBackDate) > new Date()
-                            }
-                            pending={claim.id === pendingId}
-                        >
-                            Claim
-                        </ClaimButton>
-                    ),
-                    align: CellAlign.Center,
-                    flexSize: 0.6,
-                };
-            }
-
-            return {
-                children: (
-                    <Checkbox
-                        checked={selectedClaims.has(claim.id)}
-                        onChange={() => {
-                            selectClaim(claim);
-                        }}
-                        disabled={new Date(claim.claimBackDate) > new Date() || Boolean(pendingId)}
-                    />
-                ),
-                align: CellAlign.Center,
-                flexSize: 0.3,
-                hideOnMobile: true,
-            };
-        },
-        [pendingId, account, selectedClaims, selectClaim, pendingId],
-    );
-    const onSubmit = async (claim?: any) => {
+    const onSubmit = async (claim?: Vote) => {
         if (account.authType === LoginTypes.walletConnect) {
             openCurrentWalletIfExist();
         }
@@ -252,9 +218,7 @@ const VotesList = ({
             if (isMounted.current) {
                 setPendingId(null);
                 setClaims(
-                    claims.filter((cb) =>
-                        claim ? claim.id !== cb.id : !selectedClaims.has(cb.id),
-                    ),
+                    claims.filter(cb => (claim ? claim.id !== cb.id : !selectedClaims.has(cb.id))),
                 );
                 setSelectedClaims(new Map());
             }
@@ -276,6 +240,47 @@ const VotesList = ({
             }
         }
     };
+
+    const getActionBlock = useCallback(
+        (claim: Vote) => {
+            if (account.authType === LoginTypes.ledger) {
+                return {
+                    children: (
+                        <ClaimButton
+                            isSmall
+                            onClick={() => onSubmit(claim)}
+                            disabled={
+                                (Boolean(pendingId) && claim.id !== pendingId) ||
+                                new Date(claim.claimBackDate) > new Date()
+                            }
+                            pending={claim.id === pendingId}
+                        >
+                            Claim
+                        </ClaimButton>
+                    ),
+                    align: CellAlign.Center,
+                    flexSize: 0.6,
+                };
+            }
+
+            return {
+                children: (
+                    <Checkbox
+                        checked={selectedClaims.has(claim.id)}
+                        onChange={() => {
+                            selectClaim(claim);
+                        }}
+                        disabled={new Date(claim.claimBackDate) > new Date() || Boolean(pendingId)}
+                    />
+                ),
+                align: CellAlign.Center,
+                flexSize: 0.3,
+                hideOnMobile: true,
+            };
+        },
+        [pendingId, account, selectedClaims, selectClaim, pendingId],
+    );
+
     return (
         <div>
             {account.authType !== LoginTypes.ledger && (
@@ -290,7 +295,7 @@ const VotesList = ({
             )}
             <Table
                 head={[
-                    { children: 'Pair', hideOnWeb: Boolean(pair), flexSize: 1.5 },
+                    { children: 'Market', hideOnWeb: Boolean(pair), flexSize: 1.5 },
                     { children: 'Vote date' },
                     { children: 'Amount', align: CellAlign.Right },
                     {
@@ -301,7 +306,7 @@ const VotesList = ({
                     getActionHeadCell(),
                     { children: '', align: CellAlign.Center, flexSize: 0.1 },
                 ]}
-                body={claims.map((claim) => ({
+                body={claims.map(claim => ({
                     key: claim.id,
                     isNarrow: true,
                     mobileBackground: COLORS.lightGray,
@@ -323,12 +328,20 @@ const VotesList = ({
                                     <Market
                                         assets={[
                                             {
-                                                code: pair?.asset1_code || claim.asset1_code,
-                                                issuer: pair?.asset1_issuer || claim.asset1_issuer,
+                                                code:
+                                                    pair?.asset1_code ||
+                                                    (claim as unknown as PairStats).asset1_code,
+                                                issuer:
+                                                    pair?.asset1_issuer ||
+                                                    (claim as unknown as PairStats).asset1_issuer,
                                             },
                                             {
-                                                code: pair?.asset2_code || claim.asset2_code,
-                                                issuer: pair?.asset2_issuer || claim.asset2_issuer,
+                                                code:
+                                                    pair?.asset2_code ||
+                                                    (claim as unknown as PairStats).asset2_code,
+                                                issuer:
+                                                    pair?.asset2_issuer ||
+                                                    (claim as unknown as PairStats).asset2_issuer,
                                             },
                                         ]}
                                         withoutDomains
@@ -356,7 +369,7 @@ const VotesList = ({
                             children: (
                                 <>
                                     <Amount>
-                                        {formatBalance(claim.amount)} {claim.assetCode}
+                                        {formatBalance(+claim.amount)} {claim.assetCode}
                                     </Amount>
                                     {claim.isDownVote && (
                                         <TooltipStyled
@@ -413,7 +426,7 @@ const VotesList = ({
             />
             {account.authType !== LoginTypes.ledger && (
                 <StyledButton
-                    disabled={!Boolean(selectedClaims.size)}
+                    disabled={!selectedClaims.size}
                     fullWidth
                     isBig
                     pending={Boolean(pendingId)}

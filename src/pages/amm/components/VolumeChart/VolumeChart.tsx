@@ -1,13 +1,18 @@
+import * as d3 from 'd3';
+import { addDays, format, isAfter, set, subDays } from 'date-fns';
 import * as React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { formatBalance, getDateString } from '../../../../common/helpers/helpers';
-import { COLORS } from '../../../../common/styles';
-
-import * as d3 from 'd3';
-import { transformDate } from '../LiquidityChart/LiquidityChart';
 import styled from 'styled-components';
-import { addDays, format, isAfter, set, subDays } from 'date-fns';
-import { StellarService } from '../../../../common/services/globalServices';
+
+import { convertLocalDateToUTCIgnoringTimezone, getDateString } from 'helpers/date';
+import { formatBalance } from 'helpers/format-number';
+
+import { PoolStatistics, PoolVolume24h } from 'types/amm';
+
+import { StellarService } from 'services/globalServices';
+import { COLORS } from 'web/styles';
+
+import { transformDate } from '../LiquidityChart/LiquidityChart';
 
 const Axis = styled.g`
     font-size: 1.4rem;
@@ -26,6 +31,18 @@ const LiquidityValue = styled.text`
     font-weight: 700;
 `;
 
+interface VolumeChartProps {
+    data: PoolStatistics[];
+    volume24h?: PoolVolume24h;
+    isGlobalStat?: boolean;
+    width?: number;
+    height?: number;
+    marginTop?: number;
+    marginRight?: number;
+    marginBottom?: number;
+    marginLeft?: number;
+}
+
 const VolumeChart = ({
     data,
     volume24h = null,
@@ -36,16 +53,16 @@ const VolumeChart = ({
     marginRight = 16,
     marginBottom = 32,
     marginLeft = 16,
-}) => {
+}: VolumeChartProps): React.ReactNode => {
     const [daily, last24] = useMemo(() => {
         if (isGlobalStat) {
-            const copy = [...data].map((item) => ({
+            const copy = [...data].map(item => ({
                 ...item,
                 date: transformDate(item.date_str),
-                volume: item.volume / 1e7,
+                volume: Number(item.volume) / 1e7,
             }));
 
-            volume24h.volume = volume24h.volume / 1e7;
+            volume24h.volume = (Number(volume24h.volume) / 1e7).toString();
 
             return [copy, volume24h];
         }
@@ -65,8 +82,13 @@ const VolumeChart = ({
         }
 
         const last24Volume = data
-            .filter((item) => isAfter(transformDate(item.datetime_str), subDays(Date.now(), 1)))
-            .reduce((acc, item) => acc + item.volume / 1e7, 0);
+            .filter(item =>
+                isAfter(
+                    transformDate(item.datetime_str),
+                    subDays(convertLocalDateToUTCIgnoringTimezone(new Date()), 1),
+                ),
+            )
+            .reduce((acc, item) => acc + Number(item.volume) / 1e7, 0);
 
         return [
             [
@@ -80,7 +102,7 @@ const VolumeChart = ({
 
                         acc.set(itemDate, {
                             date: acc.get(itemDate)?.date || itemDate,
-                            volume: +acc.get(itemDate)?.volume + item.volume / 1e7,
+                            volume: +acc.get(itemDate)?.volume + Number(item.volume) / 1e7,
                         });
                         return acc;
                     }, dateMap)
@@ -97,19 +119,23 @@ const VolumeChart = ({
     const x = d3
         .scaleBand()
         .rangeRound([marginLeft, width - marginRight])
-        .domain(daily.map((d) => d.date));
+        .domain(daily.map(d => d.date));
 
     const y = d3
         .scaleLinear()
         .range([height - marginBottom, marginTop + height * 0.4])
-        .domain([0, d3.max(daily, (d) => d.volume) || 1]);
+        .domain([0, d3.max(daily, d => d.volume) || 1]);
 
     useEffect(
         () =>
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-expect-error
             void d3.select(gx.current).call(
                 d3
-                    .axisBottom()
+                    .axisBottom(x)
                     .scale(x)
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-expect-error
                     .tickFormat(d3.timeFormat('%d'))
                     .tickValues(
                         x.domain().filter(function (d, i) {
@@ -120,31 +146,38 @@ const VolumeChart = ({
         [gx, x],
     );
 
+    const onMouseMove = event => {
+        const [mouseX] = d3.pointer(event);
+
+        // Check if the mouse position is within the chart bounds
+        if (mouseX < marginLeft || mouseX > width - marginRight) {
+            setSelectedIndex(null);
+            return;
+        }
+
+        // Find the closest index based on the x-scale
+        const date = x.domain().find(d => {
+            const posX = x(d) + x.bandwidth() / 2;
+            return mouseX >= posX - x.bandwidth() / 2 && mouseX < posX + x.bandwidth() / 2;
+        });
+
+        // Set the selected index to the matching date index
+        const index = daily.findIndex(item => item.date === date);
+        setSelectedIndex(index !== -1 ? index : null);
+    };
+
     useEffect(() => {
         if (!svg.current) {
             return;
         }
         d3.select(svg.current)
-            .on('mousemove touchmove', (event) => {
+            .on('mousemove touchmove', event => {
                 onMouseMove(event);
             })
             .on('mouseout', () => {
                 setSelectedIndex(null);
             });
     }, [svg]);
-
-    const onMouseMove = (event) => {
-        if (
-            event.offsetX < marginLeft ||
-            event.offsetX >= x.bandwidth() * daily.length + marginLeft
-        ) {
-            return setSelectedIndex(null);
-        }
-
-        const index = Math.floor((event.offsetX - marginLeft) / x.bandwidth());
-
-        setSelectedIndex(index);
-    };
 
     const selectedItem = daily[selectedIndex];
 

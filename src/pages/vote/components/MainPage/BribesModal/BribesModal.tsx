@@ -1,23 +1,26 @@
 import * as React from 'react';
 import { useState } from 'react';
-import {
-    ModalDescription,
-    ModalProps,
-    ModalTitle,
-} from '../../../../../common/modals/atoms/ModalAtoms';
-import { PairStats } from '../../../api/types';
 import styled from 'styled-components';
-import { respondDown } from '../../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import { convertUTCToLocalDateIgnoringTimezone } from '../../../../bribes/pages/AddBribePage';
-import { formatBalance, getDateString } from '../../../../../common/helpers/helpers';
-import Aqua from '../../../../../common/assets/img/aqua-logo-small.svg';
-import Close from '../../../../../common/assets/img/icon-close-small-purple.svg';
-import ExternalLink from '../../../../../common/basics/ExternalLink';
-import Asset from '../../AssetDropdown/Asset';
-import { StellarService } from '../../../../../common/services/globalServices';
-import Info from '../../../../../common/assets/img/icon-info.svg';
-import Table, { CellAlign } from '../../../../../common/basics/Table';
+
+import { convertLocalDateToUTCIgnoringTimezone, getDateString } from 'helpers/date';
+import { formatBalance } from 'helpers/format-number';
+
+import { ModalProps } from 'types/modal';
+
+import { StellarService } from 'services/globalServices';
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Aqua from 'assets/aqua-logo-small.svg';
+import Close from 'assets/icon-close-small-purple.svg';
+import Info from 'assets/icon-info.svg';
+
+import Asset from 'basics/Asset';
+import ExternalLink from 'basics/ExternalLink';
+import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+import Table, { CellAlign } from 'basics/Table';
+
+import { PairStats } from '../../../api/types';
 
 const ModalContainer = styled.div`
     width: 80.6rem;
@@ -179,8 +182,8 @@ const BribesModal = ({ params }: ModalProps<{ pair: PairStats }>) => {
     }, 0);
     const { start_at, stop_at } = pair.aggregated_bribes[0];
 
-    const startUTC = convertUTCToLocalDateIgnoringTimezone(new Date(start_at));
-    const stopUTC = convertUTCToLocalDateIgnoringTimezone(new Date(stop_at));
+    const startUTC = convertLocalDateToUTCIgnoringTimezone(new Date(start_at));
+    const stopUTC = convertLocalDateToUTCIgnoringTimezone(new Date(stop_at));
 
     const aquaBribePrice = Number(sum / Number(pair.upvote_value)) * 1000;
     return (
@@ -240,7 +243,7 @@ const BribesModal = ({ params }: ModalProps<{ pair: PairStats }>) => {
                     { children: 'Reward per day', align: CellAlign.Right },
                     { children: 'AQUA amount', align: CellAlign.Right },
                 ]}
-                body={pair.aggregated_bribes.map((bribe) => ({
+                body={pair.aggregated_bribes.map(bribe => ({
                     key: bribe.asset_code + bribe.asset_issuer,
                     isNarrow: true,
                     mobileBackground: COLORS.lightGray,

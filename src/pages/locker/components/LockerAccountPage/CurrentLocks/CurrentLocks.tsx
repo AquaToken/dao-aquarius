@@ -1,17 +1,21 @@
 import * as React from 'react';
 import { useCallback, useMemo } from 'react';
 import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import ProgressLine from '../../../../../common/basics/ProgressLine';
-import {
-    formatBalance,
-    getDateString,
-    roundToPrecision,
-} from '../../../../../common/helpers/helpers';
-import { flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
-import Tooltip, { TOOLTIP_POSITION } from '../../../../../common/basics/Tooltip';
-import Info from '../../../../../common/assets/img/icon-info.svg';
-import Table, { CellAlign } from '../../../../../common/basics/Table';
+
+import { getDateString } from 'helpers/date';
+import { formatBalance, roundToPrecision } from 'helpers/format-number';
+
+import { AccountIceDistribution } from 'types/api-ice-locker';
+import { ClaimableBalance } from 'types/stellar';
+
+import { flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Info from 'assets/icon-info.svg';
+
+import ProgressLine from 'basics/ProgressLine';
+import Table, { CellAlign } from 'basics/Table';
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 const Container = styled.div`
     margin-top: 4rem;
@@ -77,6 +81,15 @@ const Total = styled.div`
     `}
 `;
 
+interface CurrentLocksProps {
+    locks: ClaimableBalance[];
+    aquaBalance: number;
+    distributions: AccountIceDistribution[];
+    ammAquaBalance: number;
+    aquaInOffers: number;
+    aquaInVotes: number;
+}
+
 const CurrentLocks = ({
     locks,
     aquaBalance,
@@ -84,38 +97,34 @@ const CurrentLocks = ({
     ammAquaBalance,
     aquaInOffers,
     aquaInVotes,
-}) => {
+}: CurrentLocksProps): React.ReactNode => {
     const locksSum = locks.reduce((acc, lock) => {
         acc += Number(lock.amount);
         return acc;
     }, 0);
 
-    const total = useMemo(() => {
-        return locksSum + aquaBalance + aquaInOffers + ammAquaBalance + aquaInVotes;
-    }, [locksSum, aquaBalance, aquaInOffers, ammAquaBalance, aquaInVotes]);
+    const total = useMemo(
+        () => locksSum + aquaBalance + aquaInOffers + ammAquaBalance + aquaInVotes,
+        [locksSum, aquaBalance, aquaInOffers, ammAquaBalance, aquaInVotes],
+    );
 
-    const availablePercent = useMemo(() => {
-        return roundToPrecision((aquaBalance / total) * 100, 2);
-    }, [total]);
-    const inOffersPercent = useMemo(() => {
-        return roundToPrecision((aquaInOffers / total) * 100, 2);
-    }, [total]);
-    const inVotesPercent = useMemo(() => {
-        return roundToPrecision((aquaInVotes / total) * 100, 2);
-    }, [total]);
-    const ammPercent = useMemo(() => {
-        return roundToPrecision((ammAquaBalance / total) * 100, 2);
-    }, [total]);
+    const availablePercent = useMemo(
+        () => roundToPrecision((aquaBalance / total) * 100, 2),
+        [total],
+    );
+    const inOffersPercent = useMemo(
+        () => roundToPrecision((aquaInOffers / total) * 100, 2),
+        [total],
+    );
+    const inVotesPercent = useMemo(() => roundToPrecision((aquaInVotes / total) * 100, 2), [total]);
+    const ammPercent = useMemo(() => roundToPrecision((ammAquaBalance / total) * 100, 2), [total]);
 
-    const lockPercent = useMemo(() => {
-        return roundToPrecision((locksSum / total) * 100, 2);
-    }, [total]);
+    const lockPercent = useMemo(() => roundToPrecision((locksSum / total) * 100, 2), [total]);
 
     const getIceAmount = useCallback(
-        (balanceId) => {
-            return distributions.find((distribution) => distribution.balance_id === balanceId)
-                ?.distributed_amount;
-        },
+        balanceId =>
+            distributions.find(distribution => distribution.balance_id === balanceId)
+                ?.distributed_amount,
         [distributions, locks],
     );
 
@@ -186,7 +195,7 @@ const CurrentLocks = ({
                         { children: 'AQUA locked', flexSize: 2, align: CellAlign.Right },
                         { children: 'ICE received', flexSize: 2, align: CellAlign.Right },
                     ]}
-                    body={locks.map((lock) => ({
+                    body={locks.map(lock => ({
                         key: lock.id,
                         isNarrow: true,
                         mobileBackground: COLORS.lightGray,
@@ -209,14 +218,14 @@ const CurrentLocks = ({
                                 flexSize: 1.5,
                             },
                             {
-                                children: `${formatBalance(lock.amount, true)} AQUA`,
+                                children: `${formatBalance(Number(lock.amount), true)} AQUA`,
                                 flexSize: 2,
                                 align: CellAlign.Right,
                                 label: 'AQUA locked',
                             },
                             {
                                 children: getIceAmount(lock.id)
-                                    ? `${formatBalance(getIceAmount(lock.id), true)} ICE`
+                                    ? `${formatBalance(Number(getIceAmount(lock.id)), true)} ICE`
                                     : '-',
                                 flexSize: 2,
                                 align: CellAlign.Right,

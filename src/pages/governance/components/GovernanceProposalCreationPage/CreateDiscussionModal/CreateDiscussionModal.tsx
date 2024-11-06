@@ -1,28 +1,31 @@
-import * as React from 'react';
-import { useState } from 'react';
-import {
-    ModalDescription,
-    ModalProps,
-    ModalTitle,
-} from '../../../../../common/modals/atoms/ModalAtoms';
-import styled from 'styled-components';
-import Button from '../../../../../common/basics/Button';
-import { flexRowSpaceBetween, respondDown } from '../../../../../common/mixins';
-import { Proposal } from '../../../api/types';
-import { formatBalance } from '../../../../../common/helpers/helpers';
-import { CREATE_DISCUSSION_COST } from '../../../pages/GovernanceMainPage';
-import { StellarService, ToastService } from '../../../../../common/services/globalServices';
 import { MemoHash } from '@stellar/stellar-sdk';
 import { sha256 } from 'js-sha256';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
-import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
-import { checkProposalStatus, createProposal, editProposal } from '../../../api/api';
+import * as React from 'react';
+import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Breakpoints } from '../../../../../common/styles';
-import ErrorHandler from '../../../../../common/helpers/error-handler';
-import { LoginTypes } from '../../../../../store/authStore/types';
-import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
-import Alert from '../../../../../common/basics/Alert';
+import styled from 'styled-components';
+
+import ErrorHandler from 'helpers/error-handler';
+import { formatBalance } from 'helpers/format-number';
+import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
+
+import { LoginTypes } from 'store/authStore/types';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { ModalProps } from 'types/modal';
+
+import { useIsMounted } from 'hooks/useIsMounted';
+import { StellarService, ToastService } from 'services/globalServices';
+import { flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints } from 'web/styles';
+
+import Alert from 'basics/Alert';
+import Button from 'basics/buttons/Button';
+import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+
+import { checkProposalStatus, createProposal, editProposal } from '../../../api/api';
+import { Proposal } from '../../../api/types';
+import { CREATE_DISCUSSION_COST } from '../../../pages/GovernanceMainPage';
 
 const Container = styled.div`
     width: 52.8rem;
@@ -67,8 +70,8 @@ const CreateDiscussionModal = ({
 
     const isMounted = useIsMounted();
 
-    const checkStatus = (id) => {
-        return new Promise((resolve, reject) => {
+    const checkStatus = id =>
+        new Promise((resolve, reject) => {
             async function check() {
                 if (!isMounted.current) {
                     reject();
@@ -90,7 +93,6 @@ const CreateDiscussionModal = ({
 
             check();
         });
-    };
 
     const onSubmit = async () => {
         const { text, title, start_at, end_at, discord_username, isEdit, id } = params;
@@ -129,7 +131,7 @@ const CreateDiscussionModal = ({
                       start_at,
                       end_at,
                       transaction_hash: tx.hash().toString('hex'),
-                      discord_username: Boolean(discord_username) ? discord_username : null,
+                      discord_username: discord_username ? discord_username : null,
                       envelope_xdr: tx.toEnvelope().toXDR('base64'),
                   });
 

@@ -1,11 +1,15 @@
+import * as d3 from 'd3';
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
-
-import * as d3 from 'd3';
 import styled from 'styled-components';
-import { COLORS } from '../../../../common/styles';
-import { formatBalance, getDateString } from '../../../../common/helpers/helpers';
-import { StellarService } from '../../../../common/services/globalServices';
+
+import { getDateString } from 'helpers/date';
+import { formatBalance } from 'helpers/format-number';
+
+import { PoolStatistics } from 'types/amm';
+
+import { StellarService } from 'services/globalServices';
+import { COLORS } from 'web/styles';
 
 const Axis = styled.g`
     font-size: 1.4rem;
@@ -24,13 +28,23 @@ const LiquidityValue = styled.text`
     font-weight: 700;
 `;
 
-export const transformDate = (date_str) => {
+export const transformDate = (date_str: string) => {
     const [date, time = ''] = date_str.split(' ');
 
     const [year, month, day] = date.split('-');
     const [hour = 0, minute = 0, second = 0] = time.split(':');
-    return new Date(year, month - 1, day, hour, minute, second);
+    return new Date(+year, +month - 1, +day, +hour, +minute, +second);
 };
+
+interface LiquidityChartProps {
+    data: PoolStatistics[];
+    width?: number;
+    height?: number;
+    marginTop?: number;
+    marginRight?: number;
+    marginBottom?: number;
+    marginLeft?: number;
+}
 
 const LiquidityChart = ({
     data,
@@ -40,68 +54,73 @@ const LiquidityChart = ({
     marginRight = 16,
     marginBottom = 32,
     marginLeft = 16,
-}) => {
+}: LiquidityChartProps) => {
     const [selectedIndex, setSelectedIndex] = useState(null);
     const svg = useRef();
     const gx = useRef();
     const x = d3
         .scaleTime()
         .range([marginLeft, width - marginRight])
-        .domain(
-            d3.extent(data, (d) => transformDate(d.datetime_str || d.date_str)) as [Date, Date],
-        );
+        .domain(d3.extent(data, d => transformDate(d.datetime_str || d.date_str)) as [Date, Date]);
     const y = d3
         .scaleLinear()
         .range([height - marginBottom, marginTop + height * 0.4])
-        .domain([d3.min(data, (d) => d.liquidity / 1e7), d3.max(data, (d) => d.liquidity / 1e7)]);
+        .domain([
+            d3.min(data, d => Number(d.liquidity) / 1e7),
+            d3.max(data, d => Number(d.liquidity) / 1e7),
+        ]);
 
     const line = d3
-        .line()
-        .x((d) => x(transformDate(d.datetime_str || d.date_str)))
-        .y((d) => y(d.liquidity / 1e7))
+        .line<PoolStatistics>()
+        .x(d => x(transformDate(d.datetime_str || d.date_str))) // Transform the date
+        .y(d => y(Number(d.liquidity) / 1e7)) // Scale liquidity value
         .curve(d3.curveMonotoneX);
 
-    const path = (data) => {
+    const path = (data: PoolStatistics[]) => {
         const lineValues = line(data).slice(1);
         const splitedValues = lineValues.split(',');
 
         return `M${splitedValues[0]},${height - marginBottom},${lineValues},l0,${
-            height - marginBottom - splitedValues[splitedValues.length - 1]
+            height - marginBottom - +splitedValues[splitedValues.length - 1]
         }`;
     };
 
     useEffect(
         () =>
             void d3.select(gx.current).call(
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-expect-error
                 d3
-                    .axisBottom()
+                    .axisBottom(x)
                     .scale(x)
                     .tickFormat(d3.timeFormat('%d'))
-                    .ticks(d3.timeDay.filter((d) => d3.timeDay.count(0, d) % 3 === 0)),
+                    .ticks(
+                        d3.timeDay.filter(d => d3.timeDay.count(new Date(2023, 0, 1), d) % 3 === 0),
+                    ),
             ),
         [gx, x],
     );
+
+    const onMouseMove = xCoord => {
+        const nearestIndex = d3.bisectCenter(
+            data.map(item => transformDate(item.datetime_str || item.date_str)),
+            x.invert(xCoord),
+        );
+        setSelectedIndex(nearestIndex);
+    };
 
     useEffect(() => {
         if (!svg.current) {
             return;
         }
         d3.select(svg.current)
-            .on('mousemove touchmove', (event) => {
+            .on('mousemove touchmove', event => {
                 onMouseMove(event.offsetX);
             })
             .on('mouseout', () => {
                 setSelectedIndex(null);
             });
     }, [svg]);
-
-    const onMouseMove = (xCoord) => {
-        const nearestIndex = d3.bisectCenter(
-            data.map((item) => transformDate(item.datetime_str || item.date_str)),
-            x.invert(xCoord),
-        );
-        setSelectedIndex(nearestIndex);
-    };
 
     return (
         <svg width={width} height={height} ref={svg}>
@@ -118,7 +137,8 @@ const LiquidityChart = ({
                 <LiquidityValue x="16" y="63">
                     $
                     {formatBalance(
-                        (data[selectedIndex === null ? data.length - 1 : selectedIndex]?.liquidity /
+                        (+data[selectedIndex === null ? data.length - 1 : selectedIndex]
+                            ?.liquidity /
                             1e7) *
                             StellarService.priceLumenUsd,
                         true,
@@ -172,7 +192,7 @@ const LiquidityChart = ({
                                 data[selectedIndex]?.datetime_str || data[selectedIndex]?.date_str,
                             ),
                         )}
-                        cy={y(data[selectedIndex].liquidity / 1e7)}
+                        cy={y(Number(data[selectedIndex].liquidity) / 1e7)}
                     />
                 </g>
             )}

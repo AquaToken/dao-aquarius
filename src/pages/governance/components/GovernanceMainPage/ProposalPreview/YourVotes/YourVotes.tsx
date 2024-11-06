@@ -1,29 +1,32 @@
 import * as React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import Table, { CellAlign } from '../../../../../../common/basics/Table';
-import { Breakpoints, COLORS } from '../../../../../../common/styles';
-import { formatBalance, getDateString } from '../../../../../../common/helpers/helpers';
-import { LoginTypes } from '../../../../../../store/authStore/types';
-import DotsLoader from '../../../../../../common/basics/DotsLoader';
-import Button from '../../../../../../common/basics/Button';
-import { BuildSignAndSubmitStatuses } from '../../../../../../common/services/wallet-connect.service';
-import { StellarService, ToastService } from '../../../../../../common/services/globalServices';
-import {
-    GOV_ICE_CODE,
-    ICE_ISSUER,
-    StellarEvents,
-} from '../../../../../../common/services/stellar.service';
-import ErrorHandler from '../../../../../../common/helpers/error-handler';
-import useAuthStore from '../../../../../../store/authStore/useAuthStore';
 import styled from 'styled-components';
-import Aqua from '../../../../../../common/assets/img/aqua-logo-small.svg';
-import Ice from '../../../../../../common/assets/img/ice-logo.svg';
-import IconFail from '../../../../../../common/assets/img/icon-fail.svg';
-import IconSuccess from '../../../../../../common/assets/img/icon-success.svg';
-import Checkbox from '../../../../../../common/basics/Checkbox';
-import { respondDown } from '../../../../../../common/mixins';
-import { LogVote } from '../../../../api/types';
-import { openCurrentWalletIfExist } from '../../../../../../common/helpers/wallet-connect-helpers';
+
+import { getDateString } from 'helpers/date';
+import ErrorHandler from 'helpers/error-handler';
+import { formatBalance } from 'helpers/format-number';
+import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
+
+import { LoginTypes } from 'store/authStore/types';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { StellarService, ToastService } from 'services/globalServices';
+import { GOV_ICE_CODE, ICE_ISSUER, StellarEvents } from 'services/stellar.service';
+import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Aqua from 'assets/aqua-logo-small.svg';
+import Ice from 'assets/ice-logo.svg';
+import IconFail from 'assets/icon-fail.svg';
+import IconSuccess from 'assets/icon-success.svg';
+
+import Button from 'basics/buttons/Button';
+import Checkbox from 'basics/inputs/Checkbox';
+import DotsLoader from 'basics/loaders/DotsLoader';
+import Table, { CellAlign } from 'basics/Table';
+
+import { LogVote, ProposalSimple } from '../../../../api/types';
 
 const AquaLogo = styled(Aqua)`
     height: 1.6rem;
@@ -69,7 +72,11 @@ const SelectAllMobile = styled(Checkbox)`
    `}
 `;
 
-const YourVotes = ({ proposal }) => {
+interface YourVotesProps {
+    proposal: ProposalSimple;
+}
+
+const YourVotes = ({ proposal }: YourVotesProps): React.ReactNode => {
     const [claimUpdateId, setClaimUpdateId] = useState(0);
     const [claims, setClaims] = useState(null);
     const [selectedClaims, setSelectedClaims] = useState(new Map());
@@ -82,7 +89,7 @@ const YourVotes = ({ proposal }) => {
     useEffect(() => {
         const unsub = StellarService.event.sub(({ type }) => {
             if (type === StellarEvents.claimableUpdate) {
-                setClaimUpdateId((prevState) => prevState + 1);
+                setClaimUpdateId(prevState => prevState + 1);
             }
         });
 
@@ -116,81 +123,7 @@ const YourVotes = ({ proposal }) => {
         }, []);
     }, [claims, proposal]);
 
-    const getActionBlock = useCallback(
-        (vote: LogVote) => {
-            if (!claims) {
-                return <DotsLoader />;
-            }
-
-            const { claimable_balance_id: balanceId } = vote;
-
-            const claim = claims.find(({ id }) => id === balanceId);
-
-            if (!claim) {
-                return 'Claimed';
-            }
-
-            const claimBackTimestamp = new Date(claim.claimBackDate).getTime();
-
-            if (claimBackTimestamp > Date.now()) {
-                return getDateString(claimBackTimestamp, { withTime: true });
-            }
-
-            return isLedgerAuth ? (
-                <Button
-                    isSmall
-                    pending={balanceId === pendingId}
-                    disabled={Boolean(pendingId) && balanceId !== pendingId}
-                    onClick={(event) => claimBack(event, vote)}
-                >
-                    claim
-                </Button>
-            ) : (
-                'Ready to claim'
-            );
-        },
-        [claims, pendingId],
-    );
-
-    const selectClaim = useCallback(
-        (event: Event, log: LogVote) => {
-            event.stopPropagation();
-            event.preventDefault();
-
-            const { claimable_balance_id: balanceId } = log;
-
-            if (selectedClaims.has(balanceId)) {
-                selectedClaims.delete(balanceId);
-
-                return setSelectedClaims(new Map(selectedClaims));
-            }
-            selectedClaims.set(balanceId, log);
-            setSelectedClaims(new Map(selectedClaims));
-        },
-        [selectedClaims, setSelectedClaims],
-    );
-
-    const selectAll = useCallback(
-        (event) => {
-            event.stopPropagation();
-            event.preventDefault();
-
-            if (Boolean(selectedClaims.size)) {
-                return setSelectedClaims(new Map());
-            }
-
-            const all = proposal.logvote_set.reduce((acc, log) => {
-                if (unlockedClaims.includes(log.claimable_balance_id)) {
-                    acc.set(log.claimable_balance_id, log);
-                }
-                return acc;
-            }, new Map());
-            setSelectedClaims(all);
-        },
-        [selectedClaims, setSelectedClaims, proposal, unlockedClaims],
-    );
-
-    const claimBack = async (event, log?: LogVote) => {
+    const claimBack = async (event: React.MouseEvent, log?: LogVote) => {
         event.stopPropagation();
         event.preventDefault();
 
@@ -243,13 +176,87 @@ const YourVotes = ({ proposal }) => {
         }
     };
 
+    const getActionBlock = useCallback(
+        (vote: LogVote) => {
+            if (!claims) {
+                return <DotsLoader />;
+            }
+
+            const { claimable_balance_id: balanceId } = vote;
+
+            const claim = claims.find(({ id }) => id === balanceId);
+
+            if (!claim) {
+                return 'Claimed';
+            }
+
+            const claimBackTimestamp = new Date(claim.claimBackDate).getTime();
+
+            if (claimBackTimestamp > Date.now()) {
+                return getDateString(claimBackTimestamp, { withTime: true });
+            }
+
+            return isLedgerAuth ? (
+                <Button
+                    isSmall
+                    pending={balanceId === pendingId}
+                    disabled={Boolean(pendingId) && balanceId !== pendingId}
+                    onClick={event => claimBack(event, vote)}
+                >
+                    claim
+                </Button>
+            ) : (
+                'Ready to claim'
+            );
+        },
+        [claims, pendingId],
+    );
+
+    const selectClaim = useCallback(
+        (event: React.MouseEvent, log: LogVote) => {
+            event.stopPropagation();
+            event.preventDefault();
+
+            const { claimable_balance_id: balanceId } = log;
+
+            if (selectedClaims.has(balanceId)) {
+                selectedClaims.delete(balanceId);
+
+                return setSelectedClaims(new Map(selectedClaims));
+            }
+            selectedClaims.set(balanceId, log);
+            setSelectedClaims(new Map(selectedClaims));
+        },
+        [selectedClaims, setSelectedClaims],
+    );
+
+    const selectAll = useCallback(
+        (event: React.MouseEvent) => {
+            event.stopPropagation();
+            event.preventDefault();
+
+            if (selectedClaims.size) {
+                return setSelectedClaims(new Map());
+            }
+
+            const all = proposal.logvote_set.reduce((acc, log) => {
+                if (unlockedClaims.includes(log.claimable_balance_id)) {
+                    acc.set(log.claimable_balance_id, log);
+                }
+                return acc;
+            }, new Map());
+            setSelectedClaims(all);
+        },
+        [selectedClaims, setSelectedClaims, proposal, unlockedClaims],
+    );
+
     return (
         <>
             {!isLedgerAuth && (
                 <SelectAllMobile
                     disabled={!unlockedClaims.length || pendingId}
                     checked={Boolean(selectedClaims.size)}
-                    onChange={(_, event) => selectAll(event)}
+                    onChange={(_, event: React.MouseEvent) => selectAll(event)}
                     label="Select all"
                 />
             )}
@@ -273,7 +280,7 @@ const YourVotes = ({ proposal }) => {
                         hideOnMobile: isLedgerAuth,
                     },
                 ]}
-                body={proposal.logvote_set.map((log) => ({
+                body={proposal.logvote_set.map(log => ({
                     key: log.claimable_balance_id,
                     isNarrow: true,
                     mobileBackground: COLORS.lightGray,
@@ -347,8 +354,8 @@ const YourVotes = ({ proposal }) => {
                 <StyledButton
                     fullWidth
                     isBig
-                    onClick={(e) => claimBack(e)}
-                    disabled={!Boolean(selectedClaims.size)}
+                    onClick={(e: React.MouseEvent) => claimBack(e)}
+                    disabled={!selectedClaims.size}
                     pending={Boolean(pendingId)}
                 >
                     claim selected

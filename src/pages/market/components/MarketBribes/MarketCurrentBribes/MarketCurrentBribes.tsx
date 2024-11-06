@@ -1,7 +1,23 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { convertUTCToLocalDateIgnoringTimezone } from '../../../../bribes/pages/AddBribePage';
-import { formatBalance, getDateString } from '../../../../../common/helpers/helpers';
+import styled from 'styled-components';
+
+import { convertLocalDateToUTCIgnoringTimezone, getDateString } from 'helpers/date';
+import { formatBalance } from 'helpers/format-number';
+
+import { StellarService } from 'services/globalServices';
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Aqua from 'assets/aqua-logo-small.svg';
+import Close from 'assets/icon-close-small-purple.svg';
+import Info from 'assets/icon-info.svg';
+
+import Asset from 'basics/Asset';
+import Table, { CellAlign } from 'basics/Table';
+
+import { Bribe } from 'pages/bribes/api/types';
+import { MarketVotesExtra } from 'pages/vote/api/types';
 import {
     BribeDetail,
     BribeDetailsMain,
@@ -12,17 +28,7 @@ import {
     ExternalLinkWeb,
     HowItWorksFooter,
     HowItWorksText,
-} from '../../../../vote/components/MainPage/BribesModal/BribesModal';
-import Close from '../../../../../common/assets/img/icon-close-small-purple.svg';
-
-import Asset from '../../../../vote/components/AssetDropdown/Asset';
-import { StellarService } from '../../../../../common/services/globalServices';
-import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import Aqua from '../../../../../common/assets/img/aqua-logo-small.svg';
-import Info from '../../../../../common/assets/img/icon-info.svg';
-import { respondDown } from '../../../../../common/mixins';
-import Table, { CellAlign } from '../../../../../common/basics/Table';
+} from 'pages/vote/components/MainPage/BribesModal/BribesModal';
 
 const Container = styled.div`
     display: flex;
@@ -101,7 +107,12 @@ const Total = styled.div`
     align-items: center;
 `;
 
-const MarketCurrentBribes = ({ extra, bribes }) => {
+interface MarketCurrentBribes {
+    bribes: Bribe[];
+    extra: MarketVotesExtra;
+}
+
+const MarketCurrentBribes = ({ extra, bribes }: MarketCurrentBribes) => {
     const [showHowItWorks, setShowHowItWorks] = useState(false);
     if (!bribes) {
         return (
@@ -113,8 +124,8 @@ const MarketCurrentBribes = ({ extra, bribes }) => {
 
     const { start_at, stop_at } = bribes[0];
 
-    const startUTC = convertUTCToLocalDateIgnoringTimezone(new Date(start_at));
-    const stopUTC = convertUTCToLocalDateIgnoringTimezone(new Date(stop_at));
+    const startUTC = convertLocalDateToUTCIgnoringTimezone(new Date(start_at));
+    const stopUTC = convertLocalDateToUTCIgnoringTimezone(new Date(stop_at));
 
     const { upvoteSum, upvoteCount } = extra.upvote_assets.reduce(
         (acc, { votes_count, votes_sum }) => {
@@ -189,7 +200,7 @@ const MarketCurrentBribes = ({ extra, bribes }) => {
                     { children: 'AQUA amount', align: CellAlign.Right },
                 ]}
                 body={[
-                    ...bribes.map((bribe) => ({
+                    ...bribes.map(bribe => ({
                         isNarrow: true,
                         key: bribe.asset_code + bribe.asset_issuer,
                         mobileBackground: COLORS.lightGray,

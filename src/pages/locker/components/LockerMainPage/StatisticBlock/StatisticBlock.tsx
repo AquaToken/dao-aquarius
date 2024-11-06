@@ -1,13 +1,18 @@
 import * as React from 'react';
-import styled from 'styled-components';
-import { Breakpoints, COLORS } from '../../../../../common/styles';
-import { respondDown } from '../../../../../common/mixins';
-import Aqua from '../../../../../common/assets/img/aqua-logo-small.svg';
-import Ice from '../../../../../common/assets/img/ice-logo.svg';
-import { formatBalance } from '../../../../../common/helpers/helpers';
 import { useEffect, useState } from 'react';
-import { getStatistics } from '../../../api/api';
-import DotsLoader from '../../../../../common/basics/DotsLoader';
+import styled from 'styled-components';
+
+import { getIceStatistics } from 'api/ice-locker';
+
+import { formatBalance } from 'helpers/format-number';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Aqua from 'assets/aqua-logo-small.svg';
+import Ice from 'assets/ice-logo.svg';
+
+import DotsLoader from 'basics/loaders/DotsLoader';
 
 const Container = styled.div`
     display: flex;
@@ -73,14 +78,14 @@ const StatisticBlock = () => {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            setUpdateIndex((prev) => prev + 1);
+            setUpdateIndex(prev => prev + 1);
         }, UPDATE_INTERVAL);
 
         return () => clearInterval(interval);
     }, []);
 
     useEffect(() => {
-        getStatistics().then((res) => {
+        getIceStatistics().then(res => {
             setStatistics(res);
         });
     }, [updateIndex]);

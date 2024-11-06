@@ -1,30 +1,42 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import { getUserPools } from '../../api/api';
-import { Empty } from '../../../profile/YourVotes/YourVotes';
-import { ModalService, StellarService } from '../../../../common/services/globalServices';
-import ChooseLoginMethodModal from '../../../../common/modals/ChooseLoginMethodModal';
-import useAuthStore from '../../../../store/authStore/useAuthStore';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from '../../../../common/mixins';
-import Button from '../../../../common/basics/Button';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import PageLoader from '../../../../common/basics/PageLoader';
-import PoolsList from '../PoolsList/PoolsList';
-import { formatBalance } from '../../../../common/helpers/helpers';
-import { PoolUserProcessed } from '../../api/types';
-import ToggleGroup from '../../../../common/basics/ToggleGroup';
-import Select from '../../../../common/basics/Select';
-import { POOL_TYPE } from '../../../../common/services/soroban.service';
 
-const PoolsListBlock = styled.div<{ onlyList: boolean }>`
+import { getUserPools } from 'api/amm';
+
+import { formatBalance } from 'helpers/format-number';
+
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { PoolUserProcessed } from 'types/amm';
+
+import { useUpdateIndex } from 'hooks/useUpdateIndex';
+import { ModalService, StellarService } from 'services/globalServices';
+import { POOL_TYPE } from 'services/soroban.service';
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
+import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Button from 'basics/buttons/Button';
+import Select from 'basics/inputs/Select';
+import ToggleGroup from 'basics/inputs/ToggleGroup';
+import PageLoader from 'basics/loaders/PageLoader';
+
+import { ExternalLinkStyled } from 'pages/profile/AmmRewards/AmmRewards';
+import { Empty } from 'pages/profile/YourVotes/YourVotes';
+
+import { MainRoutes } from '../../../../routes';
+import PoolsList from '../PoolsList/PoolsList';
+
+const PoolsListBlock = styled.div<{ $onlyList: boolean }>`
     display: flex;
     flex-direction: column;
     background-color: ${COLORS.white};
     margin: 4.8rem auto 5rem;
 
-    ${({ onlyList }) =>
-        !onlyList &&
+    ${({ $onlyList }) =>
+        !$onlyList &&
         `
         padding: 4.8rem;
         border-radius: 0.5rem;
@@ -110,14 +122,17 @@ const FilterOptions = [
 interface MyLiquidityProps {
     setTotal?: (total: number) => void;
     onlyList?: boolean;
+    backToAllPools?: () => void;
 }
 
-const MyLiquidity = ({ setTotal, onlyList }: MyLiquidityProps) => {
+const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) => {
     const { account } = useAuthStore();
 
     const [pools, setPools] = useState<PoolUserProcessed[]>([]);
     const [classicPools, setClassicPools] = useState([]);
     const [filter, setFilter] = useState(FilterValues.all);
+
+    const updateIndex = useUpdateIndex(5000);
 
     const filteredPools = useMemo(() => {
         if (filter === FilterValues.classic) {
@@ -132,21 +147,21 @@ const MyLiquidity = ({ setTotal, onlyList }: MyLiquidityProps) => {
         return [...pools, ...classicPools];
     }, [classicPools, pools, filter]);
 
-    useEffect(() => {
-        updateData();
-    }, [account]);
-
     const updateData = () => {
         if (account) {
-            getUserPools(account.accountId()).then((res) => {
+            getUserPools(account.accountId()).then(res => {
                 setPools(res);
             });
 
-            account?.getClassicPools().then((res) => {
+            account?.getClassicPools().then(res => {
                 setClassicPools(res);
             });
         }
     };
+
+    useEffect(() => {
+        updateData();
+    }, [account, updateIndex]);
 
     const totalLiquidity = useMemo(() => {
         const totalXlm = [...pools, ...classicPools].reduce((acc, pool) => {
@@ -181,7 +196,7 @@ const MyLiquidity = ({ setTotal, onlyList }: MyLiquidityProps) => {
         );
     }
     return (
-        <PoolsListBlock onlyList={onlyList}>
+        <PoolsListBlock $onlyList={onlyList}>
             {!onlyList && (
                 <ListHeader>
                     <ListTitle>My liquidity positions</ListTitle>
@@ -195,10 +210,28 @@ const MyLiquidity = ({ setTotal, onlyList }: MyLiquidityProps) => {
             <SelectStyled value={filter} options={FilterOptions} onChange={setFilter} />
             {!filteredPools ? (
                 <PageLoader />
-            ) : Boolean(filteredPools.length) ? (
+            ) : filteredPools.length ? (
                 <PoolsList isUserList pools={filteredPools} onUpdate={() => updateData()} />
             ) : (
-                <div>Your liquidity positions will appear here</div>
+                <Section>
+                    <Empty>
+                        <h3>There's nothing here.</h3>
+                        <span>It looks like you don’t have any active liquidity positions.</span>
+
+                        <ExternalLinkStyled asDiv>
+                            <Link
+                                to={MainRoutes.amm}
+                                onClick={() => {
+                                    if (backToAllPools) {
+                                        backToAllPools();
+                                    }
+                                }}
+                            >
+                                Browse pools
+                            </Link>
+                        </ExternalLinkStyled>
+                    </Empty>
+                </Section>
             )}
         </PoolsListBlock>
     );

@@ -1,11 +1,17 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { COLORS } from '../../../../common/styles';
-import { StellarService } from '../../../../common/services/globalServices';
-import useAuthStore from '../../../../store/authStore/useAuthStore';
-import { StellarEvents } from '../../../../common/services/stellar.service';
-import PageLoader from '../../../../common/basics/PageLoader';
+
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { StellarService } from 'services/globalServices';
+import { StellarEvents } from 'services/stellar.service';
+import { COLORS } from 'web/styles';
+
+import PageLoader from 'basics/loaders/PageLoader';
+
+import { PairStats } from 'pages/vote/api/types';
+
 import VotesList from '../../../vote/components/MainPage/ManageVotesModal/VotesList/VotesList';
 
 const Container = styled.div`
@@ -37,7 +43,11 @@ const Description = styled.div`
     margin-bottom: 3.2rem;
 `;
 
-const YourVotes = ({ votesData }) => {
+interface YourVotes {
+    votesData: PairStats;
+}
+
+const YourVotes = ({ votesData }: YourVotes): React.ReactNode => {
     const { account, isLogged } = useAuthStore();
 
     const [claims, setClaims] = useState(
@@ -75,13 +85,13 @@ const YourVotes = ({ votesData }) => {
             {claims.length ? (
                 <>
                     <Description>
-                        View your votes for a pair and claim unlocked votes back
+                        View your votes for a market and claim unlocked votes back
                     </Description>
 
                     <VotesList votes={claims} pair={votesData} />
                 </>
             ) : (
-                <Description>You didn't vote for this pair</Description>
+                <Description>You didn't vote for this market</Description>
             )}
         </Container>
     );

@@ -1,9 +1,11 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
-import { COLORS } from '../../../../../common/styles';
 
-import Success from '../../../../../common/assets/img/icon-success.svg';
-import Fail from '../../../../../common/assets/img/icon-fail.svg';
+import { COLORS } from 'web/styles';
+
+import Fail from 'assets/icon-fail.svg';
+import Success from 'assets/icon-success.svg';
+
 import { VoteChoiceSimple } from '../../../api/types';
 
 const SolutionBlock = styled.div`
@@ -31,13 +33,11 @@ enum ChoiceLabel {
     vote_for = 'For',
 }
 
-const Solution = ({ choice }: { choice: VoteChoiceSimple }): JSX.Element => {
-    return (
-        <SolutionBlock>
-            {choice === 'vote_against' ? <FailIcon /> : <SuccessIcon />}
-            <span>{ChoiceLabel[choice]}</span>
-        </SolutionBlock>
-    );
-};
+const Solution = ({ choice }: { choice: VoteChoiceSimple }): JSX.Element => (
+    <SolutionBlock>
+        {choice === 'vote_against' ? <FailIcon /> : <SuccessIcon />}
+        <span>{ChoiceLabel[choice]}</span>
+    </SolutionBlock>
+);
 
 export default Solution;

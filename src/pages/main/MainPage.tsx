@@ -1,15 +1,17 @@
 import * as React from 'react';
-import MainBlock from './components/MainBlock/MainBlock';
 import styled from 'styled-components';
-import { respondDown } from '../../common/mixins';
-import { Breakpoints, COLORS } from '../../common/styles';
-import SupportedBy from './components/SupportedBy/SupportedBy';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Community from 'components/Community';
+import Subscribe from 'components/Subscribe';
+
 import About from './components/About/About';
 import IceBlock from './components/IceBlock/IceBlock';
+import MainBlock from './components/MainBlock/MainBlock';
 import Roadmap from './components/Roadmap/Roadmap';
-import Community from '../../common/components/Community/Community';
-import Subscribe from '../../common/components/Subscribe/Subscribe';
-import { useEffect } from 'react';
+import SupportedBy from './components/SupportedBy/SupportedBy';
 
 const Container = styled.div`
     height: 100%;
@@ -26,24 +28,22 @@ const Container = styled.div`
     `}
 `;
 
-const MainPage = () => {
-    return (
-        <Container>
-            <MainBlock />
+const MainPage = () => (
+    <Container>
+        <MainBlock />
 
-            <SupportedBy />
+        <SupportedBy />
 
-            <About />
+        <About />
 
-            <IceBlock />
+        <IceBlock />
 
-            <Roadmap />
+        <Roadmap />
 
-            <Community />
+        <Community />
 
-            <Subscribe />
-        </Container>
-    );
-};
+        <Subscribe />
+    </Container>
+);
 
 export default MainPage;

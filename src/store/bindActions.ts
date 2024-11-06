@@ -1,4 +1,5 @@
 import { Dispatch } from 'react';
+
 import { Action, ActionResult } from './types';
 
 export default function bindActions(

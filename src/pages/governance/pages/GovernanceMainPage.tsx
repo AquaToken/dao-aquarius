@@ -1,24 +1,29 @@
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
-import styled from 'styled-components';
-import BackgroundImageLeft from '../../../common/assets/img/background-left.svg';
-import BackgroundImageRight from '../../../common/assets/img/background-right.svg';
-import { Breakpoints, COLORS } from '../../../common/styles';
-import { commonMaxWidth, flexAllCenter, respondDown } from '../../../common/mixins';
-import PageLoader from '../../../common/basics/PageLoader';
-import { getProposalsRequest, PROPOSAL_FILTER } from '../api/api';
-import ToggleGroup from '../../../common/basics/ToggleGroup';
-import CreateProposal from '../components/GovernanceMainPage/CreateProposal/CreateProposal';
-import Select from '../../../common/basics/Select';
-import ProposalPreview from '../components/GovernanceMainPage/ProposalPreview/ProposalPreview';
-import FAQ from '../components/GovernanceMainPage/FAQ/FAQ';
 import { useHistory, useLocation } from 'react-router-dom';
-import useAuthStore from '../../../store/authStore/useAuthStore';
-import { ModalService } from '../../../common/services/globalServices';
-import ChooseLoginMethodModal from '../../../common/modals/ChooseLoginMethodModal';
-import { useIsOnViewport } from '../../../common/hooks/useIsOnViewport';
-import ArrowDown from '../../../common/assets/img/icon-arrow-down.svg';
+import styled from 'styled-components';
+
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { useIsOnViewport } from 'hooks/useIsOnViewport';
+import { ModalService } from 'services/globalServices';
+import { commonMaxWidth, flexAllCenter, respondDown } from 'web/mixins';
+import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import BackgroundImageLeft from 'assets/background-left.svg';
+import BackgroundImageRight from 'assets/background-right.svg';
+import ArrowDown from 'assets/icon-arrow-down.svg';
+
+import Select from 'basics/inputs/Select';
+import ToggleGroup from 'basics/inputs/ToggleGroup';
+import PageLoader from 'basics/loaders/PageLoader';
+
 import { GovernanceRoutes } from '../../../routes';
+import { getProposalsRequest, PROPOSAL_FILTER } from '../api/api';
+import CreateProposal from '../components/GovernanceMainPage/CreateProposal/CreateProposal';
+import FAQ from '../components/GovernanceMainPage/FAQ/FAQ';
+import ProposalPreview from '../components/GovernanceMainPage/ProposalPreview/ProposalPreview';
 
 export const CREATE_DISCUSSION_COST = 100000;
 export const CREATE_PROPOSAL_COST = 900000;
@@ -220,7 +225,7 @@ const EmptyLink = styled.span`
     cursor: pointer;
 `;
 
-const scrollToRef = (ref) => {
+const scrollToRef = ref => {
     ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
 
@@ -244,6 +249,9 @@ const GovernanceMainPage = (): JSX.Element => {
 
     const { isLogged, account } = useAuthStore();
 
+    const location = useLocation();
+    const history = useHistory();
+
     const onLinkClick = () => {
         if (!isLogged) {
             ModalService.openModal(ChooseLoginMethodModal, {
@@ -260,16 +268,13 @@ const GovernanceMainPage = (): JSX.Element => {
             return;
         }
         setLoading(true);
-        getProposalsRequest(filter, account?.accountId()).then((result) => {
+        getProposalsRequest(filter, account?.accountId()).then(result => {
             setProposals(result.data.results.reverse());
             setLoading(false);
         });
     }, [filter]);
 
-    const location = useLocation();
-    const history = useHistory();
-
-    const setFilterValue = (value) => {
+    const setFilterValue = value => {
         if (value === PROPOSAL_FILTER.MY && !isLogged) {
             ModalService.openModal(ChooseLoginMethodModal, {
                 redirectURL: `${GovernanceRoutes.main}?${UrlParams.filter}=${PROPOSAL_FILTER.MY}`,
@@ -354,15 +359,13 @@ const GovernanceMainPage = (): JSX.Element => {
                                 <PageLoader />
                             ) : proposals.length ? (
                                 <div>
-                                    {proposals.map((proposal) => {
-                                        return (
-                                            <ProposalPreview
-                                                key={proposal.id}
-                                                proposal={proposal}
-                                                withMyVotes={filter === PROPOSAL_FILTER.MY_VOTES}
-                                            />
-                                        );
-                                    })}
+                                    {proposals.map(proposal => (
+                                        <ProposalPreview
+                                            key={proposal.id}
+                                            proposal={proposal}
+                                            withMyVotes={filter === PROPOSAL_FILTER.MY_VOTES}
+                                        />
+                                    ))}
                                 </div>
                             ) : (
                                 <EmptyList>

@@ -1,6 +1,7 @@
-import { AuthStore } from './authStore/types';
-import { AssetsStore } from './assetsStore/types';
 import * as React from 'react';
+
+import { AssetsStore } from './assetsStore/types';
+import { AuthStore } from './authStore/types';
 
 export type ActionSimpleResult = {
     type: string;

@@ -1,13 +1,17 @@
 import * as React from 'react';
-import styled from 'styled-components';
-import { respondDown } from '../../../../common/mixins';
-import { Breakpoints, COLORS } from '../../../../common/styles';
-import { ModalDescription, ModalTitle } from '../../../../common/modals/atoms/ModalAtoms';
-import ToggleGroup from '../../../../common/basics/ToggleGroup';
 import { useState } from 'react';
-import Input from '../../../../common/basics/Input';
-import Button from '../../../../common/basics/Button';
-import { ToastService } from '../../../../common/services/globalServices';
+import styled from 'styled-components';
+
+import { ModalProps } from 'types/modal';
+
+import { ToastService } from 'services/globalServices';
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Button from 'basics/buttons/Button';
+import Input from 'basics/inputs/Input';
+import ToggleGroup from 'basics/inputs/ToggleGroup';
+import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
 
 const Container = styled.div`
     width: 52.3rem;
@@ -38,7 +42,7 @@ const Divider = styled.div`
 export const SWAP_SLIPPAGE_ALIAS = 'swap-slippage';
 export const DEFAULT_SLIPPAGE = '1'; // 1%
 
-const SwapSettingsModal = ({ close }) => {
+const SwapSettingsModal = ({ close }: ModalProps<never>): React.ReactNode => {
     const [slippage, setSlippage] = useState(
         localStorage.getItem(SWAP_SLIPPAGE_ALIAS) || DEFAULT_SLIPPAGE,
     );
@@ -77,6 +81,7 @@ const SwapSettingsModal = ({ close }) => {
                     postfix="%"
                     value={slippage}
                     onChange={({ target }) => setSlippage(target.value)}
+                    inputMode="decimal"
                 />
             </FormRow>
 

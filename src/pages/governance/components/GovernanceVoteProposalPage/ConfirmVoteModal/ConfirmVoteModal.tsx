@@ -1,48 +1,40 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import {
-    ModalDescription,
-    ModalProps,
-    ModalTitle,
-} from '../../../../../common/modals/atoms/ModalAtoms';
-import styled, { css } from 'styled-components';
-import { flexAllCenter, flexRowSpaceBetween } from '../../../../../common/mixins';
-import { COLORS } from '../../../../../common/styles';
-import Fail from '../../../../../common/assets/img/icon-fail.svg';
-import Success from '../../../../../common/assets/img/icon-success.svg';
-import Aqua from '../../../../../common/assets/img/aqua-logo-small.svg';
-import Ice from '../../../../../common/assets/img/ice-logo.svg';
-import useAuthStore from '../../../../../store/authStore/useAuthStore';
-import Input from '../../../../../common/basics/Input';
-import RangeInput from '../../../../../common/basics/RangeInput';
-import Button from '../../../../../common/basics/Button';
-import {
-    ModalService,
-    StellarService,
-    ToastService,
-} from '../../../../../common/services/globalServices';
-import {
-    formatBalance,
-    getDateString,
-    roundToPrecision,
-} from '../../../../../common/helpers/helpers';
-import ExternalLink from '../../../../../common/basics/ExternalLink';
-import GetAquaModal from '../../../../../common/modals/GetAquaModal/GetAquaModal';
-import { SimpleProposalOptions } from '../../../pages/GovernanceVoteProposalPage';
-import { useIsMounted } from '../../../../../common/hooks/useIsMounted';
-import ErrorHandler from '../../../../../common/helpers/error-handler';
-import { BuildSignAndSubmitStatuses } from '../../../../../common/services/wallet-connect.service';
-import { LoginTypes } from '../../../../../store/authStore/types';
-import {
-    AQUA_CODE,
-    AQUA_ISSUER,
-    GOV_ICE_CODE,
-    ICE_ISSUER,
-} from '../../../../../common/services/stellar.service';
-import Select from '../../../../../common/basics/Select';
 import { Link } from 'react-router-dom';
+import styled, { css } from 'styled-components';
+
+import { getDateString } from 'helpers/date';
+import ErrorHandler from 'helpers/error-handler';
+import { formatBalance, roundToPrecision } from 'helpers/format-number';
+import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
+
+import { LoginTypes } from 'store/authStore/types';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { ModalProps } from 'types/modal';
+
+import { useIsMounted } from 'hooks/useIsMounted';
+import { ModalService, StellarService, ToastService } from 'services/globalServices';
+import { AQUA_CODE, AQUA_ISSUER, GOV_ICE_CODE, ICE_ISSUER } from 'services/stellar.service';
+import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
+import { flexAllCenter, flexRowSpaceBetween } from 'web/mixins';
+import GetAquaModal from 'web/modals/GetAquaModal';
+import { COLORS } from 'web/styles';
+
+import Aqua from 'assets/aqua-logo-small.svg';
+import Ice from 'assets/ice-logo.svg';
+import Fail from 'assets/icon-fail.svg';
+import Success from 'assets/icon-success.svg';
+
+import Button from 'basics/buttons/Button';
+import ExternalLink from 'basics/ExternalLink';
+import Input from 'basics/inputs/Input';
+import RangeInput from 'basics/inputs/RangeInput';
+import Select from 'basics/inputs/Select';
+import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+
 import { LockerRoutes } from '../../../../../routes';
-import { openCurrentWalletIfExist } from '../../../../../common/helpers/wallet-connect-helpers';
+import { SimpleProposalOptions } from '../../../pages/GovernanceVoteProposalPage';
 
 const MINIMUM_AMOUNT = 0.0000001;
 const MINIMUM_ICE_AMOUNT = 10;
@@ -167,9 +159,7 @@ const ConfirmVoteModal = ({
     const [pending, setPending] = useState(false);
     const [targetAsset, setTargetAsset] = useState(AQUA);
 
-    const targetBalance = useMemo(() => {
-        return account?.getAssetBalance(targetAsset);
-    }, [targetAsset]);
+    const targetBalance = useMemo(() => account?.getAssetBalance(targetAsset), [targetAsset]);
 
     const hasTrustLine = targetBalance !== null;
     const hasTargetBalance = targetBalance !== 0;
@@ -187,7 +177,7 @@ const ConfirmVoteModal = ({
         setPercent(0);
     }, [targetAsset]);
 
-    const onRangeChange = (percent) => {
+    const onRangeChange = percent => {
         setPercent(percent);
 
         const amountValue = (targetBalance * percent) / 100;
@@ -195,7 +185,7 @@ const ConfirmVoteModal = ({
         setAmount(roundToPrecision(amountValue, 7));
     };
 
-    const onInputChange = (value) => {
+    const onInputChange = value => {
         if (Number.isNaN(Number(value))) {
             return;
         }
@@ -297,11 +287,12 @@ const ConfirmVoteModal = ({
             <ContentRow>
                 <StyledInput
                     value={amount}
-                    onChange={(e) => {
+                    onChange={e => {
                         onInputChange(e.target.value);
                     }}
                     placeholder="Enter amount"
                     disabled={!hasTrustLine || !hasTargetBalance}
+                    inputMode="decimal"
                 />
 
                 <StyledSelect options={OPTIONS} value={targetAsset} onChange={setTargetAsset} />
