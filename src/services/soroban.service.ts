@@ -292,8 +292,8 @@ export default class SorobanServiceClass {
 
         return this.server
             .getAccount(publicKey)
-            .then((acc) => {
-                return new StellarSdk.TransactionBuilder(acc, {
+            .then(acc =>
+                new StellarSdk.TransactionBuilder(acc, {
                     fee: BASE_FEE,
                     networkPassphrase: StellarSdk.Networks.TESTNET,
                 })
@@ -304,9 +304,9 @@ export default class SorobanServiceClass {
                             .build(),
                     )
                     .setTimeout(StellarSdk.TimeoutInfinite)
-                    .build();
-            })
-            .then((tx) => this.prepareTransaction(tx));
+                    .build(),
+            )
+            .then(tx => this.prepareTransaction(tx));
     }
 
     bumpAssetContractTx(publicKey: string, asset: Asset) {
@@ -316,8 +316,8 @@ export default class SorobanServiceClass {
 
         return this.server
             .getAccount(publicKey)
-            .then((acc) => {
-                return new StellarSdk.TransactionBuilder(acc, {
+            .then(acc =>
+                new StellarSdk.TransactionBuilder(acc, {
                     fee: BASE_FEE,
                     networkPassphrase: StellarSdk.Networks.TESTNET,
                 })
@@ -332,28 +332,10 @@ export default class SorobanServiceClass {
                             .build(),
                     )
                     .setTimeout(StellarSdk.TimeoutInfinite)
-                    .build();
-            })
-            .then((tx) => this.prepareTransaction(tx));
-    }
-
-    getPools(assets: Asset[]): Promise<null | Array<any>> {
-        return this.buildSmartContactTx(
-            ACCOUNT_FOR_SIMULATE,
-            AMM_SMART_CONTACT_ID,
-            AMM_CONTRACT_METHOD.GET_POOLS,
-            this.scValToArray(this.orderTokens(assets).map((asset) => this.assetToScVal(asset))),
-        )
-            .then(
-                (tx) =>
-                    this.server.simulateTransaction(
-                        tx,
-                    ) as Promise<SimulateTransactionSuccessResponse>,
+                    .build(),
             )
-            .then((res) => {
-                if (!res.result) {
-                    return [];
-                }
+            .then(tx => this.prepareTransaction(tx));
+    }
 
     // restoreAssetContractTx(publicKey: string, asset: Asset) {
     //     const contractId = this.getAssetContractId(asset);
