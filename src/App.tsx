@@ -4,6 +4,8 @@ import Title from 'react-document-title';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import styled, { createGlobalStyle } from 'styled-components';
 
+import { LoginTypes } from 'store/authStore/types';
+
 import { ModalService, StellarService, WalletConnectService } from 'services/globalServices';
 import AppGlobalStyle from 'web/AppGlobalStyles';
 import { respondDown } from 'web/mixins';
@@ -112,6 +114,19 @@ const App = () => {
 
         return () => window.removeEventListener('online', reloadIfNotLoaded);
     }, [wcLoginChecked, isAssetsUpdated]);
+
+    useEffect(() => {
+        const handler = (event: BeforeUnloadEvent) => {
+            if (account && account.authType === LoginTypes.secret) {
+                event.preventDefault();
+            }
+        };
+
+        window.addEventListener('beforeunload', handler);
+        return () => {
+            window.removeEventListener('beforeunload', handler);
+        };
+    }, [account]);
 
     useEffect(() => {
         if (assets.length) {
