@@ -12,7 +12,8 @@ import {
     GetProxyAddressResponse,
     GetProxyMemoResponse,
     GetMoonpayBuyQuoteParams,
-    GetMoonpayProxyFee,
+    GetMoonpayProxyFeeResponse,
+    GetProxyTrxStatusResponse,
 } from 'types/api-moonpay';
 
 export const getMoonpayCurrencies = (): Promise<MoonpayCurrencies> => {
@@ -74,11 +75,22 @@ export const getMoonpayProxyAddress = (
         .then(res => res.data.address);
 };
 
-export const getMoonpayProxyFees = (): Promise<GetMoonpayProxyFee['operational']> => {
+export const getMoonpayProxyFees = (): Promise<GetMoonpayProxyFeeResponse['operational']> => {
     const env = getEnv();
     const baseUrl = API_URLS[env].onRampProxy;
 
     return axios
-        .get<GetMoonpayProxyFee>(`${baseUrl}/api/pool/proxy/fees/`)
+        .get<GetMoonpayProxyFeeResponse>(`${baseUrl}/api/pool/proxy/fees/`)
         .then(res => res.data.operational / 1e7);
+};
+// TODO: api types
+export const getMoonpayProxyTrx = (
+    publicKey: string,
+): Promise<GetProxyTrxStatusResponse['address']> => {
+    const env = getEnv();
+    const baseUrl = API_URLS[env].onRampProxy;
+
+    return axios
+        .get<GetProxyTrxStatusResponse>(`${baseUrl}/api/pool/operations/?proxy_wallet${publicKey}`)
+        .then(res => res.data.address);
 };

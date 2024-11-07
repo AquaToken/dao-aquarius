@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
+import { MoonpayCurrencies, MoonpayCurrency } from 'types/api-moonpay';
 import { ModalProps } from 'types/modal';
 
 import { flexAllCenter, flexRowSpaceBetween, respondDown, respondUp } from 'web/mixins';
@@ -61,9 +62,9 @@ const CustomModalDescription = styled(ModalDescription)`
 `;
 
 interface BuyAquaCurrencyModalParams {
-    availableCurrencies: any;
-    currentCurrency: any;
-    onChooseCurrency: (currency: any) => void;
+    availableCurrencies: MoonpayCurrencies;
+    currentCurrency: MoonpayCurrency;
+    onChooseCurrency: (currency: MoonpayCurrency) => void;
 }
 
 const BuyAquaCurrencyModal = ({
@@ -83,7 +84,6 @@ const BuyAquaCurrencyModal = ({
             ),
         [searchText],
     );
-    console.log(availableCurrencies);
 
     const onClickCurrency = currency => {
         onChooseCurrency(currency);
@@ -119,6 +119,7 @@ const BuyAquaCurrencyModal = ({
                         </CurrencyWrapper>
                     );
                 })}
+                {!filteredCurrencies.length && `Nothing found for search "${searchText}"`}
             </CustomModalDescription>
         </Container>
     );

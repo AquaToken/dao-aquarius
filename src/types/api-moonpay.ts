@@ -129,6 +129,10 @@ export type GetProxyAddressResponse = {
     address: string;
 };
 
-export type GetMoonpayProxyFee = {
+export type GetProxyTrxStatusResponse = {
+    address: string;
+};
+
+export type GetMoonpayProxyFeeResponse = {
     operational: number;
 };

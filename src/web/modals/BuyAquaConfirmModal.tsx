@@ -1,24 +1,26 @@
 import { MoonPayBuyWidget } from '@moonpay/moonpay-react';
-import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { getMoonpayFederationMemo, getMoonpayProxyAddress } from 'api/moonpay';
-
-import { MOONPAY_CURRENCY_PREFIXES } from 'constants/moonpay';
-import { MainRoutes } from 'constants/routes';
+import { getMoonpayFederationMemo, getMoonpayProxyAddress, getMoonpayProxyTrx } from 'api/moonpay';
 
 import { getAquaAssetData } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
+import { getMoonpayCurrencyPrefix } from 'helpers/moonpay';
 
 import useAuthStore from 'store/authStore/useAuthStore';
-
-import { StellarService } from 'services/globalServices';
 
 import { MoonpayQuote } from 'types/api-moonpay';
 import { ModalProps } from 'types/modal';
 
-import { flexAllCenter, flexColumn, flexRowSpaceBetween, respondDown, respondUp } from 'web/mixins';
+import {
+    customScroll,
+    flexAllCenter,
+    flexColumn,
+    flexRowSpaceBetween,
+    respondDown,
+    respondUp,
+} from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import AquaLogoSmall from 'assets/aqua-logo-small.svg';
@@ -26,8 +28,7 @@ import AquaLogoSmall from 'assets/aqua-logo-small.svg';
 import IconArrowRight from 'assets/icon-link-arrow.svg';
 
 import { Button } from 'basics/buttons';
-import { Input } from 'basics/inputs';
-import { PageLoader } from 'basics/loaders';
+import { CircleLoader } from 'basics/loaders';
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
 
 const Container = styled.div`
@@ -64,8 +65,9 @@ const TitleText = styled.div`
 `;
 
 const StyledModalDescription = styled(ModalDescription)`
+    ${customScroll};
     ${respondUp(Breakpoints.md)`
-       min-height: 40vh;
+       max-height: 70vh;
     `};
 `;
 
@@ -103,6 +105,17 @@ const StyledIconArrowRight = styled(IconArrowRight)`
     height: 100%;
 `;
 
+const MoonpayDescription = styled.div`
+    font-size: 1.6rem;
+    line-height: 2.8rem;
+    margin-bottom: 4rem;
+    color: ${COLORS.descriptionText};
+`;
+
+const CompleteButton = styled(Button)`
+    margin-top: 3.2rem;
+`;
+
 interface BuyAquaCurrencyModalParams {
     quote: MoonpayQuote;
     counterAmount: number;
@@ -124,7 +137,6 @@ const BuyAquaConfirmModal = ({
     const { quote, counterAmount, counterCurrencyCode, proxyFee } = params;
     const userAddress = account?.accountId();
 
-    console.log(userAddress);
     const {
         baseCurrencyAmount,
         baseCurrencyCode,
@@ -133,16 +145,14 @@ const BuyAquaConfirmModal = ({
         networkFeeAmount,
         feeAmount,
     } = quote;
-    console.log(quote);
 
     const { aquaCode } = getAquaAssetData();
-    const currencyPrefix = MOONPAY_CURRENCY_PREFIXES[baseCurrencyCode];
+    const currencyPrefix = getMoonpayCurrencyPrefix(baseCurrencyCode);
 
     const onClickConfirm = () => {
         setIsLoading(true);
         getMoonpayFederationMemo(userAddress)
             .then(federation => {
-                console.log(federation);
                 setProxyFederation(federation);
             })
             .then(() => getMoonpayProxyAddress(userAddress))
@@ -150,9 +160,15 @@ const BuyAquaConfirmModal = ({
                 setIsLoading(false);
                 setIsConfirmed(true);
                 setProxyAddress(address);
-                console.log(address);
             });
     };
+
+    useEffect(() => {
+        // const interval = setInterval(() => {
+        //     getMoonpayProxyTrx(proxyAddress).then(trx => console.log(trx));
+        // }, 5000);
+        // return () => clearInterval(interval);
+    }, [proxyAddress]);
 
     const listValues = [
         {
@@ -178,16 +194,8 @@ const BuyAquaConfirmModal = ({
             value: `${feeAmount} ${baseCurrencyCode.toUpperCase()}`,
         },
         {
-            description: 'Proxy fee',
+            description: 'Aquarius fee',
             value: `${proxyFee} ${quoteCurrencyCode.toUpperCase()}`,
-        },
-        {
-            description: 'Est. processing time',
-            value: '-',
-        },
-        {
-            description: 'Total',
-            value: '-',
         },
     ];
 
@@ -195,21 +203,30 @@ const BuyAquaConfirmModal = ({
 
     return (
         <Container>
-            <ModalTitle>{isConfirmed ? 'Enter payment information' : 'Get AQUA'}</ModalTitle>
+            <ModalTitle>{isConfirmed ? 'Purchase with onramp provider' : 'Get AQUA'}</ModalTitle>
             <StyledModalDescription>
+                {isConfirmed && (
+                    <MoonpayDescription>
+                        Aquarius uses Moonpay to on-ramp {quoteCurrencyCode.toUpperCase()} via
+                        credit & debit cards that is then automatically converted to {aquaCode}{' '}
+                        token
+                    </MoonpayDescription>
+                )}
                 <MoonPayBuyWidget
-                    style={{ margin: '0', width: '100%' }}
+                    style={{ margin: '0', width: '100%', height: '470px' }}
                     variant="embedded"
                     walletAddress={proxyAddress}
                     walletAddressTag={proxyFederation}
                     baseCurrencyCode={baseCurrencyCode}
                     baseCurrencyAmount={baseCurrencyAmount.toString()}
                     defaultCurrencyCode={counterCurrencyCode}
+                    // Maybe onUrlSignatureRequested is needed for security or any other reasons??
+                    // onUrlSignatureRequested={handleGetSignature}
                     // Can be used for some statistics or analytics tracking
                     // onLogin={async () => console.log('Customer logged in!')}
                     visible={isConfirmed}
                 />
-                {!isConfirmed && (
+                {!isConfirmed ? (
                     <>
                         <AquaBlock>
                             <AquaLogo />
@@ -242,9 +259,13 @@ const BuyAquaConfirmModal = ({
                             disabled={isConfirmDisabled}
                             onClick={onClickConfirm}
                         >
-                            {isLoading ? <PageLoader /> : 'Confirm order'}
+                            {isLoading ? <CircleLoader /> : 'Confirm order'}
                         </Button>
                     </>
+                ) : (
+                    <CompleteButton isBig fullWidth>
+                        Complete purchase
+                    </CompleteButton>
                 )}
             </StyledModalDescription>
         </Container>
