@@ -4,22 +4,20 @@ import styled from 'styled-components';
 import { findSwapPath } from 'api/amm';
 import { getMoonpayBuyQuote, getMoonpayCurrencies, getMoonpayProxyFees } from 'api/moonpay';
 
-import {
-    MOONPAY_CURRENCY_PREFIXES,
-    DEFAULT_BUY_CRYPTO_CODE,
-    DEFAULT_BUY_CRYPTO_CODE_TEST,
-} from 'constants/moonpay';
+import { DEFAULT_BUY_CRYPTO_CODE, DEFAULT_BUY_CRYPTO_CODE_TEST } from 'constants/moonpay';
 
 import { getAquaAssetData } from 'helpers/assets';
 import { getIsTestnetEnv } from 'helpers/env';
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
+import { getMoonpayCurrencyPrefix } from 'helpers/moonpay';
 import { getAquaContract, getXlmContract } from 'helpers/soroban';
 
 import { useDebounce } from 'hooks/useDebounce';
 
+import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { ModalService, ToastService } from 'services/globalServices';
+import { ModalService, SorobanService, ToastService } from 'services/globalServices';
 
 import { MoonpayCurrencies, MoonpayCurrency, MoonpayQuote } from 'types/api-moonpay';
 
@@ -116,7 +114,7 @@ const ButtonArrowIcon = styled(IconArrowRight)`
     margin-left: 0.8rem;
 `;
 
-const CircleLoader2 = styled(CircleLoader)`
+const CircleLoaderWrapper = styled(CircleLoader)`
     line-height: 2.8rem;
 `;
 
@@ -132,7 +130,7 @@ const AmountInput = styled(BlankInput)`
     }
 `;
 const BuyAqua = (): JSX.Element => {
-    const { isLogged, account } = useAuthStore();
+    const { isLogged, account, login } = useAuthStore();
     const [availableCurrencies, setAvailableCurrencies] = useState<MoonpayCurrencies>(null);
     const [currentCurrency, setCurrentCurrency] = useState(null);
     const [baseAmount, setBaseAmount] = useState('');
@@ -148,6 +146,7 @@ const BuyAqua = (): JSX.Element => {
 
     const hasTrustline = account?.getAssetBalance(aquaStellarAsset) !== null;
 
+    // TODO: Change for USDC FOR PRODUCTION
     const baseContract = getAquaContract();
     const counterContract = getXlmContract();
 
@@ -155,7 +154,7 @@ const BuyAqua = (): JSX.Element => {
 
     const counterCurrencyCode = isTestnet ? DEFAULT_BUY_CRYPTO_CODE_TEST : DEFAULT_BUY_CRYPTO_CODE;
 
-    const currencyPrefix = MOONPAY_CURRENCY_PREFIXES[currentCurrency?.code];
+    const currencyPrefix = getMoonpayCurrencyPrefix(currentCurrency?.code);
     const amountInputValue = !baseAmount ? '' : `${currencyPrefix}${baseAmount}`;
     const isWrongAmount =
         baseAmount > currentCurrency?.maxBuyAmount || baseAmount < currentCurrency?.minBuyAmount;
@@ -165,7 +164,7 @@ const BuyAqua = (): JSX.Element => {
 
     const onChangeInput = (value, newCurrency?: MoonpayCurrency) => {
         const precision = newCurrency?.precision || currentCurrency?.precision;
-        const newPrefix = MOONPAY_CURRENCY_PREFIXES[newCurrency?.code] || currencyPrefix;
+        const newPrefix = getMoonpayCurrencyPrefix(newCurrency?.code) || currencyPrefix;
         const pureValue = value.toString().replace(newPrefix, '');
         const pureValueNum = Number(pureValue);
 
@@ -181,6 +180,11 @@ const BuyAqua = (): JSX.Element => {
     };
 
     useEffect(() => {
+        // SorobanService.loginWithSecret(
+        //     'SC4KDE2N5EQ6PKD6E2EI4TNKQ7MVM6GZONLWBYIK343M6AMIA6CPZ6WV',
+        // ).then(pubKey => {
+        //     login(pubKey, LoginTypes.secret);
+        // });
         getMoonpayProxyFees()
             .then(fee => {
                 setProxyFee(fee);
@@ -304,7 +308,7 @@ const BuyAqua = (): JSX.Element => {
                     ) : (
                         <CounterCurrencyLabel>
                             {isLoadingRates ? (
-                                <CircleLoader2 size="small" />
+                                <CircleLoaderWrapper size="small" />
                             ) : (
                                 `${formatBalance(counterAmount, true)} ${aquaCode}`
                             )}
