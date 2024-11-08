@@ -17,6 +17,7 @@ export enum PROPOSAL_FILTER {
     CLOSED = 'closed',
     MY = 'my',
     MY_VOTES = 'my_votes',
+    HISTORY = 'history',
 }
 
 export const getProposalsRequest = (
@@ -34,7 +35,9 @@ export const getProposalsRequest = (
         params.append('owner_public_key', pubkey);
     } else if (filter === PROPOSAL_FILTER.MY_VOTES) {
         params.append('vote_owner_public_key', pubkey);
-        // params.append('active', 'true');
+        params.append('active', 'true');
+    } else if (filter === PROPOSAL_FILTER.HISTORY) {
+        params.append('vote_owner_public_key', pubkey);
     }
 
     return axios.get(`${apiURL}/proposal/`, { params });

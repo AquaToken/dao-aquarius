@@ -151,7 +151,7 @@ const TitleBlock = styled.div`
 `;
 
 const ProposalsTitle = styled.h3`
-    font-size: 5.6rem;
+    font-size: 4rem;
     line-height: 6.4rem;
     font-weight: bold;
     color: ${COLORS.titleText};
@@ -240,6 +240,7 @@ const Options = [
     { label: 'Finished', value: PROPOSAL_FILTER.CLOSED },
     { label: 'My proposals', value: PROPOSAL_FILTER.MY },
     { label: 'My votes', value: PROPOSAL_FILTER.MY_VOTES },
+    { label: 'History', value: PROPOSAL_FILTER.HISTORY },
 ];
 
 const GovernanceMainPage = (): JSX.Element => {
@@ -274,7 +275,7 @@ const GovernanceMainPage = (): JSX.Element => {
         });
     }, [filter]);
 
-    const setFilterValue = value => {
+    const setFilterValue = (value: PROPOSAL_FILTER) => {
         if (value === PROPOSAL_FILTER.MY && !isLogged) {
             ModalService.openModal(ChooseLoginMethodModal, {
                 redirectURL: `${GovernanceRoutes.main}?${UrlParams.filter}=${PROPOSAL_FILTER.MY}`,
@@ -284,6 +285,12 @@ const GovernanceMainPage = (): JSX.Element => {
         if (value === PROPOSAL_FILTER.MY_VOTES && !isLogged) {
             ModalService.openModal(ChooseLoginMethodModal, {
                 redirectURL: `${GovernanceRoutes.main}?${UrlParams.filter}=${PROPOSAL_FILTER.MY_VOTES}`,
+            });
+            return;
+        }
+        if (value === PROPOSAL_FILTER.HISTORY && !isLogged) {
+            ModalService.openModal(ChooseLoginMethodModal, {
+                redirectURL: `${GovernanceRoutes.main}?${UrlParams.filter}=${PROPOSAL_FILTER.HISTORY}`,
             });
             return;
         }
@@ -363,7 +370,10 @@ const GovernanceMainPage = (): JSX.Element => {
                                         <ProposalPreview
                                             key={proposal.id}
                                             proposal={proposal}
-                                            withMyVotes={filter === PROPOSAL_FILTER.MY_VOTES}
+                                            withMyVotes={
+                                                filter === PROPOSAL_FILTER.MY_VOTES ||
+                                                filter === PROPOSAL_FILTER.HISTORY
+                                            }
                                         />
                                     ))}
                                 </div>
