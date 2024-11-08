@@ -4,13 +4,18 @@ import styled from 'styled-components';
 
 import { getMoonpayFederationMemo, getMoonpayProxyAddress, getMoonpayProxyTrx } from 'api/moonpay';
 
+import { INTERVAL_IDS, INTERVAL_TIMES } from 'constants/intervals';
+
 import { getAquaAssetData } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
+import Intervals from 'helpers/intervals';
 import { getMoonpayCurrencyPrefix } from 'helpers/moonpay';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { MoonpayQuote } from 'types/api-moonpay';
+import { ModalService, ToastService } from 'services/globalServices';
+
+import { MoonpayQuote, ProxyTrxResponse } from 'types/api-moonpay';
 import { ModalProps } from 'types/modal';
 
 import {
@@ -25,11 +30,22 @@ import { Breakpoints, COLORS } from 'web/styles';
 
 import AquaLogoSmall from 'assets/aqua-logo-small.svg';
 // TODO: same icon as assets/icon-arrow-right-long, add colors
+import CompleteModalBackImg from 'assets/background-moonpay-complete.svg';
 import IconArrowRight from 'assets/icon-link-arrow.svg';
 
 import { Button } from 'basics/buttons';
 import { CircleLoader } from 'basics/loaders';
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+
+import BuyAquaCompleteModal from './BuyAquaCompleteModal';
+
+const ModalCompleteBackground = styled(CompleteModalBackImg)`
+    object-position: center center;
+
+    ${respondDown(Breakpoints.md)`
+        width: 100%;
+    `}
+`;
 
 const Container = styled.div`
     width: 52.8rem;
@@ -133,9 +149,11 @@ const BuyAquaConfirmModal = ({
     const [isLoading, setIsLoading] = useState(false);
     const [proxyFederation, setProxyFederation] = useState('');
     const [proxyAddress, setProxyAddress] = useState('');
+    const [proxyTrx, setProxyTrx] = useState<ProxyTrxResponse>(null);
 
     const { quote, counterAmount, counterCurrencyCode, proxyFee } = params;
     const userAddress = account?.accountId();
+    const isPaymentReceived = proxyTrx?.operation_status === 'payment';
 
     const {
         baseCurrencyAmount,
@@ -148,6 +166,14 @@ const BuyAquaConfirmModal = ({
 
     const { aquaCode } = getAquaAssetData();
     const currencyPrefix = getMoonpayCurrencyPrefix(baseCurrencyCode);
+    const isConfirmDisabled = isLoading || !userAddress;
+
+    useEffect(
+        () => () => {
+            Intervals.stop(INTERVAL_IDS.moonpayProxyTrx);
+        },
+        [],
+    );
 
     const onClickConfirm = () => {
         setIsLoading(true);
@@ -160,15 +186,29 @@ const BuyAquaConfirmModal = ({
                 setIsLoading(false);
                 setIsConfirmed(true);
                 setProxyAddress(address);
+
+                Intervals.set(
+                    INTERVAL_IDS.moonpayProxyTrx,
+                    () =>
+                        getMoonpayProxyTrx(address).then(trxList => {
+                            if (trxList.length > 0) {
+                                setProxyTrx(trxList[0]);
+                            }
+                        }),
+                    {
+                        timeout: INTERVAL_TIMES.moonpayProxyTrx,
+                    },
+                );
+            })
+            .catch(e => {
+                ToastService.showErrorToast(e.message ?? e.toString());
             });
     };
 
-    useEffect(() => {
-        // const interval = setInterval(() => {
-        //     getMoonpayProxyTrx(proxyAddress).then(trx => console.log(trx));
-        // }, 5000);
-        // return () => clearInterval(interval);
-    }, [proxyAddress]);
+    const onClickComplete = () => {
+        close();
+        ModalService.openModal(BuyAquaCompleteModal, {}, true, <ModalCompleteBackground />);
+    };
 
     const listValues = [
         {
@@ -199,8 +239,6 @@ const BuyAquaConfirmModal = ({
         },
     ];
 
-    const isConfirmDisabled = isLoading || !userAddress;
-
     return (
         <Container>
             <ModalTitle>{isConfirmed ? 'Purchase with onramp provider' : 'Get AQUA'}</ModalTitle>
@@ -212,6 +250,7 @@ const BuyAquaConfirmModal = ({
                         token
                     </MoonpayDescription>
                 )}
+
                 <MoonPayBuyWidget
                     style={{ margin: '0', width: '100%', height: '470px' }}
                     variant="embedded"
@@ -224,8 +263,9 @@ const BuyAquaConfirmModal = ({
                     // onUrlSignatureRequested={handleGetSignature}
                     // Can be used for some statistics or analytics tracking
                     // onLogin={async () => console.log('Customer logged in!')}
-                    visible={isConfirmed}
+                    visible={isConfirmed && !isPaymentReceived}
                 />
+
                 {!isConfirmed ? (
                     <>
                         <AquaBlock>
@@ -263,8 +303,15 @@ const BuyAquaConfirmModal = ({
                         </Button>
                     </>
                 ) : (
-                    <CompleteButton isBig fullWidth>
-                        Complete purchase
+                    <CompleteButton
+                        isBig
+                        fullWidth
+                        disabled={!isPaymentReceived}
+                        onClick={onClickComplete}
+                    >
+                        {isPaymentReceived
+                            ? 'Complete purchase'
+                            : 'Waiting for payment from moonpay'}
                     </CompleteButton>
                 )}
             </StyledModalDescription>

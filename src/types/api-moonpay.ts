@@ -114,25 +114,43 @@ export interface MoonpayQuote {
     expiresAt: string;
 }
 
-export type GetMoonpayBuyQuoteParams = {
+export type MoonpayBuyQuoteParams = {
     cryptoCode: string;
     baseCurrencyCode: string;
     baseCurrencyAmount: string;
 };
 
-export type GetProxyMemoResponse = {
+export type ProxyMemoResponse = {
     account_id: string;
     memo: string;
 };
 
-export type GetProxyAddressResponse = {
+export type ProxyAddressResponse = {
     address: string;
 };
 
-export type GetProxyTrxStatusResponse = {
+export type ProxyTrxResponse = {
     address: string;
+    operation_status: 'payment' | 'request' | 'completed';
+    proxy_wallet: string;
+    destination_address: string;
+    payment_op_id: number;
+    payment_tx_id: string;
+    request_tx_id: string | null;
+    swap_tx_id: string | null;
+    last_tx_envelope: string;
+    last_tx_error: string;
+    created: string;
+    modified: string;
 };
 
-export type GetMoonpayProxyFeeResponse = {
+export type ProxyTrxListResponse = {
+    count: number;
+    next: string | null;
+    previous: string | null;
+    results: ProxyTrxResponse[];
+};
+
+export type MoonpayProxyFeeResponse = {
     operational: number;
 };

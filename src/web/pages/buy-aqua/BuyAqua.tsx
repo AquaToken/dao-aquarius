@@ -181,7 +181,7 @@ const BuyAqua = (): JSX.Element => {
 
     useEffect(() => {
         // SorobanService.loginWithSecret(
-        //     'SC4KDE2N5EQ6PKD6E2EI4TNKQ7MVM6GZONLWBYIK343M6AMIA6CPZ6WV',
+        //     'SCJBBHJWYWJSBDILEDVXEM4OFRDQJLAYVGYBPRAWTYTCAGU5CIZT65Y3',
         // ).then(pubKey => {
         //     login(pubKey, LoginTypes.secret);
         // });

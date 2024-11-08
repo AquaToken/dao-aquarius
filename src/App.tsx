@@ -21,7 +21,6 @@ import { Breakpoints, COLORS } from 'web/styles';
 import LiveOnSorobanImage from 'assets/live-on-soroban.svg';
 
 import PageLoader from 'basics/loaders/PageLoader';
-import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import ErrorBoundary from 'components/ErrorBoundary';
 import Footer from 'components/Footer';
@@ -59,18 +58,6 @@ const UPDATE_PERIOD = 24 * 60 * 60 * 1000;
 
 const BgStyled = styled(LiveOnSorobanImage)`
     object-position: center center;
-`;
-
-const TooltipStyled = styled(Tooltip)`
-    margin-right: 2rem;
-    a {
-        margin: 0 !important;
-    }
-
-    ${respondDown(Breakpoints.md)`
-        margin-right: 0;
-        margin-bottom: 2.4rem;
-    `}
 `;
 
 const App = () => {

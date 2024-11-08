@@ -63,6 +63,7 @@ const ButtonBody = styled(BlankButton)<{
     font-weight: bold;
     letter-spacing: ${({ $isBig }) => ($isBig ? '0.2rem' : '0.05rem')};
     text-transform: uppercase;
+    //TODO: remove
     cursor: pointer;
     transition: all ease 200ms;
     position: relative;
@@ -89,6 +90,7 @@ const ButtonBody = styled(BlankButton)<{
 
     &:disabled {
         background-color: ${COLORS.gray};
+        //TODO: remove
         pointer-events: none;
     }
 `;

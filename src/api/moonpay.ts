@@ -6,14 +6,18 @@ import { getEnv } from 'helpers/env';
 import { getMoonpayKeyByEnv } from 'helpers/moonpay';
 import { getAquaContract } from 'helpers/soroban';
 
+import { ListResponse } from 'store/assetsStore/types';
+
 import {
     MoonpayCurrencies,
     MoonpayQuote,
-    GetProxyAddressResponse,
-    GetProxyMemoResponse,
-    GetMoonpayBuyQuoteParams,
-    GetMoonpayProxyFeeResponse,
-    GetProxyTrxStatusResponse,
+    ProxyAddressResponse,
+    ProxyMemoResponse,
+    MoonpayBuyQuoteParams,
+    MoonpayProxyFeeResponse,
+    ProxyTrxStatusResponse,
+    ProxyTrxListResponse,
+    ProxyTrxResponse,
 } from 'types/api-moonpay';
 
 export const getMoonpayCurrencies = (): Promise<MoonpayCurrencies> => {
@@ -29,7 +33,7 @@ export const getMoonpayBuyQuote = ({
     cryptoCode,
     baseCurrencyCode,
     baseCurrencyAmount,
-}: GetMoonpayBuyQuoteParams): Promise<MoonpayQuote> => {
+}: MoonpayBuyQuoteParams): Promise<MoonpayQuote> => {
     const env = getEnv();
     const baseUrl = API_URLS[env].moonpay;
 
@@ -40,20 +44,18 @@ export const getMoonpayBuyQuote = ({
         .then(result => result.data);
 };
 
-export const getMoonpayFederationMemo = (
-    publicKey: string,
-): Promise<GetProxyMemoResponse['memo']> => {
+export const getMoonpayFederationMemo = (publicKey: string): Promise<ProxyMemoResponse['memo']> => {
     const env = getEnv();
     const baseUrl = API_URLS[env].onRampProxy;
 
     return axios
-        .get<GetProxyMemoResponse>(`${baseUrl}/federation/?type=id&q=${publicKey}`)
+        .get<ProxyMemoResponse>(`${baseUrl}/federation/?type=id&q=${publicKey}`)
         .then(res => res.data.memo);
 };
 
 export const getMoonpayProxyAddress = (
     publicKey: string,
-): Promise<GetProxyAddressResponse['address']> => {
+): Promise<ProxyAddressResponse['address']> => {
     const env = getEnv();
     const baseUrl = API_URLS[env].onRampProxy;
     const aquaContract = getAquaContract();
@@ -69,28 +71,28 @@ export const getMoonpayProxyAddress = (
     });
 
     return axios
-        .post<GetProxyAddressResponse>(`${baseUrl}/api/pool/proxy/generate/`, body, {
+        .post<ProxyAddressResponse>(`${baseUrl}/api/pool/proxy/generate/`, body, {
             headers,
         })
         .then(res => res.data.address);
 };
 
-export const getMoonpayProxyFees = (): Promise<GetMoonpayProxyFeeResponse['operational']> => {
+export const getMoonpayProxyFees = (): Promise<MoonpayProxyFeeResponse['operational']> => {
     const env = getEnv();
     const baseUrl = API_URLS[env].onRampProxy;
 
     return axios
-        .get<GetMoonpayProxyFeeResponse>(`${baseUrl}/api/pool/proxy/fees/`)
+        .get<MoonpayProxyFeeResponse>(`${baseUrl}/api/pool/proxy/fees/`)
         .then(res => res.data.operational / 1e7);
 };
-// TODO: api types
-export const getMoonpayProxyTrx = (
-    publicKey: string,
-): Promise<GetProxyTrxStatusResponse['address']> => {
+
+// Here can be only 1 result in array for proxy address
+export const getMoonpayProxyTrx = (publicKey: string): Promise<ProxyTrxResponse[]> => {
     const env = getEnv();
+
     const baseUrl = API_URLS[env].onRampProxy;
 
     return axios
-        .get<GetProxyTrxStatusResponse>(`${baseUrl}/api/pool/operations/?proxy_wallet${publicKey}`)
-        .then(res => res.data.address);
+        .get<ProxyTrxListResponse>(`${baseUrl}/api/pool/operations/?proxy_wallet=${publicKey}`)
+        .then(res => res.data.results);
 };
