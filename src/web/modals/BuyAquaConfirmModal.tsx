@@ -34,7 +34,7 @@ import CompleteModalBackImg from 'assets/background-moonpay-complete.svg';
 import IconArrowRight from 'assets/icon-link-arrow.svg';
 
 import { Button } from 'basics/buttons';
-import { CircleLoader } from 'basics/loaders';
+import { DotsLoader } from 'basics/loaders';
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
 
 import BuyAquaCompleteModal from './BuyAquaCompleteModal';
@@ -128,10 +128,6 @@ const MoonpayDescription = styled.div`
     color: ${COLORS.descriptionText};
 `;
 
-const CompleteButton = styled(Button)`
-    margin-top: 3.2rem;
-`;
-
 interface BuyAquaCurrencyModalParams {
     quote: MoonpayQuote;
     counterAmount: number;
@@ -167,6 +163,15 @@ const BuyAquaConfirmModal = ({
     const { aquaCode } = getAquaAssetData();
     const currencyPrefix = getMoonpayCurrencyPrefix(baseCurrencyCode);
     const isConfirmDisabled = isLoading || !userAddress;
+
+    useEffect(() => {
+        if (!isPaymentReceived) {
+            return;
+        }
+
+        close();
+        ModalService.openModal(BuyAquaCompleteModal, {}, true, <ModalCompleteBackground />);
+    }, [isPaymentReceived]);
 
     useEffect(
         () => () => {
@@ -205,14 +210,9 @@ const BuyAquaConfirmModal = ({
             });
     };
 
-    const onClickComplete = () => {
-        close();
-        ModalService.openModal(BuyAquaCompleteModal, {}, true, <ModalCompleteBackground />);
-    };
-
     const listValues = [
         {
-            description: 'Payment token',
+            description: 'Transit token',
             value: `${quoteCurrencyAmount} ${quoteCurrencyCode.toUpperCase()}`,
         },
         {
@@ -266,7 +266,7 @@ const BuyAquaConfirmModal = ({
                     visible={isConfirmed && !isPaymentReceived}
                 />
 
-                {!isConfirmed ? (
+                {!isConfirmed && (
                     <>
                         <AquaBlock>
                             <AquaLogo />
@@ -299,20 +299,16 @@ const BuyAquaConfirmModal = ({
                             disabled={isConfirmDisabled}
                             onClick={onClickConfirm}
                         >
-                            {isLoading ? <CircleLoader /> : 'Confirm order'}
+                            {isLoading ? (
+                                <>
+                                    Loading payment provider app
+                                    <DotsLoader />
+                                </>
+                            ) : (
+                                'Confirm order'
+                            )}
                         </Button>
                     </>
-                ) : (
-                    <CompleteButton
-                        isBig
-                        fullWidth
-                        disabled={!isPaymentReceived}
-                        onClick={onClickComplete}
-                    >
-                        {isPaymentReceived
-                            ? 'Complete purchase'
-                            : 'Waiting for payment from moonpay'}
-                    </CompleteButton>
                 )}
             </StyledModalDescription>
         </Container>
