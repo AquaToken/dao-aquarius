@@ -212,7 +212,7 @@ const BuyAquaConfirmModal = ({
 
     const listValues = [
         {
-            description: 'Transit token',
+            description: 'Transit token amount',
             value: `${quoteCurrencyAmount} ${quoteCurrencyCode.toUpperCase()}`,
         },
         {
