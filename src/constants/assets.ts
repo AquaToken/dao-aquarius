@@ -9,8 +9,12 @@ const AQUA_ISSUER_TESTNET = 'GAHPYWLK6YRN7CVYZOO4H3VDRZ7PVF5UJGLZCSPAEIKJE2XSWF5
 const AQUA_ASSET_STRING = `${AQUA_CODE}:${AQUA_ISSUER}`;
 const AQUA_ASSET_STRING_TESTNET = `${AQUA_CODE_TESTNET}:${AQUA_ISSUER_TESTNET}`;
 
-export const USDC_CODE = 'USDC';
-export const USDC_ISSUER = 'GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN';
+const USDC_CODE = 'USDC';
+const USDC_CODE_TESTNET = 'USDC';
+const USDC_ISSUER = 'GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN';
+const USDC_ISSUER_TESTNET = 'GAHPYWLK6YRN7CVYZOO4H3VDRZ7PVF5UJGLZCSPAEIKJE2XSWF5LAGER';
+const USDC_ASSET_STRING = `${USDC_CODE}:${USDC_ISSUER}`;
+const USDC_ASSET_STRING_TESTNET = `${USDC_CODE_TESTNET}:${USDC_ISSUER_TESTNET}`;
 
 export const ASSETS_ENV_DATA: AssetsEnvData = {
     [ENV_PRODUCTION]: {
@@ -19,6 +23,11 @@ export const ASSETS_ENV_DATA: AssetsEnvData = {
             aquaIssuer: AQUA_ISSUER,
             aquaAssetString: AQUA_ASSET_STRING,
         },
+        usdc: {
+            usdcCode: USDC_CODE,
+            usdcIssuer: USDC_ISSUER,
+            usdcAssetString: USDC_ASSET_STRING,
+        },
     },
     [ENV_TESTNET]: {
         aqua: {
@@ -26,12 +35,18 @@ export const ASSETS_ENV_DATA: AssetsEnvData = {
             aquaIssuer: AQUA_ISSUER_TESTNET,
             aquaAssetString: AQUA_ASSET_STRING_TESTNET,
         },
+
+        usdc: {
+            usdcCode: USDC_CODE_TESTNET,
+            usdcIssuer: USDC_ISSUER_TESTNET,
+            usdcAssetString: USDC_ASSET_STRING_TESTNET,
+        },
     },
 };
 
 export const TESTNET_ASSETS = new Map([
     [
-        'USDC:GAHPYWLK6YRN7CVYZOO4H3VDRZ7PVF5UJGLZCSPAEIKJE2XSWF5LAGER',
+        USDC_ASSET_STRING_TESTNET,
         {
             code: 'USDC',
             issuer: 'GAHPYWLK6YRN7CVYZOO4H3VDRZ7PVF5UJGLZCSPAEIKJE2XSWF5LAGER',
@@ -58,7 +73,7 @@ export const TESTNET_ASSETS = new Map([
         },
     ],
     [
-        'AQUA:GAHPYWLK6YRN7CVYZOO4H3VDRZ7PVF5UJGLZCSPAEIKJE2XSWF5LAGER',
+        AQUA_ASSET_STRING_TESTNET,
         {
             code: 'AQUA',
             issuer: 'GAHPYWLK6YRN7CVYZOO4H3VDRZ7PVF5UJGLZCSPAEIKJE2XSWF5LAGER',

@@ -2,9 +2,7 @@ import { Dispatch } from 'react';
 
 import { getAssetsInfo, getAssetsRequest } from 'api/assets';
 
-import { USDC_CODE, USDC_ISSUER } from 'constants/assets';
-
-import { getAquaAssetData, getAssetString } from 'helpers/assets';
+import { getAquaAssetData, getAssetString, getUsdcAssetData } from 'helpers/assets';
 
 import { StellarService } from 'services/globalServices';
 
@@ -23,6 +21,7 @@ export function getAssets() {
         dispatch({ type: ASSETS_ACTIONS.GET_ASSETS_START });
 
         const { aquaStellarAsset, aquaCode, aquaIssuer } = getAquaAssetData();
+        const { usdcStellarAsset, usdcCode, usdcIssuer } = getUsdcAssetData();
 
         getAssetsRequest()
             .then(assets => {
@@ -32,15 +31,14 @@ export function getAssets() {
                         assets: [
                             aquaStellarAsset,
                             StellarService.createLumen(),
-                            StellarService.createAsset(USDC_CODE, USDC_ISSUER),
+                            usdcStellarAsset,
                             ...assets
                                 .filter(
                                     asset =>
                                         !(
                                             (asset.code === aquaCode &&
                                                 asset.issuer === aquaIssuer) ||
-                                            (asset.code === USDC_CODE &&
-                                                asset.issuer === USDC_ISSUER)
+                                            (asset.code === usdcCode && asset.issuer === usdcIssuer)
                                         ),
                                 )
                                 .sort((a, b) => a.code.localeCompare(b.code)),

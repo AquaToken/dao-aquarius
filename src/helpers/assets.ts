@@ -32,6 +32,7 @@ export const getAssetFromString = (str: string): Asset => {
     return StellarService.createAsset(code, issuer);
 };
 
+// TODO: refactor getassetData to one function
 export const getAquaAssetData = () => {
     const env = getEnv();
     const data = ASSETS_ENV_DATA[env].aqua;
@@ -40,5 +41,16 @@ export const getAquaAssetData = () => {
         ...data,
         aquaStellarAsset: StellarService.createAsset(data.aquaCode, data.aquaIssuer),
         aquaContract: getAquaContract(),
+    };
+};
+
+export const getUsdcAssetData = () => {
+    const env = getEnv();
+    const data = ASSETS_ENV_DATA[env].usdc;
+    console.log(data);
+    return {
+        ...data,
+        usdcStellarAsset: StellarService.createAsset(data.usdcCode, data.usdcIssuer),
+        usdcContract: getAquaContract(),
     };
 };

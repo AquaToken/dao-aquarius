@@ -8,8 +8,15 @@ type AquaAssetData = {
     aquaAssetString: string;
 };
 
+type UsdcAssetData = {
+    usdcCode: string;
+    usdcIssuer: string;
+    usdcAssetString: string;
+};
+
 export type AssetsEnvData = {
     [key in Environment]: {
         aqua: AquaAssetData;
+        usdc: UsdcAssetData;
     };
 };

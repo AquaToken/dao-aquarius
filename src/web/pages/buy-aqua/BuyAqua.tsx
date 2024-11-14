@@ -4,20 +4,18 @@ import styled from 'styled-components';
 import { findSwapPath } from 'api/amm';
 import { getMoonpayBuyQuote, getMoonpayCurrencies, getMoonpayProxyFees } from 'api/moonpay';
 
-import { DEFAULT_BUY_CRYPTO_CODE, DEFAULT_BUY_CRYPTO_CODE_TEST } from 'constants/moonpay';
-
 import { getAquaAssetData } from 'helpers/assets';
 import { getIsTestnetEnv } from 'helpers/env';
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
-import { getMoonpayCurrencyPrefix } from 'helpers/moonpay';
-import { getAquaContract, getXlmContract } from 'helpers/soroban';
+import { getDefaultProxyCrypto, getMoonpayCurrencyPrefix } from 'helpers/moonpay';
+import { getAquaContract, getUsdcContract, getXlmContract } from 'helpers/soroban';
 
 import { useDebounce } from 'hooks/useDebounce';
 
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { ModalService, SorobanService, ToastService } from 'services/globalServices';
+import { ModalService, ToastService } from 'services/globalServices';
 
 import { MoonpayCurrencies, MoonpayCurrency, MoonpayQuote } from 'types/api-moonpay';
 
@@ -146,13 +144,10 @@ const BuyAqua = (): JSX.Element => {
 
     const hasTrustline = account?.getAssetBalance(aquaStellarAsset) !== null;
 
-    // TODO: Change for USDC FOR PRODUCTION
     const baseContract = getAquaContract();
-    const counterContract = getXlmContract();
+    const counterContract = getIsTestnetEnv() ? getXlmContract() : getUsdcContract();
 
-    const isTestnet = getIsTestnetEnv();
-
-    const counterCurrencyCode = isTestnet ? DEFAULT_BUY_CRYPTO_CODE_TEST : DEFAULT_BUY_CRYPTO_CODE;
+    const counterCurrencyCode = getDefaultProxyCrypto();
 
     const currencyPrefix = getMoonpayCurrencyPrefix(currentCurrency?.code);
     const amountInputValue = !baseAmount ? '' : `${currencyPrefix}${baseAmount}`;
