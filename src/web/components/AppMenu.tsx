@@ -36,6 +36,7 @@ const MenuBlock = styled.div`
     width: 100%;
     top: 100%;
     right: 0;
+    min-width: 29.5rem;
     background-color: ${COLORS.white};
     box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
     cursor: auto;
