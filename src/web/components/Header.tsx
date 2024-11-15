@@ -2,18 +2,12 @@ import * as React from 'react';
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 
-import useAuthStore from 'store/authStore/useAuthStore';
-
-import { ModalService } from 'services/globalServices';
-
 import AquaLogo from 'assets/aqua-logo.svg';
-import IconProfile from 'assets/icon-profile.svg';
 
 import AccountBlock from './AccountBlock';
 
 import { MainRoutes } from '../../routes';
 import { commonMaxWidth, respondDown } from '../mixins';
-import ChooseLoginMethodModal from '../modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS, Z_INDEX } from '../styles';
 
 const HeaderBlock = styled.header`
@@ -111,6 +105,7 @@ export const HeaderNavLink = styled(NavLink)<{ $disabled?: boolean }>`
     ${respondDown(Breakpoints.lg)`
         font-size: 1.4rem;
         line-height: 2rem;
+        margin-right: 1rem;
     `}
 `;
 
@@ -125,7 +120,7 @@ export const NavLinksDivider = styled.div`
     `}
 
     ${respondDown(Breakpoints.lg)`
-        margin-right: 2rem;
+        margin-right: 1rem;
         height: 2rem;
     `}
 
@@ -136,6 +131,31 @@ export const NavLinksDivider = styled.div`
          width: 20rem;
          margin: 2.4rem 0;
          border-top: 0.1rem solid ${COLORS.gray};
+    `}
+`;
+
+export const HeaderNavLinkWithCount = styled(HeaderNavLink)<{ count: number }>`
+    ${({ count }) =>
+        Boolean(count) &&
+        `
+            position: relative;
+            
+            &::before {
+                content: attr(count);
+                position: absolute;
+                left: 100%;
+                bottom: 1.2rem;
+                text-transform: uppercase;
+                height: 1.5rem;
+                padding: 0 0.5rem;
+                border-radius: 0.4rem;
+                background: ${COLORS.purple};
+                color: ${COLORS.white};
+                font-weight: 700;
+                font-size: 0.8rem;
+                line-height: 1.6rem;
+                white-space: nowrap;
+            }
     `}
 `;
 
@@ -198,85 +218,18 @@ const RightBlock = styled.div`
     align-items: center;
 `;
 
-const MyAquarius = styled(NavLink)`
-    display: flex;
-    align-items: center;
-    padding: 0 1.6rem;
-    height: 4.8rem;
-    background-color: ${COLORS.lightGray};
-    border-radius: 0.6rem;
-    cursor: pointer;
-    font-size: 1.6rem;
-    line-height: 2.4rem;
-    color: ${COLORS.titleText};
-    text-decoration: none;
+const Header = ({ children }: { children?: React.ReactNode }): React.ReactNode => (
+    <HeaderBlock>
+        <MainLink to={MainRoutes.main}>
+            <Aqua />
+        </MainLink>
 
-    div::after {
-        content: attr(title);
-        visibility: hidden;
-        overflow: hidden;
-        user-select: none;
-        pointer-events: none;
-        font-weight: 700;
-        height: 0;
-        display: block;
-    }
+        <HeaderNavLinks>{children}</HeaderNavLinks>
 
-    svg {
-        margin-right: 0.8rem;
-    }
-
-    &:hover {
-        color: ${COLORS.purple};
-    }
-
-    ${respondDown(Breakpoints.xl)`
-        width: 4.8rem;
-        div {
-            display: none;
-        }
-        svg {
-            margin-right: 0;
-        }
-    `}
-`;
-
-const Header = ({ children }: { children?: React.ReactNode }): React.ReactNode => {
-    const { isLogged } = useAuthStore();
-
-    const onMyAquariusClick = (e: React.MouseEvent) => {
-        if (!isLogged) {
-            e.preventDefault();
-            e.stopPropagation();
-            e.nativeEvent.stopImmediatePropagation();
-
-            return ModalService.openModal(ChooseLoginMethodModal, {
-                redirectURL: MainRoutes.account,
-            });
-        }
-    };
-
-    return (
-        <HeaderBlock>
-            <MainLink to={MainRoutes.main}>
-                <Aqua />
-            </MainLink>
-
-            <HeaderNavLinks>{children}</HeaderNavLinks>
-
-            <RightBlock>
-                <MyAquarius
-                    onClick={onMyAquariusClick}
-                    to={MainRoutes.account}
-                    activeStyle={{ fontWeight: 700 }}
-                >
-                    <IconProfile />
-                    <div title="My Aquarius">My Aquarius</div>
-                </MyAquarius>
-                <AccountBlock navLinks={children} />
-            </RightBlock>
-        </HeaderBlock>
-    );
-};
+        <RightBlock>
+            <AccountBlock navLinks={children} />
+        </RightBlock>
+    </HeaderBlock>
+);
 
 export default Header;
