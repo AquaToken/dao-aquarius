@@ -134,7 +134,10 @@ const Footer = (): React.ReactNode => (
                 The project is unaffiliated with the Stellar Development Foundation.
             </div>
             <div>
-                For exchanges: <a href="mailto:listings@aqua.network">listings@aqua.network</a>
+                For exchanges:{' '}
+                <a href="mailto:listings@aqua.network" target="_blank" rel="noreferrer">
+                    listings@aqua.network
+                </a>
                 <br />© {new Date().getFullYear()} aqua.network
             </div>
         </CopyrightLine>
