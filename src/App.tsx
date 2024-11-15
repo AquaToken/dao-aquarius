@@ -21,11 +21,12 @@ import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import ErrorBoundary from 'components/ErrorBoundary';
 import Footer from 'components/Footer';
-import Header, { HeaderNavLink, NavLinksDivider } from 'components/Header';
+import Header, { HeaderNavLink, HeaderNavLinkWithCount, NavLinksDivider } from 'components/Header';
 import ModalContainer from 'components/ModalContainer';
 import NotFoundPage from 'components/NotFoundPage';
 import ToastContainer from 'components/ToastContainer';
 
+import { getActiveProposalsCount } from 'pages/governance/api/api';
 import Governance from 'pages/governance/Governance';
 
 import useGlobalSubscriptions from './hooks/useGlobalSubscriptions';
@@ -69,6 +70,8 @@ const TooltipStyled = styled(Tooltip)`
 
 const App = () => {
     const [wcLoginChecked, setWcLoginChecked] = useState(false);
+    const [activeProposalsCount, setActiveProposalsCount] = useState(0);
+
     useGlobalSubscriptions();
 
     const { getAssets, assets, processNewAssets, assetsInfo, clearAssets } = useAssetsStore();
@@ -76,6 +79,12 @@ const App = () => {
 
     const { isLogged, account, redirectURL, disableRedirect, callback, removeAuthCallback } =
         useAuthStore();
+
+    useEffect(() => {
+        getActiveProposalsCount().then(res => {
+            setActiveProposalsCount(res);
+        });
+    }, []);
 
     useEffect(() => {
         const assetUpdateTimestamp = localStorage.getItem(UPDATE_ASSETS_DATE);
@@ -248,6 +257,19 @@ const App = () => {
                         >
                             Bribes
                         </HeaderNavLink>
+
+                        <NavLinksDivider />
+
+                        <HeaderNavLinkWithCount
+                            to={MainRoutes.governance}
+                            activeStyle={{
+                                fontWeight: 700,
+                            }}
+                            title="DAO"
+                            count={activeProposalsCount}
+                        >
+                            DAO
+                        </HeaderNavLinkWithCount>
 
                         <NavLinksDivider />
 
