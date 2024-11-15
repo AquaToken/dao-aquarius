@@ -12,7 +12,6 @@ import { getAquaContract, getUsdcContract, getXlmContract } from 'helpers/soroba
 
 import { useDebounce } from 'hooks/useDebounce';
 
-import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService, ToastService } from 'services/globalServices';
@@ -128,7 +127,7 @@ const AmountInput = styled(BlankInput)`
     }
 `;
 const BuyAqua = (): JSX.Element => {
-    const { isLogged, account, login } = useAuthStore();
+    const { isLogged, account } = useAuthStore();
     const [availableCurrencies, setAvailableCurrencies] = useState<MoonpayCurrencies>(null);
     const [currentCurrency, setCurrentCurrency] = useState(null);
     const [baseAmount, setBaseAmount] = useState('');
@@ -175,11 +174,6 @@ const BuyAqua = (): JSX.Element => {
     };
 
     useEffect(() => {
-        // SorobanService.loginWithSecret(
-        //     'SCJBBHJWYWJSBDILEDVXEM4OFRDQJLAYVGYBPRAWTYTCAGU5CIZT65Y3',
-        // ).then(pubKey => {
-        //     login(pubKey, LoginTypes.secret);
-        // });
         getMoonpayProxyFees()
             .then(fee => {
                 setProxyFee(fee);

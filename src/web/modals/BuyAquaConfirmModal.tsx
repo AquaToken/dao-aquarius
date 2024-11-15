@@ -64,7 +64,7 @@ const CenteredWrapper = styled.div`
 const ListWrapper = styled.div`
     ${flexColumn};
     margin-top: 3.2rem;
-    margin-bottom: 4.8rem;
+    margin-bottom: 3.2rem;
 `;
 
 const ListItem = styled.div`
@@ -82,8 +82,10 @@ const TitleText = styled.div`
 
 const StyledModalDescription = styled(ModalDescription)`
     ${customScroll};
+    margin-bottom: 0;
+
     ${respondUp(Breakpoints.md)`
-       max-height: 70vh;
+       max-height: 80vh;
     `};
 `;
 
@@ -121,11 +123,24 @@ const StyledIconArrowRight = styled(IconArrowRight)`
     height: 100%;
 `;
 
-const MoonpayDescription = styled.div`
+const HeaderDescription = styled.div`
     font-size: 1.6rem;
     line-height: 2.8rem;
     margin-bottom: 4rem;
-    color: ${COLORS.descriptionText};
+    color: ${COLORS.grayText};
+`;
+
+const EmojiBlock = styled.div`
+    font-size: 2.4rem;
+    margin-right: 1.6rem;
+`;
+
+const FooterDescription = styled.div`
+    display: flex;
+    font-size: 1.6rem;
+    line-height: 2.4rem;
+    margin-top: 1.6rem;
+    color: ${COLORS.grayText};
 `;
 
 interface BuyAquaCurrencyModalParams {
@@ -244,16 +259,16 @@ const BuyAquaConfirmModal = ({
             <ModalTitle>{isConfirmed ? 'Purchase with onramp provider' : 'Get AQUA'}</ModalTitle>
             <StyledModalDescription>
                 {isConfirmed && (
-                    <MoonpayDescription>
-                        Aquarius uses Moonpay to on-ramp {quoteCurrencyCode.toUpperCase()} via
-                        credit & debit cards that is then automatically converted to {aquaCode}{' '}
-                        token
-                    </MoonpayDescription>
+                    <HeaderDescription>
+                        You will be redirected to Moonpay to buy transit token to a dedicated
+                        Aquarius address. Then Aquarius will seamlessly swap the transit token into{' '}
+                        {aquaCode} and send it to your wallet.
+                    </HeaderDescription>
                 )}
 
                 <MoonPayBuyWidget
                     theme="light"
-                    style={{ margin: '0', width: '100%', height: '470px' }}
+                    style={{ margin: '0', width: '100%', height: '510px' }}
                     variant="embedded"
                     walletAddress={proxyAddress}
                     walletAddressTag={proxyFederation}
@@ -293,7 +308,6 @@ const BuyAquaConfirmModal = ({
                                 </ListItem>
                             ))}
                         </ListWrapper>
-
                         <Button
                             isBig
                             fullWidth
@@ -309,6 +323,14 @@ const BuyAquaConfirmModal = ({
                                 'Confirm order'
                             )}
                         </Button>
+                        <FooterDescription>
+                            <EmojiBlock>☝️</EmojiBlock>
+                            <div>
+                                You will be redirected to Moonpay to buy transit token to a
+                                dedicated Aquarius address. Then Aquarius will seamlessly swap the
+                                transit token into {aquaCode} and send it to your wallet.
+                            </div>
+                        </FooterDescription>
                     </>
                 )}
             </StyledModalDescription>
