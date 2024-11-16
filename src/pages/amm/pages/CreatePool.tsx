@@ -14,13 +14,10 @@ import useAuthStore from 'store/authStore/useAuthStore';
 import { PoolProcessed } from 'types/amm';
 import { Transaction } from 'types/stellar';
 
-import { ModalService, SorobanService, ToastService } from 'services/globalServices';
+import { SorobanService, ToastService } from 'services/globalServices';
 import { CONTRACT_STATUS, POOL_TYPE } from 'services/soroban.service';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 import { flexRowSpaceBetween, respondDown } from 'web/mixins';
-import MainNetWarningModal, {
-    SHOW_PURPOSE_ALIAS_MAIN_NET,
-} from 'web/modals/alerts/MainNetWarningModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import ArrowLeft from 'assets/icon-arrow-left.svg';
@@ -443,19 +440,6 @@ const CreatePool = () => {
         setStableFee(roundedValue);
     };
 
-    const createPoolWithWarning = () => {
-        const showPurpose = JSON.parse(localStorage.getItem(SHOW_PURPOSE_ALIAS_MAIN_NET) || 'true');
-        if (showPurpose) {
-            ModalService.openModal(MainNetWarningModal, {}, false).then(({ isConfirmed }) => {
-                if (isConfirmed) {
-                    createPool();
-                }
-            });
-            return;
-        }
-        createPool();
-    };
-
     if (!createInfo) {
         return <PageLoader />;
     }
@@ -690,7 +674,7 @@ const CreatePool = () => {
                             <Button
                                 isBig
                                 fullWidth
-                                onClick={() => createPoolWithWarning()}
+                                onClick={() => createPool()}
                                 pending={pending}
                                 disabled={
                                     !agreeWithFee ||

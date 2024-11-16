@@ -21,9 +21,6 @@ import {
 } from 'services/globalServices';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 import { customScroll, flexRowSpaceBetween, respondDown } from 'web/mixins';
-import MainNetWarningModal, {
-    SHOW_PURPOSE_ALIAS_MAIN_NET,
-} from 'web/modals/alerts/MainNetWarningModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Arrow from 'assets/icon-arrow-right-long.svg';
@@ -334,19 +331,6 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
             });
     };
 
-    const submitWithWarning = () => {
-        const showPurpose = JSON.parse(localStorage.getItem(SHOW_PURPOSE_ALIAS_MAIN_NET) || 'true');
-        if (showPurpose) {
-            ModalService.openModal(MainNetWarningModal, {}).then(({ isConfirmed }) => {
-                if (isConfirmed) {
-                    onSubmit();
-                }
-            });
-            return;
-        }
-        onSubmit();
-    };
-
     const onChangeInput = (asset: AssetType, value: string) => {
         if (Number.isNaN(Number(value))) {
             return;
@@ -569,7 +553,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
 
                 <Button
                     isBig
-                    onClick={() => submitWithWarning()}
+                    onClick={() => onSubmit()}
                     pending={pending}
                     disabled={!hasAllAmounts}
                 >
