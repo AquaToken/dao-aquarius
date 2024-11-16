@@ -14,9 +14,6 @@ import { Asset } from 'types/stellar';
 import { useDebounce } from 'hooks/useDebounce';
 import { ModalService, SorobanService, ToastService } from 'services/globalServices';
 import { respondDown } from 'web/mixins';
-import MainNetWarningModal, {
-    SHOW_PURPOSE_ALIAS_MAIN_NET,
-} from 'web/modals/alerts/MainNetWarningModal';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -154,18 +151,6 @@ const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
             }
         });
     };
-    const submitWithWarning = () => {
-        const showPurpose = JSON.parse(localStorage.getItem(SHOW_PURPOSE_ALIAS_MAIN_NET) || 'true');
-        if (showPurpose) {
-            ModalService.openModal(MainNetWarningModal, {}, false).then(({ isConfirmed }) => {
-                if (isConfirmed) {
-                    swapAssets();
-                }
-            });
-            return;
-        }
-        swapAssets();
-    };
 
     const onAmountChange = value => {
         if (Number.isNaN(Number(value))) {
@@ -255,7 +240,7 @@ const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
                     (account && account.getAssetBalance(counter) === null) ||
                     (account && account.getAssetBalance(base) === null)
                 }
-                onClick={() => submitWithWarning()}
+                onClick={() => swapAssets()}
             >
                 SWAP ASSETS
             </StyledButton>
