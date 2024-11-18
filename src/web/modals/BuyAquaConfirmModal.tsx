@@ -126,7 +126,7 @@ const StyledIconArrowRight = styled(IconArrowRight)`
 const HeaderDescription = styled.div`
     font-size: 1.6rem;
     line-height: 2.8rem;
-    margin-bottom: 2.4rem;
+    margin-bottom: 1.6rem;
     color: ${COLORS.grayText};
 `;
 
@@ -260,15 +260,14 @@ const BuyAquaConfirmModal = ({
             <StyledModalDescription>
                 {isConfirmed && (
                     <HeaderDescription>
-                        You will be redirected to Moonpay to buy transit token to a dedicated
-                        Aquarius address. Then Aquarius will seamlessly swap the transit token into{' '}
-                        {aquaCode} and send it to your wallet.
+                        You will buy transit token to an Aquarius address. Then we'll seamlessly
+                        swap into {aquaCode} and send it to your wallet.
                     </HeaderDescription>
                 )}
 
                 <MoonPayBuyWidget
                     theme="light"
-                    style={{ margin: '0', width: '100%', height: '540px' }}
+                    style={{ margin: '0', width: '100%', height: '550px', borderRadius: '0px' }}
                     variant="embedded"
                     walletAddress={proxyAddress}
                     walletAddressTag={proxyFederation}
@@ -326,9 +325,8 @@ const BuyAquaConfirmModal = ({
                         <FooterDescription>
                             <EmojiBlock>☝️</EmojiBlock>
                             <div>
-                                You will be redirected to Moonpay to buy transit token to a
-                                dedicated Aquarius address. Then Aquarius will seamlessly swap the
-                                transit token into {aquaCode} and send it to your wallet.
+                                You will buy transit token to an Aquarius address. Then we'll
+                                seamlessly swap into {aquaCode} and send it to your wallet.
                             </div>
                         </FooterDescription>
                     </>
