@@ -85,7 +85,7 @@ const StyledModalDescription = styled(ModalDescription)`
     margin-bottom: 0;
 
     ${respondUp(Breakpoints.md)`
-       max-height: 80vh;
+       max-height: 90vh;
     `};
 `;
 
@@ -126,7 +126,7 @@ const StyledIconArrowRight = styled(IconArrowRight)`
 const HeaderDescription = styled.div`
     font-size: 1.6rem;
     line-height: 2.8rem;
-    margin-bottom: 4rem;
+    margin-bottom: 2.4rem;
     color: ${COLORS.grayText};
 `;
 
@@ -268,7 +268,7 @@ const BuyAquaConfirmModal = ({
 
                 <MoonPayBuyWidget
                     theme="light"
-                    style={{ margin: '0', width: '100%', height: '510px' }}
+                    style={{ margin: '0', width: '100%', height: '540px' }}
                     variant="embedded"
                     walletAddress={proxyAddress}
                     walletAddressTag={proxyFederation}

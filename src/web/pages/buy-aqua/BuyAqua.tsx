@@ -4,6 +4,8 @@ import styled from 'styled-components';
 import { findSwapPath } from 'api/amm';
 import { getMoonpayBuyQuote, getMoonpayCurrencies, getMoonpayProxyFees } from 'api/moonpay';
 
+import { DEFAULT_FIAT_CURRENCY } from 'constants/moonpay';
+
 import { getAquaAssetData } from 'helpers/assets';
 import { getIsTestnetEnv } from 'helpers/env';
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
@@ -185,7 +187,7 @@ const BuyAqua = (): JSX.Element => {
         getMoonpayCurrencies()
             .then(currencies => {
                 setAvailableCurrencies(currencies.filter(currency => currency.type === 'fiat'));
-                const usd = currencies.find(currency => currency.code === 'usd');
+                const usd = currencies.find(currency => currency.code === DEFAULT_FIAT_CURRENCY);
                 setCurrentCurrency(usd);
                 onChangeInput(usd.minBuyAmount, usd);
             })

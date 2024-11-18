@@ -49,3 +49,5 @@ export const MOONPAY_CURRENCY_PREFIXES = {
     vnd: '₫',
     zar: 'R',
 };
+
+export const DEFAULT_FIAT_CURRENCY = 'usd';
