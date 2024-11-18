@@ -1,8 +1,5 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-
-import { ModalProps } from 'types/modal';
 
 import ArrowRight from 'assets/icon-arrow-right.svg';
 import LobstrLogo from 'assets/lobstr-name-logo.svg';
@@ -14,7 +11,6 @@ import ExternalLink from 'basics/ExternalLink';
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
 import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
 
-import { MainRoutes } from '../../routes';
 import { flexRowSpaceBetween, respondDown } from '../mixins';
 import { Breakpoints, COLORS } from '../styles';
 
@@ -145,7 +141,7 @@ const Scrolled = styled.div`
     }
 `;
 
-const GetAquaModal = ({ close }: ModalProps<never>): React.ReactNode => (
+const GetAquaModal = (): React.ReactNode => (
     <Scrolled>
         <Container>
             <ModalTitle>Get AQUA token</ModalTitle>
@@ -175,16 +171,6 @@ const GetAquaModal = ({ close }: ModalProps<never>): React.ReactNode => (
                 <Text>
                     Make sure the home domain is &quot;aqua.network&quot; when you add AQUA.
                 </Text>
-            </InfoRow>
-            <InfoRow>
-                <Text>
-                    Airdrop #2 snapshot was taken on January 15th, 2022 00:00 UTC. See if your
-                    account is eligible to claim some AQUA.
-                </Text>
-
-                <ExternalLink asDiv onClick={() => close()}>
-                    <Link to={MainRoutes.airdrop2}>Learn more</Link>
-                </ExternalLink>
             </InfoRow>
         </Container>
         <TrustedPlatformsBlock>
