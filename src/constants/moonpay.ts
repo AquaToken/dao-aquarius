@@ -1,7 +1,7 @@
 import { ENV_PRODUCTION, ENV_TESTNET } from './env';
 
 export const MOONPAY_API_KEY_TEST = 'pk_test_6lvVjasw2rT5fpJcd63Zv43EtggBmE6';
-export const MOONPAY_API_KEY = 'pk_live_vey5ThAFsfLfZKBBTtyk2KjIxh4omHHV';
+export const MOONPAY_API_KEY = 'pk_live_PdWkjyrK3KbQalM3nIoyVYekD3hlsIY';
 
 export const MOONPAY_ENV_KEYS = {
     [ENV_PRODUCTION]: MOONPAY_API_KEY,
