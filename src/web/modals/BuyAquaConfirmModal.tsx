@@ -2,7 +2,7 @@ import { MoonPayBuyWidget } from '@moonpay/moonpay-react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { getMoonpayFederationMemo, getMoonpayProxyAddress, getMoonpayProxyTrx } from 'api/moonpay';
+import { getMoonpayProxyMemo, getMoonpayProxyAddress, getMoonpayProxyTrx } from 'api/moonpay';
 
 import { INTERVAL_IDS, INTERVAL_TIMES } from 'constants/intervals';
 
@@ -158,7 +158,7 @@ const BuyAquaConfirmModal = ({
 
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [proxyFederation, setProxyFederation] = useState('');
+    const [proxyMemo, setProxyMemo] = useState('');
     const [proxyAddress, setProxyAddress] = useState('');
     const [proxyTrx, setProxyTrx] = useState<ProxyTrxResponse>(null);
 
@@ -197,9 +197,9 @@ const BuyAquaConfirmModal = ({
 
     const onClickConfirm = () => {
         setIsLoading(true);
-        getMoonpayFederationMemo(userAddress)
-            .then(federation => {
-                setProxyFederation(federation);
+        getMoonpayProxyMemo(userAddress)
+            .then(memo => {
+                setProxyMemo(memo);
             })
             .then(() => getMoonpayProxyAddress(userAddress))
             .then(address => {
@@ -253,7 +253,7 @@ const BuyAquaConfirmModal = ({
             value: `${proxyFee} ${quoteCurrencyCode.toUpperCase()}`,
         },
     ];
-
+    console.log(proxyAddress, proxyMemo);
     return (
         <Container>
             <ModalTitle>{isConfirmed ? 'Purchase with onramp provider' : 'Get AQUA'}</ModalTitle>
@@ -270,7 +270,7 @@ const BuyAquaConfirmModal = ({
                     style={{ margin: '0', width: '100%', height: '550px', borderRadius: '0px' }}
                     variant="embedded"
                     walletAddress={proxyAddress}
-                    walletAddressTag={proxyFederation}
+                    walletAddressTag={proxyMemo}
                     baseCurrencyCode={baseCurrencyCode}
                     baseCurrencyAmount={baseCurrencyAmount.toString()}
                     defaultCurrencyCode={counterCurrencyCode}

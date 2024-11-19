@@ -41,7 +41,7 @@ export const getMoonpayBuyQuote = ({
         .then(result => result.data);
 };
 
-export const getMoonpayFederationMemo = (publicKey: string): Promise<ProxyMemoResponse['memo']> => {
+export const getMoonpayProxyMemo = (publicKey: string): Promise<ProxyMemoResponse['memo']> => {
     const env = getEnv();
     const baseUrl = API_URLS[env].onRampProxy;
 
