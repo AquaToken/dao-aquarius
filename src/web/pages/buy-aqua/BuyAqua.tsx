@@ -145,8 +145,8 @@ const BuyAqua = (): JSX.Element => {
 
     const hasTrustline = account?.getAssetBalance(aquaStellarAsset) !== null;
 
-    const baseContract = getAquaContract();
-    const counterContract = getIsTestnetEnv() ? getXlmContract() : getUsdcContract();
+    const baseContract = getIsTestnetEnv() ? getXlmContract() : getUsdcContract();
+    const counterContract = getAquaContract();
 
     const counterCurrencyCode = getDefaultProxyCrypto();
 

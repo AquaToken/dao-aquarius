@@ -6,8 +6,6 @@ import { getEnv } from 'helpers/env';
 import { getMoonpayKeyByEnv } from 'helpers/moonpay';
 import { getAquaContract } from 'helpers/soroban';
 
-import { ListResponse } from 'store/assetsStore/types';
-
 import {
     MoonpayCurrencies,
     MoonpayQuote,
@@ -15,7 +13,6 @@ import {
     ProxyMemoResponse,
     MoonpayBuyQuoteParams,
     MoonpayProxyFeeResponse,
-    ProxyTrxStatusResponse,
     ProxyTrxListResponse,
     ProxyTrxResponse,
 } from 'types/api-moonpay';

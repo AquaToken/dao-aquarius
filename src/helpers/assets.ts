@@ -5,7 +5,7 @@ import { StellarService } from 'services/globalServices';
 import { Asset } from 'types/stellar';
 
 import { getEnv } from './env';
-import { getAquaContract } from './soroban';
+import { getAquaContract, getUsdcContract } from './soroban';
 
 export const getAssetString = (asset: Asset): string => {
     if (asset.isNative()) {
@@ -47,10 +47,10 @@ export const getAquaAssetData = () => {
 export const getUsdcAssetData = () => {
     const env = getEnv();
     const data = ASSETS_ENV_DATA[env].usdc;
-    console.log(data);
+
     return {
         ...data,
         usdcStellarAsset: StellarService.createAsset(data.usdcCode, data.usdcIssuer),
-        usdcContract: getAquaContract(),
+        usdcContract: getUsdcContract(),
     };
 };
