@@ -6,15 +6,10 @@ import styled, { createGlobalStyle } from 'styled-components';
 
 import { LoginTypes } from 'store/authStore/types';
 
-import { ModalService, StellarService, WalletConnectService } from 'services/globalServices';
+import { StellarService, WalletConnectService } from 'services/globalServices';
 import AppGlobalStyle from 'web/AppGlobalStyles';
 import { respondDown } from 'web/mixins';
-import LiveOnSorobanAlert, {
-    LIVE_ON_SOROBAN_SHOWED_ALIAS,
-} from 'web/modals/alerts/LiveOnSorobanAlert';
 import { Breakpoints, COLORS } from 'web/styles';
-
-import LiveOnSorobanImage from 'assets/live-on-soroban.svg';
 
 import PageLoader from 'basics/loaders/PageLoader';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
@@ -51,10 +46,6 @@ const SwapPage = lazy(() => import('pages/swap/Swap'));
 
 const UPDATE_ASSETS_DATE = 'update assets timestamp';
 const UPDATE_PERIOD = 24 * 60 * 60 * 1000;
-
-const BgStyled = styled(LiveOnSorobanImage)`
-    object-position: center center;
-`;
 
 const TooltipStyled = styled(Tooltip)`
     margin-right: 2rem;
@@ -187,16 +178,6 @@ const App = () => {
             document.body.style.overflowX = 'unset';
         }
     }, []);
-
-    useEffect(() => {
-        if (!wcLoginChecked) {
-            return;
-        }
-        const isShowed = localStorage.getItem(LIVE_ON_SOROBAN_SHOWED_ALIAS) || false;
-        if (!isShowed) {
-            ModalService.openModal(LiveOnSorobanAlert, {}, false, <BgStyled />);
-        }
-    }, [wcLoginChecked]);
 
     if (!isAssetsUpdated || !wcLoginChecked) {
         return <PageLoader />;
