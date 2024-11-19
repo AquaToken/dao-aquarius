@@ -2,11 +2,18 @@ import { MoonPayBuyWidget } from '@moonpay/moonpay-react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { getMoonpayProxyMemo, getMoonpayProxyAddress, getMoonpayProxyTrx } from 'api/moonpay';
+import {
+    getMoonpayProxyMemo,
+    getMoonpayProxyAddress,
+    getMoonpayProxyTrx,
+    getMoonpayUrlSignature,
+} from 'api/moonpay';
 
 import { INTERVAL_IDS, INTERVAL_TIMES } from 'constants/intervals';
+import { AQUA_NETWORK_URL } from 'constants/urls';
 
 import { getAquaAssetData } from 'helpers/assets';
+import { getIsTestnetEnv } from 'helpers/env';
 import { formatBalance } from 'helpers/format-number';
 import Intervals from 'helpers/intervals';
 import { getMoonpayCurrencyPrefix } from 'helpers/moonpay';
@@ -195,6 +202,11 @@ const BuyAquaConfirmModal = ({
         [],
     );
 
+    const handleGetSignature = (url: string): Promise<string> => {
+        const signature = getMoonpayUrlSignature(url);
+        return signature;
+    };
+
     const onClickConfirm = () => {
         setIsLoading(true);
         getMoonpayProxyMemo(userAddress)
@@ -253,7 +265,7 @@ const BuyAquaConfirmModal = ({
             value: `${proxyFee} ${quoteCurrencyCode.toUpperCase()}`,
         },
     ];
-    console.log(proxyAddress, proxyMemo);
+
     return (
         <Container>
             <ModalTitle>{isConfirmed ? 'Purchase with onramp provider' : 'Get AQUA'}</ModalTitle>
@@ -267,17 +279,17 @@ const BuyAquaConfirmModal = ({
 
                 <MoonPayBuyWidget
                     theme="light"
-                    style={{ margin: '0', width: '100%', height: '550px', borderRadius: '0px' }}
+                    style={{ margin: '0', width: '100%', height: '570px', borderRadius: '0px' }}
                     variant="embedded"
                     walletAddress={proxyAddress}
                     walletAddressTag={proxyMemo}
                     baseCurrencyCode={baseCurrencyCode}
                     baseCurrencyAmount={baseCurrencyAmount.toString()}
                     defaultCurrencyCode={counterCurrencyCode}
-                    // Maybe onUrlSignatureRequested is needed for security or any other reasons??
-                    // onUrlSignatureRequested={handleGetSignature}
                     // Can be used for some statistics or analytics tracking
                     // onLogin={async () => console.log('Customer logged in!')}
+                    // Used for wallet address passed to the widget
+                    onUrlSignatureRequested={getIsTestnetEnv() ? undefined : handleGetSignature}
                     visible={isConfirmed && !isPaymentReceived}
                 />
 

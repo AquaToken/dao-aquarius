@@ -15,6 +15,7 @@ import {
     MoonpayProxyFeeResponse,
     ProxyTrxListResponse,
     ProxyTrxResponse,
+    MoonpaySignatureResponse,
 } from 'types/api-moonpay';
 
 export const getMoonpayCurrencies = (): Promise<MoonpayCurrencies> => {
@@ -92,4 +93,30 @@ export const getMoonpayProxyTrx = (publicKey: string): Promise<ProxyTrxResponse[
     return axios
         .get<ProxyTrxListResponse>(`${baseUrl}/api/pool/operations/?proxy_wallet=${publicKey}`)
         .then(res => res.data.results);
+};
+
+export const getMoonpayUrlSignature = (
+    url: string,
+): Promise<MoonpaySignatureResponse['signature']> => {
+    const env = getEnv();
+    const baseUrl = API_URLS[env].onRampProxy;
+
+    const headers = {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+    };
+
+    const body = JSON.stringify({
+        url,
+    });
+
+    return axios
+        .post<MoonpaySignatureResponse>(
+            `${baseUrl}/api/pool/integrations/moonpay/sign-url/`,
+            body,
+            {
+                headers,
+            },
+        )
+        .then(res => res.data.signature);
 };

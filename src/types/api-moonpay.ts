@@ -129,6 +129,10 @@ export type ProxyAddressResponse = {
     address: string;
 };
 
+export type MoonpaySignatureResponse = {
+    signature: string;
+};
+
 export type ProxyTrxResponse = {
     address: string;
     operation_status: 'payment' | 'request' | 'completed';
