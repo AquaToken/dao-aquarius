@@ -10,7 +10,6 @@ import {
 } from 'api/moonpay';
 
 import { INTERVAL_IDS, INTERVAL_TIMES } from 'constants/intervals';
-import { AQUA_NETWORK_URL } from 'constants/urls';
 
 import { getAquaAssetData } from 'helpers/assets';
 import { getIsTestnetEnv } from 'helpers/env';
@@ -203,7 +202,13 @@ const BuyAquaConfirmModal = ({
     );
 
     const handleGetSignature = (url: string): Promise<string> => {
-        const signature = getMoonpayUrlSignature(url);
+        const signature = getMoonpayUrlSignature(url)
+            .then(signature => signature)
+            .catch(e => {
+                ToastService.showErrorToast(e.message ?? e.toString());
+                return '';
+            });
+
         return signature;
     };
 
@@ -277,21 +282,23 @@ const BuyAquaConfirmModal = ({
                     </HeaderDescription>
                 )}
 
-                <MoonPayBuyWidget
-                    theme="light"
-                    style={{ margin: '0', width: '100%', height: '570px', borderRadius: '0px' }}
-                    variant="embedded"
-                    walletAddress={proxyAddress}
-                    walletAddressTag={proxyMemo}
-                    baseCurrencyCode={baseCurrencyCode}
-                    baseCurrencyAmount={baseCurrencyAmount.toString()}
-                    defaultCurrencyCode={counterCurrencyCode}
-                    // Can be used for some statistics or analytics tracking
-                    // onLogin={async () => console.log('Customer logged in!')}
-                    // Used for wallet address passed to the widget
-                    onUrlSignatureRequested={getIsTestnetEnv() ? undefined : handleGetSignature}
-                    visible={isConfirmed && !isPaymentReceived}
-                />
+                {proxyAddress && !isPaymentReceived && (
+                    <MoonPayBuyWidget
+                        theme="light"
+                        style={{ margin: '0', width: '100%', height: '570px', borderRadius: '0px' }}
+                        variant="embedded"
+                        walletAddress={proxyAddress}
+                        walletAddressTag={proxyMemo}
+                        baseCurrencyCode={baseCurrencyCode}
+                        baseCurrencyAmount={baseCurrencyAmount.toString()}
+                        defaultCurrencyCode={counterCurrencyCode}
+                        // Can be used for some statistics or analytics tracking
+                        // onLogin={async () => console.log('Customer logged in!')}
+                        // Used for wallet address passed to the widget
+                        onUrlSignatureRequested={getIsTestnetEnv() ? undefined : handleGetSignature}
+                        visible={isConfirmed && !isPaymentReceived}
+                    />
+                )}
 
                 {!isConfirmed && (
                     <>
