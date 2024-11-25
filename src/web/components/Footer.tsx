@@ -7,6 +7,7 @@ import { commonMaxWidth, flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import AquaLogo from 'assets/aqua-logo.svg';
+import Dune from 'assets/DuneLogoCircle.svg';
 import Docs from 'assets/icon-docs.svg';
 
 const FooterBlock = styled.footer`
@@ -114,6 +115,11 @@ const DocsLink = styled.a`
     ${linkStyles};
 `;
 
+const DuneLogo = styled(Dune)`
+    height: 1.6rem;
+    width: 1.6rem;
+`;
+
 const Footer = (): React.ReactNode => (
     <FooterBlock>
         <HelpfulLine>
@@ -121,6 +127,10 @@ const Footer = (): React.ReactNode => (
                 <Aqua />
             </a>
             <Links>
+                <DocsLink href="https://dune.com/fergmolina/aquarius" target="_blank">
+                    <DuneLogo />
+                    Dune dashboard
+                </DocsLink>
                 <DocsLink href="https://docs.aqua.network/" target="_blank">
                     <Docs />
                     Aquarius docs
