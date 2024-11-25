@@ -127,7 +127,7 @@ const Footer = (): React.ReactNode => (
                 <Aqua />
             </a>
             <Links>
-                <DocsLink href="https://docs.aqua.network/" target="_blank">
+                <DocsLink href="https://dune.com/fergmolina/aquarius" target="_blank">
                     <DuneLogo />
                     Dune dashboard
                 </DocsLink>
