@@ -9,7 +9,6 @@ import { formatBalance } from 'helpers/format-number';
 
 import { PoolStatistics, PoolVolume24h } from 'types/amm';
 
-import { StellarService } from 'services/globalServices';
 import { COLORS } from 'web/styles';
 
 import { transformDate } from '../LiquidityChart/LiquidityChart';
@@ -59,10 +58,10 @@ const VolumeChart = ({
             const copy = [...data].map(item => ({
                 ...item,
                 date: transformDate(item.date_str),
-                volume: Number(item.volume) / 1e7,
+                volume_usd: Number(item.volume_usd) / 1e7,
             }));
 
-            volume24h.volume = (Number(volume24h.volume) / 1e7).toString();
+            volume24h.volume_usd = (Number(volume24h.volume_usd) / 1e7).toString();
 
             return [copy, volume24h];
         }
@@ -77,7 +76,7 @@ const VolumeChart = ({
         const dateMap = new Map();
 
         while (!isAfter(date, Date.now())) {
-            dateMap.set(format(date, 'yyyy-MM-dd'), { date, volume: 0 });
+            dateMap.set(format(date, 'yyyy-MM-dd'), { date, volume_usd: 0 });
             date = addDays(date, 1);
         }
 
@@ -88,7 +87,7 @@ const VolumeChart = ({
                     subDays(convertLocalDateToUTCIgnoringTimezone(new Date()), 1),
                 ),
             )
-            .reduce((acc, item) => acc + Number(item.volume) / 1e7, 0);
+            .reduce((acc, item) => acc + Number(item.volume_usd) / 1e7, 0);
 
         return [
             [
@@ -102,13 +101,14 @@ const VolumeChart = ({
 
                         acc.set(itemDate, {
                             date: acc.get(itemDate)?.date || itemDate,
-                            volume: +acc.get(itemDate)?.volume + Number(item.volume) / 1e7,
+                            volume_usd:
+                                +acc.get(itemDate)?.volume_usd + Number(item.volume_usd) / 1e7,
                         });
                         return acc;
                     }, dateMap)
                     .values(),
             ],
-            { volume: last24Volume },
+            { volume_usd: last24Volume },
         ];
     }, [data, isGlobalStat]);
 
@@ -124,7 +124,7 @@ const VolumeChart = ({
     const y = d3
         .scaleLinear()
         .range([height - marginBottom, marginTop + height * 0.4])
-        .domain([0, d3.max(daily, d => d.volume) || 1]);
+        .domain([0, d3.max(daily, d => d.volume_usd) || 1]);
 
     useEffect(
         () =>
@@ -190,12 +190,7 @@ const VolumeChart = ({
                         : `Last 24h volume:`}
                 </GrayText>
                 <LiquidityValue x="16" y="63">
-                    $
-                    {formatBalance(
-                        (selectedItem || last24)?.volume * StellarService.priceLumenUsd,
-                        true,
-                        true,
-                    )}
+                    ${formatBalance((selectedItem || last24)?.volume_usd, true, true)}
                 </LiquidityValue>
             </g>
 
@@ -207,8 +202,8 @@ const VolumeChart = ({
                     key={i}
                     x={x(item.date)}
                     width={x.bandwidth()}
-                    y={y(item.volume)}
-                    height={height - marginBottom - y(item.volume)}
+                    y={y(item.volume_usd)}
+                    height={height - marginBottom - y(item.volume_usd)}
                 />
             ))}
 
