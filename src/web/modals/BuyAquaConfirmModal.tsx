@@ -296,7 +296,6 @@ const BuyAquaConfirmModal = ({
                         // onLogin={async () => console.log('Customer logged in!')}
                         // Used for wallet address passed to the widget
                         onUrlSignatureRequested={getIsTestnetEnv() ? undefined : handleGetSignature}
-                        visible={isConfirmed && !isPaymentReceived}
                     />
                 )}
 
