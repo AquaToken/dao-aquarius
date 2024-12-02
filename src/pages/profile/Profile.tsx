@@ -1,10 +1,10 @@
-import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { StellarService } from 'services/globalServices';
+
 import { commonMaxWidth, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -116,11 +116,7 @@ const Profile = () => {
     }, []);
 
     useEffect(() => {
-        Promise.all([StellarService.getAquaPrice(), StellarService.getLumenUsdPrice()]).then(
-            ([AQUA_XLM, XLM_USD]) => {
-                setAquaUsdPrice(AQUA_XLM * XLM_USD);
-            },
-        );
+        StellarService.getAquaUsdPrice().then(setAquaUsdPrice);
     }, []);
 
     return (

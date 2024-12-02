@@ -17,11 +17,12 @@ import { getPercentValue } from 'helpers/number';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
+import { StellarService } from 'services/globalServices';
+import { AQUA_CODE, AQUA_ISSUER } from 'services/stellar.service';
+
 import { IceStatistics } from 'types/api-ice-locker';
 import { ExpertAssetData } from 'types/api-stellar-expert';
 
-import { StellarService } from 'services/globalServices';
-import { AQUA_CODE, AQUA_ISSUER } from 'services/stellar.service';
 import { respondDown, respondUp } from 'web/mixins';
 import { Breakpoints, COLORS, FONT_FAMILY } from 'web/styles';
 
@@ -264,6 +265,7 @@ const About = (): React.ReactElement => {
     const [totalRewards, setTotalRewards] = useState<number>(null);
     const [aquaInSorobanAmm, setAquaInSorobanAmm] = useState<number>(null);
     const [aquaCirculatingSupply, setAquaCirculatingSupply] = useState<number>(null);
+    const [aquaUsdPrice, setAquaUsdPrice] = useState<number>(0);
 
     const aquaTokenRef = useRef(null);
 
@@ -272,6 +274,10 @@ const About = (): React.ReactElement => {
             aquaTokenRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
     }, [location, aquaTokenRef]);
+
+    useEffect(() => {
+        StellarService.getAquaUsdPrice().then(setAquaUsdPrice);
+    }, []);
 
     useEffect(() => {
         getAssetDetails(StellarService.createAsset(AQUA_CODE, AQUA_ISSUER))
@@ -328,13 +334,7 @@ const About = (): React.ReactElement => {
                                         <Asset asset={aquaAsset} isBig />
                                         <AquaPriceBlock>
                                             <AquaPrice>
-                                                $
-                                                {formatBalance(
-                                                    expertData?.price7d?.[
-                                                        expertData?.price7d.length - 1
-                                                    ]?.[1] ?? 0,
-                                                    true,
-                                                )}
+                                                ${formatBalance(aquaUsdPrice, true)}
                                             </AquaPrice>
                                             <Changes24 expertData={expertData} />
                                         </AquaPriceBlock>
