@@ -114,9 +114,7 @@ const SwapConfirmModal = ({
             '0',
         ).then(res => {
             SorobanService.simulateTx(res).then(
-                ({
-                    minResourceFee,
-                }: StellarSdk.SorobanRpc.Api.SimulateTransactionSuccessResponse) => {
+                ({ minResourceFee }: StellarSdk.rpc.Api.SimulateTransactionSuccessResponse) => {
                     setTxFee(minResourceFee);
                 },
             );
