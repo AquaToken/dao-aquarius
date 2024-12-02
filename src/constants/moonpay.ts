@@ -8,7 +8,13 @@ export const MOONPAY_ENV_KEYS = {
     [ENV_TESTNET]: MOONPAY_API_KEY_TEST,
 };
 
-export const MOONPAY_DEFAULT_PROXY_CODE = 'xlm';
+export const MOONPAY_XLM_CODE = 'xlm';
+export const MOONPAY_USDC_CODE = 'usdc_xlm';
+
+export const MOONPAY_PROXY_CRYPTO_CODES = {
+    [ENV_PRODUCTION]: MOONPAY_USDC_CODE,
+    [ENV_TESTNET]: MOONPAY_XLM_CODE,
+};
 
 export const MOONPAY_CURRENCY_PREFIXES = {
     aud: '$',

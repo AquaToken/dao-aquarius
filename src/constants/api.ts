@@ -12,7 +12,7 @@ export const API_ASSETS_INFO = 'https://assets.aqua.network/api/v1/assets/';
 export const API_URLS = {
     [ENV_PRODUCTION]: {
         moonpay: 'https://api.moonpay.com/v3',
-        onRampProxy: 'https://soroban-on-ramp.aqua.network',
+        onRampProxy: 'https://soroban-on-ramp.coindisco.com',
         horizon: 'https://horizon.stellar.org',
         soroban: 'https://soroban-rpc.aqua.network/',
         ammAqua: 'https://amm-api.aqua.network',

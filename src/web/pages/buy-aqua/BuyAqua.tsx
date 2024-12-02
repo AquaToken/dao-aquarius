@@ -4,12 +4,13 @@ import styled from 'styled-components';
 import { findSwapPath } from 'api/amm';
 import { getMoonpayBuyQuote, getMoonpayCurrencies, getMoonpayProxyFees } from 'api/moonpay';
 
-import { DEFAULT_FIAT_CURRENCY, MOONPAY_DEFAULT_PROXY_CODE } from 'constants/moonpay';
+import { DEFAULT_FIAT_CURRENCY } from 'constants/moonpay';
 
 import { getAquaAssetData } from 'helpers/assets';
+import { getIsTestnetEnv } from 'helpers/env';
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
-import { getMoonpayCurrencyPrefix } from 'helpers/moonpay';
-import { getAquaContract, getXlmContract } from 'helpers/soroban';
+import { getMoonpayCurrencyPrefix, getMoonpayProxyCrypto } from 'helpers/moonpay';
+import { getAquaContract, getUsdcContract, getXlmContract } from 'helpers/soroban';
 
 import { useDebounce } from 'hooks/useDebounce';
 
@@ -144,8 +145,9 @@ const BuyAqua = (): JSX.Element => {
 
     const hasTrustline = account?.getAssetBalance(aquaStellarAsset) !== null;
 
-    const baseContract = getXlmContract();
+    const baseContract = getIsTestnetEnv() ? getXlmContract() : getUsdcContract();
     const counterContract = getAquaContract();
+    const proxyCryptoCode = getMoonpayProxyCrypto();
 
     const currencyPrefix = getMoonpayCurrencyPrefix(currentCurrency?.code);
     const amountInputValue = !baseAmount ? '' : `${currencyPrefix}${baseAmount}`;
@@ -204,7 +206,7 @@ const BuyAqua = (): JSX.Element => {
         setIsLoadingRates(true);
 
         getMoonpayBuyQuote({
-            cryptoCode: MOONPAY_DEFAULT_PROXY_CODE,
+            cryptoCode: proxyCryptoCode,
             baseCurrencyCode: currentCurrency.code,
             baseCurrencyAmount: baseAmount,
         })
@@ -247,7 +249,7 @@ const BuyAqua = (): JSX.Element => {
         ModalService.openModal(BuyAquaConfirmModal, {
             quote,
             counterAmount,
-            counterCurrencyCode: MOONPAY_DEFAULT_PROXY_CODE,
+            counterCurrencyCode: proxyCryptoCode,
             proxyFee,
         });
     };

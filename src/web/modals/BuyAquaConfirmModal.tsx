@@ -10,6 +10,7 @@ import {
 } from 'api/moonpay';
 
 import { INTERVAL_IDS, INTERVAL_TIMES } from 'constants/intervals';
+import { MOONPAY_USDC_CODE } from 'constants/moonpay';
 
 import { getAquaAssetData } from 'helpers/assets';
 import { getIsTestnetEnv } from 'helpers/env';
@@ -183,6 +184,8 @@ const BuyAquaConfirmModal = ({
 
     const { aquaCode } = getAquaAssetData();
     const currencyPrefix = getMoonpayCurrencyPrefix(baseCurrencyCode);
+    // Hardcoded for now, as we only support USDC
+    const quoteUiCode = quoteCurrencyCode === MOONPAY_USDC_CODE ? 'usdc' : quoteCurrencyCode;
     const isConfirmDisabled = isLoading || !userAddress;
 
     useEffect(() => {
@@ -245,14 +248,14 @@ const BuyAquaConfirmModal = ({
     const listValues = [
         {
             description: 'Transit token amount',
-            value: `${quoteCurrencyAmount} ${quoteCurrencyCode.toUpperCase()}`,
+            value: `${quoteCurrencyAmount} ${quoteUiCode.toUpperCase()}`,
         },
         {
             description: 'Payment route',
             value: (
                 <CenteredWrapper>
                     {baseCurrencyCode.toUpperCase()} <StyledIconArrowRight />
-                    {quoteCurrencyCode.toUpperCase()} <StyledIconArrowRight />
+                    {quoteUiCode.toUpperCase()} <StyledIconArrowRight />
                     {aquaCode}
                 </CenteredWrapper>
             ),
@@ -267,7 +270,7 @@ const BuyAquaConfirmModal = ({
         },
         {
             description: 'Aquarius fee',
-            value: `${proxyFee} ${quoteCurrencyCode.toUpperCase()}`,
+            value: `${proxyFee} ${quoteUiCode.toUpperCase()}`,
         },
     ];
 
