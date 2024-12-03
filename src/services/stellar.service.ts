@@ -336,11 +336,17 @@ export default class StellarServiceClass {
             });
     }
 
-    getAquaPrice() {
+    getAquaPrice(): Promise<number> {
         return this.server
             .orderbook(this.createAsset(AQUA_CODE, AQUA_ISSUER), this.createLumen())
             .call()
             .then(res => (+res.asks[0].price + +res.bids[0].price) / 2);
+    }
+
+    getAquaUsdPrice(): Promise<number> {
+        return Promise.all([this.getAquaPrice(), this.getLumenUsdPrice()]).then(
+            ([AQUA_XLM, XLM_USD]) => AQUA_XLM * XLM_USD,
+        );
     }
 
     getLocks(publicKey: string) {
