@@ -20,7 +20,7 @@ import { getMoonpayCurrencyPrefix } from 'helpers/moonpay';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { ModalService, ToastService } from 'services/globalServices';
+import { ToastService } from 'services/globalServices';
 
 import { MoonpayQuote, ProxyTrxResponse } from 'types/api-moonpay';
 import { ModalProps } from 'types/modal';
@@ -36,23 +36,11 @@ import {
 import { Breakpoints, COLORS } from 'web/styles';
 
 import AquaLogoSmall from 'assets/aqua-logo-small.svg';
-// TODO: same icon as assets/icon-arrow-right-long, add colors
-import CompleteModalBackImg from 'assets/background-moonpay-complete.svg';
 import IconArrowRight from 'assets/icon-link-arrow.svg';
 
 import { Button } from 'basics/buttons';
 import { DotsLoader } from 'basics/loaders';
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
-
-import BuyAquaCompleteModal from './BuyAquaCompleteModal';
-
-const ModalCompleteBackground = styled(CompleteModalBackImg)`
-    object-position: center center;
-
-    ${respondDown(Breakpoints.md)`
-        width: 100%;
-    `}
-`;
 
 const Container = styled.div`
     width: 52.8rem;
@@ -194,7 +182,10 @@ const BuyAquaConfirmModal = ({
         }
 
         close();
-        ModalService.openModal(BuyAquaCompleteModal, {}, true, <ModalCompleteBackground />);
+
+        ToastService.showSuccessToast(
+            `Your AQUA tokens are on its way, you will receive them to your wallet shortly`,
+        );
     }, [isPaymentReceived]);
 
     useEffect(
@@ -295,6 +286,8 @@ const BuyAquaConfirmModal = ({
                         baseCurrencyCode={baseCurrencyCode}
                         baseCurrencyAmount={baseCurrencyAmount.toString()}
                         defaultCurrencyCode={counterCurrencyCode}
+                        // currencyCode if provided, skips confirm screen and goes directly to payment lol
+                        currencyCode={counterCurrencyCode}
                         // Can be used for some statistics or analytics tracking
                         // onLogin={async () => console.log('Customer logged in!')}
                         // Used for wallet address passed to the widget
