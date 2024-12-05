@@ -121,7 +121,7 @@ const StyledIconArrowRight = styled(IconArrowRight)`
 const HeaderDescription = styled.div`
     font-size: 1.6rem;
     line-height: 2.8rem;
-    margin-bottom: 1.6rem;
+    margin-bottom: 1rem;
     color: ${COLORS.grayText};
 `;
 
@@ -136,6 +136,15 @@ const FooterDescription = styled.div`
     line-height: 2.4rem;
     margin-top: 1.6rem;
     color: ${COLORS.grayText};
+`;
+
+const CoinDiscolaimer = styled.div`
+    margin-top: 1.6rem;
+    display: flex;
+    justify-content: end;
+    color: ${COLORS.purple};
+    font-size: 1.4rem;
+    font-weight: 600;
 `;
 
 interface BuyAquaCurrencyModalParams {
@@ -167,14 +176,17 @@ const BuyAquaConfirmModal = ({
         quoteCurrencyCode,
         quoteCurrencyAmount,
         networkFeeAmount,
+        extraFeeAmount,
         feeAmount,
     } = quote;
 
     const { aquaCode } = getAquaAssetData();
     const currencyPrefix = getMoonpayCurrencyPrefix(baseCurrencyCode);
     // Hardcoded for now, as we only support USDC
-    const quoteUiCode = quoteCurrencyCode === MOONPAY_USDC_CODE ? 'usdc' : quoteCurrencyCode;
+    const quoteUiCode =
+        quoteCurrencyCode === MOONPAY_USDC_CODE ? 'USDC' : quoteCurrencyCode.toUpperCase();
     const isConfirmDisabled = isLoading || !userAddress;
+    const totalFee = feeAmount + extraFeeAmount + networkFeeAmount;
 
     useEffect(() => {
         if (!isPaymentReceived) {
@@ -239,47 +251,43 @@ const BuyAquaConfirmModal = ({
     const listValues = [
         {
             description: 'Transit token amount',
-            value: `${quoteCurrencyAmount} ${quoteUiCode.toUpperCase()}`,
+            value: `${quoteCurrencyAmount} ${quoteUiCode}`,
         },
         {
             description: 'Payment route',
             value: (
                 <CenteredWrapper>
                     {baseCurrencyCode.toUpperCase()} <StyledIconArrowRight />
-                    {quoteUiCode.toUpperCase()} <StyledIconArrowRight />
+                    {quoteUiCode} <StyledIconArrowRight />
                     {aquaCode}
                 </CenteredWrapper>
             ),
         },
         {
-            description: 'Network fee',
-            value: `${networkFeeAmount} ${baseCurrencyCode.toUpperCase()}`,
+            description: 'Payment provider fee',
+            value: `${totalFee} ${baseCurrencyCode.toUpperCase()}`,
         },
         {
-            description: 'Card processing fee',
-            value: `${feeAmount} ${baseCurrencyCode.toUpperCase()}`,
-        },
-        {
-            description: 'Aquarius fee',
-            value: `${proxyFee} ${quoteUiCode.toUpperCase()}`,
+            description: 'Operational costs',
+            value: `${proxyFee} ${quoteUiCode}`,
         },
     ];
 
     return (
         <Container>
-            <ModalTitle>{isConfirmed ? 'Purchase with onramp provider' : 'Get AQUA'}</ModalTitle>
+            <ModalTitle>Buy {aquaCode} with Galaxy Ramp</ModalTitle>
             <StyledModalDescription>
                 {isConfirmed && (
                     <HeaderDescription>
-                        You will buy transit token to an Aquarius address. Then we'll seamlessly
-                        swap into {aquaCode} and send it to your wallet.
+                        You purchase {quoteUiCode} as a transit token, which will automatically be{' '}
+                        converted into {aquaCode} using Stellar smart contracts.
                     </HeaderDescription>
                 )}
 
                 {proxyAddress && !isPaymentReceived && (
                     <MoonPayBuyWidget
                         theme="light"
-                        style={{ margin: '0', width: '100%', height: '570px', borderRadius: '0px' }}
+                        style={{ margin: '0', width: '100%', height: '560px', borderRadius: '0px' }}
                         variant="embedded"
                         walletAddress={proxyAddress}
                         walletAddressTag={proxyMemo}
@@ -339,13 +347,17 @@ const BuyAquaConfirmModal = ({
                         <FooterDescription>
                             <EmojiBlock>☝️</EmojiBlock>
                             <div>
-                                You will buy transit token to an Aquarius address. Then we'll
-                                seamlessly swap into {aquaCode} and send it to your wallet.
+                                You will be redirected to Moonpay to purchase {quoteUiCode} as a
+                                transit token. This token will then be automatically converted into{' '}
+                                {aquaCode} using Stellar smart contracts.
                             </div>
                         </FooterDescription>
                     </>
                 )}
             </StyledModalDescription>
+            <CoinDiscolaimer>
+                Powered by Galaxy Ramp, a Coindisco Ltd. product. © 2024
+            </CoinDiscolaimer>
         </Container>
     );
 };
