@@ -22,7 +22,7 @@ export default class ModalServiceClass {
             | FunctionComponent<unknown>
             | ComponentClass<unknown>
             | ((value: unknown) => React.ReactNode),
-        params: unknown,
+        params: unknown = {},
         hideClose = false,
         backgroundImage = null,
         disableClickOutside = false,

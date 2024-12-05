@@ -1,33 +1,35 @@
-import * as React from 'react';
 import { lazy } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 
-import { getAssetString } from 'helpers/assets';
+import { MainRoutes } from 'constants/routes';
+
+import { getAquaAssetData, getAssetString } from 'helpers/assets';
 
 import { StellarService } from 'services/globalServices';
-import { AQUA_CODE, AQUA_ISSUER } from 'services/stellar.service';
-
-import { MainRoutes } from '../../routes';
 
 const SwapPageLazy = lazy(() => import('./pages/SwapPage'));
 
-const Swap = () => (
-    <Switch>
-        <Route exact path={`${MainRoutes.swap}/:source/:destination/`}>
-            <SwapPageLazy />
-        </Route>
-        <Route
-            component={() => (
-                <Redirect
-                    to={{
-                        pathname: `${MainRoutes.swap}/${getAssetString(
-                            StellarService.createLumen(),
-                        )}/${getAssetString(StellarService.createAsset(AQUA_CODE, AQUA_ISSUER))}`,
-                    }}
-                />
-            )}
-        ></Route>
-    </Switch>
-);
+const Swap = () => {
+    const { aquaAssetString } = getAquaAssetData();
+
+    return (
+        <Switch>
+            <Route exact path={`${MainRoutes.swap}/:source/:destination/`}>
+                <SwapPageLazy />
+            </Route>
+            <Route
+                component={() => (
+                    <Redirect
+                        to={{
+                            pathname: `${MainRoutes.swap}/${getAssetString(
+                                StellarService.createLumen(),
+                            )}/${aquaAssetString}`,
+                        }}
+                    />
+                )}
+            ></Route>
+        </Switch>
+    );
+};
 
 export default Swap;

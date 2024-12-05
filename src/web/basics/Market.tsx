@@ -3,6 +3,8 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { AmmRoutes, MarketRoutes } from 'constants/routes';
+
 import { getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 
@@ -31,8 +33,6 @@ import {
     RewardPoolLabel,
     StablePoolLabel,
 } from 'basics/Labels';
-
-import { AmmRoutes, MarketRoutes } from '../../routes';
 
 const Wrapper = styled.div<{
     $verticalDirections?: boolean;

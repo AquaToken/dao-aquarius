@@ -3,6 +3,8 @@ import { forwardRef, RefObject } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { GovernanceRoutes } from 'constants/routes';
+
 import { formatBalance } from 'helpers/format-number';
 
 import useAuthStore from 'store/authStore/useAuthStore';
@@ -16,7 +18,6 @@ import AquaLogo from 'assets/aqua-logo-small.svg';
 import Button from 'basics/buttons/Button';
 import ExternalLink from 'basics/ExternalLink';
 
-import { GovernanceRoutes } from '../../../../../routes';
 import { APPROVED_PROPOSAL_REWARD } from '../../../pages/GovernanceMainPage';
 
 const Container = styled.div`

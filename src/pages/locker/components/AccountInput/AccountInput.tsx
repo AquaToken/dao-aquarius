@@ -3,18 +3,19 @@ import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { LockerRoutes } from 'constants/routes';
+
 import useAuthStore from 'store/authStore/useAuthStore';
+
+import { StellarService, ToastService } from 'services/globalServices';
 
 import { ModalProps } from 'types/modal';
 
-import { StellarService, ToastService } from 'services/globalServices';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
-
-import { LockerRoutes } from '../../../../routes';
 
 const Container = styled.form<{ $isModal: boolean }>`
     display: flex;

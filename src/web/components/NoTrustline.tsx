@@ -12,13 +12,13 @@ import useAuthStore from 'store/authStore/useAuthStore';
 import { StellarService, ToastService } from 'services/globalServices';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Plus from 'assets/icon-plus.svg';
 
 import Asset from 'basics/Asset';
-import Button from 'basics/buttons/Button';
-
-import { respondDown } from '../mixins';
-import { Breakpoints, COLORS } from '../styles';
+import { Button } from 'basics/buttons';
 
 const TrustlineBlock = styled.div`
     display: flex;
@@ -105,6 +105,7 @@ const NoTrustline = ({ asset, onlyButton }: NoTrustlineProps): React.ReactNode =
             </Button>
         );
     }
+
     return (
         <TrustlineBlock>
             <TrustlineBlockTitle>

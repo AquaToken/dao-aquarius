@@ -5,6 +5,8 @@ import styled from 'styled-components';
 
 import { getUserPools } from 'api/amm';
 
+import { MainRoutes } from 'constants/routes';
+
 import { formatBalance } from 'helpers/format-number';
 
 import useAuthStore from 'store/authStore/useAuthStore';
@@ -26,7 +28,6 @@ import PageLoader from 'basics/loaders/PageLoader';
 import { ExternalLinkStyled } from 'pages/profile/AmmRewards/AmmRewards';
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
 
-import { MainRoutes } from '../../../../routes';
 import PoolsList from '../PoolsList/PoolsList';
 
 const PoolsListBlock = styled.div<{ $onlyList: boolean }>`

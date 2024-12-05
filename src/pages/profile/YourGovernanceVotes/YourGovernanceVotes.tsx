@@ -1,12 +1,12 @@
-import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+
+import { GovernanceRoutes } from 'constants/routes';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import PageLoader from 'basics/loaders/PageLoader';
 
-import { GovernanceRoutes } from '../../../routes';
 import { getProposalsRequest, PROPOSAL_FILTER } from '../../governance/api/api';
 import ProposalPreview from '../../governance/components/GovernanceMainPage/ProposalPreview/ProposalPreview';
 import { Container, Header, Title } from '../AmmRewards/AmmRewards';

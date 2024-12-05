@@ -2,6 +2,8 @@ import * as React from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { BribesRoutes } from 'constants/routes';
+
 import { commonMaxWidth, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -11,7 +13,6 @@ import Plus from 'assets/icon-plus.svg';
 import Button from 'basics/buttons/Button';
 import ExternalLink from 'basics/ExternalLink';
 
-import { BribesRoutes } from '../../../routes';
 import BribesTable from '../components/BribesPage/BribesTable/BribesTable';
 import FAQ from '../components/BribesPage/FAQ/FAQ';
 

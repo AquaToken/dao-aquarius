@@ -5,6 +5,8 @@ import styled from 'styled-components';
 
 import { findSwapPath } from 'api/amm';
 
+import { MainRoutes } from 'constants/routes';
+
 import { getAssetString } from 'helpers/assets';
 
 import useAuthStore from 'store/authStore/useAuthStore';
@@ -28,7 +30,6 @@ import SwapFormHeader from './SwapFormHeader/SwapFormHeader';
 import SwapFormPrice from './SwapFormPrice/SwapFormPrice';
 import SwapFormRow from './SwapFormRow/SwapFormRow';
 
-import { MainRoutes } from '../../../../routes';
 import SwapConfirmModal from '../SwapConfirmModal/SwapConfirmModal';
 
 const Form = styled.div`

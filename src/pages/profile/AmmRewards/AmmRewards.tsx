@@ -3,12 +3,15 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { MainRoutes } from 'constants/routes';
+
 import { formatBalance } from 'helpers/format-number';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { StellarService } from 'services/globalServices';
+
 import { flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -21,7 +24,6 @@ import PageLoader from 'basics/loaders/PageLoader';
 import Market from 'basics/Market';
 import Table, { CellAlign } from 'basics/Table';
 
-import { MainRoutes } from '../../../routes';
 import { getAmmRewards } from '../api/api';
 import BoostBanner from '../BoostBanner/BoostBanner';
 import { Empty } from '../YourVotes/YourVotes';
@@ -367,8 +369,8 @@ const AmmRewards = ({ aquaUsdPrice }: AmmRewardsProps): React.ReactNode => {
 
                                                     {Boolean(boostedReward) && (
                                                         <StyledLabel
-                                                            title={`Boosted ${boostValue}x`}
-                                                            text={TOOLTIP_TEXT}
+                                                            tooltipText={`Boosted ${boostValue}x`}
+                                                            labelText={TOOLTIP_TEXT}
                                                             background={COLORS.blue}
                                                         />
                                                     )}

@@ -9,10 +9,10 @@ import {
 } from 'react';
 import styled from 'styled-components';
 
-import { ModalProps } from 'types/modal';
-
 import useAnimationEnd from 'hooks/useAnimationEnd';
 import useOnClickOutside from 'hooks/useOutsideClick';
+
+import { ModalProps } from 'types/modal';
 
 import CloseIcon from 'assets/icon-close.svg';
 

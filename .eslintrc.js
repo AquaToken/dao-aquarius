@@ -69,10 +69,19 @@ module.exports = {
                         pattern: 'helpers/**',
                         position: 'before',
                     },
-
+                    {
+                        group: 'internal',
+                        pattern: 'hooks/**',
+                        position: 'before',
+                    },
                     {
                         group: 'internal',
                         pattern: 'store/**',
+                        position: 'before',
+                    },
+                    {
+                        group: 'internal',
+                        pattern: 'services/**',
                         position: 'before',
                     },
                     {

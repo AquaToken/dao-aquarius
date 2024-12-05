@@ -1,6 +1,8 @@
 import { isConnected, getPublicKey, signTransaction } from '@lobstrco/signer-extension-api';
 import * as StellarSdk from '@stellar/stellar-sdk';
 
+import { getNetworkPassphrase } from 'helpers/env';
+
 import EventService from './event.service';
 
 export enum LobstrExtensionEvents {
@@ -24,6 +26,6 @@ export default class LobstrExtensionServiceClass {
     async signTx(tx: StellarSdk.Transaction): Promise<StellarSdk.Transaction> {
         const signedXDR = await signTransaction(tx.toEnvelope().toXDR('base64'));
 
-        return new StellarSdk.Transaction(signedXDR, StellarSdk.Networks.PUBLIC);
+        return new StellarSdk.Transaction(signedXDR, getNetworkPassphrase());
     }
 }

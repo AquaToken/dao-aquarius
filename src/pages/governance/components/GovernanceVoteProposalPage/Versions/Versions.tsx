@@ -2,6 +2,8 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { GovernanceRoutes } from 'constants/routes';
+
 import { getDateString } from 'helpers/date';
 
 import { flexAllCenter } from 'web/mixins';
@@ -9,7 +11,6 @@ import { COLORS } from 'web/styles';
 
 import ExternalLinkIcon from 'assets/icon-external-link.svg';
 
-import { GovernanceRoutes } from '../../../../../routes';
 import { Proposal } from '../../../api/types';
 
 const Container = styled.div`

@@ -1,18 +1,18 @@
-import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { getAssetFromString, getAssetString } from 'helpers/assets';
+import { MainRoutes } from 'constants/routes';
+
+import { getAquaAssetData, getAssetFromString, getAssetString } from 'helpers/assets';
 
 import { StellarService } from 'services/globalServices';
-import { AQUA_CODE, AQUA_ISSUER } from 'services/stellar.service';
+
 import { commonMaxWidth, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import PageLoader from 'basics/loaders/PageLoader';
 
-import { MainRoutes } from '../../../routes';
 import SwapForm from '../components/SwapForm/SwapForm';
 
 const Container = styled.main`
@@ -44,6 +44,7 @@ const SwapPage = () => {
 
     const params = useParams<{ source: string; destination: string }>();
     const history = useHistory();
+    const { aquaAssetString } = getAquaAssetData();
 
     useEffect(() => {
         const { source, destination } = params;
@@ -52,7 +53,7 @@ const SwapPage = () => {
             history.replace(
                 `${MainRoutes.swap}/${getAssetString(
                     StellarService.createLumen(),
-                )}/${getAssetString(StellarService.createAsset(AQUA_CODE, AQUA_ISSUER))}`,
+                )}/${aquaAssetString}`,
             );
             return;
         }

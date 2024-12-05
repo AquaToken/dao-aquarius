@@ -26,6 +26,7 @@ type AuthActions = {
     removeAuthCallback: () => ActionSimpleResult;
 };
 
+// TODO: move to hooks
 const useAuthStore = (): AuthStore & AuthActions => {
     const { state, dispatch } = useGlobalStore();
 

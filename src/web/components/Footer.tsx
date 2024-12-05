@@ -1,6 +1,7 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 
+import { MainRoutes } from 'constants/routes';
 import { AQUA_NETWORK_URL } from 'constants/urls';
 
 import { commonMaxWidth, flexAllCenter, respondDown } from 'web/mixins';
@@ -30,11 +31,11 @@ const HelpfulLine = styled.div`
     justify-content: space-between;
     width: 100%;
     align-items: center;
-    
+
     ${respondDown(Breakpoints.xs)`
         flex-direction: column;
         align-items: flex-start;
-    `}}
+    `}
 `;
 
 const CopyrightLine = styled(HelpfulLine)`

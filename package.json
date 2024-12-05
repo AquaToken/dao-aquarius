@@ -66,6 +66,7 @@
     "@ledgerhq/hw-app-str": "7.0.4",
     "@ledgerhq/hw-transport-webusb": "6.29.4",
     "@lobstrco/signer-extension-api": "^1.0.0-beta.0",
+    "@moonpay/moonpay-react": "^1.8.2",
     "@sentry/react": "^8.23.0",
     "@stellar/freighter-api": "^2.0.0",
     "@stellar/stellar-sdk": "13.0.0",

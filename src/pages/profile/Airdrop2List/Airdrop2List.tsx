@@ -1,7 +1,8 @@
-import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+
+import { MainRoutes } from 'constants/routes';
 
 import { getDateString } from 'helpers/date';
 import ErrorHandler from 'helpers/error-handler';
@@ -22,7 +23,6 @@ import Checkbox from 'basics/inputs/Checkbox';
 import PageLoader from 'basics/loaders/PageLoader';
 import Table, { CellAlign } from 'basics/Table';
 
-import { MainRoutes } from '../../../routes';
 import { ExternalLinkStyled, Header, Section, Title } from '../AmmRewards/AmmRewards';
 import { Empty } from '../YourVotes/YourVotes';
 

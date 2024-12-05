@@ -4,7 +4,10 @@ import BigNumber from 'bignumber.js';
 import binascii from 'binascii';
 import { sha256 } from 'js-sha256';
 
+import { CONTRACTS } from 'constants/soroban';
+
 import { getAssetString } from 'helpers/assets';
+import { getEnv, getNetworkPassphrase } from 'helpers/env';
 import { SorobanErrorHandler, SorobanPrepareTxErrorHandler } from 'helpers/error-handler';
 
 import RestoreContractModal from 'web/modals/RestoreContractModal';
@@ -147,7 +150,7 @@ export default class SorobanServiceClass {
         );
 
         const restoreTx = new StellarSdk.TransactionBuilder(account, { fee: fee.toString() })
-            .setNetworkPassphrase(StellarSdk.Networks.PUBLIC)
+            .setNetworkPassphrase(getNetworkPassphrase())
             .setSorobanData(
                 (
                     sim as StellarSdk.rpc.Api.SimulateTransactionRestoreResponse
@@ -171,7 +174,7 @@ export default class SorobanServiceClass {
     }
 
     getAssetContractHash(asset: Asset): string {
-        const networkId: Buffer = Buffer.from(sha256.arrayBuffer(StellarSdk.Networks.PUBLIC));
+        const networkId: Buffer = Buffer.from(sha256.arrayBuffer(getNetworkPassphrase()));
 
         const contractIdPreimage: xdr.ContractIdPreimage =
             xdr.ContractIdPreimage.contractIdPreimageFromAsset(asset.toXDRObject());
@@ -269,7 +272,7 @@ export default class SorobanServiceClass {
             .then(acc => {
                 const tx = new StellarSdk.TransactionBuilder(acc, {
                     fee: BASE_FEE,
-                    networkPassphrase: StellarSdk.Networks.PUBLIC,
+                    networkPassphrase: getNetworkPassphrase(),
                 });
 
                 tx.addOperation(
@@ -293,7 +296,7 @@ export default class SorobanServiceClass {
     //         .then(acc =>
     //             new StellarSdk.TransactionBuilder(acc, {
     //                 fee: BASE_FEE,
-    //                 networkPassphrase: StellarSdk.Networks.PUBLIC,
+    //                 networkPassphrase: getNetworkPassphrase(),
     //             })
     //                 .addOperation(StellarSdk.Operation.restoreFootprint({}))
     //                 .setSorobanData(
@@ -317,7 +320,7 @@ export default class SorobanServiceClass {
     //         .then(acc =>
     //             new StellarSdk.TransactionBuilder(acc, {
     //                 fee: BASE_FEE,
-    //                 networkPassphrase: StellarSdk.Networks.PUBLIC,
+    //                 networkPassphrase: getNetworkPassphrase(),
     //             })
     //                 .addOperation(
     //                     StellarSdk.Operation.extendFootprintTtl({
@@ -753,7 +756,7 @@ export default class SorobanServiceClass {
 
             const builtTx = new StellarSdk.TransactionBuilder(acc, {
                 fee: BASE_FEE,
-                networkPassphrase: StellarSdk.Networks.PUBLIC,
+                networkPassphrase: getNetworkPassphrase(),
             });
 
             if (args) {

@@ -22,6 +22,17 @@ export const flexRowSpaceBetween = css`
     justify-content: space-between;
 `;
 
+export const flexColumn = css`
+    display: flex;
+    flex-direction: column;
+`;
+
+export const flexColumnCenter = css`
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+`;
+
 export const customScroll = css`
     padding-right: 1rem;
     &::-webkit-scrollbar {
@@ -38,6 +49,10 @@ export const customScroll = css`
         background: ${COLORS.purple};
         border-radius: 0.25rem;
     }
+`;
+
+export const cardBoxShadow = css`
+    box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
 `;
 
 export const commonMaxWidth = css`

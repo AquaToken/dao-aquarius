@@ -1,9 +1,10 @@
-import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { getRewards, RewardsSort } from 'api/rewards';
+
+import { MarketRoutes } from 'constants/routes';
 
 import { getTimeAgoValue } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
@@ -20,8 +21,6 @@ import PageLoader from 'basics/loaders/PageLoader';
 import Market from 'basics/Market';
 import Table, { CellAlign } from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
-
-import { MarketRoutes } from '../../../../routes';
 
 const Container = styled.section`
     position: relative;
