@@ -8,6 +8,7 @@ import { AmmRoutes } from 'constants/routes';
 
 import { getAquaAssetData } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
+import { truncateString } from 'helpers/truncate-string';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
 import { useUpdateIndex } from 'hooks/useUpdateIndex';
@@ -28,6 +29,7 @@ import ArrowLeft from 'assets/icon-arrow-left.svg';
 
 import Button from 'basics/buttons/Button';
 import CircleButton from 'basics/buttons/CircleButton';
+import CopyButton from 'basics/buttons/CopyButton';
 import ExternalLink from 'basics/ExternalLink';
 import PageLoader from 'basics/loaders/PageLoader';
 import Market from 'basics/Market';
@@ -124,15 +126,16 @@ const RewardsDescription = styled.div`
 const SectionRow = styled.div`
     ${flexRowSpaceBetween};
     align-items: center;
-    color: ${COLORS.grayText};
+    color: ${COLORS.paragraphText};
     margin: 1rem 0;
     height: 2.8rem;
+    font-size: 1.6rem;
+`;
 
-    span:first-child {
-        font-size: 1.6rem;
-        line-height: 2.8rem;
-        color: ${COLORS.paragraphText};
-    }
+const SectionLabel = styled.span`
+    font-size: 1.6rem;
+    line-height: 2.8rem;
+    color: ${COLORS.grayText};
 `;
 
 const Charts = styled.div`
@@ -297,33 +300,49 @@ const PoolPage = () => {
                         )}
 
                         <SectionRow>
-                            <span>Type:</span>
+                            <SectionLabel>Type:</SectionLabel>
                             <span>{pool.pool_type === 'stable' ? 'Stable' : 'Volatile'}</span>
                         </SectionRow>
                         <SectionRow>
-                            <span>Fee:</span>
+                            <SectionLabel>Fee:</SectionLabel>
                             <span>{(Number(pool.fee) * 100).toFixed(2)}%</span>
                         </SectionRow>
                         {pool.assets.map((asset, index) => (
                             <SectionRow key={pool.tokens_addresses[index]}>
-                                <span>Total {asset.code}:</span>
+                                <SectionLabel>Total {asset.code}:</SectionLabel>
                                 <span>
                                     {formatBalance(+pool.reserves[index] / 1e7, true)} {asset.code}
                                 </span>
                             </SectionRow>
                         ))}
                         <SectionRow>
-                            <span>Total share:</span>
+                            <SectionLabel>Total share:</SectionLabel>
                             <span>{formatBalance(+pool.total_share / 1e7, true)}</span>
                         </SectionRow>
                         <SectionRow>
-                            <span>Members: </span>
+                            <SectionLabel>Members: </SectionLabel>
                             <span>{pool.membersCount}</span>
                         </SectionRow>
                         <SectionRow>
-                            <span>Daily reward: </span>
+                            <SectionLabel>Daily reward: </SectionLabel>
                             <span>
                                 {formatBalance((+pool.reward_tps / 1e7) * 60 * 60 * 24, true)} AQUA
+                            </span>
+                        </SectionRow>
+                        <SectionRow>
+                            <SectionLabel>Pool hash: </SectionLabel>
+                            <span>
+                                <CopyButton text={pool.index} isBlackText>
+                                    {truncateString(pool.index)}
+                                </CopyButton>
+                            </span>
+                        </SectionRow>
+                        <SectionRow>
+                            <SectionLabel>Pool address: </SectionLabel>
+                            <span>
+                                <CopyButton text={pool.address} isBlackText>
+                                    {truncateString(pool.address)}
+                                </CopyButton>
                             </span>
                         </SectionRow>
                     </SectionWrap>

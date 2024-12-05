@@ -420,9 +420,9 @@ export default class StellarServiceClass {
                 onmessage: res => {
                     if (
                         (res as unknown as Horizon.ServerApi.EffectRecord).type ===
-                            'claimable_balance_claimant_created' ||
+                            'claimable_balance_sponsorship_created' ||
                         (res as unknown as Horizon.ServerApi.EffectRecord).type ===
-                            'claimable_balance_claimed' ||
+                            'claimable_balance_sponsorship_removed' ||
                         (res as unknown as Horizon.ServerApi.EffectRecord).type ===
                             'claimable_balance_created'
                     ) {

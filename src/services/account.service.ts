@@ -423,12 +423,18 @@ export default class AccountService extends Horizon.AccountResponse {
     }
 
     getReservesForSwap(asset: Asset): { label: string; value: number }[] {
+        const balance = this.balances.find(
+            balance =>
+                (balance as Horizon.HorizonApi.BalanceLineAsset).asset_code == asset.code &&
+                (balance as Horizon.HorizonApi.BalanceLineAsset).asset_issuer === asset.issuer,
+        ) as Horizon.HorizonApi.BalanceLineAsset | Horizon.HorizonApi.BalanceLineNative;
+
+        if (!balance) {
+            return [];
+        }
+
         if (!asset.isNative()) {
-            const { selling_liabilities } = this.balances.find(
-                balance =>
-                    (balance as Horizon.HorizonApi.BalanceLineAsset).asset_code == asset.code &&
-                    (balance as Horizon.HorizonApi.BalanceLineAsset).asset_issuer === asset.issuer,
-            ) as Horizon.HorizonApi.BalanceLineAsset;
+            const { selling_liabilities } = balance as Horizon.HorizonApi.BalanceLineAsset;
 
             return [
                 {
@@ -438,9 +444,7 @@ export default class AccountService extends Horizon.AccountResponse {
             ];
         }
 
-        const { selling_liabilities } = this.balances.find(
-            ({ asset_type }) => asset_type === 'native',
-        ) as Horizon.HorizonApi.BalanceLineNative;
+        const { selling_liabilities } = balance as Horizon.HorizonApi.BalanceLineNative;
 
         const { entriesTrustlines, entriesLiquidityTrustlines } = this.balances.reduce(
             (acc, balance) => {

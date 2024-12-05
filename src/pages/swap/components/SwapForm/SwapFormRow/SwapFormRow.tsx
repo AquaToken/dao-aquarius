@@ -115,7 +115,7 @@ const SwapFormRow = ({
                 value={amount}
                 onChange={e => setAmount(e.target.value)}
                 label={isBase ? 'From' : 'To(estimated)'}
-                placeholder={isBase ? '' : '0.0'}
+                placeholder="0.0"
                 postfix={inputPostfix}
                 disabled={!isBase}
                 inputMode="decimal"

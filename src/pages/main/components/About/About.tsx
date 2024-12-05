@@ -237,7 +237,7 @@ const StatsTitle = styled.span`
 
 const TooltipInner = styled.span`
     width: 15rem;
-    white-space: wrap;
+    white-space: normal;
 
     ${respondDown(Breakpoints.xs)`
         width: 13rem;

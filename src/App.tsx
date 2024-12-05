@@ -2,34 +2,32 @@ import { MoonPayProvider } from '@moonpay/moonpay-react';
 import { lazy, Suspense, useEffect, useState } from 'react';
 import Title from 'react-document-title';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
-import styled, { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle } from 'styled-components';
 
 import { AmmRoutes, MainRoutes } from 'constants/routes';
 
 import { getEnv, getIsTestnetEnv, setProductionEnv } from 'helpers/env';
 import { getMoonpayKeyByEnv } from 'helpers/moonpay';
 
-import { ModalService, StellarService, WalletConnectService } from 'services/globalServices';
+import { LoginTypes } from 'store/authStore/types';
+
+import { StellarService, WalletConnectService } from 'services/globalServices';
 
 import AppGlobalStyle from 'web/AppGlobalStyles';
 import { respondDown } from 'web/mixins';
-import LiveOnSorobanAlert, {
-    LIVE_ON_SOROBAN_SHOWED_ALIAS,
-} from 'web/modals/alerts/LiveOnSorobanAlert';
 import { Breakpoints, COLORS } from 'web/styles';
-
-import LiveOnSorobanImage from 'assets/live-on-soroban.svg';
 
 import PageLoader from 'basics/loaders/PageLoader';
 
 import ErrorBoundary from 'components/ErrorBoundary';
 import Footer from 'components/Footer';
-import Header, { HeaderNavLink, NavLinksDivider } from 'components/Header';
+import Header, { HeaderNavLink, HeaderNavLinkWithCount, NavLinksDivider } from 'components/Header';
 import ModalContainer from 'components/ModalContainer';
 import NotFoundPage from 'components/NotFoundPage';
 import TestnetBanner from 'components/TestnetBanner';
 import ToastContainer from 'components/ToastContainer';
 
+import { getActiveProposalsCount } from 'pages/governance/api/api';
 import Governance from 'pages/governance/Governance';
 
 import useGlobalSubscriptions from './hooks/useGlobalSubscriptions';
@@ -56,12 +54,10 @@ const TestnetSwitcherPage = lazy(() => import('web/pages/testnet-switcher/Testne
 const UPDATE_ASSETS_DATE = 'update assets timestamp';
 const UPDATE_PERIOD = 24 * 60 * 60 * 1000;
 
-const BgStyled = styled(LiveOnSorobanImage)`
-    object-position: center center;
-`;
-
 const App = () => {
     const [wcLoginChecked, setWcLoginChecked] = useState(false);
+    const [activeProposalsCount, setActiveProposalsCount] = useState(0);
+
     useGlobalSubscriptions();
 
     const { getAssets, assets, processNewAssets, assetsInfo, clearAssets } = useAssetsStore();
@@ -69,6 +65,18 @@ const App = () => {
 
     const { isLogged, account, redirectURL, disableRedirect, callback, removeAuthCallback } =
         useAuthStore();
+
+    useEffect(() => {
+        getActiveProposalsCount().then(res => {
+            setActiveProposalsCount(res);
+        });
+    }, []);
+
+    useEffect(() => {
+        getActiveProposalsCount().then(res => {
+            setActiveProposalsCount(res);
+        });
+    }, []);
 
     useEffect(() => {
         if (!getEnv()) {
@@ -111,6 +119,19 @@ const App = () => {
 
         return () => window.removeEventListener('online', reloadIfNotLoaded);
     }, [wcLoginChecked, isAssetsUpdated]);
+
+    useEffect(() => {
+        const handler = (event: BeforeUnloadEvent) => {
+            if (account && account.authType === LoginTypes.secret) {
+                event.preventDefault();
+            }
+        };
+
+        window.addEventListener('beforeunload', handler);
+        return () => {
+            window.removeEventListener('beforeunload', handler);
+        };
+    }, [account]);
 
     useEffect(() => {
         if (assets.length) {
@@ -162,16 +183,6 @@ const App = () => {
             document.body.style.overflowX = 'unset';
         }
     }, []);
-
-    useEffect(() => {
-        if (!wcLoginChecked) {
-            return;
-        }
-        const isShowed = localStorage.getItem(LIVE_ON_SOROBAN_SHOWED_ALIAS) || false;
-        if (!isShowed) {
-            ModalService.openModal(LiveOnSorobanAlert, {}, false, <BgStyled />);
-        }
-    }, [wcLoginChecked]);
 
     if (!isAssetsUpdated || !wcLoginChecked) {
         return <PageLoader />;
@@ -233,6 +244,19 @@ const App = () => {
                         >
                             Bribes
                         </HeaderNavLink>
+
+                        <NavLinksDivider />
+
+                        <HeaderNavLinkWithCount
+                            to={MainRoutes.governance}
+                            activeStyle={{
+                                fontWeight: 700,
+                            }}
+                            title="DAO"
+                            count={activeProposalsCount}
+                        >
+                            DAO
+                        </HeaderNavLinkWithCount>
 
                         <NavLinksDivider />
 
