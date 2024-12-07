@@ -369,8 +369,8 @@ const AmmRewards = ({ aquaUsdPrice }: AmmRewardsProps): React.ReactNode => {
 
                                                     {Boolean(boostedReward) && (
                                                         <StyledLabel
-                                                            tooltipText={`Boosted ${boostValue}x`}
-                                                            labelText={TOOLTIP_TEXT}
+                                                            labelText={`Boosted ${boostValue}x`}
+                                                            tooltipText={TOOLTIP_TEXT}
                                                             background={COLORS.blue}
                                                         />
                                                     )}
