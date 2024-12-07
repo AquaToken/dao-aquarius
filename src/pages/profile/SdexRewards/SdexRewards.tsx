@@ -290,8 +290,8 @@ const SdexRewards = ({ aquaUsdPrice }: SdexRewardsProps): React.ReactNode => {
                                                     </span>
                                                     {Boolean(boost) && (
                                                         <StyledLabel
-                                                            tooltipText={`Boosted ${boostValue}x`}
-                                                            labelText={TOOLTIP_TEXT}
+                                                            labelText={`Boosted ${boostValue}x`}
+                                                            tooltipText={TOOLTIP_TEXT}
                                                             background={COLORS.blue}
                                                         />
                                                     )}
