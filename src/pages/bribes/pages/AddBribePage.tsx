@@ -580,8 +580,6 @@ const AddBribePage = () => {
                     <Form
                         onSubmit={event => {
                             event.preventDefault();
-                            event.stopPropagation();
-                            onSubmit();
                         }}
                         key={maxDuration}
                     >
@@ -762,6 +760,7 @@ const AddBribePage = () => {
                                 <NextButton
                                     isBig
                                     fullWidth
+                                    onClick={() => onSubmit()}
                                     disabled={
                                         !base ||
                                         !counter ||
