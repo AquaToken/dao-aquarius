@@ -280,10 +280,6 @@ const About = (): React.ReactElement => {
     }, []);
 
     useEffect(() => {
-        StellarService.getAquaUsdPrice().then(setAquaUsdPrice);
-    }, []);
-
-    useEffect(() => {
         getAssetDetails(aquaStellarAsset)
             .then(data => {
                 setExpertData(data);
