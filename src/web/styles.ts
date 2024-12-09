@@ -23,6 +23,8 @@ export const COLORS = {
     classicPool: '#4F345B',
     constantPool: '#B0632A',
     stablePool: '#2AA3B0',
+    // Focus color should be different of any project colors for visability
+    focusColor: '#24b1c7',
 };
 
 export const FONT_FAMILY = {

@@ -2,10 +2,11 @@ import * as React from 'react';
 import { useRef, useState } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 
+import useOnClickOutside from 'hooks/useOutsideClick';
+
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import useOnClickOutside from 'hooks/useOutsideClick';
 import { ModalService } from 'services/globalServices';
 
 import ArrowDown from 'assets/icon-arrow-down.svg';
@@ -111,6 +112,7 @@ const AccountPublic = styled.div`
 const SignInButton = styled(Button)`
     width: 12rem;
     margin-left: 1.6rem;
+
     ${respondDown(Breakpoints.md)`
         display: none;
     `}

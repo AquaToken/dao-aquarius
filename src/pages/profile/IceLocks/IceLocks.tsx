@@ -5,6 +5,8 @@ import styled from 'styled-components';
 
 import { getDistributionForAccount } from 'api/ice-locker';
 
+import { MainRoutes } from 'constants/routes';
+
 import { getDateString } from 'helpers/date';
 import ErrorHandler from 'helpers/error-handler';
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
@@ -28,7 +30,6 @@ import ProgressLine from 'basics/ProgressLine';
 import Table, { CellAlign } from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
-import { MainRoutes } from '../../../routes';
 import { ExternalLinkStyled, Header, Section, Title } from '../AmmRewards/AmmRewards';
 import { Empty } from '../YourVotes/YourVotes';
 

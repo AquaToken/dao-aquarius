@@ -5,18 +5,19 @@ import styled from 'styled-components';
 
 import { getAssetDetails } from 'api/stellar-expert';
 
-import { getAssetString } from 'helpers/assets';
+import { MainRoutes } from 'constants/routes';
+
+import { getAquaAssetData, getAssetString } from 'helpers/assets';
 import { getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
+import { StellarService } from 'services/globalServices';
+
 import { ExpertAssetData } from 'types/api-stellar-expert';
 import { ModalProps } from 'types/modal';
 import { Asset as AssetType, StellarToml as StellarTomlType } from 'types/stellar';
-
-import { StellarService } from 'services/globalServices';
-import { AQUA_CODE, AQUA_ISSUER } from 'services/stellar.service';
 
 import Mail from 'assets/email16.svg';
 import Git from 'assets/github16.svg';
@@ -31,7 +32,6 @@ import { ModalWrapper } from 'basics/ModalAtoms';
 
 import NoTrustline from 'components/NoTrustline';
 
-import { MainRoutes } from '../../routes';
 import { respondDown } from '../mixins';
 import { Breakpoints, COLORS } from '../styles';
 
@@ -120,6 +120,7 @@ const AssetInfoModal = ({ params, close }: ModalProps<AssetInfoModalParams>): Re
     const { assetsInfo } = useAssetsStore();
 
     const { desc, home_domain } = assetsInfo.get(getAssetString(asset)) || {};
+    const { aquaCode, aquaIssuer, aquaStellarAsset } = getAquaAssetData();
 
     useEffect(() => {
         StellarService.resolveToml(home_domain)
@@ -241,9 +242,9 @@ const AssetInfoModal = ({ params, close }: ModalProps<AssetInfoModalParams>): Re
             <Buttons>
                 <LinkStyled
                     to={`${MainRoutes.swap}/${getAssetString(asset)}/${getAssetString(
-                        asset.code === AQUA_CODE && asset.issuer === AQUA_ISSUER
+                        asset.code === aquaCode && asset.issuer === aquaIssuer
                             ? StellarService.createLumen()
-                            : StellarService.createAsset(AQUA_CODE, AQUA_ISSUER),
+                            : aquaStellarAsset,
                     )}`}
                     onClick={() => close()}
                 >

@@ -1,3 +1,4 @@
+//TODO: move to consts
 export enum MainRoutes {
     main = '/',
     bribes = '/bribes',
@@ -13,6 +14,8 @@ export enum MainRoutes {
     walletConnect = '/wallet-connect',
     amm = '/pools',
     swap = '/swap',
+    buyAqua = '/buy-aqua',
+    testnet = '/testnet',
 }
 
 //TODO: Replace constants with enums after TS 5.0 release

@@ -4,7 +4,9 @@ import styled from 'styled-components';
 import { flexAllCenter } from 'web/mixins';
 import { COLORS } from 'web/styles';
 
-const ButtonBody = styled.button<{
+import BlankButton from './BlankButton';
+
+const ButtonBody = styled(BlankButton)<{
     $isBig?: boolean;
     $pending?: boolean;
     $fullWidth?: boolean;
@@ -58,10 +60,10 @@ const ButtonBody = styled.button<{
         return COLORS.buttonBackground;
     }};
     border-radius: 0.5rem;
-    border: none;
     font-weight: bold;
     letter-spacing: ${({ $isBig }) => ($isBig ? '0.2rem' : '0.05rem')};
     text-transform: uppercase;
+    //TODO: remove
     cursor: pointer;
     transition: all ease 200ms;
     position: relative;
@@ -88,6 +90,7 @@ const ButtonBody = styled.button<{
 
     &:disabled {
         background-color: ${COLORS.gray};
+        //TODO: remove
         pointer-events: none;
     }
 `;
@@ -171,7 +174,7 @@ const Button = ({
     isWhite,
     isPurpleText,
     ...props
-}: ButtonProps): React.ReactNode => (
+}: ButtonProps): JSX.Element => (
     <ButtonBody
         $pending={pending}
         $isBig={isBig}

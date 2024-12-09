@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
-import { respondDown } from '../mixins';
-import { Breakpoints, COLORS } from '../styles';
+import { customScroll, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
 
 export const ModalWrapper = styled.div<{ $isWide?: boolean }>`
     width: ${({ $isWide }) => ($isWide ? '75.2rem' : '52.3rem')};
@@ -30,7 +30,10 @@ export const ModalDescription = styled.div<{ $smallMarginBottom?: boolean }>`
     color: ${COLORS.descriptionText};
     margin-bottom: ${({ $smallMarginBottom }) => ($smallMarginBottom ? '2.4rem' : '4rem')};
 
+    overflow-y: scroll;
+    ${customScroll};
+
     ${respondDown(Breakpoints.md)`
-         margin-bottom: 2.4rem;
+        margin-bottom: 2.4rem;
     `};
 `;

@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { Redirect, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { GovernanceRoutes } from 'constants/routes';
+
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -10,7 +12,6 @@ import PageLoader from 'basics/loaders/PageLoader';
 
 import NotFoundPage from 'components/NotFoundPage';
 
-import { GovernanceRoutes } from '../../../routes';
 import { getProposalRequest, UPDATE_INTERVAL } from '../api/api';
 import { Proposal } from '../api/types';
 import ProposalScreen from '../components/GovernanceVoteProposalPage/Proposal/ProposalScreen';

@@ -1,26 +1,27 @@
-import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 
+import { getAquaAssetData } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService, StellarService } from 'services/globalServices';
 import { StellarEvents } from 'services/stellar.service';
+
 import { flexRowSpaceBetween } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 
 import IconDislike from 'assets/icon-dislike-black.svg';
 import IconLike from 'assets/icon-like-white.svg';
-import IconTick from 'assets/icon-tick.svg';
+import IconTick from 'assets/icon-tick-16.svg';
 
 import Button from 'basics/buttons/Button';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import { PairStats } from 'pages/vote/api/types';
 
-import { AQUA, DOWN_ICE, UP_ICE } from '../../MainPage';
+import { DOWN_ICE, UP_ICE } from '../../MainPage';
 import VotesAmountModal from '../../VoteModals/VotesAmountModal';
 
 const iconStyles = css`
@@ -67,13 +68,14 @@ const VoteButton = ({
 }): JSX.Element => {
     const { market_key: marketKeyUp, downvote_account_id: marketKeyDown } = pair;
     const { account, isLogged } = useAuthStore();
+    const { aquaStellarAsset } = getAquaAssetData();
 
     const getUpVotesValue = () =>
-        +StellarService.getMarketVotesValue(marketKeyUp, account?.accountId(), AQUA) +
+        +StellarService.getMarketVotesValue(marketKeyUp, account?.accountId(), aquaStellarAsset) +
         +StellarService.getMarketVotesValue(marketKeyUp, account?.accountId(), UP_ICE);
 
     const getDownVotesValue = () =>
-        +StellarService.getMarketVotesValue(marketKeyDown, account?.accountId(), AQUA) +
+        +StellarService.getMarketVotesValue(marketKeyDown, account?.accountId(), aquaStellarAsset) +
         +StellarService.getMarketVotesValue(marketKeyDown, account?.accountId(), DOWN_ICE);
 
     const [balanceUp, setBalanceUp] = useState(isLogged ? getUpVotesValue() : null);

@@ -13,7 +13,8 @@ import { flexAllCenter } from 'web/mixins';
 import { COLORS } from 'web/styles';
 
 import UnknownLogo from 'assets/asset-unknown-logo.svg';
-import Loader from 'assets/loader.svg';
+
+import { CircleLoader } from './loaders';
 
 export const logoStyles = (isCircle = true) => css`
     height: 3.2rem;
@@ -84,9 +85,7 @@ const LogoLoaderContainer = styled.div<{
     background-color: ${COLORS.descriptionText};
 `;
 
-const LogoLoader = styled(Loader)`
-    height: 1.2rem;
-    width: 1.2rem;
+const LogoLoader = styled(CircleLoader)`
     color: ${COLORS.white};
 `;
 
@@ -113,7 +112,7 @@ const AssetLogo = ({
     if (logoUrl === undefined) {
         return (
             <LogoLoaderContainer $isSmall={isSmall} $isBig={isBig} $isCircle={isCircle}>
-                <LogoLoader />
+                <LogoLoader size="small" />
             </LogoLoaderContainer>
         );
     }

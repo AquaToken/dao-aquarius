@@ -1,22 +1,26 @@
-import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
+import { LockerRoutes } from 'constants/routes';
+
+import { getAquaAssetData } from 'helpers/assets';
 import { getDateString } from 'helpers/date';
 import ErrorHandler from 'helpers/error-handler';
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
+import { useIsMounted } from 'hooks/useIsMounted';
+
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { ModalService, StellarService, ToastService } from 'services/globalServices';
+import { GOV_ICE_CODE, ICE_ISSUER } from 'services/stellar.service';
+import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
+
 import { ModalProps } from 'types/modal';
 
-import { useIsMounted } from 'hooks/useIsMounted';
-import { ModalService, StellarService, ToastService } from 'services/globalServices';
-import { AQUA_CODE, AQUA_ISSUER, GOV_ICE_CODE, ICE_ISSUER } from 'services/stellar.service';
-import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 import { flexAllCenter, flexRowSpaceBetween } from 'web/mixins';
 import GetAquaModal from 'web/modals/GetAquaModal';
 import { COLORS } from 'web/styles';
@@ -33,7 +37,6 @@ import RangeInput from 'basics/inputs/RangeInput';
 import Select from 'basics/inputs/Select';
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
 
-import { LockerRoutes } from '../../../../../routes';
 import { SimpleProposalOptions } from '../../../pages/GovernanceVoteProposalPage';
 
 const MINIMUM_AMOUNT = 0.0000001;
@@ -137,11 +140,12 @@ const GetAquaLink = styled.div`
 `;
 
 const RATIO = 2;
-const AQUA = StellarService.createAsset(AQUA_CODE, AQUA_ISSUER);
+const { aquaStellarAsset } = getAquaAssetData();
+
 const GOV_ICE = StellarService.createAsset(GOV_ICE_CODE, ICE_ISSUER);
 
 const OPTIONS = [
-    { label: 'AQUA', value: AQUA, icon: <AquaLogo /> },
+    { label: 'AQUA', value: aquaStellarAsset, icon: <AquaLogo /> },
     { label: 'ICE', value: GOV_ICE, icon: <IceLogo /> },
 ];
 
@@ -157,7 +161,7 @@ const ConfirmVoteModal = ({
     const [percent, setPercent] = useState(0);
     const [amount, setAmount] = useState('');
     const [pending, setPending] = useState(false);
-    const [targetAsset, setTargetAsset] = useState(AQUA);
+    const [targetAsset, setTargetAsset] = useState(aquaStellarAsset);
 
     const targetBalance = useMemo(() => account?.getAssetBalance(targetAsset), [targetAsset]);
 
@@ -168,7 +172,7 @@ const ConfirmVoteModal = ({
 
     const now = Date.now();
     const unlockDate =
-        targetAsset === AQUA
+        targetAsset === aquaStellarAsset
             ? new Date(endDate).getTime() + RATIO * (now - new Date(startDate).getTime())
             : new Date(endDate).getTime() + 60 * 60 * 1000;
 
@@ -312,7 +316,7 @@ const ConfirmVoteModal = ({
             ) : (
                 <GetAquaBlock>
                     <GetAquaLabel>You don&apos;t have enough {targetAsset.code}</GetAquaLabel>
-                    {targetAsset === AQUA ? (
+                    {targetAsset === aquaStellarAsset ? (
                         <ExternalLink onClick={() => ModalService.openModal(GetAquaModal, {})}>
                             <GetAquaLink>Get AQUA</GetAquaLink>
                         </ExternalLink>

@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { GovernanceRoutes } from 'constants/routes';
+
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { useIsOnViewport } from 'hooks/useIsOnViewport';
@@ -19,7 +21,6 @@ import Select from 'basics/inputs/Select';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
 import PageLoader from 'basics/loaders/PageLoader';
 
-import { GovernanceRoutes } from '../../../routes';
 import { getProposalsRequest, PROPOSAL_FILTER } from '../api/api';
 import CreateProposal from '../components/GovernanceMainPage/CreateProposal/CreateProposal';
 import FAQ from '../components/GovernanceMainPage/FAQ/FAQ';

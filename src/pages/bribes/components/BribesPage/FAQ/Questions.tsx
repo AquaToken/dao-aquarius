@@ -2,9 +2,9 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import Question from 'basics/Question';
+import { VoteRoutes } from 'constants/routes';
 
-import { VoteRoutes } from '../../../../../routes';
+import Question from 'basics/Question';
 
 const Container = styled.div`
     display: flex;

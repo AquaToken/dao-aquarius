@@ -2,6 +2,8 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { GovernanceRoutes } from 'constants/routes';
+
 import { getDateString } from 'helpers/date';
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
 
@@ -14,7 +16,6 @@ import IconSuccess from 'assets/icon-success.svg';
 import CurrentResults from './CurrentResults/CurrentResults';
 import YourVotes from './YourVotes/YourVotes';
 
-import { GovernanceRoutes } from '../../../../../routes';
 import { ProposalSimple } from '../../../api/types';
 import ProposalStatus, { PROPOSAL_STATUS } from '../ProposalStatus/ProposalStatus';
 

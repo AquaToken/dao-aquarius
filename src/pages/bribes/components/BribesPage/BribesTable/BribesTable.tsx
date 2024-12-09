@@ -3,12 +3,15 @@ import { useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { convertLocalDateToUTCIgnoringTimezone, getDateString } from 'helpers/date';
+import { BribesRoutes, MarketRoutes } from 'constants/routes';
+
+import { getDateString, convertLocalDateToUTCIgnoringTimezone } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
 import { StellarService } from 'services/globalServices';
+
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -23,7 +26,6 @@ import Market from 'basics/Market';
 import Pagination from 'basics/Pagination';
 import Table, { CellAlign } from 'basics/Table';
 
-import { BribesRoutes, MarketRoutes } from '../../../../../routes';
 import { BribeSortFields, getBribes } from '../../../api/api';
 
 const Container = styled.div`

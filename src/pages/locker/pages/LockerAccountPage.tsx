@@ -5,6 +5,8 @@ import styled from 'styled-components';
 
 import { getDistributionForAccount } from 'api/ice-locker';
 
+import { LockerRoutes } from 'constants/routes';
+
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { useIsOnViewport } from 'hooks/useIsOnViewport';
@@ -18,7 +20,6 @@ import ArrowDown from 'assets/icon-arrow-down.svg';
 
 import PageLoader from 'basics/loaders/PageLoader';
 
-import { LockerRoutes } from '../../../routes';
 import FAQ from '../components/FAQ/FAQ';
 import AccountInfoBlock from '../components/LockerAccountPage/AccountInfoBlock/AccountInfoBlock';
 import CurrentLocks from '../components/LockerAccountPage/CurrentLocks/CurrentLocks';

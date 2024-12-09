@@ -4,15 +4,18 @@ import BigNumber from 'bignumber.js';
 import binascii from 'binascii';
 import { sha256 } from 'js-sha256';
 
+import { CONTRACTS } from 'constants/soroban';
+
 import { getAssetString } from 'helpers/assets';
+import { getEnv, getNetworkPassphrase } from 'helpers/env';
 import { SorobanErrorHandler, SorobanPrepareTxErrorHandler } from 'helpers/error-handler';
 
 import RestoreContractModal from 'web/modals/RestoreContractModal';
 
 import { ModalService, ToastService } from './globalServices';
 
+export const AMM_SMART_CONTACT_ID = CONTRACTS[getEnv()].amm;
 const SOROBAN_SERVER = 'https://soroban-rpc.aqua.network/';
-export const AMM_SMART_CONTACT_ID = 'CBQDHNBFBZYE4MKPWBSJOPIYLW4SFSXAXUTSXJN76GNKYVYPCKWC6QUK';
 
 enum AMM_CONTRACT_METHOD {
     GET_POOLS = 'get_pools',
@@ -60,7 +63,7 @@ export enum POOL_TYPE {
 }
 
 export default class SorobanServiceClass {
-    server: StellarSdk.SorobanRpc.Server | null = null;
+    server: StellarSdk.rpc.Server | null = null;
     keypair: Keypair | null = null;
     assetsCache = new Map<string, Asset>();
 
@@ -87,7 +90,7 @@ export default class SorobanServiceClass {
     }
 
     processResponse(
-        response: StellarSdk.SorobanRpc.Api.SendTransactionResponse,
+        response: StellarSdk.rpc.Api.SendTransactionResponse,
         tx: StellarSdk.Transaction,
     ) {
         if (response.status === 'DUPLICATE') {
@@ -134,9 +137,7 @@ export default class SorobanServiceClass {
     async tryRestore(tx: StellarSdk.Transaction) {
         const sim = await this.server.simulateTransaction(tx);
 
-        if (
-            !(sim as StellarSdk.SorobanRpc.Api.SimulateTransactionRestoreResponse).restorePreamble
-        ) {
+        if (!(sim as StellarSdk.rpc.Api.SimulateTransactionRestoreResponse).restorePreamble) {
             return Promise.resolve();
         }
 
@@ -144,15 +145,15 @@ export default class SorobanServiceClass {
         let fee = parseInt(BASE_FEE);
 
         fee += parseInt(
-            (sim as StellarSdk.SorobanRpc.Api.SimulateTransactionRestoreResponse).restorePreamble
+            (sim as StellarSdk.rpc.Api.SimulateTransactionRestoreResponse).restorePreamble
                 .minResourceFee,
         );
 
         const restoreTx = new StellarSdk.TransactionBuilder(account, { fee: fee.toString() })
-            .setNetworkPassphrase(StellarSdk.Networks.PUBLIC)
+            .setNetworkPassphrase(getNetworkPassphrase())
             .setSorobanData(
                 (
-                    sim as StellarSdk.SorobanRpc.Api.SimulateTransactionRestoreResponse
+                    sim as StellarSdk.rpc.Api.SimulateTransactionRestoreResponse
                 ).restorePreamble.transactionData.build(),
             )
             .addOperation(StellarSdk.Operation.restoreFootprint({}))
@@ -173,7 +174,7 @@ export default class SorobanServiceClass {
     }
 
     getAssetContractHash(asset: Asset): string {
-        const networkId: Buffer = Buffer.from(sha256.arrayBuffer(StellarSdk.Networks.PUBLIC));
+        const networkId: Buffer = Buffer.from(sha256.arrayBuffer(getNetworkPassphrase()));
 
         const contractIdPreimage: xdr.ContractIdPreimage =
             xdr.ContractIdPreimage.contractIdPreimageFromAsset(asset.toXDRObject());
@@ -207,7 +208,7 @@ export default class SorobanServiceClass {
                 tx =>
                     this.simulateTx(
                         tx,
-                    ) as Promise<StellarSdk.SorobanRpc.Api.SimulateTransactionSuccessResponse>,
+                    ) as Promise<StellarSdk.rpc.Api.SimulateTransactionSuccessResponse>,
             )
             .then(({ result }) => {
                 const [code, issuer] = (result.retval.value() as unknown).toString().split(':');
@@ -271,7 +272,7 @@ export default class SorobanServiceClass {
             .then(acc => {
                 const tx = new StellarSdk.TransactionBuilder(acc, {
                     fee: BASE_FEE,
-                    networkPassphrase: StellarSdk.Networks.PUBLIC,
+                    networkPassphrase: getNetworkPassphrase(),
                 });
 
                 tx.addOperation(
@@ -295,7 +296,7 @@ export default class SorobanServiceClass {
     //         .then(acc =>
     //             new StellarSdk.TransactionBuilder(acc, {
     //                 fee: BASE_FEE,
-    //                 networkPassphrase: StellarSdk.Networks.PUBLIC,
+    //                 networkPassphrase: getNetworkPassphrase(),
     //             })
     //                 .addOperation(StellarSdk.Operation.restoreFootprint({}))
     //                 .setSorobanData(
@@ -319,7 +320,7 @@ export default class SorobanServiceClass {
     //         .then(acc =>
     //             new StellarSdk.TransactionBuilder(acc, {
     //                 fee: BASE_FEE,
-    //                 networkPassphrase: StellarSdk.Networks.PUBLIC,
+    //                 networkPassphrase: getNetworkPassphrase(),
     //             })
     //                 .addOperation(
     //                     StellarSdk.Operation.extendFootprintTtl({
@@ -348,7 +349,7 @@ export default class SorobanServiceClass {
     //             tx =>
     //                 this.server.simulateTransaction(
     //                     tx,
-    //                 ) as Promise<StellarSdk.SorobanRpc.Api.SimulateTransactionSuccessResponse>,
+    //                 ) as Promise<StellarSdk.rpc.Api.SimulateTransactionSuccessResponse>,
     //         )
     //         .then(res => {
     //             if (!res.result) {
@@ -400,7 +401,7 @@ export default class SorobanServiceClass {
                 tx =>
                     this.server.simulateTransaction(
                         tx,
-                    ) as Promise<StellarSdk.SorobanRpc.Api.SimulateTransactionSuccessResponse>,
+                    ) as Promise<StellarSdk.rpc.Api.SimulateTransactionSuccessResponse>,
             )
             .then(({ result }) => {
                 if (result) {
@@ -428,7 +429,7 @@ export default class SorobanServiceClass {
                 tx =>
                     this.server.simulateTransaction(
                         tx,
-                    ) as Promise<StellarSdk.SorobanRpc.Api.SimulateTransactionSuccessResponse>,
+                    ) as Promise<StellarSdk.rpc.Api.SimulateTransactionSuccessResponse>,
             )
             .then(({ result }) => {
                 if (result) {
@@ -461,7 +462,7 @@ export default class SorobanServiceClass {
                 tx =>
                     this.server.simulateTransaction(
                         tx,
-                    ) as Promise<StellarSdk.SorobanRpc.Api.SimulateTransactionSuccessResponse>,
+                    ) as Promise<StellarSdk.rpc.Api.SimulateTransactionSuccessResponse>,
             )
             .then(({ result }) => {
                 if (result) {
@@ -493,7 +494,7 @@ export default class SorobanServiceClass {
                 tx =>
                     this.server.simulateTransaction(
                         tx,
-                    ) as Promise<StellarSdk.SorobanRpc.Api.SimulateTransactionSuccessResponse>,
+                    ) as Promise<StellarSdk.rpc.Api.SimulateTransactionSuccessResponse>,
             )
             .then(({ result }) => {
                 if (result) {
@@ -515,7 +516,7 @@ export default class SorobanServiceClass {
     //             tx =>
     //                 this.server.simulateTransaction(
     //                     tx,
-    //                 ) as Promise<StellarSdk.SorobanRpc.Api.SimulateTransactionSuccessResponse>,
+    //                 ) as Promise<StellarSdk.rpc.Api.SimulateTransactionSuccessResponse>,
     //         )
     //         .then(({ result }) => {
     //             if (result) {
@@ -545,7 +546,7 @@ export default class SorobanServiceClass {
                 tx =>
                     this.simulateTx(
                         tx,
-                    ) as Promise<StellarSdk.SorobanRpc.Api.SimulateTransactionSuccessResponse>,
+                    ) as Promise<StellarSdk.rpc.Api.SimulateTransactionSuccessResponse>,
             )
             .then(({ result }) =>
                 this.getAssetFromContractId(
@@ -568,7 +569,7 @@ export default class SorobanServiceClass {
                 tx =>
                     this.simulateTx(
                         tx,
-                    ) as Promise<StellarSdk.SorobanRpc.Api.SimulateTransactionSuccessResponse>,
+                    ) as Promise<StellarSdk.rpc.Api.SimulateTransactionSuccessResponse>,
             )
             .then(({ result }) => this.i128ToInt(result.retval.value() as xdr.Int128Parts));
     }
@@ -628,7 +629,7 @@ export default class SorobanServiceClass {
                 tx =>
                     this.server.simulateTransaction(
                         tx,
-                    ) as Promise<StellarSdk.SorobanRpc.Api.SimulateTransactionSuccessResponse>,
+                    ) as Promise<StellarSdk.rpc.Api.SimulateTransactionSuccessResponse>,
             )
             .then(({ result }) => {
                 if (result) {
@@ -649,7 +650,7 @@ export default class SorobanServiceClass {
                 tx =>
                     this.simulateTx(
                         tx,
-                    ) as Promise<StellarSdk.SorobanRpc.Api.SimulateTransactionSuccessResponse>,
+                    ) as Promise<StellarSdk.rpc.Api.SimulateTransactionSuccessResponse>,
             )
             .then(({ result }) => {
                 if (result) {
@@ -720,7 +721,7 @@ export default class SorobanServiceClass {
     //             tx =>
     //                 this.server.simulateTransaction(
     //                     tx,
-    //                 ) as Promise<StellarSdk.SorobanRpc.Api.SimulateTransactionSuccessResponse>,
+    //                 ) as Promise<StellarSdk.rpc.Api.SimulateTransactionSuccessResponse>,
     //         )
     //         .then(({ result }) => {
     //             if (result) {
@@ -755,7 +756,7 @@ export default class SorobanServiceClass {
 
             const builtTx = new StellarSdk.TransactionBuilder(acc, {
                 fee: BASE_FEE,
-                networkPassphrase: StellarSdk.Networks.PUBLIC,
+                networkPassphrase: getNetworkPassphrase(),
             });
 
             if (args) {
@@ -790,7 +791,7 @@ export default class SorobanServiceClass {
     }
 
     private startServer(): void {
-        this.server = new StellarSdk.SorobanRpc.Server(SOROBAN_SERVER);
+        this.server = new StellarSdk.rpc.Server(SOROBAN_SERVER);
     }
 
     contractIdToScVal(contractId) {

@@ -12,9 +12,9 @@ import { Breakpoints, COLORS } from 'web/styles';
 import Aqua from 'assets/aqua-logo-small.svg';
 import Ice from 'assets/ice-logo.svg';
 import ExternalLinkIcon from 'assets/icon-external-link.svg';
-import Loader from 'assets/loader.svg';
 
 import { IconSort } from 'basics/Icons';
+import { CircleLoader } from 'basics/loaders';
 import Pagination from 'basics/Pagination';
 import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
 
@@ -126,11 +126,6 @@ const LoaderContainer = styled.div`
     padding: 1rem 0;
 `;
 
-const VotesLoader = styled(Loader)`
-    height: 3rem;
-    width: 3rem;
-`;
-
 const AquaLogo = styled(Aqua)`
     height: 1.6rem;
     width: 1.6rem;
@@ -190,7 +185,7 @@ const Votes = (): React.ReactNode => {
     if (!votes) {
         return (
             <LoaderContainer>
-                <VotesLoader />
+                <CircleLoader />
             </LoaderContainer>
         );
     }

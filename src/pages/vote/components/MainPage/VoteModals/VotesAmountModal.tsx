@@ -1,21 +1,25 @@
 import { Asset } from '@stellar/stellar-sdk';
-import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { LockerRoutes } from 'constants/routes';
+
+import { getAquaAssetData } from 'helpers/assets';
 import ErrorHandler from 'helpers/error-handler';
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
+import { useIsMounted } from 'hooks/useIsMounted';
+
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { ModalProps } from 'types/modal';
-
-import { useIsMounted } from 'hooks/useIsMounted';
 import { ModalService, StellarService, ToastService } from 'services/globalServices';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
+
+import { ModalProps } from 'types/modal';
+
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import GetAquaModal from 'web/modals/GetAquaModal';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -34,9 +38,8 @@ import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
 
 import VotesDurationModal from './VotesDurationModal';
 
-import { LockerRoutes } from '../../../../../routes';
 import { PairStats } from '../../../api/types';
-import { AQUA, DOWN_ICE, SELECTED_PAIRS_ALIAS, UP_ICE } from '../MainPage';
+import { DOWN_ICE, SELECTED_PAIRS_ALIAS, UP_ICE } from '../MainPage';
 
 export const ContentRow = styled.div`
     ${flexRowSpaceBetween};
@@ -259,6 +262,7 @@ const VotesAmountModal = ({
     const { account, isLogged } = useAuthStore();
     const { pairs, updatePairs, pairsAmounts, isDownVoteModal, asset, isSingleVoteForModal } =
         params;
+    const { aquaStellarAsset } = getAquaAssetData();
 
     useEffect(() => {
         if (!isLogged) {
@@ -268,7 +272,7 @@ const VotesAmountModal = ({
 
     const [percent, setPercent] = useState(0);
     const [amount, setAmount] = useState('');
-    const [targetAsset, setTargetAsset] = useState(asset ?? AQUA);
+    const [targetAsset, setTargetAsset] = useState(asset ?? aquaStellarAsset);
     const [selectedPairs, setSelectedPairs] = useState(pairs);
     const [pending, setPending] = useState(false);
 
@@ -287,7 +291,7 @@ const VotesAmountModal = ({
 
     const OPTIONS: Option<Asset>[] = useMemo(
         () => [
-            { label: 'AQUA', value: AQUA, icon: <AquaLogo /> },
+            { label: 'AQUA', value: aquaStellarAsset, icon: <AquaLogo /> },
             { label: 'ICE', value: isDownVoteModal ? DOWN_ICE : UP_ICE, icon: <IceLogo /> },
         ],
         [isDownVoteModal],
@@ -509,22 +513,24 @@ const VotesAmountModal = ({
                     !value ||
                     !Number(value) ||
                     +value < MINIMUM_AMOUNT ||
-                    (targetAsset !== AQUA && +value < MINIMUM_ICE_AMOUNT),
+                    (targetAsset !== aquaStellarAsset && +value < MINIMUM_ICE_AMOUNT),
             )
         ) {
             ToastService.showErrorToast(
                 `The value of each vote must be greater than ${
-                    targetAsset !== AQUA ? MINIMUM_ICE_AMOUNT : MINIMUM_AMOUNT.toFixed(7)
+                    targetAsset !== aquaStellarAsset
+                        ? MINIMUM_ICE_AMOUNT
+                        : MINIMUM_AMOUNT.toFixed(7)
                 } ${targetAsset.code}`,
             );
             return;
         }
 
-        if (targetAsset !== AQUA && account.authType === LoginTypes.walletConnect) {
+        if (targetAsset !== aquaStellarAsset && account.authType === LoginTypes.walletConnect) {
             openCurrentWalletIfExist();
         }
 
-        if (targetAsset !== AQUA) {
+        if (targetAsset !== aquaStellarAsset) {
             confirmVotes();
             return;
         }
@@ -671,7 +677,7 @@ const VotesAmountModal = ({
                             <Label>Total:</Label>
                             <TotalAmount>
                                 {amount || '0'} {targetAsset.code}{' '}
-                                {targetAsset === AQUA ? <AquaLogo /> : <IceLogo />}
+                                {targetAsset === aquaStellarAsset ? <AquaLogo /> : <IceLogo />}
                             </TotalAmount>
                         </TotalAmountRow>
                     </>
@@ -680,7 +686,7 @@ const VotesAmountModal = ({
                 {hasTrustLine && hasTargetBalance ? null : (
                     <GetAquaBlock>
                         <GetAquaLabel>You don&apos;t have enough {targetAsset.code}</GetAquaLabel>
-                        {targetAsset === AQUA ? (
+                        {targetAsset === aquaStellarAsset ? (
                             <ExternalLink onClick={() => ModalService.openModal(GetAquaModal, {})}>
                                 <GetAquaLink>Get {targetAsset.code}</GetAquaLink>
                             </ExternalLink>
@@ -700,7 +706,7 @@ const VotesAmountModal = ({
                     disabled={!amount || !Number(amount)}
                     pending={pending}
                 >
-                    {targetAsset === AQUA ? 'NEXT' : 'confirm'}
+                    {targetAsset === aquaStellarAsset ? 'NEXT' : 'confirm'}
                 </Button>
             </ButtonContainer>
         </>

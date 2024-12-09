@@ -1,31 +1,36 @@
-import * as React from 'react';
+import { MoonPayProvider } from '@moonpay/moonpay-react';
 import { lazy, Suspense, useEffect, useState } from 'react';
 import Title from 'react-document-title';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
-import styled, { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle } from 'styled-components';
+
+import { AmmRoutes, MainRoutes } from 'constants/routes';
+
+import { getEnv, getIsTestnetEnv, setProductionEnv } from 'helpers/env';
+import { getMoonpayKeyByEnv } from 'helpers/moonpay';
 
 import { LoginTypes } from 'store/authStore/types';
 
 import { StellarService, WalletConnectService } from 'services/globalServices';
+
 import AppGlobalStyle from 'web/AppGlobalStyles';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import PageLoader from 'basics/loaders/PageLoader';
-import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import ErrorBoundary from 'components/ErrorBoundary';
 import Footer from 'components/Footer';
 import Header, { HeaderNavLink, HeaderNavLinkWithCount, NavLinksDivider } from 'components/Header';
 import ModalContainer from 'components/ModalContainer';
 import NotFoundPage from 'components/NotFoundPage';
+import TestnetBanner from 'components/TestnetBanner';
 import ToastContainer from 'components/ToastContainer';
 
 import { getActiveProposalsCount } from 'pages/governance/api/api';
 import Governance from 'pages/governance/Governance';
 
 import useGlobalSubscriptions from './hooks/useGlobalSubscriptions';
-import { AmmRoutes, MainRoutes } from './routes';
 import SentryService from './services/sentry.service';
 import Provider from './store';
 import useAssetsStore from './store/assetsStore/useAssetsStore';
@@ -43,21 +48,11 @@ const ProfilePage = lazy(() => import('pages/profile/Profile'));
 const WalletConnectPage = lazy(() => import('pages/wallet-connect/WalletConnect'));
 const AmmPage = lazy(() => import('pages/amm/Amm'));
 const SwapPage = lazy(() => import('pages/swap/Swap'));
+const BuyAquaPage = lazy(() => import('web/pages/buy-aqua/BuyAqua'));
+const TestnetSwitcherPage = lazy(() => import('web/pages/testnet-switcher/TestnetSwitcher'));
 
 const UPDATE_ASSETS_DATE = 'update assets timestamp';
 const UPDATE_PERIOD = 24 * 60 * 60 * 1000;
-
-const TooltipStyled = styled(Tooltip)`
-    margin-right: 2rem;
-    a {
-        margin: 0 !important;
-    }
-
-    ${respondDown(Breakpoints.md)`
-        margin-right: 0;
-        margin-bottom: 2.4rem;
-    `}
-`;
 
 const App = () => {
     const [wcLoginChecked, setWcLoginChecked] = useState(false);
@@ -78,6 +73,16 @@ const App = () => {
     }, []);
 
     useEffect(() => {
+        getActiveProposalsCount().then(res => {
+            setActiveProposalsCount(res);
+        });
+    }, []);
+
+    useEffect(() => {
+        if (!getEnv()) {
+            setProductionEnv();
+        }
+
         const assetUpdateTimestamp = localStorage.getItem(UPDATE_ASSETS_DATE);
 
         if (
@@ -187,6 +192,7 @@ const App = () => {
         <Router>
             <ErrorBoundary>
                 {isLogged && Boolean(redirectURL) && <Redirect to={redirectURL} />}
+                <TestnetBanner />
                 <Header>
                     <>
                         <HeaderNavLink
@@ -254,25 +260,15 @@ const App = () => {
 
                         <NavLinksDivider />
 
-                        <TooltipStyled
-                            position={TOOLTIP_POSITION.bottom}
-                            content="Soon"
-                            showOnHover
+                        <HeaderNavLink
+                            activeStyle={{
+                                fontWeight: 700,
+                            }}
+                            title="Buy AQUA"
+                            to={MainRoutes.buyAqua}
                         >
-                            <HeaderNavLink
-                                activeStyle={{
-                                    fontWeight: 700,
-                                }}
-                                title="Buy AQUA"
-                                onClick={(e: React.MouseEvent) => {
-                                    e.preventDefault();
-                                }}
-                                to=""
-                                $disabled
-                            >
-                                Buy AQUA
-                            </HeaderNavLink>
-                        </TooltipStyled>
+                            Buy AQUA
+                        </HeaderNavLink>
 
                         <HeaderNavLink
                             to={MainRoutes.locker}
@@ -355,6 +351,18 @@ const App = () => {
                             </Title>
                         </Route>
 
+                        <Route path={MainRoutes.buyAqua}>
+                            <Title title="Buy Aqua">
+                                <BuyAquaPage />
+                            </Title>
+                        </Route>
+
+                        <Route path={MainRoutes.testnet}>
+                            <Title title="Testnet">
+                                <TestnetSwitcherPage />
+                            </Title>
+                        </Route>
+
                         <Route component={NotFoundPage} />
                     </Switch>
                 </Suspense>
@@ -376,11 +384,12 @@ const BodyStyle = createGlobalStyle`
 `;
 
 const ProvidedApp = () => (
-    <Provider>
-        <AppGlobalStyle />
-        <BodyStyle />
-        <App />
-    </Provider>
+    <MoonPayProvider apiKey={getMoonpayKeyByEnv()} debug={getIsTestnetEnv()}>
+        <Provider>
+            <AppGlobalStyle />
+            <BodyStyle />
+            <App />
+        </Provider>
+    </MoonPayProvider>
 );
-
 export default ProvidedApp;

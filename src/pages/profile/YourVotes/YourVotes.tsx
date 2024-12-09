@@ -1,7 +1,8 @@
-import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+
+import { VoteRoutes } from 'constants/routes';
 
 import { formatBalance } from 'helpers/format-number';
 
@@ -16,7 +17,6 @@ import { Breakpoints, COLORS } from 'web/styles';
 import Button from 'basics/buttons/Button';
 import PageLoader from 'basics/loaders/PageLoader';
 
-import { VoteRoutes } from '../../../routes';
 import { getTotalVotingStats, getUserPairsList } from '../../vote/api/api';
 import { PairStats } from '../../vote/api/types';
 import { getAssetsFromPairs } from '../../vote/components/MainPage/MainPage';

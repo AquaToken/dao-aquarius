@@ -5,12 +5,16 @@ import styled from 'styled-components';
 
 import { getTotalStats, getVolume24h } from 'api/amm';
 
+import { AmmRoutes } from 'constants/routes';
+
 import { formatBalance } from 'helpers/format-number';
+
+import { useDebounce } from 'hooks/useDebounce';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { useDebounce } from 'hooks/useDebounce';
 import { ModalService } from 'services/globalServices';
+
 import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -21,7 +25,6 @@ import Search from 'assets/icon-search.svg';
 import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
 
-import { AmmRoutes } from '../../../routes';
 import AllPools from '../components/AllPools/AllPools';
 import LiquidityChart from '../components/LiquidityChart/LiquidityChart';
 import MyLiquidity from '../components/MyLiquidity/MyLiquidity';

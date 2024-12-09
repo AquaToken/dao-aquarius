@@ -50,6 +50,10 @@ const AppGlobalStyle = createGlobalStyle`
     opacity: 1;
   }
   
+  iframe {
+    border: 0;
+  }
+  
   #root {
     display: flex;
     flex-direction: column;

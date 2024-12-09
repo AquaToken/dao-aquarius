@@ -2,12 +2,15 @@ import * as React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+import { MainRoutes } from 'constants/routes';
+
 import { formatBalance } from 'helpers/format-number';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { StellarService } from 'services/globalServices';
+
 import { COLORS } from 'web/styles';
 
 import DotsLoader from 'basics/loaders/DotsLoader';
@@ -15,7 +18,6 @@ import PageLoader from 'basics/loaders/PageLoader';
 import Market from 'basics/Market';
 import Table, { CellAlign } from 'basics/Table';
 
-import { MainRoutes } from '../../../routes';
 import {
     AquaBalance,
     AquaLogo,
@@ -288,8 +290,8 @@ const SdexRewards = ({ aquaUsdPrice }: SdexRewardsProps): React.ReactNode => {
                                                     </span>
                                                     {Boolean(boost) && (
                                                         <StyledLabel
-                                                            title={`Boosted ${boostValue}x`}
-                                                            text={TOOLTIP_TEXT}
+                                                            labelText={`Boosted ${boostValue}x`}
+                                                            tooltipText={TOOLTIP_TEXT}
                                                             background={COLORS.blue}
                                                         />
                                                     )}

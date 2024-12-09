@@ -2,13 +2,14 @@ import * as React from 'react';
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { MainRoutes } from 'constants/routes';
+
+import { commonMaxWidth, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS, Z_INDEX } from 'web/styles';
+
 import AquaLogo from 'assets/aqua-logo.svg';
 
 import AccountBlock from './AccountBlock';
-
-import { MainRoutes } from '../../routes';
-import { commonMaxWidth, respondDown } from '../mixins';
-import { Breakpoints, COLORS, Z_INDEX } from '../styles';
 
 const HeaderBlock = styled.header`
     ${commonMaxWidth};

@@ -1,9 +1,10 @@
 import { Asset } from '@stellar/stellar-sdk';
 import axios from 'axios';
 
-import { API_AMM_BACKEND } from 'constants/api';
+import { getAquaAssetData, getAssetFromString, getAssetString } from 'helpers/assets';
+import { getAmmAquaUrl } from 'helpers/url';
 
-import { getAssetFromString, getAssetString } from 'helpers/assets';
+import { AssetsService, SorobanService } from 'services/globalServices';
 
 import {
     FindSwapPath,
@@ -20,9 +21,6 @@ import {
     PoolUserProcessed,
     PoolVolume24h,
 } from 'types/amm';
-
-import { AssetsService, SorobanService, StellarService } from 'services/globalServices';
-import { AQUA_CODE, AQUA_ISSUER } from 'services/stellar.service';
 
 export enum FilterOptions {
     all = '',
@@ -65,9 +63,10 @@ export const getPools = async (
     search?: string,
 ): Promise<{ total: number; pools: PoolProcessed[] }> => {
     const capitalizedSearch = (search || '').toUpperCase();
+    const baseUrl = getAmmAquaUrl();
 
     const { data } = await axios.get<ListResponse<Pool>>(
-        `${API_AMM_BACKEND}/pools/?pool_type=${filter}&sort=${sort}&page=${page}&size=${size}&search=${
+        `${baseUrl}/pools/?pool_type=${filter}&sort=${sort}&page=${page}&size=${size}&search=${
             capitalizedSearch === 'XLM' ? 'native' : capitalizedSearch
         }`,
     );
@@ -76,15 +75,19 @@ export const getPools = async (
 };
 
 export const getPoolInfo = async (id: string): Promise<PoolProcessed> => {
-    const { data } = await axios.get<Pool>(`${API_AMM_BACKEND}/pools/${id}/`);
+    const baseUrl = getAmmAquaUrl();
+
+    const { data } = await axios.get<Pool>(`${baseUrl}/pools/${id}/`);
     const [processed] = processPools([data]);
     return processed;
 };
 
 const getPoolStats = async (id: string): Promise<{ stats: PoolStatistics[] }> => {
+    const baseUrl = getAmmAquaUrl();
+
     try {
         const { data } = await axios.get<ListResponse<PoolStatistics>>(
-            `${API_AMM_BACKEND}/statistics/pool/${id}/?size=1000`,
+            `${baseUrl}/statistics/pool/${id}/?size=1000`,
         );
         return { stats: data.items.reverse() };
     } catch {
@@ -97,9 +100,11 @@ export const getPoolMembers = async (
     page: number,
     size: number,
 ): Promise<{ members: PoolBalance[]; total: number; page: number }> => {
+    const baseUrl = getAmmAquaUrl();
+
     try {
         const { data } = await axios.get<ListResponse<PoolBalance>>(
-            `${API_AMM_BACKEND}/pools/${id}/balances/?sort=-balance&size=${size}&page=${page} `,
+            `${baseUrl}/pools/${id}/balances/?sort=-balance&size=${size}&page=${page} `,
         );
         return { members: data.items, total: data.total, page: data.page };
     } catch {
@@ -108,9 +113,11 @@ export const getPoolMembers = async (
 };
 
 const getPoolMembersCount = async (id: string): Promise<{ membersCount: number }> => {
+    const baseUrl = getAmmAquaUrl();
+
     try {
         const { data } = await axios.get<ListResponse<PoolBalance>>(
-            `${API_AMM_BACKEND}/pools/${id}/balances/?size=1 `,
+            `${baseUrl}/pools/${id}/balances/?size=1 `,
         );
         return { membersCount: data.total };
     } catch {
@@ -123,9 +130,11 @@ export const getPoolEvents = async (
     page: number,
     size: number,
 ): Promise<{ events: PoolEvent[]; total: number; page: number }> => {
+    const baseUrl = getAmmAquaUrl();
+
     try {
         const { data } = await axios.get<ListResponse<PoolEvent>>(
-            `${API_AMM_BACKEND}/events/pool/${id}/?size=${size}&page=${page}`,
+            `${baseUrl}/events/pool/${id}/?size=${size}&page=${page}`,
         );
         return { events: data.items, total: data.total, page: data.page };
     } catch {
@@ -142,44 +151,52 @@ export const getPool = async (id: string): Promise<PoolExtended> => {
     return Object.assign({}, info, stats, membersCount);
 };
 
-export const getUserPools = (accountId: string): Promise<PoolUserProcessed[]> =>
-    axios
-        .get<ListResponse<PoolUser>>(`${API_AMM_BACKEND}/pools/user/${accountId}/?size=1000`)
+export const getUserPools = (accountId: string): Promise<PoolUserProcessed[]> => {
+    const baseUrl = getAmmAquaUrl();
+
+    return axios
+        .get<ListResponse<PoolUser>>(`${baseUrl}/pools/user/${accountId}/?size=1000`)
         .then(({ data }) => processPools(data.items) as PoolUserProcessed[]);
+};
 
 export const findSwapPath = async (
     baseId: string,
     counterId: string,
-    amount: string,
+    amount: string | number,
 ): Promise<FindSwapPath> => {
     const headers = { 'Content-Type': 'application/json' };
+    const baseUrl = getAmmAquaUrl();
 
     const body = JSON.stringify({
         token_in_address: baseId,
         token_out_address: counterId,
         amount: (+amount * 1e7).toString(),
     });
-    const { data } = await axios.post<FindSwapPath>(`${API_AMM_BACKEND}/pools/find-path/`, body, {
+    const { data } = await axios.post<FindSwapPath>(`${baseUrl}/pools/find-path/`, body, {
         headers,
     });
     return data;
 };
 
 export const getTotalStats = async (): Promise<PoolStatistics[]> => {
-    const { data } = await axios.get<ListResponse<PoolStatistics>>(
-        `${API_AMM_BACKEND}/statistics/totals/`,
-    );
+    const baseUrl = getAmmAquaUrl();
+
+    const { data } = await axios.get<ListResponse<PoolStatistics>>(`${baseUrl}/statistics/totals/`);
     return data.items.reverse();
 };
 
 export const getVolume24h = async (): Promise<PoolVolume24h> => {
-    const { data } = await axios.get<PoolVolume24h>(`${API_AMM_BACKEND}/statistics/24h/`);
+    const baseUrl = getAmmAquaUrl();
+
+    const { data } = await axios.get<PoolVolume24h>(`${baseUrl}/statistics/24h/`);
     return data;
 };
 export const getNativePrices = async (
     assets: Array<Asset>,
     batchSize: number = 50,
 ): Promise<Map<string, string>> => {
+    const baseUrl = getAmmAquaUrl();
+
     const batches = [];
 
     // Split assets into batches of 100
@@ -193,7 +210,7 @@ export const getNativePrices = async (
     // Process each batch
     for (const batch of batches) {
         const { data } = await axios.get<ListResponse<NativePrice>>(
-            `${API_AMM_BACKEND}/tokens/?name__in=${batch
+            `${baseUrl}/tokens/?name__in=${batch
                 .map((asset: Asset) => getAssetString(asset))
                 .join(',')}`,
         );
@@ -208,8 +225,10 @@ export const getNativePrices = async (
 };
 
 export const getPathPoolsFee = async (addresses: Array<string>): Promise<Map<string, Pool>> => {
+    const baseUrl = getAmmAquaUrl();
+
     const { data } = await axios.get<ListResponse<Pool>>(
-        `${API_AMM_BACKEND}/pools/?address__in=${addresses.join(',')}`,
+        `${baseUrl}/pools/?address__in=${addresses.join(',')}`,
     );
 
     return processPools(data.items).reduce((acc, pool) => {
@@ -219,8 +238,10 @@ export const getPathPoolsFee = async (addresses: Array<string>): Promise<Map<str
 };
 
 export const getPoolsToMigrate = async (base: Asset, counter: Asset): Promise<Pool[] | null> => {
+    const baseUrl = getAmmAquaUrl();
+
     const { data } = await axios.get<ListResponse<Pool>>(
-        `${API_AMM_BACKEND}/pools?tokens__in=${SorobanService.getAssetContractId(
+        `${baseUrl}/pools?tokens__in=${SorobanService.getAssetContractId(
             base,
         )},${SorobanService.getAssetContractId(counter)}`,
     );
@@ -235,7 +256,9 @@ export const getPoolsToMigrate = async (base: Asset, counter: Asset): Promise<Po
 
 // TODO: remove this method when this data is placed on the backend
 export const getAmmRewards = async (): Promise<number> => {
-    const { data } = await axios.get<ListResponse<PoolRewards>>(`${API_AMM_BACKEND}/pool-rewards/`);
+    const baseUrl = getAmmAquaUrl();
+
+    const { data } = await axios.get<ListResponse<PoolRewards>>(`${baseUrl}/pool-rewards/`);
 
     const sumTps = data.items.reduce((acc, item) => acc + Number(item.tps) / 1e7, 0);
 
@@ -244,13 +267,16 @@ export const getAmmRewards = async (): Promise<number> => {
 
 // TODO: remove this method when this data is placed on the backend
 export const getAquaInPoolsSum = async (): Promise<number> => {
-    const AQUA = StellarService.createAsset(AQUA_CODE, AQUA_ISSUER);
+    const baseUrl = getAmmAquaUrl();
+
+    const { aquaContract, aquaAssetString } = getAquaAssetData();
+
     const { data } = await axios.get<ListResponse<Pool>>(
-        `${API_AMM_BACKEND}/pools/?&search=${SorobanService.getAssetContractId(AQUA)}&size=500`,
+        `${baseUrl}/pools/?&search=${aquaContract}&size=500`,
     );
 
     return data.items.reduce((acc, item) => {
-        const aquaIndex = item.tokens_str.findIndex(str => str === getAssetString(AQUA));
+        const aquaIndex = item.tokens_str.findIndex(str => str === aquaAssetString);
 
         return acc + Number(item.reserves[aquaIndex]) / 1e7;
     }, 0);
