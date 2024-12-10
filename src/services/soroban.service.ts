@@ -4,10 +4,8 @@ import BigNumber from 'bignumber.js';
 import binascii from 'binascii';
 import { sha256 } from 'js-sha256';
 
-import { CONTRACTS } from 'constants/soroban';
-
 import { getAssetString } from 'helpers/assets';
-import { getEnv, getNetworkPassphrase } from 'helpers/env';
+import { getNetworkPassphrase } from 'helpers/env';
 import { SorobanErrorHandler, SorobanPrepareTxErrorHandler } from 'helpers/error-handler';
 
 import RestoreContractModal from 'web/modals/RestoreContractModal';
@@ -15,7 +13,7 @@ import RestoreContractModal from 'web/modals/RestoreContractModal';
 import { ModalService, ToastService } from './globalServices';
 
 const SOROBAN_SERVER = 'https://soroban-rpc.aqua.network/';
-export const AMM_SMART_CONTACT_ID = 'CA7RQDMMV6E53P5EDZA5GPWBZ33AMW2ZNO42XLI2RGRIAP4QXIARUOJQ';
+export const AMM_SMART_CONTACT_ID = 'CBQDHNBFBZYE4MKPWBSJOPIYLW4SFSXAXUTSXJN76GNKYVYPCKWC6QUK';
 
 enum AMM_CONTRACT_METHOD {
     GET_POOLS = 'get_pools',
