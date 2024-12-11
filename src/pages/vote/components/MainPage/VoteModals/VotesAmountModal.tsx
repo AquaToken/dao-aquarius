@@ -513,7 +513,7 @@ const VotesAmountModal = ({
                     !value ||
                     !Number(value) ||
                     +value < MINIMUM_AMOUNT ||
-                    (targetAsset !== aquaStellarAsset && +value < MINIMUM_ICE_AMOUNT),
+                    (targetAsset.code !== aquaStellarAsset.code && +value < MINIMUM_ICE_AMOUNT),
             )
         ) {
             ToastService.showErrorToast(
@@ -526,11 +526,14 @@ const VotesAmountModal = ({
             return;
         }
 
-        if (targetAsset !== aquaStellarAsset && account.authType === LoginTypes.walletConnect) {
+        if (
+            targetAsset.code !== aquaStellarAsset.code &&
+            account.authType === LoginTypes.walletConnect
+        ) {
             openCurrentWalletIfExist();
         }
 
-        if (targetAsset !== aquaStellarAsset) {
+        if (targetAsset.code !== aquaStellarAsset.code) {
             confirmVotes();
             return;
         }
@@ -677,7 +680,11 @@ const VotesAmountModal = ({
                             <Label>Total:</Label>
                             <TotalAmount>
                                 {amount || '0'} {targetAsset.code}{' '}
-                                {targetAsset === aquaStellarAsset ? <AquaLogo /> : <IceLogo />}
+                                {targetAsset.code === aquaStellarAsset.code ? (
+                                    <AquaLogo />
+                                ) : (
+                                    <IceLogo />
+                                )}
                             </TotalAmount>
                         </TotalAmountRow>
                     </>
@@ -686,7 +693,7 @@ const VotesAmountModal = ({
                 {hasTrustLine && hasTargetBalance ? null : (
                     <GetAquaBlock>
                         <GetAquaLabel>You don&apos;t have enough {targetAsset.code}</GetAquaLabel>
-                        {targetAsset === aquaStellarAsset ? (
+                        {targetAsset.code === aquaStellarAsset.code ? (
                             <ExternalLink onClick={() => ModalService.openModal(GetAquaModal, {})}>
                                 <GetAquaLink>Get {targetAsset.code}</GetAquaLink>
                             </ExternalLink>
@@ -706,7 +713,7 @@ const VotesAmountModal = ({
                     disabled={!amount || !Number(amount)}
                     pending={pending}
                 >
-                    {targetAsset === aquaStellarAsset ? 'NEXT' : 'confirm'}
+                    {targetAsset.code === aquaStellarAsset.code ? 'NEXT' : 'confirm'}
                 </Button>
             </ButtonContainer>
         </>
