@@ -8,7 +8,7 @@ import { Asset } from 'types/stellar';
 export const getAssetDetails = (asset: Asset): Promise<ExpertAssetData> =>
     axios
         .get<{ _embedded: { records: ExpertAssetData[] } }>(
-            `${API_URL_STELLAR_EXPERT}explorer/public/asset?search=${asset.issuer}`,
+            `${API_URL_STELLAR_EXPERT}explorer/public/asset?search=${asset.issuer ?? 'XLM'}`,
         )
         .then(({ data }) =>
             data._embedded.records.find(details => {

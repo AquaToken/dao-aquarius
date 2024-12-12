@@ -74,6 +74,14 @@ export const getPools = async (
     return { pools: processed, total: data.total };
 };
 
+export const getPoolsWithAssets = (assets: Asset[]): Promise<PoolProcessed[]> => {
+    const baseUrl = getAmmAquaUrl();
+    const params = assets.map(asset => SorobanService.getAssetContractId(asset)).join(',');
+
+    return axios
+        .get<ListResponse<Pool>>(`${baseUrl}/pools/?tokens__in=${params}`)
+        .then(res => processPools(res.data.items));
+};
 export const getPoolInfo = async (id: string): Promise<PoolProcessed> => {
     const baseUrl = getAmmAquaUrl();
 
@@ -82,7 +90,7 @@ export const getPoolInfo = async (id: string): Promise<PoolProcessed> => {
     return processed;
 };
 
-const getPoolStats = async (id: string): Promise<{ stats: PoolStatistics[] }> => {
+export const getPoolStats = async (id: string): Promise<{ stats: PoolStatistics[] }> => {
     const baseUrl = getAmmAquaUrl();
 
     try {
@@ -112,7 +120,7 @@ export const getPoolMembers = async (
     }
 };
 
-const getPoolMembersCount = async (id: string): Promise<{ membersCount: number }> => {
+export const getPoolMembersCount = async (id: string): Promise<{ membersCount: number }> => {
     const baseUrl = getAmmAquaUrl();
 
     try {

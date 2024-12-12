@@ -1,15 +1,19 @@
 import BigNumber from 'bignumber.js';
 import * as React from 'react';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
+import { getPoolMembersCount, getPoolStats } from 'api/amm';
+
 import { formatBalance } from 'helpers/format-number';
+import { truncateString } from 'helpers/truncate-string';
+
+import { ModalService, StellarService } from 'services/globalServices';
+import { POOL_TYPE } from 'services/soroban.service';
 
 import { PoolClassicProcessed, PoolExtended, PoolProcessed, PoolUserProcessed } from 'types/amm';
 import { Asset as AssetType } from 'types/stellar';
 
-import { ModalService, StellarService } from 'services/globalServices';
-import { POOL_TYPE } from 'services/soroban.service';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import MigrateLiquidityStep1 from 'web/modals/migrate-liquidity/MigrateLiquidityStep1';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -18,10 +22,15 @@ import Arrow from 'assets/icon-arrow-down.svg';
 
 import Asset from 'basics/Asset';
 import Button from 'basics/buttons/Button';
+import { DotsLoader } from 'basics/loaders';
 import Market from 'basics/Market';
+
+import LiquidityChart from 'pages/amm/components/LiquidityChart/LiquidityChart';
+import VolumeChart from 'pages/amm/components/VolumeChart/VolumeChart';
 
 import MigratePoolButton from './MigratePoolButton/MigratePoolButton';
 
+import CopyButton from '../../../../web/basics/buttons/CopyButton';
 import DepositToPool from '../DepositToPool/DepositToPool';
 import WithdrawFromPool from '../WithdrawFromPool/WithdrawFromPool';
 
@@ -141,6 +150,16 @@ const ArrowDown = styled(Arrow)<{ $isOpen: boolean }>`
     transition: transform linear 200ms;
 `;
 
+const Charts = styled.div`
+    display: flex;
+    justify-content: space-evenly;
+    margin-bottom: 1rem;
+
+    ${respondDown(Breakpoints.sm)`
+        flex-direction: column;
+    `}
+`;
+
 const ExpandedBlock = styled.div<{ $withoutTopPadding?: boolean }>`
     display: flex;
     flex-direction: column;
@@ -188,6 +207,24 @@ const ExpandedDataRow = styled.div`
     }
 `;
 
+const Rates = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    span {
+        font-size: 1.6rem;
+        line-height: 2.8rem;
+        color: ${COLORS.paragraphText};
+    }
+
+    ${respondDown(Breakpoints.sm)`
+        span {
+            font-size: 1.2rem!important;
+        }
+    `}
+`;
+
 const Buttons = styled.div`
     ${flexRowSpaceBetween};
     gap: 0.8rem;
@@ -204,6 +241,7 @@ interface PoolsListProps {
     onUpdate: () => void;
     isUserList?: boolean;
     withDeposit?: boolean;
+    isCommonList?: boolean;
     baseAmount?: string;
     counterAmount?: string;
     base?: AssetType;
@@ -215,6 +253,7 @@ const PoolsList = ({
     pools,
     onUpdate,
     isUserList,
+    isCommonList,
     withDeposit,
     baseAmount,
     counterAmount,
@@ -222,7 +261,35 @@ const PoolsList = ({
     counter,
     onConfirm,
 }: PoolsListProps) => {
-    const [expandedIndexes, setExpandedIndexes] = useState([]);
+    const [expandedIndexes, setExpandedIndexes] = useState(
+        isCommonList && pools.length === 1 ? [(pools[0] as SorobanPool).address] : [],
+    );
+    const [poolMembers, setPoolMembers] = useState(null);
+    const [poolStats, setPoolStats] = useState(null);
+
+    useEffect(() => {
+        if (!isCommonList) {
+            return;
+        }
+
+        Promise.all(
+            pools.map(pool =>
+                getPoolMembersCount((pool as SorobanPool).address).then(
+                    ({ membersCount }) => membersCount,
+                ),
+            ),
+        ).then(res => {
+            setPoolMembers(res);
+        });
+
+        Promise.all(
+            pools.map(pool =>
+                getPoolStats((pool as SorobanPool).address).then(({ stats }) => stats),
+            ),
+        ).then(res => {
+            setPoolStats(res);
+        });
+    }, []);
 
     const openPool = (id: string) => {
         setExpandedIndexes(withDeposit ? [id] : [...expandedIndexes, id]);
@@ -239,9 +306,37 @@ const PoolsList = ({
         openPool(id);
     };
 
+    const rates = useMemo(
+        () =>
+            pools.map(pool => {
+                if (pool.total_share === 0) {
+                    return null;
+                }
+
+                const results = [];
+
+                for (let i = 0; i < pool.assets.length; i++) {
+                    let result = `1 ${pool.assets[i].code}`;
+                    const baseShare = pool.reserves[i];
+
+                    for (let j = 0; j < pool.assets.length; j++) {
+                        if (i !== j) {
+                            const conversionRate = (pool.reserves[j] / baseShare).toFixed(7);
+                            result += ` = ${conversionRate} ${pool.assets[j].code}`;
+                        }
+                    }
+
+                    results.push(result);
+                }
+
+                return results;
+            }),
+        [pools],
+    );
+
     return (
         <>
-            {pools.map((pool: SorobanPool | PoolClassicProcessed) => {
+            {pools.map((pool: SorobanPool | PoolClassicProcessed, index: number) => {
                 const balance = new BigNumber(((pool as PoolUserProcessed).balance ?? 0).toString())
                     .div(1e7)
                     .toString();
@@ -310,21 +405,23 @@ const PoolsList = ({
                                     </span>
                                 </PoolLiquidity>
                             )}
-                            <ExpandButton
-                                onClick={() =>
-                                    togglePool(
-                                        (pool as SorobanPool).address ??
-                                            (pool as PoolClassicProcessed).id,
-                                    )
-                                }
-                            >
-                                <ArrowDown
-                                    $isOpen={expandedIndexes.includes(
-                                        (pool as SorobanPool).address ??
-                                            (pool as PoolClassicProcessed).id,
-                                    )}
-                                />
-                            </ExpandButton>
+                            {isCommonList && pools.length === 1 ? null : (
+                                <ExpandButton
+                                    onClick={() =>
+                                        togglePool(
+                                            (pool as SorobanPool).address ??
+                                                (pool as PoolClassicProcessed).id,
+                                        )
+                                    }
+                                >
+                                    <ArrowDown
+                                        $isOpen={expandedIndexes.includes(
+                                            (pool as SorobanPool).address ??
+                                                (pool as PoolClassicProcessed).id,
+                                        )}
+                                    />
+                                </ExpandButton>
+                            )}
                         </PoolMain>
                         {expandedIndexes.includes(
                             (pool as SorobanPool).address ?? (pool as PoolClassicProcessed).id,
@@ -350,6 +447,20 @@ const PoolsList = ({
                                     />
                                 ) : (
                                     <>
+                                        {isCommonList && poolStats && (
+                                            <Charts>
+                                                <VolumeChart
+                                                    data={poolStats[index]}
+                                                    width={Math.min(450, +window.innerWidth - 105)}
+                                                    height={320}
+                                                />
+                                                <LiquidityChart
+                                                    data={poolStats[index]}
+                                                    width={Math.min(450, +window.innerWidth - 105)}
+                                                    height={320}
+                                                />
+                                            </Charts>
+                                        )}
                                         {Boolean((pool as PoolUserProcessed).balance) && (
                                             <ExpandedDataRow>
                                                 <span>Pool shares:</span>
@@ -409,59 +520,119 @@ const PoolsList = ({
                                                 <span>{(+pool.fee * 100).toFixed(2)}%</span>
                                             </ExpandedDataRow>
                                         )}
-                                        <Buttons>
-                                            {Boolean((pool as PoolUserProcessed).balance) && (
-                                                <Button
-                                                    fullWidth
-                                                    onClick={() =>
-                                                        pool.pool_type === POOL_TYPE.classic
-                                                            ? ModalService.openModal(
-                                                                  MigrateLiquidityStep1,
-                                                                  {
-                                                                      pool,
-                                                                      base: pool.assets[0],
-                                                                      counter: pool.assets[1],
-                                                                  },
-                                                              ).then(() => onUpdate())
-                                                            : ModalService.openModal(
-                                                                  WithdrawFromPool,
-                                                                  {
-                                                                      pool,
-                                                                  },
-                                                              ).then(() => onUpdate())
-                                                    }
-                                                >
-                                                    Remove liquidity
-                                                </Button>
-                                            )}
+                                        {isCommonList && (
+                                            <>
+                                                <ExpandedDataRow>
+                                                    <span>Total share:</span>
+                                                    <span>
+                                                        {formatBalance(+pool.total_share / 1e7)}
+                                                    </span>
+                                                </ExpandedDataRow>
+                                                <ExpandedDataRow>
+                                                    <span>Members:</span>
+                                                    <span>
+                                                        {poolMembers ? (
+                                                            formatBalance(poolMembers[index])
+                                                        ) : (
+                                                            <DotsLoader />
+                                                        )}
+                                                    </span>
+                                                </ExpandedDataRow>
+                                                <ExpandedDataRow>
+                                                    <span>Pool hash:</span>
+                                                    <span>
+                                                        <CopyButton
+                                                            text={(pool as SorobanPool).index}
+                                                            isBlackText
+                                                        >
+                                                            {truncateString(
+                                                                (pool as SorobanPool).index,
+                                                            )}
+                                                        </CopyButton>
+                                                    </span>
+                                                </ExpandedDataRow>
+                                                <ExpandedDataRow>
+                                                    <span>Pool address:</span>
+                                                    <span>
+                                                        <CopyButton
+                                                            text={(pool as SorobanPool).address}
+                                                            isBlackText
+                                                        >
+                                                            {truncateString(
+                                                                (pool as SorobanPool).address,
+                                                            )}
+                                                        </CopyButton>
+                                                    </span>
+                                                </ExpandedDataRow>
+                                                <ExpandedDataRow>
+                                                    <span>Exchange rates:</span>
+                                                    <Rates>
+                                                        {rates[index]
+                                                            ? rates[index].map(rate => (
+                                                                  <span key={rate}>{rate}</span>
+                                                              ))
+                                                            : 'Empty pool'}
+                                                    </Rates>
+                                                </ExpandedDataRow>
+                                            </>
+                                        )}
+                                        {!isCommonList && (
+                                            <Buttons>
+                                                {Boolean((pool as PoolUserProcessed).balance) && (
+                                                    <Button
+                                                        fullWidth
+                                                        onClick={() =>
+                                                            pool.pool_type === POOL_TYPE.classic
+                                                                ? ModalService.openModal(
+                                                                      MigrateLiquidityStep1,
+                                                                      {
+                                                                          pool,
+                                                                          base: pool.assets[0],
+                                                                          counter: pool.assets[1],
+                                                                      },
+                                                                  ).then(() => onUpdate())
+                                                                : ModalService.openModal(
+                                                                      WithdrawFromPool,
+                                                                      {
+                                                                          pool,
+                                                                      },
+                                                                  ).then(() => onUpdate())
+                                                        }
+                                                    >
+                                                        Remove liquidity
+                                                    </Button>
+                                                )}
 
-                                            {pool.pool_type === POOL_TYPE.classic ? (
-                                                <MigratePoolButton
-                                                    pool={pool as PoolClassicProcessed}
-                                                    onUpdate={() => onUpdate()}
-                                                />
-                                            ) : (
-                                                <Button
-                                                    fullWidth
-                                                    onClick={(e: React.MouseEvent) => {
-                                                        e.preventDefault();
-                                                        ModalService.openModal(
-                                                            DepositToPool,
-                                                            {
-                                                                pool,
-                                                                onUpdate,
-                                                            },
-                                                            false,
-                                                            null,
-                                                            true,
-                                                        );
-                                                    }}
-                                                    disabled={(pool as SorobanPool).deposit_killed}
-                                                >
-                                                    Add liquidity
-                                                </Button>
-                                            )}
-                                        </Buttons>
+                                                {pool.pool_type === POOL_TYPE.classic ? (
+                                                    <MigratePoolButton
+                                                        pool={pool as PoolClassicProcessed}
+                                                        onUpdate={() => onUpdate()}
+                                                    />
+                                                ) : (
+                                                    <Button
+                                                        fullWidth
+                                                        onClick={(e: React.MouseEvent) => {
+                                                            e.preventDefault();
+                                                            ModalService.openModal(
+                                                                DepositToPool,
+                                                                {
+                                                                    pool,
+                                                                    onUpdate,
+                                                                },
+                                                                false,
+                                                                null,
+                                                                true,
+                                                            );
+                                                        }}
+                                                        disabled={
+                                                            (pool as SorobanPool).deposit_killed
+                                                        }
+                                                    >
+                                                        Add liquidity
+                                                    </Button>
+                                                )}
+                                            </Buttons>
+                                        )}
                                     </>
                                 )}
                             </ExpandedBlock>
