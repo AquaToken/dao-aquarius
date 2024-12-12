@@ -14,6 +14,7 @@ import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
 import { ModalService, StellarService } from 'services/globalServices';
 import { POOL_TYPE } from 'services/soroban.service';
+
 import { flexAllCenter, respondDown } from 'web/mixins';
 import AssetInfoModal from 'web/modals/AssetInfoModal';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -97,7 +98,7 @@ const Icon = styled.div<{
         $mobileVerticalDirections &&
         respondDown(Breakpoints.md)`
               right: ${({ $isBig, $assetOrderNumber }) =>
-                  `${($assetOrderNumber - 1) * ($isBig ? 3 : 1)}rem`};
+                  `${(+$assetOrderNumber - 1) * ($isBig ? 3 : 1)}rem`};
           `}
 `;
 
@@ -314,6 +315,7 @@ const Market = ({
                     </Icon>
                 ))}
             </Icons>
+            {bottomLabels && <Labels>{labels}</Labels>}
             <AssetsDetails
                 $verticalDirections={verticalDirections}
                 $mobileVerticalDirections={mobileVerticalDirections}
@@ -389,7 +391,6 @@ const Market = ({
                     </AssetsDomains>
                 )}
             </AssetsDetails>
-            {bottomLabels && <Labels>{labels}</Labels>}
         </Wrapper>
     );
 };

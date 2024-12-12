@@ -1,5 +1,5 @@
-/* eslint-disable prefer-spread */
-import { css, FlattenSimpleInterpolation, Interpolation } from 'styled-components';
+// eslint-disable-next-line import/named
+import { css, CSSObject, Interpolation } from 'styled-components';
 
 import { Breakpoints, COLORS } from './styles';
 
@@ -62,17 +62,39 @@ export const commonMaxWidth = css`
 
 export const respondUp =
     (breakPoint: Breakpoints) =>
-    (...args: Interpolation<any>[]): FlattenSimpleInterpolation =>
+    (...args: [TemplateStringsArray, ...Interpolation<CSSObject>[]]) =>
         css`
             @media (min-width: ${breakPoint}) {
-                ${css.apply(null, args)};
+                ${css(...args)};
             }
         `;
+
 export const respondDown =
     (breakPoint: Breakpoints) =>
-    (...args: Interpolation<any>[]): FlattenSimpleInterpolation =>
+    (...args: [TemplateStringsArray, ...Interpolation<CSSObject>[]]) =>
         css`
             @media (max-width: ${breakPoint}) {
-                ${css.apply(null, args)};
+                ${css(...args)};
             }
         `;
+
+export const contentWithSidebar = css`
+    ${commonMaxWidth};
+    padding-right: calc(10vw + 20rem);
+
+    &:last-child {
+        margin-bottom: 6.6rem;
+    }
+
+    ${respondDown(Breakpoints.xxxl)`
+        padding-right: calc(10vw + 30rem);
+    `}
+
+    ${respondDown(Breakpoints.xxl)`
+        padding-right: calc(10vw + 40rem);
+    `}
+
+    ${respondDown(Breakpoints.lg)`
+        padding: 3.2rem 1.6rem 0;
+    `}
+`;

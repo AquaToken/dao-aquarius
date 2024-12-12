@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 
-function isElementInViewport(el: HTMLDivElement) {
+function isElementInViewport(el: HTMLElement) {
     const rect = el.getBoundingClientRect();
 
     return rect.bottom <= (window.innerHeight || document.documentElement.clientHeight);
 }
 
-function isElementOverScrolled(el: HTMLDivElement, offset: number) {
+export function isElementOverScrolled(el: HTMLElement, offset: number) {
     const rect = el.getBoundingClientRect();
     return rect.bottom < (offset || 0);
 }
@@ -26,7 +26,7 @@ function useEventsListener(handler: () => void) {
     }, []);
 }
 
-export function useIsOnViewport(ref: React.RefObject<HTMLDivElement>) {
+export function useIsOnViewport(ref: React.RefObject<HTMLElement>) {
     const [isOnViewport, setIsOnViewport] = useState(false);
 
     const handler = () => {
@@ -42,7 +42,7 @@ export function useIsOnViewport(ref: React.RefObject<HTMLDivElement>) {
     return isOnViewport;
 }
 
-export function useIsOverScrolled(ref: React.RefObject<HTMLDivElement>, offset: number) {
+export function useIsOverScrolled(ref: React.RefObject<HTMLElement>, offset: number) {
     const [isOnViewport, setIsOnViewport] = useState(false);
 
     const handler = () => {
@@ -56,4 +56,22 @@ export function useIsOverScrolled(ref: React.RefObject<HTMLDivElement>, offset: 
     useEventsListener(handler);
 
     return isOnViewport;
+}
+
+export function useActiveAnchorIndex(anchors: React.RefObject<HTMLElement>[], offset = 50) {
+    const [activeIndex, setActiveIndex] = useState<number>(-1);
+
+    const calculateActiveIndex = () => {
+        const currentIndex = anchors.findIndex((_, i) => {
+            const isCurrentInView = !isElementOverScrolled(anchors[i].current, offset);
+            const isPreviousScrolledOut =
+                i === 0 || isElementOverScrolled(anchors[i - 1].current, offset);
+            return isCurrentInView && isPreviousScrolledOut;
+        });
+        setActiveIndex(currentIndex);
+    };
+
+    useEventsListener(calculateActiveIndex);
+
+    return activeIndex;
 }
