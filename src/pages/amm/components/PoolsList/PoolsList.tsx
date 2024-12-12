@@ -447,20 +447,28 @@ const PoolsList = ({
                                     />
                                 ) : (
                                     <>
-                                        {isCommonList && poolStats && (
-                                            <Charts>
-                                                <VolumeChart
-                                                    data={poolStats[index]}
-                                                    width={Math.min(450, +window.innerWidth - 105)}
-                                                    height={320}
-                                                />
-                                                <LiquidityChart
-                                                    data={poolStats[index]}
-                                                    width={Math.min(450, +window.innerWidth - 105)}
-                                                    height={320}
-                                                />
-                                            </Charts>
-                                        )}
+                                        {isCommonList &&
+                                            poolStats &&
+                                            Boolean(poolStats[index].length) && (
+                                                <Charts>
+                                                    <VolumeChart
+                                                        data={poolStats[index]}
+                                                        width={Math.min(
+                                                            450,
+                                                            +window.innerWidth - 105,
+                                                        )}
+                                                        height={320}
+                                                    />
+                                                    <LiquidityChart
+                                                        data={poolStats[index]}
+                                                        width={Math.min(
+                                                            450,
+                                                            +window.innerWidth - 105,
+                                                        )}
+                                                        height={320}
+                                                    />
+                                                </Charts>
+                                            )}
                                         {Boolean((pool as PoolUserProcessed).balance) && (
                                             <ExpandedDataRow>
                                                 <span>Pool shares:</span>
