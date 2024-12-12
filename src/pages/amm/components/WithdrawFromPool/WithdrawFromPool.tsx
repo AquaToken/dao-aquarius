@@ -10,12 +10,13 @@ import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { ModalService, SorobanService, ToastService } from 'services/globalServices';
+import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
+
 import { PoolExtended } from 'types/amm';
 import { ModalProps } from 'types/modal';
 import { Int128Parts } from 'types/stellar';
 
-import { ModalService, SorobanService, ToastService } from 'services/globalServices';
-import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 import { flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -146,7 +147,13 @@ const WithdrawFromPool = ({ params, close }: ModalProps<{ pool: PoolExtended }>)
             .toFixed(7);
         let hash: string;
 
-        SorobanService.getWithdrawTx(account?.accountId(), pool.index, amount, pool.assets)
+        SorobanService.getWithdrawTx(
+            account?.accountId(),
+            pool.address,
+            amount,
+            pool.assets,
+            pool.share_token_address,
+        )
             .then(tx => {
                 hash = tx.hash().toString('hex');
                 return account.signAndSubmitTx(tx, true);

@@ -9,10 +9,6 @@ import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { PoolExtended } from 'types/amm';
-import { ModalProps } from 'types/modal';
-import { Asset as AssetType, Int128Parts } from 'types/stellar';
-
 import {
     ModalService,
     SorobanService,
@@ -20,6 +16,11 @@ import {
     ToastService,
 } from 'services/globalServices';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
+
+import { PoolExtended } from 'types/amm';
+import { ModalProps } from 'types/modal';
+import { Asset as AssetType, Int128Parts } from 'types/stellar';
+
 import { customScroll, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -286,7 +287,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
             openCurrentWalletIfExist();
         }
         setPending(true);
-        SorobanService.getDepositTx(account?.accountId(), pool.index, pool.assets, amounts)
+        SorobanService.getDepositTx(account?.accountId(), pool.address, pool.assets, amounts)
             .then(tx => {
                 hash = tx.hash().toString('hex');
                 return account.signAndSubmitTx(tx, true);
