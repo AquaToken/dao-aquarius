@@ -20,7 +20,7 @@ import { PairStats } from 'pages/vote/api/types';
 import EventService from './event.service';
 import { ToastService } from './globalServices';
 
-const VAULT_API = 'https://vault.lobstr.co/api/transactions/';
+const VAULT_API = 'https://vault-staging.lobstr.co/api/transactions/';
 
 const FEE = '100000';
 const TRANSACTION_TIMEOUT = 60 * 60 * 24 * 30;
