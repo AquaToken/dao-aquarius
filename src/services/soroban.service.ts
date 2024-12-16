@@ -379,7 +379,7 @@ export default class SorobanServiceClass {
             this.scValToArray(
                 this.orderTokens([base, counter]).map(asset => this.assetToScVal(asset)),
             ),
-            this.amountToUint32(fee * 100),
+            this.amountToUint32(fee),
         ];
 
         const operation = StellarSdk.Operation.invokeContractFunction({
@@ -411,7 +411,7 @@ export default class SorobanServiceClass {
                                             args: [
                                                 this.publicKeyToScVal(accountId),
                                                 this.contractIdToScVal(createInfo.destination),
-                                                this.amountToToInt128(createInfo.constantFee),
+                                                this.amountToInt128(createInfo.constantFee),
                                             ],
                                         }),
                                     ),
@@ -464,7 +464,7 @@ export default class SorobanServiceClass {
                                             args: [
                                                 this.publicKeyToScVal(accountId),
                                                 this.contractIdToScVal(createInfo.destination),
-                                                this.amountToToInt128(createInfo.stableFee),
+                                                this.amountToInt128(createInfo.stableFee),
                                             ],
                                         }),
                                     ),
@@ -675,7 +675,7 @@ export default class SorobanServiceClass {
             .then(({ result }) =>
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-expect-error
-                this.getContactIdFromHash(result.retval.value().value().toString('hex')),
+                StellarSdk.StrKey.encodeContract(result.retval.value().value()),
             );
     }
 
@@ -817,7 +817,7 @@ export default class SorobanServiceClass {
                                                 args: [
                                                     this.publicKeyToScVal(accountId),
                                                     this.contractIdToScVal(poolAddress),
-                                                    this.amountToToInt128(
+                                                    this.amountToInt128(
                                                         amounts.get(getAssetString(asset)),
                                                     ),
                                                 ],
@@ -875,7 +875,7 @@ export default class SorobanServiceClass {
                                                 this.contractIdToScVal(shareAddress).address(),
                                             args: [
                                                 this.publicKeyToScVal(accountId),
-                                                this.amountToToInt128(shareAmount),
+                                                this.amountToInt128(shareAmount),
                                             ],
                                         }),
                                     ),
@@ -963,7 +963,7 @@ export default class SorobanServiceClass {
                                             args: [
                                                 this.publicKeyToScVal(accountId),
                                                 this.contractIdToScVal(AMM_SMART_CONTACT_ID),
-                                                this.amountToToInt128(amount),
+                                                this.amountToInt128(amount),
                                             ],
                                         }),
                                     ),
@@ -1060,7 +1060,7 @@ export default class SorobanServiceClass {
         return xdr.ScVal.scvU32(Math.floor(amount));
     }
 
-    amountToToInt128(amount: string): xdr.ScVal {
+    amountToInt128(amount: string): xdr.ScVal {
         return new StellarSdk.XdrLargeInt(
             'u128',
             new BigNumber(amount).times(1e7).toFixed(),
