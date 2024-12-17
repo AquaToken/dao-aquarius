@@ -173,6 +173,17 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
     const { pool, isModal = true, baseAmount, counterAmount, base, counter, onUpdate } = params;
 
     const [accountShare, setAccountShare] = useState(null);
+    const [assetsReserves, setAssetsReserves] = useState(null);
+
+    useEffect(() => {
+        if (!account) {
+            setAssetsReserves(null);
+            return;
+        }
+        Promise.all(pool.assets.map(asset => account.getReservesForSwap(asset))).then(res => {
+            setAssetsReserves(res);
+        });
+    }, [account, pool]);
 
     useEffect(() => {
         if (!account) {
@@ -398,7 +409,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                 />
             )}
             <Form>
-                {pool.assets.map(asset => (
+                {pool.assets.map((asset, index) => (
                     <FormRow key={getAssetString(asset)}>
                         {account && account.getAssetBalance(asset) !== null && (
                             <Balance>
@@ -421,16 +432,18 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                                     position={TOOLTIP_POSITION.left}
                                     content={
                                         <TooltipInnerBalance>
-                                            {account
-                                                .getReservesForSwap(asset)
-                                                .map(({ label, value }) => (
+                                            {assetsReserves ? (
+                                                assetsReserves[index].map(({ label, value }) => (
                                                     <TooltipRow key={label}>
                                                         <span>{label}</span>
                                                         <span>
                                                             {value} {asset.code}
                                                         </span>
                                                     </TooltipRow>
-                                                ))}
+                                                ))
+                                            ) : (
+                                                <DotsLoader />
+                                            )}
                                         </TooltipInnerBalance>
                                     }
                                 >

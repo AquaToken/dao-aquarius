@@ -1,5 +1,6 @@
 import { Asset } from '@stellar/stellar-sdk';
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import useAuthStore from 'store/authStore/useAuthStore';
@@ -9,6 +10,7 @@ import { Breakpoints, COLORS } from 'web/styles';
 
 import Info from 'assets/icon-info.svg';
 
+import { DotsLoader } from 'basics/loaders';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 const Container = styled.div<{ $isMobile: boolean }>`
@@ -86,7 +88,18 @@ interface PercentButtonsProps {
 }
 
 const PercentButtons = ({ setPercent, asset, isMobile }: PercentButtonsProps) => {
+    const [assetReserves, setAssetReserves] = useState(null);
     const { account } = useAuthStore();
+
+    useEffect(() => {
+        if (!account) {
+            setAssetReserves(null);
+            return;
+        }
+        account.getReservesForSwap(asset).then(res => {
+            setAssetReserves(res);
+        });
+    }, [account]);
 
     if (!account) {
         return null;
@@ -107,14 +120,18 @@ const PercentButtons = ({ setPercent, asset, isMobile }: PercentButtonsProps) =>
                 }
                 content={
                     <TooltipInner>
-                        {account.getReservesForSwap(asset).map(({ label, value }) => (
-                            <TooltipRow key={label}>
-                                <span>{label}</span>
-                                <span>
-                                    {value} {asset.code}
-                                </span>
-                            </TooltipRow>
-                        ))}
+                        {assetReserves ? (
+                            assetReserves.map(({ label, value }) => (
+                                <TooltipRow key={label}>
+                                    <span>{label}</span>
+                                    <span>
+                                        {value} {asset.code}
+                                    </span>
+                                </TooltipRow>
+                            ))
+                        ) : (
+                            <DotsLoader />
+                        )}
                     </TooltipInner>
                 }
             >
