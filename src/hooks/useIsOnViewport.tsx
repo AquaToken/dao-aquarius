@@ -2,12 +2,14 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 
 function isElementInViewport(el: HTMLElement) {
+    if (!el) return;
     const rect = el.getBoundingClientRect();
 
     return rect.bottom <= (window.innerHeight || document.documentElement.clientHeight);
 }
 
 export function isElementOverScrolled(el: HTMLElement, offset: number) {
+    if (!el) return;
     const rect = el.getBoundingClientRect();
     return rect.bottom < (offset || 0);
 }
