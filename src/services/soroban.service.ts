@@ -12,7 +12,7 @@ import RestoreContractModal from 'web/modals/RestoreContractModal';
 import { ModalService, ToastService } from './globalServices';
 
 const SOROBAN_SERVER = 'https://soroban-testnet.stellar.org:443';
-export const AMM_SMART_CONTACT_ID = 'CDMSJQ4TPCTAYDRYN46FVMYIWV2A4ZTHCWWIN2NW3QZIFPJWBBEGDKDY';
+export const AMM_SMART_CONTACT_ID = 'CDGX6Q3ZZIDSX2N3SHBORWUIEG2ZZEBAAMYARAXTT7M5L6IXKNJMT3GB';
 
 enum AMM_CONTRACT_METHOD {
     GET_POOLS = 'get_pools',
