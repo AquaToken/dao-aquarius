@@ -48,6 +48,10 @@ const Cell = styled.div`
     align-items: center;
     height: 2.4rem;
 
+    span:last-child {
+        text-align: right;
+    }
+
     ${respondDown(Breakpoints.sm)`
         justify-content: space-between;
     `}
