@@ -453,6 +453,10 @@ const PoolsList = ({
                                                 <Charts>
                                                     <VolumeChart
                                                         data={poolStats[index]}
+                                                        volume24h={{
+                                                            volume_usd: (pool as SorobanPool)
+                                                                .volume_usd,
+                                                        }}
                                                         width={Math.min(
                                                             450,
                                                             +window.innerWidth - 105,
@@ -461,6 +465,9 @@ const PoolsList = ({
                                                     />
                                                     <LiquidityChart
                                                         data={poolStats[index]}
+                                                        currentLiquidity={
+                                                            (pool as SorobanPool).liquidity_usd
+                                                        }
                                                         width={Math.min(
                                                             450,
                                                             +window.innerWidth - 105,
