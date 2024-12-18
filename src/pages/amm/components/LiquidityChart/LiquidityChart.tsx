@@ -37,6 +37,7 @@ export const transformDate = (date_str: string) => {
 
 interface LiquidityChartProps {
     data: PoolStatistics[];
+    currentLiquidity?: string;
     width?: number;
     height?: number;
     marginTop?: number;
@@ -47,6 +48,7 @@ interface LiquidityChartProps {
 
 const LiquidityChart = ({
     data,
+    currentLiquidity,
     width = 312,
     height = 264,
     marginTop = 16,
@@ -136,8 +138,9 @@ const LiquidityChart = ({
                 <LiquidityValue x="16" y="63">
                     $
                     {formatBalance(
-                        +data[selectedIndex === null ? data.length - 1 : selectedIndex]
-                            ?.liquidity_usd / 1e7,
+                        (selectedIndex === null
+                            ? +currentLiquidity || +data[data.length - 1]?.liquidity_usd
+                            : +data[selectedIndex]?.liquidity_usd) / 1e7,
                         true,
                         true,
                     )}
