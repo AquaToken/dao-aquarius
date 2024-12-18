@@ -422,11 +422,13 @@ export default class AccountService extends Horizon.AccountResponse {
         return this.getAssetBalance(asset);
     }
 
-    getReservesForSwap(asset: Asset): { label: string; value: number }[] {
+    async getReservesForSwap(asset: Asset): Promise<{ label: string; value: number }[]> {
         const balance = this.balances.find(
             balance =>
-                (balance as Horizon.HorizonApi.BalanceLineAsset).asset_code == asset.code &&
-                (balance as Horizon.HorizonApi.BalanceLineAsset).asset_issuer === asset.issuer,
+                ((balance as Horizon.HorizonApi.BalanceLineAsset).asset_code == asset.code &&
+                    (balance as Horizon.HorizonApi.BalanceLineAsset).asset_issuer ===
+                        asset.issuer) ||
+                (balance.asset_type === 'native' && asset.isNative()),
         ) as Horizon.HorizonApi.BalanceLineAsset | Horizon.HorizonApi.BalanceLineNative;
 
         if (!balance) {
@@ -466,7 +468,8 @@ export default class AccountService extends Horizon.AccountResponse {
             },
         );
 
-        const entriesOffers = Object.keys(this.offers).length;
+        // TODO: add pagination for more then 200 offers
+        const entriesOffers = (await this.offers({ limit: 200 })).records.length;
         const entriesSigners = this.signers.length - 1;
         const entriesOthers =
             this.subentry_count -
