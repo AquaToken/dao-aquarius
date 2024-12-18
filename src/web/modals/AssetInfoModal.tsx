@@ -227,7 +227,8 @@ const AssetInfoModal = ({ params, close }: ModalProps<AssetInfoModalParams>): Re
                         <Detail>
                             <span>Overall payments volume:</span>
                             <span>
-                                {formatBalance(expertData.payments_amount / 1e7, true)} {asset.code}
+                                {formatBalance(expertData.payments_amount / 1e7, true, true)}{' '}
+                                {asset.code}
                             </span>
                         </Detail>
                         <Detail>

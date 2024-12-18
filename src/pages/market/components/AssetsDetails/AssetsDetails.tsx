@@ -128,7 +128,7 @@ const AssetsDetails = ({ assets }: Props) => {
                     <Cell>
                         <MobileLabel>Payments volume:</MobileLabel>
                         <span>
-                            {formatBalance(details[index]?.payments_amount / 1e7, true)}{' '}
+                            {formatBalance(details[index]?.payments_amount / 1e7, true, true)}{' '}
                             {asset.code}
                         </span>
                     </Cell>
