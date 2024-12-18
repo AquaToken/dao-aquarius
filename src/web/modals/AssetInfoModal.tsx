@@ -13,7 +13,7 @@ import { formatBalance } from 'helpers/format-number';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
-import { StellarService } from 'services/globalServices';
+import { ModalService, StellarService } from 'services/globalServices';
 
 import { ExpertAssetData } from 'types/api-stellar-expert';
 import { ModalProps } from 'types/modal';
@@ -111,7 +111,7 @@ interface AssetInfoModalParams {
     asset: AssetType;
 }
 
-const AssetInfoModal = ({ params, close }: ModalProps<AssetInfoModalParams>): React.ReactNode => {
+const AssetInfoModal = ({ params }: ModalProps<AssetInfoModalParams>): React.ReactNode => {
     const { asset } = params;
 
     const [tomlInfo, setTomlInfo] = useState<StellarTomlType>({});
@@ -246,14 +246,14 @@ const AssetInfoModal = ({ params, close }: ModalProps<AssetInfoModalParams>): Re
                             ? StellarService.createLumen()
                             : aquaStellarAsset,
                     )}`}
-                    onClick={() => close()}
+                    onClick={() => ModalService.closeAllModals()}
                 >
                     <Button isBig>swap</Button>
                 </LinkStyled>
 
                 <LinkStyled
                     to={`${MainRoutes.vote}/?base=${getAssetString(asset)}`}
-                    onClick={() => close()}
+                    onClick={() => ModalService.closeAllModals()}
                 >
                     <Button isBig>vote</Button>
                 </LinkStyled>
