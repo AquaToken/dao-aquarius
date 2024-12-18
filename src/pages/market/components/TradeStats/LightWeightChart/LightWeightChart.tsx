@@ -6,10 +6,12 @@ import styled from 'styled-components';
 import { convertUTCToLocalDateIgnoringTimezone } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 
+import { useDebounce } from 'hooks/useDebounce';
+
+import { StellarService } from 'services/globalServices';
+
 import { Asset } from 'types/stellar';
 
-import { useDebounce } from 'hooks/useDebounce';
-import { StellarService } from 'services/globalServices';
 import { flexAllCenter } from 'web/mixins';
 import { COLORS } from 'web/styles';
 
@@ -248,6 +250,7 @@ const LightWeightChart = ({ base, counter, period }: LightWeightChartProps): Rea
             },
             localization: {
                 locale: 'en-US',
+                priceFormatter: p => parseFloat(p.toFixed(7)).toString(),
             },
             handleScale: {
                 axisPressedMouseMove: false,
@@ -379,7 +382,7 @@ const LightWeightChart = ({ base, counter, period }: LightWeightChartProps): Rea
                     <StatisticValue>{formatBalance(hoveredItem.close)}</StatisticValue>
                     <StatisticLabel>VOL:</StatisticLabel>
                     <StatisticValue>
-                        {formatBalance(hoveredItem.value, true)} {base.code}
+                        {formatBalance(hoveredItem.value, true, true)} {base.code}
                     </StatisticValue>
                 </Statistic>
             )}

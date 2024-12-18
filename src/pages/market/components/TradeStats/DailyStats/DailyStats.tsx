@@ -4,9 +4,10 @@ import styled from 'styled-components';
 
 import { formatBalance } from 'helpers/format-number';
 
+import { StellarService } from 'services/globalServices';
+
 import { Asset } from 'types/stellar';
 
-import { StellarService } from 'services/globalServices';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -134,7 +135,7 @@ const DailyStats = ({ base, counter }: DailyStatsProps): React.ReactNode => {
                         volume24 === '-' ? (
                             '-'
                         ) : (
-                            `${formatBalance(volume24, true)} ${counter.code}`
+                            `${formatBalance(volume24, true, true)} ${counter.code}`
                         )
                     ) : (
                         <DotsLoader />

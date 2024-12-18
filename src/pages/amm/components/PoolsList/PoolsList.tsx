@@ -211,6 +211,7 @@ const Rates = styled.div`
     display: flex;
     flex-direction: column;
     align-items: flex-end;
+    text-align: right;
 
     span {
         font-size: 1.6rem;
@@ -321,7 +322,7 @@ const PoolsList = ({
 
                     for (let j = 0; j < pool.assets.length; j++) {
                         if (i !== j) {
-                            const conversionRate = (pool.reserves[j] / baseShare).toFixed(7);
+                            const conversionRate = formatBalance(pool.reserves[j] / baseShare);
                             result += ` = ${conversionRate} ${pool.assets[j].code}`;
                         }
                     }
