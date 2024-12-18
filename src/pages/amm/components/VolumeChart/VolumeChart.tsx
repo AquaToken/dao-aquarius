@@ -1,10 +1,10 @@
 import * as d3 from 'd3';
-import { addDays, format, isAfter, set, subDays } from 'date-fns';
+import { addDays, format, isAfter, set } from 'date-fns';
 import * as React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import { convertLocalDateToUTCIgnoringTimezone, getDateString } from 'helpers/date';
+import { getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 
 import { PoolStatistics, PoolVolume24h } from 'types/amm';
@@ -32,7 +32,7 @@ const LiquidityValue = styled.text`
 
 interface VolumeChartProps {
     data: PoolStatistics[];
-    volume24h?: PoolVolume24h;
+    volume24h: Partial<PoolVolume24h>;
     isGlobalStat?: boolean;
     width?: number;
     height?: number;
@@ -80,15 +80,6 @@ const VolumeChart = ({
             date = addDays(date, 1);
         }
 
-        const last24Volume = data
-            .filter(item =>
-                isAfter(
-                    transformDate(item.datetime_str),
-                    subDays(convertLocalDateToUTCIgnoringTimezone(new Date()), 1),
-                ),
-            )
-            .reduce((acc, item) => acc + Number(item.volume_usd) / 1e7, 0);
-
         return [
             [
                 ...data
@@ -108,7 +99,7 @@ const VolumeChart = ({
                     }, dateMap)
                     .values(),
             ],
-            { volume_usd: last24Volume },
+            { volume_usd: +volume24h.volume_usd / 1e7 },
         ];
     }, [data, isGlobalStat]);
 

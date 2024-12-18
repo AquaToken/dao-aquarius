@@ -291,10 +291,16 @@ const PoolPage = () => {
                         {Boolean(pool.stats.length) && (
                             <Charts>
                                 <Chart>
-                                    <LiquidityChart data={pool.stats} />
+                                    <LiquidityChart
+                                        data={pool.stats}
+                                        currentLiquidity={pool.liquidity_usd}
+                                    />
                                 </Chart>
                                 <Chart>
-                                    <VolumeChart data={pool.stats} />
+                                    <VolumeChart
+                                        data={pool.stats}
+                                        volume24h={{ volume_usd: pool.volume_usd }}
+                                    />
                                 </Chart>
                             </Charts>
                         )}
