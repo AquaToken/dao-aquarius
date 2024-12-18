@@ -13,12 +13,13 @@ import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { PoolProcessed } from 'types/amm';
-import { Transaction } from 'types/stellar';
-
 import { SorobanService, ToastService } from 'services/globalServices';
 import { CONTRACT_STATUS, POOL_TYPE } from 'services/soroban.service';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
+
+import { PoolProcessed } from 'types/amm';
+import { Transaction } from 'types/stellar';
+
 import { flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -385,6 +386,7 @@ const CreatePool = () => {
             account.accountId(),
             [firstAsset, secondAsset, thirdAsset, fourthAsset].filter(asset => asset !== null),
             Number(stableFee),
+            createInfo,
         )
             .then(tx => signAndSubmitCreation(tx))
             .catch(e => {
@@ -412,6 +414,7 @@ const CreatePool = () => {
             firstAsset,
             secondAsset,
             constantFee,
+            createInfo,
         )
             .then(tx => signAndSubmitCreation(tx))
             .catch(e => {
