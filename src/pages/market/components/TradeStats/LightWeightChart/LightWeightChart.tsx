@@ -162,6 +162,13 @@ interface LightWeightChartProps {
     period: number;
 }
 
+const priceFormatter = price => {
+    if (Number(price) < 1e6) {
+        return price.toFixed(7);
+    }
+    return parseFloat(price.toFixed(7)).toString();
+};
+
 const LightWeightChart = ({ base, counter, period }: LightWeightChartProps): React.ReactNode => {
     const [loading, setLoading] = useState(false);
     const [nextLoading, setNextLoading] = useState(false);
@@ -250,7 +257,7 @@ const LightWeightChart = ({ base, counter, period }: LightWeightChartProps): Rea
             },
             localization: {
                 locale: 'en-US',
-                priceFormatter: p => parseFloat(p.toFixed(7)).toString(),
+                priceFormatter,
             },
             handleScale: {
                 axisPressedMouseMove: false,
