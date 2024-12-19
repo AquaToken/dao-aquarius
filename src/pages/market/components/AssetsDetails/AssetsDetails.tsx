@@ -26,6 +26,7 @@ const Table = styled.div`
 
     ${respondDown(Breakpoints.sm)`
         flex-direction: column;
+        gap: 3rem
     `}
 `;
 
