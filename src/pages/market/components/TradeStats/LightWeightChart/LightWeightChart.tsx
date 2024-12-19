@@ -42,6 +42,9 @@ const Statistic = styled.div<{ $isUp: boolean }>`
     top: 0.8rem;
     z-index: 2;
     color: ${({ $isUp }) => ($isUp ? '#4caf50' : '#ef5350')};
+    width: 80%;
+    display: flex;
+    flex-wrap: wrap;
 `;
 
 const StatisticLabel = styled.span`
@@ -51,10 +54,11 @@ const StatisticLabel = styled.span`
     margin-right: 0.8rem;
 `;
 
-const StatisticValue = styled.span`
+const StatisticValue = styled.div`
     font-size: 1.6rem;
     line-height: 2.8rem;
     margin-right: 1.6rem;
+    display: inline;
 `;
 
 export enum PeriodOptions {
@@ -379,16 +383,20 @@ const LightWeightChart = ({ base, counter, period }: LightWeightChartProps): Rea
                     <StatisticLabel>
                         {base.code}/{counter.code}
                     </StatisticLabel>
-                    <StatisticLabel>O:</StatisticLabel>
-                    <StatisticValue>{formatBalance(hoveredItem.open)}</StatisticValue>
-                    <StatisticLabel>H:</StatisticLabel>
-                    <StatisticValue>{formatBalance(hoveredItem.high)}</StatisticValue>
-                    <StatisticLabel>L:</StatisticLabel>
-                    <StatisticValue>{formatBalance(hoveredItem.low)}</StatisticValue>
-                    <StatisticLabel>C:</StatisticLabel>
-                    <StatisticValue>{formatBalance(hoveredItem.close)}</StatisticValue>
-                    <StatisticLabel>VOL:</StatisticLabel>
                     <StatisticValue>
+                        <StatisticLabel>O:</StatisticLabel> {formatBalance(hoveredItem.open)}
+                    </StatisticValue>
+                    <StatisticValue>
+                        <StatisticLabel>H: </StatisticLabel> {formatBalance(hoveredItem.high)}
+                    </StatisticValue>
+                    <StatisticValue>
+                        <StatisticLabel>L: </StatisticLabel> {formatBalance(hoveredItem.low)}
+                    </StatisticValue>
+                    <StatisticValue>
+                        <StatisticLabel>C: </StatisticLabel> {formatBalance(hoveredItem.close)}
+                    </StatisticValue>
+                    <StatisticValue>
+                        <StatisticLabel>VOL:</StatisticLabel>{' '}
                         {formatBalance(hoveredItem.value, true, true)} {base.code}
                     </StatisticValue>
                 </Statistic>
