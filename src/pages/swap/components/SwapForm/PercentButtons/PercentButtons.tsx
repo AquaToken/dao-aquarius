@@ -99,7 +99,7 @@ const PercentButtons = ({ setPercent, asset, isMobile }: PercentButtonsProps) =>
         account.getReservesForSwap(asset).then(res => {
             setAssetReserves(res);
         });
-    }, [account]);
+    }, [account, asset]);
 
     if (!account) {
         return null;
