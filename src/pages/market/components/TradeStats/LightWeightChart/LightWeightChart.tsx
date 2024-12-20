@@ -167,7 +167,7 @@ interface LightWeightChartProps {
 }
 
 const priceFormatter = price => {
-    if (Number(price) < 1e6) {
+    if (Number(price) < 1e-6) {
         return price.toFixed(7);
     }
     return parseFloat(price.toFixed(7)).toString();
