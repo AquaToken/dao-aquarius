@@ -262,7 +262,7 @@ const ProposalCreation = ({
                             />
                         </SectionForm>
 
-                        <Button fullWidth isBig disabled={!hasData}>
+                        <Button fullWidth isBig disabled={!hasData} type="submit">
                             {isEdit ? 'SUBMIT CHANGES' : 'NEXT'}
                         </Button>
 
