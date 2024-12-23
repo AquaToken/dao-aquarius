@@ -580,16 +580,18 @@ const PoolsList = ({
                                                         </CopyButton>
                                                     </span>
                                                 </ExpandedDataRow>
-                                                <ExpandedDataRow>
-                                                    <span>Exchange rates:</span>
-                                                    <Rates>
-                                                        {rates[index]
-                                                            ? rates[index].map(rate => (
-                                                                  <span key={rate}>{rate}</span>
-                                                              ))
-                                                            : 'Empty pool'}
-                                                    </Rates>
-                                                </ExpandedDataRow>
+                                                {Boolean(Number(pool.total_share)) && (
+                                                    <ExpandedDataRow>
+                                                        <span>Exchange rates:</span>
+                                                        <Rates>
+                                                            {rates[index]
+                                                                ? rates[index].map(rate => (
+                                                                      <span key={rate}>{rate}</span>
+                                                                  ))
+                                                                : 'Empty pool'}
+                                                        </Rates>
+                                                    </ExpandedDataRow>
+                                                )}
                                             </>
                                         )}
                                         {!isCommonList && (
