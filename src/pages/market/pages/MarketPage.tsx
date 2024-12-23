@@ -186,7 +186,11 @@ const MarketPage = () => {
                     <BackButton
                         label="Back to markets"
                         onClick={() => {
-                            history.length ? history.goBack() : history.push(VoteRoutes.main);
+                            try {
+                                history.goBack();
+                            } catch (e) {
+                                history.push(VoteRoutes.main);
+                            }
                         }}
                     >
                         <ArrowLeft />
