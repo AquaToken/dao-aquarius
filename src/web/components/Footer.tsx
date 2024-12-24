@@ -1,7 +1,6 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 
-import { MainRoutes } from 'constants/routes';
 import { AQUA_NETWORK_URL } from 'constants/urls';
 
 import { commonMaxWidth, flexAllCenter, respondDown } from 'web/mixins';
@@ -119,6 +118,7 @@ const DocsLink = styled.a`
 const DuneLogo = styled(Dune)`
     height: 1.6rem;
     width: 1.6rem;
+    overflow: visible;
 `;
 
 const Footer = (): React.ReactNode => (
