@@ -7,6 +7,7 @@ import { commonMaxWidth, flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import AquaLogo from 'assets/aqua-logo.svg';
+import Audit from 'assets/audit.svg';
 import Dune from 'assets/DuneLogoCircle.svg';
 import Docs from 'assets/icon-docs.svg';
 
@@ -31,7 +32,7 @@ const HelpfulLine = styled.div`
     width: 100%;
     align-items: center;
 
-    ${respondDown(Breakpoints.xs)`
+    ${respondDown(Breakpoints.sm)`
         flex-direction: column;
         align-items: flex-start;
     `}
@@ -78,6 +79,7 @@ const Aqua = styled(AquaLogo)`
 const Links = styled.div`
     display: flex;
     gap: 0.8rem;
+    flex-wrap: wrap;
 
     ${respondDown(Breakpoints.xs)`
         margin-top: 1.6rem;
@@ -135,6 +137,13 @@ const Footer = (): React.ReactNode => (
                 <DocsLink href="https://docs.aqua.network/" target="_blank">
                     <Docs />
                     Aquarius docs
+                </DocsLink>
+                <DocsLink
+                    href="https://docs.aqua.network/technical-documents/audits"
+                    target="_blank"
+                >
+                    <Audit />
+                    Audits
                 </DocsLink>
             </Links>
         </HelpfulLine>
