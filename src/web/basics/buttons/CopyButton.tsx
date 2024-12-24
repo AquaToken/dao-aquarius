@@ -29,6 +29,10 @@ interface CopyButtonProps extends React.DOMAttributes<HTMLDivElement> {
     isBlackText?: boolean;
 }
 
+const Inner = styled.div`
+    color: ${COLORS.white};
+`;
+
 const CopyButton = ({
     text,
     children,
@@ -63,7 +67,7 @@ const CopyButton = ({
 
     return (
         <Tooltip
-            content={<span>Copied!</span>}
+            content={<Inner>Copied!</Inner>}
             position={TOOLTIP_POSITION.top}
             isShow={isShowTooltip}
             color={COLORS.white}

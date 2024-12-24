@@ -11,11 +11,13 @@ import { getAquaAssetData, getAssetString } from 'helpers/assets';
 import { getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 
+import { LumenInfo } from 'store/assetsStore/reducer';
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
 import { ModalService, StellarService } from 'services/globalServices';
 
 import { ExpertAssetData } from 'types/api-stellar-expert';
+import { AssetInfo } from 'types/asset-info';
 import { ModalProps } from 'types/modal';
 import { Asset as AssetType, StellarToml as StellarTomlType } from 'types/stellar';
 
@@ -29,9 +31,11 @@ import Button from 'basics/buttons/Button';
 import Changes24 from 'basics/Changes24';
 import PageLoader from 'basics/loaders/PageLoader';
 import { ModalWrapper } from 'basics/ModalAtoms';
+import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
 
 import NoTrustline from 'components/NoTrustline';
 
+import CopyButton from '../basics/buttons/CopyButton';
 import { respondDown } from '../mixins';
 import { Breakpoints, COLORS } from '../styles';
 
@@ -84,6 +88,10 @@ const Detail = styled.div`
     span:first-child {
         color: ${COLORS.grayText};
     }
+
+    span:last-child {
+        line-height: 2.8rem;
+    }
 `;
 
 const Buttons = styled.div`
@@ -107,6 +115,10 @@ const LinkStyled = styled(Link)`
     }
 `;
 
+const CopyButtonStyled = styled(CopyButton)`
+    font-size: 1.4rem;
+`;
+
 interface AssetInfoModalParams {
     asset: AssetType;
 }
@@ -121,6 +133,11 @@ const AssetInfoModal = ({ params }: ModalProps<AssetInfoModalParams>): React.Rea
 
     const { desc, home_domain } = assetsInfo.get(getAssetString(asset)) || {};
     const { aquaCode, aquaIssuer, aquaStellarAsset } = getAquaAssetData();
+
+    const isNative = asset.isNative();
+    const assetInfo: Partial<AssetInfo> = isNative
+        ? LumenInfo
+        : assetsInfo.get(getAssetString(asset));
 
     useEffect(() => {
         StellarService.resolveToml(home_domain)
@@ -210,7 +227,8 @@ const AssetInfoModal = ({ params }: ModalProps<AssetInfoModalParams>): React.Rea
                         <Detail>
                             <span>Overall payments volume:</span>
                             <span>
-                                {formatBalance(expertData.payments_amount / 1e7, true)} {asset.code}
+                                {formatBalance(expertData.payments_amount / 1e7, true, true)}{' '}
+                                {asset.code}
                             </span>
                         </Detail>
                         <Detail>
@@ -233,6 +251,30 @@ const AssetInfoModal = ({ params }: ModalProps<AssetInfoModalParams>): React.Rea
                         <Detail>
                             <span>24h change:</span>
                             <Changes24 expertData={expertData} />
+                        </Detail>
+                        <Detail>
+                            <span>Issuer:</span>
+                            <CopyButtonStyled text={asset.issuer}>
+                                <PublicKeyWithIcon pubKey={asset.issuer} />
+                            </CopyButtonStyled>
+                        </Detail>
+                        <Detail>
+                            <span>Authorization flags:</span>
+                            <span>
+                                {assetInfo.auth_required && 'auth required '}
+                                {assetInfo.auth_clawback_enabled && 'clawback enabled '}
+                                {assetInfo.auth_immutable && 'immutable '}
+                                {assetInfo.auth_revocable && 'revocable'}
+                                {!assetInfo.auth_required &&
+                                    !assetInfo.auth_clawback_enabled &&
+                                    !assetInfo.auth_immutable &&
+                                    !assetInfo.auth_revocable &&
+                                    'None'}
+                            </span>
+                        </Detail>
+                        <Detail>
+                            <span>Supply status:</span>
+                            <span>{assetInfo.is_supply_locked ? 'Locked' : 'Unlocked'}</span>
                         </Detail>
                     </Details>
                 ) : null
