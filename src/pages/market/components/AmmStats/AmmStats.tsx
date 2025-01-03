@@ -50,14 +50,12 @@ enum PoolTypes {
 }
 
 const OPTIONS = [
-    { label: 'Classic AMM', value: PoolTypes.classic },
     { label: 'Soroban AMM', value: PoolTypes.soroban },
+    { label: 'Classic AMM', value: PoolTypes.classic },
 ];
 
 const AmmStats = ({ assets }: Props) => {
-    const [ammType, setAmmType] = useState(
-        assets.length === 2 ? PoolTypes.classic : PoolTypes.soroban,
-    );
+    const [ammType, setAmmType] = useState(PoolTypes.soroban);
     return (
         <Container>
             <Header>
