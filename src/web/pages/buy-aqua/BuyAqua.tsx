@@ -38,9 +38,10 @@ const BuyAqua = (): JSX.Element => {
         assetcode: aquaCode,
         assetissuer: aquaIssuer,
         useraddress: account?.accountId(),
-        backgroundcolor: COLORS.white.substring(1),
+        backgroundcolor: 'transparent',
         textcolor: COLORS.titleText.substring(1),
         buttonbackground: COLORS.buttonBackground.substring(1),
+        // substring here cause of url params can't have # symbol
     };
 
     return (
@@ -49,7 +50,7 @@ const BuyAqua = (): JSX.Element => {
                 <iframe
                     src={getOnRampWidgetUrl(frameParams)}
                     width="430px"
-                    height="690px"
+                    height="730px"
                     referrerPolicy="no-referrer"
                 />
             ) : (
