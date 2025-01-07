@@ -38,6 +38,9 @@ const BuyAqua = (): JSX.Element => {
         assetcode: aquaCode,
         assetissuer: aquaIssuer,
         useraddress: account?.accountId(),
+        backgroundcolor: COLORS.white.substring(1),
+        textcolor: COLORS.titleText.substring(1),
+        buttonbackground: COLORS.buttonBackground.substring(1),
     };
 
     return (
