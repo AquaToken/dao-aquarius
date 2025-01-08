@@ -3,15 +3,19 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { formatBalance } from 'helpers/format-number';
+import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
 import { useUpdateIndex } from 'hooks/useUpdateIndex';
 
+import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { SorobanService } from 'services/globalServices';
+import { SorobanService, ToastService } from 'services/globalServices';
+import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { PoolProcessed } from 'types/amm';
 import { ModalProps } from 'types/modal';
+import { Int128Parts } from 'types/stellar';
 
 import { Button } from 'basics/buttons';
 import { CircleLoader } from 'basics/loaders';
@@ -29,8 +33,9 @@ const MarketBlock = styled.div`
     margin-bottom: 2.3rem;
 `;
 
-const ClaimRewards = ({ params }: ModalProps<{ pool: PoolProcessed }>) => {
+const ClaimRewards = ({ params, confirm }: ModalProps<{ pool: PoolProcessed }>) => {
     const [rewards, setRewards] = useState(null);
+    const [claimPending, setClaimPending] = useState(false);
 
     const { pool } = params;
 
@@ -44,6 +49,39 @@ const ClaimRewards = ({ params }: ModalProps<{ pool: PoolProcessed }>) => {
         });
     }, [updateIndex, pool]);
 
+    const claim = () => {
+        if (account.authType === LoginTypes.walletConnect) {
+            openCurrentWalletIfExist();
+        }
+        setClaimPending(true);
+
+        SorobanService.getClaimRewardsTx(account.accountId(), pool.address)
+            .then(tx => account.signAndSubmitTx(tx, true))
+            .then((res: { status?: BuildSignAndSubmitStatuses; value: () => Int128Parts }) => {
+                if (!res) {
+                    return;
+                }
+
+                if (
+                    (res as { status: BuildSignAndSubmitStatuses }).status ===
+                    BuildSignAndSubmitStatuses.pending
+                ) {
+                    ToastService.showSuccessToast('More signatures required to complete');
+                    confirm();
+                    return;
+                }
+                const value = SorobanService.i128ToInt(res.value());
+
+                ToastService.showSuccessToast(`Claimed ${formatBalance(+value)} AQUA`);
+                setClaimPending(false);
+                confirm();
+            })
+            .catch(err => {
+                ToastService.showErrorToast(err.message ?? err.toString());
+                setClaimPending(false);
+            });
+    };
+
     return (
         <ModalWrapper>
             <ModalTitle>Claim rewards</ModalTitle>
@@ -54,7 +92,7 @@ const ClaimRewards = ({ params }: ModalProps<{ pool: PoolProcessed }>) => {
                 <Market assets={pool.assets} verticalDirections />
             </MarketBlock>
 
-            <Button fullWidth disabled={!rewards}>
+            <Button fullWidth disabled={!rewards} pending={claimPending} onClick={() => claim()}>
                 {rewards ? `Claim ${formatBalance(rewards.to_claim, true)} AQUA` : <CircleLoader />}
             </Button>
         </ModalWrapper>

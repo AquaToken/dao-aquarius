@@ -104,6 +104,7 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
 
     useEffect(() => {
         setPending(true);
+        setUserRewards(null);
         getPools(filter, page, PAGE_SIZE, sort, search).then(({ pools, total }) => {
             setPools(pools);
             setTotal(total);
