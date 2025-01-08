@@ -92,7 +92,7 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
     const [total, setTotal] = useState(0);
     const [page, setPage] = useState(1);
     const [pending, setPending] = useState(false);
-    const [userRewards, setUserRewards] = useState(new Map());
+    const [userRewards, setUserRewards] = useState(null);
 
     const history = useHistory();
     const { account, isLogged } = useAuthStore();
@@ -114,7 +114,7 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
 
     useEffect(() => {
         if (!account || !pools) {
-            setUserRewards(new Map());
+            setUserRewards(null);
             return;
         }
         Promise.all(
@@ -272,7 +272,7 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                                 flexSize: 2,
                                 align: CellAlign.Right,
                             },
-                            isLogged
+                            isLogged && userRewards
                                 ? { children: 'Your rewards', flexSize: 2, align: CellAlign.Right }
                                 : null,
                         ].filter(Boolean)}
@@ -375,7 +375,7 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                                     flexSize: 2,
                                     align: CellAlign.Right,
                                 },
-                                isLogged
+                                isLogged && userRewards
                                     ? {
                                           children: (
                                               <Rewards
