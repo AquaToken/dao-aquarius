@@ -25,6 +25,7 @@ import Info from 'assets/icon-info.svg';
 
 import Select from 'basics/inputs/Select';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
+import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
 import Market from 'basics/Market';
 import Pagination from 'basics/Pagination';
@@ -272,7 +273,7 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                                 flexSize: 2,
                                 align: CellAlign.Right,
                             },
-                            isLogged && userRewards
+                            isLogged
                                 ? { children: 'Your rewards', flexSize: 2, align: CellAlign.Right }
                                 : null,
                         ].filter(Boolean)}
@@ -375,9 +376,9 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                                     flexSize: 2,
                                     align: CellAlign.Right,
                                 },
-                                isLogged && userRewards
+                                isLogged
                                     ? {
-                                          children: (
+                                          children: userRewards ? (
                                               <Rewards
                                                   $hasRewards={Boolean(
                                                       userRewards.get(pool.address),
@@ -392,6 +393,8 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                                                   )}{' '}
                                                   AQUA
                                               </Rewards>
+                                          ) : (
+                                              <DotsLoader />
                                           ),
                                           flexSize: 2,
                                           align: CellAlign.Right,

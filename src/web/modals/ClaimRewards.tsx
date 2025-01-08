@@ -14,7 +14,7 @@ import { PoolProcessed } from 'types/amm';
 import { ModalProps } from 'types/modal';
 
 import { Button } from 'basics/buttons';
-import { DotsLoader } from 'basics/loaders';
+import { CircleLoader } from 'basics/loaders';
 import Market from 'basics/Market';
 import { ModalTitle, ModalWrapper, ModalDescription } from 'basics/ModalAtoms';
 
@@ -54,8 +54,8 @@ const ClaimRewards = ({ params }: ModalProps<{ pool: PoolProcessed }>) => {
                 <Market assets={pool.assets} verticalDirections />
             </MarketBlock>
 
-            <Button fullWidth>
-                Claim {rewards ? formatBalance(rewards.to_claim, true) : <DotsLoader />} AQUA
+            <Button fullWidth disabled={!rewards}>
+                {rewards ? `Claim ${formatBalance(rewards.to_claim, true)} AQUA` : <CircleLoader />}
             </Button>
         </ModalWrapper>
     );
