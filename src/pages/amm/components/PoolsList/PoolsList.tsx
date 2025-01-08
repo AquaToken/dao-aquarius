@@ -1,15 +1,20 @@
 import BigNumber from 'bignumber.js';
 import * as React from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { formatBalance } from 'helpers/format-number';
 
+import { useUpdateIndex } from 'hooks/useUpdateIndex';
+
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { ModalService, SorobanService, StellarService } from 'services/globalServices';
+import { POOL_TYPE } from 'services/soroban.service';
+
 import { PoolClassicProcessed, PoolExtended, PoolProcessed, PoolUserProcessed } from 'types/amm';
 import { Asset as AssetType } from 'types/stellar';
 
-import { ModalService, StellarService } from 'services/globalServices';
-import { POOL_TYPE } from 'services/soroban.service';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import MigrateLiquidityStep1 from 'web/modals/migrate-liquidity/MigrateLiquidityStep1';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -223,6 +228,33 @@ const PoolsList = ({
     onConfirm,
 }: PoolsListProps) => {
     const [expandedIndexes, setExpandedIndexes] = useState([]);
+    const [userRewards, setUserRewards] = useState(new Map());
+
+    const { account } = useAuthStore();
+
+    const updateIndex = useUpdateIndex(5000);
+
+    useEffect(() => {
+        if (!account || !pools) {
+            setUserRewards(new Map());
+            return;
+        }
+        const sorobanPools = pools.filter((pool): pool is SorobanPool =>
+            Boolean((pool as SorobanPool)?.address),
+        );
+        Promise.all(
+            sorobanPools.map(({ address }) =>
+                SorobanService.getPoolRewards(account.accountId(), address),
+            ),
+        ).then(res => {
+            const map = new Map<string, number>();
+
+            res.forEach((reward, index) => {
+                map.set(sorobanPools[index].address, Number(reward.to_claim));
+            });
+            setUserRewards(map);
+        });
+    }, [pools, account, updateIndex]);
 
     const openPool = (id: string) => {
         setExpandedIndexes(withDeposit ? [id] : [...expandedIndexes, id]);
@@ -409,6 +441,23 @@ const PoolsList = ({
                                                 <span>{(+pool.fee * 100).toFixed(2)}%</span>
                                             </ExpandedDataRow>
                                         )}
+                                        {isUserList &&
+                                            Boolean(
+                                                userRewards.get((pool as SorobanPool).address),
+                                            ) && (
+                                                <ExpandedDataRow>
+                                                    <span>Ready to claim</span>
+                                                    <span>
+                                                        {formatBalance(
+                                                            userRewards.get(
+                                                                (pool as SorobanPool).address,
+                                                            ),
+                                                            true,
+                                                        )}{' '}
+                                                        AQUA
+                                                    </span>
+                                                </ExpandedDataRow>
+                                            )}
                                         <Buttons>
                                             {Boolean((pool as PoolUserProcessed).balance) && (
                                                 <Button
@@ -461,6 +510,10 @@ const PoolsList = ({
                                                     Add liquidity
                                                 </Button>
                                             )}
+                                            {isUserList &&
+                                                Boolean(
+                                                    userRewards.get((pool as SorobanPool).address),
+                                                ) && <Button fullWidth>claim rewards</Button>}
                                         </Buttons>
                                     </>
                                 )}

@@ -10,6 +10,8 @@ import { getAssetString } from 'helpers/assets';
 import { getEnv, getNetworkPassphrase } from 'helpers/env';
 import { SorobanErrorHandler, SorobanPrepareTxErrorHandler } from 'helpers/error-handler';
 
+import { PoolRewardsInfo } from 'types/amm';
+
 import RestoreContractModal from 'web/modals/RestoreContractModal';
 
 import { ModalService, ToastService } from './globalServices';
@@ -503,7 +505,7 @@ export default class SorobanServiceClass {
             });
     }
 
-    getPoolRewards(accountId: string, poolId: string) {
+    getPoolRewards(accountId: string, poolId: string): Promise<PoolRewardsInfo> {
         return this.buildSmartContactTx(
             accountId,
             poolId,
@@ -534,7 +536,7 @@ export default class SorobanServiceClass {
                         // @ts-expect-error
                         acc[key] = this.i128ToInt(val.val().value());
                         return acc;
-                    }, {});
+                    }, {}) as PoolRewardsInfo;
                 }
 
                 throw new Error('getPoolRewards error');

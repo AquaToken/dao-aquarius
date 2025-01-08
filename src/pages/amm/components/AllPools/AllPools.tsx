@@ -9,10 +9,15 @@ import { AmmRoutes } from 'constants/routes';
 
 import { formatBalance } from 'helpers/format-number';
 
+import { useUpdateIndex } from 'hooks/useUpdateIndex';
+
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { ModalService, SorobanService, StellarService } from 'services/globalServices';
+import { POOL_TYPE } from 'services/soroban.service';
+
 import { PoolProcessed } from 'types/amm';
 
-import { StellarService } from 'services/globalServices';
-import { POOL_TYPE } from 'services/soroban.service';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -27,6 +32,8 @@ import Table, { CellAlign } from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
+
+import ClaimRewards from '../../../../web/modals/ClaimRewards';
 
 const ToggleGroupStyled = styled(ToggleGroup)`
     width: fit-content;
@@ -60,6 +67,12 @@ const TooltipInner = styled.span`
     white-space: pre-wrap;
 `;
 
+const Rewards = styled.span<{ $hasRewards: boolean }>`
+    text-decoration: ${({ $hasRewards }) => ($hasRewards ? 'underline' : 'none')};
+    text-decoration-style: dashed;
+    cursor: ${({ $hasRewards }) => ($hasRewards ? 'pointer' : 'unset')};
+`;
+
 const PAGE_SIZE = 10;
 
 const OPTIONS = [
@@ -79,8 +92,10 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
     const [total, setTotal] = useState(0);
     const [page, setPage] = useState(1);
     const [pending, setPending] = useState(false);
+    const [userRewards, setUserRewards] = useState(new Map());
 
     const history = useHistory();
+    const { account, isLogged } = useAuthStore();
 
     useEffect(() => {
         setPage(1);
@@ -94,6 +109,35 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
             setPending(false);
         });
     }, [filter, page, search, sort]);
+
+    const updateIndex = useUpdateIndex(30000);
+
+    useEffect(() => {
+        if (!account || !pools) {
+            setUserRewards(new Map());
+            return;
+        }
+        Promise.all(
+            pools.map(({ address }) => SorobanService.getPoolRewards(account.accountId(), address)),
+        ).then(res => {
+            const map = new Map<string, number>();
+
+            res.forEach((reward, index) => {
+                map.set(pools[index].address, Number(reward.to_claim));
+            });
+            setUserRewards(map);
+        });
+    }, [pools, account, updateIndex]);
+
+    const openClaimModal = (e: React.MouseEvent, pool: PoolProcessed) => {
+        if (!userRewards.get(pool.address)) {
+            return;
+        }
+        e.stopPropagation();
+        e.preventDefault();
+
+        ModalService.openModal(ClaimRewards, { pool });
+    };
 
     const changeSort = (newSort: PoolsSortFields) => {
         setSort(newSort);
@@ -114,7 +158,7 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                     <Table
                         pending={pending}
                         head={[
-                            { children: 'Pool', flexSize: 4 },
+                            { children: 'Pool', flexSize: 5 },
                             {
                                 children: 'Fee',
                                 flexSize: 1.5,
@@ -228,7 +272,10 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                                 flexSize: 2,
                                 align: CellAlign.Right,
                             },
-                        ]}
+                            isLogged
+                                ? { children: 'Your rewards', flexSize: 2, align: CellAlign.Right }
+                                : null,
+                        ].filter(Boolean)}
                         body={pools.map(pool => ({
                             key: pool.address,
                             onRowClick: () => goToPoolPage(pool.address),
@@ -244,7 +291,7 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                                             isRewardsPoolOn={Boolean(Number(pool.reward_tps))}
                                         />
                                     ),
-                                    flexSize: 4,
+                                    flexSize: 5,
                                 },
 
                                 {
@@ -328,7 +375,30 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                                     flexSize: 2,
                                     align: CellAlign.Right,
                                 },
-                            ],
+                                isLogged
+                                    ? {
+                                          children: (
+                                              <Rewards
+                                                  $hasRewards={Boolean(
+                                                      userRewards.get(pool.address),
+                                                  )}
+                                                  onClick={(e: React.MouseEvent) =>
+                                                      openClaimModal(e, pool)
+                                                  }
+                                              >
+                                                  {formatBalance(
+                                                      userRewards.get(pool.address),
+                                                      true,
+                                                  )}{' '}
+                                                  AQUA
+                                              </Rewards>
+                                          ),
+                                          flexSize: 2,
+                                          align: CellAlign.Right,
+                                          label: 'Your rewards',
+                                      }
+                                    : null,
+                            ].filter(Boolean),
                         }))}
                     />
                     <Pagination

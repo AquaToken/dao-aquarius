@@ -73,7 +73,12 @@ export type PoolBalance = {
     account_address: string;
 };
 
-export type PoolEventType = 'deposit' | 'withdraw' | 'swap';
+export enum PoolEventType {
+    deposit = 'deposit',
+    withdraw = 'withdraw',
+    swap = 'swap',
+    claim = 'claim',
+}
 
 export type PoolEvent = {
     event_type: PoolEventType;
@@ -113,3 +118,14 @@ export interface PoolClassicProcessed extends Omit<PoolClassic, 'reserves'> {
     liquidity: string;
     pool_type: POOL_TYPE;
 }
+
+export type PoolRewardsInfo = {
+    acc: string;
+    block: string;
+    exp_at: number;
+    last_time: number;
+    pool_acc: string;
+    to_claim: string;
+    tps: string;
+    usr_block: string;
+};

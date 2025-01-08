@@ -1,6 +1,6 @@
 import * as StellarSdk from '@stellar/stellar-sdk';
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { AmmRoutes, MarketRoutes } from 'constants/routes';
@@ -14,6 +14,7 @@ import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
 import { ModalService, StellarService } from 'services/globalServices';
 import { POOL_TYPE } from 'services/soroban.service';
+
 import { flexAllCenter, respondDown } from 'web/mixins';
 import AssetInfoModal from 'web/modals/AssetInfoModal';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -38,10 +39,12 @@ const Wrapper = styled.div<{
     $verticalDirections?: boolean;
     $mobileVerticalDirections?: boolean;
     $leftAlign?: boolean;
+    $isClickable?: boolean;
 }>`
     display: flex;
     ${({ $verticalDirections }) => $verticalDirections && 'flex-direction: column;'};
     align-items: ${({ $leftAlign }) => ($leftAlign ? 'flex-start' : 'center')};
+    cursor: ${({ $isClickable }) => ($isClickable ? 'pointer' : 'unset')};
 
     ${({ $mobileVerticalDirections }) =>
         $mobileVerticalDirections &&
@@ -251,6 +254,8 @@ const Market = ({
 }: PairProps): React.ReactNode => {
     const { assetsInfo } = useAssetsStore();
 
+    const history = useHistory();
+
     const assets = assetsSimple.map(({ code, issuer }) => StellarService.createAsset(code, issuer));
 
     const getAssetDetails = (asset: StellarSdk.Asset) => {
@@ -292,6 +297,12 @@ const Market = ({
             $verticalDirections={verticalDirections}
             $mobileVerticalDirections={mobileVerticalDirections}
             $leftAlign={leftAlign}
+            $isClickable={Boolean(poolAddress)}
+            onClick={() => {
+                if (poolAddress) {
+                    history.push(`${AmmRoutes.analytics}${poolAddress}/`);
+                }
+            }}
         >
             <Icons
                 $isBig={isBigLogo}
@@ -348,16 +359,6 @@ const Market = ({
                             to={`${MarketRoutes.main}/${getAssetString(assets[0])}/${getAssetString(
                                 assets[1],
                             )}`}
-                        >
-                            <External />
-                        </Link>
-                    )}
-                    {poolAddress && (
-                        <Link
-                            onClick={e => {
-                                e.stopPropagation();
-                            }}
-                            to={`${AmmRoutes.analytics}${poolAddress}/`}
                         >
                             <External />
                         </Link>
