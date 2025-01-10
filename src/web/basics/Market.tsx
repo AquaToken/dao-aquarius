@@ -262,8 +262,8 @@ const Market = ({
         const { name, home_domain } = assetsInfo.get(getAssetString(asset)) || {};
 
         return [
-            name ?? asset.code,
-            home_domain ?? `${asset.issuer.slice(0, 4)}...${asset.issuer.slice(-4)}`,
+            name || asset.code,
+            home_domain || `${asset.issuer.slice(0, 4)}...${asset.issuer.slice(-4)}`,
         ];
     };
 
