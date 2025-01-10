@@ -9,10 +9,10 @@ import { AmmRoutes } from 'constants/routes';
 
 import { formatBalance } from 'helpers/format-number';
 
+import { POOL_TYPE } from 'services/soroban.service';
+
 import { PoolProcessed } from 'types/amm';
 
-import { StellarService } from 'services/globalServices';
-import { POOL_TYPE } from 'services/soroban.service';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -103,7 +103,7 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
     const goToPoolPage = (id: string) => {
         history.push(`${AmmRoutes.analytics}${id}/`);
     };
-    return !pools || !StellarService.priceLumenUsd ? (
+    return !pools ? (
         <PageLoader />
     ) : (
         <>
@@ -265,10 +265,9 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                                     align: CellAlign.Right,
                                 },
                                 {
-                                    children: pool.liquidity
+                                    children: pool.liquidity_usd
                                         ? `$${formatBalance(
-                                              (Number(pool.liquidity) / 1e7) *
-                                                  StellarService.priceLumenUsd,
+                                              Number(pool.liquidity_usd) / 1e7,
                                               true,
                                           )}`
                                         : '0',
