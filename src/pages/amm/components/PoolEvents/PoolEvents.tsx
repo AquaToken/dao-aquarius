@@ -7,9 +7,10 @@ import { getPoolEvents } from 'api/amm';
 import { getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 
-import { PoolEvent, PoolExtended } from 'types/amm';
-
 import { useUpdateIndex } from 'hooks/useUpdateIndex';
+
+import { PoolEvent, PoolEventType, PoolExtended } from 'types/amm';
+
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -36,46 +37,73 @@ const Amounts = styled.span`
 `;
 
 const getEventTitle = (event: PoolEvent, pool: PoolExtended) => {
-    if (event.event_type === 'swap') {
-        const fromIndex = event.amounts.findIndex(amount => +amount > 0);
-        const toIndex = event.amounts.findIndex(amount => +amount < 0);
+    switch (event.event_type) {
+        case PoolEventType.swap: {
+            const fromIndex = event.amounts.findIndex(amount => +amount > 0);
+            const toIndex = event.amounts.findIndex(amount => +amount < 0);
 
-        return `Swap ${pool.assets[fromIndex]?.code} to ${pool.assets[toIndex]?.code}`;
+            return `Swap ${pool.assets[fromIndex]?.code} to ${pool.assets[toIndex]?.code}`;
+        }
+        case PoolEventType.claim:
+            return 'Claim rewards';
+        case PoolEventType.deposit:
+            return 'Add liquidity';
+        case PoolEventType.withdraw:
+            return 'Remove liquidity';
+
+        default:
+            return 'Unknown event';
     }
-
-    return event.event_type === 'deposit' ? 'Add liquidity' : 'Remove liquidity';
 };
 
 const getEventAmounts = (event: PoolEvent, pool: PoolExtended) => {
-    if (event.event_type === 'swap') {
-        const fromIndex = event.amounts.findIndex(amount => +amount > 0);
-        const toIndex = event.amounts.findIndex(amount => +amount < 0);
+    switch (event.event_type) {
+        case PoolEventType.swap: {
+            const fromIndex = event.amounts.findIndex(amount => +amount > 0);
+            const toIndex = event.amounts.findIndex(amount => +amount < 0);
 
-        return (
-            <Amounts>
-                <span>
-                    {formatBalance(+event.amounts[fromIndex] / 1e7)} {pool.assets[fromIndex]?.code}
-                </span>
-                <br />
-                <span>
-                    {formatBalance(Math.abs(+event.amounts[toIndex] / 1e7))}{' '}
-                    {pool.assets[toIndex]?.code}
-                </span>
-            </Amounts>
-        );
-    }
-    return (
-        <Amounts>
-            {event.amounts.map((amount, index) => (
-                <span key={pool.tokens_str[index]}>
+            return (
+                <Amounts>
                     <span>
-                        {formatBalance(+amount / 1e7)} {pool.assets[index].code}
+                        {formatBalance(+event.amounts[fromIndex] / 1e7)}{' '}
+                        {pool.assets[fromIndex]?.code}
                     </span>
                     <br />
-                </span>
-            ))}
-        </Amounts>
-    );
+                    <span>
+                        {formatBalance(Math.abs(+event.amounts[toIndex] / 1e7))}{' '}
+                        {pool.assets[toIndex]?.code}
+                    </span>
+                </Amounts>
+            );
+        }
+
+        case PoolEventType.deposit:
+        case PoolEventType.withdraw: {
+            return (
+                <Amounts>
+                    {event.amounts.map((amount, index) => (
+                        <span key={pool.tokens_str[index]}>
+                            <span>
+                                {formatBalance(+amount / 1e7)} {pool.assets[index].code}
+                            </span>
+                            <br />
+                        </span>
+                    ))}
+                </Amounts>
+            );
+        }
+
+        case PoolEventType.claim: {
+            return (
+                <Amounts>
+                    <span>{formatBalance(+event.amounts[0] / 1e7)} AQUA</span>
+                </Amounts>
+            );
+        }
+
+        default:
+            return null;
+    }
 };
 
 const PAGE_SIZE = 5;

@@ -73,7 +73,12 @@ export type PoolBalance = {
     account_address: string;
 };
 
-export type PoolEventType = 'deposit' | 'withdraw' | 'swap';
+export enum PoolEventType {
+    deposit = 'deposit',
+    withdraw = 'withdraw',
+    swap = 'swap',
+    claim = 'claim',
+}
 
 export type PoolEvent = {
     event_type: PoolEventType;
