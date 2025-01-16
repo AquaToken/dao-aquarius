@@ -477,7 +477,7 @@ const CreatePool = () => {
                             >
                                 <div>
                                     <h3>Volatile</h3>
-                                    <p>Simple model for general purpose AMM pools (Uniswap v2).</p>
+                                    <p>Simple model for general purpose AMM pools (constant product pool).</p>
                                 </div>
                                 <Tick />
                             </PoolType>
@@ -488,8 +488,7 @@ const CreatePool = () => {
                                 <div>
                                     <h3>Stable</h3>
                                     <p>
-                                        Highly effecient AMM model for correlated assets (i.e.
-                                        stablecoins) that offers lower slippage.
+                                        Highly efficient AMM model for correlated assets (e.g., stablecoins) with lower slippage.
                                     </p>
                                 </div>
                                 <Tick />
@@ -497,13 +496,13 @@ const CreatePool = () => {
                             {type === POOL_TYPE.stable && (
                                 <Alert
                                     title="Note:"
-                                    text="Stable pools are designed for assets that have 1:1 price ratio to each other (e.g. ETH/yETH, USDC/yUSDC). We don't recommend creating stable pools for volatile assets."
+                                    text="Stable pools are for assets with a 1:1 price ratio (e.g., USDC/USDT). Avoid using them for volatile assets."
                                 />
                             )}
                         </StyledFormSection>
 
                         <StyledFormSection>
-                            <FormSectionTitle>Tokens in pool</FormSectionTitle>
+                            <FormSectionTitle>Select tokens for pool</FormSectionTitle>
                             <StyledAssetDropdown
                                 label="First asset"
                                 asset={firstAsset}
@@ -617,10 +616,7 @@ const CreatePool = () => {
                         <StyledFormSection>
                             <FormSectionTitle>Pool swap fees</FormSectionTitle>
                             <FormSectionDescriptionStyled>
-                                Pool fees are paid by users who swap assets to users who provided
-                                liquidity to this pool. Creation of the pool doesn't give a creator
-                                any benefit. A typical use case for pool creation is when an asset
-                                issuer creates needs more exposure to the market.
+                                Pool fees are paid by users swapping assets and distributed to liquidity providers.
                             </FormSectionDescriptionStyled>
                             {type === POOL_TYPE.stable ? (
                                 <FormRow>
@@ -628,7 +624,7 @@ const CreatePool = () => {
                                         label={
                                             <ErrorLabel $isError={isStableFeeInputError}>
                                                 {isStableFeeInputError
-                                                    ? `Percent fee should be in range ${STABLE_POOL_FEE_PERCENTS.min}% - ${STABLE_POOL_FEE_PERCENTS.max}%`
+                                                    ? `Fee should be in range ${STABLE_POOL_FEE_PERCENTS.min}% - ${STABLE_POOL_FEE_PERCENTS.max}%`
                                                     : `Swap Fee (${STABLE_POOL_FEE_PERCENTS.min}% - ${STABLE_POOL_FEE_PERCENTS.max}%)`}
                                             </ErrorLabel>
                                         }
@@ -654,9 +650,8 @@ const CreatePool = () => {
                         <StyledFormSection>
                             <FormSectionTitle>Pool creation fee</FormSectionTitle>
                             <FormSectionDescriptionStyled>
-                                Pool creation fee is introduced to prevent abuse and spam activities
-                                and ensure that creators have valid reasons to create a pool (e.g.
-                                support their project token).
+                                A pool creation fee helps prevent abuse and spam. 
+                                Creating a pool provides no direct benefit to the creator.
                             </FormSectionDescriptionStyled>
                             <CreationFee>
                                 <CreationFeeCost>
