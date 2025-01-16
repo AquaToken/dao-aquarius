@@ -16,6 +16,8 @@ export enum MainRoutes {
     swap = '/swap',
     buyAqua = '/buy-aqua',
     testnet = '/testnet',
+    terms = '/terms',
+    privacy = '/privacy',
 }
 
 //TODO: Replace constants with enums after TS 5.0 release
