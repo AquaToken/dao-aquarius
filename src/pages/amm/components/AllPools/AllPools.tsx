@@ -158,17 +158,14 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                             {
                                 children: (
                                     <TitleWithTooltip>
-                                        LP APY
+                                        Base APY
                                         <Tooltip
                                             showOnHover
                                             content={
                                                 <TooltipInner>
-                                                    Projection of annual yield for liquidity
-                                                    providers. The yield is accrued based on the LP
-                                                    token price growth in relation to the deposited
-                                                    tokens, and is generated via swap fees. This
-                                                    type of reward is paid to all liquidity
-                                                    providers in all pools.
+                                                    Annual yield projection for liquidity providers, 
+                                                    based on current trading activity and collected fees. 
+                                                    Rewards are allocated based on each provider’s share of liquidity in the pool.                                                    
                                                 </TooltipInner>
                                             }
                                             position={TOOLTIP_POSITION.top}
@@ -200,11 +197,9 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                                             showOnHover
                                             content={
                                                 <TooltipInner>
-                                                    Projection of additional annual rewards in AQUA
-                                                    distributed by Aquarius team. These rewards are
-                                                    paid to liquidity providers to pools that are
-                                                    included to the "rewards zone" is based on
-                                                    users' voting.
+                                                    Projected additional annual AQUA rewards for 
+                                                    liquidity providers in pools within the 
+                                                    "rewards zone", determined by Aquarius DAO voting.                                                    
                                                 </TooltipInner>
                                             }
                                             position={TOOLTIP_POSITION.top}
@@ -278,17 +273,14 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                                     children: `${(Number(pool.apy) * 100).toFixed(2)}%`,
                                     label: (
                                         <TitleWithTooltip>
-                                            LP APY
+                                            Base APY
                                             <Tooltip
                                                 showOnHover
                                                 content={
                                                     <TooltipInner>
-                                                        Projection of annual yield for liquidity
-                                                        providers. The yield is accrued based on the
-                                                        LP token price growth in relation to the
-                                                        deposited tokens, and is generated via swap
-                                                        fees. This type of reward is paid to all
-                                                        liquidity providers in all pools.
+                                                        Annual yield projection for liquidity providers, 
+                                                        based on current trading activity and collected fees. 
+                                                        Rewards are allocated based on each provider’s share of liquidity in the pool.                                                    
                                                     </TooltipInner>
                                                 }
                                                 position={TOOLTIP_POSITION.top}
@@ -309,11 +301,9 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                                                 showOnHover
                                                 content={
                                                     <TooltipInner>
-                                                        Projection of additional annual rewards in
-                                                        AQUA distributed by Aquarius team. These
-                                                        rewards are paid to liquidity providers to
-                                                        pools that are included to the "rewards
-                                                        zone" is based on users' voting.
+                                                        Projected additional annual AQUA rewards for 
+                                                        liquidity providers in pools within the 
+                                                        "rewards zone", determined by Aquarius DAO voting.                                                    
                                                     </TooltipInner>
                                                 }
                                                 position={TOOLTIP_POSITION.top}
