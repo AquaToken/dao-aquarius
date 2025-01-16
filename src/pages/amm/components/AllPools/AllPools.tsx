@@ -116,6 +116,23 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                         head={[
                             { children: 'Pool', flexSize: 4 },
                             {
+                                children: 'TVL',
+                                sort: {
+                                    onClick: () =>
+                                        changeSort(
+                                            sort === PoolsSortFields.liquidityUp
+                                                ? PoolsSortFields.liquidityDown
+                                                : PoolsSortFields.liquidityUp,
+                                        ),
+                                    isEnabled:
+                                        sort === PoolsSortFields.liquidityUp ||
+                                        sort === PoolsSortFields.liquidityDown,
+                                    isReversed: sort === PoolsSortFields.liquidityDown,
+                                },
+                                align: CellAlign.Right,
+                                flexSize: 2,
+                            },
+                            {
                                 children: 'Fee',
                                 flexSize: 1.5,
                                 align: CellAlign.Right,
@@ -137,23 +154,7 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                                 flexSize: 2,
                                 align: CellAlign.Right,
                             },
-                            {
-                                children: 'TVL',
-                                sort: {
-                                    onClick: () =>
-                                        changeSort(
-                                            sort === PoolsSortFields.liquidityUp
-                                                ? PoolsSortFields.liquidityDown
-                                                : PoolsSortFields.liquidityUp,
-                                        ),
-                                    isEnabled:
-                                        sort === PoolsSortFields.liquidityUp ||
-                                        sort === PoolsSortFields.liquidityDown,
-                                    isReversed: sort === PoolsSortFields.liquidityDown,
-                                },
-                                align: CellAlign.Right,
-                                flexSize: 2,
-                            },
+
                             {
                                 children: (
                                     <TitleWithTooltip>
@@ -246,7 +247,17 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                                     ),
                                     flexSize: 4,
                                 },
-
+                                {
+                                    children: pool.liquidity_usd
+                                        ? `$${formatBalance(
+                                              Number(pool.liquidity_usd) / 1e7,
+                                              true,
+                                          )}`
+                                        : '0',
+                                    label: 'TVL:',
+                                    align: CellAlign.Right,
+                                    flexSize: 2,
+                                },
                                 {
                                     children: `${(Number(pool.fee) * 100).toFixed(2)}%`,
                                     label: 'Fee:',
@@ -263,17 +274,6 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                                     label: 'Daily reward:',
                                     flexSize: 2,
                                     align: CellAlign.Right,
-                                },
-                                {
-                                    children: pool.liquidity_usd
-                                        ? `$${formatBalance(
-                                              Number(pool.liquidity_usd) / 1e7,
-                                              true,
-                                          )}`
-                                        : '0',
-                                    label: 'TVL:',
-                                    align: CellAlign.Right,
-                                    flexSize: 2,
                                 },
                                 {
                                     children: `${(Number(pool.apy) * 100).toFixed(2)}%`,
