@@ -199,8 +199,9 @@ const FEE_OPTIONS = [
 ];
 
 const STABLE_POOL_FEE_PERCENTS = {
-    min: '0.1',
+    min: '0.01',
     max: '1',
+    default: '0.1',
 };
 
 const CreatePool = () => {
@@ -215,7 +216,7 @@ const CreatePool = () => {
     const [fourthAsset, setFourthAsset] = useState(null);
     const [fourthAssetStatus, setFourthAssetStatus] = useState(null);
     const [constantFee, setConstantFee] = useState(10);
-    const [stableFee, setStableFee] = useState(STABLE_POOL_FEE_PERCENTS.min);
+    const [stableFee, setStableFee] = useState(STABLE_POOL_FEE_PERCENTS.default);
     const [pending, setPending] = useState(false);
     const [createInfo, setCreateInfo] = useState(null);
 
