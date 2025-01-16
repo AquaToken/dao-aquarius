@@ -1,4 +1,7 @@
+import { Redirect } from 'react-router-dom';
 import styled from 'styled-components';
+
+import { MainRoutes } from 'constants/routes';
 
 import { getAquaAssetData } from 'helpers/assets';
 import { getEnv } from 'helpers/env';
@@ -6,7 +9,10 @@ import { getOnRampWidgetUrl } from 'helpers/url';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { ModalService } from 'services/globalServices';
+
 import { cardBoxShadow, flexAllCenter, flexColumn } from 'web/mixins';
+import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { COLORS } from 'web/styles';
 
 import NoTrustline from 'components/NoTrustline';
@@ -26,8 +32,7 @@ const Container = styled.div`
 `;
 
 const BuyAqua = (): JSX.Element => {
-    const { account } = useAuthStore();
-
+    const { account, isLogged } = useAuthStore();
     const { aquaCode, aquaIssuer, aquaStellarAsset } = getAquaAssetData();
 
     const hasTrustline = account?.getAssetBalance(aquaStellarAsset) !== null;
@@ -43,6 +48,13 @@ const BuyAqua = (): JSX.Element => {
         buttonbackground: COLORS.buttonBackground.substring(1),
         // substring here cause of url params can't have # symbol
     };
+
+    if (!isLogged) {
+        ModalService.openModal(ChooseLoginMethodModal, {
+            redirectURL: MainRoutes.buyAqua,
+        });
+        return <Redirect to={MainRoutes.main} />;
+    }
 
     return (
         <CenteredWrapper>
