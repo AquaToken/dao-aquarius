@@ -203,8 +203,7 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                                                     Projection of additional annual rewards in AQUA
                                                     distributed by Aquarius team. These rewards are
                                                     paid to liquidity providers to pools that are
-                                                    included to the "rewards zone" - now it's done
-                                                    by the Aquarius team but later will be based on
+                                                    included to the "rewards zone" is based on
                                                     users' voting.
                                                 </TooltipInner>
                                             }
@@ -242,7 +241,7 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                                             mobileVerticalDirections
                                             withoutLink
                                             poolType={pool.pool_type as POOL_TYPE}
-                                            isRewardsPoolOn={Boolean(Number(pool.reward_tps))}
+                                            isRewardsOn={Boolean(Number(pool.reward_tps))}
                                         />
                                     ),
                                     flexSize: 4,
@@ -314,8 +313,7 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                                                         AQUA distributed by Aquarius team. These
                                                         rewards are paid to liquidity providers to
                                                         pools that are included to the "rewards
-                                                        zone" - now it's done by the Aquarius team
-                                                        but later will be based on users' voting.
+                                                        zone" is based on users' voting.
                                                     </TooltipInner>
                                                 }
                                                 position={TOOLTIP_POSITION.top}
