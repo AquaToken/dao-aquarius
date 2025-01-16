@@ -31,7 +31,6 @@ import {
     MaxRewardsLabel,
     NoLiquidityLabel,
     RewardLabel,
-    RewardPoolLabel,
     StablePoolLabel,
 } from 'basics/Labels';
 
@@ -208,7 +207,6 @@ type PairProps = {
     withoutDomains?: boolean;
     verticalDirections?: boolean;
     isRewardsOn?: boolean;
-    isRewardsPoolOn?: boolean;
     mobileVerticalDirections?: boolean;
     authRequired?: boolean;
     noLiquidity?: boolean;
@@ -233,7 +231,6 @@ const Market = ({
     verticalDirections,
     leftAlign,
     isRewardsOn,
-    isRewardsPoolOn,
     mobileVerticalDirections,
     authRequired,
     noLiquidity,
@@ -274,7 +271,6 @@ const Market = ({
             {poolType === POOL_TYPE.constant && <ConstantPoolLabel />}
             {boosted && <BoostLabel />}
             {isRewardsOn && <RewardLabel />}
-            {isRewardsPoolOn && <RewardPoolLabel />}
             {isMaxRewards && <MaxRewardsLabel />}
             {authRequired && <AuthRequiredLabel />}
             {noLiquidity && <NoLiquidityLabel />}

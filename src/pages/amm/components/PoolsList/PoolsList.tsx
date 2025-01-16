@@ -358,7 +358,7 @@ const PoolsList = ({
                                 withoutLink
                                 mobileVerticalDirections
                                 poolType={pool.pool_type}
-                                isRewardsPoolOn={Boolean(Number((pool as SorobanPool).reward_tps))}
+                                isRewardsOn={Boolean(Number((pool as SorobanPool).reward_tps))}
                             />
                             {!isUserList ? (
                                 <PoolStats>

@@ -28,13 +28,6 @@ export const RewardLabel = () => (
     />
 );
 
-export const RewardPoolLabel = () => (
-    <StyledLabel
-        labelText="rewards"
-        tooltipText="Pools marked with the REWARDS badge have additional AQUA rewards for liquidity providers."
-    />
-);
-
 export const AuthRequiredLabel = () => (
     <StyledLabel
         labelText="asset flags"
