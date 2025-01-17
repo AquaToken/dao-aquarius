@@ -1,9 +1,10 @@
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { ModalService } from 'services/globalServices';
+import { MainRoutes } from 'constants/routes';
+
 import { respondDown } from 'web/mixins';
-import GetAquaModal from 'web/modals/GetAquaModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Background from 'assets/main-screen-img.svg';
@@ -90,7 +91,7 @@ const Title = styled.h1`
     margin: 3.5rem 0 2rem;
     max-width: 80rem;
     font-weight: bold;
-    font-size: 12rem;
+    font-size: 10rem;
     line-height: 9.4rem;
     color: ${COLORS.titleText};
 
@@ -127,6 +128,10 @@ const Description = styled.p`
 `;
 
 const StyledButton = styled(Button)`
+    a {
+        color: ${COLORS.white};
+        text-decoration: none;
+    }
     ${respondDown(Breakpoints.md)`
         width: 100%;
     `}
@@ -138,13 +143,12 @@ const MainBlock = () => (
         <StarsImage />
         <StyledBackground />
         <TextBlock>
-            <Title>New Horizons</Title>
+            <Title>Boost Liquidity</Title>
             <Description>
-                Aquarius adds liquidity management layer to Stellar and powers new generation of
-                DeFi projects.
+                Aquarius is a decentralized liquidity management platform for Stellar.
             </Description>
-            <StyledButton onClick={() => ModalService.openModal(GetAquaModal, {})} isBig>
-                Get AQUA tokens
+            <StyledButton isBig>
+                <Link to={MainRoutes.amm}>Discover Pools</Link>{' '}
             </StyledButton>
         </TextBlock>
     </Main>

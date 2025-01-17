@@ -4,10 +4,10 @@ import styled from 'styled-components';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
+import Freighter from 'assets/freighter-dark.svg';
 import Lobstr from 'assets/lobstr-name-logo.svg';
 import StellarTerm from 'assets/stellarterm-logo.svg';
 import StellarX from 'assets/stellarx-logo.svg';
-import Vault from 'assets/vault-logo.svg';
 
 const Container = styled.section`
     display: flex;
@@ -85,8 +85,8 @@ const SupportedBy = () => (
                     <StellarX />
                 </a>
 
-                <a href="https://vault.lobstr.co/" target="_blank" rel="noreferrer">
-                    <Vault />
+                <a href="https://www.freighter.app/" target="_blank" rel="noreferrer">
+                    <Freighter />
                 </a>
 
                 <a href="https://stellarterm.com/" target="_blank" rel="noreferrer">
