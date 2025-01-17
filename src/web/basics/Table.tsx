@@ -46,6 +46,8 @@ interface TableRow {
     isNarrow?: boolean;
     mobileBackground?: string;
     mobileFontSize?: string;
+    style?: React.CSSProperties;
+    hoverBackground?: string;
 }
 
 interface TableProps {
@@ -206,6 +208,7 @@ const ListStyled = styled(Virtualized.List)`
 const TableRowWrap = styled.div<{
     $isClickable?: boolean;
     $mobileBackground?: string;
+    $hoverBackground?: string;
 }>`
     border-radius: 0.5rem;
     cursor: ${({ $isClickable }) => ($isClickable ? 'pointer' : 'unset')};
@@ -213,7 +216,8 @@ const TableRowWrap = styled.div<{
     padding: ${({ $isClickable }) => ($isClickable ? '0.8rem' : 'unset')};
 
     &:hover {
-        background: ${({ $isClickable }) => ($isClickable ? COLORS.lightGray : 'unset')};
+        background: ${({ $isClickable, $hoverBackground }) =>
+            $isClickable ? $hoverBackground ?? COLORS.lightGray : 'unset'}!important;
         border: 0.1rem solid
             ${({ $isClickable }) => ($isClickable ? COLORS.gray : COLORS.transparent)};
     }
@@ -225,8 +229,10 @@ const TableRowWrap = styled.div<{
         margin-bottom: 1.6rem;
         
         &:hover {
-            background: ${({ $isClickable, $mobileBackground }) =>
-                $isClickable ? COLORS.lightGray : $mobileBackground ?? COLORS.white};
+            background: ${({ $isClickable, $mobileBackground, $hoverBackground }) =>
+                $isClickable
+                    ? $hoverBackground ?? COLORS.lightGray
+                    : $mobileBackground ?? COLORS.white}!important;
         }
     `}
 `;
@@ -251,12 +257,13 @@ const CellContent = styled.div`
     align-items: center;
 `;
 
-const Row = ({ row, style }: { row: TableRow; style?: React.CSSProperties }): React.ReactNode => (
+const Row = ({ row }: { row: TableRow; style?: React.CSSProperties }): React.ReactNode => (
     <TableRowWrap
         $mobileBackground={row.mobileBackground}
         $isClickable={Boolean(row.onRowClick)}
+        $hoverBackground={row.hoverBackground}
         onClick={() => row.onRowClick?.()}
-        style={style}
+        style={row.style}
     >
         <TableRow $isNarrow={row.isNarrow} $mobileFontSize={row.mobileFontSize}>
             {row?.rowItems.map(
