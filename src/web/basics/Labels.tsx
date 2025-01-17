@@ -16,7 +16,7 @@ const StyledLabel = styled(Label)`
 export const BoostLabel = () => (
     <StyledLabel
         labelText="boost"
-        tooltipText="25% boost for markets paired with AQUA, up until 5% of adjusted votes."
+        tooltipText="50% boost for markets paired with AQUA, 30% boost for markets paired with USDC (centre.io) or XLM. These boosts are cumulative and are effective until reaching 10% of adjusted votes."
         background={COLORS.green}
     />
 );

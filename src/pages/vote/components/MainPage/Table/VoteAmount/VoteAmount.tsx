@@ -179,11 +179,11 @@ const VoteAmount = ({ pair, totalStats }: { pair: PairStats; totalStats: TotalSt
 
     const boosted = Number(pair.adjusted_votes_value) > Number(pair.votes_value);
     const percentValue = pair.votes_value
-        ? `${getPercent(pair.votes_value, totalStats.votes_value_sum)}%`
+        ? getPercent(pair.votes_value, totalStats.votes_value_sum)
         : null;
 
     const percentBoostedValue = pair.adjusted_votes_value
-        ? `${getPercent(pair.adjusted_votes_value, totalStats.adjusted_votes_value_sum)}%`
+        ? getPercent(pair.adjusted_votes_value, totalStats.adjusted_votes_value_sum)
         : null;
 
     const upAqua =
@@ -240,9 +240,9 @@ const VoteAmount = ({ pair, totalStats }: { pair: PairStats; totalStats: TotalSt
                     <TooltipRowTitle>
                         <span>% of votes:</span>
                         <TooltipPercents>
-                            <span>{percentValue}</span>
-                            {boosted ? <IconUp /> : <IconDown />}
-                            <span>{percentBoostedValue}</span>
+                            <span>{percentValue}%</span>
+                            {+percentValue < +percentBoostedValue ? <IconUp /> : <IconDown />}
+                            <span>{percentBoostedValue}%</span>
                         </TooltipPercents>
                     </TooltipRowTitle>
                 </TooltipWrap>
@@ -256,12 +256,12 @@ const VoteAmount = ({ pair, totalStats }: { pair: PairStats; totalStats: TotalSt
                 <AmountRow>
                     {pair.votes_value ? formatBalance(+pair.votes_value, true) : null}
                     <Percents>
-                        <PercentMobile $isBoosted={boosted}>{percentBoostedValue}</PercentMobile>
+                        <PercentMobile $isBoosted={boosted}>{percentBoostedValue}%</PercentMobile>
                     </Percents>
                     <Info />
                 </AmountRow>
 
-                <Percent $isBoosted={boosted}>{percentBoostedValue}</Percent>
+                <Percent $isBoosted={boosted}>{percentBoostedValue}%</Percent>
             </Amount>
             <InfoMobile />
         </TooltipStyled>
