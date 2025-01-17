@@ -15,10 +15,8 @@ const Questions = () => (
             question="How can I get involved with AQUA rewards?"
             answer={
                 <span>
-                    An AQUA trustline needs to be added to the user's Stellar wallet. Trustlines
-                    allow a user to receive & hold specific Stellar assets within their wallets.
-                    Once a user has a Stellar wallet and an AQUA trustline enabled they can start
-                    earning rewards through SDEX market making or AMM liquidity providing.
+                    Provide liquidity to Aquarius AMM pools in the reward zone to earn a share of
+                    AQUA emissions. You can also earn AQUA by market making on SDEX.
                 </span>
             }
         />
@@ -26,22 +24,30 @@ const Questions = () => (
             question="How do I participate in earning SDEX daily rewards?"
             answer={
                 <span>
-                    SDEX rewards are earned through market making on the above markets on Stellar
-                    Decentralized Exchange (SDEX). Market making happens through the creation of buy
-                    & sell offers, with orders sitting on the order books ready for other users to
-                    take at a later time. For SDEX market making you can use platforms like LOBSTR,
-                    StellarX, StellarTerm or market-making bots like Kelp bot.
+                    Earn SDEX rewards by market making on Stellar’s Decentralized Exchange (SDEX).
+                    This involves creating buy and sell offers that remain on order books for others
+                    to take. Use platforms like LOBSTR, StellarX, StellarTerm, or market-making
+                    tools like Kelp bot. Ensure you have an AQUA trustline in your Stellar wallet to
+                    receive rewards.
                 </span>
             }
         />
         <Question
-            question="How do I participate in earning AMM daily reward?"
+            question="How do I participate in earning AMM daily rewards?"
             answer={
                 <span>
-                    AMM rewards are earned through liquidity providing on the above markets through
-                    Stellar AMMs. These rewards are distributed based on a user's contribution to
-                    AMM pools. You can get access to AMMs on Stellar using products like StellarX,
-                    Stellarport, or Lumenswap.
+                    Earn AMM rewards by providing liquidity to Aquarius AMM pools. Rewards are
+                    distributed based on your contribution. Go to pool details and click “Deposit”
+                    to start earning.
+                </span>
+            }
+        />
+        <Question
+            question="How do I claim AQUA liquidity rewards?"
+            answer={
+                <span>
+                    SDEX rewards are automatically sent to your wallet if you’ve added the AQUA
+                    asset. AMM rewards can be claimed anytime on the “My Aquarius” page.
                 </span>
             }
         />
