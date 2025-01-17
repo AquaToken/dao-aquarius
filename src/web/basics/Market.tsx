@@ -61,8 +61,7 @@ const Icons = styled.div<{
     display: flex;
     align-items: center;
     min-width: 12rem;
-    justify-content: ${({ $verticalDirections, $leftAlign }) =>
-        $leftAlign ? 'flex-start' : $verticalDirections ? 'center' : 'flex-end'};
+    justify-content: ${({ $leftAlign }) => ($leftAlign ? 'flex-start' : 'center')};
 
     ${({ $mobileVerticalDirections }) =>
         $mobileVerticalDirections &&

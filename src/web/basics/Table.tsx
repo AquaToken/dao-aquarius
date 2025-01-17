@@ -97,7 +97,7 @@ const TableHead = styled.div`
     `}
 `;
 
-const TableHeadRow = styled.div<{ $withPadding: boolean }>`
+const TableHeadRow = styled.div<{ $withPadding: boolean; $isClickable?: boolean }>`
     display: flex;
     align-items: stretch;
     width: 100%;
@@ -106,12 +106,13 @@ const TableHeadRow = styled.div<{ $withPadding: boolean }>`
     line-height: 2rem;
     color: ${COLORS.grayText};
     white-space: nowrap;
-    padding-right: ${({ $withPadding }) => ($withPadding ? '1.5rem' : 'unset')};
+    padding-right: ${({ $withPadding, $isClickable }) =>
+        $withPadding ? '1.5rem' : $isClickable ? '3.2rem' : 'unset'};
 
     ${respondDown(Breakpoints.md)`
         flex-direction: column;
         background: ${COLORS.white};
-        padding: 2.7rem 1.6rem 1.6rem;
+        padding: 2.7rem rem 1.6rem;
         margin-bottom: 1.6rem;
     `}
 `;
@@ -213,7 +214,7 @@ const TableRowWrap = styled.div<{
     border-radius: 0.5rem;
     cursor: ${({ $isClickable }) => ($isClickable ? 'pointer' : 'unset')};
     border: 0.1rem solid ${COLORS.transparent};
-    padding: ${({ $isClickable }) => ($isClickable ? '0.8rem' : 'unset')};
+    padding: ${({ $isClickable }) => ($isClickable ? '0.8rem 3.2rem 0.8rem 0.8rem' : 'unset')};
 
     &:hover {
         background: ${({ $isClickable, $hoverBackground }) =>
@@ -325,7 +326,10 @@ const Table = forwardRef(
                     </TableLoader>
                 )}
                 <TableHead>
-                    <TableHeadRow $withPadding={Boolean(virtualScrollProps)}>
+                    <TableHeadRow
+                        $withPadding={Boolean(virtualScrollProps)}
+                        $isClickable={Boolean(body[0]?.onRowClick)}
+                    >
                         {head.map(
                             (
                                 { children, sort, align, flexSize, hideOnWeb, hideOnMobile },
