@@ -3,18 +3,20 @@ import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { findSwapPath } from 'api/amm';
+import { findSwapPath, getAssetsList } from 'api/amm';
 
 import { MainRoutes } from 'constants/routes';
 
 import { getAssetString } from 'helpers/assets';
 
+import { useDebounce } from 'hooks/useDebounce';
+
 import useAuthStore from 'store/authStore/useAuthStore';
+
+import { ModalService, SorobanService, ToastService } from 'services/globalServices';
 
 import { Asset } from 'types/stellar';
 
-import { useDebounce } from 'hooks/useDebounce';
-import { ModalService, SorobanService, ToastService } from 'services/globalServices';
 import { respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -77,8 +79,14 @@ const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
 
     const debouncedAmount = useDebounce(baseAmount, 700);
 
+    const [assetsList, setAssetsList] = useState(null);
+
     const history = useHistory();
     const { account, isLogged } = useAuthStore();
+
+    useEffect(() => {
+        getAssetsList().then(res => setAssetsList(res));
+    }, []);
 
     useEffect(() => {
         if (Number(debouncedAmount.current)) {
@@ -194,6 +202,7 @@ const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
                 setAmount={onAmountChange}
                 exclude={counter}
                 pending={estimatePending}
+                assetsList={assetsList}
                 inputPostfix={
                     baseAmount ? (
                         <AmountUsdEquivalent amount={debouncedAmount.current} asset={base} />
@@ -209,6 +218,7 @@ const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
                 amount={counterAmount}
                 exclude={base}
                 pending={estimatePending}
+                assetsList={assetsList}
                 inputPostfix={
                     <AmountUsdEquivalent
                         amount={counterAmount}
