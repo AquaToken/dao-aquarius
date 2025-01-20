@@ -114,7 +114,7 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                     <Table
                         pending={pending}
                         head={[
-                            { children: 'Pool', flexSize: 4 },
+                            { children: 'Pool', flexSize: 6 },
                             {
                                 children: 'TVL',
                                 sort: {
@@ -240,7 +240,7 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                                             isRewardsOn={Boolean(Number(pool.reward_tps))}
                                         />
                                     ),
-                                    flexSize: 4,
+                                    flexSize: 6,
                                 },
                                 {
                                     children: pool.liquidity_usd
