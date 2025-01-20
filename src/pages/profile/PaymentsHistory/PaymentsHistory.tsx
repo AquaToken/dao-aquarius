@@ -11,6 +11,7 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { StellarService } from 'services/globalServices';
 import { StellarEvents } from 'services/stellar.service';
+
 import { COLORS } from 'web/styles';
 
 import ExternalLink from 'basics/ExternalLink';
@@ -18,7 +19,7 @@ import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
 import Table, { CellAlign } from 'basics/Table';
 
-import { ExternalLinkStyled, Header, Section, Title } from '../AmmRewards/AmmRewards';
+import { ExternalLinkStyled, Header, Section, Title } from '../SdexRewards/SdexRewards';
 import { Empty } from '../YourVotes/YourVotes';
 
 const Container = styled.div`

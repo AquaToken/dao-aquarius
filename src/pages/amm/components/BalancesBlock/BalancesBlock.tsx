@@ -8,6 +8,7 @@ import { formatBalance } from 'helpers/format-number';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { StellarService } from 'services/globalServices';
+
 import { respondDown } from 'web/mixins';
 import { Breakpoints } from 'web/styles';
 
@@ -15,7 +16,7 @@ import Asset from 'basics/Asset';
 import PageLoader from 'basics/loaders/PageLoader';
 import Table, { CellAlign } from 'basics/Table';
 
-import { Container, Header, Section, Title } from 'pages/profile/AmmRewards/AmmRewards';
+import { Container, Header, Section, Title } from 'pages/profile/SdexRewards/SdexRewards';
 
 const StyledContainer = styled(Container)`
     width: 70%;

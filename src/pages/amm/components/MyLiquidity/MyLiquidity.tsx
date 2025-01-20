@@ -9,13 +9,15 @@ import { MainRoutes } from 'constants/routes';
 
 import { formatBalance } from 'helpers/format-number';
 
+import { useUpdateIndex } from 'hooks/useUpdateIndex';
+
 import useAuthStore from 'store/authStore/useAuthStore';
+
+import { ModalService, StellarService } from 'services/globalServices';
+import { POOL_TYPE } from 'services/soroban.service';
 
 import { PoolUserProcessed } from 'types/amm';
 
-import { useUpdateIndex } from 'hooks/useUpdateIndex';
-import { ModalService, StellarService } from 'services/globalServices';
-import { POOL_TYPE } from 'services/soroban.service';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -25,7 +27,7 @@ import Select from 'basics/inputs/Select';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
 import PageLoader from 'basics/loaders/PageLoader';
 
-import { ExternalLinkStyled } from 'pages/profile/AmmRewards/AmmRewards';
+import { ExternalLinkStyled } from 'pages/profile/SdexRewards/SdexRewards';
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
 
 import PoolsList from '../PoolsList/PoolsList';

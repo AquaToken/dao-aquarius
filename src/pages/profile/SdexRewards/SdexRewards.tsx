@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import styled from 'styled-components';
 
 import { MainRoutes } from 'constants/routes';
 
@@ -11,35 +12,120 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { StellarService } from 'services/globalServices';
 
-import { COLORS } from 'web/styles';
+import { Breakpoints, COLORS } from 'web/styles';
 
+import Aqua from 'assets/aqua-logo-small.svg';
+
+import ExternalLink from 'basics/ExternalLink';
+import Label from 'basics/Label';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
 import Market from 'basics/Market';
 import Table, { CellAlign } from 'basics/Table';
 
-import {
-    AquaBalance,
-    AquaLogo,
-    Container,
-    ExternalLinkStyled,
-    getSortFunction,
-    Header,
-    InOffers,
-    Section,
-    StyledLabel,
-    Summary,
-    Title,
-    TOOLTIP_TEXT,
-} from '../AmmRewards/AmmRewards';
+import { flexRowSpaceBetween, respondDown } from '../../../web/mixins';
 import { getSdexRewards } from '../api/api';
 import BoostBanner from '../BoostBanner/BoostBanner';
 import { Empty } from '../YourVotes/YourVotes';
+
+export const Container = styled.div`
+    display: flex;
+    flex-direction: column;
+`;
+
+export const Header = styled.div`
+    ${flexRowSpaceBetween};
+    margin-bottom: 4.8rem;
+
+    ${respondDown(Breakpoints.md)`
+        flex-direction: column;
+        gap: 2rem;
+        margin-bottom: 2rem;
+   `}
+`;
+
+export const Title = styled.h2`
+    font-size: 3.6rem;
+    line-height: 4.2rem;
+    color: ${COLORS.titleText};
+    font-weight: 400;
+
+    ${respondDown(Breakpoints.md)`
+        text-align: center;
+   `}
+`;
+
+export const Section = styled.section`
+    background: ${COLORS.white};
+    border-radius: 0.5rem;
+    padding: 2.6rem 2.3rem;
+
+    ${respondDown(Breakpoints.md)`
+        padding: 0;
+        background: ${COLORS.lightGray};
+    `}
+`;
+
+export const ExternalLinkStyled = styled(ExternalLink)`
+    font-size: 1.4rem;
+    line-height: 2rem;
+`;
+
+export const Summary = styled.div`
+    font-size: 1.4rem;
+    line-height: 2rem;
+    color: ${COLORS.grayText};
+    display: flex;
+    align-items: center;
+`;
+
+export const AquaLogo = styled(Aqua)`
+    width: 2.4rem;
+    height: 2.4rem;
+    margin-left: 1.6rem;
+    margin-right: 0.8rem;
+`;
+
+export const AquaBalance = styled.div`
+    font-size: 2rem;
+    line-height: 2.4rem;
+    color: ${COLORS.titleText};
+    margin-right: 1rem;
+`;
+
+export const TooltipInner = styled.span`
+    width: 40rem;
+    white-space: pre-line;
+
+    ${respondDown(Breakpoints.md)`
+        width: 20rem;
+    `}
+`;
+
+export const StyledLabel = styled(Label)`
+    margin-left: 1rem;
+`;
+
+export const InOffers = styled.div`
+    display: flex;
+    flex-direction: column;
+    line-height: 2.4rem;
+
+    ${respondDown(Breakpoints.md)`
+        text-align: right;
+    `}
+`;
+
+export const TOOLTIP_TEXT =
+    'You can freeze AQUA into ICE for additional benefits. One of them is a boost in SDEX and AMM rewards you can receive. The higher your ICE balance, the higher your boost can be.';
 
 enum SortField {
     market = 'market',
     your = 'your',
 }
+
+export const getSortFunction = (value1, value2, isSortReversed) =>
+    isSortReversed ? value1 - value2 : value2 - value1;
 
 const getAssetString = (asset): string => {
     const {

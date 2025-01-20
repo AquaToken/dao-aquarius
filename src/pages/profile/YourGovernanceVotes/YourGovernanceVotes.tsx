@@ -9,7 +9,7 @@ import PageLoader from 'basics/loaders/PageLoader';
 
 import { getProposalsRequest, PROPOSAL_FILTER } from '../../governance/api/api';
 import ProposalPreview from '../../governance/components/GovernanceMainPage/ProposalPreview/ProposalPreview';
-import { Container, Header, Title } from '../AmmRewards/AmmRewards';
+import { Container, Header, Title } from '../SdexRewards/SdexRewards';
 import { Empty, Section } from '../YourVotes/YourVotes';
 
 const YourGovernanceVotes = () => {

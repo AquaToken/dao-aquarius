@@ -15,7 +15,7 @@ import { Asset } from 'types/stellar';
 import { PageLoader } from 'basics/loaders';
 
 import PoolsList from 'pages/amm/components/PoolsList/PoolsList';
-import { ExternalLinkStyled, Section } from 'pages/profile/AmmRewards/AmmRewards';
+import { ExternalLinkStyled, Section } from 'pages/profile/SdexRewards/SdexRewards';
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
 
 import ChooseLoginMethodModal from '../../../../../web/modals/auth/ChooseLoginMethodModal';

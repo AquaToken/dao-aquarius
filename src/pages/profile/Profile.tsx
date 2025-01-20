@@ -13,7 +13,6 @@ import ToggleGroup from 'basics/inputs/ToggleGroup';
 
 import AccountInfo from './AccountInfo/AccountInfo';
 import Airdrop2List from './Airdrop2List/Airdrop2List';
-import AmmRewards from './AmmRewards/AmmRewards';
 import Balances from './Balances/Balances';
 import IceLocks from './IceLocks/IceLocks';
 import PaymentsHistory from './PaymentsHistory/PaymentsHistory';
@@ -82,7 +81,6 @@ enum Tabs {
     liquidity = 'liquidity',
     balances = 'balances',
     sdex = 'sdex',
-    amm = 'amm',
     your = 'your',
     governance = 'governance',
     airdrop2 = 'airdrop2',
@@ -94,7 +92,6 @@ const OPTIONS = [
     { label: 'Balances', value: Tabs.balances },
     { label: 'My liquidity', value: Tabs.liquidity },
     { label: 'SDEX rewards', value: Tabs.sdex },
-    { label: 'AMM rewards', value: Tabs.amm },
     { label: 'My Liquidity Votes', value: Tabs.your },
     { label: 'Governance Votes', value: Tabs.governance },
     { label: 'Airdrop #2', value: Tabs.airdrop2 },
@@ -136,7 +133,6 @@ const Profile = () => {
                 <Content>
                     {selectedTab === Tabs.liquidity && <MyLiquidity />}
                     {selectedTab === Tabs.balances && <BalancesBlock />}
-                    {selectedTab === Tabs.amm && <AmmRewards aquaUsdPrice={aquaUsdPrice} />}
                     {selectedTab === Tabs.sdex && <SdexRewards aquaUsdPrice={aquaUsdPrice} />}
                     {selectedTab === Tabs.your && <YourVotes />}
                     {selectedTab === Tabs.governance && <YourGovernanceVotes />}
