@@ -266,7 +266,7 @@ const RewardsList = () => {
                         align: CellAlign.Right,
                     },
                     {
-                        children: 'AMM daily reward',
+                        children: 'Aquarius AMM daily reward',
                         sort: {
                             onClick: () =>
                                 changeSort(
@@ -409,7 +409,7 @@ const RewardsList = () => {
                                         </a>
                                     </Amount>
                                 ),
-                                label: 'AMM daily reward',
+                                label: 'Aquarius AMM daily reward',
                                 align: CellAlign.Right,
                             },
                             {

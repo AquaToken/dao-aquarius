@@ -136,7 +136,7 @@ const DividedRewards = ({ totalRewards }: DividedRewardsProps): React.ReactNode 
                     )}
                 </Amount>
                 <Description>
-                    <b>AMM</b> daily reward
+                    <b>Aquarius AMM</b> daily reward
                 </Description>
             </div>
         </Card>

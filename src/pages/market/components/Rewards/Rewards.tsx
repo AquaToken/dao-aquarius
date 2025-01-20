@@ -139,7 +139,7 @@ const Rewards = ({ base, counter }: RewardsProps): React.ReactNode => {
                     </DetailValue>
                 </DetailsColumn>
                 <DetailsColumn>
-                    <DetailTitle>AMM daily reward</DetailTitle>
+                    <DetailTitle>Aquarius AMM daily reward</DetailTitle>
                     <DetailValue>
                         {formatBalance(pairRewards.daily_amm_reward, true)} AQUA
                     </DetailValue>
