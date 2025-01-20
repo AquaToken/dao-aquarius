@@ -280,15 +280,24 @@ const AssetDropdown = ({
         });
     }, [account]);
 
-    const assets = customAssetsList || [
-        ...balances,
-        ...(knownAssets.filter(
-            knownAsset =>
-                !balances.find(
-                    asset => knownAsset.code === asset.code && knownAsset.issuer === asset.issuer,
-                ),
-        ) || []),
-    ];
+    const assets = customAssetsList
+        ? customAssetsList.map(asset => {
+              const balance = balances.find(
+                  balance => balance.code === asset.code && balance.issuer === asset.issuer,
+              );
+
+              return balance || asset;
+          })
+        : [
+              ...balances,
+              ...(knownAssets.filter(
+                  knownAsset =>
+                      !balances.find(
+                          asset =>
+                              knownAsset.code === asset.code && knownAsset.issuer === asset.issuer,
+                      ),
+              ) || []),
+          ];
 
     const [isOpen, setIsOpen] = useState(false);
     const [selectedAsset, setSelectedAsset] = useState(asset);
