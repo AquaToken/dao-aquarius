@@ -1,8 +1,15 @@
 import { Asset } from '@stellar/stellar-sdk';
 import axios from 'axios';
 
-import { getAquaAssetData, getAssetFromString, getAssetString } from 'helpers/assets';
+import {
+    getAquaAssetData,
+    getAssetFromString,
+    getAssetString,
+    getUsdcAssetData,
+} from 'helpers/assets';
 import { getAmmAquaUrl } from 'helpers/url';
+
+import { AssetSimple } from 'store/assetsStore/types';
 
 import { AssetsService, SorobanService } from 'services/globalServices';
 
@@ -288,4 +295,31 @@ export const getAquaInPoolsSum = async (): Promise<number> => {
 
         return acc + Number(item.reserves[aquaIndex]) / 1e7;
     }, 0);
+};
+
+export const getAssetsList = async (): Promise<AssetSimple[]> => {
+    const baseUrl = getAmmAquaUrl();
+
+    const { data } = await axios.get<ListResponse<Pool>>(`${baseUrl}/pools/?size=1000`);
+
+    const { aquaAssetString } = getAquaAssetData();
+    const { usdcAssetString } = getUsdcAssetData();
+
+    const assetsSet = new Set();
+
+    data.items.forEach(({ tokens_str }) => {
+        tokens_str.forEach(token => {
+            if (token === aquaAssetString || token === 'native' || token === usdcAssetString) {
+                return;
+            }
+            assetsSet.add(token);
+        });
+    });
+
+    return [
+        aquaAssetString,
+        'native',
+        usdcAssetString,
+        ...[...assetsSet].sort((a: string, b: string) => a.localeCompare(b)),
+    ].map((str: string) => getAssetFromString(str));
 };

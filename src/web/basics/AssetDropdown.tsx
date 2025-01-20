@@ -229,6 +229,7 @@ const codeIssuerRegexp = new RegExp(codeIssuerPattern);
 
 type AssetDropdownProps = {
     asset?: AssetSimple;
+    assets?: AssetSimple[];
     assetsList?: AssetSimple[];
     onUpdate?: (asset: AssetType | AssetType[]) => void;
     disabled?: boolean;
@@ -247,6 +248,7 @@ type AssetDropdownProps = {
 
 const AssetDropdown = ({
     asset,
+    assets: customAssetsList,
     assetsList,
     onUpdate,
     disabled,
@@ -278,7 +280,7 @@ const AssetDropdown = ({
         });
     }, [account]);
 
-    const assets = [
+    const assets = customAssetsList || [
         ...balances,
         ...(knownAssets.filter(
             knownAsset =>
