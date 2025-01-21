@@ -158,6 +158,7 @@ const GetAquaModal = (): React.ReactNode => (
                 <div>
                     <GrayText>Issuer address</GrayText>
                     <BoldText>
+                        {/* TODO: get aqua issuer here from env api */}
                         <CopyButton text="GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA">
                             <PublicKeyWithIcon pubKey="GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA" />
                         </CopyButton>
