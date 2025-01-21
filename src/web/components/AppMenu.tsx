@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { LockerRoutes, MainRoutes } from 'constants/routes';
+import { LockerRoutes } from 'constants/routes';
 
 import { formatBalance } from 'helpers/format-number';
 
@@ -18,7 +18,6 @@ import IconCopy from 'assets/icon-copy.svg';
 import External from 'assets/icon-external-link.svg';
 import IconLogout from 'assets/icon-logout.svg';
 import IconPlus from 'assets/icon-plus.svg';
-import IconProfile from 'assets/icon-profile.svg';
 
 import Button from 'basics/buttons/Button';
 import CircleButton from 'basics/buttons/CircleButton';
@@ -37,7 +36,7 @@ const MenuBlock = styled.div`
     width: 100%;
     top: 100%;
     right: 0;
-    min-width: 29.5rem;
+    min-width: 28rem;
     background-color: ${COLORS.white};
     box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
     cursor: auto;
@@ -209,41 +208,6 @@ const LinkButton = styled.a`
     text-decoration: none;
 `;
 
-const MyAquarius = styled(NavLink)`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    padding: 0 1.6rem;
-    height: 4.8rem;
-    background-color: ${COLORS.gray};
-    border-radius: 0.6rem;
-    cursor: pointer;
-    font-size: 1.6rem;
-    line-height: 2.4rem;
-    color: ${COLORS.titleText};
-    text-decoration: none;
-
-    div::after {
-        content: attr(title);
-        visibility: hidden;
-        overflow: hidden;
-        user-select: none;
-        pointer-events: none;
-        font-weight: 700;
-        height: 0;
-        display: block;
-    }
-
-    svg {
-        margin-right: 0.8rem;
-    }
-
-    &:hover {
-        color: ${COLORS.purple};
-    }
-`;
-
 const AppMenu = ({
     closeMenu,
     navLinks,
@@ -266,10 +230,6 @@ const AppMenu = ({
         closeMenu();
     };
 
-    const onMyAquariusClick = () => {
-        closeMenu();
-    };
-
     return (
         <MenuBlock
             onClick={(e: React.MouseEvent) => {
@@ -288,16 +248,6 @@ const AppMenu = ({
                         {federationAddress && <Federation>{federationAddress}</Federation>}
                         <AccountPublic>{accountIdView}</AccountPublic>
                     </AccountInfo>
-                    <AccountBalanceBlock>
-                        <MyAquarius
-                            onClick={onMyAquariusClick}
-                            to={MainRoutes.account}
-                            activeStyle={{ fontWeight: 700 }}
-                        >
-                            <IconProfile />
-                            <div title="My Aquarius">My Aquarius</div>
-                        </MyAquarius>
-                    </AccountBalanceBlock>
                     <AccountBalanceBlock>
                         <LinkButton
                             target="_blank"

@@ -4,7 +4,7 @@ import Title from 'react-document-title';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import { createGlobalStyle } from 'styled-components';
 
-import { AmmRoutes, MainRoutes } from 'constants/routes';
+import { MainRoutes } from 'constants/routes';
 
 import { getEnv, getIsTestnetEnv, setProductionEnv } from 'helpers/env';
 import { getMoonpayKeyByEnv } from 'helpers/moonpay';
@@ -21,13 +21,12 @@ import PageLoader from 'basics/loaders/PageLoader';
 
 import ErrorBoundary from 'components/ErrorBoundary';
 import Footer from 'components/Footer';
-import Header, { HeaderNavLink, HeaderNavLinkWithCount, NavLinksDivider } from 'components/Header';
+import Header from 'components/Header/Header';
 import ModalContainer from 'components/ModalContainer';
 import NotFoundPage from 'components/NotFoundPage';
 import TestnetBanner from 'components/TestnetBanner';
 import ToastContainer from 'components/ToastContainer';
 
-import { getActiveProposalsCount } from 'pages/governance/api/api';
 import Governance from 'pages/governance/Governance';
 
 import useGlobalSubscriptions from './hooks/useGlobalSubscriptions';
@@ -56,7 +55,6 @@ const UPDATE_PERIOD = 24 * 60 * 60 * 1000;
 
 const App = () => {
     const [wcLoginChecked, setWcLoginChecked] = useState(false);
-    const [activeProposalsCount, setActiveProposalsCount] = useState(0);
 
     useGlobalSubscriptions();
 
@@ -65,18 +63,6 @@ const App = () => {
 
     const { isLogged, account, redirectURL, disableRedirect, callback, removeAuthCallback } =
         useAuthStore();
-
-    useEffect(() => {
-        getActiveProposalsCount().then(res => {
-            setActiveProposalsCount(res);
-        });
-    }, []);
-
-    useEffect(() => {
-        getActiveProposalsCount().then(res => {
-            setActiveProposalsCount(res);
-        });
-    }, []);
 
     useEffect(() => {
         if (!getEnv()) {
@@ -193,94 +179,7 @@ const App = () => {
             <ErrorBoundary>
                 {isLogged && Boolean(redirectURL) && <Redirect to={redirectURL} />}
                 <TestnetBanner />
-                <Header>
-                    <>
-                        <HeaderNavLink
-                            to={AmmRoutes.analytics}
-                            activeStyle={{
-                                fontWeight: 700,
-                            }}
-                            title="Pools"
-                        >
-                            Pools
-                        </HeaderNavLink>
-                        <HeaderNavLink
-                            to={MainRoutes.swap}
-                            activeStyle={{
-                                fontWeight: 700,
-                            }}
-                            title="Swap"
-                        >
-                            Swap
-                        </HeaderNavLink>
-
-                        <NavLinksDivider />
-
-                        <HeaderNavLink
-                            to={MainRoutes.vote}
-                            exact
-                            activeStyle={{
-                                fontWeight: 700,
-                            }}
-                            title="Voting"
-                        >
-                            Voting
-                        </HeaderNavLink>
-                        <HeaderNavLink
-                            to={MainRoutes.rewards}
-                            activeStyle={{
-                                fontWeight: 700,
-                            }}
-                            title="Rewards"
-                        >
-                            Rewards
-                        </HeaderNavLink>
-                        <HeaderNavLink
-                            to={MainRoutes.bribes}
-                            activeStyle={{
-                                fontWeight: 700,
-                            }}
-                            title="Bribes"
-                        >
-                            Bribes
-                        </HeaderNavLink>
-
-                        <NavLinksDivider />
-
-                        <HeaderNavLinkWithCount
-                            to={MainRoutes.governance}
-                            activeStyle={{
-                                fontWeight: 700,
-                            }}
-                            title="DAO"
-                            count={activeProposalsCount}
-                        >
-                            DAO
-                        </HeaderNavLinkWithCount>
-
-                        <NavLinksDivider />
-
-                        <HeaderNavLink
-                            activeStyle={{
-                                fontWeight: 700,
-                            }}
-                            title="Buy AQUA"
-                            to={MainRoutes.buyAqua}
-                        >
-                            Buy AQUA
-                        </HeaderNavLink>
-
-                        <HeaderNavLink
-                            to={MainRoutes.locker}
-                            activeStyle={{
-                                fontWeight: 700,
-                            }}
-                            title="Lock AQUA"
-                        >
-                            Lock AQUA
-                        </HeaderNavLink>
-                    </>
-                </Header>
+                <Header />
                 <Suspense fallback={<PageLoader />}>
                     <Switch>
                         <Route exact path={MainRoutes.main}>
