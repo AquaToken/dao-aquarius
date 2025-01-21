@@ -19,6 +19,7 @@ import NoTrustline from 'components/NoTrustline';
 
 const CenteredWrapper = styled.div`
     ${flexAllCenter};
+    overflow-x: hidden;
 `;
 
 const Container = styled.div`
