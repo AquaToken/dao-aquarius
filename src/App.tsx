@@ -11,10 +11,11 @@ import { getMoonpayKeyByEnv } from 'helpers/moonpay';
 
 import { LoginTypes } from 'store/authStore/types';
 
-import { StellarService, WalletConnectService } from 'services/globalServices';
+import { ModalService, StellarService, WalletConnectService } from 'services/globalServices';
 
 import AppGlobalStyle from 'web/AppGlobalStyles';
 import { respondDown } from 'web/mixins';
+import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import PageLoader from 'basics/loaders/PageLoader';
@@ -266,6 +267,14 @@ const App = () => {
                             }}
                             title="Buy AQUA"
                             to={MainRoutes.buyAqua}
+                            onClick={e => {
+                                if (!isLogged) {
+                                    e.preventDefault();
+                                    ModalService.openModal(ChooseLoginMethodModal, {
+                                        redirectURL: MainRoutes.buyAqua,
+                                    });
+                                }
+                            }}
                         >
                             Buy AQUA
                         </HeaderNavLink>

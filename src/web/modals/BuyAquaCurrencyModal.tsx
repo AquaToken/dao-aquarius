@@ -93,6 +93,7 @@ const BuyAquaCurrencyModal = ({
     return (
         <Container>
             <ModalTitle>Payment currency</ModalTitle>
+
             <CurrencyInput
                 placeholder="Search by name or code"
                 value={searchText}
