@@ -69,9 +69,9 @@ interface Props {
 }
 
 const ExpandedMenu = ({ links, title, count }: Props): React.ReactNode => {
-    const [isOpen, setIsOpen] = useState(true);
+    const [isOpen, setIsOpen] = useState(false);
     return (
-        <Menu onMouseEnter={() => setIsOpen(true)} onMouseLeave={() => setIsOpen(true)}>
+        <Menu onMouseEnter={() => setIsOpen(true)} onMouseLeave={() => setIsOpen(false)}>
             <MenuHead>
                 <MenuHeadTitle count={count}>{title}</MenuHeadTitle>
                 <Arrow />
