@@ -29,6 +29,13 @@ const TooltipTop = (background: string) => css`
         border-left: 0.6rem solid ${COLORS.transparent};
         border-right: 0.6rem solid ${COLORS.transparent};
     }
+
+    // TODO add for all positions
+    &::before {
+        height: 1rem;
+        top: 100%;
+        width: 100%;
+    }
 `;
 
 const TooltipBottom = (background: string) => css`
@@ -88,10 +95,18 @@ const TooltipBody = styled.div<{
     white-space: nowrap;
     z-index: ${Z_INDEX.tooltip};
 
+    // triangle
     &::after {
         content: '';
         display: block;
         position: absolute;
+    }
+
+    // hover layout
+    &::before {
+        position: absolute;
+        content: '';
+        background: ${COLORS.transparent};
     }
 
     ${({ $position, $background }) =>
