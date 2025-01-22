@@ -1,6 +1,5 @@
 import { MoonPayProvider } from '@moonpay/moonpay-react';
 import { lazy, Suspense, useEffect, useState } from 'react';
-import Title from 'react-document-title';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import { createGlobalStyle } from 'styled-components';
 
@@ -18,6 +17,7 @@ import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import PageLoader from 'basics/loaders/PageLoader';
+import PageTitle from 'basics/PageTitle';
 
 import ErrorBoundary from 'components/ErrorBoundary';
 import Footer from 'components/Footer';
@@ -185,83 +185,83 @@ const App = () => {
                 <Suspense fallback={<PageLoader />}>
                     <Switch>
                         <Route exact path={MainRoutes.main}>
-                            <Title title="Staging: Aquarius">
+                            <PageTitle title="Staging: Aquarius">
                                 <MainPage />
-                            </Title>
+                            </PageTitle>
                         </Route>
                         <Route path={MainRoutes.locker}>
-                            <Title title="Staging: Locker">
+                            <PageTitle title="Staging: Locker">
                                 <LockerPage />
-                            </Title>
+                            </PageTitle>
                         </Route>
                         <Route path={MainRoutes.governance}>
-                            <Title title="Staging: Governance">
+                            <PageTitle title="Staging: Governance">
                                 <Governance />
-                            </Title>
+                            </PageTitle>
                         </Route>
                         <Route path={MainRoutes.vote}>
-                            <Title title="Staging: Voting">
+                            <PageTitle title="Staging: Voting">
                                 <VotePage />
-                            </Title>
+                            </PageTitle>
                         </Route>
                         <Route path={MainRoutes.bribes}>
-                            <Title title="Staging: Bribes">
+                            <PageTitle title="Staging: Bribes">
                                 <BribesPage />
-                            </Title>
+                            </PageTitle>
                         </Route>
                         <Route path={MainRoutes.market}>
                             <MarketPage />
                         </Route>
                         <Route path={MainRoutes.rewards}>
-                            <Title title="Staging: Rewards">
+                            <PageTitle title="Staging: Rewards">
                                 <RewardsPage />
-                            </Title>
+                            </PageTitle>
                         </Route>
                         <Route path={MainRoutes.airdrop}>
-                            <Title title="Staging: Airdrop">
+                            <PageTitle title="Staging: Airdrop">
                                 <AirdropPage />
-                            </Title>
+                            </PageTitle>
                         </Route>
                         <Route path={MainRoutes.airdrop2}>
-                            <Title title="Staging: Airdrop #2">
+                            <PageTitle title="Staging: Airdrop #2">
                                 <Airdrop2Page />
-                            </Title>
+                            </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.account}>
-                            <Title title="Staging: My Aquarius">
+                            <PageTitle title="Staging: My Aquarius">
                                 {isLogged ? <ProfilePage /> : <Redirect to={MainRoutes.main} />}
-                            </Title>
+                            </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.walletConnect}>
-                            <Title title="Staging: WalletConnect">
+                            <PageTitle title="Staging: WalletConnect">
                                 <WalletConnectPage />
-                            </Title>
+                            </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.amm}>
-                            <Title title="Staging: Pools">
+                            <PageTitle title="Staging: Pools">
                                 <AmmPage />
-                            </Title>
+                            </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.swap}>
-                            <Title title="Staging: Swap">
+                            <PageTitle title="Staging: Swap">
                                 <SwapPage />
-                            </Title>
+                            </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.buyAqua}>
-                            <Title title="Buy Aqua">
+                            <PageTitle title="Buy Aqua">
                                 <BuyAquaPage />
-                            </Title>
+                            </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.testnet}>
-                            <Title title="Testnet">
+                            <PageTitle title="Testnet">
                                 <TestnetSwitcherPage />
-                            </Title>
+                            </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.terms}>
