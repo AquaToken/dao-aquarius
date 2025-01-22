@@ -300,20 +300,20 @@ export const getAquaInPoolsSum = async (): Promise<number> => {
 export const getAssetsList = async (): Promise<AssetSimple[]> => {
     const baseUrl = getAmmAquaUrl();
 
-    const { data } = await axios.get<ListResponse<Pool>>(`${baseUrl}/pools/?size=1000`);
+    const { data } = await axios.get<ListResponse<NativePrice>>(
+        `${baseUrl}/tokens/?pooled=true&size=200`,
+    );
 
     const { aquaAssetString } = getAquaAssetData();
     const { usdcAssetString } = getUsdcAssetData();
 
     const assetsSet = new Set();
 
-    data.items.forEach(({ tokens_str }) => {
-        tokens_str.forEach(token => {
-            if (token === aquaAssetString || token === 'native' || token === usdcAssetString) {
-                return;
-            }
-            assetsSet.add(token);
-        });
+    data.items.forEach(({ name }) => {
+        if (name === aquaAssetString || name === usdcAssetString || name === 'native') {
+            return;
+        }
+        assetsSet.add(name);
     });
 
     return [

@@ -280,24 +280,19 @@ const AssetDropdown = ({
         });
     }, [account]);
 
-    const assets = customAssetsList
-        ? customAssetsList.map(asset => {
-              const balance = balances.find(
-                  balance => balance.code === asset.code && balance.issuer === asset.issuer,
-              );
+    const knownAssetsList = customAssetsList || knownAssets;
 
-              return balance || asset;
-          })
-        : [
-              ...balances,
-              ...(knownAssets.filter(
-                  knownAsset =>
-                      !balances.find(
-                          asset =>
-                              knownAsset.code === asset.code && knownAsset.issuer === asset.issuer,
-                      ),
-              ) || []),
-          ];
+    const assets = [
+        ...balances,
+        ...(knownAssetsList.filter(
+            knownAssetsList =>
+                !balances.find(
+                    asset =>
+                        knownAssetsList.code === asset.code &&
+                        knownAssetsList.issuer === asset.issuer,
+                ),
+        ) || []),
+    ];
 
     const [isOpen, setIsOpen] = useState(false);
     const [selectedAsset, setSelectedAsset] = useState(asset);
