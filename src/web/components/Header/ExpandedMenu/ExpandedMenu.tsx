@@ -30,6 +30,7 @@ const MenuHeadTitle = styled.div<{ count: number }>`
     ${({ count }) => Boolean(count) && WithCountStyles};
     ${linkStyles};
     font-size: 1.6rem;
+    color: ${COLORS.titleText};
 `;
 
 const MenuLinks = styled.div<{ $isOpen: boolean }>`
