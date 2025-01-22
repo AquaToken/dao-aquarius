@@ -253,25 +253,25 @@ const App = () => {
                         </Route>
 
                         <Route path={MainRoutes.buyAqua}>
-                            <PageTitle title="Buy Aqua">
+                            <PageTitle title="Staging: Buy Aqua">
                                 <BuyAquaPage />
                             </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.testnet}>
-                            <PageTitle title="Testnet">
+                            <PageTitle title="Staging: Testnet">
                                 <TestnetSwitcherPage />
                             </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.terms}>
-                            <PageTitle title="Terms of Use">
+                            <PageTitle title="Staging: Terms of Use">
                                 <TermsPage />
                             </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.privacy}>
-                            <PageTitle title="Privacy Policy">
+                            <PageTitle title="Staging: Privacy Policy">
                                 <PrivacyPage />
                             </PageTitle>
                         </Route>
