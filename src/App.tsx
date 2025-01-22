@@ -265,15 +265,15 @@ const App = () => {
                         </Route>
 
                         <Route path={MainRoutes.terms}>
-                            <Title title="Terms of Use">
+                            <PageTitle title="Terms of Use">
                                 <TermsPage />
-                            </Title>
+                            </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.privacy}>
-                            <Title title="Privacy Policy">
+                            <PageTitle title="Privacy Policy">
                                 <PrivacyPage />
-                            </Title>
+                            </PageTitle>
                         </Route>
 
                         <Route component={NotFoundPage} />
