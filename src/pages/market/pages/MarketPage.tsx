@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import Title from 'react-document-title';
 import { useHistory, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -19,6 +18,7 @@ import ArrowLeft from 'assets/icon-arrow-left.svg';
 import CircleButton from 'basics/buttons/CircleButton';
 import PageLoader from 'basics/loaders/PageLoader';
 import Market from 'basics/Market';
+import PageTitle from 'basics/PageTitle';
 
 import MigrateToSorobanBanner from 'components/MigrateToSorobanBanner';
 import NotFoundPage from 'components/NotFoundPage';
@@ -180,7 +180,7 @@ const MarketPage = () => {
     }
 
     return (
-        <Title title={`Market: ${baseAsset.code} / ${counterAsset.code}`}>
+        <PageTitle title={`Market: ${baseAsset.code} / ${counterAsset.code}`}>
             <MainBlock>
                 <BackButtonWrapper>
                     <BackButton
@@ -295,7 +295,7 @@ const MarketPage = () => {
                     </MarketSection>
                 )}
             </MainBlock>
-        </Title>
+        </PageTitle>
     );
 };
 
