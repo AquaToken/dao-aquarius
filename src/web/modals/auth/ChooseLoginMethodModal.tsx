@@ -8,8 +8,6 @@ import { isChrome, isMobile } from 'helpers/browser';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { ModalProps } from 'types/modal';
-
 import {
     FreighterService,
     LedgerService,
@@ -18,6 +16,8 @@ import {
     ToastService,
     WalletConnectService,
 } from 'services/globalServices';
+
+import { ModalProps } from 'types/modal';
 
 import Freighter from 'assets/freighter-logo.svg';
 import BG from 'assets/get-extension-bg.svg';
@@ -168,9 +168,13 @@ const ChooseLoginMethodModal = ({
                 LobstrExtensionService.isConnected.then(res => {
                     if (res) {
                         setPending(false);
-                        LobstrExtensionService.login().then(() => {
-                            close();
-                        });
+                        LobstrExtensionService.login()
+                            .then(() => {
+                                close();
+                            })
+                            .catch(() => {
+                                close();
+                            });
                     } else {
                         setPending(false);
                         close();

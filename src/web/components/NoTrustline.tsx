@@ -85,7 +85,7 @@ const NoTrustline = ({ asset, onlyButton }: NoTrustlineProps): React.ReactNode =
                 ToastService.showSuccessToast('More signatures required to complete');
                 return;
             }
-            ToastService.showSuccessToast('Trusline added successfully');
+            ToastService.showSuccessToast('Trustline added successfully');
             setTrustlinePending(false);
         } catch (e) {
             const errorText = ErrorHandler(e);
