@@ -58,11 +58,6 @@ export const linkStyles = css`
     &:hover {
         color: ${COLORS.purple}!important;
     }
-
-    ${respondDown(Breakpoints.lg)`
-        font-size: 1.4rem;
-        line-height: 2rem;
-    `}
 `;
 
 const NavLinkStyled = styled(NavLink)<{ $disabled?: boolean }>`
