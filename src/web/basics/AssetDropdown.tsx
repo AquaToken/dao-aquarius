@@ -281,15 +281,21 @@ const AssetDropdown = ({
     }, [account]);
 
     const knownAssetsList = customAssetsList || knownAssets;
+    const filteredBalances = customAssetsList
+        ? balances.filter(balance =>
+              knownAssetsList.find(
+                  knownAssets =>
+                      knownAssets.code === balance.code && knownAssets.issuer === balance.issuer,
+              ),
+          )
+        : balances;
 
     const assets = [
-        ...balances,
+        ...filteredBalances,
         ...(knownAssetsList.filter(
-            knownAssetsList =>
-                !balances.find(
-                    asset =>
-                        knownAssetsList.code === asset.code &&
-                        knownAssetsList.issuer === asset.issuer,
+            knownAssets =>
+                !filteredBalances.find(
+                    asset => knownAssets.code === asset.code && knownAssets.issuer === asset.issuer,
                 ),
         ) || []),
     ];
