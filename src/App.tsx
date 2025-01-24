@@ -10,11 +10,10 @@ import { getMoonpayKeyByEnv } from 'helpers/moonpay';
 
 import { LoginTypes } from 'store/authStore/types';
 
-import { ModalService, StellarService, WalletConnectService } from 'services/globalServices';
+import { StellarService, WalletConnectService } from 'services/globalServices';
 
 import AppGlobalStyle from 'web/AppGlobalStyles';
 import { respondDown } from 'web/mixins';
-import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import PageLoader from 'basics/loaders/PageLoader';

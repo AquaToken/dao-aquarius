@@ -222,6 +222,9 @@ const MyAquarius = styled(NavLink)`
 
 const Links = () => {
     const [activeProposalsCount, setActiveProposalsCount] = useState(0);
+
+    const { isLogged } = useAuthStore();
+
     useEffect(() => {
         getActiveProposalsCount().then(res => {
             setActiveProposalsCount(res);
@@ -307,6 +310,14 @@ const Links = () => {
                             }}
                             title="Buy AQUA"
                             to={MainRoutes.buyAqua}
+                            onClick={e => {
+                                if (!isLogged) {
+                                    e.preventDefault();
+                                    ModalService.openModal(ChooseLoginMethodModal, {
+                                        redirectURL: MainRoutes.buyAqua,
+                                    });
+                                }
+                            }}
                         >
                             Buy AQUA
                         </NavLinkStyled>
