@@ -1,11 +1,13 @@
 import { Horizon } from '@stellar/stellar-sdk';
 import { useEffect, useRef } from 'react';
 
+import { LS_FREIGHTER_ACCOUNT_CHANGE_IMMEDIATELY } from 'constants/local-storage';
+
+import PromisedTimeout from 'helpers/promised-timeout';
+
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
-
-import { WalletConnectEvents } from 'types/wallet-connect';
 
 import { AssetsEvent } from 'services/assets.service';
 import { FreighterEvents } from 'services/freighter.service';
@@ -18,12 +20,17 @@ import {
     ToastService,
     WalletConnectService,
     AssetsService,
+    ModalService,
 } from 'services/globalServices';
 import { LedgerEvents } from 'services/ledger.service';
 import { LobstrExtensionEvents } from 'services/lobstr-extension.service';
 import { StellarEvents } from 'services/stellar.service';
 
+import { WalletConnectEvents } from 'types/wallet-connect';
+
 import { useSkipFirstRender } from './useSkipFirstRender';
+
+import FreighterAccountChangedModal from '../web/modals/FreighterAccountChangedModal';
 
 const UnfundedErrors = ['Request failed with status code 404', 'Not Found'];
 
@@ -37,6 +44,7 @@ export default function useGlobalSubscriptions(): void {
         updateAccount,
         loginErrorText,
         clearLoginError,
+        enableRedirect,
     } = useAuthStore();
 
     const { processNewAssets } = useAssetsStore();
@@ -84,6 +92,32 @@ export default function useGlobalSubscriptions(): void {
             if (event.type === FreighterEvents.login) {
                 login(event.publicKey, LoginTypes.freighter);
             }
+
+            if (event.type === FreighterEvents.accountChanged) {
+                const defaultChoice = JSON.parse(
+                    localStorage.getItem(LS_FREIGHTER_ACCOUNT_CHANGE_IMMEDIATELY),
+                );
+
+                if (defaultChoice === null) {
+                    ModalService.openModal(FreighterAccountChangedModal, {
+                        publicKey: event.publicKey,
+                    });
+                    return;
+                }
+
+                if (defaultChoice) {
+                    const path = `${location.pathname}${location.search}`;
+
+                    logout();
+
+                    // Wait 1 second for logout.
+                    PromisedTimeout(1000).then(() => {
+                        enableRedirect(path);
+                        login(event.publicKey, LoginTypes.freighter);
+                        FreighterService.startWatching(event.publicKey);
+                    });
+                }
+            }
         });
 
         return () => unsub();
@@ -122,6 +156,7 @@ export default function useGlobalSubscriptions(): void {
             StellarService.logoutWithSecret();
             SorobanService.logoutWithSecret();
             StellarService.closeAccountStream();
+            FreighterService.stopWatching();
             ToastService.showSuccessToast('Logged out');
         }
     }, [isLogged]);
@@ -145,7 +180,7 @@ export default function useGlobalSubscriptions(): void {
                 type === StellarEvents.accountStream &&
                 StellarService.balancesHasChanges(
                     accountRef.current.balances as Horizon.HorizonApi.BalanceLineAsset[],
-                    newAccount.balances,
+                    newAccount.balances as Horizon.HorizonApi.BalanceLineAsset[],
                 )
             ) {
                 updateAccount(newAccount, accountRef.current.authType);

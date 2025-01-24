@@ -6,7 +6,7 @@ export enum AssetsEvent {
     newAssets = 'newAssets',
 }
 export default class AssetsServiceClass {
-    event = new EventService();
+    event: EventService<AssetsEvent, { payload: Asset[] }> = new EventService();
 
     processAssets(assets: Asset[]) {
         this.event.trigger({ type: AssetsEvent.newAssets, payload: assets });

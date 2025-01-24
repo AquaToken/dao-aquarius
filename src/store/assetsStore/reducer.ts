@@ -1,4 +1,6 @@
-import { AssetInfo, ASSETS_ACTIONS, AssetsStore } from './types';
+import { AssetInfo } from 'types/asset-info';
+
+import { ASSETS_ACTIONS, AssetsStore } from './types';
 
 import { ActionSimpleResult } from '../types';
 
