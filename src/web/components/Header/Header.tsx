@@ -253,7 +253,7 @@ const Links = () => {
             <Divider />
 
             <ExpandedMenu
-                title="Voting"
+                title="Voting & DAO"
                 count={activeProposalsCount}
                 links={
                     <>
@@ -263,37 +263,37 @@ const Links = () => {
                             activeStyle={{
                                 fontWeight: 700,
                             }}
-                            title="Voting"
+                            title="Liquidity Voting"
                         >
-                            Voting
+                            Liquidity Voting
                         </NavLinkStyled>
                         <NavLinkStyled
                             to={MainRoutes.rewards}
                             activeStyle={{
                                 fontWeight: 700,
                             }}
-                            title="Rewards"
+                            title="LP Rewards"
                         >
-                            Rewards
+                            LP Rewards
                         </NavLinkStyled>
                         <NavLinkStyled
                             to={MainRoutes.bribes}
                             activeStyle={{
                                 fontWeight: 700,
                             }}
-                            title="Bribes"
+                            title="Bribes for Voters"
                         >
-                            Bribes
+                            Bribes for Voters
                         </NavLinkStyled>
                         <NavLinkWithCount
                             to={MainRoutes.governance}
                             activeStyle={{
                                 fontWeight: 700,
                             }}
-                            title="DAO"
+                            title="DAO Proposals"
                             count={activeProposalsCount}
                         >
-                            DAO
+                            DAO Proposals
                         </NavLinkWithCount>
                     </>
                 }
