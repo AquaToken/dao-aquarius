@@ -31,7 +31,7 @@ const Wrapper = styled.div`
     max-width: 142rem;
     padding: 0 10rem;
 
-    ${respondDown(Breakpoints.md)`
+    ${respondDown(Breakpoints.lg)`
         padding: 0 1.6rem;
         max-width: 55rem;
         flex-direction: column;
@@ -57,13 +57,13 @@ const ImageBlock = styled.div`
     max-width: 108rem;
     align-items: center;
 
-    ${respondDown(Breakpoints.md)`
+    ${respondDown(Breakpoints.lg)`
         width: 100%;
         justify-content: space-between;
         flex-wrap: wrap;
         
         svg {
-            width: 12.4rem;
+            width: 14.3rem;
             margin-bottom: 2rem;
             margin-right: auto;
             margin-left: auto;

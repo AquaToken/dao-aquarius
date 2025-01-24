@@ -229,6 +229,7 @@ const codeIssuerRegexp = new RegExp(codeIssuerPattern);
 
 type AssetDropdownProps = {
     asset?: AssetSimple;
+    assets?: AssetSimple[];
     assetsList?: AssetSimple[];
     onUpdate?: (asset: AssetType | AssetType[]) => void;
     disabled?: boolean;
@@ -247,6 +248,7 @@ type AssetDropdownProps = {
 
 const AssetDropdown = ({
     asset,
+    assets: customAssetsList,
     assetsList,
     onUpdate,
     disabled,
@@ -278,12 +280,22 @@ const AssetDropdown = ({
         });
     }, [account]);
 
+    const knownAssetsList = customAssetsList || knownAssets;
+    const filteredBalances = customAssetsList
+        ? balances.filter(balance =>
+              knownAssetsList.find(
+                  knownAssets =>
+                      knownAssets.code === balance.code && knownAssets.issuer === balance.issuer,
+              ),
+          )
+        : balances;
+
     const assets = [
-        ...balances,
-        ...(knownAssets.filter(
-            knownAsset =>
-                !balances.find(
-                    asset => knownAsset.code === asset.code && knownAsset.issuer === asset.issuer,
+        ...filteredBalances,
+        ...(knownAssetsList.filter(
+            knownAssets =>
+                !filteredBalances.find(
+                    asset => knownAssets.code === asset.code && knownAssets.issuer === asset.issuer,
                 ),
         ) || []),
     ];

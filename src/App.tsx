@@ -1,6 +1,5 @@
 import { MoonPayProvider } from '@moonpay/moonpay-react';
 import { lazy, Suspense, useEffect, useState } from 'react';
-import Title from 'react-document-title';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import { createGlobalStyle } from 'styled-components';
 
@@ -11,13 +10,15 @@ import { getMoonpayKeyByEnv } from 'helpers/moonpay';
 
 import { LoginTypes } from 'store/authStore/types';
 
-import { StellarService, WalletConnectService } from 'services/globalServices';
+import { ModalService, StellarService, WalletConnectService } from 'services/globalServices';
 
 import AppGlobalStyle from 'web/AppGlobalStyles';
 import { respondDown } from 'web/mixins';
+import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import PageLoader from 'basics/loaders/PageLoader';
+import PageTitle from 'basics/PageTitle';
 
 import ErrorBoundary from 'components/ErrorBoundary';
 import Footer from 'components/Footer';
@@ -183,83 +184,83 @@ const App = () => {
                 <Suspense fallback={<PageLoader />}>
                     <Switch>
                         <Route exact path={MainRoutes.main}>
-                            <Title title="Aquarius">
+                            <PageTitle title="Aquarius">
                                 <MainPage />
-                            </Title>
+                            </PageTitle>
                         </Route>
                         <Route path={MainRoutes.locker}>
-                            <Title title="Locker">
+                            <PageTitle title="Locker">
                                 <LockerPage />
-                            </Title>
+                            </PageTitle>
                         </Route>
                         <Route path={MainRoutes.governance}>
-                            <Title title="Governance">
+                            <PageTitle title="Governance">
                                 <Governance />
-                            </Title>
+                            </PageTitle>
                         </Route>
                         <Route path={MainRoutes.vote}>
-                            <Title title="Voting">
+                            <PageTitle title="Voting">
                                 <VotePage />
-                            </Title>
+                            </PageTitle>
                         </Route>
                         <Route path={MainRoutes.bribes}>
-                            <Title title="Bribes">
+                            <PageTitle title="Bribes">
                                 <BribesPage />
-                            </Title>
+                            </PageTitle>
                         </Route>
                         <Route path={MainRoutes.market}>
                             <MarketPage />
                         </Route>
                         <Route path={MainRoutes.rewards}>
-                            <Title title="Rewards">
+                            <PageTitle title="Rewards">
                                 <RewardsPage />
-                            </Title>
+                            </PageTitle>
                         </Route>
                         <Route path={MainRoutes.airdrop}>
-                            <Title title="Airdrop">
+                            <PageTitle title="Airdrop">
                                 <AirdropPage />
-                            </Title>
+                            </PageTitle>
                         </Route>
                         <Route path={MainRoutes.airdrop2}>
-                            <Title title="Airdrop #2">
+                            <PageTitle title="Airdrop #2">
                                 <Airdrop2Page />
-                            </Title>
+                            </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.account}>
-                            <Title title="My Aquarius">
+                            <PageTitle title="My Aquarius">
                                 {isLogged ? <ProfilePage /> : <Redirect to={MainRoutes.main} />}
-                            </Title>
+                            </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.walletConnect}>
-                            <Title title="WalletConnect">
+                            <PageTitle title="WalletConnect">
                                 <WalletConnectPage />
-                            </Title>
+                            </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.amm}>
-                            <Title title="Pools">
+                            <PageTitle title="Pools">
                                 <AmmPage />
-                            </Title>
+                            </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.swap}>
-                            <Title title="Swap">
+                            <PageTitle title="Swap">
                                 <SwapPage />
-                            </Title>
+                            </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.buyAqua}>
-                            <Title title="Buy Aqua">
+                            <PageTitle title="Buy Aqua">
                                 <BuyAquaPage />
-                            </Title>
+                            </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.testnet}>
-                            <Title title="Testnet">
+                            <PageTitle title="Testnet">
                                 <TestnetSwitcherPage />
-                            </Title>
+                            </PageTitle>
                         </Route>
 
                         <Route component={NotFoundPage} />

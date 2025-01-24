@@ -1,22 +1,31 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { FilterOptions, getPools, PoolsSortFields } from 'api/amm';
 import { getRewards, RewardsSort } from 'api/rewards';
 
-import { MarketRoutes } from 'constants/routes';
+import { AmmRoutes, MarketRoutes } from 'constants/routes';
 
 import { getTimeAgoValue } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { ModalService } from 'services/globalServices';
+
+import { PoolProcessed } from 'types/amm';
 
 import { respondDown } from 'web/mixins';
+import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Link from 'assets/icon-external-link.svg';
 import Info from 'assets/icon-info.svg';
+import Warning from 'assets/icon-warning.svg';
 
+import ExternalLink from 'basics/ExternalLink';
 import PageLoader from 'basics/loaders/PageLoader';
 import Market from 'basics/Market';
 import Table, { CellAlign } from 'basics/Table';
@@ -76,12 +85,20 @@ const LastUpdated = styled.div`
 `;
 
 const TooltipInner = styled.div`
-    width: 15rem;
+    width: 20rem;
     white-space: pre-wrap;
+
+    div {
+        font-size: 1.4rem;
+    }
 `;
 
 const LinkIcon = styled(Link)`
     margin-left: 0.5rem;
+`;
+
+const WarningIcon = styled(Warning)`
+    margin: 0 0.5rem;
 `;
 
 const Amount = styled.div`
@@ -112,11 +129,42 @@ const RewardsList = () => {
     const [rewards, setRewards] = useState(null);
     const [sort, setSort] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [pools, setPools] = useState(null);
 
     const { processNewAssets } = useAssetsStore();
 
+    const { isLogged } = useAuthStore();
+
     const location = useLocation();
     const history = useHistory();
+
+    useEffect(() => {
+        getPools(FilterOptions.all, 1, 1000, PoolsSortFields.liquidityUp).then(res =>
+            setPools(res.pools),
+        );
+    }, []);
+
+    const marketHasPools = useCallback(
+        marketKey => {
+            if (!pools) {
+                return true;
+            }
+            const { asset1_code, asset1_issuer, asset2_code, asset2_issuer } = marketKey;
+
+            const tokenStr1 = marketKeyToString(asset1_code, asset1_issuer);
+            const tokenStr2 = marketKeyToString(asset2_code, asset2_issuer);
+
+            const poolsForMarket = pools.find(
+                (pool: PoolProcessed) =>
+                    pool.assets.length === 2 &&
+                    pool.tokens_str.some(str => str === tokenStr1) &&
+                    pool.tokens_str.some(str => str === tokenStr2),
+            );
+
+            return Boolean(poolsForMarket);
+        },
+        [pools],
+    );
 
     useEffect(() => {
         if (!sort) {
@@ -161,6 +209,16 @@ const RewardsList = () => {
                 asset1_issuer,
             )}/${marketKeyToString(asset2_code, asset2_issuer)}`,
         );
+    };
+
+    const goToCreatePool = () => {
+        if (isLogged) {
+            history.push(AmmRoutes.create);
+            return;
+        }
+        ModalService.openModal(ChooseLoginMethodModal, {
+            redirectURL: AmmRoutes.create,
+        });
     };
 
     if (!rewards) {
@@ -208,7 +266,7 @@ const RewardsList = () => {
                         align: CellAlign.Right,
                     },
                     {
-                        children: 'AMM daily reward',
+                        children: 'Aquarius AMM daily reward',
                         sort: {
                             onClick: () =>
                                 changeSort(
@@ -302,6 +360,28 @@ const RewardsList = () => {
                             {
                                 children: (
                                     <Amount>
+                                        {!marketHasPools(market_key) && (
+                                            <Tooltip
+                                                content={
+                                                    <TooltipInner>
+                                                        AMM rewards are not distributed because this
+                                                        market doesn’t have Aquarius pool yet.
+                                                        <ExternalLink
+                                                            asDiv
+                                                            onClick={() => goToCreatePool()}
+                                                        >
+                                                            Create pool
+                                                        </ExternalLink>
+                                                    </TooltipInner>
+                                                }
+                                                position={TOOLTIP_POSITION.top}
+                                                background={COLORS.white}
+                                                color={COLORS.titleText}
+                                                showOnHover
+                                            >
+                                                <WarningIcon />
+                                            </Tooltip>
+                                        )}
                                         <span>
                                             {formatBalance(daily_amm_reward)} AQUA (
                                             {Math.round(
@@ -329,7 +409,7 @@ const RewardsList = () => {
                                         </a>
                                     </Amount>
                                 ),
-                                label: 'AMM daily reward',
+                                label: 'Aquarius AMM daily reward',
                                 align: CellAlign.Right,
                             },
                             {

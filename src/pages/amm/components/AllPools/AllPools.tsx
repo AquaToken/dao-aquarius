@@ -60,7 +60,7 @@ const TooltipInner = styled.span`
     white-space: pre-wrap;
 `;
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 20;
 
 const OPTIONS = [
     { label: 'All', value: FilterOptions.all },
@@ -114,7 +114,7 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                     <Table
                         pending={pending}
                         head={[
-                            { children: 'Pool', flexSize: 4 },
+                            { children: 'Pool', flexSize: 6 },
                             {
                                 children: 'TVL',
                                 sort: {
@@ -163,9 +163,10 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                                             showOnHover
                                             content={
                                                 <TooltipInner>
-                                                    Annual yield projection for liquidity providers, 
-                                                    based on current trading activity and collected fees. 
-                                                    Rewards are allocated based on each provider’s share of liquidity in the pool.                                                    
+                                                    Annual yield projection for liquidity providers,
+                                                    based on current trading activity and collected
+                                                    fees. Rewards are allocated based on each
+                                                    provider’s share of liquidity in the pool.
                                                 </TooltipInner>
                                             }
                                             position={TOOLTIP_POSITION.top}
@@ -197,9 +198,9 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                                             showOnHover
                                             content={
                                                 <TooltipInner>
-                                                    Projected additional annual AQUA rewards for 
-                                                    liquidity providers in pools within the 
-                                                    "rewards zone", determined by Aquarius DAO voting.                                                    
+                                                    Projected additional annual AQUA rewards for
+                                                    liquidity providers in pools within the "rewards
+                                                    zone", determined by Aquarius DAO voting.
                                                 </TooltipInner>
                                             }
                                             position={TOOLTIP_POSITION.top}
@@ -239,7 +240,7 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                                             isRewardsOn={Boolean(Number(pool.reward_tps))}
                                         />
                                     ),
-                                    flexSize: 4,
+                                    flexSize: 6,
                                 },
                                 {
                                     children: pool.liquidity_usd
@@ -278,9 +279,11 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                                                 showOnHover
                                                 content={
                                                     <TooltipInner>
-                                                        Annual yield projection for liquidity providers, 
-                                                        based on current trading activity and collected fees. 
-                                                        Rewards are allocated based on each provider’s share of liquidity in the pool.                                                    
+                                                        Annual yield projection for liquidity
+                                                        providers, based on current trading activity
+                                                        and collected fees. Rewards are allocated
+                                                        based on each provider’s share of liquidity
+                                                        in the pool.
                                                     </TooltipInner>
                                                 }
                                                 position={TOOLTIP_POSITION.top}
@@ -301,9 +304,10 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                                                 showOnHover
                                                 content={
                                                     <TooltipInner>
-                                                        Projected additional annual AQUA rewards for 
-                                                        liquidity providers in pools within the 
-                                                        "rewards zone", determined by Aquarius DAO voting.                                                    
+                                                        Projected additional annual AQUA rewards for
+                                                        liquidity providers in pools within the
+                                                        "rewards zone", determined by Aquarius DAO
+                                                        voting.
                                                     </TooltipInner>
                                                 }
                                                 position={TOOLTIP_POSITION.top}
