@@ -31,7 +31,7 @@ const Accounts = styled.div`
     display: flex;
     gap: 2.4rem;
     align-items: center;
-    margin: 2.4rem 0;
+    margin: 2.4rem 0 5rem;
 
     ${respondDown(Breakpoints.md)`
         flex-direction: column;
@@ -97,11 +97,11 @@ const FreighterAccountChangedModal = ({ params, close }: ModalProps<Props>) => {
 
             <Checkbox checked={saveChoice} onChange={setSaveChoice} label="Remember my choice" />
             <Buttons>
+                <Button fullWidth onClick={() => selectNo()} likeDisabled>
+                    No
+                </Button>
                 <Button fullWidth onClick={() => selectYes()}>
                     Yes
-                </Button>
-                <Button fullWidth onClick={() => selectNo()}>
-                    No
                 </Button>
             </Buttons>
         </ModalWrapper>
