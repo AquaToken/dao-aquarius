@@ -132,6 +132,7 @@ const StyledInput = styled(Input)`
 
     ${respondDown(Breakpoints.md)`
         width: 100%;
+        margin-left: 0;
     `}
 `;
 
