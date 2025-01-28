@@ -101,9 +101,13 @@ export const OP_THRESHOLDS = {
     [THRESHOLDS.MULTIPLE]: ['setOptions'], // med or high
 };
 
+type StellarPayload = {
+    account?: StellarSdk.Horizon.AccountResponse | StellarSdk.Horizon.ServerApi.AccountRecord;
+};
+
 export default class StellarServiceClass {
     server: StellarSdk.Horizon.Server | null = null;
-    event: EventService = new EventService();
+    event: EventService<StellarEvents, StellarPayload> = new EventService();
     closeStream: () => void | null = null;
     closeEffectsStream: () => void | null = null;
     paymentsHistory = null;

@@ -12,10 +12,19 @@ export type Modals = Array<{
     name: string;
     state: { isActive: boolean };
 }>;
+
+enum ModalEvents {
+    update = 'update',
+}
+
+type ModalPayload = {
+    modals: Modals;
+};
+
 export default class ModalServiceClass {
     modals: Modals = [];
     id = 0;
-    event: EventService = new EventService();
+    event: EventService<ModalEvents, ModalPayload> = new EventService();
 
     openModal<T>(
         modalTemplate:
@@ -81,7 +90,7 @@ export default class ModalServiceClass {
             },
         ];
 
-        this.event.trigger(this.modals);
+        this.event.trigger({ type: ModalEvents.update, modals: this.modals });
 
         return promise.then(({ result, id: modalId }) => {
             const newModals = this.modals.filter(({ id }) => id !== modalId);
@@ -90,7 +99,7 @@ export default class ModalServiceClass {
                 modal.state.isActive = index === newModals.length - 1;
                 return modal;
             });
-            this.event.trigger(this.modals);
+            this.event.trigger({ type: ModalEvents.update, modals: this.modals });
             return result;
         });
     }

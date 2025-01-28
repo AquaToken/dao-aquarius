@@ -13,10 +13,18 @@ export type Toast = {
     delay: number;
 };
 
+enum ToastEvents {
+    update = 'update',
+}
+
+type ToastPayload = {
+    toasts: Toast[];
+};
+
 export default class ToastServiceClass {
     id = 1;
     toasts: Toast[] = [];
-    event = new EventService();
+    event = new EventService<ToastEvents, ToastPayload>();
 
     showSuccessToast(text: string, delay?: number): void {
         this.showToast(TOAST_TYPE.success, text, delay);
@@ -51,11 +59,11 @@ export default class ToastServiceClass {
         if (window?.navigator?.vibrate) {
             window?.navigator?.vibrate(200);
         }
-        this.event.trigger(this.toasts);
+        this.event.trigger({ type: ToastEvents.update, toasts: this.toasts });
 
         promise.then(({ id }: { id: number }) => {
             this.toasts = this.toasts.filter(toast => toast.id !== id);
-            this.event.trigger(this.toasts);
+            this.event.trigger({ type: ToastEvents.update, toasts: this.toasts });
         });
     }
 }

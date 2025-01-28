@@ -1,8 +1,12 @@
-export default class EventService {
+type EventType<A> = {
+    type: A;
+};
+
+export default class EventService<T, P> {
     private id: number = 0;
     private listeners = new Map();
 
-    sub(callback: (value: unknown) => unknown): () => void {
+    sub(callback: ({ type }: EventType<T> & P) => void): () => void {
         this.id += 1;
 
         const listenId = this.id;
@@ -16,9 +20,9 @@ export default class EventService {
         this.listeners.delete(id);
     }
 
-    trigger(...args: unknown[]): void {
+    trigger(event: EventType<T> & P): void {
         this.listeners.forEach(callback => {
-            callback(...args);
+            callback(event);
         });
     }
 }

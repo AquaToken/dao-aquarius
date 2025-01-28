@@ -2,13 +2,12 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 
 import { ModalService } from 'services/globalServices';
-import { Modals } from 'services/modal.service';
 
 const ModalContainer = (): React.ReactNode => {
     const [modals, setModals] = useState(ModalService.modals);
 
     useEffect(() => {
-        const unsub = ModalService.event.sub((modals: Modals) => {
+        const unsub = ModalService.event.sub(({ modals }) => {
             setModals(modals);
 
             if (modals.length) {

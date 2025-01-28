@@ -40,12 +40,18 @@ export enum BuildSignAndSubmitStatuses {
     pending = 'pending',
 }
 
+type WalletConnectPayload = {
+    publicKey?: string;
+    metadata?: WalletConnectTypes.CoreTypes.Metadata;
+    topic?: string;
+};
+
 export default class WalletConnectServiceClass {
     appMeta: WalletConnectTypes.SignClientTypes.Metadata | null = null;
     client: WalletConnectClient | null = null;
     session: WalletConnectTypes.SessionTypes.Struct | null = null;
-    event: EventService = new EventService();
-    selfMeta = METADATA;
+    event: EventService<WalletConnectEvents, WalletConnectPayload> = new EventService();
+    selfMeta: WalletConnectTypes.CoreTypes.Metadata = METADATA;
     isOffline = false;
 
     constructor() {

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 import useAuthStore from 'store/authStore/useAuthStore';
@@ -77,15 +78,18 @@ const Content = styled.div`
     `}
 `;
 
+enum UrlParams {
+    tab = 'tab',
+}
 enum Tabs {
-    liquidity = 'liquidity',
+    liquidity = 'amm_liquidity',
     balances = 'balances',
-    sdex = 'sdex',
-    your = 'your',
+    sdex = 'sdex_rewards',
+    your = 'liquidity_votes',
     governance = 'governance',
     airdrop2 = 'airdrop2',
-    iceLocks = 'iceLocks',
-    history = 'history',
+    iceLocks = 'ice_locks',
+    history = 'payments_history',
 }
 
 const OPTIONS = [
@@ -106,6 +110,28 @@ const Profile = () => {
 
     const { account } = useAuthStore();
 
+    const location = useLocation();
+    const history = useHistory();
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const tabParams = params.get(UrlParams.tab);
+
+        if (tabParams) {
+            setSelectedTab(tabParams as Tabs);
+        } else {
+            params.append(UrlParams.tab, Tabs.balances);
+            setSelectedTab(Tabs.balances);
+            history.replace({ search: params.toString() });
+        }
+    }, [location]);
+
+    const setTab = (tab: Tabs) => {
+        const params = new URLSearchParams(location.search);
+        params.set(UrlParams.tab, tab);
+        history.push({ search: params.toString() });
+    };
+
     useEffect(() => {
         account.getAmmAquaBalance().then(res => {
             setAmmAquaBalance(res);
@@ -121,12 +147,8 @@ const Profile = () => {
             <AccountInfo />
             <Balances ammAquaBalance={ammAquaBalance} />
             <ControlsWrapper>
-                <ToggleGroupStyled
-                    value={selectedTab}
-                    options={OPTIONS}
-                    onChange={setSelectedTab}
-                />
-                <SelectStyled value={selectedTab} options={OPTIONS} onChange={setSelectedTab} />
+                <ToggleGroupStyled value={selectedTab} options={OPTIONS} onChange={setTab} />
+                <SelectStyled value={selectedTab} options={OPTIONS} onChange={setTab} />
             </ControlsWrapper>
 
             <ContentWrap>
