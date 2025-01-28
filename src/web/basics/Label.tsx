@@ -130,7 +130,7 @@ const Label = ({
                     ? TOOLTIP_POSITION.right
                     : TOOLTIP_POSITION.left
             }
-            background={background === COLORS.transparent ? COLORS.white : background}
+            background={background}
             color={background === COLORS.white ? COLORS.titleText : color}
             showOnHover
         >
