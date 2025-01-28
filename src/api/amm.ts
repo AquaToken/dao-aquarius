@@ -261,7 +261,9 @@ export const getPoolsToMigrate = async (base: Asset, counter: Asset): Promise<Po
         )},${SorobanService.getAssetContractId(counter)}`,
     );
 
-    const pools = data.items.filter(item => item.tokens_str.length === 2);
+    const pools = data.items
+        .filter(item => item.tokens_str.length === 2)
+        .sort((a, b) => +b.liquidity_usd - +a.liquidity_usd);
 
     if (!pools.length) {
         return null;
