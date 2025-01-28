@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { getTotalStats, getVolume24h } from 'api/amm';
@@ -168,13 +168,17 @@ const Chart = styled.div`
     `}
 `;
 
-enum Tabs {
+export enum Tabs {
     top = 'top',
     my = 'my',
 }
 
+export enum AnalyticsUrlParams {
+    tab = 'tab',
+}
+
 const Analytics = () => {
-    const [activeTab, setActiveTab] = useState(Tabs.top);
+    const [activeTab, setActiveTab] = useState(null);
     const [search, setSearch] = useState('');
     const [totalStats, setTotalStats] = useState(null);
     const [volume24h, setVolume24h] = useState(null);
@@ -182,8 +186,36 @@ const Analytics = () => {
 
     const debouncedSearch = useDebounce(search, 700, true);
     const history = useHistory();
+    const location = useLocation();
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const tabParam = params.get(AnalyticsUrlParams.tab);
+        if (tabParam) {
+            setActiveTab(tabParam as Tabs);
+        } else {
+            params.append(AnalyticsUrlParams.tab, Tabs.top);
+            setActiveTab(Tabs.top);
+            history.replace({ search: params.toString() });
+        }
+    }, [location]);
 
     const { isLogged } = useAuthStore();
+
+    const setTab = (tab: Tabs) => {
+        if (tab === Tabs.my && !isLogged) {
+            return ModalService.openModal(ChooseLoginMethodModal, {
+                callback: () => {
+                    const params = new URLSearchParams('');
+                    params.set(AnalyticsUrlParams.tab, Tabs.my);
+                    history.replace({ search: params.toString() });
+                },
+            });
+        }
+        const params = new URLSearchParams('');
+        params.set(AnalyticsUrlParams.tab, tab);
+        history.push({ search: params.toString() });
+    };
 
     useEffect(() => {
         document.body.scrollTo(0, 0);
@@ -208,7 +240,7 @@ const Analytics = () => {
 
     useEffect(() => {
         if (!isLogged) {
-            setActiveTab(Tabs.top);
+            setTab(Tabs.top);
         }
     }, [isLogged]);
 
@@ -220,16 +252,6 @@ const Analytics = () => {
             return;
         }
         history.push(`${AmmRoutes.create}`);
-    };
-
-    const setTab = (tab: Tabs) => {
-        if (tab === Tabs.my && !isLogged) {
-            return ModalService.openModal(ChooseLoginMethodModal, {
-                callback: () => setActiveTab(Tabs.my),
-            });
-        }
-
-        setActiveTab(tab);
     };
 
     return (

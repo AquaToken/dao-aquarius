@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { getUserPools } from 'api/amm';
@@ -27,6 +27,7 @@ import Select from 'basics/inputs/Select';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
 import PageLoader from 'basics/loaders/PageLoader';
 
+import { AnalyticsUrlParams, Tabs } from 'pages/amm/pages/Analytics';
 import { ExternalLinkStyled } from 'pages/profile/SdexRewards/SdexRewards';
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
 
@@ -109,10 +110,14 @@ const SelectStyled = styled(Select)`
 `;
 
 enum FilterValues {
-    all = '',
+    all = 'all',
     volatile = 'volatile',
     stable = 'stable',
     classic = 'classic',
+}
+
+enum UrlParams {
+    filter = 'filter',
 }
 
 const FilterOptions = [
@@ -133,7 +138,33 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
 
     const [pools, setPools] = useState<PoolUserProcessed[]>([]);
     const [classicPools, setClassicPools] = useState([]);
-    const [filter, setFilter] = useState(FilterValues.all);
+    const [filter, setFilter] = useState(null);
+
+    const location = useLocation();
+    const history = useHistory();
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+
+        if (params.get(AnalyticsUrlParams.tab) !== Tabs.my) {
+            return;
+        }
+        const filterParam = params.get(UrlParams.filter);
+
+        if (filterParam) {
+            setFilter(filterParam as FilterValues);
+        } else {
+            params.append(UrlParams.filter, FilterValues.all);
+            setFilter(FilterValues.all);
+            history.replace({ search: params.toString() });
+        }
+    }, [location]);
+
+    const setFilterValue = (value: FilterValues) => {
+        const params = new URLSearchParams(location.search);
+        params.set(UrlParams.filter, value);
+        history.push({ search: params.toString() });
+    };
 
     const updateIndex = useUpdateIndex(5000);
 
@@ -209,8 +240,8 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                     </ListTotal>
                 </ListHeader>
             )}
-            <ToggleGroupStyled value={filter} options={FilterOptions} onChange={setFilter} />
-            <SelectStyled value={filter} options={FilterOptions} onChange={setFilter} />
+            <ToggleGroupStyled value={filter} options={FilterOptions} onChange={setFilterValue} />
+            <SelectStyled value={filter} options={FilterOptions} onChange={setFilterValue} />
             {!filteredPools ? (
                 <PageLoader />
             ) : filteredPools.length ? (

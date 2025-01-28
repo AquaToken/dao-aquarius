@@ -30,10 +30,16 @@ import {
 } from 'types/amm';
 
 export enum FilterOptions {
-    all = '',
+    all = 'all',
     stable = 'stable',
-    constant = 'constant_product',
+    constant = 'volatile',
 }
+
+const FilterOptionsMap = {
+    [FilterOptions.all]: '',
+    [FilterOptions.stable]: 'stable',
+    [FilterOptions.constant]: 'constant_product',
+};
 
 export enum PoolsSortFields {
     liquidityUp = '-liquidity',
@@ -73,7 +79,9 @@ export const getPools = async (
     const baseUrl = getAmmAquaUrl();
 
     const { data } = await axios.get<ListResponse<Pool>>(
-        `${baseUrl}/pools/?pool_type=${filter}&sort=${sort}&page=${page}&size=${size}&search=${
+        `${baseUrl}/pools/?pool_type=${
+            FilterOptionsMap[filter]
+        }&sort=${sort}&page=${page}&size=${size}&search=${
             capitalizedSearch === 'XLM' ? 'native' : capitalizedSearch
         }`,
     );

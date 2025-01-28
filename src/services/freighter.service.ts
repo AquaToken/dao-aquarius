@@ -67,7 +67,11 @@ export default class FreighterServiceClass {
     }
 
     async signTx(tx: StellarSdk.Transaction): Promise<StellarSdk.Transaction> {
-        const { signedTxXdr } = await signTransaction(tx.toEnvelope().toXDR('base64'));
+        const { signedTxXdr, error } = await signTransaction(tx.toEnvelope().toXDR('base64'));
+
+        if (error) {
+            throw error;
+        }
 
         return new StellarSdk.Transaction(signedTxXdr, getNetworkPassphrase());
     }
