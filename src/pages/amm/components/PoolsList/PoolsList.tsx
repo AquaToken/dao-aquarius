@@ -37,10 +37,7 @@ import WithdrawFromPool from '../WithdrawFromPool/WithdrawFromPool';
 const PoolBlock = styled.div`
     display: flex;
     flex-direction: column;
-    padding: 2rem 1rem;
-    background: ${COLORS.purple}12;
-    border-radius: 0.5rem;
-    margin-bottom: 1.6rem;
+    margin: 2rem 0;
 `;
 
 const PoolMain = styled.div`
@@ -51,6 +48,7 @@ const PoolMain = styled.div`
     ${respondDown(Breakpoints.sm)`
         padding: 1rem;
         flex-direction: column;
+        background-color: ${COLORS.lightGray};
         border-radius: 0.6rem;
         align-items: unset;
     `}
@@ -130,7 +128,7 @@ const PoolStats = styled.div`
 
 const ExpandButton = styled.div`
     ${flexAllCenter};
-    background-color: ${COLORS.white};
+    background-color: ${COLORS.lightGray};
     border-radius: 0.6rem;
     height: 4.8rem;
     width: 4.8rem;
@@ -167,7 +165,7 @@ const ExpandedBlock = styled.div<{ $withoutTopPadding?: boolean }>`
     flex-direction: column;
     padding: ${({ $withoutTopPadding }) => ($withoutTopPadding ? '0 2.4rem 2rem' : '3rem 2.4rem')};
     border-radius: 0.6rem;
-    background-color: ${COLORS.white};
+    background-color: ${COLORS.lightGray};
     margin-top: 2.4rem;
     animation: open ease-in-out 200ms;
     transform-origin: top;
