@@ -2,9 +2,9 @@
 
 import { AxiosError } from 'axios';
 
-import { TxFailed } from 'types/stellar';
-
 import { LEDGER_CANCEL_ERROR } from 'services/ledger.service';
+
+import { TxFailed } from 'types/stellar';
 
 enum TRANSACTIONS_ERROR_CODES {
     // TODO: Add this codes
@@ -104,7 +104,8 @@ export default function ErrorHandler(error: TxFailed | Error | AxiosError) {
     if (
         (error as Error)?.message === 'cancelled_by_user' ||
         (error as Error)?.message === 'Transaction cancelled by the user' ||
-        (error as Error)?.message === LEDGER_CANCEL_ERROR
+        (error as Error)?.message === LEDGER_CANCEL_ERROR ||
+        (error as Error)?.message === 'The user rejected this request.' // Freighter
     ) {
         return 'Transaction cancelled by the user';
     }
