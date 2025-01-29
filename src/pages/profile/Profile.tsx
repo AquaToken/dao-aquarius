@@ -3,6 +3,8 @@ import styled from 'styled-components';
 
 import { getAmmAquaBalance } from 'api/amm';
 
+import { useUpdateIndex } from 'hooks/useUpdateIndex';
+
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { StellarService } from 'services/globalServices';
@@ -108,11 +110,13 @@ const Profile = () => {
 
     const { account } = useAuthStore();
 
+    const updateIndex = useUpdateIndex(10000);
+
     useEffect(() => {
         getAmmAquaBalance(account.accountId()).then(res => {
             setAmmAquaBalance(res);
         });
-    }, []);
+    }, [updateIndex]);
 
     useEffect(() => {
         StellarService.getAquaUsdPrice().then(setAquaUsdPrice);
