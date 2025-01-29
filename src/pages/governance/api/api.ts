@@ -20,10 +20,10 @@ export enum PROPOSAL_FILTER {
     HISTORY = 'history',
 }
 
-export const getProposalsRequest = (
+export const getProposalsRequest = async (
     filter: PROPOSAL_FILTER,
     pubkey?: string,
-): Promise<AxiosResponse<ListResponse<ProposalSimple>>> => {
+): Promise<{ proposals: ListResponse<ProposalSimple>; filter: PROPOSAL_FILTER }> => {
     const params = new URLSearchParams();
     if (filter === PROPOSAL_FILTER.ACTIVE) {
         params.append('status', 'voting');
@@ -40,14 +40,18 @@ export const getProposalsRequest = (
         params.append('vote_owner_public_key', pubkey);
     }
 
-    return axios.get(`${apiURL}/proposal/`, { params });
+    const { data } = await axios.get<ListResponse<ProposalSimple>>(`${apiURL}/proposal/`, {
+        params,
+    });
+
+    return { proposals: data, filter };
 };
 
 export const getActiveProposalsCount = (): Promise<number> =>
     Promise.all([
         getProposalsRequest(PROPOSAL_FILTER.ACTIVE),
         getProposalsRequest(PROPOSAL_FILTER.DISCUSSION),
-    ]).then(([active, discussion]) => active.data.count + discussion.data.count);
+    ]).then(([active, discussion]) => active.proposals.count + discussion.proposals.count);
 
 export const getProposalRequest = (id: string): Promise<AxiosResponse<Proposal>> =>
     axios.get(`${apiURL}/proposal/${id}/`);

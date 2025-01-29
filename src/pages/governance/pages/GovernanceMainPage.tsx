@@ -5,10 +5,12 @@ import styled from 'styled-components';
 
 import { GovernanceRoutes } from 'constants/routes';
 
+import { useIsOnViewport } from 'hooks/useIsOnViewport';
+
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { useIsOnViewport } from 'hooks/useIsOnViewport';
 import { ModalService } from 'services/globalServices';
+
 import { commonMaxWidth, flexAllCenter, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -265,17 +267,6 @@ const GovernanceMainPage = (): JSX.Element => {
         history.push(GovernanceRoutes.create);
     };
 
-    useEffect(() => {
-        if (!filter) {
-            return;
-        }
-        setLoading(true);
-        getProposalsRequest(filter, account?.accountId()).then(result => {
-            setProposals(result.data.results.reverse());
-            setLoading(false);
-        });
-    }, [filter]);
-
     const setFilterValue = (value: PROPOSAL_FILTER) => {
         if (value === PROPOSAL_FILTER.MY && !isLogged) {
             ModalService.openModal(ChooseLoginMethodModal, {
@@ -295,11 +286,12 @@ const GovernanceMainPage = (): JSX.Element => {
             });
             return;
         }
-        setProposals(null);
         const params = new URLSearchParams(location.search);
         params.set(UrlParams.filter, value);
         history.push({ pathname: location.pathname, search: params.toString() });
     };
+
+    const filterRef = useRef(null);
 
     useEffect(() => {
         const params = new URLSearchParams(location.search);
@@ -308,29 +300,42 @@ const GovernanceMainPage = (): JSX.Element => {
             history.replace({ search: params.toString() });
             return;
         }
-        if (
-            params.has(UrlParams.filter) &&
-            (params.get(UrlParams.filter) === PROPOSAL_FILTER.MY ||
-                params.get(UrlParams.filter) === PROPOSAL_FILTER.MY_VOTES) &&
-            !isLogged
-        ) {
-            params.set(UrlParams.filter, PROPOSAL_FILTER.ALL);
-            history.replace({ search: params.toString() });
-            return;
-        }
+
+        filterRef.current = params.get(UrlParams.filter);
         setFilter(params.get(UrlParams.filter));
-    }, [location]);
+    }, [location, isLogged]);
 
     useEffect(() => {
-        if (!isLogged && (filter === PROPOSAL_FILTER.MY || filter === PROPOSAL_FILTER.MY_VOTES)) {
+        if (isLogged || !filter) {
+            return;
+        }
+        if (
+            filter === PROPOSAL_FILTER.MY ||
+            filter === PROPOSAL_FILTER.MY_VOTES ||
+            filter === PROPOSAL_FILTER.HISTORY
+        ) {
             setFilterValue(PROPOSAL_FILTER.ALL);
         }
-    }, [isLogged]);
+    }, [isLogged, filter]);
+
+    useEffect(() => {
+        if (!filter) {
+            return;
+        }
+        setLoading(true);
+        getProposalsRequest(filter, account?.accountId()).then(result => {
+            if (result.filter !== filterRef.current) {
+                return;
+            }
+            setProposals(result.proposals.results.reverse());
+            setLoading(false);
+        });
+    }, [filter, account]);
 
     const creationRef = useRef(null);
     const hideBottomBlock = useIsOnViewport(creationRef);
 
-    if (loading || !proposals) {
+    if (!proposals) {
         return <PageLoader />;
     }
 
