@@ -99,6 +99,7 @@ export default function useGlobalSubscriptions(): void {
                 );
 
                 if (defaultChoice === null) {
+                    ModalService.closeAllModals();
                     ModalService.openModal(FreighterAccountChangedModal, {
                         publicKey: event.publicKey,
                     });
@@ -106,6 +107,7 @@ export default function useGlobalSubscriptions(): void {
                 }
 
                 if (defaultChoice) {
+                    ModalService.closeAllModals();
                     const path = `${location.pathname}${location.search}`;
 
                     logout();
