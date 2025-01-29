@@ -19,7 +19,7 @@ const YourGovernanceVotes = () => {
 
     useEffect(() => {
         getProposalsRequest(PROPOSAL_FILTER.MY_VOTES, account.accountId()).then(res => {
-            setProposals(res.data.results.reverse());
+            setProposals(res.proposals.results.reverse());
         });
     }, []);
 
