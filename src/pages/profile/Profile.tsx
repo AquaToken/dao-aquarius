@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { getAmmAquaBalance } from 'api/amm';
+
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { StellarService } from 'services/globalServices';
@@ -133,7 +135,7 @@ const Profile = () => {
     };
 
     useEffect(() => {
-        account.getAmmAquaBalance().then(res => {
+        getAmmAquaBalance(account.accountId()).then(res => {
             setAmmAquaBalance(res);
         });
     }, []);

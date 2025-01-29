@@ -155,7 +155,7 @@ const CurrentLocks = ({
                                     </span>
                                 </TooltipRow>
                                 <TooltipRow>
-                                    <span>In AMM pool:</span>
+                                    <span>In AMM pools:</span>
                                     <span>
                                         {formatBalance(ammAquaBalance, true)} ({ammPercent}%)
                                     </span>

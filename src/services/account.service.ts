@@ -289,37 +289,6 @@ export default class AccountService extends Horizon.AccountResponse {
         }, []);
     }
 
-    async getAmmAquaBalance(): Promise<number> {
-        const aquaAlias = 'AQUA:GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA';
-
-        const liquidityPoolsBalances: Horizon.HorizonApi.BalanceLineLiquidityPool[] =
-            this.balances.filter(
-                balance => balance.asset_type === 'liquidity_pool_shares',
-            ) as Horizon.HorizonApi.BalanceLineLiquidityPool[];
-
-        const liquidityPoolsForAccount = await StellarService.getLiquidityPoolForAccount(
-            this.accountId(),
-            200,
-        );
-
-        return liquidityPoolsBalances.reduce((acc, item) => {
-            const pool = liquidityPoolsForAccount.find(({ id }) => id === item.liquidity_pool_id);
-            if (!pool) {
-                return acc;
-            }
-
-            const aquaReserve = pool.reserves.find(({ asset }) => asset === aquaAlias);
-
-            if (aquaReserve) {
-                const balance =
-                    (Number(item.balance) * Number(aquaReserve.amount)) / Number(pool.total_shares);
-                acc += balance;
-            }
-
-            return acc;
-        }, 0);
-    }
-
     getAquaBalance(): number | null {
         const aquaBalance = this.balances.find(
             balance =>

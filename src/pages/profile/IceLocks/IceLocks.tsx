@@ -345,7 +345,7 @@ const IceLocks = ({ ammAquaBalance }: IceLocksProps): React.ReactNode => {
                                                 </span>
                                             </TooltipRow>
                                             <TooltipRow>
-                                                <span>In AMM pool:</span>
+                                                <span>In AMM pools:</span>
                                                 <span>
                                                     {formatBalance(ammAquaBalance, true)} (
                                                     {ammPercent}%)

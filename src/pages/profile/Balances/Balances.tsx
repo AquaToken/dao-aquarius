@@ -6,8 +6,6 @@ import { formatBalance } from 'helpers/format-number';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { ClaimableBalance } from 'types/stellar';
-
 import { StellarService } from 'services/globalServices';
 import {
     DOWN_ICE_CODE,
@@ -17,6 +15,9 @@ import {
     StellarEvents,
     UP_ICE_CODE,
 } from 'services/stellar.service';
+
+import { ClaimableBalance } from 'types/stellar';
+
 import { commonMaxWidth, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -350,7 +351,7 @@ const Balances = ({ ammAquaBalance }: BalancesProps): React.ReactNode => {
                         <AdditionalInfo>
                             <InfoColumn>
                                 <BalanceLabel $color={COLORS.yellow} $textColor={COLORS.titleText}>
-                                    AMM
+                                    Aquarius AMM
                                 </BalanceLabel>
                                 <AdditionalInfoBalance>
                                     {ammAquaBalance === null ? (
@@ -360,7 +361,7 @@ const Balances = ({ ammAquaBalance }: BalancesProps): React.ReactNode => {
                                     )}
                                 </AdditionalInfoBalance>
                                 <AdditionalInfoDescription>
-                                    AQUA in AMM pool
+                                    AQUA in AMM pools
                                 </AdditionalInfoDescription>
                             </InfoColumn>
                             <InfoColumn>
