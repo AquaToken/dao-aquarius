@@ -2,6 +2,10 @@ import { useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { getAmmAquaBalance } from 'api/amm';
+
+import { useUpdateIndex } from 'hooks/useUpdateIndex';
+
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { StellarService } from 'services/globalServices';
@@ -132,11 +136,13 @@ const Profile = () => {
         history.push({ search: params.toString() });
     };
 
+    const updateIndex = useUpdateIndex(10000);
+
     useEffect(() => {
-        account.getAmmAquaBalance().then(res => {
+        getAmmAquaBalance(account.accountId()).then(res => {
             setAmmAquaBalance(res);
         });
-    }, []);
+    }, [updateIndex]);
 
     useEffect(() => {
         StellarService.getAquaUsdPrice().then(setAquaUsdPrice);

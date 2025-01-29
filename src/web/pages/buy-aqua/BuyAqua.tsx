@@ -41,6 +41,7 @@ const BuyAqua = (): JSX.Element => {
         assetcode: aquaCode,
         assetissuer: aquaIssuer,
         useraddress: account?.accountId(),
+        onlyselectedasset: 'true',
         backgroundcolor: 'transparent',
         textcolor: COLORS.titleText.substring(1),
         buttonbackground: COLORS.buttonBackground.substring(1),
