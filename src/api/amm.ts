@@ -1,5 +1,6 @@
 import { Asset } from '@stellar/stellar-sdk';
 import axios from 'axios';
+import BigNumber from 'bignumber.js';
 
 import {
     getAquaAssetData,
@@ -172,6 +173,27 @@ export const getUserPools = (accountId: string): Promise<PoolUserProcessed[]> =>
     return axios
         .get<ListResponse<PoolUser>>(`${baseUrl}/pools/user/${accountId}/?size=1000`)
         .then(({ data }) => processPools(data.items) as PoolUserProcessed[]);
+};
+
+export const getAmmAquaBalance = async (accountId: string): Promise<number> => {
+    const baseUrl = getAmmAquaUrl();
+    const { aquaContract, aquaAssetString } = getAquaAssetData();
+
+    const { data } = await axios.get<ListResponse<PoolUser>>(
+        `${baseUrl}/pools/user/${accountId}/?size=1000&tokens__in=${aquaContract}`,
+    );
+
+    const aquaSum: BigNumber = data.items.reduce((acc, item) => {
+        const aquaIndex = item.tokens_str.findIndex(str => str === aquaAssetString);
+        const aquaAmount = new BigNumber(item.reserves[aquaIndex])
+            .div(1e7)
+            .times(new BigNumber(item.balance))
+            .div(new BigNumber(item.total_share));
+        acc = acc.plus(aquaAmount);
+        return acc;
+    }, new BigNumber(0));
+
+    return aquaSum.toNumber();
 };
 
 export const findSwapPath = async (
