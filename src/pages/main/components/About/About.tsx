@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { getAmmRewards, getAquaInPoolsSum } from 'api/amm';
+import { getAquaInPoolsSum } from 'api/amm';
 import { getAquaCirculatingSupply } from 'api/cmc';
 import { getIceStatistics } from 'api/ice-locker';
 import { getTotalRewards } from 'api/rewards';
@@ -307,11 +307,9 @@ const About = (): React.ReactElement => {
             setIceStats(res);
         });
 
-        Promise.all([getAmmRewards(), getTotalRewards()]).then(
-            ([ammRewards, { total_daily_amm_reward, total_daily_sdex_reward }]) => {
-                setTotalRewards(ammRewards + total_daily_amm_reward + total_daily_sdex_reward);
-            },
-        );
+        getTotalRewards().then(({ total_daily_amm_reward, total_daily_sdex_reward }) => {
+            setTotalRewards(total_daily_amm_reward + total_daily_sdex_reward);
+        });
 
         getAquaInPoolsSum().then(res => {
             setAquaInSorobanAmm(res);
