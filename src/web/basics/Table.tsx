@@ -56,6 +56,7 @@ interface TableProps {
         loadMore: () => void;
         loadMoreOffset: number;
     };
+    mobileBreakpoint?: Breakpoints;
 }
 
 const Container = styled.div`
@@ -86,16 +87,16 @@ const TableLoader = styled.div`
     }
 `;
 
-const TableHead = styled.div`
+const TableHead = styled.div<{ $mobileBreakpoint: Breakpoints }>`
     display: flex;
     width: 100%;
 
-    ${respondDown(Breakpoints.md)`
+    ${({ $mobileBreakpoint }) => respondDown($mobileBreakpoint)`
          display: none;
     `}
 `;
 
-const TableHeadRow = styled.div<{ $withPadding: boolean }>`
+const TableHeadRow = styled.div<{ $withPadding: boolean; $mobileBreakpoint: Breakpoints }>`
     display: flex;
     align-items: stretch;
     width: 100%;
@@ -106,7 +107,7 @@ const TableHeadRow = styled.div<{ $withPadding: boolean }>`
     white-space: nowrap;
     padding-right: ${({ $withPadding }) => ($withPadding ? '1.5rem' : 'unset')};
 
-    ${respondDown(Breakpoints.md)`
+    ${({ $mobileBreakpoint }) => respondDown($mobileBreakpoint)`
         flex-direction: column;
         background: ${COLORS.white};
         padding: 2.7rem 1.6rem 1.6rem;
@@ -122,6 +123,7 @@ const Cell = styled.div<{
     $color?: string;
     $hideOnWeb?: boolean;
     $hideOnMobile?: boolean;
+    $mobileBreakpoint: Breakpoints;
 }>`
     display: ${({ $hideOnWeb }) => ($hideOnWeb ? 'none' : 'flex')};
     align-items: center;
@@ -146,7 +148,7 @@ const Cell = styled.div<{
         color: ${({ $labelColor }) => $labelColor ?? COLORS.grayText};
     }
 
-    ${respondDown(Breakpoints.md)`
+    ${({ $mobileBreakpoint }) => respondDown($mobileBreakpoint)`
         display: ${({ $hideOnMobile }) => ($hideOnMobile ? 'none' : 'flex')};
         align-items: center;
         margin-bottom: 1.6rem;
@@ -173,13 +175,13 @@ const HeadCell = styled(Cell)<{ $withSort?: boolean }>`
     }
 `;
 
-const TableBody = styled.div<{ $withScroll: boolean }>`
+const TableBody = styled.div<{ $withScroll: boolean; $mobileBreakpoint: Breakpoints }>`
     display: flex;
     flex-direction: column;
 
     height: ${({ $withScroll }) => ($withScroll ? '36rem' : 'unset')};
 
-    ${respondDown(Breakpoints.md)`
+    ${({ $mobileBreakpoint }) => respondDown($mobileBreakpoint)`
         height: ${({ $withScroll }) => ($withScroll ? '50rem' : 'unset')};
     `}
 `;
@@ -206,6 +208,7 @@ const ListStyled = styled(Virtualized.List)`
 const TableRowWrap = styled.div<{
     $isClickable?: boolean;
     $mobileBackground?: string;
+    $mobileBreakpoint: Breakpoints;
 }>`
     border-radius: 0.5rem;
     cursor: ${({ $isClickable }) => ($isClickable ? 'pointer' : 'unset')};
@@ -218,7 +221,7 @@ const TableRowWrap = styled.div<{
             ${({ $isClickable }) => ($isClickable ? COLORS.gray : COLORS.transparent)};
     }
 
-    ${respondDown(Breakpoints.md)`
+    ${({ $mobileBreakpoint }) => respondDown($mobileBreakpoint)`
         flex-direction: column;
         background: ${({ $mobileBackground }) => $mobileBackground ?? COLORS.white};
         padding: 2.7rem 1.6rem 1.6rem;
@@ -231,7 +234,11 @@ const TableRowWrap = styled.div<{
     `}
 `;
 
-const TableRow = styled.div<{ $isNarrow?: boolean; $mobileFontSize?: string }>`
+const TableRow = styled.div<{
+    $isNarrow?: boolean;
+    $mobileFontSize?: string;
+    $mobileBreakpoint: Breakpoints;
+}>`
     display: flex;
     align-items: stretch;
     width: 100%;
@@ -240,7 +247,7 @@ const TableRow = styled.div<{ $isNarrow?: boolean; $mobileFontSize?: string }>`
     line-height: 2.8rem;
     position: relative;
 
-    ${respondDown(Breakpoints.md)`
+    ${({ $mobileBreakpoint }) => respondDown($mobileBreakpoint)`
         flex-direction: column;
         font-size: ${({ $mobileFontSize }) => $mobileFontSize ?? '1.6rem'};
     `}
@@ -251,14 +258,27 @@ const CellContent = styled.div`
     align-items: center;
 `;
 
-const Row = ({ row, style }: { row: TableRow; style?: React.CSSProperties }): React.ReactNode => (
+const Row = ({
+    row,
+    style,
+    $mobileBreakpoint,
+}: {
+    row: TableRow;
+    style?: React.CSSProperties;
+    $mobileBreakpoint: Breakpoints;
+}): React.ReactNode => (
     <TableRowWrap
         $mobileBackground={row.mobileBackground}
         $isClickable={Boolean(row.onRowClick)}
         onClick={() => row.onRowClick?.()}
         style={style}
+        $mobileBreakpoint={$mobileBreakpoint}
     >
-        <TableRow $isNarrow={row.isNarrow} $mobileFontSize={row.mobileFontSize}>
+        <TableRow
+            $isNarrow={row.isNarrow}
+            $mobileFontSize={row.mobileFontSize}
+            $mobileBreakpoint={$mobileBreakpoint}
+        >
             {row?.rowItems.map(
                 (
                     {
@@ -283,6 +303,7 @@ const Row = ({ row, style }: { row: TableRow; style?: React.CSSProperties }): Re
                         $flexSize={flexSize}
                         $hideOnWeb={hideOnWeb}
                         $hideOnMobile={hideOnMobile}
+                        $mobileBreakpoint={$mobileBreakpoint}
                     >
                         {Boolean(label) && <label>{label}</label>}
                         <CellContent style={+window.innerWidth > 992 ? style : mobileStyle}>
@@ -298,7 +319,14 @@ const Row = ({ row, style }: { row: TableRow; style?: React.CSSProperties }): Re
 
 const Table = forwardRef(
     (
-        { pending, head, body, virtualScrollProps, ...props }: TableProps,
+        {
+            pending,
+            head,
+            body,
+            virtualScrollProps,
+            mobileBreakpoint = Breakpoints.md,
+            ...props
+        }: TableProps,
         ref: RefObject<HTMLDivElement>,
     ) => {
         const rowHeight = useMemo(() => {
@@ -317,8 +345,11 @@ const Table = forwardRef(
                         <PageLoader />
                     </TableLoader>
                 )}
-                <TableHead>
-                    <TableHeadRow $withPadding={Boolean(virtualScrollProps)}>
+                <TableHead $mobileBreakpoint={mobileBreakpoint}>
+                    <TableHeadRow
+                        $withPadding={Boolean(virtualScrollProps)}
+                        $mobileBreakpoint={mobileBreakpoint}
+                    >
                         {head.map(
                             (
                                 { children, sort, align, flexSize, hideOnWeb, hideOnMobile },
@@ -332,6 +363,7 @@ const Table = forwardRef(
                                     $flexSize={flexSize}
                                     $hideOnWeb={hideOnWeb}
                                     $hideOnMobile={hideOnMobile}
+                                    $mobileBreakpoint={mobileBreakpoint}
                                 >
                                     {children}
                                     {Boolean(sort) && (
@@ -345,7 +377,10 @@ const Table = forwardRef(
                         )}
                     </TableHeadRow>
                 </TableHead>
-                <TableBody $withScroll={Boolean(virtualScrollProps)}>
+                <TableBody
+                    $withScroll={Boolean(virtualScrollProps)}
+                    $mobileBreakpoint={mobileBreakpoint}
+                >
                     {virtualScrollProps ? (
                         <Virtualized.AutoSizer>
                             {({ height, width }) => (
@@ -376,6 +411,7 @@ const Table = forwardRef(
                                                 <Row
                                                     row={body[index]}
                                                     key={key}
+                                                    $mobileBreakpoint={mobileBreakpoint}
                                                     style={{
                                                         ...style,
                                                         height: rowHeight - rowMargin,
@@ -388,7 +424,9 @@ const Table = forwardRef(
                             )}
                         </Virtualized.AutoSizer>
                     ) : (
-                        body?.map(row => <Row row={row} key={row.key} />)
+                        body?.map(row => (
+                            <Row row={row} key={row.key} $mobileBreakpoint={mobileBreakpoint} />
+                        ))
                     )}
                 </TableBody>
             </Container>
