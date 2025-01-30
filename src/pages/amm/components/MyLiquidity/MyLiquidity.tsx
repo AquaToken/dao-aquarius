@@ -27,7 +27,8 @@ import Select from 'basics/inputs/Select';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
 import PageLoader from 'basics/loaders/PageLoader';
 
-import { AnalyticsUrlParams, Tabs } from 'pages/amm/pages/Analytics';
+import { AnalyticsUrlParams, AnalyticsTabs } from 'pages/amm/pages/Analytics';
+import { ProfileTabs, ProfileUrlParams } from 'pages/profile/Profile';
 import { ExternalLinkStyled } from 'pages/profile/SdexRewards/SdexRewards';
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
 
@@ -146,7 +147,10 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
     useEffect(() => {
         const params = new URLSearchParams(location.search);
 
-        if (params.get(AnalyticsUrlParams.tab) !== Tabs.my) {
+        if (
+            params.get(AnalyticsUrlParams.tab) !== AnalyticsTabs.my &&
+            params.get(ProfileUrlParams.tab) !== ProfileTabs.liquidity
+        ) {
             return;
         }
         const filterParam = params.get(UrlParams.filter);
