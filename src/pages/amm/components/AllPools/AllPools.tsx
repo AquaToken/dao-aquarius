@@ -26,7 +26,7 @@ import Pagination from 'basics/Pagination';
 import Table, { CellAlign } from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
-import { AnalyticsUrlParams, Tabs } from 'pages/amm/pages/Analytics';
+import { AnalyticsUrlParams, AnalyticsTabs } from 'pages/amm/pages/Analytics';
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
 
 const ToggleGroupStyled = styled(ToggleGroup)`
@@ -91,7 +91,7 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
 
     useEffect(() => {
         const params = new URLSearchParams(location.search);
-        if (params.get(AnalyticsUrlParams.tab) !== Tabs.top) {
+        if (params.get(AnalyticsUrlParams.tab) !== AnalyticsTabs.top) {
             return;
         }
         const filterParam = params.get(UrlParams.filter);

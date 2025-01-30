@@ -169,7 +169,7 @@ const Chart = styled.div`
     `}
 `;
 
-export enum Tabs {
+export enum AnalyticsTabs {
     top = 'top',
     my = 'my',
 }
@@ -193,22 +193,22 @@ const Analytics = () => {
         const params = new URLSearchParams(location.search);
         const tabParam = params.get(AnalyticsUrlParams.tab);
         if (tabParam) {
-            setActiveTab(tabParam as Tabs);
+            setActiveTab(tabParam as AnalyticsTabs);
         } else {
-            params.append(AnalyticsUrlParams.tab, Tabs.top);
-            setActiveTab(Tabs.top);
+            params.append(AnalyticsUrlParams.tab, AnalyticsTabs.top);
+            setActiveTab(AnalyticsTabs.top);
             history.replace({ search: params.toString() });
         }
     }, [location]);
 
     const { isLogged } = useAuthStore();
 
-    const setTab = (tab: Tabs) => {
-        if (tab === Tabs.my && !isLogged) {
+    const setTab = (tab: AnalyticsTabs) => {
+        if (tab === AnalyticsTabs.my && !isLogged) {
             return ModalService.openModal(ChooseLoginMethodModal, {
                 callback: () => {
                     const params = new URLSearchParams('');
-                    params.set(AnalyticsUrlParams.tab, Tabs.my);
+                    params.set(AnalyticsUrlParams.tab, AnalyticsTabs.my);
                     history.replace({ search: params.toString() });
                 },
             });
@@ -241,7 +241,7 @@ const Analytics = () => {
 
     useEffect(() => {
         if (!isLogged) {
-            setTab(Tabs.top);
+            setTab(AnalyticsTabs.top);
         }
     }, [isLogged]);
 
@@ -293,19 +293,19 @@ const Analytics = () => {
                         <ListHeader>
                             <ListTitles>
                                 <ListTab
-                                    $isActive={activeTab === Tabs.top}
-                                    onClick={() => setTab(Tabs.top)}
+                                    $isActive={activeTab === AnalyticsTabs.top}
+                                    onClick={() => setTab(AnalyticsTabs.top)}
                                 >
                                     All pools
                                 </ListTab>
                                 <ListTab
-                                    $isActive={activeTab === Tabs.my}
-                                    onClick={() => setTab(Tabs.my)}
+                                    $isActive={activeTab === AnalyticsTabs.my}
+                                    onClick={() => setTab(AnalyticsTabs.my)}
                                 >
                                     My liquidity
                                 </ListTab>
                             </ListTitles>
-                            {activeTab === Tabs.top && (
+                            {activeTab === AnalyticsTabs.top && (
                                 <StyledInput
                                     placeholder="Search by token name or token address"
                                     value={search}
@@ -313,19 +313,19 @@ const Analytics = () => {
                                     postfix={<Search />}
                                 />
                             )}
-                            {activeTab === Tabs.my && myTotal !== null && (
+                            {activeTab === AnalyticsTabs.my && myTotal !== null && (
                                 <ListTotal>
                                     <span>Total: </span>
                                     <span>${formatBalance(myTotal, true)}</span>
                                 </ListTotal>
                             )}
                         </ListHeader>
-                        {activeTab === Tabs.top && <AllPools search={debouncedSearch} />}
-                        {activeTab === Tabs.my && (
+                        {activeTab === AnalyticsTabs.top && <AllPools search={debouncedSearch} />}
+                        {activeTab === AnalyticsTabs.my && (
                             <MyLiquidity
                                 onlyList
                                 setTotal={val => setMyTotal(val)}
-                                backToAllPools={() => setTab(Tabs.top)}
+                                backToAllPools={() => setTab(AnalyticsTabs.top)}
                             />
                         )}
                     </ListBlock>
