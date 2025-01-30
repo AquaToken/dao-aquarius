@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { FilterOptions, getPools, PoolsSortFields } from 'api/amm';
@@ -26,6 +26,7 @@ import Pagination from 'basics/Pagination';
 import Table, { CellAlign } from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
+import { AnalyticsUrlParams, AnalyticsTabs } from 'pages/amm/pages/Analytics';
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
 
 const ToggleGroupStyled = styled(ToggleGroup)`
@@ -55,6 +56,11 @@ const TitleWithTooltip = styled.span`
     }
 `;
 
+enum UrlParams {
+    sort = 'sort',
+    filter = 'filter',
+}
+
 const TooltipInner = styled.span`
     width: 20rem;
     white-space: pre-wrap;
@@ -73,20 +79,59 @@ interface AllPoolsProps {
 }
 
 const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
-    const [filter, setFilter] = useState(FilterOptions.all);
-    const [sort, setSort] = useState(PoolsSortFields.liquidityUp);
+    const [filter, setFilter] = useState(null);
+    const [sort, setSort] = useState(null);
     const [pools, setPools] = useState<PoolProcessed[] | null>(null);
     const [total, setTotal] = useState(0);
     const [page, setPage] = useState(1);
     const [pending, setPending] = useState(false);
 
     const history = useHistory();
+    const location = useLocation();
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        if (params.get(AnalyticsUrlParams.tab) !== AnalyticsTabs.top) {
+            return;
+        }
+        const filterParam = params.get(UrlParams.filter);
+        if (filterParam) {
+            setFilter(filterParam as FilterOptions);
+        } else {
+            params.append(UrlParams.filter, FilterOptions.all);
+            setFilter(FilterOptions.all);
+            history.replace({ search: params.toString() });
+        }
+        const sortParam = params.get(UrlParams.sort);
+        if (sortParam) {
+            setSort(sortParam as PoolsSortFields);
+        } else {
+            params.append(UrlParams.sort, PoolsSortFields.liquidityUp);
+            setSort(PoolsSortFields.liquidityUp);
+            history.replace({ search: params.toString() });
+        }
+    }, [location]);
+
+    const setFilterParam = (filterOption: FilterOptions) => {
+        const params = new URLSearchParams(location.search);
+        params.set(UrlParams.filter, filterOption);
+        history.push({ search: params.toString() });
+    };
+
+    const setSortParam = (sort: PoolsSortFields) => {
+        const params = new URLSearchParams(location.search);
+        params.set(UrlParams.sort, sort);
+        history.push({ search: params.toString() });
+    };
 
     useEffect(() => {
         setPage(1);
     }, [filter]);
 
     useEffect(() => {
+        if (!sort || !filter) {
+            return;
+        }
         setPending(true);
         getPools(filter, page, PAGE_SIZE, sort, search).then(({ pools, total }) => {
             setPools(pools);
@@ -96,7 +141,7 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
     }, [filter, page, search, sort]);
 
     const changeSort = (newSort: PoolsSortFields) => {
-        setSort(newSort);
+        setSortParam(newSort);
         setPage(1);
     };
 
@@ -107,8 +152,8 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
         <PageLoader />
     ) : (
         <>
-            <ToggleGroupStyled value={filter} options={OPTIONS} onChange={setFilter} />
-            <SelectStyled value={filter} options={OPTIONS} onChange={setFilter} />
+            <ToggleGroupStyled value={filter} options={OPTIONS} onChange={setFilterParam} />
+            <SelectStyled value={filter} options={OPTIONS} onChange={setFilterParam} />
             {pools.length ? (
                 <>
                     <Table

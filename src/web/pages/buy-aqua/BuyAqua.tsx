@@ -9,10 +9,7 @@ import { getOnRampWidgetUrl } from 'helpers/url';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { ModalService } from 'services/globalServices';
-
 import { cardBoxShadow, flexAllCenter, flexColumn } from 'web/mixins';
-import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { COLORS } from 'web/styles';
 
 import NoTrustline from 'components/NoTrustline';
@@ -44,6 +41,7 @@ const BuyAqua = (): JSX.Element => {
         assetcode: aquaCode,
         assetissuer: aquaIssuer,
         useraddress: account?.accountId(),
+        onlyselectedasset: 'true',
         backgroundcolor: 'transparent',
         textcolor: COLORS.titleText.substring(1),
         buttonbackground: COLORS.buttonBackground.substring(1),
@@ -51,9 +49,6 @@ const BuyAqua = (): JSX.Element => {
     };
 
     if (!isLogged) {
-        ModalService.openModal(ChooseLoginMethodModal, {
-            redirectURL: MainRoutes.buyAqua,
-        });
         return <Redirect to={MainRoutes.main} />;
     }
 

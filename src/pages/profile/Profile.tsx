@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { getAmmAquaBalance } from 'api/amm';
+
+import { useUpdateIndex } from 'hooks/useUpdateIndex';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
@@ -79,40 +82,67 @@ const Content = styled.div`
     `}
 `;
 
-enum Tabs {
-    liquidity = 'liquidity',
+export enum ProfileUrlParams {
+    tab = 'tab',
+}
+export enum ProfileTabs {
+    liquidity = 'amm_liquidity',
     balances = 'balances',
-    sdex = 'sdex',
-    your = 'your',
+    sdex = 'sdex_rewards',
+    your = 'liquidity_votes',
     governance = 'governance',
     airdrop2 = 'airdrop2',
-    iceLocks = 'iceLocks',
-    history = 'history',
+    iceLocks = 'ice_locks',
+    history = 'payments_history',
 }
 
 const OPTIONS = [
-    { label: 'Balances', value: Tabs.balances },
-    { label: 'My liquidity', value: Tabs.liquidity },
-    { label: 'SDEX rewards', value: Tabs.sdex },
-    { label: 'My Liquidity Votes', value: Tabs.your },
-    { label: 'Governance Votes', value: Tabs.governance },
-    { label: 'Airdrop #2', value: Tabs.airdrop2 },
-    { label: 'ICE locks', value: Tabs.iceLocks },
-    { label: 'Payments history', value: Tabs.history },
+    { label: 'Balances', value: ProfileTabs.balances },
+    { label: 'My liquidity', value: ProfileTabs.liquidity },
+    { label: 'SDEX rewards', value: ProfileTabs.sdex },
+    { label: 'My Liquidity Votes', value: ProfileTabs.your },
+    { label: 'Governance Votes', value: ProfileTabs.governance },
+    { label: 'Airdrop #2', value: ProfileTabs.airdrop2 },
+    { label: 'ICE locks', value: ProfileTabs.iceLocks },
+    { label: 'Payments history', value: ProfileTabs.history },
 ];
 
 const Profile = () => {
-    const [selectedTab, setSelectedTab] = useState(Tabs.balances);
+    const [selectedTab, setSelectedTab] = useState(ProfileTabs.balances);
     const [ammAquaBalance, setAmmAquaBalance] = useState(null);
     const [aquaUsdPrice, setAquaUsdPrice] = useState(null);
 
     const { account } = useAuthStore();
 
+    const location = useLocation();
+    const history = useHistory();
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const tabParams = params.get(ProfileUrlParams.tab);
+
+        if (tabParams) {
+            setSelectedTab(tabParams as ProfileTabs);
+        } else {
+            params.append(ProfileUrlParams.tab, ProfileTabs.balances);
+            setSelectedTab(ProfileTabs.balances);
+            history.replace({ search: params.toString() });
+        }
+    }, [location]);
+
+    const setTab = (tab: ProfileTabs) => {
+        const params = new URLSearchParams('');
+        params.set(ProfileUrlParams.tab, tab);
+        history.push({ search: params.toString() });
+    };
+
+    const updateIndex = useUpdateIndex(10000);
+
     useEffect(() => {
         getAmmAquaBalance(account.accountId()).then(res => {
             setAmmAquaBalance(res);
         });
-    }, []);
+    }, [updateIndex]);
 
     useEffect(() => {
         StellarService.getAquaUsdPrice().then(setAquaUsdPrice);
@@ -123,24 +153,24 @@ const Profile = () => {
             <AccountInfo />
             <Balances ammAquaBalance={ammAquaBalance} />
             <ControlsWrapper>
-                <ToggleGroupStyled
-                    value={selectedTab}
-                    options={OPTIONS}
-                    onChange={setSelectedTab}
-                />
-                <SelectStyled value={selectedTab} options={OPTIONS} onChange={setSelectedTab} />
+                <ToggleGroupStyled value={selectedTab} options={OPTIONS} onChange={setTab} />
+                <SelectStyled value={selectedTab} options={OPTIONS} onChange={setTab} />
             </ControlsWrapper>
 
             <ContentWrap>
                 <Content>
-                    {selectedTab === Tabs.liquidity && <MyLiquidity />}
-                    {selectedTab === Tabs.balances && <BalancesBlock />}
-                    {selectedTab === Tabs.sdex && <SdexRewards aquaUsdPrice={aquaUsdPrice} />}
-                    {selectedTab === Tabs.your && <YourVotes />}
-                    {selectedTab === Tabs.governance && <YourGovernanceVotes />}
-                    {selectedTab === Tabs.airdrop2 && <Airdrop2List />}
-                    {selectedTab === Tabs.iceLocks && <IceLocks ammAquaBalance={ammAquaBalance} />}
-                    {selectedTab === Tabs.history && <PaymentsHistory />}
+                    {selectedTab === ProfileTabs.liquidity && <MyLiquidity />}
+                    {selectedTab === ProfileTabs.balances && <BalancesBlock />}
+                    {selectedTab === ProfileTabs.sdex && (
+                        <SdexRewards aquaUsdPrice={aquaUsdPrice} />
+                    )}
+                    {selectedTab === ProfileTabs.your && <YourVotes />}
+                    {selectedTab === ProfileTabs.governance && <YourGovernanceVotes />}
+                    {selectedTab === ProfileTabs.airdrop2 && <Airdrop2List />}
+                    {selectedTab === ProfileTabs.iceLocks && (
+                        <IceLocks ammAquaBalance={ammAquaBalance} />
+                    )}
+                    {selectedTab === ProfileTabs.history && <PaymentsHistory />}
                 </Content>
             </ContentWrap>
         </Container>

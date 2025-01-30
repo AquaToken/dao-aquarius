@@ -9,6 +9,7 @@ import { getDistributionForAccount } from 'api/ice-locker';
 import { LockerRoutes } from 'constants/routes';
 
 import { useIsOnViewport } from 'hooks/useIsOnViewport';
+import { useUpdateIndex } from 'hooks/useUpdateIndex';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
@@ -160,6 +161,8 @@ const LockerAccountPage = (): React.ReactNode => {
         return () => unsub();
     }, [isLogged, accountId]);
 
+    const updateIndex = useUpdateIndex(10000);
+
     useEffect(() => {
         if (!currentAccount) {
             return;
@@ -167,7 +170,7 @@ const LockerAccountPage = (): React.ReactNode => {
         getAmmAquaBalance(currentAccount.accountId()).then((res: number | null) => {
             setAmmAquaBalance(res);
         });
-    }, [currentAccount]);
+    }, [currentAccount, updateIndex]);
 
     useEffect(() => {
         if (!currentAccount) {

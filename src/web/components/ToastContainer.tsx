@@ -26,7 +26,7 @@ const ToastContainer = (): React.ReactNode => {
     const [toasts, setToasts] = useState<ToastType[]>(ToastService.toasts);
 
     useEffect(() => {
-        const unsub = ToastService.event.sub((toasts: ToastType[]) => {
+        const unsub = ToastService.event.sub(({ toasts }) => {
             setToasts(toasts);
         });
 

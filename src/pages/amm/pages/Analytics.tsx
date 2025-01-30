@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { getTotalStats, getVolume24h } from 'api/amm';
@@ -169,13 +169,17 @@ const Chart = styled.div`
     `}
 `;
 
-enum Tabs {
+export enum AnalyticsTabs {
     top = 'top',
     my = 'my',
 }
 
+export enum AnalyticsUrlParams {
+    tab = 'tab',
+}
+
 const Analytics = () => {
-    const [activeTab, setActiveTab] = useState(Tabs.top);
+    const [activeTab, setActiveTab] = useState(null);
     const [search, setSearch] = useState('');
     const [totalStats, setTotalStats] = useState(null);
     const [volume24h, setVolume24h] = useState(null);
@@ -183,8 +187,36 @@ const Analytics = () => {
 
     const debouncedSearch = useDebounce(search, 700, true);
     const history = useHistory();
+    const location = useLocation();
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const tabParam = params.get(AnalyticsUrlParams.tab);
+        if (tabParam) {
+            setActiveTab(tabParam as AnalyticsTabs);
+        } else {
+            params.append(AnalyticsUrlParams.tab, AnalyticsTabs.top);
+            setActiveTab(AnalyticsTabs.top);
+            history.replace({ search: params.toString() });
+        }
+    }, [location]);
 
     const { isLogged } = useAuthStore();
+
+    const setTab = (tab: AnalyticsTabs) => {
+        if (tab === AnalyticsTabs.my && !isLogged) {
+            return ModalService.openModal(ChooseLoginMethodModal, {
+                callback: () => {
+                    const params = new URLSearchParams('');
+                    params.set(AnalyticsUrlParams.tab, AnalyticsTabs.my);
+                    history.replace({ search: params.toString() });
+                },
+            });
+        }
+        const params = new URLSearchParams('');
+        params.set(AnalyticsUrlParams.tab, tab);
+        history.push({ search: params.toString() });
+    };
 
     useEffect(() => {
         document.body.scrollTo(0, 0);
@@ -209,7 +241,7 @@ const Analytics = () => {
 
     useEffect(() => {
         if (!isLogged) {
-            setActiveTab(Tabs.top);
+            setTab(AnalyticsTabs.top);
         }
     }, [isLogged]);
 
@@ -221,16 +253,6 @@ const Analytics = () => {
             return;
         }
         history.push(`${AmmRoutes.create}`);
-    };
-
-    const setTab = (tab: Tabs) => {
-        if (tab === Tabs.my && !isLogged) {
-            return ModalService.openModal(ChooseLoginMethodModal, {
-                callback: () => setActiveTab(Tabs.my),
-            });
-        }
-
-        setActiveTab(tab);
     };
 
     return (
@@ -271,19 +293,19 @@ const Analytics = () => {
                         <ListHeader>
                             <ListTitles>
                                 <ListTab
-                                    $isActive={activeTab === Tabs.top}
-                                    onClick={() => setTab(Tabs.top)}
+                                    $isActive={activeTab === AnalyticsTabs.top}
+                                    onClick={() => setTab(AnalyticsTabs.top)}
                                 >
                                     All pools
                                 </ListTab>
                                 <ListTab
-                                    $isActive={activeTab === Tabs.my}
-                                    onClick={() => setTab(Tabs.my)}
+                                    $isActive={activeTab === AnalyticsTabs.my}
+                                    onClick={() => setTab(AnalyticsTabs.my)}
                                 >
                                     My liquidity
                                 </ListTab>
                             </ListTitles>
-                            {activeTab === Tabs.top && (
+                            {activeTab === AnalyticsTabs.top && (
                                 <StyledInput
                                     placeholder="Search by token name or token address"
                                     value={search}
@@ -291,19 +313,19 @@ const Analytics = () => {
                                     postfix={<Search />}
                                 />
                             )}
-                            {activeTab === Tabs.my && myTotal !== null && (
+                            {activeTab === AnalyticsTabs.my && myTotal !== null && (
                                 <ListTotal>
                                     <span>Total: </span>
                                     <span>${formatBalance(myTotal, true)}</span>
                                 </ListTotal>
                             )}
                         </ListHeader>
-                        {activeTab === Tabs.top && <AllPools search={debouncedSearch} />}
-                        {activeTab === Tabs.my && (
+                        {activeTab === AnalyticsTabs.top && <AllPools search={debouncedSearch} />}
+                        {activeTab === AnalyticsTabs.my && (
                             <MyLiquidity
                                 onlyList
                                 setTotal={val => setMyTotal(val)}
-                                backToAllPools={() => setTab(Tabs.top)}
+                                backToAllPools={() => setTab(AnalyticsTabs.top)}
                             />
                         )}
                     </ListBlock>

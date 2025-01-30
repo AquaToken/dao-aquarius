@@ -8,8 +8,12 @@ import EventService from './event.service';
 export enum LobstrExtensionEvents {
     login = 'login',
 }
+
+type LobstrExtensionPayload = {
+    publicKey: string;
+};
 export default class LobstrExtensionServiceClass {
-    event: EventService = new EventService();
+    event: EventService<LobstrExtensionEvents, LobstrExtensionPayload> = new EventService();
     get isConnected(): Promise<boolean> {
         return isConnected();
     }

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { getUserPools } from 'api/amm';
@@ -47,6 +47,8 @@ import NoTrustline from 'components/NoTrustline';
 
 import ExpandedMenu from 'pages/amm/components/MyLiquidity/ExpandedMenu/ExpandedMenu';
 import MigratePoolButton from 'pages/amm/components/PoolsList/MigratePoolButton/MigratePoolButton';
+import { AnalyticsUrlParams, AnalyticsTabs } from 'pages/amm/pages/Analytics';
+import { ProfileTabs, ProfileUrlParams } from 'pages/profile/Profile';
 import { ExternalLinkStyled } from 'pages/profile/SdexRewards/SdexRewards';
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
 
@@ -181,10 +183,14 @@ const StyledButton = styled(Button)`
 `;
 
 enum FilterValues {
-    all = '',
+    all = 'all',
     volatile = 'volatile',
     stable = 'stable',
     classic = 'classic',
+}
+
+enum UrlParams {
+    filter = 'filter',
 }
 
 const FilterOptions = [
@@ -207,10 +213,39 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
 
     const [pools, setPools] = useState<PoolUserProcessed[]>([]);
     const [classicPools, setClassicPools] = useState([]);
-    const [filter, setFilter] = useState(FilterValues.all);
     const [userRewards, setUserRewards] = useState(new Map());
     const [rewardsSum, setRewardsSum] = useState(0);
     const [claimPendingId, setClaimPendingId] = useState(null);
+    const [filter, setFilter] = useState(null);
+
+    const location = useLocation();
+    const history = useHistory();
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+
+        if (
+            params.get(AnalyticsUrlParams.tab) !== AnalyticsTabs.my &&
+            params.get(ProfileUrlParams.tab) !== ProfileTabs.liquidity
+        ) {
+            return;
+        }
+        const filterParam = params.get(UrlParams.filter);
+
+        if (filterParam) {
+            setFilter(filterParam as FilterValues);
+        } else {
+            params.append(UrlParams.filter, FilterValues.all);
+            setFilter(FilterValues.all);
+            history.replace({ search: params.toString() });
+        }
+    }, [location]);
+
+    const setFilterValue = (value: FilterValues) => {
+        const params = new URLSearchParams(location.search);
+        params.set(UrlParams.filter, value);
+        history.push({ search: params.toString() });
+    };
 
     const updateIndex = useUpdateIndex(5000);
 
@@ -370,8 +405,8 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                     </ListTotal>
                 </ListHeader>
             )}
-            <ToggleGroupStyled value={filter} options={FilterOptions} onChange={setFilter} />
-            <SelectStyled value={filter} options={FilterOptions} onChange={setFilter} />
+            <ToggleGroupStyled value={filter} options={FilterOptions} onChange={setFilterValue} />
+            <SelectStyled value={filter} options={FilterOptions} onChange={setFilterValue} />
 
             {Boolean(rewardsSum) && (
                 <RewardsWrap>
@@ -393,7 +428,6 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                     <NoTrustline asset={aquaStellarAsset} />
                 </RewardsWrap>
             )}
-
             {!filteredPools ? (
                 <PageLoader />
             ) : filteredPools.length ? (

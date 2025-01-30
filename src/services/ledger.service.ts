@@ -16,11 +16,15 @@ export enum LedgerEvents {
     logout = 'logout',
 }
 
+type LedgerPayload = {
+    publicKey?: string;
+};
+
 export default class LedgerServiceClass {
     api: null | Str = null;
     bipSlot: number | null = null;
     bipPath: null | string;
-    event: EventService = new EventService();
+    event: EventService<LedgerEvents, LedgerPayload> = new EventService();
     accountId: string = '';
 
     constructor() {}
