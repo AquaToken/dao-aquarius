@@ -495,8 +495,9 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                                 isSquare
                                                 pending={pool.address === claimPendingId}
                                                 disabled={
-                                                    pool.address !== claimPendingId &&
-                                                    Boolean(claimPendingId)
+                                                    (pool.address !== claimPendingId &&
+                                                        Boolean(claimPendingId)) ||
+                                                    !Number(userRewards.get(pool.address))
                                                 }
                                                 onClick={() => claim(pool.address)}
                                                 title="Claim rewards"
