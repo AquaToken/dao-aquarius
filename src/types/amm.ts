@@ -118,3 +118,14 @@ export interface PoolClassicProcessed extends Omit<PoolClassic, 'reserves'> {
     liquidity: string;
     pool_type: POOL_TYPE;
 }
+
+export type PoolRewardsInfo = {
+    acc: string;
+    block: string;
+    exp_at: number;
+    last_time: number;
+    pool_acc: string;
+    to_claim: string;
+    tps: string;
+    usr_block: string;
+};

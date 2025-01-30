@@ -4,8 +4,6 @@ import styled from 'styled-components';
 
 import { getPool } from 'api/amm';
 
-import { AmmRoutes } from 'constants/routes';
-
 import { getAquaAssetData } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 import { truncateString } from 'helpers/truncate-string';
@@ -235,7 +233,7 @@ const PoolPage = () => {
                     <BackButton
                         label="Pools"
                         onClick={() => {
-                            history.length ? history.goBack() : history.push(AmmRoutes.analytics);
+                            history.goBack();
                         }}
                     >
                         <ArrowLeft />

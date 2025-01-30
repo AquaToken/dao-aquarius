@@ -1,6 +1,6 @@
 import * as StellarSdk from '@stellar/stellar-sdk';
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { AmmRoutes, MarketRoutes } from 'constants/routes';
@@ -38,10 +38,12 @@ const Wrapper = styled.div<{
     $verticalDirections?: boolean;
     $mobileVerticalDirections?: boolean;
     $leftAlign?: boolean;
+    $isClickable?: boolean;
 }>`
     display: flex;
     ${({ $verticalDirections }) => $verticalDirections && 'flex-direction: column;'};
     align-items: ${({ $leftAlign }) => ($leftAlign ? 'flex-start' : 'center')};
+    cursor: ${({ $isClickable }) => ($isClickable ? 'pointer' : 'unset')};
 
     ${({ $mobileVerticalDirections }) =>
         $mobileVerticalDirections &&
@@ -61,8 +63,7 @@ const Icons = styled.div<{
     display: flex;
     align-items: center;
     min-width: 12rem;
-    justify-content: ${({ $verticalDirections, $leftAlign }) =>
-        $leftAlign ? 'flex-start' : $verticalDirections ? 'center' : 'flex-end'};
+    justify-content: ${({ $leftAlign }) => ($leftAlign ? 'flex-start' : 'center')};
 
     ${({ $mobileVerticalDirections }) =>
         $mobileVerticalDirections &&
@@ -244,10 +245,12 @@ const Market = ({
     withMarketLink,
     amounts,
     isSwapResult,
+    // poolAddress - click to pool page
     poolAddress,
     poolType,
 }: PairProps): React.ReactNode => {
     const { assetsInfo } = useAssetsStore();
+    const history = useHistory();
 
     const assets = assetsSimple.map(({ code, issuer }) => StellarService.createAsset(code, issuer));
 
@@ -289,6 +292,12 @@ const Market = ({
             $verticalDirections={verticalDirections}
             $mobileVerticalDirections={mobileVerticalDirections}
             $leftAlign={leftAlign}
+            $isClickable={Boolean(poolAddress)}
+            onClick={() => {
+                if (poolAddress) {
+                    history.push(`${AmmRoutes.analytics}${poolAddress}/`);
+                }
+            }}
         >
             <Icons
                 $isBig={isBigLogo}
@@ -346,16 +355,6 @@ const Market = ({
                             to={`${MarketRoutes.main}/${getAssetString(assets[0])}/${getAssetString(
                                 assets[1],
                             )}`}
-                        >
-                            <External />
-                        </Link>
-                    )}
-                    {poolAddress && (
-                        <Link
-                            onClick={e => {
-                                e.stopPropagation();
-                            }}
-                            to={`${AmmRoutes.analytics}${poolAddress}/`}
                         >
                             <External />
                         </Link>

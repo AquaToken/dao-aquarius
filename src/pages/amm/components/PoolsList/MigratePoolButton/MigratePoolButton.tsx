@@ -3,19 +3,23 @@ import { useEffect, useState } from 'react';
 
 import { getPoolsToMigrate } from 'api/amm';
 
+import { ModalService } from 'services/globalServices';
+
 import { Pool, PoolClassicProcessed } from 'types/amm';
 
-import { ModalService } from 'services/globalServices';
 import MigrateLiquidityStep1 from 'web/modals/migrate-liquidity/MigrateLiquidityStep1';
+
+import IconMigration from 'assets/icon-migration.svg';
 
 import Button from 'basics/buttons/Button';
 
 interface MigratePoolButtonProps {
     pool: PoolClassicProcessed;
     onUpdate: () => void;
+    isSmall?: boolean;
 }
 
-const MigratePoolButton = ({ pool, onUpdate }: MigratePoolButtonProps) => {
+const MigratePoolButton = ({ pool, onUpdate, isSmall }: MigratePoolButtonProps) => {
     const [poolsToMigrate, setPoolsToMigrate] = useState<Pool[]>(null);
 
     const [base, counter] = pool.assets;
@@ -25,9 +29,11 @@ const MigratePoolButton = ({ pool, onUpdate }: MigratePoolButtonProps) => {
             setPoolsToMigrate(res);
         });
     }, []);
+
     return (
         <Button
-            fullWidth
+            isSquare={isSmall}
+            fullWidth={!isSmall}
             onClick={() => {
                 ModalService.openModal(MigrateLiquidityStep1, {
                     pool,
@@ -38,8 +44,9 @@ const MigratePoolButton = ({ pool, onUpdate }: MigratePoolButtonProps) => {
                 });
             }}
             disabled={!poolsToMigrate}
+            title="Migrate to Aquarius AMM"
         >
-            migrate to soroban
+            {isSmall ? <IconMigration /> : 'migrate to soroban'}
         </Button>
     );
 };
