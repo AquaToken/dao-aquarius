@@ -87,6 +87,19 @@ export default function useGlobalSubscriptions(): void {
         return () => unsub();
     });
 
+    const changeFreighterAccount = async (publicKey: string): Promise<void> => {
+        ModalService.closeAllModals();
+        await PromisedTimeout(500);
+        const path = `${location.pathname}${location.search}`;
+        logout();
+
+        await PromisedTimeout(500);
+
+        enableRedirect(path);
+        login(publicKey, LoginTypes.freighter);
+        FreighterService.startWatching(publicKey);
+    };
+
     useEffect(() => {
         const unsub = FreighterService.event.sub(event => {
             if (event.type === FreighterEvents.login) {
@@ -107,17 +120,7 @@ export default function useGlobalSubscriptions(): void {
                 }
 
                 if (defaultChoice) {
-                    ModalService.closeAllModals();
-                    const path = `${location.pathname}${location.search}`;
-
-                    logout();
-
-                    // Wait 1 second for logout.
-                    PromisedTimeout(1000).then(() => {
-                        enableRedirect(path);
-                        login(event.publicKey, LoginTypes.freighter);
-                        FreighterService.startWatching(event.publicKey);
-                    });
+                    changeFreighterAccount(event.publicKey);
                 }
             }
         });
