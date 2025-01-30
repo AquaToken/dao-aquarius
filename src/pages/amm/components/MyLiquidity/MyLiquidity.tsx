@@ -166,7 +166,7 @@ const RewardsDescription = styled.div`
     span:first-child {
         font-size: 1.6rem;
         line-height: 2.8rem;
-        color: ${COLORS.titleText};
+        color: ${COLORS.paragraphText};
     }
 
     ${respondDown(Breakpoints.md)`
