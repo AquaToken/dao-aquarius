@@ -1090,6 +1090,7 @@ export default class SorobanServiceClass {
             'ICE',
             'GAHPYWLK6YRN7CVYZOO4H3VDRZ7PVF5UJGLZCSPAEIKJE2XSWF5LAGER',
         );
+
         const footprintReadOnly = preparedTx.tx
             .ext()
             .sorobanData()
@@ -1109,6 +1110,7 @@ export default class SorobanServiceClass {
         if (
             !footprintReadOnly.find(
                 footprint =>
+                    footprint._arm === 'trustLine' &&
                     footprint
                         ?.trustLine?.()
                         ?.asset?.()
@@ -1119,6 +1121,9 @@ export default class SorobanServiceClass {
         ) {
             footprintReadOnly.push(trustlineLedgerKey);
         }
+
+        console.log(footprintReadOnly);
+        console.log(preparedTx.toEnvelope().toXDR('base64'));
 
         return preparedTx;
     }
