@@ -1098,6 +1098,13 @@ export default class SorobanServiceClass {
             .footprint()
             .readOnly();
 
+        const footprintReadWrite = preparedTx.tx
+            .ext()
+            .sorobanData()
+            .resources()
+            .footprint()
+            .readWrite();
+
         const trustlineLedgerKey = xdr.LedgerKey.trustline(
             new xdr.LedgerKeyTrustLine({
                 asset: asset.toTrustLineXDRObject(),
@@ -1117,13 +1124,20 @@ export default class SorobanServiceClass {
                         ?.alphaNum4?.()
                         ?.assetCode?.()
                         ?.toString() === 'ICE\u0000',
+            ) &&
+            !footprintReadWrite.find(
+                footprint =>
+                    footprint._arm === 'trustLine' &&
+                    footprint
+                        ?.trustLine?.()
+                        ?.asset?.()
+                        ?.alphaNum4?.()
+                        ?.assetCode?.()
+                        ?.toString() === 'ICE\u0000',
             )
         ) {
             footprintReadOnly.push(trustlineLedgerKey);
         }
-
-        console.log(footprintReadOnly);
-        console.log(preparedTx.toEnvelope().toXDR('base64'));
 
         return preparedTx;
     }
