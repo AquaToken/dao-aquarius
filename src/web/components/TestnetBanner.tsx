@@ -51,7 +51,7 @@ const TestnetBanner = (): JSX.Element => {
         timer.current.start();
     };
 
-    return isTestnet ? (
+    return !isTestnet ? (
         <Container>
             <ToggleGroup value={toggleValue} options={OPTIONS} onChange={onClickSwitch} />
         </Container>

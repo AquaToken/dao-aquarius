@@ -6,7 +6,7 @@ import { Environment } from 'types/env';
 
 export const getEnv = (): Environment => {
     const env = localStorage.getItem(LS_ENV_NAME);
-    return (env as Environment) || ENV_PRODUCTION;
+    return (env as Environment) || ENV_TESTNET;
 };
 export const getIsTestnetEnv = () => getEnv() === ENV_TESTNET;
 export const getIsProductionEnv = () => getEnv() === ENV_PRODUCTION;

@@ -2,7 +2,7 @@ import { Dispatch } from 'react';
 
 import { getAssetsInfo, getAssetsRequest } from 'api/assets';
 
-import { getAquaAssetData, getAssetString, getUsdcAssetData } from 'helpers/assets';
+import { getAquaAssetData, getUsdcAssetData } from 'helpers/assets';
 
 import { StellarService } from 'services/globalServices';
 
@@ -109,6 +109,8 @@ const HARDCODE = new Map([
     ],
 ]);
 
+const getAssetString = (asset: AssetSimple): string => `${asset.code}:${asset.issuer}`;
+
 export function processNewAssets(assets: AssetSimple[]) {
     return (dispatch: Dispatch<ActionResult>): void => {
         const cached = new Map(JSON.parse(localStorage.getItem(ASSET_CACHE) || '[]'));
@@ -142,7 +144,6 @@ export function processNewAssets(assets: AssetSimple[]) {
                 });
 
             if (!cached.has(getAssetString(HARDCODE.values().next().value))) {
-                // @ts-ignore
                 [...HARDCODE.values()].forEach(asset => {
                     cached.set(getAssetString(asset), HARDCODE.get(getAssetString(asset)));
                 });

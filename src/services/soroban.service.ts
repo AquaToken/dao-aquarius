@@ -9,13 +9,13 @@ import { CONTRACTS } from 'constants/soroban';
 import { getAssetString } from 'helpers/assets';
 import { getEnv, getNetworkPassphrase } from 'helpers/env';
 import { SorobanErrorHandler, SorobanPrepareTxErrorHandler } from 'helpers/error-handler';
+import { getSorobanUrl } from 'helpers/url';
 
 import RestoreContractModal from 'web/modals/RestoreContractModal';
 
 import { ModalService, ToastService } from './globalServices';
 
 export const AMM_SMART_CONTACT_ID = CONTRACTS[getEnv()].amm;
-const SOROBAN_SERVER = 'https://soroban-rpc.aqua.network/';
 
 enum AMM_CONTRACT_METHOD {
     GET_POOLS = 'get_pools',
@@ -670,7 +670,9 @@ export default class SorobanServiceClass {
             poolId,
             AMM_CONTRACT_METHOD.CLAIM,
             this.publicKeyToScVal(accountId),
-        ).then(tx => this.prepareTransaction(tx));
+        )
+            .then(tx => this.prepareTransaction(tx))
+            .then(res => this.fixTxFootprint(res, accountId));
     }
 
     getCreationFeeToken() {
@@ -882,9 +884,9 @@ export default class SorobanServiceClass {
             ],
         });
 
-        return this.buildSmartContactTxFromOp(accountId, operation).then(tx =>
-            this.prepareTransaction(tx),
-        );
+        return this.buildSmartContactTxFromOp(accountId, operation)
+            .then(tx => this.prepareTransaction(tx))
+            .then(res => this.fixTxFootprint(res, accountId));
     }
 
     getWithdrawTx(
@@ -938,9 +940,9 @@ export default class SorobanServiceClass {
             ],
         });
 
-        return this.buildSmartContactTxFromOp(accountId, operation).then(tx =>
-            this.prepareTransaction(tx),
-        );
+        return this.buildSmartContactTxFromOp(accountId, operation)
+            .then(tx => this.prepareTransaction(tx))
+            .then(res => this.fixTxFootprint(res, accountId));
     }
 
     // estimateSwap(base: Asset, counter: Asset, amount: string) {
@@ -1083,8 +1085,46 @@ export default class SorobanServiceClass {
         );
     }
 
+    private fixTxFootprint(preparedTx, address: string) {
+        const asset = new StellarSdk.Asset(
+            'ICE',
+            'GAHPYWLK6YRN7CVYZOO4H3VDRZ7PVF5UJGLZCSPAEIKJE2XSWF5LAGER',
+        );
+        const footprintReadOnly = preparedTx.tx
+            .ext()
+            .sorobanData()
+            .resources()
+            .footprint()
+            .readOnly();
+
+        const trustlineLedgerKey = xdr.LedgerKey.trustline(
+            new xdr.LedgerKeyTrustLine({
+                asset: asset.toTrustLineXDRObject(),
+                accountId: xdr.PublicKey.publicKeyTypeEd25519(
+                    StrKey.decodeEd25519PublicKey(address),
+                ),
+            }),
+        );
+
+        if (
+            !footprintReadOnly.find(
+                footprint =>
+                    footprint
+                        ?.trustLine?.()
+                        ?.asset?.()
+                        ?.alphaNum4?.()
+                        ?.assetCode?.()
+                        ?.toString() === 'ICE\u0000',
+            )
+        ) {
+            footprintReadOnly.push(trustlineLedgerKey);
+        }
+
+        return preparedTx;
+    }
+
     private startServer(): void {
-        this.server = new StellarSdk.rpc.Server(SOROBAN_SERVER);
+        this.server = new StellarSdk.rpc.Server(getSorobanUrl());
     }
 
     contractIdToScVal(contractId) {
