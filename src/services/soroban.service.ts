@@ -9,6 +9,7 @@ import { CONTRACTS } from 'constants/soroban';
 import { getAssetString } from 'helpers/assets';
 import { getEnv, getNetworkPassphrase } from 'helpers/env';
 import { SorobanErrorHandler, SorobanPrepareTxErrorHandler } from 'helpers/error-handler';
+import { getSorobanUrl } from 'helpers/url';
 
 import { PoolRewardsInfo } from 'types/amm';
 
@@ -18,8 +19,6 @@ import { ModalService, ToastService } from './globalServices';
 
 const AMM_SMART_CONTACT_ID = CONTRACTS[getEnv()].amm;
 const BATCH_SMART_CONTACT_ID = CONTRACTS[getEnv()].batch;
-
-const SOROBAN_SERVER = 'https://soroban-rpc.aqua.network/';
 
 enum AMM_CONTRACT_METHOD {
     GET_POOLS = 'get_pools',
@@ -1059,7 +1058,7 @@ export default class SorobanServiceClass {
     }
 
     private startServer(): void {
-        this.server = new StellarSdk.rpc.Server(SOROBAN_SERVER);
+        this.server = new StellarSdk.rpc.Server(getSorobanUrl());
     }
 
     contractIdToScVal(contractId) {
