@@ -350,7 +350,9 @@ const Table = forwardRef(
                         <Virtualized.AutoSizer>
                             {({ height, width }) => (
                                 <Virtualized.InfiniteLoader
-                                    isRowLoaded={() => true}
+                                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                    // @ts-ignore
+                                    isRowLoaded={() => {}}
                                     rowCount={body.length}
                                     loadMoreRows={(e: Virtualized.IndexRange) => {
                                         if (

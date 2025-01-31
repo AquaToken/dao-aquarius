@@ -119,10 +119,9 @@ const TotalRewards = ({ totalRewards }: TotalRewardsProps): React.ReactNode => (
             )}
         </Title>
         <Description>
-            The core use case of Aquarius is to increase liquidity on Stellar. We plan to achieve
-            this by incentivizing SDEX market makers & AMM liquidity providers. This page tracks
-            AQUA rewards on different markets and how they are distributed between SDEX markets and
-            AMM pools.
+            Aquarius enhances Stellar liquidity by rewarding SDEX market makers and Aquarius AMM
+            liquidity providers. This page tracks AQUA rewards and their distribution across SDEX
+            markets and Aquarius AMM pools.
         </Description>
     </Container>
 );

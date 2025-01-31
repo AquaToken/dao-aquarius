@@ -29,6 +29,13 @@ const TooltipTop = (background: string) => css`
         border-left: 0.6rem solid ${COLORS.transparent};
         border-right: 0.6rem solid ${COLORS.transparent};
     }
+
+    // TODO add for all positions
+    &::before {
+        height: 1rem;
+        top: 100%;
+        width: 100%;
+    }
 `;
 
 const TooltipBottom = (background: string) => css`
@@ -88,10 +95,18 @@ const TooltipBody = styled.div<{
     white-space: nowrap;
     z-index: ${Z_INDEX.tooltip};
 
+    // triangle
     &::after {
         content: '';
         display: block;
         position: absolute;
+    }
+
+    // hover layout
+    &::before {
+        position: absolute;
+        content: '';
+        background: ${COLORS.transparent};
     }
 
     ${({ $position, $background }) =>
@@ -121,26 +136,45 @@ const Tooltip = ({
     color = COLORS.white,
     ...props
 }: TooltipProps): React.ReactNode => {
-    const [onHover, setOnHover] = useState(false);
+    const [isTooltipVisible, setIsTooltipVisible] = useState(isShow);
+    const [isFirstClick, setIsFirstClick] = useState(true);
+
+    const handleClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+
+        if (isFirstClick) {
+            setIsTooltipVisible(true);
+            setIsFirstClick(false);
+        } else {
+            setIsTooltipVisible(prev => !prev);
+        }
+    };
+
+    const handleMouseEnter = (e: React.MouseEvent) => {
+        e.stopPropagation();
+
+        if (showOnHover) {
+            setIsTooltipVisible(true);
+        }
+    };
+
+    const handleMouseLeave = (e: React.MouseEvent) => {
+        e.stopPropagation();
+
+        if (showOnHover) {
+            setIsTooltipVisible(false);
+        }
+    };
 
     return (
         <ChildrenBlock
             {...props}
-            onMouseEnter={(e: React.MouseEvent) => {
-                e.stopPropagation();
-                setOnHover(true);
-            }}
-            onMouseLeave={(e: React.MouseEvent) => {
-                e.stopPropagation();
-                setOnHover(false);
-            }}
-            onClick={(e: React.MouseEvent) => {
-                e.stopPropagation();
-                setOnHover(value => !value);
-            }}
+            onClick={handleClick}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
         >
             {children}
-            {(showOnHover ? onHover && isShow !== false : isShow) && (
+            {(showOnHover ? isTooltipVisible && isShow !== false : isShow) && (
                 <TooltipBody $position={position} $background={background} $color={color}>
                     {content}
                 </TooltipBody>

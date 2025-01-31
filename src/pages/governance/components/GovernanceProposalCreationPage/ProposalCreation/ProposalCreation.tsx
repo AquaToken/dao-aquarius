@@ -4,6 +4,8 @@ import ReactQuill from 'react-quill';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { GovernanceRoutes } from 'constants/routes';
+
 import { formatBalance } from 'helpers/format-number';
 
 import { respondDown } from 'web/mixins';
@@ -15,7 +17,6 @@ import Button from 'basics/buttons/Button';
 import CircleButton from 'basics/buttons/CircleButton';
 import Input from 'basics/inputs/Input';
 
-import { GovernanceRoutes } from '../../../../../routes';
 import { ReactQuillCSS } from '../../../Governance';
 import {
     APPROVED_PROPOSAL_REWARD,
@@ -261,7 +262,7 @@ const ProposalCreation = ({
                             />
                         </SectionForm>
 
-                        <Button fullWidth isBig disabled={!hasData}>
+                        <Button fullWidth isBig disabled={!hasData} type="submit">
                             {isEdit ? 'SUBMIT CHANGES' : 'NEXT'}
                         </Button>
 

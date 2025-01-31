@@ -2,10 +2,9 @@ import { Dispatch } from 'react';
 
 import { getAssetsInfo, getAssetsRequest } from 'api/assets';
 
-import { getAssetString } from 'helpers/assets';
+import { getAquaAssetData, getAssetString, getUsdcAssetData } from 'helpers/assets';
 
 import { StellarService } from 'services/globalServices';
-import { AQUA_CODE, AQUA_ISSUER, USDC_CODE, USDC_ISSUER } from 'services/stellar.service';
 
 import { ASSET_CACHE } from './reducer';
 import { ASSETS_ACTIONS, AssetSimple } from './types';
@@ -21,23 +20,25 @@ export function getAssets() {
     return (dispatch: Dispatch<ActionResult>): void => {
         dispatch({ type: ASSETS_ACTIONS.GET_ASSETS_START });
 
+        const { aquaStellarAsset, aquaCode, aquaIssuer } = getAquaAssetData();
+        const { usdcStellarAsset, usdcCode, usdcIssuer } = getUsdcAssetData();
+
         getAssetsRequest()
             .then(assets => {
                 dispatch({
                     type: ASSETS_ACTIONS.GET_ASSETS_SUCCESS,
                     payload: {
                         assets: [
-                            StellarService.createAsset(AQUA_CODE, AQUA_ISSUER),
+                            aquaStellarAsset,
                             StellarService.createLumen(),
-                            StellarService.createAsset(USDC_CODE, USDC_ISSUER),
+                            usdcStellarAsset,
                             ...assets
                                 .filter(
                                     asset =>
                                         !(
-                                            (asset.code === AQUA_CODE &&
-                                                asset.issuer === AQUA_ISSUER) ||
-                                            (asset.code === USDC_CODE &&
-                                                asset.issuer === USDC_ISSUER)
+                                            (asset.code === aquaCode &&
+                                                asset.issuer === aquaIssuer) ||
+                                            (asset.code === usdcCode && asset.issuer === usdcIssuer)
                                         ),
                                 )
                                 .sort((a, b) => a.code.localeCompare(b.code)),

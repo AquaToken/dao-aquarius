@@ -1,7 +1,8 @@
-import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+
+import { MainRoutes } from 'constants/routes';
 
 import { getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
@@ -10,6 +11,7 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { StellarService } from 'services/globalServices';
 import { StellarEvents } from 'services/stellar.service';
+
 import { COLORS } from 'web/styles';
 
 import ExternalLink from 'basics/ExternalLink';
@@ -17,8 +19,7 @@ import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
 import Table, { CellAlign } from 'basics/Table';
 
-import { MainRoutes } from '../../../routes';
-import { ExternalLinkStyled, Header, Section, Title } from '../AmmRewards/AmmRewards';
+import { ExternalLinkStyled, Header, Section, Title } from '../SdexRewards/SdexRewards';
 import { Empty } from '../YourVotes/YourVotes';
 
 const Container = styled.div`

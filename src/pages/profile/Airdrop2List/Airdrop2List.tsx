@@ -1,7 +1,8 @@
-import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+
+import { MainRoutes } from 'constants/routes';
 
 import { getDateString } from 'helpers/date';
 import ErrorHandler from 'helpers/error-handler';
@@ -14,6 +15,7 @@ import useAuthStore from 'store/authStore/useAuthStore';
 import { StellarService, ToastService } from 'services/globalServices';
 import { StellarEvents } from 'services/stellar.service';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
+
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -22,8 +24,7 @@ import Checkbox from 'basics/inputs/Checkbox';
 import PageLoader from 'basics/loaders/PageLoader';
 import Table, { CellAlign } from 'basics/Table';
 
-import { MainRoutes } from '../../../routes';
-import { ExternalLinkStyled, Header, Section, Title } from '../AmmRewards/AmmRewards';
+import { ExternalLinkStyled, Header, Section, Title } from '../SdexRewards/SdexRewards';
 import { Empty } from '../YourVotes/YourVotes';
 
 const Container = styled.div`

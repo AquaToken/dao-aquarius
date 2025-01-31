@@ -9,10 +9,6 @@ import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { PoolExtended } from 'types/amm';
-import { ModalProps } from 'types/modal';
-import { Asset as AssetType, Int128Parts } from 'types/stellar';
-
 import {
     ModalService,
     SorobanService,
@@ -20,10 +16,12 @@ import {
     ToastService,
 } from 'services/globalServices';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
+
+import { PoolExtended } from 'types/amm';
+import { ModalProps } from 'types/modal';
+import { Asset as AssetType, Int128Parts } from 'types/stellar';
+
 import { customScroll, flexRowSpaceBetween, respondDown } from 'web/mixins';
-import MainNetWarningModal, {
-    SHOW_PURPOSE_ALIAS_MAIN_NET,
-} from 'web/modals/alerts/MainNetWarningModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Arrow from 'assets/icon-arrow-right-long.svg';
@@ -175,6 +173,17 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
     const { pool, isModal = true, baseAmount, counterAmount, base, counter, onUpdate } = params;
 
     const [accountShare, setAccountShare] = useState(null);
+    const [assetsReserves, setAssetsReserves] = useState(null);
+
+    useEffect(() => {
+        if (!account) {
+            setAssetsReserves(null);
+            return;
+        }
+        Promise.all(pool.assets.map(asset => account.getReservesForSwap(asset))).then(res => {
+            setAssetsReserves(res);
+        });
+    }, [account, pool]);
 
     useEffect(() => {
         if (!account) {
@@ -289,7 +298,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
             openCurrentWalletIfExist();
         }
         setPending(true);
-        SorobanService.getDepositTx(account?.accountId(), pool.index, pool.assets, amounts)
+        SorobanService.getDepositTx(account?.accountId(), pool.address, pool.assets, amounts)
             .then(tx => {
                 hash = tx.hash().toString('hex');
                 return account.signAndSubmitTx(tx, true);
@@ -332,19 +341,6 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                 );
                 setPending(false);
             });
-    };
-
-    const submitWithWarning = () => {
-        const showPurpose = JSON.parse(localStorage.getItem(SHOW_PURPOSE_ALIAS_MAIN_NET) || 'true');
-        if (showPurpose) {
-            ModalService.openModal(MainNetWarningModal, {}).then(({ isConfirmed }) => {
-                if (isConfirmed) {
-                    onSubmit();
-                }
-            });
-            return;
-        }
-        onSubmit();
     };
 
     const onChangeInput = (asset: AssetType, value: string) => {
@@ -413,7 +409,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                 />
             )}
             <Form>
-                {pool.assets.map(asset => (
+                {pool.assets.map((asset, index) => (
                     <FormRow key={getAssetString(asset)}>
                         {account && account.getAssetBalance(asset) !== null && (
                             <Balance>
@@ -436,16 +432,18 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                                     position={TOOLTIP_POSITION.left}
                                     content={
                                         <TooltipInnerBalance>
-                                            {account
-                                                .getReservesForSwap(asset)
-                                                .map(({ label, value }) => (
+                                            {assetsReserves ? (
+                                                assetsReserves[index].map(({ label, value }) => (
                                                     <TooltipRow key={label}>
                                                         <span>{label}</span>
                                                         <span>
                                                             {value} {asset.code}
                                                         </span>
                                                     </TooltipRow>
-                                                ))}
+                                                ))
+                                            ) : (
+                                                <DotsLoader />
+                                            )}
                                         </TooltipInnerBalance>
                                     }
                                 >
@@ -569,7 +567,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
 
                 <Button
                     isBig
-                    onClick={() => submitWithWarning()}
+                    onClick={() => onSubmit()}
                     pending={pending}
                     disabled={!hasAllAmounts}
                 >

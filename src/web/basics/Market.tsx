@@ -3,6 +3,8 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { AmmRoutes, MarketRoutes } from 'constants/routes';
+
 import { getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 
@@ -12,6 +14,7 @@ import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
 import { ModalService, StellarService } from 'services/globalServices';
 import { POOL_TYPE } from 'services/soroban.service';
+
 import { flexAllCenter, respondDown } from 'web/mixins';
 import AssetInfoModal from 'web/modals/AssetInfoModal';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -28,11 +31,8 @@ import {
     MaxRewardsLabel,
     NoLiquidityLabel,
     RewardLabel,
-    RewardPoolLabel,
     StablePoolLabel,
 } from 'basics/Labels';
-
-import { AmmRoutes, MarketRoutes } from '../../routes';
 
 const Wrapper = styled.div<{
     $verticalDirections?: boolean;
@@ -97,7 +97,7 @@ const Icon = styled.div<{
         $mobileVerticalDirections &&
         respondDown(Breakpoints.md)`
               right: ${({ $isBig, $assetOrderNumber }) =>
-                  `${($assetOrderNumber - 1) * ($isBig ? 3 : 1)}rem`};
+                  `${(+$assetOrderNumber - 1) * ($isBig ? 3 : 1)}rem`};
           `}
 `;
 
@@ -207,7 +207,6 @@ type PairProps = {
     withoutDomains?: boolean;
     verticalDirections?: boolean;
     isRewardsOn?: boolean;
-    isRewardsPoolOn?: boolean;
     mobileVerticalDirections?: boolean;
     authRequired?: boolean;
     noLiquidity?: boolean;
@@ -232,7 +231,6 @@ const Market = ({
     verticalDirections,
     leftAlign,
     isRewardsOn,
-    isRewardsPoolOn,
     mobileVerticalDirections,
     authRequired,
     noLiquidity,
@@ -261,8 +259,8 @@ const Market = ({
         const { name, home_domain } = assetsInfo.get(getAssetString(asset)) || {};
 
         return [
-            name ?? asset.code,
-            home_domain ?? `${asset.issuer.slice(0, 4)}...${asset.issuer.slice(-4)}`,
+            name || asset.code,
+            home_domain || `${asset.issuer.slice(0, 4)}...${asset.issuer.slice(-4)}`,
         ];
     };
 
@@ -273,7 +271,6 @@ const Market = ({
             {poolType === POOL_TYPE.constant && <ConstantPoolLabel />}
             {boosted && <BoostLabel />}
             {isRewardsOn && <RewardLabel />}
-            {isRewardsPoolOn && <RewardPoolLabel />}
             {isMaxRewards && <MaxRewardsLabel />}
             {authRequired && <AuthRequiredLabel />}
             {noLiquidity && <NoLiquidityLabel />}
@@ -314,6 +311,7 @@ const Market = ({
                     </Icon>
                 ))}
             </Icons>
+            {bottomLabels && <Labels>{labels}</Labels>}
             <AssetsDetails
                 $verticalDirections={verticalDirections}
                 $mobileVerticalDirections={mobileVerticalDirections}
@@ -389,7 +387,6 @@ const Market = ({
                     </AssetsDomains>
                 )}
             </AssetsDetails>
-            {bottomLabels && <Labels>{labels}</Labels>}
         </Wrapper>
     );
 };

@@ -4,10 +4,11 @@ import styled from 'styled-components';
 
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
 
-import { ClaimableBalance } from 'types/stellar';
-
 import AccountService from 'services/account.service';
 import { StellarService } from 'services/globalServices';
+
+import { ClaimableBalance } from 'types/stellar';
+
 import { flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -94,6 +95,7 @@ export const BalanceLabel = styled.div<{ $color: string; $textColor: string }>`
     color: ${({ $textColor }) => $textColor};
     margin-right: 0.7rem;
     padding: 0 0.8rem;
+    white-space: nowrap;
 `;
 
 const AdditionalInfoBalance = styled.span`
@@ -157,12 +159,12 @@ const Portfolio = ({
             <AdditionalInfo>
                 <AdditionalInfoColumn>
                     <BalanceLabel $color={COLORS.yellow} $textColor={COLORS.titleText}>
-                        AMM
+                        Aquarius AMM
                     </BalanceLabel>
                     <AdditionalInfoBalance>
                         + {formatBalance(ammAquaBalance, true)} AQUA
                     </AdditionalInfoBalance>
-                    <AdditionalInfoDescription>in AMM pool</AdditionalInfoDescription>
+                    <AdditionalInfoDescription>in AMM pools</AdditionalInfoDescription>
                 </AdditionalInfoColumn>
                 <AdditionalInfoColumn>
                     <BalanceLabel $color={COLORS.purple} $textColor={COLORS.white}>

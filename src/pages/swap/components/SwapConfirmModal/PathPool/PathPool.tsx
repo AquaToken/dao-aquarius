@@ -1,6 +1,8 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
+import { AmmRoutes } from 'constants/routes';
+
 import { AssetSimple } from 'store/assetsStore/types';
 
 import { respondDown } from 'web/mixins';
@@ -9,8 +11,6 @@ import { Breakpoints, COLORS } from 'web/styles';
 import RightIcon from 'assets/icon-arrow-right-long.svg';
 
 import Asset from 'basics/Asset';
-
-import { AmmRoutes } from '../../../../../routes';
 
 const Container = styled.div`
     width: 25%;

@@ -6,25 +6,28 @@ import styled, { css } from 'styled-components';
 import { getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 
+import { useDebounce } from 'hooks/useDebounce';
+import useOnClickOutside from 'hooks/useOutsideClick';
+
 import { AssetSimple } from 'store/assetsStore/types';
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { StellarService } from 'services/globalServices';
+
 import { Asset as AssetType } from 'types/stellar';
 
-import { useDebounce } from 'hooks/useDebounce';
-import useOnClickOutside from 'hooks/useOutsideClick';
-import { StellarService } from 'services/globalServices';
 import { flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import ArrowDown from 'assets/icon-arrow-down.svg';
 import Fail from 'assets/icon-fail.svg';
-import Loader from 'assets/loader.svg';
 
 import Asset from 'basics/Asset';
 import Chips from 'basics/Chips';
 import Input from 'basics/inputs/Input';
+
+import { CircleLoader } from './loaders';
 
 const DropDown = styled.div<{ $isOpen: boolean }>`
     width: 100%;
@@ -59,10 +62,8 @@ const DropdownArrow = styled(ArrowDown)<{ $isOpen: boolean }>`
     margin-right: ${({ $isOpen }) => ($isOpen ? '0' : '0.1rem')};
 `;
 
-const DropdownLoader = styled(Loader)`
+const DropdownLoader = styled(CircleLoader)`
     ${iconStyles};
-    height: 1.6rem;
-    width: 1.6rem;
     color: ${COLORS.descriptionText};
     transform: translateY(-50%);
     margin-right: ${({ $isOpen }) => ($isOpen ? '0' : '0.1rem')};
@@ -228,6 +229,7 @@ const codeIssuerRegexp = new RegExp(codeIssuerPattern);
 
 type AssetDropdownProps = {
     asset?: AssetSimple;
+    assets?: AssetSimple[];
     assetsList?: AssetSimple[];
     onUpdate?: (asset: AssetType | AssetType[]) => void;
     disabled?: boolean;
@@ -246,6 +248,7 @@ type AssetDropdownProps = {
 
 const AssetDropdown = ({
     asset,
+    assets: customAssetsList,
     assetsList,
     onUpdate,
     disabled,
@@ -277,12 +280,22 @@ const AssetDropdown = ({
         });
     }, [account]);
 
+    const knownAssetsList = customAssetsList || knownAssets;
+    const filteredBalances = customAssetsList
+        ? balances.filter(balance =>
+              knownAssetsList.find(
+                  knownAssets =>
+                      knownAssets.code === balance.code && knownAssets.issuer === balance.issuer,
+              ),
+          )
+        : balances;
+
     const assets = [
-        ...balances,
-        ...(knownAssets.filter(
-            knownAsset =>
-                !balances.find(
-                    asset => knownAsset.code === asset.code && knownAsset.issuer === asset.issuer,
+        ...filteredBalances,
+        ...(knownAssetsList.filter(
+            knownAssets =>
+                !filteredBalances.find(
+                    asset => knownAssets.code === asset.code && knownAssets.issuer === asset.issuer,
                 ),
         ) || []),
     ];
@@ -494,7 +507,7 @@ const AssetDropdown = ({
                 )}
 
                 {!assets.length || searchPending || pending ? (
-                    <DropdownLoader />
+                    <DropdownLoader size="small" />
                 ) : (
                     <DropdownArrow $isOpen={isOpen} />
                 )}

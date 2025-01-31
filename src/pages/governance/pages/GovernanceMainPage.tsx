@@ -3,10 +3,14 @@ import { useEffect, useRef, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
-import useAuthStore from 'store/authStore/useAuthStore';
+import { GovernanceRoutes } from 'constants/routes';
 
 import { useIsOnViewport } from 'hooks/useIsOnViewport';
+
+import useAuthStore from 'store/authStore/useAuthStore';
+
 import { ModalService } from 'services/globalServices';
+
 import { commonMaxWidth, flexAllCenter, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -19,7 +23,6 @@ import Select from 'basics/inputs/Select';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
 import PageLoader from 'basics/loaders/PageLoader';
 
-import { GovernanceRoutes } from '../../../routes';
 import { getProposalsRequest, PROPOSAL_FILTER } from '../api/api';
 import CreateProposal from '../components/GovernanceMainPage/CreateProposal/CreateProposal';
 import FAQ from '../components/GovernanceMainPage/FAQ/FAQ';
@@ -151,7 +154,7 @@ const TitleBlock = styled.div`
 `;
 
 const ProposalsTitle = styled.h3`
-    font-size: 5.6rem;
+    font-size: 4rem;
     line-height: 6.4rem;
     font-weight: bold;
     color: ${COLORS.titleText};
@@ -240,6 +243,7 @@ const Options = [
     { label: 'Finished', value: PROPOSAL_FILTER.CLOSED },
     { label: 'My proposals', value: PROPOSAL_FILTER.MY },
     { label: 'My votes', value: PROPOSAL_FILTER.MY_VOTES },
+    { label: 'History', value: PROPOSAL_FILTER.HISTORY },
 ];
 
 const GovernanceMainPage = (): JSX.Element => {
@@ -263,18 +267,7 @@ const GovernanceMainPage = (): JSX.Element => {
         history.push(GovernanceRoutes.create);
     };
 
-    useEffect(() => {
-        if (!filter) {
-            return;
-        }
-        setLoading(true);
-        getProposalsRequest(filter, account?.accountId()).then(result => {
-            setProposals(result.data.results.reverse());
-            setLoading(false);
-        });
-    }, [filter]);
-
-    const setFilterValue = value => {
+    const setFilterValue = (value: PROPOSAL_FILTER) => {
         if (value === PROPOSAL_FILTER.MY && !isLogged) {
             ModalService.openModal(ChooseLoginMethodModal, {
                 redirectURL: `${GovernanceRoutes.main}?${UrlParams.filter}=${PROPOSAL_FILTER.MY}`,
@@ -287,11 +280,18 @@ const GovernanceMainPage = (): JSX.Element => {
             });
             return;
         }
-        setProposals(null);
+        if (value === PROPOSAL_FILTER.HISTORY && !isLogged) {
+            ModalService.openModal(ChooseLoginMethodModal, {
+                redirectURL: `${GovernanceRoutes.main}?${UrlParams.filter}=${PROPOSAL_FILTER.HISTORY}`,
+            });
+            return;
+        }
         const params = new URLSearchParams(location.search);
         params.set(UrlParams.filter, value);
         history.push({ pathname: location.pathname, search: params.toString() });
     };
+
+    const filterRef = useRef(null);
 
     useEffect(() => {
         const params = new URLSearchParams(location.search);
@@ -300,29 +300,42 @@ const GovernanceMainPage = (): JSX.Element => {
             history.replace({ search: params.toString() });
             return;
         }
-        if (
-            params.has(UrlParams.filter) &&
-            (params.get(UrlParams.filter) === PROPOSAL_FILTER.MY ||
-                params.get(UrlParams.filter) === PROPOSAL_FILTER.MY_VOTES) &&
-            !isLogged
-        ) {
-            params.set(UrlParams.filter, PROPOSAL_FILTER.ALL);
-            history.replace({ search: params.toString() });
-            return;
-        }
+
+        filterRef.current = params.get(UrlParams.filter);
         setFilter(params.get(UrlParams.filter));
-    }, [location]);
+    }, [location, isLogged]);
 
     useEffect(() => {
-        if (!isLogged && (filter === PROPOSAL_FILTER.MY || filter === PROPOSAL_FILTER.MY_VOTES)) {
+        if (isLogged || !filter) {
+            return;
+        }
+        if (
+            filter === PROPOSAL_FILTER.MY ||
+            filter === PROPOSAL_FILTER.MY_VOTES ||
+            filter === PROPOSAL_FILTER.HISTORY
+        ) {
             setFilterValue(PROPOSAL_FILTER.ALL);
         }
-    }, [isLogged]);
+    }, [isLogged, filter]);
+
+    useEffect(() => {
+        if (!filter) {
+            return;
+        }
+        setLoading(true);
+        getProposalsRequest(filter, account?.accountId()).then(result => {
+            if (result.filter !== filterRef.current) {
+                return;
+            }
+            setProposals(result.proposals.results.reverse());
+            setLoading(false);
+        });
+    }, [filter, account]);
 
     const creationRef = useRef(null);
     const hideBottomBlock = useIsOnViewport(creationRef);
 
-    if (loading || !proposals) {
+    if (!proposals) {
         return <PageLoader />;
     }
 
@@ -363,7 +376,10 @@ const GovernanceMainPage = (): JSX.Element => {
                                         <ProposalPreview
                                             key={proposal.id}
                                             proposal={proposal}
-                                            withMyVotes={filter === PROPOSAL_FILTER.MY_VOTES}
+                                            withMyVotes={
+                                                filter === PROPOSAL_FILTER.MY_VOTES ||
+                                                filter === PROPOSAL_FILTER.HISTORY
+                                            }
                                         />
                                     ))}
                                 </div>

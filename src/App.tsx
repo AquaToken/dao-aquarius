@@ -1,33 +1,35 @@
-import * as React from 'react';
+import { MoonPayProvider } from '@moonpay/moonpay-react';
 import { lazy, Suspense, useEffect, useState } from 'react';
-import Title from 'react-document-title';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
-import styled, { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle } from 'styled-components';
 
-import { ModalService, StellarService, WalletConnectService } from 'services/globalServices';
+import { MainRoutes } from 'constants/routes';
+
+import { getEnv, getIsTestnetEnv, setProductionEnv } from 'helpers/env';
+import { getMoonpayKeyByEnv } from 'helpers/moonpay';
+
+import { LoginTypes } from 'store/authStore/types';
+
+import { StellarService, WalletConnectService } from 'services/globalServices';
+
 import AppGlobalStyle from 'web/AppGlobalStyles';
 import { respondDown } from 'web/mixins';
-import LiveOnSorobanAlert, {
-    LIVE_ON_SOROBAN_SHOWED_ALIAS,
-} from 'web/modals/alerts/LiveOnSorobanAlert';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import LiveOnSorobanImage from 'assets/live-on-soroban.svg';
-
 import PageLoader from 'basics/loaders/PageLoader';
-import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+import PageTitle from 'basics/PageTitle';
 
 import ErrorBoundary from 'components/ErrorBoundary';
 import Footer from 'components/Footer';
-import Header, { HeaderNavLink, NavLinksDivider } from 'components/Header';
+import Header from 'components/Header/Header';
 import ModalContainer from 'components/ModalContainer';
 import NotFoundPage from 'components/NotFoundPage';
+import TestnetBanner from 'components/TestnetBanner';
 import ToastContainer from 'components/ToastContainer';
 
 import Governance from 'pages/governance/Governance';
 
 import useGlobalSubscriptions from './hooks/useGlobalSubscriptions';
-import { AmmRoutes, MainRoutes } from './routes';
 import SentryService from './services/sentry.service';
 import Provider from './store';
 import useAssetsStore from './store/assetsStore/useAssetsStore';
@@ -45,28 +47,15 @@ const ProfilePage = lazy(() => import('pages/profile/Profile'));
 const WalletConnectPage = lazy(() => import('pages/wallet-connect/WalletConnect'));
 const AmmPage = lazy(() => import('pages/amm/Amm'));
 const SwapPage = lazy(() => import('pages/swap/Swap'));
+const BuyAquaPage = lazy(() => import('web/pages/buy-aqua/BuyAqua'));
+const TestnetSwitcherPage = lazy(() => import('web/pages/testnet-switcher/TestnetSwitcher'));
 
 const UPDATE_ASSETS_DATE = 'update assets timestamp';
 const UPDATE_PERIOD = 24 * 60 * 60 * 1000;
 
-const BgStyled = styled(LiveOnSorobanImage)`
-    object-position: center center;
-`;
-
-const TooltipStyled = styled(Tooltip)`
-    margin-right: 2rem;
-    a {
-        margin: 0 !important;
-    }
-
-    ${respondDown(Breakpoints.md)`
-        margin-right: 0;
-        margin-bottom: 2.4rem;
-    `}
-`;
-
 const App = () => {
     const [wcLoginChecked, setWcLoginChecked] = useState(false);
+
     useGlobalSubscriptions();
 
     const { getAssets, assets, processNewAssets, assetsInfo, clearAssets } = useAssetsStore();
@@ -76,6 +65,10 @@ const App = () => {
         useAuthStore();
 
     useEffect(() => {
+        if (!getEnv()) {
+            setProductionEnv();
+        }
+
         const assetUpdateTimestamp = localStorage.getItem(UPDATE_ASSETS_DATE);
 
         if (
@@ -112,6 +105,19 @@ const App = () => {
 
         return () => window.removeEventListener('online', reloadIfNotLoaded);
     }, [wcLoginChecked, isAssetsUpdated]);
+
+    useEffect(() => {
+        const handler = (event: BeforeUnloadEvent) => {
+            if (account && account.authType === LoginTypes.secret) {
+                event.preventDefault();
+            }
+        };
+
+        window.addEventListener('beforeunload', handler);
+        return () => {
+            window.removeEventListener('beforeunload', handler);
+        };
+    }, [account]);
 
     useEffect(() => {
         if (assets.length) {
@@ -164,16 +170,6 @@ const App = () => {
         }
     }, []);
 
-    useEffect(() => {
-        if (!wcLoginChecked) {
-            return;
-        }
-        const isShowed = localStorage.getItem(LIVE_ON_SOROBAN_SHOWED_ALIAS) || false;
-        if (!isShowed) {
-            ModalService.openModal(LiveOnSorobanAlert, {}, false, <BgStyled />);
-        }
-    }, [wcLoginChecked]);
-
     if (!isAssetsUpdated || !wcLoginChecked) {
         return <PageLoader />;
     }
@@ -182,159 +178,88 @@ const App = () => {
         <Router>
             <ErrorBoundary>
                 {isLogged && Boolean(redirectURL) && <Redirect to={redirectURL} />}
-                <Header>
-                    <>
-                        <HeaderNavLink
-                            to={AmmRoutes.analytics}
-                            activeStyle={{
-                                fontWeight: 700,
-                            }}
-                            title="Pools"
-                        >
-                            Pools
-                        </HeaderNavLink>
-                        <HeaderNavLink
-                            to={MainRoutes.swap}
-                            activeStyle={{
-                                fontWeight: 700,
-                            }}
-                            title="Swap"
-                        >
-                            Swap
-                        </HeaderNavLink>
-
-                        <NavLinksDivider />
-
-                        <HeaderNavLink
-                            to={MainRoutes.vote}
-                            exact
-                            activeStyle={{
-                                fontWeight: 700,
-                            }}
-                            title="Voting"
-                        >
-                            Voting
-                        </HeaderNavLink>
-                        <HeaderNavLink
-                            to={MainRoutes.rewards}
-                            activeStyle={{
-                                fontWeight: 700,
-                            }}
-                            title="Rewards"
-                        >
-                            Rewards
-                        </HeaderNavLink>
-                        <HeaderNavLink
-                            to={MainRoutes.bribes}
-                            activeStyle={{
-                                fontWeight: 700,
-                            }}
-                            title="Bribes"
-                        >
-                            Bribes
-                        </HeaderNavLink>
-
-                        <NavLinksDivider />
-
-                        <TooltipStyled
-                            position={TOOLTIP_POSITION.bottom}
-                            content="Soon"
-                            showOnHover
-                        >
-                            <HeaderNavLink
-                                activeStyle={{
-                                    fontWeight: 700,
-                                }}
-                                title="Buy AQUA"
-                                onClick={(e: React.MouseEvent) => {
-                                    e.preventDefault();
-                                }}
-                                to=""
-                                $disabled
-                            >
-                                Buy AQUA
-                            </HeaderNavLink>
-                        </TooltipStyled>
-
-                        <HeaderNavLink
-                            to={MainRoutes.locker}
-                            activeStyle={{
-                                fontWeight: 700,
-                            }}
-                            title="Lock AQUA"
-                        >
-                            Lock AQUA
-                        </HeaderNavLink>
-                    </>
-                </Header>
+                <TestnetBanner />
+                <Header />
                 <Suspense fallback={<PageLoader />}>
                     <Switch>
                         <Route exact path={MainRoutes.main}>
-                            <Title title="Aquarius">
+                            <PageTitle title="Aquarius">
                                 <MainPage />
-                            </Title>
+                            </PageTitle>
                         </Route>
                         <Route path={MainRoutes.locker}>
-                            <Title title="Locker">
+                            <PageTitle title="Locker">
                                 <LockerPage />
-                            </Title>
+                            </PageTitle>
                         </Route>
                         <Route path={MainRoutes.governance}>
-                            <Title title="Governance">
+                            <PageTitle title="Governance">
                                 <Governance />
-                            </Title>
+                            </PageTitle>
                         </Route>
                         <Route path={MainRoutes.vote}>
-                            <Title title="Voting">
+                            <PageTitle title="Voting">
                                 <VotePage />
-                            </Title>
+                            </PageTitle>
                         </Route>
                         <Route path={MainRoutes.bribes}>
-                            <Title title="Bribes">
+                            <PageTitle title="Bribes">
                                 <BribesPage />
-                            </Title>
+                            </PageTitle>
                         </Route>
                         <Route path={MainRoutes.market}>
                             <MarketPage />
                         </Route>
                         <Route path={MainRoutes.rewards}>
-                            <Title title="Rewards">
+                            <PageTitle title="Rewards">
                                 <RewardsPage />
-                            </Title>
+                            </PageTitle>
                         </Route>
                         <Route path={MainRoutes.airdrop}>
-                            <Title title="Airdrop">
+                            <PageTitle title="Airdrop">
                                 <AirdropPage />
-                            </Title>
+                            </PageTitle>
                         </Route>
                         <Route path={MainRoutes.airdrop2}>
-                            <Title title="Airdrop #2">
+                            <PageTitle title="Airdrop #2">
                                 <Airdrop2Page />
-                            </Title>
+                            </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.account}>
-                            <Title title="My Aquarius">
+                            <PageTitle title="My Aquarius">
                                 {isLogged ? <ProfilePage /> : <Redirect to={MainRoutes.main} />}
-                            </Title>
+                            </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.walletConnect}>
-                            <Title title="WalletConnect">
+                            <PageTitle title="WalletConnect">
                                 <WalletConnectPage />
-                            </Title>
+                            </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.amm}>
-                            <Title title="Pools">
+                            <PageTitle title="Pools">
                                 <AmmPage />
-                            </Title>
+                            </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.swap}>
-                            <Title title="Swap">
+                            <PageTitle title="Swap">
                                 <SwapPage />
-                            </Title>
+                            </PageTitle>
+                        </Route>
+
+                        <Route path={MainRoutes.buyAqua}>
+                            <PageTitle title="Buy Aqua">
+                                <BuyAquaPage />
+                            </PageTitle>
+                        </Route>
+
+                        <Route path={MainRoutes.testnet}>
+                            <PageTitle title="Testnet">
+                                <TestnetSwitcherPage />
+                            </PageTitle>
                         </Route>
 
                         <Route component={NotFoundPage} />
@@ -358,11 +283,12 @@ const BodyStyle = createGlobalStyle`
 `;
 
 const ProvidedApp = () => (
-    <Provider>
-        <AppGlobalStyle />
-        <BodyStyle />
-        <App />
-    </Provider>
+    <MoonPayProvider apiKey={getMoonpayKeyByEnv()} debug={getIsTestnetEnv()}>
+        <Provider>
+            <AppGlobalStyle />
+            <BodyStyle />
+            <App />
+        </Provider>
+    </MoonPayProvider>
 );
-
 export default ProvidedApp;

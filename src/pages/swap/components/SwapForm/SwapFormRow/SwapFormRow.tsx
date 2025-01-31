@@ -5,6 +5,7 @@ import styled from 'styled-components';
 
 import { formatBalance } from 'helpers/format-number';
 
+import { AssetSimple } from 'store/assetsStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { respondDown } from 'web/mixins';
@@ -76,6 +77,7 @@ interface SwapFormRowProps {
     exclude: Asset;
     pending: boolean;
     inputPostfix: React.ReactElement;
+    assetsList: AssetSimple[] | null;
 }
 
 const SwapFormRow = ({
@@ -87,6 +89,7 @@ const SwapFormRow = ({
     exclude,
     pending,
     inputPostfix,
+    assetsList,
 }: SwapFormRowProps) => {
     const { account } = useAuthStore();
     const [isOpen, setIsOpen] = useState(false);
@@ -115,7 +118,7 @@ const SwapFormRow = ({
                 value={amount}
                 onChange={e => setAmount(e.target.value)}
                 label={isBase ? 'From' : 'To(estimated)'}
-                placeholder={isBase ? '' : '0.0'}
+                placeholder="0.0"
                 postfix={inputPostfix}
                 disabled={!isBase}
                 inputMode="decimal"
@@ -123,10 +126,11 @@ const SwapFormRow = ({
 
             <DropdownContainer $isOpen={isOpen}>
                 <AssetDropdown
+                    assets={assetsList}
                     asset={asset}
                     onUpdate={setAsset}
                     exclude={exclude}
-                    disabled={pending}
+                    disabled={pending || !assetsList}
                     withoutReset
                     onToggle={res => setIsOpen(res)}
                     withBalances

@@ -4,7 +4,10 @@ import BigNumber from 'bignumber.js';
 
 import { getNativePrices } from 'api/amm';
 
+import { ASSETS_ENV_DATA } from 'constants/assets';
+
 import { getAssetFromString, getAssetString } from 'helpers/assets';
+import { getEnv, getNetworkPassphrase } from 'helpers/env';
 
 import { LoginTypes } from 'store/authStore/types';
 
@@ -24,10 +27,11 @@ import {
     WalletConnectService,
 } from './globalServices';
 import { POOL_TYPE } from './soroban.service';
-import { AQUA_CODE, AQUA_ISSUER, ICE_ASSETS } from './stellar.service';
+import { ICE_ASSETS } from './stellar.service';
 import { BuildSignAndSubmitStatuses } from './wallet-connect.service';
 
 const VAULT_MARKER = 'GA2T6GR7VXXXBETTERSAFETHANSORRYXXXPROTECTEDBYLOBSTRVAULT';
+const { aquaCode, aquaIssuer } = ASSETS_ENV_DATA[getEnv()].aqua;
 
 export default class AccountService extends Horizon.AccountResponse {
     authType?: LoginTypes;
@@ -95,7 +99,7 @@ export default class AccountService extends Horizon.AccountResponse {
 
         if (this.authType === LoginTypes.walletConnect && withResult) {
             const signedXDR: string = await WalletConnectService.signTx(tx);
-            signedTx = new StellarSdk.Transaction(signedXDR, StellarSdk.Networks.TESTNET);
+            signedTx = new StellarSdk.Transaction(signedXDR, getNetworkPassphrase());
         }
 
         if (this.authType === LoginTypes.ledger && !this.isMultisigEnabled) {
@@ -285,42 +289,11 @@ export default class AccountService extends Horizon.AccountResponse {
         }, []);
     }
 
-    async getAmmAquaBalance(): Promise<number> {
-        const aquaAlias = 'AQUA:GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA';
-
-        const liquidityPoolsBalances: Horizon.HorizonApi.BalanceLineLiquidityPool[] =
-            this.balances.filter(
-                balance => balance.asset_type === 'liquidity_pool_shares',
-            ) as Horizon.HorizonApi.BalanceLineLiquidityPool[];
-
-        const liquidityPoolsForAccount = await StellarService.getLiquidityPoolForAccount(
-            this.accountId(),
-            200,
-        );
-
-        return liquidityPoolsBalances.reduce((acc, item) => {
-            const pool = liquidityPoolsForAccount.find(({ id }) => id === item.liquidity_pool_id);
-            if (!pool) {
-                return acc;
-            }
-
-            const aquaReserve = pool.reserves.find(({ asset }) => asset === aquaAlias);
-
-            if (aquaReserve) {
-                const balance =
-                    (Number(item.balance) * Number(aquaReserve.amount)) / Number(pool.total_shares);
-                acc += balance;
-            }
-
-            return acc;
-        }, 0);
-    }
-
     getAquaBalance(): number | null {
         const aquaBalance = this.balances.find(
             balance =>
-                (balance as Horizon.HorizonApi.BalanceLineAsset).asset_code == AQUA_CODE &&
-                (balance as Horizon.HorizonApi.BalanceLineAsset).asset_issuer === AQUA_ISSUER,
+                (balance as Horizon.HorizonApi.BalanceLineAsset).asset_code == aquaCode &&
+                (balance as Horizon.HorizonApi.BalanceLineAsset).asset_issuer === aquaIssuer,
         ) as Horizon.HorizonApi.BalanceLineAsset;
 
         if (!aquaBalance) {
@@ -333,8 +306,8 @@ export default class AccountService extends Horizon.AccountResponse {
     getAquaInOffers(): number | null {
         const aquaBalance = this.balances.find(
             balance =>
-                (balance as Horizon.HorizonApi.BalanceLineAsset).asset_code == AQUA_CODE &&
-                (balance as Horizon.HorizonApi.BalanceLineAsset).asset_issuer === AQUA_ISSUER,
+                (balance as Horizon.HorizonApi.BalanceLineAsset).asset_code == aquaCode &&
+                (balance as Horizon.HorizonApi.BalanceLineAsset).asset_issuer === aquaIssuer,
         ) as Horizon.HorizonApi.BalanceLineAsset;
 
         if (!aquaBalance) {
@@ -418,13 +391,21 @@ export default class AccountService extends Horizon.AccountResponse {
         return this.getAssetBalance(asset);
     }
 
-    getReservesForSwap(asset: Asset): { label: string; value: number }[] {
+    async getReservesForSwap(asset: Asset): Promise<{ label: string; value: number }[]> {
+        const balance = this.balances.find(
+            balance =>
+                ((balance as Horizon.HorizonApi.BalanceLineAsset).asset_code == asset.code &&
+                    (balance as Horizon.HorizonApi.BalanceLineAsset).asset_issuer ===
+                        asset.issuer) ||
+                (balance.asset_type === 'native' && asset.isNative()),
+        ) as Horizon.HorizonApi.BalanceLineAsset | Horizon.HorizonApi.BalanceLineNative;
+
+        if (!balance) {
+            return [];
+        }
+
         if (!asset.isNative()) {
-            const { selling_liabilities } = this.balances.find(
-                balance =>
-                    (balance as Horizon.HorizonApi.BalanceLineAsset).asset_code == asset.code &&
-                    (balance as Horizon.HorizonApi.BalanceLineAsset).asset_issuer === asset.issuer,
-            ) as Horizon.HorizonApi.BalanceLineAsset;
+            const { selling_liabilities } = balance as Horizon.HorizonApi.BalanceLineAsset;
 
             return [
                 {
@@ -434,9 +415,7 @@ export default class AccountService extends Horizon.AccountResponse {
             ];
         }
 
-        const { selling_liabilities } = this.balances.find(
-            ({ asset_type }) => asset_type === 'native',
-        ) as Horizon.HorizonApi.BalanceLineNative;
+        const { selling_liabilities } = balance as Horizon.HorizonApi.BalanceLineNative;
 
         const { entriesTrustlines, entriesLiquidityTrustlines } = this.balances.reduce(
             (acc, balance) => {
@@ -458,7 +437,8 @@ export default class AccountService extends Horizon.AccountResponse {
             },
         );
 
-        const entriesOffers = Object.keys(this.offers).length;
+        // TODO: add pagination for more then 200 offers
+        const entriesOffers = (await this.offers({ limit: 200 })).records.length;
         const entriesSigners = this.signers.length - 1;
         const entriesOthers =
             this.subentry_count -

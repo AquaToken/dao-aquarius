@@ -7,7 +7,7 @@ import { Breakpoints, COLORS } from 'web/styles';
 
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
-const TooltipInner = styled.div`
+const TooltipWrapper = styled.div`
     width: 28.8rem;
     white-space: pre-line;
     font-size: 1.4rem;
@@ -28,43 +28,71 @@ const LabelWrap = styled.div`
     margin-top: -1rem;
 `;
 
-const LabelInner = styled.div<{
+const LabelWrapper = styled.div<{
     $background: string;
     $color: string;
+    $cursor?: string;
+    $padding: string;
+    $innerBorderRadius: string;
+    $innerFontSize: string;
+    $innerLineHeight: string;
 }>`
     ${flexAllCenter};
-    height: 1.6rem;
-    padding: 0 0.4rem;
-    border-radius: 0.3rem;
+    width: max-content;
+    min-width: 5rem;
+    padding: ${({ $padding }) => $padding};
     background: ${({ $background }) => $background};
     color: ${({ $color }) => $color};
     border: ${({ $color }) => `0.1rem solid ${$color}`};
     text-transform: uppercase;
     font-weight: 700;
-    font-size: 0.8rem;
-    line-height: 1.8rem;
-    cursor: help;
+    border-radius: ${({ $innerBorderRadius }) => $innerBorderRadius};
+    font-size: ${({ $innerFontSize }) => $innerFontSize};
+    line-height: ${({ $innerLineHeight }) => $innerLineHeight};
+    cursor: ${({ $cursor }) => $cursor};
     white-space: nowrap;
 `;
 
 const SCROLL_OFFSET = window.navigator.userAgent.indexOf('win') > -1 ? 20 : 0;
 
+const LABEL_STYLES = {
+    default: {
+        $padding: '0 0.4rem',
+        $innerBorderRadius: '0.3rem',
+        $innerFontSize: '0.8rem',
+        $innerLineHeight: '1.4rem',
+        $cursor: 'help',
+    },
+    big: {
+        $padding: '0.5rem 0.4rem',
+        $innerBorderRadius: '0.4rem',
+        $innerFontSize: '1.6rem',
+        $innerLineHeight: '1.6rem',
+        $cursor: 'help',
+    },
+};
+
+type LabelSize = 'default' | 'big';
+
 interface LabelProps {
-    title: string;
-    text?: string | React.ReactNode;
+    labelText: string;
+    labelSize?: LabelSize;
+    tooltipText?: string | React.ReactNode;
     background?: string;
     color?: string;
 }
 
 const Label = ({
-    title,
-    text,
+    labelText,
+    tooltipText,
+    labelSize = 'default',
     background = COLORS.purple,
     color = COLORS.white,
     ...props
 }: LabelProps): React.ReactNode => {
     const [isEnoughSpaceOnTop, setIsEnoughSpaceOnTop] = useState(true);
     const [isRightOriented, setIsRightOriented] = useState(true);
+    const labelStyles = LABEL_STYLES[labelSize];
 
     const ref = useCallback(
         (node: HTMLDivElement) => {
@@ -82,17 +110,19 @@ const Label = ({
         [isEnoughSpaceOnTop],
     );
 
-    if (!text) {
+    if (!tooltipText) {
+        labelStyles.$cursor = 'default';
+
         return (
-            <LabelInner $background={background} $color={color}>
-                {title}
-            </LabelInner>
+            <LabelWrapper {...labelStyles} $background={background} $color={color}>
+                {labelText}
+            </LabelWrapper>
         );
     }
 
     return (
         <Tooltip
-            content={<TooltipInner ref={ref}>{text}</TooltipInner>}
+            content={<TooltipWrapper ref={ref}>{tooltipText}</TooltipWrapper>}
             position={
                 isEnoughSpaceOnTop
                     ? TOOLTIP_POSITION.top
@@ -105,9 +135,9 @@ const Label = ({
             showOnHover
         >
             <LabelWrap>
-                <LabelInner $background={background} $color={color} {...props}>
-                    {title}
-                </LabelInner>
+                <LabelWrapper {...labelStyles} $background={background} $color={color} {...props}>
+                    {labelText}
+                </LabelWrapper>
             </LabelWrap>
         </Tooltip>
     );

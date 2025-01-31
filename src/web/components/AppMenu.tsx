@@ -2,6 +2,8 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { LockerRoutes } from 'constants/routes';
+
 import { formatBalance } from 'helpers/format-number';
 
 import { LoginTypes } from 'store/authStore/types';
@@ -24,7 +26,6 @@ import Identicon from 'basics/Identicon';
 
 import SocialLinks from 'components/SocialLinks';
 
-import { LockerRoutes } from '../../routes';
 import { respondDown } from '../mixins';
 import ChooseLoginMethodModal from '../modals/auth/ChooseLoginMethodModal';
 import GetAquaModal from '../modals/GetAquaModal';
@@ -35,6 +36,7 @@ const MenuBlock = styled.div`
     width: 100%;
     top: 100%;
     right: 0;
+    min-width: 28rem;
     background-color: ${COLORS.white};
     box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
     cursor: auto;
@@ -42,7 +44,6 @@ const MenuBlock = styled.div`
     z-index: ${Z_INDEX.accountMenu};
     display: flex;
     flex-direction: column;
-    min-width: 29.5rem;
 
     ${respondDown(Breakpoints.md)`
         position: fixed;
@@ -80,7 +81,7 @@ const AccountBalanceBlock = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.8rem 2.4rem 2.4rem;
+    padding: 0.8rem 2.4rem 0.8rem;
 `;
 
 const AccountBalance = styled.div`
@@ -146,10 +147,7 @@ const NavLinks = styled.div`
         color: ${COLORS.titleText};
         text-decoration: none;
         margin-bottom: 2.4rem;
-
-        &:not(:last-child) {
-            margin-right: 0;
-        }
+        margin-right: 0 !important;
     }
 `;
 
@@ -267,6 +265,7 @@ const AppMenu = ({
                             </Button>
                         </CopyButton>
                     </AccountBalanceBlock>
+
                     <AccountBalanceBlock>
                         <AccountBalance>
                             <AccountBalanceLabel>AQUA balance:</AccountBalanceLabel>

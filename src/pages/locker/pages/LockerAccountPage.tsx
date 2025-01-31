@@ -3,14 +3,20 @@ import { useEffect, useRef, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { getAmmAquaBalance } from 'api/amm';
 import { getDistributionForAccount } from 'api/ice-locker';
+
+import { LockerRoutes } from 'constants/routes';
+
+import { useIsOnViewport } from 'hooks/useIsOnViewport';
+import { useUpdateIndex } from 'hooks/useUpdateIndex';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { useIsOnViewport } from 'hooks/useIsOnViewport';
 import AccountService from 'services/account.service';
 import { StellarService } from 'services/globalServices';
 import { StellarEvents } from 'services/stellar.service';
+
 import { commonMaxWidth, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -18,7 +24,6 @@ import ArrowDown from 'assets/icon-arrow-down.svg';
 
 import PageLoader from 'basics/loaders/PageLoader';
 
-import { LockerRoutes } from '../../../routes';
 import FAQ from '../components/FAQ/FAQ';
 import AccountInfoBlock from '../components/LockerAccountPage/AccountInfoBlock/AccountInfoBlock';
 import CurrentLocks from '../components/LockerAccountPage/CurrentLocks/CurrentLocks';
@@ -156,14 +161,16 @@ const LockerAccountPage = (): React.ReactNode => {
         return () => unsub();
     }, [isLogged, accountId]);
 
+    const updateIndex = useUpdateIndex(10000);
+
     useEffect(() => {
         if (!currentAccount) {
             return;
         }
-        currentAccount.getAmmAquaBalance().then((res: number | null) => {
+        getAmmAquaBalance(currentAccount.accountId()).then((res: number | null) => {
             setAmmAquaBalance(res);
         });
-    }, [currentAccount]);
+    }, [currentAccount, updateIndex]);
 
     useEffect(() => {
         if (!currentAccount) {

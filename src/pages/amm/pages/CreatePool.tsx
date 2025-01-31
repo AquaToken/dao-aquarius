@@ -5,22 +5,22 @@ import styled from 'styled-components';
 
 import { FilterOptions, getPools, PoolsSortFields } from 'api/amm';
 
+import { AmmRoutes } from 'constants/routes';
+
 import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { SorobanService, ToastService } from 'services/globalServices';
+import { CONTRACT_STATUS, POOL_TYPE } from 'services/soroban.service';
+import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
+
 import { PoolProcessed } from 'types/amm';
 import { Transaction } from 'types/stellar';
 
-import { ModalService, SorobanService, ToastService } from 'services/globalServices';
-import { CONTRACT_STATUS, POOL_TYPE } from 'services/soroban.service';
-import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 import { flexRowSpaceBetween, respondDown } from 'web/mixins';
-import MainNetWarningModal, {
-    SHOW_PURPOSE_ALIAS_MAIN_NET,
-} from 'web/modals/alerts/MainNetWarningModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import ArrowLeft from 'assets/icon-arrow-left.svg';
@@ -37,7 +37,6 @@ import ToggleGroup from 'basics/inputs/ToggleGroup';
 import PageLoader from 'basics/loaders/PageLoader';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
-import { AmmRoutes } from '../../../routes';
 import {
     Back,
     Background,
@@ -200,8 +199,9 @@ const FEE_OPTIONS = [
 ];
 
 const STABLE_POOL_FEE_PERCENTS = {
-    min: '0.1',
+    min: '0.01',
     max: '1',
+    default: '0.1',
 };
 
 const CreatePool = () => {
@@ -216,7 +216,7 @@ const CreatePool = () => {
     const [fourthAsset, setFourthAsset] = useState(null);
     const [fourthAssetStatus, setFourthAssetStatus] = useState(null);
     const [constantFee, setConstantFee] = useState(10);
-    const [stableFee, setStableFee] = useState(STABLE_POOL_FEE_PERCENTS.min);
+    const [stableFee, setStableFee] = useState(STABLE_POOL_FEE_PERCENTS.default);
     const [pending, setPending] = useState(false);
     const [createInfo, setCreateInfo] = useState(null);
 
@@ -387,6 +387,7 @@ const CreatePool = () => {
             account.accountId(),
             [firstAsset, secondAsset, thirdAsset, fourthAsset].filter(asset => asset !== null),
             Number(stableFee),
+            createInfo,
         )
             .then(tx => signAndSubmitCreation(tx))
             .catch(e => {
@@ -414,6 +415,7 @@ const CreatePool = () => {
             firstAsset,
             secondAsset,
             constantFee,
+            createInfo,
         )
             .then(tx => signAndSubmitCreation(tx))
             .catch(e => {
@@ -441,19 +443,6 @@ const CreatePool = () => {
                 : value;
 
         setStableFee(roundedValue);
-    };
-
-    const createPoolWithWarning = () => {
-        const showPurpose = JSON.parse(localStorage.getItem(SHOW_PURPOSE_ALIAS_MAIN_NET) || 'true');
-        if (showPurpose) {
-            ModalService.openModal(MainNetWarningModal, {}, false).then(({ isConfirmed }) => {
-                if (isConfirmed) {
-                    createPool();
-                }
-            });
-            return;
-        }
-        createPool();
     };
 
     if (!createInfo) {
@@ -488,7 +477,7 @@ const CreatePool = () => {
                             >
                                 <div>
                                     <h3>Volatile</h3>
-                                    <p>Simple model for general purpose AMM pools (Uniswap v2).</p>
+                                    <p>Simple model for general purpose AMM pools (constant product pool).</p>
                                 </div>
                                 <Tick />
                             </PoolType>
@@ -499,8 +488,7 @@ const CreatePool = () => {
                                 <div>
                                     <h3>Stable</h3>
                                     <p>
-                                        Highly effecient AMM model for correlated assets (i.e.
-                                        stablecoins) that offers lower slippage.
+                                        Highly efficient AMM model for correlated assets (e.g., stablecoins) with lower slippage.
                                     </p>
                                 </div>
                                 <Tick />
@@ -508,13 +496,13 @@ const CreatePool = () => {
                             {type === POOL_TYPE.stable && (
                                 <Alert
                                     title="Note:"
-                                    text="Stable pools are designed for assets that have 1:1 price ratio to each other (e.g. ETH/yETH, USDC/yUSDC). We don't recommend creating stable pools for volatile assets."
+                                    text="Stable pools are for assets with a 1:1 price ratio (e.g., USDC/USDT). Avoid using them for volatile assets."
                                 />
                             )}
                         </StyledFormSection>
 
                         <StyledFormSection>
-                            <FormSectionTitle>Tokens in pool</FormSectionTitle>
+                            <FormSectionTitle>Select tokens for pool</FormSectionTitle>
                             <StyledAssetDropdown
                                 label="First asset"
                                 asset={firstAsset}
@@ -628,10 +616,7 @@ const CreatePool = () => {
                         <StyledFormSection>
                             <FormSectionTitle>Pool swap fees</FormSectionTitle>
                             <FormSectionDescriptionStyled>
-                                Pool fees are paid by users who swap assets to users who provided
-                                liquidity to this pool. Creation of the pool doesn't give a creator
-                                any benefit. A typical use case for pool creation is when an asset
-                                issuer creates needs more exposure to the market.
+                                Pool fees are paid by users swapping assets and distributed to liquidity providers.
                             </FormSectionDescriptionStyled>
                             {type === POOL_TYPE.stable ? (
                                 <FormRow>
@@ -639,7 +624,7 @@ const CreatePool = () => {
                                         label={
                                             <ErrorLabel $isError={isStableFeeInputError}>
                                                 {isStableFeeInputError
-                                                    ? `Percent fee should be in range ${STABLE_POOL_FEE_PERCENTS.min}% - ${STABLE_POOL_FEE_PERCENTS.max}%`
+                                                    ? `Fee should be in range ${STABLE_POOL_FEE_PERCENTS.min}% - ${STABLE_POOL_FEE_PERCENTS.max}%`
                                                     : `Swap Fee (${STABLE_POOL_FEE_PERCENTS.min}% - ${STABLE_POOL_FEE_PERCENTS.max}%)`}
                                             </ErrorLabel>
                                         }
@@ -665,9 +650,8 @@ const CreatePool = () => {
                         <StyledFormSection>
                             <FormSectionTitle>Pool creation fee</FormSectionTitle>
                             <FormSectionDescriptionStyled>
-                                Pool creation fee is introduced to prevent abuse and spam activities
-                                and ensure that creators have valid reasons to create a pool (e.g.
-                                support their project token).
+                                A pool creation fee helps prevent abuse and spam. 
+                                Creating a pool provides no direct benefit to the creator.
                             </FormSectionDescriptionStyled>
                             <CreationFee>
                                 <CreationFeeCost>
@@ -690,7 +674,7 @@ const CreatePool = () => {
                             <Button
                                 isBig
                                 fullWidth
-                                onClick={() => createPoolWithWarning()}
+                                onClick={() => createPool()}
                                 pending={pending}
                                 disabled={
                                     !agreeWithFee ||

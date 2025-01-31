@@ -2,21 +2,16 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { getAquaAssetData } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { ModalService, StellarService } from 'services/globalServices';
+import { DOWN_ICE_CODE, ICE_ISSUER, StellarEvents, UP_ICE_CODE } from 'services/stellar.service';
+
 import { Asset } from 'types/stellar';
 
-import { ModalService, StellarService } from 'services/globalServices';
-import {
-    AQUA_CODE,
-    AQUA_ISSUER,
-    DOWN_ICE_CODE,
-    ICE_ISSUER,
-    StellarEvents,
-    UP_ICE_CODE,
-} from 'services/stellar.service';
 import { flexRowSpaceBetween, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -30,7 +25,7 @@ import Button from 'basics/buttons/Button';
 import DotsLoader from 'basics/loaders/DotsLoader';
 
 import { PairStats, TotalStats } from 'pages/vote/api/types';
-import { AQUA, DOWN_ICE, UP_ICE } from 'pages/vote/components/MainPage/MainPage';
+import { DOWN_ICE, UP_ICE } from 'pages/vote/components/MainPage/MainPage';
 import { getPercent } from 'pages/vote/components/MainPage/Table/VoteAmount/VoteAmount';
 
 import VotesProgressLine from './VotesProgressLine/VotesProgressLine';
@@ -49,7 +44,7 @@ const Container = styled.aside`
     background: ${COLORS.white};
     display: flex;
     flex-direction: column;
-    margin-top: -48rem;
+    margin-top: -18rem;
     z-index: 102;
 
     ${respondDown(Breakpoints.lg)`
@@ -151,6 +146,8 @@ const Sidebar = ({
 }: SidebarProps): React.ReactNode => {
     const { isLogged, account } = useAuthStore();
 
+    const { aquaAssetString, aquaStellarAsset } = getAquaAssetData();
+
     const createPair = () => {
         if (isLogged) {
             ModalService.openModal(CreatePairModal, {
@@ -192,12 +189,11 @@ const Sidebar = ({
     const result = +votesData.upvote_value - +votesData.downvote_value || 0;
 
     const upAqua =
-        votesData.extra?.upvote_assets.find(({ asset }) => asset === `${AQUA_CODE}:${AQUA_ISSUER}`)
-            ?.votes_sum ?? 0;
+        votesData.extra?.upvote_assets.find(({ asset }) => asset === aquaAssetString)?.votes_sum ??
+        0;
     const downAqua =
-        votesData.extra?.downvote_assets.find(
-            ({ asset }) => asset === `${AQUA_CODE}:${AQUA_ISSUER}`,
-        )?.votes_sum ?? 0;
+        votesData.extra?.downvote_assets.find(({ asset }) => asset === aquaAssetString)
+            ?.votes_sum ?? 0;
     const upIce =
         votesData.extra?.upvote_assets.find(({ asset }) => asset === `${UP_ICE_CODE}:${ICE_ISSUER}`)
             ?.votes_sum ?? 0;
@@ -207,14 +203,17 @@ const Sidebar = ({
         )?.votes_sum ?? 0;
 
     const getUpVotesValue = () =>
-        +StellarService.getMarketVotesValue(votesData.account_id, account?.accountId(), AQUA) +
-        +StellarService.getMarketVotesValue(votesData.account_id, account?.accountId(), UP_ICE);
+        +StellarService.getMarketVotesValue(
+            votesData.account_id,
+            account?.accountId(),
+            aquaStellarAsset,
+        ) + +StellarService.getMarketVotesValue(votesData.account_id, account?.accountId(), UP_ICE);
 
     const getDownVotesValue = () =>
         +StellarService.getMarketVotesValue(
             votesData.downvote_account_id,
             account?.accountId(),
-            AQUA,
+            aquaStellarAsset,
         ) +
         +StellarService.getMarketVotesValue(
             votesData.downvote_account_id,

@@ -3,25 +3,24 @@ import { useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { getAmmRewards, getAquaInPoolsSum } from 'api/amm';
+import { getAquaInPoolsSum } from 'api/amm';
 import { getAquaCirculatingSupply } from 'api/cmc';
 import { getIceStatistics } from 'api/ice-locker';
 import { getTotalRewards } from 'api/rewards';
 import { getAssetDetails } from 'api/stellar-expert';
 
-import { AQUA_ASSET_STRING } from 'constants/assets';
-
+import { getAquaAssetData } from 'helpers/assets';
 import { getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 import { getPercentValue } from 'helpers/number';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
+import { ModalService, StellarService } from 'services/globalServices';
+
 import { IceStatistics } from 'types/api-ice-locker';
 import { ExpertAssetData } from 'types/api-stellar-expert';
 
-import { StellarService } from 'services/globalServices';
-import { AQUA_CODE, AQUA_ISSUER } from 'services/stellar.service';
 import { respondDown, respondUp } from 'web/mixins';
 import { Breakpoints, COLORS, FONT_FAMILY } from 'web/styles';
 
@@ -32,10 +31,13 @@ import VoteMarketsImage from 'assets/landing-about-vote-markets-80.svg';
 import VoteProposalsImage from 'assets/landing-about-vote-proposals-80.svg';
 
 import Asset from 'basics/Asset';
+import { Button } from 'basics/buttons';
 import Changes24 from 'basics/Changes24';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import GetAquaModal from '../../../../web/modals/GetAquaModal';
 
 const WhatIsSection = styled.section`
     display: flex;
@@ -103,6 +105,14 @@ const Description = styled.div`
         font-size: 1.4rem;
         line-height: 2.5rem;
         margin-bottom: 4rem;
+    `}
+`;
+
+const MainDescription = styled(Description)`
+    font-size: 2rem;
+
+    ${respondDown(Breakpoints.xl)`
+        font-size: 1.6rem;
     `}
 `;
 
@@ -240,7 +250,7 @@ const StatsTitle = styled.span`
 
 const TooltipInner = styled.span`
     width: 15rem;
-    white-space: wrap;
+    white-space: normal;
 
     ${respondDown(Breakpoints.xs)`
         width: 13rem;
@@ -251,12 +261,18 @@ const StatsDescription = styled.span`
     margin-top: 0.8rem;
 `;
 
+const StyledButton = styled(Button)`
+    margin: auto 0 0;
+`;
+
 const About = (): React.ReactElement => {
     const { assetsInfo } = useAssetsStore();
 
     const location = useLocation();
 
-    const aquaAsset = assetsInfo.get(AQUA_ASSET_STRING);
+    const { aquaStellarAsset, aquaAssetString } = getAquaAssetData();
+
+    const aquaAsset = assetsInfo.get(aquaAssetString);
     const { first_transaction, liquidity_pools_amount } = aquaAsset || {};
 
     const [iceStats, setIceStats] = useState<IceStatistics>(null);
@@ -264,6 +280,7 @@ const About = (): React.ReactElement => {
     const [totalRewards, setTotalRewards] = useState<number>(null);
     const [aquaInSorobanAmm, setAquaInSorobanAmm] = useState<number>(null);
     const [aquaCirculatingSupply, setAquaCirculatingSupply] = useState<number>(null);
+    const [aquaUsdPrice, setAquaUsdPrice] = useState<number>(0);
 
     const aquaTokenRef = useRef(null);
 
@@ -274,7 +291,11 @@ const About = (): React.ReactElement => {
     }, [location, aquaTokenRef]);
 
     useEffect(() => {
-        getAssetDetails(StellarService.createAsset(AQUA_CODE, AQUA_ISSUER))
+        StellarService.getAquaUsdPrice().then(setAquaUsdPrice);
+    }, []);
+
+    useEffect(() => {
+        getAssetDetails(aquaStellarAsset)
             .then(data => {
                 setExpertData(data);
             })
@@ -286,11 +307,9 @@ const About = (): React.ReactElement => {
             setIceStats(res);
         });
 
-        Promise.all([getAmmRewards(), getTotalRewards()]).then(
-            ([ammRewards, { total_daily_amm_reward, total_daily_sdex_reward }]) => {
-                setTotalRewards(ammRewards + total_daily_amm_reward + total_daily_sdex_reward);
-            },
-        );
+        getTotalRewards().then(({ total_daily_amm_reward, total_daily_sdex_reward }) => {
+            setTotalRewards(total_daily_amm_reward + total_daily_sdex_reward);
+        });
 
         getAquaInPoolsSum().then(res => {
             setAquaInSorobanAmm(res);
@@ -306,13 +325,11 @@ const About = (): React.ReactElement => {
             <WhatIsSection>
                 <Wrapper>
                     <Title>What is Aquarius?</Title>
-                    <Description>
-                        Aquarius is designed to supercharge trading on Stellar, bring more liquidity
-                        and give control over how it is distributed across various market pairs. It
-                        adds incentives for SDEX traders ("market maker rewards") and rewards for
-                        AMM liquidity providers. Aquarius allows community to set rewards for
-                        selected markets through on-chain voting.
-                    </Description>
+                    <MainDescription>
+                        Aquarius is Stellar’s liquidity hub, featuring a powerful AMM engine,
+                        rewards for liquidity providers and traders, and community control over
+                        reward distribution across market pairs.
+                    </MainDescription>
                 </Wrapper>
             </WhatIsSection>
 
@@ -328,13 +345,7 @@ const About = (): React.ReactElement => {
                                         <Asset asset={aquaAsset} isBig />
                                         <AquaPriceBlock>
                                             <AquaPrice>
-                                                $
-                                                {formatBalance(
-                                                    expertData?.price7d?.[
-                                                        expertData?.price7d.length - 1
-                                                    ]?.[1] ?? 0,
-                                                    true,
-                                                )}
+                                                ${formatBalance(aquaUsdPrice, true)}
                                             </AquaPrice>
                                             <Changes24 expertData={expertData} />
                                         </AquaPriceBlock>
@@ -457,33 +468,32 @@ const About = (): React.ReactElement => {
                         <AquaTokenStatsDescription>
                             <Title>AQUA token</Title>
                             <Description>
-                                AQUA is the currency for rewards and on-chain voting in Aquarius.
-                                Holders of AQUA can vote for trusted assets issued on Stellar or
-                                choose market pairs that require additional liquidity. Liquidity
-                                providers can earn AQUA by actively trading on the selected market
-                                pairs. AQUA will also play an important role in projects being
-                                developed by Ultra Stellar. Most of created AQUA tokens will be
-                                distributed freely to network participants and market makers.
-                                Contact email for institutional investors - tokens@aqua.network.
+                                AQUA powers rewards and on-chain voting in Aquarius. Holders can
+                                vote for trusted Stellar assets or market pairs needing liquidity.
+                                Liquidity providers earn AQUA by trading on these selected pairs.
                             </Description>
+                            <StyledButton
+                                onClick={() => ModalService.openModal(GetAquaModal, {})}
+                                isBig
+                            >
+                                Get AQUA Tokens
+                            </StyledButton>
                         </AquaTokenStatsDescription>
                     </AquaInfoContainer>
 
-                    <TitleAquaInfoSection>What can I do with AQUA token?</TitleAquaInfoSection>
+                    <TitleAquaInfoSection>Utility of AQUA</TitleAquaInfoSection>
                     <AquaInfoContainer>
                         <AquaInfoBlockData>
                             <IconWithTitleWrapper>
                                 <InvestAmmImage />
-                                <TitleAquaInfoBlock>Invest into AMM</TitleAquaInfoBlock>
+                                <TitleAquaInfoBlock>Deposit into AMM</TitleAquaInfoBlock>
                             </IconWithTitleWrapper>
 
-                            <Description>
-                                In the Pools section you can deposit AQUA into one of the volatile
-                                pools with other Stellar assets to start getting LP rewards. If the
-                                market you are investing into is in the reward zone based on voting,
-                                you’ll get additional AQUA rewards. Check the Voting section to find
-                                out which markets are currently in the reward zone.
-                            </Description>
+                            <MainDescription>
+                                Deposit AQUA into Aquarius AMM pools with Stellar assets to earn LP
+                                rewards from trading. Markets in the reward zone grant extra AQUA
+                                emission rewards.
+                            </MainDescription>
                         </AquaInfoBlockData>
 
                         <AquaInfoBlockData>
@@ -492,12 +502,11 @@ const About = (): React.ReactElement => {
                                 <TitleAquaInfoBlock>Freeze into ICE</TitleAquaInfoBlock>
                             </IconWithTitleWrapper>
 
-                            <Description>
-                                Freeze your AQUA into ICE to increase your voting power. In exchange
-                                for each AQUA token you’ll get <b>ICE, upvoteICE, downvoteICE</b>{' '}
-                                and <b>governICE</b> tokens designed for specific usage. Keeping
-                                your AQUA frozen increases the efficiency of your investment.
-                            </Description>
+                            <MainDescription>
+                                Convert your AQUA into ICE to boost your voting power. Each frozen
+                                AQUA gives you ICE, which can be used for Aquarius governance and
+                                additional benefits.
+                            </MainDescription>
                         </AquaInfoBlockData>
 
                         <AquaInfoBlockData>
@@ -506,11 +515,10 @@ const About = (): React.ReactElement => {
                                 <TitleAquaInfoBlock>Vote for proposals</TitleAquaInfoBlock>
                             </IconWithTitleWrapper>
 
-                            <Description>
-                                AQUA grants a holder power to participate in the community voting
-                                for proposals. Want to influence the future of the Aquarius
-                                protocol? Check for active proposals in the Governance section.
-                            </Description>
+                            <MainDescription>
+                                Use AQUA to participate in community voting and shape the future of
+                                the Aquarius protocol. Explore active proposals in the DAO section.
+                            </MainDescription>
                         </AquaInfoBlockData>
 
                         <AquaInfoBlockData>
@@ -519,10 +527,11 @@ const About = (): React.ReactElement => {
                                 <TitleAquaInfoBlock>Vote for markets</TitleAquaInfoBlock>
                             </IconWithTitleWrapper>
 
-                            <Description>
-                                Each AQUA holder can vote for markets so they get into the reward
-                                zone. Check the markets available in the Voting section.
-                            </Description>
+                            <MainDescription>
+                                AQUA holders can vote to add markets to the reward zone, deciding
+                                which markets earn AQUA emissions. Receive extra incentives for
+                                supporting certain pools.
+                            </MainDescription>
                         </AquaInfoBlockData>
                     </AquaInfoContainer>
                 </AquaWrapper>

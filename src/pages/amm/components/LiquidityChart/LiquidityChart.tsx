@@ -8,7 +8,6 @@ import { formatBalance } from 'helpers/format-number';
 
 import { PoolStatistics } from 'types/amm';
 
-import { StellarService } from 'services/globalServices';
 import { COLORS } from 'web/styles';
 
 const Axis = styled.g`
@@ -38,6 +37,7 @@ export const transformDate = (date_str: string) => {
 
 interface LiquidityChartProps {
     data: PoolStatistics[];
+    currentLiquidity?: string;
     width?: number;
     height?: number;
     marginTop?: number;
@@ -48,6 +48,7 @@ interface LiquidityChartProps {
 
 const LiquidityChart = ({
     data,
+    currentLiquidity,
     width = 312,
     height = 264,
     marginTop = 16,
@@ -66,14 +67,14 @@ const LiquidityChart = ({
         .scaleLinear()
         .range([height - marginBottom, marginTop + height * 0.4])
         .domain([
-            d3.min(data, d => Number(d.liquidity) / 1e7),
-            d3.max(data, d => Number(d.liquidity) / 1e7),
+            d3.min(data, d => Number(d.liquidity_usd) / 1e7),
+            d3.max(data, d => Number(d.liquidity_usd) / 1e7),
         ]);
 
     const line = d3
         .line<PoolStatistics>()
         .x(d => x(transformDate(d.datetime_str || d.date_str))) // Transform the date
-        .y(d => y(Number(d.liquidity) / 1e7)) // Scale liquidity value
+        .y(d => y(Number(d.liquidity_usd) / 1e7)) // Scale liquidity value
         .curve(d3.curveMonotoneX);
 
     const path = (data: PoolStatistics[]) => {
@@ -137,10 +138,9 @@ const LiquidityChart = ({
                 <LiquidityValue x="16" y="63">
                     $
                     {formatBalance(
-                        (+data[selectedIndex === null ? data.length - 1 : selectedIndex]
-                            ?.liquidity /
-                            1e7) *
-                            StellarService.priceLumenUsd,
+                        (selectedIndex === null
+                            ? +currentLiquidity || +data[data.length - 1]?.liquidity_usd
+                            : +data[selectedIndex]?.liquidity_usd) / 1e7,
                         true,
                         true,
                     )}
@@ -192,7 +192,7 @@ const LiquidityChart = ({
                                 data[selectedIndex]?.datetime_str || data[selectedIndex]?.date_str,
                             ),
                         )}
-                        cy={y(Number(data[selectedIndex].liquidity) / 1e7)}
+                        cy={y(Number(data[selectedIndex].liquidity_usd) / 1e7)}
                     />
                 </g>
             )}

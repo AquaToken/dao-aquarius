@@ -1,19 +1,23 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { getUserPools } from 'api/amm';
 
+import { MainRoutes } from 'constants/routes';
+
 import { formatBalance } from 'helpers/format-number';
+
+import { useUpdateIndex } from 'hooks/useUpdateIndex';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { PoolUserProcessed } from 'types/amm';
-
-import { useUpdateIndex } from 'hooks/useUpdateIndex';
 import { ModalService, StellarService } from 'services/globalServices';
 import { POOL_TYPE } from 'services/soroban.service';
+
+import { PoolUserProcessed } from 'types/amm';
+
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -23,10 +27,11 @@ import Select from 'basics/inputs/Select';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
 import PageLoader from 'basics/loaders/PageLoader';
 
-import { ExternalLinkStyled } from 'pages/profile/AmmRewards/AmmRewards';
+import { AnalyticsUrlParams, AnalyticsTabs } from 'pages/amm/pages/Analytics';
+import { ProfileTabs, ProfileUrlParams } from 'pages/profile/Profile';
+import { ExternalLinkStyled } from 'pages/profile/SdexRewards/SdexRewards';
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
 
-import { MainRoutes } from '../../../../routes';
 import PoolsList from '../PoolsList/PoolsList';
 
 const PoolsListBlock = styled.div<{ $onlyList: boolean }>`
@@ -106,10 +111,14 @@ const SelectStyled = styled(Select)`
 `;
 
 enum FilterValues {
-    all = '',
+    all = 'all',
     volatile = 'volatile',
     stable = 'stable',
     classic = 'classic',
+}
+
+enum UrlParams {
+    filter = 'filter',
 }
 
 const FilterOptions = [
@@ -130,7 +139,36 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
 
     const [pools, setPools] = useState<PoolUserProcessed[]>([]);
     const [classicPools, setClassicPools] = useState([]);
-    const [filter, setFilter] = useState(FilterValues.all);
+    const [filter, setFilter] = useState(null);
+
+    const location = useLocation();
+    const history = useHistory();
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+
+        if (
+            params.get(AnalyticsUrlParams.tab) !== AnalyticsTabs.my &&
+            params.get(ProfileUrlParams.tab) !== ProfileTabs.liquidity
+        ) {
+            return;
+        }
+        const filterParam = params.get(UrlParams.filter);
+
+        if (filterParam) {
+            setFilter(filterParam as FilterValues);
+        } else {
+            params.append(UrlParams.filter, FilterValues.all);
+            setFilter(FilterValues.all);
+            history.replace({ search: params.toString() });
+        }
+    }, [location]);
+
+    const setFilterValue = (value: FilterValues) => {
+        const params = new URLSearchParams(location.search);
+        params.set(UrlParams.filter, value);
+        history.push({ search: params.toString() });
+    };
 
     const updateIndex = useUpdateIndex(5000);
 
@@ -206,8 +244,8 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                     </ListTotal>
                 </ListHeader>
             )}
-            <ToggleGroupStyled value={filter} options={FilterOptions} onChange={setFilter} />
-            <SelectStyled value={filter} options={FilterOptions} onChange={setFilter} />
+            <ToggleGroupStyled value={filter} options={FilterOptions} onChange={setFilterValue} />
+            <SelectStyled value={filter} options={FilterOptions} onChange={setFilterValue} />
             {!filteredPools ? (
                 <PageLoader />
             ) : filteredPools.length ? (

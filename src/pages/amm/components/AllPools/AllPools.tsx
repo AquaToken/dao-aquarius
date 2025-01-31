@@ -1,16 +1,18 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { FilterOptions, getPools, PoolsSortFields } from 'api/amm';
 
+import { AmmRoutes } from 'constants/routes';
+
 import { formatBalance } from 'helpers/format-number';
+
+import { POOL_TYPE } from 'services/soroban.service';
 
 import { PoolProcessed } from 'types/amm';
 
-import { StellarService } from 'services/globalServices';
-import { POOL_TYPE } from 'services/soroban.service';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -24,9 +26,8 @@ import Pagination from 'basics/Pagination';
 import Table, { CellAlign } from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
+import { AnalyticsUrlParams, AnalyticsTabs } from 'pages/amm/pages/Analytics';
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
-
-import { AmmRoutes } from '../../../../routes';
 
 const ToggleGroupStyled = styled(ToggleGroup)`
     width: fit-content;
@@ -55,12 +56,17 @@ const TitleWithTooltip = styled.span`
     }
 `;
 
+enum UrlParams {
+    sort = 'sort',
+    filter = 'filter',
+}
+
 const TooltipInner = styled.span`
     width: 20rem;
     white-space: pre-wrap;
 `;
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 20;
 
 const OPTIONS = [
     { label: 'All', value: FilterOptions.all },
@@ -73,20 +79,59 @@ interface AllPoolsProps {
 }
 
 const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
-    const [filter, setFilter] = useState(FilterOptions.all);
-    const [sort, setSort] = useState(PoolsSortFields.liquidityUp);
+    const [filter, setFilter] = useState(null);
+    const [sort, setSort] = useState(null);
     const [pools, setPools] = useState<PoolProcessed[] | null>(null);
     const [total, setTotal] = useState(0);
     const [page, setPage] = useState(1);
     const [pending, setPending] = useState(false);
 
     const history = useHistory();
+    const location = useLocation();
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        if (params.get(AnalyticsUrlParams.tab) !== AnalyticsTabs.top) {
+            return;
+        }
+        const filterParam = params.get(UrlParams.filter);
+        if (filterParam) {
+            setFilter(filterParam as FilterOptions);
+        } else {
+            params.append(UrlParams.filter, FilterOptions.all);
+            setFilter(FilterOptions.all);
+            history.replace({ search: params.toString() });
+        }
+        const sortParam = params.get(UrlParams.sort);
+        if (sortParam) {
+            setSort(sortParam as PoolsSortFields);
+        } else {
+            params.append(UrlParams.sort, PoolsSortFields.liquidityUp);
+            setSort(PoolsSortFields.liquidityUp);
+            history.replace({ search: params.toString() });
+        }
+    }, [location]);
+
+    const setFilterParam = (filterOption: FilterOptions) => {
+        const params = new URLSearchParams(location.search);
+        params.set(UrlParams.filter, filterOption);
+        history.push({ search: params.toString() });
+    };
+
+    const setSortParam = (sort: PoolsSortFields) => {
+        const params = new URLSearchParams(location.search);
+        params.set(UrlParams.sort, sort);
+        history.push({ search: params.toString() });
+    };
 
     useEffect(() => {
         setPage(1);
     }, [filter]);
 
     useEffect(() => {
+        if (!sort || !filter) {
+            return;
+        }
         setPending(true);
         getPools(filter, page, PAGE_SIZE, sort, search).then(({ pools, total }) => {
             setPools(pools);
@@ -96,25 +141,42 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
     }, [filter, page, search, sort]);
 
     const changeSort = (newSort: PoolsSortFields) => {
-        setSort(newSort);
+        setSortParam(newSort);
         setPage(1);
     };
 
     const goToPoolPage = (id: string) => {
         history.push(`${AmmRoutes.analytics}${id}/`);
     };
-    return !pools || !StellarService.priceLumenUsd ? (
+    return !pools ? (
         <PageLoader />
     ) : (
         <>
-            <ToggleGroupStyled value={filter} options={OPTIONS} onChange={setFilter} />
-            <SelectStyled value={filter} options={OPTIONS} onChange={setFilter} />
+            <ToggleGroupStyled value={filter} options={OPTIONS} onChange={setFilterParam} />
+            <SelectStyled value={filter} options={OPTIONS} onChange={setFilterParam} />
             {pools.length ? (
                 <>
                     <Table
                         pending={pending}
                         head={[
-                            { children: 'Pool', flexSize: 4 },
+                            { children: 'Pool', flexSize: 6 },
+                            {
+                                children: 'TVL',
+                                sort: {
+                                    onClick: () =>
+                                        changeSort(
+                                            sort === PoolsSortFields.liquidityUp
+                                                ? PoolsSortFields.liquidityDown
+                                                : PoolsSortFields.liquidityUp,
+                                        ),
+                                    isEnabled:
+                                        sort === PoolsSortFields.liquidityUp ||
+                                        sort === PoolsSortFields.liquidityDown,
+                                    isReversed: sort === PoolsSortFields.liquidityDown,
+                                },
+                                align: CellAlign.Right,
+                                flexSize: 2,
+                            },
                             {
                                 children: 'Fee',
                                 flexSize: 1.5,
@@ -137,37 +199,19 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                                 flexSize: 2,
                                 align: CellAlign.Right,
                             },
-                            {
-                                children: 'TVL',
-                                sort: {
-                                    onClick: () =>
-                                        changeSort(
-                                            sort === PoolsSortFields.liquidityUp
-                                                ? PoolsSortFields.liquidityDown
-                                                : PoolsSortFields.liquidityUp,
-                                        ),
-                                    isEnabled:
-                                        sort === PoolsSortFields.liquidityUp ||
-                                        sort === PoolsSortFields.liquidityDown,
-                                    isReversed: sort === PoolsSortFields.liquidityDown,
-                                },
-                                align: CellAlign.Right,
-                                flexSize: 2,
-                            },
+
                             {
                                 children: (
                                     <TitleWithTooltip>
-                                        LP APY
+                                        Base APY
                                         <Tooltip
                                             showOnHover
                                             content={
                                                 <TooltipInner>
-                                                    Projection of annual yield for liquidity
-                                                    providers. The yield is accrued based on the LP
-                                                    token price growth in relation to the deposited
-                                                    tokens, and is generated via swap fees. This
-                                                    type of reward is paid to all liquidity
-                                                    providers in all pools.
+                                                    Annual yield projection for liquidity providers,
+                                                    based on current trading activity and collected
+                                                    fees. Rewards are allocated based on each
+                                                    provider’s share of liquidity in the pool.
                                                 </TooltipInner>
                                             }
                                             position={TOOLTIP_POSITION.top}
@@ -199,12 +243,9 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                                             showOnHover
                                             content={
                                                 <TooltipInner>
-                                                    Projection of additional annual rewards in AQUA
-                                                    distributed by Aquarius team. These rewards are
-                                                    paid to liquidity providers to pools that are
-                                                    included to the "rewards zone" - now it's done
-                                                    by the Aquarius team but later will be based on
-                                                    users' voting.
+                                                    Projected additional annual AQUA rewards for
+                                                    liquidity providers in pools within the "rewards
+                                                    zone", determined by Aquarius DAO voting.
                                                 </TooltipInner>
                                             }
                                             position={TOOLTIP_POSITION.top}
@@ -241,12 +282,22 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                                             mobileVerticalDirections
                                             withoutLink
                                             poolType={pool.pool_type as POOL_TYPE}
-                                            isRewardsPoolOn={Boolean(Number(pool.reward_tps))}
+                                            isRewardsOn={Boolean(Number(pool.reward_tps))}
                                         />
                                     ),
-                                    flexSize: 4,
+                                    flexSize: 6,
                                 },
-
+                                {
+                                    children: pool.liquidity_usd
+                                        ? `$${formatBalance(
+                                              Number(pool.liquidity_usd) / 1e7,
+                                              true,
+                                          )}`
+                                        : '0',
+                                    label: 'TVL:',
+                                    align: CellAlign.Right,
+                                    flexSize: 2,
+                                },
                                 {
                                     children: `${(Number(pool.fee) * 100).toFixed(2)}%`,
                                     label: 'Fee:',
@@ -265,32 +316,19 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                                     align: CellAlign.Right,
                                 },
                                 {
-                                    children: pool.liquidity
-                                        ? `$${formatBalance(
-                                              (Number(pool.liquidity) / 1e7) *
-                                                  StellarService.priceLumenUsd,
-                                              true,
-                                          )}`
-                                        : '0',
-                                    label: 'TVL:',
-                                    align: CellAlign.Right,
-                                    flexSize: 2,
-                                },
-                                {
                                     children: `${(Number(pool.apy) * 100).toFixed(2)}%`,
                                     label: (
                                         <TitleWithTooltip>
-                                            LP APY
+                                            Base APY
                                             <Tooltip
                                                 showOnHover
                                                 content={
                                                     <TooltipInner>
-                                                        Projection of annual yield for liquidity
-                                                        providers. The yield is accrued based on the
-                                                        LP token price growth in relation to the
-                                                        deposited tokens, and is generated via swap
-                                                        fees. This type of reward is paid to all
-                                                        liquidity providers in all pools.
+                                                        Annual yield projection for liquidity
+                                                        providers, based on current trading activity
+                                                        and collected fees. Rewards are allocated
+                                                        based on each provider’s share of liquidity
+                                                        in the pool.
                                                     </TooltipInner>
                                                 }
                                                 position={TOOLTIP_POSITION.top}
@@ -311,12 +349,10 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                                                 showOnHover
                                                 content={
                                                     <TooltipInner>
-                                                        Projection of additional annual rewards in
-                                                        AQUA distributed by Aquarius team. These
-                                                        rewards are paid to liquidity providers to
-                                                        pools that are included to the "rewards
-                                                        zone" - now it's done by the Aquarius team
-                                                        but later will be based on users' voting.
+                                                        Projected additional annual AQUA rewards for
+                                                        liquidity providers in pools within the
+                                                        "rewards zone", determined by Aquarius DAO
+                                                        voting.
                                                     </TooltipInner>
                                                 }
                                                 position={TOOLTIP_POSITION.top}

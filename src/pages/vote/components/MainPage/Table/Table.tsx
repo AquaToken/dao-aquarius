@@ -1,6 +1,7 @@
-import * as React from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
+
+import { MarketRoutes } from 'constants/routes';
 
 import { formatBalance } from 'helpers/format-number';
 
@@ -21,7 +22,6 @@ import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 import VoteAmount from './VoteAmount/VoteAmount';
 import VoteButton from './VoteButton/VoteButton';
 
-import { MarketRoutes } from '../../../../../routes';
 import { PairStats, TotalStats } from '../../../api/types';
 import BribesModal from '../BribesModal/BribesModal';
 import ManageVotesModal from '../ManageVotesModal/ManageVotesModal';

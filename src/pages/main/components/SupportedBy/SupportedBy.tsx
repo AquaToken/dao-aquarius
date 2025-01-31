@@ -4,10 +4,10 @@ import styled from 'styled-components';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
+import Freighter from 'assets/freighter-dark.svg';
 import Lobstr from 'assets/lobstr-name-logo.svg';
 import StellarTerm from 'assets/stellarterm-logo.svg';
 import StellarX from 'assets/stellarx-logo.svg';
-import Vault from 'assets/vault-logo.svg';
 
 const Container = styled.section`
     display: flex;
@@ -31,7 +31,7 @@ const Wrapper = styled.div`
     max-width: 142rem;
     padding: 0 10rem;
 
-    ${respondDown(Breakpoints.md)`
+    ${respondDown(Breakpoints.lg)`
         padding: 0 1.6rem;
         max-width: 55rem;
         flex-direction: column;
@@ -57,13 +57,13 @@ const ImageBlock = styled.div`
     max-width: 108rem;
     align-items: center;
 
-    ${respondDown(Breakpoints.md)`
+    ${respondDown(Breakpoints.lg)`
         width: 100%;
         justify-content: space-between;
         flex-wrap: wrap;
         
         svg {
-            width: 12.4rem;
+            width: 14.3rem;
             margin-bottom: 2rem;
             margin-right: auto;
             margin-left: auto;
@@ -85,8 +85,8 @@ const SupportedBy = () => (
                     <StellarX />
                 </a>
 
-                <a href="https://vault.lobstr.co/" target="_blank" rel="noreferrer">
-                    <Vault />
+                <a href="https://www.freighter.app/" target="_blank" rel="noreferrer">
+                    <Freighter />
                 </a>
 
                 <a href="https://stellarterm.com/" target="_blank" rel="noreferrer">

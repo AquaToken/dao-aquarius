@@ -1,23 +1,27 @@
-import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { getPool } from 'api/amm';
 
+import { AmmRoutes } from 'constants/routes';
+
+import { getAquaAssetData } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
+import { truncateString } from 'helpers/truncate-string';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
+
+import { useUpdateIndex } from 'hooks/useUpdateIndex';
 
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { SorobanService, ToastService } from 'services/globalServices';
+import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
+
 import { PoolExtended } from 'types/amm';
 import { Int128Parts } from 'types/stellar';
 
-import { useUpdateIndex } from 'hooks/useUpdateIndex';
-import { SorobanService, StellarService, ToastService } from 'services/globalServices';
-import { AQUA_CODE, AQUA_ISSUER } from 'services/stellar.service';
-import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -25,6 +29,7 @@ import ArrowLeft from 'assets/icon-arrow-left.svg';
 
 import Button from 'basics/buttons/Button';
 import CircleButton from 'basics/buttons/CircleButton';
+import CopyButton from 'basics/buttons/CopyButton';
 import ExternalLink from 'basics/ExternalLink';
 import PageLoader from 'basics/loaders/PageLoader';
 import Market from 'basics/Market';
@@ -32,7 +37,6 @@ import Market from 'basics/Market';
 import MigrateToSorobanBanner from 'components/MigrateToSorobanBanner';
 import NoTrustline from 'components/NoTrustline';
 
-import { AmmRoutes } from '../../../routes';
 import LiquidityChart from '../components/LiquidityChart/LiquidityChart';
 import PoolEvents from '../components/PoolEvents/PoolEvents';
 import PoolMembers from '../components/PoolMembers/PoolMembers';
@@ -122,15 +126,16 @@ const RewardsDescription = styled.div`
 const SectionRow = styled.div`
     ${flexRowSpaceBetween};
     align-items: center;
-    color: ${COLORS.grayText};
+    color: ${COLORS.paragraphText};
     margin: 1rem 0;
     height: 2.8rem;
+    font-size: 1.6rem;
+`;
 
-    span:first-child {
-        font-size: 1.6rem;
-        line-height: 2.8rem;
-        color: ${COLORS.paragraphText};
-    }
+const SectionLabel = styled.span`
+    font-size: 1.6rem;
+    line-height: 2.8rem;
+    color: ${COLORS.grayText};
 `;
 
 const Charts = styled.div`
@@ -166,6 +171,8 @@ const PoolPage = () => {
     const history = useHistory();
 
     const updateIndex = useUpdateIndex(5000);
+
+    const { aquaStellarAsset } = getAquaAssetData();
 
     useEffect(() => {
         if (!pool) {
@@ -269,17 +276,13 @@ const PoolPage = () => {
                                     pending={claimPending}
                                     disabled={
                                         pool.claim_killed ||
-                                        account?.getAssetBalance(
-                                            StellarService.createAsset(AQUA_CODE, AQUA_ISSUER),
-                                        ) === null
+                                        account?.getAssetBalance(aquaStellarAsset) === null
                                     }
                                 >
                                     Claim rewards
                                 </Button>
                             </Rewards>
-                            <NoTrustline
-                                asset={StellarService.createAsset(AQUA_CODE, AQUA_ISSUER)}
-                            />
+                            <NoTrustline asset={aquaStellarAsset} />
                         </SectionWrap>
                     </Section>
                 )}
@@ -288,42 +291,64 @@ const PoolPage = () => {
                         {Boolean(pool.stats.length) && (
                             <Charts>
                                 <Chart>
-                                    <LiquidityChart data={pool.stats} />
+                                    <LiquidityChart
+                                        data={pool.stats}
+                                        currentLiquidity={pool.liquidity_usd}
+                                    />
                                 </Chart>
                                 <Chart>
-                                    <VolumeChart data={pool.stats} />
+                                    <VolumeChart
+                                        data={pool.stats}
+                                        volume24h={{ volume_usd: pool.volume_usd }}
+                                    />
                                 </Chart>
                             </Charts>
                         )}
 
                         <SectionRow>
-                            <span>Type:</span>
+                            <SectionLabel>Type:</SectionLabel>
                             <span>{pool.pool_type === 'stable' ? 'Stable' : 'Volatile'}</span>
                         </SectionRow>
                         <SectionRow>
-                            <span>Fee:</span>
+                            <SectionLabel>Fee:</SectionLabel>
                             <span>{(Number(pool.fee) * 100).toFixed(2)}%</span>
                         </SectionRow>
                         {pool.assets.map((asset, index) => (
                             <SectionRow key={pool.tokens_addresses[index]}>
-                                <span>Total {asset.code}:</span>
+                                <SectionLabel>Total {asset.code}:</SectionLabel>
                                 <span>
                                     {formatBalance(+pool.reserves[index] / 1e7, true)} {asset.code}
                                 </span>
                             </SectionRow>
                         ))}
                         <SectionRow>
-                            <span>Total share:</span>
+                            <SectionLabel>Total share:</SectionLabel>
                             <span>{formatBalance(+pool.total_share / 1e7, true)}</span>
                         </SectionRow>
                         <SectionRow>
-                            <span>Members: </span>
+                            <SectionLabel>Members: </SectionLabel>
                             <span>{pool.membersCount}</span>
                         </SectionRow>
                         <SectionRow>
-                            <span>Daily reward: </span>
+                            <SectionLabel>Daily reward: </SectionLabel>
                             <span>
                                 {formatBalance((+pool.reward_tps / 1e7) * 60 * 60 * 24, true)} AQUA
+                            </span>
+                        </SectionRow>
+                        <SectionRow>
+                            <SectionLabel>Pool hash: </SectionLabel>
+                            <span>
+                                <CopyButton text={pool.index} isBlackText>
+                                    {truncateString(pool.index)}
+                                </CopyButton>
+                            </span>
+                        </SectionRow>
+                        <SectionRow>
+                            <SectionLabel>Pool address: </SectionLabel>
+                            <span>
+                                <CopyButton text={pool.address} isBlackText>
+                                    {truncateString(pool.address)}
+                                </CopyButton>
                             </span>
                         </SectionRow>
                     </SectionWrap>

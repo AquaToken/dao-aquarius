@@ -2,6 +2,8 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { LockerRoutes } from 'constants/routes';
+
 import { formatBalance } from 'helpers/format-number';
 
 import { respondDown } from 'web/mixins';
@@ -15,7 +17,6 @@ import ExternalLink from 'basics/ExternalLink';
 
 import { BalanceLabel } from 'pages/locker/components/LockerAccountPage/Portfolio/Portfolio';
 
-import { LockerRoutes } from '../../../../../routes';
 import { AccountEligibility } from '../../../api/types';
 
 const Container = styled.div`

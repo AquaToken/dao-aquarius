@@ -8,13 +8,13 @@ import CopyIcon from 'assets/icon-copy.svg';
 
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
-const CopyButtonContainer = styled.div`
+const CopyButtonContainer = styled.div<{ isBlackText?: boolean }>`
     display: flex;
     flex-direction: row;
     align-items: center;
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.purple};
+    color: ${({ isBlackText }) => (isBlackText ? COLORS.paragraphText : COLORS.purple)};
     cursor: pointer;
 `;
 
@@ -26,12 +26,18 @@ interface CopyButtonProps extends React.DOMAttributes<HTMLDivElement> {
     text: string;
     children: React.ReactNode;
     withoutLogo?: boolean;
+    isBlackText?: boolean;
 }
+
+const Inner = styled.div`
+    color: ${COLORS.white};
+`;
 
 const CopyButton = ({
     text,
     children,
     withoutLogo,
+    isBlackText,
     ...props
 }: CopyButtonProps): React.ReactNode => {
     const [isShowTooltip, setIsShowTooltip] = useState(false);
@@ -61,11 +67,12 @@ const CopyButton = ({
 
     return (
         <Tooltip
-            content={<span>Copied!</span>}
+            content={<Inner>Copied!</Inner>}
             position={TOOLTIP_POSITION.top}
             isShow={isShowTooltip}
+            color={COLORS.white}
         >
-            <CopyButtonContainer onClick={() => copyText()} {...props}>
+            <CopyButtonContainer onClick={() => copyText()} {...props} isBlackText={isBlackText}>
                 {children}
                 {!withoutLogo && <CopyIconStyled />}
             </CopyButtonContainer>

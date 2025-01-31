@@ -1,8 +1,8 @@
 import { Asset } from '@stellar/stellar-sdk';
 
-import { PoolClassic, PoolClassicReserves } from 'types/stellar';
-
 import { POOL_TYPE } from 'services/soroban.service';
+
+import { PoolClassic, PoolClassicReserves } from 'types/stellar';
 
 export type ListResponse<T> = {
     items: T[];
@@ -32,6 +32,8 @@ export type Pool = {
     total_share?: string;
     apy: string;
     rewards_apy: string;
+    liquidity_usd: string;
+    volume_usd: string;
 };
 
 export type PoolRewards = {
@@ -71,7 +73,12 @@ export type PoolBalance = {
     account_address: string;
 };
 
-export type PoolEventType = 'deposit' | 'withdraw' | 'swap';
+export enum PoolEventType {
+    deposit = 'deposit',
+    withdraw = 'withdraw',
+    swap = 'swap',
+    claim = 'claim',
+}
 
 export type PoolEvent = {
     event_type: PoolEventType;
