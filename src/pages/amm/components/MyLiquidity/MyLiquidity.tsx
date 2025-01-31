@@ -462,13 +462,16 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                             },
                             {
                                 children: pool.apy
-                                    ? `${formatBalance(pool.apy * 100, true)}%`
+                                    ? `${formatBalance(+(pool.apy * 100).toFixed(2), true)}%`
                                     : '-',
                                 label: 'Base APY',
                             },
                             {
                                 children: pool.rewards_apy
-                                    ? `${formatBalance(pool.rewards_apy * 100, true)}%`
+                                    ? `${formatBalance(
+                                          +(pool.rewards_apy * 100).toFixed(2),
+                                          true,
+                                      )}%`
                                     : '-',
                                 label: 'Rewards APY',
                             },
