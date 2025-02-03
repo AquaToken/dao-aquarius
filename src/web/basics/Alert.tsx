@@ -58,10 +58,6 @@ const Icon = styled(IconAlert)`
 
 const CheckboxStyled = styled(Checkbox)`
     margin-top: 0.8rem;
-
-    div {
-        font-size: 1.4rem;
-    }
 `;
 
 const iconFillColor = {
