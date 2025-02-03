@@ -167,7 +167,6 @@ const TooltipInner = styled.span`
 const CreationFee = styled.div`
     font-size: 1.6rem;
     margin-top: -1.3rem;
-    margin-bottom: 3.2rem;
     padding: 2.4rem;
     background-color: ${COLORS.lightGray};
     ${flexRowSpaceBetween};
@@ -180,6 +179,12 @@ const CreationFee = styled.div`
     `}
 `;
 
+const AlertContainer = styled.div`
+    border-top: 0.1rem solid ${COLORS.gray};
+    margin-top: 4.8rem;
+    padding-top: 3.2rem;
+`;
+
 const CreationFeeCost = styled.div`
     display: flex;
     align-items: center;
@@ -190,6 +195,10 @@ const CreationFeeCost = styled.div`
 
 const StyledCheckbox = styled(Checkbox)`
     width: fit-content;
+`;
+
+const ButtonStyled = styled(Button)`
+    margin-top: 4.8rem;
 `;
 
 const FEE_OPTIONS = [
@@ -221,6 +230,7 @@ const CreatePool = () => {
     const [createInfo, setCreateInfo] = useState(null);
 
     const [agreeWithFee, setAgreeWithFee] = useState(false);
+    const [agreeWithAlert, setAgreeWithAlert] = useState(false);
 
     const [pools, setPools] = useState<PoolProcessed[] | null>(null);
 
@@ -238,6 +248,7 @@ const CreatePool = () => {
             setAssetsCount(2);
             setThirdAsset(null);
             setFourthAsset(null);
+            setAgreeWithAlert(false);
         }
     }, [type]);
 
@@ -477,7 +488,10 @@ const CreatePool = () => {
                             >
                                 <div>
                                     <h3>Volatile</h3>
-                                    <p>Simple model for general purpose AMM pools (constant product pool).</p>
+                                    <p>
+                                        Simple model for general purpose AMM pools (constant product
+                                        pool).
+                                    </p>
                                 </div>
                                 <Tick />
                             </PoolType>
@@ -488,7 +502,8 @@ const CreatePool = () => {
                                 <div>
                                     <h3>Stable</h3>
                                     <p>
-                                        Highly efficient AMM model for correlated assets (e.g., stablecoins) with lower slippage.
+                                        Highly efficient AMM model for correlated assets (e.g.,
+                                        stablecoins) with lower slippage.
                                     </p>
                                 </div>
                                 <Tick />
@@ -616,7 +631,8 @@ const CreatePool = () => {
                         <StyledFormSection>
                             <FormSectionTitle>Pool swap fees</FormSectionTitle>
                             <FormSectionDescriptionStyled>
-                                Pool fees are paid by users swapping assets and distributed to liquidity providers.
+                                Pool fees are paid by users swapping assets and distributed to
+                                liquidity providers.
                             </FormSectionDescriptionStyled>
                             {type === POOL_TYPE.stable ? (
                                 <FormRow>
@@ -650,8 +666,8 @@ const CreatePool = () => {
                         <StyledFormSection>
                             <FormSectionTitle>Pool creation fee</FormSectionTitle>
                             <FormSectionDescriptionStyled>
-                                A pool creation fee helps prevent abuse and spam. 
-                                Creating a pool provides no direct benefit to the creator.
+                                A pool creation fee helps prevent abuse and spam. Creating a pool
+                                provides no direct benefit to the creator.
                             </FormSectionDescriptionStyled>
                             <CreationFee>
                                 <CreationFeeCost>
@@ -671,7 +687,18 @@ const CreatePool = () => {
                                     label="I acknowledge the fee"
                                 />
                             </CreationFee>
-                            <Button
+                            {type === POOL_TYPE.stable && (
+                                <AlertContainer>
+                                    <Alert
+                                        iconColor="orange"
+                                        text="Make sure the assets in the pool have the same price (or only minor price fluctuations). Otherwise, using a stable pool could result in a loss of funds."
+                                        checkbox={{
+                                            onChange: setAgreeWithAlert,
+                                        }}
+                                    />
+                                </AlertContainer>
+                            )}
+                            <ButtonStyled
                                 isBig
                                 fullWidth
                                 onClick={() => createPool()}
@@ -690,11 +717,12 @@ const CreatePool = () => {
                                     ].some(status => status === CONTRACT_STATUS.NOT_FOUND) ||
                                     isStableFeeInputError ||
                                     !stableFee ||
-                                    Boolean(existingPools.length)
+                                    Boolean(existingPools.length) ||
+                                    (!agreeWithAlert && type === POOL_TYPE.stable)
                                 }
                             >
                                 Create pool
-                            </Button>
+                            </ButtonStyled>
                         </StyledFormSection>
                     </StyledForm>
                     {Boolean(existingPools.length) && (
