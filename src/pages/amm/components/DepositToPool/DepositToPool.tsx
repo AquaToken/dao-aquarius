@@ -15,6 +15,7 @@ import {
     StellarService,
     ToastService,
 } from 'services/globalServices';
+import { POOL_TYPE } from 'services/soroban.service';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { PoolExtended } from 'types/amm';
@@ -122,7 +123,6 @@ const PoolInfo = styled.div<{ $isModal: boolean }>`
     border-radius: 0.6rem;
     padding: ${({ $isModal }) => ($isModal ? '2.4rem;' : '0')};
     margin-top: ${({ $isModal }) => ($isModal ? '2.4rem;' : '0')};
-    margin-bottom: ${({ $isModal }) => ($isModal ? '4.8rem;' : '0')};
 
     ${respondDown(Breakpoints.sm)`
         margin-bottom: 2rem;
@@ -158,6 +158,10 @@ const TooltipRow = styled.div`
     }
 `;
 
+const ButtonStyled = styled(Button)`
+    margin-top: 4.8rem;
+`;
+
 interface DepositToPoolParams {
     pool: PoolExtended;
     isModal: boolean;
@@ -174,6 +178,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
 
     const [accountShare, setAccountShare] = useState(null);
     const [assetsReserves, setAssetsReserves] = useState(null);
+    const [alertChecked, setAlertChecked] = useState(pool.pool_type === POOL_TYPE.constant);
 
     useEffect(() => {
         if (!account) {
@@ -565,14 +570,24 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                     ))}
                 </PoolInfo>
 
-                <Button
+                {pool.pool_type === POOL_TYPE.stable && (
+                    <Alert
+                        iconColor="orange"
+                        text="Make sure the assets in the pool have the same price (or only minor price fluctuations). Otherwise, using a stable pool could result in a loss of funds."
+                        checkbox={{
+                            onChange: setAlertChecked,
+                        }}
+                    />
+                )}
+
+                <ButtonStyled
                     isBig
                     onClick={() => onSubmit()}
                     pending={pending}
-                    disabled={!hasAllAmounts}
+                    disabled={!hasAllAmounts || !alertChecked}
                 >
                     deposit
-                </Button>
+                </ButtonStyled>
             </Form>
         </Container>
     );
