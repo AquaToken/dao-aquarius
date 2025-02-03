@@ -34,7 +34,7 @@ export default class ToastServiceClass {
         this.showToast(TOAST_TYPE.error, text, delay);
     }
 
-    private showToast(type: TOAST_TYPE, text: string, delay = 10000): void {
+    private showToast(type: TOAST_TYPE, text: string, delay = 5000): void {
         this.id += 1;
         let resolver: (value: unknown) => void = undefined;
 
