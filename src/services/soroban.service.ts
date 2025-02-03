@@ -11,11 +11,14 @@ import { getEnv, getNetworkPassphrase } from 'helpers/env';
 import { SorobanErrorHandler, SorobanPrepareTxErrorHandler } from 'helpers/error-handler';
 import { getSorobanUrl } from 'helpers/url';
 
+import { PoolRewardsInfo } from 'types/amm';
+
 import RestoreContractModal from 'web/modals/RestoreContractModal';
 
 import { ModalService, ToastService } from './globalServices';
 
-export const AMM_SMART_CONTACT_ID = CONTRACTS[getEnv()].amm;
+const AMM_SMART_CONTACT_ID = CONTRACTS[getEnv()].amm;
+const BATCH_SMART_CONTACT_ID = CONTRACTS[getEnv()].batch;
 
 enum AMM_CONTRACT_METHOD {
     GET_POOLS = 'get_pools',
@@ -39,6 +42,10 @@ enum AMM_CONTRACT_METHOD {
     GET_CONSTANT_CREATION_FEE = 'get_standard_pool_payment_amount',
     GET_CREATION_FEE_TOKEN = 'get_init_pool_payment_token',
     GET_INIT_POOL_DESTINATION = 'get_init_pool_payment_address',
+}
+
+enum BATCH_CONTRACT_METHOD {
+    batch = 'batch',
 }
 
 enum ASSET_CONTRACT_METHOD {
@@ -555,7 +562,7 @@ export default class SorobanServiceClass {
             });
     }
 
-    getPoolRewards(accountId: string, poolId: string) {
+    getPoolRewards(accountId: string, poolId: string): Promise<PoolRewardsInfo> {
         return this.buildSmartContactTx(
             accountId,
             poolId,
@@ -586,7 +593,7 @@ export default class SorobanServiceClass {
                         // @ts-expect-error
                         acc[key] = this.i128ToInt(val.val().value());
                         return acc;
-                    }, {});
+                    }, {}) as PoolRewardsInfo;
                 }
 
                 throw new Error('getPoolRewards error');
@@ -673,6 +680,25 @@ export default class SorobanServiceClass {
         )
             .then(tx => this.prepareTransaction(tx))
             .then(res => this.fixTxFootprint(res, accountId));
+    }
+
+    getClaimBatchTx(accountId: string, pools: string[]) {
+        const batches = pools.map(pool =>
+            this.scValToArray([
+                this.contractIdToScVal(pool),
+                xdr.ScVal.scvSymbol(AMM_CONTRACT_METHOD.CLAIM),
+                this.scValToArray([this.publicKeyToScVal(accountId)]),
+            ]),
+        );
+
+        return this.buildSmartContactTx(
+            accountId,
+            BATCH_SMART_CONTACT_ID,
+            BATCH_CONTRACT_METHOD.batch,
+            this.scValToArray([this.publicKeyToScVal(accountId)]),
+            this.scValToArray(batches),
+            xdr.ScVal.scvBool(false),
+        ).then(tx => this.prepareTransaction(tx));
     }
 
     getCreationFeeToken() {

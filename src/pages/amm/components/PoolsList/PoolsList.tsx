@@ -54,33 +54,6 @@ const PoolMain = styled.div`
     `}
 `;
 
-const PoolLiquidity = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    font-size: 1.6rem;
-    font-weight: 700;
-    line-height: 2.8rem;
-    margin-left: auto;
-    white-space: nowrap;
-
-    label {
-        color: ${COLORS.grayText};
-        font-weight: 400;
-        display: none;
-    }
-
-    ${respondDown(Breakpoints.sm)`
-        margin-left: unset;
-        flex-direction: row;
-        justify-content: space-between;
-        
-        label {
-            display: block;
-        }
-    `}
-`;
-
 const PoolStats = styled.div`
     display: flex;
     align-items: center;
@@ -240,7 +213,6 @@ type SorobanPool = PoolProcessed | PoolUserProcessed;
 interface PoolsListProps {
     pools: SorobanPool[] | PoolClassicProcessed[];
     onUpdate: () => void;
-    isUserList?: boolean;
     withDeposit?: boolean;
     isCommonList?: boolean;
     baseAmount?: string;
@@ -253,7 +225,6 @@ interface PoolsListProps {
 const PoolsList = ({
     pools,
     onUpdate,
-    isUserList,
     isCommonList,
     withDeposit,
     baseAmount,
@@ -341,9 +312,6 @@ const PoolsList = ({
                 const balance = new BigNumber(((pool as PoolUserProcessed).balance ?? 0).toString())
                     .div(1e7)
                     .toString();
-                const liquidity = new BigNumber((pool as SorobanPool).liquidity?.toString())
-                    .div(1e7)
-                    .toString();
                 const totalShare = new BigNumber((pool as SorobanPool).total_share?.toString())
                     .div(1e7)
                     .toString();
@@ -360,52 +328,39 @@ const PoolsList = ({
                                 poolType={pool.pool_type}
                                 isRewardsOn={Boolean(Number((pool as SorobanPool).reward_tps))}
                             />
-                            {!isUserList ? (
-                                <PoolStats>
-                                    <div>
-                                        <span>Fee:</span>
-                                        <span>{(Number(pool.fee) * 100).toFixed(2)}%</span>
-                                    </div>
-                                    <div>
-                                        <span>Daily Rewards:</span>
-                                        <span>
-                                            {formatBalance(
-                                                (+(pool as SorobanPool).reward_tps / 1e7) *
-                                                    60 *
-                                                    60 *
-                                                    24,
-                                                true,
-                                            )}{' '}
-                                            AQUA
-                                        </span>
-                                    </div>
-                                    <div>
-                                        <span>TVL:</span>
-                                        <span>
-                                            $
-                                            {formatBalance(
-                                                (Number(pool.liquidity) *
-                                                    StellarService.priceLumenUsd) /
-                                                    1e7,
-                                                true,
-                                            )}
-                                        </span>
-                                    </div>
-                                </PoolStats>
-                            ) : (
-                                <PoolLiquidity>
-                                    <label>My Liquidity</label>
+
+                            <PoolStats>
+                                <div>
+                                    <span>Fee:</span>
+                                    <span>{(Number(pool.fee) * 100).toFixed(2)}%</span>
+                                </div>
+                                <div>
+                                    <span>Daily Rewards:</span>
+                                    <span>
+                                        {formatBalance(
+                                            (+(pool as SorobanPool).reward_tps / 1e7) *
+                                                60 *
+                                                60 *
+                                                24,
+                                            true,
+                                        )}{' '}
+                                        AQUA
+                                    </span>
+                                </div>
+                                <div>
+                                    <span>TVL:</span>
                                     <span>
                                         $
                                         {formatBalance(
-                                            (+balance / +totalShare) *
-                                                +liquidity *
-                                                StellarService.priceLumenUsd,
+                                            (Number(pool.liquidity) *
+                                                StellarService.priceLumenUsd) /
+                                                1e7,
                                             true,
                                         )}
                                     </span>
-                                </PoolLiquidity>
-                            )}
+                                </div>
+                            </PoolStats>
+
                             {isCommonList && pools.length === 1 ? null : (
                                 <ExpandButton
                                     onClick={() =>
@@ -493,49 +448,18 @@ const PoolsList = ({
                                             </ExpandedDataRow>
                                         )}
 
-                                        {pool.pool_type !== POOL_TYPE.classic && isUserList && (
-                                            <ExpandedDataRow>
-                                                <span>Daily rewards:</span>
-                                                <span>
-                                                    {formatBalance(
-                                                        ((+(pool as SorobanPool).reward_tps / 1e7) *
-                                                            60 *
-                                                            60 *
-                                                            24 *
-                                                            +balance) /
-                                                            +totalShare,
-                                                        true,
-                                                    )}{' '}
-                                                    AQUA
-                                                </span>
-                                            </ExpandedDataRow>
-                                        )}
-
                                         {pool.assets.map((asset: AssetType, index: number) => (
                                             <ExpandedDataRow key={asset.code + asset.issuer}>
+                                                <span>Total {asset.code}:</span>
                                                 <span>
-                                                    {isUserList ? 'Pooled' : 'Total'} {asset.code}:
-                                                </span>
-                                                <span>
-                                                    {!isUserList
-                                                        ? formatBalance(+pool.reserves[index] / 1e7)
-                                                        : Number(pool.total_share)
-                                                        ? formatBalance(
-                                                              ((+pool.reserves[index] / 1e7) *
-                                                                  +balance) /
-                                                                  +totalShare,
-                                                          )
-                                                        : '0'}{' '}
+                                                    {formatBalance(
+                                                        +pool.reserves[index] / 1e7,
+                                                        true,
+                                                    )}
                                                     <Asset asset={asset} onlyLogoSmall />
                                                 </span>
                                             </ExpandedDataRow>
                                         ))}
-                                        {isUserList && (
-                                            <ExpandedDataRow>
-                                                <span>Fee</span>
-                                                <span>{(+pool.fee * 100).toFixed(2)}%</span>
-                                            </ExpandedDataRow>
-                                        )}
                                         {isCommonList && (
                                             <>
                                                 <ExpandedDataRow>
