@@ -25,7 +25,7 @@ import {
 import { POOL_TYPE } from 'services/soroban.service';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
-import { PoolUserProcessed } from 'types/amm';
+import { PoolRewardsInfo, PoolUserProcessed } from 'types/amm';
 import { Int128Parts } from 'types/stellar';
 
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
@@ -38,7 +38,7 @@ import IconClaim from 'assets/icon-claim.svg';
 import Button from 'basics/buttons/Button';
 import Select from 'basics/inputs/Select';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
-import { CircleLoader } from 'basics/loaders';
+import { CircleLoader, DotsLoader } from 'basics/loaders';
 import PageLoader from 'basics/loaders/PageLoader';
 import Market from 'basics/Market';
 import Table, { CellAlign } from 'basics/Table';
@@ -284,11 +284,11 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
         Promise.all(
             pools.map(({ address }) => SorobanService.getPoolRewards(account.accountId(), address)),
         ).then(res => {
-            const map = new Map<string, number>();
+            const map = new Map<string, PoolRewardsInfo>();
             let sum = 0;
 
             res.forEach((reward, index) => {
-                map.set(pools[index].address, Number(reward.to_claim));
+                map.set(pools[index].address, reward);
                 sum += Number(reward.to_claim);
             });
             setUserRewards(map);
@@ -355,7 +355,15 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
         }
         setClaimPendingId(CLAIM_ALL_ID);
 
-        SorobanService.getClaimBatchTx(account.accountId(), [...userRewards.keys()])
+        const poolsToClaim = [];
+
+        userRewards.forEach((value, key) => {
+            if (Number(value.to_claim)) {
+                poolsToClaim.push(key);
+            }
+        });
+
+        SorobanService.getClaimBatchTx(account.accountId(), poolsToClaim)
             .then(tx => account.signAndSubmitTx(tx, true))
             .then((res: { status?: BuildSignAndSubmitStatuses; value: () => Int128Parts }) => {
                 if (!res) {
@@ -378,6 +386,8 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                 setClaimPendingId(null);
             });
     };
+
+    console.log(pools, userRewards);
 
     if (!account) {
         return (
@@ -436,12 +446,14 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                     head={[
                         {
                             children: 'Pool',
-                            flexSize: 3.5,
+                            flexSize: 3,
                         },
                         { children: 'Base APY' },
                         { children: 'Rewards APY' },
                         { children: 'Daily rewards' },
                         { children: 'Rewards to claim', align: CellAlign.Right },
+                        { children: 'Boost', align: CellAlign.Right },
+                        { children: 'New boost', align: CellAlign.Right },
                         { children: '' },
                     ]}
                     body={filteredPools.map(pool => ({
@@ -458,7 +470,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                         poolAddress={pool.address}
                                     />
                                 ),
-                                flexSize: 3.5,
+                                flexSize: 3,
                             },
                             {
                                 children: pool.apy
@@ -483,11 +495,41 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                 label: 'Daily rewards',
                             },
                             {
-                                children: `${formatBalance(
-                                    userRewards.get(pool.address) || 0,
-                                    true,
-                                )} AQUA`,
+                                children: userRewards.get(pool.address) ? (
+                                    `${formatBalance(
+                                        userRewards.get(pool.address)?.to_claim || 0,
+                                        true,
+                                    )} AQUA`
+                                ) : (
+                                    <DotsLoader />
+                                ),
                                 label: 'Rewards to claim',
+                                align: CellAlign.Right,
+                            },
+                            {
+                                children: userRewards.get(pool.address) ? (
+                                    formatBalance(
+                                        userRewards.get(pool.address)?.working_balance /
+                                            (pool.balance / 1e7),
+                                        true,
+                                    )
+                                ) : (
+                                    <DotsLoader />
+                                ),
+                                label: 'Boost',
+                                align: CellAlign.Right,
+                            },
+                            {
+                                children: userRewards.get(pool.address) ? (
+                                    formatBalance(
+                                        userRewards.get(pool.address)?.new_working_balance /
+                                            (pool.balance / 1e7),
+                                        true,
+                                    )
+                                ) : (
+                                    <DotsLoader />
+                                ),
+                                label: 'New boost',
                                 align: CellAlign.Right,
                             },
                             {
@@ -500,7 +542,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                                 disabled={
                                                     (pool.address !== claimPendingId &&
                                                         Boolean(claimPendingId)) ||
-                                                    !Number(userRewards.get(pool.address))
+                                                    !Number(userRewards.get(pool.address)?.to_claim)
                                                 }
                                                 onClick={() => claim(pool.address)}
                                                 title="Claim rewards"
