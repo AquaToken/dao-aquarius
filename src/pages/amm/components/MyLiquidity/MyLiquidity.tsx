@@ -7,7 +7,7 @@ import { getUserPools } from 'api/amm';
 
 import { MainRoutes } from 'constants/routes';
 
-import { getAquaAssetData } from 'helpers/assets';
+import { getAquaAssetData, getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
@@ -34,7 +34,9 @@ import { Breakpoints, COLORS } from 'web/styles';
 
 import AquaLogo from 'assets/aqua-logo-small.svg';
 import IconClaim from 'assets/icon-claim.svg';
+import IconInfo from 'assets/icon-info.svg';
 
+import AssetLogo from 'basics/AssetLogo';
 import Button from 'basics/buttons/Button';
 import Select from 'basics/inputs/Select';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
@@ -42,12 +44,13 @@ import { CircleLoader } from 'basics/loaders';
 import PageLoader from 'basics/loaders/PageLoader';
 import Market from 'basics/Market';
 import Table, { CellAlign } from 'basics/Table';
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import NoTrustline from 'components/NoTrustline';
 
 import ExpandedMenu from 'pages/amm/components/MyLiquidity/ExpandedMenu/ExpandedMenu';
 import MigratePoolButton from 'pages/amm/components/PoolsList/MigratePoolButton/MigratePoolButton';
-import { AnalyticsUrlParams, AnalyticsTabs } from 'pages/amm/pages/Analytics';
+import { AnalyticsTabs, AnalyticsUrlParams } from 'pages/amm/pages/Analytics';
 import { ProfileTabs, ProfileUrlParams } from 'pages/profile/Profile';
 import { ExternalLinkStyled } from 'pages/profile/SdexRewards/SdexRewards';
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
@@ -157,6 +160,12 @@ const Rewards = styled.div`
     `}
 `;
 
+const Pooled = styled.div`
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+`;
+
 const RewardsDescription = styled.div`
     display: flex;
     flex-direction: column;
@@ -180,6 +189,36 @@ const StyledButton = styled(Button)`
     ${respondDown(Breakpoints.md)`
         margin-left: 0;
     `}
+`;
+
+const TooltipInner = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1.5rem;
+`;
+
+const TooltipRow = styled.div`
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.4rem;
+    line-height: 2rem;
+    gap: 5rem;
+
+    span:first-child {
+        color: ${COLORS.grayText};
+    }
+
+    span:last-child {
+        color: ${COLORS.paragraphText};
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+`;
+
+const IconInfoStyled = styled(IconInfo)`
+    cursor: help;
 `;
 
 enum FilterValues {
@@ -300,22 +339,36 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
         updateData();
     }, [account, updateIndex]);
 
-    const totalLiquidity = useMemo(() => {
-        const totalXlm = [...pools, ...classicPools].reduce((acc, pool) => {
+    const { totalLiquidity, poolsLiquidity } = useMemo(() => {
+        const map = new Map<string, number>();
+        const totalSorobanUsd = pools.reduce((acc, pool) => {
+            const balance = Number(pool.balance) / 1e7;
+            const liquidity = Number(pool.liquidity_usd) / 1e7;
+            const totalShare = Number(pool.total_share) / 1e7;
+
+            map.set(pool.address, (balance / totalShare) * liquidity);
+            acc += (balance / totalShare) * liquidity;
+            return acc;
+        }, 0);
+
+        const totalClassicXlm = classicPools.reduce((acc, pool) => {
             const balance = Number(pool.balance) / 1e7;
             const liquidity = Number(pool.liquidity) / 1e7;
             const totalShare = Number(pool.total_share) / 1e7;
+
+            map.set(pool.id, (balance / totalShare) * liquidity * StellarService.priceLumenUsd);
 
             acc += (balance / totalShare) * liquidity;
             return acc;
         }, 0);
 
-        const totalUsd = totalXlm * StellarService.priceLumenUsd;
+        const totalClassicUsd = totalClassicXlm * StellarService.priceLumenUsd;
+        const total = totalClassicUsd + totalSorobanUsd;
 
         if (setTotal) {
-            setTotal(totalUsd);
+            setTotal(total);
         }
-        return totalUsd;
+        return { totalLiquidity: total, poolsLiquidity: map };
     }, [pools, classicPools]);
 
     const claim = (poolId: string) => {
@@ -440,7 +493,8 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                         },
                         { children: 'Base APY' },
                         { children: 'Rewards APY' },
-                        { children: 'Daily rewards' },
+                        { children: 'Pooled' },
+                        { children: 'My daily rewards' },
                         { children: 'Rewards to claim', align: CellAlign.Right },
                         { children: '' },
                     ]}
@@ -476,11 +530,84 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                 label: 'Rewards APY',
                             },
                             {
+                                children: poolsLiquidity.has(pool.address || pool.id) ? (
+                                    <Pooled>
+                                        <span>
+                                            $
+                                            {formatBalance(
+                                                poolsLiquidity.get(pool.address || pool.id),
+                                                true,
+                                            )}
+                                        </span>
+                                        <Tooltip
+                                            content={
+                                                <TooltipInner>
+                                                    {pool.assets.map((asset, index) => (
+                                                        <TooltipRow key={getAssetString(asset)}>
+                                                            <span>Pooled {asset.code}</span>
+                                                            <span>
+                                                                {formatBalance(
+                                                                    (pool.reserves[index] *
+                                                                        pool.balance) /
+                                                                        pool.total_share /
+                                                                        1e7,
+                                                                    true,
+                                                                )}
+                                                                <AssetLogo
+                                                                    asset={asset}
+                                                                    isSmall
+                                                                    isCircle
+                                                                />
+                                                            </span>
+                                                        </TooltipRow>
+                                                    ))}
+                                                    <TooltipRow>
+                                                        <span>Shares</span>
+                                                        <span>
+                                                            {formatBalance(
+                                                                pool.balance / 1e7,
+                                                                true,
+                                                            )}{' '}
+                                                            (
+                                                            {Number(pool.total_share)
+                                                                ? formatBalance(
+                                                                      (100 * pool.balance) /
+                                                                          Number(pool.total_share),
+                                                                      true,
+                                                                  )
+                                                                : '0'}
+                                                            %)
+                                                        </span>
+                                                    </TooltipRow>
+                                                </TooltipInner>
+                                            }
+                                            position={
+                                                +window.innerWidth > 992
+                                                    ? TOOLTIP_POSITION.top
+                                                    : TOOLTIP_POSITION.left
+                                            }
+                                            background={COLORS.white}
+                                            showOnHover
+                                        >
+                                            <IconInfoStyled />
+                                        </Tooltip>
+                                    </Pooled>
+                                ) : (
+                                    '-'
+                                ),
+                                label: 'Pooled',
+                            },
+                            {
                                 children: `${formatBalance(
-                                    (+(pool.reward_tps ?? 0) / 1e7) * 60 * 60 * 24,
+                                    ((+(pool.reward_tps ?? 0) / 1e7) *
+                                        60 *
+                                        60 *
+                                        24 *
+                                        pool.balance) /
+                                        pool.total_share,
                                     true,
                                 )} AQUA`,
-                                label: 'Daily rewards',
+                                label: 'My daily rewards',
                             },
                             {
                                 children: `${formatBalance(
