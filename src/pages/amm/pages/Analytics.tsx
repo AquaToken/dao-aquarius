@@ -48,6 +48,10 @@ const Content = styled.div`
     background-color: ${COLORS.lightGray};
 
     ${respondDown(Breakpoints.sm)`
+        background-color: ${COLORS.white};
+    `}
+
+    ${respondDown(Breakpoints.sm)`
         padding: 2rem 1.6rem 0;
     `}
 `;
