@@ -204,7 +204,7 @@ const TooltipRow = styled.div`
     justify-content: space-between;
     font-size: 1.4rem;
     line-height: 2rem;
-    gap: 5rem;
+    gap: 2rem;
 
     span:first-child {
         color: ${COLORS.grayText};
