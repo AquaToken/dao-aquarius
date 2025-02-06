@@ -208,7 +208,7 @@ const TooltipRow = styled.div`
 
     span:first-child {
         color: ${COLORS.grayText};
-        width: 50%;
+        width: 60%;
         ${textEllipsis};
     }
 
