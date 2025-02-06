@@ -28,7 +28,7 @@ import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 import { PoolUserProcessed } from 'types/amm';
 import { Int128Parts } from 'types/stellar';
 
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { flexAllCenter, flexRowSpaceBetween, respondDown, textEllipsis } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -196,6 +196,7 @@ const TooltipInner = styled.div`
     flex-direction: column;
     gap: 1.5rem;
     padding: 1.5rem;
+    max-width: calc(100vw - 12rem);
 `;
 
 const TooltipRow = styled.div`
@@ -207,6 +208,8 @@ const TooltipRow = styled.div`
 
     span:first-child {
         color: ${COLORS.grayText};
+        width: 50%;
+        ${textEllipsis};
     }
 
     span:last-child {
@@ -571,8 +574,10 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                                             (
                                                             {Number(pool.total_share)
                                                                 ? formatBalance(
-                                                                      (100 * pool.balance) /
-                                                                          Number(pool.total_share),
+                                                                      +(
+                                                                          (100 * pool.balance) /
+                                                                          Number(pool.total_share)
+                                                                      ).toFixed(2),
                                                                       true,
                                                                   )
                                                                 : '0'}
@@ -582,7 +587,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                                 </TooltipInner>
                                             }
                                             position={
-                                                +window.innerWidth > 992
+                                                +window.innerWidth > 1200
                                                     ? TOOLTIP_POSITION.top
                                                     : TOOLTIP_POSITION.left
                                             }
