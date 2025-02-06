@@ -176,6 +176,12 @@ const RewardsDescription = styled.div`
         font-size: 1.6rem;
         line-height: 2.8rem;
         color: ${COLORS.paragraphText};
+        display: flex;
+        align-items: center;
+
+        svg {
+            margin: 0 0.5rem;
+        }
     }
 
     ${respondDown(Breakpoints.md)`
@@ -189,6 +195,13 @@ const StyledButton = styled(Button)`
     ${respondDown(Breakpoints.md)`
         margin-left: 0;
     `}
+`;
+
+const RewardsTooltipInner = styled.div`
+    width: 20rem;
+    white-space: wrap;
+    line-height: 2rem;
+    font-size: 1.4rem;
 `;
 
 const TooltipInner = styled.div`
@@ -249,6 +262,8 @@ interface MyLiquidityProps {
 }
 
 const CLAIM_ALL_ID = 'all';
+
+const CLAIM_ALL_COUNT = 5;
 
 const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) => {
     const { account } = useAuthStore();
@@ -330,8 +345,10 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
             let sum = 0;
 
             res.forEach((reward, index) => {
-                map.set(pools[index].address, Number(reward.to_claim));
                 sum += Number(reward.to_claim);
+                if (Number(reward.to_claim)) {
+                    map.set(pools[index].address, Number(reward.to_claim));
+                }
             });
             setUserRewards(map);
             setRewardsSum(sum);
@@ -411,7 +428,12 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
         }
         setClaimPendingId(CLAIM_ALL_ID);
 
-        SorobanService.getClaimBatchTx(account.accountId(), [...userRewards.keys()])
+        const top5RewardsPools = [...userRewards.entries()]
+            .sort((a, b) => Number(b[1].to_claim) - Number(a[1].to_claim))
+            .slice(0, CLAIM_ALL_COUNT)
+            .map(([key]) => key);
+
+        SorobanService.getClaimBatchTx(account.accountId(), top5RewardsPools)
             .then(tx => account.signAndSubmitTx(tx, true))
             .then((res: { status?: BuildSignAndSubmitStatuses; value: () => Int128Parts }) => {
                 if (!res) {
@@ -469,7 +491,26 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                     <Rewards>
                         <AquaLogoStyled />
                         <RewardsDescription>
-                            <span>You have unclaimed rewards</span>
+                            <span>
+                                You have {userRewards.size ?? ''} unclaimed rewards
+                                <Tooltip
+                                    content={
+                                        <RewardsTooltipInner>
+                                            One can claim not more than {CLAIM_ALL_COUNT} rewards at
+                                            a time. If you have more than {CLAIM_ALL_COUNT} rewards
+                                            you will have to make multiple claims.
+                                        </RewardsTooltipInner>
+                                    }
+                                    position={
+                                        +window.innerWidth > 992
+                                            ? TOOLTIP_POSITION.top
+                                            : TOOLTIP_POSITION.left
+                                    }
+                                    showOnHover
+                                >
+                                    <IconInfoStyled />
+                                </Tooltip>
+                            </span>
                             <span>for {formatBalance(rewardsSum)} AQUA</span>
                         </RewardsDescription>
                         <StyledButton
@@ -477,7 +518,9 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                             onClick={() => claimAll()}
                             pending={claimPendingId === CLAIM_ALL_ID}
                         >
-                            Claim rewards
+                            {userRewards.size > CLAIM_ALL_COUNT
+                                ? `Claim Top ${CLAIM_ALL_COUNT}`
+                                : 'Claim rewards'}
                         </StyledButton>
                     </Rewards>
 
