@@ -71,7 +71,7 @@ const PoolsListBlock = styled.div<{ $onlyList: boolean }>`
     `}
 
     ${respondDown(Breakpoints.md)`
-        padding: 3.2rem 1.6rem;
+        padding: 3.2rem 0;
     `}
 `;
 
