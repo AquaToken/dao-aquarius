@@ -613,6 +613,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                     true,
                                 )} AQUA`,
                                 label: 'My daily rewards',
+                                mobileStyle: { textAlign: 'right' },
                             },
                             {
                                 children: `${formatBalance(
@@ -621,6 +622,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                 )} AQUA`,
                                 label: 'Rewards to claim',
                                 align: CellAlign.Right,
+                                mobileStyle: { textAlign: 'right' },
                             },
                             {
                                 children: (
