@@ -87,7 +87,7 @@ const ListBlock = styled.div`
     width: 100%;
 
     ${respondDown(Breakpoints.sm)`
-        padding: 3rem 1.6rem;
+        padding: 3rem 0;
     `}
 `;
 
