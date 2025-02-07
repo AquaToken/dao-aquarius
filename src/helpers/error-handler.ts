@@ -139,7 +139,7 @@ export default function ErrorHandler(error: TxFailed | Error | AxiosError) {
 
 function findErrorCode(error: string) {
     for (const str in KnownPrepareErrors) {
-        const index = error.indexOf(str);
+        const index = error.toString().indexOf(str);
         if (index !== -1) {
             return str;
         }
