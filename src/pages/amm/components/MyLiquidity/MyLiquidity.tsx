@@ -429,7 +429,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
         setClaimPendingId(CLAIM_ALL_ID);
 
         const top5RewardsPools = [...userRewards.entries()]
-            .sort((a, b) => Number(b[1].to_claim) - Number(a[1].to_claim))
+            .sort((a, b) => Number(b[1]) - Number(a[1]))
             .slice(0, CLAIM_ALL_COUNT)
             .map(([key]) => key);
 
