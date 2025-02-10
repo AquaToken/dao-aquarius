@@ -41,16 +41,13 @@ const Container = styled.aside`
     ${respondDown(Breakpoints.lg)`
          float: unset;
          position: relative;
+         min-width: unset;
          width: calc(100% - 3.2rem);
          margin-top: 0;
          right: unset;
          margin: 1.6rem;
          box-shadow: unset;
     `}
-
-    ${respondDown(Breakpoints.md)`
-      padding: 3.2rem 1.6rem;
-    `};
 `;
 
 const SidebarRow = styled.div`
