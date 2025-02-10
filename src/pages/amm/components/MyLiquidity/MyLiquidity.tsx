@@ -121,8 +121,16 @@ const ToggleGroupStyled = styled(ToggleGroup)`
     `}
 `;
 
-const SelectStyled = styled(Select)`
+const SelectWrapper = styled.div`
     display: none;
+
+    ${respondDown(Breakpoints.md)`
+        display: flex;
+        padding: 0 1.6rem;
+    `}
+`;
+
+const SelectStyled = styled(Select)`
     margin-bottom: 4rem;
 
     ${respondDown(Breakpoints.md)`
@@ -483,8 +491,12 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                     </ListTotal>
                 </ListHeader>
             )}
+
             <ToggleGroupStyled value={filter} options={FilterOptions} onChange={setFilterValue} />
-            <SelectStyled value={filter} options={FilterOptions} onChange={setFilterValue} />
+
+            <SelectWrapper>
+                <SelectStyled value={filter} options={FilterOptions} onChange={setFilterValue} />
+            </SelectWrapper>
 
             {Boolean(rewardsSum) && (
                 <RewardsWrap>

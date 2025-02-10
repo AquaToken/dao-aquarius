@@ -55,7 +55,11 @@ const Container = styled.aside`
          right: unset;
          margin: 1.6rem;
          box-shadow: unset;
-    `}
+    `};
+
+    ${respondDown(Breakpoints.md)`
+      padding: 3.2rem 1.6rem;
+    `};
 `;
 
 const Title = styled.span`

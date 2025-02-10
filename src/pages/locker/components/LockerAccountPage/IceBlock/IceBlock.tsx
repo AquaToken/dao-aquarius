@@ -6,11 +6,12 @@ import { formatBalance } from 'helpers/format-number';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { ClaimableBalance } from 'types/stellar';
-
 import AccountService from 'services/account.service';
 import { ModalService, StellarService } from 'services/globalServices';
 import { GOV_ICE_CODE, ICE_CODE, ICE_ISSUER } from 'services/stellar.service';
+
+import { ClaimableBalance } from 'types/stellar';
+
 import { respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -31,6 +32,10 @@ const Container = styled.div`
     background-color: ${COLORS.white};
     border-radius: 0.5rem;
     padding: 3.2rem 3.2rem 4.2rem;
+
+    ${respondDown(Breakpoints.md)`
+        padding: 3.2rem 1.6rem;
+    `}
 `;
 
 const Title = styled.span`
