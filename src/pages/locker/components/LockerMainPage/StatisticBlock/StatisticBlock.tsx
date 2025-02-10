@@ -35,6 +35,10 @@ const StatisticItem = styled.div`
     padding: 3.6rem 3.9rem;
     background: ${COLORS.lightGray};
     flex: 1;
+
+    ${respondDown(Breakpoints.md)`
+        padding: 3.2rem 1.6rem;
+    `};
 `;
 
 const IconsBlock = styled.div`

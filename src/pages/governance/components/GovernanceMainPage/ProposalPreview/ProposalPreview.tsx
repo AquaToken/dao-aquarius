@@ -40,6 +40,10 @@ const Container = styled.div`
     a {
         text-decoration: none;
     }
+
+    ${respondDown(Breakpoints.md)`
+        padding: 3.2rem 1.6rem;
+    `}
 `;
 
 const Header = styled.div`

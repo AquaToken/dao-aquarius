@@ -7,9 +7,10 @@ import { formatBalance } from 'helpers/format-number';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { ModalService, SorobanService } from 'services/globalServices';
+
 import { PoolExtended } from 'types/amm';
 
-import { ModalService, SorobanService } from 'services/globalServices';
 import { flexRowSpaceBetween, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -46,6 +47,10 @@ const Container = styled.aside`
          margin: 1.6rem;
          box-shadow: unset;
     `}
+
+    ${respondDown(Breakpoints.md)`
+      padding: 3.2rem 1.6rem;
+    `};
 `;
 
 const SidebarRow = styled.div`

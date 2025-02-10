@@ -9,9 +9,9 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService, StellarService } from 'services/globalServices';
 
-import { contentWithSidebar } from 'web/mixins';
+import { contentWithSidebar, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
-import { COLORS } from 'web/styles';
+import { Breakpoints, COLORS } from 'web/styles';
 
 import ArrowLeft from 'assets/icon-arrow-left.svg';
 
@@ -68,6 +68,10 @@ const Header = styled.div`
     background-color: ${COLORS.white};
     border-radius: 0.5rem;
     padding: 4.1rem 3.7rem;
+
+    ${respondDown(Breakpoints.md)`
+        padding: 3.2rem 1.6rem;
+    `}
 `;
 
 const Divider = styled.div`
