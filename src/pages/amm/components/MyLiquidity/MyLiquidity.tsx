@@ -627,7 +627,10 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                                                 true,
                                                             )}{' '}
                                                             (
-                                                            {Number(pool.total_share)
+                                                            {+(
+                                                                (100 * pool.balance) /
+                                                                Number(pool.total_share)
+                                                            ) > 0.01
                                                                 ? formatBalance(
                                                                       +(
                                                                           (100 * pool.balance) /
@@ -635,7 +638,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                                                       ).toFixed(2),
                                                                       true,
                                                                   )
-                                                                : '0'}
+                                                                : '< 0.01'}
                                                             %)
                                                         </span>
                                                     </TooltipRow>
