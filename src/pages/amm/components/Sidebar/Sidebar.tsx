@@ -7,9 +7,10 @@ import { formatBalance } from 'helpers/format-number';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { ModalService, SorobanService } from 'services/globalServices';
+
 import { PoolExtended } from 'types/amm';
 
-import { ModalService, SorobanService } from 'services/globalServices';
 import { flexRowSpaceBetween, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -40,6 +41,7 @@ const Container = styled.aside`
     ${respondDown(Breakpoints.lg)`
          float: unset;
          position: relative;
+         min-width: unset;
          width: calc(100% - 3.2rem);
          margin-top: 0;
          right: unset;

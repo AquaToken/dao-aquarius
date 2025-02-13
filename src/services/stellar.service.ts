@@ -1127,6 +1127,22 @@ export default class StellarServiceClass {
             });
     }
 
+    private encodePaymentParameterValue(value: string) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        return StellarSdk.xdr.ScVal.fromXDR(value, 'base64').value()?.toString?.();
+    }
+
+    private isPaymentCalledMethod(
+        parameters: { value: string; type: string }[],
+        methodName: string,
+    ): boolean {
+        return parameters.some(
+            ({ type, value }) =>
+                type === 'Sym' && this.encodePaymentParameterValue(value) === methodName,
+        );
+    }
+
     private processPayments(payments) {
         const filtered = payments.filter(
             ({ from, type, parameters }) =>
@@ -1134,14 +1150,9 @@ export default class StellarServiceClass {
                 from === SDEX_REWARDS_KEY ||
                 from === BRIBE_REWARDS_KEY ||
                 (type === 'invoke_host_function' &&
-                    parameters?.some(
-                        ({ type, value }) =>
-                            type === 'Sym' &&
-                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                            // @ts-expect-error
-                            StellarSdk.xdr.ScVal.fromXDR(value, 'base64').value()?.toString?.() ===
-                                'claim',
-                    )),
+                    this.isPaymentCalledMethod(parameters, 'claim')) ||
+                (type === 'invoke_host_function' &&
+                    this.isPaymentCalledMethod(parameters, 'batch')),
         );
 
         this.loadNotes(filtered);
@@ -1158,9 +1169,18 @@ export default class StellarServiceClass {
                     payment.title = 'Bribe Reward';
                     break;
 
-                case payment.type === 'invoke_host_function':
+                case payment.type === 'invoke_host_function' &&
+                    this.isPaymentCalledMethod(payment.parameters, 'claim'):
                     payment.title = 'Claim Reward';
                     payment.amount = payment.asset_balance_changes[0].amount;
+                    break;
+                case payment.type === 'invoke_host_function' &&
+                    this.isPaymentCalledMethod(payment.parameters, 'batch'):
+                    payment.title = 'Claim Rewards';
+                    payment.amount = payment.asset_balance_changes.reduce((acc, payment) => {
+                        acc += Number(payment.amount);
+                        return acc;
+                    }, 0);
                     break;
             }
             return payment;
@@ -1169,8 +1189,20 @@ export default class StellarServiceClass {
 
     private loadNotes(payments) {
         this.chunkFunction(payments, payment => {
-            if (payment.type === 'invoke_host_function') {
+            if (
+                payment.type === 'invoke_host_function' &&
+                this.isPaymentCalledMethod(payment.parameters, 'claim')
+            ) {
                 return this.getClaimRewardsNote(payment);
+            }
+
+            if (
+                payment.type === 'invoke_host_function' &&
+                this.isPaymentCalledMethod(payment.parameters, 'batch')
+            ) {
+                payment.memo = `For ${payment.asset_balance_changes.length} pools`;
+                this.event.trigger({ type: StellarEvents.paymentsHistoryUpdate });
+                return;
             }
             return payment.transaction().then(({ memo }) => {
                 payment.memo = memo;

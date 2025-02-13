@@ -57,7 +57,10 @@ export default function useGlobalSubscriptions(): void {
                 login(event.publicKey, LoginTypes.walletConnect, event.metadata, event.topic);
             }
             if (event.type === WalletConnectEvents.logout) {
-                logout();
+                ModalService.closeAllModals();
+                PromisedTimeout(500).then(() => {
+                    logout();
+                });
             }
         });
 

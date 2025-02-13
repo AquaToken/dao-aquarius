@@ -4,13 +4,13 @@ import styled from 'styled-components';
 
 import { Asset } from 'types/stellar';
 
+import { flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import { ToggleGroup } from 'basics/inputs';
 
 import ClassicAmmStats from 'pages/market/components/AmmStats/ClassicAmmStats/ClassicAmmStats';
 import SorobanAmmStats from 'pages/market/components/AmmStats/SorobanAmmStats/SorobanAmmStats';
-
-import { flexRowSpaceBetween, respondDown } from '../../../../web/mixins';
-import { Breakpoints, COLORS } from '../../../../web/styles';
 
 const Container = styled.div`
     display: flex;
@@ -18,6 +18,10 @@ const Container = styled.div`
     background-color: ${COLORS.white};
     padding: 4.2rem 3.2rem 2rem;
     border-radius: 0.5rem;
+
+    ${respondDown(Breakpoints.md)`
+        padding: 3.2rem 1.6rem;
+    `}
 `;
 
 const Header = styled.div`

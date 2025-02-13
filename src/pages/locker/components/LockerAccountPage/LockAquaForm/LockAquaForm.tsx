@@ -11,6 +11,7 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import AccountService from 'services/account.service';
 import { ModalService, ToastService } from 'services/globalServices';
+
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS, FONT_FAMILY } from 'web/styles';
@@ -45,7 +46,7 @@ const Container = styled.div`
 
     ${respondDown(Breakpoints.md)`
         box-shadow: unset;
-        padding: 3.2rem;
+        padding: 3.2rem 1.6rem;
     `}
 `;
 

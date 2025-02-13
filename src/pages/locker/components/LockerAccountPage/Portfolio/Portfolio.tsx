@@ -24,6 +24,10 @@ const Container = styled.div`
     background-color: ${COLORS.white};
     border-radius: 0.5rem;
     padding: 3.2rem;
+
+    ${respondDown(Breakpoints.md)`
+        padding: 3.2rem 1.6rem;
+    `}
 `;
 
 const Header = styled.div`

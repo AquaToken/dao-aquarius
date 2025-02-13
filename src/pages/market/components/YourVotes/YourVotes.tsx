@@ -6,7 +6,9 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { StellarService } from 'services/globalServices';
 import { StellarEvents } from 'services/stellar.service';
-import { COLORS } from 'web/styles';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
 
 import PageLoader from 'basics/loaders/PageLoader';
 
@@ -20,6 +22,10 @@ const Container = styled.div`
     background-color: ${COLORS.white};
     padding: 4.2rem 3.2rem 2rem;
     border-radius: 0.5rem;
+
+    ${respondDown(Breakpoints.md)`
+        padding: 3.2rem 1.6rem;
+    `}
 `;
 
 const Title = styled.span`
