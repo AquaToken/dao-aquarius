@@ -54,14 +54,11 @@ const LiquidityChart = ({
     marginTop = 16,
     marginRight = 16,
     marginBottom = 32,
-    marginLeft = 50,
+    marginLeft = 16,
 }: LiquidityChartProps) => {
     const [selectedIndex, setSelectedIndex] = useState(null);
     const svg = useRef();
-
     const gx = useRef();
-    const gy = useRef();
-
     const x = d3
         .scaleTime()
         .range([marginLeft, width - marginRight])
@@ -103,16 +100,6 @@ const LiquidityChart = ({
                     ),
             ),
         [gx, x],
-    );
-
-    useEffect(
-        () =>
-            void d3.select(gy.current).call(
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-expect-error
-                d3.axisLeft(y).ticks(5).tickFormat(d3.format('~s')),
-            ),
-        [gy, y],
     );
 
     const onMouseMove = xCoord => {
@@ -173,33 +160,14 @@ const LiquidityChart = ({
                 )}
             </g>
             <Axis ref={gx} transform={`translate(0,${height - marginBottom})`} />
-            <Axis ref={gy} transform={`translate(${marginLeft}, 0)`} />
 
             <path fill="none" stroke={COLORS.tooltip} strokeWidth="2" d={line(data)} />
             <path fill="url(#gradient)" stroke="transparent" strokeWidth="0" d={path(data)} />
 
-            <g className="grid">
-                {y.ticks(5).map((tickValue, i) => (
-                    <line
-                        key={i}
-                        x1={marginLeft}
-                        x2={width - marginRight}
-                        y1={y(tickValue)}
-                        y2={y(tickValue)}
-                        strokeWidth="1"
-                        stroke={COLORS.tooltip}
-                        strokeOpacity={0.2}
-                        strokeDasharray="4 4"
-                    />
-                ))}
-            </g>
-
             {selectedIndex && (
                 <g>
                     <line
-                        stroke={COLORS.tooltip}
-                        strokeOpacity={0.2}
-                        strokeDasharray="4 4"
+                        stroke={COLORS.border}
                         strokeWidth="1"
                         x1={x(
                             transformDate(
@@ -213,16 +181,6 @@ const LiquidityChart = ({
                             ),
                         )}
                         y2={height * 0.4}
-                    />
-                    <line
-                        stroke={COLORS.tooltip}
-                        strokeOpacity={0.2}
-                        strokeDasharray="4 4"
-                        strokeWidth="1"
-                        x1={marginLeft}
-                        y1={y(Number(data[selectedIndex].liquidity_usd) / 1e7)}
-                        x2={width - marginRight}
-                        y2={y(Number(data[selectedIndex].liquidity_usd) / 1e7)}
                     />
                     <circle
                         stroke={COLORS.white}

@@ -51,7 +51,7 @@ const VolumeChart = ({
     marginTop = 16,
     marginRight = 16,
     marginBottom = 32,
-    marginLeft = 50,
+    marginLeft = 16,
 }: VolumeChartProps): React.ReactNode => {
     const [daily, last24] = useMemo(() => {
         if (isGlobalStat) {
@@ -106,7 +106,6 @@ const VolumeChart = ({
     const [selectedIndex, setSelectedIndex] = useState(null);
     const svg = useRef();
     const gx = useRef();
-    const gy = useRef();
 
     const x = d3
         .scaleBand()
@@ -136,16 +135,6 @@ const VolumeChart = ({
                     ),
             ),
         [gx, x],
-    );
-
-    useEffect(
-        () =>
-            void d3.select(gy.current).call(
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-expect-error
-                d3.axisLeft(y).ticks(5).tickFormat(d3.format('~s')),
-            ),
-        [gy, y],
     );
 
     const onMouseMove = event => {
@@ -195,21 +184,6 @@ const VolumeChart = ({
                     ${formatBalance((selectedItem || last24)?.volume_usd, true, true)}
                 </LiquidityValue>
             </g>
-            <g className="grid">
-                {y.ticks(5).map((tickValue, i) => (
-                    <line
-                        key={i}
-                        x1={marginLeft}
-                        x2={width - marginRight}
-                        y1={y(tickValue)}
-                        y2={y(tickValue)}
-                        strokeWidth="1"
-                        stroke={COLORS.tooltip}
-                        strokeOpacity={0.2}
-                        strokeDasharray="4 4"
-                    />
-                ))}
-            </g>
 
             {daily.map((item, i) => (
                 <rect
@@ -224,7 +198,6 @@ const VolumeChart = ({
                 />
             ))}
 
-            <Axis ref={gy} transform={`translate(${marginLeft},0)`} />
             <Axis ref={gx} transform={`translate(0,${height - marginBottom})`} />
         </svg>
     );
