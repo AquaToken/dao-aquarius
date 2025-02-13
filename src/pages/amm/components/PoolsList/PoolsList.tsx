@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js';
 import * as React from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { getPoolMembersCount, getPoolStats } from 'api/amm';
@@ -127,10 +127,18 @@ const Charts = styled.div`
     display: flex;
     justify-content: space-evenly;
     margin-bottom: 1rem;
+    gap: 1.6rem;
 
     ${respondDown(Breakpoints.sm)`
         flex-direction: column;
     `}
+`;
+
+const Chart = styled.div`
+    ${flexAllCenter};
+    background-color: ${COLORS.white};
+    border-radius: 0.6rem;
+    width: 100%;
 `;
 
 const ExpandedBlock = styled.div<{ $withoutTopPadding?: boolean }>`
@@ -238,6 +246,7 @@ const PoolsList = ({
     );
     const [poolMembers, setPoolMembers] = useState(null);
     const [poolStats, setPoolStats] = useState(null);
+    const [chartWidth, setChartWidth] = useState(0);
 
     useEffect(() => {
         if (!isCommonList) {
@@ -277,6 +286,30 @@ const PoolsList = ({
         }
         openPool(id);
     };
+
+    const chartRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (!poolStats || !expandedIndexes.length) {
+            return;
+        }
+        const updateWidth = () => {
+            if (chartRef.current) {
+                setChartWidth(chartRef.current.offsetWidth - 32);
+            }
+        };
+        updateWidth();
+
+        const handleResize = () => {
+            requestAnimationFrame(updateWidth);
+        };
+
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, [poolStats, expandedIndexes]);
 
     const rates = useMemo(
         () =>
@@ -407,29 +440,28 @@ const PoolsList = ({
                                             poolStats &&
                                             Boolean(poolStats[index].length) && (
                                                 <Charts>
-                                                    <VolumeChart
-                                                        data={poolStats[index]}
-                                                        volume24h={{
-                                                            volume_usd: (pool as SorobanPool)
-                                                                .volume_usd,
-                                                        }}
-                                                        width={Math.min(
-                                                            450,
-                                                            +window.innerWidth - 105,
-                                                        )}
-                                                        height={320}
-                                                    />
-                                                    <LiquidityChart
-                                                        data={poolStats[index]}
-                                                        currentLiquidity={
-                                                            (pool as SorobanPool).liquidity_usd
-                                                        }
-                                                        width={Math.min(
-                                                            450,
-                                                            +window.innerWidth - 105,
-                                                        )}
-                                                        height={320}
-                                                    />
+                                                    <Chart ref={chartRef}>
+                                                        <VolumeChart
+                                                            data={poolStats[index]}
+                                                            volume24h={{
+                                                                volume_usd: (pool as SorobanPool)
+                                                                    .volume_usd,
+                                                            }}
+                                                            width={chartWidth}
+                                                            height={320}
+                                                        />
+                                                    </Chart>
+                                                    <Chart>
+                                                        {' '}
+                                                        <LiquidityChart
+                                                            data={poolStats[index]}
+                                                            currentLiquidity={
+                                                                (pool as SorobanPool).liquidity_usd
+                                                            }
+                                                            width={chartWidth}
+                                                            height={320}
+                                                        />
+                                                    </Chart>
                                                 </Charts>
                                             )}
                                         {Boolean((pool as PoolUserProcessed).balance) && (

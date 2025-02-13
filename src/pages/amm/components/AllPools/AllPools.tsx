@@ -9,14 +9,17 @@ import { AmmRoutes } from 'constants/routes';
 
 import { formatBalance } from 'helpers/format-number';
 
+import { useDebounce } from 'hooks/useDebounce';
+
 import { POOL_TYPE } from 'services/soroban.service';
 
 import { PoolProcessed } from 'types/amm';
 
-import { respondDown } from 'web/mixins';
+import { flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Info from 'assets/icon-info.svg';
+import Search from 'assets/icon-search.svg';
 
 import Select from 'basics/inputs/Select';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
@@ -26,8 +29,21 @@ import Pagination from 'basics/Pagination';
 import Table, { CellAlign } from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
-import { AnalyticsUrlParams, AnalyticsTabs } from 'pages/amm/pages/Analytics';
+import { AnalyticsTabs, AnalyticsUrlParams } from 'pages/amm/pages/Analytics';
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
+
+import Input from '../../../../web/basics/inputs/Input';
+
+const Header = styled.div`
+    ${flexRowSpaceBetween};
+    margin-top: 3.2rem;
+
+    ${respondDown(Breakpoints.md)`
+        flex-direction: column;
+        margin-top: 0;
+        padding: 1.6rem 0;
+    `}
+`;
 
 const ToggleGroupStyled = styled(ToggleGroup)`
     width: fit-content;
@@ -41,9 +57,11 @@ const ToggleGroupStyled = styled(ToggleGroup)`
 const SelectStyled = styled(Select)`
     margin-top: 3.6rem;
     display: none;
+
     ${respondDown(Breakpoints.sm)`
         display: flex;
-        margin-bottom: 3.6rem;
+        margin-bottom: 3.2rem;
+        margin-top: 1.6rem;
     `}
 `;
 
@@ -56,15 +74,25 @@ const TitleWithTooltip = styled.span`
     }
 `;
 
-enum UrlParams {
-    sort = 'sort',
-    filter = 'filter',
-}
+const StyledInput = styled(Input)`
+    width: 56rem;
+    margin-left: 2.4rem;
+
+    ${respondDown(Breakpoints.md)`
+        width: 100%;
+        margin-left: 0;
+    `}
+`;
 
 const TooltipInner = styled.span`
     width: 20rem;
     white-space: pre-wrap;
 `;
+
+enum UrlParams {
+    sort = 'sort',
+    filter = 'filter',
+}
 
 const PAGE_SIZE = 20;
 
@@ -74,20 +102,19 @@ const OPTIONS = [
     { label: 'Volatile', value: FilterOptions.constant },
 ];
 
-interface AllPoolsProps {
-    search: string;
-}
-
-const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
+const AllPools = (): React.ReactNode => {
     const [filter, setFilter] = useState(null);
     const [sort, setSort] = useState(null);
     const [pools, setPools] = useState<PoolProcessed[] | null>(null);
     const [total, setTotal] = useState(0);
     const [page, setPage] = useState(1);
     const [pending, setPending] = useState(false);
+    const [search, setSearch] = useState('');
 
     const history = useHistory();
     const location = useLocation();
+
+    const debouncedSearch = useDebounce(search, 700, true);
 
     useEffect(() => {
         const params = new URLSearchParams(location.search);
@@ -133,12 +160,12 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
             return;
         }
         setPending(true);
-        getPools(filter, page, PAGE_SIZE, sort, search).then(({ pools, total }) => {
+        getPools(filter, page, PAGE_SIZE, sort, debouncedSearch).then(({ pools, total }) => {
             setPools(pools);
             setTotal(total);
             setPending(false);
         });
-    }, [filter, page, search, sort]);
+    }, [filter, page, debouncedSearch, sort]);
 
     const changeSort = (newSort: PoolsSortFields) => {
         setSortParam(newSort);
@@ -152,8 +179,17 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
         <PageLoader />
     ) : (
         <>
-            <ToggleGroupStyled value={filter} options={OPTIONS} onChange={setFilterParam} />
-            <SelectStyled value={filter} options={OPTIONS} onChange={setFilterParam} />
+            <Header>
+                <ToggleGroupStyled value={filter} options={OPTIONS} onChange={setFilterParam} />
+                <SelectStyled value={filter} options={OPTIONS} onChange={setFilterParam} />
+                <StyledInput
+                    placeholder="Search by token name or token address"
+                    value={search}
+                    onChange={({ target }) => setSearch(target.value)}
+                    postfix={<Search />}
+                />
+            </Header>
+
             {pools.length ? (
                 <>
                     <Table
@@ -273,7 +309,7 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                         body={pools.map(pool => ({
                             key: pool.address,
                             onRowClick: () => goToPoolPage(pool.address),
-                            mobileBackground: COLORS.lightGray,
+                            mobileBackground: COLORS.white,
                             rowItems: [
                                 {
                                     children: (

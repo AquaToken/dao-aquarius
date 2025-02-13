@@ -226,7 +226,9 @@ export const findSwapPath = async (
 export const getTotalStats = async (): Promise<PoolStatistics[]> => {
     const baseUrl = getAmmAquaUrl();
 
-    const { data } = await axios.get<ListResponse<PoolStatistics>>(`${baseUrl}/statistics/totals/`);
+    const { data } = await axios.get<ListResponse<PoolStatistics>>(
+        `${baseUrl}/statistics/totals/?size=180`,
+    );
     return data.items.reverse();
 };
 
