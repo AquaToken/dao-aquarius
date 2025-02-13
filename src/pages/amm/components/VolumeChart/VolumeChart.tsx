@@ -143,10 +143,7 @@ const VolumeChart = ({
             void d3.select(gy.current).call(
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-expect-error
-                d3
-                    .axisLeft(y)
-                    .ticks(5)
-                    .tickFormat(d => (+d >= 1 ? d3.format('~s')(d) : d3.format('~f')(d))),
+                d3.axisLeft(y).ticks(5).tickFormat(d3.format('~s')),
             ),
         [gy, y],
     );
