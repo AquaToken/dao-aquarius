@@ -6,16 +6,17 @@ import { COLORS } from 'web/styles';
 
 import { Option } from 'basics/inputs/Select';
 
-const ToggleBlock = styled.div`
-    background-color: ${COLORS.gray};
-    border-radius: 5px;
+const ToggleBlock = styled.div<{ $isRounded: boolean }>`
+    background-color: ${({ $isRounded }) => ($isRounded ? COLORS.white : COLORS.gray)};
+    border: ${({ $isRounded }) => ($isRounded ? `0.1rem solid ${COLORS.gray}` : 'none')};
+    border-radius: ${({ $isRounded }) => ($isRounded ? '3.2rem' : '0.5rem')};
     display: flex;
     font-size: 1.4rem;
     line-height: 1.6rem;
     color: ${COLORS.paragraphText};
 `;
 
-const VoteOption = styled.label<{ $isChecked: boolean }>`
+const ToggleOption = styled.label<{ $isChecked: boolean; $isRounded: boolean }>`
     display: flex;
     align-items: center;
     justify-content: center;
@@ -23,20 +24,22 @@ const VoteOption = styled.label<{ $isChecked: boolean }>`
     margin: 0.4rem;
     white-space: nowrap;
     background-color: ${COLORS.gray};
-    border-radius: 3px;
+    border-radius: ${({ $isRounded }) => ($isRounded ? '3.2rem' : '0.3rem')};
 
     font-size: 1.6rem;
     line-height: 1.8rem;
 
     transition: all ease 200ms;
 
-    ${({ $isChecked }: { $isChecked: boolean }) =>
-        $isChecked ? `background-color: ${COLORS.white};` : `background-color: ${COLORS.gray};`};
+    ${({ $isChecked, $isRounded }) =>
+        $isChecked
+            ? `background-color: ${$isRounded ? COLORS.gray : COLORS.white};`
+            : `background-color: ${$isRounded ? COLORS.white : COLORS.gray};`};
     &:hover {
-        ${({ $isChecked }: { $isChecked: boolean }) =>
+        ${({ $isChecked, $isRounded }) =>
             !$isChecked &&
             `cursor: pointer;
-             background: ${COLORS.white};
+             background: ${$isRounded ? COLORS.gray : COLORS.white};
              box-shadow: 0px 20px 30px rgba(0, 6, 54, 0.06);
              `};
     }
@@ -46,11 +49,13 @@ const ToggleGroup = <T,>({
     options,
     value,
     onChange,
+    isRounded,
     ...props
 }: {
     value: T;
     options: Option<T>[];
     onChange: (value: T) => void;
+    isRounded?: boolean;
 }): React.ReactNode => {
     const [selectedOption, setSelectedOption] = useState(
         options.find(option => option.value === value),
@@ -61,20 +66,21 @@ const ToggleGroup = <T,>({
     }, [value]);
 
     return (
-        <ToggleBlock {...props}>
+        <ToggleBlock {...props} $isRounded={isRounded}>
             {options.map(item => {
                 const isSelected = selectedOption?.value === item.value;
                 return (
-                    <VoteOption
+                    <ToggleOption
                         key={item.value.toString()}
                         $isChecked={isSelected}
+                        $isRounded={isRounded}
                         onClick={(e: React.MouseEvent) => {
                             e.preventDefault();
                             onChange(item.value);
                         }}
                     >
                         {item.label}
-                    </VoteOption>
+                    </ToggleOption>
                 );
             })}
         </ToggleBlock>

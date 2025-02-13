@@ -72,6 +72,7 @@ const PoolsListBlock = styled.div<{ $onlyList: boolean }>`
 
     ${respondDown(Breakpoints.md)`
         padding: 3.2rem 0;
+        background-color: ${COLORS.lightGray};
     `}
 `;
 
@@ -149,6 +150,10 @@ const RewardsWrap = styled.div`
     padding: 3.2rem;
     border-radius: 0.5rem;
     margin-bottom: 3.2rem;
+
+    ${respondDown(Breakpoints.md)`
+        background-color: ${COLORS.white};
+    `}
 `;
 
 const AquaLogoStyled = styled(AquaLogo)`

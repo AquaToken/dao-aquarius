@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -144,6 +144,7 @@ const Charts = styled.div`
     display: flex;
     justify-content: space-evenly;
     gap: 1.6rem;
+    padding: 1.6rem;
 
     ${respondDown(Breakpoints.xl)`
         flex-direction: column;
@@ -152,10 +153,10 @@ const Charts = styled.div`
 
 const Chart = styled.div`
     ${flexAllCenter};
-    background-color: ${COLORS.lightGray};
-    padding: 1.6rem;
     border-radius: 0.6rem;
+    padding: 1.6rem;
     flex: 1;
+    background-color: ${COLORS.lightGray};
 `;
 
 const ExternalLinkStyled = styled(ExternalLink)`
@@ -167,6 +168,7 @@ const PoolPage = () => {
     const [rewards, setRewards] = useState(null);
     const { poolAddress } = useParams<{ poolAddress: string }>();
     const [claimPending, setClaimPending] = useState(false);
+    const [chartWidth, setChartWidth] = useState(0);
 
     const { account } = useAuthStore();
 
@@ -175,6 +177,8 @@ const PoolPage = () => {
     const updateIndex = useUpdateIndex(5000);
 
     const { aquaStellarAsset } = getAquaAssetData();
+
+    const chartRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         if (!pool) {
@@ -194,6 +198,28 @@ const PoolPage = () => {
             setPool(res);
         });
     }, [poolAddress, updateIndex]);
+
+    useEffect(() => {
+        if (!pool) {
+            return;
+        }
+        const updateWidth = () => {
+            if (chartRef.current) {
+                setChartWidth(chartRef.current.offsetWidth - 32);
+            }
+        };
+        updateWidth();
+
+        const handleResize = () => {
+            requestAnimationFrame(updateWidth);
+        };
+
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, [pool]);
 
     const claim = () => {
         if (account.authType === LoginTypes.walletConnect) {
@@ -290,22 +316,26 @@ const PoolPage = () => {
                 )}
                 <Section>
                     <SectionWrap>
-                        {Boolean(pool.stats.length) && (
-                            <Charts>
-                                <Chart>
+                        <Charts>
+                            <Chart ref={chartRef}>
+                                {Boolean(pool.stats.length) && (
                                     <LiquidityChart
                                         data={pool.stats}
                                         currentLiquidity={pool.liquidity_usd}
+                                        width={chartWidth}
                                     />
-                                </Chart>
-                                <Chart>
+                                )}
+                            </Chart>
+                            <Chart>
+                                {Boolean(pool.stats.length) && (
                                     <VolumeChart
                                         data={pool.stats}
                                         volume24h={{ volume_usd: pool.volume_usd }}
+                                        width={chartWidth}
                                     />
-                                </Chart>
-                            </Charts>
-                        )}
+                                )}
+                            </Chart>
+                        </Charts>
 
                         <SectionRow>
                             <SectionLabel>Type:</SectionLabel>
