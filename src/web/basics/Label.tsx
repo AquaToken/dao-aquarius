@@ -8,8 +8,9 @@ import { Breakpoints, COLORS } from 'web/styles';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 const TooltipWrapper = styled.div`
-    width: 28.8rem;
+    max-width: 28.8rem;
     white-space: pre-line;
+    width: max-content;
     font-size: 1.4rem;
     line-height: 2rem;
     font-weight: normal;
@@ -36,14 +37,14 @@ const LabelWrapper = styled.div<{
     $innerBorderRadius: string;
     $innerFontSize: string;
     $innerLineHeight: string;
+    $withoutBorder?: boolean;
 }>`
     ${flexAllCenter};
     width: max-content;
-    min-width: 5rem;
     padding: ${({ $padding }) => $padding};
     background: ${({ $background }) => $background};
     color: ${({ $color }) => $color};
-    border: ${({ $color }) => `0.1rem solid ${$color}`};
+    border: ${({ $color, $withoutBorder }) => ($withoutBorder ? 'none' : `0.1rem solid ${$color}`)};
     text-transform: uppercase;
     font-weight: 700;
     border-radius: ${({ $innerBorderRadius }) => $innerBorderRadius};
@@ -80,6 +81,9 @@ interface LabelProps {
     tooltipText?: string | React.ReactNode;
     background?: string;
     color?: string;
+    tooltipColor?: string;
+    tooltipBackground?: string;
+    withoutBorder?: boolean;
 }
 
 const Label = ({
@@ -88,6 +92,9 @@ const Label = ({
     labelSize = 'default',
     background = COLORS.purple,
     color = COLORS.white,
+    tooltipColor,
+    tooltipBackground,
+    withoutBorder,
     ...props
 }: LabelProps): React.ReactNode => {
     const [isEnoughSpaceOnTop, setIsEnoughSpaceOnTop] = useState(true);
@@ -114,7 +121,12 @@ const Label = ({
         labelStyles.$cursor = 'default';
 
         return (
-            <LabelWrapper {...labelStyles} $background={background} $color={color}>
+            <LabelWrapper
+                {...labelStyles}
+                $background={background}
+                $color={color}
+                $withoutBorder={withoutBorder}
+            >
                 {labelText}
             </LabelWrapper>
         );
@@ -130,12 +142,18 @@ const Label = ({
                     ? TOOLTIP_POSITION.right
                     : TOOLTIP_POSITION.left
             }
-            background={background}
-            color={background === COLORS.white ? COLORS.titleText : color}
+            background={tooltipBackground ?? background}
+            color={tooltipColor ?? color}
             showOnHover
         >
             <LabelWrap>
-                <LabelWrapper {...labelStyles} $background={background} $color={color} {...props}>
+                <LabelWrapper
+                    {...labelStyles}
+                    $background={background}
+                    $color={color}
+                    $withoutBorder={withoutBorder}
+                    {...props}
+                >
                     {labelText}
                 </LabelWrapper>
             </LabelWrap>

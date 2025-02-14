@@ -228,7 +228,7 @@ const VolumeChart = ({
                 // @ts-expect-error
                 d3
                     .axisLeft(y)
-                    .ticks(5)
+                    .ticks(3)
                     .tickFormat(d =>
                         d !== 0 ? `$${+d >= 1 ? d3.format('~s')(d) : d3.format('~f')(d)}` : '',
                     ),
