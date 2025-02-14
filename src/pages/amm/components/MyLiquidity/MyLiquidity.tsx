@@ -354,7 +354,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
 
             res.forEach((reward, index) => {
                 map.set(pools[index].address, reward);
-                sum += Number(reward.to_claim)
+                sum += Number(reward.to_claim);
             });
             setUserRewards(map);
             setRewardsSum(sum);
@@ -461,6 +461,21 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                 ToastService.showErrorToast(err.message ?? err.toString());
                 setClaimPendingId(null);
             });
+    };
+    const calculateExpectedReward = (rewardsInfo, poolBalance) => {
+        const supply = +rewardsInfo.supply;
+        const oldWSupply = +rewardsInfo.working_supply;
+        const oldWBalance = +rewardsInfo.working_balance;
+        const lockedSupply = +rewardsInfo.boost_supply;
+        const lockedBalance = +rewardsInfo.boost_balance;
+
+        const newWBalance = Math.min(
+            +poolBalance + (1.5 * lockedBalance * supply) / lockedSupply,
+            +poolBalance * 2.5,
+        );
+
+        const newWSupply = oldWSupply + newWBalance - oldWBalance;
+        return (newWBalance * rewardsInfo.tps) / newWSupply;
     };
 
     console.log(pools, userRewards);
@@ -663,15 +678,22 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                 label: 'Pooled',
                             },
                             {
-                                children: `${formatBalance(
-                                    ((+(pool.reward_tps ?? 0) / 1e7) *
-                                        60 *
-                                        60 *
-                                        24 *
-                                        pool.balance) /
-                                        pool.total_share,
-                                    true,
-                                )} AQUA`,
+                                children: userRewards.get(pool.address) ? (
+                                    `${formatBalance(
+                                        (calculateExpectedReward(
+                                            userRewards.get(pool.address),
+                                            pool.balance,
+                                        ) *
+                                            60 *
+                                            60 *
+                                            24 *
+                                            pool.balance) /
+                                            pool.total_share,
+                                        true,
+                                    )} AQUA`
+                                ) : (
+                                    <DotsLoader />
+                                ),
                                 label: 'My daily rewards',
                                 mobileStyle: { textAlign: 'right' },
                             },
