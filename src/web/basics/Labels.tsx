@@ -72,6 +72,7 @@ export const ClassicPoolLabel = () => (
         tooltipText="Native Stellar liquidity pool"
         background={COLORS.white}
         color={COLORS.classicPool}
+        tooltipColor={COLORS.titleText}
     />
 );
 
@@ -81,6 +82,7 @@ export const ConstantPoolLabel = () => (
         tooltipText="Simple model for general purpose AMM pools (Uniswap v2)."
         background={COLORS.white}
         color={COLORS.constantPool}
+        tooltipColor={COLORS.titleText}
     />
 );
 
@@ -90,5 +92,18 @@ export const StablePoolLabel = () => (
         tooltipText="Highly effecient AMM model for correlated assets (i.e.stablecoins) that offers lower slippage."
         background={COLORS.white}
         color={COLORS.stablePool}
+        tooltipColor={COLORS.titleText}
+    />
+);
+
+export const FeeLabel = ({ fee }: { fee: string }) => (
+    <StyledLabel
+        labelText={`${(Number(fee) * 100).toFixed(2)}%`}
+        tooltipText="Swap fee for this pool"
+        background={COLORS.gray}
+        color={COLORS.grayText}
+        tooltipColor={COLORS.titleText}
+        tooltipBackground={COLORS.white}
+        withoutBorder
     />
 );

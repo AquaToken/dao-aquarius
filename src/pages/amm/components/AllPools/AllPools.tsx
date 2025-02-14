@@ -214,11 +214,6 @@ const AllPools = (): React.ReactNode => {
                                 flexSize: 2,
                             },
                             {
-                                children: 'Fee',
-                                flexSize: 1.5,
-                                align: CellAlign.Right,
-                            },
-                            {
                                 children: 'Daily reward',
                                 sort: {
                                     onClick: () =>
@@ -319,6 +314,7 @@ const AllPools = (): React.ReactNode => {
                                             withoutLink
                                             poolType={pool.pool_type as POOL_TYPE}
                                             isRewardsOn={Boolean(Number(pool.reward_tps))}
+                                            fee={pool.fee}
                                         />
                                     ),
                                     flexSize: 6,
@@ -333,12 +329,6 @@ const AllPools = (): React.ReactNode => {
                                     label: 'TVL:',
                                     align: CellAlign.Right,
                                     flexSize: 2,
-                                },
-                                {
-                                    children: `${(Number(pool.fee) * 100).toFixed(2)}%`,
-                                    label: 'Fee:',
-                                    flexSize: 1.5,
-                                    align: CellAlign.Right,
                                 },
                                 {
                                     children: pool.reward_tps
