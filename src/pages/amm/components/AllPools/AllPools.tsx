@@ -48,6 +48,7 @@ const Header = styled.div`
 const ToggleGroupStyled = styled(ToggleGroup)`
     width: fit-content;
     margin-top: 3.6rem;
+    margin-bottom: 3.2rem;
 
     ${respondDown(Breakpoints.sm)`
         display: none;

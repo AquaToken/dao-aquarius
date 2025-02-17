@@ -113,6 +113,7 @@ enum TotalPeriods {
     month = 30,
     months_3 = 90,
     months_6 = 180,
+    year = 365,
 }
 
 const GlobalPeriodOptions = [
@@ -120,6 +121,7 @@ const GlobalPeriodOptions = [
     { value: TotalPeriods.month, label: 'M' },
     { value: TotalPeriods.months_3, label: '3M' },
     { value: TotalPeriods.months_6, label: '6M' },
+    { value: TotalPeriods.year, label: '1Y' },
 ];
 
 const PoolPeriodOptions = [
@@ -185,10 +187,16 @@ const LiquidityChart = ({
         () =>
             void d3
                 .select(gx.current)
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-expect-error
-                .call(d3.axisBottom(x).ticks(4).tickFormat(d3.timeFormat('%b %d'))),
-        [gx, x],
+
+                .call(
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-expect-error
+                    d3
+                        .axisBottom(x)
+                        .ticks(width < 992 ? 3 : 4)
+                        .tickFormat(d3.timeFormat('%b %d')),
+                ),
+        [gx, x, width],
     );
 
     useEffect(
@@ -223,7 +231,7 @@ const LiquidityChart = ({
             .on('mouseout', () => {
                 setSelectedIndex(null);
             });
-    }, [svg, data]);
+    }, [svg, data, width]);
 
     useEffect(() => {
         if (!svg.current) {
