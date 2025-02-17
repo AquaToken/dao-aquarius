@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -239,6 +240,8 @@ const Analytics = () => {
             return;
         }
         const updateWidth = () => {
+            flushSync(() => setChartWidth(0));
+
             if (chartRef.current) {
                 setChartWidth(chartRef.current.offsetWidth - 32);
             }

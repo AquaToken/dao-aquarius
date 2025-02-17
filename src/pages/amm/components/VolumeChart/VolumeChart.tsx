@@ -61,7 +61,7 @@ const ToggleGroupStyled = styled(ToggleGroup)`
 
 const SelectStyled = styled(Select)`
     display: none;
-    width: 10rem;
+    width: 12rem;
     height: 4.8rem;
     border-radius: 1rem;
 

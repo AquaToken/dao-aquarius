@@ -57,7 +57,7 @@ const ToggleGroupStyled = styled(ToggleGroup)`
 
 const SelectStyled = styled(Select)`
     display: none;
-    width: 10rem;
+    width: 12rem;
     height: 4.8rem;
     border-radius: 1rem;
 
@@ -238,7 +238,7 @@ const LiquidityChart = ({
             return;
         }
 
-        // Удаление старых элементов foreignObject, чтобы избежать наложения
+        // remove previous elements
         d3.select(svg.current).selectAll('foreignObject').remove();
 
         // Append foreignObject for React component
@@ -338,56 +338,61 @@ const LiquidityChart = ({
                     </GrayText>
                 )}
             </g>
+
             <Axis ref={gx} transform={`translate(0,${height - marginBottom})`} />
             <AxisY ref={gy} transform={`translate(${marginLeft}, 0)`} />
 
             <path fill="none" stroke={COLORS.tooltip} strokeWidth="2" d={line(data)} />
             <path fill="url(#gradient)" stroke="transparent" strokeWidth="0" d={path(data)} />
-
-            {selectedIndex && (
-                <g>
-                    <line
-                        stroke={COLORS.tooltip}
-                        strokeOpacity={0.2}
-                        strokeDasharray="4 4"
-                        strokeWidth="1"
-                        x1={x(
-                            transformDate(
-                                data[selectedIndex]?.datetime_str || data[selectedIndex]?.date_str,
-                            ),
-                        )}
-                        y1={height - marginBottom}
-                        x2={x(
-                            transformDate(
-                                data[selectedIndex]?.datetime_str || data[selectedIndex]?.date_str,
-                            ),
-                        )}
-                        y2={height * 0.4}
-                    />
-                    <line
-                        stroke={COLORS.tooltip}
-                        strokeOpacity={0.2}
-                        strokeDasharray="4 4"
-                        strokeWidth="1"
-                        x1={marginLeft}
-                        y1={y(Number(data[selectedIndex].liquidity_usd) / 1e7)}
-                        x2={width - marginRight}
-                        y2={y(Number(data[selectedIndex].liquidity_usd) / 1e7)}
-                    />
-                    <circle
-                        stroke={COLORS.white}
-                        strokeWidth="2"
-                        r="2.5"
-                        fill={COLORS.tooltip}
-                        cx={x(
-                            transformDate(
-                                data[selectedIndex]?.datetime_str || data[selectedIndex]?.date_str,
-                            ),
-                        )}
-                        cy={y(Number(data[selectedIndex].liquidity_usd) / 1e7)}
-                    />
-                </g>
-            )}
+            <g>
+                {Boolean(selectedIndex) && (
+                    <>
+                        <line
+                            stroke={COLORS.tooltip}
+                            strokeOpacity={0.2}
+                            strokeDasharray="4 4"
+                            strokeWidth="1"
+                            x1={x(
+                                transformDate(
+                                    data[selectedIndex]?.datetime_str ||
+                                        data[selectedIndex]?.date_str,
+                                ),
+                            )}
+                            y1={height - marginBottom}
+                            x2={x(
+                                transformDate(
+                                    data[selectedIndex]?.datetime_str ||
+                                        data[selectedIndex]?.date_str,
+                                ),
+                            )}
+                            y2={height * 0.4}
+                        />
+                        <line
+                            stroke={COLORS.tooltip}
+                            strokeOpacity={0.2}
+                            strokeDasharray="4 4"
+                            strokeWidth="1"
+                            x1={marginLeft}
+                            y1={y(Number(data[selectedIndex].liquidity_usd) / 1e7)}
+                            x2={width - marginRight}
+                            y2={y(Number(data[selectedIndex].liquidity_usd) / 1e7)}
+                        />
+                        <circle
+                            stroke={COLORS.white}
+                            strokeWidth="2"
+                            r="2.5"
+                            fill={COLORS.tooltip}
+                            cx={x(
+                                transformDate(
+                                    data[selectedIndex]?.datetime_str ||
+                                        data[selectedIndex]?.date_str,
+                                ),
+                            )}
+                            cy={y(Number(data[selectedIndex].liquidity_usd) / 1e7)}
+                        />
+                    </>
+                )}
+            </g>
         </svg>
     );
 };
