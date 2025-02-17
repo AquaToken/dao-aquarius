@@ -1,10 +1,11 @@
 type GetDateStringConfig = {
     withTime?: boolean;
     withoutYear?: boolean;
+    withoutDay?: boolean;
 };
 
 export const getDateString = (timestamp: number, config?: GetDateStringConfig): string => {
-    const { withTime, withoutYear } = config ?? {};
+    const { withTime, withoutYear, withoutDay } = config ?? {};
     const date = new Date(timestamp),
         year = date.getFullYear(),
         month = date.getMonth(),
@@ -26,7 +27,7 @@ export const getDateString = (timestamp: number, config?: GetDateStringConfig): 
             'Dec',
         ];
 
-    return `${months[month]} ${day}${withoutYear ? '' : `, ${year}`}${
+    return `${months[month]}${withoutDay ? '' : ` ${day}`}${withoutYear ? '' : `, ${year}`}${
         withTime ? `, ${hours == 24 ? '00' : `0${hours}`.slice(-2)}:${`0${minutes}`.slice(-2)}` : ''
     }`;
 };

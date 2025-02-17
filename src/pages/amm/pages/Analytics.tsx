@@ -254,7 +254,7 @@ const Analytics = () => {
         return () => {
             window.removeEventListener('resize', handleResize);
         };
-    }, [totalStats]);
+    }, [totalStats, volume24h]);
 
     const goToCreatePool = () => {
         if (!isLogged) {

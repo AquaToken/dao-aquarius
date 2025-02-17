@@ -105,12 +105,16 @@ enum TotalPeriods {
     week = 7,
     month = 30,
     months_3 = 90,
+    months_6 = 180,
+    year = 365,
 }
 
 const GlobalPeriodOptions = [
     { value: TotalPeriods.week, label: 'W' },
     { value: TotalPeriods.month, label: 'M' },
     { value: TotalPeriods.months_3, label: '3M' },
+    { value: TotalPeriods.months_6, label: '6M' },
+    { value: TotalPeriods.year, label: '1Y' },
 ];
 
 const PoolPeriodOptions = [
@@ -148,9 +152,32 @@ const VolumeChart = ({
                 volume_usd: Number(item.volume_usd) / 1e7,
             }));
 
-            volume24h.volume_usd = (Number(volume24h.volume_usd) / 1e7).toString();
+            const volume24hUsd = {
+                ...volume24h,
+                volume_usd: (Number(volume24h.volume_usd) / 1e7).toString(),
+            };
 
-            return [copy, volume24h];
+            if (selectedPeriod >= TotalPeriods.months_3) {
+                const monthlyData = new Map();
+
+                copy.forEach(item => {
+                    const month = format(item.date, 'yyyy-MM');
+                    if (!monthlyData.has(month)) {
+                        monthlyData.set(month, { date: item.date, volume_usd: 0 });
+                    }
+                    const existing = monthlyData.get(month);
+                    existing.volume_usd += item.volume_usd;
+                    monthlyData.set(month, existing);
+                });
+
+                const lastNMonths = Array.from(monthlyData.values()).slice(
+                    -selectedPeriod / TotalPeriods.month,
+                );
+
+                return [lastNMonths, volume24hUsd];
+            }
+
+            return [copy, volume24hUsd];
         }
 
         let date = set(transformDate(data[0]?.datetime_str), {
@@ -188,8 +215,7 @@ const VolumeChart = ({
             ],
             { volume_usd: +volume24h.volume_usd / 1e7 },
         ];
-    }, [data, isGlobalStat]);
-
+    }, [data, isGlobalStat, selectedPeriod, volume24h]);
     const [selectedIndex, setSelectedIndex] = useState(null);
     const svg = useRef();
     const gx = useRef();
@@ -315,7 +341,7 @@ const VolumeChart = ({
             .on('mouseout', () => {
                 setSelectedIndex(null);
             });
-    }, [svg, data]);
+    }, [svg, data, width]);
 
     if (!data.length) {
         return (
@@ -343,8 +369,11 @@ const VolumeChart = ({
             <g>
                 <GrayText x="16" y="32">
                     {selectedItem
-                        ? `Daily volume: ${getDateString(
+                        ? `${
+                              selectedPeriod >= TotalPeriods.months_3 ? 'Monthly' : 'Daily'
+                          } volume: ${getDateString(
                               convertUTCToLocalDateIgnoringTimezone(selectedItem?.date)?.getTime(),
+                              { withoutDay: selectedPeriod >= TotalPeriods.months_3 },
                           )}`
                         : `Last 24h volume:`}
                 </GrayText>
