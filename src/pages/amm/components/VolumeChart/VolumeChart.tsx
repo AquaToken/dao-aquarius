@@ -182,7 +182,10 @@ const VolumeChart = ({
                 const weeklyData = new Map();
 
                 copy.forEach(item => {
-                    const startWeek = format(startOfWeek(item.date), 'yyyy-MM-dd');
+                    const startWeek = format(
+                        startOfWeek(item.date, { weekStartsOn: 1 }),
+                        'yyyy-MM-dd',
+                    );
                     if (!weeklyData.has(startWeek)) {
                         weeklyData.set(startWeek, { date: item.date, volume_usd: 0 });
                     }
