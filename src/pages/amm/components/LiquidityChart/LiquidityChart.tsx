@@ -2,7 +2,6 @@ import * as d3 from 'd3';
 import { isAfter, subDays } from 'date-fns';
 import * as React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { createRoot } from 'react-dom/client';
 import styled from 'styled-components';
 
 import { convertUTCToLocalDateIgnoringTimezone, getDateString } from 'helpers/date';
@@ -57,6 +56,9 @@ const LiquidityValue = styled.text`
 
 const ToggleGroupStyled = styled(ToggleGroup)`
     width: fit-content;
+    position: absolute;
+    right: 0;
+    top: 1.6rem;
 
     ${respondDown(Breakpoints.sm)`
         display: none;
@@ -69,6 +71,9 @@ const SelectStyled = styled(Select)`
     height: 4.8rem;
     border-radius: 1rem;
     justify-content: flex-start;
+    position: absolute;
+    right: 0;
+    top: 1.6rem;
 
     & > div {
         padding-left: 1rem;
@@ -85,25 +90,6 @@ const SelectStyled = styled(Select)`
     ${respondDown(Breakpoints.sm)`
         display: flex;
     `}
-`;
-
-const ToggleGroupForEmpty = styled(ToggleGroupStyled)`
-    position: absolute;
-    right: 0;
-    top: 1.6rem;
-`;
-
-const SelectForEmpty = styled(SelectStyled)`
-    position: absolute;
-    right: 0;
-    top: 1.6rem;
-`;
-
-const Empty = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
 `;
 
 export const transformDate = (date_str: string) => {
@@ -254,169 +240,123 @@ const LiquidityChart = ({
             });
     }, [svg, data, width]);
 
-    useEffect(() => {
-        if (!svg.current) {
-            return;
-        }
-
-        // remove previous elements
-        d3.select(svg.current).selectAll('foreignObject').remove();
-
-        // Append foreignObject for React component
-        const foreignObject = d3
-            .select(svg.current)
-            .append('foreignObject')
-            .attr('x', 0)
-            .attr('y', marginTop)
-            .attr('width', width)
-            .attr('height', height);
-
-        // Create a div inside foreignObject
-        const div = foreignObject
-            .append('xhtml:div')
-            .attr('id', 'toggle-group-liquidity')
-            .style('position', 'absolute')
-            .style('top', 0)
-            .style('right', 0);
-
-        // Render Tooltip inside div
-        const root = createRoot(document.getElementById('toggle-group-liquidity'));
-        root.render(
-            <>
-                <ToggleGroupStyled
-                    options={isGlobalStat ? GlobalPeriodOptions : PoolPeriodOptions}
-                    value={selectedPeriod}
-                    onChange={setSelectedPeriod}
-                    isRounded
-                />
-                <SelectStyled
-                    options={isGlobalStat ? GlobalPeriodOptions : PoolPeriodOptions}
-                    value={selectedPeriod}
-                    onChange={setSelectedPeriod}
-                    placeholder="Set"
-                />
-            </>,
-        );
-
-        return () => {
-            root.unmount();
-        };
-    }, [svg, selectedPeriod, width]);
-
-    if (!data.length) {
-        return (
-            <Empty style={{ width, height }}>
-                <ToggleGroupForEmpty
-                    options={isGlobalStat ? GlobalPeriodOptions : PoolPeriodOptions}
-                    value={selectedPeriod}
-                    onChange={setSelectedPeriod}
-                    isRounded
-                />
-                <SelectForEmpty
-                    options={isGlobalStat ? GlobalPeriodOptions : PoolPeriodOptions}
-                    value={selectedPeriod}
-                    onChange={setSelectedPeriod}
-                    placeholder="Set"
-                />
-                <span>No data for selected period</span>
-            </Empty>
-        );
-    }
-
     return (
-        <svg width={width} height={height} ref={svg}>
-            <defs>
-                <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stopColor="#8620B9" stopOpacity="0.6"></stop>
-                    <stop offset="100%" stopColor="#D9D9D9" stopOpacity="0"></stop>
-                </linearGradient>
-            </defs>
-            <g>
-                <GrayText x="16" y="32">
-                    Liquidity
-                </GrayText>
-                <LiquidityValue x="16" y="63">
-                    $
-                    {formatBalance(
-                        (selectedIndex === null
-                            ? +currentLiquidity || +data[data.length - 1]?.liquidity_usd
-                            : +data[selectedIndex]?.liquidity_usd) / 1e7,
-                        true,
-                        true,
-                    )}
-                </LiquidityValue>
-                {selectedIndex !== null && (
-                    <GrayText x="16" y="87">
-                        {getDateString(
-                            convertUTCToLocalDateIgnoringTimezone(
-                                transformDate(
-                                    data[selectedIndex]?.datetime_str ||
-                                        data[selectedIndex]?.date_str,
-                                ),
-                            )?.getTime(),
-                            {
-                                withTime: !isGlobalStat,
-                            },
+        <div style={{ width, height, position: 'relative' }}>
+            <ToggleGroupStyled
+                options={isGlobalStat ? GlobalPeriodOptions : PoolPeriodOptions}
+                value={selectedPeriod}
+                onChange={setSelectedPeriod}
+                isRounded
+            />
+            <SelectStyled
+                options={isGlobalStat ? GlobalPeriodOptions : PoolPeriodOptions}
+                value={selectedPeriod}
+                onChange={setSelectedPeriod}
+                placeholder="Set"
+            />
+            {data.length ? (
+                <svg width={width} height={height} ref={svg}>
+                    <defs>
+                        <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stopColor="#8620B9" stopOpacity="0.6"></stop>
+                            <stop offset="100%" stopColor="#D9D9D9" stopOpacity="0"></stop>
+                        </linearGradient>
+                    </defs>
+                    <g>
+                        <GrayText x="16" y="32">
+                            Liquidity
+                        </GrayText>
+                        <LiquidityValue x="16" y="63">
+                            $
+                            {formatBalance(
+                                (selectedIndex === null
+                                    ? +currentLiquidity || +data[data.length - 1]?.liquidity_usd
+                                    : +data[selectedIndex]?.liquidity_usd) / 1e7,
+                                true,
+                                true,
+                            )}
+                        </LiquidityValue>
+                        {selectedIndex !== null && (
+                            <GrayText x="16" y="87">
+                                {getDateString(
+                                    convertUTCToLocalDateIgnoringTimezone(
+                                        transformDate(
+                                            data[selectedIndex]?.datetime_str ||
+                                                data[selectedIndex]?.date_str,
+                                        ),
+                                    )?.getTime(),
+                                    {
+                                        withTime: !isGlobalStat,
+                                    },
+                                )}
+                            </GrayText>
                         )}
-                    </GrayText>
-                )}
-            </g>
+                    </g>
 
-            <Axis ref={gx} transform={`translate(0,${height - marginBottom})`} />
-            <AxisY ref={gy} transform={`translate(${marginLeft}, 0)`} />
+                    <Axis ref={gx} transform={`translate(0,${height - marginBottom})`} />
+                    <AxisY ref={gy} transform={`translate(${marginLeft}, 0)`} />
 
-            <path fill="none" stroke={COLORS.tooltip} strokeWidth="2" d={line(data)} />
-            <path fill="url(#gradient)" stroke="transparent" strokeWidth="0" d={path(data)} />
-            <g>
-                {Boolean(selectedIndex) && (
-                    <>
-                        <line
-                            stroke={COLORS.tooltip}
-                            strokeOpacity={0.2}
-                            strokeDasharray="4 4"
-                            strokeWidth="1"
-                            x1={x(
-                                transformDate(
-                                    data[selectedIndex]?.datetime_str ||
-                                        data[selectedIndex]?.date_str,
-                                ),
-                            )}
-                            y1={height - marginBottom}
-                            x2={x(
-                                transformDate(
-                                    data[selectedIndex]?.datetime_str ||
-                                        data[selectedIndex]?.date_str,
-                                ),
-                            )}
-                            y2={height * 0.4}
-                        />
-                        <line
-                            stroke={COLORS.tooltip}
-                            strokeOpacity={0.2}
-                            strokeDasharray="4 4"
-                            strokeWidth="1"
-                            x1={marginLeft}
-                            y1={y(Number(data[selectedIndex].liquidity_usd) / 1e7)}
-                            x2={width - marginRight}
-                            y2={y(Number(data[selectedIndex].liquidity_usd) / 1e7)}
-                        />
-                        <circle
-                            stroke={COLORS.white}
-                            strokeWidth="2"
-                            r="2.5"
-                            fill={COLORS.tooltip}
-                            cx={x(
-                                transformDate(
-                                    data[selectedIndex]?.datetime_str ||
-                                        data[selectedIndex]?.date_str,
-                                ),
-                            )}
-                            cy={y(Number(data[selectedIndex].liquidity_usd) / 1e7)}
-                        />
-                    </>
-                )}
-            </g>
-        </svg>
+                    <path fill="none" stroke={COLORS.tooltip} strokeWidth="2" d={line(data)} />
+                    <path
+                        fill="url(#gradient)"
+                        stroke="transparent"
+                        strokeWidth="0"
+                        d={path(data)}
+                    />
+                    <g>
+                        {Boolean(selectedIndex) && (
+                            <>
+                                <line
+                                    stroke={COLORS.tooltip}
+                                    strokeOpacity={0.2}
+                                    strokeDasharray="4 4"
+                                    strokeWidth="1"
+                                    x1={x(
+                                        transformDate(
+                                            data[selectedIndex]?.datetime_str ||
+                                                data[selectedIndex]?.date_str,
+                                        ),
+                                    )}
+                                    y1={height - marginBottom}
+                                    x2={x(
+                                        transformDate(
+                                            data[selectedIndex]?.datetime_str ||
+                                                data[selectedIndex]?.date_str,
+                                        ),
+                                    )}
+                                    y2={height * 0.4}
+                                />
+                                <line
+                                    stroke={COLORS.tooltip}
+                                    strokeOpacity={0.2}
+                                    strokeDasharray="4 4"
+                                    strokeWidth="1"
+                                    x1={marginLeft}
+                                    y1={y(Number(data[selectedIndex].liquidity_usd) / 1e7)}
+                                    x2={width - marginRight}
+                                    y2={y(Number(data[selectedIndex].liquidity_usd) / 1e7)}
+                                />
+                                <circle
+                                    stroke={COLORS.white}
+                                    strokeWidth="2"
+                                    r="2.5"
+                                    fill={COLORS.tooltip}
+                                    cx={x(
+                                        transformDate(
+                                            data[selectedIndex]?.datetime_str ||
+                                                data[selectedIndex]?.date_str,
+                                        ),
+                                    )}
+                                    cy={y(Number(data[selectedIndex].liquidity_usd) / 1e7)}
+                                />
+                            </>
+                        )}
+                    </g>
+                </svg>
+            ) : (
+                <span>No data for selected period</span>
+            )}
+        </div>
     );
 };
 
