@@ -168,7 +168,7 @@ const Analytics = () => {
     const mainContent = useRef(null);
 
     useEffect(() => {
-        if (!chartWidth) {
+        if (!totalStats || !volume24h) {
             return;
         }
         if (mainContent.current) {
@@ -176,7 +176,7 @@ const Analytics = () => {
                 mainContent.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }, 200);
         }
-    }, [chartWidth]);
+    }, [totalStats, volume24h]);
 
     useEffect(() => {
         const params = new URLSearchParams(location.search);
