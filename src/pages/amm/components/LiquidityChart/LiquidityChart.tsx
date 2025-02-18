@@ -13,7 +13,12 @@ import { Breakpoints, COLORS } from 'web/styles';
 
 import { Select, ToggleGroup } from 'basics/inputs';
 
-import { respondDown } from '../../../../web/mixins';
+import { flexAllCenter, respondDown } from '../../../../web/mixins';
+
+const Container = styled.div`
+    ${flexAllCenter};
+    position: relative;
+`;
 
 const Axis = styled.g`
     font-size: 1.4rem;
@@ -241,7 +246,7 @@ const LiquidityChart = ({
     }, [svg, data, width]);
 
     return (
-        <div style={{ width, height, position: 'relative' }}>
+        <Container style={{ width, height }}>
             <ToggleGroupStyled
                 options={isGlobalStat ? GlobalPeriodOptions : PoolPeriodOptions}
                 value={selectedPeriod}
@@ -356,7 +361,7 @@ const LiquidityChart = ({
             ) : (
                 <span>No data for selected period</span>
             )}
-        </div>
+        </Container>
     );
 };
 

@@ -13,8 +13,13 @@ import { Breakpoints, COLORS } from 'web/styles';
 
 import { Select, ToggleGroup } from 'basics/inputs';
 
-import { respondDown } from '../../../../web/mixins';
+import { flexAllCenter, respondDown } from '../../../../web/mixins';
 import { transformDate } from '../LiquidityChart/LiquidityChart';
+
+const Container = styled.div`
+    ${flexAllCenter};
+    position: relative;
+`;
 
 const Axis = styled.g`
     font-size: 1.4rem;
@@ -329,7 +334,7 @@ const VolumeChart = ({
     const selectedItem = daily[selectedIndex];
 
     return (
-        <div style={{ width, height, position: 'relative' }}>
+        <Container style={{ width, height }}>
             <ToggleGroupStyled
                 options={isGlobalStat ? GlobalPeriodOptions : PoolPeriodOptions}
                 value={selectedPeriod}
@@ -385,7 +390,7 @@ const VolumeChart = ({
             ) : (
                 <span>No data for selected period</span>
             )}
-        </div>
+        </Container>
     );
 };
 
