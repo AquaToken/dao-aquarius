@@ -146,8 +146,9 @@ const Charts = styled.div`
     gap: 1.6rem;
     padding: 1.6rem;
 
-    ${respondDown(Breakpoints.xl)`
+    ${respondDown(Breakpoints.md)`
         flex-direction: column;
+        padding: 0;
     `}
 `;
 
@@ -157,6 +158,10 @@ const Chart = styled.div`
     padding: 1.6rem;
     flex: 1;
     background-color: ${COLORS.lightGray};
+
+    ${respondDown(Breakpoints.md)`
+        padding: 0;
+    `}
 `;
 
 const ExternalLinkStyled = styled(ExternalLink)`

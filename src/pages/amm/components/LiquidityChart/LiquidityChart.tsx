@@ -39,12 +39,20 @@ const AxisY = styled(Axis)`
 const GrayText = styled.text`
     font-size: 1.4rem;
     fill: ${COLORS.grayText};
+
+    ${respondDown(Breakpoints.sm)`
+       font-size: 1.2rem;
+    `}
 `;
 
 const LiquidityValue = styled.text`
     font-size: 2rem;
     fill: ${COLORS.titleText};
     font-weight: 700;
+
+    ${respondDown(Breakpoints.sm)`
+       font-size: 1.6rem;
+    `}
 `;
 
 const ToggleGroupStyled = styled(ToggleGroup)`
@@ -57,9 +65,22 @@ const ToggleGroupStyled = styled(ToggleGroup)`
 
 const SelectStyled = styled(Select)`
     display: none;
-    width: 12rem;
+    width: 8rem;
     height: 4.8rem;
     border-radius: 1rem;
+    justify-content: flex-start;
+
+    & > div {
+        padding-left: 1rem;
+
+        & > div {
+            padding-left: 1rem;
+        }
+    }
+
+    & > svg {
+        right: 0.4rem;
+    }
 
     ${respondDown(Breakpoints.sm)`
         display: flex;
@@ -193,7 +214,7 @@ const LiquidityChart = ({
                     // @ts-expect-error
                     d3
                         .axisBottom(x)
-                        .ticks(width < 992 ? 3 : 4)
+                        .ticks(width < 300 ? 1 : width < 992 ? 2 : 4)
                         .tickFormat(d3.timeFormat('%b %d')),
                 ),
         [gx, x, width],
@@ -272,6 +293,7 @@ const LiquidityChart = ({
                     options={isGlobalStat ? GlobalPeriodOptions : PoolPeriodOptions}
                     value={selectedPeriod}
                     onChange={setSelectedPeriod}
+                    placeholder="Set"
                 />
             </>,
         );
@@ -294,6 +316,7 @@ const LiquidityChart = ({
                     options={isGlobalStat ? GlobalPeriodOptions : PoolPeriodOptions}
                     value={selectedPeriod}
                     onChange={setSelectedPeriod}
+                    placeholder="Set"
                 />
                 <span>No data for selected period</span>
             </Empty>
