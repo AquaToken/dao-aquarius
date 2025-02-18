@@ -139,6 +139,7 @@ const Chart = styled.div`
     background-color: ${COLORS.white};
     border-radius: 0.6rem;
     width: 100%;
+    padding: 0 1.6rem;
 `;
 
 const ExpandedBlock = styled.div<{ $withoutTopPadding?: boolean }>`
@@ -452,7 +453,6 @@ const PoolsList = ({
                                                         />
                                                     </Chart>
                                                     <Chart>
-                                                        {' '}
                                                         <LiquidityChart
                                                             data={poolStats[index]}
                                                             currentLiquidity={

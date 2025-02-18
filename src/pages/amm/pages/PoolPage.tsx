@@ -158,10 +158,6 @@ const Chart = styled.div`
     padding: 1.6rem;
     flex: 1;
     background-color: ${COLORS.lightGray};
-
-    ${respondDown(Breakpoints.md)`
-        padding: 0;
-    `}
 `;
 
 const ExternalLinkStyled = styled(ExternalLink)`
