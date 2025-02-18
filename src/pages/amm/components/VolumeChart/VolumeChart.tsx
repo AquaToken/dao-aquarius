@@ -2,7 +2,6 @@ import * as d3 from 'd3';
 import { addDays, format, isAfter, set, subDays, startOfWeek } from 'date-fns';
 import * as React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { createRoot } from 'react-dom/client';
 import styled from 'styled-components';
 
 import { convertUTCToLocalDateIgnoringTimezone, getDateString } from 'helpers/date';
@@ -61,6 +60,9 @@ const LiquidityValue = styled.text`
 
 const ToggleGroupStyled = styled(ToggleGroup)`
     width: fit-content;
+    position: absolute;
+    right: 0;
+    top: 1.6rem;
 
     ${respondDown(Breakpoints.sm)`
         display: none;
@@ -73,6 +75,9 @@ const SelectStyled = styled(Select)`
     height: 4.8rem;
     border-radius: 1rem;
     justify-content: flex-start;
+    position: absolute;
+    right: 0;
+    top: 1.6rem;
 
     & > div {
         padding-left: 1rem;
@@ -89,25 +94,6 @@ const SelectStyled = styled(Select)`
     ${respondDown(Breakpoints.sm)`
         display: flex;
     `}
-`;
-
-const ToggleGroupForEmpty = styled(ToggleGroupStyled)`
-    position: absolute;
-    right: 0;
-    top: 1.6rem;
-`;
-
-const SelectForEmpty = styled(SelectStyled)`
-    position: absolute;
-    right: 0;
-    top: 1.6rem;
-`;
-
-const Empty = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
 `;
 
 interface VolumeChartProps {
@@ -307,55 +293,6 @@ const VolumeChart = ({
         [gy, y],
     );
 
-    useEffect(() => {
-        if (!svg.current) {
-            return;
-        }
-
-        // Удаление старых элементов foreignObject, чтобы избежать наложения
-        d3.select(svg.current).selectAll('foreignObject').remove();
-
-        // Append foreignObject for React component
-        const foreignObject = d3
-            .select(svg.current)
-            .append('foreignObject')
-            .attr('x', 0)
-            .attr('y', marginTop)
-            .attr('width', width)
-            .attr('height', height);
-
-        // Create a div inside foreignObject
-        const div = foreignObject
-            .append('xhtml:div')
-            .attr('id', 'toggle-group-volume')
-            .style('position', 'absolute')
-            .style('top', 0)
-            .style('right', 0);
-
-        // Render Tooltip inside div
-        const root = createRoot(document.getElementById('toggle-group-volume'));
-        root.render(
-            <>
-                <ToggleGroupStyled
-                    options={isGlobalStat ? GlobalPeriodOptions : PoolPeriodOptions}
-                    value={selectedPeriod}
-                    onChange={setSelectedPeriod}
-                    isRounded
-                />
-                <SelectStyled
-                    options={isGlobalStat ? GlobalPeriodOptions : PoolPeriodOptions}
-                    value={selectedPeriod}
-                    onChange={setSelectedPeriod}
-                    placeholder="Set"
-                />
-            </>,
-        );
-
-        return () => {
-            root.unmount();
-        };
-    }, [svg, selectedPeriod, width]);
-
     const onMouseMove = event => {
         const [mouseX] = d3.pointer(event);
 
@@ -389,66 +326,66 @@ const VolumeChart = ({
             });
     }, [svg, data, width]);
 
-    if (!data.length) {
-        return (
-            <Empty style={{ width, height }}>
-                <ToggleGroupForEmpty
-                    options={isGlobalStat ? GlobalPeriodOptions : PoolPeriodOptions}
-                    value={selectedPeriod}
-                    onChange={setSelectedPeriod}
-                    isRounded
-                />
-                <SelectForEmpty
-                    options={isGlobalStat ? GlobalPeriodOptions : PoolPeriodOptions}
-                    value={selectedPeriod}
-                    onChange={setSelectedPeriod}
-                    placeholder="Set"
-                />
-                <span>No data for selected period</span>
-            </Empty>
-        );
-    }
-
     const selectedItem = daily[selectedIndex];
 
     return (
-        <svg width={width} height={height} ref={svg}>
-            <g>
-                <GrayText x="16" y="32">
-                    {selectedItem
-                        ? `${
-                              selectedPeriod >= TotalPeriods.months_6
-                                  ? 'Monthly'
-                                  : selectedPeriod === TotalPeriods.months_3
-                                  ? 'Weekly'
-                                  : 'Daily'
-                          } volume: ${getDateString(
-                              convertUTCToLocalDateIgnoringTimezone(selectedItem?.date)?.getTime(),
-                              { withoutDay: selectedPeriod >= TotalPeriods.months_6 },
-                          )}`
-                        : `Last 24h volume:`}
-                </GrayText>
-                <LiquidityValue x="16" y="63">
-                    ${formatBalance((selectedItem || last24)?.volume_usd, true, true)}
-                </LiquidityValue>
-            </g>
+        <div style={{ width, height, position: 'relative' }}>
+            <ToggleGroupStyled
+                options={isGlobalStat ? GlobalPeriodOptions : PoolPeriodOptions}
+                value={selectedPeriod}
+                onChange={setSelectedPeriod}
+                isRounded
+            />
+            <SelectStyled
+                options={isGlobalStat ? GlobalPeriodOptions : PoolPeriodOptions}
+                value={selectedPeriod}
+                onChange={setSelectedPeriod}
+                placeholder="Set"
+            />
+            {data.length ? (
+                <svg width={width} height={height} ref={svg}>
+                    <g>
+                        <GrayText x="16" y="32">
+                            {selectedItem
+                                ? `${
+                                      selectedPeriod >= TotalPeriods.months_6
+                                          ? 'Monthly'
+                                          : selectedPeriod === TotalPeriods.months_3
+                                          ? 'Weekly'
+                                          : 'Daily'
+                                  } volume: ${getDateString(
+                                      convertUTCToLocalDateIgnoringTimezone(
+                                          selectedItem?.date,
+                                      )?.getTime(),
+                                      { withoutDay: selectedPeriod >= TotalPeriods.months_6 },
+                                  )}`
+                                : `Last 24h volume:`}
+                        </GrayText>
+                        <LiquidityValue x="16" y="63">
+                            ${formatBalance((selectedItem || last24)?.volume_usd, true, true)}
+                        </LiquidityValue>
+                    </g>
 
-            {daily.map((item, i) => (
-                <rect
-                    rx="1"
-                    fill={selectedIndex === i ? COLORS.tooltip : COLORS.gray}
-                    stroke={COLORS.white}
-                    key={i}
-                    x={x(item.date)}
-                    width={x.bandwidth()}
-                    y={y(item.volume_usd)}
-                    height={height - marginBottom - y(item.volume_usd)}
-                />
-            ))}
+                    {daily.map((item, i) => (
+                        <rect
+                            rx="1"
+                            fill={selectedIndex === i ? COLORS.tooltip : COLORS.gray}
+                            stroke={COLORS.white}
+                            key={i}
+                            x={x(item.date)}
+                            width={x.bandwidth()}
+                            y={y(item.volume_usd)}
+                            height={height - marginBottom - y(item.volume_usd)}
+                        />
+                    ))}
 
-            <Axis ref={gx} transform={`translate(0,${height - marginBottom})`} />
-            <AxisY ref={gy} transform={`translate(${marginLeft},0)`} />
-        </svg>
+                    <Axis ref={gx} transform={`translate(0,${height - marginBottom})`} />
+                    <AxisY ref={gy} transform={`translate(${marginLeft},0)`} />
+                </svg>
+            ) : (
+                <span>No data for selected period</span>
+            )}
+        </div>
     );
 };
 
