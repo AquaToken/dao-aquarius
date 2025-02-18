@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { addDays, format, isAfter, set, subDays } from 'date-fns';
+import { addDays, format, isAfter, set, subDays, startOfWeek } from 'date-fns';
 import * as React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -43,12 +43,20 @@ const AxisY = styled(Axis)`
 const GrayText = styled.text`
     font-size: 1.4rem;
     fill: ${COLORS.grayText};
+
+    ${respondDown(Breakpoints.sm)`
+       font-size: 1.2rem;
+    `}
 `;
 
 const LiquidityValue = styled.text`
     font-size: 2rem;
     fill: ${COLORS.titleText};
     font-weight: 700;
+
+    ${respondDown(Breakpoints.sm)`
+       font-size: 1.6rem;
+    `}
 `;
 
 const ToggleGroupStyled = styled(ToggleGroup)`
@@ -61,9 +69,22 @@ const ToggleGroupStyled = styled(ToggleGroup)`
 
 const SelectStyled = styled(Select)`
     display: none;
-    width: 12rem;
+    width: 8rem;
     height: 4.8rem;
     border-radius: 1rem;
+    justify-content: flex-start;
+
+    & > div {
+        padding-left: 1rem;
+
+        & > div {
+            padding-left: 1rem;
+        }
+    }
+
+    & > svg {
+        right: 0.4rem;
+    }
 
     ${respondDown(Breakpoints.sm)`
         display: flex;
@@ -157,7 +178,27 @@ const VolumeChart = ({
                 volume_usd: (Number(volume24h.volume_usd) / 1e7).toString(),
             };
 
-            if (selectedPeriod >= TotalPeriods.months_3) {
+            if (selectedPeriod === TotalPeriods.months_3) {
+                const weeklyData = new Map();
+
+                copy.forEach(item => {
+                    const startWeek = format(startOfWeek(item.date), 'yyyy-MM-dd');
+                    if (!weeklyData.has(startWeek)) {
+                        weeklyData.set(startWeek, { date: item.date, volume_usd: 0 });
+                    }
+                    const existing = weeklyData.get(startWeek);
+                    existing.volume_usd += item.volume_usd;
+                    weeklyData.set(startWeek, existing);
+                });
+
+                const lastNWeeks = Array.from(weeklyData.values()).slice(
+                    -selectedPeriod / TotalPeriods.week,
+                );
+
+                return [lastNWeeks, volume24hUsd];
+            }
+
+            if (selectedPeriod >= TotalPeriods.months_6) {
                 const monthlyData = new Map();
 
                 copy.forEach(item => {
@@ -235,7 +276,8 @@ const VolumeChart = ({
     useEffect(() => {
         const tickCount = 3;
         const domain = x.domain();
-        const step = Math.max(1, Math.floor(domain.length / tickCount));
+        const step =
+            width < 300 ? domain.length / 2 : Math.max(1, Math.floor(domain.length / tickCount));
         const tickValues = domain.filter((_, i) => i % step === 0);
 
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -245,7 +287,7 @@ const VolumeChart = ({
             // @ts-expect-error
             d3.axisBottom(x).tickFormat(d3.timeFormat('%b %d')).tickValues(tickValues),
         );
-    }, [gx, x]);
+    }, [gx, x, width]);
 
     useEffect(
         () =>
@@ -301,6 +343,7 @@ const VolumeChart = ({
                     options={isGlobalStat ? GlobalPeriodOptions : PoolPeriodOptions}
                     value={selectedPeriod}
                     onChange={setSelectedPeriod}
+                    placeholder="Set"
                 />
             </>,
         );
@@ -356,6 +399,7 @@ const VolumeChart = ({
                     options={isGlobalStat ? GlobalPeriodOptions : PoolPeriodOptions}
                     value={selectedPeriod}
                     onChange={setSelectedPeriod}
+                    placeholder="Set"
                 />
                 <span>No data for selected period</span>
             </Empty>
@@ -370,10 +414,14 @@ const VolumeChart = ({
                 <GrayText x="16" y="32">
                     {selectedItem
                         ? `${
-                              selectedPeriod >= TotalPeriods.months_3 ? 'Monthly' : 'Daily'
+                              selectedPeriod >= TotalPeriods.months_6
+                                  ? 'Monthly'
+                                  : selectedPeriod === TotalPeriods.months_3
+                                  ? 'Weekly'
+                                  : 'Daily'
                           } volume: ${getDateString(
                               convertUTCToLocalDateIgnoringTimezone(selectedItem?.date)?.getTime(),
-                              { withoutDay: selectedPeriod >= TotalPeriods.months_3 },
+                              { withoutDay: selectedPeriod >= TotalPeriods.months_6 },
                           )}`
                         : `Last 24h volume:`}
                 </GrayText>

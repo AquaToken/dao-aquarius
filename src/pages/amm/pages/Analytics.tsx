@@ -208,10 +208,6 @@ const Analytics = () => {
     };
 
     useEffect(() => {
-        document.body.scrollTo(0, 0);
-    }, []);
-
-    useEffect(() => {
         getTotalStats().then(res => {
             setTotalStats(res);
         });
