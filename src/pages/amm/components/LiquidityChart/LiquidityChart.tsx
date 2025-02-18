@@ -246,7 +246,7 @@ const LiquidityChart = ({
     }, [svg, data, width]);
 
     return (
-        <Container style={{ width, height }}>
+        <Container style={{ width: '100%', height }}>
             <ToggleGroupStyled
                 options={isGlobalStat ? GlobalPeriodOptions : PoolPeriodOptions}
                 value={selectedPeriod}
@@ -260,7 +260,7 @@ const LiquidityChart = ({
                 placeholder="Set"
             />
             {data.length ? (
-                <svg width={width} height={height} ref={svg}>
+                <svg width="100%" height={height} ref={svg}>
                     <defs>
                         <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
                             <stop offset="0%" stopColor="#8620B9" stopOpacity="0.6"></stop>

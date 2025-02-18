@@ -19,6 +19,7 @@ import { transformDate } from '../LiquidityChart/LiquidityChart';
 const Container = styled.div`
     ${flexAllCenter};
     position: relative;
+    width: 100%;
 `;
 
 const Axis = styled.g`
@@ -334,7 +335,7 @@ const VolumeChart = ({
     const selectedItem = daily[selectedIndex];
 
     return (
-        <Container style={{ width, height }}>
+        <Container style={{ height }}>
             <ToggleGroupStyled
                 options={isGlobalStat ? GlobalPeriodOptions : PoolPeriodOptions}
                 value={selectedPeriod}
@@ -348,7 +349,7 @@ const VolumeChart = ({
                 placeholder="Set"
             />
             {data.length ? (
-                <svg width={width} height={height} ref={svg}>
+                <svg width="100%" height={height} ref={svg}>
                     <g>
                         <GrayText x="16" y="32">
                             {selectedItem
