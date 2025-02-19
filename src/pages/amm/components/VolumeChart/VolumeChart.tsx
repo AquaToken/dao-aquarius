@@ -4,6 +4,8 @@ import * as React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 
+import { ChartPeriods } from 'constants/charts';
+
 import { convertUTCToLocalDateIgnoringTimezone, getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 
@@ -112,33 +114,27 @@ interface VolumeChartProps {
     marginRight?: number;
     marginBottom?: number;
     marginLeft?: number;
-}
-
-enum TotalPeriods {
-    week = 7,
-    month = 30,
-    months_3 = 90,
-    months_6 = 180,
-    year = 365,
+    defaultPeriod?: ChartPeriods;
 }
 
 const GlobalPeriodOptions = [
-    { value: TotalPeriods.week, label: 'W' },
-    { value: TotalPeriods.month, label: 'M' },
-    { value: TotalPeriods.months_3, label: '3M' },
-    { value: TotalPeriods.months_6, label: '6M' },
-    { value: TotalPeriods.year, label: '1Y' },
+    { value: ChartPeriods.week, label: 'W' },
+    { value: ChartPeriods.month, label: 'M' },
+    { value: ChartPeriods.months_3, label: '3M' },
+    { value: ChartPeriods.months_6, label: '6M' },
+    { value: ChartPeriods.year, label: '1Y' },
 ];
 
 const PoolPeriodOptions = [
-    { value: TotalPeriods.week, label: 'W' },
-    { value: TotalPeriods.month, label: 'M' },
+    { value: ChartPeriods.week, label: 'W' },
+    { value: ChartPeriods.month, label: 'M' },
 ];
 
 const VolumeChart = ({
     data: noFilteredData,
     volume24h = null,
     isGlobalStat = false,
+    defaultPeriod = ChartPeriods.week,
     width = 312,
     height = 264,
     marginTop = 16,
@@ -146,7 +142,7 @@ const VolumeChart = ({
     marginBottom = 32,
     marginLeft = 60,
 }: VolumeChartProps): React.ReactNode => {
-    const [selectedPeriod, setSelectedPeriod] = useState(TotalPeriods.week);
+    const [selectedPeriod, setSelectedPeriod] = useState(defaultPeriod);
 
     const data = useMemo(() => {
         const timeField = isGlobalStat ? 'date_str' : 'datetime_str';
@@ -170,7 +166,7 @@ const VolumeChart = ({
                 volume_usd: (Number(volume24h.volume_usd) / 1e7).toString(),
             };
 
-            if (selectedPeriod === TotalPeriods.months_3) {
+            if (selectedPeriod === ChartPeriods.months_3) {
                 const weeklyData = new Map();
 
                 copy.forEach(item => {
@@ -187,13 +183,13 @@ const VolumeChart = ({
                 });
 
                 const lastNWeeks = Array.from(weeklyData.values()).slice(
-                    -selectedPeriod / TotalPeriods.week,
+                    -selectedPeriod / ChartPeriods.week,
                 );
 
                 return [lastNWeeks, volume24hUsd];
             }
 
-            if (selectedPeriod >= TotalPeriods.months_6) {
+            if (selectedPeriod >= ChartPeriods.months_6) {
                 const monthlyData = new Map();
 
                 copy.forEach(item => {
@@ -207,7 +203,7 @@ const VolumeChart = ({
                 });
 
                 const lastNMonths = Array.from(monthlyData.values()).slice(
-                    -selectedPeriod / TotalPeriods.month,
+                    -selectedPeriod / ChartPeriods.month,
                 );
 
                 return [lastNMonths, volume24hUsd];
@@ -354,16 +350,16 @@ const VolumeChart = ({
                         <GrayText x="16" y="32">
                             {selectedItem
                                 ? `${
-                                      selectedPeriod >= TotalPeriods.months_6
+                                      selectedPeriod >= ChartPeriods.months_6
                                           ? 'Monthly'
-                                          : selectedPeriod === TotalPeriods.months_3
+                                          : selectedPeriod === ChartPeriods.months_3
                                           ? 'Weekly'
                                           : 'Daily'
                                   } volume: ${getDateString(
                                       convertUTCToLocalDateIgnoringTimezone(
                                           selectedItem?.date,
                                       )?.getTime(),
-                                      { withoutDay: selectedPeriod >= TotalPeriods.months_6 },
+                                      { withoutDay: selectedPeriod >= ChartPeriods.months_6 },
                                   )}`
                                 : `Last 24h volume:`}
                         </GrayText>
