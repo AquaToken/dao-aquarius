@@ -319,28 +319,26 @@ const PoolPage = () => {
                 )}
                 <Section>
                     <SectionWrap>
-                        <Charts>
-                            <Chart ref={chartRef}>
-                                {Boolean(pool.stats.length) && (
+                        {Boolean(pool.stats.length) && (
+                            <Charts>
+                                <Chart ref={chartRef}>
                                     <LiquidityChart
                                         data={pool.stats}
                                         currentLiquidity={pool.liquidity_usd}
                                         width={chartWidth}
                                         defaultPeriod={ChartPeriods.month}
                                     />
-                                )}
-                            </Chart>
-                            <Chart>
-                                {Boolean(pool.stats.length) && (
+                                </Chart>
+                                <Chart>
                                     <VolumeChart
                                         data={pool.stats}
                                         volume24h={{ volume_usd: pool.volume_usd }}
                                         width={chartWidth}
                                         defaultPeriod={ChartPeriods.month}
                                     />
-                                )}
-                            </Chart>
-                        </Charts>
+                                </Chart>
+                            </Charts>
+                        )}
 
                         <SectionRow>
                             <SectionLabel>Type:</SectionLabel>
