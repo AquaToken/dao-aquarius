@@ -191,21 +191,23 @@ const LiquidityChart = ({
         }`;
     };
 
-    useEffect(
-        () =>
-            void d3
-                .select(gx.current)
+    useEffect(() => {
+        const tickValues =
+            width < 300
+                ? [
+                      transformDate(data[0]?.date_str ?? data[0]?.datetime_str),
+                      transformDate(
+                          data[data.length - 1]?.date_str ?? data[data.length - 1]?.datetime_str,
+                      ),
+                  ]
+                : undefined;
 
-                .call(
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-expect-error
-                    d3
-                        .axisBottom(x)
-                        .ticks(width < 300 ? 1 : width < 992 ? 2 : 4)
-                        .tickFormat(d3.timeFormat('%b %d')),
-                ),
-        [gx, x, width],
-    );
+        d3.select(gx.current).call(
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-expect-error
+            d3.axisBottom(x).tickFormat(d3.timeFormat('%b %d')).tickValues(tickValues).ticks(2),
+        );
+    }, [gx, x, width]);
 
     useEffect(
         () =>
