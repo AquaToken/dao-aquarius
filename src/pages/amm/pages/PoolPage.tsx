@@ -4,6 +4,8 @@ import styled from 'styled-components';
 
 import { getPool } from 'api/amm';
 
+import { ChartPeriods } from 'constants/charts';
+
 import { getAquaAssetData } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 import { truncateString } from 'helpers/truncate-string';
@@ -324,6 +326,7 @@ const PoolPage = () => {
                                         data={pool.stats}
                                         currentLiquidity={pool.liquidity_usd}
                                         width={chartWidth}
+                                        defaultPeriod={ChartPeriods.month}
                                     />
                                 )}
                             </Chart>
@@ -333,6 +336,7 @@ const PoolPage = () => {
                                         data={pool.stats}
                                         volume24h={{ volume_usd: pool.volume_usd }}
                                         width={chartWidth}
+                                        defaultPeriod={ChartPeriods.month}
                                     />
                                 )}
                             </Chart>

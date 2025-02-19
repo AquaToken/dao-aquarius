@@ -4,6 +4,8 @@ import * as React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 
+import { ChartPeriods } from 'constants/charts';
+
 import { convertUTCToLocalDateIgnoringTimezone, getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 
@@ -118,33 +120,27 @@ interface LiquidityChartProps {
     marginRight?: number;
     marginBottom?: number;
     marginLeft?: number;
-}
-
-enum TotalPeriods {
-    week = 7,
-    month = 30,
-    months_3 = 90,
-    months_6 = 180,
-    year = 365,
+    defaultPeriod?: ChartPeriods;
 }
 
 const GlobalPeriodOptions = [
-    { value: TotalPeriods.week, label: 'W' },
-    { value: TotalPeriods.month, label: 'M' },
-    { value: TotalPeriods.months_3, label: '3M' },
-    { value: TotalPeriods.months_6, label: '6M' },
-    { value: TotalPeriods.year, label: '1Y' },
+    { value: ChartPeriods.week, label: 'W' },
+    { value: ChartPeriods.month, label: 'M' },
+    { value: ChartPeriods.months_3, label: '3M' },
+    { value: ChartPeriods.months_6, label: '6M' },
+    { value: ChartPeriods.year, label: '1Y' },
 ];
 
 const PoolPeriodOptions = [
-    { value: TotalPeriods.week, label: 'W' },
-    { value: TotalPeriods.month, label: 'M' },
+    { value: ChartPeriods.week, label: 'W' },
+    { value: ChartPeriods.month, label: 'M' },
 ];
 
 const LiquidityChart = ({
     data: noFilteredData,
     currentLiquidity,
     isGlobalStat,
+    defaultPeriod = ChartPeriods.week,
     width = 312,
     height = 264,
     marginTop = 16,
@@ -153,7 +149,7 @@ const LiquidityChart = ({
     marginLeft = 60,
 }: LiquidityChartProps) => {
     const [selectedIndex, setSelectedIndex] = useState(null);
-    const [selectedPeriod, setSelectedPeriod] = useState(TotalPeriods.week);
+    const [selectedPeriod, setSelectedPeriod] = useState(defaultPeriod);
 
     const data = useMemo(() => {
         const timeField = isGlobalStat ? 'date_str' : 'datetime_str';

@@ -5,6 +5,8 @@ import styled from 'styled-components';
 
 import { getPoolMembersCount, getPoolStats } from 'api/amm';
 
+import { ChartPeriods } from 'constants/charts';
+
 import { formatBalance } from 'helpers/format-number';
 import { truncateString } from 'helpers/truncate-string';
 
@@ -450,6 +452,7 @@ const PoolsList = ({
                                                             }}
                                                             width={chartWidth}
                                                             height={320}
+                                                            defaultPeriod={ChartPeriods.month}
                                                         />
                                                     </Chart>
                                                     <Chart>
@@ -460,6 +463,7 @@ const PoolsList = ({
                                                             }
                                                             width={chartWidth}
                                                             height={320}
+                                                            defaultPeriod={ChartPeriods.month}
                                                         />
                                                     </Chart>
                                                 </Charts>
