@@ -11,11 +11,13 @@ import { formatBalance } from 'helpers/format-number';
 
 import { PoolStatistics, PoolVolume24h } from 'types/amm';
 
+import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
+
+import EmptyChart from 'assets/empty-chart.svg';
 
 import { Select, ToggleGroup } from 'basics/inputs';
 
-import { flexAllCenter, respondDown } from '../../../../web/mixins';
 import { transformDate } from '../LiquidityChart/LiquidityChart';
 
 const Container = styled.div`
@@ -102,6 +104,13 @@ const SelectStyled = styled(Select)`
     ${respondDown(Breakpoints.sm)`
         display: flex;
     `}
+`;
+
+const Empty = styled.div`
+    ${flexAllCenter};
+    flex-direction: column;
+    gap: 1.6rem;
+    color: ${COLORS.grayText};
 `;
 
 interface VolumeChartProps {
@@ -387,7 +396,10 @@ const VolumeChart = ({
                     <AxisY ref={gy} transform={`translate(${marginLeft},0)`} />
                 </svg>
             ) : (
-                <span>No data for selected period</span>
+                <Empty>
+                    <EmptyChart />
+                    <span>No data for selected period</span>
+                </Empty>
             )}
         </Container>
     );
