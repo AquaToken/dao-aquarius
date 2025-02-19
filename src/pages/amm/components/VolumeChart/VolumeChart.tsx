@@ -153,7 +153,7 @@ const VolumeChart = ({
         });
     }, [selectedPeriod, isGlobalStat]);
 
-    const [daily, last24] = useMemo(() => {
+    const [items, last24] = useMemo(() => {
         if (isGlobalStat) {
             const copy = [...data].map(item => ({
                 ...item,
@@ -256,20 +256,22 @@ const VolumeChart = ({
     const x = d3
         .scaleBand()
         .rangeRound([marginLeft, width - marginRight])
-        .domain(daily.map(d => d.date))
+        .domain(items.map(d => d.date))
         .padding(0.3);
 
     const y = d3
         .scaleLinear()
         .range([height - marginBottom, marginTop + height * 0.4])
-        .domain([0, d3.max(daily, d => d.volume_usd) || 1]);
+        .domain([0, d3.max(items, d => d.volume_usd) || 1]);
 
     useEffect(() => {
         const tickCount = 3;
         const domain = x.domain();
-        const step =
-            width < 300 ? domain.length / 2 : Math.max(1, Math.floor(domain.length / tickCount));
-        const tickValues = domain.filter((_, i) => i % step === 0);
+        const step = Math.max(1, Math.floor(domain.length / tickCount));
+        const tickValues =
+            width < 300
+                ? [domain[0], domain[domain.length - 1]]
+                : domain.filter((_, i) => i % step === 0);
 
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
@@ -311,7 +313,7 @@ const VolumeChart = ({
         });
 
         // Set the selected index to the matching date index
-        const index = daily.findIndex(item => item.date === date);
+        const index = items.findIndex(item => item.date === date);
         setSelectedIndex(index !== -1 ? index : null);
     };
 
@@ -328,7 +330,7 @@ const VolumeChart = ({
             });
     }, [svg, data, width]);
 
-    const selectedItem = daily[selectedIndex];
+    const selectedItem = items[selectedIndex];
 
     return (
         <Container style={{ height }}>
@@ -368,7 +370,7 @@ const VolumeChart = ({
                         </LiquidityValue>
                     </g>
 
-                    {daily.map((item, i) => (
+                    {items.map((item, i) => (
                         <rect
                             rx="1"
                             fill={selectedIndex === i ? COLORS.tooltip : COLORS.gray}
