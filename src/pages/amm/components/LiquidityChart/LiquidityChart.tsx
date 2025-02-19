@@ -13,6 +13,8 @@ import { PoolStatistics } from 'types/amm';
 
 import { Breakpoints, COLORS } from 'web/styles';
 
+import EmptyChart from 'assets/empty-chart.svg';
+
 import { Select, ToggleGroup } from 'basics/inputs';
 
 import { flexAllCenter, respondDown } from '../../../../web/mixins';
@@ -97,6 +99,13 @@ const SelectStyled = styled(Select)`
     ${respondDown(Breakpoints.sm)`
         display: flex;
     `}
+`;
+
+const Empty = styled.div`
+    ${flexAllCenter};
+    flex-direction: column;
+    gap: 1.6rem;
+    color: ${COLORS.grayText};
 `;
 
 export const transformDate = (date_str: string) => {
@@ -357,7 +366,10 @@ const LiquidityChart = ({
                     </g>
                 </svg>
             ) : (
-                <span>No data for selected period</span>
+                <Empty>
+                    <EmptyChart />
+                    <span>No data for selected period</span>
+                </Empty>
             )}
         </Container>
     );
