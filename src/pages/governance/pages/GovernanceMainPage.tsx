@@ -130,7 +130,7 @@ const ProposalsBlock = styled.div`
     justify-content: space-between;
     column-gap: 6rem;
 
-    ${respondDown(Breakpoints.md)`
+    ${respondDown(Breakpoints.xl)`
         flex-direction: column;
         row-gap: 6rem;
     `}
