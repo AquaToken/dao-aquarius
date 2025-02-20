@@ -115,7 +115,7 @@ const AllPools = (): React.ReactNode => {
     const history = useHistory();
     const location = useLocation();
 
-    const debouncedSearch = useDebounce(search, 700, true);
+    const debouncedSearch = useDebounce(search, 700, true, () => setPage(1));
 
     useEffect(() => {
         const params = new URLSearchParams(location.search);
@@ -125,6 +125,7 @@ const AllPools = (): React.ReactNode => {
         const filterParam = params.get(UrlParams.filter);
         if (filterParam) {
             setFilter(filterParam as FilterOptions);
+            setPage(1);
         } else {
             params.append(UrlParams.filter, FilterOptions.all);
             setFilter(FilterOptions.all);
@@ -133,6 +134,7 @@ const AllPools = (): React.ReactNode => {
         const sortParam = params.get(UrlParams.sort);
         if (sortParam) {
             setSort(sortParam as PoolsSortFields);
+            setPage(1);
         } else {
             params.append(UrlParams.sort, PoolsSortFields.liquidityUp);
             setSort(PoolsSortFields.liquidityUp);
@@ -153,10 +155,6 @@ const AllPools = (): React.ReactNode => {
     };
 
     useEffect(() => {
-        setPage(1);
-    }, [filter, debouncedSearch]);
-
-    useEffect(() => {
         if (!sort || !filter) {
             return;
         }
@@ -169,11 +167,6 @@ const AllPools = (): React.ReactNode => {
             })
             .catch(() => {});
     }, [filter, page, debouncedSearch, sort]);
-
-    const changeSort = (newSort: PoolsSortFields) => {
-        setSortParam(newSort);
-        setPage(1);
-    };
 
     const goToPoolPage = (id: string) => {
         history.push(`${AmmRoutes.analytics}${id}/`);
@@ -203,7 +196,7 @@ const AllPools = (): React.ReactNode => {
                                 children: 'TVL',
                                 sort: {
                                     onClick: () =>
-                                        changeSort(
+                                        setSortParam(
                                             sort === PoolsSortFields.liquidityUp
                                                 ? PoolsSortFields.liquidityDown
                                                 : PoolsSortFields.liquidityUp,
@@ -220,7 +213,7 @@ const AllPools = (): React.ReactNode => {
                                 children: 'Daily reward',
                                 sort: {
                                     onClick: () =>
-                                        changeSort(
+                                        setSortParam(
                                             sort === PoolsSortFields.rewardsUp
                                                 ? PoolsSortFields.rewardsDown
                                                 : PoolsSortFields.rewardsUp,
@@ -256,7 +249,7 @@ const AllPools = (): React.ReactNode => {
                                 ),
                                 sort: {
                                     onClick: () =>
-                                        changeSort(
+                                        setSortParam(
                                             sort === PoolsSortFields.apyUp
                                                 ? PoolsSortFields.apyDown
                                                 : PoolsSortFields.apyUp,
@@ -290,7 +283,7 @@ const AllPools = (): React.ReactNode => {
                                 ),
                                 sort: {
                                     onClick: () =>
-                                        changeSort(
+                                        setSortParam(
                                             sort === PoolsSortFields.rewardsApyUp
                                                 ? PoolsSortFields.rewardsApyDown
                                                 : PoolsSortFields.rewardsApyUp,
