@@ -154,18 +154,20 @@ const AllPools = (): React.ReactNode => {
 
     useEffect(() => {
         setPage(1);
-    }, [filter]);
+    }, [filter, debouncedSearch]);
 
     useEffect(() => {
         if (!sort || !filter) {
             return;
         }
         setPending(true);
-        getPools(filter, page, PAGE_SIZE, sort, debouncedSearch).then(({ pools, total }) => {
-            setPools(pools);
-            setTotal(total);
-            setPending(false);
-        });
+        getPools(filter, page, PAGE_SIZE, sort, debouncedSearch)
+            .then(({ pools, total }) => {
+                setPools(pools);
+                setTotal(total);
+                setPending(false);
+            })
+            .catch(() => {});
     }, [filter, page, debouncedSearch, sort]);
 
     const changeSort = (newSort: PoolsSortFields) => {
