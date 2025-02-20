@@ -152,6 +152,7 @@ const VolumeChart = ({
     marginLeft = 60,
 }: VolumeChartProps): React.ReactNode => {
     const [selectedPeriod, setSelectedPeriod] = useState(defaultPeriod);
+    const [selectedIndex, setSelectedIndex] = useState(null);
 
     const data = useMemo(() => {
         const timeField = isGlobalStat ? 'date_str' : 'datetime_str';
@@ -257,7 +258,7 @@ const VolumeChart = ({
             { volume_usd: +volume24h.volume_usd / 1e7 },
         ];
     }, [data, isGlobalStat, selectedPeriod, volume24h]);
-    const [selectedIndex, setSelectedIndex] = useState(null);
+
     const svg = useRef();
     const gx = useRef();
     const gy = useRef();
@@ -272,6 +273,10 @@ const VolumeChart = ({
         .scaleLinear()
         .range([height - marginBottom, marginTop + height * 0.4])
         .domain([0, d3.max(items, d => d.volume_usd) || 1]);
+
+    useEffect(() => {
+        setSelectedIndex(null);
+    }, [selectedPeriod]);
 
     useEffect(() => {
         const tickCount = 3;
