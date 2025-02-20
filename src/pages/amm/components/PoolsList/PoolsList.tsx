@@ -47,7 +47,7 @@ const PoolMain = styled.div`
     align-items: center;
     gap: 2.4rem;
 
-    ${respondDown(Breakpoints.sm)`
+    ${respondDown(Breakpoints.xl)`
         padding: 1rem;
         flex-direction: column;
         background-color: ${COLORS.lightGray};
@@ -59,21 +59,14 @@ const PoolMain = styled.div`
 const PoolStats = styled.div`
     display: flex;
     align-items: center;
-    width: 50%;
+    width: 30%;
     gap: 1.4rem;
+    margin-left: auto;
 
     div {
         display: flex;
         flex-direction: column;
-
-        &:nth-child(1) {
-            flex: 1;
-        }
-
-        &:nth-child(2),
-        &:nth-child(3) {
-            flex: 2;
-        }
+        flex: 2;
 
         span {
             white-space: nowrap;
@@ -88,7 +81,11 @@ const PoolStats = styled.div`
         }
     }
 
-    ${respondDown(Breakpoints.sm)`
+    ${respondDown(Breakpoints.xxl)`
+        width: 20%;
+     `};
+
+    ${respondDown(Breakpoints.xl)`
         flex-direction: column;
         width: 100%;
         gap: 1rem;
@@ -109,12 +106,13 @@ const ExpandButton = styled.div`
     width: 4.8rem;
     min-width: 4.8rem;
     cursor: pointer;
+    margin-left: auto;
 
     &:hover {
         background-color: ${COLORS.gray};
     }
 
-    ${respondDown(Breakpoints.sm)`
+    ${respondDown(Breakpoints.xl)`
         width: 100%;
     `}
 `;
@@ -131,7 +129,7 @@ const Charts = styled.div`
     margin-bottom: 1rem;
     gap: 1.6rem;
 
-    ${respondDown(Breakpoints.sm)`
+    ${respondDown(Breakpoints.xl)`
         flex-direction: column;
     `}
 `;
@@ -166,7 +164,7 @@ const ExpandedBlock = styled.div<{ $withoutTopPadding?: boolean }>`
         }
     }
 
-    ${respondDown(Breakpoints.sm)`
+    ${respondDown(Breakpoints.xl)`
         margin-top: 0;
         padding: 0 1rem;
     `}
@@ -203,7 +201,7 @@ const Rates = styled.div`
         color: ${COLORS.paragraphText};
     }
 
-    ${respondDown(Breakpoints.sm)`
+    ${respondDown(Breakpoints.xl)`
         span {
             font-size: 1.2rem!important;
         }
@@ -214,7 +212,7 @@ const Buttons = styled.div`
     ${flexRowSpaceBetween};
     gap: 0.8rem;
 
-    ${respondDown(Breakpoints.sm)`
+    ${respondDown(Breakpoints.xl)`
         flex-direction: column;
     `}
 `;
@@ -363,13 +361,10 @@ const PoolsList = ({
                                 mobileVerticalDirections
                                 poolType={pool.pool_type}
                                 isRewardsOn={Boolean(Number((pool as SorobanPool).reward_tps))}
+                                fee={pool.fee.toString()}
                             />
 
                             <PoolStats>
-                                <div>
-                                    <span>Fee:</span>
-                                    <span>{(Number(pool.fee) * 100).toFixed(2)}%</span>
-                                </div>
                                 <div>
                                     <span>Daily Rewards:</span>
                                     <span>
