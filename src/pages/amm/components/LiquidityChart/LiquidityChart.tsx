@@ -201,6 +201,10 @@ const LiquidityChart = ({
     };
 
     useEffect(() => {
+        setSelectedIndex(null);
+    }, [selectedPeriod]);
+
+    useEffect(() => {
         const tickValues =
             width < 300
                 ? [
@@ -316,7 +320,7 @@ const LiquidityChart = ({
                         d={path(data)}
                     />
                     <g>
-                        {Boolean(selectedIndex) && (
+                        {Boolean(selectedIndex) && Boolean(data[selectedIndex]) && (
                             <>
                                 <line
                                     stroke={COLORS.tooltip}
