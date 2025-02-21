@@ -56,12 +56,20 @@ const PoolMain = styled.div`
     `}
 `;
 
-const PoolStats = styled.div`
+const MarketStyled = styled(Market)`
+    width: 60%;
+
+    ${respondDown(Breakpoints.xl)`
+        width: 100%;
+     `}
+`;
+
+const PoolStats = styled.div<{ $isSinglePool: boolean }>`
     display: flex;
     align-items: center;
-    width: 30%;
+    width: ${({ $isSinglePool }) => ($isSinglePool ? '40%' : '30%')};
     gap: 1.4rem;
-    margin-left: auto;
+    margin-left: ${({ $isSinglePool }) => ($isSinglePool ? 'unset' : 'auto')};
 
     div {
         display: flex;
@@ -82,7 +90,7 @@ const PoolStats = styled.div`
     }
 
     ${respondDown(Breakpoints.xxl)`
-        width: 20%;
+         width: ${({ $isSinglePool }) => ($isSinglePool ? '40%' : '20%')};
      `};
 
     ${respondDown(Breakpoints.xl)`
@@ -354,7 +362,7 @@ const PoolsList = ({
                         key={(pool as SorobanPool).address ?? (pool as PoolClassicProcessed).id}
                     >
                         <PoolMain>
-                            <Market
+                            <MarketStyled
                                 assets={pool.assets}
                                 poolAddress={!withDeposit && (pool as SorobanPool).address}
                                 withoutLink
@@ -364,7 +372,7 @@ const PoolsList = ({
                                 fee={pool.fee.toString()}
                             />
 
-                            <PoolStats>
+                            <PoolStats $isSinglePool={isCommonList && pools.length === 1}>
                                 <div>
                                     <span>Daily Rewards:</span>
                                     <span>

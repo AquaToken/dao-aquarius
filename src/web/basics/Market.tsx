@@ -251,6 +251,7 @@ const Market = ({
     poolAddress,
     poolType,
     fee,
+    ...props
 }: PairProps): React.ReactNode => {
     const { assetsInfo } = useAssetsStore();
     const history = useHistory();
@@ -302,6 +303,7 @@ const Market = ({
                     history.push(`${AmmRoutes.analytics}${poolAddress}/`);
                 }
             }}
+            {...props}
         >
             <Icons
                 $isBig={isBigLogo}
