@@ -462,20 +462,19 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                 setClaimPendingId(null);
             });
     };
-    const calculateExpectedReward = (rewardsInfo, poolBalance) => {
-        const supply = +rewardsInfo.supply;
-        const oldWSupply = +rewardsInfo.working_supply;
-        const oldWBalance = +rewardsInfo.working_balance;
-        const lockedSupply = +rewardsInfo.boost_supply;
-        const lockedBalance = +rewardsInfo.boost_balance;
 
-        const newWBalance = Math.min(
-            +poolBalance + (1.5 * lockedBalance * supply) / lockedSupply,
-            +poolBalance * 2.5,
-        );
+    const calculateTpsWithoutBoost = (rewardsInfo, userBalance) => {
+        const wSupply = +rewardsInfo.working_supply;
+        const tps = +rewardsInfo.tps;
 
-        const newWSupply = oldWSupply + newWBalance - oldWBalance;
-        return (newWBalance * rewardsInfo.tps) / newWSupply;
+        return ((+userBalance / 1e7) * tps) / wSupply;
+    };
+    const calculateExpectedTps = rewardsInfo => {
+        const tps = +rewardsInfo.tps;
+        const wSupply = +rewardsInfo.working_supply;
+        const wBalance = +rewardsInfo.working_balance;
+
+        return (tps * wBalance) / wSupply;
     };
 
     console.log(pools, userRewards);
@@ -567,7 +566,8 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                         { children: 'Base APY' },
                         { children: 'Rewards APY' },
                         { children: 'Pooled' },
-                        { children: 'My daily rewards' },
+                        { children: 'Without boost' },
+                        { children: 'With boost' },
                         { children: 'Rewards to claim', align: CellAlign.Right },
                         { children: 'Boost', align: CellAlign.Right },
                         { children: 'New boost', align: CellAlign.Right },
@@ -680,21 +680,34 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                             {
                                 children: userRewards.get(pool.address) ? (
                                     `${formatBalance(
-                                        (calculateExpectedReward(
+                                        calculateTpsWithoutBoost(
                                             userRewards.get(pool.address),
                                             pool.balance,
                                         ) *
                                             60 *
                                             60 *
-                                            24 *
-                                            pool.balance) /
-                                            pool.total_share,
+                                            24,
                                         true,
                                     )} AQUA`
                                 ) : (
                                     <DotsLoader />
                                 ),
-                                label: 'My daily rewards',
+                                label: 'Without boost',
+                                mobileStyle: { textAlign: 'right' },
+                            },
+                            {
+                                children: userRewards.get(pool.address) ? (
+                                    `${formatBalance(
+                                        calculateExpectedTps(userRewards.get(pool.address)) *
+                                            60 *
+                                            60 *
+                                            24,
+                                        true,
+                                    )} AQUA`
+                                ) : (
+                                    <DotsLoader />
+                                ),
+                                label: 'With boost',
                                 mobileStyle: { textAlign: 'right' },
                             },
                             {
