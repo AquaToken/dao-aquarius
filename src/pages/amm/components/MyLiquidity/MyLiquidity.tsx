@@ -104,6 +104,14 @@ const ListTotal = styled.span`
     }
 `;
 
+const NoTrustlineStyled = styled(NoTrustline)`
+    background-color: ${COLORS.white}!important;
+
+    ${respondDown(Breakpoints.sm)`
+        background-color: ${COLORS.lightGray}!important;
+    `}
+`;
+
 const Section = styled.div`
     flex: 1 0 auto;
     ${flexAllCenter};
@@ -146,6 +154,7 @@ const Buttons = styled.div`
 
 const RewardsWrap = styled.div`
     display: flex;
+    flex-direction: column;
     background-color: ${COLORS.lightGray};
     padding: 3.2rem;
     border-radius: 0.5rem;
@@ -541,7 +550,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                         </StyledButton>
                     </Rewards>
 
-                    <NoTrustline asset={aquaStellarAsset} />
+                    <NoTrustlineStyled asset={aquaStellarAsset} />
                 </RewardsWrap>
             )}
             {!filteredPools ? (
