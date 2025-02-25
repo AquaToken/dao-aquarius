@@ -286,11 +286,11 @@ const AppMenu = ({
                                 {iceBalanceView}
                             </AccountBalanceValue>
                         </AccountBalance>
-                        <CircleButton>
-                            <Link to={LockerRoutes.main}>
+                        <Link to={LockerRoutes.main}>
+                            <CircleButton>
                                 <IconPlus />
-                            </Link>
-                        </CircleButton>
+                            </CircleButton>
+                        </Link>
                     </AccountBalanceBlock>
 
                     <LogoutBlock
