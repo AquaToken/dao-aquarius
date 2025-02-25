@@ -72,6 +72,7 @@ const PoolsListBlock = styled.div<{ $onlyList: boolean }>`
 
     ${respondDown(Breakpoints.md)`
         padding: 3.2rem 0;
+        background-color: ${COLORS.lightGray};
     `}
 `;
 
@@ -101,6 +102,14 @@ const ListTotal = styled.span`
     span:last-child {
         font-weight: 700;
     }
+`;
+
+const NoTrustlineStyled = styled(NoTrustline)`
+    background-color: ${COLORS.white}!important;
+
+    ${respondDown(Breakpoints.sm)`
+        background-color: ${COLORS.lightGray}!important;
+    `}
 `;
 
 const Section = styled.div`
@@ -145,10 +154,15 @@ const Buttons = styled.div`
 
 const RewardsWrap = styled.div`
     display: flex;
+    flex-direction: column;
     background-color: ${COLORS.lightGray};
     padding: 3.2rem;
     border-radius: 0.5rem;
     margin-bottom: 3.2rem;
+
+    ${respondDown(Breakpoints.md)`
+        background-color: ${COLORS.white};
+    `}
 `;
 
 const AquaLogoStyled = styled(AquaLogo)`
@@ -550,7 +564,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                         </StyledButton>
                     </Rewards>
 
-                    <NoTrustline asset={aquaStellarAsset} />
+                    <NoTrustlineStyled asset={aquaStellarAsset} />
                 </RewardsWrap>
             )}
             {!filteredPools ? (

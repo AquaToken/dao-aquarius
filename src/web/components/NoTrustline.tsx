@@ -61,7 +61,7 @@ interface NoTrustlineProps {
     onlyButton?: boolean;
 }
 
-const NoTrustline = ({ asset, onlyButton }: NoTrustlineProps): React.ReactNode => {
+const NoTrustline = ({ asset, onlyButton, ...props }: NoTrustlineProps): React.ReactNode => {
     const [trustlinePending, setTrustlinePending] = useState(false);
 
     const { account } = useAuthStore();
@@ -107,7 +107,7 @@ const NoTrustline = ({ asset, onlyButton }: NoTrustlineProps): React.ReactNode =
     }
 
     return (
-        <TrustlineBlock>
+        <TrustlineBlock {...props}>
             <TrustlineBlockTitle>
                 <Asset asset={asset} onlyLogo /> <span>{asset.code} trustline missing</span>
             </TrustlineBlockTitle>

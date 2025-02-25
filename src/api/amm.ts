@@ -113,7 +113,11 @@ export const getPoolStats = async (id: string): Promise<{ stats: PoolStatistics[
         const { data } = await axios.get<ListResponse<PoolStatistics>>(
             `${baseUrl}/statistics/pool/${id}/?size=1000`,
         );
-        return { stats: data.items.reverse() };
+        return {
+            stats: data.items
+                .filter(({ liquidity, volume }) => Number(liquidity) !== 0 && Number(volume) !== 0)
+                .reverse(),
+        };
     } catch {
         return { stats: [] };
     }
@@ -226,7 +230,9 @@ export const findSwapPath = async (
 export const getTotalStats = async (): Promise<PoolStatistics[]> => {
     const baseUrl = getAmmAquaUrl();
 
-    const { data } = await axios.get<ListResponse<PoolStatistics>>(`${baseUrl}/statistics/totals/`);
+    const { data } = await axios.get<ListResponse<PoolStatistics>>(
+        `${baseUrl}/statistics/totals/?size=365`,
+    );
     return data.items.reverse();
 };
 

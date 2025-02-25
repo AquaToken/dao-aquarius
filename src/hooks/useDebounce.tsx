@@ -8,16 +8,23 @@ import { useEffect, useState } from 'react';
 // we need to pass the parameter skipTriggerWithEqualValues = true;
 // The return value will be in the same form as the value passed to the function call
 
-export function useDebounce<T>(value: T, delay: number, skipTriggerWithEqualValues: true): T;
+export function useDebounce<T>(
+    value: T,
+    delay: number,
+    skipTriggerWithEqualValues: true,
+    cb?: () => void,
+): T;
 export function useDebounce<T>(
     value: T,
     delay: number,
     skipTriggerWithEqualValues?: false | undefined,
+    cb?: () => void,
 ): { current: T };
 export function useDebounce<T>(
     value: T,
     delay: number,
     skipTriggerWithEqualValues?: boolean,
+    cb?: () => void,
 ): { current: T } | T {
     const [debouncedValue, setDebouncedValue] = useState(
         skipTriggerWithEqualValues ? value : { current: value },
@@ -26,6 +33,9 @@ export function useDebounce<T>(
     useEffect(() => {
         const handler = setTimeout(() => {
             setDebouncedValue(skipTriggerWithEqualValues ? value : { current: value });
+            if (cb) {
+                cb();
+            }
         }, delay);
 
         return () => {

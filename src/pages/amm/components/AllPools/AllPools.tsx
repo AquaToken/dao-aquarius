@@ -9,14 +9,17 @@ import { AmmRoutes } from 'constants/routes';
 
 import { formatBalance } from 'helpers/format-number';
 
+import { useDebounce } from 'hooks/useDebounce';
+
 import { POOL_TYPE } from 'services/soroban.service';
 
 import { PoolProcessed } from 'types/amm';
 
-import { respondDown } from 'web/mixins';
+import { flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Info from 'assets/icon-info.svg';
+import Search from 'assets/icon-search.svg';
 
 import Select from 'basics/inputs/Select';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
@@ -26,12 +29,26 @@ import Pagination from 'basics/Pagination';
 import Table, { CellAlign } from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
-import { AnalyticsUrlParams, AnalyticsTabs } from 'pages/amm/pages/Analytics';
+import { AnalyticsTabs, AnalyticsUrlParams } from 'pages/amm/pages/Analytics';
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
+
+import Input from '../../../../web/basics/inputs/Input';
+
+const Header = styled.div`
+    ${flexRowSpaceBetween};
+    margin-top: 3.2rem;
+
+    ${respondDown(Breakpoints.md)`
+        flex-direction: column;
+        margin-top: 0;
+        padding: 1.6rem 0;
+    `}
+`;
 
 const ToggleGroupStyled = styled(ToggleGroup)`
     width: fit-content;
     margin-top: 3.6rem;
+    margin-bottom: 3.2rem;
 
     ${respondDown(Breakpoints.sm)`
         display: none;
@@ -41,9 +58,11 @@ const ToggleGroupStyled = styled(ToggleGroup)`
 const SelectStyled = styled(Select)`
     margin-top: 3.6rem;
     display: none;
+
     ${respondDown(Breakpoints.sm)`
         display: flex;
-        margin-bottom: 3.6rem;
+        margin-bottom: 3.2rem;
+        margin-top: 1.6rem;
     `}
 `;
 
@@ -56,15 +75,25 @@ const TitleWithTooltip = styled.span`
     }
 `;
 
-enum UrlParams {
-    sort = 'sort',
-    filter = 'filter',
-}
+const StyledInput = styled(Input)`
+    width: 56rem;
+    margin-left: 2.4rem;
+
+    ${respondDown(Breakpoints.md)`
+        width: 100%;
+        margin-left: 0;
+    `}
+`;
 
 const TooltipInner = styled.span`
     width: 20rem;
     white-space: pre-wrap;
 `;
+
+enum UrlParams {
+    sort = 'sort',
+    filter = 'filter',
+}
 
 const PAGE_SIZE = 20;
 
@@ -74,20 +103,19 @@ const OPTIONS = [
     { label: 'Volatile', value: FilterOptions.constant },
 ];
 
-interface AllPoolsProps {
-    search: string;
-}
-
-const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
+const AllPools = (): React.ReactNode => {
     const [filter, setFilter] = useState(null);
     const [sort, setSort] = useState(null);
     const [pools, setPools] = useState<PoolProcessed[] | null>(null);
     const [total, setTotal] = useState(0);
     const [page, setPage] = useState(1);
     const [pending, setPending] = useState(false);
+    const [search, setSearch] = useState('');
 
     const history = useHistory();
     const location = useLocation();
+
+    const debouncedSearch = useDebounce(search, 700, true, () => setPage(1));
 
     useEffect(() => {
         const params = new URLSearchParams(location.search);
@@ -97,6 +125,7 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
         const filterParam = params.get(UrlParams.filter);
         if (filterParam) {
             setFilter(filterParam as FilterOptions);
+            setPage(1);
         } else {
             params.append(UrlParams.filter, FilterOptions.all);
             setFilter(FilterOptions.all);
@@ -105,6 +134,7 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
         const sortParam = params.get(UrlParams.sort);
         if (sortParam) {
             setSort(sortParam as PoolsSortFields);
+            setPage(1);
         } else {
             params.append(UrlParams.sort, PoolsSortFields.liquidityUp);
             setSort(PoolsSortFields.liquidityUp);
@@ -125,25 +155,18 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
     };
 
     useEffect(() => {
-        setPage(1);
-    }, [filter]);
-
-    useEffect(() => {
         if (!sort || !filter) {
             return;
         }
         setPending(true);
-        getPools(filter, page, PAGE_SIZE, sort, search).then(({ pools, total }) => {
-            setPools(pools);
-            setTotal(total);
-            setPending(false);
-        });
-    }, [filter, page, search, sort]);
-
-    const changeSort = (newSort: PoolsSortFields) => {
-        setSortParam(newSort);
-        setPage(1);
-    };
+        getPools(filter, page, PAGE_SIZE, sort, debouncedSearch)
+            .then(({ pools, total }) => {
+                setPools(pools);
+                setTotal(total);
+                setPending(false);
+            })
+            .catch(() => {});
+    }, [filter, page, debouncedSearch, sort]);
 
     const goToPoolPage = (id: string) => {
         history.push(`${AmmRoutes.analytics}${id}/`);
@@ -152,8 +175,17 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
         <PageLoader />
     ) : (
         <>
-            <ToggleGroupStyled value={filter} options={OPTIONS} onChange={setFilterParam} />
-            <SelectStyled value={filter} options={OPTIONS} onChange={setFilterParam} />
+            <Header>
+                <ToggleGroupStyled value={filter} options={OPTIONS} onChange={setFilterParam} />
+                <SelectStyled value={filter} options={OPTIONS} onChange={setFilterParam} />
+                <StyledInput
+                    placeholder="Search by token name or token address"
+                    value={search}
+                    onChange={({ target }) => setSearch(target.value)}
+                    postfix={<Search />}
+                />
+            </Header>
+
             {pools.length ? (
                 <>
                     <Table
@@ -164,7 +196,7 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                                 children: 'TVL',
                                 sort: {
                                     onClick: () =>
-                                        changeSort(
+                                        setSortParam(
                                             sort === PoolsSortFields.liquidityUp
                                                 ? PoolsSortFields.liquidityDown
                                                 : PoolsSortFields.liquidityUp,
@@ -178,15 +210,10 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                                 flexSize: 2,
                             },
                             {
-                                children: 'Fee',
-                                flexSize: 1.5,
-                                align: CellAlign.Right,
-                            },
-                            {
                                 children: 'Daily reward',
                                 sort: {
                                     onClick: () =>
-                                        changeSort(
+                                        setSortParam(
                                             sort === PoolsSortFields.rewardsUp
                                                 ? PoolsSortFields.rewardsDown
                                                 : PoolsSortFields.rewardsUp,
@@ -222,7 +249,7 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                                 ),
                                 sort: {
                                     onClick: () =>
-                                        changeSort(
+                                        setSortParam(
                                             sort === PoolsSortFields.apyUp
                                                 ? PoolsSortFields.apyDown
                                                 : PoolsSortFields.apyUp,
@@ -256,7 +283,7 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                                 ),
                                 sort: {
                                     onClick: () =>
-                                        changeSort(
+                                        setSortParam(
                                             sort === PoolsSortFields.rewardsApyUp
                                                 ? PoolsSortFields.rewardsApyDown
                                                 : PoolsSortFields.rewardsApyUp,
@@ -273,7 +300,7 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                         body={pools.map(pool => ({
                             key: pool.address,
                             onRowClick: () => goToPoolPage(pool.address),
-                            mobileBackground: COLORS.lightGray,
+                            mobileBackground: COLORS.white,
                             rowItems: [
                                 {
                                     children: (
@@ -283,6 +310,7 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                                             withoutLink
                                             poolType={pool.pool_type as POOL_TYPE}
                                             isRewardsOn={Boolean(Number(pool.reward_tps))}
+                                            fee={pool.fee}
                                         />
                                     ),
                                     flexSize: 6,
@@ -297,12 +325,6 @@ const AllPools = ({ search }: AllPoolsProps): React.ReactNode => {
                                     label: 'TVL:',
                                     align: CellAlign.Right,
                                     flexSize: 2,
-                                },
-                                {
-                                    children: `${(Number(pool.fee) * 100).toFixed(2)}%`,
-                                    label: 'Fee:',
-                                    flexSize: 1.5,
-                                    align: CellAlign.Right,
                                 },
                                 {
                                     children: pool.reward_tps

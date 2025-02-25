@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -8,8 +8,6 @@ import { getTotalStats, getVolume24h } from 'api/amm';
 import { AmmRoutes } from 'constants/routes';
 
 import { formatBalance } from 'helpers/format-number';
-
-import { useDebounce } from 'hooks/useDebounce';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
@@ -20,10 +18,8 @@ import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Plus from 'assets/icon-plus.svg';
-import Search from 'assets/icon-search.svg';
 
 import Button from 'basics/buttons/Button';
-import Input from 'basics/inputs/Input';
 
 import AllPools from '../components/AllPools/AllPools';
 import LiquidityChart from '../components/LiquidityChart/LiquidityChart';
@@ -38,18 +34,14 @@ const Container = styled.main`
     flex-direction: column;
     scroll-behavior: smooth;
     overflow: auto;
+    background-color: ${COLORS.lightGray};
 `;
 
 const Content = styled.div`
     ${commonMaxWidth};
     width: 100%;
-    padding: 6.3rem 4rem 0;
+    padding: 1.6rem 4rem 0;
     flex: 1 0 auto;
-    background-color: ${COLORS.lightGray};
-
-    ${respondDown(Breakpoints.sm)`
-        background-color: ${COLORS.white};
-    `}
 
     ${respondDown(Breakpoints.sm)`
         padding: 2rem 1.6rem 0;
@@ -61,23 +53,11 @@ const Section = styled.div`
     ${flexAllCenter};
     background-color: ${COLORS.white};
     width: 100%;
-    margin-bottom: 5rem;
-`;
-
-const Header = styled.div`
-    ${flexRowSpaceBetween};
-    margin-bottom: 6.4rem;
-
-    ${respondDown(Breakpoints.sm)`
-        flex-direction: column;
-        gap: 5rem;
-    `}
-`;
-
-const Title = styled.h1`
-    font-size: 5.6rem;
-    font-weight: 700;
-    line-height: 6.4rem;
+    margin-bottom: 1.6rem;
+    
+    ${respondDown(Breakpoints.md)`
+        background-color: ${COLORS.lightGray};
+    `}}
 `;
 
 const PlusIcon = styled(Plus)`
@@ -100,7 +80,7 @@ const ListHeader = styled.div`
 
     ${respondDown(Breakpoints.md)`
         flex-direction: column;
-        gap: 5rem;
+        gap: 2.4rem;
     `}
 `;
 
@@ -130,16 +110,6 @@ const ListTab = styled.span<{ $isActive: boolean }>`
     }
 `;
 
-const StyledInput = styled(Input)`
-    width: 56rem;
-    margin-left: 2.4rem;
-
-    ${respondDown(Breakpoints.md)`
-        width: 100%;
-        margin-left: 0;
-    `}
-`;
-
 const ListTotal = styled.span`
     font-size: 1.6rem;
     line-height: 2.8rem;
@@ -153,7 +123,8 @@ const Charts = styled.div`
     display: flex;
     justify-content: space-evenly;
     gap: 1.6rem;
-    padding: 3rem 0;
+    width: 100%;
+    background-color: ${COLORS.lightGray};
 
     ${respondDown(Breakpoints.xl)`
         flex-direction: column;
@@ -162,10 +133,11 @@ const Charts = styled.div`
 
 const Chart = styled.div`
     ${flexAllCenter};
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.white};
     padding: 1.6rem;
     border-radius: 0.6rem;
     flex: 1;
+    width: 100%;
 
     ${respondDown(Breakpoints.xl)`
         flex-direction: column;
@@ -184,14 +156,26 @@ export enum AnalyticsUrlParams {
 
 const Analytics = () => {
     const [activeTab, setActiveTab] = useState(null);
-    const [search, setSearch] = useState('');
     const [totalStats, setTotalStats] = useState(null);
     const [volume24h, setVolume24h] = useState(null);
     const [myTotal, setMyTotal] = useState(null);
+    const [chartWidth, setChartWidth] = useState(0);
 
-    const debouncedSearch = useDebounce(search, 700, true);
     const history = useHistory();
     const location = useLocation();
+
+    const mainContent = useRef(null);
+
+    useEffect(() => {
+        if (!totalStats || !volume24h) {
+            return;
+        }
+        if (mainContent.current) {
+            setTimeout(() => {
+                mainContent.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 200);
+        }
+    }, [totalStats, volume24h]);
 
     useEffect(() => {
         const params = new URLSearchParams(location.search);
@@ -223,10 +207,6 @@ const Analytics = () => {
     };
 
     useEffect(() => {
-        document.body.scrollTo(0, 0);
-    }, []);
-
-    useEffect(() => {
         getTotalStats().then(res => {
             setTotalStats(res);
         });
@@ -239,7 +219,6 @@ const Analytics = () => {
     }, []);
 
     useEffect(() => {
-        setSearch('');
         setMyTotal(null);
     }, [activeTab]);
 
@@ -248,6 +227,30 @@ const Analytics = () => {
             setTab(AnalyticsTabs.top);
         }
     }, [isLogged]);
+
+    const chartRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (!totalStats) {
+            return;
+        }
+        const updateWidth = () => {
+            if (chartRef.current) {
+                setChartWidth(chartRef.current.offsetWidth - 32);
+            }
+        };
+        updateWidth();
+
+        const handleResize = () => {
+            requestAnimationFrame(updateWidth);
+        };
+
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, [totalStats, volume24h]);
 
     const goToCreatePool = () => {
         if (!isLogged) {
@@ -262,37 +265,32 @@ const Analytics = () => {
     return (
         <Container>
             <Content>
-                <Header>
-                    <Title>Pools</Title>
-                    <Button onClick={() => goToCreatePool()}>
-                        create pool <PlusIcon />
-                    </Button>
-                </Header>
-
                 {totalStats && volume24h && (
                     <Section>
                         <Charts>
-                            <Chart>
+                            <Chart ref={chartRef}>
                                 <VolumeChart
                                     data={totalStats}
                                     volume24h={volume24h}
                                     isGlobalStat
-                                    width={Math.min(576, +window.innerWidth - 64)}
+                                    width={chartWidth}
                                     height={320}
                                 />
                             </Chart>
+
                             <Chart>
                                 <LiquidityChart
                                     data={totalStats}
-                                    width={Math.min(576, +window.innerWidth - 64)}
+                                    width={chartWidth}
                                     height={320}
+                                    isGlobalStat
                                 />
                             </Chart>
                         </Charts>
                     </Section>
                 )}
 
-                <Section>
+                <Section ref={mainContent}>
                     <ListBlock>
                         <ListHeader>
                             <ListTitles>
@@ -310,12 +308,9 @@ const Analytics = () => {
                                 </ListTab>
                             </ListTitles>
                             {activeTab === AnalyticsTabs.top && (
-                                <StyledInput
-                                    placeholder="Search by token name or token address"
-                                    value={search}
-                                    onChange={({ target }) => setSearch(target.value)}
-                                    postfix={<Search />}
-                                />
+                                <Button onClick={() => goToCreatePool()}>
+                                    create pool <PlusIcon />
+                                </Button>
                             )}
                             {activeTab === AnalyticsTabs.my && myTotal !== null && (
                                 <ListTotal>
@@ -324,7 +319,7 @@ const Analytics = () => {
                                 </ListTotal>
                             )}
                         </ListHeader>
-                        {activeTab === AnalyticsTabs.top && <AllPools search={debouncedSearch} />}
+                        {activeTab === AnalyticsTabs.top && <AllPools />}
                         {activeTab === AnalyticsTabs.my && (
                             <MyLiquidity
                                 onlyList

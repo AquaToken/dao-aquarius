@@ -1,8 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { getPool } from 'api/amm';
+
+import { ChartPeriods } from 'constants/charts';
 
 import { getAquaAssetData } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
@@ -144,18 +146,20 @@ const Charts = styled.div`
     display: flex;
     justify-content: space-evenly;
     gap: 1.6rem;
+    padding: 1.6rem;
 
-    ${respondDown(Breakpoints.xl)`
+    ${respondDown(Breakpoints.md)`
         flex-direction: column;
+        padding: 0;
     `}
 `;
 
 const Chart = styled.div`
     ${flexAllCenter};
-    background-color: ${COLORS.lightGray};
-    padding: 1.6rem;
     border-radius: 0.6rem;
+    padding: 1.6rem;
     flex: 1;
+    background-color: ${COLORS.lightGray};
 `;
 
 const ExternalLinkStyled = styled(ExternalLink)`
@@ -167,6 +171,7 @@ const PoolPage = () => {
     const [rewards, setRewards] = useState(null);
     const { poolAddress } = useParams<{ poolAddress: string }>();
     const [claimPending, setClaimPending] = useState(false);
+    const [chartWidth, setChartWidth] = useState(0);
 
     const { account } = useAuthStore();
 
@@ -175,6 +180,8 @@ const PoolPage = () => {
     const updateIndex = useUpdateIndex(5000);
 
     const { aquaStellarAsset } = getAquaAssetData();
+
+    const chartRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         if (!pool) {
@@ -194,6 +201,28 @@ const PoolPage = () => {
             setPool(res);
         });
     }, [poolAddress, updateIndex]);
+
+    useEffect(() => {
+        if (!pool) {
+            return;
+        }
+        const updateWidth = () => {
+            if (chartRef.current) {
+                setChartWidth(chartRef.current.offsetWidth - 32);
+            }
+        };
+        updateWidth();
+
+        const handleResize = () => {
+            requestAnimationFrame(updateWidth);
+        };
+
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, [pool]);
 
     const claim = () => {
         if (account.authType === LoginTypes.walletConnect) {
@@ -292,16 +321,20 @@ const PoolPage = () => {
                     <SectionWrap>
                         {Boolean(pool.stats.length) && (
                             <Charts>
-                                <Chart>
+                                <Chart ref={chartRef}>
                                     <LiquidityChart
                                         data={pool.stats}
                                         currentLiquidity={pool.liquidity_usd}
+                                        width={chartWidth}
+                                        defaultPeriod={ChartPeriods.month}
                                     />
                                 </Chart>
                                 <Chart>
                                     <VolumeChart
                                         data={pool.stats}
                                         volume24h={{ volume_usd: pool.volume_usd }}
+                                        width={chartWidth}
+                                        defaultPeriod={ChartPeriods.month}
                                     />
                                 </Chart>
                             </Charts>

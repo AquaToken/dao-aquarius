@@ -1,9 +1,11 @@
 import BigNumber from 'bignumber.js';
 import * as React from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { getPoolMembersCount, getPoolStats } from 'api/amm';
+
+import { ChartPeriods } from 'constants/charts';
 
 import { formatBalance } from 'helpers/format-number';
 import { truncateString } from 'helpers/truncate-string';
@@ -45,7 +47,7 @@ const PoolMain = styled.div`
     align-items: center;
     gap: 2.4rem;
 
-    ${respondDown(Breakpoints.sm)`
+    ${respondDown(Breakpoints.xl)`
         padding: 1rem;
         flex-direction: column;
         background-color: ${COLORS.lightGray};
@@ -54,24 +56,25 @@ const PoolMain = styled.div`
     `}
 `;
 
-const PoolStats = styled.div`
+const MarketStyled = styled(Market)`
+    width: 60%;
+
+    ${respondDown(Breakpoints.xl)`
+        width: 100%;
+     `}
+`;
+
+const PoolStats = styled.div<{ $isSinglePool: boolean }>`
     display: flex;
     align-items: center;
-    width: 50%;
+    width: ${({ $isSinglePool }) => ($isSinglePool ? '40%' : '30%')};
     gap: 1.4rem;
+    margin-left: ${({ $isSinglePool }) => ($isSinglePool ? 'unset' : 'auto')};
 
     div {
         display: flex;
         flex-direction: column;
-
-        &:nth-child(1) {
-            flex: 1;
-        }
-
-        &:nth-child(2),
-        &:nth-child(3) {
-            flex: 2;
-        }
+        flex: 2;
 
         span {
             white-space: nowrap;
@@ -86,7 +89,11 @@ const PoolStats = styled.div`
         }
     }
 
-    ${respondDown(Breakpoints.sm)`
+    ${respondDown(Breakpoints.xxl)`
+         width: ${({ $isSinglePool }) => ($isSinglePool ? '40%' : '20%')};
+     `};
+
+    ${respondDown(Breakpoints.xl)`
         flex-direction: column;
         width: 100%;
         gap: 1rem;
@@ -107,12 +114,13 @@ const ExpandButton = styled.div`
     width: 4.8rem;
     min-width: 4.8rem;
     cursor: pointer;
+    margin-left: auto;
 
     &:hover {
         background-color: ${COLORS.gray};
     }
 
-    ${respondDown(Breakpoints.sm)`
+    ${respondDown(Breakpoints.xl)`
         width: 100%;
     `}
 `;
@@ -127,10 +135,19 @@ const Charts = styled.div`
     display: flex;
     justify-content: space-evenly;
     margin-bottom: 1rem;
+    gap: 1.6rem;
 
-    ${respondDown(Breakpoints.sm)`
+    ${respondDown(Breakpoints.xl)`
         flex-direction: column;
     `}
+`;
+
+const Chart = styled.div`
+    ${flexAllCenter};
+    background-color: ${COLORS.white};
+    border-radius: 0.6rem;
+    width: 100%;
+    padding: 0 1.6rem;
 `;
 
 const ExpandedBlock = styled.div<{ $withoutTopPadding?: boolean }>`
@@ -155,7 +172,7 @@ const ExpandedBlock = styled.div<{ $withoutTopPadding?: boolean }>`
         }
     }
 
-    ${respondDown(Breakpoints.sm)`
+    ${respondDown(Breakpoints.xl)`
         margin-top: 0;
         padding: 0 1rem;
     `}
@@ -192,7 +209,7 @@ const Rates = styled.div`
         color: ${COLORS.paragraphText};
     }
 
-    ${respondDown(Breakpoints.sm)`
+    ${respondDown(Breakpoints.xl)`
         span {
             font-size: 1.2rem!important;
         }
@@ -203,7 +220,7 @@ const Buttons = styled.div`
     ${flexRowSpaceBetween};
     gap: 0.8rem;
 
-    ${respondDown(Breakpoints.sm)`
+    ${respondDown(Breakpoints.xl)`
         flex-direction: column;
     `}
 `;
@@ -238,6 +255,7 @@ const PoolsList = ({
     );
     const [poolMembers, setPoolMembers] = useState(null);
     const [poolStats, setPoolStats] = useState(null);
+    const [chartWidth, setChartWidth] = useState(0);
 
     useEffect(() => {
         if (!isCommonList) {
@@ -277,6 +295,30 @@ const PoolsList = ({
         }
         openPool(id);
     };
+
+    const chartRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (!poolStats || !expandedIndexes.length) {
+            return;
+        }
+        const updateWidth = () => {
+            if (chartRef.current) {
+                setChartWidth(chartRef.current.offsetWidth - 32);
+            }
+        };
+        updateWidth();
+
+        const handleResize = () => {
+            requestAnimationFrame(updateWidth);
+        };
+
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, [poolStats, expandedIndexes]);
 
     const rates = useMemo(
         () =>
@@ -320,20 +362,17 @@ const PoolsList = ({
                         key={(pool as SorobanPool).address ?? (pool as PoolClassicProcessed).id}
                     >
                         <PoolMain>
-                            <Market
+                            <MarketStyled
                                 assets={pool.assets}
                                 poolAddress={!withDeposit && (pool as SorobanPool).address}
                                 withoutLink
                                 mobileVerticalDirections
                                 poolType={pool.pool_type}
                                 isRewardsOn={Boolean(Number((pool as SorobanPool).reward_tps))}
+                                fee={pool.fee.toString()}
                             />
 
-                            <PoolStats>
-                                <div>
-                                    <span>Fee:</span>
-                                    <span>{(Number(pool.fee) * 100).toFixed(2)}%</span>
-                                </div>
+                            <PoolStats $isSinglePool={isCommonList && pools.length === 1}>
                                 <div>
                                     <span>Daily Rewards:</span>
                                     <span>
@@ -407,29 +446,29 @@ const PoolsList = ({
                                             poolStats &&
                                             Boolean(poolStats[index].length) && (
                                                 <Charts>
-                                                    <VolumeChart
-                                                        data={poolStats[index]}
-                                                        volume24h={{
-                                                            volume_usd: (pool as SorobanPool)
-                                                                .volume_usd,
-                                                        }}
-                                                        width={Math.min(
-                                                            450,
-                                                            +window.innerWidth - 105,
-                                                        )}
-                                                        height={320}
-                                                    />
-                                                    <LiquidityChart
-                                                        data={poolStats[index]}
-                                                        currentLiquidity={
-                                                            (pool as SorobanPool).liquidity_usd
-                                                        }
-                                                        width={Math.min(
-                                                            450,
-                                                            +window.innerWidth - 105,
-                                                        )}
-                                                        height={320}
-                                                    />
+                                                    <Chart ref={chartRef}>
+                                                        <VolumeChart
+                                                            data={poolStats[index]}
+                                                            volume24h={{
+                                                                volume_usd: (pool as SorobanPool)
+                                                                    .volume_usd,
+                                                            }}
+                                                            width={chartWidth}
+                                                            height={320}
+                                                            defaultPeriod={ChartPeriods.month}
+                                                        />
+                                                    </Chart>
+                                                    <Chart>
+                                                        <LiquidityChart
+                                                            data={poolStats[index]}
+                                                            currentLiquidity={
+                                                                (pool as SorobanPool).liquidity_usd
+                                                            }
+                                                            width={chartWidth}
+                                                            height={320}
+                                                            defaultPeriod={ChartPeriods.month}
+                                                        />
+                                                    </Chart>
                                                 </Charts>
                                             )}
                                         {Boolean((pool as PoolUserProcessed).balance) && (

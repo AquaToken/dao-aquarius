@@ -28,6 +28,7 @@ import {
     BoostLabel,
     ClassicPoolLabel,
     ConstantPoolLabel,
+    FeeLabel,
     MaxRewardsLabel,
     NoLiquidityLabel,
     RewardLabel,
@@ -224,6 +225,7 @@ type PairProps = {
     isSwapResult?: boolean;
     poolAddress?: string;
     poolType?: POOL_TYPE;
+    fee?: string;
 };
 
 const Market = ({
@@ -248,6 +250,8 @@ const Market = ({
     // poolAddress - click to pool page
     poolAddress,
     poolType,
+    fee,
+    ...props
 }: PairProps): React.ReactNode => {
     const { assetsInfo } = useAssetsStore();
     const history = useHistory();
@@ -277,6 +281,7 @@ const Market = ({
             {isMaxRewards && <MaxRewardsLabel />}
             {authRequired && <AuthRequiredLabel />}
             {noLiquidity && <NoLiquidityLabel />}
+            {fee && <FeeLabel fee={fee} />}
         </>
     );
 
@@ -298,6 +303,7 @@ const Market = ({
                     history.push(`${AmmRoutes.analytics}${poolAddress}/`);
                 }
             }}
+            {...props}
         >
             <Icons
                 $isBig={isBigLogo}
