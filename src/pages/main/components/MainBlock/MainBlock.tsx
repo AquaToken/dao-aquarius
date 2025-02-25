@@ -130,6 +130,10 @@ const Description = styled.p`
 const LinkButton = styled(Link)`
     color: ${COLORS.white};
     text-decoration: none;
+
+    ${respondDown(Breakpoints.md)`
+        width: 100%;
+    `}
 `;
 
 const StyledButton = styled(Button)`
