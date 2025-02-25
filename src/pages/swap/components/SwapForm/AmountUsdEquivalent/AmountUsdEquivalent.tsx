@@ -9,6 +9,7 @@ import { getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 
 import { StellarService } from 'services/globalServices';
+
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -117,7 +118,7 @@ const AmountUsdEquivalent = ({ amount, asset, sourceAmount, sourceAsset }: Props
                 )}
             </span>
 
-            {percent ? (
+            {percent && Number.isFinite(+percent) ? (
                 <Percent $percent={Number(percent)}>
                     ({Number(percent) > 0 ? '+' : ''}
                     {percent}%)

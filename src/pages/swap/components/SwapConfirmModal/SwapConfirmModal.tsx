@@ -83,13 +83,15 @@ interface SwapConfirmModalParams {
     bestPathXDR: string;
     bestPath: string[];
     bestPools: string[];
+    isSend: boolean;
 }
 
 const SwapConfirmModal = ({
     params,
     confirm,
 }: ModalProps<SwapConfirmModalParams>): React.ReactNode => {
-    const { base, counter, baseAmount, counterAmount, bestPathXDR, bestPath, bestPools } = params;
+    const { base, counter, baseAmount, counterAmount, bestPathXDR, bestPath, bestPools, isSend } =
+        params;
     const [fees, setFees] = useState(null);
     const [swapPending, setSwapPending] = useState(false);
     const [txFee, setTxFee] = useState(null);
@@ -107,12 +109,16 @@ const SwapConfirmModal = ({
     }, []);
 
     useEffect(() => {
+        const minAmount = isSend
+            ? ((1 - 5 / 100) * Number(counterAmount)).toFixed(7)
+            : ((1 + 5 / 100) * Number(baseAmount)).toFixed(7);
         SorobanService.getSwapChainedTx(
             account?.accountId(),
             base,
             bestPathXDR,
-            baseAmount,
-            '0',
+            isSend ? baseAmount : counterAmount,
+            minAmount,
+            isSend,
         ).then(res => {
             SorobanService.simulateTx(res).then(
                 ({ minResourceFee }: StellarSdk.rpc.Api.SimulateTransactionSuccessResponse) => {
@@ -129,7 +135,9 @@ const SwapConfirmModal = ({
         setSwapPending(true);
         const SLIPPAGE = localStorage.getItem(SWAP_SLIPPAGE_ALIAS) || '1'; // 1%
 
-        const minCounterAmount = ((1 - Number(SLIPPAGE) / 100) * Number(counterAmount)).toFixed(7);
+        const minAmount = isSend
+            ? ((1 - Number(SLIPPAGE) / 100) * Number(counterAmount)).toFixed(7)
+            : ((1 + Number(SLIPPAGE) / 100) * Number(baseAmount)).toFixed(7);
 
         let hash: string;
 
@@ -137,8 +145,9 @@ const SwapConfirmModal = ({
             account?.accountId(),
             base,
             bestPathXDR,
-            baseAmount,
-            minCounterAmount,
+            isSend ? baseAmount : counterAmount,
+            minAmount,
+            isSend,
         )
             .then(tx => {
                 hash = tx.hash().toString('hex');
@@ -161,7 +170,10 @@ const SwapConfirmModal = ({
 
                 ModalService.openModal(SuccessModal, {
                     assets: [base, counter],
-                    amounts: [baseAmount, SorobanService.i128ToInt(res.value())],
+                    amounts: [
+                        isSend ? baseAmount : SorobanService.i128ToInt(res.value()),
+                        isSend ? SorobanService.i128ToInt(res.value()) : counterAmount,
+                    ],
                     title: 'Swap Successful',
                     isSwap: true,
                     hash,

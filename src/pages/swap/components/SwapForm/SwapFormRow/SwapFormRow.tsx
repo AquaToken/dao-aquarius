@@ -78,6 +78,7 @@ interface SwapFormRowProps {
     pending: boolean;
     inputPostfix: React.ReactElement;
     assetsList: AssetSimple[] | null;
+    isDestination: boolean;
 }
 
 const SwapFormRow = ({
@@ -90,6 +91,7 @@ const SwapFormRow = ({
     pending,
     inputPostfix,
     assetsList,
+    isDestination,
 }: SwapFormRowProps) => {
     const { account } = useAuthStore();
     const [isOpen, setIsOpen] = useState(false);
@@ -117,10 +119,9 @@ const SwapFormRow = ({
             <StyledInput
                 value={amount}
                 onChange={e => setAmount(e.target.value)}
-                label={isBase ? 'From' : 'To(estimated)'}
+                label={`${isBase ? 'From' : 'To'}${isDestination ? ' (estimated)' : ''}`}
                 placeholder="0.0"
                 postfix={inputPostfix}
-                disabled={!isBase}
                 inputMode="decimal"
             />
 

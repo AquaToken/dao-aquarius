@@ -74,10 +74,12 @@ const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
     const [bestPath, setBestPath] = useState(null);
     const [bestPools, setBestPools] = useState(null);
     const [estimatePending, setEstimatePending] = useState(false);
+    const [isSend, setIsSend] = useState(true);
 
     const [isPriceReverted, setIsPriceReverted] = useState(false);
 
-    const debouncedAmount = useDebounce(baseAmount, 700);
+    const debouncedBaseAmount = useDebounce(baseAmount, 700);
+    const debouncedCounterAmount = useDebounce(counterAmount, 700);
 
     const [assetsList, setAssetsList] = useState(null);
 
@@ -89,13 +91,18 @@ const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
     }, []);
 
     useEffect(() => {
-        if (Number(debouncedAmount.current)) {
+        if (debouncedCounterAmount.current) {
+            return;
+        }
+        if (Number(debouncedBaseAmount.current)) {
             setEstimatePending(true);
+            setIsSend(true);
 
             findSwapPath(
                 SorobanService.getAssetContractId(base),
                 SorobanService.getAssetContractId(counter),
-                debouncedAmount.current,
+                debouncedBaseAmount.current,
+                true,
             )
                 .then(res => {
                     if (!res.success) {
@@ -124,11 +131,50 @@ const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
             setBestPools(null);
             setCounterAmount('');
         }
-    }, [debouncedAmount, base, counter]);
+    }, [debouncedBaseAmount, base, counter]);
 
     useEffect(() => {
-        setCounterAmount('');
-    }, [baseAmount, base, counter]);
+        if (debouncedBaseAmount.current) {
+            return;
+        }
+        if (Number(debouncedCounterAmount.current)) {
+            setEstimatePending(true);
+            setIsSend(false);
+
+            findSwapPath(
+                SorobanService.getAssetContractId(base),
+                SorobanService.getAssetContractId(counter),
+                debouncedCounterAmount.current,
+                false,
+            )
+                .then(res => {
+                    if (!res.success) {
+                        setError(true);
+                        setBaseAmount('');
+                        setEstimatePending(false);
+                    } else {
+                        setError(false);
+                        setEstimatePending(false);
+                        if (!counterAmount) {
+                            return;
+                        }
+                        setBaseAmount((Number(res.amount) / 1e7).toFixed(7));
+                        setBestPathXDR(res.swap_chain_xdr);
+                        setBestPath(res.tokens);
+                        setBestPools(res.pools);
+                    }
+                })
+                .catch(() => {
+                    setError(true);
+                    setEstimatePending(false);
+                });
+        } else {
+            setBestPathXDR(null);
+            setBestPath(null);
+            setBestPools(null);
+            setBaseAmount('');
+        }
+    }, [debouncedCounterAmount, base, counter]);
 
     const swapAssets = () => {
         if (!isLogged) {
@@ -149,6 +195,7 @@ const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
             bestPathXDR,
             bestPath,
             bestPools,
+            isSend,
         }).then(({ isConfirmed }) => {
             if (isConfirmed) {
                 setBaseAmount('');
@@ -161,7 +208,7 @@ const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
         });
     };
 
-    const onAmountChange = value => {
+    const onAmountChange = (value, isBase) => {
         if (Number.isNaN(Number(value))) {
             return;
         }
@@ -171,7 +218,13 @@ const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
                 ? `${integerPart}.${fractionalPart.slice(0, 7)}`
                 : value;
 
-        setBaseAmount(roundedValue);
+        if (isBase) {
+            setCounterAmount('');
+            setBaseAmount(roundedValue);
+        } else {
+            setBaseAmount('');
+            setCounterAmount(roundedValue);
+        }
     };
 
     const revertAssets = () => {
@@ -199,15 +252,16 @@ const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
                 asset={base}
                 setAsset={setSource}
                 amount={baseAmount}
-                setAmount={onAmountChange}
+                setAmount={value => onAmountChange(value, true)}
                 exclude={counter}
                 pending={estimatePending}
                 assetsList={assetsList}
                 inputPostfix={
                     baseAmount ? (
-                        <AmountUsdEquivalent amount={debouncedAmount.current} asset={base} />
+                        <AmountUsdEquivalent amount={debouncedBaseAmount.current} asset={base} />
                     ) : null
                 }
+                isDestination={!isSend}
             />
 
             <SwapFormDivider pending={estimatePending} onRevert={revertAssets} />
@@ -216,6 +270,7 @@ const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
                 asset={counter}
                 setAsset={setDestination}
                 amount={counterAmount}
+                setAmount={value => onAmountChange(value, false)}
                 exclude={base}
                 pending={estimatePending}
                 assetsList={assetsList}
@@ -227,6 +282,7 @@ const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
                         sourceAsset={base}
                     />
                 }
+                isDestination={isSend}
             />
 
             <SwapFormPrice
