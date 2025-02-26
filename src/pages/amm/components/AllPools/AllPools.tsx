@@ -190,6 +190,7 @@ const AllPools = (): React.ReactNode => {
                 <>
                     <Table
                         pending={pending}
+                        mobileBreakpoint={Breakpoints.lg}
                         head={[
                             { children: 'Pool', flexSize: 6 },
                             {
