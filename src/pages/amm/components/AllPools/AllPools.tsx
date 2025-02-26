@@ -338,6 +338,7 @@ const AllPools = (): React.ReactNode => {
                                         ? `$${formatBalance(
                                               Number(pool.liquidity_usd) / 1e7,
                                               true,
+                                              true,
                                           )}`
                                         : '0',
                                     label: 'TVL:',
@@ -345,8 +346,12 @@ const AllPools = (): React.ReactNode => {
                                     flexSize: 2,
                                 },
                                 {
-                                    children: pool.liquidity_usd
-                                        ? `$${formatBalance(Number(pool.volume_usd) / 1e7, true)}`
+                                    children: pool.volume_usd
+                                        ? `$${formatBalance(
+                                              Number(pool.volume_usd) / 1e7,
+                                              true,
+                                              true,
+                                          )}`
                                         : '0',
                                     label: 'Volume 24h:',
                                     align: CellAlign.Right,
