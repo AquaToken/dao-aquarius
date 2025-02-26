@@ -210,6 +210,23 @@ const AllPools = (): React.ReactNode => {
                                 flexSize: 2,
                             },
                             {
+                                children: 'Volume 24h',
+                                sort: {
+                                    onClick: () =>
+                                        setSortParam(
+                                            sort === PoolsSortFields.volumeUp
+                                                ? PoolsSortFields.volumeDown
+                                                : PoolsSortFields.volumeUp,
+                                        ),
+                                    isEnabled:
+                                        sort === PoolsSortFields.volumeUp ||
+                                        sort === PoolsSortFields.volumeDown,
+                                    isReversed: sort === PoolsSortFields.volumeDown,
+                                },
+                                align: CellAlign.Right,
+                                flexSize: 2,
+                            },
+                            {
                                 children: 'Daily reward',
                                 sort: {
                                     onClick: () =>
@@ -323,6 +340,14 @@ const AllPools = (): React.ReactNode => {
                                           )}`
                                         : '0',
                                     label: 'TVL:',
+                                    align: CellAlign.Right,
+                                    flexSize: 2,
+                                },
+                                {
+                                    children: pool.liquidity_usd
+                                        ? `$${formatBalance(Number(pool.volume_usd) / 1e7, true)}`
+                                        : '0',
+                                    label: 'Volume 24h:',
                                     align: CellAlign.Right,
                                     flexSize: 2,
                                 },
