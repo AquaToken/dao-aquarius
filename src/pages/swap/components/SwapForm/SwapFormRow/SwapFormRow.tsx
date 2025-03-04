@@ -29,7 +29,7 @@ const Container = styled.div<{ $isOpen?: boolean }>`
     `}
 `;
 
-const Balance = styled.div<{ $isHidden?: boolean }>`
+export const Balance = styled.div<{ $isHidden?: boolean }>`
     visibility: ${({ $isHidden }) => ($isHidden ? 'hidden' : 'unset')};
     position: absolute;
     bottom: calc(100% + 1.2rem);

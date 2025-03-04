@@ -331,6 +331,15 @@ const Links = () => {
                         >
                             Lock AQUA
                         </NavLinkStyled>
+                        <NavLinkStyled
+                            to={MainRoutes.delegate}
+                            activeStyle={{
+                                fontWeight: 700,
+                            }}
+                            title="Delegate ICE"
+                        >
+                            Delegate ICE
+                        </NavLinkStyled>
                     </>
                 }
             />
