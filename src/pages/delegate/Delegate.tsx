@@ -13,7 +13,7 @@ import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService, StellarService, ToastService } from 'services/globalServices';
-import { DELEGATE_MARKER_KEY, ICE_ISSUER, UP_ICE_CODE } from 'services/stellar.service';
+import { D_ICE_CODE, DELEGATE_MARKER_KEY, ICE_ISSUER, UP_ICE_CODE } from 'services/stellar.service';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { cardBoxShadow, commonMaxWidth, respondDown } from 'web/mixins';
@@ -23,6 +23,8 @@ import { Button } from 'basics/buttons';
 import { Input } from 'basics/inputs';
 import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
 import Table, { CellAlign } from 'basics/Table';
+
+import NoTrustline from 'components/NoTrustline';
 
 import { Balance } from 'pages/swap/components/SwapForm/SwapFormRow/SwapFormRow';
 
@@ -66,6 +68,7 @@ const AmountBlock = styled.div`
 `;
 
 const UP_ICE = StellarService.createAsset(UP_ICE_CODE, ICE_ISSUER);
+const D_ICE = StellarService.createAsset(D_ICE_CODE, ICE_ISSUER);
 
 const Delegate = () => {
     const [destination, setDestination] = useState('');
@@ -277,6 +280,11 @@ const Delegate = () => {
                         <div>You currently have no delegated upvoteICE</div>
                     )}
                 </Form>
+                {account && account.getAssetBalance(D_ICE) === null && (
+                    <Form>
+                        <NoTrustline asset={D_ICE} />
+                    </Form>
+                )}
             </MainSection>
         </MainBlock>
     );

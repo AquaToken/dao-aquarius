@@ -52,6 +52,7 @@ export const ICE_ISSUER = 'GAXSGZ2JM3LNWOO4WRGADISNMWO4HQLG4QBGUZRKH5ZHL3EQBGX73
 export const GOV_ICE_CODE = 'governICE';
 export const UP_ICE_CODE = 'upvoteICE';
 export const DOWN_ICE_CODE = 'downvoteICE';
+export const D_ICE_CODE = 'dICE';
 
 export const ICE_ASSETS = [
     `${ICE_CODE}:${ICE_ISSUER}`,
@@ -990,7 +991,10 @@ export default class StellarServiceClass {
             const hasMarker = claim.claimants.some(
                 claimant => claimant.destination === DELEGATE_MARKER_KEY,
             );
-            const selfClaim = claim.claimants.find(claimant => claimant.destination === accountId);
+            const selfClaim = claim.claimants.find(
+                claimant =>
+                    claimant.destination === accountId && !!claimant.predicate?.not?.abs_before,
+            );
             const isUpvoteIce = claim.asset === `${UP_ICE_CODE}:${ICE_ISSUER}`;
 
             if (hasMarker && Boolean(selfClaim) && isUpvoteIce) {
