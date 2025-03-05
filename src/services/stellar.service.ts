@@ -958,7 +958,7 @@ export default class StellarServiceClass {
                         account.accountId(),
                         StellarSdk.Claimant.predicateNot(
                             StellarSdk.Claimant.predicateBeforeAbsoluteTime(
-                                ((Date.now() + 24 * 60 * 60 * 1000) / 1000).toFixed(),
+                                ((Date.now() + 25 * 60 * 60 * 1000) / 1000).toFixed(),
                             ),
                         ),
                     ),
