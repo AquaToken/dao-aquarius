@@ -7,13 +7,16 @@ import { COLORS } from 'web/styles';
 
 import Revert from 'assets/icon-revert.svg';
 
+import { DotsLoader } from 'basics/loaders';
+
 const Container = styled.div`
     color: ${COLORS.grayText};
-    margin-top: 3rem;
+    margin: 1.6rem 0;
     display: flex;
     align-items: center;
     justify-content: flex-end;
     cursor: pointer;
+    height: 1.7rem;
 
     svg {
         margin-left: 0.6rem;
@@ -28,6 +31,7 @@ interface SwapFormPriceProps {
     counterCode: string;
     isReverted: boolean;
     setIsReverted: (isReverted: boolean) => void;
+    hasError: boolean;
 }
 
 const SwapFormPrice = ({
@@ -38,10 +42,20 @@ const SwapFormPrice = ({
     counterCode,
     isReverted,
     setIsReverted,
+    hasError,
 }: SwapFormPriceProps) => {
-    if (!baseAmount || !counterAmount || pending) {
+    if ((!Number(baseAmount) && !Number(counterAmount)) || hasError) {
         return null;
     }
+
+    if (pending || !baseAmount || !counterAmount) {
+        return (
+            <Container>
+                1 {baseCode} = <DotsLoader style={{ margin: '0 0.5rem' }} /> {counterCode}
+            </Container>
+        );
+    }
+
     return (
         <Container onClick={() => setIsReverted(!isReverted)}>
             {isReverted

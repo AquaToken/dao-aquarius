@@ -10,7 +10,7 @@ const Dot = styled.span<{ $isVisible: boolean }>`
     visibility: ${({ $isVisible }) => ($isVisible ? 'visible' : 'hidden')};
 `;
 
-const DotsLoader = (): React.ReactElement => {
+const DotsLoader = ({ ...props }): React.ReactElement => {
     const [currentIndex, setCurrentIndex] = useState(0);
 
     useEffect(() => {
@@ -22,7 +22,7 @@ const DotsLoader = (): React.ReactElement => {
     }, []);
 
     return (
-        <span>
+        <span {...props}>
             {DOTS.map((dot, index) => {
                 const isVisible = index <= currentIndex;
 

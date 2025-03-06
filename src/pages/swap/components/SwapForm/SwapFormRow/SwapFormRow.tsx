@@ -1,6 +1,7 @@
 import { Asset } from '@stellar/stellar-sdk';
 import * as React from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { NumericFormat } from 'react-number-format';
 import styled from 'styled-components';
 
 import { formatBalance } from 'helpers/format-number';
@@ -8,64 +9,92 @@ import { formatBalance } from 'helpers/format-number';
 import { AssetSimple } from 'store/assetsStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { respondDown } from 'web/mixins';
+import { respondDown, textEllipsis } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import AssetDropdown from 'basics/AssetDropdown';
-import Input from 'basics/inputs/Input';
+import Info from 'assets/icon-info.svg';
 
-import PercentButtons from '../PercentButtons/PercentButtons';
+import AssetPicker from 'basics/asset-picker/AssetPicker';
+import { BlankInput } from 'basics/inputs';
+import { DotsLoader } from 'basics/loaders';
+import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
-const Container = styled.div<{ $isOpen?: boolean }>`
+import PercentButtons from 'pages/swap/components/SwapForm/PercentButtons/PercentButtons';
+
+const Container = styled.div`
     display: flex;
-    margin-top: 5rem;
     position: relative;
+    padding: 3.2rem 4rem;
+    background-color: ${COLORS.lightGray};
+    border-radius: 4rem;
+    justify-content: space-between;
 
-    ${respondDown(Breakpoints.md)`
-        flex-direction: column;
-        gap: 0.5rem;
-        margin-top: 2rem;
-        position: ${({ $isOpen }) => ($isOpen ? 'static' : 'relative')};
+    ${respondDown(Breakpoints.sm)`
+        padding: 3.2rem 1.6rem;
     `}
 `;
 
-const Balance = styled.div<{ $isHidden?: boolean }>`
-    visibility: ${({ $isHidden }) => ($isHidden ? 'hidden' : 'unset')};
-    position: absolute;
-    bottom: calc(100% + 1.2rem);
-    right: 0;
-    font-size: 1.6rem;
-    line-height: 1.8rem;
+const AmountContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+
+    span {
+        font-size: 1.6rem;
+    }
+`;
+
+const PickerContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 50%;
+    align-items: flex-end;
+`;
+
+const Balance = styled.div`
+    font-size: 1.4rem;
+    line-height: 1.6rem;
     color: ${COLORS.grayText};
     display: inline-flex;
     align-items: center;
+    white-space: nowrap;
+    width: 100%;
 
     svg {
         margin-left: 0.4rem;
     }
+`;
 
-    ${respondDown(Breakpoints.md)`
-       font-size: 1.2rem;
+const BalanceLabel = styled.span`
+    text-align: right;
+    ${respondDown(Breakpoints.sm)`
+        display: none;
     `}
 `;
 
-const StyledInput = styled(Input)`
-    flex: 1.4;
-    z-index: 50;
+const BalanceValue = styled.span`
+    width: 100%;
+    ${textEllipsis};
+    text-align: right;
 `;
 
-const DropdownContainer = styled.div<{ $isOpen: boolean }>`
-    ${({ $isOpen }) =>
-        $isOpen
-            ? `
-    width: 100%; 
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 100;
-    `
-            : `flex: 1;`}
+const TooltipInner = styled.div`
+    display: flex;
+    flex-direction: column;
+    color: ${COLORS.white};
+    font-size: 1.2rem;
+    line-height: 2rem;
+`;
+
+const TooltipRow = styled.div`
+    display: flex;
+    justify-content: space-between;
+    gap: 1.2rem;
+
+    &:last-child:not(:first-child) {
+        font-weight: 700;
+    }
 `;
 
 interface SwapFormRowProps {
@@ -74,9 +103,7 @@ interface SwapFormRowProps {
     setAsset: (asset: Asset) => void;
     amount: string;
     setAmount?: (amount: string) => void;
-    exclude: Asset;
-    pending: boolean;
-    inputPostfix: React.ReactElement;
+    usdEquivalent: React.ReactElement;
     assetsList: AssetSimple[] | null;
 }
 
@@ -86,13 +113,21 @@ const SwapFormRow = ({
     setAsset,
     amount,
     setAmount,
-    exclude,
-    pending,
-    inputPostfix,
+    usdEquivalent,
     assetsList,
 }: SwapFormRowProps) => {
     const { account } = useAuthStore();
-    const [isOpen, setIsOpen] = useState(false);
+    const [assetReserves, setAssetReserves] = useState(null);
+
+    useEffect(() => {
+        if (!account) {
+            setAssetReserves(null);
+            return;
+        }
+        account.getReservesForSwap(asset).then(res => {
+            setAssetReserves(res);
+        });
+    }, [account, asset]);
 
     const setPercent = (percent: number) => {
         const available = account.getAvailableForSwapBalance(asset);
@@ -100,44 +135,78 @@ const SwapFormRow = ({
         setAmount(((available * percent) / 100).toFixed(7));
     };
 
-    return (
-        <Container $isOpen={!isBase && isOpen}>
-            {account && account.getAssetBalance(asset) !== null && (
-                <Balance $isHidden={!isBase && isOpen}>
-                    {isBase ? 'Available: ' : 'Balance: '}
-                    {formatBalance(
-                        isBase
-                            ? account.getAvailableForSwapBalance(asset)
-                            : account.getAssetBalance(asset),
-                    )}{' '}
-                    {asset.code}
-                    {isBase && <PercentButtons asset={asset} setPercent={setPercent} />}
-                </Balance>
-            )}
-            <StyledInput
-                value={amount}
-                onChange={e => setAmount(e.target.value)}
-                label={isBase ? 'From' : 'To(estimated)'}
-                placeholder="0.0"
-                postfix={inputPostfix}
-                disabled={!isBase}
-                inputMode="decimal"
-            />
+    const setValue = (value: string) => {
+        if (setAmount) {
+            setAmount(value);
+        }
+    };
 
-            <DropdownContainer $isOpen={isOpen}>
-                <AssetDropdown
-                    assets={assetsList}
-                    asset={asset}
-                    onUpdate={setAsset}
-                    exclude={exclude}
-                    disabled={pending || !assetsList}
-                    withoutReset
-                    onToggle={res => setIsOpen(res)}
-                    withBalances
-                    longListOnMobile
+    return (
+        <Container>
+            <AmountContainer>
+                <span>{isBase ? 'Sell' : 'Buy'}</span>
+                <NumericFormat
+                    disabled={!isBase}
+                    placeholder="0"
+                    customInput={BlankInput}
+                    allowedDecimalSeparators={[',']}
+                    thousandSeparator=","
+                    decimalScale={7}
+                    value={amount}
+                    onValueChange={value => setValue(value.value)}
                 />
-            </DropdownContainer>
-            {isBase && <PercentButtons asset={asset} setPercent={setPercent} isMobile />}
+                {usdEquivalent}
+            </AmountContainer>
+
+            <PickerContainer>
+                {isBase ? (
+                    <PercentButtons setPercent={setPercent} />
+                ) : (
+                    <div style={{ height: '1.8rem' }} />
+                )}
+                <AssetPicker asset={asset} onUpdate={setAsset} assetsList={assetsList} />
+                {account && account.getAssetBalance(asset) !== null && (
+                    <Balance>
+                        <BalanceValue>
+                            <BalanceLabel>{isBase ? 'Available: ' : 'Balance: '}</BalanceLabel>
+                            {formatBalance(
+                                isBase
+                                    ? account.getAvailableForSwapBalance(asset)
+                                    : account.getAssetBalance(asset),
+                            )}
+                        </BalanceValue>
+                        {isBase && (
+                            <Tooltip
+                                showOnHover
+                                background={COLORS.titleText}
+                                position={
+                                    +window.innerWidth < 1200
+                                        ? TOOLTIP_POSITION.left
+                                        : TOOLTIP_POSITION.right
+                                }
+                                content={
+                                    <TooltipInner>
+                                        {assetReserves ? (
+                                            assetReserves.map(({ label, value }) => (
+                                                <TooltipRow key={label}>
+                                                    <span>{label}</span>
+                                                    <span>
+                                                        {value} {asset.code}
+                                                    </span>
+                                                </TooltipRow>
+                                            ))
+                                        ) : (
+                                            <DotsLoader />
+                                        )}
+                                    </TooltipInner>
+                                }
+                            >
+                                <Info />
+                            </Tooltip>
+                        )}
+                    </Balance>
+                )}
+            </PickerContainer>
         </Container>
     );
 };
