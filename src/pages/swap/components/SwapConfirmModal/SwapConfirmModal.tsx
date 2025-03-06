@@ -181,6 +181,7 @@ const SwapConfirmModal = ({
                 setSwapPending(false);
             })
             .catch(e => {
+                console.log(e);
                 const errorMessage = e.message ?? e.toString() ?? 'Oops! Something went wrong';
 
                 ToastService.showErrorToast(

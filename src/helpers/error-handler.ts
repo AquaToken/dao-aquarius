@@ -148,6 +148,7 @@ function findErrorCode(error: string) {
 }
 
 export function SorobanPrepareTxErrorHandler(error: string) {
+    console.log('Prepare error: ', error);
     const code = findErrorCode(error.toString());
     return KnownPrepareErrors[code] ?? 'Oops. Something went wrong.';
 }
