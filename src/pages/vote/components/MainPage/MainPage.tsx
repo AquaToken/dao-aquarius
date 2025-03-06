@@ -14,7 +14,13 @@ import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService, StellarService } from 'services/globalServices';
-import { DOWN_ICE_CODE, ICE_ISSUER, StellarEvents, UP_ICE_CODE } from 'services/stellar.service';
+import {
+    D_ICE_CODE,
+    DOWN_ICE_CODE,
+    ICE_ISSUER,
+    StellarEvents,
+    UP_ICE_CODE,
+} from 'services/stellar.service';
 
 import { Asset } from 'types/stellar';
 
@@ -322,6 +328,7 @@ const UPDATE_INTERVAL = 60 * 1000; // 1 minute
 
 export const UP_ICE = StellarService?.createAsset(UP_ICE_CODE, ICE_ISSUER);
 export const DOWN_ICE = StellarService?.createAsset(DOWN_ICE_CODE, ICE_ISSUER);
+export const DELEGATE_ICE = StellarService?.createAsset(D_ICE_CODE, ICE_ISSUER);
 
 enum UrlParams {
     sort = 'sort',

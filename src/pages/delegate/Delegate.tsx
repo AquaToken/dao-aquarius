@@ -75,6 +75,7 @@ const Delegate = () => {
     const [amount, setAmount] = useState('');
     const [pending, setPending] = useState(false);
     const [locks, setLocks] = useState(null);
+    const [locksForMe, setLocksForMe] = useState(null);
     const [pendingId, setPendingId] = useState(null);
 
     const { account, isLogged } = useAuthStore();
@@ -87,6 +88,14 @@ const Delegate = () => {
             return;
         }
         setLocks(StellarService.getDelegateLocks(account.accountId()));
+    }, [account, updateIndex]);
+
+    useEffect(() => {
+        if (!account) {
+            setLocksForMe(null);
+            return;
+        }
+        setLocksForMe(StellarService.getDelegatedToUserLocks(account.accountId()));
     }, [account, updateIndex]);
 
     const onAmountChange = (value: string) => {
@@ -269,6 +278,51 @@ const Delegate = () => {
                                                 >
                                                     claim
                                                 </Button>
+                                            ),
+                                            align: CellAlign.Right,
+                                        },
+                                    ],
+                                };
+                            })}
+                        />
+                    ) : (
+                        <div>You currently have no delegated upvoteICE</div>
+                    )}
+                </Form>
+                <Form>
+                    <Title>Delegations for me</Title>
+                    {locksForMe && Boolean(locksForMe.length) ? (
+                        <Table
+                            head={[
+                                { children: 'From' },
+                                { children: 'Amount', align: CellAlign.Right },
+                                { children: 'Created at', align: CellAlign.Right },
+                            ]}
+                            body={locksForMe.map(lock => {
+                                const destination = lock.claimants.find(
+                                    claimant =>
+                                        claimant.destination !== account.accountId() &&
+                                        claimant.destination !== DELEGATE_MARKER_KEY,
+                                );
+                                return {
+                                    key: lock.id,
+                                    rowItems: [
+                                        {
+                                            children: (
+                                                <PublicKeyWithIcon
+                                                    pubKey={destination.destination}
+                                                    lettersCount={8}
+                                                />
+                                            ),
+                                        },
+                                        {
+                                            children: `${formatBalance(+lock.amount)} upvoteICE`,
+                                            align: CellAlign.Right,
+                                        },
+                                        {
+                                            children: getDateString(
+                                                new Date(lock.last_modified_time).getTime(),
+                                                { withTime: true, withoutYear: true },
                                             ),
                                             align: CellAlign.Right,
                                         },

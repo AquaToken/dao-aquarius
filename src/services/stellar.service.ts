@@ -59,6 +59,7 @@ export const ICE_ASSETS = [
     `${GOV_ICE_CODE}:${ICE_ISSUER}`,
     `${UP_ICE_CODE}:${ICE_ISSUER}`,
     `${DOWN_ICE_CODE}:${ICE_ISSUER}`,
+    `${D_ICE_CODE}:${ICE_ISSUER}`,
 ];
 
 export enum THRESHOLDS {
@@ -579,11 +580,12 @@ export default class StellarServiceClass {
             const isAqua = claim.asset === aquaAssetString;
             const isUpIce = claim.asset === `${UP_ICE_CODE}:${ICE_ISSUER}`;
             const isDownIce = claim.asset === `${DOWN_ICE_CODE}:${ICE_ISSUER}`;
+            const isDelegatedIce = claim.asset === `${D_ICE_CODE}:${ICE_ISSUER}`;
 
             if (
                 (hasUpMarker || hasDownMarker) &&
                 Boolean(selfClaim) &&
-                (isAqua || isUpIce || isDownIce)
+                (isAqua || isUpIce || isDownIce || isDelegatedIce)
             ) {
                 const [code, issuer] = claim.asset.split(':');
                 acc.push({
@@ -653,10 +655,11 @@ export default class StellarServiceClass {
             const isAqua = claim.asset === aquaAssetString;
             const isUpIce = claim.asset === `${UP_ICE_CODE}:${ICE_ISSUER}`;
             const isDownIce = claim.asset === `${DOWN_ICE_CODE}:${ICE_ISSUER}`;
+            const isDelegatedIce = claim.asset === `${D_ICE_CODE}:${ICE_ISSUER}`;
             const hasSelfClaim = claim.claimants.some(
                 claimant => claimant.destination === accountId,
             );
-            if ((isAqua || isUpIce || isDownIce) && hasSelfClaim) {
+            if ((isAqua || isUpIce || isDownIce || isDelegatedIce) && hasSelfClaim) {
                 const similarToMarketKey = claim.claimants.find(
                     claimant => claimant.destination !== accountId,
                 );
@@ -740,6 +743,9 @@ export default class StellarServiceClass {
         }
         if (asset.code === UP_ICE_CODE && asset.issuer === ICE_ISSUER) {
             return 'https://ice-approval.aqua.network/api/v2/upvote-ice/tx-approve/';
+        }
+        if (asset.code === D_ICE_CODE && asset.issuer === ICE_ISSUER) {
+            return 'https://ice-approval.aqua.network/api/v2/delegated-ice/tx-approve/';
         }
         if (asset.code === DOWN_ICE_CODE && asset.issuer === ICE_ISSUER) {
             return 'https://ice-approval.aqua.network/api/v2/downvote-ice/tx-approve/';
@@ -994,6 +1000,31 @@ export default class StellarServiceClass {
             const selfClaim = claim.claimants.find(
                 claimant =>
                     claimant.destination === accountId && !!claimant.predicate?.not?.abs_before,
+            );
+            const isUpvoteIce = claim.asset === `${UP_ICE_CODE}:${ICE_ISSUER}`;
+
+            if (hasMarker && Boolean(selfClaim) && isUpvoteIce) {
+                acc.push(claim);
+            }
+            return acc;
+        }, []);
+    }
+
+    getDelegatedToUserLocks(accountId: string) {
+        if (!this.claimableBalances) {
+            return null;
+        }
+
+        return this.claimableBalances.reduce((acc, claim) => {
+            if (claim.claimants.length !== 3) {
+                return acc;
+            }
+            const hasMarker = claim.claimants.some(
+                claimant => claimant.destination === DELEGATE_MARKER_KEY,
+            );
+            const selfClaim = claim.claimants.find(
+                claimant =>
+                    claimant.destination === accountId && !!claimant.predicate?.not?.unconditional,
             );
             const isUpvoteIce = claim.asset === `${UP_ICE_CODE}:${ICE_ISSUER}`;
 
