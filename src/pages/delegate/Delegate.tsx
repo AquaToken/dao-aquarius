@@ -86,8 +86,6 @@ const Delegate = () => {
 
     const { account, isLogged } = useAuthStore();
 
-    const updateIndex = useUpdateIndex(5000);
-
     useEffect(() => {
         if (!account) {
             setLocks(null);
