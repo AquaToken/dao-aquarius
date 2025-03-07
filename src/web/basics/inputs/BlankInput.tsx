@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import Input, { InputProps } from 'basics/inputs/Input';
 
 import { respondDown } from '../../mixins';
-import { Breakpoints } from '../../styles';
+import { Breakpoints, COLORS } from '../../styles';
 
 const BlankInputComponent = styled(Input)<{ $length: number }>`
     input {
@@ -34,6 +34,10 @@ const BlankInputComponent = styled(Input)<{ $length: number }>`
                     ? '1.6rem'
                     : '1.4rem'};
         `}
+
+        &:disabled {
+            color: ${COLORS.darkGrayText};
+        }
     }
 `;
 const BlankInput = ({ ...props }: InputProps) => (
