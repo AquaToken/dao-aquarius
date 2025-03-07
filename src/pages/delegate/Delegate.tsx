@@ -13,7 +13,13 @@ import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService, StellarService, ToastService } from 'services/globalServices';
-import { D_ICE_CODE, DELEGATE_MARKER_KEY, ICE_ISSUER, UP_ICE_CODE } from 'services/stellar.service';
+import {
+    D_ICE_CODE,
+    DELEGATE_MARKER_KEY,
+    ICE_ISSUER,
+    StellarEvents,
+    UP_ICE_CODE,
+} from 'services/stellar.service';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { cardBoxShadow, commonMaxWidth, respondDown } from 'web/mixins';
@@ -85,18 +91,18 @@ const Delegate = () => {
     useEffect(() => {
         if (!account) {
             setLocks(null);
-            return;
-        }
-        setLocks(StellarService.getDelegateLocks(account.accountId()));
-    }, [account, updateIndex]);
-
-    useEffect(() => {
-        if (!account) {
             setLocksForMe(null);
             return;
         }
-        setLocksForMe(StellarService.getDelegatedToUserLocks(account.accountId()));
-    }, [account, updateIndex]);
+        const unsub = StellarService.event.sub(event => {
+            if (event.type === StellarEvents.claimableUpdate) {
+                setLocks(StellarService.getDelegateLocks(account.accountId()));
+                setLocksForMe(StellarService.getDelegatedToUserLocks(account.accountId()));
+            }
+        });
+
+        return () => unsub();
+    }, [account]);
 
     const onAmountChange = (value: string) => {
         if (Number.isNaN(Number(value))) {
@@ -229,11 +235,11 @@ const Delegate = () => {
                             body={locks.map(lock => {
                                 const destination = lock.claimants.find(
                                     claimant =>
-                                        claimant.destination !== account.accountId() &&
+                                        claimant.destination !== account?.accountId() &&
                                         claimant.destination !== DELEGATE_MARKER_KEY,
                                 );
                                 const unlockTime = lock.claimants.find(
-                                    claimant => claimant.destination === account.accountId(),
+                                    claimant => claimant.destination === account?.accountId(),
                                 ).predicate.not.abs_before;
                                 return {
                                     key: lock.id,
@@ -301,7 +307,7 @@ const Delegate = () => {
                             body={locksForMe.map(lock => {
                                 const destination = lock.claimants.find(
                                     claimant =>
-                                        claimant.destination !== account.accountId() &&
+                                        claimant.destination !== account?.accountId() &&
                                         claimant.destination !== DELEGATE_MARKER_KEY,
                                 );
                                 return {
