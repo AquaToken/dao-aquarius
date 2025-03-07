@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { forwardRef } from 'react';
 import styled from 'styled-components';
 
 import Input, { InputProps } from 'basics/inputs/Input';
@@ -40,8 +41,10 @@ const BlankInputComponent = styled(Input)<{ $length: number }>`
         }
     }
 `;
-const BlankInput = ({ ...props }: InputProps) => (
-    <BlankInputComponent {...props} $length={(props.value as string)?.length ?? 0} />
-);
+const BlankInput = forwardRef(({ ...props }: InputProps, ref) => (
+    <BlankInputComponent {...props} ref={ref} $length={(props.value as string)?.length ?? 0} />
+));
+
+BlankInput.displayName = 'BlankInput';
 
 export default BlankInput;

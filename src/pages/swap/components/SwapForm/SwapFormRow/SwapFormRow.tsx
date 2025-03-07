@@ -1,6 +1,6 @@
 import { Asset } from '@stellar/stellar-sdk';
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { NumericFormat } from 'react-number-format';
 import styled from 'styled-components';
 
@@ -118,6 +118,13 @@ const SwapFormRow = ({
 }: SwapFormRowProps) => {
     const { account } = useAuthStore();
     const [assetReserves, setAssetReserves] = useState(null);
+    const inputRef = useRef(null);
+
+    useEffect(() => {
+        if (isBase && inputRef.current) {
+            inputRef.current?.focus();
+        }
+    }, []);
 
     useEffect(() => {
         if (!account) {
@@ -154,6 +161,7 @@ const SwapFormRow = ({
                     decimalScale={7}
                     value={amount}
                     onValueChange={value => setValue(value.value)}
+                    getInputRef={inputRef}
                 />
                 {usdEquivalent}
             </AmountContainer>
