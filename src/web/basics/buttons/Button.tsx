@@ -15,6 +15,7 @@ const ButtonBody = styled(BlankButton)<{
     $isSmall?: boolean;
     $isWhite?: boolean;
     $isPurpleText?: boolean;
+    $isRounded?: boolean;
 }>`
     ${flexAllCenter};
     width: ${({ $fullWidth, $isSquare, $isBig }) => {
@@ -59,7 +60,18 @@ const ButtonBody = styled(BlankButton)<{
         }
         return COLORS.buttonBackground;
     }};
-    border-radius: 0.5rem;
+    border-radius: ${({ $isRounded, $isBig, $isSmall }) => {
+        if (!$isRounded) {
+            return '0.5rem';
+        }
+        if ($isBig) {
+            return '2.4rem';
+        }
+        if ($isSmall) {
+            return '0.8rem';
+        }
+        return '1.6rem';
+    }};
     font-weight: bold;
     letter-spacing: ${({ $isBig }) => ($isBig ? '0.2rem' : '0.05rem')};
     text-transform: uppercase;
@@ -107,7 +119,7 @@ const ButtonLoader = styled.div<{
         }
 
         if ($likeDisabled) {
-            return COLORS.titleText;
+            return COLORS.grayText;
         }
 
         if ($isWhite) {
@@ -116,6 +128,10 @@ const ButtonLoader = styled.div<{
 
         return COLORS.white;
     }};
+
+    button:disabled > & {
+        color: ${COLORS.grayText};
+    }
 
     ${({ $pending }) =>
         $pending
@@ -161,6 +177,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     isSmall?: boolean;
     isWhite?: boolean;
     isPurpleText?: boolean;
+    isRounded?: boolean;
 }
 
 const Button = ({
@@ -173,6 +190,7 @@ const Button = ({
     isSquare,
     isWhite,
     isPurpleText,
+    isRounded,
     ...props
 }: ButtonProps): JSX.Element => (
     <ButtonBody
@@ -183,6 +201,7 @@ const Button = ({
         $isSquare={isSquare}
         $isSmall={isSmall}
         $isWhite={isWhite}
+        $isRounded={isRounded}
         {...props}
     >
         <ButtonLoader

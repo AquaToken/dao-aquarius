@@ -20,13 +20,13 @@ import Plus from 'assets/icon-plus.svg';
 import Asset from 'basics/Asset';
 import { Button } from 'basics/buttons';
 
-const TrustlineBlock = styled.div`
+const TrustlineBlock = styled.div<{ $isRounded?: boolean }>`
     display: flex;
     flex-direction: column;
     padding: 3.2rem;
     background-color: ${COLORS.lightGray};
     margin-top: 1.6rem;
-    border-radius: 0.6rem;
+    border-radius: ${({ $isRounded }) => ($isRounded ? '4rem' : '0.6rem')};
 
     p {
         font-size: 1.6rem;
@@ -59,9 +59,15 @@ const TrustlineButton = styled(Button)`
 interface NoTrustlineProps {
     asset: AssetType;
     onlyButton?: boolean;
+    isRounded?: boolean;
 }
 
-const NoTrustline = ({ asset, onlyButton, ...props }: NoTrustlineProps): React.ReactNode => {
+const NoTrustline = ({
+    asset,
+    onlyButton,
+    isRounded,
+    ...props
+}: NoTrustlineProps): React.ReactNode => {
     const [trustlinePending, setTrustlinePending] = useState(false);
 
     const { account } = useAuthStore();
@@ -107,7 +113,7 @@ const NoTrustline = ({ asset, onlyButton, ...props }: NoTrustlineProps): React.R
     }
 
     return (
-        <TrustlineBlock {...props}>
+        <TrustlineBlock {...props} $isRounded={isRounded}>
             <TrustlineBlockTitle>
                 <Asset asset={asset} onlyLogo /> <span>{asset.code} trustline missing</span>
             </TrustlineBlockTitle>
@@ -115,7 +121,11 @@ const NoTrustline = ({ asset, onlyButton, ...props }: NoTrustlineProps): React.R
                 You can't receive the {asset.code} asset because you haven't added this trustline.
                 Please add the {asset.code} trustline to continue the transaction.
             </p>
-            <TrustlineButton onClick={() => addTrust()} pending={trustlinePending}>
+            <TrustlineButton
+                onClick={() => addTrust()}
+                pending={trustlinePending}
+                isRounded={isRounded}
+            >
                 add {asset.code} trustline <Plus />
             </TrustlineButton>
         </TrustlineBlock>

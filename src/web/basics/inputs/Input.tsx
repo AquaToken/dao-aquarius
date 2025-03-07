@@ -79,7 +79,7 @@ const Label = styled.div`
     color: ${COLORS.paragraphText};
 `;
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     postfix?: React.ReactNode;
     prefixCustom?: React.ReactNode;
     isMedium?: boolean;
@@ -114,22 +114,6 @@ const Input = forwardRef(
             }
         };
 
-        const wrappedOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-            let newValue = e.target.value;
-            if (props.inputMode === 'decimal') {
-                newValue = newValue.replace(',', '.');
-            }
-
-            const newEvent = {
-                ...e,
-                target: {
-                    ...e.target,
-                    value: newValue,
-                },
-            };
-            props.onChange(newEvent);
-        };
-
         useLayoutEffect(() => {
             updatePaddingLeft();
         }, [prefixCustom, isMedium]);
@@ -145,7 +129,6 @@ const Input = forwardRef(
                     $isCenterAligned={isCenterAligned}
                     $paddingLeft={paddingLeft}
                     {...props}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => wrappedOnChange(e)}
                     onWheel={(e: React.WheelEvent) => (e.currentTarget as HTMLElement).blur()}
                 />
                 {postfix && <Postfix>{postfix}</Postfix>}

@@ -100,3 +100,6 @@ export const TESTNET_ASSETS = new Map([
         },
     ],
 ]);
+
+export const USDx_CODE = 'USDx';
+export const USDx_ISSUER = 'GAVH5ZWACAY2PHPUG4FL3LHHJIYIHOFPSIUGM2KHK25CJWXHAV6QKDMN';

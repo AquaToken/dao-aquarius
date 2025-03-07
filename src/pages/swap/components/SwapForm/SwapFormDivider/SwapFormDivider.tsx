@@ -1,23 +1,31 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { flexAllCenter, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
+import { flexAllCenter } from 'web/mixins';
+import { COLORS } from 'web/styles';
 
 import SwapIcon from 'assets/icon-arrows-circle.svg';
 
 import PageLoader from 'basics/loaders/PageLoader';
 
 const Container = styled.div`
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    height: 4rem;
+    width: 4rem;
+    border-radius: 50%;
+    border: 0.1rem solid ${COLORS.gray};
+    background-color: ${COLORS.white};
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 3rem 0 4rem;
-    height: 4.8rem;
+    z-index: 10;
+    transform: translate(-50%, -50%);
 
-    ${respondDown(Breakpoints.md)`
-       margin: 1rem 0 0;
-    `}
+    &:hover {
+        border: 0.1rem solid ${COLORS.grayText};
+    }
 `;
 
 const RevertButton = styled.div`
@@ -25,10 +33,6 @@ const RevertButton = styled.div`
     padding: 1rem;
     border-radius: 0.3rem;
     ${flexAllCenter};
-
-    &:hover {
-        background-color: ${COLORS.lightGray};
-    }
 `;
 
 interface SwapFormDividerProps {

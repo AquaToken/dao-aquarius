@@ -6,7 +6,7 @@ import styled, { css } from 'styled-components';
 import { getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 
-import { useDebounce } from 'hooks/useDebounce';
+import useAssetsSearch from 'hooks/useAssetsSearch';
 import useOnClickOutside from 'hooks/useOutsideClick';
 
 import { AssetSimple } from 'store/assetsStore/types';
@@ -62,11 +62,10 @@ const DropdownArrow = styled(ArrowDown)<{ $isOpen: boolean }>`
     margin-right: ${({ $isOpen }) => ($isOpen ? '0' : '0.1rem')};
 `;
 
-const DropdownLoader = styled(CircleLoader)`
+const DropdownLoader = styled.div`
     ${iconStyles};
     color: ${COLORS.descriptionText};
     transform: translateY(-50%);
-    margin-right: ${({ $isOpen }) => ($isOpen ? '0' : '0.1rem')};
 `;
 
 const DropdownList = styled.div<{ $longListOnMobile?: boolean }>`
@@ -221,12 +220,6 @@ const ChipsMobile = styled(Chips)`
     `}
 `;
 
-const domainPattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
-const domainRegexp = new RegExp(domainPattern);
-
-const codeIssuerPattern = /^[a-zA-Z0-9]{1,12}:[a-zA-Z0-9]{56}$/;
-const codeIssuerRegexp = new RegExp(codeIssuerPattern);
-
 type AssetDropdownProps = {
     asset?: AssetSimple;
     assets?: AssetSimple[];
@@ -264,7 +257,7 @@ const AssetDropdown = ({
     withChips,
     ...props
 }: AssetDropdownProps) => {
-    const { assets: knownAssets, assetsInfo, processNewAssets } = useAssetsStore();
+    const { assets: knownAssets, assetsInfo } = useAssetsStore();
 
     const { account } = useAuthStore();
 
@@ -307,10 +300,7 @@ const AssetDropdown = ({
     );
     const [searchText, setSearchText] = useState('');
 
-    const [searchPending, setSearchPending] = useState(false);
-    const [searchResults, setSearchResults] = useState([]);
-
-    const debouncedSearchText = useDebounce(searchText, 700);
+    const { searchPending, searchResults } = useAssetsSearch(searchText);
 
     useEffect(() => {
         setSelectedAsset(asset);
@@ -348,83 +338,6 @@ const AssetDropdown = ({
         }
     }, [isOpen]);
 
-    const resolveCurrencies = (domain: string) => {
-        setSearchPending(true);
-
-        StellarSdk.StellarToml.Resolver.resolve(domain)
-            .then(({ CURRENCIES }) => {
-                if (CURRENCIES) {
-                    const newCurrencies = CURRENCIES.filter(
-                        currency =>
-                            !assets.find(
-                                asset =>
-                                    asset.code === currency.code &&
-                                    asset.issuer === currency.issuer,
-                            ),
-                    );
-                    processNewAssets(newCurrencies);
-                    setSearchResults(newCurrencies);
-                }
-                setSearchPending(false);
-            })
-            .catch(() => {
-                setSearchPending(false);
-                setSearchResults([]);
-            });
-    };
-
-    useEffect(() => {
-        if (StellarSdk.StrKey.isValidEd25519PublicKey(debouncedSearchText.current)) {
-            setSearchPending(true);
-            StellarService.loadAccount(debouncedSearchText.current)
-                .then(account => {
-                    if (!account?.home_domain) {
-                        setSearchPending(false);
-                        setSearchResults([]);
-                        return;
-                    }
-                    resolveCurrencies(account.home_domain);
-                })
-                .catch(() => {
-                    setSearchPending(false);
-                    setSearchResults([]);
-                });
-            return;
-        }
-
-        if (codeIssuerRegexp.test(debouncedSearchText.current)) {
-            const [code, issuer] = debouncedSearchText.current.split(':');
-            if (!StellarSdk.StrKey.isValidEd25519PublicKey(issuer)) {
-                return;
-            }
-
-            const currentAsset = StellarService.createAsset(code, issuer);
-
-            if (
-                assets.find(
-                    asset =>
-                        currentAsset.code === asset.code && asset.issuer === currentAsset.issuer,
-                )
-            ) {
-                setSearchResults([]);
-                setSearchPending(false);
-                return;
-            }
-
-            processNewAssets([currentAsset]);
-            setSearchResults([currentAsset]);
-
-            setSearchPending(false);
-            return;
-        }
-
-        if (domainRegexp.test(debouncedSearchText.current)) {
-            resolveCurrencies(debouncedSearchText.current);
-            return;
-        }
-        setSearchResults([]);
-    }, [debouncedSearchText.current]);
-
     const onClickAsset = (asset: AssetSimple) => {
         const stellarAsset = StellarService.createAsset(asset.code, asset.issuer);
         onUpdate(withChips ? [...selectedAssets, stellarAsset] : stellarAsset);
@@ -445,7 +358,12 @@ const AssetDropdown = ({
 
     const filteredAssets = useMemo(
         () =>
-            [...assets, ...searchResults].filter(assetItem => {
+            [
+                ...assets,
+                ...searchResults.filter(
+                    token => !assets.find(asset => getAssetString(asset) === getAssetString(token)),
+                ),
+            ].filter(assetItem => {
                 const assetInfo = assetsInfo.get(
                     getAssetString(StellarService.createAsset(assetItem.code, assetItem.issuer)),
                 );
@@ -507,7 +425,9 @@ const AssetDropdown = ({
                 )}
 
                 {!assets.length || searchPending || pending ? (
-                    <DropdownLoader size="small" />
+                    <DropdownLoader>
+                        <CircleLoader size="small" />
+                    </DropdownLoader>
                 ) : (
                     <DropdownArrow $isOpen={isOpen} />
                 )}
