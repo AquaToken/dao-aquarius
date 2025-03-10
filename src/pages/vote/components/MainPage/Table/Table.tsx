@@ -330,7 +330,7 @@ const VoteTable = ({
                     afterRow: hasBribes ? (
                         <BribeInfo key={pair.account_id} onClick={e => showBribes(e, pair)}>
                             <BribeInfoRow>
-                                <span>APY:</span>
+                                <span>Bribes APY:</span>
                                 <BribeAquaSum>
                                     <span>{formatBalance(apy * 100, true)}%</span>
                                 </BribeAquaSum>
