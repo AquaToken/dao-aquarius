@@ -332,7 +332,7 @@ const VoteTable = ({
                             <BribeInfoRow>
                                 <span>Bribes APY:</span>
                                 <BribeAquaSum>
-                                    <span>{formatBalance(apy * 100, true)}%</span>
+                                    <span>{formatBalance(+(apy * 100).toFixed(2), true)}%</span>
                                 </BribeAquaSum>
                             </BribeInfoRow>
                             <BribeInfoRow>
