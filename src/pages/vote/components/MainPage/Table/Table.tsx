@@ -6,10 +6,10 @@ import { MarketRoutes } from 'constants/routes';
 import { formatBalance } from 'helpers/format-number';
 
 import { ModalService, StellarService } from 'services/globalServices';
+
 import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Aqua from 'assets/aqua-logo-small.svg';
 import ArrowRight from 'assets/icon-arrow-right.svg';
 import ManageIcon from 'assets/icon-manage.svg';
 
@@ -90,6 +90,7 @@ const BribeAquaSum = styled.div`
     background-color: ${COLORS.white};
     height: 3.2rem;
     border-radius: 10rem;
+    font-weight: bold;
     padding: 0 1.2rem;
     margin-left: 0.9rem;
     margin-right: 2rem;
@@ -97,16 +98,6 @@ const BribeAquaSum = styled.div`
 
     ${respondDown(Breakpoints.md)`
         background-color: unset;
-    `}
-`;
-
-const AquaLogo = styled(Aqua)`
-    height: 1.6rem;
-    width: 1.6rem;
-    margin-right: 0.9rem;
-
-    ${respondDown(Breakpoints.md)`
-        display: none;
     `}
 `;
 
@@ -230,6 +221,8 @@ const VoteTable = ({
                       }, 0)
                     : 0;
 
+                const apy = (sum / Number(pair.upvote_value) + 1) ** 365 - 1;
+
                 return {
                     onRowClick: () => {
                         goToMarketPage(pair);
@@ -337,10 +330,9 @@ const VoteTable = ({
                     afterRow: hasBribes ? (
                         <BribeInfo key={pair.account_id} onClick={e => showBribes(e, pair)}>
                             <BribeInfoRow>
-                                <span>Daily bribe amount:</span>
+                                <span>APY:</span>
                                 <BribeAquaSum>
-                                    <AquaLogo />
-                                    <span>≈{formatBalance(sum, true)} AQUA</span>
+                                    <span>{formatBalance(apy * 100, true)}%</span>
                                 </BribeAquaSum>
                             </BribeInfoRow>
                             <BribeInfoRow>
