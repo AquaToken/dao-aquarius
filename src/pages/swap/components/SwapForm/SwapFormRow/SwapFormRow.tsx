@@ -73,6 +73,14 @@ const BalanceLabel = styled.span`
     `}
 `;
 
+const BalanceClickable = styled.span`
+    cursor: pointer;
+
+    &:hover {
+        color: ${COLORS.titleText};
+    }
+`;
+
 const BalanceValue = styled.span`
     width: 100%;
     ${textEllipsis};
@@ -177,10 +185,12 @@ const SwapFormRow = ({
                     <Balance>
                         <BalanceValue>
                             <BalanceLabel>{isBase ? 'Available: ' : 'Balance: '}</BalanceLabel>
-                            {formatBalance(
-                                isBase
-                                    ? account.getAvailableForSwapBalance(asset)
-                                    : account.getAssetBalance(asset),
+                            {isBase ? (
+                                <BalanceClickable onClick={() => setPercent(100)}>
+                                    {formatBalance(account.getAvailableForSwapBalance(asset))}
+                                </BalanceClickable>
+                            ) : (
+                                formatBalance(account.getAssetBalance(asset, true))
                             )}
                         </BalanceValue>
                         {isBase && (
