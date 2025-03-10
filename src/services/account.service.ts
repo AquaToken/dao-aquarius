@@ -167,14 +167,14 @@ export default class AccountService extends Horizon.AccountResponse {
             });
     }
 
-    getAssetBalance(asset: Asset): number | null {
+    getAssetBalance(asset: Asset, ignoreReserves?: boolean): number | null {
         if (asset.isNative()) {
             const nativeBalance = this.balances.find(
                 ({ asset_type }) => asset_type === 'native',
             ) as Horizon.HorizonApi.BalanceLineNative;
 
             return new BigNumber(nativeBalance.balance)
-                .minus(nativeBalance.selling_liabilities)
+                .minus(ignoreReserves ? '0' : nativeBalance.selling_liabilities)
                 .toNumber();
         }
         const assetBalance = this.balances.find(
@@ -188,7 +188,7 @@ export default class AccountService extends Horizon.AccountResponse {
         }
 
         return new BigNumber(assetBalance.balance)
-            .minus(assetBalance.selling_liabilities)
+            .minus(ignoreReserves ? '0' : assetBalance.selling_liabilities)
             .toNumber();
     }
 

@@ -190,6 +190,7 @@ const AllPools = (): React.ReactNode => {
                 <>
                     <Table
                         pending={pending}
+                        mobileBreakpoint={Breakpoints.lg}
                         head={[
                             { children: 'Pool', flexSize: 6 },
                             {
@@ -205,6 +206,23 @@ const AllPools = (): React.ReactNode => {
                                         sort === PoolsSortFields.liquidityUp ||
                                         sort === PoolsSortFields.liquidityDown,
                                     isReversed: sort === PoolsSortFields.liquidityDown,
+                                },
+                                align: CellAlign.Right,
+                                flexSize: 2,
+                            },
+                            {
+                                children: 'Volume 24h',
+                                sort: {
+                                    onClick: () =>
+                                        setSortParam(
+                                            sort === PoolsSortFields.volumeUp
+                                                ? PoolsSortFields.volumeDown
+                                                : PoolsSortFields.volumeUp,
+                                        ),
+                                    isEnabled:
+                                        sort === PoolsSortFields.volumeUp ||
+                                        sort === PoolsSortFields.volumeDown,
+                                    isReversed: sort === PoolsSortFields.volumeDown,
                                 },
                                 align: CellAlign.Right,
                                 flexSize: 2,
@@ -320,9 +338,22 @@ const AllPools = (): React.ReactNode => {
                                         ? `$${formatBalance(
                                               Number(pool.liquidity_usd) / 1e7,
                                               true,
+                                              true,
                                           )}`
                                         : '0',
                                     label: 'TVL:',
+                                    align: CellAlign.Right,
+                                    flexSize: 2,
+                                },
+                                {
+                                    children: pool.volume_usd
+                                        ? `$${formatBalance(
+                                              Number(pool.volume_usd) / 1e7,
+                                              true,
+                                              true,
+                                          )}`
+                                        : '0',
+                                    label: 'Volume 24h:',
                                     align: CellAlign.Right,
                                     flexSize: 2,
                                 },

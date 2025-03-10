@@ -10,7 +10,7 @@ import { formatBalance } from 'helpers/format-number';
 
 import { StellarService } from 'services/globalServices';
 
-import { respondDown } from 'web/mixins';
+import { respondDown, textEllipsis } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Warning from 'assets/icon-warning.svg';
@@ -20,13 +20,14 @@ import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 const Container = styled.div`
     display: flex;
     align-items: center;
-    font-size: 1.6rem;
     color: ${COLORS.grayText};
+    max-width: 17rem;
+    height: 1.7rem;
 
-    ${respondDown(Breakpoints.md)`
-        font-size: 1.2rem;
-        flex-direction: column;
-    `}
+    span {
+        font-size: 1.4rem;
+        ${textEllipsis};
+    }
 `;
 
 const Percent = styled.div<{ $percent: number }>`
@@ -35,7 +36,7 @@ const Percent = styled.div<{ $percent: number }>`
     margin-left: 0.4rem;
 
     svg {
-        margin-left: 0.4rem;
+        margin: 0 0.4rem;
     }
     color: ${({ $percent }) => {
         if ($percent > 0) {
@@ -50,7 +51,7 @@ const Percent = styled.div<{ $percent: number }>`
     }};
 `;
 
-const TooltipInner = styled.span`
+const TooltipInner = styled.p`
     width: 38rem;
     white-space: pre-wrap;
     font-size: 1.4rem;
@@ -105,13 +106,17 @@ const AmountUsdEquivalent = ({ amount, asset, sourceAmount, sourceAsset }: Props
     }, [price, priceSource, amount, sourceAmount]);
 
     if (!amount || !price || (sourceAsset && !priceSource)) {
-        return null;
+        return (
+            <Container>
+                <span>$0</span>
+            </Container>
+        );
     }
 
     return (
         <Container>
             <span>
-                ≈ $
+                $
                 {formatBalance(
                     +(Number(amount) * Number(price) * StellarService.priceLumenUsd).toFixed(2),
                     true,
@@ -132,11 +137,7 @@ const AmountUsdEquivalent = ({ amount, asset, sourceAmount, sourceAsset }: Props
                                     and thus reducing your outcome.
                                 </TooltipInner>
                             }
-                            position={
-                                +window.innerWidth <= 992
-                                    ? TOOLTIP_POSITION.left
-                                    : TOOLTIP_POSITION.bottom
-                            }
+                            position={TOOLTIP_POSITION.bottom}
                         >
                             <Warning />
                         </Tooltip>

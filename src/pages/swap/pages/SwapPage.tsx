@@ -24,7 +24,10 @@ const Container = styled.main`
     flex-direction: column;
     scroll-behavior: smooth;
     overflow: auto;
-    padding-bottom: 8rem;
+
+    ${respondDown(Breakpoints.sm)`
+        background-color: ${COLORS.white};
+    `}
 `;
 
 const Content = styled.div`
@@ -32,8 +35,8 @@ const Content = styled.div`
     width: 100%;
     padding: 6.3rem 4rem 0;
 
-    ${respondDown(Breakpoints.md)`
-        padding: 4rem 1.6rem 0;
+    ${respondDown(Breakpoints.sm)`
+        padding: 1.6rem 0;
     `}
 `;
 
@@ -49,7 +52,7 @@ const SwapPage = () => {
     useEffect(() => {
         const { source, destination } = params;
 
-        if (source === destination) {
+        if (source === destination && !base && !counter) {
             history.replace(
                 `${MainRoutes.swap}/${getAssetString(
                     StellarService.createLumen(),
@@ -58,8 +61,20 @@ const SwapPage = () => {
             return;
         }
 
-        setBase(getAssetFromString(source));
-        setCounter(getAssetFromString(destination));
+        if (!base || getAssetString(base) !== source) {
+            setBase(getAssetFromString(source));
+        }
+
+        if (!counter || getAssetString(counter) !== destination) {
+            setCounter(getAssetFromString(destination));
+        }
+
+        if (source === destination) {
+            history.replace(
+                `${MainRoutes.swap}/${getAssetString(counter)}/${getAssetString(base)}`,
+            );
+            return;
+        }
     }, [params]);
 
     if (!base || !counter) {

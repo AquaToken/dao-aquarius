@@ -1,17 +1,50 @@
+import * as React from 'react';
+import { forwardRef } from 'react';
 import styled from 'styled-components';
 
-import { COLORS } from 'web/styles';
+import Input, { InputProps } from 'basics/inputs/Input';
 
-const BlankInput = styled.input`
-    background: none;
-    border: none;
-    padding: 0;
-    border-radius: 0;
-    width: 100%;
+import { respondDown } from '../../mixins';
+import { Breakpoints, COLORS } from '../../styles';
 
-    &:focus {
-        border: 0.2rem solid ${COLORS.focusColor};
+const BlankInputComponent = styled(Input)<{ $length: number }>`
+    input {
+        background: none;
+        border: none;
+        padding: 0;
+        border-radius: 0;
+        width: 100%;
+        outline: none;
+        transition: font-size 0.2s ease;
+        font-size: ${({ $length }) =>
+            $length < 10 ? '3.6rem' : $length < 14 ? '2.5rem' : $length < 20 ? '1.8rem' : '1.6rem'};
+
+        &:focus {
+            border: none;
+        }
+
+        ${respondDown(Breakpoints.sm)`
+            font-size: ${({ $length }) =>
+                +$length < 8
+                    ? '3.6rem'
+                    : +$length < 12
+                    ? '2.5rem'
+                    : +$length < 16
+                    ? '1.8rem'
+                    : +$length < 19
+                    ? '1.6rem'
+                    : '1.4rem'};
+        `}
+
+        &:disabled {
+            color: ${COLORS.darkGrayText};
+        }
     }
 `;
+const BlankInput = forwardRef(({ ...props }: InputProps, ref) => (
+    <BlankInputComponent {...props} ref={ref} $length={(props.value as string)?.length ?? 0} />
+));
+
+BlankInput.displayName = 'BlankInput';
 
 export default BlankInput;

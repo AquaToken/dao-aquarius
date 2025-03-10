@@ -1,6 +1,8 @@
 import * as React from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
+import { MainRoutes } from 'constants/routes';
 import { AQUA_NETWORK_URL } from 'constants/urls';
 
 import { commonMaxWidth, flexAllCenter, respondDown } from 'web/mixins';
@@ -13,7 +15,7 @@ import Docs from 'assets/icon-docs.svg';
 
 const FooterBlock = styled.footer`
     ${commonMaxWidth};
-    margin: 8rem auto 0;
+    margin: 2rem auto 0;
     padding: 0 4rem;
     flex: 0 0 auto;
     display: flex;
@@ -39,8 +41,8 @@ const HelpfulLine = styled.div`
 `;
 
 const CopyrightLine = styled(HelpfulLine)`
-    padding-top: 3rem;
-    padding-bottom: 5rem;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
     box-sizing: border-box;
     font-size: 1.2rem;
     line-height: 180%;
@@ -78,7 +80,7 @@ const Aqua = styled(AquaLogo)`
 
 const Links = styled.div`
     display: flex;
-    gap: 0.8rem;
+    gap: 1.6rem;
     flex-wrap: wrap;
 
     ${respondDown(Breakpoints.xs)`
@@ -123,45 +125,57 @@ const DuneLogo = styled(Dune)`
     overflow: visible;
 `;
 
-const Footer = (): React.ReactNode => (
-    <FooterBlock>
-        <HelpfulLine>
-            <a href={AQUA_NETWORK_URL} target="_blank" rel="noreferrer noopener">
-                <Aqua />
-            </a>
-            <Links>
-                <DocsLink href="https://dune.com/fergmolina/aquarius" target="_blank">
-                    <DuneLogo />
-                    Dune dashboard
-                </DocsLink>
-                <DocsLink href="https://docs.aqua.network/" target="_blank">
-                    <Docs />
-                    Aquarius docs
-                </DocsLink>
-                <DocsLink
-                    href="https://docs.aqua.network/technical-documents/audits"
-                    target="_blank"
-                >
-                    <Audit />
-                    Audits
-                </DocsLink>
-            </Links>
-        </HelpfulLine>
-        <CopyrightLine>
-            <div>
-                Aquarius runs on Stellar. AQUA tokens are issued on Stellar.
-                <br />
-                The project is unaffiliated with the Stellar Development Foundation.
-            </div>
-            <div>
-                For exchanges:{' '}
-                <a href="mailto:listings@aqua.network" target="_blank" rel="noreferrer">
-                    listings@aqua.network
+const Footer = (): React.ReactNode => {
+    const location = useLocation();
+
+    if (location.pathname.startsWith(MainRoutes.swap)) {
+        return null;
+    }
+    return (
+        <FooterBlock>
+            <HelpfulLine>
+                <a href={AQUA_NETWORK_URL} target="_blank" rel="noreferrer noopener">
+                    <Aqua />
                 </a>
-                <br />© {new Date().getFullYear()} aqua.network
-            </div>
-        </CopyrightLine>
-    </FooterBlock>
-);
+                <Links>
+                    <DocsLink href="https://dune.com/fergmolina/aquarius" target="_blank">
+                        <DuneLogo />
+                        Dune dashboard
+                    </DocsLink>
+                    <DocsLink href="https://docs.aqua.network/" target="_blank">
+                        <Docs />
+                        Aquarius docs
+                    </DocsLink>
+                    <DocsLink
+                        href="https://docs.aqua.network/technical-documents/audits"
+                        target="_blank"
+                    >
+                        <Audit />
+                        Audits
+                    </DocsLink>
+                </Links>
+            </HelpfulLine>
+            <CopyrightLine>
+                <div>
+                    Aquarius runs on Stellar. AQUA tokens are issued on Stellar.
+                    <br />
+                    The project is unaffiliated with the Stellar Development Foundation.
+                    <br />
+                    <Links>
+                        <Link to={MainRoutes.terms}>Terms of use</Link>
+                        <Link to={MainRoutes.privacy}>Privacy policy</Link>
+                    </Links>
+                </div>
+                <div>
+                    For exchanges:{' '}
+                    <a href="mailto:listings@aqua.network" target="_blank" rel="noreferrer">
+                        listings@aqua.network
+                    </a>
+                    <br />© {new Date().getFullYear()} aqua.network
+                </div>
+            </CopyrightLine>
+        </FooterBlock>
+    );
+};
 
 export default Footer;
