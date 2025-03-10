@@ -205,7 +205,7 @@ const BribesModal = ({ params }: ModalProps<{ pair: PairStats }>) => {
                     <AquaLogo />
 
                     <BribeDetail>
-                        <BribeDetailTitle>Bribe per 1000 AQUA orICE votes:</BribeDetailTitle>
+                        <BribeDetailTitle>Bribe per 1000 AQUA or ICE votes:</BribeDetailTitle>
                         <BribeDetailValue>
                             {formatBalance(aquaBribePrice, true)} AQUA per day
                         </BribeDetailValue>
