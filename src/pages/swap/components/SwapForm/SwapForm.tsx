@@ -28,7 +28,9 @@ import Button from 'basics/buttons/Button';
 
 import NoTrustline from 'components/NoTrustline';
 
-import SwapSettingsModal from 'pages/swap/components/SwapSettingsModal/SwapSettingsModal';
+import SwapSettingsModal, {
+    SWAP_SLIPPAGE_ALIAS,
+} from 'pages/swap/components/SwapSettingsModal/SwapSettingsModal';
 
 import AmountUsdEquivalent from './AmountUsdEquivalent/AmountUsdEquivalent';
 import SwapFormDivider from './SwapFormDivider/SwapFormDivider';
@@ -243,11 +245,17 @@ const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
 
     const onAmountChange = (value, isBase) => {
         if (isBase) {
-            setCounterAmount('');
             setBaseAmount(value);
         } else {
-            setBaseAmount('');
             setCounterAmount(value);
+        }
+    };
+
+    const resetAmount = isBase => {
+        if (isBase) {
+            setCounterAmount('');
+        } else {
+            setBaseAmount('');
         }
     };
 
@@ -269,6 +277,13 @@ const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
         history.push(`${MainRoutes.swap}/${getAssetString(base)}/${getAssetString(asset)}`);
     };
 
+    const SLIPPAGE = localStorage.getItem(SWAP_SLIPPAGE_ALIAS) || '1'; // 1%
+
+    const isInsufficient = isSend
+        ? Number(baseAmount) > account?.getAvailableForSwapBalance(base)
+        : (1 + Number(SLIPPAGE) / 100) * Number(baseAmount) >
+          account?.getAvailableForSwapBalance(base);
+
     const getButtonText = () => {
         if (hasError) {
             return 'No exchange paths available';
@@ -280,7 +295,7 @@ const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
             return 'Enter amount';
         }
 
-        if (account && Number(baseAmount) > account?.getAssetBalance(base)) {
+        if (account && isInsufficient) {
             return 'Insufficient balance';
         }
 
@@ -300,12 +315,12 @@ const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
                     setAsset={setSource}
                     amount={baseAmount}
                     setAmount={value => onAmountChange(value, true)}
+                    resetAmount={() => resetAmount(true)}
                     assetsList={assetsList}
                     usdEquivalent={
                         <AmountUsdEquivalent amount={debouncedBaseAmount.current} asset={base} />
-                }
-                isDestination={!isSend}
-            />
+                    }
+                />
 
                 <SwapFormDivider pending={estimatePending} onRevert={revertAssets} />
 
@@ -315,6 +330,7 @@ const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
                     amount={counterAmount}
                     assetsList={assetsList}
                     setAmount={value => onAmountChange(value, false)}
+                    resetAmount={() => resetAmount(false)}
                     usdEquivalent={
                         <AmountUsdEquivalent
                             amount={counterAmount}
@@ -345,7 +361,7 @@ const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
                 fullWidth
                 disabled={
                     hasError ||
-                    (account && Number(baseAmount) > account?.getAssetBalance(base)) ||
+                    (account && isInsufficient) ||
                     (isLogged &&
                         (estimatePending ||
                             !counterAmount ||
