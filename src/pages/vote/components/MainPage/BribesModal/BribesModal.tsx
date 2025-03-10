@@ -217,7 +217,7 @@ const BribesModal = ({ params }: ModalProps<{ pair: PairStats }>) => {
                     </BribeDetail>
 
                     <BribeDetail>
-                        <BribeDetailTitle>APY:</BribeDetailTitle>
+                        <BribeDetailTitle>Bribes APY:</BribeDetailTitle>
                         <BribeDetailValue>{formatBalance(apy * 100, true)}%</BribeDetailValue>
                     </BribeDetail>
 
