@@ -90,6 +90,9 @@ const Delegate = () => {
             setLocksForMe(null);
             return;
         }
+        setLocks(StellarService.getDelegateLocks(account.accountId()));
+        setLocksForMe(StellarService.getDelegatedToUserLocks(account.accountId()));
+
         const unsub = StellarService.event.sub(event => {
             if (event.type === StellarEvents.claimableUpdate) {
                 setLocks(StellarService.getDelegateLocks(account.accountId()));
