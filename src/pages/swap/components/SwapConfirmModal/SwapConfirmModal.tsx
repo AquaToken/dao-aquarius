@@ -198,13 +198,13 @@ const SwapConfirmModal = ({
             <DescriptionRow>
                 <span>You give</span>
                 <span>
-                    {baseAmount} {base.code}
+                    {formatBalance(+baseAmount)} {base.code}
                 </span>
             </DescriptionRow>
             <DescriptionRow>
                 <span>You get (estimate)</span>
                 <span>
-                    {counterAmount} {counter.code}
+                    {formatBalance(+counterAmount)} {counter.code}
                 </span>
             </DescriptionRow>
             <DescriptionRow>
