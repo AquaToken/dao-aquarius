@@ -179,7 +179,7 @@ const VotesList = ({ votes, pair, withoutClaimDate }: VotesListProps): React.Rea
 
             let hasUpvote = Boolean(claim?.assetCode === UP_ICE_CODE);
             let hasDownvote = Boolean(claim?.assetCode === DOWN_ICE_CODE);
-            const hasDelegated = Boolean(claim?.assetCode === D_ICE_CODE);
+            let hasDelegated = Boolean(claim?.assetCode === D_ICE_CODE);
 
             const ops = claim
                 ? StellarService.createClaimOperations(claim.id)
@@ -189,6 +189,9 @@ const VotesList = ({ votes, pair, withoutClaimDate }: VotesListProps): React.Rea
                       }
                       if (cb.assetCode === DOWN_ICE_CODE) {
                           hasDownvote = true;
+                      }
+                      if (cb.assetCode === D_ICE_CODE) {
+                          hasDelegated = true;
                       }
                       return [...acc, ...StellarService.createClaimOperations(cb.id)];
                   }, []);
