@@ -35,6 +35,7 @@ export default class ModalServiceClass {
         hideClose = false,
         backgroundImage = null,
         disableClickOutside = false,
+        backButtonCb = null,
     ): Promise<T> {
         this.id += 1;
         let resolver: (value: unknown) => void = undefined;
@@ -66,6 +67,7 @@ export default class ModalServiceClass {
                 triggerClosePromise={triggerClosePromise}
                 backgroundImage={backgroundImage}
                 disableClickOutside={disableClickOutside}
+                backButtonCb={backButtonCb}
             >
                 {
                     modalTemplateElement as React.DetailedReactHTMLElement<

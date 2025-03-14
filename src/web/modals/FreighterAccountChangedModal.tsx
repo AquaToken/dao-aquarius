@@ -9,7 +9,7 @@ import { LS_FREIGHTER_ACCOUNT_CHANGE_IMMEDIATELY } from 'constants/local-storage
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { FreighterService } from 'services/globalServices';
+import { WalletKitService } from 'services/globalServices';
 
 import { ModalProps } from 'types/modal';
 
@@ -77,8 +77,8 @@ const FreighterAccountChangedModal = ({ params, close }: ModalProps<Props>) => {
         });
 
         enableRedirect(path);
-        login(publicKey, LoginTypes.freighter);
-        FreighterService.startWatching(publicKey);
+        login(publicKey, LoginTypes.walletKit);
+        WalletKitService.startFreighterWatching(publicKey);
     };
 
     return (

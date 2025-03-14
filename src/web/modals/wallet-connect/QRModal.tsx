@@ -127,7 +127,9 @@ type Wallet = {
     };
 };
 
-const registryUrl = `https://explorer-api.walletconnect.com/v3/wallets?projectId=${process.env.WALLET_CONNECT_PROJECT_ID}`;
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
+const registryUrl = `https://explorer-api.walletconnect.com/v3/wallets?projectId=${process.variable.WALLET_CONNECT_PROJECT_ID}`;
 
 enum ModalStates {
     mobile = 'mobile',
