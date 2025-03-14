@@ -371,7 +371,9 @@ export default class WalletConnectServiceClass {
         // We manually start the race with a timeout throwing an error
         this.client = await Promise.race([
             WalletConnectClient.init({
-                projectId: process.env.WALLET_CONNECT_PROJECT_ID,
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-expect-error
+                projectId: process.variable.WALLET_CONNECT_PROJECT_ID,
                 metadata: this.selfMeta,
             }),
             new Promise((_, reject) => {

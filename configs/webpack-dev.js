@@ -41,7 +41,7 @@ module.exports = merge(commonConfig, {
     plugins: [
         new ReactRefreshWebpackPlugin(),
         new webpack.DefinePlugin({
-            'process.env': JSON.stringify({
+            'process.variable': JSON.stringify({
                 WALLET_CONNECT_PROJECT_ID: wcProjectId,
                 SENTRY_CONTEXT: null,
             }),
