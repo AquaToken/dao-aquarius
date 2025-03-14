@@ -212,7 +212,7 @@ const ChooseLoginMethodModal = ({
                         Stellar Wallet Kit <Label labelText="NEW!" />
                     </LoginMethodName>
                     <LoginMethodDescription>
-                        Freighter, xBull, Albedo, Hana, Rabet, HotWallet
+                        Freighter, HOT Wallet, xBull, Albedo, Hana Wallet, Rabet
                     </LoginMethodDescription>
                 </LoginMethodWithDescription>
                 <ArrowRight />
