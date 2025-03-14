@@ -15,6 +15,7 @@ import useOnClickOutside from 'hooks/useOutsideClick';
 import { ModalProps } from 'types/modal';
 
 import CloseIcon from 'assets/icon-close.svg';
+import ArrowRight from 'assets/icon-link-arrow.svg';
 
 import { flexAllCenter, respondDown } from '../mixins';
 import { Breakpoints, COLORS, Z_INDEX } from '../styles';
@@ -105,6 +106,14 @@ const CloseButton = styled.div<{ $withBackground: boolean }>`
     `};
 `;
 
+const ArrowLeft = styled(ArrowRight)`
+    transform: rotate(180deg);
+`;
+
+const BackButton = styled(CloseButton)`
+    right: 7rem;
+`;
+
 const BackgroundBlock = styled.div`
     background-color: ${COLORS.lightGray};
     max-height: 28.2rem;
@@ -121,6 +130,7 @@ export const ModalBody = ({
     triggerClosePromise,
     backgroundImage,
     disableClickOutside,
+    backButtonCb,
     state,
 }: {
     resolver: (value: unknown) => void;
@@ -131,6 +141,7 @@ export const ModalBody = ({
     backgroundImage: React.ReactNode | null;
     disableClickOutside: boolean;
     state: { isActive: boolean };
+    backButtonCb: () => void | null;
 }): React.ReactNode => {
     const [isShow, setIsShow] = useState(true);
     const [resolvedData, setResolvedData] = useState(null);
@@ -185,6 +196,17 @@ export const ModalBody = ({
         <ModalWrapper>
             <ModalInner ref={ref} $isShow={isShow} $withBackground={Boolean(backgroundImage)}>
                 {backgroundImage && <BackgroundBlock>{backgroundImage}</BackgroundBlock>}
+                {Boolean(backButtonCb) && (
+                    <BackButton
+                        onClick={() => {
+                            close();
+                            backButtonCb();
+                        }}
+                        $withBackground={Boolean(backgroundImage)}
+                    >
+                        <ArrowLeft />
+                    </BackButton>
+                )}
                 {!hideClose && (
                     <CloseButton onClick={() => close()} $withBackground={Boolean(backgroundImage)}>
                         <CloseIcon />

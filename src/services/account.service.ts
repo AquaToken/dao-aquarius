@@ -18,13 +18,13 @@ import SentToVault from 'web/modals/SentToVault';
 import SignWithPublic from 'web/modals/SignWithPublic';
 
 import {
-    FreighterService,
     LedgerService,
     LobstrExtensionService,
     ModalService,
     SorobanService,
     StellarService,
     WalletConnectService,
+    WalletKitService,
 } from './globalServices';
 import { POOL_TYPE } from './soroban.service';
 import { ICE_ASSETS } from './stellar.service';
@@ -89,10 +89,6 @@ export default class AccountService extends Horizon.AccountResponse {
             signedTx = SorobanService.signWithSecret(tx);
         }
 
-        if (this.authType === LoginTypes.freighter) {
-            signedTx = await FreighterService.signTx(tx);
-        }
-
         if (this.authType === LoginTypes.lobstr) {
             signedTx = await LobstrExtensionService.signTx(tx);
         }
@@ -113,6 +109,10 @@ export default class AccountService extends Horizon.AccountResponse {
                 });
             ModalService.openModal(LedgerSignTx, { result });
             return result;
+        }
+
+        if (this.authType === LoginTypes.walletKit) {
+            signedTx = await WalletKitService.signTx(tx);
         }
 
         if (this.authType === LoginTypes.ledger) {

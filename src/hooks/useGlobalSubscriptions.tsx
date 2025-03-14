@@ -10,9 +10,7 @@ import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { AssetsEvent } from 'services/assets.service';
-import { FreighterEvents } from 'services/freighter.service';
 import {
-    FreighterService,
     LedgerService,
     SorobanService,
     LobstrExtensionService,
@@ -21,10 +19,12 @@ import {
     WalletConnectService,
     AssetsService,
     ModalService,
+    WalletKitService,
 } from 'services/globalServices';
 import { LedgerEvents } from 'services/ledger.service';
 import { LobstrExtensionEvents } from 'services/lobstr-extension.service';
 import { StellarEvents } from 'services/stellar.service';
+import { WalletKitEvents } from 'services/wallet-kit.service';
 
 import { WalletConnectEvents } from 'types/wallet-connect';
 
@@ -80,16 +80,6 @@ export default function useGlobalSubscriptions(): void {
         return () => unsub();
     }, []);
 
-    useEffect(() => {
-        const unsub = LobstrExtensionService.event.sub(event => {
-            if (event.type === LobstrExtensionEvents.login) {
-                login(event.publicKey, LoginTypes.lobstr);
-            }
-        });
-
-        return () => unsub();
-    });
-
     const changeFreighterAccount = async (publicKey: string): Promise<void> => {
         ModalService.closeAllModals();
         await PromisedTimeout(500);
@@ -99,17 +89,17 @@ export default function useGlobalSubscriptions(): void {
         await PromisedTimeout(500);
 
         enableRedirect(path);
-        login(publicKey, LoginTypes.freighter);
-        FreighterService.startWatching(publicKey);
+        login(publicKey, LoginTypes.walletKit);
+        WalletKitService.startFreighterWatching(publicKey);
     };
 
     useEffect(() => {
-        const unsub = FreighterService.event.sub(event => {
-            if (event.type === FreighterEvents.login) {
-                login(event.publicKey, LoginTypes.freighter);
+        const unsub = WalletKitService.event.sub(event => {
+            if (event.type === WalletKitEvents.login) {
+                login(event.publicKey, LoginTypes.walletKit);
             }
 
-            if (event.type === FreighterEvents.accountChanged) {
+            if (event.type === WalletKitEvents.accountChanged) {
                 const defaultChoice = JSON.parse(
                     localStorage.getItem(LS_FREIGHTER_ACCOUNT_CHANGE_IMMEDIATELY),
                 );
@@ -125,6 +115,16 @@ export default function useGlobalSubscriptions(): void {
                 if (defaultChoice) {
                     changeFreighterAccount(event.publicKey);
                 }
+            }
+        });
+
+        return () => unsub();
+    }, []);
+
+    useEffect(() => {
+        const unsub = LobstrExtensionService.event.sub(event => {
+            if (event.type === LobstrExtensionEvents.login) {
+                login(event.publicKey, LoginTypes.lobstr);
             }
         });
 
@@ -164,7 +164,7 @@ export default function useGlobalSubscriptions(): void {
             StellarService.logoutWithSecret();
             SorobanService.logoutWithSecret();
             StellarService.closeAccountStream();
-            FreighterService.stopWatching();
+            WalletKitService.stopFreighterWatching();
             ToastService.showSuccessToast('Logged out');
         }
     }, [isLogged]);
