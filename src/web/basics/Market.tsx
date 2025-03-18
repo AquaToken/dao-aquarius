@@ -22,6 +22,7 @@ import { Breakpoints, COLORS } from 'web/styles';
 import External from 'assets/icon-external-link.svg';
 import Arrow from 'assets/icon-link-arrow.svg';
 
+import ApyTier from 'basics/ApyTier';
 import AssetLogo, { bigLogoStyles, logoStyles } from 'basics/AssetLogo';
 import {
     AuthRequiredLabel,
@@ -226,6 +227,7 @@ type PairProps = {
     poolAddress?: string;
     poolType?: POOL_TYPE;
     fee?: string;
+    apyTier?: number;
 };
 
 const Market = ({
@@ -251,6 +253,7 @@ const Market = ({
     poolAddress,
     poolType,
     fee,
+    apyTier,
     ...props
 }: PairProps): React.ReactNode => {
     const { assetsInfo } = useAssetsStore();
@@ -282,6 +285,7 @@ const Market = ({
             {authRequired && <AuthRequiredLabel />}
             {noLiquidity && <NoLiquidityLabel />}
             {fee && <FeeLabel fee={fee} />}
+            <ApyTier apyTier={apyTier} />
         </>
     );
 
