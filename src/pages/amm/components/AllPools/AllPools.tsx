@@ -171,6 +171,7 @@ const AllPools = (): React.ReactNode => {
     const goToPoolPage = (id: string) => {
         history.push(`${AmmRoutes.analytics}${id}/`);
     };
+
     return !pools ? (
         <PageLoader />
     ) : (
@@ -192,7 +193,7 @@ const AllPools = (): React.ReactNode => {
                         pending={pending}
                         mobileBreakpoint={Breakpoints.lg}
                         head={[
-                            { children: 'Pool', flexSize: 6 },
+                            { children: 'Pool', flexSize: 6.5 },
                             {
                                 children: 'TVL',
                                 sort: {
@@ -329,9 +330,10 @@ const AllPools = (): React.ReactNode => {
                                             poolType={pool.pool_type as POOL_TYPE}
                                             isRewardsOn={Boolean(Number(pool.reward_tps))}
                                             fee={pool.fee}
+                                            apyTier={pool.apy_tier}
                                         />
                                     ),
-                                    flexSize: 6,
+                                    flexSize: 6.5,
                                 },
                                 {
                                     children: pool.liquidity_usd
