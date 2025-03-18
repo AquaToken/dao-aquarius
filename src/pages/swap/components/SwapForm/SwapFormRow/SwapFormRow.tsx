@@ -110,7 +110,8 @@ interface SwapFormRowProps {
     asset: Asset;
     setAsset: (asset: Asset) => void;
     amount: string;
-    setAmount?: (amount: string) => void;
+    setAmount: (amount: string) => void;
+    resetAmount: () => void;
     usdEquivalent: React.ReactElement;
     assetsList: AssetSimple[] | null;
 }
@@ -123,6 +124,7 @@ const SwapFormRow = ({
     setAmount,
     usdEquivalent,
     assetsList,
+    resetAmount,
 }: SwapFormRowProps) => {
     const { account } = useAuthStore();
     const [assetReserves, setAssetReserves] = useState(null);
@@ -145,15 +147,10 @@ const SwapFormRow = ({
     }, [account, asset]);
 
     const setPercent = (percent: number) => {
+        resetAmount();
         const available = account.getAvailableForSwapBalance(asset);
 
         setAmount(((available * percent) / 100).toFixed(7));
-    };
-
-    const setValue = (value: string) => {
-        if (setAmount) {
-            setAmount(value);
-        }
     };
 
     return (
@@ -161,14 +158,14 @@ const SwapFormRow = ({
             <AmountContainer>
                 <span>{isBase ? 'Sell' : 'Buy'}</span>
                 <NumericFormat
-                    disabled={!isBase}
                     placeholder="0"
                     customInput={BlankInput}
                     allowedDecimalSeparators={[',']}
                     thousandSeparator=","
                     decimalScale={7}
                     value={amount}
-                    onValueChange={value => setValue(value.value)}
+                    onChange={() => resetAmount()}
+                    onValueChange={value => setAmount(value.value)}
                     getInputRef={inputRef}
                 />
                 {usdEquivalent}
