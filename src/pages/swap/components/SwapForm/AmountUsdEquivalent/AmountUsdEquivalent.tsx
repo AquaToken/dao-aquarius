@@ -123,7 +123,7 @@ const AmountUsdEquivalent = ({ amount, asset, sourceAmount, sourceAsset }: Props
                 )}
             </span>
 
-            {percent ? (
+            {percent && Number.isFinite(+percent) ? (
                 <Percent $percent={Number(percent)}>
                     ({Number(percent) > 0 ? '+' : ''}
                     {percent}%)

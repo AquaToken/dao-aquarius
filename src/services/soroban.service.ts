@@ -30,6 +30,7 @@ enum AMM_CONTRACT_METHOD {
     WITHDRAW = 'withdraw',
     SWAP = 'swap',
     SWAP_CHAINED = 'swap_chained',
+    SWAP_CHAINED_RECEIVE = 'swap_chained_strict_receive',
     GET_RESERVES = 'get_reserves',
     POOL_TYPE = 'pool_type',
     FEE_FRACTION = 'get_fee_fraction',
@@ -951,19 +952,22 @@ export default class SorobanServiceClass {
         base: Asset,
         chainedXDR: string,
         amount: string,
-        minCounterAmount: string,
+        amountWithSlippage: string,
+        isSend: boolean,
     ) {
         const args = [
             this.publicKeyToScVal(accountId),
             xdr.ScVal.fromXDR(chainedXDR, 'base64'),
             this.assetToScVal(base),
             this.amountToUint128(amount),
-            this.amountToUint128(minCounterAmount),
+            this.amountToUint128(amountWithSlippage),
         ];
 
         const operation = StellarSdk.Operation.invokeContractFunction({
             contract: AMM_SMART_CONTACT_ID,
-            function: AMM_CONTRACT_METHOD.SWAP_CHAINED,
+            function: isSend
+                ? AMM_CONTRACT_METHOD.SWAP_CHAINED
+                : AMM_CONTRACT_METHOD.SWAP_CHAINED_RECEIVE,
             args,
             auth: [
                 new xdr.SorobanAuthorizationEntry({
@@ -974,7 +978,9 @@ export default class SorobanServiceClass {
                                 new xdr.InvokeContractArgs({
                                     contractAddress:
                                         this.contractIdToScVal(AMM_SMART_CONTACT_ID).address(),
-                                    functionName: AMM_CONTRACT_METHOD.SWAP_CHAINED,
+                                    functionName: isSend
+                                        ? AMM_CONTRACT_METHOD.SWAP_CHAINED
+                                        : AMM_CONTRACT_METHOD.SWAP_CHAINED_RECEIVE,
                                     args,
                                 }),
                             ),
@@ -988,7 +994,9 @@ export default class SorobanServiceClass {
                                             args: [
                                                 this.publicKeyToScVal(accountId),
                                                 this.contractIdToScVal(AMM_SMART_CONTACT_ID),
-                                                this.amountToInt128(amount),
+                                                this.amountToInt128(
+                                                    isSend ? amount : amountWithSlippage,
+                                                ),
                                             ],
                                         }),
                                     ),
