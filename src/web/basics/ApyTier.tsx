@@ -15,7 +15,7 @@ const TooltipInner = styled.span`
     font-size: 1.4rem;
     line-height: 2rem;
     width: 20rem;
-    white-space: wrap;
+    white-space: pre-wrap;
     font-weight: 400;
 `;
 
