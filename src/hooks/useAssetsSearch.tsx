@@ -28,7 +28,11 @@ export default function useAssetsSearch(searchState) {
             .then(({ CURRENCIES }) => {
                 if (CURRENCIES) {
                     processNewAssets(CURRENCIES);
-                    setSearchResults(CURRENCIES);
+                    setSearchResults(
+                        CURRENCIES.map(({ code, issuer }) =>
+                            StellarService.createAsset(code, issuer),
+                        ),
+                    );
                 }
                 setSearchPending(false);
             })
