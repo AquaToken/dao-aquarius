@@ -76,7 +76,7 @@ const LABEL_STYLES = {
 type LabelSize = 'default' | 'big';
 
 interface LabelProps {
-    labelText: string;
+    labelText: string | React.ReactNode;
     labelSize?: LabelSize;
     tooltipText?: string | React.ReactNode;
     background?: string;
