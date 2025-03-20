@@ -20,6 +20,7 @@ export const COLORS = {
     orange: '#FF8F00',
     border: '#E9E6ED',
     blue: '#2E30F0',
+    darkBlue: '#1127E9',
     classicPool: '#4F345B',
     constantPool: '#B0632A',
     stablePool: '#2AA3B0',
