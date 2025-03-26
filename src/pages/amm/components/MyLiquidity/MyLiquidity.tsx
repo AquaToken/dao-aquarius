@@ -621,6 +621,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                     <ApyBoosted
                                         value={
                                             pool.rewards_apy *
+                                            100 *
                                             calculateBoostValue(
                                                 userRewards.get(pool.address),
                                                 pool.balance,
