@@ -23,6 +23,7 @@ import Info from 'assets/icon-info.svg';
 import ArrowRightIcon from 'assets/icon-link-arrow.svg';
 import Search from 'assets/icon-search.svg';
 
+import ApyBoosted from 'basics/ApyBoosted';
 import { Button } from 'basics/buttons';
 import Select from 'basics/inputs/Select';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
@@ -98,17 +99,6 @@ const RewardsApy = styled.div`
     display: flex;
     align-items: center;
     gap: 0.4rem;
-`;
-
-const BoostedApy = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0 0.8rem;
-    height: 2.8rem;
-    border: 0.2rem solid ${COLORS.darkBlue};
-    color: ${COLORS.darkBlue};
-    border-radius: 0.7rem;
 `;
 
 const ArrowRight = styled(ArrowRightIcon)`
@@ -488,71 +478,73 @@ const AllPools = (): React.ReactNode => {
                                                 )}
                                                 %
                                             </span>
-                                            <ArrowRight />
 
-                                            <Tooltip
-                                                content={
-                                                    <BoostTooltip>
-                                                        <Label
-                                                            labelText={
+                                            {Boolean(Number(pool.rewards_apy)) && (
+                                                <>
+                                                    <ArrowRight />
+
+                                                    <Tooltip
+                                                        content={
+                                                            <BoostTooltip>
+                                                                <Label
+                                                                    labelText={
+                                                                        <span>
+                                                                            <IceSymbolWhite />
+                                                                            ICE BOOST
+                                                                        </span>
+                                                                    }
+                                                                    labelSize="big"
+                                                                    background={COLORS.darkBlue}
+                                                                />
                                                                 <span>
-                                                                    <IceSymbolWhite />
-                                                                    ICE BOOST
+                                                                    Rewards APY are boosted based on
+                                                                    your ICE balance
                                                                 </span>
-                                                            }
-                                                            labelSize="big"
-                                                            background={COLORS.darkBlue}
+                                                                <BoostTooltipValuesBlock>
+                                                                    <BoostTooltipValues>
+                                                                        <span>Max. reward:</span>
+                                                                        <Boosted>
+                                                                            {formatBalance(
+                                                                                +(
+                                                                                    Number(
+                                                                                        pool.rewards_apy,
+                                                                                    ) * 250
+                                                                                ).toFixed(2),
+                                                                            )}
+                                                                            %
+                                                                        </Boosted>
+                                                                    </BoostTooltipValues>
+                                                                    <BoostTooltipValues>
+                                                                        <span>Min. reward:</span>
+                                                                        <span>
+                                                                            {formatBalance(
+                                                                                +(
+                                                                                    Number(
+                                                                                        pool.rewards_apy,
+                                                                                    ) * 100
+                                                                                ).toFixed(2),
+                                                                            )}
+                                                                            %
+                                                                        </span>
+                                                                    </BoostTooltipValues>
+                                                                </BoostTooltipValuesBlock>
+                                                                <LinkButton to={MainRoutes.locker}>
+                                                                    <Button fullWidth>
+                                                                        get ice
+                                                                    </Button>
+                                                                </LinkButton>
+                                                            </BoostTooltip>
+                                                        }
+                                                        showOnHover
+                                                        background={COLORS.white}
+                                                    >
+                                                        <ApyBoosted
+                                                            value={Number(pool.rewards_apy) * 250}
+                                                            color="blue"
                                                         />
-                                                        <span>
-                                                            Rewards APY are boosted based on your
-                                                            ICE balance
-                                                        </span>
-                                                        <BoostTooltipValuesBlock>
-                                                            <BoostTooltipValues>
-                                                                <span>Max. reward:</span>
-                                                                <Boosted>
-                                                                    {formatBalance(
-                                                                        +(
-                                                                            Number(
-                                                                                pool.rewards_apy,
-                                                                            ) * 250
-                                                                        ).toFixed(2),
-                                                                    )}
-                                                                    %
-                                                                </Boosted>
-                                                            </BoostTooltipValues>
-                                                            <BoostTooltipValues>
-                                                                <span>Min. reward:</span>
-                                                                <span>
-                                                                    {formatBalance(
-                                                                        +(
-                                                                            Number(
-                                                                                pool.rewards_apy,
-                                                                            ) * 100
-                                                                        ).toFixed(2),
-                                                                    )}
-                                                                    %
-                                                                </span>
-                                                            </BoostTooltipValues>
-                                                        </BoostTooltipValuesBlock>
-                                                        <LinkButton to={MainRoutes.locker}>
-                                                            <Button fullWidth>get ice</Button>
-                                                        </LinkButton>
-                                                    </BoostTooltip>
-                                                }
-                                                showOnHover
-                                                background={COLORS.white}
-                                            >
-                                                <BoostedApy>
-                                                    <IceSymbol />
-                                                    {formatBalance(
-                                                        +(Number(pool.rewards_apy) * 250).toFixed(
-                                                            2,
-                                                        ),
-                                                    )}
-                                                    %
-                                                </BoostedApy>
-                                            </Tooltip>
+                                                    </Tooltip>
+                                                </>
+                                            )}
                                         </RewardsApy>
                                     ),
                                     label: (
