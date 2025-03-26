@@ -88,6 +88,8 @@ const StyledInput = styled(Input)`
 const TooltipInner = styled.span`
     width: 20rem;
     white-space: pre-wrap;
+    font-size: 1.4rem;
+    line-height: 2rem;
 `;
 
 enum UrlParams {
@@ -371,7 +373,27 @@ const AllPools = (): React.ReactNode => {
                                     align: CellAlign.Right,
                                 },
                                 {
-                                    children: `${(Number(pool.apy) * 100).toFixed(2)}%`,
+                                    children: (
+                                        <TitleWithTooltip>
+                                            {(Number(pool.apy) * 100).toFixed(2)}%{' '}
+                                            {Number(pool.apy) === 0 && (
+                                                <Tooltip
+                                                    showOnHover
+                                                    content={
+                                                        <TooltipInner>
+                                                            On small pools with TVL under $1000 we
+                                                            don't calculate APY because on such
+                                                            small volumes the numbers can be
+                                                            misleading
+                                                        </TooltipInner>
+                                                    }
+                                                    position={TOOLTIP_POSITION.top}
+                                                >
+                                                    <Info />
+                                                </Tooltip>
+                                            )}
+                                        </TitleWithTooltip>
+                                    ),
                                     label: (
                                         <TitleWithTooltip>
                                             Base APY
@@ -396,7 +418,9 @@ const AllPools = (): React.ReactNode => {
                                     align: CellAlign.Right,
                                 },
                                 {
-                                    children: `${(Number(pool.rewards_apy) * 100).toFixed(2)}%`,
+                                    children: (
+                                        <span>{(Number(pool.rewards_apy) * 100).toFixed(2)}%</span>
+                                    ),
                                     label: (
                                         <TitleWithTooltip>
                                             Rewards APY
