@@ -25,7 +25,7 @@ import {
 import { POOL_TYPE } from 'services/soroban.service';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
-import { PoolUserProcessed } from 'types/amm';
+import { PoolRewardsInfo, PoolUserProcessed } from 'types/amm';
 import { Int128Parts } from 'types/stellar';
 
 import { flexAllCenter, flexRowSpaceBetween, respondDown, textEllipsis } from 'web/mixins';
@@ -36,6 +36,7 @@ import AquaLogo from 'assets/aqua-logo-small.svg';
 import IconClaim from 'assets/icon-claim.svg';
 import IconInfo from 'assets/icon-info.svg';
 
+import ApyBoosted from 'basics/ApyBoosted';
 import AssetLogo from 'basics/AssetLogo';
 import Button from 'basics/buttons/Button';
 import Select from 'basics/inputs/Select';
@@ -292,7 +293,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
 
     const [pools, setPools] = useState<PoolUserProcessed[]>([]);
     const [classicPools, setClassicPools] = useState([]);
-    const [userRewards, setUserRewards] = useState(new Map());
+    const [userRewards, setUserRewards] = useState<Map<string, PoolRewardsInfo>>(new Map());
     const [rewardsSum, setRewardsSum] = useState(0);
     const [claimPendingId, setClaimPendingId] = useState(null);
     const [filter, setFilter] = useState(null);
@@ -363,13 +364,13 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
         Promise.all(
             pools.map(({ address }) => SorobanService.getPoolRewards(account.accountId(), address)),
         ).then(res => {
-            const map = new Map<string, number>();
+            const map = new Map<string, PoolRewardsInfo>();
             let sum = 0;
 
             res.forEach((reward, index) => {
                 sum += Number(reward.to_claim);
                 if (Number(reward.to_claim)) {
-                    map.set(pools[index].address, Number(reward.to_claim));
+                    map.set(pools[index].address, reward);
                 }
             });
             setUserRewards(map);
@@ -451,7 +452,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
         setClaimPendingId(CLAIM_ALL_ID);
 
         const top5RewardsPools = [...userRewards.entries()]
-            .sort((a, b) => Number(b[1]) - Number(a[1]))
+            .sort((a, b) => Number(b[1].to_claim) - Number(a[1].to_claim))
             .slice(0, CLAIM_ALL_COUNT)
             .map(([key]) => key);
 
@@ -477,6 +478,22 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                 ToastService.showErrorToast(err.message ?? err.toString());
                 setClaimPendingId(null);
             });
+    };
+
+    const calculateBoostValue = (rewardsInfo: PoolRewardsInfo, userBalance: string) => {
+        if (!rewardsInfo) return 1;
+        const tps = +rewardsInfo.tps;
+        const wSupply = +rewardsInfo.working_supply;
+        const wBalance = +rewardsInfo.working_balance;
+
+        if (!tps || !wSupply || !wBalance) return 1;
+
+        const tpsWithoutBoost = ((+userBalance / 1e7) * tps) / wSupply;
+        const expectedTps = (tps * wBalance) / wSupply;
+
+        if (tpsWithoutBoost === 0) return 1;
+
+        return expectedTps / tpsWithoutBoost;
     };
 
     if (!account) {
@@ -593,12 +610,25 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                 label: 'Base APY',
                             },
                             {
-                                children: pool.rewards_apy
-                                    ? `${formatBalance(
-                                          +(pool.rewards_apy * 100).toFixed(2),
-                                          true,
-                                      )}%`
-                                    : '-',
+                                children: !pool.rewards_apy ? (
+                                    '-'
+                                ) : calculateBoostValue(
+                                      userRewards.get(pool.address),
+                                      pool.balance,
+                                  ) === 1 ? (
+                                    `${formatBalance(+(pool.rewards_apy * 100).toFixed(2), true)}%`
+                                ) : (
+                                    <ApyBoosted
+                                        value={
+                                            pool.rewards_apy *
+                                            calculateBoostValue(
+                                                userRewards.get(pool.address),
+                                                pool.balance,
+                                            )
+                                        }
+                                        color="purple"
+                                    />
+                                ),
                                 label: 'Rewards APY',
                             },
                             {
@@ -689,7 +719,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                             },
                             {
                                 children: `${formatBalance(
-                                    userRewards.get(pool.address) || 0,
+                                    Number(userRewards.get(pool.address)?.to_claim) || 0,
                                     true,
                                 )} AQUA`,
                                 label: 'Rewards to claim',
@@ -706,7 +736,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                                 disabled={
                                                     (pool.address !== claimPendingId &&
                                                         Boolean(claimPendingId)) ||
-                                                    !Number(userRewards.get(pool.address))
+                                                    !Number(userRewards.get(pool.address)?.to_claim)
                                                 }
                                                 onClick={() => claim(pool.address)}
                                                 title="Claim rewards"
