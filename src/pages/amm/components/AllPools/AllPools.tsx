@@ -121,8 +121,10 @@ const BoostTooltip = styled.div`
     gap: 1.9rem;
 
     ${respondDown(Breakpoints.md)`
-        width: 20rem;
+        width: 14rem;
         padding: 0.8rem;
+        font-size: 1.2rem;
+        line-height: 1.8rem;
     `}
 `;
 
