@@ -201,6 +201,12 @@ const RewardsDescription = styled.div`
         color: ${COLORS.paragraphText};
         display: inline;
         align-items: center;
+    }
+
+    span:last-child {
+        display: flex;
+        align-items: center;
+        margin-top: 1.2rem;
 
         svg {
             margin: 0 0.5rem;
@@ -208,14 +214,11 @@ const RewardsDescription = styled.div`
     }
 
     ${respondDown(Breakpoints.md)`
+        span:last-child {
+            justify-content: center;
+        }
         text-align: center;
     `}
-`;
-
-const TooltipInline = styled(Tooltip)`
-    display: inline-flex;
-    vertical-align: text-bottom;
-    height: 1.7rem;
 `;
 
 const StyledButton = styled(Button)`
@@ -543,7 +546,10 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                             <span>
                                 You have {userRewards.size ?? ''} unclaimed rewards. To make sure
                                 you get maximum AQUA claim them regularly to refresh the ICE boost.
-                                <TooltipInline
+                            </span>
+                            <span>
+                                Available: {formatBalance(rewardsSum)} AQUA
+                                <Tooltip
                                     content={
                                         <RewardsTooltipInner>
                                             One can claim not more than {CLAIM_ALL_COUNT} rewards at
@@ -555,9 +561,8 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                     showOnHover
                                 >
                                     <IconInfoStyled />
-                                </TooltipInline>
+                                </Tooltip>
                             </span>
-                            <span>for {formatBalance(rewardsSum)} AQUA</span>
                         </RewardsDescription>
                         <StyledButton
                             disabled={Boolean(claimPendingId) && claimPendingId !== CLAIM_ALL_ID}
