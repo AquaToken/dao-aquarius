@@ -332,11 +332,13 @@ const Analytics = () => {
                                 </ListTotal>
                             )}
                         </ListHeader>
-                        <BoostDescription>
-                            <span>☝</span>
-                            To make sure you receive maximum AQUA rewards, please{' '}
-                            <b>claim them regularly</b> to refresh your ICE boost
-                        </BoostDescription>
+                        {activeTab === AnalyticsTabs.my && (
+                            <BoostDescription>
+                                <span>☝</span>
+                                To make sure you receive maximum AQUA rewards, please{' '}
+                                <b>claim them regularly</b> to refresh your ICE boost
+                            </BoostDescription>
+                        )}
                         {activeTab === AnalyticsTabs.top && <AllPools />}
                         {activeTab === AnalyticsTabs.my && (
                             <MyLiquidity
