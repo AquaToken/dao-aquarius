@@ -252,7 +252,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
             return {
                 sharesBefore: (accountShare / (Number(pool.total_share) / 1e7)) * 100,
                 sharesAfter:
-                    ((+amounts.get(firstAssetString) + amountBeforeDeposit) / oldReserves) * 100,
+                    ((+amounts.get(firstAssetString) + amountBeforeDeposit) / newReserves) * 100,
                 sharesAfterValue:
                     +accountShare +
                     (newTotalShare - Number(pool.total_share) / 1e7) *
