@@ -145,6 +145,19 @@ const Chart = styled.div`
     `}
 `;
 
+const BoostDescription = styled.div`
+    margin-top: 3.2rem;
+    background: ${COLORS.lightGray};
+    border-radius: 0.5rem;
+    padding: 1.4rem;
+
+    span {
+        font-weight: 700;
+        font-size: 1.8rem;
+        margin-right: 1.4rem;
+    }
+`;
+
 export enum AnalyticsTabs {
     top = 'top',
     my = 'my',
@@ -319,6 +332,11 @@ const Analytics = () => {
                                 </ListTotal>
                             )}
                         </ListHeader>
+                        <BoostDescription>
+                            <span>☝</span>
+                            To make sure you receive maximum AQUA rewards, please{' '}
+                            <b>claim them regularly</b> to refresh your ICE boost
+                        </BoostDescription>
                         {activeTab === AnalyticsTabs.top && <AllPools />}
                         {activeTab === AnalyticsTabs.my && (
                             <MyLiquidity
