@@ -199,7 +199,7 @@ const RewardsDescription = styled.div`
         font-size: 1.6rem;
         line-height: 2.8rem;
         color: ${COLORS.paragraphText};
-        display: flex;
+        display: inline;
         align-items: center;
 
         svg {
@@ -210,6 +210,12 @@ const RewardsDescription = styled.div`
     ${respondDown(Breakpoints.md)`
         text-align: center;
     `}
+`;
+
+const TooltipInline = styled(Tooltip)`
+    display: inline-flex;
+    vertical-align: text-bottom;
+    height: 1.7rem;
 `;
 
 const StyledButton = styled(Button)`
@@ -535,8 +541,9 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                         <AquaLogoStyled />
                         <RewardsDescription>
                             <span>
-                                You have {userRewards.size ?? ''} unclaimed rewards
-                                <Tooltip
+                                You have {userRewards.size ?? ''} unclaimed rewards. To make sure
+                                you get maximum AQUA claim them regularly to refresh the ICE boost.
+                                <TooltipInline
                                     content={
                                         <RewardsTooltipInner>
                                             One can claim not more than {CLAIM_ALL_COUNT} rewards at
@@ -544,15 +551,11 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                             you will have to make multiple claims.
                                         </RewardsTooltipInner>
                                     }
-                                    position={
-                                        +window.innerWidth > 992
-                                            ? TOOLTIP_POSITION.top
-                                            : TOOLTIP_POSITION.left
-                                    }
+                                    position={TOOLTIP_POSITION.top}
                                     showOnHover
                                 >
                                     <IconInfoStyled />
-                                </Tooltip>
+                                </TooltipInline>
                             </span>
                             <span>for {formatBalance(rewardsSum)} AQUA</span>
                         </RewardsDescription>
