@@ -247,15 +247,15 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
             const oldReserves = +reserves.get(firstAssetString);
             const newReserves = oldReserves + +amounts.get(firstAssetString);
 
-            const newTotalShare = Number(pool.total_share) * (newReserves / oldReserves);
+            const newTotalShare = (Number(pool.total_share) / 1e7) * (newReserves / oldReserves);
 
             return {
                 sharesBefore: (accountShare / (Number(pool.total_share) / 1e7)) * 100,
                 sharesAfter:
                     ((+amounts.get(firstAssetString) + amountBeforeDeposit) / oldReserves) * 100,
                 sharesAfterValue:
-                    accountShare +
-                    (newTotalShare - Number(pool.total_share)) *
+                    +accountShare +
+                    (newTotalShare - Number(pool.total_share) / 1e7) *
                         (+amounts.get(firstAssetString) / newReserves),
             };
         }
@@ -316,7 +316,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
 
         if (tpsWithoutBoost === 0) return 1;
 
-        return (expectedTps / tpsWithoutBoost).toFixed(2);
+        return (expectedTps / tpsWithoutBoost / 1e7).toFixed(2);
     };
 
     const calculateNewBoostValue = (rewardsInfo: PoolRewardsInfo) => {
@@ -330,6 +330,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
             +sharesAfterValue + (1.5 * lockedBalance * supply) / lockedSupply,
             +sharesAfterValue * 2.5,
         );
+
         return newWBalance / sharesAfterValue;
     };
 
