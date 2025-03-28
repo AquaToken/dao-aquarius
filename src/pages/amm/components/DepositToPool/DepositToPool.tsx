@@ -28,7 +28,6 @@ import Arrow from 'assets/icon-arrow-right-long.svg';
 import Info from 'assets/icon-info.svg';
 
 import Alert from 'basics/Alert';
-import ApyBoosted from 'basics/ApyBoosted';
 import Asset from 'basics/Asset';
 import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
@@ -554,70 +553,30 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                         </span>
                     </DescriptionRow>
                     {Boolean(Number(pool.total_share)) && Boolean(poolRewards) && (
-                        <>
-                            <DescriptionRow>
-                                <span>Rewards APY</span>
-                                <span>
-                                    {+calculateBoostValue(poolRewards) === 1 ? (
-                                        `${formatBalance(+(+pool.rewards_apy * 100).toFixed(2))}%`
-                                    ) : (
-                                        <ApyBoosted
-                                            value={
-                                                +pool.rewards_apy *
-                                                100 *
-                                                +calculateBoostValue(poolRewards).toFixed(2)
-                                            }
-                                            color="purple"
+                        <DescriptionRow>
+                            <span>Rewards Boost</span>
+                            <span>
+                                <Label
+                                    labelText={`x${(+calculateBoostValue(poolRewards)).toFixed(2)}`}
+                                    labelSize="medium"
+                                    background={COLORS.darkBlue}
+                                    withoutUppercase
+                                />
+                                {sharesAfter && (
+                                    <>
+                                        <Arrow />
+                                        <Label
+                                            labelText={`x${calculateNewBoostValue(
+                                                poolRewards,
+                                            ).toFixed(2)}`}
+                                            labelSize="medium"
+                                            background={COLORS.darkBlue}
+                                            withoutUppercase
                                         />
-                                    )}
-                                    {sharesAfter && (
-                                        <>
-                                            <Arrow />
-                                            {calculateNewBoostValue(poolRewards) === 1 ? (
-                                                `${formatBalance(
-                                                    +(+pool.rewards_apy * 100).toFixed(2),
-                                                )}%`
-                                            ) : (
-                                                <ApyBoosted
-                                                    value={
-                                                        +pool.rewards_apy *
-                                                        100 *
-                                                        calculateNewBoostValue(poolRewards)
-                                                    }
-                                                    color="purple"
-                                                />
-                                            )}
-                                        </>
-                                    )}
-                                </span>
-                            </DescriptionRow>
-                            <DescriptionRow>
-                                <span>Rewards Boost</span>
-                                <span>
-                                    <Label
-                                        labelText={`x${(+calculateBoostValue(poolRewards)).toFixed(
-                                            2,
-                                        )}`}
-                                        labelSize="medium"
-                                        background={COLORS.darkBlue}
-                                        withoutUppercase
-                                    />
-                                    {sharesAfter && (
-                                        <>
-                                            <Arrow />
-                                            <Label
-                                                labelText={`x${calculateNewBoostValue(
-                                                    poolRewards,
-                                                ).toFixed(2)}`}
-                                                labelSize="medium"
-                                                background={COLORS.darkBlue}
-                                                withoutUppercase
-                                            />
-                                        </>
-                                    )}
-                                </span>
-                            </DescriptionRow>
-                        </>
+                                    </>
+                                )}
+                            </span>
+                        </DescriptionRow>
                     )}
                     {Boolean(Number(pool.reward_tps)) && (
                         <DescriptionRow>
