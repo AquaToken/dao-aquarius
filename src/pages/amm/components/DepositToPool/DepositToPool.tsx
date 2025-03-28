@@ -247,16 +247,13 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
             const oldReserves = +reserves.get(firstAssetString);
             const newReserves = oldReserves + +amounts.get(firstAssetString);
 
-            const newTotalShare = (Number(pool.total_share) / 1e7) * (newReserves / oldReserves);
-
             return {
                 sharesBefore: (accountShare / (Number(pool.total_share) / 1e7)) * 100,
                 sharesAfter:
                     ((+amounts.get(firstAssetString) + amountBeforeDeposit) / newReserves) * 100,
                 sharesAfterValue:
-                    +accountShare +
-                    (newTotalShare - Number(pool.total_share) / 1e7) *
-                        (+amounts.get(firstAssetString) / newReserves),
+                    (accountShare / amountBeforeDeposit) *
+                    (amountBeforeDeposit + +amounts.get(firstAssetString)),
             };
         }
 
@@ -600,8 +597,9 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                                         labelText={`x${(+calculateBoostValue(poolRewards)).toFixed(
                                             2,
                                         )}`}
-                                        labelSize="big"
+                                        labelSize="medium"
                                         background={COLORS.darkBlue}
+                                        withoutUppercase
                                     />
                                     {sharesAfter && (
                                         <>
@@ -610,8 +608,9 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                                                 labelText={`x${calculateNewBoostValue(
                                                     poolRewards,
                                                 ).toFixed(2)}`}
-                                                labelSize="big"
+                                                labelSize="medium"
                                                 background={COLORS.darkBlue}
+                                                withoutUppercase
                                             />
                                         </>
                                     )}
