@@ -314,7 +314,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
 
         if (tpsWithoutBoost === 0) return 1;
 
-        return (expectedTps / tpsWithoutBoost / 1e7).toFixed(2);
+        return expectedTps / tpsWithoutBoost / 1e7;
     };
 
     const calculateNewBoostValue = (rewardsInfo: PoolRewardsInfo) => {
@@ -565,7 +565,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                                             value={
                                                 +pool.rewards_apy *
                                                 100 *
-                                                +calculateBoostValue(poolRewards)
+                                                +calculateBoostValue(poolRewards).toFixed(2)
                                             }
                                             color="purple"
                                         />
