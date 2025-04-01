@@ -582,6 +582,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                         poolType={pool.pool_type as POOL_TYPE}
                                         isRewardsOn={Boolean(Number(pool.reward_tps))}
                                         poolAddress={pool.address}
+                                        fee={pool.fee}
                                     />
                                 ),
                                 flexSize: 3.5,
