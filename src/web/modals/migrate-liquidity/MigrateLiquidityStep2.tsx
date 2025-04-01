@@ -18,6 +18,7 @@ const Content = styled.div`
     max-height: 60vh;
     ${customScroll};
     overflow-y: auto;
+    padding-top: 8rem;
 
     ${respondDown(Breakpoints.md)`
         max-height: unset;
