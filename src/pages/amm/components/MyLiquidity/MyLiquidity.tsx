@@ -41,6 +41,7 @@ import AssetLogo from 'basics/AssetLogo';
 import Button from 'basics/buttons/Button';
 import Select from 'basics/inputs/Select';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
+import Label from 'basics/Label';
 import { CircleLoader } from 'basics/loaders';
 import PageLoader from 'basics/loaders/PageLoader';
 import Market from 'basics/Market';
@@ -267,6 +268,11 @@ const TooltipRow = styled.div`
 
 const IconInfoStyled = styled(IconInfo)`
     cursor: help;
+`;
+
+const BoostValues = styled.div`
+    display: flex;
+    gap: 0.4rem;
 `;
 
 enum FilterValues {
@@ -589,7 +595,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                             flexSize: 3.5,
                         },
                         { children: 'Base APY' },
-                        { children: 'Rewards APY' },
+                        { children: 'Rewards APY', flexSize: 1.2 },
                         { children: 'Pooled' },
                         { children: 'My daily rewards' },
                         { children: 'Rewards to claim', align: CellAlign.Right },
@@ -626,19 +632,31 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                   ) === 1 ? (
                                     `${formatBalance(+(pool.rewards_apy * 100).toFixed(2), true)}%`
                                 ) : (
-                                    <ApyBoosted
-                                        value={
-                                            pool.rewards_apy *
-                                            100 *
-                                            calculateBoostValue(
+                                    <BoostValues>
+                                        <ApyBoosted
+                                            value={
+                                                pool.rewards_apy *
+                                                100 *
+                                                calculateBoostValue(
+                                                    userRewards.get(pool.address),
+                                                    pool.balance,
+                                                )
+                                            }
+                                            color="purple"
+                                        />
+                                        <Label
+                                            labelText={`x${calculateBoostValue(
                                                 userRewards.get(pool.address),
                                                 pool.balance,
-                                            )
-                                        }
-                                        color="purple"
-                                    />
+                                            ).toFixed(2)}`}
+                                            labelSize="medium"
+                                            background={COLORS.darkBlue}
+                                            withoutUppercase
+                                        />
+                                    </BoostValues>
                                 ),
                                 label: 'Rewards APY',
+                                flexSize: 1.2,
                             },
                             {
                                 children: poolsLiquidity.has(pool.address || pool.id) ? (
