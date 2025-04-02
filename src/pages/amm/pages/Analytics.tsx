@@ -307,11 +307,11 @@ const Analytics = () => {
                                     My liquidity
                                 </ListTab>
                             </ListTitles>
-                            {activeTab === AnalyticsTabs.top && (
-                                <Button onClick={() => goToCreatePool()}>
-                                    create pool <PlusIcon />
-                                </Button>
-                            )}
+                            {/*{activeTab === AnalyticsTabs.top && (*/}
+                            {/*    <Button onClick={() => goToCreatePool()}>*/}
+                            {/*        create pool <PlusIcon />*/}
+                            {/*    </Button>*/}
+                            {/*)}*/}
                             {activeTab === AnalyticsTabs.my && myTotal !== null && (
                                 <ListTotal>
                                     <span>Total: </span>
