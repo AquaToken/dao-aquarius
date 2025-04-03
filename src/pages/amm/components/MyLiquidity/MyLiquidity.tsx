@@ -200,14 +200,8 @@ const RewardsDescription = styled.div`
         font-size: 1.6rem;
         line-height: 2.8rem;
         color: ${COLORS.paragraphText};
-        display: inline;
-        align-items: center;
-    }
-
-    span:last-child {
         display: flex;
         align-items: center;
-        margin-top: 1.2rem;
 
         svg {
             margin: 0 0.5rem;
@@ -215,9 +209,6 @@ const RewardsDescription = styled.div`
     }
 
     ${respondDown(Breakpoints.md)`
-        span:last-child {
-            justify-content: center;
-        }
         text-align: center;
     `}
 `;
@@ -550,11 +541,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                         <AquaLogoStyled />
                         <RewardsDescription>
                             <span>
-                                You have {userRewards.size ?? ''} unclaimed rewards. To make sure
-                                you get maximum AQUA claim them regularly to refresh the ICE boost.
-                            </span>
-                            <span>
-                                Available: {formatBalance(rewardsSum)} AQUA
+                                You have {userRewards.size ?? ''} unclaimed rewards
                                 <Tooltip
                                     content={
                                         <RewardsTooltipInner>
@@ -569,6 +556,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                     <IconInfoStyled />
                                 </Tooltip>
                             </span>
+                            <span>for {formatBalance(rewardsSum)} AQUA</span>
                         </RewardsDescription>
                         <StyledButton
                             disabled={Boolean(claimPendingId) && claimPendingId !== CLAIM_ALL_ID}
@@ -594,7 +582,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                             children: 'Pool',
                             flexSize: 3.5,
                         },
-                        { children: 'Base APY' },
+                        { children: 'Base APY', flexSize: 0.6 },
                         { children: 'Rewards APY', flexSize: 1.2 },
                         { children: 'Pooled' },
                         { children: 'My daily rewards' },
@@ -622,6 +610,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                     ? `${formatBalance(+(pool.apy * 100).toFixed(2), true)}%`
                                     : '-',
                                 label: 'Base APY',
+                                flexSize: 0.6,
                             },
                             {
                                 children: !pool.rewards_apy ? (
