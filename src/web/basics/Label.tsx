@@ -128,11 +128,10 @@ const Label = ({
     );
 
     if (!tooltipText) {
-        labelStyles.$cursor = 'default';
-
         return (
             <LabelWrapper
                 {...labelStyles}
+                $cursor="default"
                 $background={background}
                 $color={color}
                 $withoutBorder={withoutBorder}
