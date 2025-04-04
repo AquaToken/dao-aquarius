@@ -645,9 +645,11 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                                     color="purple"
                                                 />
                                                 <Label
-                                                    labelText={`${
-                                                        boostValue.toFixed(2) === '1.00' ? '> ' : ''
-                                                    }x${boostValue.toFixed(2)}`}
+                                                    labelText={
+                                                        boostValue.toFixed(2) === '1.00'
+                                                            ? '< x1.01'
+                                                            : `x${boostValue.toFixed(2)}`
+                                                    }
                                                     labelSize="medium"
                                                     background={COLORS.darkBlue}
                                                     withoutUppercase
