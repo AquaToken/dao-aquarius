@@ -601,33 +601,33 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                             pool.balance,
                         );
                         return {
-                          key: pool.address || pool.id,
-                        rowItems: [
-                            {
-                                children: (
-                                    <Market
-                                        assets={pool.assets}
-                                        mobileVerticalDirections
-                                        withoutLink
-                                        poolType={pool.pool_type as POOL_TYPE}
-                                        isRewardsOn={Boolean(Number(pool.reward_tps))}
-                                        poolAddress={pool.address}
-                                        fee={pool.fee}
-                                    />
-                                ),
-                                flexSize: 3.5,
-                            },
-                            {
-                                children: pool.apy
-                                    ? `${formatBalance(+(pool.apy * 100).toFixed(2), true)}%`
-                                    : '-',
-                                label: 'Base APY',
-                                flexSize: 0.6,
-                            },
-                            {
-                                children: !pool.rewards_apy ? (
-                                    '-'
-                                ) : boostValue === 1 ? (
+                            key: pool.address || pool.id,
+                            rowItems: [
+                                {
+                                    children: (
+                                        <Market
+                                            assets={pool.assets}
+                                            mobileVerticalDirections
+                                            withoutLink
+                                            poolType={pool.pool_type as POOL_TYPE}
+                                            isRewardsOn={Boolean(Number(pool.reward_tps))}
+                                            poolAddress={pool.address}
+                                            fee={pool.fee}
+                                        />
+                                    ),
+                                    flexSize: 3.5,
+                                },
+                                {
+                                    children: pool.apy
+                                        ? `${formatBalance(+(pool.apy * 100).toFixed(2), true)}%`
+                                        : '-',
+                                    label: 'Base APY',
+                                    flexSize: 0.6,
+                                },
+                                {
+                                    children: !pool.rewards_apy ? (
+                                        '-'
+                                    ) : boostValue === 1 ? (
                                         `${formatBalance(
                                             +(pool.rewards_apy * 100).toFixed(2),
                                             true,
