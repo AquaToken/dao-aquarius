@@ -9,6 +9,7 @@ interface Props {
 
 const Container = styled.div`
     display: flex;
+    cursor: help;
 `;
 
 const TooltipInner = styled.span`

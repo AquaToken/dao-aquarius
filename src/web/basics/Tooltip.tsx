@@ -31,7 +31,7 @@ const TooltipTop = (background: string) => css`
     }
 
     &::before {
-        height: 3rem;
+        height: 1rem;
         top: 100%;
         width: 100%;
     }
@@ -50,7 +50,7 @@ const TooltipBottom = (background: string) => css`
     }
 
     &::before {
-        height: 3rem;
+        height: 1rem;
         bottom: 100%;
         width: 100%;
     }
@@ -69,7 +69,7 @@ const TooltipLeft = (background: string) => css`
     }
 
     &::before {
-        width: 3rem;
+        width: 1.5rem;
         left: 100%;
         height: 100%;
     }
@@ -87,7 +87,7 @@ const TooltipRight = (background: string) => css`
         border-bottom: 0.6rem solid ${COLORS.transparent};
     }
     &::before {
-        width: 3rem;
+        width: 1.5rem;
         right: 100%;
         height: 100%;
     }

@@ -16,6 +16,7 @@ const Container = styled.div<{ $color: string }>`
     border: ${({ $color }) => `0.2rem solid ${$color}`};
     color: ${({ $color }) => $color};
     border-radius: 0.7rem;
+    cursor: help;
 `;
 
 const Icon = styled(IceSymbol)<{ $color: string }>`
