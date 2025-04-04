@@ -265,6 +265,11 @@ const IconInfoStyled = styled(IconInfo)`
 const BoostValues = styled.div`
     display: flex;
     gap: 0.4rem;
+    cursor: help !important;
+
+    & > * {
+        cursor: help !important;
+    }
 `;
 
 enum FilterValues {
