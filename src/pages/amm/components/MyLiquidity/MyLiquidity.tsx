@@ -50,6 +50,7 @@ import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import NoTrustline from 'components/NoTrustline';
 
+import BoostTooltip from 'pages/amm/components/BoostTooltip/BoostTooltip';
 import ExpandedMenu from 'pages/amm/components/MyLiquidity/ExpandedMenu/ExpandedMenu';
 import MigratePoolButton from 'pages/amm/components/PoolsList/MigratePoolButton/MigratePoolButton';
 import { AnalyticsTabs, AnalyticsUrlParams } from 'pages/amm/pages/Analytics';
@@ -622,17 +623,31 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                     `${formatBalance(+(pool.rewards_apy * 100).toFixed(2), true)}%`
                                 ) : (
                                     <BoostValues>
-                                        <ApyBoosted
-                                            value={
-                                                pool.rewards_apy *
-                                                100 *
-                                                calculateBoostValue(
-                                                    userRewards.get(pool.address),
-                                                    pool.balance,
-                                                )
+                                        <Tooltip
+                                            content={
+                                                <BoostTooltip
+                                                    pool={pool}
+                                                    userBoost={calculateBoostValue(
+                                                        userRewards.get(pool.address),
+                                                        pool.balance,
+                                                    )}
+                                                />
                                             }
-                                            color="purple"
-                                        />
+                                            showOnHover
+                                            background={COLORS.white}
+                                        >
+                                            <ApyBoosted
+                                                value={
+                                                    pool.rewards_apy *
+                                                    100 *
+                                                    calculateBoostValue(
+                                                        userRewards.get(pool.address),
+                                                        pool.balance,
+                                                    )
+                                                }
+                                                color="purple"
+                                            />
+                                        </Tooltip>
                                         <Label
                                             labelText={`x${calculateBoostValue(
                                                 userRewards.get(pool.address),
