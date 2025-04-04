@@ -622,20 +622,20 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                   ) === 1 ? (
                                     `${formatBalance(+(pool.rewards_apy * 100).toFixed(2), true)}%`
                                 ) : (
-                                    <BoostValues>
-                                        <Tooltip
-                                            content={
-                                                <BoostTooltip
-                                                    pool={pool}
-                                                    userBoost={calculateBoostValue(
-                                                        userRewards.get(pool.address),
-                                                        pool.balance,
-                                                    )}
-                                                />
-                                            }
-                                            showOnHover
-                                            background={COLORS.white}
-                                        >
+                                    <Tooltip
+                                        content={
+                                            <BoostTooltip
+                                                pool={pool}
+                                                userBoost={calculateBoostValue(
+                                                    userRewards.get(pool.address),
+                                                    pool.balance,
+                                                )}
+                                            />
+                                        }
+                                        showOnHover
+                                        background={COLORS.white}
+                                    >
+                                        <BoostValues>
                                             <ApyBoosted
                                                 value={
                                                     pool.rewards_apy *
@@ -647,17 +647,17 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                                 }
                                                 color="purple"
                                             />
-                                        </Tooltip>
-                                        <Label
-                                            labelText={`x${calculateBoostValue(
-                                                userRewards.get(pool.address),
-                                                pool.balance,
-                                            ).toFixed(2)}`}
-                                            labelSize="medium"
-                                            background={COLORS.darkBlue}
-                                            withoutUppercase
-                                        />
-                                    </BoostValues>
+                                            <Label
+                                                labelText={`x${calculateBoostValue(
+                                                    userRewards.get(pool.address),
+                                                    pool.balance,
+                                                ).toFixed(2)}`}
+                                                labelSize="medium"
+                                                background={COLORS.darkBlue}
+                                                withoutUppercase
+                                            />
+                                        </BoostValues>
+                                    </Tooltip>
                                 ),
                                 label: 'Rewards APY',
                                 flexSize: 1.2,
