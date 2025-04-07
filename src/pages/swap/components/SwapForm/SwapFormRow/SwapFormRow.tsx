@@ -167,7 +167,7 @@ const SwapFormRow = ({
                     onChange={() => resetAmount()}
                     onValueChange={value => setAmount(value.value)}
                     getInputRef={inputRef}
-                    inputMode="numeric"
+                    inputMode="decimal"
                 />
                 {usdEquivalent}
             </AmountContainer>
