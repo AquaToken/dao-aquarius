@@ -30,7 +30,6 @@ const TooltipTop = (background: string) => css`
         border-right: 0.6rem solid ${COLORS.transparent};
     }
 
-    // TODO add for all positions
     &::before {
         height: 1rem;
         top: 100%;
@@ -49,6 +48,12 @@ const TooltipBottom = (background: string) => css`
         border-left: 0.6rem solid ${COLORS.transparent};
         border-right: 0.6rem solid ${COLORS.transparent};
     }
+
+    &::before {
+        height: 1rem;
+        bottom: 100%;
+        width: 100%;
+    }
 `;
 
 const TooltipLeft = (background: string) => css`
@@ -62,6 +67,12 @@ const TooltipLeft = (background: string) => css`
         border-top: 0.6rem solid ${COLORS.transparent};
         border-bottom: 0.6rem solid ${COLORS.transparent};
     }
+
+    &::before {
+        width: 1.5rem;
+        left: 100%;
+        height: 100%;
+    }
 `;
 
 const TooltipRight = (background: string) => css`
@@ -74,6 +85,11 @@ const TooltipRight = (background: string) => css`
         border-right: 0.6rem solid ${background};
         border-top: 0.6rem solid ${COLORS.transparent};
         border-bottom: 0.6rem solid ${COLORS.transparent};
+    }
+    &::before {
+        width: 1.5rem;
+        right: 100%;
+        height: 100%;
     }
 `;
 

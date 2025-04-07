@@ -19,8 +19,10 @@ import { flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Info from 'assets/icon-info.svg';
+import ArrowRightIcon from 'assets/icon-link-arrow.svg';
 import Search from 'assets/icon-search.svg';
 
+import ApyBoosted from 'basics/ApyBoosted';
 import Select from 'basics/inputs/Select';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
 import PageLoader from 'basics/loaders/PageLoader';
@@ -29,6 +31,7 @@ import Pagination from 'basics/Pagination';
 import Table, { CellAlign } from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
+import BoostTooltip from 'pages/amm/components/BoostTooltip/BoostTooltip';
 import { AnalyticsTabs, AnalyticsUrlParams } from 'pages/amm/pages/Analytics';
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
 
@@ -90,6 +93,18 @@ const TooltipInner = styled.span`
     white-space: pre-wrap;
     font-size: 1.4rem;
     line-height: 2rem;
+`;
+
+const RewardsApy = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+`;
+
+const ArrowRight = styled(ArrowRightIcon)`
+    path {
+        fill: ${COLORS.darkBlue};
+    }
 `;
 
 enum UrlParams {
@@ -314,7 +329,7 @@ const AllPools = (): React.ReactNode => {
                                         sort === PoolsSortFields.rewardsApyDown,
                                     isReversed: sort === PoolsSortFields.rewardsApyDown,
                                 },
-                                flexSize: 2,
+                                flexSize: 3,
                                 align: CellAlign.Right,
                             },
                         ]}
@@ -419,7 +434,31 @@ const AllPools = (): React.ReactNode => {
                                 },
                                 {
                                     children: (
-                                        <span>{(Number(pool.rewards_apy) * 100).toFixed(2)}%</span>
+                                        <RewardsApy>
+                                            <span>
+                                                {formatBalance(
+                                                    +(Number(pool.rewards_apy) * 100).toFixed(2),
+                                                )}
+                                                %
+                                            </span>
+
+                                            {Boolean(Number(pool.rewards_apy)) && (
+                                                <>
+                                                    <ArrowRight />
+
+                                                    <Tooltip
+                                                        content={<BoostTooltip pool={pool} />}
+                                                        showOnHover
+                                                        background={COLORS.white}
+                                                    >
+                                                        <ApyBoosted
+                                                            value={Number(pool.rewards_apy) * 250}
+                                                            color="blue"
+                                                        />
+                                                    </Tooltip>
+                                                </>
+                                            )}
+                                        </RewardsApy>
                                     ),
                                     label: (
                                         <TitleWithTooltip>
@@ -440,7 +479,7 @@ const AllPools = (): React.ReactNode => {
                                             </Tooltip>
                                         </TitleWithTooltip>
                                     ),
-                                    flexSize: 2,
+                                    flexSize: 3,
                                     align: CellAlign.Right,
                                 },
                             ],

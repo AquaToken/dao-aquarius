@@ -129,4 +129,11 @@ export type PoolRewardsInfo = {
     to_claim: string;
     tps: string;
     usr_block: string;
+    boost_balance: string;
+    boost_supply: string;
+    new_working_balance: string;
+    new_working_supply: string;
+    supply: string;
+    working_balance: string;
+    working_supply: string;
 };

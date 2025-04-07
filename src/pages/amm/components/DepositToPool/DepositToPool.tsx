@@ -17,7 +17,7 @@ import {
 } from 'services/globalServices';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
-import { PoolExtended } from 'types/amm';
+import { PoolExtended, PoolRewardsInfo } from 'types/amm';
 import { ModalProps } from 'types/modal';
 import { Asset as AssetType, Int128Parts } from 'types/stellar';
 
@@ -31,6 +31,7 @@ import Alert from 'basics/Alert';
 import Asset from 'basics/Asset';
 import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
+import Label from 'basics/Label';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import { ModalTitle } from 'basics/ModalAtoms';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
@@ -174,6 +175,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
 
     const [accountShare, setAccountShare] = useState(null);
     const [assetsReserves, setAssetsReserves] = useState(null);
+    const [poolRewards, setPoolRewards] = useState(null);
 
     useEffect(() => {
         if (!account) {
@@ -194,6 +196,16 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
             setAccountShare(res);
         });
     }, [account]);
+
+    useEffect(() => {
+        if (!account) {
+            setPoolRewards(null);
+            return;
+        }
+        SorobanService.getPoolRewards(account.accountId(), pool.address).then(res => {
+            setPoolRewards(res);
+        });
+    }, [account, pool]);
 
     const reserves: Map<string, number> = useMemo(
         () =>
@@ -216,7 +228,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
         [amounts],
     );
 
-    const { sharesBefore, sharesAfter } = useMemo(() => {
+    const { sharesBefore, sharesAfter, sharesAfterValue } = useMemo(() => {
         const firstAssetString = getAssetString(pool.assets[0]);
 
         const amountBeforeDeposit =
@@ -226,22 +238,29 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
             return {
                 sharesBefore: 0,
                 sharesAfter: hasAllAmounts ? 100 : null,
+                sharesAfterValue: null,
             };
         }
 
         if (hasAllAmounts) {
+            const oldReserves = +reserves.get(firstAssetString);
+            const newReserves = oldReserves + +amounts.get(firstAssetString);
+            const newTotalShare = (Number(pool.total_share) / 1e7 / oldReserves) * newReserves;
+
             return {
                 sharesBefore: (accountShare / (Number(pool.total_share) / 1e7)) * 100,
                 sharesAfter:
-                    ((+amounts.get(firstAssetString) + amountBeforeDeposit) /
-                        (reserves.get(firstAssetString) + +amounts.get(firstAssetString))) *
-                    100,
+                    ((+amounts.get(firstAssetString) + amountBeforeDeposit) / newReserves) * 100,
+                sharesAfterValue:
+                    ((+amounts.get(firstAssetString) + amountBeforeDeposit) / newReserves) *
+                    newTotalShare,
             };
         }
 
         return {
             sharesBefore: (accountShare / (Number(pool.total_share) / 1e7)) * 100,
             sharesAfter: null,
+            sharesAfterValue: null,
         };
     }, [amounts, pool, reserves, accountShare]);
 
@@ -280,6 +299,37 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
         });
         return map;
     }, [reserves, pool, amounts]);
+
+    const calculateBoostValue = (rewardsInfo: PoolRewardsInfo) => {
+        if (!rewardsInfo) return 1;
+        const tps = +rewardsInfo.tps;
+        const wSupply = +rewardsInfo.working_supply;
+        const wBalance = +rewardsInfo.working_balance;
+
+        if (!tps || !wSupply || !wBalance) return 1;
+
+        const tpsWithoutBoost = ((+accountShare / 1e7) * tps) / wSupply;
+        const expectedTps = (tps * wBalance) / wSupply;
+
+        if (tpsWithoutBoost === 0) return 1;
+
+        return expectedTps / tpsWithoutBoost / 1e7;
+    };
+
+    const calculateNewBoostValue = (rewardsInfo: PoolRewardsInfo) => {
+        if (!rewardsInfo) return 1;
+
+        const supply = +rewardsInfo.supply;
+        const lockedSupply = +rewardsInfo.boost_supply;
+        const lockedBalance = +rewardsInfo.boost_balance;
+
+        const newWBalance = Math.min(
+            +sharesAfterValue + (1.5 * lockedBalance * supply) / lockedSupply,
+            +sharesAfterValue * 2.5,
+        );
+
+        return newWBalance / sharesAfterValue;
+    };
 
     const onSubmit = () => {
         const insufficientBalanceTokens = pool.assets.filter(
@@ -502,6 +552,32 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                             )}
                         </span>
                     </DescriptionRow>
+                    {Boolean(Number(pool.total_share)) && Boolean(poolRewards) && (
+                        <DescriptionRow>
+                            <span>Rewards Boost</span>
+                            <span>
+                                <Label
+                                    labelText={`x${(+calculateBoostValue(poolRewards)).toFixed(2)}`}
+                                    labelSize="medium"
+                                    background={COLORS.darkBlue}
+                                    withoutUppercase
+                                />
+                                {sharesAfter && (
+                                    <>
+                                        <Arrow />
+                                        <Label
+                                            labelText={`x${calculateNewBoostValue(
+                                                poolRewards,
+                                            ).toFixed(2)}`}
+                                            labelSize="medium"
+                                            background={COLORS.darkBlue}
+                                            withoutUppercase
+                                        />
+                                    </>
+                                )}
+                            </span>
+                        </DescriptionRow>
+                    )}
                     {Boolean(Number(pool.reward_tps)) && (
                         <DescriptionRow>
                             <span>Daily rewards</span>
