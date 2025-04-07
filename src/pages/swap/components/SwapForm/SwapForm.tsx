@@ -28,7 +28,9 @@ import Button from 'basics/buttons/Button';
 
 import NoTrustline from 'components/NoTrustline';
 
-import SwapSettingsModal from 'pages/swap/components/SwapSettingsModal/SwapSettingsModal';
+import SwapSettingsModal, {
+    SWAP_SLIPPAGE_ALIAS,
+} from 'pages/swap/components/SwapSettingsModal/SwapSettingsModal';
 
 import AmountUsdEquivalent from './AmountUsdEquivalent/AmountUsdEquivalent';
 import SwapFormDivider from './SwapFormDivider/SwapFormDivider';
@@ -106,10 +108,12 @@ const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
     const [bestPath, setBestPath] = useState(null);
     const [bestPools, setBestPools] = useState(null);
     const [estimatePending, setEstimatePending] = useState(false);
+    const [isSend, setIsSend] = useState(true);
 
     const [isPriceReverted, setIsPriceReverted] = useState(false);
 
-    const debouncedAmount = useDebounce(baseAmount, 700);
+    const debouncedBaseAmount = useDebounce(baseAmount, 700);
+    const debouncedCounterAmount = useDebounce(counterAmount, 700);
 
     const [assetsList, setAssetsList] = useState(null);
 
@@ -126,16 +130,18 @@ const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
     }, []);
 
     useEffect(() => {
-        if (debouncedAmount.current !== baseAmount) {
+        if (debouncedCounterAmount.current) {
             return;
         }
-        if (Number(debouncedAmount.current)) {
+        if (Number(debouncedBaseAmount.current)) {
             setEstimatePending(true);
+            setIsSend(true);
 
             findSwapPath(
                 SorobanService.getAssetContractId(base),
                 SorobanService.getAssetContractId(counter),
-                debouncedAmount.current,
+                debouncedBaseAmount.current,
+                true,
             )
                 .then(res => {
                     if (!res.success) {
@@ -164,11 +170,50 @@ const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
             setBestPools(null);
             setCounterAmount('');
         }
-    }, [debouncedAmount, base, counter]);
+    }, [debouncedBaseAmount, base, counter]);
 
     useEffect(() => {
-        setCounterAmount('');
-    }, [baseAmount, base, counter]);
+        if (debouncedBaseAmount.current) {
+            return;
+        }
+        if (Number(debouncedCounterAmount.current)) {
+            setEstimatePending(true);
+            setIsSend(false);
+
+            findSwapPath(
+                SorobanService.getAssetContractId(base),
+                SorobanService.getAssetContractId(counter),
+                debouncedCounterAmount.current,
+                false,
+            )
+                .then(res => {
+                    if (!res.success) {
+                        setHasError(true);
+                        setBaseAmount('');
+                        setEstimatePending(false);
+                    } else {
+                        setHasError(false);
+                        setEstimatePending(false);
+                        if (!counterAmount) {
+                            return;
+                        }
+                        setBaseAmount((Number(res.amount) / 1e7).toFixed(7));
+                        setBestPathXDR(res.swap_chain_xdr);
+                        setBestPath(res.tokens);
+                        setBestPools(res.pools);
+                    }
+                })
+                .catch(() => {
+                    setHasError(true);
+                    setEstimatePending(false);
+                });
+        } else {
+            setBestPathXDR(null);
+            setBestPath(null);
+            setBestPools(null);
+            setBaseAmount('');
+        }
+    }, [debouncedCounterAmount, base, counter]);
 
     const swapAssets = () => {
         if (!isLogged) {
@@ -185,6 +230,7 @@ const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
             bestPathXDR,
             bestPath,
             bestPools,
+            isSend,
         }).then(({ isConfirmed }) => {
             if (isConfirmed) {
                 setBaseAmount('');
@@ -197,8 +243,20 @@ const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
         });
     };
 
-    const onAmountChange = value => {
-        setBaseAmount(value);
+    const onAmountChange = (value, isBase) => {
+        if (isBase) {
+            setBaseAmount(value);
+        } else {
+            setCounterAmount(value);
+        }
+    };
+
+    const resetAmount = isBase => {
+        if (isBase) {
+            setCounterAmount('');
+        } else {
+            setBaseAmount('');
+        }
     };
 
     const revertAssets = () => {
@@ -219,6 +277,13 @@ const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
         history.push(`${MainRoutes.swap}/${getAssetString(base)}/${getAssetString(asset)}`);
     };
 
+    const SLIPPAGE = localStorage.getItem(SWAP_SLIPPAGE_ALIAS) || '1'; // 1%
+
+    const isInsufficient = isSend
+        ? Number(baseAmount) > account?.getAvailableForSwapBalance(base)
+        : (1 + Number(SLIPPAGE) / 100) * Number(baseAmount) >
+          account?.getAvailableForSwapBalance(base);
+
     const getButtonText = () => {
         if (hasError) {
             return 'No exchange paths available';
@@ -230,7 +295,7 @@ const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
             return 'Enter amount';
         }
 
-        if (account && Number(baseAmount) > account?.getAssetBalance(base)) {
+        if (account && isInsufficient) {
             return 'Insufficient balance';
         }
 
@@ -249,10 +314,11 @@ const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
                     asset={base}
                     setAsset={setSource}
                     amount={baseAmount}
-                    setAmount={onAmountChange}
+                    setAmount={value => onAmountChange(value, true)}
+                    resetAmount={() => resetAmount(true)}
                     assetsList={assetsList}
                     usdEquivalent={
-                        <AmountUsdEquivalent amount={debouncedAmount.current} asset={base} />
+                        <AmountUsdEquivalent amount={debouncedBaseAmount.current} asset={base} />
                     }
                 />
 
@@ -263,6 +329,8 @@ const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
                     setAsset={setDestination}
                     amount={counterAmount}
                     assetsList={assetsList}
+                    setAmount={value => onAmountChange(value, false)}
+                    resetAmount={() => resetAmount(false)}
                     usdEquivalent={
                         <AmountUsdEquivalent
                             amount={counterAmount}
@@ -293,7 +361,7 @@ const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
                 fullWidth
                 disabled={
                     hasError ||
-                    (account && Number(baseAmount) > account?.getAssetBalance(base)) ||
+                    (account && isInsufficient) ||
                     (isLogged &&
                         (estimatePending ||
                             !counterAmount ||
