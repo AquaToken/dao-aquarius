@@ -170,7 +170,7 @@ const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
             setBestPools(null);
             setCounterAmount('');
         }
-    }, [debouncedBaseAmount, base, counter]);
+    }, [debouncedBaseAmount]);
 
     useEffect(() => {
         if (debouncedBaseAmount.current) {
@@ -213,7 +213,50 @@ const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
             setBestPools(null);
             setBaseAmount('');
         }
-    }, [debouncedCounterAmount, base, counter]);
+    }, [debouncedCounterAmount]);
+
+    useEffect(() => {
+        if ((isSend && !baseAmount) || (!isSend && !counterAmount)) {
+            return;
+        }
+        setEstimatePending(true);
+
+        findSwapPath(
+            SorobanService.getAssetContractId(base),
+            SorobanService.getAssetContractId(counter),
+            isSend ? baseAmount : counterAmount,
+            isSend,
+        )
+            .then(res => {
+                if (!res.success) {
+                    setHasError(true);
+                    if (isSend) {
+                        setCounterAmount('');
+                    } else {
+                        setBaseAmount('');
+                    }
+                    setEstimatePending(false);
+                } else {
+                    setHasError(false);
+                    setEstimatePending(false);
+
+                    const amount = (Number(res.amount) / 1e7).toFixed(7);
+
+                    if (isSend) {
+                        setCounterAmount(amount);
+                    } else {
+                        setBaseAmount(amount);
+                    }
+                    setBestPathXDR(res.swap_chain_xdr);
+                    setBestPath(res.tokens);
+                    setBestPools(res.pools);
+                }
+            })
+            .catch(() => {
+                setHasError(true);
+                setEstimatePending(false);
+            });
+    }, [base, counter]);
 
     const swapAssets = () => {
         if (!isLogged) {
