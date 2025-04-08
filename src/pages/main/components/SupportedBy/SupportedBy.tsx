@@ -102,7 +102,7 @@ const SupportedBy = () => (
                     <StellarTerm />
                 </a>
 
-                <a href="https://stellarterm.com/" target="_blank" rel="noreferrer">
+                <a href="https://hot-labs.org/" target="_blank" rel="noreferrer">
                     <HotWallet />
                 </a>
             </ImageBlock>
