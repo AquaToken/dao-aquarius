@@ -66,7 +66,7 @@ const ExpandedMenu = ({ pool }: Props) => {
 
     return (
         <Container ref={menuRef}>
-            <Button isSquare likeDisabled onClick={() => setIsShowMenu(prev => !prev)}>
+            <Button isSquare secondary onClick={() => setIsShowMenu(prev => !prev)}>
                 <IconThreeDots />
             </Button>
             {isShowMenu && (

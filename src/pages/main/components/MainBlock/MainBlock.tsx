@@ -173,7 +173,7 @@ const MainBlock = () => (
                     <StyledButton isBig>Discover Pools</StyledButton>
                 </LinkButton>
                 <LinkButton to={MainRoutes.swap}>
-                    <StyledButton likeDisabled isBig>
+                    <StyledButton secondary isBig>
                         Swap
                     </StyledButton>
                 </LinkButton>

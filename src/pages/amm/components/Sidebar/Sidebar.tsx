@@ -196,7 +196,7 @@ const Sidebar = ({ pool }: { pool: PoolExtended }) => {
                 <Button
                     fullWidth
                     isBig
-                    likeDisabled
+                    tertiary
                     onClick={() => openDepositModal()}
                     disabled={pool.deposit_killed}
                 >
@@ -205,9 +205,9 @@ const Sidebar = ({ pool }: { pool: PoolExtended }) => {
                 <Button
                     fullWidth
                     isBig
-                    likeDisabled
+                    tertiary
                     onClick={() => openWithdrawModal()}
-                    disabled={Number(accountShare) === 0}
+                    disabled={isLogged && Number(accountShare) === 0}
                 >
                     Withdraw
                 </Button>

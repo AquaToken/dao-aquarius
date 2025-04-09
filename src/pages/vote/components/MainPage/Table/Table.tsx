@@ -314,7 +314,7 @@ const VoteTable = ({
                                         >
                                             <ManageButton
                                                 isSquare
-                                                likeDisabled
+                                                secondary
                                                 onClick={e => manageVotes(e, pair)}
                                             >
                                                 <ManageIcon />

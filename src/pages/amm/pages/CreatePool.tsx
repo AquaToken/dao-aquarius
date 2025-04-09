@@ -618,7 +618,7 @@ const CreatePool = () => {
                                     background={COLORS.pinkRed}
                                 >
                                     <AddRowButton
-                                        likeDisabled
+                                        secondary
                                         isPurpleText
                                         disabled={assetsCount === 3}
                                         onClick={() => setAssetsCount(count => count + 1)}

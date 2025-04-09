@@ -378,9 +378,9 @@ const SwapForm = ({
                     </div>
                 </SwapHeader>
             ) : (
-                <SettingsButton
-                    onClick={() => ModalService.openModal(SwapSettingsModal, {})}
-                ></SettingsButton>
+                <SettingsButton onClick={() => ModalService.openModal(SwapSettingsModal, {})}>
+                    <SettingsIcon />
+                </SettingsButton>
             )}
 
             <SwapRows>
