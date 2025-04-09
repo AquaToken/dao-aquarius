@@ -21,10 +21,10 @@ import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import PercentButtons from 'pages/swap/components/SwapForm/PercentButtons/PercentButtons';
 
-const Container = styled.div`
+const Container = styled.div<{ $isEmbedded?: boolean }>`
     display: flex;
     position: relative;
-    padding: 3.2rem 4rem;
+    padding: ${({ $isEmbedded }) => ($isEmbedded ? '2.4rem 3.2rem' : '3.2rem 4rem')};
     background-color: ${COLORS.lightGray};
     border-radius: 4rem;
     justify-content: space-between;
@@ -114,6 +114,7 @@ interface SwapFormRowProps {
     resetAmount: () => void;
     usdEquivalent: React.ReactElement;
     assetsList: AssetSimple[] | null;
+    isEmbedded?: boolean;
 }
 
 const SwapFormRow = ({
@@ -125,6 +126,7 @@ const SwapFormRow = ({
     usdEquivalent,
     assetsList,
     resetAmount,
+    isEmbedded,
 }: SwapFormRowProps) => {
     const { account } = useAuthStore();
     const [assetReserves, setAssetReserves] = useState(null);
@@ -154,7 +156,7 @@ const SwapFormRow = ({
     };
 
     return (
-        <Container>
+        <Container $isEmbedded={isEmbedded}>
             <AmountContainer>
                 <span>{isBase ? 'Sell' : 'Buy'}</span>
                 <NumericFormat
