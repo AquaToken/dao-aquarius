@@ -97,7 +97,7 @@ const FreighterAccountChangedModal = ({ params, close }: ModalProps<Props>) => {
 
             <Checkbox checked={saveChoice} onChange={setSaveChoice} label="Remember my choice" />
             <Buttons>
-                <Button fullWidth onClick={() => selectNo()} likeDisabled>
+                <Button fullWidth onClick={() => selectNo()} secondary>
                     No
                 </Button>
                 <Button fullWidth onClick={() => selectYes()}>

@@ -129,7 +129,7 @@ const VoteButton = ({
                         e.stopPropagation();
                         onButtonClick();
                     }}
-                    likeDisabled={isPairSelected}
+                    secondary={isPairSelected}
                     disabled={disabled}
                 >
                     {isPairSelected ? 'added' : 'Add To Vote'}
@@ -142,7 +142,7 @@ const VoteButton = ({
                 >
                     <DownvoteButton
                         isSquare
-                        likeDisabled
+                        secondary
                         disabled={disabled}
                         onClick={e => downVote(e)}
                     >
@@ -161,7 +161,7 @@ const VoteButton = ({
                     e.stopPropagation();
                     onButtonClick();
                 }}
-                likeDisabled={isPairSelected}
+                secondary={isPairSelected}
                 isSquare
                 disabled={disabled}
             >
@@ -172,12 +172,7 @@ const VoteButton = ({
                 position={TOOLTIP_POSITION.top}
                 showOnHover
             >
-                <DownvoteButton
-                    isSquare
-                    likeDisabled
-                    disabled={disabled}
-                    onClick={e => downVote(e)}
-                >
+                <DownvoteButton isSquare secondary disabled={disabled} onClick={e => downVote(e)}>
                     <IconDislike />
                 </DownvoteButton>
             </Tooltip>

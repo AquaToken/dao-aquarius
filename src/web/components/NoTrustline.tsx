@@ -106,7 +106,7 @@ const NoTrustline = ({
 
     if (onlyButton) {
         return (
-            <Button isBig likeDisabled onClick={() => addTrust()} pending={trustlinePending}>
+            <Button isBig secondary onClick={() => addTrust()} pending={trustlinePending}>
                 add trustline
             </Button>
         );

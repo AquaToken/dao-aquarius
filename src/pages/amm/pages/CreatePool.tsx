@@ -477,7 +477,10 @@ const CreatePool = () => {
                             >
                                 <div>
                                     <h3>Volatile</h3>
-                                    <p>Simple model for general purpose AMM pools (constant product pool).</p>
+                                    <p>
+                                        Simple model for general purpose AMM pools (constant product
+                                        pool).
+                                    </p>
                                 </div>
                                 <Tick />
                             </PoolType>
@@ -488,7 +491,8 @@ const CreatePool = () => {
                                 <div>
                                     <h3>Stable</h3>
                                     <p>
-                                        Highly efficient AMM model for correlated assets (e.g., stablecoins) with lower slippage.
+                                        Highly efficient AMM model for correlated assets (e.g.,
+                                        stablecoins) with lower slippage.
                                     </p>
                                 </div>
                                 <Tick />
@@ -603,7 +607,7 @@ const CreatePool = () => {
                                     background={COLORS.pinkRed}
                                 >
                                     <AddRowButton
-                                        likeDisabled
+                                        secondary
                                         isPurpleText
                                         disabled={assetsCount === 3}
                                         onClick={() => setAssetsCount(count => count + 1)}
@@ -616,7 +620,8 @@ const CreatePool = () => {
                         <StyledFormSection>
                             <FormSectionTitle>Pool swap fees</FormSectionTitle>
                             <FormSectionDescriptionStyled>
-                                Pool fees are paid by users swapping assets and distributed to liquidity providers.
+                                Pool fees are paid by users swapping assets and distributed to
+                                liquidity providers.
                             </FormSectionDescriptionStyled>
                             {type === POOL_TYPE.stable ? (
                                 <FormRow>
@@ -650,8 +655,8 @@ const CreatePool = () => {
                         <StyledFormSection>
                             <FormSectionTitle>Pool creation fee</FormSectionTitle>
                             <FormSectionDescriptionStyled>
-                                A pool creation fee helps prevent abuse and spam. 
-                                Creating a pool provides no direct benefit to the creator.
+                                A pool creation fee helps prevent abuse and spam. Creating a pool
+                                provides no direct benefit to the creator.
                             </FormSectionDescriptionStyled>
                             <CreationFee>
                                 <CreationFeeCost>

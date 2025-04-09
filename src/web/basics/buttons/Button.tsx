@@ -10,12 +10,13 @@ const ButtonBody = styled(BlankButton)<{
     $isBig?: boolean;
     $pending?: boolean;
     $fullWidth?: boolean;
-    $likeDisabled?: boolean;
+    $secondary?: boolean;
     $isSquare?: boolean;
     $isSmall?: boolean;
     $isWhite?: boolean;
     $isPurpleText?: boolean;
     $isRounded?: boolean;
+    $tertiary?: boolean;
 }>`
     ${flexAllCenter};
     width: ${({ $fullWidth, $isSquare, $isBig }) => {
@@ -51,12 +52,15 @@ const ButtonBody = styled(BlankButton)<{
         return $isBig ? '0 6.4rem' : '0 3.2rem';
     }};
     background-color: ${COLORS.white};
-    background-color: ${({ $likeDisabled, $isWhite }) => {
-        if ($likeDisabled) {
+    background-color: ${({ $secondary, $isWhite, $tertiary }) => {
+        if ($secondary) {
             return COLORS.gray;
         }
         if ($isWhite) {
             return COLORS.white;
+        }
+        if ($tertiary) {
+            return COLORS.lightGray;
         }
         return COLORS.buttonBackground;
     }};
@@ -83,13 +87,17 @@ const ButtonBody = styled(BlankButton)<{
     white-space: nowrap;
 
     &:hover {
-        background-color: ${({ $likeDisabled, $isWhite }) => {
-            if ($likeDisabled) {
+        background-color: ${({ $secondary, $isWhite, $tertiary }) => {
+            if ($secondary) {
                 return COLORS.lightGray;
             }
 
             if ($isWhite) {
                 return COLORS.lightGray;
+            }
+
+            if ($tertiary) {
+                return COLORS.gray;
             }
 
             return COLORS.purple;
@@ -109,21 +117,26 @@ const ButtonBody = styled(BlankButton)<{
 
 const ButtonLoader = styled.div<{
     $pending?: boolean;
-    $likeDisabled?: boolean;
+    $secondary?: boolean;
     $isWhite?: boolean;
     $isPurpleText?: boolean;
+    $tertiary?: boolean;
 }>`
-    color: ${({ $likeDisabled, $isWhite, $isPurpleText }) => {
+    color: ${({ $secondary, $isWhite, $isPurpleText, $tertiary }) => {
         if ($isPurpleText) {
             return COLORS.purple;
         }
 
-        if ($likeDisabled) {
+        if ($secondary) {
             return COLORS.grayText;
         }
 
         if ($isWhite) {
             return COLORS.blue;
+        }
+
+        if ($tertiary) {
+            return COLORS.titleText;
         }
 
         return COLORS.white;
@@ -172,7 +185,8 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     pending?: boolean;
     isBig?: boolean;
     fullWidth?: boolean;
-    likeDisabled?: boolean;
+    secondary?: boolean;
+    tertiary?: boolean;
     isSquare?: boolean;
     isSmall?: boolean;
     isWhite?: boolean;
@@ -186,7 +200,8 @@ const Button = ({
     isBig,
     isSmall,
     fullWidth,
-    likeDisabled,
+    secondary,
+    tertiary,
     isSquare,
     isWhite,
     isPurpleText,
@@ -197,16 +212,18 @@ const Button = ({
         $pending={pending}
         $isBig={isBig}
         $fullWidth={fullWidth}
-        $likeDisabled={likeDisabled}
+        $secondary={secondary}
         $isSquare={isSquare}
         $isSmall={isSmall}
         $isWhite={isWhite}
         $isRounded={isRounded}
+        $tertiary={tertiary}
         {...props}
     >
         <ButtonLoader
             $pending={pending}
-            $likeDisabled={likeDisabled}
+            $secondary={secondary}
+            $tertiary={tertiary}
             $isWhite={isWhite}
             $isPurpleText={isPurpleText}
         >
