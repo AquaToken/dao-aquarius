@@ -73,11 +73,7 @@ const ImageBlock = styled.div`
 `;
 
 const HotWallet = styled(HotWalletIcon)`
-    width: 19.5rem;
-
-    ${respondDown(Breakpoints.lg)`
-        width: 14rem;
-    `}
+    width: 14rem;
 `;
 
 const SupportedBy = () => (
