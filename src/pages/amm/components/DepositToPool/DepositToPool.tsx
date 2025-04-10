@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { getAssetString } from 'helpers/assets';
@@ -264,17 +264,6 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
         };
     }, [amounts, pool, reserves, accountShare]);
 
-    const getDailyRewards = useCallback(
-        (percent: number) => {
-            const secondsInDay = 60 * 60 * 24;
-
-            const poolDailyRewards = (Number(pool.reward_tps) / 1e7) * secondsInDay;
-
-            return (poolDailyRewards * percent) / 100;
-        },
-        [pool],
-    );
-
     const rates: Map<string, string> = useMemo(() => {
         if (Number(pool.total_share) === 0 && !hasAllAmounts) {
             return null;
@@ -299,6 +288,42 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
         });
         return map;
     }, [reserves, pool, amounts]);
+
+    const getDailyRewards = (rewardsInfo: PoolRewardsInfo) => {
+        if (!rewardsInfo) return <DotsLoader />;
+
+        const tps = +rewardsInfo.tps;
+        const wSupply = +rewardsInfo.working_supply;
+        const wBalance = +rewardsInfo.working_balance;
+
+        if (!tps || !wSupply || !wBalance) return '0 AQUA';
+
+        const secondsInDay = 60 * 60 * 24;
+
+        return `${formatBalance((tps * wBalance * secondsInDay) / wSupply, true)} AQUA`;
+    };
+
+    const getNewDailyRewards = (rewardsInfo: PoolRewardsInfo) => {
+        if (!rewardsInfo) return <DotsLoader />;
+
+        const supply = +rewardsInfo.supply;
+        const lockedSupply = +rewardsInfo.boost_supply;
+        const lockedBalance = +rewardsInfo.boost_balance;
+
+        const newWBalance = Math.min(
+            +sharesAfterValue + (1.5 * lockedBalance * supply) / lockedSupply,
+            +sharesAfterValue * 2.5,
+        );
+
+        const tps = +rewardsInfo.tps;
+        const newWSupply = +rewardsInfo.working_supply - accountShare + sharesAfterValue;
+
+        if (!tps) return '0 AQUA';
+
+        const secondsInDay = 60 * 60 * 24;
+
+        return `${formatBalance((tps * newWBalance * secondsInDay) / newWSupply, true)} AQUA`;
+    };
 
     const calculateBoostValue = (rewardsInfo: PoolRewardsInfo) => {
         if (!rewardsInfo) return 1;
@@ -582,11 +607,11 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                         <DescriptionRow>
                             <span>Daily rewards</span>
                             <span>
-                                {formatBalance(getDailyRewards(sharesBefore), true)} AQUA
+                                {getDailyRewards(poolRewards)}
                                 {sharesAfter && (
                                     <>
                                         <Arrow />
-                                        {formatBalance(getDailyRewards(sharesAfter), true)} AQUA
+                                        {getNewDailyRewards(poolRewards)}
                                     </>
                                 )}
                             </span>
