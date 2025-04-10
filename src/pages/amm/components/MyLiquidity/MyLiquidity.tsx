@@ -306,6 +306,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
     const [pools, setPools] = useState<PoolUserProcessed[]>([]);
     const [classicPools, setClassicPools] = useState([]);
     const [userRewards, setUserRewards] = useState<Map<string, PoolRewardsInfo>>(new Map());
+    const [isUserRewardsLoaded, setIsUserRewardsLoaded] = useState(false);
     const [rewardsSum, setRewardsSum] = useState(0);
     const [claimPendingId, setClaimPendingId] = useState(null);
     const [filter, setFilter] = useState(null);
@@ -387,6 +388,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
             });
             setUserRewards(map);
             setRewardsSum(sum);
+            setIsUserRewardsLoaded(true);
         });
     }, [pools, account, updateIndex]);
 
@@ -750,10 +752,12 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                     children:
                                         pool.pool_type === POOL_TYPE.classic ? (
                                             '-'
+                                        ) : !isUserRewardsLoaded ? (
+                                            <DotsLoader />
                                         ) : poolRewardsData ? (
                                             `${formatBalance(userRewardsValue, true)} AQUA`
                                         ) : (
-                                            <DotsLoader />
+                                            '-'
                                         ),
                                     label: 'My daily rewards',
                                     mobileStyle: { textAlign: 'right' },
