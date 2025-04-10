@@ -42,7 +42,7 @@ import Button from 'basics/buttons/Button';
 import Select from 'basics/inputs/Select';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
 import Label from 'basics/Label';
-import { CircleLoader } from 'basics/loaders';
+import { CircleLoader, DotsLoader } from 'basics/loaders';
 import PageLoader from 'basics/loaders/PageLoader';
 import Market from 'basics/Market';
 import Table, { CellAlign } from 'basics/Table';
@@ -600,6 +600,16 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                             userRewards.get(pool.address),
                             pool.balance,
                         );
+                        const poolRewardsData = userRewards.get(pool.address);
+
+                        const userRewardsValue = poolRewardsData
+                            ? (+poolRewardsData.tps *
+                                  60 *
+                                  60 *
+                                  24 *
+                                  +poolRewardsData.working_balance) /
+                              +poolRewardsData.working_supply
+                            : 0;
                         return {
                             key: pool.address || pool.id,
                             rowItems: [
@@ -737,15 +747,14 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                     label: 'Pooled',
                                 },
                                 {
-                                    children: `${formatBalance(
-                                        ((+(pool.reward_tps ?? 0) / 1e7) *
-                                            60 *
-                                            60 *
-                                            24 *
-                                            pool.balance) /
-                                            pool.total_share,
-                                        true,
-                                    )} AQUA`,
+                                    children:
+                                        pool.pool_type === POOL_TYPE.classic ? (
+                                            '-'
+                                        ) : poolRewardsData ? (
+                                            `${formatBalance(userRewardsValue, true)} AQUA`
+                                        ) : (
+                                            <DotsLoader />
+                                        ),
                                     label: 'My daily rewards',
                                     mobileStyle: { textAlign: 'right' },
                                 },
