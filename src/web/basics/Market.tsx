@@ -142,9 +142,8 @@ const AssetsCodes = styled.span<{ $mobileVerticalDirections?: boolean; $bigCodes
     ${({ $mobileVerticalDirections }) =>
         $mobileVerticalDirections &&
         respondDown(Breakpoints.md)`
-            font-weight: bold;
-            font-size: 2.4rem;
-            line-height: 2.8rem;
+            font-size: ${({ $bigCodes }) => ($bigCodes ? '3rem' : '1.6rem')};
+            line-height: ${({ $bigCodes }) => ($bigCodes ? '4rem' : '2.8rem')};
             color: ${COLORS.buttonBackground};
             margin-top: 0.7rem;
             margin-bottom: 0.4rem;
