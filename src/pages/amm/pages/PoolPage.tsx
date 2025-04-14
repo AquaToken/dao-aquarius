@@ -273,7 +273,6 @@ const PoolPage = () => {
                     </BackButton>
                     <Market
                         assets={pool.assets}
-                        verticalDirections
                         leftAlign
                         bigCodes
                         isBigLogo
