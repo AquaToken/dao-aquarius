@@ -224,7 +224,6 @@ const MarketPage = () => {
                     <Header>
                         <Market
                             assets={[baseAsset, counterAsset]}
-                            verticalDirections
                             leftAlign
                             bigCodes
                             bottomLabels
