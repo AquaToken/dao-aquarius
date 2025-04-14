@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
+import { NumericFormat } from 'react-number-format';
 import styled from 'styled-components';
 
 import { getAssetString } from 'helpers/assets';
@@ -418,25 +419,16 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
             });
     };
 
-    const onChangeInput = (asset: AssetType, value: string) => {
-        if (Number.isNaN(Number(value))) {
-            return;
-        }
-
+    const onChangeInput = (asset: AssetType, inputValue: string) => {
+        const value = inputValue.replaceAll(',', '');
         if (value === '') {
             pool.assets.forEach(token => {
                 setAmounts(new Map(amounts.set(getAssetString(token), '')));
             });
             return;
         }
-        const [integerPart, fractionalPart] = value.split('.');
 
-        const roundedValue =
-            fractionalPart && fractionalPart.length > 7
-                ? `${integerPart}.${fractionalPart.slice(0, 7)}`
-                : value;
-
-        setAmounts(new Map(amounts.set(getAssetString(asset), roundedValue)));
+        setAmounts(new Map(amounts.set(getAssetString(asset), value)));
 
         // empty pool
         if (Number(pool.total_share) === 0) {
@@ -447,12 +439,10 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
             .filter(token => getAssetString(token) !== getAssetString(asset))
             .forEach(token => {
                 const newAmount = (
-                    (Number(roundedValue) * +reserves.get(getAssetString(token))) /
+                    (Number(value) * +reserves.get(getAssetString(token))) /
                     +reserves.get(getAssetString(asset))
                 ).toFixed(7);
-                setAmounts(
-                    new Map(amounts.set(getAssetString(token), Number(newAmount).toFixed(7))),
-                );
+                setAmounts(new Map(amounts.set(getAssetString(token), newAmount)));
             });
     };
 
@@ -498,8 +488,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                                     }
                                 >
                                     {' '}
-                                    {formatBalance(account.getAvailableForSwapBalance(asset))}{' '}
-                                    {asset.code}
+                                    {formatBalance(account.getAvailableForSwapBalance(asset))}
                                 </BalanceClickable>
                                 <Tooltip
                                     showOnHover
@@ -526,15 +515,18 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                                 </Tooltip>
                             </Balance>
                         )}
-                        <Input
+                        <NumericFormat
                             value={amounts.get(getAssetString(asset))}
-                            onChange={({ target }) => {
-                                onChangeInput(asset, target.value);
-                            }}
+                            onChange={({ target }) => onChangeInput(asset, target.value)}
                             placeholder={`Enter ${asset.code} amount`}
+                            customInput={Input}
                             label={`${asset.code} Amount`}
                             postfix={<Asset asset={asset} logoAndCode />}
                             inputMode="decimal"
+                            allowedDecimalSeparators={[',']}
+                            thousandSeparator=","
+                            decimalScale={7}
+                            allowNegative={false}
                         />
                     </FormRow>
                 ))}
