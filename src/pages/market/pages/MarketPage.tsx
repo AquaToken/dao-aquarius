@@ -227,6 +227,7 @@ const MarketPage = () => {
                             leftAlign
                             bigCodes
                             bottomLabels
+                            mobileVerticalDirections
                             authRequired={
                                 votesData?.auth_required ||
                                 votesData?.auth_revocable ||

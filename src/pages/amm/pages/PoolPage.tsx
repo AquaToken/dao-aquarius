@@ -278,6 +278,7 @@ const PoolPage = () => {
                         isBigLogo
                         isCircleLogos
                         withoutLink
+                        mobileVerticalDirections
                     />
                     <ExternalLinkStyled
                         href={`https://stellar.expert/explorer/public/contract/${pool.address}`}
