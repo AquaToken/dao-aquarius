@@ -224,10 +224,10 @@ const MarketPage = () => {
                     <Header>
                         <Market
                             assets={[baseAsset, counterAsset]}
-                            verticalDirections
                             leftAlign
                             bigCodes
                             bottomLabels
+                            mobileVerticalDirections
                             authRequired={
                                 votesData?.auth_required ||
                                 votesData?.auth_revocable ||
