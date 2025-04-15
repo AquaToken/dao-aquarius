@@ -61,7 +61,7 @@ const MenuLinks = styled.div<{ $isOpen: boolean }>`
         align-items: center;
         
         a:not(:last-child) {
-            margin-bottom: 2.4rem!important;
+            margin-bottom: 2.4rem;
         }
     `}
 `;
