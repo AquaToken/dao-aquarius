@@ -47,11 +47,14 @@ export const getProposalsRequest = async (
     return { proposals: data, filter };
 };
 
-export const getActiveProposalsCount = (): Promise<number> =>
+export const getActiveProposalsCount = (): Promise<{ active: number; discussion: number }> =>
     Promise.all([
         getProposalsRequest(PROPOSAL_FILTER.ACTIVE),
         getProposalsRequest(PROPOSAL_FILTER.DISCUSSION),
-    ]).then(([active, discussion]) => active.proposals.count + discussion.proposals.count);
+    ]).then(([active, discussion]) => ({
+        active: active.proposals.count,
+        discussion: discussion.proposals.count,
+    }));
 
 export const getProposalRequest = (id: string): Promise<AxiosResponse<Proposal>> =>
     axios.get(`${apiURL}/proposal/${id}/`);
