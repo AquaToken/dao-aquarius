@@ -66,7 +66,11 @@ const VoteButton = ({
     disabled: boolean;
     withoutStats?: boolean;
 }): JSX.Element => {
-    const { market_key: marketKeyUp, downvote_account_id: marketKeyDown } = pair;
+    const {
+        market_key: marketKeyUp,
+        downvote_account_id: marketKeyDown,
+        downvote_immunity: downvoteImmunity,
+    } = pair;
     const { account, isLogged } = useAuthStore();
     const { aquaStellarAsset } = getAquaAssetData();
 
@@ -138,12 +142,12 @@ const VoteButton = ({
                 <Tooltip
                     content={<TooltipInner>Downvote this market</TooltipInner>}
                     position={TOOLTIP_POSITION.top}
-                    showOnHover
+                    showOnHover={!downvoteImmunity}
                 >
                     <DownvoteButton
                         isSquare
                         secondary
-                        disabled={disabled}
+                        disabled={disabled || downvoteImmunity}
                         onClick={e => downVote(e)}
                     >
                         <IconDislike />
@@ -170,9 +174,14 @@ const VoteButton = ({
             <Tooltip
                 content={<TooltipInner>Downvote this market</TooltipInner>}
                 position={TOOLTIP_POSITION.top}
-                showOnHover
+                showOnHover={!downvoteImmunity}
             >
-                <DownvoteButton isSquare secondary disabled={disabled} onClick={e => downVote(e)}>
+                <DownvoteButton
+                    isSquare
+                    secondary
+                    disabled={disabled || downvoteImmunity}
+                    onClick={e => downVote(e)}
+                >
                     <IconDislike />
                 </DownvoteButton>
             </Tooltip>
