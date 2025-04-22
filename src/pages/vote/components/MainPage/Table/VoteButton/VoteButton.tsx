@@ -51,6 +51,10 @@ const DownvoteButton = styled(Button)`
 
 const TooltipInner = styled.div`
     font-size: 1.2rem;
+    line-height: 1.6rem;
+    width: 12rem;
+    white-space: pre-line;
+    text-align: center;
 `;
 
 const VoteButton = ({
@@ -140,9 +144,15 @@ const VoteButton = ({
                     {isPairSelected ? <TickStyled /> : <Like />}
                 </Button>
                 <Tooltip
-                    content={<TooltipInner>Downvote this market</TooltipInner>}
+                    content={
+                        <TooltipInner>
+                            {downvoteImmunity
+                                ? "Markets with XLM, AQUA, USDC and EURC can't be downvoted"
+                                : 'Downvote this market'}
+                        </TooltipInner>
+                    }
                     position={TOOLTIP_POSITION.top}
-                    showOnHover={!downvoteImmunity}
+                    showOnHover
                 >
                     <DownvoteButton
                         isSquare
@@ -172,9 +182,15 @@ const VoteButton = ({
                 {isPairSelected ? <IconTick /> : <IconLike />}
             </Button>
             <Tooltip
-                content={<TooltipInner>Downvote this market</TooltipInner>}
+                content={
+                    <TooltipInner>
+                        {downvoteImmunity
+                            ? "Markets with XLM, AQUA, USDC and EURC can't be downvoted"
+                            : 'Downvote this market'}
+                    </TooltipInner>
+                }
                 position={TOOLTIP_POSITION.top}
-                showOnHover={!downvoteImmunity}
+                showOnHover
             >
                 <DownvoteButton
                     isSquare
