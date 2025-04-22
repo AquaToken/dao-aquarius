@@ -110,8 +110,12 @@ const ButtonBody = styled(BlankButton)<{
 
     &:disabled {
         background-color: ${COLORS.gray};
-        //TODO: remove
-        pointer-events: none;
+        cursor: not-allowed;
+    }
+
+    &:active,
+    &:disabled {
+        transform: none;
     }
 `;
 
