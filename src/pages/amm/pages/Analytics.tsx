@@ -9,6 +9,8 @@ import { AmmRoutes } from 'constants/routes';
 
 import { formatBalance } from 'helpers/format-number';
 
+import { useSkipFirstRender } from 'hooks/useSkipFirstRender';
+
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService } from 'services/globalServices';
@@ -179,7 +181,9 @@ const Analytics = () => {
 
     useEffect(() => {
         const params = new URLSearchParams(location.search);
+
         const tabParam = params.get(AnalyticsUrlParams.tab);
+
         if (tabParam) {
             setActiveTab(tabParam as AnalyticsTabs);
         } else {
@@ -222,7 +226,7 @@ const Analytics = () => {
         setMyTotal(null);
     }, [activeTab]);
 
-    useEffect(() => {
+    useSkipFirstRender(() => {
         if (!isLogged) {
             setTab(AnalyticsTabs.top);
         }
