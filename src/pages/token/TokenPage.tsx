@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useEffect } from 'react';
 import styled from 'styled-components';
 
 import { respondDown } from 'web/mixins';
@@ -27,28 +28,34 @@ const AquaLinksStyled = styled(AquaLinks)`
     `}
 `;
 
-const TokenPage = () => (
-    <Container>
-        <SocialLinks />
+const TokenPage = () => {
+    useEffect(() => {
+        document.body.scrollTo(0, 0);
+    }, []);
 
-        <MainBlock />
+    return (
+        <Container>
+            <SocialLinks />
 
-        <AquaStatistics />
+            <MainBlock />
 
-        <AquaLinksStyled />
+            <AquaStatistics />
 
-        <AboutToken />
+            <AquaLinksStyled />
 
-        <AboutIce />
+            <AboutToken />
 
-        <AquaPerformance />
+            <AboutIce />
 
-        <Questions />
+            <AquaPerformance />
 
-        <Community />
+            <Questions />
 
-        <Subscribe />
-    </Container>
-);
+            <Community />
+
+            <Subscribe />
+        </Container>
+    );
+};
 
 export default TokenPage;
