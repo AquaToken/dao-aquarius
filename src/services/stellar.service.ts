@@ -904,6 +904,34 @@ export default class StellarServiceClass {
         return roundToPrecision(1 / Number(records[0].close), 7);
     }
 
+    async getAsset24hStats(
+        base: Asset,
+        counter: Asset,
+    ): Promise<{ volume: number; changes24h: string; price: { n: string; d: string } }> {
+        const period = 24 * 60 * 60 * 1000;
+        const now = Date.now();
+        const resolution = 900000; // 15 minutes
+
+        const start = now - period;
+
+        const { records } = await this.server
+            .tradeAggregation(base, counter, start, now + resolution, resolution, 0)
+            .limit(period / resolution + 1)
+            .order('desc')
+            .call();
+
+        const volume = records.reduce((acc, item) => acc + Number(item.base_volume), 0);
+
+        const startPrice = +records[records.length - 1].open;
+        const lastPrice = +records[0].close;
+
+        const changes24h = (((lastPrice - startPrice) / startPrice) * 100).toFixed(2);
+
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        return { volume, changes24h, price: records[0].close_r };
+    }
+
     createClaimOperations(claimId: string, withTrust?: boolean) {
         const ops = [];
 

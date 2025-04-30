@@ -22,6 +22,7 @@ import SettingsIcon from 'assets/icon-settings.svg';
 import Button from 'basics/buttons/Button';
 
 import NoTrustline from 'components/NoTrustline';
+import Price from 'components/Price';
 
 import SwapSettingsModal, {
     SWAP_SLIPPAGE_ALIAS,
@@ -29,7 +30,6 @@ import SwapSettingsModal, {
 
 import AmountUsdEquivalent from './AmountUsdEquivalent/AmountUsdEquivalent';
 import SwapFormDivider from './SwapFormDivider/SwapFormDivider';
-import SwapFormPrice from './SwapFormPrice/SwapFormPrice';
 import SwapFormRow from './SwapFormRow/SwapFormRow';
 
 import SwapConfirmModal from '../SwapConfirmModal/SwapConfirmModal';
@@ -419,7 +419,7 @@ const SwapForm = ({
                 />
             </SwapRows>
 
-            <SwapFormPrice
+            <Price
                 baseCode={base.code}
                 baseAmount={baseAmount}
                 counterCode={counter.code}

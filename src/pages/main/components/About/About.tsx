@@ -312,7 +312,7 @@ const About = (): React.ReactElement => {
         });
 
         getAquaInPoolsSum().then(res => {
-            setAquaInSorobanAmm(res);
+            setAquaInSorobanAmm(res.sum);
         });
 
         getAquaCirculatingSupply().then(res => {

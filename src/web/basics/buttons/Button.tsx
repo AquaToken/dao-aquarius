@@ -17,6 +17,7 @@ const ButtonBody = styled(BlankButton)<{
     $isPurpleText?: boolean;
     $isRounded?: boolean;
     $tertiary?: boolean;
+    $withGradient?: boolean;
 }>`
     ${flexAllCenter};
     width: ${({ $fullWidth, $isSquare, $isBig }) => {
@@ -52,7 +53,7 @@ const ButtonBody = styled(BlankButton)<{
         return $isBig ? '0 6.4rem' : '0 3.2rem';
     }};
     background-color: ${COLORS.white};
-    background-color: ${({ $secondary, $isWhite, $tertiary }) => {
+    background: ${({ $secondary, $isWhite, $tertiary, $withGradient }) => {
         if ($secondary) {
             return COLORS.gray;
         }
@@ -62,8 +63,18 @@ const ButtonBody = styled(BlankButton)<{
         if ($tertiary) {
             return COLORS.lightGray;
         }
+        if ($withGradient) {
+            return 'radial-gradient(146.92% 150% at 50.22% 0%, #872AB0 0%, #3918AC 100%)';
+        }
+
         return COLORS.buttonBackground;
     }};
+
+    box-shadow: ${({ $withGradient }) =>
+        $withGradient
+            ? 'inset 0 0 0 4px rgba(255, 255, 255, 0.08), 0 4px 10px rgba(0, 0, 0, 0.2)'
+            : 'unset'};
+
     border-radius: ${({ $isRounded, $isBig, $isSmall }) => {
         if (!$isRounded) {
             return '0.5rem';
@@ -87,7 +98,7 @@ const ButtonBody = styled(BlankButton)<{
     white-space: nowrap;
 
     &:hover {
-        background-color: ${({ $secondary, $isWhite, $tertiary }) => {
+        background: ${({ $secondary, $isWhite, $tertiary, $withGradient }) => {
             if ($secondary) {
                 return COLORS.lightGray;
             }
@@ -100,12 +111,20 @@ const ButtonBody = styled(BlankButton)<{
                 return COLORS.gray;
             }
 
+            if ($withGradient) {
+                return 'radial-gradient(146.92% 150% at 50.22% 0%, #AE51D6 0%, #3B17B6 100%);';
+            }
+
             return COLORS.purple;
         }};
     }
 
     &:active {
         transform: scale(0.9);
+    }
+
+    &:focus {
+        border: 0.2rem solid ${COLORS.transparent};
     }
 
     &:disabled {
@@ -192,6 +211,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     isWhite?: boolean;
     isPurpleText?: boolean;
     isRounded?: boolean;
+    withGradient?: boolean;
 }
 
 const Button = ({
@@ -206,6 +226,7 @@ const Button = ({
     isWhite,
     isPurpleText,
     isRounded,
+    withGradient,
     ...props
 }: ButtonProps): JSX.Element => (
     <ButtonBody
@@ -218,6 +239,7 @@ const Button = ({
         $isWhite={isWhite}
         $isRounded={isRounded}
         $tertiary={tertiary}
+        $withGradient={withGradient}
         {...props}
     >
         <ButtonLoader
