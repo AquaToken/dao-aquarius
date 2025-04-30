@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { getAquaInPoolsSum } from 'api/amm';
@@ -8,6 +8,8 @@ import { getAquaCirculatingSupply } from 'api/cmc';
 import { getIceStatistics } from 'api/ice-locker';
 import { getTotalRewards } from 'api/rewards';
 import { getAssetDetails } from 'api/stellar-expert';
+
+import { MainRoutes } from 'constants/routes';
 
 import { getAquaAssetData } from 'helpers/assets';
 import { getDateString } from 'helpers/date';
@@ -25,10 +27,6 @@ import { respondDown, respondUp } from 'web/mixins';
 import { Breakpoints, COLORS, FONT_FAMILY } from 'web/styles';
 
 import Info from 'assets/icon-info.svg';
-import InvestAmmImage from 'assets/landing-about-amm-80.svg';
-import FreezeIceImage from 'assets/landing-about-ice-80.svg';
-import VoteMarketsImage from 'assets/landing-about-vote-markets-80.svg';
-import VoteProposalsImage from 'assets/landing-about-vote-proposals-80.svg';
 
 import Asset from 'basics/Asset';
 import { Button } from 'basics/buttons';
@@ -76,24 +74,6 @@ const Title = styled.div`
         line-height: 3.4rem;
         margin-bottom: 1.6rem;
     `}
-`;
-
-const TitleAquaInfoSection = styled(Title)`
-    margin-bottom: 0;
-    margin-top: 10.2rem;
-    max-width: 57.7rem;
-
-    ${respondDown(Breakpoints.lg)`
-        padding: 0px 1.6rem;
-    `}
-`;
-
-const TitleAquaInfoBlock = styled(Title)`
-    font-weight: 700;
-    font-size: 2rem;
-    line-height: 2.8rem;
-    margin-bottom: 0;
-    margin-left: 0.8rem;
 `;
 
 const Description = styled.div`
@@ -174,22 +154,16 @@ const AquaTokenStats = styled(AquaInfoBlock)`
 const AquaTokenStatsDescription = styled(AquaInfoBlock)`
     padding: 5.2rem 1.6rem 5.2rem 1.6rem;
 
+    a {
+        text-decoration: none;
+        width: 100%;
+    }
+
     ${respondUp(Breakpoints.md)`
         max-width: 63.8rem;
         flex-basis: unset;
         padding: 3.6rem 0 3.6rem 6.2rem;
     `}
-`;
-
-const AquaInfoBlockData = styled(AquaTokenStats)`
-    box-shadow: none;
-    margin-top: 6.2rem;
-`;
-
-const IconWithTitleWrapper = styled.div`
-    display: flex;
-    align-items: center;
-    margin-bottom: 1.6rem;
 `;
 
 const AquaWithPriceBlock = styled.div`
@@ -263,6 +237,17 @@ const StatsDescription = styled.span`
 
 const StyledButton = styled(Button)`
     margin: auto 0 0;
+    width: 100%;
+`;
+
+const Buttons = styled.div`
+    display: flex;
+    gap: 1.6rem;
+    margin: auto;
+
+    ${respondDown(Breakpoints.md)`
+        flex-direction: column;
+    `}
 `;
 
 const About = (): React.ReactElement => {
@@ -472,67 +457,20 @@ const About = (): React.ReactElement => {
                                 vote for trusted Stellar assets or market pairs needing liquidity.
                                 Liquidity providers earn AQUA by trading on these selected pairs.
                             </Description>
-                            <StyledButton
-                                onClick={() => ModalService.openModal(GetAquaModal, {})}
-                                isBig
-                            >
-                                Get AQUA Tokens
-                            </StyledButton>
+                            <Buttons>
+                                <StyledButton
+                                    onClick={() => ModalService.openModal(GetAquaModal, {})}
+                                    isBig
+                                >
+                                    Get AQUA Tokens
+                                </StyledButton>
+                                <Link to={MainRoutes.token}>
+                                    <StyledButton isBig secondary>
+                                        Learn more
+                                    </StyledButton>
+                                </Link>
+                            </Buttons>
                         </AquaTokenStatsDescription>
-                    </AquaInfoContainer>
-
-                    <TitleAquaInfoSection>Utility of AQUA</TitleAquaInfoSection>
-                    <AquaInfoContainer>
-                        <AquaInfoBlockData>
-                            <IconWithTitleWrapper>
-                                <InvestAmmImage />
-                                <TitleAquaInfoBlock>Deposit into AMM</TitleAquaInfoBlock>
-                            </IconWithTitleWrapper>
-
-                            <MainDescription>
-                                Deposit AQUA into Aquarius AMM pools with Stellar assets to earn LP
-                                rewards from trading. Markets in the reward zone grant extra AQUA
-                                emission rewards.
-                            </MainDescription>
-                        </AquaInfoBlockData>
-
-                        <AquaInfoBlockData>
-                            <IconWithTitleWrapper>
-                                <FreezeIceImage />
-                                <TitleAquaInfoBlock>Freeze into ICE</TitleAquaInfoBlock>
-                            </IconWithTitleWrapper>
-
-                            <MainDescription>
-                                Convert your AQUA into ICE to boost your voting power. Each frozen
-                                AQUA gives you ICE, which can be used for Aquarius governance and
-                                additional benefits.
-                            </MainDescription>
-                        </AquaInfoBlockData>
-
-                        <AquaInfoBlockData>
-                            <IconWithTitleWrapper>
-                                <VoteProposalsImage />
-                                <TitleAquaInfoBlock>Vote for proposals</TitleAquaInfoBlock>
-                            </IconWithTitleWrapper>
-
-                            <MainDescription>
-                                Use AQUA to participate in community voting and shape the future of
-                                the Aquarius protocol. Explore active proposals in the DAO section.
-                            </MainDescription>
-                        </AquaInfoBlockData>
-
-                        <AquaInfoBlockData>
-                            <IconWithTitleWrapper>
-                                <VoteMarketsImage />
-                                <TitleAquaInfoBlock>Vote for markets</TitleAquaInfoBlock>
-                            </IconWithTitleWrapper>
-
-                            <MainDescription>
-                                AQUA holders can vote to add markets to the reward zone, deciding
-                                which markets earn AQUA emissions. Receive extra incentives for
-                                supporting certain pools.
-                            </MainDescription>
-                        </AquaInfoBlockData>
                     </AquaInfoContainer>
                 </AquaWrapper>
             </AquaSection>
