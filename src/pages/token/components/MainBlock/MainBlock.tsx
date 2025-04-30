@@ -22,7 +22,6 @@ import AquaPrice from 'pages/token/components/AquaPrice/AquaPrice';
 const Container = styled.section`
     display: flex;
     flex-direction: column;
-    position: relative;
 
     ${respondDown(Breakpoints.md)`
         height: unset;
@@ -30,6 +29,7 @@ const Container = styled.section`
 `;
 
 const Content = styled.div`
+    position: relative;
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -49,12 +49,8 @@ const Content = styled.div`
 const Background = styled(Bg)`
     position: absolute;
     height: 100vh;
-    right: 0;
+    right: -10rem;
     top: -11.2rem;
-
-    ${respondDown(Breakpoints.xl)`
-        right: -20rem;
-    `}
 
     ${respondDown(Breakpoints.md)`
         width: 60rem;
@@ -163,11 +159,11 @@ const MainBlock = () => {
     };
     return (
         <Container>
-            <Background />
             <Content>
+                <Background />
                 <Title>
                     AQUA
-                    <AnimatedBorderedText text="token" />
+                    <AnimatedBorderedText />
                 </Title>
                 <Description>Powers the #1 Stellar defi protocol</Description>
                 <SecondaryDescription>
