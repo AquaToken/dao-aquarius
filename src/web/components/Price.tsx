@@ -3,11 +3,11 @@ import styled from 'styled-components';
 
 import { formatBalance } from 'helpers/format-number';
 
-import { COLORS } from 'web/styles';
-
 import Revert from 'assets/icon-revert.svg';
 
 import { DotsLoader } from 'basics/loaders';
+
+import { COLORS } from '../styles';
 
 const Container = styled.div`
     color: ${COLORS.grayText};
@@ -34,7 +34,7 @@ interface SwapFormPriceProps {
     hasError: boolean;
 }
 
-const SwapFormPrice = ({
+const Price = ({
     baseAmount,
     counterAmount,
     pending,
@@ -43,6 +43,7 @@ const SwapFormPrice = ({
     isReverted,
     setIsReverted,
     hasError,
+    ...props
 }: SwapFormPriceProps) => {
     if ((!Number(baseAmount) && !Number(counterAmount)) || hasError) {
         return null;
@@ -57,7 +58,7 @@ const SwapFormPrice = ({
     }
 
     return (
-        <Container onClick={() => setIsReverted(!isReverted)}>
+        <Container onClick={() => setIsReverted(!isReverted)} {...props}>
             {isReverted
                 ? `1 ${counterCode} = ${formatBalance(+baseAmount / +counterAmount)} ${baseCode}`
                 : `1 ${baseCode} = ${formatBalance(+counterAmount / +baseAmount)} ${counterCode}`}
@@ -66,4 +67,4 @@ const SwapFormPrice = ({
     );
 };
 
-export default SwapFormPrice;
+export default Price;

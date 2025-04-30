@@ -8,6 +8,7 @@ import {
     getAssetString,
     getUsdcAssetData,
 } from 'helpers/assets';
+import { getNetworkPassphrase } from 'helpers/env';
 import { getAmmAquaUrl } from 'helpers/url';
 
 import { AssetSimple } from 'store/assetsStore/types';
@@ -324,7 +325,7 @@ export const getAmmRewards = async (): Promise<number> => {
 };
 
 // TODO: remove this method when this data is placed on the backend
-export const getAquaInPoolsSum = async (): Promise<number> => {
+export const getAquaInPoolsSum = async (): Promise<{ sum: number; sum_usd: number }> => {
     const baseUrl = getAmmAquaUrl();
 
     const { aquaContract, aquaAssetString } = getAquaAssetData();
@@ -333,13 +334,53 @@ export const getAquaInPoolsSum = async (): Promise<number> => {
         `${baseUrl}/pools/?&search=${aquaContract}&size=500`,
     );
 
-    return data.items.reduce((acc, item) => {
-        const aquaIndex = item.tokens_str.findIndex(str => str === aquaAssetString);
+    return data.items.reduce(
+        (acc, item) => {
+            const aquaIndex = item.tokens_str.findIndex(str => str === aquaAssetString);
 
-        return acc + Number(item.reserves[aquaIndex]) / 1e7;
-    }, 0);
+            acc.sum = acc.sum + Number(item.reserves[aquaIndex]) / 1e7;
+            acc.sum_usd = acc.sum_usd + Number(item.liquidity_usd) / 1e7 / 2;
+
+            return acc;
+        },
+        { sum: 0, sum_usd: 0 },
+    );
 };
 
+// TODO: remove this method when this data is placed on the backend
+export const getAquaPoolsMembers = async (): Promise<number> => {
+    const baseUrl = getAmmAquaUrl();
+
+    const { aquaContract } = getAquaAssetData();
+
+    const { data } = await axios.get<ListResponse<Pool>>(
+        `${baseUrl}/pools/?&search=${aquaContract}&size=500`,
+    );
+
+    const poolsId = data.items.map(item => item.address);
+
+    const membersCount = await Promise.all(poolsId.map(id => getPoolMembersCount(id)));
+
+    return membersCount.reduce((acc, item) => acc + item.membersCount, 0);
+};
+
+export const getAquaXlmRate = async (): Promise<number[]> => {
+    const baseUrl = getAmmAquaUrl();
+
+    const { aquaContract } = getAquaAssetData();
+
+    const XLM_CONTRACT = Asset.native().contractId(getNetworkPassphrase());
+
+    const { data } = await axios.get<ListResponse<Pool>>(
+        `${baseUrl}/pools/?&tokens__in=${aquaContract},${XLM_CONTRACT}`,
+    );
+
+    const [bestPool] = data.items.sort((a, b) => Number(b.liquidity_usd) - Number(a.liquidity_usd));
+
+    return bestPool.reserves.map(reserve => +reserve / 1e7);
+};
+
+// TODO: remove this method when this data is placed on the backend
 export const getAssetsList = async (): Promise<AssetSimple[]> => {
     const baseUrl = getAmmAquaUrl();
 
