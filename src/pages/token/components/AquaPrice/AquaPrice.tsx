@@ -65,6 +65,10 @@ const Value = styled.span`
     font-weight: 700;
     margin-right: 0.8rem;
     margin-left: 5.6rem;
+
+    ${respondDown(Breakpoints.sm)`
+        margin-left: 0.8rem;
+    `}
 `;
 
 const AquaPrice = ({ ...props }) => {
