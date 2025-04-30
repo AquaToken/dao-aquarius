@@ -176,7 +176,9 @@ const AquaPerformance = () => {
                 <Block>
                     <BlockHeader>
                         <h3>On Aquarius AMM</h3>
-                        <ExternalLink to={MainRoutes.amm}>Browse AQUA pools</ExternalLink>
+                        <ExternalLink to={`${MainRoutes.amm}?search=AQUA`}>
+                            Browse AQUA pools
+                        </ExternalLink>
                     </BlockHeader>
                     <BlockRow>
                         <span>AQUA deposited</span>

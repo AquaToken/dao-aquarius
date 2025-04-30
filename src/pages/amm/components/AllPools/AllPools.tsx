@@ -110,6 +110,7 @@ const ArrowRight = styled(ArrowRightIcon)`
 enum UrlParams {
     sort = 'sort',
     filter = 'filter',
+    search = 'search',
 }
 
 const PAGE_SIZE = 20;
@@ -149,6 +150,7 @@ const AllPools = (): React.ReactNode => {
             history.replace({ search: params.toString() });
         }
         const sortParam = params.get(UrlParams.sort);
+
         if (sortParam) {
             setSort(sortParam as PoolsSortFields);
             setPage(1);
@@ -156,6 +158,15 @@ const AllPools = (): React.ReactNode => {
             params.append(UrlParams.sort, PoolsSortFields.liquidityUp);
             setSort(PoolsSortFields.liquidityUp);
             history.replace({ search: params.toString() });
+        }
+
+        const searchParam = params.get(UrlParams.search);
+
+        if (searchParam) {
+            setSearch(searchParam);
+            setPage(1);
+        } else {
+            setSearch('');
         }
     }, [location]);
 
@@ -168,6 +179,17 @@ const AllPools = (): React.ReactNode => {
     const setSortParam = (sort: PoolsSortFields) => {
         const params = new URLSearchParams(location.search);
         params.set(UrlParams.sort, sort);
+        history.push({ search: params.toString() });
+    };
+
+    const setSearchParam = (str: string) => {
+        const params = new URLSearchParams(location.search);
+        if (!str) {
+            params.delete(UrlParams.search);
+            history.push({ search: params.toString() });
+            return;
+        }
+        params.set(UrlParams.search, str);
         history.push({ search: params.toString() });
     };
 
@@ -199,7 +221,7 @@ const AllPools = (): React.ReactNode => {
                 <StyledInput
                     placeholder="Search by token name or token address"
                     value={search}
-                    onChange={({ target }) => setSearch(target.value)}
+                    onChange={({ target }) => setSearchParam(target.value)}
                     postfix={<Search />}
                 />
             </Header>

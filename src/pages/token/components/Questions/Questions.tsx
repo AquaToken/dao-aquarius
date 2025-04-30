@@ -9,11 +9,10 @@ import useAuthStore from 'store/authStore/useAuthStore';
 import { ModalService } from 'services/globalServices';
 
 import { commonMaxWidth, respondDown } from 'web/mixins';
+import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints } from 'web/styles';
 
 import Question from 'basics/Question';
-
-import ChooseLoginMethodModal from '../../../../web/modals/auth/ChooseLoginMethodModal';
 
 const Container = styled.section`
     display: flex;
