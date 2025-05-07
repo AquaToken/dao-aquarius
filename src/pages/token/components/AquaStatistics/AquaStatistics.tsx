@@ -29,11 +29,6 @@ import AquaPrice from 'pages/token/components/AquaPrice/AquaPrice';
 const Container = styled.section`
     ${commonMaxWidth};
     padding: 0 10rem;
-    margin-top: 16.3rem;
-
-    ${respondDown(Breakpoints.md)`
-        margin-top: 15rem;
-    `}
 
     ${respondDown(Breakpoints.sm)`
         padding: 0 1.6rem;
@@ -92,6 +87,7 @@ const Column = styled.div`
 const Label = styled.span`
     color: ${COLORS.grayText};
     display: flex;
+    white-space: nowrap;
 
     svg {
         margin: 0 0.4rem;
@@ -102,6 +98,10 @@ const Value = styled.span`
     color: ${COLORS.paragraphText};
     font-size: 1.6rem;
     line-height: 2rem;
+
+    ${respondDown(Breakpoints.sm)`
+        text-align: right;
+    `}
 `;
 
 const TooltipInner = styled.span`
