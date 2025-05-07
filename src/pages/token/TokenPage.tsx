@@ -6,7 +6,6 @@ import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Community from 'components/Community';
-import SocialLinks from 'components/SocialLinks';
 import Subscribe from 'components/Subscribe';
 
 import AboutIce from 'pages/token/components/AboutIce/AboutIce';
@@ -35,8 +34,6 @@ const TokenPage = () => {
 
     return (
         <Container>
-            <SocialLinks />
-
             <MainBlock />
 
             <AquaStatistics />

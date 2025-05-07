@@ -16,12 +16,15 @@ import Bg from 'assets/token-page-bg.svg';
 
 import { Button } from 'basics/buttons';
 
+import SocialLinks from 'components/SocialLinks';
+
 import AnimatedBorderedText from 'pages/token/components/AnimatedBorderedText/AnimatedBorderedText';
 import AquaPrice from 'pages/token/components/AquaPrice/AquaPrice';
 
 const Container = styled.section`
     display: flex;
     flex-direction: column;
+    position: relative;
 
     ${respondDown(Breakpoints.md)`
         height: unset;
@@ -33,7 +36,7 @@ const Content = styled.div`
     display: flex;
     flex-direction: column;
     width: 100%;
-    padding: 20rem 10rem 0;
+    padding: 20rem 10rem 16rem;
     z-index: 20;
     ${commonMaxWidth};
 
@@ -48,9 +51,13 @@ const Content = styled.div`
 
 const Background = styled(Bg)`
     position: absolute;
-    height: 100vh;
-    right: -10rem;
+    height: 90rem;
+    right: -20rem;
     top: -11.2rem;
+
+    ${respondDown(Breakpoints.lg)`
+        right: -25rem;
+    `}
 
     ${respondDown(Breakpoints.md)`
         width: 60rem;
@@ -159,6 +166,7 @@ const MainBlock = () => {
     };
     return (
         <Container>
+            <SocialLinks />
             <Content>
                 <Background />
                 <Title>
