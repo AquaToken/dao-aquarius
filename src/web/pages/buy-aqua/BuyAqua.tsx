@@ -31,20 +31,23 @@ const Container = styled.div`
 
 const BuyAqua = (): JSX.Element => {
     const { account, isLogged } = useAuthStore();
-    const { aquaCode, aquaIssuer, aquaStellarAsset } = getAquaAssetData();
+    const { aquaStellarAsset } = getAquaAssetData();
 
     const hasTrustline = account?.getAssetBalance(aquaStellarAsset) !== null;
 
     const frameParams = {
         theme: 'light',
-        env: getEnv(),
-        assetcode: aquaCode,
-        assetissuer: aquaIssuer,
-        useraddress: account?.accountId(),
-        onlyselectedasset: 'true',
-        backgroundcolor: 'transparent',
-        textcolor: COLORS.titleText.substring(1),
-        buttonbackground: COLORS.buttonBackground.substring(1),
+        widgetId: 'aquarius',
+        walletAddress: account?.accountId(),
+        lockDefaultAsset: true,
+        defaultAsset: 'aqua-2',
+        defaultNetwork: 'stellar',
+        backgroundColor: 'transparent',
+        textColor: COLORS.titleText.substring(1),
+        buttonBackground: COLORS.buttonBackground.substring(1),
+        successColor: COLORS.green.substring(1),
+        errorColor: COLORS.pinkRed.substring(1),
+        iconsColor: COLORS.purple.substring(1),
         // substring here cause of url params can't have # symbol
     };
 
