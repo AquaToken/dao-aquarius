@@ -58,6 +58,7 @@ const Links = styled.div`
     ${respondDown(Breakpoints.md)`
         flex-wrap: wrap;
         justify-content: space-between;
+        gap: 1.6rem;
     `}
 
     ${respondDown(Breakpoints.sm)`
@@ -98,13 +99,17 @@ const Link = styled.a`
         }
     }
 
-    ${respondDown(Breakpoints.sm)`
-        width: 100%;
+    ${respondDown(Breakpoints.md)`
+        width: 45%;
         justify-content: center;
         
         &:not(:last-child) {
             margin-right: 0;
         }
+    `}
+
+    ${respondDown(Breakpoints.sm)`
+        width: 100%;
     `}
 `;
 

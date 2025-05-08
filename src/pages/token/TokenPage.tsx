@@ -19,6 +19,7 @@ import Questions from 'pages/token/components/Questions/Questions';
 const Container = styled.main`
     flex: 1 0 auto;
     background-color: ${COLORS.white};
+    overflow: hidden;
 `;
 
 const AquaLinksStyled = styled(AquaLinks)`
