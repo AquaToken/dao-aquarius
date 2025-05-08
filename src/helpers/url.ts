@@ -1,5 +1,5 @@
 import { API_URLS } from 'constants/api';
-import { GALAXYRAMP_WIDGET_URL } from 'constants/urls';
+import { COINDISCO_WIDGET_URL } from 'constants/urls';
 
 import { getEnv } from './env';
 
@@ -9,5 +9,5 @@ export const getAmmAquaUrl = () => API_URLS[getEnv()].ammAqua;
 
 export const getOnRampWidgetUrl = (params): string => {
     const urlParams = new URLSearchParams(params).toString();
-    return `${GALAXYRAMP_WIDGET_URL}?${urlParams}`;
+    return `${COINDISCO_WIDGET_URL}?${urlParams}`;
 };
