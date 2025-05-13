@@ -54,6 +54,9 @@ const ButtonBody = styled(BlankButton)<{
     }};
     background-color: ${COLORS.white};
     background: ${({ $secondary, $isWhite, $tertiary, $withGradient }) => {
+        if ($secondary && $withGradient) {
+            return 'radial-gradient(100% 158.34% at 0% 0%, rgba(234, 191, 255, 0.2) 0%, rgba(234, 191, 255, 0) 100%)';
+        }
         if ($secondary) {
             return COLORS.gray;
         }
@@ -70,10 +73,18 @@ const ButtonBody = styled(BlankButton)<{
         return COLORS.buttonBackground;
     }};
 
-    box-shadow: ${({ $withGradient }) =>
-        $withGradient
+    box-shadow: ${({ $withGradient, $secondary, $tertiary }) =>
+        $withGradient && !$secondary && !$tertiary
             ? 'inset 0 0 0 4px rgba(255, 255, 255, 0.08), 0 4px 10px rgba(0, 0, 0, 0.2)'
             : 'unset'};
+    
+    border: ${({ $withGradient, $secondary }) => {
+        if ($withGradient && $secondary) {
+            return `0.1rem solid ${COLORS.lightPurple};`;
+        }
+
+        return `0.1rem solid ${COLORS.transparent};`;
+    }}
 
     border-radius: ${({ $isRounded, $isBig, $isSmall }) => {
         if (!$isRounded) {
@@ -99,6 +110,10 @@ const ButtonBody = styled(BlankButton)<{
 
     &:hover {
         background: ${({ $secondary, $isWhite, $tertiary, $withGradient }) => {
+            if ($secondary && $withGradient) {
+                return 'radial-gradient(100% 234.36% at 0% 100%, rgba(234, 191, 255, 0) 0%, rgba(234, 191, 255, 0.2) 100%)';
+            }
+
             if ($secondary) {
                 return COLORS.lightGray;
             }
@@ -140,10 +155,15 @@ const ButtonLoader = styled.div<{
     $isWhite?: boolean;
     $isPurpleText?: boolean;
     $tertiary?: boolean;
+    $withGradient?: boolean;
 }>`
-    color: ${({ $secondary, $isWhite, $isPurpleText, $tertiary }) => {
+    color: ${({ $secondary, $isWhite, $isPurpleText, $tertiary, $withGradient }) => {
         if ($isPurpleText) {
             return COLORS.purple;
+        }
+
+        if ($secondary && $withGradient) {
+            return COLORS.black;
         }
 
         if ($secondary) {
@@ -160,6 +180,13 @@ const ButtonLoader = styled.div<{
 
         return COLORS.white;
     }};
+
+    button:hover > & {
+        ${({ $secondary, $withGradient }) => {
+            if ($secondary && $withGradient) {
+                return `color: ${COLORS.purple};`;
+            }
+        }}
 
     button:disabled > & {
         color: ${COLORS.grayText};
@@ -248,6 +275,7 @@ const Button = ({
             $tertiary={tertiary}
             $isWhite={isWhite}
             $isPurpleText={isPurpleText}
+            $withGradient={withGradient}
         >
             {children}
         </ButtonLoader>

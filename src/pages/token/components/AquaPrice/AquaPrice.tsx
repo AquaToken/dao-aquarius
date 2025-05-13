@@ -31,22 +31,18 @@ const Container = styled.div`
         rgba(234, 191, 255, 0) 100%
     );
 
-    border: 0.1rem solid;
+    border: 0.1rem solid ${COLORS.lightPurple};
 
-    border-image-source: radial-gradient(
-        80.69% 208.78% at 108.28% 112.58%,
-        rgba(135, 38, 183, 0) 0%,
-        #eabfff 100%
-    );
     backdrop-filter: blur(80px);
     -webkit-backdrop-filter: blur(80px);
     color: ${COLORS.white};
 
-    ${respondDown(Breakpoints.md)`
+    ${respondDown(Breakpoints.lg)`
         top: calc(100% + 3.6rem);
         left: 0;
         right: unset;
         color: ${COLORS.paragraphText};
+        width: 34rem;
     `}
 
     ${respondDown(Breakpoints.sm)`
