@@ -124,6 +124,11 @@ const ButtonAndPriceBlock = styled.div`
     padding-top: 2.4rem;
     position: relative;
 
+    ${respondDown(Breakpoints.md)`
+        flex-direction: column;
+        gap: 3.6rem;
+    `}
+
     ${respondDown(Breakpoints.sm)`
         a {
             width: 100%;
@@ -137,8 +142,13 @@ const ButtonAndPriceBlock = styled.div`
 `;
 
 const ButtonStyled = styled(Button)`
-    width: 33rem;
+    width: 25rem;
     height: 7rem;
+    margin-right: 1.6rem;
+
+    ${respondDown(Breakpoints.md)`
+        width: 34rem;
+    `}
 
     ${respondDown(Breakpoints.sm)`
         width: 100%;
@@ -178,9 +188,15 @@ const MainBlock = () => {
                     Join Aquarius to start earning AQUA rewards for liquidity provision and voting
                 </SecondaryDescription>
                 <ButtonAndPriceBlock>
-                    <Link to={MainRoutes.buyAqua} onClick={buyAqua}>
+                    <Link to={MainRoutes.swap}>
                         <ButtonStyled isRounded withGradient isBig>
-                            buy aqua
+                            swap aqua
+                        </ButtonStyled>
+                    </Link>
+
+                    <Link to={MainRoutes.buyAqua} onClick={buyAqua}>
+                        <ButtonStyled isRounded withGradient isBig secondary>
+                            Buy with a card
                         </ButtonStyled>
                     </Link>
 

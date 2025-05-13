@@ -7,8 +7,14 @@ import { Breakpoints, COLORS } from 'web/styles';
 import CMC from 'assets/coin-market-cap.svg';
 import Coingecko from 'assets/coingecko.svg';
 import DefiLlama from 'assets/defillama.svg';
-import Arrow from 'assets/icon-arrow-right.svg';
+import Digifinex from 'assets/digifinex.svg';
+import Gopax from 'assets/gopax-logo.svg';
+import Latoken from 'assets/latoken.svg';
+import Probit from 'assets/probit-logo.svg';
 import Expert from 'assets/stellar-expert.svg';
+import XT from 'assets/xt.svg';
+
+import AquaLink from 'pages/token/components/AquaLinks/AquaLink/AquaLink';
 
 const Container = styled.div`
     padding: 0 10rem;
@@ -31,25 +37,28 @@ const Content = styled.div`
     ${respondDown(Breakpoints.sm)`
         padding: 0;
     `}
+
+    ${respondDown(Breakpoints.md)`
+        flex-direction: column;
+        gap: 3.2rem;
+        align-items: flex-start;
+    `}
+`;
+
+const Section = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 2.4rem;
+    width: 50%;
+
+    ${respondDown(Breakpoints.md)`
+        width: 100%;
+    `}
 `;
 
 const Label = styled.span`
     color: ${COLORS.grayText};
     white-space: nowrap;
-
-    ${respondDown(Breakpoints.md)`
-        display: none;
-    `}
-`;
-
-const Line = styled.div`
-    margin: 0 2.4rem;
-    border-top: 0.1rem solid ${COLORS.grayText};
-    width: 100%;
-
-    ${respondDown(Breakpoints.md)`
-        display: none;
-    `}
 `;
 
 const Links = styled.div`
@@ -57,92 +66,63 @@ const Links = styled.div`
 
     ${respondDown(Breakpoints.md)`
         flex-wrap: wrap;
-        justify-content: space-between;
         gap: 1.6rem;
-    `}
-
-    ${respondDown(Breakpoints.sm)`
-        flex-wrap: unset;
-        flex-direction: column;
-        width: 100%;
-        gap: 0.8rem;
-    `}
-`;
-
-const Link = styled.a`
-    display: flex;
-    align-items: center;
-    padding: 1.8rem 2rem 1.8rem 2.4rem;
-    background-color: ${COLORS.lightGray};
-    border-radius: 1.6rem;
-    cursor: pointer;
-    text-decoration: none;
-    color: ${COLORS.titleText};
-    font-weight: 700;
-
-    svg:first-child {
-        margin-right: 0.8rem;
-    }
-
-    svg:last-child {
-        transition: all 0.2s ease;
-        margin: 0 0.4rem 0 0.8rem;
-    }
-
-    &:not(:last-child) {
-        margin-right: 1.6rem;
-    }
-
-    &:hover {
-        svg:last-child {
-            margin: 0 0 0 1.2rem;
-        }
-    }
-
-    ${respondDown(Breakpoints.md)`
-        width: 45%;
-        justify-content: center;
-        
-        &:not(:last-child) {
-            margin-right: 0;
-        }
-    `}
-
-    ${respondDown(Breakpoints.sm)`
-        width: 100%;
+        justify-content: space-between;
     `}
 `;
 
 const AquaLinks = ({ ...props }) => (
     <Container {...props}>
         <Content>
-            <Label>See on</Label>
-            <Line />
-            <Links>
-                <Link
-                    href="https://stellar.expert/explorer/public/asset/AQUA-GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA"
-                    target="_blank"
-                >
-                    <Expert />
-                    StellarExpert
-                    <Arrow />
-                </Link>
-                <Link href="https://www.coingecko.com/en/coins/aquarius" target="_blank">
-                    <Coingecko />
-                    CoinGecko
-                    <Arrow />
-                </Link>
-                <Link href="https://coinmarketcap.com/currencies/aquarius/" target="_blank">
-                    <CMC />
-                    CoinMarketCap
-                    <Arrow />
-                </Link>
-                <Link href="https://defillama.com/dexs/aquarius-stellar" target="_blank">
-                    <DefiLlama />
-                    DefiLlama
-                    <Arrow />
-                </Link>
-            </Links>
+            <Section>
+                <Label>See on</Label>
+                <Links>
+                    <AquaLink
+                        href="https://stellar.expert/explorer/public/asset/AQUA-GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA"
+                        label="StellarExpert"
+                    >
+                        <Expert />
+                    </AquaLink>
+                    <AquaLink href="https://www.coingecko.com/en/coins/aquarius" label="CoinGecko">
+                        <Coingecko />
+                    </AquaLink>
+                    <AquaLink
+                        href="https://coinmarketcap.com/currencies/aquarius/"
+                        label="CoinMarketCap"
+                    >
+                        <CMC />
+                    </AquaLink>
+                    <AquaLink href="https://defillama.com/dexs/aquarius-stellar" label="DefiLlama">
+                        <DefiLlama />
+                    </AquaLink>
+                </Links>
+            </Section>
+            <Section>
+                <Label>Listed on</Label>
+                <Links>
+                    <AquaLink href="https://www.xt.com/en/trade/aqua_usdc" label="XT">
+                        <XT />
+                    </AquaLink>
+                    <AquaLink href="https://latoken.com/exchange/AQUA_USDC" label="Latoken">
+                        <Latoken />
+                    </AquaLink>
+                    <AquaLink
+                        href="https://www.digifinex.com/en-ww/trade/USDT/AQUA?tradeKind=spot"
+                        label="Digifinex"
+                    >
+                        <Digifinex />
+                    </AquaLink>
+                    <AquaLink
+                        href="https://www.probit.com/en-us/app/exchange/AQUA-USDT"
+                        label="Probit Global"
+                    >
+                        <Probit />
+                    </AquaLink>
+                    <AquaLink href="https://www.gopax.co.kr/exchange/aqua-krw" label="GOPAX">
+                        <Gopax />
+                    </AquaLink>
+                </Links>
+            </Section>
         </Content>
     </Container>
 );

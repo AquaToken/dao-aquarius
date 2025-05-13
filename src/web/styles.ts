@@ -14,6 +14,7 @@ export const COLORS = {
     lightGray: '#FAFAFB',
     placeholder: '#B3B4C3',
     darkPurple: '#24034F',
+    lightPurple: '#dab0ed',
     pinkRed: '#FF3461',
     yellow: '#F8D26C',
     green: '#00B796',
@@ -26,6 +27,7 @@ export const COLORS = {
     stablePool: '#2AA3B0',
     // Focus color should be different of any project colors for visability
     focusColor: '#24b1c7',
+    black: '#000000',
 };
 
 export const FONT_FAMILY = {
