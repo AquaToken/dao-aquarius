@@ -51,6 +51,7 @@ const BuyAquaPage = lazy(() => import('web/pages/buy-aqua/BuyAqua'));
 const TestnetSwitcherPage = lazy(() => import('web/pages/testnet-switcher/TestnetSwitcher'));
 const TermsPage = lazy(() => import('pages/terms/Terms'));
 const PrivacyPage = lazy(() => import('pages/privacy/Privacy'));
+const TokenPage = lazy(() => import('pages/token/TokenPage'));
 
 const UPDATE_ASSETS_DATE = 'update assets timestamp';
 const UPDATE_PERIOD = 24 * 60 * 60 * 1000;
@@ -273,6 +274,12 @@ const App = () => {
                         <Route path={MainRoutes.privacy}>
                             <PageTitle title="Privacy Policy">
                                 <PrivacyPage />
+                            </PageTitle>
+                        </Route>
+
+                        <Route path={MainRoutes.token}>
+                            <PageTitle title="AQUA token">
+                                <TokenPage />
                             </PageTitle>
                         </Route>
 

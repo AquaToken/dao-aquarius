@@ -299,6 +299,15 @@ const Links = () => {
                             activeStyle={{
                                 fontWeight: 700,
                             }}
+                            title="AQUA token"
+                            to={MainRoutes.token}
+                        >
+                            Token info
+                        </NavLinkStyled>
+                        <NavLinkStyled
+                            activeStyle={{
+                                fontWeight: 700,
+                            }}
                             title="Buy AQUA"
                             to={MainRoutes.buyAqua}
                             onClick={e => {
