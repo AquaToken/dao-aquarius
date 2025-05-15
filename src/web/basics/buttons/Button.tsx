@@ -188,9 +188,10 @@ const ButtonLoader = styled.div<{
     button:hover > & {
         ${({ $secondary, $withGradient }) => {
             if ($secondary && $withGradient) {
-                return `color: ${COLORS.purple};`;
+                return `color:  ${COLORS.purple};`;
             }
-        }}
+        }};
+    }
 
     button:disabled > & {
         color: ${COLORS.grayText};
