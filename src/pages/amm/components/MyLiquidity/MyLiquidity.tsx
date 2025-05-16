@@ -30,6 +30,7 @@ import { Int128Parts } from 'types/stellar';
 
 import { flexAllCenter, flexRowSpaceBetween, respondDown, textEllipsis } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
+import ClaimRewardsModal from 'web/modals/ClaimRewardsModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import AquaLogo from 'assets/aqua-logo-small.svg';
@@ -296,8 +297,6 @@ interface MyLiquidityProps {
     backToAllPools?: () => void;
 }
 
-const CLAIM_ALL_ID = 'all';
-
 const CLAIM_ALL_COUNT = 5;
 
 const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) => {
@@ -459,41 +458,6 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
             });
     };
 
-    const claimAll = () => {
-        if (account.authType === LoginTypes.walletConnect) {
-            openCurrentWalletIfExist();
-        }
-        setClaimPendingId(CLAIM_ALL_ID);
-
-        const top5RewardsPools = [...userRewards.entries()]
-            .sort((a, b) => Number(b[1].to_claim) - Number(a[1].to_claim))
-            .slice(0, CLAIM_ALL_COUNT)
-            .map(([key]) => key);
-
-        SorobanService.getClaimBatchTx(account.accountId(), top5RewardsPools)
-            .then(tx => account.signAndSubmitTx(tx, true))
-            .then((res: { status?: BuildSignAndSubmitStatuses; value: () => Int128Parts }) => {
-                if (!res) {
-                    return;
-                }
-
-                if (
-                    (res as { status: BuildSignAndSubmitStatuses }).status ===
-                    BuildSignAndSubmitStatuses.pending
-                ) {
-                    ToastService.showSuccessToast('More signatures required to complete');
-                    return;
-                }
-
-                ToastService.showSuccessToast('Claimed successfully');
-                setClaimPendingId(null);
-            })
-            .catch(err => {
-                ToastService.showErrorToast(err.message ?? err.toString());
-                setClaimPendingId(null);
-            });
-    };
-
     const calculateBoostValue = (rewardsInfo: PoolRewardsInfo, userBalance: string) => {
         if (!rewardsInfo) return 1;
         const tps = +rewardsInfo.tps;
@@ -543,13 +507,16 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                 <SelectStyled value={filter} options={FilterOptions} onChange={setFilterValue} />
             </SelectWrapper>
 
-            {Boolean(rewardsSum) && (
+            {isUserRewardsLoaded && (
                 <RewardsWrap>
                     <Rewards>
                         <AquaLogoStyled />
                         <RewardsDescription>
                             <span>
-                                You have {userRewards.size ?? ''} unclaimed rewards
+                                {rewardsSum
+                                    ? `You have ${userRewards.size ?? ''} unclaimed rewards`
+                                    : 'You might have unclaimed rewards'}
+
                                 <Tooltip
                                     content={
                                         <RewardsTooltipInner>
@@ -564,16 +531,12 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                     <IconInfoStyled />
                                 </Tooltip>
                             </span>
-                            <span>for {formatBalance(rewardsSum)} AQUA</span>
+                            {Boolean(rewardsSum) && (
+                                <span>for {formatBalance(rewardsSum)} AQUA</span>
+                            )}
                         </RewardsDescription>
-                        <StyledButton
-                            disabled={Boolean(claimPendingId) && claimPendingId !== CLAIM_ALL_ID}
-                            onClick={() => claimAll()}
-                            pending={claimPendingId === CLAIM_ALL_ID}
-                        >
-                            {userRewards.size > CLAIM_ALL_COUNT
-                                ? `Claim Top ${CLAIM_ALL_COUNT}`
-                                : 'Claim rewards'}
+                        <StyledButton onClick={() => ModalService.openModal(ClaimRewardsModal, {})}>
+                            {rewardsSum ? 'Claim rewards' : 'Check'}
                         </StyledButton>
                     </Rewards>
 

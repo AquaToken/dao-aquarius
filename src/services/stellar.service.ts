@@ -7,6 +7,7 @@ import { getPoolInfo } from 'api/amm';
 
 import { ASSETS_ENV_DATA } from 'constants/assets';
 
+import chunkFunction from 'helpers/chunk-function';
 import debounceFunction from 'helpers/debounce-function';
 import { getEnv, getNetworkPassphrase } from 'helpers/env';
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
@@ -1216,7 +1217,11 @@ export default class StellarServiceClass {
     }
 
     private loadNotes(payments) {
-        this.chunkFunction(payments, payment => {
+        chunkFunction<
+            | (StellarSdk.Horizon.ServerApi.PaymentOperationRecord & { memo: string })
+            | (StellarSdk.Horizon.ServerApi.InvokeHostFunctionOperationRecord & { memo: string }),
+            void
+        >(payments, payment => {
             if (
                 payment.type === 'invoke_host_function' &&
                 this.isPaymentCalledMethod(payment.parameters, 'claim')
@@ -1263,16 +1268,6 @@ export default class StellarServiceClass {
                 payment.memo = note;
                 this.event.trigger({ type: StellarEvents.paymentsHistoryUpdate });
             });
-    }
-
-    private async chunkFunction(array, promiseFunction, chunkSize = 10) {
-        const result = [];
-        for (let i = 0; i < array.length; i += chunkSize) {
-            const chunk = array.slice(i, i + chunkSize);
-            const chunkResult = await Promise.all(chunk.map(item => promiseFunction(item)));
-            result.push(...chunkResult);
-        }
-        return result;
     }
 
     private updateLumenUsdPrice() {

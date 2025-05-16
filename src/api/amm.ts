@@ -30,6 +30,7 @@ import {
     PoolUserProcessed,
     PoolVolume24h,
 } from 'types/amm';
+import chunkFunction from 'helpers/chunk-function';
 
 export enum FilterOptions {
     all = 'all',
@@ -406,4 +407,29 @@ export const getAssetsList = async (): Promise<AssetSimple[]> => {
         usdcAssetString,
         ...[...assetsSet].sort((a: string, b: string) => a.localeCompare(b)),
     ].map((str: string) => getAssetFromString(str));
+};
+
+export const getUserRewardsList = async (
+    accountId: string,
+): Promise<{ id: string; amount: number; assets: Asset[] }[]> => {
+    const baseUrl = getAmmAquaUrl();
+
+    const { data } = await axios.get<ListResponse<Pool>>(`${baseUrl}/pools/?size=500`);
+
+    const results = [];
+
+    await chunkFunction(processPools(data.items), async pool => {
+        const result = await SorobanService.getPoolRewards(accountId, pool.address);
+
+        if (Number(result.to_claim)) {
+            results.push({
+                id: pool.address,
+                amount: Number(result.to_claim),
+                assets: pool.assets,
+                type: pool.pool_type,
+            });
+        }
+    });
+
+    return results.sort((a, b) => b.amount - a.amount);
 };
