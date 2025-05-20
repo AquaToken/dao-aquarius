@@ -3,7 +3,7 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { getAssetString } from 'helpers/assets';
+import { getAquaAssetData, getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
@@ -17,10 +17,11 @@ import { PoolExtended } from 'types/amm';
 import { ModalProps } from 'types/modal';
 import { Int128Parts } from 'types/stellar';
 
-import { flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { customScroll, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Button from 'basics/buttons/Button';
+import { Checkbox } from 'basics/inputs';
 import Input from 'basics/inputs/Input';
 import RangeInput from 'basics/inputs/RangeInput';
 import DotsLoader from 'basics/loaders/DotsLoader';
@@ -28,13 +29,19 @@ import PageLoader from 'basics/loaders/PageLoader';
 import Market from 'basics/Market';
 import { ModalTitle } from 'basics/ModalAtoms';
 
+import NoTrustline from 'components/NoTrustline';
+
 import SuccessModal from '../SuccessModal/SuccessModal';
 
 const Container = styled.div`
     width: 52.3rem;
+    max-height: 95vh;
+    overflow-y: auto;
+    ${customScroll};
 
     ${respondDown(Breakpoints.md)`
         width: 100%;
+        max-height: unset;
     `}
 `;
 
@@ -62,10 +69,13 @@ const InputStyled = styled(Input)`
     margin-top: 5rem;
 `;
 
-const Details = styled.div`
+const Details = styled.div<{ $withBorder: boolean }>`
     display: flex;
     flex-direction: column;
     margin-top: 3.2rem;
+    padding-bottom: ${({ $withBorder }) => ($withBorder ? '3.2rem' : '0')};
+    border-bottom: ${({ $withBorder }) => ($withBorder ? `0.1rem dashed ${COLORS.gray}` : 'none')};
+    margin-bottom: ${({ $withBorder }) => ($withBorder ? '3.2rem' : '0')};
 `;
 
 const DescriptionRow = styled.div`
@@ -85,8 +95,12 @@ const WithdrawFromPool = ({ params, close }: ModalProps<{ pool: PoolExtended }>)
     const [pending, setPending] = useState(false);
     const [totalShares, setTotalShares] = useState(null);
     const [reserves, setReserves] = useState(null);
+    const [rewards, setRewards] = useState(null);
+    const [withClaim, setWithClaim] = useState(false);
 
     const { account } = useAuthStore();
+
+    const { aquaStellarAsset } = getAquaAssetData();
 
     useEffect(() => {
         SorobanService.getTotalShares(pool.address).then(res => {
@@ -97,6 +111,16 @@ const WithdrawFromPool = ({ params, close }: ModalProps<{ pool: PoolExtended }>)
     useEffect(() => {
         SorobanService.getPoolReserves(pool.assets, pool.address).then(res => {
             setReserves(res);
+        });
+    }, []);
+
+    useEffect(() => {
+        SorobanService.getPoolRewards(account.accountId(), pool.address).then(res => {
+            setRewards(Number(res.to_claim));
+
+            if (Number(res.to_claim)) {
+                setWithClaim(true);
+            }
         });
     }, []);
 
@@ -124,7 +148,7 @@ const WithdrawFromPool = ({ params, close }: ModalProps<{ pool: PoolExtended }>)
         setPercent(roundedValue);
     };
 
-    const withdraw = () => {
+    const withdraw = async () => {
         const noTrustAssets = pool.assets.filter(asset => account.getAssetBalance(asset) === null);
 
         if (noTrustAssets.length) {
@@ -145,56 +169,67 @@ const WithdrawFromPool = ({ params, close }: ModalProps<{ pool: PoolExtended }>)
             .times(new BigNumber(percent))
             .div(100)
             .toFixed(7);
-        let hash: string;
 
-        SorobanService.getWithdrawTx(
-            account?.accountId(),
-            pool.address,
-            amount,
-            pool.assets,
-            pool.share_token_address,
-        )
-            .then(tx => {
-                hash = tx.hash().toString('hex');
-                return account.signAndSubmitTx(tx, true);
-            })
-            .then(
-                (res: {
-                    value?: () => { value: () => Int128Parts }[];
-                    status?: BuildSignAndSubmitStatuses;
-                }) => {
-                    setPending(false);
-                    if (!res) {
-                        return;
-                    }
+        try {
+            const tx = withClaim
+                ? await SorobanService.getWithdrawAndClaim(
+                      account?.accountId(),
+                      pool.address,
+                      amount,
+                      pool.assets,
+                      pool.share_token_address,
+                  )
+                : await SorobanService.getWithdrawTx(
+                      account?.accountId(),
+                      pool.address,
+                      amount,
+                      pool.assets,
+                      pool.share_token_address,
+                  );
 
-                    close();
+            const hash = tx.hash().toString('hex');
+            const result: {
+                value?: () =>
+                    | { value: () => Int128Parts }[]
+                    | { value: () => { value: () => Int128Parts }[] }[];
+                status?: BuildSignAndSubmitStatuses;
+            } = await account.signAndSubmitTx(tx, true);
 
-                    if (
-                        (res as { status: BuildSignAndSubmitStatuses }).status ===
-                        BuildSignAndSubmitStatuses.pending
-                    ) {
-                        ToastService.showSuccessToast('More signatures required to complete');
-                        return;
-                    }
+            setPending(false);
 
-                    ModalService.openModal(SuccessModal, {
-                        assets: pool.assets,
-                        amounts: res.value().map(val => SorobanService.i128ToInt(val.value())),
-                        title: 'Withdraw Successful',
-                        hash,
-                    });
-                },
-            )
-            .catch(e => {
-                const errorMessage = e.message ?? e.toString() ?? 'Oops! Something went wrong';
-                ToastService.showErrorToast(
-                    errorMessage === 'The amount is too small to deposit to this pool'
-                        ? 'The amount is too small to withdraw from this pool'
-                        : errorMessage,
-                );
-                setPending(false);
+            if (!result) {
+                return;
+            }
+
+            close();
+
+            if (
+                (result as { status: BuildSignAndSubmitStatuses }).status ===
+                BuildSignAndSubmitStatuses.pending
+            ) {
+                ToastService.showSuccessToast('More signatures required to complete');
+                return;
+            }
+
+            const resultValues: { value: () => Int128Parts }[] = withClaim
+                ? (result.value()[0].value() as { value: () => Int128Parts }[])
+                : (result.value() as { value: () => Int128Parts }[]);
+
+            ModalService.openModal(SuccessModal, {
+                assets: pool.assets,
+                amounts: resultValues.map(val => SorobanService.i128ToInt(val.value())),
+                title: 'Withdraw Successful',
+                hash,
             });
+        } catch (e) {
+            const errorMessage = e.message ?? e.toString() ?? 'Oops! Something went wrong';
+            ToastService.showErrorToast(
+                errorMessage === 'The amount is too small to deposit to this pool'
+                    ? 'The amount is too small to withdraw from this pool'
+                    : errorMessage,
+            );
+            setPending(false);
+        }
     };
 
     return (
@@ -216,7 +251,7 @@ const WithdrawFromPool = ({ params, close }: ModalProps<{ pool: PoolExtended }>)
                     />
                     <RangeInput onChange={value => setPercent(value.toString())} value={+percent} />
 
-                    <Details>
+                    <Details $withBorder={Boolean(rewards)}>
                         {pool.assets.map(asset => (
                             <DescriptionRow key={getAssetString(asset)}>
                                 <span>Will receive {asset.code}</span>
@@ -235,6 +270,16 @@ const WithdrawFromPool = ({ params, close }: ModalProps<{ pool: PoolExtended }>)
                             </DescriptionRow>
                         ))}
                     </Details>
+
+                    {Boolean(rewards) && (
+                        <Checkbox
+                            checked={withClaim}
+                            onChange={setWithClaim}
+                            label={`Claim rewards: ${formatBalance(rewards, true)} AQUA`}
+                        />
+                    )}
+
+                    {withClaim && <NoTrustline asset={aquaStellarAsset} />}
 
                     <StyledButton isBig pending={pending} onClick={() => withdraw()}>
                         Remove
