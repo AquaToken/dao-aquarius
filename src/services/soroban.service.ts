@@ -648,6 +648,101 @@ export default class SorobanServiceClass {
         ).then(tx => this.prepareTransaction(tx));
     }
 
+    async getWithdrawAndClaim(
+        accountId: string,
+        poolAddress: string,
+        shareAmount: string,
+        assets: Asset[],
+        shareAddress: string,
+    ): Promise<StellarSdk.Transaction> {
+        const withdrawArgs = [
+            this.publicKeyToScVal(accountId),
+            this.amountToUint128(shareAmount),
+            this.scValToArray(assets.map(() => this.amountToUint128('0.0000001'))),
+        ];
+
+        const withdrawCall = this.scValToArray([
+            this.contractIdToScVal(poolAddress),
+            xdr.ScVal.scvSymbol(AMM_CONTRACT_METHOD.WITHDRAW),
+            this.scValToArray(withdrawArgs),
+        ]);
+
+        const claimCall = this.scValToArray([
+            this.contractIdToScVal(poolAddress),
+            xdr.ScVal.scvSymbol(AMM_CONTRACT_METHOD.CLAIM),
+            this.scValToArray([this.publicKeyToScVal(accountId)]),
+        ]);
+
+        const batchCalls = [withdrawCall, claimCall];
+
+        const burnAuth = new xdr.SorobanAuthorizedInvocation({
+            function: xdr.SorobanAuthorizedFunction.sorobanAuthorizedFunctionTypeContractFn(
+                new xdr.InvokeContractArgs({
+                    functionName: ASSET_CONTRACT_METHOD.BURN,
+                    contractAddress: this.contractIdToScVal(shareAddress).address(),
+                    args: [this.publicKeyToScVal(accountId), this.amountToInt128(shareAmount)],
+                }),
+            ),
+            subInvocations: [],
+        });
+
+        const withdrawAuthInvocation = new xdr.SorobanAuthorizedInvocation({
+            function: xdr.SorobanAuthorizedFunction.sorobanAuthorizedFunctionTypeContractFn(
+                new xdr.InvokeContractArgs({
+                    contractAddress: this.contractIdToScVal(poolAddress).address(),
+                    functionName: AMM_CONTRACT_METHOD.WITHDRAW,
+                    args: withdrawArgs,
+                }),
+            ),
+            subInvocations: [burnAuth],
+        });
+
+        const claimAuthInvocation = new xdr.SorobanAuthorizedInvocation({
+            function: xdr.SorobanAuthorizedFunction.sorobanAuthorizedFunctionTypeContractFn(
+                new xdr.InvokeContractArgs({
+                    contractAddress: this.contractIdToScVal(poolAddress).address(),
+                    functionName: AMM_CONTRACT_METHOD.CLAIM,
+                    args: [this.publicKeyToScVal(accountId)],
+                }),
+            ),
+            subInvocations: [],
+        });
+
+        const rootInvocation = new xdr.SorobanAuthorizedInvocation({
+            function: xdr.SorobanAuthorizedFunction.sorobanAuthorizedFunctionTypeContractFn(
+                new xdr.InvokeContractArgs({
+                    contractAddress: this.contractIdToScVal(BATCH_SMART_CONTACT_ID).address(),
+                    functionName: BATCH_CONTRACT_METHOD.batch,
+                    args: [
+                        this.scValToArray([this.publicKeyToScVal(accountId)]),
+                        this.scValToArray(batchCalls),
+                        xdr.ScVal.scvBool(true),
+                    ],
+                }),
+            ),
+            subInvocations: [withdrawAuthInvocation, claimAuthInvocation],
+        });
+
+        const batchAuth = new xdr.SorobanAuthorizationEntry({
+            credentials: xdr.SorobanCredentials.sorobanCredentialsSourceAccount(),
+            rootInvocation,
+        });
+
+        const batchOperation = StellarSdk.Operation.invokeContractFunction({
+            contract: BATCH_SMART_CONTACT_ID,
+            function: BATCH_CONTRACT_METHOD.batch,
+            args: [
+                this.scValToArray([this.publicKeyToScVal(accountId)]),
+                this.scValToArray(batchCalls),
+                xdr.ScVal.scvBool(true),
+            ],
+            auth: [batchAuth],
+        });
+
+        const tx = await this.buildSmartContactTxFromOp(accountId, batchOperation);
+        return this.prepareTransaction(tx);
+    }
+
     getCreationFeeToken() {
         return this.buildSmartContactTx(
             ACCOUNT_FOR_SIMULATE,
