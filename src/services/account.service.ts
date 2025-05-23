@@ -57,6 +57,40 @@ export default class AccountService extends Horizon.AccountResponse {
         return Boolean(vaultMarker);
     }
 
+    signTx(tx: StellarSdk.Transaction): Promise<string> {
+        if (this.authType === LoginTypes.public || this.isMultisigEnabled) {
+            const xdr = tx.toEnvelope().toXDR('base64');
+
+            return ModalService.openModal(SignWithPublic, {
+                xdr,
+                account: this,
+                onlySign: true,
+            }).then(({ xdr }) => xdr);
+        }
+
+        if (this.authType === LoginTypes.walletConnect) {
+            return WalletConnectService.signTx(tx as StellarSdk.Transaction);
+        }
+
+        if (this.authType === LoginTypes.secret) {
+            return SorobanService.signWithSecret(tx).toEnvelope().toXDR('base64');
+        }
+
+        if (this.authType === LoginTypes.lobstr) {
+            return LobstrExtensionService.signTx(tx).then(res => res.toEnvelope().toXDR('base64'));
+        }
+
+        if (this.authType === LoginTypes.ledger) {
+            return LedgerService.signTx(tx as StellarSdk.Transaction).then(res =>
+                res.toEnvelope().toXDR('base64'),
+            );
+        }
+
+        if (this.authType === LoginTypes.walletKit) {
+            return WalletKitService.signTx(tx).then(res => res.toEnvelope().toXDR('base64'));
+        }
+    }
+
     async signAndSubmitTx(
         tx: StellarSdk.Transaction,
         withResult?: boolean,
