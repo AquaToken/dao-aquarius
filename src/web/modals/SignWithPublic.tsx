@@ -2,10 +2,10 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { ModalProps } from 'types/modal';
-
 import AccountService from 'services/account.service';
 import { StellarService } from 'services/globalServices';
+
+import { ModalProps } from 'types/modal';
 
 import ArrowRight from 'assets/icon-arrow-right.svg';
 import Copy from 'assets/icon-copy.svg';
@@ -13,6 +13,7 @@ import XdrLogo from 'assets/icon-xdr.svg';
 import Stellar from 'assets/xlm-logo.svg';
 
 import AccountBlock from 'basics/AccountBlock';
+import { Button } from 'basics/buttons';
 import CopyButton from 'basics/buttons/CopyButton';
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
 
@@ -103,10 +104,26 @@ const CopyStyled = styled(CopyButton)`
     width: 100%;
 `;
 
-const SignWithPublic = ({ params }: ModalProps<{ xdr: string; account: AccountService }>) => {
-    const { xdr, account } = params;
+const TextArea = styled.textarea`
+    width: 100%;
+    height: 10rem;
+    resize: none;
+    border-radius: 0.3rem;
+    padding: 1.2rem;
+    margin: 1.2rem 0;
+`;
+
+interface Props {
+    xdr: string;
+    account: AccountService;
+    onlySign?: boolean;
+}
+
+const SignWithPublic = ({ params, confirm }: ModalProps<Props>) => {
+    const { xdr, account, onlySign } = params;
     const accountId = account.accountId();
     const [federation, setFederation] = useState(null);
+    const [signed, setSigned] = useState('');
 
     useEffect(() => {
         if (!account.home_domain) {
@@ -122,8 +139,9 @@ const SignWithPublic = ({ params }: ModalProps<{ xdr: string; account: AccountSe
             <AccountBlock accountId={accountId} federation={federation} />
             <Title>Sign with Stellar Laboratory</Title>
             <ModalDescription>
-                Please continue and submit transaction with Stellar Laboratory using one of the
-                supported methods (Ledger, Trezor, Freighter, Albedo or secret key).
+                {onlySign
+                    ? 'Please continue with Stellar Laboratory using one of the supported methods, sign the transaction, and paste the signed transaction below.'
+                    : 'Please continue and submit transaction with Stellar Laboratory using one of the supported methods (Ledger, Trezor, Freighter, Albedo or secret key).'}
             </ModalDescription>
             <a
                 href={`https://lab.stellar.org/transaction/sign?$=network$id=mainnet&label=Mainnet&horizonUrl=https:////horizon.stellar.org&rpcUrl=&passphrase=Public%20Global%20Stellar%20Network%20/;%20September%202015;&transaction$sign$activeView=overview&importXdr=${xdr.replaceAll(
@@ -161,6 +179,24 @@ const SignWithPublic = ({ params }: ModalProps<{ xdr: string; account: AccountSe
                     <CopyIcon />
                 </ActionContainer>
             </CopyStyled>
+
+            {onlySign && (
+                <>
+                    <TextArea
+                        placeholder="Paste signed transaction here"
+                        value={signed}
+                        onChange={e => setSigned(e.target.value)}
+                    ></TextArea>
+                    <Button
+                        fullWidth
+                        isBig
+                        disabled={!signed}
+                        onClick={() => confirm({ xdr: signed })}
+                    >
+                        submit
+                    </Button>
+                </>
+            )}
         </Container>
     );
 };

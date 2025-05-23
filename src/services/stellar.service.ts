@@ -1,5 +1,13 @@
 import * as StellarSdk from '@stellar/stellar-sdk';
-import { Memo, MemoType, OperationOptions, Horizon } from '@stellar/stellar-sdk';
+import {
+    Memo,
+    MemoType,
+    OperationOptions,
+    Horizon,
+    Transaction,
+    Operation,
+    FeeBumpTransaction,
+} from '@stellar/stellar-sdk';
 import axios, { AxiosResponse } from 'axios';
 import BigNumber from 'bignumber.js';
 
@@ -180,6 +188,10 @@ export default class StellarServiceClass {
         }
 
         return tx.build();
+    }
+
+    buildTxFromXdr(xdr: string): Transaction<Memo<MemoType>, Operation[]> | FeeBumpTransaction {
+        return StellarSdk.TransactionBuilder.fromXDR(xdr, getNetworkPassphrase());
     }
 
     createMemo(type: MemoType, value): Memo {
