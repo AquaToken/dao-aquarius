@@ -40,7 +40,10 @@ const Quest = () => {
     const updateIndex = useUpdateIndex(5000);
 
     useEffect(() => {
-        if (!account) return;
+        if (!account) {
+            setStatuses(null);
+            return;
+        }
         getQuestStatus(account.accountId()).then(setStatuses);
     }, [account, updateIndex]);
 
