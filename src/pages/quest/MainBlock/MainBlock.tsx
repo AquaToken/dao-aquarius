@@ -144,8 +144,7 @@ const MainBlock = () => (
                 <AnimatedBorderedText /> to Aquarius
             </Title>
             <Description>
-                Aquarius is launching the campaign to boost web3 activity and attract new users.
-                Perform quest tasks on Aquarius and earn your share in a $20,000 worth prize fund!
+                Earn tokens by learning how to use defi on Stellar and completing onchain actions.
             </Description>
             <TotalPrizeWrapper>
                 <TotalPrize>
@@ -153,7 +152,7 @@ const MainBlock = () => (
                         <Present />
                     </IconWrapper>
                     <TotalText>
-                        <span>Worth prize fund:</span>
+                        <span>Prize fund:</span>
                         <span>$15,000</span>
                     </TotalText>
                 </TotalPrize>
