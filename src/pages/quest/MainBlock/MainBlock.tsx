@@ -64,17 +64,19 @@ const Background = styled(Bg)`
 
 const Title = styled.div`
     display: flex;
-    align-items: center;
+    flex-direction: column;
     font-weight: 700;
     font-size: 10rem;
+    line-height: 10rem;
 
     ${respondDown(Breakpoints.lg)`
         font-size: 7rem;
+        line-height: 7rem;
     `}
 
     ${respondDown(Breakpoints.md)`
         font-size: 5rem;
-        height: 5rem;
+        line-height: 5rem;
     `}
 `;
 
@@ -139,7 +141,7 @@ const MainBlock = () => (
         <Content>
             <Background />
             <Title>
-                <AnimatedBorderedText /> Quest
+                <AnimatedBorderedText /> to Aquarius
             </Title>
             <Description>
                 Aquarius is launching the campaign to boost web3 activity and attract new users.
@@ -152,7 +154,7 @@ const MainBlock = () => (
                     </IconWrapper>
                     <TotalText>
                         <span>Worth prize fund:</span>
-                        <span>$20,000</span>
+                        <span>$15,000</span>
                     </TotalText>
                 </TotalPrize>
             </TotalPrizeWrapper>

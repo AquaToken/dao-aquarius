@@ -285,7 +285,7 @@ const App = () => {
                         </Route>
 
                         <Route path={MainRoutes.quest}>
-                            <PageTitle title="web3 Quest">
+                            <PageTitle title="Onboard to Aquarius">
                                 <QuestPage />
                             </PageTitle>
                         </Route>
