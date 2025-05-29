@@ -25,6 +25,7 @@ export const getProposalsRequest = async (
     pubkey?: string,
 ): Promise<{ proposals: ListResponse<ProposalSimple>; filter: PROPOSAL_FILTER }> => {
     const params = new URLSearchParams();
+    params.append('limit', '50');
     if (filter === PROPOSAL_FILTER.ACTIVE) {
         params.append('status', 'voting');
     } else if (filter === PROPOSAL_FILTER.CLOSED) {
