@@ -20,11 +20,25 @@ export enum PROPOSAL_FILTER {
     HISTORY = 'history',
 }
 
-export const getProposalsRequest = async (
-    filter: PROPOSAL_FILTER,
-    pubkey?: string,
-): Promise<{ proposals: ListResponse<ProposalSimple>; filter: PROPOSAL_FILTER }> => {
+export const getProposalsRequest = async ({
+    filter,
+    pubkey,
+    page,
+    pageSize,
+}: {
+    filter: PROPOSAL_FILTER;
+    pubkey?: string;
+    page: number;
+    pageSize: number;
+}): Promise<{
+    proposals: ListResponse<ProposalSimple>;
+    filter: PROPOSAL_FILTER;
+    total: number;
+}> => {
     const params = new URLSearchParams();
+    params.append('limit', pageSize.toString());
+    params.append('page', page.toString());
+    params.append('ordering', '-created_at');
     if (filter === PROPOSAL_FILTER.ACTIVE) {
         params.append('status', 'voting');
     } else if (filter === PROPOSAL_FILTER.CLOSED) {
@@ -44,14 +58,17 @@ export const getProposalsRequest = async (
         params,
     });
 
-    return { proposals: data, filter };
+    return { proposals: data, filter, total: data.count };
 };
 
-export const getActiveProposalsCount = (): Promise<number> =>
+export const getActiveProposalsCount = (): Promise<{ active: number; discussion: number }> =>
     Promise.all([
-        getProposalsRequest(PROPOSAL_FILTER.ACTIVE),
-        getProposalsRequest(PROPOSAL_FILTER.DISCUSSION),
-    ]).then(([active, discussion]) => active.proposals.count + discussion.proposals.count);
+        getProposalsRequest({ filter: PROPOSAL_FILTER.ACTIVE, pageSize: 1000, page: 1 }),
+        getProposalsRequest({ filter: PROPOSAL_FILTER.DISCUSSION, pageSize: 1000, page: 1 }),
+    ]).then(([active, discussion]) => ({
+        active: active.proposals.count,
+        discussion: discussion.proposals.count,
+    }));
 
 export const getProposalRequest = (id: string): Promise<AxiosResponse<Proposal>> =>
     axios.get(`${apiURL}/proposal/${id}/`);

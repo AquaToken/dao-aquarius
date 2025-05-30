@@ -361,7 +361,10 @@ const AssetDropdown = ({
             [
                 ...assets,
                 ...searchResults.filter(
-                    token => !assets.find(asset => getAssetString(asset) === getAssetString(token)),
+                    token =>
+                        !assets.find(
+                            asset => asset.code === token.code && asset.issuer === token.issuer,
+                        ),
                 ),
             ].filter(assetItem => {
                 const assetInfo = assetsInfo.get(

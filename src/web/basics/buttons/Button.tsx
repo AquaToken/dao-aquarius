@@ -10,12 +10,14 @@ const ButtonBody = styled(BlankButton)<{
     $isBig?: boolean;
     $pending?: boolean;
     $fullWidth?: boolean;
-    $likeDisabled?: boolean;
+    $secondary?: boolean;
     $isSquare?: boolean;
     $isSmall?: boolean;
     $isWhite?: boolean;
     $isPurpleText?: boolean;
     $isRounded?: boolean;
+    $tertiary?: boolean;
+    $withGradient?: boolean;
 }>`
     ${flexAllCenter};
     width: ${({ $fullWidth, $isSquare, $isBig }) => {
@@ -51,15 +53,39 @@ const ButtonBody = styled(BlankButton)<{
         return $isBig ? '0 6.4rem' : '0 3.2rem';
     }};
     background-color: ${COLORS.white};
-    background-color: ${({ $likeDisabled, $isWhite }) => {
-        if ($likeDisabled) {
+    background: ${({ $secondary, $isWhite, $tertiary, $withGradient }) => {
+        if ($secondary && $withGradient) {
+            return 'radial-gradient(100% 158.34% at 0% 0%, rgba(234, 191, 255, 0.2) 0%, rgba(234, 191, 255, 0) 100%)';
+        }
+        if ($secondary) {
             return COLORS.gray;
         }
         if ($isWhite) {
             return COLORS.white;
         }
+        if ($tertiary) {
+            return COLORS.lightGray;
+        }
+        if ($withGradient) {
+            return 'radial-gradient(146.92% 150% at 50.22% 0%, #872AB0 0%, #3918AC 100%)';
+        }
+
         return COLORS.buttonBackground;
     }};
+
+    box-shadow: ${({ $withGradient, $secondary, $tertiary }) =>
+        $withGradient && !$secondary && !$tertiary
+            ? 'inset 0 0 0 4px rgba(255, 255, 255, 0.08), 0 4px 10px rgba(0, 0, 0, 0.2)'
+            : 'unset'};
+    
+    border: ${({ $withGradient, $secondary }) => {
+        if ($withGradient && $secondary) {
+            return `0.1rem solid ${COLORS.lightPurple};`;
+        }
+
+        return `0.1rem solid ${COLORS.transparent};`;
+    }}
+
     border-radius: ${({ $isRounded, $isBig, $isSmall }) => {
         if (!$isRounded) {
             return '0.5rem';
@@ -83,13 +109,25 @@ const ButtonBody = styled(BlankButton)<{
     white-space: nowrap;
 
     &:hover {
-        background-color: ${({ $likeDisabled, $isWhite }) => {
-            if ($likeDisabled) {
+        background: ${({ $secondary, $isWhite, $tertiary, $withGradient }) => {
+            if ($secondary && $withGradient) {
+                return 'radial-gradient(100% 234.36% at 0% 100%, rgba(234, 191, 255, 0) 0%, rgba(234, 191, 255, 0.2) 100%)';
+            }
+
+            if ($secondary) {
                 return COLORS.lightGray;
             }
 
             if ($isWhite) {
                 return COLORS.lightGray;
+            }
+
+            if ($tertiary) {
+                return COLORS.gray;
+            }
+
+            if ($withGradient) {
+                return 'radial-gradient(146.92% 150% at 50.22% 0%, #AE51D6 0%, #3B17B6 100%);';
             }
 
             return COLORS.purple;
@@ -100,25 +138,42 @@ const ButtonBody = styled(BlankButton)<{
         transform: scale(0.9);
     }
 
+    &:focus {
+        border: ${({ $withGradient, $secondary }) =>
+            $withGradient && $secondary
+                ? `0.1rem solid ${COLORS.lightPurple};`
+                : `0.2rem solid ${COLORS.transparent}`};
+    }
+
     &:disabled {
         background-color: ${COLORS.gray};
-        //TODO: remove
-        pointer-events: none;
+        cursor: not-allowed;
+    }
+
+    &:active,
+    &:disabled {
+        transform: none;
     }
 `;
 
 const ButtonLoader = styled.div<{
     $pending?: boolean;
-    $likeDisabled?: boolean;
+    $secondary?: boolean;
     $isWhite?: boolean;
     $isPurpleText?: boolean;
+    $tertiary?: boolean;
+    $withGradient?: boolean;
 }>`
-    color: ${({ $likeDisabled, $isWhite, $isPurpleText }) => {
+    color: ${({ $secondary, $isWhite, $isPurpleText, $tertiary, $withGradient }) => {
         if ($isPurpleText) {
             return COLORS.purple;
         }
 
-        if ($likeDisabled) {
+        if ($secondary && $withGradient) {
+            return COLORS.black;
+        }
+
+        if ($secondary) {
             return COLORS.grayText;
         }
 
@@ -126,8 +181,20 @@ const ButtonLoader = styled.div<{
             return COLORS.blue;
         }
 
+        if ($tertiary) {
+            return COLORS.titleText;
+        }
+
         return COLORS.white;
     }};
+
+    button:hover > & {
+        ${({ $secondary, $withGradient }) => {
+            if ($secondary && $withGradient) {
+                return `color:  ${COLORS.purple};`;
+            }
+        }};
+    }
 
     button:disabled > & {
         color: ${COLORS.grayText};
@@ -172,12 +239,14 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     pending?: boolean;
     isBig?: boolean;
     fullWidth?: boolean;
-    likeDisabled?: boolean;
+    secondary?: boolean;
+    tertiary?: boolean;
     isSquare?: boolean;
     isSmall?: boolean;
     isWhite?: boolean;
     isPurpleText?: boolean;
     isRounded?: boolean;
+    withGradient?: boolean;
 }
 
 const Button = ({
@@ -186,29 +255,35 @@ const Button = ({
     isBig,
     isSmall,
     fullWidth,
-    likeDisabled,
+    secondary,
+    tertiary,
     isSquare,
     isWhite,
     isPurpleText,
     isRounded,
+    withGradient,
     ...props
 }: ButtonProps): JSX.Element => (
     <ButtonBody
         $pending={pending}
         $isBig={isBig}
         $fullWidth={fullWidth}
-        $likeDisabled={likeDisabled}
+        $secondary={secondary}
         $isSquare={isSquare}
         $isSmall={isSmall}
         $isWhite={isWhite}
         $isRounded={isRounded}
+        $tertiary={tertiary}
+        $withGradient={withGradient}
         {...props}
     >
         <ButtonLoader
             $pending={pending}
-            $likeDisabled={likeDisabled}
+            $secondary={secondary}
+            $tertiary={tertiary}
             $isWhite={isWhite}
             $isPurpleText={isPurpleText}
+            $withGradient={withGradient}
         >
             {children}
         </ButtonLoader>

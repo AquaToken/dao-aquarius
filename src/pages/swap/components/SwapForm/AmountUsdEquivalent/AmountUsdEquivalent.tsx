@@ -90,7 +90,7 @@ const AmountUsdEquivalent = ({ amount, asset, sourceAmount, sourceAsset }: Props
                 );
             }
         });
-    }, [amount, asset]);
+    }, [amount, asset, sourceAsset]);
 
     const percent = useMemo(() => {
         if (!price || !priceSource) {

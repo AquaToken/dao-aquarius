@@ -6,15 +6,17 @@ import { getDateString } from 'helpers/date';
 import ErrorHandler from 'helpers/error-handler';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
+import { useIsMounted } from 'hooks/useIsMounted';
+
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
+
+import { ModalService, StellarService, ToastService } from 'services/globalServices';
+import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { ModalProps } from 'types/modal';
 import { Asset } from 'types/stellar';
 
-import { useIsMounted } from 'hooks/useIsMounted';
-import { ModalService, StellarService, ToastService } from 'services/globalServices';
-import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -184,7 +186,7 @@ const VotesDurationModal = ({ params, close }: ModalProps<VotesDurationModalPara
             </ClaimBack>
 
             <ButtonContainer>
-                <Button fullWidth likeDisabled onClick={() => back()}>
+                <Button fullWidth secondary onClick={() => back()}>
                     Back
                 </Button>
                 <Button fullWidth onClick={() => onSubmit()} pending={pending}>

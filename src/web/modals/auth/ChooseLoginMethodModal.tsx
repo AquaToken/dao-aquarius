@@ -8,18 +8,17 @@ import { isChrome, isMobile } from 'helpers/browser';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { ModalProps } from 'types/modal';
-
 import {
-    FreighterService,
     LedgerService,
     LobstrExtensionService,
     ModalService,
     ToastService,
     WalletConnectService,
+    WalletKitService,
 } from 'services/globalServices';
 
-import Freighter from 'assets/freighter-logo.svg';
+import { ModalProps } from 'types/modal';
+
 import BG from 'assets/get-extension-bg.svg';
 import ArrowRightIcon from 'assets/icon-arrow-right.svg';
 import KeyIcon from 'assets/icon-key.svg';
@@ -28,6 +27,7 @@ import LobstrLogo from 'assets/lobstr-logo-black.svg';
 import WalletConnectLogo from 'assets/wallet-connect-logo.svg';
 import Stellar from 'assets/xlm-logo.svg';
 
+import Label from 'basics/Label';
 import { ModalTitle } from 'basics/ModalAtoms';
 
 import LoginWithPublic from './LoginWithPublic';
@@ -35,7 +35,6 @@ import LoginWithSecret from './LoginWithSecret';
 
 import { respondDown } from '../../mixins';
 import { Breakpoints, COLORS } from '../../styles';
-import GetFreighterModal from '../GetFreighterModal';
 import GetLobstrExtensionModal from '../GetLobstrExtensionModal';
 import LedgerLogin from '../ledger/LedgerLogin';
 
@@ -46,7 +45,7 @@ const BgStyled = styled(BG)`
     `}
 `;
 
-const LoginMethod = styled.div`
+export const LoginMethod = styled.div`
     width: 52.8rem;
     display: flex;
     flex-direction: row;
@@ -72,19 +71,26 @@ const LoginMethod = styled.div`
     `}
 `;
 
-const LoginMethodWithDescription = styled.div`
+export const LoginMethodWithDescription = styled.div`
     display: flex;
     flex-direction: column;
 `;
 
-const LoginMethodName = styled.span`
+export const LoginMethodName = styled.span`
     font-size: 1.6rem;
     line-height: 2.8rem;
     color: ${COLORS.paragraphText};
     margin-left: 3rem;
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+
+    div {
+        height: fit-content;
+    }
 `;
 
-const LoginMethodDescription = styled.div`
+export const LoginMethodDescription = styled.div`
     font-size: 1.4rem;
     line-height: 2rem;
     color: ${COLORS.grayText};
@@ -139,10 +145,7 @@ const ChooseLoginMethodModal = ({
                     WalletConnectService.login();
                 }
                 break;
-            case LoginTypes.public:
-                close();
-                ModalService.openModal(LoginWithPublic, {});
-                break;
+
             case LoginTypes.ledger:
                 LedgerService.isSupported.then(res => {
                     if (res) {
@@ -154,6 +157,14 @@ const ChooseLoginMethodModal = ({
                         );
                     }
                 });
+                break;
+
+            case LoginTypes.walletKit:
+                WalletKitService.showWalletKitModal();
+                break;
+            case LoginTypes.public:
+                close();
+                ModalService.openModal(LoginWithPublic, {});
                 break;
             case LoginTypes.secret:
                 close();
@@ -178,19 +189,6 @@ const ChooseLoginMethodModal = ({
                     }
                 });
                 break;
-
-            case LoginTypes.freighter:
-                FreighterService.isConnected.then(res => {
-                    if (res) {
-                        FreighterService.login().then(() => {
-                            close();
-                        });
-                    } else {
-                        close();
-                        ModalService.openModal(GetFreighterModal, {});
-                    }
-                });
-                break;
         }
     };
 
@@ -206,22 +204,24 @@ const ChooseLoginMethodModal = ({
                 </LoginMethod>
             )}
 
+            <LoginMethod onClick={() => chooseMethod(LoginTypes.walletKit)}>
+                <StellarLogo />
+
+                <LoginMethodWithDescription>
+                    <LoginMethodName>
+                        Stellar Wallet Kit <Label labelText="NEW!" />
+                    </LoginMethodName>
+                    <LoginMethodDescription>
+                        Freighter, HOT Wallet, xBull, Albedo, Hana Wallet, Rabet
+                    </LoginMethodDescription>
+                </LoginMethodWithDescription>
+                <ArrowRight />
+            </LoginMethod>
+
             <LoginMethod onClick={() => chooseMethod(LoginTypes.walletConnect)}>
                 <WalletConnectLogo />
 
                 <LoginMethodName>WalletConnect</LoginMethodName>
-                <ArrowRight />
-            </LoginMethod>
-
-            <LoginMethod onClick={() => chooseMethod(LoginTypes.public)}>
-                <StellarLogo />
-                <LoginMethodWithDescription>
-                    <LoginMethodName>Stellar Laboratory</LoginMethodName>
-                    <LoginMethodDescription>
-                        Sign with Trezor, Albedo or others tools.
-                    </LoginMethodDescription>
-                </LoginMethodWithDescription>
-
                 <ArrowRight />
             </LoginMethod>
 
@@ -234,16 +234,15 @@ const ChooseLoginMethodModal = ({
                 <ArrowRight />
             </LoginMethod>
 
-            {!isMobile() && (
-                <LoginMethod onClick={() => chooseMethod(LoginTypes.freighter)}>
-                    <Freighter />
-                    <LoginMethodWithDescription>
-                        <LoginMethodName>Freighter</LoginMethodName>
-                    </LoginMethodWithDescription>
+            <LoginMethod onClick={() => chooseMethod(LoginTypes.public)}>
+                <StellarLogo />
+                <LoginMethodWithDescription>
+                    <LoginMethodName>Stellar Laboratory</LoginMethodName>
+                    <LoginMethodDescription>Sign with Stellar Laboratory.</LoginMethodDescription>
+                </LoginMethodWithDescription>
 
-                    <ArrowRight />
-                </LoginMethod>
-            )}
+                <ArrowRight />
+            </LoginMethod>
 
             <LoginMethod onClick={() => chooseMethod(LoginTypes.secret)}>
                 <KeyIcon />

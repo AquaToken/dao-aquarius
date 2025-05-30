@@ -51,6 +51,10 @@ const DownvoteButton = styled(Button)`
 
 const TooltipInner = styled.div`
     font-size: 1.2rem;
+    line-height: 1.6rem;
+    width: 12rem;
+    white-space: pre-line;
+    text-align: center;
 `;
 
 const VoteButton = ({
@@ -66,7 +70,11 @@ const VoteButton = ({
     disabled: boolean;
     withoutStats?: boolean;
 }): JSX.Element => {
-    const { market_key: marketKeyUp, downvote_account_id: marketKeyDown } = pair;
+    const {
+        market_key: marketKeyUp,
+        downvote_account_id: marketKeyDown,
+        downvote_immunity: downvoteImmunity,
+    } = pair;
     const { account, isLogged } = useAuthStore();
     const { aquaStellarAsset } = getAquaAssetData();
 
@@ -129,21 +137,27 @@ const VoteButton = ({
                         e.stopPropagation();
                         onButtonClick();
                     }}
-                    likeDisabled={isPairSelected}
+                    secondary={isPairSelected}
                     disabled={disabled}
                 >
                     {isPairSelected ? 'added' : 'Add To Vote'}
                     {isPairSelected ? <TickStyled /> : <Like />}
                 </Button>
                 <Tooltip
-                    content={<TooltipInner>Downvote this market</TooltipInner>}
+                    content={
+                        <TooltipInner>
+                            {downvoteImmunity
+                                ? "Markets with XLM, AQUA, USDC and EURC can't be downvoted"
+                                : 'Downvote this market'}
+                        </TooltipInner>
+                    }
                     position={TOOLTIP_POSITION.top}
                     showOnHover
                 >
                     <DownvoteButton
                         isSquare
-                        likeDisabled
-                        disabled={disabled}
+                        secondary
+                        disabled={disabled || downvoteImmunity}
                         onClick={e => downVote(e)}
                     >
                         <IconDislike />
@@ -161,21 +175,27 @@ const VoteButton = ({
                     e.stopPropagation();
                     onButtonClick();
                 }}
-                likeDisabled={isPairSelected}
+                secondary={isPairSelected}
                 isSquare
                 disabled={disabled}
             >
                 {isPairSelected ? <IconTick /> : <IconLike />}
             </Button>
             <Tooltip
-                content={<TooltipInner>Downvote this market</TooltipInner>}
+                content={
+                    <TooltipInner>
+                        {downvoteImmunity
+                            ? "Markets with XLM, AQUA, USDC and EURC can't be downvoted"
+                            : 'Downvote this market'}
+                    </TooltipInner>
+                }
                 position={TOOLTIP_POSITION.top}
                 showOnHover
             >
                 <DownvoteButton
                     isSquare
-                    likeDisabled
-                    disabled={disabled}
+                    secondary
+                    disabled={disabled || downvoteImmunity}
                     onClick={e => downVote(e)}
                 >
                     <IconDislike />

@@ -2,9 +2,9 @@ import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
 
-import { ModalProps } from 'types/modal';
-
 import { LedgerService } from 'services/globalServices';
+
+import { ModalProps } from 'types/modal';
 
 import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';

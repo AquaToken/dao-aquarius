@@ -5,9 +5,10 @@ import styled from 'styled-components';
 import { convertLocalDateToUTCIgnoringTimezone, getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 
+import { StellarService } from 'services/globalServices';
+
 import { ModalProps } from 'types/modal';
 
-import { StellarService } from 'services/globalServices';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -180,6 +181,9 @@ const BribesModal = ({ params }: ModalProps<{ pair: PairStats }>) => {
         acc += Number(bribe.daily_aqua_equivalent);
         return acc;
     }, 0);
+
+    const apy = (sum / Number(pair.upvote_value) + 1) ** 365 - 1;
+
     const { start_at, stop_at } = pair.aggregated_bribes[0];
 
     const startUTC = convertLocalDateToUTCIgnoringTimezone(new Date(start_at));
@@ -201,15 +205,22 @@ const BribesModal = ({ params }: ModalProps<{ pair: PairStats }>) => {
                     <AquaLogo />
 
                     <BribeDetail>
-                        <BribeDetailTitle>Bribe per 1000 AQUA/ICE votes:</BribeDetailTitle>
+                        <BribeDetailTitle>Bribe per 1000 AQUA or ICE votes:</BribeDetailTitle>
                         <BribeDetailValue>
-                            ≈{formatBalance(aquaBribePrice, true)} AQUA per day
+                            {formatBalance(aquaBribePrice, true)} AQUA per day
                         </BribeDetailValue>
                     </BribeDetail>
 
                     <BribeDetail>
                         <BribeDetailTitle>Distributed among:</BribeDetailTitle>
                         <BribeDetailValue>{pair.voting_amount} voters</BribeDetailValue>
+                    </BribeDetail>
+
+                    <BribeDetail>
+                        <BribeDetailTitle>Bribes APY:</BribeDetailTitle>
+                        <BribeDetailValue>
+                            {formatBalance(+(apy * 100).toFixed(2), true)}%
+                        </BribeDetailValue>
                     </BribeDetail>
 
                     <IconInfo onClick={() => setShowHowItWorks(true)} />

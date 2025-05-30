@@ -5,6 +5,7 @@ import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Freighter from 'assets/freighter-dark.svg';
+import HotWalletIcon from 'assets/hot-wallet.svg';
 import Lobstr from 'assets/lobstr-name-logo.svg';
 import StellarTerm from 'assets/stellarterm-logo.svg';
 import StellarX from 'assets/stellarx-logo.svg';
@@ -71,6 +72,10 @@ const ImageBlock = styled.div`
     `}
 `;
 
+const HotWallet = styled(HotWalletIcon)`
+    width: 14rem;
+`;
+
 const SupportedBy = () => (
     <Container>
         <Wrapper>
@@ -91,6 +96,10 @@ const SupportedBy = () => (
 
                 <a href="https://stellarterm.com/" target="_blank" rel="noreferrer">
                     <StellarTerm />
+                </a>
+
+                <a href="https://hot-labs.org/" target="_blank" rel="noreferrer">
+                    <HotWallet />
                 </a>
             </ImageBlock>
         </Wrapper>

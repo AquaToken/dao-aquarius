@@ -18,13 +18,13 @@ import SentToVault from 'web/modals/SentToVault';
 import SignWithPublic from 'web/modals/SignWithPublic';
 
 import {
-    FreighterService,
     LedgerService,
     LobstrExtensionService,
     ModalService,
     SorobanService,
     StellarService,
     WalletConnectService,
+    WalletKitService,
 } from './globalServices';
 import { POOL_TYPE } from './soroban.service';
 import { ICE_ASSETS } from './stellar.service';
@@ -55,6 +55,40 @@ export default class AccountService extends Horizon.AccountResponse {
         const vaultMarker = this.signers.find(({ key }) => key === VAULT_MARKER);
 
         return Boolean(vaultMarker);
+    }
+
+    signTx(tx: StellarSdk.Transaction): Promise<string> {
+        if (this.authType === LoginTypes.public || this.isMultisigEnabled) {
+            const xdr = tx.toEnvelope().toXDR('base64');
+
+            return ModalService.openModal(SignWithPublic, {
+                xdr,
+                account: this,
+                onlySign: true,
+            }).then(({ xdr }) => xdr);
+        }
+
+        if (this.authType === LoginTypes.walletConnect) {
+            return WalletConnectService.signTx(tx as StellarSdk.Transaction);
+        }
+
+        if (this.authType === LoginTypes.secret) {
+            return SorobanService.signWithSecret(tx).toEnvelope().toXDR('base64');
+        }
+
+        if (this.authType === LoginTypes.lobstr) {
+            return LobstrExtensionService.signTx(tx).then(res => res.toEnvelope().toXDR('base64'));
+        }
+
+        if (this.authType === LoginTypes.ledger) {
+            return LedgerService.signTx(tx as StellarSdk.Transaction).then(res =>
+                res.toEnvelope().toXDR('base64'),
+            );
+        }
+
+        if (this.authType === LoginTypes.walletKit) {
+            return WalletKitService.signTx(tx).then(res => res.toEnvelope().toXDR('base64'));
+        }
     }
 
     async signAndSubmitTx(
@@ -89,10 +123,6 @@ export default class AccountService extends Horizon.AccountResponse {
             signedTx = SorobanService.signWithSecret(tx);
         }
 
-        if (this.authType === LoginTypes.freighter) {
-            signedTx = await FreighterService.signTx(tx);
-        }
-
         if (this.authType === LoginTypes.lobstr) {
             signedTx = await LobstrExtensionService.signTx(tx);
         }
@@ -113,6 +143,10 @@ export default class AccountService extends Horizon.AccountResponse {
                 });
             ModalService.openModal(LedgerSignTx, { result });
             return result;
+        }
+
+        if (this.authType === LoginTypes.walletKit) {
+            signedTx = await WalletKitService.signTx(tx);
         }
 
         if (this.authType === LoginTypes.ledger) {

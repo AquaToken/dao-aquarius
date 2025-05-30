@@ -273,12 +273,12 @@ const PoolPage = () => {
                     </BackButton>
                     <Market
                         assets={pool.assets}
-                        verticalDirections
                         leftAlign
                         bigCodes
                         isBigLogo
                         isCircleLogos
                         withoutLink
+                        mobileVerticalDirections
                     />
                     <ExternalLinkStyled
                         href={`https://stellar.expert/explorer/public/contract/${pool.address}`}

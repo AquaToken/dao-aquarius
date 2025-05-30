@@ -130,6 +130,8 @@ const Description = styled.p`
 const LinkButton = styled(Link)`
     color: ${COLORS.white};
     text-decoration: none;
+    width: 100%;
+    flex: 1;
 
     ${respondDown(Breakpoints.md)`
         width: 100%;
@@ -137,8 +139,22 @@ const LinkButton = styled(Link)`
 `;
 
 const StyledButton = styled(Button)`
+    width: 100%;
+    flex: 1;
+
     ${respondDown(Breakpoints.md)`
         width: 100%;
+    `}
+`;
+
+const Buttons = styled.div`
+    display: flex;
+    gap: 2.4rem;
+    width: 50%;
+
+    ${respondDown(Breakpoints.md)`
+        width: 100%;
+        flex-direction: column;
     `}
 `;
 
@@ -152,9 +168,16 @@ const MainBlock = () => (
             <Description>
                 Aquarius is a decentralized liquidity management platform for Stellar.
             </Description>
-            <LinkButton to={MainRoutes.amm}>
-                <StyledButton isBig>Discover Pools</StyledButton>
-            </LinkButton>
+            <Buttons>
+                <LinkButton to={MainRoutes.amm}>
+                    <StyledButton isBig>Discover Pools</StyledButton>
+                </LinkButton>
+                <LinkButton to={MainRoutes.swap}>
+                    <StyledButton secondary isBig>
+                        Swap
+                    </StyledButton>
+                </LinkButton>
+            </Buttons>
         </TextBlock>
     </Main>
 );

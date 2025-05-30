@@ -34,6 +34,7 @@ export type Pool = {
     rewards_apy: string;
     liquidity_usd: string;
     volume_usd: string;
+    apy_tier: number;
 };
 
 export type PoolRewards = {

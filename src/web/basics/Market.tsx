@@ -22,6 +22,7 @@ import { Breakpoints, COLORS } from 'web/styles';
 import External from 'assets/icon-external-link.svg';
 import Arrow from 'assets/icon-link-arrow.svg';
 
+import ApyTier from 'basics/ApyTier';
 import AssetLogo, { bigLogoStyles, logoStyles } from 'basics/AssetLogo';
 import {
     AuthRequiredLabel,
@@ -91,8 +92,9 @@ const Icon = styled.div<{
     z-index: ${({ $assetOrderNumber, $assetsCount }) => $assetsCount - $assetOrderNumber};
     right: ${({ $isBig, $assetOrderNumber, $assetsCount, $verticalDirections }) =>
         `${
-            ($verticalDirections ? $assetOrderNumber - 1 : -($assetsCount - $assetOrderNumber)) *
-            ($isBig ? 3 : 1)
+            ($isBig || $verticalDirections
+                ? $assetOrderNumber - 1
+                : -($assetsCount - $assetOrderNumber)) * ($isBig ? 3 : 1)
         }rem`};
 
     ${({ $mobileVerticalDirections }) =>
@@ -110,11 +112,12 @@ const AssetsDetails = styled.div<{
 }>`
     display: flex;
     flex-direction: column;
+    margin: auto 0;
     ${({ $verticalDirections, $leftAlign }) =>
         $verticalDirections
             ? `align-items: ${$leftAlign ? 'flex-start' : 'center'};
         margin-top: 2rem;`
-            : 'margin-left: 1.6rem;'};
+            : `margin-left: 1.6rem;`};
 
     ${({ $mobileVerticalDirections }) =>
         $mobileVerticalDirections &&
@@ -124,9 +127,8 @@ const AssetsDetails = styled.div<{
 `;
 
 const AssetsCodes = styled.span<{ $mobileVerticalDirections?: boolean; $bigCodes?: boolean }>`
-    font-size: ${({ $bigCodes }) => ($bigCodes ? '5.6rem' : '1.6rem')};
-    line-height: ${({ $bigCodes }) => ($bigCodes ? '6.4rem' : '2.8rem')};
-    font-weight: ${({ $bigCodes }) => ($bigCodes ? '700' : '400')};
+    font-size: ${({ $bigCodes }) => ($bigCodes ? '3.6rem' : '1.6rem')};
+    line-height: ${({ $bigCodes }) => ($bigCodes ? '4.2rem' : '2.8rem')};
     color: ${COLORS.paragraphText};
     display: flex;
     flex-direction: row;
@@ -140,9 +142,8 @@ const AssetsCodes = styled.span<{ $mobileVerticalDirections?: boolean; $bigCodes
     ${({ $mobileVerticalDirections }) =>
         $mobileVerticalDirections &&
         respondDown(Breakpoints.md)`
-            font-weight: bold;
-            font-size: 2.4rem;
-            line-height: 2.8rem;
+            font-size: ${({ $bigCodes }) => ($bigCodes ? '3rem' : '1.6rem')};
+            line-height: ${({ $bigCodes }) => ($bigCodes ? '4rem' : '2.8rem')};
             color: ${COLORS.buttonBackground};
             margin-top: 0.7rem;
             margin-bottom: 0.4rem;
@@ -226,6 +227,7 @@ type PairProps = {
     poolAddress?: string;
     poolType?: POOL_TYPE;
     fee?: string;
+    apyTier?: number;
 };
 
 const Market = ({
@@ -251,6 +253,7 @@ const Market = ({
     poolAddress,
     poolType,
     fee,
+    apyTier,
     ...props
 }: PairProps): React.ReactNode => {
     const { assetsInfo } = useAssetsStore();
@@ -282,6 +285,7 @@ const Market = ({
             {authRequired && <AuthRequiredLabel />}
             {noLiquidity && <NoLiquidityLabel />}
             {fee && <FeeLabel fee={fee} />}
+            <ApyTier apyTier={apyTier} />
         </>
     );
 
@@ -326,7 +330,6 @@ const Market = ({
                     </Icon>
                 ))}
             </Icons>
-            {bottomLabels && <Labels>{labels}</Labels>}
             <AssetsDetails
                 $verticalDirections={verticalDirections}
                 $mobileVerticalDirections={mobileVerticalDirections}
@@ -391,6 +394,7 @@ const Market = ({
                         })}
                     </AssetsDomains>
                 )}
+                {bottomLabels && <Labels>{labels}</Labels>}
             </AssetsDetails>
         </Wrapper>
     );

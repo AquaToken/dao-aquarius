@@ -1,5 +1,9 @@
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const Sentry = process.env.SENTRY_CONTEXT ? require('@sentry/react') : null;
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
+const Sentry = process.variable.SENTRY_CONTEXT
+    ? // eslint-disable-next-line @typescript-eslint/no-require-imports
+      require('@sentry/react')
+    : null;
 export default class SentryService {
     static initSentry() {
         if (!Sentry) {
@@ -9,7 +13,9 @@ export default class SentryService {
         Sentry.init({
             dsn: 'https://32fb26b650c84652987395b2b0b2a01a@sentry.aqua.network/105',
             integrations: [Sentry.browserTracingIntegration()],
-            environment: process.env.SENTRY_CONTEXT,
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-expect-error
+            environment: process.variable.SENTRY_CONTEXT,
             tracesSampleRate: 0.1,
         });
     }

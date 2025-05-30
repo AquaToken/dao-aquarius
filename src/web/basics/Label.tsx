@@ -38,6 +38,7 @@ const LabelWrapper = styled.div<{
     $innerFontSize: string;
     $innerLineHeight: string;
     $withoutBorder?: boolean;
+    $withoutUppercase?: boolean;
 }>`
     ${flexAllCenter};
     width: max-content;
@@ -45,7 +46,7 @@ const LabelWrapper = styled.div<{
     background: ${({ $background }) => $background};
     color: ${({ $color }) => $color};
     border: ${({ $color, $withoutBorder }) => ($withoutBorder ? 'none' : `0.1rem solid ${$color}`)};
-    text-transform: uppercase;
+    text-transform: ${({ $withoutUppercase }) => ($withoutUppercase ? 'none' : 'uppercase')};
     font-weight: 700;
     border-radius: ${({ $innerBorderRadius }) => $innerBorderRadius};
     font-size: ${({ $innerFontSize }) => $innerFontSize};
@@ -64,6 +65,13 @@ const LABEL_STYLES = {
         $innerLineHeight: '1.4rem',
         $cursor: 'help',
     },
+    medium: {
+        $padding: '0 0.4rem',
+        $innerBorderRadius: '0.3rem',
+        $innerFontSize: '1.4rem',
+        $innerLineHeight: '2rem',
+        $cursor: 'help',
+    },
     big: {
         $padding: '0.5rem 0.4rem',
         $innerBorderRadius: '0.4rem',
@@ -73,10 +81,10 @@ const LABEL_STYLES = {
     },
 };
 
-type LabelSize = 'default' | 'big';
+type LabelSize = 'default' | 'medium' | 'big';
 
 interface LabelProps {
-    labelText: string;
+    labelText: string | React.ReactNode;
     labelSize?: LabelSize;
     tooltipText?: string | React.ReactNode;
     background?: string;
@@ -84,6 +92,7 @@ interface LabelProps {
     tooltipColor?: string;
     tooltipBackground?: string;
     withoutBorder?: boolean;
+    withoutUppercase?: boolean;
 }
 
 const Label = ({
@@ -95,6 +104,7 @@ const Label = ({
     tooltipColor,
     tooltipBackground,
     withoutBorder,
+    withoutUppercase,
     ...props
 }: LabelProps): React.ReactNode => {
     const [isEnoughSpaceOnTop, setIsEnoughSpaceOnTop] = useState(true);
@@ -118,14 +128,14 @@ const Label = ({
     );
 
     if (!tooltipText) {
-        labelStyles.$cursor = 'default';
-
         return (
             <LabelWrapper
                 {...labelStyles}
+                $cursor="default"
                 $background={background}
                 $color={color}
                 $withoutBorder={withoutBorder}
+                $withoutUppercase={withoutUppercase}
             >
                 {labelText}
             </LabelWrapper>
@@ -152,6 +162,7 @@ const Label = ({
                     $background={background}
                     $color={color}
                     $withoutBorder={withoutBorder}
+                    $withoutUppercase={withoutUppercase}
                     {...props}
                 >
                     {labelText}

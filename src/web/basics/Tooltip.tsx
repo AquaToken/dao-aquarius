@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 import { COLORS, Z_INDEX } from 'web/styles';
@@ -30,7 +30,6 @@ const TooltipTop = (background: string) => css`
         border-right: 0.6rem solid ${COLORS.transparent};
     }
 
-    // TODO add for all positions
     &::before {
         height: 1rem;
         top: 100%;
@@ -49,6 +48,12 @@ const TooltipBottom = (background: string) => css`
         border-left: 0.6rem solid ${COLORS.transparent};
         border-right: 0.6rem solid ${COLORS.transparent};
     }
+
+    &::before {
+        height: 1rem;
+        bottom: 100%;
+        width: 100%;
+    }
 `;
 
 const TooltipLeft = (background: string) => css`
@@ -61,6 +66,12 @@ const TooltipLeft = (background: string) => css`
         border-left: 0.6rem solid ${background};
         border-top: 0.6rem solid ${COLORS.transparent};
         border-bottom: 0.6rem solid ${COLORS.transparent};
+    }
+
+    &::before {
+        width: 1.5rem;
+        left: 100%;
+        height: 100%;
     }
 `;
 
@@ -75,12 +86,18 @@ const TooltipRight = (background: string) => css`
         border-top: 0.6rem solid ${COLORS.transparent};
         border-bottom: 0.6rem solid ${COLORS.transparent};
     }
+    &::before {
+        width: 1.5rem;
+        right: 100%;
+        height: 100%;
+    }
 `;
 
 const TooltipBody = styled.div<{
     $position: TOOLTIP_POSITION;
     $background: string;
     $color: string;
+    $isHidden: boolean;
 }>`
     position: absolute;
     display: flex;
@@ -94,6 +111,7 @@ const TooltipBody = styled.div<{
     border-radius: 0.5rem;
     white-space: nowrap;
     z-index: ${Z_INDEX.tooltip};
+    visibility: ${({ $isHidden }) => ($isHidden ? 'hidden' : 'visible')};
 
     // triangle
     &::after {
@@ -119,7 +137,7 @@ const TooltipBody = styled.div<{
 interface TooltipProps extends React.DOMAttributes<HTMLDivElement> {
     children: React.ReactNode;
     content: React.ReactNode;
-    position: TOOLTIP_POSITION;
+    position?: TOOLTIP_POSITION;
     isShow?: boolean;
     showOnHover?: boolean;
     background?: string;
@@ -129,7 +147,7 @@ interface TooltipProps extends React.DOMAttributes<HTMLDivElement> {
 const Tooltip = ({
     children,
     content,
-    position = TOOLTIP_POSITION.top,
+    position,
     isShow,
     showOnHover,
     background = COLORS.tooltip,
@@ -138,6 +156,9 @@ const Tooltip = ({
 }: TooltipProps): React.ReactNode => {
     const [isTooltipVisible, setIsTooltipVisible] = useState(isShow);
     const [isFirstClick, setIsFirstClick] = useState(true);
+    const [currentPosition, setCurrentPosition] = useState(position ?? TOOLTIP_POSITION.top);
+    const [positionInProgress, setPositionInProgress] = useState(true);
+    const [replaceCount, setReplacementCount] = useState(0);
 
     const handleClick = (e: React.MouseEvent) => {
         e.stopPropagation();
@@ -166,6 +187,57 @@ const Tooltip = ({
         }
     };
 
+    const tooltipRef = useRef(null);
+
+    const validateAllDimensions = () => {
+        if (!tooltipRef.current) {
+            return false;
+        }
+        const OFFSET = 5; // 0.5rem
+        const { top, left, right, bottom } = tooltipRef.current.getBoundingClientRect();
+
+        const spaceAbove = top > OFFSET;
+        const spaceBelow = bottom < window.innerHeight - OFFSET;
+        const spaceLeft = left > OFFSET;
+        const spaceRight = right < window.innerWidth - OFFSET;
+
+        return spaceAbove && spaceBelow && spaceLeft && spaceRight;
+    };
+
+    useEffect(() => {
+        if (!isTooltipVisible || !tooltipRef.current) {
+            return;
+        }
+
+        if (replaceCount === 4) {
+            setCurrentPosition(position || TOOLTIP_POSITION.top);
+            setPositionInProgress(false);
+            return;
+        }
+        const validPosition = validateAllDimensions();
+
+        if (validPosition) {
+            setPositionInProgress(false);
+        } else {
+            setReplacementCount(prev => prev + 1);
+
+            switch (currentPosition) {
+                case TOOLTIP_POSITION.top:
+                    setCurrentPosition(TOOLTIP_POSITION.bottom);
+                    break;
+                case TOOLTIP_POSITION.bottom:
+                    setCurrentPosition(TOOLTIP_POSITION.left);
+                    break;
+                case TOOLTIP_POSITION.left:
+                    setCurrentPosition(TOOLTIP_POSITION.right);
+                    break;
+                case TOOLTIP_POSITION.right:
+                    setCurrentPosition(TOOLTIP_POSITION.top);
+                    break;
+            }
+        }
+    }, [currentPosition, isTooltipVisible]);
+
     return (
         <ChildrenBlock
             {...props}
@@ -175,7 +247,13 @@ const Tooltip = ({
         >
             {children}
             {(showOnHover ? isTooltipVisible && isShow !== false : isShow) && (
-                <TooltipBody $position={position} $background={background} $color={color}>
+                <TooltipBody
+                    $position={currentPosition}
+                    $background={background}
+                    $color={color}
+                    $isHidden={positionInProgress}
+                    ref={tooltipRef}
+                >
                     {content}
                 </TooltipBody>
             )}

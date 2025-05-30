@@ -23,7 +23,7 @@ export enum LoginTypes {
     public = 'public',
     ledger = 'ledger',
     lobstr = 'lobstr',
-    freighter = 'freighter',
+    walletKit = 'wallet-kit',
 }
 
 export enum AUTH_ACTIONS {

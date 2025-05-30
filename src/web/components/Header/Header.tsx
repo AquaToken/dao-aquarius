@@ -9,13 +9,14 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService } from 'services/globalServices';
 
-import { commonMaxWidth, flexAllCenter, respondDown } from 'web/mixins';
+import { commonMaxWidth, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS, Z_INDEX } from 'web/styles';
 
 import AquaLogo from 'assets/aqua-logo.svg';
 import IconProfile from 'assets/icon-profile.svg';
 
+import { ActiveProposals } from 'components/Header/ActiveProposals/ActiveProposals';
 import ExpandedMenu from 'components/Header/ExpandedMenu/ExpandedMenu';
 
 import { getActiveProposalsCount } from 'pages/governance/api/api';
@@ -74,6 +75,16 @@ const NavLinkStyled = styled(NavLink)<{ $disabled?: boolean }>`
     `}
 `;
 
+const NavLinkWithCount = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+
+    a {
+        margin: 0 !important;
+    }
+`;
+
 const Divider = styled.div`
     height: 2.4rem;
     width: 0;
@@ -91,31 +102,6 @@ const Divider = styled.div`
          margin: 2.4rem 0;
          border-top: 0.1rem solid ${COLORS.gray};
     `};
-`;
-
-export const WithCountStyles = css`
-    line-height: 1.6rem !important;
-    &::after {
-        float: right;
-        ${flexAllCenter};
-        content: attr(count);
-        text-transform: uppercase;
-        height: 1.5rem !important;
-        width: 1.5rem !important;
-        border-radius: 0.4rem;
-        background: ${COLORS.purple};
-        color: ${COLORS.white};
-        font-weight: 700;
-        font-size: 0.8rem;
-        line-height: 1.6rem;
-        white-space: nowrap;
-        margin-left: 0.5rem;
-    }
-`;
-
-const NavLinkWithCount = styled(NavLinkStyled)<{ count: number }>`
-    line-height: 1.6rem !important;
-    ${({ count }) => Boolean(count) && WithCountStyles}
 `;
 
 const MainLink = styled(NavLink)`
@@ -221,13 +207,13 @@ const MyAquarius = styled(NavLink)`
 `;
 
 const Links = () => {
-    const [activeProposalsCount, setActiveProposalsCount] = useState(0);
+    const [proposalsCounts, setProposalsCounts] = useState({ active: 0, discussion: 0 });
 
     const { isLogged } = useAuthStore();
 
     useEffect(() => {
         getActiveProposalsCount().then(res => {
-            setActiveProposalsCount(res);
+            setProposalsCounts(res);
         });
     }, []);
     return (
@@ -255,7 +241,7 @@ const Links = () => {
 
             <ExpandedMenu
                 title="Voting & DAO"
-                count={activeProposalsCount}
+                counts={proposalsCounts}
                 links={
                     <>
                         <NavLinkStyled
@@ -286,15 +272,20 @@ const Links = () => {
                         >
                             Bribes for Voters
                         </NavLinkStyled>
-                        <NavLinkWithCount
-                            to={MainRoutes.governance}
-                            activeStyle={{
-                                fontWeight: 700,
-                            }}
-                            title="DAO Proposals"
-                            count={activeProposalsCount}
-                        >
-                            DAO Proposals
+                        <NavLinkWithCount>
+                            <NavLinkStyled
+                                to={MainRoutes.governance}
+                                activeStyle={{
+                                    fontWeight: 700,
+                                }}
+                                title="DAO Proposals"
+                            >
+                                DAO Proposals
+                            </NavLinkStyled>
+                            <ActiveProposals
+                                discussionCount={proposalsCounts.discussion}
+                                activeCount={proposalsCounts.active}
+                            />
                         </NavLinkWithCount>
                     </>
                 }
@@ -304,6 +295,15 @@ const Links = () => {
                 title="AQUA token"
                 links={
                     <>
+                        <NavLinkStyled
+                            activeStyle={{
+                                fontWeight: 700,
+                            }}
+                            title="AQUA token"
+                            to={MainRoutes.token}
+                        >
+                            Token info
+                        </NavLinkStyled>
                         <NavLinkStyled
                             activeStyle={{
                                 fontWeight: 700,

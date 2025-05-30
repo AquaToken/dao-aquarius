@@ -1,13 +1,8 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { findSwapPath, getAssetsList } from 'api/amm';
-
-import { MainRoutes } from 'constants/routes';
-
-import { getAssetString } from 'helpers/assets';
 
 import { useDebounce } from 'hooks/useDebounce';
 
@@ -27,6 +22,7 @@ import SettingsIcon from 'assets/icon-settings.svg';
 import Button from 'basics/buttons/Button';
 
 import NoTrustline from 'components/NoTrustline';
+import Price from 'components/Price';
 
 import SwapSettingsModal, {
     SWAP_SLIPPAGE_ALIAS,
@@ -34,23 +30,22 @@ import SwapSettingsModal, {
 
 import AmountUsdEquivalent from './AmountUsdEquivalent/AmountUsdEquivalent';
 import SwapFormDivider from './SwapFormDivider/SwapFormDivider';
-import SwapFormPrice from './SwapFormPrice/SwapFormPrice';
 import SwapFormRow from './SwapFormRow/SwapFormRow';
 
 import SwapConfirmModal from '../SwapConfirmModal/SwapConfirmModal';
 
-const Form = styled.div`
+const Form = styled.div<{ $isEmbedded?: boolean }>`
     margin: 0 auto 2rem;
-    width: 48rem;
+    width: ${({ $isEmbedded }) => ($isEmbedded ? '100%' : '48rem')};
     border-radius: 4rem;
     background: ${COLORS.white};
-    padding: 1.6rem;
-    ${cardBoxShadow};
+    padding: ${({ $isEmbedded }) => ($isEmbedded ? '0' : '1.6rem')};
+    ${({ $isEmbedded }) => !$isEmbedded && cardBoxShadow};
     position: relative;
 
     ${respondDown(Breakpoints.sm)`
         width: 100%;
-        padding: 6.6rem 0.8em 2rem;
+        padding: ${({ $isEmbedded }) => ($isEmbedded ? '0' : '6.6rem 0.8em 2rem')};
         box-shadow: unset;
     `};
 `;
@@ -70,6 +65,31 @@ const StyledButton = styled(Button)`
         width: 100%;
         margin-top: 2rem;
     `}
+`;
+
+const SwapHeader = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3.2rem;
+
+    h3 {
+        font-size: 3.6rem;
+        line-height: 4.2rem;
+        color: ${COLORS.titleText};
+        font-weight: 400;
+    }
+
+    div {
+        ${flexAllCenter};
+        padding: 0.5rem;
+        border-radius: 0.3rem;
+        cursor: pointer;
+
+        &:hover {
+            background-color: ${COLORS.lightGray};
+        }
+    }
 `;
 
 const SettingsButton = styled.div`
@@ -97,9 +117,18 @@ const SettingsButton = styled.div`
 interface SwapFormProps {
     base: Asset;
     counter: Asset;
+    setBase: (asset: Asset) => void;
+    setCounter: (asset: Asset) => void;
+    isEmbedded?: boolean;
 }
 
-const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
+const SwapForm = ({
+    base,
+    counter,
+    setBase,
+    setCounter,
+    isEmbedded,
+}: SwapFormProps): React.ReactNode => {
     const [hasError, setHasError] = useState(false);
 
     const [baseAmount, setBaseAmount] = useState('');
@@ -117,7 +146,6 @@ const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
 
     const [assetsList, setAssetsList] = useState(null);
 
-    const history = useHistory();
     const { account, isLogged } = useAuthStore();
 
     const { processNewAssets } = useAssetsStore();
@@ -170,7 +198,7 @@ const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
             setBestPools(null);
             setCounterAmount('');
         }
-    }, [debouncedBaseAmount, base, counter]);
+    }, [debouncedBaseAmount]);
 
     useEffect(() => {
         if (debouncedBaseAmount.current) {
@@ -213,7 +241,50 @@ const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
             setBestPools(null);
             setBaseAmount('');
         }
-    }, [debouncedCounterAmount, base, counter]);
+    }, [debouncedCounterAmount]);
+
+    useEffect(() => {
+        if ((isSend && !baseAmount) || (!isSend && !counterAmount)) {
+            return;
+        }
+        setEstimatePending(true);
+
+        findSwapPath(
+            SorobanService.getAssetContractId(base),
+            SorobanService.getAssetContractId(counter),
+            isSend ? baseAmount : counterAmount,
+            isSend,
+        )
+            .then(res => {
+                if (!res.success) {
+                    setHasError(true);
+                    if (isSend) {
+                        setCounterAmount('');
+                    } else {
+                        setBaseAmount('');
+                    }
+                    setEstimatePending(false);
+                } else {
+                    setHasError(false);
+                    setEstimatePending(false);
+
+                    const amount = (Number(res.amount) / 1e7).toFixed(7);
+
+                    if (isSend) {
+                        setCounterAmount(amount);
+                    } else {
+                        setBaseAmount(amount);
+                    }
+                    setBestPathXDR(res.swap_chain_xdr);
+                    setBestPath(res.tokens);
+                    setBestPools(res.pools);
+                }
+            })
+            .catch(() => {
+                setHasError(true);
+                setEstimatePending(false);
+            });
+    }, [base, counter]);
 
     const swapAssets = () => {
         if (!isLogged) {
@@ -260,7 +331,9 @@ const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
     };
 
     const revertAssets = () => {
-        history.push(`${MainRoutes.swap}/${getAssetString(counter)}/${getAssetString(base)}`);
+        const temp = base;
+        setBase(counter);
+        setCounter(temp);
         setBaseAmount(counterAmount ?? '');
         setCounterAmount('');
         setBestPathXDR(null);
@@ -269,13 +342,12 @@ const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
         setIsPriceReverted(false);
     };
 
-    const setSource = asset => {
-        history.push(`${MainRoutes.swap}/${getAssetString(asset)}/${getAssetString(counter)}`);
-    };
+    const SLIPPAGE = localStorage.getItem(SWAP_SLIPPAGE_ALIAS) || '1'; // 1%
 
-    const setDestination = asset => {
-        history.push(`${MainRoutes.swap}/${getAssetString(base)}/${getAssetString(asset)}`);
-    };
+    const isInsufficient = isSend
+        ? Number(baseAmount) > account?.getAvailableForSwapBalance(base)
+        : (1 + Number(SLIPPAGE) / 100) * Number(baseAmount) >
+          account?.getAvailableForSwapBalance(base);
 
     const SLIPPAGE = localStorage.getItem(SWAP_SLIPPAGE_ALIAS) || '1'; // 1%
 
@@ -303,16 +375,26 @@ const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
     };
 
     return (
-        <Form>
-            <SettingsButton onClick={() => ModalService.openModal(SwapSettingsModal, {})}>
-                <SettingsIcon />
-            </SettingsButton>
+        <Form $isEmbedded={isEmbedded}>
+            {isEmbedded ? (
+                <SwapHeader>
+                    <h3> Swap assets</h3>
+
+                    <div onClick={() => ModalService.openModal(SwapSettingsModal, {})}>
+                        <SettingsIcon />
+                    </div>
+                </SwapHeader>
+            ) : (
+                <SettingsButton onClick={() => ModalService.openModal(SwapSettingsModal, {})}>
+                    <SettingsIcon />
+                </SettingsButton>
+            )}
 
             <SwapRows>
                 <SwapFormRow
                     isBase
                     asset={base}
-                    setAsset={setSource}
+                    setAsset={setBase}
                     amount={baseAmount}
                     setAmount={value => onAmountChange(value, true)}
                     resetAmount={() => resetAmount(true)}
@@ -320,13 +402,14 @@ const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
                     usdEquivalent={
                         <AmountUsdEquivalent amount={debouncedBaseAmount.current} asset={base} />
                     }
+                    isEmbedded={isEmbedded}
                 />
 
                 <SwapFormDivider pending={estimatePending} onRevert={revertAssets} />
 
                 <SwapFormRow
                     asset={counter}
-                    setAsset={setDestination}
+                    setAsset={setCounter}
                     amount={counterAmount}
                     assetsList={assetsList}
                     setAmount={value => onAmountChange(value, false)}
@@ -339,10 +422,11 @@ const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
                             sourceAsset={base}
                         />
                     }
+                    isEmbedded={isEmbedded}
                 />
             </SwapRows>
 
-            <SwapFormPrice
+            <Price
                 baseCode={base.code}
                 baseAmount={baseAmount}
                 counterCode={counter.code}
@@ -357,7 +441,7 @@ const SwapForm = ({ base, counter }: SwapFormProps): React.ReactNode => {
 
             <StyledButton
                 isBig
-                isRounded
+                isRounded={!isEmbedded}
                 fullWidth
                 disabled={
                     hasError ||

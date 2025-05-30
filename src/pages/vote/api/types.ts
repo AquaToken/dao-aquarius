@@ -44,6 +44,7 @@ export type MarketKey = {
     auth_revocable: boolean;
     auth_clawback_enabled: boolean;
     adjusted_votes_value: string;
+    downvote_immunity: boolean;
 };
 
 export type MarketBribes = {

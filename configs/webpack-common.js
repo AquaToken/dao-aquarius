@@ -48,8 +48,21 @@ module.exports = {
                 use: ['style-loader', 'css-loader', 'sass-loader'],
             },
             {
-                test: /\.svg$/,
-                use: ['@svgr/webpack'],
+                test: /\.svg$/i,
+                oneOf: [
+                    {
+                        resourceQuery: /url/, // ?url
+                        type: 'asset/resource',
+                    },
+                    {
+                        issuer: /\.[jt]sx?$/,
+                        use: ['@svgr/webpack'],
+                    },
+                ],
+            },
+            {
+                test: /\.(png|jpe?g|gif)$/i,
+                type: 'asset/resource',
             },
         ],
     },

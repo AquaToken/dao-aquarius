@@ -30,6 +30,7 @@ const ArrowDown = styled(Down)<{ $isOpen: boolean }>`
     margin-left: 2rem;
     width: 2rem;
     height: 2rem;
+    min-width: 2rem;
     transform: ${({ $isOpen }) => ($isOpen ? 'rotate(180deg)' : 'unset')};
     transform-origin: center;
     transition: transform linear 200ms;
@@ -64,7 +65,7 @@ const Question = ({
     question,
     answer,
 }: {
-    question: string;
+    question: string | React.ReactNode;
     answer: React.ReactNode;
 }): React.ReactNode => {
     const [isOpen, setIsOpen] = useState(false);

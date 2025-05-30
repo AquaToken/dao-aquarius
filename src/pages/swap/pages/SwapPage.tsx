@@ -77,6 +77,14 @@ const SwapPage = () => {
         }
     }, [params]);
 
+    const setSource = asset => {
+        history.push(`${MainRoutes.swap}/${getAssetString(asset)}/${getAssetString(counter)}`);
+    };
+
+    const setDestination = asset => {
+        history.push(`${MainRoutes.swap}/${getAssetString(base)}/${getAssetString(asset)}`);
+    };
+
     if (!base || !counter) {
         return <PageLoader />;
     }
@@ -84,7 +92,12 @@ const SwapPage = () => {
     return (
         <Container>
             <Content>
-                <SwapForm base={base} counter={counter} />
+                <SwapForm
+                    base={base}
+                    counter={counter}
+                    setBase={setSource}
+                    setCounter={setDestination}
+                />
             </Content>
         </Container>
     );

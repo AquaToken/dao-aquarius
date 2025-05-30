@@ -7,7 +7,8 @@ import { Breakpoints, COLORS } from 'web/styles';
 
 import Arrow from 'assets/icon-arrow-down.svg';
 
-import { linkStyles, WithCountStyles } from 'components/Header/Header';
+import { ActiveProposals } from 'components/Header/ActiveProposals/ActiveProposals';
+import { linkStyles } from 'components/Header/Header';
 
 const Menu = styled.div`
     position: relative;
@@ -26,11 +27,13 @@ const MenuHead = styled.div`
     `}
 `;
 
-const MenuHeadTitle = styled.div<{ count: number }>`
-    ${({ count }) => Boolean(count) && WithCountStyles};
+const MenuHeadTitle = styled.div`
     ${linkStyles};
     font-size: 1.6rem;
     color: ${COLORS.titleText};
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
 `;
 
 const MenuLinks = styled.div<{ $isOpen: boolean }>`
@@ -47,7 +50,7 @@ const MenuLinks = styled.div<{ $isOpen: boolean }>`
         width: fit-content;
 
         &:not(:last-child) {
-            margin: 0 0 1.2rem 0 !important;
+            margin: 0 0 1.2rem 0;
         }
     }
 
@@ -58,7 +61,7 @@ const MenuLinks = styled.div<{ $isOpen: boolean }>`
         align-items: center;
         
         a:not(:last-child) {
-            margin-bottom: 2.4rem!important;
+            margin-bottom: 2.4rem;
         }
     `}
 `;
@@ -66,15 +69,21 @@ const MenuLinks = styled.div<{ $isOpen: boolean }>`
 interface Props {
     links: React.ReactNode;
     title: string;
-    count?: number;
+    counts?: { active: number; discussion: number };
 }
 
-const ExpandedMenu = ({ links, title, count }: Props): React.ReactNode => {
+const ExpandedMenu = ({ links, title, counts }: Props): React.ReactNode => {
     const [isOpen, setIsOpen] = useState(false);
     return (
         <Menu onMouseEnter={() => setIsOpen(true)} onMouseLeave={() => setIsOpen(false)}>
             <MenuHead>
-                <MenuHeadTitle count={count}>{title}</MenuHeadTitle>
+                <MenuHeadTitle>
+                    {title}
+                    <ActiveProposals
+                        discussionCount={counts?.discussion}
+                        activeCount={counts?.active}
+                    />
+                </MenuHeadTitle>
                 <Arrow />
             </MenuHead>
             <MenuLinks $isOpen={isOpen}>{links}</MenuLinks>

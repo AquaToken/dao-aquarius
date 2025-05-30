@@ -63,6 +63,7 @@
     "webpack-merge": "^5.8.0"
   },
   "dependencies": {
+    "@creit.tech/stellar-wallets-kit": "^1.7.1",
     "@ledgerhq/hw-app-str": "7.0.4",
     "@ledgerhq/hw-transport-webusb": "6.29.4",
     "@lobstrco/signer-extension-api": "^1.0.0-beta.0",
@@ -77,7 +78,6 @@
     "@walletconnect/sign-client": "2.16.2",
     "axios": "^0.23.0",
     "bignumber.js": "^9.1.2",
-    "binascii": "^0.0.2",
     "d3": "^7.9.0",
     "date-fns": "^2.28.0",
     "detect-browser": "^5.3.0",
@@ -95,7 +95,7 @@
     "styled-components": "6.1.13"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=20.18.0"
   },
   "resolutions": {
     "@types/react": "^18.0.0"

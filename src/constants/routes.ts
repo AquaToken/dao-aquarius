@@ -18,6 +18,8 @@ export enum MainRoutes {
     testnet = '/testnet',
     terms = '/terms',
     privacy = '/privacy',
+    token = '/token',
+    quest = '/quest',
 }
 
 //TODO: Replace constants with enums after TS 5.0 release
