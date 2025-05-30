@@ -349,13 +349,6 @@ const SwapForm = ({
         : (1 + Number(SLIPPAGE) / 100) * Number(baseAmount) >
           account?.getAvailableForSwapBalance(base);
 
-    const SLIPPAGE = localStorage.getItem(SWAP_SLIPPAGE_ALIAS) || '1'; // 1%
-
-    const isInsufficient = isSend
-        ? Number(baseAmount) > account?.getAvailableForSwapBalance(base)
-        : (1 + Number(SLIPPAGE) / 100) * Number(baseAmount) >
-          account?.getAvailableForSwapBalance(base);
-
     const getButtonText = () => {
         if (hasError) {
             return 'No exchange paths available';
