@@ -90,7 +90,9 @@ export default class SorobanServiceClass {
                 if (res.status === 'SUCCESS') {
                     return res.returnValue;
                 }
-                throw new Error('Something went wrong');
+                throw new Error(
+                    'Transaction failed because of timeout. Please make another attempt.',
+                );
             });
     }
 
