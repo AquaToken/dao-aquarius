@@ -14,8 +14,8 @@ export const API_URLS = {
         moonpay: 'https://api.moonpay.com/v3',
         onRampProxy: 'https://soroban-on-ramp.coindisco.com',
         horizon: 'https://horizon.stellar.org',
-        soroban: 'https://mainnet.sorobanrpc.com/',
-        // soroban: 'https://soroban-rpc.aqua.network/',
+        // soroban: 'https://mainnet.sorobanrpc.com/',
+        soroban: 'https://soroban-rpc.aqua.network/',
         ammAqua: 'https://amm-api.aqua.network',
     },
     [ENV_TESTNET]: {
