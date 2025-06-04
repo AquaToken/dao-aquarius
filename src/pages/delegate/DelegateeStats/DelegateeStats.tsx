@@ -1,0 +1,216 @@
+import * as React from 'react';
+import { forwardRef, RefObject, useEffect, useState } from 'react';
+import styled from 'styled-components';
+
+import { getDelegateeVotes } from 'api/delegate';
+
+import { getAssetFromString } from 'helpers/assets';
+
+import { useUpdateIndex } from 'hooks/useUpdateIndex';
+
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { ModalService } from 'services/globalServices';
+
+import { Delegatee, DelegateeVote } from 'types/delegate';
+
+import { cardBoxShadow, flexColumn, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
+import Discord from 'assets/discord.svg';
+
+import AssetLogo from 'basics/AssetLogo';
+import { Button } from 'basics/buttons';
+import CircularProgress from 'basics/CircularProgress';
+
+import { MarketKey } from 'pages/vote/api/types';
+import { getPercent } from 'pages/vote/components/MainPage/Table/VoteAmount/VoteAmount';
+
+import ChooseLoginMethodModal from '../../../web/modals/auth/ChooseLoginMethodModal';
+import DelegateModal from '../../../web/modals/DelegateModal';
+
+const Container = styled.div<{ $fromTop: boolean; $visible: boolean }>`
+    position: absolute;
+    background-color: ${COLORS.white};
+    ${cardBoxShadow};
+    left: calc(100% + 4rem);
+    ${({ $fromTop }) => ($fromTop ? 'top: 0;' : 'bottom: 0;')}
+    width: 50%;
+    visibility: ${({ $visible }) => ($visible ? 'visible' : 'hidden')};
+    opacity: ${({ $visible }) => ($visible ? 1 : 0)};
+    transition: opacity 0.2s;
+    border-radius: 2.4rem;
+    padding: 2.4rem;
+    ${flexColumn};
+    gap: 1.6rem;
+
+    ${respondDown(Breakpoints.md)`
+        position: relative;
+        left: 0;
+        box-shadow: unset;
+        width: 100%;
+        padding: 0;
+        margin-top: 2.4rem;
+    `}
+`;
+
+const Description = styled.div`
+    color: ${COLORS.grayText};
+`;
+
+const Stats = styled.div`
+    padding: 2.4rem;
+    border-radius: 1.6rem;
+    ${flexColumn};
+    gap: 0.8rem;
+    background-color: ${COLORS.lightGray};
+
+    h3 {
+        font-weight: 700;
+        font-size: 1.6rem;
+        line-height: 2.8rem;
+        ${COLORS.titleText};
+        margin-bottom: 1.2rem;
+    }
+`;
+
+const StatsRow = styled.div`
+    display: flex;
+    gap: 0.8rem;
+
+    &:not(:last-child) {
+        margin-bottom: 1.2rem;
+    }
+`;
+
+const Market = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-right: auto;
+`;
+
+const Buttons = styled.div`
+    ${flexColumn};
+    gap: 0.8rem;
+`;
+
+const DiscordButton = styled(Button)`
+    background-color: ${COLORS.discordBlurple};
+
+    &:hover {
+        background-color: ${COLORS.discordBlurple};
+        opacity: 0.8;
+    }
+`;
+
+const DiscordIcon = styled(Discord)`
+    margin-left: 0.8rem;
+    path {
+        fill: ${COLORS.white};
+    }
+`;
+const AssetLogoStyled = styled(AssetLogo)`
+    border: 0.1rem solid ${COLORS.white};
+`;
+
+const AssetLogoSecond = styled(AssetLogoStyled)`
+    margin-left: -0.8rem;
+`;
+
+interface Props {
+    fromTop: boolean;
+    popupVisible: boolean;
+    delegatee: Delegatee;
+    delegatees: Delegatee[];
+}
+
+const DelegateeStats = forwardRef(
+    (
+        { fromTop, popupVisible, delegatee, delegatees }: Props,
+        popupRef: RefObject<HTMLDivElement>,
+    ) => {
+        const [votes, setVotes] = useState<(DelegateeVote & MarketKey)[]>(null);
+
+        const { isLogged } = useAuthStore();
+
+        const updateIndex = useUpdateIndex(10000);
+
+        useEffect(() => {
+            getDelegateeVotes(delegatee.account).then(setVotes);
+        }, [updateIndex]);
+
+        return (
+            <Container $fromTop={fromTop} $visible={popupVisible} ref={popupRef}>
+                <Description>{delegatee.description}</Description>
+                <Description>
+                    <b>Strategy:</b> <i>{delegatee.voting_strategy}</i>
+                </Description>
+                {Boolean(votes?.length) && delegatee.managed_ice && (
+                    <Stats>
+                        <h3>Delegate distribution</h3>
+                        {votes.map(vote => (
+                            <StatsRow key={vote.id}>
+                                <Market>
+                                    <AssetLogoStyled
+                                        isCircle
+                                        asset={getAssetFromString(vote.asset1)}
+                                        isSmall
+                                    />
+                                    <AssetLogoSecond
+                                        isCircle
+                                        asset={getAssetFromString(vote.asset2)}
+                                        isSmall
+                                    />
+                                    {vote.asset1_code} / {vote.asset2_code}
+                                </Market>
+                                <span>{getPercent(vote.total_votes, delegatee.managed_ice)}%</span>
+                                <CircularProgress
+                                    percentage={
+                                        +getPercent(vote.total_votes, delegatee.managed_ice)
+                                    }
+                                />
+                            </StatsRow>
+                        ))}
+                    </Stats>
+                )}
+                <Buttons>
+                    <Button
+                        isRounded
+                        isBig
+                        onClick={() => {
+                            if (!isLogged) {
+                                return ModalService.openModal(ChooseLoginMethodModal, {
+                                    callback: () =>
+                                        ModalService.openModal(DelegateModal, {
+                                            delegatee,
+                                            delegatees,
+                                        }),
+                                });
+                            }
+                            ModalService.openModal(DelegateModal, { delegatee, delegatees });
+                        }}
+                    >
+                        delegate ice
+                    </Button>
+                    <DiscordButton
+                        isRounded
+                        isBig
+                        onClick={() =>
+                            window.open(
+                                `https://discord.com/users/${delegatee.discord_handle}`,
+                                '_blank',
+                            )
+                        }
+                    >
+                        start chat <DiscordIcon />
+                    </DiscordButton>
+                </Buttons>
+            </Container>
+        );
+    },
+);
+
+DelegateeStats.displayName = 'DelegateeStats';
+
+export default DelegateeStats;

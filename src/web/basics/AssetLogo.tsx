@@ -94,6 +94,7 @@ const AssetLogo = ({
     isSmall,
     isBig,
     isCircle,
+    ...props
 }: {
     asset: AssetSimple;
     isSmall?: boolean;
@@ -111,14 +112,14 @@ const AssetLogo = ({
 
     if (logoUrl === undefined) {
         return (
-            <LogoLoaderContainer $isSmall={isSmall} $isBig={isBig} $isCircle={isCircle}>
+            <LogoLoaderContainer $isSmall={isSmall} $isBig={isBig} $isCircle={isCircle} {...props}>
                 <LogoLoader size="small" />
             </LogoLoaderContainer>
         );
     }
 
     if (logoUrl === null || isErrorLoad) {
-        return <Unknown $isSmall={isSmall} $isBig={isBig} $isCircle={isCircle} />;
+        return <Unknown $isSmall={isSmall} $isBig={isBig} $isCircle={isCircle} {...props} />;
     }
 
     return (
@@ -131,6 +132,7 @@ const AssetLogo = ({
             onError={() => {
                 setIsErrorLoad(true);
             }}
+            {...props}
         />
     );
 };

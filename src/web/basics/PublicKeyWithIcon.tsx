@@ -38,16 +38,19 @@ const KeyMobile = styled.span<{ $narrowForMobile?: boolean }>`
 const PublicKeyWithIcon = ({
     pubKey,
     narrowForMobile,
+    lettersCount = 8,
+    ...props
 }: {
     pubKey: string;
     narrowForMobile?: boolean;
+    lettersCount?: number;
 }): React.ReactNode => {
     const url = createStellarIdenticon(pubKey).toDataURL();
-    const truncatedKeyWeb = `${pubKey.slice(0, 8)}...${pubKey.slice(-8)}`;
+    const truncatedKeyWeb = `${pubKey.slice(0, lettersCount)}...${pubKey.slice(-lettersCount)}`;
     const truncatedKeyMobile = `G...${pubKey.slice(-3)}`;
 
     return (
-        <Container>
+        <Container {...props}>
             <IdenticonImage src={url} alt="IdentIcon" />
             <KeyWeb $narrowForMobile={narrowForMobile}>{truncatedKeyWeb}</KeyWeb>
             <KeyMobile $narrowForMobile={narrowForMobile}>{truncatedKeyMobile}</KeyMobile>

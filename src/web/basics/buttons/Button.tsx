@@ -234,7 +234,7 @@ const ButtonLoader = styled.div<{
     }
 `;
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     children: React.ReactNode;
     pending?: boolean;
     isBig?: boolean;

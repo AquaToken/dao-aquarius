@@ -255,6 +255,15 @@ const Links = () => {
                             Liquidity Voting
                         </NavLinkStyled>
                         <NavLinkStyled
+                            to={MainRoutes.delegate}
+                            activeStyle={{
+                                fontWeight: 700,
+                            }}
+                            title="Delegate votes"
+                        >
+                            Delegate votes
+                        </NavLinkStyled>
+                        <NavLinkStyled
                             to={MainRoutes.rewards}
                             activeStyle={{
                                 fontWeight: 700,

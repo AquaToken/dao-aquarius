@@ -10,7 +10,8 @@ import { getMoonpayKeyByEnv } from 'helpers/moonpay';
 
 import { LoginTypes } from 'store/authStore/types';
 
-import { StellarService, WalletConnectService } from 'services/globalServices';
+import { ModalService, StellarService, WalletConnectService } from 'services/globalServices';
+import { D_ICE_CODE, ICE_ISSUER, StellarEvents } from 'services/stellar.service';
 
 import AppGlobalStyle from 'web/AppGlobalStyles';
 import { respondDown } from 'web/mixins';
@@ -34,6 +35,7 @@ import SentryService from './services/sentry.service';
 import Provider from './store';
 import useAssetsStore from './store/assetsStore/useAssetsStore';
 import useAuthStore from './store/authStore/useAuthStore';
+import DIceTrustlineModal from './web/modals/DIceTrustlineModal';
 
 const MainPage = lazy(() => import('pages/main/MainPage'));
 const LockerPage = lazy(() => import('pages/locker/Locker'));
@@ -53,6 +55,7 @@ const TermsPage = lazy(() => import('pages/terms/Terms'));
 const PrivacyPage = lazy(() => import('pages/privacy/Privacy'));
 const TokenPage = lazy(() => import('pages/token/TokenPage'));
 const QuestPage = lazy(() => import('pages/quest/Quest'));
+const DelegatePage = lazy(() => import('pages/delegate/Delegate'));
 
 const UPDATE_ASSETS_DATE = 'update assets timestamp';
 const UPDATE_PERIOD = 24 * 60 * 60 * 1000;
@@ -136,6 +139,27 @@ const App = () => {
             StellarService.stopEffectsStream();
         }
     }, [isLogged]);
+
+    useEffect(() => {
+        if (!account) {
+            return;
+        }
+        const unsub = StellarService.event.sub(({ type }) => {
+            if (type === StellarEvents.claimableUpdate) {
+                const delegators = StellarService.getDelegatorLocks(account.accountId());
+
+                if (
+                    delegators.length &&
+                    account.getAssetBalance(StellarService.createAsset(D_ICE_CODE, ICE_ISSUER)) ===
+                        null
+                ) {
+                    ModalService.openModal(DIceTrustlineModal, {});
+                }
+            }
+        });
+
+        return () => unsub();
+    }, [account]);
 
     useEffect(() => {
         if (isLogged) {
@@ -287,6 +311,12 @@ const App = () => {
                         <Route path={MainRoutes.quest}>
                             <PageTitle title="Onboard to Aquarius">
                                 <QuestPage />
+                            </PageTitle>
+                        </Route>
+
+                        <Route path={MainRoutes.delegate}>
+                            <PageTitle title="Delegates">
+                                <DelegatePage />
                             </PageTitle>
                         </Route>
 

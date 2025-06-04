@@ -37,6 +37,8 @@ const MARKET_KEY_MARKER_DOWN = 'GAYVCXXXUSEAQUAXXXAQUARIUSDOWNVOTEWALLETXXXPOWER
 const MARKET_KEY_SIGNER_WEIGHT = 1;
 const MARKET_KEY_THRESHOLD = 10;
 
+export const DELEGATE_MARKER_KEY = 'GA5BS7XXXAQUARIUSXXXICEXXXVOTEDELEGATIONXXXPOWEREDBYAQUA';
+
 const AIRDROP_2_SPONSOR = 'GDFCYDQOVJ2OEWPLEGIRQVAM3VTOQ6JDNLJTDZP5S5OGTEHM5CIWMYBH';
 
 export const COLLECTOR_KEY = 'GAORXNBAWRIOJ7HRMCTWW2MIB6PYWSC7OKHGIXWTJXYRTZRSHP356TW3';
@@ -58,6 +60,7 @@ export const ICE_ISSUER = 'GAXSGZ2JM3LNWOO4WRGADISNMWO4HQLG4QBGUZRKH5ZHL3EQBGX73
 export const GOV_ICE_CODE = 'governICE';
 export const UP_ICE_CODE = 'upvoteICE';
 export const DOWN_ICE_CODE = 'downvoteICE';
+export const D_ICE_CODE = 'dICE';
 
 export const ICE_ASSETS = [
     `${ICE_CODE}:${ICE_ISSUER}`,
@@ -439,14 +442,15 @@ export default class StellarServiceClass {
             .forAccount(publicKey)
             .cursor('now')
             .stream({
-                onmessage: res => {
+                onmessage: (res: Horizon.ServerApi.EffectRecord) => {
                     if (
-                        (res as unknown as Horizon.ServerApi.EffectRecord).type ===
-                            'claimable_balance_sponsorship_created' ||
-                        (res as unknown as Horizon.ServerApi.EffectRecord).type ===
-                            'claimable_balance_sponsorship_removed' ||
-                        (res as unknown as Horizon.ServerApi.EffectRecord).type ===
-                            'claimable_balance_created'
+                        res.type === 'claimable_balance_sponsorship_created' ||
+                        res.type === 'claimable_balance_sponsorship_removed' ||
+                        res.type === 'claimable_balance_sponsorship_updated' ||
+                        res.type === 'claimable_balance_created' ||
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore
+                        res.type === 'claimable_balance_claimant_created'
                     ) {
                         this.getClaimableBalances(publicKey);
                     }
@@ -981,6 +985,91 @@ export default class StellarServiceClass {
                 ),
             ],
         });
+    }
+
+    createDelegateTx(account, delegateDestionation, amount) {
+        return this.buildTx(
+            account,
+            StellarSdk.Operation.createClaimableBalance({
+                source: account.accountId(),
+                amount: amount.toString(),
+                asset: this.createAsset(UP_ICE_CODE, ICE_ISSUER),
+                claimants: [
+                    new StellarSdk.Claimant(
+                        account.accountId(),
+                        StellarSdk.Claimant.predicateNot(
+                            StellarSdk.Claimant.predicateBeforeAbsoluteTime(
+                                ((Date.now() + 25 * 60 * 60 * 1000) / 1000).toFixed(), // 25 hours
+                            ),
+                        ),
+                    ),
+                    new StellarSdk.Claimant(
+                        delegateDestionation,
+                        StellarSdk.Claimant.predicateNot(
+                            StellarSdk.Claimant.predicateUnconditional(),
+                        ),
+                    ),
+                    new StellarSdk.Claimant(
+                        DELEGATE_MARKER_KEY,
+                        StellarSdk.Claimant.predicateNot(
+                            StellarSdk.Claimant.predicateUnconditional(),
+                        ),
+                    ),
+                ],
+            }),
+        );
+    }
+
+    getDelegateLocks(accountId: string) {
+        if (!this.claimableBalances) {
+            return null;
+        }
+
+        return this.claimableBalances.reduce((acc, claim) => {
+            if (claim.claimants.length !== 3) {
+                return acc;
+            }
+            const hasMarker = claim.claimants.some(
+                claimant => claimant.destination === DELEGATE_MARKER_KEY,
+            );
+            const selfClaim = claim.claimants.find(
+                claimant =>
+                    claimant.destination === accountId && !!claimant.predicate?.not?.abs_before,
+            );
+            const isUpvoteIce = claim.asset === `${UP_ICE_CODE}:${ICE_ISSUER}`;
+
+            if (hasMarker && Boolean(selfClaim) && isUpvoteIce) {
+                acc.push(claim);
+            }
+            return acc;
+        }, []);
+    }
+
+    getDelegatorLocks(accountId: string) {
+        if (!this.claimableBalances) {
+            return null;
+        }
+
+        return this.claimableBalances.reduce((acc, claim) => {
+            if (claim.claimants.length !== 3) {
+                return acc;
+            }
+            const hasMarker = claim.claimants.some(
+                claimant => claimant.destination === DELEGATE_MARKER_KEY,
+            );
+            const selfClaim = claim.claimants.find(
+                claimant =>
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
+                    claimant.destination === accountId && !!claimant.predicate?.not?.unconditional,
+            );
+            const isUpvoteIce = claim.asset === `${UP_ICE_CODE}:${ICE_ISSUER}`;
+
+            if (hasMarker && Boolean(selfClaim) && isUpvoteIce) {
+                acc.push(claim);
+            }
+            return acc;
+        }, []);
     }
 
     getAquaEquivalent(asset, amount) {

@@ -23,6 +23,7 @@ export const COLORS = {
     border: '#E9E6ED',
     blue: '#2E30F0',
     darkBlue: '#1127E9',
+    discordBlurple: '#5865F2',
     classicPool: '#4F345B',
     constantPool: '#B0632A',
     stablePool: '#2AA3B0',

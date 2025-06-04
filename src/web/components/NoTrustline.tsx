@@ -9,7 +9,7 @@ import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { StellarService, ToastService } from 'services/globalServices';
+import { ModalService, StellarService, ToastService } from 'services/globalServices';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { respondDown } from 'web/mixins';
@@ -19,6 +19,7 @@ import Plus from 'assets/icon-plus.svg';
 
 import Asset from 'basics/Asset';
 import { Button } from 'basics/buttons';
+import { ButtonProps } from 'basics/buttons/Button';
 
 const TrustlineBlock = styled.div<{ $isRounded?: boolean }>`
     display: flex;
@@ -56,16 +57,18 @@ const TrustlineButton = styled(Button)`
     }
 `;
 
-interface NoTrustlineProps {
+interface NoTrustlineProps extends Omit<ButtonProps, 'children'> {
     asset: AssetType;
     onlyButton?: boolean;
     isRounded?: boolean;
+    closeModalAfterSubmit?: boolean;
 }
 
 const NoTrustline = ({
     asset,
     onlyButton,
     isRounded,
+    closeModalAfterSubmit,
     ...props
 }: NoTrustlineProps): React.ReactNode => {
     const [trustlinePending, setTrustlinePending] = useState(false);
@@ -92,6 +95,9 @@ const NoTrustline = ({
                 return;
             }
             ToastService.showSuccessToast('Trustline added successfully');
+            if (closeModalAfterSubmit) {
+                ModalService.closeAllModals();
+            }
             setTrustlinePending(false);
         } catch (e) {
             const errorText = ErrorHandler(e);
@@ -106,7 +112,7 @@ const NoTrustline = ({
 
     if (onlyButton) {
         return (
-            <Button isBig secondary onClick={() => addTrust()} pending={trustlinePending}>
+            <Button onClick={() => addTrust()} pending={trustlinePending} {...props}>
                 add trustline
             </Button>
         );
