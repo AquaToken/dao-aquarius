@@ -2,13 +2,14 @@ import * as React from 'react';
 import { useCallback } from 'react';
 import styled from 'styled-components';
 
+import { GOV_ICE_CODE, ICE_CODE, ICE_ISSUER } from 'constants/assets';
+
 import { formatBalance } from 'helpers/format-number';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import AccountService from 'services/account.service';
 import { ModalService, StellarService } from 'services/globalServices';
-import { GOV_ICE_CODE, ICE_CODE, ICE_ISSUER } from 'services/stellar.service';
 
 import { ClaimableBalance } from 'types/stellar';
 

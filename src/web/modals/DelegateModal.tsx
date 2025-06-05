@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { NumericFormat } from 'react-number-format';
 import styled from 'styled-components';
 
+import { ICE_ISSUER, UP_ICE_CODE } from 'constants/assets';
+
 import ErrorHandler from 'helpers/error-handler';
 import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
@@ -11,7 +13,6 @@ import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { StellarService, ToastService } from 'services/globalServices';
-import { ICE_ISSUER, UP_ICE_CODE } from 'services/stellar.service';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { Delegatee } from 'types/delegate';

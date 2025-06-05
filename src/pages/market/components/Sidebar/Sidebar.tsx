@@ -2,13 +2,15 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { DOWN_ICE_CODE, ICE_ISSUER, UP_ICE_CODE } from 'constants/assets';
+
 import { getAquaAssetData } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService, StellarService } from 'services/globalServices';
-import { DOWN_ICE_CODE, ICE_ISSUER, StellarEvents, UP_ICE_CODE } from 'services/stellar.service';
+import { StellarEvents } from 'services/stellar.service';
 
 import { Asset } from 'types/stellar';
 

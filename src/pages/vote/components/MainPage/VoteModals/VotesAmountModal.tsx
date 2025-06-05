@@ -39,7 +39,7 @@ import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
 import VotesDurationModal from './VotesDurationModal';
 
 import { PairStats } from '../../../api/types';
-import { DOWN_ICE, SELECTED_PAIRS_ALIAS, UP_ICE } from '../MainPage';
+import { DELEGATE_ICE, DOWN_ICE, SELECTED_PAIRS_ALIAS, UP_ICE } from '../MainPage';
 
 export const ContentRow = styled.div`
     ${flexRowSpaceBetween};
@@ -296,6 +296,14 @@ const VotesAmountModal = ({
         ],
         [isDownVoteModal],
     );
+
+    if (!isDownVoteModal && account.getAssetBalance(DELEGATE_ICE) !== null) {
+        OPTIONS.push({
+            label: 'dICE',
+            value: DELEGATE_ICE,
+            icon: <IceLogo />,
+        });
+    }
 
     const targetBalance = useMemo(() => account?.getAssetBalance(targetAsset), [targetAsset]);
 

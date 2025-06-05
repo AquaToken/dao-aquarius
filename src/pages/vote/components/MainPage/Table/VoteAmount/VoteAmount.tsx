@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 
+import { DOWN_ICE_CODE, ICE_ISSUER, UP_ICE_CODE } from 'constants/assets';
+
 import { getAquaAssetData } from 'helpers/assets';
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
-
-import { DOWN_ICE_CODE, ICE_ISSUER, UP_ICE_CODE } from 'services/stellar.service';
 
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';

@@ -1,8 +1,9 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
+import { D_ICE_CODE, ICE_ISSUER } from 'constants/assets';
+
 import { StellarService } from 'services/globalServices';
-import { D_ICE_CODE, ICE_ISSUER } from 'services/stellar.service';
 
 import { flexColumnCenter } from 'web/mixins';
 import { COLORS } from 'web/styles';

@@ -3,6 +3,7 @@ import { lazy, Suspense, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import { createGlobalStyle } from 'styled-components';
 
+import { D_ICE_CODE, ICE_ISSUER } from 'constants/assets';
 import { MainRoutes } from 'constants/routes';
 
 import { getEnv, getIsTestnetEnv, setProductionEnv } from 'helpers/env';
@@ -11,7 +12,7 @@ import { getMoonpayKeyByEnv } from 'helpers/moonpay';
 import { LoginTypes } from 'store/authStore/types';
 
 import { ModalService, StellarService, WalletConnectService } from 'services/globalServices';
-import { D_ICE_CODE, ICE_ISSUER, StellarEvents } from 'services/stellar.service';
+import { StellarEvents } from 'services/stellar.service';
 
 import AppGlobalStyle from 'web/AppGlobalStyles';
 import { respondDown } from 'web/mixins';

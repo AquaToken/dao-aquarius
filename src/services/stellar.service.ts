@@ -13,8 +13,18 @@ import BigNumber from 'bignumber.js';
 
 import { getPoolInfo } from 'api/amm';
 
-import { ASSETS_ENV_DATA } from 'constants/assets';
+import {
+    ASSETS_ENV_DATA,
+    D_ICE_CODE,
+    DOWN_ICE_CODE,
+    GOV_ICE_CODE,
+    ICE_ASSETS,
+    ICE_CODE,
+    ICE_ISSUER,
+    UP_ICE_CODE,
+} from 'constants/assets';
 
+import { getAssetString } from 'helpers/assets';
 import debounceFunction from 'helpers/debounce-function';
 import { getEnv, getNetworkPassphrase } from 'helpers/env';
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
@@ -50,24 +60,6 @@ export enum StellarEvents {
     paymentsHistoryUpdate = 'payments history update',
 }
 const { aquaCode, aquaIssuer, aquaAssetString } = ASSETS_ENV_DATA[getEnv()].aqua;
-
-export const yXLM_CODE = 'yXLM';
-export const yXLM_ISSUER = 'GARDNV3Q7YGT4AKSDF25LT32YSCCW4EV22Y2TV3I2PU2MMXJTEDL5T55';
-
-export const ICE_CODE = 'ICE';
-export const ICE_ISSUER = 'GAXSGZ2JM3LNWOO4WRGADISNMWO4HQLG4QBGUZRKH5ZHL3EQBGX73ICE';
-
-export const GOV_ICE_CODE = 'governICE';
-export const UP_ICE_CODE = 'upvoteICE';
-export const DOWN_ICE_CODE = 'downvoteICE';
-export const D_ICE_CODE = 'dICE';
-
-export const ICE_ASSETS = [
-    `${ICE_CODE}:${ICE_ISSUER}`,
-    `${GOV_ICE_CODE}:${ICE_ISSUER}`,
-    `${UP_ICE_CODE}:${ICE_ISSUER}`,
-    `${DOWN_ICE_CODE}:${ICE_ISSUER}`,
-];
 
 export enum THRESHOLDS {
     LOW = 'low_threshold',
@@ -592,11 +584,12 @@ export default class StellarServiceClass {
             const isAqua = claim.asset === aquaAssetString;
             const isUpIce = claim.asset === `${UP_ICE_CODE}:${ICE_ISSUER}`;
             const isDownIce = claim.asset === `${DOWN_ICE_CODE}:${ICE_ISSUER}`;
+            const isDelegatedIce = claim.asset === `${D_ICE_CODE}:${ICE_ISSUER}`;
 
             if (
                 (hasUpMarker || hasDownMarker) &&
                 Boolean(selfClaim) &&
-                (isAqua || isUpIce || isDownIce)
+                (isAqua || isUpIce || isDownIce || isDelegatedIce)
             ) {
                 const [code, issuer] = claim.asset.split(':');
                 acc.push({
@@ -666,10 +659,11 @@ export default class StellarServiceClass {
             const isAqua = claim.asset === aquaAssetString;
             const isUpIce = claim.asset === `${UP_ICE_CODE}:${ICE_ISSUER}`;
             const isDownIce = claim.asset === `${DOWN_ICE_CODE}:${ICE_ISSUER}`;
+            const isDelegatedIce = claim.asset === `${D_ICE_CODE}:${ICE_ISSUER}`;
             const hasSelfClaim = claim.claimants.some(
                 claimant => claimant.destination === accountId,
             );
-            if ((isAqua || isUpIce || isDownIce) && hasSelfClaim) {
+            if ((isAqua || isUpIce || isDownIce || isDelegatedIce) && hasSelfClaim) {
                 const similarToMarketKey = claim.claimants.find(
                     claimant => claimant.destination !== accountId,
                 );
@@ -731,7 +725,7 @@ export default class StellarServiceClass {
     }
 
     processIceTx(tx, asset) {
-        if (!ICE_ASSETS.includes(`${asset.code}:${asset.issuer}`)) {
+        if (![...ICE_ASSETS, `${D_ICE_CODE}:${ICE_ISSUER}`].includes(getAssetString(asset))) {
             return tx;
         }
 
@@ -753,6 +747,9 @@ export default class StellarServiceClass {
         }
         if (asset.code === UP_ICE_CODE && asset.issuer === ICE_ISSUER) {
             return 'https://ice-approval.aqua.network/api/v2/upvote-ice/tx-approve/';
+        }
+        if (asset.code === D_ICE_CODE && asset.issuer === ICE_ISSUER) {
+            return 'https://ice-approval.aqua.network/api/v2/delegated-ice/tx-approve/';
         }
         if (asset.code === DOWN_ICE_CODE && asset.issuer === ICE_ISSUER) {
             return 'https://ice-approval.aqua.network/api/v2/downvote-ice/tx-approve/';
