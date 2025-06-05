@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { commonMaxWidth, flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
+import Pending from 'assets/icon-pending-purple.svg';
 import Present from 'assets/icon-present.svg';
 import Bg from 'assets/quests-page-bg.svg';
 
@@ -136,6 +137,15 @@ const TotalText = styled.div`
     }
 `;
 
+const Summary = styled.div`
+    display: flex;
+    gap: 1.6rem;
+
+    ${respondDown(Breakpoints.sm)`
+        flex-direction: column;
+    `}
+`;
+
 const MainBlock = () => (
     <Container>
         <Content>
@@ -146,17 +156,32 @@ const MainBlock = () => (
             <Description>
                 Earn tokens by learning how to use defi on Stellar and completing onchain actions.
             </Description>
-            <TotalPrizeWrapper>
-                <TotalPrize>
-                    <IconWrapper>
-                        <Present />
-                    </IconWrapper>
-                    <TotalText>
-                        <span>Prize fund:</span>
-                        <span>$15,000</span>
-                    </TotalText>
-                </TotalPrize>
-            </TotalPrizeWrapper>
+
+            <Summary>
+                <TotalPrizeWrapper>
+                    <TotalPrize>
+                        <IconWrapper>
+                            <Present />
+                        </IconWrapper>
+                        <TotalText>
+                            <span>Prize fund:</span>
+                            <span>$15,000</span>
+                        </TotalText>
+                    </TotalPrize>
+                </TotalPrizeWrapper>
+
+                <TotalPrizeWrapper>
+                    <TotalPrize>
+                        <IconWrapper>
+                            <Pending />
+                        </IconWrapper>
+                        <TotalText>
+                            <span>Quest ends:</span>
+                            <span>30.06.2025</span>
+                        </TotalText>
+                    </TotalPrize>
+                </TotalPrizeWrapper>
+            </Summary>
         </Content>
     </Container>
 );
