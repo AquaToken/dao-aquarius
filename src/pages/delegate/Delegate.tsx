@@ -1,16 +1,23 @@
 import * as React from 'react';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { getDelegatees } from 'api/delegate';
 
-import { commonMaxWidth, flexColumn, respondDown } from 'web/mixins';
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { ModalService } from 'services/globalServices';
+
+import { commonMaxWidth, respondDown } from 'web/mixins';
 import { Breakpoints } from 'web/styles';
 
+import { ToggleGroup } from 'basics/inputs';
 import { PageLoader } from 'basics/loaders';
 
-import Delegatee from 'pages/delegate/Delegatee/Delegatee';
-import DelegateeStats from 'pages/delegate/DelegateeStats/DelegateeStats';
+import DelegatesList from 'pages/delegate/DelegatesList/DelegatesList';
+import MyDelegates from 'pages/delegate/MyDelegates/MyDelegates';
+
+import ChooseLoginMethodModal from '../../web/modals/auth/ChooseLoginMethodModal';
 
 const Main = styled.main`
     flex: 1 0 auto;
@@ -37,88 +44,62 @@ const Title = styled.h2`
     margin-bottom: 3.4rem;
 `;
 
-const List = styled.div`
-    ${flexColumn};
-    width: 60%;
-
-    ${respondDown(Breakpoints.md)`
-        width: 100%;
-    `}
+const ToggleGroupStyled = styled(ToggleGroup)`
+    width: fit-content;
+    margin-bottom: 3.2rem;
 `;
 
+enum Tabs {
+    whitelist = 'whitelist',
+    myDelegations = 'myDelegations',
+}
+
+const OPTIONS = [
+    { value: Tabs.whitelist, label: 'Whitelist' },
+    { value: Tabs.myDelegations, label: 'My delegation' },
+];
+
 const Delegate = () => {
-    const [selected, setSelected] = useState<number | null>(null);
-    const [fromTop, setFromTop] = useState(false);
-    const [popupVisible, setPopupVisible] = useState(false);
     const [delegatees, setDelegatees] = useState(null);
 
-    const listRef = useRef<HTMLDivElement>(null);
-    const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
-    const popupRef = useRef<HTMLDivElement>(null);
+    const [tab, setTab] = useState<Tabs>(Tabs.whitelist);
+
+    const { isLogged } = useAuthStore();
 
     useEffect(() => {
         getDelegatees().then(setDelegatees);
     }, []);
 
-    useLayoutEffect(() => {
-        if (selected === null) return;
+    const handleTabChange = (newTab: Tabs) => {
+        if (newTab === Tabs.myDelegations && !isLogged) {
+            ModalService.openModal(ChooseLoginMethodModal, {
+                callback: () => setTab(Tabs.myDelegations),
+            });
+            return;
+        }
+        setTab(newTab);
+    };
 
-        setPopupVisible(false);
-
-        requestAnimationFrame(() => {
-            const listRect = listRef.current?.getBoundingClientRect();
-            const itemRect = itemRefs.current[selected]?.getBoundingClientRect();
-            const popupRect = popupRef.current?.getBoundingClientRect();
-
-            if (listRect && itemRect) {
-                const spaceAbove = itemRect.bottom - listRect.top;
-                const spaceBelow = listRect.bottom - itemRect.top;
-
-                if (spaceBelow >= popupRect.height) {
-                    setFromTop(true);
-                } else if (spaceAbove >= popupRect.height) {
-                    setFromTop(false);
-                } else {
-                    setFromTop(true);
-                }
-
-                setPopupVisible(true);
-            }
-        });
-    }, [selected]);
+    useEffect(() => {
+        if (tab === Tabs.myDelegations && !isLogged) {
+            setTab(Tabs.whitelist);
+        }
+    }, [tab, isLogged]);
 
     return (
         <Main>
             <Wrapper>
+                <Title>Delegates</Title>
+
+                <ToggleGroupStyled value={tab} options={OPTIONS} onChange={handleTabChange} />
+
                 {!delegatees ? (
                     <PageLoader />
                 ) : (
-                    <List ref={listRef}>
-                        <Title>Delegates</Title>
-
-                        {delegatees.map((delegatee, i) => (
-                            <Delegatee
-                                key={delegatee.account}
-                                delegatee={delegatee}
-                                ref={el => (itemRefs.current[i] = el)}
-                                isSelected={i === selected}
-                                onDelegateClick={() => {
-                                    setSelected(i);
-                                }}
-                                statsBlock={
-                                    i === selected && (
-                                        <DelegateeStats
-                                            popupVisible={popupVisible}
-                                            fromTop={fromTop}
-                                            ref={popupRef}
-                                            delegatee={delegatee}
-                                            delegatees={delegatees}
-                                        />
-                                    )
-                                }
-                            />
-                        ))}
-                    </List>
+                    <>
+                        {tab === Tabs.whitelist && <DelegatesList delegatees={delegatees} />}
+                        {tab === Tabs.myDelegations && <MyDelegates delegatees={delegatees} />}
+                    </>
                 )}
             </Wrapper>
         </Main>

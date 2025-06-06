@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { forwardRef, RefObject, useEffect, useState } from 'react';
+import { forwardRef, RefObject, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { getDelegateeVotes } from 'api/delegate';
@@ -27,6 +27,7 @@ import { MarketKey } from 'pages/vote/api/types';
 import { getPercent } from 'pages/vote/components/MainPage/Table/VoteAmount/VoteAmount';
 
 import ChooseLoginMethodModal from '../../../web/modals/auth/ChooseLoginMethodModal';
+import DelegateClaimModal from '../../../web/modals/DelegateClaimModal';
 import DelegateModal from '../../../web/modals/DelegateModal';
 
 const Container = styled.div<{ $fromTop: boolean; $visible: boolean }>`
@@ -104,6 +105,15 @@ const DiscordButton = styled(Button)`
     }
 `;
 
+const ClaimButton = styled(Button)`
+    background-color: ${COLORS.pinkRed};
+
+    &:hover {
+        background-color: ${COLORS.pinkRed};
+        opacity: 0.8;
+    }
+`;
+
 const DiscordIcon = styled(Discord)`
     margin-left: 0.8rem;
     path {
@@ -121,13 +131,14 @@ const AssetLogoSecond = styled(AssetLogoStyled)`
 interface Props {
     fromTop: boolean;
     popupVisible: boolean;
-    delegatee: Delegatee;
+    delegatee: Partial<Delegatee>;
     delegatees: Delegatee[];
+    withClaim?: boolean;
 }
 
 const DelegateeStats = forwardRef(
     (
-        { fromTop, popupVisible, delegatee, delegatees }: Props,
+        { fromTop, popupVisible, delegatee, delegatees, withClaim }: Props,
         popupRef: RefObject<HTMLDivElement>,
     ) => {
         const [votes, setVotes] = useState<(DelegateeVote & MarketKey)[]>(null);
@@ -140,13 +151,26 @@ const DelegateeStats = forwardRef(
             getDelegateeVotes(delegatee.account).then(setVotes);
         }, [updateIndex]);
 
+        const votesSum = useMemo(() => {
+            if (!votes) return 0;
+
+            return votes.reduce((acc, item) => {
+                acc += Number(item.total_votes);
+                return acc;
+            }, 0);
+        }, [votes]);
+
         return (
             <Container $fromTop={fromTop} $visible={popupVisible} ref={popupRef}>
-                <Description>{delegatee.description}</Description>
-                <Description>
-                    <b>Strategy:</b> <i>{delegatee.voting_strategy}</i>
-                </Description>
-                {Boolean(votes?.length) && delegatee.managed_ice && (
+                {Boolean(delegatee.description) && (
+                    <Description>{delegatee.description}</Description>
+                )}
+                {Boolean(delegatee.voting_strategy) && (
+                    <Description>
+                        <b>Strategy:</b> <i>{delegatee.voting_strategy}</i>
+                    </Description>
+                )}
+                {Boolean(votes?.length) && (
                     <Stats>
                         <h3>Delegate distribution</h3>
                         {votes.map(vote => (
@@ -164,11 +188,9 @@ const DelegateeStats = forwardRef(
                                     />
                                     {vote.asset1_code} / {vote.asset2_code}
                                 </Market>
-                                <span>{getPercent(vote.total_votes, delegatee.managed_ice)}%</span>
+                                <span>{getPercent(vote.total_votes, votesSum.toFixed(2))}%</span>
                                 <CircularProgress
-                                    percentage={
-                                        +getPercent(vote.total_votes, delegatee.managed_ice)
-                                    }
+                                    percentage={+getPercent(vote.total_votes, votesSum.toFixed(2))}
                                 />
                             </StatsRow>
                         ))}
@@ -193,18 +215,40 @@ const DelegateeStats = forwardRef(
                     >
                         delegate ice
                     </Button>
-                    <DiscordButton
-                        isRounded
-                        isBig
-                        onClick={() =>
-                            window.open(
-                                `https://discord.com/users/${delegatee.discord_handle}`,
-                                '_blank',
-                            )
-                        }
-                    >
-                        start chat <DiscordIcon />
-                    </DiscordButton>
+                    {withClaim && (
+                        <ClaimButton
+                            isRounded
+                            isBig
+                            onClick={() => {
+                                if (!isLogged) {
+                                    return ModalService.openModal(ChooseLoginMethodModal, {
+                                        callback: () =>
+                                            ModalService.openModal(DelegateModal, {
+                                                delegatee,
+                                                delegatees,
+                                            }),
+                                    });
+                                }
+                                ModalService.openModal(DelegateClaimModal, { delegatee });
+                            }}
+                        >
+                            undelegate
+                        </ClaimButton>
+                    )}
+                    {Boolean(delegatee.discord_handle) && (
+                        <DiscordButton
+                            isRounded
+                            isBig
+                            onClick={() =>
+                                window.open(
+                                    `https://discord.com/users/${delegatee.discord_handle}`,
+                                    '_blank',
+                                )
+                            }
+                        >
+                            start chat <DiscordIcon />
+                        </DiscordButton>
+                    )}
                 </Buttons>
             </Container>
         );

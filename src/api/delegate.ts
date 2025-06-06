@@ -11,13 +11,13 @@ import { MarketKey } from 'pages/vote/api/types';
 const API_URL = 'https://api-delegation.aqua.network/api/delegation/';
 
 export const getDelegatees = (): Promise<Delegatee[]> =>
-    axios.get<Delegatee[]>(`${API_URL}stats/?format=json`).then(({ data }) => data);
+    axios.get<Delegatee[]>(`${API_URL}stats/`).then(({ data }) => data);
 
 export const getDelegateeVotes = async (
     accountId: string,
 ): Promise<(DelegateeVote & MarketKey)[]> => {
     const votes = await axios
-        .get<DelegateeVote[]>(`${API_URL}${accountId}/distribution?format=json`)
+        .get<DelegateeVote[]>(`${API_URL}${accountId}/distribution`)
         .then(({ data }) => data);
 
     const markets = await getMarketsMap(votes.map(item => item.market_key));

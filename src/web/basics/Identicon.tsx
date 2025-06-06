@@ -20,11 +20,11 @@ const IdenticonImage = styled.img`
     width: 50%;
 `;
 
-const Identicon = ({ pubKey }: { pubKey: string }): JSX.Element => {
+const Identicon = ({ pubKey, ...props }: { pubKey: string }): JSX.Element => {
     const url = createStellarIdenticon(pubKey).toDataURL();
 
     return (
-        <IdenticonBlock>
+        <IdenticonBlock {...props}>
             <IdenticonImage src={url} alt="" />
         </IdenticonBlock>
     );

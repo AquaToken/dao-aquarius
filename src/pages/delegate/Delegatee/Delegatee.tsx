@@ -11,6 +11,7 @@ import { Breakpoints, COLORS } from 'web/styles';
 
 import Arrow from 'assets/icon-arrow-down.svg';
 
+import Identicon from 'basics/Identicon';
 import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
 
 const Container = styled.div<{ $isSelected: boolean }>`
@@ -79,16 +80,17 @@ const RowContent = styled.div`
 const ColumnInfo = styled.div`
     ${flexColumn};
     margin-right: 3.4rem;
+    justify-content: center;
+
+    span:last-child {
+        color: ${COLORS.grayText};
+    }
 
     span:first-child {
         font-weight: 700;
         font-size: 1.6rem;
         line-height: 2.8rem;
         color: ${COLORS.titleText};
-    }
-
-    span:last-child {
-        color: ${COLORS.grayText};
     }
 `;
 
@@ -111,43 +113,70 @@ const ArrowIcon = styled(Arrow)<{ $isSelected: boolean }>`
     `}
 `;
 
+const IdenticonStyled = styled(Identicon)`
+    height: 4.8rem;
+    width: 4.8rem;
+    margin-right: 0.8rem;
+`;
+
 interface Props {
     isSelected: boolean;
     onDelegateClick: () => void;
     statsBlock: React.ReactNode;
-    delegatee: DelegateeType;
+    delegatee: Partial<DelegateeType>;
+    myDelegation?: number;
 }
 
 const Delegatee = forwardRef(
     (
-        { isSelected, onDelegateClick, statsBlock, delegatee }: Props,
+        { isSelected, onDelegateClick, statsBlock, delegatee, myDelegation }: Props,
         ref: RefObject<HTMLDivElement>,
     ) => (
         <Container ref={ref} $isSelected={isSelected} onClick={onDelegateClick}>
             <Row $isSelected={isSelected}>
                 <RowContent>
-                    <IconWrapper>
-                        <img src={delegatee.image} alt={delegatee.name} width={32} />
-                    </IconWrapper>
+                    {delegatee.image ? (
+                        <IconWrapper>
+                            <img src={delegatee.image} alt={delegatee.name} width={32} />
+                        </IconWrapper>
+                    ) : (
+                        <IdenticonStyled pubKey={delegatee.account} />
+                    )}
+
                     <ColumnInfo>
-                        <span>{delegatee.name}</span>
-                        <span>
-                            <PublicKeyWithIcon pubKey={delegatee.account} lettersCount={4} />
-                        </span>
+                        {delegatee.name ? (
+                            <span>{delegatee.name}</span>
+                        ) : (
+                            <span>
+                                {delegatee.account.slice(0, 4)}...{delegatee.account.slice(-4)}
+                            </span>
+                        )}
+                        {Boolean(delegatee.name) && (
+                            <span>
+                                <PublicKeyWithIcon pubKey={delegatee.account} lettersCount={4} />
+                            </span>
+                        )}
                     </ColumnInfo>
                     <ArrowIcon $isSelected={isSelected} />
                 </RowContent>
 
-                <RowContent>
+                {myDelegation ? (
                     <ColumnRight>
-                        <span>{formatBalance(Number(delegatee.managed_ice), true)}</span>
-                        <span>Managed ICE</span>
+                        <span>{formatBalance(myDelegation, true)} ICE</span>
+                        <span>My delegation</span>
                     </ColumnRight>
-                    <ColumnRight>
-                        <span>{formatBalance(Number(delegatee.delegated), true)}</span>
-                        <span>Delegated</span>
-                    </ColumnRight>
-                </RowContent>
+                ) : (
+                    <RowContent>
+                        <ColumnRight>
+                            <span>{formatBalance(Number(delegatee.managed_ice), true)}</span>
+                            <span>Managed ICE</span>
+                        </ColumnRight>
+                        <ColumnRight>
+                            <span>{formatBalance(Number(delegatee.delegated), true)}</span>
+                            <span>Delegated</span>
+                        </ColumnRight>
+                    </RowContent>
+                )}
             </Row>
             {statsBlock}
         </Container>

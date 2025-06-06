@@ -1022,24 +1022,32 @@ export default class StellarServiceClass {
             return null;
         }
 
-        return this.claimableBalances.reduce((acc, claim) => {
-            if (claim.claimants.length !== 3) {
-                return acc;
-            }
-            const hasMarker = claim.claimants.some(
-                claimant => claimant.destination === DELEGATE_MARKER_KEY,
-            );
-            const selfClaim = claim.claimants.find(
-                claimant =>
-                    claimant.destination === accountId && !!claimant.predicate?.not?.abs_before,
-            );
-            const isUpvoteIce = claim.asset === `${UP_ICE_CODE}:${ICE_ISSUER}`;
+        return this.claimableBalances
+            .reduce((acc, claim) => {
+                if (claim.claimants.length !== 3) {
+                    return acc;
+                }
+                const hasMarker = claim.claimants.some(
+                    claimant => claimant.destination === DELEGATE_MARKER_KEY,
+                );
+                const selfClaim = claim.claimants.find(
+                    claimant =>
+                        claimant.destination === accountId && !!claimant.predicate?.not?.abs_before,
+                );
+                const isUpvoteIce = claim.asset === `${UP_ICE_CODE}:${ICE_ISSUER}`;
 
-            if (hasMarker && Boolean(selfClaim) && isUpvoteIce) {
-                acc.push(claim);
-            }
-            return acc;
-        }, []);
+                if (hasMarker && Boolean(selfClaim) && isUpvoteIce) {
+                    acc.push(claim);
+                }
+                return acc;
+            }, [])
+            .map(cb => {
+                const unlockDate =
+                    cb.claimants.find(({ destination }) => destination === accountId).predicate.not
+                        .abs_before_epoch * 1000;
+
+                return { ...cb, unlockDate };
+            });
     }
 
     getDelegatorLocks(accountId: string) {

@@ -211,7 +211,7 @@ const DelegateModal = ({
                     <label>Delegate to</label>
                     <ToggleGroup
                         options={[
-                            { value: false, label: 'Whitelist' },
+                            { value: false, label: 'DelegatesList' },
                             { value: true, label: 'Custom address' },
                         ]}
                         value={isManualInput}

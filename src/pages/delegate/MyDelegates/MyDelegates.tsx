@@ -1,0 +1,73 @@
+import * as React from 'react';
+import { useEffect, useMemo } from 'react';
+
+import useAuthStore from 'store/authStore/useAuthStore';
+
+import { StellarService } from 'services/globalServices';
+import { DELEGATE_MARKER_KEY, StellarEvents } from 'services/stellar.service';
+
+import { Delegatee as DelegateeType } from 'types/delegate';
+
+import { PageLoader } from 'basics/loaders';
+
+import DelegatesList, { List } from 'pages/delegate/DelegatesList/DelegatesList';
+import { Empty } from 'pages/profile/YourVotes/YourVotes';
+
+interface Props {
+    delegatees: DelegateeType[];
+}
+
+const MyDelegates = ({ delegatees }: Props) => {
+    const [locks, setLocks] = React.useState(null);
+
+    const { account } = useAuthStore();
+
+    useEffect(() => {
+        setLocks(StellarService.getDelegateLocks(account?.accountId()));
+        const unsub = StellarService.event.sub(({ type }) => {
+            if (type === StellarEvents.claimableUpdate) {
+                setLocks(StellarService.getDelegateLocks(account?.accountId()));
+            }
+        });
+
+        return () => unsub();
+    }, []);
+
+    const locksSummary: Map<string, number> = useMemo(() => {
+        if (!locks) {
+            return null;
+        }
+
+        const summary = locks.reduce((acc, lock) => {
+            const destination = lock.claimants.find(
+                ({ predicate, destination }) =>
+                    !!predicate?.not?.unconditional && destination !== DELEGATE_MARKER_KEY,
+            )?.destination;
+
+            if (destination) {
+                acc.set(destination, (acc.get(destination) ?? 0) + Number(lock.amount));
+            }
+
+            return acc;
+        }, new Map<string, number>());
+
+        return new Map([...summary].sort((a, b) => b[1] - a[1]));
+    }, [locks, delegatees]);
+
+    if (!locks) {
+        return <PageLoader />;
+    }
+
+    return !locks.length ? (
+        <List>
+            <Empty>
+                <h3>There's nothing here.</h3>
+                <span>It looks like you don’t have any active delegates.</span>
+            </Empty>
+        </List>
+    ) : (
+        <DelegatesList delegatees={delegatees} myDelegatees={locksSummary} />
+    );
+};
+
+export default MyDelegates;
