@@ -20,11 +20,10 @@ import DelegateClaimModal from 'web/modals/DelegateClaimModal';
 import DelegateModal from 'web/modals/DelegateModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Discord from 'assets/discord.svg';
-
 import AssetLogo from 'basics/AssetLogo';
 import { Button } from 'basics/buttons';
 import CircularProgress from 'basics/CircularProgress';
+import ExternalLink from 'basics/ExternalLink';
 
 import { MarketKey } from 'pages/vote/api/types';
 import { getPercent } from 'pages/vote/components/MainPage/Table/VoteAmount/VoteAmount';
@@ -95,28 +94,12 @@ const Buttons = styled.div`
     gap: 0.8rem;
 `;
 
-const DiscordButton = styled(Button)`
-    background-color: ${COLORS.discordBlurple};
-
-    &:hover {
-        background-color: ${COLORS.discordBlurple};
-        opacity: 0.8;
-    }
-`;
-
 const ClaimButton = styled(Button)`
     background-color: ${COLORS.pinkRed};
 
     &:hover {
         background-color: ${COLORS.pinkRed};
         opacity: 0.8;
-    }
-`;
-
-const DiscordIcon = styled(Discord)`
-    margin-left: 0.8rem;
-    path {
-        fill: ${COLORS.white};
     }
 `;
 
@@ -169,6 +152,11 @@ const DelegateeStats = forwardRef(
                     <Description>
                         <b>Strategy:</b> <i>{delegatee.voting_strategy}</i>
                     </Description>
+                )}
+                {Boolean(delegatee.discord_handle) && (
+                    <ExternalLink href={`https://discord.com/users/${delegatee.discord_handle}`}>
+                        Discord chat
+                    </ExternalLink>
                 )}
                 {Boolean(votes) && !!Number(delegatee.managed_ice) && (
                     <Stats>
@@ -256,20 +244,6 @@ const DelegateeStats = forwardRef(
                         >
                             undelegate
                         </ClaimButton>
-                    )}
-                    {Boolean(delegatee.discord_handle) && (
-                        <DiscordButton
-                            isRounded
-                            isBig
-                            onClick={() =>
-                                window.open(
-                                    `https://discord.com/users/${delegatee.discord_handle}`,
-                                    '_blank',
-                                )
-                            }
-                        >
-                            start chat <DiscordIcon />
-                        </DiscordButton>
                     )}
                 </Buttons>
             </Container>
