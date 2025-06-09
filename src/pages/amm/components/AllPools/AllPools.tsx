@@ -15,6 +15,7 @@ import { POOL_TYPE } from 'services/soroban.service';
 
 import { PoolProcessed } from 'types/amm';
 
+import Input from 'web/basics/inputs/Input';
 import { flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -34,8 +35,6 @@ import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 import BoostTooltip from 'pages/amm/components/BoostTooltip/BoostTooltip';
 import { AnalyticsTabs, AnalyticsUrlParams } from 'pages/amm/pages/Analytics';
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
-
-import Input from '../../../../web/basics/inputs/Input';
 
 const Header = styled.div`
     ${flexRowSpaceBetween};

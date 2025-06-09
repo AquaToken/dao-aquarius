@@ -24,6 +24,7 @@ import Arrow from 'assets/icon-arrow-down.svg';
 
 import Asset from 'basics/Asset';
 import Button from 'basics/buttons/Button';
+import CopyButton from 'basics/buttons/CopyButton';
 import { DotsLoader } from 'basics/loaders';
 import Market from 'basics/Market';
 
@@ -32,7 +33,6 @@ import VolumeChart from 'pages/amm/components/VolumeChart/VolumeChart';
 
 import MigratePoolButton from './MigratePoolButton/MigratePoolButton';
 
-import CopyButton from '../../../../web/basics/buttons/CopyButton';
 import DepositToPool from '../DepositToPool/DepositToPool';
 import WithdrawFromPool from '../WithdrawFromPool/WithdrawFromPool';
 

@@ -11,13 +11,12 @@ import { formatBalance } from 'helpers/format-number';
 
 import { PoolStatistics } from 'types/amm';
 
+import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import EmptyChart from 'assets/empty-chart.svg';
 
 import { Select, ToggleGroup } from 'basics/inputs';
-
-import { flexAllCenter, respondDown } from '../../../../web/mixins';
 
 const Container = styled.div`
     ${flexAllCenter};
