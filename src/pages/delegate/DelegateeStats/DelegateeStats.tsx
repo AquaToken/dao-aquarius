@@ -15,6 +15,9 @@ import { ModalService } from 'services/globalServices';
 import { Delegatee, DelegateeVote } from 'types/delegate';
 
 import { cardBoxShadow, flexColumn, respondDown } from 'web/mixins';
+import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
+import DelegateClaimModal from 'web/modals/DelegateClaimModal';
+import DelegateModal from 'web/modals/DelegateModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Discord from 'assets/discord.svg';
@@ -25,10 +28,6 @@ import CircularProgress from 'basics/CircularProgress';
 
 import { MarketKey } from 'pages/vote/api/types';
 import { getPercent } from 'pages/vote/components/MainPage/Table/VoteAmount/VoteAmount';
-
-import ChooseLoginMethodModal from '../../../web/modals/auth/ChooseLoginMethodModal';
-import DelegateClaimModal from '../../../web/modals/DelegateClaimModal';
-import DelegateModal from '../../../web/modals/DelegateModal';
 
 const Container = styled.div<{ $fromTop: boolean; $visible: boolean }>`
     position: absolute;
@@ -45,7 +44,7 @@ const Container = styled.div<{ $fromTop: boolean; $visible: boolean }>`
     ${flexColumn};
     gap: 1.6rem;
 
-    ${respondDown(Breakpoints.md)`
+    ${respondDown(Breakpoints.lg)`
         position: relative;
         left: 0;
         box-shadow: unset;
@@ -120,6 +119,7 @@ const DiscordIcon = styled(Discord)`
         fill: ${COLORS.white};
     }
 `;
+
 const AssetLogoStyled = styled(AssetLogo)`
     border: 0.1rem solid ${COLORS.white};
 `;
@@ -170,7 +170,7 @@ const DelegateeStats = forwardRef(
                         <b>Strategy:</b> <i>{delegatee.voting_strategy}</i>
                     </Description>
                 )}
-                {Boolean(votes?.length) && (
+                {Boolean(votes) && !!Number(delegatee.managed_ice) && (
                     <Stats>
                         <h3>Delegate distribution</h3>
                         {votes.map(vote => (
@@ -188,12 +188,34 @@ const DelegateeStats = forwardRef(
                                     />
                                     {vote.asset1_code} / {vote.asset2_code}
                                 </Market>
-                                <span>{getPercent(vote.total_votes, votesSum.toFixed(2))}%</span>
+                                <span>{getPercent(vote.total_votes, delegatee.managed_ice)}%</span>
                                 <CircularProgress
-                                    percentage={+getPercent(vote.total_votes, votesSum.toFixed(2))}
+                                    percentage={
+                                        +getPercent(vote.total_votes, delegatee.managed_ice)
+                                    }
                                 />
                             </StatsRow>
                         ))}
+                        {Number(delegatee.managed_ice) - votesSum > 0 && (
+                            <StatsRow>
+                                <Market>Not distributed</Market>
+                                <span>
+                                    {getPercent(
+                                        (Number(delegatee.managed_ice) - votesSum).toString(),
+                                        delegatee.managed_ice,
+                                    )}
+                                    %
+                                </span>
+                                <CircularProgress
+                                    percentage={
+                                        +getPercent(
+                                            (Number(delegatee.managed_ice) - votesSum).toString(),
+                                            delegatee.managed_ice,
+                                        )
+                                    }
+                                />
+                            </StatsRow>
+                        )}
                     </Stats>
                 )}
                 <Buttons>

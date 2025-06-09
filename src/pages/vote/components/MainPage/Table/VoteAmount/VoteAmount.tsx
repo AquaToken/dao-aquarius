@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { DOWN_ICE_CODE, ICE_ISSUER, UP_ICE_CODE } from 'constants/assets';
+import { D_ICE_CODE, DOWN_ICE_CODE, ICE_ISSUER, UP_ICE_CODE } from 'constants/assets';
 
 import { getAquaAssetData } from 'helpers/assets';
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
@@ -9,6 +9,7 @@ import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Aqua from 'assets/aqua-logo-small.svg';
+import DIce from 'assets/dice-logo.svg';
 import Ice from 'assets/ice-logo.svg';
 import IconDown from 'assets/icon-down-percent.svg';
 import InfoIcon from 'assets/icon-info.svg';
@@ -153,6 +154,12 @@ const IceLogo = styled(Ice)`
     margin-right: 0.5rem;
 `;
 
+const DIceLogo = styled(DIce)`
+    height: 1.8rem;
+    width: 1.8rem;
+    margin-right: 0.5rem;
+`;
+
 const AquaLogo = styled(Aqua)`
     height: 1.8rem;
     width: 1.8rem;
@@ -196,6 +203,9 @@ const VoteAmount = ({ pair, totalStats }: { pair: PairStats; totalStats: TotalSt
     const downIce =
         pair.extra.downvote_assets.find(({ asset }) => asset === `${DOWN_ICE_CODE}:${ICE_ISSUER}`)
             ?.votes_sum ?? 0;
+    const dIce =
+        pair.extra.downvote_assets.find(({ asset }) => asset === `${D_ICE_CODE}:${ICE_ISSUER}`)
+            ?.votes_sum ?? 0;
 
     return (
         <TooltipStyled
@@ -210,6 +220,13 @@ const VoteAmount = ({ pair, totalStats }: { pair: PairStats; totalStats: TotalSt
                         <TokenAmount>
                             <IceLogo />
                             {formatBalance(+upIce, true)}
+                        </TokenAmount>
+                    </TooltipRow>
+                    <TooltipRow>
+                        <span>dICE:</span>
+                        <TokenAmount>
+                            <DIceLogo />
+                            {formatBalance(+dIce, true)}
                         </TokenAmount>
                     </TooltipRow>
                     <TooltipRow>

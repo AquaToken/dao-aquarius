@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { DOWN_ICE_CODE, ICE_ISSUER, UP_ICE_CODE } from 'constants/assets';
+import { D_ICE_CODE, DOWN_ICE_CODE, ICE_ISSUER, UP_ICE_CODE } from 'constants/assets';
 
 import { getAquaAssetData } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
@@ -19,6 +19,7 @@ import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Aqua from 'assets/aqua-logo-small.svg';
+import DIce from 'assets/dice-logo.svg';
 import Ice from 'assets/ice-logo.svg';
 import IconDown from 'assets/icon-down-percent.svg';
 import IconUp from 'assets/icon-up-percent.svg';
@@ -133,6 +134,12 @@ const IceLogo = styled(Ice)`
     margin-right: 0.8rem;
 `;
 
+const DIceLogo = styled(DIce)`
+    height: 1.6rem;
+    width: 1.6rem;
+    margin-right: 0.8rem;
+`;
+
 interface SidebarProps {
     votesData: PairStats;
     base: Asset;
@@ -206,6 +213,11 @@ const Sidebar = ({
     const downIce =
         votesData.extra?.downvote_assets.find(
             ({ asset }) => asset === `${DOWN_ICE_CODE}:${ICE_ISSUER}`,
+        )?.votes_sum ?? 0;
+
+    const dIce =
+        votesData.extra?.downvote_assets.find(
+            ({ asset }) => asset === `${D_ICE_CODE}:${ICE_ISSUER}`,
         )?.votes_sum ?? 0;
 
     const getUpVotesValue = () =>
@@ -293,6 +305,13 @@ const Sidebar = ({
                     ICE voted:
                 </Label>
                 <Label>{formatBalance(+upIce, true)}</Label>
+            </Row>
+            <Row>
+                <Label>
+                    <DIceLogo />
+                    dICE voted:
+                </Label>
+                <Label>{formatBalance(+dIce, true)}</Label>
             </Row>
             <LastRow>
                 <Label>

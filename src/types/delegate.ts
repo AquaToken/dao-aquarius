@@ -11,6 +11,12 @@ export type Delegatee = {
     managed_ice: string | null;
 };
 
+export type MyDelegatees = {
+    managed_ice: string;
+    delegated: string;
+    account: string;
+};
+
 export type DelegateeVote = {
     market_key: string;
     total_votes: string;

@@ -99,10 +99,12 @@ const DelegateModal = ({
 }: ModalProps<{ delegatee: Delegatee; delegatees: Delegatee[] }>) => {
     const { delegatee, delegatees } = params;
 
+    const isKnownDelegatee = !!delegatees.find(({ account }) => account === delegatee.account);
+
     const [amount, setAmount] = useState('');
     const [percent, setPercent] = useState(0);
     const [pending, setPending] = useState(false);
-    const [isManualInput, setIsManualInput] = useState<boolean>(false);
+    const [isManualInput, setIsManualInput] = useState<boolean>(!isKnownDelegatee);
     const [destination, setDestination] = useState<string>(delegatee.account);
 
     const { account } = useAuthStore();
@@ -112,11 +114,11 @@ const DelegateModal = ({
 
     useEffect(() => {
         if (isManualInput) {
-            setDestination('');
+            setDestination(isKnownDelegatee ? '' : delegatee.account);
         } else {
-            setDestination(delegatee.account);
+            setDestination(isKnownDelegatee ? delegatee.account : '');
         }
-    }, [isManualInput]);
+    }, [isManualInput, isKnownDelegatee]);
 
     const onPercentChange = (percent: number) => {
         setPercent(percent);
@@ -191,7 +193,7 @@ const DelegateModal = ({
                 </Balance>
                 <NumericFormat
                     value={amount}
-                    onChange={({ target }) => onAmountChange(target.value)}
+                    onValueChange={value => onAmountChange(value.value)}
                     placeholder="Enter amount"
                     customInput={Input}
                     label="ICE amount"
@@ -211,7 +213,7 @@ const DelegateModal = ({
                     <label>Delegate to</label>
                     <ToggleGroup
                         options={[
-                            { value: false, label: 'DelegatesList' },
+                            { value: false, label: 'Whitelist' },
                             { value: true, label: 'Custom address' },
                         ]}
                         value={isManualInput}

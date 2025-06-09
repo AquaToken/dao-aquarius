@@ -27,7 +27,7 @@ const Container = styled.div<{ $isSelected: boolean }>`
         `0.2rem solid ${$isSelected ? COLORS.purple : COLORS.transparent}`};
     position: relative;
 
-    ${respondDown(Breakpoints.md)`
+    ${respondDown(Breakpoints.lg)`
         padding: 1.6rem;
     `}
 `;
@@ -49,7 +49,7 @@ const IconWrapper = styled.div`
 const Row = styled.div<{ $isSelected: boolean }>`
     display: flex;
 
-    ${respondDown(Breakpoints.md)`
+    ${respondDown(Breakpoints.lg)`
         flex-direction: column;
         border-bottom: ${({ $isSelected }) =>
             $isSelected ? `0.1rem solid ${COLORS.lightGray}` : 'none'};
@@ -65,7 +65,7 @@ const RowContent = styled.div`
         margin-right: auto;
     }
 
-    ${respondDown(Breakpoints.md)`
+    ${respondDown(Breakpoints.lg)`
         &:last-child {
             justify-content: space-between;
         }
@@ -97,7 +97,7 @@ const ColumnInfo = styled.div`
 const ColumnRight = styled(ColumnInfo)`
     align-items: flex-end;
 
-    ${respondDown(Breakpoints.md)`
+    ${respondDown(Breakpoints.lg)`
         align-items: flex-start;
     `}
 `;
@@ -108,7 +108,7 @@ const ArrowIcon = styled(Arrow)<{ $isSelected: boolean }>`
     transition: transform 0.2s;
     margin-left: auto;
 
-    ${respondDown(Breakpoints.md)`
+    ${respondDown(Breakpoints.lg)`
         display: flex;
     `}
 `;

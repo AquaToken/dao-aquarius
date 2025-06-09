@@ -4,11 +4,14 @@ import styled from 'styled-components';
 
 import { getDelegatees } from 'api/delegate';
 
+import { useUpdateIndex } from 'hooks/useUpdateIndex';
+
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService } from 'services/globalServices';
 
 import { commonMaxWidth, respondDown } from 'web/mixins';
+import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints } from 'web/styles';
 
 import { ToggleGroup } from 'basics/inputs';
@@ -16,8 +19,8 @@ import { PageLoader } from 'basics/loaders';
 
 import DelegatesList from 'pages/delegate/DelegatesList/DelegatesList';
 import MyDelegates from 'pages/delegate/MyDelegates/MyDelegates';
-
-import ChooseLoginMethodModal from '../../web/modals/auth/ChooseLoginMethodModal';
+import MyDelegators from 'pages/delegate/MyDelegators/MyDelegators';
+import { DELEGATE_ICE } from 'pages/vote/components/MainPage/MainPage';
 
 const Main = styled.main`
     flex: 1 0 auto;
@@ -52,23 +55,28 @@ const ToggleGroupStyled = styled(ToggleGroup)`
 enum Tabs {
     whitelist = 'whitelist',
     myDelegations = 'myDelegations',
+    myDelegators = 'myDelegators',
 }
 
-const OPTIONS = [
-    { value: Tabs.whitelist, label: 'Whitelist' },
-    { value: Tabs.myDelegations, label: 'My delegation' },
+const DEFAULT_OPTIONS = [
+    { value: Tabs.whitelist, label: 'All delegates' },
+    { value: Tabs.myDelegations, label: 'My delegates' },
 ];
+
+const EXTENDED_OPTIONS = [...DEFAULT_OPTIONS, { value: Tabs.myDelegators, label: 'My delegators' }];
 
 const Delegate = () => {
     const [delegatees, setDelegatees] = useState(null);
 
     const [tab, setTab] = useState<Tabs>(Tabs.whitelist);
 
-    const { isLogged } = useAuthStore();
+    const { isLogged, account } = useAuthStore();
+
+    const updateIndex = useUpdateIndex(10000);
 
     useEffect(() => {
         getDelegatees().then(setDelegatees);
-    }, []);
+    }, [updateIndex]);
 
     const handleTabChange = (newTab: Tabs) => {
         if (newTab === Tabs.myDelegations && !isLogged) {
@@ -81,7 +89,7 @@ const Delegate = () => {
     };
 
     useEffect(() => {
-        if (tab === Tabs.myDelegations && !isLogged) {
+        if (tab !== Tabs.whitelist && !isLogged) {
             setTab(Tabs.whitelist);
         }
     }, [tab, isLogged]);
@@ -91,7 +99,15 @@ const Delegate = () => {
             <Wrapper>
                 <Title>Delegates</Title>
 
-                <ToggleGroupStyled value={tab} options={OPTIONS} onChange={handleTabChange} />
+                <ToggleGroupStyled
+                    value={tab}
+                    options={
+                        isLogged && account.getAssetBalance(DELEGATE_ICE) !== null
+                            ? EXTENDED_OPTIONS
+                            : DEFAULT_OPTIONS
+                    }
+                    onChange={handleTabChange}
+                />
 
                 {!delegatees ? (
                     <PageLoader />
@@ -99,6 +115,7 @@ const Delegate = () => {
                     <>
                         {tab === Tabs.whitelist && <DelegatesList delegatees={delegatees} />}
                         {tab === Tabs.myDelegations && <MyDelegates delegatees={delegatees} />}
+                        {tab === Tabs.myDelegators && <MyDelegators />}
                     </>
                 )}
             </Wrapper>

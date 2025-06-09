@@ -41,10 +41,11 @@ const AssetBlock = styled.div`
 
 const DIceTrustlineModal = () => (
     <ModalWrapper>
-        <ModalTitle>You're being delegated to ICE</ModalTitle>
+        <ModalTitle>You’ve Been Delegated ICE</ModalTitle>
         <ModalDescription>
-            Someone has delegated ICE to you - you have a pending dICE payment. To receive it please
-            provide trustline.
+            Someone has delegated ICE to your account — a dICE payment is pending. Add a trustline
+            to receive it. The dICE will be credited to your balance within 30 minutes, after which
+            you’ll be able to vote on the liquidity voting page.
         </ModalDescription>
         <AssetBlock>
             <IceLogo />

@@ -3,7 +3,7 @@
 
 import axios from 'axios';
 
-import { Delegatee, DelegateeVote } from 'types/delegate';
+import { Delegatee, DelegateeVote, MyDelegatees } from 'types/delegate';
 
 import { getMarketsMap } from 'pages/vote/api/api';
 import { MarketKey } from 'pages/vote/api/types';
@@ -24,3 +24,6 @@ export const getDelegateeVotes = async (
 
     return votes.map(item => ({ ...item, ...markets.get(item.market_key) }));
 };
+
+export const getMyDelegatees = (accountId: string): Promise<MyDelegatees[]> =>
+    axios.get<MyDelegatees[]>(`${API_URL}${accountId}/delegation/`).then(({ data }) => data);

@@ -25,6 +25,7 @@ import GetAquaModal from 'web/modals/GetAquaModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Aqua from 'assets/aqua-logo-small.svg';
+import DIce from 'assets/dice-logo.svg';
 import Ice from 'assets/ice-logo.svg';
 import CloseIcon from 'assets/icon-close-small.svg';
 
@@ -79,6 +80,11 @@ const AquaLogo = styled(Aqua)`
 `;
 
 const IceLogo = styled(Ice)`
+    height: 3.2rem;
+    width: 3.2rem;
+`;
+
+const DIceLogo = styled(DIce)`
     height: 3.2rem;
     width: 3.2rem;
 `;
@@ -301,7 +307,7 @@ const VotesAmountModal = ({
         OPTIONS.push({
             label: 'dICE',
             value: DELEGATE_ICE,
-            icon: <IceLogo />,
+            icon: <DIceLogo />,
         });
     }
 

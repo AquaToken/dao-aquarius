@@ -1,6 +1,10 @@
 import * as React from 'react';
 import { useEffect, useMemo } from 'react';
 
+import { getMyDelegatees } from 'api/delegate';
+
+import { useUpdateIndex } from 'hooks/useUpdateIndex';
+
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { StellarService } from 'services/globalServices';
@@ -19,6 +23,7 @@ interface Props {
 
 const MyDelegates = ({ delegatees }: Props) => {
     const [locks, setLocks] = React.useState(null);
+    const [customDelegatees, setCustomDelegatees] = React.useState(null);
 
     const { account } = useAuthStore();
 
@@ -32,6 +37,20 @@ const MyDelegates = ({ delegatees }: Props) => {
 
         return () => unsub();
     }, []);
+
+    const updateIndex = useUpdateIndex(10000);
+
+    useEffect(() => {
+        getMyDelegatees(account.accountId())
+            .then(res =>
+                res.filter(
+                    ({ account }) => !delegatees.find(delegatee => delegatee.account === account),
+                ),
+            )
+            .then(res => {
+                setCustomDelegatees(res);
+            });
+    }, [updateIndex]);
 
     const locksSummary: Map<string, number> = useMemo(() => {
         if (!locks) {
@@ -54,7 +73,7 @@ const MyDelegates = ({ delegatees }: Props) => {
         return new Map([...summary].sort((a, b) => b[1] - a[1]));
     }, [locks, delegatees]);
 
-    if (!locks) {
+    if (!locks || !customDelegatees) {
         return <PageLoader />;
     }
 
@@ -66,7 +85,11 @@ const MyDelegates = ({ delegatees }: Props) => {
             </Empty>
         </List>
     ) : (
-        <DelegatesList delegatees={delegatees} myDelegatees={locksSummary} />
+        <DelegatesList
+            delegatees={delegatees}
+            myLocks={locksSummary}
+            customDelegatees={customDelegatees}
+        />
     );
 };
 
