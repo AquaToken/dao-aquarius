@@ -96,16 +96,17 @@ const PublicKeyWithIconStyled = styled(PublicKeyWithIcon)`
 const DelegateModal = ({
     params,
     confirm,
-}: ModalProps<{ delegatee: Delegatee; delegatees: Delegatee[] }>) => {
+}: ModalProps<{ delegatee?: Delegatee; delegatees: Delegatee[] }>) => {
     const { delegatee, delegatees } = params;
 
-    const isKnownDelegatee = !!delegatees.find(({ account }) => account === delegatee.account);
+    const isKnownDelegatee =
+        delegatee && !!delegatees.find(({ account }) => account === delegatee.account);
 
     const [amount, setAmount] = useState('');
     const [percent, setPercent] = useState(0);
     const [pending, setPending] = useState(false);
-    const [isManualInput, setIsManualInput] = useState<boolean>(!isKnownDelegatee);
-    const [destination, setDestination] = useState<string>(delegatee.account);
+    const [isManualInput, setIsManualInput] = useState<boolean>(!!delegatee && !isKnownDelegatee);
+    const [destination, setDestination] = useState<string>(delegatee?.account ?? '');
 
     const { account } = useAuthStore();
 
@@ -113,6 +114,9 @@ const DelegateModal = ({
     const upvoteIceBalance = account.getAvailableForSwapBalance(upvoteIce);
 
     useEffect(() => {
+        if (!delegatee) {
+            return;
+        }
         if (isManualInput) {
             setDestination(isKnownDelegatee ? '' : delegatee.account);
         } else {

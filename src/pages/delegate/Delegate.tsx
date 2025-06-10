@@ -10,11 +10,12 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService } from 'services/globalServices';
 
-import { commonMaxWidth, respondDown } from 'web/mixins';
+import { commonMaxWidth, respondDown, respondUp } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints } from 'web/styles';
 
 import { ToggleGroup } from 'basics/inputs';
+import Select from 'basics/inputs/Select';
 import { PageLoader } from 'basics/loaders';
 
 import DelegatesList from 'pages/delegate/DelegatesList/DelegatesList';
@@ -45,11 +46,28 @@ const Title = styled.h2`
     font-size: 5.6rem;
     line-height: 6.4rem;
     margin-bottom: 3.4rem;
+
+    ${respondDown(Breakpoints.md)`
+        font-size: 4rem;
+        line-height: 5rem;
+    `}
 `;
 
 const ToggleGroupStyled = styled(ToggleGroup)`
     width: fit-content;
     margin-bottom: 3.2rem;
+
+    ${respondDown(Breakpoints.md)`
+        display: none;
+    `}
+`;
+
+const SelectStyled = styled(Select)`
+    margin-bottom: 3.2rem;
+
+    ${respondUp(Breakpoints.md)`
+        display: none;
+    `}
 `;
 
 enum Tabs {
@@ -100,6 +118,16 @@ const Delegate = () => {
                 <Title>Delegates</Title>
 
                 <ToggleGroupStyled
+                    value={tab}
+                    options={
+                        isLogged && account.getAssetBalance(DELEGATE_ICE) !== null
+                            ? EXTENDED_OPTIONS
+                            : DEFAULT_OPTIONS
+                    }
+                    onChange={handleTabChange}
+                />
+
+                <SelectStyled
                     value={tab}
                     options={
                         isLogged && account.getAssetBalance(DELEGATE_ICE) !== null
