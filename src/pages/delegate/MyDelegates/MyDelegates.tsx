@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useEffect, useMemo } from 'react';
+import styled from 'styled-components';
 
 import { getMyDelegatees } from 'api/delegate';
 
@@ -14,8 +15,16 @@ import { Delegatee as DelegateeType } from 'types/delegate';
 
 import { PageLoader } from 'basics/loaders';
 
-import DelegatesList, { List } from 'pages/delegate/DelegatesList/DelegatesList';
+import DelegatesList from 'pages/delegate/DelegatesList/DelegatesList';
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
+
+const EmptyWrap = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 40vh;
+`;
 
 interface Props {
     delegatees: DelegateeType[];
@@ -78,12 +87,12 @@ const MyDelegates = ({ delegatees }: Props) => {
     }
 
     return !locks.length ? (
-        <List>
+        <EmptyWrap>
             <Empty>
                 <h3>There's nothing here.</h3>
                 <span>It looks like you don’t have any active delegates.</span>
             </Empty>
-        </List>
+        </EmptyWrap>
     ) : (
         <DelegatesList
             delegatees={delegatees}

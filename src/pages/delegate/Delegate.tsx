@@ -115,7 +115,7 @@ const Delegate = () => {
     return (
         <Main>
             <Wrapper>
-                <Title>Delegates</Title>
+                <Title>ICE Delegation</Title>
 
                 <ToggleGroupStyled
                     value={tab}
