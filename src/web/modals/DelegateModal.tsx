@@ -93,6 +93,8 @@ const PublicKeyWithIconStyled = styled(PublicKeyWithIcon)`
     margin-left: 1rem;
 `;
 
+const MINIMUM_AMOUNT = 10;
+
 const DelegateModal = ({
     params,
     confirm,
@@ -142,8 +144,15 @@ const DelegateModal = ({
 
     const onSubmit = async () => {
         try {
+            if (Number(amount) < MINIMUM_AMOUNT) {
+                ToastService.showErrorToast(
+                    `The value must be greater than ${MINIMUM_AMOUNT.toFixed(7)} upvoteICE`,
+                );
+                return;
+            }
+
             if (+amount > +account.getAssetBalance(UP_ICE)) {
-                ToastService.showErrorToast('Insufficient upvoteIce balance');
+                ToastService.showErrorToast('Insufficient upvoteICE balance');
                 return;
             }
 
