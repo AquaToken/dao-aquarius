@@ -13,6 +13,9 @@ import { DELEGATE_MARKER_KEY, StellarEvents } from 'services/stellar.service';
 
 import { Delegatee as DelegateeType } from 'types/delegate';
 
+import { cardBoxShadow } from 'web/mixins';
+
+import ExternalLink from 'basics/ExternalLink';
 import { PageLoader } from 'basics/loaders';
 
 import DelegatesList from 'pages/delegate/DelegatesList/DelegatesList';
@@ -23,14 +26,22 @@ const EmptyWrap = styled.div`
     justify-content: center;
     align-items: center;
     width: 100%;
-    height: 40vh;
+    padding: 7.2rem 0;
+    ${cardBoxShadow};
+    margin-top: 3.4rem;
+    border-radius: 0.5rem;
+`;
+
+const ExternalLinkStyled = styled(ExternalLink)`
+    margin-top: 1.6rem;
 `;
 
 interface Props {
     delegatees: DelegateeType[];
+    goToList: () => void;
 }
 
-const MyDelegates = ({ delegatees }: Props) => {
+const MyDelegates = ({ delegatees, goToList }: Props) => {
     const [locks, setLocks] = React.useState(null);
     const [customDelegatees, setCustomDelegatees] = React.useState(null);
 
@@ -91,6 +102,9 @@ const MyDelegates = ({ delegatees }: Props) => {
             <Empty>
                 <h3>There's nothing here.</h3>
                 <span>It looks like you don’t have any active delegates.</span>
+                <ExternalLinkStyled asDiv onClick={() => goToList()}>
+                    Explore delegates
+                </ExternalLinkStyled>
             </Empty>
         </EmptyWrap>
     ) : (

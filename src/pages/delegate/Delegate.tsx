@@ -12,7 +12,7 @@ import { ModalService } from 'services/globalServices';
 
 import { commonMaxWidth, respondDown, respondUp } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
-import { Breakpoints } from 'web/styles';
+import { Breakpoints, COLORS } from 'web/styles';
 
 import { ToggleGroup } from 'basics/inputs';
 import Select from 'basics/inputs/Select';
@@ -25,6 +25,7 @@ import { DELEGATE_ICE } from 'pages/vote/components/MainPage/MainPage';
 
 const Main = styled.main`
     flex: 1 0 auto;
+    background-color: ${COLORS.lightGray};
 `;
 
 const Wrapper = styled.div`
@@ -142,7 +143,12 @@ const Delegate = () => {
                 ) : (
                     <>
                         {tab === Tabs.whitelist && <DelegatesList delegatees={delegatees} />}
-                        {tab === Tabs.myDelegations && <MyDelegates delegatees={delegatees} />}
+                        {tab === Tabs.myDelegations && (
+                            <MyDelegates
+                                delegatees={delegatees}
+                                goToList={() => setTab(Tabs.whitelist)}
+                            />
+                        )}
                         {tab === Tabs.myDelegators && <MyDelegators />}
                     </>
                 )}
