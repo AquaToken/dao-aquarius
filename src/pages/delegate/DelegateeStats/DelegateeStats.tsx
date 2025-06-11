@@ -131,7 +131,9 @@ const DelegateeStats = forwardRef(
         const updateIndex = useUpdateIndex(10000);
 
         useEffect(() => {
-            getDelegateeVotes(delegatee.account).then(setVotes);
+            getDelegateeVotes(delegatee.account).then(res =>
+                setVotes(res.sort((a, b) => +b.total_votes - +a.total_votes)),
+            );
         }, [updateIndex]);
 
         const votesSum = useMemo(() => {

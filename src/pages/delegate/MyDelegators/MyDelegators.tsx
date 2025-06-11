@@ -70,7 +70,10 @@ const MyDelegators = () => {
                         key: sponsor,
                         isNarrow: true,
                         rowItems: [
-                            { children: <PublicKeyWithIcon pubKey={sponsor} />, label: 'Account' },
+                            {
+                                children: <PublicKeyWithIcon pubKey={sponsor} narrowForMobile />,
+                                label: 'Account',
+                            },
                             {
                                 children: `${formatBalance(amount, true)} dICE`,
                                 label: 'Delegated',

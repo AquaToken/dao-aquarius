@@ -161,6 +161,11 @@ const DelegateModal = ({
                 return;
             }
 
+            if (destination === account.accountId()) {
+                ToastService.showErrorToast('You cannot delegate tokens to yourself');
+                return;
+            }
+
             if (account.authType === LoginTypes.walletConnect) {
                 openCurrentWalletIfExist();
             }
