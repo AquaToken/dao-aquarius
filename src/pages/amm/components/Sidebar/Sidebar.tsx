@@ -86,7 +86,7 @@ const WithdrawIconStyled = styled(WithdrawIcon)`
     margin-right: 0.8rem;
 
     path {
-        stroke: ${COLORS.white};
+        stroke: ${COLORS.grayText};
     }
 `;
 const DepositIconStyled = styled(DepositIcon)`
@@ -211,6 +211,7 @@ const Sidebar = ({ pool }: { pool: PoolExtended }) => {
                     <Button
                         fullWidth
                         isBig
+                        secondary
                         onClick={() => openWithdrawModal()}
                         disabled={isLogged && Number(accountShare) === 0}
                     >
