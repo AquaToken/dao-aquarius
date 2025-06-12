@@ -11,6 +11,7 @@ import {
 import { ACCOUNT_FOR_SIMULATE } from 'constants/stellar';
 
 import { getAssetString } from 'helpers/assets';
+import { getDateString } from 'helpers/date';
 import { getEnv, getNetworkPassphrase } from 'helpers/env';
 import { SorobanErrorHandler, SorobanPrepareTxErrorHandler } from 'helpers/error-handler';
 import { getSorobanUrl } from 'helpers/url';
@@ -64,6 +65,16 @@ export default class SorobanServiceClass {
     }
 
     processResponse(response: rpc.Api.SendTransactionResponse) {
+        console.log(
+            `Transaction ${response.hash} submitted with status ${
+                response.status
+            } at ${getDateString(Date.now(), {
+                withTime: true,
+                withSeconds: true,
+                withoutDay: true,
+                withoutYear: true,
+            })}`,
+        );
         if (response.status === 'TRY_AGAIN_LATER') {
             throw new Error('Try again later');
         }
@@ -73,6 +84,13 @@ export default class SorobanServiceClass {
         if (response.status !== 'PENDING') {
             throw new Error(SorobanErrorHandler(response.errorResult.result().switch().name));
         }
+        console.log(
+            `Transaction polling started at ${getDateString(Date.now(), {
+                withTime: true,
+                withSeconds: true,
+                withoutYear: true,
+            })}`,
+        );
         return this.pollTx(response.hash);
     }
 
@@ -87,6 +105,13 @@ export default class SorobanServiceClass {
                 sleepStrategy: () => 2000,
             })
             .then(res => {
+                console.log(
+                    `Polling stopped with status ${res.status} at ${getDateString(Date.now(), {
+                        withTime: true,
+                        withSeconds: true,
+                        withoutYear: true,
+                    })}`,
+                );
                 if (res.status === 'SUCCESS') {
                     return res.returnValue;
                 }
@@ -829,6 +854,13 @@ export default class SorobanServiceClass {
     }
 
     async submitTx(tx: StellarSdk.Transaction) {
+        console.log(
+            `Transaction submit started at ${getDateString(Date.now(), {
+                withTime: true,
+                withoutYear: true,
+                withSeconds: true,
+            })}`,
+        );
         const res = await this.server.sendTransaction(tx);
         return await this.processResponse(res);
     }
