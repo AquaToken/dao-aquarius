@@ -47,10 +47,12 @@ const Title = styled.h2`
     font-size: 5.6rem;
     line-height: 6.4rem;
     margin-bottom: 3.4rem;
+    margin-top: 6.8rem;
 
     ${respondDown(Breakpoints.md)`
         font-size: 4rem;
         line-height: 5rem;
+        margin-top: 3.2rem;
     `}
 `;
 
