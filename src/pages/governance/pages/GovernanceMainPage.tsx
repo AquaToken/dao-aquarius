@@ -22,6 +22,7 @@ import ArrowDown from 'assets/icon-arrow-down.svg';
 import Select from 'basics/inputs/Select';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
 import PageLoader from 'basics/loaders/PageLoader';
+import Pagination from 'basics/Pagination';
 
 import { getProposalsRequest, PROPOSAL_FILTER } from '../api/api';
 import CreateProposal from '../components/GovernanceMainPage/CreateProposal/CreateProposal';
@@ -228,6 +229,31 @@ const EmptyLink = styled.span`
     cursor: pointer;
 `;
 
+const List = styled.div`
+    position: relative;
+`;
+
+const Loader = styled.div`
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: rgba(255, 255, 255, 0.8);
+    z-index: 10;
+    ${flexAllCenter};
+    animation: showLoader 0.1s ease-in-out;
+
+    @keyframes showLoader {
+        0% {
+            background-color: rgba(255, 255, 255, 0);
+        }
+        100% {
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+    }
+`;
+
 const scrollToRef = ref => {
     ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
@@ -246,10 +272,14 @@ const Options = [
     { label: 'History', value: PROPOSAL_FILTER.HISTORY },
 ];
 
+const PAGE_SIZE = 5;
+
 const GovernanceMainPage = (): JSX.Element => {
     const [proposals, setProposals] = useState(null);
     const [filter, setFilter] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [page, setPage] = useState(1);
+    const [total, setTotal] = useState(1);
 
     const { isLogged, account } = useAuthStore();
 
@@ -323,14 +353,20 @@ const GovernanceMainPage = (): JSX.Element => {
             return;
         }
         setLoading(true);
-        getProposalsRequest(filter, account?.accountId()).then(result => {
+        getProposalsRequest({
+            filter,
+            pubkey: account?.accountId(),
+            page,
+            pageSize: PAGE_SIZE,
+        }).then(result => {
             if (result.filter !== filterRef.current) {
                 return;
             }
-            setProposals(result.proposals.results.reverse());
+            setProposals(result.proposals.results);
+            setTotal(result.total);
             setLoading(false);
         });
-    }, [filter, account]);
+    }, [filter, account, page]);
 
     const creationRef = useRef(null);
     const hideBottomBlock = useIsOnViewport(creationRef);
@@ -368,20 +404,34 @@ const GovernanceMainPage = (): JSX.Element => {
                                 />
                             </TitleBlock>
 
-                            {loading ? (
+                            {!proposals ? (
                                 <PageLoader />
                             ) : proposals.length ? (
                                 <div>
-                                    {proposals.map(proposal => (
-                                        <ProposalPreview
-                                            key={proposal.id}
-                                            proposal={proposal}
-                                            withMyVotes={
-                                                filter === PROPOSAL_FILTER.MY_VOTES ||
-                                                filter === PROPOSAL_FILTER.HISTORY
-                                            }
-                                        />
-                                    ))}
+                                    <List>
+                                        {loading && (
+                                            <Loader>
+                                                <PageLoader />
+                                            </Loader>
+                                        )}
+                                        {proposals.map(proposal => (
+                                            <ProposalPreview
+                                                key={proposal.id}
+                                                proposal={proposal}
+                                                withMyVotes={
+                                                    filter === PROPOSAL_FILTER.MY_VOTES ||
+                                                    filter === PROPOSAL_FILTER.HISTORY
+                                                }
+                                            />
+                                        ))}
+                                    </List>
+                                    <Pagination
+                                        pageSize={PAGE_SIZE}
+                                        totalCount={total}
+                                        onPageChange={setPage}
+                                        currentPage={page}
+                                        itemName="proposals"
+                                    />
                                 </div>
                             ) : (
                                 <EmptyList>

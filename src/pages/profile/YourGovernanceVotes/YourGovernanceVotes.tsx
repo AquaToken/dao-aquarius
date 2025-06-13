@@ -18,7 +18,12 @@ const YourGovernanceVotes = () => {
     const { account } = useAuthStore();
 
     useEffect(() => {
-        getProposalsRequest(PROPOSAL_FILTER.MY_VOTES, account.accountId()).then(res => {
+        getProposalsRequest({
+            filter: PROPOSAL_FILTER.MY_VOTES,
+            pubkey: account.accountId(),
+            page: 1,
+            pageSize: 50,
+        }).then(res => {
             setProposals(res.proposals.results.reverse());
         });
     }, []);

@@ -139,7 +139,10 @@ const ButtonBody = styled(BlankButton)<{
     }
 
     &:focus {
-        border: 0.2rem solid ${COLORS.transparent};
+        border: ${({ $withGradient, $secondary }) =>
+            $withGradient && $secondary
+                ? `0.1rem solid ${COLORS.lightPurple};`
+                : `0.2rem solid ${COLORS.transparent}`};
     }
 
     &:disabled {

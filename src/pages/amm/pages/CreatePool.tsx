@@ -1,3 +1,4 @@
+import { xdr } from '@stellar/stellar-sdk';
 import * as React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
@@ -355,9 +356,7 @@ const CreatePool = () => {
                         ToastService.showSuccessToast('More signatures required to complete');
                         return;
                     }
-                    const poolAddress = SorobanService.getContactIdFromHash(
-                        res.value()[1].value().value().toString('hex'),
-                    );
+                    const poolAddress = SorobanService.scValToNative(res.value()[1] as xdr.ScVal);
                     ToastService.showSuccessToast('Pool successfully created');
                     history.push(`${AmmRoutes.analytics}${poolAddress}`);
                 },

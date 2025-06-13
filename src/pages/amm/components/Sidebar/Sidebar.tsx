@@ -11,9 +11,12 @@ import { ModalService, SorobanService } from 'services/globalServices';
 
 import { PoolExtended } from 'types/amm';
 
-import { flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { cardBoxShadow, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
+
+import DepositIcon from 'assets/icon-deposit.svg';
+import WithdrawIcon from 'assets/icon-withdraw.svg';
 
 import Asset from 'basics/Asset';
 import Button from 'basics/buttons/Button';
@@ -29,10 +32,6 @@ const Container = styled.aside`
     position: sticky;
     right: 2%;
     top: 2rem;
-    padding: 3.2rem;
-    box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
-    border-radius: 0.5rem;
-    background: ${COLORS.white};
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -52,6 +51,13 @@ const Container = styled.aside`
          box-shadow: unset;
          max-width: unset;
     `}
+`;
+
+const Card = styled.div`
+    ${cardBoxShadow};
+    background: ${COLORS.white};
+    padding: 3.2rem;
+    border-radius: 0.5rem;
 
     ${respondDown(Breakpoints.md)`
         padding: 3.2rem 1.6rem;
@@ -76,11 +82,19 @@ const SidebarRow = styled.div`
     }
 `;
 
-const Divider = styled.div`
-    width: 100%;
-    border-top: 0.1rem solid ${COLORS.gray};
-    margin-top: 1.2rem;
-    padding-top: 3.2rem;
+const WithdrawIconStyled = styled(WithdrawIcon)`
+    margin-right: 0.8rem;
+
+    path {
+        stroke: ${COLORS.grayText};
+    }
+`;
+const DepositIconStyled = styled(DepositIcon)`
+    margin-right: 0.8rem;
+
+    path {
+        stroke: ${COLORS.white};
+    }
 `;
 
 const UserShares = styled.div`
@@ -144,74 +158,77 @@ const Sidebar = ({ pool }: { pool: PoolExtended }) => {
     };
     return (
         <Container>
-            <SwapForm
-                base={source}
-                setBase={changeSource}
-                counter={destination}
-                setCounter={changeDestination}
-                isEmbedded
-            />
-
-            <Divider />
-
-            {isLogged && accountShare === null ? (
-                <PageLoader />
-            ) : (
-                isLogged && (
-                    <UserShares>
-                        <SidebarRow>
-                            <span>Pool shares:</span>
-                            <span>
-                                {formatBalance(accountShare, true)} (
-                                {Number(pool.total_share)
-                                    ? formatBalance(
-                                          (100 * accountShare) / (Number(pool.total_share) / 1e7),
-                                          true,
-                                      )
-                                    : '0'}
-                                %)
-                            </span>
-                        </SidebarRow>
-                        {pool.assets.map((asset, index) => (
-                            <SidebarRow key={getAssetString(asset)}>
-                                <span>Pooled {asset.code}:</span>
+            <Card>
+                {isLogged && accountShare === null ? (
+                    <PageLoader />
+                ) : (
+                    isLogged && (
+                        <UserShares>
+                            <SidebarRow>
+                                <span>Pool shares:</span>
                                 <span>
+                                    {formatBalance(accountShare, true)} (
                                     {Number(pool.total_share)
                                         ? formatBalance(
-                                              ((Number(pool.reserves[index]) / 1e7) *
-                                                  accountShare) /
+                                              (100 * accountShare) /
                                                   (Number(pool.total_share) / 1e7),
                                               true,
                                           )
-                                        : '0'}{' '}
-                                    <Asset asset={asset} onlyLogoSmall />
+                                        : '0'}
+                                    %)
                                 </span>
                             </SidebarRow>
-                        ))}
-                    </UserShares>
-                )
-            )}
+                            {pool.assets.map((asset, index) => (
+                                <SidebarRow key={getAssetString(asset)}>
+                                    <span>Pooled {asset.code}:</span>
+                                    <span>
+                                        {Number(pool.total_share)
+                                            ? formatBalance(
+                                                  ((Number(pool.reserves[index]) / 1e7) *
+                                                      accountShare) /
+                                                      (Number(pool.total_share) / 1e7),
+                                                  true,
+                                              )
+                                            : '0'}{' '}
+                                        <Asset asset={asset} onlyLogoSmall />
+                                    </span>
+                                </SidebarRow>
+                            ))}
+                        </UserShares>
+                    )
+                )}
 
-            <Buttons>
-                <Button
-                    fullWidth
-                    isBig
-                    tertiary
-                    onClick={() => openDepositModal()}
-                    disabled={pool.deposit_killed}
-                >
-                    Deposit
-                </Button>
-                <Button
-                    fullWidth
-                    isBig
-                    tertiary
-                    onClick={() => openWithdrawModal()}
-                    disabled={isLogged && Number(accountShare) === 0}
-                >
-                    Withdraw
-                </Button>
-            </Buttons>
+                <Buttons>
+                    <Button
+                        fullWidth
+                        isBig
+                        onClick={() => openDepositModal()}
+                        disabled={pool.deposit_killed}
+                    >
+                        <DepositIconStyled />
+                        Deposit
+                    </Button>
+                    <Button
+                        fullWidth
+                        isBig
+                        secondary
+                        onClick={() => openWithdrawModal()}
+                        disabled={isLogged && Number(accountShare) === 0}
+                    >
+                        <WithdrawIconStyled />
+                        Withdraw
+                    </Button>
+                </Buttons>
+            </Card>
+            <Card>
+                <SwapForm
+                    base={source}
+                    setBase={changeSource}
+                    counter={destination}
+                    setCounter={changeDestination}
+                    isEmbedded
+                />
+            </Card>
         </Container>
     );
 };
