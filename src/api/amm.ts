@@ -8,6 +8,7 @@ import {
     getAssetString,
     getUsdcAssetData,
 } from 'helpers/assets';
+import chunkFunction from 'helpers/chunk-function';
 import { getNetworkPassphrase } from 'helpers/env';
 import { getAmmAquaUrl } from 'helpers/url';
 
@@ -30,7 +31,6 @@ import {
     PoolUserProcessed,
     PoolVolume24h,
 } from 'types/amm';
-import chunkFunction from 'helpers/chunk-function';
 
 export enum FilterOptions {
     all = 'all',
@@ -409,6 +409,14 @@ export const getAssetsList = async (): Promise<AssetSimple[]> => {
     ].map((str: string) => getAssetFromString(str));
 };
 
+function chunkArray<T>(arr: T[], size = 5) {
+    const result = [];
+    for (let i = 0; i < arr.length; i += size) {
+        result.push(arr.slice(i, i + size));
+    }
+    return result;
+}
+
 export const getUserRewardsList = async (
     accountId: string,
 ): Promise<{ id: string; amount: number; assets: Asset[] }[]> => {
@@ -418,17 +426,26 @@ export const getUserRewardsList = async (
 
     const results = [];
 
-    await chunkFunction(processPools(data.items), async pool => {
-        const result = await SorobanService.getPoolRewards(accountId, pool.address);
+    const processed = processPools(data.items);
 
-        if (Number(result.to_claim)) {
-            results.push({
-                id: pool.address,
-                amount: Number(result.to_claim),
-                assets: pool.assets,
-                type: pool.pool_type,
-            });
-        }
+    const chunked = chunkArray(processed);
+
+    await chunkFunction(chunked, async chunk => {
+        const result = await SorobanService.getPoolsRewards(
+            accountId,
+            chunk.map(({ address }) => address),
+        );
+
+        result.forEach((item, index) => {
+            if (Number(item.to_claim)) {
+                results.push({
+                    id: chunk[index].address,
+                    amount: Number(item.to_claim),
+                    assets: chunk[index].assets,
+                    type: chunk[index].pool_type,
+                });
+            }
+        });
     });
 
     return results.sort((a, b) => b.amount - a.amount);

@@ -333,6 +333,20 @@ export default class SorobanServiceClass {
         );
     }
 
+    parsePoolRewards(value): PoolRewardsInfo {
+        return value.reduce((acc, val) => {
+            const key = val.key().value().toString();
+            if (key === 'exp_at' || key === 'last_time') {
+                acc[key] = new BigNumber(this.i128ToInt(val.val().value()).toString())
+                    .times(1e7)
+                    .toNumber();
+                return acc;
+            }
+            acc[key] = this.i128ToInt(val.val().value());
+            return acc;
+        }, {}) as PoolRewardsInfo;
+    }
+
     getPoolRewards(accountId: string, poolId: string): Promise<PoolRewardsInfo> {
         return this.buildSmartContactTx(
             accountId,
@@ -348,26 +362,43 @@ export default class SorobanServiceClass {
             )
             .then(({ result }) => {
                 if (result) {
-                    return (result.retval.value() as unknown[]).reduce((acc, val) => {
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-expect-error
-                        const key = val.key().value().toString();
-                        if (key === 'exp_at' || key === 'last_time') {
-                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                            // @ts-expect-error
-                            acc[key] = new BigNumber(this.i128ToInt(val.val().value()).toString())
-                                .times(1e7)
-                                .toNumber();
-                            return acc;
-                        }
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-expect-error
-                        acc[key] = this.i128ToInt(val.val().value());
-                        return acc;
-                    }, {}) as PoolRewardsInfo;
+                    return this.parsePoolRewards(result.retval.value());
                 }
 
                 throw new Error('getPoolRewards error');
+            });
+    }
+
+    getPoolsRewards(accountId: string, pools: string[]) {
+        const batches = pools.map(pool =>
+            this.scValToArray([
+                this.contractIdToScVal(pool),
+                xdr.ScVal.scvSymbol(AMM_CONTRACT_METHOD.GET_REWARDS_INFO),
+                this.scValToArray([this.publicKeyToScVal(accountId)]),
+            ]),
+        );
+
+        return this.buildSmartContactTx(
+            accountId,
+            BATCH_SMART_CONTACT_ID,
+            BATCH_CONTRACT_METHOD.batch,
+            this.scValToArray([this.publicKeyToScVal(accountId)]),
+            this.scValToArray(batches),
+            xdr.ScVal.scvBool(true),
+        )
+            .then(tx => this.simulateTx(tx))
+            .then(res => {
+                if (!(res as StellarSdk.rpc.Api.SimulateTransactionSuccessResponse).result) {
+                    throw new Error('getPoolsRewards error');
+                }
+
+                const retValArr = (
+                    res as StellarSdk.rpc.Api.SimulateTransactionSuccessResponse
+                ).result.retval.value() as unknown[];
+
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                return retValArr.map(val => this.parsePoolRewards(val.value()));
             });
     }
 
