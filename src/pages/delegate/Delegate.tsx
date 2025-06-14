@@ -84,7 +84,10 @@ const DEFAULT_OPTIONS = [
     { value: Tabs.myDelegations, label: 'My delegates' },
 ];
 
-const EXTENDED_OPTIONS = [...DEFAULT_OPTIONS, { value: Tabs.myDelegators, label: 'My delegators' }];
+const EXTENDED_OPTIONS = [
+    ...DEFAULT_OPTIONS,
+    { value: Tabs.myDelegators, label: 'ICE Delegated to Me' },
+];
 
 const Delegate = () => {
     const [delegatees, setDelegatees] = useState(null);
