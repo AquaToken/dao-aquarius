@@ -204,7 +204,7 @@ const VoteAmount = ({ pair, totalStats }: { pair: PairStats; totalStats: TotalSt
         pair.extra.downvote_assets.find(({ asset }) => asset === `${DOWN_ICE_CODE}:${ICE_ISSUER}`)
             ?.votes_sum ?? 0;
     const dIce =
-        pair.extra.downvote_assets.find(({ asset }) => asset === `${D_ICE_CODE}:${ICE_ISSUER}`)
+        pair.extra.upvote_assets.find(({ asset }) => asset === `${D_ICE_CODE}:${ICE_ISSUER}`)
             ?.votes_sum ?? 0;
 
     return (
