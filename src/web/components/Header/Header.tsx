@@ -299,7 +299,7 @@ const Links = () => {
                             }}
                             title="ICE delegation"
                         >
-                            ICE delegation
+                            ICE Delegation
                         </NavLinkStyled>
                     </>
                 }
