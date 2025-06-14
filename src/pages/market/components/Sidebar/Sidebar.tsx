@@ -216,9 +216,8 @@ const Sidebar = ({
         )?.votes_sum ?? 0;
 
     const dIce =
-        votesData.extra?.downvote_assets.find(
-            ({ asset }) => asset === `${D_ICE_CODE}:${ICE_ISSUER}`,
-        )?.votes_sum ?? 0;
+        votesData.extra?.upvote_assets.find(({ asset }) => asset === `${D_ICE_CODE}:${ICE_ISSUER}`)
+            ?.votes_sum ?? 0;
 
     const getUpVotesValue = () =>
         +StellarService.getMarketVotesValue(
