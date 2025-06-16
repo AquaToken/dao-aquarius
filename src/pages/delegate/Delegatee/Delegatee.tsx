@@ -164,10 +164,12 @@ const Delegatee = forwardRef(
 
                 {delegatee.description && <Bio>{delegatee.description}</Bio>}
 
-                <Trusted>
-                    Trusted by <b>{formatBalance(+delegatee.delegated)}</b> account
-                    {+delegatee.delegated > 1 ? 's' : ''}
-                </Trusted>
+                {+delegatee.delegated > 0 && (
+                    <Trusted>
+                        Trusted by <b>{formatBalance(+delegatee.delegated)}</b> account
+                        {+delegatee.delegated > 1 ? 's' : ''}
+                    </Trusted>
+                )}
             </Main>
             {statsBlock}
         </Container>
