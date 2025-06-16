@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
+import { getIsTestnetEnv } from 'helpers/env';
 import { formatBalance } from 'helpers/format-number';
 
 import useAuthStore from 'store/authStore/useAuthStore';
@@ -11,6 +12,7 @@ import { StellarEvents } from 'services/stellar.service';
 
 import { cardBoxShadow } from 'web/mixins';
 
+import ExternalLink from 'basics/ExternalLink';
 import { PageLoader } from 'basics/loaders';
 import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
 import Table, { CellAlign } from 'basics/Table';
@@ -65,6 +67,7 @@ const MyDelegators = () => {
                     head={[
                         { children: 'Account' },
                         { children: 'Delegated ', align: CellAlign.Right },
+                        { children: ' ', align: CellAlign.Right, flexSize: 0.5 },
                     ]}
                     body={processedLocks.map(([sponsor, amount]) => ({
                         key: sponsor,
@@ -78,6 +81,19 @@ const MyDelegators = () => {
                                 children: `${formatBalance(amount, true)} dICE`,
                                 label: 'Delegated',
                                 align: CellAlign.Right,
+                            },
+                            {
+                                children: (
+                                    <ExternalLink
+                                        href={`https://stellar.expert/explorer/${
+                                            getIsTestnetEnv() ? 'testnet' : 'public'
+                                        }/account/${sponsor}`}
+                                    >
+                                        View on Explorer
+                                    </ExternalLink>
+                                ),
+                                align: CellAlign.Right,
+                                flexSize: 0.5,
                             },
                         ],
                     }))}

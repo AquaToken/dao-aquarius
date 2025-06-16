@@ -53,8 +53,22 @@ const Container = styled.div<{ $fromTop: boolean; $visible: boolean }>`
     `}
 `;
 
-const Description = styled.div`
+const Strategy = styled.div`
     color: ${COLORS.grayText};
+    display: flex;
+    flex-direction: column;
+
+    h5 {
+        font-weight: 400;
+        font-size: 2rem;
+        line-height: 2.4rem;
+        color: ${COLORS.titleText};
+        margin-bottom: 1.6rem;
+    }
+
+    span {
+        color: ${COLORS.grayText};
+    }
 `;
 
 const Stats = styled.div`
@@ -147,13 +161,11 @@ const DelegateeStats = forwardRef(
 
         return (
             <Container $fromTop={fromTop} $visible={popupVisible} ref={popupRef}>
-                {Boolean(delegatee.description) && (
-                    <Description>{delegatee.description}</Description>
-                )}
                 {Boolean(delegatee.voting_strategy) && (
-                    <Description>
-                        <b>Strategy:</b> <i>{delegatee.voting_strategy}</i>
-                    </Description>
+                    <Strategy>
+                        <h5>Strategy:</h5>
+                        <span>{delegatee.voting_strategy}</span>
+                    </Strategy>
                 )}
                 {Boolean(delegatee.discord_handle) && (
                     <ExternalLink href={`https://discord.com/users/${delegatee.discord_handle}`}>

@@ -11,6 +11,7 @@ export const COLORS = {
     tooltip: '#8620B9',
     background: '#5C1283',
     deepPurple: '#6D29B5',
+    royalPurple: '#461685',
     gray: '#E8E8ED',
     lightGray: '#FAFAFB',
     placeholder: '#B3B4C3',

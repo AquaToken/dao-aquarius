@@ -14,6 +14,7 @@ import { commonMaxWidth, respondDown, respondUp } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
+import ExternalLink from 'basics/ExternalLink';
 import { ToggleGroup } from 'basics/inputs';
 import Select from 'basics/inputs/Select';
 import { PageLoader } from 'basics/loaders';
@@ -26,6 +27,74 @@ import { DELEGATE_ICE } from 'pages/vote/components/MainPage/MainPage';
 const Main = styled.main`
     flex: 1 0 auto;
     background-color: ${COLORS.lightGray};
+`;
+
+const Background = styled.div`
+    width: 100%;
+    padding: 8.2rem 25%;
+    background-color: ${COLORS.darkPurple};
+    color: ${COLORS.white};
+
+    ${respondDown(Breakpoints.md)`
+         padding: 5rem 5%;
+    `}
+`;
+
+const MainTitle = styled.h2`
+    font-weight: 700;
+    font-size: 8rem;
+    line-height: 9.4rem;
+    text-align: center;
+    white-space: nowrap;
+
+    ${respondDown(Breakpoints.sm)`
+         font-size: 5rem;
+         line-height: 5rem;
+    `}
+
+    ${respondDown(Breakpoints.xs)`
+         font-size: 3rem;
+         line-height: 3rem;
+    `}
+`;
+
+const MainDescription = styled.p`
+    font-weight: 400;
+    font-size: 1.6rem;
+    line-height: 2.8rem;
+    text-align: center;
+    margin: 1.6rem 0 2.4rem;
+`;
+
+const InviteLink = styled.div`
+    display: flex;
+    padding: 1.6rem 2.4rem;
+    border-radius: 2.4rem;
+    background-color: ${COLORS.royalPurple};
+    gap: 1.6rem;
+    width: fit-content;
+    margin: 0 auto;
+
+    span {
+        font-weight: 700;
+        font-size: 1.6rem;
+        line-height: 2.8rem;
+    }
+
+    ${respondDown(Breakpoints.sm)`
+         flex-direction: column;
+         align-items: center;
+    `}
+`;
+
+const ExternalLinkStyled = styled(ExternalLink)`
+    color: ${COLORS.white};
+
+    svg {
+        path {
+            fill: ${COLORS.white};
+        }
+    }
 `;
 
 const Wrapper = styled.div`
@@ -120,8 +189,21 @@ const Delegate = () => {
 
     return (
         <Main>
+            <Background>
+                <MainTitle>ICE Delegation</MainTitle>
+                <MainDescription>
+                    Delegate your ICE to trusted community members and let them vote on your behalf.
+                    Earn rewards without managing votes yourself or become a delegate and help shape
+                    protocol incentives
+                </MainDescription>
+                <InviteLink>
+                    <span>Want to lead and earn incentives?</span>
+
+                    <ExternalLinkStyled>Become a Delegate</ExternalLinkStyled>
+                </InviteLink>
+            </Background>
             <Wrapper>
-                <Title>ICE Delegation</Title>
+                <Title>Delegates</Title>
 
                 <ToggleGroupStyled
                     value={tab}
