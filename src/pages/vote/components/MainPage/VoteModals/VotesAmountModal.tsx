@@ -1,5 +1,6 @@
 import { Asset } from '@stellar/stellar-sdk';
 import { useEffect, useMemo, useState } from 'react';
+import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -29,13 +30,14 @@ import DIce from 'assets/dice-logo.svg';
 import Ice from 'assets/ice-logo.svg';
 import CloseIcon from 'assets/icon-close-small.svg';
 
+import Alert from 'basics/Alert';
 import Button from 'basics/buttons/Button';
 import ExternalLink from 'basics/ExternalLink';
 import Input from 'basics/inputs/Input';
 import RangeInput from 'basics/inputs/RangeInput';
 import Select, { Option } from 'basics/inputs/Select';
 import Market from 'basics/Market';
-import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 import VotesDurationModal from './VotesDurationModal';
 
@@ -44,7 +46,7 @@ import { DELEGATE_ICE, DOWN_ICE, SELECTED_PAIRS_ALIAS, UP_ICE } from '../MainPag
 
 export const ContentRow = styled.div`
     ${flexRowSpaceBetween};
-    width: 52.8rem;
+    width: 100%;
     margin-top: 3rem;
 
     ${respondDown(Breakpoints.md)`
@@ -278,7 +280,7 @@ const VotesAmountModal = ({
 
     const [percent, setPercent] = useState(0);
     const [amount, setAmount] = useState('');
-    const [targetAsset, setTargetAsset] = useState(asset ?? aquaStellarAsset);
+    const [targetAsset, setTargetAsset] = useState(asset ?? (isDownVoteModal ? DOWN_ICE : UP_ICE));
     const [selectedPairs, setSelectedPairs] = useState(pairs);
     const [pending, setPending] = useState(false);
 
@@ -295,21 +297,25 @@ const VotesAmountModal = ({
     );
     const [isHandleEdit, setIsHandleEdit] = useState(false);
 
-    const OPTIONS: Option<Asset>[] = useMemo(
-        () => [
-            { label: 'AQUA', value: aquaStellarAsset, icon: <AquaLogo /> },
-            { label: 'ICE', value: isDownVoteModal ? DOWN_ICE : UP_ICE, icon: <IceLogo /> },
-        ],
-        [isDownVoteModal],
-    );
-
-    if (!isDownVoteModal && account.getAssetBalance(DELEGATE_ICE) !== null) {
-        OPTIONS.push({
+    const OPTIONS: Option<Asset>[] = useMemo(() => {
+        const AQUA_OPTION = { label: 'AQUA', value: aquaStellarAsset, icon: <AquaLogo /> };
+        const ICE_OPTION = {
+            label: 'ICE',
+            value: isDownVoteModal ? DOWN_ICE : UP_ICE,
+            icon: <IceLogo />,
+        };
+        const D_ICE_OPTION = {
             label: 'dICE',
             value: DELEGATE_ICE,
             icon: <DIceLogo />,
-        });
-    }
+        };
+
+        if (!isDownVoteModal && account && account.getAssetBalance(DELEGATE_ICE) !== null) {
+            return [ICE_OPTION, D_ICE_OPTION, AQUA_OPTION];
+        }
+
+        return [ICE_OPTION, AQUA_OPTION];
+    }, [isDownVoteModal, account]);
 
     const targetBalance = useMemo(() => account?.getAssetBalance(targetAsset), [targetAsset]);
 
@@ -563,7 +569,7 @@ const VotesAmountModal = ({
     };
 
     return (
-        <>
+        <ModalWrapper $width="60rem">
             <Scrollable scrollDisabled={isDownVoteModal || isSingleVoteForModal}>
                 <ModalTitle>
                     {isDownVoteModal
@@ -593,6 +599,10 @@ const VotesAmountModal = ({
                             ]}
                         />
                     </AssetsInfoBlock>
+                )}
+
+                {targetAsset.code === aquaStellarAsset.code && (
+                    <Alert text="ICE has more voting power than AQUA and ICE votes can be withdrawn from the market at any time" />
                 )}
 
                 <ContentRow>
@@ -713,7 +723,9 @@ const VotesAmountModal = ({
                             </ExternalLink>
                         ) : (
                             <ExternalLink asDiv>
-                                <Link to={LockerRoutes.main}>Get ICE</Link>
+                                <Link to={LockerRoutes.main} onClick={() => close()}>
+                                    Get ICE
+                                </Link>
                             </ExternalLink>
                         )}
                     </GetAquaBlock>
@@ -730,7 +742,7 @@ const VotesAmountModal = ({
                     {targetAsset.code === aquaStellarAsset.code ? 'NEXT' : 'confirm'}
                 </Button>
             </ButtonContainer>
-        </>
+        </ModalWrapper>
     );
 };
 

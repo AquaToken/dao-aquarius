@@ -18,10 +18,11 @@ import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 import { Delegatee } from 'types/delegate';
 import { ModalProps } from 'types/modal';
 
-import { respondDown } from 'web/mixins';
+import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Ice from 'assets/ice-logo.svg';
+import IconProfile from 'assets/icon-profile.svg';
 
 import { Button } from 'basics/buttons';
 import { Input, RangeInput, Select, ToggleGroup } from 'basics/inputs';
@@ -86,6 +87,21 @@ const SelectItem = styled.div`
 
 const Avatar = styled.img`
     border-radius: 50%;
+`;
+
+const IconWrapper = styled.div`
+    height: 2.4rem;
+    width: 2.4rem;
+    background: ${COLORS.gray};
+    border-radius: 50%;
+    ${flexAllCenter};
+    color: ${COLORS.lavenderGray};
+
+    svg {
+        margin: 0;
+        height: 1.2rem;
+        width: 1.2rem;
+    }
 `;
 
 const PublicKeyWithIconStyled = styled(PublicKeyWithIcon)`
@@ -250,7 +266,17 @@ const DelegateModal = ({
                         options={delegatees.map(delegate => ({
                             label: (
                                 <SelectItem>
-                                    <Avatar src={delegate.image} alt={delegate.name} width={24} />{' '}
+                                    {delegate.image ? (
+                                        <Avatar
+                                            src={delegate.image}
+                                            alt={delegate.name}
+                                            width={24}
+                                        />
+                                    ) : (
+                                        <IconWrapper>
+                                            <IconProfile />
+                                        </IconWrapper>
+                                    )}{' '}
                                     {delegate.name}
                                     <PublicKeyWithIconStyled
                                         pubKey={delegate.account}

@@ -31,7 +31,7 @@ const Main = styled.main`
 
 const Background = styled.div`
     width: 100%;
-    padding: 8.2rem 25%;
+    padding: 8.2rem 24%;
     background-color: ${COLORS.darkPurple};
     color: ${COLORS.white};
 
@@ -99,11 +99,12 @@ const ExternalLinkStyled = styled(ExternalLink)`
 
 const Wrapper = styled.div`
     ${commonMaxWidth};
-    margin: 0 auto;
+    margin: 0 auto 10rem;
     padding: 0 10rem;
 
     ${respondDown(Breakpoints.md)`
         padding: 0 4rem;
+        margin: 0 auto 5rem;
     `}
 
     ${respondDown(Breakpoints.xs)`
@@ -193,13 +194,16 @@ const Delegate = () => {
                 <MainTitle>ICE Delegation</MainTitle>
                 <MainDescription>
                     Delegate your ICE to trusted community members and let them vote on your behalf.
+                    <br />
                     Earn rewards without managing votes yourself or become a delegate and help shape
                     protocol incentives
                 </MainDescription>
                 <InviteLink>
                     <span>Want to lead and earn incentives?</span>
 
-                    <ExternalLinkStyled>Become a Delegate</ExternalLinkStyled>
+                    <ExternalLinkStyled href="https://docs.google.com/forms/d/e/1FAIpQLSftzcYs7HJu2Qrp4DmMOTnABLESujDvd47EvPQPlgCRh5vLGQ/viewform">
+                        Become a Delegate
+                    </ExternalLinkStyled>
                 </InviteLink>
             </Background>
             <Wrapper>

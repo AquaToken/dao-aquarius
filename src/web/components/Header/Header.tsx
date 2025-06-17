@@ -194,6 +194,8 @@ const MyAquarius = styled(NavLink)`
 
     svg {
         margin-right: 0.8rem;
+        height: 1.6rem;
+        width: 1.6rem;
     }
 
     &:hover {

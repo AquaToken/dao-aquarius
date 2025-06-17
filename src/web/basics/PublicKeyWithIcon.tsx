@@ -2,6 +2,8 @@ import * as React from 'react';
 import createStellarIdenticon from 'stellar-identicon-js';
 import styled from 'styled-components';
 
+import { truncateString } from 'helpers/truncate-string';
+
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -46,7 +48,7 @@ const PublicKeyWithIcon = ({
     lettersCount?: number;
 }): React.ReactNode => {
     const url = createStellarIdenticon(pubKey).toDataURL();
-    const truncatedKeyWeb = `${pubKey.slice(0, lettersCount)}...${pubKey.slice(-lettersCount)}`;
+    const truncatedKeyWeb = truncateString(pubKey, lettersCount);
     const truncatedKeyMobile = `G...${pubKey.slice(-3)}`;
 
     return (

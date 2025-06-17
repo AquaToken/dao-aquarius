@@ -14,7 +14,7 @@ import { ModalService } from 'services/globalServices';
 
 import { Delegatee, DelegateeVote } from 'types/delegate';
 
-import { cardBoxShadow, flexColumn, respondDown } from 'web/mixins';
+import { cardBoxShadow, customScroll, flexColumn, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import DelegateClaimModal from 'web/modals/DelegateClaimModal';
 import DelegateModal from 'web/modals/DelegateModal';
@@ -24,6 +24,7 @@ import AssetLogo from 'basics/AssetLogo';
 import { Button } from 'basics/buttons';
 import CircularProgress from 'basics/CircularProgress';
 import ExternalLink from 'basics/ExternalLink';
+import { PageLoader } from 'basics/loaders';
 
 import { MarketKey } from 'pages/vote/api/types';
 import { getPercent } from 'pages/vote/components/MainPage/Table/VoteAmount/VoteAmount';
@@ -77,6 +78,9 @@ const Stats = styled.div`
     ${flexColumn};
     gap: 0.8rem;
     background-color: ${COLORS.lightGray};
+    ${customScroll};
+    max-height: 20rem;
+    overflow: auto;
 
     h3 {
         font-weight: 700;
@@ -172,54 +176,63 @@ const DelegateeStats = forwardRef(
                         Discord chat
                     </ExternalLink>
                 )}
-                {Boolean(votes) && !!Number(delegatee.managed_ice) && (
-                    <Stats>
-                        <h3>Delegate distribution</h3>
-                        {votes.map(vote => (
-                            <StatsRow key={vote.id}>
-                                <Market>
-                                    <AssetLogoStyled
-                                        isCircle
-                                        asset={getAssetFromString(vote.asset1)}
-                                        isSmall
+                {!!Number(delegatee.managed_ice) &&
+                    (!votes ? (
+                        <Stats>
+                            <PageLoader />
+                        </Stats>
+                    ) : (
+                        <Stats>
+                            <h3>How This Delegate Votes</h3>
+                            {votes.map(vote => (
+                                <StatsRow key={vote.id}>
+                                    <Market>
+                                        <AssetLogoStyled
+                                            isCircle
+                                            asset={getAssetFromString(vote.asset1)}
+                                            isSmall
+                                        />
+                                        <AssetLogoSecond
+                                            isCircle
+                                            asset={getAssetFromString(vote.asset2)}
+                                            isSmall
+                                        />
+                                        {vote.asset1_code} / {vote.asset2_code}
+                                    </Market>
+                                    <span>
+                                        {getPercent(vote.total_votes, delegatee.managed_ice)}%
+                                    </span>
+                                    <CircularProgress
+                                        percentage={
+                                            +getPercent(vote.total_votes, delegatee.managed_ice)
+                                        }
                                     />
-                                    <AssetLogoSecond
-                                        isCircle
-                                        asset={getAssetFromString(vote.asset2)}
-                                        isSmall
-                                    />
-                                    {vote.asset1_code} / {vote.asset2_code}
-                                </Market>
-                                <span>{getPercent(vote.total_votes, delegatee.managed_ice)}%</span>
-                                <CircularProgress
-                                    percentage={
-                                        +getPercent(vote.total_votes, delegatee.managed_ice)
-                                    }
-                                />
-                            </StatsRow>
-                        ))}
-                        {Number(delegatee.managed_ice) - votesSum > 0 && (
-                            <StatsRow>
-                                <Market>Not distributed</Market>
-                                <span>
-                                    {getPercent(
-                                        (Number(delegatee.managed_ice) - votesSum).toString(),
-                                        delegatee.managed_ice,
-                                    )}
-                                    %
-                                </span>
-                                <CircularProgress
-                                    percentage={
-                                        +getPercent(
+                                </StatsRow>
+                            ))}
+                            {Number(delegatee.managed_ice) - votesSum > 0 && (
+                                <StatsRow>
+                                    <Market>Not distributed</Market>
+                                    <span>
+                                        {getPercent(
                                             (Number(delegatee.managed_ice) - votesSum).toString(),
                                             delegatee.managed_ice,
-                                        )
-                                    }
-                                />
-                            </StatsRow>
-                        )}
-                    </Stats>
-                )}
+                                        )}
+                                        %
+                                    </span>
+                                    <CircularProgress
+                                        percentage={
+                                            +getPercent(
+                                                (
+                                                    Number(delegatee.managed_ice) - votesSum
+                                                ).toString(),
+                                                delegatee.managed_ice,
+                                            )
+                                        }
+                                    />
+                                </StatsRow>
+                            )}
+                        </Stats>
+                    ))}
                 <Buttons>
                     <Button
                         isRounded

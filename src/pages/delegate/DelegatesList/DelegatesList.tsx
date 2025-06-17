@@ -15,6 +15,8 @@ import {
     flexColumnCenter,
     respondDown,
 } from 'web/mixins';
+import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
+import DelegateModal from 'web/modals/DelegateModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Profile from 'assets/icon-profile.svg';
@@ -23,9 +25,6 @@ import { Button } from 'basics/buttons';
 
 import Delegatee from 'pages/delegate/Delegatee/Delegatee';
 import DelegateeStats from 'pages/delegate/DelegateeStats/DelegateeStats';
-
-import ChooseLoginMethodModal from '../../../web/modals/auth/ChooseLoginMethodModal';
-import DelegateModal from '../../../web/modals/DelegateModal';
 
 export const List = styled.div`
     ${flexColumn};
@@ -74,6 +73,11 @@ const IconWrap = styled.div`
     width: 6.4rem;
     border-radius: 50%;
     background-color: ${COLORS.lightGray};
+
+    svg {
+        height: 1.6rem;
+        width: 1.6rem;
+    }
 `;
 
 interface Props {
