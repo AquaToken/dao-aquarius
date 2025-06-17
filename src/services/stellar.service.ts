@@ -14,6 +14,7 @@ import BigNumber from 'bignumber.js';
 import { getPoolInfo } from 'api/amm';
 
 import { ASSETS_ENV_DATA } from 'constants/assets';
+import { BASE_FEE } from 'constants/stellar';
 
 import debounceFunction from 'helpers/debounce-function';
 import { getEnv, getNetworkPassphrase } from 'helpers/env';
@@ -30,7 +31,6 @@ import { ToastService } from './globalServices';
 
 const VAULT_API = 'https://vault.lobstr.co/api/transactions/';
 
-const FEE = '100000';
 const TRANSACTION_TIMEOUT = 60 * 60 * 24 * 30;
 const MARKET_KEY_MARKER_UP = 'GA2UB7VXXXUSEAQUAXXXAQUARIUSVOTINGWALLETXXXPOWEREDBYAQUA';
 const MARKET_KEY_MARKER_DOWN = 'GAYVCXXXUSEAQUAXXXAQUARIUSDOWNVOTEWALLETXXXPOWEREDBYAQUA';
@@ -170,7 +170,7 @@ export default class StellarServiceClass {
         this.event.trigger({ type: StellarEvents.handleAccountUpdate, account: newAccount });
 
         const tx = new StellarSdk.TransactionBuilder(newAccount, {
-            fee: FEE.toString(),
+            fee: BASE_FEE,
             networkPassphrase: getNetworkPassphrase(),
         }).setTimeout(TRANSACTION_TIMEOUT);
 
@@ -859,7 +859,7 @@ export default class StellarServiceClass {
         const marketKeyDown = StellarSdk.Keypair.random();
 
         const transactionBuilder = new StellarSdk.TransactionBuilder(updatedAccount, {
-            fee: FEE,
+            fee: BASE_FEE,
             networkPassphrase: getNetworkPassphrase(),
         });
 

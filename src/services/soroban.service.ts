@@ -1,5 +1,5 @@
 import * as StellarSdk from '@stellar/stellar-sdk';
-import { xdr, Asset, Keypair, BASE_FEE, StrKey } from '@stellar/stellar-sdk';
+import { xdr, Asset, Keypair, StrKey } from '@stellar/stellar-sdk';
 import BigNumber from 'bignumber.js';
 
 import {
@@ -8,7 +8,7 @@ import {
     BATCH_CONTRACT_METHOD,
     CONTRACTS,
 } from 'constants/soroban';
-import { ACCOUNT_FOR_SIMULATE } from 'constants/stellar';
+import { ACCOUNT_FOR_SIMULATE, BASE_FEE } from 'constants/stellar';
 
 import { getAssetString } from 'helpers/assets';
 import { getEnv, getNetworkPassphrase } from 'helpers/env';
