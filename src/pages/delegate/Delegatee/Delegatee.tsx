@@ -145,7 +145,8 @@ const Delegatee = forwardRef(
                         </span>
                     ) : (
                         <span>
-                            Managed: <b>{formatBalance(Number(delegatee.managed_ice), true)} ICE</b>
+                            Voting Power:{' '}
+                            <b>{formatBalance(Number(delegatee.managed_ice), true)} ICE</b>
                         </span>
                     )}
 
