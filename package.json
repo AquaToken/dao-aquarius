@@ -64,8 +64,8 @@
   },
   "dependencies": {
     "@creit.tech/stellar-wallets-kit": "^1.7.1",
-    "@ledgerhq/hw-app-str": "7.0.4",
-    "@ledgerhq/hw-transport-webusb": "6.29.4",
+    "@ledgerhq/hw-app-str": "7.2.2",
+    "@ledgerhq/hw-transport-webusb": "6.29.6",
     "@lobstrco/signer-extension-api": "^1.0.0-beta.0",
     "@moonpay/moonpay-react": "^1.8.2",
     "@sentry/react": "^8.23.0",
