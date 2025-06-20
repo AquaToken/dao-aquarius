@@ -209,8 +209,6 @@ const MyAquarius = styled(NavLink)`
 const Links = () => {
     const [proposalsCounts, setProposalsCounts] = useState({ active: 0, discussion: 0 });
 
-    const { isLogged } = useAuthStore();
-
     useEffect(() => {
         getActiveProposalsCount().then(res => {
             setProposalsCounts(res);
@@ -303,23 +301,6 @@ const Links = () => {
                             to={MainRoutes.token}
                         >
                             Token info
-                        </NavLinkStyled>
-                        <NavLinkStyled
-                            activeStyle={{
-                                fontWeight: 700,
-                            }}
-                            title="Buy AQUA"
-                            to={MainRoutes.buyAqua}
-                            onClick={e => {
-                                if (!isLogged) {
-                                    e.preventDefault();
-                                    ModalService.openModal(ChooseLoginMethodModal, {
-                                        redirectURL: MainRoutes.buyAqua,
-                                    });
-                                }
-                            }}
-                        >
-                            Buy AQUA
                         </NavLinkStyled>
 
                         <NavLinkStyled
