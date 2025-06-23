@@ -9,6 +9,9 @@ export type Delegatee = {
     discord_handle: string;
     delegated: string | null;
     managed_ice: string | null;
+    is_recommended: boolean;
+    twitter_image: string | null;
+    twitter_link: string;
 };
 
 export type MyDelegatees = {

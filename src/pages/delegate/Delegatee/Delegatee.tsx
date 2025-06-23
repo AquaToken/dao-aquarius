@@ -13,6 +13,7 @@ import { Breakpoints, COLORS } from 'web/styles';
 import Arrow from 'assets/icon-arrow-down.svg';
 
 import Identicon from 'basics/Identicon';
+import Label from 'basics/Label';
 
 const Container = styled.div<{ $isSelected: boolean }>`
     display: flex;
@@ -60,6 +61,13 @@ const Header = styled.div`
         font-size: 1.6rem;
         line-height: 2.8rem;
         color: ${COLORS.titleText};
+        display: flex;
+        gap: 0.8rem;
+        align-items: center;
+
+        div {
+            height: fit-content;
+        }
     }
 
     span {
@@ -75,7 +83,15 @@ const Header = styled.div`
         span {
             display: none;
         }
-    `}
+    `};
+
+    ${respondDown(Breakpoints.xs)`
+        h3 {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0;
+        }
+    `};
 `;
 
 const MobileAmount = styled.span`
@@ -137,6 +153,7 @@ const Delegatee = forwardRef(
 
                     <h3>
                         {delegatee.name ? delegatee.name : truncateString(delegatee.account, 4)}
+                        {delegatee.is_recommended && <Label labelText="RECOMMENDED" />}
                     </h3>
 
                     {myDelegation ? (

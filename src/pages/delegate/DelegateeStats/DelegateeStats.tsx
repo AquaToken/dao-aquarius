@@ -14,11 +14,14 @@ import { ModalService } from 'services/globalServices';
 
 import { Delegatee, DelegateeVote } from 'types/delegate';
 
-import { cardBoxShadow, customScroll, flexColumn, respondDown } from 'web/mixins';
+import { cardBoxShadow, customScroll, flexAllCenter, flexColumn, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import DelegateClaimModal from 'web/modals/DelegateClaimModal';
 import DelegateModal from 'web/modals/DelegateModal';
 import { Breakpoints, COLORS } from 'web/styles';
+
+import Discord from 'assets/discord.svg';
+import Twitter from 'assets/twitter.svg';
 
 import AssetLogo from 'basics/AssetLogo';
 import { Button } from 'basics/buttons';
@@ -43,6 +46,7 @@ const Container = styled.div<{ $fromTop: boolean; $visible: boolean }>`
     padding: 2.4rem;
     ${flexColumn};
     gap: 1.6rem;
+    cursor: auto;
 
     ${respondDown(Breakpoints.lg)`
         position: relative;
@@ -88,6 +92,27 @@ const Stats = styled.div`
         line-height: 2.8rem;
         ${COLORS.titleText};
         margin-bottom: 1.2rem;
+    }
+`;
+
+const Links = styled.div`
+    display: flex;
+    gap: 1.6rem;
+`;
+
+const Link = styled.a`
+    ${flexAllCenter};
+    background-color: ${COLORS.lightGray};
+    border-radius: 1.6rem;
+    height: 4.4rem;
+    padding: 0 1.3rem;
+    gap: 0.8rem;
+    text-decoration: none;
+
+    svg {
+        path {
+            fill: ${COLORS.purple};
+        }
     }
 `;
 
@@ -171,10 +196,28 @@ const DelegateeStats = forwardRef(
                         <span>{delegatee.voting_strategy}</span>
                     </Strategy>
                 )}
-                {Boolean(delegatee.discord_handle) && (
-                    <ExternalLink href={`https://discord.com/users/${delegatee.discord_handle}`}>
-                        Discord chat
-                    </ExternalLink>
+                {(Boolean(delegatee.discord_handle) || Boolean(delegatee.twitter_link)) && (
+                    <Links>
+                        {Boolean(delegatee.discord_handle) && (
+                            <Link
+                                href={delegatee.discord_handle}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <Discord />
+                                <ExternalLink asDiv>Discord chat</ExternalLink>
+                            </Link>
+                        )}
+                        {Boolean(delegatee.twitter_link) && (
+                            <Link
+                                href={delegatee.twitter_link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <Twitter />
+                            </Link>
+                        )}
+                    </Links>
                 )}
                 {!!Number(delegatee.managed_ice) &&
                     (!votes ? (

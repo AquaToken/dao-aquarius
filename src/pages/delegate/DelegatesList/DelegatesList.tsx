@@ -46,6 +46,7 @@ const Empty = styled.div`
     border-radius: 2.4rem;
     padding: 2.4rem;
     gap: 2.4rem;
+    cursor: auto;
 
     span {
         font-size: 1.6rem;
