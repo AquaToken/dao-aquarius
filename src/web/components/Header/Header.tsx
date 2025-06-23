@@ -235,6 +235,16 @@ const Links = () => {
                 Swap
             </NavLinkStyled>
 
+            <NavLinkStyled
+                to={MainRoutes.quest}
+                activeStyle={{
+                    fontWeight: 700,
+                }}
+                title="Quest"
+            >
+                Quest
+            </NavLinkStyled>
+
             <Divider />
 
             <ExpandedMenu
