@@ -38,22 +38,22 @@ const Details = () => (
         <Detail>
             <Star>*</Star>
             <span>
-                Minimum number of completed tasks are the first 2 - you must buy AQUA and freeze
-                AQUA into ICE for at least 3 months
+                The minimum requirement to qualify is completing the first two tasks: Swap AQUA and
+                Freeze AQUA into ICE for at least 3 months
             </span>
         </Detail>
         <Detail>
             <Star>*</Star>
             <span>
-                You can skip the tasks #3 and #4 but we suggest you complete them as well to
-                maximize your returns!
+                Tasks #3 and #4 are optional, but we highly recommend completing them to maximize
+                your potential rewards.
             </span>
         </Detail>
         <Detail>
             <Star>*</Star>
             <span>
-                Participating wallets will be checked by Aquarius team and rewards will be
-                distributed manually
+                All participating wallets will be reviewed by the Aquarius team, and rewards will be
+                distributed manually.
             </span>
         </Detail>
     </Container>
