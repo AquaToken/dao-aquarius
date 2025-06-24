@@ -38,8 +38,8 @@ const Details = () => (
         <Detail>
             <Star>*</Star>
             <span>
-                The minimum requirement to qualify is completing the first two tasks: Swap AQUA and
-                Freeze AQUA into ICE for at least 3 months
+                The minimum requirement to qualify is completing the first two tasks:{' '}
+                <b>Swap AQUA</b> and <b>Freeze AQUA into ICE for at least 3 months</b>
             </span>
         </Detail>
         <Detail>
