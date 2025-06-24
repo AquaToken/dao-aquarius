@@ -154,7 +154,7 @@ const MainBlock = () => (
                 <AnimatedBorderedText /> to Aquarius
             </Title>
             <Description>
-                Earn tokens by learning how to use defi on Stellar and completing onchain actions.
+                Earn tokens by exploring DeFi on Stellar and completing simple on-chain actions.
             </Description>
 
             <Summary>

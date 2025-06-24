@@ -56,25 +56,29 @@ const PreRequisites = () => (
         <Item>
             <Icon />
             <span>
-                Create a wallet if you are new to Stellar. We recommend{' '}
+                If you're new to Stellar, start by creating a wallet. We recommend{' '}
                 <a href="https://lobstr.co/" target="_blank" rel="noreferrer">
                     Lobstr
                 </a>
-                , but there are also{' '}
+                , but other options like{' '}
                 <a href="https://www.freighter.app/" target="_blank" rel="noreferrer">
                     Freighter
                 </a>
                 ,{' '}
+                <a href="https://solarwallet.io/" target="_blank" rel="noreferrer">
+                    Solar
+                </a>
+                , or{' '}
                 <a href="https://hot-labs.org/wallet/" target="_blank" rel="noreferrer">
-                    HOT wallet
+                    HOT Wallet
                 </a>{' '}
-                and many others.
+                are also available.
             </span>
         </Item>
         <Item>
             <Icon />
-            If you are already familiar with Stellar, make sure your wallet didn’t transact with
-            Aquarius
+            If you already have a Stellar wallet, ensure it has not previously interacted with
+            Aquarius.
         </Item>
         <Item>
             <Icon />
@@ -83,14 +87,15 @@ const PreRequisites = () => (
         <Item>
             <Icon />
             <span>
-                Join Aquarius social media:{' '}
+                Join the Aquarius community on{' '}
                 <a href="https://t.me/aquarius_official_community" target="_blank" rel="noreferrer">
                     Telegram
                 </a>{' '}
                 and{' '}
                 <a href="https://discord.com/invite/sgzFscHp4C" target="_blank" rel="noreferrer">
                     Discord
-                </a>
+                </a>{' '}
+                to stay updated and connect with others.
             </span>
         </Item>
 
