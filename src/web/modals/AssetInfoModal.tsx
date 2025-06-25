@@ -300,7 +300,7 @@ const AssetInfoModal = ({ params }: ModalProps<AssetInfoModalParams>): React.Rea
                     <Button isBig>vote</Button>
                 </LinkStyled>
 
-                <NoTrustline asset={asset} onlyButton />
+                <NoTrustline asset={asset} onlyButton secondary isBig />
             </Buttons>
         </ModalWrapper>
     );

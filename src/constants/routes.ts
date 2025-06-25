@@ -20,6 +20,7 @@ export enum MainRoutes {
     privacy = '/privacy',
     token = '/token',
     quest = '/quest',
+    delegate = '/delegate',
 }
 
 //TODO: Replace constants with enums after TS 5.0 release

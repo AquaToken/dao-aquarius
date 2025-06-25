@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import { customScroll, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-export const ModalWrapper = styled.div<{ $isWide?: boolean }>`
-    width: ${({ $isWide }) => ($isWide ? '75.2rem' : '52.3rem')};
+export const ModalWrapper = styled.div<{ $isWide?: boolean; $width?: string }>`
+    width: ${({ $isWide, $width }) => $width ?? ($isWide ? '75.2rem' : '52.3rem')};
 
     ${respondDown(Breakpoints.md)`
         width: 100%;

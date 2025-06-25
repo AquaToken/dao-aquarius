@@ -1,8 +1,8 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { commonMaxWidth, respondDown } from '../../web/mixins';
-import { Breakpoints, COLORS } from '../../web/styles';
+import { commonMaxWidth, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
 
 const Container = styled.main`
     ${commonMaxWidth};

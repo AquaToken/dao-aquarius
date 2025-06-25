@@ -16,6 +16,21 @@ const USDC_ISSUER_TESTNET = 'GAHPYWLK6YRN7CVYZOO4H3VDRZ7PVF5UJGLZCSPAEIKJE2XSWF5
 const USDC_ASSET_STRING = `${USDC_CODE}:${USDC_ISSUER}`;
 const USDC_ASSET_STRING_TESTNET = `${USDC_CODE_TESTNET}:${USDC_ISSUER_TESTNET}`;
 
+export const ICE_CODE = 'ICE';
+export const ICE_ISSUER = 'GAXSGZ2JM3LNWOO4WRGADISNMWO4HQLG4QBGUZRKH5ZHL3EQBGX73ICE';
+
+export const GOV_ICE_CODE = 'governICE';
+export const UP_ICE_CODE = 'upvoteICE';
+export const DOWN_ICE_CODE = 'downvoteICE';
+export const D_ICE_CODE = 'dICE';
+
+export const ICE_ASSETS = [
+    `${ICE_CODE}:${ICE_ISSUER}`,
+    `${GOV_ICE_CODE}:${ICE_ISSUER}`,
+    `${UP_ICE_CODE}:${ICE_ISSUER}`,
+    `${DOWN_ICE_CODE}:${ICE_ISSUER}`,
+];
+
 export const ASSETS_ENV_DATA: AssetsEnvData = {
     [ENV_PRODUCTION]: {
         aqua: {

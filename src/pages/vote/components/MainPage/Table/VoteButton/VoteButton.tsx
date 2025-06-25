@@ -21,7 +21,7 @@ import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import { PairStats } from 'pages/vote/api/types';
 
-import { DOWN_ICE, UP_ICE } from '../../MainPage';
+import { DELEGATE_ICE, DOWN_ICE, UP_ICE } from '../../MainPage';
 import VotesAmountModal from '../../VoteModals/VotesAmountModal';
 
 const iconStyles = css`
@@ -80,7 +80,8 @@ const VoteButton = ({
 
     const getUpVotesValue = () =>
         +StellarService.getMarketVotesValue(marketKeyUp, account?.accountId(), aquaStellarAsset) +
-        +StellarService.getMarketVotesValue(marketKeyUp, account?.accountId(), UP_ICE);
+        +StellarService.getMarketVotesValue(marketKeyUp, account?.accountId(), UP_ICE) +
+        +StellarService.getMarketVotesValue(marketKeyUp, account?.accountId(), DELEGATE_ICE);
 
     const getDownVotesValue = () =>
         +StellarService.getMarketVotesValue(marketKeyDown, account?.accountId(), aquaStellarAsset) +

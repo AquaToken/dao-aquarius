@@ -11,14 +11,14 @@ import { ModalService } from 'services/globalServices';
 
 import { Asset as AssetType } from 'types/stellar';
 
+import { respondDown } from 'web/mixins';
+import AssetInfoModal from 'web/modals/AssetInfoModal';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Asset from 'basics/Asset';
 import Changes24 from 'basics/Changes24';
 import ExternalLink from 'basics/ExternalLink';
 import { PageLoader } from 'basics/loaders';
-
-import { respondDown } from '../../../../web/mixins';
-import AssetInfoModal from '../../../../web/modals/AssetInfoModal';
-import { Breakpoints, COLORS } from '../../../../web/styles';
 
 const Table = styled.div`
     display: flex;

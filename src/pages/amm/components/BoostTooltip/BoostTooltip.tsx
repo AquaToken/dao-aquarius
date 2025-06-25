@@ -8,13 +8,13 @@ import { formatBalance } from 'helpers/format-number';
 
 import { PoolProcessed } from 'types/amm';
 
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import IceSymbol from 'assets/icon-ice-symbol.svg';
 
 import { Button } from 'basics/buttons';
 import Label from 'basics/Label';
-
-import { respondDown } from '../../../../web/mixins';
-import { Breakpoints, COLORS } from '../../../../web/styles';
 
 const Container = styled.div`
     display: flex;

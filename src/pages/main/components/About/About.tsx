@@ -24,6 +24,7 @@ import { IceStatistics } from 'types/api-ice-locker';
 import { ExpertAssetData } from 'types/api-stellar-expert';
 
 import { respondDown, respondUp } from 'web/mixins';
+import GetAquaModal from 'web/modals/GetAquaModal';
 import { Breakpoints, COLORS, FONT_FAMILY } from 'web/styles';
 
 import Info from 'assets/icon-info.svg';
@@ -34,8 +35,6 @@ import Changes24 from 'basics/Changes24';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
-
-import GetAquaModal from '../../../../web/modals/GetAquaModal';
 
 const WhatIsSection = styled.section`
     display: flex;

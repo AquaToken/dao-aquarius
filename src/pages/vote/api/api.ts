@@ -36,6 +36,23 @@ const getPairUrl = (sortType: SortTypes, pageSize: number, page: number): string
     }
 };
 
+export const getMarketsMap = async (marketKeys: string[]): Promise<Map<string, MarketKey>> => {
+    const params = new URLSearchParams();
+
+    marketKeys.forEach(marketKey => {
+        params.append('account_id', marketKey);
+    });
+
+    const markets = await axios
+        .get<ListResponse<MarketKey>>(marketKeysUrl, { params })
+        .then(res => res.data.results);
+
+    return markets.reduce((acc, marketKey) => {
+        acc.set(marketKey.account_id, marketKey);
+        return acc;
+    }, new Map<string, MarketKey>());
+};
+
 const addKeysToMarketVotes = async (votes: MarketVotes[], count) => {
     const params = new URLSearchParams();
     const bribesParams = new URLSearchParams();

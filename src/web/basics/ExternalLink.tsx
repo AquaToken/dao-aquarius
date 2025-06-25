@@ -56,7 +56,7 @@ const ExternalLink = ({ children, asDiv, to, ...props }: ExternalLinkProps): Rea
 
     if (to) {
         return (
-            <LinkStyled to={to}>
+            <LinkStyled to={to} {...props}>
                 {children}
                 <LinkArrow />
             </LinkStyled>

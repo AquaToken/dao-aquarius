@@ -28,9 +28,9 @@ import { WalletKitEvents } from 'services/wallet-kit.service';
 
 import { WalletConnectEvents } from 'types/wallet-connect';
 
-import { useSkipFirstRender } from './useSkipFirstRender';
+import FreighterAccountChangedModal from 'web/modals/FreighterAccountChangedModal';
 
-import FreighterAccountChangedModal from '../web/modals/FreighterAccountChangedModal';
+import { useSkipFirstRender } from './useSkipFirstRender';
 
 const UnfundedErrors = ['Request failed with status code 404', 'Not Found'];
 

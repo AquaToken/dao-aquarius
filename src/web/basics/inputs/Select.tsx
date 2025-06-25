@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import useOnClickOutside from 'hooks/useOutsideClick';
+
 import { COLORS } from 'web/styles';
 
 import ArrowDown from 'assets/icon-arrow-down.svg';
@@ -99,7 +100,7 @@ const DropdownList = styled.div`
 `;
 
 export type Option<T> = {
-    label: string;
+    label: string | React.ReactNode;
     value: T;
     icon?: React.ReactNode;
 };
