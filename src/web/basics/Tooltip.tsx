@@ -98,13 +98,14 @@ const TooltipBody = styled.div<{
     $background: string;
     $color: string;
     $isHidden: boolean;
+    $withoutPadding: boolean;
 }>`
     position: absolute;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    padding: 0.9rem 1.2rem;
+    padding: ${({ $withoutPadding }) => ($withoutPadding ? '0' : '0.9rem 1.2rem')};
     color: ${({ $color }) => $color};
     background-color: ${({ $background }) => $background};
     box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
@@ -142,6 +143,7 @@ interface TooltipProps extends React.DOMAttributes<HTMLDivElement> {
     showOnHover?: boolean;
     background?: string;
     color?: string;
+    withoutPadding?: boolean;
 }
 
 const Tooltip = ({
@@ -152,6 +154,7 @@ const Tooltip = ({
     showOnHover,
     background = COLORS.tooltip,
     color = COLORS.white,
+    withoutPadding = false,
     ...props
 }: TooltipProps): React.ReactNode => {
     const [isTooltipVisible, setIsTooltipVisible] = useState(isShow);
@@ -252,6 +255,7 @@ const Tooltip = ({
                     $background={background}
                     $color={color}
                     $isHidden={positionInProgress}
+                    $withoutPadding={withoutPadding}
                     ref={tooltipRef}
                 >
                     {content}

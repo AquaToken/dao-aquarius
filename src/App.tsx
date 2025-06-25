@@ -3,6 +3,7 @@ import { lazy, Suspense, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import { createGlobalStyle } from 'styled-components';
 
+import { LS_IS_QUEST_PROMO_VIEWED } from 'constants/local-storage';
 import { MainRoutes } from 'constants/routes';
 
 import { getEnv, getIsTestnetEnv, setProductionEnv } from 'helpers/env';
@@ -10,7 +11,7 @@ import { getMoonpayKeyByEnv } from 'helpers/moonpay';
 
 import { LoginTypes } from 'store/authStore/types';
 
-import { StellarService, WalletConnectService } from 'services/globalServices';
+import { ModalService, StellarService, WalletConnectService } from 'services/globalServices';
 
 import AppGlobalStyle from 'web/AppGlobalStyles';
 import { respondDown } from 'web/mixins';
@@ -34,6 +35,7 @@ import SentryService from './services/sentry.service';
 import Provider from './store';
 import useAssetsStore from './store/assetsStore/useAssetsStore';
 import useAuthStore from './store/authStore/useAuthStore';
+import QuestPromoModal from './web/modals/alerts/QuestPromoModal';
 
 const MainPage = lazy(() => import('pages/main/MainPage'));
 const LockerPage = lazy(() => import('pages/locker/Locker'));
@@ -156,6 +158,13 @@ const App = () => {
             disableRedirect();
         }
     }, [isLogged, redirectURL]);
+
+    useEffect(() => {
+        const isQuestPromoViewed = !!localStorage.getItem(LS_IS_QUEST_PROMO_VIEWED);
+        if (!isQuestPromoViewed) {
+            ModalService.openModal(QuestPromoModal, {});
+        }
+    }, []);
 
     useEffect(() => {
         if (isLogged && Boolean(callback)) {
