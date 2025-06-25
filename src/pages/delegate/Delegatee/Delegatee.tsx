@@ -141,57 +141,58 @@ const Delegatee = forwardRef(
     (
         { isSelected, onDelegateClick, statsBlock, delegatee, myDelegation }: Props,
         ref: RefObject<HTMLDivElement>,
-    ) => (
-        <Container ref={ref} $isSelected={isSelected} onClick={onDelegateClick}>
-            <Main $isSelected={isSelected}>
-                <Header>
-                    {delegatee.image ? (
-                        <Image src={delegatee.image} alt={delegatee.name} width={48} />
-                    ) : (
-                        <IdenticonStyled pubKey={delegatee.account} />
-                    )}
+    ) =>
+        delegatee ? (
+            <Container ref={ref} $isSelected={isSelected} onClick={onDelegateClick}>
+                <Main $isSelected={isSelected}>
+                    <Header>
+                        {delegatee.image ? (
+                            <Image src={delegatee.image} alt={delegatee.name} width={48} />
+                        ) : (
+                            <IdenticonStyled pubKey={delegatee.account} />
+                        )}
 
-                    <h3>
-                        {delegatee.name ? delegatee.name : truncateString(delegatee.account, 4)}
-                        {delegatee.is_recommended && <Label labelText="RECOMMENDED" />}
-                    </h3>
+                        <h3>
+                            {delegatee.name ? delegatee.name : truncateString(delegatee.account, 4)}
+                            {delegatee.is_recommended && <Label labelText="RECOMMENDED" />}
+                        </h3>
+
+                        {myDelegation ? (
+                            <span>
+                                My delegation: <b>{formatBalance(myDelegation, true)} ICE</b>
+                            </span>
+                        ) : (
+                            <span>
+                                Voting Power:{' '}
+                                <b>{formatBalance(Number(delegatee.managed_ice), true)} ICE</b>
+                            </span>
+                        )}
+
+                        <ArrowIcon $isSelected={isSelected} />
+                    </Header>
 
                     {myDelegation ? (
-                        <span>
+                        <MobileAmount>
                             My delegation: <b>{formatBalance(myDelegation, true)} ICE</b>
-                        </span>
+                        </MobileAmount>
                     ) : (
-                        <span>
-                            Voting Power:{' '}
-                            <b>{formatBalance(Number(delegatee.managed_ice), true)} ICE</b>
-                        </span>
+                        <MobileAmount>
+                            Managed: <b>{formatBalance(Number(delegatee.managed_ice), true)} ICE</b>
+                        </MobileAmount>
                     )}
 
-                    <ArrowIcon $isSelected={isSelected} />
-                </Header>
+                    {delegatee.description && <Bio>{delegatee.description}</Bio>}
 
-                {myDelegation ? (
-                    <MobileAmount>
-                        My delegation: <b>{formatBalance(myDelegation, true)} ICE</b>
-                    </MobileAmount>
-                ) : (
-                    <MobileAmount>
-                        Managed: <b>{formatBalance(Number(delegatee.managed_ice), true)} ICE</b>
-                    </MobileAmount>
-                )}
-
-                {delegatee.description && <Bio>{delegatee.description}</Bio>}
-
-                {+delegatee.delegated > 0 && (
-                    <Trusted>
-                        Trusted by <b>{formatBalance(+delegatee.delegated)}</b> account
-                        {+delegatee.delegated > 1 ? 's' : ''}
-                    </Trusted>
-                )}
-            </Main>
-            {statsBlock}
-        </Container>
-    ),
+                    {+delegatee.delegated > 0 && (
+                        <Trusted>
+                            Trusted by <b>{formatBalance(+delegatee.delegated)}</b> account
+                            {+delegatee.delegated > 1 ? 's' : ''}
+                        </Trusted>
+                    )}
+                </Main>
+                {statsBlock}
+            </Container>
+        ) : null,
 );
 
 Delegatee.displayName = 'Delegatee';
