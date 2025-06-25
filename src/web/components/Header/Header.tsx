@@ -77,6 +77,22 @@ const NavLinkStyled = styled(NavLink)<{ $disabled?: boolean }>`
     `}
 `;
 
+const TooltipStyled = styled(Tooltip)`
+    margin-right: 2.4rem;
+
+    ${respondDown(Breakpoints.lg)`
+        margin-right: 1rem;
+    `}
+
+    ${respondDown(Breakpoints.md)`
+        margin-bottom: 1rem;
+    `}
+
+    a {
+        margin: 0 !important;
+    }
+`;
+
 const NavLinkWithCount = styled.div`
     display: flex;
     align-items: center;
@@ -242,22 +258,22 @@ const Links = () => {
                 Swap
             </NavLinkStyled>
 
-            <NavLinkStyled
-                to={MainRoutes.quest}
-                activeStyle={{
-                    fontWeight: 700,
-                }}
-                title="Quest"
+            <TooltipStyled
+                content={<TooltipInner>🔥 Hot</TooltipInner>}
+                position={TOOLTIP_POSITION.bottom}
+                isShow
+                withoutPadding
             >
-                <Tooltip
-                    content={<TooltipInner>🔥 Hot</TooltipInner>}
-                    position={TOOLTIP_POSITION.bottom}
-                    isShow
-                    withoutPadding
+                <NavLinkStyled
+                    to={MainRoutes.quest}
+                    activeStyle={{
+                        fontWeight: 700,
+                    }}
+                    title="Quest"
                 >
                     Quest
-                </Tooltip>
-            </NavLinkStyled>
+                </NavLinkStyled>
+            </TooltipStyled>
 
             <Divider />
 
