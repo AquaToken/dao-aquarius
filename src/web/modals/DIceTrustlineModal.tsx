@@ -8,7 +8,7 @@ import { StellarService } from 'services/globalServices';
 import { flexColumnCenter } from 'web/mixins';
 import { COLORS } from 'web/styles';
 
-import IceLogo from 'assets/ice-logo.svg';
+import DIceLogo from 'assets/dice-logo.svg';
 
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
@@ -48,7 +48,7 @@ const DIceTrustlineModal = () => (
             you’ll be able to vote on the liquidity voting page.
         </ModalDescription>
         <AssetBlock>
-            <IceLogo />
+            <DIceLogo />
             <h4>dICE</h4>
             <span>aqua.network</span>
         </AssetBlock>
