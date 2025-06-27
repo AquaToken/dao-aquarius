@@ -46,6 +46,7 @@ interface TableRow {
     isNarrow?: boolean;
     mobileBackground?: string;
     mobileFontSize?: string;
+    style?: React.CSSProperties;
 }
 
 interface TableProps {
@@ -425,7 +426,12 @@ const Table = forwardRef(
                         </Virtualized.AutoSizer>
                     ) : (
                         body?.map(row => (
-                            <Row row={row} key={row.key} $mobileBreakpoint={mobileBreakpoint} />
+                            <Row
+                                row={row}
+                                key={row.key}
+                                style={row.style}
+                                $mobileBreakpoint={mobileBreakpoint}
+                            />
                         ))
                     )}
                 </TableBody>

@@ -8,6 +8,7 @@ import {
     getAssetString,
     getUsdcAssetData,
 } from 'helpers/assets';
+import chunkFunction from 'helpers/chunk-function';
 import { getNetworkPassphrase } from 'helpers/env';
 import { getAmmAquaUrl } from 'helpers/url';
 
@@ -406,4 +407,46 @@ export const getAssetsList = async (): Promise<AssetSimple[]> => {
         usdcAssetString,
         ...[...assetsSet].sort((a: string, b: string) => a.localeCompare(b)),
     ].map((str: string) => getAssetFromString(str));
+};
+
+function chunkArray<T>(arr: T[], size = 5) {
+    const result = [];
+    for (let i = 0; i < arr.length; i += size) {
+        result.push(arr.slice(i, i + size));
+    }
+    return result;
+}
+
+export const getUserRewardsList = async (
+    accountId: string,
+): Promise<{ id: string; amount: number; assets: Asset[] }[]> => {
+    const baseUrl = getAmmAquaUrl();
+
+    const { data } = await axios.get<ListResponse<Pool>>(`${baseUrl}/pools/?size=500`);
+
+    const results = [];
+
+    const processed = processPools(data.items);
+
+    const chunked = chunkArray(processed);
+
+    await chunkFunction(chunked, async chunk => {
+        const result = await SorobanService.getPoolsRewards(
+            accountId,
+            chunk.map(({ address }) => address),
+        );
+
+        result.forEach((item, index) => {
+            if (Number(item.to_claim)) {
+                results.push({
+                    id: chunk[index].address,
+                    amount: Number(item.to_claim),
+                    assets: chunk[index].assets,
+                    type: chunk[index].pool_type,
+                });
+            }
+        });
+    });
+
+    return results.sort((a, b) => b.amount - a.amount);
 };

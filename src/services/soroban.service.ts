@@ -333,6 +333,20 @@ export default class SorobanServiceClass {
         );
     }
 
+    parsePoolRewards(value): PoolRewardsInfo {
+        return value.reduce((acc, val) => {
+            const key = val.key().value().toString();
+            if (key === 'exp_at' || key === 'last_time') {
+                acc[key] = new BigNumber(this.i128ToInt(val.val().value()).toString())
+                    .times(1e7)
+                    .toNumber();
+                return acc;
+            }
+            acc[key] = this.i128ToInt(val.val().value());
+            return acc;
+        }, {}) as PoolRewardsInfo;
+    }
+
     getPoolRewards(accountId: string, poolId: string): Promise<PoolRewardsInfo> {
         return this.buildSmartContactTx(
             accountId,
@@ -348,26 +362,43 @@ export default class SorobanServiceClass {
             )
             .then(({ result }) => {
                 if (result) {
-                    return (result.retval.value() as unknown[]).reduce((acc, val) => {
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-expect-error
-                        const key = val.key().value().toString();
-                        if (key === 'exp_at' || key === 'last_time') {
-                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                            // @ts-expect-error
-                            acc[key] = new BigNumber(this.i128ToInt(val.val().value()).toString())
-                                .times(1e7)
-                                .toNumber();
-                            return acc;
-                        }
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-expect-error
-                        acc[key] = this.i128ToInt(val.val().value());
-                        return acc;
-                    }, {}) as PoolRewardsInfo;
+                    return this.parsePoolRewards(result.retval.value());
                 }
 
                 throw new Error('getPoolRewards error');
+            });
+    }
+
+    getPoolsRewards(accountId: string, pools: string[]) {
+        const batches = pools.map(pool =>
+            this.scValToArray([
+                this.contractIdToScVal(pool),
+                xdr.ScVal.scvSymbol(AMM_CONTRACT_METHOD.GET_REWARDS_INFO),
+                this.scValToArray([this.publicKeyToScVal(accountId)]),
+            ]),
+        );
+
+        return this.buildSmartContactTx(
+            accountId,
+            BATCH_SMART_CONTACT_ID,
+            BATCH_CONTRACT_METHOD.batch,
+            this.scValToArray([this.publicKeyToScVal(accountId)]),
+            this.scValToArray(batches),
+            xdr.ScVal.scvBool(true),
+        )
+            .then(tx => this.simulateTx(tx))
+            .then(res => {
+                if (!(res as StellarSdk.rpc.Api.SimulateTransactionSuccessResponse).result) {
+                    throw new Error('getPoolsRewards error');
+                }
+
+                const retValArr = (
+                    res as StellarSdk.rpc.Api.SimulateTransactionSuccessResponse
+                ).result.retval.value() as unknown[];
+
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                return retValArr.map(val => this.parsePoolRewards(val.value()));
             });
     }
 
@@ -418,6 +449,101 @@ export default class SorobanServiceClass {
             this.scValToArray(batches),
             xdr.ScVal.scvBool(false),
         ).then(tx => this.prepareTransaction(tx));
+    }
+
+    async getWithdrawAndClaim(
+        accountId: string,
+        poolAddress: string,
+        shareAmount: string,
+        assets: Asset[],
+        shareAddress: string,
+    ): Promise<StellarSdk.Transaction> {
+        const withdrawArgs = [
+            this.publicKeyToScVal(accountId),
+            this.amountToUint128(shareAmount),
+            this.scValToArray(assets.map(() => this.amountToUint128('0.0000001'))),
+        ];
+
+        const withdrawCall = this.scValToArray([
+            this.contractIdToScVal(poolAddress),
+            xdr.ScVal.scvSymbol(AMM_CONTRACT_METHOD.WITHDRAW),
+            this.scValToArray(withdrawArgs),
+        ]);
+
+        const claimCall = this.scValToArray([
+            this.contractIdToScVal(poolAddress),
+            xdr.ScVal.scvSymbol(AMM_CONTRACT_METHOD.CLAIM),
+            this.scValToArray([this.publicKeyToScVal(accountId)]),
+        ]);
+
+        const batchCalls = [withdrawCall, claimCall];
+
+        const burnAuth = new xdr.SorobanAuthorizedInvocation({
+            function: xdr.SorobanAuthorizedFunction.sorobanAuthorizedFunctionTypeContractFn(
+                new xdr.InvokeContractArgs({
+                    functionName: ASSET_CONTRACT_METHOD.BURN,
+                    contractAddress: this.contractIdToScVal(shareAddress).address(),
+                    args: [this.publicKeyToScVal(accountId), this.amountToInt128(shareAmount)],
+                }),
+            ),
+            subInvocations: [],
+        });
+
+        const withdrawAuthInvocation = new xdr.SorobanAuthorizedInvocation({
+            function: xdr.SorobanAuthorizedFunction.sorobanAuthorizedFunctionTypeContractFn(
+                new xdr.InvokeContractArgs({
+                    contractAddress: this.contractIdToScVal(poolAddress).address(),
+                    functionName: AMM_CONTRACT_METHOD.WITHDRAW,
+                    args: withdrawArgs,
+                }),
+            ),
+            subInvocations: [burnAuth],
+        });
+
+        const claimAuthInvocation = new xdr.SorobanAuthorizedInvocation({
+            function: xdr.SorobanAuthorizedFunction.sorobanAuthorizedFunctionTypeContractFn(
+                new xdr.InvokeContractArgs({
+                    contractAddress: this.contractIdToScVal(poolAddress).address(),
+                    functionName: AMM_CONTRACT_METHOD.CLAIM,
+                    args: [this.publicKeyToScVal(accountId)],
+                }),
+            ),
+            subInvocations: [],
+        });
+
+        const rootInvocation = new xdr.SorobanAuthorizedInvocation({
+            function: xdr.SorobanAuthorizedFunction.sorobanAuthorizedFunctionTypeContractFn(
+                new xdr.InvokeContractArgs({
+                    contractAddress: this.contractIdToScVal(BATCH_SMART_CONTACT_ID).address(),
+                    functionName: BATCH_CONTRACT_METHOD.batch,
+                    args: [
+                        this.scValToArray([this.publicKeyToScVal(accountId)]),
+                        this.scValToArray(batchCalls),
+                        xdr.ScVal.scvBool(true),
+                    ],
+                }),
+            ),
+            subInvocations: [withdrawAuthInvocation, claimAuthInvocation],
+        });
+
+        const batchAuth = new xdr.SorobanAuthorizationEntry({
+            credentials: xdr.SorobanCredentials.sorobanCredentialsSourceAccount(),
+            rootInvocation,
+        });
+
+        const batchOperation = StellarSdk.Operation.invokeContractFunction({
+            contract: BATCH_SMART_CONTACT_ID,
+            function: BATCH_CONTRACT_METHOD.batch,
+            args: [
+                this.scValToArray([this.publicKeyToScVal(accountId)]),
+                this.scValToArray(batchCalls),
+                xdr.ScVal.scvBool(true),
+            ],
+            auth: [batchAuth],
+        });
+
+        const tx = await this.buildSmartContactTxFromOp(accountId, batchOperation);
+        return this.prepareTransaction(tx);
     }
 
     getCreationFeeToken() {
