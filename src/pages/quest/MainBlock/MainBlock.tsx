@@ -177,7 +177,7 @@ const MainBlock = () => (
                         </IconWrapper>
                         <TotalText>
                             <span>Quest ends:</span>
-                            <span>30.06.2025</span>
+                            <span>07.07.2025</span>
                         </TotalText>
                     </TotalPrize>
                 </TotalPrizeWrapper>
