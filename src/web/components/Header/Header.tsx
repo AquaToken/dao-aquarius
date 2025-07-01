@@ -97,10 +97,15 @@ const NavLinkWithCount = styled.div`
     display: flex;
     align-items: center;
     gap: 0.8rem;
+    margin-bottom: 1.2rem;
 
     a {
         margin: 0 !important;
     }
+
+    ${respondDown(Breakpoints.md)`
+        margin-bottom: 2.4rem;
+    `}
 `;
 
 const Divider = styled.div`
@@ -207,6 +212,8 @@ const MyAquarius = styled(NavLink)`
 
     svg {
         margin-right: 0.8rem;
+        height: 1.6rem;
+        width: 1.6rem;
     }
 
     &:hover {
@@ -325,6 +332,15 @@ const Links = () => {
                                 activeCount={proposalsCounts.active}
                             />
                         </NavLinkWithCount>
+                        {/*<NavLinkStyled*/}
+                        {/*    to={MainRoutes.delegate}*/}
+                        {/*    activeStyle={{*/}
+                        {/*        fontWeight: 700,*/}
+                        {/*    }}*/}
+                        {/*    title="ICE delegation"*/}
+                        {/*>*/}
+                        {/*    ICE Delegation*/}
+                        {/*</NavLinkStyled>*/}
                     </>
                 }
             />

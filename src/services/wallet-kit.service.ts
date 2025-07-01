@@ -17,10 +17,10 @@ import { getNetworkPassphrase } from 'helpers/env';
 
 import { ModalService, ToastService } from 'services/globalServices';
 
-import EventService from './event.service';
+import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
+import WalletKitModal from 'web/modals/WalletKitModal';
 
-import ChooseLoginMethodModal from '../web/modals/auth/ChooseLoginMethodModal';
-import WalletKitModal from '../web/modals/WalletKitModal';
+import EventService from './event.service';
 
 export enum WalletKitEvents {
     login = 'login',

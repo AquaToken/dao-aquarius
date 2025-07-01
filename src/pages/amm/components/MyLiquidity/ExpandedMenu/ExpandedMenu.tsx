@@ -8,17 +8,18 @@ import { ModalService } from 'services/globalServices';
 
 import { PoolClassicProcessed, PoolUserProcessed } from 'types/amm';
 
+import { cardBoxShadow } from 'web/mixins';
+import MigrateLiquidityStep1 from 'web/modals/migrate-liquidity/MigrateLiquidityStep1';
+import { COLORS } from 'web/styles';
+
 import IconDeposit from 'assets/icon-deposit.svg';
 import IconThreeDots from 'assets/icon-three-dots.svg';
 import IconWithdraw from 'assets/icon-withdraw.svg';
 
+import Button from 'basics/buttons/Button';
+
 import DepositToPool from 'pages/amm/components/DepositToPool/DepositToPool';
 import WithdrawFromPool from 'pages/amm/components/WithdrawFromPool/WithdrawFromPool';
-
-import Button from '../../../../../web/basics/buttons/Button';
-import { cardBoxShadow } from '../../../../../web/mixins';
-import MigrateLiquidityStep1 from '../../../../../web/modals/migrate-liquidity/MigrateLiquidityStep1';
-import { COLORS } from '../../../../../web/styles';
 
 const Container = styled.div`
     position: relative;

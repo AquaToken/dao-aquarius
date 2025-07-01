@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js';
 
 import { getNativePrices } from 'api/amm';
 
-import { ASSETS_ENV_DATA } from 'constants/assets';
+import { ASSETS_ENV_DATA, ICE_ASSETS } from 'constants/assets';
 
 import { getAssetFromString, getAssetString } from 'helpers/assets';
 import { getEnv, getNetworkPassphrase } from 'helpers/env';
@@ -27,7 +27,6 @@ import {
     WalletKitService,
 } from './globalServices';
 import { POOL_TYPE } from './soroban.service';
-import { ICE_ASSETS } from './stellar.service';
 import { BuildSignAndSubmitStatuses } from './wallet-connect.service';
 
 const VAULT_MARKER = 'GA2T6GR7VXXXBETTERSAFETHANSORRYXXXPROTECTEDBYLOBSTRVAULT';
@@ -73,7 +72,7 @@ export default class AccountService extends Horizon.AccountResponse {
         }
 
         if (this.authType === LoginTypes.secret) {
-            return SorobanService.signWithSecret(tx).toEnvelope().toXDR('base64');
+            return Promise.resolve(SorobanService.signWithSecret(tx).toEnvelope().toXDR('base64'));
         }
 
         if (this.authType === LoginTypes.lobstr) {
