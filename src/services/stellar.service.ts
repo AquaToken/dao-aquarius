@@ -25,8 +25,8 @@ import {
 } from 'constants/assets';
 import { BASE_FEE } from 'constants/stellar';
 
-import chunkFunction from 'helpers/chunk-function';
 import { getAssetString } from 'helpers/assets';
+import chunkFunction from 'helpers/chunk-function';
 import debounceFunction from 'helpers/debounce-function';
 import { getEnv, getNetworkPassphrase } from 'helpers/env';
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
