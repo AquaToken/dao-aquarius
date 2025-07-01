@@ -239,7 +239,7 @@ const Tooltip = ({
                     break;
             }
         }
-    }, [currentPosition, isTooltipVisible]);
+    }, [currentPosition, isTooltipVisible, isShow]);
 
     return (
         <ChildrenBlock
