@@ -171,7 +171,12 @@ const Delegatee = forwardRef(
 
                         <h3>
                             {delegatee.name ? delegatee.name : truncateString(delegatee.account, 4)}
-                            {delegatee.is_recommended && <Label labelText="RECOMMENDED" />}
+                            {delegatee.is_recommended && (
+                                <Label
+                                    labelText="RECOMMENDED"
+                                    tooltipText="Recommended by the Aquarius team based on past contributions to Aquarius or the broader Stellar ecosystem."
+                                />
+                            )}
                         </h3>
 
                         {myDelegation ? (
@@ -211,7 +216,7 @@ const Delegatee = forwardRef(
                         )}
                         {Boolean(delegatee.affiliate_project) && (
                             <AffiliateProject>
-                                Affiliate project: <b>{delegatee.affiliate_project}</b>
+                                Affiliated project(s): <b>{delegatee.affiliate_project}</b>
                             </AffiliateProject>
                         )}
                     </BottomRow>

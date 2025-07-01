@@ -192,7 +192,7 @@ const DelegateeStats = forwardRef(
             <Container $fromTop={fromTop} $visible={popupVisible} ref={popupRef}>
                 {Boolean(delegatee.voting_strategy) && (
                     <Strategy>
-                        <h5>Strategy:</h5>
+                        <h5>Voting Strategy:</h5>
                         <span>{delegatee.voting_strategy}</span>
                     </Strategy>
                 )}
