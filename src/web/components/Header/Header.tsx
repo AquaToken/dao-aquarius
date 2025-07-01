@@ -332,15 +332,15 @@ const Links = () => {
                                 activeCount={proposalsCounts.active}
                             />
                         </NavLinkWithCount>
-                        <NavLinkStyled
-                            to={MainRoutes.delegate}
-                            activeStyle={{
-                                fontWeight: 700,
-                            }}
-                            title="ICE delegation"
-                        >
-                            ICE Delegation
-                        </NavLinkStyled>
+                        {/*<NavLinkStyled*/}
+                        {/*    to={MainRoutes.delegate}*/}
+                        {/*    activeStyle={{*/}
+                        {/*        fontWeight: 700,*/}
+                        {/*    }}*/}
+                        {/*    title="ICE delegation"*/}
+                        {/*>*/}
+                        {/*    ICE Delegation*/}
+                        {/*</NavLinkStyled>*/}
                     </>
                 }
             />

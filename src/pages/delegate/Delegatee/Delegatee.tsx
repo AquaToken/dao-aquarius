@@ -7,7 +7,7 @@ import { truncateString } from 'helpers/truncate-string';
 
 import { Delegatee as DelegateeType } from 'types/delegate';
 
-import { cardBoxShadow, respondDown, respondUp } from 'web/mixins';
+import { cardBoxShadow, flexRowSpaceBetween, respondDown, respondUp } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Arrow from 'assets/icon-arrow-down.svg';
@@ -109,7 +109,14 @@ const Bio = styled.p`
 
 const Trusted = styled.span`
     color: ${COLORS.grayText};
-    margin-top: 2.4rem;
+`;
+
+const AffiliateProject = styled.span`
+    color: ${COLORS.grayText};
+
+    b {
+        color: ${COLORS.titleText};
+    }
 `;
 
 const ArrowIcon = styled(Arrow)<{ $isSelected: boolean }>`
@@ -127,6 +134,10 @@ const IdenticonStyled = styled(Identicon)`
     height: 4.8rem;
     width: 4.8rem;
     margin-right: 0.8rem;
+`;
+const BottomRow = styled.div`
+    ${flexRowSpaceBetween};
+    margin-top: 2.4rem;
 `;
 
 interface Props {
@@ -183,12 +194,21 @@ const Delegatee = forwardRef(
 
                     {delegatee.description && <Bio>{delegatee.description}</Bio>}
 
-                    {+delegatee.delegated > 0 && (
-                        <Trusted>
-                            Trusted by <b>{formatBalance(+delegatee.delegated)}</b> account
-                            {+delegatee.delegated > 1 ? 's' : ''}
-                        </Trusted>
-                    )}
+                    <BottomRow>
+                        {+delegatee.delegated > 0 ? (
+                            <Trusted>
+                                Trusted by <b>{formatBalance(+delegatee.delegated)}</b> account
+                                {+delegatee.delegated > 1 ? 's' : ''}
+                            </Trusted>
+                        ) : (
+                            <div />
+                        )}
+                        {Boolean(delegatee.affiliate_project) && (
+                            <AffiliateProject>
+                                Affiliate project: <b>Aquarius</b>
+                            </AffiliateProject>
+                        )}
+                    </BottomRow>
                 </Main>
                 {statsBlock}
             </Container>
