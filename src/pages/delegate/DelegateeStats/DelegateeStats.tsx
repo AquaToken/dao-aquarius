@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { forwardRef, RefObject, useEffect, useMemo, useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { getDelegateeVotes } from 'api/delegate';
 
@@ -26,7 +26,6 @@ import Twitter from 'assets/twitter.svg';
 import AssetLogo from 'basics/AssetLogo';
 import { Button } from 'basics/buttons';
 import CircularProgress from 'basics/CircularProgress';
-import ExternalLink from 'basics/ExternalLink';
 import { PageLoader } from 'basics/loaders';
 
 import { MarketKey } from 'pages/vote/api/types';
@@ -100,7 +99,7 @@ const Links = styled.div`
     gap: 1.6rem;
 `;
 
-const Link = styled.a`
+const LinkStyles = css`
     ${flexAllCenter};
     background-color: ${COLORS.lightGray};
     border-radius: 1.6rem;
@@ -114,6 +113,22 @@ const Link = styled.a`
             fill: ${COLORS.purple};
         }
     }
+`;
+
+const DiscordButton = styled.div`
+    ${LinkStyles};
+`;
+
+const DiscordName = styled.div`
+    ${flexAllCenter};
+    gap: 0.8rem;
+    font-size: 1.6rem;
+    line-height: 2.8rem;
+    color: ${COLORS.purple};
+`;
+
+const Link = styled.a`
+    ${LinkStyles};
 `;
 
 const StatsRow = styled.div`
@@ -199,14 +214,12 @@ const DelegateeStats = forwardRef(
                 {(Boolean(delegatee.discord_handle) || Boolean(delegatee.twitter_link)) && (
                     <Links>
                         {Boolean(delegatee.discord_handle) && (
-                            <Link
-                                href={delegatee.discord_handle}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                <Discord />
-                                <ExternalLink asDiv>Discord chat</ExternalLink>
-                            </Link>
+                            <DiscordButton>
+                                <DiscordName>
+                                    <Discord />
+                                    <span>{delegatee.discord_handle}</span>
+                                </DiscordName>
+                            </DiscordButton>
                         )}
                         {Boolean(delegatee.twitter_link) && (
                             <Link
