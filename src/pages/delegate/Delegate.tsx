@@ -198,13 +198,13 @@ const Delegate = () => {
                     Earn rewards without managing votes yourself or become a delegate and help shape
                     protocol incentives
                 </MainDescription>
-                <InviteLink>
-                    <span>Want to lead and earn incentives?</span>
+                {/*<InviteLink>*/}
+                {/*    <span>Want to lead and earn incentives?</span>*/}
 
-                    <ExternalLinkStyled href="https://docs.google.com/forms/d/e/1FAIpQLSftzcYs7HJu2Qrp4DmMOTnABLESujDvd47EvPQPlgCRh5vLGQ/viewform">
-                        Become a Delegate
-                    </ExternalLinkStyled>
-                </InviteLink>
+                {/*    <ExternalLinkStyled href="https://docs.google.com/forms/d/e/1FAIpQLSftzcYs7HJu2Qrp4DmMOTnABLESujDvd47EvPQPlgCRh5vLGQ/viewform">*/}
+                {/*        Become a Delegate*/}
+                {/*    </ExternalLinkStyled>*/}
+                {/*</InviteLink>*/}
             </Background>
             <Wrapper>
                 <Title>Delegates</Title>

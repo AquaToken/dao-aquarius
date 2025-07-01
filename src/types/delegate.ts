@@ -12,6 +12,7 @@ export type Delegatee = {
     is_recommended: boolean;
     twitter_image: string | null;
     twitter_link: string;
+    affiliate_project: string;
 };
 
 export type MyDelegatees = {
