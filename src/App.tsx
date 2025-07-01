@@ -3,8 +3,8 @@ import { lazy, Suspense, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import { createGlobalStyle } from 'styled-components';
 
-import { LS_IS_QUEST_PROMO_VIEWED } from 'constants/local-storage';
 import { D_ICE_CODE, ICE_ISSUER } from 'constants/assets';
+import { LS_IS_QUEST_PROMO_VIEWED } from 'constants/local-storage';
 import { MainRoutes } from 'constants/routes';
 
 import { getEnv, getIsTestnetEnv, setProductionEnv } from 'helpers/env';
