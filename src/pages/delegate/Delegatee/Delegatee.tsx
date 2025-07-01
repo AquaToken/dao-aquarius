@@ -138,6 +138,12 @@ const IdenticonStyled = styled(Identicon)`
 const BottomRow = styled.div`
     ${flexRowSpaceBetween};
     margin-top: 2.4rem;
+
+    ${respondDown(Breakpoints.md)`
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.6rem;
+    `}
 `;
 
 interface Props {
