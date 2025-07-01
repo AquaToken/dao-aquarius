@@ -256,7 +256,11 @@ const BribesTable = () => {
                         rowItems: [
                             {
                                 children: (
-                                    <Market assets={[base, counter]} mobileVerticalDirections />
+                                    <Market
+                                        assets={[base, counter]}
+                                        mobileVerticalDirections
+                                        withoutLink
+                                    />
                                 ),
                                 flexSize: 3,
                             },

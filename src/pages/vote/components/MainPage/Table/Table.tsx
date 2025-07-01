@@ -274,6 +274,7 @@ const VoteTable = ({
                                             Number(pair.adjusted_votes_value) >
                                             Number(pair.votes_value)
                                         }
+                                        withoutLink
                                     />
                                 </PairWrapper>
                             ),
