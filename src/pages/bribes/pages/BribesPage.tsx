@@ -13,7 +13,8 @@ import Plus from 'assets/icon-plus.svg';
 import Button from 'basics/buttons/Button';
 import ExternalLink from 'basics/ExternalLink';
 
-import BribesTable from '../components/BribesPage/BribesTable/BribesTable';
+import BribesList from 'pages/bribes/components/BribesPage/BribesList/BribesList';
+
 import FAQ from '../components/BribesPage/FAQ/FAQ';
 
 const MainBlock = styled.main`
@@ -173,7 +174,7 @@ const BribesPage = () => {
             </Background>
 
             <TableContainer>
-                <BribesTable />
+                <BribesList />
             </TableContainer>
 
             <FAQ />
