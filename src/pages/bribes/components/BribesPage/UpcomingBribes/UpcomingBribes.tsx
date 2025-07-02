@@ -3,73 +3,30 @@ import { useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { BribesRoutes, MarketRoutes } from 'constants/routes';
+import { MarketRoutes } from 'constants/routes';
 
-import { getDateString, convertLocalDateToUTCIgnoringTimezone } from 'helpers/date';
+import { convertLocalDateToUTCIgnoringTimezone, getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
 import { StellarService } from 'services/globalServices';
 
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
-import Plus from 'assets/icon-plus.svg';
+import Checkbox from 'web/basics/inputs/Checkbox';
+import Select from 'web/basics/inputs/Select';
+import PageLoader from 'web/basics/loaders/PageLoader';
+import { flexAllCenter, flexColumn, respondDown } from 'web/mixins';
+import { Breakpoints } from 'web/styles';
 
 import Asset from 'basics/Asset';
-import Button from 'basics/buttons/Button';
-import Checkbox from 'basics/inputs/Checkbox';
-import Select from 'basics/inputs/Select';
-import PageLoader from 'basics/loaders/PageLoader';
 import Market from 'basics/Market';
 import Pagination from 'basics/Pagination';
 import Table, { CellAlign } from 'basics/Table';
 
-import { BribeSortFields, getBribes } from '../../../api/api';
+import { BribeSortFields, getUpcomingBribes } from 'pages/bribes/api/api';
 
 const Container = styled.div`
-    display: flex;
-    flex-direction: column;
-    margin-top: 8.3rem;
-
-    ${respondDown(Breakpoints.md)`
-         margin-top: 3.3rem;
-    `}
-`;
-
-const TitleBlock = styled.div`
-    ${flexRowSpaceBetween};
-    margin-bottom: 5.3rem;
-
-    ${respondDown(Breakpoints.md)`
-        margin-bottom: 2.3rem;
-    `}
-`;
-
-const Title = styled.span`
-    font-weight: bold;
-    font-size: 5.6rem;
-    line-height: 6.4rem;
-    color: ${COLORS.buttonBackground};
-
-    ${respondDown(Breakpoints.md)`
-        font-weight: normal;
-        font-size: 2.9rem;
-        line-height: 3.4rem;
-    `}
-`;
-
-const AddBribeButton = styled(Button)`
-    width: 22.2rem;
-
-    ${respondDown(Breakpoints.md)`
-        display: none;
-    `}
-`;
-
-const PlusIcon = styled(Plus)`
-    margin-left: 1.6rem;
+    ${flexColumn};
 `;
 
 const WebAsset = styled(Asset)`
@@ -105,7 +62,6 @@ const SelectStyled = styled(Select)`
 `;
 
 const PAGE_SIZE = 20;
-
 const SORT_OPTIONS = [
     { label: 'Sort by: Period ▲', value: BribeSortFields.startAtDown },
     { label: 'Sort by: Period ▼', value: BribeSortFields.startAtUp },
@@ -113,18 +69,26 @@ const SORT_OPTIONS = [
     { label: 'Sort by: Reward ▼', value: BribeSortFields.aquaAmountUp },
 ];
 
-const BribesTable = () => {
-    const history = useHistory();
-
-    const [loading, setLoading] = useState(false);
+const UpcomingBribes = () => {
     const [bribes, setBribes] = useState(null);
+    const [loading, setLoading] = useState(false);
     const [count, setCount] = useState(null);
     const [sort, setSort] = useState(BribeSortFields.startAtDown);
     const [filterByAmount, setFilterByAmount] = useState(false);
-
     const [page, setPage] = useState(1);
 
+    const history = useHistory();
+
     const { processNewAssets } = useAssetsStore();
+
+    const containerRef = useRef(null);
+
+    useEffect(() => {
+        if (!bribes?.length || !containerRef.current) {
+            return;
+        }
+        containerRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, [page]);
 
     const processAssetsFromPairs = bribes => {
         const assets = bribes.reduce((acc, item) => {
@@ -142,22 +106,13 @@ const BribesTable = () => {
 
     useEffect(() => {
         setLoading(true);
-        getBribes(PAGE_SIZE, page, sort, !filterByAmount).then(res => {
+        getUpcomingBribes(PAGE_SIZE, page, sort, !filterByAmount).then(res => {
             setCount(res.count);
             setBribes(res.bribes);
             processAssetsFromPairs(res.bribes);
             setLoading(false);
         });
     }, [page, filterByAmount, sort]);
-
-    const headerRef = useRef(null);
-
-    useEffect(() => {
-        if (!bribes?.length || !headerRef.current) {
-            return;
-        }
-        headerRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }, [page]);
 
     const changeSort = newSort => {
         setSort(newSort);
@@ -177,15 +132,7 @@ const BribesTable = () => {
     }
 
     return (
-        <Container>
-            <TitleBlock ref={headerRef}>
-                <Title>Upcoming Bribes</Title>
-                <AddBribeButton onClick={() => history.push(BribesRoutes.addBribe)}>
-                    <span>create bribe</span>
-                    <PlusIcon />
-                </AddBribeButton>
-            </TitleBlock>
-
+        <Container ref={containerRef}>
             <CheckboxStyled
                 label="Show bribes smaller than 100,000 AQUA"
                 checked={filterByAmount}
@@ -260,6 +207,8 @@ const BribesTable = () => {
                                         assets={[base, counter]}
                                         mobileVerticalDirections
                                         withoutLink
+                                        isAmmBribes={item.is_amm_protocol}
+                                        isPrivateBribes={!item.is_amm_protocol}
                                     />
                                 ),
                                 flexSize: 3,
@@ -302,4 +251,4 @@ const BribesTable = () => {
     );
 };
 
-export default BribesTable;
+export default UpcomingBribes;

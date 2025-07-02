@@ -107,3 +107,21 @@ export const FeeLabel = ({ fee }: { fee: string }) => (
         withoutBorder
     />
 );
+
+export const AmmBribesLabel = () => (
+    <StyledLabel
+        labelText="Protocol"
+        tooltipText="Automatically funded by the Aquarius protocol using a portion of trading fees."
+        background={COLORS.purple}
+        color={COLORS.white}
+    />
+);
+
+export const PrivateBribesLabel = () => (
+    <StyledLabel
+        labelText="External"
+        tooltipText="Funded to attract votes to specific pools by third parties like token projects or DAOs."
+        background={COLORS.green}
+        color={COLORS.white}
+    />
+);
