@@ -25,6 +25,7 @@ import Arrow from 'assets/icon-link-arrow.svg';
 import ApyTier from 'basics/ApyTier';
 import AssetLogo, { bigLogoStyles, logoStyles } from 'basics/AssetLogo';
 import {
+    AmmBribesLabel,
     AuthRequiredLabel,
     BoostLabel,
     ClassicPoolLabel,
@@ -32,6 +33,7 @@ import {
     FeeLabel,
     MaxRewardsLabel,
     NoLiquidityLabel,
+    PrivateBribesLabel,
     RewardLabel,
     StablePoolLabel,
 } from 'basics/Labels';
@@ -228,6 +230,8 @@ type PairProps = {
     poolType?: POOL_TYPE;
     fee?: string;
     apyTier?: number;
+    isAmmBribes?: boolean;
+    isPrivateBribes?: boolean;
 };
 
 const Market = ({
@@ -239,6 +243,8 @@ const Market = ({
     mobileVerticalDirections,
     authRequired,
     noLiquidity,
+    isAmmBribes,
+    isPrivateBribes,
     boosted,
     bigCodes,
     bottomLabels,
@@ -284,6 +290,8 @@ const Market = ({
             {isMaxRewards && <MaxRewardsLabel />}
             {authRequired && <AuthRequiredLabel />}
             {noLiquidity && <NoLiquidityLabel />}
+            {isAmmBribes && <AmmBribesLabel />}
+            {isPrivateBribes && <PrivateBribesLabel />}
             {fee && <FeeLabel fee={fee} />}
             <ApyTier apyTier={apyTier} />
         </>
