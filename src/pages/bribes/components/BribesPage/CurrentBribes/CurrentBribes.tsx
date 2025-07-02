@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
+
+import { MarketRoutes } from 'constants/routes';
 
 import { getAssetString } from 'helpers/assets';
 import { convertLocalDateToUTCIgnoringTimezone, getDateString } from 'helpers/date';
@@ -45,6 +48,8 @@ const CurrentBribes = () => {
     const [page, setPage] = useState(1);
     const [pending, setPending] = useState(true);
 
+    const history = useHistory();
+
     const { processNewAssets } = useAssetsStore();
 
     const processAssets = bribes => {
@@ -61,6 +66,10 @@ const CurrentBribes = () => {
         }, []);
 
         processNewAssets(assets);
+    };
+
+    const goToMarketPage = (asset1, asset2) => {
+        history.push(`${MarketRoutes.main}/${getAssetString(asset1)}/${getAssetString(asset2)}`);
     };
 
     useEffect(() => {
@@ -99,14 +108,11 @@ const CurrentBribes = () => {
                     const stopUTC = convertLocalDateToUTCIgnoringTimezone(
                         new Date(bribe.aggregated_bribes[0].stop_at),
                     );
-                    const base = {
-                        code: bribe.asset1_code,
-                        issuer: bribe.asset1_issuer,
-                    };
-                    const counter = {
-                        code: bribe.asset2_code,
-                        issuer: bribe.asset2_issuer,
-                    };
+                    const base = StellarService.createAsset(bribe.asset1_code, bribe.asset1_issuer);
+                    const counter = StellarService.createAsset(
+                        bribe.asset2_code,
+                        bribe.asset2_issuer,
+                    );
 
                     const { sum, rewardAssets } = bribe.aggregated_bribes.reduce(
                         (acc, bribe) => {
@@ -122,7 +128,7 @@ const CurrentBribes = () => {
                     const apy = (sum / Number(bribe.upvote_value) + 1) ** 365 - 1;
 
                     return {
-                        onRowClick: () => {},
+                        onRowClick: () => goToMarketPage(base, counter),
                         key: bribe.account_id,
                         rowItems: [
                             {
@@ -138,9 +144,10 @@ const CurrentBribes = () => {
                             {
                                 children: (
                                     <Apy
-                                        onClick={() =>
-                                            ModalService.openModal(BribesModal, { pair: bribe })
-                                        }
+                                        onClick={e => {
+                                            e.stopPropagation();
+                                            ModalService.openModal(BribesModal, { pair: bribe });
+                                        }}
                                     >
                                         {formatBalance(+(apy * 100).toFixed(2), true)}%
                                     </Apy>
