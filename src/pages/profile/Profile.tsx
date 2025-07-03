@@ -17,7 +17,6 @@ import Select from 'basics/inputs/Select';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
 
 import AccountInfo from './AccountInfo/AccountInfo';
-import Airdrop2List from './Airdrop2List/Airdrop2List';
 import Balances from './Balances/Balances';
 import IceLocks from './IceLocks/IceLocks';
 import PaymentsHistory from './PaymentsHistory/PaymentsHistory';
@@ -91,7 +90,6 @@ export enum ProfileTabs {
     sdex = 'sdex_rewards',
     your = 'liquidity_votes',
     governance = 'governance',
-    airdrop2 = 'airdrop2',
     iceLocks = 'ice_locks',
     history = 'payments_history',
 }
@@ -102,7 +100,6 @@ const OPTIONS = [
     { label: 'SDEX rewards', value: ProfileTabs.sdex },
     { label: 'My Liquidity Votes', value: ProfileTabs.your },
     { label: 'Governance Votes', value: ProfileTabs.governance },
-    { label: 'Airdrop #2', value: ProfileTabs.airdrop2 },
     { label: 'ICE locks', value: ProfileTabs.iceLocks },
     { label: 'Payments history', value: ProfileTabs.history },
 ];
@@ -166,7 +163,6 @@ const Profile = () => {
                     )}
                     {selectedTab === ProfileTabs.your && <YourVotes />}
                     {selectedTab === ProfileTabs.governance && <YourGovernanceVotes />}
-                    {selectedTab === ProfileTabs.airdrop2 && <Airdrop2List />}
                     {selectedTab === ProfileTabs.iceLocks && (
                         <IceLocks ammAquaBalance={ammAquaBalance} />
                     )}
