@@ -267,7 +267,7 @@ const DelegateeStats = forwardRef(
                             ))}
                             {Number(delegatee.managed_ice) - votesSum > 0 && (
                                 <StatsRow>
-                                    <Market>Not distributed</Market>
+                                    <Market>Unused Voting Power</Market>
                                     <span>
                                         {getPercent(
                                             (Number(delegatee.managed_ice) - votesSum).toString(),

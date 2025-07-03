@@ -21,7 +21,6 @@ import { respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Link from 'assets/icon-external-link.svg';
 import Info from 'assets/icon-info.svg';
 import Warning from 'assets/icon-warning.svg';
 
@@ -91,10 +90,6 @@ const TooltipInner = styled.div`
     div {
         font-size: 1.4rem;
     }
-`;
-
-const LinkIcon = styled(Link)`
-    margin-left: 0.5rem;
 `;
 
 const WarningIcon = styled(Warning)`
@@ -335,23 +330,6 @@ const RewardsList = () => {
                                             )}
                                             %)
                                         </span>
-                                        <a
-                                            href={`https://www.stellarx.com/markets/${marketKeyToString(
-                                                market_key.asset1_code,
-                                                market_key.asset1_issuer,
-                                            )}/${marketKeyToString(
-                                                market_key.asset2_code,
-                                                market_key.asset2_issuer,
-                                            )}`}
-                                            target="_blank"
-                                            onClick={e => {
-                                                e.stopPropagation();
-                                            }}
-                                            title="StellarX"
-                                            rel="noreferrer"
-                                        >
-                                            <LinkIcon />
-                                        </a>
                                     </Amount>
                                 ),
                                 label: 'SDEX daily reward',
@@ -390,23 +368,6 @@ const RewardsList = () => {
                                             )}
                                             %)
                                         </span>{' '}
-                                        <a
-                                            href={`https://www.stellarx.com/amm/analytics/${marketKeyToString(
-                                                market_key.asset1_code,
-                                                market_key.asset1_issuer,
-                                            )}/${marketKeyToString(
-                                                market_key.asset2_code,
-                                                market_key.asset2_issuer,
-                                            )}`}
-                                            target="_blank"
-                                            onClick={e => {
-                                                e.stopPropagation();
-                                            }}
-                                            title="StellarX"
-                                            rel="noreferrer"
-                                        >
-                                            <LinkIcon />
-                                        </a>
                                     </Amount>
                                 ),
                                 label: 'Aquarius AMM daily reward',
