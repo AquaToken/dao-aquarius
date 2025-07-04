@@ -7,13 +7,13 @@ import { truncateString } from 'helpers/truncate-string';
 
 import { Delegatee as DelegateeType } from 'types/delegate';
 
-import { cardBoxShadow, flexRowSpaceBetween, respondDown, respondUp } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import Arrow from 'assets/icon-arrow-down.svg';
 
 import Identicon from 'basics/Identicon';
 import Label from 'basics/Label';
+
+import { cardBoxShadow, flexRowSpaceBetween, respondDown, respondUp } from '../../../../web/mixins';
+import { Breakpoints, COLORS } from '../../../../web/styles';
 
 const Container = styled.div<{ $isSelected: boolean }>`
     display: flex;

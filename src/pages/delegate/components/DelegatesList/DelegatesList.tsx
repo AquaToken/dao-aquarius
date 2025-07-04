@@ -8,23 +8,23 @@ import { ModalService } from 'services/globalServices';
 
 import { Delegatee as DelegateeType, MyDelegatees } from 'types/delegate';
 
+import Profile from 'assets/icon-profile.svg';
+
+import { Button } from 'basics/buttons';
+
+import Delegatee from 'pages/delegate/components/Delegatee/Delegatee';
+import DelegateeStats from 'pages/delegate/components/DelegateeStats/DelegateeStats';
+
 import {
     cardBoxShadow,
     flexAllCenter,
     flexColumn,
     flexColumnCenter,
     respondDown,
-} from 'web/mixins';
-import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
-import DelegateModal from 'web/modals/DelegateModal';
-import { Breakpoints, COLORS } from 'web/styles';
-
-import Profile from 'assets/icon-profile.svg';
-
-import { Button } from 'basics/buttons';
-
-import Delegatee from 'pages/delegate/Delegatee/Delegatee';
-import DelegateeStats from 'pages/delegate/DelegateeStats/DelegateeStats';
+} from '../../../../web/mixins';
+import ChooseLoginMethodModal from '../../../../web/modals/auth/ChooseLoginMethodModal';
+import DelegateModal from '../../../../web/modals/DelegateModal';
+import { Breakpoints, COLORS } from '../../../../web/styles';
 
 export const List = styled.div`
     ${flexColumn};

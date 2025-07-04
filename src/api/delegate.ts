@@ -33,3 +33,40 @@ export const getDelegateeVotes = async (
 
 export const getMyDelegatees = (accountId: string): Promise<MyDelegatees[]> =>
     axios.get<MyDelegatees[]>(`${API_URL}${accountId}/delegation/`).then(({ data }) => data);
+
+type CreateDelegateeArgs = {
+    name: string;
+    account: string;
+    avatar: string;
+    discord: string;
+    project: string;
+    description: string;
+    strategy: string;
+    xLink: string;
+};
+
+export const createDelegatee = ({
+    name,
+    account,
+    avatar,
+    discord,
+    project,
+    description,
+    strategy,
+    xLink,
+}: CreateDelegateeArgs) => {
+    const body = JSON.stringify({
+        name,
+        description,
+        voting_strategy: strategy,
+        account,
+        discord_handle: discord,
+        twitter_link: xLink,
+        affiliate_project: project,
+        image: avatar,
+    });
+
+    const headers = { 'Content-Type': 'application/json' };
+
+    return axios.post(`${API_URL}application/`, body, { headers });
+};
