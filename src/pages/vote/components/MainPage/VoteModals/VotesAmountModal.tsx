@@ -31,6 +31,7 @@ import Ice from 'assets/ice-logo.svg';
 import CloseIcon from 'assets/icon-close-small.svg';
 
 import Alert from 'basics/Alert';
+import AssetLogo from 'basics/AssetLogo';
 import Button from 'basics/buttons/Button';
 import ExternalLink from 'basics/ExternalLink';
 import Input from 'basics/inputs/Input';
@@ -216,7 +217,8 @@ const TotalAmount = styled.div`
     width: 48rem;
     justify-content: flex-end;
 
-    svg {
+    svg,
+    img {
         margin-left: 0.8rem;
         min-width: 3.2rem;
     }
@@ -703,12 +705,8 @@ const VotesAmountModal = ({
                         <TotalAmountRow>
                             <Label>Total:</Label>
                             <TotalAmount>
-                                {amount || '0'} {targetAsset.code}{' '}
-                                {targetAsset.code === aquaStellarAsset.code ? (
-                                    <AquaLogo />
-                                ) : (
-                                    <IceLogo />
-                                )}
+                                {amount ? formatBalance(+amount) : '0'} {targetAsset.code}{' '}
+                                <AssetLogo asset={targetAsset} isCircle={false} />
                             </TotalAmount>
                         </TotalAmountRow>
                     </>
