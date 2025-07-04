@@ -14,6 +14,12 @@ import { ModalService } from 'services/globalServices';
 
 import { Delegatee, DelegateeVote } from 'types/delegate';
 
+import { cardBoxShadow, customScroll, flexAllCenter, flexColumn, respondDown } from 'web/mixins';
+import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
+import DelegateClaimModal from 'web/modals/DelegateClaimModal';
+import DelegateModal from 'web/modals/DelegateModal';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Discord from 'assets/discord.svg';
 import Twitter from 'assets/twitter.svg';
 
@@ -24,18 +30,6 @@ import { PageLoader } from 'basics/loaders';
 
 import { MarketKey } from 'pages/vote/api/types';
 import { getPercent } from 'pages/vote/components/MainPage/Table/VoteAmount/VoteAmount';
-
-import {
-    cardBoxShadow,
-    customScroll,
-    flexAllCenter,
-    flexColumn,
-    respondDown,
-} from '../../../../web/mixins';
-import ChooseLoginMethodModal from '../../../../web/modals/auth/ChooseLoginMethodModal';
-import DelegateClaimModal from '../../../../web/modals/DelegateClaimModal';
-import DelegateModal from '../../../../web/modals/DelegateModal';
-import { Breakpoints, COLORS } from '../../../../web/styles';
 
 const Container = styled.div<{ $fromTop: boolean; $visible: boolean }>`
     position: absolute;

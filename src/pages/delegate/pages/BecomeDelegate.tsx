@@ -1,13 +1,19 @@
 import * as React from 'react';
 import { useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { createDelegatee } from 'api/delegate';
 
+import { DelegateRoutes } from 'constants/routes';
+
 import { StellarService, ToastService } from 'services/globalServices';
 
-import { cardBoxShadow } from 'web/mixins';
-import { COLORS, FONT_SIZE } from 'web/styles';
+import CircleButton from 'web/basics/buttons/CircleButton';
+import { cardBoxShadow, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS, FONT_SIZE } from 'web/styles';
+
+import ArrowLeft from 'assets/icon-arrow-left.svg';
 
 import { Button } from 'basics/buttons';
 import { Input } from 'basics/inputs';
@@ -21,22 +27,40 @@ const Background = styled.div`
     width: 100%;
     background-color: ${COLORS.lightGray};
     padding: 7.7rem 0 21.2rem;
+
+    ${respondDown(Breakpoints.md)`
+        padding: 3.2rem 0 0;
+    `};
 `;
 
 const Content = styled.div`
     width: 79.2rem;
     margin: 0 auto;
+
+    ${respondDown(Breakpoints.md)`
+        width: 100%;
+        padding: 1.6rem;
+    `};
 `;
 
 const FormWrapper = styled(Content)`
     position: relative;
     top: -17rem;
+
+    ${respondDown(Breakpoints.md)`
+        top: 0;
+    `};
 `;
 
 const Title = styled.h2`
     font-weight: 700;
     ${FONT_SIZE.xxl}
     color: ${COLORS.titleText};
+
+    ${respondDown(Breakpoints.md)`
+        width: 100%;
+         ${FONT_SIZE.xl}
+    `};
 `;
 
 const Description = styled.p`
@@ -51,6 +75,10 @@ const Form = styled.form`
     padding: 6.4rem 4.8rem;
     display: flex;
     flex-direction: column;
+
+    ${respondDown(Breakpoints.md)`
+        padding: 4rem 1.6rem;
+    `};
 `;
 
 const InputStyled = styled(Input)`
@@ -63,6 +91,19 @@ const ImageInputStyled = styled(ImageInput)`
 
 const ButtonStyled = styled(Button)`
     margin-top: 3.2rem;
+`;
+
+const BackButton = styled(CircleButton)`
+    margin-bottom: 7.2rem;
+
+    ${respondDown(Breakpoints.md)`
+        margin-bottom: 3.2rem;
+    `}
+`;
+
+const LinkStyled = styled(Link)`
+    text-decoration: none;
+    cursor: pointer;
 `;
 
 const BecomeDelegate = () => {
@@ -131,6 +172,12 @@ const BecomeDelegate = () => {
         <Container>
             <Background>
                 <Content>
+                    <LinkStyled to={DelegateRoutes.main}>
+                        <BackButton label="Back to delegates">
+                            <ArrowLeft />
+                        </BackButton>
+                    </LinkStyled>
+
                     <Title>Call for Aquarius delegates</Title>
                     <Description>
                         Aquarius is launching the Delegated Voting feature: users can now delegate

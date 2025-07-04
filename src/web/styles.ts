@@ -49,6 +49,11 @@ export const FONT_SIZE = {
         font-size: 1.6rem;
         line-height: 2.8rem;
     `,
+
+    xl: css`
+        font-size: 3rem;
+        line-height: 3.6rem;
+    `,
     xxl: css`
         font-size: 5.6rem;
         line-height: 6.4rem;
