@@ -13,13 +13,13 @@ import { DELEGATE_MARKER_KEY, StellarEvents } from 'services/stellar.service';
 
 import { Delegatee as DelegateeType } from 'types/delegate';
 
-import { cardBoxShadow } from 'web/mixins';
-
 import ExternalLink from 'basics/ExternalLink';
 import { PageLoader } from 'basics/loaders';
 
-import DelegatesList from 'pages/delegate/DelegatesList/DelegatesList';
+import DelegatesList from 'pages/delegate/components/DelegatesList/DelegatesList';
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
+
+import { cardBoxShadow } from '../../../../web/mixins';
 
 const EmptyWrap = styled.div`
     display: flex;

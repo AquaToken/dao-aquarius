@@ -56,3 +56,8 @@ export const AmmRoutes = {
     analytics: `${MainRoutes.amm}/`,
     create: `${MainRoutes.amm}/create-pool/`,
 };
+
+export const DelegateRoutes = {
+    main: `${MainRoutes.delegate}/`,
+    become: `${MainRoutes.delegate}/become/`,
+};

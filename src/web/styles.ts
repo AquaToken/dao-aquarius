@@ -1,3 +1,5 @@
+import { css } from 'styled-components';
+
 export const COLORS = {
     transparent: 'transparent',
     white: '#ffffff',
@@ -36,6 +38,21 @@ export const COLORS = {
 
 export const FONT_FAMILY = {
     roboto: 'Roboto, sans-serif',
+};
+
+export const FONT_SIZE = {
+    sm: css`
+        font-size: 1.4rem;
+        line-height: 2rem;
+    `,
+    md: css`
+        font-size: 1.6rem;
+        line-height: 2.8rem;
+    `,
+    xxl: css`
+        font-size: 5.6rem;
+        line-height: 6.4rem;
+    `,
 };
 
 export const Z_INDEX = {
