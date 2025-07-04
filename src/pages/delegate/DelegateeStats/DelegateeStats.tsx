@@ -1,8 +1,11 @@
 import * as React from 'react';
 import { forwardRef, RefObject, useEffect, useMemo, useState } from 'react';
+import { Link as LinkRouter } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
 import { getDelegateeVotes } from 'api/delegate';
+
+import { MarketRoutes } from 'constants/routes';
 
 import { getAssetFromString } from 'helpers/assets';
 
@@ -140,11 +143,23 @@ const StatsRow = styled.div`
     }
 `;
 
-const Market = styled.div`
+const rowStyles = css`
     display: flex;
     align-items: center;
     gap: 0.4rem;
     margin-right: auto;
+`;
+
+const Row = styled.div`
+    ${rowStyles}
+`;
+
+const Market = styled(LinkRouter)`
+    ${rowStyles};
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-style: dashed;
+    color: ${COLORS.titleText};
 `;
 
 const Buttons = styled.div`
@@ -242,7 +257,9 @@ const DelegateeStats = forwardRef(
                             <h3>How This Delegate Votes</h3>
                             {votes.map(vote => (
                                 <StatsRow key={vote.id}>
-                                    <Market>
+                                    <Market
+                                        to={`${MarketRoutes.main}/${vote.asset1}/${vote.asset2}`}
+                                    >
                                         <AssetLogoStyled
                                             isCircle
                                             asset={getAssetFromString(vote.asset1)}
@@ -267,7 +284,7 @@ const DelegateeStats = forwardRef(
                             ))}
                             {Number(delegatee.managed_ice) - votesSum > 0 && (
                                 <StatsRow>
-                                    <Market>Unused Voting Power</Market>
+                                    <Row>Unused Voting Power</Row>
                                     <span>
                                         {getPercent(
                                             (Number(delegatee.managed_ice) - votesSum).toString(),
