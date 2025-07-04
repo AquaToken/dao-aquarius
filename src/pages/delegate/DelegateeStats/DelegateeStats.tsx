@@ -11,6 +11,7 @@ import { getAssetFromString } from 'helpers/assets';
 
 import { useUpdateIndex } from 'hooks/useUpdateIndex';
 
+import useAssetsStore from 'store/assetsStore/useAssetsStore';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService } from 'services/globalServices';
@@ -201,12 +202,19 @@ const DelegateeStats = forwardRef(
 
         const { isLogged } = useAuthStore();
 
+        const { processNewAssets } = useAssetsStore();
+
         const updateIndex = useUpdateIndex(10000);
 
         useEffect(() => {
-            getDelegateeVotes(delegatee.account).then(res =>
-                setVotes(res.sort((a, b) => +b.total_votes - +a.total_votes)),
-            );
+            getDelegateeVotes(delegatee.account).then(res => {
+                setVotes(res.sort((a, b) => +b.total_votes - +a.total_votes));
+                const assets = res.reduce((acc, item) => {
+                    acc.push(getAssetFromString(item.asset1), getAssetFromString(item.asset2));
+                    return acc;
+                }, []);
+                processNewAssets(assets);
+            });
         }, [updateIndex]);
 
         const votesSum = useMemo(() => {
