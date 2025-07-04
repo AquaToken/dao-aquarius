@@ -14,6 +14,9 @@ import { commonMaxWidth, respondDown, respondUp } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
+import BackgroundImageLeft from 'assets/delegate-bg-left.svg';
+import BackgroundImageRight from 'assets/delegate-bg-right.svg';
+
 import ExternalLink from 'basics/ExternalLink';
 import { ToggleGroup } from 'basics/inputs';
 import Select from 'basics/inputs/Select';
@@ -34,10 +37,39 @@ const Background = styled.div`
     padding: 8.2rem 24%;
     background-color: ${COLORS.darkPurple};
     color: ${COLORS.white};
+    position: relative;
 
     ${respondDown(Breakpoints.md)`
          padding: 5rem 5%;
     `}
+`;
+
+const BackgroundLeft = styled(BackgroundImageLeft)`
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+
+    ${respondDown(Breakpoints.md)`
+        height: unset;
+        width: 40%;
+        top: 50%;
+        transform: translateY(-50%);
+    `}
+`;
+
+const BackgroundRight = styled(BackgroundImageRight)`
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+
+    ${respondDown(Breakpoints.md)`
+         height: unset;
+         width: 40%;
+         top: 50%;
+         transform: translateY(-50%);
+     `}
 `;
 
 const MainTitle = styled.h2`
@@ -46,6 +78,8 @@ const MainTitle = styled.h2`
     line-height: 9.4rem;
     text-align: center;
     white-space: nowrap;
+    z-index: 1;
+    position: relative;
 
     ${respondDown(Breakpoints.sm)`
          font-size: 5rem;
@@ -64,6 +98,8 @@ const MainDescription = styled.p`
     line-height: 2.8rem;
     text-align: center;
     margin: 1.6rem 0 2.4rem;
+    z-index: 1;
+    position: relative;
 `;
 
 const InviteLink = styled.div`
@@ -74,6 +110,8 @@ const InviteLink = styled.div`
     gap: 1.6rem;
     width: fit-content;
     margin: 0 auto;
+    z-index: 1;
+    position: relative;
 
     span {
         font-weight: 700;
@@ -205,6 +243,8 @@ const Delegate = () => {
                 {/*        Become a Delegate*/}
                 {/*    </ExternalLinkStyled>*/}
                 {/*</InviteLink>*/}
+                <BackgroundLeft />
+                <BackgroundRight />
             </Background>
             <Wrapper>
                 <Title>Delegates</Title>
