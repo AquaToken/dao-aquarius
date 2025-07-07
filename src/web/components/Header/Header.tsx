@@ -16,8 +16,6 @@ import { Breakpoints, COLORS, Z_INDEX } from 'web/styles';
 import AquaLogo from 'assets/aqua-logo.svg';
 import IconProfile from 'assets/icon-profile.svg';
 
-import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
-
 import { ActiveProposals } from 'components/Header/ActiveProposals/ActiveProposals';
 import ExpandedMenu from 'components/Header/ExpandedMenu/ExpandedMenu';
 
@@ -75,22 +73,6 @@ const NavLinkStyled = styled(NavLink)<{ $disabled?: boolean }>`
     ${respondDown(Breakpoints.lg)`
         margin-right: 1rem;
     `}
-`;
-
-const TooltipStyled = styled(Tooltip)`
-    margin-right: 2.4rem;
-
-    ${respondDown(Breakpoints.lg)`
-        margin-right: 1rem;
-    `}
-
-    ${respondDown(Breakpoints.md)`
-        margin-bottom: 1rem;
-    `}
-
-    a {
-        margin: 0 !important;
-    }
 `;
 
 const NavLinkWithCount = styled.div`
@@ -231,11 +213,6 @@ const MyAquarius = styled(NavLink)`
     `}
 `;
 
-const TooltipInner = styled.span`
-    font-size: 1.2rem;
-    padding: 0 0.3rem;
-`;
-
 const Links = () => {
     const [proposalsCounts, setProposalsCounts] = useState({ active: 0, discussion: 0 });
 
@@ -264,23 +241,6 @@ const Links = () => {
             >
                 Swap
             </NavLinkStyled>
-
-            <TooltipStyled
-                content={<TooltipInner>🔥 Hot</TooltipInner>}
-                position={TOOLTIP_POSITION.bottom}
-                isShow
-                withoutPadding
-            >
-                <NavLinkStyled
-                    to={MainRoutes.quest}
-                    activeStyle={{
-                        fontWeight: 700,
-                    }}
-                    title="Quest"
-                >
-                    Quest
-                </NavLinkStyled>
-            </TooltipStyled>
 
             <Divider />
 
