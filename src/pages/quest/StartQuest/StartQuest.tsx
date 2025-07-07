@@ -91,6 +91,7 @@ const StartQuest = ({ isStarted }: Props) => {
                     isRounded
                     pending={pending}
                     onClick={() => start()}
+                    disabled
                 >
                     Start QUEST
                 </Button>
