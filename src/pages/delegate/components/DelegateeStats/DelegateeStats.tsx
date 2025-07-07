@@ -158,9 +158,12 @@ const Row = styled.div`
 const Market = styled(LinkRouter)`
     ${rowStyles};
     cursor: pointer;
-    text-decoration: underline;
-    text-decoration-style: dashed;
     color: ${COLORS.titleText};
+    text-decoration: none;
+
+    span {
+        border-bottom: 0.1rem dashed ${COLORS.purple};
+    }
 `;
 
 const Buttons = styled.div`
@@ -278,7 +281,9 @@ const DelegateeStats = forwardRef(
                                             asset={getAssetFromString(vote.asset2)}
                                             isSmall
                                         />
-                                        {vote.asset1_code} / {vote.asset2_code}
+                                        <span>
+                                            {vote.asset1_code} / {vote.asset2_code}
+                                        </span>
                                     </Market>
                                     <span>
                                         {getPercent(vote.total_votes, delegatee.managed_ice)}%
