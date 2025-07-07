@@ -36,8 +36,8 @@ const LoaderContainer = styled.div`
 `;
 
 const Apy = styled.span`
-    text-decoration: underline;
-    text-decoration-style: dashed;
+    border-bottom: 0.1rem dashed ${COLORS.purple};
+    line-height: 2rem;
 `;
 
 const PAGE_SIZE = 20;
