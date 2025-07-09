@@ -2,12 +2,16 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { getAssetsList } from 'api/amm';
+
 import { getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { StellarService } from 'services/globalServices';
+import { SorobanService, StellarService } from 'services/globalServices';
+
+import { TokenType } from 'types/token';
 
 import { respondDown } from 'web/mixins';
 import { Breakpoints } from 'web/styles';
@@ -29,6 +33,7 @@ const StyledContainer = styled(Container)`
 
 const BalancesBlock = () => {
     const [balances, setBalances] = useState(null);
+    const [customTokensBalances, setCustomTokensBalances] = useState(null);
 
     const { account } = useAuthStore();
 
@@ -39,6 +44,31 @@ const BalancesBlock = () => {
         account.getSortedBalances().then(res => {
             setBalances(res);
         });
+    }, [account]);
+
+    const getCustomTokensBalances = async () => {
+        const list = await getAssetsList();
+        const sorobanTokens = list.filter(({ type }) => type === TokenType.soroban);
+
+        if (!sorobanTokens.length) {
+            return;
+        }
+        const balances = await Promise.all(
+            sorobanTokens.map(({ contract }) =>
+                SorobanService.getTokenBalance(contract, account.accountId()),
+            ),
+        );
+
+        setCustomTokensBalances(
+            sorobanTokens.map((token, index) => ({
+                ...token,
+                ...{ balance: balances[index] },
+            })),
+        );
+    };
+
+    useEffect(() => {
+        getCustomTokensBalances();
     }, [account]);
     return (
         <StyledContainer>
@@ -80,6 +110,36 @@ const BalancesBlock = () => {
                                         : '$0.00',
                                     label: 'Balance(USD):',
                                     align: CellAlign.Right,
+                                },
+                            ],
+                        }))}
+                    />
+                </Section>
+            )}
+
+            {Boolean(customTokensBalances) && (
+                <Section>
+                    <h3>Custom Soroban Tokens</h3>
+                    <Table
+                        head={[
+                            { children: 'Asset' },
+                            { children: 'Balance', align: CellAlign.Right },
+                        ]}
+                        body={customTokensBalances.map(balance => ({
+                            key: balance.cotract,
+                            isNarrow: true,
+                            rowItems: [
+                                {
+                                    children: (
+                                        <Asset asset={balance} withMobileView hasAssetDetailsLink />
+                                    ),
+                                    label: 'Asset:',
+                                },
+                                {
+                                    children: `${formatBalance(+balance.balance)} ${balance.code}`,
+                                    label: 'Balance:',
+                                    align: CellAlign.Right,
+                                    mobileStyle: { textAlign: 'right' },
                                 },
                             ],
                         }))}

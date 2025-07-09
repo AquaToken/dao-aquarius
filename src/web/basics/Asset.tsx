@@ -119,7 +119,7 @@ const Asset = ({
 
     const domain = useMemo(() => {
         if (asset.type === TokenType.soroban) {
-            return asset.name;
+            return 'soroban token';
         }
         if (!assetInfo) {
             return <DotsLoader />;
