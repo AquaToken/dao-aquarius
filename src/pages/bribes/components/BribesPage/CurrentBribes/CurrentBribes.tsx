@@ -15,6 +15,7 @@ import { ModalService, StellarService } from 'services/globalServices';
 
 import PageLoader from 'web/basics/loaders/PageLoader';
 import { flexAllCenter } from 'web/mixins';
+import { COLORS } from 'web/styles';
 
 import Asset from 'basics/Asset';
 import AssetLogo from 'basics/AssetLogo';
@@ -25,8 +26,6 @@ import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import { getPairsWithBribes } from 'pages/vote/api/api';
 import BribesModal from 'pages/vote/components/MainPage/BribesModal/BribesModal';
-
-import { COLORS } from '../../../../../web/styles';
 
 const Container = styled.div``;
 

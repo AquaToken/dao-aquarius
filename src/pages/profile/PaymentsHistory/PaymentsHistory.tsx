@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { MainRoutes } from 'constants/routes';
 
 import { getDateString } from 'helpers/date';
+import { getIsTestnetEnv } from 'helpers/env';
 import { formatBalance } from 'helpers/format-number';
 
 import useAuthStore from 'store/authStore/useAuthStore';
@@ -107,7 +108,9 @@ const PaymentsHistory = () => {
                                     {
                                         children: (
                                             <ExternalLink
-                                                href={`https://stellar.expert/explorer/public/tx/${item.transaction_hash}#${opId}`}
+                                                href={`https://stellar.expert/explorer/${
+                                                    getIsTestnetEnv() ? 'testnet' : 'public'
+                                                }/tx/${item.transaction_hash}#${opId}`}
                                             >
                                                 View on Explorer
                                             </ExternalLink>

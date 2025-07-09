@@ -16,15 +16,15 @@ import useAuthStore from 'store/authStore/useAuthStore';
 import { StellarService } from 'services/globalServices';
 
 import { ModalProps } from 'types/modal';
-import { Asset as AssetType } from 'types/stellar';
+import { ClassicToken, Token, TokenType } from 'types/token';
+
+import { customScroll, respondDown, textEllipsis } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
 
 import Asset from 'basics/Asset';
 import { Input } from 'basics/inputs';
 import { CircleLoader } from 'basics/loaders';
 import { ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
-
-import { customScroll, respondDown, textEllipsis } from '../../mixins';
-import { Breakpoints, COLORS } from '../../styles';
 
 const StyledInput = styled(Input)`
     margin-top: 2.4rem;
@@ -134,11 +134,11 @@ const DEFAULT_ASSETS = [
     getAquaAssetData().aquaStellarAsset,
     getUsdcAssetData().usdcStellarAsset,
     StellarService.createAsset(USDx_CODE, USDx_ISSUER),
-];
+] as ClassicToken[];
 
 type Props = {
-    assetsList: AssetType[];
-    onUpdate: (asset: AssetType) => void;
+    assetsList: Token[];
+    onUpdate: (asset: Token) => void;
 };
 
 const AssetPickerModal = ({ params, confirm }: ModalProps<Props>) => {
@@ -165,7 +165,8 @@ const AssetPickerModal = ({ params, confirm }: ModalProps<Props>) => {
         balances.filter(balance =>
             assetsList?.find(
                 knownAssets =>
-                    knownAssets.code === balance.code && knownAssets.issuer === balance.issuer,
+                    knownAssets.code === balance.code &&
+                    (knownAssets as ClassicToken).issuer === balance.issuer,
             ),
         ) ?? [];
 
@@ -174,7 +175,9 @@ const AssetPickerModal = ({ params, confirm }: ModalProps<Props>) => {
         ...(assetsList?.filter(
             knownAssets =>
                 !filteredBalances.find(
-                    asset => knownAssets.code === asset.code && knownAssets.issuer === asset.issuer,
+                    asset =>
+                        knownAssets.code === asset.code &&
+                        (knownAssets as ClassicToken).issuer === asset.issuer,
                 ),
         ) || []),
     ];
@@ -189,13 +192,16 @@ const AssetPickerModal = ({ params, confirm }: ModalProps<Props>) => {
                     token => !assets.find(asset => getAssetString(asset) === getAssetString(token)),
                 ),
             ].filter(assetItem => {
-                const assetInfo = assetsInfo.get(
-                    getAssetString(StellarService.createAsset(assetItem.code, assetItem.issuer)),
+                const assetString = getAssetString(
+                    assetItem.type === TokenType.soroban
+                        ? assetItem
+                        : StellarService.createAsset(assetItem.code, assetItem.issuer),
                 );
+                const assetInfo =
+                    assetItem.type === TokenType.classic ? assetsInfo.get(assetString) : null;
 
                 return (
-                    getAssetString(StellarService.createAsset(assetItem.code, assetItem.issuer)) ===
-                        search ||
+                    assetString === search ||
                     assetItem.code.toLowerCase().includes(search.toLowerCase()) ||
                     (StellarSdk.StrKey.isValidEd25519PublicKey(search) &&
                         assetItem.issuer?.toLowerCase().includes(search.toLowerCase())) ||
@@ -207,9 +213,12 @@ const AssetPickerModal = ({ params, confirm }: ModalProps<Props>) => {
         [assets, search, assetsInfo, searchResults],
     );
 
-    const chooseAsset = (asset: AssetType) => {
-        const stellarAsset = StellarService.createAsset(asset.code, asset.issuer);
-        onUpdate(stellarAsset);
+    const chooseAsset = (asset: Token) => {
+        const result =
+            asset.type === TokenType.soroban
+                ? asset
+                : StellarService.createAsset(asset.code, asset.issuer);
+        onUpdate(result);
         confirm();
     };
 

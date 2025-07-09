@@ -1,4 +1,3 @@
-import * as StellarSdk from '@stellar/stellar-sdk';
 import * as React from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
@@ -9,11 +8,13 @@ import { getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 
 import { LumenInfo } from 'store/assetsStore/reducer';
-import { AssetSimple } from 'store/assetsStore/types';
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
-import { ModalService, StellarService } from 'services/globalServices';
+import { ModalService } from 'services/globalServices';
 import { POOL_TYPE } from 'services/soroban.service';
+
+import { Asset } from 'types/stellar';
+import { Token, TokenType } from 'types/token';
 
 import { flexAllCenter, respondDown } from 'web/mixins';
 import AssetInfoModal from 'web/modals/AssetInfoModal';
@@ -197,7 +198,7 @@ const Domain = styled.span`
     }
 `;
 
-const viewOnStellarX = (event: React.MouseEvent, assets: StellarSdk.Asset[]) => {
+const viewOnStellarX = (event: React.MouseEvent, assets: Token[]) => {
     const [base, counter] = assets;
     event.preventDefault();
     event.stopPropagation();
@@ -208,7 +209,7 @@ const viewOnStellarX = (event: React.MouseEvent, assets: StellarSdk.Asset[]) => 
 };
 
 type PairProps = {
-    assets: AssetSimple[];
+    assets: Token[];
     withoutDomains?: boolean;
     verticalDirections?: boolean;
     isRewardsOn?: boolean;
@@ -235,7 +236,7 @@ type PairProps = {
 };
 
 const Market = ({
-    assets: assetsSimple,
+    assets,
     withoutDomains,
     verticalDirections,
     leftAlign,
@@ -265,9 +266,10 @@ const Market = ({
     const { assetsInfo } = useAssetsStore();
     const history = useHistory();
 
-    const assets = assetsSimple.map(({ code, issuer }) => StellarService.createAsset(code, issuer));
-
-    const getAssetDetails = (asset: StellarSdk.Asset) => {
+    const getAssetDetails = (asset: Token) => {
+        if (asset.type === TokenType.soroban) {
+            return [asset.code, asset.name];
+        }
         if (asset.isNative()) {
             return [LumenInfo.name, LumenInfo.home_domain];
         }
@@ -297,7 +299,7 @@ const Market = ({
         </>
     );
 
-    const onDomainClick = (e: React.MouseEvent, asset: StellarSdk.Asset) => {
+    const onDomainClick = (e: React.MouseEvent, asset: Asset) => {
         e.preventDefault();
         e.stopPropagation();
 
@@ -385,7 +387,7 @@ const Market = ({
                                 <span key={getAssetString(asset)}>
                                     {index > 0 ? ' · ' : ''}
                                     {name} (
-                                    {asset.isNative() ? (
+                                    {asset.type === TokenType.soroban || asset.isNative() ? (
                                         domain
                                     ) : (
                                         <Domain

@@ -1,13 +1,16 @@
 import { ASSETS_ENV_DATA } from 'constants/assets';
 
-import { StellarService } from 'services/globalServices';
+import { SorobanService, StellarService } from 'services/globalServices';
 
 import { Asset } from 'types/stellar';
+import { ClassicToken, SorobanToken, Token, TokenType } from 'types/token';
 
-import { getEnv } from './env';
-import { getAquaContract, getUsdcContract } from './soroban';
+import { getEnv, getNetworkPassphrase } from './env';
 
-export const getAssetString = (asset: Asset): string => {
+export const getAssetString = (asset: Token): string => {
+    if (asset.type === TokenType.soroban) {
+        return asset.contract;
+    }
     if (asset.isNative()) {
         return 'native';
     }
@@ -22,35 +25,66 @@ export const getStellarAsset = (code: string, issuer: string): Asset => {
     return StellarService.createAsset(code, issuer);
 };
 
-export const getAssetFromString = (str: string): Asset => {
+export const isValidClassicTokenString = (str: string): boolean => {
     if (str === 'native') {
-        return StellarService.createLumen();
+        return true;
     }
 
     const [code, issuer] = str.split(':');
 
-    return StellarService.createAsset(code, issuer);
+    return issuer && StellarService.isValidPublicKey(issuer) && `${code}:${issuer}` === str;
+};
+
+export const getAssetFromString = (str: string, onUpdateCB?: () => void): Token => {
+    if (StellarService.isValidContract(str)) {
+        const result: SorobanToken = { type: TokenType.soroban, contract: str } as SorobanToken;
+
+        SorobanService.parseTokenContractId(str).then((res: SorobanToken) => {
+            result.code = res.code;
+            result.name = res.name;
+            if (onUpdateCB) {
+                onUpdateCB();
+            }
+        });
+        return result;
+    }
+    if (str === 'native') {
+        const asset: ClassicToken = StellarService.createLumen() as ClassicToken;
+
+        asset.type = TokenType.classic;
+        asset.contract = asset.contractId(getNetworkPassphrase());
+        return asset;
+    }
+
+    const [code, issuer] = str.split(':');
+
+    const asset: ClassicToken = StellarService.createAsset(code, issuer) as ClassicToken;
+    asset.type = TokenType.classic;
+    asset.contract = asset.contractId(getNetworkPassphrase());
+    return asset;
 };
 
 // TODO: refactor getassetData to one function
 export const getAquaAssetData = () => {
     const env = getEnv();
     const data = ASSETS_ENV_DATA[env].aqua;
+    const asset = StellarService.createAsset(data.aquaCode, data.aquaIssuer);
 
     return {
         ...data,
-        aquaStellarAsset: StellarService.createAsset(data.aquaCode, data.aquaIssuer),
-        aquaContract: getAquaContract(),
+        aquaStellarAsset: asset,
+        aquaContract: asset.contractId(getNetworkPassphrase()),
     };
 };
 
 export const getUsdcAssetData = () => {
     const env = getEnv();
     const data = ASSETS_ENV_DATA[env].usdc;
+    const asset = StellarService.createAsset(data.usdcCode, data.usdcIssuer);
 
     return {
         ...data,
-        usdcStellarAsset: StellarService.createAsset(data.usdcCode, data.usdcIssuer),
-        usdcContract: getUsdcContract(),
+        usdcStellarAsset: asset,
+        usdcContract: asset.contractId(getNetworkPassphrase()),
     };
 };

@@ -2,19 +2,12 @@ import { Asset } from '@stellar/stellar-sdk';
 import axios from 'axios';
 import BigNumber from 'bignumber.js';
 
-import {
-    getAquaAssetData,
-    getAssetFromString,
-    getAssetString,
-    getUsdcAssetData,
-} from 'helpers/assets';
+import { getAquaAssetData, getUsdcAssetData } from 'helpers/assets';
 import chunkFunction from 'helpers/chunk-function';
 import { getNetworkPassphrase } from 'helpers/env';
 import { getAmmAquaUrl } from 'helpers/url';
 
-import { AssetSimple } from 'store/assetsStore/types';
-
-import { AssetsService, SorobanService } from 'services/globalServices';
+import { AssetsService, SorobanService, StellarService } from 'services/globalServices';
 
 import {
     FindSwapPath,
@@ -31,6 +24,7 @@ import {
     PoolUserProcessed,
     PoolVolume24h,
 } from 'types/amm';
+import { ClassicToken, Token, TokenType } from 'types/token';
 
 export enum FilterOptions {
     all = 'all',
@@ -57,17 +51,23 @@ export enum PoolsSortFields {
     rewardsApyDown = 'rewards_apy',
 }
 
-const processPools = (pools: Array<Pool | PoolUser>): Array<PoolProcessed> => {
-    const assetsStr: Set<string> = pools.reduce((acc: Set<string>, item: Pool | PoolUser) => {
-        item.tokens_str.forEach(str => acc.add(str));
+const processPools = async (pools: Array<Pool | PoolUser>): Promise<Array<PoolProcessed>> => {
+    const contracts: Set<string> = pools.reduce((acc: Set<string>, item: Pool | PoolUser) => {
+        item.tokens_addresses.forEach(id => acc.add(id));
         return acc;
     }, new Set<string>());
 
-    AssetsService.processAssets([...assetsStr].map(str => getAssetFromString(str)));
+    const tokens = await Promise.all(
+        [...contracts].map(id => SorobanService.parseTokenContractId(id)),
+    );
+
+    AssetsService.processAssets(
+        tokens.filter(({ type }) => type === TokenType.classic) as ClassicToken[],
+    );
 
     return pools.map(pool => ({
         ...pool,
-        assets: pool.tokens_str.map(str => getAssetFromString(str)),
+        tokens: pool.tokens_addresses.map(str => tokens.find(token => token.contract === str)),
     }));
 };
 
@@ -88,7 +88,7 @@ export const getPools = async (
             capitalizedSearch === 'XLM' ? 'native' : capitalizedSearch
         }`,
     );
-    const processed = processPools(data.items);
+    const processed = await processPools(data.items);
     return { pools: processed, total: data.total };
 };
 
@@ -104,7 +104,7 @@ export const getPoolInfo = async (id: string): Promise<PoolProcessed> => {
     const baseUrl = getAmmAquaUrl();
 
     const { data } = await axios.get<Pool>(`${baseUrl}/pools/${id}/`);
-    const [processed] = processPools([data]);
+    const [processed] = await processPools([data]);
     return processed;
 };
 
@@ -181,12 +181,14 @@ export const getPool = async (id: string): Promise<PoolExtended> => {
     return Object.assign({}, info, stats, membersCount);
 };
 
-export const getUserPools = (accountId: string): Promise<PoolUserProcessed[]> => {
+export const getUserPools = async (accountId: string): Promise<PoolUserProcessed[]> => {
     const baseUrl = getAmmAquaUrl();
 
-    return axios
-        .get<ListResponse<PoolUser>>(`${baseUrl}/pools/user/${accountId}/?size=1000`)
-        .then(({ data }) => processPools(data.items) as PoolUserProcessed[]);
+    const { data } = await axios.get<ListResponse<PoolUser>>(
+        `${baseUrl}/pools/user/${accountId}/?size=1000`,
+    );
+    const res = (await processPools(data.items)) as PoolUserProcessed[];
+    return res;
 };
 
 export const getAmmAquaBalance = async (accountId: string): Promise<number> => {
@@ -250,7 +252,7 @@ export const getVolume24h = async (): Promise<PoolVolume24h> => {
     return data;
 };
 export const getNativePrices = async (
-    assets: Array<Asset>,
+    assets: Array<Token>,
     batchSize: number = 50,
 ): Promise<Map<string, string>> => {
     const baseUrl = getAmmAquaUrl();
@@ -268,9 +270,7 @@ export const getNativePrices = async (
     // Process each batch
     for (const batch of batches) {
         const { data } = await axios.get<ListResponse<NativePrice>>(
-            `${baseUrl}/tokens/?name__in=${batch
-                .map((asset: Asset) => getAssetString(asset))
-                .join(',')}`,
+            `${baseUrl}/tokens/?token__in=${batch.map((asset: Token) => asset.contract).join(',')}`,
         );
         const prices = data.items;
 
@@ -289,7 +289,7 @@ export const getPathPoolsFee = async (addresses: Array<string>): Promise<Map<str
         `${baseUrl}/pools/?address__in=${addresses.join(',')}`,
     );
 
-    return processPools(data.items).reduce((acc, pool) => {
+    return (await processPools(data.items)).reduce((acc, pool) => {
         acc.set(pool.address, pool.fee);
         return acc;
     }, new Map());
@@ -382,31 +382,33 @@ export const getAquaXlmRate = async (): Promise<number[]> => {
 };
 
 // TODO: remove this method when this data is placed on the backend
-export const getAssetsList = async (): Promise<AssetSimple[]> => {
+export const getAssetsList = async (): Promise<Token[]> => {
     const baseUrl = getAmmAquaUrl();
 
     const { data } = await axios.get<ListResponse<NativePrice>>(
         `${baseUrl}/tokens/?pooled=true&size=200`,
     );
 
-    const { aquaAssetString } = getAquaAssetData();
-    const { usdcAssetString } = getUsdcAssetData();
+    const { aquaAssetString, aquaContract } = getAquaAssetData();
+    const { usdcAssetString, usdcContract } = getUsdcAssetData();
+    const xlmContract = StellarService.createLumen().contractId(getNetworkPassphrase());
 
     const assetsSet = new Set();
 
-    data.items.forEach(({ name }) => {
+    data.items.forEach(({ name, address }) => {
         if (name === aquaAssetString || name === usdcAssetString || name === 'native') {
             return;
         }
-        assetsSet.add(name);
+        assetsSet.add(address);
     });
 
-    return [
-        aquaAssetString,
-        'native',
-        usdcAssetString,
-        ...[...assetsSet].sort((a: string, b: string) => a.localeCompare(b)),
-    ].map((str: string) => getAssetFromString(str));
+    const tokens = await Promise.all(
+        [aquaContract, xlmContract, usdcContract, ...[...assetsSet]].map((id: string) =>
+            SorobanService.parseTokenContractId(id),
+        ),
+    );
+
+    return tokens;
 };
 
 function chunkArray<T>(arr: T[], size = 5) {
@@ -426,7 +428,7 @@ export const getUserRewardsList = async (
 
     const results = [];
 
-    const processed = processPools(data.items);
+    const processed = await processPools(data.items);
 
     const chunked = chunkArray(processed);
 

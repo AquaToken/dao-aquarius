@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { D_ICE_CODE, DOWN_ICE_CODE, ICE_ISSUER, UP_ICE_CODE } from 'constants/assets';
 
 import { getDateString } from 'helpers/date';
+import { getIsTestnetEnv } from 'helpers/env';
 import ErrorHandler from 'helpers/error-handler';
 import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
@@ -97,7 +98,9 @@ export const goToStellarExpert = ({ transactions }) => {
     transactions().then((res: { records: Transaction[] }) => {
         const hash = res?.records?.[0]?.hash;
         if (hash) {
-            tab.location.href = `https://stellar.expert/explorer/public/tx/${hash}`;
+            tab.location.href = `https://stellar.expert/explorer/${
+                getIsTestnetEnv() ? 'testnet' : 'public'
+            }/tx/${hash}`;
         }
     });
 };

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -7,6 +7,8 @@ import { MainRoutes } from 'constants/routes';
 import { getAquaAssetData, getAssetFromString, getAssetString } from 'helpers/assets';
 
 import { StellarService } from 'services/globalServices';
+
+import { Token } from 'types/token';
 
 import { commonMaxWidth, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -42,6 +44,7 @@ const Content = styled.div`
 
 const SwapPage = () => {
     const [base, setBase] = useState(null);
+    const [, forceUpdate] = useReducer(x => x + 1, 0);
 
     const [counter, setCounter] = useState(null);
 
@@ -55,18 +58,18 @@ const SwapPage = () => {
         if (source === destination && !base && !counter) {
             history.replace(
                 `${MainRoutes.swap}/${getAssetString(
-                    StellarService.createLumen(),
+                    StellarService.createLumen() as Token,
                 )}/${aquaAssetString}`,
             );
             return;
         }
 
         if (!base || getAssetString(base) !== source) {
-            setBase(getAssetFromString(source));
+            setBase(getAssetFromString(source, () => forceUpdate()));
         }
 
         if (!counter || getAssetString(counter) !== destination) {
-            setCounter(getAssetFromString(destination));
+            setCounter(getAssetFromString(destination, () => forceUpdate()));
         }
 
         if (source === destination) {

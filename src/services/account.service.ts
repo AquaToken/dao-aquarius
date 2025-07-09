@@ -1,5 +1,5 @@
 import AccountRecord, * as StellarSdk from '@stellar/stellar-sdk';
-import { Asset, Horizon } from '@stellar/stellar-sdk';
+import { Horizon } from '@stellar/stellar-sdk';
 import BigNumber from 'bignumber.js';
 
 import { getNativePrices } from 'api/amm';
@@ -12,6 +12,7 @@ import { getEnv, getNetworkPassphrase } from 'helpers/env';
 import { LoginTypes } from 'store/authStore/types';
 
 import { PoolClassicProcessed } from 'types/amm';
+import { ClassicToken, SorobanToken, Token, TokenType } from 'types/token';
 
 import LedgerSignTx from 'web/modals/ledger/LedgerSignTx';
 import SentToVault from 'web/modals/SentToVault';
@@ -200,7 +201,14 @@ export default class AccountService extends Horizon.AccountResponse {
             });
     }
 
-    getAssetBalance(asset: Asset, ignoreReserves?: boolean): number | null {
+    getAssetBalance(asset: SorobanToken): Promise<number>;
+    getAssetBalance(asset: ClassicToken, ignoreReserves?: boolean): number | null;
+    getAssetBalance(asset: Token, ignoreReserves?: boolean): number | null | Promise<number> {
+        if (asset.type === TokenType.soroban) {
+            return SorobanService.getTokenBalance(asset.contract, this.account_id).then(res =>
+                Number(res),
+            );
+        }
         if (asset.isNative()) {
             const nativeBalance = this.balances.find(
                 ({ asset_type }) => asset_type === 'native',
@@ -251,9 +259,9 @@ export default class AccountService extends Horizon.AccountResponse {
         const assetsSet = new Set();
 
         liquidityPoolsForAccount.forEach(lp => {
-            (lp as unknown as PoolClassicProcessed).assets = lp.reserves.map(reserve => {
+            (lp as unknown as PoolClassicProcessed).tokens = lp.reserves.map(reserve => {
                 assetsSet.add(reserve.asset);
-                return getAssetFromString(reserve.asset);
+                return getAssetFromString(reserve.asset) as ClassicToken;
             });
             (lp as unknown as PoolClassicProcessed).reserves = [
                 ...lp.reserves.map(reserve => new BigNumber(reserve.amount).times(1e7).toFixed(7)),
@@ -266,15 +274,15 @@ export default class AccountService extends Horizon.AccountResponse {
         });
 
         const prices = await getNativePrices(
-            [...assetsSet].map(str => getAssetFromString(str as string)),
+            [...assetsSet].map(str => getAssetFromString(str as string)) as ClassicToken[],
         );
 
         liquidityPoolsForAccount.forEach(lp => {
             (lp as unknown as PoolClassicProcessed).liquidity = (
                 lp as unknown as PoolClassicProcessed
-            ).assets
+            ).tokens
                 .reduce((acc, asset, index) => {
-                    const price = prices.get(getAssetString(asset)) ?? 0;
+                    const price = prices.get(getAssetString(asset as ClassicToken)) ?? 0;
 
                     const amount = Number(lp.reserves[index]) * Number(price);
 
@@ -413,18 +421,25 @@ export default class AccountService extends Horizon.AccountResponse {
         ];
     }
 
-    getAvailableForSwapBalance(asset: Asset) {
+    getAvailableForSwapBalance(asset: SorobanToken): Promise<number>;
+    getAvailableForSwapBalance(asset: ClassicToken): number | null;
+    getAvailableForSwapBalance(asset: Token): Promise<number> | number | null {
         const FEE_RESERVE = 2; // reserve for fee
-        if (asset.isNative()) {
+        if (asset.type !== TokenType.soroban && asset.isNative()) {
             const available = this.getAvailableNativeBalance();
 
             return Math.max(available - FEE_RESERVE, 0);
         }
 
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         return this.getAssetBalance(asset);
     }
 
-    async getReservesForSwap(asset: Asset): Promise<{ label: string; value: number }[]> {
+    async getReservesForSwap(asset: Token): Promise<{ label: string; value: number }[]> {
+        if (asset.type === TokenType.soroban) {
+            return [{ label: 'Reserves', value: 0 }];
+        }
         const balance = this.balances.find(
             balance =>
                 ((balance as Horizon.HorizonApi.BalanceLineAsset).asset_code == asset.code &&

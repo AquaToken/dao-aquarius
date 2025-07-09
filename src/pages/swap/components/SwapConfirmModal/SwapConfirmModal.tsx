@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import { getPathPoolsFee } from 'api/amm';
 
-import { getAssetFromString } from 'helpers/assets';
+import { getAssetFromString, isValidClassicTokenString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
@@ -16,11 +16,15 @@ import { ModalService, SorobanService, ToastService } from 'services/globalServi
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { ModalProps } from 'types/modal';
-import { Asset, Int128Parts } from 'types/stellar';
+import { Int128Parts } from 'types/stellar';
+import { Token } from 'types/token';
 
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
+import SorobanLogo from 'assets/soroban-token-logo.svg';
+
+import AssetLogo from 'basics/AssetLogo';
 import Button from 'basics/buttons/Button';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
@@ -73,11 +77,20 @@ const Pools = styled.div`
     `}
 `;
 
+const Soroban = styled(SorobanLogo)`
+    height: 3.2rem;
+    width: 3.2rem;
+    max-height: 3.2rem;
+    max-width: 3.2rem;
+    min-width: 3.2rem;
+    border-radius: '50%';
+`;
+
 const STROOP = 0.0000001;
 
 interface SwapConfirmModalParams {
-    base: Asset;
-    counter: Asset;
+    base: Token;
+    counter: Token;
     baseAmount: string;
     counterAmount: string;
     bestPathXDR: string;
@@ -249,8 +262,20 @@ const SwapConfirmModal = ({
                 {bestPools.map((pool, index) => (
                     <PathPool
                         key={pool}
-                        base={getAssetFromString(bestPath[index])}
-                        counter={getAssetFromString(bestPath[index + 1])}
+                        baseIcon={
+                            isValidClassicTokenString(bestPath[index]) ? (
+                                <AssetLogo asset={getAssetFromString(bestPath[index])} />
+                            ) : (
+                                <Soroban />
+                            )
+                        }
+                        counterIcon={
+                            isValidClassicTokenString(bestPath[index + 1]) ? (
+                                <AssetLogo asset={getAssetFromString(bestPath[index + 1])} />
+                            ) : (
+                                <Soroban />
+                            )
+                        }
                         fee={fees.get(pool)}
                         address={pool}
                         isLastPool={index === bestPools.length - 1}

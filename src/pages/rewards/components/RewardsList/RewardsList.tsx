@@ -13,7 +13,7 @@ import { formatBalance } from 'helpers/format-number';
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { ModalService } from 'services/globalServices';
+import { ModalService, StellarService } from 'services/globalServices';
 
 import { PoolProcessed } from 'types/amm';
 
@@ -151,7 +151,7 @@ const RewardsList = () => {
 
             const poolsForMarket = pools.find(
                 (pool: PoolProcessed) =>
-                    pool.assets.length === 2 &&
+                    pool.tokens.length === 2 &&
                     pool.tokens_str.some(str => str === tokenStr1) &&
                     pool.tokens_str.some(str => str === tokenStr2),
             );
@@ -304,14 +304,14 @@ const RewardsList = () => {
                                 children: (
                                     <Market
                                         assets={[
-                                            {
-                                                code: market_key.asset1_code,
-                                                issuer: market_key.asset1_issuer,
-                                            },
-                                            {
-                                                code: market_key.asset2_code,
-                                                issuer: market_key.asset2_issuer,
-                                            },
+                                            StellarService.createAsset(
+                                                market_key.asset1_code,
+                                                market_key.asset1_issuer,
+                                            ),
+                                            StellarService.createAsset(
+                                                market_key.asset2_code,
+                                                market_key.asset2_issuer,
+                                            ),
                                         ]}
                                         withoutLink
                                         mobileVerticalDirections

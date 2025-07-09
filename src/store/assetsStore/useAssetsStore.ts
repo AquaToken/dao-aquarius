@@ -1,3 +1,5 @@
+import { Token } from 'types/token';
+
 import * as actions from './actions';
 import { AssetsStore } from './types';
 
@@ -7,7 +9,7 @@ import { ActionAsyncResult, ActionSimpleResult } from '../types';
 
 type AssetsActions = {
     getAssets: () => ActionAsyncResult;
-    processNewAssets: (assets: any[]) => ActionAsyncResult;
+    processNewAssets: (assets: Token[]) => ActionAsyncResult;
     clearAssets: () => ActionSimpleResult;
 };
 

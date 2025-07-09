@@ -9,6 +9,7 @@ import { MainRoutes } from 'constants/routes';
 
 import { getAquaAssetData, getAssetString } from 'helpers/assets';
 import { getDateString } from 'helpers/date';
+import { getIsTestnetEnv } from 'helpers/env';
 import { formatBalance } from 'helpers/format-number';
 
 import { LumenInfo } from 'store/assetsStore/reducer';
@@ -207,7 +208,9 @@ const AssetInfoModal = ({ params }: ModalProps<AssetInfoModalParams>): React.Rea
                 )}
                 <ContactLink
                     target="_blank"
-                    href={`https://stellar.expert/explorer/public/asset/${asset.code}-${asset.issuer}`}
+                    href={`https://stellar.expert/explorer/${
+                        getIsTestnetEnv() ? 'testnet' : 'public'
+                    }/asset/${asset.code}-${asset.issuer}`}
                 >
                     <External />
                     StellarExpert

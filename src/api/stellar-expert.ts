@@ -2,13 +2,17 @@ import axios from 'axios';
 
 import { API_URL_STELLAR_EXPERT } from 'constants/api';
 
+import { getIsTestnetEnv } from 'helpers/env';
+
 import type { ExpertAssetData } from 'types/api-stellar-expert';
 import { Asset } from 'types/stellar';
 
 export const getAssetDetails = (asset: Asset): Promise<ExpertAssetData> =>
     axios
         .get<{ _embedded: { records: ExpertAssetData[] } }>(
-            `${API_URL_STELLAR_EXPERT}explorer/public/asset?search=${asset.issuer ?? 'XLM'}`,
+            `${API_URL_STELLAR_EXPERT}explorer/${
+                getIsTestnetEnv() ? 'testnet' : 'public'
+            }/asset?search=${asset.issuer ?? 'XLM'}`,
         )
         .then(({ data }) =>
             data._embedded.records.find(details => {

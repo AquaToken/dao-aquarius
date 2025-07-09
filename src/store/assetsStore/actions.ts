@@ -2,12 +2,17 @@ import { Dispatch } from 'react';
 
 import { getAssetsInfo, getAssetsRequest } from 'api/assets';
 
+import { TESTNET_ASSETS } from 'constants/assets';
+
 import { getAquaAssetData, getAssetString, getUsdcAssetData } from 'helpers/assets';
+import { getIsTestnetEnv } from 'helpers/env';
 
 import { StellarService } from 'services/globalServices';
 
+import { ClassicToken, Token, TokenType } from 'types/token';
+
 import { ASSET_CACHE } from './reducer';
-import { ASSETS_ACTIONS, AssetSimple } from './types';
+import { ASSETS_ACTIONS } from './types';
 
 import { ActionResult } from '../types';
 
@@ -52,15 +57,33 @@ export function getAssets() {
     };
 }
 
-export function processNewAssets(assets: AssetSimple[]) {
+export function processNewAssets(assets: Token[]) {
     return (dispatch: Dispatch<ActionResult>): void => {
         const cached = new Map(JSON.parse(localStorage.getItem(ASSET_CACHE) || '[]'));
 
-        const newAssets = assets.filter(
+        const newAssets: ClassicToken[] = assets.filter(
             asset =>
-                !cached.has(getAssetString(StellarService.createAsset(asset.code, asset.issuer))) &&
+                asset.type !== TokenType.soroban &&
+                !cached.has(`${asset.code}:${asset.issuer}`) &&
                 !StellarService.createAsset(asset.code, asset.issuer).isNative(),
-        );
+        ) as ClassicToken[];
+
+        if (getIsTestnetEnv()) {
+            if (!cached.has(TESTNET_ASSETS.keys()[0])) {
+                TESTNET_ASSETS.forEach(asset => {
+                    cached.set(`${asset.code}:${asset.issuer}`, asset);
+                });
+            }
+            newAssets.forEach(asset => {
+                cached.set(`${asset.code}:${asset.issuer}`, { ...asset, ...{ image: null } });
+            });
+            localStorage.setItem(ASSET_CACHE, JSON.stringify(Array.from(cached.entries())));
+            dispatch({
+                type: ASSETS_ACTIONS.UPDATE_ASSET_INFO,
+                payload: { assetInfo: cached },
+            });
+            return;
+        }
 
         if (!newAssets.length) {
             return;

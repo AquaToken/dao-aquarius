@@ -1,4 +1,3 @@
-import { Asset } from '@stellar/stellar-sdk';
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
@@ -9,6 +8,8 @@ import { getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 
 import { StellarService } from 'services/globalServices';
+
+import { Token } from 'types/token';
 
 import { respondDown, textEllipsis } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -64,9 +65,9 @@ const TooltipInner = styled.p`
 
 interface Props {
     amount: string;
-    asset: Asset;
+    asset: Token;
     sourceAmount?: string;
-    sourceAsset?: Asset;
+    sourceAsset?: Token;
 }
 
 const AmountUsdEquivalent = ({ amount, asset, sourceAmount, sourceAsset }: Props) => {

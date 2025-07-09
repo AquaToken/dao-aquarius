@@ -184,14 +184,11 @@ const UpcomingBribes = () => {
                 body={bribes.map(item => {
                     const startUTC = convertLocalDateToUTCIgnoringTimezone(new Date(item.start_at));
                     const stopUTC = convertLocalDateToUTCIgnoringTimezone(new Date(item.stop_at));
-                    const base = {
-                        code: item.asset1_code,
-                        issuer: item.asset1_issuer,
-                    };
-                    const counter = {
-                        code: item.asset2_code,
-                        issuer: item.asset2_issuer,
-                    };
+                    const base = StellarService.createAsset(item.asset1_code, item.asset1_issuer);
+                    const counter = StellarService.createAsset(
+                        item.asset2_code,
+                        item.asset2_issuer,
+                    );
                     const rewardAsset = StellarService.createAsset(
                         item.asset_code,
                         item.asset_issuer,
