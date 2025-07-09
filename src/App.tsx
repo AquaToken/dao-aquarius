@@ -4,7 +4,6 @@ import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-d
 import { createGlobalStyle } from 'styled-components';
 
 import { D_ICE_CODE, ICE_ISSUER } from 'constants/assets';
-import { LS_IS_QUEST_PROMO_VIEWED } from 'constants/local-storage';
 import { MainRoutes } from 'constants/routes';
 
 import { getEnv, getIsTestnetEnv, setProductionEnv } from 'helpers/env';
@@ -37,7 +36,6 @@ import SentryService from './services/sentry.service';
 import Provider from './store';
 import useAssetsStore from './store/assetsStore/useAssetsStore';
 import useAuthStore from './store/authStore/useAuthStore';
-import QuestPromoModal from './web/modals/alerts/QuestPromoModal';
 import DIceTrustlineModal from './web/modals/DIceTrustlineModal';
 
 const MainPage = lazy(() => import('pages/main/MainPage'));
@@ -183,13 +181,6 @@ const App = () => {
             disableRedirect();
         }
     }, [isLogged, redirectURL]);
-
-    useEffect(() => {
-        const isQuestPromoViewed = !!localStorage.getItem(LS_IS_QUEST_PROMO_VIEWED);
-        if (!isQuestPromoViewed) {
-            ModalService.openModal(QuestPromoModal, {});
-        }
-    }, []);
 
     useEffect(() => {
         if (isLogged && Boolean(callback)) {
