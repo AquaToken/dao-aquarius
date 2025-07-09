@@ -146,7 +146,13 @@ const ButtonBody = styled(BlankButton)<{
     }
 
     &:disabled {
-        background-color: ${COLORS.gray};
+        background: ${({ $withGradient }) => {
+            if ($withGradient) {
+                return 'radial-gradient(146.92% 150% at 50.22% 0%, #E0E0E0 0%, #A0A0A0 100%)';
+            }
+
+            return COLORS.gray;
+        }};
         cursor: not-allowed;
     }
 
@@ -234,7 +240,7 @@ const ButtonLoader = styled.div<{
     }
 `;
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     children: React.ReactNode;
     pending?: boolean;
     isBig?: boolean;

@@ -265,13 +265,9 @@ const CreatePool = () => {
         return pools.filter(
             pool =>
                 selectedAssets.every(
-                    asset =>
-                        !!pool.assets.find(
-                            poolAsset =>
-                                poolAsset.code === asset.code && poolAsset.issuer === asset.issuer,
-                        ),
+                    asset => !!pool.tokens.find(poolAsset => poolAsset.contract === asset.contract),
                 ) &&
-                selectedAssets.length === pool.assets.length &&
+                selectedAssets.length === pool.tokens.length &&
                 type === pool.pool_type &&
                 +(type === POOL_TYPE.constant ? constantFee / 100 : stableFee) ===
                     +(Number(pool.fee) * 100).toFixed(2),
@@ -283,11 +279,9 @@ const CreatePool = () => {
             setFirstAssetStatus(null);
             return;
         }
-        SorobanService.getContractData(SorobanService.getAssetContractId(firstAsset)).then(
-            ({ status }) => {
-                setFirstAssetStatus(status);
-            },
-        );
+        SorobanService.getContractData(firstAsset.contract).then(({ status }) => {
+            setFirstAssetStatus(status);
+        });
     }, [firstAsset]);
 
     useEffect(() => {
@@ -295,11 +289,9 @@ const CreatePool = () => {
             setSecondAssetStatus(null);
             return;
         }
-        SorobanService.getContractData(SorobanService.getAssetContractId(secondAsset)).then(
-            ({ status }) => {
-                setSecondAssetStatus(status);
-            },
-        );
+        SorobanService.getContractData(secondAsset.contract).then(({ status }) => {
+            setSecondAssetStatus(status);
+        });
     }, [secondAsset]);
 
     useEffect(() => {
@@ -307,11 +299,9 @@ const CreatePool = () => {
             setThirdAssetStatus(null);
             return;
         }
-        SorobanService.getContractData(SorobanService.getAssetContractId(thirdAsset)).then(
-            ({ status }) => {
-                setThirdAssetStatus(status);
-            },
-        );
+        SorobanService.getContractData(thirdAsset.contract).then(({ status }) => {
+            setThirdAssetStatus(status);
+        });
     }, [thirdAsset]);
 
     const existingPoolsRef = useRef(null);
@@ -327,11 +317,9 @@ const CreatePool = () => {
             setFourthAssetStatus(null);
             return;
         }
-        SorobanService.getContractData(SorobanService.getAssetContractId(fourthAsset)).then(
-            ({ status }) => {
-                setFourthAssetStatus(status);
-            },
-        );
+        SorobanService.getContractData(fourthAsset.contract).then(({ status }) => {
+            setFourthAssetStatus(status);
+        });
     }, [fourthAsset]);
 
     const signAndSubmitCreation = (tx: Transaction) =>
@@ -707,7 +695,7 @@ const CreatePool = () => {
                                 <FormSectionTitle>Existing pools</FormSectionTitle>
                                 <FormDescription>
                                     {type === POOL_TYPE.constant ? 'Volatile' : 'Stable'} pool{' '}
-                                    {existingPools[0].assets.map(({ code }) => code).join(' / ')}{' '}
+                                    {existingPools[0].tokens.map(({ code }) => code).join(' / ')}{' '}
                                     with fee = {(Number(existingPools[0].fee) * 100).toFixed(2)}%
                                     already exists.
                                 </FormDescription>

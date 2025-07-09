@@ -2,15 +2,16 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { ICE_CODE, ICE_ISSUER } from 'constants/assets';
 import { LockerRoutes } from 'constants/routes';
 
+import { getIsTestnetEnv } from 'helpers/env';
 import { formatBalance } from 'helpers/format-number';
 
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService, StellarService, WalletConnectService } from 'services/globalServices';
-import { ICE_CODE, ICE_ISSUER } from 'services/stellar.service';
 
 import Aqua from 'assets/aqua-logo-small.svg';
 import Ice from 'assets/ice-logo.svg';
@@ -251,7 +252,9 @@ const AppMenu = ({
                     <AccountBalanceBlock>
                         <LinkButton
                             target="_blank"
-                            href={`https://stellar.expert/explorer/public/account/${account.accountId()}`}
+                            href={`https://stellar.expert/explorer/${
+                                getIsTestnetEnv() ? 'testnet' : 'public'
+                            }/account/${account.accountId()}`}
                         >
                             <Button fullWidth>
                                 EXPLORER

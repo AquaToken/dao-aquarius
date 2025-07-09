@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import { getAssetString } from 'helpers/assets';
 import { getDateString } from 'helpers/date';
+import { getIsTestnetEnv } from 'helpers/env';
 import { formatBalance } from 'helpers/format-number';
 
 import { LumenInfo } from 'store/assetsStore/reducer';
@@ -155,9 +156,9 @@ const AboutAsset = ({ asset }: AboutAssetProps) => {
             </AssetCard>
             <Description>{assetInfo.desc}</Description>
             <ExternalLink
-                href={`https://stellar.expert/explorer/public/asset/${
-                    isNative ? 'native' : `${asset.code}-${asset.issuer}`
-                }`}
+                href={`https://stellar.expert/explorer/${
+                    getIsTestnetEnv() ? 'testnet' : 'public'
+                }/asset/${isNative ? 'native' : `${asset.code}-${asset.issuer}`}`}
             >
                 View on Network Explorer
             </ExternalLink>

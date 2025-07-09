@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
+import { GOV_ICE_CODE, ICE_ISSUER } from 'constants/assets';
 import { LockerRoutes } from 'constants/routes';
 
 import { getAquaAssetData } from 'helpers/assets';
@@ -16,7 +17,6 @@ import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService, StellarService, ToastService } from 'services/globalServices';
-import { GOV_ICE_CODE, ICE_ISSUER } from 'services/stellar.service';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { ModalProps } from 'types/modal';

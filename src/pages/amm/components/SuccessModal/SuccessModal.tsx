@@ -1,6 +1,8 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
+import { getIsTestnetEnv } from 'helpers/env';
+
 import { ModalProps } from 'types/modal';
 import { Asset } from 'types/stellar';
 
@@ -57,7 +59,11 @@ const SuccessModal = ({ params, close }: ModalProps<SuccessModalParams>) => {
                     amounts={amounts}
                     isSwapResult={isSwap}
                 />
-                <ExternalLink href={`https://stellar.expert/explorer/public/tx/${hash}`}>
+                <ExternalLink
+                    href={`https://stellar.expert/explorer/${
+                        getIsTestnetEnv() ? 'testnet' : 'public'
+                    }/tx/${hash}`}
+                >
                     View on Explorer
                 </ExternalLink>
             </AssetsInfo>

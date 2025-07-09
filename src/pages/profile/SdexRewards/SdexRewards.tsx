@@ -12,6 +12,7 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { StellarService } from 'services/globalServices';
 
+import { flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Aqua from 'assets/aqua-logo-small.svg';
@@ -23,7 +24,6 @@ import PageLoader from 'basics/loaders/PageLoader';
 import Market from 'basics/Market';
 import Table, { CellAlign } from 'basics/Table';
 
-import { flexRowSpaceBetween, respondDown } from '../../../web/mixins';
 import { getSdexRewards } from '../api/api';
 import BoostBanner from '../BoostBanner/BoostBanner';
 import { Empty } from '../YourVotes/YourVotes';

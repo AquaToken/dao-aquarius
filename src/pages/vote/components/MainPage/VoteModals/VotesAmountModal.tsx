@@ -1,5 +1,6 @@
 import { Asset } from '@stellar/stellar-sdk';
 import { useEffect, useMemo, useState } from 'react';
+import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -25,25 +26,28 @@ import GetAquaModal from 'web/modals/GetAquaModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Aqua from 'assets/aqua-logo-small.svg';
+import DIce from 'assets/dice-logo.svg';
 import Ice from 'assets/ice-logo.svg';
 import CloseIcon from 'assets/icon-close-small.svg';
 
+import Alert from 'basics/Alert';
+import AssetLogo from 'basics/AssetLogo';
 import Button from 'basics/buttons/Button';
 import ExternalLink from 'basics/ExternalLink';
 import Input from 'basics/inputs/Input';
 import RangeInput from 'basics/inputs/RangeInput';
 import Select, { Option } from 'basics/inputs/Select';
 import Market from 'basics/Market';
-import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 import VotesDurationModal from './VotesDurationModal';
 
 import { PairStats } from '../../../api/types';
-import { DOWN_ICE, SELECTED_PAIRS_ALIAS, UP_ICE } from '../MainPage';
+import { DELEGATE_ICE, DOWN_ICE, SELECTED_PAIRS_ALIAS, UP_ICE } from '../MainPage';
 
 export const ContentRow = styled.div`
     ${flexRowSpaceBetween};
-    width: 52.8rem;
+    width: 100%;
     margin-top: 3rem;
 
     ${respondDown(Breakpoints.md)`
@@ -79,6 +83,11 @@ const AquaLogo = styled(Aqua)`
 `;
 
 const IceLogo = styled(Ice)`
+    height: 3.2rem;
+    width: 3.2rem;
+`;
+
+const DIceLogo = styled(DIce)`
     height: 3.2rem;
     width: 3.2rem;
 `;
@@ -208,7 +217,8 @@ const TotalAmount = styled.div`
     width: 48rem;
     justify-content: flex-end;
 
-    svg {
+    svg,
+    img {
         margin-left: 0.8rem;
         min-width: 3.2rem;
     }
@@ -272,7 +282,7 @@ const VotesAmountModal = ({
 
     const [percent, setPercent] = useState(0);
     const [amount, setAmount] = useState('');
-    const [targetAsset, setTargetAsset] = useState(asset ?? aquaStellarAsset);
+    const [targetAsset, setTargetAsset] = useState(asset ?? (isDownVoteModal ? DOWN_ICE : UP_ICE));
     const [selectedPairs, setSelectedPairs] = useState(pairs);
     const [pending, setPending] = useState(false);
 
@@ -289,13 +299,25 @@ const VotesAmountModal = ({
     );
     const [isHandleEdit, setIsHandleEdit] = useState(false);
 
-    const OPTIONS: Option<Asset>[] = useMemo(
-        () => [
-            { label: 'AQUA', value: aquaStellarAsset, icon: <AquaLogo /> },
-            { label: 'ICE', value: isDownVoteModal ? DOWN_ICE : UP_ICE, icon: <IceLogo /> },
-        ],
-        [isDownVoteModal],
-    );
+    const OPTIONS: Option<Asset>[] = useMemo(() => {
+        const AQUA_OPTION = { label: 'AQUA', value: aquaStellarAsset, icon: <AquaLogo /> };
+        const ICE_OPTION = {
+            label: 'ICE',
+            value: isDownVoteModal ? DOWN_ICE : UP_ICE,
+            icon: <IceLogo />,
+        };
+        const D_ICE_OPTION = {
+            label: 'dICE',
+            value: DELEGATE_ICE,
+            icon: <DIceLogo />,
+        };
+
+        if (!isDownVoteModal && account && account.getAssetBalance(DELEGATE_ICE) !== null) {
+            return [ICE_OPTION, D_ICE_OPTION, AQUA_OPTION];
+        }
+
+        return [ICE_OPTION, AQUA_OPTION];
+    }, [isDownVoteModal, account]);
 
     const targetBalance = useMemo(() => account?.getAssetBalance(targetAsset), [targetAsset]);
 
@@ -549,7 +571,7 @@ const VotesAmountModal = ({
     };
 
     return (
-        <>
+        <ModalWrapper $width="60rem">
             <Scrollable scrollDisabled={isDownVoteModal || isSingleVoteForModal}>
                 <ModalTitle>
                     {isDownVoteModal
@@ -579,6 +601,10 @@ const VotesAmountModal = ({
                             ]}
                         />
                     </AssetsInfoBlock>
+                )}
+
+                {targetAsset.code === aquaStellarAsset.code && (
+                    <Alert text="ICE has more voting power than AQUA and ICE votes can be withdrawn from the market at any time" />
                 )}
 
                 <ContentRow>
@@ -679,12 +705,8 @@ const VotesAmountModal = ({
                         <TotalAmountRow>
                             <Label>Total:</Label>
                             <TotalAmount>
-                                {amount || '0'} {targetAsset.code}{' '}
-                                {targetAsset.code === aquaStellarAsset.code ? (
-                                    <AquaLogo />
-                                ) : (
-                                    <IceLogo />
-                                )}
+                                {amount ? formatBalance(+amount) : '0'} {targetAsset.code}{' '}
+                                <AssetLogo asset={targetAsset} isCircle={false} />
                             </TotalAmount>
                         </TotalAmountRow>
                     </>
@@ -699,7 +721,9 @@ const VotesAmountModal = ({
                             </ExternalLink>
                         ) : (
                             <ExternalLink asDiv>
-                                <Link to={LockerRoutes.main}>Get ICE</Link>
+                                <Link to={LockerRoutes.main} onClick={() => close()}>
+                                    Get ICE
+                                </Link>
                             </ExternalLink>
                         )}
                     </GetAquaBlock>
@@ -716,7 +740,7 @@ const VotesAmountModal = ({
                     {targetAsset.code === aquaStellarAsset.code ? 'NEXT' : 'confirm'}
                 </Button>
             </ButtonContainer>
-        </>
+        </ModalWrapper>
     );
 };
 

@@ -1,26 +1,39 @@
 import * as StellarSdk from '@stellar/stellar-sdk';
 import {
+    FeeBumpTransaction,
+    Horizon,
     Memo,
     MemoType,
-    OperationOptions,
-    Horizon,
-    Transaction,
     Operation,
-    FeeBumpTransaction,
+    OperationOptions,
+    Transaction,
 } from '@stellar/stellar-sdk';
 import axios, { AxiosResponse } from 'axios';
 import BigNumber from 'bignumber.js';
 
 import { getPoolInfo } from 'api/amm';
 
-import { ASSETS_ENV_DATA } from 'constants/assets';
+import {
+    ASSETS_ENV_DATA,
+    D_ICE_CODE,
+    DOWN_ICE_CODE,
+    GOV_ICE_CODE,
+    ICE_ASSETS,
+    ICE_CODE,
+    ICE_ISSUER,
+    UP_ICE_CODE,
+} from 'constants/assets';
+import { BASE_FEE } from 'constants/stellar';
 
+import { getAssetString } from 'helpers/assets';
+import chunkFunction from 'helpers/chunk-function';
 import debounceFunction from 'helpers/debounce-function';
 import { getEnv, getNetworkPassphrase } from 'helpers/env';
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
 import { getHorizonUrl } from 'helpers/url';
 
 import { Asset, StellarToml } from 'types/stellar';
+import { ClassicToken, TokenType } from 'types/token';
 
 import { validateMarketKeys } from 'pages/vote/api/api';
 import { PairStats } from 'pages/vote/api/types';
@@ -30,12 +43,13 @@ import { ToastService } from './globalServices';
 
 const VAULT_API = 'https://vault.lobstr.co/api/transactions/';
 
-const FEE = '100000';
 const TRANSACTION_TIMEOUT = 60 * 60 * 24 * 30;
 const MARKET_KEY_MARKER_UP = 'GA2UB7VXXXUSEAQUAXXXAQUARIUSVOTINGWALLETXXXPOWEREDBYAQUA';
 const MARKET_KEY_MARKER_DOWN = 'GAYVCXXXUSEAQUAXXXAQUARIUSDOWNVOTEWALLETXXXPOWEREDBYAQUA';
 const MARKET_KEY_SIGNER_WEIGHT = 1;
 const MARKET_KEY_THRESHOLD = 10;
+
+export const DELEGATE_MARKER_KEY = 'GA5BS7XXXAQUARIUSXXXICEXXXVOTEDELEGATIONXXXPOWEREDBYAQUA';
 
 const AIRDROP_2_SPONSOR = 'GDFCYDQOVJ2OEWPLEGIRQVAM3VTOQ6JDNLJTDZP5S5OGTEHM5CIWMYBH';
 
@@ -48,23 +62,6 @@ export enum StellarEvents {
     paymentsHistoryUpdate = 'payments history update',
 }
 const { aquaCode, aquaIssuer, aquaAssetString } = ASSETS_ENV_DATA[getEnv()].aqua;
-
-export const yXLM_CODE = 'yXLM';
-export const yXLM_ISSUER = 'GARDNV3Q7YGT4AKSDF25LT32YSCCW4EV22Y2TV3I2PU2MMXJTEDL5T55';
-
-export const ICE_CODE = 'ICE';
-export const ICE_ISSUER = 'GAXSGZ2JM3LNWOO4WRGADISNMWO4HQLG4QBGUZRKH5ZHL3EQBGX73ICE';
-
-export const GOV_ICE_CODE = 'governICE';
-export const UP_ICE_CODE = 'upvoteICE';
-export const DOWN_ICE_CODE = 'downvoteICE';
-
-export const ICE_ASSETS = [
-    `${ICE_CODE}:${ICE_ISSUER}`,
-    `${GOV_ICE_CODE}:${ICE_ISSUER}`,
-    `${UP_ICE_CODE}:${ICE_ISSUER}`,
-    `${DOWN_ICE_CODE}:${ICE_ISSUER}`,
-];
 
 export enum THRESHOLDS {
     LOW = 'low_threshold',
@@ -127,6 +124,7 @@ export default class StellarServiceClass {
     private claimableBalances: Horizon.ServerApi.ClaimableBalanceRecord[] | null = null;
     private keypair: StellarSdk.Keypair | null = null;
     private poolsRewardsNoteHash = new Map<string, unknown>();
+
     constructor() {
         this.startHorizonServer();
         this.loadMorePayments = this.loadMorePayments.bind(this);
@@ -170,7 +168,7 @@ export default class StellarServiceClass {
         this.event.trigger({ type: StellarEvents.handleAccountUpdate, account: newAccount });
 
         const tx = new StellarSdk.TransactionBuilder(newAccount, {
-            fee: FEE.toString(),
+            fee: BASE_FEE,
             networkPassphrase: getNetworkPassphrase(),
         }).setTimeout(TRANSACTION_TIMEOUT);
 
@@ -197,16 +195,30 @@ export default class StellarServiceClass {
         return new StellarSdk.Memo(type, value);
     }
 
-    createAsset(code: string, issuer: string): Asset {
-        return new StellarSdk.Asset(code, issuer);
+    createAsset(code: string, issuer: string): ClassicToken {
+        const asset: ClassicToken = new StellarSdk.Asset(code, issuer) as ClassicToken;
+
+        asset.type = TokenType.classic;
+        asset.contract = asset.contractId(getNetworkPassphrase());
+
+        return asset;
     }
 
-    createLumen() {
-        return StellarSdk.Asset.native();
+    createLumen(): ClassicToken {
+        const asset: ClassicToken = StellarSdk.Asset.native() as ClassicToken;
+
+        asset.type = TokenType.classic;
+        asset.contract = asset.contractId(getNetworkPassphrase());
+
+        return asset;
     }
 
     isValidPublicKey(key: string): boolean {
         return StellarSdk.StrKey.isValidEd25519PublicKey(key);
+    }
+
+    isValidContract(id: string): boolean {
+        return StellarSdk.StrKey.isValidContract(id);
     }
 
     submitTx(tx: StellarSdk.Transaction) {
@@ -439,14 +451,15 @@ export default class StellarServiceClass {
             .forAccount(publicKey)
             .cursor('now')
             .stream({
-                onmessage: res => {
+                onmessage: (res: Horizon.ServerApi.EffectRecord) => {
                     if (
-                        (res as unknown as Horizon.ServerApi.EffectRecord).type ===
-                            'claimable_balance_sponsorship_created' ||
-                        (res as unknown as Horizon.ServerApi.EffectRecord).type ===
-                            'claimable_balance_sponsorship_removed' ||
-                        (res as unknown as Horizon.ServerApi.EffectRecord).type ===
-                            'claimable_balance_created'
+                        res.type === 'claimable_balance_sponsorship_created' ||
+                        res.type === 'claimable_balance_sponsorship_removed' ||
+                        res.type === 'claimable_balance_sponsorship_updated' ||
+                        res.type === 'claimable_balance_created' ||
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore
+                        res.type === 'claimable_balance_claimant_created'
                     ) {
                         this.getClaimableBalances(publicKey);
                     }
@@ -588,11 +601,12 @@ export default class StellarServiceClass {
             const isAqua = claim.asset === aquaAssetString;
             const isUpIce = claim.asset === `${UP_ICE_CODE}:${ICE_ISSUER}`;
             const isDownIce = claim.asset === `${DOWN_ICE_CODE}:${ICE_ISSUER}`;
+            const isDelegatedIce = claim.asset === `${D_ICE_CODE}:${ICE_ISSUER}`;
 
             if (
                 (hasUpMarker || hasDownMarker) &&
                 Boolean(selfClaim) &&
-                (isAqua || isUpIce || isDownIce)
+                (isAqua || isUpIce || isDownIce || isDelegatedIce)
             ) {
                 const [code, issuer] = claim.asset.split(':');
                 acc.push({
@@ -662,10 +676,11 @@ export default class StellarServiceClass {
             const isAqua = claim.asset === aquaAssetString;
             const isUpIce = claim.asset === `${UP_ICE_CODE}:${ICE_ISSUER}`;
             const isDownIce = claim.asset === `${DOWN_ICE_CODE}:${ICE_ISSUER}`;
+            const isDelegatedIce = claim.asset === `${D_ICE_CODE}:${ICE_ISSUER}`;
             const hasSelfClaim = claim.claimants.some(
                 claimant => claimant.destination === accountId,
             );
-            if ((isAqua || isUpIce || isDownIce) && hasSelfClaim) {
+            if ((isAqua || isUpIce || isDownIce || isDelegatedIce) && hasSelfClaim) {
                 const similarToMarketKey = claim.claimants.find(
                     claimant => claimant.destination !== accountId,
                 );
@@ -710,7 +725,7 @@ export default class StellarServiceClass {
         return StellarSdk.Operation.createClaimableBalance({
             source: publicKey,
             amount: amount.toString(),
-            asset: asset ?? new StellarSdk.Asset(aquaCode, aquaIssuer),
+            asset: asset ?? this.createAsset(aquaCode, aquaIssuer),
             claimants: [
                 new StellarSdk.Claimant(
                     marketKey,
@@ -727,7 +742,7 @@ export default class StellarServiceClass {
     }
 
     processIceTx(tx, asset) {
-        if (!ICE_ASSETS.includes(`${asset.code}:${asset.issuer}`)) {
+        if (![...ICE_ASSETS, `${D_ICE_CODE}:${ICE_ISSUER}`].includes(getAssetString(asset))) {
             return tx;
         }
 
@@ -750,6 +765,9 @@ export default class StellarServiceClass {
         if (asset.code === UP_ICE_CODE && asset.issuer === ICE_ISSUER) {
             return 'https://ice-approval.aqua.network/api/v2/upvote-ice/tx-approve/';
         }
+        if (asset.code === D_ICE_CODE && asset.issuer === ICE_ISSUER) {
+            return 'https://ice-approval.aqua.network/api/v2/delegated-ice/tx-approve/';
+        }
         if (asset.code === DOWN_ICE_CODE && asset.issuer === ICE_ISSUER) {
             return 'https://ice-approval.aqua.network/api/v2/downvote-ice/tx-approve/';
         }
@@ -765,7 +783,7 @@ export default class StellarServiceClass {
         return StellarSdk.Operation.createClaimableBalance({
             source: publicKey,
             amount: amount.toString(),
-            asset: new StellarSdk.Asset(aquaCode, aquaIssuer),
+            asset: this.createAsset(aquaCode, aquaIssuer),
             claimants: [
                 new StellarSdk.Claimant(
                     publicKey,
@@ -807,7 +825,7 @@ export default class StellarServiceClass {
     createBurnAquaOperation(amount: string) {
         return StellarSdk.Operation.payment({
             amount,
-            asset: new StellarSdk.Asset(aquaCode, aquaIssuer),
+            asset: this.createAsset(aquaCode, aquaIssuer),
             destination: aquaIssuer,
         });
     }
@@ -859,7 +877,7 @@ export default class StellarServiceClass {
         const marketKeyDown = StellarSdk.Keypair.random();
 
         const transactionBuilder = new StellarSdk.TransactionBuilder(updatedAccount, {
-            fee: FEE,
+            fee: BASE_FEE,
             networkPassphrase: getNetworkPassphrase(),
         });
 
@@ -949,7 +967,7 @@ export default class StellarServiceClass {
 
         if (withTrust) {
             const trustOp = StellarSdk.Operation.changeTrust({
-                asset: new StellarSdk.Asset(aquaCode, aquaIssuer),
+                asset: this.createAsset(aquaCode, aquaIssuer),
             });
             ops.push(trustOp);
         }
@@ -967,7 +985,7 @@ export default class StellarServiceClass {
         const time = Math.ceil(timestamp / 1000);
         return StellarSdk.Operation.createClaimableBalance({
             amount: amount.toString(),
-            asset: new StellarSdk.Asset(asset.code, asset.issuer),
+            asset: this.createAsset(asset.code, asset.issuer),
             claimants: [
                 new StellarSdk.Claimant(
                     marketKey,
@@ -983,9 +1001,102 @@ export default class StellarServiceClass {
         });
     }
 
+    createDelegateTx(account, delegateDestionation, amount) {
+        return this.buildTx(
+            account,
+            StellarSdk.Operation.createClaimableBalance({
+                source: account.accountId(),
+                amount: amount.toString(),
+                asset: this.createAsset(UP_ICE_CODE, ICE_ISSUER),
+                claimants: [
+                    new StellarSdk.Claimant(
+                        account.accountId(),
+                        StellarSdk.Claimant.predicateNot(
+                            StellarSdk.Claimant.predicateBeforeAbsoluteTime(
+                                ((Date.now() + 25 * 60 * 60 * 1000) / 1000).toFixed(), // 25 hours
+                            ),
+                        ),
+                    ),
+                    new StellarSdk.Claimant(
+                        delegateDestionation,
+                        StellarSdk.Claimant.predicateNot(
+                            StellarSdk.Claimant.predicateUnconditional(),
+                        ),
+                    ),
+                    new StellarSdk.Claimant(
+                        DELEGATE_MARKER_KEY,
+                        StellarSdk.Claimant.predicateNot(
+                            StellarSdk.Claimant.predicateUnconditional(),
+                        ),
+                    ),
+                ],
+            }),
+        );
+    }
+
+    getDelegateLocks(accountId: string) {
+        if (!this.claimableBalances) {
+            return null;
+        }
+
+        return this.claimableBalances
+            .reduce((acc, claim) => {
+                if (claim.claimants.length !== 3) {
+                    return acc;
+                }
+                const hasMarker = claim.claimants.some(
+                    claimant => claimant.destination === DELEGATE_MARKER_KEY,
+                );
+                const selfClaim = claim.claimants.find(
+                    claimant =>
+                        claimant.destination === accountId && !!claimant.predicate?.not?.abs_before,
+                );
+                const isUpvoteIce = claim.asset === `${UP_ICE_CODE}:${ICE_ISSUER}`;
+
+                if (hasMarker && Boolean(selfClaim) && isUpvoteIce) {
+                    acc.push(claim);
+                }
+                return acc;
+            }, [])
+            .map(cb => {
+                const unlockDate =
+                    cb.claimants.find(({ destination }) => destination === accountId).predicate.not
+                        .abs_before_epoch * 1000;
+
+                return { ...cb, unlockDate };
+            });
+    }
+
+    getDelegatorLocks(accountId: string) {
+        if (!this.claimableBalances) {
+            return null;
+        }
+
+        return this.claimableBalances.reduce((acc, claim) => {
+            if (claim.claimants.length !== 3) {
+                return acc;
+            }
+            const hasMarker = claim.claimants.some(
+                claimant => claimant.destination === DELEGATE_MARKER_KEY,
+            );
+            const selfClaim = claim.claimants.find(
+                claimant =>
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
+                    claimant.destination === accountId && !!claimant.predicate?.not?.unconditional,
+            );
+            const isUpvoteIce = claim.asset === `${UP_ICE_CODE}:${ICE_ISSUER}`;
+
+            if (hasMarker && Boolean(selfClaim) && isUpvoteIce) {
+                acc.push(claim);
+            }
+            return acc;
+        }, []);
+    }
+
     getAquaEquivalent(asset, amount) {
         return this.server
-            .strictSendPaths(asset, amount, [new StellarSdk.Asset(aquaCode, aquaIssuer)])
+            .strictSendPaths(asset, amount, [this.createAsset(aquaCode, aquaIssuer)])
             .call()
             .then(res => {
                 if (!res.records.length) {
@@ -1228,7 +1339,11 @@ export default class StellarServiceClass {
     }
 
     private loadNotes(payments) {
-        this.chunkFunction(payments, payment => {
+        chunkFunction<
+            | (StellarSdk.Horizon.ServerApi.PaymentOperationRecord & { memo: string })
+            | (StellarSdk.Horizon.ServerApi.InvokeHostFunctionOperationRecord & { memo: string }),
+            void
+        >(payments, payment => {
             if (
                 payment.type === 'invoke_host_function' &&
                 this.isPaymentCalledMethod(payment.parameters, 'claim')
@@ -1262,7 +1377,7 @@ export default class StellarServiceClass {
 
         return getPoolInfo(poolId)
             .then(poolInfo => {
-                const note = `Rewards for pool: ${poolInfo.assets
+                const note = `Rewards for pool: ${poolInfo.tokens
                     .map(({ code }) => code)
                     .join('/')}`;
                 this.poolsRewardsNoteHash.set(poolId, note);
@@ -1275,16 +1390,6 @@ export default class StellarServiceClass {
                 payment.memo = note;
                 this.event.trigger({ type: StellarEvents.paymentsHistoryUpdate });
             });
-    }
-
-    private async chunkFunction(array, promiseFunction, chunkSize = 10) {
-        const result = [];
-        for (let i = 0; i < array.length; i += chunkSize) {
-            const chunk = array.slice(i, i + chunkSize);
-            const chunkResult = await Promise.all(chunk.map(item => promiseFunction(item)));
-            result.push(...chunkResult);
-        }
-        return result;
     }
 
     private updateLumenUsdPrice() {

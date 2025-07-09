@@ -1,7 +1,12 @@
-import * as StellarSdk from '@stellar/stellar-sdk';
 import axios from 'axios';
 
+import { BRIBES_API_URL } from 'constants/api';
+
+import { getAssetString } from 'helpers/assets';
+
 import { AssetSimple } from 'store/assetsStore/types';
+
+import { StellarService } from 'services/globalServices';
 
 import {
     ListResponse,
@@ -16,7 +21,6 @@ import {
 
 const marketKeysUrl = 'https://marketkeys-tracker.aqua.network/api/market-keys/';
 const votingTrackerUrl = 'https://voting-tracker.aqua.network/api/voting-snapshot/';
-const bribesApiUrl = 'https://bribes-api.aqua.network/api/';
 const rewardsApi =
     'https://reward-api.aqua.network/api/rewards/?ordering=-daily_total_reward&page=1&page_size=200';
 
@@ -36,6 +40,23 @@ const getPairUrl = (sortType: SortTypes, pageSize: number, page: number): string
     }
 };
 
+export const getMarketsMap = async (marketKeys: string[]): Promise<Map<string, MarketKey>> => {
+    const params = new URLSearchParams();
+
+    marketKeys.forEach(marketKey => {
+        params.append('account_id', marketKey);
+    });
+
+    const markets = await axios
+        .get<ListResponse<MarketKey>>(marketKeysUrl, { params })
+        .then(res => res.data.results);
+
+    return markets.reduce((acc, marketKey) => {
+        acc.set(marketKey.account_id, marketKey);
+        return acc;
+    }, new Map<string, MarketKey>());
+};
+
 const addKeysToMarketVotes = async (votes: MarketVotes[], count) => {
     const params = new URLSearchParams();
     const bribesParams = new URLSearchParams();
@@ -47,7 +68,7 @@ const addKeysToMarketVotes = async (votes: MarketVotes[], count) => {
 
     const [marketsKeys, bribes] = await Promise.all([
         axios.get<ListResponse<MarketKey>>(marketKeysUrl, { params }),
-        axios.get<ListResponse<MarketBribes>>(`${bribesApiUrl}bribes/?limit=200`, {
+        axios.get<ListResponse<MarketBribes>>(`${BRIBES_API_URL}bribes/?limit=200`, {
             params: bribesParams,
         }),
     ]);
@@ -148,7 +169,7 @@ export const getUserPairsList = async (keys: string[]) => {
         axios.get<ListResponse<MarketVotes>>(votingTrackerUrl, {
             params: marketVotesParams,
         }),
-        axios.get<ListResponse<MarketBribes>>(`${bribesApiUrl}bribes/?limit=200`, {
+        axios.get<ListResponse<MarketBribes>>(`${BRIBES_API_URL}bribes/?limit=200`, {
             params: marketVotesParams,
         }),
     ]);
@@ -170,7 +191,7 @@ export const getUserPairsList = async (keys: string[]) => {
 
 export const getPairsWithBribes = async (pageSize: number, page: number) => {
     const bribes = await axios.get<ListResponse<MarketBribes>>(
-        `${bribesApiUrl}bribes/?limit=${pageSize}&page=${page}`,
+        `${BRIBES_API_URL}bribes/?limit=${pageSize}&page=${page}`,
     );
 
     if (!bribes.data.results.length) {
@@ -206,10 +227,7 @@ export const getPairsWithBribes = async (pageSize: number, page: number) => {
 };
 
 const getAssetParam = (asset: AssetSimple) =>
-    new StellarSdk.Asset(asset.code, asset.issuer).isNative()
-        ? 'native'
-        : `${asset.code}:${asset.issuer}`;
-
+    getAssetString(StellarService.createAsset(asset.code, asset.issuer));
 export const getFilteredPairsList = async (
     baseAsset: AssetSimple,
     counterAsset: AssetSimple,
@@ -260,7 +278,7 @@ export const getFilteredPairsList = async (
         axios.get<ListResponse<MarketVotes>>(votingTrackerUrl, {
             params: marketVotesParams,
         }),
-        axios.get<ListResponse<MarketBribes>>(`${bribesApiUrl}bribes/?limit=200`, {
+        axios.get<ListResponse<MarketBribes>>(`${BRIBES_API_URL}bribes/?limit=200`, {
             params: bribesParams,
         }),
     ]);
@@ -288,7 +306,7 @@ export const getTotalVotingStats = (): Promise<TotalStats> =>
 export const getUpcomingBribesForMarket = (marketKey: string): Promise<UpcomingBribe[]> =>
     axios
         .get<ListResponse<UpcomingBribe>>(
-            `${bribesApiUrl}pending-bribes/?limit=200&ordering=start_at&market_key=${marketKey}`,
+            `${BRIBES_API_URL}pending-bribes/?limit=200&ordering=start_at&market_key=${marketKey}`,
         )
         .then(({ data }) => data.results);
 

@@ -9,11 +9,11 @@ import { StellarService } from 'services/globalServices';
 
 import { Asset } from 'types/stellar';
 
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import ExternalLink from 'basics/ExternalLink';
 import PageLoader from 'basics/loaders/PageLoader';
-
-import { respondDown } from '../../../../../web/mixins';
-import { Breakpoints, COLORS } from '../../../../../web/styles';
 
 const Description = styled.div`
     font-size: 1.6rem;

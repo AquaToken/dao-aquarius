@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { getDateString } from 'helpers/date';
+import { getIsTestnetEnv } from 'helpers/env';
 import { formatBalance } from 'helpers/format-number';
 
 import { flexAllCenter, respondDown } from 'web/mixins';
@@ -142,7 +143,9 @@ const onVoteLinkClick = (url: string) => {
     const tab = window.open('', '_blank');
     getVoteTxHash(url).then((hash: string) => {
         if (hash) {
-            tab.location.href = `https://stellar.expert/explorer/public/tx/${hash}`;
+            tab.location.href = `https://stellar.expert/explorer/${
+                getIsTestnetEnv() ? 'testnet' : 'public'
+            }/tx/${hash}`;
         }
     });
 };

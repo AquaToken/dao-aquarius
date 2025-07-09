@@ -2,21 +2,25 @@ import * as React from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
+import { D_ICE_CODE, DOWN_ICE_CODE, ICE_ISSUER, UP_ICE_CODE } from 'constants/assets';
+
 import { getDateString } from 'helpers/date';
+import { getIsTestnetEnv } from 'helpers/env';
 import ErrorHandler from 'helpers/error-handler';
 import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
+import { useIsMounted } from 'hooks/useIsMounted';
+
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
+
+import { StellarService, ToastService } from 'services/globalServices';
+import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { Transaction } from 'types/stellar';
 import { Vote } from 'types/voting-tool';
 
-import { useIsMounted } from 'hooks/useIsMounted';
-import { StellarService, ToastService } from 'services/globalServices';
-import { DOWN_ICE_CODE, ICE_ISSUER, UP_ICE_CODE } from 'services/stellar.service';
-import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -94,7 +98,9 @@ export const goToStellarExpert = ({ transactions }) => {
     transactions().then((res: { records: Transaction[] }) => {
         const hash = res?.records?.[0]?.hash;
         if (hash) {
-            tab.location.href = `https://stellar.expert/explorer/public/tx/${hash}`;
+            tab.location.href = `https://stellar.expert/explorer/${
+                getIsTestnetEnv() ? 'testnet' : 'public'
+            }/tx/${hash}`;
         }
     });
 };
@@ -177,6 +183,7 @@ const VotesList = ({ votes, pair, withoutClaimDate }: VotesListProps): React.Rea
 
             let hasUpvote = Boolean(claim?.assetCode === UP_ICE_CODE);
             let hasDownvote = Boolean(claim?.assetCode === DOWN_ICE_CODE);
+            let hasDelegated = Boolean(claim?.assetCode === D_ICE_CODE);
 
             const ops = claim
                 ? StellarService.createClaimOperations(claim.id)
@@ -187,6 +194,9 @@ const VotesList = ({ votes, pair, withoutClaimDate }: VotesListProps): React.Rea
                       if (cb.assetCode === DOWN_ICE_CODE) {
                           hasDownvote = true;
                       }
+                      if (cb.assetCode === D_ICE_CODE) {
+                          hasDelegated = true;
+                      }
                       return [...acc, ...StellarService.createClaimOperations(cb.id)];
                   }, []);
 
@@ -196,6 +206,13 @@ const VotesList = ({ votes, pair, withoutClaimDate }: VotesListProps): React.Rea
                 tx = await StellarService.processIceTx(
                     tx,
                     StellarService.createAsset(UP_ICE_CODE, ICE_ISSUER),
+                );
+            }
+
+            if (hasDelegated) {
+                tx = await StellarService.processIceTx(
+                    tx,
+                    StellarService.createAsset(D_ICE_CODE, ICE_ISSUER),
                 );
             }
 

@@ -4,11 +4,13 @@ import styled from 'styled-components';
 
 import { getPoolMembers } from 'api/amm';
 
+import { getIsTestnetEnv } from 'helpers/env';
 import { formatBalance } from 'helpers/format-number';
+
+import { useUpdateIndex } from 'hooks/useUpdateIndex';
 
 import { PoolBalance } from 'types/amm';
 
-import { useUpdateIndex } from 'hooks/useUpdateIndex';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -106,7 +108,9 @@ const PoolMembers = ({ poolId, totalShare }: { poolId: string; totalShare: strin
                 .map(member => (
                     <Row key={member.account_address}>
                         <LinkToExpert
-                            href={`https://stellar.expert/explorer/public/account/${member.account_address}`}
+                            href={`https://stellar.expert/explorer/${
+                                getIsTestnetEnv() ? 'testnet' : 'public'
+                            }/account/${member.account_address}`}
                             target="_blank"
                         >
                             <PublicKeyWithIcon pubKey={member.account_address} />

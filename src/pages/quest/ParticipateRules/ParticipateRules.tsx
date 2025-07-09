@@ -57,11 +57,11 @@ const ParticipateRules = () => (
         <Rules>
             <Rule>
                 <Icon />
-                <span>Any new Stellar wallet that has never transacted with Aquarius</span>
+                <span>Any new Stellar wallet that has never interacted with Aquarius.</span>
             </Rule>
             <Rule>
                 <Icon />
-                <span>Persons from all over the world excluding the US</span>
+                <span>Individuals from all countries except the United States.</span>
             </Rule>
             <Rule>
                 <Icon />

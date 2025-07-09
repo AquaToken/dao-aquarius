@@ -1,5 +1,5 @@
 import * as StellarSdk from '@stellar/stellar-sdk';
-import { xdr, Asset, Keypair, BASE_FEE, StrKey } from '@stellar/stellar-sdk';
+import { xdr, Asset, Keypair, StrKey } from '@stellar/stellar-sdk';
 import BigNumber from 'bignumber.js';
 
 import {
@@ -8,7 +8,7 @@ import {
     BATCH_CONTRACT_METHOD,
     CONTRACTS,
 } from 'constants/soroban';
-import { ACCOUNT_FOR_SIMULATE } from 'constants/stellar';
+import { ACCOUNT_FOR_SIMULATE, BASE_FEE } from 'constants/stellar';
 
 import { getAssetString } from 'helpers/assets';
 import { getEnv, getNetworkPassphrase } from 'helpers/env';
@@ -16,10 +16,11 @@ import { SorobanErrorHandler, SorobanPrepareTxErrorHandler } from 'helpers/error
 import { getSorobanUrl } from 'helpers/url';
 
 import { PoolRewardsInfo } from 'types/amm';
+import { ClassicToken, Token, TokenType } from 'types/token';
 
 import RestoreContractModal from 'web/modals/RestoreContractModal';
 
-import { ModalService, ToastService } from './globalServices';
+import { ModalService, StellarService, ToastService } from './globalServices';
 
 const AMM_SMART_CONTACT_ID = CONTRACTS[getEnv()].amm;
 const BATCH_SMART_CONTACT_ID = CONTRACTS[getEnv()].batch;
@@ -39,7 +40,7 @@ export enum POOL_TYPE {
 export default class SorobanServiceClass {
     server: StellarSdk.rpc.Server | null = null;
     keypair: Keypair | null = null;
-    assetsCache = new Map<string, Asset>();
+    tokensCache = new Map<string, Token>();
 
     constructor() {
         this.startServer();
@@ -143,10 +144,82 @@ export default class SorobanServiceClass {
         return asset.contractId(getNetworkPassphrase());
     }
 
-    getAssetFromContractId(id: string): Promise<Asset> {
-        if (this.assetsCache.has(id)) {
-            return Promise.resolve(this.assetsCache.get(id));
+    parseTokenContractId(contractId: string): Promise<Token> {
+        if (this.tokensCache.has(contractId)) {
+            return Promise.resolve(this.tokensCache.get(contractId));
         }
+
+        if (contractId === StellarService.createLumen().contractId(getNetworkPassphrase())) {
+            const lumen: ClassicToken = StellarService.createLumen() as ClassicToken;
+            lumen.type = TokenType.classic;
+            lumen.contract = contractId;
+            return Promise.resolve(lumen);
+        }
+
+        const nameCall = this.scValToArray([
+            this.contractIdToScVal(contractId),
+            xdr.ScVal.scvSymbol(ASSET_CONTRACT_METHOD.NAME),
+            this.scValToArray([]),
+        ]);
+
+        const symbolCall = this.scValToArray([
+            this.contractIdToScVal(contractId),
+            xdr.ScVal.scvSymbol(ASSET_CONTRACT_METHOD.SYMBOL),
+            this.scValToArray([]),
+        ]);
+
+        const batchCalls = this.scValToArray([nameCall, symbolCall]);
+
+        return this.buildSmartContactTx(
+            ACCOUNT_FOR_SIMULATE,
+            BATCH_SMART_CONTACT_ID,
+            BATCH_CONTRACT_METHOD.batch,
+            this.scValToArray([this.publicKeyToScVal(ACCOUNT_FOR_SIMULATE)]),
+            batchCalls,
+            xdr.ScVal.scvBool(true),
+        )
+            .then(
+                tx =>
+                    this.simulateTx(
+                        tx,
+                    ) as Promise<StellarSdk.rpc.Api.SimulateTransactionSuccessResponse>,
+            )
+            .then(({ result }) => {
+                const [name, symbol] = (result.retval.value() as { value: () => unknown }[]).map(
+                    val => val.value().toString(),
+                );
+
+                const [code, issuer] = name.split(':');
+
+                try {
+                    const asset: ClassicToken = StellarService.createAsset(
+                        code,
+                        issuer,
+                    ) as ClassicToken;
+
+                    if (asset.contractId(getNetworkPassphrase()) !== contractId) {
+                        throw new Error();
+                    }
+
+                    asset.type = TokenType.classic;
+                    asset.contract = contractId;
+
+                    return asset;
+                } catch {
+                    return {
+                        type: TokenType.soroban,
+                        contract: contractId,
+                        name,
+                        code: symbol,
+                    };
+                }
+            });
+    }
+
+    getAssetFromContractId(id: string): Promise<Asset> {
+        // if (this.assetsCache.has(id)) {
+        //     return Promise.resolve(this.assetsCache.get(id));
+        // }
         return this.buildSmartContactTx(ACCOUNT_FOR_SIMULATE, id, ASSET_CONTRACT_METHOD.NAME)
             .then(
                 tx =>
@@ -157,10 +230,10 @@ export default class SorobanServiceClass {
             .then(({ result }) => {
                 const [code, issuer] = (result.retval.value() as unknown).toString().split(':');
                 const asset = issuer
-                    ? new StellarSdk.Asset(code, issuer)
-                    : StellarSdk.Asset.native();
+                    ? StellarService.createAsset(code, issuer)
+                    : StellarService.createLumen();
 
-                this.assetsCache.set(id, asset);
+                // this.assetsCache.set(id, asset);
 
                 return asset;
             });
@@ -227,11 +300,13 @@ export default class SorobanServiceClass {
             .then(tx => this.prepareTransaction(tx));
     }
 
-    getInitConstantPoolTx(accountId: string, base: Asset, counter: Asset, fee: number, createInfo) {
+    getInitConstantPoolTx(accountId: string, base: Token, counter: Token, fee: number, createInfo) {
         const args = [
             this.publicKeyToScVal(accountId),
             this.scValToArray(
-                this.orderTokens([base, counter]).map(asset => this.assetToScVal(asset)),
+                this.orderTokens([base, counter]).map(asset =>
+                    this.contractIdToScVal(asset.contract),
+                ),
             ),
             this.amountToUint32(fee),
         ];
@@ -282,10 +357,12 @@ export default class SorobanServiceClass {
         );
     }
 
-    getInitStableSwapPoolTx(accountId: string, assets: Asset[], fee: number, createInfo) {
+    getInitStableSwapPoolTx(accountId: string, assets: Token[], fee: number, createInfo) {
         const args = [
             this.publicKeyToScVal(accountId),
-            this.scValToArray(this.orderTokens(assets).map(asset => this.assetToScVal(asset))),
+            this.scValToArray(
+                this.orderTokens(assets).map(asset => this.contractIdToScVal(asset.contract)),
+            ),
             this.amountToUint32(fee * 100),
         ];
 
@@ -330,6 +407,20 @@ export default class SorobanServiceClass {
         );
     }
 
+    parsePoolRewards(value): PoolRewardsInfo {
+        return value.reduce((acc, val) => {
+            const key = val.key().value().toString();
+            if (key === 'exp_at' || key === 'last_time') {
+                acc[key] = new BigNumber(this.i128ToInt(val.val().value()).toString())
+                    .times(1e7)
+                    .toNumber();
+                return acc;
+            }
+            acc[key] = this.i128ToInt(val.val().value());
+            return acc;
+        }, {}) as PoolRewardsInfo;
+    }
+
     getPoolRewards(accountId: string, poolId: string): Promise<PoolRewardsInfo> {
         return this.buildSmartContactTx(
             accountId,
@@ -345,26 +436,43 @@ export default class SorobanServiceClass {
             )
             .then(({ result }) => {
                 if (result) {
-                    return (result.retval.value() as unknown[]).reduce((acc, val) => {
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-expect-error
-                        const key = val.key().value().toString();
-                        if (key === 'exp_at' || key === 'last_time') {
-                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                            // @ts-expect-error
-                            acc[key] = new BigNumber(this.i128ToInt(val.val().value()).toString())
-                                .times(1e7)
-                                .toNumber();
-                            return acc;
-                        }
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-expect-error
-                        acc[key] = this.i128ToInt(val.val().value());
-                        return acc;
-                    }, {}) as PoolRewardsInfo;
+                    return this.parsePoolRewards(result.retval.value());
                 }
 
                 throw new Error('getPoolRewards error');
+            });
+    }
+
+    getPoolsRewards(accountId: string, pools: string[]) {
+        const batches = pools.map(pool =>
+            this.scValToArray([
+                this.contractIdToScVal(pool),
+                xdr.ScVal.scvSymbol(AMM_CONTRACT_METHOD.GET_REWARDS_INFO),
+                this.scValToArray([this.publicKeyToScVal(accountId)]),
+            ]),
+        );
+
+        return this.buildSmartContactTx(
+            accountId,
+            BATCH_SMART_CONTACT_ID,
+            BATCH_CONTRACT_METHOD.batch,
+            this.scValToArray([this.publicKeyToScVal(accountId)]),
+            this.scValToArray(batches),
+            xdr.ScVal.scvBool(true),
+        )
+            .then(tx => this.simulateTx(tx))
+            .then(res => {
+                if (!(res as StellarSdk.rpc.Api.SimulateTransactionSuccessResponse).result) {
+                    throw new Error('getPoolsRewards error');
+                }
+
+                const retValArr = (
+                    res as StellarSdk.rpc.Api.SimulateTransactionSuccessResponse
+                ).result.retval.value() as unknown[];
+
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                return retValArr.map(val => this.parsePoolRewards(val.value()));
             });
     }
 
@@ -417,6 +525,101 @@ export default class SorobanServiceClass {
             this.scValToArray(batches),
             xdr.ScVal.scvBool(false),
         ).then(tx => this.prepareTransaction(tx));
+    }
+
+    async getWithdrawAndClaim(
+        accountId: string,
+        poolAddress: string,
+        shareAmount: string,
+        assets: Token[],
+        shareAddress: string,
+    ): Promise<StellarSdk.Transaction> {
+        const withdrawArgs = [
+            this.publicKeyToScVal(accountId),
+            this.amountToUint128(shareAmount),
+            this.scValToArray(assets.map(() => this.amountToUint128('0.0000001'))),
+        ];
+
+        const withdrawCall = this.scValToArray([
+            this.contractIdToScVal(poolAddress),
+            xdr.ScVal.scvSymbol(AMM_CONTRACT_METHOD.WITHDRAW),
+            this.scValToArray(withdrawArgs),
+        ]);
+
+        const claimCall = this.scValToArray([
+            this.contractIdToScVal(poolAddress),
+            xdr.ScVal.scvSymbol(AMM_CONTRACT_METHOD.CLAIM),
+            this.scValToArray([this.publicKeyToScVal(accountId)]),
+        ]);
+
+        const batchCalls = [withdrawCall, claimCall];
+
+        const burnAuth = new xdr.SorobanAuthorizedInvocation({
+            function: xdr.SorobanAuthorizedFunction.sorobanAuthorizedFunctionTypeContractFn(
+                new xdr.InvokeContractArgs({
+                    functionName: ASSET_CONTRACT_METHOD.BURN,
+                    contractAddress: this.contractIdToScVal(shareAddress).address(),
+                    args: [this.publicKeyToScVal(accountId), this.amountToInt128(shareAmount)],
+                }),
+            ),
+            subInvocations: [],
+        });
+
+        const withdrawAuthInvocation = new xdr.SorobanAuthorizedInvocation({
+            function: xdr.SorobanAuthorizedFunction.sorobanAuthorizedFunctionTypeContractFn(
+                new xdr.InvokeContractArgs({
+                    contractAddress: this.contractIdToScVal(poolAddress).address(),
+                    functionName: AMM_CONTRACT_METHOD.WITHDRAW,
+                    args: withdrawArgs,
+                }),
+            ),
+            subInvocations: [burnAuth],
+        });
+
+        const claimAuthInvocation = new xdr.SorobanAuthorizedInvocation({
+            function: xdr.SorobanAuthorizedFunction.sorobanAuthorizedFunctionTypeContractFn(
+                new xdr.InvokeContractArgs({
+                    contractAddress: this.contractIdToScVal(poolAddress).address(),
+                    functionName: AMM_CONTRACT_METHOD.CLAIM,
+                    args: [this.publicKeyToScVal(accountId)],
+                }),
+            ),
+            subInvocations: [],
+        });
+
+        const rootInvocation = new xdr.SorobanAuthorizedInvocation({
+            function: xdr.SorobanAuthorizedFunction.sorobanAuthorizedFunctionTypeContractFn(
+                new xdr.InvokeContractArgs({
+                    contractAddress: this.contractIdToScVal(BATCH_SMART_CONTACT_ID).address(),
+                    functionName: BATCH_CONTRACT_METHOD.batch,
+                    args: [
+                        this.scValToArray([this.publicKeyToScVal(accountId)]),
+                        this.scValToArray(batchCalls),
+                        xdr.ScVal.scvBool(true),
+                    ],
+                }),
+            ),
+            subInvocations: [withdrawAuthInvocation, claimAuthInvocation],
+        });
+
+        const batchAuth = new xdr.SorobanAuthorizationEntry({
+            credentials: xdr.SorobanCredentials.sorobanCredentialsSourceAccount(),
+            rootInvocation,
+        });
+
+        const batchOperation = StellarSdk.Operation.invokeContractFunction({
+            contract: BATCH_SMART_CONTACT_ID,
+            function: BATCH_CONTRACT_METHOD.batch,
+            args: [
+                this.scValToArray([this.publicKeyToScVal(accountId)]),
+                this.scValToArray(batchCalls),
+                xdr.ScVal.scvBool(true),
+            ],
+            auth: [batchAuth],
+        });
+
+        const tx = await this.buildSmartContactTxFromOp(accountId, batchOperation);
+        return this.prepareTransaction(tx);
     }
 
     getCreationFeeToken() {
@@ -510,7 +713,7 @@ export default class SorobanServiceClass {
             });
     }
 
-    getPoolReserves(assets: Asset[], poolId: string) {
+    getPoolReserves(assets: Token[], poolId: string) {
         return this.buildSmartContactTx(
             ACCOUNT_FOR_SIMULATE,
             poolId,
@@ -540,7 +743,7 @@ export default class SorobanServiceClass {
     getDepositTx(
         accountId: string,
         poolAddress: string,
-        assets: Asset[],
+        assets: Token[],
         amounts: Map<string, string>,
     ) {
         const args = [
@@ -559,7 +762,7 @@ export default class SorobanServiceClass {
                     function: xdr.SorobanAuthorizedFunction.sorobanAuthorizedFunctionTypeContractFn(
                         new xdr.InvokeContractArgs({
                             functionName: ASSET_CONTRACT_METHOD.TRANSFER,
-                            contractAddress: this.assetToScVal(asset).address(),
+                            contractAddress: this.contractIdToScVal(asset.contract).address(),
                             args: [
                                 this.publicKeyToScVal(accountId),
                                 this.contractIdToScVal(poolAddress),
@@ -601,7 +804,7 @@ export default class SorobanServiceClass {
         accountId: string,
         poolAddress: string,
         shareAmount: string,
-        assets: Asset[],
+        assets: Token[],
         shareAddress: string,
     ): Promise<StellarSdk.Transaction> {
         const args = [
@@ -649,7 +852,7 @@ export default class SorobanServiceClass {
 
     getSwapChainedTx(
         accountId: string,
-        base: Asset,
+        base: Token,
         chainedXDR: string,
         amount: string,
         amountWithSlippage: string,
@@ -658,7 +861,7 @@ export default class SorobanServiceClass {
         const args = [
             this.publicKeyToScVal(accountId),
             xdr.ScVal.fromXDR(chainedXDR, 'base64'),
-            this.assetToScVal(base),
+            this.contractIdToScVal(base.contract),
             this.amountToUint128(amount),
             this.amountToUint128(amountWithSlippage),
         ];
@@ -667,7 +870,7 @@ export default class SorobanServiceClass {
             function: xdr.SorobanAuthorizedFunction.sorobanAuthorizedFunctionTypeContractFn(
                 new xdr.InvokeContractArgs({
                     functionName: ASSET_CONTRACT_METHOD.TRANSFER,
-                    contractAddress: this.assetToScVal(base).address(),
+                    contractAddress: this.contractIdToScVal(base.contract).address(),
                     args: [
                         this.publicKeyToScVal(accountId),
                         this.contractIdToScVal(AMM_SMART_CONTACT_ID),
@@ -876,14 +1079,11 @@ export default class SorobanServiceClass {
         );
     }
 
-    private getAssetContractHash(asset: Asset): string {
-        return new StellarSdk.Contract(asset.contractId(getNetworkPassphrase()))
-            .address()
-            .toBuffer()
-            .toString('hex');
+    private getAssetContractHash(asset: Token): string {
+        return new StellarSdk.Contract(asset.contract).address().toBuffer().toString('hex');
     }
 
-    private orderTokens(assets: Asset[]) {
+    private orderTokens(assets: Token[]) {
         for (let i = 0; i < assets.length; i++) {
             for (let j = 0; j < assets.length - 1; j++) {
                 const hash1 = parseInt(this.getAssetContractHash(assets[j]), 16);

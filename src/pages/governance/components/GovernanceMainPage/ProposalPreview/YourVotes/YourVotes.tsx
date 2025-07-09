@@ -2,6 +2,8 @@ import * as React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
+import { GOV_ICE_CODE, ICE_ISSUER } from 'constants/assets';
+
 import { getDateString } from 'helpers/date';
 import ErrorHandler from 'helpers/error-handler';
 import { formatBalance } from 'helpers/format-number';
@@ -11,8 +13,9 @@ import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { StellarService, ToastService } from 'services/globalServices';
-import { GOV_ICE_CODE, ICE_ISSUER, StellarEvents } from 'services/stellar.service';
+import { StellarEvents } from 'services/stellar.service';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
+
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 

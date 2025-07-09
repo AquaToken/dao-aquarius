@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { commonMaxWidth, flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
+import Pending from 'assets/icon-pending-purple.svg';
 import Present from 'assets/icon-present.svg';
 import Bg from 'assets/quests-page-bg.svg';
 
@@ -101,6 +102,16 @@ const TotalPrizeWrapper = styled.div`
     background: linear-gradient(90deg, #bf61e8 0%, #6423af 96.83%);
 `;
 
+const TotalPrizeWrapperGray = styled(TotalPrizeWrapper)`
+    background: ${COLORS.grayText};
+
+    svg {
+        * {
+            stroke: ${COLORS.grayText};
+        }
+    }
+`;
+
 const TotalPrize = styled.div`
     display: flex;
     padding: 1.8rem 2.4rem;
@@ -136,6 +147,15 @@ const TotalText = styled.div`
     }
 `;
 
+const Summary = styled.div`
+    display: flex;
+    gap: 1.6rem;
+
+    ${respondDown(Breakpoints.sm)`
+        flex-direction: column;
+    `}
+`;
+
 const MainBlock = () => (
     <Container>
         <Content>
@@ -144,19 +164,34 @@ const MainBlock = () => (
                 <AnimatedBorderedText /> to Aquarius
             </Title>
             <Description>
-                Earn tokens by learning how to use defi on Stellar and completing onchain actions.
+                Earn tokens by exploring DeFi on Stellar and completing simple on-chain actions.
             </Description>
-            <TotalPrizeWrapper>
-                <TotalPrize>
-                    <IconWrapper>
-                        <Present />
-                    </IconWrapper>
-                    <TotalText>
-                        <span>Prize fund:</span>
-                        <span>$15,000</span>
-                    </TotalText>
-                </TotalPrize>
-            </TotalPrizeWrapper>
+
+            <Summary>
+                <TotalPrizeWrapper>
+                    <TotalPrize>
+                        <IconWrapper>
+                            <Present />
+                        </IconWrapper>
+                        <TotalText>
+                            <span>Prize fund:</span>
+                            <span>$15,000</span>
+                        </TotalText>
+                    </TotalPrize>
+                </TotalPrizeWrapper>
+
+                <TotalPrizeWrapperGray>
+                    <TotalPrize>
+                        <IconWrapper>
+                            <Pending />
+                        </IconWrapper>
+                        <TotalText>
+                            <span style={{ color: COLORS.grayText }}>Quest ended:</span>
+                            <span style={{ color: COLORS.grayText }}>07.07.2025</span>
+                        </TotalText>
+                    </TotalPrize>
+                </TotalPrizeWrapperGray>
+            </Summary>
         </Content>
     </Container>
 );

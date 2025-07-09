@@ -24,6 +24,7 @@ import Arrow from 'assets/icon-arrow-down.svg';
 
 import Asset from 'basics/Asset';
 import Button from 'basics/buttons/Button';
+import CopyButton from 'basics/buttons/CopyButton';
 import { DotsLoader } from 'basics/loaders';
 import Market from 'basics/Market';
 
@@ -32,7 +33,6 @@ import VolumeChart from 'pages/amm/components/VolumeChart/VolumeChart';
 
 import MigratePoolButton from './MigratePoolButton/MigratePoolButton';
 
-import CopyButton from '../../../../web/basics/buttons/CopyButton';
 import DepositToPool from '../DepositToPool/DepositToPool';
 import WithdrawFromPool from '../WithdrawFromPool/WithdrawFromPool';
 
@@ -329,14 +329,14 @@ const PoolsList = ({
 
                 const results = [];
 
-                for (let i = 0; i < pool.assets.length; i++) {
-                    let result = `1 ${pool.assets[i].code}`;
+                for (let i = 0; i < pool.tokens.length; i++) {
+                    let result = `1 ${pool.tokens[i].code}`;
                     const baseShare = pool.reserves[i];
 
-                    for (let j = 0; j < pool.assets.length; j++) {
+                    for (let j = 0; j < pool.tokens.length; j++) {
                         if (i !== j) {
                             const conversionRate = formatBalance(pool.reserves[j] / baseShare);
-                            result += ` = ${conversionRate} ${pool.assets[j].code}`;
+                            result += ` = ${conversionRate} ${pool.tokens[j].code}`;
                         }
                     }
 
@@ -363,7 +363,7 @@ const PoolsList = ({
                     >
                         <PoolMain>
                             <MarketStyled
-                                assets={pool.assets}
+                                assets={pool.tokens}
                                 poolAddress={!withDeposit && (pool as SorobanPool).address}
                                 withoutLink
                                 mobileVerticalDirections
@@ -487,7 +487,7 @@ const PoolsList = ({
                                             </ExpandedDataRow>
                                         )}
 
-                                        {pool.assets.map((asset: AssetType, index: number) => (
+                                        {pool.tokens.map((asset: AssetType, index: number) => (
                                             <ExpandedDataRow key={asset.code + asset.issuer}>
                                                 <span>Total {asset.code}:</span>
                                                 <span>
@@ -568,8 +568,8 @@ const PoolsList = ({
                                                                       MigrateLiquidityStep1,
                                                                       {
                                                                           pool,
-                                                                          base: pool.assets[0],
-                                                                          counter: pool.assets[1],
+                                                                          base: pool.tokens[0],
+                                                                          counter: pool.tokens[1],
                                                                       },
                                                                   ).then(() => onUpdate())
                                                                 : ModalService.openModal(

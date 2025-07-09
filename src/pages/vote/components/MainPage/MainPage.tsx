@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { D_ICE_CODE, DOWN_ICE_CODE, ICE_ISSUER, UP_ICE_CODE } from 'constants/assets';
 import { MainRoutes, MarketRoutes } from 'constants/routes';
 
 import { getAquaAssetData, getAssetString } from 'helpers/assets';
@@ -14,7 +15,7 @@ import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService, StellarService } from 'services/globalServices';
-import { DOWN_ICE_CODE, ICE_ISSUER, StellarEvents, UP_ICE_CODE } from 'services/stellar.service';
+import { StellarEvents } from 'services/stellar.service';
 
 import { Asset } from 'types/stellar';
 
@@ -25,6 +26,7 @@ import { Breakpoints, COLORS } from 'web/styles';
 import Aqua from 'assets/aqua-logo-small.svg';
 import BackgroundImageLeft from 'assets/background-left.svg';
 import BackgroundImageRight from 'assets/background-right.svg';
+import dIce from 'assets/dice-logo.svg';
 import Ice from 'assets/ice-logo.svg';
 import Info from 'assets/icon-info.svg';
 
@@ -299,6 +301,12 @@ const IceLogo = styled(Ice)`
     margin-right: 0.5rem;
 `;
 
+const DIceLogo = styled(dIce)`
+    height: 1.8rem;
+    width: 1.8rem;
+    margin-right: 0.5rem;
+`;
+
 const AquaLogo = styled(Aqua)`
     height: 1.8rem;
     width: 1.8rem;
@@ -322,6 +330,7 @@ const UPDATE_INTERVAL = 60 * 1000; // 1 minute
 
 export const UP_ICE = StellarService?.createAsset(UP_ICE_CODE, ICE_ISSUER);
 export const DOWN_ICE = StellarService?.createAsset(DOWN_ICE_CODE, ICE_ISSUER);
+export const DELEGATE_ICE = StellarService?.createAsset(D_ICE_CODE, ICE_ISSUER);
 
 enum UrlParams {
     sort = 'sort',
@@ -691,12 +700,13 @@ const MainPage = (): React.ReactNode => {
         setChangePageLoading(true);
     };
 
-    const { totalAqua, totalUpIce, totalDownIce } = useMemo(() => {
+    const { totalAqua, totalUpIce, totalDIce, totalDownIce } = useMemo(() => {
         if (!totalStats) {
             return {
                 totalAqua: 0,
                 totalUpIce: 0,
                 totalDownIce: 0,
+                totalDIce: 0,
             };
         }
         const { assets } = totalStats;
@@ -705,6 +715,8 @@ const MainPage = (): React.ReactNode => {
             totalAqua: +assets.find(({ asset }) => asset === aquaAssetString)?.votes_sum,
             totalUpIce: +assets.find(({ asset }) => asset === getAssetString(UP_ICE))?.votes_sum,
             totalDownIce: +assets.find(({ asset }) => asset === getAssetString(DOWN_ICE))
+                ?.votes_sum,
+            totalDIce: +assets.find(({ asset }) => asset === getAssetString(DELEGATE_ICE))
                 ?.votes_sum,
         };
     }, [totalStats]);
@@ -819,6 +831,13 @@ const MainPage = (): React.ReactNode => {
                                                 <span>
                                                     <IceLogo />
                                                     {formatBalance(totalUpIce, true)}
+                                                </span>
+                                            </TooltipRow>
+                                            <TooltipRow>
+                                                <span>dICE:</span>
+                                                <span>
+                                                    <DIceLogo />
+                                                    {formatBalance(totalDIce, true)}
                                                 </span>
                                             </TooltipRow>
                                             <TooltipRow>

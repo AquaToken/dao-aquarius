@@ -5,7 +5,7 @@ import { AssetSimple } from 'store/assetsStore/types';
 
 import { ModalService } from 'services/globalServices';
 
-import { Asset as AssetType } from 'types/stellar';
+import { Token } from 'types/token';
 
 import { COLORS } from 'web/styles';
 
@@ -46,8 +46,8 @@ const ArrowIcon = styled(Arrow)`
 `;
 
 type Props = {
-    asset: AssetType;
-    onUpdate: (asset: AssetType) => void;
+    asset: Token;
+    onUpdate: (asset: Token) => void;
     assetsList: AssetSimple[];
 };
 

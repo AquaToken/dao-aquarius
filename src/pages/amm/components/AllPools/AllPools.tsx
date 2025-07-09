@@ -15,6 +15,7 @@ import { POOL_TYPE } from 'services/soroban.service';
 
 import { PoolProcessed } from 'types/amm';
 
+import Input from 'web/basics/inputs/Input';
 import { flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -34,8 +35,6 @@ import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 import BoostTooltip from 'pages/amm/components/BoostTooltip/BoostTooltip';
 import { AnalyticsTabs, AnalyticsUrlParams } from 'pages/amm/pages/Analytics';
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
-
-import Input from '../../../../web/basics/inputs/Input';
 
 const Header = styled.div`
     ${flexRowSpaceBetween};
@@ -204,7 +203,9 @@ const AllPools = (): React.ReactNode => {
                 setTotal(total);
                 setPending(false);
             })
-            .catch(() => {});
+            .catch(e => {
+                console.log(e);
+            });
     }, [filter, page, debouncedSearch, sort]);
 
     const goToPoolPage = (id: string) => {
@@ -363,7 +364,7 @@ const AllPools = (): React.ReactNode => {
                                 {
                                     children: (
                                         <Market
-                                            assets={pool.assets}
+                                            assets={pool.tokens}
                                             mobileVerticalDirections
                                             withoutLink
                                             poolType={pool.pool_type as POOL_TYPE}

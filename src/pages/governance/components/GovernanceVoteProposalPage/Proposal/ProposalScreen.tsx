@@ -5,10 +5,12 @@ import styled from 'styled-components';
 import { GovernanceRoutes } from 'constants/routes';
 
 import { getDateString } from 'helpers/date';
+import { getIsTestnetEnv } from 'helpers/env';
+
+import { useIsOnViewport, useIsOverScrolled } from 'hooks/useIsOnViewport';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { useIsOnViewport, useIsOverScrolled } from 'hooks/useIsOnViewport';
 import { commonMaxWidth, flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -179,7 +181,12 @@ const SidebarMobile = styled(Sidebar)`
 `;
 
 const viewOnStellarExpert = (account: string) => {
-    window.open(`https://stellar.expert/explorer/public/account/${account}`, '_blank');
+    window.open(
+        `https://stellar.expert/explorer/${
+            getIsTestnetEnv() ? 'testnet' : 'public'
+        }/account/${account}`,
+        '_blank',
+    );
 };
 
 const ScrollToSidebarButton = styled.div`
@@ -516,6 +523,19 @@ const ProposalScreen = ({
                                                       withTime: true,
                                                   },
                                               )}
+                                    </DetailsDescription>
+                                </Column>
+                                <Column>
+                                    <DetailsTitle>Proposed by:</DetailsTitle>
+                                    <DetailsDescription>
+                                        <AccountBlock>
+                                            <PublicKeyWithIcon pubKey={proposedBy} />
+                                            <ExternalButton
+                                                onClick={() => viewOnStellarExpert(proposedBy)}
+                                            >
+                                                <ExternalIcon />
+                                            </ExternalButton>
+                                        </AccountBlock>
                                     </DetailsDescription>
                                 </Column>
                             </DataDetails>
