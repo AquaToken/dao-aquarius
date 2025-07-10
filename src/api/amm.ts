@@ -443,7 +443,7 @@ export const getUserRewardsList = async (
                 results.push({
                     id: chunk[index].address,
                     amount: Number(item.to_claim),
-                    assets: chunk[index].assets,
+                    tokens: chunk[index].tokens,
                     type: chunk[index].pool_type,
                 });
             }
