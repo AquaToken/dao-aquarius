@@ -380,7 +380,6 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
             let sum = 0;
 
             res.forEach((reward, index) => {
-                map.set(pools[index].address, reward);
                 sum += Number(reward.to_claim);
                 if (Number(reward.to_claim)) {
                     map.set(pools[index].address, reward);
@@ -552,16 +551,13 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                     head={[
                         {
                             children: 'Pool',
-                            flexSize: 3,
+                            flexSize: 3.5,
                         },
                         { children: 'Base APY', flexSize: 0.6 },
                         { children: 'Rewards APY', flexSize: 1.2 },
                         { children: 'Pooled' },
-                        { children: 'Without boost' },
-                        { children: 'With boost' },
+                        { children: 'My daily rewards' },
                         { children: 'Rewards to claim', align: CellAlign.Right },
-                        { children: 'Boost', align: CellAlign.Right },
-                        { children: 'New boost', align: CellAlign.Right },
                         { children: '' },
                     ]}
                     body={filteredPools.map(pool => {
