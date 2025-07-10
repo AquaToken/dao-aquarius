@@ -585,7 +585,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                 {
                                     children: (
                                         <Market
-                                            assets={pool.assets}
+                                            assets={pool.tokens}
                                             mobileVerticalDirections
                                             withoutLink
                                             poolType={pool.pool_type as POOL_TYPE}
@@ -653,7 +653,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                             <Tooltip
                                                 content={
                                                     <TooltipInner>
-                                                        {pool.assets.map((asset, index) => (
+                                                        {pool.tokens.map((asset, index) => (
                                                             <TooltipRow key={getAssetString(asset)}>
                                                                 <span>Pooled {asset.code}</span>
                                                                 <span>

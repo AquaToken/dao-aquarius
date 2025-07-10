@@ -93,8 +93,8 @@ const ExpandedMenu = ({ pool }: Props) => {
                             }
                             ModalService.openModal(MigrateLiquidityStep1, {
                                 pool,
-                                base: pool.assets[0],
-                                counter: pool.assets[1],
+                                base: pool.tokens[0],
+                                counter: pool.tokens[1],
                             });
                         }}
                     >
