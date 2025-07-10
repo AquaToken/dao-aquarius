@@ -160,6 +160,7 @@ const AssetsDomains = styled.span<{ $mobileVerticalDirections?: boolean }>`
     font-size: 1.4rem;
     line-height: 2rem;
     text-align: left;
+    word-break: break-word;
 
     ${respondDown(Breakpoints.md)`
         text-align: center;
