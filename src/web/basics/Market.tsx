@@ -269,7 +269,7 @@ const Market = ({
 
     const getAssetDetails = (asset: Token) => {
         if (asset.type === TokenType.soroban) {
-            return [asset.code, asset.name];
+            return [asset.name, 'soroban token'];
         }
         if (asset.isNative()) {
             return [LumenInfo.name, LumenInfo.home_domain];
