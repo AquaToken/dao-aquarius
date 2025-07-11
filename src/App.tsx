@@ -1,9 +1,10 @@
 import { MoonPayProvider } from '@moonpay/moonpay-react';
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
-import { createGlobalStyle } from 'styled-components';
+import styled, { createGlobalStyle } from 'styled-components';
 
 import { D_ICE_CODE, ICE_ISSUER } from 'constants/assets';
+import { LS_DELEGATE_PROMO_VIEWED } from 'constants/local-storage';
 import { MainRoutes } from 'constants/routes';
 
 import { getEnv, getIsTestnetEnv, setProductionEnv } from 'helpers/env';
@@ -17,6 +18,8 @@ import { StellarEvents } from 'services/stellar.service';
 import AppGlobalStyle from 'web/AppGlobalStyles';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
+
+import DelegateLogo from 'assets/delegate-promo.svg';
 
 import PageLoader from 'basics/loaders/PageLoader';
 import PageTitle from 'basics/PageTitle';
@@ -36,6 +39,7 @@ import SentryService from './services/sentry.service';
 import Provider from './store';
 import useAssetsStore from './store/assetsStore/useAssetsStore';
 import useAuthStore from './store/authStore/useAuthStore';
+import DelegatePromoModal from './web/modals/alerts/DelegatePromoModal';
 import DIceTrustlineModal from './web/modals/DIceTrustlineModal';
 
 const MainPage = lazy(() => import('pages/main/MainPage'));
@@ -60,6 +64,16 @@ const DelegatePage = lazy(() => import('pages/delegate/Delegate'));
 
 const UPDATE_ASSETS_DATE = 'update assets timestamp';
 const UPDATE_PERIOD = 24 * 60 * 60 * 1000;
+
+const ModalBG = styled(DelegateLogo)`
+    object-position: center center;
+    height: 28.2rem;
+    width: 100%;
+
+    ${respondDown(Breakpoints.md)`
+        width: 100%;
+    `}
+`;
 
 const App = () => {
     const [wcLoginChecked, setWcLoginChecked] = useState(false);
@@ -132,6 +146,13 @@ const App = () => {
             processNewAssets(assets);
         }
     }, [assets]);
+
+    useEffect(() => {
+        const isViewed = !!localStorage.getItem(LS_DELEGATE_PROMO_VIEWED);
+        if (!isViewed) {
+            ModalService.openModal(DelegatePromoModal, {}, false, <ModalBG />);
+        }
+    }, []);
 
     useEffect(() => {
         if (isLogged) {
