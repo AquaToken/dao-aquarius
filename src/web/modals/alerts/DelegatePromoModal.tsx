@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { LS_DELEGATE_PROMO_VIEWED, LS_DELEGATE_PROMO_VIEWED_LOCKER } from 'constants/local-storage';
+import { LS_DELEGATE_PROMO_VIEWED_LOCKER } from 'constants/local-storage';
 import { MainRoutes } from 'constants/routes';
 
 import { ModalProps } from 'types/modal';
@@ -61,16 +61,10 @@ const ButtonBlock = styled.div`
     }
 `;
 
-const DelegatePromoModal = ({ confirm, params }: ModalProps<{ isForLocker: boolean }>) => {
-    const { isForLocker } = params;
-
+const DelegatePromoModal = ({ confirm }: ModalProps<never>) => {
     useEffect(() => {
-        if (isForLocker) {
-            localStorage.setItem(LS_DELEGATE_PROMO_VIEWED_LOCKER, 'true');
-        } else {
-            localStorage.setItem(LS_DELEGATE_PROMO_VIEWED, 'true');
-        }
-    }, [isForLocker]);
+        localStorage.setItem(LS_DELEGATE_PROMO_VIEWED_LOCKER, 'true');
+    }, []);
     return (
         <ModalWrapper>
             <ModalTitle>Delegate your ICE!</ModalTitle>
