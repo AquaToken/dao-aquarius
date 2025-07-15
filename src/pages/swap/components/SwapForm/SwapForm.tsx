@@ -206,7 +206,7 @@ const SwapForm = ({
                         }
                         setCounterAmount((Number(res.amount) / 1e7).toFixed(7));
                         setBestPathXDR(res.swap_chain_xdr);
-                        setBestPath(res.tokens);
+                        setBestPath(res.tokens_addresses);
                         setBestPools(res.pools);
                     }
                 })
@@ -244,7 +244,7 @@ const SwapForm = ({
                         }
                         setBaseAmount((Number(res.amount) / 1e7).toFixed(7));
                         setBestPathXDR(res.swap_chain_xdr);
-                        setBestPath(res.tokens);
+                        setBestPath(res.tokens_addresses);
                         setBestPools(res.pools);
                     }
                 })
@@ -288,7 +288,7 @@ const SwapForm = ({
                         setBaseAmount(amount);
                     }
                     setBestPathXDR(res.swap_chain_xdr);
-                    setBestPath(res.tokens);
+                    setBestPath(res.tokens_addresses);
                     setBestPools(res.pools);
                 }
             })

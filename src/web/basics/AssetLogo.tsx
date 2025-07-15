@@ -120,6 +120,10 @@ const AssetLogo = ({
 
     const { assetsInfo } = useAssetsStore();
 
+    if (!asset.type && !(asset as ClassicToken).issuer) {
+        return <Unknown $isSmall={isSmall} $isBig={isBig} $isCircle={isCircle} {...props} />;
+    }
+
     if (asset.type === TokenType.soroban) {
         return <Soroban $isSmall={isSmall} $isBig={isBig} $isCircle={isCircle} {...props} />;
     }
