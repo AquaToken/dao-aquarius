@@ -247,20 +247,6 @@ const RewardsList = () => {
                 head={[
                     { children: 'Market', flexSize: 1.5 },
                     {
-                        children: 'SDEX daily reward',
-                        sort: {
-                            onClick: () =>
-                                changeSort(
-                                    sort === RewardsSort.sdexUp
-                                        ? RewardsSort.sdexDown
-                                        : RewardsSort.sdexUp,
-                                ),
-                            isEnabled: sort === RewardsSort.sdexUp || sort === RewardsSort.sdexDown,
-                            isReversed: sort === RewardsSort.sdexDown,
-                        },
-                        align: CellAlign.Right,
-                    },
-                    {
                         children: 'Aquarius AMM daily reward',
                         sort: {
                             onClick: () =>
@@ -271,6 +257,20 @@ const RewardsList = () => {
                                 ),
                             isEnabled: sort === RewardsSort.ammUp || sort === RewardsSort.ammDown,
                             isReversed: sort === RewardsSort.ammDown,
+                        },
+                        align: CellAlign.Right,
+                    },
+                    {
+                        children: 'SDEX daily reward',
+                        sort: {
+                            onClick: () =>
+                                changeSort(
+                                    sort === RewardsSort.sdexUp
+                                        ? RewardsSort.sdexDown
+                                        : RewardsSort.sdexUp,
+                                ),
+                            isEnabled: sort === RewardsSort.sdexUp || sort === RewardsSort.sdexDown,
+                            isReversed: sort === RewardsSort.sdexDown,
                         },
                         align: CellAlign.Right,
                     },
@@ -322,22 +322,6 @@ const RewardsList = () => {
                             {
                                 children: (
                                     <Amount>
-                                        <span>
-                                            {formatBalance(daily_sdex_reward)} AQUA (
-                                            {Math.round(
-                                                (daily_sdex_reward * 100) /
-                                                    (daily_sdex_reward + daily_amm_reward),
-                                            )}
-                                            %)
-                                        </span>
-                                    </Amount>
-                                ),
-                                label: 'SDEX daily reward',
-                                align: CellAlign.Right,
-                            },
-                            {
-                                children: (
-                                    <Amount>
                                         {!marketHasPools(market_key) && (
                                             <Tooltip
                                                 content={
@@ -371,6 +355,22 @@ const RewardsList = () => {
                                     </Amount>
                                 ),
                                 label: 'Aquarius AMM daily reward',
+                                align: CellAlign.Right,
+                            },
+                            {
+                                children: (
+                                    <Amount>
+                                        <span>
+                                            {formatBalance(daily_sdex_reward)} AQUA (
+                                            {Math.round(
+                                                (daily_sdex_reward * 100) /
+                                                    (daily_sdex_reward + daily_amm_reward),
+                                            )}
+                                            %)
+                                        </span>
+                                    </Amount>
+                                ),
+                                label: 'SDEX daily reward',
                                 align: CellAlign.Right,
                             },
                             {

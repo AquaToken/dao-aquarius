@@ -217,22 +217,22 @@ const App = () => {
                             </PageTitle>
                         </Route>
                         <Route path={MainRoutes.locker}>
-                            <PageTitle title="Staging: Locker">
+                            <PageTitle title="Staging: Locker - Aquarius">
                                 <LockerPage />
                             </PageTitle>
                         </Route>
                         <Route path={MainRoutes.governance}>
-                            <PageTitle title="Staging: Governance">
+                            <PageTitle title="Staging: Governance - Aquarius">
                                 <Governance />
                             </PageTitle>
                         </Route>
                         <Route path={MainRoutes.vote}>
-                            <PageTitle title="Staging: Voting">
+                            <PageTitle title="Staging: Voting - Aquarius">
                                 <VotePage />
                             </PageTitle>
                         </Route>
                         <Route path={MainRoutes.bribes}>
-                            <PageTitle title="Staging: Bribes">
+                            <PageTitle title="Staging: Bribes - Aquarius">
                                 <BribesPage />
                             </PageTitle>
                         </Route>
@@ -240,17 +240,17 @@ const App = () => {
                             <MarketPage />
                         </Route>
                         <Route path={MainRoutes.rewards}>
-                            <PageTitle title="Staging: Rewards">
+                            <PageTitle title="Staging: Rewards - Aquarius">
                                 <RewardsPage />
                             </PageTitle>
                         </Route>
                         <Route path={MainRoutes.airdrop}>
-                            <PageTitle title="Staging: Airdrop">
+                            <PageTitle title="Staging: Airdrop - Aquarius">
                                 <AirdropPage />
                             </PageTitle>
                         </Route>
                         <Route path={MainRoutes.airdrop2}>
-                            <PageTitle title="Staging: Airdrop #2">
+                            <PageTitle title="Staging: Airdrop #2 - Aquarius">
                                 <Airdrop2Page />
                             </PageTitle>
                         </Route>
@@ -262,49 +262,49 @@ const App = () => {
                         </Route>
 
                         <Route path={MainRoutes.walletConnect}>
-                            <PageTitle title="Staging: WalletConnect">
+                            <PageTitle title="Staging: WalletConnect - Aquarius">
                                 <WalletConnectPage />
                             </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.amm}>
-                            <PageTitle title="Staging: Pools">
+                            <PageTitle title="Staging: Pools - Aquarius">
                                 <AmmPage />
                             </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.swap}>
-                            <PageTitle title="Staging: Swap">
+                            <PageTitle title="Staging: Swap - Aquarius">
                                 <SwapPage />
                             </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.buyAqua}>
-                            <PageTitle title="Staging: Buy Aqua">
+                            <PageTitle title="Staging: Buy Aqua - Aquarius">
                                 <BuyAquaPage />
                             </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.testnet}>
-                            <PageTitle title="Staging: Testnet">
+                            <PageTitle title="Staging: Testnet - Aquarius">
                                 <TestnetSwitcherPage />
                             </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.terms}>
-                            <PageTitle title="Staging: Terms of Use">
+                            <PageTitle title="Staging: Terms of Use - Aquarius">
                                 <TermsPage />
                             </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.privacy}>
-                            <PageTitle title="Staging: Privacy Policy">
+                            <PageTitle title="Staging: Privacy Policy - Aquarius">
                                 <PrivacyPage />
                             </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.token}>
-                            <PageTitle title="AQUA token">
+                            <PageTitle title="AQUA token - Aquarius">
                                 <TokenPage />
                             </PageTitle>
                         </Route>

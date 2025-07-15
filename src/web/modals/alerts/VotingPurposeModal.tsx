@@ -4,20 +4,11 @@ import styled from 'styled-components';
 
 import { ModalProps } from 'types/modal';
 
+import { COLORS } from 'web/styles';
+
 import Button from 'basics/buttons/Button';
 import Checkbox from 'basics/inputs/Checkbox';
-import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
-
-import { respondDown } from '../../mixins';
-import { Breakpoints, COLORS } from '../../styles';
-
-const Container = styled.div`
-    width: 52.8rem;
-
-    ${respondDown(Breakpoints.md)`
-        width: 100%;
-    `}
-`;
+import { ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 const CheckboxBlock = styled.div`
     padding: 1.5rem 0 1.6rem;
@@ -26,6 +17,11 @@ const CheckboxBlock = styled.div`
 
 const StyledButton = styled(Button)`
     margin-top: 3.3rem;
+`;
+
+const Description = styled.p`
+    font-size: 1.4rem;
+    line-height: 2rem;
 `;
 
 export const SHOW_PURPOSE_ALIAS = 'show purpose';
@@ -42,14 +38,23 @@ const VotingPurposeModal = ({ close }: ModalProps<never>) => {
     }, [checked]);
 
     return (
-        <Container>
-            <ModalTitle>Liquidity voting with AQUA & ICE</ModalTitle>
-            <ModalDescription>
-                You can use AQUA or ICE tokens to vote for your favorite markets on Stellar, helping
-                improve their liquidity. These votes define the size of the Aquarius liquidity
-                rewards paid to AMM liquidity providers and SDEX traders. Choose the markets that
-                are important to you, and support them through the on-chain voting.
-            </ModalDescription>
+        <ModalWrapper $width="54rem">
+            <ModalTitle>Liquidity Voting with ICE & AQUA</ModalTitle>
+            <Description>
+                Use your <b>ICE</b> or <b>AQUA</b> tokens to vote for markets on Stellar. Your votes
+                help direct AQUA rewards to AMM liquidity providers and SDEX market makers.
+                <br />
+                <br />
+                Most users vote with <b>ICE</b> — it’s earned by locking AQUA and gives stronger
+                voting power.
+                <br />
+                <br />
+                Don’t want to vote manually? You can now <b>delegate your ICE</b> to trusted voters.
+                <br />
+                <br />
+                Voting earns <b>incentives and bribes</b> — support the markets you care about and
+                get rewarded for it.
+            </Description>
             <CheckboxBlock>
                 <Checkbox label="Don’t show again" checked={checked} onChange={setChecked} />
             </CheckboxBlock>
@@ -57,7 +62,7 @@ const VotingPurposeModal = ({ close }: ModalProps<never>) => {
             <StyledButton fullWidth onClick={() => close()}>
                 Let’s start
             </StyledButton>
-        </Container>
+        </ModalWrapper>
     );
 };
 

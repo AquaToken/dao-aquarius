@@ -114,13 +114,13 @@ const DividedRewards = ({ totalRewards }: DividedRewardsProps): React.ReactNode 
             <div>
                 <Amount>
                     {totalRewards ? (
-                        `${formatBalance(totalRewards.total_daily_sdex_reward)} AQUA`
+                        `${formatBalance(totalRewards.total_daily_amm_reward)} AQUA`
                     ) : (
                         <DotsLoader />
                     )}
                 </Amount>
                 <Description>
-                    <b>SDEX</b> daily reward
+                    <b>Aquarius AMM</b> daily reward
                 </Description>
             </div>
         </Card>
@@ -130,13 +130,13 @@ const DividedRewards = ({ totalRewards }: DividedRewardsProps): React.ReactNode 
             <div>
                 <Amount>
                     {totalRewards ? (
-                        `${formatBalance(totalRewards.total_daily_amm_reward)} AQUA`
+                        `${formatBalance(totalRewards.total_daily_sdex_reward)} AQUA`
                     ) : (
                         <DotsLoader />
                     )}
                 </Amount>
                 <Description>
-                    <b>Aquarius AMM</b> daily reward
+                    <b>SDEX</b> daily reward
                 </Description>
             </div>
         </Card>
