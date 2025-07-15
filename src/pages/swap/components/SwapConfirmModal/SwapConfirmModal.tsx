@@ -5,7 +5,6 @@ import styled from 'styled-components';
 
 import { getPathPoolsFee } from 'api/amm';
 
-import { getAssetFromString, isValidClassicTokenString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
@@ -21,8 +20,6 @@ import { Token } from 'types/token';
 
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
-
-import SorobanLogo from 'assets/soroban-token-logo.svg';
 
 import AssetLogo from 'basics/AssetLogo';
 import Button from 'basics/buttons/Button';
@@ -77,15 +74,6 @@ const Pools = styled.div`
     `}
 `;
 
-const Soroban = styled(SorobanLogo)`
-    height: 3.2rem;
-    width: 3.2rem;
-    max-height: 3.2rem;
-    max-width: 3.2rem;
-    min-width: 3.2rem;
-    border-radius: '50%';
-`;
-
 const STROOP = 0.0000001;
 
 interface SwapConfirmModalParams {
@@ -108,8 +96,15 @@ const SwapConfirmModal = ({
     const [fees, setFees] = useState(null);
     const [swapPending, setSwapPending] = useState(false);
     const [txFee, setTxFee] = useState(null);
+    const [pathTokens, setPathTokens] = useState<Token[]>(null);
 
     const { account } = useAuthStore();
+
+    useEffect(() => {
+        Promise.all(bestPath.map(str => SorobanService.parseTokenContractId(str))).then(res => {
+            setPathTokens(res);
+        });
+    }, []);
 
     useEffect(() => {
         getPathPoolsFee(bestPools)
@@ -206,7 +201,7 @@ const SwapConfirmModal = ({
             });
     };
 
-    if (!fees) {
+    if (!fees || !pathTokens) {
         return (
             <Container>
                 <PageLoader />
@@ -259,28 +254,20 @@ const SwapConfirmModal = ({
             </DescriptionRow>
 
             <Pools>
-                {bestPools.map((pool, index) => (
-                    <PathPool
-                        key={pool}
-                        baseIcon={
-                            isValidClassicTokenString(bestPath[index]) ? (
-                                <AssetLogo asset={getAssetFromString(bestPath[index])} />
-                            ) : (
-                                <Soroban />
-                            )
-                        }
-                        counterIcon={
-                            isValidClassicTokenString(bestPath[index + 1]) ? (
-                                <AssetLogo asset={getAssetFromString(bestPath[index + 1])} />
-                            ) : (
-                                <Soroban />
-                            )
-                        }
-                        fee={fees.get(pool)}
-                        address={pool}
-                        isLastPool={index === bestPools.length - 1}
-                    />
-                ))}
+                {bestPools.map((pool, index) => {
+                    const base = pathTokens[index];
+                    const counter = pathTokens[index + 1];
+                    return (
+                        <PathPool
+                            key={pool}
+                            baseIcon={<AssetLogo asset={base} />}
+                            counterIcon={<AssetLogo asset={counter} />}
+                            fee={fees.get(pool)}
+                            address={pool}
+                            isLastPool={index === bestPools.length - 1}
+                        />
+                    );
+                })}
             </Pools>
 
             <Divider />

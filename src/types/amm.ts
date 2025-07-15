@@ -109,6 +109,7 @@ export type FindSwapPath = {
     pools: string[];
     tokens: string[];
     amount: string;
+    tokens_addresses: string[];
 };
 
 export interface PoolClassicProcessed extends Omit<PoolClassic, 'reserves'> {

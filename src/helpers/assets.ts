@@ -3,7 +3,7 @@ import { ASSETS_ENV_DATA } from 'constants/assets';
 import { SorobanService, StellarService } from 'services/globalServices';
 
 import { Asset } from 'types/stellar';
-import { ClassicToken, SorobanToken, Token, TokenType } from 'types/token';
+import { ClassicToken, Token, TokenType } from 'types/token';
 
 import { getEnv, getNetworkPassphrase } from './env';
 
@@ -25,23 +25,12 @@ export const getStellarAsset = (code: string, issuer: string): Asset => {
     return StellarService.createAsset(code, issuer);
 };
 
-export const isValidClassicTokenString = (str: string): boolean => {
-    if (str === 'native') {
-        return true;
-    }
-
-    const [code, issuer] = str.split(':');
-
-    return issuer && StellarService.isValidPublicKey(issuer) && `${code}:${issuer}` === str;
-};
-
 export const getAssetFromString = (str: string, onUpdateCB?: () => void): Token => {
     if (StellarService.isValidContract(str)) {
-        const result: SorobanToken = { type: TokenType.soroban, contract: str } as SorobanToken;
+        const result = { contract: str } as Token;
 
-        SorobanService.parseTokenContractId(str).then((res: SorobanToken) => {
-            result.code = res.code;
-            result.name = res.name;
+        SorobanService.parseTokenContractId(str).then((res: Token) => {
+            Object.assign(result, res);
             if (onUpdateCB) {
                 onUpdateCB();
             }
