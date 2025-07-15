@@ -21,6 +21,16 @@ const Questions = () => (
             }
         />
         <Question
+            question="How do I participate in earning AMM daily rewards?"
+            answer={
+                <span>
+                    Earn AMM rewards by providing liquidity to Aquarius AMM pools. Rewards are
+                    distributed based on your contribution. Go to pool details and click “Deposit”
+                    to start earning.
+                </span>
+            }
+        />
+        <Question
             question="How do I participate in earning SDEX daily rewards?"
             answer={
                 <span>
@@ -29,16 +39,6 @@ const Questions = () => (
                     to take. Use platforms like LOBSTR, StellarX, StellarTerm, or market-making
                     tools like Kelp bot. Ensure you have an AQUA trustline in your Stellar wallet to
                     receive rewards.
-                </span>
-            }
-        />
-        <Question
-            question="How do I participate in earning AMM daily rewards?"
-            answer={
-                <span>
-                    Earn AMM rewards by providing liquidity to Aquarius AMM pools. Rewards are
-                    distributed based on your contribution. Go to pool details and click “Deposit”
-                    to start earning.
                 </span>
             }
         />
