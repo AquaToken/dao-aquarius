@@ -183,7 +183,7 @@ const MainBlock = () => {
                     AQUA
                     <AnimatedBorderedText />
                 </Title>
-                <Description>Powers the #1 Stellar defi protocol</Description>
+                <Description>Powers the #1 Stellar DeFi protocol</Description>
                 <SecondaryDescription>
                     Join Aquarius to start earning AQUA rewards for liquidity provision and voting
                 </SecondaryDescription>
