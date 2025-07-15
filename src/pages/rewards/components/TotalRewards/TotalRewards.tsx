@@ -119,9 +119,9 @@ const TotalRewards = ({ totalRewards }: TotalRewardsProps): React.ReactNode => (
             )}
         </Title>
         <Description>
-            Aquarius enhances Stellar liquidity by rewarding SDEX market makers and Aquarius AMM
-            liquidity providers. This page tracks AQUA rewards and their distribution across SDEX
-            markets and Aquarius AMM pools.
+            Aquarius boosts Stellar liquidity by rewarding both Aquarius AMM liquidity providers and
+            market makers on the Stellar Decentralized Exchange (SDEX). This page shows how AQUA
+            rewards are distributed across AMM pools and SDEX markets.
         </Description>
     </Container>
 );

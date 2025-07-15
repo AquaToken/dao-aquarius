@@ -9,7 +9,7 @@ const MarketPage = lazy(() => import('./pages/MarketPage'));
 
 const Market = () => (
     <Switch>
-        <Route exact path={`${MarketRoutes.main}/:base/:counter`}>
+        <Route exact path={`${MarketRoutes.main}/:base/:counter - Aquarius`}>
             <MarketPage />
         </Route>
         <Route component={NotFoundPage} />
