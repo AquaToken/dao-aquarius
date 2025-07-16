@@ -36,6 +36,17 @@ const AppGlobalStyle = createGlobalStyle`
     line-height: 1.6rem;
     color: ${COLORS.paragraphText};
   }
+
+  @media print {
+      html, body, #root {
+          height: auto !important;
+          overflow: visible !important;
+      }
+
+      * {
+          overflow: visible !important;
+      }
+  }
   
   h1, h2, h3, h4, h5, h6 {
   	margin: 0;
