@@ -40,6 +40,8 @@ import Market from 'basics/Market';
 import Pagination from 'basics/Pagination';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
+import DelegateBlockSmall from 'components/DelegateBlockSmall';
+
 import CreatePairModal from './CreatePairModal/CreatePairModal';
 import FloatingButton from './FloatingButton/FloatingButton';
 import Table from './Table/Table';
@@ -808,6 +810,9 @@ const MainPage = (): React.ReactNode => {
                         withChips
                     />
                 </PairSearch>
+
+                <DelegateBlockSmall />
+
                 <Header ref={headerRef}>
                     <ToggleGroupStyled
                         value={sort}

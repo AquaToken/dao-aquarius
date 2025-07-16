@@ -13,6 +13,8 @@ import Plus from 'assets/icon-plus.svg';
 import Button from 'basics/buttons/Button';
 import ExternalLink from 'basics/ExternalLink';
 
+import DelegateBlockSmall from 'components/DelegateBlockSmall';
+
 import BribesList from 'pages/bribes/components/BribesPage/BribesList/BribesList';
 
 import FAQ from '../components/BribesPage/FAQ/FAQ';
@@ -41,6 +43,10 @@ const MainContentWrap = styled.div`
     flex-direction: column;
     width: 100%;
     z-index: 1;
+`;
+
+const Banner = styled(MainContentWrap)`
+    padding: 0 4rem;
 `;
 
 const MainContent = styled.div`
@@ -172,6 +178,10 @@ const BribesPage = () => {
 
                 <BribesLogo />
             </Background>
+
+            <Banner>
+                <DelegateBlockSmall />
+            </Banner>
 
             <TableContainer>
                 <BribesList />
