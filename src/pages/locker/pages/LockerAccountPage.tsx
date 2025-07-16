@@ -24,6 +24,8 @@ import ArrowDown from 'assets/icon-arrow-down.svg';
 
 import PageLoader from 'basics/loaders/PageLoader';
 
+import DelegateBlock from 'pages/locker/components/DelegateBlock/DelegateBlock';
+
 import FAQ from '../components/FAQ/FAQ';
 import AccountInfoBlock from '../components/LockerAccountPage/AccountInfoBlock/AccountInfoBlock';
 import CurrentLocks from '../components/LockerAccountPage/CurrentLocks/CurrentLocks';
@@ -218,6 +220,8 @@ const LockerAccountPage = (): React.ReactNode => {
                         />
 
                         <IceBlock account={account ?? currentAccount} locks={locks} />
+
+                        <DelegateBlock />
 
                         {Boolean(locks?.length) && Boolean(distributions) && (
                             <CurrentLocks

@@ -126,6 +126,11 @@ const IconWrapper = styled.div`
     padding: 0.8rem;
     border-radius: 0.8rem;
     ${flexAllCenter};
+
+    svg {
+        width: 3.2rem;
+        height: 3.2rem;
+    }
 `;
 
 const TotalText = styled.div`
