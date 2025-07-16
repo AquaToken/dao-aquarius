@@ -71,12 +71,12 @@ enum Tab {
 }
 
 const OPTIONS = [
-    { value: Tab.upcoming, label: 'Upcoming bribes' },
     { value: Tab.current, label: 'Current bribes' },
+    { value: Tab.upcoming, label: 'Upcoming bribes' },
 ];
 
 const BribesList = () => {
-    const [tab, setTab] = React.useState<Tab>(Tab.upcoming);
+    const [tab, setTab] = React.useState<Tab>(Tab.current);
     const history = useHistory();
 
     const headerRef = useRef(null);
