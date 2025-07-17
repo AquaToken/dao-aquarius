@@ -39,8 +39,8 @@ const DelegateBlock = () => (
     <Container>
         <Content>
             <p>
-                ICE tokens can be delegated to a trusted community members so they vote for markets
-                on your behalf
+                Delegate your ICE to trusted community members. They vote on your behalf, and 100%
+                of the rewards they earn are passed back to you.
             </p>
             <ExternalLink>Learn more</ExternalLink>
         </Content>
