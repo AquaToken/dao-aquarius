@@ -1,8 +1,5 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-
-import { VoteRoutes } from 'constants/routes';
 
 import Question from 'basics/Question';
 
@@ -18,75 +15,89 @@ const Questions = () => (
             question="What is a bribe?"
             answer={
                 <span>
-                    A bribe is a way for anyone to incentivize those who upvote particular Stellar
-                    markets on <Link to={VoteRoutes.main}>aqua.network/vote</Link>
-                    <br />
-                    <br />
-                    Bribes can be given in any Stellar asset. Users can simultaneously assign
-                    multiple assets to each market at any time. Those who vote on bribed markets
-                    will receive hourly payouts while the market stays incentivized with bribes.
+                    A bribe is a reward given to users who vote with ICE for specific Stellar
+                    markets. Voters earn rewards while the bribe is active.
                 </span>
             }
         />
         <Question
-            question="How does bribing work?"
+            question="Who can submit a bribe?"
             answer={
                 <span>
-                    Bribes take place entirely at the protocol level on Aquarius. A claimable
-                    balance is created using the tool above containing the marker for the bribed
-                    market and the tokens used to reward voters.
-                    <br />
-                    <br />
-                    Every Sunday, Aquarius collects bribes for the coming week and decides which
-                    ones are valid. Valid bribes are accepted and then distributed to voters
-                    linearly from Monday through Sunday.
+                    Anyone — projects, DAOs, or individuals — can submit a bribe using any Stellar
+                    asset to attract votes to their market.
                 </span>
             }
         />
         <Question
-            question="Is there a maximum to bribes?"
+            question="What’s the difference between protocol and external bribes?"
             answer={
                 <span>
-                    There is no maximum limit to the amount of a token that can be allocated, with
-                    no limit to how many assets that can be added to one market, in any given week.
+                    Protocol bribes are funded automatically from AMM trading fees and go to voters
+                    on high-volume markets. External bribes are manually submitted by anyone to
+                    boost votes for a specific pair.
                 </span>
             }
         />
         <Question
-            question="Is there a minimum amount for a bribe?"
+            question="How do I receive bribes?"
             answer={
                 <span>
-                    All bribes must be worth a minimum of 100K AQUA per week.
-                    <br />
-                    <br />A validity check happens with Aquarius purchasing 100K AQUA using a path
-                    payment upon collection, helping ensure tokens used for bribes have value. The
-                    purchased 100K AQUA + the remainder of the chosen reward token gets distributed
-                    to voters. Aquarius returns rejected bribes to the sender.
+                    Vote with ICE for a market that has an active bribe. Rewards are distributed
+                    hourly and usually begin within 24 hours of voting.
                 </span>
             }
         />
         <Question
-            question="Why are bribes necessary?"
+            question="Can I vote for multiple markets and receive bribes on each?"
             answer={
                 <span>
-                    Bribes help create a level playing field where all Stellar markets can become
-                    incentivized, encouraging AQUA holders to place their votes towards specific
-                    markets.
+                    Yes, you’ll receive rewards on any market where you’ve voted with ICE and a
+                    bribe is active.
                 </span>
             }
         />
-
         <Question
-            question="How can I receive a bribe?"
+            question="Where can I see active bribes?"
             answer={
                 <span>
-                    To receive a bribe, go to <Link to={VoteRoutes.main}>aqua.network/vote</Link>{' '}
-                    and search for markets incentivized with bribes.
-                    <br />
-                    <br />
-                    Once you find a market you like, upvote it with your AQUA. You will start to
-                    receive bribe rewards within a day after your vote if bribes are already being
-                    distributed to that market.
+                    All bribes for the current week are listed on this page, including reward
+                    amount, token, and APY. Use the toggle to view upcoming bribes scheduled for
+                    next week.
+                </span>
+            }
+        />
+        <Question
+            question="How are my rewards calculated?"
+            answer={
+                <span>
+                    Bribe rewards are distributed proportionally based on your ICE voting weight in
+                    a given market. The more ICE you’ve allocated to a market, the larger your share
+                    of that market’s bribe.
+                </span>
+            }
+        />
+        <Question
+            question="How does it work technically?"
+            answer={
+                <span>
+                    Bribes are submitted as claimable balances on Stellar and linked to specific
+                    markets. When you vote with ICE, the system tracks your allocation. Rewards are
+                    then distributed hourly based on voting snapshots. Protocol bribes are triggered
+                    automatically, external bribes are collected and activated weekly.
+                </span>
+            }
+        />
+        <Question
+            question="How do I create a bribe for the market?"
+            answer={
+                <span>
+                    Click “Create Bribe” on this page. Choose the market, reward asset, amount,
+                    start date, and duration. Your bribe will be submitted as a Stellar transaction
+                    and will activate the following week{' '}
+                    <b>if it successfully converts to at least 100,000 AQUA via a path payment</b>.
+                    If the threshold isn’t met, the funds will be returned. Bribes must be submitted
+                    <b>by the end of Saturday</b> to be included in the next week’s cycle.
                 </span>
             }
         />

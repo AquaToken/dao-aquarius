@@ -583,7 +583,7 @@ const VotesAmountModal = ({
             <ModalDescription>
                 {isDownVoteModal
                     ? `Submit ${targetAsset.code} against a market if you think it has no place in the reward zone`
-                    : `Lock your ${targetAsset.code} in the network to complete your vote`}
+                    : `Vote with ${targetAsset.code} to support markets and increase their AQUA rewards`}
             </ModalDescription>
             {(isDownVoteModal || isSingleVoteForModal) && (
                 <AssetsInfoBlock>

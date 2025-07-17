@@ -170,7 +170,7 @@ const VotesDurationModal = ({ params, close }: ModalProps<VotesDurationModalPara
             <ModalDescription>
                 {isDownVoteModal
                     ? `Enter the period for which your ${asset.code} will be locked to voting`
-                    : `Lock your ${asset.code} in the network to complete your vote`}
+                    : `Vote with ${asset.code} to support markets and increase their AQUA rewards`}
             </ModalDescription>
 
             <ContentRow>

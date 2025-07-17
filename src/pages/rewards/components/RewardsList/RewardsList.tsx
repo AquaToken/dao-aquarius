@@ -48,7 +48,6 @@ const Header = styled.div`
     align-items: center;
     justify-content: space-between;
     margin-bottom: 4.2rem;
-    padding: 0 1rem;
 
     ${respondDown(Breakpoints.md)`
         flex-direction: column;
@@ -64,6 +63,7 @@ const Title = styled.h3`
 
     ${respondDown(Breakpoints.md)`
         margin-bottom: 2rem;
+        font-size: 2.5rem;
     `}
 `;
 
@@ -223,7 +223,7 @@ const RewardsList = () => {
     return (
         <Container>
             <Header>
-                <Title>Market Rewards</Title>
+                <Title>LP Rewards by Market</Title>
 
                 <LastUpdated>
                     <span>
