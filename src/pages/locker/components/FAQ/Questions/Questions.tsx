@@ -12,125 +12,134 @@ const Container = styled.div`
 const Questions = () => (
     <Container>
         <Question
-            question="What does the locker tool do?"
+            question="What is ICE?"
             answer={
                 <span>
-                    Although originally used to boost Airdrop #2 rewards, the locker tool now turns
-                    AQUA into ICE. Those who freeze AQUA through this tool receive 4 ICE tokens in
-                    return, each of which has a specific use within the Aquarius universe.
+                    ICE is a non-transferable token you receive by freezing AQUA. It gives you more
+                    voting power in the Aquarius protocol and boosts your rewards from AMM and SDEX
+                    liquidity.
                 </span>
             }
         />
         <Question
-            question="Will I get my ICE, upvoteICE, downvoteICE and governICE immediately after locking AQUA?"
+            question="How long can I freeze AQUA?"
             answer={
                 <span>
-                    The tokens will be credited to your wallet balance not later than in 2 hours.
-                    The reason is that the ICE tokens distribution is a scheduled operation that
-                    runs every 2 hours. If you're lucky enough you'll get your ICE within minutes.
+                    You can freeze AQUA for any period from <b>a few days to several years</b>. The
+                    longer the lock, the more ICE you receive per AQUA.
                 </span>
             }
         />
         <Question
-            question="What are the benefits of freezing AQUA?"
+            question="Can I unlock AQUA early?"
             answer={
                 <span>
-                    Freezing AQUA into ICE comes with multiple benefits.
-                    <br />
-                    <br />
-                    ICE tokens, unlike AQUA, can be used simultaneously on liquidity voting &
-                    governance voting. Voting restrictions are also removed, with users able to
-                    change their liquidity votes anytime and able to retrieve their ICE immediately
-                    after a governance proposal ends.
+                    No. Once you freeze AQUA, it cannot be unlocked until the selected period
+                    expires.
                 </span>
             }
         />
         <Question
-            question="Can holding ICE increase liquidity reward yields?"
+            question="Can I extend or add more time to an existing lock?"
             answer={
                 <span>
-                    Yes! Holding ICE can increase the rewards given to those who take part in SDEX &
-                    AMM liquidity rewards.
-                    <br />
-                    <br />
-                    The more ICE an account holds, the higher the potential rewards boost given for
-                    liquidity provision on selected markets. Markets eligible for liquidity rewards
-                    can be found at{' '}
-                    <a
-                        href="https://aqua.network/rewards"
-                        target="_blank"
-                        rel="noreferrer noopener"
-                    >
-                        aqua.network/rewards
-                    </a>
-                    .
+                    No. If you want to lock for longer, you’ll need to create a new lock with a new
+                    expiration date.
                 </span>
             }
         />
         <Question
-            question="How can I get more ICE?"
+            question="Can I have multiple AQUA locks?"
             answer={
                 <span>
-                    To get more ICE, you need to either lock more AQUA or choose a longer lock
-                    period when locking AQUA.
-                    <br />
-                    <br />
-                    Users can gain up to ten times the amount of ICE compared to the AQUA they lock
-                    by locking for longer. To achieve the 10 times max boost, users need to lock
-                    AQUA for 3 years or longer.
+                    Yes, you can create as many separate AQUA locks as you like. Each lock can have
+                    its own amount and duration, and each will generate ICE independently based on
+                    its settings.
                 </span>
             }
         />
         <Question
-            question="Can ICE tokens be bought, sold, or transferred?"
+            question="Can I buy, trade, or transfer ICE?"
             answer={
                 <span>
-                    No.
-                    <br />
-                    <br />
-                    <b>ICE tokens can only be acquired by locking AQUA.</b> If someone is offering
-                    ICE tokens on Stellar, they are fake. ICE tokens have the domain
-                    <i> aqua.network</i>.
+                    No — ICE tokens are <b>non-transferable</b> and can only be obtained by freezing
+                    AQUA. They cannot be bought, sold, or sent to another wallet. This ensures
+                    voting power remains tied to real protocol commitment.
                 </span>
             }
         />
         <Question
-            question="Why is my ICE balance going down?"
+            question="What are the four ICE tokens?"
             answer={
                 <span>
-                    ICE tokens melt as the AQUA unlocking date gets closer. Every day, the protocol
-                    claws back ICE from your wallet balance and the votes you have made. This means
-                    your balance and votes will decline over time unless more AQUA is frozen.
+                    When you freeze AQUA, you receive four types of non-transferable ICE tokens:
+                    <ul>
+                        <li>upvoteICE — used to vote for liquidity markets</li>
+                        <li>downvoteICE — used to reduce rewards for markets</li>
+                        <li>governICE — used for protocol governance proposals</li>
+                        <li>dICE — used when others delegate their votes to you</li>
+                    </ul>
                 </span>
             }
         />
         <Question
-            question="Can I avoid ICE balance declines?"
+            question="Can I earn rewards by holding ICE?"
             answer={
                 <span>
-                    Locking more AQUA can bring your ICE balance back up.
-                    <br />
-                    <br />
-                    Alternatively, ICE balance declines can be temporarily avoided by locking for
-                    longer than 3 years. As the 10 times boost maxes out at 3 year locks, a lock of
-                    4 years will see no ICE balance declines for one year. Once the lock enters the
-                    last 3 years, ICE will decline accordingly.
+                    Yes — ICE can be used to vote and earn <b>bribes</b> (external or
+                    protocol-funded). You can also <b>delegate ICE</b> to another user and earn
+                    rewards passively.
                 </span>
             }
         />
         <Question
-            question="How does locking work & is it safe?"
+            question="What is ICE melting and why is my balance dropping?"
             answer={
                 <span>
-                    Locking AQUA takes place entirely at the protocol level on Stellar. When you use
-                    the tool above, a claimable balance is created and sent back to your wallet.
-                    Only you can reclaim the locked AQUA balance, unfreezing ICE after the lock
-                    period you select passes.
-                    <br />
-                    <br />
-                    Locking AQUA is completely safe when using this tool. AQUA is securely locked
-                    into the Stellar blockchain, with only you able to reclaim the tokens at a later
-                    time.
+                    ICE melts gradually as your lock approaches its end date. The closer it is to
+                    expiry, the less ICE you hold. This reflects your decreasing commitment to the
+                    protocol.
+                </span>
+            }
+        />
+        <Question
+            question="How can I stop ICE from melting?"
+            answer={
+                <span>
+                    Locks longer than 3 years are not subject to melting. For example, a 4-year lock
+                    won’t lose any ICE until it enters its final 3-year period. If you want to lock
+                    AQUA for longer than 3 years, you can enter any unlock date with the keyboard
+                    instead of using the slider.
+                </span>
+            }
+        />
+        <Question
+            question="How is my ICE distributed when I freeze AQUA?"
+            answer={
+                <span>
+                    The ICE tokens are automatically sent to your Stellar wallet when you freeze
+                    AQUA. Make sure you have trustlines for all ICE assets to receive them.
+                </span>
+            }
+        />
+        <Question
+            question="Can I use ICE for voting and delegation at the same time?"
+            answer={
+                <span>
+                    Yes, you can use some ICE to vote yourself, and delegate the rest. The system
+                    supports partial delegation.
+                </span>
+            }
+        />
+        <Question
+            question="How does locking work, and is it safe?"
+            answer={
+                <span>
+                    Locking AQUA happens fully on-chain using Stellar’s native protocol. When you
+                    freeze AQUA, a claimable balance is created and returned to your wallet. Only
+                    you can reclaim it after the lock period ends, which also unfreezes your ICE.
+                    The process is completely secure — your tokens remain locked on the Stellar
+                    blockchain, with no third-party access or custody.
                 </span>
             }
         />
