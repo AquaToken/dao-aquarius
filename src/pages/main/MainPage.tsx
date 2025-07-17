@@ -5,7 +5,6 @@ import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Community from 'components/Community';
-import DelegateBlock from 'components/DelegateBlock';
 import Subscribe from 'components/Subscribe';
 
 import About from './components/About/About';
@@ -38,8 +37,6 @@ const MainPage = () => (
         <About />
 
         <IceBlock />
-
-        <DelegateBlock />
 
         <Roadmap />
 
