@@ -15,7 +15,6 @@ import AquaLinks from 'pages/token/components/AquaLinks/AquaLinks';
 import AquaPerformance from 'pages/token/components/AquaPerformance/AquaPerformance';
 import AquaStatistics from 'pages/token/components/AquaStatistics/AquaStatistics';
 import MainBlock from 'pages/token/components/MainBlock/MainBlock';
-import Questions from 'pages/token/components/Questions/Questions';
 
 const Container = styled.main`
     flex: 1 0 auto;
@@ -49,8 +48,6 @@ const TokenPage = () => {
             <DelegateBlock />
 
             <AquaPerformance />
-
-            <Questions />
 
             <Community />
 

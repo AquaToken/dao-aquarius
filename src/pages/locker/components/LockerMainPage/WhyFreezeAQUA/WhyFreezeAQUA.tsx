@@ -84,30 +84,29 @@ const WhyFreezeAQUA = (): JSX.Element => (
         <Content>
             <Column>
                 <Image1 />
-                <ColumnTitle>Increased Liquidity Rewards</ColumnTitle>
+                <ColumnTitle>Boosted Liquidity Rewards</ColumnTitle>
                 <ColumnText>
-                    The core benefit of ICE is boosted AQUA reward yields when taking part with SDEX
-                    & AMM liquidity rewarded markets. The higher a user’s ICE balance, the higher
-                    their liquidity reward boost!
-                </ColumnText>
-            </Column>
-            <Column>
-                <Image2 />
-                <ColumnTitle>Voting Flexibility</ColumnTitle>
-                <ColumnText>
-                    There are no hard decisions on whether to vote for your favorite markets,
-                    participate in governance, or downvoting other market pairs. ICE allows full
-                    flexibility between these key voting areas, meaning you can participate with
-                    them simultaneously.
+                    ICE boosts your AQUA rewards when providing liquidity on both SDEX and AMM
+                    markets. The more ICE you hold, the higher your boost — up to 250% of the normal
+                    rewards. Earn more from the same position just by freezing AQUA
                 </ColumnText>
             </Column>
             <Column>
                 <Image3 />
-                <ColumnTitle>Increased Voting Power</ColumnTitle>
+                <ColumnTitle>Vote with 10x Power</ColumnTitle>
                 <ColumnText>
-                    Those who freeze into ICE can gain vastly increased voting power! Up to ten
-                    times the voting weight compared to AQUA can be achieved when freezing for 3
-                    years or more. This gives you more say in governance & liquidity voting.
+                    Use ICE to participate in Aquarius governance and liquidity voting. Compared to
+                    AQUA, ICE gives you up to 10x more voting power, allowing you to shape emissions
+                    and protocol direction more effectively.
+                </ColumnText>
+            </Column>
+            <Column>
+                <Image2 />
+                <ColumnTitle>Earn for Voting</ColumnTitle>
+                <ColumnText>
+                    Voting with ICE lets you earn additional incentives through bribes — including
+                    protocol-funded ones tied to market activity. You can also delegate your ICE to
+                    trusted community members and earn passively while they vote on your behalf.
                 </ColumnText>
             </Column>
         </Content>

@@ -102,6 +102,10 @@ const IconWrapper = styled.div`
     svg {
         width: 1.6rem;
         height: 1.6rem;
+
+        path {
+            stroke: ${COLORS.black};
+        }
     }
 `;
 
@@ -128,7 +132,7 @@ const DelegateBlock = () => (
                         <IconWrapper>
                             <Present />
                         </IconWrapper>
-                        Earn all protocol rewards
+                        Let others vote on your behalf and still earn all rewards for voting.
                     </ListItem>
                     <ListItem>
                         <IconWrapper>
