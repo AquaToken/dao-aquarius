@@ -103,17 +103,7 @@ const StatisticBlock = () => {
                 <Amount>
                     {statistics ? formatBalance(statistics.aqua_lock_amount, true) : <DotsLoader />}
                 </Amount>
-                <Description>AQUA tokens frozen</Description>
-            </StatisticItem>
-            <StatisticItem>
-                <IconsBlock>
-                    <AquaLogo />
-                    <IceLogo />
-                </IconsBlock>
-                <Amount>
-                    {statistics ? formatBalance(statistics.aqua_lock_accounts) : <DotsLoader />}
-                </Amount>
-                <Description>Wallets locking AQUA</Description>
+                <Description>Total AQUA Locked</Description>
             </StatisticItem>
             <StatisticItem>
                 <IconsBlock>
@@ -126,7 +116,17 @@ const StatisticBlock = () => {
                         <DotsLoader />
                     )}
                 </Amount>
-                <Description>ICE tokens issued</Description>
+                <Description>Total ICE Issued</Description>
+            </StatisticItem>
+            <StatisticItem>
+                <IconsBlock>
+                    <AquaLogo />
+                    <IceLogo />
+                </IconsBlock>
+                <Amount>
+                    {statistics ? formatBalance(statistics.aqua_lock_accounts) : <DotsLoader />}
+                </Amount>
+                <Description>Wallets with ICE</Description>
             </StatisticItem>
         </Container>
     );

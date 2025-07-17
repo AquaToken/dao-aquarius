@@ -684,7 +684,8 @@ const AddBribePage = () => {
                                 <FormSectionDescription>
                                     Bribe distribution starts on Mondays and happens every day until
                                     Sunday. You can plan bribes by choosing a start date in advance
-                                    or selecting multiple weeks.
+                                    or selecting multiple weeks. Bribes must be submitted by the end
+                                    of Saturday to be included in the next week’s cycle.
                                 </FormSectionDescription>
                                 <FormRow>
                                     <DurationInput
