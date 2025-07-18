@@ -16,7 +16,7 @@ import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { ModalProps } from 'types/modal';
 import { Int128Parts } from 'types/stellar';
-import { Token } from 'types/token';
+import { Token, TokenType } from 'types/token';
 
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -177,16 +177,32 @@ const SwapConfirmModal = ({
                     return;
                 }
 
+                const sentAmount = isSend ? baseAmount : SorobanService.i128ToInt(res.value());
+                const receivedAmount = isSend
+                    ? SorobanService.i128ToInt(res.value())
+                    : counterAmount;
+
                 ModalService.openModal(SuccessModal, {
                     assets: [base, counter],
-                    amounts: [
-                        isSend ? baseAmount : SorobanService.i128ToInt(res.value()),
-                        isSend ? SorobanService.i128ToInt(res.value()) : counterAmount,
-                    ],
+                    amounts: [sentAmount, receivedAmount],
                     title: 'Swap Successful',
                     isSwap: true,
                     hash,
                 });
+
+                if (base.type === TokenType.soroban) {
+                    ToastService.showSuccessToast(
+                        `Payment sent: ${formatBalance(Number(sentAmount))} ${base.code}`,
+                    );
+                }
+
+                if (counter.type === TokenType.soroban) {
+                    ToastService.showSuccessToast(
+                        `Payment received: ${formatBalance(Number(receivedAmount))} ${
+                            counter.code
+                        }`,
+                    );
+                }
                 setSwapPending(false);
             })
             .catch(e => {

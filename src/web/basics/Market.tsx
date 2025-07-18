@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { AmmRoutes, MarketRoutes } from 'constants/routes';
 
 import { getAssetString } from 'helpers/assets';
+import { getIsTestnetEnv } from 'helpers/env';
 import { formatBalance } from 'helpers/format-number';
 
 import { LumenInfo } from 'store/assetsStore/reducer';
@@ -14,7 +15,7 @@ import { ModalService } from 'services/globalServices';
 import { POOL_TYPE } from 'services/soroban.service';
 
 import { Asset } from 'types/stellar';
-import { Token, TokenType } from 'types/token';
+import { ClassicToken, Token, TokenType } from 'types/token';
 
 import { flexAllCenter, respondDown } from 'web/mixins';
 import AssetInfoModal from 'web/modals/AssetInfoModal';
@@ -300,9 +301,19 @@ const Market = ({
         </>
     );
 
-    const onDomainClick = (e: React.MouseEvent, asset: Asset) => {
+    const onDomainClick = (e: React.MouseEvent, asset: Token) => {
         e.preventDefault();
         e.stopPropagation();
+
+        if (asset.type === TokenType.soroban) {
+            window.open(
+                `https://stellar.expert/explorer/${
+                    getIsTestnetEnv() ? 'testnet' : 'public'
+                }/contract/${asset.contract}`,
+                '_blank',
+            );
+            return;
+        }
 
         ModalService.openModal(AssetInfoModal, { asset });
     };
@@ -388,7 +399,7 @@ const Market = ({
                                 <span key={getAssetString(asset)}>
                                     {index > 0 ? ' · ' : ''}
                                     {name} (
-                                    {asset.type === TokenType.soroban || asset.isNative() ? (
+                                    {(asset as ClassicToken)?.isNative?.() ? (
                                         domain
                                     ) : (
                                         <Domain

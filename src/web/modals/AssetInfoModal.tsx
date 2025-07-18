@@ -20,7 +20,8 @@ import { ModalService, StellarService } from 'services/globalServices';
 import { ExpertAssetData } from 'types/api-stellar-expert';
 import { AssetInfo } from 'types/asset-info';
 import { ModalProps } from 'types/modal';
-import { Asset as AssetType, StellarToml as StellarTomlType } from 'types/stellar';
+import { StellarToml as StellarTomlType } from 'types/stellar';
+import { ClassicToken } from 'types/token';
 
 import Mail from 'assets/email16.svg';
 import Git from 'assets/github16.svg';
@@ -121,7 +122,7 @@ const CopyButtonStyled = styled(CopyButton)`
 `;
 
 interface AssetInfoModalParams {
-    asset: AssetType;
+    asset: ClassicToken;
 }
 
 const AssetInfoModal = ({ params }: ModalProps<AssetInfoModalParams>): React.ReactNode => {

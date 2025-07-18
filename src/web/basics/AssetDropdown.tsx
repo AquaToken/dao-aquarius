@@ -417,7 +417,7 @@ const AssetDropdown = ({
                         }}
                         $isOpen={isOpen}
                         placeholder={
-                            placeholder ?? 'Search asset or enter home domain or contact address'
+                            placeholder ?? 'Search asset or enter home domain or contract address'
                         }
                         disabled={!assets.length || disabled || pending}
                         value={searchText}
