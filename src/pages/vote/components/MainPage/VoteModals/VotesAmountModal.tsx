@@ -40,6 +40,8 @@ import Select, { Option } from 'basics/inputs/Select';
 import Market from 'basics/Market';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
+import DelegateBlock from 'pages/vote/components/MainPage/VoteModals/DelegateBlock/DelegateBlock';
+
 import VotesDurationModal from './VotesDurationModal';
 
 import { PairStats } from '../../../api/types';
@@ -232,8 +234,7 @@ const ResetValues = styled.div`
 const Scrollable = styled.div<{ scrollDisabled: boolean }>`
     overflow-y: ${({ scrollDisabled }) => (scrollDisabled ? 'unset' : 'scroll')};
     padding: 0 1rem;
-    max-height: calc(100vh - 20rem);
-    min-height: 47rem;
+    max-height: 15rem;
 
     ${respondDown(Breakpoints.md)`
         max-height: calc(100vh - 16rem);
@@ -572,96 +573,96 @@ const VotesAmountModal = ({
 
     return (
         <ModalWrapper $width="60rem">
-            <Scrollable scrollDisabled={isDownVoteModal || isSingleVoteForModal}>
-                <ModalTitle>
-                    {isDownVoteModal
-                        ? 'Downvote market'
-                        : isSingleVoteForModal
-                        ? 'Upvote market'
-                        : 'Selected Markets'}
-                </ModalTitle>
-                <ModalDescription>
-                    {isDownVoteModal
-                        ? `Submit ${targetAsset.code} against a market if you think it has no place in the reward zone`
-                        : `Lock your ${targetAsset.code} in the network to complete your vote`}
-                </ModalDescription>
-                {(isDownVoteModal || isSingleVoteForModal) && (
-                    <AssetsInfoBlock>
-                        <Market
-                            verticalDirections
-                            assets={[
-                                {
-                                    code: pairs[0].asset1_code,
-                                    issuer: pairs[0].asset1_issuer,
-                                },
-                                {
-                                    code: pairs[0].asset2_code,
-                                    issuer: pairs[0].asset2_issuer,
-                                },
-                            ]}
-                        />
-                    </AssetsInfoBlock>
-                )}
-
-                {targetAsset.code === aquaStellarAsset.code && (
-                    <Alert text="ICE has more voting power than AQUA and ICE votes can be withdrawn from the market at any time" />
-                )}
-
-                <ContentRow>
-                    <Label>Amount</Label>
-
-                    {hasTrustLine ? (
-                        <BalanceBlock>
-                            <Balance
-                                onClick={() => {
-                                    if (!isHandleEdit) {
-                                        onRangeChange(100);
-                                    }
-                                }}
-                            >
-                                {formattedTargetBalance} {targetAsset.code}{' '}
-                            </Balance>
-                            available
-                        </BalanceBlock>
-                    ) : (
-                        <BalanceBlock>You don’t have {targetAsset.code} trustline</BalanceBlock>
-                    )}
-                </ContentRow>
-
-                <AmountRow>
-                    <AmountInput
-                        value={amount}
-                        onChange={e => {
-                            onInputChange(e.target.value);
-                        }}
-                        placeholder="Enter voting power"
-                        disabled={!hasTrustLine || !hasTargetBalance || isHandleEdit}
-                        inputMode="decimal"
+            <ModalTitle>
+                {isDownVoteModal
+                    ? 'Downvote market'
+                    : isSingleVoteForModal
+                    ? 'Upvote market'
+                    : 'Selected Markets'}
+            </ModalTitle>
+            <ModalDescription>
+                {isDownVoteModal
+                    ? `Submit ${targetAsset.code} against a market if you think it has no place in the reward zone`
+                    : `Vote with ${targetAsset.code} to support markets and increase their AQUA rewards`}
+            </ModalDescription>
+            {(isDownVoteModal || isSingleVoteForModal) && (
+                <AssetsInfoBlock>
+                    <Market
+                        verticalDirections
+                        assets={[
+                            {
+                                code: pairs[0].asset1_code,
+                                issuer: pairs[0].asset1_issuer,
+                            },
+                            {
+                                code: pairs[0].asset2_code,
+                                issuer: pairs[0].asset2_issuer,
+                            },
+                        ]}
                     />
+                </AssetsInfoBlock>
+            )}
 
-                    <AssetSelect options={OPTIONS} value={targetAsset} onChange={setTargetAsset} />
-                </AmountRow>
+            {targetAsset.code === aquaStellarAsset.code && (
+                <Alert text="ICE has more voting power than AQUA and ICE votes can be withdrawn from the market at any time" />
+            )}
 
-                <RangeInput
-                    onChange={onRangeChange}
-                    value={percent}
+            <ContentRow>
+                <Label>Amount</Label>
+
+                {hasTrustLine ? (
+                    <BalanceBlock>
+                        <Balance
+                            onClick={() => {
+                                if (!isHandleEdit) {
+                                    onRangeChange(100);
+                                }
+                            }}
+                        >
+                            {formattedTargetBalance} {targetAsset.code}{' '}
+                        </Balance>
+                        available
+                    </BalanceBlock>
+                ) : (
+                    <BalanceBlock>You don’t have {targetAsset.code} trustline</BalanceBlock>
+                )}
+            </ContentRow>
+
+            <AmountRow>
+                <AmountInput
+                    value={amount}
+                    onChange={e => {
+                        onInputChange(e.target.value);
+                    }}
+                    placeholder="Enter voting power"
                     disabled={!hasTrustLine || !hasTargetBalance || isHandleEdit}
+                    inputMode="decimal"
                 />
 
-                {!isDownVoteModal && !isSingleVoteForModal && (
-                    <>
-                        <ContentRow>
-                            <Label>Pairs ({selectedPairs.length})</Label>
-                            {isHandleEdit && (
-                                <ResetValues
-                                    onClick={() => {
-                                        resetForm();
-                                    }}
-                                >
-                                    Reset values
-                                </ResetValues>
-                            )}
-                        </ContentRow>
+                <AssetSelect options={OPTIONS} value={targetAsset} onChange={setTargetAsset} />
+            </AmountRow>
+
+            <RangeInput
+                onChange={onRangeChange}
+                value={percent}
+                disabled={!hasTrustLine || !hasTargetBalance || isHandleEdit}
+            />
+
+            {!isDownVoteModal && !isSingleVoteForModal && (
+                <>
+                    <ContentRow>
+                        <Label>Pairs ({selectedPairs.length})</Label>
+                        {isHandleEdit && (
+                            <ResetValues
+                                onClick={() => {
+                                    resetForm();
+                                }}
+                            >
+                                Reset values
+                            </ResetValues>
+                        )}
+                    </ContentRow>
+                    <Scrollable scrollDisabled={isDownVoteModal || isSingleVoteForModal}>
                         <PairsList>
                             {selectedPairs.map(pair => (
                                 <PairBlock key={pair.market_key}>
@@ -702,33 +703,35 @@ const VotesAmountModal = ({
                                 </PairBlock>
                             ))}
                         </PairsList>
-                        <TotalAmountRow>
-                            <Label>Total:</Label>
-                            <TotalAmount>
-                                {amount ? formatBalance(+amount) : '0'} {targetAsset.code}{' '}
-                                <AssetLogo asset={targetAsset} isCircle={false} />
-                            </TotalAmount>
-                        </TotalAmountRow>
-                    </>
-                )}
+                    </Scrollable>
+                    <TotalAmountRow>
+                        <Label>Total:</Label>
+                        <TotalAmount>
+                            {amount ? formatBalance(+amount) : '0'} {targetAsset.code}{' '}
+                            <AssetLogo asset={targetAsset} isCircle={false} />
+                        </TotalAmount>
+                    </TotalAmountRow>
+                </>
+            )}
 
-                {hasTrustLine && hasTargetBalance ? null : (
-                    <GetAquaBlock>
-                        <GetAquaLabel>You don&apos;t have enough {targetAsset.code}</GetAquaLabel>
-                        {targetAsset.code === aquaStellarAsset.code ? (
-                            <ExternalLink onClick={() => ModalService.openModal(GetAquaModal, {})}>
-                                <GetAquaLink>Get {targetAsset.code}</GetAquaLink>
-                            </ExternalLink>
-                        ) : (
-                            <ExternalLink asDiv>
-                                <Link to={LockerRoutes.main} onClick={() => close()}>
-                                    Get ICE
-                                </Link>
-                            </ExternalLink>
-                        )}
-                    </GetAquaBlock>
-                )}
-            </Scrollable>
+            {hasTrustLine && hasTargetBalance ? null : (
+                <GetAquaBlock>
+                    <GetAquaLabel>You don&apos;t have enough {targetAsset.code}</GetAquaLabel>
+                    {targetAsset.code === aquaStellarAsset.code ? (
+                        <ExternalLink onClick={() => ModalService.openModal(GetAquaModal, {})}>
+                            <GetAquaLink>Get {targetAsset.code}</GetAquaLink>
+                        </ExternalLink>
+                    ) : (
+                        <ExternalLink asDiv>
+                            <Link to={LockerRoutes.main} onClick={() => close()}>
+                                Get ICE
+                            </Link>
+                        </ExternalLink>
+                    )}
+                </GetAquaBlock>
+            )}
+
+            {targetAsset.code === UP_ICE.code && <DelegateBlock />}
 
             <ButtonContainer>
                 <Button

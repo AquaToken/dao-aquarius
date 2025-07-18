@@ -184,7 +184,7 @@ const MarketPage = () => {
     }
 
     return (
-        <PageTitle title={`Market: ${baseAsset.code} / ${counterAsset.code}`}>
+        <PageTitle title={`Market: ${baseAsset.code} / ${counterAsset.code} - Aquarius`}>
             <MainBlock>
                 <BackButtonWrapper>
                     <BackButton

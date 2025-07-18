@@ -96,10 +96,10 @@ const LinkContent = styled.div`
 
 const AboutToken = () => (
     <Container>
-        <Title>What is AQUA token?</Title>
+        <Title>What is AQUA?</Title>
         <Description>
-            AQUA is the utility token of Aquarius protocol, the largest DEX on Stellar network. It's
-            used for:
+            AQUA is the utility token of the Aquarius protocol — the largest DEX on the Stellar
+            network. It’s used for:
         </Description>
         <Links>
             <LinksRow>
@@ -107,14 +107,14 @@ const AboutToken = () => (
                     <LP />
                     <LinkContent>
                         <h3>LP rewards</h3>
-                        <p>Get rewards for depositing tokens into AMM and Stellar DEX</p>
+                        <p>Earn AQUA for providing liquidity in AMM pools or SDEX markets.</p>
                     </LinkContent>
                 </LinkStyled>
                 <LinkStyled to={MainRoutes.bribes}>
                     <Bribes />
                     <LinkContent>
                         <h3>Bribes</h3>
-                        <p>Get paid from market creators for your votes</p>
+                        <p>Earn bonus incentives for voting on specific markets.</p>
                     </LinkContent>
                 </LinkStyled>
             </LinksRow>
@@ -123,14 +123,14 @@ const AboutToken = () => (
                     <DAO />
                     <LinkContent>
                         <h3>Governance</h3>
-                        <p>Influence on the protocol development</p>
+                        <p>Vote on proposals and help shape the future of Aquarius.</p>
                     </LinkContent>
                 </LinkStyled>
                 <LinkStyled to={MainRoutes.vote}>
                     <Voting />
                     <LinkContent>
-                        <h3>Voting</h3>
-                        <p>Support markets to inventivize liquidity providers</p>
+                        <h3>Market Voting</h3>
+                        <p>Vote to direct rewards to markets you want to support.</p>
                     </LinkContent>
                 </LinkStyled>
             </LinksRow>

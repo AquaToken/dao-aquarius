@@ -68,17 +68,22 @@ const FreezeAQUA = (): JSX.Element => (
     <Container>
         <TextBlock>
             <Title>
-                Freeze AQUA <TitleOpacity>= Lock AQUA</TitleOpacity>
+                Freeze AQUA <TitleOpacity>= Get ICE</TitleOpacity>
             </Title>
             <Description>
-                ICE tokens work similarly to veCRV on the Curve platform, with users locking the
-                main CRV token in exchange for veCRV. This secondary token allows for voting in
-                governance and boosts CRV liquidity rewards on Curve.
+                <b>Freeze your AQUA to receive ICE</b> — a non-transferable token that gives you
+                more influence over how rewards are distributed across AMM and SDEX markets. ICE
+                also boosts your earnings through bribes for voting and higher yields from liquidity
+                rewards.
                 <br />
                 <br />
-                We have taken this core idea and revamped it for use inside the Stellar ecosystem.
-                Users who lock (freeze) AQUA will receive four additional non-transferable tokens
-                inside their Stellar wallets, specifically for use in the Aquarius universe.
+                You choose how much AQUA to freeze and for how long — from 1 week up to 3 years. The
+                longer you lock it, the more ICE you receive per token. More ICE means more voting
+                influence and greater rewards.
+                <br />
+                <br />
+                Inspired by veCRV on Curve, this system has been reimagined for Stellar and fully
+                integrated into Aquarius.
             </Description>
             <ExternalLink href="https://medium.com/aquarius-aqua/ice-the-next-stage-of-aquarius-810edc7cf3bb">
                 Read more about freezing AQUA

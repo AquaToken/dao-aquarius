@@ -1,5 +1,5 @@
 import * as StellarSdk from '@stellar/stellar-sdk';
-import { xdr, Asset, Keypair, StrKey } from '@stellar/stellar-sdk';
+import { xdr, Asset, Keypair, StrKey, rpc } from '@stellar/stellar-sdk';
 import BigNumber from 'bignumber.js';
 
 import {
@@ -20,7 +20,7 @@ import { ClassicToken, Token, TokenType } from 'types/token';
 
 import RestoreContractModal from 'web/modals/RestoreContractModal';
 
-import { ModalService, StellarService, ToastService } from './globalServices';
+import { ModalService, StellarService } from './globalServices';
 
 const AMM_SMART_CONTRACT_ID = CONTRACTS[getEnv()].amm;
 const BATCH_SMART_CONTRACT_ID = CONTRACTS[getEnv()].batch;
@@ -64,49 +64,37 @@ export default class SorobanServiceClass {
         }
     }
 
-    processResponse(
-        response: StellarSdk.rpc.Api.SendTransactionResponse,
-        tx: StellarSdk.Transaction,
-    ) {
+    processResponse(response: rpc.Api.SendTransactionResponse) {
+        if (response.status === 'TRY_AGAIN_LATER') {
+            throw new Error('Try again later');
+        }
         if (response.status === 'DUPLICATE') {
-            return this.getTx(response.hash, tx);
+            return this.pollTx(response.hash);
         }
         if (response.status !== 'PENDING') {
             throw new Error(SorobanErrorHandler(response.errorResult.result().switch().name));
         }
-        return this.getTx(response.hash, tx);
+        return this.pollTx(response.hash);
     }
 
-    getTx(
+    pollTx<T>(
         hash: string,
-        tx: StellarSdk.Transaction,
-        resolver?: (value?: unknown) => void,
-        rejecter?: () => void,
-    ) {
-        return this.server.getTransaction(hash).then(res => {
-            if (res.status === 'SUCCESS') {
-                if (resolver) {
-                    resolver(res.returnValue);
+    ): Promise<
+        T | rpc.Api.GetFailedTransactionResponse | rpc.Api.GetMissingTransactionResponse | xdr.ScVal
+    > {
+        return this.server
+            .pollTransaction(hash, {
+                attempts: 30,
+                sleepStrategy: () => 2000,
+            })
+            .then(res => {
+                if (res.status === 'SUCCESS') {
+                    return res.returnValue;
                 }
-                return;
-            }
-
-            if (res.status === 'FAILED') {
-                if (rejecter) {
-                    rejecter();
-                }
-                ToastService.showErrorToast('Transaction was failed');
-                return;
-            }
-
-            if (resolver) {
-                return setTimeout(() => this.getTx(hash, tx, resolver, rejecter), 1000);
-            }
-
-            return new Promise((resolve, reject) => {
-                setTimeout(() => this.getTx(hash, tx, resolve, reject), 1000);
+                throw new Error(
+                    'Transaction failed because of timeout. Please make another attempt.',
+                );
             });
-        });
     }
 
     async tryRestore(tx: StellarSdk.Transaction) {
@@ -949,8 +937,9 @@ export default class SorobanServiceClass {
         return tx;
     }
 
-    submitTx(tx: StellarSdk.Transaction) {
-        return this.server.sendTransaction(tx).then(res => this.processResponse(res, tx));
+    async submitTx(tx: StellarSdk.Transaction) {
+        const res = await this.server.sendTransaction(tx);
+        return await this.processResponse(res);
     }
 
     simulateTx(tx: StellarSdk.Transaction) {
@@ -966,7 +955,7 @@ export default class SorobanServiceClass {
     }
 
     private startServer(): void {
-        this.server = new StellarSdk.rpc.Server(getSorobanUrl());
+        this.server = new rpc.Server(getSorobanUrl());
     }
 
     contractIdToScVal(contractId) {

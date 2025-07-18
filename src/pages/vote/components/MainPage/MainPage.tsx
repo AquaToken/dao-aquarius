@@ -40,6 +40,8 @@ import Market from 'basics/Market';
 import Pagination from 'basics/Pagination';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
+import DelegateBlockSmall from 'components/DelegateBlockSmall';
+
 import CreatePairModal from './CreatePairModal/CreatePairModal';
 import FloatingButton from './FloatingButton/FloatingButton';
 import Table from './Table/Table';
@@ -66,7 +68,7 @@ const Background = styled.div`
     flex-direction: column;
     background-color: ${COLORS.darkPurple};
     min-height: 10rem;
-    max-height: 40vh;
+    max-height: 50vh;
     overflow: hidden;
     position: relative;
 
@@ -104,7 +106,7 @@ const BackgroundRight = styled(BackgroundImageRight)`
 `;
 
 const Title = styled.h2`
-    font-size: 8rem;
+    font-size: 6rem;
     line-height: 9.4rem;
     font-weight: bold;
     color: ${COLORS.white};
@@ -113,13 +115,13 @@ const Title = styled.h2`
     text-align: center;
 
     ${respondDown(Breakpoints.lg)`
-      font-size: 7rem;
+      font-size: 5.5rem;
       line-height: 8rem;
       margin-bottom: 1.2rem;
     `}
 
     ${respondDown(Breakpoints.md)`
-        font-size: 5.5rem;
+        font-size: 5rem;
         line-height: 6rem;
         margin-bottom: 1rem;
     `}
@@ -785,10 +787,11 @@ const MainPage = (): React.ReactNode => {
     return (
         <MainBlock>
             <Background>
-                <Title>Vote For Your Favorite Markets</Title>
+                <Title>Vote with ICE to Support Stellar Markets</Title>
                 <Description>
-                    Lock your AQUA or ICE to create immutable and transparent votes direct on the
-                    Stellar blockchain
+                    Lock your AQUA to mint ICE and vote on-chain. Your votes decide how AQUA
+                    emissions are distributed — and can earn you bribes and incentives along the
+                    way.
                 </Description>
                 <BackgroundLeft />
                 <BackgroundRight />
@@ -807,6 +810,9 @@ const MainPage = (): React.ReactNode => {
                         withChips
                     />
                 </PairSearch>
+
+                <DelegateBlockSmall />
+
                 <Header ref={headerRef}>
                     <ToggleGroupStyled
                         value={sort}
