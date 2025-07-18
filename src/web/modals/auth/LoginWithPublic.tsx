@@ -6,9 +6,9 @@ import styled from 'styled-components';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { ModalProps } from 'types/modal';
-
 import { StellarService, ToastService } from 'services/globalServices';
+
+import { ModalProps } from 'types/modal';
 
 import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
@@ -59,7 +59,10 @@ const LoginWithPublic = ({ close }: ModalProps<never>): React.ReactNode => {
             return;
         }
 
-        login(publicKey, LoginTypes.public);
+        login({
+            pubKey: publicKey,
+            loginType: LoginTypes.public,
+        });
     };
 
     useEffect(() => {

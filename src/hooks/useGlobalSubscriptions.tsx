@@ -1,24 +1,27 @@
+import { FREIGHTER_ID } from '@creit.tech/stellar-wallets-kit';
 import { Horizon } from '@stellar/stellar-sdk';
 import { useEffect, useRef } from 'react';
 
 import { LS_FREIGHTER_ACCOUNT_CHANGE_IMMEDIATELY } from 'constants/local-storage';
+import { MainRoutes } from 'constants/routes';
 
 import PromisedTimeout from 'helpers/promised-timeout';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
+import { getSavedAuthData, clearSavedAuthData } from 'store/authStore/auth-helpers';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { AssetsEvent } from 'services/assets.service';
 import {
+    AssetsService,
     LedgerService,
-    SorobanService,
     LobstrExtensionService,
+    ModalService,
+    SorobanService,
     StellarService,
     ToastService,
     WalletConnectService,
-    AssetsService,
-    ModalService,
     WalletKitService,
 } from 'services/globalServices';
 import { LedgerEvents } from 'services/ledger.service';
@@ -52,9 +55,41 @@ export default function useGlobalSubscriptions(): void {
     const accountRef = useRef(account);
 
     useEffect(() => {
+        const { pubKey, loginType, walletKitId } = getSavedAuthData();
+
+        if (!loginType) {
+            return;
+        }
+
+        if (loginType === LoginTypes.walletKit) {
+            WalletKitService.restoreLogin(walletKitId, pubKey);
+            login({ pubKey, loginType, walletKitId });
+
+            return;
+        }
+
+        if (loginType === LoginTypes.walletConnect) {
+            WalletConnectService.onAppStart(window.location.pathname === MainRoutes.walletConnect);
+            return;
+        }
+
+        if (loginType === LoginTypes.secret || loginType === LoginTypes.ledger) {
+            clearSavedAuthData();
+            return;
+        }
+
+        login({ pubKey, loginType });
+    }, []);
+
+    useEffect(() => {
         const unsub = WalletConnectService.event.sub(event => {
             if (event.type === WalletConnectEvents.login) {
-                login(event.publicKey, LoginTypes.walletConnect, event.metadata, event.topic);
+                login({
+                    pubKey: event.publicKey,
+                    loginType: LoginTypes.walletConnect,
+                    metadata: event.metadata,
+                    topic: event.topic,
+                });
             }
             if (event.type === WalletConnectEvents.logout) {
                 ModalService.closeAllModals();
@@ -70,7 +105,10 @@ export default function useGlobalSubscriptions(): void {
     useEffect(() => {
         const unsub = LedgerService.event.sub(event => {
             if (event.type === LedgerEvents.login) {
-                login(event.publicKey, LoginTypes.ledger);
+                login({
+                    pubKey: event.publicKey,
+                    loginType: LoginTypes.ledger,
+                });
             }
             if (event.type === LedgerEvents.logout) {
                 logout();
@@ -89,14 +127,18 @@ export default function useGlobalSubscriptions(): void {
         await PromisedTimeout(500);
 
         enableRedirect(path);
-        login(publicKey, LoginTypes.walletKit);
+        login({ pubKey: publicKey, loginType: LoginTypes.walletKit, walletKitId: FREIGHTER_ID });
         WalletKitService.startFreighterWatching(publicKey);
     };
 
     useEffect(() => {
         const unsub = WalletKitService.event.sub(event => {
             if (event.type === WalletKitEvents.login) {
-                login(event.publicKey, LoginTypes.walletKit);
+                login({
+                    pubKey: event.publicKey,
+                    loginType: LoginTypes.walletKit,
+                    walletKitId: event.id,
+                });
             }
 
             if (event.type === WalletKitEvents.accountChanged) {
@@ -124,7 +166,10 @@ export default function useGlobalSubscriptions(): void {
     useEffect(() => {
         const unsub = LobstrExtensionService.event.sub(event => {
             if (event.type === LobstrExtensionEvents.login) {
-                login(event.publicKey, LoginTypes.lobstr);
+                login({
+                    pubKey: event.publicKey,
+                    loginType: LoginTypes.lobstr,
+                });
             }
         });
 
