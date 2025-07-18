@@ -47,6 +47,7 @@ const AssetDomain = styled.span<{ $withMobileView?: boolean; $inRow?: boolean }>
     color: ${({ $inRow }) => ($inRow ? COLORS.paragraphText : COLORS.grayText)};
     font-size: ${({ $inRow }) => ($inRow ? '1.6rem' : '1.4rem')};
     line-height: ${({ $inRow }) => ($inRow ? '2.8rem' : '2rem')};
+    word-break: break-word;
 
     ${respondDown(Breakpoints.md)`
         white-space: nowrap;

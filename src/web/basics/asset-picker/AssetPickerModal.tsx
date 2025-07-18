@@ -3,6 +3,8 @@ import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
+import { getAssetsList } from 'api/amm';
+
 import { USDx_CODE, USDx_ISSUER } from 'constants/assets';
 
 import { getAquaAssetData, getAssetString, getUsdcAssetData } from 'helpers/assets';
@@ -13,7 +15,7 @@ import useAssetsSearch from 'hooks/useAssetsSearch';
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { StellarService } from 'services/globalServices';
+import { SorobanService, StellarService } from 'services/globalServices';
 
 import { ModalProps } from 'types/modal';
 import { ClassicToken, Token, TokenType } from 'types/token';
@@ -145,17 +147,40 @@ const AssetPickerModal = ({ params, confirm }: ModalProps<Props>) => {
     const [search, setSearch] = useState('');
 
     const [balances, setBalances] = useState([]);
+    const [customTokensBalances, setCustomTokensBalances] = useState(new Map());
 
     const { account, isLogged } = useAuthStore();
     const { assetsInfo } = useAssetsStore();
 
     const { assetsList, onUpdate } = params;
 
+    const getCustomTokensBalances = async () => {
+        const list = await getAssetsList();
+        const sorobanTokens = list.filter(({ type }) => type === TokenType.soroban);
+
+        if (!sorobanTokens.length) {
+            return;
+        }
+        const balances = await Promise.all(
+            sorobanTokens.map(({ contract }) =>
+                SorobanService.getTokenBalance(contract, account.accountId()),
+            ),
+        );
+
+        const map = new Map();
+        sorobanTokens.forEach((token, index) => {
+            map.set(token.contract, balances[index]);
+        });
+        setCustomTokensBalances(map);
+    };
+
     useEffect(() => {
         if (!account) {
             setBalances([]);
+            setCustomTokensBalances(new Map());
             return;
         }
+        getCustomTokensBalances();
         account.getSortedBalances().then(res => {
             setBalances(res);
         });
@@ -242,20 +267,31 @@ const AssetPickerModal = ({ params, confirm }: ModalProps<Props>) => {
                 {filteredAssets.map(asset => (
                     <AssetItem key={asset.code + asset.issuer} onClick={() => chooseAsset(asset)}>
                         <AssetStyled asset={asset} $isLogged={isLogged} />
-                        {asset.balance ? (
+                        {(
+                            asset.type === TokenType.soroban
+                                ? customTokensBalances.has(asset.contract)
+                                : asset.balance
+                        ) ? (
                             <Balances>
                                 <span>
-                                    {formatBalance(asset.balance)} {asset.code}
-                                </span>
-                                <span>
-                                    $
                                     {formatBalance(
-                                        +(
-                                            asset.nativeBalance * StellarService.priceLumenUsd
-                                        ).toFixed(2),
-                                        true,
-                                    )}
+                                        asset.type === TokenType.soroban
+                                            ? customTokensBalances.get(asset.contract)
+                                            : asset.balance,
+                                    )}{' '}
+                                    {asset.code}
                                 </span>
+                                {asset.nativeBalance && (
+                                    <span>
+                                        $
+                                        {formatBalance(
+                                            +(
+                                                asset.nativeBalance * StellarService.priceLumenUsd
+                                            ).toFixed(2),
+                                            true,
+                                        )}
+                                    </span>
+                                )}
                             </Balances>
                         ) : null}
                     </AssetItem>
