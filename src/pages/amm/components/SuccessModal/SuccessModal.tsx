@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { getIsTestnetEnv } from 'helpers/env';
 
 import { ModalProps } from 'types/modal';
-import { Asset } from 'types/stellar';
+import { Token } from 'types/token';
 
 import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -39,7 +39,7 @@ const StyledButton = styled(Button)`
 `;
 
 interface SuccessModalParams {
-    assets: Asset[];
+    assets: Token[];
     amounts: string[];
     title: string;
     isSwap?: boolean;

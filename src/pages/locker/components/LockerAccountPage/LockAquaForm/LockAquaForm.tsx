@@ -4,6 +4,8 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import styled, { createGlobalStyle } from 'styled-components';
 
+import { LS_DELEGATE_PROMO_VIEWED_LOCKER } from 'constants/local-storage';
+
 import { getDateString } from 'helpers/date';
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
 
@@ -13,10 +15,12 @@ import AccountService from 'services/account.service';
 import { ModalService, ToastService } from 'services/globalServices';
 
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
+import DelegatePromoModal from 'web/modals/alerts/DelegatePromoModal';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS, FONT_FAMILY } from 'web/styles';
 
 import Aqua from 'assets/aqua-logo-small.svg';
+import DelegateLogo from 'assets/delegate-promo.svg';
 import Ice from 'assets/ice-logo.svg';
 import Info from 'assets/icon-info.svg';
 
@@ -258,6 +262,16 @@ const IceLogoSmall = styled(Ice)`
     margin-right: 0.5rem;
 `;
 
+const ModalBG = styled(DelegateLogo)`
+    object-position: center center;
+    height: 28.2rem;
+    width: 100%;
+
+    ${respondDown(Breakpoints.md)`
+        width: 100%;
+    `}
+`;
+
 const LockAquaForm = forwardRef(
     (
         {
@@ -346,6 +360,13 @@ const LockAquaForm = forwardRef(
             setLockPeriodPercent(0);
         };
 
+        const showDelegatePromo = () => {
+            const isViewed = !!localStorage.getItem(LS_DELEGATE_PROMO_VIEWED_LOCKER);
+            if (!isViewed) {
+                ModalService.openModal(DelegatePromoModal, {}, false, <ModalBG />);
+            }
+        };
+
         const onSubmit = () => {
             if (lockPeriod - Date.now() > MAX_LOCK_PERIOD) {
                 ToastService.showErrorToast('The maximum allowed lock period is 10 years');
@@ -361,6 +382,7 @@ const LockAquaForm = forwardRef(
                         }).then(({ isConfirmed }) => {
                             if (isConfirmed) {
                                 resetForm();
+                                showDelegatePromo();
                             }
                         }),
                 });
@@ -373,6 +395,7 @@ const LockAquaForm = forwardRef(
             }).then(({ isConfirmed }) => {
                 if (isConfirmed) {
                     resetForm();
+                    showDelegatePromo();
                 }
             });
         };

@@ -1,5 +1,5 @@
 import * as StellarSdk from '@stellar/stellar-sdk';
-import { xdr, Asset, Keypair, StrKey } from '@stellar/stellar-sdk';
+import { xdr, Asset, Keypair, StrKey, rpc } from '@stellar/stellar-sdk';
 import BigNumber from 'bignumber.js';
 
 import {
@@ -20,10 +20,10 @@ import { ClassicToken, Token, TokenType } from 'types/token';
 
 import RestoreContractModal from 'web/modals/RestoreContractModal';
 
-import { ModalService, StellarService, ToastService } from './globalServices';
+import { ModalService, StellarService } from './globalServices';
 
-const AMM_SMART_CONTACT_ID = CONTRACTS[getEnv()].amm;
-const BATCH_SMART_CONTACT_ID = CONTRACTS[getEnv()].batch;
+const AMM_SMART_CONTRACT_ID = CONTRACTS[getEnv()].amm;
+const BATCH_SMART_CONTRACT_ID = CONTRACTS[getEnv()].batch;
 
 export enum CONTRACT_STATUS {
     ACTIVE = 'active',
@@ -64,49 +64,37 @@ export default class SorobanServiceClass {
         }
     }
 
-    processResponse(
-        response: StellarSdk.rpc.Api.SendTransactionResponse,
-        tx: StellarSdk.Transaction,
-    ) {
+    processResponse(response: rpc.Api.SendTransactionResponse) {
+        if (response.status === 'TRY_AGAIN_LATER') {
+            throw new Error('Try again later');
+        }
         if (response.status === 'DUPLICATE') {
-            return this.getTx(response.hash, tx);
+            return this.pollTx(response.hash);
         }
         if (response.status !== 'PENDING') {
             throw new Error(SorobanErrorHandler(response.errorResult.result().switch().name));
         }
-        return this.getTx(response.hash, tx);
+        return this.pollTx(response.hash);
     }
 
-    getTx(
+    pollTx<T>(
         hash: string,
-        tx: StellarSdk.Transaction,
-        resolver?: (value?: unknown) => void,
-        rejecter?: () => void,
-    ) {
-        return this.server.getTransaction(hash).then(res => {
-            if (res.status === 'SUCCESS') {
-                if (resolver) {
-                    resolver(res.returnValue);
+    ): Promise<
+        T | rpc.Api.GetFailedTransactionResponse | rpc.Api.GetMissingTransactionResponse | xdr.ScVal
+    > {
+        return this.server
+            .pollTransaction(hash, {
+                attempts: 30,
+                sleepStrategy: () => 2000,
+            })
+            .then(res => {
+                if (res.status === 'SUCCESS') {
+                    return res.returnValue;
                 }
-                return;
-            }
-
-            if (res.status === 'FAILED') {
-                if (rejecter) {
-                    rejecter();
-                }
-                ToastService.showErrorToast('Transaction was failed');
-                return;
-            }
-
-            if (resolver) {
-                return setTimeout(() => this.getTx(hash, tx, resolver, rejecter), 1000);
-            }
-
-            return new Promise((resolve, reject) => {
-                setTimeout(() => this.getTx(hash, tx, resolve, reject), 1000);
+                throw new Error(
+                    'Transaction failed because of timeout. Please make another attempt.',
+                );
             });
-        });
     }
 
     async tryRestore(tx: StellarSdk.Transaction) {
@@ -170,9 +158,9 @@ export default class SorobanServiceClass {
 
         const batchCalls = this.scValToArray([nameCall, symbolCall]);
 
-        return this.buildSmartContactTx(
+        return this.buildSmartContractTx(
             ACCOUNT_FOR_SIMULATE,
-            BATCH_SMART_CONTACT_ID,
+            BATCH_SMART_CONTRACT_ID,
             BATCH_CONTRACT_METHOD.batch,
             this.scValToArray([this.publicKeyToScVal(ACCOUNT_FOR_SIMULATE)]),
             batchCalls,
@@ -220,7 +208,7 @@ export default class SorobanServiceClass {
         // if (this.assetsCache.has(id)) {
         //     return Promise.resolve(this.assetsCache.get(id));
         // }
-        return this.buildSmartContactTx(ACCOUNT_FOR_SIMULATE, id, ASSET_CONTRACT_METHOD.NAME)
+        return this.buildSmartContractTx(ACCOUNT_FOR_SIMULATE, id, ASSET_CONTRACT_METHOD.NAME)
             .then(
                 tx =>
                     this.simulateTx(
@@ -312,7 +300,7 @@ export default class SorobanServiceClass {
         ];
 
         const operation = StellarSdk.Operation.invokeContractFunction({
-            contract: AMM_SMART_CONTACT_ID,
+            contract: AMM_SMART_CONTRACT_ID,
             function: AMM_CONTRACT_METHOD.INIT_CONSTANT_POOL,
             args,
             auth: [
@@ -323,7 +311,7 @@ export default class SorobanServiceClass {
                             xdr.SorobanAuthorizedFunction.sorobanAuthorizedFunctionTypeContractFn(
                                 new xdr.InvokeContractArgs({
                                     contractAddress:
-                                        this.contractIdToScVal(AMM_SMART_CONTACT_ID).address(),
+                                        this.contractIdToScVal(AMM_SMART_CONTRACT_ID).address(),
                                     functionName: AMM_CONTRACT_METHOD.INIT_CONSTANT_POOL,
                                     args,
                                 }),
@@ -352,7 +340,7 @@ export default class SorobanServiceClass {
             ],
         });
 
-        return this.buildSmartContactTxFromOp(accountId, operation).then(tx =>
+        return this.buildSmartContractTxFromOp(accountId, operation).then(tx =>
             this.prepareTransaction(tx),
         );
     }
@@ -386,7 +374,7 @@ export default class SorobanServiceClass {
             rootInvocation: new xdr.SorobanAuthorizedInvocation({
                 function: xdr.SorobanAuthorizedFunction.sorobanAuthorizedFunctionTypeContractFn(
                     new xdr.InvokeContractArgs({
-                        contractAddress: this.contractIdToScVal(AMM_SMART_CONTACT_ID).address(),
+                        contractAddress: this.contractIdToScVal(AMM_SMART_CONTRACT_ID).address(),
                         functionName: AMM_CONTRACT_METHOD.INIT_STABLESWAP_POOL,
                         args,
                     }),
@@ -396,13 +384,13 @@ export default class SorobanServiceClass {
         });
 
         const operation = StellarSdk.Operation.invokeContractFunction({
-            contract: AMM_SMART_CONTACT_ID,
+            contract: AMM_SMART_CONTRACT_ID,
             function: AMM_CONTRACT_METHOD.INIT_STABLESWAP_POOL,
             args,
             auth: [rootInvocation],
         });
 
-        return this.buildSmartContactTxFromOp(accountId, operation).then(tx =>
+        return this.buildSmartContractTxFromOp(accountId, operation).then(tx =>
             this.prepareTransaction(tx),
         );
     }
@@ -422,7 +410,7 @@ export default class SorobanServiceClass {
     }
 
     getPoolRewards(accountId: string, poolId: string): Promise<PoolRewardsInfo> {
-        return this.buildSmartContactTx(
+        return this.buildSmartContractTx(
             accountId,
             poolId,
             AMM_CONTRACT_METHOD.GET_REWARDS_INFO,
@@ -452,9 +440,9 @@ export default class SorobanServiceClass {
             ]),
         );
 
-        return this.buildSmartContactTx(
+        return this.buildSmartContractTx(
             accountId,
-            BATCH_SMART_CONTACT_ID,
+            BATCH_SMART_CONTRACT_ID,
             BATCH_CONTRACT_METHOD.batch,
             this.scValToArray([this.publicKeyToScVal(accountId)]),
             this.scValToArray(batches),
@@ -477,7 +465,7 @@ export default class SorobanServiceClass {
     }
 
     getTotalShares(poolId: string) {
-        return this.buildSmartContactTx(
+        return this.buildSmartContractTx(
             ACCOUNT_FOR_SIMULATE,
             poolId,
             AMM_CONTRACT_METHOD.GET_TOTAL_SHARES,
@@ -498,7 +486,7 @@ export default class SorobanServiceClass {
     }
 
     getClaimRewardsTx(accountId: string, poolId: string) {
-        return this.buildSmartContactTx(
+        return this.buildSmartContractTx(
             accountId,
             poolId,
             AMM_CONTRACT_METHOD.CLAIM,
@@ -517,9 +505,9 @@ export default class SorobanServiceClass {
             ]),
         );
 
-        return this.buildSmartContactTx(
+        return this.buildSmartContractTx(
             accountId,
-            BATCH_SMART_CONTACT_ID,
+            BATCH_SMART_CONTRACT_ID,
             BATCH_CONTRACT_METHOD.batch,
             this.scValToArray([this.publicKeyToScVal(accountId)]),
             this.scValToArray(batches),
@@ -590,7 +578,7 @@ export default class SorobanServiceClass {
         const rootInvocation = new xdr.SorobanAuthorizedInvocation({
             function: xdr.SorobanAuthorizedFunction.sorobanAuthorizedFunctionTypeContractFn(
                 new xdr.InvokeContractArgs({
-                    contractAddress: this.contractIdToScVal(BATCH_SMART_CONTACT_ID).address(),
+                    contractAddress: this.contractIdToScVal(BATCH_SMART_CONTRACT_ID).address(),
                     functionName: BATCH_CONTRACT_METHOD.batch,
                     args: [
                         this.scValToArray([this.publicKeyToScVal(accountId)]),
@@ -608,7 +596,7 @@ export default class SorobanServiceClass {
         });
 
         const batchOperation = StellarSdk.Operation.invokeContractFunction({
-            contract: BATCH_SMART_CONTACT_ID,
+            contract: BATCH_SMART_CONTRACT_ID,
             function: BATCH_CONTRACT_METHOD.batch,
             args: [
                 this.scValToArray([this.publicKeyToScVal(accountId)]),
@@ -618,14 +606,14 @@ export default class SorobanServiceClass {
             auth: [batchAuth],
         });
 
-        const tx = await this.buildSmartContactTxFromOp(accountId, batchOperation);
+        const tx = await this.buildSmartContractTxFromOp(accountId, batchOperation);
         return this.prepareTransaction(tx);
     }
 
     getCreationFeeToken() {
-        return this.buildSmartContactTx(
+        return this.buildSmartContractTx(
             ACCOUNT_FOR_SIMULATE,
-            AMM_SMART_CONTACT_ID,
+            AMM_SMART_CONTRACT_ID,
             AMM_CONTRACT_METHOD.GET_CREATION_FEE_TOKEN,
         )
             .then(
@@ -640,9 +628,9 @@ export default class SorobanServiceClass {
     }
 
     getCreationFee(type: POOL_TYPE) {
-        return this.buildSmartContactTx(
+        return this.buildSmartContractTx(
             ACCOUNT_FOR_SIMULATE,
-            AMM_SMART_CONTACT_ID,
+            AMM_SMART_CONTRACT_ID,
             type === POOL_TYPE.constant
                 ? AMM_CONTRACT_METHOD.GET_CONSTANT_CREATION_FEE
                 : AMM_CONTRACT_METHOD.GET_STABLE_CREATION_FEE,
@@ -657,9 +645,9 @@ export default class SorobanServiceClass {
     }
 
     getCreationFeeAddress() {
-        return this.buildSmartContactTx(
+        return this.buildSmartContractTx(
             ACCOUNT_FOR_SIMULATE,
-            AMM_SMART_CONTACT_ID,
+            AMM_SMART_CONTRACT_ID,
             AMM_CONTRACT_METHOD.GET_INIT_POOL_DESTINATION,
         )
             .then(
@@ -690,7 +678,7 @@ export default class SorobanServiceClass {
     }
 
     getTokenBalance(token: Asset | string, where: string) {
-        return this.buildSmartContactTx(
+        return this.buildSmartContractTx(
             ACCOUNT_FOR_SIMULATE,
             typeof token === 'string' ? token : this.getAssetContractId(token),
             ASSET_CONTRACT_METHOD.GET_BALANCE,
@@ -714,7 +702,7 @@ export default class SorobanServiceClass {
     }
 
     getPoolReserves(assets: Token[], poolId: string) {
-        return this.buildSmartContactTx(
+        return this.buildSmartContractTx(
             ACCOUNT_FOR_SIMULATE,
             poolId,
             AMM_CONTRACT_METHOD.GET_RESERVES,
@@ -795,7 +783,7 @@ export default class SorobanServiceClass {
             auth: [rootInvocation],
         });
 
-        return this.buildSmartContactTxFromOp(accountId, operation)
+        return this.buildSmartContractTxFromOp(accountId, operation)
             .then(tx => this.prepareTransaction(tx))
             .then(res => this.fixTxFootprint(res, accountId));
     }
@@ -845,7 +833,7 @@ export default class SorobanServiceClass {
             auth: [rootInvocation],
         });
 
-        return this.buildSmartContactTxFromOp(accountId, operation)
+        return this.buildSmartContractTxFromOp(accountId, operation)
             .then(tx => this.prepareTransaction(tx))
             .then(res => this.fixTxFootprint(res, accountId));
     }
@@ -873,7 +861,7 @@ export default class SorobanServiceClass {
                     contractAddress: this.contractIdToScVal(base.contract).address(),
                     args: [
                         this.publicKeyToScVal(accountId),
-                        this.contractIdToScVal(AMM_SMART_CONTACT_ID),
+                        this.contractIdToScVal(AMM_SMART_CONTRACT_ID),
                         this.amountToInt128(isSend ? amount : amountWithSlippage),
                     ],
                 }),
@@ -886,7 +874,7 @@ export default class SorobanServiceClass {
             rootInvocation: new xdr.SorobanAuthorizedInvocation({
                 function: xdr.SorobanAuthorizedFunction.sorobanAuthorizedFunctionTypeContractFn(
                     new xdr.InvokeContractArgs({
-                        contractAddress: this.contractIdToScVal(AMM_SMART_CONTACT_ID).address(),
+                        contractAddress: this.contractIdToScVal(AMM_SMART_CONTRACT_ID).address(),
                         functionName: isSend
                             ? AMM_CONTRACT_METHOD.SWAP_CHAINED
                             : AMM_CONTRACT_METHOD.SWAP_CHAINED_RECEIVE,
@@ -898,38 +886,39 @@ export default class SorobanServiceClass {
         });
 
         const operation = StellarSdk.Operation.invokeContractFunction({
-            contract: AMM_SMART_CONTACT_ID,
+            contract: AMM_SMART_CONTRACT_ID,
             function: isSend
                 ? AMM_CONTRACT_METHOD.SWAP_CHAINED
                 : AMM_CONTRACT_METHOD.SWAP_CHAINED_RECEIVE,
             args,
             auth: [rootInvocation],
         });
-        return this.buildSmartContactTxFromOp(accountId, operation).then(tx =>
+        return this.buildSmartContractTxFromOp(accountId, operation).then(tx =>
             this.prepareTransaction(tx),
         );
     }
 
-    buildSmartContactTx(publicKey, contactId, method, ...args) {
-        return this.server.getAccount(publicKey).then(acc => {
-            const contract = new StellarSdk.Contract(contactId);
-
-            const builtTx = new StellarSdk.TransactionBuilder(acc, {
-                fee: BASE_FEE,
-                networkPassphrase: getNetworkPassphrase(),
-            });
-
-            if (args) {
-                builtTx.addOperation(contract.call(method, ...args));
-            } else {
-                builtTx.addOperation(contract.call(method));
-            }
-
-            return builtTx.setTimeout(StellarSdk.TimeoutInfinite).build();
+    async buildSmartContractTx(
+        publicKey: string,
+        contractId: string,
+        method: string,
+        ...args: xdr.ScVal[]
+    ) {
+        const acc = await this.server.getAccount(publicKey);
+        const contract = new StellarSdk.Contract(contractId);
+        const builtTx = new StellarSdk.TransactionBuilder(acc, {
+            fee: BASE_FEE,
+            networkPassphrase: getNetworkPassphrase(),
         });
+        if (args) {
+            builtTx.addOperation(contract.call(method, ...args));
+        } else {
+            builtTx.addOperation(contract.call(method));
+        }
+        return builtTx.setTimeout(StellarSdk.TimeoutInfinite).build();
     }
 
-    buildSmartContactTxFromOp(publicKey, operation) {
+    buildSmartContractTxFromOp(publicKey, operation) {
         return this.server.getAccount(publicKey).then(acc => {
             const builtTx = new StellarSdk.TransactionBuilder(acc, {
                 fee: BASE_FEE,
@@ -947,8 +936,9 @@ export default class SorobanServiceClass {
         return tx;
     }
 
-    submitTx(tx: StellarSdk.Transaction) {
-        return this.server.sendTransaction(tx).then(res => this.processResponse(res, tx));
+    async submitTx(tx: StellarSdk.Transaction) {
+        const res = await this.server.sendTransaction(tx);
+        return await this.processResponse(res);
     }
 
     simulateTx(tx: StellarSdk.Transaction) {
@@ -1021,7 +1011,7 @@ export default class SorobanServiceClass {
     }
 
     private startServer(): void {
-        this.server = new StellarSdk.rpc.Server(getSorobanUrl());
+        this.server = new rpc.Server(getSorobanUrl());
     }
 
     contractIdToScVal(contractId) {

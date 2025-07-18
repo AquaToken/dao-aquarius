@@ -184,14 +184,14 @@ const AboutIce = () => (
         <Content>
             <TextBlock>
                 <Title>
-                    Freeze your AQUA into ICE <span>and maximize your income</span>
+                    Freeze your AQUA into ICE <span>and unlock extra benefits</span>
                 </Title>
-                <SubTitle>and maximize your income</SubTitle>
+                <SubTitle>and unlock extra benefits</SubTitle>
 
                 <List>
                     <Item>Increase your voting power</Item>
-                    <Item>Withdraw your votes at any time</Item>
-                    <Item>Enjoy ICE boosts for liquidity providers</Item>
+                    <Item>Earn more from liquidity with ICE boosts</Item>
+                    <Item>Delegate ICE and earn passive rewards</Item>
                 </List>
             </TextBlock>
             <BlueBlock>

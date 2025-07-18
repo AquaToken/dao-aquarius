@@ -70,10 +70,10 @@ const Purpose = (): JSX.Element => (
             <TextContainer>
                 <Title>Freeze your AQUA into ICE!</Title>
                 <Description>
-                    ICE brings entirely new benefits to the Aquarius ecosystem, giving those who
-                    freeze AQUA increased voting power for liquidity & governance voting, boosted
-                    yields when providing liquidity for markets receiving SDEX & AMM rewards, and
-                    expanded freedom within the Aquarius ecosystem.
+                    Lock AQUA to receive ICE — a non-transferable token that boosts your voting
+                    power and increases your rewards across the Aquarius ecosystem. Use ICE to vote
+                    for markets, earn bribes and protocol incentives, and unlock higher yields
+                    through ICE Boosts when providing liquidity on AMM or SDEX.
                 </Description>
             </TextContainer>
             <Image />

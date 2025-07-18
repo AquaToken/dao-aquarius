@@ -183,9 +183,9 @@ const MainBlock = () => {
                     AQUA
                     <AnimatedBorderedText />
                 </Title>
-                <Description>Powers the #1 Stellar defi protocol</Description>
+                <Description>Powers the #1 Stellar DeFi protocol</Description>
                 <SecondaryDescription>
-                    Join Aquarius to start earning AQUA rewards for liquidity provision and voting
+                    Earn AQUA rewards by providing liquidity and voting in the Aquarius ecosystem.
                 </SecondaryDescription>
                 <ButtonAndPriceBlock>
                     <Link to={MainRoutes.swap}>

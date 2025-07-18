@@ -6,6 +6,7 @@ import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Community from 'components/Community';
+import DelegateBlock from 'components/DelegateBlock';
 import Subscribe from 'components/Subscribe';
 
 import AboutIce from 'pages/token/components/AboutIce/AboutIce';
@@ -14,7 +15,6 @@ import AquaLinks from 'pages/token/components/AquaLinks/AquaLinks';
 import AquaPerformance from 'pages/token/components/AquaPerformance/AquaPerformance';
 import AquaStatistics from 'pages/token/components/AquaStatistics/AquaStatistics';
 import MainBlock from 'pages/token/components/MainBlock/MainBlock';
-import Questions from 'pages/token/components/Questions/Questions';
 
 const Container = styled.main`
     flex: 1 0 auto;
@@ -45,9 +45,9 @@ const TokenPage = () => {
 
             <AboutIce />
 
-            <AquaPerformance />
+            <DelegateBlock />
 
-            <Questions />
+            <AquaPerformance />
 
             <Community />
 

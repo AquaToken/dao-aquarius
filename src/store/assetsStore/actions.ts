@@ -12,7 +12,7 @@ import { StellarService } from 'services/globalServices';
 import { ClassicToken, Token, TokenType } from 'types/token';
 
 import { ASSET_CACHE } from './reducer';
-import { ASSETS_ACTIONS } from './types';
+import { ASSETS_ACTIONS, AssetSimple } from './types';
 
 import { ActionResult } from '../types';
 
@@ -57,16 +57,19 @@ export function getAssets() {
     };
 }
 
-export function processNewAssets(assets: Token[]) {
+export function processNewAssets(assets: Token[] | AssetSimple[]) {
     return (dispatch: Dispatch<ActionResult>): void => {
         const cached = new Map(JSON.parse(localStorage.getItem(ASSET_CACHE) || '[]'));
 
-        const newAssets: ClassicToken[] = assets.filter(
+        const newAssets: ClassicToken[] | AssetSimple[] = assets.filter(
             asset =>
-                asset.type !== TokenType.soroban &&
-                !cached.has(`${asset.code}:${asset.issuer}`) &&
-                !StellarService.createAsset(asset.code, asset.issuer).isNative(),
-        ) as ClassicToken[];
+                (asset as Token).type !== TokenType.soroban &&
+                !cached.has(`${asset.code}:${(asset as ClassicToken | AssetSimple).issuer}`) &&
+                !StellarService.createAsset(
+                    asset.code,
+                    (asset as ClassicToken | AssetSimple).issuer,
+                ).isNative(),
+        ) as ClassicToken[] | AssetSimple[];
 
         if (getIsTestnetEnv()) {
             if (!cached.has(TESTNET_ASSETS.keys()[0])) {
