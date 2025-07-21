@@ -27,6 +27,7 @@ import { getPairsWithBribes } from 'pages/vote/api/api';
 import BribesModal from 'pages/vote/components/MainPage/BribesModal/BribesModal';
 
 import { COLORS } from '../../../../../web/styles';
+import { getIceMaxApy } from 'helpers/ice';
 
 const Container = styled.div``;
 
@@ -126,6 +127,7 @@ const CurrentBribes = () => {
                     );
 
                     const apy = (sum / Number(bribe.upvote_value) + 1) ** 365 - 1;
+                    const apyMax = getIceMaxApy({ apy });
 
                     return {
                         onRowClick: () => goToMarketPage(base, counter),
@@ -149,7 +151,7 @@ const CurrentBribes = () => {
                                             ModalService.openModal(BribesModal, { pair: bribe });
                                         }}
                                     >
-                                        {formatBalance(+(apy * 100).toFixed(2), true)}%
+                                        up to {formatBalance(+apyMax.toFixed(2), true)}%
                                     </Apy>
                                 ),
                                 label: 'Bribe APY:',
