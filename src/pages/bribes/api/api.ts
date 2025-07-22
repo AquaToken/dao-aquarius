@@ -1,18 +1,19 @@
-import * as StellarSdk from '@stellar/stellar-sdk';
 import axios from 'axios';
 
 import { BRIBES_API_URL, MARKET_KEY_API_URL } from 'constants/api';
 
+import { getAssetString } from 'helpers/assets';
+
 import { AssetSimple } from 'store/assetsStore/types';
+
+import { StellarService } from 'services/globalServices';
 
 import { UpcomingBribe } from './types';
 
 import { MarketBribes, MarketKey, ListResponse } from '../../vote/api/types';
 
 const getAssetParam = (asset: AssetSimple) =>
-    new StellarSdk.Asset(asset.code, asset.issuer).isNative()
-        ? 'native'
-        : `${asset.code}:${asset.issuer}`;
+    getAssetString(StellarService.createAsset(asset.code, asset.issuer));
 
 export const getMarketPair = (base, counter) =>
     axios

@@ -1,4 +1,3 @@
-import * as StellarSdk from '@stellar/stellar-sdk';
 import * as React from 'react';
 import { useState } from 'react';
 import styled, { css } from 'styled-components';
@@ -6,13 +5,17 @@ import styled, { css } from 'styled-components';
 import { getAssetString } from 'helpers/assets';
 
 import { LumenInfo } from 'store/assetsStore/reducer';
-import { AssetSimple } from 'store/assetsStore/types';
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
+
+import { StellarService } from 'services/globalServices';
+
+import { ClassicToken, Token, TokenType } from 'types/token';
 
 import { flexAllCenter } from 'web/mixins';
 import { COLORS } from 'web/styles';
 
 import UnknownLogo from 'assets/asset-unknown-logo.svg';
+import SorobanLogo from 'assets/soroban-token-logo.svg';
 
 import { CircleLoader } from './loaders';
 
@@ -67,6 +70,18 @@ const Unknown = styled(UnknownLogo)<{ $isSmall?: boolean; $isBig?: boolean; $isC
     }}
 `;
 
+const Soroban = styled(SorobanLogo)<{ $isSmall?: boolean; $isBig?: boolean; $isCircle?: boolean }>`
+    ${({ $isSmall, $isBig, $isCircle }) => {
+        if ($isSmall) {
+            return smallLogoStyles($isCircle);
+        }
+        if ($isBig) {
+            return bigLogoStyles($isCircle);
+        }
+        return logoStyles($isCircle);
+    }}
+`;
+
 const LogoLoaderContainer = styled.div<{
     $isSmall?: boolean;
     $isBig?: boolean;
@@ -96,7 +111,7 @@ const AssetLogo = ({
     isCircle,
     ...props
 }: {
-    asset: AssetSimple;
+    asset: Token;
     isSmall?: boolean;
     isBig?: boolean;
     isCircle?: boolean;
@@ -105,9 +120,19 @@ const AssetLogo = ({
 
     const { assetsInfo } = useAssetsStore();
 
-    const assetInstance = new StellarSdk.Asset(asset.code, asset.issuer);
+    if (!asset.type && !(asset as ClassicToken).issuer) {
+        return <Unknown $isSmall={isSmall} $isBig={isBig} $isCircle={isCircle} {...props} />;
+    }
+
+    if (asset.type === TokenType.soroban) {
+        return <Soroban $isSmall={isSmall} $isBig={isBig} $isCircle={isCircle} {...props} />;
+    }
+
+    const assetInstance = StellarService.createAsset(asset.code, asset.issuer);
     const isNative = assetInstance.isNative();
-    const assetInfo = isNative ? LumenInfo : assetsInfo.get(getAssetString(assetInstance));
+    const assetInfo = isNative
+        ? LumenInfo
+        : assetsInfo.get(getAssetString(assetInstance as ClassicToken));
     const logoUrl = assetInfo?.image;
 
     if (logoUrl === undefined) {

@@ -8,6 +8,7 @@ import { MarketRoutes } from 'constants/routes';
 import { getAssetString } from 'helpers/assets';
 import { convertLocalDateToUTCIgnoringTimezone, getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
+import { getIceMaxApy } from 'helpers/ice';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
@@ -15,6 +16,7 @@ import { ModalService, StellarService } from 'services/globalServices';
 
 import PageLoader from 'web/basics/loaders/PageLoader';
 import { flexAllCenter } from 'web/mixins';
+import { COLORS } from 'web/styles';
 
 import Asset from 'basics/Asset';
 import AssetLogo from 'basics/AssetLogo';
@@ -26,8 +28,6 @@ import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 import { getPairsWithBribes } from 'pages/vote/api/api';
 import BribesModal from 'pages/vote/components/MainPage/BribesModal/BribesModal';
 
-import { COLORS } from '../../../../../web/styles';
-import { getIceMaxApy } from 'helpers/ice';
 
 const Container = styled.div``;
 

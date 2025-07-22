@@ -1,11 +1,11 @@
-import * as StellarSdk from '@stellar/stellar-sdk';
+import { StellarToml } from '@stellar/stellar-sdk';
 import { useEffect, useState } from 'react';
 
 import { useDebounce } from 'hooks/useDebounce';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
-import { StellarService } from 'services/globalServices';
+import { SorobanService, StellarService } from 'services/globalServices';
 
 const domainPattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
 const domainRegexp = new RegExp(domainPattern);
@@ -24,15 +24,14 @@ export default function useAssetsSearch(searchState) {
     const resolveCurrencies = (domain: string) => {
         setSearchPending(true);
 
-        StellarSdk.StellarToml.Resolver.resolve(domain)
+        StellarToml.Resolver.resolve(domain)
             .then(({ CURRENCIES }) => {
                 if (CURRENCIES) {
-                    processNewAssets(CURRENCIES);
-                    setSearchResults(
-                        CURRENCIES.map(({ code, issuer }) =>
-                            StellarService.createAsset(code, issuer),
-                        ),
+                    const tokens = CURRENCIES.map(({ code, issuer }) =>
+                        StellarService.createAsset(code, issuer),
                     );
+                    processNewAssets(tokens);
+                    setSearchResults(tokens);
                 }
                 setSearchPending(false);
             })
@@ -43,7 +42,7 @@ export default function useAssetsSearch(searchState) {
     };
 
     useEffect(() => {
-        if (StellarSdk.StrKey.isValidEd25519PublicKey(debouncedSearchText.current)) {
+        if (StellarService.isValidPublicKey(debouncedSearchText.current)) {
             setSearchPending(true);
             StellarService.loadAccount(debouncedSearchText.current)
                 .then(account => {
@@ -61,9 +60,23 @@ export default function useAssetsSearch(searchState) {
             return;
         }
 
+        if (StellarService.isValidContract(debouncedSearchText.current)) {
+            setSearchPending(true);
+            SorobanService.parseTokenContractId(debouncedSearchText.current)
+                .then(token => {
+                    setSearchResults([token]);
+                    setSearchPending(false);
+                })
+                .catch(() => {
+                    setSearchPending(false);
+                    setSearchResults([]);
+                });
+            return;
+        }
+
         if (codeIssuerRegexp.test(debouncedSearchText.current)) {
             const [code, issuer] = debouncedSearchText.current.split(':');
-            if (!StellarSdk.StrKey.isValidEd25519PublicKey(issuer)) {
+            if (!StellarService.isValidPublicKey(issuer)) {
                 return;
             }
 

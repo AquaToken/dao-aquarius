@@ -16,6 +16,7 @@ import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 import { PoolExtended } from 'types/amm';
 import { ModalProps } from 'types/modal';
 import { Int128Parts } from 'types/stellar';
+import { TokenType } from 'types/token';
 
 import { customScroll, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -109,7 +110,7 @@ const WithdrawFromPool = ({ params, close }: ModalProps<{ pool: PoolExtended }>)
     }, []);
 
     useEffect(() => {
-        SorobanService.getPoolReserves(pool.assets, pool.address).then(res => {
+        SorobanService.getPoolReserves(pool.tokens, pool.address).then(res => {
             setReserves(res);
         });
     }, []);
@@ -149,7 +150,9 @@ const WithdrawFromPool = ({ params, close }: ModalProps<{ pool: PoolExtended }>)
     };
 
     const withdraw = async () => {
-        const noTrustAssets = pool.assets.filter(asset => account.getAssetBalance(asset) === null);
+        const noTrustAssets = pool.tokens.filter(
+            asset => asset.type !== TokenType.soroban && account.getAssetBalance(asset) === null,
+        );
 
         if (noTrustAssets.length) {
             ToastService.showErrorToast(
@@ -176,14 +179,14 @@ const WithdrawFromPool = ({ params, close }: ModalProps<{ pool: PoolExtended }>)
                       account?.accountId(),
                       pool.address,
                       amount,
-                      pool.assets,
+                      pool.tokens,
                       pool.share_token_address,
                   )
                 : await SorobanService.getWithdrawTx(
                       account?.accountId(),
                       pool.address,
                       amount,
-                      pool.assets,
+                      pool.tokens,
                       pool.share_token_address,
                   );
 
@@ -216,7 +219,7 @@ const WithdrawFromPool = ({ params, close }: ModalProps<{ pool: PoolExtended }>)
                 : (result.value() as { value: () => Int128Parts }[]);
 
             ModalService.openModal(SuccessModal, {
-                assets: pool.assets,
+                assets: pool.tokens,
                 amounts: resultValues.map(val => SorobanService.i128ToInt(val.value())),
                 title: 'Withdraw Successful',
                 hash,
@@ -240,7 +243,7 @@ const WithdrawFromPool = ({ params, close }: ModalProps<{ pool: PoolExtended }>)
                 <>
                     <ModalTitle>Remove liquidity</ModalTitle>
                     <PairContainer>
-                        <Market assets={pool.assets} />
+                        <Market assets={pool.tokens} />
                     </PairContainer>
                     <InputStyled
                         label="Amount to remove"
@@ -252,7 +255,7 @@ const WithdrawFromPool = ({ params, close }: ModalProps<{ pool: PoolExtended }>)
                     <RangeInput onChange={value => setPercent(value.toString())} value={+percent} />
 
                     <Details $withBorder={Boolean(rewards)}>
-                        {pool.assets.map(asset => (
+                        {pool.tokens.map(asset => (
                             <DescriptionRow key={getAssetString(asset)}>
                                 <span>Will receive {asset.code}</span>
                                 <span>

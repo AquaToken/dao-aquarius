@@ -9,7 +9,7 @@ import { formatBalance } from 'helpers/format-number';
 
 import { ModalService } from 'services/globalServices';
 
-import { Asset as AssetType } from 'types/stellar';
+import { ClassicToken } from 'types/token';
 
 import { respondDown } from 'web/mixins';
 import AssetInfoModal from 'web/modals/AssetInfoModal';
@@ -72,7 +72,7 @@ const MobileLabel = styled.span`
 `;
 
 interface Props {
-    assets: AssetType[];
+    assets: ClassicToken[];
 }
 
 const AssetsDetails = ({ assets }: Props) => {

@@ -1,5 +1,7 @@
+import { Token } from 'types/token';
+
 import * as actions from './actions';
-import { AssetsStore } from './types';
+import { AssetSimple, AssetsStore } from './types';
 
 import bindActions from '../bindActions';
 import { useGlobalStore } from '../index';
@@ -7,7 +9,7 @@ import { ActionAsyncResult, ActionSimpleResult } from '../types';
 
 type AssetsActions = {
     getAssets: () => ActionAsyncResult;
-    processNewAssets: (assets: any[]) => ActionAsyncResult;
+    processNewAssets: (assets: Token[] | AssetSimple[]) => ActionAsyncResult;
     clearAssets: () => ActionSimpleResult;
 };
 

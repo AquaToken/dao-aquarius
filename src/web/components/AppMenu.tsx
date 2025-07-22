@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { ICE_CODE, ICE_ISSUER } from 'constants/assets';
 import { LockerRoutes } from 'constants/routes';
 
+import { getIsTestnetEnv } from 'helpers/env';
 import { formatBalance } from 'helpers/format-number';
 
 import { LoginTypes } from 'store/authStore/types';
@@ -251,7 +252,9 @@ const AppMenu = ({
                     <AccountBalanceBlock>
                         <LinkButton
                             target="_blank"
-                            href={`https://stellar.expert/explorer/public/account/${account.accountId()}`}
+                            href={`https://stellar.expert/explorer/${
+                                getIsTestnetEnv() ? 'testnet' : 'public'
+                            }/account/${account.accountId()}`}
                         >
                             <Button fullWidth>
                                 EXPLORER

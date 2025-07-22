@@ -1,6 +1,8 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
+import { getIsTestnetEnv } from 'helpers/env';
+
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
@@ -176,7 +178,9 @@ const AccountInfo = () => {
                         <CopyWrap>
                             <a
                                 target="_blank"
-                                href={`https://stellar.expert/explorer/public/account/${account.accountId()}`}
+                                href={`https://stellar.expert/explorer/${
+                                    getIsTestnetEnv() ? 'testnet' : 'public'
+                                }/account/${account.accountId()}`}
                                 rel="noreferrer"
                             >
                                 <ButtonBlock>

@@ -83,7 +83,6 @@ const ClaimRewardsModal = ({ confirm, close }: ModalProps<never>) => {
             return;
         }
         getUserRewardsList(account.accountId()).then(res => {
-            console.log(res);
             setRewards(res);
 
             setSelectedRewards(new Set(res.slice(0, MAX_REWARDS_COUNT).map(({ id }) => id)));
@@ -155,7 +154,7 @@ const ClaimRewardsModal = ({ confirm, close }: ModalProps<never>) => {
                                             children: (
                                                 <>
                                                     <Market
-                                                        assets={item.assets}
+                                                        assets={item.tokens}
                                                         withoutLink
                                                         poolType={item.type}
                                                         mobileVerticalDirections

@@ -78,7 +78,7 @@ const AquaLinks = ({ ...props }) => (
                 <Label>See on</Label>
                 <Links>
                     <AquaLink
-                        href="https://stellar.expert/explorer/public/asset/AQUA-GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA"
+                        href="https://stellar.expert/explorer//asset/AQUA-GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA"
                         label="StellarExpert"
                     >
                         <Expert />
