@@ -212,27 +212,27 @@ const App = () => {
                 <Suspense fallback={<PageLoader />}>
                     <Switch>
                         <Route exact path={MainRoutes.main}>
-                            <PageTitle title="Aquarius">
+                            <PageTitle title="Staging: Aquarius">
                                 <MainPage />
                             </PageTitle>
                         </Route>
                         <Route path={MainRoutes.locker}>
-                            <PageTitle title="Locker - Aquarius">
+                            <PageTitle title="Staging: Locker - Aquarius">
                                 <LockerPage />
                             </PageTitle>
                         </Route>
                         <Route path={MainRoutes.governance}>
-                            <PageTitle title="Governance - Aquarius">
+                            <PageTitle title="Staging: Governance - Aquarius">
                                 <Governance />
                             </PageTitle>
                         </Route>
                         <Route path={MainRoutes.vote}>
-                            <PageTitle title="Voting - Aquarius">
+                            <PageTitle title="Staging: Voting - Aquarius">
                                 <VotePage />
                             </PageTitle>
                         </Route>
                         <Route path={MainRoutes.bribes}>
-                            <PageTitle title="Bribes - Aquarius">
+                            <PageTitle title="Staging: Bribes - Aquarius">
                                 <BribesPage />
                             </PageTitle>
                         </Route>
@@ -240,83 +240,83 @@ const App = () => {
                             <MarketPage />
                         </Route>
                         <Route path={MainRoutes.rewards}>
-                            <PageTitle title="Rewards - Aquarius">
+                            <PageTitle title="Staging: Rewards - Aquarius">
                                 <RewardsPage />
                             </PageTitle>
                         </Route>
                         <Route path={MainRoutes.airdrop}>
-                            <PageTitle title="Airdrop - Aquarius">
+                            <PageTitle title="Staging: Airdrop - Aquarius">
                                 <AirdropPage />
                             </PageTitle>
                         </Route>
                         <Route path={MainRoutes.airdrop2}>
-                            <PageTitle title="Airdrop #2 - Aquarius">
+                            <PageTitle title="Staging: Airdrop #2 - Aquarius">
                                 <Airdrop2Page />
                             </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.account}>
-                            <PageTitle title="My Aquarius">
+                            <PageTitle title="Staging: My Aquarius">
                                 {isLogged ? <ProfilePage /> : <Redirect to={MainRoutes.main} />}
                             </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.walletConnect}>
-                            <PageTitle title="WalletConnect - Aquarius">
+                            <PageTitle title="Staging: WalletConnect - Aquarius">
                                 <WalletConnectPage />
                             </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.amm}>
-                            <PageTitle title="Pools - Aquarius">
+                            <PageTitle title="Staging: Pools - Aquarius">
                                 <AmmPage />
                             </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.swap}>
-                            <PageTitle title="Swap - Aquarius">
+                            <PageTitle title="Staging: Swap - Aquarius">
                                 <SwapPage />
                             </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.buyAqua}>
-                            <PageTitle title="Buy Aqua - Aquarius">
+                            <PageTitle title="Staging: Buy Aqua - Aquarius">
                                 <BuyAquaPage />
                             </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.testnet}>
-                            <PageTitle title="Testnet - Aquarius">
+                            <PageTitle title="Staging: Testnet - Aquarius">
                                 <TestnetSwitcherPage />
                             </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.terms}>
-                            <PageTitle title="Terms of Use - Aquarius">
+                            <PageTitle title="Staging: Terms of Use - Aquarius">
                                 <TermsPage />
                             </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.privacy}>
-                            <PageTitle title="Privacy Policy - Aquarius">
+                            <PageTitle title="Staging: Privacy Policy - Aquarius">
                                 <PrivacyPage />
                             </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.token}>
-                            <PageTitle title="AQUA token - Aquarius">
+                            <PageTitle title="Staging: AQUA token - Aquarius">
                                 <TokenPage />
                             </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.quest}>
-                            <PageTitle title="Onboard to Aquarius">
+                            <PageTitle title="Staging: Onboard to Aquarius">
                                 <QuestPage />
                             </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.delegate}>
-                            <PageTitle title="Delegates">
+                            <PageTitle title="Staging: Delegates">
                                 <DelegatePage />
                             </PageTitle>
                         </Route>

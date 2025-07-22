@@ -20,7 +20,7 @@ export const API_URLS = {
         horizon: 'https://horizon.stellar.org',
         // soroban: 'https://mainnet.sorobanrpc.com/',
         soroban: 'https://soroban-rpc.aqua.network/',
-        ammAqua: 'https://amm-api.aqua.network',
+        ammAqua: 'https://amm-api-staging.aqua.network', //staging
     },
     [ENV_TESTNET]: {
         moonpay: 'https://api.moonpay.com/v3',
