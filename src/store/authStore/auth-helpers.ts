@@ -1,9 +1,11 @@
 import { LS_LAST_AUTH_DATA } from 'constants/local-storage';
+import { LOBSTR_CONNECTION_KEY } from 'constants/session-storage';
 
 import { LoginTypes, SavedAuthData } from 'store/authStore/types';
 
 export function saveToLS(pubKey: string, loginType: LoginTypes, walletKitId = '') {
-    const stringified = JSON.stringify({ pubKey, loginType, walletKitId });
+    const lobstrConnectionKey = sessionStorage.getItem(LOBSTR_CONNECTION_KEY);
+    const stringified = JSON.stringify({ pubKey, loginType, walletKitId, lobstrConnectionKey });
     localStorage.setItem(LS_LAST_AUTH_DATA, stringified);
 }
 

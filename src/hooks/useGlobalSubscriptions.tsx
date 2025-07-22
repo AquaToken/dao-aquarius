@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 
 import { LS_FREIGHTER_ACCOUNT_CHANGE_IMMEDIATELY } from 'constants/local-storage';
 import { MainRoutes } from 'constants/routes';
+import { LOBSTR_CONNECTION_KEY } from 'constants/session-storage';
 
 import PromisedTimeout from 'helpers/promised-timeout';
 
@@ -55,7 +56,7 @@ export default function useGlobalSubscriptions(): void {
     const accountRef = useRef(account);
 
     useEffect(() => {
-        const { pubKey, loginType, walletKitId } = getSavedAuthData();
+        const { pubKey, loginType, walletKitId, lobstrConnectionKey } = getSavedAuthData();
 
         if (!loginType) {
             return;
@@ -76,6 +77,11 @@ export default function useGlobalSubscriptions(): void {
         if (loginType === LoginTypes.secret || loginType === LoginTypes.ledger) {
             clearSavedAuthData();
             return;
+        }
+
+        if (loginType === LoginTypes.lobstr) {
+            // save connection key to session storage
+            sessionStorage.setItem(LOBSTR_CONNECTION_KEY, lobstrConnectionKey);
         }
 
         login({ pubKey, loginType });

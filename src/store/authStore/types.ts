@@ -29,6 +29,7 @@ export interface SavedAuthData {
     pubKey: string;
     loginType: LoginTypes;
     walletKitId: string;
+    lobstrConnectionKey?: string;
 }
 
 export enum LoginTypes {
