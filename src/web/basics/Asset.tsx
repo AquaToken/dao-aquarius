@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import styled from 'styled-components';
 
 import { getAssetString } from 'helpers/assets';
+import getExplorerLink, { ExplorerSection } from 'helpers/explorer-links';
 import { truncateString } from 'helpers/truncate-string';
 
 import { LumenInfo } from 'store/assetsStore/reducer';
@@ -79,6 +80,16 @@ const DomainDetails = styled.span`
     }
 `;
 
+const DomainDetailsLink = styled.a`
+    text-decoration: none;
+    color: ${COLORS.grayText};
+
+    &:hover {
+        text-decoration: underline;
+        text-decoration-style: dashed;
+    }
+`;
+
 const Asset = ({
     asset,
     inRow,
@@ -120,7 +131,14 @@ const Asset = ({
 
     const domain = useMemo(() => {
         if (asset.type === TokenType.soroban) {
-            return 'soroban token';
+            return (
+                <DomainDetailsLink
+                    href={getExplorerLink(ExplorerSection.contract, asset.contract)}
+                    target="_blank"
+                >
+                    soroban token
+                </DomainDetailsLink>
+            );
         }
         if (!assetInfo) {
             return <DotsLoader />;
