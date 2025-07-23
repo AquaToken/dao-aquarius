@@ -58,7 +58,7 @@ export default class WalletKitServiceClass {
             this.watcher = new WatchWalletChanges(1000);
         }
         this.watcher.watch(({ address }) => {
-            if (publicKey === address) {
+            if (publicKey === address || !address) {
                 return;
             }
             this.event.trigger({
