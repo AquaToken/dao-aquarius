@@ -16,6 +16,7 @@ export function login({
     metadata,
     topic,
     walletKitId,
+    bipPath,
 }: LoginArgs): ActionAsyncResult {
     return (dispatch: Dispatch<ActionResult>): void => {
         dispatch({ type: AUTH_ACTIONS.LOGIN_START, payload: { topic } });
@@ -23,7 +24,7 @@ export function login({
         StellarService.loadAccount(pubKey)
             .then(account => {
                 const wrappedAccount = new AccountService(account, loginType);
-                saveToLS(pubKey, loginType, walletKitId);
+                saveToLS(pubKey, loginType, walletKitId, bipPath);
                 dispatch({
                     type: AUTH_ACTIONS.LOGIN_SUCCESS,
                     payload: {

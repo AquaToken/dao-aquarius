@@ -23,6 +23,7 @@ export interface LoginArgs {
     metadata?: WalletConnectTypes.SignClientTypes.Metadata;
     topic?: string;
     walletKitId?: string;
+    bipPath?: number;
 }
 
 export interface SavedAuthData {
@@ -30,6 +31,7 @@ export interface SavedAuthData {
     loginType: LoginTypes;
     walletKitId: string;
     lobstrConnectionKey?: string;
+    bipPath?: number | null;
 }
 
 export enum LoginTypes {

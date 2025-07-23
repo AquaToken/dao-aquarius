@@ -9,7 +9,7 @@ import { LOBSTR_CONNECTION_KEY } from 'constants/session-storage';
 import PromisedTimeout from 'helpers/promised-timeout';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
-import { getSavedAuthData, clearSavedAuthData } from 'store/authStore/auth-helpers';
+import { clearSavedAuthData, getSavedAuthData } from 'store/authStore/auth-helpers';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
@@ -56,7 +56,7 @@ export default function useGlobalSubscriptions(): void {
     const accountRef = useRef(account);
 
     useEffect(() => {
-        const { pubKey, loginType, walletKitId, lobstrConnectionKey } = getSavedAuthData();
+        const { pubKey, loginType, walletKitId, lobstrConnectionKey, bipPath } = getSavedAuthData();
 
         if (!loginType) {
             return;
@@ -74,8 +74,13 @@ export default function useGlobalSubscriptions(): void {
             return;
         }
 
-        if (loginType === LoginTypes.secret || loginType === LoginTypes.ledger) {
+        if (loginType === LoginTypes.secret) {
             clearSavedAuthData();
+            return;
+        }
+
+        if (loginType === LoginTypes.ledger) {
+            LedgerService.reLogin(bipPath, pubKey);
             return;
         }
 
@@ -114,6 +119,7 @@ export default function useGlobalSubscriptions(): void {
                 login({
                     pubKey: event.publicKey,
                     loginType: LoginTypes.ledger,
+                    bipPath: event.bipPath,
                 });
             }
             if (event.type === LedgerEvents.logout) {
