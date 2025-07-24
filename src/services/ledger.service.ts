@@ -18,6 +18,7 @@ export enum LedgerEvents {
 
 type LedgerPayload = {
     publicKey?: string;
+    bipPath?: number;
 };
 
 export default class LedgerServiceClass {
@@ -54,6 +55,29 @@ export default class LedgerServiceClass {
             this.event.trigger({
                 type: LedgerEvents.login,
                 publicKey,
+                bipPath,
+            });
+        } catch {
+            ModalService.openModal(LedgerError, {});
+        }
+    }
+
+    async reLogin(bipPath: number, pubKey: string) {
+        try {
+            const transport = await LedgerTransport.create();
+            this.api = new LedgerStr(transport);
+
+            await this.api.getAppConfiguration();
+
+            const path = `44'/148'/${bipPath}'`;
+
+            this.bipSlot = bipPath;
+            this.bipPath = path;
+            this.accountId = pubKey;
+            this.event.trigger({
+                type: LedgerEvents.login,
+                publicKey: pubKey,
+                bipPath,
             });
         } catch {
             ModalService.openModal(LedgerError, {});

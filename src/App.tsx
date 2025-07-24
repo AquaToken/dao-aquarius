@@ -11,7 +11,7 @@ import { getMoonpayKeyByEnv } from 'helpers/moonpay';
 
 import { LoginTypes } from 'store/authStore/types';
 
-import { ModalService, StellarService, WalletConnectService } from 'services/globalServices';
+import { ModalService, StellarService } from 'services/globalServices';
 import { StellarEvents } from 'services/stellar.service';
 
 import AppGlobalStyle from 'web/AppGlobalStyles';
@@ -62,8 +62,6 @@ const UPDATE_ASSETS_DATE = 'update assets timestamp';
 const UPDATE_PERIOD = 24 * 60 * 60 * 1000;
 
 const App = () => {
-    const [wcLoginChecked, setWcLoginChecked] = useState(false);
-
     useGlobalSubscriptions();
 
     const { getAssets, assets, processNewAssets, assetsInfo, clearAssets } = useAssetsStore();
@@ -94,16 +92,8 @@ const App = () => {
         getAssets();
     }, []);
 
-    useEffect(() => {
-        WalletConnectService.onAppStart(window.location.pathname === MainRoutes.walletConnect).then(
-            () => {
-                setWcLoginChecked(true);
-            },
-        );
-    }, []);
-
     const reloadIfNotLoaded = () => {
-        if (!wcLoginChecked || !isAssetsUpdated) {
+        if (!isAssetsUpdated) {
             window.location.reload();
         }
     };
@@ -112,7 +102,7 @@ const App = () => {
         window.addEventListener('online', reloadIfNotLoaded);
 
         return () => window.removeEventListener('online', reloadIfNotLoaded);
-    }, [wcLoginChecked, isAssetsUpdated]);
+    }, [isAssetsUpdated]);
 
     useEffect(() => {
         const handler = (event: BeforeUnloadEvent) => {
@@ -199,7 +189,7 @@ const App = () => {
         }
     }, []);
 
-    if (!isAssetsUpdated || !wcLoginChecked) {
+    if (!isAssetsUpdated) {
         return <PageLoader />;
     }
 
