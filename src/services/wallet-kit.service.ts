@@ -30,6 +30,7 @@ export enum WalletKitEvents {
 
 type WalletKitPayload = {
     publicKey?: string;
+    id?: string;
 };
 
 export default class WalletKitServiceClass {
@@ -57,7 +58,7 @@ export default class WalletKitServiceClass {
             this.watcher = new WatchWalletChanges(1000);
         }
         this.watcher.watch(({ address }) => {
-            if (publicKey === address) {
+            if (publicKey === address || !address) {
                 return;
             }
             this.event.trigger({
@@ -99,9 +100,18 @@ export default class WalletKitServiceClass {
             this.event.trigger({
                 type: WalletKitEvents.login,
                 publicKey: address,
+                id,
             });
         } catch (e) {
             ToastService.showErrorToast(e.message);
+        }
+    }
+
+    restoreLogin(id: string, publicKey: string) {
+        this.walletKit.setWallet(id);
+
+        if (id === FREIGHTER_ID) {
+            this.startFreighterWatching(publicKey);
         }
     }
 

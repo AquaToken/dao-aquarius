@@ -5,9 +5,9 @@ import styled from 'styled-components';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { ModalProps } from 'types/modal';
-
 import { SorobanService, ToastService } from 'services/globalServices';
+
+import { ModalProps } from 'types/modal';
 
 import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
@@ -54,7 +54,10 @@ const LoginWithSecret = ({ close }: ModalProps<never>): React.ReactNode => {
         e.preventDefault();
         SorobanService.loginWithSecret(secretKey)
             .then(pubKey => {
-                login(pubKey, LoginTypes.secret);
+                login({
+                    pubKey,
+                    loginType: LoginTypes.secret,
+                });
             })
             .catch(() => {
                 ToastService.showErrorToast('Invalid secret key');
