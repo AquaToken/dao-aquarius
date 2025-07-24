@@ -218,6 +218,18 @@ const WithdrawFromPool = ({ params, close }: ModalProps<{ pool: PoolExtended }>)
                 ? (result.value()[0].value() as { value: () => Int128Parts }[])
                 : (result.value() as { value: () => Int128Parts }[]);
 
+            pool.tokens.forEach((token, index) => {
+                if (token.type === TokenType.soroban) {
+                    const resAmount = SorobanService.i128ToInt(
+                        resultValues[index].value() as Int128Parts,
+                    );
+
+                    ToastService.showSuccessToast(
+                        `Payment received: ${formatBalance(Number(resAmount))} ${token.code}`,
+                    );
+                }
+            });
+
             ModalService.openModal(SuccessModal, {
                 assets: pool.tokens,
                 amounts: resultValues.map(val => SorobanService.i128ToInt(val.value())),

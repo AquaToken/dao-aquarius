@@ -421,6 +421,18 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
 
                 const resultAmounts = res.value()[0].value();
 
+                pool.tokens.forEach((token, index) => {
+                    if (token.type === TokenType.soroban) {
+                        const resAmount = SorobanService.i128ToInt(
+                            resultAmounts[index].value() as Int128Parts,
+                        );
+
+                        ToastService.showSuccessToast(
+                            `Payment sent: ${formatBalance(Number(resAmount))} ${token.code}`,
+                        );
+                    }
+                });
+
                 ModalService.openModal(SuccessModal, {
                     assets: pool.tokens,
                     amounts: resultAmounts.map(value =>
