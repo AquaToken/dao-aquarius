@@ -186,7 +186,7 @@ const SwapFormRow = ({
                     <div style={{ height: '1.8rem' }} />
                 )}
                 <AssetPicker asset={asset} onUpdate={setAsset} assetsList={assetsList} />
-                {balance !== null && (
+                {balance !== null && Boolean(account) && (
                     <Balance>
                         <BalanceValue>
                             <BalanceLabel>{isBase ? 'Available: ' : 'Balance: '}</BalanceLabel>
