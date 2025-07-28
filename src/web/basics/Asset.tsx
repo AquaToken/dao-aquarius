@@ -1,15 +1,17 @@
-import * as StellarSdk from '@stellar/stellar-sdk';
 import * as React from 'react';
 import { useMemo } from 'react';
 import styled from 'styled-components';
 
 import { getAssetString } from 'helpers/assets';
+import getExplorerLink, { ExplorerSection } from 'helpers/explorer-links';
+import { truncateString } from 'helpers/truncate-string';
 
 import { LumenInfo } from 'store/assetsStore/reducer';
-import { AssetSimple } from 'store/assetsStore/types';
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
-import { ModalService } from 'services/globalServices';
+import { ModalService, StellarService } from 'services/globalServices';
+
+import { ClassicToken, Token, TokenType } from 'types/token';
 
 import { flexAllCenter, respondDown, textEllipsis } from 'web/mixins';
 import AssetInfoModal from 'web/modals/AssetInfoModal';
@@ -46,6 +48,7 @@ const AssetDomain = styled.span<{ $withMobileView?: boolean; $inRow?: boolean }>
     color: ${({ $inRow }) => ($inRow ? COLORS.paragraphText : COLORS.grayText)};
     font-size: ${({ $inRow }) => ($inRow ? '1.6rem' : '1.4rem')};
     line-height: ${({ $inRow }) => ($inRow ? '2.8rem' : '2rem')};
+    word-break: break-word;
 
     ${respondDown(Breakpoints.md)`
         white-space: nowrap;
@@ -77,6 +80,16 @@ const DomainDetails = styled.span`
     }
 `;
 
+const DomainDetailsLink = styled.a`
+    text-decoration: none;
+    color: ${COLORS.grayText};
+
+    &:hover {
+        text-decoration: underline;
+        text-decoration-style: dashed;
+    }
+`;
+
 const Asset = ({
     asset,
     inRow,
@@ -89,7 +102,7 @@ const Asset = ({
     hasAssetDetailsLink,
     ...props
 }: {
-    asset: AssetSimple;
+    asset: Token;
     inRow?: boolean;
     withMobileView?: boolean;
     onlyLogo?: boolean;
@@ -101,18 +114,37 @@ const Asset = ({
 }): React.ReactNode => {
     const { assetsInfo } = useAssetsStore();
 
-    const assetInstance = new StellarSdk.Asset(asset.code, asset.issuer);
-    const isNative = assetInstance.isNative();
-    const hasAssetInfo = isNative || assetsInfo.has(getAssetString(assetInstance));
-    const assetInfo = isNative ? LumenInfo : assetsInfo.get(getAssetString(assetInstance));
+    const assetInstance =
+        asset.type !== TokenType.soroban
+            ? StellarService.createAsset(asset.code, asset.issuer)
+            : null;
+
+    const isNative = assetInstance && assetInstance.isNative();
+    const hasAssetInfo =
+        isNative ||
+        (assetInstance && assetsInfo.has(getAssetString(assetInstance as ClassicToken)));
+    const assetInfo = isNative
+        ? LumenInfo
+        : assetInstance
+        ? assetsInfo.get(getAssetString(assetInstance as ClassicToken))
+        : null;
 
     const domain = useMemo(() => {
+        if (asset.type === TokenType.soroban) {
+            return (
+                <DomainDetailsLink
+                    href={getExplorerLink(ExplorerSection.contract, asset.contract)}
+                    target="_blank"
+                >
+                    soroban token
+                </DomainDetailsLink>
+            );
+        }
         if (!assetInfo) {
             return <DotsLoader />;
         }
 
-        const domainView =
-            assetInfo.home_domain ?? `${asset.issuer.slice(0, 4)}...${asset.issuer.slice(-4)}`;
+        const domainView = assetInfo.home_domain ?? truncateString(asset.issuer, 4);
 
         if (hasDomainLink && assetInfo.home_domain) {
             return (
@@ -160,7 +192,11 @@ const Asset = ({
                     {asset.code}
                 </AssetCode>
                 <AssetDomain $withMobileView={withMobileView} $inRow={inRow}>
-                    {inRow ? '' : assetInfo?.name || asset.code} ({domain})
+                    {inRow
+                        ? ''
+                        : assetInfo?.name ||
+                          (asset.type === TokenType.soroban ? asset.name : asset.code)}{' '}
+                    ({domain})
                 </AssetDomain>
                 <Tooltip
                     content={

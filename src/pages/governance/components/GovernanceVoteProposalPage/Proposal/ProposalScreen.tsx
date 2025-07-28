@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { GovernanceRoutes } from 'constants/routes';
 
 import { getDateString } from 'helpers/date';
+import { getIsTestnetEnv } from 'helpers/env';
 
 import { useIsOnViewport, useIsOverScrolled } from 'hooks/useIsOnViewport';
 
@@ -180,7 +181,12 @@ const SidebarMobile = styled(Sidebar)`
 `;
 
 const viewOnStellarExpert = (account: string) => {
-    window.open(`https://stellar.expert/explorer/public/account/${account}`, '_blank');
+    window.open(
+        `https://stellar.expert/explorer/${
+            getIsTestnetEnv() ? 'testnet' : 'public'
+        }/account/${account}`,
+        '_blank',
+    );
 };
 
 const ScrollToSidebarButton = styled.div`

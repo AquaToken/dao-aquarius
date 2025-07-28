@@ -116,8 +116,8 @@ const Buttons = styled.div`
 const Sidebar = ({ pool }: { pool: PoolExtended }) => {
     const { isLogged, account } = useAuthStore();
     const [accountShare, setAccountShare] = useState(null);
-    const [source, setSource] = useState(pool.assets[0]);
-    const [destination, setDestination] = useState(pool.assets[1]);
+    const [source, setSource] = useState(pool.tokens[0]);
+    const [destination, setDestination] = useState(pool.tokens[1]);
 
     const changeSource = asset => {
         if (getAssetString(asset) === getAssetString(destination)) {
@@ -178,7 +178,7 @@ const Sidebar = ({ pool }: { pool: PoolExtended }) => {
                                     %)
                                 </span>
                             </SidebarRow>
-                            {pool.assets.map((asset, index) => (
+                            {pool.tokens.map((asset, index) => (
                                 <SidebarRow key={getAssetString(asset)}>
                                     <span>Pooled {asset.code}:</span>
                                     <span>

@@ -7,6 +7,7 @@ import { getPool } from 'api/amm';
 import { ChartPeriods } from 'constants/charts';
 
 import { getAquaAssetData } from 'helpers/assets';
+import { getIsTestnetEnv } from 'helpers/env';
 import { formatBalance } from 'helpers/format-number';
 import { truncateString } from 'helpers/truncate-string';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
@@ -20,7 +21,8 @@ import { SorobanService, ToastService } from 'services/globalServices';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { PoolExtended } from 'types/amm';
-import { Int128Parts } from 'types/stellar';
+import { Asset, Int128Parts } from 'types/stellar';
+import { TokenType } from 'types/token';
 
 import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -272,7 +274,7 @@ const PoolPage = () => {
                         <ArrowLeft />
                     </BackButton>
                     <Market
-                        assets={pool.assets}
+                        assets={pool.tokens}
                         leftAlign
                         bigCodes
                         isBigLogo
@@ -281,18 +283,24 @@ const PoolPage = () => {
                         mobileVerticalDirections
                     />
                     <ExternalLinkStyled
-                        href={`https://stellar.expert/explorer/public/contract/${pool.address}`}
+                        href={`https://stellar.expert/explorer/${
+                            getIsTestnetEnv() ? 'testnet' : 'public'
+                        }/contract/${pool.address}`}
                     >
                         View on Explorer
                     </ExternalLinkStyled>
                 </Section>
                 <Sidebar pool={pool} />
 
-                {pool.assets.length === 2 && (
-                    <Section>
-                        <MigrateToSorobanBanner base={pool.assets[0]} counter={pool.assets[1]} />
-                    </Section>
-                )}
+                {pool.tokens.length === 2 &&
+                    pool.tokens.every(({ type }) => type === TokenType.classic) && (
+                        <Section>
+                            <MigrateToSorobanBanner
+                                base={pool.tokens[0] as Asset}
+                                counter={pool.tokens[1] as Asset}
+                            />
+                        </Section>
+                    )}
 
                 {Boolean(rewards && Number(rewards.to_claim)) && (
                     <Section>
@@ -348,7 +356,7 @@ const PoolPage = () => {
                             <SectionLabel>Fee:</SectionLabel>
                             <span>{(Number(pool.fee) * 100).toFixed(2)}%</span>
                         </SectionRow>
-                        {pool.assets.map((asset, index) => (
+                        {pool.tokens.map((asset, index) => (
                             <SectionRow key={pool.tokens_addresses[index]}>
                                 <SectionLabel>Total {asset.code}:</SectionLabel>
                                 <span>

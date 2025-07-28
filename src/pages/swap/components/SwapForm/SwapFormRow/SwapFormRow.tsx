@@ -1,4 +1,3 @@
-import { Asset } from '@stellar/stellar-sdk';
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { NumericFormat } from 'react-number-format';
@@ -8,6 +7,8 @@ import { formatBalance } from 'helpers/format-number';
 
 import { AssetSimple } from 'store/assetsStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
+
+import { Token, TokenType } from 'types/token';
 
 import { respondDown, textEllipsis } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -107,20 +108,22 @@ const TooltipRow = styled.div`
 
 interface SwapFormRowProps {
     isBase?: boolean;
-    asset: Asset;
-    setAsset: (asset: Asset) => void;
+    asset: Token;
+    setAsset: (asset: Token) => void;
     amount: string;
     setAmount: (amount: string) => void;
     resetAmount: () => void;
     usdEquivalent: React.ReactElement;
     assetsList: AssetSimple[] | null;
     isEmbedded?: boolean;
+    balance: number | null;
 }
 
 const SwapFormRow = ({
     isBase,
     asset,
     setAsset,
+    balance,
     amount,
     setAmount,
     usdEquivalent,
@@ -150,7 +153,8 @@ const SwapFormRow = ({
 
     const setPercent = (percent: number) => {
         resetAmount();
-        const available = account.getAvailableForSwapBalance(asset);
+        const available =
+            asset.type === TokenType.soroban ? balance : account.getAvailableForSwapBalance(asset);
 
         setAmount(((available * percent) / 100).toFixed(7));
     };
@@ -182,16 +186,18 @@ const SwapFormRow = ({
                     <div style={{ height: '1.8rem' }} />
                 )}
                 <AssetPicker asset={asset} onUpdate={setAsset} assetsList={assetsList} />
-                {account && account.getAssetBalance(asset) !== null && (
+                {balance !== null && Boolean(account) && (
                     <Balance>
                         <BalanceValue>
                             <BalanceLabel>{isBase ? 'Available: ' : 'Balance: '}</BalanceLabel>
                             {isBase ? (
                                 <BalanceClickable onClick={() => setPercent(100)}>
-                                    {formatBalance(account.getAvailableForSwapBalance(asset))}
+                                    {asset.type === TokenType.soroban
+                                        ? balance
+                                        : formatBalance(account.getAvailableForSwapBalance(asset))}
                                 </BalanceClickable>
                             ) : (
-                                formatBalance(account.getAssetBalance(asset, true))
+                                formatBalance(balance, true)
                             )}
                         </BalanceValue>
                         {isBase && (

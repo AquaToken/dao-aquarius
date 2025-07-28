@@ -1,12 +1,12 @@
 import * as StellarSdk from '@stellar/stellar-sdk';
 import {
+    FeeBumpTransaction,
+    Horizon,
     Memo,
     MemoType,
-    OperationOptions,
-    Horizon,
-    Transaction,
     Operation,
-    FeeBumpTransaction,
+    OperationOptions,
+    Transaction,
 } from '@stellar/stellar-sdk';
 import axios, { AxiosResponse } from 'axios';
 import BigNumber from 'bignumber.js';
@@ -33,6 +33,7 @@ import { formatBalance, roundToPrecision } from 'helpers/format-number';
 import { getHorizonUrl } from 'helpers/url';
 
 import { Asset, StellarToml } from 'types/stellar';
+import { ClassicToken, TokenType } from 'types/token';
 
 import { validateMarketKeys } from 'pages/vote/api/api';
 import { PairStats } from 'pages/vote/api/types';
@@ -123,6 +124,7 @@ export default class StellarServiceClass {
     private claimableBalances: Horizon.ServerApi.ClaimableBalanceRecord[] | null = null;
     private keypair: StellarSdk.Keypair | null = null;
     private poolsRewardsNoteHash = new Map<string, unknown>();
+
     constructor() {
         this.startHorizonServer();
         this.loadMorePayments = this.loadMorePayments.bind(this);
@@ -193,16 +195,30 @@ export default class StellarServiceClass {
         return new StellarSdk.Memo(type, value);
     }
 
-    createAsset(code: string, issuer: string): Asset {
-        return new StellarSdk.Asset(code, issuer);
+    createAsset(code: string, issuer: string): ClassicToken {
+        const asset: ClassicToken = new StellarSdk.Asset(code, issuer) as ClassicToken;
+
+        asset.type = TokenType.classic;
+        asset.contract = asset.contractId(getNetworkPassphrase());
+
+        return asset;
     }
 
-    createLumen() {
-        return StellarSdk.Asset.native();
+    createLumen(): ClassicToken {
+        const asset: ClassicToken = StellarSdk.Asset.native() as ClassicToken;
+
+        asset.type = TokenType.classic;
+        asset.contract = asset.contractId(getNetworkPassphrase());
+
+        return asset;
     }
 
     isValidPublicKey(key: string): boolean {
         return StellarSdk.StrKey.isValidEd25519PublicKey(key);
+    }
+
+    isValidContract(id: string): boolean {
+        return StellarSdk.StrKey.isValidContract(id);
     }
 
     submitTx(tx: StellarSdk.Transaction) {
@@ -709,7 +725,7 @@ export default class StellarServiceClass {
         return StellarSdk.Operation.createClaimableBalance({
             source: publicKey,
             amount: amount.toString(),
-            asset: asset ?? new StellarSdk.Asset(aquaCode, aquaIssuer),
+            asset: asset ?? this.createAsset(aquaCode, aquaIssuer),
             claimants: [
                 new StellarSdk.Claimant(
                     marketKey,
@@ -767,7 +783,7 @@ export default class StellarServiceClass {
         return StellarSdk.Operation.createClaimableBalance({
             source: publicKey,
             amount: amount.toString(),
-            asset: new StellarSdk.Asset(aquaCode, aquaIssuer),
+            asset: this.createAsset(aquaCode, aquaIssuer),
             claimants: [
                 new StellarSdk.Claimant(
                     publicKey,
@@ -809,7 +825,7 @@ export default class StellarServiceClass {
     createBurnAquaOperation(amount: string) {
         return StellarSdk.Operation.payment({
             amount,
-            asset: new StellarSdk.Asset(aquaCode, aquaIssuer),
+            asset: this.createAsset(aquaCode, aquaIssuer),
             destination: aquaIssuer,
         });
     }
@@ -951,7 +967,7 @@ export default class StellarServiceClass {
 
         if (withTrust) {
             const trustOp = StellarSdk.Operation.changeTrust({
-                asset: new StellarSdk.Asset(aquaCode, aquaIssuer),
+                asset: this.createAsset(aquaCode, aquaIssuer),
             });
             ops.push(trustOp);
         }
@@ -969,7 +985,7 @@ export default class StellarServiceClass {
         const time = Math.ceil(timestamp / 1000);
         return StellarSdk.Operation.createClaimableBalance({
             amount: amount.toString(),
-            asset: new StellarSdk.Asset(asset.code, asset.issuer),
+            asset: this.createAsset(asset.code, asset.issuer),
             claimants: [
                 new StellarSdk.Claimant(
                     marketKey,
@@ -1080,7 +1096,7 @@ export default class StellarServiceClass {
 
     getAquaEquivalent(asset, amount) {
         return this.server
-            .strictSendPaths(asset, amount, [new StellarSdk.Asset(aquaCode, aquaIssuer)])
+            .strictSendPaths(asset, amount, [this.createAsset(aquaCode, aquaIssuer)])
             .call()
             .then(res => {
                 if (!res.records.length) {
@@ -1361,7 +1377,7 @@ export default class StellarServiceClass {
 
         return getPoolInfo(poolId)
             .then(poolInfo => {
-                const note = `Rewards for pool: ${poolInfo.assets
+                const note = `Rewards for pool: ${poolInfo.tokens
                     .map(({ code }) => code)
                     .join('/')}`;
                 this.poolsRewardsNoteHash.set(poolId, note);

@@ -1,4 +1,3 @@
-import { Asset as AssetType } from '@stellar/stellar-sdk';
 import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
@@ -11,6 +10,8 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService, StellarService, ToastService } from 'services/globalServices';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
+
+import { Token, TokenType } from 'types/token';
 
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -58,7 +59,7 @@ const TrustlineButton = styled(Button)`
 `;
 
 interface NoTrustlineProps extends Omit<ButtonProps, 'children'> {
-    asset: AssetType;
+    asset: Token;
     onlyButton?: boolean;
     isRounded?: boolean;
     closeModalAfterSubmit?: boolean;
@@ -105,6 +106,10 @@ const NoTrustline = ({
             setTrustlinePending(false);
         }
     };
+
+    if (asset.type === TokenType.soroban) {
+        return null;
+    }
 
     if (!account || account.getAssetBalance(asset) !== null) {
         return null;

@@ -5,7 +5,6 @@ import styled from 'styled-components';
 
 import { getPathPoolsFee } from 'api/amm';
 
-import { getAssetFromString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
@@ -16,11 +15,13 @@ import { ModalService, SorobanService, ToastService } from 'services/globalServi
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { ModalProps } from 'types/modal';
-import { Asset, Int128Parts } from 'types/stellar';
+import { Int128Parts } from 'types/stellar';
+import { Token, TokenType } from 'types/token';
 
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
+import AssetLogo from 'basics/AssetLogo';
 import Button from 'basics/buttons/Button';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
@@ -76,8 +77,8 @@ const Pools = styled.div`
 const STROOP = 0.0000001;
 
 interface SwapConfirmModalParams {
-    base: Asset;
-    counter: Asset;
+    base: Token;
+    counter: Token;
     baseAmount: string;
     counterAmount: string;
     bestPathXDR: string;
@@ -95,8 +96,15 @@ const SwapConfirmModal = ({
     const [fees, setFees] = useState(null);
     const [swapPending, setSwapPending] = useState(false);
     const [txFee, setTxFee] = useState(null);
+    const [pathTokens, setPathTokens] = useState<Token[]>(null);
 
     const { account } = useAuthStore();
+
+    useEffect(() => {
+        Promise.all(bestPath.map(str => SorobanService.parseTokenContractId(str))).then(res => {
+            setPathTokens(res);
+        });
+    }, []);
 
     useEffect(() => {
         getPathPoolsFee(bestPools)
@@ -169,16 +177,32 @@ const SwapConfirmModal = ({
                     return;
                 }
 
+                const sentAmount = isSend ? baseAmount : SorobanService.i128ToInt(res.value());
+                const receivedAmount = isSend
+                    ? SorobanService.i128ToInt(res.value())
+                    : counterAmount;
+
                 ModalService.openModal(SuccessModal, {
                     assets: [base, counter],
-                    amounts: [
-                        isSend ? baseAmount : SorobanService.i128ToInt(res.value()),
-                        isSend ? SorobanService.i128ToInt(res.value()) : counterAmount,
-                    ],
+                    amounts: [sentAmount, receivedAmount],
                     title: 'Swap Successful',
                     isSwap: true,
                     hash,
                 });
+
+                if (base.type === TokenType.soroban) {
+                    ToastService.showSuccessToast(
+                        `Payment sent: ${formatBalance(Number(sentAmount))} ${base.code}`,
+                    );
+                }
+
+                if (counter.type === TokenType.soroban) {
+                    ToastService.showSuccessToast(
+                        `Payment received: ${formatBalance(Number(receivedAmount))} ${
+                            counter.code
+                        }`,
+                    );
+                }
                 setSwapPending(false);
             })
             .catch(e => {
@@ -193,7 +217,7 @@ const SwapConfirmModal = ({
             });
     };
 
-    if (!fees) {
+    if (!fees || !pathTokens) {
         return (
             <Container>
                 <PageLoader />
@@ -246,16 +270,20 @@ const SwapConfirmModal = ({
             </DescriptionRow>
 
             <Pools>
-                {bestPools.map((pool, index) => (
-                    <PathPool
-                        key={pool}
-                        base={getAssetFromString(bestPath[index])}
-                        counter={getAssetFromString(bestPath[index + 1])}
-                        fee={fees.get(pool)}
-                        address={pool}
-                        isLastPool={index === bestPools.length - 1}
-                    />
-                ))}
+                {bestPools.map((pool, index) => {
+                    const base = pathTokens[index];
+                    const counter = pathTokens[index + 1];
+                    return (
+                        <PathPool
+                            key={pool}
+                            baseIcon={<AssetLogo asset={base} />}
+                            counterIcon={<AssetLogo asset={counter} />}
+                            fee={fees.get(pool)}
+                            address={pool}
+                            isLastPool={index === bestPools.length - 1}
+                        />
+                    );
+                })}
             </Pools>
 
             <Divider />

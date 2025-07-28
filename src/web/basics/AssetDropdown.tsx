@@ -16,6 +16,7 @@ import useAuthStore from 'store/authStore/useAuthStore';
 import { StellarService } from 'services/globalServices';
 
 import { Asset as AssetType } from 'types/stellar';
+import { ClassicToken, Token, TokenType } from 'types/token';
 
 import { flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -221,10 +222,10 @@ const ChipsMobile = styled(Chips)`
 `;
 
 type AssetDropdownProps = {
-    asset?: AssetSimple;
-    assets?: AssetSimple[];
-    assetsList?: AssetSimple[];
-    onUpdate?: (asset: AssetType | AssetType[]) => void;
+    asset?: Token;
+    assets?: Token[];
+    assetsList?: Token[];
+    onUpdate?: (asset: Token | Token[]) => void;
     disabled?: boolean;
     onToggle?: (value: boolean) => void;
     exclude?: AssetSimple;
@@ -232,7 +233,7 @@ type AssetDropdownProps = {
     label?: string;
     withoutReset?: boolean;
     pending?: boolean;
-    excludeList?: AssetSimple[];
+    excludeList?: Token[];
     withBalances?: boolean;
     longListOnMobile?: boolean;
     withChips?: boolean;
@@ -278,7 +279,8 @@ const AssetDropdown = ({
         ? balances.filter(balance =>
               knownAssetsList.find(
                   knownAssets =>
-                      knownAssets.code === balance.code && knownAssets.issuer === balance.issuer,
+                      knownAssets.code === balance.code &&
+                      (knownAssets as ClassicToken).issuer === balance.issuer,
               ),
           )
         : balances;
@@ -288,7 +290,9 @@ const AssetDropdown = ({
         ...(knownAssetsList.filter(
             knownAssets =>
                 !filteredBalances.find(
-                    asset => knownAssets.code === asset.code && knownAssets.issuer === asset.issuer,
+                    asset =>
+                        knownAssets.code === asset.code &&
+                        (knownAssets as ClassicToken).issuer === asset.issuer,
                 ),
         ) || []),
     ];
@@ -338,8 +342,11 @@ const AssetDropdown = ({
         }
     }, [isOpen]);
 
-    const onClickAsset = (asset: AssetSimple) => {
-        const stellarAsset = StellarService.createAsset(asset.code, asset.issuer);
+    const onClickAsset = (asset: Token) => {
+        const stellarAsset =
+            asset.type === TokenType.soroban
+                ? asset
+                : StellarService.createAsset(asset.code, asset.issuer);
         onUpdate(withChips ? [...selectedAssets, stellarAsset] : stellarAsset);
     };
 
@@ -367,14 +374,17 @@ const AssetDropdown = ({
                         ),
                 ),
             ].filter(assetItem => {
-                const assetInfo = assetsInfo.get(
-                    getAssetString(StellarService.createAsset(assetItem.code, assetItem.issuer)),
-                );
+                const token =
+                    assetItem.type === TokenType.soroban
+                        ? assetItem
+                        : StellarService.createAsset(assetItem.code, assetItem.issuer);
+                const assetString = getAssetString(token);
+                const assetInfo =
+                    assetItem.type === TokenType.soroban ? null : assetsInfo.get(assetString);
 
                 return (
-                    (getAssetString(
-                        StellarService.createAsset(assetItem.code, assetItem.issuer),
-                    ) === searchText ||
+                    (assetString === searchText ||
+                        token.contract === searchText ||
                         assetItem.code.toLowerCase().includes(searchText.toLowerCase()) ||
                         (StellarSdk.StrKey.isValidEd25519PublicKey(searchText) &&
                             assetItem.issuer?.toLowerCase().includes(searchText.toLowerCase())) ||
@@ -406,7 +416,9 @@ const AssetDropdown = ({
                             }
                         }}
                         $isOpen={isOpen}
-                        placeholder={placeholder ?? 'Search asset or enter home domain'}
+                        placeholder={
+                            placeholder ?? 'Search asset or enter home domain or contract address'
+                        }
                         disabled={!assets.length || disabled || pending}
                         value={searchText}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
