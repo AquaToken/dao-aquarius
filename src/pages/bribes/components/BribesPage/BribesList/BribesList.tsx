@@ -71,8 +71,8 @@ enum Tab {
 }
 
 const OPTIONS = [
-    { value: Tab.current, label: 'Current bribes' },
-    { value: Tab.upcoming, label: 'Upcoming bribes' },
+    { value: Tab.current, label: 'Current Bribes' },
+    { value: Tab.upcoming, label: 'Upcoming Bribes' },
 ];
 
 const BribesList = () => {
