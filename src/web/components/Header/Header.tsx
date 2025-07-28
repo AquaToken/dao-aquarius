@@ -313,10 +313,10 @@ const Links = () => {
                             activeStyle={{
                                 fontWeight: 700,
                             }}
-                            title="AQUA token"
+                            title="Token Info"
                             to={MainRoutes.token}
                         >
-                            Token info
+                            Token Info
                         </NavLinkStyled>
 
                         <NavLinkStyled
