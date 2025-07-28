@@ -267,8 +267,8 @@ const Options = [
     { label: 'Active', value: PROPOSAL_FILTER.ACTIVE },
     { label: 'Discussion', value: PROPOSAL_FILTER.DISCUSSION },
     { label: 'Finished', value: PROPOSAL_FILTER.CLOSED },
-    { label: 'My proposals', value: PROPOSAL_FILTER.MY },
-    { label: 'My votes', value: PROPOSAL_FILTER.MY_VOTES },
+    { label: 'My Proposals', value: PROPOSAL_FILTER.MY },
+    { label: 'My Votes', value: PROPOSAL_FILTER.MY_VOTES },
     { label: 'History', value: PROPOSAL_FILTER.HISTORY },
 ];
 
