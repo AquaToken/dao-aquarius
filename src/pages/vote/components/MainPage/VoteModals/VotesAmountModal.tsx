@@ -20,6 +20,7 @@ import { ModalService, StellarService, ToastService } from 'services/globalServi
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { ModalProps } from 'types/modal';
+import { ClassicToken } from 'types/token';
 
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import GetAquaModal from 'web/modals/GetAquaModal';
@@ -268,7 +269,7 @@ const VotesAmountModal = ({
     pairsAmounts?: { [key: string]: string };
     isDownVoteModal?: boolean;
     isSingleVoteForModal?: boolean;
-    asset: Asset;
+    asset: ClassicToken;
 }>) => {
     const { account, isLogged } = useAuthStore();
     const { pairs, updatePairs, pairsAmounts, isDownVoteModal, asset, isSingleVoteForModal } =
@@ -590,14 +591,14 @@ const VotesAmountModal = ({
                     <Market
                         verticalDirections
                         assets={[
-                            {
-                                code: pairs[0].asset1_code,
-                                issuer: pairs[0].asset1_issuer,
-                            },
-                            {
-                                code: pairs[0].asset2_code,
-                                issuer: pairs[0].asset2_issuer,
-                            },
+                            StellarService.createAsset(
+                                pairs[0].asset1_code,
+                                pairs[0].asset1_issuer,
+                            ),
+                            StellarService.createAsset(
+                                pairs[0].asset2_code,
+                                pairs[0].asset2_issuer,
+                            ),
                         ]}
                     />
                 </AssetsInfoBlock>
@@ -669,14 +670,14 @@ const VotesAmountModal = ({
                                     <AssetsInfo>
                                         <Market
                                             assets={[
-                                                {
-                                                    code: pair.asset1_code,
-                                                    issuer: pair.asset1_issuer,
-                                                },
-                                                {
-                                                    code: pair.asset2_code,
-                                                    issuer: pair.asset2_issuer,
-                                                },
+                                                StellarService.createAsset(
+                                                    pair.asset1_code,
+                                                    pair.asset1_issuer,
+                                                ),
+                                                StellarService.createAsset(
+                                                    pair.asset2_code,
+                                                    pair.asset2_issuer,
+                                                ),
                                             ]}
                                             withoutDomains
                                         />
