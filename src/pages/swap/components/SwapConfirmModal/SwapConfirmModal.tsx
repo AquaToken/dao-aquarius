@@ -185,9 +185,9 @@ const SwapConfirmModal = ({
 
                 const sentAmount = isSend
                     ? baseAmount
-                    : SorobanService.i128ToInt(res as xdr.ScVal, (counter as SorobanToken).decimal);
+                    : SorobanService.i128ToInt(res as xdr.ScVal, (base as SorobanToken).decimal);
                 const receivedAmount = isSend
-                    ? SorobanService.i128ToInt(res as xdr.ScVal, (base as SorobanToken).decimal)
+                    ? SorobanService.i128ToInt(res as xdr.ScVal, (counter as SorobanToken).decimal)
                     : counterAmount;
 
                 ModalService.openModal(SuccessModal, {
