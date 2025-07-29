@@ -7,6 +7,7 @@ import { MarketRoutes } from 'constants/routes';
 
 import { convertLocalDateToUTCIgnoringTimezone, getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
+import { getIceMaxApy } from 'helpers/ice';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
@@ -165,6 +166,9 @@ const UpcomingBribes = () => {
                         },
                     },
                     {
+                        children: 'APY',
+                    },
+                    {
                         children: 'Period',
                         align: CellAlign.Center,
                         sort: {
@@ -193,6 +197,15 @@ const UpcomingBribes = () => {
                         item.asset_code,
                         item.asset_issuer,
                     );
+
+                    console.log(item);
+
+                    const apy =
+                        (item.aqua_total_reward_amount_equivalent / Number(item.upvote_value) +
+                            1) **
+                            365 -
+                        1;
+                    const apyMax = getIceMaxApy({ apy });
 
                     return {
                         onRowClick: () => goToMarketPage(item),
@@ -225,6 +238,10 @@ const UpcomingBribes = () => {
                                     rewardAsset.code
                                 }`,
                                 label: 'Reward per day:',
+                            },
+                            {
+                                children: apyMax,
+                                label: 'APY:',
                             },
                             {
                                 children: `${getDateString(startUTC.getTime(), {
