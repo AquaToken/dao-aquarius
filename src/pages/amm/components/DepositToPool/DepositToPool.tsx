@@ -20,7 +20,6 @@ import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { PoolExtended, PoolRewardsInfo } from 'types/amm';
 import { ModalProps } from 'types/modal';
-import { Int128Parts } from 'types/stellar';
 import { SorobanToken, Token, TokenType } from 'types/token';
 
 import { customScroll, flexRowSpaceBetween, respondDown } from 'web/mixins';
@@ -423,9 +422,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
 
                 pool.tokens.forEach((token, index) => {
                     if (token.type === TokenType.soroban) {
-                        const resAmount = SorobanService.i128ToInt(
-                            resultAmounts[index].value() as Int128Parts,
-                        );
+                        const resAmount = SorobanService.i128ToInt(resultAmounts[index]);
 
                         ToastService.showSuccessToast(
                             `Payment sent: ${formatBalance(Number(resAmount))} ${token.code}`,
@@ -435,9 +432,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
 
                 ModalService.openModal(SuccessModal, {
                     assets: pool.tokens,
-                    amounts: resultAmounts.map(value =>
-                        SorobanService.i128ToInt(value.value() as Int128Parts),
-                    ),
+                    amounts: resultAmounts.map(value => SorobanService.i128ToInt(value)),
                     title: 'Deposit Successful',
                     hash,
                 });

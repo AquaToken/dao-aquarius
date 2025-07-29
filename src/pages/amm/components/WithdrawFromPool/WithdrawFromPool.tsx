@@ -1,3 +1,4 @@
+import { xdr } from '@stellar/stellar-sdk';
 import BigNumber from 'bignumber.js';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
@@ -214,15 +215,13 @@ const WithdrawFromPool = ({ params, close }: ModalProps<{ pool: PoolExtended }>)
                 return;
             }
 
-            const resultValues: { value: () => Int128Parts }[] = withClaim
-                ? (result.value()[0].value() as { value: () => Int128Parts }[])
-                : (result.value() as { value: () => Int128Parts }[]);
+            const resultValues: xdr.ScVal[] = withClaim
+                ? (result.value()[0].value() as xdr.ScVal[])
+                : (result.value() as xdr.ScVal[]);
 
             pool.tokens.forEach((token, index) => {
                 if (token.type === TokenType.soroban) {
-                    const resAmount = SorobanService.i128ToInt(
-                        resultValues[index].value() as Int128Parts,
-                    );
+                    const resAmount = SorobanService.i128ToInt(resultValues[index]);
 
                     ToastService.showSuccessToast(
                         `Payment received: ${formatBalance(Number(resAmount))} ${token.code}`,
@@ -232,7 +231,7 @@ const WithdrawFromPool = ({ params, close }: ModalProps<{ pool: PoolExtended }>)
 
             ModalService.openModal(SuccessModal, {
                 assets: pool.tokens,
-                amounts: resultValues.map(val => SorobanService.i128ToInt(val.value())),
+                amounts: resultValues.map(val => SorobanService.i128ToInt(val)),
                 title: 'Withdraw Successful',
                 hash,
             });

@@ -15,6 +15,7 @@ export type SorobanToken = {
     contract: string;
     name: string;
     code: string;
+    decimal: number;
 };
 
 export type Token = ClassicToken | SorobanToken;
