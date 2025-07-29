@@ -149,6 +149,9 @@ const UpcomingBribes = () => {
                 pending={bribes && loading}
                 head={[
                     { children: 'Market', flexSize: 3 },
+                    {
+                        children: 'Bribe APY',
+                    },
                     { children: 'Reward asset', flexSize: 2 },
                     {
                         children: 'Reward per day',
@@ -164,9 +167,6 @@ const UpcomingBribes = () => {
                                 sort === BribeSortFields.aquaAmountDown,
                             isReversed: sort === BribeSortFields.aquaAmountDown,
                         },
-                    },
-                    {
-                        children: 'APY',
                     },
                     {
                         children: 'Period',
@@ -198,10 +198,8 @@ const UpcomingBribes = () => {
                         item.asset_issuer,
                     );
 
-                    console.log(item);
-
                     const apy =
-                        (item.aqua_total_reward_amount_equivalent / Number(item.upvote_value) +
+                        (item.aqua_total_reward_amount_equivalent / 7 / Number(item.upvote_value) +
                             1) **
                             365 -
                         1;
@@ -224,6 +222,10 @@ const UpcomingBribes = () => {
                                 flexSize: 3,
                             },
                             {
+                                children: `up to ${formatBalance(apyMax, true)}%`,
+                                label: 'Bribe APY:',
+                            },
+                            {
                                 children: (
                                     <>
                                         <WebAsset asset={rewardAsset} />
@@ -238,10 +240,6 @@ const UpcomingBribes = () => {
                                     rewardAsset.code
                                 }`,
                                 label: 'Reward per day:',
-                            },
-                            {
-                                children: apyMax,
-                                label: 'APY:',
                             },
                             {
                                 children: `${getDateString(startUTC.getTime(), {
