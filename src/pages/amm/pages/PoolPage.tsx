@@ -6,10 +6,11 @@ import styled from 'styled-components';
 import { getPool } from 'api/amm';
 
 import { ChartPeriods } from 'constants/charts';
+import { MarketRoutes } from 'constants/routes';
 
 import { contractValueToAmount } from 'helpers/amount';
-import { getAquaAssetData } from 'helpers/assets';
-import { getIsTestnetEnv } from 'helpers/env';
+import { getAquaAssetData, getAssetString } from 'helpers/assets';
+import getExplorerLink, { ExplorerSection } from 'helpers/explorer-links';
 import { formatBalance } from 'helpers/format-number';
 import { truncateString } from 'helpers/truncate-string';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
@@ -166,6 +167,11 @@ const Chart = styled.div`
     background-color: ${COLORS.lightGray};
 `;
 
+const Links = styled.div`
+    display: flex;
+    gap: 3.2rem;
+`;
+
 const ExternalLinkStyled = styled(ExternalLink)`
     margin-top: 1.6rem;
 `;
@@ -284,13 +290,23 @@ const PoolPage = () => {
                         withoutLink
                         mobileVerticalDirections
                     />
-                    <ExternalLinkStyled
-                        href={`https://stellar.expert/explorer/${
-                            getIsTestnetEnv() ? 'testnet' : 'public'
-                        }/contract/${pool.address}`}
-                    >
-                        View on Explorer
-                    </ExternalLinkStyled>
+                    <Links>
+                        {pool.tokens.length === 2 &&
+                            pool.tokens.every(({ type }) => type !== TokenType.soroban) && (
+                                <ExternalLinkStyled
+                                    to={`${MarketRoutes.main}/${getAssetString(
+                                        pool.tokens[0],
+                                    )}/${getAssetString(pool.tokens[1])}/`}
+                                >
+                                    View Market
+                                </ExternalLinkStyled>
+                            )}
+                        <ExternalLinkStyled
+                            href={getExplorerLink(ExplorerSection.contract, pool.address)}
+                        >
+                            View on Explorer
+                        </ExternalLinkStyled>
+                    </Links>
                 </Section>
                 <Sidebar pool={pool} />
 
