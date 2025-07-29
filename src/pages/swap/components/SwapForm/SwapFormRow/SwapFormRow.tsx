@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js';
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { NumericFormat } from 'react-number-format';
@@ -8,7 +9,7 @@ import { formatBalance } from 'helpers/format-number';
 import { AssetSimple } from 'store/assetsStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { Token, TokenType } from 'types/token';
+import { SorobanToken, Token, TokenType } from 'types/token';
 
 import { respondDown, textEllipsis } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -156,7 +157,12 @@ const SwapFormRow = ({
         const available =
             asset.type === TokenType.soroban ? balance : account.getAvailableForSwapBalance(asset);
 
-        setAmount(((available * percent) / 100).toFixed(7));
+        const result = new BigNumber(available)
+            .times(percent)
+            .div(100)
+            .toFixed((asset as SorobanToken).decimal ?? 7);
+
+        setAmount(result);
     };
 
     return (
@@ -168,7 +174,7 @@ const SwapFormRow = ({
                     customInput={BlankInput}
                     allowedDecimalSeparators={[',']}
                     thousandSeparator=","
-                    decimalScale={7}
+                    decimalScale={(asset as SorobanToken).decimal ?? 7}
                     value={amount}
                     onChange={() => resetAmount()}
                     onValueChange={value => setAmount(value.value)}

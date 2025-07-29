@@ -52,6 +52,6 @@ export const formatBalance = (
     const precision = getNumDecimals(Math.abs(balance));
 
     return new Intl.NumberFormat('en-US', {
-        maximumFractionDigits: withRounding ? precision : 7,
+        maximumFractionDigits: withRounding ? precision : 20,
     }).format(balance);
 };

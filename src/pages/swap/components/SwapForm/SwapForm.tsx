@@ -4,6 +4,8 @@ import styled from 'styled-components';
 
 import { findSwapPath, getAssetsList } from 'api/amm';
 
+import { contractValueToAmount } from 'helpers/amount';
+
 import { useDebounce } from 'hooks/useDebounce';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
@@ -11,7 +13,7 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService } from 'services/globalServices';
 
-import { Token, TokenType } from 'types/token';
+import { SorobanToken, Token, TokenType } from 'types/token';
 
 import { cardBoxShadow, flexAllCenter, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
@@ -192,7 +194,13 @@ const SwapForm = ({
             setEstimatePending(true);
             setIsSend(true);
 
-            findSwapPath(base.contract, counter.contract, debouncedBaseAmount.current, true)
+            findSwapPath(
+                base.contract,
+                counter.contract,
+                debouncedBaseAmount.current,
+                true,
+                (base as SorobanToken).decimal ?? 7,
+            )
                 .then(res => {
                     if (!res.success) {
                         setHasError(true);
@@ -204,7 +212,9 @@ const SwapForm = ({
                         if (!baseAmount) {
                             return;
                         }
-                        setCounterAmount((Number(res.amount) / 1e7).toFixed(7));
+                        setCounterAmount(
+                            contractValueToAmount(res.amount, (counter as SorobanToken).decimal),
+                        );
                         setBestPathXDR(res.swap_chain_xdr);
                         setBestPath(res.tokens_addresses);
                         setBestPools(res.pools);
@@ -230,7 +240,13 @@ const SwapForm = ({
             setEstimatePending(true);
             setIsSend(false);
 
-            findSwapPath(base.contract, counter.contract, debouncedCounterAmount.current, false)
+            findSwapPath(
+                base.contract,
+                counter.contract,
+                debouncedCounterAmount.current,
+                false,
+                (counter as SorobanToken).decimal ?? 7,
+            )
                 .then(res => {
                     if (!res.success) {
                         setHasError(true);
@@ -242,7 +258,9 @@ const SwapForm = ({
                         if (!counterAmount) {
                             return;
                         }
-                        setBaseAmount((Number(res.amount) / 1e7).toFixed(7));
+                        setBaseAmount(
+                            contractValueToAmount(res.amount, (base as SorobanToken).decimal),
+                        );
                         setBestPathXDR(res.swap_chain_xdr);
                         setBestPath(res.tokens_addresses);
                         setBestPools(res.pools);
@@ -266,7 +284,13 @@ const SwapForm = ({
         }
         setEstimatePending(true);
 
-        findSwapPath(base.contract, counter.contract, isSend ? baseAmount : counterAmount, isSend)
+        findSwapPath(
+            base.contract,
+            counter.contract,
+            isSend ? baseAmount : counterAmount,
+            isSend,
+            (isSend ? (base as SorobanToken).decimal : (counter as SorobanToken).decimal) ?? 7,
+        )
             .then(res => {
                 if (!res.success) {
                     setHasError(true);
@@ -280,7 +304,10 @@ const SwapForm = ({
                     setHasError(false);
                     setEstimatePending(false);
 
-                    const amount = (Number(res.amount) / 1e7).toFixed(7);
+                    const amount = contractValueToAmount(
+                        res.amount,
+                        isSend ? (counter as SorobanToken).decimal : (base as SorobanToken).decimal,
+                    );
 
                     if (isSend) {
                         setCounterAmount(amount);

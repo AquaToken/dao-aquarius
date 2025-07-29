@@ -8,6 +8,7 @@ import { getUserPools } from 'api/amm';
 
 import { MainRoutes } from 'constants/routes';
 
+import { contractValueToAmount } from 'helpers/amount';
 import { getAquaAssetData, getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
@@ -27,6 +28,7 @@ import { POOL_TYPE } from 'services/soroban.service';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { PoolRewardsInfo, PoolUserProcessed } from 'types/amm';
+import { SorobanToken } from 'types/token';
 
 import { flexAllCenter, flexRowSpaceBetween, respondDown, textEllipsis } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
@@ -654,10 +656,16 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                                                 <span>Pooled {asset.code}</span>
                                                                 <span>
                                                                     {formatBalance(
-                                                                        (pool.reserves[index] *
+                                                                        (+contractValueToAmount(
+                                                                            pool.reserves[index],
+                                                                            (
+                                                                                pool.tokens[
+                                                                                    index
+                                                                                ] as SorobanToken
+                                                                            ).decimal,
+                                                                        ) *
                                                                             pool.balance) /
-                                                                            pool.total_share /
-                                                                            1e7,
+                                                                            pool.total_share,
                                                                         true,
                                                                     )}
                                                                     <AssetLogo

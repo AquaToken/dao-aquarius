@@ -17,7 +17,7 @@ import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 import { PoolExtended } from 'types/amm';
 import { ModalProps } from 'types/modal';
 import { Int128Parts } from 'types/stellar';
-import { TokenType } from 'types/token';
+import { SorobanToken, TokenType } from 'types/token';
 
 import { customScroll, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -172,7 +172,7 @@ const WithdrawFromPool = ({ params, close }: ModalProps<{ pool: PoolExtended }>)
         const amount = new BigNumber(accountShare.toString())
             .times(new BigNumber(percent))
             .div(100)
-            .toFixed(7);
+            .toFixed(pool.share_token_decimals);
 
         try {
             const tx = withClaim
@@ -221,7 +221,7 @@ const WithdrawFromPool = ({ params, close }: ModalProps<{ pool: PoolExtended }>)
 
             pool.tokens.forEach((token, index) => {
                 if (token.type === TokenType.soroban) {
-                    const resAmount = SorobanService.i128ToInt(resultValues[index]);
+                    const resAmount = SorobanService.i128ToInt(resultValues[index], token.decimal);
 
                     ToastService.showSuccessToast(
                         `Payment received: ${formatBalance(Number(resAmount))} ${token.code}`,
@@ -231,7 +231,9 @@ const WithdrawFromPool = ({ params, close }: ModalProps<{ pool: PoolExtended }>)
 
             ModalService.openModal(SuccessModal, {
                 assets: pool.tokens,
-                amounts: resultValues.map(val => SorobanService.i128ToInt(val)),
+                amounts: resultValues.map((val, index) =>
+                    SorobanService.i128ToInt(val, (pool.tokens[index] as SorobanToken).decimal),
+                ),
                 title: 'Withdraw Successful',
                 hash,
             });
@@ -276,8 +278,10 @@ const WithdrawFromPool = ({ params, close }: ModalProps<{ pool: PoolExtended }>)
                                         '0'
                                     ) : (
                                         formatBalance(
-                                            (((+percent / 100) * accountShare) / totalShares) *
-                                                reserves.get(getAssetString(asset)),
+                                            +(
+                                                (((+percent / 100) * accountShare) / totalShares) *
+                                                reserves.get(getAssetString(asset))
+                                            ).toFixed((asset as SorobanToken).decimal ?? 7),
                                         )
                                     )}
                                 </span>

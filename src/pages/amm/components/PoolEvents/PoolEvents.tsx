@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import { getPoolEvents } from 'api/amm';
 
+import { contractValueToAmount } from 'helpers/amount';
 import { getDateString } from 'helpers/date';
 import { getIsTestnetEnv } from 'helpers/env';
 import { formatBalance } from 'helpers/format-number';
@@ -11,6 +12,7 @@ import { formatBalance } from 'helpers/format-number';
 import { useUpdateIndex } from 'hooks/useUpdateIndex';
 
 import { PoolEvent, PoolEventType, PoolExtended } from 'types/amm';
+import { SorobanToken } from 'types/token';
 
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -66,12 +68,24 @@ const getEventAmounts = (event: PoolEvent, pool: PoolExtended) => {
             return (
                 <Amounts>
                     <span>
-                        {formatBalance(+event.amounts[fromIndex] / 1e7)}{' '}
+                        {formatBalance(
+                            +contractValueToAmount(
+                                event.amounts[fromIndex],
+                                (pool.tokens[fromIndex] as SorobanToken).decimal,
+                            ),
+                        )}{' '}
                         {pool.tokens[fromIndex]?.code}
                     </span>
                     <br />
                     <span>
-                        {formatBalance(Math.abs(+event.amounts[toIndex] / 1e7))}{' '}
+                        {formatBalance(
+                            Math.abs(
+                                +contractValueToAmount(
+                                    event.amounts[toIndex],
+                                    (pool.tokens[toIndex] as SorobanToken).decimal,
+                                ),
+                            ),
+                        )}{' '}
                         {pool.tokens[toIndex]?.code}
                     </span>
                 </Amounts>
@@ -85,7 +99,13 @@ const getEventAmounts = (event: PoolEvent, pool: PoolExtended) => {
                     {event.amounts.map((amount, index) => (
                         <span key={pool.tokens_str[index]}>
                             <span>
-                                {formatBalance(+amount / 1e7)} {pool.tokens[index]?.code}
+                                {formatBalance(
+                                    +contractValueToAmount(
+                                        amount,
+                                        (pool.tokens[index] as SorobanToken).decimal,
+                                    ),
+                                )}{' '}
+                                {pool.tokens[index]?.code}
                             </span>
                             <br />
                         </span>
