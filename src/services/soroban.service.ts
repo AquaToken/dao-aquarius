@@ -16,7 +16,7 @@ import { SorobanErrorHandler, SorobanPrepareTxErrorHandler } from 'helpers/error
 import { getSorobanUrl } from 'helpers/url';
 
 import { PoolRewardsInfo } from 'types/amm';
-import { ClassicToken, Token, TokenType } from 'types/token';
+import { ClassicToken, SorobanToken, Token, TokenType } from 'types/token';
 
 import RestoreContractModal from 'web/modals/RestoreContractModal';
 
@@ -741,7 +741,10 @@ export default class SorobanServiceClass {
                     return this.orderTokens(assets).reduce((acc, asset, index) => {
                         acc.set(
                             getAssetString(asset),
-                            this.i128ToInt(result.retval.value()[index]),
+                            this.i128ToInt(
+                                result.retval.value()[index],
+                                (assets[index] as SorobanToken).decimal,
+                            ),
                         );
                         return acc;
                     }, new Map());
@@ -761,7 +764,10 @@ export default class SorobanServiceClass {
             this.publicKeyToScVal(accountId),
             this.scValToArray(
                 this.orderTokens(assets).map(asset =>
-                    this.amountToUint128(amounts.get(getAssetString(asset))),
+                    this.amountToUint128(
+                        amounts.get(getAssetString(asset)),
+                        (asset as SorobanToken).decimal,
+                    ),
                 ),
             ),
             this.amountToUint128('0.0000001'),
@@ -864,6 +870,7 @@ export default class SorobanServiceClass {
     getSwapChainedTx(
         accountId: string,
         base: Token,
+        counter: Token,
         chainedXDR: string,
         amount: string,
         amountWithSlippage: string,
@@ -873,8 +880,14 @@ export default class SorobanServiceClass {
             this.publicKeyToScVal(accountId),
             xdr.ScVal.fromXDR(chainedXDR, 'base64'),
             this.contractIdToScVal(base.contract),
-            this.amountToUint128(amount),
-            this.amountToUint128(amountWithSlippage),
+            this.amountToUint128(
+                amount,
+                isSend ? (base as SorobanToken).decimal : (counter as SorobanToken).decimal,
+            ),
+            this.amountToUint128(
+                amountWithSlippage,
+                isSend ? (counter as SorobanToken).decimal : (base as SorobanToken).decimal,
+            ),
         ];
 
         const transferInvocation = new xdr.SorobanAuthorizedInvocation({
@@ -885,7 +898,10 @@ export default class SorobanServiceClass {
                     args: [
                         this.publicKeyToScVal(accountId),
                         this.contractIdToScVal(AMM_SMART_CONTRACT_ID),
-                        this.amountToInt128(isSend ? amount : amountWithSlippage),
+                        this.amountToInt128(
+                            isSend ? amount : amountWithSlippage,
+                            (base as SorobanToken).decimal,
+                        ),
                     ],
                 }),
             ),
@@ -1004,17 +1020,17 @@ export default class SorobanServiceClass {
         return xdr.ScVal.scvU32(Math.floor(amount));
     }
 
-    amountToInt128(amount: string): xdr.ScVal {
+    amountToInt128(amount: string, decimals = 7): xdr.ScVal {
         return new StellarSdk.XdrLargeInt(
-            'u128',
-            new BigNumber(amount).times(1e7).toFixed(),
+            'i128',
+            new BigNumber(amount).times(Math.pow(10, decimals)).toFixed(),
         ).toI128();
     }
 
-    amountToUint128(amount: string): xdr.ScVal {
+    amountToUint128(amount: string, decimals = 7): xdr.ScVal {
         return new StellarSdk.XdrLargeInt(
             'u128',
-            new BigNumber(amount).times(1e7).toFixed(),
+            new BigNumber(amount).times(Math.pow(10, decimals)).toFixed(),
         ).toU128();
     }
 

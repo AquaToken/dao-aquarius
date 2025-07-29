@@ -217,6 +217,7 @@ export const findSwapPath = async (
     counterId: string,
     amount: string | number,
     isSend: boolean,
+    decimals: number,
 ): Promise<FindSwapPath> => {
     const headers = { 'Content-Type': 'application/json' };
     const baseUrl = getAmmAquaUrl();
@@ -224,7 +225,7 @@ export const findSwapPath = async (
     const body = JSON.stringify({
         token_in_address: baseId,
         token_out_address: counterId,
-        amount: (+amount * 1e7).toString(),
+        amount: new BigNumber(amount).times(Math.pow(10, decimals)).toFixed(),
     });
     const { data } = await axios.post<FindSwapPath>(
         isSend ? `${baseUrl}/pools/find-path/` : `${baseUrl}/pools/find-path-strict-receive/`,

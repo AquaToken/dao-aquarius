@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { NumericFormat } from 'react-number-format';
 import styled from 'styled-components';
 
+import { contractValueToAmount } from 'helpers/amount';
 import { getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
@@ -228,7 +229,10 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
             new Map(
                 pool.tokens.map((asset, index) => [
                     getAssetString(asset),
-                    Number(pool.reserves[index]) / 1e7,
+                    +contractValueToAmount(
+                        pool.reserves[index],
+                        (pool.tokens[index] as SorobanToken).decimal,
+                    ),
                 ]),
             ),
         [pool],
@@ -248,7 +252,8 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
         const firstAssetString = getAssetString(pool.tokens[0]);
 
         const amountBeforeDeposit =
-            (reserves.get(firstAssetString) * accountShare) / (Number(pool.total_share) / 1e7);
+            (reserves.get(firstAssetString) * accountShare) /
+            (Number(pool.total_share) / Math.pow(10, pool.share_token_decimals));
 
         if (Number(pool.total_share) === 0) {
             return {
@@ -261,10 +266,15 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
         if (hasAllAmounts) {
             const oldReserves = +reserves.get(firstAssetString);
             const newReserves = oldReserves + +amounts.get(firstAssetString);
-            const newTotalShare = (Number(pool.total_share) / 1e7 / oldReserves) * newReserves;
+            const newTotalShare =
+                (Number(pool.total_share) / Math.pow(10, pool.share_token_decimals) / oldReserves) *
+                newReserves;
 
             return {
-                sharesBefore: (accountShare / (Number(pool.total_share) / 1e7)) * 100,
+                sharesBefore:
+                    (accountShare /
+                        (Number(pool.total_share) / Math.pow(10, pool.share_token_decimals))) *
+                    100,
                 sharesAfter:
                     ((+amounts.get(firstAssetString) + amountBeforeDeposit) / newReserves) * 100,
                 sharesAfterValue:
@@ -274,7 +284,10 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
         }
 
         return {
-            sharesBefore: (accountShare / (Number(pool.total_share) / 1e7)) * 100,
+            sharesBefore:
+                (accountShare /
+                    (Number(pool.total_share) / Math.pow(10, pool.share_token_decimals))) *
+                100,
             sharesAfter: null,
             sharesAfterValue: null,
         };
@@ -349,7 +362,8 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
 
         if (!tps || !wSupply || !wBalance) return 1;
 
-        const tpsWithoutBoost = ((+accountShare / 1e7) * tps) / wSupply;
+        const tpsWithoutBoost =
+            ((+accountShare / Math.pow(10, pool.share_token_decimals)) * tps) / wSupply;
         const expectedTps = (tps * wBalance) / wSupply;
 
         if (tpsWithoutBoost === 0) return 1;
@@ -422,7 +436,10 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
 
                 pool.tokens.forEach((token, index) => {
                     if (token.type === TokenType.soroban) {
-                        const resAmount = SorobanService.i128ToInt(resultAmounts[index]);
+                        const resAmount = SorobanService.i128ToInt(
+                            resultAmounts[index],
+                            token.decimal,
+                        );
 
                         ToastService.showSuccessToast(
                             `Payment sent: ${formatBalance(Number(resAmount))} ${token.code}`,
@@ -432,7 +449,12 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
 
                 ModalService.openModal(SuccessModal, {
                     assets: pool.tokens,
-                    amounts: resultAmounts.map(value => SorobanService.i128ToInt(value)),
+                    amounts: resultAmounts.map((value, index) =>
+                        SorobanService.i128ToInt(
+                            value,
+                            (pool.tokens[index] as SorobanToken).decimal,
+                        ),
+                    ),
                     title: 'Deposit Successful',
                     hash,
                 });
@@ -467,7 +489,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                 const newAmount = (
                     (Number(value) * +reserves.get(getAssetString(token))) /
                     +reserves.get(getAssetString(asset))
-                ).toFixed(7);
+                ).toFixed((token as SorobanToken).decimal ?? 7);
                 setAmounts(new Map(amounts.set(getAssetString(token), newAmount)));
             });
     };
@@ -479,7 +501,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
         const newCounterAmount = (
             (Number(baseAmount) * +reserves.get(getAssetString(counter))) /
             +reserves.get(getAssetString(base))
-        ).toFixed(7);
+        ).toFixed((counter as SorobanToken).decimal ?? 7);
 
         if (+newCounterAmount >= +counterAmount) {
             onChangeInput(counter, counterAmount);
@@ -515,7 +537,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                                                 (asset.type === TokenType.soroban
                                                     ? balances?.get(getAssetString(asset)) || 0
                                                     : account.getAvailableForSwapBalance(asset)
-                                                ).toFixed(7),
+                                                ).toFixed((asset as SorobanToken).decimal ?? 7),
                                             )
                                         }
                                     >
@@ -563,7 +585,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                             inputMode="decimal"
                             allowedDecimalSeparators={[',']}
                             thousandSeparator=","
-                            decimalScale={7}
+                            decimalScale={(asset as SorobanToken).decimal ?? 7}
                             allowNegative={false}
                         />
                     </FormRow>

@@ -7,6 +7,7 @@ import { getPool } from 'api/amm';
 
 import { ChartPeriods } from 'constants/charts';
 
+import { contractValueToAmount } from 'helpers/amount';
 import { getAquaAssetData } from 'helpers/assets';
 import { getIsTestnetEnv } from 'helpers/env';
 import { formatBalance } from 'helpers/format-number';
@@ -23,7 +24,7 @@ import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { PoolExtended } from 'types/amm';
 import { Asset } from 'types/stellar';
-import { TokenType } from 'types/token';
+import { SorobanToken, TokenType } from 'types/token';
 
 import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -361,13 +362,24 @@ const PoolPage = () => {
                             <SectionRow key={pool.tokens_addresses[index]}>
                                 <SectionLabel>Total {asset.code}:</SectionLabel>
                                 <span>
-                                    {formatBalance(+pool.reserves[index] / 1e7, true)} {asset.code}
+                                    {formatBalance(
+                                        +contractValueToAmount(
+                                            pool.reserves[index],
+                                            (pool.tokens[index] as SorobanToken).decimal,
+                                        ),
+                                    )}{' '}
+                                    {asset.code}
                                 </span>
                             </SectionRow>
                         ))}
                         <SectionRow>
                             <SectionLabel>Total share:</SectionLabel>
-                            <span>{formatBalance(+pool.total_share / 1e7, true)}</span>
+                            <span>
+                                {formatBalance(
+                                    +pool.total_share / Math.pow(10, pool.share_token_decimals),
+                                    true,
+                                )}
+                            </span>
                         </SectionRow>
                         <SectionRow>
                             <SectionLabel>Members: </SectionLabel>

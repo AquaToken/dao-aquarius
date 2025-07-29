@@ -16,7 +16,7 @@ import { ModalService, SorobanService, ToastService } from 'services/globalServi
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { ModalProps } from 'types/modal';
-import { Token, TokenType } from 'types/token';
+import { SorobanToken, Token, TokenType } from 'types/token';
 
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -119,11 +119,16 @@ const SwapConfirmModal = ({
     useEffect(() => {
         const SLIPPAGE = localStorage.getItem(SWAP_SLIPPAGE_ALIAS) || '1'; // 1%
         const minAmount = isSend
-            ? ((1 - Number(SLIPPAGE) / 100) * Number(counterAmount)).toFixed(7)
-            : ((1 + Number(SLIPPAGE) / 100) * Number(baseAmount)).toFixed(7);
+            ? ((1 - Number(SLIPPAGE) / 100) * Number(counterAmount)).toFixed(
+                  (counter as SorobanToken).decimal ?? 7,
+              )
+            : ((1 + Number(SLIPPAGE) / 100) * Number(baseAmount)).toFixed(
+                  (base as SorobanToken).decimal ?? 7,
+              );
         SorobanService.getSwapChainedTx(
             account?.accountId(),
             base,
+            counter,
             bestPathXDR,
             isSend ? baseAmount : counterAmount,
             minAmount,
@@ -153,6 +158,7 @@ const SwapConfirmModal = ({
         SorobanService.getSwapChainedTx(
             account?.accountId(),
             base,
+            counter,
             bestPathXDR,
             isSend ? baseAmount : counterAmount,
             minAmount,
@@ -177,9 +183,11 @@ const SwapConfirmModal = ({
                     return;
                 }
 
-                const sentAmount = isSend ? baseAmount : SorobanService.i128ToInt(res as xdr.ScVal);
+                const sentAmount = isSend
+                    ? baseAmount
+                    : SorobanService.i128ToInt(res as xdr.ScVal, (counter as SorobanToken).decimal);
                 const receivedAmount = isSend
-                    ? SorobanService.i128ToInt(res as xdr.ScVal)
+                    ? SorobanService.i128ToInt(res as xdr.ScVal, (base as SorobanToken).decimal)
                     : counterAmount;
 
                 ModalService.openModal(SuccessModal, {
