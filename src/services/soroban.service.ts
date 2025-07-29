@@ -783,7 +783,10 @@ export default class SorobanServiceClass {
                             args: [
                                 this.publicKeyToScVal(accountId),
                                 this.contractIdToScVal(poolAddress),
-                                this.amountToInt128(amounts.get(getAssetString(asset))),
+                                this.amountToInt128(
+                                    amounts.get(getAssetString(asset)),
+                                    (asset as SorobanToken).decimal,
+                                ),
                             ],
                         }),
                     ),
