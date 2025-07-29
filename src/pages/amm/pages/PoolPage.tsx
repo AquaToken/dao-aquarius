@@ -1,3 +1,4 @@
+import { xdr } from '@stellar/stellar-sdk';
 import { useEffect, useRef, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import styled from 'styled-components';
@@ -21,7 +22,7 @@ import { SorobanService, ToastService } from 'services/globalServices';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { PoolExtended } from 'types/amm';
-import { Asset, Int128Parts } from 'types/stellar';
+import { Asset } from 'types/stellar';
 import { TokenType } from 'types/token';
 
 import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
@@ -234,7 +235,7 @@ const PoolPage = () => {
 
         SorobanService.getClaimRewardsTx(account.accountId(), pool.address)
             .then(tx => account.signAndSubmitTx(tx, true))
-            .then((res: { status?: BuildSignAndSubmitStatuses; value: () => Int128Parts }) => {
+            .then((res: { status?: BuildSignAndSubmitStatuses }) => {
                 if (!res) {
                     return;
                 }
@@ -246,7 +247,7 @@ const PoolPage = () => {
                     ToastService.showSuccessToast('More signatures required to complete');
                     return;
                 }
-                const value = SorobanService.i128ToInt(res.value());
+                const value = SorobanService.i128ToInt(res as xdr.ScVal);
 
                 ToastService.showSuccessToast(`Claimed ${formatBalance(+value)} AQUA`);
                 setClaimPending(false);

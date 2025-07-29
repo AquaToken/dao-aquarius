@@ -1,4 +1,5 @@
 import * as StellarSdk from '@stellar/stellar-sdk';
+import { xdr } from '@stellar/stellar-sdk';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -15,7 +16,6 @@ import { ModalService, SorobanService, ToastService } from 'services/globalServi
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { ModalProps } from 'types/modal';
-import { Int128Parts } from 'types/stellar';
 import { Token, TokenType } from 'types/token';
 
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
@@ -162,7 +162,7 @@ const SwapConfirmModal = ({
                 hash = tx.hash().toString('hex');
                 return account.signAndSubmitTx(tx, true);
             })
-            .then((res: { value?: () => Int128Parts; status?: BuildSignAndSubmitStatuses }) => {
+            .then((res: { status?: BuildSignAndSubmitStatuses }) => {
                 confirm();
 
                 if (!res) {
@@ -177,9 +177,9 @@ const SwapConfirmModal = ({
                     return;
                 }
 
-                const sentAmount = isSend ? baseAmount : SorobanService.i128ToInt(res.value());
+                const sentAmount = isSend ? baseAmount : SorobanService.i128ToInt(res as xdr.ScVal);
                 const receivedAmount = isSend
-                    ? SorobanService.i128ToInt(res.value())
+                    ? SorobanService.i128ToInt(res as xdr.ScVal)
                     : counterAmount;
 
                 ModalService.openModal(SuccessModal, {

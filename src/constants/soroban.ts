@@ -48,4 +48,5 @@ export enum ASSET_CONTRACT_METHOD {
     TRANSFER = 'transfer',
     BURN = 'burn',
     SYMBOL = 'symbol',
+    DECIMALS = 'decimals',
 }
