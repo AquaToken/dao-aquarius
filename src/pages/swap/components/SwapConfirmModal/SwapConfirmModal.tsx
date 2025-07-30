@@ -255,7 +255,13 @@ const SwapConfirmModal = ({
             <DescriptionRow>
                 <span>Exchange rate</span>
                 <span>
-                    1 {base.code} = {formatBalance(+counterAmount / +baseAmount)} {counter.code}
+                    1 {base.code} ={' '}
+                    {formatBalance(
+                        +(+counterAmount / +baseAmount).toFixed(
+                            counter.type === TokenType.soroban ? counter.decimal : 7,
+                        ),
+                    )}{' '}
+                    {counter.code}
                 </span>
             </DescriptionRow>
 
@@ -264,7 +270,7 @@ const SwapConfirmModal = ({
                 <span>
                     {txFee !== null ? (
                         `${formatBalance(
-                            STROOP * (Number(txFee) + Number(StellarSdk.BASE_FEE)),
+                            +(STROOP * (Number(txFee) + Number(StellarSdk.BASE_FEE))).toFixed(7),
                         )} XLM`
                     ) : (
                         <DotsLoader />
