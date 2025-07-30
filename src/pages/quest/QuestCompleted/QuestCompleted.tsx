@@ -77,7 +77,7 @@ const QuestCompleted = () => (
                 </ButtonStyled>
             </a>
 
-            <a href="https://x.com/aqua_token" target="_blank" rel="noreferrer">
+            <a href="https://x.com/AquariusDeFi" target="_blank" rel="noreferrer">
                 <ButtonStyled isRounded secondary withGradient>
                     <X />
                 </ButtonStyled>
