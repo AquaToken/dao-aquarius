@@ -252,33 +252,19 @@ export const getVolume24h = async (): Promise<PoolVolume24h> => {
     const { data } = await axios.get<PoolVolume24h>(`${baseUrl}/statistics/24h/`);
     return data;
 };
-export const getNativePrices = async (
-    assets: Array<Token>,
-    batchSize: number = 50,
-): Promise<Map<string, string>> => {
+export const getNativePrices = async (): Promise<Map<string, string>> => {
     const baseUrl = getAmmAquaUrl();
-
-    const batches = [];
-
-    // Split assets into batches of 100
-    for (let i = 0; i < assets.length; i += batchSize) {
-        const batch = assets.slice(i, i + batchSize);
-        batches.push(batch);
-    }
 
     const allPrices = new Map<string, string>();
 
-    // Process each batch
-    for (const batch of batches) {
-        const { data } = await axios.get<ListResponse<NativePrice>>(
-            `${baseUrl}/tokens/?token__in=${batch.map((asset: Token) => asset.contract).join(',')}`,
-        );
-        const prices = data.items;
+    const { data } = await axios.get<ListResponse<NativePrice>>(
+        `${baseUrl}/tokens/?pooled=true&size=500`,
+    );
+    const prices = data.items;
 
-        prices.forEach(price => {
-            allPrices.set(price.name, price.price_xlm);
-        });
-    }
+    prices.forEach(price => {
+        allPrices.set(price.name, price.price_xlm);
+    });
 
     return allPrices;
 };
