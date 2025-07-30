@@ -201,13 +201,11 @@ export default class AccountService extends Horizon.AccountResponse {
             });
     }
 
-    getAssetBalance(asset: SorobanToken): Promise<number>;
+    getAssetBalance(asset: SorobanToken): Promise<string>;
     getAssetBalance(asset: ClassicToken, ignoreReserves?: boolean): number | null;
-    getAssetBalance(asset: Token, ignoreReserves?: boolean): number | null | Promise<number> {
+    getAssetBalance(asset: Token, ignoreReserves?: boolean): number | null | Promise<string> {
         if (asset.type === TokenType.soroban) {
-            return SorobanService.getTokenBalance(asset.contract, this.account_id).then(res =>
-                Number(res),
-            );
+            return SorobanService.getTokenBalance(asset.contract, this.account_id).then(res => res);
         }
         if (asset.isNative()) {
             const nativeBalance = this.balances.find(
