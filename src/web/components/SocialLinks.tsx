@@ -94,7 +94,7 @@ const SocialLinks = ({ isHorizontal }: { isHorizontal?: boolean }) => (
         <a href="https://t.me/aquarius_official_community" target="_blank" rel="noreferrer">
             <Telegram />
         </a>
-        <a href="https://x.com/aqua_token" target="_blank" rel="noreferrer">
+        <a href="https://x.com/AquariusDeFi" target="_blank" rel="noreferrer">
             <Twitter />
         </a>
         <a href="mailto:hello@aqua.network">

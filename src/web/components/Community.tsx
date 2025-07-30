@@ -176,7 +176,7 @@ const Community = (): React.ReactNode => (
                         </ItemContent>
                     </Item>
                 </Link>
-                <Link href="https://x.com/aqua_token" target="_blank">
+                <Link href="https://x.com/AquariusDeFi" target="_blank">
                     <Item>
                         <ItemContent>
                             <Twitter />
