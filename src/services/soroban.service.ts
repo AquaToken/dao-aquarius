@@ -1041,8 +1041,8 @@ export default class SorobanServiceClass {
         return StellarSdk.scValToNative(value);
     }
 
-    i128ToInt(val: xdr.ScVal, decimals = 7): number {
-        return new BigNumber(StellarSdk.scValToNative(val)).div(Math.pow(10, decimals)).toNumber();
+    i128ToInt(val: xdr.ScVal, decimals = 7): string {
+        return new BigNumber(StellarSdk.scValToNative(val)).div(Math.pow(10, decimals)).toString();
     }
 
     private getAssetContractHash(asset: Token): string {
