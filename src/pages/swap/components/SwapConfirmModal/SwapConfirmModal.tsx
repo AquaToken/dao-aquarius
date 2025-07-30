@@ -150,8 +150,12 @@ const SwapConfirmModal = ({
         const SLIPPAGE = localStorage.getItem(SWAP_SLIPPAGE_ALIAS) || '1'; // 1%
 
         const minAmount = isSend
-            ? ((1 - Number(SLIPPAGE) / 100) * Number(counterAmount)).toFixed(7)
-            : ((1 + Number(SLIPPAGE) / 100) * Number(baseAmount)).toFixed(7);
+            ? ((1 - Number(SLIPPAGE) / 100) * Number(counterAmount)).toFixed(
+                  (counter as SorobanToken).decimal ?? 7,
+              )
+            : ((1 + Number(SLIPPAGE) / 100) * Number(baseAmount)).toFixed(
+                  (base as SorobanToken).decimal ?? 7,
+              );
 
         let hash: string;
 
