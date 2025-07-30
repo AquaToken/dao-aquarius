@@ -534,10 +534,11 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                                         onClick={() =>
                                             onChangeInput(
                                                 asset,
-                                                (asset.type === TokenType.soroban
+                                                asset.type === TokenType.soroban
                                                     ? balances?.get(getAssetString(asset)) || 0
-                                                    : account.getAvailableForSwapBalance(asset)
-                                                ).toFixed((asset as SorobanToken).decimal ?? 7),
+                                                    : account
+                                                          .getAvailableForSwapBalance(asset)
+                                                          .toFixed(7),
                                             )
                                         }
                                     >
