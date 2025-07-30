@@ -60,10 +60,12 @@ const BalancesBlock = () => {
         );
 
         setCustomTokensBalances(
-            sorobanTokens.map((token, index) => ({
-                ...token,
-                ...{ balance: balances[index] },
-            })),
+            sorobanTokens
+                .map((token, index) => ({
+                    ...token,
+                    ...{ balance: balances[index] },
+                }))
+                .filter(({ balance }) => !!balance),
         );
     };
 
@@ -117,7 +119,7 @@ const BalancesBlock = () => {
                 </Section>
             )}
 
-            {Boolean(customTokensBalances) && (
+            {Boolean(customTokensBalances?.length) && (
                 <Section>
                     <h3>Custom Soroban Tokens</h3>
                     <Table
