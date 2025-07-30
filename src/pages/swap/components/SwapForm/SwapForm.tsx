@@ -466,9 +466,9 @@ const SwapForm = ({
             </SwapRows>
 
             <Price
-                baseCode={base.code}
+                base={base}
                 baseAmount={baseAmount}
-                counterCode={counter.code}
+                counter={counter}
                 counterAmount={counterAmount}
                 isReverted={isPriceReverted}
                 setIsReverted={setIsPriceReverted}

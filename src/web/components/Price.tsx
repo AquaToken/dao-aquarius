@@ -3,6 +3,8 @@ import styled from 'styled-components';
 
 import { formatBalance } from 'helpers/format-number';
 
+import { Token, TokenType } from 'types/token';
+
 import Revert from 'assets/icon-revert.svg';
 
 import { DotsLoader } from 'basics/loaders';
@@ -27,8 +29,8 @@ interface SwapFormPriceProps {
     baseAmount: string;
     counterAmount: string;
     pending: boolean;
-    baseCode: string;
-    counterCode: string;
+    base: Token;
+    counter: Token;
     isReverted: boolean;
     setIsReverted: (isReverted: boolean) => void;
     hasError: boolean;
@@ -38,8 +40,8 @@ const Price = ({
     baseAmount,
     counterAmount,
     pending,
-    baseCode,
-    counterCode,
+    base,
+    counter,
     isReverted,
     setIsReverted,
     hasError,
@@ -52,7 +54,7 @@ const Price = ({
     if (pending || !baseAmount || !counterAmount) {
         return (
             <Container>
-                1 {baseCode} = <DotsLoader style={{ margin: '0 0.5rem' }} /> {counterCode}
+                1 {base.code} = <DotsLoader style={{ margin: '0 0.5rem' }} /> {counter.code}
             </Container>
         );
     }
@@ -60,8 +62,16 @@ const Price = ({
     return (
         <Container onClick={() => setIsReverted(!isReverted)} {...props}>
             {isReverted
-                ? `1 ${counterCode} = ${formatBalance(+baseAmount / +counterAmount)} ${baseCode}`
-                : `1 ${baseCode} = ${formatBalance(+counterAmount / +baseAmount)} ${counterCode}`}
+                ? `1 ${counter.code} = ${formatBalance(
+                      +(+baseAmount / +counterAmount).toFixed(
+                          base.type === TokenType.soroban ? base.decimal : 7,
+                      ),
+                  )} ${base.code}`
+                : `1 ${base.code} = ${formatBalance(
+                      +(+counterAmount / +baseAmount).toFixed(
+                          counter.type === TokenType.soroban ? counter.decimal : 7,
+                      ),
+                  )} ${counter.code}`}
             <Revert />
         </Container>
     );
