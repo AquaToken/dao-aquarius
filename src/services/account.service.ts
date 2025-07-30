@@ -400,6 +400,7 @@ export default class AccountService extends Horizon.AccountResponse {
                     code: balance.asset_code,
                     issuer: balance.asset_issuer,
                     asset: StellarService.createAsset(balance.asset_code, balance.asset_issuer),
+                    type: TokenType.classic,
                 };
             })
             .sort(
@@ -416,6 +417,7 @@ export default class AccountService extends Horizon.AccountResponse {
                 code: 'XLM',
                 issuer: undefined,
                 asset: StellarService.createLumen(),
+                type: TokenType.classic,
             },
             ...balances,
         ];
