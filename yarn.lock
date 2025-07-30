@@ -1075,10 +1075,10 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@creit.tech/stellar-wallets-kit@^1.7.1":
-  version "1.7.1"
-  resolved "https://registry.yarnpkg.com/@creit.tech/stellar-wallets-kit/-/stellar-wallets-kit-1.7.1.tgz#8a9ef6bda76c5115dbe5fcee8b5a2f7bb5175206"
-  integrity sha512-bbeUU5NRbSvJafmM+XQP7VRb+xWWc7ZG1i12P19FwUxMczaA1V5uti85Q8lHn+f0lTCfdtqOlqu+KacHeNQF8Q==
+"@creit.tech/stellar-wallets-kit@1.7.7":
+  version "1.7.7"
+  resolved "https://registry.yarnpkg.com/@creit.tech/stellar-wallets-kit/-/stellar-wallets-kit-1.7.7.tgz#c200da13d9efd2ac1816324f580f955f38caa5cb"
+  integrity sha512-XUyiTDI7v4L6LaQtSW80iIGsnzx3WabZCcCjd7enXaz3N8nXQCs2d3G2ZQNErxF8uM400TwHyDhftL1m6Oec4g==
   dependencies:
     "@albedo-link/intent" "0.12.0"
     "@creit.tech/xbull-wallet-connect" "0.3.0"
