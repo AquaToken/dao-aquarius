@@ -273,9 +273,7 @@ export default class AccountService extends Horizon.AccountResponse {
             (lp as unknown as PoolClassicProcessed).fee = 0.003;
         });
 
-        const prices = await getNativePrices(
-            [...assetsSet].map(str => getAssetFromString(str as string)) as ClassicToken[],
-        );
+        const prices = await getNativePrices();
 
         liquidityPoolsForAccount.forEach(lp => {
             (lp as unknown as PoolClassicProcessed).liquidity = (
@@ -381,11 +379,7 @@ export default class AccountService extends Horizon.AccountResponse {
         const nativeBalanceInstance = this.balances.find(
             ({ asset_type }) => asset_type === 'native',
         );
-        const nativePrices = await getNativePrices(
-            assetsBalances.map(({ asset_code, asset_issuer }) =>
-                StellarService.createAsset(asset_code, asset_issuer),
-            ),
-        );
+        const nativePrices = await getNativePrices();
 
         const balances = assetsBalances
             .map(balance => {

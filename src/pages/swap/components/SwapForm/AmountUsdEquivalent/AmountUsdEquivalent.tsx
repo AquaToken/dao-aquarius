@@ -81,7 +81,7 @@ const AmountUsdEquivalent = ({ amount, asset, sourceAmount, sourceAsset }: Props
             return;
         }
 
-        getNativePrices(sourceAsset ? [asset, sourceAsset] : [asset]).then(res => {
+        getNativePrices().then(res => {
             setPrice(res.has(getAssetString(asset)) ? res.get(getAssetString(asset)) : null);
             if (sourceAsset) {
                 setPriceSource(
