@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -44,7 +44,6 @@ const Content = styled.div`
 
 const SwapPage = () => {
     const [base, setBase] = useState(null);
-    const [, forceUpdate] = useReducer(x => x + 1, 0);
 
     const [counter, setCounter] = useState(null);
 
@@ -65,11 +64,15 @@ const SwapPage = () => {
         }
 
         if (!base || getAssetString(base) !== source) {
-            setBase(getAssetFromString(source, () => forceUpdate()));
+            getAssetFromString(source, token => {
+                setBase(token);
+            });
         }
 
         if (!counter || getAssetString(counter) !== destination) {
-            setCounter(getAssetFromString(destination, () => forceUpdate()));
+            getAssetFromString(destination, token => {
+                setCounter(token);
+            });
         }
 
         if (source === destination) {
