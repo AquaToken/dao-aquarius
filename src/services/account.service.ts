@@ -6,7 +6,7 @@ import { getNativePrices } from 'api/amm';
 
 import { ASSETS_ENV_DATA, ICE_ASSETS } from 'constants/assets';
 
-import { getAssetFromString, getAssetString } from 'helpers/assets';
+import { getAssetFromString } from 'helpers/assets';
 import { getEnv, getNetworkPassphrase } from 'helpers/env';
 
 import { LoginTypes } from 'store/authStore/types';
@@ -278,7 +278,7 @@ export default class AccountService extends Horizon.AccountResponse {
                 lp as unknown as PoolClassicProcessed
             ).tokens
                 .reduce((acc, asset, index) => {
-                    const price = prices.get(getAssetString(asset as ClassicToken)) ?? 0;
+                    const price = prices.get(asset.contractId(getNetworkPassphrase())) ?? 0;
 
                     const amount = Number(lp.reserves[index]) * Number(price);
 
@@ -382,12 +382,12 @@ export default class AccountService extends Horizon.AccountResponse {
         const balances = assetsBalances
             .map(balance => {
                 const asset = StellarService.createAsset(balance.asset_code, balance.asset_issuer);
-                const assetString = getAssetString(asset);
+                const contract = asset.contractId(getNetworkPassphrase());
 
                 return {
                     ...balance,
-                    nativeBalance: nativePrices.has(assetString)
-                        ? +balance.balance * +nativePrices.get(assetString)
+                    nativeBalance: nativePrices.has(contract)
+                        ? +balance.balance * +nativePrices.get(contract)
                         : 0,
                     code: balance.asset_code,
                     issuer: balance.asset_issuer,

@@ -3,7 +3,7 @@ import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
-import { getAssetsList } from 'api/amm';
+import { getAssetsList, getNativePrices } from 'api/amm';
 
 import { USDx_CODE, USDx_ISSUER } from 'constants/assets';
 
@@ -156,6 +156,7 @@ const AssetPickerModal = ({ params, confirm }: ModalProps<Props>) => {
 
     const getCustomTokensBalances = async () => {
         const list = await getAssetsList();
+        const prices = await getNativePrices();
         const sorobanTokens = list.filter(({ type }) => type === TokenType.soroban);
 
         if (!sorobanTokens.length) {
@@ -169,7 +170,10 @@ const AssetPickerModal = ({ params, confirm }: ModalProps<Props>) => {
 
         const map = new Map();
         sorobanTokens.forEach((token, index) => {
-            map.set(token.contract, balances[index]);
+            map.set(token.contract, {
+                balance: balances[index],
+                nativePrice: prices.get(token.contract),
+            });
         });
         setCustomTokensBalances(map);
     };
@@ -264,38 +268,48 @@ const AssetPickerModal = ({ params, confirm }: ModalProps<Props>) => {
                 ))}
             </DefaultAssets>
             <AssetsList>
-                {filteredAssets.map(asset => (
-                    <AssetItem key={asset.code + asset.issuer} onClick={() => chooseAsset(asset)}>
-                        <AssetStyled asset={asset} $isLogged={isLogged} />
-                        {(
-                            asset.type === TokenType.soroban
-                                ? customTokensBalances.has(asset.contract)
-                                : asset.balance
-                        ) ? (
-                            <Balances>
-                                <span>
-                                    {formatBalance(
-                                        asset.type === TokenType.soroban
-                                            ? customTokensBalances.get(asset.contract)
-                                            : asset.balance,
-                                    )}{' '}
-                                    {asset.code}
-                                </span>
-                                {asset.nativeBalance && (
+                {filteredAssets.map(asset => {
+                    const balance =
+                        asset.type === TokenType.soroban
+                            ? customTokensBalances.get(asset.contract)?.balance
+                            : asset.balance;
+
+                    const nativeBalance =
+                        asset.type === TokenType.soroban
+                            ? customTokensBalances.get(asset.contract)?.nativePrice * balance
+                            : asset.nativeBalance;
+
+                    return (
+                        <AssetItem
+                            key={asset.code + asset.issuer}
+                            onClick={() => chooseAsset(asset)}
+                        >
+                            <AssetStyled asset={asset} $isLogged={isLogged} />
+                            {(
+                                asset.type === TokenType.soroban
+                                    ? customTokensBalances.has(asset.contract)
+                                    : asset.balance
+                            ) ? (
+                                <Balances>
                                     <span>
-                                        $
-                                        {formatBalance(
-                                            +(
-                                                asset.nativeBalance * StellarService.priceLumenUsd
-                                            ).toFixed(2),
-                                            true,
-                                        )}
+                                        {formatBalance(balance)} {asset.code}
                                     </span>
-                                )}
-                            </Balances>
-                        ) : null}
-                    </AssetItem>
-                ))}
+                                    {nativeBalance !== null && (
+                                        <span>
+                                            $
+                                            {formatBalance(
+                                                +(
+                                                    nativeBalance * StellarService.priceLumenUsd
+                                                ).toFixed(2),
+                                                true,
+                                            )}
+                                        </span>
+                                    )}
+                                </Balances>
+                            ) : null}
+                        </AssetItem>
+                    );
+                })}
             </AssetsList>
         </ModalWrapper>
     );
