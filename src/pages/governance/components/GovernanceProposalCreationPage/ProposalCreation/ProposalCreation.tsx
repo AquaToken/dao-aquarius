@@ -256,7 +256,13 @@ const ProposalCreation = ({
                                 focused={textFocused}
                                 id="body"
                                 value={text}
-                                onChange={setText}
+                                onChange={content => {
+                                    const cleaned = content
+                                        .replace(/<p><br><\/p>/g, '') // delete empty paragraphs
+                                        .replace(/(\n\s*){2,}/g, '\n') // replace multiple line breaks
+                                        .trim();
+                                    setText(cleaned);
+                                }}
                                 onFocus={() => setTextFocused(true)}
                                 onBlur={() => setTextFocused(false)}
                             />
