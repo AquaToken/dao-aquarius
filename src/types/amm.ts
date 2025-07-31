@@ -99,8 +99,14 @@ export type NativePrice = {
     name: string;
     code: string;
     address: string;
-    issuer: string;
+    issuer: string | null;
     price_xlm: string;
+    decimals: number;
+    home_domain: null | string;
+    description: null | string;
+    asset_name: null | string;
+    logo: null | string;
+    is_sac: boolean;
 };
 
 export type FindSwapPath = {

@@ -199,7 +199,7 @@ const SwapFormRow = ({
                             {isBase ? (
                                 <BalanceClickable onClick={() => setPercent(100)}>
                                     {asset.type === TokenType.soroban
-                                        ? balance
+                                        ? Number(balance).toFixed(asset.decimal)
                                         : formatBalance(account.getAvailableForSwapBalance(asset))}
                                 </BalanceClickable>
                             ) : (

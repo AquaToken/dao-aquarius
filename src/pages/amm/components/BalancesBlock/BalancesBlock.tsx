@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { getAssetsList } from 'api/amm';
+import { getAssetsList, getNativePrices } from 'api/amm';
 
 import { getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
@@ -48,6 +48,7 @@ const BalancesBlock = () => {
 
     const getCustomTokensBalances = async () => {
         const list = await getAssetsList();
+        const prices = await getNativePrices();
         const sorobanTokens = list.filter(({ type }) => type === TokenType.soroban);
 
         if (!sorobanTokens.length) {
@@ -64,7 +65,7 @@ const BalancesBlock = () => {
                 .map((token, index) => ({
                     ...token,
                     ...{ balance: balances[index] },
-                }))
+                    ...{ nativeBalance: +prices.get(token.contract) * +balances[index] },}))
                 .filter(({ balance }) => !!balance),
         );
     };
@@ -126,6 +127,7 @@ const BalancesBlock = () => {
                         head={[
                             { children: 'Asset' },
                             { children: 'Balance', align: CellAlign.Right },
+                            { children: 'Balance(USD)', align: CellAlign.Right },
                         ]}
                         body={customTokensBalances.map(balance => ({
                             key: balance.cotract,
@@ -142,6 +144,16 @@ const BalancesBlock = () => {
                                     label: 'Balance:',
                                     align: CellAlign.Right,
                                     mobileStyle: { textAlign: 'right' },
+                                },
+                                {
+                                    children: balance.nativeBalance
+                                        ? `$${formatBalance(
+                                              balance.nativeBalance * StellarService.priceLumenUsd,
+                                              true,
+                                          )}`
+                                        : '$0.00',
+                                    label: 'Balance(USD):',
+                                    align: CellAlign.Right,
                                 },
                             ],
                         }))}
