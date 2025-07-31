@@ -1,6 +1,5 @@
 import { Asset } from '@stellar/stellar-sdk';
 import { useEffect, useMemo, useState } from 'react';
-import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -146,9 +145,11 @@ const GetAquaLabel = styled.span`
 const GetAquaLink = styled.div`
     font-size: 1.4rem;
 `;
+
 const PairsList = styled.div`
     padding-top: 1.6rem;
 `;
+
 const PairBlock = styled.div`
     padding: 0.4rem 0;
     margin-bottom: 0.8rem;
@@ -170,7 +171,7 @@ const AssetsInfo = styled.div`
     display: flex;
     align-items: center;
     span {
-        margin-left: 0.8rem;
+        white-space: pre;
     }
     grid-area: Pair;
 `;
