@@ -65,8 +65,9 @@ const BalancesBlock = () => {
                 .map((token, index) => ({
                     ...token,
                     ...{ balance: balances[index] },
-                    ...{ nativeBalance: +prices.get(token.contract) * +balances[index] },}))
-                .filter(({ balance }) => !!balance),
+                    ...{ nativeBalance: +prices.get(token.contract) * +balances[index] },
+                }))
+                .filter(({ balance }) => !!Number(balance)),
         );
     };
 
