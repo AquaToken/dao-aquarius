@@ -4,7 +4,6 @@ import styled from 'styled-components';
 
 import { getNativePrices } from 'api/amm';
 
-import { getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 
 import { StellarService } from 'services/globalServices';
@@ -82,12 +81,10 @@ const AmountUsdEquivalent = ({ amount, asset, sourceAmount, sourceAsset }: Props
         }
 
         getNativePrices().then(res => {
-            setPrice(res.has(getAssetString(asset)) ? res.get(getAssetString(asset)) : null);
+            setPrice(res.has(asset.contract) ? res.get(asset.contract) : null);
             if (sourceAsset) {
                 setPriceSource(
-                    res.has(getAssetString(sourceAsset))
-                        ? res.get(getAssetString(sourceAsset))
-                        : null,
+                    res.has(sourceAsset.contract) ? res.get(sourceAsset.contract) : null,
                 );
             }
         });

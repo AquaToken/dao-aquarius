@@ -263,7 +263,10 @@ export const getNativePrices = async (): Promise<Map<string, string>> => {
     const prices = data.items;
 
     prices.forEach(price => {
-        allPrices.set(price.name, price.price_xlm);
+        allPrices.set(
+            price.address,
+            (+price.price_xlm * Math.pow(10, price.decimals - 7)).toFixed(7),
+        );
     });
 
     return allPrices;
