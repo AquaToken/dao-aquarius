@@ -207,13 +207,14 @@ const PublishProposalModal = ({
             }
         }
     };
+
     return (
         <Container>
             <ModalTitle>Publish proposal</ModalTitle>
             <Description>
-                To publish a proposal you need pay <b>{cost} AQUA</b>. After publication, you will
-                not be able to make changes, in case of acceptance of the proposal, you will receive{' '}
-                {reward} AQUA
+                To submit a proposal, <b>a fee of {cost} AQUA is required.</b> Once published, the
+                proposal cannot be edited. If the proposal is approved, the creator will receive a
+                reward of {reward} AQUA.
             </Description>
             <ProposalCost>
                 <Label>Proposal publish cost</Label>
