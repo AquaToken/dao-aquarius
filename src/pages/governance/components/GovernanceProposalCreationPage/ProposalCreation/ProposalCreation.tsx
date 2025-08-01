@@ -256,7 +256,7 @@ const ProposalCreation = ({
                                 focused={textFocused}
                                 id="body"
                                 value={text}
-                                onChange={setText}
+                                onChange={content => setText(content)}
                                 onFocus={() => setTextFocused(true)}
                                 onBlur={() => setTextFocused(false)}
                             />
