@@ -248,6 +248,7 @@ const DelegateMain = () => {
                 <BackgroundLeft />
                 <BackgroundRight />
             </Background>
+
             <Wrapper>
                 <Title>Delegates</Title>
 
