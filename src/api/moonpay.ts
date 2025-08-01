@@ -2,9 +2,9 @@ import axios from 'axios';
 
 import { API_URLS } from 'constants/api';
 
+import { getAquaAssetData } from 'helpers/assets';
 import { getEnv } from 'helpers/env';
 import { getMoonpayKeyByEnv } from 'helpers/moonpay';
-import { getAquaContract } from 'helpers/soroban';
 
 import {
     MoonpayCurrencies,
@@ -56,7 +56,7 @@ export const getMoonpayProxyAddress = (
 ): Promise<ProxyAddressResponse['address']> => {
     const env = getEnv();
     const baseUrl = API_URLS[env].onRampProxy;
-    const aquaContract = getAquaContract();
+    const aquaContract = getAquaAssetData().aquaContract;
 
     const headers = {
         Accept: 'application/json',

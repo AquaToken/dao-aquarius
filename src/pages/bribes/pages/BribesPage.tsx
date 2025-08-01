@@ -11,7 +11,8 @@ import Bribes from 'assets/bribes.svg';
 import Plus from 'assets/icon-plus.svg';
 
 import Button from 'basics/buttons/Button';
-import ExternalLink from 'basics/ExternalLink';
+
+import DelegateBlockSmall from 'components/DelegateBlockSmall';
 
 import BribesList from 'pages/bribes/components/BribesPage/BribesList/BribesList';
 
@@ -41,6 +42,10 @@ const MainContentWrap = styled.div`
     flex-direction: column;
     width: 100%;
     z-index: 1;
+`;
+
+const Banner = styled(MainContentWrap)`
+    padding: 0 4rem;
 `;
 
 const MainContent = styled.div`
@@ -153,25 +158,26 @@ const BribesPage = () => {
                     <MainContent>
                         <Title>Aquarius Bribes</Title>
                         <Description>
-                            With Bribes, anyone can incentivize AQUA holders to vote for specific
-                            markets by offering rewards in any asset. Bribes worth over 100,000 AQUA
-                            are automatically collected and distributed to the voters every week.
+                            Bribes are on-chain rewards for voting on specific Stellar markets.
+                            Aquarius supports two types: protocol bribes, funded by trading fees and
+                            directed to high-volume markets, and external bribes, submitted by users
+                            or projects to attract votes.
                         </Description>
                         <MainContentFooter>
                             <AddBribeButton onClick={() => history.push(BribesRoutes.addBribe)}>
                                 <span>create bribe</span>
                                 <PlusIcon />
                             </AddBribeButton>
-
-                            <ExternalLink href="https://medium.com/aquarius-aqua/introducing-aquarius-bribes-6b0931dc3dd7">
-                                Learn more about Aquarius Bribes
-                            </ExternalLink>
                         </MainContentFooter>
                     </MainContent>
                 </MainContentWrap>
 
                 <BribesLogo />
             </Background>
+
+            <Banner>
+                <DelegateBlockSmall />
+            </Banner>
 
             <TableContainer>
                 <BribesList />

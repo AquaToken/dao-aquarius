@@ -208,8 +208,8 @@ const AquaPerformance = () => {
                                     baseAmount={bestPoolReserves[0]}
                                     counterAmount={bestPoolReserves[1]}
                                     pending={false}
-                                    baseCode="XLM"
-                                    counterCode="AQUA"
+                                    base={StellarService.createLumen()}
+                                    counter={aquaStellarAsset}
                                     isReverted={isReverted}
                                     setIsReverted={setIsReverted}
                                     hasError={false}
@@ -257,8 +257,8 @@ const AquaPerformance = () => {
                                     baseAmount={sdexStats.price.n}
                                     counterAmount={sdexStats.price.d}
                                     pending={false}
-                                    baseCode={counter.code}
-                                    counterCode="AQUA"
+                                    base={counter}
+                                    counter={aquaStellarAsset}
                                     isReverted={isRevertedSdex}
                                     setIsReverted={setIsRevertedSdex}
                                     hasError={false}

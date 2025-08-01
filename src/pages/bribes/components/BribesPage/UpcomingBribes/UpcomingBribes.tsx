@@ -7,6 +7,7 @@ import { MarketRoutes } from 'constants/routes';
 
 import { convertLocalDateToUTCIgnoringTimezone, getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
+import { getIceMaxApy } from 'helpers/ice';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
@@ -148,6 +149,9 @@ const UpcomingBribes = () => {
                 pending={bribes && loading}
                 head={[
                     { children: 'Market', flexSize: 3 },
+                    {
+                        children: 'Bribe APY',
+                    },
                     { children: 'Reward asset', flexSize: 2 },
                     {
                         children: 'Reward per day',
@@ -184,18 +188,22 @@ const UpcomingBribes = () => {
                 body={bribes.map(item => {
                     const startUTC = convertLocalDateToUTCIgnoringTimezone(new Date(item.start_at));
                     const stopUTC = convertLocalDateToUTCIgnoringTimezone(new Date(item.stop_at));
-                    const base = {
-                        code: item.asset1_code,
-                        issuer: item.asset1_issuer,
-                    };
-                    const counter = {
-                        code: item.asset2_code,
-                        issuer: item.asset2_issuer,
-                    };
+                    const base = StellarService.createAsset(item.asset1_code, item.asset1_issuer);
+                    const counter = StellarService.createAsset(
+                        item.asset2_code,
+                        item.asset2_issuer,
+                    );
                     const rewardAsset = StellarService.createAsset(
                         item.asset_code,
                         item.asset_issuer,
                     );
+
+                    const apy =
+                        (item.aqua_total_reward_amount_equivalent / 7 / Number(item.upvote_value) +
+                            1) **
+                            365 -
+                        1;
+                    const apyMax = getIceMaxApy({ apy });
 
                     return {
                         onRowClick: () => goToMarketPage(item),
@@ -212,6 +220,10 @@ const UpcomingBribes = () => {
                                     />
                                 ),
                                 flexSize: 3,
+                            },
+                            {
+                                children: `up to ${formatBalance(apyMax, true)}%`,
+                                label: 'Bribe APY:',
                             },
                             {
                                 children: (

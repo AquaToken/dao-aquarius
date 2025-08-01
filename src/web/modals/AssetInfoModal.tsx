@@ -9,6 +9,7 @@ import { MainRoutes } from 'constants/routes';
 
 import { getAquaAssetData, getAssetString } from 'helpers/assets';
 import { getDateString } from 'helpers/date';
+import { getIsTestnetEnv } from 'helpers/env';
 import { formatBalance } from 'helpers/format-number';
 
 import { LumenInfo } from 'store/assetsStore/reducer';
@@ -19,7 +20,8 @@ import { ModalService, StellarService } from 'services/globalServices';
 import { ExpertAssetData } from 'types/api-stellar-expert';
 import { AssetInfo } from 'types/asset-info';
 import { ModalProps } from 'types/modal';
-import { Asset as AssetType, StellarToml as StellarTomlType } from 'types/stellar';
+import { StellarToml as StellarTomlType } from 'types/stellar';
+import { ClassicToken } from 'types/token';
 
 import Mail from 'assets/email16.svg';
 import Git from 'assets/github16.svg';
@@ -120,7 +122,7 @@ const CopyButtonStyled = styled(CopyButton)`
 `;
 
 interface AssetInfoModalParams {
-    asset: AssetType;
+    asset: ClassicToken;
 }
 
 const AssetInfoModal = ({ params }: ModalProps<AssetInfoModalParams>): React.ReactNode => {
@@ -207,7 +209,9 @@ const AssetInfoModal = ({ params }: ModalProps<AssetInfoModalParams>): React.Rea
                 )}
                 <ContactLink
                     target="_blank"
-                    href={`https://stellar.expert/explorer/public/asset/${asset.code}-${asset.issuer}`}
+                    href={`https://stellar.expert/explorer/${
+                        getIsTestnetEnv() ? 'testnet' : 'public'
+                    }/asset/${asset.code}-${asset.issuer}`}
                 >
                     <External />
                     StellarExpert

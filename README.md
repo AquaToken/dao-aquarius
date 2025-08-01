@@ -177,7 +177,7 @@ Don't forget to give the project a star! Thanks again!
 Email: [hello@aqua.network](mailto:hello@aqua.network)
 Telegram chat: [@aquarius_official_community](https://t.me/aquarius_official_community)
 Telegram news: [@aqua_token](https://t.me/aqua_token)
-X: [@aqua_token](https://x.com/aqua_token)
+X: [@AquariusDeFi](https://x.com/AquariusDeFi)
 GitHub: [@AquaToken](https://github.com/AquaToken)
 Discord: [@Aquarius](https://discord.gg/sgzFscHp4C)
 Reddit: [@AquariusAqua](https://www.reddit.com/r/AquariusAqua/)

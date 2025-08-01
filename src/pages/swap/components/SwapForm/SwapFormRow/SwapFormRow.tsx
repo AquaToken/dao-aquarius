@@ -1,4 +1,4 @@
-import { Asset } from '@stellar/stellar-sdk';
+import BigNumber from 'bignumber.js';
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { NumericFormat } from 'react-number-format';
@@ -8,6 +8,8 @@ import { formatBalance } from 'helpers/format-number';
 
 import { AssetSimple } from 'store/assetsStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
+
+import { SorobanToken, Token, TokenType } from 'types/token';
 
 import { respondDown, textEllipsis } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -107,20 +109,22 @@ const TooltipRow = styled.div`
 
 interface SwapFormRowProps {
     isBase?: boolean;
-    asset: Asset;
-    setAsset: (asset: Asset) => void;
+    asset: Token;
+    setAsset: (asset: Token) => void;
     amount: string;
     setAmount: (amount: string) => void;
     resetAmount: () => void;
     usdEquivalent: React.ReactElement;
     assetsList: AssetSimple[] | null;
     isEmbedded?: boolean;
+    balance: number | null;
 }
 
 const SwapFormRow = ({
     isBase,
     asset,
     setAsset,
+    balance,
     amount,
     setAmount,
     usdEquivalent,
@@ -150,9 +154,15 @@ const SwapFormRow = ({
 
     const setPercent = (percent: number) => {
         resetAmount();
-        const available = account.getAvailableForSwapBalance(asset);
+        const available =
+            asset.type === TokenType.soroban ? balance : account.getAvailableForSwapBalance(asset);
 
-        setAmount(((available * percent) / 100).toFixed(7));
+        const result = new BigNumber(available)
+            .times(percent)
+            .div(100)
+            .toFixed((asset as SorobanToken).decimal ?? 7);
+
+        setAmount(result);
     };
 
     return (
@@ -164,7 +174,7 @@ const SwapFormRow = ({
                     customInput={BlankInput}
                     allowedDecimalSeparators={[',']}
                     thousandSeparator=","
-                    decimalScale={7}
+                    decimalScale={(asset as SorobanToken).decimal ?? 7}
                     value={amount}
                     onChange={() => resetAmount()}
                     onValueChange={value => setAmount(value.value)}
@@ -182,16 +192,18 @@ const SwapFormRow = ({
                     <div style={{ height: '1.8rem' }} />
                 )}
                 <AssetPicker asset={asset} onUpdate={setAsset} assetsList={assetsList} />
-                {account && account.getAssetBalance(asset) !== null && (
+                {balance !== null && Boolean(account) && (
                     <Balance>
                         <BalanceValue>
                             <BalanceLabel>{isBase ? 'Available: ' : 'Balance: '}</BalanceLabel>
                             {isBase ? (
                                 <BalanceClickable onClick={() => setPercent(100)}>
-                                    {formatBalance(account.getAvailableForSwapBalance(asset))}
+                                    {asset.type === TokenType.soroban
+                                        ? Number(balance).toFixed(asset.decimal)
+                                        : formatBalance(account.getAvailableForSwapBalance(asset))}
                                 </BalanceClickable>
                             ) : (
-                                formatBalance(account.getAssetBalance(asset, true))
+                                formatBalance(balance, true)
                             )}
                         </BalanceValue>
                         {isBase && (

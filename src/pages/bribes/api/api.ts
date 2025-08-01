@@ -1,18 +1,19 @@
-import * as StellarSdk from '@stellar/stellar-sdk';
 import axios from 'axios';
 
-import { BRIBES_API_URL, MARKET_KEY_API_URL } from 'constants/api';
+import { BRIBES_API_URL, MARKET_KEY_API_URL, VOTING_TRACKER_API_URL } from 'constants/api';
+
+import { getAssetString } from 'helpers/assets';
 
 import { AssetSimple } from 'store/assetsStore/types';
 
+import { StellarService } from 'services/globalServices';
+
 import { UpcomingBribe } from './types';
 
-import { MarketBribes, MarketKey, ListResponse } from '../../vote/api/types';
+import { MarketBribes, MarketKey, ListResponse, MarketVotes } from '../../vote/api/types';
 
 const getAssetParam = (asset: AssetSimple) =>
-    new StellarSdk.Asset(asset.code, asset.issuer).isNative()
-        ? 'native'
-        : `${asset.code}:${asset.issuer}`;
+    getAssetString(StellarService.createAsset(asset.code, asset.issuer));
 
 export const getMarketPair = (base, counter) =>
     axios
@@ -29,21 +30,30 @@ export enum BribeSortFields {
 
 const processBribes = async (results: UpcomingBribe[] | MarketBribes[], count: number) => {
     const keysParams = new URLSearchParams();
+    const votesParams = new URLSearchParams();
 
     results.forEach(bribe => {
         keysParams.append('account_id', bribe.market_key);
+        votesParams.append('market_key', bribe.market_key);
     });
 
-    const marketKeys = await axios.get<ListResponse<MarketKey>>(MARKET_KEY_API_URL, {
-        params: keysParams,
-    });
+    const [marketsVotes, marketsKeys] = await Promise.all([
+        axios.get<ListResponse<MarketVotes>>(VOTING_TRACKER_API_URL, {
+            params: votesParams,
+        }),
+        axios.get<ListResponse<MarketKey>>(MARKET_KEY_API_URL, { params: keysParams }),
+    ]);
 
     const bribes = results.map(bribe => {
-        const marketKey = marketKeys.data.results.find(
+        const marketKey = marketsKeys.data.results.find(
             marketKey => marketKey.account_id === bribe.market_key,
         );
 
-        return { ...bribe, ...marketKey };
+        const marketVote = marketsVotes.data.results.find(
+            vote => vote.market_key === bribe.market_key,
+        );
+
+        return { ...bribe, ...marketKey, ...marketVote };
     });
 
     return { count, bribes };

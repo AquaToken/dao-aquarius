@@ -203,7 +203,9 @@ const AllPools = (): React.ReactNode => {
                 setTotal(total);
                 setPending(false);
             })
-            .catch(() => {});
+            .catch(e => {
+                console.log(e);
+            });
     }, [filter, page, debouncedSearch, sort]);
 
     const goToPoolPage = (id: string) => {
@@ -362,7 +364,7 @@ const AllPools = (): React.ReactNode => {
                                 {
                                     children: (
                                         <Market
-                                            assets={pool.assets}
+                                            assets={pool.tokens}
                                             mobileVerticalDirections
                                             withoutLink
                                             poolType={pool.pool_type as POOL_TYPE}

@@ -302,13 +302,13 @@ const Analytics = () => {
                                     $isActive={activeTab === AnalyticsTabs.top}
                                     onClick={() => setTab(AnalyticsTabs.top)}
                                 >
-                                    All pools
+                                    All Pools
                                 </ListTab>
                                 <ListTab
                                     $isActive={activeTab === AnalyticsTabs.my}
                                     onClick={() => setTab(AnalyticsTabs.my)}
                                 >
-                                    My liquidity
+                                    My Liquidity
                                 </ListTab>
                             </ListTitles>
                             {activeTab === AnalyticsTabs.top && (

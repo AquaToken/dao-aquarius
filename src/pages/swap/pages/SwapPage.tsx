@@ -8,6 +8,8 @@ import { getAquaAssetData, getAssetFromString, getAssetString } from 'helpers/as
 
 import { StellarService } from 'services/globalServices';
 
+import { Token } from 'types/token';
+
 import { commonMaxWidth, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -55,18 +57,22 @@ const SwapPage = () => {
         if (source === destination && !base && !counter) {
             history.replace(
                 `${MainRoutes.swap}/${getAssetString(
-                    StellarService.createLumen(),
+                    StellarService.createLumen() as Token,
                 )}/${aquaAssetString}`,
             );
             return;
         }
 
         if (!base || getAssetString(base) !== source) {
-            setBase(getAssetFromString(source));
+            getAssetFromString(source, token => {
+                setBase(token);
+            });
         }
 
         if (!counter || getAssetString(counter) !== destination) {
-            setCounter(getAssetFromString(destination));
+            getAssetFromString(destination, token => {
+                setCounter(token);
+            });
         }
 
         if (source === destination) {

@@ -4,12 +4,15 @@ import styled from 'styled-components';
 
 import { getPoolEvents } from 'api/amm';
 
+import { contractValueToAmount } from 'helpers/amount';
 import { getDateString } from 'helpers/date';
+import { getIsTestnetEnv } from 'helpers/env';
 import { formatBalance } from 'helpers/format-number';
 
 import { useUpdateIndex } from 'hooks/useUpdateIndex';
 
 import { PoolEvent, PoolEventType, PoolExtended } from 'types/amm';
+import { SorobanToken } from 'types/token';
 
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -42,7 +45,7 @@ const getEventTitle = (event: PoolEvent, pool: PoolExtended) => {
             const fromIndex = event.amounts.findIndex(amount => +amount > 0);
             const toIndex = event.amounts.findIndex(amount => +amount < 0);
 
-            return `Swap ${pool.assets[fromIndex]?.code} to ${pool.assets[toIndex]?.code}`;
+            return `Swap ${pool.tokens[fromIndex]?.code} to ${pool.tokens[toIndex]?.code}`;
         }
         case PoolEventType.claim:
             return 'Claim rewards';
@@ -65,13 +68,25 @@ const getEventAmounts = (event: PoolEvent, pool: PoolExtended) => {
             return (
                 <Amounts>
                     <span>
-                        {formatBalance(+event.amounts[fromIndex] / 1e7)}{' '}
-                        {pool.assets[fromIndex]?.code}
+                        {formatBalance(
+                            +contractValueToAmount(
+                                event.amounts[fromIndex],
+                                (pool.tokens[fromIndex] as SorobanToken).decimal,
+                            ),
+                        )}{' '}
+                        {pool.tokens[fromIndex]?.code}
                     </span>
                     <br />
                     <span>
-                        {formatBalance(Math.abs(+event.amounts[toIndex] / 1e7))}{' '}
-                        {pool.assets[toIndex]?.code}
+                        {formatBalance(
+                            Math.abs(
+                                +contractValueToAmount(
+                                    event.amounts[toIndex],
+                                    (pool.tokens[toIndex] as SorobanToken).decimal,
+                                ),
+                            ),
+                        )}{' '}
+                        {pool.tokens[toIndex]?.code}
                     </span>
                 </Amounts>
             );
@@ -84,7 +99,13 @@ const getEventAmounts = (event: PoolEvent, pool: PoolExtended) => {
                     {event.amounts.map((amount, index) => (
                         <span key={pool.tokens_str[index]}>
                             <span>
-                                {formatBalance(+amount / 1e7)} {pool.assets[index].code}
+                                {formatBalance(
+                                    +contractValueToAmount(
+                                        amount,
+                                        (pool.tokens[index] as SorobanToken).decimal,
+                                    ),
+                                )}{' '}
+                                {pool.tokens[index]?.code}
                             </span>
                             <br />
                         </span>
@@ -192,7 +213,9 @@ const PoolEvents = ({ pool }: { pool: PoolExtended }) => {
                         {
                             children: (
                                 <a
-                                    href={`https://stellar.expert/explorer/public/tx/${event.transaction_hash}`}
+                                    href={`https://stellar.expert/explorer/${
+                                        getIsTestnetEnv() ? 'testnet' : 'public'
+                                    }/tx/${event.transaction_hash}`}
                                     target="_blank"
                                     rel="noreferrer"
                                 >
@@ -206,7 +229,9 @@ const PoolEvents = ({ pool }: { pool: PoolExtended }) => {
                         {
                             children: (
                                 <ExternalLink
-                                    href={`https://stellar.expert/explorer/public/tx/${event.transaction_hash}`}
+                                    href={`https://stellar.expert/explorer/${
+                                        getIsTestnetEnv() ? 'testnet' : 'public'
+                                    }/tx/${event.transaction_hash}`}
                                 >
                                     View on Explorer
                                 </ExternalLink>

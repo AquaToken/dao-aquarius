@@ -1,11 +1,11 @@
 import * as StellarSdk from '@stellar/stellar-sdk';
+import { xdr } from '@stellar/stellar-sdk';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { getPathPoolsFee } from 'api/amm';
 
-import { getAssetFromString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
@@ -16,11 +16,12 @@ import { ModalService, SorobanService, ToastService } from 'services/globalServi
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { ModalProps } from 'types/modal';
-import { Asset, Int128Parts } from 'types/stellar';
+import { SorobanToken, Token, TokenType } from 'types/token';
 
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
+import AssetLogo from 'basics/AssetLogo';
 import Button from 'basics/buttons/Button';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
@@ -76,8 +77,8 @@ const Pools = styled.div`
 const STROOP = 0.0000001;
 
 interface SwapConfirmModalParams {
-    base: Asset;
-    counter: Asset;
+    base: Token;
+    counter: Token;
     baseAmount: string;
     counterAmount: string;
     bestPathXDR: string;
@@ -95,8 +96,15 @@ const SwapConfirmModal = ({
     const [fees, setFees] = useState(null);
     const [swapPending, setSwapPending] = useState(false);
     const [txFee, setTxFee] = useState(null);
+    const [pathTokens, setPathTokens] = useState<Token[]>(null);
 
     const { account } = useAuthStore();
+
+    useEffect(() => {
+        Promise.all(bestPath.map(str => SorobanService.parseTokenContractId(str))).then(res => {
+            setPathTokens(res);
+        });
+    }, []);
 
     useEffect(() => {
         getPathPoolsFee(bestPools)
@@ -111,11 +119,16 @@ const SwapConfirmModal = ({
     useEffect(() => {
         const SLIPPAGE = localStorage.getItem(SWAP_SLIPPAGE_ALIAS) || '1'; // 1%
         const minAmount = isSend
-            ? ((1 - Number(SLIPPAGE) / 100) * Number(counterAmount)).toFixed(7)
-            : ((1 + Number(SLIPPAGE) / 100) * Number(baseAmount)).toFixed(7);
+            ? ((1 - Number(SLIPPAGE) / 100) * Number(counterAmount)).toFixed(
+                  (counter as SorobanToken).decimal ?? 7,
+              )
+            : ((1 + Number(SLIPPAGE) / 100) * Number(baseAmount)).toFixed(
+                  (base as SorobanToken).decimal ?? 7,
+              );
         SorobanService.getSwapChainedTx(
             account?.accountId(),
             base,
+            counter,
             bestPathXDR,
             isSend ? baseAmount : counterAmount,
             minAmount,
@@ -137,14 +150,19 @@ const SwapConfirmModal = ({
         const SLIPPAGE = localStorage.getItem(SWAP_SLIPPAGE_ALIAS) || '1'; // 1%
 
         const minAmount = isSend
-            ? ((1 - Number(SLIPPAGE) / 100) * Number(counterAmount)).toFixed(7)
-            : ((1 + Number(SLIPPAGE) / 100) * Number(baseAmount)).toFixed(7);
+            ? ((1 - Number(SLIPPAGE) / 100) * Number(counterAmount)).toFixed(
+                  (counter as SorobanToken).decimal ?? 7,
+              )
+            : ((1 + Number(SLIPPAGE) / 100) * Number(baseAmount)).toFixed(
+                  (base as SorobanToken).decimal ?? 7,
+              );
 
         let hash: string;
 
         SorobanService.getSwapChainedTx(
             account?.accountId(),
             base,
+            counter,
             bestPathXDR,
             isSend ? baseAmount : counterAmount,
             minAmount,
@@ -154,7 +172,7 @@ const SwapConfirmModal = ({
                 hash = tx.hash().toString('hex');
                 return account.signAndSubmitTx(tx, true);
             })
-            .then((res: { value?: () => Int128Parts; status?: BuildSignAndSubmitStatuses }) => {
+            .then((res: { status?: BuildSignAndSubmitStatuses }) => {
                 confirm();
 
                 if (!res) {
@@ -169,16 +187,34 @@ const SwapConfirmModal = ({
                     return;
                 }
 
+                const sentAmount = isSend
+                    ? baseAmount
+                    : SorobanService.i128ToInt(res as xdr.ScVal, (base as SorobanToken).decimal);
+                const receivedAmount = isSend
+                    ? SorobanService.i128ToInt(res as xdr.ScVal, (counter as SorobanToken).decimal)
+                    : counterAmount;
+
                 ModalService.openModal(SuccessModal, {
                     assets: [base, counter],
-                    amounts: [
-                        isSend ? baseAmount : SorobanService.i128ToInt(res.value()),
-                        isSend ? SorobanService.i128ToInt(res.value()) : counterAmount,
-                    ],
+                    amounts: [sentAmount, receivedAmount],
                     title: 'Swap Successful',
                     isSwap: true,
                     hash,
                 });
+
+                if (base.type === TokenType.soroban) {
+                    ToastService.showSuccessToast(
+                        `Payment sent: ${formatBalance(Number(sentAmount))} ${base.code}`,
+                    );
+                }
+
+                if (counter.type === TokenType.soroban) {
+                    ToastService.showSuccessToast(
+                        `Payment received: ${formatBalance(Number(receivedAmount))} ${
+                            counter.code
+                        }`,
+                    );
+                }
                 setSwapPending(false);
             })
             .catch(e => {
@@ -193,7 +229,7 @@ const SwapConfirmModal = ({
             });
     };
 
-    if (!fees) {
+    if (!fees || !pathTokens) {
         return (
             <Container>
                 <PageLoader />
@@ -223,7 +259,13 @@ const SwapConfirmModal = ({
             <DescriptionRow>
                 <span>Exchange rate</span>
                 <span>
-                    1 {base.code} = {formatBalance(+counterAmount / +baseAmount)} {counter.code}
+                    1 {base.code} ={' '}
+                    {formatBalance(
+                        +(+counterAmount / +baseAmount).toFixed(
+                            counter.type === TokenType.soroban ? counter.decimal : 7,
+                        ),
+                    )}{' '}
+                    {counter.code}
                 </span>
             </DescriptionRow>
 
@@ -232,7 +274,7 @@ const SwapConfirmModal = ({
                 <span>
                     {txFee !== null ? (
                         `${formatBalance(
-                            STROOP * (Number(txFee) + Number(StellarSdk.BASE_FEE)),
+                            +(STROOP * (Number(txFee) + Number(StellarSdk.BASE_FEE))).toFixed(7),
                         )} XLM`
                     ) : (
                         <DotsLoader />
@@ -246,16 +288,20 @@ const SwapConfirmModal = ({
             </DescriptionRow>
 
             <Pools>
-                {bestPools.map((pool, index) => (
-                    <PathPool
-                        key={pool}
-                        base={getAssetFromString(bestPath[index])}
-                        counter={getAssetFromString(bestPath[index + 1])}
-                        fee={fees.get(pool)}
-                        address={pool}
-                        isLastPool={index === bestPools.length - 1}
-                    />
-                ))}
+                {bestPools.map((pool, index) => {
+                    const base = pathTokens[index];
+                    const counter = pathTokens[index + 1];
+                    return (
+                        <PathPool
+                            key={pool}
+                            baseIcon={<AssetLogo asset={base} />}
+                            counterIcon={<AssetLogo asset={counter} />}
+                            fee={fees.get(pool)}
+                            address={pool}
+                            isLastPool={index === bestPools.length - 1}
+                        />
+                    );
+                })}
             </Pools>
 
             <Divider />

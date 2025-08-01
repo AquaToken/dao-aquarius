@@ -22,7 +22,7 @@ interface MigratePoolButtonProps {
 const MigratePoolButton = ({ pool, onUpdate, isSmall }: MigratePoolButtonProps) => {
     const [poolsToMigrate, setPoolsToMigrate] = useState<Pool[]>(null);
 
-    const [base, counter] = pool.assets;
+    const [base, counter] = pool.tokens;
 
     useEffect(() => {
         getPoolsToMigrate(base, counter).then(res => {

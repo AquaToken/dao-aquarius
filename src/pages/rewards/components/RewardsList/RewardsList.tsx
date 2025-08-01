@@ -13,7 +13,7 @@ import { formatBalance } from 'helpers/format-number';
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { ModalService } from 'services/globalServices';
+import { ModalService, StellarService } from 'services/globalServices';
 
 import { PoolProcessed } from 'types/amm';
 
@@ -21,7 +21,6 @@ import { respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Link from 'assets/icon-external-link.svg';
 import Info from 'assets/icon-info.svg';
 import Warning from 'assets/icon-warning.svg';
 
@@ -49,7 +48,6 @@ const Header = styled.div`
     align-items: center;
     justify-content: space-between;
     margin-bottom: 4.2rem;
-    padding: 0 1rem;
 
     ${respondDown(Breakpoints.md)`
         flex-direction: column;
@@ -65,6 +63,7 @@ const Title = styled.h3`
 
     ${respondDown(Breakpoints.md)`
         margin-bottom: 2rem;
+        font-size: 2.5rem;
     `}
 `;
 
@@ -91,10 +90,6 @@ const TooltipInner = styled.div`
     div {
         font-size: 1.4rem;
     }
-`;
-
-const LinkIcon = styled(Link)`
-    margin-left: 0.5rem;
 `;
 
 const WarningIcon = styled(Warning)`
@@ -156,7 +151,7 @@ const RewardsList = () => {
 
             const poolsForMarket = pools.find(
                 (pool: PoolProcessed) =>
-                    pool.assets.length === 2 &&
+                    pool.tokens.length === 2 &&
                     pool.tokens_str.some(str => str === tokenStr1) &&
                     pool.tokens_str.some(str => str === tokenStr2),
             );
@@ -228,7 +223,7 @@ const RewardsList = () => {
     return (
         <Container>
             <Header>
-                <Title>Market Rewards</Title>
+                <Title>LP Rewards by Market</Title>
 
                 <LastUpdated>
                     <span>
@@ -252,20 +247,6 @@ const RewardsList = () => {
                 head={[
                     { children: 'Market', flexSize: 1.5 },
                     {
-                        children: 'SDEX daily reward',
-                        sort: {
-                            onClick: () =>
-                                changeSort(
-                                    sort === RewardsSort.sdexUp
-                                        ? RewardsSort.sdexDown
-                                        : RewardsSort.sdexUp,
-                                ),
-                            isEnabled: sort === RewardsSort.sdexUp || sort === RewardsSort.sdexDown,
-                            isReversed: sort === RewardsSort.sdexDown,
-                        },
-                        align: CellAlign.Right,
-                    },
-                    {
                         children: 'Aquarius AMM daily reward',
                         sort: {
                             onClick: () =>
@@ -276,6 +257,20 @@ const RewardsList = () => {
                                 ),
                             isEnabled: sort === RewardsSort.ammUp || sort === RewardsSort.ammDown,
                             isReversed: sort === RewardsSort.ammDown,
+                        },
+                        align: CellAlign.Right,
+                    },
+                    {
+                        children: 'SDEX daily reward',
+                        sort: {
+                            onClick: () =>
+                                changeSort(
+                                    sort === RewardsSort.sdexUp
+                                        ? RewardsSort.sdexDown
+                                        : RewardsSort.sdexUp,
+                                ),
+                            isEnabled: sort === RewardsSort.sdexUp || sort === RewardsSort.sdexDown,
+                            isReversed: sort === RewardsSort.sdexDown,
                         },
                         align: CellAlign.Right,
                     },
@@ -309,53 +304,20 @@ const RewardsList = () => {
                                 children: (
                                     <Market
                                         assets={[
-                                            {
-                                                code: market_key.asset1_code,
-                                                issuer: market_key.asset1_issuer,
-                                            },
-                                            {
-                                                code: market_key.asset2_code,
-                                                issuer: market_key.asset2_issuer,
-                                            },
+                                            StellarService.createAsset(
+                                                market_key.asset1_code,
+                                                market_key.asset1_issuer,
+                                            ),
+                                            StellarService.createAsset(
+                                                market_key.asset2_code,
+                                                market_key.asset2_issuer,
+                                            ),
                                         ]}
                                         withoutLink
                                         mobileVerticalDirections
                                     />
                                 ),
                                 flexSize: 1.5,
-                            },
-                            {
-                                children: (
-                                    <Amount>
-                                        <span>
-                                            {formatBalance(daily_sdex_reward)} AQUA (
-                                            {Math.round(
-                                                (daily_sdex_reward * 100) /
-                                                    (daily_sdex_reward + daily_amm_reward),
-                                            )}
-                                            %)
-                                        </span>
-                                        <a
-                                            href={`https://www.stellarx.com/markets/${marketKeyToString(
-                                                market_key.asset1_code,
-                                                market_key.asset1_issuer,
-                                            )}/${marketKeyToString(
-                                                market_key.asset2_code,
-                                                market_key.asset2_issuer,
-                                            )}`}
-                                            target="_blank"
-                                            onClick={e => {
-                                                e.stopPropagation();
-                                            }}
-                                            title="StellarX"
-                                            rel="noreferrer"
-                                        >
-                                            <LinkIcon />
-                                        </a>
-                                    </Amount>
-                                ),
-                                label: 'SDEX daily reward',
-                                align: CellAlign.Right,
                             },
                             {
                                 children: (
@@ -390,26 +352,25 @@ const RewardsList = () => {
                                             )}
                                             %)
                                         </span>{' '}
-                                        <a
-                                            href={`https://www.stellarx.com/amm/analytics/${marketKeyToString(
-                                                market_key.asset1_code,
-                                                market_key.asset1_issuer,
-                                            )}/${marketKeyToString(
-                                                market_key.asset2_code,
-                                                market_key.asset2_issuer,
-                                            )}`}
-                                            target="_blank"
-                                            onClick={e => {
-                                                e.stopPropagation();
-                                            }}
-                                            title="StellarX"
-                                            rel="noreferrer"
-                                        >
-                                            <LinkIcon />
-                                        </a>
                                     </Amount>
                                 ),
                                 label: 'Aquarius AMM daily reward',
+                                align: CellAlign.Right,
+                            },
+                            {
+                                children: (
+                                    <Amount>
+                                        <span>
+                                            {formatBalance(daily_sdex_reward)} AQUA (
+                                            {Math.round(
+                                                (daily_sdex_reward * 100) /
+                                                    (daily_sdex_reward + daily_amm_reward),
+                                            )}
+                                            %)
+                                        </span>
+                                    </Amount>
+                                ),
+                                label: 'SDEX daily reward',
                                 align: CellAlign.Right,
                             },
                             {

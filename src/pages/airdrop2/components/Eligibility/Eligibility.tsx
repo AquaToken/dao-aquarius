@@ -2,7 +2,10 @@ import * as React from 'react';
 import { forwardRef, RefObject, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { getIsTestnetEnv } from 'helpers/env';
+
 import { StellarService } from 'services/globalServices';
+
 import { flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -105,7 +108,9 @@ const Eligibility = forwardRef(
                         )}
                         {accountEligibility && (
                             <ExternalLink
-                                href={`https://stellar.expert/explorer/public/account/${accountEligibility.account_id}`}
+                                href={`https://stellar.expert/explorer/${
+                                    getIsTestnetEnv() ? 'testnet' : 'public'
+                                }/account/${accountEligibility.account_id}`}
                             >
                                 View my account details
                             </ExternalLink>

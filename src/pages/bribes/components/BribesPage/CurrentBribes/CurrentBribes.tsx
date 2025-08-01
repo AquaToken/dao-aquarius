@@ -8,6 +8,7 @@ import { MarketRoutes } from 'constants/routes';
 import { getAssetString } from 'helpers/assets';
 import { convertLocalDateToUTCIgnoringTimezone, getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
+import { getIceMaxApy } from 'helpers/ice';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
@@ -15,6 +16,7 @@ import { ModalService, StellarService } from 'services/globalServices';
 
 import PageLoader from 'web/basics/loaders/PageLoader';
 import { flexAllCenter } from 'web/mixins';
+import { COLORS } from 'web/styles';
 
 import Asset from 'basics/Asset';
 import AssetLogo from 'basics/AssetLogo';
@@ -26,7 +28,6 @@ import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 import { getPairsWithBribes } from 'pages/vote/api/api';
 import BribesModal from 'pages/vote/components/MainPage/BribesModal/BribesModal';
 
-import { COLORS } from '../../../../../web/styles';
 
 const Container = styled.div``;
 
@@ -36,8 +37,8 @@ const LoaderContainer = styled.div`
 `;
 
 const Apy = styled.span`
-    text-decoration: underline;
-    text-decoration-style: dashed;
+    border-bottom: 0.1rem dashed ${COLORS.purple};
+    line-height: 2rem;
 `;
 
 const PAGE_SIZE = 20;
@@ -126,6 +127,7 @@ const CurrentBribes = () => {
                     );
 
                     const apy = (sum / Number(bribe.upvote_value) + 1) ** 365 - 1;
+                    const apyMax = getIceMaxApy({ apy });
 
                     return {
                         onRowClick: () => goToMarketPage(base, counter),
@@ -149,7 +151,7 @@ const CurrentBribes = () => {
                                             ModalService.openModal(BribesModal, { pair: bribe });
                                         }}
                                     >
-                                        {formatBalance(+(apy * 100).toFixed(2), true)}%
+                                        up to {formatBalance(+apyMax.toFixed(2), true)}%
                                     </Apy>
                                 ),
                                 label: 'Bribe APY:',

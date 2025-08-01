@@ -1,8 +1,8 @@
-import { Asset } from '@stellar/stellar-sdk';
-
 import { POOL_TYPE } from 'services/soroban.service';
 
 import { PoolClassic, PoolClassicReserves } from 'types/stellar';
+
+import { ClassicToken, Token } from './token';
 
 export type ListResponse<T> = {
     items: T[];
@@ -48,11 +48,11 @@ export interface PoolUser extends Pool {
 }
 
 export interface PoolProcessed extends Pool {
-    assets: Asset[];
+    tokens: Token[];
 }
 
 export interface PoolUserProcessed extends PoolUser {
-    assets: Asset[];
+    tokens: Token[];
 }
 
 export type PoolStatistics = {
@@ -99,8 +99,14 @@ export type NativePrice = {
     name: string;
     code: string;
     address: string;
-    issuer: string;
+    issuer: string | null;
     price_xlm: string;
+    decimals: number;
+    home_domain: null | string;
+    description: null | string;
+    asset_name: null | string;
+    logo: null | string;
+    is_sac: boolean;
 };
 
 export type FindSwapPath = {
@@ -109,10 +115,11 @@ export type FindSwapPath = {
     pools: string[];
     tokens: string[];
     amount: string;
+    tokens_addresses: string[];
 };
 
 export interface PoolClassicProcessed extends Omit<PoolClassic, 'reserves'> {
-    assets: Asset[];
+    tokens: ClassicToken[];
     reserves: (string | PoolClassicReserves)[];
     total_share: string;
     fee: number;

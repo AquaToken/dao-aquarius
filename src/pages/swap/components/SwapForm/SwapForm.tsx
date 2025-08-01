@@ -4,14 +4,16 @@ import styled from 'styled-components';
 
 import { findSwapPath, getAssetsList } from 'api/amm';
 
+import { contractValueToAmount } from 'helpers/amount';
+
 import { useDebounce } from 'hooks/useDebounce';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { ModalService, SorobanService } from 'services/globalServices';
+import { ModalService } from 'services/globalServices';
 
-import { Asset } from 'types/stellar';
+import { SorobanToken, Token, TokenType } from 'types/token';
 
 import { cardBoxShadow, flexAllCenter, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
@@ -115,10 +117,10 @@ const SettingsButton = styled.div`
 `;
 
 interface SwapFormProps {
-    base: Asset;
-    counter: Asset;
-    setBase: (asset: Asset) => void;
-    setCounter: (asset: Asset) => void;
+    base: Token;
+    counter: Token;
+    setBase: (asset: Token) => void;
+    setCounter: (asset: Token) => void;
     isEmbedded?: boolean;
 }
 
@@ -139,6 +141,9 @@ const SwapForm = ({
     const [estimatePending, setEstimatePending] = useState(false);
     const [isSend, setIsSend] = useState(true);
 
+    const [baseBalance, setBaseBalance] = useState(null);
+    const [counterBalance, setCounterBalance] = useState(null);
+
     const [isPriceReverted, setIsPriceReverted] = useState(false);
 
     const debouncedBaseAmount = useDebounce(baseAmount, 700);
@@ -149,6 +154,30 @@ const SwapForm = ({
     const { account, isLogged } = useAuthStore();
 
     const { processNewAssets } = useAssetsStore();
+
+    useEffect(() => {
+        if (!account) {
+            setBaseBalance(null);
+            setCounterBalance(null);
+            return;
+        }
+
+        if (base.type === TokenType.classic) {
+            setBaseBalance(account.getAssetBalance(base));
+        } else {
+            account.getAssetBalance(base).then(res => {
+                setBaseBalance(res);
+            });
+        }
+
+        if (counter.type === TokenType.classic) {
+            setCounterBalance(account.getAssetBalance(counter));
+        } else {
+            account.getAssetBalance(counter).then(res => {
+                setCounterBalance(res);
+            });
+        }
+    }, [account, base, counter]);
 
     useEffect(() => {
         getAssetsList().then(res => {
@@ -166,10 +195,11 @@ const SwapForm = ({
             setIsSend(true);
 
             findSwapPath(
-                SorobanService.getAssetContractId(base),
-                SorobanService.getAssetContractId(counter),
+                base.contract,
+                counter.contract,
                 debouncedBaseAmount.current,
                 true,
+                (base as SorobanToken).decimal ?? 7,
             )
                 .then(res => {
                     if (!res.success) {
@@ -182,9 +212,11 @@ const SwapForm = ({
                         if (!baseAmount) {
                             return;
                         }
-                        setCounterAmount((Number(res.amount) / 1e7).toFixed(7));
+                        setCounterAmount(
+                            contractValueToAmount(res.amount, (counter as SorobanToken).decimal),
+                        );
                         setBestPathXDR(res.swap_chain_xdr);
-                        setBestPath(res.tokens);
+                        setBestPath(res.tokens_addresses);
                         setBestPools(res.pools);
                     }
                 })
@@ -209,10 +241,11 @@ const SwapForm = ({
             setIsSend(false);
 
             findSwapPath(
-                SorobanService.getAssetContractId(base),
-                SorobanService.getAssetContractId(counter),
+                base.contract,
+                counter.contract,
                 debouncedCounterAmount.current,
                 false,
+                (counter as SorobanToken).decimal ?? 7,
             )
                 .then(res => {
                     if (!res.success) {
@@ -225,9 +258,11 @@ const SwapForm = ({
                         if (!counterAmount) {
                             return;
                         }
-                        setBaseAmount((Number(res.amount) / 1e7).toFixed(7));
+                        setBaseAmount(
+                            contractValueToAmount(res.amount, (base as SorobanToken).decimal),
+                        );
                         setBestPathXDR(res.swap_chain_xdr);
-                        setBestPath(res.tokens);
+                        setBestPath(res.tokens_addresses);
                         setBestPools(res.pools);
                     }
                 })
@@ -250,10 +285,11 @@ const SwapForm = ({
         setEstimatePending(true);
 
         findSwapPath(
-            SorobanService.getAssetContractId(base),
-            SorobanService.getAssetContractId(counter),
+            base.contract,
+            counter.contract,
             isSend ? baseAmount : counterAmount,
             isSend,
+            (isSend ? (base as SorobanToken).decimal : (counter as SorobanToken).decimal) ?? 7,
         )
             .then(res => {
                 if (!res.success) {
@@ -268,7 +304,10 @@ const SwapForm = ({
                     setHasError(false);
                     setEstimatePending(false);
 
-                    const amount = (Number(res.amount) / 1e7).toFixed(7);
+                    const amount = contractValueToAmount(
+                        res.amount,
+                        isSend ? (counter as SorobanToken).decimal : (base as SorobanToken).decimal,
+                    );
 
                     if (isSend) {
                         setCounterAmount(amount);
@@ -276,7 +315,7 @@ const SwapForm = ({
                         setBaseAmount(amount);
                     }
                     setBestPathXDR(res.swap_chain_xdr);
-                    setBestPath(res.tokens);
+                    setBestPath(res.tokens_addresses);
                     setBestPools(res.pools);
                 }
             })
@@ -345,9 +384,14 @@ const SwapForm = ({
     const SLIPPAGE = localStorage.getItem(SWAP_SLIPPAGE_ALIAS) || '1'; // 1%
 
     const isInsufficient = isSend
-        ? Number(baseAmount) > account?.getAvailableForSwapBalance(base)
+        ? Number(baseAmount) >
+          (base.type === TokenType.soroban
+              ? baseBalance
+              : account?.getAvailableForSwapBalance(base))
         : (1 + Number(SLIPPAGE) / 100) * Number(baseAmount) >
-          account?.getAvailableForSwapBalance(base);
+          (base.type === TokenType.soroban
+              ? baseBalance
+              : account?.getAvailableForSwapBalance(base));
 
     const getButtonText = () => {
         if (hasError) {
@@ -388,6 +432,7 @@ const SwapForm = ({
                     isBase
                     asset={base}
                     setAsset={setBase}
+                    balance={baseBalance}
                     amount={baseAmount}
                     setAmount={value => onAmountChange(value, true)}
                     resetAmount={() => resetAmount(true)}
@@ -404,6 +449,7 @@ const SwapForm = ({
                     asset={counter}
                     setAsset={setCounter}
                     amount={counterAmount}
+                    balance={counterBalance}
                     assetsList={assetsList}
                     setAmount={value => onAmountChange(value, false)}
                     resetAmount={() => resetAmount(false)}
@@ -420,9 +466,9 @@ const SwapForm = ({
             </SwapRows>
 
             <Price
-                baseCode={base.code}
+                base={base}
                 baseAmount={baseAmount}
-                counterCode={counter.code}
+                counter={counter}
                 counterAmount={counterAmount}
                 isReverted={isPriceReverted}
                 setIsReverted={setIsPriceReverted}
@@ -442,8 +488,8 @@ const SwapForm = ({
                     (isLogged &&
                         (estimatePending ||
                             !counterAmount ||
-                            (account && account.getAssetBalance(counter) === null) ||
-                            (account && account.getAssetBalance(base) === null)))
+                            (account && counterBalance === null) ||
+                            (account && baseBalance === null)))
                 }
                 onClick={() => swapAssets()}
             >

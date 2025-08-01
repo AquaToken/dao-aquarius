@@ -1,13 +1,17 @@
 import * as React from 'react';
 import { forwardRef, RefObject, useEffect, useMemo, useState } from 'react';
+import { Link as LinkRouter } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
 import { getDelegateeVotes } from 'api/delegate';
+
+import { MarketRoutes } from 'constants/routes';
 
 import { getAssetFromString } from 'helpers/assets';
 
 import { useUpdateIndex } from 'hooks/useUpdateIndex';
 
+import useAssetsStore from 'store/assetsStore/useAssetsStore';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService } from 'services/globalServices';
@@ -140,11 +144,26 @@ const StatsRow = styled.div`
     }
 `;
 
-const Market = styled.div`
+const rowStyles = css`
     display: flex;
     align-items: center;
     gap: 0.4rem;
     margin-right: auto;
+`;
+
+const Row = styled.div`
+    ${rowStyles}
+`;
+
+const Market = styled(LinkRouter)`
+    ${rowStyles};
+    cursor: pointer;
+    color: ${COLORS.titleText};
+    text-decoration: none;
+
+    span {
+        border-bottom: 0.1rem dashed ${COLORS.purple};
+    }
 `;
 
 const Buttons = styled.div`
@@ -186,12 +205,19 @@ const DelegateeStats = forwardRef(
 
         const { isLogged } = useAuthStore();
 
+        const { processNewAssets } = useAssetsStore();
+
         const updateIndex = useUpdateIndex(10000);
 
         useEffect(() => {
-            getDelegateeVotes(delegatee.account).then(res =>
-                setVotes(res.sort((a, b) => +b.total_votes - +a.total_votes)),
-            );
+            getDelegateeVotes(delegatee.account).then(res => {
+                setVotes(res.sort((a, b) => +b.total_votes - +a.total_votes));
+                const assets = res.reduce((acc, item) => {
+                    acc.push(getAssetFromString(item.asset1), getAssetFromString(item.asset2));
+                    return acc;
+                }, []);
+                processNewAssets(assets);
+            });
         }, [updateIndex]);
 
         const votesSum = useMemo(() => {
@@ -242,7 +268,9 @@ const DelegateeStats = forwardRef(
                             <h3>How This Delegate Votes</h3>
                             {votes.map(vote => (
                                 <StatsRow key={vote.id}>
-                                    <Market>
+                                    <Market
+                                        to={`${MarketRoutes.main}/${vote.asset1}/${vote.asset2}`}
+                                    >
                                         <AssetLogoStyled
                                             isCircle
                                             asset={getAssetFromString(vote.asset1)}
@@ -253,7 +281,9 @@ const DelegateeStats = forwardRef(
                                             asset={getAssetFromString(vote.asset2)}
                                             isSmall
                                         />
-                                        {vote.asset1_code} / {vote.asset2_code}
+                                        <span>
+                                            {vote.asset1_code} / {vote.asset2_code}
+                                        </span>
                                     </Market>
                                     <span>
                                         {getPercent(vote.total_votes, delegatee.managed_ice)}%
@@ -267,7 +297,7 @@ const DelegateeStats = forwardRef(
                             ))}
                             {Number(delegatee.managed_ice) - votesSum > 0 && (
                                 <StatsRow>
-                                    <Market>Not distributed</Market>
+                                    <Row>Unused Voting Power</Row>
                                     <span>
                                         {getPercent(
                                             (Number(delegatee.managed_ice) - votesSum).toString(),

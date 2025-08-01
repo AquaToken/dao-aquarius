@@ -1,26 +1,30 @@
 import AccountRecord from '@stellar/stellar-sdk';
-import * as WalletConnectTypes from '@walletconnect/types';
 import { Dispatch } from 'react';
+
+import { clearSavedAuthData, saveToLS } from 'store/authStore/auth-helpers';
 
 import AccountService from 'services/account.service';
 import { StellarService } from 'services/globalServices';
 
-import { AUTH_ACTIONS, LoginTypes } from './types';
+import { AUTH_ACTIONS, LoginArgs, LoginTypes } from './types';
 
 import { ActionAsyncResult, ActionResult, ActionSimpleResult } from '../types';
 
-export function login(
-    pubKey: string,
-    loginType: LoginTypes,
-    metadata?: WalletConnectTypes.SignClientTypes.Metadata,
-    topic?: string,
-): ActionAsyncResult {
+export function login({
+    pubKey,
+    loginType,
+    metadata,
+    topic,
+    walletKitId,
+    bipPath,
+}: LoginArgs): ActionAsyncResult {
     return (dispatch: Dispatch<ActionResult>): void => {
         dispatch({ type: AUTH_ACTIONS.LOGIN_START, payload: { topic } });
 
         StellarService.loadAccount(pubKey)
             .then(account => {
                 const wrappedAccount = new AccountService(account, loginType);
+                saveToLS(pubKey, loginType, walletKitId, bipPath);
                 dispatch({
                     type: AUTH_ACTIONS.LOGIN_SUCCESS,
                     payload: {
@@ -42,6 +46,7 @@ export function clearLoginError(): ActionSimpleResult {
 }
 
 export function logout(): ActionSimpleResult {
+    clearSavedAuthData();
     return { type: AUTH_ACTIONS.LOGOUT };
 }
 

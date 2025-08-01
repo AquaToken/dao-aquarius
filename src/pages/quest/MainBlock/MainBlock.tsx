@@ -102,6 +102,16 @@ const TotalPrizeWrapper = styled.div`
     background: linear-gradient(90deg, #bf61e8 0%, #6423af 96.83%);
 `;
 
+const TotalPrizeWrapperGray = styled(TotalPrizeWrapper)`
+    background: ${COLORS.grayText};
+
+    svg {
+        * {
+            stroke: ${COLORS.grayText};
+        }
+    }
+`;
+
 const TotalPrize = styled.div`
     display: flex;
     padding: 1.8rem 2.4rem;
@@ -116,6 +126,11 @@ const IconWrapper = styled.div`
     padding: 0.8rem;
     border-radius: 0.8rem;
     ${flexAllCenter};
+
+    svg {
+        width: 3.2rem;
+        height: 3.2rem;
+    }
 `;
 
 const TotalText = styled.div`
@@ -170,17 +185,17 @@ const MainBlock = () => (
                     </TotalPrize>
                 </TotalPrizeWrapper>
 
-                <TotalPrizeWrapper>
+                <TotalPrizeWrapperGray>
                     <TotalPrize>
                         <IconWrapper>
                             <Pending />
                         </IconWrapper>
                         <TotalText>
-                            <span>Quest ends:</span>
-                            <span>07.07.2025</span>
+                            <span style={{ color: COLORS.grayText }}>Quest ended:</span>
+                            <span style={{ color: COLORS.grayText }}>07.07.2025</span>
                         </TotalText>
                     </TotalPrize>
-                </TotalPrizeWrapper>
+                </TotalPrizeWrapperGray>
             </Summary>
         </Content>
     </Container>

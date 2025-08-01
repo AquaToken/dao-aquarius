@@ -1,21 +1,14 @@
 import AccountRecord from '@stellar/stellar-sdk';
-import { SignClientTypes } from '@walletconnect/types';
 
 import * as actions from './actions';
-import { addAuthCallback, removeAuthCallback } from './actions';
-import { AuthStore, LoginTypes } from './types';
+import { AuthStore, LoginArgs, LoginTypes } from './types';
 
 import bindActions from '../bindActions';
 import { useGlobalStore } from '../index';
 import { ActionAsyncResult, ActionSimpleResult } from '../types';
 
 type AuthActions = {
-    login: (
-        pubKey: string,
-        loginType: LoginTypes,
-        metadata?: SignClientTypes.Metadata,
-        topic?: string,
-    ) => ActionAsyncResult;
+    login: (args: LoginArgs) => ActionAsyncResult;
     logout: () => ActionSimpleResult;
     resolveFederation: (homeDomain: string, accountId: string) => ActionAsyncResult;
     updateAccount: (account: typeof AccountRecord, authType: LoginTypes) => ActionSimpleResult;

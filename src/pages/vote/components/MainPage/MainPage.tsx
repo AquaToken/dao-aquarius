@@ -26,6 +26,7 @@ import { Breakpoints, COLORS } from 'web/styles';
 import Aqua from 'assets/aqua-logo-small.svg';
 import BackgroundImageLeft from 'assets/background-left.svg';
 import BackgroundImageRight from 'assets/background-right.svg';
+import dIce from 'assets/dice-logo.svg';
 import Ice from 'assets/ice-logo.svg';
 import Info from 'assets/icon-info.svg';
 
@@ -38,6 +39,8 @@ import PageLoader from 'basics/loaders/PageLoader';
 import Market from 'basics/Market';
 import Pagination from 'basics/Pagination';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import DelegateBlockSmall from 'components/DelegateBlockSmall';
 
 import CreatePairModal from './CreatePairModal/CreatePairModal';
 import FloatingButton from './FloatingButton/FloatingButton';
@@ -65,7 +68,7 @@ const Background = styled.div`
     flex-direction: column;
     background-color: ${COLORS.darkPurple};
     min-height: 10rem;
-    max-height: 40vh;
+    max-height: 50vh;
     overflow: hidden;
     position: relative;
 
@@ -103,7 +106,7 @@ const BackgroundRight = styled(BackgroundImageRight)`
 `;
 
 const Title = styled.h2`
-    font-size: 8rem;
+    font-size: 6rem;
     line-height: 9.4rem;
     font-weight: bold;
     color: ${COLORS.white};
@@ -112,13 +115,13 @@ const Title = styled.h2`
     text-align: center;
 
     ${respondDown(Breakpoints.lg)`
-      font-size: 7rem;
+      font-size: 5.5rem;
       line-height: 8rem;
       margin-bottom: 1.2rem;
     `}
 
     ${respondDown(Breakpoints.md)`
-        font-size: 5.5rem;
+        font-size: 5rem;
         line-height: 6rem;
         margin-bottom: 1rem;
     `}
@@ -295,6 +298,12 @@ const TooltipRow = styled.div`
 `;
 
 const IceLogo = styled(Ice)`
+    height: 1.8rem;
+    width: 1.8rem;
+    margin-right: 0.5rem;
+`;
+
+const DIceLogo = styled(dIce)`
     height: 1.8rem;
     width: 1.8rem;
     margin-right: 0.5rem;
@@ -693,12 +702,13 @@ const MainPage = (): React.ReactNode => {
         setChangePageLoading(true);
     };
 
-    const { totalAqua, totalUpIce, totalDownIce } = useMemo(() => {
+    const { totalAqua, totalUpIce, totalDIce, totalDownIce } = useMemo(() => {
         if (!totalStats) {
             return {
                 totalAqua: 0,
                 totalUpIce: 0,
                 totalDownIce: 0,
+                totalDIce: 0,
             };
         }
         const { assets } = totalStats;
@@ -707,6 +717,8 @@ const MainPage = (): React.ReactNode => {
             totalAqua: +assets.find(({ asset }) => asset === aquaAssetString)?.votes_sum,
             totalUpIce: +assets.find(({ asset }) => asset === getAssetString(UP_ICE))?.votes_sum,
             totalDownIce: +assets.find(({ asset }) => asset === getAssetString(DOWN_ICE))
+                ?.votes_sum,
+            totalDIce: +assets.find(({ asset }) => asset === getAssetString(DELEGATE_ICE))
                 ?.votes_sum,
         };
     }, [totalStats]);
@@ -775,10 +787,11 @@ const MainPage = (): React.ReactNode => {
     return (
         <MainBlock>
             <Background>
-                <Title>Vote For Your Favorite Markets</Title>
+                <Title>Vote with ICE to Support Stellar Markets</Title>
                 <Description>
-                    Lock your AQUA or ICE to create immutable and transparent votes direct on the
-                    Stellar blockchain
+                    Lock your AQUA to mint ICE and vote on-chain. Your votes decide how AQUA
+                    emissions are distributed — and can earn you bribes and incentives along the
+                    way.
                 </Description>
                 <BackgroundLeft />
                 <BackgroundRight />
@@ -797,6 +810,9 @@ const MainPage = (): React.ReactNode => {
                         withChips
                     />
                 </PairSearch>
+
+                <DelegateBlockSmall />
+
                 <Header ref={headerRef}>
                     <ToggleGroupStyled
                         value={sort}
@@ -821,6 +837,13 @@ const MainPage = (): React.ReactNode => {
                                                 <span>
                                                     <IceLogo />
                                                     {formatBalance(totalUpIce, true)}
+                                                </span>
+                                            </TooltipRow>
+                                            <TooltipRow>
+                                                <span>dICE:</span>
+                                                <span>
+                                                    <DIceLogo />
+                                                    {formatBalance(totalDIce, true)}
                                                 </span>
                                             </TooltipRow>
                                             <TooltipRow>

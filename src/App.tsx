@@ -4,7 +4,6 @@ import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-d
 import { createGlobalStyle } from 'styled-components';
 
 import { D_ICE_CODE, ICE_ISSUER } from 'constants/assets';
-import { LS_IS_QUEST_PROMO_VIEWED } from 'constants/local-storage';
 import { MainRoutes } from 'constants/routes';
 
 import { getEnv, getIsTestnetEnv, setProductionEnv } from 'helpers/env';
@@ -12,7 +11,7 @@ import { getMoonpayKeyByEnv } from 'helpers/moonpay';
 
 import { LoginTypes } from 'store/authStore/types';
 
-import { ModalService, StellarService, WalletConnectService } from 'services/globalServices';
+import { ModalService, StellarService } from 'services/globalServices';
 import { StellarEvents } from 'services/stellar.service';
 
 import AppGlobalStyle from 'web/AppGlobalStyles';
@@ -37,7 +36,6 @@ import SentryService from './services/sentry.service';
 import Provider from './store';
 import useAssetsStore from './store/assetsStore/useAssetsStore';
 import useAuthStore from './store/authStore/useAuthStore';
-import QuestPromoModal from './web/modals/alerts/QuestPromoModal';
 import DIceTrustlineModal from './web/modals/DIceTrustlineModal';
 
 const MainPage = lazy(() => import('pages/main/MainPage'));
@@ -64,8 +62,6 @@ const UPDATE_ASSETS_DATE = 'update assets timestamp';
 const UPDATE_PERIOD = 24 * 60 * 60 * 1000;
 
 const App = () => {
-    const [wcLoginChecked, setWcLoginChecked] = useState(false);
-
     useGlobalSubscriptions();
 
     const { getAssets, assets, processNewAssets, assetsInfo, clearAssets } = useAssetsStore();
@@ -96,16 +92,8 @@ const App = () => {
         getAssets();
     }, []);
 
-    useEffect(() => {
-        WalletConnectService.onAppStart(window.location.pathname === MainRoutes.walletConnect).then(
-            () => {
-                setWcLoginChecked(true);
-            },
-        );
-    }, []);
-
     const reloadIfNotLoaded = () => {
-        if (!wcLoginChecked || !isAssetsUpdated) {
+        if (!isAssetsUpdated) {
             window.location.reload();
         }
     };
@@ -114,7 +102,7 @@ const App = () => {
         window.addEventListener('online', reloadIfNotLoaded);
 
         return () => window.removeEventListener('online', reloadIfNotLoaded);
-    }, [wcLoginChecked, isAssetsUpdated]);
+    }, [isAssetsUpdated]);
 
     useEffect(() => {
         const handler = (event: BeforeUnloadEvent) => {
@@ -185,13 +173,6 @@ const App = () => {
     }, [isLogged, redirectURL]);
 
     useEffect(() => {
-        const isQuestPromoViewed = !!localStorage.getItem(LS_IS_QUEST_PROMO_VIEWED);
-        if (!isQuestPromoViewed) {
-            ModalService.openModal(QuestPromoModal, {});
-        }
-    }, []);
-
-    useEffect(() => {
         if (isLogged && Boolean(callback)) {
             callback();
             removeAuthCallback();
@@ -208,7 +189,7 @@ const App = () => {
         }
     }, []);
 
-    if (!isAssetsUpdated || !wcLoginChecked) {
+    if (!isAssetsUpdated) {
         return <PageLoader />;
     }
 
@@ -226,22 +207,22 @@ const App = () => {
                             </PageTitle>
                         </Route>
                         <Route path={MainRoutes.locker}>
-                            <PageTitle title="Locker">
+                            <PageTitle title="Locker - Aquarius">
                                 <LockerPage />
                             </PageTitle>
                         </Route>
                         <Route path={MainRoutes.governance}>
-                            <PageTitle title="Governance">
+                            <PageTitle title="Governance - Aquarius">
                                 <Governance />
                             </PageTitle>
                         </Route>
                         <Route path={MainRoutes.vote}>
-                            <PageTitle title="Voting">
+                            <PageTitle title="Voting - Aquarius">
                                 <VotePage />
                             </PageTitle>
                         </Route>
                         <Route path={MainRoutes.bribes}>
-                            <PageTitle title="Bribes">
+                            <PageTitle title="Bribes - Aquarius">
                                 <BribesPage />
                             </PageTitle>
                         </Route>
@@ -249,17 +230,17 @@ const App = () => {
                             <MarketPage />
                         </Route>
                         <Route path={MainRoutes.rewards}>
-                            <PageTitle title="Rewards">
+                            <PageTitle title="Rewards - Aquarius">
                                 <RewardsPage />
                             </PageTitle>
                         </Route>
                         <Route path={MainRoutes.airdrop}>
-                            <PageTitle title="Airdrop">
+                            <PageTitle title="Airdrop - Aquarius">
                                 <AirdropPage />
                             </PageTitle>
                         </Route>
                         <Route path={MainRoutes.airdrop2}>
-                            <PageTitle title="Airdrop #2">
+                            <PageTitle title="Airdrop #2 - Aquarius">
                                 <Airdrop2Page />
                             </PageTitle>
                         </Route>
@@ -271,49 +252,49 @@ const App = () => {
                         </Route>
 
                         <Route path={MainRoutes.walletConnect}>
-                            <PageTitle title="WalletConnect">
+                            <PageTitle title="WalletConnect - Aquarius">
                                 <WalletConnectPage />
                             </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.amm}>
-                            <PageTitle title="Pools">
+                            <PageTitle title="Pools - Aquarius">
                                 <AmmPage />
                             </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.swap}>
-                            <PageTitle title="Swap">
+                            <PageTitle title="Swap - Aquarius">
                                 <SwapPage />
                             </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.buyAqua}>
-                            <PageTitle title="Buy Aqua">
+                            <PageTitle title="Buy Aqua - Aquarius">
                                 <BuyAquaPage />
                             </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.testnet}>
-                            <PageTitle title="Testnet">
+                            <PageTitle title="Testnet - Aquarius">
                                 <TestnetSwitcherPage />
                             </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.terms}>
-                            <PageTitle title="Terms of Use">
+                            <PageTitle title="Terms of Use - Aquarius">
                                 <TermsPage />
                             </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.privacy}>
-                            <PageTitle title="Privacy Policy">
+                            <PageTitle title="Privacy Policy - Aquarius">
                                 <PrivacyPage />
                             </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.token}>
-                            <PageTitle title="AQUA token">
+                            <PageTitle title="AQUA token - Aquarius">
                                 <TokenPage />
                             </PageTitle>
                         </Route>

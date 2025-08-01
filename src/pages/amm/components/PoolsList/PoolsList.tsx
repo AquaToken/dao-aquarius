@@ -7,6 +7,7 @@ import { getPoolMembersCount, getPoolStats } from 'api/amm';
 
 import { ChartPeriods } from 'constants/charts';
 
+import { contractValueToAmount } from 'helpers/amount';
 import { formatBalance } from 'helpers/format-number';
 import { truncateString } from 'helpers/truncate-string';
 
@@ -15,6 +16,7 @@ import { POOL_TYPE } from 'services/soroban.service';
 
 import { PoolClassicProcessed, PoolExtended, PoolProcessed, PoolUserProcessed } from 'types/amm';
 import { Asset as AssetType } from 'types/stellar';
+import { SorobanToken } from 'types/token';
 
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import MigrateLiquidityStep1 from 'web/modals/migrate-liquidity/MigrateLiquidityStep1';
@@ -329,14 +331,14 @@ const PoolsList = ({
 
                 const results = [];
 
-                for (let i = 0; i < pool.assets.length; i++) {
-                    let result = `1 ${pool.assets[i].code}`;
+                for (let i = 0; i < pool.tokens.length; i++) {
+                    let result = `1 ${pool.tokens[i].code}`;
                     const baseShare = pool.reserves[i];
 
-                    for (let j = 0; j < pool.assets.length; j++) {
+                    for (let j = 0; j < pool.tokens.length; j++) {
                         if (i !== j) {
                             const conversionRate = formatBalance(pool.reserves[j] / baseShare);
-                            result += ` = ${conversionRate} ${pool.assets[j].code}`;
+                            result += ` = ${conversionRate} ${pool.tokens[j].code}`;
                         }
                     }
 
@@ -363,7 +365,7 @@ const PoolsList = ({
                     >
                         <PoolMain>
                             <MarketStyled
-                                assets={pool.assets}
+                                assets={pool.tokens}
                                 poolAddress={!withDeposit && (pool as SorobanPool).address}
                                 withoutLink
                                 mobileVerticalDirections
@@ -487,12 +489,15 @@ const PoolsList = ({
                                             </ExpandedDataRow>
                                         )}
 
-                                        {pool.assets.map((asset: AssetType, index: number) => (
+                                        {pool.tokens.map((asset, index: number) => (
                                             <ExpandedDataRow key={asset.code + asset.issuer}>
                                                 <span>Total {asset.code}:</span>
                                                 <span>
                                                     {formatBalance(
-                                                        +pool.reserves[index] / 1e7,
+                                                        +contractValueToAmount(
+                                                            pool.reserves[index],
+                                                            (asset as SorobanToken).decimal,
+                                                        ),
                                                         true,
                                                     )}
                                                     <Asset asset={asset} onlyLogoSmall />
@@ -568,8 +573,8 @@ const PoolsList = ({
                                                                       MigrateLiquidityStep1,
                                                                       {
                                                                           pool,
-                                                                          base: pool.assets[0],
-                                                                          counter: pool.assets[1],
+                                                                          base: pool.tokens[0],
+                                                                          counter: pool.tokens[1],
                                                                       },
                                                                   ).then(() => onUpdate())
                                                                 : ModalService.openModal(
