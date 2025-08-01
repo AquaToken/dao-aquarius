@@ -1327,9 +1327,27 @@ export default class StellarServiceClass {
                     break;
                 case payment.type === 'invoke_host_function' &&
                     this.isPaymentCalledMethod(payment.parameters, 'batch'):
+                    if (
+                        payment.parameters.some(({ value }) => {
+                            const parsed = StellarSdk.scValToNative(
+                                StellarSdk.xdr.ScVal.fromXDR(value, 'base64'),
+                            );
+
+                            if (!Array.isArray(parsed)) return false;
+
+                            return parsed.some(arr => arr.includes('withdraw'));
+                        })
+                    ) {
+                        payment.title = 'Claim Reward';
+                        payment.amount =
+                            payment.asset_balance_changes[
+                                payment.asset_balance_changes.length - 1
+                            ].amount;
+                        break;
+                    }
                     payment.title = 'Claim Rewards';
-                    payment.amount = payment.asset_balance_changes.reduce((acc, payment) => {
-                        acc += Number(payment.amount);
+                    payment.amount = payment.asset_balance_changes.reduce((acc, item) => {
+                        acc += Number(item.amount);
                         return acc;
                     }, 0);
                     break;
@@ -1355,6 +1373,19 @@ export default class StellarServiceClass {
                 payment.type === 'invoke_host_function' &&
                 this.isPaymentCalledMethod(payment.parameters, 'batch')
             ) {
+                if (
+                    payment.parameters.some(({ value }) => {
+                        const parsed = StellarSdk.scValToNative(
+                            StellarSdk.xdr.ScVal.fromXDR(value, 'base64'),
+                        );
+
+                        if (!Array.isArray(parsed)) return false;
+
+                        return parsed.some(arr => arr.includes('withdraw'));
+                    })
+                ) {
+                    return this.getClaimRewardsNote(payment);
+                }
                 payment.memo = `For ${payment.asset_balance_changes.length} pools`;
                 this.event.trigger({ type: StellarEvents.paymentsHistoryUpdate });
                 return;
