@@ -200,6 +200,7 @@ export default class StellarServiceClass {
 
         asset.type = TokenType.classic;
         asset.contract = asset.contractId(getNetworkPassphrase());
+        asset.decimal = 7;
 
         return asset;
     }
@@ -209,6 +210,7 @@ export default class StellarServiceClass {
 
         asset.type = TokenType.classic;
         asset.contract = asset.contractId(getNetworkPassphrase());
+        asset.decimal = 7;
 
         return asset;
     }

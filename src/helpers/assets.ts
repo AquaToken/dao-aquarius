@@ -42,6 +42,7 @@ export const getAssetFromString = (str: string, onUpdateCB?: (token: Token) => v
 
         asset.type = TokenType.classic;
         asset.contract = asset.contractId(getNetworkPassphrase());
+        asset.decimal = 7;
         if (onUpdateCB) {
             onUpdateCB(asset);
         }
@@ -53,6 +54,7 @@ export const getAssetFromString = (str: string, onUpdateCB?: (token: Token) => v
     const asset: ClassicToken = StellarService.createAsset(code, issuer) as ClassicToken;
     asset.type = TokenType.classic;
     asset.contract = asset.contractId(getNetworkPassphrase());
+    asset.decimal = 7;
     if (onUpdateCB) {
         onUpdateCB(asset);
     }

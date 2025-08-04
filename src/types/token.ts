@@ -8,6 +8,7 @@ export enum TokenType {
 export type ClassicToken = Asset & {
     type: TokenType.classic;
     contract: string;
+    decimal: number;
 };
 
 export type SorobanToken = {
