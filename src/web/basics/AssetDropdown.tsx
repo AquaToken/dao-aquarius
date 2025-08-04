@@ -238,6 +238,7 @@ type AssetDropdownProps = {
     longListOnMobile?: boolean;
     withChips?: boolean;
     chipsCount?: number;
+    withCustomTokens?: boolean;
 };
 
 const AssetDropdown = ({
@@ -256,6 +257,7 @@ const AssetDropdown = ({
     withBalances,
     longListOnMobile,
     withChips,
+    withCustomTokens,
     ...props
 }: AssetDropdownProps) => {
     const { assets: knownAssets, assetsInfo } = useAssetsStore();
@@ -371,37 +373,55 @@ const AssetDropdown = ({
         () =>
             [
                 ...assets,
-                ...searchResults.filter(
-                    token =>
-                        !assets.find(
-                            asset =>
-                                asset.token.code === token.code &&
-                                asset.token.issuer === token.issuer,
-                        ),
-                ),
-            ].filter(item => {
-                const token = StellarService.createAsset(item.token.code, item.token.issuer);
-                const assetString = getAssetString(token);
-
-                const assetInfo = assetsInfo.get(assetString);
-
-                return (
-                    (assetString === searchText ||
-                        token.contract === searchText ||
-                        item.token.code.toLowerCase().includes(searchText.toLowerCase()) ||
-                        (StellarSdk.StrKey.isValidEd25519PublicKey(searchText) &&
-                            item.token.issuer?.toLowerCase().includes(searchText.toLowerCase())) ||
-                        assetInfo?.home_domain
-                            ?.toLowerCase()
-                            .includes(searchText.toLowerCase().replace('www.', ''))) &&
-                    !(item.token.code === exclude?.code && item.token.issuer === exclude?.issuer) &&
-                    !excludeList?.find(
-                        excludeToken =>
-                            excludeToken.code === item.token.code &&
-                            item.token.issuer === (excludeToken as ClassicToken).issuer,
+                ...searchResults
+                    .filter(
+                        token =>
+                            !assets.find(
+                                asset =>
+                                    asset.token.code === token.code &&
+                                    asset.token.issuer === token.issuer,
+                            ),
                     )
-                );
-            }),
+                    .map(token => ({ token })),
+            ]
+                .filter(item => {
+                    const token =
+                        item.token?.type === TokenType.soroban
+                            ? item.token
+                            : StellarService.createAsset(item.token.code, item.token.issuer);
+                    const assetString = getAssetString(token);
+
+                    const assetInfo = assetsInfo.get(assetString);
+
+                    return (
+                        (assetString === searchText ||
+                            token.contract === searchText ||
+                            item.token.code.toLowerCase().includes(searchText.toLowerCase()) ||
+                            (StellarSdk.StrKey.isValidEd25519PublicKey(searchText) &&
+                                item.token.issuer
+                                    ?.toLowerCase()
+                                    .includes(searchText.toLowerCase())) ||
+                            assetInfo?.home_domain
+                                ?.toLowerCase()
+                                .includes(searchText.toLowerCase().replace('www.', ''))) &&
+                        !(
+                            item.token.code === exclude?.code &&
+                            item.token.issuer === exclude?.issuer
+                        ) &&
+                        !excludeList?.find(
+                            excludeToken =>
+                                excludeToken.code === item.token.code &&
+                                item.token.issuer === (excludeToken as ClassicToken).issuer,
+                        )
+                    );
+                })
+                .filter(({ token }) => {
+                    if (token.type === TokenType.classic) {
+                        return true;
+                    }
+
+                    return withCustomTokens;
+                }),
         [assets, searchText, assetsInfo, searchResults, exclude, excludeList],
     );
 
