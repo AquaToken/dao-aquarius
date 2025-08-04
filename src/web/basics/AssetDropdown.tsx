@@ -374,7 +374,9 @@ const AssetDropdown = ({
                 ...searchResults.filter(
                     token =>
                         !assets.find(
-                            asset => asset.code === token.code && asset.issuer === token.issuer,
+                            asset =>
+                                asset.token.code === token.code &&
+                                asset.token.issuer === token.issuer,
                         ),
                 ),
             ].filter(item => {

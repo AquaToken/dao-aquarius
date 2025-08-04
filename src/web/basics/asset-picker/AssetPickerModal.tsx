@@ -186,7 +186,11 @@ const AssetPickerModal = ({ params, confirm }: ModalProps<Props>) => {
                 ...searchResults
                     .filter(
                         token =>
-                            !assets.find(asset => getAssetString(asset) === getAssetString(token)),
+                            !assets.find(
+                                asset =>
+                                    asset.token.code === token.code &&
+                                    asset.token.issuer === token.issuer,
+                            ),
                     )
                     .map(token => ({ token })),
             ].filter(item => {
@@ -197,6 +201,7 @@ const AssetPickerModal = ({ params, confirm }: ModalProps<Props>) => {
 
                 return (
                     assetString === search ||
+                    item.token.contract === search ||
                     item.token.code.toLowerCase().includes(search.toLowerCase()) ||
                     (StellarSdk.StrKey.isValidEd25519PublicKey(search) &&
                         item.token.issuer?.toLowerCase().includes(search.toLowerCase())) ||
