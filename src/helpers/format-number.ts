@@ -45,6 +45,7 @@ export const formatBalance = (
     balance: number,
     withRounding?: boolean,
     withLetter?: boolean,
+    decimal = 7,
 ): string => {
     if (withLetter && balance > 1000) {
         return nFormatter(balance, 2);
@@ -52,6 +53,6 @@ export const formatBalance = (
     const precision = getNumDecimals(Math.abs(balance));
 
     return new Intl.NumberFormat('en-US', {
-        maximumFractionDigits: withRounding ? precision : 7,
+        maximumFractionDigits: withRounding ? precision : decimal,
     }).format(balance);
 };

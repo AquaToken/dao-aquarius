@@ -141,6 +141,7 @@ export default class SorobanServiceClass {
             const lumen: ClassicToken = StellarService.createLumen() as ClassicToken;
             lumen.type = TokenType.classic;
             lumen.contract = contractId;
+            lumen.decimal = 7;
             return Promise.resolve(lumen);
         }
 
@@ -197,6 +198,7 @@ export default class SorobanServiceClass {
 
                     asset.type = TokenType.classic;
                     asset.contract = contractId;
+                    asset.decimal = 7;
 
                     return asset;
                 } catch {
