@@ -314,22 +314,12 @@ interface BalancesProps {
 
 const Balances = ({ ammAquaBalance }: BalancesProps): React.ReactNode => {
     const [locks, setLocks] = useState<ClaimableBalance[]>(null);
-    const [aquaInVotes, setAquaInVotes] = useState(null);
 
     const { account } = useAuthStore();
 
     useEffect(() => {
-        StellarService.getAquaInLiquidityVotes(account.accountId()).then(res => {
-            setAquaInVotes(res);
-        });
-    }, []);
-
-    useEffect(() => {
         const unsub = StellarService.event.sub((event: { type: StellarEvents }) => {
             if (event.type === StellarEvents.claimableUpdate) {
-                StellarService.getAquaInLiquidityVotes(account.accountId()).then(res => {
-                    setAquaInVotes(res);
-                });
                 setLocks(StellarService.getLocks(account.accountId()));
             }
         });
@@ -405,19 +395,6 @@ const Balances = ({ ammAquaBalance }: BalancesProps): React.ReactNode => {
                                     )}
                                 </AdditionalInfoBalance>
                                 <AdditionalInfoDescription>AQUA locked</AdditionalInfoDescription>
-                            </InfoColumn>
-                            <InfoColumn>
-                                <BalanceLabel $color={COLORS.purple} $textColor={COLORS.white}>
-                                    VOTE
-                                </BalanceLabel>
-                                <AdditionalInfoBalance>
-                                    {aquaInVotes === null ? (
-                                        <DotsLoader />
-                                    ) : (
-                                        <span>{formatBalance(+aquaInVotes, true)}</span>
-                                    )}
-                                </AdditionalInfoBalance>
-                                <AdditionalInfoDescription>AQUA in votes</AdditionalInfoDescription>
                             </InfoColumn>
                         </AdditionalInfo>
                     </BalancesColumn>
