@@ -201,7 +201,13 @@ const Asset = ({
                 <Tooltip
                     content={
                         <span>
-                            {hasAssetInfo ? assetInfo.home_domain ?? 'unknown' : <DotsLoader />}
+                            {asset.type === TokenType.soroban ? (
+                                'Soroban Token'
+                            ) : hasAssetInfo ? (
+                                assetInfo.home_domain ?? 'unknown'
+                            ) : (
+                                <DotsLoader />
+                            )}
                         </span>
                     }
                     position={TOOLTIP_POSITION.left}

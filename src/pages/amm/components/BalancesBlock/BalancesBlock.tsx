@@ -2,16 +2,11 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { getAssetsList, getNativePrices } from 'api/amm';
-
-import { getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { SorobanService, StellarService } from 'services/globalServices';
-
-import { TokenType } from 'types/token';
+import { StellarService } from 'services/globalServices';
 
 import { respondDown } from 'web/mixins';
 import { Breakpoints } from 'web/styles';
@@ -33,7 +28,6 @@ const StyledContainer = styled(Container)`
 
 const BalancesBlock = () => {
     const [balances, setBalances] = useState(null);
-    const [customTokensBalances, setCustomTokensBalances] = useState(null);
 
     const { account } = useAuthStore();
 
@@ -46,34 +40,6 @@ const BalancesBlock = () => {
         });
     }, [account]);
 
-    const getCustomTokensBalances = async () => {
-        const list = await getAssetsList();
-        const prices = await getNativePrices();
-        const sorobanTokens = list.filter(({ type }) => type === TokenType.soroban);
-
-        if (!sorobanTokens.length) {
-            return;
-        }
-        const balances = await Promise.all(
-            sorobanTokens.map(({ contract }) =>
-                SorobanService.getTokenBalance(contract, account.accountId()),
-            ),
-        );
-
-        setCustomTokensBalances(
-            sorobanTokens
-                .map((token, index) => ({
-                    ...token,
-                    ...{ balance: balances[index] },
-                    ...{ nativeBalance: +prices.get(token.contract) * +balances[index] },
-                }))
-                .filter(({ balance }) => !!Number(balance)),
-        );
-    };
-
-    useEffect(() => {
-        getCustomTokensBalances();
-    }, [account]);
     return (
         <StyledContainer>
             <Header>
@@ -89,70 +55,35 @@ const BalancesBlock = () => {
                             { children: 'Balance', align: CellAlign.Right },
                             { children: 'Balance(USD)', align: CellAlign.Right },
                         ]}
-                        body={balances.map(({ asset, balance, nativeBalance, code }) => ({
-                            key: getAssetString(asset),
+                        body={balances.map(({ token, balance, nativeBalance }) => ({
+                            key: token.contract,
                             isNarrow: true,
                             rowItems: [
                                 {
                                     children: (
-                                        <Asset asset={asset} withMobileView hasAssetDetailsLink />
+                                        <Asset asset={token} withMobileView hasAssetDetailsLink />
                                     ),
                                     label: 'Asset:',
                                 },
                                 {
-                                    children: `${formatBalance(+balance)} ${code}`,
+                                    children: `${formatBalance(
+                                        +balance,
+                                        false,
+                                        false,
+                                        token.decimal,
+                                    )} ${token.code}`,
                                     label: 'Balance:',
                                     align: CellAlign.Right,
                                     mobileStyle: { textAlign: 'right' },
                                 },
                                 {
-                                    children: nativeBalance
-                                        ? `$${formatBalance(
-                                              nativeBalance * StellarService.priceLumenUsd,
-                                              true,
-                                          )}`
-                                        : '$0.00',
-                                    label: 'Balance(USD):',
-                                    align: CellAlign.Right,
-                                },
-                            ],
-                        }))}
-                    />
-                </Section>
-            )}
-
-            {Boolean(customTokensBalances?.length) && (
-                <Section>
-                    <h3>Custom Soroban Tokens</h3>
-                    <Table
-                        head={[
-                            { children: 'Asset' },
-                            { children: 'Balance', align: CellAlign.Right },
-                            { children: 'Balance(USD)', align: CellAlign.Right },
-                        ]}
-                        body={customTokensBalances.map(balance => ({
-                            key: balance.cotract,
-                            isNarrow: true,
-                            rowItems: [
-                                {
-                                    children: (
-                                        <Asset asset={balance} withMobileView hasAssetDetailsLink />
-                                    ),
-                                    label: 'Asset:',
-                                },
-                                {
-                                    children: `${formatBalance(+balance.balance)} ${balance.code}`,
-                                    label: 'Balance:',
-                                    align: CellAlign.Right,
-                                    mobileStyle: { textAlign: 'right' },
-                                },
-                                {
-                                    children: balance.nativeBalance
-                                        ? `$${formatBalance(
-                                              balance.nativeBalance * StellarService.priceLumenUsd,
-                                              true,
-                                          )}`
-                                        : '$0.00',
+                                    children:
+                                        +nativeBalance > 1e-7
+                                            ? `$${formatBalance(
+                                                  nativeBalance * StellarService.priceLumenUsd,
+                                                  true,
+                                              )}`
+                                            : '$0.00',
                                     label: 'Balance(USD):',
                                     align: CellAlign.Right,
                                 },

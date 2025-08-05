@@ -238,6 +238,7 @@ type AssetDropdownProps = {
     longListOnMobile?: boolean;
     withChips?: boolean;
     chipsCount?: number;
+    withCustomTokens?: boolean;
 };
 
 const AssetDropdown = ({
@@ -256,6 +257,7 @@ const AssetDropdown = ({
     withBalances,
     longListOnMobile,
     withChips,
+    withCustomTokens,
     ...props
 }: AssetDropdownProps) => {
     const { assets: knownAssets, assetsInfo } = useAssetsStore();
@@ -270,37 +272,39 @@ const AssetDropdown = ({
             return;
         }
         account.getSortedBalances().then(res => {
-            setBalances(res);
+            setBalances(res.filter(({ token }) => token.type === TokenType.classic));
         });
     }, [account]);
 
-    const knownAssetsList = customAssetsList || knownAssets;
+    const knownAssetsList: Token[] = (customAssetsList || knownAssets).map(asset => {
+        if (asset.type) {
+            return asset;
+        }
+        return StellarService.createAsset(asset.code, asset.issuer);
+    });
+
     const filteredBalances = customAssetsList
         ? balances.filter(balance =>
-              knownAssetsList.find(
-                  knownAssets =>
-                      knownAssets.code === balance.code &&
-                      (knownAssets as ClassicToken).issuer === balance.issuer,
-              ),
+              knownAssetsList.find(knownAsset => knownAsset.contract === balance.token.contract),
           )
         : balances;
 
     const assets = [
         ...filteredBalances,
-        ...(knownAssetsList.filter(
-            knownAssets =>
-                !filteredBalances.find(
-                    asset =>
-                        knownAssets.code === asset.code &&
-                        (knownAssets as ClassicToken).issuer === asset.issuer,
-                ),
-        ) || []),
+        ...(assetsList
+            ?.filter(
+                knownAsset =>
+                    !filteredBalances.find(asset => asset.token.contract === knownAsset.contract),
+            )
+            .map(token => ({ token })) || []),
     ];
 
     const [isOpen, setIsOpen] = useState(false);
     const [selectedAsset, setSelectedAsset] = useState(asset);
     const [selectedAssets, setSelectedAssets] = useState(
-        assetsList?.map(asset => StellarService.createAsset(asset.code, asset.issuer)) || [],
+        assetsList?.map((asset: ClassicToken) =>
+            StellarService.createAsset(asset.code, asset.issuer),
+        ) || [],
     );
     const [searchText, setSearchText] = useState('');
 
@@ -312,7 +316,9 @@ const AssetDropdown = ({
 
     useEffect(() => {
         setSelectedAssets(
-            assetsList?.map(asset => StellarService.createAsset(asset.code, asset.issuer)) || [],
+            assetsList?.map((asset: ClassicToken) =>
+                StellarService.createAsset(asset.code, asset.issuer),
+            ) || [],
         );
     }, [assetsList]);
 
@@ -367,38 +373,55 @@ const AssetDropdown = ({
         () =>
             [
                 ...assets,
-                ...searchResults.filter(
-                    token =>
-                        !assets.find(
-                            asset => asset.code === token.code && asset.issuer === token.issuer,
-                        ),
-                ),
-            ].filter(assetItem => {
-                const token =
-                    assetItem.type === TokenType.soroban
-                        ? assetItem
-                        : StellarService.createAsset(assetItem.code, assetItem.issuer);
-                const assetString = getAssetString(token);
-                const assetInfo =
-                    assetItem.type === TokenType.soroban ? null : assetsInfo.get(assetString);
-
-                return (
-                    (assetString === searchText ||
-                        token.contract === searchText ||
-                        assetItem.code.toLowerCase().includes(searchText.toLowerCase()) ||
-                        (StellarSdk.StrKey.isValidEd25519PublicKey(searchText) &&
-                            assetItem.issuer?.toLowerCase().includes(searchText.toLowerCase())) ||
-                        assetInfo?.home_domain
-                            ?.toLowerCase()
-                            .includes(searchText.toLowerCase().replace('www.', ''))) &&
-                    !(assetItem.code === exclude?.code && assetItem.issuer === exclude?.issuer) &&
-                    !excludeList?.find(
-                        excludeToken =>
-                            excludeToken.code === assetItem.code &&
-                            assetItem.issuer === excludeToken.issuer,
+                ...searchResults
+                    .filter(
+                        token =>
+                            !assets.find(
+                                asset =>
+                                    asset.token.code === token.code &&
+                                    asset.token.issuer === token.issuer,
+                            ),
                     )
-                );
-            }),
+                    .map(token => ({ token })),
+            ]
+                .filter(item => {
+                    const token =
+                        item.token?.type === TokenType.soroban
+                            ? item.token
+                            : StellarService.createAsset(item.token.code, item.token.issuer);
+                    const assetString = getAssetString(token);
+
+                    const assetInfo = assetsInfo.get(assetString);
+
+                    return (
+                        (assetString === searchText ||
+                            token.contract === searchText ||
+                            item.token.code.toLowerCase().includes(searchText.toLowerCase()) ||
+                            (StellarSdk.StrKey.isValidEd25519PublicKey(searchText) &&
+                                item.token.issuer
+                                    ?.toLowerCase()
+                                    .includes(searchText.toLowerCase())) ||
+                            assetInfo?.home_domain
+                                ?.toLowerCase()
+                                .includes(searchText.toLowerCase().replace('www.', ''))) &&
+                        !(
+                            item.token.code === exclude?.code &&
+                            item.token.issuer === exclude?.issuer
+                        ) &&
+                        !excludeList?.find(
+                            excludeToken =>
+                                excludeToken.code === item.token.code &&
+                                item.token.issuer === (excludeToken as ClassicToken).issuer,
+                        )
+                    );
+                })
+                .filter(({ token }) => {
+                    if (token.type === TokenType.classic) {
+                        return true;
+                    }
+
+                    return withCustomTokens;
+                }),
         [assets, searchText, assetsInfo, searchResults, exclude, excludeList],
     );
 
@@ -449,26 +472,25 @@ const AssetDropdown = ({
 
                 {isOpen && (
                     <DropdownList $longListOnMobile={longListOnMobile}>
-                        {filteredAssets.map(assetItem => (
+                        {filteredAssets.map(({ token, balance, nativeBalance }) => (
                             <DropdownItem
-                                onClick={() => onClickAsset(assetItem)}
-                                key={assetItem.code + assetItem.issuer}
+                                onClick={() => onClickAsset(token)}
+                                key={token.code + token.issuer}
                             >
                                 <StyledAsset
-                                    asset={assetItem}
-                                    $withBalances={withBalances && assetItem.balance}
+                                    asset={token}
+                                    $withBalances={withBalances && balance}
                                 />
-                                {withBalances && assetItem.balance ? (
+                                {withBalances && balance ? (
                                     <Balances>
                                         <span>
-                                            {formatBalance(assetItem.balance)} {assetItem.code}
+                                            {formatBalance(balance)} {token.code}
                                         </span>
                                         <span>
                                             $
                                             {formatBalance(
                                                 +(
-                                                    assetItem.nativeBalance *
-                                                    StellarService.priceLumenUsd
+                                                    nativeBalance * StellarService.priceLumenUsd
                                                 ).toFixed(2),
                                                 true,
                                             )}
