@@ -34,7 +34,6 @@ export const flexColumnCenter = css`
 `;
 
 export const customScroll = css`
-    padding-right: 1rem;
     &::-webkit-scrollbar {
         width: 0.5rem;
     }
@@ -42,6 +41,7 @@ export const customScroll = css`
     /* Track */
     &::-webkit-scrollbar-track {
         background: ${COLORS.white};
+        border-radius: 0.25rem;
     }
 
     /* Handle */
