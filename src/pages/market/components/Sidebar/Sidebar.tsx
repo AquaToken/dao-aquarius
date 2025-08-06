@@ -18,7 +18,6 @@ import { flexRowSpaceBetween, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Aqua from 'assets/aqua-logo-small.svg';
 import DIce from 'assets/dice-logo.svg';
 import Ice from 'assets/ice-logo.svg';
 import IconDown from 'assets/icon-down-percent.svg';
@@ -92,10 +91,6 @@ const Row = styled.div`
     `}
 `;
 
-const LastRow = styled(Row)`
-    margin-bottom: 3.6rem;
-`;
-
 const Label = styled.span`
     font-size: 1.4rem;
     line-height: 2rem;
@@ -120,12 +115,6 @@ const Divider = styled.div`
     border-bottom: 0.1rem solid ${COLORS.gray};
     margin: 2.4rem 0;
     width: 100%;
-`;
-
-const AquaLogo = styled(Aqua)`
-    height: 1.6rem;
-    width: 1.6rem;
-    margin-right: 0.8rem;
 `;
 
 const IceLogo = styled(Ice)`
@@ -159,7 +148,7 @@ const Sidebar = ({
 }: SidebarProps): React.ReactNode => {
     const { isLogged, account } = useAuthStore();
 
-    const { aquaAssetString, aquaStellarAsset } = getAquaAssetData();
+    const { aquaStellarAsset } = getAquaAssetData();
 
     const createPair = () => {
         if (isLogged) {
@@ -201,12 +190,6 @@ const Sidebar = ({
     const total = +votesData.upvote_value + +votesData.downvote_value || 0;
     const result = +votesData.upvote_value - +votesData.downvote_value || 0;
 
-    const upAqua =
-        votesData.extra?.upvote_assets.find(({ asset }) => asset === aquaAssetString)?.votes_sum ??
-        0;
-    const downAqua =
-        votesData.extra?.downvote_assets.find(({ asset }) => asset === aquaAssetString)
-            ?.votes_sum ?? 0;
     const upIce =
         votesData.extra?.upvote_assets.find(({ asset }) => asset === `${UP_ICE_CODE}:${ICE_ISSUER}`)
             ?.votes_sum ?? 0;
@@ -292,12 +275,7 @@ const Sidebar = ({
                 </Value>
             </Row>
             <Divider />
-            <VotesProgressLine
-                label="Upvotes"
-                iceVotes={+upIce}
-                aquaVotes={+upAqua}
-                total={total}
-            />
+            <VotesProgressLine label="Upvotes" iceVotes={+upIce} diceVotes={+dIce} total={total} />
             <Row>
                 <Label>
                     <IceLogo />
@@ -312,19 +290,7 @@ const Sidebar = ({
                 </Label>
                 <Label>{formatBalance(+dIce, true)}</Label>
             </Row>
-            <LastRow>
-                <Label>
-                    <AquaLogo />
-                    AQUA voted:
-                </Label>
-                <Label>{formatBalance(+upAqua, true)}</Label>
-            </LastRow>
-            <VotesProgressLine
-                label="Downvotes"
-                iceVotes={+downIce}
-                aquaVotes={+downAqua}
-                total={total}
-            />
+            <VotesProgressLine label="Downvotes" iceVotes={+downIce} total={total} />
             <Row>
                 <Label>
                     <IceLogo />
@@ -332,13 +298,6 @@ const Sidebar = ({
                 </Label>
                 <Label>{formatBalance(+downIce, true)}</Label>
             </Row>
-            <LastRow>
-                <Label>
-                    <AquaLogo />
-                    AQUA voted:
-                </Label>
-                <Label>{formatBalance(+downAqua, true)}</Label>
-            </LastRow>
             <VoteButton
                 pair={votesData}
                 isPairSelected={isPairSelected}

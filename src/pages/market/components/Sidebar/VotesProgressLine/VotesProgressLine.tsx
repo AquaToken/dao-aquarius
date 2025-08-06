@@ -38,49 +38,49 @@ const Pillar = styled.div`
     background: ${COLORS.gray};
 `;
 
-const IceLine = styled.div<{ $width: number; $hasAquaVotes: boolean }>`
+const IceLine = styled.div<{ $width: number; $hasDiceVotes: boolean }>`
     display: flex;
     width: ${({ $width }) => `${$width}%`};
     height: 0.8rem;
-    border-radius: ${({ $hasAquaVotes }) => (!$hasAquaVotes ? '0.8rem' : '0.8rem 0 0 0.8rem')};
-    border-right: ${({ $hasAquaVotes }) =>
-        !$hasAquaVotes ? 'none' : `0.1rem solid ${COLORS.white}`};
+    border-radius: ${({ $hasDiceVotes }) => (!$hasDiceVotes ? '0.8rem' : '0.8rem 0 0 0.8rem')};
+    border-right: ${({ $hasDiceVotes }) =>
+        !$hasDiceVotes ? 'none' : `0.1rem solid ${COLORS.white}`};
     background: ${COLORS.blue};
 `;
 
-const AquaLine = styled.div<{ $width: number; $hasIceVotes: boolean }>`
+const DiceLine = styled.div<{ $width: number; $hasIceVotes: boolean }>`
     display: flex;
     width: ${({ $width }) => `${$width}%`};
     height: 0.8rem;
     border-radius: ${({ $hasIceVotes }) => ($hasIceVotes ? '0 0.8rem 0.8rem 0' : '0.8rem')};
-    background: ${COLORS.purple};
+    background: ${COLORS.darkPurple};
 `;
 
 interface VotesProgressLineProps {
     label: string;
     total: number;
     iceVotes: number;
-    aquaVotes: number;
+    diceVotes?: number;
 }
 
 const VotesProgressLine = ({
     label,
     total,
     iceVotes,
-    aquaVotes,
+    diceVotes,
 }: VotesProgressLineProps): React.ReactNode => {
     const icePercent = iceVotes === 0 ? 0 : Math.max((iceVotes / total) * 100, 1);
-    const aquaPercent = aquaVotes === 0 ? 0 : Math.max((aquaVotes / total) * 100, 1);
+    const dicePercent = diceVotes === 0 ? 0 : Math.max((diceVotes / total) * 100, 1);
 
     return (
         <Container>
             <Header>
                 <Label>{label}</Label>
-                <Sum>{formatBalance(iceVotes + aquaVotes, true)}</Sum>
+                <Sum>{formatBalance(iceVotes + (diceVotes ?? 0), true)}</Sum>
             </Header>
             <Pillar>
-                <IceLine $width={icePercent} $hasAquaVotes={aquaPercent !== 0} />
-                <AquaLine $width={aquaPercent} $hasIceVotes={icePercent !== 0} />
+                <IceLine $width={icePercent} $hasDiceVotes={dicePercent !== 0} />
+                <DiceLine $width={dicePercent} $hasIceVotes={icePercent !== 0} />
             </Pillar>
         </Container>
     );
