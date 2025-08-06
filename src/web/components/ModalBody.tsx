@@ -83,14 +83,16 @@ const ModalInner = styled.div<{ $withBackground: boolean; $isShow: boolean }>`
 `;
 
 const ModalContent = styled.div`
-    padding: 0 4.8rem 4.8rem;
-    max-height: calc(100vh - 6.4rem);
+    margin: 0 4.8rem 4.8rem;
+    padding-right: 1rem;
+    max-height: calc(95vh - 11.2rem); // 11.2rem = 6.4rem top padding + 4.8rem bottom margin
 
     overflow-y: scroll;
     ${customScroll};
 
     ${respondDown(Breakpoints.md)`
-        padding: 0 1.6rem 2rem;
+        margin: 0 1.6rem 2rem;
+        max-height: calc(95vh - 2rem);
     `};
 `;
 
