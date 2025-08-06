@@ -68,6 +68,11 @@ const Description = styled.p`
     color: ${COLORS.descriptionText};
 `;
 
+const DescriptionLink = styled.span`
+    color: ${COLORS.purple};
+    text-decoration: underline;
+`;
+
 const Form = styled.form`
     background: ${COLORS.white};
     border-radius: 1rem;
@@ -82,11 +87,11 @@ const Form = styled.form`
 `;
 
 const InputStyled = styled(Input)`
-    margin-bottom: 7rem;
+    margin-bottom: 2.4rem;
 `;
 
 const ImageInputStyled = styled(ImageInput)`
-    margin-bottom: 7rem;
+    margin-bottom: 2.4rem;
 `;
 
 const ButtonStyled = styled(Button)`
@@ -104,6 +109,18 @@ const BackButton = styled(CircleButton)`
 const LinkStyled = styled(Link)`
     text-decoration: none;
     cursor: pointer;
+`;
+
+const InputName = styled.span`
+    color: ${COLORS.titleText};
+    ${FONT_SIZE.md};
+    margin-bottom: 0.8rem;
+`;
+
+const InputDescription = styled.span`
+    color: ${COLORS.grayText};
+    ${FONT_SIZE.sm};
+    margin-bottom: 0.8rem;
 `;
 
 const BecomeDelegate = () => {
@@ -158,7 +175,7 @@ const BecomeDelegate = () => {
                 setPending(false);
                 clearForm();
                 ToastService.showSuccessToast(
-                    'Your application to participate as a delegate has been successfully submitted.',
+                    'Thanks for applying! We’ll review your submission and reach out via Discord or X once selected.',
                 );
             })
             .catch(err => {
@@ -180,77 +197,111 @@ const BecomeDelegate = () => {
 
                     <Title>Call for Aquarius delegates</Title>
                     <Description>
-                        Aquarius is launching the Delegated Voting feature: users can now delegate
-                        their ICE tokens to a delegate who will vote on their behalf — backed by
-                        incentives from the Aquarius DAO.
+                        Apply to become an Aquarius Delegate. If selected, your profile will be
+                        featured on <DescriptionLink>aqua.network</DescriptionLink>, and users will
+                        be able to delegate ICE to your wallet. You’ll vote on their behalf and earn
+                        a share of protocol rewards.
                     </Description>
                 </Content>
             </Background>
 
             <FormWrapper>
                 <Form onSubmit={handleSubmit}>
+                    <InputName>Display Name</InputName>
+                    <InputDescription>
+                        Public name to be shown on the delegate page.
+                    </InputDescription>
                     <InputStyled
-                        label="Stellar account:"
-                        placeholder="G..."
-                        value={account}
-                        onChange={handleAccountChange}
-                        ref={inputAccountRef}
-                        required
-                    />
-                    <InputStyled
-                        label="Name"
                         placeholder="Your name"
                         value={name}
                         onChange={e => setName(e.target.value)}
                         required
                     />
 
-                    <ImageInputStyled
-                        label="Choose avatar"
-                        onChange={setAvatar}
-                        value={avatar}
+                    <InputName>Stellar Wallet Address</InputName>
+                    <InputDescription>
+                        This must be the wallet that will receive delegations and cast votes. You
+                        must own and control this wallet.
+                    </InputDescription>
+                    <InputStyled
+                        placeholder="G..."
+                        value={account}
+                        onChange={handleAccountChange}
+                        ref={inputAccountRef}
                         required
                     />
 
+                    <InputName>Profile Picture</InputName>
+                    <InputDescription>
+                        Upload a visual icon or photo to represent your delegate profile.
+                    </InputDescription>
+
+                    <ImageInputStyled onChange={setAvatar} value={avatar} required />
+
+                    <InputName>Discord Username</InputName>
+                    <InputDescription>
+                        Used to connect with you or add you to the delegate chat.
+                    </InputDescription>
+
                     <InputStyled
-                        label="Discord handle"
                         placeholder="username"
                         value={discord}
                         onChange={e => setDiscord(e.target.value)}
                         required
                     />
+
+                    <InputName>Affiliated Project / Organization</InputName>
+                    <InputDescription>
+                        Name of any project, DAO, or team you represent (if applicable).
+                    </InputDescription>
+
                     <InputStyled
-                        label="Affiliate project (optional)"
                         placeholder="Project with which you associate your investment activity"
                         value={project}
                         onChange={e => setProject(e.target.value)}
                     />
+
+                    <InputName>X (Twitter) Handle</InputName>
+                    <InputDescription>
+                        Public social media reference for visibility.
+                    </InputDescription>
+
                     <InputStyled
-                        label="Description "
-                        placeholder="А few words about you. Less than 140 characters"
-                        value={description}
-                        onChange={e => setDescription(e.target.value)}
-                        required
-                        maxLength={140}
-                    />
-                    <InputStyled
-                        label="Voting strategy"
-                        placeholder="Short description of your investment strategy Less than 140 characters"
-                        value={strategy}
-                        onChange={e => setStrategy(e.target.value)}
-                        required
-                        maxLength={140}
-                    />
-                    <Input
-                        label="X link (optional)"
                         placeholder="https://x.com/username"
                         value={xLink}
                         onChange={e => setXLink(e.target.value)}
                         pattern="https:\/\/x\.com\/[A-Za-z0-9_]{1,15}"
                     />
 
+                    <InputName>Description</InputName>
+                    <InputDescription>
+                        Short multiline bio that introduces who you are and what your background is.
+                    </InputDescription>
+
+                    <InputStyled
+                        placeholder="А few words about you. Less than 140 characters"
+                        value={description}
+                        onChange={e => setDescription(e.target.value)}
+                        required
+                        maxLength={140}
+                    />
+
+                    <InputName>Voting Strategy</InputName>
+                    <InputDescription>
+                        Explain how you plan to use delegated votes. For example: focus on top
+                        traded pools, support long-term ecosystem growth, rotate weekly, etc.
+                    </InputDescription>
+
+                    <InputStyled
+                        placeholder="Short description of your investment strategy. Less than 140 characters"
+                        value={strategy}
+                        onChange={e => setStrategy(e.target.value)}
+                        required
+                        maxLength={140}
+                    />
+
                     <ButtonStyled isBig type="submit" pending={pending}>
-                        send
+                        submit
                     </ButtonStyled>
                 </Form>
             </FormWrapper>

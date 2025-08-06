@@ -59,5 +59,5 @@ export const AmmRoutes = {
 
 export const DelegateRoutes = {
     main: `${MainRoutes.delegate}/`,
-    become: `${MainRoutes.delegate}/become/`,
+    become: `${MainRoutes.delegate}/apply/`,
 };
