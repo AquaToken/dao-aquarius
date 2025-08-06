@@ -37,9 +37,6 @@ const CheckboxMobile = styled(Checkbox)`
 `;
 
 const Scrollable = styled.div`
-    ${customScroll};
-    overflow: auto;
-    max-height: 30rem;
     margin: 3.2rem 0;
 
     ${respondDown(Breakpoints.md)`

@@ -37,9 +37,6 @@ import SuccessModal from '../SuccessModal/SuccessModal';
 
 const Container = styled.div`
     width: 52.3rem;
-    max-height: 95vh;
-    overflow-y: auto;
-    ${customScroll};
 
     ${respondDown(Breakpoints.md)`
         width: 100%;
