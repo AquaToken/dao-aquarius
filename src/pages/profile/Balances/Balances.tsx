@@ -458,7 +458,7 @@ const Balances = ({ ammAquaBalance }: BalancesProps): React.ReactNode => {
                             <TooltipInner>
                                 All actions performed on the Stellar network require a fee paid in
                                 XLM. Ensure a sufficient XLM balance in your wallet to vote with
-                                AQUA/ICE, claim back votes, and freeze ICE with the locker tool.
+                                ICE, claim back votes, and freeze ICE with the locker tool.
                             </TooltipInner>
                         }
                         position={TOOLTIP_POSITION.top}

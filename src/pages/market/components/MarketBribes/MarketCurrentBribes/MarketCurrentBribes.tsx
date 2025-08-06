@@ -6,6 +6,7 @@ import { convertLocalDateToUTCIgnoringTimezone, getDateString } from 'helpers/da
 import { formatBalance } from 'helpers/format-number';
 
 import { StellarService } from 'services/globalServices';
+
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -155,7 +156,7 @@ const MarketCurrentBribes = ({ extra, bribes }: MarketCurrentBribes) => {
                     <AquaLogo />
 
                     <BribeDetail>
-                        <BribeDetailTitle>Bribe per 1000 AQUA/ICE votes:</BribeDetailTitle>
+                        <BribeDetailTitle>Bribe per 1000 ICE votes:</BribeDetailTitle>
                         <BribeDetailValue>
                             ≈{formatBalance(aquaBribePrice, true)} AQUA per day
                         </BribeDetailValue>
