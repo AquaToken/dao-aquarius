@@ -238,13 +238,13 @@ const DelegateMain = () => {
                     Earn rewards without managing votes yourself or become a delegate and help shape
                     protocol incentives
                 </MainDescription>
-                {/*<InviteLink>*/}
-                {/*    <span>Want to lead and earn incentives?</span>*/}
+                <InviteLink>
+                    <span>Want to lead and earn incentives?</span>
 
-                {/*    <ExternalLinkStyled to={DelegateRoutes.become}>*/}
-                {/*        Become a Delegate*/}
-                {/*    </ExternalLinkStyled>*/}
-                {/*</InviteLink>*/}
+                    <ExternalLinkStyled to={DelegateRoutes.become}>
+                        Become a Delegate
+                    </ExternalLinkStyled>
+                </InviteLink>
                 <BackgroundLeft />
                 <BackgroundRight />
             </Background>
