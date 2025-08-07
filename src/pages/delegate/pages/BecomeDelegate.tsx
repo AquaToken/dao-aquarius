@@ -201,10 +201,10 @@ const BecomeDelegate = () => {
 
                     <Title>Delegate Application Form</Title>
                     <Description>
-                        Apply to become an Aquarius Delegate. If selected, your profile will be
-                        featured on <DescriptionLink>aqua.network</DescriptionLink>, and users will
-                        be able to delegate ICE to your wallet. You’ll vote on their behalf and earn
-                        a share of protocol rewards.
+                        Become an Aquarius Delegate and get featured on{' '}
+                        <DescriptionLink>aqua.network</DescriptionLink>. Users will delegate ICE to
+                        your wallet, and you’ll vote on their behalf. Top delegates earn a share of
+                        10M AQUA in monthly rewards based on voting power.
                     </Description>
                 </Content>
             </Background>
@@ -283,11 +283,11 @@ const BecomeDelegate = () => {
                     </InputDescription>
 
                     <TextAreaStyled
-                        placeholder="А few words about you. Less than 140 characters"
+                        placeholder="А few words about you. Less than 560 characters"
                         value={description}
                         onChange={e => setDescription(e.target.value)}
                         required
-                        maxLength={140}
+                        maxLength={560}
                         autosize
                         rows={2}
                     ></TextAreaStyled>
@@ -299,11 +299,11 @@ const BecomeDelegate = () => {
                     </InputDescription>
 
                     <TextAreaStyled
-                        placeholder="Short description of your investment strategy. Less than 140 characters"
+                        placeholder="Short description of your investment strategy. Less than 560 characters"
                         value={strategy}
                         onChange={e => setStrategy(e.target.value)}
                         required
-                        maxLength={140}
+                        maxLength={560}
                         autosize
                         rows={2}
                     ></TextAreaStyled>
