@@ -10,12 +10,12 @@ import useAuthStore from 'store/authStore/useAuthStore';
 import { StellarService } from 'services/globalServices';
 import { StellarEvents } from 'services/stellar.service';
 
-import { cardBoxShadow } from 'web/mixins';
-
 import ExternalLink from 'basics/ExternalLink';
 import { PageLoader } from 'basics/loaders';
 import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
 import Table, { CellAlign } from 'basics/Table';
+
+import { cardBoxShadow } from '../../../../web/mixins';
 
 const Container = styled.div`
     padding: 2.4rem;
