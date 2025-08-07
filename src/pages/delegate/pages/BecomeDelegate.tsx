@@ -195,7 +195,7 @@ const BecomeDelegate = () => {
                         </BackButton>
                     </LinkStyled>
 
-                    <Title>Call for Aquarius delegates</Title>
+                    <Title>Delegate Application Form</Title>
                     <Description>
                         Apply to become an Aquarius Delegate. If selected, your profile will be
                         featured on <DescriptionLink>aqua.network</DescriptionLink>, and users will
