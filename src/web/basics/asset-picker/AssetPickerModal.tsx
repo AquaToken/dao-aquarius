@@ -56,7 +56,7 @@ const DefaultAsset = styled.div`
 
     ${respondDown(Breakpoints.md)`
         margin-bottom: 1rem;
-    `}}
+    `};
 `;
 
 const AssetsList = styled.div`

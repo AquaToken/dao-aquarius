@@ -30,9 +30,6 @@ export const ModalDescription = styled.div<{ $smallMarginBottom?: boolean }>`
     color: ${COLORS.descriptionText};
     margin-bottom: ${({ $smallMarginBottom }) => ($smallMarginBottom ? '2.4rem' : '4rem')};
 
-    overflow-y: scroll;
-    ${customScroll};
-
     ${respondDown(Breakpoints.md)`
         margin-bottom: 2.4rem;
     `};

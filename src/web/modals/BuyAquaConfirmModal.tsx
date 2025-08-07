@@ -76,7 +76,6 @@ const TitleText = styled.div`
 `;
 
 const StyledModalDescription = styled(ModalDescription)`
-    ${customScroll};
     margin-bottom: 0;
 
     ${respondUp(Breakpoints.md)`
