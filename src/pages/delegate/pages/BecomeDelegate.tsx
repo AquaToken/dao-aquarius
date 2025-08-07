@@ -224,8 +224,8 @@ const BecomeDelegate = () => {
 
                     <InputName>Stellar Wallet Address</InputName>
                     <InputDescription>
-                        This must be the wallet that will receive delegations and cast votes. You
-                        must own and control this wallet.
+                        Must be the Stellar wallet you control that will receive delegations and
+                        cast votes.
                     </InputDescription>
                     <InputStyled
                         placeholder="G..."
@@ -260,7 +260,7 @@ const BecomeDelegate = () => {
                     </InputDescription>
 
                     <InputStyled
-                        placeholder="Project with which you associate your investment activity"
+                        placeholder="e.g. Aquanauts DAO, StellarBridge Labs"
                         value={project}
                         onChange={e => setProject(e.target.value)}
                     />
