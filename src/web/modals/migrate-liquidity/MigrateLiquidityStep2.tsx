@@ -1,4 +1,3 @@
-import * as React from 'react';
 import styled from 'styled-components';
 
 import { PoolProcessed } from 'types/amm';
@@ -11,13 +10,10 @@ import PoolsList from 'pages/amm/components/PoolsList/PoolsList';
 
 import { Stepper } from './MigrateLiquidityStep1';
 
-import { customScroll, respondDown } from '../../mixins';
+import { respondDown } from '../../mixins';
 import { Breakpoints } from '../../styles';
 
 const Content = styled.div`
-    max-height: 60vh;
-    ${customScroll};
-    overflow-y: auto;
     padding-top: 8rem;
 
     ${respondDown(Breakpoints.md)`

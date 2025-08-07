@@ -17,7 +17,7 @@ import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { ModalProps } from 'types/modal';
 
-import { customScroll, flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Aqua from 'assets/aqua-logo-small.svg';
@@ -31,9 +31,6 @@ const ModalContainer = styled.div`
     width: 52.8rem;
     display: flex;
     flex-direction: column;
-    ${customScroll};
-    overflow-y: auto;
-    max-height: 75vh;
     padding: 0 1.5rem;
 
     ${respondDown(Breakpoints.md)`
