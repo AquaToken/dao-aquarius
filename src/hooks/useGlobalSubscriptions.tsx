@@ -30,6 +30,7 @@ import { LobstrExtensionEvents } from 'services/lobstr-extension.service';
 import { StellarEvents } from 'services/stellar.service';
 import { WalletKitEvents } from 'services/wallet-kit.service';
 
+import { TokenType } from 'types/token';
 import { WalletConnectEvents } from 'types/wallet-connect';
 
 import FreighterAccountChangedModal from 'web/modals/FreighterAccountChangedModal';
@@ -229,7 +230,8 @@ export default function useGlobalSubscriptions(): void {
     useEffect(() => {
         if (account) {
             account.getSortedBalances().then(res => {
-                processNewAssets(res.map(({ asset }) => asset));
+                const classicTokens = res.filter(({ token }) => token.type === TokenType.classic);
+                processNewAssets(classicTokens.map(({ token }) => token));
             });
             return;
         }

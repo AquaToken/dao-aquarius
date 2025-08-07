@@ -24,7 +24,7 @@ import {
     PoolUserProcessed,
     PoolVolume24h,
 } from 'types/amm';
-import { ClassicToken, Token, TokenType } from 'types/token';
+import { ClassicToken, SorobanToken, Token, TokenType } from 'types/token';
 
 export enum FilterOptions {
     all = 'all',
@@ -252,7 +252,12 @@ export const getVolume24h = async (): Promise<PoolVolume24h> => {
     const { data } = await axios.get<PoolVolume24h>(`${baseUrl}/statistics/24h/`);
     return data;
 };
-export const getNativePrices = async (): Promise<Map<string, string>> => {
+
+interface GetNativePricesOpts {
+    onlySoroban: boolean;
+}
+
+export const getNativePrices = async (opts?: GetNativePricesOpts): Promise<Map<string, string>> => {
     const baseUrl = getAmmAquaUrl();
 
     const allPrices = new Map<string, string>();
@@ -260,7 +265,13 @@ export const getNativePrices = async (): Promise<Map<string, string>> => {
     const { data } = await axios.get<ListResponse<NativePrice>>(
         `${baseUrl}/tokens/?pooled=true&size=500`,
     );
-    const prices = data.items;
+    const prices = data.items.filter(item => {
+        if (opts?.onlySoroban) {
+            return !item.is_sac;
+        }
+
+        return true;
+    });
 
     prices.forEach(price => {
         allPrices.set(
@@ -270,6 +281,22 @@ export const getNativePrices = async (): Promise<Map<string, string>> => {
     });
 
     return allPrices;
+};
+
+export const getCustomTokens = async (): Promise<SorobanToken[]> => {
+    const baseUrl = getAmmAquaUrl();
+
+    const { data } = await axios.get<ListResponse<NativePrice>>(
+        `${baseUrl}/tokens/?pooled=true&is_sac=false&size=500`,
+    );
+
+    return data.items.map(item => ({
+        contract: item.address,
+        type: TokenType.soroban,
+        name: item.name,
+        code: item.code,
+        decimal: item.decimals,
+    }));
 };
 
 export const getPathPoolsFee = async (addresses: Array<string>): Promise<Map<string, Pool>> => {

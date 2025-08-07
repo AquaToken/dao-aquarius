@@ -1,8 +1,6 @@
-import * as React from 'react';
-import { useState } from 'react';
-import ReactQuill from 'react-quill';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
+import { ReactNode } from 'react';
 
 import { GovernanceRoutes } from 'constants/routes';
 
@@ -17,12 +15,12 @@ import Button from 'basics/buttons/Button';
 import CircleButton from 'basics/buttons/CircleButton';
 import Input from 'basics/inputs/Input';
 
-import { ReactQuillCSS } from '../../../Governance';
 import {
     APPROVED_PROPOSAL_REWARD,
     CREATE_DISCUSSION_COST,
     CREATE_PROPOSAL_COST,
 } from '../../../pages/GovernanceMainPage';
+import QuillEditor from './QuillEditor';
 
 const Background = styled.div`
     width: 100%;
@@ -115,36 +113,6 @@ const BackTo = styled.div`
     margin-bottom: 3.2rem;
 `;
 
-const StyledReactQuill = styled(ReactQuill)<{ focused: boolean }>`
-    ${ReactQuillCSS};
-
-    .ql-toolbar {
-        box-sizing: border-box;
-        border-radius: 0.5rem 0.5rem 0 0;
-        border-color: ${COLORS.gray};
-        border-bottom-color: ${({ focused }) => (focused ? COLORS.purple : COLORS.gray)};
-        border-bottom-width: ${({ focused }) => (focused ? '0.2rem' : '0.1rem')};
-    }
-
-    .ql-container {
-        box-sizing: border-box;
-        border-radius: 0 0 0.5rem 0.5rem;
-        border-color: ${({ focused }) => (focused ? COLORS.purple : COLORS.gray)};
-        border-width: ${({ focused }) => (focused ? '0.2rem' : '0.1rem')};
-        padding: 1.2rem 1.5rem;
-    }
-
-    .ql-editor {
-        width: 100%;
-        min-height: 30rem;
-        box-sizing: content-box;
-        border: ${({ focused }) => (focused ? 'none' : '0.1rem solid transparent')};
-        font-size: 1.6rem;
-        line-height: 2.8rem;
-        padding: 0;
-    }
-`;
-
 export const DAY = 24 * 60 * 60 * 1000;
 
 interface proposalCreationProps {
@@ -173,8 +141,7 @@ const ProposalCreation = ({
     discordChannelOwner,
     setDiscordChannelOwner,
     isEdit,
-}: proposalCreationProps): React.ReactNode => {
-    const [textFocused, setTextFocused] = useState(false);
+}: proposalCreationProps): ReactNode => {
     const { id } = useParams<{ id?: string }>();
 
     return (
@@ -252,14 +219,7 @@ const ProposalCreation = ({
 
                         <SectionForm>
                             <Label htmlFor="body">Content</Label>
-                            <StyledReactQuill
-                                focused={textFocused}
-                                id="body"
-                                value={text}
-                                onChange={setText}
-                                onFocus={() => setTextFocused(true)}
-                                onBlur={() => setTextFocused(false)}
-                            />
+                            <QuillEditor value={text} onChange={setText} />
                         </SectionForm>
 
                         <Button fullWidth isBig disabled={!hasData} type="submit">
