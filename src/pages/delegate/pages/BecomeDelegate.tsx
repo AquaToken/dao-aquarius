@@ -283,11 +283,11 @@ const BecomeDelegate = () => {
                     </InputDescription>
 
                     <TextAreaStyled
-                        placeholder="А few words about you. Less than 560 characters"
+                        placeholder="А few words about you. Less than 500 characters"
                         value={description}
                         onChange={e => setDescription(e.target.value)}
                         required
-                        maxLength={560}
+                        maxLength={500}
                         autosize
                         rows={2}
                     ></TextAreaStyled>
@@ -299,11 +299,11 @@ const BecomeDelegate = () => {
                     </InputDescription>
 
                     <TextAreaStyled
-                        placeholder="Short description of your investment strategy. Less than 560 characters"
+                        placeholder="Short description of your investment strategy. Less than 500 characters"
                         value={strategy}
                         onChange={e => setStrategy(e.target.value)}
                         required
-                        maxLength={560}
+                        maxLength={500}
                         autosize
                         rows={2}
                     ></TextAreaStyled>
