@@ -16,7 +16,7 @@ import { Breakpoints, COLORS, FONT_SIZE } from 'web/styles';
 import ArrowLeft from 'assets/icon-arrow-left.svg';
 
 import { Button } from 'basics/buttons';
-import { Input } from 'basics/inputs';
+import { Input, TextArea } from 'basics/inputs';
 import ImageInput from 'basics/inputs/ImageInput';
 
 const Container = styled.main`
@@ -91,6 +91,10 @@ const InputStyled = styled(Input)`
 `;
 
 const ImageInputStyled = styled(ImageInput)`
+    margin-bottom: 2.4rem;
+`;
+
+const TextAreaStyled = styled(TextArea)`
     margin-bottom: 2.4rem;
 `;
 
@@ -278,13 +282,15 @@ const BecomeDelegate = () => {
                         Short multiline bio that introduces who you are and what your background is.
                     </InputDescription>
 
-                    <InputStyled
+                    <TextAreaStyled
                         placeholder="А few words about you. Less than 140 characters"
                         value={description}
                         onChange={e => setDescription(e.target.value)}
                         required
                         maxLength={140}
-                    />
+                        autosize
+                        rows={2}
+                    ></TextAreaStyled>
 
                     <InputName>Voting Strategy</InputName>
                     <InputDescription>
@@ -292,13 +298,15 @@ const BecomeDelegate = () => {
                         traded pools, support long-term ecosystem growth, rotate weekly, etc.
                     </InputDescription>
 
-                    <InputStyled
+                    <TextAreaStyled
                         placeholder="Short description of your investment strategy. Less than 140 characters"
                         value={strategy}
                         onChange={e => setStrategy(e.target.value)}
                         required
                         maxLength={140}
-                    />
+                        autosize
+                        rows={2}
+                    ></TextAreaStyled>
 
                     <ButtonStyled isBig type="submit" pending={pending}>
                         submit

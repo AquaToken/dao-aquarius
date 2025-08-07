@@ -1,11 +1,10 @@
 import * as React from 'react';
+import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 
-import { textEllipsis } from 'web/mixins';
 import { COLORS } from 'web/styles';
 
-const StyledArea = styled.textarea`
-    height: 34.8rem;
+const StyledArea = styled.textarea<{ rows?: number }>`
     width: 100%;
     border: 0.1rem solid ${COLORS.gray};
     border-radius: 0.5rem;
@@ -14,7 +13,12 @@ const StyledArea = styled.textarea`
     line-height: 2.8rem;
     color: ${COLORS.paragraphText};
     box-sizing: border-box;
-    ${textEllipsis};
+
+    ${({ rows }) =>
+        rows &&
+        `
+        min-height: ${rows * 6}rem;
+    `}
 
     resize: none;
 
@@ -34,8 +38,35 @@ const StyledArea = styled.textarea`
     }
 `;
 
-const TextArea = ({
-    ...props
-}: React.TextareaHTMLAttributes<HTMLTextAreaElement>): React.ReactNode => <StyledArea {...props} />;
+interface Props extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+    autosize?: boolean;
+}
+
+const TextArea = ({ autosize, ...props }: Props): React.ReactNode => {
+    const ref = useRef<HTMLTextAreaElement>(null);
+
+    const resize = () => {
+        const el = ref.current;
+        if (autosize && el) {
+            el.style.height = '5px'; // сначала сбросить высоту
+            el.style.height = `${el.scrollHeight}px`; // потом установить по содержимому
+        }
+    };
+
+    useEffect(() => {
+        resize(); // resize при монтировании и при смене value
+    }, [props.value]);
+
+    return (
+        <StyledArea
+            {...props}
+            ref={ref}
+            onInput={e => {
+                props?.onInput?.(e);
+                resize();
+            }}
+        />
+    );
+};
 
 export default TextArea;
