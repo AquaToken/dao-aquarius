@@ -306,7 +306,7 @@ const App = () => {
                         </Route>
 
                         <Route path={MainRoutes.delegate}>
-                            <PageTitle title="Delegates">
+                            <PageTitle title="Delegates - Aquarius">
                                 <DelegatePage />
                             </PageTitle>
                         </Route>
