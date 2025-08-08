@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { D_ICE_CODE, DOWN_ICE_CODE, ICE_ISSUER, UP_ICE_CODE } from 'constants/assets';
 import { MainRoutes, MarketRoutes } from 'constants/routes';
 
-import { getAquaAssetData, getAssetString } from 'helpers/assets';
+import { getAssetString } from 'helpers/assets';
 import { getTimeAgoValue } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 
@@ -18,12 +18,12 @@ import { ModalService, StellarService } from 'services/globalServices';
 import { StellarEvents } from 'services/stellar.service';
 
 import { Asset } from 'types/stellar';
+import { Token } from 'types/token';
 
 import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Aqua from 'assets/aqua-logo-small.svg';
 import BackgroundImageLeft from 'assets/background-left.svg';
 import BackgroundImageRight from 'assets/background-right.svg';
 import dIce from 'assets/dice-logo.svg';
@@ -309,12 +309,6 @@ const DIceLogo = styled(dIce)`
     margin-right: 0.5rem;
 `;
 
-const AquaLogo = styled(Aqua)`
-    height: 1.8rem;
-    width: 1.8rem;
-    margin-right: 0.5rem;
-`;
-
 export const SELECTED_PAIRS_ALIAS = 'selected pairs';
 
 export const getCachedChosenPairs = () =>
@@ -393,7 +387,6 @@ const MainPage = (): React.ReactNode => {
     const [changePageLoading, setChangePageLoading] = useState(false);
     const [totalStats, setTotalStats] = useState(null);
 
-    const { aquaAssetString } = getAquaAssetData();
     const [pairs, setPairs] = useState(null);
     const [count, setCount] = useState(0);
 
@@ -702,10 +695,9 @@ const MainPage = (): React.ReactNode => {
         setChangePageLoading(true);
     };
 
-    const { totalAqua, totalUpIce, totalDIce, totalDownIce } = useMemo(() => {
+    const { totalUpIce, totalDIce, totalDownIce } = useMemo(() => {
         if (!totalStats) {
             return {
-                totalAqua: 0,
                 totalUpIce: 0,
                 totalDownIce: 0,
                 totalDIce: 0,
@@ -714,7 +706,6 @@ const MainPage = (): React.ReactNode => {
         const { assets } = totalStats;
 
         return {
-            totalAqua: +assets.find(({ asset }) => asset === aquaAssetString)?.votes_sum,
             totalUpIce: +assets.find(({ asset }) => asset === getAssetString(UP_ICE))?.votes_sum,
             totalDownIce: +assets.find(({ asset }) => asset === getAssetString(DOWN_ICE))
                 ?.votes_sum,
@@ -800,7 +791,7 @@ const MainPage = (): React.ReactNode => {
                 <PairSearch>
                     <AssetDropdown
                         assetsList={[searchBase, searchCounter].filter(Boolean)}
-                        onUpdate={(assets: Asset[]) => {
+                        onUpdate={(assets: Token[]) => {
                             changeSearch(assets);
                         }}
                         excludeList={[searchBase, searchCounter].filter(Boolean)}
@@ -825,13 +816,6 @@ const MainPage = (): React.ReactNode => {
                                 <Tooltip
                                     content={
                                         <TotalTooltip>
-                                            <TooltipRow>
-                                                <span>AQUA:</span>
-                                                <span>
-                                                    <AquaLogo />
-                                                    {formatBalance(totalAqua, true)}
-                                                </span>
-                                            </TooltipRow>
                                             <TooltipRow>
                                                 <span>upvoteICE:</span>
                                                 <span>

@@ -24,7 +24,7 @@ export const BoostLabel = () => (
 export const RewardLabel = () => (
     <StyledLabel
         labelText="reward zone"
-        tooltipText={`Any market with at least ${MIN_REWARDS_PERCENT}% of the total AQUA votes is placed into the reward zone and will get rewards after the next rewards update.`}
+        tooltipText={`Any market with at least ${MIN_REWARDS_PERCENT}% of the total ICE votes is placed into the reward zone and will get rewards after the next rewards update.`}
     />
 );
 

@@ -93,11 +93,10 @@ const WhyFreezeAQUA = (): JSX.Element => (
             </Column>
             <Column>
                 <Image3 />
-                <ColumnTitle>Vote with 10x Power</ColumnTitle>
+                <ColumnTitle>Unlock voting</ColumnTitle>
                 <ColumnText>
-                    Use ICE to participate in Aquarius governance and liquidity voting. Compared to
-                    AQUA, ICE gives you up to 10x more voting power, allowing you to shape emissions
-                    and protocol direction more effectively.
+                    Use ICE to participate in Aquarius governance and liquidity voting. The longer
+                    is the lock period of ICE the more voting power you gain.
                 </ColumnText>
             </Column>
             <Column>

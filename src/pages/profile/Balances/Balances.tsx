@@ -314,22 +314,12 @@ interface BalancesProps {
 
 const Balances = ({ ammAquaBalance }: BalancesProps): React.ReactNode => {
     const [locks, setLocks] = useState<ClaimableBalance[]>(null);
-    const [aquaInVotes, setAquaInVotes] = useState(null);
 
     const { account } = useAuthStore();
 
     useEffect(() => {
-        StellarService.getAquaInLiquidityVotes(account.accountId()).then(res => {
-            setAquaInVotes(res);
-        });
-    }, []);
-
-    useEffect(() => {
         const unsub = StellarService.event.sub((event: { type: StellarEvents }) => {
             if (event.type === StellarEvents.claimableUpdate) {
-                StellarService.getAquaInLiquidityVotes(account.accountId()).then(res => {
-                    setAquaInVotes(res);
-                });
                 setLocks(StellarService.getLocks(account.accountId()));
             }
         });
@@ -406,19 +396,6 @@ const Balances = ({ ammAquaBalance }: BalancesProps): React.ReactNode => {
                                 </AdditionalInfoBalance>
                                 <AdditionalInfoDescription>AQUA locked</AdditionalInfoDescription>
                             </InfoColumn>
-                            <InfoColumn>
-                                <BalanceLabel $color={COLORS.purple} $textColor={COLORS.white}>
-                                    VOTE
-                                </BalanceLabel>
-                                <AdditionalInfoBalance>
-                                    {aquaInVotes === null ? (
-                                        <DotsLoader />
-                                    ) : (
-                                        <span>{formatBalance(+aquaInVotes, true)}</span>
-                                    )}
-                                </AdditionalInfoBalance>
-                                <AdditionalInfoDescription>AQUA in votes</AdditionalInfoDescription>
-                            </InfoColumn>
                         </AdditionalInfo>
                     </BalancesColumn>
                     <BalancesColumn>
@@ -481,7 +458,7 @@ const Balances = ({ ammAquaBalance }: BalancesProps): React.ReactNode => {
                             <TooltipInner>
                                 All actions performed on the Stellar network require a fee paid in
                                 XLM. Ensure a sufficient XLM balance in your wallet to vote with
-                                AQUA/ICE, claim back votes, and freeze ICE with the locker tool.
+                                ICE, claim back votes, and freeze ICE with the locker tool.
                             </TooltipInner>
                         }
                         position={TOOLTIP_POSITION.top}

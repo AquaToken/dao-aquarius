@@ -5,7 +5,6 @@ import styled from 'styled-components';
 
 import { LockerRoutes } from 'constants/routes';
 
-import { getAquaAssetData } from 'helpers/assets';
 import ErrorHandler from 'helpers/error-handler';
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
@@ -15,22 +14,19 @@ import { useIsMounted } from 'hooks/useIsMounted';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { ModalService, StellarService, ToastService } from 'services/globalServices';
+import { StellarService, ToastService } from 'services/globalServices';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { ModalProps } from 'types/modal';
 import { ClassicToken } from 'types/token';
 
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
-import GetAquaModal from 'web/modals/GetAquaModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Aqua from 'assets/aqua-logo-small.svg';
 import DIce from 'assets/dice-logo.svg';
 import Ice from 'assets/ice-logo.svg';
 import CloseIcon from 'assets/icon-close-small.svg';
 
-import Alert from 'basics/Alert';
 import AssetLogo from 'basics/AssetLogo';
 import Button from 'basics/buttons/Button';
 import ExternalLink from 'basics/ExternalLink';
@@ -41,8 +37,6 @@ import Market from 'basics/Market';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 import DelegateBlock from 'pages/vote/components/MainPage/VoteModals/DelegateBlock/DelegateBlock';
-
-import VotesDurationModal from './VotesDurationModal';
 
 import { PairStats } from '../../../api/types';
 import { DELEGATE_ICE, DOWN_ICE, SELECTED_PAIRS_ALIAS, UP_ICE } from '../MainPage';
@@ -77,11 +71,6 @@ const BalanceBlock = styled.span`
 const Balance = styled.span`
     color: ${COLORS.tooltip};
     cursor: pointer;
-`;
-
-const AquaLogo = styled(Aqua)`
-    height: 3.2rem;
-    width: 3.2rem;
 `;
 
 const IceLogo = styled(Ice)`
@@ -141,11 +130,6 @@ const GetAquaBlock = styled.div`
 const GetAquaLabel = styled.span`
     color: ${COLORS.grayText};
 `;
-
-const GetAquaLink = styled.div`
-    font-size: 1.4rem;
-`;
-
 const PairsList = styled.div`
     padding-top: 1.6rem;
 `;
@@ -258,7 +242,6 @@ const Scrollable = styled.div<{ scrollDisabled: boolean }>`
     }
 `;
 
-const MINIMUM_AMOUNT = 0.0000001;
 const MINIMUM_ICE_AMOUNT = 10;
 
 const VotesAmountModal = ({
@@ -275,7 +258,6 @@ const VotesAmountModal = ({
     const { account, isLogged } = useAuthStore();
     const { pairs, updatePairs, pairsAmounts, isDownVoteModal, asset, isSingleVoteForModal } =
         params;
-    const { aquaStellarAsset } = getAquaAssetData();
 
     useEffect(() => {
         if (!isLogged) {
@@ -303,7 +285,6 @@ const VotesAmountModal = ({
     const [isHandleEdit, setIsHandleEdit] = useState(false);
 
     const OPTIONS: Option<Asset>[] = useMemo(() => {
-        const AQUA_OPTION = { label: 'AQUA', value: aquaStellarAsset, icon: <AquaLogo /> };
         const ICE_OPTION = {
             label: 'ICE',
             value: isDownVoteModal ? DOWN_ICE : UP_ICE,
@@ -316,10 +297,10 @@ const VotesAmountModal = ({
         };
 
         if (!isDownVoteModal && account && account.getAssetBalance(DELEGATE_ICE) !== null) {
-            return [ICE_OPTION, D_ICE_OPTION, AQUA_OPTION];
+            return [ICE_OPTION, D_ICE_OPTION];
         }
 
-        return [ICE_OPTION, AQUA_OPTION];
+        return [ICE_OPTION];
     }, [isDownVoteModal, account]);
 
     const targetBalance = useMemo(() => account?.getAssetBalance(targetAsset), [targetAsset]);
@@ -525,52 +506,29 @@ const VotesAmountModal = ({
             );
             return;
         }
-        if (Number(amount) < MINIMUM_AMOUNT) {
+        if (Number(amount) < MINIMUM_ICE_AMOUNT) {
             ToastService.showErrorToast(
-                `The value must be greater than ${MINIMUM_AMOUNT.toFixed(7)} ${targetAsset.code}`,
+                `The value must be greater than ${MINIMUM_ICE_AMOUNT} ${targetAsset.code}`,
             );
             return;
         }
 
         if (
             Object.values(pairsAmount).some(
-                value =>
-                    !value ||
-                    !Number(value) ||
-                    +value < MINIMUM_AMOUNT ||
-                    (targetAsset.code !== aquaStellarAsset.code && +value < MINIMUM_ICE_AMOUNT),
+                value => !value || !Number(value) || +value < MINIMUM_ICE_AMOUNT,
             )
         ) {
             ToastService.showErrorToast(
-                `The value of each vote must be greater than ${
-                    targetAsset !== aquaStellarAsset
-                        ? MINIMUM_ICE_AMOUNT
-                        : MINIMUM_AMOUNT.toFixed(7)
-                } ${targetAsset.code}`,
+                `The value of each vote must be greater than ${MINIMUM_ICE_AMOUNT} ${targetAsset.code}`,
             );
             return;
         }
 
-        if (
-            targetAsset.code !== aquaStellarAsset.code &&
-            account.authType === LoginTypes.walletConnect
-        ) {
+        if (account.authType === LoginTypes.walletConnect) {
             openCurrentWalletIfExist();
         }
 
-        if (targetAsset.code !== aquaStellarAsset.code) {
-            confirmVotes();
-            return;
-        }
-
-        close();
-        ModalService.openModal(VotesDurationModal, {
-            pairsAmounts: pairsAmount,
-            pairs: selectedPairs,
-            updatePairs,
-            isDownVoteModal,
-            asset: targetAsset,
-        });
+        confirmVotes();
     };
 
     return (
@@ -603,10 +561,6 @@ const VotesAmountModal = ({
                         ]}
                     />
                 </AssetsInfoBlock>
-            )}
-
-            {targetAsset.code === aquaStellarAsset.code && (
-                <Alert text="ICE has more voting power than AQUA and ICE votes can be withdrawn from the market at any time" />
             )}
 
             <ContentRow>
@@ -719,17 +673,12 @@ const VotesAmountModal = ({
             {hasTrustLine && hasTargetBalance ? null : (
                 <GetAquaBlock>
                     <GetAquaLabel>You don&apos;t have enough {targetAsset.code}</GetAquaLabel>
-                    {targetAsset.code === aquaStellarAsset.code ? (
-                        <ExternalLink onClick={() => ModalService.openModal(GetAquaModal, {})}>
-                            <GetAquaLink>Get {targetAsset.code}</GetAquaLink>
-                        </ExternalLink>
-                    ) : (
-                        <ExternalLink asDiv>
-                            <Link to={LockerRoutes.main} onClick={() => close()}>
-                                Get ICE
-                            </Link>
-                        </ExternalLink>
-                    )}
+
+                    <ExternalLink asDiv>
+                        <Link to={LockerRoutes.main} onClick={() => close()}>
+                            Get ICE
+                        </Link>
+                    </ExternalLink>
                 </GetAquaBlock>
             )}
 
@@ -742,7 +691,7 @@ const VotesAmountModal = ({
                     disabled={!amount || !Number(amount)}
                     pending={pending}
                 >
-                    {targetAsset.code === aquaStellarAsset.code ? 'NEXT' : 'confirm'}
+                    confirm
                 </Button>
             </ButtonContainer>
         </ModalWrapper>

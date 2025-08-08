@@ -18,7 +18,7 @@
 <h3 align="center">DAO Aquarius</h3>
 
   <p align="center">
-    Aquarius protocol is governed by DAO voting with AQUA tokens. Vote and participate in discussions to shape the future of Aquarius.
+    Aquarius protocol is governed by DAO voting with ICE tokens. Vote and participate in discussions to shape the future of Aquarius.
     <br />
     <br />
     <a href="https://github.com/AquaToken/dao-aquarius/issues">Report Bug</a>
