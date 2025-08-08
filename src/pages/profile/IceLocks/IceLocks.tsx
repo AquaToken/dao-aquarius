@@ -110,7 +110,6 @@ const IceLocks = ({ ammAquaBalance }: IceLocksProps): React.ReactNode => {
     const [locks, setLocks] = useState(null);
     const [selectedLocks, setSelectedLocks] = useState([]);
     const [distributions, setDistributions] = useState(null);
-    const [aquaInVotes, setAquaInVotes] = useState(null);
 
     const [pendingId, setPendingId] = useState(null);
 
@@ -121,19 +120,9 @@ const IceLocks = ({ ammAquaBalance }: IceLocksProps): React.ReactNode => {
     }, []);
 
     useEffect(() => {
-        StellarService.getAquaInLiquidityVotes(account.accountId()).then(res => {
-            setAquaInVotes(res);
-        });
-    }, []);
-
-    useEffect(() => {
         const unsub = StellarService.event.sub(({ type }) => {
             if (type === StellarEvents.claimableUpdate) {
                 setLocks(StellarService.getLocks(account.accountId()));
-
-                StellarService.getAquaInLiquidityVotes(account.accountId()).then(res => {
-                    setAquaInVotes(res);
-                });
             }
         });
 
@@ -168,8 +157,8 @@ const IceLocks = ({ ammAquaBalance }: IceLocksProps): React.ReactNode => {
     }, [locks]);
 
     const total = useMemo(
-        () => locksSum + aquaBalance + aquaInOffers + ammAquaBalance + aquaInVotes,
-        [locksSum, aquaBalance, aquaInOffers, ammAquaBalance, aquaInVotes],
+        () => locksSum + aquaBalance + aquaInOffers + ammAquaBalance,
+        [locksSum, aquaBalance, aquaInOffers, ammAquaBalance],
     );
 
     const availablePercent = useMemo(
@@ -180,7 +169,6 @@ const IceLocks = ({ ammAquaBalance }: IceLocksProps): React.ReactNode => {
         () => roundToPrecision((aquaInOffers / total) * 100, 2),
         [total],
     );
-    const inVotesPercent = useMemo(() => roundToPrecision((aquaInVotes / total) * 100, 2), [total]);
     const ammPercent = useMemo(() => roundToPrecision((ammAquaBalance / total) * 100, 2), [total]);
 
     const lockPercent = useMemo(() => roundToPrecision((locksSum / total) * 100, 2), [total]);
@@ -312,7 +300,7 @@ const IceLocks = ({ ammAquaBalance }: IceLocksProps): React.ReactNode => {
             </Header>
 
             <Section>
-                {!locks || !distributions || ammAquaBalance === null || aquaInVotes === null ? (
+                {!locks || !distributions || ammAquaBalance === null ? (
                     <PageLoader />
                 ) : locks.length ? (
                     <>
@@ -349,13 +337,6 @@ const IceLocks = ({ ammAquaBalance }: IceLocksProps): React.ReactNode => {
                                                 <span>
                                                     {formatBalance(ammAquaBalance, true)} (
                                                     {ammPercent}%)
-                                                </span>
-                                            </TooltipRow>
-                                            <TooltipRow>
-                                                <span>In votes:</span>
-                                                <span>
-                                                    {formatBalance(aquaInVotes, true)} (
-                                                    {inVotesPercent}%)
                                                 </span>
                                             </TooltipRow>
                                             <TooltipRow>

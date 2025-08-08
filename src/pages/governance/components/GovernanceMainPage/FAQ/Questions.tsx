@@ -91,23 +91,6 @@ const Questions = () => (
                 </span>
             }
         />
-        <Question
-            question="How long is AQUA locked when used for voting?"
-            answer={
-                <span>
-                    The unlock time for AQUA governance votes depends on how quickly a vote occurs
-                    after a proposal is published. The unlock logic takes the time difference
-                    between a proposal’s start time and when a vote occurs and multiplies it by two.
-                    This multiplied time is added to the end of a proposal’s vote period, giving a
-                    final unlock time.
-                    <br />
-                    <br />
-                    For example, a user who votes 3.5 days into a voting period will have those days
-                    multiplied by 2, giving 7 days. Therefore the AQUA used to vote will unlock 7
-                    days after the proposal vote ends.
-                </span>
-            }
-        />
     </Container>
 );
 

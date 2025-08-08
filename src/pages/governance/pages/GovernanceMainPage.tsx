@@ -381,7 +381,7 @@ const GovernanceMainPage = (): JSX.Element => {
                 <Background>
                     <Title>Aquarius Governance</Title>
                     <Description>
-                        Aquarius protocol is governed by DAO voting with AQUA tokens. Vote and
+                        Aquarius protocol is governed by DAO voting with ICE tokens. Vote and
                         participate in discussions to shape the future of Aquarius.
                     </Description>
                     <BackgroundLeft />

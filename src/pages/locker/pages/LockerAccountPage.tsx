@@ -106,7 +106,6 @@ const LockerAccountPage = (): React.ReactNode => {
     const [ammAquaBalance, setAmmAquaBalance] = useState(null);
     const [locks, setLocks] = useState(null);
     const [distributions, setDistributions] = useState(null);
-    const [aquaInVotes, setAquaInVotes] = useState(null);
 
     const { account, isLogged } = useAuthStore();
     const { accountId } = useParams<{ accountId: string }>();
@@ -153,10 +152,6 @@ const LockerAccountPage = (): React.ReactNode => {
                 StellarService.getAccountLocks(accountId).then(res => {
                     setLocks(res);
                 });
-
-                StellarService.getAquaInLiquidityVotes(accountId).then(res => {
-                    setAquaInVotes(res);
-                });
             }
         });
 
@@ -178,9 +173,6 @@ const LockerAccountPage = (): React.ReactNode => {
         if (!currentAccount) {
             return;
         }
-        StellarService.getAquaInLiquidityVotes(currentAccount.accountId()).then(res => {
-            setAquaInVotes(res);
-        });
     }, [currentAccount]);
 
     useEffect(() => {
@@ -234,7 +226,6 @@ const LockerAccountPage = (): React.ReactNode => {
                                 aquaInOffers={
                                     account?.getAquaInOffers() ?? currentAccount.getAquaInOffers()
                                 }
-                                aquaInVotes={aquaInVotes}
                             />
                         )}
                     </LeftColumn>
