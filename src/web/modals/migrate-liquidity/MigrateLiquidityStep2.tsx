@@ -10,10 +10,13 @@ import PoolsList from 'pages/amm/components/PoolsList/PoolsList';
 
 import { Stepper } from './MigrateLiquidityStep1';
 
-import { respondDown } from '../../mixins';
+import { customScroll, respondDown } from '../../mixins';
 import { Breakpoints } from '../../styles';
 
 const Content = styled.div`
+    max-height: 60vh;
+    ${customScroll};
+    overflow-y: auto;
     padding-top: 8rem;
 
     ${respondDown(Breakpoints.md)`

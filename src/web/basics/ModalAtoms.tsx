@@ -6,8 +6,15 @@ import { Breakpoints, COLORS } from 'web/styles';
 export const ModalWrapper = styled.div<{ $isWide?: boolean; $width?: string }>`
     width: ${({ $isWide, $width }) => $width ?? ($isWide ? '75.2rem' : '52.3rem')};
 
+    overflow-y: scroll;
+    overflow-x: hidden;
+    ${customScroll};
+
+    max-height: calc(95vh - 11.2rem); // 11.2rem = 6.4rem top padding + 4.8rem bottom margin
+
     ${respondDown(Breakpoints.md)`
         width: 100%;
+        max-height: calc(95vh - 2rem);
     `}
 `;
 

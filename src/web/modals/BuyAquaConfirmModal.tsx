@@ -77,6 +77,7 @@ const TitleText = styled.div`
 
 const StyledModalDescription = styled(ModalDescription)`
     margin-bottom: 0;
+    ${customScroll};
 
     ${respondUp(Breakpoints.md)`
        max-height: 90vh;

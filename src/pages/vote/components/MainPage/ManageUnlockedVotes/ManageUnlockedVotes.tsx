@@ -20,7 +20,10 @@ import VotesList from '../ManageVotesModal/VotesList/VotesList';
 
 const Container = styled.div`
     width: 80.6rem;
+    max-height: 80vh;
     padding-right: 0.5rem;
+    overflow: auto;
+    ${customScroll};
 
     ${respondDown(Breakpoints.md)`
           width: 100%;

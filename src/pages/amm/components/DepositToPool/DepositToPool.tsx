@@ -42,7 +42,11 @@ import SuccessModal from '../SuccessModal/SuccessModal';
 
 const Container = styled.div<{ $isModal: boolean }>`
     width: ${({ $isModal }) => ($isModal ? '52.3rem' : '100%')};
+    max-height: 82vh;
+    overflow: auto;
     padding-top: ${({ $isModal }) => ($isModal ? '0' : '4rem')};
+
+    ${customScroll};
 
     ${respondDown(Breakpoints.md)`
         width: 100%;
