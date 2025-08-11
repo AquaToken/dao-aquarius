@@ -22,7 +22,7 @@ import { Breakpoints, COLORS } from 'web/styles';
 
 import Button from 'basics/buttons/Button';
 import Select, { Option } from 'basics/inputs/Select';
-import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 import { PairStats } from 'pages/vote/api/types';
 
@@ -163,7 +163,7 @@ const VotesDurationModal = ({ params, close }: ModalProps<VotesDurationModalPara
     };
 
     return (
-        <>
+        <ModalWrapper>
             <ModalTitle>
                 {isDownVoteModal ? 'Select Downvote Period' : 'Selected Markets'}
             </ModalTitle>
@@ -193,7 +193,7 @@ const VotesDurationModal = ({ params, close }: ModalProps<VotesDurationModalPara
                     confirm
                 </Button>
             </ButtonContainer>
-        </>
+        </ModalWrapper>
     );
 };
 

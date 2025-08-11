@@ -12,28 +12,25 @@ import { ModalProps } from 'types/modal';
 
 import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
-import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 import { respondDown } from '../../mixins';
 import { Breakpoints } from '../../styles';
 
 const LoginWithSecretBody = styled.div`
-    width: 52.8rem;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
 
     ${respondDown(Breakpoints.md)`
-          width: 100%;
-      `}
+        width: 100%;
+    `}
 `;
 
 const Description = styled(ModalDescription)`
-    width: 52.8rem;
-
     ${respondDown(Breakpoints.md)`
-          width: 100%;
-      `}
+        width: 100%;
+    `}
 `;
 
 const StyledButton = styled(Button)`
@@ -72,7 +69,7 @@ const LoginWithPublic = ({ close }: ModalProps<never>): React.ReactNode => {
     }, [isLogged]);
 
     return (
-        <>
+        <ModalWrapper>
             <ModalTitle>Public key</ModalTitle>
             <Description>Enter your public key, started from “G”</Description>
             <LoginWithSecretBody>
@@ -91,7 +88,7 @@ const LoginWithPublic = ({ close }: ModalProps<never>): React.ReactNode => {
                     connect
                 </StyledButton>
             </LoginWithSecretBody>
-        </>
+        </ModalWrapper>
     );
 };
 

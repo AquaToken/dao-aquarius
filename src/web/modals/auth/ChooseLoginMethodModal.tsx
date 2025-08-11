@@ -28,7 +28,7 @@ import WalletConnectLogo from 'assets/wallet-connect-logo.svg';
 import Stellar from 'assets/xlm-logo.svg';
 
 import Label from 'basics/Label';
-import { ModalTitle } from 'basics/ModalAtoms';
+import { ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 import LoginWithPublic from './LoginWithPublic';
 import LoginWithSecret from './LoginWithSecret';
@@ -46,14 +46,13 @@ const BgStyled = styled(BG)`
 `;
 
 export const LoginMethod = styled.div`
-    width: 52.8rem;
     display: flex;
     flex-direction: row;
     align-items: center;
     height: 9rem;
     background-color: ${COLORS.lightGray};
     border-radius: 0.5rem;
-    padding: 0 2.4rem 0 3.4rem;
+    padding: 0 2.4rem 0 2.4rem;
     box-sizing: border-box;
     transition: all ease-in 150ms;
     cursor: pointer;
@@ -80,7 +79,7 @@ export const LoginMethodName = styled.span`
     font-size: 1.6rem;
     line-height: 2.8rem;
     color: ${COLORS.paragraphText};
-    margin-left: 3rem;
+    margin-left: 2.4rem;
     display: flex;
     gap: 0.8rem;
     align-items: center;
@@ -94,7 +93,7 @@ export const LoginMethodDescription = styled.div`
     font-size: 1.4rem;
     line-height: 2rem;
     color: ${COLORS.grayText};
-    margin-left: 3rem;
+    margin-left: 2.4rem;
 `;
 
 const ArrowRight = styled(ArrowRightIcon)`
@@ -193,7 +192,7 @@ const ChooseLoginMethodModal = ({
     };
 
     return (
-        <>
+        <ModalWrapper>
             <ModalTitle>Sign in</ModalTitle>
 
             {!isMobile() && (
@@ -249,7 +248,7 @@ const ChooseLoginMethodModal = ({
                 <LoginMethodName>Secret key</LoginMethodName>
                 <ArrowRight />
             </LoginMethod>
-        </>
+        </ModalWrapper>
     );
 };
 

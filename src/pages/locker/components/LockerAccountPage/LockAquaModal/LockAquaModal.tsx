@@ -25,22 +25,7 @@ import Ice from 'assets/ice-logo.svg';
 import ArrowDown from 'assets/icon-arrow-down-purple.svg';
 
 import Button from 'basics/buttons/Button';
-import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
-
-const ModalContainer = styled.div`
-    width: 52.8rem;
-    display: flex;
-    flex-direction: column;
-    padding: 0 1.5rem;
-
-    ${customScroll};
-    overflow-y: auto;
-    max-height: 75vh;
-
-    ${respondDown(Breakpoints.md)`
-        width: 100%;
-    `}
-`;
+import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 const Row = styled.div`
     ${flexRowSpaceBetween};
@@ -218,7 +203,7 @@ const LockAquaModal = ({
         }
     };
     return (
-        <ModalContainer>
+        <ModalWrapper>
             <ModalTitle>Lock AQUA</ModalTitle>
             <ModalDescription>Please verify the details below before confirming</ModalDescription>
             <Row>
@@ -281,7 +266,7 @@ const LockAquaModal = ({
                     Confirm
                 </Button>
             </ButtonContainer>
-        </ModalContainer>
+        </ModalWrapper>
     );
 };
 

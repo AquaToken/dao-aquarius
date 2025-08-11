@@ -16,15 +16,7 @@ import { Breakpoints } from 'web/styles';
 
 import Button from 'basics/buttons/Button';
 import ExternalLink from 'basics/ExternalLink';
-import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
-
-const Container = styled.div`
-    width: 52.3rem;
-
-    ${respondDown(Breakpoints.md)`
-        width: 100%;
-    `}
-`;
+import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 const Title = styled(ModalTitle)`
     margin-top: 2.4rem;
@@ -68,7 +60,7 @@ const RestoreContractModal = ({ params, close }: ModalProps<RestoreContractModal
     };
 
     return (
-        <Container>
+        <ModalWrapper>
             <Title>Contract expired</Title>
             <ModalDescription>
                 One or more ledger entries that need to be used in this transactions has expired.
@@ -81,7 +73,7 @@ const RestoreContractModal = ({ params, close }: ModalProps<RestoreContractModal
             <StyledButton onClick={() => restore()} pending={pending}>
                 Restore
             </StyledButton>
-        </Container>
+        </ModalWrapper>
     );
 };
 

@@ -5,7 +5,7 @@ import { Breakpoints, COLORS } from 'web/styles';
 
 export const ModalWrapper = styled.div<{ $isWide?: boolean; $width?: string }>`
     width: ${({ $isWide, $width }) => $width ?? ($isWide ? '75.2rem' : '52.3rem')};
-
+    padding: 0 1rem;
     overflow-y: scroll;
     overflow-x: hidden;
     ${customScroll};

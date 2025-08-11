@@ -84,7 +84,6 @@ const ModalInner = styled.div<{ $withBackground: boolean; $isShow: boolean }>`
 
 const ModalContent = styled.div`
     margin: 0 3.8rem 4.8rem;
-    padding: 0 1rem;
 
     ${respondDown(Breakpoints.md)`
         margin: 0 1.6rem 2rem;
