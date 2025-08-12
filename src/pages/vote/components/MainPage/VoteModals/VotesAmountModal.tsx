@@ -21,7 +21,7 @@ import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 import { ModalProps } from 'types/modal';
 import { ClassicToken } from 'types/token';
 
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { customScroll, flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import GetAquaModal from 'web/modals/GetAquaModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -38,7 +38,7 @@ import Input from 'basics/inputs/Input';
 import RangeInput from 'basics/inputs/RangeInput';
 import Select, { Option } from 'basics/inputs/Select';
 import Market from 'basics/Market';
-import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
+import { ModalDescription, ModalTitle, ModalWrapper, StickyButtonWrapper } from 'basics/ModalAtoms';
 
 import DelegateBlock from 'pages/vote/components/MainPage/VoteModals/DelegateBlock/DelegateBlock';
 
@@ -121,12 +121,6 @@ const AssetSelect = styled(Select)`
     ${respondDown(Breakpoints.md)`
         flex: 1.6;
     `}
-`;
-
-const ButtonContainer = styled.div`
-    margin-top: 2.5rem;
-    padding-top: 3.2rem;
-    border-top: 0.1rem dashed ${COLORS.gray};
 `;
 
 const GetAquaBlock = styled.div`
@@ -231,6 +225,16 @@ const TotalAmount = styled.div`
 const ResetValues = styled.div`
     color: ${COLORS.tooltip};
     cursor: pointer;
+`;
+
+const Scrollable = styled.div`
+    ${customScroll};
+    padding: 0 0.5rem;
+    overflow-y: scroll;
+
+    ${respondDown(Breakpoints.md)`
+        max-height: calc(100vh - 25rem);
+    `}
 `;
 
 const MINIMUM_AMOUNT = 0.0000001;
@@ -710,7 +714,7 @@ const VotesAmountModal = ({
 
             {targetAsset.code === UP_ICE.code && <DelegateBlock />}
 
-            <ButtonContainer>
+            <StickyButtonWrapper>
                 <Button
                     fullWidth
                     onClick={() => onSubmit()}
@@ -719,7 +723,7 @@ const VotesAmountModal = ({
                 >
                     {targetAsset.code === aquaStellarAsset.code ? 'NEXT' : 'confirm'}
                 </Button>
-            </ButtonContainer>
+            </StickyButtonWrapper>
         </ModalWrapper>
     );
 };
