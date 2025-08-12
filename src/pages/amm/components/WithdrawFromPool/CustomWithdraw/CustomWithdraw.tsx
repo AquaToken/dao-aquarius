@@ -26,6 +26,7 @@ import { Breakpoints, COLORS } from 'web/styles';
 
 import Asset from 'basics/Asset';
 import Button from 'basics/buttons/Button';
+import ErrorMessage from 'basics/ErrorMessage';
 import { Checkbox } from 'basics/inputs';
 
 import NoTrustline from 'components/NoTrustline';
@@ -56,7 +57,7 @@ const Divider = styled.div`
 const Summary = styled.div`
     display: flex;
     justify-content: space-between;
-    margin-top: 1.6rem;
+    margin: 0.8rem 0;
 
     span {
         display: flex;
@@ -66,10 +67,6 @@ const Summary = styled.div`
             margin: 0 0.4rem;
         }
     }
-`;
-
-const Error = styled(Summary)`
-    color: ${COLORS.pinkRed};
 `;
 
 interface Props {
@@ -268,9 +265,7 @@ const CustomWithdraw = ({ pool, accountShare, rewards, close }: Props) => {
             )}
 
             {isInsufficient && (
-                <Error>
-                    The withdraw amount requested exceeds the amount of pool shares available
-                </Error>
+                <ErrorMessage text="The withdraw amount requested exceeds the amount of pool shares available" />
             )}
 
             <Divider />
