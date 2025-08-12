@@ -45,7 +45,7 @@ export const ModalDescription = styled.div<{ $smallMarginBottom?: boolean }>`
 export const StickyButtonWrapper = styled.div`
     position: sticky;
     bottom: 0;
-    padding: 10px 20px;
+    padding: 10px 0;
     background: ${COLORS.white};
     z-index: 10;
 `;
