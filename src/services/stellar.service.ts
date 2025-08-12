@@ -14,11 +14,11 @@ import BigNumber from 'bignumber.js';
 import { getPoolInfo } from 'api/amm';
 
 import {
+    ALL_ICE_ASSETS,
     ASSETS_ENV_DATA,
     D_ICE_CODE,
     DOWN_ICE_CODE,
     GOV_ICE_CODE,
-    ICE_ASSETS,
     ICE_CODE,
     ICE_ISSUER,
     UP_ICE_CODE,
@@ -708,7 +708,7 @@ export default class StellarServiceClass {
     }
 
     processIceTx(tx, asset) {
-        if (![...ICE_ASSETS, `${D_ICE_CODE}:${ICE_ISSUER}`].includes(getAssetString(asset))) {
+        if (!ALL_ICE_ASSETS.includes(getAssetString(asset))) {
             return tx;
         }
 
