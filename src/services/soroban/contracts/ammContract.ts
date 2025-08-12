@@ -779,14 +779,14 @@ export function getSwapChainedTx(
     isSend: boolean,
 ) {
     const args = [
-        this.publicKeyToScVal(accountId),
+        publicKeyToScVal(accountId),
         xdr.ScVal.fromXDR(chainedXDR, 'base64'),
-        this.contractIdToScVal(base.contract),
-        this.amountToUint128(
+        contractIdToScVal(base.contract),
+        amountToUint128(
             amount,
             isSend ? (base as SorobanToken).decimal : (counter as SorobanToken).decimal,
         ),
-        this.amountToUint128(
+        amountToUint128(
             amountWithSlippage,
             isSend ? (counter as SorobanToken).decimal : (base as SorobanToken).decimal,
         ),
@@ -796,11 +796,11 @@ export function getSwapChainedTx(
         function: xdr.SorobanAuthorizedFunction.sorobanAuthorizedFunctionTypeContractFn(
             new xdr.InvokeContractArgs({
                 functionName: ASSET_CONTRACT_METHOD.TRANSFER,
-                contractAddress: this.contractIdToScVal(base.contract).address(),
+                contractAddress: contractIdToScVal(base.contract).address(),
                 args: [
-                    this.publicKeyToScVal(accountId),
-                    this.contractIdToScVal(AMM_SMART_CONTRACT_ID),
-                    this.amountToInt128(
+                    publicKeyToScVal(accountId),
+                    contractIdToScVal(AMM_SMART_CONTRACT_ID),
+                    amountToInt128(
                         isSend ? amount : amountWithSlippage,
                         (base as SorobanToken).decimal,
                     ),
@@ -815,7 +815,7 @@ export function getSwapChainedTx(
         rootInvocation: new xdr.SorobanAuthorizedInvocation({
             function: xdr.SorobanAuthorizedFunction.sorobanAuthorizedFunctionTypeContractFn(
                 new xdr.InvokeContractArgs({
-                    contractAddress: this.contractIdToScVal(AMM_SMART_CONTRACT_ID).address(),
+                    contractAddress: contractIdToScVal(AMM_SMART_CONTRACT_ID).address(),
                     functionName: isSend
                         ? AMM_CONTRACT_METHOD.SWAP_CHAINED
                         : AMM_CONTRACT_METHOD.SWAP_CHAINED_RECEIVE,
@@ -834,7 +834,5 @@ export function getSwapChainedTx(
         args,
         auth: [rootInvocation],
     });
-    return this.buildSmartContractTxFromOp(accountId, operation).then(tx =>
-        this.prepareTransaction(tx),
-    );
+    return buildSmartContractTxFromOp(accountId, operation).then(tx => prepareTransaction(tx));
 }
