@@ -219,8 +219,7 @@ export default function useGlobalSubscriptions(): void {
             StellarService.startAccountStream(account.accountId());
             ToastService.showSuccessToast('Logged in');
         } else {
-            StellarService.logoutWithSecret();
-            SorobanService.logoutWithSecret();
+            SorobanService.connection.logoutWithSecret();
             StellarService.closeAccountStream();
             WalletKitService.stopFreighterWatching();
             ToastService.showSuccessToast('Logged out');

@@ -95,7 +95,8 @@ const ClaimRewardsModal = ({ confirm, close }: ModalProps<never>) => {
         }
         setPending(true);
 
-        SorobanService.getClaimBatchTx(account.accountId(), [...selectedRewards] as string[])
+        SorobanService.amm
+            .getClaimBatchTx(account.accountId(), [...selectedRewards] as string[])
             .then(tx => account.signAndSubmitTx(tx, true))
             .then((res: { status?: BuildSignAndSubmitStatuses; value: () => Int128Parts }) => {
                 if (!res) {

@@ -201,7 +201,7 @@ const PoolPage = () => {
             setRewards(null);
             return;
         }
-        SorobanService.getPoolRewards(account.accountId(), pool.address).then(res => {
+        SorobanService.amm.getPoolRewards(account.accountId(), pool.address).then(res => {
             setRewards(res);
         });
     }, [account, pool, updateIndex]);
@@ -240,7 +240,8 @@ const PoolPage = () => {
         }
         setClaimPending(true);
 
-        SorobanService.getClaimRewardsTx(account.accountId(), pool.address)
+        SorobanService.amm
+            .getClaimRewardsTx(account.accountId(), pool.address)
             .then(tx => account.signAndSubmitTx(tx, true))
             .then((res: { status?: BuildSignAndSubmitStatuses }) => {
                 if (!res) {
@@ -254,7 +255,7 @@ const PoolPage = () => {
                     ToastService.showSuccessToast('More signatures required to complete');
                     return;
                 }
-                const value = SorobanService.i128ToInt(res as xdr.ScVal);
+                const value = SorobanService.scVal.i128ToInt(res as xdr.ScVal);
 
                 ToastService.showSuccessToast(`Claimed ${formatBalance(+value)} AQUA`);
                 setClaimPending(false);
