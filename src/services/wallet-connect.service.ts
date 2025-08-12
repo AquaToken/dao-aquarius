@@ -73,12 +73,12 @@ export default class WalletConnectServiceClass {
     //
     //  If we want to disconnect all the established sessions, we pass the parameter disconnectAll.
     //  Used for the auto-connect page
-    async onAppStart(disconnectAll: boolean): Promise<unknown> {
-        if (!(await sessionExistsInStorage())) {
+    async onAppStart(skipChecking: boolean): Promise<unknown> {
+        if (skipChecking || !(await sessionExistsInStorage())) {
             return Promise.resolve();
         }
 
-        return this.initWalletConnect(disconnectAll);
+        return this.initWalletConnect();
     }
 
     async initWalletConnect(disconnectAll?: boolean): Promise<boolean> {
@@ -207,7 +207,7 @@ export default class WalletConnectServiceClass {
             ToastService.showErrorToast(INTERNET_CONNECTION_ERROR);
             return Promise.reject();
         }
-        await this.initWalletConnect();
+        await this.initWalletConnect(true);
 
         return this.connect(null, true);
     }
