@@ -21,7 +21,7 @@ import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
 import RangeInput from 'basics/inputs/RangeInput';
 import Market from 'basics/Market';
-import { ModalWrapper, ModalTitle } from 'basics/ModalAtoms';
+import { ModalWrapper, ModalTitle, StickyButtonWrapper } from 'basics/ModalAtoms';
 
 import { PairContainer } from 'pages/amm/components/WithdrawFromPool/WithdrawFromPool';
 
@@ -252,14 +252,16 @@ const MigrateLiquidityStep1 = ({ params, confirm }: ModalProps<MigrateLiquidityS
                 </Amounts>
             </AmountRow>
 
-            <StyledButton
-                isBig
-                disabled={!Number(percent)}
-                onClick={() => submit()}
-                pending={pending}
-            >
-                withdraw
-            </StyledButton>
+            <StickyButtonWrapper>
+                <StyledButton
+                    isBig
+                    disabled={!Number(percent)}
+                    onClick={() => submit()}
+                    pending={pending}
+                >
+                    withdraw
+                </StyledButton>
+            </StickyButtonWrapper>
         </ModalWrapper>
     );
 };
