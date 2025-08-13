@@ -42,9 +42,21 @@ const StyledButton = styled(Button)`
     `}
 `;
 
-const InputStyled = styled(Input)`
+const FormRow = styled.div`
+    display: flex;
+    align-items: center;
     margin-bottom: 3.2rem;
     margin-top: 5rem;
+    gap: 2.4rem;
+    padding: 0 0.2rem;
+`;
+
+const InputStyled = styled(Input)`
+    flex: 1;
+`;
+
+const RangeInputStyled = styled(RangeInput)`
+    flex: 3;
 `;
 
 const Details = styled.div<{ $withBorder: boolean }>`
@@ -212,14 +224,18 @@ const BalancedWithdraw = ({ pool, totalShares, reserves, rewards, accountShare, 
     };
     return (
         <>
-            <InputStyled
-                label="Amount to remove"
-                postfix="%"
-                value={percent}
-                onChange={({ target }) => onInputChange(target.value)}
-                inputMode="decimal"
-            />
-            <RangeInput onChange={value => setPercent(value.toString())} value={+percent} />
+            <FormRow>
+                <InputStyled
+                    postfix="%"
+                    value={percent}
+                    onChange={({ target }) => onInputChange(target.value)}
+                    inputMode="decimal"
+                />
+                <RangeInputStyled
+                    onChange={value => setPercent(value.toString())}
+                    value={+percent}
+                />
+            </FormRow>
 
             <Details $withBorder={Boolean(rewards)}>
                 {pool.tokens.map(asset => (

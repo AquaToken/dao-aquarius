@@ -45,9 +45,21 @@ const Label = styled.div`
     margin-bottom: 0.8rem;
 `;
 
-const InputStyled = styled(Input)`
+const FormRow = styled.div`
+    display: flex;
+    align-items: center;
     margin-bottom: 3.2rem;
     margin-top: 5rem;
+    gap: 2.4rem;
+    padding: 0 0.2rem;
+`;
+
+const InputStyled = styled(Input)`
+    flex: 1;
+`;
+
+const RangeInputStyled = styled(RangeInput)`
+    flex: 3;
 `;
 
 const TokenPicker = styled.div`
@@ -84,11 +96,6 @@ const Divider = styled.div`
     padding-top: 3.2rem;
 `;
 
-const MaxValue = styled.span`
-    color: ${COLORS.purple};
-    cursor: pointer;
-`;
-
 const Summary = styled.div`
     display: flex;
     justify-content: space-between;
@@ -122,7 +129,6 @@ const SingleTokenWithdraw = ({ pool, rewards, accountShare, close }: Props) => {
     const [pending, setPending] = useState(false);
     const [withClaim, setWithClaim] = useState(true);
     const [selectedToken, setSelectedToken] = useState(pool.tokens[0]);
-    const [maxWithdraw, setMaxWithdraw] = useState(null);
     const [estimateWithdraw, setEstimateWithdraw] = useState(null);
 
     const { aquaStellarAsset } = getAquaAssetData();
@@ -136,14 +142,6 @@ const SingleTokenWithdraw = ({ pool, rewards, accountShare, close }: Props) => {
             setWithClaim(true);
         }
     }, [rewards]);
-
-    useEffect(() => {
-        if (!accountShare) return;
-
-        SorobanService.amm
-            .getSingleTokenWithdrawEstimate(pool.address, pool.tokens, accountShare)
-            .then(setMaxWithdraw);
-    }, [accountShare]);
 
     useEffect(() => {
         setEstimateWithdraw(null);
@@ -286,27 +284,19 @@ const SingleTokenWithdraw = ({ pool, rewards, accountShare, close }: Props) => {
                     </Token>
                 ))}
             </TokenPicker>
-            <InputStyled
-                label="Amount to remove"
-                rightLabel={
-                    maxWithdraw ? (
-                        <span>
-                            Max:{' '}
-                            <MaxValue onClick={() => setPercent('100')}>
-                                {maxWithdraw.get(selectedToken.contract)}
-                            </MaxValue>{' '}
-                            {selectedToken.code}
-                        </span>
-                    ) : (
-                        <DotsLoader />
-                    )
-                }
-                postfix="%"
-                value={percent}
-                onChange={({ target }) => onInputChange(target.value)}
-                inputMode="decimal"
-            />
-            <RangeInput onChange={value => setPercent(value.toString())} value={+percent} />
+
+            <FormRow>
+                <InputStyled
+                    postfix="%"
+                    value={percent}
+                    onChange={({ target }) => onInputChange(target.value)}
+                    inputMode="decimal"
+                />
+                <RangeInputStyled
+                    onChange={value => setPercent(value.toString())}
+                    value={+percent}
+                />
+            </FormRow>
 
             <Summary>
                 <span>You get</span>
