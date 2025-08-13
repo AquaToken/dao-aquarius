@@ -9,6 +9,8 @@ import { getAquaAssetData } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
+import { useDebounce } from 'hooks/useDebounce';
+
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
@@ -83,6 +85,8 @@ const CustomWithdraw = ({ pool, accountShare, rewards, close }: Props) => {
     const [estimatedValue, setEstimatedValue] = useState(null);
     const [pending, setPending] = useState(false);
 
+    const debouncedAmounts = useDebounce(amounts, 700, true);
+
     const { aquaStellarAsset } = getAquaAssetData();
 
     const { account } = useAuthStore();
@@ -127,7 +131,7 @@ const CustomWithdraw = ({ pool, accountShare, rewards, close }: Props) => {
             account.accountId(),
             pool.address,
             accountShare,
-            amounts,
+            debouncedAmounts,
             pool.share_token_address,
         )
             .then(res => {
@@ -137,7 +141,7 @@ const CustomWithdraw = ({ pool, accountShare, rewards, close }: Props) => {
                 setIsInsufficient(true);
                 setEstimatedValue(null);
             });
-    }, [amounts]);
+    }, [debouncedAmounts]);
 
     const withdraw = async () => {
         const noTrustAssets = pool.tokens.filter(
