@@ -35,7 +35,7 @@ import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
 import Label from 'basics/Label';
 import DotsLoader from 'basics/loaders/DotsLoader';
-import { ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
+import { ModalTitle, ModalWrapper, StickyButtonWrapper } from 'basics/ModalAtoms';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import SuccessModal from '../SuccessModal/SuccessModal';
@@ -510,6 +510,18 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
         }
     }, []);
 
+    const ButtonAdd = (
+        <Button
+            isBig
+            fullWidth
+            onClick={() => onSubmit()}
+            pending={pending}
+            disabled={!hasAllAmounts}
+        >
+            deposit
+        </Button>
+    );
+
     const content = (
         <>
             {Number(pool.total_share) === 0 && (
@@ -718,14 +730,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                     ))}
                 </PoolInfo>
 
-                <Button
-                    isBig
-                    onClick={() => onSubmit()}
-                    pending={pending}
-                    disabled={!hasAllAmounts}
-                >
-                    deposit
-                </Button>
+                {isModal ? <StickyButtonWrapper>{ButtonAdd}</StickyButtonWrapper> : ButtonAdd}
             </Form>
         </>
     );
