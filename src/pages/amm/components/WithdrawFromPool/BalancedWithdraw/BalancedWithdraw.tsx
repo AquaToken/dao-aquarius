@@ -242,6 +242,12 @@ const BalancedWithdraw = ({ pool, totalShares, reserves, rewards, accountShare, 
                         </span>
                     </DescriptionRow>
                 ))}
+
+                {pool.tokens
+                    .filter(token => token.type === TokenType.classic)
+                    .map(token => (
+                        <NoTrustline asset={token} key={token.contract} />
+                    ))}
             </Details>
 
             {Boolean(rewards) && (
@@ -254,7 +260,14 @@ const BalancedWithdraw = ({ pool, totalShares, reserves, rewards, accountShare, 
 
             {withClaim && <NoTrustline asset={aquaStellarAsset} />}
 
-            <StyledButton isBig pending={pending} onClick={() => withdraw()}>
+            <StyledButton
+                isBig
+                pending={pending}
+                onClick={() => withdraw()}
+                disabled={pool.tokens
+                    .filter(token => token.type === TokenType.classic)
+                    .some(token => account.getAssetBalance(token) === null)}
+            >
                 Remove
             </StyledButton>
         </>

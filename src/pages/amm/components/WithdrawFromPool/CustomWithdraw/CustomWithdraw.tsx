@@ -144,21 +144,6 @@ const CustomWithdraw = ({ pool, accountShare, rewards, close }: Props) => {
     }, [debouncedAmounts]);
 
     const withdraw = async () => {
-        const noTrustAssets = pool.tokens.filter(
-            asset =>
-                asset.type !== TokenType.soroban &&
-                account.getAssetBalance(asset) === null &&
-                !!amounts.get(asset.contract),
-        );
-
-        if (noTrustAssets.length) {
-            ToastService.showErrorToast(
-                `${noTrustAssets.map(({ code }) => code).join(', ')} trustline${
-                    noTrustAssets.length > 1 ? 's' : ''
-                } missing. Please provide it in your wallet.`,
-            );
-            return;
-        }
         if (account.authType === LoginTypes.walletConnect) {
             openCurrentWalletIfExist();
         }
