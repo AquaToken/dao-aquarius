@@ -251,6 +251,9 @@ const CustomWithdraw = ({ pool, accountShare, rewards, close }: Props) => {
                     thousandSeparator=","
                     decimalScale={token.decimal}
                     allowNegative={false}
+                    disabled={
+                        token.type !== TokenType.soroban && account.getAssetBalance(token) === null
+                    }
                 />
             ))}
 
@@ -271,6 +274,12 @@ const CustomWithdraw = ({ pool, accountShare, rewards, close }: Props) => {
             {isInsufficient && (
                 <ErrorMessage text="The withdraw amount requested exceeds the amount of pool shares available" />
             )}
+
+            {pool.tokens
+                .filter(token => token.type === TokenType.classic)
+                .map(token => (
+                    <NoTrustline asset={token} key={token.contract} />
+                ))}
 
             <Divider />
 

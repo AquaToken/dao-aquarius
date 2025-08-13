@@ -171,15 +171,6 @@ const SingleTokenWithdraw = ({ pool, rewards, accountShare, close }: Props) => {
     };
 
     const withdraw = async () => {
-        if (
-            selectedToken.type === TokenType.classic &&
-            account.getAssetBalance(selectedToken) === null
-        ) {
-            ToastService.showErrorToast(
-                `${selectedToken.code} trustline missing. Please provide it in your wallet.`,
-            );
-            return;
-        }
         if (account.authType === LoginTypes.walletConnect) {
             openCurrentWalletIfExist();
         }
@@ -358,6 +349,8 @@ const SingleTokenWithdraw = ({ pool, rewards, accountShare, close }: Props) => {
                 )}
             </Summary>
 
+            {selectedToken.type === TokenType.classic && <NoTrustline asset={selectedToken} />}
+
             <Divider />
 
             {Boolean(rewards) && (
@@ -374,7 +367,11 @@ const SingleTokenWithdraw = ({ pool, rewards, accountShare, close }: Props) => {
                 isBig
                 pending={pending}
                 onClick={() => withdraw()}
-                disabled={!Number(percent)}
+                disabled={
+                    !Number(percent) ||
+                    (selectedToken.type === TokenType.classic &&
+                        account.getAssetBalance(selectedToken) === null)
+                }
             >
                 Remove
             </StyledButton>
