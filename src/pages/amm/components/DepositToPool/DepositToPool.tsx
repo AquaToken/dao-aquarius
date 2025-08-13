@@ -636,7 +636,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                     </FormRow>
                 ))}
 
-                {pool.pool_type === 'stable' && (
+                {pool.pool_type === 'stable' && Number(pool.total_share) && (
                     <CheckboxStyled
                         checked={isBalancedDeposit}
                         onChange={setIsBalancedDeposit}
