@@ -257,13 +257,19 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
         [amounts],
     );
 
+    const isValidForDepositAmounts = useMemo(() => {
+        const hasSomeAmount = [...amounts.values()].some(value => Boolean(+value));
+
+        return isBalancedDeposit ? hasAllAmounts : hasSomeAmount;
+    }, [hasAllAmounts, isBalancedDeposit, amounts]);
+
     const { sharesBefore, sharesAfter, sharesAfterValue } = useMemo(() => {
         const totalShare = Number(pool.total_share) / Math.pow(10, pool.share_token_decimals);
 
         if (!reserves || reserves.size === 0 || totalShare === 0) {
             return {
                 sharesBefore: 0,
-                sharesAfter: null,
+                sharesAfter: isValidForDepositAmounts ? 100 : null,
                 sharesAfterValue: null,
             };
         }
@@ -328,7 +334,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
             sharesAfter,
             sharesAfterValue,
         };
-    }, [amounts, pool, reserves, accountShare]);
+    }, [amounts, pool, reserves, accountShare, isValidForDepositAmounts]);
 
     const rates: Map<string, string> = useMemo(() => {
         if (Number(pool.total_share) === 0 && !hasAllAmounts) {
