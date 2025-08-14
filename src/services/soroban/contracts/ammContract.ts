@@ -478,13 +478,14 @@ export function getSingleCoinWithdrawTx(
     shareAmount: string,
     tokenIndex: number,
     minimumTokenAmount: string,
+    tokenDecimals: number,
     shareAddress: string,
 ): Promise<StellarSdk.Transaction> {
     const args = [
         publicKeyToScVal(accountId),
         amountToUint128(shareAmount),
         amountToUint32(tokenIndex),
-        amountToUint128(minimumTokenAmount),
+        amountToUint128(minimumTokenAmount, tokenDecimals),
     ];
     return buildSingleWithdrawTx(
         accountId,
@@ -502,13 +503,14 @@ export function getSingleTokenWithdrawAndClaim(
     shareAmount: string,
     tokenIndex: number,
     minimumTokenAmount: string,
+    tokenDecimals: number,
     shareAddress: string,
 ): Promise<StellarSdk.Transaction> {
     const withdrawArgs = [
         publicKeyToScVal(accountId),
         amountToUint128(shareAmount),
         amountToUint32(tokenIndex),
-        amountToUint128(minimumTokenAmount),
+        amountToUint128(minimumTokenAmount, tokenDecimals),
     ];
     return buildWithdrawAndClaimTx(
         accountId,
@@ -525,11 +527,16 @@ export function getCustomWithdrawTx(
     poolAddress: string,
     shareAmountMaximum: string,
     amounts: Map<string, string>,
+    tokens: Token[],
     shareAddress: string,
 ): Promise<StellarSdk.Transaction> {
     const args = [
         publicKeyToScVal(accountId),
-        scValToArray([...amounts.values()].map(value => amountToUint128(value || '0'))),
+        scValToArray(
+            [...amounts.values()].map((value, index) =>
+                amountToUint128(value || '0', tokens[index].decimal),
+            ),
+        ),
         amountToUint128(shareAmountMaximum),
     ];
     return buildSingleWithdrawTx(
@@ -547,11 +554,16 @@ export function getCustomWithdrawAndClaim(
     poolAddress: string,
     shareAmountMaximum: string,
     amounts: Map<string, string>,
+    tokens: Token[],
     shareAddress: string,
 ): Promise<StellarSdk.Transaction> {
     const withdrawArgs = [
         publicKeyToScVal(accountId),
-        scValToArray([...amounts.values()].map(value => amountToUint128(value || '0'))),
+        scValToArray(
+            [...amounts.values()].map((value, index) =>
+                amountToUint128(value || '0', tokens[index].decimal),
+            ),
+        ),
         amountToUint128(shareAmountMaximum),
     ];
     return buildWithdrawAndClaimTx(
@@ -569,11 +581,16 @@ export async function estimateCustomWithdraw(
     poolAddress: string,
     shareAmountMaximum: string,
     amounts: Map<string, string>,
+    tokens: Token[],
     shareAddress: string,
 ) {
     const args = [
         publicKeyToScVal(accountId),
-        scValToArray([...amounts.values()].map(value => amountToUint128(value || '0'))),
+        scValToArray(
+            [...amounts.values()].map((value, index) =>
+                amountToUint128(value || '0', tokens[index].decimal),
+            ),
+        ),
         amountToUint128(shareAmountMaximum),
     ];
     const tx = await buildSingleWithdrawTx(

@@ -106,9 +106,10 @@ const CustomWithdraw = ({ pool, accountShare, rewards, close }: Props) => {
     }, []);
 
     const onInputChange = (token, amount) => {
+        const value = amount.replaceAll(',', '');
         const map = new Map(amounts.entries());
 
-        map.set(token.contract, amount);
+        map.set(token.contract, value);
 
         setEstimatedValue(null);
         setAmounts(map);
@@ -138,6 +139,7 @@ const CustomWithdraw = ({ pool, accountShare, rewards, close }: Props) => {
             pool.address,
             accountShare,
             debouncedAmounts,
+            pool.tokens,
             pool.share_token_address,
         )
             .then(res => {
@@ -163,6 +165,7 @@ const CustomWithdraw = ({ pool, accountShare, rewards, close }: Props) => {
                       pool.address,
                       sharesToRemove,
                       amounts,
+                      pool.tokens,
                       pool.share_token_address,
                   )
                 : await SorobanService.amm.getCustomWithdrawTx(
@@ -170,6 +173,7 @@ const CustomWithdraw = ({ pool, accountShare, rewards, close }: Props) => {
                       pool.address,
                       sharesToRemove,
                       amounts,
+                      pool.tokens,
                       pool.share_token_address,
                   );
 

@@ -59,7 +59,8 @@ const InputStyled = styled(Input)`
 
     ${respondDown(Breakpoints.sm)`
         input {
-            padding: 1.2rem;
+            padding: 1rem;
+            font-size: 1.4rem;
         }
     `}
 `;
@@ -151,6 +152,9 @@ const SingleTokenWithdraw = ({ pool, rewards, accountShare, close }: Props) => {
 
     useEffect(() => {
         setEstimateWithdraw(null);
+    }, [percent]);
+
+    useEffect(() => {
         SorobanService.amm
             .getSingleTokenWithdrawEstimate(
                 pool.address,
@@ -202,6 +206,7 @@ const SingleTokenWithdraw = ({ pool, rewards, accountShare, close }: Props) => {
                       shareToWithdraw,
                       tokenIndex,
                       minimumAmount,
+                      selectedToken.decimal,
                       pool.share_token_address,
                   )
                 : await SorobanService.amm.getSingleCoinWithdrawTx(
@@ -210,6 +215,7 @@ const SingleTokenWithdraw = ({ pool, rewards, accountShare, close }: Props) => {
                       shareToWithdraw,
                       tokenIndex,
                       minimumAmount,
+                      selectedToken.decimal,
                       pool.share_token_address,
                   );
 
@@ -366,7 +372,8 @@ const SingleTokenWithdraw = ({ pool, rewards, accountShare, close }: Props) => {
                 disabled={
                     !Number(percent) ||
                     (selectedToken.type === TokenType.classic &&
-                        account.getAssetBalance(selectedToken) === null)
+                        account.getAssetBalance(selectedToken) === null) ||
+                    !estimateWithdraw
                 }
             >
                 Remove

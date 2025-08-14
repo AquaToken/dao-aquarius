@@ -56,7 +56,8 @@ const InputStyled = styled(Input)`
 
     ${respondDown(Breakpoints.sm)`
         input {
-            padding: 1.2rem;
+            padding: 1rem;
+            font-size: 1.4rem;
         }
     `}
 `;
