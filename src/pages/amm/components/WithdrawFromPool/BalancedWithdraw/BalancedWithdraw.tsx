@@ -53,6 +53,12 @@ const FormRow = styled.div`
 
 const InputStyled = styled(Input)`
     flex: 1;
+
+    ${respondDown(Breakpoints.sm)`
+        input {
+            padding: 1.2rem;
+        }
+    `}
 `;
 
 const RangeInputStyled = styled(RangeInput)`
