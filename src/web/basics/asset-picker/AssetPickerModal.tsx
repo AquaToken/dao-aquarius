@@ -62,7 +62,7 @@ const DefaultAsset = styled.div`
 const AssetsList = styled.div`
     display: flex;
     flex-direction: column;
-    height: 50vh;
+    max-height: 40vh;
     ${customScroll};
     overflow-y: auto;
     margin-top: 2.5rem;
@@ -71,7 +71,7 @@ const AssetsList = styled.div`
         margin-bottom: 1rem;
         height: 40rem;
         width: 100%;
-    `}}
+    `};
 `;
 
 const AssetStyled = styled(Asset)<{ $isLogged: boolean }>`

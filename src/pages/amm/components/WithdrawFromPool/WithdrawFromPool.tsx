@@ -29,7 +29,7 @@ import RangeInput from 'basics/inputs/RangeInput';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
 import Market from 'basics/Market';
-import { ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
+import { ModalTitle, ModalWrapper, StickyButtonWrapper } from 'basics/ModalAtoms';
 
 import NoTrustline from 'components/NoTrustline';
 
@@ -287,9 +287,11 @@ const WithdrawFromPool = ({ params, close }: ModalProps<{ pool: PoolExtended }>)
 
                     {withClaim && <NoTrustline asset={aquaStellarAsset} />}
 
-                    <StyledButton isBig pending={pending} onClick={() => withdraw()}>
-                        Remove
-                    </StyledButton>
+                    <StickyButtonWrapper>
+                        <StyledButton isBig pending={pending} onClick={() => withdraw()}>
+                            Remove
+                        </StyledButton>
+                    </StickyButtonWrapper>
                 </>
             )}
         </ModalWrapper>
