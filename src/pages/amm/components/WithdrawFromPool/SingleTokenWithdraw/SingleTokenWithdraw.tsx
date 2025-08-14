@@ -59,7 +59,7 @@ const InputStyled = styled(Input)`
 `;
 
 const RangeInputStyled = styled(RangeInput)`
-    flex: 3;
+    flex: 2.8;
 `;
 
 const TokenPicker = styled.div`
@@ -127,7 +127,7 @@ interface Props {
 const SingleTokenWithdraw = ({ pool, rewards, accountShare, close }: Props) => {
     const [percent, setPercent] = useState('100');
     const [pending, setPending] = useState(false);
-    const [withClaim, setWithClaim] = useState(true);
+    const [withClaim, setWithClaim] = useState(false);
     const [selectedToken, setSelectedToken] = useState(pool.tokens[0]);
     const [estimateWithdraw, setEstimateWithdraw] = useState(null);
 

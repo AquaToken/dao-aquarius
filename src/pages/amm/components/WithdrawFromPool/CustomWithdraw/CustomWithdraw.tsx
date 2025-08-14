@@ -80,7 +80,7 @@ interface Props {
 
 const CustomWithdraw = ({ pool, accountShare, rewards, close }: Props) => {
     const [amounts, setAmounts] = useState(new Map());
-    const [withClaim, setWithClaim] = useState(true);
+    const [withClaim, setWithClaim] = useState(false);
     const [isInsufficient, setIsInsufficient] = useState(false);
     const [estimatedValue, setEstimatedValue] = useState(null);
     const [pending, setPending] = useState(false);
@@ -90,6 +90,12 @@ const CustomWithdraw = ({ pool, accountShare, rewards, close }: Props) => {
     const { aquaStellarAsset } = getAquaAssetData();
 
     const { account } = useAuthStore();
+
+    useEffect(() => {
+        if (rewards) {
+            setWithClaim(true);
+        }
+    }, [rewards]);
 
     useEffect(() => {
         const map = new Map();

@@ -56,7 +56,7 @@ const InputStyled = styled(Input)`
 `;
 
 const RangeInputStyled = styled(RangeInput)`
-    flex: 3;
+    flex: 2.8;
 `;
 
 const Details = styled.div<{ $withBorder: boolean }>`

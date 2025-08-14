@@ -320,7 +320,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
 
         // Final share increase in percentage
         const addedSharePercent = totalDelta * 100;
-        const sharesAfter = sharesBefore + addedSharePercent;
+        const sharesAfter = Math.min(sharesBefore + addedSharePercent, 100);
         const sharesAfterValue = (sharesAfter / 100) * totalShare;
 
         return {
