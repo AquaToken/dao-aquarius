@@ -65,11 +65,9 @@ const ClaimAllModal = ({ params, close }: ModalProps<ClaimAllModalParams>) => {
             ) : (
                 <>
                     <EmptyList>You don't have unlocked votes</EmptyList>
-                    <StickyButtonWrapper>
-                        <Button fullWidth onClick={() => close()}>
-                            close
-                        </Button>
-                    </StickyButtonWrapper>
+                    <Button fullWidth onClick={() => close()}>
+                        close
+                    </Button>
                 </>
             )}
         </ModalWrapper>
