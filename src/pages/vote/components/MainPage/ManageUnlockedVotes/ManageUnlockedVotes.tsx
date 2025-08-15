@@ -60,7 +60,7 @@ const ClaimAllModal = ({ params, close }: ModalProps<ClaimAllModalParams>) => {
         <ModalWrapper $isWide>
             <ModalTitle>Manage unlocked votes</ModalTitle>
             <ModalDescription>View your unlocked votes and claim back</ModalDescription>
-            {!claims.length ? (
+            {claims.length ? (
                 <VotesList votes={claims} withoutClaimDate />
             ) : (
                 <>
