@@ -26,7 +26,7 @@ import Button from 'basics/buttons/Button';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
 import Market from 'basics/Market';
-import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
+import { ModalDescription, ModalTitle, ModalWrapper, StickyButtonWrapper } from 'basics/ModalAtoms';
 
 import PathPool from './PathPool/PathPool';
 
@@ -297,9 +297,11 @@ const SwapConfirmModal = ({
             </Pools>
 
             <Divider />
-            <Button fullWidth isBig pending={swapPending} onClick={() => swap()}>
-                Confirm Swap
-            </Button>
+            <StickyButtonWrapper>
+                <Button fullWidth isBig pending={swapPending} onClick={() => swap()}>
+                    Confirm Swap
+                </Button>
+            </StickyButtonWrapper>
         </ModalWrapper>
     );
 };
