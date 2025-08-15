@@ -3,13 +3,14 @@ import styled from 'styled-components';
 import { customScroll, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-export const ModalWrapper = styled.div<{ $isWide?: boolean; $width?: string }>`
+export const ModalWrapper = styled.div<{ $isWide?: boolean; $width?: string; $minHeight?: string }>`
     width: ${({ $isWide, $width }) => $width ?? ($isWide ? '75.2rem' : '52.3rem')};
     padding: 0 1rem;
     overflow-y: scroll;
     overflow-x: hidden;
     ${customScroll};
 
+    min-height: ${({ $minHeight }) => $minHeight ?? 'auto'};
     max-height: calc(95vh - 11.2rem); // 11.2rem = 6.4rem top padding + 4.8rem bottom margin
 
     ${respondDown(Breakpoints.md)`
