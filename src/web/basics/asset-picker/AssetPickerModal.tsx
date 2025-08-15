@@ -62,7 +62,7 @@ const DefaultAsset = styled.div`
 const AssetsList = styled.div`
     display: flex;
     flex-direction: column;
-    max-height: 40vh;
+    max-height: 45vh;
     ${customScroll};
     overflow-y: auto;
     margin-top: 2.5rem;
@@ -93,7 +93,7 @@ const AssetItem = styled.div`
 
     ${respondDown(Breakpoints.md)`
         width: 100%;
-    `}}
+    `};
 `;
 
 const Balances = styled.div`
@@ -133,7 +133,7 @@ const LoaderWrapper = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 40vh;
+    min-height: 45vh;
     margin-top: 2.5rem;
 `;
 
@@ -239,7 +239,7 @@ const AssetPickerModal = ({ params, confirm }: ModalProps<Props>) => {
     };
 
     return (
-        <ModalWrapper $minHeight="67vh">
+        <ModalWrapper $minHeight="75vh">
             <ModalTitle>Choose asset</ModalTitle>
             <StyledInput
                 placeholder="Search asset or enter home domain"
