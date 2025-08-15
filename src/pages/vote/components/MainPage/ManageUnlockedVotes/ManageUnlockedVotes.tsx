@@ -60,14 +60,16 @@ const ClaimAllModal = ({ params, close }: ModalProps<ClaimAllModalParams>) => {
         <ModalWrapper $isWide>
             <ModalTitle>Manage unlocked votes</ModalTitle>
             <ModalDescription>View your unlocked votes and claim back</ModalDescription>
-            {claims.length ? (
+            {!claims.length ? (
                 <VotesList votes={claims} withoutClaimDate />
             ) : (
                 <>
                     <EmptyList>You don't have unlocked votes</EmptyList>
-                    <Button fullWidth onClick={() => close()}>
-                        close
-                    </Button>
+                    <StickyButtonWrapper>
+                        <Button fullWidth onClick={() => close()}>
+                            close
+                        </Button>
+                    </StickyButtonWrapper>
                 </>
             )}
         </ModalWrapper>
