@@ -35,16 +35,16 @@ import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
 import Label from 'basics/Label';
 import DotsLoader from 'basics/loaders/DotsLoader';
-import { ModalTitle } from 'basics/ModalAtoms';
+import { ModalTitle, ModalWrapper, StickyButtonWrapper } from 'basics/ModalAtoms';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import SuccessModal from '../SuccessModal/SuccessModal';
 
 const Container = styled.div<{ $isModal: boolean }>`
-    width: ${({ $isModal }) => ($isModal ? '52.3rem' : '100%')};
+    width: 100%;
     max-height: 82vh;
     overflow: auto;
-    padding-top: ${({ $isModal }) => ($isModal ? '0' : '4rem')};
+    padding-top: 4rem;
 
     ${customScroll};
 
@@ -510,9 +510,20 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
         }
     }, []);
 
-    return (
-        <Container $isModal={isModal}>
-            {isModal && <ModalTitle>Add liquidity</ModalTitle>}
+    const ButtonAdd = (
+        <Button
+            isBig
+            fullWidth
+            onClick={() => onSubmit()}
+            pending={pending}
+            disabled={!hasAllAmounts}
+        >
+            deposit
+        </Button>
+    );
+
+    const content = (
+        <>
             {Number(pool.total_share) === 0 && (
                 <Alert
                     title="This is the first deposit into this pool."
@@ -719,16 +730,18 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                     ))}
                 </PoolInfo>
 
-                <Button
-                    isBig
-                    onClick={() => onSubmit()}
-                    pending={pending}
-                    disabled={!hasAllAmounts}
-                >
-                    deposit
-                </Button>
+                {isModal ? <StickyButtonWrapper>{ButtonAdd}</StickyButtonWrapper> : ButtonAdd}
             </Form>
-        </Container>
+        </>
+    );
+
+    return isModal ? (
+        <ModalWrapper>
+            <ModalTitle>Add liquidity</ModalTitle>
+            {content}
+        </ModalWrapper>
+    ) : (
+        <Container $isModal={isModal}>{content}</Container>
     );
 };
 

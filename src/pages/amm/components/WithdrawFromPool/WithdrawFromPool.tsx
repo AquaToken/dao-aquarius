@@ -29,23 +29,11 @@ import RangeInput from 'basics/inputs/RangeInput';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
 import Market from 'basics/Market';
-import { ModalTitle } from 'basics/ModalAtoms';
+import { ModalTitle, ModalWrapper, StickyButtonWrapper } from 'basics/ModalAtoms';
 
 import NoTrustline from 'components/NoTrustline';
 
 import SuccessModal from '../SuccessModal/SuccessModal';
-
-const Container = styled.div`
-    width: 52.3rem;
-    max-height: 95vh;
-    overflow-y: auto;
-    ${customScroll};
-
-    ${respondDown(Breakpoints.md)`
-        width: 100%;
-        max-height: unset;
-    `}
-`;
 
 export const PairContainer = styled.div`
     display: flex;
@@ -249,7 +237,7 @@ const WithdrawFromPool = ({ params, close }: ModalProps<{ pool: PoolExtended }>)
     };
 
     return (
-        <Container>
+        <ModalWrapper>
             {accountShare === null ? (
                 <PageLoader />
             ) : (
@@ -299,12 +287,14 @@ const WithdrawFromPool = ({ params, close }: ModalProps<{ pool: PoolExtended }>)
 
                     {withClaim && <NoTrustline asset={aquaStellarAsset} />}
 
-                    <StyledButton isBig pending={pending} onClick={() => withdraw()}>
-                        Remove
-                    </StyledButton>
+                    <StickyButtonWrapper>
+                        <StyledButton isBig pending={pending} onClick={() => withdraw()}>
+                            Remove
+                        </StyledButton>
+                    </StickyButtonWrapper>
                 </>
             )}
-        </Container>
+        </ModalWrapper>
     );
 };
 

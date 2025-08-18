@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
@@ -15,23 +14,15 @@ import Stellar from 'assets/xlm-logo.svg';
 import AccountBlock from 'basics/AccountBlock';
 import { Button } from 'basics/buttons';
 import CopyButton from 'basics/buttons/CopyButton';
-import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 import { flexAllCenter, respondDown } from '../mixins';
 import { Breakpoints, COLORS } from '../styles';
 
-const Container = styled.div`
-    width: 52.8rem;
-
-    a {
-        text-decoration: none;
-        display: block;
-        margin-bottom: 1.4rem;
-    }
-
-    ${respondDown(Breakpoints.md)`
-        width: 100%;
-    `}
+const LinkLab = styled.a`
+    text-decoration: none;
+    display: block;
+    margin-bottom: 1.4rem;
 `;
 
 const Title = styled(ModalTitle)`
@@ -135,7 +126,7 @@ const SignWithPublic = ({ params, confirm }: ModalProps<Props>) => {
     }, []);
 
     return (
-        <Container>
+        <ModalWrapper>
             <AccountBlock accountId={accountId} federation={federation} />
             <Title>Sign with Stellar Laboratory</Title>
             <ModalDescription>
@@ -143,7 +134,7 @@ const SignWithPublic = ({ params, confirm }: ModalProps<Props>) => {
                     ? 'Please continue with Stellar Laboratory using one of the supported methods, sign the transaction, and paste the signed transaction below.'
                     : 'Please continue and submit transaction with Stellar Laboratory using one of the supported methods (Ledger, Trezor, Freighter, Albedo or secret key).'}
             </ModalDescription>
-            <a
+            <LinkLab
                 href={`https://lab.stellar.org/transaction/sign?$=network$id=mainnet&label=Mainnet&horizonUrl=https:////horizon.stellar.org&rpcUrl=&passphrase=Public%20Global%20Stellar%20Network%20/;%20September%202015;&transaction$sign$activeView=overview&importXdr=${xdr.replaceAll(
                     '/',
                     '//',
@@ -163,7 +154,7 @@ const SignWithPublic = ({ params, confirm }: ModalProps<Props>) => {
                     </ActionMain>
                     <ArrowRightIcon />
                 </ActionContainer>
-            </a>
+            </LinkLab>
 
             <CopyStyled text={xdr} withoutLogo>
                 <ActionContainer>
@@ -197,7 +188,7 @@ const SignWithPublic = ({ params, confirm }: ModalProps<Props>) => {
                     </Button>
                 </>
             )}
-        </Container>
+        </ModalWrapper>
     );
 };
 

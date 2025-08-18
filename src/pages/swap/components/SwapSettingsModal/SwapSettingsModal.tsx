@@ -11,15 +11,7 @@ import { Breakpoints, COLORS } from 'web/styles';
 import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
-import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
-
-const Container = styled.div`
-    width: 52.3rem;
-
-    ${respondDown(Breakpoints.md)`
-        width: 100%;
-    `}
-`;
+import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 const FormRow = styled.div`
     display: flex;
@@ -58,7 +50,7 @@ const SwapSettingsModal = ({ close }: ModalProps<never>): React.ReactNode => {
     };
 
     return (
-        <Container>
+        <ModalWrapper>
             <ModalTitle>Transaction settings</ModalTitle>
             <ModalDescription>
                 Swap transactions will fail if the price changes unfavorably during processing by
@@ -90,7 +82,7 @@ const SwapSettingsModal = ({ close }: ModalProps<never>): React.ReactNode => {
             <Button fullWidth isBig onClick={() => onSave()}>
                 Save
             </Button>
-        </Container>
+        </ModalWrapper>
     );
 };
 

@@ -26,21 +26,13 @@ import Alert from 'basics/Alert';
 import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
 import Select, { Option } from 'basics/inputs/Select';
-import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 import { ProposalSimple } from 'pages/governance/api/types';
 
 import { checkProposalStatus, publishProposal } from '../../../api/api';
 import { APPROVED_PROPOSAL_REWARD, CREATE_PROPOSAL_COST } from '../../../pages/GovernanceMainPage';
 import { DAY } from '../ProposalCreation/ProposalCreation';
-
-const Container = styled.div`
-    width: 52.8rem;
-
-    ${respondDown(Breakpoints.md)`
-        width: 100%;
-    `}
-`;
 
 const Description = styled(ModalDescription)`
     width: 100%;
@@ -209,7 +201,7 @@ const PublishProposalModal = ({
     };
 
     return (
-        <Container>
+        <ModalWrapper>
             <ModalTitle>Publish proposal</ModalTitle>
             <Description>
                 To submit a proposal, <b>a fee of {cost} AQUA is required.</b> Once published, the
@@ -247,7 +239,7 @@ const PublishProposalModal = ({
                     transaction is signed"
                 />
             )}
-        </Container>
+        </ModalWrapper>
     );
 };
 
