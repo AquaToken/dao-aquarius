@@ -1,13 +1,18 @@
-import axios from 'axios';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import QRCode from 'react-qr-code';
 import styled from 'styled-components';
 
+import { getWalletsList } from 'api/wallet-connect';
+
 import { isAndroid, isIOS, isMobile } from 'helpers/browser';
 import { clearCurrentWallet, saveCurrentWallet } from 'helpers/wallet-connect-helpers';
 
 import { ModalProps } from 'types/modal';
+import { Wallet } from 'types/wallet-connect';
+
+import { flexAllCenter, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
 
 import ArrowRight from 'assets/icon-arrow-right.svg';
 
@@ -16,9 +21,6 @@ import CopyButton from 'basics/buttons/CopyButton';
 import ExternalLink from 'basics/ExternalLink';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
-
-import { flexAllCenter, respondDown } from '../../mixins';
-import { Breakpoints, COLORS } from '../../styles';
 
 const QRContainer = styled.div`
     width: 100%;
@@ -91,36 +93,6 @@ const ArrowRightIcon = styled(ArrowRight)`
     margin-left: auto;
 `;
 
-type Listings = { [id: string]: Wallet };
-type Wallet = {
-    app: {
-        browser: string;
-        ios: string;
-        android: string;
-        mac: string;
-        windows: string;
-        linux: string;
-    };
-    chains: string[];
-    description: string;
-    desktop: { native: string; universal: string };
-    homepage: string;
-    id: string;
-    metadata: { shortName: string; colors: { primary: string; secondary: string } };
-    mobile: { native: string; universal: string };
-    name: string;
-    versions: string[];
-    image_url: {
-        lg: string;
-        md: string;
-        sm: string;
-    };
-};
-
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
-const registryUrl = `https://explorer-api.walletconnect.com/v3/wallets?projectId=${process.variable.WALLET_CONNECT_PROJECT_ID}`;
-
 enum ModalStates {
     mobile = 'mobile',
     qr = 'qr',
@@ -151,21 +123,9 @@ const QRModal = ({ params }: ModalProps<{ uri: string }>): React.ReactNode => {
 
     useEffect(() => {
         if (isIOS()) {
-            axios
-                .get<{ listings: Listings }>(registryUrl)
-                .then(({ data }) =>
-                    Object.values(data.listings).filter(
-                        wallet =>
-                            wallet.versions.includes('2') &&
-                            wallet.chains.includes('stellar:pubnet') &&
-                            // TODO remove this hardcode
-                            // Hide "SafePal" until they fix compatibility issues
-                            wallet.name !== 'SafePal',
-                    ),
-                )
-                .then(res => {
-                    setWallets(res);
-                });
+            getWalletsList().then(res => {
+                setWallets(res);
+            });
         }
     }, []);
 

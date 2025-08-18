@@ -2,13 +2,11 @@ import styled from 'styled-components';
 
 import { D_ICE_CODE, DOWN_ICE_CODE, ICE_ISSUER, UP_ICE_CODE } from 'constants/assets';
 
-import { getAquaAssetData } from 'helpers/assets';
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
 
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Aqua from 'assets/aqua-logo-small.svg';
 import DIce from 'assets/dice-logo.svg';
 import Ice from 'assets/ice-logo.svg';
 import IconDown from 'assets/icon-down-percent.svg';
@@ -160,12 +158,6 @@ const DIceLogo = styled(DIce)`
     margin-right: 0.5rem;
 `;
 
-const AquaLogo = styled(Aqua)`
-    height: 1.8rem;
-    width: 1.8rem;
-    margin-right: 0.5rem;
-`;
-
 const TokenAmount = styled.div`
     ${flexAllCenter};
 `;
@@ -178,8 +170,6 @@ export const getPercent = (value: string, total: string): string => {
 };
 
 const VoteAmount = ({ pair, totalStats }: { pair: PairStats; totalStats: TotalStats }) => {
-    const { aquaAssetString } = getAquaAssetData();
-
     if (!pair.votes_value) {
         return null;
     }
@@ -193,10 +183,6 @@ const VoteAmount = ({ pair, totalStats }: { pair: PairStats; totalStats: TotalSt
         ? getPercent(pair.adjusted_votes_value, totalStats.adjusted_votes_value_sum)
         : null;
 
-    const upAqua =
-        pair.extra.upvote_assets.find(({ asset }) => asset === aquaAssetString)?.votes_sum ?? 0;
-    const downAqua =
-        pair.extra.downvote_assets.find(({ asset }) => asset === aquaAssetString)?.votes_sum ?? 0;
     const upIce =
         pair.extra.upvote_assets.find(({ asset }) => asset === `${UP_ICE_CODE}:${ICE_ISSUER}`)
             ?.votes_sum ?? 0;
@@ -229,13 +215,6 @@ const VoteAmount = ({ pair, totalStats }: { pair: PairStats; totalStats: TotalSt
                             {formatBalance(+dIce, true)}
                         </TokenAmount>
                     </TooltipRow>
-                    <TooltipRow>
-                        <span>AQUA:</span>
-                        <TokenAmount>
-                            <AquaLogo />
-                            {formatBalance(+upAqua, true)}
-                        </TokenAmount>
-                    </TooltipRow>
                     <TooltipRowTitle>
                         <span>Downvotes:</span>
                         <span>{formatBalance(+pair.downvote_value, true)}</span>
@@ -245,13 +224,6 @@ const VoteAmount = ({ pair, totalStats }: { pair: PairStats; totalStats: TotalSt
                         <TokenAmount>
                             <IceLogo />
                             {formatBalance(+downIce, true)}
-                        </TokenAmount>
-                    </TooltipRow>
-                    <TooltipRow>
-                        <span>AQUA:</span>
-                        <TokenAmount>
-                            <AquaLogo />
-                            {formatBalance(+downAqua, true)}
                         </TokenAmount>
                     </TooltipRow>
                     <TooltipRowTitle>

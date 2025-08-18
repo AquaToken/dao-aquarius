@@ -14,11 +14,11 @@ import BigNumber from 'bignumber.js';
 import { getPoolInfo } from 'api/amm';
 
 import {
+    ALL_ICE_ASSETS,
     ASSETS_ENV_DATA,
     D_ICE_CODE,
     DOWN_ICE_CODE,
     GOV_ICE_CODE,
-    ICE_ASSETS,
     ICE_CODE,
     ICE_ISSUER,
     UP_ICE_CODE,
@@ -35,7 +35,6 @@ import { getHorizonUrl } from 'helpers/url';
 import { Asset, StellarToml } from 'types/stellar';
 import { ClassicToken, TokenType } from 'types/token';
 
-import { validateMarketKeys } from 'pages/vote/api/api';
 import { PairStats } from 'pages/vote/api/types';
 
 import EventService from './event.service';
@@ -623,41 +622,6 @@ export default class StellarServiceClass {
         }, []);
     }
 
-    getAquaInLiquidityVotes(accountId: string): Promise<number> {
-        if (!this.claimableBalances) {
-            return Promise.resolve(null);
-        }
-
-        const keys = this.getKeysSimilarToMarketKeys(accountId);
-
-        return validateMarketKeys(keys).then(marketPairs =>
-            this.claimableBalances.reduce((acc, claim) => {
-                if (claim.claimants.length !== 2) {
-                    return acc;
-                }
-                const hasUpMarker = claim.claimants.some(claimant =>
-                    Boolean(marketPairs.find(pair => pair.account_id === claimant.destination)),
-                );
-
-                const hasDownMarker = claim.claimants.some(claimant =>
-                    Boolean(
-                        marketPairs.find(pair => pair.downvote_account_id === claimant.destination),
-                    ),
-                );
-
-                const selfClaim = claim.claimants.find(
-                    claimant => claimant.destination === accountId,
-                );
-                const isAqua = claim.asset === aquaAssetString;
-
-                if ((hasUpMarker || hasDownMarker) && Boolean(selfClaim) && isAqua) {
-                    acc += Number(claim.amount);
-                }
-                return acc;
-            }, 0),
-        );
-    }
-
     getAirdrop2Claims() {
         if (!this.claimableBalances) {
             return null;
@@ -744,7 +708,7 @@ export default class StellarServiceClass {
     }
 
     processIceTx(tx, asset) {
-        if (![...ICE_ASSETS, `${D_ICE_CODE}:${ICE_ISSUER}`].includes(getAssetString(asset))) {
+        if (!ALL_ICE_ASSETS.includes(getAssetString(asset))) {
             return tx;
         }
 

@@ -2,9 +2,14 @@ import { Dispatch } from 'react';
 
 import { getAssetsInfo, getAssetsRequest } from 'api/assets';
 
-import { TESTNET_ASSETS } from 'constants/assets';
+import { ALL_ICE_ASSETS, TESTNET_ASSETS } from 'constants/assets';
 
-import { getAquaAssetData, getAssetString, getUsdcAssetData } from 'helpers/assets';
+import {
+    getAquaAssetData,
+    getAssetFromString,
+    getAssetString,
+    getUsdcAssetData,
+} from 'helpers/assets';
 import { getIsTestnetEnv } from 'helpers/env';
 
 import { StellarService } from 'services/globalServices';
@@ -70,6 +75,10 @@ export function processNewAssets(assets: Token[] | AssetSimple[]) {
                     (asset as ClassicToken | AssetSimple).issuer,
                 ).isNative(),
         ) as ClassicToken[] | AssetSimple[];
+
+        if (!cached.has(ALL_ICE_ASSETS[0])) {
+            newAssets.push(...ALL_ICE_ASSETS.map(str => getAssetFromString(str) as ClassicToken));
+        }
 
         if (getIsTestnetEnv()) {
             if (!cached.has(TESTNET_ASSETS.keys()[0])) {

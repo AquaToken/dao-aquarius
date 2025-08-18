@@ -5,7 +5,6 @@ import styled, { css } from 'styled-components';
 import { GOV_ICE_CODE, ICE_ISSUER } from 'constants/assets';
 import { LockerRoutes } from 'constants/routes';
 
-import { getAquaAssetData } from 'helpers/assets';
 import { getDateString } from 'helpers/date';
 import ErrorHandler from 'helpers/error-handler';
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
@@ -16,16 +15,14 @@ import { useIsMounted } from 'hooks/useIsMounted';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { ModalService, StellarService, ToastService } from 'services/globalServices';
+import { StellarService, ToastService } from 'services/globalServices';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { ModalProps } from 'types/modal';
 
 import { flexAllCenter, flexRowSpaceBetween } from 'web/mixins';
-import GetAquaModal from 'web/modals/GetAquaModal';
 import { COLORS } from 'web/styles';
 
-import Aqua from 'assets/aqua-logo-small.svg';
 import Ice from 'assets/ice-logo.svg';
 import Fail from 'assets/icon-fail.svg';
 import Success from 'assets/icon-success.svg';
@@ -39,7 +36,6 @@ import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 import { SimpleProposalOptions } from '../../../pages/GovernanceVoteProposalPage';
 
-const MINIMUM_AMOUNT = 0.0000001;
 const MINIMUM_ICE_AMOUNT = 10;
 
 const ContentRow = styled.div`
@@ -81,12 +77,6 @@ const BalanceBlock = styled.span`
 const Balance = styled.span`
     color: ${COLORS.tooltip};
     cursor: pointer;
-`;
-
-const AquaLogo = styled(Aqua)`
-    margin-right: 0.8rem;
-    height: 3.2rem;
-    width: 3.2rem;
 `;
 
 const IceLogo = styled(Ice)`
@@ -135,33 +125,23 @@ const GetAquaLabel = styled.span`
     color: ${COLORS.grayText};
 `;
 
-const GetAquaLink = styled.div`
-    font-size: 1.4rem;
-`;
-
-const RATIO = 2;
-const { aquaStellarAsset } = getAquaAssetData();
-
 const GOV_ICE = StellarService.createAsset(GOV_ICE_CODE, ICE_ISSUER);
 
-const OPTIONS = [
-    { label: 'AQUA', value: aquaStellarAsset, icon: <AquaLogo /> },
-    { label: 'ICE', value: GOV_ICE, icon: <IceLogo /> },
-];
+const OPTIONS = [{ label: 'ICE', value: GOV_ICE, icon: <IceLogo /> }];
 
 const ConfirmVoteModal = ({
     params,
     close,
 }: ModalProps<{ option: string; key: string; endDate: string; startDate: string }>) => {
     const { account } = useAuthStore();
-    const { option, key, endDate, startDate } = params;
+    const { option, key, endDate } = params;
 
     const isMounted = useIsMounted();
 
     const [percent, setPercent] = useState(0);
     const [amount, setAmount] = useState('');
     const [pending, setPending] = useState(false);
-    const [targetAsset, setTargetAsset] = useState(aquaStellarAsset);
+    const [targetAsset, setTargetAsset] = useState(GOV_ICE);
 
     const targetBalance = useMemo(() => account?.getAssetBalance(targetAsset), [targetAsset]);
 
@@ -170,11 +150,7 @@ const ConfirmVoteModal = ({
 
     const formattedBalance = hasTrustLine && formatBalance(targetBalance);
 
-    const now = Date.now();
-    const unlockDate =
-        targetAsset === aquaStellarAsset
-            ? new Date(endDate).getTime() + RATIO * (now - new Date(startDate).getTime())
-            : new Date(endDate).getTime() + 60 * 60 * 1000;
+    const unlockDate = new Date(endDate).getTime() + 60 * 60 * 1000;
 
     useEffect(() => {
         setAmount('');
@@ -206,19 +182,13 @@ const ConfirmVoteModal = ({
         }
         if (Number(amount) > Number(targetBalance)) {
             ToastService.showErrorToast(
-                `The value must be less or equal than ${formattedBalance} AQUA`,
+                `The value must be less or equal than ${formattedBalance} ${targetAsset.code}`,
             );
             return;
         }
-        if (Number(amount) < MINIMUM_AMOUNT) {
+        if (Number(amount) < MINIMUM_ICE_AMOUNT) {
             ToastService.showErrorToast(
-                `The value must be greater than ${MINIMUM_AMOUNT.toFixed(7)} AQUA`,
-            );
-            return;
-        }
-        if (Number(amount) < MINIMUM_ICE_AMOUNT && targetAsset === GOV_ICE) {
-            ToastService.showErrorToast(
-                `The value must be greater than ${MINIMUM_ICE_AMOUNT} ${GOV_ICE.code}`,
+                `The value must be greater than ${MINIMUM_ICE_AMOUNT} ${targetAsset.code}`,
             );
             return;
         }
@@ -263,7 +233,7 @@ const ConfirmVoteModal = ({
         <ModalWrapper>
             <ModalTitle>Confirm vote</ModalTitle>
             <ModalDescription>
-                Your AQUA will be locked until the voting ends. Please check the details carefully.
+                Your ICE will be locked until the voting ends. Please check the details carefully.
             </ModalDescription>
             <ContentRow>
                 <Label>Your vote:</Label>
@@ -316,15 +286,10 @@ const ConfirmVoteModal = ({
             ) : (
                 <GetAquaBlock>
                     <GetAquaLabel>You don&apos;t have enough {targetAsset.code}</GetAquaLabel>
-                    {targetAsset === aquaStellarAsset ? (
-                        <ExternalLink onClick={() => ModalService.openModal(GetAquaModal, {})}>
-                            <GetAquaLink>Get AQUA</GetAquaLink>
-                        </ExternalLink>
-                    ) : (
-                        <ExternalLink asDiv>
-                            <Link to={LockerRoutes.main}>Get ICE</Link>
-                        </ExternalLink>
-                    )}
+
+                    <ExternalLink asDiv>
+                        <Link to={LockerRoutes.main}>Get ICE</Link>
+                    </ExternalLink>
                 </GetAquaBlock>
             )}
 

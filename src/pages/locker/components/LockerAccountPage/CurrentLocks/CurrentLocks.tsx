@@ -91,7 +91,6 @@ interface CurrentLocksProps {
     distributions: AccountIceDistribution[];
     ammAquaBalance: number;
     aquaInOffers: number;
-    aquaInVotes: number;
 }
 
 const CurrentLocks = ({
@@ -100,7 +99,6 @@ const CurrentLocks = ({
     distributions,
     ammAquaBalance,
     aquaInOffers,
-    aquaInVotes,
 }: CurrentLocksProps): React.ReactNode => {
     const locksSum = locks.reduce((acc, lock) => {
         acc += Number(lock.amount);
@@ -108,8 +106,8 @@ const CurrentLocks = ({
     }, 0);
 
     const total = useMemo(
-        () => locksSum + aquaBalance + aquaInOffers + ammAquaBalance + aquaInVotes,
-        [locksSum, aquaBalance, aquaInOffers, ammAquaBalance, aquaInVotes],
+        () => locksSum + aquaBalance + aquaInOffers + ammAquaBalance,
+        [locksSum, aquaBalance, aquaInOffers, ammAquaBalance],
     );
 
     const availablePercent = useMemo(
@@ -120,7 +118,6 @@ const CurrentLocks = ({
         () => roundToPrecision((aquaInOffers / total) * 100, 2),
         [total],
     );
-    const inVotesPercent = useMemo(() => roundToPrecision((aquaInVotes / total) * 100, 2), [total]);
     const ammPercent = useMemo(() => roundToPrecision((ammAquaBalance / total) * 100, 2), [total]);
 
     const lockPercent = useMemo(() => roundToPrecision((locksSum / total) * 100, 2), [total]);
@@ -162,12 +159,6 @@ const CurrentLocks = ({
                                     <span>In AMM pools:</span>
                                     <span>
                                         {formatBalance(ammAquaBalance, true)} ({ammPercent}%)
-                                    </span>
-                                </TooltipRow>
-                                <TooltipRow>
-                                    <span>In votes:</span>
-                                    <span>
-                                        {formatBalance(aquaInVotes, true)} ({inVotesPercent}%)
                                     </span>
                                 </TooltipRow>
                                 <TooltipRow>
