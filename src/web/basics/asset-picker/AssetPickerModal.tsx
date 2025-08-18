@@ -3,8 +3,6 @@ import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
-import { getAssetsList } from 'api/amm';
-
 import { USDx_CODE, USDx_ISSUER } from 'constants/assets';
 
 import { getAquaAssetData, getAssetString, getUsdcAssetData } from 'helpers/assets';
@@ -15,7 +13,7 @@ import useAssetsSearch from 'hooks/useAssetsSearch';
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { SorobanService, StellarService } from 'services/globalServices';
+import { StellarService } from 'services/globalServices';
 
 import { ModalProps } from 'types/modal';
 import { ClassicToken, Token, TokenType } from 'types/token';
@@ -25,7 +23,7 @@ import { Breakpoints, COLORS } from 'web/styles';
 
 import Asset from 'basics/Asset';
 import { Input } from 'basics/inputs';
-import { CircleLoader } from 'basics/loaders';
+import { CircleLoader, PageLoader } from 'basics/loaders';
 import { ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 const StyledInput = styled(Input)`
@@ -147,64 +145,36 @@ const AssetPickerModal = ({ params, confirm }: ModalProps<Props>) => {
     const [search, setSearch] = useState('');
 
     const [balances, setBalances] = useState([]);
-    const [customTokensBalances, setCustomTokensBalances] = useState(new Map());
 
     const { account, isLogged } = useAuthStore();
     const { assetsInfo } = useAssetsStore();
 
     const { assetsList, onUpdate } = params;
 
-    const getCustomTokensBalances = async () => {
-        const list = await getAssetsList();
-        const sorobanTokens = list.filter(({ type }) => type === TokenType.soroban);
-
-        if (!sorobanTokens.length) {
-            return;
-        }
-        const balances = await Promise.all(
-            sorobanTokens.map(({ contract }) =>
-                SorobanService.getTokenBalance(contract, account.accountId()),
-            ),
-        );
-
-        const map = new Map();
-        sorobanTokens.forEach((token, index) => {
-            map.set(token.contract, balances[index]);
-        });
-        setCustomTokensBalances(map);
-    };
-
     useEffect(() => {
         if (!account) {
             setBalances([]);
-            setCustomTokensBalances(new Map());
             return;
         }
-        getCustomTokensBalances();
         account.getSortedBalances().then(res => {
             setBalances(res);
         });
     }, [account]);
 
+    // get balances with tokens pooled into AMM
     const filteredBalances =
-        balances.filter(balance =>
-            assetsList?.find(
-                knownAssets =>
-                    knownAssets.code === balance.code &&
-                    (knownAssets as ClassicToken).issuer === balance.issuer,
-            ),
+        balances.filter(({ token }) =>
+            assetsList?.find(knownAssets => knownAssets.contract === token.contract),
         ) ?? [];
 
     const assets = [
         ...filteredBalances,
-        ...(assetsList?.filter(
-            knownAssets =>
-                !filteredBalances.find(
-                    asset =>
-                        knownAssets.code === asset.code &&
-                        (knownAssets as ClassicToken).issuer === asset.issuer,
-                ),
-        ) || []),
+        ...(assetsList
+            ?.filter(
+                knownAsset =>
+                    !filteredBalances.find(asset => asset.token.contract === knownAsset.contract),
+            )
+            .map(token => ({ token })) || []),
     ];
 
     const { searchResults, searchPending } = useAssetsSearch(search);
@@ -213,23 +183,28 @@ const AssetPickerModal = ({ params, confirm }: ModalProps<Props>) => {
         () =>
             [
                 ...assets,
-                ...searchResults.filter(
-                    token => !assets.find(asset => getAssetString(asset) === getAssetString(token)),
-                ),
-            ].filter(assetItem => {
-                const assetString = getAssetString(
-                    assetItem.type === TokenType.soroban
-                        ? assetItem
-                        : StellarService.createAsset(assetItem.code, assetItem.issuer),
-                );
+                ...searchResults
+                    .filter(
+                        token =>
+                            !assets.find(
+                                asset =>
+                                    asset.token.code === token.code &&
+                                    asset.token.issuer === token.issuer,
+                            ),
+                    )
+                    .map(token => ({ token })),
+            ].filter(item => {
+                const assetString = getAssetString(item.token);
+
                 const assetInfo =
-                    assetItem.type === TokenType.classic ? assetsInfo.get(assetString) : null;
+                    item.token.type === TokenType.classic ? assetsInfo.get(assetString) : null;
 
                 return (
                     assetString === search ||
-                    assetItem.code.toLowerCase().includes(search.toLowerCase()) ||
+                    item.token.contract === search ||
+                    item.token.code.toLowerCase().includes(search.toLowerCase()) ||
                     (StellarSdk.StrKey.isValidEd25519PublicKey(search) &&
-                        assetItem.issuer?.toLowerCase().includes(search.toLowerCase())) ||
+                        item.token.issuer?.toLowerCase().includes(search.toLowerCase())) ||
                     assetInfo?.home_domain
                         ?.toLowerCase()
                         .includes(search.toLowerCase().replace('www.', ''))
@@ -263,40 +238,37 @@ const AssetPickerModal = ({ params, confirm }: ModalProps<Props>) => {
                     </DefaultAsset>
                 ))}
             </DefaultAssets>
-            <AssetsList>
-                {filteredAssets.map(asset => (
-                    <AssetItem key={asset.code + asset.issuer} onClick={() => chooseAsset(asset)}>
-                        <AssetStyled asset={asset} $isLogged={isLogged} />
-                        {(
-                            asset.type === TokenType.soroban
-                                ? customTokensBalances.has(asset.contract)
-                                : asset.balance
-                        ) ? (
-                            <Balances>
-                                <span>
-                                    {formatBalance(
-                                        asset.type === TokenType.soroban
-                                            ? customTokensBalances.get(asset.contract)
-                                            : asset.balance,
-                                    )}{' '}
-                                    {asset.code}
-                                </span>
-                                {asset.nativeBalance && (
+            {account && !balances.length ? (
+                <AssetsList>
+                    <PageLoader />
+                </AssetsList>
+            ) : (
+                <AssetsList>
+                    {filteredAssets.map(({ token, balance, nativeBalance }) => (
+                        <AssetItem key={token.contract} onClick={() => chooseAsset(token)}>
+                            <AssetStyled asset={token} $isLogged={isLogged} />
+                            {Number(balance) ? (
+                                <Balances>
                                     <span>
-                                        $
-                                        {formatBalance(
-                                            +(
-                                                asset.nativeBalance * StellarService.priceLumenUsd
-                                            ).toFixed(2),
-                                            true,
-                                        )}
+                                        {formatBalance(balance)} {token.code}
                                     </span>
-                                )}
-                            </Balances>
-                        ) : null}
-                    </AssetItem>
-                ))}
-            </AssetsList>
+                                    {nativeBalance !== null && (
+                                        <span>
+                                            $
+                                            {formatBalance(
+                                                +(
+                                                    nativeBalance * StellarService.priceLumenUsd
+                                                ).toFixed(2),
+                                                true,
+                                            )}
+                                        </span>
+                                    )}
+                                </Balances>
+                            ) : null}
+                        </AssetItem>
+                    ))}
+                </AssetsList>
+            )}
         </ModalWrapper>
     );
 };

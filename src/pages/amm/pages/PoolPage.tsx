@@ -1,3 +1,4 @@
+import { xdr } from '@stellar/stellar-sdk';
 import { useEffect, useRef, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import styled from 'styled-components';
@@ -5,9 +6,11 @@ import styled from 'styled-components';
 import { getPool } from 'api/amm';
 
 import { ChartPeriods } from 'constants/charts';
+import { MarketRoutes } from 'constants/routes';
 
-import { getAquaAssetData } from 'helpers/assets';
-import { getIsTestnetEnv } from 'helpers/env';
+import { contractValueToAmount } from 'helpers/amount';
+import { getAquaAssetData, getAssetString } from 'helpers/assets';
+import getExplorerLink, { ExplorerSection } from 'helpers/explorer-links';
 import { formatBalance } from 'helpers/format-number';
 import { truncateString } from 'helpers/truncate-string';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
@@ -21,8 +24,8 @@ import { SorobanService, ToastService } from 'services/globalServices';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { PoolExtended } from 'types/amm';
-import { Asset, Int128Parts } from 'types/stellar';
-import { TokenType } from 'types/token';
+import { Asset } from 'types/stellar';
+import { SorobanToken, TokenType } from 'types/token';
 
 import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -164,6 +167,11 @@ const Chart = styled.div`
     background-color: ${COLORS.lightGray};
 `;
 
+const Links = styled.div`
+    display: flex;
+    gap: 3.2rem;
+`;
+
 const ExternalLinkStyled = styled(ExternalLink)`
     margin-top: 1.6rem;
 `;
@@ -234,7 +242,7 @@ const PoolPage = () => {
 
         SorobanService.getClaimRewardsTx(account.accountId(), pool.address)
             .then(tx => account.signAndSubmitTx(tx, true))
-            .then((res: { status?: BuildSignAndSubmitStatuses; value: () => Int128Parts }) => {
+            .then((res: { status?: BuildSignAndSubmitStatuses }) => {
                 if (!res) {
                     return;
                 }
@@ -246,7 +254,7 @@ const PoolPage = () => {
                     ToastService.showSuccessToast('More signatures required to complete');
                     return;
                 }
-                const value = SorobanService.i128ToInt(res.value());
+                const value = SorobanService.i128ToInt(res as xdr.ScVal);
 
                 ToastService.showSuccessToast(`Claimed ${formatBalance(+value)} AQUA`);
                 setClaimPending(false);
@@ -282,13 +290,23 @@ const PoolPage = () => {
                         withoutLink
                         mobileVerticalDirections
                     />
-                    <ExternalLinkStyled
-                        href={`https://stellar.expert/explorer/${
-                            getIsTestnetEnv() ? 'testnet' : 'public'
-                        }/contract/${pool.address}`}
-                    >
-                        View on Explorer
-                    </ExternalLinkStyled>
+                    <Links>
+                        {pool.tokens.length === 2 &&
+                            pool.tokens.every(({ type }) => type !== TokenType.soroban) && (
+                                <ExternalLinkStyled
+                                    to={`${MarketRoutes.main}/${getAssetString(
+                                        pool.tokens[0],
+                                    )}/${getAssetString(pool.tokens[1])}/`}
+                                >
+                                    View Market
+                                </ExternalLinkStyled>
+                            )}
+                        <ExternalLinkStyled
+                            href={getExplorerLink(ExplorerSection.contract, pool.address)}
+                        >
+                            View on Explorer
+                        </ExternalLinkStyled>
+                    </Links>
                 </Section>
                 <Sidebar pool={pool} />
 
@@ -360,13 +378,24 @@ const PoolPage = () => {
                             <SectionRow key={pool.tokens_addresses[index]}>
                                 <SectionLabel>Total {asset.code}:</SectionLabel>
                                 <span>
-                                    {formatBalance(+pool.reserves[index] / 1e7, true)} {asset.code}
+                                    {formatBalance(
+                                        +contractValueToAmount(
+                                            pool.reserves[index],
+                                            (pool.tokens[index] as SorobanToken).decimal,
+                                        ),
+                                    )}{' '}
+                                    {asset.code}
                                 </span>
                             </SectionRow>
                         ))}
                         <SectionRow>
                             <SectionLabel>Total share:</SectionLabel>
-                            <span>{formatBalance(+pool.total_share / 1e7, true)}</span>
+                            <span>
+                                {formatBalance(
+                                    +pool.total_share / Math.pow(10, pool.share_token_decimals),
+                                    true,
+                                )}
+                            </span>
                         </SectionRow>
                         <SectionRow>
                             <SectionLabel>Members: </SectionLabel>

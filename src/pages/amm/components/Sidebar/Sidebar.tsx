@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { contractValueToAmount } from 'helpers/amount';
 import { getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 
@@ -10,6 +11,7 @@ import useAuthStore from 'store/authStore/useAuthStore';
 import { ModalService, SorobanService } from 'services/globalServices';
 
 import { PoolExtended } from 'types/amm';
+import { SorobanToken } from 'types/token';
 
 import { cardBoxShadow, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
@@ -184,10 +186,21 @@ const Sidebar = ({ pool }: { pool: PoolExtended }) => {
                                     <span>
                                         {Number(pool.total_share)
                                             ? formatBalance(
-                                                  ((Number(pool.reserves[index]) / 1e7) *
-                                                      accountShare) /
-                                                      (Number(pool.total_share) / 1e7),
-                                                  true,
+                                                  +(
+                                                      (Number(
+                                                          contractValueToAmount(
+                                                              pool.reserves[index],
+                                                              (pool.tokens[index] as SorobanToken)
+                                                                  .decimal,
+                                                          ),
+                                                      ) *
+                                                          accountShare) /
+                                                      (Number(pool.total_share) /
+                                                          Math.pow(10, pool.share_token_decimals))
+                                                  ).toFixed(
+                                                      (pool.tokens[index] as SorobanToken)
+                                                          .decimal ?? 7,
+                                                  ),
                                               )
                                             : '0'}{' '}
                                         <Asset asset={asset} onlyLogoSmall />

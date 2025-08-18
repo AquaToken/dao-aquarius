@@ -2,11 +2,11 @@ import AccountRecord, * as StellarSdk from '@stellar/stellar-sdk';
 import { Horizon } from '@stellar/stellar-sdk';
 import BigNumber from 'bignumber.js';
 
-import { getNativePrices } from 'api/amm';
+import { getCustomTokens, getNativePrices } from 'api/amm';
 
-import { ASSETS_ENV_DATA, ICE_ASSETS } from 'constants/assets';
+import { ASSETS_ENV_DATA, DEFAULT_ICE_ASSETS } from 'constants/assets';
 
-import { getAssetFromString, getAssetString } from 'helpers/assets';
+import { getAssetFromString } from 'helpers/assets';
 import { getEnv, getNetworkPassphrase } from 'helpers/env';
 
 import { LoginTypes } from 'store/authStore/types';
@@ -201,13 +201,11 @@ export default class AccountService extends Horizon.AccountResponse {
             });
     }
 
-    getAssetBalance(asset: SorobanToken): Promise<number>;
+    getAssetBalance(asset: SorobanToken): Promise<string>;
     getAssetBalance(asset: ClassicToken, ignoreReserves?: boolean): number | null;
-    getAssetBalance(asset: Token, ignoreReserves?: boolean): number | null | Promise<number> {
+    getAssetBalance(asset: Token, ignoreReserves?: boolean): number | null | Promise<string> {
         if (asset.type === TokenType.soroban) {
-            return SorobanService.getTokenBalance(asset.contract, this.account_id).then(res =>
-                Number(res),
-            );
+            return SorobanService.getTokenBalance(asset.contract, this.account_id).then(res => res);
         }
         if (asset.isNative()) {
             const nativeBalance = this.balances.find(
@@ -273,16 +271,14 @@ export default class AccountService extends Horizon.AccountResponse {
             (lp as unknown as PoolClassicProcessed).fee = 0.003;
         });
 
-        const prices = await getNativePrices(
-            [...assetsSet].map(str => getAssetFromString(str as string)) as ClassicToken[],
-        );
+        const prices = await getNativePrices();
 
         liquidityPoolsForAccount.forEach(lp => {
             (lp as unknown as PoolClassicProcessed).liquidity = (
                 lp as unknown as PoolClassicProcessed
             ).tokens
                 .reduce((acc, asset, index) => {
-                    const price = prices.get(getAssetString(asset as ClassicToken)) ?? 0;
+                    const price = prices.get(asset.contractId(getNetworkPassphrase())) ?? 0;
 
                     const amount = Number(lp.reserves[index]) * Number(price);
 
@@ -311,7 +307,7 @@ export default class AccountService extends Horizon.AccountResponse {
     }
 
     hasAllIceTrustlines() {
-        return ICE_ASSETS.map(asset => {
+        return DEFAULT_ICE_ASSETS.map(asset => {
             const [code, issuer] = asset.split(':');
             const stellarAsset = StellarService.createAsset(code, issuer);
             return this.getAssetBalance(stellarAsset);
@@ -319,7 +315,7 @@ export default class AccountService extends Horizon.AccountResponse {
     }
 
     getUntrustedIceAssets() {
-        return ICE_ASSETS.reduce((acc, asset) => {
+        return DEFAULT_ICE_ASSETS.reduce((acc, asset) => {
             const [code, issuer] = asset.split(':');
             const stellarAsset = StellarService.createAsset(code, issuer);
             if (this.getAssetBalance(stellarAsset) === null) {
@@ -374,48 +370,56 @@ export default class AccountService extends Horizon.AccountResponse {
     }
 
     async getSortedBalances() {
-        const assetsBalances = this.balances.filter(
+        const classicAssetsBalances = this.balances.filter(
             (asset): asset is Horizon.HorizonApi.BalanceLineAsset =>
                 asset.asset_type !== 'liquidity_pool_shares' && asset.asset_type !== 'native',
         );
         const nativeBalanceInstance = this.balances.find(
             ({ asset_type }) => asset_type === 'native',
         );
-        const nativePrices = await getNativePrices(
-            assetsBalances.map(({ asset_code, asset_issuer }) =>
-                StellarService.createAsset(asset_code, asset_issuer),
+
+        const knownCustomTokens = await getCustomTokens();
+        const customUserBalances = await Promise.all(
+            knownCustomTokens.map(token =>
+                SorobanService.getTokenBalance(token.contract, this.account_id),
             ),
         );
 
-        const balances = assetsBalances
-            .map(balance => {
-                const asset = StellarService.createAsset(balance.asset_code, balance.asset_issuer);
-                const assetString = getAssetString(asset);
+        const nativePrices = await getNativePrices();
 
-                return {
-                    ...balance,
-                    nativeBalance: nativePrices.has(assetString)
-                        ? +balance.balance * +nativePrices.get(assetString)
-                        : 0,
-                    code: balance.asset_code,
-                    issuer: balance.asset_issuer,
-                    asset: StellarService.createAsset(balance.asset_code, balance.asset_issuer),
-                };
-            })
-            .sort(
-                (a, b) =>
-                    b.nativeBalance - a.nativeBalance ||
-                    +b.balance - +a.balance ||
-                    a.asset_code.localeCompare(b.asset_code),
-            );
+        const classicBalances = classicAssetsBalances.map(balance => {
+            const asset = StellarService.createAsset(balance.asset_code, balance.asset_issuer);
+            const contract = asset.contractId(getNetworkPassphrase());
+
+            return {
+                balance: balance.balance,
+                nativeBalance: nativePrices.has(contract)
+                    ? +balance.balance * +nativePrices.get(contract)
+                    : 0,
+                token: StellarService.createAsset(balance.asset_code, balance.asset_issuer),
+            };
+        });
+
+        const customBalances = knownCustomTokens
+            .map((token, index) => ({
+                balance: customUserBalances[index],
+                nativeBalance: +customUserBalances[index] * +nativePrices.get(token.contract),
+                token,
+            }))
+            .filter(({ balance }) => !!Number(balance));
+
+        const balances = [...customBalances, ...classicBalances].sort(
+            (a, b) =>
+                b.nativeBalance - a.nativeBalance ||
+                +b.balance - +a.balance ||
+                a.token.code.localeCompare(b.token.code),
+        );
 
         return [
             {
-                ...nativeBalanceInstance,
+                balance: nativeBalanceInstance.balance,
                 nativeBalance: +nativeBalanceInstance.balance,
-                code: 'XLM',
-                issuer: undefined,
-                asset: StellarService.createLumen(),
+                token: StellarService.createLumen(),
             },
             ...balances,
         ];

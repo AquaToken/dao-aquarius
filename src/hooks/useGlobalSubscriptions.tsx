@@ -1,24 +1,28 @@
+import { FREIGHTER_ID } from '@creit.tech/stellar-wallets-kit';
 import { Horizon } from '@stellar/stellar-sdk';
 import { useEffect, useRef } from 'react';
 
 import { LS_FREIGHTER_ACCOUNT_CHANGE_IMMEDIATELY } from 'constants/local-storage';
+import { MainRoutes } from 'constants/routes';
+import { LOBSTR_CONNECTION_KEY } from 'constants/session-storage';
 
 import PromisedTimeout from 'helpers/promised-timeout';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
+import { clearSavedAuthData, getSavedAuthData } from 'store/authStore/auth-helpers';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { AssetsEvent } from 'services/assets.service';
 import {
+    AssetsService,
     LedgerService,
-    SorobanService,
     LobstrExtensionService,
+    ModalService,
+    SorobanService,
     StellarService,
     ToastService,
     WalletConnectService,
-    AssetsService,
-    ModalService,
     WalletKitService,
 } from 'services/globalServices';
 import { LedgerEvents } from 'services/ledger.service';
@@ -26,6 +30,7 @@ import { LobstrExtensionEvents } from 'services/lobstr-extension.service';
 import { StellarEvents } from 'services/stellar.service';
 import { WalletKitEvents } from 'services/wallet-kit.service';
 
+import { TokenType } from 'types/token';
 import { WalletConnectEvents } from 'types/wallet-connect';
 
 import FreighterAccountChangedModal from 'web/modals/FreighterAccountChangedModal';
@@ -52,9 +57,51 @@ export default function useGlobalSubscriptions(): void {
     const accountRef = useRef(account);
 
     useEffect(() => {
+        const { pubKey, loginType, walletKitId, lobstrConnectionKey, bipPath } = getSavedAuthData();
+
+        if (!loginType) {
+            return;
+        }
+
+        if (loginType === LoginTypes.walletKit) {
+            WalletKitService.restoreLogin(walletKitId, pubKey);
+            login({ pubKey, loginType, walletKitId });
+
+            return;
+        }
+
+        if (loginType === LoginTypes.walletConnect) {
+            WalletConnectService.onAppStart(window.location.pathname === MainRoutes.walletConnect);
+            return;
+        }
+
+        if (loginType === LoginTypes.secret) {
+            clearSavedAuthData();
+            return;
+        }
+
+        if (loginType === LoginTypes.ledger) {
+            LedgerService.reLogin(bipPath, pubKey);
+            return;
+        }
+
+        if (loginType === LoginTypes.lobstr) {
+            // save connection key to session storage
+            sessionStorage.setItem(LOBSTR_CONNECTION_KEY, lobstrConnectionKey);
+        }
+
+        login({ pubKey, loginType });
+    }, []);
+
+    useEffect(() => {
         const unsub = WalletConnectService.event.sub(event => {
             if (event.type === WalletConnectEvents.login) {
-                login(event.publicKey, LoginTypes.walletConnect, event.metadata, event.topic);
+                login({
+                    pubKey: event.publicKey,
+                    loginType: LoginTypes.walletConnect,
+                    metadata: event.metadata,
+                    topic: event.topic,
+                });
             }
             if (event.type === WalletConnectEvents.logout) {
                 ModalService.closeAllModals();
@@ -70,7 +117,11 @@ export default function useGlobalSubscriptions(): void {
     useEffect(() => {
         const unsub = LedgerService.event.sub(event => {
             if (event.type === LedgerEvents.login) {
-                login(event.publicKey, LoginTypes.ledger);
+                login({
+                    pubKey: event.publicKey,
+                    loginType: LoginTypes.ledger,
+                    bipPath: event.bipPath,
+                });
             }
             if (event.type === LedgerEvents.logout) {
                 logout();
@@ -89,14 +140,18 @@ export default function useGlobalSubscriptions(): void {
         await PromisedTimeout(500);
 
         enableRedirect(path);
-        login(publicKey, LoginTypes.walletKit);
+        login({ pubKey: publicKey, loginType: LoginTypes.walletKit, walletKitId: FREIGHTER_ID });
         WalletKitService.startFreighterWatching(publicKey);
     };
 
     useEffect(() => {
         const unsub = WalletKitService.event.sub(event => {
             if (event.type === WalletKitEvents.login) {
-                login(event.publicKey, LoginTypes.walletKit);
+                login({
+                    pubKey: event.publicKey,
+                    loginType: LoginTypes.walletKit,
+                    walletKitId: event.id,
+                });
             }
 
             if (event.type === WalletKitEvents.accountChanged) {
@@ -124,7 +179,10 @@ export default function useGlobalSubscriptions(): void {
     useEffect(() => {
         const unsub = LobstrExtensionService.event.sub(event => {
             if (event.type === LobstrExtensionEvents.login) {
-                login(event.publicKey, LoginTypes.lobstr);
+                login({
+                    pubKey: event.publicKey,
+                    loginType: LoginTypes.lobstr,
+                });
             }
         });
 
@@ -172,7 +230,8 @@ export default function useGlobalSubscriptions(): void {
     useEffect(() => {
         if (account) {
             account.getSortedBalances().then(res => {
-                processNewAssets(res.map(({ asset }) => asset));
+                const classicTokens = res.filter(({ token }) => token.type === TokenType.classic);
+                processNewAssets(classicTokens.map(({ token }) => token));
             });
             return;
         }

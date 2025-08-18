@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
 
@@ -22,6 +21,8 @@ import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
 import Table, { CellAlign } from 'basics/Table';
 
 import { PairStats } from '../../../api/types';
+import { getIceMaxApy } from 'helpers/ice';
+import { MAX_X_ICE_BOOST } from 'constants/ice';
 
 const ModalContainer = styled.div`
     width: 80.6rem;
@@ -54,6 +55,7 @@ const BribeDetails = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+
     padding: 3.8rem;
     background: ${COLORS.lightGray};
     border-radius: 0.5rem;
@@ -79,10 +81,7 @@ export const BribeDetailsMain = styled.div`
 export const BribeDetail = styled.div`
     display: flex;
     flex-direction: column;
-
-    &:not(:last-child) {
-        margin-right: 7.7rem;
-    }
+    flex: auto;
 
     ${respondDown(Breakpoints.md)`
         margin: 2.4rem 0;
@@ -183,6 +182,7 @@ const BribesModal = ({ params }: ModalProps<{ pair: PairStats }>) => {
     }, 0);
 
     const apy = (sum / Number(pair.upvote_value) + 1) ** 365 - 1;
+    const maxApy = getIceMaxApy({ apy });
 
     const { start_at, stop_at } = pair.aggregated_bribes[0];
 
@@ -219,7 +219,7 @@ const BribesModal = ({ params }: ModalProps<{ pair: PairStats }>) => {
                     <BribeDetail>
                         <BribeDetailTitle>Bribes APY:</BribeDetailTitle>
                         <BribeDetailValue>
-                            {formatBalance(+(apy * 100).toFixed(2), true)}%
+                            up to {formatBalance(+maxApy.toFixed(2), true)}%
                         </BribeDetailValue>
                     </BribeDetail>
 
@@ -228,18 +228,12 @@ const BribesModal = ({ params }: ModalProps<{ pair: PairStats }>) => {
                 {showHowItWorks && (
                     <HowItWorks>
                         <HowItWorksText>
-                            Bribes are paid out during a 7 day period. They are divided among all
-                            participants in the voting for the market pair. Bribes are issued in the
-                            currency indicated by the creator of the bribe, in order to receive them
-                            you need to have an open trustline.
+                            Bribes are divided among all participants in the voting for the market
+                            pair. Make sure you have an open trustline to the bribe reward asset to
+                            receive your share. Maximum bribe APY is displayed for fully locked ICE
+                            ({MAX_X_ICE_BOOST} ICE per AQUA).
                         </HowItWorksText>
                         <HowItWorksFooter>
-                            <ExternalLinkWeb href="https://medium.com/aquarius-aqua/introducing-aquarius-bribes-6b0931dc3dd7">
-                                Learn more about Aquarius Bribes
-                            </ExternalLinkWeb>
-                            <ExternalLinkMobile href="https://medium.com/aquarius-aqua/introducing-aquarius-bribes-6b0931dc3dd7">
-                                Learn more
-                            </ExternalLinkMobile>
                             <CloseButton onClick={() => setShowHowItWorks(false)}>
                                 <span>Close</span>
                                 <Close />

@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import styled from 'styled-components';
 
 import { GOV_ICE_CODE, ICE_CODE, ICE_ISSUER } from 'constants/assets';
+import { MAX_BOOST, MAX_BOOST_PERIOD } from 'constants/ice';
 
 import { formatBalance } from 'helpers/format-number';
 
@@ -174,11 +175,6 @@ const SmallLogo = styled(IceLogo)`
     height: 2rem;
     margin-right: 0.5rem;
 `;
-
-export const MAX_BOOST = 9;
-export const MAX_BOOST_PERIOD = 3 * 365 * 24 * 60 * 60 * 1000;
-export const MIN_BOOST_PERIOD = 24 * 60 * 60 * 1000;
-export const MAX_LOCK_PERIOD = 10 * 365 * 24 * 60 * 60 * 1000;
 
 export const roundMsToDays = (timestamp: number) => Math.floor(timestamp / (24 * 60 * 60 * 1000));
 

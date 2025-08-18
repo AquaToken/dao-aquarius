@@ -7,6 +7,7 @@ import { getPoolMembersCount, getPoolStats } from 'api/amm';
 
 import { ChartPeriods } from 'constants/charts';
 
+import { contractValueToAmount } from 'helpers/amount';
 import { formatBalance } from 'helpers/format-number';
 import { truncateString } from 'helpers/truncate-string';
 
@@ -15,6 +16,7 @@ import { POOL_TYPE } from 'services/soroban.service';
 
 import { PoolClassicProcessed, PoolExtended, PoolProcessed, PoolUserProcessed } from 'types/amm';
 import { Asset as AssetType } from 'types/stellar';
+import { SorobanToken } from 'types/token';
 
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import MigrateLiquidityStep1 from 'web/modals/migrate-liquidity/MigrateLiquidityStep1';
@@ -487,12 +489,15 @@ const PoolsList = ({
                                             </ExpandedDataRow>
                                         )}
 
-                                        {pool.tokens.map((asset: AssetType, index: number) => (
+                                        {pool.tokens.map((asset, index: number) => (
                                             <ExpandedDataRow key={asset.code + asset.issuer}>
                                                 <span>Total {asset.code}:</span>
                                                 <span>
                                                     {formatBalance(
-                                                        +pool.reserves[index] / 1e7,
+                                                        +contractValueToAmount(
+                                                            pool.reserves[index],
+                                                            (asset as SorobanToken).decimal,
+                                                        ),
                                                         true,
                                                     )}
                                                     <Asset asset={asset} onlyLogoSmall />

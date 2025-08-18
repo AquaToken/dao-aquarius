@@ -96,12 +96,12 @@ export enum ProfileTabs {
 
 const OPTIONS = [
     { label: 'Balances', value: ProfileTabs.balances },
-    { label: 'My liquidity', value: ProfileTabs.liquidity },
-    { label: 'SDEX rewards', value: ProfileTabs.sdex },
+    { label: 'My Liquidity', value: ProfileTabs.liquidity },
+    { label: 'SDEX Rewards', value: ProfileTabs.sdex },
     { label: 'My Liquidity Votes', value: ProfileTabs.your },
     { label: 'Governance Votes', value: ProfileTabs.governance },
-    { label: 'ICE locks', value: ProfileTabs.iceLocks },
-    { label: 'Payments history', value: ProfileTabs.history },
+    { label: 'ICE Locks', value: ProfileTabs.iceLocks },
+    { label: 'Payments History', value: ProfileTabs.history },
 ];
 
 const Profile = () => {

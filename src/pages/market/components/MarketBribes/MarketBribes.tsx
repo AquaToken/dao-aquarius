@@ -54,7 +54,7 @@ enum BribeBlockStates {
 }
 
 const OPTIONS = [
-    { label: 'This week', value: BribeBlockStates.current },
+    { label: 'This Week', value: BribeBlockStates.current },
     { label: 'Upcoming', value: BribeBlockStates.upcoming },
 ];
 

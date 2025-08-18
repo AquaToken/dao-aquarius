@@ -1,3 +1,4 @@
+import { FREIGHTER_ID } from '@creit.tech/stellar-wallets-kit';
 import * as React from 'react';
 import { useState } from 'react';
 import { flushSync } from 'react-dom';
@@ -77,7 +78,7 @@ const FreighterAccountChangedModal = ({ params, close }: ModalProps<Props>) => {
         });
 
         enableRedirect(path);
-        login(publicKey, LoginTypes.walletKit);
+        login({ pubKey: publicKey, loginType: LoginTypes.walletKit, walletKitId: FREIGHTER_ID });
         WalletKitService.startFreighterWatching(publicKey);
     };
 

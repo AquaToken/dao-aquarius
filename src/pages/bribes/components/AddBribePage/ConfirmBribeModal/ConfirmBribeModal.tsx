@@ -8,15 +8,17 @@ import ErrorHandler from 'helpers/error-handler';
 import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
-import { AssetSimple } from 'store/assetsStore/types';
+import { useIsMounted } from 'hooks/useIsMounted';
+
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { ModalProps } from 'types/modal';
-
-import { useIsMounted } from 'hooks/useIsMounted';
 import { StellarService, ToastService } from 'services/globalServices';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
+
+import { ModalProps } from 'types/modal';
+import { ClassicToken } from 'types/token';
+
 import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -81,9 +83,9 @@ const ConfirmBribeModal = ({
     params,
     close,
 }: ModalProps<{
-    base: AssetSimple;
-    counter: AssetSimple;
-    rewardAsset: AssetSimple;
+    base: ClassicToken;
+    counter: ClassicToken;
+    rewardAsset: ClassicToken;
     amount: string;
     startDate: Date;
     endDate: Date;

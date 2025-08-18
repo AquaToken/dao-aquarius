@@ -4,9 +4,10 @@ import styled from 'styled-components';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { StellarService } from 'services/globalServices';
+
 import { ModalProps } from 'types/modal';
 
-import { StellarService } from 'services/globalServices';
 import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -62,8 +63,8 @@ const ManageVotesModal = ({ params }: ModalProps<{ pair: PairStats }>) => {
     const { pair } = params;
     const { account } = useAuthStore();
 
-    const base = { code: pair.asset1_code, issuer: pair.asset1_issuer };
-    const counter = { code: pair.asset2_code, issuer: pair.asset2_issuer };
+    const base = StellarService.createAsset(pair.asset1_code, pair.asset1_issuer);
+    const counter = StellarService.createAsset(pair.asset2_code, pair.asset2_issuer);
 
     useEffect(() => {
         setClaims(StellarService.getPairVotes(pair, account.accountId())?.reverse());

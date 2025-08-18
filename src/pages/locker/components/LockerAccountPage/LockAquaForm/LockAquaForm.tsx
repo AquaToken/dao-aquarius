@@ -4,6 +4,13 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import styled, { createGlobalStyle } from 'styled-components';
 
+import {
+    MAX_BOOST,
+    MAX_BOOST_PERIOD,
+    MAX_LOCK_PERIOD,
+    MIN_BOOST_PERIOD,
+    RECOMMENDED_LOCK_PERIOD,
+} from 'constants/ice';
 import { LS_DELEGATE_PROMO_VIEWED_LOCKER } from 'constants/local-storage';
 
 import { getDateString } from 'helpers/date';
@@ -29,13 +36,7 @@ import Input from 'basics/inputs/Input';
 import RangeInput from 'basics/inputs/RangeInput';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
-import {
-    MAX_BOOST,
-    MAX_BOOST_PERIOD,
-    MAX_LOCK_PERIOD,
-    MIN_BOOST_PERIOD,
-    roundMsToDays,
-} from '../IceBlock/IceBlock';
+import { roundMsToDays } from '../IceBlock/IceBlock';
 import LockAquaModal from '../LockAquaModal/LockAquaModal';
 
 const Container = styled.div`
@@ -294,7 +295,7 @@ const LockAquaForm = forwardRef(
 
         const onLockPeriodPercentChange = value => {
             setLockPeriodPercent(value);
-            const period = (MAX_BOOST_PERIOD * value) / 100;
+            const period = (RECOMMENDED_LOCK_PERIOD * value) / 100;
 
             setLockPeriod(period + Date.now());
         };
@@ -307,12 +308,12 @@ const LockAquaForm = forwardRef(
             }
             const period = value - Date.now();
 
-            if (period > MAX_BOOST_PERIOD) {
+            if (period > RECOMMENDED_LOCK_PERIOD) {
                 setLockPeriodPercent(100);
                 return;
             }
 
-            const percent = roundToPrecision((period / MAX_BOOST_PERIOD) * 100, 2);
+            const percent = roundToPrecision((period / RECOMMENDED_LOCK_PERIOD) * 100, 2);
 
             setLockPeriodPercent(+percent);
         };

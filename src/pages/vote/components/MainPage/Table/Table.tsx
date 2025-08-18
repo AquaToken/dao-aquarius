@@ -25,6 +25,7 @@ import VoteButton from './VoteButton/VoteButton';
 import { PairStats, TotalStats } from '../../../api/types';
 import BribesModal from '../BribesModal/BribesModal';
 import ManageVotesModal from '../ManageVotesModal/ManageVotesModal';
+import { getIceMaxApy } from 'helpers/ice';
 
 const ManageButton = styled(Button)`
     margin-left: 0.8rem;
@@ -222,6 +223,7 @@ const VoteTable = ({
                     : 0;
 
                 const apy = (sum / Number(pair.upvote_value) + 1) ** 365 - 1;
+                const maxApy = getIceMaxApy({ apy });
 
                 return {
                     onRowClick: () => {
@@ -333,7 +335,7 @@ const VoteTable = ({
                             <BribeInfoRow>
                                 <span>Bribes APY:</span>
                                 <BribeAquaSum>
-                                    <span>{formatBalance(+(apy * 100).toFixed(2), true)}%</span>
+                                    <span>up to {formatBalance(+maxApy.toFixed(2), true)}%</span>
                                 </BribeAquaSum>
                             </BribeInfoRow>
                             <BribeInfoRow>

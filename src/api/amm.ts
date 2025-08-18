@@ -24,7 +24,7 @@ import {
     PoolUserProcessed,
     PoolVolume24h,
 } from 'types/amm';
-import { ClassicToken, Token, TokenType } from 'types/token';
+import { ClassicToken, SorobanToken, Token, TokenType } from 'types/token';
 
 export enum FilterOptions {
     all = 'all',
@@ -217,6 +217,7 @@ export const findSwapPath = async (
     counterId: string,
     amount: string | number,
     isSend: boolean,
+    decimals: number,
 ): Promise<FindSwapPath> => {
     const headers = { 'Content-Type': 'application/json' };
     const baseUrl = getAmmAquaUrl();
@@ -224,7 +225,7 @@ export const findSwapPath = async (
     const body = JSON.stringify({
         token_in_address: baseId,
         token_out_address: counterId,
-        amount: (+amount * 1e7).toString(),
+        amount: new BigNumber(amount).times(Math.pow(10, decimals)).toFixed(),
     });
     const { data } = await axios.post<FindSwapPath>(
         isSend ? `${baseUrl}/pools/find-path/` : `${baseUrl}/pools/find-path-strict-receive/`,
@@ -251,35 +252,51 @@ export const getVolume24h = async (): Promise<PoolVolume24h> => {
     const { data } = await axios.get<PoolVolume24h>(`${baseUrl}/statistics/24h/`);
     return data;
 };
-export const getNativePrices = async (
-    assets: Array<Token>,
-    batchSize: number = 50,
-): Promise<Map<string, string>> => {
+
+interface GetNativePricesOpts {
+    onlySoroban: boolean;
+}
+
+export const getNativePrices = async (opts?: GetNativePricesOpts): Promise<Map<string, string>> => {
     const baseUrl = getAmmAquaUrl();
-
-    const batches = [];
-
-    // Split assets into batches of 100
-    for (let i = 0; i < assets.length; i += batchSize) {
-        const batch = assets.slice(i, i + batchSize);
-        batches.push(batch);
-    }
 
     const allPrices = new Map<string, string>();
 
-    // Process each batch
-    for (const batch of batches) {
-        const { data } = await axios.get<ListResponse<NativePrice>>(
-            `${baseUrl}/tokens/?token__in=${batch.map((asset: Token) => asset.contract).join(',')}`,
-        );
-        const prices = data.items;
+    const { data } = await axios.get<ListResponse<NativePrice>>(
+        `${baseUrl}/tokens/?pooled=true&size=500`,
+    );
+    const prices = data.items.filter(item => {
+        if (opts?.onlySoroban) {
+            return !item.is_sac;
+        }
 
-        prices.forEach(price => {
-            allPrices.set(price.name, price.price_xlm);
-        });
-    }
+        return true;
+    });
+
+    prices.forEach(price => {
+        allPrices.set(
+            price.address,
+            (+price.price_xlm * Math.pow(10, price.decimals - 7)).toFixed(7),
+        );
+    });
 
     return allPrices;
+};
+
+export const getCustomTokens = async (): Promise<SorobanToken[]> => {
+    const baseUrl = getAmmAquaUrl();
+
+    const { data } = await axios.get<ListResponse<NativePrice>>(
+        `${baseUrl}/tokens/?pooled=true&is_sac=false&size=500`,
+    );
+
+    return data.items.map(item => ({
+        contract: item.address,
+        type: TokenType.soroban,
+        name: item.name,
+        code: item.code,
+        decimal: item.decimals,
+    }));
 };
 
 export const getPathPoolsFee = async (addresses: Array<string>): Promise<Map<string, Pool>> => {

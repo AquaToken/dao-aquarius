@@ -17,6 +17,23 @@ export interface AuthStore {
     callback?: () => void;
 }
 
+export interface LoginArgs {
+    pubKey: string;
+    loginType: LoginTypes;
+    metadata?: WalletConnectTypes.SignClientTypes.Metadata;
+    topic?: string;
+    walletKitId?: string;
+    bipPath?: number;
+}
+
+export interface SavedAuthData {
+    pubKey: string;
+    loginType: LoginTypes;
+    walletKitId: string;
+    lobstrConnectionKey?: string;
+    bipPath?: number | null;
+}
+
 export enum LoginTypes {
     secret = 'secret',
     walletConnect = 'wallet-connect',

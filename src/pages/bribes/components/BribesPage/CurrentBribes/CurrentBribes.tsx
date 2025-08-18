@@ -8,6 +8,7 @@ import { MarketRoutes } from 'constants/routes';
 import { getAssetString } from 'helpers/assets';
 import { convertLocalDateToUTCIgnoringTimezone, getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
+import { getIceMaxApy } from 'helpers/ice';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
@@ -26,6 +27,7 @@ import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import { getPairsWithBribes } from 'pages/vote/api/api';
 import BribesModal from 'pages/vote/components/MainPage/BribesModal/BribesModal';
+
 
 const Container = styled.div``;
 
@@ -125,6 +127,7 @@ const CurrentBribes = () => {
                     );
 
                     const apy = (sum / Number(bribe.upvote_value) + 1) ** 365 - 1;
+                    const apyMax = getIceMaxApy({ apy });
 
                     return {
                         onRowClick: () => goToMarketPage(base, counter),
@@ -148,7 +151,7 @@ const CurrentBribes = () => {
                                             ModalService.openModal(BribesModal, { pair: bribe });
                                         }}
                                     >
-                                        {formatBalance(+(apy * 100).toFixed(2), true)}%
+                                        up to {formatBalance(+apyMax.toFixed(2), true)}%
                                     </Apy>
                                 ),
                                 label: 'Bribe APY:',

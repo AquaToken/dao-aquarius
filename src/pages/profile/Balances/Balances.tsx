@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { DOWN_ICE_CODE, GOV_ICE_CODE, ICE_CODE, ICE_ISSUER, UP_ICE_CODE } from 'constants/assets';
+import { MainRoutes } from 'constants/routes';
 
 import { formatBalance } from 'helpers/format-number';
 
@@ -19,8 +21,11 @@ import { Breakpoints, COLORS } from 'web/styles';
 import Aqua from 'assets/aqua-logo-small.svg';
 import Ice from 'assets/ice-logo.svg';
 import Info from 'assets/icon-info.svg';
+import PlusIcon from 'assets/icon-plus.svg';
+import Withdraw from 'assets/icon-withdraw.svg';
 import Lumen from 'assets/xlm-logo.svg';
 
+import { Button } from 'basics/buttons';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
@@ -81,11 +86,37 @@ const BalancesColumn = styled.div`
     `}
 `;
 
+const Header = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2.6rem;
+
+    ${respondDown(Breakpoints.xs)`
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.6rem;
+    `}
+`;
+
+const HeaderButtons = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+
+    a {
+        text-decoration: none;
+
+        svg {
+            margin-right: 0.5rem;
+        }
+    }
+`;
+
 const BalanceTitle = styled.span`
     font-size: 1.6rem;
     line-height: 1.8rem;
     color: ${COLORS.grayText};
-    margin-bottom: 2.6rem;
 `;
 
 const BalanceValue = styled.div`
@@ -283,22 +314,12 @@ interface BalancesProps {
 
 const Balances = ({ ammAquaBalance }: BalancesProps): React.ReactNode => {
     const [locks, setLocks] = useState<ClaimableBalance[]>(null);
-    const [aquaInVotes, setAquaInVotes] = useState(null);
 
     const { account } = useAuthStore();
 
     useEffect(() => {
-        StellarService.getAquaInLiquidityVotes(account.accountId()).then(res => {
-            setAquaInVotes(res);
-        });
-    }, []);
-
-    useEffect(() => {
         const unsub = StellarService.event.sub((event: { type: StellarEvents }) => {
             if (event.type === StellarEvents.claimableUpdate) {
-                StellarService.getAquaInLiquidityVotes(account.accountId()).then(res => {
-                    setAquaInVotes(res);
-                });
                 setLocks(StellarService.getLocks(account.accountId()));
             }
         });
@@ -338,7 +359,10 @@ const Balances = ({ ammAquaBalance }: BalancesProps): React.ReactNode => {
             <Wrapper>
                 <BalancesContainer>
                     <BalancesColumn>
-                        <BalanceTitle>Your available AQUA balance</BalanceTitle>
+                        <Header>
+                            <BalanceTitle>Your available AQUA balance</BalanceTitle>
+                        </Header>
+
                         <BalanceValue>
                             <AquaLogo />
                             {formatBalance(+aquaBalance, true)} AQUA
@@ -372,23 +396,26 @@ const Balances = ({ ammAquaBalance }: BalancesProps): React.ReactNode => {
                                 </AdditionalInfoBalance>
                                 <AdditionalInfoDescription>AQUA locked</AdditionalInfoDescription>
                             </InfoColumn>
-                            <InfoColumn>
-                                <BalanceLabel $color={COLORS.purple} $textColor={COLORS.white}>
-                                    VOTE
-                                </BalanceLabel>
-                                <AdditionalInfoBalance>
-                                    {aquaInVotes === null ? (
-                                        <DotsLoader />
-                                    ) : (
-                                        <span>{formatBalance(+aquaInVotes, true)}</span>
-                                    )}
-                                </AdditionalInfoBalance>
-                                <AdditionalInfoDescription>AQUA in votes</AdditionalInfoDescription>
-                            </InfoColumn>
                         </AdditionalInfo>
                     </BalancesColumn>
                     <BalancesColumn>
-                        <BalanceTitle>Your current ICE balance</BalanceTitle>
+                        <Header>
+                            <BalanceTitle>Your current ICE balance</BalanceTitle>
+                            <HeaderButtons>
+                                <Link to={MainRoutes.locker}>
+                                    <Button isSmall>
+                                        <PlusIcon /> get ice
+                                    </Button>
+                                </Link>
+
+                                <Link to={MainRoutes.delegate}>
+                                    <Button isSmall secondary>
+                                        <Withdraw /> delegate
+                                    </Button>
+                                </Link>
+                            </HeaderButtons>
+                        </Header>
+
                         <BalanceValue>
                             <IceLogo />
                             {formatBalance(+iceBalance, true)} ICE
@@ -431,7 +458,7 @@ const Balances = ({ ammAquaBalance }: BalancesProps): React.ReactNode => {
                             <TooltipInner>
                                 All actions performed on the Stellar network require a fee paid in
                                 XLM. Ensure a sufficient XLM balance in your wallet to vote with
-                                AQUA/ICE, claim back votes, and freeze ICE with the locker tool.
+                                ICE, claim back votes, and freeze ICE with the locker tool.
                             </TooltipInner>
                         }
                         position={TOOLTIP_POSITION.top}

@@ -25,14 +25,14 @@ export const getStellarAsset = (code: string, issuer: string): Asset => {
     return StellarService.createAsset(code, issuer);
 };
 
-export const getAssetFromString = (str: string, onUpdateCB?: () => void): Token => {
+export const getAssetFromString = (str: string, onUpdateCB?: (token: Token) => void): Token => {
     if (StellarService.isValidContract(str)) {
         const result = { contract: str, type: TokenType.soroban } as Token;
 
         SorobanService.parseTokenContractId(str).then((res: Token) => {
             Object.assign(result, res);
             if (onUpdateCB) {
-                onUpdateCB();
+                onUpdateCB(result);
             }
         });
         return result;
@@ -42,6 +42,10 @@ export const getAssetFromString = (str: string, onUpdateCB?: () => void): Token 
 
         asset.type = TokenType.classic;
         asset.contract = asset.contractId(getNetworkPassphrase());
+        asset.decimal = 7;
+        if (onUpdateCB) {
+            onUpdateCB(asset);
+        }
         return asset;
     }
 
@@ -50,6 +54,10 @@ export const getAssetFromString = (str: string, onUpdateCB?: () => void): Token 
     const asset: ClassicToken = StellarService.createAsset(code, issuer) as ClassicToken;
     asset.type = TokenType.classic;
     asset.contract = asset.contractId(getNetworkPassphrase());
+    asset.decimal = 7;
+    if (onUpdateCB) {
+        onUpdateCB(asset);
+    }
     return asset;
 };
 

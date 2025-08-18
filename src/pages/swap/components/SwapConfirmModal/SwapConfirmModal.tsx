@@ -1,4 +1,5 @@
 import * as StellarSdk from '@stellar/stellar-sdk';
+import { xdr } from '@stellar/stellar-sdk';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -15,8 +16,7 @@ import { ModalService, SorobanService, ToastService } from 'services/globalServi
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { ModalProps } from 'types/modal';
-import { Int128Parts } from 'types/stellar';
-import { Token, TokenType } from 'types/token';
+import { SorobanToken, Token, TokenType } from 'types/token';
 
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -119,11 +119,16 @@ const SwapConfirmModal = ({
     useEffect(() => {
         const SLIPPAGE = localStorage.getItem(SWAP_SLIPPAGE_ALIAS) || '1'; // 1%
         const minAmount = isSend
-            ? ((1 - Number(SLIPPAGE) / 100) * Number(counterAmount)).toFixed(7)
-            : ((1 + Number(SLIPPAGE) / 100) * Number(baseAmount)).toFixed(7);
+            ? ((1 - Number(SLIPPAGE) / 100) * Number(counterAmount)).toFixed(
+                  (counter as SorobanToken).decimal ?? 7,
+              )
+            : ((1 + Number(SLIPPAGE) / 100) * Number(baseAmount)).toFixed(
+                  (base as SorobanToken).decimal ?? 7,
+              );
         SorobanService.getSwapChainedTx(
             account?.accountId(),
             base,
+            counter,
             bestPathXDR,
             isSend ? baseAmount : counterAmount,
             minAmount,
@@ -145,14 +150,19 @@ const SwapConfirmModal = ({
         const SLIPPAGE = localStorage.getItem(SWAP_SLIPPAGE_ALIAS) || '1'; // 1%
 
         const minAmount = isSend
-            ? ((1 - Number(SLIPPAGE) / 100) * Number(counterAmount)).toFixed(7)
-            : ((1 + Number(SLIPPAGE) / 100) * Number(baseAmount)).toFixed(7);
+            ? ((1 - Number(SLIPPAGE) / 100) * Number(counterAmount)).toFixed(
+                  (counter as SorobanToken).decimal ?? 7,
+              )
+            : ((1 + Number(SLIPPAGE) / 100) * Number(baseAmount)).toFixed(
+                  (base as SorobanToken).decimal ?? 7,
+              );
 
         let hash: string;
 
         SorobanService.getSwapChainedTx(
             account?.accountId(),
             base,
+            counter,
             bestPathXDR,
             isSend ? baseAmount : counterAmount,
             minAmount,
@@ -162,7 +172,7 @@ const SwapConfirmModal = ({
                 hash = tx.hash().toString('hex');
                 return account.signAndSubmitTx(tx, true);
             })
-            .then((res: { value?: () => Int128Parts; status?: BuildSignAndSubmitStatuses }) => {
+            .then((res: { status?: BuildSignAndSubmitStatuses }) => {
                 confirm();
 
                 if (!res) {
@@ -177,9 +187,11 @@ const SwapConfirmModal = ({
                     return;
                 }
 
-                const sentAmount = isSend ? baseAmount : SorobanService.i128ToInt(res.value());
+                const sentAmount = isSend
+                    ? baseAmount
+                    : SorobanService.i128ToInt(res as xdr.ScVal, (base as SorobanToken).decimal);
                 const receivedAmount = isSend
-                    ? SorobanService.i128ToInt(res.value())
+                    ? SorobanService.i128ToInt(res as xdr.ScVal, (counter as SorobanToken).decimal)
                     : counterAmount;
 
                 ModalService.openModal(SuccessModal, {
@@ -248,7 +260,13 @@ const SwapConfirmModal = ({
             <DescriptionRow>
                 <span>Exchange rate</span>
                 <span>
-                    1 {base.code} = {formatBalance(+counterAmount / +baseAmount)} {counter.code}
+                    1 {base.code} ={' '}
+                    {formatBalance(
+                        +(+counterAmount / +baseAmount).toFixed(
+                            counter.type === TokenType.soroban ? counter.decimal : 7,
+                        ),
+                    )}{' '}
+                    {counter.code}
                 </span>
             </DescriptionRow>
 
@@ -257,7 +275,7 @@ const SwapConfirmModal = ({
                 <span>
                     {txFee !== null ? (
                         `${formatBalance(
-                            STROOP * (Number(txFee) + Number(StellarSdk.BASE_FEE)),
+                            +(STROOP * (Number(txFee) + Number(StellarSdk.BASE_FEE))).toFixed(7),
                         )} XLM`
                     ) : (
                         <DotsLoader />

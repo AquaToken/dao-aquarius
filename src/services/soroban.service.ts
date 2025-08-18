@@ -16,7 +16,7 @@ import { SorobanErrorHandler, SorobanPrepareTxErrorHandler } from 'helpers/error
 import { getSorobanUrl } from 'helpers/url';
 
 import { PoolRewardsInfo } from 'types/amm';
-import { ClassicToken, Token, TokenType } from 'types/token';
+import { ClassicToken, SorobanToken, Token, TokenType } from 'types/token';
 
 import RestoreContractModal from 'web/modals/RestoreContractModal';
 
@@ -141,6 +141,7 @@ export default class SorobanServiceClass {
             const lumen: ClassicToken = StellarService.createLumen() as ClassicToken;
             lumen.type = TokenType.classic;
             lumen.contract = contractId;
+            lumen.decimal = 7;
             return Promise.resolve(lumen);
         }
 
@@ -156,7 +157,13 @@ export default class SorobanServiceClass {
             this.scValToArray([]),
         ]);
 
-        const batchCalls = this.scValToArray([nameCall, symbolCall]);
+        const decimalCall = this.scValToArray([
+            this.contractIdToScVal(contractId),
+            xdr.ScVal.scvSymbol(ASSET_CONTRACT_METHOD.DECIMALS),
+            this.scValToArray([]),
+        ]);
+
+        const batchCalls = this.scValToArray([nameCall, symbolCall, decimalCall]);
 
         return this.buildSmartContractTx(
             ACCOUNT_FOR_SIMULATE,
@@ -173,9 +180,9 @@ export default class SorobanServiceClass {
                     ) as Promise<StellarSdk.rpc.Api.SimulateTransactionSuccessResponse>,
             )
             .then(({ result }) => {
-                const [name, symbol] = (result.retval.value() as { value: () => unknown }[]).map(
-                    val => val.value().toString(),
-                );
+                const [name, symbol, decimal] = (
+                    result.retval.value() as { value: () => unknown }[]
+                ).map(val => val.value().toString());
 
                 const [code, issuer] = name.split(':');
 
@@ -191,6 +198,7 @@ export default class SorobanServiceClass {
 
                     asset.type = TokenType.classic;
                     asset.contract = contractId;
+                    asset.decimal = 7;
 
                     return asset;
                 } catch {
@@ -199,6 +207,7 @@ export default class SorobanServiceClass {
                         contract: contractId,
                         name,
                         code: symbol,
+                        decimal: Number(decimal),
                     };
                 }
             });
@@ -399,12 +408,12 @@ export default class SorobanServiceClass {
         return value.reduce((acc, val) => {
             const key = val.key().value().toString();
             if (key === 'exp_at' || key === 'last_time') {
-                acc[key] = new BigNumber(this.i128ToInt(val.val().value()).toString())
+                acc[key] = new BigNumber(this.i128ToInt(val.val()).toString())
                     .times(1e7)
                     .toNumber();
                 return acc;
             }
-            acc[key] = this.i128ToInt(val.val().value());
+            acc[key] = this.i128ToInt(val.val());
             return acc;
         }, {}) as PoolRewardsInfo;
     }
@@ -478,7 +487,7 @@ export default class SorobanServiceClass {
             )
             .then(({ result }) => {
                 if (result) {
-                    return this.i128ToInt(result.retval.value() as StellarSdk.xdr.Int128Parts);
+                    return this.i128ToInt(result.retval);
                 }
 
                 throw new Error('getTotalShares error');
@@ -641,7 +650,7 @@ export default class SorobanServiceClass {
                         tx,
                     ) as Promise<StellarSdk.rpc.Api.SimulateTransactionSuccessResponse>,
             )
-            .then(({ result }) => this.i128ToInt(result.retval.value() as xdr.Int128Parts));
+            .then(({ result }) => this.i128ToInt(result.retval));
     }
 
     getCreationFeeAddress() {
@@ -677,14 +686,11 @@ export default class SorobanServiceClass {
         }));
     }
 
-    getTokenBalance(token: Asset | string, where: string) {
+    getTokenDecimals(contactId: string): Promise<number> {
         return this.buildSmartContractTx(
             ACCOUNT_FOR_SIMULATE,
-            typeof token === 'string' ? token : this.getAssetContractId(token),
-            ASSET_CONTRACT_METHOD.GET_BALANCE,
-            StellarSdk.StrKey.isValidEd25519PublicKey(where)
-                ? this.publicKeyToScVal(where)
-                : this.contractIdToScVal(where),
+            contactId,
+            ASSET_CONTRACT_METHOD.DECIMALS,
         )
             .then(
                 tx =>
@@ -692,13 +698,31 @@ export default class SorobanServiceClass {
                         tx,
                     ) as Promise<StellarSdk.rpc.Api.SimulateTransactionSuccessResponse>,
             )
-            .then(({ result }) => {
-                if (result) {
-                    return this.i128ToInt(result.retval.value() as xdr.Int128Parts);
-                }
+            .then(({ result }) => Number(result.retval.value()));
+    }
 
-                return null;
-            });
+    async getTokenBalance(token: Asset | string, where: string) {
+        const tokenContact = typeof token === 'string' ? token : this.getAssetContractId(token);
+        const tokenDecimals = await this.getTokenDecimals(tokenContact);
+
+        const tx = await this.buildSmartContractTx(
+            ACCOUNT_FOR_SIMULATE,
+            tokenContact,
+            ASSET_CONTRACT_METHOD.GET_BALANCE,
+            StellarSdk.StrKey.isValidEd25519PublicKey(where)
+                ? this.publicKeyToScVal(where)
+                : this.contractIdToScVal(where),
+        );
+
+        const result = (await this.server.simulateTransaction(
+            tx,
+        )) as StellarSdk.rpc.Api.SimulateTransactionSuccessResponse;
+
+        if (result.result) {
+            return this.i128ToInt(result.result.retval, tokenDecimals);
+        }
+
+        return null;
     }
 
     getPoolReserves(assets: Token[], poolId: string) {
@@ -718,7 +742,10 @@ export default class SorobanServiceClass {
                     return this.orderTokens(assets).reduce((acc, asset, index) => {
                         acc.set(
                             getAssetString(asset),
-                            this.i128ToInt(result.retval.value()[index].value()),
+                            this.i128ToInt(
+                                result.retval.value()[index],
+                                (assets[index] as SorobanToken).decimal,
+                            ),
                         );
                         return acc;
                     }, new Map());
@@ -738,7 +765,10 @@ export default class SorobanServiceClass {
             this.publicKeyToScVal(accountId),
             this.scValToArray(
                 this.orderTokens(assets).map(asset =>
-                    this.amountToUint128(amounts.get(getAssetString(asset))),
+                    this.amountToUint128(
+                        amounts.get(getAssetString(asset)),
+                        (asset as SorobanToken).decimal,
+                    ),
                 ),
             ),
             this.amountToUint128('0.0000001'),
@@ -754,7 +784,10 @@ export default class SorobanServiceClass {
                             args: [
                                 this.publicKeyToScVal(accountId),
                                 this.contractIdToScVal(poolAddress),
-                                this.amountToInt128(amounts.get(getAssetString(asset))),
+                                this.amountToInt128(
+                                    amounts.get(getAssetString(asset)),
+                                    (asset as SorobanToken).decimal,
+                                ),
                             ],
                         }),
                     ),
@@ -841,6 +874,7 @@ export default class SorobanServiceClass {
     getSwapChainedTx(
         accountId: string,
         base: Token,
+        counter: Token,
         chainedXDR: string,
         amount: string,
         amountWithSlippage: string,
@@ -850,8 +884,14 @@ export default class SorobanServiceClass {
             this.publicKeyToScVal(accountId),
             xdr.ScVal.fromXDR(chainedXDR, 'base64'),
             this.contractIdToScVal(base.contract),
-            this.amountToUint128(amount),
-            this.amountToUint128(amountWithSlippage),
+            this.amountToUint128(
+                amount,
+                isSend ? (base as SorobanToken).decimal : (counter as SorobanToken).decimal,
+            ),
+            this.amountToUint128(
+                amountWithSlippage,
+                isSend ? (counter as SorobanToken).decimal : (base as SorobanToken).decimal,
+            ),
         ];
 
         const transferInvocation = new xdr.SorobanAuthorizedInvocation({
@@ -862,7 +902,10 @@ export default class SorobanServiceClass {
                     args: [
                         this.publicKeyToScVal(accountId),
                         this.contractIdToScVal(AMM_SMART_CONTRACT_ID),
-                        this.amountToInt128(isSend ? amount : amountWithSlippage),
+                        this.amountToInt128(
+                            isSend ? amount : amountWithSlippage,
+                            (base as SorobanToken).decimal,
+                        ),
                     ],
                 }),
             ),
@@ -1038,17 +1081,17 @@ export default class SorobanServiceClass {
         return xdr.ScVal.scvU32(Math.floor(amount));
     }
 
-    amountToInt128(amount: string): xdr.ScVal {
+    amountToInt128(amount: string, decimals = 7): xdr.ScVal {
         return new StellarSdk.XdrLargeInt(
-            'u128',
-            new BigNumber(amount).times(1e7).toFixed(),
+            'i128',
+            new BigNumber(amount).times(Math.pow(10, decimals)).toFixed(),
         ).toI128();
     }
 
-    amountToUint128(amount: string): xdr.ScVal {
+    amountToUint128(amount: string, decimals = 7): xdr.ScVal {
         return new StellarSdk.XdrLargeInt(
             'u128',
-            new BigNumber(amount).times(1e7).toFixed(),
+            new BigNumber(amount).times(Math.pow(10, decimals)).toFixed(),
         ).toU128();
     }
 
@@ -1056,17 +1099,8 @@ export default class SorobanServiceClass {
         return StellarSdk.scValToNative(value);
     }
 
-    i128ToInt(val: xdr.Int128Parts): string {
-        return (
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-expect-error
-            new BigNumber(val.hi()._value)
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-expect-error
-                .plus(val.lo()._value)
-                .div(1e7)
-                .toString()
-        );
+    i128ToInt(val: xdr.ScVal, decimals = 7): string {
+        return new BigNumber(StellarSdk.scValToNative(val)).div(Math.pow(10, decimals)).toString();
     }
 
     private getAssetContractHash(asset: Token): string {

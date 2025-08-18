@@ -502,6 +502,7 @@ const CreatePool = () => {
                                     asset => asset !== null,
                                 )}
                                 pending={firstAsset && firstAssetStatus === null}
+                                withCustomTokens
                             />
                             {firstAssetStatus === CONTRACT_STATUS.NOT_FOUND && (
                                 <ContractNotFound
@@ -516,6 +517,7 @@ const CreatePool = () => {
                                 excludeList={[firstAsset, thirdAsset, fourthAsset].filter(
                                     asset => asset !== null,
                                 )}
+                                withCustomTokens
                             />
                             {secondAssetStatus === CONTRACT_STATUS.NOT_FOUND && (
                                 <ContractNotFound
@@ -542,6 +544,7 @@ const CreatePool = () => {
                                         excludeList={[firstAsset, secondAsset, fourthAsset].filter(
                                             asset => asset !== null,
                                         )}
+                                        withCustomTokens
                                     />
                                     {thirdAssetStatus === CONTRACT_STATUS.NOT_FOUND && (
                                         <ContractNotFound
@@ -570,6 +573,7 @@ const CreatePool = () => {
                                         excludeList={[firstAsset, secondAsset, thirdAsset].filter(
                                             asset => asset !== null,
                                         )}
+                                        withCustomTokens
                                     />
                                     {fourthAssetStatus === CONTRACT_STATUS.NOT_FOUND && (
                                         <ContractNotFound

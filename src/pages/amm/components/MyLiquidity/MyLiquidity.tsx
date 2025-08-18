@@ -1,3 +1,4 @@
+import { xdr } from '@stellar/stellar-sdk';
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useHistory, useLocation } from 'react-router-dom';
@@ -7,6 +8,7 @@ import { getUserPools } from 'api/amm';
 
 import { MainRoutes } from 'constants/routes';
 
+import { contractValueToAmount } from 'helpers/amount';
 import { getAquaAssetData, getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
@@ -26,7 +28,7 @@ import { POOL_TYPE } from 'services/soroban.service';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { PoolRewardsInfo, PoolUserProcessed } from 'types/amm';
-import { Int128Parts } from 'types/stellar';
+import { SorobanToken } from 'types/token';
 
 import { flexAllCenter, flexRowSpaceBetween, respondDown, textEllipsis } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
@@ -435,7 +437,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
 
         SorobanService.getClaimRewardsTx(account.accountId(), poolId)
             .then(tx => account.signAndSubmitTx(tx, true))
-            .then((res: { status?: BuildSignAndSubmitStatuses; value: () => Int128Parts }) => {
+            .then((res: { status?: BuildSignAndSubmitStatuses }) => {
                 if (!res) {
                     return;
                 }
@@ -447,7 +449,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                     ToastService.showSuccessToast('More signatures required to complete');
                     return;
                 }
-                const value = SorobanService.i128ToInt(res.value());
+                const value = SorobanService.i128ToInt(res as xdr.ScVal);
 
                 ToastService.showSuccessToast(`Claimed ${formatBalance(+value)} AQUA`);
                 setClaimPendingId(null);
@@ -654,10 +656,16 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                                                 <span>Pooled {asset.code}</span>
                                                                 <span>
                                                                     {formatBalance(
-                                                                        (pool.reserves[index] *
+                                                                        (+contractValueToAmount(
+                                                                            pool.reserves[index],
+                                                                            (
+                                                                                pool.tokens[
+                                                                                    index
+                                                                                ] as SorobanToken
+                                                                            ).decimal,
+                                                                        ) *
                                                                             pool.balance) /
-                                                                            pool.total_share /
-                                                                            1e7,
+                                                                            pool.total_share,
                                                                         true,
                                                                     )}
                                                                     <AssetLogo
