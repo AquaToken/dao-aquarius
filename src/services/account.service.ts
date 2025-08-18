@@ -5,7 +5,7 @@ import BigNumber from 'bignumber.js';
 import { getCustomTokens, getNativePrices } from 'api/amm';
 
 import { POOL_TYPE } from 'constants/amm';
-import { ASSETS_ENV_DATA, ICE_ASSETS } from 'constants/assets';
+import { ASSETS_ENV_DATA, DEFAULT_ICE_ASSETS } from 'constants/assets';
 
 import { getAssetFromString } from 'helpers/assets';
 import { getEnv, getNetworkPassphrase } from 'helpers/env';
@@ -315,7 +315,7 @@ export default class AccountService extends Horizon.AccountResponse {
     }
 
     hasAllIceTrustlines() {
-        return ICE_ASSETS.map(asset => {
+        return DEFAULT_ICE_ASSETS.map(asset => {
             const [code, issuer] = asset.split(':');
             const stellarAsset = StellarService.createAsset(code, issuer);
             return this.getAssetBalance(stellarAsset);
@@ -323,7 +323,7 @@ export default class AccountService extends Horizon.AccountResponse {
     }
 
     getUntrustedIceAssets() {
-        return ICE_ASSETS.reduce((acc, asset) => {
+        return DEFAULT_ICE_ASSETS.reduce((acc, asset) => {
             const [code, issuer] = asset.split(':');
             const stellarAsset = StellarService.createAsset(code, issuer);
             if (this.getAssetBalance(stellarAsset) === null) {

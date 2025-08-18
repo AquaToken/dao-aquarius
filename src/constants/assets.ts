@@ -24,12 +24,14 @@ export const UP_ICE_CODE = 'upvoteICE';
 export const DOWN_ICE_CODE = 'downvoteICE';
 export const D_ICE_CODE = 'dICE';
 
-export const ICE_ASSETS = [
+export const DEFAULT_ICE_ASSETS = [
     `${ICE_CODE}:${ICE_ISSUER}`,
     `${GOV_ICE_CODE}:${ICE_ISSUER}`,
     `${UP_ICE_CODE}:${ICE_ISSUER}`,
     `${DOWN_ICE_CODE}:${ICE_ISSUER}`,
 ];
+
+export const ALL_ICE_ASSETS = [...DEFAULT_ICE_ASSETS, `${D_ICE_CODE}:${ICE_ISSUER}`];
 
 export const ASSETS_ENV_DATA: AssetsEnvData = {
     [ENV_PRODUCTION]: {

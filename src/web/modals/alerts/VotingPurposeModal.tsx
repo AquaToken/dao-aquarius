@@ -39,14 +39,11 @@ const VotingPurposeModal = ({ close }: ModalProps<never>) => {
 
     return (
         <ModalWrapper $width="54rem">
-            <ModalTitle>Liquidity Voting with ICE & AQUA</ModalTitle>
+            <ModalTitle>Liquidity Voting with ICE</ModalTitle>
             <Description>
-                Use your <b>ICE</b> or <b>AQUA</b> tokens to vote for markets on Stellar. Your votes
-                help direct AQUA rewards to AMM liquidity providers and SDEX market makers.
-                <br />
-                <br />
-                Most users vote with <b>ICE</b> — it’s earned by locking AQUA and gives stronger
-                voting power.
+                Use your <b>ICE</b> tokens to vote for markets on Stellar. Your votes help direct
+                AQUA rewards to AMM liquidity providers and SDEX market makers. To get ICE one
+                should lock their AQUA tokens.
                 <br />
                 <br />
                 Don’t want to vote manually? You can now <b>delegate your ICE</b> to trusted voters.
