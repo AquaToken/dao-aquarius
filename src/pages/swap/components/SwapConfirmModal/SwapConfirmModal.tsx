@@ -26,20 +26,12 @@ import Button from 'basics/buttons/Button';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
 import Market from 'basics/Market';
-import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+import { ModalDescription, ModalTitle, ModalWrapper, StickyButtonWrapper } from 'basics/ModalAtoms';
 
 import PathPool from './PathPool/PathPool';
 
 import SuccessModal from '../../../amm/components/SuccessModal/SuccessModal';
 import { SWAP_SLIPPAGE_ALIAS } from '../SwapSettingsModal/SwapSettingsModal';
-
-const Container = styled.div`
-    width: 52.3rem;
-
-    ${respondDown(Breakpoints.md)`
-        width: 100%;
-    `}
-`;
 
 const AssetsInfo = styled.div`
     ${flexAllCenter};
@@ -231,14 +223,14 @@ const SwapConfirmModal = ({
 
     if (!fees || !pathTokens) {
         return (
-            <Container>
+            <ModalWrapper>
                 <PageLoader />
-            </Container>
+            </ModalWrapper>
         );
     }
 
     return (
-        <Container>
+        <ModalWrapper>
             <ModalTitle>Confirm swap</ModalTitle>
             <ModalDescription>Please check all the details to make a swap</ModalDescription>
             <AssetsInfo>
@@ -305,10 +297,12 @@ const SwapConfirmModal = ({
             </Pools>
 
             <Divider />
-            <Button fullWidth isBig pending={swapPending} onClick={() => swap()}>
-                Confirm Swap
-            </Button>
-        </Container>
+            <StickyButtonWrapper>
+                <Button fullWidth isBig pending={swapPending} onClick={() => swap()}>
+                    Confirm Swap
+                </Button>
+            </StickyButtonWrapper>
+        </ModalWrapper>
     );
 };
 

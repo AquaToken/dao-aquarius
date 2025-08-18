@@ -8,19 +8,16 @@ import StellarXLogo from 'assets/stellarx-logo.svg';
 
 import CopyButton from 'basics/buttons/CopyButton';
 import ExternalLink from 'basics/ExternalLink';
-import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
 
 import { flexRowSpaceBetween, respondDown } from '../mixins';
 import { Breakpoints, COLORS } from '../styles';
 
 const Container = styled.div`
-    width: 67.2rem;
-
-    ${respondDown(Breakpoints.md)`
-        width: 100%;
-    `}
+    width: 100%;
 `;
+
 const TrustedPlatformsBlock = styled(Container)`
     margin-top: 5.6rem;
 `;
@@ -120,29 +117,8 @@ const LinkDescription = styled(GrayText)`
     line-height: 2.9rem;
 `;
 
-const Scrolled = styled.div`
-    max-height: 80vh;
-    overflow-y: scroll;
-    padding-right: 3rem;
-
-    &::-webkit-scrollbar {
-        width: 0.5rem;
-    }
-
-    /* Track */
-    &::-webkit-scrollbar-track {
-        background: ${COLORS.white};
-    }
-
-    /* Handle */
-    &::-webkit-scrollbar-thumb {
-        background: ${COLORS.purple};
-        border-radius: 0.25rem;
-    }
-`;
-
 const GetAquaModal = (): React.ReactNode => (
-    <Scrolled>
+    <ModalWrapper $isWide>
         <Container>
             <ModalTitle>Get AQUA token</ModalTitle>
             <ModalDescription>AQUA is the utility token of Aquarius project.</ModalDescription>
@@ -226,7 +202,7 @@ const GetAquaModal = (): React.ReactNode => (
                 <ArrowRight />
             </PlatfomLink>
         </TrustedPlatformsBlock>
-    </Scrolled>
+    </ModalWrapper>
 );
 
 export default GetAquaModal;

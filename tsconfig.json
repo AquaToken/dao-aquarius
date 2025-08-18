@@ -20,6 +20,7 @@
             // components
             "basics/*": ["web/basics/*"],
             "components/*": ["web/components/*"],
+            "modals/*": ["web/modals/*"],
             "pages/*": ["pages/*"]
         }
     }

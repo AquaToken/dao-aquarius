@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
@@ -27,7 +26,7 @@ import { Button } from 'basics/buttons';
 import Identicon from 'basics/Identicon';
 import { Checkbox } from 'basics/inputs';
 import { PageLoader } from 'basics/loaders';
-import { ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
+import { ModalTitle, ModalWrapper, StickyButtonWrapper } from 'basics/ModalAtoms';
 import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
 import Table, { CellAlign } from 'basics/Table';
 
@@ -302,15 +301,17 @@ const DelegateClaimModal = ({ params }: ModalProps<Params>) => {
                     <span>All delegated ICE claimed back</span>
                 )}
             </List>
-            <Button
-                isBig
-                fullWidth
-                disabled={!selectedClaims.size}
-                pending={pending}
-                onClick={() => onSubmit()}
-            >
-                claim selected
-            </Button>
+            <StickyButtonWrapper>
+                <Button
+                    isBig
+                    fullWidth
+                    disabled={!selectedClaims.size}
+                    pending={pending}
+                    onClick={() => onSubmit()}
+                >
+                    claim selected
+                </Button>
+            </StickyButtonWrapper>
         </ModalWrapper>
     );
 };

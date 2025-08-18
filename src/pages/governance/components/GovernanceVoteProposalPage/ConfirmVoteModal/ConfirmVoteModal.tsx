@@ -32,7 +32,7 @@ import ExternalLink from 'basics/ExternalLink';
 import Input from 'basics/inputs/Input';
 import RangeInput from 'basics/inputs/RangeInput';
 import Select from 'basics/inputs/Select';
-import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 import { SimpleProposalOptions } from '../../../pages/GovernanceVoteProposalPage';
 
@@ -230,7 +230,7 @@ const ConfirmVoteModal = ({
     };
 
     return (
-        <>
+        <ModalWrapper>
             <ModalTitle>Confirm vote</ModalTitle>
             <ModalDescription>
                 Your ICE will be locked until the voting ends. Please check the details carefully.
@@ -301,7 +301,7 @@ const ConfirmVoteModal = ({
             >
                 SUBMIT VOTE
             </StyledButton>
-        </>
+        </ModalWrapper>
     );
 };
 

@@ -13,7 +13,7 @@ import IconDeepLink from 'assets/icon-deep-link.svg';
 import IconPlus from 'assets/icon-plus.svg';
 import IconQR from 'assets/icon-qr.svg';
 
-import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 import { flexAllCenter, respondDown } from '../../mixins';
 import { Breakpoints, COLORS } from '../../styles';
@@ -23,14 +23,6 @@ type PairingModalParams = {
     deletePairing: (topic: string) => Promise<void>;
     connect: (pairing?: WalletConnect.PairingTypes.Struct) => Promise<void>;
 };
-
-const ModalBlock = styled.div`
-    width: 52.3rem;
-
-    ${respondDown(Breakpoints.md)`
-        width: 100%;
-    `}
-`;
 
 const PairingBlock = styled.div`
     display: flex;
@@ -226,7 +218,7 @@ const PairingModal = ({ params }: ModalProps<PairingModalParams>): React.ReactNo
     };
 
     return (
-        <ModalBlock>
+        <ModalWrapper>
             <ModalTitle>Logged in before?</ModalTitle>
             <ModalDescription>Restore your connection or create a new one.</ModalDescription>
             <NewConnectionButtonMobile onClick={() => connect()}>
@@ -287,7 +279,7 @@ const PairingModal = ({ params }: ModalProps<PairingModalParams>): React.ReactNo
                 <span>Add new connection</span>
                 <NewConnectionButtonIcon />
             </NewConnectionButtonWeb>
-        </ModalBlock>
+        </ModalWrapper>
     );
 };
 

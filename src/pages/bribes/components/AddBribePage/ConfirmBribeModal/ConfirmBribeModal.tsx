@@ -25,15 +25,7 @@ import { Breakpoints, COLORS } from 'web/styles';
 import Asset from 'basics/Asset';
 import Button from 'basics/buttons/Button';
 import Market from 'basics/Market';
-import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
-
-const Container = styled.div`
-    width: 52.8rem;
-
-    ${respondDown(Breakpoints.md)`
-        width: 100%;
-    `}
-`;
+import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 const PairBlock = styled.div`
     ${flexAllCenter};
@@ -171,7 +163,7 @@ const ConfirmBribeModal = ({
     };
 
     return (
-        <Container>
+        <ModalWrapper>
             <ModalTitle>Confirm bribe</ModalTitle>
             <ModalDescription>Please check all the details to create a bribe</ModalDescription>
             <PairBlock>
@@ -208,7 +200,7 @@ const ConfirmBribeModal = ({
             <StyledButton isBig fullWidth onClick={() => onSubmit()} pending={pending}>
                 add bribe
             </StyledButton>
-        </Container>
+        </ModalWrapper>
     );
 };
 

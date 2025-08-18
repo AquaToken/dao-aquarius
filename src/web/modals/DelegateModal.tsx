@@ -31,6 +31,10 @@ import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
 
 import { UP_ICE } from 'pages/vote/components/MainPage/MainPage';
 
+const DelegateButton = styled(Button)`
+    margin-top: 4rem;
+`;
+
 const IceLogo = styled(Ice)`
     height: 1.8rem;
     width: 1.8rem;
@@ -218,31 +222,6 @@ const DelegateModal = ({
             </ModalDescription>
 
             <FormRow>
-                <Balance>
-                    Available:{' '}
-                    <BalanceClickable onClick={() => onAmountChange(upvoteIceBalance.toFixed(7))}>
-                        {formatBalance(upvoteIceBalance)}
-                    </BalanceClickable>
-                    {UP_ICE_CODE}
-                </Balance>
-                <NumericFormat
-                    value={amount}
-                    onValueChange={value => onAmountChange(value.value)}
-                    placeholder="Enter amount"
-                    customInput={Input}
-                    label="ICE amount"
-                    postfix={<IceLogo />}
-                    inputMode="decimal"
-                    allowedDecimalSeparators={[',']}
-                    thousandSeparator=","
-                    decimalScale={7}
-                    allowNegative={false}
-                />
-            </FormRow>
-
-            <RangeInput onChange={onPercentChange} value={percent} />
-
-            <FormRow>
                 <Labels>
                     <label>Delegate to</label>
                     <ToggleGroup
@@ -294,7 +273,32 @@ const DelegateModal = ({
                 )}
             </FormRow>
 
-            <Button
+            <FormRow>
+                <Balance>
+                    Available:{' '}
+                    <BalanceClickable onClick={() => onAmountChange(upvoteIceBalance.toFixed(7))}>
+                        {formatBalance(upvoteIceBalance)}
+                    </BalanceClickable>
+                    {UP_ICE_CODE}
+                </Balance>
+                <NumericFormat
+                    value={amount}
+                    onValueChange={value => onAmountChange(value.value)}
+                    placeholder="Enter amount"
+                    customInput={Input}
+                    label="ICE amount"
+                    postfix={<IceLogo />}
+                    inputMode="decimal"
+                    allowedDecimalSeparators={[',']}
+                    thousandSeparator=","
+                    decimalScale={7}
+                    allowNegative={false}
+                />
+            </FormRow>
+
+            <RangeInput onChange={onPercentChange} value={percent} />
+
+            <DelegateButton
                 isBig
                 fullWidth
                 onClick={() => onSubmit()}
@@ -302,7 +306,7 @@ const DelegateModal = ({
                 pending={pending}
             >
                 Delegate
-            </Button>
+            </DelegateButton>
         </ModalWrapper>
     );
 };

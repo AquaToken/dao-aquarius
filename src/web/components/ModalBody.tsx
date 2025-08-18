@@ -17,7 +17,7 @@ import { ModalProps } from 'types/modal';
 import CloseIcon from 'assets/icon-close.svg';
 import ArrowRight from 'assets/icon-link-arrow.svg';
 
-import { flexAllCenter, respondDown } from '../mixins';
+import { customScroll, flexAllCenter, respondDown } from '../mixins';
 import { Breakpoints, COLORS, Z_INDEX } from '../styles';
 
 const ModalWrapper = styled.div`
@@ -44,7 +44,7 @@ const ModalInner = styled.div<{ $withBackground: boolean; $isShow: boolean }>`
     border-radius: 1rem;
     background: ${COLORS.white};
     box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
-    padding: ${({ $withBackground }) => ($withBackground ? '0 0 1rem' : '6.4rem 0 1rem')};
+    padding: ${({ $withBackground }) => ($withBackground ? '0 0 1rem' : '6.4rem 0 0')};
     animation: ${({ $isShow }) => ($isShow ? 'opening 300ms' : 'closing 300ms')};
     position: relative;
 
@@ -83,10 +83,10 @@ const ModalInner = styled.div<{ $withBackground: boolean; $isShow: boolean }>`
 `;
 
 const ModalContent = styled.div`
-    padding: 0 4.8rem 3.8rem;
+    margin: 0 3.8rem 4.8rem;
 
     ${respondDown(Breakpoints.md)`
-        padding: 0 1.6rem 2rem;
+        margin: 0 1.6rem 2rem;
     `};
 `;
 

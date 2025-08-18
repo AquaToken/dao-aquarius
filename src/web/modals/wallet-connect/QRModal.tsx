@@ -20,17 +20,7 @@ import Button from 'basics/buttons/Button';
 import CopyButton from 'basics/buttons/CopyButton';
 import ExternalLink from 'basics/ExternalLink';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
-import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
-
-const Wrapper = styled.div`
-    width: 52.8rem;
-    display: flex;
-    flex-direction: column;
-
-    ${respondDown(Breakpoints.md)`
-        width: 100%;
-    `}
-`;
+import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 const QRContainer = styled.div`
     width: 100%;
@@ -140,7 +130,7 @@ const QRModal = ({ params }: ModalProps<{ uri: string }>): React.ReactNode => {
     }, []);
 
     return (
-        <Wrapper>
+        <ModalWrapper>
             {isMobile() && (
                 <>
                     <MobileTitle>WalletConnect</MobileTitle>
@@ -213,7 +203,7 @@ const QRModal = ({ params }: ModalProps<{ uri: string }>): React.ReactNode => {
                         )}
                     </>
                 ))}
-        </Wrapper>
+        </ModalWrapper>
     );
 };
 
