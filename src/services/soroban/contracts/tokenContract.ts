@@ -17,6 +17,7 @@ import {
     simulateTx,
     getAccount,
     prepareTransaction,
+    getLedgerEntries,
 } from 'services/soroban/connection/connection';
 import {
     contractIdToScVal,
@@ -175,8 +176,7 @@ export function getTokenContractData(
         }),
     );
 
-    return this.server
-        .getLedgerEntries(contractKey)
+    return getLedgerEntries(contractKey)
         .then(({ entries, latestLedger }) => {
             if (!entries?.length) {
                 return {

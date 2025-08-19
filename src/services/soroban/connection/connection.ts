@@ -160,3 +160,7 @@ export function prepareTransaction(tx: StellarSdk.Transaction) {
         }),
     );
 }
+
+export function getLedgerEntries(...args: xdr.LedgerKey[]) {
+    return server.getLedgerEntries(...args);
+}
