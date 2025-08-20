@@ -27,6 +27,7 @@ import { Checkbox } from 'basics/inputs';
 import Input from 'basics/inputs/Input';
 import RangeInput from 'basics/inputs/RangeInput';
 import DotsLoader from 'basics/loaders/DotsLoader';
+import { StickyButtonWrapper } from 'basics/ModalAtoms';
 
 import NoTrustline from 'components/NoTrustline';
 
@@ -283,16 +284,18 @@ const BalancedWithdraw = ({ pool, totalShares, reserves, rewards, accountShare, 
 
             {withClaim && <NoTrustline asset={aquaStellarAsset} />}
 
-            <StyledButton
-                isBig
-                pending={pending}
-                onClick={() => withdraw()}
-                disabled={pool.tokens
-                    .filter(token => token.type === TokenType.classic)
-                    .some(token => account.getAssetBalance(token) === null)}
-            >
-                Remove
-            </StyledButton>
+            <StickyButtonWrapper>
+                <StyledButton
+                    isBig
+                    pending={pending}
+                    onClick={() => withdraw()}
+                    disabled={pool.tokens
+                        .filter(token => token.type === TokenType.classic)
+                        .some(token => account.getAssetBalance(token) === null)}
+                >
+                    Remove
+                </StyledButton>
+            </StickyButtonWrapper>
         </>
     );
 };

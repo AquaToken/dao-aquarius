@@ -30,6 +30,7 @@ import Asset from 'basics/Asset';
 import Button from 'basics/buttons/Button';
 import ErrorMessage from 'basics/ErrorMessage';
 import { Checkbox } from 'basics/inputs';
+import { StickyButtonWrapper } from 'basics/ModalAtoms';
 
 import NoTrustline from 'components/NoTrustline';
 
@@ -288,14 +289,16 @@ const CustomWithdraw = ({ pool, accountShare, rewards, close }: Props) => {
 
             {withClaim && <NoTrustline asset={aquaStellarAsset} />}
 
-            <StyledButton
-                isBig
-                disabled={!hasAmount || isInsufficient || !estimatedValue}
-                onClick={() => withdraw()}
-                pending={pending}
-            >
-                Remove
-            </StyledButton>
+            <StickyButtonWrapper>
+                <StyledButton
+                    isBig
+                    disabled={!hasAmount || isInsufficient || !estimatedValue}
+                    onClick={() => withdraw()}
+                    pending={pending}
+                >
+                    Remove
+                </StyledButton>
+            </StickyButtonWrapper>
         </>
     );
 };
