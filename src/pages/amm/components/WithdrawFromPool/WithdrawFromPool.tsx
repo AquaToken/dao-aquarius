@@ -12,28 +12,15 @@ import { SorobanService } from 'services/globalServices';
 import { PoolExtended } from 'types/amm';
 import { ModalProps } from 'types/modal';
 
-import { customScroll, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
+import { COLORS } from 'web/styles';
 
 import { ToggleGroup } from 'basics/inputs';
 import PageLoader from 'basics/loaders/PageLoader';
-import { ModalTitle } from 'basics/ModalAtoms';
+import { ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 import BalancedWithdraw from 'pages/amm/components/WithdrawFromPool/BalancedWithdraw/BalancedWithdraw';
 import CustomWithdraw from 'pages/amm/components/WithdrawFromPool/CustomWithdraw/CustomWithdraw';
 import SingleTokenWithdraw from 'pages/amm/components/WithdrawFromPool/SingleTokenWithdraw/SingleTokenWithdraw';
-
-const Container = styled.div`
-    width: 52.3rem;
-    max-height: 95vh;
-    overflow-y: auto;
-    ${customScroll};
-
-    ${respondDown(Breakpoints.md)`
-        width: 100%;
-        max-height: unset;
-    `}
-`;
 
 export const PairContainer = styled.div`
     display: flex;
@@ -97,7 +84,7 @@ const WithdrawFromPool = ({ params, close }: ModalProps<{ pool: PoolExtended }>)
     }, [account]);
 
     return (
-        <Container>
+        <ModalWrapper>
             {accountShare === null ? (
                 <PageLoader />
             ) : (
@@ -140,7 +127,7 @@ const WithdrawFromPool = ({ params, close }: ModalProps<{ pool: PoolExtended }>)
                     )}
                 </>
             )}
-        </Container>
+        </ModalWrapper>
     );
 };
 

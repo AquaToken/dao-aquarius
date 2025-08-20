@@ -17,23 +17,14 @@ import { ModalProps } from 'types/modal';
 import { useIsMounted } from 'hooks/useIsMounted';
 import { StellarService, ToastService } from 'services/globalServices';
 import { flexRowSpaceBetween, respondDown } from 'web/mixins';
-import { Breakpoints } from 'web/styles';
 
 import Alert from 'basics/Alert';
 import Button from 'basics/buttons/Button';
-import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 import { checkProposalStatus, createProposal, editProposal } from '../../../api/api';
 import { Proposal } from '../../../api/types';
 import { CREATE_DISCUSSION_COST } from '../../../pages/GovernanceMainPage';
-
-const Container = styled.div`
-    width: 52.8rem;
-
-    ${respondDown(Breakpoints.md)`
-        width: 100%;
-    `}
-`;
 
 const ProposalCost = styled.div`
     ${flexRowSpaceBetween};
@@ -162,7 +153,7 @@ const CreateDiscussionModal = ({
     };
 
     return (
-        <Container>
+        <ModalWrapper>
             <ModalTitle>Create proposal discussion</ModalTitle>
             <Description>To create a proposal discussion, you need to pay {cost} AQUA</Description>
             <ProposalCost>
@@ -186,7 +177,7 @@ const CreateDiscussionModal = ({
                     transaction is signed"
                 />
             )}
-        </Container>
+        </ModalWrapper>
     );
 };
 

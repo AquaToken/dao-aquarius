@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
 
@@ -8,18 +7,10 @@ import { ModalProps } from 'types/modal';
 
 import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
-import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 import { respondDown } from '../../mixins';
 import { Breakpoints } from '../../styles';
-
-const Container = styled.div`
-    width: 52.3rem;
-
-    ${respondDown(Breakpoints.md)`
-        width: 100%;
-    `}
-`;
 
 const Prefix = styled.div`
     margin-top: 0.1rem;
@@ -52,7 +43,7 @@ const LedgerLogin = ({ close }: ModalProps<never>) => {
     };
 
     return (
-        <Container>
+        <ModalWrapper>
             <ModalTitle>Log in with Ledger</ModalTitle>
             <ModalDescription>
                 Make sure your Ledger Wallet is connected with the Stellar application open on it.
@@ -89,7 +80,7 @@ const LedgerLogin = ({ close }: ModalProps<never>) => {
                     connect
                 </StyledButton>
             </form>
-        </Container>
+        </ModalWrapper>
     );
 };
 

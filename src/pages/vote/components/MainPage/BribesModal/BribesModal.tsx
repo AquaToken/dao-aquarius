@@ -17,39 +17,12 @@ import Info from 'assets/icon-info.svg';
 
 import Asset from 'basics/Asset';
 import ExternalLink from 'basics/ExternalLink';
-import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 import Table, { CellAlign } from 'basics/Table';
 
 import { PairStats } from '../../../api/types';
 import { getIceMaxApy } from 'helpers/ice';
 import { MAX_X_ICE_BOOST } from 'constants/ice';
-
-const ModalContainer = styled.div`
-    width: 80.6rem;
-    max-height: 80vh;
-    padding-right: 0.5rem;
-    overflow: auto;
-
-    &::-webkit-scrollbar {
-        width: 0.5rem;
-    }
-
-    /* Track */
-    &::-webkit-scrollbar-track {
-        background: ${COLORS.white};
-    }
-
-    /* Handle */
-    &::-webkit-scrollbar-thumb {
-        background: ${COLORS.purple};
-        border-radius: 0.25rem;
-    }
-
-    ${respondDown(Breakpoints.md)`
-          width: 100%;
-          max-height: unset;
-      `};
-`;
 
 const BribeDetails = styled.div`
     display: flex;
@@ -190,8 +163,9 @@ const BribesModal = ({ params }: ModalProps<{ pair: PairStats }>) => {
     const stopUTC = convertLocalDateToUTCIgnoringTimezone(new Date(stop_at));
 
     const aquaBribePrice = Number(sum / Number(pair.upvote_value)) * 1000;
+
     return (
-        <ModalContainer>
+        <ModalWrapper $isWide>
             <ModalTitle>
                 Bribes for {pair.asset1_code}/{pair.asset2_code}
             </ModalTitle>
@@ -281,7 +255,7 @@ const BribesModal = ({ params }: ModalProps<{ pair: PairStats }>) => {
                     ],
                 }))}
             />
-        </ModalContainer>
+        </ModalWrapper>
     );
 };
 

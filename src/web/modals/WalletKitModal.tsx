@@ -1,5 +1,4 @@
 import { HOTWALLET_ID } from '@creit.tech/stellar-wallets-kit';
-import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
