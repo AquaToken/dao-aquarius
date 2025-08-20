@@ -1,12 +1,9 @@
-import * as React from 'react';
 import { useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { StellarService, ToastService } from 'services/globalServices';
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
 
 import Community from 'components/Community';
 import Subscribe from 'components/Subscribe';
@@ -18,11 +15,11 @@ import FAQ from './components/FAQ/FAQ';
 import MainBlock from './components/MainBlock/MainBlock';
 import SnapshotStats from './components/SnapshotStats/SnapshotStats';
 import SupportedBy from './components/SupportedBy/SupportedBy';
+import { PageContainer } from 'web/pages/commonPageStyles';
 
-const Container = styled.div`
-    ${respondDown(Breakpoints.md)`
-         background-color: ${COLORS.white};
-    `}
+const Wrapper = styled.div`
+    max-width: 122rem;
+    width: 100%;
 `;
 
 const Airdrop2 = () => {
@@ -58,7 +55,7 @@ const Airdrop2 = () => {
     };
 
     return (
-        <Container>
+        <PageContainer $withoutPadding>
             <MainBlock />
 
             <Conditions
@@ -83,8 +80,10 @@ const Airdrop2 = () => {
 
             <Community />
 
-            <Subscribe />
-        </Container>
+            <Wrapper>
+                <Subscribe />
+            </Wrapper>
+        </PageContainer>
     );
 };
 

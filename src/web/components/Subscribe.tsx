@@ -8,27 +8,15 @@ import Input from 'basics/inputs/Input';
 import { respondDown } from '../mixins';
 import { Breakpoints, COLORS } from '../styles';
 
-const Container = styled.section`
-    padding-top: 3.2rem;
-    display: flex;
-    justify-content: center;
-    flex: auto;
-    position: relative;
-    min-height: 0;
-
-    ${respondDown(Breakpoints.md)`
-        text-align: left;
-    `}
-`;
-
 const Wrapper = styled.div`
     display: flex;
     width: 100%;
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-end;
-    max-width: 142rem;
-    padding: 0 10rem;
+    border-radius: 1.6rem;
+    background: ${COLORS.lightGray};
+    margin-top: 3.2rem;
 
     ${respondDown(Breakpoints.md)`
         padding: 0 1.6rem;
@@ -40,7 +28,7 @@ const SubscribeBlock = styled.div`
     display: flex;
     justify-content: space-between;
     width: 100%;
-    background: ${COLORS.lightGray};
+
     border-radius: 0.5rem;
     padding: 4.6rem 4rem 4rem;
 
@@ -125,35 +113,34 @@ const Subscribe = (): React.ReactNode => {
 
         e.preventDefault();
     };
-    return (
-        <Container>
-            <Wrapper>
-                <SubscribeBlock>
-                    <Header>
-                        <Title>Subscribe to stay updated</Title>
-                        <Description>
-                            Aquarius is moving fast, do not forget to subscribe to news
-                        </Description>
-                    </Header>
-                    <FormContainer>
-                        <Form onSubmit={handleSubmit}>
-                            <input type="hidden" name="form-name" value="subscribe" />
 
-                            <Input
-                                type="email"
-                                name="email"
-                                placeholder="Enter your email"
-                                value={email}
-                                onChange={e => setEmail(e.target.value)}
-                            />
-                            <StyledButton isBig type="submit">
-                                Subscribe
-                            </StyledButton>
-                        </Form>
-                    </FormContainer>
-                </SubscribeBlock>
-            </Wrapper>
-        </Container>
+    return (
+        <Wrapper>
+            <SubscribeBlock>
+                <Header>
+                    <Title>Subscribe to stay updated</Title>
+                    <Description>
+                        Aquarius is moving fast, do not forget to subscribe to news
+                    </Description>
+                </Header>
+                <FormContainer>
+                    <Form onSubmit={handleSubmit}>
+                        <input type="hidden" name="form-name" value="subscribe" />
+
+                        <Input
+                            type="email"
+                            name="email"
+                            placeholder="Enter your email"
+                            value={email}
+                            onChange={e => setEmail(e.target.value)}
+                        />
+                        <StyledButton isBig type="submit">
+                            Subscribe
+                        </StyledButton>
+                    </Form>
+                </FormContainer>
+            </SubscribeBlock>
+        </Wrapper>
     );
 };
 
