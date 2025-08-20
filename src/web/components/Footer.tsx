@@ -5,97 +5,159 @@ import styled, { css } from 'styled-components';
 import { MainRoutes } from 'constants/routes';
 import { AQUA_NETWORK_URL } from 'constants/urls';
 
-import { commonMaxWidth, flexAllCenter, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
+import { flexAllCenter, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS, MAX_WIDTHS } from 'web/styles';
 
 import AquaLogo from 'assets/aqua-logo.svg';
 import Audit from 'assets/audit.svg';
 import Dune from 'assets/DuneLogoCircle.svg';
 import Docs from 'assets/icon-docs.svg';
+import { MAIL_AQUA_LISTINGS } from 'constants/emails';
 
 const FooterBlock = styled.footer`
-    ${commonMaxWidth};
-    margin: 2rem auto 0;
-    padding: 0 4rem;
-    flex: 0 0 auto;
     display: flex;
-    flex-direction: column;
-    width: 100%;
+    justify-content: center;
+    align-items: center;
+    height: 16rem;
+    margin: 5.4rem 2.4rem 4.8rem 2.4rem;
 
-    ${respondDown(Breakpoints.xs)`
-        margin-top: 2.4rem;
-        padding: 0 1.6rem;
+    ${respondDown(Breakpoints.lg)`
+        margin: 3.6rem 2.4rem 3rem 2.4rem;
+    `}
+
+    ${respondDown(Breakpoints.md)`
+        height: auto;
+        margin: 3.6rem 1.6rem 3rem 1.6rem;
+    `}
+
+    ${respondDown(Breakpoints.sm)`
+        margin: 3.6rem 0.8rem 3rem 0.8rem;
     `}
 `;
 
-const HelpfulLine = styled.div`
+const Wrapper = styled.div<{ $isMainPage: boolean }>`
+    max-width: ${props => (props.$isMainPage ? MAX_WIDTHS.mainPage : MAX_WIDTHS.common)};
     display: flex;
-    justify-content: space-between;
+    gap: 3.2rem;
     width: 100%;
-    align-items: center;
 
     ${respondDown(Breakpoints.sm)`
         flex-direction: column;
-        align-items: flex-start;
+        gap: 2.4rem;
     `}
 `;
 
-const CopyrightLine = styled(HelpfulLine)`
-    padding-top: 2rem;
-    padding-bottom: 2rem;
-    box-sizing: border-box;
+const LogoWithDesc = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    line-height: 180%;
+    flex: 1;
+
+    ${respondDown(Breakpoints.xs)`
+        padding: 0 0.8rem;
+    `}
+`;
+
+const Description = styled.div`
+    font-size: 1.4rem;
+    color: ${COLORS.darkGrayText};
+    margin-top: 3.2rem;
+
+    ${respondDown(Breakpoints.sm)`
+        margin-top: 2.4rem;
+    `}
+`;
+
+const LinksAndCopyright = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    line-height: 180%;
+    flex: 1;
+    color: ${COLORS.darkGrayText};
+`;
+
+const ExchangesAndCopyright = styled.div`
     font-size: 1.2rem;
     line-height: 180%;
-    color: ${COLORS.descriptionText};
+    color: ${COLORS.darkGrayText};
+    text-decoration: none;
+    height: 100%;
+    display: flex;
+    align-items: end;
+    justify-content: center;
+    flex-direction: column;
 
-    div:last-child {
-        text-align: right;
+    ${respondDown(Breakpoints.sm)`
+        padding: 0 0.8rem;
+        flex-direction: row-reverse;
+        justify-content: space-between;
+        width: 100%;
+        margin-top: 2.4rem;
+    `}
 
-        a {
-            color: ${COLORS.purple};
-            text-decoration: none;
-        }
-    }
-
-    ${respondDown(Breakpoints.md)`
-        align-items: flex-start;
+    ${respondDown(Breakpoints.xs)`
         flex-direction: column;
-        padding-top: 1.6rem;
-        padding-bottom: 2.4rem;
-        gap: 1.6rem;
-        
-        div:last-child {
-            text-align: unset;
-        }
-   `}
+        align-items: start;
+        gap: 0.8rem;
+    `}
 `;
+
+const Exchanges = styled.span``;
 
 const Aqua = styled(AquaLogo)`
-    height: 4.4rem;
+    height: 3.8rem;
+`;
+
+const DocLinks = styled.div`
+    display: flex;
+    justify-content: space-between;
+    gap: 0.8rem;
+
+    ${respondDown(Breakpoints.sm)`
+        width: 100%;
+    `}
 
     ${respondDown(Breakpoints.xs)`
-       height: 3.4rem;
+        width: 100%;
+        flex-direction: column;
     `}
 `;
 
-const Links = styled.div`
+const AquaLinks = styled.div`
     display: flex;
     gap: 1.6rem;
-    flex-wrap: wrap;
+    margin-top: 1.2rem;
 
-    ${respondDown(Breakpoints.xs)`
-        margin-top: 1.6rem;
+    ${respondDown(Breakpoints.sm)`
+        padding: 0 0.8rem;
     `}
 `;
 
-const linkStyles = css`
+const AquaLink = styled(Link)`
+    font-size: 1.2rem;
+    line-height: 180%;
+    color: ${COLORS.purple};
+    text-decoration: none;
+`;
+
+const MailLink = styled.a`
+    font-size: 1.2rem;
+    line-height: 180%;
+    color: ${COLORS.purple};
+    text-decoration: none;
+`;
+
+const DocsLink = styled.a`
     ${flexAllCenter};
     border-radius: 0.5rem;
     background: ${COLORS.lightGray};
     padding: 1.2rem 1.6rem;
     text-decoration: none;
-    color: ${COLORS.descriptionText};
+    color: ${COLORS.darkGrayText};
     white-space: nowrap;
+
     span {
         margin-left: 0.3rem;
     }
@@ -109,14 +171,11 @@ const linkStyles = css`
     `}
 
     ${respondDown(Breakpoints.sm)`
+        flex: 1;
         span {
             display: none;
         }
     `}
-`;
-
-const DocsLink = styled.a`
-    ${linkStyles};
 `;
 
 const DuneLogo = styled(Dune)`
@@ -131,49 +190,58 @@ const Footer = (): React.ReactNode => {
     if (location.pathname.startsWith(MainRoutes.swap)) {
         return null;
     }
+
+    const isMainPage = location.pathname === MainRoutes.main;
+
     return (
         <FooterBlock>
-            <HelpfulLine>
-                <a href={AQUA_NETWORK_URL} target="_blank" rel="noreferrer noopener">
-                    <Aqua />
-                </a>
-                <Links>
-                    <DocsLink href="https://dune.com/fergmolina/aquarius" target="_blank">
-                        <DuneLogo />
-                        Dune dashboard
-                    </DocsLink>
-                    <DocsLink href="https://docs.aqua.network/" target="_blank">
-                        <Docs />
-                        Aquarius docs
-                    </DocsLink>
-                    <DocsLink
-                        href="https://docs.aqua.network/technical-documents/audits"
-                        target="_blank"
-                    >
-                        <Audit />
-                        Audits
-                    </DocsLink>
-                </Links>
-            </HelpfulLine>
-            <CopyrightLine>
-                <div>
-                    Aquarius runs on Stellar. AQUA tokens are issued on Stellar.
-                    <br />
-                    The project is unaffiliated with the Stellar Development Foundation.
-                    <br />
-                    <Links>
-                        <Link to={MainRoutes.terms}>Terms of use</Link>
-                        <Link to={MainRoutes.privacy}>Privacy policy</Link>
-                    </Links>
-                </div>
-                <div>
-                    For exchanges:{' '}
-                    <a href="mailto:listings@aqua.network" target="_blank" rel="noreferrer">
-                        listings@aqua.network
-                    </a>
-                    <br />© {new Date().getFullYear()} aqua.network
-                </div>
-            </CopyrightLine>
+            <Wrapper $isMainPage={isMainPage}>
+                <LogoWithDesc>
+                    <Link to={MainRoutes.main}>
+                        <Aqua />
+                    </Link>
+                    <Description>
+                        Aquarius runs on Stellar. AQUA tokens are issued on Stellar. <br />
+                        The project is unaffiliated with the Stellar Development Foundation.
+                    </Description>
+                    <AquaLinks>
+                        <AquaLink to={MainRoutes.terms}>Terms of use</AquaLink>
+                        <AquaLink to={MainRoutes.privacy}>Privacy policy</AquaLink>
+                    </AquaLinks>
+                </LogoWithDesc>
+                <LinksAndCopyright>
+                    <DocLinks>
+                        <DocsLink href="https://dune.com/fergmolina/aquarius" target="_blank">
+                            <DuneLogo />
+                            Dune dashboard
+                        </DocsLink>
+                        <DocsLink href="https://docs.aqua.network/" target="_blank">
+                            <Docs />
+                            Aquarius docs
+                        </DocsLink>
+                        <DocsLink
+                            href="https://docs.aqua.network/technical-documents/audits"
+                            target="_blank"
+                        >
+                            <Audit />
+                            Audits
+                        </DocsLink>
+                    </DocLinks>
+                    <ExchangesAndCopyright>
+                        <Exchanges>
+                            For exchanges:{' '}
+                            <MailLink
+                                href={`mailto:${MAIL_AQUA_LISTINGS}`}
+                                target="_blank"
+                                rel="noreferrer noopener"
+                            >
+                                {MAIL_AQUA_LISTINGS}
+                            </MailLink>
+                        </Exchanges>
+                        <span>© {new Date().getFullYear()} aqua.network</span>
+                    </ExchangesAndCopyright>
+                </LinksAndCopyright>
+            </Wrapper>
         </FooterBlock>
     );
 };

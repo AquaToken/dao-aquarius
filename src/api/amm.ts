@@ -237,11 +237,11 @@ export const findSwapPath = async (
     return data;
 };
 
-export const getTotalStats = async (): Promise<PoolStatistics[]> => {
+export const getTotalStats = async (pageSize = 365): Promise<PoolStatistics[]> => {
     const baseUrl = getAmmAquaUrl();
 
     const { data } = await axios.get<ListResponse<PoolStatistics>>(
-        `${baseUrl}/statistics/totals/?size=365`,
+        `${baseUrl}/statistics/totals/?size=${pageSize}`,
     );
     return data.items.reverse();
 };

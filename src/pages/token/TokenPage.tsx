@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useEffect } from 'react';
 import styled from 'styled-components';
 
@@ -15,11 +14,11 @@ import AquaLinks from 'pages/token/components/AquaLinks/AquaLinks';
 import AquaPerformance from 'pages/token/components/AquaPerformance/AquaPerformance';
 import AquaStatistics from 'pages/token/components/AquaStatistics/AquaStatistics';
 import MainBlock from 'pages/token/components/MainBlock/MainBlock';
+import { PageContainer } from 'web/pages/commonPageStyles';
 
-const Container = styled.main`
-    flex: 1 0 auto;
-    background-color: ${COLORS.white};
-    overflow: hidden;
+const Wrapper = styled.div`
+    width: 100%;
+    max-width: 122rem;
 `;
 
 const AquaLinksStyled = styled(AquaLinks)`
@@ -34,7 +33,7 @@ const TokenPage = () => {
     }, []);
 
     return (
-        <Container>
+        <PageContainer $withoutPadding>
             <MainBlock />
 
             <AquaStatistics />
@@ -51,8 +50,10 @@ const TokenPage = () => {
 
             <Community />
 
-            <Subscribe />
-        </Container>
+            <Wrapper>
+                <Subscribe />
+            </Wrapper>
+        </PageContainer>
     );
 };
 
