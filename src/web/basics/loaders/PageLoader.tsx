@@ -1,9 +1,7 @@
-import Lottie from 'lottie-react';
 import styled from 'styled-components';
 
-import * as preloader from 'assets/preloader.json';
-
 import { flexAllCenter } from '../../mixins';
+import AquaLogoLoader from './AquaLogoLoader';
 
 const Container = styled.div`
     flex: 1 0 auto;
@@ -12,8 +10,7 @@ const Container = styled.div`
 
 const PageLoader = (): JSX.Element => (
     <Container>
-        {/* TODO: DELETE LOTTIE PKG */}
-        <Lottie animationData={preloader} style={{ height: '6rem', width: '6rem' }} />
+        <AquaLogoLoader />
     </Container>
 );
 
