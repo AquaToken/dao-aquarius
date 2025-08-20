@@ -25,7 +25,6 @@ import {
     amountToInt128,
     amountToUint128,
     amountToUint32,
-    assetToScVal,
     contractIdToScVal,
     i128ToInt,
     publicKeyToScVal,
@@ -72,11 +71,16 @@ export function getInitConstantPoolTx(
                                 xdr.SorobanAuthorizedFunction.sorobanAuthorizedFunctionTypeContractFn(
                                     new xdr.InvokeContractArgs({
                                         functionName: ASSET_CONTRACT_METHOD.TRANSFER,
-                                        contractAddress: assetToScVal(createInfo.token).address(),
+                                        contractAddress: contractIdToScVal(
+                                            createInfo.token.contract,
+                                        ).address(),
                                         args: [
                                             publicKeyToScVal(accountId),
                                             contractIdToScVal(createInfo.destination),
-                                            amountToInt128(createInfo.constantFee),
+                                            amountToInt128(
+                                                createInfo.constantFee,
+                                                createInfo.token.decimal,
+                                            ),
                                         ],
                                     }),
                                 ),
@@ -107,11 +111,11 @@ export function getInitStableSwapPoolTx(
         function: xdr.SorobanAuthorizedFunction.sorobanAuthorizedFunctionTypeContractFn(
             new xdr.InvokeContractArgs({
                 functionName: ASSET_CONTRACT_METHOD.TRANSFER,
-                contractAddress: assetToScVal(createInfo.token).address(),
+                contractAddress: contractIdToScVal(createInfo.token.contract).address(),
                 args: [
                     publicKeyToScVal(accountId),
                     contractIdToScVal(createInfo.destination),
-                    amountToInt128(createInfo.stableFee),
+                    amountToInt128(createInfo.stableFee, createInfo.token.decimal),
                 ],
             }),
         ),
