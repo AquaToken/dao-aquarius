@@ -12,6 +12,7 @@ const Container = styled.div`
 
 const PageLoader = (): JSX.Element => (
     <Container>
+        {/* TODO: DELETE LOTTIE PKG */}
         <Lottie animationData={preloader} style={{ height: '6rem', width: '6rem' }} />
     </Container>
 );
