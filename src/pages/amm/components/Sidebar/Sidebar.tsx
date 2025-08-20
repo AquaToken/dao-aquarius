@@ -140,9 +140,11 @@ const Sidebar = ({ pool }: { pool: PoolExtended }) => {
             setAccountShare(null);
             return;
         }
-        SorobanService.getTokenBalance(pool.share_token_address, account.accountId()).then(res => {
-            setAccountShare(res);
-        });
+        SorobanService.token
+            .getTokenBalance(pool.share_token_address, account.accountId())
+            .then(res => {
+                setAccountShare(res);
+            });
     }, [account]);
     const openDepositModal = () => {
         if (!isLogged) {

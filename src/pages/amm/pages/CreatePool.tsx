@@ -6,7 +6,9 @@ import styled from 'styled-components';
 
 import { FilterOptions, getPools, PoolsSortFields } from 'api/amm';
 
+import { POOL_TYPE } from 'constants/amm';
 import { AmmRoutes } from 'constants/routes';
+import { CONTRACT_STATUS } from 'constants/soroban';
 
 import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
@@ -15,7 +17,6 @@ import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { SorobanService, ToastService } from 'services/globalServices';
-import { CONTRACT_STATUS, POOL_TYPE } from 'services/soroban.service';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { PoolProcessed } from 'types/amm';
@@ -243,7 +244,7 @@ const CreatePool = () => {
     }, [type]);
 
     useEffect(() => {
-        SorobanService.getCreationFeeInfo().then(res => {
+        SorobanService.amm.getCreationFeeInfo().then(res => {
             setCreateInfo(res);
         });
     }, []);
@@ -279,7 +280,7 @@ const CreatePool = () => {
             setFirstAssetStatus(null);
             return;
         }
-        SorobanService.getContractData(firstAsset.contract).then(({ status }) => {
+        SorobanService.token.getTokenContractData(firstAsset.contract).then(({ status }) => {
             setFirstAssetStatus(status);
         });
     }, [firstAsset]);
@@ -289,7 +290,7 @@ const CreatePool = () => {
             setSecondAssetStatus(null);
             return;
         }
-        SorobanService.getContractData(secondAsset.contract).then(({ status }) => {
+        SorobanService.token.getTokenContractData(secondAsset.contract).then(({ status }) => {
             setSecondAssetStatus(status);
         });
     }, [secondAsset]);
@@ -299,7 +300,7 @@ const CreatePool = () => {
             setThirdAssetStatus(null);
             return;
         }
-        SorobanService.getContractData(thirdAsset.contract).then(({ status }) => {
+        SorobanService.token.getTokenContractData(thirdAsset.contract).then(({ status }) => {
             setThirdAssetStatus(status);
         });
     }, [thirdAsset]);
@@ -317,7 +318,7 @@ const CreatePool = () => {
             setFourthAssetStatus(null);
             return;
         }
-        SorobanService.getContractData(fourthAsset.contract).then(({ status }) => {
+        SorobanService.token.getTokenContractData(fourthAsset.contract).then(({ status }) => {
             setFourthAssetStatus(status);
         });
     }, [fourthAsset]);
@@ -344,7 +345,9 @@ const CreatePool = () => {
                         ToastService.showSuccessToast('More signatures required to complete');
                         return;
                     }
-                    const poolAddress = SorobanService.scValToNative(res.value()[1] as xdr.ScVal);
+                    const poolAddress = SorobanService.scVal.scValToNative(
+                        res.value()[1] as xdr.ScVal,
+                    );
                     ToastService.showSuccessToast('Pool successfully created');
                     history.push(`${AmmRoutes.analytics}${poolAddress}`);
                 },
@@ -370,12 +373,13 @@ const CreatePool = () => {
 
         setPending(true);
 
-        SorobanService.getInitStableSwapPoolTx(
-            account.accountId(),
-            [firstAsset, secondAsset, thirdAsset, fourthAsset].filter(asset => asset !== null),
-            Number(stableFee),
-            createInfo,
-        )
+        SorobanService.amm
+            .getInitStableSwapPoolTx(
+                account.accountId(),
+                [firstAsset, secondAsset, thirdAsset, fourthAsset].filter(asset => asset !== null),
+                Number(stableFee),
+                createInfo,
+            )
             .then(tx => signAndSubmitCreation(tx))
             .catch(e => {
                 ToastService.showErrorToast(e.message ?? e.toString());
@@ -397,13 +401,14 @@ const CreatePool = () => {
             openCurrentWalletIfExist();
         }
         setPending(true);
-        SorobanService.getInitConstantPoolTx(
-            account.accountId(),
-            firstAsset,
-            secondAsset,
-            constantFee,
-            createInfo,
-        )
+        SorobanService.amm
+            .getInitConstantPoolTx(
+                account.accountId(),
+                firstAsset,
+                secondAsset,
+                constantFee,
+                createInfo,
+            )
             .then(tx => signAndSubmitCreation(tx))
             .catch(e => {
                 ToastService.showErrorToast(e.message ?? e.toString());

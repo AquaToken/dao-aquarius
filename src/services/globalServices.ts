@@ -4,7 +4,7 @@ import AssetsServiceClass from './assets.service';
 import LedgerServiceClass from './ledger.service';
 import LobstrExtensionServiceClass from './lobstr-extension.service';
 import ModalServiceClass from './modal.service';
-import SorobanServiceClass from './soroban.service';
+import SorobanServiceClass from './soroban/soroban.service';
 import StellarServiceClass from './stellar.service';
 import ToastServiceClass from './toast.service';
 import WalletConnectServiceClass from './wallet-connect.service';

@@ -93,9 +93,11 @@ const SwapConfirmModal = ({
     const { account } = useAuthStore();
 
     useEffect(() => {
-        Promise.all(bestPath.map(str => SorobanService.parseTokenContractId(str))).then(res => {
-            setPathTokens(res);
-        });
+        Promise.all(bestPath.map(str => SorobanService.token.parseTokenContractId(str))).then(
+            res => {
+                setPathTokens(res);
+            },
+        );
     }, []);
 
     useEffect(() => {
@@ -117,21 +119,27 @@ const SwapConfirmModal = ({
             : ((1 + Number(SLIPPAGE) / 100) * Number(baseAmount)).toFixed(
                   (base as SorobanToken).decimal ?? 7,
               );
-        SorobanService.getSwapChainedTx(
-            account?.accountId(),
-            base,
-            counter,
-            bestPathXDR,
-            isSend ? baseAmount : counterAmount,
-            minAmount,
-            isSend,
-        ).then(res => {
-            SorobanService.simulateTx(res).then(
-                ({ minResourceFee }: StellarSdk.rpc.Api.SimulateTransactionSuccessResponse) => {
-                    setTxFee(minResourceFee);
-                },
-            );
-        });
+        SorobanService.amm
+            .getSwapChainedTx(
+                account?.accountId(),
+                base,
+                counter,
+                bestPathXDR,
+                isSend ? baseAmount : counterAmount,
+                minAmount,
+                isSend,
+            )
+            .then(res => {
+                SorobanService.connection
+                    .simulateTx(res)
+                    .then(
+                        ({
+                            minResourceFee,
+                        }: StellarSdk.rpc.Api.SimulateTransactionSuccessResponse) => {
+                            setTxFee(minResourceFee);
+                        },
+                    );
+            });
     }, []);
 
     const swap = () => {
@@ -151,15 +159,16 @@ const SwapConfirmModal = ({
 
         let hash: string;
 
-        SorobanService.getSwapChainedTx(
-            account?.accountId(),
-            base,
-            counter,
-            bestPathXDR,
-            isSend ? baseAmount : counterAmount,
-            minAmount,
-            isSend,
-        )
+        SorobanService.amm
+            .getSwapChainedTx(
+                account?.accountId(),
+                base,
+                counter,
+                bestPathXDR,
+                isSend ? baseAmount : counterAmount,
+                minAmount,
+                isSend,
+            )
             .then(tx => {
                 hash = tx.hash().toString('hex');
                 return account.signAndSubmitTx(tx, true);
@@ -181,9 +190,15 @@ const SwapConfirmModal = ({
 
                 const sentAmount = isSend
                     ? baseAmount
-                    : SorobanService.i128ToInt(res as xdr.ScVal, (base as SorobanToken).decimal);
+                    : SorobanService.scVal.i128ToInt(
+                          res as xdr.ScVal,
+                          (base as SorobanToken).decimal,
+                      );
                 const receivedAmount = isSend
-                    ? SorobanService.i128ToInt(res as xdr.ScVal, (counter as SorobanToken).decimal)
+                    ? SorobanService.scVal.i128ToInt(
+                          res as xdr.ScVal,
+                          (counter as SorobanToken).decimal,
+                      )
                     : counterAmount;
 
                 ModalService.openModal(SuccessModal, {
