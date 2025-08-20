@@ -29,6 +29,7 @@ import AquaPrice from 'pages/token/components/AquaPrice/AquaPrice';
 const Container = styled.section`
     ${commonMaxWidth};
     padding: 0 10rem;
+    width: 100%;
 
     ${respondDown(Breakpoints.sm)`
         padding: 0 1.6rem;
