@@ -15,12 +15,7 @@ import FAQ from './components/FAQ/FAQ';
 import MainBlock from './components/MainBlock/MainBlock';
 import SnapshotStats from './components/SnapshotStats/SnapshotStats';
 import SupportedBy from './components/SupportedBy/SupportedBy';
-import { PageContainer } from 'web/pages/commonPageStyles';
-
-const Wrapper = styled.div`
-    max-width: 122rem;
-    width: 100%;
-`;
+import { PageContainer, SectionWrapper } from 'web/pages/commonPageStyles';
 
 const Airdrop2 = () => {
     const { isLogged, account } = useAuthStore();
@@ -78,11 +73,11 @@ const Airdrop2 = () => {
 
             <FAQ />
 
-            <Wrapper>
+            <SectionWrapper>
                 <Community />
 
                 <Subscribe />
-            </Wrapper>
+            </SectionWrapper>
         </PageContainer>
     );
 };

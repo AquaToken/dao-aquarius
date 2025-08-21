@@ -34,7 +34,7 @@ const FooterBlock = styled.footer`
 `;
 
 const Wrapper = styled.div<{ $isMainPage: boolean }>`
-    max-width: ${props => (props.$isMainPage ? MAX_WIDTHS.mainPage : MAX_WIDTHS.common)};
+    max-width: ${props => (props.$isMainPage ? MAX_WIDTHS.medium : MAX_WIDTHS.common)};
     display: flex;
     gap: 3.2rem;
     width: 100%;

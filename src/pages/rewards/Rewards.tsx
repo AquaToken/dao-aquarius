@@ -4,9 +4,6 @@ import styled from 'styled-components';
 
 import { getTotalRewards } from 'api/rewards';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS, MAX_WIDTHS } from 'web/styles';
-
 import Community from 'components/Community';
 import Subscribe from 'components/Subscribe';
 
@@ -14,12 +11,7 @@ import DividedRewards from './components/DividedRewards/DividedRewards';
 import FAQ from './components/FAQ/FAQ';
 import RewardsList from './components/RewardsList/RewardsList';
 import TotalRewards from './components/TotalRewards/TotalRewards';
-import { PageContainer } from 'web/pages/commonPageStyles';
-
-const Wrapper = styled.div`
-    max-width: 122rem;
-    width: 100%;
-`;
+import { PageContainer, SectionWrapper } from 'web/pages/commonPageStyles';
 
 const Rewards = () => {
     const [totalRewards, setTotalRewards] = useState(null);
@@ -40,11 +32,11 @@ const Rewards = () => {
 
             <FAQ />
 
-            <Wrapper>
+            <SectionWrapper>
                 <Community />
 
                 <Subscribe />
-            </Wrapper>
+            </SectionWrapper>
         </PageContainer>
     );
 };

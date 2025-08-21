@@ -61,6 +61,10 @@ const Description = styled.div`
     margin-top: 0.8rem;
     color: #4d4f68;
     text-align: center;
+
+    ${respondDown(Breakpoints.xs)`
+        font-size: 1.4rem;
+    `};
 `;
 
 const Benefits = styled.div`

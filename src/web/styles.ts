@@ -80,5 +80,5 @@ export enum Breakpoints {
 
 export const MAX_WIDTHS = {
     common: '144rem',
-    mainPage: '121.6rem',
+    medium: '122rem',
 };
