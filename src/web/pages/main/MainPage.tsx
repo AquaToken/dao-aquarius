@@ -5,13 +5,13 @@ import { Breakpoints, COLORS, MAX_WIDTHS } from 'web/styles';
 import Community from 'components/Community';
 import Subscribe from 'components/Subscribe';
 
-import About from './components/About/About';
 import IceBlock from './components/IceBlock/IceBlock';
 import HeroBlock from './components/HeroBlock';
 import Roadmap from './components/Roadmap/Roadmap';
 import SupportedBy from './components/SupportedBy/SupportedBy';
 
 import { PageContainer } from '../commonPageStyles';
+import AquaSoroban from './components/AquaSoroban';
 
 const Wrapper = styled.div`
     max-width: ${MAX_WIDTHS.mainPage};
@@ -25,7 +25,7 @@ const MainPage = () => (
         <Wrapper>
             <SupportedBy />
 
-            <About />
+            <AquaSoroban />
 
             <IceBlock />
 

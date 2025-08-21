@@ -1,9 +1,7 @@
-import * as React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
 import { MainRoutes } from 'constants/routes';
-import { AQUA_NETWORK_URL } from 'constants/urls';
 
 import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS, MAX_WIDTHS } from 'web/styles';
@@ -110,6 +108,10 @@ const Aqua = styled(AquaLogo)`
     height: 3.8rem;
 `;
 
+const LogoLink = styled(Link)`
+    width: fit-content;
+`;
+
 const DocLinks = styled.div`
     display: flex;
     justify-content: space-between;
@@ -197,9 +199,9 @@ const Footer = (): React.ReactNode => {
         <FooterBlock>
             <Wrapper $isMainPage={isMainPage}>
                 <LogoWithDesc>
-                    <Link to={MainRoutes.main}>
+                    <LogoLink to={MainRoutes.main}>
                         <Aqua />
-                    </Link>
+                    </LogoLink>
                     <Description>
                         Aquarius runs on Stellar. AQUA tokens are issued on Stellar. <br />
                         The project is unaffiliated with the Stellar Development Foundation.

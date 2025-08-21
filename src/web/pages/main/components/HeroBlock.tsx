@@ -3,8 +3,12 @@ import styled from 'styled-components';
 
 import { MainRoutes } from 'constants/routes';
 
-import StellarLogo from 'assets/hero/stellar-logo.svg';
-import HeroBackground from 'assets/hero/hero-background.png';
+import StellarLogo from 'assets/main-page/stellar-logo.svg';
+import HeroBackground from 'assets/main-page/hero-background.png';
+import HandTopRight from 'assets/main-page/hand-top-right.svg';
+import HandLeftBottom from 'assets/main-page/hand-left-bottom.svg';
+import HeroTopLeft from 'assets/main-page/hero-top-left.svg';
+import HeroBottomRight from 'assets/main-page/hero-bottom-right.svg';
 
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -18,6 +22,8 @@ import LiveIndicator from 'basics/LiveIndicator';
 
 const Hero = styled.section<{ $isDarkTheme: boolean }>`
     width: 100%;
+    position: relative;
+    overflow: hidden;
     background: ${({ $isDarkTheme }) =>
         $isDarkTheme ? `url(${HeroBackground}) no-repeat center center / cover` : COLORS.lightGray};
 
@@ -130,10 +136,42 @@ const StellarLogoStyled = styled(StellarLogo)<{ $isDarkTheme: boolean }>`
     color: ${props => (props.$isDarkTheme ? COLORS.white : COLORS.black)};
 `;
 
+const HandTopRightStyled = styled(HandTopRight)`
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    ${respondDown(Breakpoints.sm)`
+        display: none;
+    `}
+`;
+
+const HandBottomLeftStyled = styled(HandLeftBottom)`
+    position: absolute;
+    bottom: 0;
+    left: 0;
+
+    ${respondDown(Breakpoints.sm)`
+        display: none;
+    `}
+`;
+
+const HeroTopLeftStyled = styled(HeroTopLeft)`
+    position: absolute;
+    top: 0;
+    left: 0;
+`;
+
+const HeroBottomRightStyled = styled(HeroBottomRight)`
+    position: absolute;
+    bottom: 0;
+    right: 0;
+`;
+
 const HeroBlock = () => {
     const [lastStats, setLastStats] = useState(null);
 
-    const isDarkTheme = getIsDarkTheme();
+    const isDarkTheme = false;
 
     useEffect(() => {
         getTotalStats(1).then(res => {
@@ -143,6 +181,10 @@ const HeroBlock = () => {
 
     return (
         <Hero $isDarkTheme={isDarkTheme}>
+            <HandTopRightStyled />
+            <HandBottomLeftStyled />
+            <HeroTopLeftStyled />
+            <HeroBottomRightStyled />
             <MainContent>
                 <Label $isDarkTheme={isDarkTheme}>
                     Built on <StellarLogoStyled $isDarkTheme={isDarkTheme} />
