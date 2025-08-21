@@ -6,6 +6,7 @@ import { Breakpoints, COLORS } from 'web/styles';
 import AquaBuildersIcon from 'assets/main-page/aqua-builders.svg';
 import IconCheck16 from 'assets/small-icons/check/icon-check-16.svg';
 import ExternalLink from 'basics/ExternalLink';
+import { AQUA_DOCS_URL } from 'constants/urls';
 
 const Wrapper = styled.section`
     ${flexAllCenter};
@@ -116,7 +117,9 @@ const AquaForBuilders = () => (
                 ))}
             </Benefits>
 
-            <ExternalLinkStyled href="#">Learn more about building on Aquarius</ExternalLinkStyled>
+            <ExternalLinkStyled href={AQUA_DOCS_URL}>
+                Learn more about building on Aquarius
+            </ExternalLinkStyled>
         </ShortWrapper>
     </Wrapper>
 );

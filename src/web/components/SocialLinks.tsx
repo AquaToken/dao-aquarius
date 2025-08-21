@@ -1,4 +1,3 @@
-import * as React from 'react';
 import styled, { css } from 'styled-components';
 
 import Discord from 'assets/discord.svg';
@@ -11,6 +10,7 @@ import Twitter from 'assets/twitter.svg';
 
 import { respondDown } from '../mixins';
 import { Breakpoints, COLORS } from '../styles';
+import { MAIL_AQUA_HELLO } from 'constants/emails';
 
 const VerticalStyles = css`
     position: absolute;
@@ -97,7 +97,7 @@ const SocialLinks = ({ isHorizontal }: { isHorizontal?: boolean }) => (
         <a href="https://x.com/AquariusDeFi" target="_blank" rel="noreferrer">
             <Twitter />
         </a>
-        <a href="mailto:hello@aqua.network">
+        <a href={`mailto:${MAIL_AQUA_HELLO}`} target="_blank" rel="noopener noreferrer">
             <Email />
         </a>
         <StayInTouch $isHorizontal={isHorizontal}>

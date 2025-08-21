@@ -11,6 +11,7 @@ import Audit from 'assets/audit.svg';
 import Dune from 'assets/DuneLogoCircle.svg';
 import Docs from 'assets/icon-docs.svg';
 import { MAIL_AQUA_LISTINGS } from 'constants/emails';
+import { AQUA_DOCS_AUDIT, AQUA_DOCS_URL } from 'constants/urls';
 
 const FooterBlock = styled.footer`
     display: flex;
@@ -217,14 +218,11 @@ const Footer = (): React.ReactNode => {
                             <DuneLogo />
                             Dune dashboard
                         </DocsLink>
-                        <DocsLink href="https://docs.aqua.network/" target="_blank">
+                        <DocsLink href={AQUA_DOCS_URL} target="_blank">
                             <Docs />
                             Aquarius docs
                         </DocsLink>
-                        <DocsLink
-                            href="https://docs.aqua.network/technical-documents/audits"
-                            target="_blank"
-                        >
+                        <DocsLink href={AQUA_DOCS_AUDIT} target="_blank">
                             <Audit />
                             Audits
                         </DocsLink>

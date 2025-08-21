@@ -11,6 +11,7 @@ import Twitter from 'assets/twitter-styled.svg';
 
 import { respondDown } from '../mixins';
 import { Breakpoints, COLORS } from '../styles';
+import { MAIL_AQUA_HELLO } from 'constants/emails';
 
 const Wrapper = styled.section`
     display: flex;
@@ -184,9 +185,9 @@ const Community = (): React.ReactNode => (
                 <Medium />
                 <ItemTitle>Medium</ItemTitle>
             </Link>
-            <Link href="mailto:hello@aqua.network" target="_blank" rel="noopener noreferrer">
+            <Link href={`mailto:${MAIL_AQUA_HELLO}`} target="_blank" rel="noopener noreferrer">
                 <Email />
-                <ItemTitle>hello@aqua.network</ItemTitle>
+                <ItemTitle>{MAIL_AQUA_HELLO}</ItemTitle>
             </Link>
         </LinksWrapper>
     </Wrapper>
