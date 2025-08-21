@@ -55,7 +55,7 @@ const Airdrop2 = () => {
     };
 
     return (
-        <PageContainer $withoutPadding>
+        <PageContainer>
             <MainBlock />
 
             <Conditions

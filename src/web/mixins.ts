@@ -98,3 +98,17 @@ export const contentWithSidebar = css`
         padding: 3.2rem 1.6rem 0;
     `}
 `;
+
+export const commonSectionPaddings = css`
+    ${respondDown(Breakpoints.md)`
+        padding: 0 2.4rem;
+    `}
+
+    ${respondDown(Breakpoints.sm)`
+        padding: 0 1.6rem;
+    `}
+
+    ${respondDown(Breakpoints.xs)`
+        padding: 0 0.8rem;
+    `}
+`;

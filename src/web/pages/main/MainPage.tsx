@@ -1,41 +1,59 @@
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { Breakpoints, COLORS, MAX_WIDTHS } from 'web/styles';
+import { getTotalStats } from 'api/amm';
+
+import { COLORS, MAX_WIDTHS } from 'web/styles';
 
 import Community from 'components/Community';
 import Subscribe from 'components/Subscribe';
 
-import IceBlock from './components/IceBlock/IceBlock';
 import HeroBlock from './components/HeroBlock';
-import Roadmap from './components/Roadmap/Roadmap';
-import SupportedBy from './components/SupportedBy/SupportedBy';
+import SupportedWallets from './components/SupportedWallets';
 
 import { PageContainer } from '../commonPageStyles';
 import AquaSoroban from './components/AquaSoroban';
+import { commonSectionPaddings } from 'web/mixins';
+import AquaForBuilders from './components/AquaForBuilders';
+import { PoolStatistics } from 'types/amm';
 
 const Wrapper = styled.div`
     max-width: ${MAX_WIDTHS.mainPage};
-    width: 100%;
+    background-color: ${COLORS.white};
+    ${commonSectionPaddings};
 `;
 
-const MainPage = () => (
-    <PageContainer>
-        <HeroBlock />
+const MainPage = () => {
+    const [isLoadingStats, setIsLoadingStats] = useState(true);
+    const [lastStats, setLastStats] = useState<PoolStatistics | null>(null);
 
-        <Wrapper>
-            <SupportedBy />
+    useEffect(() => {
+        getTotalStats(1)
+            .then(res => {
+                setLastStats(res[0]);
+            })
+            .finally(() => {
+                setIsLoadingStats(false);
+            });
+    }, []);
 
-            <AquaSoroban />
+    return (
+        <PageContainer>
+            <HeroBlock isLoading={isLoadingStats} lastStats={lastStats} />
 
-            <IceBlock />
+            <Wrapper>
+                <SupportedWallets />
 
-            <Roadmap />
+                <AquaSoroban />
 
-            <Community />
+                <AquaForBuilders />
 
-            <Subscribe />
-        </Wrapper>
-    </PageContainer>
-);
+                <Community />
+
+                <Subscribe />
+            </Wrapper>
+        </PageContainer>
+    );
+};
 
 export default MainPage;

@@ -33,7 +33,7 @@ const TokenPage = () => {
     }, []);
 
     return (
-        <PageContainer $withoutPadding>
+        <PageContainer>
             <MainBlock />
 
             <AquaStatistics />

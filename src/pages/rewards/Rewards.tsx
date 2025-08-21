@@ -31,7 +31,7 @@ const Rewards = () => {
     }, []);
 
     return (
-        <PageContainer $withoutPadding>
+        <PageContainer>
             <TotalRewards totalRewards={totalRewards} />
 
             <DividedRewards totalRewards={totalRewards} />

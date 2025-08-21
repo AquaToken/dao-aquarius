@@ -14,14 +14,14 @@ import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Button from 'basics/buttons/Button';
-import { useEffect, useState } from 'react';
-import { getTotalStats } from 'api/amm';
 import { formatBalance } from 'helpers/format-number';
 import { getIsDarkTheme } from 'helpers/theme';
 import LiveIndicator from 'basics/LiveIndicator';
+import { PoolStatistics } from 'types/amm';
+import { DotsLoader } from 'basics/loaders';
 
 const Hero = styled.section<{ $isDarkTheme: boolean }>`
-    width: 100%;
+    width: calc(100% - 4.8rem);
     position: relative;
     overflow: hidden;
     background: ${({ $isDarkTheme }) =>
@@ -40,7 +40,10 @@ const Hero = styled.section<{ $isDarkTheme: boolean }>`
     `}
 
     ${respondDown(Breakpoints.xs)`
+        width: 100%;
         height: 44.8rem;
+        border-radius: 0;
+        padding: 5.6rem 0.8rem 3.6rem 0.8rem;
     `}
 `;
 
@@ -168,16 +171,13 @@ const HeroBottomRightStyled = styled(HeroBottomRight)`
     right: 0;
 `;
 
-const HeroBlock = () => {
-    const [lastStats, setLastStats] = useState(null);
+interface Props {
+    isLoading: boolean;
+    lastStats: PoolStatistics | null;
+}
 
-    const isDarkTheme = false;
-
-    useEffect(() => {
-        getTotalStats(1).then(res => {
-            setLastStats(res[0]);
-        });
-    }, []);
+const HeroBlock = ({ isLoading, lastStats }) => {
+    const isDarkTheme = getIsDarkTheme();
 
     return (
         <Hero $isDarkTheme={isDarkTheme}>
@@ -206,7 +206,11 @@ const HeroBlock = () => {
                 </LiveStats>
                 <LockedLiquidity>
                     <TotalLiq $isDarkTheme={isDarkTheme}>
-                        ${formatBalance(Number(lastStats?.liquidity_usd) / 1e7, true, true)}
+                        {isLoading ? (
+                            <DotsLoader />
+                        ) : (
+                            `$${formatBalance(Number(lastStats?.liquidity_usd) / 1e7, true, true)}`
+                        )}
                     </TotalLiq>
                     <TotalLiqDesc $isDarkTheme={isDarkTheme}>Locked in Liquidity</TotalLiqDesc>
                 </LockedLiquidity>

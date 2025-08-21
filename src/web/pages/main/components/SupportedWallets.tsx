@@ -9,13 +9,7 @@ import LobstrIcon from 'assets/lobstr-name-logo.svg';
 import StellarTermIcon from 'assets/stellarterm-logo.svg';
 import StellarXIcon from 'assets/stellarx-logo.svg';
 
-const CenteredWrapper = styled.section`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-`;
-
-const Wrapper = styled.div`
+const Wrapper = styled.section`
     display: flex;
     width: 100%;
     justify-content: center;
@@ -71,36 +65,34 @@ const HotWalletIcon = styled(HotWallet)`
     height: 2.4rem;
 `;
 
-const SupportedBy = () => (
-    <CenteredWrapper>
-        <Wrapper>
-            <Title>Supported by:</Title>
+const SupportedWallets = () => (
+    <Wrapper>
+        <Title>Supported by:</Title>
 
-            <ImageBlock>
-                <FlexTitle>Supported by:</FlexTitle>
+        <ImageBlock>
+            <FlexTitle>Supported by:</FlexTitle>
 
-                <a href="https://lobstr.co/" target="_blank" rel="noreferrer">
-                    <LobstrIcon />
-                </a>
+            <a href="https://lobstr.co/" target="_blank" rel="noreferrer">
+                <LobstrIcon />
+            </a>
 
-                <a href="https://www.stellarx.com/" target="_blank" rel="noreferrer">
-                    <StellarXIcon />
-                </a>
+            <a href="https://www.stellarx.com/" target="_blank" rel="noreferrer">
+                <StellarXIcon />
+            </a>
 
-                <a href="https://www.freighter.app/" target="_blank" rel="noreferrer">
-                    <FreighterIcon />
-                </a>
+            <a href="https://www.freighter.app/" target="_blank" rel="noreferrer">
+                <FreighterIcon />
+            </a>
 
-                <a href="https://stellarterm.com/" target="_blank" rel="noreferrer">
-                    <StellarTermIcon />
-                </a>
+            <a href="https://stellarterm.com/" target="_blank" rel="noreferrer">
+                <StellarTermIcon />
+            </a>
 
-                <a href="https://hot-labs.org/" target="_blank" rel="noreferrer">
-                    <HotWalletIcon />
-                </a>
-            </ImageBlock>
-        </Wrapper>
-    </CenteredWrapper>
+            <a href="https://hot-labs.org/" target="_blank" rel="noreferrer">
+                <HotWalletIcon />
+            </a>
+        </ImageBlock>
+    </Wrapper>
 );
 
-export default SupportedBy;
+export default SupportedWallets;
