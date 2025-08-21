@@ -78,9 +78,9 @@ const Airdrop2 = () => {
 
             <FAQ />
 
-            <Community />
-
             <Wrapper>
+                <Community />
+
                 <Subscribe />
             </Wrapper>
         </PageContainer>

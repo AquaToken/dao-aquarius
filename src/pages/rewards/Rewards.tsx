@@ -40,9 +40,9 @@ const Rewards = () => {
 
             <FAQ />
 
-            <Community />
-
             <Wrapper>
+                <Community />
+
                 <Subscribe />
             </Wrapper>
         </PageContainer>

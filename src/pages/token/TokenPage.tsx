@@ -48,9 +48,9 @@ const TokenPage = () => {
 
             <AquaPerformance />
 
-            <Community />
-
             <Wrapper>
+                <Community />
+
                 <Subscribe />
             </Wrapper>
         </PageContainer>
