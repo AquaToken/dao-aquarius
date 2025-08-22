@@ -84,7 +84,7 @@ const WithdrawFromPool = ({ params, close }: ModalProps<{ pool: PoolExtended }>)
     }, [account]);
 
     return (
-        <ModalWrapper>
+        <ModalWrapper $width="60rem">
             {accountShare === null ? (
                 <PageLoader />
             ) : (
