@@ -36,6 +36,15 @@ const Hero = styled.section<{ $isDarkTheme: boolean }>`
     justify-content: center;
     height: 85rem;
 
+    /* hide icons to back of content */
+    svg {
+        z-index: 0;
+    }
+
+    div {
+        z-index: 1;
+    }
+
     ${respondDown(Breakpoints.md)`
         height: 56rem;
     `}
