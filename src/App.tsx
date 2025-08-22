@@ -57,6 +57,7 @@ const PrivacyPage = lazy(() => import('pages/privacy/Privacy'));
 const TokenPage = lazy(() => import('pages/token/TokenPage'));
 const QuestPage = lazy(() => import('pages/quest/Quest'));
 const DelegatePage = lazy(() => import('pages/delegate/Delegate'));
+const IncentivesPage = lazy(() => import('pages/incentives/Incentives'));
 
 const UPDATE_ASSETS_DATE = 'update assets timestamp';
 const UPDATE_PERIOD = 24 * 60 * 60 * 1000;
@@ -308,6 +309,12 @@ const App = () => {
                         <Route path={MainRoutes.delegate}>
                             <PageTitle title="Delegates - Aquarius">
                                 <DelegatePage />
+                            </PageTitle>
+                        </Route>
+
+                        <Route path={MainRoutes.incentives}>
+                            <PageTitle title="Incentives - Aquarius">
+                                <IncentivesPage />
                             </PageTitle>
                         </Route>
 

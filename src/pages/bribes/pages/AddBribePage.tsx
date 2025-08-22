@@ -49,6 +49,7 @@ import Input from 'basics/inputs/Input';
 import { CircleLoader } from 'basics/loaders';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
+import { DatePickerStyles } from '../../../web/DatePickerStyles';
 import CreatePairModal from '../../vote/components/MainPage/CreatePairModal/CreatePairModal';
 import { getMarketPair } from '../api/api';
 import ConfirmBribeModal from '../components/AddBribePage/ConfirmBribeModal/ConfirmBribeModal';
@@ -98,7 +99,7 @@ export const Title = styled.span`
     `}
 `;
 
-const Description = styled.div`
+export const Description = styled.div`
     font-size: 1.6rem;
     line-height: 2.8rem;
     color: ${COLORS.grayText};
@@ -157,7 +158,7 @@ export const FormSection = styled.section`
     `}
 `;
 
-const FormRow = styled.div`
+export const FormRow = styled.div`
     display: flex;
     align-items: center;
     margin-top: 3rem;
@@ -176,7 +177,8 @@ const PairDivider = styled(Dash)`
         margin: 2.4rem 0 3.8rem;
     `}
 `;
-const DashIcon = styled(Dash)`
+
+export const DashIcon = styled(Dash)`
     margin: 0 2rem;
     min-width: 1.6rem;
     min-height: 1.6rem;
@@ -234,76 +236,6 @@ const TooltipInner = styled.span`
     ${respondDown(Breakpoints.md)`
         width: 15rem;
     `}
-`;
-
-const GlobalStyle = createGlobalStyle`
-    div.react-datepicker-wrapper {
-        width: 100%;
-    }
-    div.react-datepicker {
-        font-family: ${FONT_FAMILY.roboto};
-        font-size: 1.6rem;
-        background-color: #fff;
-        color: #000636;
-        border: none;
-        border-radius: 0.5rem;
-        box-shadow: 0 20px 30px rgba(0, 6, 54, 0.06);
-    }
-    div.react-datepicker__triangle {
-        display: none;
-    }
-    div.react-datepicker__header {
-        background-color: white;
-        border-bottom: none;
-    }
-    
-    div.react-datepicker-popper {
-      z-index: 200;
-    }
-    div.react-datepicker__day-name, .react-datepicker__day, .react-datepicker__time-name {
-        display: inline-block;
-        width: 4.6rem;
-        line-height: 4.5rem;
-        margin: 0;
-    }
-    div.react-datepicker__day--selected {
-        border-radius: 0;
-        background-color: #8620B9;
-        color: #fff;
-        
-        &:hover {
-            background-color: #8620B9;
-        }
-    }
-    div.react-datepicker__day--keyboard-selected {
-        background-color: unset;
-        color: unset;
-        
-        &:hover {
-          background-color: #f0f0f0;
-        }
-    }
-    div.react-datepicker__current-month  {
-        color: #000;
-        font-weight: normal;
-        font-size: 1.6rem;
-        line-height: 2.8rem;
-    }
-    div.react-datepicker__month {
-        margin: 0;
-        border-left: 1px solid #E8E8ED;
-        border-top: 1px solid #E8E8ED;
-    }
-    div.react-datepicker__day {
-        width: 4.6rem;
-        line-height: 4.5rem;
-        margin: 0;
-        border-right: 1px solid #E8E8ED;
-        border-bottom: 1px solid #E8E8ED;
-  }
-    div.react-datepicker__day--outside-month {
-        color: #B3B4C3;
-    }
 `;
 
 const DurationInput = styled(Input)`
@@ -774,7 +706,7 @@ const AddBribePage = () => {
                                     Create bribe
                                 </NextButton>
 
-                                <GlobalStyle />
+                                <DatePickerStyles />
                             </FormSection>
                         )}
                     </Form>

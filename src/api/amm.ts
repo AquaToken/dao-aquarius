@@ -331,6 +331,14 @@ export const getPoolsToMigrate = async (base: Asset, counter: Asset): Promise<Po
     return processPools(pools);
 };
 
+export const getPoolsForIncentives = async (): Promise<PoolProcessed[] | null> => {
+    const baseUrl = getAmmAquaUrl();
+
+    const { data } = await axios.get<ListResponse<Pool>>(`${baseUrl}/pools/?gauge_enabled=true`);
+
+    return processPools(data.items);
+};
+
 // TODO: remove this method when this data is placed on the backend
 export const getAmmRewards = async (): Promise<number> => {
     const baseUrl = getAmmAquaUrl();

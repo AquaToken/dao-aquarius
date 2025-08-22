@@ -1,6 +1,6 @@
 const SECOND = 1000;
 const MINUTE = 60 * 1000;
-const DAY = MINUTE * 60 * 24;
+export const DAY = MINUTE * 60 * 24;
 
 export const TIMEFRAMES = {
     MINUTE,
