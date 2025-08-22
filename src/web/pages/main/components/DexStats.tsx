@@ -182,10 +182,6 @@ const DexStats = ({ isLoading, stats }: Props) => (
                     </StatsTitle>
                     <StatsDesc>Total Swap Volume</StatsDesc>
                 </StatWrapper>
-                <StatWrapper>
-                    <StatsTitle>{isLoading ? <DotsLoader /> : `$Add data`}</StatsTitle>
-                    <StatsDesc>Average Daily Swap Volume</StatsDesc>
-                </StatWrapper>
             </StatsBlock>
         </DexBlocks>
     </Wrapper>
