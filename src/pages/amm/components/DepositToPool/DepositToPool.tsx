@@ -266,7 +266,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
     const { sharesBefore, sharesAfter, sharesAfterValue } = useMemo(() => {
         const totalShare = Number(pool.total_share) / Math.pow(10, pool.share_token_decimals);
 
-        if (!reserves || reserves.size === 0 || totalShare === 0) {
+        if (!reserves || reserves.size === 0 || totalShare <= 0) {
             return {
                 sharesBefore: 0,
                 sharesAfter: isValidForDepositAmounts ? 100 : null,
@@ -274,21 +274,22 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
             };
         }
 
-        // User's share before deposit
-        const sharesBefore = (accountShare / totalShare) * 100;
+        const accountShareNum = Number(accountShare) || 0;
+        const sharesBefore = (accountShareNum / totalShare) * 100;
 
-        // Calculate total pool reserves and store per-token reserves
-        let totalReserves = 0;
+        // Collect pool reserves and user deposit amounts
         const tokenReserves: number[] = [];
-
+        const tokenDeposits: number[] = [];
         for (const token of pool.tokens) {
             const key = getAssetString(token);
-            const reserve = Number(reserves.get(key) || 0);
-            tokenReserves.push(reserve);
-            totalReserves += reserve;
+            tokenReserves.push(Number(reserves.get(key) || 0));
+            tokenDeposits.push(Number(amounts.get(key) || 0));
         }
 
-        if (totalReserves === 0) {
+        const totalReserves = tokenReserves.reduce((a, b) => a + b, 0);
+        const totalDeposit = tokenDeposits.reduce((a, b) => a + b, 0);
+
+        if (totalReserves === 0 || totalDeposit === 0) {
             return {
                 sharesBefore,
                 sharesAfter: null,
@@ -296,38 +297,28 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
             };
         }
 
-        // Calculate total share delta from the deposit using token weights based on reserves
-        let totalDelta = 0;
-
-        for (let i = 0; i < pool.tokens.length; i++) {
-            const token = pool.tokens[i];
-            const key = getAssetString(token);
-            const reserve = tokenReserves[i];
-            const deposit = Number(amounts.get(key) || 0);
-
-            if (deposit > 0 && reserve > 0) {
-                // Token weight = token reserve / total pool reserves
-                const weight = reserve / totalReserves;
-
-                // Share increase from this token = (deposit / new reserve) * weight
-                const delta = (deposit / (reserve + deposit)) * weight;
-
-                totalDelta += delta;
-            }
+        // === One-sided deposit handling ===
+        // The idea: if only one token is deposited,
+        // the protocol internally swaps part of it to the missing tokens
+        // so that the effective deposit matches pool proportions.
+        const effectiveDeposits: number[] = [];
+        for (let i = 0; i < tokenReserves.length; i++) {
+            const proportion = tokenReserves[i] / totalReserves;
+            effectiveDeposits[i] = totalDeposit * proportion;
         }
 
-        if (totalDelta === 0) {
-            return {
-                sharesBefore,
-                sharesAfter: null,
-                sharesAfterValue: null,
-            };
-        }
+        // Effective ratio of deposit to reserve (same for all tokens after balancing)
+        const ratio = effectiveDeposits[0] / tokenReserves[0];
 
-        // Final share increase in percentage
-        const addedSharePercent = totalDelta * 100;
-        const sharesAfter = Math.min(sharesBefore + addedSharePercent, 100);
-        const sharesAfterValue = (sharesAfter / 100) * totalShare;
+        // Minted LP shares based on this ratio
+        const mintedShares = totalShare * ratio;
+
+        // New account share and total supply after deposit
+        const newAccountShare = accountShareNum + mintedShares;
+        const newTotalShare = totalShare + mintedShares;
+
+        const sharesAfter = (newAccountShare / newTotalShare) * 100;
+        const sharesAfterValue = newAccountShare;
 
         return {
             sharesBefore,
@@ -566,9 +557,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
             onClick={() => onSubmit()}
             pending={pending}
             disabled={
-                isBalancedDeposit
-                    ? !hasAllAmounts
-                    : ![...amounts.values()].some(v => Boolean(+v))
+                isBalancedDeposit ? !hasAllAmounts : ![...amounts.values()].some(v => Boolean(+v))
             }
         >
             deposit
