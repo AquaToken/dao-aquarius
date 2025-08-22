@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 
 import { MainRoutes } from 'constants/routes';
 
-import { flexAllCenter, respondDown } from 'web/mixins';
+import { commonSectionPaddings, flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS, MAX_WIDTHS } from 'web/styles';
 
 import AquaLogo from 'assets/aqua-logo.svg';
@@ -12,6 +12,8 @@ import Dune from 'assets/DuneLogoCircle.svg';
 import Docs from 'assets/icon-docs.svg';
 import { MAIL_AQUA_LISTINGS } from 'constants/emails';
 import { AQUA_DOCS_AUDIT, AQUA_DOCS_URL } from 'constants/urls';
+import { BlankRouterLink } from 'basics/links';
+import { normalizePath } from 'helpers/url';
 
 const FooterBlock = styled.footer`
     display: flex;
@@ -20,7 +22,7 @@ const FooterBlock = styled.footer`
     height: 16rem;
     margin: 5.4rem 2.4rem 4.8rem 2.4rem;
 
-    ${respondDown(Breakpoints.lg)`
+    ${respondDown(Breakpoints.xl)`
         margin: 3.6rem 2.4rem 3rem 2.4rem;
     `}
 
@@ -30,12 +32,16 @@ const FooterBlock = styled.footer`
     `}
 
     ${respondDown(Breakpoints.sm)`
-        margin: 3.6rem 0.8rem 3rem 0.8rem;
+        margin: 3.6rem 1.6rem 3rem 1.6rem;
+    `}
+
+    ${respondDown(Breakpoints.xs)`
+        margin: 3.6rem 0.8rem 3.6rem 0.8rem;
     `}
 `;
 
-const Wrapper = styled.div<{ $isMainPage: boolean }>`
-    max-width: ${props => (props.$isMainPage ? MAX_WIDTHS.medium : MAX_WIDTHS.common)};
+const Wrapper = styled.div<{ $isWide: boolean }>`
+    max-width: ${props => (props.$isWide ? MAX_WIDTHS.wide : MAX_WIDTHS.common)};
     display: flex;
     gap: 3.2rem;
     width: 100%;
@@ -107,10 +113,6 @@ const Exchanges = styled.span``;
 
 const Aqua = styled(AquaLogo)`
     height: 3.8rem;
-`;
-
-const LogoLink = styled(Link)`
-    width: fit-content;
 `;
 
 const DocLinks = styled.div`
@@ -187,6 +189,18 @@ const DuneLogo = styled(Dune)`
     overflow: visible;
 `;
 
+const WIDE_PAGES = [
+    MainRoutes.bribes,
+    MainRoutes.vote,
+    MainRoutes.locker,
+    MainRoutes.governance,
+    MainRoutes.market,
+    MainRoutes.account,
+    MainRoutes.amm,
+    MainRoutes.terms,
+    MainRoutes.privacy,
+];
+
 const Footer = (): React.ReactNode => {
     const location = useLocation();
 
@@ -194,15 +208,15 @@ const Footer = (): React.ReactNode => {
         return null;
     }
 
-    const isMainPage = location.pathname === MainRoutes.main;
+    const isWidePage = WIDE_PAGES.includes(normalizePath(location.pathname) as MainRoutes);
 
     return (
         <FooterBlock>
-            <Wrapper $isMainPage={isMainPage}>
+            <Wrapper $isWide={isWidePage}>
                 <LogoWithDesc>
-                    <LogoLink to={MainRoutes.main}>
+                    <BlankRouterLink to={MainRoutes.main}>
                         <Aqua />
-                    </LogoLink>
+                    </BlankRouterLink>
                     <Description>
                         Aquarius runs on Stellar. AQUA tokens are issued on Stellar. <br />
                         The project is unaffiliated with the Stellar Development Foundation.

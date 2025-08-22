@@ -10,8 +10,8 @@ export const PageContainer = styled.div`
     scroll-behavior: smooth;
 `;
 
-export const SectionWrapper = styled.div<{ $color: string }>`
-    max-width: ${MAX_WIDTHS.medium};
+export const SectionWrapper = styled.div<{ $color: string; $isWide: boolean }>`
+    max-width: ${props => (props.$isWide ? MAX_WIDTHS.wide : MAX_WIDTHS.common)};
     background-color: ${props => props.$color || COLORS.white};
     ${commonSectionPaddings};
 `;

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { commonSectionPaddings, flexAllCenter, respondDown } from 'web/mixins';
+import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import AquaBuildersIcon from 'assets/main-page/aqua-builders.svg';
@@ -15,8 +15,6 @@ const Wrapper = styled.section`
     margin-top: 11rem;
     padding: 5.6rem;
     border-radius: 4.8rem;
-
-    ${commonSectionPaddings};
 
     ${respondDown(Breakpoints.md)`
         margin-top: 10rem;

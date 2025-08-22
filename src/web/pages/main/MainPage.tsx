@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
-import { getTotalStats } from 'api/amm';
+import { getAllTimeStats } from 'api/amm';
+import { AllTimeStats } from 'api/amm.types';
 
 import Community from 'components/Community';
 import Subscribe from 'components/Subscribe';
@@ -11,16 +12,17 @@ import SupportedWallets from './components/SupportedWallets';
 import { PageContainer, SectionWrapper } from '../commonPageStyles';
 import AquaSoroban from './components/AquaSoroban';
 import AquaForBuilders from './components/AquaForBuilders';
-import { PoolStatistics } from 'types/amm';
+import DexStats from './components/DexStats';
+import WhyProvideLiq from './components/WhyProvideLiq';
 
 const MainPage = () => {
     const [isLoadingStats, setIsLoadingStats] = useState(true);
-    const [lastStats, setLastStats] = useState<PoolStatistics | null>(null);
+    const [ammStats, setAmmStats] = useState<AllTimeStats | null>(null);
 
     useEffect(() => {
-        getTotalStats(1)
+        getAllTimeStats()
             .then(res => {
-                setLastStats(res[0]);
+                setAmmStats(res);
             })
             .finally(() => {
                 setIsLoadingStats(false);
@@ -29,12 +31,16 @@ const MainPage = () => {
 
     return (
         <PageContainer>
-            <HeroBlock isLoading={isLoadingStats} lastStats={lastStats} />
+            <HeroBlock isLoading={isLoadingStats} stats={ammStats} />
 
             <SectionWrapper>
                 <SupportedWallets />
 
                 <AquaSoroban />
+
+                <DexStats isLoading={isLoadingStats} stats={ammStats} />
+
+                <WhyProvideLiq isLoading={isLoadingStats} stats={ammStats} />
 
                 <AquaForBuilders />
 

@@ -100,15 +100,15 @@ export const contentWithSidebar = css`
 `;
 
 export const commonSectionPaddings = css`
-    ${respondDown(Breakpoints.md)`
-        padding: 0 2.4rem;
+    ${respondDown(Breakpoints.xl)`
+        margin: 0 2.4rem;
     `}
 
     ${respondDown(Breakpoints.sm)`
-        padding: 0 1.6rem;
+        margin: 0 1.6rem;
     `}
 
     ${respondDown(Breakpoints.xs)`
-        padding: 0 0.8rem;
+        margin: 0 0.8rem;
     `}
 `;

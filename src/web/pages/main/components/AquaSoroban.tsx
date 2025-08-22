@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
 
 import SorobanStars from 'assets/main-page/soroban-stars.svg';
 import SwapBlockIcon from 'assets/main-page/swap-block.svg';
@@ -10,11 +9,20 @@ import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 import { Button } from 'basics/buttons';
 import { MainRoutes } from 'constants/routes';
+import { BlankRouterLink } from 'basics/links';
 
 const Wrapper = styled.section`
     ${flexAllCenter};
     flex-direction: column;
     margin-top: 11rem;
+
+    ${respondDown(Breakpoints.sm)`
+       margin-top: 6.4rem;
+    `}
+
+    ${respondDown(Breakpoints.xs)`
+       margin-top: 4.8rem;
+    `}
 `;
 
 const InnerWrapper = styled.div`
@@ -146,11 +154,11 @@ const AquaSoroban = () => (
                         <b>Swap assets instantly</b> with deep Stellar-based liquidity.
                     </BlockDesc>
                 </BlockWithIcon>
-                <Link to={MainRoutes.swap}>
-                    <SorobanButton withGradient isBig isRounded>
+                <BlankRouterLink to={MainRoutes.swap}>
+                    <SorobanButton withGradient secondary isBig isRounded>
                         Smart swap
                     </SorobanButton>
-                </Link>
+                </BlankRouterLink>
             </Block>
             <Block>
                 <BlockWithIcon>
@@ -161,11 +169,11 @@ const AquaSoroban = () => (
                         with Aquarius AMMs.
                     </BlockDesc>
                 </BlockWithIcon>
-                <Link to={MainRoutes.amm}>
-                    <SorobanButton withGradient isBig isRounded>
+                <BlankRouterLink to={MainRoutes.amm}>
+                    <SorobanButton withGradient secondary isBig isRounded>
                         Explore pools
                     </SorobanButton>
-                </Link>
+                </BlankRouterLink>
             </Block>
         </SorobanBlocks>
     </Wrapper>

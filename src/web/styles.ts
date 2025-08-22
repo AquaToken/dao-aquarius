@@ -79,6 +79,6 @@ export enum Breakpoints {
 }
 
 export const MAX_WIDTHS = {
-    common: '144rem',
-    medium: '122rem',
+    common: '122rem',
+    wide: '136rem',
 };

@@ -17,8 +17,9 @@ import Button from 'basics/buttons/Button';
 import { formatBalance } from 'helpers/format-number';
 import { getIsDarkTheme } from 'helpers/theme';
 import LiveIndicator from 'basics/LiveIndicator';
-import { PoolStatistics } from 'types/amm';
+
 import { DotsLoader } from 'basics/loaders';
+import { AllTimeStats } from 'api/amm.types';
 
 const Hero = styled.section<{ $isDarkTheme: boolean }>`
     width: calc(100% - 4.8rem);
@@ -173,10 +174,10 @@ const HeroBottomRightStyled = styled(HeroBottomRight)`
 
 interface Props {
     isLoading: boolean;
-    lastStats: PoolStatistics | null;
+    stats: AllTimeStats | null;
 }
 
-const HeroBlock = ({ isLoading, lastStats }) => {
+const HeroBlock = ({ isLoading, stats }: Props) => {
     const isDarkTheme = getIsDarkTheme();
 
     return (
@@ -209,7 +210,7 @@ const HeroBlock = ({ isLoading, lastStats }) => {
                         {isLoading ? (
                             <DotsLoader />
                         ) : (
-                            `$${formatBalance(Number(lastStats?.liquidity_usd) / 1e7, true, true)}`
+                            `$${formatBalance(stats?.tvl / 1e7, true, true)}`
                         )}
                     </TotalLiq>
                     <TotalLiqDesc $isDarkTheme={isDarkTheme}>Locked in Liquidity</TotalLiqDesc>

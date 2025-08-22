@@ -25,6 +25,7 @@ import {
     PoolVolume24h,
 } from 'types/amm';
 import { ClassicToken, SorobanToken, Token, TokenType } from 'types/token';
+import { AllTimeStats } from './amm.types';
 
 export enum FilterOptions {
     all = 'all',
@@ -468,4 +469,14 @@ export const getUserRewardsList = async (
     });
 
     return results.sort((a, b) => b.amount - a.amount);
+};
+
+export const getAllTimeStats = async (): Promise<AllTimeStats> => {
+    const baseUrl = getAmmAquaUrl();
+
+    const { data } = await axios.get<AllTimeStats>(
+        `${baseUrl}/api/external/v2/statistics/all-time/`,
+    );
+
+    return data;
 };
