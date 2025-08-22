@@ -24,7 +24,7 @@ import { Button } from 'basics/buttons';
 import { Checkbox } from 'basics/inputs';
 import { PageLoader } from 'basics/loaders';
 import Market from 'basics/Market';
-import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
+import { ModalDescription, ModalTitle, ModalWrapper, StickyButtonWrapper } from 'basics/ModalAtoms';
 import Table, { CellAlign } from 'basics/Table';
 
 const CheckboxMobile = styled(Checkbox)`
@@ -33,17 +33,6 @@ const CheckboxMobile = styled(Checkbox)`
 
     ${respondDown(Breakpoints.md)`
         display: block;
-    `}
-`;
-
-const Scrollable = styled.div`
-    ${customScroll};
-    overflow: auto;
-    max-height: 30rem;
-    margin: 3.2rem 0;
-
-    ${respondDown(Breakpoints.md)`
-        max-height: calc(100vh - 25rem);
     `}
 `;
 
@@ -95,7 +84,8 @@ const ClaimRewardsModal = ({ confirm, close }: ModalProps<never>) => {
         }
         setPending(true);
 
-        SorobanService.getClaimBatchTx(account.accountId(), [...selectedRewards] as string[])
+        SorobanService.amm
+            .getClaimBatchTx(account.accountId(), [...selectedRewards] as string[])
             .then(tx => account.signAndSubmitTx(tx, true))
             .then((res: { status?: BuildSignAndSubmitStatuses; value: () => Int128Parts }) => {
                 if (!res) {
@@ -132,85 +122,87 @@ const ClaimRewardsModal = ({ confirm, close }: ModalProps<never>) => {
                     </Container>
                 ) : rewards.length ? (
                     <>
-                        <Scrollable>
-                            <Table
-                                head={[
+                        <Table
+                            head={[
+                                {
+                                    children: 'Pool',
+                                    flexSize: 3,
+                                },
+                                {
+                                    children: 'Amount',
+                                    align: CellAlign.Right,
+                                },
+                                { children: '', flexSize: 0.3 },
+                            ]}
+                            body={rewards.map(item => ({
+                                key: item.id,
+                                style: { marginBottom: '1.6rem' },
+                                mobileBackground: COLORS.lightGray,
+                                rowItems: [
                                     {
-                                        children: 'Pool',
-                                        flexSize: 3,
-                                    },
-                                    {
-                                        children: 'Amount',
-                                        align: CellAlign.Right,
-                                    },
-                                    { children: '', flexSize: 0.3 },
-                                ]}
-                                body={rewards.map(item => ({
-                                    key: item.id,
-                                    style: { marginBottom: '1.6rem' },
-                                    mobileBackground: COLORS.lightGray,
-                                    rowItems: [
-                                        {
-                                            children: (
-                                                <>
-                                                    <Market
-                                                        assets={item.tokens}
-                                                        withoutLink
-                                                        poolType={item.type}
-                                                        mobileVerticalDirections
-                                                    />
+                                        children: (
+                                            <>
+                                                <Market
+                                                    assets={item.tokens}
+                                                    withoutLink
+                                                    poolType={item.type}
+                                                    mobileVerticalDirections
+                                                />
 
-                                                    <CheckboxMobile
-                                                        checked={selectedRewards.has(item.id)}
-                                                        onChange={() => {
-                                                            selectClaim(item.id);
-                                                        }}
-                                                    />
-                                                </>
-                                            ),
-                                            flexSize: 3,
-                                            mobileStyle: { width: '100%' },
-                                        },
-                                        {
-                                            children: `${formatBalance(item.amount, true)} AQUA`,
-                                            align: CellAlign.Right,
-                                            label: 'Amount',
-                                        },
-                                        {
-                                            children: (
-                                                <Checkbox
+                                                <CheckboxMobile
                                                     checked={selectedRewards.has(item.id)}
                                                     onChange={() => {
                                                         selectClaim(item.id);
                                                     }}
                                                 />
-                                            ),
-                                            flexSize: 0.3,
-                                            align: CellAlign.Right,
-                                            hideOnMobile: true,
-                                        },
-                                    ],
-                                    isNarrow: true,
-                                }))}
-                            />
-                        </Scrollable>
-                        <Button
-                            isBig
-                            fullWidth
-                            disabled={
-                                !selectedRewards.size || selectedRewards.size > MAX_REWARDS_COUNT
-                            }
-                            pending={pending}
-                            onClick={() => claimAll()}
-                        >
-                            {!selectedRewards.size
-                                ? 'select rewards'
-                                : selectedRewards.size > MAX_REWARDS_COUNT
-                                ? `maximum ${MAX_REWARDS_COUNT} pools at a time `
-                                : `claim ${selectedRewards.size} reward${
-                                      selectedRewards.size > 1 ? 's' : ''
-                                  }`}
-                        </Button>
+                                            </>
+                                        ),
+                                        flexSize: 3,
+                                        mobileStyle: { width: '100%' },
+                                    },
+                                    {
+                                        children: `${formatBalance(item.amount, true)} AQUA`,
+                                        align: CellAlign.Right,
+                                        label: 'Amount',
+                                    },
+                                    {
+                                        children: (
+                                            <Checkbox
+                                                checked={selectedRewards.has(item.id)}
+                                                onChange={() => {
+                                                    selectClaim(item.id);
+                                                }}
+                                            />
+                                        ),
+                                        flexSize: 0.3,
+                                        align: CellAlign.Right,
+                                        hideOnMobile: true,
+                                    },
+                                ],
+                                isNarrow: true,
+                            }))}
+                        />
+
+                        <StickyButtonWrapper>
+                            <Button
+                                isBig
+                                fullWidth
+                                disabled={
+                                    !selectedRewards.size ||
+                                    selectedRewards.size > MAX_REWARDS_COUNT
+                                }
+                                pending={pending}
+                                onClick={() => claimAll()}
+                            >
+                                {!selectedRewards.size
+                                    ? 'select rewards'
+                                    : selectedRewards.size > MAX_REWARDS_COUNT
+                                    ? `maximum ${MAX_REWARDS_COUNT} pools at a time `
+                                    : `claim ${selectedRewards.size} reward${
+                                          selectedRewards.size > 1 ? 's' : ''
+                                      }`}
+                            </Button>
+                        </StickyButtonWrapper>
                     </>
                 ) : (
                     <Container>

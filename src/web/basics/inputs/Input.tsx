@@ -79,6 +79,11 @@ const Label = styled.div`
     color: ${COLORS.paragraphText};
 `;
 
+const LabelRight = styled(Label)`
+    left: unset;
+    right: 0;
+`;
+
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     postfix?: React.ReactNode;
     prefixCustom?: React.ReactNode;
@@ -86,6 +91,7 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
     isRightAligned?: boolean;
     isCenterAligned?: boolean;
     label?: string | React.ReactNode;
+    rightLabel?: string | React.ReactNode;
 }
 
 const Input = forwardRef(
@@ -95,6 +101,7 @@ const Input = forwardRef(
             prefixCustom,
             className,
             label,
+            rightLabel,
             isMedium,
             isRightAligned,
             isCenterAligned,
@@ -121,6 +128,7 @@ const Input = forwardRef(
         return (
             <InputWrapper className={className}>
                 {Boolean(label) && <Label>{label}</Label>}
+                {Boolean(rightLabel) && <LabelRight>{rightLabel}</LabelRight>}
                 <Prefix ref={prefixRef}>{prefixCustom}</Prefix>
                 <StyledInput
                     ref={ref}

@@ -6,6 +6,7 @@ import styled from 'styled-components';
 
 import { getUserPools } from 'api/amm';
 
+import { POOL_TYPE } from 'constants/amm';
 import { MainRoutes } from 'constants/routes';
 
 import { contractValueToAmount } from 'helpers/amount';
@@ -24,7 +25,6 @@ import {
     StellarService,
     ToastService,
 } from 'services/globalServices';
-import { POOL_TYPE } from 'services/soroban.service';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { PoolRewardsInfo, PoolUserProcessed } from 'types/amm';
@@ -376,7 +376,9 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
             return;
         }
         Promise.all(
-            pools.map(({ address }) => SorobanService.getPoolRewards(account.accountId(), address)),
+            pools.map(({ address }) =>
+                SorobanService.amm.getPoolRewards(account.accountId(), address),
+            ),
         ).then(res => {
             const map = new Map<string, PoolRewardsInfo>();
             let sum = 0;
@@ -435,7 +437,8 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
         }
         setClaimPendingId(poolId);
 
-        SorobanService.getClaimRewardsTx(account.accountId(), poolId)
+        SorobanService.amm
+            .getClaimRewardsTx(account.accountId(), poolId)
             .then(tx => account.signAndSubmitTx(tx, true))
             .then((res: { status?: BuildSignAndSubmitStatuses }) => {
                 if (!res) {
@@ -449,7 +452,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                     ToastService.showSuccessToast('More signatures required to complete');
                     return;
                 }
-                const value = SorobanService.i128ToInt(res as xdr.ScVal);
+                const value = SorobanService.scVal.i128ToInt(res as xdr.ScVal);
 
                 ToastService.showSuccessToast(`Claimed ${formatBalance(+value)} AQUA`);
                 setClaimPendingId(null);

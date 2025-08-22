@@ -28,6 +28,7 @@ module.exports = {
             web: path.resolve(rootDir, 'web/'),
             basics: path.resolve(rootDir, 'web/basics/'),
             components: path.resolve(rootDir, 'web/components/'),
+            modals: path.resolve(rootDir, 'web/modals/'),
             pages: path.resolve(rootDir, 'pages/'),
         },
     },

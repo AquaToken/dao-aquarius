@@ -23,7 +23,7 @@ import Info from 'assets/icon-info.svg';
 
 import Button from 'basics/buttons/Button';
 import Market from 'basics/Market';
-import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 const ContentRow = styled.div`
@@ -173,7 +173,7 @@ const CreatePairModal = ({ params, close }: ModalProps<CreatePairModalParams>): 
     };
 
     return (
-        <>
+        <ModalWrapper>
             <ModalTitle>Create pair</ModalTitle>
             <Description>
                 To create a pair, you first need to pay for the trustlines for transactions. Once
@@ -228,7 +228,7 @@ const CreatePairModal = ({ params, close }: ModalProps<CreatePairModalParams>): 
                     Create market
                 </StyledButton>
             </div>
-        </>
+        </ModalWrapper>
     );
 };
 

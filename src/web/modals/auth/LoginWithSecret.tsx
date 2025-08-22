@@ -11,28 +11,15 @@ import { ModalProps } from 'types/modal';
 
 import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
-import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 import { respondDown } from '../../mixins';
 import { Breakpoints } from '../../styles';
 
 const LoginWithSecretBody = styled.form`
-    width: 52.8rem;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-
-    ${respondDown(Breakpoints.md)`
-        width: 100%;
-    `}
-`;
-
-const Description = styled(ModalDescription)`
-    width: 52.8rem;
-
-    ${respondDown(Breakpoints.md)`
-        width: 100%;
-    `}
 `;
 
 const InputWrapped = styled(Input)`
@@ -52,7 +39,8 @@ const LoginWithSecret = ({ close }: ModalProps<never>): React.ReactNode => {
 
     const onSubmit = (e: React.MouseEvent) => {
         e.preventDefault();
-        SorobanService.loginWithSecret(secretKey)
+        SorobanService.connection
+            .loginWithSecret(secretKey)
             .then(pubKey => {
                 login({
                     pubKey,
@@ -71,13 +59,13 @@ const LoginWithSecret = ({ close }: ModalProps<never>): React.ReactNode => {
     }, [isLogged]);
 
     return (
-        <>
+        <ModalWrapper>
             <ModalTitle>Secret key</ModalTitle>
-            <Description>
+            <ModalDescription>
                 We recommend using WalletConnect login as it provides better security. Secret key
                 login is not recommended and will be deprecated shortly. Check the URL and make sure
                 you are on the correct website.
-            </Description>
+            </ModalDescription>
             <LoginWithSecretBody>
                 <InputWrapped
                     placeholder="SXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
@@ -96,7 +84,7 @@ const LoginWithSecret = ({ close }: ModalProps<never>): React.ReactNode => {
                     connect
                 </StyledButton>
             </LoginWithSecretBody>
-        </>
+        </ModalWrapper>
     );
 };
 

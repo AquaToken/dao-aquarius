@@ -34,11 +34,11 @@ const DefaultAssets = styled.div`
     display: flex;
     justify-content: space-between;
     margin-top: 1.6rem;
-    
+
     ${respondDown(Breakpoints.md)`
         flex-wrap: wrap;
         gap: 0;
-    `}}
+    `}
 `;
 
 const DefaultAsset = styled.div`
@@ -56,13 +56,13 @@ const DefaultAsset = styled.div`
 
     ${respondDown(Breakpoints.md)`
         margin-bottom: 1rem;
-    `}}
+    `};
 `;
 
 const AssetsList = styled.div`
     display: flex;
     flex-direction: column;
-    height: 50vh;
+    max-height: 45vh;
     ${customScroll};
     overflow-y: auto;
     margin-top: 2.5rem;
@@ -71,7 +71,7 @@ const AssetsList = styled.div`
         margin-bottom: 1rem;
         height: 40rem;
         width: 100%;
-    `}}
+    `};
 `;
 
 const AssetStyled = styled(Asset)<{ $isLogged: boolean }>`
@@ -93,7 +93,7 @@ const AssetItem = styled.div`
 
     ${respondDown(Breakpoints.md)`
         width: 100%;
-    `}}
+    `};
 `;
 
 const Balances = styled.div`
@@ -127,6 +127,22 @@ const Balances = styled.div`
             white-space: nowrap;
         }
     `}
+`;
+
+const LoaderWrapper = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 45vh;
+    margin-top: 2.5rem;
+`;
+
+const EmptyState = styled.span`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: ${COLORS.grayText};
+    line-height: 6.4rem;
 `;
 
 const DEFAULT_ASSETS = [
@@ -223,7 +239,7 @@ const AssetPickerModal = ({ params, confirm }: ModalProps<Props>) => {
     };
 
     return (
-        <ModalWrapper>
+        <ModalWrapper $minHeight="75vh">
             <ModalTitle>Choose asset</ModalTitle>
             <StyledInput
                 placeholder="Search asset or enter home domain"
@@ -239,9 +255,9 @@ const AssetPickerModal = ({ params, confirm }: ModalProps<Props>) => {
                 ))}
             </DefaultAssets>
             {account && !balances.length ? (
-                <AssetsList>
+                <LoaderWrapper>
                     <PageLoader />
-                </AssetsList>
+                </LoaderWrapper>
             ) : (
                 <AssetsList>
                     {filteredAssets.map(({ token, balance, nativeBalance }) => (
@@ -267,6 +283,7 @@ const AssetPickerModal = ({ params, confirm }: ModalProps<Props>) => {
                             ) : null}
                         </AssetItem>
                     ))}
+                    {filteredAssets.length === 0 && <EmptyState>No assets found</EmptyState>}
                 </AssetsList>
             )}
         </ModalWrapper>
