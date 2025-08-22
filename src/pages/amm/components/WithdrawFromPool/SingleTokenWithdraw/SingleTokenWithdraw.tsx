@@ -160,7 +160,10 @@ const SingleTokenWithdraw = ({ pool, rewards, accountShare, close }: Props) => {
             .getSingleTokenWithdrawEstimate(
                 pool.address,
                 pool.tokens,
-                ((+accountShare * +debouncedPercent) / 100).toFixed(7),
+                new BigNumber(accountShare)
+                    .times(new BigNumber(debouncedPercent))
+                    .div(100)
+                    .toFixed(7),
             )
             .then(setEstimateWithdraw);
     }, [debouncedPercent]);
