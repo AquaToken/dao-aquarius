@@ -40,7 +40,7 @@ const MainPage = () => {
 
                 <DexStats isLoading={isLoadingStats} stats={ammStats} />
 
-                <WhyProvideLiq isLoading={isLoadingStats} stats={ammStats} />
+                <WhyProvideLiq />
 
                 <AquaForBuilders />
 

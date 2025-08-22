@@ -193,17 +193,16 @@ const HideOnSm = styled.div`
 `;
 
 interface Props {
-    isLoading: boolean;
-    stats: AllTimeStats | null;
+    isLoading?: boolean;
 }
 
-const WhyProvideLiq = ({ isLoading, stats }: Props) => {
+const WhyProvideLiq = ({ isLoading }: Props) => {
     const whyStatsContent = (
         <WhyStats>
-            <StatsTitle>
-                {isLoading ? <DotsLoader /> : `$${formatBalance(stats?.tvl / 1e7, true, true)}`}
-            </StatsTitle>
-            <Description>Distributed to LPs through 4B AQUA in emissions.</Description>
+            <StatsTitle>{isLoading ? <DotsLoader /> : `$Add daily data`}</StatsTitle>
+            <Description>
+                LPs receive daily rewards, distributed among liquidity providers.
+            </Description>
         </WhyStats>
     );
 
