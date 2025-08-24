@@ -31,12 +31,14 @@ import { ClassicToken, Token, TokenType } from 'types/token';
 
 const tokensCache = new Map<string, Token>();
 
-const cached = getTokensFromCache();
+export function restoreFromCache() {
+    const cached = getTokensFromCache();
 
-if (cached) {
-    cached.forEach(token => {
-        tokensCache.set(token.contract, token);
-    });
+    if (cached) {
+        cached.forEach(token => {
+            tokensCache.set(token.contract, token);
+        });
+    }
 }
 
 const BATCH_SMART_CONTRACT_ID = CONTRACTS[getEnv()].batch;
