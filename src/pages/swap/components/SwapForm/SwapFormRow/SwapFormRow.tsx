@@ -6,7 +6,6 @@ import styled from 'styled-components';
 
 import { formatBalance } from 'helpers/format-number';
 
-import { AssetSimple } from 'store/assetsStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { SorobanToken, Token, TokenType } from 'types/token';
@@ -115,7 +114,7 @@ interface SwapFormRowProps {
     setAmount: (amount: string) => void;
     resetAmount: () => void;
     usdEquivalent: React.ReactElement;
-    assetsList: AssetSimple[] | null;
+    assetsList: Token[] | null;
     isEmbedded?: boolean;
     balance: number | null;
 }
