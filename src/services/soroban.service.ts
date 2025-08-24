@@ -13,6 +13,7 @@ import { ACCOUNT_FOR_SIMULATE, BASE_FEE } from 'constants/stellar';
 import { getAssetString } from 'helpers/assets';
 import { getEnv, getNetworkPassphrase } from 'helpers/env';
 import { SorobanErrorHandler, SorobanPrepareTxErrorHandler } from 'helpers/error-handler';
+import { getTokensFromCache } from 'helpers/swap';
 import { getSorobanUrl } from 'helpers/url';
 
 import { PoolRewardsInfo } from 'types/amm';
@@ -44,6 +45,14 @@ export default class SorobanServiceClass {
 
     constructor() {
         this.startServer();
+
+        const cached = getTokensFromCache();
+
+        if (cached) {
+            cached.forEach(token => {
+                this.tokensCache.set(token.contract, token);
+            });
+        }
     }
 
     loginWithSecret(secretKey: string): Promise<string> {

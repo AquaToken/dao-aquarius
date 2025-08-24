@@ -2,7 +2,7 @@ import AccountRecord, * as StellarSdk from '@stellar/stellar-sdk';
 import { Horizon } from '@stellar/stellar-sdk';
 import BigNumber from 'bignumber.js';
 
-import { getCustomTokens, getNativePrices } from 'api/amm';
+import { getNativePrices } from 'api/amm';
 
 import { ASSETS_ENV_DATA, DEFAULT_ICE_ASSETS } from 'constants/assets';
 
@@ -278,7 +278,7 @@ export default class AccountService extends Horizon.AccountResponse {
                 lp as unknown as PoolClassicProcessed
             ).tokens
                 .reduce((acc, asset, index) => {
-                    const price = prices.get(asset.contractId(getNetworkPassphrase())) ?? 0;
+                    const price = prices.get(asset.contractId(getNetworkPassphrase())).price ?? 0;
 
                     const amount = Number(lp.reserves[index]) * Number(price);
 
@@ -378,14 +378,17 @@ export default class AccountService extends Horizon.AccountResponse {
             ({ asset_type }) => asset_type === 'native',
         );
 
-        const knownCustomTokens = await getCustomTokens();
+        const nativePrices = await getNativePrices();
+
+        const knownCustomTokens = [...nativePrices.values()]
+            .filter(({ token }) => token.type === TokenType.soroban)
+            .map(({ token }) => token);
+
         const customUserBalances = await Promise.all(
             knownCustomTokens.map(token =>
                 SorobanService.getTokenBalance(token.contract, this.account_id),
             ),
         );
-
-        const nativePrices = await getNativePrices();
 
         const classicBalances = classicAssetsBalances.map(balance => {
             const asset = StellarService.createAsset(balance.asset_code, balance.asset_issuer);
@@ -394,7 +397,7 @@ export default class AccountService extends Horizon.AccountResponse {
             return {
                 balance: balance.balance,
                 nativeBalance: nativePrices.has(contract)
-                    ? +balance.balance * +nativePrices.get(contract)
+                    ? +balance.balance * +nativePrices.get(contract).price
                     : 0,
                 token: StellarService.createAsset(balance.asset_code, balance.asset_issuer),
             };
@@ -403,7 +406,7 @@ export default class AccountService extends Horizon.AccountResponse {
         const customBalances = knownCustomTokens
             .map((token, index) => ({
                 balance: customUserBalances[index],
-                nativeBalance: +customUserBalances[index] * +nativePrices.get(token.contract),
+                nativeBalance: +customUserBalances[index] * +nativePrices.get(token.contract).price,
                 token,
             }))
             .filter(({ balance }) => !!Number(balance));

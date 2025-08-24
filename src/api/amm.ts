@@ -257,10 +257,12 @@ interface GetNativePricesOpts {
     onlySoroban: boolean;
 }
 
-export const getNativePrices = async (opts?: GetNativePricesOpts): Promise<Map<string, string>> => {
+export const getNativePrices = async (
+    opts?: GetNativePricesOpts,
+): Promise<Map<string, { price: string; token: Token }>> => {
     const baseUrl = getAmmAquaUrl();
 
-    const allPrices = new Map<string, string>();
+    const allPrices = new Map<string, { price: string; token: Token }>();
 
     const { data } = await axios.get<ListResponse<NativePrice>>(
         `${baseUrl}/tokens/?pooled=true&size=500`,
@@ -274,29 +276,24 @@ export const getNativePrices = async (opts?: GetNativePricesOpts): Promise<Map<s
     });
 
     prices.forEach(price => {
-        allPrices.set(
-            price.address,
-            (+price.price_xlm * Math.pow(10, price.decimals - 7)).toFixed(7),
-        );
+        allPrices.set(price.address, {
+            price: (+price.price_xlm * Math.pow(10, price.decimals - 7)).toFixed(7),
+            token:
+                price.name === 'native' && price.is_sac
+                    ? StellarService.createLumen()
+                    : price.is_sac
+                    ? StellarService.createAsset(price.code, price.issuer)
+                    : {
+                          contract: price.address,
+                          type: TokenType.soroban,
+                          name: price.name,
+                          code: price.code,
+                          decimal: price.decimals,
+                      },
+        });
     });
 
     return allPrices;
-};
-
-export const getCustomTokens = async (): Promise<SorobanToken[]> => {
-    const baseUrl = getAmmAquaUrl();
-
-    const { data } = await axios.get<ListResponse<NativePrice>>(
-        `${baseUrl}/tokens/?pooled=true&is_sac=false&size=500`,
-    );
-
-    return data.items.map(item => ({
-        contract: item.address,
-        type: TokenType.soroban,
-        name: item.name,
-        code: item.code,
-        decimal: item.decimals,
-    }));
 };
 
 export const getPathPoolsFee = async (addresses: Array<string>): Promise<Map<string, Pool>> => {
@@ -406,26 +403,31 @@ export const getAssetsList = async (): Promise<Token[]> => {
         `${baseUrl}/tokens/?pooled=true&size=200`,
     );
 
-    const { aquaAssetString, aquaContract } = getAquaAssetData();
-    const { usdcAssetString, usdcContract } = getUsdcAssetData();
-    const xlmContract = StellarService.createLumen().contractId(getNetworkPassphrase());
+    // tokens in the top of the list - AQUA, XLM, USDC
+    const { aquaStellarAsset } = getAquaAssetData();
+    const { usdcStellarAsset } = getUsdcAssetData();
+    const lumen = StellarService.createLumen();
 
-    const assetsSet = new Set();
+    const otherTokens = data.items
+        .filter(
+            ({ address }) =>
+                address !== aquaStellarAsset.contract &&
+                address !== usdcStellarAsset.contract &&
+                address !== lumen.contract,
+        )
+        .map(price =>
+            price.is_sac
+                ? StellarService.createAsset(price.code, price.issuer)
+                : ({
+                      contract: price.address,
+                      type: TokenType.soroban,
+                      name: price.name,
+                      code: price.code,
+                      decimal: price.decimals,
+                  } as SorobanToken),
+        );
 
-    data.items.forEach(({ name, address }) => {
-        if (name === aquaAssetString || name === usdcAssetString || name === 'native') {
-            return;
-        }
-        assetsSet.add(address);
-    });
-
-    const tokens = await Promise.all(
-        [aquaContract, xlmContract, usdcContract, ...[...assetsSet]].map((id: string) =>
-            SorobanService.parseTokenContractId(id),
-        ),
-    );
-
-    return tokens;
+    return [aquaStellarAsset, lumen, usdcStellarAsset, ...otherTokens];
 };
 
 function chunkArray<T>(arr: T[], size = 5) {

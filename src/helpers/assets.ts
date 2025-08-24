@@ -11,7 +11,7 @@ export const getAssetString = (asset: Token): string => {
     if (asset.type === TokenType.soroban) {
         return asset.contract;
     }
-    if (asset.isNative()) {
+    if (asset?.isNative?.()) {
         return 'native';
     }
     return `${asset.code}:${asset.issuer}`;

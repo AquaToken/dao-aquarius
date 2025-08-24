@@ -2,13 +2,12 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { findSwapPath, getAssetsList } from 'api/amm';
+import { findSwapPath } from 'api/amm';
 
 import { contractValueToAmount } from 'helpers/amount';
 
 import { useDebounce } from 'hooks/useDebounce';
 
-import useAssetsStore from 'store/assetsStore/useAssetsStore';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService } from 'services/globalServices';
@@ -122,6 +121,7 @@ interface SwapFormProps {
     setBase: (asset: Token) => void;
     setCounter: (asset: Token) => void;
     isEmbedded?: boolean;
+    assetsList: Token[] | null;
 }
 
 const SwapForm = ({
@@ -130,6 +130,7 @@ const SwapForm = ({
     setBase,
     setCounter,
     isEmbedded,
+    assetsList,
 }: SwapFormProps): React.ReactNode => {
     const [hasError, setHasError] = useState(false);
 
@@ -149,11 +150,7 @@ const SwapForm = ({
     const debouncedBaseAmount = useDebounce(baseAmount, 700);
     const debouncedCounterAmount = useDebounce(counterAmount, 700);
 
-    const [assetsList, setAssetsList] = useState(null);
-
     const { account, isLogged } = useAuthStore();
-
-    const { processNewAssets } = useAssetsStore();
 
     useEffect(() => {
         if (!account) {
@@ -178,13 +175,6 @@ const SwapForm = ({
             });
         }
     }, [account, base, counter]);
-
-    useEffect(() => {
-        getAssetsList().then(res => {
-            processNewAssets(res);
-            setAssetsList(res);
-        });
-    }, []);
 
     useEffect(() => {
         if (debouncedCounterAmount.current) {
