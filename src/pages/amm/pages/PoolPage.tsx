@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { getPool } from 'api/amm';
 
 import { ChartPeriods } from 'constants/charts';
-import { MarketRoutes } from 'constants/routes';
+import { MainRoutes, MarketRoutes } from 'constants/routes';
 
 import { contractValueToAmount } from 'helpers/amount';
 import { getAquaAssetData, getAssetString } from 'helpers/assets';
@@ -277,7 +277,7 @@ const PoolPage = () => {
                     <BackButton
                         label="Pools"
                         onClick={() => {
-                            history.goBack();
+                            history.push(MainRoutes.amm);
                         }}
                     >
                         <ArrowLeft />
