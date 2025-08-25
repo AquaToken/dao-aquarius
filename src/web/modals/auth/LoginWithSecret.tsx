@@ -39,7 +39,8 @@ const LoginWithSecret = ({ close }: ModalProps<never>): React.ReactNode => {
 
     const onSubmit = (e: React.MouseEvent) => {
         e.preventDefault();
-        SorobanService.loginWithSecret(secretKey)
+        SorobanService.connection
+            .loginWithSecret(secretKey)
             .then(pubKey => {
                 login({
                     pubKey,

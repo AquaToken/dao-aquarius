@@ -62,7 +62,8 @@ export default function useAssetsSearch(searchState) {
 
         if (StellarService.isValidContract(debouncedSearchText.current)) {
             setSearchPending(true);
-            SorobanService.parseTokenContractId(debouncedSearchText.current)
+            SorobanService.token
+                .parseTokenContractId(debouncedSearchText.current)
                 .then(token => {
                     setSearchResults([token]);
                     setSearchPending(false);

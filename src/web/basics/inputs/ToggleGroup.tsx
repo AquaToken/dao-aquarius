@@ -14,6 +14,7 @@ const ToggleBlock = styled.div<{ $isRounded: boolean }>`
     font-size: 1.4rem;
     line-height: 1.6rem;
     color: ${COLORS.paragraphText};
+    width: fit-content;
 `;
 
 const ToggleOption = styled.label<{ $isChecked: boolean; $isRounded: boolean }>`

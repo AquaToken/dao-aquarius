@@ -58,7 +58,7 @@ const processPools = async (pools: Array<Pool | PoolUser>): Promise<Array<PoolPr
     }, new Set<string>());
 
     const tokens = await Promise.all(
-        [...contracts].map(id => SorobanService.parseTokenContractId(id)),
+        [...contracts].map(id => SorobanService.token.parseTokenContractId(id)),
     );
 
     AssetsService.processAssets(
@@ -94,7 +94,7 @@ export const getPools = async (
 
 export const getPoolsWithAssets = (assets: Asset[]): Promise<PoolProcessed[]> => {
     const baseUrl = getAmmAquaUrl();
-    const params = assets.map(asset => SorobanService.getAssetContractId(asset)).join(',');
+    const params = assets.map(asset => SorobanService.token.getAssetContractId(asset)).join(',');
 
     return axios
         .get<ListResponse<Pool>>(`${baseUrl}/pools/?tokens__in=${params}`)
@@ -313,9 +313,9 @@ export const getPoolsToMigrate = async (base: Asset, counter: Asset): Promise<Po
     const baseUrl = getAmmAquaUrl();
 
     const { data } = await axios.get<ListResponse<Pool>>(
-        `${baseUrl}/pools?tokens__in=${SorobanService.getAssetContractId(
+        `${baseUrl}/pools?tokens__in=${SorobanService.token.getAssetContractId(
             base,
-        )},${SorobanService.getAssetContractId(counter)}`,
+        )},${SorobanService.token.getAssetContractId(counter)}`,
     );
 
     const pools = data.items
@@ -452,7 +452,7 @@ export const getUserRewardsList = async (
     const chunked = chunkArray(processed);
 
     await chunkFunction(chunked, async chunk => {
-        const result = await SorobanService.getPoolsRewards(
+        const result = await SorobanService.amm.getPoolsRewards(
             accountId,
             chunk.map(({ address }) => address),
         );

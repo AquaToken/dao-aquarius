@@ -1,4 +1,4 @@
-import { POOL_TYPE } from 'services/soroban.service';
+import { POOL_TYPE } from 'constants/amm';
 
 import { PoolClassic, PoolClassicReserves } from 'types/stellar';
 

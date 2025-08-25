@@ -29,7 +29,7 @@ export const getAssetFromString = (str: string, onUpdateCB?: (token: Token) => v
     if (StellarService.isValidContract(str)) {
         const result = { contract: str, type: TokenType.soroban } as Token;
 
-        SorobanService.parseTokenContractId(str).then((res: Token) => {
+        SorobanService.token.parseTokenContractId(str).then((res: Token) => {
             Object.assign(result, res);
             if (onUpdateCB) {
                 onUpdateCB(result);

@@ -119,6 +119,7 @@ const RangeInput = ({
     value: valueProps,
     disabled,
     withoutPercent,
+    ...props
 }: {
     onChange: (value: number) => void;
     value: number;
@@ -186,6 +187,7 @@ const RangeInput = ({
             }}
             $disabled={disabled}
             ref={ref}
+            {...props}
         >
             <Mark
                 $percent={0}

@@ -5,6 +5,7 @@ import styled from 'styled-components';
 
 import { getPoolMembersCount, getPoolStats } from 'api/amm';
 
+import { POOL_TYPE } from 'constants/amm';
 import { ChartPeriods } from 'constants/charts';
 
 import { contractValueToAmount } from 'helpers/amount';
@@ -12,7 +13,6 @@ import { formatBalance } from 'helpers/format-number';
 import { truncateString } from 'helpers/truncate-string';
 
 import { ModalService, StellarService } from 'services/globalServices';
-import { POOL_TYPE } from 'services/soroban.service';
 
 import { PoolClassicProcessed, PoolExtended, PoolProcessed, PoolUserProcessed } from 'types/amm';
 import { Asset as AssetType } from 'types/stellar';
