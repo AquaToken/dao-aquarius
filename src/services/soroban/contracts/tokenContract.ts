@@ -10,6 +10,7 @@ import {
 import { ACCOUNT_FOR_SIMULATE, BASE_FEE } from 'constants/stellar';
 
 import { getEnv, getNetworkPassphrase } from 'helpers/env';
+import { getTokensFromCache } from 'helpers/swap';
 
 import { StellarService } from 'services/globalServices';
 import {
@@ -29,6 +30,16 @@ import {
 import { ClassicToken, Token, TokenType } from 'types/token';
 
 const tokensCache = new Map<string, Token>();
+
+export function restoreFromCache() {
+    const cached = getTokensFromCache();
+
+    if (cached) {
+        cached.forEach(token => {
+            tokensCache.set(token.contract, token);
+        });
+    }
+}
 
 const BATCH_SMART_CONTRACT_ID = CONTRACTS[getEnv()].batch;
 

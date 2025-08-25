@@ -11,5 +11,7 @@ export default class SorobanService {
 
     constructor() {
         this.connection.startServer();
+
+        this.token.restoreFromCache();
     }
 }
