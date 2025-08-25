@@ -66,7 +66,7 @@ const HotWalletIcon = styled(HotWallet)`
 `;
 
 const SupportedWallets = () => (
-    <Wrapper>
+    <Wrapper id="supported-wallets">
         <Title>Supported by:</Title>
 
         <ImageBlock>

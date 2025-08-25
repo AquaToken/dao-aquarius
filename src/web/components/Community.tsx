@@ -142,7 +142,7 @@ const ItemTitle = styled.span`
 `;
 
 const Community = (): React.ReactNode => (
-    <Wrapper>
+    <Wrapper id="community">
         <Title>Join AQUA community</Title>
         <Description>
             Learn more about Aquarius, follow the project updates, chat with the team and other

@@ -3,10 +3,10 @@ import styled, { css } from 'styled-components';
 
 import { MainRoutes } from 'constants/routes';
 
-import { commonSectionPaddings, flexAllCenter, respondDown } from 'web/mixins';
+import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS, MAX_WIDTHS } from 'web/styles';
 
-import AquaLogo from 'assets/aqua-logo.svg';
+import AquaLogo from 'assets/aqua/aqua-logo-text.svg';
 import Audit from 'assets/audit.svg';
 import Dune from 'assets/DuneLogoCircle.svg';
 import Docs from 'assets/icon-docs.svg';

@@ -14,10 +14,14 @@ import AquaSoroban from './components/AquaSoroban';
 import AquaForBuilders from './components/AquaForBuilders';
 import DexStats from './components/DexStats';
 import WhyProvideLiq from './components/WhyProvideLiq';
+import TokenSystem from './components/TokenSystem';
+import { useScrollToHash } from 'hooks/useScrollToHash';
 
 const MainPage = () => {
     const [isLoadingStats, setIsLoadingStats] = useState(true);
     const [ammStats, setAmmStats] = useState<AllTimeStats | null>(null);
+
+    useScrollToHash();
 
     useEffect(() => {
         getAllTimeStats()
@@ -39,6 +43,8 @@ const MainPage = () => {
                 <AquaSoroban />
 
                 <DexStats isLoading={isLoadingStats} stats={ammStats} />
+
+                <TokenSystem />
 
                 <WhyProvideLiq />
 

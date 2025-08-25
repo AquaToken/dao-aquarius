@@ -98,7 +98,7 @@ const ExternalLinkStyled = styled(ExternalLink)`
 const BENEFITS = ['Self-custodial wallets', 'Trading bots', 'DEX aggregators'];
 
 const AquaForBuilders = () => (
-    <Wrapper>
+    <Wrapper id="aqua-for-builders">
         <ShortWrapper>
             <AquaBuildersIcon />
             <Title>Aquarius for Stellar builders</Title>

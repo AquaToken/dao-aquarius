@@ -136,7 +136,7 @@ const SorobanButton = styled(Button)`
 `;
 
 const AquaSoroban = () => (
-    <Wrapper>
+    <Wrapper id="aqua-soroban">
         <InnerWrapper>
             <SorobanStarsStyled />
             <Title>

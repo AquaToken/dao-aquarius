@@ -101,14 +101,14 @@ export const contentWithSidebar = css`
 
 export const commonSectionPaddings = css`
     ${respondDown(Breakpoints.xl)`
-        margin: 0 2.4rem;
+        padding: 0 2.4rem;
     `}
 
     ${respondDown(Breakpoints.sm)`
-        margin: 0 1.6rem;
+        padding: 0 1.6rem;
     `}
 
     ${respondDown(Breakpoints.xs)`
-        margin: 0 0.8rem;
+        padding: 0 0.8rem;
     `}
 `;

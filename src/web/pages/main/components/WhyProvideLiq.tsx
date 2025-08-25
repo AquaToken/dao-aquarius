@@ -10,6 +10,10 @@ import EarnByMarketIcon from 'assets/main-page/earn-by-market.svg';
 import { flexAllCenter, respondDown } from 'web/mixins';
 
 import { Breakpoints, COLORS } from 'web/styles';
+import { useEffect, useState } from 'react';
+import { StellarService } from 'services/globalServices';
+import { getTotalRewards } from 'api/rewards';
+import { TotalRewards } from 'pages/vote/api/types';
 
 const Wrapper = styled.section`
     ${flexAllCenter};
@@ -192,22 +196,44 @@ const HideOnSm = styled.div`
     `}
 `;
 
-interface Props {
-    isLoading?: boolean;
-}
+const WhyProvideLiq = () => {
+    const [price, setPrice] = useState<number | null>(null);
+    const [totalRewards, setTotalRewards] = useState<TotalRewards | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
 
-const WhyProvideLiq = ({ isLoading }: Props) => {
+    useEffect(() => {
+        Promise.all([
+            StellarService.getAquaUsdPrice().then(res => {
+                setPrice(res);
+            }),
+            getTotalRewards().then(res => {
+                setTotalRewards(res);
+            }),
+        ]).finally(() => {
+            setIsLoading(false);
+        });
+    }, []);
+
+    // 30 days
+    const totalDistributedMonthly =
+        (totalRewards?.total_daily_amm_reward + totalRewards?.total_daily_sdex_reward) * price * 30;
+    const formattedTotalDistributedMonthly = `$${formatBalance(
+        totalDistributedMonthly,
+        true,
+        true,
+    )}`;
+
     const whyStatsContent = (
         <WhyStats>
-            <StatsTitle>{isLoading ? <DotsLoader /> : `$Add daily data`}</StatsTitle>
+            <StatsTitle>{isLoading ? <DotsLoader /> : formattedTotalDistributedMonthly}</StatsTitle>
             <Description>
-                LPs receive daily rewards, distributed among liquidity providers.
+                LPs receive monthly rewards, distributed among liquidity providers.
             </Description>
         </WhyStats>
     );
 
     return (
-        <Wrapper>
+        <Wrapper id="why-provide-liquidity">
             <WhyBlocks>
                 <Block>
                     <WhyTitle>Why Provide Liquidity?</WhyTitle>

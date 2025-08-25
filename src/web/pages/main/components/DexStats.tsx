@@ -156,7 +156,7 @@ interface Props {
 }
 
 const DexStats = ({ isLoading, stats }: Props) => (
-    <Wrapper>
+    <Wrapper id="dex-stats">
         <DexBlocks>
             <Block>
                 <DexTitle>The Largest DEX on Stellar</DexTitle>

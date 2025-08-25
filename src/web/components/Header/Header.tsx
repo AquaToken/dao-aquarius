@@ -13,7 +13,7 @@ import { commonMaxWidth, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS, Z_INDEX } from 'web/styles';
 
-import AquaLogo from 'assets/aqua-logo.svg';
+import AquaLogo from 'assets/aqua/aqua-logo-text.svg';
 import IconProfile from 'assets/icon-profile.svg';
 
 import { ActiveProposals } from 'components/Header/ActiveProposals/ActiveProposals';
