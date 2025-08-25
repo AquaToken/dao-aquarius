@@ -98,3 +98,26 @@ export const contentWithSidebar = css`
         padding: 3.2rem 1.6rem 0;
     `}
 `;
+
+export const EmptyList = css`
+    ${flexAllCenter};
+    flex-direction: column;
+
+    h3 {
+        font-size: 2rem;
+        line-height: 2.8rem;
+        color: ${COLORS.titleText};
+        margin-bottom: 0.9rem;
+    }
+
+    span {
+        line-height: 180%;
+        color: ${COLORS.grayText};
+    }
+
+    a {
+        color: ${COLORS.purple};
+        font-size: 1.4rem;
+        line-height: 2rem;
+    }
+`;

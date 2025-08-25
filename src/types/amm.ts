@@ -35,6 +35,8 @@ export type Pool = {
     liquidity_usd: string;
     volume_usd: string;
     apy_tier: number;
+    reward_tps_per_token: { [key: string]: string };
+    rewards_apy_per_token: { [key: string]: string };
 };
 
 export type PoolRewards = {
@@ -143,4 +145,13 @@ export type PoolRewardsInfo = {
     supply: string;
     working_balance: string;
     working_supply: string;
+};
+
+export type PoolIncentives = {
+    token: Token;
+    info: {
+        expired_at: string;
+        tps: string;
+        user_reward: string;
+    };
 };

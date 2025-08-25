@@ -1,3 +1,4 @@
+import { addDays, startOfDay } from 'date-fns';
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import DatePicker from 'react-datepicker';
@@ -19,10 +20,12 @@ import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
 import { ModalService } from 'services/globalServices';
 
-import { PoolExtended, PoolProcessed } from 'types/amm';
+import { PoolProcessed } from 'types/amm';
 import { Token } from 'types/token';
 
+import { DatePickerStyles } from 'web/DatePickerStyles';
 import { respondDown } from 'web/mixins';
+import ConfirmIncentiveModal from 'web/modals/ConfirmIncentiveModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import ArrowLeft from 'assets/icon-arrow-left.svg';
@@ -30,7 +33,6 @@ import Fail from 'assets/icon-fail.svg';
 import Success from 'assets/icon-success.svg';
 
 import AssetPicker from 'basics/asset-picker/AssetPicker';
-import AssetDropdown from 'basics/AssetDropdown';
 import Button from 'basics/buttons/Button';
 import CircleButton from 'basics/buttons/CircleButton';
 import ExternalLink from 'basics/ExternalLink';
@@ -51,17 +53,10 @@ import {
     FormSection,
     FormSectionTitle,
     FormSectionDescription,
-    getWeekStartFromDay,
     FormWrap,
     FormRow,
     DashIcon,
 } from 'pages/bribes/pages/AddBribePage';
-
-import { DatePickerStyles } from '../../../web/DatePickerStyles';
-
-import { addDays, startOfDay } from 'date-fns';
-
-import ConfirmIncentiveModal from '../../../web/modals/ConfirmIncentiveModal';
 
 const ExternalLinkStyled = styled(ExternalLink)`
     ${respondDown(Breakpoints.md)`
@@ -405,7 +400,7 @@ const AddIncentivePage = () => {
                                         });
                                     }}
                                 >
-                                    Create bribe
+                                    Create incentive
                                 </NextButton>
 
                                 <DatePickerStyles />

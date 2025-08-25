@@ -92,6 +92,14 @@ export const getPools = async (
     return { pools: processed, total: data.total };
 };
 
+export const getPoolsWithIncentives = (): Promise<PoolProcessed[]> => {
+    const baseUrl = getAmmAquaUrl();
+
+    return axios
+        .get<ListResponse<Pool>>(`${baseUrl}/pools/?gauge_rewards=true`)
+        .then(res => processPools(res.data.items));
+};
+
 export const getPoolsWithAssets = (assets: Asset[]): Promise<PoolProcessed[]> => {
     const baseUrl = getAmmAquaUrl();
     const params = assets.map(asset => SorobanService.token.getAssetContractId(asset)).join(',');

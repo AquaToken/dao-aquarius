@@ -308,7 +308,7 @@ const Links = () => {
                             }}
                             title="Pools Incentives"
                         >
-                            Pools Incentives
+                            LP Incentives
                         </NavLinkStyled>
                     </>
                 }

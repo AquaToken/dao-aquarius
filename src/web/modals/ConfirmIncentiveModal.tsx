@@ -8,16 +8,24 @@ import { getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
+import { useIsMounted } from 'hooks/useIsMounted';
+
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ToastService } from 'services/globalServices';
+import { getScheduleIncentiveTx } from 'services/soroban/contracts/ammContract';
+import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { PoolExtended } from 'types/amm';
 import { ModalProps } from 'types/modal';
 import { Token, TokenType } from 'types/token';
 
+import { flexAllCenter } from 'web/mixins';
+import { COLORS } from 'web/styles';
+
 import Asset from 'basics/Asset';
+import Button from 'basics/buttons/Button';
 import Market from 'basics/Market';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
@@ -27,10 +35,6 @@ import {
     Label,
     Value,
 } from 'pages/bribes/components/AddBribePage/ConfirmBribeModal/ConfirmBribeModal';
-
-import Button from '../basics/buttons/Button';
-import { flexAllCenter } from '../mixins';
-import { COLORS } from '../styles';
 
 const PairBlock = styled.div`
     ${flexAllCenter};
@@ -49,13 +53,15 @@ interface Props {
     swapChainedXdr: string;
 }
 
-const ConfirmIncentiveModal = ({ params }: ModalProps<Props>) => {
+const ConfirmIncentiveModal = ({ params, close }: ModalProps<Props>) => {
     const [pending, setPending] = useState<boolean>(false);
     const { pool, rewardToken, amountPerDay, startDate, endDate, swapChainedXdr } = params;
 
     const days = (endDate - startDate) / DAY;
 
     const { account } = useAuthStore();
+
+    const isMounted = useIsMounted();
 
     const onSubmit = async () => {
         const balance =
@@ -78,6 +84,36 @@ const ConfirmIncentiveModal = ({ params }: ModalProps<Props>) => {
         }
 
         setPending(true);
+
+        const seconds = (endDate - startDate) / 1000;
+
+        const tps = (amountPerDay * days) / seconds;
+
+        const tx = await getScheduleIncentiveTx(
+            account.accountId(),
+            pool,
+            rewardToken,
+            tps,
+            startDate,
+            endDate,
+            swapChainedXdr,
+        );
+
+        const result = await account.signAndSubmitTx(tx);
+
+        if (isMounted.current) {
+            setPending(false);
+            close();
+        }
+
+        if (
+            (result as { status: BuildSignAndSubmitStatuses }).status ===
+            BuildSignAndSubmitStatuses.pending
+        ) {
+            ToastService.showSuccessToast('More signatures required to complete');
+            return;
+        }
+        ToastService.showSuccessToast('Your incentive has been created');
     };
 
     return (
@@ -120,7 +156,7 @@ const ConfirmIncentiveModal = ({ params }: ModalProps<Props>) => {
                     </Value>
                 </InfoRow>
             </BribeInfo>
-            <Button isBig fullWidth onClick={() => {}} pending={pending}>
+            <Button isBig fullWidth onClick={() => onSubmit()} pending={pending}>
                 create incentive
             </Button>
         </ModalWrapper>

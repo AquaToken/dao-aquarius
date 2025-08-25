@@ -37,6 +37,9 @@ export enum AMM_CONTRACT_METHOD {
     CALC_WITHDRAW_ONE_COIN = 'calc_withdraw_one_coin',
     WITHDRAW_ONE_COIN = 'withdraw_one_coin',
     WITHDRAW_CUSTOM = 'remove_liquidity_imbalance',
+    SCHEDULE_INCENTIVE = 'pool_gauge_schedule_reward',
+    GET_INCENTIVES_INFO = 'gauges_get_reward_info',
+    CLAIM_INCENTIVES = 'gauges_claim',
 }
 
 export enum BATCH_CONTRACT_METHOD {
