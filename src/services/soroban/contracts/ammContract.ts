@@ -920,7 +920,7 @@ export function getScheduleIncentiveTx(
         scValToArray(pool.tokens.map(token => contractIdToScVal(token.contract))),
         hashToScVal(pool.index),
         contractIdToScVal(rewardToken.contract),
-        amountToUint128(tps.toFixed(7)),
+        amountToUint128(tps.toFixed(rewardToken.decimal), rewardToken.decimal),
         amountToUint64((startDate / 1000).toFixed(), 0),
         amountToUint64(duration, 0),
         swapChainedScVal,
