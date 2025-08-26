@@ -236,14 +236,6 @@ const SwapConfirmModal = ({
             });
     };
 
-    if (!fees || !pathTokens) {
-        return (
-            <ModalWrapper>
-                <PageLoader />
-            </ModalWrapper>
-        );
-    }
-
     return (
         <ModalWrapper>
             <ModalTitle>Confirm swap</ModalTitle>
@@ -294,22 +286,26 @@ const SwapConfirmModal = ({
                 <span />
             </DescriptionRow>
 
-            <Pools>
-                {bestPools.map((pool, index) => {
-                    const base = pathTokens[index];
-                    const counter = pathTokens[index + 1];
-                    return (
-                        <PathPool
-                            key={pool}
-                            baseIcon={<AssetLogo asset={base} />}
-                            counterIcon={<AssetLogo asset={counter} />}
-                            fee={fees.get(pool)}
-                            address={pool}
-                            isLastPool={index === bestPools.length - 1}
-                        />
-                    );
-                })}
-            </Pools>
+            {!fees || !pathTokens ? (
+                <PageLoader />
+            ) : (
+                <Pools>
+                    {bestPools.map((pool, index) => {
+                        const base = pathTokens[index];
+                        const counter = pathTokens[index + 1];
+                        return (
+                            <PathPool
+                                key={pool}
+                                baseIcon={<AssetLogo asset={base} />}
+                                counterIcon={<AssetLogo asset={counter} />}
+                                fee={fees.get(pool)}
+                                address={pool}
+                                isLastPool={index === bestPools.length - 1}
+                            />
+                        );
+                    })}
+                </Pools>
+            )}
 
             <Divider />
             <StickyButtonWrapper>

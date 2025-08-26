@@ -1,8 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { AssetSimple } from 'store/assetsStore/types';
-
 import { ModalService } from 'services/globalServices';
 
 import { Token } from 'types/token';
@@ -58,7 +56,7 @@ const Label = styled.span`
 type Props = {
     asset: Token;
     onUpdate: (asset: Token) => void;
-    assetsList: AssetSimple[];
+    assetsList: Token[];
     label?: string;
 };
 

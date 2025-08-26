@@ -3,11 +3,14 @@ import { lazy, Suspense, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import { createGlobalStyle } from 'styled-components';
 
+import { getAssetsList } from 'api/amm';
+
 import { D_ICE_CODE, ICE_ISSUER } from 'constants/assets';
 import { MainRoutes } from 'constants/routes';
 
 import { getEnv, getIsTestnetEnv, setProductionEnv } from 'helpers/env';
 import { getMoonpayKeyByEnv } from 'helpers/moonpay';
+import { cacheTokens } from 'helpers/swap';
 
 import { LoginTypes } from 'store/authStore/types';
 
@@ -91,6 +94,13 @@ const App = () => {
         }
 
         getAssets();
+    }, []);
+
+    useEffect(() => {
+        getAssetsList().then(res => {
+            processNewAssets(res);
+            cacheTokens(res);
+        });
     }, []);
 
     const reloadIfNotLoaded = () => {
