@@ -21,7 +21,7 @@ type BaseIncentive<P> = {
     expired_at_str: string;
 };
 
-export type UpcomingIncentive = BaseIncentive<IncentivePool>;
-export type UpcomingIncentiveProcessed = BaseIncentive<IncentivePoolProcessed> & {
+export type Incentive = BaseIncentive<IncentivePool>;
+export type IncentiveProcessed = BaseIncentive<IncentivePoolProcessed> & {
     tokenInstance: Token;
 };

@@ -11,8 +11,7 @@ import {
     TitleBlock,
     ToggleGroupStyled,
 } from 'pages/bribes/components/BribesPage/BribesList/BribesList';
-import CurrentIncentives from 'pages/incentives/components/CurrentIncentives/CurrentIncentives';
-import UpcomingIncentives from 'pages/incentives/components/UpcomingIncentives/UpcomingIncentives';
+import IncentivesTable from 'pages/incentives/components/IncentivesTable/IncentivesTable';
 
 enum Tab {
     current = 'current',
@@ -49,8 +48,8 @@ const IncentivesList = () => {
 
             <ToggleGroupStyled value={tab} options={OPTIONS} onChange={setTab} />
 
-            {tab === Tab.current && <CurrentIncentives />}
-            {tab === Tab.upcoming && <UpcomingIncentives />}
+            {tab === Tab.current && <IncentivesTable isActive={true} />}
+            {tab === Tab.upcoming && <IncentivesTable isActive={false} />}
         </Container>
     );
 };

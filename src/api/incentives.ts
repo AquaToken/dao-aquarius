@@ -5,7 +5,7 @@ import { convertNativePriceToToken, processPools } from 'api/amm';
 import { getAmmAquaUrl } from 'helpers/url';
 
 import { ListResponse, Pool, PoolProcessed } from 'types/amm';
-import { UpcomingIncentive, UpcomingIncentiveProcessed } from 'types/incentives';
+import { Incentive, IncentiveProcessed } from 'types/incentives';
 
 export const getPoolsWithIncentives = (): Promise<PoolProcessed[]> => {
     const baseUrl = getAmmAquaUrl();
@@ -15,11 +15,11 @@ export const getPoolsWithIncentives = (): Promise<PoolProcessed[]> => {
         .then(res => processPools(res.data.items));
 };
 
-export const getUpcomingIncentives = async (): Promise<UpcomingIncentiveProcessed[]> => {
+export const getIncentives = async (isActive = true): Promise<IncentiveProcessed[]> => {
     const baseUrl = getAmmAquaUrl();
 
-    const { data } = await axios.get<ListResponse<UpcomingIncentive>>(
-        `${baseUrl}/pool-rewards/custom/?active=false`,
+    const { data } = await axios.get<ListResponse<Incentive>>(
+        `${baseUrl}/pool-rewards/custom/?active=${isActive}`,
     );
 
     const pools = await processPools(data.items.map(({ pool }) => pool));

@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { getUpcomingIncentives } from 'api/incentives';
+import { getIncentives } from 'api/incentives';
 
 import { DAY } from 'constants/intervals';
 import { AmmRoutes, IncentivesRoutes } from 'constants/routes';
@@ -12,7 +12,7 @@ import { contractValueToAmount } from 'helpers/amount';
 import { convertDateStrToTimestamp, getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 
-import { UpcomingIncentiveProcessed } from 'types/incentives';
+import { IncentiveProcessed } from 'types/incentives';
 
 import { EmptyList } from 'web/mixins';
 
@@ -30,11 +30,15 @@ const Empty = styled.div`
     ${EmptyList};
 `;
 
-const UpcomingIncentives = () => {
-    const [incentives, setIncentives] = React.useState<UpcomingIncentiveProcessed[] | null>(null);
+interface Props {
+    isActive: boolean;
+}
+
+const IncentivesTable = ({ isActive }: Props) => {
+    const [incentives, setIncentives] = React.useState<IncentiveProcessed[] | null>(null);
 
     useEffect(() => {
-        getUpcomingIncentives().then(setIncentives);
+        getIncentives(isActive).then(setIncentives);
     }, []);
 
     const history = useHistory();
@@ -46,8 +50,6 @@ const UpcomingIncentives = () => {
     if (!incentives) {
         return <PageLoader />;
     }
-
-    console.log();
     return (
         <Wrapper>
             {incentives.length ? (
@@ -121,4 +123,4 @@ const UpcomingIncentives = () => {
     );
 };
 
-export default UpcomingIncentives;
+export default IncentivesTable;
