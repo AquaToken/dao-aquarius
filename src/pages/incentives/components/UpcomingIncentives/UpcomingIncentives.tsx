@@ -65,7 +65,7 @@ const UpcomingIncentives = () => {
                                 incentive.tokenInstance.decimal,
                             ) *
                                 DAY) /
-                            100;
+                            1000;
                         return {
                             key: incentive.pool_address + incentive.token.address,
                             onRowClick: () => goToPoolPage(incentive.pool_address),

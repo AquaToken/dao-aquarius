@@ -8,11 +8,15 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { findSwapPath, getAssetsList, getPoolsForIncentives } from 'api/amm';
 
 import { MAX_TOKEN_AMOUNT, MINIMUM_AQUA_EQUIVALENT } from 'constants/incentives';
+import { MINUTE, WEEK } from 'constants/intervals';
 import { IncentivesRoutes } from 'constants/routes';
 
 import { contractValueToAmount } from 'helpers/amount';
 import { getAquaAssetData } from 'helpers/assets';
-import { convertUTCToLocalDateIgnoringTimezone } from 'helpers/date';
+import {
+    convertLocalDateToUTCIgnoringTimezone,
+    convertUTCToLocalDateIgnoringTimezone,
+} from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 
 import { useDebounce } from 'hooks/useDebounce';
@@ -193,6 +197,13 @@ const AddIncentivePage = () => {
             value: market,
         }));
     }, [markets]);
+
+    const setTestDate = () => {
+        const start = 3 * MINUTE + Date.now();
+        const end = start + WEEK;
+        setStartDay(convertLocalDateToUTCIgnoringTimezone(new Date(start)).getTime());
+        setEndDay(convertLocalDateToUTCIgnoringTimezone(new Date(end)).getTime());
+    };
 
     const amountInputPostfix =
         debouncedAmount.current !== null && aquaEquivalent === null ? (
@@ -386,6 +397,16 @@ const AddIncentivePage = () => {
                                         minDate={addDays(startDay, 7)}
                                     />
                                 </FormRow>
+
+                                <Button
+                                    isSmall
+                                    style={{ marginTop: '2rem' }}
+                                    withGradient
+                                    isRounded
+                                    onClick={() => setTestDate()}
+                                >
+                                    Test Button: Set date to one week from now + 3 min
+                                </Button>
 
                                 <NextButton
                                     isBig
