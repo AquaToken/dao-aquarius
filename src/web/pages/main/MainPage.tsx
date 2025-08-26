@@ -16,6 +16,8 @@ import DexStats from './components/DexStats';
 import WhyProvideLiq from './components/WhyProvideLiq';
 import TokenSystem from './components/TokenSystem';
 import { useScrollToHash } from 'hooks/useScrollToHash';
+import HowItWorks from './components/HowItWorks';
+import { COLORS } from 'web/styles';
 
 const MainPage = () => {
     const [isLoadingStats, setIsLoadingStats] = useState(true);
@@ -34,7 +36,7 @@ const MainPage = () => {
     }, []);
 
     return (
-        <PageContainer>
+        <PageContainer $color={COLORS.white}>
             <HeroBlock isLoading={isLoadingStats} stats={ammStats} />
 
             <SectionWrapper>
@@ -45,6 +47,8 @@ const MainPage = () => {
                 <DexStats isLoading={isLoadingStats} stats={ammStats} />
 
                 <TokenSystem />
+
+                <HowItWorks />
 
                 <WhyProvideLiq />
 

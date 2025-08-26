@@ -99,7 +99,9 @@ const Divider = styled.div`
     ${respondDown(Breakpoints.lg)`
         margin-right: 1rem;
         height: 2rem;
-    `} ${respondDown(Breakpoints.md)`
+    `};
+
+    ${respondDown(Breakpoints.md)`
          border-left: none;
          margin-right: 0;
          height: 0;
