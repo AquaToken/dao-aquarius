@@ -24,7 +24,7 @@ import {
     PoolUserProcessed,
     PoolVolume24h,
 } from 'types/amm';
-import { ClassicToken, SorobanToken, Token, TokenType } from 'types/token';
+import { ClassicToken, Token, TokenType } from 'types/token';
 
 export enum FilterOptions {
     all = 'all',
@@ -51,8 +51,10 @@ export enum PoolsSortFields {
     rewardsApyDown = 'rewards_apy',
 }
 
-const processPools = async (pools: Array<Pool | PoolUser>): Promise<Array<PoolProcessed>> => {
-    const contracts: Set<string> = pools.reduce((acc: Set<string>, item: Pool | PoolUser) => {
+export const processPools = async <T extends { tokens_addresses: string[] }>(
+    pools: T[],
+): Promise<(T & { tokens: Token[] })[]> => {
+    const contracts: Set<string> = pools.reduce((acc: Set<string>, item: T) => {
         item.tokens_addresses.forEach(id => acc.add(id));
         return acc;
     }, new Set<string>());
@@ -90,14 +92,6 @@ export const getPools = async (
     );
     const processed = await processPools(data.items);
     return { pools: processed, total: data.total };
-};
-
-export const getPoolsWithIncentives = (): Promise<PoolProcessed[]> => {
-    const baseUrl = getAmmAquaUrl();
-
-    return axios
-        .get<ListResponse<Pool>>(`${baseUrl}/pools/?gauge_rewards=true`)
-        .then(res => processPools(res.data.items));
 };
 
 export const getPoolsWithAssets = (assets: Asset[]): Promise<PoolProcessed[]> => {
@@ -265,6 +259,19 @@ interface GetNativePricesOpts {
     onlySoroban: boolean;
 }
 
+export const convertNativePriceToToken = (item: NativePrice): Token =>
+    item.name === 'native' && item.is_sac
+        ? StellarService.createLumen()
+        : item.is_sac
+        ? StellarService.createAsset(item.code, item.issuer)
+        : {
+              contract: item.address,
+              type: TokenType.soroban,
+              name: item.name,
+              code: item.code,
+              decimal: item.decimals,
+          };
+
 export const getNativePrices = async (
     opts?: GetNativePricesOpts,
 ): Promise<Map<string, { price: string; token: Token }>> => {
@@ -286,18 +293,7 @@ export const getNativePrices = async (
     prices.forEach(price => {
         allPrices.set(price.address, {
             price: (+price.price_xlm * Math.pow(10, price.decimals - 7)).toFixed(7),
-            token:
-                price.name === 'native' && price.is_sac
-                    ? StellarService.createLumen()
-                    : price.is_sac
-                    ? StellarService.createAsset(price.code, price.issuer)
-                    : {
-                          contract: price.address,
-                          type: TokenType.soroban,
-                          name: price.name,
-                          code: price.code,
-                          decimal: price.decimals,
-                      },
+            token: convertNativePriceToToken(price),
         });
     });
 
@@ -431,17 +427,7 @@ export const getAssetsList = async (): Promise<Token[]> => {
                 address !== usdcStellarAsset.contract &&
                 address !== lumen.contract,
         )
-        .map(price =>
-            price.is_sac
-                ? StellarService.createAsset(price.code, price.issuer)
-                : ({
-                      contract: price.address,
-                      type: TokenType.soroban,
-                      name: price.name,
-                      code: price.code,
-                      decimal: price.decimals,
-                  } as SorobanToken),
-        );
+        .map(price => convertNativePriceToToken(price));
 
     return [aquaStellarAsset, lumen, usdcStellarAsset, ...otherTokens];
 };

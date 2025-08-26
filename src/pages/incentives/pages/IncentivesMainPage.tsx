@@ -16,7 +16,7 @@ import {
     TableContainer,
     Title,
 } from 'pages/bribes/pages/BribesPage';
-import IncentivesList from 'pages/incentives/components/IncentivesList';
+import IncentivesList from 'pages/incentives/components/IncentivesList/IncentivesList';
 
 const Main = styled.main`
     flex: 1 0 auto;

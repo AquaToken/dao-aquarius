@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { getPoolsWithIncentives } from 'api/amm';
+import { getPoolsWithIncentives } from 'api/incentives';
 
 import { DAY } from 'constants/intervals';
 import { AmmRoutes, IncentivesRoutes } from 'constants/routes';
@@ -14,7 +14,7 @@ import { formatBalance } from 'helpers/format-number';
 
 import { PoolProcessed } from 'types/amm';
 
-import { EmptyList, flexAllCenter } from 'web/mixins';
+import { EmptyList } from 'web/mixins';
 
 import Asset from 'basics/Asset';
 import ExternalLink from 'basics/ExternalLink';
@@ -30,7 +30,7 @@ const Empty = styled.div`
     ${EmptyList};
 `;
 
-const IncentivesList = () => {
+const CurrentIncentives = () => {
     const [pools, setPools] = React.useState<PoolProcessed[] | null>(null);
 
     useEffect(() => {
@@ -52,7 +52,7 @@ const IncentivesList = () => {
             {pools.length ? (
                 <Table
                     head={[
-                        { children: 'Pool', flexSize: 3 },
+                        { children: 'Pool', flexSize: 2.5 },
                         { children: 'Token' },
                         { children: 'Daily amount' },
                         { children: 'APY' },
@@ -91,7 +91,7 @@ const IncentivesList = () => {
                                                 withoutLink
                                             />
                                         ),
-                                        flexSize: 3,
+                                        flexSize: 2.5,
                                     },
                                     {
                                         children: <Asset asset={token} logoAndCode />,
@@ -127,4 +127,4 @@ const IncentivesList = () => {
     );
 };
 
-export default IncentivesList;
+export default CurrentIncentives;

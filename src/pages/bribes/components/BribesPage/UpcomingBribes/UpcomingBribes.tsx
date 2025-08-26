@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import { MarketRoutes } from 'constants/routes';
 
-import { convertLocalDateToUTCIgnoringTimezone, getDateString } from 'helpers/date';
+import { convertDateStrToTimestamp, getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 import { getIceMaxApy } from 'helpers/ice';
 
@@ -186,8 +186,8 @@ const UpcomingBribes = () => {
                     },
                 ]}
                 body={bribes.map(item => {
-                    const startUTC = convertLocalDateToUTCIgnoringTimezone(new Date(item.start_at));
-                    const stopUTC = convertLocalDateToUTCIgnoringTimezone(new Date(item.stop_at));
+                    const startUTC = convertDateStrToTimestamp(item.start_at);
+                    const stopUTC = convertDateStrToTimestamp(item.stop_at);
                     const base = StellarService.createAsset(item.asset1_code, item.asset1_issuer);
                     const counter = StellarService.createAsset(
                         item.asset2_code,
@@ -242,9 +242,9 @@ const UpcomingBribes = () => {
                                 label: 'Reward per day:',
                             },
                             {
-                                children: `${getDateString(startUTC.getTime(), {
+                                children: `${getDateString(startUTC, {
                                     withoutYear: true,
-                                })} - ${getDateString(stopUTC.getTime() - 1)}`,
+                                })} - ${getDateString(stopUTC - 1)}`,
                                 label: 'Period:',
                             },
                         ],
