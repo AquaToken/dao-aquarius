@@ -151,8 +151,9 @@ const ConfirmIncentiveModal = ({ params, close }: ModalProps<Props>) => {
                 <InfoRow>
                     <Label>Incentive period</Label>
                     <Value>
-                        {getDateString(startDate, { withoutYear: true })} - {getDateString(endDate)}{' '}
-                        ({days} days)
+                        {getDateString(startDate, { withoutYear: true, withTime: true })} -{' '}
+                        {getDateString(endDate, { withoutYear: true, withTime: true })} ({days}{' '}
+                        days)
                     </Value>
                 </InfoRow>
             </BribeInfo>

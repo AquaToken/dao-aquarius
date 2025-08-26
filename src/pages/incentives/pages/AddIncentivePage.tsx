@@ -12,6 +12,7 @@ import { IncentivesRoutes } from 'constants/routes';
 
 import { contractValueToAmount } from 'helpers/amount';
 import { getAquaAssetData } from 'helpers/assets';
+import { convertUTCToLocalDateIgnoringTimezone } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 
 import { useDebounce } from 'hooks/useDebounce';
@@ -151,7 +152,7 @@ const AddIncentivePage = () => {
         });
     }, []);
 
-    const nextDay = startOfDay(addDays(Date.now(), 1));
+    const nextDay = convertUTCToLocalDateIgnoringTimezone(startOfDay(addDays(Date.now(), 1)));
 
     useEffect(() => {
         if (!debouncedAmount) {
@@ -394,8 +395,12 @@ const AddIncentivePage = () => {
                                             pool: selectedMarket,
                                             rewardToken,
                                             amountPerDay: amount,
-                                            startDate: startDay,
-                                            endDate: endDay,
+                                            startDate: convertUTCToLocalDateIgnoringTimezone(
+                                                new Date(startDay),
+                                            ).getTime(),
+                                            endDate: convertUTCToLocalDateIgnoringTimezone(
+                                                new Date(endDay),
+                                            ).getTime(),
                                             swapChainedXdr: xdr,
                                         });
                                     }}
