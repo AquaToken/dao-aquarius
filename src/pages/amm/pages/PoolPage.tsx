@@ -402,11 +402,14 @@ const PoolPage = () => {
                             <Rewards>
                                 <RewardsDescription>
                                     <span>You have unclaimed incentives</span>
-                                    {incentives.map(({ token, info }) => (
-                                        <IncentiveAmount key={token.contract}>
-                                            {formatBalance(+info.user_reward, true)} {token.code}
-                                        </IncentiveAmount>
-                                    ))}
+                                    {incentives
+                                        .filter(({ info }) => !!Number(info.user_reward))
+                                        .map(({ token, info }) => (
+                                            <IncentiveAmount key={token.contract}>
+                                                {formatBalance(+info.user_reward, true)}{' '}
+                                                {token.code}
+                                            </IncentiveAmount>
+                                        ))}
                                 </RewardsDescription>
                                 <Button
                                     onClick={() => claimIncentive()}
