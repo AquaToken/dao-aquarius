@@ -218,9 +218,6 @@ const PoolPage = () => {
         SorobanService.amm.getPoolIncentives(account.accountId(), pool.address).then(setIncentives);
     }, [account, pool, updateIndex]);
 
-    console.log(incentives);
-    console.log();
-
     useEffect(() => {
         getPool(poolAddress).then(res => {
             setPool(res);
@@ -399,7 +396,7 @@ const PoolPage = () => {
                     </Section>
                 )}
 
-                {hasIncentivesToClaim && (
+                {hasIncentivesToClaim && Boolean(account) && (
                     <Section>
                         <SectionWrap>
                             <Rewards>
