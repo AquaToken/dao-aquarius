@@ -12,6 +12,7 @@ import Twitter from 'assets/twitter-styled.svg';
 import { respondDown } from '../mixins';
 import { Breakpoints, COLORS } from '../styles';
 import { MAIL_AQUA_HELLO } from 'constants/emails';
+import { BlankExternalLink } from 'basics/links';
 
 const Wrapper = styled.section`
     display: flex;
@@ -83,7 +84,7 @@ const LinksWrapper = styled.div`
     `}
 `;
 
-const Link = styled.a`
+const Link = styled(BlankExternalLink)`
     flex: 1 1 calc(25% - 3.2rem); // 4 items per row minus gap
     max-width: calc(25% - 3.2rem);
     border-radius: 2.4rem;
@@ -143,49 +144,41 @@ const ItemTitle = styled.span`
 
 const Community = (): React.ReactNode => (
     <Wrapper id="community">
-        <Title>Join AQUA community</Title>
+        <Title>Join the conversation</Title>
         <Description>
             Learn more about Aquarius, follow the project updates, chat with the team and other
             community members.
         </Description>
         <LinksWrapper>
-            <Link
-                href="https://t.me/aquarius_official_community"
-                target="_blank"
-                rel="noopener noreferrer"
-            >
+            <Link href="https://t.me/aquarius_official_community">
                 <Telegram />
                 <ItemTitle>Telegram chat</ItemTitle>
             </Link>
-            <Link href="https://t.me/aqua_token" target="_blank" rel="noopener noreferrer">
+            <Link href="https://t.me/aqua_token">
                 <Telegram />
                 <ItemTitle>Telegram news</ItemTitle>
             </Link>
-            <Link href="https://x.com/AquariusDeFi" target="_blank" rel="noopener noreferrer">
+            <Link href="https://x.com/AquariusDeFi">
                 <Twitter />
                 <ItemTitle>X</ItemTitle>
             </Link>
-            <Link href="https://github.com/AquaToken" target="_blank" rel="noopener noreferrer">
+            <Link href="https://github.com/AquaToken">
                 <Github />
                 <ItemTitle>GitHub</ItemTitle>
             </Link>
-            <Link href="https://discord.gg/sgzFscHp4C" target="_blank" rel="noopener noreferrer">
+            <Link href="https://discord.gg/sgzFscHp4C">
                 <Discord />
                 <ItemTitle>Discord</ItemTitle>
             </Link>
-            <Link
-                href="https://www.reddit.com/r/AquariusAqua/"
-                target="_blank"
-                rel="noopener noreferrer"
-            >
+            <Link href="https://www.reddit.com/r/AquariusAqua/">
                 <Reddit />
                 <ItemTitle>Reddit</ItemTitle>
             </Link>
-            <Link href="https://medium.com/aquarius-aqua" target="_blank" rel="noopener noreferrer">
+            <Link href="https://medium.com/aquarius-aqua">
                 <Medium />
                 <ItemTitle>Medium</ItemTitle>
             </Link>
-            <Link href={`mailto:${MAIL_AQUA_HELLO}`} target="_blank" rel="noopener noreferrer">
+            <Link href={`mailto:${MAIL_AQUA_HELLO}`}>
                 <Email />
                 <ItemTitle>{MAIL_AQUA_HELLO}</ItemTitle>
             </Link>

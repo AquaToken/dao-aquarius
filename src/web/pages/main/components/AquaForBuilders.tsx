@@ -5,8 +5,11 @@ import { Breakpoints, COLORS } from 'web/styles';
 
 import AquaBuildersIcon from 'assets/main-page/aqua-builders.svg';
 import IconCheck16 from 'assets/small-icons/check/icon-check-16.svg';
-import ExternalLink from 'basics/ExternalLink';
+import ArrowAlt16 from 'assets/arrows/arrow-alt-16.svg';
+
 import { AQUA_DOCS_URL } from 'constants/urls';
+import { Button } from 'basics/buttons';
+import { BlankExternalLink } from 'basics/links';
 
 const Wrapper = styled.section`
     ${flexAllCenter};
@@ -90,20 +93,29 @@ const IconCheck = styled(IconCheck16)`
     margin-right: 0.6rem;
 `;
 
-const ExternalLinkStyled = styled(ExternalLink)`
-    margin-top: 2.4rem;
-    font-size: 1.6rem;
+const SorobanButton = styled(Button)`
+    margin-top: 1.6rem;
+    padding: 0 6rem;
+
+    ${respondDown(Breakpoints.xs)`
+        width: 100%;
+    `}
 `;
 
-const BENEFITS = ['Self-custodial wallets', 'Trading bots', 'DEX aggregators'];
+const ArrowAlt16Styled = styled(ArrowAlt16)`
+    margin-left: 0.8rem;
+    color: ${COLORS.white};
+`;
+
+const BENEFITS = ['Wallet swaps', 'Trading automation', 'Liquidity aggregation'];
 
 const AquaForBuilders = () => (
     <Wrapper id="aqua-for-builders">
         <ShortWrapper>
             <AquaBuildersIcon />
-            <Title>Aquarius for Stellar builders</Title>
+            <Title>Build on Aquarius</Title>
             <Description>
-                Build with on-chain oracles, smart contracts, and programmable incentive
+                Tap into Aquarius liquidity and swap contracts to power your project.
             </Description>
 
             <Benefits>
@@ -115,9 +127,11 @@ const AquaForBuilders = () => (
                 ))}
             </Benefits>
 
-            <ExternalLinkStyled href={AQUA_DOCS_URL}>
-                Learn more about building on Aquarius
-            </ExternalLinkStyled>
+            <BlankExternalLink href={AQUA_DOCS_URL}>
+                <SorobanButton withGradient isRounded>
+                    View docs <ArrowAlt16Styled />
+                </SorobanButton>
+            </BlankExternalLink>
         </ShortWrapper>
     </Wrapper>
 );

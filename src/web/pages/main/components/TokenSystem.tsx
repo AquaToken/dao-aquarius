@@ -152,6 +152,11 @@ const LinkButton = styled(BlankRouterLink)`
     width: 100%;
     z-index: 2;
 
+    &:hover {
+        background: ${COLORS.white};
+        box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
+    }
+
     ${respondDown(Breakpoints.md)`
         padding: 2.4rem 3.2rem;
     `}
@@ -226,11 +231,10 @@ const TokenSystem = () => (
                 <StyledTokenSystemIcon />
             </IconBlock>
             <TokensBlock>
-                <Title>Tokens system</Title>
+                <Title>Token system</Title>
                 <Description>
-                    Earn AQUA by providing liquidity and use it to vote for key market pairs.
-                    Locking AQUA gives you ICE, which boosts your rewards and increases your voting
-                    power in Aquarius.
+                    Earn AQUA by providing liquidity. Lock AQUA into ICE to access voting, earn
+                    voting rewards, boost liquidity rewards, and participate in governance.
                 </Description>
                 <LinkButton to={MainRoutes.token}>
                     <LinkContent>
@@ -241,7 +245,7 @@ const TokenSystem = () => (
                         <DescWrapper>
                             <LinkTitle>AQUA</LinkTitle>
                             <LinkDesc>
-                                Utility token used for liquidity rewards and ICE conversion
+                                Utility token for liquidity rewards and ICE conversion.
                             </LinkDesc>
                         </DescWrapper>
                     </LinkContent>
@@ -255,7 +259,7 @@ const TokenSystem = () => (
                         <DescWrapper>
                             <LinkTitle>ICE</LinkTitle>
                             <LinkDesc>
-                                Non-transferable token used for governance and reward boosts.
+                                Non-transferable token for voting and reward boosts.
                             </LinkDesc>
                         </DescWrapper>
                     </LinkContent>

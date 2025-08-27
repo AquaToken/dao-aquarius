@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import SorobanStars from 'assets/main-page/soroban-stars.svg';
 import SwapBlockIcon from 'assets/main-page/swap-block.svg';
 import PoolsBlockIcon from 'assets/main-page/pools-block.svg';
+import ArrowAlt16 from 'assets/arrows/arrow-alt-16.svg';
 
 import { flexAllCenter, respondDown } from 'web/mixins';
 
@@ -125,6 +126,7 @@ const BlockDesc = styled.div`
 
 const SorobanButton = styled(Button)`
     margin-top: 4rem;
+    padding: 0 2.4rem;
 
     ${respondDown(Breakpoints.sm)`
         margin-top: 3.2rem;
@@ -135,13 +137,18 @@ const SorobanButton = styled(Button)`
     `}
 `;
 
+const ArrowAlt16Styled = styled(ArrowAlt16)`
+    margin-left: 0.8rem;
+    color: ${COLORS.titleText};
+`;
+
 const AquaSoroban = () => (
     <Wrapper id="aqua-soroban">
         <InnerWrapper>
             <SorobanStarsStyled />
             <Title>
-                Aquarius AMMs <TitleBold>run on Soroban smart contracts</TitleBold> — unlocking a
-                new era of DeFi on Stellar
+                Aquarius AMMs <TitleBold>run on Soroban smart contracts</TitleBold> — powering a new
+                generation of DeFi on Stellar.
             </Title>
         </InnerWrapper>
 
@@ -151,12 +158,12 @@ const AquaSoroban = () => (
                     <SwapBlockIcon />
 
                     <BlockDesc>
-                        <b>Swap assets instantly</b> with deep Stellar-based liquidity.
+                        <b>Swap instantly</b> with deep on-chain liquidity from Aquarius AMMs.
                     </BlockDesc>
                 </BlockWithIcon>
                 <BlankRouterLink to={MainRoutes.swap}>
                     <SorobanButton withGradient secondary isBig isRounded>
-                        Smart swap
+                        Swap now <ArrowAlt16Styled />
                     </SorobanButton>
                 </BlankRouterLink>
             </Block>
@@ -165,13 +172,12 @@ const AquaSoroban = () => (
                     <PoolsBlockIcon />
 
                     <BlockDesc>
-                        <b>Discover liquidity pools,</b> earn rewards, and power DeFi on Stellar
-                        with Aquarius AMMs.
+                        <b>Provide liquidity</b> and get rewarded while powering Stellar markets.
                     </BlockDesc>
                 </BlockWithIcon>
                 <BlankRouterLink to={MainRoutes.amm}>
                     <SorobanButton withGradient secondary isBig isRounded>
-                        Explore pools
+                        View Pools <ArrowAlt16Styled />
                     </SorobanButton>
                 </BlankRouterLink>
             </Block>

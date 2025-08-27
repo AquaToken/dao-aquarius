@@ -147,19 +147,8 @@ const InteractiveItem = styled.div`
     background-color: ${COLORS.lightGray};
     border-radius: 48px;
     padding: 3.2rem 4rem;
-    transition: all 0.2s ease-in-out;
     display: flex;
     flex-direction: column;
-
-    &:hover,
-    :active {
-        background-color: ${COLORS.purple};
-
-        & div {
-            cursor: pointer;
-            color: ${COLORS.white};
-        }
-    }
 
     ${respondDown(Breakpoints.sm)`
         border-radius: 3.2rem;
@@ -185,29 +174,29 @@ const HowItWorks = () => (
             <TitleBlock>
                 <Title>How it works</Title>
                 <Description>
-                    Protocol incentives and mechanics are designed to support deep liquidity and
-                    sustainable DeFi growth on Stellar.
+                    Aquarius incentives are designed to drive deep liquidity and sustainable DeFi
+                    growth.
                 </Description>
             </TitleBlock>
             <BlockInteractive>
                 <InteractiveItem>
                     <InteractiveTitle>Traders</InteractiveTitle>
                     <Description>
-                        Swap tokens easily using Aquarius AMMs with low fees and fast Stellar-based
+                        Swap tokens seamlessly through Aquarius AMMs with low fees and fast on-chain
                         execution.
                     </Description>
                 </InteractiveItem>
                 <InteractiveItem>
                     <InteractiveTitle>Voters</InteractiveTitle>
                     <Description>
-                        Lock AQUA to vote for pools and direct emissions. Earn weekly incentives and
-                        voting rewards.
+                        Lock AQUA into ICE to vote on pools and direct emissions. Earn AQUA rewards
+                        for voting every week.
                     </Description>
                 </InteractiveItem>
                 <InteractiveItem>
                     <InteractiveTitle>Liquidity Providers</InteractiveTitle>
                     <Description>
-                        Provide liquidity to AMM pools to earn AQUA rewards and fees.
+                        Provide liquidity to AMM pools and earn AQUA rewards plus trading fees.
                     </Description>
                 </InteractiveItem>
             </BlockInteractive>

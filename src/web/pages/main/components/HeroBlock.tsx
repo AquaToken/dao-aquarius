@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { MainRoutes } from 'constants/routes';
@@ -9,17 +8,16 @@ import HandTopRight from 'assets/main-page/hand-top-right.svg';
 import HandLeftBottom from 'assets/main-page/hand-left-bottom.svg';
 import HeroTopLeft from 'assets/main-page/hero-top-left.svg';
 import HeroBottomRight from 'assets/main-page/hero-bottom-right.svg';
+import ArrowAlt16 from 'assets/arrows/arrow-alt-16.svg';
 
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Button from 'basics/buttons/Button';
-import { formatBalance } from 'helpers/format-number';
 import { getIsDarkTheme } from 'helpers/theme';
 import LiveIndicator from 'basics/LiveIndicator';
-
 import { DotsLoader } from 'basics/loaders';
-import { AllTimeStats } from 'api/amm.types';
+import { BlankRouterLink } from 'basics/links';
 
 const Hero = styled.section<{ $isDarkTheme: boolean }>`
     width: calc(100% - 4.8rem);
@@ -54,6 +52,7 @@ const Hero = styled.section<{ $isDarkTheme: boolean }>`
         height: 44.8rem;
         border-radius: 0;
         padding: 5.6rem 0.8rem 3.6rem 0.8rem;
+        gap: 1.6rem;
     `}
 `;
 
@@ -105,6 +104,7 @@ const Description = styled.p<{ $isDarkTheme: boolean }>`
 
 const ProvideLiqButton = styled(Button)`
     border-radius: 46px;
+    padding: 0 4rem;
 `;
 
 const LiveStats = styled.div`
@@ -116,17 +116,32 @@ const LiveStats = styled.div`
 
 const LockedLiquidity = styled.div`
     display: flex;
-    gap: 0.4rem;
+    gap: 2.4rem;
+
+    ${respondDown(Breakpoints.sm)`
+        flex-direction: column;
+        align-items: center;
+        gap: 0.8rem;
+    `}
 `;
 
-const TotalLiq = styled.span<{ $isDarkTheme: boolean }>`
+const StatsWrapper = styled.div`
+    display: flex;
+    gap: 0.8rem;
+`;
+
+const Stats = styled.span<{ $isDarkTheme: boolean }>`
     font-weight: 700;
     font-size: 1.8rem;
     line-height: 180%;
     color: ${props => (props.$isDarkTheme ? COLORS.white : COLORS.titleText)};
+
+    ${respondDown(Breakpoints.md)`
+        font-size: 1.6rem;
+    `}
 `;
 
-const TotalLiqDesc = styled(TotalLiq)<{ $isDarkTheme: boolean }>`
+const StatsDesc = styled(Stats)<{ $isDarkTheme: boolean }>`
     font-weight: 400;
     opacity: ${props => (props.$isDarkTheme ? 0.7 : 1)};
     color: ${props => (props.$isDarkTheme ? COLORS.white : '#4D4F68')};
@@ -169,24 +184,31 @@ const HandBottomLeftStyled = styled(HandLeftBottom)`
     `}
 `;
 
-const HeroTopLeftStyled = styled(HeroTopLeft)`
+export const HeroTopLeftStyled = styled(HeroTopLeft)`
     position: absolute;
     top: 0;
     left: 0;
 `;
 
-const HeroBottomRightStyled = styled(HeroBottomRight)`
+export const HeroBottomRightStyled = styled(HeroBottomRight)`
     position: absolute;
     bottom: 0;
     right: 0;
 `;
 
+const ArrowAlt16Styled = styled(ArrowAlt16)`
+    margin-left: 0.8rem;
+    color: ${COLORS.white};
+`;
+
 interface Props {
     isLoading: boolean;
-    stats: AllTimeStats | null;
+    monthlyDistributed: string;
+    volumeInUsd: string;
+    tvlInUsd: string;
 }
 
-const HeroBlock = ({ isLoading, stats }: Props) => {
+const HeroBlock = ({ isLoading, monthlyDistributed, volumeInUsd, tvlInUsd }: Props) => {
     const isDarkTheme = getIsDarkTheme();
 
     return (
@@ -199,15 +221,15 @@ const HeroBlock = ({ isLoading, stats }: Props) => {
                 <Label $isDarkTheme={isDarkTheme}>
                     Built on <StellarLogoStyled $isDarkTheme={isDarkTheme} />
                 </Label>
-                <Title $isDarkTheme={isDarkTheme}>DeFi Liquidity Layer</Title>
+                <Title $isDarkTheme={isDarkTheme}>Stellar’s DeFi Hub</Title>
                 <Description $isDarkTheme={isDarkTheme}>
-                    Add liquidity. Earn AQUA. Shape the future of decentralized finance.
+                    Swap faster. Add liquidity. Earn AQUA.
                 </Description>
-                <Link to={MainRoutes.amm}>
+                <BlankRouterLink to={MainRoutes.swap}>
                     <ProvideLiqButton withGradient isBig isRounded>
-                        Provide liquidity
+                        Swap now <ArrowAlt16Styled />
                     </ProvideLiqButton>
-                </Link>
+                </BlankRouterLink>
             </MainContent>
             <FooterContent>
                 <LiveStats>
@@ -215,14 +237,24 @@ const HeroBlock = ({ isLoading, stats }: Props) => {
                     Live Stats
                 </LiveStats>
                 <LockedLiquidity>
-                    <TotalLiq $isDarkTheme={isDarkTheme}>
-                        {isLoading ? (
-                            <DotsLoader />
-                        ) : (
-                            `$${formatBalance(stats?.tvl / 1e7, true, true)}`
-                        )}
-                    </TotalLiq>
-                    <TotalLiqDesc $isDarkTheme={isDarkTheme}>Locked in Liquidity</TotalLiqDesc>
+                    <StatsWrapper>
+                        <StatsDesc $isDarkTheme={isDarkTheme}>Total Swap Volume:</StatsDesc>
+                        <Stats $isDarkTheme={isDarkTheme}>
+                            {isLoading ? <DotsLoader /> : volumeInUsd}
+                        </Stats>
+                    </StatsWrapper>
+                    <StatsWrapper>
+                        <StatsDesc $isDarkTheme={isDarkTheme}>Total Liquidity:</StatsDesc>
+                        <Stats $isDarkTheme={isDarkTheme}>
+                            {isLoading ? <DotsLoader /> : tvlInUsd}
+                        </Stats>
+                    </StatsWrapper>
+                    <StatsWrapper>
+                        <StatsDesc $isDarkTheme={isDarkTheme}>Monthly Rewards:</StatsDesc>
+                        <Stats $isDarkTheme={isDarkTheme}>
+                            {isLoading ? <DotsLoader /> : monthlyDistributed}
+                        </Stats>
+                    </StatsWrapper>
                 </LockedLiquidity>
             </FooterContent>
         </Hero>

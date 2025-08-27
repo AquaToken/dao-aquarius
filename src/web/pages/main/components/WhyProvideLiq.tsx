@@ -1,6 +1,4 @@
-import { AllTimeStats } from 'api/amm.types';
 import { DotsLoader } from 'basics/loaders';
-import { formatBalance } from 'helpers/format-number';
 import styled from 'styled-components';
 
 import BoostRewardsIcon from 'assets/main-page/boost-rewards.svg';
@@ -10,10 +8,6 @@ import EarnByMarketIcon from 'assets/main-page/earn-by-market.svg';
 import { flexAllCenter, respondDown } from 'web/mixins';
 
 import { Breakpoints, COLORS } from 'web/styles';
-import { useEffect, useState } from 'react';
-import { StellarService } from 'services/globalServices';
-import { getTotalRewards } from 'api/rewards';
-import { TotalRewards } from 'pages/vote/api/types';
 
 const Wrapper = styled.section`
     ${flexAllCenter};
@@ -26,10 +20,12 @@ const Wrapper = styled.section`
 
     ${respondDown(Breakpoints.md)`
         font-size: 7rem;
+        margin-top: 6rem;
     `}
 
     ${respondDown(Breakpoints.xs)`
         font-size: 4rem;
+        margin-top: 4rem;
     `}
 `;
 
@@ -190,45 +186,32 @@ const Description = styled.div`
     `}
 `;
 
+const DescriptionStats = styled(Description)`
+    font-weight: bold;
+
+    ${respondDown(Breakpoints.xs)`
+        text-align: center;
+    `}
+`;
+
 const HideOnSm = styled.div`
     ${respondDown(Breakpoints.sm)` 
         display: none; 
     `}
 `;
 
-const WhyProvideLiq = () => {
-    const [price, setPrice] = useState<number | null>(null);
-    const [totalRewards, setTotalRewards] = useState<TotalRewards | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
+interface Props {
+    monthlyDistributed: string;
+    isLoading?: boolean;
+}
 
-    useEffect(() => {
-        Promise.all([
-            StellarService.getAquaUsdPrice().then(res => {
-                setPrice(res);
-            }),
-            getTotalRewards().then(res => {
-                setTotalRewards(res);
-            }),
-        ]).finally(() => {
-            setIsLoading(false);
-        });
-    }, []);
-
-    // 30 days
-    const totalDistributedMonthly =
-        (totalRewards?.total_daily_amm_reward + totalRewards?.total_daily_sdex_reward) * price * 30;
-    const formattedTotalDistributedMonthly = `$${formatBalance(
-        totalDistributedMonthly,
-        true,
-        true,
-    )}`;
-
+const WhyProvideLiq = ({ monthlyDistributed, isLoading }: Props) => {
     const whyStatsContent = (
         <WhyStats>
-            <StatsTitle>{isLoading ? <DotsLoader /> : formattedTotalDistributedMonthly}</StatsTitle>
-            <Description>
-                LPs receive monthly rewards, distributed among liquidity providers.
-            </Description>
+            <StatsTitle>{isLoading ? <DotsLoader /> : monthlyDistributed}</StatsTitle>
+            <DescriptionStats>
+                Monthly AQUA rewards shared among liquidity providers.
+            </DescriptionStats>
         </WhyStats>
     );
 
@@ -245,8 +228,8 @@ const WhyProvideLiq = () => {
                         <DescBlock>
                             <DescTitle>Earn more than swap fees</DescTitle>
                             <Description>
-                                LPs receive additional rewards in AQUA — distributed hourly based on
-                                pool activity and community votes.
+                                LPs receive additional rewards in AQUA — distributed in real time
+                                based on pool activity and community votes.
                             </Description>
                         </DescBlock>
                     </InfoWrapper>
@@ -255,7 +238,7 @@ const WhyProvideLiq = () => {
                         <DescBlock>
                             <DescTitle>Boost your rewards with ICE</DescTitle>
                             <Description>
-                                Lock AQUA to mint ICE, increasing your governance power and boosting
+                                Lock AQUA to mint ICE, increasing your voting power and boosting
                                 your yield.
                             </Description>
                         </DescBlock>
@@ -266,7 +249,7 @@ const WhyProvideLiq = () => {
                             <DescTitle>Earn by market making on SDEX</DescTitle>
                             <Description>
                                 Place limit orders on Stellar DEX and earn AQUA incentives —
-                                liquidity provision isn’t limited to AMMs.
+                                liquidity provision isn’t limited to AMMs.c
                             </Description>
                         </DescBlock>
                     </InfoWrapper>

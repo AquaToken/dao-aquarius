@@ -14,10 +14,12 @@ const Wrapper = styled.section`
 
     ${respondDown(Breakpoints.md)`
         font-size: 6rem;
+        margin-top: 6rem;
     `}
 
     ${respondDown(Breakpoints.xs)`
         font-size: 3.2rem;
+        margin-top: 3rem;
     `}
 `;
 
@@ -54,6 +56,10 @@ const DexBlocks = styled.div`
     ${respondDown(Breakpoints.sm)`
         flex-direction: column;
         gap: 2.4rem;
+    `}
+
+    ${respondDown(Breakpoints.sm)`
+        margin-top: 0;
     `}
 `;
 
@@ -152,10 +158,11 @@ const StatsDesc = styled.div`
 
 interface Props {
     isLoading: boolean;
-    stats: AllTimeStats | null;
+    volumeInUsd: string;
+    tvlInUsd: string;
 }
 
-const DexStats = ({ isLoading, stats }: Props) => (
+const DexStats = ({ isLoading, volumeInUsd, tvlInUsd }: Props) => (
     <Wrapper id="dex-stats">
         <DexBlocks>
             <Block>
@@ -163,23 +170,11 @@ const DexStats = ({ isLoading, stats }: Props) => (
             </Block>
             <StatsBlock>
                 <StatWrapper>
-                    <StatsTitle>
-                        {isLoading ? (
-                            <DotsLoader />
-                        ) : (
-                            `$${formatBalance(stats?.tvl / 1e7, true, true)}`
-                        )}
-                    </StatsTitle>
+                    <StatsTitle>{isLoading ? <DotsLoader /> : tvlInUsd}</StatsTitle>
                     <StatsDesc>Total Locked in Liquidity</StatsDesc>
                 </StatWrapper>
                 <StatWrapper>
-                    <StatsTitle>
-                        {isLoading ? (
-                            <DotsLoader />
-                        ) : (
-                            `$${formatBalance(stats?.volume / 1e7, true, true)}`
-                        )}
-                    </StatsTitle>
+                    <StatsTitle>{isLoading ? <DotsLoader /> : volumeInUsd}</StatsTitle>
                     <StatsDesc>Total Swap Volume</StatsDesc>
                 </StatWrapper>
             </StatsBlock>
