@@ -1,6 +1,8 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
+import { MAIL_AQUA_HELLO } from 'constants/emails';
+
 import Discord from 'assets/discord-styled.svg';
 import Email from 'assets/email-styled.svg';
 import Github from 'assets/github-styled.svg';
@@ -9,10 +11,10 @@ import Reddit from 'assets/reddit-styled.svg';
 import Telegram from 'assets/telegram-styled.svg';
 import Twitter from 'assets/twitter-styled.svg';
 
+import { BlankExternalLink } from 'basics/links';
+
 import { respondDown } from '../mixins';
 import { Breakpoints, COLORS } from '../styles';
-import { MAIL_AQUA_HELLO } from 'constants/emails';
-import { BlankExternalLink } from 'basics/links';
 
 const Wrapper = styled.section`
     display: flex;

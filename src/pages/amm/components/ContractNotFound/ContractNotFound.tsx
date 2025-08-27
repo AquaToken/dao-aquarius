@@ -8,9 +8,10 @@ import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { SorobanService, ToastService } from 'services/globalServices';
+
 import { Asset } from 'types/stellar';
 
-import { SorobanService, ToastService } from 'services/globalServices';
 import { COLORS } from 'web/styles';
 
 import Button from 'basics/buttons/Button';

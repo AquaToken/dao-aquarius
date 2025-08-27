@@ -1,12 +1,13 @@
 import styled from 'styled-components';
 
-import HowItWorksIcon from 'assets/main-page/how-it-works.svg';
+import { MainRoutes } from 'constants/routes';
 
 import { flexAllCenter, respondDown } from 'web/mixins';
-
 import { Breakpoints, COLORS } from 'web/styles';
+
+import HowItWorksIcon from 'assets/main-page/how-it-works.svg';
+
 import { BlankRouterLink } from 'basics/links';
-import { MainRoutes } from 'constants/routes';
 
 const Wrapper = styled.section`
     ${flexAllCenter};

@@ -3,9 +3,10 @@ import styled from 'styled-components';
 
 import { formatBalance } from 'helpers/format-number';
 
+import { ModalService } from 'services/globalServices';
+
 import { ModalProps } from 'types/modal';
 
-import { ModalService } from 'services/globalServices';
 import { respondDown } from 'web/mixins';
 import GetAquaModal from 'web/modals/GetAquaModal';
 import { Breakpoints } from 'web/styles';

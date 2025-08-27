@@ -2,22 +2,23 @@ import styled from 'styled-components';
 
 import { MainRoutes } from 'constants/routes';
 
-import StellarLogo from 'assets/main-page/stellar-logo.svg';
-import HeroBackground from 'assets/main-page/hero-background.png';
-import HandTopRight from 'assets/main-page/hand-top-right.svg';
-import HandLeftBottom from 'assets/main-page/hand-left-bottom.svg';
-import HeroTopLeft from 'assets/main-page/hero-top-left.svg';
-import HeroBottomRight from 'assets/main-page/hero-bottom-right.svg';
-import ArrowAlt16 from 'assets/arrows/arrow-alt-16.svg';
+import { getIsDarkTheme } from 'helpers/theme';
 
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
+import ArrowAlt16 from 'assets/arrows/arrow-alt-16.svg';
+import HandLeftBottom from 'assets/main-page/hand-left-bottom.svg';
+import HandTopRight from 'assets/main-page/hand-top-right.svg';
+import HeroBackground from 'assets/main-page/hero-background.png';
+import HeroBottomRight from 'assets/main-page/hero-bottom-right.svg';
+import HeroTopLeft from 'assets/main-page/hero-top-left.svg';
+import StellarLogo from 'assets/main-page/stellar-logo.svg';
+
 import Button from 'basics/buttons/Button';
-import { getIsDarkTheme } from 'helpers/theme';
+import { BlankRouterLink } from 'basics/links';
 import LiveIndicator from 'basics/LiveIndicator';
 import { DotsLoader } from 'basics/loaders';
-import { BlankRouterLink } from 'basics/links';
 
 const Hero = styled.section<{ $isDarkTheme: boolean }>`
     width: calc(100% - 4.8rem);

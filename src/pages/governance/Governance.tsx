@@ -1,6 +1,5 @@
-import { lazy } from 'react';
 import reactQuillCSS from 'quill/dist/quill.snow.css';
-
+import { lazy } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 
 import { GovernanceRoutes } from 'constants/routes';

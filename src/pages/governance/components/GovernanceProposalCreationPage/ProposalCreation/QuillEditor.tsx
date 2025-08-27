@@ -1,24 +1,25 @@
-import { useEffect, useRef, useState } from 'react';
 import Quill from 'quill/core';
-import Toolbar from 'quill/modules/toolbar';
-import Clipboard from 'quill/modules/clipboard';
-import Snow from 'quill/themes/snow';
+import Blockquote from 'quill/formats/blockquote';
 import Bold from 'quill/formats/bold';
+import CodeBlock from 'quill/formats/code';
+import Header from 'quill/formats/header';
+import Indent from 'quill/formats/indent';
 import Italic from 'quill/formats/italic';
 import Underline from 'quill/formats/underline';
+import Clipboard from 'quill/modules/clipboard';
+import Toolbar from 'quill/modules/toolbar';
+import { useEffect, useRef, useState } from 'react';
+import Snow from 'quill/themes/snow';
 import Strike from 'quill/formats/strike';
-import Header from 'quill/formats/header';
 import List from 'quill/formats/list';
-import Blockquote from 'quill/formats/blockquote';
-import CodeBlock from 'quill/formats/code';
 import Link from 'quill/formats/link';
 import Script from 'quill/formats/script';
-import Indent from 'quill/formats/indent';
 
 import 'quill/dist/quill.snow.css';
 import styled from 'styled-components';
 
 import { COLORS } from 'web/styles';
+
 import { AlignStyle } from 'quill/formats/align';
 
 Quill.register(AlignStyle, true);

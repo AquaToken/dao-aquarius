@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { MarketRoutes } from 'constants/routes';
 
 import { formatBalance } from 'helpers/format-number';
+import { getIceMaxApy } from 'helpers/ice';
 
 import { ModalService, StellarService } from 'services/globalServices';
 
@@ -25,7 +26,6 @@ import VoteButton from './VoteButton/VoteButton';
 import { PairStats, TotalStats } from '../../../api/types';
 import BribesModal from '../BribesModal/BribesModal';
 import ManageVotesModal from '../ManageVotesModal/ManageVotesModal';
-import { getIceMaxApy } from 'helpers/ice';
 
 const ManageButton = styled(Button)`
     margin-left: 0.8rem;

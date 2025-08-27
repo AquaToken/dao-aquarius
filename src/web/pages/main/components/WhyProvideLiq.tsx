@@ -1,13 +1,13 @@
-import { DotsLoader } from 'basics/loaders';
 import styled from 'styled-components';
 
-import BoostRewardsIcon from 'assets/main-page/boost-rewards.svg';
-import EarnMoreIcon from 'assets/main-page/earn-more.svg';
-import EarnByMarketIcon from 'assets/main-page/earn-by-market.svg';
-
 import { flexAllCenter, respondDown } from 'web/mixins';
-
 import { Breakpoints, COLORS } from 'web/styles';
+
+import BoostRewardsIcon from 'assets/main-page/boost-rewards.svg';
+import EarnByMarketIcon from 'assets/main-page/earn-by-market.svg';
+import EarnMoreIcon from 'assets/main-page/earn-more.svg';
+
+import { DotsLoader } from 'basics/loaders';
 
 const Wrapper = styled.section`
     ${flexAllCenter};

@@ -1,12 +1,13 @@
+import { useState } from 'react';
 import styled from 'styled-components';
+
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS, MAX_WIDTHS } from 'web/styles';
 
 import HeroBackground from 'assets/main-page/hero-background.png';
 import IconCheck16 from 'assets/small-icons/check/icon-check-16.svg';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS, MAX_WIDTHS } from 'web/styles';
 import { HeroBottomRightStyled, HeroTopLeftStyled } from './HeroBlock';
-import { useState } from 'react';
 
 type TabKey = 'stable' | 'volatile';
 

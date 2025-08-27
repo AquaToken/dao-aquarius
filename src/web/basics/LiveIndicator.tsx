@@ -1,4 +1,5 @@
 import styled, { keyframes, css } from 'styled-components';
+
 import { COLORS } from 'web/styles';
 
 type LiveIndicatorProps = {

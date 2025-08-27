@@ -6,9 +6,9 @@ import { getPoolsToMigrate } from 'api/amm';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { Asset } from 'types/stellar';
-
 import { ModalService, StellarService } from 'services/globalServices';
+
+import { Asset } from 'types/stellar';
 
 import Soroban from 'assets/soroban.svg';
 

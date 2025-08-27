@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import styled from 'styled-components';
 
 import { respondDown } from 'web/mixins';
+import { PageContainer, SectionWrapper } from 'web/pages/commonPageStyles';
 import { Breakpoints } from 'web/styles';
 
 import Community from 'components/Community';
@@ -14,7 +15,6 @@ import AquaLinks from 'pages/token/components/AquaLinks/AquaLinks';
 import AquaPerformance from 'pages/token/components/AquaPerformance/AquaPerformance';
 import AquaStatistics from 'pages/token/components/AquaStatistics/AquaStatistics';
 import MainBlock from 'pages/token/components/MainBlock/MainBlock';
-import { PageContainer, SectionWrapper } from 'web/pages/commonPageStyles';
 
 const AquaLinksStyled = styled(AquaLinks)`
     ${respondDown(Breakpoints.sm)`

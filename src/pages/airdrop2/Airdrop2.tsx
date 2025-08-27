@@ -5,6 +5,8 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { StellarService, ToastService } from 'services/globalServices';
 
+import { PageContainer, SectionWrapper } from 'web/pages/commonPageStyles';
+
 import Community from 'components/Community';
 import Subscribe from 'components/Subscribe';
 
@@ -15,7 +17,6 @@ import FAQ from './components/FAQ/FAQ';
 import MainBlock from './components/MainBlock/MainBlock';
 import SnapshotStats from './components/SnapshotStats/SnapshotStats';
 import SupportedBy from './components/SupportedBy/SupportedBy';
-import { PageContainer, SectionWrapper } from 'web/pages/commonPageStyles';
 
 const Airdrop2 = () => {
     const { isLogged, account } = useAuthStore();

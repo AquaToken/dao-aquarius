@@ -1,14 +1,15 @@
 import styled from 'styled-components';
 
-import TokenSystemIcon from 'assets/main-page/token-system.svg';
-import AquaLogo from 'assets/aqua-logo-small.svg';
-import IceLogo from 'assets/ice-logo.svg';
+import { MainRoutes } from 'constants/routes';
 
 import { flexAllCenter, respondDown } from 'web/mixins';
-
 import { Breakpoints, COLORS } from 'web/styles';
+
+import AquaLogo from 'assets/aqua-logo-small.svg';
+import IceLogo from 'assets/ice-logo.svg';
+import TokenSystemIcon from 'assets/main-page/token-system.svg';
+
 import { BlankRouterLink } from 'basics/links';
-import { MainRoutes } from 'constants/routes';
 
 const Wrapper = styled.section`
     ${flexAllCenter};

@@ -25,6 +25,7 @@ import {
     PoolVolume24h,
 } from 'types/amm';
 import { ClassicToken, SorobanToken, Token, TokenType } from 'types/token';
+
 import { AllTimeStats } from './amm.types';
 
 export enum FilterOptions {

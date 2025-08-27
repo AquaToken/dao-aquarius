@@ -1,5 +1,7 @@
 import styled, { css } from 'styled-components';
 
+import { MAIL_AQUA_HELLO } from 'constants/emails';
+
 import Discord from 'assets/discord.svg';
 import Email from 'assets/email.svg';
 import Github from 'assets/github.svg';
@@ -10,7 +12,6 @@ import Twitter from 'assets/twitter.svg';
 
 import { respondDown } from '../mixins';
 import { Breakpoints, COLORS } from '../styles';
-import { MAIL_AQUA_HELLO } from 'constants/emails';
 
 const VerticalStyles = css`
     position: absolute;

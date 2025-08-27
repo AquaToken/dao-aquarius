@@ -2,28 +2,33 @@ import { useEffect, useState } from 'react';
 
 import { getAllTimeStats } from 'api/amm';
 import { AllTimeStats } from 'api/amm.types';
+import { getTotalRewards } from 'api/rewards';
+
+import { formatBalance } from 'helpers/format-number';
+
+import { useScrollToHash } from 'hooks/useScrollToHash';
+
+import { StellarService } from 'services/globalServices';
+
+import { COLORS } from 'web/styles';
 
 import Community from 'components/Community';
 import Subscribe from 'components/Subscribe';
 
 import { TotalRewards } from 'pages/vote/api/types';
 
+import AquaForBuilders from './components/AquaForBuilders';
+import AquaSoroban from './components/AquaSoroban';
+import DexStats from './components/DexStats';
 import HeroBlock from './components/HeroBlock';
+import HowItWorks from './components/HowItWorks';
+
+import LiqPoolsTabs from './components/LiqPoolsTabs';
 import SupportedWallets from './components/SupportedWallets';
+import TokenSystem from './components/TokenSystem';
+import WhyProvideLiq from './components/WhyProvideLiq';
 
 import { PageContainer, SectionWrapper } from '../commonPageStyles';
-import AquaSoroban from './components/AquaSoroban';
-import AquaForBuilders from './components/AquaForBuilders';
-import DexStats from './components/DexStats';
-import WhyProvideLiq from './components/WhyProvideLiq';
-import TokenSystem from './components/TokenSystem';
-import { useScrollToHash } from 'hooks/useScrollToHash';
-import HowItWorks from './components/HowItWorks';
-import { COLORS } from 'web/styles';
-import LiqPoolsTabs from './components/LiqPoolsTabs';
-import { StellarService } from 'services/globalServices';
-import { getTotalRewards } from 'api/rewards';
-import { formatBalance } from 'helpers/format-number';
 
 const MainPage = () => {
     const [isLoadingStats, setIsLoadingStats] = useState(true);

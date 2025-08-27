@@ -1,13 +1,14 @@
 import styled from 'styled-components';
 
+import { AQUA_DOCS_URL } from 'constants/urls';
+
 import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
+import ArrowAlt16 from 'assets/arrows/arrow-alt-16.svg';
 import AquaBuildersIcon from 'assets/main-page/aqua-builders.svg';
 import IconCheck16 from 'assets/small-icons/check/icon-check-16.svg';
-import ArrowAlt16 from 'assets/arrows/arrow-alt-16.svg';
 
-import { AQUA_DOCS_URL } from 'constants/urls';
 import { Button } from 'basics/buttons';
 import { BlankExternalLink } from 'basics/links';
 

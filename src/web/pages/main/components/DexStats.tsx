@@ -1,11 +1,13 @@
-import { AllTimeStats } from 'api/amm.types';
-import { DotsLoader } from 'basics/loaders';
-import { formatBalance } from 'helpers/format-number';
 import styled from 'styled-components';
 
-import { flexAllCenter, respondDown } from 'web/mixins';
+import { AllTimeStats } from 'api/amm.types';
 
+import { formatBalance } from 'helpers/format-number';
+
+import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
+
+import { DotsLoader } from 'basics/loaders';
 
 const Wrapper = styled.section`
     ${flexAllCenter};

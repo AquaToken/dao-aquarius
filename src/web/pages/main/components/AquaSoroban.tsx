@@ -1,15 +1,16 @@
 import styled from 'styled-components';
 
-import SorobanStars from 'assets/main-page/soroban-stars.svg';
-import SwapBlockIcon from 'assets/main-page/swap-block.svg';
-import PoolsBlockIcon from 'assets/main-page/pools-block.svg';
-import ArrowAlt16 from 'assets/arrows/arrow-alt-16.svg';
+import { MainRoutes } from 'constants/routes';
 
 import { flexAllCenter, respondDown } from 'web/mixins';
-
 import { Breakpoints, COLORS } from 'web/styles';
+
+import ArrowAlt16 from 'assets/arrows/arrow-alt-16.svg';
+import PoolsBlockIcon from 'assets/main-page/pools-block.svg';
+import SorobanStars from 'assets/main-page/soroban-stars.svg';
+import SwapBlockIcon from 'assets/main-page/swap-block.svg';
+
 import { Button } from 'basics/buttons';
-import { MainRoutes } from 'constants/routes';
 import { BlankRouterLink } from 'basics/links';
 
 const Wrapper = styled.section`
