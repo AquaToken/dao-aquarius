@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { MainRoutes } from 'constants/routes';
 
@@ -9,7 +9,9 @@ import { Breakpoints, COLORS } from 'web/styles';
 
 import ArrowAlt16 from 'assets/arrows/arrow-alt-16.svg';
 import HandLeftBottom from 'assets/main-page/hand-left-bottom.svg';
+import HandLeftBottomLight from 'assets/main-page/hand-left-bottom-light.svg';
 import HandTopRight from 'assets/main-page/hand-top-right.svg';
+import HandTopRightLight from 'assets/main-page/hand-top-right-light.svg';
 import HeroBackground from 'assets/main-page/hero-background.png';
 import HeroBottomRight from 'assets/main-page/hero-bottom-right.svg';
 import HeroTopLeft from 'assets/main-page/hero-top-left.svg';
@@ -165,7 +167,7 @@ const StellarLogoStyled = styled(StellarLogo)<{ $isDarkTheme: boolean }>`
     color: ${props => (props.$isDarkTheme ? COLORS.white : COLORS.black)};
 `;
 
-const HandTopRightStyled = styled(HandTopRight)`
+const TopRightHand = css`
     position: absolute;
     top: 0;
     right: 0;
@@ -175,7 +177,7 @@ const HandTopRightStyled = styled(HandTopRight)`
     `}
 `;
 
-const HandBottomLeftStyled = styled(HandLeftBottom)`
+const BottomLeftHand = css`
     position: absolute;
     bottom: 0;
     left: 0;
@@ -183,6 +185,22 @@ const HandBottomLeftStyled = styled(HandLeftBottom)`
     ${respondDown(Breakpoints.sm)`
         display: none;
     `}
+`;
+
+const HandTopRightStyled = styled(HandTopRight)`
+    ${TopRightHand};
+`;
+
+const HandTopRightLightStyled = styled(HandTopRightLight)`
+    ${TopRightHand};
+`;
+
+const HandBottomLeftStyled = styled(HandLeftBottom)`
+    ${BottomLeftHand};
+`;
+
+const HandBottomLeftLightStyled = styled(HandLeftBottomLight)`
+    ${BottomLeftHand};
 `;
 
 export const HeroTopLeftStyled = styled(HeroTopLeft)`
@@ -214,8 +232,18 @@ const HeroBlock = ({ isLoading, monthlyDistributed, volumeInUsd, tvlInUsd }: Pro
 
     return (
         <Hero $isDarkTheme={isDarkTheme}>
-            <HandTopRightStyled />
-            <HandBottomLeftStyled />
+            {isDarkTheme ? (
+                <>
+                    <HandTopRightStyled />
+                    <HandBottomLeftStyled />
+                </>
+            ) : (
+                <>
+                    <HandTopRightLightStyled />
+                    <HandBottomLeftLightStyled />
+                </>
+            )}
+
             <HeroTopLeftStyled />
             <HeroBottomRightStyled />
             <MainContent>

@@ -94,9 +94,9 @@ const IconCheck = styled(IconCheck16)`
     margin-right: 0.6rem;
 `;
 
-const SorobanButton = styled(Button)`
+const DocsButton = styled(Button)`
     margin-top: 1.6rem;
-    padding: 0 6rem;
+    border-radius: 46px;
 
     ${respondDown(Breakpoints.xs)`
         width: 100%;
@@ -129,9 +129,9 @@ const AquaForBuilders = () => (
             </Benefits>
 
             <BlankExternalLink href={AQUA_DOCS_URL}>
-                <SorobanButton withGradient isRounded>
+                <DocsButton withGradient isBig isRounded>
                     View docs <ArrowAlt16Styled />
-                </SorobanButton>
+                </DocsButton>
             </BlankExternalLink>
         </ShortWrapper>
     </Wrapper>

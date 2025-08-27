@@ -8,6 +8,7 @@ import { Breakpoints, COLORS } from 'web/styles';
 import AquaLogo from 'assets/aqua-logo-small.svg';
 import IceLogo from 'assets/ice-logo.svg';
 import TokenSystemIcon from 'assets/main-page/token-system.svg';
+import ArrowAlt16 from 'assets/arrows/arrow-alt-16.svg';
 
 import { BlankRouterLink } from 'basics/links';
 
@@ -169,14 +170,10 @@ const LinkButton = styled(BlankRouterLink)`
 `;
 
 const LinkContent = styled.div`
+    position: relative;
     display: flex;
     align-items: center;
     gap: 2.4rem;
-
-    svg {
-        width: 5rem;
-        height: 5rem;
-    }
 
     ${respondDown(Breakpoints.xs)`
         flex-direction: column;
@@ -188,6 +185,11 @@ const LogoWrapper = styled.div`
     display: flex;
     justify-content: start;
     align-items: center;
+
+    svg {
+        width: 5rem;
+        height: 5rem;
+    }
 
     ${respondDown(Breakpoints.xs)`
         width: 100%;
@@ -225,6 +227,16 @@ const LinkDesc = styled.div`
     line-height: 180%;
 `;
 
+const ArrowAlt16Styled = styled(ArrowAlt16)`
+    position: absolute;
+    right: 0;
+    color: ${COLORS.purple};
+
+    ${respondDown(Breakpoints.xs)`
+        top: 1.7rem;
+    `}
+`;
+
 const TokenSystem = () => (
     <Wrapper id="token-system">
         <BlocksWrapper>
@@ -249,6 +261,7 @@ const TokenSystem = () => (
                                 Utility token for liquidity rewards and ICE conversion.
                             </LinkDesc>
                         </DescWrapper>
+                        <ArrowAlt16Styled />
                     </LinkContent>
                 </LinkButton>
                 <LinkButton to={MainRoutes.locker}>
@@ -263,6 +276,7 @@ const TokenSystem = () => (
                                 Non-transferable token for voting and reward boosts.
                             </LinkDesc>
                         </DescWrapper>
+                        <ArrowAlt16Styled />
                     </LinkContent>
                 </LinkButton>
             </TokensBlock>
