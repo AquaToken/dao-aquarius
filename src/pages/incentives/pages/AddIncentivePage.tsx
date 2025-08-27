@@ -22,6 +22,7 @@ import { formatBalance } from 'helpers/format-number';
 import { useDebounce } from 'hooks/useDebounce';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
+import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService } from 'services/globalServices';
 
@@ -46,6 +47,8 @@ import Input from 'basics/inputs/Input';
 import { CircleLoader, PageLoader } from 'basics/loaders';
 import Market from 'basics/Market';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import ChooseLoginMethodModal from 'modals/auth/ChooseLoginMethodModal';
 
 import {
     Back,
@@ -145,6 +148,8 @@ const AddIncentivePage = () => {
 
     const { aquaContract } = getAquaAssetData();
 
+    const { isLogged } = useAuthStore();
+
     useEffect(() => {
         getPoolsForIncentives().then(setMarkets);
     }, []);
@@ -234,6 +239,22 @@ const AddIncentivePage = () => {
                 <FailIcon />
             </Tooltip>
         );
+
+    const onSubmit = () => {
+        if (!isLogged) {
+            ModalService.openModal(ChooseLoginMethodModal, {});
+            return;
+        }
+
+        ModalService.openModal(ConfirmIncentiveModal, {
+            pool: selectedMarket,
+            rewardToken,
+            amountPerDay: amount,
+            startDate: convertUTCToLocalDateIgnoringTimezone(new Date(startDay)).getTime(),
+            endDate: convertUTCToLocalDateIgnoringTimezone(new Date(endDay)).getTime(),
+            swapChainedXdr: xdr,
+        });
+    };
 
     if (!markets) {
         return (
@@ -411,22 +432,13 @@ const AddIncentivePage = () => {
                                 <NextButton
                                     isBig
                                     fullWidth
-                                    onClick={() => {
-                                        ModalService.openModal(ConfirmIncentiveModal, {
-                                            pool: selectedMarket,
-                                            rewardToken,
-                                            amountPerDay: amount,
-                                            startDate: convertUTCToLocalDateIgnoringTimezone(
-                                                new Date(startDay),
-                                            ).getTime(),
-                                            endDate: convertUTCToLocalDateIgnoringTimezone(
-                                                new Date(endDay),
-                                            ).getTime(),
-                                            swapChainedXdr: xdr,
-                                        });
-                                    }}
+                                    onClick={() => onSubmit()}
+                                    disabled={
+                                        isLogged &&
+                                        (!startDay || !endDay || !amount || !selectedMarket)
+                                    }
                                 >
-                                    Create incentive
+                                    {isLogged ? 'Create incentive' : 'Connect Wallet'}
                                 </NextButton>
 
                                 <DatePickerStyles />

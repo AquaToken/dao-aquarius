@@ -148,14 +148,14 @@ export function getInitStableSwapPoolTx(
     return buildSmartContractTxFromOp(accountId, operation).then(tx => prepareTransaction(tx));
 }
 
-function parsePoolRewards(value): PoolRewardsInfo {
+function parsePoolRewards(value, decimals = 7): PoolRewardsInfo {
     return value.reduce((acc, val) => {
         const key = val.key().value().toString();
-        if (key === 'exp_at' || key === 'last_time') {
+        if (key === 'exp_at' || key === 'last_time' || key === 'expired_at') {
             acc[key] = new BigNumber(i128ToInt(val.val()).toString()).times(1e7).toNumber();
             return acc;
         }
-        acc[key] = i128ToInt(val.val());
+        acc[key] = i128ToInt(val.val(), decimals);
         return acc;
     }, {}) as PoolRewardsInfo;
 }
@@ -196,15 +196,18 @@ export async function getPoolIncentives(
         return Promise.all(
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
-            result.retval.value().map(async item => ({
-                token: await parseTokenContractId(
+            result.retval.value().map(async item => {
+                const token = await parseTokenContractId(
                     StellarSdk.StrKey.encodeContract(item.key().value().value()),
-                ),
-                info: parsePoolRewards(item.val().value()),
-            })),
+                );
+                return {
+                    token,
+                    info: parsePoolRewards(item.val().value(), token.decimal),
+                };
+            }),
         );
     }
-    throw new Error('getPoolIncentives error');
+    return null;
 }
 
 export function getPoolsRewards(accountId: string, pools: string[]) {

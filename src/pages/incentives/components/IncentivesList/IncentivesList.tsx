@@ -41,7 +41,7 @@ const IncentivesList = () => {
                 <Title>Incentives</Title>
 
                 <AddBribeButton onClick={() => history.push(IncentivesRoutes.addIncentive)}>
-                    <span>create incentive</span>
+                    <span>add incentive</span>
                     <PlusIcon />
                 </AddBribeButton>
             </TitleBlock>
