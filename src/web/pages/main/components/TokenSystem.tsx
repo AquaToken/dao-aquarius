@@ -6,9 +6,9 @@ import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import AquaLogo from 'assets/aqua-logo-small.svg';
+import ArrowAlt16 from 'assets/arrows/arrow-alt-16.svg';
 import IceLogo from 'assets/ice-logo.svg';
 import TokenSystemIcon from 'assets/main-page/token-system.svg';
-import ArrowAlt16 from 'assets/arrows/arrow-alt-16.svg';
 
 import { BlankRouterLink } from 'basics/links';
 
@@ -177,6 +177,7 @@ const LinkContent = styled.div`
 
     ${respondDown(Breakpoints.xs)`
         flex-direction: column;
+        align-items: flex-start;
         gap: 0.8rem;
     `}
 `;

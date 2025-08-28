@@ -1,13 +1,9 @@
 import styled from 'styled-components';
 
-import { MainRoutes } from 'constants/routes';
-
 import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import HowItWorksIcon from 'assets/main-page/how-it-works.svg';
-
-import { BlankRouterLink } from 'basics/links';
 
 const Wrapper = styled.section`
     ${flexAllCenter};
@@ -191,13 +187,14 @@ const HowItWorks = () => (
                     <InteractiveTitle>Voters</InteractiveTitle>
                     <Description>
                         Lock AQUA into ICE to vote on pools and direct emissions. Earn AQUA rewards
-                        for voting every week.
+                        every day for voting!
                     </Description>
                 </InteractiveItem>
                 <InteractiveItem>
                     <InteractiveTitle>Liquidity Providers</InteractiveTitle>
                     <Description>
-                        Provide liquidity to AMM pools and earn AQUA rewards plus trading fees.
+                        Provide liquidity to AMM pools and earn AQUA rewards, trading fees, and
+                        occasional bonus tokens.
                     </Description>
                 </InteractiveItem>
             </BlockInteractive>

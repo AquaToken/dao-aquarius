@@ -22,7 +22,6 @@ import AquaSoroban from './components/AquaSoroban';
 import DexStats from './components/DexStats';
 import HeroBlock from './components/HeroBlock';
 import HowItWorks from './components/HowItWorks';
-
 import LiqPoolsTabs from './components/LiqPoolsTabs';
 import SupportedWallets from './components/SupportedWallets';
 import TokenSystem from './components/TokenSystem';

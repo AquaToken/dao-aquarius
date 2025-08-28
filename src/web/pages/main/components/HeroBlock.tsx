@@ -1,21 +1,22 @@
+import StellarLogo from 'assets/main-page/stellar-logo.svg';
 import styled, { css } from 'styled-components';
 
 import { MainRoutes } from 'constants/routes';
 
 import { getIsDarkTheme } from 'helpers/theme';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
+import { fullWidthSectionStyles, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS, PAGE_PADDINGS } from 'web/styles';
 
+import AquaLogo from 'assets/aqua/aqua-logo-text.svg';
 import ArrowAlt16 from 'assets/arrows/arrow-alt-16.svg';
-import HandLeftBottom from 'assets/main-page/hand-left-bottom.svg';
 import HandLeftBottomLight from 'assets/main-page/hand-left-bottom-light.svg';
-import HandTopRight from 'assets/main-page/hand-top-right.svg';
+import HandLeftBottom from 'assets/main-page/hand-left-bottom.svg';
 import HandTopRightLight from 'assets/main-page/hand-top-right-light.svg';
+import HandTopRight from 'assets/main-page/hand-top-right.svg';
 import HeroBackground from 'assets/main-page/hero-background.png';
 import HeroBottomRight from 'assets/main-page/hero-bottom-right.svg';
 import HeroTopLeft from 'assets/main-page/hero-top-left.svg';
-import StellarLogo from 'assets/main-page/stellar-logo.svg';
 
 import Button from 'basics/buttons/Button';
 import { BlankRouterLink } from 'basics/links';
@@ -23,7 +24,7 @@ import LiveIndicator from 'basics/LiveIndicator';
 import { DotsLoader } from 'basics/loaders';
 
 const Hero = styled.section<{ $isDarkTheme: boolean }>`
-    width: calc(100% - 4.8rem);
+    ${fullWidthSectionStyles};
     position: relative;
     overflow: hidden;
     background: ${({ $isDarkTheme }) =>
@@ -54,7 +55,7 @@ const Hero = styled.section<{ $isDarkTheme: boolean }>`
         width: 100%;
         height: 44.8rem;
         border-radius: 0;
-        padding: 5.6rem 0.8rem 3.6rem 0.8rem;
+        padding: 5.6rem ${PAGE_PADDINGS.BELOW_SM}rem 3.6rem ${PAGE_PADDINGS.BELOW_SM}rem;
         gap: 1.6rem;
     `}
 `;
@@ -163,8 +164,9 @@ const Label = styled.div<{ $isDarkTheme: boolean }>`
     line-height: 180%;
 `;
 
-const StellarLogoStyled = styled(StellarLogo)<{ $isDarkTheme: boolean }>`
+const AquaLogoStyled = styled(AquaLogo)<{ $isDarkTheme: boolean }>`
     color: ${props => (props.$isDarkTheme ? COLORS.white : COLORS.black)};
+    height: 4rem;
 `;
 
 const TopRightHand = css`
@@ -248,7 +250,7 @@ const HeroBlock = ({ isLoading, monthlyDistributed, volumeInUsd, tvlInUsd }: Pro
             <HeroBottomRightStyled />
             <MainContent>
                 <Label $isDarkTheme={isDarkTheme}>
-                    Built on <StellarLogoStyled $isDarkTheme={isDarkTheme} />
+                    <AquaLogoStyled $isDarkTheme={isDarkTheme} />
                 </Label>
                 <Title $isDarkTheme={isDarkTheme}>Stellar’s DeFi Hub</Title>
                 <Description $isDarkTheme={isDarkTheme}>

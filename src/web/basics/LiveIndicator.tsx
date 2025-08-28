@@ -12,8 +12,8 @@ type LiveIndicatorProps = {
 };
 
 const pulse = keyframes`
-  0%   { transform: scale(0.8); opacity: 0.25; }
-  100% { transform: scale(1.5); opacity: 0.0; }
+  0%   { transform: scale(0.8); opacity: 0.6; }
+  100% { transform: scale(1.6); opacity: 0.0; }
 `;
 
 const Root = styled.span<{
@@ -27,6 +27,7 @@ const Root = styled.span<{
     justify-content: center;
     width: ${({ $size }) => $size}px;
     height: ${({ $size }) => $size}px;
+    margin: ${({ $size }) => `0 ${Math.round($size * 0.2)}px`};
 `;
 
 const Dot = styled.span<{
@@ -69,7 +70,7 @@ const LiveIndicator: React.FC<LiveIndicatorProps> = ({
     size = 20,
     color = COLORS.green,
     active = true,
-    periodSec = 2,
+    periodSec = 1.5,
     ariaLabel = 'Live',
     className,
 }) => (

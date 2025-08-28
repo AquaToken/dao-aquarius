@@ -238,8 +238,7 @@ const WhyProvideLiq = ({ monthlyDistributed, isLoading }: Props) => {
                         <DescBlock>
                             <DescTitle>Boost your rewards with ICE</DescTitle>
                             <Description>
-                                Lock AQUA to mint ICE, increasing your voting power and boosting
-                                your yield.
+                                Lock AQUA to mint ICE and increase your LP earnings by up to 250%.
                             </Description>
                         </DescBlock>
                     </InfoWrapper>
@@ -249,7 +248,7 @@ const WhyProvideLiq = ({ monthlyDistributed, isLoading }: Props) => {
                             <DescTitle>Earn by market making on SDEX</DescTitle>
                             <Description>
                                 Place limit orders on Stellar DEX and earn AQUA incentives —
-                                liquidity provision isn’t limited to AMMs.c
+                                liquidity provision isn’t limited to AMMs.
                             </Description>
                         </DescBlock>
                     </InfoWrapper>

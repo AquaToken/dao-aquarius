@@ -41,6 +41,7 @@ const DexTitle = styled.div`
 
     ${respondDown(Breakpoints.xs)`
         font-size: 2.4rem;
+        text-align: center;
     `}
 `;
 
@@ -99,6 +100,7 @@ const StatsBlock = styled(Block)`
 
     ${respondDown(Breakpoints.xs)`
         flex-direction: column;
+        align-items: center;
     `}
 `;
 
@@ -107,10 +109,6 @@ const StatWrapper = styled.div`
     flex-direction: column;
     align-items: center;
     gap: 0.8rem;
-
-    ${respondDown(Breakpoints.sm)`
-        align-items: start;
-    `}
 `;
 
 const StatsTitle = styled.div`

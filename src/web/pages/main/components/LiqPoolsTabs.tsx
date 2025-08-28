@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS, MAX_WIDTHS } from 'web/styles';
+import { fullWidthSectionStyles, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS, MAX_WIDTHS, PAGE_PADDINGS } from 'web/styles';
 
 import HeroBackground from 'assets/main-page/hero-background.png';
 import IconCheck16 from 'assets/small-icons/check/icon-check-16.svg';
@@ -12,7 +12,7 @@ import { HeroBottomRightStyled, HeroTopLeftStyled } from './HeroBlock';
 type TabKey = 'stable' | 'volatile';
 
 const Wrapper = styled.section`
-    width: calc(100% - 4.8rem);
+    ${fullWidthSectionStyles};
     max-width: ${MAX_WIDTHS.common};
     position: relative;
     overflow: hidden;
@@ -36,7 +36,6 @@ const Wrapper = styled.section`
     ${respondDown(Breakpoints.md)`
         padding: 4rem;
         margin-top: 9rem;
-        width: calc(100% - 3.2rem);
     `}
 
     ${respondDown(Breakpoints.sm)`
@@ -46,8 +45,7 @@ const Wrapper = styled.section`
     ${respondDown(Breakpoints.xs)`
         margin-top: 4rem;
         border-radius: 0;
-        padding: 3.2rem 0.8rem;
-        width: 100%;
+        padding: 3.2rem ${PAGE_PADDINGS.BELOW_SM}rem;
     `}
 `;
 
@@ -97,7 +95,6 @@ const CheckboxesBlock = styled(Block)`
 
     ${respondDown(Breakpoints.md)`
         width: 100%;
-        
     `}
 `;
 
@@ -236,24 +233,25 @@ const LiqPoolsTabs = () => {
             <TitleBlocks>
                 <Block>
                     <Title>
-                        Liquidity pools are the <b>foundation of Aquarius AMMs</b>
+                        Liquidity pools are the <b>foundation of Aquarius</b>
                     </Title>
                 </Block>
                 <CheckboxesBlock>
                     <CheckBoxRow>
                         <IconCheck />
-                        Supported 2- and 3-asset pools to enabling multi-asset strategies
+                        Supports both 2-asset and 3-asset pools, enabling flexible multi-asset
+                        strategies
                     </CheckBoxRow>
                     <CheckBoxRow>
                         <IconCheck />
-                        Standard Stellar and novel Soroban assets are supported
+                        Works with standard Stellar assets as well as new Soroban-based tokens
                     </CheckBoxRow>
                 </CheckboxesBlock>
             </TitleBlocks>
             <TabsBlock>
                 <Tabs>
                     <TabBtn active={active === 'stable'} onClick={() => setActive('stable')}>
-                        Stable Swap
+                        Stable Pools
                     </TabBtn>
 
                     <TabBtn active={active === 'volatile'} onClick={() => setActive('volatile')}>
@@ -268,7 +266,7 @@ const LiqPoolsTabs = () => {
                     <ContentTitle>
                         {active === 'stable'
                             ? 'Designed for stablecoins or 1:1-pegged assets, these pools aim to maintain tight price alignment.'
-                            : 'Classic AMM pools designed for volatile assets. Prices are determined by the constant product formula, dynamically adjusting based on supply and demand during swaps.'}
+                            : 'Designed for non-pegged assets, these pools use the constant product formula to balance prices.'}
                     </ContentTitle>
                 </div>
             </TabsBlock>
