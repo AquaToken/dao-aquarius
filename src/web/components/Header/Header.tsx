@@ -44,6 +44,7 @@ const Container = styled.header`
 
 const Aqua = styled(AquaLogo)`
     height: 4.4rem;
+    color: ${COLORS.titleText};
 
     ${respondDown(Breakpoints.md)`
         height: 3.4rem;
