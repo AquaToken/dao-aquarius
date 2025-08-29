@@ -163,7 +163,7 @@ const PoolApyTooltip = ({ pool, userBoost, userRewardsValue, userShareRatio }: P
 
             {(!!Number(pool.reward_tps) ||
                 (pool.incentive_tps_per_token &&
-                    Object.values(pool.incentive_tps_per_token).length)) && <Divider />}
+                    !!Object.values(pool.incentive_tps_per_token).length)) && <Divider />}
             <TooltipValues>
                 <span>LP APY:</span>
                 <span>{apyValueToDisplay(pool.apy)}</span>
