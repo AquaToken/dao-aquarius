@@ -31,12 +31,15 @@ export type Pool = {
     reward_tps: string;
     total_share?: string;
     apy: string;
-    rewards_apy: string;
     liquidity_usd: string;
     volume_usd: string;
     apy_tier: number;
-    reward_tps_per_token: { [key: string]: string };
-    rewards_apy_per_token: { [key: string]: string };
+    rewards_tps: string;
+    rewards_apy: string;
+    incentive_tps_per_token: { [key: string]: string };
+    incentive_apy_per_token: { [key: string]: string };
+    incentive_apy: string;
+    total_apy: string;
 };
 
 export type PoolRewards = {
@@ -155,3 +158,21 @@ export type PoolIncentives = {
         user_reward: string;
     };
 };
+
+export enum RewardType {
+    aquaReward = 'aqua_reward',
+    incentive = 'incentive',
+}
+
+type BaseUserReward<T> = {
+    id: string;
+    poolAddress: string;
+    tokens: Token[];
+    poolType: POOL_TYPE;
+    fee: string;
+    type: T;
+};
+
+export type UserAquaReward = BaseUserReward<RewardType.aquaReward> & { amount: number };
+export type UserIncentive = BaseUserReward<RewardType.incentive> & { incentives: PoolIncentives[] };
+export type UserReward = UserAquaReward | UserIncentive;

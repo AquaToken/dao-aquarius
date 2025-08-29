@@ -1,4 +1,3 @@
-import { xdr } from '@stellar/stellar-sdk';
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useHistory, useLocation } from 'react-router-dom';
@@ -9,8 +8,8 @@ import { getUserPools } from 'api/amm';
 import { POOL_TYPE } from 'constants/amm';
 import { MainRoutes } from 'constants/routes';
 
-import { contractValueToAmount } from 'helpers/amount';
-import { getAquaAssetData, getAssetString } from 'helpers/assets';
+import { apyValueToDisplay, contractValueToAmount } from 'helpers/amount';
+import { getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
@@ -27,35 +26,38 @@ import {
 } from 'services/globalServices';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
-import { PoolRewardsInfo, PoolUserProcessed } from 'types/amm';
-import { SorobanToken } from 'types/token';
+import { PoolIncentives, PoolRewardsInfo, PoolUserProcessed, RewardType } from 'types/amm';
+import { Token, SorobanToken } from 'types/token';
 
-import { flexAllCenter, flexRowSpaceBetween, respondDown, textEllipsis } from 'web/mixins';
+import {
+    flexAllCenter,
+    flexColumn,
+    flexRowSpaceBetween,
+    respondDown,
+    textEllipsis,
+} from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
-import ClaimRewardsModal from 'web/modals/ClaimRewardsModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import AquaLogo from 'assets/aqua-logo-small.svg';
 import IconClaim from 'assets/icon-claim.svg';
-import IconInfo from 'assets/icon-info.svg';
+import Info from 'assets/icon-info.svg';
+import ArrowRightIcon from 'assets/icon-link-arrow.svg';
 
 import ApyBoosted from 'basics/ApyBoosted';
 import AssetLogo from 'basics/AssetLogo';
 import Button from 'basics/buttons/Button';
 import Select from 'basics/inputs/Select';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
-import Label from 'basics/Label';
-import { CircleLoader, DotsLoader } from 'basics/loaders';
+import { CircleLoader } from 'basics/loaders';
 import PageLoader from 'basics/loaders/PageLoader';
 import Market from 'basics/Market';
 import Table, { CellAlign } from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
-import NoTrustline from 'components/NoTrustline';
-
-import BoostTooltip from 'pages/amm/components/BoostTooltip/BoostTooltip';
 import ExpandedMenu from 'pages/amm/components/MyLiquidity/ExpandedMenu/ExpandedMenu';
+import PoolApyTooltip from 'pages/amm/components/PoolApyTooltip/PoolApyTooltip';
 import MigratePoolButton from 'pages/amm/components/PoolsList/MigratePoolButton/MigratePoolButton';
+import RewardsBanner from 'pages/amm/components/RewardsBanner/RewardsBanner';
 import { AnalyticsTabs, AnalyticsUrlParams } from 'pages/amm/pages/Analytics';
 import { ProfileTabs, ProfileUrlParams } from 'pages/profile/Profile';
 import { ExternalLinkStyled } from 'pages/profile/SdexRewards/SdexRewards';
@@ -110,14 +112,6 @@ const ListTotal = styled.span`
     }
 `;
 
-const NoTrustlineStyled = styled(NoTrustline)`
-    background-color: ${COLORS.white}!important;
-
-    ${respondDown(Breakpoints.sm)`
-        background-color: ${COLORS.lightGray}!important;
-    `}
-`;
-
 const Section = styled.div`
     flex: 1 0 auto;
     ${flexAllCenter};
@@ -158,78 +152,10 @@ const Buttons = styled.div`
     gap: 0.8rem;
 `;
 
-const RewardsWrap = styled.div`
-    display: flex;
-    flex-direction: column;
-    background-color: ${COLORS.lightGray};
-    padding: 3.2rem;
-    border-radius: 0.5rem;
-    margin-bottom: 3.2rem;
-
-    ${respondDown(Breakpoints.md)`
-        background-color: ${COLORS.white};
-    `}
-`;
-
-const AquaLogoStyled = styled(AquaLogo)`
-    height: 4.8rem;
-    width: 4.8rem;
-`;
-
-const Rewards = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 2.4rem;
-    width: 100%;
-
-    ${respondDown(Breakpoints.md)`
-        flex-direction: column;
-        gap: 2rem;
-    `}
-`;
-
 const Pooled = styled.div`
     display: flex;
     gap: 0.8rem;
     align-items: center;
-`;
-
-const RewardsDescription = styled.div`
-    display: flex;
-    flex-direction: column;
-    color: ${COLORS.grayText};
-    font-size: 1.4rem;
-
-    span:first-child {
-        font-size: 1.6rem;
-        line-height: 2.8rem;
-        color: ${COLORS.paragraphText};
-        display: flex;
-        align-items: center;
-
-        svg {
-            margin: 0 0.5rem;
-        }
-    }
-
-    ${respondDown(Breakpoints.md)`
-        text-align: center;
-    `}
-`;
-
-const StyledButton = styled(Button)`
-    margin-left: auto;
-
-    ${respondDown(Breakpoints.md)`
-        margin-left: 0;
-    `}
-`;
-
-const RewardsTooltipInner = styled.div`
-    width: 20rem;
-    white-space: wrap;
-    line-height: 2rem;
-    font-size: 1.4rem;
 `;
 
 const TooltipInner = styled.div`
@@ -261,18 +187,30 @@ const TooltipRow = styled.div`
     }
 `;
 
-const IconInfoStyled = styled(IconInfo)`
+const IconInfoStyled = styled(Info)`
     cursor: help;
 `;
 
-const BoostValues = styled.div`
-    display: flex;
-    gap: 0.4rem;
-    cursor: help !important;
-
-    & > * {
-        cursor: help !important;
+const ArrowRight = styled(ArrowRightIcon)`
+    path {
+        fill: ${COLORS.darkBlue};
     }
+`;
+
+const RewardsApy = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+`;
+
+const WithTooltip = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+`;
+
+const IncentivesValues = styled.div`
+    ${flexColumn};
 `;
 
 enum FilterValues {
@@ -299,16 +237,17 @@ interface MyLiquidityProps {
     backToAllPools?: () => void;
 }
 
-const CLAIM_ALL_COUNT = 5;
-
 const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) => {
     const { account } = useAuthStore();
 
     const [pools, setPools] = useState<PoolUserProcessed[]>([]);
     const [classicPools, setClassicPools] = useState([]);
     const [userRewards, setUserRewards] = useState<Map<string, PoolRewardsInfo>>(new Map());
+    const [userIncentives, setUserIncentives] = useState<Map<string, PoolIncentives[]>>(new Map());
     const [isUserRewardsLoaded, setIsUserRewardsLoaded] = useState(false);
     const [rewardsSum, setRewardsSum] = useState(0);
+    const [incentivesSum, setIncentivesSum] = useState(new Map());
+    const [isUserIncentivesLoaded, setIsUserIncentivesLoaded] = useState(false);
     const [claimPendingId, setClaimPendingId] = useState(null);
     const [filter, setFilter] = useState(null);
 
@@ -343,8 +282,6 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
 
     const updateIndex = useUpdateIndex(5000);
 
-    const { aquaStellarAsset } = getAquaAssetData();
-
     const filteredPools = useMemo(() => {
         if (filter === FilterValues.classic) {
             return classicPools;
@@ -371,7 +308,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
     };
 
     useEffect(() => {
-        if (!account || !pools) {
+        if (!account || !pools || !pools.length) {
             setUserRewards(new Map());
             return;
         }
@@ -392,6 +329,42 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
             setUserRewards(map);
             setRewardsSum(sum);
             setIsUserRewardsLoaded(true);
+        });
+    }, [pools, account, updateIndex]);
+
+    useEffect(() => {
+        if (!account || !pools || !pools.length) {
+            setUserIncentives(new Map());
+            return;
+        }
+        Promise.all(
+            pools.map(({ address }) =>
+                SorobanService.amm.getPoolIncentives(account.accountId(), address),
+            ),
+        ).then(res => {
+            const map = new Map<string, PoolIncentives[]>();
+            const sum = new Map<Token, number>();
+
+            res.forEach((incentives, index) => {
+                if (incentives) {
+                    map.set(pools[index].address, incentives);
+                }
+
+                incentives.forEach(incentive => {
+                    const sameToken = [...sum.keys()].find(
+                        ({ contract }) => contract === incentive.token.contract,
+                    );
+                    if (sameToken) {
+                        sum.set(sameToken, sum.get(sameToken) + Number(incentive.info.user_reward));
+                    } else {
+                        sum.set(incentive.token, Number(incentive.info.user_reward));
+                    }
+                });
+            });
+
+            setUserIncentives(map);
+            setIncentivesSum(sum);
+            setIsUserIncentivesLoaded(true);
         });
     }, [pools, account, updateIndex]);
 
@@ -437,8 +410,18 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
         }
         setClaimPendingId(poolId);
 
+        const poolsAndTypes = [];
+
+        if (userRewards.get(poolId)?.to_claim) {
+            poolsAndTypes.push(`${RewardType.aquaReward}-${poolId}`);
+        }
+
+        if (userIncentives.get(poolId)?.some(({ info }) => !!Number(info.user_reward))) {
+            poolsAndTypes.push(`${RewardType.incentive}-${poolId}`);
+        }
+
         SorobanService.amm
-            .getClaimRewardsTx(account.accountId(), poolId)
+            .getClaimBatchTx(account.accountId(), poolsAndTypes)
             .then(tx => account.signAndSubmitTx(tx, true))
             .then((res: { status?: BuildSignAndSubmitStatuses }) => {
                 if (!res) {
@@ -452,9 +435,8 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                     ToastService.showSuccessToast('More signatures required to complete');
                     return;
                 }
-                const value = SorobanService.scVal.i128ToInt(res as xdr.ScVal);
 
-                ToastService.showSuccessToast(`Claimed ${formatBalance(+value)} AQUA`);
+                ToastService.showSuccessToast(`Claimed successfully.`);
                 setClaimPendingId(null);
             })
             .catch(err => {
@@ -512,42 +494,15 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                 <SelectStyled value={filter} options={FilterOptions} onChange={setFilterValue} />
             </SelectWrapper>
 
-            {isUserRewardsLoaded && (
-                <RewardsWrap>
-                    <Rewards>
-                        <AquaLogoStyled />
-                        <RewardsDescription>
-                            <span>
-                                {rewardsSum
-                                    ? `You have ${userRewards.size ?? ''} unclaimed rewards`
-                                    : 'You might have unclaimed rewards'}
-
-                                <Tooltip
-                                    content={
-                                        <RewardsTooltipInner>
-                                            One can claim not more than {CLAIM_ALL_COUNT} rewards at
-                                            a time. If you have more than {CLAIM_ALL_COUNT} rewards
-                                            you will have to make multiple claims.
-                                        </RewardsTooltipInner>
-                                    }
-                                    position={TOOLTIP_POSITION.top}
-                                    showOnHover
-                                >
-                                    <IconInfoStyled />
-                                </Tooltip>
-                            </span>
-                            {Boolean(rewardsSum) && (
-                                <span>for {formatBalance(rewardsSum)} AQUA</span>
-                            )}
-                        </RewardsDescription>
-                        <StyledButton onClick={() => ModalService.openModal(ClaimRewardsModal, {})}>
-                            {rewardsSum ? 'Claim rewards' : 'Check'}
-                        </StyledButton>
-                    </Rewards>
-
-                    <NoTrustlineStyled asset={aquaStellarAsset} />
-                </RewardsWrap>
+            {isUserRewardsLoaded && isUserIncentivesLoaded && (
+                <RewardsBanner
+                    rewardsSum={rewardsSum}
+                    userRewardsCount={userRewards.size}
+                    incentivesSum={incentivesSum}
+                    userIncentivesCount={userIncentives.size}
+                />
             )}
+
             {!filteredPools ? (
                 <PageLoader />
             ) : filteredPools.length ? (
@@ -556,13 +511,21 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                     head={[
                         {
                             children: 'Pool',
-                            flexSize: 3.5,
+                            flexSize: 3,
                         },
-                        { children: 'Base APY', flexSize: 0.6 },
-                        { children: 'Rewards APY', flexSize: 1.2 },
-                        { children: 'Pooled' },
-                        { children: 'My daily rewards' },
-                        { children: 'Rewards to claim', align: CellAlign.Right },
+                        { children: 'Pooled', align: CellAlign.Right },
+
+                        {
+                            children: 'Rewards to claim',
+                            align: CellAlign.Right,
+                            mobileStyle: { textAlign: 'right' },
+                        },
+                        {
+                            children: 'Incentives to claim',
+                            align: CellAlign.Right,
+                            mobileStyle: { textAlign: 'right' },
+                        },
+                        { children: 'Total APY', align: CellAlign.Right, flexSize: 2 },
                         { children: '' },
                     ]}
                     body={filteredPools.map(pool => {
@@ -580,6 +543,9 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                   +poolRewardsData.working_balance) /
                               +poolRewardsData.working_supply
                             : 0;
+
+                        const incentivesForPool = userIncentives.get(pool.address);
+
                         return {
                             key: pool.address || pool.id,
                             rowItems: [
@@ -595,51 +561,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                             fee={pool.fee}
                                         />
                                     ),
-                                    flexSize: 3.5,
-                                },
-                                {
-                                    children: pool.apy
-                                        ? `${formatBalance(+(pool.apy * 100).toFixed(2), true)}%`
-                                        : '-',
-                                    label: 'Base APY',
-                                    flexSize: 0.6,
-                                },
-                                {
-                                    children: !pool.rewards_apy ? (
-                                        '-'
-                                    ) : boostValue === 1 ? (
-                                        `${formatBalance(
-                                            +(pool.rewards_apy * 100).toFixed(2),
-                                            true,
-                                        )}%`
-                                    ) : (
-                                        <Tooltip
-                                            content={
-                                                <BoostTooltip pool={pool} userBoost={boostValue} />
-                                            }
-                                            showOnHover
-                                            background={COLORS.white}
-                                        >
-                                            <BoostValues>
-                                                <ApyBoosted
-                                                    value={pool.rewards_apy * 100 * boostValue}
-                                                    color="purple"
-                                                />
-                                                <Label
-                                                    labelText={
-                                                        boostValue.toFixed(2) === '1.00'
-                                                            ? '< x1.01'
-                                                            : `x${boostValue.toFixed(2)}`
-                                                    }
-                                                    labelSize="medium"
-                                                    background={COLORS.darkBlue}
-                                                    withoutUppercase
-                                                />
-                                            </BoostValues>
-                                        </Tooltip>
-                                    ),
-                                    label: 'Rewards APY',
-                                    flexSize: 1.2,
+                                    flexSize: 3,
                                 },
                                 {
                                     children: poolsLiquidity.has(pool.address || pool.id) ? (
@@ -721,28 +643,90 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                         '-'
                                     ),
                                     label: 'Pooled',
-                                },
-                                {
-                                    children: !Number(pool.reward_tps) ? (
-                                        '-'
-                                    ) : !isUserRewardsLoaded ? (
-                                        <DotsLoader />
-                                    ) : userRewardsValue ? (
-                                        `${formatBalance(userRewardsValue, true)} AQUA`
-                                    ) : (
-                                        '-'
-                                    ),
-                                    label: 'My daily rewards',
-                                    mobileStyle: { textAlign: 'right' },
+                                    align: CellAlign.Right,
                                 },
                                 {
                                     children: `${formatBalance(
                                         Number(userRewards.get(pool.address)?.to_claim) || 0,
                                         true,
+                                        true,
                                     )} AQUA`,
                                     label: 'Rewards to claim',
                                     align: CellAlign.Right,
                                     mobileStyle: { textAlign: 'right' },
+                                },
+                                {
+                                    children: incentivesForPool?.length ? (
+                                        <IncentivesValues>
+                                            {incentivesForPool
+                                                .filter(
+                                                    incentive =>
+                                                        !!Number(incentive.info.user_reward),
+                                                )
+                                                .map(incentive => (
+                                                    <span key={incentive.token.contract}>
+                                                        {formatBalance(
+                                                            +incentive.info.user_reward,
+                                                            true,
+                                                            true,
+                                                        )}{' '}
+                                                        {incentive.token.code}
+                                                    </span>
+                                                ))}
+                                        </IncentivesValues>
+                                    ) : (
+                                        '-'
+                                    ),
+                                    label: 'Incentives to claim',
+                                    align: CellAlign.Right,
+                                    mobileStyle: { textAlign: 'right' },
+                                },
+                                {
+                                    children: (
+                                        <RewardsApy>
+                                            <WithTooltip>
+                                                {apyValueToDisplay(pool.total_apy)}
+                                            </WithTooltip>
+
+                                            {Boolean(Number(pool.rewards_apy)) &&
+                                                boostValue !== 1 && (
+                                                    <>
+                                                        <ArrowRight />
+
+                                                        <ApyBoosted
+                                                            value={
+                                                                Number(pool.rewards_apy) *
+                                                                    boostValue *
+                                                                    100 +
+                                                                (Number(pool.apy) * 100 || 0) +
+                                                                (Number(pool.incentive_apy) * 100 ||
+                                                                    0)
+                                                            }
+                                                            color="blue"
+                                                        />
+                                                    </>
+                                                )}
+                                            <Tooltip
+                                                content={
+                                                    <PoolApyTooltip
+                                                        pool={pool}
+                                                        userBoost={boostValue}
+                                                        userRewardsValue={userRewardsValue}
+                                                        userShareRatio={
+                                                            pool.balance / pool.total_share
+                                                        }
+                                                    />
+                                                }
+                                                background={COLORS.white}
+                                                showOnHover
+                                            >
+                                                <Info />
+                                            </Tooltip>
+                                        </RewardsApy>
+                                    ),
+                                    label: 'Total APY',
+                                    align: CellAlign.Right,
+                                    flexSize: 2,
                                 },
                                 {
                                     children: (
@@ -754,9 +738,15 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                                     disabled={
                                                         (pool.address !== claimPendingId &&
                                                             Boolean(claimPendingId)) ||
-                                                        !Number(
+                                                        (!Number(
                                                             userRewards.get(pool.address)?.to_claim,
-                                                        )
+                                                        ) &&
+                                                            !userIncentives
+                                                                .get(pool.address)
+                                                                ?.some(
+                                                                    ({ info }) =>
+                                                                        !!Number(info.user_reward),
+                                                                ))
                                                     }
                                                     onClick={() => claim(pool.address)}
                                                     title="Claim rewards"

@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components';
 
 import { getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
+import { createAsset } from 'helpers/token';
 
 import useAssetsSearch from 'hooks/useAssetsSearch';
 import useOnClickOutside from 'hooks/useOutsideClick';
@@ -280,7 +281,7 @@ const AssetDropdown = ({
         if (asset.type) {
             return asset;
         }
-        return StellarService.createAsset(asset.code, asset.issuer);
+        return createAsset(asset.code, asset.issuer);
     });
 
     const filteredBalances = customAssetsList
@@ -302,9 +303,7 @@ const AssetDropdown = ({
     const [isOpen, setIsOpen] = useState(false);
     const [selectedAsset, setSelectedAsset] = useState(asset);
     const [selectedAssets, setSelectedAssets] = useState(
-        assetsList?.map((asset: ClassicToken) =>
-            StellarService.createAsset(asset.code, asset.issuer),
-        ) || [],
+        assetsList?.map((asset: ClassicToken) => createAsset(asset.code, asset.issuer)) || [],
     );
     const [searchText, setSearchText] = useState('');
 
@@ -316,9 +315,7 @@ const AssetDropdown = ({
 
     useEffect(() => {
         setSelectedAssets(
-            assetsList?.map((asset: ClassicToken) =>
-                StellarService.createAsset(asset.code, asset.issuer),
-            ) || [],
+            assetsList?.map((asset: ClassicToken) => createAsset(asset.code, asset.issuer)) || [],
         );
     }, [assetsList]);
 
@@ -350,9 +347,7 @@ const AssetDropdown = ({
 
     const onClickAsset = (asset: Token) => {
         const stellarAsset =
-            asset.type === TokenType.soroban
-                ? asset
-                : StellarService.createAsset(asset.code, asset.issuer);
+            asset.type === TokenType.soroban ? asset : createAsset(asset.code, asset.issuer);
         onUpdate(withChips ? [...selectedAssets, stellarAsset] : stellarAsset);
     };
 
@@ -388,7 +383,7 @@ const AssetDropdown = ({
                     const token =
                         item.token?.type === TokenType.soroban
                             ? item.token
-                            : StellarService.createAsset(item.token.code, item.token.issuer);
+                            : createAsset(item.token.code, item.token.issuer);
                     const assetString = getAssetString(token);
 
                     const assetInfo = assetsInfo.get(assetString);

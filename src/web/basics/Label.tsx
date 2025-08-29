@@ -131,6 +131,7 @@ const Label = ({
         return (
             <LabelWrapper
                 {...labelStyles}
+                {...props}
                 $cursor="default"
                 $background={background}
                 $color={color}

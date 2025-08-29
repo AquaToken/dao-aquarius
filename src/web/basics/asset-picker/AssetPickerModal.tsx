@@ -7,6 +7,7 @@ import { USDx_CODE, USDx_ISSUER } from 'constants/assets';
 
 import { getAquaAssetData, getAssetString, getUsdcAssetData } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
+import { createAsset, createLumen } from 'helpers/token';
 
 import useAssetsSearch from 'hooks/useAssetsSearch';
 
@@ -147,10 +148,10 @@ const EmptyState = styled.span`
 `;
 
 const DEFAULT_ASSETS = [
-    StellarService.createLumen(),
+    createLumen(),
     getAquaAssetData().aquaStellarAsset,
     getUsdcAssetData().usdcStellarAsset,
-    StellarService.createAsset(USDx_CODE, USDx_ISSUER),
+    createAsset(USDx_CODE, USDx_ISSUER),
 ] as ClassicToken[];
 
 type Props = {
@@ -232,9 +233,7 @@ const AssetPickerModal = ({ params, confirm }: ModalProps<Props>) => {
 
     const chooseAsset = (asset: Token) => {
         const result =
-            asset.type === TokenType.soroban
-                ? asset
-                : StellarService.createAsset(asset.code, asset.issuer);
+            asset.type === TokenType.soroban ? asset : createAsset(asset.code, asset.issuer);
         onUpdate(result);
         confirm();
     };

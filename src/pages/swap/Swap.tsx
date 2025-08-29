@@ -4,8 +4,7 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import { MainRoutes } from 'constants/routes';
 
 import { getAquaAssetData, getAssetString } from 'helpers/assets';
-
-import { StellarService } from 'services/globalServices';
+import { createLumen } from 'helpers/token';
 
 const SwapPageLazy = lazy(() => import('./pages/SwapPage'));
 
@@ -22,7 +21,7 @@ const Swap = () => {
                     <Redirect
                         to={{
                             pathname: `${MainRoutes.swap}/${getAssetString(
-                                StellarService.createLumen(),
+                                createLumen(),
                             )}/${aquaAssetString}`,
                         }}
                     />

@@ -13,7 +13,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Link } from 'react-router-dom';
-import styled, { createGlobalStyle } from 'styled-components';
+import styled from 'styled-components';
 
 import { BribesRoutes } from 'constants/routes';
 
@@ -22,6 +22,7 @@ import {
     convertUTCToLocalDateIgnoringTimezone,
 } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
+import { createAsset } from 'helpers/token';
 
 import { useDebounce } from 'hooks/useDebounce';
 
@@ -32,7 +33,7 @@ import { ModalService, StellarService } from 'services/globalServices';
 
 import { flexAllCenter, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
-import { Breakpoints, COLORS, FONT_FAMILY } from 'web/styles';
+import { Breakpoints, COLORS } from 'web/styles';
 
 import ArrowLeft from 'assets/icon-arrow-left.svg';
 import Dash from 'assets/icon-dash.svg';
@@ -351,7 +352,7 @@ const AddBribePage = () => {
         setIsInvalidAmount(false);
 
         StellarService.getAquaEquivalent(
-            StellarService.createAsset(rewardAsset.code, rewardAsset.issuer),
+            createAsset(rewardAsset.code, rewardAsset.issuer),
             debouncedAmount.current,
         )
             .then(res => {

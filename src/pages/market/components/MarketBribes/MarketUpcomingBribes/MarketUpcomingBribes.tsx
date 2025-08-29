@@ -4,8 +4,8 @@ import styled from 'styled-components';
 
 import { convertLocalDateToUTCIgnoringTimezone, getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
+import { createAsset } from 'helpers/token';
 
-import { StellarService } from 'services/globalServices';
 import { COLORS } from 'web/styles';
 
 import Asset from 'basics/Asset';
@@ -89,10 +89,7 @@ const MarketUpcomingBribes = ({ marketKey }: MarketUpcomingBribes): React.ReactN
                             {
                                 children: (
                                     <Asset
-                                        asset={StellarService.createAsset(
-                                            bribe.asset_code,
-                                            bribe.asset_issuer,
-                                        )}
+                                        asset={createAsset(bribe.asset_code, bribe.asset_issuer)}
                                         inRow
                                         withMobileView
                                     />

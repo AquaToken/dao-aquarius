@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 
+import { MAX_X_ICE_BOOST } from 'constants/ice';
+
 import { convertLocalDateToUTCIgnoringTimezone, getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
-
-import { StellarService } from 'services/globalServices';
+import { getIceMaxApy } from 'helpers/ice';
+import { createAsset } from 'helpers/token';
 
 import { ModalProps } from 'types/modal';
 
@@ -21,8 +23,6 @@ import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 import Table, { CellAlign } from 'basics/Table';
 
 import { PairStats } from '../../../api/types';
-import { getIceMaxApy } from 'helpers/ice';
-import { MAX_X_ICE_BOOST } from 'constants/ice';
 
 const BribeDetails = styled.div`
     display: flex;
@@ -230,10 +230,7 @@ const BribesModal = ({ params }: ModalProps<{ pair: PairStats }>) => {
                         {
                             children: (
                                 <Asset
-                                    asset={StellarService.createAsset(
-                                        bribe.asset_code,
-                                        bribe.asset_issuer,
-                                    )}
+                                    asset={createAsset(bribe.asset_code, bribe.asset_issuer)}
                                     inRow
                                     withMobileView
                                 />

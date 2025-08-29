@@ -33,7 +33,7 @@ import {
     scValToArray,
 } from 'services/soroban/utils/scValHelpers';
 
-import { PoolIncentives, PoolProcessed, PoolRewardsInfo } from 'types/amm';
+import { PoolIncentives, PoolProcessed, PoolRewardsInfo, RewardType } from 'types/amm';
 import { SorobanToken, Token } from 'types/token';
 
 const AMM_SMART_CONTRACT_ID = CONTRACTS[getEnv()].amm;
@@ -243,6 +243,54 @@ export function getPoolsRewards(accountId: string, pools: string[]) {
         });
 }
 
+export function getPoolsIncentives(accountId: string, pools: string[]) {
+    const batches = pools.map(pool =>
+        scValToArray([
+            contractIdToScVal(pool),
+            xdr.ScVal.scvSymbol(AMM_CONTRACT_METHOD.GET_INCENTIVES_INFO),
+            scValToArray([publicKeyToScVal(accountId)]),
+        ]),
+    );
+
+    return buildSmartContractTx(
+        accountId,
+        BATCH_SMART_CONTRACT_ID,
+        BATCH_CONTRACT_METHOD.batch,
+        scValToArray([publicKeyToScVal(accountId)]),
+        scValToArray(batches),
+        xdr.ScVal.scvBool(true),
+    )
+        .then(tx => simulateTx(tx))
+        .then(res => {
+            if (!(res as StellarSdk.rpc.Api.SimulateTransactionSuccessResponse).result) {
+                throw new Error('getPoolsIncentives error');
+            }
+
+            const retValArr = (
+                res as StellarSdk.rpc.Api.SimulateTransactionSuccessResponse
+            ).result.retval.value() as unknown[];
+
+            return Promise.all(
+                retValArr.map(
+                    async val =>
+                        await Promise.all(
+                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                            // @ts-ignore
+                            val.value().map(async item => {
+                                const token = await parseTokenContractId(
+                                    StellarSdk.StrKey.encodeContract(item.key().value().value()),
+                                );
+                                return {
+                                    token,
+                                    info: parsePoolRewards(item.val().value(), token.decimal),
+                                };
+                            }),
+                        ),
+                ),
+            );
+        });
+}
+
 export function getTotalShares(poolId: string) {
     return buildSmartContractTx(ACCOUNT_FOR_SIMULATE, poolId, AMM_CONTRACT_METHOD.GET_TOTAL_SHARES)
         .then(
@@ -275,14 +323,20 @@ export function getClaimIncentiveTx(accountId: string, poolId: string) {
     ).then(tx => prepareTransaction(tx));
 }
 
-export function getClaimBatchTx(accountId: string, pools: string[]) {
-    const batches = pools.map(pool =>
-        scValToArray([
-            contractIdToScVal(pool),
-            xdr.ScVal.scvSymbol(AMM_CONTRACT_METHOD.CLAIM),
+export function getClaimBatchTx(accountId: string, poolsAndTypes: string[]) {
+    const batches = poolsAndTypes.map(poolAndType => {
+        const [type, poolId] = poolAndType.split('-');
+
+        return scValToArray([
+            contractIdToScVal(poolId),
+            xdr.ScVal.scvSymbol(
+                type === RewardType.aquaReward
+                    ? AMM_CONTRACT_METHOD.CLAIM
+                    : AMM_CONTRACT_METHOD.CLAIM_INCENTIVES,
+            ),
             scValToArray([publicKeyToScVal(accountId)]),
-        ]),
-    );
+        ]);
+    });
 
     return buildSmartContractTx(
         accountId,

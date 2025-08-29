@@ -8,6 +8,7 @@ import { LockerRoutes } from 'constants/routes';
 import { getDateString } from 'helpers/date';
 import ErrorHandler from 'helpers/error-handler';
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
+import { createAsset } from 'helpers/token';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
 import { useIsMounted } from 'hooks/useIsMounted';
@@ -125,7 +126,7 @@ const GetAquaLabel = styled.span`
     color: ${COLORS.grayText};
 `;
 
-const GOV_ICE = StellarService.createAsset(GOV_ICE_CODE, ICE_ISSUER);
+const GOV_ICE = createAsset(GOV_ICE_CODE, ICE_ISSUER);
 
 const OPTIONS = [{ label: 'ICE', value: GOV_ICE, icon: <IceLogo /> }];
 

@@ -10,7 +10,7 @@ import { MainRoutes } from 'constants/routes';
 
 import { getEnv, getIsTestnetEnv, setProductionEnv } from 'helpers/env';
 import { getMoonpayKeyByEnv } from 'helpers/moonpay';
-import { cacheTokens } from 'helpers/swap';
+import { cacheTokens, createAsset } from 'helpers/token';
 
 import { LoginTypes } from 'store/authStore/types';
 
@@ -152,8 +152,7 @@ const App = () => {
 
                 if (
                     delegators.length &&
-                    account.getAssetBalance(StellarService.createAsset(D_ICE_CODE, ICE_ISSUER)) ===
-                        null
+                    account.getAssetBalance(createAsset(D_ICE_CODE, ICE_ISSUER)) === null
                 ) {
                     ModalService.openModal(DIceTrustlineModal, {});
                 }

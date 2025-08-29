@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import { getDateString } from 'helpers/date';
 import ErrorHandler from 'helpers/error-handler';
 import { formatBalance } from 'helpers/format-number';
+import { createAsset } from 'helpers/token';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
 import { useIsMounted } from 'hooks/useIsMounted';
@@ -19,8 +20,8 @@ import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 import { ModalProps } from 'types/modal';
 import { ClassicToken } from 'types/token';
 
-import { flexAllCenter, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
+import { flexAllCenter } from 'web/mixins';
+import { COLORS } from 'web/styles';
 
 import Asset from 'basics/Asset';
 import Button from 'basics/buttons/Button';
@@ -99,9 +100,7 @@ const ConfirmBribeModal = ({
     const isMounted = useIsMounted();
 
     const onSubmit = async () => {
-        const balance = account.getAssetBalance(
-            StellarService.createAsset(rewardAsset.code, rewardAsset.issuer),
-        );
+        const balance = account.getAssetBalance(createAsset(rewardAsset.code, rewardAsset.issuer));
 
         if (balance === null) {
             ToastService.showErrorToast(`You don't have a trustline for ${rewardAsset.code}`);

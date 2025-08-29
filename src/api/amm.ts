@@ -5,9 +5,10 @@ import BigNumber from 'bignumber.js';
 import { getAquaAssetData, getUsdcAssetData } from 'helpers/assets';
 import chunkFunction from 'helpers/chunk-function';
 import { getNetworkPassphrase } from 'helpers/env';
+import { createAsset, createLumen } from 'helpers/token';
 import { getAmmAquaUrl } from 'helpers/url';
 
-import { AssetsService, SorobanService, StellarService } from 'services/globalServices';
+import { AssetsService, SorobanService } from 'services/globalServices';
 
 import {
     FindSwapPath,
@@ -23,6 +24,8 @@ import {
     PoolUser,
     PoolUserProcessed,
     PoolVolume24h,
+    RewardType,
+    UserReward,
 } from 'types/amm';
 import { ClassicToken, Token, TokenType } from 'types/token';
 
@@ -43,12 +46,8 @@ export enum PoolsSortFields {
     liquidityDown = 'liquidity',
     volumeUp = '-volume',
     volumeDown = 'volume',
-    rewardsUp = '-reward',
-    rewardsDown = 'reward',
-    apyUp = '-apy',
-    apyDown = 'apy',
-    rewardsApyUp = '-rewards_apy',
-    rewardsApyDown = 'rewards_apy',
+    totalApyUp = '-total_apy',
+    totalApyDown = 'total_apy',
 }
 
 export const processPools = async <T extends { tokens_addresses: string[] }>(
@@ -261,9 +260,9 @@ interface GetNativePricesOpts {
 
 export const convertNativePriceToToken = (item: NativePrice): Token =>
     item.name === 'native' && item.is_sac
-        ? StellarService.createLumen()
+        ? createLumen()
         : item.is_sac
-        ? StellarService.createAsset(item.code, item.issuer)
+        ? createAsset(item.code, item.issuer)
         : {
               contract: item.address,
               type: TokenType.soroban,
@@ -418,7 +417,7 @@ export const getAssetsList = async (): Promise<Token[]> => {
     // tokens in the top of the list - AQUA, XLM, USDC
     const { aquaStellarAsset } = getAquaAssetData();
     const { usdcStellarAsset } = getUsdcAssetData();
-    const lumen = StellarService.createLumen();
+    const lumen = createLumen();
 
     const otherTokens = data.items
         .filter(
@@ -440,36 +439,60 @@ function chunkArray<T>(arr: T[], size = 5) {
     return result;
 }
 
-export const getUserRewardsList = async (
-    accountId: string,
-): Promise<{ id: string; amount: number; assets: Asset[] }[]> => {
+export const getUserRewardsList = async (accountId: string): Promise<UserReward[]> => {
     const baseUrl = getAmmAquaUrl();
 
     const { data } = await axios.get<ListResponse<Pool>>(`${baseUrl}/pools/?size=500`);
 
-    const results = [];
+    const results: UserReward[] = [];
 
     const processed = await processPools(data.items);
 
     const chunked = chunkArray(processed);
 
     await chunkFunction(chunked, async chunk => {
-        const result = await SorobanService.amm.getPoolsRewards(
+        const rewards = await SorobanService.amm.getPoolsRewards(
+            accountId,
+            chunk.map(({ address }) => address),
+        );
+        const incentives = await SorobanService.amm.getPoolsIncentives(
             accountId,
             chunk.map(({ address }) => address),
         );
 
-        result.forEach((item, index) => {
+        rewards.forEach((item, index) => {
             if (Number(item.to_claim)) {
                 results.push({
-                    id: chunk[index].address,
+                    id: `${RewardType.aquaReward}-${chunk[index].address}`,
                     amount: Number(item.to_claim),
                     tokens: chunk[index].tokens,
-                    type: chunk[index].pool_type,
+                    poolType: chunk[index].pool_type,
+                    fee: chunk[index].fee,
+                    poolAddress: chunk[index].address,
+                    type: RewardType.aquaReward,
+                });
+            }
+
+            if (
+                incentives[index].length &&
+                incentives[index].some(incentive => !!Number(incentive.info.user_reward))
+            ) {
+                results.push({
+                    id: `${RewardType.incentive}-${chunk[index].address}`,
+                    poolAddress: chunk[index].address,
+                    incentives: incentives[index],
+                    tokens: chunk[index].tokens,
+                    poolType: chunk[index].pool_type,
+                    fee: chunk[index].fee,
+                    type: RewardType.incentive,
                 });
             }
         });
     });
 
-    return results.sort((a, b) => b.amount - a.amount);
+    return results.sort(
+        (a, b) =>
+            Number(b.type === RewardType.aquaReward ? b.amount : b.incentives[0].info.user_reward) -
+            Number(a.type === RewardType.aquaReward ? a.amount : a.incentives[0].info.user_reward),
+    );
 };
