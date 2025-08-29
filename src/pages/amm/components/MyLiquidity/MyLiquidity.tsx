@@ -749,7 +749,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                                                 ))
                                                     }
                                                     onClick={() => claim(pool.address)}
-                                                    title="Claim rewards"
+                                                    title="Claim rewards and incentives"
                                                 >
                                                     {pool.address === claimPendingId ? (
                                                         <CircleLoader isWhite size="small" />
