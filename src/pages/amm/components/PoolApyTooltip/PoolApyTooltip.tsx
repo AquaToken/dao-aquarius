@@ -141,7 +141,7 @@ const PoolApyTooltip = ({ pool, userBoost, userRewardsValue, userShareRatio }: P
                 </TooltipValues>
             )}
             {pool.incentive_tps_per_token &&
-                Object.values(pool.incentive_tps_per_token).length &&
+                !!Object.values(pool.incentive_tps_per_token).length &&
                 Object.entries(pool.incentive_tps_per_token).map(([key, val]) => {
                     const token = getAssetFromString(key);
                     return (
