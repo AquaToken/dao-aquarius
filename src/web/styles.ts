@@ -84,7 +84,4 @@ export const MAX_WIDTHS = {
 };
 
 // in rem
-export const PAGE_PADDINGS = {
-    DEFAULT: 2.4,
-    BELOW_SM: 1.6,
-};
+export const PAGE_PADDINGS = 2.4;

@@ -1,4 +1,3 @@
-import StellarLogo from 'assets/main-page/stellar-logo.svg';
 import styled, { css } from 'styled-components';
 
 import { MainRoutes } from 'constants/routes';
@@ -53,10 +52,10 @@ const Hero = styled.section<{ $isDarkTheme: boolean }>`
 
     ${respondDown(Breakpoints.xs)`
         width: 100%;
-        height: 44.8rem;
+        height: auto;
         border-radius: 0;
-        padding: 5.6rem ${PAGE_PADDINGS.BELOW_SM}rem 3.6rem ${PAGE_PADDINGS.BELOW_SM}rem;
-        gap: 1.6rem;
+        padding: 6rem ${PAGE_PADDINGS}rem 6rem ${PAGE_PADDINGS}rem;
+        gap: 6rem;
     `}
 `;
 
@@ -109,6 +108,11 @@ const Description = styled.p<{ $isDarkTheme: boolean }>`
 const ProvideLiqButton = styled(Button)`
     border-radius: 46px;
     padding: 0 4rem;
+
+    ${respondDown(Breakpoints.sm)`
+        padding: 0 3rem;
+        height: 5rem;
+    `}
 `;
 
 const LiveStats = styled.div`

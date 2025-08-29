@@ -45,7 +45,7 @@ const Wrapper = styled.section`
     ${respondDown(Breakpoints.xs)`
         margin-top: 4rem;
         border-radius: 0;
-        padding: 3.2rem ${PAGE_PADDINGS.BELOW_SM}rem;
+        padding: 6rem ${PAGE_PADDINGS}rem;
     `}
 `;
 

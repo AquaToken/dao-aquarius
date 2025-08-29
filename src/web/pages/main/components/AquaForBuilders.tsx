@@ -2,8 +2,8 @@ import styled from 'styled-components';
 
 import { AQUA_DOCS_URL } from 'constants/urls';
 
-import { flexAllCenter, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
+import { flexAllCenter, fullWidthSectionStyles, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS, PAGE_PADDINGS } from 'web/styles';
 
 import ArrowAlt16 from 'assets/arrows/arrow-alt-16.svg';
 import AquaBuildersIcon from 'assets/main-page/aqua-builders.svg';
@@ -14,6 +14,7 @@ import { BlankExternalLink } from 'basics/links';
 
 const Wrapper = styled.section`
     ${flexAllCenter};
+    ${fullWidthSectionStyles};
     width: 100%;
     background-color: ${COLORS.lightGray};
     margin-top: 11rem;
@@ -33,7 +34,7 @@ const Wrapper = styled.section`
     ${respondDown(Breakpoints.xs)`
         border-radius: 0;
         margin-top: 4rem;
-        padding: 3.2rem 0;
+        padding: 3.2rem ${PAGE_PADDINGS}rem;
     `}
 `;
 
@@ -97,6 +98,11 @@ const IconCheck = styled(IconCheck16)`
 const DocsButton = styled(Button)`
     margin-top: 1.6rem;
     border-radius: 46px;
+
+    ${respondDown(Breakpoints.sm)`
+        padding: 0 2.4rem;
+        height: 4rem;
+    `}
 
     ${respondDown(Breakpoints.xs)`
         width: 100%;

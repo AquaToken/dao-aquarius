@@ -131,6 +131,7 @@ const SorobanButton = styled(Button)`
 
     ${respondDown(Breakpoints.sm)`
         margin-top: 3.2rem;
+        height: 4rem;
     `}
 
     ${respondDown(Breakpoints.xs)`

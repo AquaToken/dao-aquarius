@@ -131,6 +131,12 @@ const Link = styled(BlankExternalLink)`
     ${respondDown(Breakpoints.xs)`
         flex: 1 1 100%;
         max-width: 100%;
+        padding: 1.6rem;
+
+        svg {
+            height: 3.6rem;
+            width: 3.6rem;
+        }
     `}
 `;
 

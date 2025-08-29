@@ -13,7 +13,6 @@ import { StellarService } from 'services/globalServices';
 import { COLORS } from 'web/styles';
 
 import Community from 'components/Community';
-import Subscribe from 'components/Subscribe';
 
 import { TotalRewards } from 'pages/vote/api/types';
 
@@ -99,9 +98,11 @@ const MainPage = () => {
                     monthlyDistributed={formattedTotalDistributedMonthly}
                     isLoading={isLoadingStats}
                 />
+            </SectionWrapper>
 
-                <AquaForBuilders />
+            <AquaForBuilders />
 
+            <SectionWrapper>
                 <Community />
             </SectionWrapper>
         </PageContainer>

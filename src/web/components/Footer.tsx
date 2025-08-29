@@ -7,7 +7,7 @@ import { AQUA_DOCS_AUDIT, AQUA_DOCS_URL } from 'constants/urls';
 
 import { normalizePath } from 'helpers/url';
 
-import { flexAllCenter, respondDown } from 'web/mixins';
+import { commonSectionPaddings, flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS, MAX_WIDTHS } from 'web/styles';
 
 import AquaLogo from 'assets/aqua/aqua-logo-text.svg';
@@ -18,27 +18,28 @@ import Docs from 'assets/icon-docs.svg';
 import { BlankRouterLink } from 'basics/links';
 
 const FooterBlock = styled.footer`
+    ${commonSectionPaddings};
     display: flex;
     justify-content: center;
     align-items: center;
     height: 16rem;
-    margin: 5.4rem 2.4rem 4.8rem 2.4rem;
+    margin: 5.4rem 0 4.8rem 0;
 
     ${respondDown(Breakpoints.xl)`
-        margin: 3.6rem 2.4rem 3rem 2.4rem;
+        margin: 3.6rem 0 3rem 0;
     `}
 
     ${respondDown(Breakpoints.md)`
         height: auto;
-        margin: 3.6rem 2.4rem 3rem 2.4rem;
+        margin: 3.6rem 0 3rem 0;
     `}
 
     ${respondDown(Breakpoints.sm)`
-        margin: 3.6rem 1.6rem 3rem 1.6rem;
+        margin: 3.6rem 0 3rem 0;
     `}
 
     ${respondDown(Breakpoints.xs)`
-        margin: 3.6rem 0.8rem 3.6rem 0.8rem;
+        margin: 3.6rem 0 3.6rem 0;
     `}
 `;
 
