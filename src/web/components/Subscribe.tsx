@@ -8,32 +8,13 @@ import Input from 'basics/inputs/Input';
 import { respondDown } from '../mixins';
 import { Breakpoints, COLORS } from '../styles';
 
-const Container = styled.section`
-    padding-top: 3.2rem;
-    display: flex;
-    justify-content: center;
-    flex: auto;
-    position: relative;
-    min-height: 0;
-
-    ${respondDown(Breakpoints.md)`
-        text-align: left;
-    `}
-`;
-
 const Wrapper = styled.div`
     display: flex;
     width: 100%;
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-end;
-    max-width: 142rem;
-    padding: 0 10rem;
-
-    ${respondDown(Breakpoints.md)`
-        padding: 0 1.6rem;
-        max-width: 55rem;
-    `}
+    margin-top: 3.2rem;
 `;
 
 const SubscribeBlock = styled.div`
@@ -41,22 +22,42 @@ const SubscribeBlock = styled.div`
     justify-content: space-between;
     width: 100%;
     background: ${COLORS.lightGray};
-    border-radius: 0.5rem;
-    padding: 4.6rem 4rem 4rem;
+    padding: 4rem 4.6rem;
+    border-radius: 2.4rem;
 
     ${respondDown(Breakpoints.lg)`
         flex-direction: column;
+    `}
+
+    ${respondDown(Breakpoints.md)`
+        padding: 3.2rem;
+    `}
+
+    ${respondDown(Breakpoints.xs)`
+        border-radius: 0;
     `}
 `;
 
 const Header = styled.div`
     display: flex;
-    flex: 1;
+    flex: 3;
     flex-direction: column;
 
     ${respondDown(Breakpoints.lg)`
-        text-align: center;
-        margin-bottom: 2.7rem;
+        margin-bottom: 3.2rem;
+    `}
+
+    ${respondDown(Breakpoints.xs)`
+        display: none;
+        margin-bottom: 2.4rem;
+    `}
+`;
+
+const HeaderXS = styled(Header)`
+    display: none;
+
+    ${respondDown(Breakpoints.xs)`
+        display: block;
     `}
 `;
 
@@ -65,45 +66,51 @@ const Title = styled.div`
     line-height: 4.1rem;
     color: ${COLORS.titleText};
     margin-bottom: 0;
+
+    ${respondDown(Breakpoints.xs)`
+        margin-bottom: 1.6rem;
+    `}
 `;
 
 const Description = styled.div`
     font-size: 1.6rem;
-    line-height: 3rem;
+    line-height: 180%;
     color: ${COLORS.descriptionText};
     opacity: 0.7;
 
     ${respondDown(Breakpoints.md)`
-        margin-top: 1.6rem;
         font-size: 1.4rem;
-        line-height: 180%;
     `}
-`;
-
-const FormContainer = styled.div`
-    display: flex;
-    flex: 1.2;
-    width: 100%;
 `;
 
 const Form = styled.form`
     display: flex;
+    flex: 4;
     justify-content: space-around;
     align-items: center;
     width: 100%;
+    gap: 2.6rem;
 
-    ${respondDown(Breakpoints.md)`
+    ${respondDown(Breakpoints.xs)`
         flex-direction: column;
     `}
 `;
 
 const StyledButton = styled(Button)`
-    margin-left: 2.5rem;
+    max-width: 20rem;
 
     ${respondDown(Breakpoints.md)`
-        margin: 2.7rem 0;
+        max-width: 26rem;
+    `};
+
+    ${respondDown(Breakpoints.sm)`
+        max-width: 19rem;
+    `};
+
+    ${respondDown(Breakpoints.xs)`
         width: 100%;
-    `}
+        max-width: 100%;
+    `};
 `;
 
 const encode = (data: { [key: string]: string }) =>
@@ -125,35 +132,35 @@ const Subscribe = (): React.ReactNode => {
 
         e.preventDefault();
     };
-    return (
-        <Container>
-            <Wrapper>
-                <SubscribeBlock>
-                    <Header>
-                        <Title>Subscribe to stay updated</Title>
-                        <Description>
-                            Aquarius is moving fast, do not forget to subscribe to news
-                        </Description>
-                    </Header>
-                    <FormContainer>
-                        <Form onSubmit={handleSubmit}>
-                            <input type="hidden" name="form-name" value="subscribe" />
 
-                            <Input
-                                type="email"
-                                name="email"
-                                placeholder="Enter your email"
-                                value={email}
-                                onChange={e => setEmail(e.target.value)}
-                            />
-                            <StyledButton isBig type="submit">
-                                Subscribe
-                            </StyledButton>
-                        </Form>
-                    </FormContainer>
-                </SubscribeBlock>
-            </Wrapper>
-        </Container>
+    const HeaderContent = (
+        <>
+            <Title>Subscribe to stay updated</Title>
+            <Description>Aquarius is moving fast, do not forget to subscribe to news</Description>
+        </>
+    );
+
+    return (
+        <Wrapper>
+            <HeaderXS>{HeaderContent}</HeaderXS>
+            <SubscribeBlock>
+                <Header>{HeaderContent}</Header>
+                <Form onSubmit={handleSubmit}>
+                    <input type="hidden" name="form-name" value="subscribe" />
+
+                    <Input
+                        type="email"
+                        name="email"
+                        placeholder="Enter your email"
+                        value={email}
+                        onChange={e => setEmail(e.target.value)}
+                    />
+                    <StyledButton isBig type="submit">
+                        Subscribe
+                    </StyledButton>
+                </Form>
+            </SubscribeBlock>
+        </Wrapper>
     );
 };
 

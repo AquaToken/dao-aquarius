@@ -28,7 +28,6 @@ import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 import { getPairsWithBribes } from 'pages/vote/api/api';
 import BribesModal from 'pages/vote/components/MainPage/BribesModal/BribesModal';
 
-
 const Container = styled.div``;
 
 const LoaderContainer = styled.div`

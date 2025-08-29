@@ -11,3 +11,5 @@ export const getOnRampWidgetUrl = (params): string => {
     const urlParams = new URLSearchParams(params).toString();
     return `${COINDISCO_WIDGET_URL}?${urlParams}`;
 };
+
+export const normalizePath = (path: string) => (path !== '/' ? path.replace(/\/+$/, '') : path);

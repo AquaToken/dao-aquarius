@@ -77,3 +77,11 @@ export enum Breakpoints {
     xxl = '1600px',
     xxxl = '1800px',
 }
+
+export const MAX_WIDTHS = {
+    common: '122rem',
+    wide: '136rem',
+};
+
+// in rem
+export const PAGE_PADDINGS = 2.4;

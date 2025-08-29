@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 
+import { MAX_X_ICE_BOOST } from 'constants/ice';
+
 import { convertLocalDateToUTCIgnoringTimezone, getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
+import { getIceMaxApy } from 'helpers/ice';
 
 import { StellarService } from 'services/globalServices';
 
@@ -21,8 +24,6 @@ import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 import Table, { CellAlign } from 'basics/Table';
 
 import { PairStats } from '../../../api/types';
-import { getIceMaxApy } from 'helpers/ice';
-import { MAX_X_ICE_BOOST } from 'constants/ice';
 
 const BribeDetails = styled.div`
     display: flex;

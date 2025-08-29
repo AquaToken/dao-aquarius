@@ -6,6 +6,7 @@ import { convertLocalDateToUTCIgnoringTimezone, getDateString } from 'helpers/da
 import { formatBalance } from 'helpers/format-number';
 
 import { StellarService } from 'services/globalServices';
+
 import { COLORS } from 'web/styles';
 
 import Asset from 'basics/Asset';

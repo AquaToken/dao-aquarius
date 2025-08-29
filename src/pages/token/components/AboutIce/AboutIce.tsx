@@ -189,7 +189,7 @@ const AboutIce = () => (
                 <SubTitle>and unlock extra benefits</SubTitle>
 
                 <List>
-                    <Item>Increase your voting power</Item>
+                    <Item>Vote for markets so they generate more rewards</Item>
                     <Item>Earn more from liquidity with ICE boosts</Item>
                     <Item>Delegate ICE and earn passive rewards</Item>
                 </List>

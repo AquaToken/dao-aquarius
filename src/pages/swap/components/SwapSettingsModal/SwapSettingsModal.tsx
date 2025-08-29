@@ -2,9 +2,10 @@ import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
 
+import { ToastService } from 'services/globalServices';
+
 import { ModalProps } from 'types/modal';
 
-import { ToastService } from 'services/globalServices';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
