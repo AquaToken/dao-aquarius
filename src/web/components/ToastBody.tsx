@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import Timer from 'helpers/timer';
 
 import useAnimationEnd from 'hooks/useAnimationEnd';
+
 import { TOAST_TYPE } from 'services/toast.service';
 
 import IconClose from 'assets/icon-close-small.svg';

@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/named
 import { css, CSSObject, Interpolation } from 'styled-components';
 
-import { Breakpoints, COLORS } from './styles';
+import { Breakpoints, COLORS, PAGE_PADDINGS } from './styles';
 
 export const textEllipsis = css`
     overflow: hidden;
@@ -96,5 +96,25 @@ export const contentWithSidebar = css`
 
     ${respondDown(Breakpoints.lg)`
         padding: 3.2rem 1.6rem 0;
+    `}
+`;
+
+export const fullWidthSectionStyles = css`
+    width: calc(100% - ${PAGE_PADDINGS * 2}rem);
+
+    ${respondDown(Breakpoints.sm)`
+        width: calc(100% - ${PAGE_PADDINGS * 2}rem);
+        padding-left: ${PAGE_PADDINGS}rem;
+        padding-right: ${PAGE_PADDINGS}rem;
+    `}
+
+    ${respondDown(Breakpoints.xs)`
+        width: 100%;
+    `}
+`;
+
+export const commonSectionPaddings = css`
+    ${respondDown(Breakpoints.xl)`
+        padding: 0 ${PAGE_PADDINGS}rem;
     `}
 `;

@@ -25,6 +25,7 @@ const Container = styled.section`
     display: flex;
     flex-direction: column;
     position: relative;
+    width: 100%;
 
     ${respondDown(Breakpoints.md)`
         height: unset;

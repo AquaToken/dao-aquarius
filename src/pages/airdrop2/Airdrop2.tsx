@@ -1,12 +1,11 @@
-import * as React from 'react';
 import { useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { StellarService, ToastService } from 'services/globalServices';
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
+
+import { PageContainer, SectionWrapper } from 'web/pages/commonPageStyles';
 
 import Community from 'components/Community';
 import Subscribe from 'components/Subscribe';
@@ -18,12 +17,6 @@ import FAQ from './components/FAQ/FAQ';
 import MainBlock from './components/MainBlock/MainBlock';
 import SnapshotStats from './components/SnapshotStats/SnapshotStats';
 import SupportedBy from './components/SupportedBy/SupportedBy';
-
-const Container = styled.div`
-    ${respondDown(Breakpoints.md)`
-         background-color: ${COLORS.white};
-    `}
-`;
 
 const Airdrop2 = () => {
     const { isLogged, account } = useAuthStore();
@@ -58,7 +51,7 @@ const Airdrop2 = () => {
     };
 
     return (
-        <Container>
+        <PageContainer>
             <MainBlock />
 
             <Conditions
@@ -81,10 +74,12 @@ const Airdrop2 = () => {
 
             <FAQ />
 
-            <Community />
+            <SectionWrapper>
+                <Community />
 
-            <Subscribe />
-        </Container>
+                <Subscribe />
+            </SectionWrapper>
+        </PageContainer>
     );
 };
 
