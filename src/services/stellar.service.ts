@@ -950,13 +950,13 @@ export default class StellarServiceClass {
         });
     }
 
-    createDelegateTx(account, delegateDestionation, amount) {
+    createDelegateTx(account, token: ClassicToken, delegateDestionation, amount) {
         return this.buildTx(
             account,
             StellarSdk.Operation.createClaimableBalance({
                 source: account.accountId(),
                 amount: amount.toString(),
-                asset: this.createAsset(UP_ICE_CODE, ICE_ISSUER),
+                asset: token,
                 claimants: [
                     new StellarSdk.Claimant(
                         account.accountId(),
@@ -1035,8 +1035,9 @@ export default class StellarServiceClass {
                     claimant.destination === accountId && !!claimant.predicate?.not?.unconditional,
             );
             const isUpvoteIce = claim.asset === `${UP_ICE_CODE}:${ICE_ISSUER}`;
+            const isGovernIce = claim.asset === `${GOV_ICE_CODE}:${ICE_ISSUER}`;
 
-            if (hasMarker && Boolean(selfClaim) && isUpvoteIce) {
+            if (hasMarker && Boolean(selfClaim) && (isUpvoteIce || isGovernIce)) {
                 acc.push(claim);
             }
             return acc;

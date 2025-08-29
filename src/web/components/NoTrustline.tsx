@@ -118,7 +118,7 @@ const NoTrustline = ({
     if (onlyButton) {
         return (
             <Button onClick={() => addTrust()} pending={trustlinePending} {...props}>
-                add trustline
+                add {asset.code} trustline
             </Button>
         );
     }

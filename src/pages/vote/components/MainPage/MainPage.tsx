@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { D_ICE_CODE, DOWN_ICE_CODE, ICE_ISSUER, UP_ICE_CODE } from 'constants/assets';
+import { D_ICE_CODE, DOWN_ICE_CODE, GOV_ICE_CODE, ICE_ISSUER, UP_ICE_CODE } from 'constants/assets';
 import { MainRoutes, MarketRoutes } from 'constants/routes';
 
 import { getAssetString } from 'helpers/assets';
@@ -325,6 +325,7 @@ const PAGE_SIZE = 20;
 const UPDATE_INTERVAL = 60 * 1000; // 1 minute
 
 export const UP_ICE = StellarService?.createAsset(UP_ICE_CODE, ICE_ISSUER);
+export const GOV_ICE = StellarService?.createAsset(GOV_ICE_CODE, ICE_ISSUER);
 export const DOWN_ICE = StellarService?.createAsset(DOWN_ICE_CODE, ICE_ISSUER);
 export const DELEGATE_ICE = StellarService?.createAsset(D_ICE_CODE, ICE_ISSUER);
 

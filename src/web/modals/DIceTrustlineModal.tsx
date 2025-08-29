@@ -1,9 +1,11 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { D_ICE_CODE, ICE_ISSUER } from 'constants/assets';
+import { D_ICE_CODE, GD_ICE_CODE, ICE_ISSUER } from 'constants/assets';
 
 import { StellarService } from 'services/globalServices';
+
+import { ModalProps } from 'types/modal';
 
 import { flexColumnCenter } from 'web/mixins';
 import { COLORS } from 'web/styles';
@@ -39,27 +41,50 @@ const AssetBlock = styled.div`
     }
 `;
 
-const DIceTrustlineModal = () => (
-    <ModalWrapper>
-        <ModalTitle>You’ve Been Delegated ICE</ModalTitle>
-        <ModalDescription>
-            Someone has delegated ICE to your account — a dICE payment is pending. Add a trustline
-            to receive it. The dICE will be credited to your balance within 30 minutes, after which
-            you’ll be able to vote on the liquidity voting page.
-        </ModalDescription>
-        <AssetBlock>
-            <DIceLogo />
-            <h4>dICE</h4>
-            <span>aqua.network</span>
-        </AssetBlock>
-        <NoTrustline
-            asset={StellarService.createAsset(D_ICE_CODE, ICE_ISSUER)}
-            onlyButton
-            fullWidth
-            isBig
-            closeModalAfterSubmit
-        />
-    </ModalWrapper>
-);
+interface Params {
+    neededDIceTrustline: boolean;
+    neededGDIceTrustline: boolean;
+}
+
+const DIceTrustlineModal = ({ params }: ModalProps<Params>) => {
+    const { neededDIceTrustline, neededGDIceTrustline } = params;
+    return (
+        <ModalWrapper>
+            <ModalTitle>You’ve Been Delegated ICE</ModalTitle>
+            <ModalDescription>
+                Someone has delegated ICE to your account — a {neededDIceTrustline ? 'dICE' : ''}
+                {neededDIceTrustline && neededGDIceTrustline ? ',' : ''}{' '}
+                {neededGDIceTrustline ? 'gdICE' : ''}
+                payment is pending. Add a trustline to receive it. The dICE will be credited to your
+                balance within 30 minutes, after which you’ll be able to vote on the liquidity
+                voting page.
+            </ModalDescription>
+            <AssetBlock>
+                <DIceLogo />
+                {neededDIceTrustline && <h4>dICE</h4>}
+                {neededGDIceTrustline && <h4>gdICE</h4>}
+                <span>aqua.network</span>
+            </AssetBlock>
+            {neededDIceTrustline && (
+                <NoTrustline
+                    asset={StellarService.createAsset(D_ICE_CODE, ICE_ISSUER)}
+                    onlyButton
+                    fullWidth
+                    isBig
+                    closeModalAfterSubmit
+                />
+            )}
+            {neededGDIceTrustline && (
+                <NoTrustline
+                    asset={StellarService.createAsset(GD_ICE_CODE, ICE_ISSUER)}
+                    onlyButton
+                    fullWidth
+                    isBig
+                    closeModalAfterSubmit
+                />
+            )}
+        </ModalWrapper>
+    );
+};
 
 export default DIceTrustlineModal;
