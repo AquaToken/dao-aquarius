@@ -86,7 +86,13 @@ const MigrateToSorobanBanner = ({
     }
 
     const migrate = () => {
-        ModalService.openModal(MigrateLiquidityStep1, { pool, poolsToMigrate, base, counter });
+        ModalService.openModal(MigrateLiquidityStep1, {
+            pool,
+            poolsToMigrate,
+            base,
+            counter,
+            onUpdate: () => {},
+        });
     };
 
     return (

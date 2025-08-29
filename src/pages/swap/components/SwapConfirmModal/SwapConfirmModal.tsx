@@ -93,9 +93,11 @@ const SwapConfirmModal = ({
     const { account } = useAuthStore();
 
     useEffect(() => {
-        Promise.all(bestPath.map(str => SorobanService.parseTokenContractId(str))).then(res => {
-            setPathTokens(res);
-        });
+        Promise.all(bestPath.map(str => SorobanService.token.parseTokenContractId(str))).then(
+            res => {
+                setPathTokens(res);
+            },
+        );
     }, []);
 
     useEffect(() => {
@@ -117,21 +119,27 @@ const SwapConfirmModal = ({
             : ((1 + Number(SLIPPAGE) / 100) * Number(baseAmount)).toFixed(
                   (base as SorobanToken).decimal ?? 7,
               );
-        SorobanService.getSwapChainedTx(
-            account?.accountId(),
-            base,
-            counter,
-            bestPathXDR,
-            isSend ? baseAmount : counterAmount,
-            minAmount,
-            isSend,
-        ).then(res => {
-            SorobanService.simulateTx(res).then(
-                ({ minResourceFee }: StellarSdk.rpc.Api.SimulateTransactionSuccessResponse) => {
-                    setTxFee(minResourceFee);
-                },
-            );
-        });
+        SorobanService.amm
+            .getSwapChainedTx(
+                account?.accountId(),
+                base,
+                counter,
+                bestPathXDR,
+                isSend ? baseAmount : counterAmount,
+                minAmount,
+                isSend,
+            )
+            .then(res => {
+                SorobanService.connection
+                    .simulateTx(res)
+                    .then(
+                        ({
+                            minResourceFee,
+                        }: StellarSdk.rpc.Api.SimulateTransactionSuccessResponse) => {
+                            setTxFee(minResourceFee);
+                        },
+                    );
+            });
     }, []);
 
     const swap = () => {
@@ -151,15 +159,16 @@ const SwapConfirmModal = ({
 
         let hash: string;
 
-        SorobanService.getSwapChainedTx(
-            account?.accountId(),
-            base,
-            counter,
-            bestPathXDR,
-            isSend ? baseAmount : counterAmount,
-            minAmount,
-            isSend,
-        )
+        SorobanService.amm
+            .getSwapChainedTx(
+                account?.accountId(),
+                base,
+                counter,
+                bestPathXDR,
+                isSend ? baseAmount : counterAmount,
+                minAmount,
+                isSend,
+            )
             .then(tx => {
                 hash = tx.hash().toString('hex');
                 return account.signAndSubmitTx(tx, true);
@@ -181,9 +190,15 @@ const SwapConfirmModal = ({
 
                 const sentAmount = isSend
                     ? baseAmount
-                    : SorobanService.i128ToInt(res as xdr.ScVal, (base as SorobanToken).decimal);
+                    : SorobanService.scVal.i128ToInt(
+                          res as xdr.ScVal,
+                          (base as SorobanToken).decimal,
+                      );
                 const receivedAmount = isSend
-                    ? SorobanService.i128ToInt(res as xdr.ScVal, (counter as SorobanToken).decimal)
+                    ? SorobanService.scVal.i128ToInt(
+                          res as xdr.ScVal,
+                          (counter as SorobanToken).decimal,
+                      )
                     : counterAmount;
 
                 ModalService.openModal(SuccessModal, {
@@ -220,14 +235,6 @@ const SwapConfirmModal = ({
                 setSwapPending(false);
             });
     };
-
-    if (!fees || !pathTokens) {
-        return (
-            <ModalWrapper>
-                <PageLoader />
-            </ModalWrapper>
-        );
-    }
 
     return (
         <ModalWrapper>
@@ -279,22 +286,26 @@ const SwapConfirmModal = ({
                 <span />
             </DescriptionRow>
 
-            <Pools>
-                {bestPools.map((pool, index) => {
-                    const base = pathTokens[index];
-                    const counter = pathTokens[index + 1];
-                    return (
-                        <PathPool
-                            key={pool}
-                            baseIcon={<AssetLogo asset={base} />}
-                            counterIcon={<AssetLogo asset={counter} />}
-                            fee={fees.get(pool)}
-                            address={pool}
-                            isLastPool={index === bestPools.length - 1}
-                        />
-                    );
-                })}
-            </Pools>
+            {!fees || !pathTokens ? (
+                <PageLoader />
+            ) : (
+                <Pools>
+                    {bestPools.map((pool, index) => {
+                        const base = pathTokens[index];
+                        const counter = pathTokens[index + 1];
+                        return (
+                            <PathPool
+                                key={pool}
+                                baseIcon={<AssetLogo asset={base} />}
+                                counterIcon={<AssetLogo asset={counter} />}
+                                fee={fees.get(pool)}
+                                address={pool}
+                                isLastPool={index === bestPools.length - 1}
+                            />
+                        );
+                    })}
+                </Pools>
+            )}
 
             <Divider />
             <StickyButtonWrapper>

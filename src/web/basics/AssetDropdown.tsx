@@ -291,7 +291,7 @@ const AssetDropdown = ({
 
     const assets = [
         ...filteredBalances,
-        ...(assetsList
+        ...(knownAssetsList
             ?.filter(
                 knownAsset =>
                     !filteredBalances.find(asset => asset.token.contract === knownAsset.contract),

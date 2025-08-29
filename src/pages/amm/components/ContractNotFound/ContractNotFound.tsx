@@ -40,7 +40,8 @@ const ContractNotFound = ({ asset, onSuccess }: ContractNotFoundProps): React.Re
         }
         setPending(true);
 
-        SorobanService.deployAssetContractTx(account.accountId(), asset)
+        SorobanService.token
+            .deployAssetContractTx(account.accountId(), asset)
             .then(tx => account.signAndSubmitTx(tx))
             .then(() => {
                 onSuccess();

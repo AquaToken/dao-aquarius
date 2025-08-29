@@ -69,7 +69,8 @@ const AssetsList = styled.div`
 
     ${respondDown(Breakpoints.md)`
         margin-bottom: 1rem;
-        height: 40rem;
+        height: calc(100vh - 35rem);
+        max-height: unset;
         width: 100%;
     `};
 `;
@@ -239,7 +240,7 @@ const AssetPickerModal = ({ params, confirm }: ModalProps<Props>) => {
     };
 
     return (
-        <ModalWrapper $minHeight="75vh">
+        <ModalWrapper $minHeight="30rem">
             <ModalTitle>Choose asset</ModalTitle>
             <StyledInput
                 placeholder="Search asset or enter home domain"

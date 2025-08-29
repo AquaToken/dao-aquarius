@@ -139,23 +139,6 @@ export default class StellarServiceClass {
     get isClaimableBalancesLoaded() {
         return this.claimableBalances !== null;
     }
-    loginWithSecret(secretKey: string): Promise<string> {
-        return new Promise((resolve, reject) => {
-            try {
-                this.keypair = StellarSdk.Keypair.fromSecret(secretKey);
-
-                resolve(this.keypair.publicKey());
-            } catch (e) {
-                reject(e);
-            }
-        });
-    }
-
-    logoutWithSecret() {
-        if (this.keypair) {
-            this.keypair = null;
-        }
-    }
 
     async buildTx(
         account: StellarSdk.Account,

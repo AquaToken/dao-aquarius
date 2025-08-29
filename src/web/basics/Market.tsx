@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { POOL_TYPE } from 'constants/amm';
 import { AmmRoutes, MarketRoutes } from 'constants/routes';
 
 import { getAssetString } from 'helpers/assets';
@@ -12,9 +13,7 @@ import { LumenInfo } from 'store/assetsStore/reducer';
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
 import { ModalService } from 'services/globalServices';
-import { POOL_TYPE } from 'services/soroban.service';
 
-import { Asset } from 'types/stellar';
 import { ClassicToken, Token, TokenType } from 'types/token';
 
 import { flexAllCenter, respondDown } from 'web/mixins';
@@ -272,7 +271,7 @@ const Market = ({
         if (asset.type === TokenType.soroban) {
             return [asset.name, 'soroban token'];
         }
-        if (asset.isNative()) {
+        if (asset?.isNative?.()) {
             return [LumenInfo.name, LumenInfo.home_domain];
         }
 
