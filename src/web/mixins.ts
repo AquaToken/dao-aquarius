@@ -141,3 +141,23 @@ export const EmptyList = css`
         line-height: 2rem;
     }
 `;
+
+export const fullWidthSectionStyles = css`
+    width: calc(100% - ${PAGE_PADDINGS * 2}rem);
+
+    ${respondDown(Breakpoints.sm)`
+        width: calc(100% - ${PAGE_PADDINGS * 2}rem);
+        padding-left: ${PAGE_PADDINGS}rem;
+        padding-right: ${PAGE_PADDINGS}rem;
+    `}
+
+    ${respondDown(Breakpoints.xs)`
+        width: 100%;
+    `}
+`;
+
+export const commonSectionPaddings = css`
+    ${respondDown(Breakpoints.xl)`
+        padding: 0 ${PAGE_PADDINGS}rem;
+    `}
+`;
