@@ -983,3 +983,42 @@ export function getScheduleIncentiveTx(
         swapChainedScVal,
     ).then(tx => prepareTransaction(tx));
 }
+
+export function getIncentivesConfig(): Promise<{ duration: number; minAquaAmount: number }> {
+    const batches = [
+        scValToArray([
+            contractIdToScVal(AMM_SMART_CONTRACT_ID),
+            xdr.ScVal.scvSymbol(AMM_CONTRACT_METHOD.GET_INCENTIVES_MIN_DURATION),
+            scValToArray([]),
+        ]),
+        scValToArray([
+            contractIdToScVal(AMM_SMART_CONTRACT_ID),
+            xdr.ScVal.scvSymbol(AMM_CONTRACT_METHOD.GET_INCENTIVES_MIN_DAILY_AMOUNT),
+            scValToArray([]),
+        ]),
+    ];
+
+    return buildSmartContractTx(
+        ACCOUNT_FOR_SIMULATE,
+        BATCH_SMART_CONTRACT_ID,
+        BATCH_CONTRACT_METHOD.batch,
+        scValToArray([publicKeyToScVal(ACCOUNT_FOR_SIMULATE)]),
+        scValToArray(batches),
+        xdr.ScVal.scvBool(true),
+    )
+        .then(tx => simulateTx(tx))
+        .then(res => {
+            if (!(res as StellarSdk.rpc.Api.SimulateTransactionSuccessResponse).result) {
+                throw new Error('getPoolsRewards error');
+            }
+
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            const [duration, minAquaAmount] = res.result.retval.value();
+
+            return {
+                duration: +i128ToInt(duration, 0),
+                minAquaAmount: +i128ToInt(minAquaAmount, 7),
+            };
+        });
+}

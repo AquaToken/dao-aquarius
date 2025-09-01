@@ -7,7 +7,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 import { findSwapPath, getAssetsList, getPoolsForIncentives } from 'api/amm';
 
-import { MAX_TOKEN_AMOUNT, MINIMUM_AQUA_EQUIVALENT } from 'constants/incentives';
+import { MAX_TOKEN_AMOUNT } from 'constants/incentives';
 import { MINUTE, WEEK } from 'constants/intervals';
 import { IncentivesRoutes } from 'constants/routes';
 
@@ -25,6 +25,7 @@ import useAssetsStore from 'store/assetsStore/useAssetsStore';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService } from 'services/globalServices';
+import { getIncentivesConfig } from 'services/soroban/contracts/ammContract';
 
 import { PoolProcessed } from 'types/amm';
 import { Token } from 'types/token';
@@ -131,6 +132,7 @@ const AddIncentivePage = () => {
     const [markets, setMarkets] = useState<PoolProcessed[] | null>(null);
     const [selectedMarket, setSelectedMarket] = useState<PoolProcessed | null>(null);
     const [step, setStep] = useState(Step.market);
+    const [config, setConfig] = useState(null);
 
     const [rewardToken, setRewardToken] = useState<Token>(getAquaAssetData().aquaStellarAsset);
     const [assetsList, setAssetsList] = useState(null);
@@ -149,6 +151,10 @@ const AddIncentivePage = () => {
     const { aquaContract } = getAquaAssetData();
 
     const { isLogged } = useAuthStore();
+
+    useEffect(() => {
+        getIncentivesConfig().then(setConfig);
+    }, []);
 
     useEffect(() => {
         getPoolsForIncentives().then(setMarkets);
@@ -213,7 +219,7 @@ const AddIncentivePage = () => {
     const amountInputPostfix =
         debouncedAmount.current !== null && aquaEquivalent === null ? (
             <CircleLoader size="small" />
-        ) : Number(aquaEquivalent) >= MINIMUM_AQUA_EQUIVALENT ? (
+        ) : Number(aquaEquivalent) >= config?.minAquaAmount ? (
             <SuccessIcon />
         ) : isInvalidAmount ? (
             <Tooltip
@@ -228,7 +234,7 @@ const AddIncentivePage = () => {
             <Tooltip
                 content={
                     <TooltipInner>
-                        The incentive appears to be under {formatBalance(MINIMUM_AQUA_EQUIVALENT)}{' '}
+                        The incentive appears to be under {formatBalance(config?.minAquaAmount)}{' '}
                         AQUA in value.
                     </TooltipInner>
                 }
@@ -256,7 +262,7 @@ const AddIncentivePage = () => {
         });
     };
 
-    if (!markets) {
+    if (!markets || !config) {
         return (
             <MainBlock>
                 <PageLoader />
@@ -415,7 +421,7 @@ const AddIncentivePage = () => {
                                                 },
                                             },
                                         ]}
-                                        minDate={addDays(startDay, 7)}
+                                        minDate={addDays(startDay, config.duration / 24 / 60 / 60)}
                                     />
                                 </FormRow>
 

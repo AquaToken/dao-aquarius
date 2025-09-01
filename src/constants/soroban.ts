@@ -40,6 +40,8 @@ export enum AMM_CONTRACT_METHOD {
     SCHEDULE_INCENTIVE = 'pool_gauge_schedule_reward',
     GET_INCENTIVES_INFO = 'gauges_get_reward_info',
     CLAIM_INCENTIVES = 'gauges_claim',
+    GET_INCENTIVES_MIN_DAILY_AMOUNT = 'pool_gauge_get_min_daily_amount',
+    GET_INCENTIVES_MIN_DURATION = 'pool_gauge_get_min_duration',
 }
 
 export enum BATCH_CONTRACT_METHOD {
