@@ -455,6 +455,10 @@ export default class StellarServiceClass {
                             asset_code: string;
                         };
 
+                        if (!Number(amount)) {
+                            return;
+                        }
+
                         ToastService.showSuccessToast(
                             `Payment received: ${formatBalance(Number(amount))} ${
                                 asset_type === 'native' ? 'XLM' : asset_code

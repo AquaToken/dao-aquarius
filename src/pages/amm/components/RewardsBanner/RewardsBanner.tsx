@@ -168,7 +168,7 @@ const RewardsBanner = ({
             {[...incentivesSum.keys()]
                 .filter(token => token.contract !== aquaStellarAsset.contract)
                 .map(token => (
-                    <NoTrustlineStyled key={token.contract} asset={token} onlyButton />
+                    <NoTrustlineStyled key={token.contract} asset={token} />
                 ))}
         </RewardsWrap>
     );
