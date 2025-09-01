@@ -2,10 +2,14 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { getAssetsList } from 'api/amm';
+
 import { contractValueToAmount } from 'helpers/amount';
 import { getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
+import { getTokensFromCache } from 'helpers/swap';
 
+import useAssetsStore from 'store/assetsStore/useAssetsStore';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService, SorobanService } from 'services/globalServices';
@@ -120,6 +124,9 @@ const Sidebar = ({ pool }: { pool: PoolExtended }) => {
     const [accountShare, setAccountShare] = useState(null);
     const [source, setSource] = useState(pool.tokens[0]);
     const [destination, setDestination] = useState(pool.tokens[1]);
+    const [assetsList, setAssetsList] = useState(getTokensFromCache());
+
+    const { processNewAssets } = useAssetsStore();
 
     const changeSource = asset => {
         if (getAssetString(asset) === getAssetString(destination)) {
@@ -134,6 +141,13 @@ const Sidebar = ({ pool }: { pool: PoolExtended }) => {
         }
         setDestination(asset);
     };
+
+    useEffect(() => {
+        getAssetsList().then(res => {
+            processNewAssets(res);
+            setAssetsList(res);
+        });
+    }, []);
 
     useEffect(() => {
         if (!account) {
@@ -241,6 +255,7 @@ const Sidebar = ({ pool }: { pool: PoolExtended }) => {
                     setBase={changeSource}
                     counter={destination}
                     setCounter={changeDestination}
+                    assetsList={assetsList}
                     isEmbedded
                 />
             </Card>
