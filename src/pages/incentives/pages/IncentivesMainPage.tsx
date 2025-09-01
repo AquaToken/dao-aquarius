@@ -4,6 +4,8 @@ import styled from 'styled-components';
 
 import { IncentivesRoutes } from 'constants/routes';
 
+import FAQ from 'basics/FAQ';
+
 import {
     AddBribeButton,
     Background,
@@ -17,6 +19,7 @@ import {
     Title,
 } from 'pages/bribes/pages/BribesPage';
 import IncentivesList from 'pages/incentives/components/IncentivesList/IncentivesList';
+import { lpIncentivesQuestions } from 'pages/incentives/components/Questions/Questions';
 
 const Main = styled.main`
     flex: 1 0 auto;
@@ -54,6 +57,8 @@ const IncentivesMainPage = () => {
             <TableContainer>
                 <IncentivesList />
             </TableContainer>
+
+            <FAQ questions={lpIncentivesQuestions} />
         </Main>
     );
 };

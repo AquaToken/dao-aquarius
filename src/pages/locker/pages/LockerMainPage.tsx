@@ -3,8 +3,11 @@ import styled from 'styled-components';
 
 import { commonMaxWidth } from 'web/mixins';
 
+import FAQ from 'basics/FAQ';
+
+import { LockerQuestions } from 'pages/locker/components/Questions/Questions';
+
 import AccountInput from '../components/AccountInput/AccountInput';
-import FAQ from '../components/FAQ/FAQ';
 import FreezeAQUA from '../components/LockerMainPage/FreezeAQUA/FreezeAQUA';
 import Purpose from '../components/LockerMainPage/Purpose/Purpose';
 import StatisticBlock from '../components/LockerMainPage/StatisticBlock/StatisticBlock';
@@ -36,7 +39,7 @@ const LockerMainPage = (): React.ReactNode => (
         <MainSection>
             <WhyFreezeAQUA />
         </MainSection>
-        <FAQ />
+        <FAQ questions={LockerQuestions} />
     </>
 );
 

@@ -231,7 +231,7 @@ const AquaPerformance = () => {
                         />
                     </BlockHeader>
                     <BlockRow>
-                        <span>Volume 24h</span>
+                        <span>Volume 24H</span>
                         <span>
                             {sdexStats ? (
                                 `${formatBalance(sdexStats.volume, true, true)} AQUA`
@@ -241,7 +241,7 @@ const AquaPerformance = () => {
                         </span>
                     </BlockRow>
                     <BlockRow>
-                        <span>Change 24h</span>
+                        <span>Change 24H</span>
                         <span>
                             {sdexStats ? (
                                 <Changes24 changes24h={sdexStats.changes24h} />

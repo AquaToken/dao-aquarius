@@ -22,11 +22,12 @@ import { Breakpoints, COLORS } from 'web/styles';
 
 import ArrowDown from 'assets/icon-arrow-down.svg';
 
+import FAQ from 'basics/FAQ';
 import PageLoader from 'basics/loaders/PageLoader';
 
 import DelegateBlock from 'pages/locker/components/DelegateBlock/DelegateBlock';
+import { LockerQuestions } from 'pages/locker/components/Questions/Questions';
 
-import FAQ from '../components/FAQ/FAQ';
 import AccountInfoBlock from '../components/LockerAccountPage/AccountInfoBlock/AccountInfoBlock';
 import CurrentLocks from '../components/LockerAccountPage/CurrentLocks/CurrentLocks';
 import IceBlock from '../components/LockerAccountPage/IceBlock/IceBlock';
@@ -250,7 +251,7 @@ const LockerAccountPage = (): React.ReactNode => {
             <MainSection>
                 <WhyFreezeAQUA />
             </MainSection>
-            <FAQ />
+            <FAQ questions={LockerQuestions} />
         </>
     );
 };

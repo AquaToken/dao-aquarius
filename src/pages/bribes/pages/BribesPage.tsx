@@ -11,12 +11,12 @@ import Bribes from 'assets/bribes.svg';
 import Plus from 'assets/icon-plus.svg';
 
 import Button from 'basics/buttons/Button';
+import FAQ from 'basics/FAQ';
 
 import DelegateBlockSmall from 'components/DelegateBlockSmall';
 
 import BribesList from 'pages/bribes/components/BribesPage/BribesList/BribesList';
-
-import FAQ from '../components/BribesPage/FAQ/FAQ';
+import { BribeQuestions } from 'pages/bribes/components/BribesPage/FAQ/Questions';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -185,7 +185,7 @@ const BribesPage = () => {
                 <BribesList />
             </TableContainer>
 
-            <FAQ />
+            <FAQ questions={BribeQuestions} />
         </MainBlock>
     );
 };
