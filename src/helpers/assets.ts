@@ -1,5 +1,7 @@
 import { ASSETS_ENV_DATA } from 'constants/assets';
 
+import { createAsset, createLumen, getTokensFromCache } from 'helpers/token';
+
 import { SorobanService, StellarService } from 'services/globalServices';
 
 import { Asset } from 'types/stellar';
@@ -19,15 +21,22 @@ export const getAssetString = (asset: Token): string => {
 
 export const getStellarAsset = (code: string, issuer: string): Asset => {
     if (!issuer) {
-        return StellarService.createLumen();
+        return createLumen();
     }
 
-    return StellarService.createAsset(code, issuer);
+    return createAsset(code, issuer);
 };
 
 export const getAssetFromString = (str: string, onUpdateCB?: (token: Token) => void): Token => {
     if (StellarService.isValidContract(str)) {
         const result = { contract: str, type: TokenType.soroban } as Token;
+
+        const cache = getTokensFromCache();
+        const cachedToken = cache.find(({ contract }) => contract === str);
+
+        if (cachedToken) {
+            return cachedToken;
+        }
 
         SorobanService.token.parseTokenContractId(str).then((res: Token) => {
             Object.assign(result, res);
@@ -38,7 +47,7 @@ export const getAssetFromString = (str: string, onUpdateCB?: (token: Token) => v
         return result;
     }
     if (str === 'native') {
-        const asset: ClassicToken = StellarService.createLumen() as ClassicToken;
+        const asset: ClassicToken = createLumen() as ClassicToken;
 
         asset.type = TokenType.classic;
         asset.contract = asset.contractId(getNetworkPassphrase());
@@ -51,7 +60,7 @@ export const getAssetFromString = (str: string, onUpdateCB?: (token: Token) => v
 
     const [code, issuer] = str.split(':');
 
-    const asset: ClassicToken = StellarService.createAsset(code, issuer) as ClassicToken;
+    const asset: ClassicToken = createAsset(code, issuer) as ClassicToken;
     asset.type = TokenType.classic;
     asset.contract = asset.contractId(getNetworkPassphrase());
     asset.decimal = 7;
@@ -65,7 +74,7 @@ export const getAssetFromString = (str: string, onUpdateCB?: (token: Token) => v
 export const getAquaAssetData = () => {
     const env = getEnv();
     const data = ASSETS_ENV_DATA[env].aqua;
-    const asset = StellarService.createAsset(data.aquaCode, data.aquaIssuer);
+    const asset = createAsset(data.aquaCode, data.aquaIssuer);
 
     return {
         ...data,
@@ -77,7 +86,7 @@ export const getAquaAssetData = () => {
 export const getUsdcAssetData = () => {
     const env = getEnv();
     const data = ASSETS_ENV_DATA[env].usdc;
-    const asset = StellarService.createAsset(data.usdcCode, data.usdcIssuer);
+    const asset = createAsset(data.usdcCode, data.usdcIssuer);
 
     return {
         ...data,

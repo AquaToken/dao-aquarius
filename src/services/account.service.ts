@@ -9,6 +9,7 @@ import { ASSETS_ENV_DATA, DEFAULT_ICE_ASSETS } from 'constants/assets';
 
 import { getAssetFromString } from 'helpers/assets';
 import { getEnv, getNetworkPassphrase } from 'helpers/env';
+import { createAsset, createLumen } from 'helpers/token';
 
 import { LoginTypes } from 'store/authStore/types';
 
@@ -317,7 +318,7 @@ export default class AccountService extends Horizon.AccountResponse {
     hasAllIceTrustlines() {
         return DEFAULT_ICE_ASSETS.map(asset => {
             const [code, issuer] = asset.split(':');
-            const stellarAsset = StellarService.createAsset(code, issuer);
+            const stellarAsset = createAsset(code, issuer);
             return this.getAssetBalance(stellarAsset);
         }).every(asset => asset !== null);
     }
@@ -325,7 +326,7 @@ export default class AccountService extends Horizon.AccountResponse {
     getUntrustedIceAssets() {
         return DEFAULT_ICE_ASSETS.reduce((acc, asset) => {
             const [code, issuer] = asset.split(':');
-            const stellarAsset = StellarService.createAsset(code, issuer);
+            const stellarAsset = createAsset(code, issuer);
             if (this.getAssetBalance(stellarAsset) === null) {
                 acc.push(stellarAsset);
                 return acc;
@@ -399,7 +400,7 @@ export default class AccountService extends Horizon.AccountResponse {
         );
 
         const classicBalances = classicAssetsBalances.map(balance => {
-            const asset = StellarService.createAsset(balance.asset_code, balance.asset_issuer);
+            const asset = createAsset(balance.asset_code, balance.asset_issuer);
             const contract = asset.contractId(getNetworkPassphrase());
 
             return {
@@ -407,7 +408,7 @@ export default class AccountService extends Horizon.AccountResponse {
                 nativeBalance: nativePrices.has(contract)
                     ? +balance.balance * +nativePrices.get(contract).price
                     : 0,
-                token: StellarService.createAsset(balance.asset_code, balance.asset_issuer),
+                token: createAsset(balance.asset_code, balance.asset_issuer),
             };
         });
 
@@ -430,7 +431,7 @@ export default class AccountService extends Horizon.AccountResponse {
             {
                 balance: nativeBalanceInstance.balance,
                 nativeBalance: +nativeBalanceInstance.balance,
-                token: StellarService.createLumen(),
+                token: createLumen(),
             },
             ...balances,
         ];

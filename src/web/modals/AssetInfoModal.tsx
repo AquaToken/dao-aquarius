@@ -11,6 +11,7 @@ import { getAquaAssetData, getAssetString } from 'helpers/assets';
 import { getDateString } from 'helpers/date';
 import { getIsTestnetEnv } from 'helpers/env';
 import { formatBalance } from 'helpers/format-number';
+import { createLumen } from 'helpers/token';
 
 import { LumenInfo } from 'store/assetsStore/reducer';
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
@@ -289,7 +290,7 @@ const AssetInfoModal = ({ params }: ModalProps<AssetInfoModalParams>): React.Rea
                 <LinkStyled
                     to={`${MainRoutes.swap}/${getAssetString(asset)}/${getAssetString(
                         asset.code === aquaCode && asset.issuer === aquaIssuer
-                            ? StellarService.createLumen()
+                            ? createLumen()
                             : aquaStellarAsset,
                     )}`}
                     onClick={() => ModalService.closeAllModals()}

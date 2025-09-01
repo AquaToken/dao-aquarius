@@ -10,9 +10,8 @@ import {
 import { ACCOUNT_FOR_SIMULATE, BASE_FEE } from 'constants/stellar';
 
 import { getEnv, getNetworkPassphrase } from 'helpers/env';
-import { getTokensFromCache } from 'helpers/swap';
+import { createAsset, createLumen, getTokensFromCache } from 'helpers/token';
 
-import { StellarService } from 'services/globalServices';
 import {
     buildSmartContractTx,
     simulateTx,
@@ -52,8 +51,8 @@ export function parseTokenContractId(contractId: string): Promise<Token> {
         return Promise.resolve(tokensCache.get(contractId));
     }
 
-    if (contractId === StellarService.createLumen().contractId(getNetworkPassphrase())) {
-        const lumen: ClassicToken = StellarService.createLumen() as ClassicToken;
+    if (contractId === createLumen().contractId(getNetworkPassphrase())) {
+        const lumen: ClassicToken = createLumen() as ClassicToken;
         lumen.type = TokenType.classic;
         lumen.contract = contractId;
         lumen.decimal = 7;
@@ -99,10 +98,7 @@ export function parseTokenContractId(contractId: string): Promise<Token> {
             const [code, issuer] = name.split(':');
 
             try {
-                const asset: ClassicToken = StellarService.createAsset(
-                    code,
-                    issuer,
-                ) as ClassicToken;
+                const asset: ClassicToken = createAsset(code, issuer) as ClassicToken;
 
                 if (asset.contractId(getNetworkPassphrase()) !== contractId) {
                     throw new Error();

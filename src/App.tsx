@@ -10,7 +10,7 @@ import { MainRoutes } from 'constants/routes';
 
 import { getEnv, getIsTestnetEnv, setProductionEnv } from 'helpers/env';
 import { getMoonpayKeyByEnv } from 'helpers/moonpay';
-import { cacheTokens } from 'helpers/swap';
+import { cacheTokens, createAsset } from 'helpers/token';
 
 import { LoginTypes } from 'store/authStore/types';
 
@@ -60,6 +60,7 @@ const PrivacyPage = lazy(() => import('pages/privacy/Privacy'));
 const TokenPage = lazy(() => import('pages/token/TokenPage'));
 const QuestPage = lazy(() => import('pages/quest/Quest'));
 const DelegatePage = lazy(() => import('pages/delegate/Delegate'));
+const IncentivesPage = lazy(() => import('pages/incentives/Incentives'));
 
 const UPDATE_ASSETS_DATE = 'update assets timestamp';
 const UPDATE_PERIOD = 24 * 60 * 60 * 1000;
@@ -151,8 +152,7 @@ const App = () => {
 
                 if (
                     delegators.length &&
-                    account.getAssetBalance(StellarService.createAsset(D_ICE_CODE, ICE_ISSUER)) ===
-                        null
+                    account.getAssetBalance(createAsset(D_ICE_CODE, ICE_ISSUER)) === null
                 ) {
                     ModalService.openModal(DIceTrustlineModal, {});
                 }
@@ -318,6 +318,12 @@ const App = () => {
                         <Route path={MainRoutes.delegate}>
                             <PageTitle title="Staging: Delegates - Aquarius">
                                 <DelegatePage />
+                            </PageTitle>
+                        </Route>
+
+                        <Route path={MainRoutes.incentives}>
+                            <PageTitle title="Incentives - Aquarius">
+                                <IncentivesPage />
                             </PageTitle>
                         </Route>
 

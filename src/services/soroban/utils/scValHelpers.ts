@@ -26,6 +26,13 @@ export function amountToUint32(amount: number): xdr.ScVal {
     return xdr.ScVal.scvU32(Math.floor(amount));
 }
 
+export function amountToUint64(amount: string, decimals = 7): xdr.ScVal {
+    return new StellarSdk.XdrLargeInt(
+        'u64',
+        new BigNumber(amount).times(Math.pow(10, decimals)).toFixed(),
+    ).toU64();
+}
+
 export function amountToInt128(amount: string, decimals = 7): xdr.ScVal {
     return new StellarSdk.XdrLargeInt(
         'i128',
@@ -46,4 +53,10 @@ export function scValToNative(value: xdr.ScVal) {
 
 export function i128ToInt(val: xdr.ScVal, decimals = 7): string {
     return new BigNumber(StellarSdk.scValToNative(val)).div(Math.pow(10, decimals)).toString();
+}
+
+export function hashToScVal(hash: string): xdr.ScVal {
+    const bytes = Buffer.from(hash, 'hex');
+
+    return xdr.ScVal.scvBytes(bytes);
 }

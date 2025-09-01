@@ -9,10 +9,11 @@ import { getAssetString } from 'helpers/assets';
 import { convertLocalDateToUTCIgnoringTimezone, getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 import { getIceMaxApy } from 'helpers/ice';
+import { createAsset } from 'helpers/token';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
-import { ModalService, StellarService } from 'services/globalServices';
+import { ModalService } from 'services/globalServices';
 
 import PageLoader from 'web/basics/loaders/PageLoader';
 import { flexAllCenter } from 'web/mixins';
@@ -55,7 +56,7 @@ const CurrentBribes = () => {
     const processAssets = bribes => {
         const assets = bribes.reduce((acc, item) => {
             const rewardAssets = item.aggregated_bribes.map(agr =>
-                StellarService.createAsset(agr.asset_code, agr.asset_issuer),
+                createAsset(agr.asset_code, agr.asset_issuer),
             );
             return [
                 ...acc,
@@ -108,17 +109,14 @@ const CurrentBribes = () => {
                     const stopUTC = convertLocalDateToUTCIgnoringTimezone(
                         new Date(bribe.aggregated_bribes[0].stop_at),
                     );
-                    const base = StellarService.createAsset(bribe.asset1_code, bribe.asset1_issuer);
-                    const counter = StellarService.createAsset(
-                        bribe.asset2_code,
-                        bribe.asset2_issuer,
-                    );
+                    const base = createAsset(bribe.asset1_code, bribe.asset1_issuer);
+                    const counter = createAsset(bribe.asset2_code, bribe.asset2_issuer);
 
                     const { sum, rewardAssets } = bribe.aggregated_bribes.reduce(
                         (acc, bribe) => {
                             acc.sum += Number(bribe.daily_aqua_equivalent);
                             acc.rewardAssets.push(
-                                StellarService.createAsset(bribe.asset_code, bribe.asset_issuer),
+                                createAsset(bribe.asset_code, bribe.asset_issuer),
                             );
                             return acc;
                         },

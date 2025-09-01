@@ -4,10 +4,12 @@ import styled from 'styled-components';
 
 import { VoteRoutes } from 'constants/routes';
 
+import { createAsset, createLumen } from 'helpers/token';
+
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { ModalService, StellarService } from 'services/globalServices';
+import { ModalService } from 'services/globalServices';
 
 import { contentWithSidebar, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
@@ -93,7 +95,7 @@ const isValidPathAsset = (pathAsset: string) => {
     }
 
     try {
-        StellarService.createAsset(code, issuer);
+        createAsset(code, issuer);
         return true;
     } catch {
         return false;
@@ -115,14 +117,9 @@ const MarketPage = () => {
     const [baseCode, baseIssuer] = base.split(':');
     const [counterCode, counterIssuer] = counter.split(':');
 
-    const baseAsset =
-        baseCode === 'native'
-            ? StellarService.createLumen()
-            : StellarService.createAsset(baseCode, baseIssuer);
+    const baseAsset = baseCode === 'native' ? createLumen() : createAsset(baseCode, baseIssuer);
     const counterAsset =
-        counterCode === 'native'
-            ? StellarService.createLumen()
-            : StellarService.createAsset(counterCode, counterIssuer);
+        counterCode === 'native' ? createLumen() : createAsset(counterCode, counterIssuer);
 
     useEffect(() => {
         if (!isValidAssets) {

@@ -7,6 +7,7 @@ import { LockerRoutes } from 'constants/routes';
 
 import ErrorHandler from 'helpers/error-handler';
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
+import { createAsset } from 'helpers/token';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
 import { useIsMounted } from 'hooks/useIsMounted';
@@ -520,14 +521,8 @@ const VotesAmountModal = ({
                     <Market
                         verticalDirections
                         assets={[
-                            StellarService.createAsset(
-                                pairs[0].asset1_code,
-                                pairs[0].asset1_issuer,
-                            ),
-                            StellarService.createAsset(
-                                pairs[0].asset2_code,
-                                pairs[0].asset2_issuer,
-                            ),
+                            createAsset(pairs[0].asset1_code, pairs[0].asset1_issuer),
+                            createAsset(pairs[0].asset2_code, pairs[0].asset2_issuer),
                         ]}
                     />
                 </AssetsInfoBlock>
@@ -595,14 +590,8 @@ const VotesAmountModal = ({
                                 <AssetsInfo>
                                     <Market
                                         assets={[
-                                            StellarService.createAsset(
-                                                pair.asset1_code,
-                                                pair.asset1_issuer,
-                                            ),
-                                            StellarService.createAsset(
-                                                pair.asset2_code,
-                                                pair.asset2_issuer,
-                                            ),
+                                            createAsset(pair.asset1_code, pair.asset1_issuer),
+                                            createAsset(pair.asset2_code, pair.asset2_issuer),
                                         ]}
                                         withoutDomains
                                     />

@@ -25,13 +25,15 @@ import {
     amountToInt128,
     amountToUint128,
     amountToUint32,
+    amountToUint64,
     contractIdToScVal,
+    hashToScVal,
     i128ToInt,
     publicKeyToScVal,
     scValToArray,
 } from 'services/soroban/utils/scValHelpers';
 
-import { PoolRewardsInfo } from 'types/amm';
+import { PoolIncentives, PoolProcessed, PoolRewardsInfo, RewardType } from 'types/amm';
 import { SorobanToken, Token } from 'types/token';
 
 const AMM_SMART_CONTRACT_ID = CONTRACTS[getEnv()].amm;
@@ -146,14 +148,14 @@ export function getInitStableSwapPoolTx(
     return buildSmartContractTxFromOp(accountId, operation).then(tx => prepareTransaction(tx));
 }
 
-function parsePoolRewards(value): PoolRewardsInfo {
+function parsePoolRewards(value, decimals = 7): PoolRewardsInfo {
     return value.reduce((acc, val) => {
         const key = val.key().value().toString();
-        if (key === 'exp_at' || key === 'last_time') {
+        if (key === 'exp_at' || key === 'last_time' || key === 'expired_at') {
             acc[key] = new BigNumber(i128ToInt(val.val()).toString()).times(1e7).toNumber();
             return acc;
         }
-        acc[key] = i128ToInt(val.val());
+        acc[key] = i128ToInt(val.val(), decimals);
         return acc;
     }, {}) as PoolRewardsInfo;
 }
@@ -175,6 +177,37 @@ export function getPoolRewards(accountId: string, poolId: string): Promise<PoolR
 
             throw new Error('getPoolRewards error');
         });
+}
+
+export async function getPoolIncentives(
+    accountId: string,
+    poolId: string,
+): Promise<PoolIncentives[]> {
+    const tx = await buildSmartContractTx(
+        accountId,
+        poolId,
+        AMM_CONTRACT_METHOD.GET_INCENTIVES_INFO,
+        publicKeyToScVal(accountId),
+    );
+    const { result } = await (simulateTx(
+        tx,
+    ) as Promise<StellarSdk.rpc.Api.SimulateTransactionSuccessResponse>);
+    if (result) {
+        return Promise.all(
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            result.retval.value().map(async item => {
+                const token = await parseTokenContractId(
+                    StellarSdk.StrKey.encodeContract(item.key().value().value()),
+                );
+                return {
+                    token,
+                    info: parsePoolRewards(item.val().value(), token.decimal),
+                };
+            }),
+        );
+    }
+    return null;
 }
 
 export function getPoolsRewards(accountId: string, pools: string[]) {
@@ -210,6 +243,54 @@ export function getPoolsRewards(accountId: string, pools: string[]) {
         });
 }
 
+export function getPoolsIncentives(accountId: string, pools: string[]) {
+    const batches = pools.map(pool =>
+        scValToArray([
+            contractIdToScVal(pool),
+            xdr.ScVal.scvSymbol(AMM_CONTRACT_METHOD.GET_INCENTIVES_INFO),
+            scValToArray([publicKeyToScVal(accountId)]),
+        ]),
+    );
+
+    return buildSmartContractTx(
+        accountId,
+        BATCH_SMART_CONTRACT_ID,
+        BATCH_CONTRACT_METHOD.batch,
+        scValToArray([publicKeyToScVal(accountId)]),
+        scValToArray(batches),
+        xdr.ScVal.scvBool(true),
+    )
+        .then(tx => simulateTx(tx))
+        .then(res => {
+            if (!(res as StellarSdk.rpc.Api.SimulateTransactionSuccessResponse).result) {
+                throw new Error('getPoolsIncentives error');
+            }
+
+            const retValArr = (
+                res as StellarSdk.rpc.Api.SimulateTransactionSuccessResponse
+            ).result.retval.value() as unknown[];
+
+            return Promise.all(
+                retValArr.map(
+                    async val =>
+                        await Promise.all(
+                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                            // @ts-ignore
+                            val.value().map(async item => {
+                                const token = await parseTokenContractId(
+                                    StellarSdk.StrKey.encodeContract(item.key().value().value()),
+                                );
+                                return {
+                                    token,
+                                    info: parsePoolRewards(item.val().value(), token.decimal),
+                                };
+                            }),
+                        ),
+                ),
+            );
+        });
+}
+
 export function getTotalShares(poolId: string) {
     return buildSmartContractTx(ACCOUNT_FOR_SIMULATE, poolId, AMM_CONTRACT_METHOD.GET_TOTAL_SHARES)
         .then(
@@ -233,14 +314,29 @@ export function getClaimRewardsTx(accountId: string, poolId: string) {
     ).then(tx => prepareTransaction(tx));
 }
 
-export function getClaimBatchTx(accountId: string, pools: string[]) {
-    const batches = pools.map(pool =>
-        scValToArray([
-            contractIdToScVal(pool),
-            xdr.ScVal.scvSymbol(AMM_CONTRACT_METHOD.CLAIM),
+export function getClaimIncentiveTx(accountId: string, poolId: string) {
+    return buildSmartContractTx(
+        accountId,
+        poolId,
+        AMM_CONTRACT_METHOD.CLAIM_INCENTIVES,
+        publicKeyToScVal(accountId),
+    ).then(tx => prepareTransaction(tx));
+}
+
+export function getClaimBatchTx(accountId: string, poolsAndTypes: string[]) {
+    const batches = poolsAndTypes.map(poolAndType => {
+        const [type, poolId] = poolAndType.split('-');
+
+        return scValToArray([
+            contractIdToScVal(poolId),
+            xdr.ScVal.scvSymbol(
+                type === RewardType.aquaReward
+                    ? AMM_CONTRACT_METHOD.CLAIM
+                    : AMM_CONTRACT_METHOD.CLAIM_INCENTIVES,
+            ),
             scValToArray([publicKeyToScVal(accountId)]),
-        ]),
-    );
+        ]);
+    });
 
     return buildSmartContractTx(
         accountId,
@@ -856,4 +952,34 @@ export function getSwapChainedTx(
         auth: [rootInvocation],
     });
     return buildSmartContractTxFromOp(accountId, operation).then(tx => prepareTransaction(tx));
+}
+
+export function getScheduleIncentiveTx(
+    accountId: string,
+    pool: PoolProcessed,
+    rewardToken: Token,
+    tps: number,
+    startDate: number,
+    endDate: number,
+    chainedXDR: string,
+) {
+    const duration = ((endDate - startDate) / 1000).toFixed();
+
+    const swapChainedScVal = chainedXDR
+        ? xdr.ScVal.fromXDR(chainedXDR, 'base64')
+        : scValToArray([]);
+
+    return buildSmartContractTx(
+        accountId,
+        AMM_SMART_CONTRACT_ID,
+        AMM_CONTRACT_METHOD.SCHEDULE_INCENTIVE,
+        publicKeyToScVal(accountId),
+        scValToArray(pool.tokens.map(token => contractIdToScVal(token.contract))),
+        hashToScVal(pool.index),
+        contractIdToScVal(rewardToken.contract),
+        amountToUint128(tps.toFixed(rewardToken.decimal), rewardToken.decimal),
+        amountToUint64((startDate / 1000).toFixed(), 0),
+        amountToUint64(duration, 0),
+        swapChainedScVal,
+    ).then(tx => prepareTransaction(tx));
 }

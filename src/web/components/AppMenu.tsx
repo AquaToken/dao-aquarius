@@ -7,11 +7,12 @@ import { LockerRoutes } from 'constants/routes';
 
 import { getIsTestnetEnv } from 'helpers/env';
 import { formatBalance } from 'helpers/format-number';
+import { createAsset } from 'helpers/token';
 
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { ModalService, StellarService, WalletConnectService } from 'services/globalServices';
+import { ModalService, WalletConnectService } from 'services/globalServices';
 
 import Aqua from 'assets/aqua-logo-small.svg';
 import Ice from 'assets/ice-logo.svg';
@@ -219,7 +220,7 @@ const AppMenu = ({
     const { logout, loginType, account, isLogged, metadata, federationAddress, isLoginPending } =
         useAuthStore();
     const aquaBalance = account?.getAquaBalance();
-    const ICE = StellarService.createAsset(ICE_CODE, ICE_ISSUER);
+    const ICE = createAsset(ICE_CODE, ICE_ISSUER);
     const iceBalance = account?.getAssetBalance(ICE);
     const aquaBalanceView = aquaBalance === null ? '—' : formatBalance(aquaBalance, true);
     const iceBalanceView = aquaBalance === null ? '—' : formatBalance(iceBalance, true);

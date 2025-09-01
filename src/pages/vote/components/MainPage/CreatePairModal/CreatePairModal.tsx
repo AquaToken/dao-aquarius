@@ -3,6 +3,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 
 import ErrorHandler from 'helpers/error-handler';
+import { createAsset } from 'helpers/token';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
 import { useIsMounted } from 'hooks/useIsMounted';
@@ -14,7 +15,7 @@ import { StellarService, ToastService } from 'services/globalServices';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { ModalProps } from 'types/modal';
-import { Asset } from 'types/stellar';
+import { ClassicToken } from 'types/token';
 
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -107,8 +108,8 @@ const StyledButton = styled(Button)`
 `;
 
 interface CreatePairModalParams {
-    base: Asset;
-    counter: Asset;
+    base: ClassicToken;
+    counter: ClassicToken;
 }
 
 const CreatePairModal = ({ params, close }: ModalProps<CreatePairModalParams>): React.ReactNode => {
@@ -119,10 +120,10 @@ const CreatePairModal = ({ params, close }: ModalProps<CreatePairModalParams>): 
 
     const [pending, setPending] = useState(false);
 
-    const baseInstance = StellarService.createAsset(base.code, base.issuer);
+    const baseInstance = createAsset(base.code, base.issuer);
     const isBaseNative = baseInstance.isNative();
 
-    const counterInstance = StellarService.createAsset(counter.code, counter.issuer);
+    const counterInstance = createAsset(counter.code, counter.issuer);
     const isCounterNative = counterInstance.isNative();
 
     const pairHasNative = isBaseNative || isCounterNative;

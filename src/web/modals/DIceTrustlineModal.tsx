@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { D_ICE_CODE, ICE_ISSUER } from 'constants/assets';
 
-import { StellarService } from 'services/globalServices';
+import { createAsset } from 'helpers/token';
 
 import { flexColumnCenter } from 'web/mixins';
 import { COLORS } from 'web/styles';
@@ -53,7 +53,7 @@ const DIceTrustlineModal = () => (
             <span>aqua.network</span>
         </AssetBlock>
         <NoTrustline
-            asset={StellarService.createAsset(D_ICE_CODE, ICE_ISSUER)}
+            asset={createAsset(D_ICE_CODE, ICE_ISSUER)}
             onlyButton
             fullWidth
             isBig

@@ -118,3 +118,26 @@ export const commonSectionPaddings = css`
         padding: 0 ${PAGE_PADDINGS}rem;
     `}
 `;
+
+export const EmptyList = css`
+    ${flexAllCenter};
+    flex-direction: column;
+
+    h3 {
+        font-size: 2rem;
+        line-height: 2.8rem;
+        color: ${COLORS.titleText};
+        margin-bottom: 0.9rem;
+    }
+
+    span {
+        line-height: 180%;
+        color: ${COLORS.grayText};
+    }
+
+    a {
+        color: ${COLORS.purple};
+        font-size: 1.4rem;
+        line-height: 2rem;
+    }
+`;

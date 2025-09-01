@@ -3,6 +3,8 @@ import styled from 'styled-components';
 
 import { getUserRewardsList } from 'api/amm';
 
+import { CLAIM_ALL_COUNT } from 'constants/amm';
+
 import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
@@ -15,7 +17,7 @@ import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 import { ModalProps } from 'types/modal';
 import { Int128Parts } from 'types/stellar';
 
-import { customScroll, flexAllCenter, respondDown } from 'web/mixins';
+import { flexAllCenter, flexColumn, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Warning from 'assets/icon-warning-orange.svg';
@@ -48,7 +50,10 @@ const Container = styled.div`
     }
 `;
 
-const MAX_REWARDS_COUNT = 5;
+const Amounts = styled.div`
+    ${flexColumn};
+    text-align: right;
+`;
 
 const ClaimRewardsModal = ({ confirm, close }: ModalProps<never>) => {
     const [rewards, setRewards] = useState(null);
@@ -74,7 +79,7 @@ const ClaimRewardsModal = ({ confirm, close }: ModalProps<never>) => {
         getUserRewardsList(account.accountId()).then(res => {
             setRewards(res);
 
-            setSelectedRewards(new Set(res.slice(0, MAX_REWARDS_COUNT).map(({ id }) => id)));
+            setSelectedRewards(new Set(res.slice(0, CLAIM_ALL_COUNT).map(({ id }) => id)));
         });
     }, [account]);
 
@@ -112,7 +117,7 @@ const ClaimRewardsModal = ({ confirm, close }: ModalProps<never>) => {
 
     return (
         <ModalWrapper $isWide>
-            <ModalTitle>Claim rewards</ModalTitle>
+            <ModalTitle>Claim rewards and incentives</ModalTitle>
             <ModalDescription>Claim up to 5 pools at a time</ModalDescription>
 
             <>
@@ -129,8 +134,13 @@ const ClaimRewardsModal = ({ confirm, close }: ModalProps<never>) => {
                                     flexSize: 3,
                                 },
                                 {
+                                    children: 'Type',
+                                    align: CellAlign.Right,
+                                },
+                                {
                                     children: 'Amount',
                                     align: CellAlign.Right,
+                                    flexSize: 2,
                                 },
                                 { children: '', flexSize: 0.3 },
                             ]}
@@ -145,7 +155,8 @@ const ClaimRewardsModal = ({ confirm, close }: ModalProps<never>) => {
                                                 <Market
                                                     assets={item.tokens}
                                                     withoutLink
-                                                    poolType={item.type}
+                                                    poolType={item.poolType}
+                                                    fee={item.fee}
                                                     mobileVerticalDirections
                                                 />
 
@@ -161,9 +172,34 @@ const ClaimRewardsModal = ({ confirm, close }: ModalProps<never>) => {
                                         mobileStyle: { width: '100%' },
                                     },
                                     {
-                                        children: `${formatBalance(item.amount, true)} AQUA`,
+                                        children: item.amount ? 'Reward' : 'Incentive',
+                                        label: 'Type',
+                                        align: CellAlign.Right,
+                                    },
+                                    {
+                                        children: item.amount ? (
+                                            `${formatBalance(item.amount, true)} AQUA`
+                                        ) : (
+                                            <Amounts>
+                                                {item.incentives
+                                                    .filter(
+                                                        incentive =>
+                                                            !!Number(incentive.info.user_reward),
+                                                    )
+                                                    .map(incentive => (
+                                                        <span key={incentive.token.contract}>
+                                                            {formatBalance(
+                                                                incentive.info.user_reward,
+                                                                true,
+                                                            )}{' '}
+                                                            {incentive.token.code}
+                                                        </span>
+                                                    ))}
+                                            </Amounts>
+                                        ),
                                         align: CellAlign.Right,
                                         label: 'Amount',
+                                        flexSize: 2,
                                     },
                                     {
                                         children: (
@@ -188,16 +224,15 @@ const ClaimRewardsModal = ({ confirm, close }: ModalProps<never>) => {
                                 isBig
                                 fullWidth
                                 disabled={
-                                    !selectedRewards.size ||
-                                    selectedRewards.size > MAX_REWARDS_COUNT
+                                    !selectedRewards.size || selectedRewards.size > CLAIM_ALL_COUNT
                                 }
                                 pending={pending}
                                 onClick={() => claimAll()}
                             >
                                 {!selectedRewards.size
                                     ? 'select rewards'
-                                    : selectedRewards.size > MAX_REWARDS_COUNT
-                                    ? `maximum ${MAX_REWARDS_COUNT} pools at a time `
+                                    : selectedRewards.size > CLAIM_ALL_COUNT
+                                    ? `maximum ${CLAIM_ALL_COUNT} rewards at a time `
                                     : `claim ${selectedRewards.size} reward${
                                           selectedRewards.size > 1 ? 's' : ''
                                       }`}

@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { createAsset } from 'helpers/token';
+
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { StellarService } from 'services/globalServices';
@@ -35,8 +37,8 @@ const ManageVotesModal = ({ params }: ModalProps<{ pair: PairStats }>) => {
     const { pair } = params;
     const { account } = useAuthStore();
 
-    const base = StellarService.createAsset(pair.asset1_code, pair.asset1_issuer);
-    const counter = StellarService.createAsset(pair.asset2_code, pair.asset2_issuer);
+    const base = createAsset(pair.asset1_code, pair.asset1_issuer);
+    const counter = createAsset(pair.asset2_code, pair.asset2_issuer);
 
     useEffect(() => {
         setClaims(StellarService.getPairVotes(pair, account.accountId())?.reverse());

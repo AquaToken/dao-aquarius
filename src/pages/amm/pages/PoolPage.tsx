@@ -1,5 +1,5 @@
 import { xdr } from '@stellar/stellar-sdk';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -23,7 +23,7 @@ import useAuthStore from 'store/authStore/useAuthStore';
 import { SorobanService, ToastService } from 'services/globalServices';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
-import { PoolExtended } from 'types/amm';
+import { PoolExtended, PoolIncentives } from 'types/amm';
 import { Asset } from 'types/stellar';
 import { SorobanToken, TokenType } from 'types/token';
 
@@ -130,6 +130,16 @@ const RewardsDescription = styled.div`
         color: ${COLORS.titleText};
         margin-bottom: 0.8rem;
     }
+
+    ${respondDown(Breakpoints.md)`
+        align-items: center;
+    `}
+`;
+
+const IncentiveAmount = styled.span`
+    &:not(:last-child) {
+        margin-bottom: 1.6rem;
+    }
 `;
 
 const SectionRow = styled.div`
@@ -179,8 +189,10 @@ const ExternalLinkStyled = styled(ExternalLink)`
 const PoolPage = () => {
     const [pool, setPool] = useState<PoolExtended | null>(null);
     const [rewards, setRewards] = useState(null);
+    const [incentives, setIncentives] = useState<PoolIncentives[] | null>(null);
     const { poolAddress } = useParams<{ poolAddress: string }>();
     const [claimPending, setClaimPending] = useState(false);
+    const [claimIncentivePending, setClaimIncentivePending] = useState(false);
     const [chartWidth, setChartWidth] = useState(0);
 
     const { account } = useAuthStore();
@@ -201,9 +213,9 @@ const PoolPage = () => {
             setRewards(null);
             return;
         }
-        SorobanService.amm.getPoolRewards(account.accountId(), pool.address).then(res => {
-            setRewards(res);
-        });
+        SorobanService.amm.getPoolRewards(account.accountId(), pool.address).then(setRewards);
+
+        SorobanService.amm.getPoolIncentives(account.accountId(), pool.address).then(setIncentives);
     }, [account, pool, updateIndex]);
 
     useEffect(() => {
@@ -265,6 +277,45 @@ const PoolPage = () => {
                 setClaimPending(false);
             });
     };
+
+    const claimIncentive = () => {
+        if (account.authType === LoginTypes.walletConnect) {
+            openCurrentWalletIfExist();
+        }
+        setClaimIncentivePending(true);
+
+        SorobanService.amm
+            .getClaimIncentiveTx(account.accountId(), pool.address)
+            .then(tx => account.signAndSubmitTx(tx, true))
+            .then((res: { status?: BuildSignAndSubmitStatuses }) => {
+                if (!res) {
+                    return;
+                }
+
+                if (
+                    (res as { status: BuildSignAndSubmitStatuses }).status ===
+                    BuildSignAndSubmitStatuses.pending
+                ) {
+                    ToastService.showSuccessToast('More signatures required to complete');
+                    return;
+                }
+
+                // TODO parse return values and show in the toast
+
+                ToastService.showSuccessToast(`Claimed successfully`);
+                setClaimIncentivePending(false);
+            })
+            .catch(err => {
+                ToastService.showErrorToast(err.message ?? err.toString());
+                setClaimIncentivePending(false);
+            });
+    };
+
+    const hasIncentivesToClaim = useMemo(() => {
+        if (!incentives || !incentives.length) return false;
+
+        return incentives.some(({ info }) => !!Number(info.user_reward));
+    }, [incentives]);
 
     if (!pool) {
         return <PageLoader />;
@@ -341,6 +392,40 @@ const PoolPage = () => {
                                 </Button>
                             </Rewards>
                             <NoTrustline asset={aquaStellarAsset} />
+                        </SectionWrap>
+                    </Section>
+                )}
+
+                {hasIncentivesToClaim && Boolean(account) && (
+                    <Section>
+                        <SectionWrap>
+                            <Rewards>
+                                <RewardsDescription>
+                                    <span>You have unclaimed incentives</span>
+                                    {incentives
+                                        .filter(({ info }) => !!Number(info.user_reward))
+                                        .map(({ token, info }) => (
+                                            <IncentiveAmount key={token.contract}>
+                                                {formatBalance(+info.user_reward, true)}{' '}
+                                                {token.code}
+                                            </IncentiveAmount>
+                                        ))}
+                                </RewardsDescription>
+                                <Button
+                                    onClick={() => claimIncentive()}
+                                    pending={claimIncentivePending}
+                                    disabled={incentives.some(
+                                        ({ token }) =>
+                                            token.type === TokenType.classic &&
+                                            account.getAssetBalance(token) === null,
+                                    )}
+                                >
+                                    Claim incentives
+                                </Button>
+                            </Rewards>
+                            {incentives.map(({ token }) => (
+                                <NoTrustline key={token.contract} asset={token} />
+                            ))}
                         </SectionWrap>
                     </Section>
                 )}
