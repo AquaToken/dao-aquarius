@@ -208,6 +208,7 @@ export default function useGlobalSubscriptions(): void {
         }
         if (UnfundedErrors.includes(loginErrorText)) {
             WalletConnectService.logout();
+            logout();
         }
     }, [loginErrorText]);
 

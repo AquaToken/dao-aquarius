@@ -29,6 +29,8 @@ import {
 } from 'types/amm';
 import { ClassicToken, Token, TokenType } from 'types/token';
 
+import { AllTimeStats } from './amm.types';
+
 export enum FilterOptions {
     all = 'all',
     stable = 'stable',
@@ -238,11 +240,11 @@ export const findSwapPath = async (
     return data;
 };
 
-export const getTotalStats = async (): Promise<PoolStatistics[]> => {
+export const getTotalStats = async (pageSize = 365): Promise<PoolStatistics[]> => {
     const baseUrl = getAmmAquaUrl();
 
     const { data } = await axios.get<ListResponse<PoolStatistics>>(
-        `${baseUrl}/statistics/totals/?size=365`,
+        `${baseUrl}/statistics/totals/?size=${pageSize}`,
     );
     return data.items.reverse();
 };
@@ -495,4 +497,14 @@ export const getUserRewardsList = async (accountId: string): Promise<UserReward[
             Number(b.type === RewardType.aquaReward ? b.amount : b.incentives[0].info.user_reward) -
             Number(a.type === RewardType.aquaReward ? a.amount : a.incentives[0].info.user_reward),
     );
+};
+
+export const getAllTimeStats = async (): Promise<AllTimeStats> => {
+    const baseUrl = getAmmAquaUrl();
+
+    const { data } = await axios.get<AllTimeStats>(
+        `${baseUrl}/api/external/v2/statistics/all-time/`,
+    );
+
+    return data;
 };

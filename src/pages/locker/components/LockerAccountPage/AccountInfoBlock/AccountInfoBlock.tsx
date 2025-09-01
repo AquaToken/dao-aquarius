@@ -6,6 +6,7 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import AccountService from 'services/account.service';
 import { StellarService } from 'services/globalServices';
+
 import { flexRowSpaceBetween } from 'web/mixins';
 
 import AccountBlock from 'basics/AccountBlock';

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import Tick from 'assets/icon-checkbox-tick.svg';
+import Tick from 'assets/small-icons/check/icon-checkbox-tick.svg';
 
 import { flexAllCenter } from '../../mixins';
 import { COLORS } from '../../styles';

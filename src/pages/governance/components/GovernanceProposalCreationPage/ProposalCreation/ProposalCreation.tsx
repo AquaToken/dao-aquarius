@@ -1,6 +1,6 @@
+import { ReactNode } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { ReactNode } from 'react';
 
 import { GovernanceRoutes } from 'constants/routes';
 
@@ -15,12 +15,13 @@ import Button from 'basics/buttons/Button';
 import CircleButton from 'basics/buttons/CircleButton';
 import Input from 'basics/inputs/Input';
 
+import QuillEditor from './QuillEditor';
+
 import {
     APPROVED_PROPOSAL_REWARD,
     CREATE_DISCUSSION_COST,
     CREATE_PROPOSAL_COST,
 } from '../../../pages/GovernanceMainPage';
-import QuillEditor from './QuillEditor';
 
 const Background = styled.div`
     width: 100%;

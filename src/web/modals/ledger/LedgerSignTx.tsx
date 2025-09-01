@@ -2,10 +2,11 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { ModalProps } from 'types/modal';
-
 import { useIsMounted } from 'hooks/useIsMounted';
+
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
+
+import { ModalProps } from 'types/modal';
 
 import Button from 'basics/buttons/Button';
 import { IconFail, IconPending, IconSuccess } from 'basics/Icons';

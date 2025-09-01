@@ -9,12 +9,12 @@ import { formatBalance } from 'helpers/format-number';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { ModalService, StellarService, ToastService } from 'services/globalServices';
+import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
+
 import { Pool } from 'types/amm';
 import { ModalProps } from 'types/modal';
 import { Asset, PoolClassic } from 'types/stellar';
-
-import { ModalService, StellarService, ToastService } from 'services/globalServices';
-import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import AssetLogo from 'basics/AssetLogo';
 import Button from 'basics/buttons/Button';

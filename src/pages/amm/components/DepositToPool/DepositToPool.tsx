@@ -649,7 +649,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                     <CheckboxStyled
                         checked={isBalancedDeposit}
                         onChange={setIsBalancedDeposit}
-                        label="Add all coins in a balances proportion"
+                        label="Match pool ratio"
                     />
                 )}
 
@@ -693,7 +693,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                     </DescriptionRow>
                     {Boolean(Number(pool.total_share)) && Boolean(poolRewards) && (
                         <DescriptionRow>
-                            <span>Rewards Boost</span>
+                            <span>ICE Reward Boost</span>
                             <span>
                                 <Label
                                     labelText={`x${(+calculateBoostValue(poolRewards)).toFixed(2)}`}
