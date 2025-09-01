@@ -7,7 +7,7 @@ import { getAssetsList } from 'api/amm';
 import { contractValueToAmount } from 'helpers/amount';
 import { getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
-import { getTokensFromCache } from 'helpers/swap';
+import { getTokensFromCache } from 'helpers/token';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 import useAuthStore from 'store/authStore/useAuthStore';
