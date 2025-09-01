@@ -2,13 +2,14 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { DAY } from 'constants/intervals';
 import { MainRoutes } from 'constants/routes';
 
 import { apyValueToDisplay, tpsToDailyAmount } from 'helpers/amount';
 import { getAssetFromString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 
-import { PoolProcessed } from 'types/amm';
+import { PoolIncentives, PoolProcessed } from 'types/amm';
 
 import { flexAllCenter, flexColumn, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -124,9 +125,16 @@ interface Props {
     userBoost?: number;
     userRewardsValue?: number;
     userShareRatio?: number;
+    incentivesForPool?: PoolIncentives[];
 }
 
-const PoolApyTooltip = ({ pool, userBoost, userRewardsValue, userShareRatio }: Props) => (
+const PoolApyTooltip = ({
+    pool,
+    userBoost,
+    userRewardsValue,
+    userShareRatio,
+    incentivesForPool,
+}: Props) => (
     <Container>
         <TooltipValuesBlock>
             {!!Number(pool.reward_tps) && (
@@ -140,7 +148,25 @@ const PoolApyTooltip = ({ pool, userBoost, userRewardsValue, userShareRatio }: P
                     </Amount>
                 </TooltipValues>
             )}
-            {pool.incentive_tps_per_token &&
+
+            {incentivesForPool?.length
+                ? incentivesForPool
+                      .filter(incentive => !!Number(incentive.info.tps))
+                      .map(incentive => (
+                          <TooltipValues key={incentive.token.contract}>
+                              <span>
+                                  {userShareRatio ? 'My incentive daily' : 'Incentive daily:'}
+                              </span>
+                              <Amount>
+                                  {formatBalance((+incentive.info.tps * DAY) / 1000, true, true)}{' '}
+                                  {incentive.token.code}
+                              </Amount>
+                          </TooltipValues>
+                      ))
+                : null}
+
+            {!incentivesForPool?.length &&
+                pool.incentive_tps_per_token &&
                 !!Object.values(pool.incentive_tps_per_token).length &&
                 Object.entries(pool.incentive_tps_per_token).map(([key, val]) => {
                     const token = getAssetFromString(key);

@@ -5,12 +5,10 @@ import styled from 'styled-components';
 
 import { getIncentives } from 'api/incentives';
 
-import { DAY } from 'constants/intervals';
 import { AmmRoutes, IncentivesRoutes } from 'constants/routes';
 
-import { contractValueToAmount } from 'helpers/amount';
+import { tpsToDailyAmount } from 'helpers/amount';
 import { convertDateStrToTimestamp, getDateString } from 'helpers/date';
-import { formatBalance } from 'helpers/format-number';
 
 import { IncentiveProcessed } from 'types/incentives';
 
@@ -61,13 +59,10 @@ const IncentivesTable = ({ isActive }: Props) => {
                         { children: 'Period' },
                     ]}
                     body={incentives.map(incentive => {
-                        const amount =
-                            (+contractValueToAmount(
-                                incentive.tps,
-                                incentive.tokenInstance.decimal,
-                            ) *
-                                DAY) /
-                            1000;
+                        const amount = tpsToDailyAmount(
+                            incentive.tps,
+                            incentive.tokenInstance.decimal,
+                        );
                         return {
                             key: incentive.pool_address + incentive.token.address,
                             onRowClick: () => goToPoolPage(incentive.pool_address),
@@ -89,9 +84,7 @@ const IncentivesTable = ({ isActive }: Props) => {
                                 },
 
                                 {
-                                    children: `${formatBalance(amount)} ${
-                                        incentive.tokenInstance.code
-                                    }`,
+                                    children: `${amount} ${incentive.tokenInstance.code}`,
                                     label: 'Daily amount',
                                 },
                                 {

@@ -27,7 +27,7 @@ import {
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { PoolIncentives, PoolRewardsInfo, PoolUserProcessed, RewardType } from 'types/amm';
-import { Token, SorobanToken } from 'types/token';
+import { SorobanToken, Token } from 'types/token';
 
 import {
     flexAllCenter,
@@ -715,6 +715,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                                         userShareRatio={
                                                             pool.balance / pool.total_share
                                                         }
+                                                        incentivesForPool={incentivesForPool}
                                                     />
                                                 }
                                                 background={COLORS.white}

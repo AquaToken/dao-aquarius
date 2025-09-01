@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 import styled, { css } from 'styled-components';
 
 import { COLORS, Z_INDEX } from 'web/styles';
@@ -212,15 +213,23 @@ const Tooltip = ({
             return;
         }
 
+        if (replaceCount === 0) {
+            flushSync(() => {
+                setPositionInProgress(true);
+            });
+        }
+
         if (replaceCount === 4) {
-            setCurrentPosition(position || TOOLTIP_POSITION.top);
+            setCurrentPosition(position || TOOLTIP_POSITION.left);
             setPositionInProgress(false);
+            setReplacementCount(0);
             return;
         }
         const validPosition = validateAllDimensions();
 
         if (validPosition) {
             setPositionInProgress(false);
+            setReplacementCount(0);
         } else {
             setReplacementCount(prev => prev + 1);
 
