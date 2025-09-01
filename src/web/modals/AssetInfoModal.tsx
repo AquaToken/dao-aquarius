@@ -254,7 +254,7 @@ const AssetInfoModal = ({ params }: ModalProps<AssetInfoModalParams>): React.Rea
                             </span>
                         </Detail>
                         <Detail>
-                            <span>24h change:</span>
+                            <span>24H change:</span>
                             <Changes24 expertData={expertData} />
                         </Detail>
                         <Detail>

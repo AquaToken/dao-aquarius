@@ -377,7 +377,7 @@ const VolumeChart = ({
                                       )?.getTime(),
                                       { withoutDay: selectedPeriod >= ChartPeriods.months_6 },
                                   )}`
-                                : `Last 24h volume:`}
+                                : `Last 24H volume:`}
                         </GrayText>
                         <LiquidityValue x="16" y="63">
                             ${formatBalance((selectedItem || last24)?.volume_usd, true, true)}

@@ -32,9 +32,12 @@ export const getAssetFromString = (str: string, onUpdateCB?: (token: Token) => v
         const result = { contract: str, type: TokenType.soroban } as Token;
 
         const cache = getTokensFromCache();
-        const cachedToken = cache.find(({ contract }) => contract === str);
+        const cachedToken = cache?.find(({ contract }) => contract === str);
 
         if (cachedToken) {
+            if (onUpdateCB) {
+                onUpdateCB(cachedToken);
+            }
             return cachedToken;
         }
 
