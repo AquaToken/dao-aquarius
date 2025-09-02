@@ -18,7 +18,7 @@ import { ModalService, SorobanService, ToastService } from 'services/globalServi
 import { estimateCustomWithdraw } from 'services/soroban/contracts/ammContract';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
-import { PoolExtended } from 'types/amm';
+import { PoolExtended, PoolIncentives } from 'types/amm';
 import { Int128Parts } from 'types/stellar';
 import { TokenType } from 'types/token';
 
@@ -72,16 +72,22 @@ const Summary = styled.div`
     }
 `;
 
+const CheckboxStyled = styled(Checkbox)`
+    margin-top: 1.2rem;
+`;
+
 interface Props {
     pool: PoolExtended;
     rewards: number;
     accountShare: string;
     close: () => void;
+    incentives: PoolIncentives[];
 }
 
-const CustomWithdraw = ({ pool, accountShare, rewards, close }: Props) => {
+const CustomWithdraw = ({ pool, accountShare, rewards, close, incentives }: Props) => {
     const [amounts, setAmounts] = useState(new Map());
-    const [withClaim, setWithClaim] = useState(false);
+    const [withClaimRewards, setWithClaimRewards] = useState(false);
+    const [withClaimIncentives, setWithClaimIncentives] = useState(false);
     const [isInsufficient, setIsInsufficient] = useState(false);
     const [estimatedValue, setEstimatedValue] = useState(null);
     const [pending, setPending] = useState(false);
@@ -94,7 +100,7 @@ const CustomWithdraw = ({ pool, accountShare, rewards, close }: Props) => {
 
     useEffect(() => {
         if (rewards) {
-            setWithClaim(true);
+            setWithClaimRewards(true);
         }
     }, [rewards]);
 
@@ -117,6 +123,11 @@ const CustomWithdraw = ({ pool, accountShare, rewards, close }: Props) => {
     };
 
     const hasAmount = amounts.size && [...amounts.values()].some(val => Boolean(Number(val)));
+
+    const hasIncentivesToClaim =
+        incentives &&
+        Boolean(incentives.length) &&
+        incentives.some(incentive => Boolean(Number(incentive.info.user_reward)));
 
     const sharesToRemove = useMemo(() => {
         if (!estimatedValue) return null;
@@ -160,24 +171,16 @@ const CustomWithdraw = ({ pool, accountShare, rewards, close }: Props) => {
         setPending(true);
 
         try {
-            const tx = withClaim
-                ? await SorobanService.amm.getCustomWithdrawAndClaim(
-                      account.accountId(),
-                      pool.address,
-                      sharesToRemove,
-                      amounts,
-                      pool.tokens,
-                      pool.share_token_address,
-                  )
-                : await SorobanService.amm.getCustomWithdrawTx(
-                      account.accountId(),
-                      pool.address,
-                      sharesToRemove,
-                      amounts,
-                      pool.tokens,
-                      pool.share_token_address,
-                  );
-
+            const tx = await SorobanService.amm.getCustomWithdrawAndClaim(
+                account.accountId(),
+                pool.address,
+                sharesToRemove,
+                amounts,
+                pool.tokens,
+                pool.share_token_address,
+                withClaimRewards,
+                withClaimIncentives,
+            );
             const hash = tx.hash().toString('hex');
             const result: {
                 value?: () =>
@@ -281,13 +284,36 @@ const CustomWithdraw = ({ pool, accountShare, rewards, close }: Props) => {
 
             {Boolean(rewards) && (
                 <Checkbox
-                    checked={withClaim}
-                    onChange={setWithClaim}
+                    checked={withClaimRewards}
+                    onChange={setWithClaimRewards}
                     label={`Claim rewards: ${formatBalance(rewards, true)} AQUA`}
                 />
             )}
 
-            {withClaim && <NoTrustline asset={aquaStellarAsset} />}
+            {hasIncentivesToClaim && (
+                <CheckboxStyled
+                    checked={withClaimIncentives}
+                    onChange={setWithClaimIncentives}
+                    label={`Claim incentives: ${incentives
+                        .filter(incentive => Boolean(Number(incentive.info.user_reward)))
+                        .map(
+                            incentive =>
+                                `${formatBalance(+incentive.info.user_reward, true)} ${
+                                    incentive.token.code
+                                }`,
+                        )
+                        .join(', ')}`}
+                />
+            )}
+
+            {withClaimRewards && <NoTrustline asset={aquaStellarAsset} />}
+
+            {withClaimIncentives &&
+                incentives
+                    .filter(incentive => Boolean(Number(incentive.info.user_reward)))
+                    .map(incentive => (
+                        <NoTrustline key={incentive.token.contract} asset={incentive.token} />
+                    ))}
 
             <StickyButtonWrapper>
                 <StyledButton

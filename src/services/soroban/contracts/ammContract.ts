@@ -391,12 +391,12 @@ function createWithdrawInvocation(
 /**
  * Creates the claim invocation which doesn't require any sub-invocations.
  */
-function createClaimInvocation(accountId: string, poolAddress: string) {
+function createClaimInvocation(accountId: string, poolAddress: string, functionName: string) {
     return new xdr.SorobanAuthorizedInvocation({
         function: xdr.SorobanAuthorizedFunction.sorobanAuthorizedFunctionTypeContractFn(
             new xdr.InvokeContractArgs({
                 contractAddress: contractIdToScVal(poolAddress).address(),
-                functionName: AMM_CONTRACT_METHOD.CLAIM,
+                functionName,
                 args: [publicKeyToScVal(accountId)],
             }),
         ),
@@ -465,6 +465,8 @@ async function buildWithdrawAndClaimTx(
     shareAddress: string,
     withdrawFunctionName: string,
     withdrawArgs: xdr.ScVal[],
+    withClaimRewards: boolean,
+    withClaimIncentives: boolean,
 ): Promise<StellarSdk.Transaction> {
     // Prepare batch calls: withdraw and claim
     const withdrawCall = scValToArray([
@@ -472,14 +474,6 @@ async function buildWithdrawAndClaimTx(
         xdr.ScVal.scvSymbol(withdrawFunctionName),
         scValToArray(withdrawArgs),
     ]);
-
-    const claimCall = scValToArray([
-        contractIdToScVal(poolAddress),
-        xdr.ScVal.scvSymbol(AMM_CONTRACT_METHOD.CLAIM),
-        scValToArray([publicKeyToScVal(accountId)]),
-    ]);
-
-    const batchCalls = [withdrawCall, claimCall];
 
     // Prepare authorizations
     const burnInvocation = createBurnInvocation(accountId, shareAmount, shareAddress);
@@ -492,7 +486,43 @@ async function buildWithdrawAndClaimTx(
         burnInvocation,
     );
 
-    const claimAuthInvocation = createClaimInvocation(accountId, poolAddress);
+    const batchCalls = [withdrawCall];
+    const subInvocations = [withdrawAuthInvocation];
+
+    if (withClaimRewards) {
+        const claimRewardsCall = scValToArray([
+            contractIdToScVal(poolAddress),
+            xdr.ScVal.scvSymbol(AMM_CONTRACT_METHOD.CLAIM),
+            scValToArray([publicKeyToScVal(accountId)]),
+        ]);
+
+        batchCalls.push(claimRewardsCall);
+
+        const claimRewardsInvocations = createClaimInvocation(
+            accountId,
+            poolAddress,
+            AMM_CONTRACT_METHOD.CLAIM,
+        );
+
+        subInvocations.push(claimRewardsInvocations);
+    }
+
+    if (withClaimIncentives) {
+        const claimIncentivesCall = scValToArray([
+            contractIdToScVal(poolAddress),
+            xdr.ScVal.scvSymbol(AMM_CONTRACT_METHOD.CLAIM_INCENTIVES),
+            scValToArray([publicKeyToScVal(accountId)]),
+        ]);
+        batchCalls.push(claimIncentivesCall);
+
+        const claimIncentivesInvocations = createClaimInvocation(
+            accountId,
+            poolAddress,
+            AMM_CONTRACT_METHOD.CLAIM_INCENTIVES,
+        );
+
+        subInvocations.push(claimIncentivesInvocations);
+    }
 
     const rootInvocation = new xdr.SorobanAuthorizedInvocation({
         function: xdr.SorobanAuthorizedFunction.sorobanAuthorizedFunctionTypeContractFn(
@@ -506,7 +536,7 @@ async function buildWithdrawAndClaimTx(
                 ],
             }),
         ),
-        subInvocations: [withdrawAuthInvocation, claimAuthInvocation],
+        subInvocations,
     });
 
     const batchAuth = createRootAuthorization(accountId, rootInvocation);
@@ -528,34 +558,14 @@ async function buildWithdrawAndClaimTx(
 
 // --- Exported functions for external use ---
 
-export function getWithdrawTx(
-    accountId: string,
-    poolAddress: string,
-    shareAmount: string,
-    assets: Token[],
-    shareAddress: string,
-): Promise<StellarSdk.Transaction> {
-    const args = [
-        publicKeyToScVal(accountId),
-        amountToUint128(shareAmount),
-        scValToArray(assets.map(() => amountToUint128('0.0000001'))),
-    ];
-    return buildSingleWithdrawTx(
-        accountId,
-        poolAddress,
-        shareAmount,
-        shareAddress,
-        AMM_CONTRACT_METHOD.WITHDRAW,
-        args,
-    );
-}
-
 export function getWithdrawAndClaim(
     accountId: string,
     poolAddress: string,
     shareAmount: string,
     assets: Token[],
     shareAddress: string,
+    withClaimRewards: boolean,
+    withClaimIncentives: boolean,
 ): Promise<StellarSdk.Transaction> {
     const withdrawArgs = [
         publicKeyToScVal(accountId),
@@ -569,31 +579,8 @@ export function getWithdrawAndClaim(
         shareAddress,
         AMM_CONTRACT_METHOD.WITHDRAW,
         withdrawArgs,
-    );
-}
-
-export function getSingleCoinWithdrawTx(
-    accountId: string,
-    poolAddress: string,
-    shareAmount: string,
-    tokenIndex: number,
-    minimumTokenAmount: string,
-    tokenDecimals: number,
-    shareAddress: string,
-): Promise<StellarSdk.Transaction> {
-    const args = [
-        publicKeyToScVal(accountId),
-        amountToUint128(shareAmount),
-        amountToUint32(tokenIndex),
-        amountToUint128(minimumTokenAmount, tokenDecimals),
-    ];
-    return buildSingleWithdrawTx(
-        accountId,
-        poolAddress,
-        shareAmount,
-        shareAddress,
-        AMM_CONTRACT_METHOD.WITHDRAW_ONE_COIN,
-        args,
+        withClaimRewards,
+        withClaimIncentives,
     );
 }
 
@@ -605,6 +592,8 @@ export function getSingleTokenWithdrawAndClaim(
     minimumTokenAmount: string,
     tokenDecimals: number,
     shareAddress: string,
+    withClaimRewards: boolean,
+    withClaimIncentives: boolean,
 ): Promise<StellarSdk.Transaction> {
     const withdrawArgs = [
         publicKeyToScVal(accountId),
@@ -619,33 +608,8 @@ export function getSingleTokenWithdrawAndClaim(
         shareAddress,
         AMM_CONTRACT_METHOD.WITHDRAW_ONE_COIN,
         withdrawArgs,
-    );
-}
-
-export function getCustomWithdrawTx(
-    accountId: string,
-    poolAddress: string,
-    shareAmountMaximum: string,
-    amounts: Map<string, string>,
-    tokens: Token[],
-    shareAddress: string,
-): Promise<StellarSdk.Transaction> {
-    const args = [
-        publicKeyToScVal(accountId),
-        scValToArray(
-            [...amounts.values()].map((value, index) =>
-                amountToUint128(value || '0', tokens[index].decimal),
-            ),
-        ),
-        amountToUint128(shareAmountMaximum),
-    ];
-    return buildSingleWithdrawTx(
-        accountId,
-        poolAddress,
-        shareAmountMaximum,
-        shareAddress,
-        AMM_CONTRACT_METHOD.WITHDRAW_CUSTOM,
-        args,
+        withClaimRewards,
+        withClaimIncentives,
     );
 }
 
@@ -656,6 +620,8 @@ export function getCustomWithdrawAndClaim(
     amounts: Map<string, string>,
     tokens: Token[],
     shareAddress: string,
+    withClaimRewards: boolean,
+    withClaimIncentives: boolean,
 ): Promise<StellarSdk.Transaction> {
     const withdrawArgs = [
         publicKeyToScVal(accountId),
@@ -673,6 +639,8 @@ export function getCustomWithdrawAndClaim(
         shareAddress,
         AMM_CONTRACT_METHOD.WITHDRAW_CUSTOM,
         withdrawArgs,
+        withClaimRewards,
+        withClaimIncentives,
     );
 }
 
