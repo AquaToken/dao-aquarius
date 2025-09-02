@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { DAY } from 'constants/intervals';
 
 import { getDateString } from 'helpers/date';
+import ErrorHandler from 'helpers/error-handler';
 import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
@@ -85,35 +86,41 @@ const ConfirmIncentiveModal = ({ params, close }: ModalProps<Props>) => {
 
         setPending(true);
 
-        const seconds = (endDate - startDate) / 1000;
+        try {
+            const seconds = (endDate - startDate) / 1000;
 
-        const tps = (amountPerDay * days) / seconds;
+            const tps = (amountPerDay * days) / seconds;
 
-        const tx = await getScheduleIncentiveTx(
-            account.accountId(),
-            pool,
-            rewardToken,
-            tps,
-            startDate,
-            endDate,
-            swapChainedXdr,
-        );
+            const tx = await getScheduleIncentiveTx(
+                account.accountId(),
+                pool,
+                rewardToken,
+                tps,
+                startDate,
+                endDate,
+                swapChainedXdr,
+            );
 
-        const result = await account.signAndSubmitTx(tx);
+            const result = await account.signAndSubmitTx(tx);
 
-        if (isMounted.current) {
+            if (isMounted.current) {
+                setPending(false);
+                close();
+            }
+
+            if (
+                (result as { status: BuildSignAndSubmitStatuses }).status ===
+                BuildSignAndSubmitStatuses.pending
+            ) {
+                ToastService.showSuccessToast('More signatures required to complete');
+                return;
+            }
+            ToastService.showSuccessToast('Your incentive has been created');
+        } catch (error) {
+            const errorText = ErrorHandler(error);
+            ToastService.showErrorToast(errorText);
             setPending(false);
-            close();
         }
-
-        if (
-            (result as { status: BuildSignAndSubmitStatuses }).status ===
-            BuildSignAndSubmitStatuses.pending
-        ) {
-            ToastService.showSuccessToast('More signatures required to complete');
-            return;
-        }
-        ToastService.showSuccessToast('Your incentive has been created');
     };
 
     return (
