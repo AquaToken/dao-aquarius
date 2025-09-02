@@ -139,7 +139,6 @@ const AddIncentivePage = () => {
     const [amount, setAmount] = useState<string | null>(null);
     const [aquaEquivalent, setAquaEquivalent] = useState(null);
     const [xdr, setXDR] = useState(null);
-    const [isInvalidAmount, setIsInvalidAmount] = useState(false);
 
     const [startDay, setStartDay] = useState<number | null>(null);
     const [endDay, setEndDay] = useState<number | null>(null);
@@ -219,18 +218,7 @@ const AddIncentivePage = () => {
     const amountInputPostfix =
         debouncedAmount.current !== null && aquaEquivalent === null ? (
             <CircleLoader size="small" />
-        ) : Number(aquaEquivalent) >= config?.minAquaAmount ? (
-            <SuccessIcon />
-        ) : isInvalidAmount ? (
-            <Tooltip
-                content={<div>Value must be less or equal {formatBalance(MAX_TOKEN_AMOUNT)}</div>}
-                position={+window.innerWidth > 992 ? TOOLTIP_POSITION.top : TOOLTIP_POSITION.left}
-                isShow={true}
-                background={COLORS.pinkRed}
-            >
-                <FailIcon />
-            </Tooltip>
-        ) : (
+        ) : Number(aquaEquivalent) < config?.minAquaAmount ? (
             <Tooltip
                 content={
                     <TooltipInner>
@@ -238,6 +226,17 @@ const AddIncentivePage = () => {
                         AQUA in value.
                     </TooltipInner>
                 }
+                position={+window.innerWidth > 992 ? TOOLTIP_POSITION.top : TOOLTIP_POSITION.left}
+                isShow={true}
+                background={COLORS.pinkRed}
+            >
+                <FailIcon />
+            </Tooltip>
+        ) : +amount < MAX_TOKEN_AMOUNT ? (
+            <SuccessIcon />
+        ) : (
+            <Tooltip
+                content={<div>Value must be less or equal {formatBalance(MAX_TOKEN_AMOUNT)}</div>}
                 position={+window.innerWidth > 992 ? TOOLTIP_POSITION.top : TOOLTIP_POSITION.left}
                 isShow={true}
                 background={COLORS.pinkRed}
