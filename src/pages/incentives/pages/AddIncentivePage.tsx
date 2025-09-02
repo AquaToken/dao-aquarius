@@ -8,7 +8,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { findSwapPath, getAssetsList, getPoolsForIncentives } from 'api/amm';
 
 import { MAX_TOKEN_AMOUNT } from 'constants/incentives';
-import { MINUTE, WEEK } from 'constants/intervals';
+import { MINUTE } from 'constants/intervals';
 import { IncentivesRoutes } from 'constants/routes';
 
 import { contractValueToAmount } from 'helpers/amount';
@@ -210,7 +210,7 @@ const AddIncentivePage = () => {
 
     const setTestDate = () => {
         const start = 3 * MINUTE + Date.now();
-        const end = start + WEEK;
+        const end = start + config?.duration * 1000;
         setStartDay(convertLocalDateToUTCIgnoringTimezone(new Date(start)).getTime());
         setEndDay(convertLocalDateToUTCIgnoringTimezone(new Date(end)).getTime());
     };
