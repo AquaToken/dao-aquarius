@@ -499,7 +499,13 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                     rewardsSum={rewardsSum}
                     userRewardsCount={userRewards.size}
                     incentivesSum={incentivesSum}
-                    userIncentivesCount={userIncentives.size}
+                    userIncentivesCount={
+                        [...userIncentives.values()].filter(incentives =>
+                            incentives.some(incentive =>
+                                Boolean(Number(incentive.info.user_reward)),
+                            ),
+                        ).length
+                    }
                 />
             )}
 
