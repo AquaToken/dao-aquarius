@@ -158,7 +158,12 @@ const PoolApyTooltip = ({
                                   {userShareRatio ? 'My incentive daily' : 'Incentive daily:'}
                               </span>
                               <Amount>
-                                  {formatBalance((+incentive.info.tps * DAY) / 1000, true, true)}{' '}
+                                  {formatBalance(
+                                      ((+incentive.info.tps * DAY) / 1000) *
+                                          (userShareRatio ? userShareRatio : 1),
+                                      true,
+                                      true,
+                                  )}{' '}
                                   {incentive.token.code}
                               </Amount>
                           </TooltipValues>
