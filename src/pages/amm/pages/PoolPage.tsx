@@ -7,10 +7,11 @@ import styled from 'styled-components';
 import { getPool } from 'api/amm';
 
 import { ChartPeriods } from 'constants/charts';
+import { DAY } from 'constants/intervals';
 import { MainRoutes, MarketRoutes } from 'constants/routes';
 
-import { contractValueToAmount, tpsToDailyAmount } from 'helpers/amount';
-import { getAquaAssetData, getAssetFromString, getAssetString } from 'helpers/assets';
+import { contractValueToAmount } from 'helpers/amount';
+import { getAquaAssetData, getAssetString } from 'helpers/assets';
 import getExplorerLink, { ExplorerSection } from 'helpers/explorer-links';
 import { formatBalance } from 'helpers/format-number';
 import { truncateString } from 'helpers/truncate-string';
@@ -494,19 +495,25 @@ const PoolPage = () => {
                                 {formatBalance((+pool.reward_tps / 1e7) * 60 * 60 * 24, true)} AQUA
                             </span>
                         </SectionRow>
-                        {pool.incentive_tps_per_token &&
-                            !!Object.values(pool.incentive_tps_per_token).length &&
-                            Object.entries(pool.incentive_tps_per_token).map(([key, val]) => {
-                                const token = getAssetFromString(key);
-                                return (
-                                    <SectionRow key={token.contract}>
-                                        <SectionLabel>Daily incentive {token.code}: </SectionLabel>
-                                        <span>
-                                            {tpsToDailyAmount(val, token.decimal)} {token.code}
-                                        </span>
-                                    </SectionRow>
-                                );
-                            })}
+
+                        {incentives?.length
+                            ? incentives
+                                  .filter(incentive => !!Number(incentive.info.tps))
+                                  .map(incentive => (
+                                      <SectionRow key={incentive.token.contract}>
+                                          <SectionLabel>
+                                              Daily incentive {incentive.token.code}:{' '}
+                                          </SectionLabel>
+                                          <span>
+                                              {formatBalance(
+                                                  (+incentive.info.tps * DAY) / 1000,
+                                                  true,
+                                              )}{' '}
+                                              {incentive.token.code}
+                                          </span>
+                                      </SectionRow>
+                                  ))
+                            : null}
                         <SectionRow>
                             <SectionLabel>Pool hash: </SectionLabel>
                             <span>

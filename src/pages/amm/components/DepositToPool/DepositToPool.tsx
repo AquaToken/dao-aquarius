@@ -3,8 +3,10 @@ import { useEffect, useMemo, useState } from 'react';
 import { NumericFormat } from 'react-number-format';
 import styled from 'styled-components';
 
-import { contractValueToAmount, tpsToDailyAmount } from 'helpers/amount';
-import { getAssetFromString, getAssetString } from 'helpers/assets';
+import { DAY } from 'constants/intervals';
+
+import { contractValueToAmount } from 'helpers/amount';
+import { getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
@@ -19,7 +21,7 @@ import {
 } from 'services/globalServices';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
-import { PoolExtended, PoolRewardsInfo } from 'types/amm';
+import { PoolExtended, PoolIncentives, PoolRewardsInfo } from 'types/amm';
 import { ModalProps } from 'types/modal';
 import { SorobanToken, Token, TokenType } from 'types/token';
 
@@ -191,6 +193,8 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
 
     const [priceIndex, setPriceIndex] = useState(0);
 
+    const [incentives, setIncentives] = useState<PoolIncentives[] | null>(null);
+
     useEffect(() => {
         if (!account) {
             setAssetsReserves(null);
@@ -235,6 +239,15 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
         SorobanService.amm.getPoolRewards(account.accountId(), pool.address).then(res => {
             setPoolRewards(res);
         });
+    }, [account, pool]);
+
+    useEffect(() => {
+        if (!account) {
+            setIncentives(null);
+            return;
+        }
+
+        SorobanService.amm.getPoolIncentives(account.accountId(), pool.address).then(setIncentives);
     }, [account, pool]);
 
     const reserves: Map<string, number> = useMemo(
@@ -739,33 +752,36 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                         </DescriptionRow>
                     )}
 
-                    {pool.incentive_tps_per_token &&
-                        !!Object.values(pool.incentive_tps_per_token).length &&
-                        Object.entries(pool.incentive_tps_per_token).map(([key, val]) => {
-                            const token = getAssetFromString(key);
-                            return (
-                                <DescriptionRow key={token.contract}>
-                                    <span>Daily incentives {token.code}</span>
-                                    <span>
-                                        {tpsToDailyAmount(
-                                            ((+val * sharesBefore) / 100).toFixed(7),
-                                            token.decimal,
-                                        )}{' '}
-                                        {token.code}
-                                        {sharesAfter && (
-                                            <>
-                                                <Arrow />
-                                                {tpsToDailyAmount(
-                                                    ((+val * sharesAfter) / 100).toFixed(7),
-                                                    token.decimal,
-                                                )}{' '}
-                                                {token.code}
-                                            </>
-                                        )}
-                                    </span>
-                                </DescriptionRow>
-                            );
-                        })}
+                    {incentives?.length
+                        ? incentives
+                              .filter(incentive => !!Number(incentive.info.tps))
+                              .map(incentive => (
+                                  <DescriptionRow key={incentive.token.contract}>
+                                      <span>Daily incentives {incentive.token.code}</span>
+                                      <span>
+                                          {formatBalance(
+                                              (+incentive.info.tps * DAY * sharesBefore) /
+                                                  1000 /
+                                                  100,
+                                              true,
+                                          )}{' '}
+                                          {incentive.token.code}
+                                          {sharesAfter && (
+                                              <>
+                                                  <Arrow />
+                                                  {formatBalance(
+                                                      (+incentive.info.tps * DAY * sharesAfter) /
+                                                          1000 /
+                                                          100,
+                                                      true,
+                                                  )}{' '}
+                                                  {incentive.token.code}
+                                              </>
+                                          )}
+                                      </span>
+                                  </DescriptionRow>
+                              ))
+                        : null}
                 </PoolInfo>
 
                 {isModal ? <StickyButtonWrapper>{ButtonAdd}</StickyButtonWrapper> : ButtonAdd}

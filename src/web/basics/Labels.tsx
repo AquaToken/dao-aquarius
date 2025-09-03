@@ -2,6 +2,8 @@ import styled from 'styled-components';
 
 import { COLORS } from 'web/styles';
 
+import Lightning from 'assets/icon-lightning.svg';
+
 import Label from 'basics/Label';
 
 import {
@@ -11,6 +13,10 @@ import {
 
 const StyledLabel = styled(Label)`
     margin: 0 0.5rem;
+`;
+
+const LabelWithIcon = styled.span`
+    gap: 0.4rem;
 `;
 
 export const BoostLabel = () => (
@@ -23,8 +29,18 @@ export const BoostLabel = () => (
 
 export const RewardLabel = () => (
     <StyledLabel
-        labelText="reward zone"
+        labelText={
+            <LabelWithIcon>
+                <Lightning />
+                reward zone
+            </LabelWithIcon>
+        }
         tooltipText={`Any market with at least ${MIN_REWARDS_PERCENT}% of the total ICE votes is placed into the reward zone and will get rewards after the next rewards update.`}
+        color={COLORS.purple}
+        background={`${COLORS.purple}1A`}
+        tooltipColor={COLORS.white}
+        tooltipBackground={COLORS.purple}
+        withoutBorder
     />
 );
 
