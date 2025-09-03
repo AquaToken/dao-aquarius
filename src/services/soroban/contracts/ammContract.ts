@@ -31,6 +31,7 @@ import {
     i128ToInt,
     publicKeyToScVal,
     scValToArray,
+    scValToNative,
 } from 'services/soroban/utils/scValHelpers';
 
 import { PoolIncentives, PoolProcessed, PoolRewardsInfo, RewardType } from 'types/amm';
@@ -989,4 +990,42 @@ export function getIncentivesConfig(): Promise<{ duration: number; minAquaAmount
                 minAquaAmount: +i128ToInt(minAquaAmount, 7),
             };
         });
+}
+
+export async function getPoolIncentivesCountPerToken(incentiveContractId: string): Promise<number> {
+    const tx = await buildSmartContractTx(
+        ACCOUNT_FOR_SIMULATE,
+        incentiveContractId,
+        AMM_CONTRACT_METHOD.GET_POOL_CONFIG_PER_TOKEN,
+    );
+
+    const res = await simulateTx(tx);
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    return res.result.retval.value().length;
+}
+
+export async function getPoolIncentivesMap(poolId: string) {
+    const tx = await buildSmartContractTx(
+        ACCOUNT_FOR_SIMULATE,
+        poolId,
+        AMM_CONTRACT_METHOD.GET_POOL_INCENTIVES_MAP,
+    );
+
+    const res = await simulateTx(tx);
+
+    const result = await Promise.all(
+        res.result.retval
+            .value()
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            .map(async item => ({
+                token: await parseTokenContractId(scValToNative(item.key())),
+                incentiveContract: scValToNative(item.val()),
+                count: await getPoolIncentivesCountPerToken(scValToNative(item.val())),
+            })),
+    );
+
+    return result;
 }

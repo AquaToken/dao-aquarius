@@ -42,8 +42,6 @@ export const getTokensFromCache = (): Token[] | null => {
 
         const lumen = createLumen();
 
-        return lumen.contract === token.contract
-            ? { lumen }
-            : createAsset(token.code, token.issuer);
+        return lumen.contract === token.contract ? lumen : createAsset(token.code, token.issuer);
     });
 };

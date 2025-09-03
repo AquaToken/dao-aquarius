@@ -249,9 +249,7 @@ const SingleTokenWithdraw = ({ pool, rewards, accountShare, close, incentives }:
                 return;
             }
 
-            const resultValues: xdr.ScVal[] = withClaimRewards
-                ? (result.value()[0].value() as xdr.ScVal[])
-                : (result.value() as xdr.ScVal[]);
+            const resultValues: xdr.ScVal[] = result.value()[0].value() as xdr.ScVal[];
 
             pool.tokens.forEach((token, index) => {
                 if (token.type === TokenType.soroban) {

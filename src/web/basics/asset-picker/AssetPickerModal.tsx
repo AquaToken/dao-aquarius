@@ -33,13 +33,10 @@ const StyledInput = styled(Input)`
 
 const DefaultAssets = styled.div`
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     margin-top: 1.6rem;
-
-    ${respondDown(Breakpoints.md)`
-        flex-wrap: wrap;
-        gap: 0;
-    `}
+    flex-wrap: wrap;
+    gap: 0;
 `;
 
 const DefaultAsset = styled.div`
@@ -50,6 +47,10 @@ const DefaultAsset = styled.div`
     background-color: ${COLORS.white};
     align-items: center;
     cursor: pointer;
+
+    &:not(:last-child) {
+        margin-right: 2.4rem;
+    }
 
     &:hover {
         border-color: ${COLORS.grayText};
@@ -248,7 +249,9 @@ const AssetPickerModal = ({ params, confirm }: ModalProps<Props>) => {
                 postfix={searchPending ? <CircleLoader size="small" /> : null}
             />
             <DefaultAssets>
-                {DEFAULT_ASSETS.map(asset => (
+                {DEFAULT_ASSETS.filter(
+                    asset => !!assetsList.find(token => asset.contract === token.contract),
+                ).map(asset => (
                     <DefaultAsset key={getAssetString(asset)} onClick={() => chooseAsset(asset)}>
                         <Asset asset={asset} logoAndCode />
                     </DefaultAsset>
