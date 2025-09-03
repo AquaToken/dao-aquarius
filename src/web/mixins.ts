@@ -122,6 +122,16 @@ export const EmptyList = css`
     }
 `;
 
+export const noSelect = css`
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+`;
+
 export const fullWidthSectionStyles = css`
     width: calc(100% - ${PAGE_PADDINGS * 2}rem);
 
