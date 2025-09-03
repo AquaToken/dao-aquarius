@@ -7,7 +7,11 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 import { findSwapPath, getAssetsList, getPoolsForIncentives } from 'api/amm';
 
-import { MAX_TOKEN_AMOUNT } from 'constants/incentives';
+import {
+    MAX_INCENTIVES_PER_TOKEN,
+    MAX_INCENTIVES_TOKENS_PER_POOL,
+    MAX_TOKEN_AMOUNT,
+} from 'constants/incentives';
 import { MINUTE } from 'constants/intervals';
 import { IncentivesRoutes } from 'constants/routes';
 
@@ -18,6 +22,7 @@ import {
     convertUTCToLocalDateIgnoringTimezone,
 } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
+import { getTokensFromCache } from 'helpers/token';
 
 import { useDebounce } from 'hooks/useDebounce';
 
@@ -25,7 +30,7 @@ import useAssetsStore from 'store/assetsStore/useAssetsStore';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService } from 'services/globalServices';
-import { getIncentivesConfig } from 'services/soroban/contracts/ammContract';
+import { getIncentivesConfig, getPoolIncentivesMap } from 'services/soroban/contracts/ammContract';
 
 import { PoolProcessed } from 'types/amm';
 import { Token } from 'types/token';
@@ -39,6 +44,7 @@ import ArrowLeft from 'assets/icon-arrow-left.svg';
 import Fail from 'assets/icon-fail.svg';
 import Success from 'assets/icon-success.svg';
 
+import Alert from 'basics/Alert';
 import AssetPicker from 'basics/asset-picker/AssetPicker';
 import Button from 'basics/buttons/Button';
 import CircleButton from 'basics/buttons/CircleButton';
@@ -92,6 +98,12 @@ const AmountInput = styled(Input)`
     `};
 `;
 
+const InputStyled = styled(Input)`
+    ${respondDown(Breakpoints.md)`
+           margin-bottom: 4.8rem;
+    `}
+`;
+
 const AssetPickerStyled = styled(AssetPicker)`
     border-radius: 0.5rem;
     height: 6.6rem;
@@ -133,9 +145,13 @@ const AddIncentivePage = () => {
     const [selectedMarket, setSelectedMarket] = useState<PoolProcessed | null>(null);
     const [step, setStep] = useState(Step.market);
     const [config, setConfig] = useState(null);
+    const [firstStepPending, setFirstStepPending] = useState(false);
+    const [poolConfig, setPoolConfig] = useState(null);
 
-    const [rewardToken, setRewardToken] = useState<Token>(getAquaAssetData().aquaStellarAsset);
-    const [assetsList, setAssetsList] = useState(null);
+    const { aquaContract, aquaStellarAsset } = getAquaAssetData();
+
+    const [rewardToken, setRewardToken] = useState<Token>(aquaStellarAsset);
+    const [assetsList, setAssetsList] = useState(getTokensFromCache());
     const [amount, setAmount] = useState<string | null>(null);
     const [aquaEquivalent, setAquaEquivalent] = useState(null);
     const [xdr, setXDR] = useState(null);
@@ -146,8 +162,6 @@ const AddIncentivePage = () => {
     const { processNewAssets } = useAssetsStore();
 
     const debouncedAmount = useDebounce(amount, 700);
-
-    const { aquaContract } = getAquaAssetData();
 
     const { isLogged } = useAuthStore();
 
@@ -208,6 +222,12 @@ const AddIncentivePage = () => {
         }));
     }, [markets]);
 
+    const currentTokenConfig = useMemo(() => {
+        if (!poolConfig) return null;
+
+        return poolConfig.find(({ token }) => token.contract === rewardToken.contract) ?? null;
+    }, [poolConfig, rewardToken]);
+
     const setTestDate = () => {
         const start = 3 * MINUTE + Date.now();
         const end = start + config?.duration * 1000;
@@ -244,6 +264,34 @@ const AddIncentivePage = () => {
                 <FailIcon />
             </Tooltip>
         );
+
+    useEffect(() => {
+        if (!selectedMarket) return;
+
+        setPoolConfig(null);
+        setFirstStepPending(true);
+
+        getPoolIncentivesMap(selectedMarket.address).then(res => {
+            setPoolConfig(res);
+
+            if (res.length !== MAX_INCENTIVES_TOKENS_PER_POOL) {
+                setFirstStepPending(false);
+                setAssetsList(getTokensFromCache());
+                return;
+            }
+
+            const hasTokenInConfig = res.find(
+                ({ token }) => token.contract === rewardToken.contract,
+            );
+
+            if (!hasTokenInConfig) {
+                setRewardToken(res[0].token);
+                setAmount('');
+            }
+            setAssetsList(res.map(({ token }) => token));
+            setFirstStepPending(false);
+        });
+    }, [selectedMarket]);
 
     const onSubmit = () => {
         if (!isLogged) {
@@ -312,10 +360,9 @@ const AddIncentivePage = () => {
                                 <NextButton
                                     isBig
                                     fullWidth
-                                    onClick={() => {
-                                        setStep(Step.amount);
-                                    }}
-                                    disabled={!selectedMarket}
+                                    onClick={() => setStep(Step.amount)}
+                                    disabled={!selectedMarket || !poolConfig}
+                                    pending={firstStepPending}
                                 >
                                     next
                                 </NextButton>
@@ -380,7 +427,7 @@ const AddIncentivePage = () => {
                                 </FormSectionDescription>
                                 <FormRow>
                                     <DatePicker
-                                        customInput={<Input label="Start date" />}
+                                        customInput={<InputStyled label="Start date" />}
                                         calendarStartDay={1}
                                         selected={startDay ? new Date(startDay) : null}
                                         onChange={res => {
@@ -402,7 +449,7 @@ const AddIncentivePage = () => {
                                     <DashIcon />
 
                                     <DatePicker
-                                        customInput={<Input label="End date" />}
+                                        customInput={<InputStyled label="End date" />}
                                         calendarStartDay={1}
                                         selected={endDay ? new Date(endDay) : null}
                                         onChange={res => {
@@ -431,16 +478,26 @@ const AddIncentivePage = () => {
                                     isRounded
                                     onClick={() => setTestDate()}
                                 >
-                                    Test Button: Set date to one week from now + 3 min
+                                    Test Button: Set date from now + 3 min
                                 </Button>
+
+                                {currentTokenConfig &&
+                                    currentTokenConfig.count >= MAX_INCENTIVES_PER_TOKEN && (
+                                        <Alert
+                                            title="The maximum number of incentives has been reached."
+                                            text={`At the moment, 10 incentives have been created for the ${rewardToken.code} token. To create another one, please wait until one of the active incentives expires.`}
+                                        />
+                                    )}
 
                                 <NextButton
                                     isBig
                                     fullWidth
                                     onClick={() => onSubmit()}
                                     disabled={
-                                        isLogged &&
-                                        (!startDay || !endDay || !amount || !selectedMarket)
+                                        (isLogged &&
+                                            (!startDay || !endDay || !amount || !selectedMarket)) ||
+                                        (currentTokenConfig &&
+                                            currentTokenConfig.count >= MAX_INCENTIVES_PER_TOKEN)
                                     }
                                 >
                                     {isLogged ? 'Create incentive' : 'Connect Wallet'}
