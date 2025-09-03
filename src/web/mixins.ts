@@ -141,3 +141,14 @@ export const EmptyList = css`
         line-height: 2rem;
     }
 `;
+
+export const noSelect = css`
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+`;
+
