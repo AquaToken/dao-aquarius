@@ -150,6 +150,7 @@ const RewardsBanner = ({
 
                         {userIncentivesCount
                             ? `Incentives (${userIncentivesCount}): ${[...incentivesSum.entries()]
+                                  .filter(([_, amount]) => Boolean(Number(amount)))
                                   .map(
                                       ([token, amount]) =>
                                           `${formatBalance(amount, true, true)} ${token.code}`,
