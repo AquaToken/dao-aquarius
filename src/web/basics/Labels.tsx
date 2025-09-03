@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { COLORS } from 'web/styles';
+import { COLORS, hexWithOpacity } from 'web/styles';
 
 import Lightning from 'assets/icon-lightning.svg';
 
@@ -31,13 +31,13 @@ export const RewardLabel = () => (
     <StyledLabel
         labelText={
             <LabelWithIcon>
-                <Lightning />
+                <Lightning style={{ height: '0.8rem', width: '0.5rem' }} />
                 reward zone
             </LabelWithIcon>
         }
         tooltipText={`Any market with at least ${MIN_REWARDS_PERCENT}% of the total ICE votes is placed into the reward zone and will get rewards after the next rewards update.`}
         color={COLORS.purple}
-        background={`${COLORS.purple}1A`}
+        background={`${hexWithOpacity(COLORS.purple, 10)}`}
         tooltipColor={COLORS.white}
         tooltipBackground={COLORS.purple}
         withoutBorder
