@@ -97,7 +97,11 @@ const TableHead = styled.div<{ $mobileBreakpoint: Breakpoints }>`
     `}
 `;
 
-const TableHeadRow = styled.div<{ $withPadding: boolean; $mobileBreakpoint: Breakpoints }>`
+const TableHeadRow = styled.div<{
+    $withPadding: boolean;
+    $bodyIsClickable: boolean;
+    $mobileBreakpoint: Breakpoints;
+}>`
     display: flex;
     align-items: stretch;
     width: 100%;
@@ -107,6 +111,7 @@ const TableHeadRow = styled.div<{ $withPadding: boolean; $mobileBreakpoint: Brea
     color: ${COLORS.grayText};
     white-space: nowrap;
     padding-right: ${({ $withPadding }) => ($withPadding ? '1.5rem' : 'unset')};
+    padding: ${({ $bodyIsClickable }) => ($bodyIsClickable ? '0.8rem' : 'unset')};
 
     ${({ $mobileBreakpoint }) => respondDown($mobileBreakpoint)`
         flex-direction: column;
@@ -349,6 +354,7 @@ const Table = forwardRef(
                 <TableHead $mobileBreakpoint={mobileBreakpoint}>
                     <TableHeadRow
                         $withPadding={Boolean(virtualScrollProps)}
+                        $bodyIsClickable={Boolean(body[0].onRowClick)}
                         $mobileBreakpoint={mobileBreakpoint}
                     >
                         {head.map(

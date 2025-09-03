@@ -15,6 +15,7 @@ export const COLORS = {
     background: '#5C1283',
     deepPurple: '#6D29B5',
     royalPurple: '#461685',
+    extralightPurple: '#F3EAF7',
     gray: '#E8E8ED',
     lightGray: '#FAFAFB',
     placeholder: '#B3B4C3',
@@ -36,11 +37,59 @@ export const COLORS = {
     black: '#000000',
 };
 
+/**
+ * Returns an 8-character HEX (#RRGGBBAA) from a HEX color and opacity percentage.
+ * Supports: "#RGB", "RGB", "#RRGGBB", "RRGGBB", "#RRGGBBAA".
+ */
+export const hexWithOpacity = (hex: string, opacityPercent: number): string => {
+    if (!hex) {
+        throw new Error('hex is required');
+    }
+
+    const raw = hex.trim().replace(/^#/, '');
+    let rgb: string;
+
+    if (raw.length === 3) {
+        // expand shorthand #RGB to #RRGGBB
+        rgb = raw
+            .split('')
+            .map(ch => ch + ch)
+            .join('');
+    } else if (raw.length === 6) {
+        rgb = raw;
+    } else if (raw.length === 8) {
+        // drop existing alpha, replace with new one
+        rgb = raw.slice(0, 6);
+    } else {
+        throw new Error('Unsupported HEX format. Use #RGB, #RRGGBB or #RRGGBBAA.');
+    }
+
+    let pct = Number(opacityPercent);
+    if (Number.isNaN(pct)) {
+        throw new Error('opacityPercent must be a number');
+    }
+
+    // clamp between 0 and 100
+    pct = Math.max(0, Math.min(100, pct));
+
+    // convert percentage to 0..255 alpha
+    const alpha = Math.round((pct * 255) / 100);
+
+    // convert to 2-digit HEX
+    const aa = alpha.toString(16).padStart(2, '0').toUpperCase();
+
+    return `#${rgb.toUpperCase()}${aa}`;
+};
+
 export const FONT_FAMILY = {
     roboto: 'Roboto, sans-serif',
 };
 
 export const FONT_SIZE = {
+    xs: css`
+        font-size: 1rem;
+        line-height: 2rem;
+    `,
     sm: css`
         font-size: 1.4rem;
         line-height: 2rem;

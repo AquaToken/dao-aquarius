@@ -33,6 +33,7 @@ import Table, { CellAlign } from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import PoolApyTooltip from 'pages/amm/components/PoolApyTooltip/PoolApyTooltip';
+import RewardsTokens from 'pages/amm/components/RewardsTokens/RewardsTokens';
 import { AnalyticsTabs, AnalyticsUrlParams } from 'pages/amm/pages/Analytics';
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
 
@@ -254,7 +255,7 @@ const AllPools = (): React.ReactNode => {
                                         sort === PoolsSortFields.liquidityDown,
                                     isReversed: sort === PoolsSortFields.liquidityDown,
                                 },
-                                align: CellAlign.Right,
+                                align: CellAlign.Left,
                                 flexSize: 2,
                             },
                             {
@@ -271,8 +272,14 @@ const AllPools = (): React.ReactNode => {
                                         sort === PoolsSortFields.volumeDown,
                                     isReversed: sort === PoolsSortFields.volumeDown,
                                 },
-                                align: CellAlign.Right,
+                                align: CellAlign.Left,
                                 flexSize: 2,
+                            },
+
+                            {
+                                children: 'Rewards',
+                                align: CellAlign.Left,
+                                flexSize: 3,
                             },
                             {
                                 children: (
@@ -293,7 +300,7 @@ const AllPools = (): React.ReactNode => {
                                     </TitleWithTooltip>
                                 ),
                                 flexSize: 3,
-                                align: CellAlign.Right,
+                                align: CellAlign.Left,
                                 sort: {
                                     onClick: () =>
                                         setSortParam(
@@ -336,7 +343,7 @@ const AllPools = (): React.ReactNode => {
                                           )}`
                                         : '0',
                                     label: 'TVL:',
-                                    align: CellAlign.Right,
+                                    align: CellAlign.Left,
                                     flexSize: 2,
                                 },
                                 {
@@ -348,8 +355,14 @@ const AllPools = (): React.ReactNode => {
                                           )}`
                                         : '0',
                                     label: 'Volume 24h:',
-                                    align: CellAlign.Right,
+                                    align: CellAlign.Left,
                                     flexSize: 2,
+                                },
+                                {
+                                    children: <RewardsTokens pool={pool} />,
+                                    label: 'Rewards',
+                                    align: CellAlign.Left,
+                                    flexSize: 3,
                                 },
                                 {
                                     children: (
@@ -399,7 +412,7 @@ const AllPools = (): React.ReactNode => {
                                         </TitleWithTooltip>
                                     ),
                                     flexSize: 3,
-                                    align: CellAlign.Right,
+                                    align: CellAlign.Left,
                                 },
                             ],
                         }))}

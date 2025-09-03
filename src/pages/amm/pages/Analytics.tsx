@@ -17,7 +17,7 @@ import { ModalService } from 'services/globalServices';
 
 import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
-import { Breakpoints, COLORS } from 'web/styles';
+import { Breakpoints, COLORS, hexWithOpacity } from 'web/styles';
 
 import Plus from 'assets/icon-plus.svg';
 
@@ -98,7 +98,8 @@ const ListTitles = styled.h3`
 
 const ListTab = styled.span<{ $isActive: boolean }>`
     cursor: pointer;
-    color: ${({ $isActive }) => ($isActive ? COLORS.titleText : `${COLORS.titleText}4D`)};
+    color: ${({ $isActive }) =>
+        $isActive ? COLORS.titleText : `${hexWithOpacity(COLORS.titleText, 30)}`};
     white-space: nowrap;
 
     &:hover {
