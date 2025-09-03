@@ -57,7 +57,7 @@ const AssetLogoStyled = styled(AssetLogo)`
 const TooltipInner = styled.div`
     padding: 1.5rem 1.2rem;
     ${flexColumn};
-    width: 24rem;
+    min-width: 24rem;
 `;
 
 const TooltipSectionTitle = styled.div`
@@ -78,6 +78,7 @@ const TooltipRow = styled.div`
     &:not(:last-child) {
         margin-bottom: 1.6rem;
     }
+    gap: 3.2rem;
 `;
 
 const TooltipToken = styled.div`
