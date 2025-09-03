@@ -14,8 +14,8 @@ export const apyValueToDisplay = (apy: string) =>
     apy ? `${formatBalance(+(+apy * 100).toFixed(2))}%` : '0%';
 
 export const tpsToDailyAmount = (tps: string, decimals = 7, withLetters?: boolean) => {
-    const value = contractValueToAmount(tps, decimals);
     const seconds = DAY / 1000;
+    const value = contractValueToAmount((+tps * seconds).toString(), decimals);
 
-    return formatBalance(+value * seconds, true, withLetters);
+    return formatBalance(+value, true, withLetters);
 };
