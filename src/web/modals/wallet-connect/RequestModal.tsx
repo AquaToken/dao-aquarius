@@ -11,7 +11,7 @@ import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 import { ModalProps } from 'types/modal';
 
 import Button from 'basics/buttons/Button';
-import { IconFail, IconPending, IconSuccess } from 'basics/Icons';
+import { IconFail, IconPending, IconSuccess } from 'basics/icons';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 

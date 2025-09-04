@@ -10,7 +10,7 @@ import { TOAST_TYPE } from 'services/toast.service';
 
 import IconClose from 'assets/icon-close-small.svg';
 
-import { IconFail, IconSuccess } from 'basics/Icons';
+import { IconFail, IconSuccess } from 'basics/icons';
 
 import { respondDown } from '../mixins';
 import { Breakpoints, COLORS } from '../styles';

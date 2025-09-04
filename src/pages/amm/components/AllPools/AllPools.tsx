@@ -8,7 +8,6 @@ import { FilterOptions, getPools, PoolsSortFields } from 'api/amm';
 import { POOL_TYPE } from 'constants/amm';
 import { AmmRoutes } from 'constants/routes';
 
-import { apyValueToDisplay } from 'helpers/amount';
 import { formatBalance } from 'helpers/format-number';
 
 import { useDebounce } from 'hooks/useDebounce';
@@ -20,10 +19,8 @@ import { flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Info from 'assets/icon-info.svg';
-import ArrowRightIcon from 'assets/icon-link-arrow.svg';
 import Search from 'assets/icon-search.svg';
 
-import ApyBoosted from 'basics/ApyBoosted';
 import Select from 'basics/inputs/Select';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
 import PageLoader from 'basics/loaders/PageLoader';
@@ -32,8 +29,8 @@ import Pagination from 'basics/Pagination';
 import Table, { CellAlign } from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
-import PoolApyTooltip from 'pages/amm/components/PoolApyTooltip/PoolApyTooltip';
 import RewardsTokens from 'pages/amm/components/RewardsTokens/RewardsTokens';
+import TotalApy from 'pages/amm/components/TotalApy/TotalApy';
 import { AnalyticsTabs, AnalyticsUrlParams } from 'pages/amm/pages/Analytics';
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
 
@@ -93,24 +90,6 @@ const TooltipInner = styled.span`
     white-space: pre-wrap;
     font-size: 1.4rem;
     line-height: 2rem;
-`;
-
-const RewardsApy = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-`;
-
-const WithTooltip = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-`;
-
-const ArrowRight = styled(ArrowRightIcon)`
-    path {
-        fill: ${COLORS.darkBlue};
-    }
 `;
 
 enum UrlParams {
@@ -255,7 +234,7 @@ const AllPools = (): React.ReactNode => {
                                         sort === PoolsSortFields.liquidityDown,
                                     isReversed: sort === PoolsSortFields.liquidityDown,
                                 },
-                                align: CellAlign.Left,
+                                align: CellAlign.Right,
                                 flexSize: 2,
                             },
                             {
@@ -272,7 +251,7 @@ const AllPools = (): React.ReactNode => {
                                         sort === PoolsSortFields.volumeDown,
                                     isReversed: sort === PoolsSortFields.volumeDown,
                                 },
-                                align: CellAlign.Left,
+                                align: CellAlign.Right,
                                 flexSize: 2,
                             },
 
@@ -280,6 +259,9 @@ const AllPools = (): React.ReactNode => {
                                 children: 'Rewards',
                                 align: CellAlign.Left,
                                 flexSize: 3,
+                                style: {
+                                    marginLeft: '5rem',
+                                },
                             },
                             {
                                 children: (
@@ -343,7 +325,7 @@ const AllPools = (): React.ReactNode => {
                                           )}`
                                         : '0',
                                     label: 'TVL:',
-                                    align: CellAlign.Left,
+                                    align: CellAlign.Right,
                                     flexSize: 2,
                                 },
                                 {
@@ -355,7 +337,7 @@ const AllPools = (): React.ReactNode => {
                                           )}`
                                         : '0',
                                     label: 'Volume 24h:',
-                                    align: CellAlign.Left,
+                                    align: CellAlign.Right,
                                     flexSize: 2,
                                 },
                                 {
@@ -363,37 +345,12 @@ const AllPools = (): React.ReactNode => {
                                     label: 'Rewards',
                                     align: CellAlign.Left,
                                     flexSize: 3,
+                                    style: {
+                                        marginLeft: '5rem',
+                                    },
                                 },
                                 {
-                                    children: (
-                                        <RewardsApy>
-                                            <WithTooltip>
-                                                {apyValueToDisplay(pool.total_apy)}
-                                            </WithTooltip>
-
-                                            {Boolean(Number(pool.rewards_apy)) && (
-                                                <>
-                                                    <ArrowRight />
-
-                                                    <ApyBoosted
-                                                        value={
-                                                            Number(pool.rewards_apy) * 250 +
-                                                            (Number(pool.apy) * 100 || 0) +
-                                                            (Number(pool.incentive_apy) * 100 || 0)
-                                                        }
-                                                        color="blue"
-                                                    />
-                                                </>
-                                            )}
-                                            <Tooltip
-                                                content={<PoolApyTooltip pool={pool} />}
-                                                background={COLORS.white}
-                                                showOnHover
-                                            >
-                                                <Info />
-                                            </Tooltip>
-                                        </RewardsApy>
-                                    ),
+                                    children: <TotalApy pool={pool} />,
                                     label: (
                                         <TitleWithTooltip>
                                             Total APY
