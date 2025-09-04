@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import { IconSort } from 'basics/Icons';
+import { IconSort } from 'basics/icons';
 import PageLoader from 'basics/loaders/PageLoader';
 
 interface Sort {
@@ -178,6 +178,11 @@ const HeadCell = styled(Cell)<{ $withSort?: boolean }>`
 
     &:hover {
         color: ${({ $withSort }) => ($withSort ? COLORS.purple : COLORS.grayText)};
+    }
+
+    & > div {
+        display: flex;
+        align-items: center;
     }
 `;
 
@@ -359,7 +364,7 @@ const Table = forwardRef(
                     >
                         {head.map(
                             (
-                                { children, sort, align, flexSize, hideOnWeb, hideOnMobile },
+                                { children, sort, align, flexSize, hideOnWeb, hideOnMobile, style },
                                 index,
                             ) => (
                                 <HeadCell
@@ -372,13 +377,15 @@ const Table = forwardRef(
                                     $hideOnMobile={hideOnMobile}
                                     $mobileBreakpoint={mobileBreakpoint}
                                 >
-                                    {children}
-                                    {Boolean(sort) && (
-                                        <IconSort
-                                            isEnabled={sort.isEnabled}
-                                            isReversed={sort.isReversed}
-                                        />
-                                    )}
+                                    <div style={style}>
+                                        {children}
+                                        {Boolean(sort) && (
+                                            <IconSort
+                                                isEnabled={sort.isEnabled}
+                                                isReversed={sort.isReversed}
+                                            />
+                                        )}
+                                    </div>
                                 </HeadCell>
                             ),
                         )}

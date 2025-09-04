@@ -8,7 +8,7 @@ import { getUserPools } from 'api/amm';
 import { POOL_TYPE } from 'constants/amm';
 import { MainRoutes } from 'constants/routes';
 
-import { apyValueToDisplay, contractValueToAmount } from 'helpers/amount';
+import { contractValueToAmount } from 'helpers/amount';
 import { getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
@@ -41,9 +41,7 @@ import { Breakpoints, COLORS } from 'web/styles';
 
 import IconClaim from 'assets/icon-claim.svg';
 import Info from 'assets/icon-info.svg';
-import ArrowRightIcon from 'assets/icon-link-arrow.svg';
 
-import ApyBoosted from 'basics/ApyBoosted';
 import AssetLogo from 'basics/AssetLogo';
 import Button from 'basics/buttons/Button';
 import Select from 'basics/inputs/Select';
@@ -55,9 +53,9 @@ import Table, { CellAlign } from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import ExpandedMenu from 'pages/amm/components/MyLiquidity/ExpandedMenu/ExpandedMenu';
-import PoolApyTooltip from 'pages/amm/components/PoolApyTooltip/PoolApyTooltip';
 import MigratePoolButton from 'pages/amm/components/PoolsList/MigratePoolButton/MigratePoolButton';
 import RewardsBanner from 'pages/amm/components/RewardsBanner/RewardsBanner';
+import TotalApy from 'pages/amm/components/TotalApy/TotalApy';
 import { AnalyticsTabs, AnalyticsUrlParams } from 'pages/amm/pages/Analytics';
 import { ProfileTabs, ProfileUrlParams } from 'pages/profile/Profile';
 import { ExternalLinkStyled } from 'pages/profile/SdexRewards/SdexRewards';
@@ -189,24 +187,6 @@ const TooltipRow = styled.div`
 
 const IconInfoStyled = styled(Info)`
     cursor: help;
-`;
-
-const ArrowRight = styled(ArrowRightIcon)`
-    path {
-        fill: ${COLORS.darkBlue};
-    }
-`;
-
-const RewardsApy = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-`;
-
-const WithTooltip = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
 `;
 
 const IncentivesValues = styled.div`
@@ -346,6 +326,8 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
             const sum = new Map<Token, number>();
 
             res.forEach((incentives, index) => {
+                if (!incentives) return;
+
                 if (incentives) {
                     map.set(pools[index].address, incentives);
                 }
@@ -531,7 +513,12 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                             align: CellAlign.Right,
                             mobileStyle: { textAlign: 'right' },
                         },
-                        { children: 'Total APY', align: CellAlign.Right, flexSize: 2 },
+                        {
+                            children: 'Total APY',
+                            align: CellAlign.Left,
+                            flexSize: 2,
+                            style: { paddingLeft: '5rem' },
+                        },
                         { children: '' },
                     ]}
                     body={filteredPools.map(pool => {
@@ -539,16 +526,6 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                             userRewards.get(pool.address),
                             pool.balance,
                         );
-                        const poolRewardsData = userRewards.get(pool.address);
-
-                        const userRewardsValue = poolRewardsData
-                            ? (+poolRewardsData.tps *
-                                  60 *
-                                  60 *
-                                  24 *
-                                  +poolRewardsData.working_balance) /
-                              +poolRewardsData.working_supply
-                            : 0;
 
                         const incentivesForPool = userIncentives.get(pool.address);
 
@@ -688,52 +665,13 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                     mobileStyle: { textAlign: 'right' },
                                 },
                                 {
-                                    children: (
-                                        <RewardsApy>
-                                            <WithTooltip>
-                                                {apyValueToDisplay(pool.total_apy)}
-                                            </WithTooltip>
-
-                                            {Boolean(Number(pool.rewards_apy)) &&
-                                                boostValue !== 1 && (
-                                                    <>
-                                                        <ArrowRight />
-
-                                                        <ApyBoosted
-                                                            value={
-                                                                Number(pool.rewards_apy) *
-                                                                    boostValue *
-                                                                    100 +
-                                                                (Number(pool.apy) * 100 || 0) +
-                                                                (Number(pool.incentive_apy) * 100 ||
-                                                                    0)
-                                                            }
-                                                            color="blue"
-                                                        />
-                                                    </>
-                                                )}
-                                            <Tooltip
-                                                content={
-                                                    <PoolApyTooltip
-                                                        pool={pool}
-                                                        userBoost={boostValue}
-                                                        userRewardsValue={userRewardsValue}
-                                                        userShareRatio={
-                                                            pool.balance / pool.total_share
-                                                        }
-                                                        incentivesForPool={incentivesForPool}
-                                                    />
-                                                }
-                                                background={COLORS.white}
-                                                showOnHover
-                                            >
-                                                <Info />
-                                            </Tooltip>
-                                        </RewardsApy>
-                                    ),
+                                    children: <TotalApy pool={pool} userBoost={boostValue} />,
                                     label: 'Total APY',
-                                    align: CellAlign.Right,
+                                    align: CellAlign.Left,
                                     flexSize: 2,
+                                    style: {
+                                        marginLeft: '5rem',
+                                    },
                                 },
                                 {
                                     children: (
