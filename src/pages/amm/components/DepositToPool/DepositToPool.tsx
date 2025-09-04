@@ -687,14 +687,16 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                                     : '0'}
                             </span>
                         </DescriptionRow>
-                        <DescriptionRow>
-                            <span>Pool rates</span>
-                            <PoolRates
-                                onClick={() => setPriceIndex(prev => (prev + 1) % rates.size)}
-                            >
-                                {[...rates.values()][priceIndex]} <RevertIcon />{' '}
-                            </PoolRates>
-                        </DescriptionRow>
+                        {Boolean(rates) && (
+                            <DescriptionRow>
+                                <span>Pool rates</span>
+                                <PoolRates
+                                    onClick={() => setPriceIndex(prev => (prev + 1) % rates.size)}
+                                >
+                                    {[...rates.values()][priceIndex]} <RevertIcon />{' '}
+                                </PoolRates>
+                            </DescriptionRow>
+                        )}
                     </>
                 )}
 
