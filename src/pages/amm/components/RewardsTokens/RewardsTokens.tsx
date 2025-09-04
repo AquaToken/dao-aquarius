@@ -6,8 +6,8 @@ import { getAquaAssetData, getAssetFromString } from 'helpers/assets';
 
 import { PoolProcessed } from 'types/amm';
 
-import { flexAllCenter, flexColumn, flexRowSpaceBetween } from 'web/mixins';
-import { COLORS, FONT_SIZE, hexWithOpacity } from 'web/styles';
+import { flexAllCenter, flexColumn, flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS, FONT_SIZE, hexWithOpacity } from 'web/styles';
 
 import Arrows from 'assets/icon-arrows.svg';
 import Lightning from 'assets/icon-lightning.svg';
@@ -55,9 +55,14 @@ const AssetLogoStyled = styled(AssetLogo)`
 `;
 
 const TooltipInner = styled.div`
-    padding: 1.5rem 1.2rem;
+    padding: 2.4rem;
     ${flexColumn};
     min-width: 24rem;
+
+    ${respondDown(Breakpoints.xs)`
+        padding: 0.8rem;
+        min-width: unset;
+    `}
 `;
 
 const TooltipSectionTitle = styled.div`
@@ -79,6 +84,11 @@ const TooltipRow = styled.div`
         margin-bottom: 1.6rem;
     }
     gap: 3.2rem;
+
+    ${respondDown(Breakpoints.xs)`
+        gap: 0.8rem;
+        ${FONT_SIZE.xs}
+    `}
 `;
 
 const TooltipToken = styled.div`
@@ -160,6 +170,7 @@ const RewardsTokens = ({ pool }: Props) => {
                     )}
                 </TooltipInner>
             }
+            withoutPadding
             background={COLORS.white}
             color={COLORS.paragraphText}
             showOnHover
