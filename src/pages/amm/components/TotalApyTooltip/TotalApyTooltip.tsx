@@ -23,6 +23,7 @@ const Container = styled.div`
 
     ${respondDown(Breakpoints.xs)`
         min-width: unset;
+        ${FONT_SIZE.xs};
     `}
 `;
 
@@ -36,7 +37,7 @@ const BoostBlock = styled(Link)`
     text-decoration: none;
 
     ${respondDown(Breakpoints.xs)`
-        padding: 1.6rem;
+        padding: 0.8rem;
     `}
 `;
 
@@ -58,7 +59,7 @@ const ContentBlock = styled.div`
     padding: 2.4rem 3.2rem;
 
     ${respondDown(Breakpoints.xs)`
-        padding: 1.6rem;
+        padding: 0.8rem;
     `}
 `;
 
@@ -87,6 +88,10 @@ const ContentRowWithBackground = styled(ContentRow)<{ $background: string }>`
 
 const Title = styled.span`
     color: ${COLORS.grayText};
+
+    ${respondDown(Breakpoints.xs)`
+        font-weight: 700;
+    `}
 `;
 
 const Value = styled.div`
@@ -94,6 +99,10 @@ const Value = styled.div`
     align-items: center;
     color: ${COLORS.titleText};
     gap: 0.8rem;
+
+    ${respondDown(Breakpoints.xs)`
+        flex-direction: column;
+    `}
 `;
 
 const LabelText = styled.div`
@@ -105,6 +114,10 @@ const LabelText = styled.div`
 const LabelTextTotal = styled(LabelText)`
     ${FONT_SIZE.md};
     font-weight: 700;
+
+    ${respondDown(Breakpoints.xs)`
+        ${FONT_SIZE.sm};
+    `}
 `;
 
 const Cross = styled.span`
