@@ -639,32 +639,6 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                         marginLeft: '5rem',
                                     },
                                 },
-                                // {
-                                //     children: incentivesForPool?.length ? (
-                                //         <IncentivesValues>
-                                //             {incentivesForPool
-                                //                 .filter(
-                                //                     incentive =>
-                                //                         !!Number(incentive.info.user_reward),
-                                //                 )
-                                //                 .map(incentive => (
-                                //                     <span key={incentive.token.contract}>
-                                //                         {formatBalance(
-                                //                             +incentive.info.user_reward,
-                                //                             true,
-                                //                             true,
-                                //                         )}{' '}
-                                //                         {incentive.token.code}
-                                //                     </span>
-                                //                 ))}
-                                //         </IncentivesValues>
-                                //     ) : (
-                                //         '-'
-                                //     ),
-                                //     label: 'Incentives to claim',
-                                //     align: CellAlign.Right,
-                                //     mobileStyle: { textAlign: 'right' },
-                                // },
                                 {
                                     children: <TotalApy pool={pool} userBoost={boostValue} />,
                                     label: 'Total APY',
