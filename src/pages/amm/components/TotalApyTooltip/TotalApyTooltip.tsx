@@ -159,14 +159,14 @@ const TotalApyTooltip = ({ pool, withBoost, userBoost }: Props) => (
         <ContentBlock>
             {!!Number(pool.apy) || (!Number(pool.rewards_apy) && !Number(pool.incentive_apy)) ? (
                 <ContentRow>
-                    <Title>Swap fee APY:</Title>
+                    <Title>Swap Fees:</Title>
                     <Value>{apyValueToDisplay(pool.apy)}</Value>
                 </ContentRow>
             ) : null}
 
             {!!Number(pool.rewards_apy) && (
                 <ContentRow>
-                    <Title>AQUA rewards APY:</Title>
+                    <Title>AQUA Rewards:</Title>
                     <Value>
                         {withBoost ? (
                             <>
@@ -186,7 +186,7 @@ const TotalApyTooltip = ({ pool, withBoost, userBoost }: Props) => (
             )}
             {!!Number(pool.incentive_apy) && (
                 <ContentRow>
-                    <Title>Extra incentives APY:</Title>
+                    <Title>Extra Incentives:</Title>
                     <Value>{apyValueToDisplay(pool.incentive_apy)}</Value>
                 </ContentRow>
             )}
@@ -198,7 +198,7 @@ const TotalApyTooltip = ({ pool, withBoost, userBoost }: Props) => (
             )}
             {withBoost && (
                 <ContentRowWithBackground $background={hexWithOpacity(COLORS.darkBlue, 10)}>
-                    <Title>Max boost APY:</Title>
+                    <Title>Max Boost APY:</Title>
                     <Value>
                         <Cross>{apyValueToDisplay(pool.total_apy)}</Cross>
                         <LabelTextTotal>
@@ -216,7 +216,7 @@ const TotalApyTooltip = ({ pool, withBoost, userBoost }: Props) => (
             )}
             {Boolean(userBoost) && (
                 <ContentRowWithBackground $background={hexWithOpacity(COLORS.purple, 10)}>
-                    <Title>Your boost APY:</Title>
+                    <Title>Your Boost APY:</Title>
                     <Value>
                         <LabelTextTotal>
                             <IconBoost />
