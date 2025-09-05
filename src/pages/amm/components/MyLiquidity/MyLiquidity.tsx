@@ -420,7 +420,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
     };
 
     const calculateBoostValue = (rewardsInfo: PoolRewardsInfo, userBalance: string) => {
-        if (!rewardsInfo) return 1;
+        if (!rewardsInfo) return 0;
         const tps = +rewardsInfo.tps;
         const wSupply = +rewardsInfo.working_supply;
         const wBalance = +rewardsInfo.working_balance;
