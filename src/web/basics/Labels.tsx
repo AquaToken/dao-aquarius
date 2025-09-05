@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import { COLORS, hexWithOpacity } from 'web/styles';
 
-import Lightning from 'assets/icon-lightning.svg';
+import Crown from 'assets/icon-crown.svg';
 
 import Label from 'basics/Label';
 
@@ -31,7 +31,7 @@ export const RewardLabel = () => (
     <StyledLabel
         labelText={
             <LabelWithIcon>
-                <Lightning style={{ height: '0.8rem', width: '0.5rem' }} />
+                <Crown style={{ height: '0.6rem', width: '0.9rem' }} />
                 reward zone
             </LabelWithIcon>
         }
