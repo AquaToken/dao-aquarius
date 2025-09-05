@@ -238,7 +238,7 @@ const AllPools = (): React.ReactNode => {
                                 flexSize: 2,
                             },
                             {
-                                children: 'Volume 24h',
+                                children: 'Volume 24H',
                                 sort: {
                                     onClick: () =>
                                         setSortParam(
@@ -336,7 +336,7 @@ const AllPools = (): React.ReactNode => {
                                               true,
                                           )}`
                                         : '0',
-                                    label: 'Volume 24h:',
+                                    label: 'Volume 24H:',
                                     align: CellAlign.Right,
                                     flexSize: 2,
                                 },
