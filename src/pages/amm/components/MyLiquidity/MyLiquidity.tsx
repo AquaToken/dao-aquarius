@@ -302,7 +302,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
 
             res.forEach((reward, index) => {
                 sum += Number(reward.to_claim);
-                if (Number(reward.to_claim)) {
+                if (Number(reward.tps)) {
                     map.set(pools[index].address, reward);
                 }
             });
