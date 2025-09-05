@@ -166,7 +166,7 @@ const TotalApyTooltip = ({ pool, withBoost, userBoost }: Props) => (
 
             {!!Number(pool.rewards_apy) && (
                 <ContentRow>
-                    <Title>AQUA rewards base APY:</Title>
+                    <Title>AQUA rewards APY:</Title>
                     <Value>
                         {withBoost ? (
                             <>
