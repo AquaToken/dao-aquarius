@@ -648,9 +648,10 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                 {
                                     children: Number(pool.reward_tps)
                                         ? `${formatBalance(
-                                              ((((+pool.reward_tps / 1e7) * DAY) / 1000) *
+                                              (((((+pool.reward_tps / 1e7) * DAY) / 1000) *
                                                   +pool.balance) /
-                                                  +pool.total_share,
+                                                  +pool.total_share) *
+                                                  boostValue,
                                               true,
                                               true,
                                           )} AQUA`
