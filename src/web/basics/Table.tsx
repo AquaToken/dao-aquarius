@@ -168,9 +168,10 @@ const Cell = styled.div<{
     `}
 `;
 
-const HeadCell = styled(Cell)<{ $withSort?: boolean }>`
+const HeadCell = styled(Cell)<{ $withSort?: boolean; $sortActive?: boolean }>`
     color: ${COLORS.grayText};
     cursor: ${({ $withSort }) => ($withSort ? 'pointer' : 'unset')};
+    font-weight: ${({ $sortActive }) => ($sortActive ? 700 : 400)};
 
     & > svg {
         margin-left: 0.4rem;
@@ -372,6 +373,7 @@ const Table = forwardRef(
                                     onClick={() => sort?.onClick()}
                                     $align={align}
                                     $withSort={Boolean(sort)}
+                                    $sortActive={sort?.isEnabled}
                                     $flexSize={flexSize}
                                     $hideOnWeb={hideOnWeb}
                                     $hideOnMobile={hideOnMobile}

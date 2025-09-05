@@ -66,7 +66,7 @@ const SelectStyled = styled(Select)`
     `}
 `;
 
-const TitleWithTooltip = styled.span`
+export const TitleWithTooltip = styled.span`
     display: flex;
     align-items: center;
 
@@ -85,7 +85,7 @@ const StyledInput = styled(Input)`
     `}
 `;
 
-const TooltipInner = styled.span`
+export const TooltipInnerHead = styled.span`
     width: 20rem;
     white-space: pre-wrap;
     font-size: 1.4rem;
@@ -270,10 +270,10 @@ const AllPools = (): React.ReactNode => {
                                         <Tooltip
                                             showOnHover
                                             content={
-                                                <TooltipInner>
+                                                <TooltipInnerHead>
                                                     Total APY is the sum of LP APY, Rewards APY, and
                                                     Incentives APY.
-                                                </TooltipInner>
+                                                </TooltipInnerHead>
                                             }
                                             position={TOOLTIP_POSITION.top}
                                         >
@@ -357,10 +357,10 @@ const AllPools = (): React.ReactNode => {
                                             <Tooltip
                                                 showOnHover
                                                 content={
-                                                    <TooltipInner>
+                                                    <TooltipInnerHead>
                                                         Total APY is the sum of LP APY, Rewards APY,
                                                         and Incentives APY.
-                                                    </TooltipInner>
+                                                    </TooltipInnerHead>
                                                 }
                                                 position={TOOLTIP_POSITION.top}
                                             >

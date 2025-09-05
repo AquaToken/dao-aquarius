@@ -47,6 +47,7 @@ import Market from 'basics/Market';
 import Table, { CellAlign } from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
+import { TitleWithTooltip, TooltipInnerHead } from 'pages/amm/components/AllPools/AllPools';
 import ExpandedMenu from 'pages/amm/components/MyLiquidity/ExpandedMenu/ExpandedMenu';
 import MigratePoolButton from 'pages/amm/components/PoolsList/MigratePoolButton/MigratePoolButton';
 import RewardsBanner from 'pages/amm/components/RewardsBanner/RewardsBanner';
@@ -494,10 +495,30 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                             flexSize: 4,
                         },
                         { children: 'Pooled', align: CellAlign.Right },
-                        { children: 'Daily Rewards', align: CellAlign.Right, flexSize: 1.2 },
+                        {
+                            children: (
+                                <TitleWithTooltip>
+                                    Daily Rewards
+                                    <Tooltip
+                                        showOnHover
+                                        content={
+                                            <TooltipInnerHead>
+                                                Amount of AQUA your position earns daily from
+                                                Aquarius reward zone emissions.
+                                            </TooltipInnerHead>
+                                        }
+                                        position={TOOLTIP_POSITION.top}
+                                    >
+                                        <Info />
+                                    </Tooltip>
+                                </TitleWithTooltip>
+                            ),
+                            align: CellAlign.Right,
+                            flexSize: 1.2,
+                        },
 
                         {
-                            children: 'To claim',
+                            children: 'Ready To Claim',
                             align: CellAlign.Left,
                             flexSize: 1.5,
                             style: {
@@ -634,7 +655,23 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                               true,
                                           )} AQUA`
                                         : '-',
-                                    label: 'Daily Rewards',
+                                    label: (
+                                        <TitleWithTooltip>
+                                            Daily Rewards
+                                            <Tooltip
+                                                showOnHover
+                                                content={
+                                                    <TooltipInnerHead>
+                                                        Amount of AQUA your position earns daily
+                                                        from Aquarius reward zone emissions.
+                                                    </TooltipInnerHead>
+                                                }
+                                                position={TOOLTIP_POSITION.top}
+                                            >
+                                                <Info />
+                                            </Tooltip>
+                                        </TitleWithTooltip>
+                                    ),
                                     align: CellAlign.Right,
                                     flexSize: 1.2,
                                 },
@@ -649,7 +686,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                         ) : (
                                             '-'
                                         ),
-                                    label: 'To claim',
+                                    label: 'Ready To Claim',
                                     flexSize: 1.5,
                                     align: CellAlign.Left,
                                     style: {
