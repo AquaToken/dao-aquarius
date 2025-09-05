@@ -150,7 +150,7 @@ const TotalApyTooltip = ({ pool, withBoost, userBoost }: Props) => (
                         withoutBorder
                     />
                     <span>
-                        AQUA rewards APY are boosted based on your <b>ICE balance</b>
+                        Boost AQUA rewards up to 2.5× with your <b>ICE balance</b>
                     </span>
                 </BoostBlockContent>
                 <WhiteArrow />
@@ -166,7 +166,7 @@ const TotalApyTooltip = ({ pool, withBoost, userBoost }: Props) => (
 
             {!!Number(pool.rewards_apy) && (
                 <ContentRow>
-                    <Title>AQUA Rewards:</Title>
+                    <Title>AQUA Rewards{withBoost ? ' (Max)' : ' (Base)'}:</Title>
                     <Value>
                         {withBoost ? (
                             <>
@@ -196,24 +196,6 @@ const TotalApyTooltip = ({ pool, withBoost, userBoost }: Props) => (
                     <Value>{apyValueToDisplay(pool.total_apy)}</Value>
                 </ContentRowWithBackground>
             )}
-            {withBoost && (
-                <ContentRowWithBackground $background={hexWithOpacity(COLORS.darkBlue, 10)}>
-                    <Title>Max Boost APY:</Title>
-                    <Value>
-                        <Cross>{apyValueToDisplay(pool.total_apy)}</Cross>
-                        <LabelTextTotal>
-                            <IconBoost />
-                            {apyValueToDisplay(
-                                (
-                                    (+pool.rewards_apy || 0) * 2.5 +
-                                    (+pool.apy || 0) +
-                                    (+pool.incentive_apy || 0)
-                                ).toString(),
-                            )}
-                        </LabelTextTotal>
-                    </Value>
-                </ContentRowWithBackground>
-            )}
             {Boolean(userBoost) && (
                 <ContentRowWithBackground $background={hexWithOpacity(COLORS.purple, 10)}>
                     <Title>Your Boost APY:</Title>
@@ -239,6 +221,24 @@ const TotalApyTooltip = ({ pool, withBoost, userBoost }: Props) => (
                                     : `X${userBoost.toFixed(2)}`
                             }
                         />
+                    </Value>
+                </ContentRowWithBackground>
+            )}
+            {withBoost && (
+                <ContentRowWithBackground $background={hexWithOpacity(COLORS.darkBlue, 10)}>
+                    <Title>Max Boost APY:</Title>
+                    <Value>
+                        <Cross>{apyValueToDisplay(pool.total_apy)}</Cross>
+                        <LabelTextTotal>
+                            <IconBoost />
+                            {apyValueToDisplay(
+                                (
+                                    (+pool.rewards_apy || 0) * 2.5 +
+                                    (+pool.apy || 0) +
+                                    (+pool.incentive_apy || 0)
+                                ).toString(),
+                            )}
+                        </LabelTextTotal>
                     </Value>
                 </ContentRowWithBackground>
             )}
