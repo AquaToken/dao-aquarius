@@ -79,7 +79,7 @@ const TotalApy = ({ pool, userBoost }: Props) => (
                 />
             </Tooltip>
         )}
-        {userBoost && !!Number(pool.rewards_apy) && (
+        {!!userBoost && !!Number(pool.rewards_apy) && (
             <Label
                 background={COLORS.darkBlue}
                 labelSize="extraLarge"
