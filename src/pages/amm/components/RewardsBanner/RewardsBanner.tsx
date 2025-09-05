@@ -10,7 +10,7 @@ import { ModalService } from 'services/globalServices';
 import { Token } from 'types/token';
 
 import Button from 'web/basics/buttons/Button';
-import { respondDown } from 'web/mixins';
+import { flexColumn, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import AssetLogo from 'basics/AssetLogo';
@@ -46,24 +46,12 @@ const Rewards = styled.div`
 
 const RewardsDescription = styled.div`
     display: flex;
-    flex-direction: column;
     color: ${COLORS.grayText};
     font-size: 1.4rem;
+    gap: 2.4rem;
 
-    span:first-child {
-        font-size: 1.6rem;
-        line-height: 2.8rem;
-        color: ${COLORS.paragraphText};
-        display: flex;
-        align-items: center;
-
-        svg {
-            margin: 0 0.5rem;
-        }
-    }
-
-    ${respondDown(Breakpoints.md)`
-        text-align: center;
+    ${respondDown(Breakpoints.xs)`
+         flex-direction: column;
     `}
 `;
 
@@ -95,6 +83,38 @@ const StyledAssetLogo = styled(AssetLogo)`
     &:not(:first-child) {
         margin-left: -1.2rem;
     }
+`;
+
+const Column = styled.div`
+    ${flexColumn};
+
+    span:last-child {
+        font-size: 1.6rem;
+        line-height: 2.8rem;
+        color: ${COLORS.paragraphText};
+        display: flex;
+        align-items: center;
+
+        svg {
+            margin: 0 0.5rem;
+        }
+    }
+
+    ${respondDown(Breakpoints.xs)`
+         text-align: center;
+         
+         span:last-child {
+            justify-content: center;
+         }
+    `}
+`;
+
+const Divider = styled.div`
+    border-left: 0.1rem solid ${COLORS.gray};
+
+    ${respondDown(Breakpoints.xs)`
+         display: none;
+    `}
 `;
 
 interface RewardsBannerProps {
@@ -137,25 +157,32 @@ const RewardsBanner = ({
                     ))}
                 </Logos>
                 <RewardsDescription>
-                    <span>
-                        {!userRewardsCount && !userIncentivesCount && (
-                            <span>You might have unclaimed rewards or incentives</span>
-                        )}
+                    {!userRewardsCount && !userIncentivesCount && (
+                        <span>You might have unclaimed rewards or incentives</span>
+                    )}
+                    {!!userRewardsCount && (
+                        <Column>
+                            <span>AQUA Rewards:</span>
+                            <span>{formatBalance(rewardsSum)} AQUA</span>
+                        </Column>
+                    )}
 
-                        {userRewardsCount ? `AQUA Rewards: ${formatBalance(rewardsSum)} AQUA` : ''}
+                    {!!userRewardsCount && !!userIncentivesCount && <Divider />}
 
-                        {!!userRewardsCount && <br />}
-
-                        {userIncentivesCount
-                            ? `Extra Incentives: ${[...incentivesSum.entries()]
-                                  .filter(([, amount]) => Boolean(Number(amount)))
-                                  .map(
-                                      ([token, amount]) =>
-                                          `${formatBalance(amount, true, true)} ${token.code}`,
-                                  )
-                                  .join(' + ')}`
-                            : ''}
-                    </span>
+                    {!!userIncentivesCount && (
+                        <Column>
+                            <span>Extra Incentives:</span>
+                            <span>
+                                {[...incentivesSum.entries()]
+                                    .filter(([, amount]) => Boolean(Number(amount)))
+                                    .map(
+                                        ([token, amount]) =>
+                                            `${formatBalance(amount, true, true)} ${token.code}`,
+                                    )
+                                    .join(' + ')}
+                            </span>
+                        </Column>
+                    )}
                 </RewardsDescription>
                 <StyledButton onClick={() => ModalService.openModal(ClaimRewardsModal, {})}>
                     {userRewardsCount || userIncentivesCount ? 'Claim All' : 'Check'}

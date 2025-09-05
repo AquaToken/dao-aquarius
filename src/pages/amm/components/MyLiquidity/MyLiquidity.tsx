@@ -29,13 +29,7 @@ import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 import { PoolIncentives, PoolRewardsInfo, PoolUserProcessed, RewardType } from 'types/amm';
 import { SorobanToken, Token } from 'types/token';
 
-import {
-    flexAllCenter,
-    flexColumn,
-    flexRowSpaceBetween,
-    respondDown,
-    textEllipsis,
-} from 'web/mixins';
+import { flexAllCenter, flexRowSpaceBetween, respondDown, textEllipsis } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -55,6 +49,7 @@ import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 import ExpandedMenu from 'pages/amm/components/MyLiquidity/ExpandedMenu/ExpandedMenu';
 import MigratePoolButton from 'pages/amm/components/PoolsList/MigratePoolButton/MigratePoolButton';
 import RewardsBanner from 'pages/amm/components/RewardsBanner/RewardsBanner';
+import RewardsTokens from 'pages/amm/components/RewardsTokens/RewardsTokens';
 import TotalApy from 'pages/amm/components/TotalApy/TotalApy';
 import { AnalyticsTabs, AnalyticsUrlParams } from 'pages/amm/pages/Analytics';
 import { ProfileTabs, ProfileUrlParams } from 'pages/profile/Profile';
@@ -187,10 +182,6 @@ const TooltipRow = styled.div`
 
 const IconInfoStyled = styled(Info)`
     cursor: help;
-`;
-
-const IncentivesValues = styled.div`
-    ${flexColumn};
 `;
 
 enum FilterValues {
@@ -504,14 +495,12 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                         { children: 'Pooled', align: CellAlign.Right },
 
                         {
-                            children: 'Rewards to claim',
-                            align: CellAlign.Right,
-                            mobileStyle: { textAlign: 'right' },
-                        },
-                        {
-                            children: 'Incentives to claim',
-                            align: CellAlign.Right,
-                            mobileStyle: { textAlign: 'right' },
+                            children: 'To claim',
+                            align: CellAlign.Left,
+                            flexSize: 1.5,
+                            style: {
+                                marginLeft: '5rem',
+                            },
                         },
                         {
                             children: 'Total APY',
@@ -527,7 +516,11 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                             pool.balance,
                         );
 
-                        const incentivesForPool = userIncentives.get(pool.address);
+                        const incentivesForPool = userIncentives
+                            .get(pool.address)
+                            ?.filter(incentive => !!Number(incentive.info.user_reward));
+
+                        const userRewardsValue = +userRewards.get(pool.address)?.to_claim;
 
                         return {
                             key: pool.address || pool.id,
@@ -629,41 +622,49 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                     align: CellAlign.Right,
                                 },
                                 {
-                                    children: `${formatBalance(
-                                        Number(userRewards.get(pool.address)?.to_claim) || 0,
-                                        true,
-                                        true,
-                                    )} AQUA`,
-                                    label: 'Rewards to claim',
-                                    align: CellAlign.Right,
-                                    mobileStyle: { textAlign: 'right' },
+                                    children:
+                                        !!incentivesForPool?.length || !!userRewardsValue ? (
+                                            <RewardsTokens
+                                                pool={pool}
+                                                myRewards={userRewardsValue}
+                                                myIncentives={incentivesForPool}
+                                            />
+                                        ) : (
+                                            '-'
+                                        ),
+                                    label: 'To claim',
+                                    flexSize: 1.5,
+                                    align: CellAlign.Left,
+                                    style: {
+                                        marginLeft: '5rem',
+                                    },
                                 },
-                                {
-                                    children: incentivesForPool?.length ? (
-                                        <IncentivesValues>
-                                            {incentivesForPool
-                                                .filter(
-                                                    incentive =>
-                                                        !!Number(incentive.info.user_reward),
-                                                )
-                                                .map(incentive => (
-                                                    <span key={incentive.token.contract}>
-                                                        {formatBalance(
-                                                            +incentive.info.user_reward,
-                                                            true,
-                                                            true,
-                                                        )}{' '}
-                                                        {incentive.token.code}
-                                                    </span>
-                                                ))}
-                                        </IncentivesValues>
-                                    ) : (
-                                        '-'
-                                    ),
-                                    label: 'Incentives to claim',
-                                    align: CellAlign.Right,
-                                    mobileStyle: { textAlign: 'right' },
-                                },
+                                // {
+                                //     children: incentivesForPool?.length ? (
+                                //         <IncentivesValues>
+                                //             {incentivesForPool
+                                //                 .filter(
+                                //                     incentive =>
+                                //                         !!Number(incentive.info.user_reward),
+                                //                 )
+                                //                 .map(incentive => (
+                                //                     <span key={incentive.token.contract}>
+                                //                         {formatBalance(
+                                //                             +incentive.info.user_reward,
+                                //                             true,
+                                //                             true,
+                                //                         )}{' '}
+                                //                         {incentive.token.code}
+                                //                     </span>
+                                //                 ))}
+                                //         </IncentivesValues>
+                                //     ) : (
+                                //         '-'
+                                //     ),
+                                //     label: 'Incentives to claim',
+                                //     align: CellAlign.Right,
+                                //     mobileStyle: { textAlign: 'right' },
+                                // },
                                 {
                                     children: <TotalApy pool={pool} userBoost={boostValue} />,
                                     label: 'Total APY',

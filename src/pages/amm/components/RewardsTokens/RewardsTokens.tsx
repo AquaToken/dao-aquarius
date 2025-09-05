@@ -3,8 +3,9 @@ import styled from 'styled-components';
 
 import { apyValueToDisplay } from 'helpers/amount';
 import { getAquaAssetData, getAssetFromString } from 'helpers/assets';
+import { formatBalance } from 'helpers/format-number';
 
-import { PoolProcessed } from 'types/amm';
+import { PoolIncentives, PoolProcessed } from 'types/amm';
 
 import { flexAllCenter, flexColumn, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS, FONT_SIZE, hexWithOpacity } from 'web/styles';
@@ -104,11 +105,13 @@ const TooltipDivider = styled.div`
 
 interface Props {
     pool: PoolProcessed;
+    myRewards?: number;
+    myIncentives?: PoolIncentives[];
 }
 
-const RewardsTokens = ({ pool }: Props) => {
+const RewardsTokens = ({ pool, myRewards, myIncentives }: Props) => {
     const { aquaStellarAsset } = getAquaAssetData();
-    const hasRewards = Boolean(Number(pool.rewards_apy));
+    const hasRewards = Boolean(Number(pool.rewards_apy)) || !!myRewards;
 
     const hasIncentives =
         pool.incentive_tps_per_token && !!Object.values(pool.incentive_tps_per_token).length;
@@ -117,55 +120,81 @@ const RewardsTokens = ({ pool }: Props) => {
         <Tooltip
             content={
                 <TooltipInner>
-                    <TooltipSectionTitle>
-                        <BlockWithIcon>
-                            <Arrows />
-                        </BlockWithIcon>
-                        SWAP REWARDS (24H)
-                    </TooltipSectionTitle>
-                    <TooltipRow>
-                        <span>Swap fee</span>
-                        <span>{apyValueToDisplay(pool.apy)} APY</span>
-                    </TooltipRow>
+                    {!myRewards && !myIncentives?.length && (
+                        <>
+                            <TooltipSectionTitle>
+                                <BlockWithIcon>
+                                    <Arrows />
+                                </BlockWithIcon>
+                                SWAP REWARDS (24H)
+                            </TooltipSectionTitle>
+                            <TooltipRow>
+                                <span>Swap fee</span>
+                                <span>{apyValueToDisplay(pool.apy)} APY</span>
+                            </TooltipRow>
+                        </>
+                    )}
+
+                    {!myRewards && !myIncentives?.length && hasRewards && <TooltipDivider />}
 
                     {Boolean(Number(pool.rewards_apy)) && (
                         <>
-                            <TooltipDivider />
                             <TooltipSectionTitle>
                                 <BlockWithIcon>
                                     <Lightning style={{ width: '0.7rem', height: '1.2rem' }} />
                                 </BlockWithIcon>
-                                REWARD ZONE
+                                {myRewards ? 'REWARDS TO CLAIM' : 'REWARD ZONE'}
                             </TooltipSectionTitle>
                             <TooltipRow>
                                 <TooltipToken>
                                     <AssetLogoStyled asset={aquaStellarAsset} />
                                     AQUA
                                 </TooltipToken>
-                                <span>{apyValueToDisplay(pool.rewards_apy)} APY</span>
+                                {myRewards ? (
+                                    <span>{formatBalance(myRewards, true)} AQUA</span>
+                                ) : (
+                                    <span>{apyValueToDisplay(pool.rewards_apy)} APY</span>
+                                )}
                             </TooltipRow>
                         </>
                     )}
 
-                    {Boolean(Number(pool.incentive_apy)) && (
-                        <>
-                            <TooltipDivider />
-                            <TooltipSectionTitle>extra rewards</TooltipSectionTitle>
+                    {(hasIncentives || (!!myIncentives?.length && !!myRewards)) && (
+                        <TooltipDivider />
+                    )}
 
-                            {Object.entries(pool.incentive_apy_per_token)
-                                .filter(([, val]) => Boolean(Number(val)))
-                                .map(([key, val]) => {
-                                    const token = getAssetFromString(key);
-                                    return (
-                                        <TooltipRow key={token.contract}>
-                                            <TooltipToken>
-                                                <AssetLogoStyled asset={token} />
-                                                {token.code}
-                                            </TooltipToken>
-                                            <span>{apyValueToDisplay(val)} APY</span>
-                                        </TooltipRow>
-                                    );
-                                })}
+                    {(Boolean(Number(pool.incentive_apy)) || !!myIncentives?.length) && (
+                        <>
+                            <TooltipSectionTitle>
+                                {myIncentives?.length ? 'extra rewards to claim' : 'extra rewards'}
+                            </TooltipSectionTitle>
+
+                            {myIncentives?.length
+                                ? myIncentives.map(({ token, info }) => (
+                                      <TooltipRow key={token.contract}>
+                                          <TooltipToken>
+                                              <AssetLogoStyled asset={token} />
+                                              {token.code}
+                                          </TooltipToken>
+                                          <span>
+                                              {formatBalance(+info.user_reward, true)} {token.code}
+                                          </span>
+                                      </TooltipRow>
+                                  ))
+                                : Object.entries(pool.incentive_apy_per_token)
+                                      .filter(([, val]) => Boolean(Number(val)))
+                                      .map(([key, val]) => {
+                                          const token = getAssetFromString(key);
+                                          return (
+                                              <TooltipRow key={token.contract}>
+                                                  <TooltipToken>
+                                                      <AssetLogoStyled asset={token} />
+                                                      {token.code}
+                                                  </TooltipToken>
+                                                  <span>{apyValueToDisplay(val)} APY</span>
+                                              </TooltipRow>
+                                          );
+                                      })}
                         </>
                     )}
                 </TooltipInner>
@@ -176,29 +205,33 @@ const RewardsTokens = ({ pool }: Props) => {
             showOnHover
         >
             <Container>
-                <BlockWithIcon>
-                    <Arrows />
-                </BlockWithIcon>
-
-                {hasRewards && (
-                    <>
-                        <Divider />
-                        <BlockWithIcon>
-                            <Lightning style={{ width: '0.7rem', height: '1.2rem' }} />
-                        </BlockWithIcon>
-                    </>
+                {!myRewards && !myIncentives?.length && (
+                    <BlockWithIcon>
+                        <Arrows />
+                    </BlockWithIcon>
                 )}
 
-                {hasIncentives && (
-                    <>
-                        <Divider />
-                        <Logos>
-                            {Object.entries(pool.incentive_tps_per_token).map(([key]) => {
-                                const token = getAssetFromString(key);
-                                return <AssetLogoStyled key={token.contract} asset={token} />;
-                            })}
-                        </Logos>
-                    </>
+                {!myRewards && !myIncentives?.length && hasRewards && <Divider />}
+
+                {hasRewards && (
+                    <BlockWithIcon>
+                        <Lightning style={{ width: '0.7rem', height: '1.2rem' }} />
+                    </BlockWithIcon>
+                )}
+
+                {(hasIncentives || (!!myIncentives?.length && !!myRewards)) && <Divider />}
+
+                {(hasIncentives || !!myIncentives?.length) && (
+                    <Logos>
+                        {myIncentives?.length
+                            ? myIncentives.map(({ token }) => (
+                                  <AssetLogoStyled key={token.contract} asset={token} />
+                              ))
+                            : Object.entries(pool.incentive_tps_per_token).map(([key]) => {
+                                  const token = getAssetFromString(key);
+                                  return <AssetLogoStyled key={token.contract} asset={token} />;
+                              })}
+                    </Logos>
                 )}
             </Container>
         </Tooltip>
