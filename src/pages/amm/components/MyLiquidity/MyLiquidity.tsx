@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import { getUserPools } from 'api/amm';
 
 import { POOL_TYPE } from 'constants/amm';
+import { DAY } from 'constants/intervals';
 import { MainRoutes } from 'constants/routes';
 
 import { contractValueToAmount } from 'helpers/amount';
@@ -490,9 +491,10 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                     head={[
                         {
                             children: 'Pool',
-                            flexSize: 3,
+                            flexSize: 4,
                         },
                         { children: 'Pooled', align: CellAlign.Right },
+                        { children: 'Daily Rewards', align: CellAlign.Right, flexSize: 1.2 },
 
                         {
                             children: 'To claim',
@@ -537,7 +539,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                             fee={pool.fee}
                                         />
                                     ),
-                                    flexSize: 3,
+                                    flexSize: 4,
                                 },
                                 {
                                     children: poolsLiquidity.has(pool.address || pool.id) ? (
@@ -565,8 +567,8 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                                                                 ] as SorobanToken
                                                                             ).decimal,
                                                                         ) *
-                                                                            pool.balance) /
-                                                                            pool.total_share,
+                                                                            +pool.balance) /
+                                                                            +pool.total_share,
                                                                         true,
                                                                     )}
                                                                     <AssetLogo
@@ -591,7 +593,8 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                                                 ) > 0.01
                                                                     ? formatBalance(
                                                                           +(
-                                                                              (100 * pool.balance) /
+                                                                              (100 *
+                                                                                  +pool.balance) /
                                                                               Number(
                                                                                   pool.total_share,
                                                                               )
@@ -620,6 +623,20 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                     ),
                                     label: 'Pooled',
                                     align: CellAlign.Right,
+                                },
+                                {
+                                    children: Number(pool.reward_tps)
+                                        ? `${formatBalance(
+                                              ((((+pool.reward_tps / 1e7) * DAY) / 1000) *
+                                                  +pool.balance) /
+                                                  +pool.total_share,
+                                              true,
+                                              true,
+                                          )} AQUA`
+                                        : '-',
+                                    label: 'Daily Rewards',
+                                    align: CellAlign.Right,
+                                    flexSize: 1.2,
                                 },
                                 {
                                     children:

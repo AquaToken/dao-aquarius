@@ -31,22 +31,24 @@ interface Props {
 
 const TotalApy = ({ pool, userBoost }: Props) => (
     <Container>
-        <Tooltip
-            content={<TotalApyTooltip pool={pool} />}
-            showOnHover
-            background={COLORS.white}
-            color={COLORS.paragraphText}
-            withoutPadding
-        >
-            <Label
-                labelText={apyValueToDisplay(pool.total_apy)}
-                labelSize="extraLarge"
-                background={hexWithOpacity(COLORS.placeholder, 20)}
+        {(!userBoost || (Boolean(userBoost) && !Number(pool.rewards_apy))) && (
+            <Tooltip
+                content={<TotalApyTooltip pool={pool} />}
+                showOnHover
+                background={COLORS.white}
                 color={COLORS.paragraphText}
-                withoutBorder
-                fontWeight={400}
-            />
-        </Tooltip>
+                withoutPadding
+            >
+                <Label
+                    labelText={apyValueToDisplay(pool.total_apy)}
+                    labelSize="extraLarge"
+                    background={hexWithOpacity(COLORS.placeholder, 20)}
+                    color={COLORS.paragraphText}
+                    withoutBorder
+                    fontWeight={400}
+                />
+            </Tooltip>
+        )}
 
         {Boolean(Number(pool.rewards_apy)) && (
             <Tooltip
@@ -76,6 +78,21 @@ const TotalApy = ({ pool, userBoost }: Props) => (
                     fontWeight={400}
                 />
             </Tooltip>
+        )}
+        {userBoost && !!Number(pool.rewards_apy) && (
+            <Label
+                background={COLORS.darkBlue}
+                labelSize="extraLarge"
+                withoutBorder
+                fontWeight={700}
+                labelText={
+                    userBoost === 1
+                        ? 'No boost'
+                        : userBoost < 1.01
+                        ? 'X<1.01'
+                        : `X${userBoost.toFixed(2)}`
+                }
+            />
         )}
     </Container>
 );

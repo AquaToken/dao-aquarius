@@ -228,6 +228,17 @@ const TotalApyTooltip = ({ pool, withBoost, userBoost }: Props) => (
                                 ).toString(),
                             )}
                         </LabelTextTotal>
+                        <Label
+                            background={COLORS.darkBlue}
+                            labelSize="medium"
+                            labelText={
+                                userBoost === 1
+                                    ? 'No boost'
+                                    : userBoost < 1.01
+                                    ? 'X<1.01'
+                                    : `X${userBoost.toFixed(2)}`
+                            }
+                        />
                     </Value>
                 </ContentRowWithBackground>
             )}

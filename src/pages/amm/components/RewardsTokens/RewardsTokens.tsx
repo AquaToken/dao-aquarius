@@ -11,7 +11,7 @@ import { flexAllCenter, flexColumn, flexRowSpaceBetween, respondDown } from 'web
 import { Breakpoints, COLORS, FONT_SIZE, hexWithOpacity } from 'web/styles';
 
 import Arrows from 'assets/icon-arrows.svg';
-import Lightning from 'assets/icon-lightning.svg';
+import Crown from 'assets/icon-crown.svg';
 
 import AssetLogo from 'basics/AssetLogo';
 import Tooltip from 'basics/Tooltip';
@@ -141,7 +141,7 @@ const RewardsTokens = ({ pool, myRewards, myIncentives }: Props) => {
                         <>
                             <TooltipSectionTitle>
                                 <BlockWithIcon>
-                                    <Lightning style={{ width: '0.7rem', height: '1.2rem' }} />
+                                    <Crown style={{ width: '1.2rem', height: '0.8rem' }} />
                                 </BlockWithIcon>
                                 {myRewards ? 'REWARDS TO CLAIM' : 'AQUARIUS REWARDS'}
                             </TooltipSectionTitle>
@@ -215,7 +215,7 @@ const RewardsTokens = ({ pool, myRewards, myIncentives }: Props) => {
 
                 {hasRewards && (
                     <BlockWithIcon>
-                        <Lightning style={{ width: '0.7rem', height: '1.2rem' }} />
+                        <Crown style={{ width: '1.2rem', height: '0.8rem' }} />
                     </BlockWithIcon>
                 )}
 
