@@ -142,20 +142,18 @@ const RewardsBanner = ({
                             <span>You might have unclaimed rewards or incentives</span>
                         )}
 
-                        {userRewardsCount
-                            ? `Rewards (${userRewardsCount}): ${formatBalance(rewardsSum)} AQUA`
-                            : ''}
+                        {userRewardsCount ? `AQUA Rewards: ${formatBalance(rewardsSum)} AQUA` : ''}
 
                         {!!userRewardsCount && <br />}
 
                         {userIncentivesCount
-                            ? `Incentives (${userIncentivesCount}): ${[...incentivesSum.entries()]
-                                  .filter(([_, amount]) => Boolean(Number(amount)))
+                            ? `Extra Incentives: ${[...incentivesSum.entries()]
+                                  .filter(([, amount]) => Boolean(Number(amount)))
                                   .map(
                                       ([token, amount]) =>
                                           `${formatBalance(amount, true, true)} ${token.code}`,
                                   )
-                                  .join(', ')}`
+                                  .join(' + ')}`
                             : ''}
                     </span>
                 </RewardsDescription>

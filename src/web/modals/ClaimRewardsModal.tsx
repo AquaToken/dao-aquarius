@@ -117,7 +117,7 @@ const ClaimRewardsModal = ({ confirm, close }: ModalProps<never>) => {
 
     return (
         <ModalWrapper $isWide>
-            <ModalTitle>Claim rewards and incentives</ModalTitle>
+            <ModalTitle>Claim rewards and extra incentives</ModalTitle>
             <ModalDescription>Claim up to 5 pools at a time</ModalDescription>
 
             <>
