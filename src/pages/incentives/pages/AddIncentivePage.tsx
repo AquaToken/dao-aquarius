@@ -374,8 +374,9 @@ const AddIncentivePage = () => {
                                 <FormSectionTitle>Set reward</FormSectionTitle>
                                 <FormSectionDescription>
                                     Set the reward asset and amount that will be distributed during
-                                    period. Note, your incentive should be worth at least ... AQUA,
-                                    otherwise it won't be accepted.
+                                    period. Note, your incentive should be worth at least
+                                    {formatBalance(config?.minAquaAmount)} AQUA, otherwise it won't
+                                    be accepted.
                                 </FormSectionDescription>
                                 <FormRow>
                                     <AssetPickerStyled
