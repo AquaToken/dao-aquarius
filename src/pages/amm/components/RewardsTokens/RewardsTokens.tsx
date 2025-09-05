@@ -143,7 +143,7 @@ const RewardsTokens = ({ pool, myRewards, myIncentives }: Props) => {
                                 <BlockWithIcon>
                                     <Lightning style={{ width: '0.7rem', height: '1.2rem' }} />
                                 </BlockWithIcon>
-                                {myRewards ? 'REWARDS TO CLAIM' : 'REWARD ZONE'}
+                                {myRewards ? 'REWARDS TO CLAIM' : 'AQUARIUS REWARDS'}
                             </TooltipSectionTitle>
                             <TooltipRow>
                                 <TooltipToken>

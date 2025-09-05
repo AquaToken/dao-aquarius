@@ -157,33 +157,39 @@ const TotalApyTooltip = ({ pool, withBoost, userBoost }: Props) => (
             </BoostBlock>
         )}
         <ContentBlock>
-            <ContentRow>
-                <Title>Swap fee APY:</Title>
-                <Value>{apyValueToDisplay(pool.apy)}</Value>
-            </ContentRow>
+            {!!Number(pool.apy) || (!Number(pool.rewards_apy) && !Number(pool.incentive_apy)) ? (
+                <ContentRow>
+                    <Title>Swap fee APY:</Title>
+                    <Value>{apyValueToDisplay(pool.apy)}</Value>
+                </ContentRow>
+            ) : null}
 
-            <ContentRow>
-                <Title>AQUA rewards base APY:</Title>
-                <Value>
-                    {withBoost ? (
-                        <>
-                            <Cross>{apyValueToDisplay(pool.rewards_apy)}</Cross>
-                            <LabelText>
-                                <IconBoost />{' '}
-                                {apyValueToDisplay(
-                                    (+pool.rewards_apy * (userBoost || 2.5)).toString(),
-                                )}
-                            </LabelText>
-                        </>
-                    ) : (
-                        apyValueToDisplay(pool.rewards_apy)
-                    )}
-                </Value>
-            </ContentRow>
-            <ContentRow>
-                <Title>Extra incentives APY:</Title>
-                <Value>{apyValueToDisplay(pool.incentive_apy)}</Value>
-            </ContentRow>
+            {!!Number(pool.rewards_apy) && (
+                <ContentRow>
+                    <Title>AQUA rewards base APY:</Title>
+                    <Value>
+                        {withBoost ? (
+                            <>
+                                <Cross>{apyValueToDisplay(pool.rewards_apy)}</Cross>
+                                <LabelText>
+                                    <IconBoost />{' '}
+                                    {apyValueToDisplay(
+                                        (+pool.rewards_apy * (userBoost || 2.5)).toString(),
+                                    )}
+                                </LabelText>
+                            </>
+                        ) : (
+                            apyValueToDisplay(pool.rewards_apy)
+                        )}
+                    </Value>
+                </ContentRow>
+            )}
+            {!!Number(pool.incentive_apy) && (
+                <ContentRow>
+                    <Title>Extra incentives APY:</Title>
+                    <Value>{apyValueToDisplay(pool.incentive_apy)}</Value>
+                </ContentRow>
+            )}
             {!withBoost && (
                 <ContentRowWithBackground $background={hexWithOpacity(COLORS.placeholder, 20)}>
                     <Title>Total APY:</Title>
