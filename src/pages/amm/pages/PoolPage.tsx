@@ -379,7 +379,7 @@ const PoolPage = () => {
                         <SectionWrap>
                             <Rewards>
                                 <RewardsDescription>
-                                    <span>You have unclaimed rewards</span>
+                                    <span>You have AQUA rewards:</span>
                                     <span>{formatBalance(rewards.to_claim)} AQUA</span>
                                 </RewardsDescription>
                                 <Button
@@ -403,7 +403,7 @@ const PoolPage = () => {
                         <SectionWrap>
                             <Rewards>
                                 <RewardsDescription>
-                                    <span>You have unclaimed incentives</span>
+                                    <span>You have extra incentives:</span>
                                     {incentives
                                         .filter(({ info }) => !!Number(info.user_reward))
                                         .map(({ token, info }) => (
