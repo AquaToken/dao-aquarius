@@ -9,11 +9,12 @@ import { AmmRoutes, MarketRoutes } from 'constants/routes';
 
 import { getTimeAgoValue } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
+import { createAsset } from 'helpers/token';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { ModalService, StellarService } from 'services/globalServices';
+import { ModalService } from 'services/globalServices';
 
 import { PoolProcessed } from 'types/amm';
 
@@ -304,11 +305,11 @@ const RewardsList = () => {
                                 children: (
                                     <Market
                                         assets={[
-                                            StellarService.createAsset(
+                                            createAsset(
                                                 market_key.asset1_code,
                                                 market_key.asset1_issuer,
                                             ),
-                                            StellarService.createAsset(
+                                            createAsset(
                                                 market_key.asset2_code,
                                                 market_key.asset2_issuer,
                                             ),

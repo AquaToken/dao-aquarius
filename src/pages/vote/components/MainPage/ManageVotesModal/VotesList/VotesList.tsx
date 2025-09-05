@@ -8,6 +8,7 @@ import { getDateString } from 'helpers/date';
 import { getIsTestnetEnv } from 'helpers/env';
 import ErrorHandler from 'helpers/error-handler';
 import { formatBalance } from 'helpers/format-number';
+import { createAsset } from 'helpers/token';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
 import { useIsMounted } from 'hooks/useIsMounted';
@@ -203,24 +204,15 @@ const VotesList = ({ votes, pair, withoutClaimDate }: VotesListProps): React.Rea
             let tx = await StellarService.buildTx(account, ops);
 
             if (hasUpvote) {
-                tx = await StellarService.processIceTx(
-                    tx,
-                    StellarService.createAsset(UP_ICE_CODE, ICE_ISSUER),
-                );
+                tx = await StellarService.processIceTx(tx, createAsset(UP_ICE_CODE, ICE_ISSUER));
             }
 
             if (hasDelegated) {
-                tx = await StellarService.processIceTx(
-                    tx,
-                    StellarService.createAsset(D_ICE_CODE, ICE_ISSUER),
-                );
+                tx = await StellarService.processIceTx(tx, createAsset(D_ICE_CODE, ICE_ISSUER));
             }
 
             if (hasDownvote) {
-                tx = await StellarService.processIceTx(
-                    tx,
-                    StellarService.createAsset(DOWN_ICE_CODE, ICE_ISSUER),
-                );
+                tx = await StellarService.processIceTx(tx, createAsset(DOWN_ICE_CODE, ICE_ISSUER));
             }
 
             const result = await account.signAndSubmitTx(tx);
@@ -344,13 +336,13 @@ const VotesList = ({ votes, pair, withoutClaimDate }: VotesListProps): React.Rea
                                     />
                                     <Market
                                         assets={[
-                                            StellarService.createAsset(
+                                            createAsset(
                                                 pair?.asset1_code ||
                                                     (claim as unknown as PairStats).asset1_code,
                                                 pair?.asset1_issuer ||
                                                     (claim as unknown as PairStats).asset1_issuer,
                                             ),
-                                            StellarService.createAsset(
+                                            createAsset(
                                                 pair?.asset2_code ||
                                                     (claim as unknown as PairStats).asset2_code,
                                                 pair?.asset2_issuer ||

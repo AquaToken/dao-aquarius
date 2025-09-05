@@ -99,6 +99,39 @@ export const contentWithSidebar = css`
     `}
 `;
 
+export const EmptyList = css`
+    ${flexAllCenter};
+    flex-direction: column;
+
+    h3 {
+        font-size: 2rem;
+        line-height: 2.8rem;
+        color: ${COLORS.titleText};
+        margin-bottom: 0.9rem;
+    }
+
+    span {
+        line-height: 180%;
+        color: ${COLORS.grayText};
+    }
+
+    a {
+        color: ${COLORS.purple};
+        font-size: 1.4rem;
+        line-height: 2rem;
+    }
+`;
+
+export const noSelect = css`
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+`;
+
 export const fullWidthSectionStyles = css`
     width: calc(100% - ${PAGE_PADDINGS * 2}rem);
 

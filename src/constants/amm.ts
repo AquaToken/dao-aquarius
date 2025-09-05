@@ -3,3 +3,5 @@ export enum POOL_TYPE {
     constant = 'constant_product',
     classic = 'classic',
 }
+
+export const CLAIM_ALL_COUNT = 5;

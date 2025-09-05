@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { ModalProps } from 'types/modal';
 
 import Button from 'basics/buttons/Button';
-import { IconFail } from 'basics/Icons';
+import { IconFail } from 'basics/icons';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 import { respondDown } from '../../mixins';

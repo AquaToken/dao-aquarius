@@ -6,8 +6,7 @@ import { MAX_X_ICE_BOOST } from 'constants/ice';
 import { convertLocalDateToUTCIgnoringTimezone, getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 import { getIceMaxApy } from 'helpers/ice';
-
-import { StellarService } from 'services/globalServices';
+import { createAsset } from 'helpers/token';
 
 import { ModalProps } from 'types/modal';
 
@@ -231,10 +230,7 @@ const BribesModal = ({ params }: ModalProps<{ pair: PairStats }>) => {
                         {
                             children: (
                                 <Asset
-                                    asset={StellarService.createAsset(
-                                        bribe.asset_code,
-                                        bribe.asset_issuer,
-                                    )}
+                                    asset={createAsset(bribe.asset_code, bribe.asset_issuer)}
                                     inRow
                                     withMobileView
                                 />

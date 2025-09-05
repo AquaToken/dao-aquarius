@@ -4,8 +4,7 @@ import styled from 'styled-components';
 
 import { convertLocalDateToUTCIgnoringTimezone, getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
-
-import { StellarService } from 'services/globalServices';
+import { createAsset } from 'helpers/token';
 
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -209,10 +208,7 @@ const MarketCurrentBribes = ({ extra, bribes }: MarketCurrentBribes) => {
                             {
                                 children: (
                                     <Asset
-                                        asset={StellarService.createAsset(
-                                            bribe.asset_code,
-                                            bribe.asset_issuer,
-                                        )}
+                                        asset={createAsset(bribe.asset_code, bribe.asset_issuer)}
                                         inRow
                                         withMobileView
                                     />

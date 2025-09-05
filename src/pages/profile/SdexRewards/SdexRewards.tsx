@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import { MainRoutes } from 'constants/routes';
 
 import { formatBalance } from 'helpers/format-number';
+import { createAsset, createLumen } from 'helpers/token';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 import useAuthStore from 'store/authStore/useAuthStore';
@@ -315,12 +316,12 @@ const SdexRewards = ({ aquaUsdPrice }: SdexRewardsProps): React.ReactNode => {
                                 } = pair;
 
                                 const base = baseIssuer
-                                    ? StellarService.createAsset(baseCode, baseIssuer)
-                                    : StellarService.createLumen();
+                                    ? createAsset(baseCode, baseIssuer)
+                                    : createLumen();
 
                                 const counter = counterIssuer
-                                    ? StellarService.createAsset(counterCode, counterIssuer)
-                                    : StellarService.createLumen();
+                                    ? createAsset(counterCode, counterIssuer)
+                                    : createLumen();
 
                                 const baseSum =
                                     offersMap?.get(

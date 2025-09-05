@@ -8,6 +8,7 @@ import { MainRoutes } from 'constants/routes';
 
 import { getAquaAssetData, getUsdcAssetData } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
+import { createLumen } from 'helpers/token';
 
 import { StellarService } from 'services/globalServices';
 
@@ -142,7 +143,7 @@ const AquaPerformance = () => {
 
     const { aquaStellarAsset } = getAquaAssetData();
     const { usdcStellarAsset } = getUsdcAssetData();
-    const lumen = StellarService.createLumen();
+    const lumen = createLumen();
 
     const counter = useMemo(() => {
         if (sdexCounter === SDEX_ASSETS.xlm) {
@@ -208,7 +209,7 @@ const AquaPerformance = () => {
                                     baseAmount={bestPoolReserves[0]}
                                     counterAmount={bestPoolReserves[1]}
                                     pending={false}
-                                    base={StellarService.createLumen()}
+                                    base={createLumen()}
                                     counter={aquaStellarAsset}
                                     isReverted={isReverted}
                                     setIsReverted={setIsReverted}
@@ -230,7 +231,7 @@ const AquaPerformance = () => {
                         />
                     </BlockHeader>
                     <BlockRow>
-                        <span>Volume 24h</span>
+                        <span>Volume 24H</span>
                         <span>
                             {sdexStats ? (
                                 `${formatBalance(sdexStats.volume, true, true)} AQUA`
@@ -240,7 +241,7 @@ const AquaPerformance = () => {
                         </span>
                     </BlockRow>
                     <BlockRow>
-                        <span>Change 24h</span>
+                        <span>Change 24H</span>
                         <span>
                             {sdexStats ? (
                                 <Changes24 changes24h={sdexStats.changes24h} />

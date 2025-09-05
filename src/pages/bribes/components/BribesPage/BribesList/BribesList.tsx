@@ -16,7 +16,7 @@ import { ToggleGroup } from 'basics/inputs';
 import CurrentBribes from 'pages/bribes/components/BribesPage/CurrentBribes/CurrentBribes';
 import UpcomingBribes from 'pages/bribes/components/BribesPage/UpcomingBribes/UpcomingBribes';
 
-const Container = styled.div`
+export const Container = styled.div`
     display: flex;
     flex-direction: column;
     margin-top: 8.3rem;
@@ -26,7 +26,7 @@ const Container = styled.div`
     `}
 `;
 
-const TitleBlock = styled.div`
+export const TitleBlock = styled.div`
     ${flexRowSpaceBetween};
     margin-bottom: 5.3rem;
 
@@ -35,7 +35,7 @@ const TitleBlock = styled.div`
     `}
 `;
 
-const Title = styled.span`
+export const Title = styled.span`
     font-weight: bold;
     font-size: 5.6rem;
     line-height: 6.4rem;
@@ -48,7 +48,7 @@ const Title = styled.span`
     `}
 `;
 
-const AddBribeButton = styled(Button)`
+export const AddBribeButton = styled(Button)`
     width: 22.2rem;
 
     ${respondDown(Breakpoints.md)`
@@ -56,11 +56,11 @@ const AddBribeButton = styled(Button)`
     `}
 `;
 
-const PlusIcon = styled(Plus)`
+export const PlusIcon = styled(Plus)`
     margin-left: 1.6rem;
 `;
 
-const ToggleGroupStyled = styled(ToggleGroup)`
+export const ToggleGroupStyled = styled(ToggleGroup)`
     width: fit-content;
     margin-bottom: 5.3rem;
 `;

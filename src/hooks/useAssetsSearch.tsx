@@ -1,6 +1,8 @@
 import { StellarToml } from '@stellar/stellar-sdk';
 import { useEffect, useState } from 'react';
 
+import { createAsset } from 'helpers/token';
+
 import { useDebounce } from 'hooks/useDebounce';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
@@ -27,9 +29,7 @@ export default function useAssetsSearch(searchState) {
         StellarToml.Resolver.resolve(domain)
             .then(({ CURRENCIES }) => {
                 if (CURRENCIES) {
-                    const tokens = CURRENCIES.map(({ code, issuer }) =>
-                        StellarService.createAsset(code, issuer),
-                    );
+                    const tokens = CURRENCIES.map(({ code, issuer }) => createAsset(code, issuer));
                     processNewAssets(tokens);
                     setSearchResults(tokens);
                 }
@@ -81,7 +81,7 @@ export default function useAssetsSearch(searchState) {
                 return;
             }
 
-            const currentAsset = StellarService.createAsset(code, issuer);
+            const currentAsset = createAsset(code, issuer);
 
             processNewAssets([currentAsset]);
             setSearchResults([currentAsset]);

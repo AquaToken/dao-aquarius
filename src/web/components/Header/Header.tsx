@@ -304,6 +304,15 @@ const Links = () => {
                         >
                             ICE Delegation
                         </NavLinkStyled>
+                        <NavLinkStyled
+                            to={MainRoutes.incentives}
+                            activeStyle={{
+                                fontWeight: 700,
+                            }}
+                            title="Pools Incentives"
+                        >
+                            LP Incentives
+                        </NavLinkStyled>
                     </>
                 }
             />

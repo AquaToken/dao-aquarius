@@ -1,5 +1,4 @@
 import { useRef, useState } from 'react';
-import styled from 'styled-components';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
@@ -7,13 +6,16 @@ import { StellarService, ToastService } from 'services/globalServices';
 
 import { PageContainer, SectionWrapper } from 'web/pages/commonPageStyles';
 
+import FAQ from 'basics/FAQ';
+
 import Community from 'components/Community';
 import Subscribe from 'components/Subscribe';
+
+import { AirdropQuestions } from 'pages/airdrop2/components/Questions/Questions';
 
 import { getAccountEligibility } from './api/api';
 import Conditions from './components/Conditions/Conditions';
 import Eligibility from './components/Eligibility/Eligibility';
-import FAQ from './components/FAQ/FAQ';
 import MainBlock from './components/MainBlock/MainBlock';
 import SnapshotStats from './components/SnapshotStats/SnapshotStats';
 import SupportedBy from './components/SupportedBy/SupportedBy';
@@ -72,7 +74,7 @@ const Airdrop2 = () => {
 
             <SupportedBy />
 
-            <FAQ />
+            <FAQ questions={AirdropQuestions} />
 
             <SectionWrapper>
                 <Community />

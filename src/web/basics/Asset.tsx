@@ -4,12 +4,13 @@ import styled from 'styled-components';
 
 import { getAssetString } from 'helpers/assets';
 import getExplorerLink, { ExplorerSection } from 'helpers/explorer-links';
+import { createAsset } from 'helpers/token';
 import { truncateString } from 'helpers/truncate-string';
 
 import { LumenInfo } from 'store/assetsStore/reducer';
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
-import { ModalService, StellarService } from 'services/globalServices';
+import { ModalService } from 'services/globalServices';
 
 import { ClassicToken, Token, TokenType } from 'types/token';
 
@@ -115,9 +116,7 @@ const Asset = ({
     const { assetsInfo } = useAssetsStore();
 
     const assetInstance =
-        asset.type !== TokenType.soroban
-            ? StellarService.createAsset(asset.code, asset.issuer)
-            : null;
+        asset.type !== TokenType.soroban ? createAsset(asset.code, asset.issuer) : null;
 
     const isNative = assetInstance && assetInstance.isNative();
     const hasAssetInfo =

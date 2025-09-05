@@ -5,11 +5,12 @@ import { formatBalance } from 'helpers/format-number';
 
 import { Token, TokenType } from 'types/token';
 
+import { noSelect } from 'web/mixins';
+import { COLORS } from 'web/styles';
+
 import Revert from 'assets/icon-revert.svg';
 
 import { DotsLoader } from 'basics/loaders';
-
-import { COLORS } from '../styles';
 
 const Container = styled.div`
     color: ${COLORS.grayText};
@@ -19,6 +20,7 @@ const Container = styled.div`
     justify-content: flex-end;
     cursor: pointer;
     height: 1.7rem;
+    ${noSelect};
 
     svg {
         margin-left: 0.6rem;

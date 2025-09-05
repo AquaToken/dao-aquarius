@@ -7,6 +7,7 @@ import { DOWN_ICE_CODE, GOV_ICE_CODE, ICE_CODE, ICE_ISSUER, UP_ICE_CODE } from '
 import { MainRoutes } from 'constants/routes';
 
 import { formatBalance } from 'helpers/format-number';
+import { createAsset } from 'helpers/token';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
@@ -344,16 +345,10 @@ const Balances = ({ ammAquaBalance }: BalancesProps): React.ReactNode => {
         }, 0);
     }, [locks]);
 
-    const iceBalance = account.getAssetBalance(StellarService.createAsset(ICE_CODE, ICE_ISSUER));
-    const upIceBalance = account.getAssetBalance(
-        StellarService.createAsset(UP_ICE_CODE, ICE_ISSUER),
-    );
-    const downIceBalance = account.getAssetBalance(
-        StellarService.createAsset(DOWN_ICE_CODE, ICE_ISSUER),
-    );
-    const govIceBalance = account.getAssetBalance(
-        StellarService.createAsset(GOV_ICE_CODE, ICE_ISSUER),
-    );
+    const iceBalance = account.getAssetBalance(createAsset(ICE_CODE, ICE_ISSUER));
+    const upIceBalance = account.getAssetBalance(createAsset(UP_ICE_CODE, ICE_ISSUER));
+    const downIceBalance = account.getAssetBalance(createAsset(DOWN_ICE_CODE, ICE_ISSUER));
+    const govIceBalance = account.getAssetBalance(createAsset(GOV_ICE_CODE, ICE_ISSUER));
     return (
         <Container>
             <Wrapper>
