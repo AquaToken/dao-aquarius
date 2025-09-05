@@ -126,10 +126,10 @@ const RewardsTokens = ({ pool, myRewards, myIncentives }: Props) => {
                                 <BlockWithIcon>
                                     <Arrows />
                                 </BlockWithIcon>
-                                SWAP FEES
+                                SWAP REWARDS
                             </TooltipSectionTitle>
                             <TooltipRow>
-                                <span>Swap fee</span>
+                                <span>Swap fees</span>
                                 <span>{apyValueToDisplay(pool.apy)} APY</span>
                             </TooltipRow>
                         </>
