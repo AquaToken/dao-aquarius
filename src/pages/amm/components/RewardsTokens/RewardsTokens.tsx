@@ -126,7 +126,7 @@ const RewardsTokens = ({ pool, myRewards, myIncentives }: Props) => {
                                 <BlockWithIcon>
                                     <Arrows />
                                 </BlockWithIcon>
-                                SWAP REWARDS
+                                SWAP FEES
                             </TooltipSectionTitle>
                             <TooltipRow>
                                 <span>Swap fee</span>
