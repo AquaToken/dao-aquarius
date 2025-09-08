@@ -360,7 +360,7 @@ const Table = forwardRef(
                 <TableHead $mobileBreakpoint={mobileBreakpoint}>
                     <TableHeadRow
                         $withPadding={Boolean(virtualScrollProps)}
-                        $bodyIsClickable={Boolean(body[0].onRowClick)}
+                        $bodyIsClickable={Boolean(body?.[0]?.onRowClick)}
                         $mobileBreakpoint={mobileBreakpoint}
                     >
                         {head.map(
