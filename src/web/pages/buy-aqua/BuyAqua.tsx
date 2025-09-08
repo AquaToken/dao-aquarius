@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { MainRoutes } from 'constants/routes';
 
 import { getAquaAssetData } from 'helpers/assets';
-import { getEnv } from 'helpers/env';
 import { getOnRampWidgetUrl } from 'helpers/url';
 
 import useAuthStore from 'store/authStore/useAuthStore';
@@ -37,10 +36,10 @@ const BuyAqua = (): JSX.Element => {
 
     const frameParams = {
         theme: 'light',
-        widgetId: 'aquarius',
+        publicKey: 'pk_prod_01JVXZ2X7BD2KD4XX3E2RD974K',
         walletAddress: account?.accountId(),
         lockDefaultAsset: true,
-        defaultAsset: 'aqua-2',
+        defaultAsset: 'aqua-3',
         defaultNetwork: 'stellar',
         backgroundColor: 'transparent',
         textColor: COLORS.titleText.substring(1),
