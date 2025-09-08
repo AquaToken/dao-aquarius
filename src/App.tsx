@@ -321,11 +321,11 @@ const App = () => {
                             </PageTitle>
                         </Route>
 
-                        <Route path={MainRoutes.incentives}>
-                            <PageTitle title="Incentives - Aquarius">
-                                <IncentivesPage />
-                            </PageTitle>
-                        </Route>
+                        {/*<Route path={MainRoutes.incentives}>*/}
+                        {/*    <PageTitle title="Incentives - Aquarius">*/}
+                        {/*        <IncentivesPage />*/}
+                        {/*    </PageTitle>*/}
+                        {/*</Route>*/}
 
                         <Route component={NotFoundPage} />
                     </Switch>
