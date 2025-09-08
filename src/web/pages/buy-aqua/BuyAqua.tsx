@@ -39,7 +39,7 @@ const BuyAqua = (): JSX.Element => {
         publicKey: 'pk_prod_01JVXZ2X7BD2KD4XX3E2RD974K',
         walletAddress: account?.accountId(),
         lockDefaultAsset: true,
-        defaultAsset: 'aqua-3',
+        defaultAsset: 'aqua-2',
         defaultNetwork: 'stellar',
         backgroundColor: 'transparent',
         textColor: COLORS.titleText.substring(1),
