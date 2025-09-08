@@ -2,6 +2,9 @@ import * as React from 'react';
 import { forwardRef, RefObject } from 'react';
 import styled from 'styled-components';
 
+import { ICE_DELEGATION_MAP, ICE_TO_DELEGATE } from 'constants/assets';
+
+import { getTrusted, getVotingPower } from 'helpers/delegate';
 import { formatBalance } from 'helpers/format-number';
 import { truncateString } from 'helpers/truncate-string';
 
@@ -185,8 +188,7 @@ const Delegatee = forwardRef(
                             </span>
                         ) : (
                             <span>
-                                Voting Power:{' '}
-                                <b>{formatBalance(Number(delegatee.managed_ice), true)} ICE</b>
+                                Voting Power: <b>{getVotingPower(delegatee)}</b>
                             </span>
                         )}
 
@@ -199,16 +201,16 @@ const Delegatee = forwardRef(
                         </MobileAmount>
                     ) : (
                         <MobileAmount>
-                            Managed: <b>{formatBalance(Number(delegatee.managed_ice), true)} ICE</b>
+                            Voting Power: <b>{getVotingPower(delegatee)}</b>
                         </MobileAmount>
                     )}
 
                     {delegatee.description && <Bio>{delegatee.description}</Bio>}
 
                     <BottomRow>
-                        {+delegatee.delegated > 0 ? (
+                        {Object.values(delegatee.delegated).length > 0 ? (
                             <Trusted>
-                                Trusted by <b>{formatBalance(+delegatee.delegated)}</b> account
+                                Trusted by <b>{getTrusted(delegatee)}</b> account
                                 {+delegatee.delegated > 1 ? 's' : ''}
                             </Trusted>
                         ) : (

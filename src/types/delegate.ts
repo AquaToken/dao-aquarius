@@ -7,8 +7,8 @@ export type Delegatee = {
     account: string;
     image: string;
     discord_handle: string;
-    delegated: string | null;
-    managed_ice: string | null;
+    delegated: { key: string; value: number } | null;
+    managed_ice: { key: string; value: number } | null;
     is_recommended: boolean;
     twitter_image: string | null;
     twitter_link: string;

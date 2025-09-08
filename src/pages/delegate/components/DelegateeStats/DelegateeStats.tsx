@@ -220,6 +220,8 @@ const DelegateeStats = forwardRef(
             });
         }, [updateIndex]);
 
+        console.log(votes);
+
         const votesSum = useMemo(() => {
             if (!votes) return 0;
 

@@ -10,7 +10,7 @@ import { formatBalance } from 'helpers/format-number';
 import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Aqua from 'assets/aqua-logo-small.svg';
+import DIce from 'assets/dice-logo.svg';
 import Ice from 'assets/ice-logo.svg';
 import ExternalLinkIcon from 'assets/icon-external-link.svg';
 
@@ -127,7 +127,7 @@ const LoaderContainer = styled.div`
     padding: 1rem 0;
 `;
 
-const AquaLogo = styled(Aqua)`
+const GdIceLogo = styled(DIce)`
     height: 1.6rem;
     width: 1.6rem;
     margin-left: 0.8rem;
@@ -184,6 +184,8 @@ const Votes = (): React.ReactNode => {
         setPage(1);
         setIsReversedSort(isEqualSort ? !isReversedSort : false);
     };
+
+    console.log(votes);
 
     if (!votes) {
         return (
@@ -275,7 +277,7 @@ const Votes = (): React.ReactNode => {
                             </CellSolution>
                             <CellAmount>
                                 {formatBalance(Number(amount), true)}
-                                {vote.asset_code === 'AQUA' ? <AquaLogo /> : <IceLogo />}
+                                {vote.asset_code === 'gdICE' ? <GdIceLogo /> : <IceLogo />}
                                 <ExternalLink onClick={() => onVoteLinkClick(txLink)}>
                                     <ExternalLinkIcon />
                                 </ExternalLink>

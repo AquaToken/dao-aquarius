@@ -8,7 +8,7 @@ import { Delegatee, DelegateeVote, MyDelegatees } from 'types/delegate';
 import { getMarketsMap } from 'pages/vote/api/api';
 import { MarketKey } from 'pages/vote/api/types';
 
-const API_URL = 'https://api-delegation.aqua.network/api/delegation/';
+const API_URL = 'https://api-delegation.aqua.network/api/delegation/v2/';
 
 export const getDelegatees = (): Promise<Delegatee[]> =>
     axios

@@ -18,6 +18,7 @@ import {
     ASSETS_ENV_DATA,
     D_ICE_CODE,
     DOWN_ICE_CODE,
+    GD_ICE_CODE,
     GOV_ICE_CODE,
     ICE_CODE,
     ICE_ISSUER,
@@ -722,6 +723,10 @@ export default class StellarServiceClass {
         }
         if (asset.code === GOV_ICE_CODE && asset.issuer === ICE_ISSUER) {
             return 'https://ice-approval.aqua.network/api/v1/govern-ice/tx-approve/';
+        }
+
+        if (asset.code === GD_ICE_CODE && asset.issuer === ICE_ISSUER) {
+            return 'https://ice-approval.aqua.network/api/v1/delegated-govern-ice/tx-approve/';
         }
 
         throw new Error('Unknown asset');

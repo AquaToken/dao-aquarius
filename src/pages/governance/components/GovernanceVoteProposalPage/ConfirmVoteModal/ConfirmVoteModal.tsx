@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
-import { GOV_ICE_CODE, ICE_ISSUER } from 'constants/assets';
+import { GD_ICE_CODE, GOV_ICE_CODE, ICE_ISSUER } from 'constants/assets';
 import { LockerRoutes } from 'constants/routes';
 
 import { getDateString } from 'helpers/date';
@@ -23,6 +23,7 @@ import { ModalProps } from 'types/modal';
 import { flexAllCenter, flexRowSpaceBetween } from 'web/mixins';
 import { COLORS } from 'web/styles';
 
+import DIce from 'assets/dice-logo.svg';
 import Ice from 'assets/ice-logo.svg';
 import Fail from 'assets/icon-fail.svg';
 import Success from 'assets/icon-success.svg';
@@ -84,17 +85,22 @@ const IceLogo = styled(Ice)`
     height: 3.2rem;
     width: 3.2rem;
 `;
+const DIceLogo = styled(DIce)`
+    margin-right: 0.8rem;
+    height: 3.2rem;
+    width: 3.2rem;
+`;
 
 const StyledInput = styled(Input)`
     margin-top: 1.2rem;
     margin-bottom: 3.3rem;
-    flex: 2;
+    flex: 3;
 `;
 
 const StyledSelect = styled(Select)`
     margin-top: 1.2rem;
     margin-bottom: 3.3rem;
-    flex: 1;
+    flex: 2;
 `;
 
 const ClaimBack = styled.div`
@@ -126,8 +132,12 @@ const GetAquaLabel = styled.span`
 `;
 
 const GOV_ICE = StellarService.createAsset(GOV_ICE_CODE, ICE_ISSUER);
+const GD_ICE = StellarService.createAsset(GD_ICE_CODE, ICE_ISSUER);
 
-const OPTIONS = [{ label: 'ICE', value: GOV_ICE, icon: <IceLogo /> }];
+const OPTIONS = [
+    { label: 'governICE', value: GOV_ICE, icon: <IceLogo /> },
+    { label: 'gdICE', value: GD_ICE, icon: <DIceLogo /> },
+];
 
 const ConfirmVoteModal = ({
     params,

@@ -32,6 +32,13 @@ export const DEFAULT_ICE_ASSETS = [
     `${DOWN_ICE_CODE}:${ICE_ISSUER}`,
 ];
 
+export const ICE_TO_DELEGATE = [`${UP_ICE_CODE}:${ICE_ISSUER}`, `${GOV_ICE_CODE}:${ICE_ISSUER}`];
+
+export const ICE_DELEGATION_MAP = new Map([
+    [`${UP_ICE_CODE}:${ICE_ISSUER}`, `${D_ICE_CODE}:${ICE_ISSUER}`],
+    [`${GOV_ICE_CODE}:${ICE_ISSUER}`, `${GD_ICE_CODE}:${ICE_ISSUER}`],
+]);
+
 export const ALL_ICE_ASSETS = [
     ...DEFAULT_ICE_ASSETS,
     `${D_ICE_CODE}:${ICE_ISSUER}`,
