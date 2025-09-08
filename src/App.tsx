@@ -156,8 +156,7 @@ const App = () => {
 
                 const neededGDIceTrustline =
                     delegators.some(({ asset }) => asset === `${GOV_ICE_CODE}:${ICE_ISSUER}`) &&
-                    account.getAssetBalance(createAsset(GD_ICE_CODE, ICE_ISSUER)) ===
-                        null;
+                    account.getAssetBalance(createAsset(GD_ICE_CODE, ICE_ISSUER)) === null;
 
                 if (neededDIceTrustline || neededGDIceTrustline) {
                     ModalService.openModal(DIceTrustlineModal, {

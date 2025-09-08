@@ -35,6 +35,7 @@ import { createAsset, createLumen } from 'helpers/token';
 import { getHorizonUrl } from 'helpers/url';
 
 import { Asset, StellarToml } from 'types/stellar';
+import { ClassicToken } from 'types/token';
 
 import { PairStats } from 'pages/vote/api/types';
 
