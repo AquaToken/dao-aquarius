@@ -19,14 +19,16 @@ import BackgroundImageLeft from 'assets/background-left.svg';
 import BackgroundImageRight from 'assets/background-right.svg';
 import ArrowDown from 'assets/icon-arrow-down.svg';
 
+import FAQ from 'basics/FAQ';
 import Select from 'basics/inputs/Select';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
 import PageLoader from 'basics/loaders/PageLoader';
 import Pagination from 'basics/Pagination';
 
+import { governanceQuestions } from 'pages/governance/components/GovernanceMainPage/FAQ/Questions';
+
 import { getProposalsRequest, PROPOSAL_FILTER } from '../api/api';
 import CreateProposal from '../components/GovernanceMainPage/CreateProposal/CreateProposal';
-import FAQ from '../components/GovernanceMainPage/FAQ/FAQ';
 import ProposalPreview from '../components/GovernanceMainPage/ProposalPreview/ProposalPreview';
 
 export const CREATE_DISCUSSION_COST = 100000;
@@ -452,7 +454,7 @@ const GovernanceMainPage = (): JSX.Element => {
                         <CreateProposal ref={creationRef} />
                     </ProposalsBlock>
                 </ProposalsBlockWrapper>
-                <FAQ />
+                <FAQ questions={governanceQuestions} />
             </MainBlock>
             {!hideBottomBlock && (
                 <ScrollToSidebarButton onClick={() => scrollToRef(creationRef)}>

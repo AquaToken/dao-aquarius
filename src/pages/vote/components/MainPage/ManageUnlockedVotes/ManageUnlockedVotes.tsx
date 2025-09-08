@@ -3,10 +3,10 @@ import styled from 'styled-components';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { ModalProps } from 'types/modal';
-
 import { StellarService } from 'services/globalServices';
 import { StellarEvents } from 'services/stellar.service';
+
+import { ModalProps } from 'types/modal';
 
 import Button from 'basics/buttons/Button';
 import { ModalDescription, ModalTitle, ModalWrapper, StickyButtonWrapper } from 'basics/ModalAtoms';

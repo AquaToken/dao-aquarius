@@ -7,7 +7,6 @@ export enum MainRoutes {
     governance = '/governance',
     market = '/market',
     rewards = '/rewards',
-    rewardsV2 = '/rewards-v2-demo',
     airdrop = '/airdrop',
     airdrop2 = '/airdrop2',
     account = '/account',
@@ -21,6 +20,7 @@ export enum MainRoutes {
     token = '/token',
     quest = '/quest',
     delegate = '/delegate',
+    incentives = '/incentives',
 }
 
 //TODO: Replace constants with enums after TS 5.0 release
@@ -41,6 +41,11 @@ export const GovernanceRoutes = {
 
 export const VoteRoutes = {
     main: `${MainRoutes.vote}`,
+};
+
+export const IncentivesRoutes = {
+    main: `${MainRoutes.incentives}`,
+    addIncentive: `${MainRoutes.incentives}/add`,
 };
 
 export const BribesRoutes = {

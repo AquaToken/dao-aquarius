@@ -10,6 +10,7 @@ import { POOL_TYPE } from 'constants/amm';
 import { AmmRoutes } from 'constants/routes';
 import { CONTRACT_STATUS } from 'constants/soroban';
 
+import ErrorHandler from 'helpers/error-handler';
 import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
@@ -352,7 +353,9 @@ const CreatePool = () => {
                     history.push(`${AmmRoutes.analytics}${poolAddress}`);
                 },
             )
-            .catch(() => {
+            .catch(e => {
+                const text = ErrorHandler(e);
+                ToastService.showErrorToast(text);
                 setPending(false);
             });
 

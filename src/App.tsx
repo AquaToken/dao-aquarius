@@ -10,7 +10,7 @@ import { MainRoutes } from 'constants/routes';
 
 import { getEnv, getIsTestnetEnv, setProductionEnv } from 'helpers/env';
 import { getMoonpayKeyByEnv } from 'helpers/moonpay';
-import { cacheTokens } from 'helpers/swap';
+import { cacheTokens, createAsset } from 'helpers/token';
 
 import { LoginTypes } from 'store/authStore/types';
 
@@ -41,7 +41,7 @@ import useAssetsStore from './store/assetsStore/useAssetsStore';
 import useAuthStore from './store/authStore/useAuthStore';
 import DIceTrustlineModal from './web/modals/DIceTrustlineModal';
 
-const MainPage = lazy(() => import('pages/main/MainPage'));
+const MainPage = lazy(() => import('web/pages/main/MainPage'));
 const LockerPage = lazy(() => import('pages/locker/Locker'));
 const VotePage = lazy(() => import('pages/vote/Vote'));
 const BribesPage = lazy(() => import('pages/bribes/Bribes'));
@@ -60,6 +60,7 @@ const PrivacyPage = lazy(() => import('pages/privacy/Privacy'));
 const TokenPage = lazy(() => import('pages/token/TokenPage'));
 const QuestPage = lazy(() => import('pages/quest/Quest'));
 const DelegatePage = lazy(() => import('pages/delegate/Delegate'));
+const IncentivesPage = lazy(() => import('pages/incentives/Incentives'));
 
 const UPDATE_ASSETS_DATE = 'update assets timestamp';
 const UPDATE_PERIOD = 24 * 60 * 60 * 1000;
@@ -151,12 +152,11 @@ const App = () => {
 
                 const neededDIceTrustline =
                     delegators.some(({ asset }) => asset === `${UP_ICE_CODE}:${ICE_ISSUER}`) &&
-                    account.getAssetBalance(StellarService.createAsset(D_ICE_CODE, ICE_ISSUER)) ===
-                        null;
+                    account.getAssetBalance(createAsset(D_ICE_CODE, ICE_ISSUER)) === null;
 
                 const neededGDIceTrustline =
                     delegators.some(({ asset }) => asset === `${GOV_ICE_CODE}:${ICE_ISSUER}`) &&
-                    account.getAssetBalance(StellarService.createAsset(GD_ICE_CODE, ICE_ISSUER)) ===
+                    account.getAssetBalance(createAsset(GD_ICE_CODE, ICE_ISSUER)) ===
                         null;
 
                 if (neededDIceTrustline || neededGDIceTrustline) {
@@ -329,6 +329,12 @@ const App = () => {
                                 <DelegatePage />
                             </PageTitle>
                         </Route>
+
+                        {/*<Route path={MainRoutes.incentives}>*/}
+                        {/*    <PageTitle title="Incentives - Aquarius">*/}
+                        {/*        <IncentivesPage />*/}
+                        {/*    </PageTitle>*/}
+                        {/*</Route>*/}
 
                         <Route component={NotFoundPage} />
                     </Switch>

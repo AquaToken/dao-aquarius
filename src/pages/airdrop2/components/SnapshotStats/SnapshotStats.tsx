@@ -13,6 +13,7 @@ import PageLoader from 'basics/loaders/PageLoader';
 import { getAirdropStats } from '../../api/api';
 
 const Container = styled.section`
+    width: 100%;
     position: relative;
     display: flex;
     justify-content: center;

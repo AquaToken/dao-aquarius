@@ -7,6 +7,7 @@ import { USDx_CODE, USDx_ISSUER } from 'constants/assets';
 
 import { getAquaAssetData, getAssetString, getUsdcAssetData } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
+import { createAsset, createLumen } from 'helpers/token';
 
 import useAssetsSearch from 'hooks/useAssetsSearch';
 
@@ -32,13 +33,10 @@ const StyledInput = styled(Input)`
 
 const DefaultAssets = styled.div`
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     margin-top: 1.6rem;
-
-    ${respondDown(Breakpoints.md)`
-        flex-wrap: wrap;
-        gap: 0;
-    `}
+    flex-wrap: wrap;
+    gap: 0;
 `;
 
 const DefaultAsset = styled.div`
@@ -49,6 +47,10 @@ const DefaultAsset = styled.div`
     background-color: ${COLORS.white};
     align-items: center;
     cursor: pointer;
+
+    &:not(:last-child) {
+        margin-right: 2.4rem;
+    }
 
     &:hover {
         border-color: ${COLORS.grayText};
@@ -147,10 +149,10 @@ const EmptyState = styled.span`
 `;
 
 const DEFAULT_ASSETS = [
-    StellarService.createLumen(),
+    createLumen(),
     getAquaAssetData().aquaStellarAsset,
     getUsdcAssetData().usdcStellarAsset,
-    StellarService.createAsset(USDx_CODE, USDx_ISSUER),
+    createAsset(USDx_CODE, USDx_ISSUER),
 ] as ClassicToken[];
 
 type Props = {
@@ -232,9 +234,7 @@ const AssetPickerModal = ({ params, confirm }: ModalProps<Props>) => {
 
     const chooseAsset = (asset: Token) => {
         const result =
-            asset.type === TokenType.soroban
-                ? asset
-                : StellarService.createAsset(asset.code, asset.issuer);
+            asset.type === TokenType.soroban ? asset : createAsset(asset.code, asset.issuer);
         onUpdate(result);
         confirm();
     };
@@ -249,7 +249,9 @@ const AssetPickerModal = ({ params, confirm }: ModalProps<Props>) => {
                 postfix={searchPending ? <CircleLoader size="small" /> : null}
             />
             <DefaultAssets>
-                {DEFAULT_ASSETS.map(asset => (
+                {DEFAULT_ASSETS.filter(
+                    asset => !!assetsList.find(token => asset.contract === token.contract),
+                ).map(asset => (
                     <DefaultAsset key={getAssetString(asset)} onClick={() => chooseAsset(asset)}>
                         <Asset asset={asset} logoAndCode />
                     </DefaultAsset>

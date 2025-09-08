@@ -92,7 +92,7 @@ const AssetsDetails = ({ assets }: Props) => {
         <Table>
             <TitleColumn>
                 <TitleCell>Asset:</TitleCell>
-                <TitleCell>24h change:</TitleCell>
+                <TitleCell>24H change:</TitleCell>
                 <TitleCell>Current price:</TitleCell>
                 <TitleCell>Asset holders:</TitleCell>
                 <TitleCell>Payments volume:</TitleCell>
@@ -107,7 +107,7 @@ const AssetsDetails = ({ assets }: Props) => {
                         <Asset asset={asset} logoAndCode />
                     </Cell>
                     <Cell>
-                        <MobileLabel>24h change:</MobileLabel>
+                        <MobileLabel>24H change:</MobileLabel>
                         <Changes24 expertData={details[index]} />
                     </Cell>
                     <Cell>

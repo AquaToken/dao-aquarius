@@ -7,6 +7,7 @@ import { GOV_ICE_CODE, ICE_ISSUER } from 'constants/assets';
 import { getDateString } from 'helpers/date';
 import ErrorHandler from 'helpers/error-handler';
 import { formatBalance } from 'helpers/format-number';
+import { createAsset } from 'helpers/token';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
 import { LoginTypes } from 'store/authStore/types';
@@ -153,10 +154,7 @@ const YourVotes = ({ proposal }: YourVotesProps): React.ReactNode => {
             let tx = await StellarService.buildTx(account, ops);
 
             if (hasIce) {
-                tx = await StellarService.processIceTx(
-                    tx,
-                    StellarService.createAsset(GOV_ICE_CODE, ICE_ISSUER),
-                );
+                tx = await StellarService.processIceTx(tx, createAsset(GOV_ICE_CODE, ICE_ISSUER));
             }
 
             const result = await account.signAndSubmitTx(tx);

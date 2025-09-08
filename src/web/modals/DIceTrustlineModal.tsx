@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { D_ICE_CODE, GD_ICE_CODE, ICE_ISSUER } from 'constants/assets';
 
-import { StellarService } from 'services/globalServices';
+import { createAsset } from 'helpers/token';
 
 import { ModalProps } from 'types/modal';
 
@@ -67,7 +67,7 @@ const DIceTrustlineModal = ({ params }: ModalProps<Params>) => {
             </AssetBlock>
             {neededDIceTrustline && (
                 <NoTrustline
-                    asset={StellarService.createAsset(D_ICE_CODE, ICE_ISSUER)}
+                    asset={createAsset(D_ICE_CODE, ICE_ISSUER)}
                     onlyButton
                     fullWidth
                     isBig
@@ -76,7 +76,7 @@ const DIceTrustlineModal = ({ params }: ModalProps<Params>) => {
             )}
             {neededGDIceTrustline && (
                 <NoTrustline
-                    asset={StellarService.createAsset(GD_ICE_CODE, ICE_ISSUER)}
+                    asset={createAsset(GD_ICE_CODE, ICE_ISSUER)}
                     onlyButton
                     fullWidth
                     isBig

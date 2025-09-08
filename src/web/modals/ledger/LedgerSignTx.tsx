@@ -2,13 +2,14 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { ModalProps } from 'types/modal';
-
 import { useIsMounted } from 'hooks/useIsMounted';
+
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
+import { ModalProps } from 'types/modal';
+
 import Button from 'basics/buttons/Button';
-import { IconFail, IconPending, IconSuccess } from 'basics/Icons';
+import { IconFail, IconPending, IconSuccess } from 'basics/icons';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 

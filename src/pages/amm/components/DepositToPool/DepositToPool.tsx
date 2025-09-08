@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { NumericFormat } from 'react-number-format';
 import styled from 'styled-components';
 
-import { POOL_TYPE } from 'constants/amm';
+import { DAY } from 'constants/intervals';
 
 import { contractValueToAmount } from 'helpers/amount';
 import { getAssetString } from 'helpers/assets';
@@ -21,15 +21,16 @@ import {
 } from 'services/globalServices';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
-import { PoolExtended, PoolRewardsInfo } from 'types/amm';
+import { PoolExtended, PoolIncentives, PoolRewardsInfo } from 'types/amm';
 import { ModalProps } from 'types/modal';
 import { SorobanToken, Token, TokenType } from 'types/token';
 
-import { customScroll, flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { customScroll, flexRowSpaceBetween, noSelect, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Arrow from 'assets/icon-arrow-right-long.svg';
 import Info from 'assets/icon-info.svg';
+import Revert from 'assets/icon-revert.svg';
 
 import Alert from 'basics/Alert';
 import Asset from 'basics/Asset';
@@ -96,6 +97,11 @@ const DescriptionRow = styled.div`
     }
 `;
 
+const PoolRates = styled.span`
+    cursor: pointer;
+    ${noSelect};
+`;
+
 const Balance = styled.div`
     position: absolute;
     bottom: calc(100% + 1.2rem);
@@ -135,17 +141,6 @@ const PoolInfo = styled.div<{ $isModal: boolean }>`
     `}
 `;
 
-const TooltipInner = styled.span`
-    color: ${COLORS.white}!important;
-    white-space: pre-line;
-    max-width: 30rem;
-    width: max-content;
-
-    ${respondDown(Breakpoints.sm)`
-        width: 12rem;
-    `}
-`;
-
 const TooltipInnerBalance = styled.div`
     display: flex;
     flex-direction: column;
@@ -166,6 +161,10 @@ const TooltipRow = styled.div`
 
 const CheckboxStyled = styled(Checkbox)`
     margin-bottom: 2.4rem;
+`;
+
+const RevertIcon = styled(Revert)`
+    margin-left: 0.4rem;
 `;
 
 interface DepositToPoolParams {
@@ -191,6 +190,10 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
     );
     const [pending, setPending] = useState(false);
     const [isBalancedDeposit, setIsBalancedDeposit] = useState(true);
+
+    const [priceIndex, setPriceIndex] = useState(0);
+
+    const [incentives, setIncentives] = useState<PoolIncentives[] | null>(null);
 
     useEffect(() => {
         if (!account) {
@@ -236,6 +239,15 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
         SorobanService.amm.getPoolRewards(account.accountId(), pool.address).then(res => {
             setPoolRewards(res);
         });
+    }, [account, pool]);
+
+    useEffect(() => {
+        if (!account) {
+            setIncentives(null);
+            return;
+        }
+
+        SorobanService.amm.getPoolIncentives(account.accountId(), pool.address).then(setIncentives);
     }, [account, pool]);
 
     const reserves: Map<string, number> = useMemo(
@@ -675,6 +687,16 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                                     : '0'}
                             </span>
                         </DescriptionRow>
+                        {Boolean(rates) && (
+                            <DescriptionRow>
+                                <span>Pool rates</span>
+                                <PoolRates
+                                    onClick={() => setPriceIndex(prev => (prev + 1) % rates.size)}
+                                >
+                                    {[...rates.values()][priceIndex]} <RevertIcon />{' '}
+                                </PoolRates>
+                            </DescriptionRow>
+                        )}
                     </>
                 )}
 
@@ -731,55 +753,37 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                             </span>
                         </DescriptionRow>
                     )}
-                    {pool.tokens.map(asset => (
-                        <DescriptionRow key={getAssetString(asset)}>
-                            <span>
-                                Pooled {asset.code}{' '}
-                                {Boolean(rates) && (
-                                    <Tooltip
-                                        content={
-                                            <TooltipInner>
-                                                {rates.get(getAssetString(asset))}
-                                            </TooltipInner>
-                                        }
-                                        position={TOOLTIP_POSITION.right}
-                                        showOnHover
-                                    >
-                                        <Info />
-                                    </Tooltip>
-                                )}
-                            </span>
-                            <span>
-                                {(hasAllAmounts ||
-                                    (pool.pool_type === POOL_TYPE.stable &&
-                                        !isBalancedDeposit)) && (
-                                    <>
-                                        {+pool.total_share
-                                            ? formatBalance(
-                                                  (+reserves.get(getAssetString(asset)) *
-                                                      accountShare) /
-                                                      (Number(pool.total_share) / 1e7),
-                                                  true,
-                                              )
-                                            : 0}
-                                        <Arrow />
-                                    </>
-                                )}
-                                {reserves !== null ? (
-                                    formatBalance(
-                                        (+pool.total_share
-                                            ? (+reserves.get(getAssetString(asset)) *
-                                                  accountShare) /
-                                              (Number(pool.total_share) / 1e7)
-                                            : 0) + +amounts.get(getAssetString(asset)),
-                                        true,
-                                    )
-                                ) : (
-                                    <DotsLoader />
-                                )}
-                            </span>
-                        </DescriptionRow>
-                    ))}
+
+                    {incentives?.length
+                        ? incentives
+                              .filter(incentive => !!Number(incentive.info.tps))
+                              .map(incentive => (
+                                  <DescriptionRow key={incentive.token.contract}>
+                                      <span>Daily incentives {incentive.token.code}</span>
+                                      <span>
+                                          {formatBalance(
+                                              (+incentive.info.tps * DAY * sharesBefore) /
+                                                  1000 /
+                                                  100,
+                                              true,
+                                          )}{' '}
+                                          {incentive.token.code}
+                                          {sharesAfter && (
+                                              <>
+                                                  <Arrow />
+                                                  {formatBalance(
+                                                      (+incentive.info.tps * DAY * sharesAfter) /
+                                                          1000 /
+                                                          100,
+                                                      true,
+                                                  )}{' '}
+                                                  {incentive.token.code}
+                                              </>
+                                          )}
+                                      </span>
+                                  </DescriptionRow>
+                              ))
+                        : null}
                 </PoolInfo>
 
                 {isModal ? <StickyButtonWrapper>{ButtonAdd}</StickyButtonWrapper> : ButtonAdd}

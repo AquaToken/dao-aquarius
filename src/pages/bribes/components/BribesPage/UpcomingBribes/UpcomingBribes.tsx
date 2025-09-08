@@ -5,13 +5,12 @@ import styled from 'styled-components';
 
 import { MarketRoutes } from 'constants/routes';
 
-import { convertLocalDateToUTCIgnoringTimezone, getDateString } from 'helpers/date';
+import { convertDateStrToTimestamp, getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 import { getIceMaxApy } from 'helpers/ice';
+import { createAsset } from 'helpers/token';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
-
-import { StellarService } from 'services/globalServices';
 
 import Checkbox from 'web/basics/inputs/Checkbox';
 import Select from 'web/basics/inputs/Select';
@@ -93,7 +92,7 @@ const UpcomingBribes = () => {
 
     const processAssetsFromPairs = bribes => {
         const assets = bribes.reduce((acc, item) => {
-            const rewardAsset = StellarService.createAsset(item.asset_code, item.asset_issuer);
+            const rewardAsset = createAsset(item.asset_code, item.asset_issuer);
             return [
                 ...acc,
                 { code: item.asset1_code, issuer: item.asset1_issuer },
@@ -186,17 +185,11 @@ const UpcomingBribes = () => {
                     },
                 ]}
                 body={bribes.map(item => {
-                    const startUTC = convertLocalDateToUTCIgnoringTimezone(new Date(item.start_at));
-                    const stopUTC = convertLocalDateToUTCIgnoringTimezone(new Date(item.stop_at));
-                    const base = StellarService.createAsset(item.asset1_code, item.asset1_issuer);
-                    const counter = StellarService.createAsset(
-                        item.asset2_code,
-                        item.asset2_issuer,
-                    );
-                    const rewardAsset = StellarService.createAsset(
-                        item.asset_code,
-                        item.asset_issuer,
-                    );
+                    const startUTC = convertDateStrToTimestamp(item.start_at);
+                    const stopUTC = convertDateStrToTimestamp(item.stop_at);
+                    const base = createAsset(item.asset1_code, item.asset1_issuer);
+                    const counter = createAsset(item.asset2_code, item.asset2_issuer);
+                    const rewardAsset = createAsset(item.asset_code, item.asset_issuer);
 
                     const apy =
                         (item.aqua_total_reward_amount_equivalent / 7 / Number(item.upvote_value) +
@@ -242,9 +235,9 @@ const UpcomingBribes = () => {
                                 label: 'Reward per day:',
                             },
                             {
-                                children: `${getDateString(startUTC.getTime(), {
+                                children: `${getDateString(startUTC, {
                                     withoutYear: true,
-                                })} - ${getDateString(stopUTC.getTime() - 1)}`,
+                                })} - ${getDateString(stopUTC - 1)}`,
                                 label: 'Period:',
                             },
                         ],

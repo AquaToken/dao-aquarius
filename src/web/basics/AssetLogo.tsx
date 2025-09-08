@@ -3,11 +3,10 @@ import { useState } from 'react';
 import styled, { css } from 'styled-components';
 
 import { getAssetString } from 'helpers/assets';
+import { createAsset } from 'helpers/token';
 
 import { LumenInfo } from 'store/assetsStore/reducer';
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
-
-import { StellarService } from 'services/globalServices';
 
 import { ClassicToken, Token, TokenType } from 'types/token';
 
@@ -128,7 +127,7 @@ const AssetLogo = ({
         return <Soroban $isSmall={isSmall} $isBig={isBig} $isCircle={isCircle} {...props} />;
     }
 
-    const assetInstance = StellarService.createAsset(asset.code, asset.issuer);
+    const assetInstance = createAsset(asset.code, asset.issuer);
     const isNative = assetInstance.isNative();
     const assetInfo = isNative
         ? LumenInfo

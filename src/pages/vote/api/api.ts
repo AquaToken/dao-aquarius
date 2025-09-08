@@ -3,10 +3,9 @@ import axios from 'axios';
 import { BRIBES_API_URL } from 'constants/api';
 
 import { getAssetString } from 'helpers/assets';
+import { createAsset } from 'helpers/token';
 
 import { AssetSimple } from 'store/assetsStore/types';
-
-import { StellarService } from 'services/globalServices';
 
 import {
     ListResponse,
@@ -226,8 +225,7 @@ export const getPairsWithBribes = async (pageSize: number, page: number) => {
     return { pairs, count: bribes.data.count };
 };
 
-const getAssetParam = (asset: AssetSimple) =>
-    getAssetString(StellarService.createAsset(asset.code, asset.issuer));
+const getAssetParam = (asset: AssetSimple) => getAssetString(createAsset(asset.code, asset.issuer));
 export const getFilteredPairsList = async (
     baseAsset: AssetSimple,
     counterAsset: AssetSimple,

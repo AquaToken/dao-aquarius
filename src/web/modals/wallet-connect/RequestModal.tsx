@@ -4,13 +4,14 @@ import styled from 'styled-components';
 import { isMobile } from 'helpers/browser';
 import { getCurrentWallet } from 'helpers/wallet-connect-helpers';
 
-import { ModalProps } from 'types/modal';
-
 import { useIsMounted } from 'hooks/useIsMounted';
+
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
+import { ModalProps } from 'types/modal';
+
 import Button from 'basics/buttons/Button';
-import { IconFail, IconPending, IconSuccess } from 'basics/Icons';
+import { IconFail, IconPending, IconSuccess } from 'basics/icons';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 

@@ -14,7 +14,7 @@ import DIce from 'assets/dice-logo.svg';
 import Ice from 'assets/ice-logo.svg';
 import ExternalLinkIcon from 'assets/icon-external-link.svg';
 
-import { IconSort } from 'basics/Icons';
+import { IconSort } from 'basics/icons';
 import { CircleLoader } from 'basics/loaders';
 import Pagination from 'basics/Pagination';
 import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';

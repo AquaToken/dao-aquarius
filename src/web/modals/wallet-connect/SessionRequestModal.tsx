@@ -1,9 +1,9 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 
-import { ModalProps } from 'types/modal';
-
 import { WalletConnectService } from 'services/globalServices';
+
+import { ModalProps } from 'types/modal';
 
 import Aqua from 'assets/aqua-logo-small.svg';
 import ArrowsIcon from 'assets/icon-arrows-circle.svg';

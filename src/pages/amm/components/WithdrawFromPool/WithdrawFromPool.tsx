@@ -49,6 +49,7 @@ const WithdrawFromPool = ({ params, close }: ModalProps<{ pool: PoolExtended }>)
 
     const [totalShares, setTotalShares] = useState(null);
     const [reserves, setReserves] = useState(null);
+    const [incentives, setIncentives] = useState(null);
     const [rewards, setRewards] = useState(null);
 
     const { account } = useAuthStore();
@@ -60,9 +61,11 @@ const WithdrawFromPool = ({ params, close }: ModalProps<{ pool: PoolExtended }>)
     }, []);
 
     useEffect(() => {
-        SorobanService.amm.getPoolReserves(pool.tokens, pool.address).then(res => {
-            setReserves(res);
-        });
+        SorobanService.amm.getPoolReserves(pool.tokens, pool.address).then(setReserves);
+    }, []);
+
+    useEffect(() => {
+        SorobanService.amm.getPoolIncentives(account.accountId(), pool.address).then(setIncentives);
     }, []);
 
     useEffect(() => {
@@ -105,6 +108,7 @@ const WithdrawFromPool = ({ params, close }: ModalProps<{ pool: PoolExtended }>)
                             totalShares={totalShares}
                             accountShare={accountShare}
                             close={close}
+                            incentives={incentives}
                         />
                     )}
 
@@ -114,6 +118,7 @@ const WithdrawFromPool = ({ params, close }: ModalProps<{ pool: PoolExtended }>)
                             rewards={rewards}
                             accountShare={accountShare}
                             close={close}
+                            incentives={incentives}
                         />
                     )}
 
@@ -123,6 +128,7 @@ const WithdrawFromPool = ({ params, close }: ModalProps<{ pool: PoolExtended }>)
                             rewards={rewards}
                             accountShare={accountShare}
                             close={close}
+                            incentives={incentives}
                         />
                     )}
                 </>

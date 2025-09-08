@@ -13,7 +13,7 @@ import { commonMaxWidth, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS, Z_INDEX } from 'web/styles';
 
-import AquaLogo from 'assets/aqua-logo.svg';
+import AquaLogo from 'assets/aqua/aqua-logo-text.svg';
 import IconProfile from 'assets/icon-profile.svg';
 
 import { ActiveProposals } from 'components/Header/ActiveProposals/ActiveProposals';
@@ -44,6 +44,7 @@ const Container = styled.header`
 
 const Aqua = styled(AquaLogo)`
     height: 4.4rem;
+    color: ${COLORS.titleText};
 
     ${respondDown(Breakpoints.md)`
         height: 3.4rem;
@@ -99,7 +100,9 @@ const Divider = styled.div`
     ${respondDown(Breakpoints.lg)`
         margin-right: 1rem;
         height: 2rem;
-    `} ${respondDown(Breakpoints.md)`
+    `};
+
+    ${respondDown(Breakpoints.md)`
          border-left: none;
          margin-right: 0;
          height: 0;
@@ -301,6 +304,15 @@ const Links = () => {
                         >
                             ICE Delegation
                         </NavLinkStyled>
+                        {/*<NavLinkStyled*/}
+                        {/*    to={MainRoutes.incentives}*/}
+                        {/*    activeStyle={{*/}
+                        {/*        fontWeight: 700,*/}
+                        {/*    }}*/}
+                        {/*    title="Pools Incentives"*/}
+                        {/*>*/}
+                        {/*    LP Incentives*/}
+                        {/*</NavLinkStyled>*/}
                     </>
                 }
             />

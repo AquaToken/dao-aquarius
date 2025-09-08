@@ -7,6 +7,7 @@ import { ICE_ISSUER, UP_ICE_CODE } from 'constants/assets';
 
 import ErrorHandler from 'helpers/error-handler';
 import { formatBalance } from 'helpers/format-number';
+import { createAsset } from 'helpers/token';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
 import { LoginTypes } from 'store/authStore/types';

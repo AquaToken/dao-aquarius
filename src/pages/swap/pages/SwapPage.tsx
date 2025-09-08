@@ -7,11 +7,9 @@ import { getAssetsList } from 'api/amm';
 import { MainRoutes } from 'constants/routes';
 
 import { getAquaAssetData, getAssetFromString, getAssetString } from 'helpers/assets';
-import { getTokensFromCache } from 'helpers/swap';
+import { createLumen, getTokensFromCache } from 'helpers/token';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
-
-import { StellarService } from 'services/globalServices';
 
 import { Token } from 'types/token';
 
@@ -70,9 +68,7 @@ const SwapPage = () => {
 
         if (source === destination && !base && !counter) {
             history.replace(
-                `${MainRoutes.swap}/${getAssetString(
-                    StellarService.createLumen() as Token,
-                )}/${aquaAssetString}`,
+                `${MainRoutes.swap}/${getAssetString(createLumen() as Token)}/${aquaAssetString}`,
             );
             return;
         }
