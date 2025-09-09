@@ -3,7 +3,14 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { D_ICE_CODE, DOWN_ICE_CODE, GOV_ICE_CODE, ICE_ISSUER, UP_ICE_CODE } from 'constants/assets';
+import {
+    D_ICE_CODE,
+    DOWN_ICE_CODE,
+    GD_ICE_CODE,
+    GOV_ICE_CODE,
+    ICE_ISSUER,
+    UP_ICE_CODE,
+} from 'constants/assets';
 import { MainRoutes, MarketRoutes } from 'constants/routes';
 
 import { getAssetString } from 'helpers/assets';
@@ -328,6 +335,7 @@ export const UP_ICE = createAsset(UP_ICE_CODE, ICE_ISSUER);
 export const GOV_ICE = createAsset(GOV_ICE_CODE, ICE_ISSUER);
 export const DOWN_ICE = createAsset(DOWN_ICE_CODE, ICE_ISSUER);
 export const DELEGATE_ICE = createAsset(D_ICE_CODE, ICE_ISSUER);
+export const G_DELEGATE_ICE = createAsset(GD_ICE_CODE, ICE_ISSUER);
 
 enum UrlParams {
     sort = 'sort',

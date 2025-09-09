@@ -3,7 +3,12 @@
 
 import axios from 'axios';
 
+import { ICE_DELEGATION_MAP } from 'constants/assets';
+
+import { getAssetString } from 'helpers/assets';
+
 import { Delegatee, DelegateeVote, MyDelegatees } from 'types/delegate';
+import { ClassicToken } from 'types/token';
 
 import { getMarketsMap } from 'pages/vote/api/api';
 import { MarketKey } from 'pages/vote/api/types';
@@ -21,9 +26,14 @@ export const getDelegatees = (): Promise<Delegatee[]> =>
 
 export const getDelegateeVotes = async (
     accountId: string,
+    token: ClassicToken,
 ): Promise<(DelegateeVote & MarketKey)[]> => {
     const votes = await axios
-        .get<DelegateeVote[]>(`${API_URL}${accountId}/distribution`)
+        .get<DelegateeVote[]>(
+            `${API_URL}${accountId}/distribution?asset=${ICE_DELEGATION_MAP.get(
+                getAssetString(token),
+            )}`,
+        )
         .then(({ data }) => data);
 
     const markets = await getMarketsMap(votes.map(item => item.market_key));
@@ -31,8 +41,30 @@ export const getDelegateeVotes = async (
     return votes.map(item => ({ ...item, ...markets.get(item.market_key) }));
 };
 
-export const getMyDelegatees = (accountId: string): Promise<MyDelegatees[]> =>
-    axios.get<MyDelegatees[]>(`${API_URL}${accountId}/delegation/`).then(({ data }) => data);
+function combine(data: MyDelegatees[]): Partial<Delegatee>[] {
+    const map = new Map<string, Partial<Delegatee>>();
+
+    for (const item of data) {
+        if (!map.has(item.account)) {
+            map.set(item.account, {
+                account: item.account,
+                managed_ice: {},
+                delegated: {},
+            });
+        }
+
+        const acc = map.get(item.account)!;
+        acc.managed_ice[item.asset] = +item.managed_ice;
+        acc.delegated[item.asset] = +item.delegated;
+    }
+
+    return Array.from(map.values());
+}
+
+export const getMyDelegatees = (accountId: string): Promise<Partial<Delegatee>[]> =>
+    axios
+        .get<MyDelegatees[]>(`${API_URL}${accountId}/delegation/`)
+        .then(({ data }) => combine(data));
 
 type CreateDelegateeArgs = {
     name: string;

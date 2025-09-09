@@ -185,8 +185,6 @@ const Votes = (): React.ReactNode => {
         setIsReversedSort(isEqualSort ? !isReversedSort : false);
     };
 
-    console.log(votes);
-
     if (!votes) {
         return (
             <LoaderContainer>

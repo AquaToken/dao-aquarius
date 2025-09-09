@@ -72,7 +72,7 @@ const MyDelegates = ({ delegatees, goToList }: Props) => {
             });
     }, [updateIndex]);
 
-    const locksSummary: Map<string, number> = useMemo(() => {
+    const locksSummary: Map<string, { [key: string]: number }> = useMemo(() => {
         if (!locks) {
             return null;
         }
@@ -84,13 +84,27 @@ const MyDelegates = ({ delegatees, goToList }: Props) => {
             )?.destination;
 
             if (destination) {
-                acc.set(destination, (acc.get(destination) ?? 0) + Number(lock.amount));
+                const result = acc.get(destination) ?? {};
+                result[lock.asset] = (result[lock.asset] ?? 0) + Number(lock.amount);
+                acc.set(destination, result);
             }
 
             return acc;
-        }, new Map<string, number>());
+        }, new Map<string, { [key: string]: number }>());
 
-        return new Map([...summary].sort((a, b) => b[1] - a[1]));
+        return new Map(
+            [...summary].sort((a, b) => {
+                const sumA: number = Object.values(a[1]).reduce(
+                    (acc: number, val: number) => acc + val,
+                    0,
+                ) as number;
+                const sumB: number = Object.values(b[1]).reduce(
+                    (acc: number, val: number) => acc + val,
+                    0,
+                ) as number;
+                return sumB - sumA;
+            }),
+        );
     }, [locks, delegatees]);
 
     if (!locks || !customDelegatees) {

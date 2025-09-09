@@ -279,7 +279,9 @@ const DelegateClaimModal = ({ params }: ModalProps<Params>) => {
                                         flexSize: 1.5,
                                     },
                                     {
-                                        children: `${formatBalance(+claim.amount, true)} upvoteICE`,
+                                        children: `${formatBalance(+claim.amount, true)} ${
+                                            claim.asset.split(':')[0]
+                                        }`,
                                         label: 'Amount',
                                     },
                                     {

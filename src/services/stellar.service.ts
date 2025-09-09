@@ -22,6 +22,7 @@ import {
     GOV_ICE_CODE,
     ICE_CODE,
     ICE_ISSUER,
+    ICE_TO_DELEGATE,
     UP_ICE_CODE,
 } from 'constants/assets';
 import { BASE_FEE } from 'constants/stellar';
@@ -990,9 +991,10 @@ export default class StellarServiceClass {
                     claimant =>
                         claimant.destination === accountId && !!claimant.predicate?.not?.abs_before,
                 );
-                const isUpvoteIce = claim.asset === `${UP_ICE_CODE}:${ICE_ISSUER}`;
 
-                if (hasMarker && Boolean(selfClaim) && isUpvoteIce) {
+                const isDelegatedIce = ICE_TO_DELEGATE.includes(claim.asset);
+
+                if (hasMarker && Boolean(selfClaim) && isDelegatedIce) {
                     acc.push(claim);
                 }
                 return acc;
@@ -1024,10 +1026,10 @@ export default class StellarServiceClass {
                     // @ts-ignore
                     claimant.destination === accountId && !!claimant.predicate?.not?.unconditional,
             );
-            const isUpvoteIce = claim.asset === `${UP_ICE_CODE}:${ICE_ISSUER}`;
-            const isGovernIce = claim.asset === `${GOV_ICE_CODE}:${ICE_ISSUER}`;
 
-            if (hasMarker && Boolean(selfClaim) && (isUpvoteIce || isGovernIce)) {
+            const isDelegatedIce = ICE_TO_DELEGATE.includes(claim.asset);
+
+            if (hasMarker && Boolean(selfClaim) && isDelegatedIce) {
                 acc.push(claim);
             }
             return acc;
