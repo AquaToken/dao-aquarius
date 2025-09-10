@@ -135,9 +135,9 @@ const GetAquaLabel = styled.span`
 const GOV_ICE = createAsset(GOV_ICE_CODE, ICE_ISSUER);
 const GD_ICE = createAsset(GD_ICE_CODE, ICE_ISSUER);
 
-const OPTIONS = [{ label: 'governICE', value: GOV_ICE, icon: <IceLogo /> }];
+const OPTIONS = [{ label: GOV_ICE_CODE, value: GOV_ICE, icon: <IceLogo /> }];
 
-const EXTENDED_OPTIONS = [...OPTIONS, { label: 'gdICE', value: GD_ICE, icon: <DIceLogo /> }];
+const EXTENDED_OPTIONS = [...OPTIONS, { label: GD_ICE_CODE, value: GD_ICE, icon: <DIceLogo /> }];
 
 const ConfirmVoteModal = ({
     params,

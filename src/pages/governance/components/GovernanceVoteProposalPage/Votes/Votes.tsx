@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { GD_ICE_CODE } from 'constants/assets';
+
 import { getDateString } from 'helpers/date';
 import { getIsTestnetEnv } from 'helpers/env';
 import { formatBalance } from 'helpers/format-number';
@@ -275,7 +277,7 @@ const Votes = (): React.ReactNode => {
                             </CellSolution>
                             <CellAmount>
                                 {formatBalance(Number(amount), true)}
-                                {vote.asset_code === 'gdICE' ? <GdIceLogo /> : <IceLogo />}
+                                {vote.asset_code === GD_ICE_CODE ? <GdIceLogo /> : <IceLogo />}
                                 <ExternalLink onClick={() => onVoteLinkClick(txLink)}>
                                     <ExternalLinkIcon />
                                 </ExternalLink>

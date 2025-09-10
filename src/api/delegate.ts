@@ -12,6 +12,7 @@ import { ClassicToken } from 'types/token';
 
 import { getMarketsMap } from 'pages/vote/api/api';
 import { MarketKey } from 'pages/vote/api/types';
+import { UP_ICE } from 'pages/vote/components/MainPage/MainPage';
 
 const API_URL = 'https://api-delegation.aqua.network/api/delegation/v2/';
 
@@ -20,7 +21,9 @@ export const getDelegatees = (): Promise<Delegatee[]> =>
         .get<Delegatee[]>(`${API_URL}stats/`)
         .then(({ data }) =>
             data.sort(
-                (a, b) => +b.is_recommended - +a.is_recommended || +b.managed_ice - +a.managed_ice,
+                (a, b) =>
+                    +b.is_recommended - +a.is_recommended ||
+                    +b.managed_ice[getAssetString(UP_ICE)] - +a.managed_ice[getAssetString(UP_ICE)],
             ),
         );
 

@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components';
 
 import { getDelegateeVotes } from 'api/delegate';
 
+import { GD_ICE_CODE } from 'constants/assets';
 import { GovernanceRoutes, MarketRoutes } from 'constants/routes';
 
 import { getAssetFromString, getAssetString } from 'helpers/assets';
@@ -287,7 +288,7 @@ const DelegateeStats = forwardRef(
                             const key = isFor ? 'sum_for' : 'sum_against';
                             acc[key] += amount;
 
-                            if (vote.asset_code === 'gdICE') {
+                            if (vote.asset_code === GD_ICE_CODE) {
                                 acc[`${key}_gdice`] += amount;
                             }
 

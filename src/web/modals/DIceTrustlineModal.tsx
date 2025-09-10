@@ -52,9 +52,10 @@ const DIceTrustlineModal = ({ params }: ModalProps<Params>) => {
         <ModalWrapper>
             <ModalTitle>You’ve Been Delegated ICE</ModalTitle>
             <ModalDescription>
-                Someone has delegated ICE to your account — a {neededDIceTrustline ? 'dICE' : ''}
+                Someone has delegated ICE to your account — a{' '}
+                {neededDIceTrustline ? D_ICE_CODE : ''}
                 {neededDIceTrustline && neededGDIceTrustline ? ',' : ''}{' '}
-                {neededGDIceTrustline ? 'gdICE' : ''}
+                {neededGDIceTrustline ? GD_ICE_CODE : ''}
                 payment is pending. Add a trustline to receive it. The dICE will be credited to your
                 balance within 30 minutes, after which you’ll be able to vote on the liquidity
                 voting page.
