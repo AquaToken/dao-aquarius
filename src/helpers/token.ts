@@ -6,8 +6,8 @@ import { getNetworkPassphrase } from 'helpers/env';
 
 import { ClassicToken, Token, TokenType } from 'types/token';
 
-export const createAsset = (code: string, issuer: string): ClassicToken => {
-    const asset: ClassicToken = new StellarSdk.Asset(code, issuer) as ClassicToken;
+export const createLumen = (): ClassicToken => {
+    const asset: ClassicToken = StellarSdk.Asset.native() as ClassicToken;
 
     asset.type = TokenType.classic;
     asset.contract = asset.contractId(getNetworkPassphrase());
@@ -16,8 +16,11 @@ export const createAsset = (code: string, issuer: string): ClassicToken => {
     return asset;
 };
 
-export const createLumen = (): ClassicToken => {
-    const asset: ClassicToken = StellarSdk.Asset.native() as ClassicToken;
+export const createAsset = (code: string, issuer: string): ClassicToken => {
+    if (code === 'XLM' && !issuer) {
+        return createLumen();
+    }
+    const asset: ClassicToken = new StellarSdk.Asset(code, issuer) as ClassicToken;
 
     asset.type = TokenType.classic;
     asset.contract = asset.contractId(getNetworkPassphrase());
