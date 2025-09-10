@@ -255,7 +255,9 @@ const DelegateMain = () => {
                 <ToggleGroupStyled
                     value={tab}
                     options={
-                        isLogged && account.getAssetBalance(DELEGATE_ICE) !== null
+                        isLogged &&
+                        (account.getAssetBalance(DELEGATE_ICE) !== null ||
+                            account.getAssetBalance(G_DELEGATE_ICE) !== null)
                             ? EXTENDED_OPTIONS
                             : DEFAULT_OPTIONS
                     }
