@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components';
 
 import { getDelegateeVotes } from 'api/delegate';
 
+import { FIRST_PROPOSAL_ID_WITH_GDICE } from 'constants/delegate';
 import { GovernanceRoutes, MarketRoutes } from 'constants/routes';
 
 import { getAssetFromString, getAssetString } from 'helpers/assets';
@@ -38,7 +39,7 @@ import { PageLoader } from 'basics/loaders';
 
 import { getProposalsRequest, PROPOSAL_FILTER } from 'pages/governance/api/api';
 import { MarketKey } from 'pages/vote/api/types';
-import { GOV_ICE, UP_ICE } from 'pages/vote/components/MainPage/MainPage';
+import { DELEGATE_ICE, GOV_ICE, UP_ICE } from 'pages/vote/components/MainPage/MainPage';
 import { getPercent } from 'pages/vote/components/MainPage/Table/VoteAmount/VoteAmount';
 
 const Container = styled.div<{ $fromTop: boolean; $visible: boolean }>`
@@ -183,7 +184,8 @@ const VoteType = styled.div`
 
 const VoteAmount = styled(VoteType)`
     justify-content: flex-end;
-    flex: 1;
+    flex: 4;
+    white-space: nowrap;
 `;
 
 const Buttons = styled.div`
@@ -280,20 +282,27 @@ const DelegateeStats = forwardRef(
                     const result = logvote_set.reduce(
                         (acc, vote) => {
                             const amount = Number(vote.amount);
-                            if (vote.vote_choice === 'vote_for') {
-                                acc.sum_for += amount;
-                            } else if (vote.vote_choice === 'vote_against') {
-                                acc.sum_against += amount;
+
+                            const isFor = vote.vote_choice === 'vote_for';
+
+                            const key = isFor ? 'sum_for' : 'sum_against';
+                            acc[key] += amount;
+
+                            if (vote.asset_code === 'gdICE') {
+                                acc[`${key}_gdice`] += amount;
                             }
+
                             return acc;
                         },
-                        { sum_for: 0, sum_against: 0 },
+                        { sum_for: 0, sum_against: 0, sum_for_gdice: 0, sum_against_gdice: 0 },
                     );
 
                     return {
                         id,
                         sum_for: result.sum_for,
                         sum_against: result.sum_against,
+                        sum_for_gdice: result.sum_for_gdice,
+                        sum_against_gdice: result.sum_against_gdice,
                     };
                 });
 
@@ -446,8 +455,23 @@ const DelegateeStats = forwardRef(
                                                 For
                                             </VoteType>
                                             <VoteAmount>
-                                                {formatBalance(vote.sum_for, true, true)}{' '}
-                                                <AssetLogo asset={UP_ICE} isSmall />{' '}
+                                                <span>
+                                                    {formatBalance(vote.sum_for, true, true)}
+                                                </span>
+                                                {vote.id >= FIRST_PROPOSAL_ID_WITH_GDICE ? (
+                                                    <>
+                                                        <span>
+                                                            ({' '}
+                                                            {formatBalance(
+                                                                vote.sum_for_gdice,
+                                                                true,
+                                                                true,
+                                                            )}{' '}
+                                                        </span>
+                                                        <AssetLogo asset={DELEGATE_ICE} isSmall />
+                                                        <span>)</span>
+                                                    </>
+                                                ) : null}
                                             </VoteAmount>
                                         </StatsRow>
                                     )}
@@ -463,8 +487,23 @@ const DelegateeStats = forwardRef(
                                                 Against
                                             </VoteType>
                                             <VoteAmount>
-                                                {formatBalance(vote.sum_against, true, true)}{' '}
-                                                <AssetLogo asset={UP_ICE} isSmall />{' '}
+                                                <span>
+                                                    {formatBalance(vote.sum_against, true, true)}
+                                                </span>
+                                                {vote.id >= FIRST_PROPOSAL_ID_WITH_GDICE ? (
+                                                    <>
+                                                        <span>
+                                                            ({' '}
+                                                            {formatBalance(
+                                                                vote.sum_against_gdice,
+                                                                true,
+                                                                true,
+                                                            )}{' '}
+                                                        </span>
+                                                        <AssetLogo asset={DELEGATE_ICE} isSmall />
+                                                        <span>)</span>
+                                                    </>
+                                                ) : null}
                                             </VoteAmount>
                                         </StatsRow>
                                     )}

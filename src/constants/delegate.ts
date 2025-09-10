@@ -1,0 +1,1 @@
+export const FIRST_PROPOSAL_ID_WITH_GDICE = 115;
