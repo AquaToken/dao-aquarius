@@ -14,7 +14,13 @@ export const getVotingPower = (delegatee: Partial<Delegatee>): string =>
         )
         .join(', ');
 
-export const getTrusted = (delegatee: Partial<Delegatee>): string =>
+export const getDelegatorsAmounts = (delegatee: Partial<Delegatee>): string =>
     ICE_TO_DELEGATE.filter(str => !!Number(delegatee.delegated[str]))
         .map(str => `${formatBalance(Number(delegatee.delegated[str]), true)} ${str.split(':')[0]}`)
         .join(', ');
+
+export const getDelegatorsCount = (delegatee: Partial<Delegatee>): number =>
+    ICE_TO_DELEGATE.filter(str => !!Number(delegatee.delegated[str])).reduce((acc, str) => {
+        acc += delegatee.delegated[str];
+        return acc;
+    }, 0);

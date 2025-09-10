@@ -72,7 +72,7 @@ const MyDelegators = () => {
 
     return (
         <Container>
-            {delegators ? (
+            {processedLocks ? (
                 <Table
                     head={[
                         { children: 'Account' },

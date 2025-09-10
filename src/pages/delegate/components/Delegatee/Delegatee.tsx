@@ -2,7 +2,7 @@ import * as React from 'react';
 import { forwardRef, RefObject } from 'react';
 import styled from 'styled-components';
 
-import { getTrusted, getVotingPower } from 'helpers/delegate';
+import { getDelegatorsAmounts, getDelegatorsCount, getVotingPower } from 'helpers/delegate';
 import { truncateString } from 'helpers/truncate-string';
 
 import { Delegatee as DelegateeType } from 'types/delegate';
@@ -207,8 +207,8 @@ const Delegatee = forwardRef(
                     <BottomRow>
                         {Object.values(delegatee.delegated).length > 0 ? (
                             <Trusted>
-                                Trusted by <b>{getTrusted(delegatee)}</b> account
-                                {+delegatee.delegated > 1 ? 's' : ''}
+                                Trusted by <b>{getDelegatorsAmounts(delegatee)}</b> account
+                                {getDelegatorsCount(delegatee) > 1 ? 's' : ''}
                             </Trusted>
                         ) : (
                             <div />

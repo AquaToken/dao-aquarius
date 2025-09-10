@@ -27,7 +27,7 @@ import { PageLoader } from 'basics/loaders';
 import DelegatesList from 'pages/delegate/components/DelegatesList/DelegatesList';
 import MyDelegates from 'pages/delegate/components/MyDelegates/MyDelegates';
 import MyDelegators from 'pages/delegate/components/MyDelegators/MyDelegators';
-import { DELEGATE_ICE } from 'pages/vote/components/MainPage/MainPage';
+import { DELEGATE_ICE, G_DELEGATE_ICE } from 'pages/vote/components/MainPage/MainPage';
 
 const Main = styled.main`
     flex: 1 0 auto;
@@ -265,7 +265,9 @@ const DelegateMain = () => {
                 <SelectStyled
                     value={tab}
                     options={
-                        isLogged && account.getAssetBalance(DELEGATE_ICE) !== null
+                        isLogged &&
+                        (account.getAssetBalance(DELEGATE_ICE) !== null ||
+                            account.getAssetBalance(G_DELEGATE_ICE) !== null)
                             ? EXTENDED_OPTIONS
                             : DEFAULT_OPTIONS
                     }
