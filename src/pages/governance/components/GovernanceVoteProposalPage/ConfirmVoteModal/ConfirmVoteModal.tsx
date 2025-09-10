@@ -135,10 +135,9 @@ const GetAquaLabel = styled.span`
 const GOV_ICE = createAsset(GOV_ICE_CODE, ICE_ISSUER);
 const GD_ICE = createAsset(GD_ICE_CODE, ICE_ISSUER);
 
-const OPTIONS = [
-    { label: 'governICE', value: GOV_ICE, icon: <IceLogo /> },
-    { label: 'gdICE', value: GD_ICE, icon: <DIceLogo /> },
-];
+const OPTIONS = [{ label: 'governICE', value: GOV_ICE, icon: <IceLogo /> }];
+
+const EXTENDED_OPTIONS = [...OPTIONS, { label: 'gdICE', value: GD_ICE, icon: <DIceLogo /> }];
 
 const ConfirmVoteModal = ({
     params,
@@ -162,6 +161,8 @@ const ConfirmVoteModal = ({
     const formattedBalance = hasTrustLine && formatBalance(targetBalance);
 
     const unlockDate = new Date(endDate).getTime() + 60 * 60 * 1000;
+
+    const hasGDIce = account?.getAssetBalance(GD_ICE) !== null;
 
     useEffect(() => {
         setAmount('');
@@ -280,7 +281,12 @@ const ConfirmVoteModal = ({
                     inputMode="decimal"
                 />
 
-                <StyledSelect options={OPTIONS} value={targetAsset} onChange={setTargetAsset} />
+                <StyledSelect
+                    options={hasGDIce ? EXTENDED_OPTIONS : OPTIONS}
+                    value={targetAsset}
+                    onChange={setTargetAsset}
+                    disabled={!hasGDIce}
+                />
             </ContentRow>
 
             <RangeInput

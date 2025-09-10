@@ -5,7 +5,6 @@ import styled, { css } from 'styled-components';
 
 import { getDelegateeVotes } from 'api/delegate';
 
-import { FIRST_PROPOSAL_ID_WITH_GDICE } from 'constants/delegate';
 import { GovernanceRoutes, MarketRoutes } from 'constants/routes';
 
 import { getAssetFromString, getAssetString } from 'helpers/assets';
@@ -39,7 +38,7 @@ import { PageLoader } from 'basics/loaders';
 
 import { getProposalsRequest, PROPOSAL_FILTER } from 'pages/governance/api/api';
 import { MarketKey } from 'pages/vote/api/types';
-import { DELEGATE_ICE, GOV_ICE, UP_ICE } from 'pages/vote/components/MainPage/MainPage';
+import { GOV_ICE, UP_ICE } from 'pages/vote/components/MainPage/MainPage';
 import { getPercent } from 'pages/vote/components/MainPage/Table/VoteAmount/VoteAmount';
 
 const Container = styled.div<{ $fromTop: boolean; $visible: boolean }>`
@@ -456,22 +455,8 @@ const DelegateeStats = forwardRef(
                                             </VoteType>
                                             <VoteAmount>
                                                 <span>
-                                                    {formatBalance(vote.sum_for, true, true)}
+                                                    {formatBalance(vote.sum_for, true, true)} ICE
                                                 </span>
-                                                {vote.id >= FIRST_PROPOSAL_ID_WITH_GDICE ? (
-                                                    <>
-                                                        <span>
-                                                            ({' '}
-                                                            {formatBalance(
-                                                                vote.sum_for_gdice,
-                                                                true,
-                                                                true,
-                                                            )}{' '}
-                                                        </span>
-                                                        <AssetLogo asset={DELEGATE_ICE} isSmall />
-                                                        <span>)</span>
-                                                    </>
-                                                ) : null}
                                             </VoteAmount>
                                         </StatsRow>
                                     )}
@@ -488,22 +473,9 @@ const DelegateeStats = forwardRef(
                                             </VoteType>
                                             <VoteAmount>
                                                 <span>
-                                                    {formatBalance(vote.sum_against, true, true)}
+                                                    {formatBalance(vote.sum_against, true, true)}{' '}
+                                                    ICE
                                                 </span>
-                                                {vote.id >= FIRST_PROPOSAL_ID_WITH_GDICE ? (
-                                                    <>
-                                                        <span>
-                                                            ({' '}
-                                                            {formatBalance(
-                                                                vote.sum_against_gdice,
-                                                                true,
-                                                                true,
-                                                            )}{' '}
-                                                        </span>
-                                                        <AssetLogo asset={DELEGATE_ICE} isSmall />
-                                                        <span>)</span>
-                                                    </>
-                                                ) : null}
                                             </VoteAmount>
                                         </StatsRow>
                                     )}

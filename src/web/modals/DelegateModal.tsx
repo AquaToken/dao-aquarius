@@ -3,11 +3,8 @@ import { useEffect, useState } from 'react';
 import { NumericFormat } from 'react-number-format';
 import styled from 'styled-components';
 
-import { ICE_ISSUER, UP_ICE_CODE } from 'constants/assets';
-
 import ErrorHandler from 'helpers/error-handler';
 import { formatBalance } from 'helpers/format-number';
-import { createAsset } from 'helpers/token';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
 import { LoginTypes } from 'store/authStore/types';
@@ -20,7 +17,7 @@ import { Delegatee } from 'types/delegate';
 import { ModalProps } from 'types/modal';
 import { ClassicToken } from 'types/token';
 
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Ice from 'assets/ice-logo.svg';
@@ -123,7 +120,7 @@ const OPTIONS = [
         value: UP_ICE,
         label: (
             <SelectItem>
-                upvoteIce <AssetLogo asset={UP_ICE} />
+                {UP_ICE.code} <AssetLogo asset={UP_ICE} />
             </SelectItem>
         ),
     },
@@ -131,7 +128,7 @@ const OPTIONS = [
         value: GOV_ICE,
         label: (
             <SelectItem>
-                governICE <AssetLogo asset={GOV_ICE} />
+                {GOV_ICE.code} <AssetLogo asset={GOV_ICE} />
             </SelectItem>
         ),
     },

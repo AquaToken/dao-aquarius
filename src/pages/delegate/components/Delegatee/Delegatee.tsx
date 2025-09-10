@@ -2,7 +2,8 @@ import * as React from 'react';
 import { forwardRef, RefObject } from 'react';
 import styled from 'styled-components';
 
-import { getDelegatorsAmounts, getDelegatorsCount, getVotingPower } from 'helpers/delegate';
+import { getAssetString } from 'helpers/assets';
+import { formatBalance } from 'helpers/format-number';
 import { truncateString } from 'helpers/truncate-string';
 
 import { Delegatee as DelegateeType } from 'types/delegate';
@@ -14,6 +15,8 @@ import Arrow from 'assets/icon-arrow-down.svg';
 
 import Identicon from 'basics/Identicon';
 import Label from 'basics/Label';
+
+import { GOV_ICE, UP_ICE } from 'pages/vote/components/MainPage/MainPage';
 
 const Container = styled.div<{ $isSelected: boolean }>`
     display: flex;
@@ -185,7 +188,34 @@ const Delegatee = forwardRef(
                             </span>
                         ) : (
                             <span>
-                                Voting Power: <b>{getVotingPower(delegatee)}</b>
+                                {!!+delegatee.managed_ice[getAssetString(UP_ICE)] && (
+                                    <span>
+                                        Market Voting Power:{' '}
+                                        <b>
+                                            {formatBalance(
+                                                delegatee.managed_ice[getAssetString(UP_ICE)],
+                                                true,
+                                            )}{' '}
+                                            dICE
+                                        </b>
+                                    </span>
+                                )}
+
+                                {!!+delegatee.managed_ice[getAssetString(GOV_ICE)] && (
+                                    <>
+                                        <br />
+                                        <span>
+                                            DAO Voting Power:{' '}
+                                            <b>
+                                                {formatBalance(
+                                                    delegatee.managed_ice[getAssetString(GOV_ICE)],
+                                                    true,
+                                                )}{' '}
+                                                gdICE
+                                            </b>
+                                        </span>
+                                    </>
+                                )}
                             </span>
                         )}
 
@@ -198,7 +228,36 @@ const Delegatee = forwardRef(
                         </MobileAmount>
                     ) : (
                         <MobileAmount>
-                            Voting Power: <b>{getVotingPower(delegatee)}</b>
+                            <span>
+                                {!!+delegatee.managed_ice[getAssetString(UP_ICE)] && (
+                                    <span>
+                                        Market Voting Power:{' '}
+                                        <b>
+                                            {formatBalance(
+                                                delegatee.managed_ice[getAssetString(UP_ICE)],
+                                                true,
+                                            )}{' '}
+                                            dICE
+                                        </b>
+                                    </span>
+                                )}
+
+                                {!!+delegatee.managed_ice[getAssetString(GOV_ICE)] && (
+                                    <>
+                                        <br />
+                                        <span>
+                                            DAO Voting Power:{' '}
+                                            <b>
+                                                {formatBalance(
+                                                    delegatee.managed_ice[getAssetString(GOV_ICE)],
+                                                    true,
+                                                )}{' '}
+                                                gdICE
+                                            </b>
+                                        </span>
+                                    </>
+                                )}
+                            </span>
                         </MobileAmount>
                     )}
 
@@ -207,8 +266,9 @@ const Delegatee = forwardRef(
                     <BottomRow>
                         {Object.values(delegatee.delegated).length > 0 ? (
                             <Trusted>
-                                Trusted by <b>{getDelegatorsAmounts(delegatee)}</b> account
-                                {getDelegatorsCount(delegatee) > 1 ? 's' : ''}
+                                Trusted by <b>{delegatee.delegated[getAssetString(UP_ICE)]}</b>{' '}
+                                account
+                                {(delegatee.delegated[getAssetString(UP_ICE)] ?? 0) > 1 ? 's' : ''}
                             </Trusted>
                         ) : (
                             <div />
