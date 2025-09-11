@@ -355,7 +355,7 @@ const Balances = ({ ammAquaBalance }: BalancesProps): React.ReactNode => {
                 <BalancesContainer>
                     <BalancesColumn>
                         <Header>
-                            <BalanceTitle>Your available AQUA balance</BalanceTitle>
+                            <BalanceTitle>Your Available AQUA Balance</BalanceTitle>
                         </Header>
 
                         <BalanceValue>
@@ -375,7 +375,7 @@ const Balances = ({ ammAquaBalance }: BalancesProps): React.ReactNode => {
                                     )}
                                 </AdditionalInfoBalance>
                                 <AdditionalInfoDescription>
-                                    AQUA in AMM pools
+                                    AQUA In AMM Pools
                                 </AdditionalInfoDescription>
                             </InfoColumn>
                             <InfoColumn>
@@ -389,13 +389,13 @@ const Balances = ({ ammAquaBalance }: BalancesProps): React.ReactNode => {
                                         <span>{formatBalance(+locksSum, true)}</span>
                                     )}
                                 </AdditionalInfoBalance>
-                                <AdditionalInfoDescription>AQUA locked</AdditionalInfoDescription>
+                                <AdditionalInfoDescription>AQUA Locked</AdditionalInfoDescription>
                             </InfoColumn>
                         </AdditionalInfo>
                     </BalancesColumn>
                     <BalancesColumn>
                         <Header>
-                            <BalanceTitle>Your current ICE balance</BalanceTitle>
+                            <BalanceTitle>Your Current ICE Balance</BalanceTitle>
                             <HeaderButtons>
                                 <Link to={MainRoutes.locker}>
                                     <Button isSmall>
@@ -442,7 +442,7 @@ const Balances = ({ ammAquaBalance }: BalancesProps): React.ReactNode => {
                 </BalancesContainer>
                 <LumenBalanceRow>
                     <LumenBalance>
-                        <LumenBalanceLabel>Available XLM balance:</LumenBalanceLabel>
+                        <LumenBalanceLabel>Available XLM Balance:</LumenBalanceLabel>
                         <LumenLogo />
                         <LumenBalanceValue>{formatBalance(+lumenBalance, true)}</LumenBalanceValue>
                         <LumenBalanceLabel>XLM</LumenBalanceLabel>

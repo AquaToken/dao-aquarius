@@ -221,7 +221,7 @@ const IceBlock = ({ account, locks }: IceBlockProps): React.ReactNode => {
 
     return (
         <Container>
-            <Title>Your available ICE balance</Title>
+            <Title>Your Available ICE Balance</Title>
             <div>
                 <BalanceRow>
                     <Logo />
