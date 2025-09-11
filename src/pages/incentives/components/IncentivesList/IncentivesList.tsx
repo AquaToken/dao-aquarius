@@ -19,8 +19,8 @@ enum Tab {
 }
 
 const OPTIONS = [
-    { value: Tab.current, label: 'Current Incentives' },
-    { value: Tab.upcoming, label: 'Upcoming Incentives' },
+    { value: Tab.current, label: 'Current' },
+    { value: Tab.upcoming, label: 'Upcoming' },
 ];
 
 const IncentivesList = () => {

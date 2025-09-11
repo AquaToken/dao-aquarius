@@ -191,7 +191,7 @@ const YourVotes = () => {
 
     return (
         <Container>
-            <Title>Your liquidity votes</Title>
+            <Title>Liquidity Votes</Title>
 
             {!totalStats || !votes || !unclaimedVotesInfo ? (
                 <PageLoader />

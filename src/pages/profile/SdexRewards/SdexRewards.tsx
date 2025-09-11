@@ -253,7 +253,7 @@ const SdexRewards = ({ aquaUsdPrice }: SdexRewardsProps): React.ReactNode => {
     return (
         <Container>
             <Header>
-                <Title>SDEX rewards overview</Title>
+                <Title>SDEX Rewards</Title>
                 {Boolean(sumRewards) && (
                     <Summary>
                         Daily SDEX reward: <AquaLogo />

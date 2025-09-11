@@ -455,7 +455,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
         <PoolsListBlock $onlyList={onlyList}>
             {!onlyList && (
                 <ListHeader>
-                    <ListTitle>My liquidity positions</ListTitle>
+                    <ListTitle>Liquidity Positions</ListTitle>
                     <ListTotal>
                         <span>Total: </span>
                         <span>${formatBalance(totalLiquidity, true)}</span>

@@ -156,14 +156,12 @@ const BribesPage = () => {
             <Background>
                 <MainContentWrap>
                     <MainContent>
-                        <Title>Voting Incentives</Title>
+                        <Title>Aquarius Bribes</Title>
                         <Description>
-                            Voting incentives are on-chain rewards designed to encourage
-                            participation in governance across Stellar markets. Within Aquarius,
-                            these incentives take two forms: protocol voting incentives, which are
-                            funded by trading fees and directed toward high-volume markets, and
-                            external voting incentives, which are contributed by users or projects
-                            seeking to attract votes and support for their preferred markets.
+                            Bribes are on-chain rewards for voting on specific Stellar markets.
+                            Aquarius supports two types: protocol bribes, funded by trading fees and
+                            directed to high-volume markets, and external bribes, submitted by users
+                            or projects to attract votes.
                         </Description>
                         <MainContentFooter>
                             <AddBribeButton onClick={() => history.push(BribesRoutes.addBribe)}>
