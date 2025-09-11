@@ -13,6 +13,10 @@ import { linkStyles } from 'components/Header/Header';
 const Menu = styled.div`
     position: relative;
     padding: 0 2.4rem;
+
+    ${respondDown(Breakpoints.lg)`
+        padding: 0 1.2rem;
+    `}
 `;
 
 const MenuHead = styled.div`
@@ -34,6 +38,7 @@ const MenuHeadTitle = styled.div`
     display: flex;
     align-items: center;
     gap: 0.8rem;
+    white-space: nowrap;
 `;
 
 const MenuLinks = styled.div<{ $isOpen: boolean }>`

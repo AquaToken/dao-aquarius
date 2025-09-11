@@ -1,6 +1,10 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
+
+import { MainRoutes } from 'constants/routes';
+
+import useAuthStore from 'store/authStore/useAuthStore';
 
 import LinkArrowIcon from 'assets/icon-link-arrow.svg';
 
@@ -50,16 +54,25 @@ const LinkArrow = styled(LinkArrowIcon)`
     margin-left: 1rem;
 `;
 
-const NotFoundPage = (): React.ReactNode => (
-    <MainBlock>
-        <div>
-            <Title>Page not found</Title>
-            <Description>This page does not exist or was recently moved.</Description>
-            <StyledLink to="/">
-                Go to Home Page <LinkArrow />
-            </StyledLink>
-        </div>
-    </MainBlock>
-);
+const NotFoundPage = (): React.ReactNode => {
+    const { isLogged } = useAuthStore();
+
+    const location = useLocation();
+
+    if (isLogged && location.pathname.startsWith('/account')) {
+        return <Redirect to={MainRoutes.account} />;
+    }
+    return (
+        <MainBlock>
+            <div>
+                <Title>Page not found</Title>
+                <Description>This page does not exist or was recently moved.</Description>
+                <StyledLink to="/">
+                    Go to Home Page <LinkArrow />
+                </StyledLink>
+            </div>
+        </MainBlock>
+    );
+};
 
 export default NotFoundPage;

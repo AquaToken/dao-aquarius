@@ -256,7 +256,7 @@ const App = () => {
                         </Route>
 
                         <Route path={MainRoutes.account}>
-                            <PageTitle title="My Aquarius">
+                            <PageTitle title="Dashboard - Aquarius">
                                 {isLogged ? <ProfilePage /> : <Redirect to={MainRoutes.main} />}
                             </PageTitle>
                         </Route>

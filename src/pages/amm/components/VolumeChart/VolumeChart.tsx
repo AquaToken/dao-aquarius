@@ -219,7 +219,7 @@ const VolumeChart = ({
                 return [lastNMonths, volume24hUsd];
             }
 
-            return [copy, volume24hUsd];
+            return [copy.slice(0, copy.length - 1), volume24hUsd];
         }
 
         let date = set(transformDate(data[0]?.datetime_str), {
