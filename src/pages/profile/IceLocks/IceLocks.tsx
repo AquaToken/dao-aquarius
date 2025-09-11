@@ -296,7 +296,7 @@ const IceLocks = ({ ammAquaBalance }: IceLocksProps): React.ReactNode => {
     return (
         <Container>
             <Header>
-                <Title>ICE locks</Title>
+                <Title>ICE Locks</Title>
             </Header>
 
             <Section>

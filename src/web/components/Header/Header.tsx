@@ -248,7 +248,42 @@ const Links = () => {
             <Divider />
 
             <ExpandedMenu
-                title="Voting & DAO"
+                title="Incentives"
+                links={
+                    <>
+                        <NavLinkStyled
+                            to={MainRoutes.rewards}
+                            activeStyle={{
+                                fontWeight: 700,
+                            }}
+                            title="AQUA Rewards"
+                        >
+                            AQUA Rewards
+                        </NavLinkStyled>
+                        {/*<NavLinkStyled*/}
+                        {/*    to={MainRoutes.incentives}*/}
+                        {/*    activeStyle={{*/}
+                        {/*        fontWeight: 700,*/}
+                        {/*    }}*/}
+                        {/*    title="Pools Incentives"*/}
+                        {/*>*/}
+                        {/*    LP Incentives*/}
+                        {/*</NavLinkStyled>*/}
+                        <NavLinkStyled
+                            to={MainRoutes.bribes}
+                            activeStyle={{
+                                fontWeight: 700,
+                            }}
+                            title="Bribes"
+                        >
+                            Bribes
+                        </NavLinkStyled>
+                    </>
+                }
+            />
+
+            <ExpandedMenu
+                title="Governance"
                 counts={proposalsCounts}
                 links={
                     <>
@@ -262,24 +297,7 @@ const Links = () => {
                         >
                             Liquidity Voting
                         </NavLinkStyled>
-                        <NavLinkStyled
-                            to={MainRoutes.rewards}
-                            activeStyle={{
-                                fontWeight: 700,
-                            }}
-                            title="LP Rewards"
-                        >
-                            LP Rewards
-                        </NavLinkStyled>
-                        <NavLinkStyled
-                            to={MainRoutes.bribes}
-                            activeStyle={{
-                                fontWeight: 700,
-                            }}
-                            title="Bribes for Voters"
-                        >
-                            Bribes for Voters
-                        </NavLinkStyled>
+
                         <NavLinkWithCount>
                             <NavLinkStyled
                                 to={MainRoutes.governance}
@@ -295,6 +313,7 @@ const Links = () => {
                                 activeCount={proposalsCounts.active}
                             />
                         </NavLinkWithCount>
+
                         <NavLinkStyled
                             to={MainRoutes.delegate}
                             activeStyle={{
@@ -304,15 +323,6 @@ const Links = () => {
                         >
                             ICE Delegation
                         </NavLinkStyled>
-                        {/*<NavLinkStyled*/}
-                        {/*    to={MainRoutes.incentives}*/}
-                        {/*    activeStyle={{*/}
-                        {/*        fontWeight: 700,*/}
-                        {/*    }}*/}
-                        {/*    title="Pools Incentives"*/}
-                        {/*>*/}
-                        {/*    LP Incentives*/}
-                        {/*</NavLinkStyled>*/}
                     </>
                 }
             />
@@ -325,10 +335,10 @@ const Links = () => {
                             activeStyle={{
                                 fontWeight: 700,
                             }}
-                            title="Token Info"
+                            title="About"
                             to={MainRoutes.token}
                         >
-                            Token Info
+                            About
                         </NavLinkStyled>
 
                         <NavLinkStyled
@@ -374,7 +384,7 @@ const Header = (): React.ReactNode => {
             <RightBlock>
                 <MyAquarius onClick={onMyAquariusClick} to={MainRoutes.account}>
                     <IconProfile />
-                    <div>My Aquarius</div>
+                    <div>Dashboard</div>
                 </MyAquarius>
                 <AccountBlock navLinks={<Links />} />
             </RightBlock>

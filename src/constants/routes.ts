@@ -9,7 +9,7 @@ export enum MainRoutes {
     rewards = '/rewards',
     airdrop = '/airdrop',
     airdrop2 = '/airdrop2',
-    account = '/account',
+    account = '/dashboard',
     walletConnect = '/wallet-connect',
     amm = '/pools',
     swap = '/swap',

@@ -31,7 +31,7 @@ const YourGovernanceVotes = () => {
     return (
         <Container>
             <Header>
-                <Title>Your governance votes</Title>
+                <Title>Governance Votes</Title>
             </Header>
 
             {!proposals ? (
