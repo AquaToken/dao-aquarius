@@ -442,7 +442,7 @@ const DelegateeStats = forwardRef(
                     <Stats>
                         {daoVotes.length ? (
                             daoVotes.map(vote => (
-                                <>
+                                <React.Fragment key={vote.id}>
                                     {!!vote.sum_for && (
                                         <StatsRow>
                                             <LinkInner
@@ -480,7 +480,7 @@ const DelegateeStats = forwardRef(
                                             </VoteAmount>
                                         </StatsRow>
                                     )}
-                                </>
+                                </React.Fragment>
                             ))
                         ) : (
                             <div>Not voted yet</div>
