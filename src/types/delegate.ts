@@ -13,6 +13,7 @@ export type Delegatee = {
     twitter_image: string | null;
     twitter_link: string;
     affiliate_project: string;
+    overall_delegated_stat: { unique_delegators: number };
 };
 
 export type MyDelegatees = {
