@@ -350,7 +350,12 @@ const DelegateeStats = forwardRef(
                 )}
 
                 <h3>How This Delegate Votes</h3>
-                <ToggleGroup value={selectedAsset} options={OPTIONS} onChange={setSelecttedAsset} />
+                <ToggleGroup
+                    value={selectedAsset}
+                    options={OPTIONS}
+                    onChange={setSelecttedAsset}
+                    fullWidth
+                />
                 {getAssetString(selectedAsset) === getAssetString(UP_ICE) ? (
                     !marketVotes ? (
                         <Stats>
