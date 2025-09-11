@@ -72,7 +72,7 @@ export function processNewAssets(assets: Token[] | AssetSimple[]) {
                 !createAsset(asset.code, (asset as ClassicToken | AssetSimple).issuer).isNative(),
         ) as ClassicToken[] | AssetSimple[];
 
-        if (!cached.has(ALL_ICE_ASSETS[0])) {
+        if (!cached.has(ALL_ICE_ASSETS[ALL_ICE_ASSETS.length - 1])) {
             newAssets.push(...ALL_ICE_ASSETS.map(str => getAssetFromString(str) as ClassicToken));
         }
 

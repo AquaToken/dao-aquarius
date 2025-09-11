@@ -266,7 +266,11 @@ const Delegatee = forwardRef(
                     <BottomRow>
                         {Object.values(delegatee.delegated).length > 0 ? (
                             <Trusted>
-                                Trusted by <b>{delegatee.delegated[getAssetString(UP_ICE)]}</b>{' '}
+                                Trusted by{' '}
+                                <b>
+                                    {delegatee?.overall_delegated_stat?.unique_delegators ??
+                                        delegatee.delegated[getAssetString(UP_ICE)]}
+                                </b>{' '}
                                 account
                                 {(delegatee.delegated[getAssetString(UP_ICE)] ?? 0) > 1 ? 's' : ''}
                             </Trusted>
