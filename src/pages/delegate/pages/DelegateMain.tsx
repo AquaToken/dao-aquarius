@@ -190,7 +190,7 @@ enum Tabs {
 }
 
 const DEFAULT_OPTIONS = [
-    { value: Tabs.whitelist, label: 'All delegates' },
+    { value: Tabs.whitelist, label: 'All Delegates' },
     { value: Tabs.myDelegations, label: 'My Delegates' },
 ];
 
