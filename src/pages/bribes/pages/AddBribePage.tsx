@@ -31,7 +31,7 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService, StellarService } from 'services/globalServices';
 
-import { flexAllCenter, respondDown } from 'web/mixins';
+import { flexAllCenter, flexColumnCenter, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -57,6 +57,7 @@ import ConfirmBribeModal from '../components/AddBribePage/ConfirmBribeModal/Conf
 
 export const MainBlock = styled.main`
     flex: 1 0 auto;
+    ${flexColumnCenter};
 `;
 
 export const Background = styled.div`
