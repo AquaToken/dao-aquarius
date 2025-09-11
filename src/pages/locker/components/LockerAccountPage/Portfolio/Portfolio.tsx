@@ -153,7 +153,7 @@ const Portfolio = ({
     return (
         <Container>
             <Header>
-                <Title>Your available AQUA balance</Title>
+                <Title>Your Available AQUA Balance</Title>
                 <Title>{price ? `1 AQUA = ${formatBalance(price)} XLM` : <DotsLoader />}</Title>
             </Header>
             <BalanceRow>
