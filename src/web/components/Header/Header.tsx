@@ -328,7 +328,7 @@ const Links = () => {
             />
 
             <ExpandedMenu
-                title="AQUA token"
+                title="AQUA Token"
                 links={
                     <>
                         <NavLinkStyled

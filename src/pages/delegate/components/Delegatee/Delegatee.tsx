@@ -216,7 +216,7 @@ const Delegatee = forwardRef(
                         )}
                         {Boolean(delegatee.affiliate_project) && (
                             <AffiliateProject>
-                                Affiliated project(s): <b>{delegatee.affiliate_project}</b>
+                                Power project(s): <b>{delegatee.affiliate_project}</b>
                             </AffiliateProject>
                         )}
                     </BottomRow>

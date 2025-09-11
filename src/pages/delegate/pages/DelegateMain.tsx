@@ -191,12 +191,12 @@ enum Tabs {
 
 const DEFAULT_OPTIONS = [
     { value: Tabs.whitelist, label: 'All delegates' },
-    { value: Tabs.myDelegations, label: 'My delegates' },
+    { value: Tabs.myDelegations, label: 'My Delegates' },
 ];
 
 const EXTENDED_OPTIONS = [
     ...DEFAULT_OPTIONS,
-    { value: Tabs.myDelegators, label: 'ICE Delegated to Me' },
+    { value: Tabs.myDelegators, label: 'ICE Delegated To Me' },
 ];
 
 const DelegateMain = () => {
