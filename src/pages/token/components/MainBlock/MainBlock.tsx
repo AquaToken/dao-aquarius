@@ -182,7 +182,7 @@ const MainBlock = () => {
                 <Background />
                 <Title>
                     AQUA
-                    <AnimatedBorderedText />
+                    <AnimatedBorderedText text="Token" />
                 </Title>
                 <Description>Powers the #1 Stellar DeFi protocol</Description>
                 <SecondaryDescription>

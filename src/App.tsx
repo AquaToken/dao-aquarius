@@ -292,7 +292,7 @@ const App = () => {
                         </Route>
 
                         <Route path={MainRoutes.terms}>
-                            <PageTitle title="Staging: Terms of Use - Aquarius">
+                            <PageTitle title="Staging: Terms Of Use - Aquarius">
                                 <TermsPage />
                             </PageTitle>
                         </Route>
@@ -304,13 +304,13 @@ const App = () => {
                         </Route>
 
                         <Route path={MainRoutes.token}>
-                            <PageTitle title="Staging: AQUA token - Aquarius">
+                            <PageTitle title="Staging: AQUA Token - Aquarius">
                                 <TokenPage />
                             </PageTitle>
                         </Route>
 
                         <Route path={MainRoutes.quest}>
-                            <PageTitle title="Staging: Onboard to Aquarius">
+                            <PageTitle title="Staging: Onboard To Aquarius">
                                 <QuestPage />
                             </PageTitle>
                         </Route>
