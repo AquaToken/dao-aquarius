@@ -18,9 +18,11 @@ import {
     ASSETS_ENV_DATA,
     D_ICE_CODE,
     DOWN_ICE_CODE,
+    GD_ICE_CODE,
     GOV_ICE_CODE,
     ICE_CODE,
     ICE_ISSUER,
+    ICE_TO_DELEGATE,
     UP_ICE_CODE,
 } from 'constants/assets';
 import { BASE_FEE } from 'constants/stellar';
@@ -33,7 +35,8 @@ import { formatBalance, roundToPrecision } from 'helpers/format-number';
 import { createAsset, createLumen } from 'helpers/token';
 import { getHorizonUrl } from 'helpers/url';
 
-import { Asset, StellarToml } from 'types/stellar';
+import { Asset, ClaimableBalance, StellarToml } from 'types/stellar';
+import { ClassicToken } from 'types/token';
 
 import { PairStats } from 'pages/vote/api/types';
 
@@ -536,8 +539,13 @@ export default class StellarServiceClass {
             const selfClaim = claim.claimants.find(claimant => claimant.destination === accountId);
             const isAqua = claim.asset === aquaAssetString;
             const isGovIce = claim.asset === `${GOV_ICE_CODE}:${ICE_ISSUER}`;
+            const isGDIce = claim.asset === `${GD_ICE_CODE}:${ICE_ISSUER}`;
 
-            if ((hasForMarker || hasAgainstMarker) && Boolean(selfClaim) && (isAqua || isGovIce)) {
+            if (
+                (hasForMarker || hasAgainstMarker) &&
+                Boolean(selfClaim) &&
+                (isAqua || isGovIce || isGDIce)
+            ) {
                 const [code, issuer] = claim.asset.split(':');
                 acc.push({
                     ...claim,
@@ -706,6 +714,10 @@ export default class StellarServiceClass {
         }
         if (asset.code === GOV_ICE_CODE && asset.issuer === ICE_ISSUER) {
             return 'https://ice-approval.aqua.network/api/v1/govern-ice/tx-approve/';
+        }
+
+        if (asset.code === GD_ICE_CODE && asset.issuer === ICE_ISSUER) {
+            return 'https://ice-approval.aqua.network/api/v1/delegated-govern-ice/tx-approve/';
         }
 
         throw new Error('Unknown asset');
@@ -934,13 +946,13 @@ export default class StellarServiceClass {
         });
     }
 
-    createDelegateTx(account, delegateDestionation, amount) {
+    createDelegateTx(account, token: ClassicToken, delegateDestionation, amount) {
         return this.buildTx(
             account,
             StellarSdk.Operation.createClaimableBalance({
                 source: account.accountId(),
                 amount: amount.toString(),
-                asset: createAsset(UP_ICE_CODE, ICE_ISSUER),
+                asset: token,
                 claimants: [
                     new StellarSdk.Claimant(
                         account.accountId(),
@@ -984,9 +996,10 @@ export default class StellarServiceClass {
                     claimant =>
                         claimant.destination === accountId && !!claimant.predicate?.not?.abs_before,
                 );
-                const isUpvoteIce = claim.asset === `${UP_ICE_CODE}:${ICE_ISSUER}`;
 
-                if (hasMarker && Boolean(selfClaim) && isUpvoteIce) {
+                const isDelegatedIce = ICE_TO_DELEGATE.includes(claim.asset);
+
+                if (hasMarker && Boolean(selfClaim) && isDelegatedIce) {
                     acc.push(claim);
                 }
                 return acc;
@@ -1000,7 +1013,7 @@ export default class StellarServiceClass {
             });
     }
 
-    getDelegatorLocks(accountId: string) {
+    getDelegatorLocks(accountId: string): ClaimableBalance[] {
         if (!this.claimableBalances) {
             return null;
         }
@@ -1018,9 +1031,10 @@ export default class StellarServiceClass {
                     // @ts-ignore
                     claimant.destination === accountId && !!claimant.predicate?.not?.unconditional,
             );
-            const isUpvoteIce = claim.asset === `${UP_ICE_CODE}:${ICE_ISSUER}`;
 
-            if (hasMarker && Boolean(selfClaim) && isUpvoteIce) {
+            const isDelegatedIce = ICE_TO_DELEGATE.includes(claim.asset);
+
+            if (hasMarker && Boolean(selfClaim) && isDelegatedIce) {
                 acc.push(claim);
             }
             return acc;

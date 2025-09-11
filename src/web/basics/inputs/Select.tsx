@@ -8,6 +8,8 @@ import { COLORS } from 'web/styles';
 
 import ArrowDown from 'assets/icon-arrow-down.svg';
 
+import { noSelect } from '../../mixins';
+
 const DropDown = styled.div<{ $isOpen: boolean; $disabled: boolean }>`
     width: 100%;
     display: flex;
@@ -23,6 +25,8 @@ const DropDown = styled.div<{ $isOpen: boolean; $disabled: boolean }>`
     box-sizing: border-box;
     pointer-events: ${({ $disabled }) => ($disabled ? 'none' : 'auto')};
     font-size: 1.4rem;
+    background-color: ${({ $disabled }) => ($disabled ? COLORS.lightGray : COLORS.white)};
+    ${noSelect};
 `;
 
 const DropdownItem = styled.div`

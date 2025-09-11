@@ -5,7 +5,7 @@ import { createGlobalStyle } from 'styled-components';
 
 import { getAssetsList } from 'api/amm';
 
-import { D_ICE_CODE, ICE_ISSUER } from 'constants/assets';
+import { D_ICE_CODE, GD_ICE_CODE, GOV_ICE_CODE, ICE_ISSUER, UP_ICE_CODE } from 'constants/assets';
 import { MainRoutes } from 'constants/routes';
 
 import { getEnv, getIsTestnetEnv, setProductionEnv } from 'helpers/env';
@@ -150,11 +150,19 @@ const App = () => {
             if (type === StellarEvents.claimableUpdate) {
                 const delegators = StellarService.getDelegatorLocks(account.accountId());
 
-                if (
-                    delegators.length &&
-                    account.getAssetBalance(createAsset(D_ICE_CODE, ICE_ISSUER)) === null
-                ) {
-                    ModalService.openModal(DIceTrustlineModal, {});
+                const neededDIceTrustline =
+                    delegators.some(({ asset }) => asset === `${UP_ICE_CODE}:${ICE_ISSUER}`) &&
+                    account.getAssetBalance(createAsset(D_ICE_CODE, ICE_ISSUER)) === null;
+
+                const neededGDIceTrustline =
+                    delegators.some(({ asset }) => asset === `${GOV_ICE_CODE}:${ICE_ISSUER}`) &&
+                    account.getAssetBalance(createAsset(GD_ICE_CODE, ICE_ISSUER)) === null;
+
+                if (neededDIceTrustline || neededGDIceTrustline) {
+                    ModalService.openModal(DIceTrustlineModal, {
+                        neededDIceTrustline,
+                        neededGDIceTrustline,
+                    });
                 }
             }
         });
