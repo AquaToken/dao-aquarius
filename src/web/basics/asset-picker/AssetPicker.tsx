@@ -29,7 +29,7 @@ const Container = styled.div`
     position: relative;
 
     &:hover {
-        border-color: ${COLORS.grayText};
+        border-color: ${COLORS.purple};
     }
 `;
 

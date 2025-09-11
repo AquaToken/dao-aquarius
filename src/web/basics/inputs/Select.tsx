@@ -23,6 +23,10 @@ const DropDown = styled.div<{ $isOpen: boolean; $disabled: boolean }>`
     box-sizing: border-box;
     pointer-events: ${({ $disabled }) => ($disabled ? 'none' : 'auto')};
     font-size: 1.4rem;
+
+    &:hover {
+        border-color: ${COLORS.purple};
+    }
 `;
 
 const DropdownItem = styled.div`

@@ -126,7 +126,9 @@ const ConfirmIncentiveModal = ({ params, close }: ModalProps<Props>) => {
     return (
         <ModalWrapper>
             <ModalTitle>Confirm Incentive</ModalTitle>
-            <ModalDescription>Please check all the details to create an incentive</ModalDescription>
+            <ModalDescription>
+                Review details and confirm to lock tokens from your wallet for this incentive.
+            </ModalDescription>
             <PairBlock>
                 <Market
                     verticalDirections
@@ -138,25 +140,25 @@ const ConfirmIncentiveModal = ({ params, close }: ModalProps<Props>) => {
             </PairBlock>
             <BribeInfo>
                 <InfoRow>
-                    <Label>Reward asset</Label>
+                    <Label>Reward asset:</Label>
                     <Value>
                         <Asset asset={rewardToken} inRow withMobileView />
                     </Value>
                 </InfoRow>
                 <InfoRow>
-                    <Label>Daily reward amount</Label>
+                    <Label>Daily reward amount:</Label>
                     <Value>
                         {formatBalance(+amountPerDay)} {rewardToken.code}
                     </Value>
                 </InfoRow>
                 <InfoRow>
-                    <Label>Total reward amount</Label>
+                    <Label>Total reward amount:</Label>
                     <Value>
                         {formatBalance(+amountPerDay * days)} {rewardToken.code}
                     </Value>
                 </InfoRow>
                 <InfoRow>
-                    <Label>Incentive period</Label>
+                    <Label>Incentive period:</Label>
                     <Value>
                         {getDateString(startDate, { withoutYear: true, withTime: true })} -{' '}
                         {getDateString(endDate, { withoutYear: true, withTime: true })} ({days}{' '}

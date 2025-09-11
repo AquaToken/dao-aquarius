@@ -48,7 +48,6 @@ import Alert from 'basics/Alert';
 import AssetPicker from 'basics/asset-picker/AssetPicker';
 import Button from 'basics/buttons/Button';
 import CircleButton from 'basics/buttons/CircleButton';
-import ExternalLink from 'basics/ExternalLink';
 import { Select } from 'basics/inputs';
 import Input from 'basics/inputs/Input';
 import { CircleLoader, PageLoader } from 'basics/loaders';
@@ -72,12 +71,6 @@ import {
     FormRow,
     DashIcon,
 } from 'pages/bribes/pages/AddBribePage';
-
-const ExternalLinkStyled = styled(ExternalLink)`
-    ${respondDown(Breakpoints.md)`
-            padding: 0 1.6rem;
-        `}
-`;
 
 const MarketStyled = styled(Market)`
     pointer-events: none;
@@ -322,18 +315,15 @@ const AddIncentivePage = () => {
             <Background>
                 <Content>
                     <Back to={IncentivesRoutes.main}>
-                        <CircleButton label="Incentives">
+                        <CircleButton label="Pools Incentives">
                             <ArrowLeft />
                         </CircleButton>
                     </Back>
-                    <Title>Create Incentive</Title>
+                    <Title>Create Pool Incentive</Title>
                     <Description>
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad fuga fugiat
-                        itaque, modi molestiae, necessitatibus nostrum officia omnis perspiciatis
-                        possimus quis quo recusandae, rerum similique sunt suscipit ut!
-                        Consequuntur, quidem?
+                        Launch a new incentive for any Aquarius pool. Select a token, amount, and
+                        timeframe — rewards flow automatically to liquidity providers.
                     </Description>
-                    <ExternalLinkStyled href="">Learn more</ExternalLinkStyled>
                 </Content>
             </Background>
             <FormWrap>
@@ -344,15 +334,16 @@ const AddIncentivePage = () => {
                         }}
                     >
                         <FormSection>
-                            <FormSectionTitle>Select market</FormSectionTitle>
+                            <FormSectionTitle>Choose Pool</FormSectionTitle>
                             <FormSectionDescription>
-                                Choose a market for your incentive.
+                                Select the liquidity pool where your rewards will be distributed.
                             </FormSectionDescription>
                             <FormRow>
                                 <Select
                                     options={OPTIONS}
                                     value={selectedMarket}
                                     onChange={setSelectedMarket}
+                                    placeholder="Select a pool"
                                 />
                             </FormRow>
 
@@ -364,32 +355,31 @@ const AddIncentivePage = () => {
                                     disabled={!selectedMarket || !poolConfig}
                                     pending={firstStepPending}
                                 >
-                                    next
+                                    Continue
                                 </NextButton>
                             )}
                         </FormSection>
 
                         {step >= Step.amount && (
                             <FormSection>
-                                <FormSectionTitle>Set reward</FormSectionTitle>
+                                <FormSectionTitle>Set Rewards</FormSectionTitle>
                                 <FormSectionDescription>
-                                    Set the reward asset and amount that will be distributed during
-                                    period. Note, your incentive should be worth at least
-                                    {formatBalance(config?.minAquaAmount)} AQUA, otherwise it won't
-                                    be accepted.
+                                    Choose the token and daily amount to distribute. Incentives must
+                                    equal at least {formatBalance(config?.minAquaAmount)} AQUA in
+                                    value per day to be accepted.
                                 </FormSectionDescription>
                                 <FormRow>
                                     <AssetPickerStyled
                                         asset={rewardToken}
                                         onUpdate={setRewardToken}
                                         assetsList={assetsList}
-                                        label="Reward token"
+                                        label="Select reward token"
                                     />
 
                                     <AmountInput
                                         placeholder="0"
                                         type="number"
-                                        label="Reward per day"
+                                        label="Daily reward amount"
                                         value={amount}
                                         required
                                         onChange={({ target }) => {
@@ -412,7 +402,7 @@ const AddIncentivePage = () => {
                                         }
                                         onClick={() => setStep(Step.duration)}
                                     >
-                                        next
+                                        Continue
                                     </NextButton>
                                 )}
                             </FormSection>
@@ -420,11 +410,11 @@ const AddIncentivePage = () => {
 
                         {step === Step.duration && (
                             <FormSection>
-                                <FormSectionTitle>Set period</FormSectionTitle>
+                                <FormSectionTitle>Set Period</FormSectionTitle>
                                 <FormSectionDescription>
-                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                                    Assumenda cum et explicabo facilis, libero numquam soluta
-                                    tempore temporibus voluptas voluptatibus!
+                                    Choose the start and end dates for your incentive. Rewards will
+                                    begin distributing from the start date until the end date
+                                    automatically.
                                 </FormSectionDescription>
                                 <FormRow>
                                     <DatePicker
