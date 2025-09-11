@@ -539,8 +539,13 @@ export default class StellarServiceClass {
             const selfClaim = claim.claimants.find(claimant => claimant.destination === accountId);
             const isAqua = claim.asset === aquaAssetString;
             const isGovIce = claim.asset === `${GOV_ICE_CODE}:${ICE_ISSUER}`;
+            const isGDIce = claim.asset === `${GD_ICE_CODE}:${ICE_ISSUER}`;
 
-            if ((hasForMarker || hasAgainstMarker) && Boolean(selfClaim) && (isAqua || isGovIce)) {
+            if (
+                (hasForMarker || hasAgainstMarker) &&
+                Boolean(selfClaim) &&
+                (isAqua || isGovIce || isGDIce)
+            ) {
                 const [code, issuer] = claim.asset.split(':');
                 acc.push({
                     ...claim,

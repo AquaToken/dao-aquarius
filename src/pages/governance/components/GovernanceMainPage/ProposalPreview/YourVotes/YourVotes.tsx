@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
-import { GOV_ICE_CODE, ICE_ISSUER } from 'constants/assets';
+import { GD_ICE_CODE, GOV_ICE_CODE, ICE_ISSUER } from 'constants/assets';
 
 import { getDateString } from 'helpers/date';
 import ErrorHandler from 'helpers/error-handler';
@@ -138,12 +138,17 @@ const YourVotes = ({ proposal }: YourVotesProps): React.ReactNode => {
         try {
             setPendingId(log?.claimable_balance_id || 'all');
             let hasIce = log?.asset_code === GOV_ICE_CODE;
+            let hasGdIce = log?.asset_code === GD_ICE_CODE;
 
             const ops = log
                 ? StellarService.createClaimOperations(log.claimable_balance_id)
                 : Array.from(selectedClaims.values()).reduce((acc, cb) => {
                       if (cb.asset_code === GOV_ICE_CODE) {
                           hasIce = true;
+                      }
+
+                      if (cb.asset_code === GD_ICE_CODE) {
+                          hasGdIce = true;
                       }
                       return [
                           ...acc,
@@ -155,6 +160,10 @@ const YourVotes = ({ proposal }: YourVotesProps): React.ReactNode => {
 
             if (hasIce) {
                 tx = await StellarService.processIceTx(tx, createAsset(GOV_ICE_CODE, ICE_ISSUER));
+            }
+
+            if (hasGdIce) {
+                tx = await StellarService.processIceTx(tx, createAsset(GD_ICE_CODE, ICE_ISSUER));
             }
 
             const result = await account.signAndSubmitTx(tx);
