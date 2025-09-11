@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { getAssetString } from 'helpers/assets';
 import { getDateString } from 'helpers/date';
 import ErrorHandler from 'helpers/error-handler';
 import { formatBalance } from 'helpers/format-number';
@@ -17,7 +18,6 @@ import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { Delegatee } from 'types/delegate';
 import { ModalProps } from 'types/modal';
-import { Vote } from 'types/voting-tool';
 
 import { customScroll, flexAllCenter, flexColumnCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -30,7 +30,7 @@ import { ModalTitle, ModalWrapper, StickyButtonWrapper } from 'basics/ModalAtoms
 import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
 import Table, { CellAlign } from 'basics/Table';
 
-import { UP_ICE } from 'pages/vote/components/MainPage/MainPage';
+import { GOV_ICE, UP_ICE } from 'pages/vote/components/MainPage/MainPage';
 
 const DelegateBlock = styled.div`
     ${flexColumnCenter};
@@ -151,7 +151,7 @@ const DelegateClaimModal = ({ params }: ModalProps<Params>) => {
         setSelectedClaims(new Set(all));
     };
 
-    const onSubmit = async (claim?: Vote) => {
+    const onSubmit = async () => {
         if (account.authType === LoginTypes.walletConnect) {
             openCurrentWalletIfExist();
         }
@@ -159,34 +159,39 @@ const DelegateClaimModal = ({ params }: ModalProps<Params>) => {
             setPending(true);
 
             const ops = [...selectedClaims].reduce(
-                (acc, id, index) => [
-                    ...acc,
-                    ...StellarService.createClaimOperations(
-                        id,
-                        index === 1 && account.getAssetBalance(UP_ICE) === null,
-                    ),
-                ],
+                (acc, id) => [...acc, ...StellarService.createClaimOperations(id)],
                 [],
+            );
+
+            const hasUpIce = [...selectedClaims].some(cbId =>
+                claims.some(({ id, asset }) => cbId === id && asset === getAssetString(UP_ICE)),
+            );
+
+            const hasGovIce = [...selectedClaims].some(cbId =>
+                claims.some(({ id, asset }) => cbId === id && asset === getAssetString(GOV_ICE)),
             );
 
             const tx = await StellarService.buildTx(account, ops);
 
-            const processedTx = await StellarService.processIceTx(tx, UP_ICE);
+            let processedTx;
+
+            if (hasUpIce) {
+                processedTx = await StellarService.processIceTx(tx, UP_ICE);
+            }
+
+            if (hasGovIce) {
+                processedTx = await StellarService.processIceTx(tx, GOV_ICE);
+            }
 
             const result = await account.signAndSubmitTx(processedTx);
 
-            if (
-                (claim && claims.length === 1) ||
-                (!claim && selectedClaims.size === claims.length)
-            ) {
+            if (selectedClaims.size === claims.length) {
                 close();
             }
 
             if (isMounted.current) {
                 setPending(false);
-                setClaims(
-                    claims.filter(cb => (claim ? claim.id !== cb.id : !selectedClaims.has(cb.id))),
-                );
+                setClaims(claims.filter(cb => !selectedClaims.has(cb.id)));
                 setSelectedClaims(new Set());
             }
 
