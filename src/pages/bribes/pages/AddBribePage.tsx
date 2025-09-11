@@ -517,7 +517,7 @@ const AddBribePage = () => {
                         key={maxDuration}
                     >
                         <FormSection>
-                            <FormSectionTitle>Select market</FormSectionTitle>
+                            <FormSectionTitle>Select Market</FormSectionTitle>
                             <FormSectionDescription>
                                 Choose the assets to define a market for your bribe.
                             </FormSectionDescription>
@@ -565,7 +565,7 @@ const AddBribePage = () => {
                         </FormSection>
                         {step >= CreateStep.bribeAmount && (
                             <FormSection>
-                                <FormSectionTitle>Set reward</FormSectionTitle>
+                                <FormSectionTitle>Set Reward</FormSectionTitle>
                                 <FormSectionDescription>
                                     Set the reward asset and amount that will be distributed during
                                     one week. Note, your bribe should be worth at least 100,000
@@ -613,7 +613,7 @@ const AddBribePage = () => {
 
                         {step === CreateStep.period && (
                             <FormSection>
-                                <FormSectionTitle>Set period</FormSectionTitle>
+                                <FormSectionTitle>Set Period</FormSectionTitle>
                                 <FormSectionDescription>
                                     Bribe distribution starts on Mondays and happens every day until
                                     Sunday. You can plan bribes by choosing a start date in advance
