@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import styled from 'styled-components';
 
 import { ICE_DELEGATION_MAP, ICE_TO_DELEGATE } from 'constants/assets';
@@ -7,10 +7,7 @@ import { ICE_DELEGATION_MAP, ICE_TO_DELEGATE } from 'constants/assets';
 import { getIsTestnetEnv } from 'helpers/env';
 import { formatBalance } from 'helpers/format-number';
 
-import useAuthStore from 'store/authStore/useAuthStore';
-
-import { StellarService } from 'services/globalServices';
-import { StellarEvents } from 'services/stellar.service';
+import { ClaimableBalance } from 'types/stellar';
 
 import { cardBoxShadow } from 'web/mixins';
 
@@ -26,25 +23,11 @@ const Container = styled.div`
     ${cardBoxShadow};
 `;
 
-const MyDelegators = () => {
-    const [delegators, setDelegators] = useState(null);
-    const { account } = useAuthStore();
+interface Props {
+    delegators: ClaimableBalance[];
+}
 
-    useEffect(() => {
-        if (!account) {
-            return;
-        }
-        setDelegators(StellarService.getDelegatorLocks(account.accountId()));
-
-        const unsub = StellarService.event.sub(({ type }) => {
-            if (type === StellarEvents.claimableUpdate) {
-                setDelegators(StellarService.getDelegatorLocks(account.accountId()));
-            }
-        });
-
-        return () => unsub();
-    }, [account]);
-
+const MyDelegators = ({ delegators }: Props) => {
     const processedLocks = useMemo(() => {
         if (!delegators || delegators.length === 0) return null;
 

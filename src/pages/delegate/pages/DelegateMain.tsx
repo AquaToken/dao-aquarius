@@ -10,7 +10,8 @@ import { useUpdateIndex } from 'hooks/useUpdateIndex';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { ModalService } from 'services/globalServices';
+import { ModalService, StellarService } from 'services/globalServices';
+import { StellarEvents } from 'services/stellar.service';
 
 import { commonMaxWidth, respondDown, respondUp } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
@@ -27,7 +28,6 @@ import { PageLoader } from 'basics/loaders';
 import DelegatesList from 'pages/delegate/components/DelegatesList/DelegatesList';
 import MyDelegates from 'pages/delegate/components/MyDelegates/MyDelegates';
 import MyDelegators from 'pages/delegate/components/MyDelegators/MyDelegators';
-import { DELEGATE_ICE, G_DELEGATE_ICE } from 'pages/vote/components/MainPage/MainPage';
 
 const Main = styled.main`
     flex: 1 0 auto;
@@ -200,6 +200,7 @@ const EXTENDED_OPTIONS = [
 ];
 
 const DelegateMain = () => {
+    const [delegators, setDelegators] = useState(null);
     const [delegatees, setDelegatees] = useState(null);
 
     const [tab, setTab] = useState<Tabs>(Tabs.whitelist);
@@ -207,6 +208,21 @@ const DelegateMain = () => {
     const { isLogged, account } = useAuthStore();
 
     const updateIndex = useUpdateIndex(10000);
+
+    useEffect(() => {
+        if (!account) {
+            return;
+        }
+        setDelegators(StellarService.getDelegatorLocks(account.accountId()));
+
+        const unsub = StellarService.event.sub(({ type }) => {
+            if (type === StellarEvents.claimableUpdate) {
+                setDelegators(StellarService.getDelegatorLocks(account.accountId()));
+            }
+        });
+
+        return () => unsub();
+    }, [account]);
 
     useEffect(() => {
         getDelegatees().then(setDelegatees);
@@ -254,25 +270,13 @@ const DelegateMain = () => {
 
                 <ToggleGroupStyled
                     value={tab}
-                    options={
-                        isLogged &&
-                        (account.getAssetBalance(DELEGATE_ICE) !== null ||
-                            account.getAssetBalance(G_DELEGATE_ICE) !== null)
-                            ? EXTENDED_OPTIONS
-                            : DEFAULT_OPTIONS
-                    }
+                    options={isLogged && !!delegators?.length ? EXTENDED_OPTIONS : DEFAULT_OPTIONS}
                     onChange={handleTabChange}
                 />
 
                 <SelectStyled
                     value={tab}
-                    options={
-                        isLogged &&
-                        (account.getAssetBalance(DELEGATE_ICE) !== null ||
-                            account.getAssetBalance(G_DELEGATE_ICE) !== null)
-                            ? EXTENDED_OPTIONS
-                            : DEFAULT_OPTIONS
-                    }
+                    options={isLogged && !!delegators?.length ? EXTENDED_OPTIONS : DEFAULT_OPTIONS}
                     onChange={handleTabChange}
                 />
 
@@ -287,7 +291,7 @@ const DelegateMain = () => {
                                 goToList={() => setTab(Tabs.whitelist)}
                             />
                         )}
-                        {tab === Tabs.myDelegators && <MyDelegators />}
+                        {tab === Tabs.myDelegators && <MyDelegators delegators={delegators} />}
                     </>
                 )}
             </Wrapper>

@@ -35,7 +35,7 @@ import { formatBalance, roundToPrecision } from 'helpers/format-number';
 import { createAsset, createLumen } from 'helpers/token';
 import { getHorizonUrl } from 'helpers/url';
 
-import { Asset, StellarToml } from 'types/stellar';
+import { Asset, ClaimableBalance, StellarToml } from 'types/stellar';
 import { ClassicToken } from 'types/token';
 
 import { PairStats } from 'pages/vote/api/types';
@@ -1013,7 +1013,7 @@ export default class StellarServiceClass {
             });
     }
 
-    getDelegatorLocks(accountId: string) {
+    getDelegatorLocks(accountId: string): ClaimableBalance[] {
         if (!this.claimableBalances) {
             return null;
         }
