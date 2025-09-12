@@ -315,7 +315,7 @@ const AddIncentivePage = () => {
             <Background>
                 <Content>
                     <Back to={IncentivesRoutes.main}>
-                        <CircleButton label="Pools Incentives">
+                        <CircleButton label="Pool Incentives">
                             <ArrowLeft />
                         </CircleButton>
                     </Back>
