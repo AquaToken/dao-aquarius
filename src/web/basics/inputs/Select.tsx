@@ -27,6 +27,10 @@ const DropDown = styled.div<{ $isOpen: boolean; $disabled: boolean }>`
     font-size: 1.4rem;
     background-color: ${({ $disabled }) => ($disabled ? COLORS.lightGray : COLORS.white)};
     ${noSelect};
+
+    &:hover {
+        border-color: ${COLORS.purple};
+    }
 `;
 
 const DropdownItem = styled.div`

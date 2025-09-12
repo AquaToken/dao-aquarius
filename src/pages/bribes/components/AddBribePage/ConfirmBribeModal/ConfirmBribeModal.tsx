@@ -51,7 +51,7 @@ export const InfoRow = styled.div`
     justify-content: space-between;
 
     &:not(:last-child) {
-        margin-bottom: 3rem;
+        margin-bottom: 1.6rem;
     }
 `;
 
