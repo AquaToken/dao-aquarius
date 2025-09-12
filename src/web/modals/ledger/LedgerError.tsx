@@ -4,19 +4,11 @@ import styled from 'styled-components';
 import { ModalProps } from 'types/modal';
 
 import Button from 'basics/buttons/Button';
-import { IconFail } from 'basics/Icons';
-import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+import { IconFail } from 'basics/icons';
+import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 import { respondDown } from '../../mixins';
 import { Breakpoints } from '../../styles';
-
-const Container = styled.div`
-    width: 52.3rem;
-
-    ${respondDown(Breakpoints.md)`
-        width: 100%;
-    `}
-`;
 
 const Title = styled(ModalTitle)`
     margin-top: 2.4rem;
@@ -32,7 +24,7 @@ const StyledButton = styled(Button)`
 `;
 
 const LedgerError = ({ close }: ModalProps<never>) => (
-    <Container>
+    <ModalWrapper>
         <IconFail />
         <Title>Ledger app is unavailable</Title>
         <ModalDescription>
@@ -41,7 +33,7 @@ const LedgerError = ({ close }: ModalProps<never>) => (
             does not work, make sure that your Ledger device is not used on another site.
         </ModalDescription>
         <StyledButton onClick={() => close()}>Close</StyledButton>
-    </Container>
+    </ModalWrapper>
 );
 
 export default LedgerError;

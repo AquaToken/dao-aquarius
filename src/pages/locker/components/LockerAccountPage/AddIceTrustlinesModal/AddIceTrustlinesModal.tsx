@@ -5,30 +5,26 @@ import styled from 'styled-components';
 import ErrorHandler from 'helpers/error-handler';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
+import { useIsMounted } from 'hooks/useIsMounted';
+
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { ModalProps } from 'types/modal';
-
-import { useIsMounted } from 'hooks/useIsMounted';
 import { StellarService, ToastService } from 'services/globalServices';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
+
+import { ModalProps } from 'types/modal';
+
+import { COLORS } from 'web/styles';
 
 import Ice from 'assets/ice-logo.svg';
 
 import Button from 'basics/buttons/Button';
-import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
-const ModalContainer = styled.div`
-    width: 52.8rem;
+const Wrapper = styled.div`
     display: flex;
     flex-direction: column;
-
-    ${respondDown(Breakpoints.md)`
-        width: 100%;
-    `}
 `;
 
 const IceLogo = styled(Ice)`
@@ -111,31 +107,33 @@ const AddIceTrustlinesModal = ({ confirm }: ModalProps<never>) => {
     };
 
     return (
-        <ModalContainer>
-            <ModalTitle>Add ICE trustlines</ModalTitle>
-            <ModalDescription>
-                Freezing AQUA requires you to add the {unlistedAssets.length} ICE trustlines. Each
-                trustline will reserve 0.5 XLM of your wallet balance.
-            </ModalDescription>
-            <AssetsBlock>
-                {unlistedAssets.map(asset => (
-                    <AssetLine key={asset.code}>
-                        <AssetName>
-                            <IceLogo />
-                            <span>{asset.code}</span>
-                        </AssetName>
-                        <Amount>0.5 XLM</Amount>
+        <ModalWrapper>
+            <Wrapper>
+                <ModalTitle>Add ICE trustlines</ModalTitle>
+                <ModalDescription>
+                    Freezing AQUA requires you to add the {unlistedAssets.length} ICE trustlines.
+                    Each trustline will reserve 0.5 XLM of your wallet balance.
+                </ModalDescription>
+                <AssetsBlock>
+                    {unlistedAssets.map(asset => (
+                        <AssetLine key={asset.code}>
+                            <AssetName>
+                                <IceLogo />
+                                <span>{asset.code}</span>
+                            </AssetName>
+                            <Amount>0.5 XLM</Amount>
+                        </AssetLine>
+                    ))}
+                    <AssetLine>
+                        <AssetName>Total:</AssetName>
+                        <Amount>{unlistedAssets.length * 0.5} XLM</Amount>
                     </AssetLine>
-                ))}
-                <AssetLine>
-                    <AssetName>Total:</AssetName>
-                    <Amount>{unlistedAssets.length * 0.5} XLM</Amount>
-                </AssetLine>
-            </AssetsBlock>
-            <Button isBig onClick={() => addTrustlines()} pending={pending}>
-                Confirm
-            </Button>
-        </ModalContainer>
+                </AssetsBlock>
+                <Button isBig onClick={() => addTrustlines()} pending={pending}>
+                    Confirm
+                </Button>
+            </Wrapper>
+        </ModalWrapper>
     );
 };
 

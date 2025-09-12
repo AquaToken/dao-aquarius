@@ -219,7 +219,7 @@ const VolumeChart = ({
                 return [lastNMonths, volume24hUsd];
             }
 
-            return [copy, volume24hUsd];
+            return [copy.slice(0, copy.length - 1), volume24hUsd];
         }
 
         let date = set(transformDate(data[0]?.datetime_str), {
@@ -377,7 +377,7 @@ const VolumeChart = ({
                                       )?.getTime(),
                                       { withoutDay: selectedPeriod >= ChartPeriods.months_6 },
                                   )}`
-                                : `Last 24h volume:`}
+                                : `Last 24H volume:`}
                         </GrayText>
                         <LiquidityValue x="16" y="63">
                             ${formatBalance((selectedItem || last24)?.volume_usd, true, true)}

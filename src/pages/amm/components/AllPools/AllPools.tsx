@@ -5,13 +5,12 @@ import styled from 'styled-components';
 
 import { FilterOptions, getPools, PoolsSortFields } from 'api/amm';
 
+import { POOL_TYPE } from 'constants/amm';
 import { AmmRoutes } from 'constants/routes';
 
 import { formatBalance } from 'helpers/format-number';
 
 import { useDebounce } from 'hooks/useDebounce';
-
-import { POOL_TYPE } from 'services/soroban.service';
 
 import { PoolProcessed } from 'types/amm';
 
@@ -20,10 +19,8 @@ import { flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Info from 'assets/icon-info.svg';
-import ArrowRightIcon from 'assets/icon-link-arrow.svg';
 import Search from 'assets/icon-search.svg';
 
-import ApyBoosted from 'basics/ApyBoosted';
 import Select from 'basics/inputs/Select';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
 import PageLoader from 'basics/loaders/PageLoader';
@@ -32,7 +29,8 @@ import Pagination from 'basics/Pagination';
 import Table, { CellAlign } from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
-import BoostTooltip from 'pages/amm/components/BoostTooltip/BoostTooltip';
+import RewardsTokens from 'pages/amm/components/RewardsTokens/RewardsTokens';
+import TotalApy from 'pages/amm/components/TotalApy/TotalApy';
 import { AnalyticsTabs, AnalyticsUrlParams } from 'pages/amm/pages/Analytics';
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
 
@@ -68,7 +66,7 @@ const SelectStyled = styled(Select)`
     `}
 `;
 
-const TitleWithTooltip = styled.span`
+export const TitleWithTooltip = styled.span`
     display: flex;
     align-items: center;
 
@@ -87,23 +85,11 @@ const StyledInput = styled(Input)`
     `}
 `;
 
-const TooltipInner = styled.span`
+export const TooltipInnerHead = styled.span`
     width: 20rem;
     white-space: pre-wrap;
     font-size: 1.4rem;
     line-height: 2rem;
-`;
-
-const RewardsApy = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-`;
-
-const ArrowRight = styled(ArrowRightIcon)`
-    path {
-        fill: ${COLORS.darkBlue};
-    }
 `;
 
 enum UrlParams {
@@ -252,7 +238,7 @@ const AllPools = (): React.ReactNode => {
                                 flexSize: 2,
                             },
                             {
-                                children: 'Volume 24h',
+                                children: 'Volume 24H',
                                 sort: {
                                     onClick: () =>
                                         setSortParam(
@@ -268,71 +254,26 @@ const AllPools = (): React.ReactNode => {
                                 align: CellAlign.Right,
                                 flexSize: 2,
                             },
-                            {
-                                children: 'Daily reward',
-                                sort: {
-                                    onClick: () =>
-                                        setSortParam(
-                                            sort === PoolsSortFields.rewardsUp
-                                                ? PoolsSortFields.rewardsDown
-                                                : PoolsSortFields.rewardsUp,
-                                        ),
-                                    isEnabled:
-                                        sort === PoolsSortFields.rewardsUp ||
-                                        sort === PoolsSortFields.rewardsDown,
-                                    isReversed: sort === PoolsSortFields.rewardsDown,
-                                },
-                                flexSize: 2,
-                                align: CellAlign.Right,
-                            },
 
                             {
-                                children: (
-                                    <TitleWithTooltip>
-                                        Base APY
-                                        <Tooltip
-                                            showOnHover
-                                            content={
-                                                <TooltipInner>
-                                                    Annual yield projection for liquidity providers,
-                                                    based on current trading activity and collected
-                                                    fees. Rewards are allocated based on each
-                                                    provider’s share of liquidity in the pool.
-                                                </TooltipInner>
-                                            }
-                                            position={TOOLTIP_POSITION.top}
-                                        >
-                                            <Info />
-                                        </Tooltip>
-                                    </TitleWithTooltip>
-                                ),
-                                sort: {
-                                    onClick: () =>
-                                        setSortParam(
-                                            sort === PoolsSortFields.apyUp
-                                                ? PoolsSortFields.apyDown
-                                                : PoolsSortFields.apyUp,
-                                        ),
-                                    isEnabled:
-                                        sort === PoolsSortFields.apyUp ||
-                                        sort === PoolsSortFields.apyDown,
-                                    isReversed: sort === PoolsSortFields.apyDown,
+                                children: 'Rewards',
+                                align: CellAlign.Left,
+                                flexSize: 3,
+                                style: {
+                                    marginLeft: '5rem',
                                 },
-                                flexSize: 2,
-                                align: CellAlign.Right,
                             },
                             {
                                 children: (
                                     <TitleWithTooltip>
-                                        Rewards APY
+                                        Total APY
                                         <Tooltip
                                             showOnHover
                                             content={
-                                                <TooltipInner>
-                                                    Projected additional annual AQUA rewards for
-                                                    liquidity providers in pools within the "rewards
-                                                    zone", determined by Aquarius DAO voting.
-                                                </TooltipInner>
+                                                <TooltipInnerHead>
+                                                    Total APY is the sum of LP APY, Rewards APY, and
+                                                    Incentives APY.
+                                                </TooltipInnerHead>
                                             }
                                             position={TOOLTIP_POSITION.top}
                                         >
@@ -340,20 +281,20 @@ const AllPools = (): React.ReactNode => {
                                         </Tooltip>
                                     </TitleWithTooltip>
                                 ),
+                                flexSize: 3,
+                                align: CellAlign.Left,
                                 sort: {
                                     onClick: () =>
                                         setSortParam(
-                                            sort === PoolsSortFields.rewardsApyUp
-                                                ? PoolsSortFields.rewardsApyDown
-                                                : PoolsSortFields.rewardsApyUp,
+                                            sort === PoolsSortFields.totalApyUp
+                                                ? PoolsSortFields.totalApyDown
+                                                : PoolsSortFields.totalApyUp,
                                         ),
                                     isEnabled:
-                                        sort === PoolsSortFields.rewardsApyUp ||
-                                        sort === PoolsSortFields.rewardsApyDown,
-                                    isReversed: sort === PoolsSortFields.rewardsApyDown,
+                                        sort === PoolsSortFields.totalApyUp ||
+                                        sort === PoolsSortFields.totalApyDown,
+                                    isReversed: sort === PoolsSortFields.totalApyDown,
                                 },
-                                flexSize: 3,
-                                align: CellAlign.Right,
                             },
                         ]}
                         body={pools.map(pool => ({
@@ -395,106 +336,31 @@ const AllPools = (): React.ReactNode => {
                                               true,
                                           )}`
                                         : '0',
-                                    label: 'Volume 24h:',
+                                    label: 'Volume 24H:',
                                     align: CellAlign.Right,
                                     flexSize: 2,
                                 },
                                 {
-                                    children: pool.reward_tps
-                                        ? `${formatBalance(
-                                              (+pool.reward_tps / 1e7) * 60 * 60 * 24,
-                                              true,
-                                          )} AQUA`
-                                        : '-',
-                                    label: 'Daily reward:',
-                                    flexSize: 2,
-                                    align: CellAlign.Right,
+                                    children: <RewardsTokens pool={pool} />,
+                                    label: 'Rewards',
+                                    align: CellAlign.Left,
+                                    flexSize: 3,
+                                    style: {
+                                        marginLeft: '5rem',
+                                    },
                                 },
                                 {
-                                    children: (
-                                        <TitleWithTooltip>
-                                            {(Number(pool.apy) * 100).toFixed(2)}%{' '}
-                                            {Number(pool.apy) === 0 && (
-                                                <Tooltip
-                                                    showOnHover
-                                                    content={
-                                                        <TooltipInner>
-                                                            On small pools with TVL under $1000 we
-                                                            don't calculate APY because on such
-                                                            small volumes the numbers can be
-                                                            misleading
-                                                        </TooltipInner>
-                                                    }
-                                                    position={TOOLTIP_POSITION.top}
-                                                >
-                                                    <Info />
-                                                </Tooltip>
-                                            )}
-                                        </TitleWithTooltip>
-                                    ),
+                                    children: <TotalApy pool={pool} />,
                                     label: (
                                         <TitleWithTooltip>
-                                            Base APY
+                                            Total APY
                                             <Tooltip
                                                 showOnHover
                                                 content={
-                                                    <TooltipInner>
-                                                        Annual yield projection for liquidity
-                                                        providers, based on current trading activity
-                                                        and collected fees. Rewards are allocated
-                                                        based on each provider’s share of liquidity
-                                                        in the pool.
-                                                    </TooltipInner>
-                                                }
-                                                position={TOOLTIP_POSITION.top}
-                                            >
-                                                <Info />
-                                            </Tooltip>
-                                        </TitleWithTooltip>
-                                    ),
-                                    flexSize: 2,
-                                    align: CellAlign.Right,
-                                },
-                                {
-                                    children: (
-                                        <RewardsApy>
-                                            <span>
-                                                {formatBalance(
-                                                    +(Number(pool.rewards_apy) * 100).toFixed(2),
-                                                )}
-                                                %
-                                            </span>
-
-                                            {Boolean(Number(pool.rewards_apy)) && (
-                                                <>
-                                                    <ArrowRight />
-
-                                                    <Tooltip
-                                                        content={<BoostTooltip pool={pool} />}
-                                                        showOnHover
-                                                        background={COLORS.white}
-                                                    >
-                                                        <ApyBoosted
-                                                            value={Number(pool.rewards_apy) * 250}
-                                                            color="blue"
-                                                        />
-                                                    </Tooltip>
-                                                </>
-                                            )}
-                                        </RewardsApy>
-                                    ),
-                                    label: (
-                                        <TitleWithTooltip>
-                                            Rewards APY
-                                            <Tooltip
-                                                showOnHover
-                                                content={
-                                                    <TooltipInner>
-                                                        Projected additional annual AQUA rewards for
-                                                        liquidity providers in pools within the
-                                                        "rewards zone", determined by Aquarius DAO
-                                                        voting.
-                                                    </TooltipInner>
+                                                    <TooltipInnerHead>
+                                                        Total APY is the sum of LP APY, Rewards APY,
+                                                        and Incentives APY.
+                                                    </TooltipInnerHead>
                                                 }
                                                 position={TOOLTIP_POSITION.top}
                                             >
@@ -503,7 +369,7 @@ const AllPools = (): React.ReactNode => {
                                         </TitleWithTooltip>
                                     ),
                                     flexSize: 3,
-                                    align: CellAlign.Right,
+                                    align: CellAlign.Left,
                                 },
                             ],
                         }))}

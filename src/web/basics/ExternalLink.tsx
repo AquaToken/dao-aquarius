@@ -62,6 +62,7 @@ const ExternalLink = ({ children, asDiv, to, ...props }: ExternalLinkProps): Rea
             </LinkStyled>
         );
     }
+
     return (
         <LinkBody {...props} target="_blank" rel="noreferrer noopener">
             {children}

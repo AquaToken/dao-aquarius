@@ -13,7 +13,7 @@ import { commonMaxWidth, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS, Z_INDEX } from 'web/styles';
 
-import AquaLogo from 'assets/aqua-logo.svg';
+import AquaLogo from 'assets/aqua/aqua-logo-text.svg';
 import IconProfile from 'assets/icon-profile.svg';
 
 import { ActiveProposals } from 'components/Header/ActiveProposals/ActiveProposals';
@@ -44,6 +44,7 @@ const Container = styled.header`
 
 const Aqua = styled(AquaLogo)`
     height: 4.4rem;
+    color: ${COLORS.titleText};
 
     ${respondDown(Breakpoints.md)`
         height: 3.4rem;
@@ -99,7 +100,9 @@ const Divider = styled.div`
     ${respondDown(Breakpoints.lg)`
         margin-right: 1rem;
         height: 2rem;
-    `} ${respondDown(Breakpoints.md)`
+    `};
+
+    ${respondDown(Breakpoints.md)`
          border-left: none;
          margin-right: 0;
          height: 0;
@@ -245,7 +248,42 @@ const Links = () => {
             <Divider />
 
             <ExpandedMenu
-                title="Voting & DAO"
+                title="Incentives"
+                links={
+                    <>
+                        <NavLinkStyled
+                            to={MainRoutes.rewards}
+                            activeStyle={{
+                                fontWeight: 700,
+                            }}
+                            title="AQUA Rewards"
+                        >
+                            AQUA Rewards
+                        </NavLinkStyled>
+                        {/*<NavLinkStyled*/}
+                        {/*    to={MainRoutes.incentives}*/}
+                        {/*    activeStyle={{*/}
+                        {/*        fontWeight: 700,*/}
+                        {/*    }}*/}
+                        {/*    title="Pools Incentives"*/}
+                        {/*>*/}
+                        {/*    LP Incentives*/}
+                        {/*</NavLinkStyled>*/}
+                        <NavLinkStyled
+                            to={MainRoutes.bribes}
+                            activeStyle={{
+                                fontWeight: 700,
+                            }}
+                            title="Bribes"
+                        >
+                            Bribes
+                        </NavLinkStyled>
+                    </>
+                }
+            />
+
+            <ExpandedMenu
+                title="Governance"
                 counts={proposalsCounts}
                 links={
                     <>
@@ -259,24 +297,7 @@ const Links = () => {
                         >
                             Liquidity Voting
                         </NavLinkStyled>
-                        <NavLinkStyled
-                            to={MainRoutes.rewards}
-                            activeStyle={{
-                                fontWeight: 700,
-                            }}
-                            title="LP Rewards"
-                        >
-                            LP Rewards
-                        </NavLinkStyled>
-                        <NavLinkStyled
-                            to={MainRoutes.bribes}
-                            activeStyle={{
-                                fontWeight: 700,
-                            }}
-                            title="Bribes for Voters"
-                        >
-                            Bribes for Voters
-                        </NavLinkStyled>
+
                         <NavLinkWithCount>
                             <NavLinkStyled
                                 to={MainRoutes.governance}
@@ -292,6 +313,7 @@ const Links = () => {
                                 activeCount={proposalsCounts.active}
                             />
                         </NavLinkWithCount>
+
                         <NavLinkStyled
                             to={MainRoutes.delegate}
                             activeStyle={{
@@ -306,17 +328,17 @@ const Links = () => {
             />
 
             <ExpandedMenu
-                title="AQUA token"
+                title="AQUA Token"
                 links={
                     <>
                         <NavLinkStyled
                             activeStyle={{
                                 fontWeight: 700,
                             }}
-                            title="Token Info"
+                            title="About"
                             to={MainRoutes.token}
                         >
-                            Token Info
+                            About
                         </NavLinkStyled>
 
                         <NavLinkStyled
@@ -362,7 +384,7 @@ const Header = (): React.ReactNode => {
             <RightBlock>
                 <MyAquarius onClick={onMyAquariusClick} to={MainRoutes.account}>
                     <IconProfile />
-                    <div>My Aquarius</div>
+                    <div>Dashboard</div>
                 </MyAquarius>
                 <AccountBlock navLinks={<Links />} />
             </RightBlock>

@@ -18,9 +18,11 @@ import {
     ASSETS_ENV_DATA,
     D_ICE_CODE,
     DOWN_ICE_CODE,
+    GD_ICE_CODE,
     GOV_ICE_CODE,
     ICE_CODE,
     ICE_ISSUER,
+    ICE_TO_DELEGATE,
     UP_ICE_CODE,
 } from 'constants/assets';
 import { BASE_FEE } from 'constants/stellar';
@@ -30,10 +32,11 @@ import chunkFunction from 'helpers/chunk-function';
 import debounceFunction from 'helpers/debounce-function';
 import { getEnv, getNetworkPassphrase } from 'helpers/env';
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
+import { createAsset, createLumen } from 'helpers/token';
 import { getHorizonUrl } from 'helpers/url';
 
-import { Asset, StellarToml } from 'types/stellar';
-import { ClassicToken, TokenType } from 'types/token';
+import { Asset, ClaimableBalance, StellarToml } from 'types/stellar';
+import { ClassicToken } from 'types/token';
 
 import { PairStats } from 'pages/vote/api/types';
 
@@ -139,23 +142,6 @@ export default class StellarServiceClass {
     get isClaimableBalancesLoaded() {
         return this.claimableBalances !== null;
     }
-    loginWithSecret(secretKey: string): Promise<string> {
-        return new Promise((resolve, reject) => {
-            try {
-                this.keypair = StellarSdk.Keypair.fromSecret(secretKey);
-
-                resolve(this.keypair.publicKey());
-            } catch (e) {
-                reject(e);
-            }
-        });
-    }
-
-    logoutWithSecret() {
-        if (this.keypair) {
-            this.keypair = null;
-        }
-    }
 
     async buildTx(
         account: StellarSdk.Account,
@@ -192,26 +178,6 @@ export default class StellarServiceClass {
 
     createMemo(type: MemoType, value): Memo {
         return new StellarSdk.Memo(type, value);
-    }
-
-    createAsset(code: string, issuer: string): ClassicToken {
-        const asset: ClassicToken = new StellarSdk.Asset(code, issuer) as ClassicToken;
-
-        asset.type = TokenType.classic;
-        asset.contract = asset.contractId(getNetworkPassphrase());
-        asset.decimal = 7;
-
-        return asset;
-    }
-
-    createLumen(): ClassicToken {
-        const asset: ClassicToken = StellarSdk.Asset.native() as ClassicToken;
-
-        asset.type = TokenType.classic;
-        asset.contract = asset.contractId(getNetworkPassphrase());
-        asset.decimal = 7;
-
-        return asset;
     }
 
     isValidPublicKey(key: string): boolean {
@@ -364,7 +330,7 @@ export default class StellarServiceClass {
 
     getAquaPrice(): Promise<number> {
         return this.server
-            .orderbook(this.createAsset(aquaCode, aquaIssuer), this.createLumen())
+            .orderbook(createAsset(aquaCode, aquaIssuer), createLumen())
             .call()
             .then(res => (+res.asks[0].price + +res.bids[0].price) / 2);
     }
@@ -492,6 +458,10 @@ export default class StellarServiceClass {
                             asset_code: string;
                         };
 
+                        if (!Number(amount)) {
+                            return;
+                        }
+
                         ToastService.showSuccessToast(
                             `Payment received: ${formatBalance(Number(amount))} ${
                                 asset_type === 'native' ? 'XLM' : asset_code
@@ -569,8 +539,13 @@ export default class StellarServiceClass {
             const selfClaim = claim.claimants.find(claimant => claimant.destination === accountId);
             const isAqua = claim.asset === aquaAssetString;
             const isGovIce = claim.asset === `${GOV_ICE_CODE}:${ICE_ISSUER}`;
+            const isGDIce = claim.asset === `${GD_ICE_CODE}:${ICE_ISSUER}`;
 
-            if ((hasForMarker || hasAgainstMarker) && Boolean(selfClaim) && (isAqua || isGovIce)) {
+            if (
+                (hasForMarker || hasAgainstMarker) &&
+                Boolean(selfClaim) &&
+                (isAqua || isGovIce || isGDIce)
+            ) {
                 const [code, issuer] = claim.asset.split(':');
                 acc.push({
                     ...claim,
@@ -691,7 +666,7 @@ export default class StellarServiceClass {
         return StellarSdk.Operation.createClaimableBalance({
             source: publicKey,
             amount: amount.toString(),
-            asset: asset ?? this.createAsset(aquaCode, aquaIssuer),
+            asset: asset ?? createAsset(aquaCode, aquaIssuer),
             claimants: [
                 new StellarSdk.Claimant(
                     marketKey,
@@ -741,6 +716,10 @@ export default class StellarServiceClass {
             return 'https://ice-approval.aqua.network/api/v1/govern-ice/tx-approve/';
         }
 
+        if (asset.code === GD_ICE_CODE && asset.issuer === ICE_ISSUER) {
+            return 'https://ice-approval.aqua.network/api/v1/delegated-govern-ice/tx-approve/';
+        }
+
         throw new Error('Unknown asset');
     }
 
@@ -749,7 +728,7 @@ export default class StellarServiceClass {
         return StellarSdk.Operation.createClaimableBalance({
             source: publicKey,
             amount: amount.toString(),
-            asset: this.createAsset(aquaCode, aquaIssuer),
+            asset: createAsset(aquaCode, aquaIssuer),
             claimants: [
                 new StellarSdk.Claimant(
                     publicKey,
@@ -791,7 +770,7 @@ export default class StellarServiceClass {
     createBurnAquaOperation(amount: string) {
         return StellarSdk.Operation.payment({
             amount,
-            asset: this.createAsset(aquaCode, aquaIssuer),
+            asset: createAsset(aquaCode, aquaIssuer),
             destination: aquaIssuer,
         });
     }
@@ -882,8 +861,8 @@ export default class StellarServiceClass {
 
         const { records } = await this.server
             .tradeAggregation(
-                this.createLumen(),
-                this.createAsset(asset.code, asset.issuer),
+                createLumen(),
+                createAsset(asset.code, asset.issuer),
                 start,
                 now + 3600000,
                 3600000,
@@ -933,7 +912,7 @@ export default class StellarServiceClass {
 
         if (withTrust) {
             const trustOp = StellarSdk.Operation.changeTrust({
-                asset: this.createAsset(aquaCode, aquaIssuer),
+                asset: createAsset(aquaCode, aquaIssuer),
             });
             ops.push(trustOp);
         }
@@ -951,7 +930,7 @@ export default class StellarServiceClass {
         const time = Math.ceil(timestamp / 1000);
         return StellarSdk.Operation.createClaimableBalance({
             amount: amount.toString(),
-            asset: this.createAsset(asset.code, asset.issuer),
+            asset: createAsset(asset.code, asset.issuer),
             claimants: [
                 new StellarSdk.Claimant(
                     marketKey,
@@ -967,13 +946,13 @@ export default class StellarServiceClass {
         });
     }
 
-    createDelegateTx(account, delegateDestionation, amount) {
+    createDelegateTx(account, token: ClassicToken, delegateDestionation, amount) {
         return this.buildTx(
             account,
             StellarSdk.Operation.createClaimableBalance({
                 source: account.accountId(),
                 amount: amount.toString(),
-                asset: this.createAsset(UP_ICE_CODE, ICE_ISSUER),
+                asset: token,
                 claimants: [
                     new StellarSdk.Claimant(
                         account.accountId(),
@@ -1017,9 +996,10 @@ export default class StellarServiceClass {
                     claimant =>
                         claimant.destination === accountId && !!claimant.predicate?.not?.abs_before,
                 );
-                const isUpvoteIce = claim.asset === `${UP_ICE_CODE}:${ICE_ISSUER}`;
 
-                if (hasMarker && Boolean(selfClaim) && isUpvoteIce) {
+                const isDelegatedIce = ICE_TO_DELEGATE.includes(claim.asset);
+
+                if (hasMarker && Boolean(selfClaim) && isDelegatedIce) {
                     acc.push(claim);
                 }
                 return acc;
@@ -1033,7 +1013,7 @@ export default class StellarServiceClass {
             });
     }
 
-    getDelegatorLocks(accountId: string) {
+    getDelegatorLocks(accountId: string): ClaimableBalance[] {
         if (!this.claimableBalances) {
             return null;
         }
@@ -1051,9 +1031,10 @@ export default class StellarServiceClass {
                     // @ts-ignore
                     claimant.destination === accountId && !!claimant.predicate?.not?.unconditional,
             );
-            const isUpvoteIce = claim.asset === `${UP_ICE_CODE}:${ICE_ISSUER}`;
 
-            if (hasMarker && Boolean(selfClaim) && isUpvoteIce) {
+            const isDelegatedIce = ICE_TO_DELEGATE.includes(claim.asset);
+
+            if (hasMarker && Boolean(selfClaim) && isDelegatedIce) {
                 acc.push(claim);
             }
             return acc;
@@ -1062,7 +1043,7 @@ export default class StellarServiceClass {
 
     getAquaEquivalent(asset, amount) {
         return this.server
-            .strictSendPaths(asset, amount, [this.createAsset(aquaCode, aquaIssuer)])
+            .strictSendPaths(asset, amount, [createAsset(aquaCode, aquaIssuer)])
             .call()
             .then(res => {
                 if (!res.records.length) {

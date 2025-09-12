@@ -1,12 +1,17 @@
-import ExternalLink from 'basics/ExternalLink';
-import SocialLinks from 'components/SocialLinks';
-import { MainRoutes } from 'constants/routes';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+
+import { MainRoutes } from 'constants/routes';
+
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
+
 import Success from 'assets/icon-success-green.svg';
+
+import ExternalLink from 'basics/ExternalLink';
+
+import SocialLinks from 'components/SocialLinks';
 
 const Container = styled.div`
     height: 100%;

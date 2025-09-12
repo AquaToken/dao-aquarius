@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/named
 import { css, CSSObject, Interpolation } from 'styled-components';
 
-import { Breakpoints, COLORS } from './styles';
+import { Breakpoints, COLORS, PAGE_PADDINGS } from './styles';
 
 export const textEllipsis = css`
     overflow: hidden;
@@ -34,7 +34,6 @@ export const flexColumnCenter = css`
 `;
 
 export const customScroll = css`
-    padding-right: 1rem;
     &::-webkit-scrollbar {
         width: 0.5rem;
     }
@@ -42,6 +41,7 @@ export const customScroll = css`
     /* Track */
     &::-webkit-scrollbar-track {
         background: ${COLORS.white};
+        border-radius: 0.25rem;
     }
 
     /* Handle */
@@ -96,5 +96,58 @@ export const contentWithSidebar = css`
 
     ${respondDown(Breakpoints.lg)`
         padding: 3.2rem 1.6rem 0;
+    `}
+`;
+
+export const EmptyList = css`
+    ${flexAllCenter};
+    flex-direction: column;
+
+    h3 {
+        font-size: 2rem;
+        line-height: 2.8rem;
+        color: ${COLORS.titleText};
+        margin-bottom: 0.9rem;
+    }
+
+    span {
+        line-height: 180%;
+        color: ${COLORS.grayText};
+    }
+
+    a {
+        color: ${COLORS.purple};
+        font-size: 1.4rem;
+        line-height: 2rem;
+    }
+`;
+
+export const noSelect = css`
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+`;
+
+export const fullWidthSectionStyles = css`
+    width: calc(100% - ${PAGE_PADDINGS * 2}rem);
+
+    ${respondDown(Breakpoints.sm)`
+        width: calc(100% - ${PAGE_PADDINGS * 2}rem);
+        padding-left: ${PAGE_PADDINGS}rem;
+        padding-right: ${PAGE_PADDINGS}rem;
+    `}
+
+    ${respondDown(Breakpoints.xs)`
+        width: 100%;
+    `}
+`;
+
+export const commonSectionPaddings = css`
+    ${respondDown(Breakpoints.xl)`
+        padding: 0 ${PAGE_PADDINGS}rem;
     `}
 `;

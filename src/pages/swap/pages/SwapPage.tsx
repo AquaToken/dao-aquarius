@@ -2,11 +2,14 @@ import { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { getAssetsList } from 'api/amm';
+
 import { MainRoutes } from 'constants/routes';
 
 import { getAquaAssetData, getAssetFromString, getAssetString } from 'helpers/assets';
+import { createLumen, getTokensFromCache } from 'helpers/token';
 
-import { StellarService } from 'services/globalServices';
+import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
 import { Token } from 'types/token';
 
@@ -44,21 +47,28 @@ const Content = styled.div`
 
 const SwapPage = () => {
     const [base, setBase] = useState(null);
-
     const [counter, setCounter] = useState(null);
+    const [assetsList, setAssetsList] = useState(getTokensFromCache());
 
     const params = useParams<{ source: string; destination: string }>();
     const history = useHistory();
     const { aquaAssetString } = getAquaAssetData();
+
+    const { processNewAssets } = useAssetsStore();
+
+    useEffect(() => {
+        getAssetsList().then(res => {
+            processNewAssets(res);
+            setAssetsList(res);
+        });
+    }, []);
 
     useEffect(() => {
         const { source, destination } = params;
 
         if (source === destination && !base && !counter) {
             history.replace(
-                `${MainRoutes.swap}/${getAssetString(
-                    StellarService.createLumen() as Token,
-                )}/${aquaAssetString}`,
+                `${MainRoutes.swap}/${getAssetString(createLumen() as Token)}/${aquaAssetString}`,
             );
             return;
         }
@@ -91,7 +101,7 @@ const SwapPage = () => {
         history.push(`${MainRoutes.swap}/${getAssetString(base)}/${getAssetString(asset)}`);
     };
 
-    if (!base || !counter) {
+    if (!base || !counter || !assetsList) {
         return <PageLoader />;
     }
 
@@ -103,6 +113,7 @@ const SwapPage = () => {
                     counter={counter}
                     setBase={setSource}
                     setCounter={setDestination}
+                    assetsList={assetsList}
                 />
             </Content>
         </Container>

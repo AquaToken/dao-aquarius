@@ -1,26 +1,18 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 
-import { ModalProps } from 'types/modal';
-
 import { WalletConnectService } from 'services/globalServices';
+
+import { ModalProps } from 'types/modal';
 
 import Aqua from 'assets/aqua-logo-small.svg';
 import ArrowsIcon from 'assets/icon-arrows-circle.svg';
 
 import DotsLoader from 'basics/loaders/DotsLoader';
-import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 import { flexAllCenter, respondDown } from '../../mixins';
 import { Breakpoints, COLORS } from '../../styles';
-
-const Container = styled.div`
-    width: 52.3rem;
-
-    ${respondDown(Breakpoints.md)`
-          width: 100%;
-      `}
-`;
 
 const IconsBlock = styled.div`
     ${flexAllCenter};
@@ -54,8 +46,9 @@ const SessionRequestModal = ({
     params,
 }: ModalProps<{ icon: string; name: string }>): React.ReactNode => {
     const { icon, name } = params;
+
     return (
-        <Container>
+        <ModalWrapper>
             <ModalTitle>Connecting</ModalTitle>
             <ModalDescription>
                 The connection request was sent to {name}. Confirm the request in the app and
@@ -71,7 +64,7 @@ const SessionRequestModal = ({
                 Connecting
                 <DotsLoader />
             </Connecting>
-        </Container>
+        </ModalWrapper>
     );
 };
 

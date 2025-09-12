@@ -39,6 +39,7 @@ const LabelWrapper = styled.div<{
     $innerLineHeight: string;
     $withoutBorder?: boolean;
     $withoutUppercase?: boolean;
+    $fontWeight?: string | number;
 }>`
     ${flexAllCenter};
     width: max-content;
@@ -47,7 +48,7 @@ const LabelWrapper = styled.div<{
     color: ${({ $color }) => $color};
     border: ${({ $color, $withoutBorder }) => ($withoutBorder ? 'none' : `0.1rem solid ${$color}`)};
     text-transform: ${({ $withoutUppercase }) => ($withoutUppercase ? 'none' : 'uppercase')};
-    font-weight: 700;
+    font-weight: ${({ $fontWeight }) => $fontWeight ?? 700};
     border-radius: ${({ $innerBorderRadius }) => $innerBorderRadius};
     font-size: ${({ $innerFontSize }) => $innerFontSize};
     line-height: ${({ $innerLineHeight }) => $innerLineHeight};
@@ -79,9 +80,17 @@ const LABEL_STYLES = {
         $innerLineHeight: '1.6rem',
         $cursor: 'help',
     },
+
+    extraLarge: {
+        $padding: '0.4rem 0.8rem',
+        $innerBorderRadius: '0.8rem',
+        $innerFontSize: '1.6rem',
+        $innerLineHeight: '2.8rem',
+        $cursor: 'help',
+    },
 };
 
-type LabelSize = 'default' | 'medium' | 'big';
+type LabelSize = 'default' | 'medium' | 'big' | 'extraLarge';
 
 interface LabelProps {
     labelText: string | React.ReactNode;
@@ -93,6 +102,7 @@ interface LabelProps {
     tooltipBackground?: string;
     withoutBorder?: boolean;
     withoutUppercase?: boolean;
+    fontWeight?: string | number;
 }
 
 const Label = ({
@@ -105,6 +115,7 @@ const Label = ({
     tooltipBackground,
     withoutBorder,
     withoutUppercase,
+    fontWeight,
     ...props
 }: LabelProps): React.ReactNode => {
     const [isEnoughSpaceOnTop, setIsEnoughSpaceOnTop] = useState(true);
@@ -131,11 +142,13 @@ const Label = ({
         return (
             <LabelWrapper
                 {...labelStyles}
+                {...props}
                 $cursor="default"
                 $background={background}
                 $color={color}
                 $withoutBorder={withoutBorder}
                 $withoutUppercase={withoutUppercase}
+                $fontWeight={fontWeight}
             >
                 {labelText}
             </LabelWrapper>

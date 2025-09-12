@@ -4,8 +4,10 @@ import styled from 'styled-components';
 import { MarketRoutes } from 'constants/routes';
 
 import { formatBalance } from 'helpers/format-number';
+import { getIceMaxApy } from 'helpers/ice';
+import { createAsset } from 'helpers/token';
 
-import { ModalService, StellarService } from 'services/globalServices';
+import { ModalService } from 'services/globalServices';
 
 import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -25,7 +27,6 @@ import VoteButton from './VoteButton/VoteButton';
 import { PairStats, TotalStats } from '../../../api/types';
 import BribesModal from '../BribesModal/BribesModal';
 import ManageVotesModal from '../ManageVotesModal/ManageVotesModal';
-import { getIceMaxApy } from 'helpers/ice';
 
 const ManageButton = styled(Button)`
     margin-left: 0.8rem;
@@ -236,14 +237,8 @@ const VoteTable = ({
                                 <PairWrapper>
                                     <Market
                                         assets={[
-                                            StellarService.createAsset(
-                                                pair.asset1_code,
-                                                pair.asset1_issuer,
-                                            ),
-                                            StellarService.createAsset(
-                                                pair.asset2_code,
-                                                pair.asset2_issuer,
-                                            ),
+                                            createAsset(pair.asset1_code, pair.asset1_issuer),
+                                            createAsset(pair.asset2_code, pair.asset2_issuer),
                                         ]}
                                         isRewardsOn={
                                             (isRewardsOn(
@@ -354,7 +349,7 @@ const VoteTable = ({
                                                 key={bribe.asset_code + bribe.asset_issuer}
                                             >
                                                 <Asset
-                                                    asset={StellarService.createAsset(
+                                                    asset={createAsset(
                                                         bribe.asset_code,
                                                         bribe.asset_issuer,
                                                     )}

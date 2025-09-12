@@ -5,9 +5,11 @@ import styled, { css } from 'styled-components';
 
 import { getDelegateeVotes } from 'api/delegate';
 
-import { MarketRoutes } from 'constants/routes';
+import { GD_ICE_CODE } from 'constants/assets';
+import { GovernanceRoutes, MarketRoutes } from 'constants/routes';
 
-import { getAssetFromString } from 'helpers/assets';
+import { getAssetFromString, getAssetString } from 'helpers/assets';
+import { formatBalance } from 'helpers/format-number';
 
 import { useUpdateIndex } from 'hooks/useUpdateIndex';
 
@@ -25,14 +27,19 @@ import DelegateModal from 'web/modals/DelegateModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Discord from 'assets/discord.svg';
+import IconFail from 'assets/icon-fail.svg';
+import IconSuccess from 'assets/icon-success.svg';
 import Twitter from 'assets/twitter.svg';
 
 import AssetLogo from 'basics/AssetLogo';
 import { Button } from 'basics/buttons';
 import CircularProgress from 'basics/CircularProgress';
+import { ToggleGroup } from 'basics/inputs';
 import { PageLoader } from 'basics/loaders';
 
+import { getProposalsRequest, PROPOSAL_FILTER } from 'pages/governance/api/api';
 import { MarketKey } from 'pages/vote/api/types';
+import { GOV_ICE, UP_ICE } from 'pages/vote/components/MainPage/MainPage';
 import { getPercent } from 'pages/vote/components/MainPage/Table/VoteAmount/VoteAmount';
 
 const Container = styled.div<{ $fromTop: boolean; $visible: boolean }>`
@@ -155,15 +162,30 @@ const Row = styled.div`
     ${rowStyles}
 `;
 
-const Market = styled(LinkRouter)`
+const LinkInner = styled(LinkRouter)`
     ${rowStyles};
     cursor: pointer;
     color: ${COLORS.titleText};
     text-decoration: none;
+    flex: 1;
 
     span {
         border-bottom: 0.1rem dashed ${COLORS.purple};
     }
+`;
+
+const VoteType = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex: 2;
+    justify-content: flex-start;
+`;
+
+const VoteAmount = styled(VoteType)`
+    justify-content: flex-end;
+    flex: 4;
+    white-space: nowrap;
 `;
 
 const Buttons = styled.div`
@@ -188,6 +210,23 @@ const AssetLogoSecond = styled(AssetLogoStyled)`
     margin-left: -0.8rem;
 `;
 
+const IconAgainst = styled(IconFail)`
+    height: 1.6rem;
+    width: 1.6rem;
+    margin-right: 0.5rem;
+`;
+
+const IconFor = styled(IconSuccess)`
+    height: 1.6rem;
+    width: 1.6rem;
+    margin-right: 0.5rem;
+`;
+
+const OPTIONS = [
+    { value: UP_ICE, label: 'Markets' },
+    { value: GOV_ICE, label: 'DAO' },
+];
+
 interface Props {
     fromTop: boolean;
     popupVisible: boolean;
@@ -201,7 +240,9 @@ const DelegateeStats = forwardRef(
         { fromTop, popupVisible, delegatee, delegatees, withClaim }: Props,
         popupRef: RefObject<HTMLDivElement>,
     ) => {
-        const [votes, setVotes] = useState<(DelegateeVote & MarketKey)[]>(null);
+        const [marketVotes, setMarketVotes] = useState<(DelegateeVote & MarketKey)[]>(null);
+        const [daoVotes, setDaoVotes] = useState(null);
+        const [selectedAsset, setSelecttedAsset] = useState(UP_ICE);
 
         const { isLogged } = useAuthStore();
 
@@ -210,24 +251,73 @@ const DelegateeStats = forwardRef(
         const updateIndex = useUpdateIndex(10000);
 
         useEffect(() => {
-            getDelegateeVotes(delegatee.account).then(res => {
-                setVotes(res.sort((a, b) => +b.total_votes - +a.total_votes));
+            if (getAssetString(selectedAsset) !== getAssetString(UP_ICE)) {
+                setMarketVotes(null);
+                return;
+            }
+            getDelegateeVotes(delegatee.account, selectedAsset).then(res => {
+                setMarketVotes(res.sort((a, b) => +b.total_votes - +a.total_votes));
                 const assets = res.reduce((acc, item) => {
                     acc.push(getAssetFromString(item.asset1), getAssetFromString(item.asset2));
                     return acc;
                 }, []);
                 processNewAssets(assets);
             });
-        }, [updateIndex]);
+        }, [updateIndex, selectedAsset]);
+
+        useEffect(() => {
+            if (getAssetString(selectedAsset) !== getAssetString(GOV_ICE)) {
+                setDaoVotes(null);
+                return;
+            }
+            getProposalsRequest({
+                filter: PROPOSAL_FILTER.HISTORY,
+                pubkey: delegatee.account,
+                page: 1,
+                pageSize: 500,
+            }).then(res => {
+                const summary = res.proposals.results.map(proposal => {
+                    const { id, logvote_set } = proposal;
+
+                    const result = logvote_set.reduce(
+                        (acc, vote) => {
+                            const amount = Number(vote.amount);
+
+                            const isFor = vote.vote_choice === 'vote_for';
+
+                            const key = isFor ? 'sum_for' : 'sum_against';
+                            acc[key] += amount;
+
+                            if (vote.asset_code === GD_ICE_CODE) {
+                                acc[`${key}_gdice`] += amount;
+                            }
+
+                            return acc;
+                        },
+                        { sum_for: 0, sum_against: 0, sum_for_gdice: 0, sum_against_gdice: 0 },
+                    );
+
+                    return {
+                        id,
+                        sum_for: result.sum_for,
+                        sum_against: result.sum_against,
+                        sum_for_gdice: result.sum_for_gdice,
+                        sum_against_gdice: result.sum_against_gdice,
+                    };
+                });
+
+                setDaoVotes(summary);
+            });
+        }, [selectedAsset]);
 
         const votesSum = useMemo(() => {
-            if (!votes) return 0;
+            if (!marketVotes) return 0;
 
-            return votes.reduce((acc, item) => {
+            return marketVotes.reduce((acc, item) => {
                 acc += Number(item.total_votes);
                 return acc;
             }, 0);
-        }, [votes]);
+        }, [marketVotes]);
 
         return (
             <Container $fromTop={fromTop} $visible={popupVisible} ref={popupRef}>
@@ -258,17 +348,24 @@ const DelegateeStats = forwardRef(
                         )}
                     </Links>
                 )}
-                {!!Number(delegatee.managed_ice) &&
-                    (!votes ? (
+
+                <h3>How This Delegate Votes</h3>
+                <ToggleGroup
+                    value={selectedAsset}
+                    options={OPTIONS}
+                    onChange={setSelecttedAsset}
+                    fullWidth
+                />
+                {getAssetString(selectedAsset) === getAssetString(UP_ICE) ? (
+                    !marketVotes ? (
                         <Stats>
                             <PageLoader />
                         </Stats>
                     ) : (
                         <Stats>
-                            <h3>How This Delegate Votes</h3>
-                            {votes.map(vote => (
+                            {marketVotes.map(vote => (
                                 <StatsRow key={vote.id}>
-                                    <Market
+                                    <LinkInner
                                         to={`${MarketRoutes.main}/${vote.asset1}/${vote.asset2}`}
                                     >
                                         <AssetLogoStyled
@@ -284,24 +381,41 @@ const DelegateeStats = forwardRef(
                                         <span>
                                             {vote.asset1_code} / {vote.asset2_code}
                                         </span>
-                                    </Market>
+                                    </LinkInner>
                                     <span>
-                                        {getPercent(vote.total_votes, delegatee.managed_ice)}%
+                                        {getPercent(
+                                            vote.total_votes,
+                                            delegatee.managed_ice[getAssetString(selectedAsset)],
+                                        )}
+                                        %
                                     </span>
                                     <CircularProgress
                                         percentage={
-                                            +getPercent(vote.total_votes, delegatee.managed_ice)
+                                            +getPercent(
+                                                vote.total_votes,
+                                                delegatee.managed_ice[
+                                                    getAssetString(selectedAsset)
+                                                ],
+                                            )
                                         }
                                     />
                                 </StatsRow>
                             ))}
-                            {Number(delegatee.managed_ice) - votesSum > 0 && (
+                            {Number(delegatee.managed_ice[getAssetString(selectedAsset)]) -
+                                votesSum >
+                                0 && (
                                 <StatsRow>
                                     <Row>Unused Voting Power</Row>
                                     <span>
                                         {getPercent(
-                                            (Number(delegatee.managed_ice) - votesSum).toString(),
-                                            delegatee.managed_ice,
+                                            (
+                                                Number(
+                                                    delegatee.managed_ice[
+                                                        getAssetString(selectedAsset)
+                                                    ],
+                                                ) - votesSum
+                                            ).toString(),
+                                            delegatee.managed_ice[getAssetString(selectedAsset)],
                                         )}
                                         %
                                     </span>
@@ -309,16 +423,76 @@ const DelegateeStats = forwardRef(
                                         percentage={
                                             +getPercent(
                                                 (
-                                                    Number(delegatee.managed_ice) - votesSum
+                                                    Number(
+                                                        delegatee.managed_ice[
+                                                            getAssetString(selectedAsset)
+                                                        ],
+                                                    ) - votesSum
                                                 ).toString(),
-                                                delegatee.managed_ice,
+                                                delegatee.managed_ice[
+                                                    getAssetString(selectedAsset)
+                                                ],
                                             )
                                         }
                                     />
                                 </StatsRow>
                             )}
                         </Stats>
-                    ))}
+                    )
+                ) : !daoVotes ? (
+                    <Stats>
+                        <PageLoader />
+                    </Stats>
+                ) : (
+                    <Stats>
+                        {daoVotes.length ? (
+                            daoVotes.map(vote => (
+                                <React.Fragment key={vote.id}>
+                                    {!!vote.sum_for && (
+                                        <StatsRow>
+                                            <LinkInner
+                                                to={`${GovernanceRoutes.proposal}/${vote.id}`}
+                                            >
+                                                <span>#{vote.id}</span>{' '}
+                                            </LinkInner>
+                                            <VoteType>
+                                                <IconFor />
+                                                For
+                                            </VoteType>
+                                            <VoteAmount>
+                                                <span>
+                                                    {formatBalance(vote.sum_for, true, true)} ICE
+                                                </span>
+                                            </VoteAmount>
+                                        </StatsRow>
+                                    )}
+                                    {!!vote.sum_against && (
+                                        <StatsRow>
+                                            <LinkInner
+                                                to={`${GovernanceRoutes.proposal}/${vote.id}`}
+                                            >
+                                                <span>#{vote.id}</span>{' '}
+                                            </LinkInner>
+                                            <VoteType>
+                                                <IconAgainst />
+                                                Against
+                                            </VoteType>
+                                            <VoteAmount>
+                                                <span>
+                                                    {formatBalance(vote.sum_against, true, true)}{' '}
+                                                    ICE
+                                                </span>
+                                            </VoteAmount>
+                                        </StatsRow>
+                                    )}
+                                </React.Fragment>
+                            ))
+                        ) : (
+                            <div>Not voted yet</div>
+                        )}
+                    </Stats>
+                )}
+
                 <Buttons>
                     <Button
                         isRounded

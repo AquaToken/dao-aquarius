@@ -129,7 +129,7 @@ const DailyStats = ({ base, counter }: DailyStatsProps): React.ReactNode => {
                 </DetailValue>
             </DetailsColumn>
             <DetailsColumn>
-                <DetailTitle>Volume 24h</DetailTitle>
+                <DetailTitle>Volume 24H</DetailTitle>
                 <DetailValue>
                     {volume24 ? (
                         volume24 === '-' ? (
@@ -143,7 +143,7 @@ const DailyStats = ({ base, counter }: DailyStatsProps): React.ReactNode => {
                 </DetailValue>
             </DetailsColumn>
             <DetailsColumn>
-                <DetailTitle>Change 24h</DetailTitle>
+                <DetailTitle>Change 24H</DetailTitle>
                 <DetailValue>
                     {change24 ? (
                         change24 === '-' ? (

@@ -19,6 +19,7 @@ import Upbit from 'assets/upbit.svg';
 import ExternalLink from 'basics/ExternalLink';
 
 const Container = styled.section`
+    width: 100%;
     position: relative;
     display: grid;
     padding: 8rem 10rem 11.6rem;

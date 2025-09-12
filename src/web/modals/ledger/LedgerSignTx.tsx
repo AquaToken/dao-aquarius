@@ -2,15 +2,16 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { ModalProps } from 'types/modal';
-
 import { useIsMounted } from 'hooks/useIsMounted';
+
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
+import { ModalProps } from 'types/modal';
+
 import Button from 'basics/buttons/Button';
-import { IconFail, IconPending, IconSuccess } from 'basics/Icons';
+import { IconFail, IconPending, IconSuccess } from 'basics/icons';
 import DotsLoader from 'basics/loaders/DotsLoader';
-import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 import { flexAllCenter, respondDown } from '../../mixins';
 import { Breakpoints, COLORS } from '../../styles';
@@ -85,7 +86,7 @@ const LedgerSignTx = ({ params, close }: ModalProps<RequestModalProps>) => {
     }, []);
 
     return (
-        <>
+        <ModalWrapper>
             <ModalTitle>Transaction</ModalTitle>
             <ModalDescription>View and sign the transaction in Ledger Device</ModalDescription>
 
@@ -101,7 +102,7 @@ const LedgerSignTx = ({ params, close }: ModalProps<RequestModalProps>) => {
             </Status>
 
             <RightButton onClick={() => close()}>Close</RightButton>
-        </>
+        </ModalWrapper>
     );
 };
 

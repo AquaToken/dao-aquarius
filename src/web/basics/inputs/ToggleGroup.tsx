@@ -6,7 +6,7 @@ import { COLORS } from 'web/styles';
 
 import { Option } from 'basics/inputs/Select';
 
-const ToggleBlock = styled.div<{ $isRounded: boolean }>`
+const ToggleBlock = styled.div<{ $isRounded: boolean; $fullWidth: boolean }>`
     background-color: ${({ $isRounded }) => ($isRounded ? COLORS.white : COLORS.gray)};
     border: ${({ $isRounded }) => ($isRounded ? `0.1rem solid ${COLORS.gray}` : 'none')};
     border-radius: ${({ $isRounded }) => ($isRounded ? '3.2rem' : '0.5rem')};
@@ -14,12 +14,18 @@ const ToggleBlock = styled.div<{ $isRounded: boolean }>`
     font-size: 1.4rem;
     line-height: 1.6rem;
     color: ${COLORS.paragraphText};
+    width: ${({ $fullWidth }) => ($fullWidth ? '100%' : 'fit-content')};
 `;
 
-const ToggleOption = styled.label<{ $isChecked: boolean; $isRounded: boolean }>`
+const ToggleOption = styled.label<{
+    $isChecked: boolean;
+    $isRounded: boolean;
+    $fullWidth: boolean;
+}>`
     display: flex;
     align-items: center;
     justify-content: center;
+    flex: ${({ $fullWidth }) => ($fullWidth ? 1 : 'unset')};
     padding: 0.8rem 1.6rem;
     margin: 0.4rem;
     white-space: nowrap;
@@ -50,12 +56,14 @@ const ToggleGroup = <T,>({
     value,
     onChange,
     isRounded,
+    fullWidth,
     ...props
 }: {
     value: T;
     options: Option<T>[];
     onChange: (value: T) => void;
     isRounded?: boolean;
+    fullWidth?: boolean;
 }): React.ReactNode => {
     const [selectedOption, setSelectedOption] = useState(
         options.find(option => option.value === value),
@@ -66,7 +74,7 @@ const ToggleGroup = <T,>({
     }, [value]);
 
     return (
-        <ToggleBlock {...props} $isRounded={isRounded}>
+        <ToggleBlock {...props} $isRounded={isRounded} $fullWidth={fullWidth}>
             {options.map(item => {
                 const isSelected = selectedOption?.value === item.value;
                 return (
@@ -74,6 +82,7 @@ const ToggleGroup = <T,>({
                         key={item.value.toString()}
                         $isChecked={isSelected}
                         $isRounded={isRounded}
+                        $fullWidth={fullWidth}
                         onClick={(e: React.MouseEvent) => {
                             e.preventDefault();
                             onChange(item.value);

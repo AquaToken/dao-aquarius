@@ -2,12 +2,13 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
-import { GOV_ICE_CODE, ICE_ISSUER } from 'constants/assets';
+import { GD_ICE_CODE, GOV_ICE_CODE, ICE_ISSUER } from 'constants/assets';
 import { LockerRoutes } from 'constants/routes';
 
 import { getDateString } from 'helpers/date';
 import ErrorHandler from 'helpers/error-handler';
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
+import { createAsset } from 'helpers/token';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
 import { useIsMounted } from 'hooks/useIsMounted';
@@ -23,6 +24,7 @@ import { ModalProps } from 'types/modal';
 import { flexAllCenter, flexRowSpaceBetween } from 'web/mixins';
 import { COLORS } from 'web/styles';
 
+import DIce from 'assets/dice-logo.svg';
 import Ice from 'assets/ice-logo.svg';
 import Fail from 'assets/icon-fail.svg';
 import Success from 'assets/icon-success.svg';
@@ -32,7 +34,7 @@ import ExternalLink from 'basics/ExternalLink';
 import Input from 'basics/inputs/Input';
 import RangeInput from 'basics/inputs/RangeInput';
 import Select from 'basics/inputs/Select';
-import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 import { SimpleProposalOptions } from '../../../pages/GovernanceVoteProposalPage';
 
@@ -84,17 +86,22 @@ const IceLogo = styled(Ice)`
     height: 3.2rem;
     width: 3.2rem;
 `;
+const DIceLogo = styled(DIce)`
+    margin-right: 0.8rem;
+    height: 3.2rem;
+    width: 3.2rem;
+`;
 
 const StyledInput = styled(Input)`
     margin-top: 1.2rem;
     margin-bottom: 3.3rem;
-    flex: 2;
+    flex: 3;
 `;
 
 const StyledSelect = styled(Select)`
     margin-top: 1.2rem;
     margin-bottom: 3.3rem;
-    flex: 1;
+    flex: 2;
 `;
 
 const ClaimBack = styled.div`
@@ -125,9 +132,12 @@ const GetAquaLabel = styled.span`
     color: ${COLORS.grayText};
 `;
 
-const GOV_ICE = StellarService.createAsset(GOV_ICE_CODE, ICE_ISSUER);
+const GOV_ICE = createAsset(GOV_ICE_CODE, ICE_ISSUER);
+const GD_ICE = createAsset(GD_ICE_CODE, ICE_ISSUER);
 
-const OPTIONS = [{ label: 'ICE', value: GOV_ICE, icon: <IceLogo /> }];
+const OPTIONS = [{ label: GOV_ICE_CODE, value: GOV_ICE, icon: <IceLogo /> }];
+
+const EXTENDED_OPTIONS = [...OPTIONS, { label: GD_ICE_CODE, value: GD_ICE, icon: <DIceLogo /> }];
 
 const ConfirmVoteModal = ({
     params,
@@ -151,6 +161,8 @@ const ConfirmVoteModal = ({
     const formattedBalance = hasTrustLine && formatBalance(targetBalance);
 
     const unlockDate = new Date(endDate).getTime() + 60 * 60 * 1000;
+
+    const hasGDIce = account?.getAssetBalance(GD_ICE) !== null;
 
     useEffect(() => {
         setAmount('');
@@ -230,7 +242,7 @@ const ConfirmVoteModal = ({
     };
 
     return (
-        <>
+        <ModalWrapper>
             <ModalTitle>Confirm vote</ModalTitle>
             <ModalDescription>
                 Your ICE will be locked until the voting ends. Please check the details carefully.
@@ -269,7 +281,12 @@ const ConfirmVoteModal = ({
                     inputMode="decimal"
                 />
 
-                <StyledSelect options={OPTIONS} value={targetAsset} onChange={setTargetAsset} />
+                <StyledSelect
+                    options={hasGDIce ? EXTENDED_OPTIONS : OPTIONS}
+                    value={targetAsset}
+                    onChange={setTargetAsset}
+                    disabled={!hasGDIce}
+                />
             </ContentRow>
 
             <RangeInput
@@ -301,7 +318,7 @@ const ConfirmVoteModal = ({
             >
                 SUBMIT VOTE
             </StyledButton>
-        </>
+        </ModalWrapper>
     );
 };
 

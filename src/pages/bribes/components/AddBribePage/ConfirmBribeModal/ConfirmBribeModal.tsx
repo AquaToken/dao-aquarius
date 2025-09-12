@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import { getDateString } from 'helpers/date';
 import ErrorHandler from 'helpers/error-handler';
 import { formatBalance } from 'helpers/format-number';
+import { createAsset } from 'helpers/token';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
 import { useIsMounted } from 'hooks/useIsMounted';
@@ -19,21 +20,13 @@ import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 import { ModalProps } from 'types/modal';
 import { ClassicToken } from 'types/token';
 
-import { flexAllCenter, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
+import { flexAllCenter } from 'web/mixins';
+import { COLORS } from 'web/styles';
 
 import Asset from 'basics/Asset';
 import Button from 'basics/buttons/Button';
 import Market from 'basics/Market';
-import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
-
-const Container = styled.div`
-    width: 52.8rem;
-
-    ${respondDown(Breakpoints.md)`
-        width: 100%;
-    `}
-`;
+import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 const PairBlock = styled.div`
     ${flexAllCenter};
@@ -43,15 +36,16 @@ const PairBlock = styled.div`
     margin-bottom: 2.3rem;
 `;
 
-const BribeInfo = styled.div`
+export const BribeInfo = styled.div`
     display: flex;
     flex-direction: column;
     margin-top: 4.7rem;
     padding-bottom: 3rem;
     border-bottom: 0.1rem dashed ${COLORS.gray};
+    margin-bottom: 3rem;
 `;
 
-const InfoRow = styled.div`
+export const InfoRow = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -61,20 +55,16 @@ const InfoRow = styled.div`
     }
 `;
 
-const Label = styled.span`
+export const Label = styled.span`
     font-size: 1.6rem;
     line-height: 1.8rem;
     color: ${COLORS.grayText};
 `;
 
-const Value = styled.span`
+export const Value = styled.span`
     font-size: 1.6rem;
     line-height: 2.8rem;
     color: ${COLORS.paragraphText};
-`;
-
-const StyledButton = styled(Button)`
-    margin-top: 3rem;
 `;
 
 const DAY = 24 * 60 * 60 * 1000;
@@ -110,9 +100,7 @@ const ConfirmBribeModal = ({
     const isMounted = useIsMounted();
 
     const onSubmit = async () => {
-        const balance = account.getAssetBalance(
-            StellarService.createAsset(rewardAsset.code, rewardAsset.issuer),
-        );
+        const balance = account.getAssetBalance(createAsset(rewardAsset.code, rewardAsset.issuer));
 
         if (balance === null) {
             ToastService.showErrorToast(`You don't have a trustline for ${rewardAsset.code}`);
@@ -171,7 +159,7 @@ const ConfirmBribeModal = ({
     };
 
     return (
-        <Container>
+        <ModalWrapper>
             <ModalTitle>Confirm bribe</ModalTitle>
             <ModalDescription>Please check all the details to create a bribe</ModalDescription>
             <PairBlock>
@@ -205,10 +193,10 @@ const ConfirmBribeModal = ({
                     </Value>
                 </InfoRow>
             </BribeInfo>
-            <StyledButton isBig fullWidth onClick={() => onSubmit()} pending={pending}>
+            <Button isBig fullWidth onClick={() => onSubmit()} pending={pending}>
                 add bribe
-            </StyledButton>
-        </Container>
+            </Button>
+        </ModalWrapper>
     );
 };
 

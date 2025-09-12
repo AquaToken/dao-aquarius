@@ -1,9 +1,9 @@
-import * as React from 'react';
 import { useEffect } from 'react';
 import styled from 'styled-components';
 
 import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
+import { PageContainer, SectionWrapper } from 'web/pages/commonPageStyles';
+import { Breakpoints } from 'web/styles';
 
 import Community from 'components/Community';
 import DelegateBlock from 'components/DelegateBlock';
@@ -15,12 +15,6 @@ import AquaLinks from 'pages/token/components/AquaLinks/AquaLinks';
 import AquaPerformance from 'pages/token/components/AquaPerformance/AquaPerformance';
 import AquaStatistics from 'pages/token/components/AquaStatistics/AquaStatistics';
 import MainBlock from 'pages/token/components/MainBlock/MainBlock';
-
-const Container = styled.main`
-    flex: 1 0 auto;
-    background-color: ${COLORS.white};
-    overflow: hidden;
-`;
 
 const AquaLinksStyled = styled(AquaLinks)`
     ${respondDown(Breakpoints.sm)`
@@ -34,7 +28,7 @@ const TokenPage = () => {
     }, []);
 
     return (
-        <Container>
+        <PageContainer>
             <MainBlock />
 
             <AquaStatistics />
@@ -49,10 +43,12 @@ const TokenPage = () => {
 
             <AquaPerformance />
 
-            <Community />
+            <SectionWrapper>
+                <Community />
 
-            <Subscribe />
-        </Container>
+                <Subscribe />
+            </SectionWrapper>
+        </PageContainer>
     );
 };
 

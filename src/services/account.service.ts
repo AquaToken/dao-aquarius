@@ -2,12 +2,14 @@ import AccountRecord, * as StellarSdk from '@stellar/stellar-sdk';
 import { Horizon } from '@stellar/stellar-sdk';
 import BigNumber from 'bignumber.js';
 
-import { getCustomTokens, getNativePrices } from 'api/amm';
+import { getNativePrices } from 'api/amm';
 
+import { POOL_TYPE } from 'constants/amm';
 import { ASSETS_ENV_DATA, DEFAULT_ICE_ASSETS } from 'constants/assets';
 
 import { getAssetFromString } from 'helpers/assets';
 import { getEnv, getNetworkPassphrase } from 'helpers/env';
+import { createAsset, createLumen } from 'helpers/token';
 
 import { LoginTypes } from 'store/authStore/types';
 
@@ -27,7 +29,6 @@ import {
     WalletConnectService,
     WalletKitService,
 } from './globalServices';
-import { POOL_TYPE } from './soroban.service';
 import { BuildSignAndSubmitStatuses } from './wallet-connect.service';
 
 const VAULT_MARKER = 'GA2T6GR7VXXXBETTERSAFETHANSORRYXXXPROTECTEDBYLOBSTRVAULT';
@@ -73,7 +74,9 @@ export default class AccountService extends Horizon.AccountResponse {
         }
 
         if (this.authType === LoginTypes.secret) {
-            return Promise.resolve(SorobanService.signWithSecret(tx).toEnvelope().toXDR('base64'));
+            return Promise.resolve(
+                SorobanService.connection.signWithSecret(tx).toEnvelope().toXDR('base64'),
+            );
         }
 
         if (this.authType === LoginTypes.lobstr) {
@@ -120,7 +123,7 @@ export default class AccountService extends Horizon.AccountResponse {
         let signedTx;
 
         if (this.authType === LoginTypes.secret) {
-            signedTx = SorobanService.signWithSecret(tx);
+            signedTx = SorobanService.connection.signWithSecret(tx);
         }
 
         if (this.authType === LoginTypes.lobstr) {
@@ -135,7 +138,9 @@ export default class AccountService extends Horizon.AccountResponse {
         if (this.authType === LoginTypes.ledger && !this.isMultisigEnabled) {
             const result = LedgerService.signTx(tx as StellarSdk.Transaction)
                 .then(signed =>
-                    withResult ? SorobanService.submitTx(signed) : StellarService.submitTx(signed),
+                    withResult
+                        ? SorobanService.connection.submitTx(signed)
+                        : StellarService.submitTx(signed),
                 )
                 .then(res => {
                     callCallbackIfExist();
@@ -167,7 +172,9 @@ export default class AccountService extends Horizon.AccountResponse {
                 ModalService.closeAllModals();
             }
             return (
-                withResult ? SorobanService.submitTx(signedTx) : StellarService.submitTx(signedTx)
+                withResult
+                    ? SorobanService.connection.submitTx(signedTx)
+                    : StellarService.submitTx(signedTx)
             ).then(res => {
                 callCallbackIfExist();
                 return res;
@@ -205,7 +212,9 @@ export default class AccountService extends Horizon.AccountResponse {
     getAssetBalance(asset: ClassicToken, ignoreReserves?: boolean): number | null;
     getAssetBalance(asset: Token, ignoreReserves?: boolean): number | null | Promise<string> {
         if (asset.type === TokenType.soroban) {
-            return SorobanService.getTokenBalance(asset.contract, this.account_id).then(res => res);
+            return SorobanService.token
+                .getTokenBalance(asset.contract, this.account_id)
+                .then(res => res);
         }
         if (asset.isNative()) {
             const nativeBalance = this.balances.find(
@@ -278,7 +287,7 @@ export default class AccountService extends Horizon.AccountResponse {
                 lp as unknown as PoolClassicProcessed
             ).tokens
                 .reduce((acc, asset, index) => {
-                    const price = prices.get(asset.contractId(getNetworkPassphrase())) ?? 0;
+                    const price = prices.get(asset.contractId(getNetworkPassphrase())).price ?? 0;
 
                     const amount = Number(lp.reserves[index]) * Number(price);
 
@@ -309,7 +318,7 @@ export default class AccountService extends Horizon.AccountResponse {
     hasAllIceTrustlines() {
         return DEFAULT_ICE_ASSETS.map(asset => {
             const [code, issuer] = asset.split(':');
-            const stellarAsset = StellarService.createAsset(code, issuer);
+            const stellarAsset = createAsset(code, issuer);
             return this.getAssetBalance(stellarAsset);
         }).every(asset => asset !== null);
     }
@@ -317,7 +326,7 @@ export default class AccountService extends Horizon.AccountResponse {
     getUntrustedIceAssets() {
         return DEFAULT_ICE_ASSETS.reduce((acc, asset) => {
             const [code, issuer] = asset.split(':');
-            const stellarAsset = StellarService.createAsset(code, issuer);
+            const stellarAsset = createAsset(code, issuer);
             if (this.getAssetBalance(stellarAsset) === null) {
                 acc.push(stellarAsset);
                 return acc;
@@ -378,32 +387,35 @@ export default class AccountService extends Horizon.AccountResponse {
             ({ asset_type }) => asset_type === 'native',
         );
 
-        const knownCustomTokens = await getCustomTokens();
+        const nativePrices = await getNativePrices();
+
+        const knownCustomTokens = [...nativePrices.values()]
+            .filter(({ token }) => token.type === TokenType.soroban)
+            .map(({ token }) => token);
+
         const customUserBalances = await Promise.all(
             knownCustomTokens.map(token =>
-                SorobanService.getTokenBalance(token.contract, this.account_id),
+                SorobanService.token.getTokenBalance(token.contract, this.account_id),
             ),
         );
 
-        const nativePrices = await getNativePrices();
-
         const classicBalances = classicAssetsBalances.map(balance => {
-            const asset = StellarService.createAsset(balance.asset_code, balance.asset_issuer);
+            const asset = createAsset(balance.asset_code, balance.asset_issuer);
             const contract = asset.contractId(getNetworkPassphrase());
 
             return {
                 balance: balance.balance,
                 nativeBalance: nativePrices.has(contract)
-                    ? +balance.balance * +nativePrices.get(contract)
+                    ? +balance.balance * +nativePrices.get(contract).price
                     : 0,
-                token: StellarService.createAsset(balance.asset_code, balance.asset_issuer),
+                token: createAsset(balance.asset_code, balance.asset_issuer),
             };
         });
 
         const customBalances = knownCustomTokens
             .map((token, index) => ({
                 balance: customUserBalances[index],
-                nativeBalance: +customUserBalances[index] * +nativePrices.get(token.contract),
+                nativeBalance: +customUserBalances[index] * +nativePrices.get(token.contract).price,
                 token,
             }))
             .filter(({ balance }) => !!Number(balance));
@@ -419,7 +431,7 @@ export default class AccountService extends Horizon.AccountResponse {
             {
                 balance: nativeBalanceInstance.balance,
                 nativeBalance: +nativeBalanceInstance.balance,
-                token: StellarService.createLumen(),
+                token: createLumen(),
             },
             ...balances,
         ];

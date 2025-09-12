@@ -7,6 +7,7 @@ import { LockerRoutes } from 'constants/routes';
 
 import ErrorHandler from 'helpers/error-handler';
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
+import { createAsset } from 'helpers/token';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 
 import { useIsMounted } from 'hooks/useIsMounted';
@@ -34,7 +35,7 @@ import Input from 'basics/inputs/Input';
 import RangeInput from 'basics/inputs/RangeInput';
 import Select, { Option } from 'basics/inputs/Select';
 import Market from 'basics/Market';
-import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
+import { ModalDescription, ModalTitle, ModalWrapper, StickyButtonWrapper } from 'basics/ModalAtoms';
 
 import DelegateBlock from 'pages/vote/components/MainPage/VoteModals/DelegateBlock/DelegateBlock';
 
@@ -110,12 +111,6 @@ const AssetSelect = styled(Select)`
     ${respondDown(Breakpoints.md)`
         flex: 1.6;
     `}
-`;
-
-const ButtonContainer = styled.div`
-    margin-top: 2.5rem;
-    padding-top: 3.2rem;
-    border-top: 0.1rem dashed ${COLORS.gray};
 `;
 
 const GetAquaBlock = styled.div`
@@ -215,31 +210,6 @@ const TotalAmount = styled.div`
 const ResetValues = styled.div`
     color: ${COLORS.tooltip};
     cursor: pointer;
-`;
-
-const Scrollable = styled.div<{ scrollDisabled: boolean }>`
-    overflow-y: ${({ scrollDisabled }) => (scrollDisabled ? 'unset' : 'scroll')};
-    padding: 0 1rem;
-    max-height: 15rem;
-
-    ${respondDown(Breakpoints.md)`
-        max-height: calc(100vh - 16rem);
-    `};
-
-    &::-webkit-scrollbar {
-        width: 0.5rem;
-    }
-
-    /* Track */
-    &::-webkit-scrollbar-track {
-        background: ${COLORS.white};
-    }
-
-    /* Handle */
-    &::-webkit-scrollbar-thumb {
-        background: ${COLORS.purple};
-        border-radius: 0.25rem;
-    }
 `;
 
 const MINIMUM_ICE_AMOUNT = 10;
@@ -550,14 +520,8 @@ const VotesAmountModal = ({
                     <Market
                         verticalDirections
                         assets={[
-                            StellarService.createAsset(
-                                pairs[0].asset1_code,
-                                pairs[0].asset1_issuer,
-                            ),
-                            StellarService.createAsset(
-                                pairs[0].asset2_code,
-                                pairs[0].asset2_issuer,
-                            ),
+                            createAsset(pairs[0].asset1_code, pairs[0].asset1_issuer),
+                            createAsset(pairs[0].asset2_code, pairs[0].asset2_issuer),
                         ]}
                     />
                 </AssetsInfoBlock>
@@ -618,48 +582,42 @@ const VotesAmountModal = ({
                             </ResetValues>
                         )}
                     </ContentRow>
-                    <Scrollable scrollDisabled={isDownVoteModal || isSingleVoteForModal}>
-                        <PairsList>
-                            {selectedPairs.map(pair => (
-                                <PairBlock key={pair.market_key}>
-                                    <AssetsInfo>
-                                        <Market
-                                            assets={[
-                                                StellarService.createAsset(
-                                                    pair.asset1_code,
-                                                    pair.asset1_issuer,
-                                                ),
-                                                StellarService.createAsset(
-                                                    pair.asset2_code,
-                                                    pair.asset2_issuer,
-                                                ),
-                                            ]}
-                                            withoutDomains
-                                        />
-                                    </AssetsInfo>
-                                    <StyledInput
-                                        value={pairsAmount[pair[keyType]]}
-                                        onChange={e => {
-                                            onPairInputChange(e.target.value, pair[keyType]);
-                                        }}
-                                        onFocus={() => {
-                                            setIsHandleEdit(true);
-                                        }}
-                                        isMedium
-                                        isRightAligned
-                                        inputMode="decimal"
+
+                    <PairsList>
+                        {selectedPairs.map(pair => (
+                            <PairBlock key={pair.market_key}>
+                                <AssetsInfo>
+                                    <Market
+                                        assets={[
+                                            createAsset(pair.asset1_code, pair.asset1_issuer),
+                                            createAsset(pair.asset2_code, pair.asset2_issuer),
+                                        ]}
+                                        withoutDomains
                                     />
-                                    <CloseButton
-                                        onClick={() => {
-                                            deletePair(pair);
-                                        }}
-                                    >
-                                        <CloseIcon />
-                                    </CloseButton>
-                                </PairBlock>
-                            ))}
-                        </PairsList>
-                    </Scrollable>
+                                </AssetsInfo>
+                                <StyledInput
+                                    value={pairsAmount[pair[keyType]]}
+                                    onChange={e => {
+                                        onPairInputChange(e.target.value, pair[keyType]);
+                                    }}
+                                    onFocus={() => {
+                                        setIsHandleEdit(true);
+                                    }}
+                                    isMedium
+                                    isRightAligned
+                                    inputMode="decimal"
+                                />
+                                <CloseButton
+                                    onClick={() => {
+                                        deletePair(pair);
+                                    }}
+                                >
+                                    <CloseIcon />
+                                </CloseButton>
+                            </PairBlock>
+                        ))}
+                    </PairsList>
+
                     <TotalAmountRow>
                         <Label>Total:</Label>
                         <TotalAmount>
@@ -684,7 +642,7 @@ const VotesAmountModal = ({
 
             {targetAsset.code === UP_ICE.code && <DelegateBlock />}
 
-            <ButtonContainer>
+            <StickyButtonWrapper>
                 <Button
                     fullWidth
                     onClick={() => onSubmit()}
@@ -693,7 +651,7 @@ const VotesAmountModal = ({
                 >
                     confirm
                 </Button>
-            </ButtonContainer>
+            </StickyButtonWrapper>
         </ModalWrapper>
     );
 };

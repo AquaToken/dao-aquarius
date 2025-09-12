@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import { IconSort } from 'basics/Icons';
+import { IconSort } from 'basics/icons';
 import PageLoader from 'basics/loaders/PageLoader';
 
 interface Sort {
@@ -97,7 +97,11 @@ const TableHead = styled.div<{ $mobileBreakpoint: Breakpoints }>`
     `}
 `;
 
-const TableHeadRow = styled.div<{ $withPadding: boolean; $mobileBreakpoint: Breakpoints }>`
+const TableHeadRow = styled.div<{
+    $withPadding: boolean;
+    $bodyIsClickable: boolean;
+    $mobileBreakpoint: Breakpoints;
+}>`
     display: flex;
     align-items: stretch;
     width: 100%;
@@ -107,6 +111,7 @@ const TableHeadRow = styled.div<{ $withPadding: boolean; $mobileBreakpoint: Brea
     color: ${COLORS.grayText};
     white-space: nowrap;
     padding-right: ${({ $withPadding }) => ($withPadding ? '1.5rem' : 'unset')};
+    padding: ${({ $bodyIsClickable }) => ($bodyIsClickable ? '0.8rem' : 'unset')};
 
     ${({ $mobileBreakpoint }) => respondDown($mobileBreakpoint)`
         flex-direction: column;
@@ -163,9 +168,10 @@ const Cell = styled.div<{
     `}
 `;
 
-const HeadCell = styled(Cell)<{ $withSort?: boolean }>`
+const HeadCell = styled(Cell)<{ $withSort?: boolean; $sortActive?: boolean }>`
     color: ${COLORS.grayText};
     cursor: ${({ $withSort }) => ($withSort ? 'pointer' : 'unset')};
+    font-weight: ${({ $sortActive }) => ($sortActive ? 700 : 400)};
 
     & > svg {
         margin-left: 0.4rem;
@@ -173,6 +179,11 @@ const HeadCell = styled(Cell)<{ $withSort?: boolean }>`
 
     &:hover {
         color: ${({ $withSort }) => ($withSort ? COLORS.purple : COLORS.grayText)};
+    }
+
+    & > div {
+        display: flex;
+        align-items: center;
     }
 `;
 
@@ -349,11 +360,12 @@ const Table = forwardRef(
                 <TableHead $mobileBreakpoint={mobileBreakpoint}>
                     <TableHeadRow
                         $withPadding={Boolean(virtualScrollProps)}
+                        $bodyIsClickable={Boolean(body?.[0]?.onRowClick)}
                         $mobileBreakpoint={mobileBreakpoint}
                     >
                         {head.map(
                             (
-                                { children, sort, align, flexSize, hideOnWeb, hideOnMobile },
+                                { children, sort, align, flexSize, hideOnWeb, hideOnMobile, style },
                                 index,
                             ) => (
                                 <HeadCell
@@ -361,18 +373,21 @@ const Table = forwardRef(
                                     onClick={() => sort?.onClick()}
                                     $align={align}
                                     $withSort={Boolean(sort)}
+                                    $sortActive={sort?.isEnabled}
                                     $flexSize={flexSize}
                                     $hideOnWeb={hideOnWeb}
                                     $hideOnMobile={hideOnMobile}
                                     $mobileBreakpoint={mobileBreakpoint}
                                 >
-                                    {children}
-                                    {Boolean(sort) && (
-                                        <IconSort
-                                            isEnabled={sort.isEnabled}
-                                            isReversed={sort.isReversed}
-                                        />
-                                    )}
+                                    <div style={style}>
+                                        {children}
+                                        {Boolean(sort) && (
+                                            <IconSort
+                                                isEnabled={sort.isEnabled}
+                                                isReversed={sort.isReversed}
+                                            />
+                                        )}
+                                    </div>
                                 </HeadCell>
                             ),
                         )}

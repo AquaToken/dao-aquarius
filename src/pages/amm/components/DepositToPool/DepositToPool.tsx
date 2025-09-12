@@ -3,6 +3,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { NumericFormat } from 'react-number-format';
 import styled from 'styled-components';
 
+import { DAY } from 'constants/intervals';
+
 import { contractValueToAmount } from 'helpers/amount';
 import { getAssetString } from 'helpers/assets';
 import { formatBalance } from 'helpers/format-number';
@@ -19,32 +21,34 @@ import {
 } from 'services/globalServices';
 import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
-import { PoolExtended, PoolRewardsInfo } from 'types/amm';
+import { PoolExtended, PoolIncentives, PoolRewardsInfo } from 'types/amm';
 import { ModalProps } from 'types/modal';
 import { SorobanToken, Token, TokenType } from 'types/token';
 
-import { customScroll, flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { customScroll, flexRowSpaceBetween, noSelect, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Arrow from 'assets/icon-arrow-right-long.svg';
 import Info from 'assets/icon-info.svg';
+import Revert from 'assets/icon-revert.svg';
 
 import Alert from 'basics/Alert';
 import Asset from 'basics/Asset';
 import Button from 'basics/buttons/Button';
+import { Checkbox } from 'basics/inputs';
 import Input from 'basics/inputs/Input';
 import Label from 'basics/Label';
 import DotsLoader from 'basics/loaders/DotsLoader';
-import { ModalTitle } from 'basics/ModalAtoms';
+import { ModalTitle, ModalWrapper, StickyButtonWrapper } from 'basics/ModalAtoms';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import SuccessModal from '../SuccessModal/SuccessModal';
 
 const Container = styled.div<{ $isModal: boolean }>`
-    width: ${({ $isModal }) => ($isModal ? '52.3rem' : '100%')};
+    width: 100%;
     max-height: 82vh;
     overflow: auto;
-    padding-top: ${({ $isModal }) => ($isModal ? '0' : '4rem')};
+    padding-top: 4rem;
 
     ${customScroll};
 
@@ -93,6 +97,11 @@ const DescriptionRow = styled.div`
     }
 `;
 
+const PoolRates = styled.span`
+    cursor: pointer;
+    ${noSelect};
+`;
+
 const Balance = styled.div`
     position: absolute;
     bottom: calc(100% + 1.2rem);
@@ -132,17 +141,6 @@ const PoolInfo = styled.div<{ $isModal: boolean }>`
     `}
 `;
 
-const TooltipInner = styled.span`
-    color: ${COLORS.white}!important;
-    white-space: pre-line;
-    max-width: 30rem;
-    width: max-content;
-
-    ${respondDown(Breakpoints.sm)`
-        width: 12rem;
-    `}
-`;
-
 const TooltipInnerBalance = styled.div`
     display: flex;
     flex-direction: column;
@@ -159,6 +157,14 @@ const TooltipRow = styled.div`
     &:last-child:not(:first-child) {
         font-weight: 700;
     }
+`;
+
+const CheckboxStyled = styled(Checkbox)`
+    margin-bottom: 2.4rem;
+`;
+
+const RevertIcon = styled(Revert)`
+    margin-left: 0.4rem;
 `;
 
 interface DepositToPoolParams {
@@ -179,6 +185,15 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
     const [assetsReserves, setAssetsReserves] = useState(null);
     const [poolRewards, setPoolRewards] = useState(null);
     const [balances, setBalances] = useState(null);
+    const [amounts, setAmounts] = useState<Map<string, string>>(
+        new Map<string, string>(pool.tokens.map(asset => [getAssetString(asset), ''])),
+    );
+    const [pending, setPending] = useState(false);
+    const [isBalancedDeposit, setIsBalancedDeposit] = useState(true);
+
+    const [priceIndex, setPriceIndex] = useState(0);
+
+    const [incentives, setIncentives] = useState<PoolIncentives[] | null>(null);
 
     useEffect(() => {
         if (!account) {
@@ -209,9 +224,11 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
             setAccountShare(null);
             return;
         }
-        SorobanService.getTokenBalance(pool.share_token_address, account.accountId()).then(res => {
-            setAccountShare(res);
-        });
+        SorobanService.token
+            .getTokenBalance(pool.share_token_address, account.accountId())
+            .then(res => {
+                setAccountShare(res);
+            });
     }, [account]);
 
     useEffect(() => {
@@ -219,9 +236,18 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
             setPoolRewards(null);
             return;
         }
-        SorobanService.getPoolRewards(account.accountId(), pool.address).then(res => {
+        SorobanService.amm.getPoolRewards(account.accountId(), pool.address).then(res => {
             setPoolRewards(res);
         });
+    }, [account, pool]);
+
+    useEffect(() => {
+        if (!account) {
+            setIncentives(null);
+            return;
+        }
+
+        SorobanService.amm.getPoolIncentives(account.accountId(), pool.address).then(setIncentives);
     }, [account, pool]);
 
     const reserves: Map<string, number> = useMemo(
@@ -233,65 +259,85 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                         pool.reserves[index],
                         (pool.tokens[index] as SorobanToken).decimal,
                     ),
-                ]),
+                ]) as [string, number][],
             ),
         [pool],
     );
-
-    const [amounts, setAmounts] = useState<Map<string, string>>(
-        new Map<string, string>(pool.tokens.map(asset => [getAssetString(asset), ''])),
-    );
-    const [pending, setPending] = useState(false);
 
     const hasAllAmounts = useMemo(
         () => [...amounts.values()].every(value => Boolean(+value)),
         [amounts],
     );
 
+    const isValidForDepositAmounts = useMemo(() => {
+        const hasSomeAmount = [...amounts.values()].some(value => Boolean(+value));
+
+        return isBalancedDeposit ? hasAllAmounts : hasSomeAmount;
+    }, [hasAllAmounts, isBalancedDeposit, amounts]);
+
     const { sharesBefore, sharesAfter, sharesAfterValue } = useMemo(() => {
-        const firstAssetString = getAssetString(pool.tokens[0]);
+        const totalShare = Number(pool.total_share) / Math.pow(10, pool.share_token_decimals);
 
-        const amountBeforeDeposit =
-            (reserves.get(firstAssetString) * accountShare) /
-            (Number(pool.total_share) / Math.pow(10, pool.share_token_decimals));
-
-        if (Number(pool.total_share) === 0) {
+        if (!reserves || reserves.size === 0 || totalShare <= 0) {
             return {
                 sharesBefore: 0,
-                sharesAfter: hasAllAmounts ? 100 : null,
+                sharesAfter: isValidForDepositAmounts ? 100 : null,
                 sharesAfterValue: null,
             };
         }
 
-        if (hasAllAmounts) {
-            const oldReserves = +reserves.get(firstAssetString);
-            const newReserves = oldReserves + +amounts.get(firstAssetString);
-            const newTotalShare =
-                (Number(pool.total_share) / Math.pow(10, pool.share_token_decimals) / oldReserves) *
-                newReserves;
+        const accountShareNum = Number(accountShare) || 0;
+        const sharesBefore = (accountShareNum / totalShare) * 100;
 
+        // Collect pool reserves and user deposit amounts
+        const tokenReserves: number[] = [];
+        const tokenDeposits: number[] = [];
+        for (const token of pool.tokens) {
+            const key = getAssetString(token);
+            tokenReserves.push(Number(reserves.get(key) || 0));
+            tokenDeposits.push(Number(amounts.get(key) || 0));
+        }
+
+        const totalReserves = tokenReserves.reduce((a, b) => a + b, 0);
+        const totalDeposit = tokenDeposits.reduce((a, b) => a + b, 0);
+
+        if (totalReserves === 0 || totalDeposit === 0) {
             return {
-                sharesBefore:
-                    (accountShare /
-                        (Number(pool.total_share) / Math.pow(10, pool.share_token_decimals))) *
-                    100,
-                sharesAfter:
-                    ((+amounts.get(firstAssetString) + amountBeforeDeposit) / newReserves) * 100,
-                sharesAfterValue:
-                    ((+amounts.get(firstAssetString) + amountBeforeDeposit) / newReserves) *
-                    newTotalShare,
+                sharesBefore,
+                sharesAfter: null,
+                sharesAfterValue: null,
             };
         }
 
+        // === One-sided deposit handling ===
+        // The idea: if only one token is deposited,
+        // the protocol internally swaps part of it to the missing tokens
+        // so that the effective deposit matches pool proportions.
+        const effectiveDeposits: number[] = [];
+        for (let i = 0; i < tokenReserves.length; i++) {
+            const proportion = tokenReserves[i] / totalReserves;
+            effectiveDeposits[i] = totalDeposit * proportion;
+        }
+
+        // Effective ratio of deposit to reserve (same for all tokens after balancing)
+        const ratio = effectiveDeposits[0] / tokenReserves[0];
+
+        // Minted LP shares based on this ratio
+        const mintedShares = totalShare * ratio;
+
+        // New account share and total supply after deposit
+        const newAccountShare = accountShareNum + mintedShares;
+        const newTotalShare = totalShare + mintedShares;
+
+        const sharesAfter = (newAccountShare / newTotalShare) * 100;
+        const sharesAfterValue = newAccountShare;
+
         return {
-            sharesBefore:
-                (accountShare /
-                    (Number(pool.total_share) / Math.pow(10, pool.share_token_decimals))) *
-                100,
-            sharesAfter: null,
-            sharesAfterValue: null,
+            sharesBefore,
+            sharesAfter,
+            sharesAfterValue,
         };
-    }, [amounts, pool, reserves, accountShare]);
+    }, [amounts, pool, reserves, accountShare, isValidForDepositAmounts]);
 
     const rates: Map<string, string> = useMemo(() => {
         if (Number(pool.total_share) === 0 && !hasAllAmounts) {
@@ -406,7 +452,8 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
             openCurrentWalletIfExist();
         }
         setPending(true);
-        SorobanService.getDepositTx(account?.accountId(), pool.address, pool.tokens, amounts)
+        SorobanService.amm
+            .getDepositTx(account?.accountId(), pool.address, pool.tokens, amounts)
             .then(tx => {
                 hash = tx.hash().toString('hex');
                 return account.signAndSubmitTx(tx, true);
@@ -436,7 +483,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
 
                 pool.tokens.forEach((token, index) => {
                     if (token.type === TokenType.soroban) {
-                        const resAmount = SorobanService.i128ToInt(
+                        const resAmount = SorobanService.scVal.i128ToInt(
                             resultAmounts[index],
                             token.decimal,
                         );
@@ -450,7 +497,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                 ModalService.openModal(SuccessModal, {
                     assets: pool.tokens,
                     amounts: resultAmounts.map((value, index) =>
-                        SorobanService.i128ToInt(
+                        SorobanService.scVal.i128ToInt(
                             value,
                             (pool.tokens[index] as SorobanToken).decimal,
                         ),
@@ -479,7 +526,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
         setAmounts(new Map(amounts.set(getAssetString(asset), value)));
 
         // empty pool
-        if (Number(pool.total_share) === 0) {
+        if (Number(pool.total_share) === 0 || !isBalancedDeposit) {
             return;
         }
 
@@ -493,6 +540,12 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                 setAmounts(new Map(amounts.set(getAssetString(token), newAmount)));
             });
     };
+
+    useEffect(() => {
+        pool.tokens.forEach(token => {
+            setAmounts(new Map(amounts.set(getAssetString(token), '')));
+        });
+    }, [isBalancedDeposit]);
 
     useEffect(() => {
         if (!baseAmount || !counterAmount) {
@@ -510,9 +563,21 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
         }
     }, []);
 
-    return (
-        <Container $isModal={isModal}>
-            {isModal && <ModalTitle>Add liquidity</ModalTitle>}
+    const ButtonAdd = (
+        <Button
+            isBig
+            onClick={() => onSubmit()}
+            pending={pending}
+            disabled={
+                isBalancedDeposit ? !hasAllAmounts : ![...amounts.values()].some(v => Boolean(+v))
+            }
+        >
+            deposit
+        </Button>
+    );
+
+    const content = (
+        <>
             {Number(pool.total_share) === 0 && (
                 <Alert
                     title="This is the first deposit into this pool."
@@ -592,6 +657,14 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                     </FormRow>
                 ))}
 
+                {pool.pool_type === 'stable' && !!Number(pool.total_share) && (
+                    <CheckboxStyled
+                        checked={isBalancedDeposit}
+                        onChange={setIsBalancedDeposit}
+                        label="Match pool ratio"
+                    />
+                )}
+
                 {isModal && (
                     <>
                         <DescriptionRow>
@@ -614,6 +687,16 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                                     : '0'}
                             </span>
                         </DescriptionRow>
+                        {Boolean(rates) && (
+                            <DescriptionRow>
+                                <span>Pool rates</span>
+                                <PoolRates
+                                    onClick={() => setPriceIndex(prev => (prev + 1) % rates.size)}
+                                >
+                                    {[...rates.values()][priceIndex]} <RevertIcon />{' '}
+                                </PoolRates>
+                            </DescriptionRow>
+                        )}
                     </>
                 )}
 
@@ -632,7 +715,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                     </DescriptionRow>
                     {Boolean(Number(pool.total_share)) && Boolean(poolRewards) && (
                         <DescriptionRow>
-                            <span>Rewards Boost</span>
+                            <span>ICE Reward Boost</span>
                             <span>
                                 <Label
                                     labelText={`x${(+calculateBoostValue(poolRewards)).toFixed(2)}`}
@@ -670,65 +753,51 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                             </span>
                         </DescriptionRow>
                     )}
-                    {pool.tokens.map(asset => (
-                        <DescriptionRow key={getAssetString(asset)}>
-                            <span>
-                                Pooled {asset.code}{' '}
-                                {Boolean(rates) && (
-                                    <Tooltip
-                                        content={
-                                            <TooltipInner>
-                                                {rates.get(getAssetString(asset))}
-                                            </TooltipInner>
-                                        }
-                                        position={TOOLTIP_POSITION.right}
-                                        showOnHover
-                                    >
-                                        <Info />
-                                    </Tooltip>
-                                )}
-                            </span>
-                            <span>
-                                {hasAllAmounts && (
-                                    <>
-                                        {+pool.total_share
-                                            ? formatBalance(
-                                                  (+reserves.get(getAssetString(asset)) *
-                                                      accountShare) /
-                                                      (Number(pool.total_share) / 1e7),
-                                                  true,
-                                              )
-                                            : 0}
-                                        <Arrow />
-                                    </>
-                                )}
-                                {reserves !== null ? (
-                                    formatBalance(
-                                        (+pool.total_share
-                                            ? (+reserves.get(getAssetString(asset)) *
-                                                  accountShare) /
-                                              (Number(pool.total_share) / 1e7)
-                                            : 0) + +amounts.get(getAssetString(asset)),
-                                        true,
-                                    )
-                                ) : (
-                                    <DotsLoader />
-                                )}
-                            </span>
-                        </DescriptionRow>
-                    ))}
+
+                    {incentives?.length
+                        ? incentives
+                              .filter(incentive => !!Number(incentive.info.tps))
+                              .map(incentive => (
+                                  <DescriptionRow key={incentive.token.contract}>
+                                      <span>Daily incentives {incentive.token.code}</span>
+                                      <span>
+                                          {formatBalance(
+                                              (+incentive.info.tps * DAY * sharesBefore) /
+                                                  1000 /
+                                                  100,
+                                              true,
+                                          )}{' '}
+                                          {incentive.token.code}
+                                          {sharesAfter && (
+                                              <>
+                                                  <Arrow />
+                                                  {formatBalance(
+                                                      (+incentive.info.tps * DAY * sharesAfter) /
+                                                          1000 /
+                                                          100,
+                                                      true,
+                                                  )}{' '}
+                                                  {incentive.token.code}
+                                              </>
+                                          )}
+                                      </span>
+                                  </DescriptionRow>
+                              ))
+                        : null}
                 </PoolInfo>
 
-                <Button
-                    isBig
-                    onClick={() => onSubmit()}
-                    pending={pending}
-                    disabled={!hasAllAmounts}
-                >
-                    deposit
-                </Button>
+                {isModal ? <StickyButtonWrapper>{ButtonAdd}</StickyButtonWrapper> : ButtonAdd}
             </Form>
-        </Container>
+        </>
+    );
+
+    return isModal ? (
+        <ModalWrapper>
+            <ModalTitle>Add liquidity</ModalTitle>
+            {content}
+        </ModalWrapper>
+    ) : (
+        <Container $isModal={isModal}>{content}</Container>
     );
 };
 

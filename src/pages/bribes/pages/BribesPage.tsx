@@ -11,18 +11,18 @@ import Bribes from 'assets/bribes.svg';
 import Plus from 'assets/icon-plus.svg';
 
 import Button from 'basics/buttons/Button';
+import FAQ from 'basics/FAQ';
 
 import DelegateBlockSmall from 'components/DelegateBlockSmall';
 
 import BribesList from 'pages/bribes/components/BribesPage/BribesList/BribesList';
-
-import FAQ from '../components/BribesPage/FAQ/FAQ';
+import { BribeQuestions } from 'pages/bribes/components/BribesPage/FAQ/Questions';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
 `;
 
-const Background = styled.div`
+export const Background = styled.div`
     display: flex;
     align-items: center;
     background-color: ${COLORS.lightGray};
@@ -36,7 +36,7 @@ const Background = styled.div`
     `}
 `;
 
-const MainContentWrap = styled.div`
+export const MainContentWrap = styled.div`
     ${commonMaxWidth};
     display: flex;
     flex-direction: column;
@@ -48,7 +48,7 @@ const Banner = styled(MainContentWrap)`
     padding: 0 4rem;
 `;
 
-const MainContent = styled.div`
+export const MainContent = styled.div`
     max-width: 60rem;
     padding: 10% 4rem;
 
@@ -59,7 +59,7 @@ const MainContent = styled.div`
     `}
 `;
 
-const BribesLogo = styled(Bribes)`
+export const BribesLogo = styled(Bribes)`
     height: 100%;
     position: absolute;
     right: 5%;
@@ -72,7 +72,7 @@ const BribesLogo = styled(Bribes)`
     `}
 `;
 
-const Title = styled.span`
+export const Title = styled.span`
     font-weight: bold;
     font-size: 8rem;
     line-height: 9.4rem;
@@ -102,14 +102,14 @@ const Title = styled.span`
       `}
 `;
 
-const Description = styled.p`
+export const Description = styled.p`
     font-size: 1.6rem;
     line-height: 2.4rem;
     color: ${COLORS.grayText};
     margin-bottom: 2.4rem;
 `;
 
-const MainContentFooter = styled.div`
+export const MainContentFooter = styled.div`
     display: flex;
     justify-content: space-between;
 
@@ -118,11 +118,11 @@ const MainContentFooter = styled.div`
     `}
 `;
 
-const PlusIcon = styled(Plus)`
+export const PlusIcon = styled(Plus)`
     margin-left: 1.6rem;
 `;
 
-const AddBribeButton = styled(Button)`
+export const AddBribeButton = styled(Button)`
     flex: 1;
     max-width: 22.2rem;
     margin-right: 1.6rem;
@@ -135,7 +135,7 @@ const AddBribeButton = styled(Button)`
     `}
 `;
 
-const TableContainer = styled.div`
+export const TableContainer = styled.div`
     position: relative;
     padding: 0 4rem;
     ${commonMaxWidth};
@@ -183,7 +183,7 @@ const BribesPage = () => {
                 <BribesList />
             </TableContainer>
 
-            <FAQ />
+            <FAQ questions={BribeQuestions} />
         </MainBlock>
     );
 };

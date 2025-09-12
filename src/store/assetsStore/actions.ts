@@ -11,8 +11,7 @@ import {
     getUsdcAssetData,
 } from 'helpers/assets';
 import { getIsTestnetEnv } from 'helpers/env';
-
-import { StellarService } from 'services/globalServices';
+import { createAsset, createLumen } from 'helpers/token';
 
 import { ClassicToken, Token, TokenType } from 'types/token';
 
@@ -40,7 +39,7 @@ export function getAssets() {
                     payload: {
                         assets: [
                             aquaStellarAsset,
-                            StellarService.createLumen(),
+                            createLumen(),
                             usdcStellarAsset,
                             ...assets
                                 .filter(
@@ -70,13 +69,10 @@ export function processNewAssets(assets: Token[] | AssetSimple[]) {
             asset =>
                 (asset as Token).type !== TokenType.soroban &&
                 !cached.has(`${asset.code}:${(asset as ClassicToken | AssetSimple).issuer}`) &&
-                !StellarService.createAsset(
-                    asset.code,
-                    (asset as ClassicToken | AssetSimple).issuer,
-                ).isNative(),
+                !createAsset(asset.code, (asset as ClassicToken | AssetSimple).issuer).isNative(),
         ) as ClassicToken[] | AssetSimple[];
 
-        if (!cached.has(ALL_ICE_ASSETS[0])) {
+        if (!cached.has(ALL_ICE_ASSETS[ALL_ICE_ASSETS.length - 1])) {
             newAssets.push(...ALL_ICE_ASSETS.map(str => getAssetFromString(str) as ClassicToken));
         }
 
@@ -103,10 +99,7 @@ export function processNewAssets(assets: Token[] | AssetSimple[]) {
 
         getAssetsInfo(newAssets).then(res => {
             res.forEach(info => {
-                cached.set(
-                    getAssetString(StellarService.createAsset(info.code, info.issuer)),
-                    info,
-                );
+                cached.set(getAssetString(createAsset(info.code, info.issuer)), info);
             });
 
             localStorage.setItem(ASSET_CACHE, JSON.stringify(Array.from(cached.entries())));

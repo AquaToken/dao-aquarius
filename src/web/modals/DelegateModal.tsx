@@ -3,8 +3,6 @@ import { useEffect, useState } from 'react';
 import { NumericFormat } from 'react-number-format';
 import styled from 'styled-components';
 
-import { ICE_ISSUER, UP_ICE_CODE } from 'constants/assets';
-
 import ErrorHandler from 'helpers/error-handler';
 import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
@@ -17,6 +15,7 @@ import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { Delegatee } from 'types/delegate';
 import { ModalProps } from 'types/modal';
+import { ClassicToken } from 'types/token';
 
 import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -24,12 +23,17 @@ import { Breakpoints, COLORS } from 'web/styles';
 import Ice from 'assets/ice-logo.svg';
 import IconProfile from 'assets/icon-profile.svg';
 
+import AssetLogo from 'basics/AssetLogo';
 import { Button } from 'basics/buttons';
 import { Input, RangeInput, Select, ToggleGroup } from 'basics/inputs';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
 
-import { UP_ICE } from 'pages/vote/components/MainPage/MainPage';
+import { GOV_ICE, UP_ICE } from 'pages/vote/components/MainPage/MainPage';
+
+const DelegateButton = styled(Button)`
+    margin-top: 4rem;
+`;
 
 const IceLogo = styled(Ice)`
     height: 1.8rem;
@@ -111,6 +115,25 @@ const PublicKeyWithIconStyled = styled(PublicKeyWithIcon)`
 
 const MINIMUM_AMOUNT = 10;
 
+const OPTIONS = [
+    {
+        value: UP_ICE,
+        label: (
+            <SelectItem>
+                {UP_ICE.code} <AssetLogo asset={UP_ICE} />
+            </SelectItem>
+        ),
+    },
+    {
+        value: GOV_ICE,
+        label: (
+            <SelectItem>
+                {GOV_ICE.code} <AssetLogo asset={GOV_ICE} />
+            </SelectItem>
+        ),
+    },
+];
+
 const DelegateModal = ({
     params,
     confirm,
@@ -120,6 +143,7 @@ const DelegateModal = ({
     const isKnownDelegatee =
         delegatee && !!delegatees.find(({ account }) => account === delegatee.account);
 
+    const [selectedToken, setSelectedToken] = useState<ClassicToken>(UP_ICE);
     const [amount, setAmount] = useState('');
     const [percent, setPercent] = useState(0);
     const [pending, setPending] = useState(false);
@@ -128,8 +152,7 @@ const DelegateModal = ({
 
     const { account } = useAuthStore();
 
-    const upvoteIce = StellarService.createAsset(UP_ICE_CODE, ICE_ISSUER);
-    const upvoteIceBalance = account.getAvailableForSwapBalance(upvoteIce);
+    const availableBalance = account.getAvailableForSwapBalance(selectedToken);
 
     useEffect(() => {
         if (!delegatee) {
@@ -145,7 +168,7 @@ const DelegateModal = ({
     const onPercentChange = (percent: number) => {
         setPercent(percent);
 
-        const newAmount = ((upvoteIceBalance * percent) / 100).toFixed(7);
+        const newAmount = ((availableBalance * percent) / 100).toFixed(7);
 
         setAmount(newAmount);
     };
@@ -153,7 +176,7 @@ const DelegateModal = ({
     const onAmountChange = (amount: string) => {
         setAmount(amount);
 
-        const newPercent = ((Number(amount) / upvoteIceBalance) * 100).toFixed(2);
+        const newPercent = ((Number(amount) / availableBalance) * 100).toFixed(2);
 
         setPercent(Number(newPercent));
     };
@@ -162,13 +185,15 @@ const DelegateModal = ({
         try {
             if (Number(amount) < MINIMUM_AMOUNT) {
                 ToastService.showErrorToast(
-                    `The value must be greater than ${MINIMUM_AMOUNT.toFixed(7)} upvoteICE`,
+                    `The value must be greater than ${MINIMUM_AMOUNT.toFixed(7)} ${
+                        selectedToken.code
+                    }`,
                 );
                 return;
             }
 
-            if (+amount > +account.getAssetBalance(UP_ICE)) {
-                ToastService.showErrorToast('Insufficient upvoteICE balance');
+            if (+amount > +account.getAssetBalance(selectedToken)) {
+                ToastService.showErrorToast(`Insufficient ${selectedToken.code} balance`);
                 return;
             }
 
@@ -186,8 +211,13 @@ const DelegateModal = ({
                 openCurrentWalletIfExist();
             }
             setPending(true);
-            const tx = await StellarService.createDelegateTx(account, destination, amount);
-            const processedTx = await StellarService.processIceTx(tx, UP_ICE);
+            const tx = await StellarService.createDelegateTx(
+                account,
+                selectedToken,
+                destination,
+                amount,
+            );
+            const processedTx = await StellarService.processIceTx(tx, selectedToken);
             const result = await account.signAndSubmitTx(processedTx);
 
             setPending(false);
@@ -220,10 +250,10 @@ const DelegateModal = ({
             <FormRow>
                 <Balance>
                     Available:{' '}
-                    <BalanceClickable onClick={() => onAmountChange(upvoteIceBalance.toFixed(7))}>
-                        {formatBalance(upvoteIceBalance)}
+                    <BalanceClickable onClick={() => onAmountChange(availableBalance.toFixed(7))}>
+                        {formatBalance(availableBalance)}
                     </BalanceClickable>
-                    {UP_ICE_CODE}
+                    {selectedToken.code}
                 </Balance>
                 <NumericFormat
                     value={amount}
@@ -238,6 +268,7 @@ const DelegateModal = ({
                     decimalScale={7}
                     allowNegative={false}
                 />
+                <Select options={OPTIONS} value={selectedToken} onChange={setSelectedToken} />
             </FormRow>
 
             <RangeInput onChange={onPercentChange} value={percent} />
@@ -271,6 +302,7 @@ const DelegateModal = ({
                                             src={delegate.image}
                                             alt={delegate.name}
                                             width={24}
+                                            height={24}
                                         />
                                     ) : (
                                         <IconWrapper>
@@ -294,7 +326,7 @@ const DelegateModal = ({
                 )}
             </FormRow>
 
-            <Button
+            <DelegateButton
                 isBig
                 fullWidth
                 onClick={() => onSubmit()}
@@ -302,7 +334,7 @@ const DelegateModal = ({
                 pending={pending}
             >
                 Delegate
-            </Button>
+            </DelegateButton>
         </ModalWrapper>
     );
 };

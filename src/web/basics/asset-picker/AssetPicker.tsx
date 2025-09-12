@@ -1,20 +1,17 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { AssetSimple } from 'store/assetsStore/types';
-
 import { ModalService } from 'services/globalServices';
 
 import { Token } from 'types/token';
 
+import { textEllipsis } from 'web/mixins';
 import { COLORS } from 'web/styles';
 
 import Arrow from 'assets/icon-arrow-down.svg';
 
 import AssetPickerModal from 'basics/asset-picker/AssetPickerModal';
 import AssetLogo from 'basics/AssetLogo';
-
-import { textEllipsis } from '../../mixins';
 
 const Container = styled.div`
     display: flex;
@@ -29,6 +26,7 @@ const Container = styled.div`
     gap: 0.8rem;
     cursor: pointer;
     margin: 0.9rem 0;
+    position: relative;
 
     &:hover {
         border-color: ${COLORS.grayText};
@@ -43,16 +41,31 @@ const Code = styled.span`
 
 const ArrowIcon = styled(Arrow)`
     min-width: 1.6rem;
+    margin-left: auto;
+`;
+
+const Label = styled.span`
+    position: absolute;
+    bottom: calc(100% + 1.2rem);
+    font-size: 1.6rem;
+    line-height: 1.8rem;
+    color: ${COLORS.paragraphText};
+    left: 0;
 `;
 
 type Props = {
     asset: Token;
     onUpdate: (asset: Token) => void;
-    assetsList: AssetSimple[];
+    assetsList: Token[];
+    label?: string;
 };
 
-const AssetPicker = ({ asset, onUpdate, assetsList }: Props) => (
-    <Container onClick={() => ModalService.openModal(AssetPickerModal, { assetsList, onUpdate })}>
+const AssetPicker = ({ asset, onUpdate, assetsList, label, ...props }: Props) => (
+    <Container
+        onClick={() => ModalService.openModal(AssetPickerModal, { assetsList, onUpdate })}
+        {...props}
+    >
+        {label && <Label>{label}</Label>}
         <AssetLogo asset={asset} />
         <Code>{asset.code}</Code>
         <ArrowIcon />

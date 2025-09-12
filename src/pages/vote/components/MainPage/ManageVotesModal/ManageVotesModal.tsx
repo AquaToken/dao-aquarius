@@ -1,6 +1,7 @@
-import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
+
+import { createAsset } from 'helpers/token';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
@@ -12,38 +13,11 @@ import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Market from 'basics/Market';
-import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 import VotesList from './VotesList/VotesList';
 
 import { PairStats } from '../../../api/types';
-
-const Container = styled.div`
-    width: 80.6rem;
-    max-height: 80vh;
-    padding-right: 0.5rem;
-    overflow: auto;
-
-    &::-webkit-scrollbar {
-        width: 0.5rem;
-    }
-
-    /* Track */
-    &::-webkit-scrollbar-track {
-        background: ${COLORS.white};
-    }
-
-    /* Handle */
-    &::-webkit-scrollbar-thumb {
-        background: ${COLORS.purple};
-        border-radius: 0.25rem;
-    }
-
-    ${respondDown(Breakpoints.md)`
-        width: 100%;
-        max-height: unset;
-    `};
-`;
 
 const PairBlock = styled.div`
     ${flexAllCenter};
@@ -63,8 +37,8 @@ const ManageVotesModal = ({ params }: ModalProps<{ pair: PairStats }>) => {
     const { pair } = params;
     const { account } = useAuthStore();
 
-    const base = StellarService.createAsset(pair.asset1_code, pair.asset1_issuer);
-    const counter = StellarService.createAsset(pair.asset2_code, pair.asset2_issuer);
+    const base = createAsset(pair.asset1_code, pair.asset1_issuer);
+    const counter = createAsset(pair.asset2_code, pair.asset2_issuer);
 
     useEffect(() => {
         setClaims(StellarService.getPairVotes(pair, account.accountId())?.reverse());
@@ -75,7 +49,7 @@ const ManageVotesModal = ({ params }: ModalProps<{ pair: PairStats }>) => {
     }
 
     return (
-        <Container>
+        <ModalWrapper $isWide>
             <ModalTitle>Manage your votes</ModalTitle>
             <ModalDescription>
                 View your votes for a market and claim unlocked votes back
@@ -85,7 +59,7 @@ const ManageVotesModal = ({ params }: ModalProps<{ pair: PairStats }>) => {
             </PairBlock>
 
             <VotesList votes={claims} pair={pair} />
-        </Container>
+        </ModalWrapper>
     );
 };
 

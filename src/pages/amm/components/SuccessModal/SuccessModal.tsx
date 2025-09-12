@@ -1,4 +1,3 @@
-import * as React from 'react';
 import styled from 'styled-components';
 
 import { getIsTestnetEnv } from 'helpers/env';
@@ -12,16 +11,7 @@ import { Breakpoints, COLORS } from 'web/styles';
 import Button from 'basics/buttons/Button';
 import ExternalLink from 'basics/ExternalLink';
 import Market from 'basics/Market';
-import { ModalTitle } from 'basics/ModalAtoms';
-
-const Container = styled.div`
-    width: 52.3rem;
-    align-items: center;
-
-    ${respondDown(Breakpoints.md)`
-        width: 100%;
-    `}
-`;
+import { ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 const AssetsInfo = styled.div`
     ${flexAllCenter};
@@ -48,8 +38,9 @@ interface SuccessModalParams {
 
 const SuccessModal = ({ params, close }: ModalProps<SuccessModalParams>) => {
     const { assets, amounts, title, isSwap, hash } = params;
+
     return (
-        <Container>
+        <ModalWrapper>
             <ModalTitle>{title ?? 'Success'}</ModalTitle>
             <AssetsInfo>
                 <Market
@@ -69,7 +60,7 @@ const SuccessModal = ({ params, close }: ModalProps<SuccessModalParams>) => {
             </AssetsInfo>
 
             <StyledButton onClick={() => close()}>done</StyledButton>
-        </Container>
+        </ModalWrapper>
     );
 };
 

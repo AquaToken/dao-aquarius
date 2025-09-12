@@ -23,6 +23,7 @@ export const GOV_ICE_CODE = 'governICE';
 export const UP_ICE_CODE = 'upvoteICE';
 export const DOWN_ICE_CODE = 'downvoteICE';
 export const D_ICE_CODE = 'dICE';
+export const GD_ICE_CODE = 'gdICE';
 
 export const DEFAULT_ICE_ASSETS = [
     `${ICE_CODE}:${ICE_ISSUER}`,
@@ -31,7 +32,16 @@ export const DEFAULT_ICE_ASSETS = [
     `${DOWN_ICE_CODE}:${ICE_ISSUER}`,
 ];
 
-export const ALL_ICE_ASSETS = [...DEFAULT_ICE_ASSETS, `${D_ICE_CODE}:${ICE_ISSUER}`];
+export const DELEGATED_ICE_ASSETS = [`${D_ICE_CODE}:${ICE_ISSUER}`, `${GD_ICE_CODE}:${ICE_ISSUER}`];
+
+export const ICE_TO_DELEGATE = [`${UP_ICE_CODE}:${ICE_ISSUER}`, `${GOV_ICE_CODE}:${ICE_ISSUER}`];
+
+export const ICE_DELEGATION_MAP = new Map([
+    [`${UP_ICE_CODE}:${ICE_ISSUER}`, `${D_ICE_CODE}:${ICE_ISSUER}`],
+    [`${GOV_ICE_CODE}:${ICE_ISSUER}`, `${GD_ICE_CODE}:${ICE_ISSUER}`],
+]);
+
+export const ALL_ICE_ASSETS = [...DEFAULT_ICE_ASSETS, ...DELEGATED_ICE_ASSETS];
 
 export const ASSETS_ENV_DATA: AssetsEnvData = {
     [ENV_PRODUCTION]: {

@@ -1,7 +1,7 @@
-import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { getAssetString } from 'helpers/assets';
 import { getDateString } from 'helpers/date';
 import ErrorHandler from 'helpers/error-handler';
 import { formatBalance } from 'helpers/format-number';
@@ -18,7 +18,6 @@ import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { Delegatee } from 'types/delegate';
 import { ModalProps } from 'types/modal';
-import { Vote } from 'types/voting-tool';
 
 import { customScroll, flexAllCenter, flexColumnCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -27,11 +26,11 @@ import { Button } from 'basics/buttons';
 import Identicon from 'basics/Identicon';
 import { Checkbox } from 'basics/inputs';
 import { PageLoader } from 'basics/loaders';
-import { ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
+import { ModalTitle, ModalWrapper, StickyButtonWrapper } from 'basics/ModalAtoms';
 import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
 import Table, { CellAlign } from 'basics/Table';
 
-import { UP_ICE } from 'pages/vote/components/MainPage/MainPage';
+import { GOV_ICE, UP_ICE } from 'pages/vote/components/MainPage/MainPage';
 
 const DelegateBlock = styled.div`
     ${flexColumnCenter};
@@ -152,7 +151,7 @@ const DelegateClaimModal = ({ params }: ModalProps<Params>) => {
         setSelectedClaims(new Set(all));
     };
 
-    const onSubmit = async (claim?: Vote) => {
+    const onSubmit = async () => {
         if (account.authType === LoginTypes.walletConnect) {
             openCurrentWalletIfExist();
         }
@@ -160,34 +159,39 @@ const DelegateClaimModal = ({ params }: ModalProps<Params>) => {
             setPending(true);
 
             const ops = [...selectedClaims].reduce(
-                (acc, id, index) => [
-                    ...acc,
-                    ...StellarService.createClaimOperations(
-                        id,
-                        index === 1 && account.getAssetBalance(UP_ICE) === null,
-                    ),
-                ],
+                (acc, id) => [...acc, ...StellarService.createClaimOperations(id)],
                 [],
+            );
+
+            const hasUpIce = [...selectedClaims].some(cbId =>
+                claims.some(({ id, asset }) => cbId === id && asset === getAssetString(UP_ICE)),
+            );
+
+            const hasGovIce = [...selectedClaims].some(cbId =>
+                claims.some(({ id, asset }) => cbId === id && asset === getAssetString(GOV_ICE)),
             );
 
             const tx = await StellarService.buildTx(account, ops);
 
-            const processedTx = await StellarService.processIceTx(tx, UP_ICE);
+            let processedTx;
+
+            if (hasUpIce) {
+                processedTx = await StellarService.processIceTx(tx, UP_ICE);
+            }
+
+            if (hasGovIce) {
+                processedTx = await StellarService.processIceTx(tx, GOV_ICE);
+            }
 
             const result = await account.signAndSubmitTx(processedTx);
 
-            if (
-                (claim && claims.length === 1) ||
-                (!claim && selectedClaims.size === claims.length)
-            ) {
+            if (selectedClaims.size === claims.length) {
                 close();
             }
 
             if (isMounted.current) {
                 setPending(false);
-                setClaims(
-                    claims.filter(cb => (claim ? claim.id !== cb.id : !selectedClaims.has(cb.id))),
-                );
+                setClaims(claims.filter(cb => !selectedClaims.has(cb.id)));
                 setSelectedClaims(new Set());
             }
 
@@ -280,7 +284,9 @@ const DelegateClaimModal = ({ params }: ModalProps<Params>) => {
                                         flexSize: 1.5,
                                     },
                                     {
-                                        children: `${formatBalance(+claim.amount, true)} upvoteICE`,
+                                        children: `${formatBalance(+claim.amount, true)} ${
+                                            claim.asset.split(':')[0]
+                                        }`,
                                         label: 'Amount',
                                     },
                                     {
@@ -302,15 +308,17 @@ const DelegateClaimModal = ({ params }: ModalProps<Params>) => {
                     <span>All delegated ICE claimed back</span>
                 )}
             </List>
-            <Button
-                isBig
-                fullWidth
-                disabled={!selectedClaims.size}
-                pending={pending}
-                onClick={() => onSubmit()}
-            >
-                claim selected
-            </Button>
+            <StickyButtonWrapper>
+                <Button
+                    isBig
+                    fullWidth
+                    disabled={!selectedClaims.size}
+                    pending={pending}
+                    onClick={() => onSubmit()}
+                >
+                    claim selected
+                </Button>
+            </StickyButtonWrapper>
         </ModalWrapper>
     );
 };

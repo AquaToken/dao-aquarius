@@ -3,12 +3,20 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { D_ICE_CODE, DOWN_ICE_CODE, ICE_ISSUER, UP_ICE_CODE } from 'constants/assets';
+import {
+    D_ICE_CODE,
+    DOWN_ICE_CODE,
+    GD_ICE_CODE,
+    GOV_ICE_CODE,
+    ICE_ISSUER,
+    UP_ICE_CODE,
+} from 'constants/assets';
 import { MainRoutes, MarketRoutes } from 'constants/routes';
 
 import { getAssetString } from 'helpers/assets';
 import { getTimeAgoValue } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
+import { createAsset, createLumen } from 'helpers/token';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 import { LoginTypes } from 'store/authStore/types';
@@ -17,8 +25,7 @@ import useAuthStore from 'store/authStore/useAuthStore';
 import { ModalService, StellarService } from 'services/globalServices';
 import { StellarEvents } from 'services/stellar.service';
 
-import { Asset } from 'types/stellar';
-import { Token } from 'types/token';
+import { ClassicToken } from 'types/token';
 
 import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
@@ -324,9 +331,11 @@ const options: Option<SortTypes>[] = [
 const PAGE_SIZE = 20;
 const UPDATE_INTERVAL = 60 * 1000; // 1 minute
 
-export const UP_ICE = StellarService?.createAsset(UP_ICE_CODE, ICE_ISSUER);
-export const DOWN_ICE = StellarService?.createAsset(DOWN_ICE_CODE, ICE_ISSUER);
-export const DELEGATE_ICE = StellarService?.createAsset(D_ICE_CODE, ICE_ISSUER);
+export const UP_ICE = createAsset(UP_ICE_CODE, ICE_ISSUER);
+export const GOV_ICE = createAsset(GOV_ICE_CODE, ICE_ISSUER);
+export const DOWN_ICE = createAsset(DOWN_ICE_CODE, ICE_ISSUER);
+export const DELEGATE_ICE = createAsset(D_ICE_CODE, ICE_ISSUER);
+export const G_DELEGATE_ICE = createAsset(GD_ICE_CODE, ICE_ISSUER);
 
 enum UrlParams {
     sort = 'sort',
@@ -334,8 +343,8 @@ enum UrlParams {
     counter = 'counter',
 }
 
-const assetToUrlParams = (asset: Asset) => {
-    const assetInstance = StellarService.createAsset(asset.code, asset.issuer);
+const assetToUrlParams = (asset: ClassicToken) => {
+    const assetInstance = createAsset(asset.code, asset.issuer);
 
     if (assetInstance.isNative()) {
         return 'native';
@@ -346,12 +355,12 @@ const assetToUrlParams = (asset: Asset) => {
 
 const assetFromUrlParams = (params: string) => {
     if (params === 'native') {
-        return StellarService.createLumen();
+        return createLumen();
     }
 
     const [code, issuer] = params.split(':');
 
-    return StellarService.createAsset(code, issuer);
+    return createAsset(code, issuer);
 };
 
 export const getAssetsFromPairs = pairs =>
@@ -663,7 +672,7 @@ const MainPage = (): React.ReactNode => {
         }
     }, [isLogged]);
 
-    const changeSearch = (assets: Asset[]): void => {
+    const changeSearch = (assets: ClassicToken[]): void => {
         const [base, counter] = assets;
 
         const params = new URLSearchParams(location.search);
@@ -791,7 +800,7 @@ const MainPage = (): React.ReactNode => {
                 <PairSearch>
                     <AssetDropdown
                         assetsList={[searchBase, searchCounter].filter(Boolean)}
-                        onUpdate={(assets: Token[]) => {
+                        onUpdate={(assets: ClassicToken[]) => {
                             changeSearch(assets);
                         }}
                         excludeList={[searchBase, searchCounter].filter(Boolean)}

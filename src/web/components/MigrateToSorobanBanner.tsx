@@ -6,9 +6,9 @@ import { getPoolsToMigrate } from 'api/amm';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { Asset } from 'types/stellar';
-
 import { ModalService, StellarService } from 'services/globalServices';
+
+import { Asset } from 'types/stellar';
 
 import Soroban from 'assets/soroban.svg';
 
@@ -86,7 +86,13 @@ const MigrateToSorobanBanner = ({
     }
 
     const migrate = () => {
-        ModalService.openModal(MigrateLiquidityStep1, { pool, poolsToMigrate, base, counter });
+        ModalService.openModal(MigrateLiquidityStep1, {
+            pool,
+            poolsToMigrate,
+            base,
+            counter,
+            onUpdate: () => {},
+        });
     };
 
     return (

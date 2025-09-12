@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 
-import { COLORS } from 'web/styles';
+import { COLORS, hexWithOpacity } from 'web/styles';
+
+import Crown from 'assets/icon-crown.svg';
 
 import Label from 'basics/Label';
 
@@ -13,6 +15,10 @@ const StyledLabel = styled(Label)`
     margin: 0 0.5rem;
 `;
 
+const LabelWithIcon = styled.span`
+    gap: 0.4rem;
+`;
+
 export const BoostLabel = () => (
     <StyledLabel
         labelText="boost"
@@ -23,8 +29,18 @@ export const BoostLabel = () => (
 
 export const RewardLabel = () => (
     <StyledLabel
-        labelText="reward zone"
+        labelText={
+            <LabelWithIcon>
+                <Crown style={{ height: '0.6rem', width: '0.9rem' }} />
+                reward zone
+            </LabelWithIcon>
+        }
         tooltipText={`Any market with at least ${MIN_REWARDS_PERCENT}% of the total ICE votes is placed into the reward zone and will get rewards after the next rewards update.`}
+        color={COLORS.purple}
+        background={`${hexWithOpacity(COLORS.purple, 10)}`}
+        tooltipColor={COLORS.white}
+        tooltipBackground={COLORS.purple}
+        withoutBorder
     />
 );
 

@@ -34,6 +34,16 @@ export enum AMM_CONTRACT_METHOD {
     GET_CONSTANT_CREATION_FEE = 'get_standard_pool_payment_amount',
     GET_CREATION_FEE_TOKEN = 'get_init_pool_payment_token',
     GET_INIT_POOL_DESTINATION = 'get_init_pool_payment_address',
+    CALC_WITHDRAW_ONE_COIN = 'calc_withdraw_one_coin',
+    WITHDRAW_ONE_COIN = 'withdraw_one_coin',
+    WITHDRAW_CUSTOM = 'remove_liquidity_imbalance',
+    SCHEDULE_INCENTIVE = 'pool_gauge_schedule_reward',
+    GET_INCENTIVES_INFO = 'gauges_get_reward_info',
+    CLAIM_INCENTIVES = 'gauges_claim',
+    GET_INCENTIVES_MIN_DAILY_AMOUNT = 'pool_gauge_get_min_daily_amount',
+    GET_INCENTIVES_MIN_DURATION = 'pool_gauge_get_min_duration',
+    GET_POOL_INCENTIVES_MAP = 'get_gauges',
+    GET_POOL_CONFIG_PER_TOKEN = 'get_reward_configs',
 }
 
 export enum BATCH_CONTRACT_METHOD {
@@ -49,4 +59,10 @@ export enum ASSET_CONTRACT_METHOD {
     BURN = 'burn',
     SYMBOL = 'symbol',
     DECIMALS = 'decimals',
+}
+
+export enum CONTRACT_STATUS {
+    ACTIVE = 'active',
+    EXPIRED = 'expired',
+    NOT_FOUND = 'not_found',
 }

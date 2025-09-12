@@ -6,11 +6,12 @@ import { GOV_ICE_CODE, ICE_CODE, ICE_ISSUER } from 'constants/assets';
 import { MAX_BOOST, MAX_BOOST_PERIOD } from 'constants/ice';
 
 import { formatBalance } from 'helpers/format-number';
+import { createAsset } from 'helpers/token';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import AccountService from 'services/account.service';
-import { ModalService, StellarService } from 'services/globalServices';
+import { ModalService } from 'services/globalServices';
 
 import { ClaimableBalance } from 'types/stellar';
 
@@ -186,15 +187,11 @@ interface IceBlockProps {
 const IceBlock = ({ account, locks }: IceBlockProps): React.ReactNode => {
     const { isLogged } = useAuthStore();
 
-    const iceBalance = Number(
-        account.getAssetBalance(StellarService.createAsset(ICE_CODE, ICE_ISSUER)),
-    );
+    const iceBalance = Number(account.getAssetBalance(createAsset(ICE_CODE, ICE_ISSUER)));
 
     const upBalance = account.getAssetBalance(UP_ICE);
     const downBalance = account.getAssetBalance(DOWN_ICE);
-    const govBalance = account.getAssetBalance(
-        StellarService.createAsset(GOV_ICE_CODE, ICE_ISSUER),
-    );
+    const govBalance = account.getAssetBalance(createAsset(GOV_ICE_CODE, ICE_ISSUER));
 
     const getIceAmount = useCallback(
         () =>
@@ -224,7 +221,7 @@ const IceBlock = ({ account, locks }: IceBlockProps): React.ReactNode => {
 
     return (
         <Container>
-            <Title>Your available ICE balance</Title>
+            <Title>Your Available ICE Balance</Title>
             <div>
                 <BalanceRow>
                     <Logo />

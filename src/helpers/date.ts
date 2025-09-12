@@ -92,3 +92,6 @@ export function convertUTCToLocalDateIgnoringTimezone(date: Date) {
 
     return new Date(timestamp);
 }
+
+export const convertDateStrToTimestamp = (str: string): number =>
+    convertLocalDateToUTCIgnoringTimezone(new Date(str)).getTime();

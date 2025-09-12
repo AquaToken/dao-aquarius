@@ -2,11 +2,13 @@ import * as React from 'react';
 import { useLayoutEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
+import { formatBalance } from 'helpers/format-number';
+
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService } from 'services/globalServices';
 
-import { Delegatee as DelegateeType, MyDelegatees } from 'types/delegate';
+import { Delegatee as DelegateeType } from 'types/delegate';
 
 import Profile from 'assets/icon-profile.svg';
 
@@ -83,8 +85,8 @@ const IconWrap = styled.div`
 
 interface Props {
     delegatees: DelegateeType[];
-    myLocks?: Map<string, number>;
-    customDelegatees?: MyDelegatees[];
+    myLocks?: Map<string, { [key: string]: number }>;
+    customDelegatees?: Partial<DelegateeType>[];
 }
 
 const DelegatesList = ({ delegatees, myLocks, customDelegatees }: Props) => {
@@ -136,11 +138,18 @@ const DelegatesList = ({ delegatees, myLocks, customDelegatees }: Props) => {
                         ({ account }) => account === destination,
                     );
 
+                    const myDelegation = Object.entries(total)
+                        .map(
+                            ([token, amount]) =>
+                                `${formatBalance(amount, true)} ${token.split(':')[0]}`,
+                        )
+                        .join(', ');
+
                     return (
                         <Delegatee
                             key={destination}
                             delegatee={knownDelegatee ?? customDelegatee}
-                            myDelegation={total}
+                            myDelegation={myDelegation}
                             ref={el => (itemRefs.current[i] = el)}
                             isSelected={i === selected}
                             onDelegateClick={() => {

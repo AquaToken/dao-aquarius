@@ -10,6 +10,7 @@ import { formatBalance } from 'helpers/format-number';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService } from 'services/globalServices';
+
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { COLORS } from 'web/styles';
 

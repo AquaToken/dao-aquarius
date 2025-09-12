@@ -25,6 +25,7 @@ const Container = styled.section`
     display: flex;
     flex-direction: column;
     position: relative;
+    width: 100%;
 
     ${respondDown(Breakpoints.md)`
         height: unset;
@@ -181,7 +182,7 @@ const MainBlock = () => {
                 <Background />
                 <Title>
                     AQUA
-                    <AnimatedBorderedText />
+                    <AnimatedBorderedText text="Token" />
                 </Title>
                 <Description>Powers the #1 Stellar DeFi protocol</Description>
                 <SecondaryDescription>

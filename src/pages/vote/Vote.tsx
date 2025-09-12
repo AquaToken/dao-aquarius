@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { VoteRoutes } from 'constants/routes';
 
 import { ModalService } from 'services/globalServices';
+
 import { respondDown } from 'web/mixins';
 import VotingPurposeModal, { SHOW_PURPOSE_ALIAS } from 'web/modals/alerts/VotingPurposeModal';
 import { Breakpoints } from 'web/styles';
