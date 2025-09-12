@@ -178,10 +178,10 @@ const MarketCurrentBribes = ({ extra, bribes }: MarketCurrentBribes) => {
                             you need to have an open trustline.
                         </HowItWorksText>
                         <HowItWorksFooter>
-                            <ExternalLinkWeb href="https://medium.com/aquarius-aqua/introducing-aquarius-bribes-6b0931dc3dd7">
+                            <ExternalLinkWeb href="https://docs.aqua.network/bribes/what-are-bribes">
                                 Learn more about Aquarius Bribes
                             </ExternalLinkWeb>
-                            <ExternalLinkMobile href="https://medium.com/aquarius-aqua/introducing-aquarius-bribes-6b0931dc3dd7">
+                            <ExternalLinkMobile href="https://docs.aqua.network/bribes/what-are-bribes">
                                 Learn more
                             </ExternalLinkMobile>
                             <CloseButton onClick={() => setShowHowItWorks(false)}>

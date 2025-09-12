@@ -280,7 +280,7 @@ const IceBlock = ({ account, locks }: IceBlockProps): React.ReactNode => {
                         governance voting, as well as boosted yields when providing liquidity on
                         markets receiving SDEX & AMM rewards.
                     </IceDescriptionText>
-                    <ExternalLink href="https://medium.com/aquarius-aqua/ice-the-next-stage-of-aquarius-810edc7cf3bb">
+                    <ExternalLink href=" https://docs.aqua.network/ice/ice-tokens-locking-aqua-and-getting-benefits">
                         Learn more
                     </ExternalLink>
                 </IceDescriptionContent>

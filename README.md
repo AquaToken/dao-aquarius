@@ -181,7 +181,7 @@ X: [@AquariusDeFi](https://x.com/AquariusDeFi)
 GitHub: [@AquaToken](https://github.com/AquaToken)
 Discord: [@Aquarius](https://discord.gg/sgzFscHp4C)
 Reddit: [@AquariusAqua](https://www.reddit.com/r/AquariusAqua/)
-Medium: [@aquarius-aqua](https://medium.com/aquarius-aqua)
+Docs: [Aquarius docs](https://docs.aqua.network/developers/integrating-with-aquarius)
 
 Project Link: [https://github.com/AquaToken/dao-aquarius](https://github.com/AquaToken/dao-aquarius)
 
