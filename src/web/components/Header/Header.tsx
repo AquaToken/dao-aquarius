@@ -265,9 +265,9 @@ const Links = () => {
                             activeStyle={{
                                 fontWeight: 700,
                             }}
-                            title="Pools Incentives"
+                            title="Pool Incentives"
                         >
-                            Pools Incentives
+                            Pool Incentives
                         </NavLinkStyled>
                         <NavLinkStyled
                             to={MainRoutes.bribes}

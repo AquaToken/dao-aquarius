@@ -12,7 +12,7 @@ import { linkStyles } from 'components/Header/Header';
 
 const Menu = styled.div`
     position: relative;
-    padding: 0 2.4rem;
+    padding: 0 1rem;
 
     ${respondDown(Breakpoints.lg)`
         padding: 0 1.2rem;
