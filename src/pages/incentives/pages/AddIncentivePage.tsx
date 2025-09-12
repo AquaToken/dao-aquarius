@@ -12,15 +12,11 @@ import {
     MAX_INCENTIVES_TOKENS_PER_POOL,
     MAX_TOKEN_AMOUNT,
 } from 'constants/incentives';
-import { MINUTE } from 'constants/intervals';
 import { IncentivesRoutes } from 'constants/routes';
 
 import { contractValueToAmount } from 'helpers/amount';
 import { getAquaAssetData } from 'helpers/assets';
-import {
-    convertLocalDateToUTCIgnoringTimezone,
-    convertUTCToLocalDateIgnoringTimezone,
-} from 'helpers/date';
+import { convertUTCToLocalDateIgnoringTimezone } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 import { getTokensFromCache } from 'helpers/token';
 
@@ -220,13 +216,6 @@ const AddIncentivePage = () => {
 
         return poolConfig.find(({ token }) => token.contract === rewardToken.contract) ?? null;
     }, [poolConfig, rewardToken]);
-
-    const setTestDate = () => {
-        const start = 3 * MINUTE + Date.now();
-        const end = start + config?.duration * 1000;
-        setStartDay(convertLocalDateToUTCIgnoringTimezone(new Date(start)).getTime());
-        setEndDay(convertLocalDateToUTCIgnoringTimezone(new Date(end)).getTime());
-    };
 
     const amountInputPostfix =
         debouncedAmount.current !== null && aquaEquivalent === null ? (
@@ -461,16 +450,6 @@ const AddIncentivePage = () => {
                                         minDate={addDays(startDay, config.duration / 24 / 60 / 60)}
                                     />
                                 </FormRow>
-
-                                <Button
-                                    isSmall
-                                    style={{ marginTop: '2rem' }}
-                                    withGradient
-                                    isRounded
-                                    onClick={() => setTestDate()}
-                                >
-                                    Test Button: Set date from now + 3 min
-                                </Button>
 
                                 {currentTokenConfig &&
                                     currentTokenConfig.count >= MAX_INCENTIVES_PER_TOKEN && (
