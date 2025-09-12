@@ -260,15 +260,15 @@ const Links = () => {
                         >
                             AQUA Rewards
                         </NavLinkStyled>
-                        {/*<NavLinkStyled*/}
-                        {/*    to={MainRoutes.incentives}*/}
-                        {/*    activeStyle={{*/}
-                        {/*        fontWeight: 700,*/}
-                        {/*    }}*/}
-                        {/*    title="Pools Incentives"*/}
-                        {/*>*/}
-                        {/*    LP Incentives*/}
-                        {/*</NavLinkStyled>*/}
+                        <NavLinkStyled
+                            to={MainRoutes.incentives}
+                            activeStyle={{
+                                fontWeight: 700,
+                            }}
+                            title="Pool Incentives"
+                        >
+                            Pool Incentives
+                        </NavLinkStyled>
                         <NavLinkStyled
                             to={MainRoutes.bribes}
                             activeStyle={{
