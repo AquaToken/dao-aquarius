@@ -213,8 +213,8 @@ interface MyLiquidityProps {
 const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) => {
     const { account } = useAuthStore();
 
-    const [pools, setPools] = useState<PoolUserProcessed[]>([]);
-    const [classicPools, setClassicPools] = useState([]);
+    const [pools, setPools] = useState<PoolUserProcessed[]>(null);
+    const [classicPools, setClassicPools] = useState(null);
     const [userRewards, setUserRewards] = useState<Map<string, PoolRewardsInfo>>(new Map());
     const [userIncentives, setUserIncentives] = useState<Map<string, PoolIncentives[]>>(new Map());
     const [isUserRewardsLoaded, setIsUserRewardsLoaded] = useState(false);
@@ -256,6 +256,8 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
     const updateIndex = useUpdateIndex(5000);
 
     const filteredPools = useMemo(() => {
+        if (!classicPools || !pools) return null;
+
         if (filter === FilterValues.classic) {
             return classicPools;
         }
@@ -349,6 +351,11 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
 
     const { totalLiquidity, poolsLiquidity } = useMemo(() => {
         const map = new Map<string, number>();
+
+        if (!pools || !classicPools) {
+            return { totalLiquidity: 0, poolsLiquidity: map };
+        }
+
         const totalSorobanUsd = pools.reduce((acc, pool) => {
             const balance = Number(pool.balance) / 1e7;
             const liquidity = Number(pool.liquidity_usd) / 1e7;
