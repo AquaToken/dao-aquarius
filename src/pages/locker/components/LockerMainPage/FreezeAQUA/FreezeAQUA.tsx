@@ -85,7 +85,7 @@ const FreezeAQUA = (): JSX.Element => (
                 Inspired by veCRV on Curve, this system has been reimagined for Stellar and fully
                 integrated into Aquarius.
             </Description>
-            <ExternalLink href="https://medium.com/aquarius-aqua/ice-the-next-stage-of-aquarius-810edc7cf3bb">
+            <ExternalLink href=" https://docs.aqua.network/ice/ice-tokens-locking-aqua-and-getting-benefits">
                 Read more about freezing AQUA
             </ExternalLink>
         </TextBlock>
