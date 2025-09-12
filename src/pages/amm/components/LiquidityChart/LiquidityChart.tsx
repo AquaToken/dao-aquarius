@@ -6,7 +6,7 @@ import styled from 'styled-components';
 
 import { ChartPeriods } from 'constants/charts';
 
-import { convertUTCToLocalDateIgnoringTimezone, getDateString } from 'helpers/date';
+import { getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 
 import { PoolStatistics } from 'types/amm';
@@ -204,6 +204,8 @@ const LiquidityChart = ({
     }, [selectedPeriod]);
 
     useEffect(() => {
+        if (!data || !data.length) return;
+
         const tickValues =
             width < 300
                 ? [
@@ -219,7 +221,7 @@ const LiquidityChart = ({
             // @ts-expect-error
             d3.axisBottom(x).tickFormat(d3.timeFormat('%b %d')).tickValues(tickValues).ticks(2),
         );
-    }, [gx, x, width]);
+    }, [gx, x, data, isGlobalStat]);
 
     useEffect(
         () =>
@@ -294,11 +296,9 @@ const LiquidityChart = ({
                         {selectedIndex !== null && (
                             <GrayText x="16" y="87">
                                 {getDateString(
-                                    convertUTCToLocalDateIgnoringTimezone(
-                                        transformDate(
-                                            data[selectedIndex]?.datetime_str ||
-                                                data[selectedIndex]?.date_str,
-                                        ),
+                                    transformDate(
+                                        data[selectedIndex]?.datetime_str ||
+                                            data[selectedIndex]?.date_str,
                                     )?.getTime(),
                                     {
                                         withTime: !isGlobalStat,

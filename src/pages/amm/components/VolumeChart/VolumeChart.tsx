@@ -6,7 +6,7 @@ import styled from 'styled-components';
 
 import { ChartPeriods } from 'constants/charts';
 
-import { convertUTCToLocalDateIgnoringTimezone, getDateString } from 'helpers/date';
+import { getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 
 import { PoolStatistics, PoolVolume24h } from 'types/amm';
@@ -371,12 +371,9 @@ const VolumeChart = ({
                                           : selectedPeriod === ChartPeriods.months_3
                                           ? 'Weekly'
                                           : 'Daily'
-                                  } volume: ${getDateString(
-                                      convertUTCToLocalDateIgnoringTimezone(
-                                          selectedItem?.date,
-                                      )?.getTime(),
-                                      { withoutDay: selectedPeriod >= ChartPeriods.months_6 },
-                                  )}`
+                                  } volume: ${getDateString(selectedItem?.date?.getTime(), {
+                                      withoutDay: selectedPeriod >= ChartPeriods.months_6,
+                                  })}`
                                 : `Last 24H volume:`}
                         </GrayText>
                         <LiquidityValue x="16" y="63">
