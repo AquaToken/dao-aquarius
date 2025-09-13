@@ -7,7 +7,7 @@ import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
+import { Breakpoints, COLORS, FONT_SIZE } from 'web/styles';
 
 import Copy from 'assets/icon-copy.svg';
 import External from 'assets/icon-external-link.svg';
@@ -26,10 +26,10 @@ const BgContainer = styled.div`
     ${flexAllCenter};
     flex-direction: column;
     width: 100%;
-    height: 45vh;
     position: relative;
     overflow: hidden;
     background: ${COLORS.background};
+    padding-bottom: 5rem;
 `;
 
 const MyAquariusLogo = styled(MyAquarius)`
@@ -37,7 +37,7 @@ const MyAquariusLogo = styled(MyAquarius)`
     position: absolute;
     display: block;
 
-    ${respondDown(Breakpoints.xxl)`
+    ${respondDown(Breakpoints.md)`
         width: unset;
         height: 100%;
     `};
@@ -46,7 +46,7 @@ const MyAquariusLogo = styled(MyAquarius)`
 const Wrapper = styled.div`
     ${commonMaxWidth};
     width: 100%;
-    padding: 5.6rem 4rem;
+    padding: 3.2rem 4rem;
     z-index: 1;
 
     ${respondDown(Breakpoints.md)`
@@ -64,12 +64,15 @@ const Main = styled.div`
 
 const AccountInfoBLock = styled.div`
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    gap: 3.2rem;
 
     ${respondDown(Breakpoints.md)`
+        flex-direction: column;
         margin-bottom: 3rem;
         align-items: center;
-    `}
+        gap: 1.6rem;
+    `};
 `;
 
 const Icon = styled.div`
@@ -96,8 +99,7 @@ const AccountData = styled.div`
 
     span:first-child {
         font-weight: 700;
-        font-size: 5.6rem;
-        line-height: 6.4rem;
+        ${FONT_SIZE.xl};
         margin-bottom: 0.4rem;
     }
 
@@ -105,8 +107,7 @@ const AccountData = styled.div`
         align-items: center;
         
         span:first-child {
-            font-size: 2rem;
-            line-height: 2.2rem;
+            ${FONT_SIZE.lg};
         }
     `}
 `;

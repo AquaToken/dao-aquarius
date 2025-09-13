@@ -5,7 +5,7 @@ import { MainRoutes } from 'constants/routes';
 import { getIsDarkTheme } from 'helpers/theme';
 
 import { fullWidthSectionStyles, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS, PAGE_PADDINGS } from 'web/styles';
+import { Breakpoints, COLORS, HEADER_HEIGHT, PAGE_PADDINGS } from 'web/styles';
 
 import AquaLogo from 'assets/aqua/aqua-logo-text.svg';
 import ArrowAlt16 from 'assets/arrows/arrow-alt-16.svg';
@@ -35,7 +35,7 @@ const Hero = styled.section<{ $isDarkTheme: boolean }>`
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 85rem;
+    height: calc(100vh - ${HEADER_HEIGHT});
 
     /* hide icons to back of content */
     svg {
