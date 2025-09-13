@@ -98,7 +98,10 @@ export const FONT_SIZE = {
         font-size: 1.6rem;
         line-height: 2.8rem;
     `,
-
+    lg: css`
+        font-size: 2rem;
+        line-height: 2.2rem;
+    `,
     xl: css`
         font-size: 3rem;
         line-height: 3.6rem;
@@ -134,3 +137,4 @@ export const MAX_WIDTHS = {
 
 // in rem
 export const PAGE_PADDINGS = 2.4;
+export const HEADER_HEIGHT = '11.2rem';

@@ -11,7 +11,7 @@ import { ModalService } from 'services/globalServices';
 
 import { commonMaxWidth, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
-import { Breakpoints, COLORS, Z_INDEX } from 'web/styles';
+import { Breakpoints, COLORS, HEADER_HEIGHT, Z_INDEX } from 'web/styles';
 
 import AquaLogo from 'assets/aqua/aqua-logo-text.svg';
 import IconProfile from 'assets/icon-profile.svg';
@@ -30,7 +30,7 @@ const Container = styled.header`
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    height: 11.2rem;
+    height: ${HEADER_HEIGHT};
     padding: 0 4rem;
     z-index: ${Z_INDEX.header};
     background: ${COLORS.white};

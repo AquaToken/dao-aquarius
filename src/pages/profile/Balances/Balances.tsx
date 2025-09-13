@@ -16,7 +16,7 @@ import { StellarEvents } from 'services/stellar.service';
 
 import { ClaimableBalance } from 'types/stellar';
 
-import { commonMaxWidth, respondDown } from 'web/mixins';
+import { cardBoxShadow, commonMaxWidth, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Aqua from 'assets/aqua-logo-small.svg';
@@ -41,20 +41,19 @@ const Container = styled.div`
     width: 100%;
     margin-bottom: 5.6rem;
     padding: 0 4rem;
-    margin-top: -9rem;
+    margin-top: -5rem;
     z-index: 2;
 
     ${respondDown(Breakpoints.md)`
         padding: 3.2rem 1.6rem 2rem;
-        margin-top: -9rem;
         margin-bottom: 0;
     `}
 `;
 
 const Wrapper = styled.div`
     background-color: ${COLORS.white};
-    padding: 4.8rem 4.8rem 4.2rem;
-    box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
+    padding: 3.2rem;
+    ${cardBoxShadow};
     border-radius: 1rem;
 
     ${respondDown(Breakpoints.md)`
@@ -235,7 +234,7 @@ const InfoColumnIce = styled(InfoColumn)`
 const LumenBalanceRow = styled.div`
     display: flex;
     align-items: center;
-    margin-top: 3.6rem;
+    margin-top: 2rem;
     justify-content: space-between;
 
     ${respondDown(Breakpoints.sm)`
