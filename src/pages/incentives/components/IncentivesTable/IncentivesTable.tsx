@@ -74,6 +74,7 @@ const IncentivesTable = ({ isActive }: Props) => {
                                             fee={incentive.pool.fee}
                                             poolType={incentive.pool.pool_type}
                                             withoutLink
+                                            mobileVerticalDirections
                                         />
                                     ),
                                     flexSize: 2.5,
