@@ -196,7 +196,8 @@ const UpcomingBribes = () => {
                             1) **
                             365 -
                         1;
-                    const apyMax = getIceMaxApy({ apy });
+                    const MAX_APY_VALUE = 1e6; // 1B
+                    const apyMax = Math.min(getIceMaxApy({ apy }), MAX_APY_VALUE);
 
                     return {
                         onRowClick: () => goToMarketPage(item),
@@ -215,7 +216,9 @@ const UpcomingBribes = () => {
                                 flexSize: 3,
                             },
                             {
-                                children: `up to ${formatBalance(apyMax, true)}%`,
+                                children: `up to ${
+                                    apyMax === MAX_APY_VALUE ? '>' : ''
+                                }${formatBalance(apyMax, true)}%`,
                                 label: 'Bribe APY:',
                             },
                             {
