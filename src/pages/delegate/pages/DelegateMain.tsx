@@ -268,7 +268,7 @@ const DelegateMain = () => {
                     Delegate your ICE to trusted community members and let them vote on your behalf.
                     <br />
                     Earn rewards without managing votes yourself or become a delegate and help shape
-                    protocol incentives\
+                    protocol incentives
                     <BlankExternalLink href="https://docs.aqua.network/ice-delegation/overview">
                         <ButtonStyled withGradient isRounded>
                             Read more <ArrowAlt16Styled />
