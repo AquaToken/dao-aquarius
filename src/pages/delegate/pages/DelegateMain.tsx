@@ -17,12 +17,15 @@ import { commonMaxWidth, respondDown, respondUp } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
+import ArrowAlt16 from 'assets/arrows/arrow-alt-16.svg';
 import BackgroundImageLeft from 'assets/delegate-bg-left.svg';
 import BackgroundImageRight from 'assets/delegate-bg-right.svg';
 
+import { Button } from 'basics/buttons';
 import ExternalLink from 'basics/ExternalLink';
 import { ToggleGroup } from 'basics/inputs';
 import Select from 'basics/inputs/Select';
+import { BlankExternalLink } from 'basics/links';
 import { PageLoader } from 'basics/loaders';
 
 import DelegatesList from 'pages/delegate/components/DelegatesList/DelegatesList';
@@ -58,6 +61,16 @@ const BackgroundLeft = styled(BackgroundImageLeft)`
         top: 50%;
         transform: translateY(-50%);
     `}
+`;
+
+const ButtonStyled = styled(Button)`
+    border-radius: 4.6rem;
+    margin-top: 1.6rem;
+`;
+
+const ArrowAlt16Styled = styled(ArrowAlt16)`
+    margin-left: 0.8rem;
+    color: ${COLORS.white};
 `;
 
 const BackgroundRight = styled(BackgroundImageRight)`
@@ -102,6 +115,9 @@ const MainDescription = styled.p`
     margin: 1.6rem 0 2.4rem;
     position: relative;
     z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 `;
 
 const InviteLink = styled.div`
@@ -252,8 +268,14 @@ const DelegateMain = () => {
                     Delegate your ICE to trusted community members and let them vote on your behalf.
                     <br />
                     Earn rewards without managing votes yourself or become a delegate and help shape
-                    protocol incentives
+                    protocol incentives\
+                    <BlankExternalLink href="https://docs.aqua.network/ice-delegation/overview">
+                        <ButtonStyled withGradient isRounded>
+                            Read more <ArrowAlt16Styled />
+                        </ButtonStyled>
+                    </BlankExternalLink>
                 </MainDescription>
+
                 <InviteLink>
                     <span>Want to lead and earn incentives?</span>
 
