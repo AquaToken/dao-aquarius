@@ -4,11 +4,11 @@ import styled from 'styled-components';
 
 import useOnClickOutside from 'hooks/useOutsideClick';
 
-import { COLORS } from 'web/styles';
+import { Breakpoints, COLORS } from 'web/styles';
 
 import ArrowDown from 'assets/icon-arrow-down.svg';
 
-import { noSelect } from '../../mixins';
+import { noSelect, respondDown } from '../../mixins';
 
 const DropDown = styled.div<{ $isOpen: boolean; $disabled: boolean }>`
     width: 100%;
@@ -46,6 +46,15 @@ const DropdownItem = styled.div`
     svg {
         margin-right: 0.8rem;
     }
+`;
+
+const DropdownItemHead = styled(DropdownItem)`
+    padding: 0;
+    min-height: 6.6rem;
+
+    ${respondDown(Breakpoints.md)`
+        padding: 1.2rem;
+    `}
 `;
 
 const Placeholder = styled(DropdownItem)`
@@ -160,10 +169,10 @@ const Select = <T,>({
         >
             <DropdownArrow $isOpen={isOpen} />
             {selectedOption && !isOpen ? (
-                <DropdownItem>
+                <DropdownItemHead>
                     {Boolean(selectedOption.icon) && selectedOption.icon}
                     {selectedOption?.label}
-                </DropdownItem>
+                </DropdownItemHead>
             ) : (
                 <Placeholder>{placeholder || 'Select'}</Placeholder>
             )}
