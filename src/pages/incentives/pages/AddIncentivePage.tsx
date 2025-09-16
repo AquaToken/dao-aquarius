@@ -205,6 +205,7 @@ const AddIncentivePage = () => {
                     withoutLink
                     fee={market.fee}
                     poolType={market.pool_type}
+                    mobileVerticalDirections
                 />
             ),
             value: market,

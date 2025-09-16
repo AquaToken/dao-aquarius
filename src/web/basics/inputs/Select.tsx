@@ -15,7 +15,7 @@ const DropDown = styled.div<{ $isOpen: boolean; $disabled: boolean }>`
     display: flex;
     flex-direction: row;
     align-items: center;
-    height: 6.6rem;
+    min-height: 6.6rem;
     position: relative;
     cursor: pointer;
     border: ${({ $isOpen }) =>
