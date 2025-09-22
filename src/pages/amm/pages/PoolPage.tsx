@@ -34,6 +34,7 @@ import { Breakpoints, COLORS } from 'web/styles';
 
 import ArrowLeft from 'assets/icon-arrow-left.svg';
 
+import AssetLogo from 'basics/AssetLogo';
 import Button from 'basics/buttons/Button';
 import CircleButton from 'basics/buttons/CircleButton';
 import CopyButton from 'basics/buttons/CopyButton';
@@ -151,6 +152,12 @@ const SectionRow = styled.div`
     margin: 1rem 0;
     height: 2.8rem;
     font-size: 1.6rem;
+
+    span {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
 `;
 
 const SectionLabel = styled.span`
@@ -472,7 +479,7 @@ const PoolPage = () => {
                                             (pool.tokens[index] as SorobanToken).decimal,
                                         ),
                                     )}{' '}
-                                    {asset.code}
+                                    <AssetLogo asset={asset} isSmall isCircle />
                                 </span>
                             </SectionRow>
                         ))}
