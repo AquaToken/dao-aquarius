@@ -102,7 +102,7 @@ const IconWrapper = styled.div`
     color: ${COLORS.lavenderGray};
 
     svg {
-        margin: 0;
+        margin: 0 !important;
         height: 1.2rem;
         width: 1.2rem;
     }
@@ -240,7 +240,7 @@ const DelegateModal = ({
     };
 
     return (
-        <ModalWrapper>
+        <ModalWrapper $noScroll>
             <ModalTitle>Delegate my ICE</ModalTitle>
 
             <ModalDescription>
