@@ -22,10 +22,9 @@ import BackgroundImageLeft from 'assets/delegate-bg-left.svg';
 import BackgroundImageRight from 'assets/delegate-bg-right.svg';
 
 import { Button } from 'basics/buttons';
-import ExternalLink from 'basics/ExternalLink';
 import { ToggleGroup } from 'basics/inputs';
 import Select from 'basics/inputs/Select';
-import { BlankExternalLink } from 'basics/links';
+import { ExternalLink, BlankExternalLink } from 'basics/links';
 import { PageLoader } from 'basics/loaders';
 
 import DelegatesList from 'pages/delegate/components/DelegatesList/DelegatesList';
