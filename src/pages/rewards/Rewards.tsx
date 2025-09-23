@@ -1,14 +1,12 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import styled from 'styled-components';
 
 import { getTotalRewards } from 'api/rewards';
 
 import { PageContainer, SectionWrapper } from 'web/pages/commonPageStyles';
 
-import FAQ from 'basics/FAQ';
-
 import Community from 'components/Community';
+import FAQ from 'components/FAQ';
 import Subscribe from 'components/Subscribe';
 
 import { rewardsQuestions } from 'pages/rewards/components/Questions/Questions';

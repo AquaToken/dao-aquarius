@@ -20,11 +20,11 @@ import ArrowLeft from 'assets/icon-arrow-left.svg';
 import CircleButton from 'basics/buttons/CircleButton';
 import PageLoader from 'basics/loaders/PageLoader';
 import Market from 'basics/Market';
-import PageTitle from 'basics/PageTitle';
 
 import MigrateToSorobanBanner from 'components/MigrateToSorobanBanner';
 import NotFoundPage from 'components/NotFoundPage';
 import PageNavigation from 'components/PageNavigation';
+import PageTitle from 'components/PageTitle';
 
 import AmmStats from 'pages/market/components/AmmStats/AmmStats';
 import AssetsDetails from 'pages/market/components/AssetsDetails/AssetsDetails';

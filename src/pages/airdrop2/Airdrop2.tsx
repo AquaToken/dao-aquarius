@@ -6,9 +6,8 @@ import { StellarService, ToastService } from 'services/globalServices';
 
 import { PageContainer, SectionWrapper } from 'web/pages/commonPageStyles';
 
-import FAQ from 'basics/FAQ';
-
 import Community from 'components/Community';
+import FAQ from 'components/FAQ';
 import Subscribe from 'components/Subscribe';
 
 import { AirdropQuestions } from 'pages/airdrop2/components/Questions/Questions';

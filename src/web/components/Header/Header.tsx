@@ -21,7 +21,7 @@ import ExpandedMenu from 'components/Header/ExpandedMenu/ExpandedMenu';
 
 import { getActiveProposalsCount } from 'pages/governance/api/api';
 
-import AccountBlock from '../AccountBlock';
+import AccountBlock from './AccountBlock';
 
 const Container = styled.header`
     ${commonMaxWidth};

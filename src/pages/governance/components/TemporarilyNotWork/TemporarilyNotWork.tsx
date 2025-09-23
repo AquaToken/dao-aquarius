@@ -5,7 +5,7 @@ import { respondDown } from 'web/mixins';
 import { Breakpoints } from 'web/styles';
 
 import Button from 'basics/buttons/Button';
-import ExternalLink from 'basics/ExternalLink';
+import { ExternalLink } from 'basics/links';
 
 import { ModalDescription, ModalProps, ModalTitle } from 'components/ModalBody';
 

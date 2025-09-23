@@ -7,9 +7,10 @@ import StellarTermLogo from 'assets/stellarterm-logo.svg';
 import StellarXLogo from 'assets/stellarx-logo.svg';
 
 import CopyButton from 'basics/buttons/CopyButton';
-import ExternalLink from 'basics/ExternalLink';
+import { ExternalLink } from 'basics/links';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
-import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
+
+import PublicKeyWithIcon from 'components/PublicKeyWithIcon';
 
 import { flexRowSpaceBetween, respondDown } from '../mixins';
 import { Breakpoints, COLORS } from '../styles';

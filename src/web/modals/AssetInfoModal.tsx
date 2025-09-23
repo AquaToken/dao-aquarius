@@ -31,12 +31,12 @@ import X from 'assets/twitter16.svg';
 
 import Asset from 'basics/Asset';
 import Button from 'basics/buttons/Button';
-import Changes24 from 'basics/Changes24';
 import PageLoader from 'basics/loaders/PageLoader';
 import { ModalWrapper } from 'basics/ModalAtoms';
-import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
 
+import Changes24 from 'components/Changes24';
 import NoTrustline from 'components/NoTrustline';
+import PublicKeyWithIcon from 'components/PublicKeyWithIcon';
 
 import CopyButton from '../basics/buttons/CopyButton';
 import { respondDown } from '../mixins';

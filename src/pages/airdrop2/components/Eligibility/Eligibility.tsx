@@ -9,9 +9,10 @@ import { StellarService } from 'services/globalServices';
 import { flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import AccountBlock from 'basics/AccountBlock';
-import ExternalLink from 'basics/ExternalLink';
+import { ExternalLink } from 'basics/links';
 import PageLoader from 'basics/loaders/PageLoader';
+
+import AccountBlock from 'components/AccountBlock';
 
 import ExpectedReward from './ExpectedReward/ExpectedReward';
 import SnapshotHoldings from './SnapshotHoldings/SnapshotHoldings';

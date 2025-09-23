@@ -15,7 +15,7 @@ import { Breakpoints, COLORS } from 'web/styles';
 
 import Info from 'assets/icon-info.svg';
 
-import AssetPicker from 'basics/asset-picker/AssetPicker';
+import AssetPicker from 'basics/asset-pickers/AssetPicker';
 import { BlankInput } from 'basics/inputs';
 import { DotsLoader } from 'basics/loaders';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';

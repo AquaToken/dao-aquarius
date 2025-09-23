@@ -1,11 +1,11 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { commonMaxWidth, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
+import Contacts from 'components/Contacts';
+import Question from 'components/Question';
 
-import Contacts from 'basics/Contacts';
-import Question from 'basics/Question';
+import { commonMaxWidth, respondDown } from '../mixins';
+import { Breakpoints, COLORS } from '../styles';
 
 export type QuestionType = {
     question: string;

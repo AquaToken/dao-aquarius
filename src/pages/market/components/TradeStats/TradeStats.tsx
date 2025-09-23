@@ -9,9 +9,9 @@ import { Asset } from 'types/stellar';
 import { flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import ExternalLink from 'basics/ExternalLink';
 import Select from 'basics/inputs/Select';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
+import { ExternalLink } from 'basics/links';
 
 import DailyStats from './DailyStats/DailyStats';
 import LightWeightChart, { PeriodOptions } from './LightWeightChart/LightWeightChart';

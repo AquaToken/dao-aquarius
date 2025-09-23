@@ -25,7 +25,7 @@ import { Breakpoints, COLORS } from 'web/styles';
 import Info from 'assets/icon-info.svg';
 import Warning from 'assets/icon-warning.svg';
 
-import ExternalLink from 'basics/ExternalLink';
+import { ExternalLink } from 'basics/links';
 import PageLoader from 'basics/loaders/PageLoader';
 import Market from 'basics/Market';
 import Table, { CellAlign } from 'basics/Table';

@@ -12,7 +12,7 @@ import { Asset } from 'types/stellar';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import ExternalLink from 'basics/ExternalLink';
+import { ExternalLink } from 'basics/links';
 import PageLoader from 'basics/loaders/PageLoader';
 
 const Description = styled.div`

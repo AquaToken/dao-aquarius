@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { COLORS } from '../styles';
+import { COLORS } from '../../styles';
 
 interface Props {
     percentage: number;

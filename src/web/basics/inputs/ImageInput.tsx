@@ -11,7 +11,7 @@ import { COLORS, FONT_SIZE } from 'web/styles';
 
 import Icon from 'assets/icon-withdraw.svg';
 
-import ExternalLink from 'basics/ExternalLink';
+import { ExternalLink } from 'basics/links';
 
 const Container = styled.div`
     position: relative;

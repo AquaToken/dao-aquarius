@@ -1,4 +1,4 @@
-import { QuestionType } from 'basics/FAQ';
+import { QuestionType } from 'components/FAQ';
 
 export const BribeQuestions: QuestionType[] = [
     {

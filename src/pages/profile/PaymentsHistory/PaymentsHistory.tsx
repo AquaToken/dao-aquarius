@@ -15,7 +15,7 @@ import { StellarEvents } from 'services/stellar.service';
 
 import { COLORS } from 'web/styles';
 
-import ExternalLink from 'basics/ExternalLink';
+import { ExternalLink } from 'basics/links';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
 import Table, { CellAlign } from 'basics/Table';

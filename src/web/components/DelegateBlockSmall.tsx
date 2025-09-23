@@ -5,7 +5,7 @@ import { MainRoutes } from 'constants/routes';
 
 import Logo from 'assets/delegate-promo-small.svg';
 
-import ExternalLink from 'basics/ExternalLink';
+import { ExternalLink } from 'basics/links';
 
 import { flexColumn, respondDown } from '../mixins';
 import { Breakpoints, COLORS } from '../styles';

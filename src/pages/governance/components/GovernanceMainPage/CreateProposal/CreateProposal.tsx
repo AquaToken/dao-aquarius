@@ -17,7 +17,7 @@ import { COLORS } from 'web/styles';
 import AquaLogo from 'assets/aqua-logo-small.svg';
 
 import Button from 'basics/buttons/Button';
-import ExternalLink from 'basics/ExternalLink';
+import { ExternalLink } from 'basics/links';
 
 import { APPROVED_PROPOSAL_REWARD } from '../../../pages/GovernanceMainPage';
 

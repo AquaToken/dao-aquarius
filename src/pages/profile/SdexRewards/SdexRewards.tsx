@@ -18,8 +18,8 @@ import { Breakpoints, COLORS } from 'web/styles';
 
 import Aqua from 'assets/aqua-logo-small.svg';
 
-import ExternalLink from 'basics/ExternalLink';
 import Label from 'basics/Label';
+import { ExternalLink } from 'basics/links';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
 import Market from 'basics/Market';

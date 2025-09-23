@@ -2,9 +2,9 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
-import { COLORS } from 'web/styles';
-
 import LinkArrowIcon from 'assets/icon-link-arrow.svg';
+
+import { COLORS } from '../../styles';
 
 const styles = css`
     display: flex;

@@ -19,9 +19,6 @@ import { StellarService } from 'services/globalServices';
 import { Asset as AssetType } from 'types/stellar';
 import { ClassicToken, Token, TokenType } from 'types/token';
 
-import { flexRowSpaceBetween, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import ArrowDown from 'assets/icon-arrow-down.svg';
 import Fail from 'assets/icon-fail.svg';
 
@@ -29,7 +26,9 @@ import Asset from 'basics/Asset';
 import Chips from 'basics/Chips';
 import Input from 'basics/inputs/Input';
 
-import { CircleLoader } from './loaders';
+import { flexRowSpaceBetween, respondDown } from '../../mixins';
+import { Breakpoints, COLORS } from '../../styles';
+import { CircleLoader } from '../loaders';
 
 const DropDown = styled.div<{ $isOpen: boolean }>`
     width: 100%;

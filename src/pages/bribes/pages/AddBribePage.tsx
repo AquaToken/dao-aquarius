@@ -42,11 +42,11 @@ import Minus from 'assets/icon-minus.svg';
 import Plus from 'assets/icon-plus.svg';
 import Success from 'assets/icon-success.svg';
 
-import AssetDropdown from 'basics/AssetDropdown';
+import AssetDropdown from 'basics/asset-pickers/AssetDropdown';
 import Button from 'basics/buttons/Button';
 import CircleButton from 'basics/buttons/CircleButton';
-import ExternalLink from 'basics/ExternalLink';
 import Input from 'basics/inputs/Input';
+import { ExternalLink } from 'basics/links';
 import { CircleLoader } from 'basics/loaders';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 

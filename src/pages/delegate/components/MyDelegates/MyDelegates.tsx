@@ -13,7 +13,7 @@ import { DELEGATE_MARKER_KEY, StellarEvents } from 'services/stellar.service';
 
 import { Delegatee as DelegateeType } from 'types/delegate';
 
-import ExternalLink from 'basics/ExternalLink';
+import { ExternalLink } from 'basics/links';
 import { PageLoader } from 'basics/loaders';
 
 import DelegatesList from 'pages/delegate/components/DelegatesList/DelegatesList';

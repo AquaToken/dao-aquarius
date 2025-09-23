@@ -5,8 +5,8 @@ import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Button from 'basics/buttons/Button';
-import ExternalLink from 'basics/ExternalLink';
 import Input from 'basics/inputs/Input';
+import { ExternalLink } from 'basics/links';
 
 const Container = styled.section`
     position: relative;

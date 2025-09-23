@@ -27,7 +27,7 @@ import Info from 'assets/icon-info.svg';
 import Button from 'basics/buttons/Button';
 import Checkbox from 'basics/inputs/Checkbox';
 import PageLoader from 'basics/loaders/PageLoader';
-import ProgressLine from 'basics/ProgressLine';
+import { ProgressLine } from 'basics/progress';
 import Table, { CellAlign } from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 

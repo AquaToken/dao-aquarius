@@ -5,11 +5,11 @@ import { getIsTestnetEnv } from 'helpers/env';
 import { ModalProps } from 'types/modal';
 import { Token } from 'types/token';
 
-import { flexAllCenter, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
+import { flexAllCenter } from 'web/mixins';
+import { COLORS } from 'web/styles';
 
 import Button from 'basics/buttons/Button';
-import ExternalLink from 'basics/ExternalLink';
+import { ExternalLink } from 'basics/links';
 import Market from 'basics/Market';
 import { ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 

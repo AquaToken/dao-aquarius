@@ -6,7 +6,7 @@ import { Breakpoints, COLORS } from 'web/styles';
 
 import FreezeAquaImage from 'assets/freeze-aqua.svg';
 
-import ExternalLink from 'basics/ExternalLink';
+import { ExternalLink } from 'basics/links';
 
 const Container = styled.div`
     display: flex;

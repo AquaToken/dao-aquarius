@@ -37,7 +37,7 @@ import dIce from 'assets/dice-logo.svg';
 import Ice from 'assets/ice-logo.svg';
 import Info from 'assets/icon-info.svg';
 
-import AssetDropdown from 'basics/AssetDropdown';
+import AssetDropdown from 'basics/asset-pickers/AssetDropdown';
 import Button from 'basics/buttons/Button';
 import { Option } from 'basics/inputs/Select';
 import ToggleGroup from 'basics/inputs/ToggleGroup';

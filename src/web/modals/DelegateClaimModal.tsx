@@ -27,8 +27,9 @@ import Identicon from 'basics/Identicon';
 import { Checkbox } from 'basics/inputs';
 import { PageLoader } from 'basics/loaders';
 import { ModalTitle, ModalWrapper, StickyButtonWrapper } from 'basics/ModalAtoms';
-import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
 import Table, { CellAlign } from 'basics/Table';
+
+import PublicKeyWithIcon from 'components/PublicKeyWithIcon';
 
 import { GOV_ICE, UP_ICE } from 'pages/vote/components/MainPage/MainPage';
 

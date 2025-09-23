@@ -30,10 +30,10 @@ import CloseIcon from 'assets/icon-close-small.svg';
 
 import AssetLogo from 'basics/AssetLogo';
 import Button from 'basics/buttons/Button';
-import ExternalLink from 'basics/ExternalLink';
 import Input from 'basics/inputs/Input';
 import RangeInput from 'basics/inputs/RangeInput';
 import Select, { Option } from 'basics/inputs/Select';
+import { ExternalLink } from 'basics/links';
 import Market from 'basics/Market';
 import { ModalDescription, ModalTitle, ModalWrapper, StickyButtonWrapper } from 'basics/ModalAtoms';
 
@@ -220,7 +220,7 @@ const VotesAmountModal = ({
 }: ModalProps<{
     pairs: PairStats[];
     updatePairs?: () => void;
-    pairsAmounts?: { [key: string]: string };
+    pairsAmounts?: Record<string, string>;
     isDownVoteModal?: boolean;
     isSingleVoteForModal?: boolean;
     asset: ClassicToken;
