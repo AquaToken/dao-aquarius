@@ -14,7 +14,7 @@ import Task2 from 'assets/quest-task-2.png';
 import Task3 from 'assets/quest-task-3.png';
 import Task4 from 'assets/quest-task-4.png';
 
-import Question from 'basics/Question';
+import Question from 'components/Question';
 
 import TaskStatus from 'pages/quest/TaskStatus/TaskStatus';
 

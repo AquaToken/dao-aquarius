@@ -33,9 +33,9 @@ import Twitter from 'assets/twitter.svg';
 
 import AssetLogo from 'basics/AssetLogo';
 import { Button } from 'basics/buttons';
-import CircularProgress from 'basics/CircularProgress';
 import { ToggleGroup } from 'basics/inputs';
 import { PageLoader } from 'basics/loaders';
+import { CircularProgress } from 'basics/progress';
 
 import { getProposalsRequest, PROPOSAL_FILTER } from 'pages/governance/api/api';
 import { MarketKey } from 'pages/vote/api/types';

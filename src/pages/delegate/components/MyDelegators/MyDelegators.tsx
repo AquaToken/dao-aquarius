@@ -11,10 +11,11 @@ import { ClaimableBalance } from 'types/stellar';
 
 import { cardBoxShadow } from 'web/mixins';
 
-import ExternalLink from 'basics/ExternalLink';
+import { ExternalLink } from 'basics/links';
 import { PageLoader } from 'basics/loaders';
-import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
 import Table, { CellAlign } from 'basics/Table';
+
+import PublicKeyWithIcon from 'components/PublicKeyWithIcon';
 
 const Container = styled.div`
     padding: 2.4rem;

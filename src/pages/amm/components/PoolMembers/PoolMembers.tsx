@@ -18,7 +18,8 @@ import LinkIcon from 'assets/icon-external-link.svg';
 
 import PageLoader from 'basics/loaders/PageLoader';
 import Pagination from 'basics/Pagination';
-import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
+
+import PublicKeyWithIcon from 'components/PublicKeyWithIcon';
 
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
 

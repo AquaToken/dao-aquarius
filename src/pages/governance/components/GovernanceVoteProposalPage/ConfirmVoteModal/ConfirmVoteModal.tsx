@@ -30,10 +30,10 @@ import Fail from 'assets/icon-fail.svg';
 import Success from 'assets/icon-success.svg';
 
 import Button from 'basics/buttons/Button';
-import ExternalLink from 'basics/ExternalLink';
 import Input from 'basics/inputs/Input';
 import RangeInput from 'basics/inputs/RangeInput';
 import Select from 'basics/inputs/Select';
+import { ExternalLink } from 'basics/links';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 import { SimpleProposalOptions } from '../../../pages/GovernanceVoteProposalPage';

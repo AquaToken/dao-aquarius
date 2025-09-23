@@ -1,9 +1,9 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { COLORS } from 'web/styles';
+import { ExternalLink } from 'basics/links';
 
-import ExternalLink from './ExternalLink';
+import { COLORS } from '../styles';
 
 const Container = styled.div`
     max-width: 36.6rem;

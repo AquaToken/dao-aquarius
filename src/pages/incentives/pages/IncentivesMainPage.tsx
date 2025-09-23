@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { IncentivesRoutes } from 'constants/routes';
 
-import FAQ from 'basics/FAQ';
+import FAQ from 'components/FAQ';
 
 import {
     AddBribeButton,

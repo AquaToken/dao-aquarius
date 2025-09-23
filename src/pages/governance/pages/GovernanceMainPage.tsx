@@ -19,11 +19,12 @@ import BackgroundImageLeft from 'assets/background-left.svg';
 import BackgroundImageRight from 'assets/background-right.svg';
 import ArrowDown from 'assets/icon-arrow-down.svg';
 
-import FAQ from 'basics/FAQ';
 import Select from 'basics/inputs/Select';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
 import PageLoader from 'basics/loaders/PageLoader';
 import Pagination from 'basics/Pagination';
+
+import FAQ from 'components/FAQ';
 
 import { governanceQuestions } from 'pages/governance/components/GovernanceMainPage/FAQ/Questions';
 

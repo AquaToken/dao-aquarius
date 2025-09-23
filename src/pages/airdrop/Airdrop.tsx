@@ -9,7 +9,7 @@ import { Breakpoints, COLORS } from 'web/styles';
 
 import Success from 'assets/icon-success-green.svg';
 
-import ExternalLink from 'basics/ExternalLink';
+import { ExternalLink } from 'basics/links';
 
 import SocialLinks from 'components/SocialLinks';
 

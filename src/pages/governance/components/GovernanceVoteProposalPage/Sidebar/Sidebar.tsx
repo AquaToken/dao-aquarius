@@ -19,7 +19,7 @@ import Fail from 'assets/icon-fail.svg';
 import Success from 'assets/icon-success.svg';
 
 import Button from 'basics/buttons/Button';
-import ExternalLink from 'basics/ExternalLink';
+import { ExternalLink } from 'basics/links';
 
 import NativeVotingButton from './VotingButton/VotingButton';
 

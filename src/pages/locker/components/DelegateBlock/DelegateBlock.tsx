@@ -8,7 +8,7 @@ import { Breakpoints, COLORS } from 'web/styles';
 
 import Logo from 'assets/delegate-promo-small.svg';
 
-import ExternalLink from 'basics/ExternalLink';
+import { ExternalLink } from 'basics/links';
 
 const Container = styled.div`
     margin-top: 4rem;

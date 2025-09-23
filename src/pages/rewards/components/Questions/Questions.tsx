@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 import { MainRoutes } from 'constants/routes';
 
-import { QuestionType } from 'basics/FAQ';
+import { QuestionType } from 'components/FAQ';
 
 export const rewardsQuestions: QuestionType[] = [
     {

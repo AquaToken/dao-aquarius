@@ -23,8 +23,9 @@ import { Breakpoints, COLORS } from 'web/styles';
 import External from 'assets/icon-external-link.svg';
 import Arrow from 'assets/icon-link-arrow.svg';
 
-import ApyTier from 'basics/ApyTier';
 import AssetLogo, { bigLogoStyles, logoStyles } from 'basics/AssetLogo';
+
+import ApyTier from 'components/ApyTier';
 import {
     AmmBribesLabel,
     AuthRequiredLabel,
@@ -37,7 +38,7 @@ import {
     PrivateBribesLabel,
     RewardLabel,
     StablePoolLabel,
-} from 'basics/Labels';
+} from 'components/Labels';
 
 const Wrapper = styled.div<{
     $verticalDirections?: boolean;

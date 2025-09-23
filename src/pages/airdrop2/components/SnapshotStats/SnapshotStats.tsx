@@ -7,7 +7,7 @@ import { formatBalance } from 'helpers/format-number';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import ExternalLink from 'basics/ExternalLink';
+import { ExternalLink } from 'basics/links';
 import PageLoader from 'basics/loaders/PageLoader';
 
 import { getAirdropStats } from '../../api/api';

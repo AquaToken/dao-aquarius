@@ -13,7 +13,7 @@ import { Breakpoints, COLORS } from 'web/styles';
 
 import Info from 'assets/icon-info.svg';
 
-import ProgressLine from 'basics/ProgressLine';
+import { ProgressLine } from 'basics/progress';
 import Table, { CellAlign } from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 

@@ -18,7 +18,7 @@ import Close from 'assets/icon-close-small-purple.svg';
 import Info from 'assets/icon-info.svg';
 
 import Asset from 'basics/Asset';
-import ExternalLink from 'basics/ExternalLink';
+import { ExternalLink } from 'basics/links';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 import Table, { CellAlign } from 'basics/Table';
 

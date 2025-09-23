@@ -15,7 +15,7 @@ import { IncentiveProcessed } from 'types/incentives';
 import { EmptyList } from 'web/mixins';
 
 import Asset from 'basics/Asset';
-import ExternalLink from 'basics/ExternalLink';
+import { ExternalLink } from 'basics/links';
 import { PageLoader } from 'basics/loaders';
 import Market from 'basics/Market';
 import Table from 'basics/Table';

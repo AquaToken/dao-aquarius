@@ -45,7 +45,7 @@ import Fail from 'assets/icon-fail.svg';
 import Success from 'assets/icon-success.svg';
 
 import Alert from 'basics/Alert';
-import AssetPicker from 'basics/asset-picker/AssetPicker';
+import AssetPicker from 'basics/asset-pickers/AssetPicker';
 import Button from 'basics/buttons/Button';
 import CircleButton from 'basics/buttons/CircleButton';
 import { Select } from 'basics/inputs';

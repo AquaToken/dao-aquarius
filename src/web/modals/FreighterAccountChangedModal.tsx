@@ -16,10 +16,11 @@ import { ModalProps } from 'types/modal';
 
 import Arrow from 'assets/icon-arrow-right-long.svg';
 
-import AccountBlock from 'basics/AccountBlock';
 import { Button } from 'basics/buttons';
 import { Checkbox } from 'basics/inputs';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
+
+import AccountBlock from 'components/AccountBlock';
 
 import { respondDown } from '../mixins';
 import { Breakpoints } from '../styles';

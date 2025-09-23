@@ -16,9 +16,10 @@ import AssetInfoModal from 'web/modals/AssetInfoModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Asset from 'basics/Asset';
-import Changes24 from 'basics/Changes24';
-import ExternalLink from 'basics/ExternalLink';
+import { ExternalLink } from 'basics/links';
 import { PageLoader } from 'basics/loaders';
+
+import Changes24 from 'components/Changes24';
 
 const Table = styled.div`
     display: flex;

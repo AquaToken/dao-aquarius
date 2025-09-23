@@ -27,7 +27,8 @@ import AssetLogo from 'basics/AssetLogo';
 import { Button } from 'basics/buttons';
 import { Input, RangeInput, Select, ToggleGroup } from 'basics/inputs';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
-import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
+
+import PublicKeyWithIcon from 'components/PublicKeyWithIcon';
 
 import { GOV_ICE, UP_ICE } from 'pages/vote/components/MainPage/MainPage';
 

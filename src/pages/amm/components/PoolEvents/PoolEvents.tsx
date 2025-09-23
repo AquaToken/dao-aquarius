@@ -19,11 +19,12 @@ import { Breakpoints, COLORS } from 'web/styles';
 
 import LinkIcon from 'assets/icon-external-link.svg';
 
-import ExternalLink from 'basics/ExternalLink';
+import { ExternalLink } from 'basics/links';
 import PageLoader from 'basics/loaders/PageLoader';
 import Pagination from 'basics/Pagination';
-import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
 import Table from 'basics/Table';
+
+import PublicKeyWithIcon from 'components/PublicKeyWithIcon';
 
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
 

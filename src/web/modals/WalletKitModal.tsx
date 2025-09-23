@@ -8,8 +8,8 @@ import { ModalProps } from 'types/modal';
 
 import ArrowRightIcon from 'assets/icon-arrow-right.svg';
 
-import ExternalLink from 'basics/ExternalLink';
 import Label from 'basics/Label';
+import { ExternalLink } from 'basics/links';
 import { ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 import {

@@ -10,7 +10,7 @@ import { COLORS } from 'web/styles';
 
 import Arrow from 'assets/icon-arrow-down.svg';
 
-import AssetPickerModal from 'basics/asset-picker/AssetPickerModal';
+import AssetPickerModal from 'basics/asset-pickers/AssetPickerModal';
 import AssetLogo from 'basics/AssetLogo';
 
 const Container = styled.div`

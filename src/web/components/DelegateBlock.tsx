@@ -8,7 +8,7 @@ import DAO from 'assets/icon-governance.svg';
 import Heart from 'assets/icon-heart.svg';
 import Present from 'assets/icon-present.svg';
 
-import ExternalLink from 'basics/ExternalLink';
+import { ExternalLink } from 'basics/links';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import { flexAllCenter, flexColumn, respondDown } from '../mixins';
