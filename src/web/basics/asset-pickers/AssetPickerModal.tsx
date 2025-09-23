@@ -221,7 +221,7 @@ const AssetPickerModal = ({ params, confirm }: ModalProps<Props>) => {
                 return (
                     assetString === search ||
                     item.token.contract === search ||
-                    item.token.code.toLowerCase().includes(search.toLowerCase()) ||
+                    item.token.code?.toLowerCase().includes(search.toLowerCase()) ||
                     (StellarSdk.StrKey.isValidEd25519PublicKey(search) &&
                         item.token.issuer?.toLowerCase().includes(search.toLowerCase())) ||
                     assetInfo?.home_domain
