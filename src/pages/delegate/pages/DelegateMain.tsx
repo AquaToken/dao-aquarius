@@ -25,7 +25,7 @@ import BackgroundImageRight from 'assets/delegate-bg-right.svg';
 import { Button } from 'basics/buttons';
 import { ToggleGroup } from 'basics/inputs';
 import Select from 'basics/inputs/Select';
-import { BlankExternalLink } from 'basics/links';
+import { BlankExternalLink, BlankRouterLink } from 'basics/links';
 import { PageLoader } from 'basics/loaders';
 
 import DelegatesList from 'pages/delegate/components/DelegatesList/DelegatesList';
@@ -247,11 +247,11 @@ const DelegateMain = () => {
                     Earn rewards without managing votes yourself or become a delegate and help shape
                     protocol incentives
                     <MainLinksContainer>
-                        <Link to={DelegateRoutes.become}>
+                        <BlankRouterLink to={DelegateRoutes.become}>
                             <ButtonStyled withGradient isRounded>
                                 Become a Delegate <ArrowAlt16Styled />
                             </ButtonStyled>
-                        </Link>
+                        </BlankRouterLink>
 
                         <BlankExternalLink href="https://docs.aqua.network/ice-delegation/overview">
                             <ButtonReadMoreStyled isRounded>
