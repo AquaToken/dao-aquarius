@@ -24,7 +24,7 @@ import BackgroundImageRight from 'assets/delegate-bg-right.svg';
 import { Button } from 'basics/buttons';
 import { ToggleGroup } from 'basics/inputs';
 import Select from 'basics/inputs/Select';
-import { ExternalLink, BlankExternalLink } from 'basics/links';
+import { BlankExternalLink, BlankRouterLink } from 'basics/links';
 import { PageLoader } from 'basics/loaders';
 
 import DelegatesList from 'pages/delegate/components/DelegatesList/DelegatesList';
@@ -64,7 +64,10 @@ const BackgroundLeft = styled(BackgroundImageLeft)`
 
 const ButtonStyled = styled(Button)`
     border-radius: 4.6rem;
-    margin-top: 1.6rem;
+`;
+
+const ButtonReadMoreStyled = styled(ButtonStyled)`
+    background-color: ${COLORS.royalPurple};
 `;
 
 const ArrowAlt16Styled = styled(ArrowAlt16)`
@@ -119,37 +122,11 @@ const MainDescription = styled.p`
     align-items: center;
 `;
 
-const InviteLink = styled.div`
+const MainLinksContainer = styled.div`
     display: flex;
-    padding: 1.6rem 2.4rem;
-    border-radius: 2.4rem;
-    background-color: ${COLORS.royalPurple};
-    gap: 1.6rem;
-    width: fit-content;
-    margin: 0 auto;
-    position: relative;
-    z-index: 1;
-
-    span {
-        font-weight: 700;
-        font-size: 1.6rem;
-        line-height: 2.8rem;
-    }
-
-    ${respondDown(Breakpoints.sm)`
-         flex-direction: column;
-         align-items: center;
-    `}
-`;
-
-const ExternalLinkStyled = styled(ExternalLink)`
-    color: ${COLORS.white};
-
-    svg {
-        path {
-            fill: ${COLORS.white};
-        }
-    }
+    justify-content: center;
+    gap: 0.8rem;
+    margin-top: 2.4rem;
 `;
 
 const Wrapper = styled.div`
@@ -268,20 +245,20 @@ const DelegateMain = () => {
                     <br />
                     Earn rewards without managing votes yourself or become a delegate and help shape
                     protocol incentives
-                    <BlankExternalLink href="https://docs.aqua.network/ice-delegation/overview">
-                        <ButtonStyled withGradient isRounded>
-                            Read more <ArrowAlt16Styled />
-                        </ButtonStyled>
-                    </BlankExternalLink>
+                    <MainLinksContainer>
+                        <BlankRouterLink to={DelegateRoutes.become}>
+                            <ButtonStyled withGradient isRounded>
+                                Become a Delegate <ArrowAlt16Styled />
+                            </ButtonStyled>
+                        </BlankRouterLink>
+
+                        <BlankExternalLink href="https://docs.aqua.network/ice-delegation/overview">
+                            <ButtonReadMoreStyled isRounded>
+                                Read more <ArrowAlt16Styled />
+                            </ButtonReadMoreStyled>
+                        </BlankExternalLink>
+                    </MainLinksContainer>
                 </MainDescription>
-
-                <InviteLink>
-                    <span>Want to lead and earn incentives?</span>
-
-                    <ExternalLinkStyled to={DelegateRoutes.become}>
-                        Become a Delegate
-                    </ExternalLinkStyled>
-                </InviteLink>
                 <BackgroundLeft />
                 <BackgroundRight />
             </Background>
