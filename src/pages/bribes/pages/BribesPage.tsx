@@ -11,9 +11,9 @@ import Bribes from 'assets/bribes.svg';
 import Plus from 'assets/icon-plus.svg';
 
 import Button from 'basics/buttons/Button';
-import FAQ from 'basics/FAQ';
 
 import DelegateBlockSmall from 'components/DelegateBlockSmall';
+import FAQ from 'components/FAQ';
 
 import BribesList from 'pages/bribes/components/BribesPage/BribesList/BribesList';
 import { BribeQuestions } from 'pages/bribes/components/BribesPage/FAQ/Questions';

@@ -19,7 +19,8 @@ import ExternalLinkIcon from 'assets/icon-external-link.svg';
 import { IconSort } from 'basics/icons';
 import { CircleLoader } from 'basics/loaders';
 import Pagination from 'basics/Pagination';
-import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
+
+import PublicKeyWithIcon from 'components/PublicKeyWithIcon';
 
 import { getVotes, getVoteTxHash, UPDATE_INTERVAL, VoteFields } from '../../../api/api';
 import { Vote } from '../../../api/types';

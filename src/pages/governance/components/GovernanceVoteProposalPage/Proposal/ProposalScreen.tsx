@@ -20,8 +20,9 @@ import IconEdit from 'assets/icon-edit.svg';
 import ExternalIcon from 'assets/icon-external-link.svg';
 
 import CircleButton from 'basics/buttons/CircleButton';
-import ExternalLink from 'basics/ExternalLink';
-import PublicKeyWithIcon from 'basics/PublicKeyWithIcon';
+import { ExternalLink } from 'basics/links';
+
+import PublicKeyWithIcon from 'components/PublicKeyWithIcon';
 
 import { Proposal } from '../../../api/types';
 import { statePage } from '../../../pages/GovernanceProposalCreationPage';

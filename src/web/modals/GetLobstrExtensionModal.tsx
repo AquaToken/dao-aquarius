@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import Button from 'basics/buttons/Button';
-import ExternalLink from 'basics/ExternalLink';
+import { ExternalLink } from 'basics/links';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 const StyledButton = styled(Button)`

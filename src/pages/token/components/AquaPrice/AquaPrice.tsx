@@ -13,8 +13,9 @@ import { ExpertAssetData } from 'types/api-stellar-expert';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Changes24 from 'basics/Changes24';
 import { DotsLoader } from 'basics/loaders';
+
+import Changes24 from 'components/Changes24';
 
 const Container = styled.div`
     display: flex;

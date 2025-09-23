@@ -1,7 +1,5 @@
 import styled from 'styled-components';
 
-import { COLORS, hexWithOpacity } from 'web/styles';
-
 import Crown from 'assets/icon-crown.svg';
 
 import Label from 'basics/Label';
@@ -10,6 +8,8 @@ import {
     MAX_REWARDS_PERCENT,
     MIN_REWARDS_PERCENT,
 } from 'pages/vote/components/MainPage/Table/Table';
+
+import { COLORS, hexWithOpacity } from '../styles';
 
 const StyledLabel = styled(Label)`
     margin: 0 0.5rem;

@@ -6,18 +6,19 @@ import { StellarService } from 'services/globalServices';
 
 import { ModalProps } from 'types/modal';
 
+import { flexAllCenter } from 'web/mixins';
+import { COLORS } from 'web/styles';
+
 import ArrowRight from 'assets/icon-arrow-right.svg';
 import Copy from 'assets/icon-copy.svg';
 import XdrLogo from 'assets/icon-xdr.svg';
 import Stellar from 'assets/xlm-logo.svg';
 
-import AccountBlock from 'basics/AccountBlock';
 import { Button } from 'basics/buttons';
 import CopyButton from 'basics/buttons/CopyButton';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
-import { flexAllCenter, respondDown } from '../mixins';
-import { Breakpoints, COLORS } from '../styles';
+import AccountBlock from 'components/AccountBlock';
 
 const LinkLab = styled.a`
     text-decoration: none;

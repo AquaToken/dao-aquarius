@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 import { GovernanceRoutes } from 'constants/routes';
 
-import { QuestionType } from 'basics/FAQ';
+import { QuestionType } from 'components/FAQ';
 
 export const AirdropQuestions: QuestionType[] = [
     {

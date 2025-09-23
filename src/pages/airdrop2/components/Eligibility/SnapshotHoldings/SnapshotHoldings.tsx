@@ -13,7 +13,7 @@ import Aqua from 'assets/aqua-logo-small.svg';
 import Xlm from 'assets/xlm-logo.svg';
 import YXlm from 'assets/yxlm-logo.svg';
 
-import ExternalLink from 'basics/ExternalLink';
+import { ExternalLink } from 'basics/links';
 
 import { BalanceLabel } from 'pages/locker/components/LockerAccountPage/Portfolio/Portfolio';
 

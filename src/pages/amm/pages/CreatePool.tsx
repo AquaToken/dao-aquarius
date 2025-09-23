@@ -30,7 +30,7 @@ import ArrowLeft from 'assets/icon-arrow-left.svg';
 import Tick from 'assets/icon-tick-white.svg';
 
 import Alert from 'basics/Alert';
-import AssetDropdown from 'basics/AssetDropdown';
+import AssetDropdown from 'basics/asset-pickers/AssetDropdown';
 import AssetLogo from 'basics/AssetLogo';
 import Button from 'basics/buttons/Button';
 import CircleButton from 'basics/buttons/CircleButton';

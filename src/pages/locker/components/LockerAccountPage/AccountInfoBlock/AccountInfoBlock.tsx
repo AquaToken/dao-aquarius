@@ -9,7 +9,7 @@ import { StellarService } from 'services/globalServices';
 
 import { flexRowSpaceBetween } from 'web/mixins';
 
-import AccountBlock from 'basics/AccountBlock';
+import AccountBlock from 'components/AccountBlock';
 
 import OtherAccountButton from './OtherAccountButton/OtherAccountButton';
 

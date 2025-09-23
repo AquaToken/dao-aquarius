@@ -16,7 +16,7 @@ import Stellarterm from 'assets/stellarterm-logo.svg';
 import StellarX from 'assets/stellarx-logo.svg';
 import Upbit from 'assets/upbit.svg';
 
-import ExternalLink from 'basics/ExternalLink';
+import { ExternalLink } from 'basics/links';
 
 const Container = styled.section`
     width: 100%;

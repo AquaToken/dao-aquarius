@@ -22,7 +22,7 @@ import { Breakpoints, COLORS } from 'web/styles';
 import IceLogo from 'assets/ice-logo.svg';
 
 import Button from 'basics/buttons/Button';
-import ExternalLink from 'basics/ExternalLink';
+import { ExternalLink } from 'basics/links';
 
 import { DOWN_ICE, UP_ICE } from 'pages/vote/components/MainPage/MainPage';
 

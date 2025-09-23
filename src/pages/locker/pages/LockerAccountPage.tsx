@@ -22,8 +22,9 @@ import { Breakpoints, COLORS } from 'web/styles';
 
 import ArrowDown from 'assets/icon-arrow-down.svg';
 
-import FAQ from 'basics/FAQ';
 import PageLoader from 'basics/loaders/PageLoader';
+
+import FAQ from 'components/FAQ';
 
 import DelegateBlock from 'pages/locker/components/DelegateBlock/DelegateBlock';
 import { LockerQuestions } from 'pages/locker/components/Questions/Questions';

@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { commonMaxWidth } from 'web/mixins';
 
-import FAQ from 'basics/FAQ';
+import FAQ from 'components/FAQ';
 
 import { LockerQuestions } from 'pages/locker/components/Questions/Questions';
 

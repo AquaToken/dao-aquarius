@@ -22,13 +22,13 @@ import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import PageLoader from 'basics/loaders/PageLoader';
-import PageTitle from 'basics/PageTitle';
 
 import ErrorBoundary from 'components/ErrorBoundary';
 import Footer from 'components/Footer';
 import Header from 'components/Header/Header';
 import ModalContainer from 'components/ModalContainer';
 import NotFoundPage from 'components/NotFoundPage';
+import PageTitle from 'components/PageTitle';
 import TestnetBanner from 'components/TestnetBanner';
 import ToastContainer from 'components/ToastContainer';
 

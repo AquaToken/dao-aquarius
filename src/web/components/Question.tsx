@@ -2,10 +2,10 @@ import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
 
-import { flexRowSpaceBetween } from 'web/mixins';
-import { COLORS } from 'web/styles';
-
 import Down from 'assets/icon-arrow-down.svg';
+
+import { flexRowSpaceBetween } from '../mixins';
+import { COLORS } from '../styles';
 
 const Container = styled.div`
     display: flex;

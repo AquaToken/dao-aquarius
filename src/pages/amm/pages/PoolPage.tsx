@@ -38,7 +38,7 @@ import AssetLogo from 'basics/AssetLogo';
 import Button from 'basics/buttons/Button';
 import CircleButton from 'basics/buttons/CircleButton';
 import CopyButton from 'basics/buttons/CopyButton';
-import ExternalLink from 'basics/ExternalLink';
+import { ExternalLink } from 'basics/links';
 import PageLoader from 'basics/loaders/PageLoader';
 import Market from 'basics/Market';
 
