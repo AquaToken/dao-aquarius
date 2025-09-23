@@ -36,9 +36,9 @@ import { PoolProcessed } from 'types/amm';
 import { Token } from 'types/token';
 
 import { DatePickerStyles } from 'web/DatePickerStyles';
-import { respondDown } from 'web/mixins';
+import { flexColumn, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import ConfirmIncentiveModal from 'web/modals/ConfirmIncentiveModal';
-import { Breakpoints, COLORS } from 'web/styles';
+import { Breakpoints, COLORS, FONT_SIZE } from 'web/styles';
 
 import ArrowLeft from 'assets/icon-arrow-left.svg';
 import Fail from 'assets/icon-fail.svg';
@@ -72,8 +72,29 @@ import {
     DashIcon,
 } from 'pages/bribes/pages/AddBribePage';
 
+const OptionsRow = styled.div`
+    ${flexRowSpaceBetween};
+    width: 100%;
+`;
+
 const MarketStyled = styled(Market)`
     pointer-events: none;
+    flex: 5;
+`;
+
+const MarketTVL = styled.div`
+    ${flexColumn};
+    align-items: flex-end;
+    flex: 1;
+    ${FONT_SIZE.sm}
+
+    span:first-child {
+        color: ${COLORS.grayText};
+    }
+
+    span:last-child {
+        font-weight: 700;
+    }
 `;
 
 const NextButton = styled(Button)`
@@ -204,13 +225,26 @@ const AddIncentivePage = () => {
 
         return markets.map(market => ({
             label: (
-                <MarketStyled
-                    assets={market.tokens}
-                    withoutLink
-                    fee={market.fee}
-                    poolType={market.pool_type}
-                    mobileVerticalDirections
-                />
+                <OptionsRow>
+                    <MarketStyled
+                        assets={market.tokens}
+                        withoutLink
+                        fee={market.fee}
+                        poolType={market.pool_type}
+                        mobileVerticalDirections
+                    />
+                    <MarketTVL>
+                        <span>TVL:</span>
+                        <span>
+                            $
+                            {formatBalance(
+                                +contractValueToAmount(market.liquidity_usd),
+                                true,
+                                true,
+                            )}
+                        </span>
+                    </MarketTVL>
+                </OptionsRow>
             ),
             value: market,
         }));

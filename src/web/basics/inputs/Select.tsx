@@ -18,18 +18,19 @@ const DropDown = styled.div<{ $isOpen: boolean; $disabled: boolean }>`
     min-height: 6.6rem;
     position: relative;
     cursor: pointer;
-    border: ${({ $isOpen }) =>
-        $isOpen ? `0.2rem solid ${COLORS.purple}` : `0.1rem solid ${COLORS.gray}`};
-    border-radius: ${({ $isOpen }) => ($isOpen ? '0.5rem 0.5rem 0 0' : '0.5rem')};
-    padding: ${({ $isOpen }) => ($isOpen ? '0.1rem' : '0.2rem')};
     box-sizing: border-box;
+
+    border-radius: ${({ $isOpen }) => ($isOpen ? '0.5rem 0.5rem 0 0' : '0.5rem')};
+    background-color: ${({ $disabled }) => ($disabled ? COLORS.lightGray : COLORS.white)};
     pointer-events: ${({ $disabled }) => ($disabled ? 'none' : 'auto')};
     font-size: 1.4rem;
-    background-color: ${({ $disabled }) => ($disabled ? COLORS.lightGray : COLORS.white)};
     ${noSelect};
 
+    box-shadow: inset 0 0 0 ${({ $isOpen }) => ($isOpen ? '0.2rem' : '0.1rem')}
+        ${({ $isOpen }) => ($isOpen ? COLORS.purple : COLORS.gray)};
+
     &:hover {
-        border-color: ${COLORS.purple};
+        box-shadow: inset 0 0 0 ${({ $isOpen }) => ($isOpen ? '0.2rem' : '0.1rem')} ${COLORS.purple};
     }
 `;
 
@@ -49,11 +50,11 @@ const DropdownItem = styled.div`
 `;
 
 const DropdownItemHead = styled(DropdownItem)`
-    padding: 0;
+    padding: 0 6rem 0 1.2rem;
     min-height: 6.6rem;
 
     ${respondDown(Breakpoints.md)`
-        padding: 1.2rem;
+        padding: 1.2rem 6rem 1.2rem 1.2rem;;
     `}
 `;
 
