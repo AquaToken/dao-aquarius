@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { NumericFormat } from 'react-number-format';
 import styled from 'styled-components';
 
+import { POOL_TYPE } from 'constants/amm';
 import { DAY } from 'constants/intervals';
 
 import { contractValueToAmount } from 'helpers/amount';
@@ -687,7 +688,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                                     : '0'}
                             </span>
                         </DescriptionRow>
-                        {Boolean(rates) && (
+                        {pool.pool_type === POOL_TYPE.constant && Boolean(rates) && (
                             <DescriptionRow>
                                 <span>Pool rates</span>
                                 <PoolRates
