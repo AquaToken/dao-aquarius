@@ -189,7 +189,7 @@ const ActiveParticipationRate = styled.div`
 `;
 
 const Red = styled.span`
-    color: ${COLORS.pink500};
+    color: ${COLORS.red500};
 `;
 
 const getStatus = (proposal: ProposalSimple) => {

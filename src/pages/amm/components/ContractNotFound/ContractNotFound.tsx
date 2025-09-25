@@ -17,7 +17,7 @@ import { COLORS } from 'web/styles';
 import Button from 'basics/buttons/Button';
 
 const Container = styled.div`
-    color: ${COLORS.pink500};
+    color: ${COLORS.red500};
     margin-top: 0.8rem;
     display: flex;
     align-items: center;

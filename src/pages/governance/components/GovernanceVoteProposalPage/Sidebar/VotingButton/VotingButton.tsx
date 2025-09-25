@@ -15,7 +15,7 @@ const ButtonBody = styled.button<{ isVoteFor?: boolean }>`
 
     color: ${COLORS.white};
 
-    background-color: ${({ isVoteFor }) => (isVoteFor ? COLORS.pink500 : COLORS.purple500)};
+    background-color: ${({ isVoteFor }) => (isVoteFor ? COLORS.red500 : COLORS.purple500)};
 
     border-radius: 0.5rem;
     border: none;

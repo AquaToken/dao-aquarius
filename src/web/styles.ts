@@ -58,8 +58,8 @@ export const COLORS = {
     orange300: '#B0632A',
     orange500: '#FF8F00',
 
-    // Pink scale
-    pink500: '#FF3461',
+    // Red scale
+    red500: '#FF3461',
 };
 
 /**

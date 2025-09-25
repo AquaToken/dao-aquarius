@@ -32,7 +32,7 @@ const Outer = styled.div`
     height: 0.8rem;
     border-radius: 8px;
     width: 100%;
-    background-color: ${COLORS.pink500};
+    background-color: ${COLORS.red500};
 `;
 
 const Inner = styled.div<{ $width: string }>`

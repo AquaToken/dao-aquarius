@@ -59,7 +59,7 @@ const Outer = styled.div`
 const Inner = styled.div<{ $width: string; $isAgainst: boolean }>`
     ${progressLineStyles};
     width: ${({ $width }) => $width};
-    background-color: ${({ $isAgainst }) => ($isAgainst ? COLORS.pink500 : COLORS.purple500)};
+    background-color: ${({ $isAgainst }) => ($isAgainst ? COLORS.red500 : COLORS.purple500)};
 `;
 
 const ResultProgressLine = ({

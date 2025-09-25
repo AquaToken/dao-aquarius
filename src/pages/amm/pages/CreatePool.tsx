@@ -56,7 +56,7 @@ import ContractNotFound from '../components/ContractNotFound/ContractNotFound';
 import PoolsList from '../components/PoolsList/PoolsList';
 
 const ErrorLabel = styled.span<{ $isError?: boolean }>`
-    color: ${({ $isError }) => ($isError ? COLORS.pink500 : COLORS.textTertiary)};
+    color: ${({ $isError }) => ($isError ? COLORS.red500 : COLORS.textTertiary)};
 `;
 
 const StyledForm = styled(Form)`
@@ -121,7 +121,7 @@ const RemoveButton = styled.div`
     position: absolute;
     right: 0;
     bottom: 7.8rem;
-    color: ${COLORS.pink500};
+    color: ${COLORS.red500};
     cursor: pointer;
 `;
 
@@ -603,7 +603,7 @@ const CreatePool = () => {
                                         </TooltipInner>
                                     }
                                     position={TOOLTIP_POSITION.right}
-                                    background={COLORS.pink500}
+                                    background={COLORS.red500}
                                 >
                                     <AddRowButton
                                         secondary
