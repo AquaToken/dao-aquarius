@@ -43,7 +43,7 @@ const AssetInfo = styled.div`
 const GrayText = styled.div`
     font-size: 1.6rem;
     line-height: 1.8rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
 `;
 
 const BoldText = styled.div`
@@ -51,7 +51,7 @@ const BoldText = styled.div`
     font-size: 1.6rem;
     line-height: 1.9rem;
     margin: 0.5rem 0 0 0;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 
     ${respondDown(Breakpoints.md)`
           margin: 0;
@@ -64,7 +64,7 @@ const InfoRow = styled.div`
 `;
 
 const Text = styled.div`
-    color: ${COLORS.descriptionText};
+    color: ${COLORS.textSecondary};
     font-size: 1.6rem;
     line-height: 2.9rem;
     margin: 0.8rem 0;
@@ -77,7 +77,7 @@ const PlatfomLink = styled.a`
     &:not(:last-child) {
         margin-bottom: 2rem;
     }
-    background: ${COLORS.lightGray};
+    background: ${COLORS.gray50};
     border-radius: 0.5rem;
     padding: 3rem 2rem 3rem 4rem;
 

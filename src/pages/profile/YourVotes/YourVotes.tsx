@@ -33,7 +33,7 @@ const Container = styled.div`
 const Title = styled.h2`
     font-size: 3.6rem;
     line-height: 4.2rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     font-weight: 400;
     margin-bottom: 4.8rem;
 `;
@@ -52,7 +52,7 @@ const TableSection = styled(Section)`
     margin-top: 3.2rem;
 
     ${respondDown(Breakpoints.md)`
-       background: ${COLORS.lightGray};
+       background: ${COLORS.gray50};
        padding: 3.2rem 0 0;
        overflow: hidden;
     `}
@@ -65,17 +65,17 @@ export const Empty = styled.div`
     h3 {
         font-size: 2rem;
         line-height: 2.8rem;
-        color: ${COLORS.titleText};
+        color: ${COLORS.textPrimary};
         margin-bottom: 0.9rem;
     }
 
     span {
         line-height: 180%;
-        color: ${COLORS.grayText};
+        color: ${COLORS.textGray};
     }
 
     a {
-        color: ${COLORS.purple};
+        color: ${COLORS.purple500};
     }
 `;
 
@@ -95,11 +95,11 @@ const UnlockedVotesData = styled.div`
 const UnlockedVotesTitle = styled.span`
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
 `;
 
 const UnlockedVotesStats = styled.span`
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const ManageButton = styled(Button)`

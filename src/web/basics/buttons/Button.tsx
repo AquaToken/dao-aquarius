@@ -58,19 +58,19 @@ const ButtonBody = styled(BlankButton)<{
             return 'radial-gradient(100% 158.34% at 0% 0%, rgba(234, 191, 255, 0.2) 0%, rgba(234, 191, 255, 0) 100%)';
         }
         if ($secondary) {
-            return COLORS.gray;
+            return COLORS.gray100;
         }
         if ($isWhite) {
             return COLORS.white;
         }
         if ($tertiary) {
-            return COLORS.lightGray;
+            return COLORS.gray50;
         }
         if ($withGradient) {
             return 'radial-gradient(146.92% 150% at 50.22% 0%, #872AB0 0%, #3918AC 100%)';
         }
 
-        return COLORS.buttonBackground;
+        return COLORS.purple950;
     }};
 
     box-shadow: ${({ $withGradient, $secondary, $tertiary }) =>
@@ -80,7 +80,7 @@ const ButtonBody = styled(BlankButton)<{
     
     border: ${({ $withGradient, $secondary }) => {
         if ($withGradient && $secondary) {
-            return `0.1rem solid ${COLORS.lightPurple};`;
+            return `0.1rem solid ${COLORS.purple100};`;
         }
 
         return `0.1rem solid ${COLORS.transparent};`;
@@ -115,22 +115,22 @@ const ButtonBody = styled(BlankButton)<{
             }
 
             if ($secondary) {
-                return COLORS.lightGray;
+                return COLORS.gray50;
             }
 
             if ($isWhite) {
-                return COLORS.lightGray;
+                return COLORS.gray50;
             }
 
             if ($tertiary) {
-                return COLORS.gray;
+                return COLORS.gray100;
             }
 
             if ($withGradient) {
                 return 'radial-gradient(146.92% 150% at 50.22% 0%, #AE51D6 0%, #3B17B6 100%);';
             }
 
-            return COLORS.purple;
+            return COLORS.purple500;
         }};
     }
 
@@ -141,7 +141,7 @@ const ButtonBody = styled(BlankButton)<{
     &:focus {
         border: ${({ $withGradient, $secondary }) =>
             $withGradient && $secondary
-                ? `0.1rem solid ${COLORS.lightPurple};`
+                ? `0.1rem solid ${COLORS.purple100};`
                 : `0.2rem solid ${COLORS.transparent}`};
     }
 
@@ -151,7 +151,7 @@ const ButtonBody = styled(BlankButton)<{
                 return 'radial-gradient(146.92% 150% at 50.22% 0%, #E0E0E0 0%, #A0A0A0 100%)';
             }
 
-            return COLORS.gray;
+            return COLORS.gray100;
         }};
         cursor: not-allowed;
     }
@@ -172,7 +172,7 @@ const ButtonLoader = styled.div<{
 }>`
     color: ${({ $secondary, $isWhite, $isPurpleText, $tertiary, $withGradient }) => {
         if ($isPurpleText) {
-            return COLORS.purple;
+            return COLORS.purple500;
         }
 
         if ($secondary && $withGradient) {
@@ -180,15 +180,15 @@ const ButtonLoader = styled.div<{
         }
 
         if ($secondary) {
-            return COLORS.grayText;
+            return COLORS.textGray;
         }
 
         if ($isWhite) {
-            return COLORS.blue;
+            return COLORS.blue500;
         }
 
         if ($tertiary) {
-            return COLORS.titleText;
+            return COLORS.textPrimary;
         }
 
         return COLORS.white;
@@ -197,13 +197,13 @@ const ButtonLoader = styled.div<{
     button:hover > & {
         ${({ $secondary, $withGradient }) => {
             if ($secondary && $withGradient) {
-                return `color:  ${COLORS.purple};`;
+                return `color:  ${COLORS.purple500} ;`;
             }
         }};
     }
 
     button:disabled > & {
-        color: ${COLORS.grayText};
+        color: ${COLORS.textGray};
     }
 
     ${({ $pending }) =>

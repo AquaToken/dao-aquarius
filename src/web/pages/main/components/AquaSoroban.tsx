@@ -38,7 +38,7 @@ const InnerWrapper = styled.div`
 const Title = styled.span`
     font-size: 3.5rem;
     line-height: 5.2rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 
     ${respondDown(Breakpoints.sm)`
         font-size: 2.4rem;
@@ -48,7 +48,7 @@ const Title = styled.span`
 
 const TitleBold = styled(Title)`
     font-weight: 700;
-    color: ${COLORS.purple};
+    color: ${COLORS.purple500};
 `;
 
 const SorobanStarsStyled = styled(SorobanStars)`
@@ -73,7 +73,7 @@ const SorobanBlocks = styled.div`
 `;
 
 const Block = styled.div`
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     display: flex;
     justify-content: space-between;
     flex: 1;
@@ -108,7 +108,7 @@ const BlockWithIcon = styled.div`
 const BlockDesc = styled.div`
     font-size: 2.4rem;
     line-height: 3.6rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     margin-top: 1.6rem;
 
     ${respondDown(Breakpoints.md)`
@@ -141,7 +141,7 @@ const SorobanButton = styled(Button)`
 
 const ArrowAlt16Styled = styled(ArrowAlt16)`
     margin-left: 0.8rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 `;
 
 const AquaSoroban = () => (

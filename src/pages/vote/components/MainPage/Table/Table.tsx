@@ -41,12 +41,12 @@ const BribeInfo = styled.div`
     align-items: center;
     width: min-content;
     height: 4.8rem;
-    background-color: ${COLORS.gray};
+    background-color: ${COLORS.gray100};
     border-radius: 2.2rem;
     padding: 0 1.6rem;
     white-space: nowrap;
     position: relative;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     font-size: 1.4rem;
     line-height: 2rem;
     cursor: pointer;
@@ -65,7 +65,7 @@ const BribeInfo = styled.div`
         position: absolute;
         bottom: 100%;
         left: 3.3rem;
-        border-bottom: 0.6rem solid ${COLORS.gray};
+        border-bottom: 0.6rem solid ${COLORS.gray100};
         border-left: 0.6rem solid ${COLORS.transparent};
         border-right: 0.6rem solid ${COLORS.transparent};
     }
@@ -96,7 +96,7 @@ const BribeAquaSum = styled.div`
     padding: 0 1.2rem;
     margin-left: 0.9rem;
     margin-right: 2rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
 
     ${respondDown(Breakpoints.md)`
         background-color: unset;
@@ -115,7 +115,7 @@ const BribeAsset = styled.div`
     width: 3.2rem;
     background-color: ${COLORS.white};
     border-radius: 50%;
-    border: 0.2rem solid ${COLORS.gray};
+    border: 0.2rem solid ${COLORS.gray100};
 
     &:not(:first-child) {
         margin-left: -1.2rem;
@@ -147,7 +147,7 @@ const PairWrapper = styled.div`
 const Voted = styled.div`
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 
     ${respondDown(Breakpoints.md)`
         font-size: unset;

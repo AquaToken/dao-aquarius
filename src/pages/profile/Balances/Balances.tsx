@@ -63,7 +63,7 @@ const Wrapper = styled.div`
 
 const BalancesContainer = styled.div`
     display: flex;
-    border-bottom: 0.1rem dashed ${COLORS.gray};
+    border-bottom: 0.1rem dashed ${COLORS.gray100};
     padding-bottom: 3.2rem;
     gap: 1.6rem;
 
@@ -80,7 +80,7 @@ const BalancesColumn = styled.div`
     ${respondDown(Breakpoints.lg)`
         &:not(:first-child){
             margin-top: 2.4rem;
-            border-top: 0.1rem dashed ${COLORS.gray};
+            border-top: 0.1rem dashed ${COLORS.gray100};
             padding-top: 2.4rem;
         }
     `}
@@ -116,7 +116,7 @@ const HeaderButtons = styled.div`
 const BalanceTitle = styled.span`
     font-size: 1.6rem;
     line-height: 1.8rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const BalanceValue = styled.div`
@@ -124,7 +124,7 @@ const BalanceValue = styled.div`
     align-items: center;
     font-size: 36px;
     line-height: 42px;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     margin-bottom: 4.4rem;
 
     ${respondDown(Breakpoints.md)`
@@ -171,7 +171,7 @@ const IceLogoSmall = styled(Ice)`
 const BalanceTitleSmall = styled.div`
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     margin-bottom: 0.5rem;
 
     ${respondDown(Breakpoints.md)`
@@ -186,14 +186,14 @@ const BalanceValueSmall = styled.div`
     font-weight: 700;
     font-size: 2rem;
     line-height: 2.8rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 `;
 
 const AdditionalInfoBalance = styled.span`
     font-weight: bold;
     font-size: 2rem;
     line-height: 2.8rem;
-    color: ${COLORS.buttonBackground};
+    color: ${COLORS.purple950};
     margin-top: 1rem;
 
     ${respondDown(Breakpoints.md)`
@@ -246,7 +246,7 @@ const LumenBalanceRow = styled.div`
 const LumenBalanceLabel = styled.span`
     font-size: 1.6rem;
     line-height: 1.8rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const LumenBalance = styled.div`
@@ -261,7 +261,7 @@ const LumenBalance = styled.div`
 const LumenBalanceValue = styled.span`
     font-size: 1.6rem;
     line-height: 1.8rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     font-weight: 700;
     margin-right: 1rem;
 `;
@@ -291,7 +291,7 @@ const Hint = styled.div`
     margin-right: 2rem;
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 
     ${respondDown(Breakpoints.sm)`
         margin-right: 0;
@@ -363,7 +363,10 @@ const Balances = ({ ammAquaBalance }: BalancesProps): React.ReactNode => {
                         </BalanceValue>
                         <AdditionalInfo>
                             <InfoColumn>
-                                <BalanceLabel $color={COLORS.yellow} $textColor={COLORS.titleText}>
+                                <BalanceLabel
+                                    $color={COLORS.yellow500}
+                                    $textColor={COLORS.textPrimary}
+                                >
                                     Aquarius AMM
                                 </BalanceLabel>
                                 <AdditionalInfoBalance>
@@ -378,7 +381,7 @@ const Balances = ({ ammAquaBalance }: BalancesProps): React.ReactNode => {
                                 </AdditionalInfoDescription>
                             </InfoColumn>
                             <InfoColumn>
-                                <BalanceLabel $color={COLORS.purple} $textColor={COLORS.white}>
+                                <BalanceLabel $color={COLORS.purple500} $textColor={COLORS.white}>
                                     LOCK
                                 </BalanceLabel>
                                 <AdditionalInfoBalance>

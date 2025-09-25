@@ -35,9 +35,9 @@ const ContentRow = styled.div`
     margin-top: 3rem;
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     padding-bottom: 2.6rem;
-    border-bottom: 0.1rem dashed ${COLORS.gray};
+    border-bottom: 0.1rem dashed ${COLORS.gray100};
 
     ${respondDown(Breakpoints.md)`
          width: 100%;
@@ -57,7 +57,7 @@ const Cost = styled.div`
     line-height: 1.8rem;
     font-size: 1.6rem;
     margin-right: 1.2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const InfoIconWrap = styled.div`
@@ -71,7 +71,7 @@ const InfoIconWrap = styled.div`
 const AssetsInfo = styled.div`
     ${flexAllCenter};
     padding: 3.5rem 0;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     border-radius: 0.5rem;
 `;
 

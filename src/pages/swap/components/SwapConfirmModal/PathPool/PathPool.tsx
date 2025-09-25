@@ -39,14 +39,14 @@ const PoolAssets = styled.div`
     border-radius: 2.1rem;
     border: 0.2rem solid ${COLORS.transparent};
     background: linear-gradient(to top, white, white),
-        linear-gradient(to top, ${COLORS.gray}, ${COLORS.white} 50%);
+        linear-gradient(to top, ${COLORS.gray100}, ${COLORS.white} 50%);
     background-clip: padding-box, border-box;
     background-origin: padding-box, border-box;
     cursor: pointer;
 
     &:hover {
-        background: linear-gradient(to top, ${COLORS.gray}, ${COLORS.gray}),
-            linear-gradient(to top, ${COLORS.gray}, ${COLORS.white} 50%);
+        background: linear-gradient(to top, ${COLORS.gray100}, ${COLORS.gray100}),
+            linear-gradient(to top, ${COLORS.gray100}, ${COLORS.white} 50%);
     }
 `;
 
@@ -62,7 +62,7 @@ const ArrowRight = styled(RightIcon)`
 const Fee = styled.div`
     font-size: 1.6rem;
     line-height: 1.8rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 interface PathPoolProps {

@@ -190,7 +190,7 @@ const PoolEvents = ({ pool }: { pool: PoolExtended }) => {
                 ]}
                 body={events.map((event: PoolEvent, index: number) => ({
                     key: `${event.ledger}-${index}`,
-                    mobileBackground: COLORS.lightGray,
+                    mobileBackground: COLORS.gray50,
                     rowItems: [
                         {
                             children: getEventTitle(event, pool),

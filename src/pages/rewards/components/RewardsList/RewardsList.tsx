@@ -59,7 +59,7 @@ const Header = styled.div`
 const Title = styled.h3`
     font-size: 3.5rem;
     line-height: 4.1rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     font-weight: normal;
 
     ${respondDown(Breakpoints.md)`
@@ -73,7 +73,7 @@ const LastUpdated = styled.div`
     align-items: center;
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 
     span {
         margin-right: 1rem;
@@ -102,7 +102,7 @@ const Amount = styled.div`
     align-items: center;
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 
     a {
         display: flex;
@@ -339,7 +339,7 @@ const RewardsList = () => {
                                                 }
                                                 position={TOOLTIP_POSITION.top}
                                                 background={COLORS.white}
-                                                color={COLORS.titleText}
+                                                color={COLORS.textPrimary}
                                                 showOnHover
                                             >
                                                 <WarningIcon />
@@ -378,7 +378,7 @@ const RewardsList = () => {
                                 children: `${formatBalance(daily_total_reward)} AQUA`,
                                 label: 'Total daily reward',
                                 align: CellAlign.Right,
-                                labelColor: COLORS.titleText,
+                                labelColor: COLORS.textPrimary,
                             },
                         ],
                     }),

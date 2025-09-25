@@ -26,7 +26,7 @@ const Title = styled.h2`
     font-weight: 700;
     font-size: 2rem;
     line-height: 2.8rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     margin-bottom: 2.4rem;
 `;
 
@@ -34,7 +34,7 @@ const Item = styled.div`
     display: flex;
     gap: 1.6rem;
     align-items: center;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
 
     svg {
         min-width: 3.2rem;
@@ -42,7 +42,7 @@ const Item = styled.div`
 
     a {
         text-decoration: underline;
-        color: ${COLORS.paragraphText};
+        color: ${COLORS.textTertiary};
     }
 
     &:not(:last-child) {

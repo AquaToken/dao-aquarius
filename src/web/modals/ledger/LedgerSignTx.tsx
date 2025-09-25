@@ -32,7 +32,7 @@ const IconContainer = styled.div`
     padding-top: 8rem;
     padding-bottom: 2.4rem;
     width: 50rem;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     ${flexAllCenter};
 
     ${respondDown(Breakpoints.md)`
@@ -44,7 +44,7 @@ const Status = styled.div`
     padding-top: 2.4rem;
     padding-bottom: 4.5rem;
     margin-bottom: 3.2rem;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     ${flexAllCenter};
 `;
 

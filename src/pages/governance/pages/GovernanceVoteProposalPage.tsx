@@ -18,7 +18,7 @@ import ProposalScreen from '../components/GovernanceVoteProposalPage/Proposal/Pr
 
 const Main = styled.main`
     ${respondDown(Breakpoints.md)`
-         background: ${COLORS.lightGray};
+         background: ${COLORS.gray50};
     `}
 `;
 

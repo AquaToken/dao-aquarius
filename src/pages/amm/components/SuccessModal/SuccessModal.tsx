@@ -17,7 +17,7 @@ const AssetsInfo = styled.div`
     ${flexAllCenter};
     flex-direction: column;
     padding: 3.5rem 0;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     border-radius: 0.5rem;
     margin-top: 4rem;
     gap: 2.4rem;

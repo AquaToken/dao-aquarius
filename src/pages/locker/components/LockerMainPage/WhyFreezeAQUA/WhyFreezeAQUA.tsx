@@ -49,7 +49,7 @@ const Column = styled.div`
 const Title = styled.span`
     font-size: 3.5rem;
     line-height: 4.1rem;
-    color: ${COLORS.buttonBackground};
+    color: ${COLORS.purple950};
     margin-bottom: 7rem;
 
     ${respondDown(Breakpoints.md)`
@@ -62,7 +62,7 @@ const ColumnTitle = styled.span`
     font-weight: 700;
     font-size: 2rem;
     line-height: 2.8rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     margin-top: 5.5rem;
     margin-bottom: 2.3rem;
 
@@ -75,7 +75,7 @@ const ColumnText = styled.span`
     font-weight: 400;
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
 `;
 
 const WhyFreezeAQUA = (): JSX.Element => (

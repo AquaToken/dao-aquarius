@@ -14,7 +14,7 @@ const CopyButtonContainer = styled.div<{ isBlackText?: boolean }>`
     align-items: center;
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${({ isBlackText }) => (isBlackText ? COLORS.paragraphText : COLORS.purple)};
+    color: ${({ isBlackText }) => (isBlackText ? COLORS.textTertiary : COLORS.purple500)};
     cursor: pointer;
 `;
 

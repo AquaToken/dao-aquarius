@@ -26,7 +26,7 @@ const Chart = styled.div`
 
 const Loader = styled.div`
     ${flexAllCenter};
-    background: ${COLORS.lightGray};
+    background: ${COLORS.gray50};
     font-size: 1.6rem;
     position: absolute;
     top: 0;
@@ -50,7 +50,7 @@ const Statistic = styled.div<{ $isUp: boolean }>`
 const StatisticLabel = styled.span`
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     margin-right: 0.8rem;
 `;
 
@@ -208,13 +208,13 @@ const LightWeightChart = ({ base, counter, period }: LightWeightChartProps): Rea
         }
 
         const chartInstance = createChart('lightweight', {
-            layout: { background: { color: COLORS.lightGray }, textColor: COLORS.titleText },
+            layout: { background: { color: COLORS.gray50 }, textColor: COLORS.textPrimary },
             rightPriceScale: {
                 autoScale: true,
                 invertScale: false,
                 alignLabels: true,
                 borderVisible: true,
-                borderColor: COLORS.placeholder,
+                borderColor: COLORS.gray200,
                 scaleMargins: {
                     top: 0.1,
                     bottom: 0.2,
@@ -226,20 +226,20 @@ const LightWeightChart = ({ base, counter, period }: LightWeightChartProps): Rea
                 lockVisibleTimeRangeOnResize: true,
                 rightBarStaysOnScroll: true,
                 borderVisible: true,
-                borderColor: COLORS.placeholder,
+                borderColor: COLORS.gray200,
                 visible: true,
                 timeVisible: true,
             },
             crosshair: {
                 vertLine: {
-                    color: COLORS.purple,
+                    color: COLORS.purple500,
                     width: 1,
                     style: 3,
                     visible: true,
                     labelVisible: true,
                 },
                 horzLine: {
-                    color: COLORS.purple,
+                    color: COLORS.purple500,
                     width: 1,
                     style: 3,
                     visible: true,
@@ -249,12 +249,12 @@ const LightWeightChart = ({ base, counter, period }: LightWeightChartProps): Rea
             },
             grid: {
                 vertLines: {
-                    color: COLORS.placeholder,
+                    color: COLORS.gray200,
                     style: LineStyle.SparseDotted,
                     visible: true,
                 },
                 horzLines: {
-                    color: COLORS.placeholder,
+                    color: COLORS.gray200,
                     style: LineStyle.SparseDotted,
                     visible: true,
                 },

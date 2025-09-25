@@ -6,8 +6,7 @@ import { ToastService } from 'services/globalServices';
 
 import { ModalProps } from 'types/modal';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
+import { COLORS } from 'web/styles';
 
 import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
@@ -28,7 +27,7 @@ const InputStyled = styled(Input)`
 `;
 
 const Divider = styled.div`
-    border-bottom: 0.1rem dashed ${COLORS.gray};
+    border-bottom: 0.1rem dashed ${COLORS.gray100};
     margin: 4.2rem 0 3.2rem;
 `;
 

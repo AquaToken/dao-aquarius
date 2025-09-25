@@ -52,7 +52,7 @@ const ContentRow = styled.div`
 const Label = styled.span`
     font-size: 1.6rem;
     line-height: 1.8rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     ${flexAllCenter};
 `;
 
@@ -73,11 +73,11 @@ const SuccessIcon = styled(Success)`
 const BalanceBlock = styled.span`
     font-size: 1.4rem;
     line-height: 1.6rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const Balance = styled.span`
-    color: ${COLORS.tooltip};
+    color: ${COLORS.purple400};
     cursor: pointer;
 `;
 
@@ -107,12 +107,12 @@ const StyledSelect = styled(Select)`
 const ClaimBack = styled.div`
     margin-top: 4.1rem;
     padding-bottom: 1.7rem;
-    color: ${COLORS.grayText};
-    border-bottom: 0.1rem dashed ${COLORS.gray};
+    color: ${COLORS.textGray};
+    border-bottom: 0.1rem dashed ${COLORS.gray100};
 `;
 
 const ClaimBackDate = styled.span`
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
 `;
 
 const StyledButton = styled(Button)`
@@ -123,13 +123,13 @@ const GetAquaBlock = styled.div`
     ${flexRowSpaceBetween};
     height: 6.8rem;
     border-radius: 1rem;
-    background: ${COLORS.lightGray};
+    background: ${COLORS.gray50};
     padding: 0 3.2rem;
     margin-top: 4.1rem;
 `;
 
 const GetAquaLabel = styled.span`
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const GOV_ICE = createAsset(GOV_ICE_CODE, ICE_ISSUER);

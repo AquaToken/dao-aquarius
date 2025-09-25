@@ -18,7 +18,8 @@ import { StellarService, ToastService } from 'services/globalServices';
 
 import { ModalProps } from 'types/modal';
 
-import { flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { flexRowSpaceBetween } from 'web/mixins';
+import { COLORS } from 'web/styles';
 
 import Alert from 'basics/Alert';
 import Button from 'basics/buttons/Button';
@@ -42,13 +43,13 @@ const Description = styled(ModalDescription)`
 
 const Label = styled.div`
     line-height: 2.8rem;
-    color: #6b6c83;
+    color: ${COLORS.textGray};
 `;
 
 const Amount = styled.div`
     line-height: 2.8rem;
     text-align: right;
-    color: #000636;
+    color: ${COLORS.textTertiary};
 `;
 
 const CreateDiscussionModal = ({

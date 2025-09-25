@@ -26,7 +26,7 @@ const Container = styled.div<{ $isEmbedded?: boolean }>`
     display: flex;
     position: relative;
     padding: ${({ $isEmbedded }) => ($isEmbedded ? '2.4rem 3.2rem' : '3.2rem 4rem')};
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     border-radius: 4rem;
     justify-content: space-between;
 
@@ -56,7 +56,7 @@ const PickerContainer = styled.div`
 const Balance = styled.div`
     font-size: 1.4rem;
     line-height: 1.6rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     display: inline-flex;
     align-items: center;
     white-space: nowrap;
@@ -78,7 +78,7 @@ const BalanceClickable = styled.span`
     cursor: pointer;
 
     &:hover {
-        color: ${COLORS.titleText};
+        color: ${COLORS.textPrimary};
     }
 `;
 
@@ -208,7 +208,7 @@ const SwapFormRow = ({
                         {isBase && (
                             <Tooltip
                                 showOnHover
-                                background={COLORS.titleText}
+                                background={COLORS.textPrimary}
                                 position={
                                     +window.innerWidth < 1200
                                         ? TOOLTIP_POSITION.left

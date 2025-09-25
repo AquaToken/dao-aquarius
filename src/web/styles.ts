@@ -1,40 +1,65 @@
 import { css } from 'styled-components';
 
 export const COLORS = {
+    // Text colors
+    textPrimary: '#23024D',
+    textSecondary: '#000427',
+    textTertiary: '#000636',
+    textGray: '#6B6C83',
+    textDark: '#4B4E67',
+
+    // Transparent and basic
     transparent: 'transparent',
     white: '#ffffff',
-    titleText: '#23024D',
-    descriptionText: '#000427',
-    paragraphText: '#000636',
-    grayText: '#6B6C83',
-    darkGrayText: '#4B4E67',
-    lavenderGray: '#9A9BAA',
-    buttonBackground: '#23024D',
-    purple: '#872AB0',
-    tooltip: '#8620B9',
-    background: '#5C1283',
-    deepPurple: '#6D29B5',
-    royalPurple: '#461685',
-    extralightPurple: '#F3EAF7',
-    gray: '#E8E8ED',
-    lightGray: '#FAFAFB',
-    placeholder: '#B3B4C3',
-    darkPurple: '#24034F',
-    lightPurple: '#dab0ed',
-    pinkRed: '#FF3461',
-    yellow: '#F8D26C',
-    green: '#00B796',
-    orange: '#FF8F00',
-    border: '#E9E6ED',
-    blue: '#2E30F0',
-    darkBlue: '#1127E9',
-    discordBlurple: '#5865F2',
-    classicPool: '#4F345B',
-    constantPool: '#B0632A',
-    stablePool: '#2AA3B0',
-    // Focus color should be different of any project colors for visability
-    focusColor: '#24b1c7',
     black: '#000000',
+
+    // Gray scale
+    gray10: '#F0F0F0',
+    gray50: '#FAFAFB',
+    gray100: '#E8E8ED',
+    gray200: '#B3B4C3',
+    gray300: '#9A9BAA',
+    gray400: '#6B6C83',
+    gray500: '#4B4E67',
+    gray550: '#4D4F68',
+    gray600: '#E9E6ED',
+
+    // Purple scale
+    purple50: '#F3EAF7',
+    purple100: '#dab0ed',
+    purple200: '#BF63FF',
+    purple300: '#4F345B',
+    purple400: '#8620B9',
+    purple500: '#872AB0',
+    purple600: '#6D29B5',
+    purple700: '#5C1283',
+    purple800: '#461685',
+    purple900: '#24034F',
+    purple950: '#23024D',
+    purple990: '#270158',
+
+    // Blue scale
+    blue300: '#2AA3B0',
+    blue500: '#2E30F0',
+    blue550: '#3918AC',
+    blue600: '#5865F2',
+    blue700: '#1127E9',
+
+    // Cyan scale
+    cyan500: '#24b1c7',
+
+    // Green scale
+    green500: '#00B796',
+
+    // Yellow scale
+    yellow500: '#F8D26C',
+
+    // Orange scale
+    orange300: '#B0632A',
+    orange500: '#FF8F00',
+
+    // Pink scale
+    pink500: '#FF3461',
 };
 
 /**

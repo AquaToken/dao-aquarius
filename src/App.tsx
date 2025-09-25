@@ -350,7 +350,7 @@ const App = () => {
 const BodyStyle = createGlobalStyle`
     ${respondDown(Breakpoints.md)`
         body {
-            background-color: ${COLORS.lightGray};
+            background-color: ${COLORS.gray50};
         } 
     `};
 `;

@@ -44,7 +44,7 @@ const Container = styled.div`
 const Title = styled.span`
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     margin-bottom: 0.5rem;
 `;
 
@@ -79,14 +79,14 @@ const SmallBalance = styled.div`
     font-weight: 700;
     font-size: 2rem;
     line-height: 2.8rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 `;
 
 const Balance = styled.span`
     font-weight: bold;
     font-size: 5.6rem;
     line-height: 6.4rem;
-    color: ${COLORS.buttonBackground};
+    color: ${COLORS.purple950};
     margin-left: 1.6rem;
 
     ${respondDown(Breakpoints.md)`
@@ -98,7 +98,7 @@ const Balance = styled.span`
 const IceDescription = styled.div`
     display: flex;
     border-radius: 0.5rem;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     padding: 2.6rem 2.2rem 2rem;
     gap: 2rem;
 `;
@@ -115,17 +115,17 @@ const IceDescriptionContent = styled.div`
     gap: 0.6rem;
 `;
 
-const IceDescriptionText = styled.span`
+const IcetextSecondary = styled.span`
     font-weight: 400;
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.descriptionText};
+    color: ${COLORS.textSecondary};
     opacity: 0.7;
 `;
 
 const ClaimIceBlock = styled.div`
     display: flex;
-    background: ${COLORS.blue};
+    background: ${COLORS.blue500};
     border-radius: 5px;
     padding: 2.9rem 4.5rem 2.9rem 3.2rem;
     margin-bottom: 1.6rem;
@@ -275,11 +275,11 @@ const IceBlock = ({ account, locks }: IceBlockProps): React.ReactNode => {
             <IceDescription>
                 <IceDescriptionEmoji>☝️</IceDescriptionEmoji>
                 <IceDescriptionContent>
-                    <IceDescriptionText>
+                    <IcetextSecondary>
                         ICE enables increased voting power & flexibility between liquidity &
                         governance voting, as well as boosted yields when providing liquidity on
                         markets receiving SDEX & AMM rewards.
-                    </IceDescriptionText>
+                    </IcetextSecondary>
                     <ExternalLink href=" https://docs.aqua.network/ice/ice-tokens-locking-aqua-and-getting-benefits">
                         Learn more
                     </ExternalLink>

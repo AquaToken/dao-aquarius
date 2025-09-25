@@ -27,11 +27,11 @@ const BlockWithIcon = styled.div`
     height: 2.4rem;
     width: 2.4rem;
     border-radius: 0.6rem;
-    background-color: ${COLORS.extralightPurple};
+    background-color: ${COLORS.purple50};
 `;
 
 const Divider = styled.div`
-    border-left: 0.1rem solid ${hexWithOpacity(COLORS.grayText, 20)};
+    border-left: 0.1rem solid ${hexWithOpacity(COLORS.textGray, 20)};
     height: 1.7rem;
 `;
 
@@ -70,7 +70,7 @@ const TooltipSectionTitle = styled.div`
     display: flex;
     align-items: center;
     ${FONT_SIZE.xs}
-    color: ${COLORS.purple};
+    color: ${COLORS.purple500};
     text-transform: uppercase;
     gap: 0.8rem;
     margin-bottom: 1.6rem;
@@ -79,7 +79,7 @@ const TooltipSectionTitle = styled.div`
 const TooltipRow = styled.div`
     ${flexRowSpaceBetween};
     ${FONT_SIZE.sm}
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
 
     &:not(:last-child) {
         margin-bottom: 1.6rem;
@@ -99,7 +99,7 @@ const TooltipToken = styled.div`
 `;
 
 const TooltipDivider = styled.div`
-    border-top: 0.1rem dashed ${COLORS.gray};
+    border-top: 0.1rem dashed ${COLORS.gray100};
     margin: 1.6rem 0;
 `;
 
@@ -201,7 +201,7 @@ const RewardsTokens = ({ pool, myRewards, myIncentives }: Props) => {
             }
             withoutPadding
             background={COLORS.white}
-            color={COLORS.paragraphText}
+            color={COLORS.textTertiary}
             showOnHover
         >
             <Container>

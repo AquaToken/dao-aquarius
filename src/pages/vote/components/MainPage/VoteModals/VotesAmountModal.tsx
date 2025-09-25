@@ -59,18 +59,18 @@ const AmountRow = styled.div`
 export const Label = styled.span`
     font-size: 1.6rem;
     line-height: 1.8rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     ${flexAllCenter};
 `;
 
 const BalanceBlock = styled.span`
     font-size: 1.4rem;
     line-height: 1.6rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const Balance = styled.span`
-    color: ${COLORS.tooltip};
+    color: ${COLORS.purple400};
     cursor: pointer;
 `;
 
@@ -87,7 +87,7 @@ const DIceLogo = styled(DIce)`
 const AssetsInfoBlock = styled.div`
     ${flexAllCenter};
     padding: 3.5rem 0;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     border-radius: 0.5rem;
 `;
 
@@ -117,13 +117,13 @@ const GetAquaBlock = styled.div`
     ${flexRowSpaceBetween};
     height: 6.8rem;
     border-radius: 1rem;
-    background: ${COLORS.lightGray};
+    background: ${COLORS.gray50};
     padding: 0 3.2rem;
     margin-top: 4.1rem;
 `;
 
 const GetAquaLabel = styled.span`
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const PairsList = styled.div`
@@ -135,7 +135,7 @@ const PairBlock = styled.div`
     margin-bottom: 0.8rem;
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     display: grid;
     grid-template-areas: 'Pair Input Close';
     grid-template-columns: 1fr 1fr 0.1fr;
@@ -162,7 +162,7 @@ const CloseButton = styled.button`
     cursor: pointer;
     height: 4rem;
     width: 4rem;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     border-radius: 1rem;
     grid-area: Close;
     justify-self: end;
@@ -185,12 +185,12 @@ const TotalAmountRow = styled.div`
     margin-top: 0.8rem;
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     display: flex;
     align-items: center;
     justify-content: space-between;
     ${Label} {
-        color: ${COLORS.grayText};
+        color: ${COLORS.textGray};
     }
 `;
 
@@ -209,7 +209,7 @@ const TotalAmount = styled.div`
 `;
 
 const ResetValues = styled.div`
-    color: ${COLORS.tooltip};
+    color: ${COLORS.purple400};
     cursor: pointer;
 `;
 

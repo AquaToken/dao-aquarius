@@ -22,7 +22,7 @@ import { AccountEligibility } from '../../../api/types';
 const Container = styled.div`
     display: block;
     padding: 3rem 3rem 2rem;
-    background: ${COLORS.lightGray};
+    background: ${COLORS.gray50};
     border-radius: 0.5rem;
     margin-top: 2rem;
 `;
@@ -31,14 +31,14 @@ const Title = styled.div`
     font-size: 2rem;
     font-weight: 700;
     line-height: 2.8rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     margin-bottom: 0.8rem;
 `;
 
 const Date = styled.div`
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     margin-bottom: 3.2rem;
 `;
 
@@ -58,7 +58,7 @@ const Asset = styled.div`
     align-items: center;
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.descriptionText};
+    color: ${COLORS.textSecondary};
 
     svg {
         margin-right: 0.8rem;
@@ -71,7 +71,7 @@ const Amount = styled.div`
     font-size: 2rem;
     font-weight: 700;
     line-height: 2.8rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     margin-top: 1.6rem;
 
     ${respondDown(Breakpoints.sm)`
@@ -84,7 +84,7 @@ const AmmAmount = styled.div`
     align-items: center;
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     margin-top: 1.6rem;
 
     ${respondDown(Breakpoints.sm)`
@@ -97,12 +97,12 @@ const LockAmount = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-top: 0.1rem dashed ${COLORS.gray};
+    border-top: 0.1rem dashed ${COLORS.gray100};
     padding-top: 3.2rem;
     margin-bottom: 1rem;
     font-size: 1.6rem;
     line-height: 2.9rem;
-    color: ${COLORS.darkGrayText};
+    color: ${COLORS.textDark};
 
     ${respondDown(Breakpoints.sm)`
        display: block;
@@ -123,7 +123,7 @@ const SnapshotHoldings = ({ accountEligibility }: { accountEligibility: AccountE
                 <Amount>{formatBalance(+accountEligibility.aqua_balance, true)} AQUA</Amount>
                 {Boolean(Number(accountEligibility.aqua_pool_balance)) && (
                     <AmmAmount>
-                        <BalanceLabel $color={COLORS.yellow} $textColor={COLORS.titleText}>
+                        <BalanceLabel $color={COLORS.yellow500} $textColor={COLORS.textPrimary}>
                             AMM
                         </BalanceLabel>
                         {formatBalance(+accountEligibility.aqua_pool_balance, true)} AQUA
@@ -138,7 +138,7 @@ const SnapshotHoldings = ({ accountEligibility }: { accountEligibility: AccountE
                 <Amount>{formatBalance(+accountEligibility.native_balance, true)} XLM</Amount>
                 {Boolean(Number(accountEligibility.native_pool_balance)) && (
                     <AmmAmount>
-                        <BalanceLabel $color={COLORS.yellow} $textColor={COLORS.titleText}>
+                        <BalanceLabel $color={COLORS.yellow500} $textColor={COLORS.textPrimary}>
                             AMM
                         </BalanceLabel>
                         {formatBalance(+accountEligibility.native_pool_balance, true)} XLM
@@ -153,7 +153,7 @@ const SnapshotHoldings = ({ accountEligibility }: { accountEligibility: AccountE
                 <Amount>{formatBalance(+accountEligibility.yxlm_balance, true)} yXLM</Amount>
                 {Boolean(Number(accountEligibility.yxlm_pool_balance)) && (
                     <AmmAmount>
-                        <BalanceLabel $color={COLORS.yellow} $textColor={COLORS.titleText}>
+                        <BalanceLabel $color={COLORS.yellow500} $textColor={COLORS.textPrimary}>
                             AMM
                         </BalanceLabel>
                         {formatBalance(+accountEligibility.yxlm_pool_balance, true)} yXLM

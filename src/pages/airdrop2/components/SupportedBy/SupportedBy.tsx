@@ -46,14 +46,14 @@ const Text = styled.div`
     max-width: 36.6rem;
     font-size: 1.6rem;
     line-height: 2.9rem;
-    color: ${COLORS.descriptionText};
+    color: ${COLORS.textSecondary};
 
     h4 {
         font-size: 3.5rem;
         line-height: 4.1rem;
         margin-bottom: 1.7rem;
         font-weight: normal;
-        color: ${COLORS.titleText};
+        color: ${COLORS.textPrimary};
     }
 
     ${respondDown(Breakpoints.md)`
@@ -103,7 +103,7 @@ const Link = styled.a`
     align-content: center;
     justify-content: center;
     height: 13rem;
-    background: ${COLORS.lightGray};
+    background: ${COLORS.gray50};
     border-radius: 0.5rem;
     cursor: pointer;
     transition: 0.3s;

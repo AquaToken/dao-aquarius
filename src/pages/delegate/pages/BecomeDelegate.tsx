@@ -25,7 +25,7 @@ const Container = styled.main`
 
 const Background = styled.div`
     width: 100%;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     padding: 7.7rem 0 21.2rem;
 
     ${respondDown(Breakpoints.md)`
@@ -55,7 +55,7 @@ const FormWrapper = styled(Content)`
 const Title = styled.h2`
     font-weight: 700;
     ${FONT_SIZE.xxl}
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 
     ${respondDown(Breakpoints.md)`
         width: 100%;
@@ -65,11 +65,11 @@ const Title = styled.h2`
 
 const Description = styled.p`
     ${FONT_SIZE.md};
-    color: ${COLORS.descriptionText};
+    color: ${COLORS.textSecondary};
 `;
 
 const DescriptionLink = styled.span`
-    color: ${COLORS.purple};
+    color: ${COLORS.purple500};
     text-decoration: underline;
 `;
 
@@ -116,13 +116,13 @@ const LinkStyled = styled(Link)`
 `;
 
 const InputName = styled.span`
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     ${FONT_SIZE.md};
     margin-bottom: 0.8rem;
 `;
 
 const InputDescription = styled.span`
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     ${FONT_SIZE.sm};
     margin-bottom: 0.8rem;
 `;

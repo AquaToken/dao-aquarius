@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { respondDown } from 'web/mixins';
+import { cardBoxShadow, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Button from 'basics/buttons/Button';
@@ -18,9 +18,9 @@ const Container = styled.section`
     margin: -9rem auto 0;
     padding: 3.2rem 1.6rem 1.6rem;
     background: ${COLORS.white};
-    box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
     border-radius: 0.5rem;
     letter-spacing: 0;
+    ${cardBoxShadow};
 
     ${respondDown(Breakpoints.sm)`
         margin: 1rem auto 0;
@@ -35,7 +35,7 @@ const Heading = styled.h2`
     font-size: 3.6rem;
     font-weight: 400;
     line-height: 4.2rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     margin-bottom: 1.2rem;
 
     ${respondDown(Breakpoints.md)`
@@ -49,7 +49,7 @@ const LedgerLink = styled.p`
     align-items: center;
     font-size: 1.8rem;
     line-height: 3.2rem;
-    color: ${COLORS.darkGrayText};
+    color: ${COLORS.textDark};
     margin-bottom: 1.5rem;
 
     span {
@@ -77,9 +77,9 @@ const Card = styled.div`
     ${respondDown(Breakpoints.sm)`
         max-width: 40rem;
         background: ${COLORS.white};
-        box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
         border-radius: 0.5rem;
         margin-bottom: 1.6rem;
+        ${cardBoxShadow};
     `}
 `;
 
@@ -98,7 +98,7 @@ const Description = styled.div`
     font-size: 1.8rem;
     font-weight: 400;
     line-height: 3.2rem;
-    color: ${COLORS.darkGrayText};
+    color: ${COLORS.textDark};
 
     ${respondDown(Breakpoints.md)`
         font-size: 1.4rem;
@@ -115,12 +115,12 @@ const FormBlock = styled.div`
         padding: 2.4rem 3.2rem 3.2rem;
         max-width: 40rem;
         background: ${COLORS.white};
-        box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
+        ${cardBoxShadow};
     `}
 `;
 
 const HorizontalDivider = styled.div`
-    border-top: 1px solid ${COLORS.border};
+    border-top: 1px solid ${COLORS.gray600};
     width: 100%;
     margin-bottom: 3rem;
 
@@ -130,7 +130,7 @@ const HorizontalDivider = styled.div`
 `;
 
 const FormDescription = styled.div`
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     margin-bottom: 3rem;
     font-size: 1.6rem;
     line-height: 3rem;
@@ -138,7 +138,7 @@ const FormDescription = styled.div`
     ${respondDown(Breakpoints.sm)`
         font-size: 1.4rem;
         line-height: 2.5rem;
-        color: ${COLORS.descriptionText};
+        color: ${COLORS.textSecondary};
         margin-bottom: 1.3rem;
     `}
 `;

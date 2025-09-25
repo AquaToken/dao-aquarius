@@ -13,7 +13,7 @@ const Container = styled.div<{ $isComplete: boolean }>`
     align-items: center;
     padding: 0 1rem;
     border-radius: 4.5rem;
-    background-color: ${({ $isComplete }) => ($isComplete ? COLORS.green : COLORS.purple)};
+    background-color: ${({ $isComplete }) => ($isComplete ? COLORS.green500 : COLORS.purple500)};
     font-weight: 700;
     font-size: 1.6rem;
     line-height: 100%;
@@ -24,7 +24,7 @@ const Container = styled.div<{ $isComplete: boolean }>`
 
 const SuccessIcon = styled(Success)`
     path {
-        stroke: ${COLORS.green};
+        stroke: ${COLORS.green500};
     }
 `;
 

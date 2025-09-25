@@ -73,7 +73,7 @@ const Background = styled.div`
     padding: 10% 0;
     ${flexAllCenter};
     flex-direction: column;
-    background-color: ${COLORS.darkPurple};
+    background-color: ${COLORS.purple900};
     min-height: 10rem;
     max-height: 50vh;
     overflow: hidden;
@@ -213,7 +213,7 @@ const StatusUpdate = styled.div`
     margin-left: auto;
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     white-space: nowrap;
 
     ${respondDown(Breakpoints.md)`
@@ -256,8 +256,8 @@ const CreatePair = styled.div`
     padding-right: 0.8rem;
 
     &:hover {
-        background: ${COLORS.lightGray};
-        border: 0.1rem solid ${COLORS.gray};
+        background: ${COLORS.gray50};
+        border: 0.1rem solid ${COLORS.gray100};
     }
 
     ${respondDown(Breakpoints.md)`
@@ -295,7 +295,7 @@ const InfoIcon = styled(Info)`
 const TotalTooltip = styled.div`
     display: flex;
     flex-direction: column;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     width: 25rem;
 `;
 

@@ -33,13 +33,13 @@ import MyDelegators from 'pages/delegate/components/MyDelegators/MyDelegators';
 
 const Main = styled.main`
     flex: 1 0 auto;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
 `;
 
 const Background = styled.div`
     width: 100%;
     padding: 8.2rem 24%;
-    background-color: ${COLORS.darkPurple};
+    background-color: ${COLORS.purple900};
     color: ${COLORS.white};
     position: relative;
 
@@ -67,7 +67,7 @@ const ButtonStyled = styled(Button)`
 `;
 
 const ButtonReadMoreStyled = styled(ButtonStyled)`
-    background-color: ${COLORS.royalPurple};
+    background-color: ${COLORS.purple800};
 `;
 
 const ArrowAlt16Styled = styled(ArrowAlt16)`

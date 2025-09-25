@@ -48,7 +48,7 @@ export const Header = styled.div`
 export const Title = styled.h2`
     font-size: 3.6rem;
     line-height: 4.2rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     font-weight: 400;
 
     ${respondDown(Breakpoints.md)`
@@ -63,7 +63,7 @@ export const Section = styled.section`
 
     ${respondDown(Breakpoints.md)`
         padding: 0;
-        background: ${COLORS.lightGray};
+        background: ${COLORS.gray50};
     `}
 `;
 
@@ -75,7 +75,7 @@ export const ExternalLinkStyled = styled(ExternalLink)`
 export const Summary = styled.div`
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     display: flex;
     align-items: center;
 `;
@@ -90,7 +90,7 @@ export const AquaLogo = styled(Aqua)`
 export const AquaBalance = styled.div`
     font-size: 2rem;
     line-height: 2.4rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     margin-right: 1rem;
 `;
 
@@ -379,7 +379,7 @@ const SdexRewards = ({ aquaUsdPrice }: SdexRewardsProps): React.ReactNode => {
                                                         <StyledLabel
                                                             labelText={`Boosted ${boostValue}x`}
                                                             tooltipText={TOOLTIP_TEXT}
-                                                            background={COLORS.blue}
+                                                            background={COLORS.blue500}
                                                         />
                                                     )}
                                                 </>

@@ -19,7 +19,7 @@ import { ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 const Description = styled.p`
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const List = styled.ul`
@@ -34,7 +34,7 @@ const ListItem = styled.li`
     gap: 0.8rem;
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     margin-bottom: 1.6rem;
 `;
 
@@ -43,7 +43,7 @@ const IconWrapper = styled.div`
     height: 3.2rem;
     width: 3.2rem;
     border-radius: 50%;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
 
     svg {
         width: 1.6rem;
@@ -52,7 +52,7 @@ const IconWrapper = styled.div`
 `;
 
 const ButtonBlock = styled.div`
-    border-top: 0.1rem dashed ${COLORS.gray};
+    border-top: 0.1rem dashed ${COLORS.gray100};
     padding-top: 3.3rem;
     margin-top: 3.3rem;
 

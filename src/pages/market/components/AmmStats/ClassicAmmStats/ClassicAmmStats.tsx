@@ -18,7 +18,7 @@ import PageLoader from 'basics/loaders/PageLoader';
 const Description = styled.div`
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.descriptionText};
+    color: ${COLORS.textSecondary};
     opacity: 0.7;
     margin-bottom: 3.2rem;
 `;
@@ -53,14 +53,14 @@ const StatsDetail = styled.div`
 const StatsDetailTitle = styled.span`
     font-size: 1.4rem;
     line-height: 1.6rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     margin-bottom: 0.8rem;
 `;
 
 const StatsDetailValue = styled.span`
     font-size: 1.6rem;
     line-height: 2.4rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     width: min-content;
     white-space: nowrap;
 `;

@@ -21,7 +21,7 @@ const Container = styled.div`
     ${respondDown(Breakpoints.md)`
         flex-direction: column;
         padding: 5rem 1.6rem;
-        background: ${COLORS.lightGray};
+        background: ${COLORS.gray50};
     `}
 `;
 

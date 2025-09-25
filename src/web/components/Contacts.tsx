@@ -15,13 +15,13 @@ const Container = styled.div`
 const Title = styled.span`
     font-size: 3.5rem;
     line-height: 4.1rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 `;
 
 const Description = styled.p`
     font-size: 1.8rem;
     line-height: 180%;
-    color: ${COLORS.darkGrayText};
+    color: ${COLORS.textDark};
 `;
 
 const Links = styled.div`

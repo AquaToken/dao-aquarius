@@ -10,7 +10,7 @@ const styles = css`
     display: flex;
     flex-direction: row;
     align-items: center;
-    color: ${COLORS.purple};
+    color: ${COLORS.purple500};
     font-size: 1.6rem;
     line-height: 2.8rem;
     cursor: pointer;

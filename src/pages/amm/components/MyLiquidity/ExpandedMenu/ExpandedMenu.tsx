@@ -46,7 +46,7 @@ const MenuRow = styled.div`
     padding: 0 1.6rem;
 
     &:hover {
-        background-color: ${COLORS.lightGray};
+        background-color: ${COLORS.gray50};
     }
 
     svg {

@@ -133,7 +133,7 @@ const AssetsDetails = styled.div<{
 const AssetsCodes = styled.span<{ $mobileVerticalDirections?: boolean; $bigCodes?: boolean }>`
     font-size: ${({ $bigCodes }) => ($bigCodes ? '3.6rem' : '1.6rem')};
     line-height: ${({ $bigCodes }) => ($bigCodes ? '4.2rem' : '2.8rem')};
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -148,7 +148,7 @@ const AssetsCodes = styled.span<{ $mobileVerticalDirections?: boolean; $bigCodes
         respondDown(Breakpoints.md)`
             font-size: ${({ $bigCodes }) => ($bigCodes ? '3rem' : '1.6rem')};
             line-height: ${({ $bigCodes }) => ($bigCodes ? '4rem' : '2.8rem')};
-            color: ${COLORS.buttonBackground};
+            color: ${COLORS.purple950};
             margin-top: 0.7rem;
             margin-bottom: 0.4rem;
             display: flex;
@@ -157,7 +157,7 @@ const AssetsCodes = styled.span<{ $mobileVerticalDirections?: boolean; $bigCodes
 `;
 
 const AssetsDomains = styled.span<{ $mobileVerticalDirections?: boolean }>`
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     font-size: 1.4rem;
     line-height: 2rem;
     text-align: left;

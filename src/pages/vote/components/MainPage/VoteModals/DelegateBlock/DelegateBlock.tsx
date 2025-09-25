@@ -11,7 +11,7 @@ import { ExternalLink } from 'basics/links';
 const Container = styled.div`
     width: 100%;
     border-radius: 0.5rem;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     padding: 2.4rem;
     gap: 2.4rem;
     display: flex;
@@ -27,7 +27,7 @@ const Content = styled.div`
     gap: 0.8rem;
 
     p {
-        color: ${COLORS.grayText};
+        color: ${COLORS.textGray};
         margin: 0;
         font-weight: 400;
         font-size: 1.6rem;

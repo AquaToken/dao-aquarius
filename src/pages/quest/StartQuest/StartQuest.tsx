@@ -35,7 +35,7 @@ const Content = styled.div`
     font-size: 1.6rem;
     line-height: 100%;
     letter-spacing: 0.2em;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     gap: 1.6rem;
     text-transform: uppercase;
     background-color: ${COLORS.white};

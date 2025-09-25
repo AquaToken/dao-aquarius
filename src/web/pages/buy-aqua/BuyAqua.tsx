@@ -42,11 +42,11 @@ const BuyAqua = (): JSX.Element => {
         defaultAsset: 'aqua-2',
         defaultNetwork: 'stellar',
         backgroundColor: 'transparent',
-        textColor: COLORS.titleText.substring(1),
-        buttonBackground: COLORS.buttonBackground.substring(1),
-        successColor: COLORS.green.substring(1),
-        errorColor: COLORS.pinkRed.substring(1),
-        iconsColor: COLORS.purple.substring(1),
+        textColor: COLORS.textPrimary.substring(1),
+        buttonBackground: COLORS.purple950.substring(1),
+        successColor: COLORS.green500.substring(1),
+        errorColor: COLORS.pink500.substring(1),
+        iconsColor: COLORS.purple500.substring(1),
         // substring here cause of url params can't have # symbol
     };
 

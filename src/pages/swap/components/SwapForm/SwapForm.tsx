@@ -77,7 +77,7 @@ const SwapHeader = styled.div`
     h3 {
         font-size: 3.6rem;
         line-height: 4.2rem;
-        color: ${COLORS.titleText};
+        color: ${COLORS.textPrimary};
         font-weight: 400;
     }
 
@@ -88,7 +88,7 @@ const SwapHeader = styled.div`
         cursor: pointer;
 
         &:hover {
-            background-color: ${COLORS.lightGray};
+            background-color: ${COLORS.gray50};
         }
     }
 `;
@@ -101,12 +101,12 @@ const SettingsButton = styled.div`
     cursor: pointer;
     position: absolute;
     background-color: ${COLORS.white};
-    border: 0.1rem solid ${COLORS.gray};
+    border: 0.1rem solid ${COLORS.gray100};
     top: 0;
     left: calc(100% + 1.6rem);
 
     &:hover {
-        border: 0.1rem solid ${COLORS.grayText};
+        border: 0.1rem solid ${COLORS.textGray};
     }
 
     ${respondDown(Breakpoints.sm)`

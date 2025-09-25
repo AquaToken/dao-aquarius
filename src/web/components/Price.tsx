@@ -13,7 +13,7 @@ import Revert from 'assets/icon-revert.svg';
 import { DotsLoader } from 'basics/loaders';
 
 const Container = styled.div`
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     margin: 1.6rem 0;
     display: flex;
     align-items: center;

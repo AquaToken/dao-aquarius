@@ -45,7 +45,7 @@ import { Breakpoints, COLORS } from '../styles';
 const Description = styled.p`
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.descriptionText};
+    color: ${COLORS.textSecondary};
     opacity: 0.7;
     margin: 2.4rem 0 1.6rem;
 `;
@@ -62,7 +62,7 @@ const Links = styled.div`
 const ContactLink = styled.a`
     display: flex;
     align-items: center;
-    color: ${COLORS.purple};
+    color: ${COLORS.purple500};
     text-decoration: none;
     margin-right: 2.4rem;
     font-size: 1.6rem;
@@ -86,10 +86,10 @@ const Detail = styled.div`
     display: flex;
     flex-direction: column;
     gap: 0.8rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
 
     span:first-child {
-        color: ${COLORS.grayText};
+        color: ${COLORS.textGray};
     }
 
     span:last-child {

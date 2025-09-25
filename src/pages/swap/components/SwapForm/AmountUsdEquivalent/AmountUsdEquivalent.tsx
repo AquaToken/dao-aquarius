@@ -20,7 +20,7 @@ import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 const Container = styled.div`
     display: flex;
     align-items: center;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     max-width: 17rem;
     height: 1.7rem;
 
@@ -40,14 +40,14 @@ const Percent = styled.div<{ $percent: number }>`
     }
     color: ${({ $percent }) => {
         if ($percent > 0) {
-            return COLORS.green;
+            return COLORS.green500;
         }
 
         if ($percent <= -10) {
-            return COLORS.pinkRed;
+            return COLORS.pink500;
         }
 
-        return COLORS.grayText;
+        return COLORS.textGray;
     }};
 `;
 

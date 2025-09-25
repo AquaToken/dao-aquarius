@@ -15,7 +15,7 @@ const Container = styled.div`
     height: 4rem;
     width: 4rem;
     border-radius: 50%;
-    border: 0.1rem solid ${COLORS.gray};
+    border: 0.1rem solid ${COLORS.gray100};
     background-color: ${COLORS.white};
     display: flex;
     align-items: center;
@@ -24,7 +24,7 @@ const Container = styled.div`
     transform: translate(-50%, -50%);
 
     &:hover {
-        border: 0.1rem solid ${COLORS.grayText};
+        border: 0.1rem solid ${COLORS.textGray};
     }
 `;
 

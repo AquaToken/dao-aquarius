@@ -44,7 +44,7 @@ const Container = styled.div`
     flex-direction: column;
 
     span {
-        color: ${COLORS.grayText};
+        color: ${COLORS.textGray};
         margin-top: 0.8rem;
         margin-bottom: auto;
     }
@@ -147,7 +147,7 @@ const ClaimRewardsModal = ({ confirm, close }: ModalProps<never>) => {
                             body={rewards.map(item => ({
                                 key: item.id,
                                 style: { marginBottom: '1.6rem' },
-                                mobileBackground: COLORS.lightGray,
+                                mobileBackground: COLORS.gray50,
                                 rowItems: [
                                     {
                                         children: (

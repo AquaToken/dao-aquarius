@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { MoonpayCurrencies, MoonpayCurrency } from 'types/api-moonpay';
@@ -40,7 +40,7 @@ const CurrencyWrapper = styled(BlankButton)`
     padding: 1rem 0.8rem;
 
     &:hover {
-        background-color: ${COLORS.lightGray};
+        background-color: ${COLORS.gray50};
     }
 `;
 
@@ -48,11 +48,11 @@ const CurrencyNameBlock = styled.div`
     ${flexRowSpaceBetween};
     width: 100%;
     margin-left: 1.6rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 `;
 
 const PurpleTickIcon = styled(IconTick16)`
-    color: ${COLORS.purple};
+    color: ${COLORS.purple500};
 `;
 
 const CustomModalDescription = styled(ModalDescription)`

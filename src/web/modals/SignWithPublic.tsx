@@ -35,7 +35,7 @@ const ActionContainer = styled.div`
     align-items: center;
     width: 100%;
     min-height: 9rem;
-    background: ${COLORS.lightGray};
+    background: ${COLORS.gray50};
     border-radius: 0.5rem;
     cursor: pointer;
     padding: 1.2rem 2.4rem;
@@ -60,13 +60,13 @@ const ActionMain = styled.div`
 const ActionName = styled.div`
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
 `;
 
 const ActionDescription = styled.div`
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const StellarLogo = styled(Stellar)`
@@ -79,7 +79,7 @@ const ArrowRightIcon = styled(ArrowRight)`
     min-width: 1.6rem;
 
     path {
-        fill: ${COLORS.descriptionText};
+        fill: ${COLORS.textSecondary};
     }
 `;
 
@@ -88,7 +88,7 @@ const CopyIcon = styled(Copy)`
     min-width: 1.6rem;
 
     path {
-        fill: ${COLORS.descriptionText};
+        fill: ${COLORS.textSecondary};
     }
 `;
 

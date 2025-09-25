@@ -38,7 +38,7 @@ export const ModalWrapper = styled.div<{
 export const ModalTitle = styled.h3`
     font-size: 3.6rem;
     line-height: 4.2rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     margin-bottom: 0.8rem;
     font-weight: normal;
 
@@ -51,7 +51,7 @@ export const ModalTitle = styled.h3`
 export const ModalDescription = styled.div<{ $smallMarginBottom?: boolean }>`
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.descriptionText};
+    color: ${COLORS.textSecondary};
     margin-bottom: ${({ $smallMarginBottom }) => ($smallMarginBottom ? '2.4rem' : '4rem')};
 
     ${respondDown(Breakpoints.md)`

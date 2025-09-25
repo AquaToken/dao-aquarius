@@ -86,7 +86,7 @@ const Column = styled.div`
 `;
 
 const Label = styled.span`
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     display: flex;
     white-space: nowrap;
 
@@ -96,7 +96,7 @@ const Label = styled.span`
 `;
 
 const Value = styled.span`
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     font-size: 1.6rem;
     line-height: 2rem;
 

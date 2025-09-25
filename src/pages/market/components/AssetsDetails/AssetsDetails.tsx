@@ -44,7 +44,7 @@ const TitleColumn = styled(Column)`
 `;
 
 const Cell = styled.div`
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     margin-bottom: 0.8rem;
     display: flex;
     align-items: center;
@@ -60,11 +60,11 @@ const Cell = styled.div`
 `;
 
 const TitleCell = styled(Cell)`
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const MobileLabel = styled.span`
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     display: none;
 
     ${respondDown(Breakpoints.sm)`

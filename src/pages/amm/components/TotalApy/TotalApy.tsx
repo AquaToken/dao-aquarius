@@ -36,14 +36,14 @@ const TotalApy = ({ pool, userBoost }: Props) => (
                 content={<TotalApyTooltip pool={pool} />}
                 showOnHover
                 background={COLORS.white}
-                color={COLORS.paragraphText}
+                color={COLORS.textTertiary}
                 withoutPadding
             >
                 <Label
                     labelText={apyValueToDisplay(pool.total_apy)}
                     labelSize="extraLarge"
-                    background={hexWithOpacity(COLORS.placeholder, 20)}
-                    color={COLORS.paragraphText}
+                    background={hexWithOpacity(COLORS.gray200, 20)}
+                    color={COLORS.textTertiary}
                     withoutBorder
                     fontWeight={400}
                 />
@@ -55,7 +55,7 @@ const TotalApy = ({ pool, userBoost }: Props) => (
                 content={<TotalApyTooltip pool={pool} withBoost userBoost={userBoost} />}
                 showOnHover
                 background={COLORS.white}
-                color={COLORS.paragraphText}
+                color={COLORS.textTertiary}
                 withoutPadding
             >
                 <Label
@@ -72,8 +72,8 @@ const TotalApy = ({ pool, userBoost }: Props) => (
                         </LabelContent>
                     }
                     labelSize="extraLarge"
-                    background={hexWithOpacity(userBoost ? COLORS.purple : COLORS.darkBlue, 10)}
-                    color={COLORS.paragraphText}
+                    background={hexWithOpacity(userBoost ? COLORS.purple500 : COLORS.blue700, 10)}
+                    color={COLORS.textTertiary}
                     withoutBorder
                     fontWeight={400}
                 />
@@ -81,7 +81,7 @@ const TotalApy = ({ pool, userBoost }: Props) => (
         )}
         {!!userBoost && !!Number(pool.rewards_apy) && (
             <Label
-                background={COLORS.darkBlue}
+                background={COLORS.blue700}
                 labelSize="extraLarge"
                 withoutBorder
                 fontWeight={700}

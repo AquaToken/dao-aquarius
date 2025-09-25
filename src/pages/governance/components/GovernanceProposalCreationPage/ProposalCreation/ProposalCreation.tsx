@@ -6,7 +6,7 @@ import { GovernanceRoutes } from 'constants/routes';
 
 import { formatBalance } from 'helpers/format-number';
 
-import { respondDown } from 'web/mixins';
+import { cardBoxShadow, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import ArrowLeft from 'assets/icon-arrow-left.svg';
@@ -25,7 +25,7 @@ import {
 
 const Background = styled.div`
     width: 100%;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     padding-top: 7.7rem;
     padding-bottom: 16.4rem;
     margin-bottom: -11.7rem;
@@ -41,7 +41,7 @@ const Title = styled.h3`
     font-size: 5.6rem;
     line-height: 6.4rem;
     font-weight: bold;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 
     ${respondDown(Breakpoints.md)`
         font-size: 4rem;
@@ -54,7 +54,7 @@ const Description = styled.div`
     margin-top: 1.2rem;
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.descriptionText};
+    color: ${COLORS.textSecondary};
     opacity: 0.7;
 
     ${respondDown(Breakpoints.md)`
@@ -65,8 +65,8 @@ const Description = styled.div`
 const ContainerForm = styled.div`
     padding: 4.8rem;
     background-color: ${COLORS.white};
-    box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
     border-radius: 0.5rem;
+    ${cardBoxShadow};
 
     ${respondDown(Breakpoints.md)`
         padding: 3.2rem 1.6rem;
@@ -82,7 +82,7 @@ const Label = styled.label`
     margin-bottom: 1.2rem;
     font-size: 1.6rem;
     line-height: 1.8rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
 `;
 
 const InfoRow = styled.div`
@@ -91,7 +91,7 @@ const InfoRow = styled.div`
     font-weight: 400;
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 
     &:first-child {
         margin-top: 4rem;

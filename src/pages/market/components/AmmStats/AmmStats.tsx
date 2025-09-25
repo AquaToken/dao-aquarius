@@ -37,7 +37,7 @@ const Title = styled.span`
     font-weight: 700;
     font-size: 2rem;
     line-height: 2.8rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 
     ${respondDown(Breakpoints.md)`
         margin-bottom: 1.6rem;

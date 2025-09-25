@@ -32,7 +32,7 @@ const Wrapper = styled.section`
 const WhyTitle = styled.div`
     font-weight: bold;
     font-size: 7rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     line-height: 100%;
 
     ${respondDown(Breakpoints.md)`
@@ -140,9 +140,9 @@ const StatsTitle = styled.div`
     font-weight: bold;
     font-size: 3.5rem;
     line-height: 100%;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 
-    background: linear-gradient(90deg, ${COLORS.purple}, #3918ac);
+    background: linear-gradient(90deg, ${COLORS.purple500}, ${COLORS.blue550});
     background-clip: text;
     -webkit-background-clip: text;
     -moz-background-clip: text;
@@ -162,7 +162,7 @@ const DescTitle = styled.div`
     font-weight: bold;
     font-size: 2.4rem;
     line-height: 3.6rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 
     ${respondDown(Breakpoints.xs)`
         font-size: 1.6rem;
@@ -174,7 +174,7 @@ const Description = styled.div`
     font-size: 1.6rem;
     font-weight: 500;
     line-height: 180%;
-    color: #4d4f68;
+    color: ${COLORS.gray550};
 
     ${respondDown(Breakpoints.sm)`
         margin-top: 0;

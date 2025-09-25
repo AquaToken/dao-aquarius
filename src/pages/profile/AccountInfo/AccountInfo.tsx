@@ -6,7 +6,13 @@ import { getIsTestnetEnv } from 'helpers/env';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
+import {
+    cardBoxShadow,
+    commonMaxWidth,
+    flexAllCenter,
+    flexRowSpaceBetween,
+    respondDown,
+} from 'web/mixins';
 import { Breakpoints, COLORS, FONT_SIZE } from 'web/styles';
 
 import Copy from 'assets/icon-copy.svg';
@@ -28,7 +34,7 @@ const BgContainer = styled.div`
     width: 100%;
     position: relative;
     overflow: hidden;
-    background: ${COLORS.background};
+    background: ${COLORS.purple700};
     padding-bottom: 5rem;
 `;
 
@@ -131,7 +137,7 @@ const ButtonBlock = styled.div`
     min-width: 4.8rem;
     height: 4.8rem;
     background-color: ${COLORS.white};
-    box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
+    ${cardBoxShadow};
     border-radius: 2.4rem;
     text-decoration: none;
     border: none;
@@ -139,12 +145,12 @@ const ButtonBlock = styled.div`
     transition: all ease 200ms;
     z-index: 1;
     padding: 0 1.8rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     font-size: 1.4rem;
     line-height: 2rem;
 
     &:hover {
-        background-color: ${COLORS.lightGray};
+        background-color: ${COLORS.gray50};
     }
 
     &:active {

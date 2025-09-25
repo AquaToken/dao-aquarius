@@ -34,7 +34,7 @@ const Title = styled.span`
     font-size: 2rem;
     line-height: 2.8rem;
     font-weight: bold;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     margin-bottom: 3.2rem;
 `;
 
@@ -62,13 +62,13 @@ const TooltipRow = styled.div`
     ${flexRowSpaceBetween};
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     margin-bottom: 0.4rem;
 `;
 
 const TooltipTotal = styled(TooltipRow)`
     font-weight: 700;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     font-size: 1.6rem;
     line-height: 2.8rem;
 `;
@@ -193,7 +193,7 @@ const CurrentLocks = ({
                     body={locks.map(lock => ({
                         key: lock.id,
                         isNarrow: true,
-                        mobileBackground: COLORS.lightGray,
+                        mobileBackground: COLORS.gray50,
                         mobileFontSize: '1.4rem',
                         rowItems: [
                             {

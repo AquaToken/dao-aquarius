@@ -15,7 +15,7 @@ const BoostLogo = styled.div`
     ${flexAllCenter};
     width: 1.5rem;
     height: 1.5rem;
-    background-color: ${COLORS.darkBlue};
+    background-color: ${COLORS.blue700};
     border-radius: 0.4rem;
 `;
 

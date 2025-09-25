@@ -31,7 +31,7 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService, StellarService } from 'services/globalServices';
 
-import { flexAllCenter, flexColumnCenter, respondDown } from 'web/mixins';
+import { cardBoxShadow, flexAllCenter, flexColumnCenter, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -62,7 +62,7 @@ export const MainBlock = styled.main`
 
 export const Background = styled.div`
     width: 100%;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     padding: 7.7rem 0 14.3rem;
     ${flexAllCenter};
 `;
@@ -82,7 +82,7 @@ export const Back = styled(Link)`
     align-items: center;
     margin-bottom: 3.2rem;
     text-decoration: none;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
 
     ${respondDown(Breakpoints.md)`
           padding: 0 1.6rem;
@@ -93,7 +93,7 @@ export const Title = styled.span`
     font-weight: bold;
     font-size: 5.6rem;
     line-height: 6.4rem;
-    color: ${COLORS.buttonBackground};
+    color: ${COLORS.purple950};
     margin-bottom: 1.2rem;
 
     ${respondDown(Breakpoints.md)`
@@ -104,7 +104,7 @@ export const Title = styled.span`
 export const Description = styled.div`
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     margin-bottom: 1.2rem;
 
     ${respondDown(Breakpoints.md)`
@@ -128,21 +128,21 @@ export const FormWrap = styled.div`
 export const Form = styled.form`
     width: 100%;
     background: ${COLORS.white};
-    box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
     border-radius: 0.5rem;
+    ${cardBoxShadow};
 `;
 
 export const FormSectionTitle = styled.span`
     font-size: 3.6rem;
     line-height: 4.2rem;
-    color: ${COLORS.buttonBackground};
+    color: ${COLORS.purple950};
     margin-bottom: 0.8rem;
 `;
 
 export const FormSectionDescription = styled.span`
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     margin-bottom: 4.8rem;
 `;
 
@@ -152,7 +152,7 @@ export const FormSection = styled.section`
     padding: 4.8rem;
 
     &:not(:last-child) {
-        border-bottom: 0.1rem solid ${COLORS.gray};
+        border-bottom: 0.1rem solid ${COLORS.gray100};
     }
 
     ${respondDown(Breakpoints.md)`
@@ -222,13 +222,13 @@ const SuccessIcon = styled(Success)`
 const MinusIcon = styled(Minus)`
     width: 1.6rem;
     height: 1.6rem;
-    color: ${COLORS.purple};
+    color: ${COLORS.purple500};
 `;
 
 const PlusIcon = styled(Plus)`
     width: 1.6rem;
     height: 1.6rem;
-    color: ${COLORS.purple};
+    color: ${COLORS.purple500};
 `;
 
 const TooltipInner = styled.span`
@@ -257,7 +257,7 @@ const DurationButton = styled.div`
     user-select: none;
 
     &:hover {
-        background-color: ${COLORS.lightGray};
+        background-color: ${COLORS.gray50};
     }
 `;
 
@@ -467,7 +467,7 @@ const AddBribePage = () => {
                 content={<div>Value must be less or equal {formatBalance(MAX_AMOUNT)}</div>}
                 position={+window.innerWidth > 992 ? TOOLTIP_POSITION.top : TOOLTIP_POSITION.left}
                 isShow={true}
-                background={COLORS.pinkRed}
+                background={COLORS.pink500}
             >
                 <FailIcon />
             </Tooltip>
@@ -482,7 +482,7 @@ const AddBribePage = () => {
                 }
                 position={+window.innerWidth > 992 ? TOOLTIP_POSITION.top : TOOLTIP_POSITION.left}
                 isShow={true}
-                background={COLORS.pinkRed}
+                background={COLORS.pink500}
             >
                 <FailIcon />
             </Tooltip>

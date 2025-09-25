@@ -49,20 +49,20 @@ const AssetName = styled.div`
     font-weight: 400;
     font-size: 1.6rem;
     line-height: 1.8rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const Amount = styled.span`
     font-weight: 400;
     font-size: 1.6rem;
     line-height: 1.8rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
 `;
 
 const AssetsBlock = styled.div`
     padding-bottom: 4rem;
     margin-bottom: 3.1rem;
-    border-bottom: 0.1rem dashed ${COLORS.gray};
+    border-bottom: 0.1rem dashed ${COLORS.gray100};
 `;
 
 const AddIceTrustlinesModal = ({ confirm }: ModalProps<never>) => {

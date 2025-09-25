@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { flexAllCenter } from 'web/mixins';
+import { cardBoxShadow, flexAllCenter } from 'web/mixins';
 import { COLORS } from 'web/styles';
 
 import ArrowRight from 'assets/icon-arrow-right.svg';
@@ -19,9 +19,9 @@ const FloatingButtonBody = styled.button`
     border: none;
     font-size: 1.4rem;
     line-height: 1.6rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     background-color: ${COLORS.white};
-    box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
+    ${cardBoxShadow};
     cursor: pointer;
     animation: showButton linear 0.5s;
     z-index: 3;
@@ -60,7 +60,7 @@ const VotesCounter = styled.div`
     width: 3.2rem;
     height: 3.2rem;
     border-radius: 50%;
-    background-color: ${COLORS.purple};
+    background-color: ${COLORS.purple500};
     font-weight: bold;
     font-size: 1.6rem;
     line-height: 1.8rem;
@@ -79,7 +79,7 @@ const InfoBlock = styled.div`
 const Description = styled.div`
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {

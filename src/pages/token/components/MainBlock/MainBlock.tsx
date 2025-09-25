@@ -112,7 +112,7 @@ const SecondaryDescription = styled.p`
     margin: 0;
     font-size: 1.6rem;
     line-height: 180%;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 
     ${respondDown(Breakpoints.sm)`
         font-size: 1.4rem;

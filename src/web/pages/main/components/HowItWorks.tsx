@@ -26,7 +26,7 @@ const Wrapper = styled.section`
 const Title = styled.div`
     font-weight: bold;
     font-size: 7rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     line-height: 100%;
 
     ${respondDown(Breakpoints.md)`
@@ -133,7 +133,7 @@ const Description = styled.div`
     font-size: 1.6rem;
     font-weight: 500;
     line-height: 180%;
-    color: #4d4f68;
+    color: ${COLORS.gray550};
 
     ${respondDown(Breakpoints.xs)`
         font-size: 1.4rem;
@@ -141,7 +141,7 @@ const Description = styled.div`
 `;
 
 const InteractiveItem = styled.div`
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     border-radius: 48px;
     padding: 3.2rem 4rem;
     display: flex;
@@ -161,7 +161,7 @@ const InteractiveTitle = styled.div`
     font-weight: bold;
     font-size: 1.6rem;
     line-height: 3.6rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     text-transform: uppercase;
 `;
 

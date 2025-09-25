@@ -12,7 +12,7 @@ import { Breakpoints, COLORS } from '../styles';
 
 const Container = styled.div`
     display: flex;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     padding: 2.4rem;
     border-radius: 0.5rem;
     margin-top: 4.2rem;
@@ -44,13 +44,13 @@ const Title = styled.h5`
     font-weight: 700;
     font-size: 2rem;
     line-height: 2.8rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 `;
 
 const Description = styled.p`
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     padding: 0;
     margin: 0;
 `;

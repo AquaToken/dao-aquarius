@@ -1,4 +1,5 @@
 import Quill from 'quill/core';
+import { AlignStyle } from 'quill/formats/align';
 import Blockquote from 'quill/formats/blockquote';
 import Bold from 'quill/formats/bold';
 import CodeBlock from 'quill/formats/code';
@@ -14,13 +15,10 @@ import Clipboard from 'quill/modules/clipboard';
 import Toolbar from 'quill/modules/toolbar';
 import Snow from 'quill/themes/snow';
 import { useEffect, useRef, useState } from 'react';
-
 import 'quill/dist/quill.snow.css';
 import styled from 'styled-components';
 
 import { COLORS } from 'web/styles';
-
-import { AlignStyle } from 'quill/formats/align';
 
 Quill.register(AlignStyle, true);
 
@@ -44,15 +42,15 @@ const EditorWrapper = styled.div<{ focused: boolean }>`
     .ql-toolbar {
         box-sizing: border-box;
         border-radius: 0.5rem 0.5rem 0 0;
-        border-color: ${COLORS.gray};
-        border-bottom-color: ${({ focused }) => (focused ? COLORS.purple : COLORS.gray)};
+        border-color: ${COLORS.gray100};
+        border-bottom-color: ${({ focused }) => (focused ? COLORS.purple500 : COLORS.gray100)};
         border-bottom-width: ${({ focused }) => (focused ? '0.2rem' : '0.1rem')};
     }
 
     .ql-container {
         box-sizing: border-box;
         border-radius: 0 0 0.5rem 0.5rem;
-        border-color: ${({ focused }) => (focused ? COLORS.purple : COLORS.gray)};
+        border-color: ${({ focused }) => (focused ? COLORS.purple500 : COLORS.gray100)};
         border-width: ${({ focused }) => (focused ? '0.2rem' : '0.1rem')};
         padding: 1.2rem 1.5rem;
     }

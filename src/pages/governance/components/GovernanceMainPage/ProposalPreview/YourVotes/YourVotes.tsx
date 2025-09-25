@@ -293,7 +293,7 @@ const YourVotes = ({ proposal }: YourVotesProps): React.ReactNode => {
                 body={proposal.logvote_set.map(log => ({
                     key: log.claimable_balance_id,
                     isNarrow: true,
-                    mobileBackground: COLORS.lightGray,
+                    mobileBackground: COLORS.gray50,
                     mobileFontSize: '1.4rem',
                     rowItems: [
                         {

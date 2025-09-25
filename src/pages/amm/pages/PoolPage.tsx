@@ -53,14 +53,14 @@ import VolumeChart from '../components/VolumeChart/VolumeChart';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     z-index: 1;
 `;
 
 const Background = styled.div`
     width: 100%;
     padding: 4rem 0 6rem;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
 
     ${respondDown(Breakpoints.md)`
         padding: 1.6rem 0;
@@ -123,14 +123,14 @@ const Rewards = styled.div`
 const RewardsDescription = styled.div`
     display: flex;
     flex-direction: column;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     font-weight: 700;
     font-size: 2.6rem;
 
     span:first-child {
         font-size: 1.6rem;
         line-height: 2.8rem;
-        color: ${COLORS.titleText};
+        color: ${COLORS.textPrimary};
         margin-bottom: 0.8rem;
     }
 
@@ -148,7 +148,7 @@ const IncentiveAmount = styled.span`
 const SectionRow = styled.div`
     ${flexRowSpaceBetween};
     align-items: center;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     margin: 1rem 0;
     height: 2.8rem;
     font-size: 1.6rem;
@@ -163,7 +163,7 @@ const SectionRow = styled.div`
 const SectionLabel = styled.span`
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const Charts = styled.div`
@@ -183,7 +183,7 @@ const Chart = styled.div`
     border-radius: 0.6rem;
     padding: 1.6rem;
     flex: 1;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
 `;
 
 const Links = styled.div`

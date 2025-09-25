@@ -43,14 +43,14 @@ const Header = styled.div`
 const Title = styled.span`
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const BalanceRow = styled.div`
     display: flex;
     align-items: center;
     padding-bottom: 3.2rem;
-    border-bottom: 0.1rem dashed ${COLORS.gray};
+    border-bottom: 0.1rem dashed ${COLORS.gray100};
 `;
 
 const Aqua = styled(AquaLogo)`
@@ -62,7 +62,7 @@ const Balance = styled.span`
     font-weight: bold;
     font-size: 5.6rem;
     line-height: 6.4rem;
-    color: ${COLORS.buttonBackground};
+    color: ${COLORS.purple950};
     margin-left: 1.6rem;
 
     ${respondDown(Breakpoints.md)`
@@ -106,14 +106,14 @@ const AdditionalInfoBalance = styled.span`
     font-weight: bold;
     font-size: 2rem;
     line-height: 2.8rem;
-    color: ${COLORS.buttonBackground};
+    color: ${COLORS.purple950};
     margin-top: 1rem;
 `;
 
 export const AdditionalInfoDescription = styled.span`
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const Portfolio = ({
@@ -162,7 +162,7 @@ const Portfolio = ({
             </BalanceRow>
             <AdditionalInfo>
                 <AdditionalInfoColumn>
-                    <BalanceLabel $color={COLORS.yellow} $textColor={COLORS.titleText}>
+                    <BalanceLabel $color={COLORS.yellow500} $textColor={COLORS.textPrimary}>
                         Aquarius AMM
                     </BalanceLabel>
                     <AdditionalInfoBalance>
@@ -171,7 +171,7 @@ const Portfolio = ({
                     <AdditionalInfoDescription>in AMM pools</AdditionalInfoDescription>
                 </AdditionalInfoColumn>
                 <AdditionalInfoColumn>
-                    <BalanceLabel $color={COLORS.purple} $textColor={COLORS.white}>
+                    <BalanceLabel $color={COLORS.purple500} $textColor={COLORS.white}>
                         LOCK
                     </BalanceLabel>
                     <AdditionalInfoBalance>

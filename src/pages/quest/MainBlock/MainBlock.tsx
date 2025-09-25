@@ -84,7 +84,7 @@ const Title = styled.div`
 const Description = styled.p`
     font-size: 1.6rem;
     line-height: 180%;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     margin: 2.4rem 0;
     width: 50%;
 
@@ -103,11 +103,11 @@ const TotalPrizeWrapper = styled.div`
 `;
 
 const TotalPrizeWrapperGray = styled(TotalPrizeWrapper)`
-    background: ${COLORS.grayText};
+    background: ${COLORS.textGray};
 
     svg {
         * {
-            stroke: ${COLORS.grayText};
+            stroke: ${COLORS.textGray};
         }
     }
 `;
@@ -122,7 +122,7 @@ const TotalPrize = styled.div`
 `;
 
 const IconWrapper = styled.div`
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     padding: 0.8rem;
     border-radius: 0.8rem;
     ${flexAllCenter};
@@ -139,7 +139,7 @@ const TotalText = styled.div`
 
     span:first-child {
         font-size: 1.6rem;
-        color: ${COLORS.grayText};
+        color: ${COLORS.textGray};
         line-height: 180%;
     }
 
@@ -148,7 +148,7 @@ const TotalText = styled.div`
         font-size: 1.9rem;
         line-height: 100%;
         letter-spacing: 0.2em;
-        color: ${COLORS.deepPurple};
+        color: ${COLORS.purple600};
     }
 `;
 
@@ -191,8 +191,8 @@ const MainBlock = () => (
                             <Pending />
                         </IconWrapper>
                         <TotalText>
-                            <span style={{ color: COLORS.grayText }}>Quest ended:</span>
-                            <span style={{ color: COLORS.grayText }}>07.07.2025</span>
+                            <span style={{ color: COLORS.textGray }}>Quest ended:</span>
+                            <span style={{ color: COLORS.textGray }}>07.07.2025</span>
                         </TotalText>
                     </TotalPrize>
                 </TotalPrizeWrapperGray>

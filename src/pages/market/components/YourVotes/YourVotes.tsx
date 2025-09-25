@@ -33,7 +33,7 @@ const Title = styled.span`
     font-size: 2rem;
     line-height: 2.8rem;
     margin-bottom: 1.6rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 `;
 
 const Loader = styled.div`
@@ -44,7 +44,7 @@ const Loader = styled.div`
 const Description = styled.div`
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.descriptionText};
+    color: ${COLORS.textSecondary};
     opacity: 0.7;
     margin-bottom: 3.2rem;
 `;
