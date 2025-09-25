@@ -34,7 +34,7 @@ import Votes from '../Votes/Votes';
 const ProposalQuestion = styled.div`
     width: 100%;
     padding: 4rem 0 15rem;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
 
     ${respondDown(Breakpoints.md)`
         padding: 1.6rem 0;
@@ -55,7 +55,7 @@ const EditButtonLabel = styled.div`
 const Id = styled.div`
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.descriptionText};
+    color: ${COLORS.textSecondary};
     opacity: 0.7;
     margin-bottom: 0.4rem;
 `;
@@ -64,7 +64,7 @@ const QuestionText = styled.h3`
     font-size: 5.6rem;
     line-height: 6.4rem;
 
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 
     ${respondDown(Breakpoints.md)`
         font-size: 4rem;
@@ -98,20 +98,8 @@ const LeftContent = styled.div`
 const Title = styled.h5`
     font-size: 2rem;
     line-height: 2.8rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     margin-bottom: 1rem;
-`;
-
-const DescriptionText = styled.div`
-    font-size: 1.6rem;
-    line-height: 2.8rem;
-    color: ${COLORS.descriptionText};
-    opacity: 0.7;
-    white-space: pre-wrap;
-
-    ${respondDown(Breakpoints.md)`
-        word-break: break-word;
-    `}
 `;
 
 const DataDetails = styled.div`
@@ -139,17 +127,29 @@ const Column = styled.div`
     `}
 `;
 
+const DescriptionText = styled.div`
+    font-size: 1.6rem;
+    line-height: 2.8rem;
+    color: ${COLORS.textSecondary};
+    opacity: 0.7;
+    white-space: pre-wrap;
+
+    ${respondDown(Breakpoints.md)`
+        word-break: break-word;
+    `}
+`;
+
 const DetailsTitle = styled.div`
     font-size: 1.4rem;
     line-height: 1.6rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const DetailsDescription = styled.div`
     margin-top: 0.8rem;
     font-size: 1.6rem;
     line-height: 2.4rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
 
     ${respondDown(Breakpoints.md)`
         margin-top: 0;
@@ -213,7 +213,7 @@ const ScrollToSidebarButton = styled.div`
 `;
 
 const TabNav = styled.div`
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     position: sticky;
     top: 0;
     z-index: 1;
@@ -233,15 +233,15 @@ const TabNavContent = styled.div`
 
 const TabNavItem = styled.div<{ $active?: boolean }>`
     padding: 1.7rem 0 1.3rem;
-    color: ${({ $active }) => ($active ? COLORS.purple : COLORS.grayText)};
+    color: ${({ $active }) => ($active ? COLORS.purple500 : COLORS.textGray)};
     font-weight: ${({ $active }) => ($active ? 700 : 400)};
     border-bottom: ${({ $active }) =>
-        $active ? `0.1rem solid ${COLORS.purple}` : `0.1rem solid ${COLORS.transparent}`};
+        $active ? `0.1rem solid ${COLORS.purple500} ` : `0.1rem solid ${COLORS.transparent}`};
     cursor: pointer;
 
     &:hover {
-        border-bottom: 0.1rem solid ${COLORS.purple};
-        color: ${COLORS.purple};
+        border-bottom: 0.1rem solid ${COLORS.purple500};
+        color: ${COLORS.purple500};
     }
 
     &:not(:last-child) {
@@ -257,14 +257,14 @@ const DiscordChannelOwner = styled.div`
         font-weight: 400;
         font-size: 1.4rem;
         line-height: 1.6rem;
-        color: ${COLORS.grayText};
+        color: ${COLORS.textGray};
     }
 
     div:last-child {
         font-weight: 400;
         font-size: 1.6rem;
         line-height: 2.4rem;
-        color: ${COLORS.paragraphText};
+        color: ${COLORS.textTertiary};
     }
 `;
 

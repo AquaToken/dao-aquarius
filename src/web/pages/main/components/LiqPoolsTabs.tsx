@@ -151,7 +151,7 @@ const TabBtn = styled.button<{ active?: boolean }>`
     cursor: pointer;
     transition: all 0.2s ease;
     opacity: ${({ active }) => (active ? 1 : 0.5)};
-    color: ${({ active }) => (active ? '#BF63FF' : COLORS.white)};
+    color: ${({ active }) => (active ? COLORS.purple200 : COLORS.white)};
 
     &:hover {
         transform: scale(1.1);
@@ -169,7 +169,7 @@ const Underline = styled.div<{ active: TabKey }>`
     bottom: 0;
     height: 0.4rem;
     width: calc(50% - 2rem);
-    background: #bf63ff;
+    background: ${COLORS.purple200};
 `;
 
 const UnderlineBack = styled.div<{ active: TabKey }>`
@@ -195,8 +195,8 @@ const Badge = styled.span<{ tone?: 'stable' | 'volatile' }>`
     border-radius: 0.7rem;
     font-weight: 700;
 
-    color: ${({ tone }) => (tone === 'stable' ? COLORS.stablePool : COLORS.constantPool)};
-    border: 2px solid ${({ tone }) => (tone === 'stable' ? COLORS.stablePool : COLORS.constantPool)};
+    color: ${({ tone }) => (tone === 'stable' ? COLORS.blue300 : COLORS.orange300)};
+    border: 2px solid ${({ tone }) => (tone === 'stable' ? COLORS.blue300 : COLORS.orange300)};
 
     ${respondDown(Breakpoints.sm)`
         margin-top: 3.2rem;
@@ -216,11 +216,6 @@ const ContentTitle = styled.div`
         font-size: 2.4rem;
         line-height: 3.6rem;
     `}
-`;
-
-const TabsHeader = styled.div`
-    display: grid;
-    gap: 4px;
 `;
 
 const LiqPoolsTabs = () => {

@@ -22,7 +22,7 @@ import ClaimRewardsModal from 'modals/ClaimRewardsModal';
 const RewardsWrap = styled.div`
     display: flex;
     flex-direction: column;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     padding: 3.2rem;
     border-radius: 0.5rem;
     margin-bottom: 3.2rem;
@@ -46,7 +46,7 @@ const Rewards = styled.div`
 
 const RewardsDescription = styled.div`
     display: flex;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     font-size: 1.4rem;
     gap: 2.4rem;
 
@@ -67,7 +67,7 @@ const NoTrustlineStyled = styled(NoTrustline)`
     background-color: ${COLORS.white}!important;
 
     ${respondDown(Breakpoints.sm)`
-        background-color: ${COLORS.lightGray}!important;
+        background-color: ${COLORS.gray50}!important;
     `}
 `;
 
@@ -91,7 +91,7 @@ const Column = styled.div`
     span:last-child {
         font-size: 1.6rem;
         line-height: 2.8rem;
-        color: ${COLORS.paragraphText};
+        color: ${COLORS.textTertiary};
         display: flex;
         align-items: center;
 
@@ -110,7 +110,7 @@ const Column = styled.div`
 `;
 
 const Divider = styled.div`
-    border-left: 0.1rem solid ${COLORS.gray};
+    border-left: 0.1rem solid ${COLORS.gray100};
 
     ${respondDown(Breakpoints.xs)`
          display: none;

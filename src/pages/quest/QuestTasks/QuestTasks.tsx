@@ -52,7 +52,7 @@ const TaskDescription = styled.div`
 `;
 
 const ImageWrapper = styled.div`
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     border-radius: 2.4rem;
     ${flexAllCenter};
 
@@ -65,7 +65,7 @@ const ImageWrapper = styled.div`
 const Optional = styled.div`
     height: 1.6rem;
     border-radius: 4.3rem;
-    background-color: ${COLORS.placeholder};
+    background-color: ${COLORS.gray200};
     text-transform: uppercase;
     padding: 0 0.6rem;
     color: ${COLORS.white};

@@ -6,7 +6,7 @@ import { getIsTestnetEnv } from 'helpers/env';
 
 import { StellarService } from 'services/globalServices';
 
-import { flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { cardBoxShadow, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import { ExternalLink } from 'basics/links';
@@ -28,16 +28,16 @@ const Container = styled.section`
 const Wrapper = styled.div`
     padding: 5rem 4rem 3.5rem;
     background: ${COLORS.white};
-    box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
     border-radius: 0.5rem;
     max-width: 78rem;
     margin: 3rem auto;
+    ${cardBoxShadow};
 `;
 
 const Title = styled.h4`
     font-size: 3.5rem;
     line-height: 4.1rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     margin-bottom: 2.4rem;
     font-weight: 400;
 `;
@@ -47,14 +47,14 @@ const Status = styled.div`
     flex-direction: column;
     align-items: center;
     padding: 3rem 3rem 2rem;
-    background: ${COLORS.lightGray};
+    background: ${COLORS.gray50};
     border-radius: 0.5rem;
 `;
 
 const AccountInfo = styled.div`
     width: 100%;
     ${flexRowSpaceBetween};
-    border-bottom: 0.1rem dashed ${COLORS.gray};
+    border-bottom: 0.1rem dashed ${COLORS.gray100};
     padding-bottom: 2rem;
     margin-bottom: 1.7rem;
 

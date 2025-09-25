@@ -67,14 +67,14 @@ const SelectStyled = styled(Select)`
 
 const ContentWrap = styled.div`
     width: 100%;
-    background: ${COLORS.lightGray};
+    background: ${COLORS.gray50};
 `;
 
 const Content = styled.div`
     ${commonMaxWidth};
     width: 100%;
     padding: 5.6rem 4rem 4rem;
-    background: ${COLORS.lightGray};
+    background: ${COLORS.gray50};
 
     ${respondDown(Breakpoints.md)`
         padding: 3.2rem 1.6rem 2rem;

@@ -40,7 +40,7 @@ import WhyFreezeAQUA from '../components/LockerMainPage/WhyFreezeAQUA/WhyFreezeA
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     padding: 2.5% 0 5%;
 `;
 

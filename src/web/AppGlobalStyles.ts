@@ -34,7 +34,7 @@ const AppGlobalStyle = createGlobalStyle`
   button {
     font: 400 1.4rem ${FONT_FAMILY.roboto};
     line-height: 1.6rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
   }
 
   @media print {

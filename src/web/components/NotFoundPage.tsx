@@ -13,7 +13,7 @@ import { Breakpoints, COLORS } from '../styles';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     ${flexAllCenter};
     flex-direction: column;
 
@@ -26,7 +26,7 @@ const Title = styled.h2`
     font-size: 5.6rem;
     line-height: 6.4rem;
     font-weight: bold;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     margin-bottom: 1.2rem;
 `;
 
@@ -34,7 +34,7 @@ const Description = styled.div`
     max-width: 79.2rem;
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.descriptionText};
+    color: ${COLORS.textSecondary};
     margin-bottom: 1.2rem;
     opacity: 0.7;
 `;
@@ -43,7 +43,7 @@ const StyledLink = styled(Link)`
     display: flex;
     flex-direction: row;
     align-items: center;
-    color: ${COLORS.purple};
+    color: ${COLORS.purple500};
     font-size: 1.6rem;
     line-height: 2.8rem;
     cursor: pointer;

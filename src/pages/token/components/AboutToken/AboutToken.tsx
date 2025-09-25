@@ -26,7 +26,7 @@ const Title = styled.h1`
     font-weight: 700;
     font-size: 5.6rem;
     line-height: 6.4rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 
     ${respondDown(Breakpoints.sm)`
         font-size: 2.9rem;
@@ -37,7 +37,7 @@ const Title = styled.h1`
 
 const Description = styled.p`
     margin: 1.6rem 0 0;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     font-size: 1.6rem;
     line-height: 2.8rem;
 `;
@@ -69,12 +69,12 @@ const LinkStyled = styled(Link)`
     gap: 2.4rem;
     padding: 4rem 3.6rem;
     align-items: center;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     border-radius: 4.4rem;
     flex: 1;
     cursor: pointer;
     text-decoration: none;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 
     h3 {
         font-size: 2rem;

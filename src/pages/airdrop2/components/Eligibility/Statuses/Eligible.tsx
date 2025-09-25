@@ -12,8 +12,8 @@ const Container = styled.div`
     padding: 0 1.6rem 0 0.8rem;
     background: linear-gradient(
         300.06deg,
-        ${COLORS.buttonBackground} -19.81%,
-        ${COLORS.tooltip} 141.52%
+        ${COLORS.purple950} -19.81%,
+        ${COLORS.purple400} 141.52%
     );
     border-radius: 45px;
     font-size: 1.4rem;

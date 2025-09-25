@@ -6,12 +6,12 @@ import { COLORS } from 'web/styles';
 
 const StyledArea = styled.textarea<{ rows?: number }>`
     width: 100%;
-    border: 0.1rem solid ${COLORS.gray};
+    border: 0.1rem solid ${COLORS.gray100};
     border-radius: 0.5rem;
     padding: 2.4rem 6.5rem 2.4rem 2.4rem;
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     box-sizing: border-box;
 
     ${({ rows }) =>
@@ -30,11 +30,11 @@ const StyledArea = styled.textarea<{ rows?: number }>`
     }
 
     &::placeholder {
-        color: ${COLORS.placeholder};
+        color: ${COLORS.gray200};
     }
 
     &:focus {
-        border: 0.2rem solid ${COLORS.purple};
+        border: 0.2rem solid ${COLORS.purple500};
     }
 `;
 

@@ -10,7 +10,7 @@ const IdenticonBlock = styled.div`
     width: 100%;
     height: 100%;
     background: ${COLORS.white};
-    border: 0.2rem solid ${COLORS.lightGray};
+    border: 0.2rem solid ${COLORS.gray50};
     box-sizing: border-box;
     border-radius: 50%;
 `;

@@ -17,8 +17,8 @@ import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { ModalProps } from 'types/modal';
 
-import { customScroll, flexRowSpaceBetween, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
+import { flexRowSpaceBetween } from 'web/mixins';
+import { COLORS } from 'web/styles';
 
 import Aqua from 'assets/aqua-logo-small.svg';
 import Ice from 'assets/ice-logo.svg';
@@ -35,18 +35,18 @@ const Row = styled.div`
 `;
 
 const Label = styled.span`
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const Value = styled.span`
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     display: flex;
     align-items: center;
 `;
 
 const ButtonContainer = styled.div`
     padding-top: 3.2rem;
-    border-top: 0.1rem dashed ${COLORS.gray};
+    border-top: 0.1rem dashed ${COLORS.gray100};
     display: flex;
 `;
 
@@ -63,7 +63,7 @@ const IceLogo = styled(Ice)`
 `;
 
 const AddTrustBlock = styled.div`
-    background: ${COLORS.lightGray};
+    background: ${COLORS.gray50};
     border-radius: 0.5rem;
     padding: 3.5rem 3.2rem 2.2rem;
     margin-bottom: 4.7rem;
@@ -80,11 +80,11 @@ const AddTrustEmoji = styled.span`
     line-height: 3.2rem;
 `;
 
-const AddTrustDescriptionText = styled.span`
+const AddTrustTextDescription = styled.span`
     font-weight: 400;
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.descriptionText};
+    color: ${COLORS.textSecondary};
     opacity: 0.7;
 `;
 
@@ -95,7 +95,7 @@ const ShowMoreBlock = styled.div`
 `;
 
 const Divider = styled.div`
-    border-bottom: 0.1rem dashed ${COLORS.gray};
+    border-bottom: 0.1rem dashed ${COLORS.gray100};
     width: 100%;
 `;
 
@@ -106,7 +106,7 @@ const ShowMoreButton = styled.div`
     white-space: nowrap;
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.purple};
+    color: ${COLORS.purple500};
     cursor: pointer;
 `;
 
@@ -136,14 +136,14 @@ const AssetName = styled.div`
     font-weight: 400;
     font-size: 1.6rem;
     line-height: 1.8rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const Amount = styled.span`
     font-weight: 400;
     font-size: 1.6rem;
     line-height: 1.8rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
 `;
 
 const LockAquaModal = ({
@@ -228,10 +228,10 @@ const LockAquaModal = ({
                 <AddTrustBlock>
                     <AddTrustDescription>
                         <AddTrustEmoji>☝️</AddTrustEmoji>
-                        <AddTrustDescriptionText>
+                        <AddTrustTextDescription>
                             Freezing AQUA requires you to add the {unlistedIceAssets.length} ICE
                             trustlines. Each trustline will reserve 0.5 XLM of your wallet balance.
-                        </AddTrustDescriptionText>
+                        </AddTrustTextDescription>
                     </AddTrustDescription>
                     <ShowMoreBlock>
                         <Divider />

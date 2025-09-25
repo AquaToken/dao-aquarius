@@ -15,7 +15,7 @@ const ButtonBody = styled.button<{ isVoteFor?: boolean }>`
 
     color: ${COLORS.white};
 
-    background-color: ${({ isVoteFor }) => (isVoteFor ? COLORS.pinkRed : COLORS.purple)};
+    background-color: ${({ isVoteFor }) => (isVoteFor ? COLORS.pink500 : COLORS.purple500)};
 
     border-radius: 0.5rem;
     border: none;
@@ -31,8 +31,8 @@ const ButtonBody = styled.button<{ isVoteFor?: boolean }>`
     }
 
     &:disabled {
-        background-color: ${COLORS.gray};
-        color: ${COLORS.placeholder};
+        background-color: ${COLORS.gray100};
+        color: ${COLORS.gray200};
         pointer-events: none;
     }
 `;

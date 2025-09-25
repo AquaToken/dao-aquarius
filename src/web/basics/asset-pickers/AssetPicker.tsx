@@ -19,7 +19,7 @@ const Container = styled.div`
     max-width: 15rem;
     height: 4.8rem;
     border-radius: 3.8rem;
-    border: 0.1rem solid ${COLORS.gray};
+    border: 0.1rem solid ${COLORS.gray100};
     padding: 0.8rem;
     background-color: ${COLORS.white};
     align-items: center;
@@ -29,7 +29,7 @@ const Container = styled.div`
     position: relative;
 
     &:hover {
-        border-color: ${COLORS.purple};
+        border-color: ${COLORS.purple500};
     }
 `;
 
@@ -49,7 +49,7 @@ const Label = styled.span`
     bottom: calc(100% + 1.2rem);
     font-size: 1.6rem;
     line-height: 1.8rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     left: 0;
 `;
 

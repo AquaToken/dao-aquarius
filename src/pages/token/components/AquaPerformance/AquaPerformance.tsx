@@ -80,7 +80,7 @@ const BlockHeader = styled.div`
         font-weight: 700;
         font-size: 2rem;
         line-height: 2.8rem;
-        color: ${COLORS.titleText};
+        color: ${COLORS.textPrimary};
     }
 
     ${respondDown(Breakpoints.sm)`
@@ -99,11 +99,11 @@ const BlockRow = styled.div`
     }
 
     span:first-child {
-        color: ${COLORS.grayText};
+        color: ${COLORS.textGray};
     }
 
     span:last-child {
-        color: ${COLORS.paragraphText};
+        color: ${COLORS.textTertiary};
     }
 
     ${respondDown(Breakpoints.xs)`
@@ -118,7 +118,7 @@ const BlockRow = styled.div`
 `;
 
 const PriceStyled = styled(Price)`
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     margin: 0;
 `;
 

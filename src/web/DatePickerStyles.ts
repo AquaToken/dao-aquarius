@@ -1,6 +1,6 @@
 import { createGlobalStyle } from 'styled-components';
 
-import { FONT_FAMILY } from './styles';
+import { COLORS, FONT_FAMILY } from './styles';
 
 export const DatePickerStyles = createGlobalStyle`
     div.react-datepicker-wrapper {
@@ -9,8 +9,8 @@ export const DatePickerStyles = createGlobalStyle`
     div.react-datepicker {
         font-family: ${FONT_FAMILY.roboto};
         font-size: 1.6rem;
-        background-color: #fff;
-        color: #000636;
+        background-color: ${COLORS.white};
+        color: ${COLORS.textTertiary};
         border: none;
         border-radius: 0.5rem;
         box-shadow: 0 20px 30px rgba(0, 6, 54, 0.06);
@@ -19,7 +19,7 @@ export const DatePickerStyles = createGlobalStyle`
         display: none;
     }
     div.react-datepicker__header {
-        background-color: white;
+        background-color: ${COLORS.white};
         border-bottom: none;
     }
     
@@ -34,11 +34,11 @@ export const DatePickerStyles = createGlobalStyle`
     }
     div.react-datepicker__day--selected {
         border-radius: 0;
-        background-color: #8620B9;
-        color: #fff;
+        background-color: ${COLORS.purple400};
+        color: ${COLORS.white};
         
         &:hover {
-            background-color: #8620B9;
+            background-color: ${COLORS.purple400};
         }
     }
     div.react-datepicker__day--keyboard-selected {
@@ -46,28 +46,28 @@ export const DatePickerStyles = createGlobalStyle`
         color: unset;
         
         &:hover {
-          background-color: #f0f0f0;
+          background-color: ${COLORS.gray10};
         }
     }
     div.react-datepicker__current-month  {
-        color: #000;
+        color: ${COLORS.black};
         font-weight: normal;
         font-size: 1.6rem;
         line-height: 2.8rem;
     }
     div.react-datepicker__month {
         margin: 0;
-        border-left: 1px solid #E8E8ED;
-        border-top: 1px solid #E8E8ED;
+        border-left: 1px solid ${COLORS.gray100};
+        border-top: 1px solid ${COLORS.gray100};
     }
     div.react-datepicker__day {
         width: 4.6rem;
         line-height: 4.5rem;
         margin: 0;
-        border-right: 1px solid #E8E8ED;
-        border-bottom: 1px solid #E8E8ED;
+        border-right: 1px solid ${COLORS.gray100};
+        border-bottom: 1px solid ${COLORS.gray100};
   }
     div.react-datepicker__day--outside-month {
-        color: #B3B4C3;
+        color: ${COLORS.gray200};
     }
 `;

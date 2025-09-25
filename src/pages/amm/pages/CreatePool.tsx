@@ -56,7 +56,7 @@ import ContractNotFound from '../components/ContractNotFound/ContractNotFound';
 import PoolsList from '../components/PoolsList/PoolsList';
 
 const ErrorLabel = styled.span<{ $isError?: boolean }>`
-    color: ${({ $isError }) => ($isError ? COLORS.pinkRed : COLORS.paragraphText)};
+    color: ${({ $isError }) => ($isError ? COLORS.pink500 : COLORS.textTertiary)};
 `;
 
 const StyledForm = styled(Form)`
@@ -84,7 +84,7 @@ const StyledFormSection = styled(FormSection)`
 const FormDescription = styled.span`
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const PoolType = styled.div<{ $isActive?: boolean }>`
@@ -93,8 +93,8 @@ const PoolType = styled.div<{ $isActive?: boolean }>`
     width: 100%;
     padding: 3.7rem 3.2rem;
     border-radius: 1rem;
-    background-color: ${({ $isActive }) => ($isActive ? COLORS.purple : COLORS.lightGray)};
-    color: ${({ $isActive }) => ($isActive ? COLORS.white : COLORS.paragraphText)};
+    background-color: ${({ $isActive }) => ($isActive ? COLORS.purple500 : COLORS.gray50)};
+    color: ${({ $isActive }) => ($isActive ? COLORS.white : COLORS.textTertiary)};
 
     svg {
         display: ${({ $isActive }) => ($isActive ? 'block' : 'none')};
@@ -121,7 +121,7 @@ const RemoveButton = styled.div`
     position: absolute;
     right: 0;
     bottom: 7.8rem;
-    color: ${COLORS.pinkRed};
+    color: ${COLORS.pink500};
     cursor: pointer;
 `;
 
@@ -172,7 +172,7 @@ const CreationFee = styled.div`
     margin-top: -1.3rem;
     margin-bottom: 3.2rem;
     padding: 2.4rem;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     ${flexRowSpaceBetween};
 
     ${respondDown(Breakpoints.md)`
@@ -603,7 +603,7 @@ const CreatePool = () => {
                                         </TooltipInner>
                                     }
                                     position={TOOLTIP_POSITION.right}
-                                    background={COLORS.pinkRed}
+                                    background={COLORS.pink500}
                                 >
                                     <AddRowButton
                                         secondary

@@ -12,7 +12,7 @@ const Labels = styled.div`
     width: 100%;
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -31,13 +31,13 @@ const progressLineStyles = css`
 const Outer = styled.div`
     ${progressLineStyles};
     width: 100%;
-    background-color: ${COLORS.gray};
+    background-color: ${COLORS.gray100};
 `;
 
 const Inner = styled.div<{ $width: string }>`
     ${progressLineStyles};
     width: ${({ $width }) => $width};
-    background-color: ${COLORS.purple};
+    background-color: ${COLORS.purple500};
 `;
 
 const ProgressLine = ({

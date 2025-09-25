@@ -8,7 +8,7 @@ import { Breakpoints, COLORS } from 'web/styles';
 
 import ArrowDown from 'assets/icon-arrow-down.svg';
 
-import { noSelect, respondDown } from '../../mixins';
+import { cardBoxShadow, customScroll, noSelect, respondDown } from '../../mixins';
 
 const DropDown = styled.div<{ $isOpen: boolean; $disabled: boolean }>`
     width: 100%;
@@ -21,16 +21,17 @@ const DropDown = styled.div<{ $isOpen: boolean; $disabled: boolean }>`
     box-sizing: border-box;
 
     border-radius: ${({ $isOpen }) => ($isOpen ? '0.5rem 0.5rem 0 0' : '0.5rem')};
-    background-color: ${({ $disabled }) => ($disabled ? COLORS.lightGray : COLORS.white)};
+    background-color: ${({ $disabled }) => ($disabled ? COLORS.gray50 : COLORS.white)};
     pointer-events: ${({ $disabled }) => ($disabled ? 'none' : 'auto')};
     font-size: 1.4rem;
     ${noSelect};
 
     box-shadow: inset 0 0 0 ${({ $isOpen }) => ($isOpen ? '0.2rem' : '0.1rem')}
-        ${({ $isOpen }) => ($isOpen ? COLORS.purple : COLORS.gray)};
+        ${({ $isOpen }) => ($isOpen ? COLORS.purple500 : COLORS.gray100)};
 
     &:hover {
-        box-shadow: inset 0 0 0 ${({ $isOpen }) => ($isOpen ? '0.2rem' : '0.1rem')} ${COLORS.purple};
+        box-shadow: inset 0 0 0 ${({ $isOpen }) => ($isOpen ? '0.2rem' : '0.1rem')}
+            ${COLORS.purple500};
     }
 `;
 
@@ -59,7 +60,7 @@ const DropdownItemHead = styled(DropdownItem)`
 `;
 
 const Placeholder = styled(DropdownItem)`
-    color: ${COLORS.placeholder};
+    color: ${COLORS.gray200};
 `;
 
 const DropdownArrow = styled(ArrowDown)<{ $isOpen: boolean }>`
@@ -79,7 +80,6 @@ const DropdownList = styled.div`
     left: -0.2rem;
     top: calc(100% + 0.2rem);
     background-color: ${COLORS.white};
-    box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
     width: calc(100% + 0.4rem);
     box-sizing: border-box;
     border-radius: 0 0 0.5rem 0.5rem;
@@ -88,21 +88,8 @@ const DropdownList = styled.div`
     max-height: 24rem;
     overflow-y: scroll;
     z-index: 10;
-
-    &::-webkit-scrollbar {
-        width: 0.5rem;
-    }
-
-    /* Track */
-    &::-webkit-scrollbar-track {
-        background: ${COLORS.white};
-    }
-
-    /* Handle */
-    &::-webkit-scrollbar-thumb {
-        background: ${COLORS.purple};
-        border-radius: 0.25rem;
-    }
+    ${customScroll};
+    ${cardBoxShadow};
 
     @keyframes openDropdown {
         0% {

@@ -80,11 +80,11 @@ const SidebarRow = styled.div`
         display: flex;
         align-items: center;
         gap: 0.8rem;
-        color: ${COLORS.paragraphText};
+        color: ${COLORS.textTertiary};
     }
 
     span:first-child {
-        color: ${COLORS.grayText};
+        color: ${COLORS.textGray};
     }
 `;
 
@@ -92,7 +92,7 @@ const WithdrawIconStyled = styled(WithdrawIcon)`
     margin-right: 0.8rem;
 
     path {
-        stroke: ${COLORS.grayText};
+        stroke: ${COLORS.textGray};
     }
 `;
 const DepositIconStyled = styled(DepositIcon)`

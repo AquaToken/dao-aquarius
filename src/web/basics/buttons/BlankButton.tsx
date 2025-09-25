@@ -20,7 +20,7 @@ const BlankButton = styled.button.attrs<{ type?: 'button' | 'submit' | 'reset'; 
     border: 0.2rem solid ${COLORS.transparent};
 
     &:focus {
-        border: 0.2rem solid ${COLORS.focusColor};
+        border: 0.2rem solid ${COLORS.cyan500};
     }
 `;
 

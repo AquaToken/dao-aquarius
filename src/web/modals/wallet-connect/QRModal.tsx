@@ -56,7 +56,7 @@ const ToggleGroupStyled = styled(ToggleGroup)`
 const AndroidButtonBlock = styled.div`
     ${flexAllCenter};
     border-radius: 0.5rem;
-    background: ${COLORS.lightGray};
+    background: ${COLORS.gray50};
     padding: 6rem 0;
     margin-top: 2.2rem;
 `;
@@ -69,7 +69,7 @@ const AppBlock = styled.div`
     display: flex;
     align-items: center;
     border-radius: 0.5rem;
-    background: ${COLORS.lightGray};
+    background: ${COLORS.gray50};
     padding: 1.9rem 2.4rem 1.9rem 1.9rem;
 
     &:not(:last-child) {
@@ -79,7 +79,7 @@ const AppBlock = styled.div`
 
 const AppName = styled.span`
     font-size: 1.6rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
 `;
 
 const AppLogo = styled.img`

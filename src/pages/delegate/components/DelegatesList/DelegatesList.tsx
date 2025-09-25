@@ -53,7 +53,7 @@ const Empty = styled.div`
     span {
         font-size: 1.6rem;
         line-height: 2.8rem;
-        color: ${COLORS.descriptionText};
+        color: ${COLORS.textSecondary};
     }
 
     ${respondDown(Breakpoints.lg)`
@@ -75,7 +75,7 @@ const IconWrap = styled.div`
     height: 6.4rem;
     width: 6.4rem;
     border-radius: 50%;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
 
     svg {
         height: 1.6rem;

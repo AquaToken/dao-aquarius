@@ -57,7 +57,7 @@ const BlueBlock = styled.div`
     flex: 1;
     background-repeat: repeat;
     background-size: auto;
-    background-color: ${COLORS.blue};
+    background-color: ${COLORS.blue500};
     background-image: url(${BG});
     border-radius: 10rem;
     height: 34rem;
@@ -104,7 +104,7 @@ const Title = styled.h1`
     font-weight: 700;
     font-size: 8rem;
     line-height: 8rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 
     span {
         display: none;
@@ -131,7 +131,7 @@ const SubTitle = styled.h2`
     font-weight: 400;
     font-size: 3.6rem;
     line-height: 4.2rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 
     ${respondDown(Breakpoints.md)`
         display: none;
@@ -151,7 +151,7 @@ const Item = styled.li`
     gap: 1.6rem;
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
 
     &::before {
         content: '';
@@ -171,10 +171,10 @@ const IceLogo = styled(IceLogoIcon)`
 `;
 
 const ButtonStyled = styled(Button)`
-    background-color: ${COLORS.blue};
+    background-color: ${COLORS.blue500};
 
     &:hover {
-        background-color: ${COLORS.blue};
+        background-color: ${COLORS.blue500};
         opacity: 0.9;
     }
 `;

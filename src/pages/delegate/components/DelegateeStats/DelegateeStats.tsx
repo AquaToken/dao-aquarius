@@ -69,7 +69,7 @@ const Container = styled.div<{ $fromTop: boolean; $visible: boolean }>`
 `;
 
 const Strategy = styled.div`
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     display: flex;
     flex-direction: column;
 
@@ -77,12 +77,12 @@ const Strategy = styled.div`
         font-weight: 400;
         font-size: 2rem;
         line-height: 2.4rem;
-        color: ${COLORS.titleText};
+        color: ${COLORS.textPrimary};
         margin-bottom: 1.6rem;
     }
 
     span {
-        color: ${COLORS.grayText};
+        color: ${COLORS.textGray};
     }
 `;
 
@@ -91,7 +91,7 @@ const Stats = styled.div`
     border-radius: 1.6rem;
     ${flexColumn};
     gap: 0.8rem;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     ${customScroll};
     max-height: 20rem;
     overflow: auto;
@@ -100,7 +100,7 @@ const Stats = styled.div`
         font-weight: 700;
         font-size: 1.6rem;
         line-height: 2.8rem;
-        ${COLORS.titleText};
+        ${COLORS.textPrimary};
         margin-bottom: 1.2rem;
     }
 `;
@@ -112,7 +112,7 @@ const Links = styled.div`
 
 const LinkStyles = css`
     ${flexAllCenter};
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     border-radius: 1.6rem;
     height: 4.4rem;
     padding: 0 1.3rem;
@@ -121,7 +121,7 @@ const LinkStyles = css`
 
     svg {
         path {
-            fill: ${COLORS.purple};
+            fill: ${COLORS.purple500};
         }
     }
 `;
@@ -135,7 +135,7 @@ const DiscordName = styled.div`
     gap: 0.8rem;
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.purple};
+    color: ${COLORS.purple500};
 `;
 
 const Link = styled.a`
@@ -165,12 +165,12 @@ const Row = styled.div`
 const LinkInner = styled(LinkRouter)`
     ${rowStyles};
     cursor: pointer;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     text-decoration: none;
     flex: 1;
 
     span {
-        border-bottom: 0.1rem dashed ${COLORS.purple};
+        border-bottom: 0.1rem dashed ${COLORS.purple500};
     }
 `;
 
@@ -194,10 +194,10 @@ const Buttons = styled.div`
 `;
 
 const ClaimButton = styled(Button)`
-    background-color: ${COLORS.pinkRed};
+    background-color: ${COLORS.pink500};
 
     &:hover {
-        background-color: ${COLORS.pinkRed};
+        background-color: ${COLORS.pink500};
         opacity: 0.8;
     }
 `;

@@ -19,7 +19,7 @@ const CircularProgress = ({ percentage, size = 16, strokeWidth = 2 }: Props) => 
                 cx={size / 2}
                 cy={size / 2}
                 r={radius}
-                stroke={COLORS.deepPurple}
+                stroke={COLORS.purple600}
                 strokeOpacity="0.2"
                 strokeWidth={strokeWidth}
                 fill="none"
@@ -28,7 +28,7 @@ const CircularProgress = ({ percentage, size = 16, strokeWidth = 2 }: Props) => 
                 cx={size / 2}
                 cy={size / 2}
                 r={radius}
-                stroke={COLORS.deepPurple}
+                stroke={COLORS.purple600}
                 strokeWidth={strokeWidth}
                 fill="none"
                 strokeDasharray={circumference}

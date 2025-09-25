@@ -85,7 +85,7 @@ const FormRow = styled.div`
 const DescriptionRow = styled.div`
     ${flexRowSpaceBetween};
     margin-bottom: 1.6rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 
     span {
         display: flex;
@@ -94,7 +94,7 @@ const DescriptionRow = styled.div`
     }
 
     span:last-child {
-        color: ${COLORS.paragraphText};
+        color: ${COLORS.textTertiary};
     }
 `;
 
@@ -109,7 +109,7 @@ const Balance = styled.div`
     right: 0;
     font-size: 1.6rem;
     line-height: 1.8rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     display: flex;
     align-items: center;
 
@@ -123,7 +123,7 @@ const Balance = styled.div`
 `;
 
 const BalanceClickable = styled.span`
-    color: ${COLORS.purple};
+    color: ${COLORS.purple500};
     cursor: pointer;
     margin-left: 0.4rem;
 `;
@@ -131,7 +131,7 @@ const BalanceClickable = styled.span`
 const PoolInfo = styled.div<{ $isModal: boolean }>`
     display: flex;
     flex-direction: column;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     border-radius: 0.6rem;
     padding: ${({ $isModal }) => ($isModal ? '2.4rem;' : '0')};
     margin-top: ${({ $isModal }) => ($isModal ? '2.4rem;' : '0')};
@@ -617,7 +617,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                                     </BalanceClickable>
                                     <Tooltip
                                         showOnHover
-                                        background={COLORS.titleText}
+                                        background={COLORS.textPrimary}
                                         position={TOOLTIP_POSITION.left}
                                         content={
                                             <TooltipInnerBalance>
@@ -721,7 +721,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                                 <Label
                                     labelText={`x${(+calculateBoostValue(poolRewards)).toFixed(2)}`}
                                     labelSize="medium"
-                                    background={COLORS.darkBlue}
+                                    background={COLORS.blue700}
                                     withoutUppercase
                                 />
                                 {sharesAfter && (
@@ -732,7 +732,7 @@ const DepositToPool = ({ params, confirm }: ModalProps<DepositToPoolParams>) => 
                                                 poolRewards,
                                             ).toFixed(2)}`}
                                             labelSize="medium"
-                                            background={COLORS.darkBlue}
+                                            background={COLORS.blue700}
                                             withoutUppercase
                                         />
                                     </>

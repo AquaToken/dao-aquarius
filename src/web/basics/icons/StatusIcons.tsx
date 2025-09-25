@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { flexAllCenter } from 'web/mixins';
+import { cardBoxShadow, flexAllCenter } from 'web/mixins';
 import { COLORS } from 'web/styles';
 
 import Fail from 'assets/icon-fail.svg';
@@ -14,8 +14,8 @@ const IconBlock = styled.div<{ $isBig?: boolean }>`
     min-height: ${({ $isBig }) => ($isBig ? '5.6rem' : '4rem')};
     min-width: ${({ $isBig }) => ($isBig ? '5.6rem' : '4rem')};
     border-radius: 50%;
-    background-color: #${COLORS.white};
-    box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
+    background-color: ${COLORS.white};
+    ${cardBoxShadow};
     ${flexAllCenter};
 
     svg {

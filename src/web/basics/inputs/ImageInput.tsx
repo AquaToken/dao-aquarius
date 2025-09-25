@@ -16,12 +16,12 @@ import { ExternalLink } from 'basics/links';
 const Container = styled.div`
     position: relative;
     border-radius: 0.5rem;
-    border: 0.1rem dashed ${COLORS.gray};
+    border: 0.1rem dashed ${COLORS.gray100};
     padding: 6rem 0;
     gap: 1.6rem;
     ${FONT_SIZE.md};
     ${flexColumnCenter};
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const Label = styled.div`
@@ -30,7 +30,7 @@ const Label = styled.div`
     left: 0;
     ${FONT_SIZE.md};
     line-height: 1.8rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
 `;
 
 const Preview = styled.img`

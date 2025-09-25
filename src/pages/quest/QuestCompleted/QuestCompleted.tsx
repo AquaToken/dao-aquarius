@@ -26,7 +26,7 @@ const Title = styled.h2`
     font-weight: 700;
     font-size: 2rem;
     line-height: 2.8rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     text-align: center;
 `;
 
@@ -34,7 +34,7 @@ const Description = styled.p`
     font-weight: 400;
     font-size: 1.6rem;
     line-height: 2.4rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     text-align: center;
 `;
 

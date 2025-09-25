@@ -24,7 +24,7 @@ const MainBlock = styled.main`
     flex: 1 0 auto;
 
     ${respondDown(Breakpoints.md)`
-         background: ${COLORS.lightGray};
+         background: ${COLORS.gray50};
     `}
 `;
 

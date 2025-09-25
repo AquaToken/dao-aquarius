@@ -31,7 +31,7 @@ const Title = styled.h3`
 const Row = styled.div`
     display: flex;
     align-items: center;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     margin: 1rem 0;
     height: 2.8rem;
 
@@ -50,7 +50,7 @@ const LinkToExpert = styled.a`
     justify-content: space-between;
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     text-decoration: none;
     width: 22rem;
 

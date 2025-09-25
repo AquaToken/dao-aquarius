@@ -21,7 +21,7 @@ import PageLoader from 'basics/loaders/PageLoader';
 import SwapForm from '../components/SwapForm/SwapForm';
 
 const Container = styled.main`
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     height: 100%;
     position: relative;
     display: flex;

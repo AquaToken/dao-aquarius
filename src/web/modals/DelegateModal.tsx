@@ -54,7 +54,7 @@ const Balance = styled.div`
     right: 0;
     font-size: 1.6rem;
     line-height: 1.8rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     display: flex;
     align-items: center;
 
@@ -78,7 +78,7 @@ const Labels = styled.div`
 `;
 
 const BalanceClickable = styled.span`
-    color: ${COLORS.purple};
+    color: ${COLORS.purple500};
     cursor: pointer;
     margin-left: 0.4rem;
     margin-right: 0.4rem;
@@ -97,10 +97,10 @@ const Avatar = styled.img`
 const IconWrapper = styled.div`
     height: 2.4rem;
     width: 2.4rem;
-    background: ${COLORS.gray};
+    background: ${COLORS.gray100};
     border-radius: 50%;
     ${flexAllCenter};
-    color: ${COLORS.lavenderGray};
+    color: ${COLORS.gray300};
 
     svg {
         margin: 0 !important;
@@ -110,7 +110,7 @@ const IconWrapper = styled.div`
 `;
 
 const PublicKeyWithIconStyled = styled(PublicKeyWithIcon)`
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     margin-left: 1rem;
 `;
 

@@ -46,7 +46,7 @@ export const customScroll = css`
 
     /* Handle */
     &::-webkit-scrollbar-thumb {
-        background: ${COLORS.purple};
+        background: ${COLORS.purple500};
         border-radius: 0.25rem;
     }
 `;
@@ -106,17 +106,17 @@ export const EmptyList = css`
     h3 {
         font-size: 2rem;
         line-height: 2.8rem;
-        color: ${COLORS.titleText};
+        color: ${COLORS.textPrimary};
         margin-bottom: 0.9rem;
     }
 
     span {
         line-height: 180%;
-        color: ${COLORS.grayText};
+        color: ${COLORS.textGray};
     }
 
     a {
-        color: ${COLORS.purple};
+        color: ${COLORS.purple500};
         font-size: 1.4rem;
         line-height: 2rem;
     }

@@ -72,7 +72,8 @@ const Details = styled.div<{ $withBorder: boolean }>`
     flex-direction: column;
     margin-top: 3.2rem;
     padding-bottom: ${({ $withBorder }) => ($withBorder ? '3.2rem' : '0')};
-    border-bottom: ${({ $withBorder }) => ($withBorder ? `0.1rem dashed ${COLORS.gray}` : 'none')};
+    border-bottom: ${({ $withBorder }) =>
+        $withBorder ? `0.1rem dashed ${COLORS.gray100}` : 'none'};
     margin-bottom: ${({ $withBorder }) => ($withBorder ? '3.2rem' : '0')};
 `;
 
@@ -83,10 +84,10 @@ const CheckboxStyled = styled(Checkbox)`
 const DescriptionRow = styled.div`
     ${flexRowSpaceBetween};
     margin-bottom: 1.6rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 
     span:last-child {
-        color: ${COLORS.paragraphText};
+        color: ${COLORS.textTertiary};
         display: flex;
         align-items: center;
         gap: 0.8rem;

@@ -15,7 +15,7 @@ import { AccountEligibility } from '../../../api/types';
 const Container = styled.div`
     margin-top: 2rem;
     padding: 3rem 3rem 2rem;
-    background: ${COLORS.lightGray};
+    background: ${COLORS.gray50};
     border-radius: 0.5rem;
 `;
 
@@ -23,7 +23,7 @@ const Title = styled.div`
     font-size: 2rem;
     font-weight: 700;
     line-height: 2.8rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     margin-bottom: 0.8rem;
 `;
 
@@ -32,7 +32,7 @@ const WithoutBoost = styled.div<{ $hasBoost: boolean }>`
     align-items: center;
     font-size: 3.6rem;
     line-height: 4.2rem;
-    color: ${({ $hasBoost }) => ($hasBoost ? COLORS.grayText : COLORS.titleText)};
+    color: ${({ $hasBoost }) => ($hasBoost ? COLORS.textGray : COLORS.textPrimary)};
     position: relative;
 
     svg {
@@ -68,7 +68,7 @@ const Boost = styled.div`
     height: 3.5rem;
     margin-left: 1.6rem;
     padding: 0 1.4rem 0 1.2rem;
-    background: ${COLORS.tooltip};
+    background: ${COLORS.purple400};
     border-radius: 5px;
     font-size: 1.4rem;
     line-height: 2rem;
@@ -91,7 +91,7 @@ const WithBoost = styled.div`
     font-weight: 700;
     line-height: 6.4rem;
     margin-top: 3rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 
     svg {
         height: 4.8rem;
@@ -137,7 +137,7 @@ const DividedReward = styled.div`
     grid-template-columns: 1fr 1fr 1fr;
     margin-top: 3.2rem;
     padding-top: 3.2rem;
-    border-top: 1px dashed ${COLORS.gray};
+    border-top: 1px dashed ${COLORS.gray100};
 
     ${respondDown(Breakpoints.sm)`
         grid-template-columns: 1fr;
@@ -149,14 +149,14 @@ const Reward = styled.div`
     font-size: 2rem;
     font-weight: 700;
     line-height: 2.8rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     margin-bottom: 0.3rem;
 `;
 
 const Description = styled.div`
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const ExpectedReward = ({ accountEligibility }: { accountEligibility: AccountEligibility }) => {

@@ -41,7 +41,7 @@ import YourVotes from '../components/YourVotes/YourVotes';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     z-index: 1;
 `;
 
@@ -77,7 +77,7 @@ const Header = styled.div`
 `;
 
 const Divider = styled.div`
-    border-top: 0.1rem solid ${COLORS.gray};
+    border-top: 0.1rem solid ${COLORS.gray100};
     margin: 4rem 0;
     height: 0.1rem;
     width: 100%;

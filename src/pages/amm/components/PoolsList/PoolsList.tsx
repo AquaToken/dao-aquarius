@@ -15,8 +15,7 @@ import { truncateString } from 'helpers/truncate-string';
 import { ModalService, StellarService } from 'services/globalServices';
 
 import { PoolClassicProcessed, PoolExtended, PoolProcessed, PoolUserProcessed } from 'types/amm';
-import { Asset as AssetType } from 'types/stellar';
-import { SorobanToken } from 'types/token';
+import { SorobanToken, Token } from 'types/token';
 
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import MigrateLiquidityStep1 from 'web/modals/migrate-liquidity/MigrateLiquidityStep1';
@@ -52,7 +51,7 @@ const PoolMain = styled.div`
     ${respondDown(Breakpoints.xl)`
         padding: 1rem;
         flex-direction: column;
-        background-color: ${COLORS.lightGray};
+        background-color: ${COLORS.gray50};
         border-radius: 0.6rem;
         align-items: unset;
     `}
@@ -83,11 +82,11 @@ const PoolStats = styled.div<{ $isSinglePool: boolean }>`
         }
 
         span:first-child {
-            color: ${COLORS.grayText};
+            color: ${COLORS.textGray};
         }
 
         span:last-child {
-            color: ${COLORS.paragraphText};
+            color: ${COLORS.textTertiary};
         }
     }
 
@@ -110,7 +109,7 @@ const PoolStats = styled.div<{ $isSinglePool: boolean }>`
 
 const ExpandButton = styled.div`
     ${flexAllCenter};
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     border-radius: 0.6rem;
     height: 4.8rem;
     width: 4.8rem;
@@ -119,7 +118,7 @@ const ExpandButton = styled.div`
     margin-left: auto;
 
     &:hover {
-        background-color: ${COLORS.gray};
+        background-color: ${COLORS.gray100};
     }
 
     ${respondDown(Breakpoints.xl)`
@@ -157,7 +156,7 @@ const ExpandedBlock = styled.div<{ $withoutTopPadding?: boolean }>`
     flex-direction: column;
     padding: ${({ $withoutTopPadding }) => ($withoutTopPadding ? '0 2.4rem 2rem' : '3rem 2.4rem')};
     border-radius: 0.6rem;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     margin-top: 2.4rem;
     animation: open ease-in-out 200ms;
     transform-origin: top;
@@ -182,13 +181,13 @@ const ExpandedBlock = styled.div<{ $withoutTopPadding?: boolean }>`
 
 const ExpandedDataRow = styled.div`
     ${flexRowSpaceBetween};
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     gap: 0.8rem;
 
     span:last-child {
         font-size: 1.6rem;
         line-height: 2.8rem;
-        color: ${COLORS.paragraphText};
+        color: ${COLORS.textTertiary};
         display: flex;
         align-items: center;
         gap: 0.8rem;
@@ -208,7 +207,7 @@ const Rates = styled.div`
     span {
         font-size: 1.6rem;
         line-height: 2.8rem;
-        color: ${COLORS.paragraphText};
+        color: ${COLORS.textTertiary};
     }
 
     ${respondDown(Breakpoints.xl)`
@@ -236,8 +235,8 @@ interface PoolsListProps {
     isCommonList?: boolean;
     baseAmount?: string;
     counterAmount?: string;
-    base?: AssetType;
-    counter?: AssetType;
+    base?: Token;
+    counter?: Token;
     onConfirm?: () => void;
 }
 

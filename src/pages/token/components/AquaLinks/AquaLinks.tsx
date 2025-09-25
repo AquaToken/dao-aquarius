@@ -57,7 +57,7 @@ const Section = styled.div`
 `;
 
 const Label = styled.span`
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     white-space: nowrap;
 `;
 

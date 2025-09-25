@@ -11,7 +11,7 @@ const Container = styled.main`
     ${commonMaxWidth};
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     padding: 0 4rem;
 
     ${respondDown(Breakpoints.md)`
@@ -36,7 +36,7 @@ const Container = styled.main`
     }
 
     a {
-        color: ${COLORS.purple};
+        color: ${COLORS.purple500};
         text-decoration: none;
     }
 `;

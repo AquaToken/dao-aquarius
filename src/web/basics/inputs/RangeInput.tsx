@@ -8,8 +8,8 @@ const Pillar = styled.div.attrs<{ $value: number; $disabled?: boolean }>(
     ({ $value, $disabled }) => ({
         style: {
             background: `linear-gradient(to right, ${
-                $disabled ? COLORS.gray : COLORS.titleText
-            } 0% ${$value}%, ${COLORS.gray} ${$value}% 100%)`,
+                $disabled ? COLORS.gray100 : COLORS.textPrimary
+            } 0% ${$value}%, ${COLORS.gray100} ${$value}% 100%)`,
         },
     }),
 )<{ $value: number; $disabled?: boolean }>`
@@ -35,9 +35,9 @@ const Pillar = styled.div.attrs<{ $value: number; $disabled?: boolean }>(
 const Mark = styled.div.attrs<{ $percent: number; $value: number; $disabled: boolean }>(
     ({ $percent, $value, $disabled }) => ({
         style: {
-            background: !$disabled && $value >= $percent ? COLORS.titleText : COLORS.gray,
+            background: !$disabled && $value >= $percent ? COLORS.textPrimary : COLORS.gray100,
             border: `0.1rem solid ${
-                !$disabled && $value >= $percent ? COLORS.titleText : COLORS.white
+                !$disabled && $value >= $percent ? COLORS.textPrimary : COLORS.white
             }`,
             left: `${$percent}%`,
         },
@@ -69,7 +69,7 @@ const Thumb = styled.div.attrs<{ $value: number; $isDrag: boolean; $disabled?: b
     height: 1.6rem;
     width: 1.6rem;
     border: 0.2rem solid ${COLORS.white};
-    background: ${({ $disabled }) => ($disabled ? COLORS.gray : COLORS.titleText)};
+    background: ${({ $disabled }) => ($disabled ? COLORS.gray100 : COLORS.textPrimary)};
     pointer-events: ${({ $disabled }) => ($disabled ? 'none' : 'auto')};
     border-radius: 0.5rem;
     transform: translate(-50%, -50%) rotate(45deg);
@@ -87,7 +87,7 @@ const CurrentValue = styled.div.attrs<{ $value: number; $disabled: boolean }>(({
     position: absolute;
     top: -2.5rem;
     transform: ${({ $value }) => `translateX(-${$value < 99 ? 50 : 80}%)`};
-    color: ${({ $disabled }) => ($disabled ? COLORS.placeholder : COLORS.titleText)};
+    color: ${({ $disabled }) => ($disabled ? COLORS.gray200 : COLORS.textPrimary)};
 `;
 
 const getClickPosition = (

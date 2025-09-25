@@ -35,7 +35,7 @@ import { GOV_ICE, UP_ICE } from 'pages/vote/components/MainPage/MainPage';
 
 const DelegateBlock = styled.div`
     ${flexColumnCenter};
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     padding: 3.4rem 0;
     border-radius: 0.5rem;
     margin-top: 4rem;
@@ -46,7 +46,7 @@ const IconWrapper = styled.div`
     height: 4.8rem;
     width: 4.8rem;
     border-radius: 50%;
-    border: 0.2rem solid ${COLORS.lightGray};
+    border: 0.2rem solid ${COLORS.gray50};
     ${flexAllCenter};
     margin-right: 0.8rem;
 
@@ -67,7 +67,7 @@ const Name = styled.span`
     font-weight: 700;
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 `;
 
 const List = styled.div`
@@ -274,7 +274,7 @@ const DelegateClaimModal = ({ params }: ModalProps<Params>) => {
                             body={claims.map(claim => ({
                                 key: claim.id,
                                 isNarrow: true,
-                                mobileBackground: COLORS.lightGray,
+                                mobileBackground: COLORS.gray50,
                                 mobileFontSize: '1.4rem',
                                 rowItems: [
                                     {

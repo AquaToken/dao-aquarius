@@ -44,7 +44,7 @@ const LogoStyled = styled(Logo)`
 
 const LogoWrapper = styled.div`
     ${flexAllCenter};
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     border-radius: 8rem;
     flex: 1;
     position: relative;
@@ -65,7 +65,7 @@ const Title = styled.h2`
     font-weight: 400;
     font-size: 3.5rem;
     line-height: 100%;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 `;
 
 const Description = styled.p`
@@ -73,7 +73,7 @@ const Description = styled.p`
     font-size: 1.6rem;
     line-height: 2.8rem;
     margin: 2.4rem 0;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const List = styled.ul`
@@ -88,7 +88,7 @@ const ListItem = styled.li`
     gap: 0.8rem;
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     margin-bottom: 1.6rem;
 `;
 
@@ -97,7 +97,7 @@ const IconWrapper = styled.div`
     height: 3.2rem;
     width: 3.2rem;
     border-radius: 50%;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
 
     svg {
         width: 1.6rem;

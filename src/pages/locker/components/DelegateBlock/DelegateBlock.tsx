@@ -41,7 +41,7 @@ const Title = styled.span`
     font-size: 2rem;
     line-height: 2.8rem;
     font-weight: bold;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 `;
 
 const Description = styled.p`
@@ -49,7 +49,7 @@ const Description = styled.p`
     margin: 0;
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const DelegateBlock = () => (

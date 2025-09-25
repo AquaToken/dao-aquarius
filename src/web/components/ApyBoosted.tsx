@@ -26,8 +26,8 @@ const Icon = styled(IceSymbol)<{ $color: string }>`
 `;
 
 const colors = {
-    blue: COLORS.darkBlue,
-    purple: COLORS.purple,
+    blue: COLORS.blue700,
+    purple: COLORS.purple500,
 } as const;
 
 interface Props {

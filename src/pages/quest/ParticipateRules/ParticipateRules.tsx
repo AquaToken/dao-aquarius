@@ -22,7 +22,7 @@ const Title = styled.h2`
     font-weight: 700;
     font-size: 2rem;
     line-height: 2.8rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 `;
 
 const Rules = styled.div`
@@ -38,7 +38,7 @@ const Rules = styled.div`
 const Rule = styled.div`
     display: flex;
     gap: 1.6rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     align-items: center;
     width: 25%;
 

@@ -85,7 +85,7 @@ const MarketTVL = styled.div`
     ${FONT_SIZE.sm}
 
     span:first-child {
-        color: ${COLORS.grayText};
+        color: ${COLORS.textGray};
     }
 
     span:last-child {
@@ -265,7 +265,7 @@ const AddIncentivePage = () => {
                 }
                 position={+window.innerWidth > 992 ? TOOLTIP_POSITION.top : TOOLTIP_POSITION.left}
                 isShow={true}
-                background={COLORS.pinkRed}
+                background={COLORS.pink500}
             >
                 <FailIcon />
             </Tooltip>
@@ -276,7 +276,7 @@ const AddIncentivePage = () => {
                 content={<div>Value must be less or equal {formatBalance(MAX_TOKEN_AMOUNT)}</div>}
                 position={+window.innerWidth > 992 ? TOOLTIP_POSITION.top : TOOLTIP_POSITION.left}
                 isShow={true}
-                background={COLORS.pinkRed}
+                background={COLORS.pink500}
             >
                 <FailIcon />
             </Tooltip>

@@ -17,7 +17,7 @@ const Container = styled.section`
     position: relative;
     display: flex;
     justify-content: center;
-    background: ${COLORS.paragraphText};
+    background: ${COLORS.textTertiary};
     font-family: Roboto, sans-serif;
     letter-spacing: 0;
     padding: 8rem 0;
@@ -65,7 +65,7 @@ const Title = styled.div`
 const Date = styled.div`
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.placeholder};
+    color: ${COLORS.gray200};
 
     ${respondDown(Breakpoints.lg)`
        font-size: 1.4rem;
@@ -110,7 +110,7 @@ const Count = styled.div`
 const Description = styled.div`
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.placeholder};
+    color: ${COLORS.gray200};
 
     ${respondDown(Breakpoints.lg)`
         font-size: 1.4rem;

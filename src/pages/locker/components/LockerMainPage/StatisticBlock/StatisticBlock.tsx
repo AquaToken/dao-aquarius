@@ -33,7 +33,7 @@ const StatisticItem = styled.div`
     display: flex;
     flex-direction: column;
     padding: 3.6rem 3.9rem;
-    background: ${COLORS.lightGray};
+    background: ${COLORS.gray50};
     flex: 1;
 
     ${respondDown(Breakpoints.md)`
@@ -64,14 +64,14 @@ const IceLogo = styled(Ice)`
 const Amount = styled.span`
     font-size: 3.6rem;
     line-height: 4.2rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     margin-bottom: 0.6rem;
 `;
 
 const Description = styled.span`
     font-size: 1.8rem;
     line-height: 3.2rem;
-    color: ${COLORS.darkGrayText};
+    color: ${COLORS.textDark};
 `;
 
 const UPDATE_INTERVAL = 60 * 1000;

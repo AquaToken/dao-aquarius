@@ -20,7 +20,7 @@ const Container = styled.section`
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    background: ${COLORS.lightGray};
+    background: ${COLORS.gray50};
 
     ${respondDown(Breakpoints.md)`
         height: initial;
@@ -84,7 +84,7 @@ const Description = styled.div`
     text-align: center;
     max-width: 80rem;
     margin-top: 3.2rem;
-    color: ${COLORS.darkGrayText};
+    color: ${COLORS.textDark};
 
     ${respondDown(Breakpoints.lg)`
         max-width: 58rem;

@@ -26,7 +26,7 @@ import Asset from 'basics/Asset';
 import Chips from 'basics/Chips';
 import Input from 'basics/inputs/Input';
 
-import { flexRowSpaceBetween, respondDown } from '../../mixins';
+import { cardBoxShadow, customScroll, flexRowSpaceBetween, respondDown } from '../../mixins';
 import { Breakpoints, COLORS } from '../../styles';
 import { CircleLoader } from '../loaders';
 
@@ -39,7 +39,7 @@ const DropDown = styled.div<{ $isOpen: boolean }>`
     position: relative;
     cursor: pointer;
     border: ${({ $isOpen }) =>
-        $isOpen ? `0.2rem solid ${COLORS.purple}` : `0.1rem solid ${COLORS.gray}`};
+        $isOpen ? `0.2rem solid ${COLORS.purple500} ` : `0.1rem solid ${COLORS.gray100}`};
     border-radius: ${({ $isOpen }) => ($isOpen ? '0.5rem 0.5rem 0 0' : '0.5rem')};
     padding: ${({ $isOpen }) => ($isOpen ? '0.1rem' : '0.2rem')};
     box-sizing: border-box;
@@ -65,7 +65,7 @@ const DropdownArrow = styled(ArrowDown)<{ $isOpen: boolean }>`
 
 const DropdownLoader = styled.div`
     ${iconStyles};
-    color: ${COLORS.descriptionText};
+    color: ${COLORS.textSecondary};
     transform: translateY(-50%);
 `;
 
@@ -74,7 +74,7 @@ const DropdownList = styled.div<{ $longListOnMobile?: boolean }>`
     left: -0.2rem;
     top: calc(100% + 0.2rem);
     background-color: ${COLORS.white};
-    box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
+    ${cardBoxShadow};
     width: calc(100% + 0.4rem);
     box-sizing: border-box;
     border-radius: 0 0 0.5rem 0.5rem;
@@ -83,26 +83,12 @@ const DropdownList = styled.div<{ $longListOnMobile?: boolean }>`
     max-height: 24rem;
     overflow-y: scroll;
     z-index: 2;
+    ${customScroll};
 
     ${respondDown(Breakpoints.md)`
         ${({ $longListOnMobile }) =>
             $longListOnMobile ? 'max-height: 42rem' : 'max-height: 24rem;'}
-    `}
-
-    &::-webkit-scrollbar {
-        width: 0.5rem;
-    }
-
-    /* Track */
-    &::-webkit-scrollbar-track {
-        background: ${COLORS.white};
-    }
-
-    /* Handle */
-    &::-webkit-scrollbar-thumb {
-        background: ${COLORS.purple};
-        border-radius: 0.25rem;
-    }
+    `};
 
     @keyframes openDropdown {
         0% {
@@ -123,7 +109,7 @@ const DropdownItem = styled.div`
     padding-right: 2.4rem;
 
     &:hover {
-        background-color: ${COLORS.lightGray};
+        background-color: ${COLORS.gray50};
     }
 `;
 
@@ -131,14 +117,14 @@ const Balances = styled.div`
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     font-size: 1.4rem;
     line-height: 2rem;
 
     span:first-child {
         font-size: 1.6rem;
         line-height: 2.8rem;
-        color: ${COLORS.paragraphText};
+        color: ${COLORS.textTertiary};
         text-align: right;
     }
 
@@ -165,7 +151,7 @@ const SearchEmpty = styled.div`
 
 const Reset = styled(Fail)`
     rect {
-        fill: ${COLORS.gray};
+        fill: ${COLORS.gray100};
     }
     height: 1.6rem;
     width: 1.6rem;
@@ -182,7 +168,7 @@ const Label = styled.div<{ $isOpen?: boolean }>`
     left: ${({ $isOpen }) => ($isOpen ? '0' : '0.1rem')};
     font-size: 1.6rem;
     line-height: 1.8rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
 `;
 
 const StyledAsset = styled(Asset)<{ $withBalances?: boolean }>`

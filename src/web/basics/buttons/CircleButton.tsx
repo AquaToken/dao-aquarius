@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { flexAllCenter } from 'web/mixins';
+import { cardBoxShadow, flexAllCenter } from 'web/mixins';
 import { COLORS } from 'web/styles';
 
 import BlankButton from './BlankButton';
@@ -27,13 +27,13 @@ const CircleButtonContainer = styled(BlankButton)`
     border-radius: 50%;
     border: none;
     background-color: ${COLORS.white};
-    box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
+    ${cardBoxShadow};
     cursor: pointer;
     transition: all ease 200ms;
-    color: ${COLORS.purple};
+    color: ${COLORS.purple500};
 
     &:hover {
-        background-color: ${COLORS.lightGray};
+        background-color: ${COLORS.gray50};
     }
 
     &:active {
@@ -43,7 +43,7 @@ const CircleButtonContainer = styled(BlankButton)`
 
 const Label = styled.span`
     margin-left: 1.6rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
 `;
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLDivElement> {

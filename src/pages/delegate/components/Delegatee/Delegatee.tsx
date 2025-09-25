@@ -28,7 +28,7 @@ const Container = styled.div<{ $isSelected: boolean }>`
     margin-bottom: 2.4rem;
     cursor: pointer;
     border: ${({ $isSelected }) =>
-        `0.2rem solid ${$isSelected ? COLORS.purple : COLORS.transparent}`};
+        `0.2rem solid ${$isSelected ? COLORS.purple500 : COLORS.transparent}`};
     position: relative;
 
     ${respondDown(Breakpoints.lg)`
@@ -50,7 +50,7 @@ const Main = styled.div<{ $isSelected: boolean }>`
     ${respondDown(Breakpoints.lg)`
         flex-direction: column;
         border-bottom: ${({ $isSelected }) =>
-            $isSelected ? `0.1rem solid ${COLORS.lightGray}` : 'none'};
+            $isSelected ? `0.1rem solid ${COLORS.gray50}` : 'none'};
         padding-bottom: ${({ $isSelected }) => ($isSelected ? '2.4rem' : '0')};
     `}
 `;
@@ -63,7 +63,7 @@ const Header = styled.div`
         font-weight: 700;
         font-size: 1.6rem;
         line-height: 2.8rem;
-        color: ${COLORS.titleText};
+        color: ${COLORS.textPrimary};
         display: flex;
         gap: 0.8rem;
         align-items: center;
@@ -75,11 +75,11 @@ const Header = styled.div`
 
     span {
         margin-left: auto;
-        color: ${COLORS.grayText};
+        color: ${COLORS.textGray};
     }
 
     b {
-        color: ${COLORS.titleText};
+        color: ${COLORS.textPrimary};
     }
 
     ${respondDown(Breakpoints.lg)`
@@ -106,19 +106,19 @@ const MobileAmount = styled.span`
 
 const Bio = styled.p`
     margin-top: 2.4rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     margin-bottom: 0;
 `;
 
 const Trusted = styled.span`
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const AffiliateProject = styled.span`
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 
     b {
-        color: ${COLORS.titleText};
+        color: ${COLORS.textPrimary};
     }
 `;
 

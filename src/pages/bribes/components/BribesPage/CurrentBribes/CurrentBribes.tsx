@@ -37,7 +37,7 @@ const LoaderContainer = styled.div`
 `;
 
 const Apy = styled.span`
-    border-bottom: 0.1rem dashed ${COLORS.purple};
+    border-bottom: 0.1rem dashed ${COLORS.purple500};
     line-height: 2rem;
 `;
 

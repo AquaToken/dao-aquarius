@@ -73,13 +73,13 @@ const TooltipRow = styled.div`
     ${flexRowSpaceBetween};
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     margin-bottom: 0.4rem;
 `;
 
 const TooltipTotal = styled(TooltipRow)`
     font-weight: 700;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     font-size: 1.6rem;
     line-height: 2.8rem;
 `;

@@ -72,7 +72,7 @@ const RangeInputStyled = styled(RangeInput)`
 
 const TokenPicker = styled.div`
     display: flex;
-    border: 0.1rem solid ${COLORS.gray};
+    border: 0.1rem solid ${COLORS.gray100};
     border-radius: 0.5rem;
 `;
 
@@ -81,10 +81,10 @@ const Token = styled.div<{ $isSelected: boolean }>`
     ${flexAllCenter};
     height: 6.6rem;
     cursor: pointer;
-    background-color: ${({ $isSelected }) => ($isSelected ? COLORS.gray : COLORS.transparent)};
+    background-color: ${({ $isSelected }) => ($isSelected ? COLORS.gray100 : COLORS.transparent)};
 
     &:not(:last-child) {
-        border-right: 0.1rem solid ${COLORS.gray};
+        border-right: 0.1rem solid ${COLORS.gray100};
     }
 `;
 
@@ -99,7 +99,7 @@ const StyledButton = styled(Button)`
 `;
 
 const Divider = styled.div`
-    border-top: 0.1rem dashed ${COLORS.gray};
+    border-top: 0.1rem dashed ${COLORS.gray100};
     margin-top: 3.2rem;
     padding-top: 3.2rem;
 `;

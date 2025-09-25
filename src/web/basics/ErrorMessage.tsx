@@ -9,8 +9,8 @@ import Error from 'assets/icon-fail.svg';
 const Container = styled.div`
     ${flexAllCenter};
     padding: 2.4rem;
-    color: ${COLORS.darkGrayText};
-    background-color: ${COLORS.lightGray};
+    color: ${COLORS.textDark};
+    background-color: ${COLORS.gray50};
 `;
 
 const ErrorIcon = styled(Error)`

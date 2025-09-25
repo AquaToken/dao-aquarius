@@ -18,7 +18,7 @@ import Identicon from 'basics/Identicon';
 
 import ChooseLoginMethodModal from 'modals/auth/ChooseLoginMethodModal';
 
-import { flexAllCenter, respondDown, textEllipsis } from '../../mixins';
+import { cardBoxShadow, flexAllCenter, respondDown, textEllipsis } from '../../mixins';
 import { Breakpoints, COLORS } from '../../styles';
 import AppMenu from '../AppMenu';
 
@@ -97,7 +97,7 @@ const Arrow = styled.div<{ $isMenuOpen: boolean }>`
 `;
 
 const AccountFederation = styled.div`
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     line-height: 2rem;
     margin-bottom: 0.2rem;
     max-width: 25rem;
@@ -105,7 +105,7 @@ const AccountFederation = styled.div`
 `;
 
 const AccountPublic = styled.div`
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     line-height: 2rem;
 `;
 
@@ -135,13 +135,13 @@ const MobileMenuButton = styled.div`
     height: 4.8rem;
     font-size: 1.6rem;
     line-height: 2.4rem;
-    color: ${COLORS.titleText};
-    background: ${COLORS.lightGray};
+    color: ${COLORS.textPrimary};
+    background: ${COLORS.gray50};
     border-radius: 0.6rem;
     padding: 0 1.6rem;
 
     &:hover {
-        color: ${COLORS.purple};
+        color: ${COLORS.purple500};
     }
 
     svg {
@@ -154,7 +154,7 @@ const CloseMenuButton = styled.div`
     height: 4.8rem;
     width: 4.8rem;
     background-color: ${COLORS.white};
-    box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
+    ${cardBoxShadow};
     border-radius: 0.5rem;
 `;
 

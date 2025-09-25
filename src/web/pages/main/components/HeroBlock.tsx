@@ -27,7 +27,7 @@ const Hero = styled.section<{ $isDarkTheme: boolean }>`
     position: relative;
     overflow: hidden;
     background: ${({ $isDarkTheme }) =>
-        $isDarkTheme ? `url(${HeroBackground}) no-repeat center center / cover` : COLORS.lightGray};
+        $isDarkTheme ? `url(${HeroBackground}) no-repeat center center / cover` : COLORS.gray50};
 
     border-radius: 96px;
     padding: 3.6rem;
@@ -81,7 +81,7 @@ const Title = styled.h1<{ $isDarkTheme: boolean }>`
     font-size: 7rem;
     line-height: 100%;
     margin-top: 1.6rem;
-    color: ${props => (props.$isDarkTheme ? COLORS.white : COLORS.titleText)};
+    color: ${props => (props.$isDarkTheme ? COLORS.white : COLORS.textPrimary)};
 
     ${respondDown(Breakpoints.md)`
         font-size: 5.6rem;
@@ -96,7 +96,7 @@ const Description = styled.p<{ $isDarkTheme: boolean }>`
     font-weight: 500;
     font-size: 1.8rem;
     line-height: 180%;
-    color: ${props => (props.$isDarkTheme ? COLORS.white : COLORS.descriptionText)};
+    color: ${props => (props.$isDarkTheme ? COLORS.white : COLORS.textSecondary)};
     opacity: ${props => (props.$isDarkTheme ? 0.7 : 1)};
 
     ${respondDown(Breakpoints.sm)`
@@ -119,7 +119,7 @@ const LiveStats = styled.div`
     font-weight: 700;
     font-size: 1.4rem;
     line-height: 180%;
-    color: ${COLORS.green};
+    color: ${COLORS.green500};
 `;
 
 const LockedLiquidity = styled.div`
@@ -142,7 +142,7 @@ const Stats = styled.span<{ $isDarkTheme: boolean }>`
     font-weight: 700;
     font-size: 1.8rem;
     line-height: 180%;
-    color: ${props => (props.$isDarkTheme ? COLORS.white : COLORS.titleText)};
+    color: ${props => (props.$isDarkTheme ? COLORS.white : COLORS.textPrimary)};
 
     ${respondDown(Breakpoints.md)`
         font-size: 1.6rem;
@@ -152,14 +152,14 @@ const Stats = styled.span<{ $isDarkTheme: boolean }>`
 const StatsDesc = styled(Stats)<{ $isDarkTheme: boolean }>`
     font-weight: 400;
     opacity: ${props => (props.$isDarkTheme ? 0.7 : 1)};
-    color: ${props => (props.$isDarkTheme ? COLORS.white : '#4D4F68')};
+    color: ${props => (props.$isDarkTheme ? COLORS.white : COLORS.gray550)};
 `;
 
 const Label = styled.div<{ $isDarkTheme: boolean }>`
     display: flex;
     align-items: center;
     gap: 1.2rem;
-    background-color: ${props => (props.$isDarkTheme ? '#270158' : COLORS.white)};
+    background-color: ${props => (props.$isDarkTheme ? COLORS.purple990 : COLORS.white)};
     color: ${props => (props.$isDarkTheme ? COLORS.white : COLORS.black)};
     padding: 1.6rem 2.4rem;
     border-radius: 46px;

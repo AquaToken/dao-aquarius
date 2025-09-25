@@ -7,7 +7,7 @@ import { Breakpoints, COLORS } from 'web/styles';
 import LockerMainImage from 'assets/locker-main.svg';
 
 const Container = styled.div`
-    background-color: ${COLORS.buttonBackground};
+    background-color: ${COLORS.purple950};
     padding: 5% 0;
 `;
 

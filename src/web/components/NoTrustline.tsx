@@ -26,14 +26,14 @@ const TrustlineBlock = styled.div<{ $isRounded?: boolean }>`
     display: flex;
     flex-direction: column;
     padding: 3.2rem;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     margin-top: 1.6rem;
     border-radius: ${({ $isRounded }) => ($isRounded ? '4rem' : '0.6rem')};
 
     p {
         font-size: 1.6rem;
         line-height: 2.8rem;
-        color: ${COLORS.grayText};
+        color: ${COLORS.textGray};
     }
 `;
 

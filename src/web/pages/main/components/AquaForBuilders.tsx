@@ -16,7 +16,7 @@ const Wrapper = styled.section`
     ${flexAllCenter};
     ${fullWidthSectionStyles};
     width: 100%;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     margin-top: 11rem;
     padding: 5.6rem;
     border-radius: 4.8rem;
@@ -50,7 +50,7 @@ const Title = styled.div`
     font-size: 3.5rem;
     line-height: 5.2rem;
     margin-top: 3.2rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 
     ${respondDown(Breakpoints.sm)`
         font-size: 2.4rem;
@@ -63,7 +63,7 @@ const Description = styled.div`
     font-size: 1.6rem;
     line-height: 180%;
     margin-top: 0.8rem;
-    color: #4d4f68;
+    color: ${COLORS.gray550};
     text-align: center;
 
     ${respondDown(Breakpoints.xs)`
@@ -91,7 +91,7 @@ const BenefitsItem = styled.div`
 `;
 
 const IconCheck = styled(IconCheck16)`
-    color: ${COLORS.purple};
+    color: ${COLORS.purple500};
     margin-right: 0.6rem;
 `;
 

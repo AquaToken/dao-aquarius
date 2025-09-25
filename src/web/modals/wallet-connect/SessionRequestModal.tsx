@@ -5,14 +5,14 @@ import { WalletConnectService } from 'services/globalServices';
 
 import { ModalProps } from 'types/modal';
 
+import { flexAllCenter } from 'web/mixins';
+import { COLORS } from 'web/styles';
+
 import Aqua from 'assets/aqua-logo-small.svg';
 import ArrowsIcon from 'assets/icon-arrows-circle.svg';
 
 import DotsLoader from 'basics/loaders/DotsLoader';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
-
-import { flexAllCenter, respondDown } from '../../mixins';
-import { Breakpoints, COLORS } from '../../styles';
 
 const IconsBlock = styled.div`
     ${flexAllCenter};
@@ -38,7 +38,7 @@ const AppLogo = styled.img`
 
 const Connecting = styled.div`
     ${flexAllCenter};
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     margin-bottom: 4rem;
 `;
 

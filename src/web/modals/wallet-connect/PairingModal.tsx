@@ -28,7 +28,7 @@ const PairingBlock = styled.div`
     display: flex;
     flex-direction: row;
     align-items: center;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     border-radius: 0.5rem;
     padding: 2.1rem 2.4rem;
     cursor: pointer;
@@ -75,7 +75,7 @@ const LoginFlowIconWrap = styled.div`
     height: 1.6rem;
     width: 1.6rem;
     border-radius: 50%;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     ${flexAllCenter};
     bottom: 0;
     right: 0;
@@ -91,7 +91,7 @@ const AppNameWrap = styled.div`
     width: min-content;
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
 `;
 
 const AppName = styled.div`
@@ -114,7 +114,7 @@ const LatestAdded = styled.div`
     text-transform: uppercase;
     text-align: center;
     color: ${COLORS.white};
-    background-color: ${COLORS.tooltip};
+    background-color: ${COLORS.purple400};
     border-radius: 0.5rem;
     white-space: nowrap;
 
@@ -125,14 +125,14 @@ const LatestAdded = styled.div`
 `;
 
 const AppDescription = styled.span`
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     word-break: break-word;
     padding-right: 1.6rem;
 `;
 
 const ConnectButton = styled.div`
     display: none;
-    color: ${COLORS.purple};
+    color: ${COLORS.purple500};
     font-weight: 400;
     font-size: 1.4rem;
     line-height: 2rem;
@@ -178,7 +178,7 @@ const NewConnectionButton = styled.div`
     align-items: center;
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.purple};
+    color: ${COLORS.purple500};
     cursor: pointer;
 `;
 

@@ -28,7 +28,7 @@ import Identicon from 'basics/Identicon';
 
 import SocialLinks from 'components/SocialLinks';
 
-import { respondDown } from '../mixins';
+import { cardBoxShadow, respondDown } from '../mixins';
 import ChooseLoginMethodModal from '../modals/auth/ChooseLoginMethodModal';
 import GetAquaModal from '../modals/GetAquaModal';
 import { Breakpoints, COLORS, Z_INDEX } from '../styles';
@@ -40,7 +40,7 @@ const MenuBlock = styled.div`
     right: 0;
     min-width: 28rem;
     background-color: ${COLORS.white};
-    box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
+    ${cardBoxShadow};
     cursor: auto;
     border-radius: 0 0 0.5rem 0.5rem;
     z-index: ${Z_INDEX.accountMenu};
@@ -60,7 +60,7 @@ const MenuBlock = styled.div`
 const AccountBlock = styled.div`
     ${respondDown(Breakpoints.md)`
         margin: 2.4rem 1.6rem 0;
-        background: ${COLORS.lightGray};
+        background: ${COLORS.gray50};
         border-radius: 0.5rem;
         padding: 2.4rem 1.6rem;
     `}
@@ -92,12 +92,12 @@ const AccountBalance = styled.div`
 `;
 
 const AccountBalanceLabel = styled.span`
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     margin-bottom: 0.4rem;
 `;
 
 const AccountBalanceValue = styled.span`
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     display: flex;
     align-items: center;
 `;
@@ -107,11 +107,11 @@ const LogoutBlock = styled.div`
     align-items: center;
     padding: 2.4rem 2.4rem 2.9rem;
     cursor: pointer;
-    color: ${COLORS.grayText};
-    border-top: 0.1rem dashed ${COLORS.gray};
+    color: ${COLORS.textGray};
+    border-top: 0.1rem dashed ${COLORS.gray100};
 
     &:hover {
-        color: ${COLORS.titleText};
+        color: ${COLORS.textPrimary};
     }
 
     ${respondDown(Breakpoints.md)`
@@ -127,7 +127,7 @@ const Logout = styled.div`
 
 const SignInButton = styled.div`
     padding: 3.2rem 1.6rem 1.6rem;
-    border-top: 0.1rem dashed ${COLORS.gray};
+    border-top: 0.1rem dashed ${COLORS.gray100};
     display: flex;
     width: 100%;
 `;
@@ -146,7 +146,7 @@ const NavLinks = styled.div`
         font-weight: bold;
         font-size: 1.6rem;
         line-height: 1.9rem;
-        color: ${COLORS.titleText};
+        color: ${COLORS.textPrimary};
         text-decoration: none;
         margin-bottom: 2.4rem;
         margin-right: 0 !important;
@@ -182,14 +182,14 @@ const AppIcon = styled.img`
 const Federation = styled.span`
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     margin-bottom: 0.2rem;
 `;
 
 const AccountPublic = styled.span`
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const AquaLogo = styled(Aqua)`
