@@ -201,7 +201,7 @@ const Winner = styled.div<{ $isVoteFor?: boolean }>`
     width: min-content;
     white-space: nowrap;
     border-radius: 1.75rem;
-    background-color: ${({ $isVoteFor }) => ($isVoteFor ? COLORS.purple500 : COLORS.pink500)};
+    background-color: ${({ $isVoteFor }) => ($isVoteFor ? COLORS.purple500 : COLORS.red500)};
     color: ${COLORS.white};
     font-weight: 400;
     margin-top: 1rem;

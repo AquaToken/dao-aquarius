@@ -17,12 +17,12 @@ const Changes = styled.span<{ $isPositive?: boolean; $withWrapper?: boolean }>`
         if ($withWrapper) {
             return COLORS.white;
         }
-        return $isPositive ? COLORS.green500 : COLORS.pink500;
+        return $isPositive ? COLORS.green500 : COLORS.red500;
     }}!important;
     white-space: nowrap;
     background: ${({ $isPositive, $withWrapper }) => {
         if ($withWrapper) {
-            return $isPositive ? COLORS.green500 : COLORS.pink500;
+            return $isPositive ? COLORS.green500 : COLORS.red500;
         }
         return 'unset';
     }}!important;

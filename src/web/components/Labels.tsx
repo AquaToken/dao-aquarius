@@ -62,7 +62,7 @@ export const AuthRequiredLabel = () => (
                 .
             </span>
         }
-        background={COLORS.pink500}
+        background={COLORS.red500}
     />
 );
 
@@ -70,7 +70,7 @@ export const NoLiquidityLabel = () => (
     <StyledLabel
         labelText="no liquidity"
         tooltipText="This market is not eligible for AQUA rewards at the moment, as it failed the liquidity test (no path payment from XLM)."
-        background={COLORS.pink500}
+        background={COLORS.red500}
     />
 );
 

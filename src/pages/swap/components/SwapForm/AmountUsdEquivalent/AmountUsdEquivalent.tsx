@@ -44,7 +44,7 @@ const Percent = styled.div<{ $percent: number }>`
         }
 
         if ($percent <= -10) {
-            return COLORS.pink500;
+            return COLORS.red500;
         }
 
         return COLORS.textGray;
