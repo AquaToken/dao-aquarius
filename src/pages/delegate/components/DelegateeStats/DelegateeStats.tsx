@@ -194,10 +194,10 @@ const Buttons = styled.div`
 `;
 
 const ClaimButton = styled(Button)`
-    background-color: ${COLORS.pink500};
+    background-color: ${COLORS.red500};
 
     &:hover {
-        background-color: ${COLORS.pink500};
+        background-color: ${COLORS.red500};
         opacity: 0.8;
     }
 `;

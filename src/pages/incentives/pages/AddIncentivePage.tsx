@@ -269,7 +269,7 @@ const AddIncentivePage = () => {
                 }
                 position={+window.innerWidth > 992 ? TOOLTIP_POSITION.top : TOOLTIP_POSITION.left}
                 isShow={true}
-                background={COLORS.pink500}
+                background={COLORS.red500}
             >
                 <FailIcon />
             </Tooltip>
@@ -280,7 +280,7 @@ const AddIncentivePage = () => {
                 content={<div>Value must be less or equal {formatBalance(MAX_TOKEN_AMOUNT)}</div>}
                 position={+window.innerWidth > 992 ? TOOLTIP_POSITION.top : TOOLTIP_POSITION.left}
                 isShow={true}
-                background={COLORS.pink500}
+                background={COLORS.red500}
             >
                 <FailIcon />
             </Tooltip>

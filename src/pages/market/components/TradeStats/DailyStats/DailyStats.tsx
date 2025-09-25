@@ -48,7 +48,7 @@ const DetailValue = styled.span`
 `;
 
 const Change = styled.div<{ $isPositive: boolean }>`
-    color: ${({ $isPositive }) => ($isPositive ? COLORS.purple500 : COLORS.pink500)};
+    color: ${({ $isPositive }) => ($isPositive ? COLORS.purple500 : COLORS.red500)};
 `;
 
 const PERIOD_24H = 24 * 60 * 60 * 1000;

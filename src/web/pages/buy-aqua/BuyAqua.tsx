@@ -45,7 +45,7 @@ const BuyAqua = (): JSX.Element => {
         textColor: COLORS.textPrimary.substring(1),
         buttonBackground: COLORS.purple950.substring(1),
         successColor: COLORS.green500.substring(1),
-        errorColor: COLORS.pink500.substring(1),
+        errorColor: COLORS.red500.substring(1),
         iconsColor: COLORS.purple500.substring(1),
         // substring here cause of url params can't have # symbol
     };

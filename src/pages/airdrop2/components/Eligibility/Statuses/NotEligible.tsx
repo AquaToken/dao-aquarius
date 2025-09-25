@@ -10,7 +10,7 @@ const Container = styled.div`
     align-items: center;
     height: 30px;
     padding: 0 1.6rem 0 0.8rem;
-    background: ${COLORS.pink500};
+    background: ${COLORS.red500};
     border-radius: 45px;
     font-size: 1.4rem;
     line-height: 1.6rem;
