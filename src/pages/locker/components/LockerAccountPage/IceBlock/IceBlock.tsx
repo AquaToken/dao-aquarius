@@ -115,7 +115,7 @@ const IceDescriptionContent = styled.div`
     gap: 0.6rem;
 `;
 
-const IcetextSecondary = styled.span`
+const IceTextDescription = styled.span`
     font-weight: 400;
     font-size: 1.6rem;
     line-height: 2.8rem;
@@ -275,11 +275,11 @@ const IceBlock = ({ account, locks }: IceBlockProps): React.ReactNode => {
             <IceDescription>
                 <IceDescriptionEmoji>☝️</IceDescriptionEmoji>
                 <IceDescriptionContent>
-                    <IcetextSecondary>
+                    <IceTextDescription>
                         ICE enables increased voting power & flexibility between liquidity &
                         governance voting, as well as boosted yields when providing liquidity on
                         markets receiving SDEX & AMM rewards.
-                    </IcetextSecondary>
+                    </IceTextDescription>
                     <ExternalLink href=" https://docs.aqua.network/ice/ice-tokens-locking-aqua-and-getting-benefits">
                         Learn more
                     </ExternalLink>

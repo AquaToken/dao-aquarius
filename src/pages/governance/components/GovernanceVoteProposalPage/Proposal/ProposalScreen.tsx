@@ -127,6 +127,18 @@ const Column = styled.div`
     `}
 `;
 
+const DescriptionText = styled.div`
+    font-size: 1.6rem;
+    line-height: 2.8rem;
+    color: ${COLORS.textSecondary};
+    opacity: 0.7;
+    white-space: pre-wrap;
+
+    ${respondDown(Breakpoints.md)`
+        word-break: break-word;
+    `}
+`;
+
 const DetailsTitle = styled.div`
     font-size: 1.4rem;
     line-height: 1.6rem;
@@ -398,7 +410,7 @@ const ProposalScreen = ({
             <ProposalSection ref={proposalRef}>
                 <LeftContent>
                     <Title>Proposal</Title>
-                    <textSecondary
+                    <DescriptionText
                         dangerouslySetInnerHTML={{
                             __html: currentVersionProposal ? currentVersionProposal.text : text,
                         }}

@@ -80,7 +80,7 @@ const AddTrustEmoji = styled.span`
     line-height: 3.2rem;
 `;
 
-const AddTrusttextSecondary = styled.span`
+const AddTrustTextDescription = styled.span`
     font-weight: 400;
     font-size: 1.6rem;
     line-height: 2.8rem;
@@ -228,10 +228,10 @@ const LockAquaModal = ({
                 <AddTrustBlock>
                     <AddTrustDescription>
                         <AddTrustEmoji>☝️</AddTrustEmoji>
-                        <AddTrusttextSecondary>
+                        <AddTrustTextDescription>
                             Freezing AQUA requires you to add the {unlistedIceAssets.length} ICE
                             trustlines. Each trustline will reserve 0.5 XLM of your wallet balance.
-                        </AddTrusttextSecondary>
+                        </AddTrustTextDescription>
                     </AddTrustDescription>
                     <ShowMoreBlock>
                         <Divider />
