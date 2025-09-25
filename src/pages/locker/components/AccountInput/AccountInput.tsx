@@ -50,26 +50,26 @@ const TextBlock = styled.div`
 const InputBlock = styled.div<{ $isModal: boolean }>`
     width: ${({ $isModal }) => ($isModal ? '100%' : '130%')};
     padding-bottom: ${({ $isModal }) => ($isModal ? '4rem' : '0')};
-    border-bottom: ${({ $isModal }) => ($isModal ? `0.1rem dashed ${COLORS.gray}` : 'none')};
+    border-bottom: ${({ $isModal }) => ($isModal ? `0.1rem dashed ${COLORS.gray100}` : 'none')};
 
     ${respondDown(Breakpoints.md)`
         width: 100%;
         padding-bottom: 4rem;
-        border-bottom: 0.1rem dashed ${COLORS.gray};
+        border-bottom: 0.1rem dashed ${COLORS.gray100};
     `}
 `;
 
 const Title = styled.span`
     font-size: 3.6rem;
     line-height: 4.2rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     margin-bottom: 0.8rem;
 `;
 
 const Description = styled.span<{ $isModal: boolean }>`
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.descriptionText};
+    color: ${COLORS.textSecondary};
     margin-bottom: ${({ $isModal }) => ($isModal ? '4rem' : '0')};
 
     ${respondDown(Breakpoints.md)`

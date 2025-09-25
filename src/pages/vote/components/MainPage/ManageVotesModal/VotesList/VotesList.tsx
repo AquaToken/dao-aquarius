@@ -318,7 +318,7 @@ const VotesList = ({ votes, pair, withoutClaimDate }: VotesListProps): React.Rea
                 body={claims.map(claim => ({
                     key: claim.id,
                     isNarrow: true,
-                    mobileBackground: COLORS.lightGray,
+                    mobileBackground: COLORS.gray50,
                     mobileFontSize: '1.4rem',
                     rowItems: [
                         {

@@ -44,7 +44,7 @@ const Background = styled.div`
     padding: 10% 4rem;
     ${flexAllCenter};
     flex-direction: column;
-    background-color: ${COLORS.darkPurple};
+    background-color: ${COLORS.purple900};
     min-height: 10rem;
     max-height: 40vh;
     overflow: hidden;
@@ -124,7 +124,7 @@ const ProposalsBlockWrapper = styled.div`
 
     ${respondDown(Breakpoints.md)`
         padding: 5.5rem 1.6rem 0; 
-        background: ${COLORS.lightGray};
+        background: ${COLORS.gray50};
         margin-bottom: 0;
     `}
 `;
@@ -161,7 +161,7 @@ const ProposalsTitle = styled.h3`
     font-size: 4rem;
     line-height: 6.4rem;
     font-weight: bold;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 
     ${respondDown(Breakpoints.lg)`
          margin-bottom: 5.5rem;
@@ -214,7 +214,7 @@ const EmptyTitle = styled.span`
     font-weight: 700;
     font-size: 2rem;
     line-height: 2.8rem;
-    color: ${COLORS.buttonBackground};
+    color: ${COLORS.purple950};
     margin-bottom: 0.8rem;
 `;
 
@@ -222,12 +222,12 @@ const EmptyDescription = styled.div`
     font-weight: 400;
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     text-align: center;
 `;
 
 const EmptyLink = styled.span`
-    color: ${COLORS.purple};
+    color: ${COLORS.purple500};
     text-decoration: underline;
     cursor: pointer;
 `;

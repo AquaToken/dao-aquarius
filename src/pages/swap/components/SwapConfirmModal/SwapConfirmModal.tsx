@@ -36,23 +36,23 @@ import { SWAP_SLIPPAGE_ALIAS } from '../SwapSettingsModal/SwapSettingsModal';
 const AssetsInfo = styled.div`
     ${flexAllCenter};
     padding: 3.5rem 0;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     border-radius: 0.5rem;
 `;
 
 const DescriptionRow = styled.div`
     ${flexRowSpaceBetween};
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     font-size: 1.6rem;
     padding: 1.5rem 0;
 
     span:last-child {
-        color: ${COLORS.paragraphText};
+        color: ${COLORS.textTertiary};
     }
 `;
 
 const Divider = styled.div`
-    border-bottom: 0.1rem dashed ${COLORS.gray};
+    border-bottom: 0.1rem dashed ${COLORS.gray100};
     margin: 3.2rem 0;
 `;
 

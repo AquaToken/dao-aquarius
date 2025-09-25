@@ -63,7 +63,7 @@ const Amount = styled.div`
 `;
 
 const Percent = styled.div<{ $isBoosted: boolean }>`
-    color: ${({ $isBoosted }) => ($isBoosted ? COLORS.green : COLORS.grayText)};
+    color: ${({ $isBoosted }) => ($isBoosted ? COLORS.green500 : COLORS.textGray)};
     font-size: 1.4rem;
     line-height: 2rem;
     display: flex;
@@ -84,7 +84,7 @@ const Percents = styled.div`
 `;
 
 const PercentMobile = styled.span<{ $isBoosted: boolean }>`
-    color: ${({ $isBoosted }) => ($isBoosted ? COLORS.green : COLORS.grayText)};
+    color: ${({ $isBoosted }) => ($isBoosted ? COLORS.green500 : COLORS.textGray)};
 
     font-size: 1.2rem;
     line-height: 1.4rem;
@@ -107,7 +107,7 @@ const TooltipWrap = styled.div`
 `;
 
 const TooltipRow = styled.div`
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     font-size: 1.4rem;
     line-height: 2rem;
     ${flexRowSpaceBetween};
@@ -119,7 +119,7 @@ const TooltipRow = styled.div`
 `;
 
 const TooltipRowTitleFirst = styled.div`
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     font-size: 1.4rem;
     ${flexRowSpaceBetween};
     width: 100%;
@@ -142,7 +142,7 @@ const TooltipPercents = styled.div`
 
     span:first-child {
         margin-right: 0;
-        color: ${COLORS.grayText};
+        color: ${COLORS.textGray};
     }
 `;
 

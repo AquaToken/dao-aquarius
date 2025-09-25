@@ -50,7 +50,7 @@ export const LoginMethod = styled.div`
     flex-direction: row;
     align-items: center;
     height: 9rem;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     border-radius: 0.5rem;
     padding: 0 2.4rem 0 2.4rem;
     box-sizing: border-box;
@@ -78,7 +78,7 @@ export const LoginMethodWithDescription = styled.div`
 export const LoginMethodName = styled.span`
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     margin-left: 2.4rem;
     display: flex;
     gap: 0.8rem;
@@ -92,7 +92,7 @@ export const LoginMethodName = styled.span`
 export const LoginMethodDescription = styled.div`
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     margin-left: 2.4rem;
 `;
 

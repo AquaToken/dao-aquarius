@@ -14,7 +14,7 @@ import { StellarEvents } from 'services/stellar.service';
 
 import { Asset } from 'types/stellar';
 
-import { flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { cardBoxShadow, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -41,13 +41,13 @@ const Container = styled.aside`
     right: 10%;
     top: 2rem;
     padding: 4.5rem 5rem;
-    box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
     border-radius: 0.5rem;
     background: ${COLORS.white};
     display: flex;
     flex-direction: column;
     margin-top: -18rem;
     z-index: 102;
+    ${cardBoxShadow};
 
     ${respondDown(Breakpoints.lg)`
          float: unset;
@@ -68,14 +68,14 @@ const Title = styled.span`
     font-weight: 700;
     font-size: 2rem;
     line-height: 2.8rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     margin-bottom: 3.4rem;
 `;
 
 const CreatePair = styled.div`
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.descriptionText};
+    color: ${COLORS.textSecondary};
     opacity: 0.7;
     max-width: 26rem;
     margin-bottom: 2.5rem;
@@ -94,7 +94,7 @@ const Row = styled.div`
 const Label = styled.span`
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     display: flex;
     align-items: center;
 `;
@@ -102,17 +102,17 @@ const Label = styled.span`
 const Value = styled.span`
     font-size: 1.6rem;
     line-height: 2.4rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     display: flex;
     align-items: center;
 `;
 
 const PercentWithoutBoost = styled.span`
-    color: ${COLORS.placeholder};
+    color: ${COLORS.gray200};
 `;
 
 const Divider = styled.div`
-    border-bottom: 0.1rem solid ${COLORS.gray};
+    border-bottom: 0.1rem solid ${COLORS.gray100};
     margin: 2.4rem 0;
     width: 100%;
 `;

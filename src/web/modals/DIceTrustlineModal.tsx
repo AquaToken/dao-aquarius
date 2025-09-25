@@ -21,7 +21,7 @@ import NoTrustline from 'components/NoTrustline';
 const AssetBlock = styled.div`
     ${flexColumnCenter};
     padding: 3.7rem 0;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     border-radius: 0.5rem;
     margin-bottom: 2.4rem;
 
@@ -35,11 +35,11 @@ const AssetBlock = styled.div`
         font-weight: 400;
         font-size: 1.6rem;
         line-height: 2.8rem;
-        color: ${COLORS.titleText};
+        color: ${COLORS.textPrimary};
     }
 
     span {
-        color: ${COLORS.grayText};
+        color: ${COLORS.textGray};
     }
 `;
 
@@ -49,7 +49,7 @@ const Buttons = styled.div`
 `;
 
 const LinkStyled = styled(Link)`
-    color: ${COLORS.purple};
+    color: ${COLORS.purple500};
     text-decoration: none;
 `;
 

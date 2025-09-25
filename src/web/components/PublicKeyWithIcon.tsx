@@ -10,7 +10,7 @@ import { Breakpoints, COLORS } from '../styles';
 const Container = styled.div`
     display: flex;
     align-items: center;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
 `;
 
 const IdenticonImage = styled.img`

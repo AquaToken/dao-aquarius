@@ -21,7 +21,7 @@ const SubscribeBlock = styled.div`
     display: flex;
     justify-content: space-between;
     width: 100%;
-    background: ${COLORS.lightGray};
+    background: ${COLORS.gray50};
     padding: 4rem 4.6rem;
     border-radius: 2.4rem;
 
@@ -64,7 +64,7 @@ const HeaderXS = styled(Header)`
 const Title = styled.div`
     font-size: 3.5rem;
     line-height: 4.1rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     margin-bottom: 0;
 
     ${respondDown(Breakpoints.xs)`
@@ -75,7 +75,7 @@ const Title = styled.div`
 const Description = styled.div`
     font-size: 1.6rem;
     line-height: 180%;
-    color: ${COLORS.descriptionText};
+    color: ${COLORS.textSecondary};
     opacity: 0.7;
 
     ${respondDown(Breakpoints.md)`

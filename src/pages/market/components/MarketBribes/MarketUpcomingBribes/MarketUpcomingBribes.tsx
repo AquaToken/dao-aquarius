@@ -28,7 +28,7 @@ const Loader = styled.div`
 const Description = styled.div`
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.descriptionText};
+    color: ${COLORS.textSecondary};
     opacity: 0.7;
     margin-bottom: 3.2rem;
 `;
@@ -84,7 +84,7 @@ const MarketUpcomingBribes = ({ marketKey }: MarketUpcomingBribes): React.ReactN
                     return {
                         key: bribe.asset_code + bribe.asset_issuer + startUTC,
                         isNarrow: true,
-                        mobileBackground: COLORS.lightGray,
+                        mobileBackground: COLORS.gray50,
                         rowItems: [
                             {
                                 children: (

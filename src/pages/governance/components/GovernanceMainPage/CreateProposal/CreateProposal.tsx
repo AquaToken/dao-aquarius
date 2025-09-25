@@ -19,6 +19,7 @@ import AquaLogo from 'assets/aqua-logo-small.svg';
 import Button from 'basics/buttons/Button';
 import { ExternalLink } from 'basics/links';
 
+import { cardBoxShadow } from '../../../../../web/mixins';
 import { APPROVED_PROPOSAL_REWARD } from '../../../pages/GovernanceMainPage';
 
 const Container = styled.div`
@@ -27,11 +28,11 @@ const Container = styled.div`
     flex-direction: column;
     padding: 3.2rem 3.2rem 4.3rem;
     background: ${COLORS.white};
-    box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
     border-radius: 0.5rem;
     height: min-content;
     position: sticky;
     top: 5rem;
+    ${cardBoxShadow};
 `;
 
 const Aqua = styled(AquaLogo)`
@@ -44,7 +45,7 @@ const Title = styled.span`
     font-weight: 700;
     font-size: 2rem;
     line-height: 2.8rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     margin-bottom: 1.6rem;
 `;
 
@@ -52,7 +53,7 @@ const Description = styled.span`
     font-weight: 400;
     font-size: 1.6rem;
     line-height: 2.4rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     margin-bottom: 2.4rem;
 `;
 
@@ -61,7 +62,7 @@ const ProcessChangedBlock = styled.div`
     flex-direction: column;
     padding: 2.4rem;
     border-radius: 0.5rem;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     margin-bottom: 2.4rem;
 `;
 
@@ -69,7 +70,7 @@ const ChangedProcessText = styled.div`
     font-weight: 400;
     font-size: 1.6rem;
     line-height: 2.4rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     margin: 1.6rem 0;
 `;
 

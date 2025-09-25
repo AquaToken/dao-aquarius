@@ -13,10 +13,10 @@ const Container = styled.div`
     display: flex;
     flex-direction: row;
     padding: 3.2rem 0;
-    border-top: 0.1rem solid ${COLORS.gray};
+    border-top: 0.1rem solid ${COLORS.gray100};
     margin-top: 1.6rem;
     justify-content: space-between;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 
     &::after {
         content: '';
@@ -55,7 +55,7 @@ const ArrowRight = styled(Right)`
 `;
 
 const BlackText = styled.span`
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
 `;
 
 type PaginationProps = {
@@ -69,7 +69,7 @@ type PaginationProps = {
 const PageButton = styled.span<{ $isActive: boolean }>`
     padding: 0 1.2rem;
     cursor: pointer;
-    color: ${({ $isActive }) => ($isActive ? COLORS.paragraphText : COLORS.grayText)};
+    color: ${({ $isActive }) => ($isActive ? COLORS.textTertiary : COLORS.textGray)};
 `;
 
 const PAGES_CONTROLS_COUNT = 3;

@@ -8,7 +8,7 @@ import { COLORS } from '../../styles';
 const SizedLoader = styled(Loader)`
     height: ${({ size }) => size}rem;
     width: ${({ size }) => size}rem;
-    color: ${({ isWhite }) => (isWhite ? COLORS.white : COLORS.titleText)};
+    color: ${({ isWhite }) => (isWhite ? COLORS.white : COLORS.textPrimary)};
 `;
 
 export enum SIZES {

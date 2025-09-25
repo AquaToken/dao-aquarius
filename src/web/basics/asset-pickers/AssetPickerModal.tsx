@@ -42,7 +42,7 @@ const DefaultAssets = styled.div`
 const DefaultAsset = styled.div`
     height: 4.8rem;
     border-radius: 3.8rem;
-    border: 0.1rem solid ${COLORS.gray};
+    border: 0.1rem solid ${COLORS.gray100};
     padding: 0.8rem;
     background-color: ${COLORS.white};
     align-items: center;
@@ -53,7 +53,7 @@ const DefaultAsset = styled.div`
     }
 
     &:hover {
-        border-color: ${COLORS.grayText};
+        border-color: ${COLORS.textGray};
     }
 
     ${respondDown(Breakpoints.md)`
@@ -91,7 +91,7 @@ const AssetItem = styled.div`
     justify-content: space-between;
 
     &:hover {
-        background-color: ${COLORS.lightGray};
+        background-color: ${COLORS.gray50};
     }
 
     ${respondDown(Breakpoints.md)`
@@ -103,14 +103,14 @@ const Balances = styled.div`
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     font-size: 1.4rem;
     line-height: 2rem;
 
     span:first-child {
         font-size: 1.6rem;
         line-height: 2.8rem;
-        color: ${COLORS.paragraphText};
+        color: ${COLORS.textTertiary};
         text-align: right;
     }
 
@@ -144,7 +144,7 @@ const EmptyState = styled.span`
     display: flex;
     justify-content: center;
     align-items: center;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     line-height: 6.4rem;
 `;
 

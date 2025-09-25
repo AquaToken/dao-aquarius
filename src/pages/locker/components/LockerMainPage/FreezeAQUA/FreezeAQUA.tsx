@@ -34,7 +34,7 @@ const TextBlock = styled.div`
 const Title = styled.span`
     font-size: 3.5rem;
     line-height: 4.1rem;
-    color: ${COLORS.buttonBackground};
+    color: ${COLORS.purple950};
 
     ${respondDown(Breakpoints.md)`
         font-size: 2.5rem;
@@ -47,7 +47,7 @@ const TitleOpacity = styled.span`
 
 const Description = styled.span`
     font-size: 1.6rem;
-    color: ${COLORS.darkGrayText};
+    color: ${COLORS.textDark};
     margin-top: 3rem;
     margin-bottom: 3rem;
     line-height: 180%;

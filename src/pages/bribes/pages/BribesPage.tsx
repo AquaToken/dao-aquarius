@@ -25,7 +25,7 @@ const MainBlock = styled.main`
 export const Background = styled.div`
     display: flex;
     align-items: center;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     min-height: 10rem;
     overflow: hidden;
     position: relative;
@@ -76,7 +76,7 @@ export const Title = styled.span`
     font-weight: bold;
     font-size: 8rem;
     line-height: 9.4rem;
-    color: ${COLORS.buttonBackground};
+    color: ${COLORS.purple950};
     white-space: nowrap;
     z-index: 1;
     margin-bottom: 1.6rem;
@@ -105,7 +105,7 @@ export const Title = styled.span`
 export const Description = styled.p`
     font-size: 1.6rem;
     line-height: 2.4rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     margin-bottom: 2.4rem;
 `;
 
@@ -143,7 +143,7 @@ export const TableContainer = styled.div`
 
     ${respondDown(Breakpoints.md)`
         padding: 0 1.6rem;
-        background: ${COLORS.lightGray};
+        background: ${COLORS.gray50};
         margin-bottom: 3rem;
     `}
 `;

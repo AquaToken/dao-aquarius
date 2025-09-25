@@ -30,7 +30,7 @@ const BribeDetails = styled.div`
     align-items: center;
 
     padding: 3.8rem;
-    background: ${COLORS.lightGray};
+    background: ${COLORS.gray50};
     border-radius: 0.5rem;
     margin-bottom: 3.8rem;
     position: relative;
@@ -65,14 +65,14 @@ export const BribeDetailTitle = styled.div`
     font-weight: 400;
     font-size: 1.4rem;
     line-height: 2rem;
-    ${COLORS.grayText}
+    ${COLORS.textGray}
 `;
 
 export const BribeDetailValue = styled.div`
     font-weight: 700;
     font-size: 2rem;
     line-height: 2.8rem;
-    ${COLORS.titleText}
+    ${COLORS.textPrimary}
 `;
 
 const AquaLogo = styled(Aqua)`
@@ -110,7 +110,7 @@ const HowItWorks = styled.div`
 export const HowItWorksText = styled.span`
     font-size: 1.6rem;
     line-height: 2.4rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 export const HowItWorksFooter = styled.div`
@@ -123,7 +123,7 @@ export const CloseButton = styled.div`
     display: flex;
     align-items: center;
     cursor: pointer;
-    color: ${COLORS.purple};
+    color: ${COLORS.purple500};
     font-size: 1.6rem;
     line-height: 2.8rem;
     svg {
@@ -225,7 +225,7 @@ const BribesModal = ({ params }: ModalProps<{ pair: PairStats }>) => {
                 body={pair.aggregated_bribes.map(bribe => ({
                     key: bribe.asset_code + bribe.asset_issuer,
                     isNarrow: true,
-                    mobileBackground: COLORS.lightGray,
+                    mobileBackground: COLORS.gray50,
                     rowItems: [
                         {
                             children: (

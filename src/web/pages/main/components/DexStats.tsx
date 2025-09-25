@@ -1,9 +1,5 @@
 import styled from 'styled-components';
 
-import { AllTimeStats } from 'api/amm.types';
-
-import { formatBalance } from 'helpers/format-number';
-
 import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -28,7 +24,7 @@ const Wrapper = styled.section`
 const DexTitle = styled.div`
     font-weight: bold;
     font-size: 7rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     line-height: 100%;
 
     ${respondDown(Breakpoints.md)`
@@ -115,9 +111,9 @@ const StatsTitle = styled.div`
     font-weight: bold;
     font-size: 7rem;
     line-height: 100%;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 
-    background: linear-gradient(90deg, ${COLORS.purple}, #3918ac);
+    background: linear-gradient(90deg, ${COLORS.purple500}, ${COLORS.blue550});
     background-clip: text;
     -webkit-background-clip: text;
     -moz-background-clip: text;
@@ -139,7 +135,7 @@ const StatsDesc = styled.div`
     font-size: 1.8rem;
     font-weight: 500;
     line-height: 180%;
-    color: #4d4f68;
+    color: ${COLORS.gray550};
     margin-top: 0.8rem;
 
     ${respondDown(Breakpoints.md)`

@@ -20,7 +20,7 @@ const Container = styled.div`
     display: flex;
     flex-direction: column;
     padding: 2.4rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     font-size: 1.4rem;
     line-height: 2rem;
     width: 25.8rem;
@@ -50,22 +50,22 @@ const BoostTooltipValues = styled.div`
     width: 100%;
 
     span {
-        color: ${COLORS.grayText};
+        color: ${COLORS.textGray};
     }
 
     span:last-child {
-        color: ${COLORS.paragraphText};
+        color: ${COLORS.textTertiary};
     }
 `;
 
 const UserBoostTooltipValues = styled(BoostTooltipValues)`
     span {
-        color: ${COLORS.purple}!important;
+        color: ${COLORS.purple500} !important;
     }
 `;
 
 const Boosted = styled.span`
-    color: ${COLORS.darkBlue}!important;
+    color: ${COLORS.blue700}!important;
 `;
 
 const IceSymbolWhite = styled(IceSymbol)`
@@ -96,7 +96,7 @@ const BoostTooltip = ({ pool, userBoost }: Props) => (
                 </span>
             }
             labelSize="big"
-            background={COLORS.darkBlue}
+            background={COLORS.blue700}
         />
         <span>Rewards APY are boosted based on your ICE balance</span>
         <BoostTooltipValuesBlock>

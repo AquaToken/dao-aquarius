@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { commonSectionPaddings } from 'web/mixins';
 import { COLORS, MAX_WIDTHS } from 'web/styles';
 
-export const PageContainer = styled.div<{ $color: string }>`
+export const PageContainer = styled.main<{ $color: string }>`
     display: flex;
     align-items: center;
     flex-direction: column;

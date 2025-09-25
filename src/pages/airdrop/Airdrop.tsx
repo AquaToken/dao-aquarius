@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { MainRoutes } from 'constants/routes';
 
-import { respondDown } from 'web/mixins';
+import { cardBoxShadow, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import Success from 'assets/icon-success-green.svg';
@@ -21,7 +21,7 @@ const Container = styled.div`
     flex: 1 0 auto;
 
     ${respondDown(Breakpoints.md)`
-        background-color: ${COLORS.lightGray};
+        background-color: ${COLORS.gray50};
         padding-bottom: 0;
     `}
 `;
@@ -43,7 +43,7 @@ const Main = styled.section`
     align-items: center;
     justify-content: center;
     font-family: Roboto, sans-serif;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     padding-top: 13rem;
     padding-bottom: 16rem;
 `;
@@ -54,7 +54,7 @@ const Title = styled.h1`
     font-weight: 700;
     line-height: 9.4rem;
     letter-spacing: 0;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 
     ${respondDown(Breakpoints.xl)`
         font-size: 7rem;
@@ -80,7 +80,7 @@ const Description = styled.div`
     line-height: 3.2rem;
     letter-spacing: 0;
     text-align: center;
-    color: ${COLORS.darkGrayText};
+    color: ${COLORS.textDark};
 
     ${respondDown(Breakpoints.xl)`
         max-width: 73rem;
@@ -121,7 +121,7 @@ const Card = styled.div`
     height: auto;
     background: ${COLORS.white};
     border-radius: 0.5rem;
-    box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
+    ${cardBoxShadow};
 
     &:first-child {
         margin-right: 6rem;
@@ -166,7 +166,7 @@ const Heading = styled.div`
     line-height: 4.2rem;
     letter-spacing: 0;
     margin-bottom: 0.4rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 
     ${respondDown(Breakpoints.xl)`
         font-size: 3.4rem;
@@ -188,7 +188,7 @@ const Label = styled.div`
     align-items: center;
     width: min-content;
     padding: 0.7rem 0.9rem 0.7rem 0.7rem;
-    background-color: ${COLORS.tooltip};
+    background-color: ${COLORS.purple400};
     border-radius: 0.5rem;
     font-size: 1.2rem;
     font-weight: 700;
@@ -204,7 +204,7 @@ const Text = styled.div`
     font-weight: 400;
     line-height: 2.9rem;
     letter-spacing: 0;
-    color: ${COLORS.darkGrayText};
+    color: ${COLORS.textDark};
 
     ${respondDown(Breakpoints.xl)`
         max-width: 32.6rem;

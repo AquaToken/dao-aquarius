@@ -13,7 +13,7 @@ import Twitter from 'assets/twitter-styled.svg';
 
 import { BlankExternalLink } from 'basics/links';
 
-import { respondDown } from '../mixins';
+import { cardBoxShadow, respondDown } from '../mixins';
 import { Breakpoints, COLORS } from '../styles';
 
 const Wrapper = styled.section`
@@ -39,7 +39,7 @@ const Title = styled.div`
     font-size: 3.5rem;
     line-height: 100%;
 
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     margin-bottom: 2.4rem;
 
     ${respondDown(Breakpoints.sm)`
@@ -55,7 +55,7 @@ const Title = styled.div`
 const Description = styled.div`
     font-size: 1.6rem;
     line-height: 180%;
-    color: ${COLORS.descriptionText};
+    color: ${COLORS.textSecondary};
     opacity: 0.7;
     margin-bottom: 5.6rem;
     font-weight: 500;
@@ -91,7 +91,7 @@ const Link = styled(BlankExternalLink)`
     max-width: calc(25% - 3.2rem);
     border-radius: 2.4rem;
     text-decoration: none;
-    background: ${COLORS.lightGray};
+    background: ${COLORS.gray50};
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -107,7 +107,7 @@ const Link = styled(BlankExternalLink)`
 
     &:hover {
         background: ${COLORS.white};
-        box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
+        ${cardBoxShadow};
     }
 
     ${respondDown(Breakpoints.lg)`
@@ -142,7 +142,7 @@ const Link = styled(BlankExternalLink)`
 
 const ItemTitle = styled.span`
     font-size: 2rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     white-space: nowrap;
 
     ${respondDown(Breakpoints.md)`

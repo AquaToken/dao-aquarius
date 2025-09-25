@@ -14,7 +14,7 @@ const Container = styled.section`
     justify-content: space-between;
     width: 100%;
     height: 50vw;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     overflow: hidden;
 
     ${respondDown(Breakpoints.sm)`

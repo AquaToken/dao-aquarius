@@ -22,11 +22,11 @@ const StyledInput = styled.input<{
     text-align: ${({ $isRightAligned, $isCenterAligned }) =>
         $isRightAligned ? `right` : $isCenterAligned ? 'center' : 'start'};
     width: 100%;
-    border: 0.1rem solid ${COLORS.gray};
+    border: 0.1rem solid ${COLORS.gray100};
     border-radius: 0.5rem;
     font-size: 1.6rem;
     line-height: 1.8rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     box-sizing: border-box;
     ${textEllipsis};
     padding-left: ${({ $paddingLeft }) => $paddingLeft};
@@ -44,15 +44,15 @@ const StyledInput = styled.input<{
     }
 
     &::placeholder {
-        color: ${COLORS.placeholder};
+        color: ${COLORS.gray200};
     }
 
     &:focus {
-        border: 0.2rem solid ${COLORS.purple};
+        border: 0.2rem solid ${COLORS.purple500};
     }
 
     &:disabled {
-        color: ${COLORS.placeholder};
+        color: ${COLORS.gray200};
     }
 `;
 
@@ -76,7 +76,7 @@ const Label = styled.div`
     left: 0;
     font-size: 1.6rem;
     line-height: 1.8rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
 `;
 
 const LabelRight = styled(Label)`

@@ -26,10 +26,10 @@ const Container = styled.div`
 const Axis = styled.g`
     font-size: 1.4rem;
     line-height: 1.6rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 
     path {
-        color: ${COLORS.border};
+        color: ${COLORS.gray600};
     }
 
     line {
@@ -45,7 +45,7 @@ const AxisY = styled(Axis)`
 
 const GrayText = styled.text`
     font-size: 1.4rem;
-    fill: ${COLORS.grayText};
+    fill: ${COLORS.textGray};
 
     ${respondDown(Breakpoints.sm)`
        font-size: 1.2rem;
@@ -54,7 +54,7 @@ const GrayText = styled.text`
 
 const LiquidityValue = styled.text`
     font-size: 2rem;
-    fill: ${COLORS.titleText};
+    fill: ${COLORS.textPrimary};
     font-weight: 700;
 
     ${respondDown(Breakpoints.sm)`
@@ -104,7 +104,7 @@ const Empty = styled.div`
     ${flexAllCenter};
     flex-direction: column;
     gap: 1.6rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 export const transformDate = (date_str: string) => {
@@ -311,7 +311,7 @@ const LiquidityChart = ({
                     <Axis ref={gx} transform={`translate(0,${height - marginBottom})`} />
                     <AxisY ref={gy} transform={`translate(${marginLeft}, 0)`} />
 
-                    <path fill="none" stroke={COLORS.tooltip} strokeWidth="2" d={line(data)} />
+                    <path fill="none" stroke={COLORS.purple400} strokeWidth="2" d={line(data)} />
                     <path
                         fill="url(#gradient)"
                         stroke="transparent"
@@ -322,7 +322,7 @@ const LiquidityChart = ({
                         {Boolean(selectedIndex) && Boolean(data[selectedIndex]) && (
                             <>
                                 <line
-                                    stroke={COLORS.tooltip}
+                                    stroke={COLORS.purple400}
                                     strokeOpacity={0.2}
                                     strokeDasharray="4 4"
                                     strokeWidth="1"
@@ -342,7 +342,7 @@ const LiquidityChart = ({
                                     y2={height * 0.4}
                                 />
                                 <line
-                                    stroke={COLORS.tooltip}
+                                    stroke={COLORS.purple400}
                                     strokeOpacity={0.2}
                                     strokeDasharray="4 4"
                                     strokeWidth="1"
@@ -355,7 +355,7 @@ const LiquidityChart = ({
                                     stroke={COLORS.white}
                                     strokeWidth="2"
                                     r="2.5"
-                                    fill={COLORS.tooltip}
+                                    fill={COLORS.purple400}
                                     cx={x(
                                         transformDate(
                                             data[selectedIndex]?.datetime_str ||

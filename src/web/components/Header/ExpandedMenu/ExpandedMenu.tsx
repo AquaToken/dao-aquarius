@@ -34,7 +34,7 @@ const MenuHead = styled.div`
 const MenuHeadTitle = styled.div`
     ${linkStyles};
     font-size: 1.6rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     display: flex;
     align-items: center;
     gap: 0.8rem;

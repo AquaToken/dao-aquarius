@@ -30,7 +30,13 @@ import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 import { PoolIncentives, PoolRewardsInfo, PoolUserProcessed, RewardType } from 'types/amm';
 import { SorobanToken, Token } from 'types/token';
 
-import { flexAllCenter, flexRowSpaceBetween, respondDown, textEllipsis } from 'web/mixins';
+import {
+    cardBoxShadow,
+    flexAllCenter,
+    flexRowSpaceBetween,
+    respondDown,
+    textEllipsis,
+} from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -69,13 +75,13 @@ const PoolsListBlock = styled.div<{ $onlyList: boolean }>`
         `
         padding: 4.8rem;
         border-radius: 0.5rem;
-        box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
         margin-top: 0;
+        ${cardBoxShadow};
     `}
 
     ${respondDown(Breakpoints.md)`
         padding: 3.2rem 0;
-        background-color: ${COLORS.lightGray};
+        background-color: ${COLORS.gray50};
     `}
 `;
 
@@ -169,13 +175,13 @@ const TooltipRow = styled.div`
     gap: 2rem;
 
     span:first-child {
-        color: ${COLORS.grayText};
+        color: ${COLORS.textGray};
         width: 60%;
         ${textEllipsis};
     }
 
     span:last-child {
-        color: ${COLORS.paragraphText};
+        color: ${COLORS.textTertiary};
         display: flex;
         gap: 0.5rem;
         align-items: center;

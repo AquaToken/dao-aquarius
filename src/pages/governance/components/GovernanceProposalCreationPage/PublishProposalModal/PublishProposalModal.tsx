@@ -20,7 +20,7 @@ import { StellarService, ToastService } from 'services/globalServices';
 import { ModalProps } from 'types/modal';
 
 import { flexRowSpaceBetween, respondDown } from 'web/mixins';
-import { Breakpoints } from 'web/styles';
+import { Breakpoints, COLORS } from 'web/styles';
 
 import Alert from 'basics/Alert';
 import Button from 'basics/buttons/Button';
@@ -49,13 +49,13 @@ const ProposalCost = styled.div`
 
 const Label = styled.div`
     line-height: 2.8rem;
-    color: #6b6c83;
+    color: ${COLORS.textGray};
 `;
 
 const Amount = styled.div`
     line-height: 2.8rem;
     text-align: right;
-    color: #000636;
+    color: ${COLORS.textTertiary};
 `;
 
 const SectionDate = styled.div`

@@ -38,7 +38,7 @@ const Container = styled.div`
 const Description = styled.div`
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.descriptionText};
+    color: ${COLORS.textSecondary};
     opacity: 0.7;
     margin-bottom: 3.2rem;
 `;
@@ -67,7 +67,7 @@ const BribeDetails = styled.div`
     flex-direction: column;
     align-items: center;
     padding: 3.8rem;
-    background: ${COLORS.lightGray};
+    background: ${COLORS.gray50};
     border-radius: 0.5rem;
     margin-bottom: 3.8rem;
     position: relative;
@@ -98,7 +98,7 @@ export const HowItWorks = styled.div`
 
     ${respondDown(Breakpoints.md)`
         padding: 1.6rem;
-        background-color: ${COLORS.lightGray};
+        background-color: ${COLORS.gray50};
     `}
 `;
 
@@ -203,7 +203,7 @@ const MarketCurrentBribes = ({ extra, bribes }: MarketCurrentBribes) => {
                     ...bribes.map(bribe => ({
                         isNarrow: true,
                         key: bribe.asset_code + bribe.asset_issuer,
-                        mobileBackground: COLORS.lightGray,
+                        mobileBackground: COLORS.gray50,
                         rowItems: [
                             {
                                 children: (
@@ -235,7 +235,7 @@ const MarketCurrentBribes = ({ extra, bribes }: MarketCurrentBribes) => {
                     {
                         isNarrow: true,
                         key: 'total',
-                        mobileBackground: COLORS.lightGray,
+                        mobileBackground: COLORS.gray50,
                         rowItems: [
                             { children: 'Total reward per day:' },
                             { children: '' },

@@ -56,7 +56,7 @@ const Container = styled.div<{ $isHorizontal?: boolean }>`
     ${({ $isHorizontal }) => ($isHorizontal ? HorizontalStyles : VerticalStyles)};
 
     a:hover svg path:not(.white) {
-        fill: ${COLORS.purple};
+        fill: ${COLORS.purple500};
     }
 `;
 
@@ -65,7 +65,7 @@ const StayInTouch = styled.div<{ $isHorizontal?: boolean }>`
     align-items: center;
     font-size: 1.6rem;
     line-height: 1.9rem;
-    color: ${COLORS.placeholder};
+    color: ${COLORS.gray200};
     white-space: nowrap;
     transform: rotate(-90deg);
     margin-top: 8.5rem;
@@ -74,7 +74,7 @@ const StayInTouch = styled.div<{ $isHorizontal?: boolean }>`
 const Line = styled.div`
     width: 6.7rem;
     height: 1px;
-    background-color: ${COLORS.placeholder};
+    background-color: ${COLORS.gray200};
     margin-left: 1.6rem;
 `;
 

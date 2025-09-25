@@ -39,15 +39,15 @@ const Container = styled.div<{ $status: PROPOSAL_STATUS }>`
     background-color: ${({ $status }) => {
         switch ($status) {
             case PROPOSAL_STATUS.DISCUSSION:
-                return COLORS.orange;
+                return COLORS.orange500;
             case PROPOSAL_STATUS.ACTIVE:
-                return COLORS.purple;
+                return COLORS.purple500;
             case PROPOSAL_STATUS.CLOSED:
-                return COLORS.gray;
+                return COLORS.gray100;
             case PROPOSAL_STATUS.DEPRECATED:
-                return COLORS.placeholder;
+                return COLORS.gray200;
             case PROPOSAL_STATUS.EXPIRED:
-                return COLORS.placeholder;
+                return COLORS.gray200;
         }
     }};
     color: ${({ $status }) => {
@@ -57,7 +57,7 @@ const Container = styled.div<{ $status: PROPOSAL_STATUS }>`
             case PROPOSAL_STATUS.ACTIVE:
                 return COLORS.white;
             case PROPOSAL_STATUS.CLOSED:
-                return COLORS.darkGrayText;
+                return COLORS.textDark;
             case PROPOSAL_STATUS.DEPRECATED:
                 return COLORS.white;
             case PROPOSAL_STATUS.EXPIRED:
@@ -75,7 +75,7 @@ const ActiveIcon = styled(IconSuccess)`
     }
 
     path {
-        stroke: ${COLORS.purple};
+        stroke: ${COLORS.purple500};
     }
 `;
 
@@ -89,7 +89,7 @@ const DiscussionIcon = styled(IconPending)`
 
     path,
     circle {
-        stroke: ${COLORS.orange};
+        stroke: ${COLORS.orange500};
     }
 `;
 
@@ -103,7 +103,7 @@ const DeprecatedIcon = styled(IconPending)`
 
     path,
     circle {
-        stroke: ${COLORS.placeholder};
+        stroke: ${COLORS.gray200};
     }
 `;
 

@@ -11,7 +11,7 @@ import { VoteChoiceSimple } from '../../../api/types';
 const SolutionBlock = styled.div`
     display: flex;
     align-items: center;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const IconStyles = css`

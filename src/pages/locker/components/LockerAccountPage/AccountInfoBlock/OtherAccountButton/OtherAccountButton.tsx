@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { ModalService } from 'services/globalServices';
 
-import { flexAllCenter, respondDown } from 'web/mixins';
+import { cardBoxShadow, flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import ArrowsCircle from 'assets/icon-arrows-circle.svg';
@@ -18,7 +18,7 @@ const Wrapper = styled.div`
 const ButtonText = styled.span`
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     margin-right: 1.6rem;
 
     ${respondDown(Breakpoints.md)`
@@ -28,8 +28,8 @@ const ButtonText = styled.span`
 
 const IconContainer = styled.div`
     ${flexAllCenter};
+    ${cardBoxShadow};
     background-color: ${COLORS.white};
-    box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
     height: 4.8rem;
     width: 4.8rem;
     border-radius: 50%;

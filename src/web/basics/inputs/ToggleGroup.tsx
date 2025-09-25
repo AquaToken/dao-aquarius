@@ -7,13 +7,13 @@ import { COLORS } from 'web/styles';
 import { Option } from 'basics/inputs/Select';
 
 const ToggleBlock = styled.div<{ $isRounded: boolean; $fullWidth: boolean }>`
-    background-color: ${({ $isRounded }) => ($isRounded ? COLORS.white : COLORS.gray)};
-    border: ${({ $isRounded }) => ($isRounded ? `0.1rem solid ${COLORS.gray}` : 'none')};
+    background-color: ${({ $isRounded }) => ($isRounded ? COLORS.white : COLORS.gray100)};
+    border: ${({ $isRounded }) => ($isRounded ? `0.1rem solid ${COLORS.gray100}` : 'none')};
     border-radius: ${({ $isRounded }) => ($isRounded ? '3.2rem' : '0.5rem')};
     display: flex;
     font-size: 1.4rem;
     line-height: 1.6rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     width: ${({ $fullWidth }) => ($fullWidth ? '100%' : 'fit-content')};
 `;
 
@@ -29,7 +29,7 @@ const ToggleOption = styled.label<{
     padding: 0.8rem 1.6rem;
     margin: 0.4rem;
     white-space: nowrap;
-    background-color: ${COLORS.gray};
+    background-color: ${COLORS.gray100};
     border-radius: ${({ $isRounded }) => ($isRounded ? '3.2rem' : '0.3rem')};
 
     font-size: 1.6rem;
@@ -39,13 +39,13 @@ const ToggleOption = styled.label<{
 
     ${({ $isChecked, $isRounded }) =>
         $isChecked
-            ? `background-color: ${$isRounded ? COLORS.gray : COLORS.white};`
-            : `background-color: ${$isRounded ? COLORS.white : COLORS.gray};`};
+            ? `background-color: ${$isRounded ? COLORS.gray100 : COLORS.white};`
+            : `background-color: ${$isRounded ? COLORS.white : COLORS.gray100};`};
     &:hover {
         ${({ $isChecked, $isRounded }) =>
             !$isChecked &&
             `cursor: pointer;
-             background: ${$isRounded ? COLORS.gray : COLORS.white};
+             background: ${$isRounded ? COLORS.gray100 : COLORS.white};
              box-shadow: 0px 20px 30px rgba(0, 6, 54, 0.06);
              `};
     }

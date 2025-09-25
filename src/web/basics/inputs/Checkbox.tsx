@@ -16,7 +16,7 @@ const CheckboxContainer = styled.div<{ $disabled?: boolean }>`
 const Label = styled.div`
     font-size: 1.6rem;
     line-height: 1.8rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const CheckboxInput = styled.div<{ $checked: boolean; $hasLabel: boolean; $disabled?: boolean }>`
@@ -26,16 +26,16 @@ const CheckboxInput = styled.div<{ $checked: boolean; $hasLabel: boolean; $disab
     min-width: 1.6rem;
     border-radius: 0.4rem;
     margin-right: ${({ $hasLabel }) => ($hasLabel ? '1.6rem' : '0')};
-    background: ${({ $checked }) => ($checked ? COLORS.purple : COLORS.white)};
+    background: ${({ $checked }) => ($checked ? COLORS.purple500 : COLORS.white)};
     border: ${({ $checked, $disabled }) =>
         $checked
-            ? `0.1rem solid ${COLORS.purple}`
+            ? `0.1rem solid ${COLORS.purple500} `
             : $disabled
-            ? `0.1rem solid ${COLORS.gray}`
-            : `0.1rem solid ${COLORS.grayText}`};
+            ? `0.1rem solid ${COLORS.gray100}`
+            : `0.1rem solid ${COLORS.textGray}`};
 
     &:hover {
-        border: 0.1rem solid ${COLORS.purple};
+        border: 0.1rem solid ${COLORS.purple500};
     }
 `;
 

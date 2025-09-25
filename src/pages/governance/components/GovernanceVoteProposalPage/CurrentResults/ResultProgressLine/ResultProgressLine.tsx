@@ -20,7 +20,7 @@ const Label = styled.div`
     width: 100%;
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -53,13 +53,13 @@ const progressLineStyles = css`
 const Outer = styled.div`
     ${progressLineStyles};
     width: 100%;
-    background-color: ${COLORS.gray};
+    background-color: ${COLORS.gray100};
 `;
 
 const Inner = styled.div<{ $width: string; $isAgainst: boolean }>`
     ${progressLineStyles};
     width: ${({ $width }) => $width};
-    background-color: ${({ $isAgainst }) => ($isAgainst ? COLORS.pinkRed : COLORS.purple)};
+    background-color: ${({ $isAgainst }) => ($isAgainst ? COLORS.pink500 : COLORS.purple500)};
 `;
 
 const ResultProgressLine = ({

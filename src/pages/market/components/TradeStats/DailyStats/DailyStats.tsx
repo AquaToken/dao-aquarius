@@ -35,20 +35,20 @@ const DetailsColumn = styled.div`
 const DetailTitle = styled.span`
     font-size: 1.4rem;
     line-height: 1.6rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     margin-bottom: 0.8rem;
 `;
 
 const DetailValue = styled.span`
     font-size: 1.6rem;
     line-height: 2.4rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     width: min-content;
     white-space: nowrap;
 `;
 
 const Change = styled.div<{ $isPositive: boolean }>`
-    color: ${({ $isPositive }) => ($isPositive ? COLORS.purple : COLORS.pinkRed)};
+    color: ${({ $isPositive }) => ($isPositive ? COLORS.purple500 : COLORS.pink500)};
 `;
 
 const PERIOD_24H = 24 * 60 * 60 * 1000;

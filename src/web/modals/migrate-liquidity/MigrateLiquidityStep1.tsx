@@ -34,7 +34,7 @@ export const Stepper = styled.div`
     font-size: 1.4rem;
     line-height: 1.6rem;
     letter-spacing: 0.2em;
-    color: ${COLORS.descriptionText}B3;
+    color: ${COLORS.textSecondary}B3;
     margin-bottom: 0.8rem;
 `;
 
@@ -51,7 +51,7 @@ const AmountRow = styled.div<{ $isFirst?: boolean }>`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     margin-top: ${({ $isFirst }) => ($isFirst ? '3rem' : '1.2rem')};
 
     ${respondDown(Breakpoints.md)`
@@ -76,7 +76,7 @@ const Amounts = styled.span`
 `;
 
 const AmountWithdraw = styled.span`
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
 
     ${respondDown(Breakpoints.md)`
         font-size: 1.4rem;

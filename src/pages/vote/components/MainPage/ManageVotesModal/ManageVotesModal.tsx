@@ -23,7 +23,7 @@ const PairBlock = styled.div`
     ${flexAllCenter};
     padding: 3.4rem 0;
     border-radius: 0.5rem;
-    background: ${COLORS.lightGray};
+    background: ${COLORS.gray50};
     margin-bottom: 2.3rem;
 
     ${respondDown(Breakpoints.md)`

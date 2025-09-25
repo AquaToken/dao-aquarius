@@ -96,7 +96,7 @@ const LogoLoaderContainer = styled.div<{
         return logoStyles($isCircle);
     }}
     ${flexAllCenter};
-    background-color: ${COLORS.descriptionText};
+    background-color: ${COLORS.textSecondary};
 `;
 
 const LogoLoader = styled(CircleLoader)`

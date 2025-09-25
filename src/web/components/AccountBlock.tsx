@@ -2,7 +2,7 @@ import * as React from 'react';
 import createStellarIdenticon from 'stellar-identicon-js';
 import styled from 'styled-components';
 
-import { flexAllCenter } from '../mixins';
+import { cardBoxShadow, flexAllCenter } from '../mixins';
 import { COLORS } from '../styles';
 
 const Account = styled.div`
@@ -16,7 +16,7 @@ const Identicon = styled.div`
     height: 4.8rem;
     width: 4.8rem;
     border-radius: 1rem;
-    box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
+    ${cardBoxShadow};
     margin-right: 0.8rem;
     background-color: ${COLORS.white};
 `;
@@ -35,14 +35,14 @@ const AccountData = styled.div`
 const AccountId = styled.span`
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     opacity: 0.7;
 `;
 
 const Federation = styled.span`
     font-size: 1.6rem;
     line-height: 2.9rem;
-    color: ${COLORS.descriptionText};
+    color: ${COLORS.textSecondary};
     opacity: 0.7;
 `;
 

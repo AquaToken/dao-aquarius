@@ -109,7 +109,7 @@ const Label = ({
     labelText,
     tooltipText,
     labelSize = 'default',
-    background = COLORS.purple,
+    background = COLORS.purple500,
     color = COLORS.white,
     tooltipColor,
     tooltipBackground,

@@ -44,7 +44,7 @@ const Container = styled.header`
 
 const Aqua = styled(AquaLogo)`
     height: 4.4rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 
     ${respondDown(Breakpoints.md)`
         height: 3.4rem;
@@ -58,12 +58,12 @@ export const linkStyles = css`
     white-space: nowrap;
 
     &:hover {
-        color: ${COLORS.purple}!important;
+        color: ${COLORS.purple500} !important;
     }
 `;
 
 const NavLinkStyled = styled(NavLink)<{ $disabled?: boolean }>`
-    color: ${({ $disabled }) => ($disabled ? COLORS.grayText : COLORS.titleText)}!important;
+    color: ${({ $disabled }) => ($disabled ? COLORS.textGray : COLORS.textPrimary)}!important;
     font-weight: ${({ $disabled }) => ($disabled ? '400!important' : 'unset')};
     ${linkStyles};
 
@@ -94,7 +94,7 @@ const NavLinkWithCount = styled.div`
 const Divider = styled.div`
     height: 2.4rem;
     width: 0;
-    border-left: 0.1rem solid ${COLORS.gray};
+    border-left: 0.1rem solid ${COLORS.gray100};
     margin: 0 2.4rem;
 
     ${respondDown(Breakpoints.lg)`
@@ -108,7 +108,7 @@ const Divider = styled.div`
          height: 0;
          width: 20rem;
          margin: 2.4rem 0;
-         border-top: 0.1rem solid ${COLORS.gray};
+         border-top: 0.1rem solid ${COLORS.gray100};
     `};
 `;
 
@@ -126,11 +126,11 @@ const NavLinks = styled.div`
     align-items: center;
 
     a {
-        color: ${COLORS.titleText};
+        color: ${COLORS.textPrimary};
         text-decoration: none;
 
         &:hover {
-            color: ${COLORS.purple};
+            color: ${COLORS.purple500};
         }
 
         &::before {
@@ -176,12 +176,12 @@ const MyAquarius = styled(NavLink)`
     align-items: center;
     padding: 0 1.6rem;
     height: 4.8rem;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     border-radius: 0.6rem;
     cursor: pointer;
     font-size: 1.6rem;
     line-height: 2.4rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     text-decoration: none;
 
     div::after {
@@ -202,7 +202,7 @@ const MyAquarius = styled(NavLink)`
     }
 
     &:hover {
-        color: ${COLORS.purple};
+        color: ${COLORS.purple500};
     }
 
     ${respondDown(Breakpoints.xl)`

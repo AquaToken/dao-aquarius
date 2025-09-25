@@ -39,7 +39,7 @@ export const Title = styled.span`
     font-weight: bold;
     font-size: 5.6rem;
     line-height: 6.4rem;
-    color: ${COLORS.buttonBackground};
+    color: ${COLORS.purple950};
 
     ${respondDown(Breakpoints.md)`
         font-weight: normal;

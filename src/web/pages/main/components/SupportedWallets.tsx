@@ -26,7 +26,7 @@ const Wrapper = styled.section`
 
 const Title = styled.span`
     font-size: 1.6rem;
-    color: ${COLORS.placeholder};
+    color: ${COLORS.gray200};
     display: none;
 
     ${respondDown(Breakpoints.md)`

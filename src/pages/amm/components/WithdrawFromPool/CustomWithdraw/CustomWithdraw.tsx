@@ -52,7 +52,7 @@ const StyledButton = styled(Button)`
 `;
 
 const Divider = styled.div`
-    border-top: 0.1rem dashed ${COLORS.gray};
+    border-top: 0.1rem dashed ${COLORS.gray100};
     margin-top: 3.2rem;
     padding-top: 3.2rem;
 `;

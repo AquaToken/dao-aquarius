@@ -8,7 +8,7 @@ import Tooltip from 'basics/Tooltip';
 
 const Container = styled.a`
     border-radius: 1.6rem;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     width: 7.2rem;
     height: 6rem;
     ${flexAllCenter};

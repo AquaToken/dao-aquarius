@@ -2,7 +2,7 @@ import * as React from 'react';
 import { forwardRef, RefObject, useMemo, useRef, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import styled, { createGlobalStyle } from 'styled-components';
+import styled from 'styled-components';
 
 import {
     MAX_BOOST,
@@ -21,10 +21,11 @@ import useAuthStore from 'store/authStore/useAuthStore';
 import AccountService from 'services/account.service';
 import { ModalService, ToastService } from 'services/globalServices';
 
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { DatePickerStyles } from 'web/DatePickerStyles';
+import { cardBoxShadow, flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import DelegatePromoModal from 'web/modals/alerts/DelegatePromoModal';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
-import { Breakpoints, COLORS, FONT_FAMILY } from 'web/styles';
+import { Breakpoints, COLORS } from 'web/styles';
 
 import Aqua from 'assets/aqua-logo-small.svg';
 import DelegateLogo from 'assets/delegate-promo.svg';
@@ -42,7 +43,7 @@ import LockAquaModal from '../LockAquaModal/LockAquaModal';
 const Container = styled.div`
     background: ${COLORS.white};
     padding: 4.8rem;
-    box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
+    ${cardBoxShadow};
     border-radius: 1rem;
     display: flex;
     flex-direction: column;
@@ -58,14 +59,14 @@ const Container = styled.div`
 const Title = styled.span`
     font-size: 3.6rem;
     line-height: 4.2rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     margin-bottom: 0.8rem;
 `;
 
 const Description = styled.span`
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.descriptionText};
+    color: ${COLORS.textSecondary};
     opacity: 0.7;
 `;
 
@@ -77,25 +78,25 @@ const ContentRow = styled.div`
 const Label = styled.span`
     font-size: 1.6rem;
     line-height: 1.8rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     ${flexAllCenter};
 `;
 
 const BalanceBlock = styled.span`
     font-size: 1.4rem;
     line-height: 1.6rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const Balance = styled.span`
-    color: ${COLORS.tooltip};
+    color: ${COLORS.purple400};
     cursor: pointer;
 `;
 
 const InputPostfix = styled.div`
     height: min-content;
     ${flexAllCenter};
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
 `;
 
 const AquaLogo = styled(Aqua)`
@@ -112,13 +113,13 @@ const StyledInput = styled(Input)`
 const ClaimBack = styled.div`
     margin-top: 1.7rem;
     padding-bottom: 3.2rem;
-    color: ${COLORS.grayText};
-    border-bottom: 0.1rem dashed ${COLORS.gray};
+    color: ${COLORS.textGray};
+    border-bottom: 0.1rem dashed ${COLORS.gray100};
     margin-bottom: 3.2rem;
 `;
 
 const ClaimBackDate = styled.span`
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
 `;
 
 const DatePickerContainer = styled.div`
@@ -128,64 +129,6 @@ const DatePickerContainer = styled.div`
 
 const EmptyDate = styled.div`
     height: 1.6rem;
-`;
-
-const GlobalStyle = createGlobalStyle`
-    div.react-datepicker-wrapper {
-        width: 100%;
-    }
-    div.react-datepicker {
-        font-family: ${FONT_FAMILY.roboto};
-        font-size: 1.6rem;
-        background-color: #fff;
-        color: #000636;
-        border: none;
-        border-radius: 0.5rem;
-        box-shadow: 0 20px 30px rgba(0, 6, 54, 0.06);
-    }
-    div.react-datepicker__triangle {
-        display: none;
-    }
-    div.react-datepicker__header {
-        background-color: white;
-        border-bottom: none;
-    }
-    
-    div.react-datepicker-popper {
-      z-index: 200;
-    }
-    div.react-datepicker__day-name, .react-datepicker__day, .react-datepicker__time-name {
-        display: inline-block;
-        width: 4.6rem;
-        line-height: 4.5rem;
-        margin: 0;
-    }
-    div.react-datepicker__day--selected, div.react-datepicker__day--keyboard-selected {
-        border-radius: 0;
-        background-color: #8620B9;
-        color: #fff;
-    }
-    div.react-datepicker__current-month  {
-        color: #000;
-        font-weight: normal;
-        font-size: 1.6rem;
-        line-height: 2.8rem;
-    }
-    div.react-datepicker__month {
-        margin: 0;
-        border-left: 1px solid #E8E8ED;
-        border-top: 1px solid #E8E8ED;
-    }
-    div.react-datepicker__day {
-        width: 4.6rem;
-        line-height: 4.5rem;
-        margin: 0;
-        border-right: 1px solid #E8E8ED;
-        border-bottom: 1px solid #E8E8ED;
-  }
-    div.react-datepicker__day--outside-month {
-        color: #B3B4C3;
-    }
 `;
 
 const YouWillGet = styled.div`
@@ -199,7 +142,7 @@ const YouWillGetLabel = styled.span`
     font-weight: 400;
     font-size: 1.4rem;
     line-height: 2rem;
-    color: ${COLORS.descriptionText};
+    color: ${COLORS.textSecondary};
     opacity: 0.7;
     white-space: nowrap;
     margin-right: 0.6rem;
@@ -209,7 +152,7 @@ const YouWillGetAmount = styled.div`
     font-weight: 700;
     font-size: 2rem;
     line-height: 2.8rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     display: flex;
     align-items: center;
 
@@ -232,7 +175,7 @@ const InfoIcon = styled(Info)`
 const TooltipInner = styled.div`
     display: flex;
     flex-direction: column;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     width: fit-content;
 `;
 
@@ -245,7 +188,7 @@ const TooltipRow = styled.div`
     span:first-child {
         font-size: 1.4rem;
         line-height: 2rem;
-        color: ${COLORS.grayText};
+        color: ${COLORS.textGray};
     }
 
     span:last-child {
@@ -253,7 +196,7 @@ const TooltipRow = styled.div`
         align-items: center;
         font-size: 1.6rem;
         line-height: 2.8rem;
-        color: ${COLORS.paragraphText};
+        color: ${COLORS.textTertiary};
     }
 `;
 
@@ -460,7 +403,7 @@ const LockAquaForm = forwardRef(
                         }}
                     />
 
-                    <GlobalStyle />
+                    <DatePickerStyles />
                 </DatePickerContainer>
 
                 <RangeInput

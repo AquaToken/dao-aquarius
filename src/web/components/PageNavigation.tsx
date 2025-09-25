@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { useActiveAnchorIndex } from 'hooks/useIsOnViewport';
 
-import { contentWithSidebar, respondDown } from '../mixins';
+import { cardBoxShadow, contentWithSidebar, respondDown } from '../mixins';
 import { Breakpoints, COLORS } from '../styles';
 
 const NavPanel = styled.div`
@@ -26,20 +26,20 @@ const NavBackground = styled.div`
     background: ${COLORS.white};
     border-radius: 0.5rem;
     padding: 2.4rem;
-    box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
+    ${cardBoxShadow};
 `;
 
 const NavItem = styled.div<{ $active?: boolean }>`
-    color: ${({ $active }) => ($active ? COLORS.purple : COLORS.grayText)};
+    color: ${({ $active }) => ($active ? COLORS.purple500 : COLORS.textGray)};
     font-weight: ${({ $active }) => ($active ? 700 : 400)};
     border-bottom: ${({ $active }) =>
-        $active ? `0.1rem solid ${COLORS.purple}` : `0.1rem solid ${COLORS.transparent}`};
+        $active ? `0.1rem solid ${COLORS.purple500} ` : `0.1rem solid ${COLORS.transparent}`};
     cursor: pointer;
     padding: 0.8rem;
 
     &:hover {
-        border-bottom: 0.1rem solid ${COLORS.purple};
-        color: ${COLORS.purple};
+        border-bottom: 0.1rem solid ${COLORS.purple500};
+        color: ${COLORS.purple500};
     }
 
     &:not(:last-child) {

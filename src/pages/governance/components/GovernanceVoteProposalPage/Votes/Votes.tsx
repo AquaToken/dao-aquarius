@@ -33,7 +33,7 @@ const VotesBlock = styled.div`
 const Title = styled.h5`
     font-size: 2rem;
     line-height: 2.8rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 `;
 const VotesList = styled.div`
     display: flex;
@@ -78,7 +78,7 @@ const VoteRow = styled.div`
     font-size: 1.6rem;
     line-height: 2.8rem;
 
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
 
     ${respondDown(Breakpoints.md)`
         font-size: 1.2rem;
@@ -115,12 +115,12 @@ const SortingHeader = styled.button<{ $position: SortingHeaderPosition }>`
         return 'center';
     }};
 
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     & > svg {
         margin-left: 0.4rem;
     }
     &:hover {
-        color: ${COLORS.purple};
+        color: ${COLORS.purple500};
     }
 `;
 

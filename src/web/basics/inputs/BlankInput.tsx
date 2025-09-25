@@ -39,7 +39,7 @@ const BlankInputComponent = styled(Input)<{ $fontSize: number }>`
         }
 
         &:disabled {
-            color: ${COLORS.darkGrayText};
+            color: ${COLORS.textDark};
         }
     }
 `;

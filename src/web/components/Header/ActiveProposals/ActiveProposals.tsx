@@ -22,7 +22,7 @@ const CountText = styled.div`
     inset: 0;
     font-size: 1rem;
     font-weight: 700;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 `;
 
 interface ActiveProposalsProps {
@@ -55,7 +55,7 @@ export const ActiveProposals = ({
                         cy="10"
                         r="9"
                         fill="none"
-                        stroke={COLORS.orange}
+                        stroke={COLORS.orange500}
                         strokeWidth="2"
                     />
                 )}
@@ -67,7 +67,7 @@ export const ActiveProposals = ({
                         cy="10"
                         r="9"
                         fill="none"
-                        stroke={COLORS.purple}
+                        stroke={COLORS.purple500}
                         strokeWidth="2"
                     />
                 )}
@@ -78,13 +78,13 @@ export const ActiveProposals = ({
                         <path
                             d="M10,1 A9,9 0 0,0 10,19"
                             fill="none"
-                            stroke={COLORS.orange}
+                            stroke={COLORS.orange500}
                             strokeWidth="2"
                         />
                         <path
                             d="M10,1 A9,9 0 0,1 10,19"
                             fill="none"
-                            stroke={COLORS.purple}
+                            stroke={COLORS.purple500}
                             strokeWidth="2"
                         />
 

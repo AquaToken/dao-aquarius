@@ -13,7 +13,7 @@ const Container = styled.div`
     width: 100%;
     height: min-content;
     padding: 3.2rem 0;
-    border-bottom: 0.1rem solid ${COLORS.gray};
+    border-bottom: 0.1rem solid ${COLORS.gray100};
     cursor: pointer;
 `;
 
@@ -23,7 +23,7 @@ const QuestionText = styled.div`
     font-weight: bold;
     font-size: 2rem;
     line-height: 2.8rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 `;
 
 const ArrowDown = styled(Down)<{ $isOpen: boolean }>`
@@ -40,12 +40,12 @@ const Answer = styled.div`
     margin-top: 1.6rem;
     font-size: 1.8rem;
     line-height: 180%;
-    color: ${COLORS.darkGrayText};
+    color: ${COLORS.textDark};
     animation: openAnswer ease-in-out 200ms;
     transform-origin: top;
 
     a {
-        color: ${COLORS.purple};
+        color: ${COLORS.purple500};
     }
 
     @keyframes openAnswer {

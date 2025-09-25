@@ -25,7 +25,7 @@ import SingleTokenWithdraw from 'pages/amm/components/WithdrawFromPool/SingleTok
 export const PairContainer = styled.div`
     display: flex;
     flex-direction: column;
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     border-radius: 0.6rem;
     padding: 2.4rem;
     margin: 4rem 0 1.6rem;

@@ -17,12 +17,12 @@ const Changes = styled.span<{ $isPositive?: boolean; $withWrapper?: boolean }>`
         if ($withWrapper) {
             return COLORS.white;
         }
-        return $isPositive ? COLORS.green : COLORS.pinkRed;
+        return $isPositive ? COLORS.green500 : COLORS.pink500;
     }}!important;
     white-space: nowrap;
     background: ${({ $isPositive, $withWrapper }) => {
         if ($withWrapper) {
-            return $isPositive ? COLORS.green : COLORS.pinkRed;
+            return $isPositive ? COLORS.green500 : COLORS.pink500;
         }
         return 'unset';
     }}!important;
@@ -52,7 +52,7 @@ const Default = styled.span<{ $withWrapper: boolean }>`
     padding: ${({ $withWrapper }) => ($withWrapper ? '0.4rem 0.8rem' : '0')};
     background: ${({ $withWrapper }) => {
         if ($withWrapper) {
-            return COLORS.gray;
+            return COLORS.gray100;
         }
         return 'unset';
     }}!important;

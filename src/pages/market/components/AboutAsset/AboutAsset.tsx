@@ -10,7 +10,7 @@ import { LumenInfo } from 'store/assetsStore/reducer';
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
 import { AssetInfo } from 'types/asset-info';
-import { Asset } from 'types/stellar';
+import { ClassicToken } from 'types/token';
 
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -40,7 +40,7 @@ const Title = styled.span`
     font-size: 2rem;
     line-height: 2.8rem;
     margin-bottom: 4rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 `;
 
 const AssetCard = styled.div`
@@ -59,18 +59,18 @@ const AssetCode = styled.span`
     font-weight: 700;
     font-size: 2rem;
     line-height: 2.8rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 `;
 
 const AssetDomain = styled.a`
-    color: ${COLORS.purple};
+    color: ${COLORS.purple500};
     text-decoration: none;
 `;
 
 const Description = styled.div`
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.descriptionText};
+    color: ${COLORS.textSecondary};
     opacity: 0.7;
     margin-bottom: 1.6rem;
 `;
@@ -106,20 +106,20 @@ const AssetDetail = styled.div`
 const AssetDetailTitle = styled.span`
     font-size: 1.4rem;
     line-height: 1.6rem;
-    color: ${COLORS.grayText};
+    color: ${COLORS.textGray};
     margin-bottom: 0.8rem;
 `;
 
 const AssetDetailValue = styled.span`
     font-size: 1.6rem;
     line-height: 2.4rem;
-    color: ${COLORS.paragraphText};
+    color: ${COLORS.textTertiary};
     width: min-content;
     white-space: nowrap;
 `;
 
 interface AboutAssetProps {
-    asset: Asset;
+    asset: ClassicToken;
 }
 
 const AboutAsset = ({ asset }: AboutAssetProps) => {
@@ -145,11 +145,13 @@ const AboutAsset = ({ asset }: AboutAssetProps) => {
                         {asset.code} ({assetInfo?.name || asset.code})
                     </AssetCode>
                     {hasAssetInfo ? (
-                        (
+                        assetInfo.home_domain ? (
                             <AssetDomain href={`https://${assetInfo.home_domain}`} target="_blank">
                                 https://{assetInfo.home_domain}/
                             </AssetDomain>
-                        ) ?? 'unknown'
+                        ) : (
+                            'unknown'
+                        )
                     ) : (
                         <DotsLoader />
                     )}

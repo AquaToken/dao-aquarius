@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import { MainRoutes } from 'constants/routes';
 
-import { flexAllCenter, respondDown } from 'web/mixins';
+import { cardBoxShadow, flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import AquaLogo from 'assets/aqua-logo-small.svg';
@@ -34,7 +34,7 @@ const Wrapper = styled.section`
 const Title = styled.div`
     font-weight: bold;
     font-size: 7rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
     line-height: 100%;
 
     ${respondDown(Breakpoints.md)`
@@ -102,7 +102,7 @@ const Description = styled.div`
     font-size: 1.6rem;
     font-weight: 500;
     line-height: 180%;
-    color: #4d4f68;
+    color: ${COLORS.gray550};
     margin-top: 0.8rem;
 
     ${respondDown(Breakpoints.md)`
@@ -148,7 +148,7 @@ const StyledTokenSystemIcon = styled(TokenSystemIcon)`
 `;
 
 const LinkButton = styled(BlankRouterLink)`
-    background-color: ${COLORS.lightGray};
+    background-color: ${COLORS.gray50};
     border-radius: 48px;
     padding: 3.2rem 4rem;
     width: 100%;
@@ -156,7 +156,7 @@ const LinkButton = styled(BlankRouterLink)`
 
     &:hover {
         background: ${COLORS.white};
-        box-shadow: 0 2rem 3rem rgba(0, 6, 54, 0.06);
+        ${cardBoxShadow};
     }
 
     ${respondDown(Breakpoints.md)`
@@ -207,7 +207,7 @@ const LinkTitle = styled.div`
     font-weight: bold;
     font-size: 2.4rem;
     line-height: 3.6rem;
-    color: ${COLORS.titleText};
+    color: ${COLORS.textPrimary};
 
     ${respondDown(Breakpoints.xs)`
         display: none;
@@ -231,7 +231,7 @@ const LinkDesc = styled.div`
 const ArrowAlt16Styled = styled(ArrowAlt16)`
     position: absolute;
     right: 0;
-    color: ${COLORS.purple};
+    color: ${COLORS.purple500};
 
     ${respondDown(Breakpoints.xs)`
         top: 1.7rem;

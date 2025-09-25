@@ -32,7 +32,7 @@ const Container = styled.div`
         rgba(234, 191, 255, 0) 100%
     );
 
-    border: 0.1rem solid ${COLORS.lightPurple};
+    border: 0.1rem solid ${COLORS.purple100};
 
     backdrop-filter: blur(80px);
     -webkit-backdrop-filter: blur(80px);
@@ -42,7 +42,7 @@ const Container = styled.div`
         top: calc(100% + 3.6rem);
         left: 0;
         right: unset;
-        color: ${COLORS.paragraphText};
+        color: ${COLORS.textTertiary};
         width: 34rem;
     `}
 
