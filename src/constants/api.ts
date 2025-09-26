@@ -13,6 +13,8 @@ export const BRIBES_API_URL = 'https://bribes-api.aqua.network/api/';
 export const MARKET_KEY_API_URL = 'https://marketkeys-tracker.aqua.network/api/market-keys/';
 export const VOTING_TRACKER_API_URL = 'https://voting-tracker.aqua.network/api/voting-snapshot/';
 
+export const API_DELEGATION_URL = 'https://api-delegation.aqua.network/api/delegation/';
+
 export const API_URLS = {
     [ENV_PRODUCTION]: {
         moonpay: 'https://api.moonpay.com/v3',
