@@ -9,6 +9,7 @@ import { COLORS } from '../../styles';
 const CheckboxContainer = styled.div<{ $disabled?: boolean }>`
     display: flex;
     flex-direction: row;
+    align-items: center;
     cursor: pointer;
     pointer-events: ${({ $disabled }) => ($disabled ? 'none' : 'unset')};
 `;
@@ -46,7 +47,7 @@ const Checkbox = ({
     disabled,
     ...props
 }: {
-    label?: string;
+    label?: string | React.ReactNode;
     checked: boolean;
     onChange: (value: boolean, event: React.MouseEvent) => void;
     disabled?: boolean;
