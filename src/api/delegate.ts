@@ -12,7 +12,7 @@ import { getMarketsMap } from 'pages/vote/api/api';
 import { MarketKey } from 'pages/vote/api/types';
 import { UP_ICE } from 'pages/vote/components/MainPage/MainPage';
 
-const API_URL_V1 = `${API_DELEGATION_URL}v1/`;
+const API_URL_V1 = `${API_DELEGATION_URL}`;
 const API_URL_V2 = `${API_DELEGATION_URL}v2/`;
 
 export const getDelegatees = (): Promise<Delegatee[]> =>
