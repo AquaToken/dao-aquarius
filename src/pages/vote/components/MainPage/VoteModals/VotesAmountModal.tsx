@@ -3,6 +3,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { processIceTx } from 'api/ice';
+
 import { LockerRoutes } from 'constants/routes';
 
 import ErrorHandler from 'helpers/error-handler';
@@ -15,8 +17,8 @@ import { useIsMounted } from 'hooks/useIsMounted';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-connect.service';
 import { StellarService, ToastService } from 'services/globalServices';
-import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { ModalProps } from 'types/modal';
 import { ClassicToken } from 'types/token';
@@ -420,18 +422,18 @@ const VotesAmountModal = ({
             setPending(true);
 
             const voteOps = Object.entries(pairsAmount).map(([marketKey, voteAmount]) =>
-                StellarService.createVoteOperation(
+                StellarService.op.createVoteOperation(
                     account.accountId(),
                     marketKey,
-                    voteAmount,
+                    voteAmount as string,
                     new Date(Date.now() + 1.2 * 60 * 60 * 1000).getTime(),
                     targetAsset,
                 ),
             );
 
-            const tx = await StellarService.buildTx(account, voteOps);
+            const tx = await StellarService.tx.buildTx(account, voteOps);
 
-            const processedTx = await StellarService.processIceTx(tx, targetAsset);
+            const processedTx = await processIceTx(tx, targetAsset);
 
             const result = await account.signAndSubmitTx(processedTx);
 
@@ -453,7 +455,7 @@ const VotesAmountModal = ({
             ToastService.showSuccessToast(
                 'Your vote has been cast! You will be able to see your vote in the list within 10 minutes',
             );
-            StellarService.getClaimableBalances(account.accountId());
+            StellarService.cb.getClaimableBalances(account.accountId());
         } catch (e) {
             const errorText = ErrorHandler(e);
             ToastService.showErrorToast(errorText);

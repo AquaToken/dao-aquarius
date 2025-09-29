@@ -2,7 +2,7 @@ import * as StellarSdk from '@stellar/stellar-sdk';
 import { Asset, StrKey, xdr } from '@stellar/stellar-sdk';
 import BigNumber from 'bignumber.js';
 
-import { getAssetContractId } from 'services/soroban/contracts/tokenContract';
+import { getNetworkPassphrase } from 'helpers/env';
 
 export function contractIdToScVal(contractId: string) {
     return StellarSdk.Address.contract(StrKey.decodeContract(contractId)).toScVal();
@@ -14,7 +14,9 @@ export function scValToArray(array: xdr.ScVal[]): xdr.ScVal {
 
 export function assetToScVal(asset: Asset): xdr.ScVal {
     return xdr.ScVal.scvAddress(
-        StellarSdk.Address.contract(StrKey.decodeContract(getAssetContractId(asset))).toScAddress(),
+        StellarSdk.Address.contract(
+            StrKey.decodeContract(asset.contractId(getNetworkPassphrase())),
+        ).toScAddress(),
     );
 }
 

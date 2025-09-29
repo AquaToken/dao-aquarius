@@ -2,6 +2,8 @@ import * as React from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
+import { processIceTx } from 'api/ice';
+
 import { D_ICE_CODE, DOWN_ICE_CODE, ICE_ISSUER, UP_ICE_CODE } from 'constants/assets';
 
 import { getDateString } from 'helpers/date';
@@ -16,8 +18,8 @@ import { useIsMounted } from 'hooks/useIsMounted';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-connect.service';
 import { StellarService, ToastService } from 'services/globalServices';
-import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { Transaction } from 'types/stellar';
 import { Vote } from 'types/voting-tool';
@@ -187,7 +189,7 @@ const VotesList = ({ votes, pair, withoutClaimDate }: VotesListProps): React.Rea
             let hasDelegated = Boolean(claim?.assetCode === D_ICE_CODE);
 
             const ops = claim
-                ? StellarService.createClaimOperations(claim.id)
+                ? StellarService.op.createClaimOperations(claim.id)
                 : Array.from(selectedClaims.values()).reduce((acc, cb) => {
                       if (cb.assetCode === UP_ICE_CODE) {
                           hasUpvote = true;
@@ -198,21 +200,21 @@ const VotesList = ({ votes, pair, withoutClaimDate }: VotesListProps): React.Rea
                       if (cb.assetCode === D_ICE_CODE) {
                           hasDelegated = true;
                       }
-                      return [...acc, ...StellarService.createClaimOperations(cb.id)];
+                      return [...acc, ...StellarService.op.createClaimOperations(cb.id)];
                   }, []);
 
-            let tx = await StellarService.buildTx(account, ops);
+            let tx = await StellarService.tx.buildTx(account, ops);
 
             if (hasUpvote) {
-                tx = await StellarService.processIceTx(tx, createAsset(UP_ICE_CODE, ICE_ISSUER));
+                tx = await processIceTx(tx, createAsset(UP_ICE_CODE, ICE_ISSUER));
             }
 
             if (hasDelegated) {
-                tx = await StellarService.processIceTx(tx, createAsset(D_ICE_CODE, ICE_ISSUER));
+                tx = await processIceTx(tx, createAsset(D_ICE_CODE, ICE_ISSUER));
             }
 
             if (hasDownvote) {
-                tx = await StellarService.processIceTx(tx, createAsset(DOWN_ICE_CODE, ICE_ISSUER));
+                tx = await processIceTx(tx, createAsset(DOWN_ICE_CODE, ICE_ISSUER));
             }
 
             const result = await account.signAndSubmitTx(tx);
@@ -240,7 +242,7 @@ const VotesList = ({ votes, pair, withoutClaimDate }: VotesListProps): React.Rea
                 return;
             }
             ToastService.showSuccessToast('Your votes has been claimed back');
-            StellarService.getClaimableBalances(account.accountId());
+            StellarService.cb.getClaimableBalances(account.accountId());
         } catch (e) {
             const errorText = ErrorHandler(e);
             ToastService.showErrorToast(errorText);

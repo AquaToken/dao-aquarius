@@ -4,22 +4,24 @@ import styled from 'styled-components';
 
 import { getMyDelegatees } from 'api/delegate';
 
+import { DELEGATE_MARKER_KEY } from 'constants/stellar-accounts';
+
 import { useUpdateIndex } from 'hooks/useUpdateIndex';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { StellarService } from 'services/globalServices';
-import { DELEGATE_MARKER_KEY, StellarEvents } from 'services/stellar.service';
+import { StellarEvents } from 'services/stellar/events/events';
 
 import { Delegatee as DelegateeType } from 'types/delegate';
+
+import { cardBoxShadow } from 'web/mixins';
 
 import { ExternalLink } from 'basics/links';
 import { PageLoader } from 'basics/loaders';
 
 import DelegatesList from 'pages/delegate/components/DelegatesList/DelegatesList';
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
-
-import { cardBoxShadow } from '../../../../web/mixins';
 
 const EmptyWrap = styled.div`
     display: flex;
@@ -48,10 +50,10 @@ const MyDelegates = ({ delegatees, goToList }: Props) => {
     const { account } = useAuthStore();
 
     useEffect(() => {
-        setLocks(StellarService.getDelegateLocks(account?.accountId()));
+        setLocks(StellarService.cb.getDelegateLocks(account?.accountId()));
         const unsub = StellarService.event.sub(({ type }) => {
             if (type === StellarEvents.claimableUpdate) {
-                setLocks(StellarService.getDelegateLocks(account?.accountId()));
+                setLocks(StellarService.cb.getDelegateLocks(account?.accountId()));
             }
         });
 

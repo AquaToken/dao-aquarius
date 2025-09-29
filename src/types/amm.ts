@@ -1,6 +1,6 @@
 import { POOL_TYPE } from 'constants/amm';
 
-import { PoolClassic } from 'types/stellar';
+import { PoolClassic, PoolClassicReserves } from 'types/stellar';
 
 import { ClassicToken, Token } from './token';
 
@@ -125,7 +125,7 @@ export type FindSwapPath = {
 
 export interface PoolClassicProcessed extends Omit<PoolClassic, 'reserves'> {
     tokens: ClassicToken[];
-    reserves: string[];
+    reserves: (string | PoolClassicReserves)[];
     total_share: string;
     fee: number;
     liquidity: string;

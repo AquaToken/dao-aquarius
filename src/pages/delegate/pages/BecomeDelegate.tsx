@@ -7,7 +7,8 @@ import { createDelegatee } from 'api/delegate';
 
 import { DelegateRoutes } from 'constants/routes';
 
-import { StellarService, ToastService } from 'services/globalServices';
+import { ToastService } from 'services/globalServices';
+import { isValidPublicKey } from 'services/stellar/utils/validators';
 
 import CircleButton from 'web/basics/buttons/CircleButton';
 import { cardBoxShadow, respondDown } from 'web/mixins';
@@ -172,7 +173,7 @@ const BecomeDelegate = () => {
 
         if (value === '') {
             inputAccountRef.current.setCustomValidity('Required field');
-        } else if (!StellarService.isValidPublicKey(value)) {
+        } else if (!isValidPublicKey(value)) {
             inputAccountRef.current.setCustomValidity('Invalid Stellar public key');
         } else {
             inputAccountRef.current.setCustomValidity(''); // Очищаем ошибку

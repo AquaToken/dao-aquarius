@@ -14,9 +14,8 @@ import { useIsMounted } from 'hooks/useIsMounted';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { ToastService } from 'services/globalServices';
-import { getScheduleIncentiveTx } from 'services/soroban/contracts/ammContract';
-import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
+import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-connect.service';
+import { SorobanService, ToastService } from 'services/globalServices';
 
 import { PoolExtended } from 'types/amm';
 import { ModalProps } from 'types/modal';
@@ -91,7 +90,7 @@ const ConfirmIncentiveModal = ({ params, close }: ModalProps<Props>) => {
 
             const tps = (amountPerDay * days) / seconds;
 
-            const tx = await getScheduleIncentiveTx(
+            const tx = await SorobanService.amm.getScheduleIncentiveTx(
                 account.accountId(),
                 pool,
                 rewardToken,

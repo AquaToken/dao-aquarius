@@ -12,7 +12,7 @@ import { createAsset } from 'helpers/token';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { ModalService, WalletConnectService } from 'services/globalServices';
+import { AuthService, ModalService } from 'services/globalServices';
 
 import Aqua from 'assets/aqua-logo-small.svg';
 import Ice from 'assets/ice-logo.svg';
@@ -302,7 +302,7 @@ const AppMenu = ({
                             closeMenu();
                             logout();
                             if (loginType === LoginTypes.walletConnect) {
-                                WalletConnectService.logout();
+                                AuthService.walletConnect.logout();
                             }
                         }}
                     >

@@ -1,0 +1,2 @@
+export const LEDGER_DEFAULT_ACCOUNT = 'GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF';
+export const LEDGER_CANCEL_ERROR = 'Transaction approval request was rejected';

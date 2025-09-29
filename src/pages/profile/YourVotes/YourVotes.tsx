@@ -10,7 +10,7 @@ import useAssetsStore from 'store/assetsStore/useAssetsStore';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService, StellarService } from 'services/globalServices';
-import { StellarEvents } from 'services/stellar.service';
+import { StellarEvents } from 'services/stellar/events/events';
 
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -144,17 +144,16 @@ const YourVotes = () => {
             setUnclaimedVotesInfo(null);
             return;
         }
-        const keys = StellarService.getKeysSimilarToMarketKeys(account.accountId());
+        const keys = StellarService.cb.getKeysSimilarToMarketKeys(account.accountId());
 
         getUserPairsList(keys).then(res => {
             setVotes(res);
             processAssetsFromPairs(res);
             const processedClaims = res.reduce(
                 (acc, pair) => {
-                    const pairUnclaimedVotes = StellarService.getPairVotes(
-                        pair as PairStats,
-                        account.accountId(),
-                    ).filter(claim => new Date(claim.claimBackDate) < new Date());
+                    const pairUnclaimedVotes = StellarService.cb
+                        .getPairVotes(pair as PairStats, account.accountId())
+                        .filter(claim => new Date(claim.claimBackDate) < new Date());
 
                     const sum = pairUnclaimedVotes.reduce((votesSum, claim) => {
                         votesSum += Number(claim.amount);

@@ -6,7 +6,7 @@ import { getCurrentWallet } from 'helpers/wallet-connect-helpers';
 
 import { useIsMounted } from 'hooks/useIsMounted';
 
-import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
+import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-connect.service';
 
 import { ModalProps } from 'types/modal';
 

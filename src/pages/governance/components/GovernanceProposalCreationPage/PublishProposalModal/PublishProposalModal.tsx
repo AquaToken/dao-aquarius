@@ -155,11 +155,11 @@ const PublishProposalModal = ({
         }
 
         try {
-            const op = StellarService.createBurnAquaOperation(CREATE_PROPOSAL_COST.toString());
+            const op = StellarService.op.createBurnAquaOperation(CREATE_PROPOSAL_COST.toString());
             const hash = sha256(proposal.text);
-            const memoHash = StellarService.createMemo(MemoHash, hash);
+            const memoHash = StellarService.tx.createMemo(MemoHash, hash);
 
-            const tx = await StellarService.buildTx(account, op, memoHash);
+            const tx = await StellarService.tx.buildTx(account, op, memoHash);
 
             const dateNow = new Date().toISOString();
             const dateEnd = new Date(Date.now() + period).toISOString();

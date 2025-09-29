@@ -1,34 +1,25 @@
 import LedgerStr from '@ledgerhq/hw-app-str';
-import Str from '@ledgerhq/hw-app-str';
 import LedgerTransport from '@ledgerhq/hw-transport-webusb';
 import * as StellarSdk from '@stellar/stellar-sdk';
 
-import LedgerError from 'web/modals/ledger/LedgerError';
+import { LEDGER_DEFAULT_ACCOUNT } from 'constants/ledger';
 
-import EventService from './event.service';
-import { ModalService } from './globalServices';
+import { AuthEvent, AuthPayload } from 'services/auth/events/events';
+import EventService from 'services/event.service';
+import { ModalService } from 'services/globalServices';
 
-const LEDGER_DEFAULT_ACCOUNT = 'GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF';
-export const LEDGER_CANCEL_ERROR = 'Transaction approval request was rejected';
-
-export enum LedgerEvents {
-    login = 'login',
-    logout = 'logout',
-}
-
-type LedgerPayload = {
-    publicKey?: string;
-    bipPath?: number;
-};
+import LedgerError from 'modals/ledger/LedgerError';
 
 export default class LedgerServiceClass {
-    api: null | Str = null;
+    private readonly event: EventService<AuthEvent, AuthPayload>;
+    api: null | LedgerStr = null;
     bipSlot: number | null = null;
     bipPath: null | string;
-    event: EventService<LedgerEvents, LedgerPayload> = new EventService();
     accountId: string = '';
 
-    constructor() {}
+    constructor(event: EventService<AuthEvent, AuthPayload>) {
+        this.event = event;
+    }
 
     get isSupported(): Promise<boolean> {
         return LedgerTransport.isSupported();
@@ -53,7 +44,7 @@ export default class LedgerServiceClass {
             this.bipPath = path;
             this.accountId = publicKey;
             this.event.trigger({
-                type: LedgerEvents.login,
+                type: AuthEvent.ledgerLogin,
                 publicKey,
                 bipPath,
             });
@@ -75,7 +66,7 @@ export default class LedgerServiceClass {
             this.bipPath = path;
             this.accountId = pubKey;
             this.event.trigger({
-                type: LedgerEvents.login,
+                type: AuthEvent.ledgerLogout,
                 publicKey: pubKey,
                 bipPath,
             });

@@ -102,11 +102,11 @@ const CreateDiscussionModal = ({
         }
 
         try {
-            const op = StellarService.createBurnAquaOperation(CREATE_DISCUSSION_COST.toString());
+            const op = StellarService.op.createBurnAquaOperation(CREATE_DISCUSSION_COST.toString());
             const hash = sha256(text);
-            const memoHash = StellarService.createMemo(MemoHash, hash);
+            const memoHash = StellarService.tx.createMemo(MemoHash, hash);
 
-            const tx = await StellarService.buildTx(account, op, memoHash);
+            const tx = await StellarService.tx.buildTx(account, op, memoHash);
 
             const result = isEdit
                 ? await editProposal(

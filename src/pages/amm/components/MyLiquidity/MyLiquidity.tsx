@@ -19,13 +19,13 @@ import { useUpdateIndex } from 'hooks/useUpdateIndex';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-connect.service';
 import {
     ModalService,
     SorobanService,
     StellarService,
     ToastService,
 } from 'services/globalServices';
-import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { PoolIncentives, PoolRewardsInfo, PoolUserProcessed, RewardType } from 'types/amm';
 import { SorobanToken, Token } from 'types/token';
@@ -377,13 +377,16 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
             const liquidity = Number(pool.liquidity) / 1e7;
             const totalShare = Number(pool.total_share) / 1e7;
 
-            map.set(pool.id, (balance / totalShare) * liquidity * StellarService.priceLumenUsd);
+            map.set(
+                pool.id,
+                (balance / totalShare) * liquidity * StellarService.price.priceLumenUsd,
+            );
 
             acc += (balance / totalShare) * liquidity;
             return acc;
         }, 0);
 
-        const totalClassicUsd = totalClassicXlm * StellarService.priceLumenUsd;
+        const totalClassicUsd = totalClassicXlm * StellarService.price.priceLumenUsd;
         const total = totalClassicUsd + totalSorobanUsd;
 
         if (setTotal) {

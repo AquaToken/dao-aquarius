@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { NumericFormat } from 'react-number-format';
 import styled from 'styled-components';
 
+import { processIceTx } from 'api/ice';
+
 import ErrorHandler from 'helpers/error-handler';
 import { formatBalance } from 'helpers/format-number';
 import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
@@ -10,8 +12,9 @@ import { openCurrentWalletIfExist } from 'helpers/wallet-connect-helpers';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-connect.service';
 import { StellarService, ToastService } from 'services/globalServices';
-import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
+import { isValidPublicKey } from 'services/stellar/utils/validators';
 
 import { Delegatee } from 'types/delegate';
 import { ModalProps } from 'types/modal';
@@ -198,7 +201,7 @@ const DelegateModal = ({
                 return;
             }
 
-            if (isManualInput && !StellarService.isValidPublicKey(destination)) {
+            if (isManualInput && !isValidPublicKey(destination)) {
                 ToastService.showErrorToast('Invalid destination address');
                 return;
             }
@@ -212,13 +215,13 @@ const DelegateModal = ({
                 openCurrentWalletIfExist();
             }
             setPending(true);
-            const tx = await StellarService.createDelegateTx(
+            const tx = await StellarService.tx.createDelegateTx(
                 account,
                 selectedToken,
                 destination,
                 amount,
             );
-            const processedTx = await StellarService.processIceTx(tx, selectedToken);
+            const processedTx = await processIceTx(tx, selectedToken);
             const result = await account.signAndSubmitTx(processedTx);
 
             setPending(false);

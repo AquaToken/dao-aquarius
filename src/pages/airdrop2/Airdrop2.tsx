@@ -2,7 +2,8 @@ import { useRef, useState } from 'react';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { StellarService, ToastService } from 'services/globalServices';
+import { ToastService } from 'services/globalServices';
+import { isValidPublicKey } from 'services/stellar/utils/validators';
 
 import { PageContainer, SectionWrapper } from 'web/pages/commonPageStyles';
 
@@ -29,7 +30,7 @@ const Airdrop2 = () => {
     const eligibilityRef = useRef(null);
 
     const checkAccount = () => {
-        if (!accountId || !StellarService.isValidPublicKey(accountId)) {
+        if (!accountId || !isValidPublicKey(accountId)) {
             ToastService.showErrorToast('Please enter a valid Stellar account address');
             return;
         }

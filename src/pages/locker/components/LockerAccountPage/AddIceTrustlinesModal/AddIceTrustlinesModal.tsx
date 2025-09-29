@@ -10,8 +10,8 @@ import { useIsMounted } from 'hooks/useIsMounted';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-connect.service';
 import { StellarService, ToastService } from 'services/globalServices';
-import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { ModalProps } from 'types/modal';
 
@@ -79,8 +79,10 @@ const AddIceTrustlinesModal = ({ confirm }: ModalProps<never>) => {
         try {
             setPending(true);
 
-            const ops = unlistedAssets.map(asset => StellarService.createAddTrustOperation(asset));
-            const tx = await StellarService.buildTx(account, ops);
+            const ops = unlistedAssets.map(asset =>
+                StellarService.op.createAddTrustOperation(asset),
+            );
+            const tx = await StellarService.tx.buildTx(account, ops);
 
             const result = await account.signAndSubmitTx(tx);
 

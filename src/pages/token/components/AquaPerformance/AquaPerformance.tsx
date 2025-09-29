@@ -164,7 +164,7 @@ const AquaPerformance = () => {
 
     useEffect(() => {
         setSdexStats(null);
-        StellarService.getAsset24hStats(aquaStellarAsset, counter).then(setSdexStats);
+        StellarService.price.getAsset24hStats(aquaStellarAsset, counter).then(setSdexStats);
     }, [counter]);
 
     return (

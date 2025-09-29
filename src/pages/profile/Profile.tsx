@@ -142,7 +142,7 @@ const Profile = () => {
     }, [updateIndex]);
 
     useEffect(() => {
-        StellarService.getAquaUsdPrice().then(setAquaUsdPrice);
+        StellarService.price.getAquaUsdPrice().then(setAquaUsdPrice);
     }, []);
 
     return (

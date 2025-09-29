@@ -159,7 +159,7 @@ const SdexRewards = ({ aquaUsdPrice }: SdexRewardsProps): React.ReactNode => {
     const { processNewAssets } = useAssetsStore();
 
     useEffect(() => {
-        StellarService.getAccountOffers(account.accountId()).then(res => {
+        StellarService.account.getAccountOffers(account.accountId()).then(res => {
             setOffers(res);
         });
     }, []);

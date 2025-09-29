@@ -2,7 +2,8 @@ import { ASSETS_ENV_DATA } from 'constants/assets';
 
 import { createAsset, createLumen, getTokensFromCache } from 'helpers/token';
 
-import { SorobanService, StellarService } from 'services/globalServices';
+import { SorobanService } from 'services/globalServices';
+import { isValidContract } from 'services/stellar/utils/validators';
 
 import { Asset } from 'types/stellar';
 import { ClassicToken, Token, TokenType } from 'types/token';
@@ -28,7 +29,7 @@ export const getStellarAsset = (code: string, issuer: string): Asset => {
 };
 
 export const getAssetFromString = (str: string, onUpdateCB?: (token: Token) => void): Token => {
-    if (StellarService.isValidContract(str)) {
+    if (isValidContract(str)) {
         const result = { contract: str, type: TokenType.soroban } as Token;
 
         const cache = getTokensFromCache();

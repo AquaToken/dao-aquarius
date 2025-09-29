@@ -5,6 +5,7 @@ import { clearSavedAuthData, saveToLS } from 'store/authStore/auth-helpers';
 
 import AccountService from 'services/account.service';
 import { StellarService } from 'services/globalServices';
+import { getFederation } from 'services/stellar/utils/resolvers';
 
 import { AUTH_ACTIONS, LoginArgs, LoginTypes } from './types';
 
@@ -21,7 +22,8 @@ export function login({
     return (dispatch: Dispatch<ActionResult>): void => {
         dispatch({ type: AUTH_ACTIONS.LOGIN_START, payload: { topic } });
 
-        StellarService.loadAccount(pubKey)
+        StellarService.account
+            .loadAccount(pubKey)
             .then(account => {
                 const wrappedAccount = new AccountService(account, loginType);
                 saveToLS(pubKey, loginType, walletKitId, bipPath);
@@ -54,7 +56,7 @@ export function resolveFederation(homeDomain: string, accountId: string): Action
     return (dispatch: Dispatch<ActionResult>): void => {
         dispatch({ type: AUTH_ACTIONS.FEDERATION_RESOLVE_START });
 
-        StellarService.resolveFederation(homeDomain, accountId)
+        getFederation(homeDomain, accountId)
             .then(federation => {
                 dispatch({
                     type: AUTH_ACTIONS.FEDERATION_RESOLVE_SUCCESS,

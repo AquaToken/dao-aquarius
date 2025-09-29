@@ -15,7 +15,7 @@ import { cacheTokens, createAsset } from 'helpers/token';
 import { LoginTypes } from 'store/authStore/types';
 
 import { ModalService, StellarService } from 'services/globalServices';
-import { StellarEvents } from 'services/stellar.service';
+import { StellarEvents } from 'services/stellar/events/events';
 
 import AppGlobalStyle from 'web/AppGlobalStyles';
 import { respondDown } from 'web/mixins';
@@ -136,9 +136,9 @@ const App = () => {
 
     useEffect(() => {
         if (isLogged) {
-            StellarService.startEffectsStream(account.accountId());
+            StellarService.effectsStream.start(account.accountId());
         } else {
-            StellarService.stopEffectsStream();
+            StellarService.effectsStream.stop();
         }
     }, [isLogged]);
 
@@ -148,7 +148,7 @@ const App = () => {
         }
         const unsub = StellarService.event.sub(({ type }) => {
             if (type === StellarEvents.claimableUpdate) {
-                const delegators = StellarService.getDelegatorLocks(account.accountId());
+                const delegators = StellarService.cb.getDelegatorLocks(account.accountId());
 
                 const neededDIceTrustline =
                     delegators.some(({ asset }) => asset === `${UP_ICE_CODE}:${ICE_ISSUER}`) &&

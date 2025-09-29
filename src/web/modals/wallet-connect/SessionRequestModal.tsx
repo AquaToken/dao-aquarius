@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 
-import { WalletConnectService } from 'services/globalServices';
+import { AuthService } from 'services/globalServices';
 
 import { ModalProps } from 'types/modal';
 
@@ -52,7 +52,7 @@ const SessionRequestModal = ({
             <ModalTitle>Connecting</ModalTitle>
             <ModalDescription>
                 The connection request was sent to {name}. Confirm the request in the app and
-                continue with {WalletConnectService.selfMeta.name}.
+                continue with {AuthService.walletConnect.selfMeta.name}.
             </ModalDescription>
             <IconsBlock>
                 <AquaLogo />

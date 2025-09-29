@@ -41,7 +41,7 @@ const ManageVotesModal = ({ params }: ModalProps<{ pair: PairStats }>) => {
     const counter = createAsset(pair.asset2_code, pair.asset2_issuer);
 
     useEffect(() => {
-        setClaims(StellarService.getPairVotes(pair, account.accountId())?.reverse());
+        setClaims(StellarService.cb.getPairVotes(pair, account.accountId())?.reverse());
     }, []);
 
     if (!claims) {

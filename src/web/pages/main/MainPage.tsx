@@ -41,7 +41,7 @@ const MainPage = () => {
             getAllTimeStats().then(res => {
                 setAmmStats(res);
             }),
-            StellarService.getAquaUsdPrice().then(res => {
+            StellarService.price.getAquaUsdPrice().then(res => {
                 setAquaPrice(res);
             }),
             getTotalRewards().then(res => {
