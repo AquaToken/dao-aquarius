@@ -33,9 +33,13 @@ const AccountInfoBlock = ({ account }: AccountInfoBlockProps) => {
         if (!account.home_domain) {
             return;
         }
-        getFederation(account.home_domain, accountId).then(res => {
-            setFederation(res);
-        });
+        getFederation(account.home_domain, accountId)
+            .then(res => {
+                setFederation(res);
+            })
+            .catch(() => {
+                // federation may be missing for the user — that's fine
+            });
     }, []);
 
     return (
