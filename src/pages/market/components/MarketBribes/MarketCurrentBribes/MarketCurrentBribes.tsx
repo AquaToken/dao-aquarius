@@ -127,7 +127,7 @@ const MarketCurrentBribes = ({ extra, bribes }: MarketCurrentBribes) => {
     const startUTC = convertLocalDateToUTCIgnoringTimezone(new Date(start_at));
     const stopUTC = convertLocalDateToUTCIgnoringTimezone(new Date(stop_at));
 
-    const { upvoteSum, upvoteCount } = extra.upvote_assets.reduce(
+    const { upvoteSum, upvoteCount } = (extra?.upvote_assets ?? []).reduce(
         (acc, { votes_count, votes_sum }) => {
             acc.upvoteSum += Number(votes_sum);
             acc.upvoteCount += votes_count;
