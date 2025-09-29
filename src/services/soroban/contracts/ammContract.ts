@@ -250,7 +250,7 @@ export default class AmmContract {
 
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
-                return retValArr.map(val => parsePoolRewards(val.value()));
+                return retValArr.map(val => this.parsePoolRewards(val.value()));
             });
     }
 
