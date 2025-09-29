@@ -25,7 +25,7 @@ import { SorobanToken, TokenType } from 'types/token';
 import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Info from 'assets/icon-info.svg';
+import Info from 'assets/icons/status/icon-info-16.svg';
 
 import Asset from 'basics/Asset';
 import Button from 'basics/buttons/Button';

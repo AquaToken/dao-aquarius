@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
 
-import Down from 'assets/icon-arrow-down.svg';
+import Down from 'assets/icons/arrows/arrow-down-16.svg';
 
 import { flexRowSpaceBetween } from '../mixins';
 import { COLORS } from '../styles';

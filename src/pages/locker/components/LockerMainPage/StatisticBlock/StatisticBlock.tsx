@@ -9,8 +9,8 @@ import { formatBalance } from 'helpers/format-number';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Aqua from 'assets/aqua-logo-small.svg';
-import Ice from 'assets/ice-logo.svg';
+import Aqua from 'assets/aqua/aqua-logo.svg';
+import Ice from 'assets/tokens/ice-logo.svg';
 
 import DotsLoader from 'basics/loaders/DotsLoader';
 

@@ -35,9 +35,9 @@ import { flexColumn, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import ConfirmIncentiveModal from 'web/modals/ConfirmIncentiveModal';
 import { Breakpoints, COLORS, FONT_SIZE } from 'web/styles';
 
-import ArrowLeft from 'assets/icon-arrow-left.svg';
-import Fail from 'assets/icon-fail.svg';
-import Success from 'assets/icon-success.svg';
+import ArrowLeft from 'assets/icons/arrows/arrow-left-16.svg';
+import Fail from 'assets/icons/status/fail-red.svg';
+import Success from 'assets/icons/status/success.svg';
 
 import Alert from 'basics/Alert';
 import AssetPicker from 'basics/asset-pickers/AssetPicker';

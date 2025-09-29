@@ -12,8 +12,8 @@ import { ModalService } from 'services/globalServices';
 import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import ArrowRight from 'assets/icon-arrow-right.svg';
-import ManageIcon from 'assets/icon-manage.svg';
+import ManageIcon from 'assets/icons/actions/icon-manage-16.svg';
+import ArrowRight from 'assets/icons/arrows/arrow-right-16.svg';
 
 import Asset from 'basics/Asset';
 import Button from 'basics/buttons/Button';

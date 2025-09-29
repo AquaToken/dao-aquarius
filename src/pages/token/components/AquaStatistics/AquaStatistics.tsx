@@ -19,7 +19,7 @@ import DotsLoader from 'web/basics/loaders/DotsLoader';
 import { cardBoxShadow, commonMaxWidth, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Info from 'assets/icon-info.svg';
+import Info from 'assets/icons/status/icon-info-16.svg';
 
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 

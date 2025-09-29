@@ -22,8 +22,8 @@ import { respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Info from 'assets/icon-info.svg';
-import Warning from 'assets/icon-warning.svg';
+import Info from 'assets/icons/status/icon-info-16.svg';
+import Warning from 'assets/icons/status/warning-16.svg';
 
 import { ExternalLink } from 'basics/links';
 import PageLoader from 'basics/loaders/PageLoader';

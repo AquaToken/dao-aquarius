@@ -8,7 +8,7 @@ import { Token } from 'types/token';
 import { textEllipsis } from 'web/mixins';
 import { COLORS } from 'web/styles';
 
-import Arrow from 'assets/icon-arrow-down.svg';
+import Arrow from 'assets/icons/arrows/arrow-down-16.svg';
 
 import AssetPickerModal from 'basics/asset-pickers/AssetPickerModal';
 import AssetLogo from 'basics/AssetLogo';

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import Crown from 'assets/icon-crown.svg';
+import Crown from 'assets/icons/objects/icon-crown.svg';
 
 import Label from 'basics/Label';
 

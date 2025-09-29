@@ -17,7 +17,7 @@ import { SorobanToken } from 'types/token';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import LinkIcon from 'assets/icon-external-link.svg';
+import LinkIcon from 'assets/icons/nav/icon-external-link-16.svg';
 
 import { ExternalLink } from 'basics/links';
 import PageLoader from 'basics/loaders/PageLoader';

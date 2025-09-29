@@ -25,10 +25,10 @@ import { ModalProps } from 'types/modal';
 import { StellarToml as StellarTomlType } from 'types/stellar';
 import { ClassicToken } from 'types/token';
 
-import Mail from 'assets/email16.svg';
-import Git from 'assets/github16.svg';
-import External from 'assets/icon-external-link-black.svg';
-import X from 'assets/twitter16.svg';
+import Mail from 'assets/community/email16.svg';
+import Git from 'assets/community/github16.svg';
+import X from 'assets/community/twitter16.svg';
+import External from 'assets/icons/nav/icon-external-link-16.svg';
 
 import Asset from 'basics/Asset';
 import Button from 'basics/buttons/Button';
@@ -71,6 +71,12 @@ const ContactLink = styled.a`
 
     svg {
         margin-right: 0.4rem;
+    }
+`;
+
+const ExternalBlack = styled(External)`
+    path {
+        fill: ${COLORS.black};
     }
 `;
 
@@ -215,7 +221,7 @@ const AssetInfoModal = ({ params }: ModalProps<AssetInfoModalParams>): React.Rea
                         getIsTestnetEnv() ? 'testnet' : 'public'
                     }/asset/${asset.code}-${asset.issuer}`}
                 >
-                    <External />
+                    <ExternalBlack />
                     StellarExpert
                 </ContactLink>
             </Links>

@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { cardBoxShadow, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Arrow from 'assets/icon-arrow-down.svg';
+import Arrow from 'assets/icons/arrows/arrow-down-16.svg';
 
 import { ActiveProposals } from 'components/Header/ActiveProposals/ActiveProposals';
 import { linkStyles } from 'components/Header/Header';

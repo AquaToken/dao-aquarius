@@ -26,8 +26,8 @@ import { Transaction } from 'types/stellar';
 import { flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import ArrowLeft from 'assets/icon-arrow-left.svg';
-import Tick from 'assets/icon-tick-white.svg';
+import ArrowLeft from 'assets/icons/arrows/arrow-left-16.svg';
+import Tick from 'assets/icons/small-icons/check/check-11x9.svg';
 
 import Alert from 'basics/Alert';
 import AssetDropdown from 'basics/asset-pickers/AssetDropdown';

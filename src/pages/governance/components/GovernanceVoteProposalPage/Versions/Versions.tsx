@@ -9,7 +9,7 @@ import { getDateString } from 'helpers/date';
 import { flexAllCenter } from 'web/mixins';
 import { COLORS } from 'web/styles';
 
-import ExternalLinkIcon from 'assets/icon-external-link.svg';
+import ExternalLinkIcon from 'assets/icons/nav/icon-external-link-16.svg';
 
 import { Proposal } from '../../../api/types';
 

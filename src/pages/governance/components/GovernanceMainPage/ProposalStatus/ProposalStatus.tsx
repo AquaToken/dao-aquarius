@@ -4,8 +4,8 @@ import styled from 'styled-components';
 import { flexAllCenter } from 'web/mixins';
 import { COLORS } from 'web/styles';
 
-import IconPending from 'assets/icon-pending.svg';
-import IconSuccess from 'assets/icon-success.svg';
+import IconPending from 'assets/icons/status/pending.svg';
+import IconSuccess from 'assets/icons/status/success.svg';
 
 export enum PROPOSAL_STATUS {
     DISCUSSION = 'discussion',

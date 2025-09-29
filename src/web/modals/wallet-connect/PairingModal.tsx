@@ -7,11 +7,11 @@ import { getWalletFromDeepLinkHistory, saveCurrentWallet } from 'helpers/wallet-
 
 import { ModalProps } from 'types/modal';
 
-import IconArrowRight from 'assets/icon-arrow-right-purple.svg';
-import IconCloseSmall from 'assets/icon-close-small.svg';
-import IconDeepLink from 'assets/icon-deep-link.svg';
-import IconPlus from 'assets/icon-plus.svg';
-import IconQR from 'assets/icon-qr.svg';
+import IconArrowRight from 'assets/icons/arrows/arrow-right-16.svg';
+import IconCloseSmall from 'assets/icons/nav/icon-close-alt-16.svg';
+import IconPlus from 'assets/icons/nav/icon-plus-16.svg';
+import IconDeepLink from 'assets/icons/small-icons/icon-deep-link-10.svg';
+import IconQR from 'assets/icons/small-icons/icon-qr-8.svg';
 
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
@@ -205,6 +205,12 @@ const NewConnectionButtonIcon = styled(IconPlus)`
     margin-left: 0.8rem;
 `;
 
+const IconArrowRightStyled = styled(IconArrowRight)`
+    path {
+        fill: ${COLORS.purple400};
+    }
+`;
+
 const PairingModal = ({ params }: ModalProps<PairingModalParams>): React.ReactNode => {
     const { pairings, deletePairing, connect } = params;
 
@@ -265,7 +271,7 @@ const PairingModal = ({ params }: ModalProps<PairingModalParams>): React.ReactNo
                             <AppDescription>{metadata.description}</AppDescription>
                             <ConnectButton>
                                 <span>Connect</span>
-                                <IconArrowRight />
+                                <IconArrowRightStyled />
                             </ConnectButton>
                         </AppInfoBlock>
 

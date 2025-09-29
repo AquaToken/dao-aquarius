@@ -12,7 +12,7 @@ import { ModalProps } from 'types/modal';
 import { flexColumn, flexColumnCenter } from 'web/mixins';
 import { COLORS } from 'web/styles';
 
-import DIceLogo from 'assets/dice-logo.svg';
+import DIceLogo from 'assets/tokens/dice-logo.svg';
 
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 

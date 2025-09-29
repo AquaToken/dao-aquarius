@@ -18,7 +18,7 @@ import { flexAllCenter, respondDown, textEllipsis } from 'web/mixins';
 import AssetInfoModal from 'web/modals/AssetInfoModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Info from 'assets/icon-info.svg';
+import Info from 'assets/icons/status/icon-info-16.svg';
 
 import AssetLogo from 'basics/AssetLogo';
 import DotsLoader from 'basics/loaders/DotsLoader';

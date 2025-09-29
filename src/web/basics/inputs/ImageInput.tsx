@@ -9,7 +9,7 @@ import { flexColumnCenter } from 'web/mixins';
 import CropperModal from 'web/modals/CropperModal';
 import { COLORS, FONT_SIZE } from 'web/styles';
 
-import Icon from 'assets/icon-withdraw.svg';
+import Icon from 'assets/icons/actions/icon-withdraw-16.svg';
 
 import { ExternalLink } from 'basics/links';
 

@@ -8,7 +8,7 @@ import { BribesRoutes } from 'constants/routes';
 import { flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Plus from 'assets/icon-plus.svg';
+import Plus from 'assets/icons/nav/icon-plus-16.svg';
 
 import Button from 'basics/buttons/Button';
 import { ToggleGroup } from 'basics/inputs';

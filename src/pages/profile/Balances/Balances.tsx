@@ -19,12 +19,12 @@ import { ClaimableBalance } from 'types/stellar';
 import { cardBoxShadow, commonMaxWidth, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Aqua from 'assets/aqua-logo-small.svg';
-import Ice from 'assets/ice-logo.svg';
-import Info from 'assets/icon-info.svg';
-import PlusIcon from 'assets/icon-plus.svg';
-import Withdraw from 'assets/icon-withdraw.svg';
-import Lumen from 'assets/xlm-logo.svg';
+import Aqua from 'assets/aqua/aqua-logo.svg';
+import Withdraw from 'assets/icons/actions/icon-withdraw-16.svg';
+import PlusIcon from 'assets/icons/nav/icon-plus-16.svg';
+import Info from 'assets/icons/status/icon-info-16.svg';
+import Ice from 'assets/tokens/ice-logo.svg';
+import Lumen from 'assets/tokens/xlm-logo.svg';
 
 import { Button } from 'basics/buttons';
 import DotsLoader from 'basics/loaders/DotsLoader';

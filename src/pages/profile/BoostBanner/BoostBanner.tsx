@@ -6,7 +6,7 @@ import { LockerRoutes } from 'constants/routes';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import FreezeAqua from 'assets/freeze-aqua-banner.svg';
+import FreezeAqua from 'assets/locker/freeze-aqua-banner.svg';
 
 import { Button } from 'basics/buttons';
 import Label from 'basics/Label';

@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { cardBoxShadow, flexAllCenter } from 'web/mixins';
 import { COLORS } from 'web/styles';
 
-import ArrowRight from 'assets/icon-arrow-right.svg';
+import ArrowRight from 'assets/icons/arrows/arrow-right-16.svg';
 
 const FloatingButtonBody = styled.button`
     position: sticky;

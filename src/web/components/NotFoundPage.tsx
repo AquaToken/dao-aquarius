@@ -6,10 +6,10 @@ import { MainRoutes } from 'constants/routes';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import LinkArrowIcon from 'assets/icon-link-arrow.svg';
+import { flexAllCenter, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
 
-import { flexAllCenter, respondDown } from '../mixins';
-import { Breakpoints, COLORS } from '../styles';
+import LinkArrowIcon from 'assets/icons/arrows/arrow-alt2-16.svg';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;
@@ -52,6 +52,10 @@ const StyledLink = styled(Link)`
 
 const LinkArrow = styled(LinkArrowIcon)`
     margin-left: 1rem;
+
+    path {
+        fill: ${COLORS.purple500};
+    }
 `;
 
 const NotFoundPage = (): React.ReactNode => {

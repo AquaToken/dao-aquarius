@@ -7,8 +7,8 @@ import { BribesRoutes } from 'constants/routes';
 import { commonMaxWidth, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Bribes from 'assets/bribes.svg';
-import Plus from 'assets/icon-plus.svg';
+import Bribes from 'assets/bribes-page/bribes.svg';
+import Plus from 'assets/icons/nav/icon-plus-16.svg';
 
 import Button from 'basics/buttons/Button';
 

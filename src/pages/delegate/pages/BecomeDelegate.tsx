@@ -14,7 +14,7 @@ import CircleButton from 'web/basics/buttons/CircleButton';
 import { cardBoxShadow, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS, FONT_SIZE } from 'web/styles';
 
-import ArrowLeft from 'assets/icon-arrow-left.svg';
+import ArrowLeft from 'assets/icons/arrows/arrow-left-16.svg';
 
 import { Button } from 'basics/buttons';
 import { Checkbox, Input, TextArea } from 'basics/inputs';

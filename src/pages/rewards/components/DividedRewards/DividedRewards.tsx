@@ -6,7 +6,7 @@ import { formatBalance } from 'helpers/format-number';
 import { cardBoxShadow, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Aqua from 'assets/aqua-logo-small.svg';
+import Aqua from 'assets/aqua/aqua-logo.svg';
 
 import DotsLoader from 'basics/loaders/DotsLoader';
 

@@ -9,9 +9,9 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService } from 'services/globalServices';
 
-import ArrowDown from 'assets/icon-arrow-down.svg';
-import CloseIcon from 'assets/icon-close-small.svg';
-import MobileMenuIcon from 'assets/icon-mobile-menu.svg';
+import ArrowDown from 'assets/icons/arrows/arrow-down-16.svg';
+import CloseIcon from 'assets/icons/nav/icon-close-alt-16.svg';
+import MobileMenuIcon from 'assets/icons/nav/icon-mobile-menu-16.svg';
 
 import Button from 'basics/buttons/Button';
 import Identicon from 'basics/Identicon';

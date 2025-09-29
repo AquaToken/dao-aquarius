@@ -9,9 +9,9 @@ import { createAsset } from 'helpers/token';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Aqua from 'assets/aqua-logo-small.svg';
-import Close from 'assets/icon-close-small-purple.svg';
-import Info from 'assets/icon-info.svg';
+import Aqua from 'assets/aqua/aqua-logo.svg';
+import Close from 'assets/icons/nav/icon-close-alt-16.svg';
+import Info from 'assets/icons/status/icon-info-16.svg';
 
 import Asset from 'basics/Asset';
 import Table, { CellAlign } from 'basics/Table';

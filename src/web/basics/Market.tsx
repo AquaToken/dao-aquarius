@@ -20,8 +20,8 @@ import { flexAllCenter, respondDown } from 'web/mixins';
 import AssetInfoModal from 'web/modals/AssetInfoModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import External from 'assets/icon-external-link.svg';
-import Arrow from 'assets/icon-link-arrow.svg';
+import Arrow from 'assets/icons/arrows/arrow-alt2-16.svg';
+import External from 'assets/icons/nav/icon-external-link-16.svg';
 
 import AssetLogo, { bigLogoStyles, logoStyles } from 'basics/AssetLogo';
 
@@ -190,6 +190,10 @@ const Labels = styled.div`
 
 const ArrowRight = styled(Arrow)`
     margin: 0 0.5rem;
+
+    path {
+        fill: ${COLORS.purple500};
+    }
 `;
 
 const Domain = styled.span`

@@ -5,8 +5,8 @@ import styled, { css } from 'styled-components';
 import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Left from 'assets/icon-arrow-left.svg';
-import Right from 'assets/icon-arrow-right.svg';
+import Left from 'assets/icons/arrows/arrow-left-16.svg';
+import Right from 'assets/icons/arrows/arrow-right-16.svg';
 
 const Container = styled.div`
     width: 100%;

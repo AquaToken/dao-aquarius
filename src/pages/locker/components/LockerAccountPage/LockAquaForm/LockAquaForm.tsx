@@ -27,10 +27,10 @@ import DelegatePromoModal from 'web/modals/alerts/DelegatePromoModal';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Aqua from 'assets/aqua-logo-small.svg';
-import DelegateLogo from 'assets/delegate-promo.svg';
-import Ice from 'assets/ice-logo.svg';
-import Info from 'assets/icon-info.svg';
+import Aqua from 'assets/aqua/aqua-logo.svg';
+import DelegateLogo from 'assets/delegate/delegate-promo.svg';
+import Info from 'assets/icons/status/icon-info-16.svg';
+import Ice from 'assets/tokens/ice-logo.svg';
 
 import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';

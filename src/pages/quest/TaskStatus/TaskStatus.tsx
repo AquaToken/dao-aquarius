@@ -3,8 +3,8 @@ import styled from 'styled-components';
 
 import { COLORS } from 'web/styles';
 
-import Present from 'assets/icon-precent-white.svg';
-import Success from 'assets/icon-success-white.svg';
+import Present from 'assets/icons/objects/icon-present-white-25x24.svg';
+import Success from 'assets/icons/status/success-white-14.svg';
 
 const Container = styled.div<{ $isComplete: boolean }>`
     display: flex;

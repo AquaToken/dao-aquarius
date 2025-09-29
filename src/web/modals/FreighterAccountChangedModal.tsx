@@ -14,7 +14,7 @@ import { AuthService } from 'services/globalServices';
 
 import { ModalProps } from 'types/modal';
 
-import Arrow from 'assets/icon-arrow-right-long.svg';
+import Arrow from 'assets/icons/arrows/arrow-alt2-16.svg';
 
 import { Button } from 'basics/buttons';
 import { Checkbox } from 'basics/inputs';

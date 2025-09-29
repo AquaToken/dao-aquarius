@@ -12,7 +12,7 @@ import { ClaimableBalance } from 'types/stellar';
 import { flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import AquaLogo from 'assets/aqua-logo-small.svg';
+import AquaLogo from 'assets/aqua/aqua-logo.svg';
 
 import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';

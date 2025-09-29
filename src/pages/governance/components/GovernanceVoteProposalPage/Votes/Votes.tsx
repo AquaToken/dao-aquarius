@@ -12,9 +12,9 @@ import { formatBalance } from 'helpers/format-number';
 import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import DIce from 'assets/dice-logo.svg';
-import Ice from 'assets/ice-logo.svg';
-import ExternalLinkIcon from 'assets/icon-external-link.svg';
+import ExternalLinkIcon from 'assets/icons/nav/icon-external-link-16.svg';
+import DIce from 'assets/tokens/dice-logo.svg';
+import Ice from 'assets/tokens/ice-logo.svg';
 
 import { IconSort } from 'basics/icons';
 import { CircleLoader } from 'basics/loaders';

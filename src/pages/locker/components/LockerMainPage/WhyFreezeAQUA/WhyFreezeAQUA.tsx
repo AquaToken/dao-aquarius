@@ -4,9 +4,9 @@ import styled from 'styled-components';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Image1 from 'assets/why-freeze-aqua-1.svg';
-import Image2 from 'assets/why-freeze-aqua-2.svg';
-import Image3 from 'assets/why-freeze-aqua-3.svg';
+import Image1 from 'assets/locker/why-freeze-aqua-1.svg';
+import Image2 from 'assets/locker/why-freeze-aqua-2.svg';
+import Image3 from 'assets/locker/why-freeze-aqua-3.svg';
 
 const Container = styled.div`
     display: flex;

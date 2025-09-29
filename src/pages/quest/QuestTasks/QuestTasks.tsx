@@ -9,10 +9,10 @@ import { QuestTaskStatus, TaskName, TaskStatus as TaskStatusType } from 'types/q
 import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Task1 from 'assets/quest-task-1.png';
-import Task2 from 'assets/quest-task-2.png';
-import Task3 from 'assets/quest-task-3.png';
-import Task4 from 'assets/quest-task-4.png';
+import Task1 from 'assets/quest-page/quest-task-1.png';
+import Task2 from 'assets/quest-page/quest-task-2.png';
+import Task3 from 'assets/quest-page/quest-task-3.png';
+import Task4 from 'assets/quest-page/quest-task-4.png';
 
 import Question from 'components/Question';
 

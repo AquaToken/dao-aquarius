@@ -7,8 +7,8 @@ import { MainRoutes } from 'constants/routes';
 import { commonMaxWidth, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import LP from 'assets/landing-about-amm-80.svg';
-import Bribes from 'assets/landing-about-bribes.svg';
+import LP from 'assets/token-page/landing-about-amm-80.svg';
+import Bribes from 'assets/token-page/landing-about-bribes.svg';
 
 const Container = styled.section`
     padding: 0 10rem;

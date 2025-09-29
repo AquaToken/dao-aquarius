@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import FreezeAquaImage from 'assets/freeze-aqua.svg';
+import FreezeAquaImage from 'assets/locker/freeze-aqua.svg';
 
 import { ExternalLink } from 'basics/links';
 

@@ -3,13 +3,13 @@ import styled from 'styled-components';
 
 import { MAIL_AQUA_HELLO } from 'constants/emails';
 
-import Discord from 'assets/discord-styled.svg';
-import Email from 'assets/email-styled.svg';
-import Github from 'assets/github-styled.svg';
-import Medium from 'assets/medium-styled.svg';
-import Reddit from 'assets/reddit-styled.svg';
-import Telegram from 'assets/telegram-styled.svg';
-import Twitter from 'assets/twitter-styled.svg';
+import Discord from 'assets/community/discord-styled.svg';
+import Email from 'assets/community/email-styled.svg';
+import Github from 'assets/community/github-styled.svg';
+import Medium from 'assets/community/medium-styled.svg';
+import Reddit from 'assets/community/reddit-styled.svg';
+import Telegram from 'assets/community/telegram-styled.svg';
+import Twitter from 'assets/community/twitter-styled.svg';
 
 import { BlankExternalLink } from 'basics/links';
 

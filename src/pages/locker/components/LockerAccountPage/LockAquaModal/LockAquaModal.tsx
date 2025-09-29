@@ -20,9 +20,9 @@ import { ModalProps } from 'types/modal';
 import { flexRowSpaceBetween } from 'web/mixins';
 import { COLORS } from 'web/styles';
 
-import Aqua from 'assets/aqua-logo-small.svg';
-import Ice from 'assets/ice-logo.svg';
-import ArrowDown from 'assets/icon-arrow-down-purple.svg';
+import Aqua from 'assets/aqua/aqua-logo.svg';
+import ArrowDown from 'assets/icons/arrows/arrow-down-16.svg';
+import Ice from 'assets/tokens/ice-logo.svg';
 
 import Button from 'basics/buttons/Button';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
@@ -114,6 +114,10 @@ const ShowMoreButtonArrow = styled(ArrowDown)<{ $showMore: boolean }>`
     margin-left: 0.9rem;
     transform: ${({ $showMore }) => ($showMore ? 'rotate(180deg)' : '')};
     transition: transform linear 200ms;
+
+    path {
+        fill: ${COLORS.purple400};
+    }
 `;
 
 const AssetsBlock = styled.div`

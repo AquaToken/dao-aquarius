@@ -2,13 +2,13 @@ import styled, { css } from 'styled-components';
 
 import { MAIL_AQUA_HELLO } from 'constants/emails';
 
-import Discord from 'assets/discord.svg';
-import Email from 'assets/email.svg';
-import Github from 'assets/github.svg';
-import Medium from 'assets/medium.svg';
-import Reddit from 'assets/reddit.svg';
-import Telegram from 'assets/telegram.svg';
-import Twitter from 'assets/twitter.svg';
+import Discord from 'assets/community/discord.svg';
+import Email from 'assets/community/email.svg';
+import Github from 'assets/community/github.svg';
+import Medium from 'assets/community/medium.svg';
+import Reddit from 'assets/community/reddit.svg';
+import Telegram from 'assets/community/telegram.svg';
+import Twitter from 'assets/community/twitter.svg';
 
 import { respondDown } from '../mixins';
 import { Breakpoints, COLORS } from '../styles';

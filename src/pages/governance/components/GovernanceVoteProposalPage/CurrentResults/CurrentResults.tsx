@@ -6,8 +6,8 @@ import { roundToPrecision } from 'helpers/format-number';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Fail from 'assets/icon-fail.svg';
-import Info from 'assets/icon-info.svg';
+import Fail from 'assets/icons/status/fail-red.svg';
+import Info from 'assets/icons/status/icon-info-16.svg';
 
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 

@@ -5,10 +5,10 @@ import { MainRoutes } from 'constants/routes';
 import { cardBoxShadow, flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import AquaLogo from 'assets/aqua-logo-small.svg';
-import ArrowAlt16 from 'assets/arrows/arrow-alt-16.svg';
-import IceLogo from 'assets/ice-logo.svg';
+import AquaLogo from 'assets/aqua/aqua-logo.svg';
+import ArrowAlt16 from 'assets/icons/arrows/arrow-alt-16.svg';
 import TokenSystemIcon from 'assets/main-page/token-system.svg';
+import IceLogo from 'assets/tokens/ice-logo.svg';
 
 import { BlankRouterLink } from 'basics/links';
 

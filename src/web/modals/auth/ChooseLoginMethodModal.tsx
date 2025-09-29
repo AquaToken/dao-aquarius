@@ -12,13 +12,13 @@ import { AuthService, ModalService, ToastService } from 'services/globalServices
 
 import { ModalProps } from 'types/modal';
 
-import BG from 'assets/get-extension-bg.svg';
-import ArrowRightIcon from 'assets/icon-arrow-right.svg';
-import KeyIcon from 'assets/icon-key.svg';
-import Ledger from 'assets/ledger-logo.svg';
-import LobstrLogo from 'assets/lobstr-logo-black.svg';
-import WalletConnectLogo from 'assets/wallet-connect-logo.svg';
-import Stellar from 'assets/xlm-logo.svg';
+import ArrowRightIcon from 'assets/icons/arrows/arrow-right-16.svg';
+import KeyIcon from 'assets/icons/objects/icon-key-40.svg';
+import Stellar from 'assets/tokens/xlm-logo.svg';
+import Ledger from 'assets/wallets/ledger-logo.svg';
+import BG from 'assets/wallets/lobstr/get-extension-bg.svg';
+import LobstrLogo from 'assets/wallets/lobstr/lobstr-logo-black.svg';
+import WalletConnectLogo from 'assets/wallets/wallet-connect-logo.svg';
 
 import Label from 'basics/Label';
 import { ModalTitle, ModalWrapper } from 'basics/ModalAtoms';

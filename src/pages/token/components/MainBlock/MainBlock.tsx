@@ -12,7 +12,7 @@ import { commonMaxWidth, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Bg from 'assets/token-page-bg.svg';
+import Bg from 'assets/token-page/token-page-bg.svg';
 
 import { Button } from 'basics/buttons';
 

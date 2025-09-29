@@ -11,7 +11,7 @@ import { ModalProps } from 'types/modal';
 import { flexAllCenter } from 'web/mixins';
 import { COLORS } from 'web/styles';
 
-import Tick from 'assets/icon-tick-16.svg';
+import Tick from 'assets/icons/small-icons/check/icon-check-16.svg';
 
 import { Button } from 'basics/buttons';
 import { ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
