@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { StellarService } from 'services/globalServices';
-import { StellarEvents } from 'services/stellar.service';
+import { StellarEvents } from 'services/stellar/events/events';
 
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -57,7 +57,7 @@ const YourVotes = ({ votesData }: YourVotes): React.ReactNode => {
     const { account, isLogged } = useAuthStore();
 
     const [claims, setClaims] = useState(
-        isLogged ? StellarService.getPairVotes(votesData, account.accountId())?.reverse() : null,
+        isLogged ? StellarService.cb.getPairVotes(votesData, account.accountId())?.reverse() : null,
     );
 
     useEffect(() => {
@@ -67,7 +67,9 @@ const YourVotes = ({ votesData }: YourVotes): React.ReactNode => {
         }
         const unsub = StellarService.event.sub(({ type }) => {
             if (type === StellarEvents.claimableUpdate) {
-                setClaims(StellarService.getPairVotes(votesData, account.accountId())?.reverse());
+                setClaims(
+                    StellarService.cb.getPairVotes(votesData, account.accountId())?.reverse(),
+                );
             }
         });
 

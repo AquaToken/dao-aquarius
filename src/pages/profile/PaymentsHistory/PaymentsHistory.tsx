@@ -11,7 +11,7 @@ import { formatBalance } from 'helpers/format-number';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { StellarService } from 'services/globalServices';
-import { StellarEvents } from 'services/stellar.service';
+import { StellarEvents } from 'services/stellar/events/events';
 
 import { COLORS } from 'web/styles';
 
@@ -34,20 +34,22 @@ const PaymentsHistory = () => {
     const { account } = useAuthStore();
 
     useEffect(() => {
-        if (!StellarService.paymentsHistory) {
-            return StellarService.getPayments(account.accountId(), 30);
+        if (!StellarService.payments.paymentsHistory) {
+            return StellarService.payments.getPayments(account.accountId(), 30);
         }
 
-        setHistory(StellarService.paymentsHistory);
+        setHistory(StellarService.payments.paymentsHistory);
     }, []);
 
     useEffect(() => {
         const unsub = StellarService.event.sub(({ type }) => {
             if (type === StellarEvents.paymentsHistoryUpdate) {
                 setHistory(
-                    StellarService.paymentsHistory ? [...StellarService.paymentsHistory] : null,
+                    StellarService.payments.paymentsHistory
+                        ? [...StellarService.payments.paymentsHistory]
+                        : null,
                 );
-                setHistoryFull(StellarService.paymentsFullyLoaded);
+                setHistoryFull(StellarService.payments.paymentsFullyLoaded);
             }
         });
 
@@ -63,10 +65,10 @@ const PaymentsHistory = () => {
                 {history ? (
                     <Table
                         virtualScrollProps={{
-                            loadMore: () => StellarService.loadMorePayments(),
+                            loadMore: () => StellarService.payments.loadMorePayments(),
                             loadMoreOffset: 5,
                         }}
-                        pending={!history || StellarService.loadMorePaymentsPending}
+                        pending={!history || StellarService.payments.loadMorePaymentsPending}
                         head={[
                             { children: 'Time' },
                             { children: 'Reward type' },

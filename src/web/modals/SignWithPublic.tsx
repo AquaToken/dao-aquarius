@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import AccountService from 'services/account.service';
-import { StellarService } from 'services/globalServices';
+import { getFederation } from 'services/stellar/utils/resolvers';
 
 import { ModalProps } from 'types/modal';
 
@@ -121,7 +121,7 @@ const SignWithPublic = ({ params, confirm }: ModalProps<Props>) => {
         if (!account.home_domain) {
             return;
         }
-        StellarService.resolveFederation(account.home_domain, accountId).then(res => {
+        getFederation(account.home_domain, accountId).then(res => {
             setFederation(res);
         });
     }, []);

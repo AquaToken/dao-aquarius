@@ -18,6 +18,8 @@ export type ProposalSimple = {
     percent_for_quorum: number;
     ice_circulating_supply: string;
     logvote_set: LogVote[];
+    vote_for_issuer: string;
+    vote_against_issuer: string;
 };
 
 export type LogVote = {

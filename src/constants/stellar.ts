@@ -7,7 +7,55 @@ export const NETWORK_PASSPHRASES = {
     [ENV_TESTNET]: StellarSdk.Networks.TESTNET,
 };
 
-// AQUA issuer account:)
-export const ACCOUNT_FOR_SIMULATE = 'GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA';
-
 export const BASE_FEE = '100000';
+
+export enum THRESHOLDS {
+    LOW = 'low_threshold',
+    MED = 'med_threshold',
+    HIGH = 'high_threshold',
+    MULTIPLE = 'multiple',
+    UNKNOWN = 'unknown',
+}
+
+export const THRESHOLD_ORDER = {
+    [THRESHOLDS.LOW]: 1,
+    [THRESHOLDS.MED]: 2,
+    [THRESHOLDS.HIGH]: 3,
+};
+
+export const OP_THRESHOLDS = {
+    [THRESHOLDS.LOW]: ['allowTrust', 'inflation', 'bumpSequence', 'setTrustLineFlags'],
+    [THRESHOLDS.MED]: [
+        'createAccount',
+        'payment',
+        'pathPayment',
+        'pathPaymentStrictSend',
+        'pathPaymentStrictReceive',
+        'manageBuyOffer',
+        'manageSellOffer',
+        'createPassiveSellOffer',
+        'changeTrust',
+        'manageData',
+        'createClaimableBalance',
+        'claimClaimableBalance',
+        'beginSponsoringFutureReserves',
+        'endSponsoringFutureReserves',
+        'revokeSponsorship',
+        'revokeAccountSponsorship',
+        'revokeTrustlineSponsorship',
+        'revokeOfferSponsorship',
+        'revokeDataSponsorship',
+        'revokeClaimableBalanceSponsorship',
+        'revokeLiquidityPoolSponsorship',
+        'revokeSignerSponsorship',
+        'clawback',
+        'clawbackClaimableBalance',
+        'invokeHostFunction',
+        'extendFootprintTtl',
+        'restoreFootprint',
+        'liquidityPoolDeposit',
+        'liquidityPoolWithdraw',
+    ],
+    [THRESHOLDS.HIGH]: ['accountMerge'],
+    [THRESHOLDS.MULTIPLE]: ['setOptions'], // med or high
+};

@@ -5,7 +5,7 @@ import { MainRoutes } from 'constants/routes';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { WalletConnectService } from 'services/globalServices';
+import { AuthService } from 'services/globalServices';
 
 import PageLoader from 'basics/loaders/PageLoader';
 
@@ -19,7 +19,7 @@ const WalletConnect = () => {
     const location = useLocation();
 
     useEffect(() => {
-        WalletConnectService.autoLogin();
+        AuthService.walletConnect.autoLogin();
     }, []);
 
     // After login redirect to the page from the url params or to the main page

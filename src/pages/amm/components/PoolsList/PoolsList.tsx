@@ -393,7 +393,7 @@ const PoolsList = ({
                                         $
                                         {formatBalance(
                                             (Number(pool.liquidity) *
-                                                StellarService.priceLumenUsd) /
+                                                StellarService.price.priceLumenUsd) /
                                                 1e7,
                                             true,
                                         )}
@@ -494,7 +494,7 @@ const PoolsList = ({
                                                 <span>
                                                     {formatBalance(
                                                         +contractValueToAmount(
-                                                            pool.reserves[index],
+                                                            pool.reserves[index] as string,
                                                             (asset as SorobanToken).decimal,
                                                         ),
                                                         true,

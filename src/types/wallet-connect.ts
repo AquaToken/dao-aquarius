@@ -1,8 +1,3 @@
-export enum WalletConnectEvents {
-    login = 'login',
-    logout = 'logout',
-}
-
 export type Listings = { [id: string]: Wallet };
 export type Wallet = {
     app: {

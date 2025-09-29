@@ -352,10 +352,11 @@ const AddBribePage = () => {
 
         setIsInvalidAmount(false);
 
-        StellarService.getAquaEquivalent(
-            createAsset(rewardAsset.code, rewardAsset.issuer),
-            debouncedAmount.current,
-        )
+        StellarService.price
+            .getAquaEquivalent(
+                createAsset(rewardAsset.code, rewardAsset.issuer),
+                debouncedAmount.current,
+            )
             .then(res => {
                 setAquaEquivalent(res);
             })

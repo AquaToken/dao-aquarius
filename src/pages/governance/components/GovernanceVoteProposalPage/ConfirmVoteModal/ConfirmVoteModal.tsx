@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
+import { processIceTx } from 'api/ice';
+
 import { GD_ICE_CODE, GOV_ICE_CODE, ICE_ISSUER } from 'constants/assets';
 import { LockerRoutes } from 'constants/routes';
 
@@ -16,8 +18,8 @@ import { useIsMounted } from 'hooks/useIsMounted';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-connect.service';
 import { StellarService, ToastService } from 'services/globalServices';
-import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { ModalProps } from 'types/modal';
 
@@ -209,15 +211,15 @@ const ConfirmVoteModal = ({
         }
         try {
             setPending(true);
-            const voteOp = StellarService.createVoteOperation(
+            const voteOp = StellarService.op.createVoteOperation(
                 account.accountId(),
                 key,
                 amount,
                 unlockDate,
                 targetAsset,
             );
-            const tx = await StellarService.buildTx(account, voteOp);
-            const processedTx = await StellarService.processIceTx(tx, targetAsset);
+            const tx = await StellarService.tx.buildTx(account, voteOp);
+            const processedTx = await processIceTx(tx, targetAsset);
             const result = await account.signAndSubmitTx(processedTx);
             if (isMounted.current) {
                 setPending(false);

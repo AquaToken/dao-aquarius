@@ -9,12 +9,13 @@ import { formatBalance } from 'helpers/format-number';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-connect.service';
 import { ModalService, StellarService, ToastService } from 'services/globalServices';
-import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { Pool } from 'types/amm';
 import { ModalProps } from 'types/modal';
-import { Asset, PoolClassic } from 'types/stellar';
+import { PoolClassic } from 'types/stellar';
+import { ClassicToken } from 'types/token';
 
 import AssetLogo from 'basics/AssetLogo';
 import Button from 'basics/buttons/Button';
@@ -85,8 +86,8 @@ const AmountWithdraw = styled.span`
 
 interface MigrateLiquidityStep1Params {
     poolsToMigrate: Pool[];
-    base: Asset;
-    counter: Asset;
+    base: ClassicToken;
+    counter: ClassicToken;
     pool: PoolClassic;
     onUpdate: () => void;
 }
@@ -153,7 +154,7 @@ const MigrateLiquidityStep1 = ({ params, confirm }: ModalProps<MigrateLiquidityS
     const submit = async () => {
         setPending(true);
 
-        const ops = StellarService.createWithdrawOperation(
+        const ops = StellarService.op.createWithdrawOperation(
             pool.id,
             amountsToWithdraw.shareToWithdraw,
             base,
@@ -163,7 +164,7 @@ const MigrateLiquidityStep1 = ({ params, confirm }: ModalProps<MigrateLiquidityS
             Number(percent) === 100,
         );
 
-        const tx = await StellarService.buildTx(account, ops);
+        const tx = await StellarService.tx.buildTx(account, ops);
 
         account
             .signAndSubmitTx(tx, false, () =>

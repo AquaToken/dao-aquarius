@@ -7,7 +7,8 @@ import { LockerRoutes } from 'constants/routes';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { StellarService, ToastService } from 'services/globalServices';
+import { ToastService } from 'services/globalServices';
+import { isValidPublicKey } from 'services/stellar/utils/validators';
 
 import { ModalProps } from 'types/modal';
 
@@ -106,7 +107,7 @@ const AccountInput = ({ params, close }: ModalProps<AccountInputParams>) => {
 
     const onSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (!StellarService.isValidPublicKey(value)) {
+        if (!isValidPublicKey(value)) {
             ToastService.showErrorToast('Invalid public key');
             return;
         }

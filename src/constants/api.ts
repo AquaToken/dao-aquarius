@@ -13,6 +13,10 @@ export const BRIBES_API_URL = 'https://bribes-api.aqua.network/api/';
 export const MARKET_KEY_API_URL = 'https://marketkeys-tracker.aqua.network/api/market-keys/';
 export const VOTING_TRACKER_API_URL = 'https://voting-tracker.aqua.network/api/voting-snapshot/';
 
+export const LOBSTR_VAULT_API_URL = 'https://vault.lobstr.co/api/transactions/';
+
+export const API_ST_TICKER = 'https://api.stellarterm.com/v1/ticker.json';
+
 export const API_URLS = {
     [ENV_PRODUCTION]: {
         moonpay: 'https://api.moonpay.com/v3',

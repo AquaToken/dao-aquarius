@@ -276,7 +276,8 @@ const AssetPickerModal = ({ params, confirm }: ModalProps<Props>) => {
                                             $
                                             {formatBalance(
                                                 +(
-                                                    nativeBalance * StellarService.priceLumenUsd
+                                                    nativeBalance *
+                                                    StellarService.price.priceLumenUsd
                                                 ).toFixed(2),
                                                 true,
                                             )}

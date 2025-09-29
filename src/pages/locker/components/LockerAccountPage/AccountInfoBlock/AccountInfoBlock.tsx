@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import AccountService from 'services/account.service';
-import { StellarService } from 'services/globalServices';
+import { getFederation } from 'services/stellar/utils/resolvers';
 
 import { flexRowSpaceBetween } from 'web/mixins';
 
@@ -33,7 +33,7 @@ const AccountInfoBlock = ({ account }: AccountInfoBlockProps) => {
         if (!account.home_domain) {
             return;
         }
-        StellarService.resolveFederation(account.home_domain, accountId).then(res => {
+        getFederation(account.home_domain, accountId).then(res => {
             setFederation(res);
         });
     }, []);

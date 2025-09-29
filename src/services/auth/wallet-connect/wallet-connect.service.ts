@@ -24,15 +24,15 @@ import {
     sessionExistsInStorage,
 } from 'helpers/wallet-connect-helpers';
 
-import { WalletConnectEvents } from 'types/wallet-connect';
+import { AuthEvent, AuthPayload } from 'services/auth/events/events';
 
-import PairingModal from 'web/modals/wallet-connect/PairingModal';
-import QRModal from 'web/modals/wallet-connect/QRModal';
-import RequestModal from 'web/modals/wallet-connect/RequestModal';
-import SessionRequestModal from 'web/modals/wallet-connect/SessionRequestModal';
+import PairingModal from 'modals/wallet-connect/PairingModal';
+import QRModal from 'modals/wallet-connect/QRModal';
+import RequestModal from 'modals/wallet-connect/RequestModal';
+import SessionRequestModal from 'modals/wallet-connect/SessionRequestModal';
 
-import EventService from './event.service';
-import { ModalService, ToastService } from './globalServices';
+import EventService from '../../event.service';
+import { ModalService, ToastService } from '../../globalServices';
 
 // TODO:  Move to WC types, add function to check pending status
 export enum BuildSignAndSubmitStatuses {
@@ -40,21 +40,17 @@ export enum BuildSignAndSubmitStatuses {
     pending = 'pending',
 }
 
-type WalletConnectPayload = {
-    publicKey?: string;
-    metadata?: WalletConnectTypes.CoreTypes.Metadata;
-    topic?: string;
-};
-
 export default class WalletConnectServiceClass {
+    private readonly event: EventService<AuthEvent, AuthPayload>;
     appMeta: WalletConnectTypes.SignClientTypes.Metadata | null = null;
     client: WalletConnectClient | null = null;
     session: WalletConnectTypes.SessionTypes.Struct | null = null;
-    event: EventService<WalletConnectEvents, WalletConnectPayload> = new EventService();
     selfMeta: WalletConnectTypes.CoreTypes.Metadata = METADATA;
     isOffline = false;
 
-    constructor() {
+    constructor(event: EventService<AuthEvent, AuthPayload>) {
+        this.event = event;
+
         window.addEventListener('offline', () => {
             this.client = null;
             this.isOffline = true;
@@ -146,7 +142,7 @@ export default class WalletConnectServiceClass {
             this.appMeta = null;
             clearCurrentWallet();
 
-            this.event.trigger({ type: WalletConnectEvents.logout });
+            this.event.trigger({ type: AuthEvent.walletConnectLogout });
         }
     }
 
@@ -359,7 +355,7 @@ export default class WalletConnectServiceClass {
         const [, , publicKey] = this.session.namespaces.stellar.accounts[0].split(':');
 
         this.event.trigger({
-            type: WalletConnectEvents.login,
+            type: AuthEvent.walletConnectLogin,
             publicKey: publicKey.toUpperCase(),
             metadata: this.appMeta,
             topic: this.session.topic,

@@ -7,7 +7,7 @@ import { formatBalance } from 'helpers/format-number';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService, StellarService } from 'services/globalServices';
-import { StellarEvents } from 'services/stellar.service';
+import { StellarEvents } from 'services/stellar/events/events';
 
 import { flexRowSpaceBetween } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
@@ -79,13 +79,20 @@ const VoteButton = ({
     const { aquaStellarAsset } = getAquaAssetData();
 
     const getUpVotesValue = () =>
-        +StellarService.getMarketVotesValue(marketKeyUp, account?.accountId(), aquaStellarAsset) +
-        +StellarService.getMarketVotesValue(marketKeyUp, account?.accountId(), UP_ICE) +
-        +StellarService.getMarketVotesValue(marketKeyUp, account?.accountId(), DELEGATE_ICE);
+        +StellarService.cb.getMarketVotesValue(
+            marketKeyUp,
+            account?.accountId(),
+            aquaStellarAsset,
+        ) +
+        +StellarService.cb.getMarketVotesValue(marketKeyUp, account?.accountId(), UP_ICE) +
+        +StellarService.cb.getMarketVotesValue(marketKeyUp, account?.accountId(), DELEGATE_ICE);
 
     const getDownVotesValue = () =>
-        +StellarService.getMarketVotesValue(marketKeyDown, account?.accountId(), aquaStellarAsset) +
-        +StellarService.getMarketVotesValue(marketKeyDown, account?.accountId(), DOWN_ICE);
+        +StellarService.cb.getMarketVotesValue(
+            marketKeyDown,
+            account?.accountId(),
+            aquaStellarAsset,
+        ) + +StellarService.cb.getMarketVotesValue(marketKeyDown, account?.accountId(), DOWN_ICE);
 
     const [balanceUp, setBalanceUp] = useState(isLogged ? getUpVotesValue() : null);
 

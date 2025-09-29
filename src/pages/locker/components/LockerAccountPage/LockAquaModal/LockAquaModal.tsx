@@ -12,8 +12,8 @@ import { useIsMounted } from 'hooks/useIsMounted';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-connect.service';
 import { StellarService, ToastService } from 'services/globalServices';
-import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { ModalProps } from 'types/modal';
 
@@ -169,15 +169,17 @@ const LockAquaModal = ({
         try {
             setPending(true);
 
-            const ops = [StellarService.createLockOperation(account.accountId(), amount, period)];
+            const ops = [
+                StellarService.op.createLockOperation(account.accountId(), amount, period),
+            ];
 
             if (unlistedIceAssets.length) {
                 unlistedIceAssets.forEach(asset => {
-                    ops.push(StellarService.createAddTrustOperation(asset));
+                    ops.push(StellarService.op.createAddTrustOperation(asset));
                 });
             }
 
-            const tx = await StellarService.buildTx(account, ops);
+            const tx = await StellarService.tx.buildTx(account, ops);
 
             const result = await account.signAndSubmitTx(tx);
 

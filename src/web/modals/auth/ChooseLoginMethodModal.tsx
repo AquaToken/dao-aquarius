@@ -8,14 +8,7 @@ import { isChrome, isMobile } from 'helpers/browser';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import {
-    LedgerService,
-    LobstrExtensionService,
-    ModalService,
-    ToastService,
-    WalletConnectService,
-    WalletKitService,
-} from 'services/globalServices';
+import { AuthService, ModalService, ToastService } from 'services/globalServices';
 
 import { ModalProps } from 'types/modal';
 
@@ -139,14 +132,14 @@ const ChooseLoginMethodModal = ({
                 // then wallet knows how to process the custom postMessage
                 if (isUaWebview(window?.navigator?.userAgent)) {
                     close();
-                    WalletConnectService.autoLogin();
+                    AuthService.walletConnect.autoLogin();
                 } else {
-                    WalletConnectService.login();
+                    AuthService.walletConnect.login();
                 }
                 break;
 
             case LoginTypes.ledger:
-                LedgerService.isSupported.then(res => {
+                AuthService.ledger.isSupported.then(res => {
                     if (res) {
                         close();
                         ModalService.openModal(LedgerLogin, {});
@@ -159,7 +152,7 @@ const ChooseLoginMethodModal = ({
                 break;
 
             case LoginTypes.walletKit:
-                WalletKitService.showWalletKitModal();
+                AuthService.walletKit.showWalletKitModal();
                 break;
             case LoginTypes.public:
                 close();
@@ -175,10 +168,10 @@ const ChooseLoginMethodModal = ({
                     return;
                 }
                 setPending(true);
-                LobstrExtensionService.isConnected.then(res => {
+                AuthService.lobstrExtension.isConnected.then(res => {
                     if (res) {
                         setPending(false);
-                        LobstrExtensionService.login().then(() => {
+                        AuthService.lobstrExtension.login().then(() => {
                             close();
                         });
                     } else {

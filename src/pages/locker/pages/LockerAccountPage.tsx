@@ -15,7 +15,8 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import AccountService from 'services/account.service';
 import { StellarService } from 'services/globalServices';
-import { StellarEvents } from 'services/stellar.service';
+import { StellarEvents } from 'services/stellar/events/events';
+import { isValidPublicKey } from 'services/stellar/utils/validators';
 
 import { commonMaxWidth, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -114,7 +115,7 @@ const LockerAccountPage = (): React.ReactNode => {
     const history = useHistory();
 
     useEffect(() => {
-        if (!StellarService.isValidPublicKey(accountId)) {
+        if (!isValidPublicKey(accountId)) {
             history.push(LockerRoutes.main);
             return;
         }
@@ -129,7 +130,7 @@ const LockerAccountPage = (): React.ReactNode => {
             return;
         }
         setCurrentAccount(null);
-        StellarService.loadAccount(accountId).then(res => {
+        StellarService.account.loadAccount(accountId).then(res => {
             setCurrentAccount(new AccountService(res, null));
         });
     }, [accountId]);
@@ -139,7 +140,7 @@ const LockerAccountPage = (): React.ReactNode => {
             return;
         }
         setLocks(null);
-        StellarService.getAccountLocks(accountId).then(res => {
+        StellarService.account.getAccountLocks(accountId).then(res => {
             setLocks(res);
         });
     }, [accountId]);
@@ -151,7 +152,7 @@ const LockerAccountPage = (): React.ReactNode => {
 
         const unsub = StellarService.event.sub(({ type }) => {
             if (type === StellarEvents.claimableUpdate) {
-                StellarService.getAccountLocks(accountId).then(res => {
+                StellarService.account.getAccountLocks(accountId).then(res => {
                     setLocks(res);
                 });
             }

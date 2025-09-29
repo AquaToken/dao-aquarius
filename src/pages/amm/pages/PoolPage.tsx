@@ -22,8 +22,8 @@ import { useUpdateIndex } from 'hooks/useUpdateIndex';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-connect.service';
 import { SorobanService, ToastService } from 'services/globalServices';
-import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { PoolExtended, PoolIncentives } from 'types/amm';
 import { Asset } from 'types/stellar';
