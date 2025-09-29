@@ -17,8 +17,9 @@ import { Breakpoints, COLORS, FONT_SIZE } from 'web/styles';
 import ArrowLeft from 'assets/icon-arrow-left.svg';
 
 import { Button } from 'basics/buttons';
-import { Input, TextArea } from 'basics/inputs';
+import { Checkbox, Input, TextArea } from 'basics/inputs';
 import ImageInput from 'basics/inputs/ImageInput';
+import { BlankExternalLink } from 'basics/links';
 
 const Container = styled.main`
     flex: 1 0 auto;
@@ -51,6 +52,10 @@ const FormWrapper = styled(Content)`
     ${respondDown(Breakpoints.md)`
         top: 0;
     `};
+`;
+
+const CheckboxStyled = styled(Checkbox)`
+    margin-bottom: 2.4rem;
 `;
 
 const Title = styled.h2`
@@ -99,6 +104,12 @@ const TextAreaStyled = styled(TextArea)`
     margin-bottom: 2.4rem;
 `;
 
+const CheckboxLabel = styled.span`
+    a {
+        color: ${COLORS.purple500};
+    }
+`;
+
 const ButtonStyled = styled(Button)`
     margin-top: 3.2rem;
 `;
@@ -137,6 +148,9 @@ const BecomeDelegate = () => {
     const [description, setDescription] = useState<string>('');
     const [strategy, setStrategy] = useState<string>('');
     const [xLink, setXLink] = useState<string>('');
+
+    const [agreeWithConduct, setAgreeWithConduct] = useState(false);
+    const [agreeWithEligibility, setAgreeWithEligibility] = useState(false);
 
     const [pending, setPending] = useState<boolean>(false);
 
@@ -309,7 +323,40 @@ const BecomeDelegate = () => {
                         rows={2}
                     ></TextAreaStyled>
 
-                    <ButtonStyled isBig type="submit" pending={pending}>
+                    <CheckboxStyled
+                        checked={agreeWithConduct}
+                        onChange={setAgreeWithConduct}
+                        label={
+                            <CheckboxLabel>
+                                I have read and agree to comply with the{' '}
+                                <BlankExternalLink href="https://docs.aqua.network/ice-delegation/delegate-code-of-conduct">
+                                    Delegate Code of Conduct
+                                </BlankExternalLink>
+                                .
+                            </CheckboxLabel>
+                        }
+                    />
+
+                    <CheckboxStyled
+                        checked={agreeWithEligibility}
+                        onChange={setAgreeWithEligibility}
+                        label={
+                            <CheckboxLabel>
+                                My application meets the{' '}
+                                <BlankExternalLink href="https://docs.aqua.network/ice-delegation/applying-and-becoming-a-delegate#eligibility-criteria-for-whitelisted-delegates">
+                                    Eligibility Criteria
+                                </BlankExternalLink>
+                                .
+                            </CheckboxLabel>
+                        }
+                    />
+
+                    <ButtonStyled
+                        isBig
+                        type="submit"
+                        pending={pending}
+                        disabled={!agreeWithConduct || !agreeWithEligibility}
+                    >
                         submit
                     </ButtonStyled>
                 </Form>

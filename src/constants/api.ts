@@ -17,6 +17,8 @@ export const LOBSTR_VAULT_API_URL = 'https://vault.lobstr.co/api/transactions/';
 
 export const API_ST_TICKER = 'https://api.stellarterm.com/v1/ticker.json';
 
+export const API_DELEGATION_URL = 'https://api-delegation.aqua.network/api/delegation/';
+
 export const API_URLS = {
     [ENV_PRODUCTION]: {
         moonpay: 'https://api.moonpay.com/v3',
