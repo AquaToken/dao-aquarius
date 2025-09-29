@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { cardBoxShadow } from 'web/mixins';
 import { COLORS } from 'web/styles';
 
-import Icon from 'assets/icon-succes-gray.svg';
+import Icon from 'assets/icons/status/success.svg';
 
 import { Button } from 'basics/buttons';
 
@@ -19,6 +19,14 @@ const Container = styled.div`
 
     a {
         text-decoration: none;
+    }
+`;
+
+const Success = styled(Icon)`
+    height: 3.2rem;
+    width: 3.2rem;
+    rect {
+        fill: ${COLORS.gray200};
     }
 `;
 
@@ -54,7 +62,7 @@ const PreRequisites = () => (
     <Container>
         <Title>Pre-requisites</Title>
         <Item>
-            <Icon />
+            <Success />
             <span>
                 If you're new to Stellar, start by creating a wallet. We recommend{' '}
                 <a href="https://lobstr.co/" target="_blank" rel="noreferrer">
@@ -76,16 +84,16 @@ const PreRequisites = () => (
             </span>
         </Item>
         <Item>
-            <Icon />
+            <Success />
             If you already have a Stellar wallet, ensure it has not previously interacted with
             Aquarius.
         </Item>
         <Item>
-            <Icon />
+            <Success />
             Fund your wallet with some XLM to participate in the quest.
         </Item>
         <Item>
-            <Icon />
+            <Success />
             <span>
                 Join the Aquarius community on{' '}
                 <a href="https://t.me/aquarius_official_community" target="_blank" rel="noreferrer">

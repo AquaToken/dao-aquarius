@@ -15,9 +15,9 @@ import { commonMaxWidth, flexAllCenter, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import BackgroundImageLeft from 'assets/background-left.svg';
-import BackgroundImageRight from 'assets/background-right.svg';
-import ArrowDown from 'assets/icon-arrow-down.svg';
+import ArrowDown from 'assets/icons/arrows/arrow-down-16.svg';
+import BackgroundImageLeft from 'assets/vote-page/background-left.svg';
+import BackgroundImageRight from 'assets/vote-page/background-right.svg';
 
 import Select from 'basics/inputs/Select';
 import ToggleGroup from 'basics/inputs/ToggleGroup';

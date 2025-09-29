@@ -3,10 +3,10 @@ import styled from 'styled-components';
 
 import { MainRoutes } from 'constants/routes';
 
-import Logo from 'assets/delegate-promo.svg';
-import DAO from 'assets/icon-governance.svg';
-import Heart from 'assets/icon-heart.svg';
-import Present from 'assets/icon-present.svg';
+import Logo from 'assets/delegate/delegate-promo.svg';
+import DAO from 'assets/icons/objects/icon-dao-16x17.svg';
+import Heart from 'assets/icons/objects/icon-heart.svg';
+import Present from 'assets/icons/objects/icon-present.svg';
 
 import { ExternalLink } from 'basics/links';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';

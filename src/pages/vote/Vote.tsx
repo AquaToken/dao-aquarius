@@ -10,7 +10,7 @@ import { respondDown } from 'web/mixins';
 import VotingPurposeModal, { SHOW_PURPOSE_ALIAS } from 'web/modals/alerts/VotingPurposeModal';
 import { Breakpoints } from 'web/styles';
 
-import BG from 'assets/purpose-modal-background.svg';
+import BG from 'assets/vote-page/purpose-modal-background.svg';
 
 import NotFoundPage from 'components/NotFoundPage';
 

@@ -11,7 +11,7 @@ import { PoolProcessed } from 'types/amm';
 import { flexColumn, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS, FONT_SIZE, hexWithOpacity } from 'web/styles';
 
-import Arrow from 'assets/icon-arrow-right-short.svg';
+import Arrow from 'assets/icons/arrows/arrow-alt-16.svg';
 
 import { IconBoost } from 'basics/icons';
 import Label from 'basics/Label';

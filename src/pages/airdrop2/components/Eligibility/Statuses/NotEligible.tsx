@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { COLORS } from 'web/styles';
 
-import Fail from 'assets/icon-fail-white.svg';
+import Fail from 'assets/icons/status/fail-white-14.svg';
 
 const Container = styled.div`
     display: flex;

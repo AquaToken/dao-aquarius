@@ -7,8 +7,8 @@ import { ExpertAssetData } from 'types/api-stellar-expert';
 
 import { COLORS } from 'web/styles';
 
-import IconNegative from 'assets/icon-arrow-negative-16.svg';
-import IconPositive from 'assets/icon-arrow-positive-16.svg';
+import IconNegative from 'assets/icons/arrows/arrow-negative-16.svg';
+import IconPositive from 'assets/icons/arrows/arrow-positive-16.svg';
 
 const Changes = styled.span<{ $isPositive?: boolean; $withWrapper?: boolean }>`
     display: flex;

@@ -18,8 +18,8 @@ import Input from 'web/basics/inputs/Input';
 import { flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Info from 'assets/icon-info.svg';
-import Search from 'assets/icon-search.svg';
+import Search from 'assets/icons/actions/icon-search-16.svg';
+import Info from 'assets/icons/status/icon-info-16.svg';
 
 import Select from 'basics/inputs/Select';
 import ToggleGroup from 'basics/inputs/ToggleGroup';

@@ -14,7 +14,7 @@ import { Wallet } from 'types/wallet-connect';
 import { flexAllCenter } from 'web/mixins';
 import { COLORS } from 'web/styles';
 
-import ArrowRight from 'assets/icon-arrow-right.svg';
+import ArrowRight from 'assets/icons/arrows/arrow-right-16.svg';
 
 import Button from 'basics/buttons/Button';
 import CopyButton from 'basics/buttons/CopyButton';

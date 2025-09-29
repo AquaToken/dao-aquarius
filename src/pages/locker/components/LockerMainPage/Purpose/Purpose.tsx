@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { commonMaxWidth, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import LockerMainImage from 'assets/locker-main.svg';
+import LockerMainImage from 'assets/locker/locker-main.svg';
 
 const Container = styled.div`
     background-color: ${COLORS.purple950};

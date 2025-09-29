@@ -17,7 +17,7 @@ import { ModalProps } from 'types/modal';
 
 import { COLORS } from 'web/styles';
 
-import Ice from 'assets/ice-logo.svg';
+import Ice from 'assets/tokens/ice-logo.svg';
 
 import Button from 'basics/buttons/Button';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';

@@ -9,7 +9,7 @@ import { Pool, PoolClassicProcessed } from 'types/amm';
 
 import MigrateLiquidityStep1 from 'web/modals/migrate-liquidity/MigrateLiquidityStep1';
 
-import IconMigration from 'assets/icon-migration.svg';
+import IconMigration from 'assets/icons/actions/icon-migration-16.svg';
 
 import Button from 'basics/buttons/Button';
 

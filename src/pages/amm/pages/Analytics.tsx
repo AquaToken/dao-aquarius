@@ -19,7 +19,7 @@ import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween, respondDown } from 
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS, hexWithOpacity } from 'web/styles';
 
-import Plus from 'assets/icon-plus.svg';
+import Plus from 'assets/icons/nav/icon-plus-16.svg';
 
 import Button from 'basics/buttons/Button';
 

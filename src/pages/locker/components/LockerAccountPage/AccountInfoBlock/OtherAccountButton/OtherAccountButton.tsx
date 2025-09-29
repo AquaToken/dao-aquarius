@@ -6,7 +6,7 @@ import { ModalService } from 'services/globalServices';
 import { cardBoxShadow, flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import ArrowsCircle from 'assets/icon-arrows-circle.svg';
+import ArrowsCircle from 'assets/icons/arrows/arrows-circle-16.svg';
 
 import AccountInput from '../../../AccountInput/AccountInput';
 

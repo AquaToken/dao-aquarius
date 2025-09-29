@@ -19,8 +19,8 @@ import { StellarService } from 'services/globalServices';
 import { Asset as AssetType } from 'types/stellar';
 import { ClassicToken, Token, TokenType } from 'types/token';
 
-import ArrowDown from 'assets/icon-arrow-down.svg';
-import Fail from 'assets/icon-fail.svg';
+import ArrowDown from 'assets/icons/arrows/arrow-down-16.svg';
+import Fail from 'assets/icons/status/fail-red.svg';
 
 import Asset from 'basics/Asset';
 import Chips from 'basics/Chips';

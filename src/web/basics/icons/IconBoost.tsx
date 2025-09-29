@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { flexAllCenter } from 'web/mixins';
 import { COLORS } from 'web/styles';
 
-import IceSymbol from 'assets/icon-ice-symbol.svg';
+import IceSymbol from 'assets/icons/small-icons/icon-ice-symbol-10.svg';
 
 const IceSymbolWhite = styled(IceSymbol)`
     path {

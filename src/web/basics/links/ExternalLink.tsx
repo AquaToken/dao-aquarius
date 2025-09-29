@@ -2,9 +2,9 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
-import LinkArrowIcon from 'assets/icon-link-arrow.svg';
+import { COLORS } from 'web/styles';
 
-import { COLORS } from '../../styles';
+import LinkArrowIcon from 'assets/icons/arrows/arrow-alt2-16.svg';
 
 const styles = css`
     display: flex;
@@ -36,6 +36,10 @@ const LinkBodyDiv = styled.div`
 
 const LinkArrow = styled(LinkArrowIcon)`
     margin-left: 1rem;
+
+    path {
+        fill: ${COLORS.purple500};
+    }
 `;
 
 interface ExternalLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement & HTMLDivElement> {

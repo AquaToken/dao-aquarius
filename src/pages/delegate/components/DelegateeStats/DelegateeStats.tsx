@@ -26,10 +26,10 @@ import DelegateClaimModal from 'web/modals/DelegateClaimModal';
 import DelegateModal from 'web/modals/DelegateModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Discord from 'assets/discord.svg';
-import IconFail from 'assets/icon-fail.svg';
-import IconSuccess from 'assets/icon-success.svg';
-import Twitter from 'assets/twitter.svg';
+import Discord from 'assets/community/discord.svg';
+import Twitter from 'assets/community/twitter.svg';
+import IconFail from 'assets/icons/status/fail-red.svg';
+import IconSuccess from 'assets/icons/status/success.svg';
 
 import AssetLogo from 'basics/AssetLogo';
 import { Button } from 'basics/buttons';

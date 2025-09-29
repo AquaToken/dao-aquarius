@@ -4,8 +4,8 @@ import styled from 'styled-components';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Image from 'assets/airdrop2-image.svg';
-import Airdrop from 'assets/airdrop2.svg';
+import Image from 'assets/airdrop2-page/airdrop2-image.svg';
+import Airdrop from 'assets/airdrop2-page/airdrop2.svg';
 
 const Container = styled.section`
     position: relative;

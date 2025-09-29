@@ -16,7 +16,7 @@ import { StellarService } from 'services/globalServices';
 import { flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Aqua from 'assets/aqua-logo-small.svg';
+import Aqua from 'assets/aqua/aqua-logo.svg';
 
 import Label from 'basics/Label';
 import { ExternalLink } from 'basics/links';

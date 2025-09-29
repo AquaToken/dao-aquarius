@@ -14,12 +14,12 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { AuthService, ModalService } from 'services/globalServices';
 
-import Aqua from 'assets/aqua-logo-small.svg';
-import Ice from 'assets/ice-logo.svg';
-import IconCopy from 'assets/icon-copy.svg';
-import External from 'assets/icon-external-link.svg';
-import IconLogout from 'assets/icon-logout.svg';
-import IconPlus from 'assets/icon-plus.svg';
+import Aqua from 'assets/aqua/aqua-logo.svg';
+import IconCopy from 'assets/icons/actions/icon-copy-16.svg';
+import IconLogout from 'assets/icons/actions/icon-logout-16.svg';
+import External from 'assets/icons/nav/icon-external-link-16.svg';
+import IconPlus from 'assets/icons/nav/icon-plus-16.svg';
+import Ice from 'assets/tokens/ice-logo.svg';
 
 import Button from 'basics/buttons/Button';
 import CircleButton from 'basics/buttons/CircleButton';

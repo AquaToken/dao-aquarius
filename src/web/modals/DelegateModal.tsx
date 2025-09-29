@@ -23,8 +23,8 @@ import { ClassicToken } from 'types/token';
 import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Ice from 'assets/ice-logo.svg';
-import IconProfile from 'assets/icon-profile.svg';
+import IconProfile from 'assets/icons/nav/icon-profile.svg';
+import Ice from 'assets/tokens/ice-logo.svg';
 
 import AssetLogo from 'basics/AssetLogo';
 import { Button } from 'basics/buttons';

@@ -3,11 +3,11 @@ import styled from 'styled-components';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Freighter from 'assets/freighter-dark.svg';
-import HotWallet from 'assets/hot-wallet.svg';
-import LobstrIcon from 'assets/lobstr-name-logo.svg';
-import StellarTermIcon from 'assets/stellarterm-logo.svg';
-import StellarXIcon from 'assets/stellarx-logo.svg';
+import Freighter from 'assets/wallets/freighter/freighter-dark.svg';
+import HotWallet from 'assets/wallets/hot-wallet.svg';
+import LobstrIcon from 'assets/wallets/lobstr/lobstr-name-logo.svg';
+import StellarTermIcon from 'assets/wallets/stellarterm-logo.svg';
+import StellarXIcon from 'assets/wallets/stellarx-logo.svg';
 
 const Wrapper = styled.section`
     display: flex;

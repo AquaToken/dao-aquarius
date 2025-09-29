@@ -40,8 +40,8 @@ import {
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import IconClaim from 'assets/icon-claim.svg';
-import Info from 'assets/icon-info.svg';
+import IconClaim from 'assets/icons/actions/icon-claim-17x16.svg';
+import Info from 'assets/icons/status/icon-info-16.svg';
 
 import AssetLogo from 'basics/AssetLogo';
 import Button from 'basics/buttons/Button';

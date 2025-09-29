@@ -10,8 +10,8 @@ import { PoolIncentives, PoolProcessed } from 'types/amm';
 import { flexAllCenter, flexColumn, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS, FONT_SIZE, hexWithOpacity } from 'web/styles';
 
-import Arrows from 'assets/icon-arrows.svg';
-import Crown from 'assets/icon-crown.svg';
+import Arrows from 'assets/icons/arrows/arrows-swap.svg';
+import Crown from 'assets/icons/objects/icon-crown.svg';
 
 import AssetLogo from 'basics/AssetLogo';
 import Tooltip from 'basics/Tooltip';

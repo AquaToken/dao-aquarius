@@ -9,7 +9,7 @@ import { formatBalance } from 'helpers/format-number';
 import { cardBoxShadow, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import ArrowLeft from 'assets/icon-arrow-left.svg';
+import ArrowLeft from 'assets/icons/arrows/arrow-left-16.svg';
 
 import Button from 'basics/buttons/Button';
 import CircleButton from 'basics/buttons/CircleButton';

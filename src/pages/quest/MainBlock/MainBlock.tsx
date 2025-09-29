@@ -4,9 +4,9 @@ import styled from 'styled-components';
 import { commonMaxWidth, flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Pending from 'assets/icon-pending-purple.svg';
-import Present from 'assets/icon-present.svg';
-import Bg from 'assets/quests-page-bg.svg';
+import Present from 'assets/icons/objects/icon-present.svg';
+import Pending from 'assets/icons/status/pending-alt-32.svg';
+import Bg from 'assets/quest-page/quests-page-bg.svg';
 
 import AnimatedBorderedText from 'pages/quest/AnimatedBorderedText/AnimatedBorderedText';
 

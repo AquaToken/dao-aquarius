@@ -9,9 +9,9 @@ import { formatBalance } from 'helpers/format-number';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Aqua from 'assets/aqua-logo-small.svg';
-import Xlm from 'assets/xlm-logo.svg';
-import YXlm from 'assets/yxlm-logo.svg';
+import Aqua from 'assets/aqua/aqua-logo.svg';
+import Xlm from 'assets/tokens/xlm-logo.svg';
+import YXlm from 'assets/tokens/yxlm-logo.svg';
 
 import { ExternalLink } from 'basics/links';
 

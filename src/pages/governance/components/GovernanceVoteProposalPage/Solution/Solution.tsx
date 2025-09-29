@@ -3,8 +3,8 @@ import styled, { css } from 'styled-components';
 
 import { COLORS } from 'web/styles';
 
-import Fail from 'assets/icon-fail.svg';
-import Success from 'assets/icon-success.svg';
+import Fail from 'assets/icons/status/fail-red.svg';
+import Success from 'assets/icons/status/success.svg';
 
 import { VoteChoiceSimple } from '../../../api/types';
 

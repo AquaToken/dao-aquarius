@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { flexAllCenter } from 'web/mixins';
 import { COLORS } from 'web/styles';
 
-import Error from 'assets/icon-fail.svg';
+import Error from 'assets/icons/status/fail-red.svg';
 
 const Container = styled.div`
     ${flexAllCenter};

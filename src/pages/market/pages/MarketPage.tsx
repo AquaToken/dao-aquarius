@@ -15,7 +15,7 @@ import { contentWithSidebar, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import ArrowLeft from 'assets/icon-arrow-left.svg';
+import ArrowLeft from 'assets/icons/arrows/arrow-left-16.svg';
 
 import CircleButton from 'basics/buttons/CircleButton';
 import PageLoader from 'basics/loaders/PageLoader';

@@ -4,17 +4,17 @@ import styled from 'styled-components';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Bitnumb from 'assets/bitnumb.svg';
-import Coinone from 'assets/coinone.svg';
-import Freighter from 'assets/freighter.svg';
-import Gopax from 'assets/gopax.svg';
-import Ledger from 'assets/ledger.svg';
-import Lobstr from 'assets/lobstr-name-logo.svg';
-import Lumenswap from 'assets/lumenswap.svg';
-import Probit from 'assets/probit.svg';
-import Stellarterm from 'assets/stellarterm-logo.svg';
-import StellarX from 'assets/stellarx-logo.svg';
-import Upbit from 'assets/upbit.svg';
+import Bitnumb from 'assets/orgs/bitnumb.svg';
+import Coinone from 'assets/orgs/coinone.svg';
+import Gopax from 'assets/orgs/gopax.svg';
+import Lumenswap from 'assets/orgs/lumenswap.svg';
+import Probit from 'assets/orgs/probit.svg';
+import Upbit from 'assets/orgs/upbit.svg';
+import Freighter from 'assets/wallets/freighter/freighter.svg';
+import Ledger from 'assets/wallets/ledger.svg';
+import Lobstr from 'assets/wallets/lobstr/lobstr-name-logo.svg';
+import Stellarterm from 'assets/wallets/stellarterm-logo.svg';
+import StellarX from 'assets/wallets/stellarx-logo.svg';
 
 import { ExternalLink } from 'basics/links';
 

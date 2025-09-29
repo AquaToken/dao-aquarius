@@ -17,9 +17,9 @@ import { commonMaxWidth, respondDown, respondUp } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import ArrowAlt16 from 'assets/arrows/arrow-alt-16.svg';
-import BackgroundImageLeft from 'assets/delegate-bg-left.svg';
-import BackgroundImageRight from 'assets/delegate-bg-right.svg';
+import BackgroundImageLeft from 'assets/delegate/delegate-bg-left.svg';
+import BackgroundImageRight from 'assets/delegate/delegate-bg-right.svg';
+import ArrowAlt16 from 'assets/icons/arrows/arrow-alt-16.svg';
 
 import { Button } from 'basics/buttons';
 import { ToggleGroup } from 'basics/inputs';

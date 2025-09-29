@@ -29,9 +29,9 @@ import { SorobanToken, Token, TokenType } from 'types/token';
 import { customScroll, flexRowSpaceBetween, noSelect, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Arrow from 'assets/icon-arrow-right-long.svg';
-import Info from 'assets/icon-info.svg';
-import Revert from 'assets/icon-revert.svg';
+import Revert from 'assets/icons/actions/icon-revert-16x17.svg';
+import Arrow from 'assets/icons/arrows/arrow-alt2-16.svg';
+import Info from 'assets/icons/status/icon-info-16.svg';
 
 import Alert from 'basics/Alert';
 import Asset from 'basics/Asset';

@@ -8,7 +8,7 @@ import useAnimationEnd from 'hooks/useAnimationEnd';
 
 import { TOAST_TYPE } from 'services/toast.service';
 
-import IconClose from 'assets/icon-close-small.svg';
+import IconClose from 'assets/icons/nav/icon-close-alt-16.svg';
 
 import { IconFail, IconSuccess } from 'basics/icons';
 

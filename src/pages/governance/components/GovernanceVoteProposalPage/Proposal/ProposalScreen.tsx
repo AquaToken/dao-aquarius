@@ -14,10 +14,10 @@ import useAuthStore from 'store/authStore/useAuthStore';
 import { commonMaxWidth, flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import ArrowDown from 'assets/icon-arrow-down.svg';
-import ArrowLeft from 'assets/icon-arrow-left.svg';
-import IconEdit from 'assets/icon-edit.svg';
-import ExternalIcon from 'assets/icon-external-link.svg';
+import IconEdit from 'assets/icons/actions/icon-edit-16.svg';
+import ArrowDown from 'assets/icons/arrows/arrow-down-16.svg';
+import ArrowLeft from 'assets/icons/arrows/arrow-left-16.svg';
+import ExternalIcon from 'assets/icons/nav/icon-external-link-16.svg';
 
 import CircleButton from 'basics/buttons/CircleButton';
 import { ExternalLink } from 'basics/links';

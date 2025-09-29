@@ -10,7 +10,7 @@ import { ModalService } from 'services/globalServices';
 
 import { Delegatee as DelegateeType } from 'types/delegate';
 
-import Profile from 'assets/icon-profile.svg';
+import Profile from 'assets/icons/nav/icon-profile.svg';
 
 import { Button } from 'basics/buttons';
 

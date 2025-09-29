@@ -35,12 +35,12 @@ import { cardBoxShadow, flexAllCenter, flexColumnCenter, respondDown } from 'web
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import ArrowLeft from 'assets/icon-arrow-left.svg';
-import Dash from 'assets/icon-dash.svg';
-import Fail from 'assets/icon-fail.svg';
-import Minus from 'assets/icon-minus.svg';
-import Plus from 'assets/icon-plus.svg';
-import Success from 'assets/icon-success.svg';
+import ArrowLeft from 'assets/icons/arrows/arrow-left-16.svg';
+import Minus from 'assets/icons/nav/icon-minus-16.svg';
+import Plus from 'assets/icons/nav/icon-plus-16.svg';
+import Dash from 'assets/icons/objects/icon-dash-16.svg';
+import Fail from 'assets/icons/status/fail-red.svg';
+import Success from 'assets/icons/status/success.svg';
 
 import AssetDropdown from 'basics/asset-pickers/AssetDropdown';
 import Button from 'basics/buttons/Button';

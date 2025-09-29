@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { Token } from 'types/token';
 
-import Fail from 'assets/icon-fail.svg';
+import Fail from 'assets/icons/status/fail-red.svg';
 
 import AssetLogo from 'basics/AssetLogo';
 

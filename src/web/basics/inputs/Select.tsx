@@ -6,7 +6,7 @@ import useOnClickOutside from 'hooks/useOutsideClick';
 
 import { Breakpoints, COLORS } from 'web/styles';
 
-import ArrowDown from 'assets/icon-arrow-down.svg';
+import ArrowDown from 'assets/icons/arrows/arrow-down-16.svg';
 
 import { cardBoxShadow, customScroll, noSelect, respondDown } from '../../mixins';
 

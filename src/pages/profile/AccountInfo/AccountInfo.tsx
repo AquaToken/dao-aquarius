@@ -15,9 +15,9 @@ import {
 } from 'web/mixins';
 import { Breakpoints, COLORS, FONT_SIZE } from 'web/styles';
 
-import Copy from 'assets/icon-copy.svg';
-import External from 'assets/icon-external-link.svg';
-import MyAquarius from 'assets/my-aquarius.svg';
+import Copy from 'assets/icons/actions/icon-copy-16.svg';
+import External from 'assets/icons/nav/icon-external-link-16.svg';
+import MyAquarius from 'assets/profile-page/my-aquarius.svg';
 
 import CopyButton from 'basics/buttons/CopyButton';
 import Identicon from 'basics/Identicon';

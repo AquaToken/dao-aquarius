@@ -4,15 +4,15 @@ import styled from 'styled-components';
 import { commonMaxWidth, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import CMC from 'assets/coin-market-cap.svg';
-import Coingecko from 'assets/coingecko.svg';
-import DefiLlama from 'assets/defillama.svg';
-import Digifinex from 'assets/digifinex.svg';
-import Gopax from 'assets/gopax-logo.svg';
-import Latoken from 'assets/latoken.svg';
-import Probit from 'assets/probit-logo.svg';
-import Expert from 'assets/stellar-expert.svg';
-import XT from 'assets/xt.svg';
+import CMC from 'assets/orgs/coin-market-cap.svg';
+import Coingecko from 'assets/orgs/coingecko.svg';
+import DefiLlama from 'assets/orgs/defillama.svg';
+import Digifinex from 'assets/orgs/digifinex.svg';
+import Gopax from 'assets/orgs/gopax-logo.svg';
+import Latoken from 'assets/orgs/latoken.svg';
+import Probit from 'assets/orgs/probit-logo.svg';
+import Expert from 'assets/orgs/stellar-expert.svg';
+import XT from 'assets/orgs/xt.svg';
 
 import AquaLink from 'pages/token/components/AquaLinks/AquaLink/AquaLink';
 

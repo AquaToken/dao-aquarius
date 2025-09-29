@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { flexAllCenter } from 'web/mixins';
 import { COLORS } from 'web/styles';
 
-import SwapIcon from 'assets/icon-arrows-circle.svg';
+import SwapIcon from 'assets/icons/arrows/arrows-circle-16.svg';
 
 import PageLoader from 'basics/loaders/PageLoader';
 

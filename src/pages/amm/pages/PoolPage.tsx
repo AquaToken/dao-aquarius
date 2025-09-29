@@ -32,7 +32,7 @@ import { SorobanToken, TokenType } from 'types/token';
 import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import ArrowLeft from 'assets/icon-arrow-left.svg';
+import ArrowLeft from 'assets/icons/arrows/arrow-left-16.svg';
 
 import AssetLogo from 'basics/AssetLogo';
 import Button from 'basics/buttons/Button';

@@ -13,8 +13,8 @@ import { ClassicToken, Token, TokenType } from 'types/token';
 import { flexAllCenter } from 'web/mixins';
 import { COLORS } from 'web/styles';
 
-import UnknownLogo from 'assets/asset-unknown-logo.svg';
-import SorobanLogo from 'assets/soroban-token-logo.svg';
+import UnknownLogo from 'assets/tokens/asset-unknown-logo.svg';
+import SorobanLogo from 'assets/tokens/soroban-token-logo.svg';
 
 import { CircleLoader } from './loaders';
 
