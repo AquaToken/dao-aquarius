@@ -80,7 +80,8 @@ const BalancesBlock = () => {
                                     children:
                                         +nativeBalance > 1e-7
                                             ? `$${formatBalance(
-                                                  nativeBalance * StellarService.priceLumenUsd,
+                                                  nativeBalance *
+                                                      StellarService.price.priceLumenUsd,
                                                   true,
                                               )}`
                                             : '$0.00',

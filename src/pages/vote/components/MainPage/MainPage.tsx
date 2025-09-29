@@ -23,7 +23,7 @@ import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService, StellarService } from 'services/globalServices';
-import { StellarEvents } from 'services/stellar.service';
+import { StellarEvents } from 'services/stellar/events/events';
 
 import { ClassicToken } from 'types/token';
 
@@ -564,11 +564,11 @@ const MainPage = (): React.ReactNode => {
 
         setPairsLoading(true);
 
-        if (!StellarService.isClaimableBalancesLoaded) {
+        if (!StellarService.cb.isClaimableBalancesLoaded) {
             return;
         }
 
-        const keys = StellarService.getKeysSimilarToMarketKeys(account.accountId());
+        const keys = StellarService.cb.getKeysSimilarToMarketKeys(account.accountId());
 
         getUserPairsList(keys).then(result => {
             setPairs(result);
@@ -588,7 +588,7 @@ const MainPage = (): React.ReactNode => {
             setPairsLoading(true);
         }
 
-        const keys = StellarService.getKeysSimilarToMarketKeys(account.accountId());
+        const keys = StellarService.cb.getKeysSimilarToMarketKeys(account.accountId());
 
         getUserPairsList(keys).then(result => {
             setPairs(result);
@@ -880,7 +880,7 @@ const MainPage = (): React.ReactNode => {
                 )}
                 {sort === SortTypes.yourVotes &&
                     !pairs.length &&
-                    StellarService.isClaimableBalancesLoaded &&
+                    StellarService.cb.isClaimableBalancesLoaded &&
                     !pairsLoading && <SearchEnabled>No markets found</SearchEnabled>}
                 {searchBase && searchCounter && !pairs.length && (
                     <CreatePair onClick={() => goToMarketPage()}>

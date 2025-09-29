@@ -16,7 +16,8 @@ import { createLumen } from 'helpers/token';
 import { LumenInfo } from 'store/assetsStore/reducer';
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
-import { ModalService, StellarService } from 'services/globalServices';
+import { ModalService } from 'services/globalServices';
+import { resolveToml } from 'services/stellar/utils/resolvers';
 
 import { ExpertAssetData } from 'types/api-stellar-expert';
 import { AssetInfo } from 'types/asset-info';
@@ -143,7 +144,7 @@ const AssetInfoModal = ({ params }: ModalProps<AssetInfoModalParams>): React.Rea
         : assetsInfo.get(getAssetString(asset));
 
     useEffect(() => {
-        StellarService.resolveToml(home_domain)
+        resolveToml(home_domain)
             .then(res => {
                 setTomlInfo(res);
             })

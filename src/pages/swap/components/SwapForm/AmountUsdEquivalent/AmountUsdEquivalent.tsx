@@ -116,7 +116,9 @@ const AmountUsdEquivalent = ({ amount, asset, sourceAmount, sourceAsset }: Props
             <span>
                 $
                 {formatBalance(
-                    +(Number(amount) * Number(price) * StellarService.priceLumenUsd).toFixed(2),
+                    +(Number(amount) * Number(price) * StellarService.price.priceLumenUsd).toFixed(
+                        2,
+                    ),
                     true,
                 )}
             </span>

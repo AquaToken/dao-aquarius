@@ -25,8 +25,7 @@ import { useDebounce } from 'hooks/useDebounce';
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { ModalService } from 'services/globalServices';
-import { getIncentivesConfig, getPoolIncentivesMap } from 'services/soroban/contracts/ammContract';
+import { ModalService, SorobanService } from 'services/globalServices';
 
 import { PoolProcessed } from 'types/amm';
 import { Token } from 'types/token';
@@ -176,7 +175,7 @@ const AddIncentivePage = () => {
     const { isLogged } = useAuthStore();
 
     useEffect(() => {
-        getIncentivesConfig().then(setConfig);
+        SorobanService.amm.getIncentivesConfig().then(setConfig);
     }, []);
 
     useEffect(() => {
@@ -288,7 +287,7 @@ const AddIncentivePage = () => {
         setPoolConfig(null);
         setFirstStepPending(true);
 
-        getPoolIncentivesMap(selectedMarket.address).then(res => {
+        SorobanService.amm.getPoolIncentivesMap(selectedMarket.address).then(res => {
             setPoolConfig(res);
 
             if (res.length !== MAX_INCENTIVES_TOKENS_PER_POOL) {

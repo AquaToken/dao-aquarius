@@ -7,17 +7,17 @@ import { getNetworkPassphrase } from 'helpers/env';
 
 import { getSavedAuthData } from 'store/authStore/auth-helpers';
 
-import EventService from './event.service';
+import { AuthEvent, AuthPayload } from 'services/auth/events/events';
 
-export enum LobstrExtensionEvents {
-    login = 'login',
-}
+import EventService from '../../event.service';
 
-type LobstrExtensionPayload = {
-    publicKey: string;
-};
 export default class LobstrExtensionServiceClass {
-    event: EventService<LobstrExtensionEvents, LobstrExtensionPayload> = new EventService();
+    private readonly event: EventService<AuthEvent, AuthPayload>;
+
+    constructor(event: EventService<AuthEvent, AuthPayload>) {
+        this.event = event;
+    }
+
     get isConnected(): Promise<boolean> {
         return isConnected();
     }
@@ -26,7 +26,7 @@ export default class LobstrExtensionServiceClass {
         const publicKey = await getPublicKey();
 
         this.event.trigger({
-            type: LobstrExtensionEvents.login,
+            type: AuthEvent.lobstrExtensionLogin,
             publicKey,
         });
     }

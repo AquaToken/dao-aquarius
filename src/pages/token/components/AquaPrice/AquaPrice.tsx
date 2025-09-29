@@ -73,7 +73,7 @@ const AquaPrice = ({ ...props }) => {
     const [expertData, setExpertData] = useState<ExpertAssetData>(undefined);
 
     useEffect(() => {
-        StellarService.getAquaUsdPrice().then(res => {
+        StellarService.price.getAquaUsdPrice().then(res => {
             setPrice(res.toFixed(7));
         });
         getAssetDetails(getAquaAssetData().aquaStellarAsset).then(res => {

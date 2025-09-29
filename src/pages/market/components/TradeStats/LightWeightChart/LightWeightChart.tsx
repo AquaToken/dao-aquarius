@@ -10,7 +10,7 @@ import { useDebounce } from 'hooks/useDebounce';
 
 import { StellarService } from 'services/globalServices';
 
-import { Asset } from 'types/stellar';
+import { ClassicToken } from 'types/token';
 
 import { flexAllCenter } from 'web/mixins';
 import { COLORS } from 'web/styles';
@@ -161,8 +161,8 @@ const processNextData = (newData, oldData, period) => {
 const LIMIT = 50;
 
 interface LightWeightChartProps {
-    base: Asset;
-    counter: Asset;
+    base: ClassicToken;
+    counter: ClassicToken;
     period: number;
 }
 
@@ -314,15 +314,15 @@ const LightWeightChart = ({ base, counter, period }: LightWeightChartProps): Rea
         const endDate = Date.now();
         const startDate = endDate - AGGREGATIONS_DEPS[period];
 
-        StellarService.getTradeAggregations(base, counter, startDate, endDate, period, LIMIT).then(
-            res => {
+        StellarService.horizon
+            .getTradeAggregations(base, counter, startDate, endDate, period, LIMIT)
+            .then(res => {
                 setTradeAggregations(res.records);
                 if (res.records.length === LIMIT) {
                     setNextTradeAggregations(res.next);
                 }
                 setLoading(false);
-            },
-        );
+            });
     }, [period]);
 
     useEffect(() => {

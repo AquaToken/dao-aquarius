@@ -11,8 +11,8 @@ import { useIsMounted } from 'hooks/useIsMounted';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-connect.service';
 import { StellarService, ToastService } from 'services/globalServices';
-import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
 
 import { ModalProps } from 'types/modal';
 import { ClassicToken } from 'types/token';
@@ -140,7 +140,7 @@ const CreatePairModal = ({ params, close }: ModalProps<CreatePairModalParams>): 
         setPending(true);
 
         try {
-            const tx = await StellarService.createMarketKeyTx(
+            const tx = await StellarService.tx.createMarketKeyTx(
                 account.accountId(),
                 baseInstance,
                 counterInstance,

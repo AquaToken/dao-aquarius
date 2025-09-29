@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { getIsTestnetEnv } from 'helpers/env';
 
 import { StellarService } from 'services/globalServices';
+import { getFederation } from 'services/stellar/utils/resolvers';
 
 import { cardBoxShadow, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -77,10 +78,9 @@ const Eligibility = forwardRef(
         useEffect(() => {
             setFederation(null);
             if (accountEligibility) {
-                StellarService.loadAccount(accountEligibility.account_id)
-                    .then(account =>
-                        StellarService.resolveFederation(account.home_domain, account.account_id),
-                    )
+                StellarService.account
+                    .loadAccount(accountEligibility.account_id)
+                    .then(account => getFederation(account.home_domain, account.account_id))
                     .then(res => {
                         setFederation(res);
                     });

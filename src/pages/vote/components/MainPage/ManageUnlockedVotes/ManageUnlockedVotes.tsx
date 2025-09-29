@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { StellarService } from 'services/globalServices';
-import { StellarEvents } from 'services/stellar.service';
+import { StellarEvents } from 'services/stellar/events/events';
 
 import { ModalProps } from 'types/modal';
 
@@ -43,7 +43,8 @@ const ClaimAllModal = ({ params, close }: ModalProps<ClaimAllModalParams>) => {
         const processedClaims = pairs.reduce((acc, pair) => {
             acc = [
                 ...acc,
-                ...StellarService.getPairVotes(pair, account.accountId())
+                ...StellarService.cb
+                    .getPairVotes(pair, account.accountId())
                     .filter(claim => new Date(claim.claimBackDate) < new Date())
                     .map(item => ({ ...pair, ...item })),
             ];

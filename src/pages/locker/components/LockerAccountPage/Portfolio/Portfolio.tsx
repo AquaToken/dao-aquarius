@@ -128,7 +128,7 @@ const Portfolio = ({
     const [price, setPrice] = useState(null);
 
     useEffect(() => {
-        StellarService.getAquaPrice().then(res => {
+        StellarService.price.getAquaPrice().then(res => {
             setPrice(res);
         });
     }, []);

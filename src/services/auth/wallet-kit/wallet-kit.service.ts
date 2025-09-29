@@ -1,13 +1,13 @@
 import {
+    AlbedoModule,
+    FREIGHTER_ID,
+    FreighterModule,
+    HanaModule,
+    HotWalletModule,
+    RabetModule,
     StellarWalletsKit,
     WalletNetwork,
-    FreighterModule,
-    FREIGHTER_ID,
     xBullModule,
-    AlbedoModule,
-    HanaModule,
-    RabetModule,
-    HotWalletModule,
 } from '@creit.tech/stellar-wallets-kit';
 import { WatchWalletChanges } from '@stellar/freighter-api';
 import * as StellarSdk from '@stellar/stellar-sdk';
@@ -15,30 +15,23 @@ import { TransactionBuilder } from '@stellar/stellar-sdk';
 
 import { getNetworkPassphrase } from 'helpers/env';
 
+import { AuthEvent, AuthPayload } from 'services/auth/events/events';
 import { ModalService, ToastService } from 'services/globalServices';
 
-import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
-import WalletKitModal from 'web/modals/WalletKitModal';
+import ChooseLoginMethodModal from 'modals/auth/ChooseLoginMethodModal';
+import WalletKitModal from 'modals/WalletKitModal';
 
-import EventService from './event.service';
-
-export enum WalletKitEvents {
-    login = 'login',
-    logout = 'logout',
-    accountChanged = 'accountChanged',
-}
-
-type WalletKitPayload = {
-    publicKey?: string;
-    id?: string;
-};
+import EventService from '../../event.service';
 
 export default class WalletKitServiceClass {
+    private readonly event: EventService<AuthEvent, AuthPayload>;
+
     walletKit: StellarWalletsKit;
-    event: EventService<WalletKitEvents, WalletKitPayload> = new EventService();
     watcher: WatchWalletChanges | null = null;
 
-    constructor() {
+    constructor(event: EventService<AuthEvent, AuthPayload>) {
+        this.event = event;
+
         this.walletKit = new StellarWalletsKit({
             network: getNetworkPassphrase() as unknown as WalletNetwork,
             modules: [
@@ -62,7 +55,7 @@ export default class WalletKitServiceClass {
                 return;
             }
             this.event.trigger({
-                type: WalletKitEvents.accountChanged,
+                type: AuthEvent.walletKitAccountChanged,
                 publicKey: address,
             });
         });
@@ -98,7 +91,7 @@ export default class WalletKitServiceClass {
             }
 
             this.event.trigger({
-                type: WalletKitEvents.login,
+                type: AuthEvent.walletKitLogin,
                 publicKey: address,
                 id,
             });

@@ -12,7 +12,7 @@ import { createAsset } from 'helpers/token';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { StellarService } from 'services/globalServices';
-import { StellarEvents } from 'services/stellar.service';
+import { StellarEvents } from 'services/stellar/events/events';
 
 import { ClaimableBalance } from 'types/stellar';
 
@@ -320,7 +320,7 @@ const Balances = ({ ammAquaBalance }: BalancesProps): React.ReactNode => {
     useEffect(() => {
         const unsub = StellarService.event.sub((event: { type: StellarEvents }) => {
             if (event.type === StellarEvents.claimableUpdate) {
-                setLocks(StellarService.getLocks(account.accountId()));
+                setLocks(StellarService.cb.getLocks(account.accountId()));
             }
         });
 
@@ -328,7 +328,7 @@ const Balances = ({ ammAquaBalance }: BalancesProps): React.ReactNode => {
     }, []);
 
     useEffect(() => {
-        setLocks(StellarService.getLocks(account.accountId()));
+        setLocks(StellarService.cb.getLocks(account.accountId()));
     }, []);
 
     const aquaBalance = account.getAquaBalance();

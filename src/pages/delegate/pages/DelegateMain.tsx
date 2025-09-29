@@ -11,7 +11,7 @@ import { useUpdateIndex } from 'hooks/useUpdateIndex';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService, StellarService } from 'services/globalServices';
-import { StellarEvents } from 'services/stellar.service';
+import { StellarEvents } from 'services/stellar/events/events';
 
 import { commonMaxWidth, respondDown, respondUp } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
@@ -205,11 +205,11 @@ const DelegateMain = () => {
         if (!account) {
             return;
         }
-        setDelegators(StellarService.getDelegatorLocks(account.accountId()));
+        setDelegators(StellarService.cb.getDelegatorLocks(account.accountId()));
 
         const unsub = StellarService.event.sub(({ type }) => {
             if (type === StellarEvents.claimableUpdate) {
-                setDelegators(StellarService.getDelegatorLocks(account.accountId()));
+                setDelegators(StellarService.cb.getDelegatorLocks(account.accountId()));
             }
         });
 

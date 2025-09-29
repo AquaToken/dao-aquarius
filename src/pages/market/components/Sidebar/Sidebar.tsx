@@ -10,7 +10,7 @@ import { formatBalance } from 'helpers/format-number';
 import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService, StellarService } from 'services/globalServices';
-import { StellarEvents } from 'services/stellar.service';
+import { StellarEvents } from 'services/stellar/events/events';
 
 import { Asset } from 'types/stellar';
 
@@ -203,19 +203,20 @@ const Sidebar = ({
             ?.votes_sum ?? 0;
 
     const getUpVotesValue = () =>
-        +StellarService.getMarketVotesValue(
+        +StellarService.cb.getMarketVotesValue(
             votesData.account_id,
             account?.accountId(),
             aquaStellarAsset,
-        ) + +StellarService.getMarketVotesValue(votesData.account_id, account?.accountId(), UP_ICE);
+        ) +
+        +StellarService.cb.getMarketVotesValue(votesData.account_id, account?.accountId(), UP_ICE);
 
     const getDownVotesValue = () =>
-        +StellarService.getMarketVotesValue(
+        +StellarService.cb.getMarketVotesValue(
             votesData.downvote_account_id,
             account?.accountId(),
             aquaStellarAsset,
         ) +
-        +StellarService.getMarketVotesValue(
+        +StellarService.cb.getMarketVotesValue(
             votesData.downvote_account_id,
             account?.accountId(),
             DOWN_ICE,

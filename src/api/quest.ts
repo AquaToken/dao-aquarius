@@ -23,7 +23,7 @@ export const getChallenge = (
         .get<ChallengeResponse>(`${API_URL}confirm-participation?account=${accountId}`)
         .then(
             ({ data }) =>
-                StellarService.buildTxFromXdr(data.transaction) as Transaction<
+                StellarService.tx.buildTxFromXdr(data.transaction) as Transaction<
                     Memo<MemoType>,
                     Operation[]
                 >,

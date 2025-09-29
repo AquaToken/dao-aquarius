@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { processIceTx } from 'api/ice';
+
 import { getAssetString } from 'helpers/assets';
 import { getDateString } from 'helpers/date';
 import ErrorHandler from 'helpers/error-handler';
@@ -12,9 +14,9 @@ import { useIsMounted } from 'hooks/useIsMounted';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
+import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-connect.service';
 import { StellarService, ToastService } from 'services/globalServices';
-import { StellarEvents } from 'services/stellar.service';
-import { BuildSignAndSubmitStatuses } from 'services/wallet-connect.service';
+import { StellarEvents } from 'services/stellar/events/events';
 
 import { Delegatee } from 'types/delegate';
 import { ModalProps } from 'types/modal';
@@ -111,17 +113,23 @@ const DelegateClaimModal = ({ params }: ModalProps<Params>) => {
             return;
         }
         setClaims(
-            StellarService.getDelegateLocks(account.accountId()).filter(cb =>
-                cb.claimants.some(({ destination }) => destination === delegatee.account),
-            ),
+            StellarService.cb
+                .getDelegateLocks(account.accountId())
+                .filter(cb =>
+                    cb.claimants.some(({ destination }) => destination === delegatee.account),
+                ),
         );
 
         const unsub = StellarService.event.sub(({ type }) => {
             if (type === StellarEvents.claimableUpdate) {
                 setClaims(
-                    StellarService.getDelegateLocks(account.accountId()).filter(cb =>
-                        cb.claimants.some(({ destination }) => destination === delegatee.account),
-                    ),
+                    StellarService.cb
+                        .getDelegateLocks(account.accountId())
+                        .filter(cb =>
+                            cb.claimants.some(
+                                ({ destination }) => destination === delegatee.account,
+                            ),
+                        ),
                 );
             }
         });
@@ -160,7 +168,7 @@ const DelegateClaimModal = ({ params }: ModalProps<Params>) => {
             setPending(true);
 
             const ops = [...selectedClaims].reduce(
-                (acc, id) => [...acc, ...StellarService.createClaimOperations(id)],
+                (acc, id) => [...acc, ...StellarService.op.createClaimOperations(id)],
                 [],
             );
 
@@ -172,16 +180,16 @@ const DelegateClaimModal = ({ params }: ModalProps<Params>) => {
                 claims.some(({ id, asset }) => cbId === id && asset === getAssetString(GOV_ICE)),
             );
 
-            const tx = await StellarService.buildTx(account, ops);
+            const tx = await StellarService.tx.buildTx(account, ops);
 
             let processedTx;
 
             if (hasUpIce) {
-                processedTx = await StellarService.processIceTx(tx, UP_ICE);
+                processedTx = await processIceTx(tx, UP_ICE);
             }
 
             if (hasGovIce) {
-                processedTx = await StellarService.processIceTx(tx, GOV_ICE);
+                processedTx = await processIceTx(tx, GOV_ICE);
             }
 
             const result = await account.signAndSubmitTx(processedTx);
@@ -204,7 +212,7 @@ const DelegateClaimModal = ({ params }: ModalProps<Params>) => {
                 return;
             }
             ToastService.showSuccessToast('Your delegates has been claimed back');
-            StellarService.getClaimableBalances(account.accountId());
+            StellarService.cb.getClaimableBalances(account.accountId());
         } catch (e) {
             const errorText = ErrorHandler(e);
             ToastService.showErrorToast(errorText);
