@@ -7,13 +7,13 @@ import { MainRoutes } from 'constants/routes';
 import { cardBoxShadow, commonMaxWidth, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import IceLogoIcon from 'assets/ice-logo.svg';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import BG from 'assets/ice-pattern.svg?url';
+import IconIce from 'assets/icons/small-icons/icon-ice-symbol-10.svg?url';
+import BG from 'assets/token-page/ice-pattern.svg?url';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import IconIce from 'assets/icon-ice-symbol.svg?url';
+import IceLogoIcon from 'assets/tokens/ice-logo.svg';
 
 import { Button } from 'basics/buttons';
 

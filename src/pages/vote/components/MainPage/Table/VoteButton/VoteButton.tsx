@@ -12,9 +12,9 @@ import { StellarEvents } from 'services/stellar/events/events';
 import { flexRowSpaceBetween } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 
-import IconDislike from 'assets/icon-dislike-black.svg';
-import IconLike from 'assets/icon-like-white.svg';
-import IconTick from 'assets/icon-tick-16.svg';
+import IconDislike from 'assets/icons/actions/icon-dislike-alt-16.svg';
+import IconLike from 'assets/icons/actions/icon-like-16.svg';
+import IconTick from 'assets/icons/small-icons/check/icon-check-16.svg';
 
 import Button from 'basics/buttons/Button';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';

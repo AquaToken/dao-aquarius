@@ -26,10 +26,10 @@ import { ModalProps } from 'types/modal';
 import { flexAllCenter, flexRowSpaceBetween } from 'web/mixins';
 import { COLORS } from 'web/styles';
 
-import DIce from 'assets/dice-logo.svg';
-import Ice from 'assets/ice-logo.svg';
-import Fail from 'assets/icon-fail.svg';
-import Success from 'assets/icon-success.svg';
+import Fail from 'assets/icons/status/fail-red.svg';
+import Success from 'assets/icons/status/success.svg';
+import DIce from 'assets/tokens/dice-logo.svg';
+import Ice from 'assets/tokens/ice-logo.svg';
 
 import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';

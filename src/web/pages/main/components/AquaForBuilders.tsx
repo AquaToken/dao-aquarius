@@ -5,9 +5,9 @@ import { AQUA_DOCS_URL } from 'constants/urls';
 import { flexAllCenter, fullWidthSectionStyles, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS, PAGE_PADDINGS } from 'web/styles';
 
-import ArrowAlt16 from 'assets/arrows/arrow-alt-16.svg';
+import ArrowAlt16 from 'assets/icons/arrows/arrow-alt-16.svg';
+import IconCheck16 from 'assets/icons/small-icons/check/icon-check-16.svg';
 import AquaBuildersIcon from 'assets/main-page/aqua-builders.svg';
-import IconCheck16 from 'assets/small-icons/check/icon-check-16.svg';
 
 import { Button } from 'basics/buttons';
 import { BlankExternalLink } from 'basics/links';

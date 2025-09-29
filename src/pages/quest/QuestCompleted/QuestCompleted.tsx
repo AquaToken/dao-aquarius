@@ -4,9 +4,9 @@ import styled from 'styled-components';
 import { cardBoxShadow, flexColumnCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Discord from 'assets/discord.svg';
-import Telegram from 'assets/telegram-new.svg';
-import X from 'assets/twitter.svg';
+import Discord from 'assets/community/discord.svg';
+import Telegram from 'assets/community/telegram-new.svg';
+import X from 'assets/community/twitter.svg';
 
 import { Button } from 'basics/buttons';
 

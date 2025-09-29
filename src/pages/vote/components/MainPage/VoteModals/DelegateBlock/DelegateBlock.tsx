@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { flexColumn } from 'web/mixins';
 import { COLORS } from 'web/styles';
 
-import Logo from 'assets/delegate-promo-small.svg';
+import Logo from 'assets/delegate/delegate-promo-small.svg';
 
 import { ExternalLink } from 'basics/links';
 

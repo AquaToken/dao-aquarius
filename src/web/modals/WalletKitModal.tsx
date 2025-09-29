@@ -6,7 +6,7 @@ import { AuthService } from 'services/globalServices';
 
 import { ModalProps } from 'types/modal';
 
-import ArrowRightIcon from 'assets/icon-arrow-right.svg';
+import ArrowRightIcon from 'assets/icons/arrows/arrow-right-16.svg';
 
 import Label from 'basics/Label';
 import { ExternalLink } from 'basics/links';

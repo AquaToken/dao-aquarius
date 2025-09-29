@@ -27,8 +27,8 @@ import { Vote } from 'types/voting-tool';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Dislike from 'assets/icon-dislike-gray.svg';
-import LinkIcon from 'assets/icon-external-link.svg';
+import Dislike from 'assets/icons/actions/icon-dislike-alt-16.svg';
+import LinkIcon from 'assets/icons/nav/icon-external-link-16.svg';
 
 import Button from 'basics/buttons/Button';
 import Checkbox from 'basics/inputs/Checkbox';
@@ -57,6 +57,12 @@ const SelectAllMobile = styled(Checkbox)`
     ${respondDown(Breakpoints.md)`
         display: flex;
    `}
+`;
+
+const DislikeGray = styled(Dislike)`
+    path {
+        fill: ${COLORS.gray200};
+    }
 `;
 
 const TooltipInner = styled.span`
@@ -388,7 +394,7 @@ const VotesList = ({ votes, pair, withoutClaimDate }: VotesListProps): React.Rea
                                             }
                                             showOnHover
                                         >
-                                            <Dislike />
+                                            <DislikeGray />
                                         </TooltipStyled>
                                     )}
                                 </>

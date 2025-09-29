@@ -15,8 +15,8 @@ import { cardBoxShadow, flexAllCenter, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Fail from 'assets/icon-fail.svg';
-import Success from 'assets/icon-success.svg';
+import Fail from 'assets/icons/status/fail-red.svg';
+import Success from 'assets/icons/status/success.svg';
 
 import Button from 'basics/buttons/Button';
 import { ExternalLink } from 'basics/links';

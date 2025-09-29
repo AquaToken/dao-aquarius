@@ -13,9 +13,9 @@ import { ModalProps } from 'types/modal';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Aqua from 'assets/aqua-logo-small.svg';
-import Close from 'assets/icon-close-small-purple.svg';
-import Info from 'assets/icon-info.svg';
+import Aqua from 'assets/aqua/aqua-logo.svg';
+import Close from 'assets/icons/nav/icon-close-alt-16.svg';
+import Info from 'assets/icons/status/icon-info-16.svg';
 
 import Asset from 'basics/Asset';
 import { ExternalLink } from 'basics/links';
@@ -131,6 +131,12 @@ export const CloseButton = styled.div`
     }
 `;
 
+const ClosePurple = styled(Close)`
+    path {
+        fill: ${COLORS.purple500};
+    }
+`;
+
 export const ExternalLinkWeb = styled(ExternalLink)`
     ${respondDown(Breakpoints.md)`
          display: none;
@@ -210,7 +216,7 @@ const BribesModal = ({ params }: ModalProps<{ pair: PairStats }>) => {
                         <HowItWorksFooter>
                             <CloseButton onClick={() => setShowHowItWorks(false)}>
                                 <span>Close</span>
-                                <Close />
+                                <ClosePurple />
                             </CloseButton>
                         </HowItWorksFooter>
                     </HowItWorks>

@@ -14,7 +14,7 @@ import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS, HEADER_HEIGHT, Z_INDEX } from 'web/styles';
 
 import AquaLogo from 'assets/aqua/aqua-logo-text.svg';
-import IconProfile from 'assets/icon-profile.svg';
+import IconProfile from 'assets/icons/nav/icon-profile.svg';
 
 import { ActiveProposals } from 'components/Header/ActiveProposals/ActiveProposals';
 import ExpandedMenu from 'components/Header/ExpandedMenu/ExpandedMenu';

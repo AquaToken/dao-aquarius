@@ -15,7 +15,7 @@ import { cardBoxShadow, flexAllCenter } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { COLORS } from 'web/styles';
 
-import Success from 'assets/icon-success-gradient.svg';
+import Success from 'assets/icons/status/success-gradient-32.svg';
 
 import { Button } from 'basics/buttons';
 

@@ -11,7 +11,7 @@ import { PoolProcessed } from 'types/amm';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import IceSymbol from 'assets/icon-ice-symbol.svg';
+import IceSymbol from 'assets/icons/small-icons/icon-ice-symbol-10.svg';
 
 import { Button } from 'basics/buttons';
 import Label from 'basics/Label';

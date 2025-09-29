@@ -10,8 +10,8 @@ import { formatBalance, roundToPrecision } from 'helpers/format-number';
 import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import IconFail from 'assets/icon-fail.svg';
-import IconSuccess from 'assets/icon-success.svg';
+import IconFail from 'assets/icons/status/fail-red.svg';
+import IconSuccess from 'assets/icons/status/success.svg';
 
 import CurrentResults from './CurrentResults/CurrentResults';
 import YourVotes from './YourVotes/YourVotes';

@@ -14,11 +14,11 @@ import useOnClickOutside from 'hooks/useOutsideClick';
 
 import { ModalProps } from 'types/modal';
 
-import CloseIcon from 'assets/icon-close.svg';
-import ArrowRight from 'assets/icon-link-arrow.svg';
+import { cardBoxShadow, flexAllCenter, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS, Z_INDEX } from 'web/styles';
 
-import { cardBoxShadow, flexAllCenter, respondDown } from '../mixins';
-import { Breakpoints, COLORS, Z_INDEX } from '../styles';
+import ArrowRight from 'assets/icons/arrows/arrow-alt2-16.svg';
+import CloseIcon from 'assets/icons/nav/icon-close-16.svg';
 
 const ModalWrapper = styled.div`
     position: fixed;
@@ -107,6 +107,10 @@ const CloseButton = styled.div<{ $withBackground: boolean }>`
 
 const ArrowLeft = styled(ArrowRight)`
     transform: rotate(180deg);
+
+    path {
+        fill: ${COLORS.purple500};
+    }
 `;
 
 const BackButton = styled(CloseButton)`

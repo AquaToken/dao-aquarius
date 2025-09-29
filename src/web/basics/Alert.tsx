@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { flexAllCenter } from 'web/mixins';
 import { COLORS } from 'web/styles';
 
-import IconAlert from 'assets/icon-alert.svg';
+import IconAlert from 'assets/icons/status/alert-22.svg';
 
 const Container = styled.div`
     display: flex;

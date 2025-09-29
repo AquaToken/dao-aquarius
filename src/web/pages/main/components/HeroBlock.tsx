@@ -8,7 +8,7 @@ import { fullWidthSectionStyles, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS, HEADER_HEIGHT, PAGE_PADDINGS } from 'web/styles';
 
 import AquaLogo from 'assets/aqua/aqua-logo-text.svg';
-import ArrowAlt16 from 'assets/arrows/arrow-alt-16.svg';
+import ArrowAlt16 from 'assets/icons/arrows/arrow-alt-16.svg';
 import HandLeftBottomLight from 'assets/main-page/hand-left-bottom-light.svg';
 import HandLeftBottom from 'assets/main-page/hand-left-bottom.svg';
 import HandTopRightLight from 'assets/main-page/hand-top-right-light.svg';

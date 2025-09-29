@@ -12,9 +12,9 @@ import { cardBoxShadow } from 'web/mixins';
 import MigrateLiquidityStep1 from 'web/modals/migrate-liquidity/MigrateLiquidityStep1';
 import { COLORS } from 'web/styles';
 
-import IconDeposit from 'assets/icon-deposit.svg';
-import IconThreeDots from 'assets/icon-three-dots.svg';
-import IconWithdraw from 'assets/icon-withdraw.svg';
+import IconDeposit from 'assets/icons/actions/icon-deposit-16.svg';
+import IconWithdraw from 'assets/icons/actions/icon-withdraw-16.svg';
+import IconThreeDots from 'assets/icons/nav/icon-three-dots-10x16.svg';
 
 import Button from 'basics/buttons/Button';
 

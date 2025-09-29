@@ -6,9 +6,9 @@ import { formatBalance } from 'helpers/format-number';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import AquaGray from 'assets/aqua-logo-gray.svg';
-import Aqua from 'assets/aqua-logo-small.svg';
-import Down from 'assets/icon-arrow-down-long.svg';
+import AquaGray from 'assets/aqua/aqua-logo-gray.svg';
+import Aqua from 'assets/aqua/aqua-logo.svg';
+import Down from 'assets/icons/arrows/arrow-down-alt.svg';
 
 import { AccountEligibility } from '../../../api/types';
 

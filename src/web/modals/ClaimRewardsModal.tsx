@@ -20,7 +20,7 @@ import { Int128Parts } from 'types/stellar';
 import { flexAllCenter, flexColumn, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Warning from 'assets/icon-warning-orange.svg';
+import Warning from 'assets/icons/status/warning-16.svg';
 
 import { Button } from 'basics/buttons';
 import { Checkbox } from 'basics/inputs';
@@ -36,6 +36,12 @@ const CheckboxMobile = styled(Checkbox)`
     ${respondDown(Breakpoints.md)`
         display: block;
     `}
+`;
+
+const WarningOrange = styled(Warning)`
+    path {
+        fill: ${COLORS.orange500};
+    }
 `;
 
 const Container = styled.div`
@@ -241,7 +247,7 @@ const ClaimRewardsModal = ({ confirm, close }: ModalProps<never>) => {
                     </>
                 ) : (
                     <Container>
-                        <Warning />
+                        <WarningOrange />
                         <span>Nothing to claim</span>
                         <Button fullWidth isBig onClick={() => close()}>
                             close

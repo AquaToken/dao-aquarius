@@ -4,8 +4,8 @@ import styled from 'styled-components';
 import { fullWidthSectionStyles, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS, MAX_WIDTHS, PAGE_PADDINGS } from 'web/styles';
 
+import IconCheck16 from 'assets/icons/small-icons/check/icon-check-16.svg';
 import HeroBackground from 'assets/main-page/hero-background.png';
-import IconCheck16 from 'assets/small-icons/check/icon-check-16.svg';
 
 import { HeroBottomRightStyled, HeroTopLeftStyled } from './HeroBlock';
 

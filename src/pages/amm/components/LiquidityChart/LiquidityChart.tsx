@@ -14,7 +14,7 @@ import { PoolStatistics } from 'types/amm';
 import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import EmptyChart from 'assets/empty-chart.svg';
+import EmptyChart from 'assets/icons/objects/icon-empty-chart-66x48.svg';
 
 import { Select, ToggleGroup } from 'basics/inputs';
 

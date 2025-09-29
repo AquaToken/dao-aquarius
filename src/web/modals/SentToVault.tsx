@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import { ModalProps } from 'types/modal';
 
-import Vault from 'assets/vault.svg';
+import Vault from 'assets/wallets/vault.svg';
 
 import Button from 'basics/buttons/Button';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';

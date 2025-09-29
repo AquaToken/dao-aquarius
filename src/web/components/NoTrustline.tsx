@@ -16,7 +16,7 @@ import { ClassicToken, Token, TokenType } from 'types/token';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Plus from 'assets/icon-plus.svg';
+import Plus from 'assets/icons/nav/icon-plus-16.svg';
 
 import Asset from 'basics/Asset';
 import { Button } from 'basics/buttons';

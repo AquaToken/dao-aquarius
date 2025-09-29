@@ -21,7 +21,7 @@ import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import MigrateLiquidityStep1 from 'web/modals/migrate-liquidity/MigrateLiquidityStep1';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Arrow from 'assets/icon-arrow-down.svg';
+import Arrow from 'assets/icons/arrows/arrow-down-16.svg';
 
 import Asset from 'basics/Asset';
 import Button from 'basics/buttons/Button';

@@ -18,10 +18,10 @@ import { cardBoxShadow, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import DIce from 'assets/dice-logo.svg';
-import Ice from 'assets/ice-logo.svg';
-import IconDown from 'assets/icon-down-percent.svg';
-import IconUp from 'assets/icon-up-percent.svg';
+import IconDown from 'assets/icons/arrows/arrow-negative-16.svg';
+import IconUp from 'assets/icons/arrows/arrow-positive-16.svg';
+import DIce from 'assets/tokens/dice-logo.svg';
+import Ice from 'assets/tokens/ice-logo.svg';
 
 import Button from 'basics/buttons/Button';
 import DotsLoader from 'basics/loaders/DotsLoader';

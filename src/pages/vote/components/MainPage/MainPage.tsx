@@ -31,11 +31,11 @@ import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween, respondDown } from 
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import BackgroundImageLeft from 'assets/background-left.svg';
-import BackgroundImageRight from 'assets/background-right.svg';
-import dIce from 'assets/dice-logo.svg';
-import Ice from 'assets/ice-logo.svg';
-import Info from 'assets/icon-info.svg';
+import Info from 'assets/icons/status/icon-info-16.svg';
+import dIce from 'assets/tokens/dice-logo.svg';
+import Ice from 'assets/tokens/ice-logo.svg';
+import BackgroundImageLeft from 'assets/vote-page/background-left.svg';
+import BackgroundImageRight from 'assets/vote-page/background-right.svg';
 
 import AssetDropdown from 'basics/asset-pickers/AssetDropdown';
 import Button from 'basics/buttons/Button';

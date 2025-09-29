@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { COLORS } from 'web/styles';
 
-import CopyIcon from 'assets/icon-copy.svg';
+import CopyIcon from 'assets/icons/actions/icon-copy-16.svg';
 
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 

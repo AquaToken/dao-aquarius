@@ -21,8 +21,8 @@ import { cardBoxShadow, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import DepositIcon from 'assets/icon-deposit.svg';
-import WithdrawIcon from 'assets/icon-withdraw.svg';
+import DepositIcon from 'assets/icons/actions/icon-deposit-16.svg';
+import WithdrawIcon from 'assets/icons/actions/icon-withdraw-16.svg';
 
 import Asset from 'basics/Asset';
 import Button from 'basics/buttons/Button';

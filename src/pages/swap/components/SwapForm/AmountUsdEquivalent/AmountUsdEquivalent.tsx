@@ -13,7 +13,7 @@ import { Token } from 'types/token';
 import { respondDown, textEllipsis } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Warning from 'assets/icon-warning.svg';
+import Warning from 'assets/icons/status/warning-16.svg';
 
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 

@@ -7,8 +7,8 @@ import { ModalProps } from 'types/modal';
 import { flexAllCenter, flexRowSpaceBetween, respondDown, respondUp } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Search from 'assets/icon-search.svg';
-import IconTick16 from 'assets/icon-tick-16.svg';
+import Search from 'assets/icons/actions/icon-search-16.svg';
+import IconTick16 from 'assets/icons/small-icons/check/icon-check-16.svg';
 
 import { BlankButton } from 'basics/buttons';
 import { Input } from 'basics/inputs';

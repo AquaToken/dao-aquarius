@@ -14,7 +14,7 @@ import { ModalService } from 'services/globalServices';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { COLORS } from 'web/styles';
 
-import AquaLogo from 'assets/aqua-logo-small.svg';
+import AquaLogo from 'assets/aqua/aqua-logo.svg';
 
 import Button from 'basics/buttons/Button';
 import { ExternalLink } from 'basics/links';

@@ -1,10 +1,10 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import ArrowRight from 'assets/icon-arrow-right.svg';
-import LobstrLogo from 'assets/lobstr-name-logo.svg';
-import StellarTermLogo from 'assets/stellarterm-logo.svg';
-import StellarXLogo from 'assets/stellarx-logo.svg';
+import ArrowRight from 'assets/icons/arrows/arrow-right-16.svg';
+import LobstrLogo from 'assets/wallets/lobstr/lobstr-name-logo.svg';
+import StellarTermLogo from 'assets/wallets/stellarterm-logo.svg';
+import StellarXLogo from 'assets/wallets/stellarx-logo.svg';
 
 import CopyButton from 'basics/buttons/CopyButton';
 import { ExternalLink } from 'basics/links';

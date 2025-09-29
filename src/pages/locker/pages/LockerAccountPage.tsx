@@ -21,7 +21,7 @@ import { isValidPublicKey } from 'services/stellar/utils/validators';
 import { commonMaxWidth, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import ArrowDown from 'assets/icon-arrow-down.svg';
+import ArrowDown from 'assets/icons/arrows/arrow-down-16.svg';
 
 import PageLoader from 'basics/loaders/PageLoader';
 

@@ -7,7 +7,7 @@ import { MainRoutes } from 'constants/routes';
 import { cardBoxShadow, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import Success from 'assets/icon-success-green.svg';
+import Success from 'assets/icons/status/success-alt.svg';
 
 import { ExternalLink } from 'basics/links';
 

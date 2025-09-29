@@ -9,10 +9,10 @@ import { ModalProps } from 'types/modal';
 import { flexAllCenter } from 'web/mixins';
 import { COLORS } from 'web/styles';
 
-import ArrowRight from 'assets/icon-arrow-right.svg';
-import Copy from 'assets/icon-copy.svg';
-import XdrLogo from 'assets/icon-xdr.svg';
-import Stellar from 'assets/xlm-logo.svg';
+import Copy from 'assets/icons/actions/icon-copy-16.svg';
+import ArrowRight from 'assets/icons/arrows/arrow-right-16.svg';
+import XdrLogo from 'assets/icons/objects/icon-xdr-32x17.svg';
+import Stellar from 'assets/tokens/xlm-logo.svg';
 
 import { Button } from 'basics/buttons';
 import CopyButton from 'basics/buttons/CopyButton';

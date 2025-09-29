@@ -7,11 +7,11 @@ import { formatBalance, roundToPrecision } from 'helpers/format-number';
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import DIce from 'assets/dice-logo.svg';
-import Ice from 'assets/ice-logo.svg';
-import IconDown from 'assets/icon-down-percent.svg';
-import InfoIcon from 'assets/icon-info.svg';
-import IconUp from 'assets/icon-up-percent.svg';
+import IconDown from 'assets/icons/arrows/arrow-negative-16.svg';
+import IconUp from 'assets/icons/arrows/arrow-positive-16.svg';
+import InfoIcon from 'assets/icons/status/icon-info-16.svg';
+import DIce from 'assets/tokens/dice-logo.svg';
+import Ice from 'assets/tokens/ice-logo.svg';
 
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 

@@ -11,9 +11,9 @@ import { commonSectionPaddings, flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS, MAX_WIDTHS } from 'web/styles';
 
 import AquaLogo from 'assets/aqua/aqua-logo-text.svg';
-import Audit from 'assets/audit.svg';
-import Dune from 'assets/DuneLogoCircle.svg';
-import Docs from 'assets/icon-docs.svg';
+import Audit from 'assets/icons/objects/icon-audit-16.svg';
+import Docs from 'assets/icons/objects/icon-docs-16x17.svg';
+import Dune from 'assets/orgs/duneLogoCircle.svg';
 
 import { BlankRouterLink } from 'basics/links';
 

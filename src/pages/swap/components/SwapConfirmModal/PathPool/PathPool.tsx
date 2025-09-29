@@ -6,7 +6,7 @@ import { AmmRoutes } from 'constants/routes';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import RightIcon from 'assets/icon-arrow-right-long.svg';
+import RightIcon from 'assets/icons/arrows/arrow-alt2-16.svg';
 
 const Container = styled.div`
     width: 25%;

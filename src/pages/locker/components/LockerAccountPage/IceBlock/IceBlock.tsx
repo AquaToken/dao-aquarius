@@ -19,7 +19,7 @@ import { respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
-import IceLogo from 'assets/ice-logo.svg';
+import IceLogo from 'assets/tokens/ice-logo.svg';
 
 import Button from 'basics/buttons/Button';
 import { ExternalLink } from 'basics/links';
