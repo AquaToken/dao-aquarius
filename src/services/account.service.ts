@@ -283,7 +283,7 @@ export default class AccountService extends Horizon.AccountResponse {
                 lp as unknown as PoolClassicProcessed
             ).tokens
                 .reduce((acc, asset, index) => {
-                    const price = prices.get(asset.contractId(getNetworkPassphrase())).price ?? 0;
+                    const price = prices.get(asset.contractId(getNetworkPassphrase()))?.price ?? 0;
 
                     const amount = Number(lp.reserves[index]) * Number(price);
 
