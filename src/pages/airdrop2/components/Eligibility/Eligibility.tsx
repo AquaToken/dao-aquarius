@@ -83,6 +83,9 @@ const Eligibility = forwardRef(
                     .then(account => getFederation(account.home_domain, account.account_id))
                     .then(res => {
                         setFederation(res);
+                    })
+                    .catch(() => {
+                        // federation may be missing for the user — that's fine
                     });
             }
         }, [accountEligibility]);
