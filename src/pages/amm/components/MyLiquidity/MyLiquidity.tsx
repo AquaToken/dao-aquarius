@@ -452,6 +452,15 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
         return expectedTps / tpsWithoutBoost;
     };
 
+    const calculateDailyRewards = (rewardsInfo: PoolRewardsInfo) => {
+        if (!rewardsInfo) return 0;
+        const tps = +rewardsInfo.tps;
+        const wSupply = +rewardsInfo.working_supply;
+        const wBalance = +rewardsInfo.working_balance;
+
+        return (((+tps * DAY) / 1000) * +wBalance) / +wSupply;
+    };
+
     if (!account) {
         return (
             <Section>
@@ -550,10 +559,10 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                         { children: '' },
                     ]}
                     body={filteredPools.map(pool => {
-                        const boostValue = calculateBoostValue(
-                            userRewards.get(pool.address),
-                            pool.balance,
-                        );
+                        const userRewardsForPool = userRewards.get(pool.address);
+                        const boostValue = calculateBoostValue(userRewardsForPool, pool.balance);
+
+                        const dailyRewards = calculateDailyRewards(userRewardsForPool);
 
                         const incentivesForPool = userIncentives
                             .get(pool.address)
@@ -662,15 +671,8 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                     align: CellAlign.Right,
                                 },
                                 {
-                                    children: Number(pool.reward_tps)
-                                        ? `${formatBalance(
-                                              (((((+pool.reward_tps / 1e7) * DAY) / 1000) *
-                                                  +pool.balance) /
-                                                  +pool.total_share) *
-                                                  boostValue,
-                                              true,
-                                              true,
-                                          )} AQUA`
+                                    children: Number(dailyRewards)
+                                        ? `${formatBalance(dailyRewards, true, true)} AQUA`
                                         : '-',
                                     label: (
                                         <TitleWithTooltip>
