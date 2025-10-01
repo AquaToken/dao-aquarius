@@ -19,6 +19,10 @@ const LabelWithIcon = styled.span`
     gap: 0.4rem;
 `;
 
+const LabelWithLink = styled.span`
+    display: inline !important;
+`;
+
 export const BoostLabel = () => (
     <StyledLabel
         labelText="boost"
@@ -48,19 +52,19 @@ export const AuthRequiredLabel = () => (
     <StyledLabel
         labelText="asset flags"
         tooltipText={
-            <span>
-                One of the assets in this market has flags enabled. Most assets with “Required”,
-                “Revocable”, and “Clawback Enabled” flags are currently banned from Aquarius. Learn
-                more about flag
+            <LabelWithLink>
+                One of the assets in this market has
                 <a
                     rel="noopener noreferrer"
                     target="_blank"
                     href="https://developers.stellar.org/docs/glossary/accounts/#flags"
                 >
-                    here
-                </a>
-                .
-            </span>
+                    special flags
+                </a>{' '}
+                enabled. Markets with assets carrying <b>Required</b>, <b>Revocable</b>, or{' '}
+                <b>Clawback Enabled</b> flags are not eligible for AQUA emissions or voting unless
+                explicitly whitelisted through a governance proposal.
+            </LabelWithLink>
         }
         background={COLORS.red500}
     />
