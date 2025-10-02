@@ -231,7 +231,7 @@ const Footer = (): React.ReactNode => {
                 </LogoWithDesc>
                 <LinksAndCopyright>
                     <DocLinks>
-                        <DocsLink href="https://dune.com/fergmolina/aquarius" target="_blank">
+                        <DocsLink href="https://dune.com/claw/aquarius-stellar" target="_blank">
                             <DuneLogo />
                             Dune dashboard
                         </DocsLink>
