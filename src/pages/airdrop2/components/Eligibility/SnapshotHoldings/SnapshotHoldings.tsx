@@ -15,7 +15,7 @@ import YXlm from 'assets/tokens/yxlm-logo.svg';
 
 import { ExternalLink } from 'basics/links';
 
-import { BalanceLabel } from 'pages/locker/components/LockerAccountPage/Portfolio/Portfolio';
+import { BalanceLabel } from 'pages/locker/components/Portfolio/Portfolio';
 
 import { AccountEligibility } from '../../../api/types';
 

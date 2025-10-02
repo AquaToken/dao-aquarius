@@ -1,41 +1,26 @@
 import * as React from 'react';
 import { lazy } from 'react';
-import { Redirect, Route, Switch } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 
 import { LockerRoutes } from 'constants/routes';
 
-import useAuthStore from 'store/authStore/useAuthStore';
-
 import NotFoundPage from 'components/NotFoundPage';
 
-const LockerMainPage = lazy(() => import('./pages/LockerMainPage'));
-const LockerAccountPage = lazy(() => import('./pages/LockerAccountPage'));
+const LockerAboutPage = lazy(() => import('./pages/./LockerAbout'));
+const LockerFormPage = lazy(() => import('./pages/./LockerForm'));
 
-const Locker = () => {
-    const { isLogged, account } = useAuthStore();
-    return (
-        <Switch>
-            <Route exact path={LockerRoutes.main}>
-                {isLogged ? (
-                    <Redirect
-                        to={{
-                            pathname: `${LockerRoutes.main}/${account.accountId()}`,
-                        }}
-                    />
-                ) : (
-                    <LockerMainPage />
-                )}
-            </Route>
+const Locker = () => (
+    <Switch>
+        <Route exact path={LockerRoutes.about}>
+            <LockerAboutPage />
+        </Route>
 
-            <Route exact path={`${LockerRoutes.main}/:accountId`}>
-                <LockerAccountPage />
-            </Route>
+        <Route exact path={LockerRoutes.main}>
+            <LockerFormPage />
+        </Route>
 
-            <Route path={`${LockerRoutes.main}/*`}>
-                <NotFoundPage />
-            </Route>
-        </Switch>
-    );
-};
+        <Route component={NotFoundPage} />
+    </Switch>
+);
 
 export default Locker;

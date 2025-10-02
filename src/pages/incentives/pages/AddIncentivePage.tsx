@@ -1,9 +1,7 @@
 import { addDays, startOfDay } from 'date-fns';
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import DatePicker from 'react-datepicker';
 import styled from 'styled-components';
-import 'react-datepicker/dist/react-datepicker.css';
 
 import { findSwapPath, getAssetsList, getPoolsForIncentives } from 'api/amm';
 
@@ -30,7 +28,6 @@ import { ModalService, SorobanService } from 'services/globalServices';
 import { PoolProcessed } from 'types/amm';
 import { Token } from 'types/token';
 
-import { DatePickerStyles } from 'web/DatePickerStyles';
 import { flexColumn, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import ConfirmIncentiveModal from 'web/modals/ConfirmIncentiveModal';
 import { Breakpoints, COLORS, FONT_SIZE } from 'web/styles';
@@ -43,7 +40,7 @@ import Alert from 'basics/Alert';
 import AssetPicker from 'basics/asset-pickers/AssetPicker';
 import Button from 'basics/buttons/Button';
 import CircleButton from 'basics/buttons/CircleButton';
-import { Select } from 'basics/inputs';
+import { DatePicker, Select } from 'basics/inputs';
 import Input from 'basics/inputs/Input';
 import { CircleLoader, PageLoader } from 'basics/loaders';
 import Market from 'basics/Market';
@@ -443,7 +440,7 @@ const AddIncentivePage = () => {
                                     <DatePicker
                                         customInput={<InputStyled label="Start date" />}
                                         calendarStartDay={1}
-                                        selected={startDay ? new Date(startDay) : null}
+                                        date={startDay ? new Date(startDay).getTime() : null}
                                         onChange={res => {
                                             setStartDay(startOfDay(res).getTime());
                                         }}
@@ -459,29 +456,21 @@ const AddIncentivePage = () => {
                                             },
                                         ]}
                                         minDate={nextDay}
+                                        fullWidth
                                     />
                                     <DashIcon />
 
                                     <DatePicker
                                         customInput={<InputStyled label="End date" />}
-                                        calendarStartDay={1}
-                                        selected={endDay ? new Date(endDay) : null}
+                                        date={endDay ? new Date(endDay).getTime() : null}
                                         onChange={res => {
                                             setEndDay(startOfDay(res).getTime());
                                         }}
-                                        dateFormat="MM.dd.yyyy"
-                                        placeholderText="MM.DD.YYYY"
+                                        calendarStartDay={1}
                                         disabledKeyboardNavigation
                                         disabled={!startDay}
-                                        popperModifiers={[
-                                            {
-                                                name: 'offset',
-                                                options: {
-                                                    offset: [0, -10],
-                                                },
-                                            },
-                                        ]}
                                         minDate={addDays(startDay, config.duration / 24 / 60 / 60)}
+                                        fullWidth
                                     />
                                 </FormRow>
 
@@ -506,8 +495,6 @@ const AddIncentivePage = () => {
                                 >
                                     {isLogged ? 'Create incentive' : 'Connect Wallet'}
                                 </NextButton>
-
-                                <DatePickerStyles />
                             </FormSection>
                         )}
                     </Form>

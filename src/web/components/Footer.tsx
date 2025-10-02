@@ -204,10 +204,12 @@ const WIDE_PAGES = [
     MainRoutes.privacy,
 ];
 
+const PAGES_WITHOUT_FOOTER = [MainRoutes.swap, MainRoutes.locker];
+
 const Footer = (): React.ReactNode => {
     const location = useLocation();
 
-    if (location.pathname.startsWith(MainRoutes.swap)) {
+    if (PAGES_WITHOUT_FOOTER.some(page => location.pathname.startsWith(page))) {
         return null;
     }
 

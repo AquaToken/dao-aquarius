@@ -34,7 +34,7 @@ import {
     AdditionalInfo,
     AdditionalInfoDescription,
     BalanceLabel,
-} from '../../locker/components/LockerAccountPage/Portfolio/Portfolio';
+} from 'pages/locker/components/Portfolio/Portfolio';
 
 const Container = styled.div`
     ${commonMaxWidth};
