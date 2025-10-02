@@ -111,7 +111,7 @@ interface SwapFormRowProps {
     setAsset?: (asset: Token) => void;
     amount: string;
     setAmount: (amount: string) => void;
-    resetAmount: () => void;
+    resetAmount?: () => void;
     usdEquivalent?: React.ReactElement;
     assetsList?: Token[] | null;
     isEmbedded?: boolean;
@@ -163,7 +163,7 @@ const TokenAmountFormField = ({
     }, [account, asset]);
 
     const setPercent = (percent: number) => {
-        resetAmount();
+        resetAmount?.();
         const available =
             asset.type === TokenType.soroban ? balance : account.getAvailableForSwapBalance(asset);
 
@@ -186,7 +186,7 @@ const TokenAmountFormField = ({
                     thousandSeparator=","
                     decimalScale={(asset as SorobanToken).decimal ?? 7}
                     value={amount}
-                    onChange={() => resetAmount()}
+                    onChange={() => resetAmount?.()}
                     onValueChange={value => setAmount(value.value)}
                     getInputRef={inputRef}
                     inputMode="decimal"

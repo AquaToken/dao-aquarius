@@ -1,8 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { ModalService } from 'services/globalServices';
-
 import ArrowsCircle from 'assets/icons/arrows/arrows-circle-16.svg';
 
 import { cardBoxShadow, flexAllCenter, respondDown } from '../../../../../web/mixins';
@@ -33,18 +31,13 @@ const IconContainer = styled.div`
     border-radius: 50%;
 `;
 
-const OtherAccountButton = () => {
-    const onClick = () => {
-        ModalService.openModal(AccountInput, { isModal: true });
-    };
-    return (
-        <Wrapper onClick={() => onClick()}>
-            <ButtonText>Other account</ButtonText>
-            <IconContainer>
-                <ArrowsCircle />
-            </IconContainer>
-        </Wrapper>
-    );
-};
+const OtherAccountButton = () => (
+    <Wrapper>
+        <ButtonText>Other account</ButtonText>
+        <IconContainer>
+            <ArrowsCircle />
+        </IconContainer>
+    </Wrapper>
+);
 
 export default OtherAccountButton;

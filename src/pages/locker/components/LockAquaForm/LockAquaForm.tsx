@@ -207,19 +207,7 @@ const LockAquaForm = () => {
             return;
         }
         if (!isLogged) {
-            ModalService.openModal(ChooseLoginMethodModal, {
-                callback: () =>
-                    ModalService.openModal(LockAquaModal, {
-                        amount: lockAmount,
-                        period: lockPeriod,
-                        iceAmount,
-                    }).then(({ isConfirmed }) => {
-                        if (isConfirmed) {
-                            resetForm();
-                            showDelegatePromo();
-                        }
-                    }),
-            });
+            ModalService.openModal(ChooseLoginMethodModal, {});
             return;
         }
         ModalService.openModal(LockAquaModal, {
@@ -243,7 +231,6 @@ const LockAquaForm = () => {
                 balance={aquaBalance}
                 amount={lockAmount}
                 setAmount={setLockAmount}
-                resetAmount={() => setLockAmount('')}
                 usdEquivalent={null}
                 withAutoFocus
                 withPercentButtons
@@ -304,7 +291,14 @@ const LockAquaForm = () => {
                 isBig
                 isRounded
                 fullWidth
-                disabled={!lockAmount || !lockPeriod || lockPeriod - Date.now() < MIN_BOOST_PERIOD}
+                disabled={
+                    isLogged &&
+                    (!lockAmount ||
+                        !lockPeriod ||
+                        lockPeriod - Date.now() < MIN_BOOST_PERIOD ||
+                        +aquaBalance < +lockAmount)
+                }
+                type="button"
                 onClick={() => onSubmit()}
             >
                 {getButtonText()}
