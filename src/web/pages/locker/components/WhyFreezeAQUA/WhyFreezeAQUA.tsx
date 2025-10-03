@@ -1,12 +1,12 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
+import { flexColumn, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS, FONT_SIZE } from 'web/styles';
+
 import Image1 from 'assets/locker/why-freeze-aqua-1.svg';
 import Image2 from 'assets/locker/why-freeze-aqua-2.svg';
 import Image3 from 'assets/locker/why-freeze-aqua-3.svg';
-
-import { flexColumn, respondDown } from '../../../../web/mixins';
-import { Breakpoints, COLORS, FONT_SIZE } from '../../../../web/styles';
 
 const Container = styled.div`
     display: flex;

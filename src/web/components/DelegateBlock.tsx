@@ -3,6 +3,9 @@ import styled from 'styled-components';
 
 import { MainRoutes } from 'constants/routes';
 
+import { commonMaxWidth, flexAllCenter, flexColumn, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Logo from 'assets/delegate/delegate-promo.svg';
 import DAO from 'assets/icons/objects/icon-dao-16x17.svg';
 import Heart from 'assets/icons/objects/icon-heart.svg';
@@ -10,9 +13,6 @@ import Present from 'assets/icons/objects/icon-present.svg';
 
 import { ExternalLink } from 'basics/links';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
-
-import { flexAllCenter, flexColumn, respondDown } from '../mixins';
-import { Breakpoints, COLORS } from '../styles';
 
 const Container = styled.section`
     width: 100%;
@@ -24,14 +24,13 @@ const Container = styled.section`
 
 const Wrapper = styled.div`
     display: flex;
-    max-width: 142rem;
+    ${commonMaxWidth};
     width: 100%;
     padding: 0 10rem;
     gap: 6rem;
 
-    ${respondDown(Breakpoints.xl)`
+    ${respondDown(Breakpoints.sm)`
         padding: 0 1.6rem;
-        max-width: 55rem;
         margin-left: 0;
         flex-direction: column;
     `}

@@ -17,15 +17,15 @@ import { StellarService, ToastService } from 'services/globalServices';
 
 import { ModalProps } from 'types/modal';
 
+import { flexRowSpaceBetween } from 'web/mixins';
+import { COLORS } from 'web/styles';
+
 import Aqua from 'assets/aqua/aqua-logo.svg';
 import ArrowDown from 'assets/icons/arrows/arrow-down-16.svg';
 import Ice from 'assets/tokens/ice-logo.svg';
 
 import Button from 'basics/buttons/Button';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
-
-import { flexRowSpaceBetween } from '../../../../web/mixins';
-import { COLORS } from '../../../../web/styles';
 
 const Row = styled.div`
     ${flexRowSpaceBetween};

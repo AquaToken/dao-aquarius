@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { MainRoutes } from 'constants/routes';
+import { LockerRoutes, MainRoutes } from 'constants/routes';
 
 import { cardBoxShadow, commonMaxWidth, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -10,12 +10,13 @@ import { Breakpoints, COLORS } from 'web/styles';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import IconIce from 'assets/icons/small-icons/icon-ice-symbol-10.svg?url';
-import BG from 'assets/token-page/ice-pattern.svg?url';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
+import BG from 'assets/token-page/ice-pattern.svg?url';
 import IceLogoIcon from 'assets/tokens/ice-logo.svg';
 
 import { Button } from 'basics/buttons';
+import { ExternalLink } from 'basics/links';
 
 const Container = styled.section`
     padding: 0 10rem;
@@ -139,7 +140,7 @@ const SubTitle = styled.h2`
 `;
 
 const List = styled.ul`
-    margin: 0;
+    margin: 0 0 3.2rem;
     padding: 0;
     list-style: none;
 `;
@@ -152,6 +153,10 @@ const Item = styled.li`
     font-size: 1.6rem;
     line-height: 2.8rem;
     color: ${COLORS.textTertiary};
+
+    &:not(:last-child) {
+        margin-bottom: 2.4rem;
+    }
 
     &::before {
         content: '';
@@ -193,6 +198,8 @@ const AboutIce = () => (
                     <Item>Earn more from liquidity with ICE boosts</Item>
                     <Item>Delegate ICE and earn passive rewards</Item>
                 </List>
+
+                <ExternalLink to={LockerRoutes.about}>Learn more about ICE</ExternalLink>
             </TextBlock>
             <BlueBlock>
                 <LockerBlock>

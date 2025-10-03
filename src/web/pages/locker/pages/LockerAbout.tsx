@@ -5,11 +5,11 @@ import { commonMaxWidth } from 'web/mixins';
 
 import FAQ from 'components/FAQ';
 
-import FreezeAQUA from 'pages/locker/components/FreezeAQUA/FreezeAQUA';
-import Purpose from 'pages/locker/components/Purpose/Purpose';
-import { LockerQuestions } from 'pages/locker/components/Questions/Questions';
-import StatisticBlock from 'pages/locker/components/StatisticBlock/StatisticBlock';
-import WhyFreezeAQUA from 'pages/locker/components/WhyFreezeAQUA/WhyFreezeAQUA';
+import FreezeAQUA from '../components/FreezeAQUA/FreezeAQUA';
+import Purpose from '../components/Purpose/Purpose';
+import { LockerQuestions } from '../components/Questions/Questions';
+import StatisticBlock from '../components/StatisticBlock/StatisticBlock';
+import WhyFreezeAQUA from '../components/WhyFreezeAQUA/WhyFreezeAQUA';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;

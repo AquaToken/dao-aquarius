@@ -6,8 +6,8 @@ import { LockerRoutes } from 'constants/routes';
 
 import NotFoundPage from 'components/NotFoundPage';
 
-const LockerAboutPage = lazy(() => import('./pages/./LockerAbout'));
-const LockerFormPage = lazy(() => import('./pages/./LockerForm'));
+const LockerAboutPage = lazy(() => import('./pages/LockerAbout'));
+const LockerFormPage = lazy(() => import('./pages/LockerForm'));
 
 const Locker = () => (
     <Switch>

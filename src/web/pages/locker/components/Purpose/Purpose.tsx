@@ -3,13 +3,13 @@ import styled from 'styled-components';
 
 import { LockerRoutes } from 'constants/routes';
 
-import CircleButton from 'web/basics/buttons/CircleButton';
 import { commonMaxWidth, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS, FONT_SIZE } from 'web/styles';
 
 import ArrowLeft from 'assets/icons/arrows/arrow-left-16.svg';
 import LockerMainImage from 'assets/locker/locker-main.svg';
 
+import CircleButton from 'basics/buttons/CircleButton';
 import { BlankRouterLink } from 'basics/links';
 
 const Container = styled.div`

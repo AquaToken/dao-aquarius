@@ -34,9 +34,8 @@ import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 import DelegatePromoModal from 'modals/alerts/DelegatePromoModal';
 import ChooseLoginMethodModal from 'modals/auth/ChooseLoginMethodModal';
 
-import LockDurationFormField from 'pages/locker/components/LockDurationFormField/LockDurationFormField';
-
 import LockAquaModal from '../LockAquaModal/LockAquaModal';
+import LockDurationFormField from '../LockDurationFormField/LockDurationFormField';
 
 const TokenAmountFormFieldStyled = styled(TokenAmountFormField)`
     margin-bottom: 0.8rem;
