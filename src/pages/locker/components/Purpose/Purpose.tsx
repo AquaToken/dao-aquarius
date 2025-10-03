@@ -32,7 +32,7 @@ const Content = styled.div`
 
 const Image = styled(LockerMainImage)`
     max-height: 70vh;
-    margin: auto;
+    margin: auto -5% auto auto;
 
     ${respondDown(Breakpoints.lg)`
         max-height: 50rem;
@@ -40,6 +40,7 @@ const Image = styled(LockerMainImage)`
 
     ${respondDown(Breakpoints.md)`
         max-height: 30rem;
+        margin: auto;
     `}
 `;
 
