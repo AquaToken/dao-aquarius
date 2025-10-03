@@ -129,7 +129,11 @@ const LockDurationFormField = ({
                 marks={5}
                 labels="y"
                 size="large"
-                highlight={{ range: [60, 100], label: 'Max.rewards', color: COLORS.gray200 }}
+                highlight={{
+                    range: [60, 100],
+                    label: 'Max.rewards',
+                    color: lockPercent >= 60 ? COLORS.purple500 : COLORS.gray200,
+                }}
                 customCurrentValue={formatDuration(lockPeriod - Date.now())}
             />
         </Container>

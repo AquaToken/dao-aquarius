@@ -211,7 +211,7 @@ const HighlightLabel = styled.div<{
 
     font-size: 1rem;
     font-weight: 700;
-    color: ${COLORS.gray300};
+    color: ${({ $color }) => $color ?? COLORS.gray400};
     white-space: nowrap;
     pointer-events: none; // not clickable
     z-index: 0;
