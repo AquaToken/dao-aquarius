@@ -12,6 +12,7 @@ import {
 import { LS_DELEGATE_PROMO_VIEWED_LOCKER } from 'constants/local-storage';
 
 import { getAquaAssetData } from 'helpers/assets';
+import { roundMsToDays } from 'helpers/date';
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
 
 import useAuthStore from 'store/authStore/useAuthStore';
@@ -35,7 +36,6 @@ import ChooseLoginMethodModal from 'modals/auth/ChooseLoginMethodModal';
 
 import LockDurationFormField from 'pages/locker/components/LockDurationFormField/LockDurationFormField';
 
-import { roundMsToDays } from '../IceBlock/IceBlock';
 import LockAquaModal from '../LockAquaModal/LockAquaModal';
 
 const TokenAmountFormFieldStyled = styled(TokenAmountFormField)`

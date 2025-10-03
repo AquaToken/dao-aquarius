@@ -2,6 +2,8 @@ import { addDays } from 'date-fns';
 import * as React from 'react';
 import styled from 'styled-components';
 
+import { formatDuration } from 'helpers/date';
+
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -128,7 +130,7 @@ const LockDurationFormField = ({
                 labels="y"
                 size="large"
                 highlight={{ range: [60, 100], label: 'Max.rewards', color: COLORS.gray200 }}
-                withoutPercent
+                customCurrentValue={formatDuration(lockPeriod - Date.now())}
             />
         </Container>
     );

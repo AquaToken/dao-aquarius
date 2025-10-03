@@ -204,12 +204,17 @@ const WIDE_PAGES = [
     MainRoutes.privacy,
 ];
 
-const PAGES_WITHOUT_FOOTER = [MainRoutes.swap, MainRoutes.locker];
+const PAGES_WITHOUT_FOOTER = [MainRoutes.swap];
+
+const PAGES_WITHOUT_FOOTER_EXACT = [MainRoutes.locker];
 
 const Footer = (): React.ReactNode => {
     const location = useLocation();
 
-    if (PAGES_WITHOUT_FOOTER.some(page => location.pathname.startsWith(page))) {
+    if (
+        PAGES_WITHOUT_FOOTER.some(page => normalizePath(location.pathname).startsWith(page)) ||
+        PAGES_WITHOUT_FOOTER_EXACT.includes(normalizePath(location.pathname) as MainRoutes)
+    ) {
         return null;
     }
 

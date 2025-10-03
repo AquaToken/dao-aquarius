@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { noSelect } from 'web/mixins';
-import { COLORS, hexWithOpacity } from 'web/styles';
+import { COLORS, FONT_SIZE, hexWithOpacity } from 'web/styles';
 
 // ---------- Sizes ----------
 type Size = 'small' | 'medium' | 'large';
@@ -205,7 +205,7 @@ const HighlightLabel = styled.div<{
     // background gradient overlay
     background: linear-gradient(
         to top,
-        ${({ $color }) => hexWithOpacity($color, 15)} 0%,
+        ${({ $color }) => hexWithOpacity($color, 20)} 0%,
         transparent 100%
     );
 
@@ -303,15 +303,31 @@ const Thumb = styled.div.attrs<{
     z-index: 2;
 `;
 
-const CurrentValue = styled.div.attrs<{ $value: number; $disabled: boolean }>(({ $value }) => ({
-    style: {
-        left: `${$value}%`,
+const CurrentValue = styled.div.attrs<{ $value: number; $disabled: boolean; $size: Size }>(
+    ({ $value }) => {
+        // clamp transform depending on position
+        let translateX = '-50%';
+        if ($value <= 1) {
+            translateX = '-20%'; // shift right edge inside
+        } else if ($value >= 99) {
+            translateX = '-80%'; // shift left edge inside
+        }
+        return {
+            style: {
+                left: `${$value}%`,
+                transform: `translateX(${translateX})`,
+            },
+        };
     },
-}))<{ $value: number; $disabled: boolean }>`
+)<{ $value: number; $disabled: boolean; $size: Size }>`
     position: absolute;
-    top: -2.5rem;
-    transform: ${({ $value }) => `translateX(-${$value < 99 ? 50 : 80}%)`};
-    color: ${({ $disabled }) => ($disabled ? COLORS.gray200 : COLORS.textPrimary)};
+    top: ${({ $size }) => `calc(${sizeStyles[$size].thumbSize} / 2)`};
+    color: ${COLORS.white};
+    padding: 0.2rem 0.8rem;
+    border-radius: 0.8rem;
+    ${FONT_SIZE.xs};
+    background-color: ${({ $disabled }) => ($disabled ? COLORS.gray200 : COLORS.textPrimary)};
+    white-space: nowrap;
 `;
 
 // ---------- Component ----------
@@ -319,21 +335,23 @@ const RangeInput = ({
     onChange,
     value: valueProps,
     disabled,
-    withoutPercent,
+    withoutCurrentValue,
     marks,
     labels,
     size = 'medium',
     highlight,
+    customCurrentValue,
     ...props
 }: {
     onChange: (value: number) => void;
     value: number;
     disabled?: boolean;
-    withoutPercent?: boolean;
     marks?: number[] | number;
     labels?: boolean | string; // false/undefined: no labels; true: % labels; string: index + suffix (e.g. "y")
     size?: Size;
     highlight?: { range: [number, number]; color?: string; label?: string };
+    withoutCurrentValue?: boolean;
+    customCurrentValue?: string;
 }) => {
     const [value, setValue] = useState(disabled ? 0 : valueProps);
     const [isMouseDrag, setIsMouseDrag] = useState(false);
@@ -447,9 +465,9 @@ const RangeInput = ({
                 }}
             />
 
-            {!withoutPercent && (
-                <CurrentValue $value={value} $disabled={!!disabled}>
-                    {value}%
+            {!withoutCurrentValue && (
+                <CurrentValue $value={value} $disabled={!!disabled} $size={size}>
+                    {customCurrentValue ?? `${value}%`}
                 </CurrentValue>
             )}
         </Pillar>

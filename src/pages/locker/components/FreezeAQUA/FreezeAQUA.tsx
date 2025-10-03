@@ -1,48 +1,49 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS, FONT_SIZE } from 'web/styles';
+
 import FreezeAquaImage from 'assets/locker/freeze-aqua.svg';
 
 import { ExternalLink } from 'basics/links';
 
-import { respondDown } from '../../../../web/mixins';
-import { Breakpoints, COLORS } from '../../../../web/styles';
-
 const Container = styled.div`
     display: flex;
     flex-direction: row;
-    padding: 0 4rem;
+    padding: 6rem 4rem;
+    gap: 9rem;
 
-    ${respondDown(Breakpoints.md)`
-        padding: 4rem 1.6rem;
+    ${respondDown(Breakpoints.sm)`
+        gap: 5rem;
+    `}
+
+    ${respondDown(Breakpoints.sm)`
+        padding: 0 1.6rem;
         flex-direction: column-reverse;
+        gap: 3.2rem;
     `}
 `;
 
 const TextBlock = styled.div`
     display: flex;
     flex-direction: column;
-    padding-top: 13rem;
     width: 50%;
 
-    ${respondDown(Breakpoints.md)`
+    ${respondDown(Breakpoints.sm)`
         width: 100%;
         padding-top: 0;
     `}
 `;
 
 const Title = styled.span`
-    font-size: 3.5rem;
-    line-height: 4.1rem;
-    color: ${COLORS.purple950};
+    ${FONT_SIZE.xxl};
+    font-weight: 700;
+    color: ${COLORS.textPrimary};
 
-    ${respondDown(Breakpoints.md)`
-        font-size: 2.5rem;
+    ${respondDown(Breakpoints.sm)`
+        ${FONT_SIZE.xl}
     `}
-`;
-
-const TitleOpacity = styled.span`
-    opacity: 0.2;
 `;
 
 const Description = styled.span`
@@ -54,22 +55,21 @@ const Description = styled.span`
 `;
 
 const Image = styled(FreezeAquaImage)`
-    width: 50%;
-    margin-left: -10%;
+    width: 40%;
+    margin: -5rem auto 0;
 
-    ${respondDown(Breakpoints.md)`
+    ${respondDown(Breakpoints.sm)`
         width: 100%;
-        margin-left: 0;
+        margin: 0 auto;
         max-height: 40rem;
+        
     `}
 `;
 
 const FreezeAQUA = (): JSX.Element => (
     <Container>
         <TextBlock>
-            <Title>
-                Freeze AQUA <TitleOpacity>= Get ICE</TitleOpacity>
-            </Title>
+            <Title>Freeze AQUA, Get ICE</Title>
             <Description>
                 <b>Freeze your AQUA to receive ICE</b> — a non-transferable token that gives you
                 more influence over how rewards are distributed across AMM and SDEX markets. ICE

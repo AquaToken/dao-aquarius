@@ -1,9 +1,16 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { respondDown } from 'web/mixins';
+import { LockerRoutes } from 'constants/routes';
+
+import { flexAllCenter, respondDown } from 'web/mixins';
 import { PageContainer } from 'web/pages/commonPageStyles';
 import { Breakpoints, COLORS } from 'web/styles';
+
+import Arrow from 'assets/icons/arrows/arrow-alt2-16.svg';
+import IceLogo from 'assets/tokens/ice-logo.svg';
+
+import { BlankRouterLink } from 'basics/links';
 
 import LockAquaForm from 'pages/locker/components/LockAquaForm/LockAquaForm';
 
@@ -15,10 +22,30 @@ const Wrapper = styled.div`
     `}
 `;
 
+const LearnMoreLink = styled(BlankRouterLink)`
+    ${flexAllCenter};
+    background-color: ${COLORS.white};
+    padding: 1rem 1.6rem;
+    border-radius: 3rem;
+    gap: 0.9rem;
+    margin: 0 auto;
+`;
+
+const PurpleArrow = styled(Arrow)`
+    path {
+        fill: ${COLORS.purple500};
+    }
+`;
+
 const LockerForm = () => (
     <PageContainer $color={COLORS.gray50} $mobileColor={COLORS.white}>
         <Wrapper>
             <LockAquaForm />
+            <LearnMoreLink to={LockerRoutes.about}>
+                <IceLogo style={{ height: '2.4rem', width: '2.4rem' }} />
+                Learn more about ICE
+                <PurpleArrow />
+            </LearnMoreLink>
         </Wrapper>
     </PageContainer>
 );

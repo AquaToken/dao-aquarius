@@ -6,27 +6,26 @@ import { getIceStatistics } from 'api/ice-locker';
 
 import { formatBalance } from 'helpers/format-number';
 
+import { respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import Aqua from 'assets/aqua/aqua-logo.svg';
 import Ice from 'assets/tokens/ice-logo.svg';
 
 import DotsLoader from 'basics/loaders/DotsLoader';
 
-import { respondDown } from '../../../../web/mixins';
-import { Breakpoints, COLORS } from '../../../../web/styles';
-
 const Container = styled.div`
     display: flex;
-    padding: 0 4rem;
+    padding: 4rem;
     margin-top: 6rem;
     gap: 6rem;
     width: 100%;
+    flex-wrap: wrap;
+    background-color: ${COLORS.white};
 
-    ${respondDown(Breakpoints.md)`
-        padding: 4rem 1.6rem;
-        flex-direction: column;
-        margin-top: 0;
-        gap: 2rem;
-    `};
+    ${respondDown(Breakpoints.sm)`
+        padding: 1.6rem;
+    `}
 `;
 
 const StatisticItem = styled.div`
@@ -34,9 +33,13 @@ const StatisticItem = styled.div`
     flex-direction: column;
     padding: 3.6rem 3.9rem;
     background: ${COLORS.gray50};
-    flex: 1;
+    border-radius: 4.4rem;
 
-    ${respondDown(Breakpoints.md)`
+    flex: 1 1 20rem;
+
+    ${respondDown(Breakpoints.sm)`
+        flex: 1 1 100%;
+        width: 100%;
         padding: 3.2rem 1.6rem;
     `};
 `;

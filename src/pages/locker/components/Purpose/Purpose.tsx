@@ -1,31 +1,43 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
+import { LockerRoutes } from 'constants/routes';
+
+import CircleButton from 'web/basics/buttons/CircleButton';
+import { commonMaxWidth, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS, FONT_SIZE } from 'web/styles';
+
+import ArrowLeft from 'assets/icons/arrows/arrow-left-16.svg';
 import LockerMainImage from 'assets/locker/locker-main.svg';
 
-import { commonMaxWidth, respondDown } from '../../../../web/mixins';
-import { Breakpoints, COLORS } from '../../../../web/styles';
+import { BlankRouterLink } from 'basics/links';
 
 const Container = styled.div`
-    background-color: ${COLORS.purple950};
-    padding: 5% 0;
+    background-color: ${COLORS.gray50};
 `;
 
 const Content = styled.div`
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
     ${commonMaxWidth};
     padding: 0 4rem;
 
-    ${respondDown(Breakpoints.md)`
-        flex-direction: column-reverse;
+    ${respondDown(Breakpoints.sm)`
+        flex-direction: column;
         padding: 0 1.6rem;
         gap: 1.6rem;
     `}
 `;
 
 const Image = styled(LockerMainImage)`
-    max-height: 40rem;
+    max-height: 70vh;
+    margin: auto;
+
+    ${respondDown(Breakpoints.lg)`
+        max-height: 50rem;
+    `}
+
     ${respondDown(Breakpoints.md)`
         max-height: 30rem;
     `}
@@ -34,14 +46,17 @@ const Image = styled(LockerMainImage)`
 const TextContainer = styled.div`
     display: flex;
     flex-direction: column;
-    min-width: 67.6rem;
+    width: 50%;
     margin-right: 6.2rem;
     flex: 1;
     justify-content: center;
+    padding: 5% 0;
+    max-width: 45rem;
 
     ${respondDown(Breakpoints.md)`
-        min-width: unset;
+        width: 100%;
         margin-right: 0;
+        max-width: unset;
     `}
 `;
 
@@ -49,25 +64,37 @@ const Title = styled.span`
     font-weight: bold;
     font-size: 5.6rem;
     line-height: 6.4rem;
-    color: ${COLORS.white};
+    color: ${COLORS.textPrimary};
     margin-bottom: 1.6rem;
 
     ${respondDown(Breakpoints.md)`
-        font-size: 4rem;
-        line-height: 5rem;
+        ${FONT_SIZE.xl}
     `}
 `;
 
 const Description = styled.span`
     font-size: 1.6rem;
     line-height: 2.8rem;
-    color: ${COLORS.white};
+    color: ${COLORS.textDark};
+`;
+
+const BackButton = styled(CircleButton)`
+    margin-bottom: 4.5rem;
+
+    ${respondDown(Breakpoints.md)`
+        margin-bottom: 3.2rem;
+    `}
 `;
 
 const Purpose = (): JSX.Element => (
     <Container>
         <Content>
             <TextContainer>
+                <BlankRouterLink to={LockerRoutes.main}>
+                    <BackButton label="Back to locker">
+                        <ArrowLeft />
+                    </BackButton>
+                </BlankRouterLink>
                 <Title>Freeze your AQUA into ICE!</Title>
                 <Description>
                     Lock AQUA to receive ICE — a non-transferable token that boosts your voting

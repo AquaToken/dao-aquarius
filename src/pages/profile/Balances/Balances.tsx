@@ -30,12 +30,6 @@ import { Button } from 'basics/buttons';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
-import {
-    AdditionalInfo,
-    AdditionalInfoDescription,
-    BalanceLabel,
-} from 'pages/locker/components/Portfolio/Portfolio';
-
 const Container = styled.div`
     ${commonMaxWidth};
     width: 100%;
@@ -203,6 +197,36 @@ const AdditionalInfoBalance = styled.span`
          font-weight: 400;
          font-size: 1.6rem;
     `}
+`;
+
+const AdditionalInfo = styled.div`
+    display: flex;
+    width: 100%;
+
+    ${respondDown(Breakpoints.md)`
+        flex-direction: column;
+    `}
+`;
+
+const AdditionalInfoDescription = styled.span`
+    font-size: 1.4rem;
+    line-height: 2rem;
+    color: ${COLORS.textGray};
+`;
+
+const BalanceLabel = styled.div<{ $color: string; $textColor: string }>`
+    width: min-content;
+    height: 1.9rem;
+    border-radius: 0.3rem;
+    text-align: center;
+    line-height: 1.9rem;
+    font-size: 1rem;
+    font-weight: bold;
+    background: ${({ $color }) => $color};
+    color: ${({ $textColor }) => $textColor};
+    margin-right: 0.7rem;
+    padding: 0 0.8rem;
+    white-space: nowrap;
 `;
 
 const InfoColumn = styled.div`
