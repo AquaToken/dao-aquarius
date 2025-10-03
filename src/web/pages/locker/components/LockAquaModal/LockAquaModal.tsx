@@ -21,7 +21,6 @@ import { flexRowSpaceBetween } from 'web/mixins';
 import { COLORS } from 'web/styles';
 
 import Aqua from 'assets/aqua/aqua-logo.svg';
-import ArrowDown from 'assets/icons/arrows/arrow-down-16.svg';
 import Ice from 'assets/tokens/ice-logo.svg';
 
 import Button from 'basics/buttons/Button';
@@ -66,11 +65,12 @@ const AddTrustBlock = styled.div`
     background: ${COLORS.gray50};
     border-radius: 0.5rem;
     padding: 3.5rem 3.2rem 2.2rem;
-    margin-bottom: 4.7rem;
+    margin-bottom: 2.4rem;
 `;
 
 const AddTrustDescription = styled.div`
     display: flex;
+    align-items: center;
     gap: 2.6rem;
     margin-bottom: 1.4rem;
 `;
@@ -88,83 +88,16 @@ const AddTrustTextDescription = styled.span`
     opacity: 0.7;
 `;
 
-const ShowMoreBlock = styled.div`
-    display: flex;
-    gap: 2.3rem;
-    align-items: center;
-`;
-
-const Divider = styled.div`
-    border-bottom: 0.1rem dashed ${COLORS.gray100};
-    width: 100%;
-`;
-
-const ShowMoreButton = styled.div`
-    display: flex;
-    align-items: center;
-    width: min-content;
-    white-space: nowrap;
-    font-size: 1.6rem;
-    line-height: 2.8rem;
-    color: ${COLORS.purple500};
-    cursor: pointer;
-`;
-
-const ShowMoreButtonArrow = styled(ArrowDown)<{ $showMore: boolean }>`
-    margin-left: 0.9rem;
-    transform: ${({ $showMore }) => ($showMore ? 'rotate(180deg)' : '')};
-    transition: transform linear 200ms;
-
-    path {
-        fill: ${COLORS.purple400};
-    }
-`;
-
-const AssetsBlock = styled.div`
-    margin-top: 2.8rem;
-`;
-
-const AssetLine = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    &:not(:last-child) {
-        margin-bottom: 2.4rem;
-    }
-`;
-
-const AssetName = styled.div`
-    display: flex;
-    align-items: center;
-    font-weight: 400;
-    font-size: 1.6rem;
-    line-height: 1.8rem;
-    color: ${COLORS.textGray};
-`;
-
-const Amount = styled.span`
-    font-weight: 400;
-    font-size: 1.6rem;
-    line-height: 1.8rem;
-    color: ${COLORS.textTertiary};
-`;
-
 const LockAquaModal = ({
     confirm,
     params,
 }: ModalProps<{ amount: string; period: number; iceAmount: number }>) => {
-    const [showMore, setShowMore] = useState(false);
     const { amount, period, iceAmount } = params;
     const { account } = useAuthStore();
     const [pending, setPending] = useState(false);
     const isMounted = useIsMounted();
 
     const unlistedIceAssets = account.getUntrustedIceAssets();
-
-    const toggleShowMore = () => {
-        setShowMore(prevState => !prevState);
-    };
 
     const onSubmit = async () => {
         if (account.authType === LoginTypes.walletConnect) {
@@ -236,39 +169,14 @@ const LockAquaModal = ({
                         <AddTrustEmoji>☝️</AddTrustEmoji>
                         <AddTrustTextDescription>
                             Freezing AQUA requires you to add the {unlistedIceAssets.length} ICE
-                            trustlines. Each trustline will reserve 0.5 XLM of your wallet balance.
+                            trustlines ({unlistedIceAssets.map(asset => asset.code).join(', ')}).
+                            Each trustline will reserve 0.5 XLM of your wallet balance.
                         </AddTrustTextDescription>
                     </AddTrustDescription>
-                    <ShowMoreBlock>
-                        <Divider />
-
-                        <ShowMoreButton onClick={() => toggleShowMore()}>
-                            <span>Show {showMore ? 'less' : 'more'}</span>
-                            <ShowMoreButtonArrow $showMore={showMore} />
-                        </ShowMoreButton>
-                        <Divider />
-                    </ShowMoreBlock>
-                    {showMore && (
-                        <AssetsBlock>
-                            {unlistedIceAssets.map(asset => (
-                                <AssetLine key={asset.code}>
-                                    <AssetName>
-                                        <IceLogo />
-                                        <span>{asset.code}</span>
-                                    </AssetName>
-                                    <Amount>0.5 XLM</Amount>
-                                </AssetLine>
-                            ))}
-                            <AssetLine>
-                                <AssetName>Total:</AssetName>
-                                <Amount>{unlistedIceAssets.length * 0.5} XLM</Amount>
-                            </AssetLine>
-                        </AssetsBlock>
-                    )}
                 </AddTrustBlock>
             )}
             <ButtonContainer>
-                <Button isBig fullWidth pending={pending} onClick={() => onSubmit()}>
+                <Button isBig isRounded fullWidth pending={pending} onClick={() => onSubmit()}>
                     Confirm
                 </Button>
             </ButtonContainer>
