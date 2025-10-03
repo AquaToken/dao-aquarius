@@ -6,5 +6,16 @@ import RangeInput from './RangeInput';
 import Select from './Select';
 import TextArea from './TextArea';
 import ToggleGroup from './ToggleGroup';
+import { withDateMask } from './withDateMask';
 
-export { BlankInput, Checkbox, Input, RangeInput, Select, TextArea, ToggleGroup, DatePicker };
+export {
+    BlankInput,
+    Checkbox,
+    Input,
+    RangeInput,
+    Select,
+    TextArea,
+    ToggleGroup,
+    DatePicker,
+    withDateMask,
+};

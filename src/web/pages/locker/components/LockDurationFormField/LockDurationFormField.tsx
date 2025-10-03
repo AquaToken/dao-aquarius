@@ -11,8 +11,7 @@ import ArrowDownIcon from 'assets/icons/arrows/arrow-down-16.svg';
 import IconClose from 'assets/icons/nav/icon-close-alt-16.svg';
 import IconCalendar from 'assets/icons/objects/icon-calendar-16.svg';
 
-import { BlankInput, DatePicker } from 'basics/inputs';
-import RangeInput from 'basics/inputs/RangeInput';
+import { RangeInput, BlankInput, DatePicker, withDateMask } from 'basics/inputs';
 
 const Container = styled.div`
     display: flex;
@@ -87,6 +86,8 @@ const LockDurationFormField = ({
         setIsOpen(prev => !prev);
     };
 
+    const MaskedInput = React.useMemo(() => withDateMask(BlankInput), []);
+
     return (
         <Container>
             <DateInputsWrapper>
@@ -99,7 +100,7 @@ const LockDurationFormField = ({
                             onLockPeriodChange(ts);
                             setIsOpen(false);
                         }}
-                        customInput={<BlankInput />}
+                        customInput={<MaskedInput />}
                         minDate={addDays(Date.now(), 1)}
                         open={isOpen}
                         onClickOutside={() => setIsOpen(false)}
