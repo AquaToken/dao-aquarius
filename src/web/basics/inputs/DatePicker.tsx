@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { useRef } from 'react';
 import ReactDatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-
 import styled from 'styled-components';
 
 import { DatePickerStyles } from 'web/DatePickerStyles';
@@ -11,6 +9,8 @@ import ArrowLeft from 'assets/icons/arrows/arrow-left-16.svg';
 import ArrowRight from 'assets/icons/arrows/arrow-right-16.svg';
 
 import Input from 'basics/inputs/Input';
+
+import 'react-datepicker/dist/react-datepicker.css';
 
 const Container = styled.div<{ $fullWidth: boolean }>`
     display: flex;
@@ -39,11 +39,12 @@ const DatePicker = ({ customInput, date, onChange, fullWidth, ...props }: Props)
                 }}
                 dateFormat="MM.dd.yyyy"
                 placeholderText="MM.DD.YYYY"
+                fixedHeight
                 popperModifiers={[
                     {
                         name: 'offset',
                         options: {
-                            offset: [0, -10],
+                            offset: [-50, -100],
                         },
                     },
                 ]}
