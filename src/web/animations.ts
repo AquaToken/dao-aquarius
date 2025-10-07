@@ -9,14 +9,14 @@ import { keyframes, css } from 'styled-components';
  * Commonly used for smooth element appearance from below.
  */
 export const fadeInUp = keyframes`
-    from {
-        opacity: 0;
-        transform: translateY(40px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 `;
 
 /**
@@ -24,14 +24,14 @@ export const fadeInUp = keyframes`
  * Creates a gentle “pop” appearance.
  */
 export const fadeIn = keyframes`
-    from {
-        opacity: 0;
-        transform: scale(0.98);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 `;
 
 /**
@@ -39,14 +39,14 @@ export const fadeIn = keyframes`
  * Good for cards or blocks that “flip” into view.
  */
 export const flipIn = keyframes`
-    from {
-        opacity: 0;
-        transform: rotateX(-15deg) scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: rotateX(0deg) scale(1);
-    }
+  from {
+    opacity: 0;
+    transform: rotateX(-15deg) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: rotateX(0deg) scale(1);
+  }
 `;
 
 /**
@@ -66,6 +66,24 @@ export const slideUpSoft = keyframes`
     opacity: 1;
     transform: translateY(0);
   }
+`;
+
+/**
+ * Simple fade-in with no movement.
+ * Ideal for subtle hero-section animations.
+ */
+export const fadeAppear = keyframes`
+  from { opacity: 0; }
+  to { opacity: 1; }
+`;
+
+/**
+ * Gentle pulsing (scaling) effect.
+ * Commonly used for logos or key icons.
+ */
+export const pulse = keyframes`
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
 `;
 
 /* -------------------------------------------------------------------------- */
@@ -111,6 +129,21 @@ export const flipInAnimation = css`
  */
 export const slideUpSoftAnimation = css`
     animation: ${slideUpSoft} 0.9s cubic-bezier(0.25, 1, 0.5, 1) both;
+`;
+
+/**
+ * Subtle fade-in for hero and static sections.
+ * Doesn’t hide content (safe for SSR and initial render).
+ */
+export const fadeAppearAnimation = css`
+    animation: ${fadeAppear} 1.2s ease-out both;
+`;
+
+/**
+ * Infinite gentle pulsing — gives "breathing" motion.
+ */
+export const pulseAnimation = css`
+    animation: ${pulse} 4s ease-in-out infinite;
 `;
 
 /* -------------------------------------------------------------------------- */

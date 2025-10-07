@@ -1,7 +1,15 @@
-import styled from 'styled-components';
+import * as React from 'react';
+import styled, { css } from 'styled-components';
 
 import { MainRoutes } from 'constants/routes';
 
+import { useScrollAnimation } from 'hooks/useScrollAnimation';
+
+import {
+    containerScrollAnimation,
+    fadeAppearAnimation,
+    slideUpSoftAnimation,
+} from 'web/animations';
 import { flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -13,26 +21,38 @@ import SwapBlockIcon from 'assets/main-page/swap-block.svg';
 import { Button } from 'basics/buttons';
 import { BlankRouterLink } from 'basics/links';
 
-const Wrapper = styled.section`
+/* -------------------------------------------------------------------------- */
+/*                                 Styled Components                          */
+/* -------------------------------------------------------------------------- */
+
+const Wrapper = styled.section<{ $visible: boolean }>`
     ${flexAllCenter};
     flex-direction: column;
     margin-top: 11rem;
+    ${containerScrollAnimation};
 
     ${respondDown(Breakpoints.sm)`
-       margin-top: 6.4rem;
-    `}
+     margin-top: 6.4rem;
+  `}
 
     ${respondDown(Breakpoints.xs)`
-       margin-top: 4.8rem;
-    `}
+     margin-top: 4.8rem;
+  `}
 `;
 
-const InnerWrapper = styled.div`
+const InnerWrapper = styled.div<{ $visible: boolean }>`
     display: flex;
     flex-direction: column;
     align-items: center;
     max-width: 79rem;
     text-align: center;
+
+    ${({ $visible }) =>
+        $visible &&
+        css`
+            ${fadeAppearAnimation};
+            animation-delay: 0.15s;
+        `}
 `;
 
 const Title = styled.span`
@@ -41,9 +61,9 @@ const Title = styled.span`
     color: ${COLORS.textPrimary};
 
     ${respondDown(Breakpoints.sm)`
-        font-size: 2.4rem;
-        line-height: 100%;
-    `}
+    font-size: 2.4rem;
+    line-height: 100%;
+  `}
 `;
 
 const TitleBold = styled(Title)`
@@ -51,8 +71,15 @@ const TitleBold = styled(Title)`
     color: ${COLORS.purple500};
 `;
 
-const SorobanStarsStyled = styled(SorobanStars)`
+const SorobanStarsStyled = styled(SorobanStars)<{ $visible: boolean }>`
     margin-bottom: 2.4rem;
+    opacity: 0;
+    ${({ $visible }) =>
+        $visible &&
+        css`
+            ${slideUpSoftAnimation};
+            animation-delay: 0.05s;
+        `}
 `;
 
 const SorobanBlocks = styled.div`
@@ -62,17 +89,17 @@ const SorobanBlocks = styled.div`
     margin-top: 4.8rem;
 
     ${respondDown(Breakpoints.md)`
-        margin-top: 2.4rem;
-        gap: 4rem;
-    `}
+    margin-top: 2.4rem;
+    gap: 4rem;
+  `}
 
     ${respondDown(Breakpoints.sm)`
-        flex-direction: column;
-        gap: 1.6rem;
-    `}
+    flex-direction: column;
+    gap: 1.6rem;
+  `}
 `;
 
-const Block = styled.div`
+const Block = styled.div<{ $visible: boolean; $delay: number }>`
     background-color: ${COLORS.gray50};
     display: flex;
     justify-content: space-between;
@@ -81,28 +108,36 @@ const Block = styled.div`
     border-radius: 4.8rem;
     padding: 4.8rem;
     width: 50%;
+    opacity: 0;
+
+    ${({ $visible, $delay }) =>
+        $visible &&
+        css`
+            ${slideUpSoftAnimation};
+            animation-delay: ${$delay}s;
+        `}
 
     ${respondDown(Breakpoints.sm)`
-        padding: 3.2rem;
-        width: 100%;
-    `}
+    padding: 3.2rem;
+    width: 100%;
+  `}
 `;
 
 const BlockWithIcon = styled.div`
     ${respondDown(Breakpoints.sm)`
-        display: flex;
-        align-items: center;
-        gap: 1.6rem;
+    display: flex;
+    align-items: center;
+    gap: 1.6rem;
 
-        svg {
-            flex: 0 0 auto;
-        }
-    `}
+    svg {
+      flex: 0 0 auto;
+    }
+  `}
 
     ${respondDown(Breakpoints.xs)`
-        flex-direction: column;
-        align-items: start;
-    `}
+    flex-direction: column;
+    align-items: start;
+  `}
 `;
 
 const BlockDesc = styled.div`
@@ -112,17 +147,17 @@ const BlockDesc = styled.div`
     margin-top: 1.6rem;
 
     ${respondDown(Breakpoints.md)`
-        margin-top: 0.8rem;
-    `}
+    margin-top: 0.8rem;
+  `}
 
     ${respondDown(Breakpoints.sm)`
-        margin-top: 0;
-    `}
+    margin-top: 0;
+  `}
 
-    ${respondDown(Breakpoints.xs)`
-        font-size: 1.6rem;
-        line-height: 2.4rem;
-    `}
+  ${respondDown(Breakpoints.xs)`
+    font-size: 1.6rem;
+    line-height: 2.4rem;
+  `}
 `;
 
 const SorobanButton = styled(Button)`
@@ -130,13 +165,13 @@ const SorobanButton = styled(Button)`
     padding: 0 2.4rem;
 
     ${respondDown(Breakpoints.sm)`
-        margin-top: 3.2rem;
-        height: 4rem;
-    `}
+    margin-top: 3.2rem;
+    height: 4rem;
+  `}
 
     ${respondDown(Breakpoints.xs)`
-        width: 100%;
-    `}
+    width: 100%;
+  `}
 `;
 
 const ArrowAlt16Styled = styled(ArrowAlt16)`
@@ -144,47 +179,55 @@ const ArrowAlt16Styled = styled(ArrowAlt16)`
     color: ${COLORS.textPrimary};
 `;
 
-const AquaSoroban = () => (
-    <Wrapper id="aqua-soroban">
-        <InnerWrapper>
-            <SorobanStarsStyled />
-            <Title>
-                Aquarius AMMs <TitleBold>run on Soroban smart contracts</TitleBold> — powering a new
-                generation of DeFi on Stellar.
-            </Title>
-        </InnerWrapper>
+/* -------------------------------------------------------------------------- */
+/*                                   Component                                */
+/* -------------------------------------------------------------------------- */
 
-        <SorobanBlocks>
-            <Block>
-                <BlockWithIcon>
-                    <SwapBlockIcon />
+const AquaSoroban: React.FC = () => {
+    const { ref, visible } = useScrollAnimation(0.2, true);
 
-                    <BlockDesc>
-                        <b>Swap instantly</b> with deep on-chain liquidity from Aquarius AMMs.
-                    </BlockDesc>
-                </BlockWithIcon>
-                <BlankRouterLink to={MainRoutes.swap}>
-                    <SorobanButton withGradient secondary isBig isRounded>
-                        Swap now <ArrowAlt16Styled />
-                    </SorobanButton>
-                </BlankRouterLink>
-            </Block>
-            <Block>
-                <BlockWithIcon>
-                    <PoolsBlockIcon />
+    return (
+        <Wrapper ref={ref as React.RefObject<HTMLDivElement>} $visible={visible} id="aqua-soroban">
+            <InnerWrapper $visible={visible}>
+                <SorobanStarsStyled $visible={visible} />
+                <Title>
+                    Aquarius AMMs <TitleBold>run on Soroban smart contracts</TitleBold> — powering a
+                    new generation of DeFi on Stellar.
+                </Title>
+            </InnerWrapper>
 
-                    <BlockDesc>
-                        <b>Provide liquidity</b> and get rewarded while powering Stellar markets.
-                    </BlockDesc>
-                </BlockWithIcon>
-                <BlankRouterLink to={MainRoutes.amm}>
-                    <SorobanButton withGradient secondary isBig isRounded>
-                        View Pools <ArrowAlt16Styled />
-                    </SorobanButton>
-                </BlankRouterLink>
-            </Block>
-        </SorobanBlocks>
-    </Wrapper>
-);
+            <SorobanBlocks>
+                <Block $visible={visible} $delay={0.1}>
+                    <BlockWithIcon>
+                        <SwapBlockIcon />
+                        <BlockDesc>
+                            <b>Swap instantly</b> with deep on-chain liquidity from Aquarius AMMs.
+                        </BlockDesc>
+                    </BlockWithIcon>
+                    <BlankRouterLink to={MainRoutes.swap}>
+                        <SorobanButton withGradient secondary isBig isRounded>
+                            Swap now <ArrowAlt16Styled />
+                        </SorobanButton>
+                    </BlankRouterLink>
+                </Block>
+
+                <Block $visible={visible} $delay={0.25}>
+                    <BlockWithIcon>
+                        <PoolsBlockIcon />
+                        <BlockDesc>
+                            <b>Provide liquidity</b> and get rewarded while powering Stellar
+                            markets.
+                        </BlockDesc>
+                    </BlockWithIcon>
+                    <BlankRouterLink to={MainRoutes.amm}>
+                        <SorobanButton withGradient secondary isBig isRounded>
+                            View Pools <ArrowAlt16Styled />
+                        </SorobanButton>
+                    </BlankRouterLink>
+                </Block>
+            </SorobanBlocks>
+        </Wrapper>
+    );
+};
 
 export default AquaSoroban;

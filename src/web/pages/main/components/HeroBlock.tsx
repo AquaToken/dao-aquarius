@@ -1,9 +1,11 @@
-import styled, { css } from 'styled-components';
+import * as React from 'react';
+import styled from 'styled-components';
 
 import { MainRoutes } from 'constants/routes';
 
 import { getIsDarkTheme } from 'helpers/theme';
 
+import { fadeAppearAnimation, pulseAnimation } from 'web/animations';
 import { fullWidthSectionStyles, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS, HEADER_HEIGHT, PAGE_PADDINGS } from 'web/styles';
 
@@ -22,13 +24,16 @@ import { BlankRouterLink } from 'basics/links';
 import LiveIndicator from 'basics/LiveIndicator';
 import { DotsLoader } from 'basics/loaders';
 
+/* -------------------------------------------------------------------------- */
+/*                                   Layout                                   */
+/* -------------------------------------------------------------------------- */
+
 const Hero = styled.section<{ $isDarkTheme: boolean }>`
     ${fullWidthSectionStyles};
     position: relative;
     overflow: hidden;
     background: ${({ $isDarkTheme }) =>
         $isDarkTheme ? `url(${HeroBackground}) no-repeat center center / cover` : COLORS.gray50};
-
     border-radius: 96px;
     padding: 3.6rem;
     display: flex;
@@ -36,8 +41,8 @@ const Hero = styled.section<{ $isDarkTheme: boolean }>`
     align-items: center;
     justify-content: center;
     height: calc(100vh - ${HEADER_HEIGHT});
+    ${fadeAppearAnimation};
 
-    /* hide icons to back of content */
     svg {
         z-index: 0;
     }
@@ -54,7 +59,7 @@ const Hero = styled.section<{ $isDarkTheme: boolean }>`
         width: 100%;
         height: auto;
         border-radius: 0;
-        padding: 6rem ${PAGE_PADDINGS}rem 6rem ${PAGE_PADDINGS}rem;
+        padding: 6rem ${PAGE_PADDINGS}rem;
         gap: 6rem;
     `}
 `;
@@ -65,6 +70,9 @@ const MainContent = styled.div`
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    text-align: center;
+    ${fadeAppearAnimation};
+    animation-delay: 0.1s;
 `;
 
 const FooterContent = styled.div`
@@ -74,6 +82,8 @@ const FooterContent = styled.div`
     flex: 1;
     align-items: center;
     justify-content: end;
+    ${fadeAppearAnimation};
+    animation-delay: 0.4s;
 `;
 
 const Title = styled.h1<{ $isDarkTheme: boolean }>`
@@ -82,6 +92,8 @@ const Title = styled.h1<{ $isDarkTheme: boolean }>`
     line-height: 100%;
     margin-top: 1.6rem;
     color: ${props => (props.$isDarkTheme ? COLORS.white : COLORS.textPrimary)};
+    ${fadeAppearAnimation};
+    animation-delay: 0.2s;
 
     ${respondDown(Breakpoints.md)`
         font-size: 5.6rem;
@@ -97,17 +109,23 @@ const Description = styled.p<{ $isDarkTheme: boolean }>`
     font-size: 1.8rem;
     line-height: 180%;
     color: ${props => (props.$isDarkTheme ? COLORS.white : COLORS.textSecondary)};
-    opacity: ${props => (props.$isDarkTheme ? 0.7 : 1)};
+    opacity: ${props => (props.$isDarkTheme ? 0.8 : 1)};
+    margin-top: 1.2rem;
+    ${fadeAppearAnimation};
+    animation-delay: 0.35s;
 
     ${respondDown(Breakpoints.sm)`
-       font-size: 1.4rem;
-       text-align: center;
+        font-size: 1.4rem;
+        text-align: center;
     `}
 `;
 
 const ProvideLiqButton = styled(Button)`
     border-radius: 46px;
     padding: 0 4rem;
+    margin-top: 2.4rem;
+    ${fadeAppearAnimation};
+    animation-delay: 0.5s;
 
     ${respondDown(Breakpoints.sm)`
         padding: 0 3rem;
@@ -120,6 +138,9 @@ const LiveStats = styled.div`
     font-size: 1.4rem;
     line-height: 180%;
     color: ${COLORS.green500};
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
 `;
 
 const LockedLiquidity = styled.div`
@@ -143,10 +164,6 @@ const Stats = styled.span<{ $isDarkTheme: boolean }>`
     font-size: 1.8rem;
     line-height: 180%;
     color: ${props => (props.$isDarkTheme ? COLORS.white : COLORS.textPrimary)};
-
-    ${respondDown(Breakpoints.md)`
-        font-size: 1.6rem;
-    `}
 `;
 
 const StatsDesc = styled(Stats)<{ $isDarkTheme: boolean }>`
@@ -166,65 +183,90 @@ const Label = styled.div<{ $isDarkTheme: boolean }>`
     font-weight: 500;
     font-size: 1.8rem;
     line-height: 180%;
+    ${fadeAppearAnimation};
+    animation-delay: 0.1s;
 `;
 
 const AquaLogoStyled = styled(AquaLogo)<{ $isDarkTheme: boolean }>`
     color: ${props => (props.$isDarkTheme ? COLORS.white : COLORS.black)};
     height: 4rem;
+    ${pulseAnimation};
 `;
 
-const TopRightHand = css`
+/* ----------------------------- Decorations -------------------------------- */
+
+const HandTopRightStyled = styled(HandTopRight)`
     position: absolute;
     top: 0;
     right: 0;
+    ${fadeAppearAnimation};
+    animation-delay: 0.1s;
 
     ${respondDown(Breakpoints.sm)`
         display: none;
     `}
-`;
-
-const BottomLeftHand = css`
-    position: absolute;
-    bottom: 0;
-    left: 0;
-
-    ${respondDown(Breakpoints.sm)`
-        display: none;
-    `}
-`;
-
-const HandTopRightStyled = styled(HandTopRight)`
-    ${TopRightHand};
 `;
 
 const HandTopRightLightStyled = styled(HandTopRightLight)`
-    ${TopRightHand};
+    position: absolute;
+    top: 0;
+    right: 0;
+    ${fadeAppearAnimation};
+    animation-delay: 0.1s;
+
+    ${respondDown(Breakpoints.sm)`
+        display: none;
+    `}
 `;
 
 const HandBottomLeftStyled = styled(HandLeftBottom)`
-    ${BottomLeftHand};
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    ${fadeAppearAnimation};
+    animation-delay: 0.15s;
+
+    ${respondDown(Breakpoints.sm)`
+        display: none;
+    `}
 `;
 
 const HandBottomLeftLightStyled = styled(HandLeftBottomLight)`
-    ${BottomLeftHand};
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    ${fadeAppearAnimation};
+    animation-delay: 0.15s;
+
+    ${respondDown(Breakpoints.sm)`
+        display: none;
+    `}
 `;
 
 export const HeroTopLeftStyled = styled(HeroTopLeft)`
     position: absolute;
     top: 0;
     left: 0;
+    ${fadeAppearAnimation};
+    animation-delay: 0.2s;
 `;
 
 export const HeroBottomRightStyled = styled(HeroBottomRight)`
     position: absolute;
     bottom: 0;
     right: 0;
+    ${fadeAppearAnimation};
+    animation-delay: 0.25s;
 `;
 
 const ArrowAlt16Styled = styled(ArrowAlt16)`
     margin-left: 0.8rem;
     color: ${COLORS.white};
 `;
+
+/* -------------------------------------------------------------------------- */
+/*                                 Component                                  */
+/* -------------------------------------------------------------------------- */
 
 interface Props {
     isLoading: boolean;
@@ -233,7 +275,7 @@ interface Props {
     tvlInUsd: string;
 }
 
-const HeroBlock = ({ isLoading, monthlyDistributed, volumeInUsd, tvlInUsd }: Props) => {
+const HeroBlock: React.FC<Props> = ({ isLoading, monthlyDistributed, volumeInUsd, tvlInUsd }) => {
     const isDarkTheme = getIsDarkTheme();
 
     return (
@@ -252,25 +294,30 @@ const HeroBlock = ({ isLoading, monthlyDistributed, volumeInUsd, tvlInUsd }: Pro
 
             <HeroTopLeftStyled />
             <HeroBottomRightStyled />
+
             <MainContent>
                 <Label $isDarkTheme={isDarkTheme}>
                     <AquaLogoStyled $isDarkTheme={isDarkTheme} />
                 </Label>
+
                 <Title $isDarkTheme={isDarkTheme}>Stellar’s DeFi Hub</Title>
                 <Description $isDarkTheme={isDarkTheme}>
                     Swap faster. Add liquidity. Earn AQUA.
                 </Description>
+
                 <BlankRouterLink to={MainRoutes.swap}>
                     <ProvideLiqButton withGradient isBig isRounded>
                         Swap now <ArrowAlt16Styled />
                     </ProvideLiqButton>
                 </BlankRouterLink>
             </MainContent>
+
             <FooterContent>
                 <LiveStats>
                     <LiveIndicator />
                     Live Stats
                 </LiveStats>
+
                 <LockedLiquidity>
                     <StatsWrapper>
                         <StatsDesc $isDarkTheme={isDarkTheme}>Total Swap Volume:</StatsDesc>
@@ -278,12 +325,14 @@ const HeroBlock = ({ isLoading, monthlyDistributed, volumeInUsd, tvlInUsd }: Pro
                             {isLoading ? <DotsLoader /> : volumeInUsd}
                         </Stats>
                     </StatsWrapper>
+
                     <StatsWrapper>
                         <StatsDesc $isDarkTheme={isDarkTheme}>Total Liquidity:</StatsDesc>
                         <Stats $isDarkTheme={isDarkTheme}>
                             {isLoading ? <DotsLoader /> : tvlInUsd}
                         </Stats>
                     </StatsWrapper>
+
                     <StatsWrapper>
                         <StatsDesc $isDarkTheme={isDarkTheme}>Monthly Rewards:</StatsDesc>
                         <Stats $isDarkTheme={isDarkTheme}>
