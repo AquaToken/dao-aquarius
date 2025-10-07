@@ -48,13 +48,13 @@ const TextArea = ({ autosize, ...props }: Props): React.ReactNode => {
     const resize = () => {
         const el = ref.current;
         if (autosize && el) {
-            el.style.height = '5px'; // сначала сбросить высоту
-            el.style.height = `${el.scrollHeight}px`; // потом установить по содержимому
+            el.style.height = '5px';
+            el.style.height = `${el.scrollHeight}px`;
         }
     };
 
     useEffect(() => {
-        resize(); // resize при монтировании и при смене value
+        resize();
     }, [props.value]);
 
     return (

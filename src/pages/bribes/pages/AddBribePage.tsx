@@ -10,8 +10,6 @@ import {
     startOfWeek,
 } from 'date-fns';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -45,12 +43,12 @@ import Success from 'assets/icons/status/success.svg';
 import AssetDropdown from 'basics/asset-pickers/AssetDropdown';
 import Button from 'basics/buttons/Button';
 import CircleButton from 'basics/buttons/CircleButton';
+import { DatePicker } from 'basics/inputs';
 import Input from 'basics/inputs/Input';
 import { ExternalLink } from 'basics/links';
 import { CircleLoader } from 'basics/loaders';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
-import { DatePickerStyles } from '../../../web/DatePickerStyles';
 import CreatePairModal from '../../vote/components/MainPage/CreatePairModal/CreatePairModal';
 import { getMarketPair } from '../api/api';
 import ConfirmBribeModal from '../components/AddBribePage/ConfirmBribeModal/ConfirmBribeModal';
@@ -261,7 +259,7 @@ const DurationButton = styled.div`
     }
 `;
 
-export const getWeekStartFromDay = (date: Date, duration: number) => {
+export const getWeekStartFromDay = (date: number | Date, duration: number) => {
     const startWeek = startOfWeek(date, { weekStartsOn: 1 });
     const endWeek = endOfWeek(date, { weekStartsOn: 1 });
     const endPeriod = addWeeks(endWeek, duration - 1);
@@ -659,37 +657,34 @@ const AddBribePage = () => {
                                     />
                                     <DatePicker
                                         customInput={<Input label="Start date" />}
-                                        calendarStartDay={1}
-                                        selected={selectedDate || null}
+                                        date={selectedDate || null}
                                         onChange={res => {
                                             setSelectedDate(res);
+
+                                            if (!res) {
+                                                setStartDate(null);
+                                                return;
+                                            }
                                             const { start } = getWeekStartFromDay(
                                                 res,
                                                 Number(duration),
                                             );
                                             setStartDate(start);
                                         }}
+                                        calendarStartDay={1}
                                         filterDate={date => date.getDay() === 1}
-                                        dateFormat="MM.dd.yyyy"
-                                        placeholderText="MM.DD.YYYY"
                                         disabledKeyboardNavigation
-                                        popperModifiers={[
-                                            {
-                                                name: 'offset',
-                                                options: {
-                                                    offset: [0, -10],
-                                                },
-                                            },
-                                        ]}
                                         minDate={minDate}
+                                        fullWidth
                                     />
                                     <DashIcon />
                                     <DatePicker
                                         customInput={<DateEndInput label="End date" />}
                                         disabled
                                         calendarStartDay={1}
-                                        selected={endDate || null}
+                                        date={endDate || null}
                                         dateFormat="MM.dd.yyyy"
+                                        fullWidth
                                     />
                                 </FormRow>
 
@@ -708,8 +703,6 @@ const AddBribePage = () => {
                                 >
                                     Create bribe
                                 </NextButton>
-
-                                <DatePickerStyles />
                             </FormSection>
                         )}
                     </Form>

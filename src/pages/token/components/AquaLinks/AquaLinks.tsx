@@ -1,6 +1,9 @@
 import * as React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
+import { useScrollAnimation } from 'hooks/useScrollAnimation';
+
+import { containerScrollAnimation, slideUpSoftAnimation } from 'web/animations';
 import { commonMaxWidth, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -16,11 +19,16 @@ import XT from 'assets/orgs/xt.svg';
 
 import AquaLink from 'pages/token/components/AquaLinks/AquaLink/AquaLink';
 
-const Container = styled.div`
+/* -------------------------------------------------------------------------- */
+/*                                 Styled                                     */
+/* -------------------------------------------------------------------------- */
+
+const Container = styled.div<{ $visible: boolean }>`
     padding: 0 10rem;
     ${commonMaxWidth};
     margin-top: 4.8rem;
     width: 100%;
+    ${containerScrollAnimation};
 
     ${respondDown(Breakpoints.sm)`
         padding: 0;
@@ -28,11 +36,12 @@ const Container = styled.div`
     `}
 `;
 
-const Content = styled.div`
+const Content = styled.div<{ $visible: boolean }>`
     display: flex;
     align-items: center;
     padding: 2.2rem 0;
     width: 100%;
+    ${({ $visible }) => $visible && slideUpSoftAnimation};
 
     ${respondDown(Breakpoints.sm)`
         padding: 0;
@@ -45,11 +54,18 @@ const Content = styled.div`
     `}
 `;
 
-const Section = styled.div`
+const Section = styled.div<{ $visible: boolean; $delay: number }>`
     display: flex;
     flex-direction: column;
     gap: 2.4rem;
     width: 50%;
+    opacity: 0;
+    ${({ $visible, $delay }) =>
+        $visible &&
+        css`
+            ${slideUpSoftAnimation};
+            animation-delay: ${$delay}s;
+        `}
 
     ${respondDown(Breakpoints.md)`
         width: 100%;
@@ -71,60 +87,75 @@ const Links = styled.div`
     `}
 `;
 
-const AquaLinks = ({ ...props }) => (
-    <Container {...props}>
-        <Content>
-            <Section>
-                <Label>See on</Label>
-                <Links>
-                    <AquaLink
-                        href="https://stellar.expert/explorer/asset/AQUA-GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA"
-                        label="StellarExpert"
-                    >
-                        <Expert />
-                    </AquaLink>
-                    <AquaLink href="https://www.coingecko.com/en/coins/aquarius" label="CoinGecko">
-                        <Coingecko />
-                    </AquaLink>
-                    <AquaLink
-                        href="https://coinmarketcap.com/currencies/aquarius/"
-                        label="CoinMarketCap"
-                    >
-                        <CMC />
-                    </AquaLink>
-                    <AquaLink href="https://defillama.com/dexs/aquarius-stellar" label="DefiLlama">
-                        <DefiLlama />
-                    </AquaLink>
-                </Links>
-            </Section>
-            <Section>
-                <Label>Listed on</Label>
-                <Links>
-                    <AquaLink href="https://www.xt.com/en/trade/aqua_usdc" label="XT">
-                        <XT />
-                    </AquaLink>
-                    <AquaLink href="https://latoken.com/exchange/AQUA_USDC" label="Latoken">
-                        <Latoken />
-                    </AquaLink>
-                    <AquaLink
-                        href="https://www.digifinex.com/en-ww/trade/USDT/AQUA?tradeKind=spot"
-                        label="Digifinex"
-                    >
-                        <Digifinex />
-                    </AquaLink>
-                    <AquaLink
-                        href="https://www.probit.com/en-us/app/exchange/AQUA-USDT"
-                        label="Probit Global"
-                    >
-                        <Probit />
-                    </AquaLink>
-                    <AquaLink href="https://www.gopax.co.kr/exchange/aqua-krw" label="GOPAX">
-                        <Gopax />
-                    </AquaLink>
-                </Links>
-            </Section>
-        </Content>
-    </Container>
-);
+/* -------------------------------------------------------------------------- */
+/*                                 Component                                  */
+/* -------------------------------------------------------------------------- */
+
+const AquaLinks = ({ ...props }) => {
+    const { ref, visible } = useScrollAnimation(0.3, true);
+
+    return (
+        <Container ref={ref as React.RefObject<HTMLDivElement>} $visible={visible} {...props}>
+            <Content $visible={visible}>
+                <Section $visible={visible} $delay={0}>
+                    <Label>See on</Label>
+                    <Links>
+                        <AquaLink
+                            href="https://stellar.expert/explorer/asset/AQUA-GBNZILSTVQZ4R7IKQDGHYGY2QXL5QOFJYQMXPKWRRM5PAV7Y4M67AQUA"
+                            label="StellarExpert"
+                        >
+                            <Expert />
+                        </AquaLink>
+                        <AquaLink
+                            href="https://www.coingecko.com/en/coins/aquarius"
+                            label="CoinGecko"
+                        >
+                            <Coingecko />
+                        </AquaLink>
+                        <AquaLink
+                            href="https://coinmarketcap.com/currencies/aquarius/"
+                            label="CoinMarketCap"
+                        >
+                            <CMC />
+                        </AquaLink>
+                        <AquaLink
+                            href="https://defillama.com/dexs/aquarius-stellar"
+                            label="DefiLlama"
+                        >
+                            <DefiLlama />
+                        </AquaLink>
+                    </Links>
+                </Section>
+
+                <Section $visible={visible} $delay={0.15}>
+                    <Label>Listed on</Label>
+                    <Links>
+                        <AquaLink href="https://www.xt.com/en/trade/aqua_usdc" label="XT">
+                            <XT />
+                        </AquaLink>
+                        <AquaLink href="https://latoken.com/exchange/AQUA_USDC" label="Latoken">
+                            <Latoken />
+                        </AquaLink>
+                        <AquaLink
+                            href="https://www.digifinex.com/en-ww/trade/USDT/AQUA?tradeKind=spot"
+                            label="Digifinex"
+                        >
+                            <Digifinex />
+                        </AquaLink>
+                        <AquaLink
+                            href="https://www.probit.com/en-us/app/exchange/AQUA-USDT"
+                            label="Probit Global"
+                        >
+                            <Probit />
+                        </AquaLink>
+                        <AquaLink href="https://www.gopax.co.kr/exchange/aqua-krw" label="GOPAX">
+                            <Gopax />
+                        </AquaLink>
+                    </Links>
+                </Section>
+            </Content>
+        </Container>
+    );
+};
 
 export default AquaLinks;

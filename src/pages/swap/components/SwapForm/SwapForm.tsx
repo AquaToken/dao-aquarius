@@ -14,13 +14,15 @@ import { ModalService } from 'services/globalServices';
 
 import { SorobanToken, Token, TokenType } from 'types/token';
 
-import { cardBoxShadow, flexAllCenter, respondDown } from 'web/mixins';
+import { flexAllCenter, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import SettingsIcon from 'assets/icons/nav/icon-settings-16.svg';
 
 import Button from 'basics/buttons/Button';
+import { Form } from 'basics/form/Form';
+import TokenAmountFormField from 'basics/form/TokenAmountFormField';
 
 import NoTrustline from 'components/NoTrustline';
 import Price from 'components/Price';
@@ -31,25 +33,8 @@ import SwapSettingsModal, {
 
 import AmountUsdEquivalent from './AmountUsdEquivalent/AmountUsdEquivalent';
 import SwapFormDivider from './SwapFormDivider/SwapFormDivider';
-import SwapFormRow from './SwapFormRow/SwapFormRow';
 
 import SwapConfirmModal from '../SwapConfirmModal/SwapConfirmModal';
-
-const Form = styled.div<{ $isEmbedded?: boolean }>`
-    margin: 0 auto 2rem;
-    width: ${({ $isEmbedded }) => ($isEmbedded ? '100%' : '48rem')};
-    border-radius: 4rem;
-    background: ${COLORS.white};
-    padding: ${({ $isEmbedded }) => ($isEmbedded ? '0' : '1.6rem')};
-    ${({ $isEmbedded }) => !$isEmbedded && cardBoxShadow};
-    position: relative;
-
-    ${respondDown(Breakpoints.sm)`
-        width: 100%;
-        padding: ${({ $isEmbedded }) => ($isEmbedded ? '0' : '6.6rem 0.8em 2rem')};
-        box-shadow: unset;
-    `};
-`;
 
 const SwapRows = styled.div`
     position: relative;
@@ -418,8 +403,7 @@ const SwapForm = ({
             )}
 
             <SwapRows>
-                <SwapFormRow
-                    isBase
+                <TokenAmountFormField
                     asset={base}
                     setAsset={setBase}
                     balance={baseBalance}
@@ -431,11 +415,17 @@ const SwapForm = ({
                         <AmountUsdEquivalent amount={debouncedBaseAmount.current} asset={base} />
                     }
                     isEmbedded={isEmbedded}
+                    withAutoFocus
+                    amountLabel="Sell"
+                    withPercentButtons
+                    balanceLabel="Available: "
+                    isBalanceClickable
+                    withReserveTooltip
                 />
 
                 <SwapFormDivider pending={estimatePending} onRevert={revertAssets} />
 
-                <SwapFormRow
+                <TokenAmountFormField
                     asset={counter}
                     setAsset={setCounter}
                     amount={counterAmount}
@@ -452,6 +442,7 @@ const SwapForm = ({
                         />
                     }
                     isEmbedded={isEmbedded}
+                    amountLabel="Buy"
                 />
             </SwapRows>
 

@@ -1,7 +1,15 @@
-import styled from 'styled-components';
+import * as React from 'react';
+import styled, { css } from 'styled-components';
 
 import { MainRoutes } from 'constants/routes';
 
+import { useScrollAnimation } from 'hooks/useScrollAnimation';
+
+import {
+    containerScrollAnimation,
+    fadeAppearAnimation,
+    slideUpSoftAnimation,
+} from 'web/animations';
 import { cardBoxShadow, flexAllCenter, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -12,42 +20,55 @@ import IceLogo from 'assets/tokens/ice-logo.svg';
 
 import { BlankRouterLink } from 'basics/links';
 
-const Wrapper = styled.section`
+/* -------------------------------------------------------------------------- */
+/*                                   Styled                                   */
+/* -------------------------------------------------------------------------- */
+
+const Wrapper = styled.section<{ $visible: boolean }>`
     ${flexAllCenter};
     flex-direction: column;
     margin-top: 11rem;
+    ${containerScrollAnimation};
 
     ${respondDown(Breakpoints.md)`
-        margin-top: 6rem;
-        font-size: 6rem;
-    `}
+      margin-top: 6rem;
+      font-size: 6rem;
+  `}
 
     ${respondDown(Breakpoints.sm)`
-        margin-top: 0rem;
-    `}
+      margin-top: 0rem;
+  `}
 
-    ${respondDown(Breakpoints.xs)`
-        margin-top: 1.6rem;
-    `}
+  ${respondDown(Breakpoints.xs)`
+      margin-top: 1.6rem;
+  `}
 `;
 
-const Title = styled.div`
+const Title = styled.div<{ $visible: boolean }>`
     font-weight: bold;
     font-size: 7rem;
     color: ${COLORS.textPrimary};
     line-height: 100%;
+    opacity: 0;
+
+    ${({ $visible }) =>
+        $visible &&
+        css`
+            ${fadeAppearAnimation};
+            animation-delay: 0.1s;
+        `}
 
     ${respondDown(Breakpoints.md)`
-        font-size: 5.6rem;
-    `}
+      font-size: 5.6rem;
+  `}
 
-    ${respondDown(Breakpoints.sm)`
-        font-size: 3.2rem;
-    `}
+  ${respondDown(Breakpoints.sm)`
+      font-size: 3.2rem;
+  `}
 
-    ${respondDown(Breakpoints.xs)`
-        font-size: 2.4rem;
-    `}
+  ${respondDown(Breakpoints.xs)`
+      font-size: 2.4rem;
+  `}
 `;
 
 const BlocksWrapper = styled.div`
@@ -56,30 +77,38 @@ const BlocksWrapper = styled.div`
     gap: 6rem;
 
     ${respondDown(Breakpoints.md)`
-        gap: 4rem;
-    `}
+      gap: 4rem;
+  `}
 
     ${respondDown(Breakpoints.sm)`
-        flex-direction: column;
-        gap: 0;
-    `}
+      flex-direction: column;
+      gap: 0;
+  `}
 `;
 
-const IconBlock = styled.div`
+const IconBlock = styled.div<{ $visible: boolean }>`
     display: flex;
     flex-direction: column;
     flex: 1;
     width: 50%;
     position: relative;
+    opacity: 0;
+
+    ${({ $visible }) =>
+        $visible &&
+        css`
+            ${slideUpSoftAnimation};
+            animation-delay: 0.1s;
+        `}
 
     ${respondDown(Breakpoints.sm)`
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-    `}
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+  `}
 `;
 
-const TokensBlock = styled.div`
+const TokensBlock = styled.div<{ $visible: boolean }>`
     display: flex;
     justify-content: space-between;
     flex-direction: column;
@@ -87,15 +116,19 @@ const TokensBlock = styled.div`
     flex: 1;
     width: 50%;
     gap: 2.4rem;
+    opacity: 0;
+
+    ${({ $visible }) =>
+        $visible &&
+        css`
+            ${slideUpSoftAnimation};
+            animation-delay: 0.25s;
+        `}
 
     ${respondDown(Breakpoints.sm)`
-        width: 100%;
-        gap: 1.6rem;
-    `}
-
-    ${respondDown(Breakpoints.xs)`
-        width: 100%;
-    `}
+      width: 100%;
+      gap: 1.6rem;
+  `}
 `;
 
 const Description = styled.div`
@@ -105,17 +138,9 @@ const Description = styled.div`
     color: ${COLORS.gray550};
     margin-top: 0.8rem;
 
-    ${respondDown(Breakpoints.md)`
-        margin-top: 0.8rem;
-    `}
-
-    ${respondDown(Breakpoints.sm)`
-        margin-top: 0;
-    `}
-
     ${respondDown(Breakpoints.xs)`
-        font-size: 1.4rem;
-    `}
+      font-size: 1.4rem;
+  `}
 `;
 
 const StyledTokenSystemIcon = styled(TokenSystemIcon)`
@@ -126,25 +151,24 @@ const StyledTokenSystemIcon = styled(TokenSystemIcon)`
     height: 69.1rem;
 
     ${respondDown(Breakpoints.md)`
-        width: 56.5rem;
-        height: 50.2rem;
-        top: 0;
-        left: -60px;
-        z-index: 1;
-    `}
+      width: 56.5rem;
+      height: 50.2rem;
+      top: 0;
+      left: -60px;
+      z-index: 1;
+  `}
 
     ${respondDown(Breakpoints.sm)`
-        position: initial;
-        width: 47.2rem;
-        height: 42rem;
-    `}
+      position: initial;
+      width: 47.2rem;
+      height: 42rem;
+  `}
 
-    ${respondDown(Breakpoints.xs)`
-        position: initial;
-        width: auto;
-        height: 26.9rem;
-
-    `}
+  ${respondDown(Breakpoints.xs)`
+      position: initial;
+      width: auto;
+      height: 26.9rem;
+  `}
 `;
 
 const LinkButton = styled(BlankRouterLink)`
@@ -153,20 +177,22 @@ const LinkButton = styled(BlankRouterLink)`
     padding: 3.2rem 4rem;
     width: 100%;
     z-index: 2;
+    transition: all 0.2s ease;
 
     &:hover {
         background: ${COLORS.white};
         ${cardBoxShadow};
+        transform: translateY(-2px);
     }
 
     ${respondDown(Breakpoints.md)`
-        padding: 2.4rem 3.2rem;
-    `}
+      padding: 2.4rem 3.2rem;
+  `}
 
     ${respondDown(Breakpoints.sm)`
-        border-radius: 32px;
-        padding: 1.6rem 2.4rem;
-    `}
+      border-radius: 32px;
+      padding: 1.6rem 2.4rem;
+  `}
 `;
 
 const LinkContent = styled.div`
@@ -176,10 +202,10 @@ const LinkContent = styled.div`
     gap: 2.4rem;
 
     ${respondDown(Breakpoints.xs)`
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.8rem;
-    `}
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.8rem;
+  `}
 `;
 
 const LogoWrapper = styled.div`
@@ -193,9 +219,9 @@ const LogoWrapper = styled.div`
     }
 
     ${respondDown(Breakpoints.xs)`
-        width: 100%;
-        gap: 0.8rem;
-    `}
+      width: 100%;
+      gap: 0.8rem;
+  `}
 `;
 
 const DescWrapper = styled.div`
@@ -210,16 +236,16 @@ const LinkTitle = styled.div`
     color: ${COLORS.textPrimary};
 
     ${respondDown(Breakpoints.xs)`
-        display: none;
-    `}
+      display: none;
+  `}
 `;
 
 const LinkTitleXs = styled(LinkTitle)`
     display: none;
 
     ${respondDown(Breakpoints.xs)`
-        display: block;
-    `}
+      display: block;
+  `}
 `;
 
 const LinkDesc = styled.div`
@@ -234,55 +260,66 @@ const ArrowAlt16Styled = styled(ArrowAlt16)`
     color: ${COLORS.purple500};
 
     ${respondDown(Breakpoints.xs)`
-        top: 1.7rem;
-    `}
+      top: 1.7rem;
+  `}
 `;
 
-const TokenSystem = () => (
-    <Wrapper id="token-system">
-        <BlocksWrapper>
-            <IconBlock>
-                <StyledTokenSystemIcon />
-            </IconBlock>
-            <TokensBlock>
-                <Title>Token system</Title>
-                <Description>
-                    Earn AQUA by providing liquidity. Lock AQUA into ICE to access voting, earn
-                    voting rewards, boost liquidity rewards, and participate in governance.
-                </Description>
-                <LinkButton to={MainRoutes.token}>
-                    <LinkContent>
-                        <LogoWrapper>
-                            <AquaLogo />
-                            <LinkTitleXs>AQUA</LinkTitleXs>
-                        </LogoWrapper>
-                        <DescWrapper>
-                            <LinkTitle>AQUA</LinkTitle>
-                            <LinkDesc>
-                                Utility token for liquidity rewards and ICE conversion.
-                            </LinkDesc>
-                        </DescWrapper>
-                        <ArrowAlt16Styled />
-                    </LinkContent>
-                </LinkButton>
-                <LinkButton to={MainRoutes.locker}>
-                    <LinkContent>
-                        <LogoWrapper>
-                            <IceLogo />
-                            <LinkTitleXs>ICE</LinkTitleXs>
-                        </LogoWrapper>
-                        <DescWrapper>
-                            <LinkTitle>ICE</LinkTitle>
-                            <LinkDesc>
-                                Non-transferable token for voting and reward boosts.
-                            </LinkDesc>
-                        </DescWrapper>
-                        <ArrowAlt16Styled />
-                    </LinkContent>
-                </LinkButton>
-            </TokensBlock>
-        </BlocksWrapper>
-    </Wrapper>
-);
+/* -------------------------------------------------------------------------- */
+/*                                  Component                                 */
+/* -------------------------------------------------------------------------- */
+
+const TokenSystem: React.FC = () => {
+    const { ref, visible } = useScrollAnimation(0.25, true);
+
+    return (
+        <Wrapper ref={ref as React.RefObject<HTMLDivElement>} $visible={visible} id="token-system">
+            <BlocksWrapper>
+                <IconBlock $visible={visible}>
+                    <StyledTokenSystemIcon />
+                </IconBlock>
+
+                <TokensBlock $visible={visible}>
+                    <Title $visible={visible}>Token system</Title>
+                    <Description>
+                        Earn AQUA by providing liquidity. Lock AQUA into ICE to access voting, earn
+                        voting rewards, boost liquidity rewards, and participate in governance.
+                    </Description>
+
+                    <LinkButton to={MainRoutes.token}>
+                        <LinkContent>
+                            <LogoWrapper>
+                                <AquaLogo />
+                                <LinkTitleXs>AQUA</LinkTitleXs>
+                            </LogoWrapper>
+                            <DescWrapper>
+                                <LinkTitle>AQUA</LinkTitle>
+                                <LinkDesc>
+                                    Utility token for liquidity rewards and ICE conversion.
+                                </LinkDesc>
+                            </DescWrapper>
+                            <ArrowAlt16Styled />
+                        </LinkContent>
+                    </LinkButton>
+
+                    <LinkButton to={MainRoutes.locker}>
+                        <LinkContent>
+                            <LogoWrapper>
+                                <IceLogo />
+                                <LinkTitleXs>ICE</LinkTitleXs>
+                            </LogoWrapper>
+                            <DescWrapper>
+                                <LinkTitle>ICE</LinkTitle>
+                                <LinkDesc>
+                                    Non-transferable token for voting and reward boosts.
+                                </LinkDesc>
+                            </DescWrapper>
+                            <ArrowAlt16Styled />
+                        </LinkContent>
+                    </LinkButton>
+                </TokensBlock>
+            </BlocksWrapper>
+        </Wrapper>
+    );
+};
 
 export default TokenSystem;

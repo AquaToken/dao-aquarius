@@ -1,7 +1,17 @@
 import * as React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { MAIL_AQUA_HELLO } from 'constants/emails';
+
+import { useScrollAnimation } from 'hooks/useScrollAnimation';
+
+import {
+    containerScrollAnimation,
+    slideUpSoftAnimation,
+    fadeAppearAnimation,
+} from 'web/animations';
+import { cardBoxShadow, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
 
 import Discord from 'assets/community/discord-styled.svg';
 import Email from 'assets/community/email-styled.svg';
@@ -13,14 +23,16 @@ import Twitter from 'assets/community/twitter-styled.svg';
 
 import { BlankExternalLink } from 'basics/links';
 
-import { cardBoxShadow, respondDown } from '../mixins';
-import { Breakpoints, COLORS } from '../styles';
+/* -------------------------------------------------------------------------- */
+/*                                   Styled                                   */
+/* -------------------------------------------------------------------------- */
 
-const Wrapper = styled.section`
+const Wrapper = styled.section<{ $visible: boolean }>`
     display: flex;
     flex-direction: column;
     width: 100%;
     margin-top: 11rem;
+    ${containerScrollAnimation};
 
     ${respondDown(Breakpoints.md)`
         margin-top: 10rem;
@@ -35,12 +47,19 @@ const Wrapper = styled.section`
     `}
 `;
 
-const Title = styled.div`
+const Title = styled.div<{ $visible: boolean }>`
     font-size: 3.5rem;
     line-height: 100%;
-
     color: ${COLORS.textPrimary};
     margin-bottom: 2.4rem;
+    opacity: 0;
+
+    ${({ $visible }) =>
+        $visible &&
+        css`
+            ${slideUpSoftAnimation};
+            animation-delay: 0.1s;
+        `}
 
     ${respondDown(Breakpoints.sm)`
         margin-bottom: 1.6rem;
@@ -52,13 +71,20 @@ const Title = styled.div`
     `}
 `;
 
-const Description = styled.div`
+const Description = styled.div<{ $visible: boolean }>`
     font-size: 1.6rem;
     line-height: 180%;
     color: ${COLORS.textSecondary};
-    opacity: 0.7;
+    opacity: 0;
     margin-bottom: 5.6rem;
     font-weight: 500;
+
+    ${({ $visible }) =>
+        $visible &&
+        css`
+            ${fadeAppearAnimation};
+            animation-delay: 0.2s;
+        `}
 
     ${respondDown(Breakpoints.md)`
         font-size: 1.4rem;
@@ -70,24 +96,32 @@ const Description = styled.div`
     `}
 `;
 
-const LinksWrapper = styled.div`
+const LinksWrapper = styled.div<{ $visible: boolean }>`
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     gap: 3.2rem;
     width: 100%;
+    opacity: 0;
+
+    ${({ $visible }) =>
+        $visible &&
+        css`
+            ${slideUpSoftAnimation};
+            animation-delay: 0.3s;
+        `}
 
     ${respondDown(Breakpoints.sm)`
         gap: 1rem 1.2rem;
     `}
 
-    ${respondDown(Breakpoints.sm)`
+    ${respondDown(Breakpoints.xs)`
         gap: 0.8rem 0;
     `}
 `;
 
 const Link = styled(BlankExternalLink)`
-    flex: 1 1 calc(25% - 3.2rem); // 4 items per row minus gap
+    flex: 1 1 calc(25% - 3.2rem);
     max-width: calc(25% - 3.2rem);
     border-radius: 2.4rem;
     text-decoration: none;
@@ -97,6 +131,7 @@ const Link = styled(BlankExternalLink)`
     justify-content: center;
     align-items: center;
     padding: 6rem;
+    transition: all 0.3s ease;
 
     svg {
         margin-bottom: 2.4rem;
@@ -108,6 +143,7 @@ const Link = styled(BlankExternalLink)`
     &:hover {
         background: ${COLORS.white};
         ${cardBoxShadow};
+        transform: translateY(-4px);
     }
 
     ${respondDown(Breakpoints.lg)`
@@ -115,7 +151,7 @@ const Link = styled(BlankExternalLink)`
     `}
 
     ${respondDown(Breakpoints.sm)`
-        flex: 1 1 calc(50% - 1.2rem); // 2 items per row minus gap
+        flex: 1 1 calc(50% - 1.2rem);
         max-width: calc(50% - 1.2rem);
         flex-direction: row-reverse;
         justify-content: space-between;
@@ -150,48 +186,56 @@ const ItemTitle = styled.span`
     `}
 `;
 
-const Community = (): React.ReactNode => (
-    <Wrapper id="community">
-        <Title>Join the conversation</Title>
-        <Description>
-            Learn more about Aquarius, follow the project updates, chat with the team and other
-            community members.
-        </Description>
-        <LinksWrapper>
-            <Link href="https://t.me/aquarius_official_community">
-                <Telegram />
-                <ItemTitle>Telegram chat</ItemTitle>
-            </Link>
-            <Link href="https://t.me/aqua_token">
-                <Telegram />
-                <ItemTitle>Telegram news</ItemTitle>
-            </Link>
-            <Link href="https://x.com/AquariusDeFi">
-                <Twitter />
-                <ItemTitle>X</ItemTitle>
-            </Link>
-            <Link href="https://github.com/AquaToken">
-                <Github />
-                <ItemTitle>GitHub</ItemTitle>
-            </Link>
-            <Link href="https://discord.gg/sgzFscHp4C">
-                <Discord />
-                <ItemTitle>Discord</ItemTitle>
-            </Link>
-            <Link href="https://www.reddit.com/r/AquariusAqua/">
-                <Reddit />
-                <ItemTitle>Reddit</ItemTitle>
-            </Link>
-            <Link href="https://medium.com/aquarius-aqua">
-                <Medium />
-                <ItemTitle>Medium</ItemTitle>
-            </Link>
-            <Link href={`mailto:${MAIL_AQUA_HELLO}`}>
-                <Email />
-                <ItemTitle>{MAIL_AQUA_HELLO}</ItemTitle>
-            </Link>
-        </LinksWrapper>
-    </Wrapper>
-);
+/* -------------------------------------------------------------------------- */
+/*                                 Component                                  */
+/* -------------------------------------------------------------------------- */
+
+const Community: React.FC = () => {
+    const { ref, visible } = useScrollAnimation(0.25, true);
+
+    return (
+        <Wrapper ref={ref as React.RefObject<HTMLDivElement>} $visible={visible} id="community">
+            <Title $visible={visible}>Join the conversation</Title>
+            <Description $visible={visible}>
+                Learn more about Aquarius, follow the project updates, chat with the team and other
+                community members.
+            </Description>
+            <LinksWrapper $visible={visible}>
+                <Link href="https://t.me/aquarius_official_community">
+                    <Telegram />
+                    <ItemTitle>Telegram chat</ItemTitle>
+                </Link>
+                <Link href="https://t.me/aqua_token">
+                    <Telegram />
+                    <ItemTitle>Telegram news</ItemTitle>
+                </Link>
+                <Link href="https://x.com/AquariusDeFi">
+                    <Twitter />
+                    <ItemTitle>X</ItemTitle>
+                </Link>
+                <Link href="https://github.com/AquaToken">
+                    <Github />
+                    <ItemTitle>GitHub</ItemTitle>
+                </Link>
+                <Link href="https://discord.gg/sgzFscHp4C">
+                    <Discord />
+                    <ItemTitle>Discord</ItemTitle>
+                </Link>
+                <Link href="https://www.reddit.com/r/AquariusAqua/">
+                    <Reddit />
+                    <ItemTitle>Reddit</ItemTitle>
+                </Link>
+                <Link href="https://medium.com/aquarius-aqua">
+                    <Medium />
+                    <ItemTitle>Medium</ItemTitle>
+                </Link>
+                <Link href={`mailto:${MAIL_AQUA_HELLO}`}>
+                    <Email />
+                    <ItemTitle>{MAIL_AQUA_HELLO}</ItemTitle>
+                </Link>
+            </LinksWrapper>
+        </Wrapper>
+    );
+};
 
 export default Community;

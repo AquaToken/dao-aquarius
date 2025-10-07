@@ -1,3 +1,5 @@
+import { DAY } from 'constants/intervals';
+
 type GetDateStringConfig = {
     withTime?: boolean;
     withoutYear?: boolean;
@@ -95,3 +97,37 @@ export function convertUTCToLocalDateIgnoringTimezone(date: Date) {
 
 export const convertDateStrToTimestamp = (str: string): number =>
     convertLocalDateToUTCIgnoringTimezone(new Date(str)).getTime();
+
+export function formatDuration(ms: number): string {
+    const MS_IN_DAY = 1000 * 60 * 60 * 24;
+
+    // Handle values smaller than one full day
+    if (ms < MS_IN_DAY) {
+        return '0d';
+    }
+
+    let days = Math.floor(ms / MS_IN_DAY);
+
+    let years = Math.floor(days / 365);
+    days %= 365;
+
+    let months = Math.floor(days / 30);
+    days %= 30;
+
+    // Normalize: if months reach 12, convert to 1 year
+    if (months === 12) {
+        years += 1;
+        months = 0;
+    }
+
+    // Format the result depending on scale
+    if (years > 0) {
+        return months > 0 ? `${years}y ${months}m` : `${years}y`;
+    } else if (months > 0) {
+        return days > 0 ? `${months}m ${days}d` : `${months}m`;
+    } else {
+        return `${days}d`;
+    }
+}
+
+export const roundMsToDays = (timestamp: number) => Math.floor(timestamp / DAY);

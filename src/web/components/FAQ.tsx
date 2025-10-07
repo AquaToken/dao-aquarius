@@ -1,10 +1,14 @@
 import * as React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
+
+import { useScrollAnimation } from 'hooks/useScrollAnimation';
+
+import { slideUpSoftAnimation } from 'web/animations';
 
 import Contacts from 'components/Contacts';
 import Question from 'components/Question';
 
-import { commonMaxWidth, respondDown } from '../mixins';
+import { commonMaxWidth, noSelect, respondDown } from '../mixins';
 import { Breakpoints, COLORS } from '../styles';
 
 export type QuestionType = {
@@ -12,17 +16,31 @@ export type QuestionType = {
     answer: string | React.ReactNode;
 };
 
-const Container = styled.div`
+const Container = styled.div<{ $visible: boolean }>`
     ${commonMaxWidth};
     display: flex;
     width: 100%;
     padding: 5rem 4rem 0;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+
+    ${({ $visible }) =>
+        $visible &&
+        css`
+            opacity: 1;
+            transform: translateY(0);
+        `}
 
     ${respondDown(Breakpoints.md)`
-        flex-direction: column;
-        padding: 5rem 1.6rem;
-        background: ${COLORS.gray50};
-    `}
+    flex-direction: column;
+    padding: 5rem 1.6rem;
+    background: ${COLORS.gray50};
+  `}
+
+  & > * {
+        ${noSelect};
+    }
 `;
 
 const QuestionsBlock = styled.div`
@@ -31,23 +49,36 @@ const QuestionsBlock = styled.div`
     width: 100%;
 `;
 
+const QuestionItem = styled.div<{ $visible: boolean; $delay: number }>`
+    opacity: 0;
+
+    ${({ $visible, $delay }) =>
+        $visible &&
+        css`
+            ${slideUpSoftAnimation};
+            animation-delay: ${$delay}s;
+        `}
+`;
+
 interface Props {
     questions: QuestionType[];
 }
 
-const FAQ = ({ questions }: Props): React.ReactElement => (
-    <Container>
-        <Contacts />
-        <QuestionsBlock>
-            {questions.map(question => (
-                <Question
-                    key={question.question}
-                    question={question.question}
-                    answer={question.answer}
-                />
-            ))}
-        </QuestionsBlock>
-    </Container>
-);
+const FAQ: React.FC<Props> = ({ questions }) => {
+    const { ref, visible } = useScrollAnimation(0.2, true);
+
+    return (
+        <Container ref={ref as React.RefObject<HTMLDivElement>} $visible={visible}>
+            <Contacts />
+            <QuestionsBlock>
+                {questions.map((question, index) => (
+                    <QuestionItem key={question.question} $visible={visible} $delay={index * 0.1}>
+                        <Question question={question.question} answer={question.answer} />
+                    </QuestionItem>
+                ))}
+            </QuestionsBlock>
+        </Container>
+    );
+};
 
 export default FAQ;

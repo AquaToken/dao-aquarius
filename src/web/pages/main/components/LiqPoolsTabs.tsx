@@ -1,6 +1,13 @@
 import { useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
+import { useScrollAnimation } from 'hooks/useScrollAnimation';
+
+import {
+    containerScrollAnimation,
+    fadeAppearAnimation,
+    slideUpSoftAnimation,
+} from 'web/animations';
 import { fullWidthSectionStyles, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS, MAX_WIDTHS, PAGE_PADDINGS } from 'web/styles';
 
@@ -9,9 +16,13 @@ import HeroBackground from 'assets/main-page/hero-background.png';
 
 import { HeroBottomRightStyled, HeroTopLeftStyled } from './HeroBlock';
 
+/* -------------------------------------------------------------------------- */
+/*                                   Styled                                   */
+/* -------------------------------------------------------------------------- */
+
 type TabKey = 'stable' | 'volatile';
 
-const Wrapper = styled.section`
+const Wrapper = styled.section<{ $visible: boolean }>`
     ${fullWidthSectionStyles};
     max-width: ${MAX_WIDTHS.common};
     position: relative;
@@ -23,8 +34,8 @@ const Wrapper = styled.section`
     display: flex;
     flex-direction: column;
     margin-top: 11rem;
+    ${containerScrollAnimation};
 
-    /* hide icons to back of content */
     svg {
         z-index: 0;
     }
@@ -34,35 +45,39 @@ const Wrapper = styled.section`
     }
 
     ${respondDown(Breakpoints.md)`
-        padding: 4rem;
-        margin-top: 9rem;
-    `}
+      padding: 4rem;
+      margin-top: 9rem;
+  `}
 
     ${respondDown(Breakpoints.sm)`
-        margin-top: 6rem;
-    `}
+      margin-top: 6rem;
+  `}
 
-    ${respondDown(Breakpoints.xs)`
-        margin-top: 4rem;
-        border-radius: 0;
-        padding: 6rem ${PAGE_PADDINGS}rem;
-    `}
+  ${respondDown(Breakpoints.xs)`
+      margin-top: 4rem;
+      border-radius: 0;
+      padding: 6rem ${PAGE_PADDINGS}rem;
+  `}
 `;
 
-const TitleBlocks = styled.div`
+const TitleBlocks = styled.div<{ $visible: boolean }>`
     display: flex;
     align-items: center;
     gap: 6rem;
     width: 100%;
+    opacity: 0;
+
+    ${({ $visible }) =>
+        $visible &&
+        css`
+            ${slideUpSoftAnimation};
+            animation-delay: 0.1s;
+        `}
 
     ${respondDown(Breakpoints.md)`
-        flex-direction: column;
-        gap: 2rem;
-    `}
-
-    ${respondDown(Breakpoints.sm)`
-        gap: 1.6rem;
-    `}
+      flex-direction: column;
+      gap: 2rem;
+  `}
 `;
 
 const Title = styled.div`
@@ -70,14 +85,14 @@ const Title = styled.div`
     line-height: 5.4rem;
 
     ${respondDown(Breakpoints.sm)`
-        font-size: 3rem;
-        line-height: 5.2rem;
-    `}
+      font-size: 3rem;
+      line-height: 5.2rem;
+  `}
 
     ${respondDown(Breakpoints.xs)`
-        font-size: 2.4rem;
-        line-height: 3.6rem;
-    `}
+      font-size: 2.4rem;
+      line-height: 3.6rem;
+  `}
 `;
 
 const Block = styled.div`
@@ -85,8 +100,8 @@ const Block = styled.div`
     width: calc(50% - 3rem);
 
     ${respondDown(Breakpoints.md)`
-        width: 100%;
-    `}
+      width: 100%;
+  `}
 `;
 
 const CheckboxesBlock = styled(Block)`
@@ -94,8 +109,8 @@ const CheckboxesBlock = styled(Block)`
     gap: 0.8rem;
 
     ${respondDown(Breakpoints.md)`
-        width: 100%;
-    `}
+      width: 100%;
+  `}
 `;
 
 const CheckBoxRow = styled.div`
@@ -106,30 +121,38 @@ const CheckBoxRow = styled.div`
     gap: 0.8rem;
 
     ${respondDown(Breakpoints.xs)`
-        line-height: 150%;
-    `}
+      line-height: 150%;
+  `}
 `;
 
 const IconCheck = styled(IconCheck16)`
     color: ${COLORS.white};
 `;
 
-const TabsBlock = styled.div`
+const TabsBlock = styled.div<{ $visible: boolean }>`
     display: flex;
     flex-direction: column;
     margin-top: 9rem;
+    opacity: 0;
+
+    ${({ $visible }) =>
+        $visible &&
+        css`
+            ${fadeAppearAnimation};
+            animation-delay: 0.3s;
+        `}
 
     ${respondDown(Breakpoints.md)`
-        margin-top: 7rem;
-    `}
+      margin-top: 7rem;
+  `}
 
-    ${respondDown(Breakpoints.sm)`
-        margin-top: 6rem;
-    `}
+  ${respondDown(Breakpoints.sm)`
+      margin-top: 6rem;
+  `}
 
-    ${respondDown(Breakpoints.xs)`
-        margin-top: 4rem;
-    `}
+  ${respondDown(Breakpoints.xs)`
+      margin-top: 4rem;
+  `}
 `;
 
 const Tabs = styled.div`
@@ -158,8 +181,8 @@ const TabBtn = styled.button<{ active?: boolean }>`
     }
 
     ${respondDown(Breakpoints.xs)`
-        font-size: 1.4rem;
-    `}
+      font-size: 1.4rem;
+  `}
 `;
 
 const Underline = styled.div<{ active: TabKey }>`
@@ -170,19 +193,16 @@ const Underline = styled.div<{ active: TabKey }>`
     height: 0.4rem;
     width: calc(50% - 2rem);
     background: ${COLORS.purple200};
+    transition: all 0.3s ease;
 `;
 
-const UnderlineBack = styled.div<{ active: TabKey }>`
+const UnderlineBack = styled.div`
     position: absolute;
-    left: ${props => (props.active === 'stable' ? 0 : 'inherit')};
-    right: ${props => (props.active === 'volatile' ? 0 : 'inherit')};
     bottom: 0;
     height: 0.4rem;
     width: 100%;
     background: ${COLORS.white};
     opacity: 0.2;
-    transition: transform 0.25s ease;
-    z-index: 0;
 `;
 
 const Badge = styled.span<{ tone?: 'stable' | 'volatile' }>`
@@ -194,13 +214,12 @@ const Badge = styled.span<{ tone?: 'stable' | 'volatile' }>`
     font-size: 1.2rem;
     border-radius: 0.7rem;
     font-weight: 700;
-
     color: ${({ tone }) => (tone === 'stable' ? COLORS.blue300 : COLORS.orange300)};
     border: 2px solid ${({ tone }) => (tone === 'stable' ? COLORS.blue300 : COLORS.orange300)};
 
     ${respondDown(Breakpoints.sm)`
-        margin-top: 3.2rem;
-    `}
+      margin-top: 3.2rem;
+  `}
 `;
 
 const ContentTitle = styled.div`
@@ -208,29 +227,40 @@ const ContentTitle = styled.div`
     line-height: 5.4rem;
 
     ${respondDown(Breakpoints.sm)`
-        font-size: 3rem;
-        line-height: 5.2rem;
-    `}
+      font-size: 3rem;
+      line-height: 5.2rem;
+  `}
 
     ${respondDown(Breakpoints.xs)`
-        font-size: 2.4rem;
-        line-height: 3.6rem;
-    `}
+      font-size: 2.4rem;
+      line-height: 3.6rem;
+  `}
 `;
+
+/* -------------------------------------------------------------------------- */
+/*                                   Component                                */
+/* -------------------------------------------------------------------------- */
 
 const LiqPoolsTabs = () => {
     const [active, setActive] = useState<TabKey>('stable');
+    const { ref, visible } = useScrollAnimation(0.2, true);
 
     return (
-        <Wrapper id="liquidity-pools">
+        <Wrapper
+            ref={ref as React.RefObject<HTMLDivElement>}
+            $visible={visible}
+            id="liquidity-pools"
+        >
             <HeroTopLeftStyled />
             <HeroBottomRightStyled />
-            <TitleBlocks>
+
+            <TitleBlocks $visible={visible}>
                 <Block>
                     <Title>
                         Liquidity pools are the <b>foundation of Aquarius</b>
                     </Title>
                 </Block>
+
                 <CheckboxesBlock>
                     <CheckBoxRow>
                         <IconCheck />
@@ -243,19 +273,20 @@ const LiqPoolsTabs = () => {
                     </CheckBoxRow>
                 </CheckboxesBlock>
             </TitleBlocks>
-            <TabsBlock>
+
+            <TabsBlock $visible={visible}>
                 <Tabs>
                     <TabBtn active={active === 'stable'} onClick={() => setActive('stable')}>
                         Stable Pools
                     </TabBtn>
-
                     <TabBtn active={active === 'volatile'} onClick={() => setActive('volatile')}>
                         Volatile Pools
                     </TabBtn>
 
                     <Underline active={active} />
-                    <UnderlineBack active={active} />
+                    <UnderlineBack />
                 </Tabs>
+
                 <div>
                     <Badge tone={active}>{active}</Badge>
                     <ContentTitle>
