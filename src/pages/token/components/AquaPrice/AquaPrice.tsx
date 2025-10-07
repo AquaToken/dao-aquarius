@@ -31,6 +31,7 @@ const Container = styled.div`
         rgba(234, 191, 255, 0.0447917) 77.08%,
         rgba(234, 191, 255, 0) 100%
     );
+    width: 34rem;
 
     border: 0.1rem solid ${COLORS.purple100};
 

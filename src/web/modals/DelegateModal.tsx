@@ -97,6 +97,10 @@ const Avatar = styled.img`
     border-radius: 50%;
 `;
 
+const RangeInputStyled = styled(RangeInput)`
+    margin-bottom: 10rem;
+`;
+
 const IconWrapper = styled.div`
     height: 2.4rem;
     width: 2.4rem;
@@ -275,7 +279,7 @@ const DelegateModal = ({
                 <Select options={OPTIONS} value={selectedToken} onChange={setSelectedToken} />
             </FormRow>
 
-            <RangeInput onChange={onPercentChange} value={percent} />
+            <RangeInputStyled onChange={onPercentChange} value={percent} />
 
             <FormRow>
                 <Labels>

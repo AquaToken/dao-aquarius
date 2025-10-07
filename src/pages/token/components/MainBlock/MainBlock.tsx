@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { MainRoutes } from 'constants/routes';
+
+import { useScrollAnimation } from 'hooks/useScrollAnimation';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
@@ -20,6 +22,10 @@ import SocialLinks from 'components/SocialLinks';
 
 import AnimatedBorderedText from 'pages/token/components/AnimatedBorderedText/AnimatedBorderedText';
 import AquaPrice from 'pages/token/components/AquaPrice/AquaPrice';
+
+/* -------------------------------------------------------------------------- */
+/*                                   Styles                                   */
+/* -------------------------------------------------------------------------- */
 
 const Container = styled.section`
     display: flex;
@@ -75,16 +81,26 @@ const Background = styled(Bg)`
     `}
 `;
 
+const fadeUp = css`
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    &.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+`;
+
 const Title = styled.div`
     display: flex;
     align-items: center;
     font-weight: 700;
     font-size: 10rem;
+    ${fadeUp};
 
     ${respondDown(Breakpoints.lg)`
         font-size: 7rem;
     `}
-
     ${respondDown(Breakpoints.md)`
         font-size: 5rem;
         height: 5rem;
@@ -95,12 +111,12 @@ const Description = styled.p`
     font-size: 3.6rem;
     line-height: 4.2rem;
     margin: 2.4rem 0;
+    ${fadeUp};
 
     ${respondDown(Breakpoints.lg)`
         font-size: 3rem;
         margin: 1.6rem 0 1.6rem;
     `}
-
     ${respondDown(Breakpoints.sm)`
         font-size: 1.8rem;
         line-height: 3.2rem;
@@ -113,6 +129,7 @@ const SecondaryDescription = styled.p`
     font-size: 1.6rem;
     line-height: 180%;
     color: ${COLORS.textGray};
+    ${fadeUp};
 
     ${respondDown(Breakpoints.sm)`
         font-size: 1.4rem;
@@ -136,7 +153,6 @@ const ButtonAndPriceBlock = styled.div`
             height: 5.2rem;
         }
     `}
-
     a {
         text-decoration: none !important;
     }
@@ -150,7 +166,6 @@ const ButtonStyled = styled(Button)`
     ${respondDown(Breakpoints.md)`
         width: 34rem;
     `}
-
     ${respondDown(Breakpoints.sm)`
         width: 100%;
         height: 5.2rem;
@@ -163,29 +178,36 @@ const AquaPriceStyled = styled(AquaPrice)`
     `}
 `;
 
+/* -------------------------------------------------------------------------- */
+/*                                   Component                                */
+/* -------------------------------------------------------------------------- */
+
 const MainBlock = () => {
     const { isLogged } = useAuthStore();
+    const { ref, visible } = useScrollAnimation(0.3, true);
+
     const buyAqua = e => {
         if (!isLogged) {
             e.preventDefault();
             e.stopPropagation();
-
             ModalService.openModal(ChooseLoginMethodModal, {});
-
             return;
         }
     };
+
     return (
         <Container>
             <SocialLinks />
-            <Content>
+            <Content ref={ref as React.RefObject<HTMLDivElement>}>
                 <Background />
-                <Title>
+                <Title className={visible ? 'visible' : ''}>
                     AQUA
                     <AnimatedBorderedText text="Token" />
                 </Title>
-                <Description>Powers the #1 Stellar DeFi protocol</Description>
-                <SecondaryDescription>
+                <Description className={visible ? 'visible' : ''}>
+                    Powers the #1 Stellar DeFi protocol
+                </Description>
+                <SecondaryDescription className={visible ? 'visible' : ''}>
                     Earn AQUA rewards by providing liquidity and voting in the Aquarius ecosystem.
                 </SecondaryDescription>
                 <ButtonAndPriceBlock>
@@ -194,13 +216,11 @@ const MainBlock = () => {
                             swap aqua
                         </ButtonStyled>
                     </Link>
-
                     <Link to={MainRoutes.buyAqua} onClick={buyAqua}>
                         <ButtonStyled isRounded withGradient isBig secondary>
                             Buy with a card
                         </ButtonStyled>
                     </Link>
-
                     <AquaPriceStyled />
                 </ButtonAndPriceBlock>
             </Content>

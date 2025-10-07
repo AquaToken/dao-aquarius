@@ -1,5 +1,13 @@
-import styled from 'styled-components';
+import * as React from 'react';
+import styled, { css } from 'styled-components';
 
+import { useScrollAnimation } from 'hooks/useScrollAnimation';
+
+import {
+    containerScrollAnimation,
+    fadeAppearAnimation,
+    slideUpSoftAnimation,
+} from 'web/animations';
 import { respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -9,7 +17,11 @@ import LobstrIcon from 'assets/wallets/lobstr/lobstr-name-logo.svg';
 import StellarTermIcon from 'assets/wallets/stellarterm-logo.svg';
 import StellarXIcon from 'assets/wallets/stellarx-logo.svg';
 
-const Wrapper = styled.section`
+/* -------------------------------------------------------------------------- */
+/*                              Layout + Animations                           */
+/* -------------------------------------------------------------------------- */
+
+const Wrapper = styled.section<{ $visible: boolean }>`
     display: flex;
     width: 100%;
     justify-content: center;
@@ -18,29 +30,36 @@ const Wrapper = styled.section`
     margin-top: 8rem;
     gap: 2.4rem;
 
+    ${containerScrollAnimation}
+
     ${respondDown(Breakpoints.md)`
-        margin-top: 3.2rem;
-        flex-direction: column;
-    `}
+    margin-top: 3.2rem;
+    flex-direction: column;
+  `}
 `;
 
-const Title = styled.span`
+const Title = styled.span<{ $visible: boolean }>`
     font-size: 1.6rem;
     color: ${COLORS.gray200};
     display: none;
 
     ${respondDown(Breakpoints.md)`
-        
-        display: block;
-    `}
+    display: block;
+    ${({ $visible }) =>
+        $visible &&
+        css`
+            ${fadeAppearAnimation};
+            animation-delay: 0.1s;
+        `}
+  `}
 `;
 
 const FlexTitle = styled(Title)`
     display: flex;
 
     ${respondDown(Breakpoints.md)`
-        display: none;
-    `}
+    display: none;
+  `}
 `;
 
 const ImageBlock = styled.div`
@@ -53,8 +72,23 @@ const ImageBlock = styled.div`
     width: 100%;
 
     ${respondDown(Breakpoints.md)`
-        gap: 3.2rem;
-    `}
+    gap: 3.2rem;
+  `}
+`;
+
+/* --- Icon wrappers with staggered slide-up --- */
+const IconWrapper = styled.a<{ $visible: boolean; $delay: number }>`
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+
+    ${({ $visible, $delay }) =>
+        $visible &&
+        css`
+            ${slideUpSoftAnimation};
+            animation-delay: ${$delay}s;
+        `}
 `;
 
 const FreighterIcon = styled(Freighter)`
@@ -65,34 +99,76 @@ const HotWalletIcon = styled(HotWallet)`
     height: 2.4rem;
 `;
 
-const SupportedWallets = () => (
-    <Wrapper id="supported-wallets">
-        <Title>Supported by:</Title>
+/* -------------------------------------------------------------------------- */
+/*                                   Component                                */
+/* -------------------------------------------------------------------------- */
 
-        <ImageBlock>
-            <FlexTitle>Supported by:</FlexTitle>
+const SupportedWallets: React.FC = () => {
+    const { ref, visible } = useScrollAnimation(0.2, true);
 
-            <a href="https://lobstr.co/" target="_blank" rel="noreferrer">
-                <LobstrIcon />
-            </a>
+    return (
+        <Wrapper
+            id="supported-wallets"
+            ref={ref as React.RefObject<HTMLElement>}
+            $visible={visible}
+        >
+            <Title $visible={visible}>Supported by:</Title>
 
-            <a href="https://www.stellarx.com/" target="_blank" rel="noreferrer">
-                <StellarXIcon />
-            </a>
+            <ImageBlock>
+                <FlexTitle $visible={visible}>Supported by:</FlexTitle>
 
-            <a href="https://www.freighter.app/" target="_blank" rel="noreferrer">
-                <FreighterIcon />
-            </a>
+                <IconWrapper
+                    href="https://lobstr.co/"
+                    target="_blank"
+                    rel="noreferrer"
+                    $visible={visible}
+                    $delay={0.05}
+                >
+                    <LobstrIcon />
+                </IconWrapper>
 
-            <a href="https://stellarterm.com/" target="_blank" rel="noreferrer">
-                <StellarTermIcon />
-            </a>
+                <IconWrapper
+                    href="https://www.stellarx.com/"
+                    target="_blank"
+                    rel="noreferrer"
+                    $visible={visible}
+                    $delay={0.15}
+                >
+                    <StellarXIcon />
+                </IconWrapper>
 
-            <a href="https://hot-labs.org/" target="_blank" rel="noreferrer">
-                <HotWalletIcon />
-            </a>
-        </ImageBlock>
-    </Wrapper>
-);
+                <IconWrapper
+                    href="https://www.freighter.app/"
+                    target="_blank"
+                    rel="noreferrer"
+                    $visible={visible}
+                    $delay={0.25}
+                >
+                    <FreighterIcon />
+                </IconWrapper>
+
+                <IconWrapper
+                    href="https://stellarterm.com/"
+                    target="_blank"
+                    rel="noreferrer"
+                    $visible={visible}
+                    $delay={0.35}
+                >
+                    <StellarTermIcon />
+                </IconWrapper>
+
+                <IconWrapper
+                    href="https://hot-labs.org/"
+                    target="_blank"
+                    rel="noreferrer"
+                    $visible={visible}
+                    $delay={0.45}
+                >
+                    <HotWalletIcon />
+                </IconWrapper>
+            </ImageBlock>
+        </Wrapper>
+    );
+};
 
 export default SupportedWallets;

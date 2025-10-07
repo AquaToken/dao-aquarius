@@ -30,6 +30,7 @@ export enum MainRoutes {
 
 export const LockerRoutes = {
     main: `${MainRoutes.locker}`,
+    about: `${MainRoutes.locker}/about`,
 };
 
 export const GovernanceRoutes = {

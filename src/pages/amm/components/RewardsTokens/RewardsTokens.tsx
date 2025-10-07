@@ -69,7 +69,7 @@ const TooltipInner = styled.div`
 const TooltipSectionTitle = styled.div`
     display: flex;
     align-items: center;
-    ${FONT_SIZE.xs}
+    ${FONT_SIZE.xxs}
     color: ${COLORS.purple500};
     text-transform: uppercase;
     gap: 0.8rem;
@@ -88,7 +88,7 @@ const TooltipRow = styled.div`
 
     ${respondDown(Breakpoints.xs)`
         gap: 0.8rem;
-        ${FONT_SIZE.xs}
+        ${FONT_SIZE.xxs}
     `}
 `;
 

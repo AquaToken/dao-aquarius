@@ -42,7 +42,7 @@ import useAuthStore from './store/authStore/useAuthStore';
 import DIceTrustlineModal from './web/modals/DIceTrustlineModal';
 
 const MainPage = lazy(() => import('web/pages/main/MainPage'));
-const LockerPage = lazy(() => import('pages/locker/Locker'));
+const LockerPage = lazy(() => import('./web/pages/locker/Locker'));
 const VotePage = lazy(() => import('pages/vote/Vote'));
 const BribesPage = lazy(() => import('pages/bribes/Bribes'));
 const MarketPage = lazy(() => import('pages/market/Market'));

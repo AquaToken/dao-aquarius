@@ -23,7 +23,7 @@ const Container = styled.div`
 
     ${respondDown(Breakpoints.xs)`
         min-width: unset;
-        ${FONT_SIZE.xs};
+        ${FONT_SIZE.xxs};
     `}
 `;
 
