@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import styled from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 
 import { MainRoutes } from 'constants/routes';
 
@@ -21,6 +21,34 @@ import SocialLinks from 'components/SocialLinks';
 import AnimatedBorderedText from 'pages/token/components/AnimatedBorderedText/AnimatedBorderedText';
 import AquaPrice from 'pages/token/components/AquaPrice/AquaPrice';
 
+/* -------------------------------------------------------------------------- */
+/*                                Animations                                  */
+/* -------------------------------------------------------------------------- */
+
+const fadeInUp = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
+
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
+
+/* -------------------------------------------------------------------------- */
+/*                                   Styles                                   */
+/* -------------------------------------------------------------------------- */
+
 const Container = styled.section`
     display: flex;
     flex-direction: column;
@@ -32,7 +60,7 @@ const Container = styled.section`
     `}
 `;
 
-const Content = styled.div`
+const Content = styled.div<{ $visible: boolean }>`
     position: relative;
     display: flex;
     flex-direction: column;
@@ -40,6 +68,12 @@ const Content = styled.div`
     padding: 20rem 10rem 16rem;
     z-index: 20;
     ${commonMaxWidth};
+
+    ${({ $visible }) =>
+        $visible &&
+        css`
+            animation: ${fadeInUp} 1s ease-out both;
+        `}
 
     ${respondDown(Breakpoints.md)`
         padding-top: 10rem;
@@ -50,11 +84,19 @@ const Content = styled.div`
     `}
 `;
 
-const Background = styled(Bg)`
+const Background = styled(Bg)<{ $visible: boolean }>`
     position: absolute;
     height: 90rem;
     right: -20rem;
     top: -11.2rem;
+    opacity: 0;
+    transition: opacity 1.4s ease-out;
+    ${({ $visible }) =>
+        $visible &&
+        css`
+            opacity: 1;
+            animation: ${fadeIn} 2s ease-out both;
+        `}
 
     ${respondDown(Breakpoints.lg)`
         right: -25rem;
@@ -75,11 +117,17 @@ const Background = styled(Bg)`
     `}
 `;
 
-const Title = styled.div`
+const Title = styled.div<{ $visible: boolean }>`
     display: flex;
     align-items: center;
     font-weight: 700;
     font-size: 10rem;
+    opacity: 0;
+    ${({ $visible }) =>
+        $visible &&
+        css`
+            animation: ${fadeInUp} 0.8s ease-out both;
+        `}
 
     ${respondDown(Breakpoints.lg)`
         font-size: 7rem;
@@ -91,10 +139,16 @@ const Title = styled.div`
     `}
 `;
 
-const Description = styled.p`
+const Description = styled.p<{ $visible: boolean }>`
     font-size: 3.6rem;
     line-height: 4.2rem;
     margin: 2.4rem 0;
+    opacity: 0;
+    ${({ $visible }) =>
+        $visible &&
+        css`
+            animation: ${fadeInUp} 1s ease-out both;
+        `}
 
     ${respondDown(Breakpoints.lg)`
         font-size: 3rem;
@@ -108,11 +162,17 @@ const Description = styled.p`
     `}
 `;
 
-const SecondaryDescription = styled.p`
+const SecondaryDescription = styled.p<{ $visible: boolean }>`
     margin: 0;
     font-size: 1.6rem;
     line-height: 180%;
     color: ${COLORS.textGray};
+    opacity: 0;
+    ${({ $visible }) =>
+        $visible &&
+        css`
+            animation: ${fadeInUp} 1.2s ease-out both;
+        `}
 
     ${respondDown(Breakpoints.sm)`
         font-size: 1.4rem;
@@ -163,29 +223,45 @@ const AquaPriceStyled = styled(AquaPrice)`
     `}
 `;
 
-const MainBlock = () => {
+/* -------------------------------------------------------------------------- */
+/*                                 Component                                  */
+/* -------------------------------------------------------------------------- */
+
+const MainBlock: React.FC = () => {
     const { isLogged } = useAuthStore();
-    const buyAqua = e => {
+    const [visible, setVisible] = React.useState(false);
+    const [showPrice, setShowPrice] = React.useState(false);
+
+    React.useEffect(() => {
+        // Тrigger animation on mount
+        const start = setTimeout(() => setVisible(true), 50);
+        // Show AquaPrice after animation
+        const priceTimer = setTimeout(() => setShowPrice(true), 1100);
+        return () => {
+            clearTimeout(start);
+            clearTimeout(priceTimer);
+        };
+    }, []);
+
+    const buyAqua = (e: React.MouseEvent<HTMLAnchorElement>) => {
         if (!isLogged) {
             e.preventDefault();
             e.stopPropagation();
-
             ModalService.openModal(ChooseLoginMethodModal, {});
-
-            return;
         }
     };
+
     return (
         <Container>
             <SocialLinks />
-            <Content>
-                <Background />
-                <Title>
+            <Content $visible={visible}>
+                <Background $visible={visible} />
+                <Title $visible={visible}>
                     AQUA
                     <AnimatedBorderedText text="Token" />
                 </Title>
-                <Description>Powers the #1 Stellar DeFi protocol</Description>
-                <SecondaryDescription>
+                <Description $visible={visible}>Powers the #1 Stellar DeFi protocol</Description>
+                <SecondaryDescription $visible={visible}>
                     Earn AQUA rewards by providing liquidity and voting in the Aquarius ecosystem.
                 </SecondaryDescription>
                 <ButtonAndPriceBlock>
@@ -201,7 +277,7 @@ const MainBlock = () => {
                         </ButtonStyled>
                     </Link>
 
-                    <AquaPriceStyled />
+                    {showPrice && <AquaPriceStyled />}
                 </ButtonAndPriceBlock>
             </Content>
         </Container>

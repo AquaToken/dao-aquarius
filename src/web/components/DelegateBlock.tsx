@@ -1,8 +1,11 @@
 import * as React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { MainRoutes } from 'constants/routes';
 
+import { useScrollAnimation } from 'hooks/useScrollAnimation';
+
+import { slideUpSoftAnimation, containerScrollAnimation } from 'web/animations';
 import { commonMaxWidth, flexAllCenter, flexColumn, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
@@ -14,12 +17,22 @@ import Present from 'assets/icons/objects/icon-present.svg';
 import { ExternalLink } from 'basics/links';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
-const Container = styled.section`
+/* ------------------------------- STYLED PART ------------------------------ */
+
+const Container = styled.section<{ $visible: boolean }>`
     width: 100%;
     background-color: ${COLORS.white};
     margin-top: 8rem;
     display: flex;
     justify-content: center;
+    opacity: 0;
+    ${containerScrollAnimation};
+
+    ${({ $visible }) =>
+        $visible &&
+        css`
+            ${slideUpSoftAnimation};
+        `}
 `;
 
 const Wrapper = styled.div`
@@ -41,12 +54,20 @@ const LogoStyled = styled(Logo)`
     width: 40.9rem;
 `;
 
-const LogoWrapper = styled.div`
+const LogoWrapper = styled.div<{ $visible: boolean }>`
     ${flexAllCenter};
     background-color: ${COLORS.gray50};
     border-radius: 8rem;
     flex: 1;
     position: relative;
+    opacity: 0;
+
+    ${({ $visible }) =>
+        $visible &&
+        css`
+            ${slideUpSoftAnimation};
+            animation-delay: 0.1s;
+        `}
 
     ${respondDown(Breakpoints.xl)`
        min-height: 35rem;
@@ -54,10 +75,18 @@ const LogoWrapper = styled.div`
     `}
 `;
 
-const ContentWrapper = styled.div`
+const ContentWrapper = styled.div<{ $visible: boolean }>`
     ${flexColumn};
     padding: 1.9rem 0;
     flex: 1;
+    opacity: 0;
+
+    ${({ $visible }) =>
+        $visible &&
+        css`
+            ${slideUpSoftAnimation};
+            animation-delay: 0.2s;
+        `}
 `;
 
 const Title = styled.h2`
@@ -108,48 +137,54 @@ const IconWrapper = styled.div`
     }
 `;
 
-const DelegateBlock = () => (
-    <Container>
-        <Wrapper>
-            <LogoWrapper>
-                <LogoStyled />
-            </LogoWrapper>
-            <ContentWrapper>
-                <Tooltip
-                    content={<span>⚡ Live now</span>}
-                    position={TOOLTIP_POSITION.right}
-                    isShow
-                >
-                    <Title>Delegate ICE</Title>
-                </Tooltip>
-                <Description>
-                    Delegate your ICE tokens to a trusted community member to maximize your returns
-                    and minimize your effort
-                </Description>
-                <List>
-                    <ListItem>
-                        <IconWrapper>
-                            <Present />
-                        </IconWrapper>
-                        Let others vote on your behalf and still earn all rewards for voting.
-                    </ListItem>
-                    <ListItem>
-                        <IconWrapper>
-                            <Heart />
-                        </IconWrapper>
-                        Support delegates who align with your values, approach, or ideology
-                    </ListItem>
-                    <ListItem>
-                        <IconWrapper>
-                            <DAO />
-                        </IconWrapper>
-                        Stay hands-off, or engage as deeply as you want
-                    </ListItem>
-                </List>
-                <ExternalLink to={MainRoutes.delegate}>Read more about Delegation</ExternalLink>
-            </ContentWrapper>
-        </Wrapper>
-    </Container>
-);
+/* ------------------------------- COMPONENT ------------------------------- */
+
+const DelegateBlock = () => {
+    const { ref, visible } = useScrollAnimation(0.25, true);
+
+    return (
+        <Container ref={ref as React.RefObject<HTMLDivElement>} $visible={visible}>
+            <Wrapper>
+                <LogoWrapper $visible={visible}>
+                    <LogoStyled />
+                </LogoWrapper>
+                <ContentWrapper $visible={visible}>
+                    <Tooltip
+                        content={<span>⚡ Live now</span>}
+                        position={TOOLTIP_POSITION.right}
+                        isShow
+                    >
+                        <Title>Delegate ICE</Title>
+                    </Tooltip>
+                    <Description>
+                        Delegate your ICE tokens to a trusted community member to maximize your
+                        returns and minimize your effort
+                    </Description>
+                    <List>
+                        <ListItem>
+                            <IconWrapper>
+                                <Present />
+                            </IconWrapper>
+                            Let others vote on your behalf and still earn all rewards for voting.
+                        </ListItem>
+                        <ListItem>
+                            <IconWrapper>
+                                <Heart />
+                            </IconWrapper>
+                            Support delegates who align with your values, approach, or ideology
+                        </ListItem>
+                        <ListItem>
+                            <IconWrapper>
+                                <DAO />
+                            </IconWrapper>
+                            Stay hands-off, or engage as deeply as you want
+                        </ListItem>
+                    </List>
+                    <ExternalLink to={MainRoutes.delegate}>Read more about Delegation</ExternalLink>
+                </ContentWrapper>
+            </Wrapper>
+        </Container>
+    );
+};
 
 export default DelegateBlock;
