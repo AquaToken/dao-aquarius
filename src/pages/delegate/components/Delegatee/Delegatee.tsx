@@ -188,12 +188,12 @@ const Delegatee = forwardRef(
                             </span>
                         ) : (
                             <span>
-                                {!!+delegatee.managed_ice[getAssetString(UP_ICE)] && (
+                                {!!+delegatee.managed_ice?.[getAssetString(UP_ICE)] && (
                                     <span>
                                         Market Voting Power:{' '}
                                         <b>
                                             {formatBalance(
-                                                delegatee.managed_ice[getAssetString(UP_ICE)],
+                                                delegatee.managed_ice?.[getAssetString(UP_ICE)],
                                                 true,
                                             )}{' '}
                                             dICE
@@ -201,14 +201,16 @@ const Delegatee = forwardRef(
                                     </span>
                                 )}
 
-                                {!!+delegatee.managed_ice[getAssetString(GOV_ICE)] && (
+                                {!!+delegatee.managed_ice?.[getAssetString(GOV_ICE)] && (
                                     <>
                                         <br />
                                         <span>
                                             DAO Voting Power:{' '}
                                             <b>
                                                 {formatBalance(
-                                                    delegatee.managed_ice[getAssetString(GOV_ICE)],
+                                                    delegatee.managed_ice?.[
+                                                        getAssetString(GOV_ICE)
+                                                    ],
                                                     true,
                                                 )}{' '}
                                                 gdICE
@@ -229,12 +231,12 @@ const Delegatee = forwardRef(
                     ) : (
                         <MobileAmount>
                             <span>
-                                {!!+delegatee.managed_ice[getAssetString(UP_ICE)] && (
+                                {!!+delegatee.managed_ice?.[getAssetString(UP_ICE)] && (
                                     <span>
                                         Market Voting Power:{' '}
                                         <b>
                                             {formatBalance(
-                                                delegatee.managed_ice[getAssetString(UP_ICE)],
+                                                delegatee.managed_ice?.[getAssetString(UP_ICE)],
                                                 true,
                                             )}{' '}
                                             dICE
@@ -242,14 +244,16 @@ const Delegatee = forwardRef(
                                     </span>
                                 )}
 
-                                {!!+delegatee.managed_ice[getAssetString(GOV_ICE)] && (
+                                {!!+delegatee.managed_ice?.[getAssetString(GOV_ICE)] && (
                                     <>
                                         <br />
                                         <span>
                                             DAO Voting Power:{' '}
                                             <b>
                                                 {formatBalance(
-                                                    delegatee.managed_ice[getAssetString(GOV_ICE)],
+                                                    delegatee.managed_ice?.[
+                                                        getAssetString(GOV_ICE)
+                                                    ],
                                                     true,
                                                 )}{' '}
                                                 gdICE
@@ -264,15 +268,17 @@ const Delegatee = forwardRef(
                     {delegatee.description && <Bio>{delegatee.description}</Bio>}
 
                     <BottomRow>
-                        {Object.values(delegatee.delegated).length > 0 ? (
+                        {delegatee.delegated && Object.values(delegatee.delegated).length > 0 ? (
                             <Trusted>
                                 Trusted by{' '}
                                 <b>
                                     {delegatee?.overall_delegated_stat?.unique_delegators ??
-                                        delegatee.delegated[getAssetString(UP_ICE)]}
+                                        delegatee.delegated?.[getAssetString(UP_ICE)]}
                                 </b>{' '}
                                 account
-                                {(delegatee.delegated[getAssetString(UP_ICE)] ?? 0) > 1 ? 's' : ''}
+                                {(delegatee.delegated?.[getAssetString(UP_ICE)] ?? 0) > 1
+                                    ? 's'
+                                    : ''}
                             </Trusted>
                         ) : (
                             <div />

@@ -363,45 +363,51 @@ const DelegateeStats = forwardRef(
                         </Stats>
                     ) : (
                         <Stats>
-                            {marketVotes.map(vote => (
-                                <StatsRow key={vote.id}>
-                                    <LinkInner
-                                        to={`${MarketRoutes.main}/${vote.asset1}/${vote.asset2}`}
-                                    >
-                                        <AssetLogoStyled
-                                            isCircle
-                                            asset={getAssetFromString(vote.asset1)}
-                                            isSmall
-                                        />
-                                        <AssetLogoSecond
-                                            isCircle
-                                            asset={getAssetFromString(vote.asset2)}
-                                            isSmall
-                                        />
+                            {marketVotes.length ? (
+                                marketVotes.map(vote => (
+                                    <StatsRow key={vote.id}>
+                                        <LinkInner
+                                            to={`${MarketRoutes.main}/${vote.asset1}/${vote.asset2}`}
+                                        >
+                                            <AssetLogoStyled
+                                                isCircle
+                                                asset={getAssetFromString(vote.asset1)}
+                                                isSmall
+                                            />
+                                            <AssetLogoSecond
+                                                isCircle
+                                                asset={getAssetFromString(vote.asset2)}
+                                                isSmall
+                                            />
+                                            <span>
+                                                {vote.asset1_code} / {vote.asset2_code}
+                                            </span>
+                                        </LinkInner>
                                         <span>
-                                            {vote.asset1_code} / {vote.asset2_code}
-                                        </span>
-                                    </LinkInner>
-                                    <span>
-                                        {getPercent(
-                                            vote.total_votes,
-                                            delegatee.managed_ice[getAssetString(selectedAsset)],
-                                        )}
-                                        %
-                                    </span>
-                                    <CircularProgress
-                                        percentage={
-                                            +getPercent(
+                                            {getPercent(
                                                 vote.total_votes,
-                                                delegatee.managed_ice[
+                                                delegatee?.managed_ice?.[
                                                     getAssetString(selectedAsset)
                                                 ],
-                                            )
-                                        }
-                                    />
-                                </StatsRow>
-                            ))}
-                            {Number(delegatee.managed_ice[getAssetString(selectedAsset)]) -
+                                            )}
+                                            %
+                                        </span>
+                                        <CircularProgress
+                                            percentage={
+                                                +getPercent(
+                                                    vote.total_votes,
+                                                    delegatee.managed_ice?.[
+                                                        getAssetString(selectedAsset)
+                                                    ],
+                                                )
+                                            }
+                                        />
+                                    </StatsRow>
+                                ))
+                            ) : (
+                                <div>Not voted yet</div>
+                            )}
+                            {Number(delegatee.managed_ice?.[getAssetString(selectedAsset)]) -
                                 votesSum >
                                 0 && (
                                 <StatsRow>
@@ -410,12 +416,12 @@ const DelegateeStats = forwardRef(
                                         {getPercent(
                                             (
                                                 Number(
-                                                    delegatee.managed_ice[
+                                                    delegatee.managed_ice?.[
                                                         getAssetString(selectedAsset)
                                                     ],
                                                 ) - votesSum
                                             ).toString(),
-                                            delegatee.managed_ice[getAssetString(selectedAsset)],
+                                            delegatee.managed_ice?.[getAssetString(selectedAsset)],
                                         )}
                                         %
                                     </span>
@@ -424,12 +430,12 @@ const DelegateeStats = forwardRef(
                                             +getPercent(
                                                 (
                                                     Number(
-                                                        delegatee.managed_ice[
+                                                        delegatee.managed_ice?.[
                                                             getAssetString(selectedAsset)
                                                         ],
                                                     ) - votesSum
                                                 ).toString(),
-                                                delegatee.managed_ice[
+                                                delegatee.managed_ice?.[
                                                     getAssetString(selectedAsset)
                                                 ],
                                             )
