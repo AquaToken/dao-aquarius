@@ -22,8 +22,8 @@ export const getDelegatees = (): Promise<Delegatee[]> =>
             data.sort(
                 (a, b) =>
                     +b.is_recommended - +a.is_recommended ||
-                    +b.managed_ice?.[getAssetString(UP_ICE)] -
-                        +a.managed_ice?.[getAssetString(UP_ICE)],
+                    (+b.managed_ice?.[getAssetString(UP_ICE)] || 0) -
+                        (+a.managed_ice?.[getAssetString(UP_ICE)] || 0),
             ),
         );
 
