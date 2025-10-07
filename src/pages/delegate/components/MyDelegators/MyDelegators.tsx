@@ -36,7 +36,7 @@ const MyDelegators = ({ delegators }: Props) => {
             const claimant = delegator.claimants.find(
                 ({ predicate }) => !!predicate?.not?.abs_before,
             );
-            if (!claimant) return acc; // если нет подходящего клейманта — пропускаем
+            if (!claimant) return acc;
 
             const sponsor = claimant.destination;
             const asset = delegator.asset;
