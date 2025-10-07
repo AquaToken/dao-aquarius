@@ -24,7 +24,7 @@ const UPDATE_INTERVAL = 60 * 1000;
 const StatisticBlock: React.FC = () => {
     const [statistics, setStatistics] = useState(null);
     const [updateIndex, setUpdateIndex] = useState(0);
-    const { ref, visible } = useScrollAnimation(0.5, true);
+    const { ref, visible } = useScrollAnimation(0.3, true);
 
     // Periodically refresh ICE statistics
     useEffect(() => {

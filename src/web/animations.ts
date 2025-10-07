@@ -95,7 +95,7 @@ export const pulse = keyframes`
  * Duration: 0.8s, easing: ease-out, keeps final state.
  */
 export const fadeInUpAnimation = css`
-    animation: ${fadeInUp} 0.8s ease-out both;
+    animation: ${fadeInUp} 0.6s ease-out both;
 `;
 
 /**
@@ -112,7 +112,7 @@ export const fadeInUpDelayed = css`
  * Often used for logos, icons, or images.
  */
 export const fadeInScale = css`
-    animation: ${fadeIn} 1s ease-out both;
+    animation: ${fadeIn} 0.8s ease-out both;
     animation-delay: 0.4s;
 `;
 
@@ -120,7 +120,7 @@ export const fadeInScale = css`
  * 3D flip-in animation for interactive elements.
  */
 export const flipInAnimation = css`
-    animation: ${flipIn} 0.8s ease-out both;
+    animation: ${flipIn} 0.6s ease-out both;
 `;
 
 /**
@@ -128,7 +128,7 @@ export const flipInAnimation = css`
  * Great for text blocks or section transitions.
  */
 export const slideUpSoftAnimation = css`
-    animation: ${slideUpSoft} 0.9s cubic-bezier(0.25, 1, 0.5, 1) both;
+    animation: ${slideUpSoft} 0.7s cubic-bezier(0.25, 1, 0.5, 1) both;
 `;
 
 /**
@@ -136,14 +136,14 @@ export const slideUpSoftAnimation = css`
  * Doesn’t hide content (safe for SSR and initial render).
  */
 export const fadeAppearAnimation = css`
-    animation: ${fadeAppear} 1.2s ease-out both;
+    animation: ${fadeAppear} 1s ease-out both;
 `;
 
 /**
  * Infinite gentle pulsing — gives "breathing" motion.
  */
 export const pulseAnimation = css`
-    animation: ${pulse} 4s ease-in-out infinite;
+    animation: ${pulse} 3.5s ease-in-out infinite;
 `;
 
 /* -------------------------------------------------------------------------- */
@@ -158,7 +158,7 @@ export const pulseAnimation = css`
 export const containerScrollAnimation = css<{ $visible: boolean }>`
     opacity: 0;
     transform: translateY(4rem);
-    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    transition: opacity 0.6s ease-out, transform 0.8s ease-out;
 
     ${({ $visible }) =>
         $visible &&

@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import styled, { css, keyframes } from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { MainRoutes } from 'constants/routes';
+
+import { useScrollAnimation } from 'hooks/useScrollAnimation';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
@@ -22,30 +24,6 @@ import AnimatedBorderedText from 'pages/token/components/AnimatedBorderedText/An
 import AquaPrice from 'pages/token/components/AquaPrice/AquaPrice';
 
 /* -------------------------------------------------------------------------- */
-/*                                Animations                                  */
-/* -------------------------------------------------------------------------- */
-
-const fadeInUp = keyframes`
-  from {
-    opacity: 0;
-    transform: translateY(40px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-`;
-
-const fadeIn = keyframes`
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-`;
-
-/* -------------------------------------------------------------------------- */
 /*                                   Styles                                   */
 /* -------------------------------------------------------------------------- */
 
@@ -60,7 +38,7 @@ const Container = styled.section`
     `}
 `;
 
-const Content = styled.div<{ $visible: boolean }>`
+const Content = styled.div`
     position: relative;
     display: flex;
     flex-direction: column;
@@ -68,12 +46,6 @@ const Content = styled.div<{ $visible: boolean }>`
     padding: 20rem 10rem 16rem;
     z-index: 20;
     ${commonMaxWidth};
-
-    ${({ $visible }) =>
-        $visible &&
-        css`
-            animation: ${fadeInUp} 1s ease-out both;
-        `}
 
     ${respondDown(Breakpoints.md)`
         padding-top: 10rem;
@@ -84,19 +56,11 @@ const Content = styled.div<{ $visible: boolean }>`
     `}
 `;
 
-const Background = styled(Bg)<{ $visible: boolean }>`
+const Background = styled(Bg)`
     position: absolute;
     height: 90rem;
     right: -20rem;
     top: -11.2rem;
-    opacity: 0;
-    transition: opacity 1.4s ease-out;
-    ${({ $visible }) =>
-        $visible &&
-        css`
-            opacity: 1;
-            animation: ${fadeIn} 2s ease-out both;
-        `}
 
     ${respondDown(Breakpoints.lg)`
         right: -25rem;
@@ -117,44 +81,42 @@ const Background = styled(Bg)<{ $visible: boolean }>`
     `}
 `;
 
-const Title = styled.div<{ $visible: boolean }>`
+const fadeUp = css`
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    &.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+`;
+
+const Title = styled.div`
     display: flex;
     align-items: center;
     font-weight: 700;
     font-size: 10rem;
-    opacity: 0;
-    ${({ $visible }) =>
-        $visible &&
-        css`
-            animation: ${fadeInUp} 0.8s ease-out both;
-        `}
+    ${fadeUp};
 
     ${respondDown(Breakpoints.lg)`
         font-size: 7rem;
     `}
-
     ${respondDown(Breakpoints.md)`
         font-size: 5rem;
         height: 5rem;
     `}
 `;
 
-const Description = styled.p<{ $visible: boolean }>`
+const Description = styled.p`
     font-size: 3.6rem;
     line-height: 4.2rem;
     margin: 2.4rem 0;
-    opacity: 0;
-    ${({ $visible }) =>
-        $visible &&
-        css`
-            animation: ${fadeInUp} 1s ease-out both;
-        `}
+    ${fadeUp};
 
     ${respondDown(Breakpoints.lg)`
         font-size: 3rem;
         margin: 1.6rem 0 1.6rem;
     `}
-
     ${respondDown(Breakpoints.sm)`
         font-size: 1.8rem;
         line-height: 3.2rem;
@@ -162,17 +124,12 @@ const Description = styled.p<{ $visible: boolean }>`
     `}
 `;
 
-const SecondaryDescription = styled.p<{ $visible: boolean }>`
+const SecondaryDescription = styled.p`
     margin: 0;
     font-size: 1.6rem;
     line-height: 180%;
     color: ${COLORS.textGray};
-    opacity: 0;
-    ${({ $visible }) =>
-        $visible &&
-        css`
-            animation: ${fadeInUp} 1.2s ease-out both;
-        `}
+    ${fadeUp};
 
     ${respondDown(Breakpoints.sm)`
         font-size: 1.4rem;
@@ -196,7 +153,6 @@ const ButtonAndPriceBlock = styled.div`
             height: 5.2rem;
         }
     `}
-
     a {
         text-decoration: none !important;
     }
@@ -210,7 +166,6 @@ const ButtonStyled = styled(Button)`
     ${respondDown(Breakpoints.md)`
         width: 34rem;
     `}
-
     ${respondDown(Breakpoints.sm)`
         width: 100%;
         height: 5.2rem;
@@ -224,44 +179,35 @@ const AquaPriceStyled = styled(AquaPrice)`
 `;
 
 /* -------------------------------------------------------------------------- */
-/*                                 Component                                  */
+/*                                   Component                                */
 /* -------------------------------------------------------------------------- */
 
-const MainBlock: React.FC = () => {
+const MainBlock = () => {
     const { isLogged } = useAuthStore();
-    const [visible, setVisible] = React.useState(false);
-    const [showPrice, setShowPrice] = React.useState(false);
+    const { ref, visible } = useScrollAnimation(0.3, true);
 
-    React.useEffect(() => {
-        // Тrigger animation on mount
-        const start = setTimeout(() => setVisible(true), 50);
-        // Show AquaPrice after animation
-        const priceTimer = setTimeout(() => setShowPrice(true), 1100);
-        return () => {
-            clearTimeout(start);
-            clearTimeout(priceTimer);
-        };
-    }, []);
-
-    const buyAqua = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const buyAqua = e => {
         if (!isLogged) {
             e.preventDefault();
             e.stopPropagation();
             ModalService.openModal(ChooseLoginMethodModal, {});
+            return;
         }
     };
 
     return (
         <Container>
             <SocialLinks />
-            <Content $visible={visible}>
-                <Background $visible={visible} />
-                <Title $visible={visible}>
+            <Content ref={ref as React.RefObject<HTMLDivElement>}>
+                <Background />
+                <Title className={visible ? 'visible' : ''}>
                     AQUA
                     <AnimatedBorderedText text="Token" />
                 </Title>
-                <Description $visible={visible}>Powers the #1 Stellar DeFi protocol</Description>
-                <SecondaryDescription $visible={visible}>
+                <Description className={visible ? 'visible' : ''}>
+                    Powers the #1 Stellar DeFi protocol
+                </Description>
+                <SecondaryDescription className={visible ? 'visible' : ''}>
                     Earn AQUA rewards by providing liquidity and voting in the Aquarius ecosystem.
                 </SecondaryDescription>
                 <ButtonAndPriceBlock>
@@ -270,14 +216,12 @@ const MainBlock: React.FC = () => {
                             swap aqua
                         </ButtonStyled>
                     </Link>
-
                     <Link to={MainRoutes.buyAqua} onClick={buyAqua}>
                         <ButtonStyled isRounded withGradient isBig secondary>
                             Buy with a card
                         </ButtonStyled>
                     </Link>
-
-                    {showPrice && <AquaPriceStyled />}
+                    <AquaPriceStyled />
                 </ButtonAndPriceBlock>
             </Content>
         </Container>
