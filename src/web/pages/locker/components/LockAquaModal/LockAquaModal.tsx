@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
-import styled from 'styled-components';
+import { useState, useMemo } from 'react';
 
 import { getDateString } from 'helpers/date';
 import ErrorHandler from 'helpers/error-handler';
@@ -17,76 +16,21 @@ import { StellarService, ToastService } from 'services/globalServices';
 
 import { ModalProps } from 'types/modal';
 
-import { flexRowSpaceBetween } from 'web/mixins';
-import { COLORS } from 'web/styles';
-
-import Aqua from 'assets/aqua/aqua-logo.svg';
-import Ice from 'assets/tokens/ice-logo.svg';
-
 import Button from 'basics/buttons/Button';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
-const Row = styled.div`
-    ${flexRowSpaceBetween};
-    font-size: 1.6rem;
-    line-height: 1.8rem;
-    padding-bottom: 3rem;
-`;
-
-const Label = styled.span`
-    color: ${COLORS.textGray};
-`;
-
-const Value = styled.span`
-    color: ${COLORS.textTertiary};
-    display: flex;
-    align-items: center;
-`;
-
-const ButtonContainer = styled.div`
-    padding-top: 3.2rem;
-    border-top: 0.1rem dashed ${COLORS.gray100};
-    display: flex;
-`;
-
-const AquaLogo = styled(Aqua)`
-    height: 2.4rem;
-    width: 2.4rem;
-    margin-right: 0.8rem;
-`;
-
-const IceLogo = styled(Ice)`
-    height: 2.4rem;
-    width: 2.4rem;
-    margin-right: 0.8rem;
-`;
-
-const AddTrustBlock = styled.div`
-    background: ${COLORS.gray50};
-    border-radius: 0.5rem;
-    padding: 3.5rem 3.2rem 2.2rem;
-    margin-bottom: 2.4rem;
-`;
-
-const AddTrustDescription = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 2.6rem;
-    margin-bottom: 1.4rem;
-`;
-
-const AddTrustEmoji = styled.span`
-    font-size: 1.8rem;
-    line-height: 3.2rem;
-`;
-
-const AddTrustTextDescription = styled.span`
-    font-weight: 400;
-    font-size: 1.6rem;
-    line-height: 2.8rem;
-    color: ${COLORS.textSecondary};
-    opacity: 0.7;
-`;
+import {
+    Row,
+    Label,
+    Value,
+    ButtonContainer,
+    AquaLogo,
+    IceLogo,
+    AddTrustBlock,
+    AddTrustDescription,
+    AddTrustEmoji,
+    AddTrustTextDescription,
+} from './LockAquaModal.styled';
 
 const LockAquaModal = ({
     confirm,
@@ -97,27 +41,30 @@ const LockAquaModal = ({
     const [pending, setPending] = useState(false);
     const isMounted = useIsMounted();
 
-    const unlistedIceAssets = account.getUntrustedIceAssets();
+    const unlistedIceAssets = useMemo(() => account.getUntrustedIceAssets(), [account]);
 
-    const onSubmit = async () => {
+    const buildOperations = () => {
+        const ops = [StellarService.op.createLockOperation(account.accountId(), amount, period)];
+
+        if (unlistedIceAssets.length) {
+            unlistedIceAssets.forEach(asset => {
+                ops.push(StellarService.op.createAddTrustOperation(asset));
+            });
+        }
+
+        return ops;
+    };
+
+    const handleSubmit = async () => {
         if (account.authType === LoginTypes.walletConnect) {
             openCurrentWalletIfExist();
         }
+
         try {
             setPending(true);
 
-            const ops = [
-                StellarService.op.createLockOperation(account.accountId(), amount, period),
-            ];
-
-            if (unlistedIceAssets.length) {
-                unlistedIceAssets.forEach(asset => {
-                    ops.push(StellarService.op.createAddTrustOperation(asset));
-                });
-            }
-
-            const tx = await StellarService.tx.buildTx(account, ops);
-
+            const operations = buildOperations();
+            const tx = await StellarService.tx.buildTx(account, operations);
             const result = await account.signAndSubmitTx(tx);
 
             if (isMounted.current) {
@@ -125,26 +72,39 @@ const LockAquaModal = ({
                 confirm({});
             }
 
-            if (
-                (result as { status: BuildSignAndSubmitStatuses }).status ===
-                BuildSignAndSubmitStatuses.pending
-            ) {
+            const { status } = result as { status: BuildSignAndSubmitStatuses };
+
+            if (status === BuildSignAndSubmitStatuses.pending) {
                 ToastService.showSuccessToast('More signatures required to complete');
                 return;
             }
+
             ToastService.showSuccessToast('Your lock has been created!');
         } catch (e) {
             const errorText = ErrorHandler(e);
             ToastService.showErrorToast(errorText);
-            if (isMounted.current) {
-                setPending(false);
-            }
+            if (isMounted.current) setPending(false);
         }
     };
+
+    const renderAddTrustInfo = Boolean(unlistedIceAssets.length) && (
+        <AddTrustBlock>
+            <AddTrustDescription>
+                <AddTrustEmoji>☝️</AddTrustEmoji>
+                <AddTrustTextDescription>
+                    Freezing AQUA requires you to add the {unlistedIceAssets.length} ICE trustlines
+                    ({unlistedIceAssets.map(asset => asset.code).join(', ')}). Each trustline will
+                    reserve 0.5 XLM of your wallet balance.
+                </AddTrustTextDescription>
+            </AddTrustDescription>
+        </AddTrustBlock>
+    );
+
     return (
         <ModalWrapper>
             <ModalTitle>Lock AQUA</ModalTitle>
             <ModalDescription>Please verify the details below before confirming</ModalDescription>
+
             <Row>
                 <Label>Amount</Label>
                 <Value>
@@ -152,10 +112,12 @@ const LockAquaModal = ({
                     {formatBalance(+amount)} AQUA
                 </Value>
             </Row>
+
             <Row>
                 <Label>Unlock date</Label>
                 <Value>{getDateString(+period)}</Value>
             </Row>
+
             <Row>
                 <Label>ICE reward amount</Label>
                 <Value>
@@ -163,20 +125,11 @@ const LockAquaModal = ({
                     {formatBalance(iceAmount)} ICE
                 </Value>
             </Row>
-            {Boolean(unlistedIceAssets.length) && (
-                <AddTrustBlock>
-                    <AddTrustDescription>
-                        <AddTrustEmoji>☝️</AddTrustEmoji>
-                        <AddTrustTextDescription>
-                            Freezing AQUA requires you to add the {unlistedIceAssets.length} ICE
-                            trustlines ({unlistedIceAssets.map(asset => asset.code).join(', ')}).
-                            Each trustline will reserve 0.5 XLM of your wallet balance.
-                        </AddTrustTextDescription>
-                    </AddTrustDescription>
-                </AddTrustBlock>
-            )}
+
+            {renderAddTrustInfo}
+
             <ButtonContainer>
-                <Button isBig isRounded fullWidth pending={pending} onClick={() => onSubmit()}>
+                <Button isBig isRounded fullWidth pending={pending} onClick={handleSubmit}>
                     Confirm
                 </Button>
             </ButtonContainer>
