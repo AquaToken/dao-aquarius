@@ -192,13 +192,13 @@ const TotalApyTooltip = ({ pool, withBoost, userBoost }: Props) => (
             )}
             {!withBoost && (
                 <ContentRowWithBackground $background={hexWithOpacity(COLORS.gray200, 20)}>
-                    <Title>Total APY:</Title>
+                    <Title>Total APR:</Title>
                     <Value>{apyValueToDisplay(pool.total_apy)}</Value>
                 </ContentRowWithBackground>
             )}
             {Boolean(userBoost) && (
                 <ContentRowWithBackground $background={hexWithOpacity(COLORS.purple500, 10)}>
-                    <Title>Your Boost APY:</Title>
+                    <Title>Your Boost APR:</Title>
                     <Value>
                         <LabelTextTotal>
                             <IconBoost />
@@ -226,7 +226,7 @@ const TotalApyTooltip = ({ pool, withBoost, userBoost }: Props) => (
             )}
             {withBoost && (
                 <ContentRowWithBackground $background={hexWithOpacity(COLORS.blue700, 10)}>
-                    <Title>Max Boost APY:</Title>
+                    <Title>Max Boost APR:</Title>
                     <Value>
                         <Cross>{apyValueToDisplay(pool.total_apy)}</Cross>
                         <LabelTextTotal>

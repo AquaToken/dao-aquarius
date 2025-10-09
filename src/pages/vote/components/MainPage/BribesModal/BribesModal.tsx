@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 
-import { MAX_X_ICE_BOOST } from 'constants/ice';
+import { MAX_X_UPVOTE_ICE_BOOST } from 'constants/ice';
 
 import { convertLocalDateToUTCIgnoringTimezone, getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
@@ -211,7 +211,7 @@ const BribesModal = ({ params }: ModalProps<{ pair: PairStats }>) => {
                             Bribes are divided among all participants in the voting for the market
                             pair. Make sure you have an open trustline to the bribe reward asset to
                             receive your share. Maximum bribe APY is displayed for fully locked ICE
-                            ({MAX_X_ICE_BOOST} ICE per AQUA).
+                            ({MAX_X_UPVOTE_ICE_BOOST} upvoteICE per AQUA).
                         </HowItWorksText>
                         <HowItWorksFooter>
                             <CloseButton onClick={() => setShowHowItWorks(false)}>
