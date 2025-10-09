@@ -283,7 +283,7 @@ const Links = () => {
             />
 
             <ExpandedMenu
-                title="Governance"
+                title="DAO"
                 counts={proposalsCounts}
                 links={
                     <>
