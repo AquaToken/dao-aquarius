@@ -191,11 +191,14 @@ const UpcomingBribes = () => {
                     const counter = createAsset(item.asset2_code, item.asset2_issuer);
                     const rewardAsset = createAsset(item.asset_code, item.asset_issuer);
 
-                    const apy =
-                        (item.aqua_total_reward_amount_equivalent / 7 / Number(item.upvote_value) +
-                            1) **
-                            365 -
-                        1;
+                    const apy = item.upvote_value
+                        ? (item.aqua_total_reward_amount_equivalent /
+                              7 /
+                              Number(item.upvote_value) +
+                              1) **
+                              365 -
+                          1
+                        : 0;
                     const MAX_APY_VALUE = 1e6; // 1B
                     const apyMax = Math.min(getIceMaxApy({ apy }), MAX_APY_VALUE);
 
@@ -216,9 +219,12 @@ const UpcomingBribes = () => {
                                 flexSize: 3,
                             },
                             {
-                                children: `up to ${
-                                    apyMax === MAX_APY_VALUE ? '>' : ''
-                                }${formatBalance(apyMax, true)}%`,
+                                children: apyMax
+                                    ? `up to ${apyMax === MAX_APY_VALUE ? '>' : ''}${formatBalance(
+                                          apyMax,
+                                          true,
+                                      )}%`
+                                    : '-',
                                 label: 'Bribe APY:',
                             },
                             {
