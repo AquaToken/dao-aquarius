@@ -551,7 +551,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                             },
                         },
                         {
-                            children: 'Total APY',
+                            children: 'Total APR',
                             align: CellAlign.Left,
                             flexSize: 2,
                             style: { paddingLeft: '5rem' },
@@ -714,7 +714,7 @@ const MyLiquidity = ({ setTotal, onlyList, backToAllPools }: MyLiquidityProps) =
                                 },
                                 {
                                     children: <TotalApy pool={pool} userBoost={boostValue} />,
-                                    label: 'Total APY',
+                                    label: 'Total APR',
                                     align: CellAlign.Left,
                                     flexSize: 2,
                                     style: {

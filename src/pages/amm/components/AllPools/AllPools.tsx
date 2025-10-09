@@ -266,13 +266,13 @@ const AllPools = (): React.ReactNode => {
                             {
                                 children: (
                                     <TitleWithTooltip>
-                                        Total APY
+                                        Total APR
                                         <Tooltip
                                             showOnHover
                                             content={
                                                 <TooltipInnerHead>
-                                                    Total APY is the sum of LP APY, Rewards APY, and
-                                                    Incentives APY.
+                                                    Total APR is the sum of LP APR, Rewards APR, and
+                                                    Incentives APR.
                                                 </TooltipInnerHead>
                                             }
                                             position={TOOLTIP_POSITION.top}
@@ -353,13 +353,13 @@ const AllPools = (): React.ReactNode => {
                                     children: <TotalApy pool={pool} />,
                                     label: (
                                         <TitleWithTooltip>
-                                            Total APY
+                                            Total APR
                                             <Tooltip
                                                 showOnHover
                                                 content={
                                                     <TooltipInnerHead>
-                                                        Total APY is the sum of LP APY, Rewards APY,
-                                                        and Incentives APY.
+                                                        Total APR is the sum of LP APR, Rewards APR,
+                                                        and Incentives APR.
                                                     </TooltipInnerHead>
                                                 }
                                                 position={TOOLTIP_POSITION.top}
