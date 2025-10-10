@@ -18,27 +18,20 @@ import { ModalService, SorobanService, ToastService } from 'services/globalServi
 import { ModalProps } from 'types/modal';
 import { SorobanToken, Token, TokenType } from 'types/token';
 
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { flexRowSpaceBetween, respondDown, flexColumn } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import AssetLogo from 'basics/AssetLogo';
 import Button from 'basics/buttons/Button';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
-import Market from 'basics/Market';
 import { ModalDescription, ModalTitle, ModalWrapper, StickyButtonWrapper } from 'basics/ModalAtoms';
+import SwapTokenDirection from 'basics/SwapTokenDirection';
 
 import PathPool from './PathPool/PathPool';
 
 import SuccessModal from '../../../amm/components/SuccessModal/SuccessModal';
 import { SWAP_SLIPPAGE_ALIAS } from '../SwapSettingsModal/SwapSettingsModal';
-
-const AssetsInfo = styled.div`
-    ${flexAllCenter};
-    padding: 3.5rem 0;
-    background-color: ${COLORS.gray50};
-    border-radius: 0.5rem;
-`;
 
 const DescriptionRow = styled.div`
     ${flexRowSpaceBetween};
@@ -64,6 +57,10 @@ const Pools = styled.div`
         flex-direction: column;
         width: 100%;
     `}
+`;
+
+const BoltText = styled.span`
+    font-weight: bold;
 `;
 
 const STROOP = 0.0000001;
@@ -238,22 +235,20 @@ const SwapConfirmModal = ({
 
     return (
         <ModalWrapper>
-            <ModalTitle>Confirm swap</ModalTitle>
-            <ModalDescription>Please check all the details to make a swap</ModalDescription>
-            <AssetsInfo>
-                <Market verticalDirections assets={[base, counter]} />
-            </AssetsInfo>
+            <ModalTitle>Confirm Swap</ModalTitle>
+            <ModalDescription>Review amounts, rate, and fees before confirming</ModalDescription>
+            <SwapTokenDirection assets={[base, counter]} />
             <DescriptionRow>
                 <span>You give</span>
-                <span>
+                <BoltText>
                     {formatBalance(Number(baseAmount))} {base.code}
-                </span>
+                </BoltText>
             </DescriptionRow>
             <DescriptionRow>
                 <span>You get (estimate)</span>
-                <span>
+                <BoltText>
                     {formatBalance(Number(counterAmount))} {counter.code}
-                </span>
+                </BoltText>
             </DescriptionRow>
             <DescriptionRow>
                 <span>Exchange rate</span>
