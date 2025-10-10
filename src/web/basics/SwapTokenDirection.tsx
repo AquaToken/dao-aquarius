@@ -10,7 +10,7 @@ import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
 import { ModalService } from 'services/globalServices';
 
-import { Token, TokenType } from 'types/token';
+import { ClassicToken, Token, TokenType } from 'types/token';
 
 import Arrow from 'assets/icons/arrows/arrow-alt2-16.svg';
 
@@ -125,6 +125,7 @@ const SwapTokenDirection = ({ assets }: Props) => {
 
     const AssetSegment = useCallback((asset: Token) => {
         const [name, domain] = getAssetDetails(asset);
+        const isNative = (asset as ClassicToken)?.isNative?.() ?? false;
         return (
             <Segment>
                 <AssetLogo size={4} asset={asset} />
@@ -133,11 +134,15 @@ const SwapTokenDirection = ({ assets }: Props) => {
                     <Description>
                         <DescriptionName>{name}</DescriptionName>
                         <span>&nbsp;</span>
-                        <DescriptionDomain
-                            onClick={(event: React.MouseEvent) => onDomainClick(event, asset)}
-                        >
-                            ({domain})
-                        </DescriptionDomain>
+                        {isNative ? (
+                            <span>({domain})</span>
+                        ) : (
+                            <DescriptionDomain
+                                onClick={(event: React.MouseEvent) => onDomainClick(event, asset)}
+                            >
+                                ({domain})
+                            </DescriptionDomain>
+                        )}
                     </Description>
                 </CodeContainer>
             </Segment>
