@@ -25,20 +25,13 @@ import AssetLogo from 'basics/AssetLogo';
 import Button from 'basics/buttons/Button';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
-import Market from 'basics/Market';
 import { ModalDescription, ModalTitle, ModalWrapper, StickyButtonWrapper } from 'basics/ModalAtoms';
+import SwapTokenDirection from 'basics/SwapTokenDirection';
 
 import PathPool from './PathPool/PathPool';
 
 import SuccessModal from '../../../amm/components/SuccessModal/SuccessModal';
 import { SWAP_SLIPPAGE_ALIAS } from '../SwapSettingsModal/SwapSettingsModal';
-
-const AssetsInfo = styled.div`
-    ${flexColumn};
-    padding: 2.5rem 0;
-    background-color: ${COLORS.gray50};
-    border-radius: 0.5rem;
-`;
 
 const DescriptionRow = styled.div`
     ${flexRowSpaceBetween};
@@ -244,9 +237,7 @@ const SwapConfirmModal = ({
         <ModalWrapper>
             <ModalTitle>Confirm Swap</ModalTitle>
             <ModalDescription>Review amounts, rate, and fees before confirming</ModalDescription>
-            <AssetsInfo>
-                <Market compact withoutLink isSwapResult assets={[base, counter]} />
-            </AssetsInfo>
+            <SwapTokenDirection assets={[base, counter]} />
             <DescriptionRow>
                 <span>You give</span>
                 <BoltText>
