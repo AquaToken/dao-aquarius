@@ -7,7 +7,7 @@ import {
     ICE_ISSUER,
     UP_ICE_CODE,
 } from 'constants/assets';
-import { MAX_X_ICE_BOOST } from 'constants/ice';
+import { MAX_X_UPVOTE_ICE_BOOST } from 'constants/ice';
 
 import { ClassicToken } from 'types/token';
 
@@ -17,7 +17,7 @@ export const getIceMaxApy = ({
 }: {
     apy: number;
     inPercent?: boolean;
-}): number => (inPercent ? apy * 100 * MAX_X_ICE_BOOST : apy * MAX_X_ICE_BOOST);
+}): number => (inPercent ? apy * 100 * MAX_X_UPVOTE_ICE_BOOST : apy * MAX_X_UPVOTE_ICE_BOOST);
 
 export const getIceApproveEndpoint = (asset: ClassicToken): string => {
     if (asset.code === ICE_CODE && asset.issuer === ICE_ISSUER) {

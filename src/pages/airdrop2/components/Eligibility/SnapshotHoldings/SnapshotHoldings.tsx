@@ -15,8 +15,6 @@ import YXlm from 'assets/tokens/yxlm-logo.svg';
 
 import { ExternalLink } from 'basics/links';
 
-import { BalanceLabel } from 'pages/locker/components/LockerAccountPage/Portfolio/Portfolio';
-
 import { AccountEligibility } from '../../../api/types';
 
 const Container = styled.div`
@@ -107,6 +105,21 @@ const LockAmount = styled.div`
     ${respondDown(Breakpoints.sm)`
        display: block;
     `}
+`;
+
+const BalanceLabel = styled.div<{ $color: string; $textColor: string }>`
+    width: min-content;
+    height: 1.9rem;
+    border-radius: 0.3rem;
+    text-align: center;
+    line-height: 1.9rem;
+    font-size: 1rem;
+    font-weight: bold;
+    background: ${({ $color }) => $color};
+    color: ${({ $textColor }) => $textColor};
+    margin-right: 0.7rem;
+    padding: 0 0.8rem;
+    white-space: nowrap;
 `;
 
 const SnapshotHoldings = ({ accountEligibility }: { accountEligibility: AccountEligibility }) => (

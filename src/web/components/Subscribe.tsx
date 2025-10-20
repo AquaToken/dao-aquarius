@@ -1,6 +1,10 @@
 import * as React from 'react';
 import { FormEvent, useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
+
+import { useScrollAnimation } from 'hooks/useScrollAnimation';
+
+import { slideUpSoftAnimation, containerScrollAnimation } from 'web/animations';
 
 import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
@@ -8,13 +12,25 @@ import Input from 'basics/inputs/Input';
 import { respondDown } from '../mixins';
 import { Breakpoints, COLORS } from '../styles';
 
-const Wrapper = styled.div`
+/* -------------------------------------------------------------------------- */
+/*                                   Styles                                   */
+/* -------------------------------------------------------------------------- */
+
+const Wrapper = styled.div<{ $visible: boolean }>`
     display: flex;
     width: 100%;
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-end;
     margin-top: 3.2rem;
+    opacity: 0;
+    ${containerScrollAnimation};
+
+    ${({ $visible }) =>
+        $visible &&
+        css`
+            ${slideUpSoftAnimation};
+        `}
 `;
 
 const SubscribeBlock = styled.div`
@@ -113,6 +129,10 @@ const StyledButton = styled(Button)`
     `};
 `;
 
+/* -------------------------------------------------------------------------- */
+/*                                   Logic                                    */
+/* -------------------------------------------------------------------------- */
+
 const encode = (data: { [key: string]: string }) =>
     Object.keys(data)
         .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(data[key]))
@@ -120,8 +140,10 @@ const encode = (data: { [key: string]: string }) =>
 
 const Subscribe = (): React.ReactNode => {
     const [email, setEmail] = useState('');
+    const { ref, visible } = useScrollAnimation(0.25, true);
 
     const handleSubmit = (e: React.SyntheticEvent<FormEvent>) => {
+        e.preventDefault();
         fetch('/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -129,8 +151,6 @@ const Subscribe = (): React.ReactNode => {
         })
             .then(() => alert('Success!'))
             .catch(error => alert(error));
-
-        e.preventDefault();
     };
 
     const HeaderContent = (
@@ -141,13 +161,12 @@ const Subscribe = (): React.ReactNode => {
     );
 
     return (
-        <Wrapper>
+        <Wrapper ref={ref as React.RefObject<HTMLDivElement>} $visible={visible}>
             <HeaderXS>{HeaderContent}</HeaderXS>
             <SubscribeBlock>
                 <Header>{HeaderContent}</Header>
                 <Form onSubmit={handleSubmit}>
                     <input type="hidden" name="form-name" value="subscribe" />
-
                     <Input
                         type="email"
                         name="email"

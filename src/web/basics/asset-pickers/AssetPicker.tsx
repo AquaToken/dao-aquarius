@@ -5,7 +5,7 @@ import { ModalService } from 'services/globalServices';
 
 import { Token } from 'types/token';
 
-import { textEllipsis } from 'web/mixins';
+import { noSelect, textEllipsis } from 'web/mixins';
 import { COLORS } from 'web/styles';
 
 import Arrow from 'assets/icons/arrows/arrow-down-16.svg';
@@ -13,7 +13,7 @@ import Arrow from 'assets/icons/arrows/arrow-down-16.svg';
 import AssetPickerModal from 'basics/asset-pickers/AssetPickerModal';
 import AssetLogo from 'basics/AssetLogo';
 
-const Container = styled.div`
+const Container = styled.div<{ $disabled?: boolean }>`
     display: flex;
     width: fit-content;
     max-width: 15rem;
@@ -27,6 +27,8 @@ const Container = styled.div`
     cursor: pointer;
     margin: 0.9rem 0;
     position: relative;
+    pointer-events: ${props => (props.$disabled ? 'none' : 'unset')};
+    ${noSelect};
 
     &:hover {
         border-color: ${COLORS.purple500};
@@ -58,17 +60,22 @@ type Props = {
     onUpdate: (asset: Token) => void;
     assetsList: Token[];
     label?: string;
+    disabled?: boolean;
 };
 
-const AssetPicker = ({ asset, onUpdate, assetsList, label, ...props }: Props) => (
+const AssetPicker = ({ asset, onUpdate, assetsList, label, disabled, ...props }: Props) => (
     <Container
-        onClick={() => ModalService.openModal(AssetPickerModal, { assetsList, onUpdate })}
+        onClick={() => {
+            if (disabled) return;
+            ModalService.openModal(AssetPickerModal, { assetsList, onUpdate });
+        }}
+        $disabled={disabled}
         {...props}
     >
         {label && <Label>{label}</Label>}
         <AssetLogo asset={asset} />
         <Code>{asset.code}</Code>
-        <ArrowIcon />
+        {!disabled && <ArrowIcon />}
     </Container>
 );
 

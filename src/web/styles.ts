@@ -111,8 +111,12 @@ export const FONT_FAMILY = {
 };
 
 export const FONT_SIZE = {
-    xs: css`
+    xxs: css`
         font-size: 1rem;
+        line-height: 2rem;
+    `,
+    xs: css`
+        font-size: 1.2rem;
         line-height: 2rem;
     `,
     sm: css`

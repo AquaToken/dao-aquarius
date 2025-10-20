@@ -261,15 +261,6 @@ const Links = () => {
                             AQUA Rewards
                         </NavLinkStyled>
                         <NavLinkStyled
-                            to={MainRoutes.incentives}
-                            activeStyle={{
-                                fontWeight: 700,
-                            }}
-                            title="Pool Incentives"
-                        >
-                            Pool Incentives
-                        </NavLinkStyled>
-                        <NavLinkStyled
                             to={MainRoutes.bribes}
                             activeStyle={{
                                 fontWeight: 700,
@@ -278,12 +269,21 @@ const Links = () => {
                         >
                             Bribes
                         </NavLinkStyled>
+                        <NavLinkStyled
+                            to={MainRoutes.incentives}
+                            activeStyle={{
+                                fontWeight: 700,
+                            }}
+                            title="Pool Incentives"
+                        >
+                            Pool Incentives
+                        </NavLinkStyled>
                     </>
                 }
             />
 
             <ExpandedMenu
-                title="Governance"
+                title="DAO"
                 counts={proposalsCounts}
                 links={
                     <>
@@ -328,19 +328,9 @@ const Links = () => {
             />
 
             <ExpandedMenu
-                title="AQUA Token"
+                title="AQUA & ICE"
                 links={
                     <>
-                        <NavLinkStyled
-                            activeStyle={{
-                                fontWeight: 700,
-                            }}
-                            title="About"
-                            to={MainRoutes.token}
-                        >
-                            About
-                        </NavLinkStyled>
-
                         <NavLinkStyled
                             to={MainRoutes.locker}
                             activeStyle={{
@@ -349,6 +339,15 @@ const Links = () => {
                             title="Lock AQUA"
                         >
                             Lock AQUA
+                        </NavLinkStyled>
+                        <NavLinkStyled
+                            activeStyle={{
+                                fontWeight: 700,
+                            }}
+                            title="About"
+                            to={MainRoutes.token}
+                        >
+                            About
                         </NavLinkStyled>
                     </>
                 }

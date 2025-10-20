@@ -13,35 +13,19 @@ import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
 import { Token } from 'types/token';
 
-import { commonMaxWidth, respondDown } from 'web/mixins';
+import { respondDown } from 'web/mixins';
+import { PageContainer } from 'web/pages/commonPageStyles';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import PageLoader from 'basics/loaders/PageLoader';
 
 import SwapForm from '../components/SwapForm/SwapForm';
 
-const Container = styled.main`
-    background-color: ${COLORS.gray50};
-    height: 100%;
-    position: relative;
-    display: flex;
-    flex: 1 0 auto;
-    flex-direction: column;
-    scroll-behavior: smooth;
-    overflow: auto;
+const Wrapper = styled.div`
+    padding-top: 6.3rem;
 
     ${respondDown(Breakpoints.sm)`
-        background-color: ${COLORS.white};
-    `}
-`;
-
-const Content = styled.div`
-    ${commonMaxWidth};
-    width: 100%;
-    padding: 6.3rem 4rem 0;
-
-    ${respondDown(Breakpoints.sm)`
-        padding: 1.6rem 0;
+        padding-top: 1.6rem;
     `}
 `;
 
@@ -106,8 +90,8 @@ const SwapPage = () => {
     }
 
     return (
-        <Container>
-            <Content>
+        <PageContainer $color={COLORS.gray50} $mobileColor={COLORS.white}>
+            <Wrapper>
                 <SwapForm
                     base={base}
                     counter={counter}
@@ -115,8 +99,8 @@ const SwapPage = () => {
                     setCounter={setDestination}
                     assetsList={assetsList}
                 />
-            </Content>
-        </Container>
+            </Wrapper>
+        </PageContainer>
     );
 };
 

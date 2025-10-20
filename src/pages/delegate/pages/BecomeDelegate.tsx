@@ -176,7 +176,7 @@ const BecomeDelegate = () => {
         } else if (!isValidPublicKey(value)) {
             inputAccountRef.current.setCustomValidity('Invalid Stellar public key');
         } else {
-            inputAccountRef.current.setCustomValidity(''); // Очищаем ошибку
+            inputAccountRef.current.setCustomValidity('');
         }
     };
 

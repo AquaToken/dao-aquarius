@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { getAquaCirculatingSupply } from 'api/cmc';
 import { getIceStatistics } from 'api/ice-locker';
@@ -12,9 +12,12 @@ import { getDateString } from 'helpers/date';
 import { formatBalance } from 'helpers/format-number';
 import { getPercentValue } from 'helpers/number';
 
+import { useScrollAnimation } from 'hooks/useScrollAnimation';
+
 import { IceStatistics } from 'types/api-ice-locker';
 import { ExpertAssetData } from 'types/api-stellar-expert';
 
+import { containerScrollAnimation, slideUpSoftAnimation } from 'web/animations';
 import DotsLoader from 'web/basics/loaders/DotsLoader';
 import { cardBoxShadow, commonMaxWidth, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
@@ -26,10 +29,17 @@ import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 import AquaLinks from 'pages/token/components/AquaLinks/AquaLinks';
 import AquaPrice from 'pages/token/components/AquaPrice/AquaPrice';
 
-const Container = styled.section`
+/* -------------------------------------------------------------------------- */
+/*                                 Styled                                     */
+/* -------------------------------------------------------------------------- */
+
+const Container = styled.section<{ $visible: boolean }>`
     ${commonMaxWidth};
     padding: 0 10rem;
     width: 100%;
+    ${containerScrollAnimation};
+    background: ${COLORS.white};
+    z-index: 100;
 
     ${respondDown(Breakpoints.sm)`
         padding: 0 1.6rem;
@@ -37,16 +47,15 @@ const Container = styled.section`
     `}
 `;
 
-const Content = styled.div`
+const Content = styled.div<{ $visible: boolean }>`
     border-radius: 4.4rem;
     padding: 3.6rem;
     ${cardBoxShadow};
-    z-index: 100;
-    background: ${COLORS.white};
     position: relative;
     display: flex;
     flex-wrap: wrap;
     gap: 3.2rem;
+    ${({ $visible }) => $visible && slideUpSoftAnimation};
 
     ${respondDown(Breakpoints.sm)`
         flex-direction: column;
@@ -72,22 +81,30 @@ const AquaLinksStyled = styled(AquaLinks)`
     `}
 `;
 
-const Column = styled.div`
+const Column = styled.div<{ $visible: boolean; $delay: number }>`
     display: flex;
     flex-direction: column;
     gap: 0.8rem;
     margin-right: auto;
+    opacity: 0;
+    ${({ $visible, $delay }) =>
+        $visible &&
+        css`
+            ${slideUpSoftAnimation};
+            animation-delay: ${$delay}s;
+        `}
 
     ${respondDown(Breakpoints.sm)`
         flex-direction: row;
         justify-content: space-between;
-        margin: 1rem 0
+        margin: 1rem 0;
     `}
 `;
 
 const Label = styled.span`
     color: ${COLORS.textGray};
     display: flex;
+    align-items: center;
     white-space: nowrap;
 
     svg {
@@ -114,35 +131,34 @@ const TooltipInner = styled.span`
     `}
 `;
 
+/* -------------------------------------------------------------------------- */
+/*                                 Component                                  */
+/* -------------------------------------------------------------------------- */
+
 const AquaStatistics = () => {
     const [iceStats, setIceStats] = useState<IceStatistics>(null);
-    const [expertData, setExpertData] = useState<ExpertAssetData>(undefined);
+    const [expertData, setExpertData] = useState<ExpertAssetData>();
     const [totalRewards, setTotalRewards] = useState<number>(null);
     const [aquaCirculatingSupply, setAquaCirculatingSupply] = useState<number>(null);
 
     const { aquaStellarAsset } = getAquaAssetData();
 
+    const { ref, visible } = useScrollAnimation(0.3, true);
+
     useEffect(() => {
         getAssetDetails(aquaStellarAsset).then(setExpertData);
-
-        getIceStatistics().then(res => {
-            setIceStats(res);
-        });
-
-        getTotalRewards().then(({ total_daily_amm_reward, total_daily_sdex_reward }) => {
-            setTotalRewards(total_daily_amm_reward + total_daily_sdex_reward);
-        });
-
-        getAquaCirculatingSupply().then(res => {
-            setAquaCirculatingSupply(res);
-        });
+        getIceStatistics().then(setIceStats);
+        getTotalRewards().then(({ total_daily_amm_reward, total_daily_sdex_reward }) =>
+            setTotalRewards(total_daily_amm_reward + total_daily_sdex_reward),
+        );
+        getAquaCirculatingSupply().then(setAquaCirculatingSupply);
     }, []);
 
     return (
-        <Container>
-            <Content>
+        <Container ref={ref as React.RefObject<HTMLDivElement>} $visible={visible}>
+            <Content $visible={visible}>
                 <AquaPriceStyled />
-                <Column>
+                <Column $visible={visible} $delay={0}>
                     <Label>First transaction:</Label>
                     <Value>
                         {expertData ? (
@@ -152,7 +168,8 @@ const AquaStatistics = () => {
                         )}
                     </Value>
                 </Column>
-                <Column>
+
+                <Column $visible={visible} $delay={0.1}>
                     <Label>Payments volume:</Label>
                     <Value>
                         {expertData ? (
@@ -162,7 +179,8 @@ const AquaStatistics = () => {
                         )}
                     </Value>
                 </Column>
-                <Column>
+
+                <Column $visible={visible} $delay={0.2}>
                     <Label>Traded volume:</Label>
                     <Value>
                         {expertData ? (
@@ -172,14 +190,15 @@ const AquaStatistics = () => {
                         )}
                     </Value>
                 </Column>
-                <Column>
+
+                <Column $visible={visible} $delay={0.3}>
                     <Label>
                         Total frozen:
                         <Tooltip
                             content={
                                 <TooltipInner>
                                     AQUA holders can lock/freeze their tokens and receive ICE tokens
-                                    with greater voting power
+                                    with greater voting power.
                                 </TooltipInner>
                             }
                             position={TOOLTIP_POSITION.top}
@@ -193,7 +212,7 @@ const AquaStatistics = () => {
                             `${formatBalance(
                                 Number(iceStats.aqua_lock_amount),
                                 true,
-                            )}(${getPercentValue(
+                            )} (${getPercentValue(
                                 Number(iceStats.aqua_lock_amount),
                                 aquaCirculatingSupply,
                             )}%) AQUA`
@@ -202,14 +221,14 @@ const AquaStatistics = () => {
                         )}
                     </Value>
                 </Column>
-                <Column>
+
+                <Column $visible={visible} $delay={0.4}>
                     <Label>
                         Daily rewards:
                         <Tooltip
                             content={
                                 <TooltipInner>
-                                    Aquarius distributes AQUA tokens to the liquidity providers
-                                    every day
+                                    Aquarius distributes AQUA tokens to liquidity providers daily.
                                 </TooltipInner>
                             }
                             position={TOOLTIP_POSITION.top}
@@ -226,6 +245,7 @@ const AquaStatistics = () => {
                         )}
                     </Value>
                 </Column>
+
                 <AquaLinksStyled />
             </Content>
         </Container>
