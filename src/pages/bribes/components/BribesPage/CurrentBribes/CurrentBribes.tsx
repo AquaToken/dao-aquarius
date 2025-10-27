@@ -123,7 +123,10 @@ const CurrentBribes = () => {
                         { sum: 0, rewardAssets: [] },
                     );
 
-                    const apy = (sum / Number(bribe.upvote_value) + 1) ** 365 - 1;
+                    const apy = bribe.upvote_value
+                        ? (sum / Number(bribe.upvote_value) + 1) ** 365 - 1
+                        : 0;
+
                     const apyMax = getIceMaxApy({ apy });
 
                     return {
@@ -141,7 +144,7 @@ const CurrentBribes = () => {
                                 ),
                             },
                             {
-                                children: (
+                                children: apyMax ? (
                                     <Apy
                                         onClick={e => {
                                             e.stopPropagation();
@@ -150,6 +153,8 @@ const CurrentBribes = () => {
                                     >
                                         up to {formatBalance(+apyMax.toFixed(2), true)}%
                                     </Apy>
+                                ) : (
+                                    '-'
                                 ),
                                 label: 'Bribe APY:',
                             },
