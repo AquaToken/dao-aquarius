@@ -1,11 +1,11 @@
 import styled, { css } from 'styled-components';
 
-import { slideUpSoftAnimation, containerScrollAnimation } from 'web/animations';
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import Aqua from 'assets/aqua/aqua-logo.svg';
 import Ice from 'assets/tokens/ice-logo.svg';
+
+import { slideUpSoftAnimation, containerScrollAnimation } from 'styles/animations';
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 /* -------------------------------------------------------------------------- */
 /*                                  Layout                                    */

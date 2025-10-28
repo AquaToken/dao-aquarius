@@ -1,9 +1,9 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { commonMaxWidth } from 'web/mixins';
-
 import FAQ from 'components/FAQ';
+
+import { commonMaxWidth } from 'styles/mixins';
 
 import FreezeAQUA from '../components/FreezeAQUA/FreezeAQUA';
 import Purpose from '../components/Purpose/Purpose';

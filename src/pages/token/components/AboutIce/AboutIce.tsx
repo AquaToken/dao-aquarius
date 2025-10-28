@@ -6,10 +6,6 @@ import { LockerRoutes, MainRoutes } from 'constants/routes';
 
 import { useScrollAnimation } from 'hooks/useScrollAnimation';
 
-import { containerScrollAnimation, slideUpSoftAnimation } from 'web/animations';
-import { cardBoxShadow, commonMaxWidth, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import IconIce from 'assets/icons/small-icons/icon-ice-symbol-10.svg?url';
@@ -20,6 +16,10 @@ import IceLogoIcon from 'assets/tokens/ice-logo.svg';
 
 import { Button } from 'basics/buttons';
 import { ExternalLink } from 'basics/links';
+
+import { containerScrollAnimation, slideUpSoftAnimation } from 'styles/animations';
+import { cardBoxShadow, commonMaxWidth, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 /* -------------------------------------------------------------------------- */
 /*                                   Styles                                   */

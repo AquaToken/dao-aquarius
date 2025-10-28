@@ -111,6 +111,11 @@ module.exports = {
                     },
                     {
                         group: 'internal',
+                        pattern: 'styles/**',
+                        position: 'after',
+                    },
+                    {
+                        group: 'internal',
                         pattern: 'pages/**',
                         position: 'after',
                     },

@@ -3,12 +3,12 @@ import { useRef } from 'react';
 import ReactDatePicker from 'react-datepicker';
 import styled from 'styled-components';
 
-import { DatePickerStyles } from 'web/DatePickerStyles';
-
 import ArrowLeft from 'assets/icons/arrows/arrow-left-16.svg';
 import ArrowRight from 'assets/icons/arrows/arrow-right-16.svg';
 
 import Input from 'basics/inputs/Input';
+
+import { DatePickerStyles } from 'styles/date-picker-styles';
 
 import 'react-datepicker/dist/react-datepicker.css';
 

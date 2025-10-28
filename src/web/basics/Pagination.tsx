@@ -2,11 +2,11 @@ import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
-import { flexAllCenter, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import Left from 'assets/icons/arrows/arrow-left-16.svg';
 import Right from 'assets/icons/arrows/arrow-right-16.svg';
+
+import { flexAllCenter, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const Container = styled.div`
     width: 100%;

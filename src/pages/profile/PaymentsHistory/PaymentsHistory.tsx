@@ -13,12 +13,12 @@ import useAuthStore from 'store/authStore/useAuthStore';
 import { StellarService } from 'services/globalServices';
 import { StellarEvents } from 'services/stellar/events/events';
 
-import { COLORS } from 'web/styles';
-
 import { ExternalLink } from 'basics/links';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
 import Table, { CellAlign } from 'basics/Table';
+
+import { COLORS } from 'styles/style-constants';
 
 import { ExternalLinkStyled, Header, Section, Title } from '../SdexRewards/SdexRewards';
 import { Empty } from '../YourVotes/YourVotes';

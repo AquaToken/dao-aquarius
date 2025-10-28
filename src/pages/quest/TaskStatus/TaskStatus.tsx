@@ -1,10 +1,10 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { COLORS } from 'web/styles';
-
 import Present from 'assets/icons/objects/icon-present-white-25x24.svg';
 import Success from 'assets/icons/status/success-white-14.svg';
+
+import { COLORS } from 'styles/style-constants';
 
 const Container = styled.div<{ $isComplete: boolean }>`
     display: flex;

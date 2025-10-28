@@ -26,8 +26,9 @@ import Asset from 'basics/Asset';
 import Chips from 'basics/Chips';
 import Input from 'basics/inputs/Input';
 
-import { cardBoxShadow, customScroll, flexRowSpaceBetween, respondDown } from '../../mixins';
-import { Breakpoints, COLORS } from '../../styles';
+import { cardBoxShadow, customScroll, flexRowSpaceBetween, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
+
 import { CircleLoader } from '../loaders';
 
 const DropDown = styled.div<{ $isOpen: boolean }>`

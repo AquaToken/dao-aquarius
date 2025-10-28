@@ -4,9 +4,6 @@ import styled from 'styled-components';
 
 import { BribesRoutes } from 'constants/routes';
 
-import { commonMaxWidth, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import Bribes from 'assets/bribes-page/bribes.svg';
 import Plus from 'assets/icons/nav/icon-plus-16.svg';
 
@@ -14,6 +11,9 @@ import Button from 'basics/buttons/Button';
 
 import DelegateBlockSmall from 'components/DelegateBlockSmall';
 import FAQ from 'components/FAQ';
+
+import { commonMaxWidth, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import BribesList from 'pages/bribes/components/BribesPage/BribesList/BribesList';
 import { BribeQuestions } from 'pages/bribes/components/BribesPage/FAQ/Questions';

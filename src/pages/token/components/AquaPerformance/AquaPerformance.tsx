@@ -14,16 +14,16 @@ import { useScrollAnimation } from 'hooks/useScrollAnimation';
 
 import { StellarService } from 'services/globalServices';
 
-import { slideUpSoftAnimation, containerScrollAnimation } from 'web/animations';
-import { cardBoxShadow, commonMaxWidth, flexRowSpaceBetween, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import { ToggleGroup } from 'basics/inputs';
 import { ExternalLink } from 'basics/links';
 import { DotsLoader } from 'basics/loaders';
 
 import Changes24 from 'components/Changes24';
 import Price from 'components/Price';
+
+import { slideUpSoftAnimation, containerScrollAnimation } from 'styles/animations';
+import { cardBoxShadow, commonMaxWidth, flexRowSpaceBetween, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 /* ------------------------------- styled ------------------------------- */
 

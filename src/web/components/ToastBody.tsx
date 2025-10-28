@@ -12,8 +12,8 @@ import IconClose from 'assets/icons/nav/icon-close-alt-16.svg';
 
 import { IconFail, IconSuccess } from 'basics/icons';
 
-import { cardBoxShadow, respondDown } from '../mixins';
-import { Breakpoints, COLORS } from '../styles';
+import { cardBoxShadow, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const ToastBody = styled.div<{ $isShow: boolean }>`
     width: 36.2rem;

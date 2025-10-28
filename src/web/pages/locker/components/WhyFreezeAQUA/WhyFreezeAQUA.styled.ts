@@ -1,8 +1,8 @@
 import styled, { css } from 'styled-components';
 
-import { slideUpSoftAnimation, containerScrollAnimation } from 'web/animations';
-import { flexColumn, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS, FONT_SIZE } from 'web/styles';
+import { slideUpSoftAnimation, containerScrollAnimation } from 'styles/animations';
+import { flexColumn, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS, FONT_SIZE } from 'styles/style-constants';
 
 /* -------------------------------------------------------------------------- */
 /*                                  Layout                                    */

@@ -14,9 +14,7 @@ import { ModalService } from 'services/globalServices';
 
 import { SorobanToken, Token, TokenType } from 'types/token';
 
-import { flexAllCenter, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
-import { Breakpoints, COLORS } from 'web/styles';
 
 import SettingsIcon from 'assets/icons/nav/icon-settings-16.svg';
 
@@ -26,6 +24,9 @@ import TokenAmountFormField from 'basics/form/TokenAmountFormField';
 
 import NoTrustline from 'components/NoTrustline';
 import Price from 'components/Price';
+
+import { flexAllCenter, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import SwapSettingsModal, {
     SWAP_SLIPPAGE_ALIAS,

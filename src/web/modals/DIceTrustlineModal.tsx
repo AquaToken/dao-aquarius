@@ -9,14 +9,14 @@ import { createAsset } from 'helpers/token';
 
 import { ModalProps } from 'types/modal';
 
-import { flexColumn, flexColumnCenter } from 'web/mixins';
-import { COLORS } from 'web/styles';
-
 import DIceLogo from 'assets/tokens/dice-logo.svg';
 
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 import NoTrustline from 'components/NoTrustline';
+
+import { flexColumn, flexColumnCenter } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 const AssetBlock = styled.div`
     ${flexColumnCenter};

@@ -8,13 +8,13 @@ import { MainRoutes } from 'constants/routes';
 
 import { ModalProps } from 'types/modal';
 
-import { flexAllCenter } from 'web/mixins';
-import { COLORS } from 'web/styles';
-
 import Tick from 'assets/icons/small-icons/check/icon-check-16.svg';
 
 import { Button } from 'basics/buttons';
 import { ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
+
+import { flexAllCenter } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 const Description = styled.p`
     font-size: 1.6rem;

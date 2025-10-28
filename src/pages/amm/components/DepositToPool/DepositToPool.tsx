@@ -26,9 +26,6 @@ import { PoolExtended, PoolIncentives, PoolRewardsInfo } from 'types/amm';
 import { ModalProps } from 'types/modal';
 import { SorobanToken, Token, TokenType } from 'types/token';
 
-import { customScroll, flexRowSpaceBetween, noSelect, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import Revert from 'assets/icons/actions/icon-revert-16x17.svg';
 import Arrow from 'assets/icons/arrows/arrow-alt2-16.svg';
 import Info from 'assets/icons/status/icon-info-16.svg';
@@ -42,6 +39,9 @@ import Label from 'basics/Label';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import { ModalTitle, ModalWrapper, StickyButtonWrapper } from 'basics/ModalAtoms';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import { customScroll, flexRowSpaceBetween, noSelect, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import SuccessModal from '../SuccessModal/SuccessModal';
 

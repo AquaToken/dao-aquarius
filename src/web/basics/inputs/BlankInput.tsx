@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import Input, { InputProps } from 'basics/inputs/Input';
 
-import { COLORS } from '../../styles';
+import { COLORS } from 'styles/style-constants';
 
 const BlankInputWrapper = styled.div`
     position: relative;

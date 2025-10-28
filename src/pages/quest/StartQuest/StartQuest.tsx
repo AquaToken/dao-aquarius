@@ -11,13 +11,14 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService, ToastService } from 'services/globalServices';
 
-import { cardBoxShadow, flexAllCenter } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
-import { COLORS } from 'web/styles';
 
 import Success from 'assets/icons/status/success-gradient-32.svg';
 
 import { Button } from 'basics/buttons';
+
+import { cardBoxShadow, flexAllCenter } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 const Container = styled.div`
     ${flexAllCenter};

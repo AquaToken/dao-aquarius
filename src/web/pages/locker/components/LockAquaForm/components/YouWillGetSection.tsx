@@ -2,9 +2,9 @@ import * as React from 'react';
 
 import { formatBalance } from 'helpers/format-number';
 
-import { COLORS } from 'web/styles';
-
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import { COLORS } from 'styles/style-constants';
 
 import {
     IceLogo,

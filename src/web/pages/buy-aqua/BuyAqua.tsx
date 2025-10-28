@@ -1,5 +1,4 @@
 import { Redirect } from 'react-router-dom';
-import styled from 'styled-components';
 
 import { MainRoutes } from 'constants/routes';
 
@@ -8,25 +7,11 @@ import { getOnRampWidgetUrl } from 'helpers/url';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { cardBoxShadow, flexAllCenter, flexColumn } from 'web/mixins';
-import { COLORS } from 'web/styles';
-
 import NoTrustline from 'components/NoTrustline';
 
-const CenteredWrapper = styled.div`
-    ${flexAllCenter};
-    overflow-x: hidden;
-`;
+import { COLORS } from 'styles/style-constants';
 
-const Container = styled.div`
-    ${cardBoxShadow};
-    ${flexColumn};
-    background-color: ${COLORS.white};
-    width: 62.4rem;
-    margin-top: 14.4rem;
-    margin-bottom: 18rem;
-    padding: 4.8rem;
-`;
+import { CenteredWrapper, Container } from './BuyAqua.styled';
 
 const BuyAqua = (): JSX.Element => {
     const { account, isLogged } = useAuthStore();
@@ -59,8 +44,8 @@ const BuyAqua = (): JSX.Element => {
             {hasTrustline ? (
                 <iframe
                     src={getOnRampWidgetUrl(frameParams)}
-                    width="430px"
-                    height="730px"
+                    width="430"
+                    height="730"
                     referrerPolicy="no-referrer"
                 />
             ) : (

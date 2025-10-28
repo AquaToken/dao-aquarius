@@ -2,9 +2,9 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { COLORS } from 'web/styles';
-
 import { Option } from 'basics/inputs/Select';
+
+import { COLORS } from 'styles/style-constants';
 
 const ToggleBlock = styled.div<{ $isRounded: boolean; $fullWidth: boolean }>`
     background-color: ${({ $isRounded }) => ($isRounded ? COLORS.white : COLORS.gray100)};

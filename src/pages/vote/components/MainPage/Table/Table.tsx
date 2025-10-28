@@ -9,9 +9,6 @@ import { createAsset } from 'helpers/token';
 
 import { ModalService } from 'services/globalServices';
 
-import { flexAllCenter, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import ManageIcon from 'assets/icons/actions/icon-manage-16.svg';
 import ArrowRight from 'assets/icons/arrows/arrow-right-16.svg';
 
@@ -20,6 +17,9 @@ import Button from 'basics/buttons/Button';
 import Market from 'basics/Market';
 import Table, { CellAlign } from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import { flexAllCenter, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import VoteAmount from './VoteAmount/VoteAmount';
 import VoteButton from './VoteButton/VoteButton';

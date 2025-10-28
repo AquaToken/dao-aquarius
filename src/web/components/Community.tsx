@@ -5,14 +5,6 @@ import { MAIL_AQUA_HELLO } from 'constants/emails';
 
 import { useScrollAnimation } from 'hooks/useScrollAnimation';
 
-import {
-    containerScrollAnimation,
-    slideUpSoftAnimation,
-    fadeAppearAnimation,
-} from 'web/animations';
-import { cardBoxShadow, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import Discord from 'assets/community/discord-styled.svg';
 import Email from 'assets/community/email-styled.svg';
 import Github from 'assets/community/github-styled.svg';
@@ -22,6 +14,14 @@ import Telegram from 'assets/community/telegram-styled.svg';
 import Twitter from 'assets/community/twitter-styled.svg';
 
 import { BlankExternalLink } from 'basics/links';
+
+import {
+    containerScrollAnimation,
+    slideUpSoftAnimation,
+    fadeAppearAnimation,
+} from 'styles/animations';
+import { cardBoxShadow, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 /* -------------------------------------------------------------------------- */
 /*                                   Styled                                   */

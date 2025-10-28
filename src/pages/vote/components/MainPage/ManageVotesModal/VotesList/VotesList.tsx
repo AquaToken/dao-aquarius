@@ -24,9 +24,6 @@ import { StellarService, ToastService } from 'services/globalServices';
 import { Transaction } from 'types/stellar';
 import { Vote } from 'types/voting-tool';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import Dislike from 'assets/icons/actions/icon-dislike-alt-16.svg';
 import LinkIcon from 'assets/icons/nav/icon-external-link-16.svg';
 
@@ -35,6 +32,9 @@ import Checkbox from 'basics/inputs/Checkbox';
 import Market from 'basics/Market';
 import Table, { CellAlign } from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { MarketPair } from 'pages/profile/api/types';
 import { PairStats } from 'pages/vote/api/types';

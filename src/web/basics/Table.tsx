@@ -3,11 +3,11 @@ import { forwardRef, RefObject, useMemo } from 'react';
 import * as Virtualized from 'react-virtualized';
 import styled from 'styled-components';
 
-import { customScroll, flexAllCenter, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import { IconSort } from 'basics/icons';
 import PageLoader from 'basics/loaders/PageLoader';
+
+import { customScroll, flexAllCenter, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 interface Sort {
     onClick: () => void;
@@ -160,7 +160,6 @@ const Cell = styled.div<{
         margin-bottom: 1.6rem;
           
         label {
-            display: block;
             margin-right: auto;
             display: flex;
             align-items: center;

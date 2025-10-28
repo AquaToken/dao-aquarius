@@ -2,9 +2,9 @@ import * as React from 'react';
 
 import { formatDuration } from 'helpers/date';
 
-import { COLORS } from 'web/styles';
-
 import { RangeInput } from 'basics/inputs';
+
+import { COLORS } from 'styles/style-constants';
 
 interface Props {
     lockPercent: number;

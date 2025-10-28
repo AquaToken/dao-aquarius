@@ -11,11 +11,11 @@ import { StellarService } from 'services/globalServices';
 
 import { ClassicToken } from 'types/token';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import { ExternalLink } from 'basics/links';
 import PageLoader from 'basics/loaders/PageLoader';
+
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const Description = styled.div`
     font-size: 1.6rem;

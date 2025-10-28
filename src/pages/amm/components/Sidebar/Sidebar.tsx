@@ -17,9 +17,7 @@ import { ModalService, SorobanService } from 'services/globalServices';
 import { PoolExtended } from 'types/amm';
 import { SorobanToken } from 'types/token';
 
-import { cardBoxShadow, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
-import { Breakpoints, COLORS } from 'web/styles';
 
 import DepositIcon from 'assets/icons/actions/icon-deposit-16.svg';
 import WithdrawIcon from 'assets/icons/actions/icon-withdraw-16.svg';
@@ -27,6 +25,9 @@ import WithdrawIcon from 'assets/icons/actions/icon-withdraw-16.svg';
 import Asset from 'basics/Asset';
 import Button from 'basics/buttons/Button';
 import PageLoader from 'basics/loaders/PageLoader';
+
+import { cardBoxShadow, flexRowSpaceBetween, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import SwapForm from 'pages/swap/components/SwapForm/SwapForm';
 
@@ -51,7 +52,6 @@ const Container = styled.aside`
          position: relative;
          min-width: unset;
          width: calc(100% - 3.2rem);
-         margin-top: 0;
          right: unset;
          margin: 1.6rem;
          box-shadow: unset;

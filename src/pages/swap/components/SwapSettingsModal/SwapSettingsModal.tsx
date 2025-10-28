@@ -6,12 +6,12 @@ import { ToastService } from 'services/globalServices';
 
 import { ModalProps } from 'types/modal';
 
-import { COLORS } from 'web/styles';
-
 import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
+
+import { COLORS } from 'styles/style-constants';
 
 const FormRow = styled.div`
     display: flex;

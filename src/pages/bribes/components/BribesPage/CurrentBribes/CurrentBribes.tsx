@@ -16,8 +16,6 @@ import useAssetsStore from 'store/assetsStore/useAssetsStore';
 import { ModalService } from 'services/globalServices';
 
 import PageLoader from 'web/basics/loaders/PageLoader';
-import { flexAllCenter } from 'web/mixins';
-import { COLORS } from 'web/styles';
 
 import Asset from 'basics/Asset';
 import AssetLogo from 'basics/AssetLogo';
@@ -25,6 +23,9 @@ import Market from 'basics/Market';
 import Pagination from 'basics/Pagination';
 import Table from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import { flexAllCenter } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 import { getPairsWithBribes } from 'pages/vote/api/api';
 import BribesModal from 'pages/vote/components/MainPage/BribesModal/BribesModal';

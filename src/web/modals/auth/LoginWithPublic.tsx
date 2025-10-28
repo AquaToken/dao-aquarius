@@ -11,12 +11,12 @@ import { isValidPublicKey } from 'services/stellar/utils/validators';
 
 import { ModalProps } from 'types/modal';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints } from 'web/styles';
-
 import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
+
+import { respondDown } from 'styles/mixins';
+import { Breakpoints } from 'styles/style-constants';
 
 const LoginWithSecretBody = styled.div`
     display: flex;

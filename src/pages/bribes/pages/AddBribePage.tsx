@@ -29,9 +29,7 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService, StellarService } from 'services/globalServices';
 
-import { cardBoxShadow, flexAllCenter, flexColumnCenter, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
-import { Breakpoints, COLORS } from 'web/styles';
 
 import ArrowLeft from 'assets/icons/arrows/arrow-left-16.svg';
 import Minus from 'assets/icons/nav/icon-minus-16.svg';
@@ -48,6 +46,9 @@ import Input from 'basics/inputs/Input';
 import { ExternalLink } from 'basics/links';
 import { CircleLoader } from 'basics/loaders';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import { cardBoxShadow, flexAllCenter, flexColumnCenter, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import CreatePairModal from '../../vote/components/MainPage/CreatePairModal/CreatePairModal';
 import { getMarketPair } from '../api/api';

@@ -23,9 +23,6 @@ import { StellarService, ToastService } from 'services/globalServices';
 
 import { ModalProps } from 'types/modal';
 
-import { flexAllCenter, flexRowSpaceBetween } from 'web/mixins';
-import { COLORS } from 'web/styles';
-
 import Fail from 'assets/icons/status/fail-red.svg';
 import Success from 'assets/icons/status/success.svg';
 import DIce from 'assets/tokens/dice-logo.svg';
@@ -37,6 +34,9 @@ import RangeInput from 'basics/inputs/RangeInput';
 import Select from 'basics/inputs/Select';
 import { ExternalLink } from 'basics/links';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
+
+import { flexAllCenter, flexRowSpaceBetween } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 import { SimpleProposalOptions } from '../../../pages/GovernanceVoteProposalPage';
 

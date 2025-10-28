@@ -15,10 +15,10 @@ import { StellarEvents } from 'services/stellar/events/events';
 
 import { Delegatee as DelegateeType } from 'types/delegate';
 
-import { cardBoxShadow } from 'web/mixins';
-
 import { ExternalLink } from 'basics/links';
 import { PageLoader } from 'basics/loaders';
+
+import { cardBoxShadow } from 'styles/mixins';
 
 import DelegatesList from 'pages/delegate/components/DelegatesList/DelegatesList';
 import { Empty } from 'pages/profile/YourVotes/YourVotes';

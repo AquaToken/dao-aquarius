@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import Loader from 'assets/loader.svg';
 
-import { COLORS } from '../../styles';
+import { COLORS } from 'styles/style-constants';
 
 const SizedLoader = styled(Loader)`
     height: ${({ size }) => size}rem;

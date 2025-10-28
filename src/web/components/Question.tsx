@@ -4,8 +4,8 @@ import styled from 'styled-components';
 
 import Down from 'assets/icons/arrows/arrow-down-16.svg';
 
-import { flexRowSpaceBetween } from '../mixins';
-import { COLORS } from '../styles';
+import { flexRowSpaceBetween } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 const Container = styled.div`
     display: flex;

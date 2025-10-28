@@ -6,9 +6,6 @@ import { getFederation } from 'services/stellar/utils/resolvers';
 
 import { ModalProps } from 'types/modal';
 
-import { flexAllCenter } from 'web/mixins';
-import { COLORS } from 'web/styles';
-
 import Copy from 'assets/icons/actions/icon-copy-16.svg';
 import ArrowRight from 'assets/icons/arrows/arrow-right-16.svg';
 import XdrLogo from 'assets/icons/objects/icon-xdr-32x17.svg';
@@ -19,6 +16,9 @@ import CopyButton from 'basics/buttons/CopyButton';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 import AccountBlock from 'components/AccountBlock';
+
+import { flexAllCenter } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 const LinkLab = styled.a`
     text-decoration: none;

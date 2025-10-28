@@ -2,8 +2,8 @@ import * as React from 'react';
 import createStellarIdenticon from 'stellar-identicon-js';
 import styled from 'styled-components';
 
-import { cardBoxShadow, flexAllCenter } from '../mixins';
-import { COLORS } from '../styles';
+import { cardBoxShadow, flexAllCenter } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 const Account = styled.div`
     display: flex;

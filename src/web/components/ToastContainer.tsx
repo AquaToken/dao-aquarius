@@ -5,10 +5,10 @@ import styled from 'styled-components';
 import { ToastService } from 'services/globalServices';
 import { Toast as ToastType } from 'services/toast.service';
 
-import { Toast } from './ToastBody';
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, Z_INDEX } from 'styles/style-constants';
 
-import { respondDown } from '../mixins';
-import { Breakpoints, Z_INDEX } from '../styles';
+import { Toast } from './ToastBody';
 
 const Container = styled.div`
     position: fixed;

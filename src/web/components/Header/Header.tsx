@@ -9,15 +9,16 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService } from 'services/globalServices';
 
-import { commonMaxWidth, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
-import { Breakpoints, COLORS, HEADER_HEIGHT, Z_INDEX } from 'web/styles';
 
 import AquaLogo from 'assets/aqua/aqua-logo-text.svg';
 import IconProfile from 'assets/icons/nav/icon-profile.svg';
 
 import { ActiveProposals } from 'components/Header/ActiveProposals/ActiveProposals';
 import ExpandedMenu from 'components/Header/ExpandedMenu/ExpandedMenu';
+
+import { commonMaxWidth, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS, HEADER_HEIGHT, Z_INDEX } from 'styles/style-constants';
 
 import { getActiveProposalsCount } from 'pages/governance/api/api';
 
@@ -104,7 +105,6 @@ const Divider = styled.div`
 
     ${respondDown(Breakpoints.md)`
          border-left: none;
-         margin-right: 0;
          height: 0;
          width: 20rem;
          margin: 2.4rem 0;

@@ -3,15 +3,15 @@ import styled from 'styled-components';
 
 import { LockerRoutes } from 'constants/routes';
 
-import { flexAllCenter, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import Arrow from 'assets/icons/arrows/arrow-alt2-16.svg';
 import IceLogo from 'assets/tokens/ice-logo.svg';
 
 import { BlankRouterLink } from 'basics/links';
 
-import { PageContainer } from '../../commonPageStyles';
+import { PageContainer } from 'styles/commonPageStyles';
+import { flexAllCenter, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
+
 import LockAquaForm from '../components/LockAquaForm/LockAquaForm';
 
 const Wrapper = styled.div`

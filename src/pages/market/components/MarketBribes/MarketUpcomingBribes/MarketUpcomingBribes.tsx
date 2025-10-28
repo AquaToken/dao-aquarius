@@ -6,11 +6,11 @@ import { convertLocalDateToUTCIgnoringTimezone, getDateString } from 'helpers/da
 import { formatBalance } from 'helpers/format-number';
 import { createAsset } from 'helpers/token';
 
-import { COLORS } from 'web/styles';
-
 import Asset from 'basics/Asset';
 import PageLoader from 'basics/loaders/PageLoader';
 import Table, { CellAlign } from 'basics/Table';
+
+import { COLORS } from 'styles/style-constants';
 
 import { UpcomingBribe } from 'pages/bribes/api/types';
 import { getUpcomingBribesForMarket } from 'pages/vote/api/api';

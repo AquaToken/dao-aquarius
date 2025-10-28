@@ -30,15 +30,7 @@ import {
 import { PoolIncentives, PoolRewardsInfo, PoolUserProcessed, RewardType } from 'types/amm';
 import { SorobanToken, Token } from 'types/token';
 
-import {
-    cardBoxShadow,
-    flexAllCenter,
-    flexRowSpaceBetween,
-    respondDown,
-    textEllipsis,
-} from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
-import { Breakpoints, COLORS } from 'web/styles';
 
 import IconClaim from 'assets/icons/actions/icon-claim-17x16.svg';
 import Info from 'assets/icons/status/icon-info-16.svg';
@@ -52,6 +44,15 @@ import PageLoader from 'basics/loaders/PageLoader';
 import Market from 'basics/Market';
 import Table, { CellAlign } from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import {
+    cardBoxShadow,
+    flexAllCenter,
+    flexRowSpaceBetween,
+    respondDown,
+    textEllipsis,
+} from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { TitleWithTooltip, TooltipInnerHead } from 'pages/amm/components/AllPools/AllPools';
 import ExpandedMenu from 'pages/amm/components/MyLiquidity/ExpandedMenu/ExpandedMenu';

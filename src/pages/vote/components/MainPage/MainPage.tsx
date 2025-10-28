@@ -27,9 +27,7 @@ import { StellarEvents } from 'services/stellar/events/events';
 
 import { ClassicToken } from 'types/token';
 
-import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
-import { Breakpoints, COLORS } from 'web/styles';
 
 import Info from 'assets/icons/status/icon-info-16.svg';
 import dIce from 'assets/tokens/dice-logo.svg';
@@ -48,6 +46,9 @@ import Pagination from 'basics/Pagination';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import DelegateBlockSmall from 'components/DelegateBlockSmall';
+
+import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import CreatePairModal from './CreatePairModal/CreatePairModal';
 import FloatingButton from './FloatingButton/FloatingButton';

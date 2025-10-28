@@ -1,13 +1,13 @@
 import styled from 'styled-components';
 
-import { flexRowSpaceBetween, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import DelegateLogo from 'assets/delegate/delegate-promo.svg';
 import Info from 'assets/icons/status/icon-info-16.svg';
 import Ice from 'assets/tokens/ice-logo.svg';
 
 import TokenAmountFormField from 'basics/form/TokenAmountFormField';
+
+import { flexRowSpaceBetween, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 /* ------------------------------ Form Fields ------------------------------ */
 

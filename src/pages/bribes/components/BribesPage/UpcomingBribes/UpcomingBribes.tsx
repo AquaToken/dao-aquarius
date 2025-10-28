@@ -15,13 +15,14 @@ import useAssetsStore from 'store/assetsStore/useAssetsStore';
 import Checkbox from 'web/basics/inputs/Checkbox';
 import Select from 'web/basics/inputs/Select';
 import PageLoader from 'web/basics/loaders/PageLoader';
-import { flexAllCenter, flexColumn, respondDown } from 'web/mixins';
-import { Breakpoints } from 'web/styles';
 
 import Asset from 'basics/Asset';
 import Market from 'basics/Market';
 import Pagination from 'basics/Pagination';
 import Table, { CellAlign } from 'basics/Table';
+
+import { flexAllCenter, flexColumn, respondDown } from 'styles/mixins';
+import { Breakpoints } from 'styles/style-constants';
 
 import { BribeSortFields, getUpcomingBribes } from 'pages/bribes/api/api';
 

@@ -23,9 +23,6 @@ import { SorobanService, ToastService } from 'services/globalServices';
 import { PoolProcessed } from 'types/amm';
 import { Transaction } from 'types/stellar';
 
-import { flexRowSpaceBetween, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import ArrowLeft from 'assets/icons/arrows/arrow-left-16.svg';
 import Tick from 'assets/icons/small-icons/check/check-11x9.svg';
 
@@ -39,6 +36,9 @@ import Input from 'basics/inputs/Input';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
 import PageLoader from 'basics/loaders/PageLoader';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import { flexRowSpaceBetween, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import {
     Back,

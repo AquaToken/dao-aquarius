@@ -17,9 +17,7 @@ import { ModalService, StellarService } from 'services/globalServices';
 import { PoolClassicProcessed, PoolExtended, PoolProcessed, PoolUserProcessed } from 'types/amm';
 import { SorobanToken, Token } from 'types/token';
 
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import MigrateLiquidityStep1 from 'web/modals/migrate-liquidity/MigrateLiquidityStep1';
-import { Breakpoints, COLORS } from 'web/styles';
 
 import Arrow from 'assets/icons/arrows/arrow-down-16.svg';
 
@@ -28,6 +26,9 @@ import Button from 'basics/buttons/Button';
 import CopyButton from 'basics/buttons/CopyButton';
 import { DotsLoader } from 'basics/loaders';
 import Market from 'basics/Market';
+
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import LiquidityChart from 'pages/amm/components/LiquidityChart/LiquidityChart';
 import VolumeChart from 'pages/amm/components/VolumeChart/VolumeChart';

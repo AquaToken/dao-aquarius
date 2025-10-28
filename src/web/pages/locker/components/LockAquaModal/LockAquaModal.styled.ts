@@ -1,10 +1,10 @@
 import styled from 'styled-components';
 
-import { flexRowSpaceBetween } from 'web/mixins';
-import { COLORS } from 'web/styles';
-
 import Aqua from 'assets/aqua/aqua-logo.svg';
 import Ice from 'assets/tokens/ice-logo.svg';
+
+import { flexRowSpaceBetween } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 export const Row = styled.div`
     ${flexRowSpaceBetween};

@@ -7,10 +7,10 @@ import useAuthStore from 'store/authStore/useAuthStore';
 import { StellarService } from 'services/globalServices';
 import { StellarEvents } from 'services/stellar/events/events';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import PageLoader from 'basics/loaders/PageLoader';
+
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { PairStats } from 'pages/vote/api/types';
 

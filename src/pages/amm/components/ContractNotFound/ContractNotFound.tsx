@@ -12,9 +12,9 @@ import { SorobanService, ToastService } from 'services/globalServices';
 
 import { Asset } from 'types/stellar';
 
-import { COLORS } from 'web/styles';
-
 import Button from 'basics/buttons/Button';
+
+import { COLORS } from 'styles/style-constants';
 
 const Container = styled.div`
     color: ${COLORS.red500};

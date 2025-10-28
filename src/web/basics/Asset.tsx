@@ -14,15 +14,16 @@ import { ModalService } from 'services/globalServices';
 
 import { ClassicToken, Token, TokenType } from 'types/token';
 
-import { flexAllCenter, respondDown, textEllipsis } from 'web/mixins';
 import AssetInfoModal from 'web/modals/AssetInfoModal';
-import { Breakpoints, COLORS } from 'web/styles';
 
 import Info from 'assets/icons/status/icon-info-16.svg';
 
 import AssetLogo from 'basics/AssetLogo';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import { flexAllCenter, respondDown, textEllipsis } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const Container = styled.div`
     display: flex;

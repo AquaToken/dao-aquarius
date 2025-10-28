@@ -1,12 +1,12 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { cardBoxShadow } from 'web/mixins';
-import { COLORS } from 'web/styles';
-
 import Icon from 'assets/icons/status/success.svg';
 
 import { Button } from 'basics/buttons';
+
+import { cardBoxShadow } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 const Container = styled.div`
     display: flex;

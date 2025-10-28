@@ -5,13 +5,13 @@ import styled from 'styled-components';
 
 import { BribesRoutes } from 'constants/routes';
 
-import { flexRowSpaceBetween, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import Plus from 'assets/icons/nav/icon-plus-16.svg';
 
 import Button from 'basics/buttons/Button';
 import { ToggleGroup } from 'basics/inputs';
+
+import { flexRowSpaceBetween, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import CurrentBribes from 'pages/bribes/components/BribesPage/CurrentBribes/CurrentBribes';
 import UpcomingBribes from 'pages/bribes/components/BribesPage/UpcomingBribes/UpcomingBribes';

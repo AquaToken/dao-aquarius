@@ -1,11 +1,11 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { flexAllCenter } from 'web/mixins';
-import { COLORS } from 'web/styles';
-
 import IconPending from 'assets/icons/status/pending.svg';
 import IconSuccess from 'assets/icons/status/success.svg';
+
+import { flexAllCenter } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 export enum PROPOSAL_STATUS {
     DISCUSSION = 'discussion',

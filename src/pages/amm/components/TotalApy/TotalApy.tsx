@@ -5,11 +5,11 @@ import { apyValueToDisplay } from 'helpers/amount';
 
 import { PoolProcessed } from 'types/amm';
 
-import { COLORS, hexWithOpacity } from 'web/styles';
-
 import { IconBoost } from 'basics/icons';
 import Label from 'basics/Label';
 import Tooltip from 'basics/Tooltip';
+
+import { COLORS, hexWithOpacity } from 'styles/style-constants';
 
 import TotalApyTooltip from 'pages/amm/components/TotalApyTooltip/TotalApyTooltip';
 

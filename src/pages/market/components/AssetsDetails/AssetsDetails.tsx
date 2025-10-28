@@ -11,15 +11,16 @@ import { ModalService } from 'services/globalServices';
 
 import { ClassicToken } from 'types/token';
 
-import { respondDown } from 'web/mixins';
 import AssetInfoModal from 'web/modals/AssetInfoModal';
-import { Breakpoints, COLORS } from 'web/styles';
 
 import Asset from 'basics/Asset';
 import { ExternalLink } from 'basics/links';
 import { PageLoader } from 'basics/loaders';
 
 import Changes24 from 'components/Changes24';
+
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const Table = styled.div`
     display: flex;

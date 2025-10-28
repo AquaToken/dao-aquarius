@@ -3,13 +3,12 @@ import styled, { css } from 'styled-components';
 
 import { useScrollAnimation } from 'hooks/useScrollAnimation';
 
-import { slideUpSoftAnimation } from 'web/animations';
-
 import Contacts from 'components/Contacts';
 import Question from 'components/Question';
 
-import { commonMaxWidth, noSelect, respondDown } from '../mixins';
-import { Breakpoints, COLORS } from '../styles';
+import { slideUpSoftAnimation } from 'styles/animations';
+import { commonMaxWidth, noSelect, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 export type QuestionType = {
     question: string;

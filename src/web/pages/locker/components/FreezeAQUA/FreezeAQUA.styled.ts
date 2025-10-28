@@ -5,9 +5,9 @@ import {
     fadeInScale,
     fadeInUpAnimation,
     fadeInUpDelayed,
-} from 'web/animations';
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS, FONT_SIZE } from 'web/styles';
+} from 'styles/animations';
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS, FONT_SIZE } from 'styles/style-constants';
 
 /* -------------------------------------------------------------------------- */
 /*                                  Layout                                    */

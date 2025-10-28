@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { COLORS } from 'web/styles';
+import { COLORS } from 'styles/style-constants';
 
 export const CalendarButton = styled.div`
     display: flex;

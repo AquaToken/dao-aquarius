@@ -1,17 +1,17 @@
 import styled from 'styled-components';
 
+import LockerMainImage from 'assets/locker/locker-main.svg';
+
+import CircleButton from 'basics/buttons/CircleButton';
+
 import {
     fadeInScale,
     fadeInUpAnimation,
     fadeInUpDelayed,
     containerScrollAnimation,
-} from 'web/animations';
-import { commonMaxWidth, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS, FONT_SIZE } from 'web/styles';
-
-import LockerMainImage from 'assets/locker/locker-main.svg';
-
-import CircleButton from 'basics/buttons/CircleButton';
+} from 'styles/animations';
+import { commonMaxWidth, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS, FONT_SIZE } from 'styles/style-constants';
 
 /* -------------------------------------------------------------------------- */
 /*                                  Layout                                    */

@@ -28,9 +28,7 @@ import { ModalService, SorobanService } from 'services/globalServices';
 import { PoolProcessed } from 'types/amm';
 import { Token } from 'types/token';
 
-import { flexColumn, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import ConfirmIncentiveModal from 'web/modals/ConfirmIncentiveModal';
-import { Breakpoints, COLORS, FONT_SIZE } from 'web/styles';
 
 import ArrowLeft from 'assets/icons/arrows/arrow-left-16.svg';
 import Fail from 'assets/icons/status/fail-red.svg';
@@ -47,6 +45,9 @@ import Market from 'basics/Market';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import ChooseLoginMethodModal from 'modals/auth/ChooseLoginMethodModal';
+
+import { flexColumn, flexRowSpaceBetween, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS, FONT_SIZE } from 'styles/style-constants';
 
 import {
     Back,

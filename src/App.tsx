@@ -12,14 +12,15 @@ import { getEnv, getIsTestnetEnv, setProductionEnv } from 'helpers/env';
 import { getMoonpayKeyByEnv } from 'helpers/moonpay';
 import { cacheTokens, createAsset } from 'helpers/token';
 
+import useAssetsStore from 'store/assetsStore/useAssetsStore';
 import { LoginTypes } from 'store/authStore/types';
+import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService, StellarService } from 'services/globalServices';
+import SentryService from 'services/sentry.service';
 import { StellarEvents } from 'services/stellar/events/events';
 
-import AppGlobalStyle from 'web/AppGlobalStyles';
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
+import Provider from 'store';
 
 import PageLoader from 'basics/loaders/PageLoader';
 
@@ -32,14 +33,15 @@ import PageTitle from 'components/PageTitle';
 import TestnetBanner from 'components/TestnetBanner';
 import ToastContainer from 'components/ToastContainer';
 
+import DIceTrustlineModal from 'modals/DIceTrustlineModal';
+
+import AppGlobalStyle from 'styles/global-styles';
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
+
 import Governance from 'pages/governance/Governance';
 
 import useGlobalSubscriptions from './hooks/useGlobalSubscriptions';
-import SentryService from './services/sentry.service';
-import Provider from './store';
-import useAssetsStore from './store/assetsStore/useAssetsStore';
-import useAuthStore from './store/authStore/useAuthStore';
-import DIceTrustlineModal from './web/modals/DIceTrustlineModal';
 
 const MainPage = lazy(() => import('web/pages/main/MainPage'));
 const LockerPage = lazy(() => import('./web/pages/locker/Locker'));
@@ -47,16 +49,16 @@ const VotePage = lazy(() => import('pages/vote/Vote'));
 const BribesPage = lazy(() => import('pages/bribes/Bribes'));
 const MarketPage = lazy(() => import('pages/market/Market'));
 const RewardsPage = lazy(() => import('pages/rewards/Rewards'));
-const AirdropPage = lazy(() => import('pages/airdrop/Airdrop'));
-const Airdrop2Page = lazy(() => import('pages/airdrop2/Airdrop2'));
+const AirdropPage = lazy(() => import('web/pages/airdrop/Airdrop'));
+const Airdrop2Page = lazy(() => import('web/pages/airdrop2/Airdrop2'));
 const ProfilePage = lazy(() => import('pages/profile/Profile'));
-const WalletConnectPage = lazy(() => import('pages/wallet-connect/WalletConnect'));
+const WalletConnectPage = lazy(() => import('./web/pages/wallet-connect/WalletConnect'));
 const AmmPage = lazy(() => import('pages/amm/Amm'));
 const SwapPage = lazy(() => import('pages/swap/Swap'));
 const BuyAquaPage = lazy(() => import('web/pages/buy-aqua/BuyAqua'));
 const TestnetSwitcherPage = lazy(() => import('web/pages/testnet-switcher/TestnetSwitcher'));
-const TermsPage = lazy(() => import('pages/terms/Terms'));
-const PrivacyPage = lazy(() => import('pages/privacy/Privacy'));
+const TermsPage = lazy(() => import('web/pages/terms/Terms'));
+const PrivacyPage = lazy(() => import('web/pages/privacy/Privacy'));
 const TokenPage = lazy(() => import('pages/token/TokenPage'));
 const QuestPage = lazy(() => import('pages/quest/Quest'));
 const DelegatePage = lazy(() => import('pages/delegate/Delegate'));

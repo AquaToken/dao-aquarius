@@ -8,10 +8,10 @@ import Timer from 'helpers/timer';
 
 import { ToastService } from 'services/globalServices';
 
-import { cardBoxShadow, flexAllCenter } from 'web/mixins';
-import { COLORS } from 'web/styles';
-
 import { ToggleGroup } from 'basics/inputs';
+
+import { cardBoxShadow, flexAllCenter } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 const Container = styled.div`
     ${flexAllCenter};

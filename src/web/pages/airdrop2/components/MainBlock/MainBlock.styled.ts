@@ -1,0 +1,65 @@
+import styled from 'styled-components';
+
+import Image from 'assets/airdrop2-page/airdrop2-image.svg';
+import Airdrop from 'assets/airdrop2-page/airdrop2.svg';
+
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
+
+export const Container = styled.section`
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 50vw;
+    background-color: ${COLORS.gray50};
+    overflow: hidden;
+
+    ${respondDown(Breakpoints.sm)`
+        height: 50rem;
+        justify-content: center;
+        padding-bottom: 10rem;
+    `}
+
+    ${respondDown(Breakpoints.xs)`
+        justify-content: flex-start;
+    `}
+`;
+
+export const BackgroundImage = styled(Image)`
+    height: 100%;
+    margin-top: -4rem;
+
+    ${respondDown(Breakpoints.md)`
+        margin-top: 11.2rem;
+    `}
+
+    ${respondDown(Breakpoints.sm)`
+        height: 120%;
+        margin-top: 14rem;
+    `}
+`;
+
+export const BackgroundImageRight = styled(BackgroundImage)`
+    transform: scale(-1, 1);
+
+    ${respondDown(Breakpoints.sm)`
+        display: none;
+    `}
+`;
+
+export const AirdropMain = styled(Airdrop)`
+    height: 35%;
+    margin-top: -4rem;
+
+    ${respondDown(Breakpoints.md)`
+        margin-top: 0;
+    `}
+
+    ${respondDown(Breakpoints.sm)`
+        height: 27%;
+        margin-top: -20rem;
+        margin-left: -20rem;
+    `}
+`;

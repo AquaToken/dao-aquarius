@@ -18,7 +18,7 @@ import { useEffect, useRef, useState } from 'react';
 import 'quill/dist/quill.snow.css';
 import styled from 'styled-components';
 
-import { COLORS } from 'web/styles';
+import { COLORS } from 'styles/style-constants';
 
 Quill.register(AlignStyle, true);
 
