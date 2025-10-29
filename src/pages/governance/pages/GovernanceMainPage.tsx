@@ -150,7 +150,8 @@ const TitleBlock = styled.div`
     display: flex;
     justify-content: space-between;
     margin-bottom: 4.8rem;
-    align-items: center;
+    flex-direction: column;
+    gap: 1rem;
 
     ${respondDown(Breakpoints.lg)`
         flex-direction: column;
