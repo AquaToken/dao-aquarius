@@ -1,26 +1,12 @@
-import * as React from 'react';
-import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-
-import { BribesRoutes } from 'constants/routes';
 
 import Bribes from 'assets/bribes-page/bribes.svg';
 import Plus from 'assets/icons/nav/icon-plus-16.svg';
 
 import Button from 'basics/buttons/Button';
 
-import DelegateBlockSmall from 'components/DelegateBlockSmall';
-import FAQ from 'components/FAQ';
-
 import { commonMaxWidth, respondDown } from 'styles/mixins';
 import { Breakpoints, COLORS } from 'styles/style-constants';
-
-import BribesList from 'pages/bribes/components/BribesPage/BribesList/BribesList';
-import { BribeQuestions } from 'pages/bribes/components/BribesPage/FAQ/Questions';
-
-const MainBlock = styled.main`
-    flex: 1 0 auto;
-`;
 
 export const Background = styled.div`
     display: flex;
@@ -29,6 +15,7 @@ export const Background = styled.div`
     min-height: 10rem;
     overflow: hidden;
     position: relative;
+    width: 100%;
 
     ${respondDown(Breakpoints.md)`
         padding: 0;
@@ -44,7 +31,7 @@ export const MainContentWrap = styled.div`
     z-index: 1;
 `;
 
-const Banner = styled(MainContentWrap)`
+export const Banner = styled(MainContentWrap)`
     padding: 0 4rem;
 `;
 
@@ -88,18 +75,18 @@ export const Title = styled.span`
     `}
 
     ${respondDown(Breakpoints.md)`
-          font-size: 5.5rem;
-          line-height: 6rem;
-          margin-bottom: 1rem;
-          display: block;
-          text-align: center;
-      `}
+        font-size: 5.5rem;
+        line-height: 6rem;
+        margin-bottom: 1rem;
+        display: block;
+        text-align: center;
+    `}
       
-      ${respondDown(Breakpoints.sm)`
-          font-size: 4rem;
-          line-height: 5rem;
-          margin-bottom: 0.8rem;
-      `}
+    ${respondDown(Breakpoints.sm)`
+        font-size: 4rem;
+        line-height: 5rem;
+        margin-bottom: 0.8rem;
+    `}
 `;
 
 export const Description = styled.p`
@@ -128,10 +115,10 @@ export const AddBribeButton = styled(Button)`
     margin-right: 1.6rem;
 
     ${respondDown(Breakpoints.md)`
-         max-width: unset;
-         width: 100%;
-         flex: unset;
-         margin-bottom: 1.6rem;
+        max-width: unset;
+        width: 100%;
+        flex: unset;
+        margin-bottom: 1.6rem;
     `}
 `;
 
@@ -140,6 +127,7 @@ export const TableContainer = styled.div`
     padding: 0 4rem;
     ${commonMaxWidth};
     margin-bottom: 10rem;
+    width: 100%;
 
     ${respondDown(Breakpoints.md)`
         padding: 0 1.6rem;
@@ -147,45 +135,3 @@ export const TableContainer = styled.div`
         margin-bottom: 3rem;
     `}
 `;
-
-const BribesPage = () => {
-    const history = useHistory();
-
-    return (
-        <MainBlock>
-            <Background>
-                <MainContentWrap>
-                    <MainContent>
-                        <Title>Aquarius Bribes</Title>
-                        <Description>
-                            Bribes are on-chain rewards for voting on specific Stellar markets.
-                            Aquarius supports two types: protocol bribes, funded by trading fees and
-                            directed to high-volume markets, and external bribes, submitted by users
-                            or projects to attract votes.
-                        </Description>
-                        <MainContentFooter>
-                            <AddBribeButton onClick={() => history.push(BribesRoutes.addBribe)}>
-                                <span>create bribe</span>
-                                <PlusIcon />
-                            </AddBribeButton>
-                        </MainContentFooter>
-                    </MainContent>
-                </MainContentWrap>
-
-                <BribesLogo />
-            </Background>
-
-            <Banner>
-                <DelegateBlockSmall />
-            </Banner>
-
-            <TableContainer>
-                <BribesList />
-            </TableContainer>
-
-            <FAQ questions={BribeQuestions} />
-        </MainBlock>
-    );
-};
-
-export default BribesPage;

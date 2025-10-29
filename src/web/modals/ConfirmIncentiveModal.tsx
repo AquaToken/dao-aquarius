@@ -26,15 +26,15 @@ import Button from 'basics/buttons/Button';
 import Market from 'basics/Market';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
-import { flexAllCenter } from 'styles/mixins';
-import { COLORS } from 'styles/style-constants';
-
 import {
     BribeInfo,
     InfoRow,
     Label,
     Value,
-} from 'pages/bribes/components/AddBribePage/ConfirmBribeModal/ConfirmBribeModal';
+} from 'modals/ConfirmBribeModal/ConfirmBribeModal.styled';
+
+import { flexAllCenter } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 const PairBlock = styled.div`
     ${flexAllCenter};

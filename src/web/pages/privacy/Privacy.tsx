@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { MAIL_AQUA_PRIVACY } from 'constants/emails';
+
 import { Container } from './Privacy.styled';
 
 const Privacy: React.FC = () => (
@@ -16,7 +18,7 @@ const Privacy: React.FC = () => (
         <p>
             For any questions regarding this Privacy Policy or our privacy practices, please contact
             our data privacy manager at{' '}
-            <a href="mailto:privacy@aqua.network">privacy@aqua.network</a>.
+            <a href={`mailto:${MAIL_AQUA_PRIVACY}`}>{MAIL_AQUA_PRIVACY}</a>.
         </p>
 
         <h2>2. Changes to the Privacy Policy and Your Duty to Inform Us of Changes</h2>
@@ -93,7 +95,7 @@ const Privacy: React.FC = () => (
         <p>
             If you have any questions or concerns about our Privacy Policy or practices, please
             contact our data privacy manager at{' '}
-            <a href="mailto:privacy@aqua.network">privacy@aqua.network</a>.
+            <a href={`mailto:${MAIL_AQUA_PRIVACY}`}>{MAIL_AQUA_PRIVACY}</a>.
         </p>
 
         <h2>Is information about me secure?</h2>
@@ -160,8 +162,9 @@ const Privacy: React.FC = () => (
         <h2>What information of mine can I access?</h2>
         <p>Users can access and delete cookies through their web browser settings.</p>
         <p>
-            You may email <a href="mailto:privacy@aqua.network">privacy@aqua.network</a> at any time
-            to obtain a copy of the information that we may have gathered and retained about you.
+            You may email <a href={`mailto:${MAIL_AQUA_PRIVACY}`}>{MAIL_AQUA_PRIVACY}</a> at any
+            time to obtain a copy of the information that we may have gathered and retained about
+            you.
         </p>
         <p>
             Registered members can review and change Personal Data at any time by accessing their
@@ -193,9 +196,9 @@ const Privacy: React.FC = () => (
             that this may limit your ability to use some features.
         </p>
         <p>
-            You may email <a href="mailto:privacy@aqua.network">privacy@aqua.network</a> and request
-            that we delete all of your Personal Data. We will make such a deletion within fifteen
-            (15) business days.
+            You may email <a href={`mailto:${MAIL_AQUA_PRIVACY}`}>{MAIL_AQUA_PRIVACY}</a> and
+            request that we delete all of your Personal Data. We will make such a deletion within
+            fifteen (15) business days.
         </p>
 
         <h2>Legal rights for EEA residents</h2>
@@ -223,7 +226,7 @@ const Privacy: React.FC = () => (
         </ul>
         <p>
             If you wish to exercise any of the rights set out above, please contact{' '}
-            <a href="mailto:privacy@aqua.network">privacy@aqua.network</a>.
+            <a href={`mailto:${MAIL_AQUA_PRIVACY}`}>{MAIL_AQUA_PRIVACY}</a>.
         </p>
         <p>
             We try to respond to all legitimate requests within one month. Occasionally it could

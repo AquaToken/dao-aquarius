@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import styled from 'styled-components';
 
+import { BribeSortFields, getUpcomingBribes } from 'api/bribes';
+
+import { BRIBES_PAGE_SIZE } from 'constants/bribes';
 import { MarketRoutes } from 'constants/routes';
 
 import { convertDateStrToTimestamp, getDateString } from 'helpers/date';
@@ -12,57 +14,20 @@ import { createAsset } from 'helpers/token';
 
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
-import Checkbox from 'web/basics/inputs/Checkbox';
-import Select from 'web/basics/inputs/Select';
-import PageLoader from 'web/basics/loaders/PageLoader';
-
-import Asset from 'basics/Asset';
+import PageLoader from 'basics/loaders/PageLoader';
 import Market from 'basics/Market';
 import Pagination from 'basics/Pagination';
 import Table, { CellAlign } from 'basics/Table';
 
-import { flexAllCenter, flexColumn, respondDown } from 'styles/mixins';
-import { Breakpoints } from 'styles/style-constants';
+import {
+    CheckboxStyled,
+    Container,
+    LoaderContainer,
+    MobileAsset,
+    SelectStyled,
+    WebAsset,
+} from './UpcomingBribes.styled';
 
-import { BribeSortFields, getUpcomingBribes } from 'pages/bribes/api/api';
-
-const Container = styled.div`
-    ${flexColumn};
-`;
-
-const WebAsset = styled(Asset)`
-    ${respondDown(Breakpoints.md)`
-        display: none;
-    `}
-`;
-
-const MobileAsset = styled(Asset)`
-    display: none;
-
-    ${respondDown(Breakpoints.md)`
-        display: flex;
-    `}
-`;
-
-const LoaderContainer = styled.div`
-    ${flexAllCenter};
-    margin: 5rem 0;
-`;
-
-const CheckboxStyled = styled(Checkbox)`
-    margin-bottom: 3rem;
-`;
-
-const SelectStyled = styled(Select)`
-    display: none;
-    margin-bottom: 3rem;
-
-    ${respondDown(Breakpoints.md)`
-          display: flex;
-      `}
-`;
-
-const PAGE_SIZE = 20;
 const SORT_OPTIONS = [
     { label: 'Sort by: Period ▲', value: BribeSortFields.startAtDown },
     { label: 'Sort by: Period ▼', value: BribeSortFields.startAtUp },
@@ -107,7 +72,7 @@ const UpcomingBribes = () => {
 
     useEffect(() => {
         setLoading(true);
-        getUpcomingBribes(PAGE_SIZE, page, sort, !filterByAmount).then(res => {
+        getUpcomingBribes(BRIBES_PAGE_SIZE, page, sort, !filterByAmount).then(res => {
             setCount(res.count);
             setBribes(res.bribes);
             processAssetsFromPairs(res.bribes);
@@ -256,7 +221,7 @@ const UpcomingBribes = () => {
             />
 
             <Pagination
-                pageSize={PAGE_SIZE}
+                pageSize={BRIBES_PAGE_SIZE}
                 totalCount={count}
                 onPageChange={setPage}
                 currentPage={page}

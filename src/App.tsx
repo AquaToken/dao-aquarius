@@ -46,7 +46,7 @@ import useGlobalSubscriptions from './hooks/useGlobalSubscriptions';
 const MainPage = lazy(() => import('web/pages/main/MainPage'));
 const LockerPage = lazy(() => import('./web/pages/locker/Locker'));
 const VotePage = lazy(() => import('pages/vote/Vote'));
-const BribesPage = lazy(() => import('pages/bribes/Bribes'));
+const BribesPage = lazy(() => import('./web/pages/bribes/Bribes'));
 const MarketPage = lazy(() => import('pages/market/Market'));
 const RewardsPage = lazy(() => import('pages/rewards/Rewards'));
 const AirdropPage = lazy(() => import('web/pages/airdrop/Airdrop'));

@@ -14,6 +14,7 @@ export const PageContainer = styled.main<{
     scroll-behavior: smooth;
     background-color: ${props => props.$color || COLORS.transparent};
     flex: 1 0 auto;
+    width: 100%;
 
     ${({ $mobileBreakpoint }) => respondDown($mobileBreakpoint ?? Breakpoints.sm)`
         background-color: ${props => props.$mobileColor || COLORS.transparent};

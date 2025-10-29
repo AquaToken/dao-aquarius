@@ -1,7 +1,8 @@
 import { addWeeks } from 'date-fns';
 import * as React from 'react';
 import { useState } from 'react';
-import styled from 'styled-components';
+
+import { DAY } from 'constants/intervals';
 
 import { getDateString } from 'helpers/date';
 import ErrorHandler from 'helpers/error-handler';
@@ -25,54 +26,9 @@ import Button from 'basics/buttons/Button';
 import Market from 'basics/Market';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
-import { flexAllCenter } from 'styles/mixins';
-import { COLORS } from 'styles/style-constants';
+import { PairBlock, BribeInfo, InfoRow, Label, Value } from './ConfirmBribeModal.styled';
 
-const PairBlock = styled.div`
-    ${flexAllCenter};
-    padding: 3.4rem 0;
-    border-radius: 0.5rem;
-    background: ${COLORS.gray50};
-    margin-bottom: 2.3rem;
-`;
-
-export const BribeInfo = styled.div`
-    display: flex;
-    flex-direction: column;
-    margin-top: 4.7rem;
-    padding-bottom: 3rem;
-    border-bottom: 0.1rem dashed ${COLORS.gray100};
-    margin-bottom: 3rem;
-`;
-
-export const InfoRow = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    &:not(:last-child) {
-        margin-bottom: 1.6rem;
-    }
-`;
-
-export const Label = styled.span`
-    font-size: 1.6rem;
-    line-height: 1.8rem;
-    color: ${COLORS.textGray};
-`;
-
-export const Value = styled.span`
-    font-size: 1.6rem;
-    line-height: 2.8rem;
-    color: ${COLORS.textTertiary};
-`;
-
-const DAY = 24 * 60 * 60 * 1000;
-
-const ConfirmBribeModal = ({
-    params,
-    close,
-}: ModalProps<{
+type ConfirmBribeParams = {
     base: ClassicToken;
     counter: ClassicToken;
     rewardAsset: ClassicToken;
@@ -82,7 +38,13 @@ const ConfirmBribeModal = ({
     marketKey: string;
     resetForm: () => void;
     duration: string;
-}>) => {
+};
+
+/**
+ * ConfirmBribeModal — final confirmation modal before submitting a new bribe.
+ * Handles transaction creation, signing, submission, and user feedback.
+ */
+const ConfirmBribeModal: React.FC<ModalProps<ConfirmBribeParams>> = ({ params, close }) => {
     const {
         base,
         counter,
@@ -96,43 +58,43 @@ const ConfirmBribeModal = ({
     } = params;
     const { account } = useAuthStore();
     const [pending, setPending] = useState(false);
-
     const isMounted = useIsMounted();
 
+    /** Submits bribe creation transaction */
     const onSubmit = async () => {
         const balance = account.getAssetBalance(createAsset(rewardAsset.code, rewardAsset.issuer));
 
+        // Check trustline existence
         if (balance === null) {
             ToastService.showErrorToast(`You don't have a trustline for ${rewardAsset.code}`);
             return;
         }
 
+        // Validate sufficient funds
         if (+balance < +amount * +duration) {
             ToastService.showErrorToast(`You have insufficient ${rewardAsset.code} balance`);
             return;
         }
 
+        // Ensure wallet app is open for WalletConnect
         if (account.authType === LoginTypes.walletConnect) {
             openCurrentWalletIfExist();
         }
 
         setPending(true);
-        try {
-            const ops = [];
 
-            for (let i = 0; i < +duration; i++) {
-                const start = startDate.getTime() - DAY;
-                const op = StellarService.op.createBribeOperation(
+        try {
+            // Build multiple weekly bribe operations
+            const operations = Array.from({ length: +duration }, (_, i) =>
+                StellarService.op.createBribeOperation(
                     marketKey,
                     rewardAsset,
                     amount,
-                    addWeeks(start, i).getTime(),
-                );
+                    addWeeks(startDate.getTime() - DAY, i).getTime(),
+                ),
+            );
 
-                ops.push(op);
-            }
-
-            const tx = await StellarService.tx.buildTx(account, ops);
+            const tx = await StellarService.tx.buildTx(account, operations);
             const result = await account.signAndSubmitTx(tx);
 
             if (isMounted.current) {
@@ -141,6 +103,7 @@ const ConfirmBribeModal = ({
                 close();
             }
 
+            // Handle pending multisig transactions
             if (
                 (result as { status: BuildSignAndSubmitStatuses }).status ===
                 BuildSignAndSubmitStatuses.pending
@@ -148,9 +111,10 @@ const ConfirmBribeModal = ({
                 ToastService.showSuccessToast('More signatures required to complete');
                 return;
             }
+
             ToastService.showSuccessToast('Your bribe has been created');
-        } catch (e) {
-            const errorText = ErrorHandler(e);
+        } catch (error) {
+            const errorText = ErrorHandler(error);
             ToastService.showErrorToast(errorText);
             if (isMounted.current) {
                 setPending(false);
@@ -162,9 +126,11 @@ const ConfirmBribeModal = ({
         <ModalWrapper>
             <ModalTitle>Confirm bribe</ModalTitle>
             <ModalDescription>Please check all the details to create a bribe</ModalDescription>
+
             <PairBlock>
                 <Market assets={[base, counter]} verticalDirections />
             </PairBlock>
+
             <BribeInfo>
                 <InfoRow>
                     <Label>Reward asset</Label>
@@ -172,18 +138,21 @@ const ConfirmBribeModal = ({
                         <Asset asset={rewardAsset} inRow withMobileView />
                     </Value>
                 </InfoRow>
+
                 <InfoRow>
                     <Label>Weekly reward amount</Label>
                     <Value>
                         {formatBalance(+amount)} {rewardAsset.code}
                     </Value>
                 </InfoRow>
+
                 <InfoRow>
                     <Label>Total reward amount</Label>
                     <Value>
                         {formatBalance(+amount * +duration)} {rewardAsset.code}
                     </Value>
                 </InfoRow>
+
                 <InfoRow>
                     <Label>Bribe period</Label>
                     <Value>
@@ -193,7 +162,8 @@ const ConfirmBribeModal = ({
                     </Value>
                 </InfoRow>
             </BribeInfo>
-            <Button isBig fullWidth onClick={() => onSubmit()} pending={pending}>
+
+            <Button isBig fullWidth onClick={onSubmit} pending={pending}>
                 add bribe
             </Button>
         </ModalWrapper>

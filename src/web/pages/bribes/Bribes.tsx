@@ -6,8 +6,8 @@ import { BribesRoutes } from 'constants/routes';
 
 import NotFoundPage from 'components/NotFoundPage';
 
-const BribesPage = lazy(() => import('./pages/BribesPage'));
-const AddBribePage = lazy(() => import('./pages/AddBribePage'));
+const BribesPage = lazy(() => import('./pages/BribesPage/BribesPage'));
+const AddBribePage = lazy(() => import('./pages/AddBribePage/AddBribePage'));
 
 const Bribes = () => (
     <Switch>

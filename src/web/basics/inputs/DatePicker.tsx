@@ -21,8 +21,8 @@ type ReactDatePickerProps = React.ComponentProps<typeof ReactDatePicker>;
 
 interface Props extends Omit<ReactDatePickerProps, 'selected' | 'onChange'> {
     customInput?: React.ReactNode;
-    date: number | null;
-    onChange?: (date: number | null) => void;
+    date: number | Date | null;
+    onChange?: (date: number | Date | null) => void;
     fullWidth?: boolean;
 }
 

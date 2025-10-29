@@ -6,6 +6,8 @@ import { convertLocalDateToUTCIgnoringTimezone, getDateString } from 'helpers/da
 import { formatBalance } from 'helpers/format-number';
 import { createAsset } from 'helpers/token';
 
+import { Bribe } from 'types/bribes';
+
 import Aqua from 'assets/aqua/aqua-logo.svg';
 import Close from 'assets/icons/nav/icon-close-alt-16.svg';
 import Info from 'assets/icons/status/icon-info-16.svg';
@@ -16,7 +18,6 @@ import Table, { CellAlign } from 'basics/Table';
 import { respondDown } from 'styles/mixins';
 import { Breakpoints, COLORS } from 'styles/style-constants';
 
-import { Bribe } from 'pages/bribes/api/types';
 import { MarketVotesExtra } from 'pages/vote/api/types';
 import {
     BribeDetail,

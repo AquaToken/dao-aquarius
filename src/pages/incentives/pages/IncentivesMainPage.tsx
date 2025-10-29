@@ -1,34 +1,32 @@
 import * as React from 'react';
 import { useHistory } from 'react-router-dom';
-import styled from 'styled-components';
 
 import { IncentivesRoutes } from 'constants/routes';
 
+import {
+    Background,
+    MainContent,
+    MainContentWrap,
+    Title,
+    Description,
+    MainContentFooter,
+    AddBribeButton,
+    PlusIcon,
+    BribesLogo,
+    TableContainer,
+} from 'web/pages/bribes/pages/BribesPage/BribesPage.styled';
+
 import FAQ from 'components/FAQ';
 
-import {
-    AddBribeButton,
-    Background,
-    BribesLogo,
-    Description,
-    MainContent,
-    MainContentFooter,
-    MainContentWrap,
-    PlusIcon,
-    TableContainer,
-    Title,
-} from 'pages/bribes/pages/BribesPage';
+import { PageContainer } from 'styles/commonPageStyles';
+
 import IncentivesList from 'pages/incentives/components/IncentivesList/IncentivesList';
 import { lpIncentivesQuestions } from 'pages/incentives/components/Questions/Questions';
-
-const Main = styled.main`
-    flex: 1 0 auto;
-`;
 
 const IncentivesMainPage = () => {
     const history = useHistory();
     return (
-        <Main>
+        <PageContainer>
             <Background>
                 <MainContentWrap>
                     <MainContent>
@@ -57,7 +55,7 @@ const IncentivesMainPage = () => {
             </TableContainer>
 
             <FAQ questions={lpIncentivesQuestions} />
-        </Main>
+        </PageContainer>
     );
 };
 

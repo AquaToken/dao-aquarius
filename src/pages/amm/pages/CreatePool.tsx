@@ -30,28 +30,27 @@ import Alert from 'basics/Alert';
 import AssetDropdown from 'basics/asset-pickers/AssetDropdown';
 import AssetLogo from 'basics/AssetLogo';
 import Button from 'basics/buttons/Button';
-import CircleButton from 'basics/buttons/CircleButton';
 import Checkbox from 'basics/inputs/Checkbox';
 import Input from 'basics/inputs/Input';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
 import PageLoader from 'basics/loaders/PageLoader';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
+import { PageContainer } from 'styles/commonPageStyles';
 import { flexRowSpaceBetween, respondDown } from 'styles/mixins';
-import { Breakpoints, COLORS } from 'styles/style-constants';
-
 import {
-    Back,
-    Background,
-    Content,
     Form,
+    FormBackButton,
+    FormPageContentWrap,
+    FormPageHeaderTitle,
+    FormPageHeaderWrap,
     FormSection,
     FormSectionDescription,
     FormSectionTitle,
     FormWrap,
-    MainBlock,
-    Title,
-} from '../../bribes/pages/AddBribePage';
+} from 'styles/sharedFormPage.styled';
+import { Breakpoints, COLORS } from 'styles/style-constants';
+
 import ContractNotFound from '../components/ContractNotFound/ContractNotFound';
 import PoolsList from '../components/PoolsList/PoolsList';
 
@@ -445,19 +444,18 @@ const CreatePool = () => {
     }
 
     return (
-        <MainBlock>
-            <Background>
-                <Content>
-                    <Back to={AmmRoutes.analytics}>
-                        <CircleButton label="Pools">
-                            <ArrowLeft />
-                        </CircleButton>
-                    </Back>
-                    <Title>Create Pool</Title>
-                </Content>
-            </Background>
+        <PageContainer>
+            <FormPageHeaderWrap>
+                <FormPageContentWrap>
+                    <FormBackButton label="Pools" to={AmmRoutes.analytics}>
+                        <ArrowLeft />
+                    </FormBackButton>
+
+                    <FormPageHeaderTitle>Create Pool</FormPageHeaderTitle>
+                </FormPageContentWrap>
+            </FormPageHeaderWrap>
             <FormWrap>
-                <Content>
+                <FormPageContentWrap>
                     <StyledForm
                         onSubmit={(event: React.SyntheticEvent<HTMLFormElement>) => {
                             event.preventDefault();
@@ -715,9 +713,9 @@ const CreatePool = () => {
                             </StyledFormSection>
                         </StyledForm>
                     )}
-                </Content>
+                </FormPageContentWrap>
             </FormWrap>
-        </MainBlock>
+        </PageContainer>
     );
 };
 

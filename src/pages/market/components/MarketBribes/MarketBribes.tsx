@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
 
+import { Bribe } from 'types/bribes';
 import { Asset } from 'types/stellar';
 
 import ToggleGroup from 'basics/inputs/ToggleGroup';
@@ -9,7 +10,6 @@ import ToggleGroup from 'basics/inputs/ToggleGroup';
 import { flexRowSpaceBetween, respondDown } from 'styles/mixins';
 import { Breakpoints, COLORS } from 'styles/style-constants';
 
-import { Bribe } from 'pages/bribes/api/types';
 import { MarketVotesExtra } from 'pages/vote/api/types';
 
 import MarketCurrentBribes from './MarketCurrentBribes/MarketCurrentBribes';

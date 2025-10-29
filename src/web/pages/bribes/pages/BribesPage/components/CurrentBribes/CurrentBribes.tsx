@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import styled from 'styled-components';
 
+import { BRIBES_PAGE_SIZE } from 'constants/bribes';
 import { MarketRoutes } from 'constants/routes';
 
 import { getAssetString } from 'helpers/assets';
@@ -15,34 +15,20 @@ import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
 import { ModalService } from 'services/globalServices';
 
-import PageLoader from 'web/basics/loaders/PageLoader';
-
 import Asset from 'basics/Asset';
 import AssetLogo from 'basics/AssetLogo';
+import PageLoader from 'basics/loaders/PageLoader';
 import Market from 'basics/Market';
 import Pagination from 'basics/Pagination';
 import Table from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
-import { flexAllCenter } from 'styles/mixins';
 import { COLORS } from 'styles/style-constants';
 
 import { getPairsWithBribes } from 'pages/vote/api/api';
 import BribesModal from 'pages/vote/components/MainPage/BribesModal/BribesModal';
 
-const Container = styled.div``;
-
-const LoaderContainer = styled.div`
-    ${flexAllCenter};
-    margin: 5rem 0;
-`;
-
-const Apy = styled.span`
-    border-bottom: 0.1rem dashed ${COLORS.purple500};
-    line-height: 2rem;
-`;
-
-const PAGE_SIZE = 20;
+import { Apy, LoaderContainer } from './CurrentBribes.styled';
 
 const CurrentBribes = () => {
     const [bribes, setBribes] = useState(null);
@@ -76,7 +62,7 @@ const CurrentBribes = () => {
 
     useEffect(() => {
         setPending(true);
-        getPairsWithBribes(PAGE_SIZE, page).then(res => {
+        getPairsWithBribes(BRIBES_PAGE_SIZE, page).then(res => {
             setBribes(res.pairs);
             setTotal(res.count);
             processAssets(res.pairs);
@@ -93,7 +79,7 @@ const CurrentBribes = () => {
     }
 
     return (
-        <Container>
+        <div>
             <Table
                 pending={pending}
                 head={[
@@ -187,13 +173,13 @@ const CurrentBribes = () => {
                 })}
             />
             <Pagination
-                pageSize={PAGE_SIZE}
+                pageSize={BRIBES_PAGE_SIZE}
                 totalCount={total}
                 onPageChange={setPage}
                 currentPage={page}
                 itemName="bribes"
             />
-        </Container>
+        </div>
     );
 };
 
