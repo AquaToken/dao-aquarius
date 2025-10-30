@@ -3,7 +3,6 @@ import { useCallback } from 'react';
 import styled from 'styled-components';
 
 import { getAssetString } from 'helpers/assets';
-import { getIsTestnetEnv } from 'helpers/env';
 import getExplorerLink, { ExplorerSection } from 'helpers/explorer-links';
 import { truncateString } from 'helpers/truncate-string';
 
@@ -20,8 +19,8 @@ import AssetLogo from 'basics/AssetLogo';
 
 import AssetInfoModal from 'modals/AssetInfoModal';
 
-import { flexAllCenter } from '../mixins';
-import { COLORS } from '../styles';
+import { flexAllCenter, respondDown } from '../mixins';
+import { Breakpoints, COLORS } from '../styles';
 
 const ArrowRightContainer = styled.div`
     position: absolute;
@@ -33,6 +32,9 @@ const ArrowRightContainer = styled.div`
     border-radius: 50%;
     border: 0.1rem solid ${COLORS.gray100};
     ${flexAllCenter}
+    ${respondDown(Breakpoints.md)`
+        transform: rotate(90deg);
+    `}
 `;
 
 const ArrowRight = styled(Arrow)`
@@ -45,6 +47,9 @@ const SegmentContainer = styled.div`
     position: relative;
     display: flex;
     gap: 16px;
+    ${respondDown(Breakpoints.md)`
+        flex-direction: column;
+    `}
 `;
 
 const Segment = styled.div`
