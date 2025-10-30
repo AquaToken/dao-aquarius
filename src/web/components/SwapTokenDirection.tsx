@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import { getAssetString } from 'helpers/assets';
 import { getIsTestnetEnv } from 'helpers/env';
+import getExplorerLink, { ExplorerSection } from 'helpers/explorer-links';
 import { truncateString } from 'helpers/truncate-string';
 
 import { LumenInfo } from 'store/assetsStore/reducer';
@@ -21,7 +22,6 @@ import AssetInfoModal from 'modals/AssetInfoModal';
 
 import { flexAllCenter } from '../mixins';
 import { COLORS } from '../styles';
-import getExplorerLink, { ExplorerSection } from 'helpers/explorer-links';
 
 const ArrowRightContainer = styled.div`
     position: absolute;
