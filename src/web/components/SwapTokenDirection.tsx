@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import { getAssetString } from 'helpers/assets';
 import { getIsTestnetEnv } from 'helpers/env';
+import { truncateString } from 'helpers/truncate-string';
 
 import { LumenInfo } from 'store/assetsStore/reducer';
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
@@ -20,6 +21,7 @@ import AssetInfoModal from 'modals/AssetInfoModal';
 
 import { flexAllCenter } from '../mixins';
 import { COLORS } from '../styles';
+import getExplorerLink, { ExplorerSection } from 'helpers/explorer-links';
 
 const ArrowRightContainer = styled.div`
     position: absolute;
@@ -100,10 +102,7 @@ const SwapTokenDirection = ({ assets }: Props) => {
 
         const { name, home_domain } = assetsInfo.get(getAssetString(asset)) || {};
 
-        return [
-            name || asset.code,
-            home_domain || `${asset.issuer.slice(0, 4)}...${asset.issuer.slice(-4)}`,
-        ];
+        return [name || asset.code, home_domain || truncateString(asset.issuer, 4)];
     }, []);
 
     const onDomainClick = useCallback(async (e: React.MouseEvent, asset: Token) => {
@@ -111,12 +110,7 @@ const SwapTokenDirection = ({ assets }: Props) => {
         e.stopPropagation();
 
         if (asset.type === TokenType.soroban) {
-            window.open(
-                `https://stellar.expert/explorer/${
-                    getIsTestnetEnv() ? 'testnet' : 'public'
-                }/contract/${asset.contract}`,
-                '_blank',
-            );
+            window.open(getExplorerLink(ExplorerSection.contract, asset.contract), '_blank');
             return;
         }
 

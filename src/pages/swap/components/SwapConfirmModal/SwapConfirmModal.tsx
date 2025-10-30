@@ -18,7 +18,7 @@ import { ModalService, SorobanService, ToastService } from 'services/globalServi
 import { ModalProps } from 'types/modal';
 import { SorobanToken, Token, TokenType } from 'types/token';
 
-import { flexRowSpaceBetween, respondDown, flexColumn } from 'web/mixins';
+import { flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import AssetLogo from 'basics/AssetLogo';
@@ -26,7 +26,8 @@ import Button from 'basics/buttons/Button';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
 import { ModalDescription, ModalTitle, ModalWrapper, StickyButtonWrapper } from 'basics/ModalAtoms';
-import SwapTokenDirection from 'basics/SwapTokenDirection';
+
+import SwapTokenDirection from 'components/SwapTokenDirection';
 
 import PathPool from './PathPool/PathPool';
 
