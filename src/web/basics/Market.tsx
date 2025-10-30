@@ -65,10 +65,11 @@ const Icons = styled.div<{
     $verticalDirections?: boolean;
     $mobileVerticalDirections?: boolean;
     $leftAlign?: boolean;
+    $compact?: boolean;
 }>`
     display: flex;
     align-items: center;
-    min-width: 12rem;
+    ${({ $compact }) => ($compact ? '' : 'min-width: 12rem;')};
     justify-content: ${({ $leftAlign }) => ($leftAlign ? 'flex-start' : 'center')};
 
     ${({ $mobileVerticalDirections }) =>
@@ -239,6 +240,7 @@ type PairProps = {
     apyTier?: number;
     isAmmBribes?: boolean;
     isPrivateBribes?: boolean;
+    compact?: boolean;
 };
 
 const Market = ({
@@ -267,6 +269,7 @@ const Market = ({
     poolType,
     fee,
     apyTier,
+    compact,
     ...props
 }: PairProps): React.ReactNode => {
     const { assetsInfo } = useAssetsStore();
@@ -341,6 +344,7 @@ const Market = ({
                 $assetsCount={assets.length}
                 $mobileVerticalDirections={mobileVerticalDirections}
                 $leftAlign={leftAlign}
+                $compact={compact}
             >
                 {assets.map((asset, index) => (
                     <Icon
