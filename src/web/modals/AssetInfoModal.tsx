@@ -85,6 +85,11 @@ const Details = styled.div`
     flex-wrap: wrap;
     margin-top: 4rem;
     gap: 3.2rem;
+
+    ${respondDown(Breakpoints.sm)`
+        flex-direction: column;
+        gap: 1.6rem;
+    `}
 `;
 
 const Detail = styled.div`
