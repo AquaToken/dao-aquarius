@@ -338,6 +338,7 @@ const GovernanceMainPage = (): JSX.Element => {
 
         filterRef.current = params.get(UrlParams.filter);
         setFilter(params.get(UrlParams.filter));
+        setPage(1);
     }, [location, isLogged]);
 
     useEffect(() => {
