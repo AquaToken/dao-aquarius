@@ -112,7 +112,6 @@ const ProposalStatus = ({ status, ...props }: { status: PROPOSAL_STATUS }) => (
         {status === PROPOSAL_STATUS.ACTIVE && <ActiveIcon />}
         {status === PROPOSAL_STATUS.DISCUSSION && <DiscussionIcon />}
         {status === PROPOSAL_STATUS.DEPRECATED && <DeprecatedIcon />}
-        {status === PROPOSAL_STATUS.EXPIRED && <DeprecatedIcon />}
         {StatusLabels[status]}
     </Container>
 );
