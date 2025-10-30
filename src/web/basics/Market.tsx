@@ -7,6 +7,7 @@ import { AmmRoutes, MarketRoutes } from 'constants/routes';
 
 import { getAssetString } from 'helpers/assets';
 import { getIsTestnetEnv } from 'helpers/env';
+import getExplorerLink, { ExplorerSection } from 'helpers/explorer-links';
 import { formatBalance } from 'helpers/format-number';
 
 import { LumenInfo } from 'store/assetsStore/reducer';
@@ -313,12 +314,7 @@ const Market = ({
         e.stopPropagation();
 
         if (asset.type === TokenType.soroban) {
-            window.open(
-                `https://stellar.expert/explorer/${
-                    getIsTestnetEnv() ? 'testnet' : 'public'
-                }/contract/${asset.contract}`,
-                '_blank',
-            );
+            window.open(getExplorerLink(ExplorerSection.contract, asset.contract), '_blank');
             return;
         }
 
