@@ -32,24 +32,17 @@ interface SuccessModalParams {
     assets: Token[];
     amounts: string[];
     title: string;
-    isSwap?: boolean;
     hash?: string;
 }
 
 const SuccessModal = ({ params, close }: ModalProps<SuccessModalParams>) => {
-    const { assets, amounts, title, isSwap, hash } = params;
+    const { assets, amounts, title, hash } = params;
 
     return (
         <ModalWrapper>
             <ModalTitle>{title ?? 'Success'}</ModalTitle>
             <AssetsInfo>
-                <Market
-                    assets={assets}
-                    verticalDirections
-                    withoutLink
-                    amounts={amounts}
-                    isSwapResult={isSwap}
-                />
+                <Market assets={assets} verticalDirections withoutLink amounts={amounts} />
                 <ExternalLink
                     href={`https://stellar.expert/explorer/${
                         getIsTestnetEnv() ? 'testnet' : 'public'

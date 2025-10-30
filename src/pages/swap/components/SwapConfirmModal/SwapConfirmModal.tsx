@@ -28,9 +28,10 @@ import PageLoader from 'basics/loaders/PageLoader';
 import Market from 'basics/Market';
 import { ModalDescription, ModalTitle, ModalWrapper, StickyButtonWrapper } from 'basics/ModalAtoms';
 
+import SwapSuccessModal from 'pages/swap/components/SwapSuccessModal/SwapSuccessModal';
+
 import PathPool from './PathPool/PathPool';
 
-import SuccessModal from '../../../amm/components/SuccessModal/SuccessModal';
 import { SWAP_SLIPPAGE_ALIAS } from '../SwapSettingsModal/SwapSettingsModal';
 
 const AssetsInfo = styled.div`
@@ -48,6 +49,7 @@ const DescriptionRow = styled.div`
 
     span:last-child {
         color: ${COLORS.textTertiary};
+        text-align: right;
     }
 `;
 
@@ -205,12 +207,12 @@ const SwapConfirmModal = ({
                       )
                     : counterAmount;
 
-                ModalService.openModal(SuccessModal, {
-                    assets: [base, counter],
-                    amounts: [sentAmount, receivedAmount],
-                    title: 'Swap Successful',
-                    isSwap: true,
-                    hash,
+                ModalService.openModal(SwapSuccessModal, {
+                    source: base,
+                    destination: counter,
+                    sourceAmount: sentAmount,
+                    destinationAmount: receivedAmount,
+                    txHash: hash,
                 });
 
                 if (base.type === TokenType.soroban) {
