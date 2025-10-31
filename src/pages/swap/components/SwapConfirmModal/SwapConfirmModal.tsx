@@ -18,28 +18,22 @@ import { ModalService, SorobanService, ToastService } from 'services/globalServi
 import { ModalProps } from 'types/modal';
 import { SorobanToken, Token, TokenType } from 'types/token';
 
-import { flexRowSpaceBetween, respondDown, flexColumn } from 'web/mixins';
+import { flexRowSpaceBetween, respondDown } from 'web/mixins';
 import { Breakpoints, COLORS } from 'web/styles';
 
 import AssetLogo from 'basics/AssetLogo';
 import Button from 'basics/buttons/Button';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
-import Market from 'basics/Market';
 import { ModalDescription, ModalTitle, ModalWrapper, StickyButtonWrapper } from 'basics/ModalAtoms';
+
+import SwapTokenDirection from 'components/SwapTokenDirection';
 
 import SwapSuccessModal from 'pages/swap/components/SwapSuccessModal/SwapSuccessModal';
 
 import PathPool from './PathPool/PathPool';
 
 import { SWAP_SLIPPAGE_ALIAS } from '../SwapSettingsModal/SwapSettingsModal';
-
-const AssetsInfo = styled.div`
-    ${flexColumn};
-    padding: 2.5rem 0;
-    background-color: ${COLORS.gray50};
-    border-radius: 0.5rem;
-`;
 
 const DescriptionRow = styled.div`
     ${flexRowSpaceBetween};
@@ -246,9 +240,7 @@ const SwapConfirmModal = ({
         <ModalWrapper>
             <ModalTitle>Confirm Swap</ModalTitle>
             <ModalDescription>Review amounts, rate, and fees before confirming</ModalDescription>
-            <AssetsInfo>
-                <Market compact withoutLink isSwapResult assets={[base, counter]} />
-            </AssetsInfo>
+            <SwapTokenDirection assets={[base, counter]} />
             <DescriptionRow>
                 <span>You give</span>
                 <BoltText>
