@@ -47,23 +47,15 @@ const DescriptionRow = styled.div`
     }
 `;
 
-const Divider = styled.div`
-    border-bottom: 0.1rem dashed ${COLORS.gray100};
-    margin: 3.2rem 0;
-`;
-
 const Pools = styled.div`
     display: flex;
     flex-wrap: wrap;
+    margin-bottom: 3.2rem;
 
     ${respondDown(Breakpoints.md)`
         flex-direction: column;
         width: 100%;
     `}
-`;
-
-const BoltText = styled.span`
-    font-weight: bold;
 `;
 
 const STROOP = 0.0000001;
@@ -243,15 +235,15 @@ const SwapConfirmModal = ({
             <SwapTokenDirection assets={[base, counter]} />
             <DescriptionRow>
                 <span>You give</span>
-                <BoltText>
+                <span>
                     {formatBalance(Number(baseAmount))} {base.code}
-                </BoltText>
+                </span>
             </DescriptionRow>
             <DescriptionRow>
                 <span>You get (estimate)</span>
-                <BoltText>
+                <span>
                     {formatBalance(Number(counterAmount))} {counter.code}
-                </BoltText>
+                </span>
             </DescriptionRow>
             <DescriptionRow>
                 <span>Exchange rate</span>
@@ -304,10 +296,8 @@ const SwapConfirmModal = ({
                     })}
                 </Pools>
             )}
-
-            <Divider />
             <StickyButtonWrapper>
-                <Button fullWidth isBig pending={swapPending} onClick={() => swap()}>
+                <Button fullWidth isBig pending={swapPending} isRounded onClick={() => swap()}>
                     Confirm Swap
                 </Button>
             </StickyButtonWrapper>
