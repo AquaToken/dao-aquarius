@@ -18,19 +18,16 @@ import { ModalService, SorobanService, ToastService } from 'services/globalServi
 import { ModalProps } from 'types/modal';
 import { SorobanToken, Token, TokenType } from 'types/token';
 
-import { flexRowSpaceBetween, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import AssetLogo from 'basics/AssetLogo';
 import Button from 'basics/buttons/Button';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
 import { ModalDescription, ModalTitle, ModalWrapper, StickyButtonWrapper } from 'basics/ModalAtoms';
 
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'styles/mixins';
-import { Breakpoints, COLORS } from 'styles/style-constants';
-
 import SwapTokenDirection from 'components/SwapTokenDirection';
+
+import { flexRowSpaceBetween, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import SwapSuccessModal from 'pages/swap/components/SwapSuccessModal/SwapSuccessModal';
 
