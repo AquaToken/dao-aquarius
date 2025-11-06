@@ -22,8 +22,8 @@ import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 import AccountBlock from 'components/AccountBlock';
 
-import { respondDown } from '../mixins';
-import { Breakpoints } from '../styles';
+import { respondDown } from 'styles/mixins';
+import { Breakpoints } from 'styles/style-constants';
 
 interface Props {
     publicKey: string;

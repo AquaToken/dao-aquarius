@@ -19,9 +19,6 @@ import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-
 import { StellarService, ToastService } from 'services/globalServices';
 import { StellarEvents } from 'services/stellar/events/events';
 
-import { flexRowSpaceBetween, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import Info from 'assets/icons/status/icon-info-16.svg';
 
 import Button from 'basics/buttons/Button';
@@ -30,6 +27,9 @@ import PageLoader from 'basics/loaders/PageLoader';
 import { ProgressLine } from 'basics/progress';
 import Table, { CellAlign } from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import { flexRowSpaceBetween, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { ExternalLinkStyled, Header, Section, Title } from '../SdexRewards/SdexRewards';
 import { Empty } from '../YourVotes/YourVotes';

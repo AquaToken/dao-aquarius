@@ -23,11 +23,12 @@ import WalletConnectLogo from 'assets/wallets/wallet-connect-logo.svg';
 import Label from 'basics/Label';
 import { ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
+
 import LoginWithPublic from './LoginWithPublic';
 import LoginWithSecret from './LoginWithSecret';
 
-import { respondDown } from '../../mixins';
-import { Breakpoints, COLORS } from '../../styles';
 import GetLobstrExtensionModal from '../GetLobstrExtensionModal';
 import LedgerLogin from '../ledger/LedgerLogin';
 

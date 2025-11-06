@@ -15,8 +15,8 @@ import { IconFail, IconPending, IconSuccess } from 'basics/icons';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
-import { flexAllCenter, respondDown } from '../../mixins';
-import { Breakpoints, COLORS } from '../../styles';
+import { flexAllCenter, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 enum TX_STATUSES {
     pending = 'pending',

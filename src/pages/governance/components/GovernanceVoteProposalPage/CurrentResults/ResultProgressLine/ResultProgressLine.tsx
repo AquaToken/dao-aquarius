@@ -3,11 +3,11 @@ import styled, { css } from 'styled-components';
 
 import { formatBalance } from 'helpers/format-number';
 
-import { flexAllCenter } from 'web/mixins';
-import { COLORS } from 'web/styles';
-
 import Fail from 'assets/icons/status/fail-red.svg';
 import Success from 'assets/icons/status/success.svg';
+
+import { flexAllCenter } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 import { SimpleProposalResultsLabels } from '../../../../pages/GovernanceVoteProposalPage';
 

@@ -1,6 +1,6 @@
 import styled, { keyframes, css } from 'styled-components';
 
-import { COLORS } from 'web/styles';
+import { COLORS } from 'styles/style-constants';
 
 type LiveIndicatorProps = {
     size?: number;

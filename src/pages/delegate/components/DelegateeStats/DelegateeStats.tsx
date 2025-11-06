@@ -20,11 +20,9 @@ import { ModalService } from 'services/globalServices';
 
 import { Delegatee, DelegateeVote } from 'types/delegate';
 
-import { cardBoxShadow, customScroll, flexAllCenter, flexColumn, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 import DelegateClaimModal from 'web/modals/DelegateClaimModal';
 import DelegateModal from 'web/modals/DelegateModal';
-import { Breakpoints, COLORS } from 'web/styles';
 
 import Discord from 'assets/community/discord.svg';
 import Twitter from 'assets/community/twitter.svg';
@@ -36,6 +34,9 @@ import { Button } from 'basics/buttons';
 import { ToggleGroup } from 'basics/inputs';
 import { PageLoader } from 'basics/loaders';
 import { CircularProgress } from 'basics/progress';
+
+import { cardBoxShadow, customScroll, flexAllCenter, flexColumn, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { getProposalsRequest, PROPOSAL_FILTER } from 'pages/governance/api/api';
 import { MarketKey } from 'pages/vote/api/types';

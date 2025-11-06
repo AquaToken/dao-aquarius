@@ -5,7 +5,7 @@ import { formatBalance } from 'helpers/format-number';
 
 import IceSymbol from 'assets/icons/small-icons/icon-ice-symbol-10.svg';
 
-import { COLORS } from '../styles';
+import { COLORS } from 'styles/style-constants';
 
 const Container = styled.div<{ $color: string }>`
     display: flex;

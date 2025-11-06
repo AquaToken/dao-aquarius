@@ -6,15 +6,15 @@ import { MainRoutes } from 'constants/routes';
 
 import { QuestTaskStatus, TaskName, TaskStatus as TaskStatusType } from 'types/quest';
 
-import { flexAllCenter, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import Task1 from 'assets/quest-page/quest-task-1.png';
 import Task2 from 'assets/quest-page/quest-task-2.png';
 import Task3 from 'assets/quest-page/quest-task-3.png';
 import Task4 from 'assets/quest-page/quest-task-4.png';
 
 import Question from 'components/Question';
+
+import { flexAllCenter, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import TaskStatus from 'pages/quest/TaskStatus/TaskStatus';
 

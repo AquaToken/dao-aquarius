@@ -11,15 +11,15 @@ import { useUpdateIndex } from 'hooks/useUpdateIndex';
 
 import { PoolBalance } from 'types/amm';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import LinkIcon from 'assets/icons/nav/icon-external-link-16.svg';
 
 import PageLoader from 'basics/loaders/PageLoader';
 import Pagination from 'basics/Pagination';
 
 import PublicKeyWithIcon from 'components/PublicKeyWithIcon';
+
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { Empty } from 'pages/profile/YourVotes/YourVotes';
 

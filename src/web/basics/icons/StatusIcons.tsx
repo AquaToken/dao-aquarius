@@ -1,12 +1,12 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { cardBoxShadow, flexAllCenter } from 'web/mixins';
-import { COLORS } from 'web/styles';
-
 import Fail from 'assets/icons/status/fail-red.svg';
 import Pending from 'assets/icons/status/pending.svg';
 import Success from 'assets/icons/status/success.svg';
+
+import { cardBoxShadow, flexAllCenter } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 const IconBlock = styled.div<{ $isBig?: boolean }>`
     height: ${({ $isBig }) => ($isBig ? '5.6rem' : '4rem')};

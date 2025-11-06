@@ -3,10 +3,10 @@ import styled from 'styled-components';
 
 import { AmmRoutes } from 'constants/routes';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import RightIcon from 'assets/icons/arrows/arrow-alt2-16.svg';
+
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const Container = styled.div`
     width: 25%;

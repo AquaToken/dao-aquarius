@@ -8,10 +8,10 @@ import { StellarService } from 'services/globalServices';
 
 import { ClassicToken } from 'types/token';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import DotsLoader from 'basics/loaders/DotsLoader';
+
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const Details = styled.div`
     display: flex;

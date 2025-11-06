@@ -5,13 +5,13 @@ import { ModalService } from 'services/globalServices';
 
 import { Token } from 'types/token';
 
-import { noSelect, textEllipsis } from 'web/mixins';
-import { COLORS } from 'web/styles';
-
 import Arrow from 'assets/icons/arrows/arrow-down-16.svg';
 
 import AssetPickerModal from 'basics/asset-pickers/AssetPickerModal';
 import AssetLogo from 'basics/AssetLogo';
+
+import { noSelect, textEllipsis } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 const Container = styled.div<{ $disabled?: boolean }>`
     display: flex;

@@ -2,8 +2,8 @@ import * as React from 'react';
 import { forwardRef, RefObject, useLayoutEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import { textEllipsis } from 'web/mixins';
-import { COLORS } from 'web/styles';
+import { textEllipsis } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 const InputWrapper = styled.div`
     position: relative;

@@ -1,10 +1,10 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { cardBoxShadow, flexAllCenter } from 'web/mixins';
-import { COLORS } from 'web/styles';
-
 import ArrowRight from 'assets/icons/arrows/arrow-right-16.svg';
+
+import { cardBoxShadow, flexAllCenter } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 const FloatingButtonBody = styled.button`
     position: sticky;

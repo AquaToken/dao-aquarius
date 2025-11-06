@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { COLORS } from 'web/styles';
+import { COLORS } from 'styles/style-constants';
 
 const BlankButton = styled.button.attrs<{ type?: 'button' | 'submit' | 'reset'; as?: string }>(
     ({ type, as }) => ({

@@ -17,10 +17,10 @@ import { BlankInput } from 'basics/inputs';
 import { DotsLoader } from 'basics/loaders';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
-import PercentButtons from 'pages/swap/components/SwapForm/PercentButtons/PercentButtons';
+import { respondDown, textEllipsis } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
-import { respondDown, textEllipsis } from '../../mixins';
-import { Breakpoints, COLORS } from '../../styles';
+import PercentButtons from 'pages/swap/components/SwapForm/PercentButtons/PercentButtons';
 
 const Container = styled.div<{ $isEmbedded?: boolean }>`
     display: flex;

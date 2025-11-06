@@ -21,9 +21,6 @@ import { PoolExtended } from 'types/amm';
 import { ModalProps } from 'types/modal';
 import { Token, TokenType } from 'types/token';
 
-import { flexAllCenter } from 'web/mixins';
-import { COLORS } from 'web/styles';
-
 import Asset from 'basics/Asset';
 import Button from 'basics/buttons/Button';
 import Market from 'basics/Market';
@@ -34,7 +31,10 @@ import {
     InfoRow,
     Label,
     Value,
-} from 'pages/bribes/components/AddBribePage/ConfirmBribeModal/ConfirmBribeModal';
+} from 'modals/ConfirmBribeModal/ConfirmBribeModal.styled';
+
+import { flexAllCenter } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 const PairBlock = styled.div`
     ${flexAllCenter};

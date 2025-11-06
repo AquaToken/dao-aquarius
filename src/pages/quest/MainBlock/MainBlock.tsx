@@ -1,12 +1,12 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { commonMaxWidth, flexAllCenter, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import Present from 'assets/icons/objects/icon-present.svg';
 import Pending from 'assets/icons/status/pending-alt-32.svg';
 import Bg from 'assets/quest-page/quests-page-bg.svg';
+
+import { commonMaxWidth, flexAllCenter, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import AnimatedBorderedText from 'pages/quest/AnimatedBorderedText/AnimatedBorderedText';
 

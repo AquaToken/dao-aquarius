@@ -29,9 +29,6 @@ import { PoolExtended, PoolIncentives } from 'types/amm';
 import { Asset } from 'types/stellar';
 import { SorobanToken, TokenType } from 'types/token';
 
-import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import ArrowLeft from 'assets/icons/arrows/arrow-left-16.svg';
 
 import AssetLogo from 'basics/AssetLogo';
@@ -44,6 +41,9 @@ import Market from 'basics/Market';
 
 import MigrateToSorobanBanner from 'components/MigrateToSorobanBanner';
 import NoTrustline from 'components/NoTrustline';
+
+import { commonMaxWidth, flexAllCenter, flexRowSpaceBetween, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import LiquidityChart from '../components/LiquidityChart/LiquidityChart';
 import PoolEvents from '../components/PoolEvents/PoolEvents';

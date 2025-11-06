@@ -23,9 +23,6 @@ import { StellarService, ToastService } from 'services/globalServices';
 import { ModalProps } from 'types/modal';
 import { ClassicToken } from 'types/token';
 
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import CloseIcon from 'assets/icons/nav/icon-close-alt-16.svg';
 import DIce from 'assets/tokens/dice-logo.svg';
 import Ice from 'assets/tokens/ice-logo.svg';
@@ -38,6 +35,9 @@ import Select, { Option } from 'basics/inputs/Select';
 import { ExternalLink } from 'basics/links';
 import Market from 'basics/Market';
 import { ModalDescription, ModalTitle, ModalWrapper, StickyButtonWrapper } from 'basics/ModalAtoms';
+
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import DelegateBlock from 'pages/vote/components/MainPage/VoteModals/DelegateBlock/DelegateBlock';
 

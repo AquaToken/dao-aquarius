@@ -18,12 +18,12 @@ import { StellarService, ToastService } from 'services/globalServices';
 
 import { ModalProps } from 'types/modal';
 
-import { flexRowSpaceBetween } from 'web/mixins';
-import { COLORS } from 'web/styles';
-
 import Alert from 'basics/Alert';
 import Button from 'basics/buttons/Button';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
+
+import { flexRowSpaceBetween } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 import { checkProposalStatus, createProposal, editProposal } from '../../../api/api';
 import { Proposal } from '../../../api/types';

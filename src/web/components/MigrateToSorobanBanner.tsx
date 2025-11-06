@@ -14,9 +14,10 @@ import Soroban from 'assets/soroban.svg';
 
 import Button from 'basics/buttons/Button';
 
-import { respondDown } from '../mixins';
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
+
 import MigrateLiquidityStep1 from '../modals/migrate-liquidity/MigrateLiquidityStep1';
-import { Breakpoints, COLORS } from '../styles';
 
 const Container = styled.div`
     display: flex;

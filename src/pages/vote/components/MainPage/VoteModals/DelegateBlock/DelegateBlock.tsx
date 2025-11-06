@@ -1,12 +1,12 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { flexColumn } from 'web/mixins';
-import { COLORS } from 'web/styles';
-
 import Logo from 'assets/delegate/delegate-promo-small.svg';
 
 import { ExternalLink } from 'basics/links';
+
+import { flexColumn } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 const Container = styled.div`
     width: 100%;

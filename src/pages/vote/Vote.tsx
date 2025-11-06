@@ -6,13 +6,14 @@ import { VoteRoutes } from 'constants/routes';
 
 import { ModalService } from 'services/globalServices';
 
-import { respondDown } from 'web/mixins';
 import VotingPurposeModal, { SHOW_PURPOSE_ALIAS } from 'web/modals/alerts/VotingPurposeModal';
-import { Breakpoints } from 'web/styles';
 
 import BG from 'assets/vote-page/purpose-modal-background.svg';
 
 import NotFoundPage from 'components/NotFoundPage';
+
+import { respondDown } from 'styles/mixins';
+import { Breakpoints } from 'styles/style-constants';
 
 const MainPage = lazy(() => import('./components/MainPage/MainPage'));
 

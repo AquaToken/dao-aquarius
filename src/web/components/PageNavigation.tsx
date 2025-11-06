@@ -3,8 +3,8 @@ import styled from 'styled-components';
 
 import { useActiveAnchorIndex } from 'hooks/useIsOnViewport';
 
-import { cardBoxShadow, contentWithSidebar, respondDown } from '../mixins';
-import { Breakpoints, COLORS } from '../styles';
+import { cardBoxShadow, contentWithSidebar, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const NavPanel = styled.div`
     ${contentWithSidebar};

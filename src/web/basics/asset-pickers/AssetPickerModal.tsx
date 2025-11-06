@@ -19,13 +19,13 @@ import { StellarService } from 'services/globalServices';
 import { ModalProps } from 'types/modal';
 import { ClassicToken, Token, TokenType } from 'types/token';
 
-import { customScroll, respondDown, textEllipsis } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import Asset from 'basics/Asset';
 import { Input } from 'basics/inputs';
 import { CircleLoader, PageLoader } from 'basics/loaders';
 import { ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
+
+import { customScroll, respondDown, textEllipsis } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const StyledInput = styled(Input)`
     margin-top: 2.4rem;

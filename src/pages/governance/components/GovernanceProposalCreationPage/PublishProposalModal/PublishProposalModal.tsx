@@ -19,14 +19,14 @@ import { StellarService, ToastService } from 'services/globalServices';
 
 import { ModalProps } from 'types/modal';
 
-import { flexRowSpaceBetween, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import Alert from 'basics/Alert';
 import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
 import Select, { Option } from 'basics/inputs/Select';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
+
+import { flexRowSpaceBetween, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { ProposalSimple } from 'pages/governance/api/types';
 

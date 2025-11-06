@@ -6,13 +6,14 @@ import { convertLocalDateToUTCIgnoringTimezone, getDateString } from 'helpers/da
 import { formatBalance } from 'helpers/format-number';
 import { createAsset } from 'helpers/token';
 
-import { COLORS } from 'web/styles';
+import { UpcomingBribe } from 'types/bribes';
 
 import Asset from 'basics/Asset';
 import PageLoader from 'basics/loaders/PageLoader';
 import Table, { CellAlign } from 'basics/Table';
 
-import { UpcomingBribe } from 'pages/bribes/api/types';
+import { COLORS } from 'styles/style-constants';
+
 import { getUpcomingBribesForMarket } from 'pages/vote/api/api';
 
 const Container = styled.div`

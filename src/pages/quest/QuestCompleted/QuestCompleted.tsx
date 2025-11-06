@@ -1,14 +1,14 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { cardBoxShadow, flexColumnCenter, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import Discord from 'assets/community/discord.svg';
 import Telegram from 'assets/community/telegram-new.svg';
 import X from 'assets/community/twitter.svg';
 
 import { Button } from 'basics/buttons';
+
+import { cardBoxShadow, flexColumnCenter, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const Container = styled.div`
     border-radius: 4.4rem;

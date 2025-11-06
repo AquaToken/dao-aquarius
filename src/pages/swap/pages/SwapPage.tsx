@@ -13,11 +13,11 @@ import useAssetsStore from 'store/assetsStore/useAssetsStore';
 
 import { Token } from 'types/token';
 
-import { respondDown } from 'web/mixins';
-import { PageContainer } from 'web/pages/commonPageStyles';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import PageLoader from 'basics/loaders/PageLoader';
+
+import { PageContainer } from 'styles/commonPageStyles';
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import SwapForm from '../components/SwapForm/SwapForm';
 

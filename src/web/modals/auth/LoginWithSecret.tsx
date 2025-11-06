@@ -13,8 +13,8 @@ import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
-import { respondDown } from '../../mixins';
-import { Breakpoints } from '../../styles';
+import { respondDown } from 'styles/mixins';
+import { Breakpoints } from 'styles/style-constants';
 
 const LoginWithSecretBody = styled.form`
     display: flex;

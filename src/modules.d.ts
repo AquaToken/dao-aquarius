@@ -26,9 +26,8 @@ declare module '*.css' {
     export default css;
 }
 declare module '*.svg' {
-    import { ComponentType } from 'react';
+    import * as React from 'react';
 
-    const Component: ComponentType<Record<string, unknown>>;
-    // noinspection all
-    export default Component;
+    const ReactComponent: React.FunctionComponent<React.SVGProps<SVGSVGElement>>;
+    export default ReactComponent;
 }

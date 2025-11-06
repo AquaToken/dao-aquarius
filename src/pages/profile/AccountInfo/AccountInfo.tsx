@@ -6,21 +6,21 @@ import { getIsTestnetEnv } from 'helpers/env';
 import { LoginTypes } from 'store/authStore/types';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import {
-    cardBoxShadow,
-    commonMaxWidth,
-    flexAllCenter,
-    flexRowSpaceBetween,
-    respondDown,
-} from 'web/mixins';
-import { Breakpoints, COLORS, FONT_SIZE } from 'web/styles';
-
 import Copy from 'assets/icons/actions/icon-copy-16.svg';
 import External from 'assets/icons/nav/icon-external-link-16.svg';
 import MyAquarius from 'assets/profile-page/my-aquarius.svg';
 
 import CopyButton from 'basics/buttons/CopyButton';
 import Identicon from 'basics/Identicon';
+
+import {
+    cardBoxShadow,
+    commonMaxWidth,
+    flexAllCenter,
+    flexRowSpaceBetween,
+    respondDown,
+} from 'styles/mixins';
+import { Breakpoints, COLORS, FONT_SIZE } from 'styles/style-constants';
 
 const Container = styled.div`
     display: flex;

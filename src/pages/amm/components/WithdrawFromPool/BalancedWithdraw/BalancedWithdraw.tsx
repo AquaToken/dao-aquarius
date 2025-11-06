@@ -18,9 +18,6 @@ import { PoolExtended, PoolIncentives } from 'types/amm';
 import { Int128Parts } from 'types/stellar';
 import { SorobanToken, TokenType } from 'types/token';
 
-import { flexRowSpaceBetween, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import AssetLogo from 'basics/AssetLogo';
 import Button from 'basics/buttons/Button';
 import { Checkbox } from 'basics/inputs';
@@ -30,6 +27,9 @@ import DotsLoader from 'basics/loaders/DotsLoader';
 import { StickyButtonWrapper } from 'basics/ModalAtoms';
 
 import NoTrustline from 'components/NoTrustline';
+
+import { flexRowSpaceBetween, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import SuccessModal from 'pages/amm/components/SuccessModal/SuccessModal';
 

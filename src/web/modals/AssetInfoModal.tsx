@@ -39,9 +39,10 @@ import Changes24 from 'components/Changes24';
 import NoTrustline from 'components/NoTrustline';
 import PublicKeyWithIcon from 'components/PublicKeyWithIcon';
 
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
+
 import CopyButton from '../basics/buttons/CopyButton';
-import { respondDown } from '../mixins';
-import { Breakpoints, COLORS } from '../styles';
 
 const Description = styled.p`
     font-size: 1.6rem;

@@ -28,10 +28,11 @@ import Identicon from 'basics/Identicon';
 
 import SocialLinks from 'components/SocialLinks';
 
-import { cardBoxShadow, respondDown } from '../mixins';
+import { cardBoxShadow, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS, Z_INDEX } from 'styles/style-constants';
+
 import ChooseLoginMethodModal from '../modals/auth/ChooseLoginMethodModal';
 import GetAquaModal from '../modals/GetAquaModal';
-import { Breakpoints, COLORS, Z_INDEX } from '../styles';
 
 const MenuBlock = styled.div`
     position: absolute;

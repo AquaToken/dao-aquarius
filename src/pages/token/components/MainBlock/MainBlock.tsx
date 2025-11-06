@@ -10,15 +10,16 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService } from 'services/globalServices';
 
-import { commonMaxWidth, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
-import { Breakpoints, COLORS } from 'web/styles';
 
 import Bg from 'assets/token-page/token-page-bg.svg';
 
 import { Button } from 'basics/buttons';
 
 import SocialLinks from 'components/SocialLinks';
+
+import { commonMaxWidth, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import AnimatedBorderedText from 'pages/token/components/AnimatedBorderedText/AnimatedBorderedText';
 import AquaPrice from 'pages/token/components/AquaPrice/AquaPrice';

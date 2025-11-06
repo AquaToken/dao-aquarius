@@ -19,8 +19,8 @@ import AssetLogo from 'basics/AssetLogo';
 
 import AssetInfoModal from 'modals/AssetInfoModal';
 
-import { flexAllCenter, respondDown } from '../mixins';
-import { Breakpoints, COLORS } from '../styles';
+import { flexAllCenter, respondDown } from 'styles//mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const ArrowRightContainer = styled.div`
     position: absolute;
