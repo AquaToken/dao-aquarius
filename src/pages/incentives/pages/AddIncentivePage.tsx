@@ -10,6 +10,7 @@ import {
     MAX_INCENTIVES_TOKENS_PER_POOL,
     MAX_TOKEN_AMOUNT,
 } from 'constants/incentives';
+import { DAY } from 'constants/intervals';
 import { IncentivesRoutes } from 'constants/routes';
 
 import { contractValueToAmount } from 'helpers/amount';
@@ -23,7 +24,7 @@ import { useDebounce } from 'hooks/useDebounce';
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { ModalService, SorobanService } from 'services/globalServices';
+import { ModalService, SorobanService, ToastService } from 'services/globalServices';
 
 import { PoolProcessed } from 'types/amm';
 import { Token } from 'types/token';
@@ -307,6 +308,18 @@ const AddIncentivePage = () => {
     }, [selectedMarket]);
 
     const onSubmit = () => {
+        if (startDay > endDay) {
+            ToastService.showErrorToast('Invalid period: start time is after the end time.');
+
+            return;
+        }
+
+        if (endDay - startDay < DAY) {
+            ToastService.showErrorToast('Invalid period: must be at least 24 hours.');
+
+            return;
+        }
+
         if (!isLogged) {
             ModalService.openModal(ChooseLoginMethodModal, {});
             return;
@@ -442,10 +455,10 @@ const AddIncentivePage = () => {
                                         calendarStartDay={1}
                                         date={startDay ? new Date(startDay).getTime() : null}
                                         onChange={res => {
-                                            setStartDay(startOfDay(res).getTime());
+                                            setStartDay(res);
                                         }}
-                                        dateFormat="MM.dd.yyyy"
-                                        placeholderText="MM.DD.YYYY"
+                                        dateFormat="MM.dd.yyyy HH:mm"
+                                        placeholderText="MM.DD.YYYY hh:mm"
                                         disabledKeyboardNavigation
                                         popperModifiers={[
                                             {
@@ -457,6 +470,8 @@ const AddIncentivePage = () => {
                                         ]}
                                         minDate={nextDay}
                                         fullWidth
+                                        showTimeSelect
+                                        timeIntervals={60}
                                     />
                                     <DashIcon />
 
@@ -464,13 +479,17 @@ const AddIncentivePage = () => {
                                         customInput={<InputStyled label="End date" />}
                                         date={endDay ? new Date(endDay).getTime() : null}
                                         onChange={res => {
-                                            setEndDay(startOfDay(res).getTime());
+                                            setEndDay(res);
                                         }}
+                                        dateFormat="MM.dd.yyyy HH:mm"
+                                        placeholderText="MM.DD.YYYY hh:mm"
                                         calendarStartDay={1}
                                         disabledKeyboardNavigation
                                         disabled={!startDay}
                                         minDate={addDays(startDay, config.duration / 24 / 60 / 60)}
                                         fullWidth
+                                        showTimeSelect
+                                        timeIntervals={60}
                                     />
                                 </FormRow>
 

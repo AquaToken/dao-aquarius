@@ -1,5 +1,6 @@
 import { createGlobalStyle } from 'styled-components';
 
+import { customScroll, flexAllCenter } from './mixins';
 import { COLORS, FONT_FAMILY } from './styles';
 
 export const DatePickerStyles = createGlobalStyle`
@@ -9,7 +10,7 @@ export const DatePickerStyles = createGlobalStyle`
     div.react-datepicker {
         font-family: ${FONT_FAMILY.roboto};
         font-size: 1.6rem;
-        background-color: ${COLORS.white};
+        background-color: ${COLORS.gray100};
         color: ${COLORS.textTertiary};
         border: none;
         border-radius: 0.5rem;
@@ -21,6 +22,7 @@ export const DatePickerStyles = createGlobalStyle`
     div.react-datepicker__header {
         background-color: ${COLORS.white};
         border-bottom: none;
+        border-right: 1px solid ${COLORS.gray100};
     }
     
     div.react-datepicker-popper {
@@ -66,8 +68,39 @@ export const DatePickerStyles = createGlobalStyle`
         margin: 0;
         border-right: 1px solid ${COLORS.gray100};
         border-bottom: 1px solid ${COLORS.gray100};
-  }
+         background-color: ${COLORS.white};
+
+        &--selected {
+            background-color: ${COLORS.purple500};
+        }
+        
+    }
     div.react-datepicker__day--outside-month {
         color: ${COLORS.gray200};
     }
+    
+    div.react-datepicker__time-container {
+        margin-left: 0.5rem;
+        border-left: none;
+    }
+    
+    div.react-datepicker__header--time {
+        border-bottom: 0.1rem solid ${COLORS.gray100};
+        
+        
+        div.react-datepicker-time__header {
+            font-size: 1.6rem;
+            font-weight: 400;
+        }
+    }
+    
+    li.react-datepicker__time-list-item {
+        font-size: 1.6rem;
+        line-height: 1.8rem;
+        border-bottom: 0.1rem solid ${COLORS.gray100};
+        height: 3.6rem!important;
+        ${flexAllCenter};
+    }
+
+    ${customScroll};
 `;

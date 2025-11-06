@@ -121,6 +121,10 @@ export const FormWrap = styled.div`
     flex-direction: column;
     margin-top: -7.7rem;
     ${flexAllCenter};
+
+    ${respondDown(Breakpoints.md)`
+        width: 100%;
+    `}
 `;
 
 export const Form = styled.form`
