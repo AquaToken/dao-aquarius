@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { getMarketPair } from 'api/bribes';
 
@@ -101,17 +101,6 @@ export const useBribeForm = () => {
         [isLogged],
     );
 
-    /** Increment/decrement duration safely */
-    const adjustDuration = useCallback(
-        (delta: number) => {
-            const next = Math.floor(Number(duration) + delta);
-            if (Number.isNaN(next) || next <= 1) return setDuration('1');
-            if (next > maxDuration) return setDuration(maxDuration.toString());
-            setDuration(next.toString());
-        },
-        [duration, maxDuration],
-    );
-
     /** Automatically compute end date based on start + duration */
     useEffect(() => {
         if (!startDate || !Number(duration) || Number(duration) > maxDuration) return;
@@ -134,7 +123,9 @@ export const useBribeForm = () => {
     };
 
     /** Confirm creation of bribe (opens modal) */
-    const onSubmit = () => {
+    const onSubmit = (e: SubmitEvent) => {
+        console.log('submit', e);
+        e.preventDefault();
         const modalProps = {
             base,
             counter,
@@ -177,7 +168,6 @@ export const useBribeForm = () => {
         setEndDate,
         setSelectedDate,
         setDuration,
-        adjustDuration,
         createPair,
         onSubmit,
         resetForm,

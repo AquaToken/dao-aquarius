@@ -44,7 +44,7 @@ const AddBribePage = () => {
 
             <FormWrap>
                 <FormPageContentWrap>
-                    <Form onSubmit={e => e.preventDefault()}>
+                    <Form onSubmit={form.onSubmit}>
                         <SelectMarketStep {...form} />
                         {form.step >= 1 && <SetRewardStep {...form} />}
                         {form.step === 2 && <SetPeriodStep {...form} />}

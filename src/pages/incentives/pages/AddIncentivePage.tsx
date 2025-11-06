@@ -64,6 +64,8 @@ import {
 } from 'styles/sharedFormPage.styled';
 import { Breakpoints, COLORS, FONT_SIZE } from 'styles/style-constants';
 
+import { DurationInput } from '../../../web/pages/bribes/pages/AddBribePage/AddBribePage.styled';
+
 const OptionsRow = styled.div`
     ${flexRowSpaceBetween};
     width: 100%;
@@ -140,6 +142,12 @@ const TooltipInner = styled.span`
     `}
 `;
 
+const DatePickerStyled = styled(DatePicker)`
+    input {
+        padding-right: 0;
+    }
+`;
+
 enum Step {
     'market',
     'amount',
@@ -164,6 +172,7 @@ const AddIncentivePage = () => {
 
     const [startDay, setStartDay] = useState<number | null>(null);
     const [endDay, setEndDay] = useState<number | null>(null);
+    const [duration, setDuration] = useState<string>('1');
 
     const { processNewAssets } = useAssetsStore();
 
@@ -211,6 +220,31 @@ const AddIncentivePage = () => {
             setXDR(res.swap_chain_xdr);
         });
     }, [debouncedAmount, rewardToken]);
+
+    const onDurationChange = (value: string) => {
+        setDuration(value);
+
+        if (startDay) {
+            const newEndDay = startDay + DAY * Number(value);
+            setEndDay(newEndDay);
+        }
+    };
+
+    const onStartDayChange = (value: number) => {
+        setStartDay(value);
+
+        const newEndDay = value + DAY * Number(duration);
+
+        setEndDay(newEndDay);
+    };
+
+    const onEndDayChange = (value: number) => {
+        setEndDay(value);
+
+        const newDuration = Math.round((value - startDay) / DAY);
+
+        setDuration(newDuration.toString());
+    };
 
     const OPTIONS = useMemo(() => {
         if (!markets) return [];
@@ -307,6 +341,12 @@ const AddIncentivePage = () => {
     }, [selectedMarket]);
 
     const onSubmit = () => {
+        if (startDay < Date.now()) {
+            ToastService.showErrorToast('Invalid period: start time cannot be in the past.');
+
+            return;
+        }
+
         if (startDay > endDay) {
             ToastService.showErrorToast('Invalid period: start time is after the end time.');
 
@@ -328,8 +368,8 @@ const AddIncentivePage = () => {
             pool: selectedMarket,
             rewardToken,
             amountPerDay: amount,
-            startDate: convertUTCToLocalDateIgnoringTimezone(new Date(startDay)).getTime(),
-            endDate: convertUTCToLocalDateIgnoringTimezone(new Date(endDay)).getTime(),
+            startDate: startDay,
+            endDate: endDay,
             swapChainedXdr: xdr,
         });
     };
@@ -448,12 +488,17 @@ const AddIncentivePage = () => {
                                     automatically.
                                 </FormSectionDescription>
                                 <FormRow>
-                                    <DatePicker
+                                    <DurationInput
+                                        label="Duration (days)"
+                                        value={duration}
+                                        setValue={onDurationChange}
+                                    />
+                                    <DatePickerStyled
                                         customInput={<InputStyled label="Start date" />}
                                         calendarStartDay={1}
                                         date={startDay ? new Date(startDay).getTime() : null}
                                         onChange={res => {
-                                            setStartDay(res);
+                                            onStartDayChange(res as number);
                                         }}
                                         dateFormat="MM.dd.yyyy HH:mm"
                                         placeholderText="MM.DD.YYYY hh:mm"
@@ -473,11 +518,11 @@ const AddIncentivePage = () => {
                                     />
                                     <DashIcon />
 
-                                    <DatePicker
+                                    <DatePickerStyled
                                         customInput={<InputStyled label="End date" />}
                                         date={endDay ? new Date(endDay).getTime() : null}
                                         onChange={res => {
-                                            setEndDay(res);
+                                            onEndDayChange(res as number);
                                         }}
                                         dateFormat="MM.dd.yyyy HH:mm"
                                         placeholderText="MM.DD.YYYY hh:mm"
@@ -486,8 +531,6 @@ const AddIncentivePage = () => {
                                         disabled={!startDay}
                                         minDate={addDays(startDay, config.duration / 24 / 60 / 60)}
                                         fullWidth
-                                        showTimeSelect
-                                        timeIntervals={60}
                                     />
                                 </FormRow>
 

@@ -13,14 +13,7 @@ import {
     DashIcon,
 } from 'styles/sharedFormPage.styled';
 
-import {
-    NextButton,
-    DurationButton,
-    DurationInput,
-    DateEndInput,
-    MinusIcon,
-    PlusIcon,
-} from '../AddBribePage.styled';
+import { NextButton, DateEndInput, DurationInput } from '../AddBribePage.styled';
 import { UseBribeFormReturn } from '../hooks/useBribeForm';
 
 type Props = Pick<
@@ -32,10 +25,8 @@ type Props = Pick<
     | 'setStartDate'
     | 'setSelectedDate'
     | 'setDuration'
-    | 'adjustDuration'
     | 'maxDuration'
     | 'minDate'
-    | 'onSubmit'
     | 'base'
     | 'counter'
     | 'rewardAsset'
@@ -50,10 +41,8 @@ export const SetPeriodStep: React.FC<Props> = ({
     setStartDate,
     setSelectedDate,
     setDuration,
-    adjustDuration,
     maxDuration,
     minDate,
-    onSubmit,
     base,
     counter,
     rewardAsset,
@@ -69,24 +58,11 @@ export const SetPeriodStep: React.FC<Props> = ({
 
         <FormRow>
             <DurationInput
-                label="Duration (weeks)"
-                placeholder="1"
-                prefixCustom={
-                    <DurationButton onClick={() => adjustDuration(-1)}>
-                        <MinusIcon />
-                    </DurationButton>
-                }
-                postfix={
-                    <DurationButton onClick={() => adjustDuration(1)}>
-                        <PlusIcon />
-                    </DurationButton>
-                }
                 value={duration}
-                onChange={({ target }) => setDuration(target.value)}
-                style={{ padding: '0rem 6rem' }}
-                isCenterAligned
-                required
-                pattern={maxDuration === 5 ? '[1-5]' : '[0-9]$|^[1-9][0-9]$|^(100)$'}
+                setValue={setDuration}
+                label="Duration (weeks)"
+                required={true}
+                maxValue={maxDuration}
             />
 
             <DatePicker
@@ -118,8 +94,8 @@ export const SetPeriodStep: React.FC<Props> = ({
 
         <NextButton
             isBig
+            type="submit"
             fullWidth
-            onClick={onSubmit}
             disabled={
                 !base ||
                 !counter ||
