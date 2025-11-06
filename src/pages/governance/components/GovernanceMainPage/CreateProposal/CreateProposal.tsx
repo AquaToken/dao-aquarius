@@ -12,14 +12,15 @@ import useAuthStore from 'store/authStore/useAuthStore';
 import { ModalService } from 'services/globalServices';
 
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
-import { COLORS } from 'web/styles';
 
 import AquaLogo from 'assets/aqua/aqua-logo.svg';
 
 import Button from 'basics/buttons/Button';
 import { ExternalLink } from 'basics/links';
 
-import { cardBoxShadow } from '../../../../../web/mixins';
+import { cardBoxShadow } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
+
 import { APPROVED_PROPOSAL_REWARD } from '../../../pages/GovernanceMainPage';
 
 const Container = styled.div`

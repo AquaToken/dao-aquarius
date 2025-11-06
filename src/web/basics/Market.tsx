@@ -17,9 +17,7 @@ import { ModalService } from 'services/globalServices';
 
 import { ClassicToken, Token, TokenType } from 'types/token';
 
-import { flexAllCenter, respondDown } from 'web/mixins';
 import AssetInfoModal from 'web/modals/AssetInfoModal';
-import { Breakpoints, COLORS } from 'web/styles';
 
 import Arrow from 'assets/icons/arrows/arrow-alt2-16.svg';
 import External from 'assets/icons/nav/icon-external-link-16.svg';
@@ -40,6 +38,9 @@ import {
     RewardLabel,
     StablePoolLabel,
 } from 'components/Labels';
+
+import { flexAllCenter, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const Wrapper = styled.div<{
     $verticalDirections?: boolean;

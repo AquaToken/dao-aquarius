@@ -7,15 +7,15 @@ import { AQUA_DOCS_AUDIT, AQUA_DOCS_URL } from 'constants/urls';
 
 import { normalizePath } from 'helpers/url';
 
-import { commonSectionPaddings, flexAllCenter, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS, MAX_WIDTHS } from 'web/styles';
-
 import AquaLogo from 'assets/aqua/aqua-logo-text.svg';
 import Audit from 'assets/icons/objects/icon-audit-16.svg';
 import Docs from 'assets/icons/objects/icon-docs-16x17.svg';
 import Dune from 'assets/orgs/duneLogoCircle.svg';
 
 import { BlankRouterLink } from 'basics/links';
+
+import { commonSectionPaddings, flexAllCenter, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS, MAX_WIDTHS } from 'styles/style-constants';
 
 const FooterBlock = styled.footer`
     ${commonSectionPaddings};

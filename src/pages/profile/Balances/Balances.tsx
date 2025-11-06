@@ -16,9 +16,6 @@ import { StellarEvents } from 'services/stellar/events/events';
 
 import { ClaimableBalance } from 'types/stellar';
 
-import { cardBoxShadow, commonMaxWidth, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import Aqua from 'assets/aqua/aqua-logo.svg';
 import Withdraw from 'assets/icons/actions/icon-withdraw-16.svg';
 import PlusIcon from 'assets/icons/nav/icon-plus-16.svg';
@@ -29,6 +26,9 @@ import Lumen from 'assets/tokens/xlm-logo.svg';
 import { Button } from 'basics/buttons';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import { cardBoxShadow, commonMaxWidth, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const Container = styled.div`
     ${commonMaxWidth};

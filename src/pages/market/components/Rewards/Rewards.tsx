@@ -6,10 +6,10 @@ import { formatBalance } from 'helpers/format-number';
 
 import { Asset } from 'types/stellar';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import PageLoader from 'basics/loaders/PageLoader';
+
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { getRewards } from 'pages/vote/api/api';
 

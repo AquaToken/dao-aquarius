@@ -6,12 +6,12 @@ import { MainRoutes } from 'constants/routes';
 
 import { useScrollAnimation } from 'hooks/useScrollAnimation';
 
-import { containerScrollAnimation, slideUpSoftAnimation } from 'web/animations';
-import { commonMaxWidth, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import LP from 'assets/token-page/landing-about-amm-80.svg';
 import Bribes from 'assets/token-page/landing-about-bribes.svg';
+
+import { containerScrollAnimation, slideUpSoftAnimation } from 'styles/animations';
+import { commonMaxWidth, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 /* -------------------------------------------------------------------------- */
 /*                                   Styles                                   */

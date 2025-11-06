@@ -21,9 +21,6 @@ import { StellarEvents } from 'services/stellar/events/events';
 import { Delegatee } from 'types/delegate';
 import { ModalProps } from 'types/modal';
 
-import { customScroll, flexAllCenter, flexColumnCenter, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import { Button } from 'basics/buttons';
 import Identicon from 'basics/Identicon';
 import { Checkbox } from 'basics/inputs';
@@ -32,6 +29,9 @@ import { ModalTitle, ModalWrapper, StickyButtonWrapper } from 'basics/ModalAtoms
 import Table, { CellAlign } from 'basics/Table';
 
 import PublicKeyWithIcon from 'components/PublicKeyWithIcon';
+
+import { customScroll, flexAllCenter, flexColumnCenter, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { GOV_ICE, UP_ICE } from 'pages/vote/components/MainPage/MainPage';
 

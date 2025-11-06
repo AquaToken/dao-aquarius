@@ -7,8 +7,8 @@ import Logo from 'assets/delegate/delegate-promo-small.svg';
 
 import { ExternalLink } from 'basics/links';
 
-import { flexColumn, respondDown } from '../mixins';
-import { Breakpoints, COLORS } from '../styles';
+import { flexColumn, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const Container = styled.div`
     display: flex;

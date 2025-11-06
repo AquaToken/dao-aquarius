@@ -7,7 +7,7 @@ import Fail from 'assets/icons/status/fail-red.svg';
 
 import AssetLogo from 'basics/AssetLogo';
 
-import { COLORS } from '../styles';
+import { COLORS } from 'styles/style-constants';
 
 const ChipsBlock = styled.div`
     display: flex;

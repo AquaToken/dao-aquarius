@@ -9,8 +9,8 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService, ToastService } from 'services/globalServices';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { CREATE_DISCUSSION_COST } from './GovernanceMainPage';
 

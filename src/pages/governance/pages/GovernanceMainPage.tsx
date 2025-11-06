@@ -11,9 +11,7 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService } from 'services/globalServices';
 
-import { commonMaxWidth, flexAllCenter, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
-import { Breakpoints, COLORS } from 'web/styles';
 
 import ArrowDown from 'assets/icons/arrows/arrow-down-16.svg';
 import BackgroundImageLeft from 'assets/vote-page/background-left.svg';
@@ -25,6 +23,9 @@ import PageLoader from 'basics/loaders/PageLoader';
 import Pagination from 'basics/Pagination';
 
 import FAQ from 'components/FAQ';
+
+import { commonMaxWidth, flexAllCenter, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { governanceQuestions } from 'pages/governance/components/GovernanceMainPage/FAQ/Questions';
 

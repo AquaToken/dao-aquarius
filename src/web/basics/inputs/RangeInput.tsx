@@ -2,8 +2,8 @@ import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import { noSelect } from 'web/mixins';
-import { COLORS, FONT_SIZE, hexWithOpacity } from 'web/styles';
+import { noSelect } from 'styles/mixins';
+import { COLORS, FONT_SIZE, hexWithOpacity } from 'styles/style-constants';
 
 // ---------- Sizes ----------
 type Size = 'small' | 'medium' | 'large';

@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { ExternalLink } from 'basics/links';
 
-import { COLORS } from '../styles';
+import { COLORS } from 'styles/style-constants';
 
 const Container = styled.div`
     max-width: 36.6rem;

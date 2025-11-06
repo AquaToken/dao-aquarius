@@ -11,8 +11,6 @@ import { ToastService } from 'services/globalServices';
 import { isValidPublicKey } from 'services/stellar/utils/validators';
 
 import CircleButton from 'web/basics/buttons/CircleButton';
-import { cardBoxShadow, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS, FONT_SIZE } from 'web/styles';
 
 import ArrowLeft from 'assets/icons/arrows/arrow-left-16.svg';
 
@@ -20,6 +18,9 @@ import { Button } from 'basics/buttons';
 import { Checkbox, Input, TextArea } from 'basics/inputs';
 import ImageInput from 'basics/inputs/ImageInput';
 import { BlankExternalLink } from 'basics/links';
+
+import { cardBoxShadow, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS, FONT_SIZE } from 'styles/style-constants';
 
 const Container = styled.main`
     flex: 1 0 auto;

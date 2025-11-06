@@ -3,10 +3,6 @@ import styled, { css } from 'styled-components';
 
 import { useScrollAnimation } from 'hooks/useScrollAnimation';
 
-import { containerScrollAnimation, slideUpSoftAnimation } from 'web/animations';
-import { commonMaxWidth, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import CMC from 'assets/orgs/coin-market-cap.svg';
 import Coingecko from 'assets/orgs/coingecko.svg';
 import DefiLlama from 'assets/orgs/defillama.svg';
@@ -16,6 +12,10 @@ import Latoken from 'assets/orgs/latoken.svg';
 import Probit from 'assets/orgs/probit-logo.svg';
 import Expert from 'assets/orgs/stellar-expert.svg';
 import XT from 'assets/orgs/xt.svg';
+
+import { containerScrollAnimation, slideUpSoftAnimation } from 'styles/animations';
+import { commonMaxWidth, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import AquaLink from 'pages/token/components/AquaLinks/AquaLink/AquaLink';
 

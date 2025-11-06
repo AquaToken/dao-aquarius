@@ -24,12 +24,12 @@ import RangeInput from 'basics/inputs/RangeInput';
 import Market from 'basics/Market';
 import { ModalWrapper, ModalTitle, StickyButtonWrapper } from 'basics/ModalAtoms';
 
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
+
 import { PairContainer } from 'pages/amm/components/WithdrawFromPool/WithdrawFromPool';
 
 import MigrateLiquidityStep2 from './MigrateLiquidityStep2';
-
-import { respondDown } from '../../mixins';
-import { Breakpoints, COLORS } from '../../styles';
 
 export const Stepper = styled.div`
     font-size: 1.4rem;

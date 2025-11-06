@@ -15,8 +15,6 @@ import { useDebounce } from 'hooks/useDebounce';
 import { PoolProcessed } from 'types/amm';
 
 import Input from 'web/basics/inputs/Input';
-import { flexRowSpaceBetween, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
 
 import Search from 'assets/icons/actions/icon-search-16.svg';
 import Info from 'assets/icons/status/icon-info-16.svg';
@@ -28,6 +26,9 @@ import Market from 'basics/Market';
 import Pagination from 'basics/Pagination';
 import Table, { CellAlign } from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import { flexRowSpaceBetween, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import RewardsTokens from 'pages/amm/components/RewardsTokens/RewardsTokens';
 import TotalApy from 'pages/amm/components/TotalApy/TotalApy';

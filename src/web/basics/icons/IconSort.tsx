@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { COLORS } from 'web/styles';
+import { COLORS } from 'styles/style-constants';
 
 export const IconSort = ({
     isEnabled,

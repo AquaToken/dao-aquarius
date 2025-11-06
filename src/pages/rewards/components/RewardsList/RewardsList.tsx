@@ -18,9 +18,7 @@ import { ModalService } from 'services/globalServices';
 
 import { PoolProcessed } from 'types/amm';
 
-import { respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
-import { Breakpoints, COLORS } from 'web/styles';
 
 import Info from 'assets/icons/status/icon-info-16.svg';
 import Warning from 'assets/icons/status/warning-16.svg';
@@ -30,6 +28,9 @@ import PageLoader from 'basics/loaders/PageLoader';
 import Market from 'basics/Market';
 import Table, { CellAlign } from 'basics/Table';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const Container = styled.section`
     position: relative;

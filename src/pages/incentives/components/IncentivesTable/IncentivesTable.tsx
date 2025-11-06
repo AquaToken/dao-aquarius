@@ -12,13 +12,13 @@ import { convertDateStrToTimestamp, getDateString } from 'helpers/date';
 
 import { IncentiveProcessed } from 'types/incentives';
 
-import { EmptyList } from 'web/mixins';
-
 import Asset from 'basics/Asset';
 import { ExternalLink } from 'basics/links';
 import { PageLoader } from 'basics/loaders';
 import Market from 'basics/Market';
 import Table from 'basics/Table';
+
+import { EmptyList } from 'styles/mixins';
 
 const Wrapper = styled.div`
     padding: 2.4rem 0;

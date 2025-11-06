@@ -21,7 +21,10 @@
             "basics/*": ["web/basics/*"],
             "components/*": ["web/components/*"],
             "modals/*": ["web/modals/*"],
-            "pages/*": ["pages/*"]
+            "styles/*": ["web/styles/*"],
+
+            "pages/*": ["pages/*"],
+
         }
     }
 }

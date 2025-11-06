@@ -14,9 +14,7 @@ import { StellarEvents } from 'services/stellar/events/events';
 
 import { Asset } from 'types/stellar';
 
-import { cardBoxShadow, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
-import { Breakpoints, COLORS } from 'web/styles';
 
 import IconDown from 'assets/icons/arrows/arrow-negative-16.svg';
 import IconUp from 'assets/icons/arrows/arrow-positive-16.svg';
@@ -25,6 +23,9 @@ import Ice from 'assets/tokens/ice-logo.svg';
 
 import Button from 'basics/buttons/Button';
 import DotsLoader from 'basics/loaders/DotsLoader';
+
+import { cardBoxShadow, flexRowSpaceBetween, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { PairStats, TotalStats } from 'pages/vote/api/types';
 import { DOWN_ICE, UP_ICE } from 'pages/vote/components/MainPage/MainPage';
@@ -53,7 +54,6 @@ const Container = styled.aside`
          float: unset;
          position: relative;
          width: calc(100% - 3.2rem);
-         margin-top: 0;
          right: unset;
          margin: 1.6rem;
          box-shadow: unset;

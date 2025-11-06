@@ -18,8 +18,9 @@ import Identicon from 'basics/Identicon';
 
 import ChooseLoginMethodModal from 'modals/auth/ChooseLoginMethodModal';
 
-import { cardBoxShadow, flexAllCenter, respondDown, textEllipsis } from '../../mixins';
-import { Breakpoints, COLORS } from '../../styles';
+import { cardBoxShadow, flexAllCenter, respondDown, textEllipsis } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
+
 import AppMenu from '../AppMenu';
 
 const Wrapper = styled.div`

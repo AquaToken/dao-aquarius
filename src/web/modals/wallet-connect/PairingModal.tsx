@@ -15,8 +15,8 @@ import IconQR from 'assets/icons/small-icons/icon-qr-8.svg';
 
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
-import { flexAllCenter, respondDown } from '../../mixins';
-import { Breakpoints, COLORS } from '../../styles';
+import { flexAllCenter, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 type PairingModalParams = {
     pairings: WalletConnect.PairingTypes.Struct[];

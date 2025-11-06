@@ -4,8 +4,8 @@ import styled from 'styled-components';
 
 import { truncateString } from 'helpers/truncate-string';
 
-import { respondDown } from '../mixins';
-import { Breakpoints, COLORS } from '../styles';
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const Container = styled.div`
     display: flex;

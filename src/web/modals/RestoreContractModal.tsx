@@ -11,12 +11,12 @@ import { ToastService } from 'services/globalServices';
 import { ModalProps } from 'types/modal';
 import { Transaction } from 'types/stellar';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints } from 'web/styles';
-
 import Button from 'basics/buttons/Button';
 import { ExternalLink } from 'basics/links';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
+
+import { respondDown } from 'styles/mixins';
+import { Breakpoints } from 'styles/style-constants';
 
 const Title = styled(ModalTitle)`
     margin-top: 2.4rem;

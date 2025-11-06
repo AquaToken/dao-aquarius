@@ -14,11 +14,11 @@ import useOnClickOutside from 'hooks/useOutsideClick';
 
 import { ModalProps } from 'types/modal';
 
-import { cardBoxShadow, flexAllCenter, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS, Z_INDEX } from 'web/styles';
-
 import ArrowRight from 'assets/icons/arrows/arrow-alt2-16.svg';
 import CloseIcon from 'assets/icons/nav/icon-close-16.svg';
+
+import { cardBoxShadow, flexAllCenter, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS, Z_INDEX } from 'styles/style-constants';
 
 const ModalWrapper = styled.div`
     position: fixed;

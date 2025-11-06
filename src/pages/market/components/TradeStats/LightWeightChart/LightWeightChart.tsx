@@ -12,10 +12,10 @@ import { StellarService } from 'services/globalServices';
 
 import { ClassicToken } from 'types/token';
 
-import { flexAllCenter } from 'web/mixins';
-import { COLORS } from 'web/styles';
-
 import PageLoader from 'basics/loaders/PageLoader';
+
+import { flexAllCenter } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 const Chart = styled.div`
     display: flex;

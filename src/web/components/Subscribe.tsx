@@ -4,13 +4,12 @@ import styled, { css } from 'styled-components';
 
 import { useScrollAnimation } from 'hooks/useScrollAnimation';
 
-import { slideUpSoftAnimation, containerScrollAnimation } from 'web/animations';
-
 import Button from 'basics/buttons/Button';
 import Input from 'basics/inputs/Input';
 
-import { respondDown } from '../mixins';
-import { Breakpoints, COLORS } from '../styles';
+import { slideUpSoftAnimation, containerScrollAnimation } from 'styles/animations';
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 /* -------------------------------------------------------------------------- */
 /*                                   Styles                                   */

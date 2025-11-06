@@ -6,10 +6,10 @@ import { GovernanceRoutes } from 'constants/routes';
 
 import { getDateString } from 'helpers/date';
 
-import { flexAllCenter } from 'web/mixins';
-import { COLORS } from 'web/styles';
-
 import ExternalLinkIcon from 'assets/icons/nav/icon-external-link-16.svg';
+
+import { flexAllCenter } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 import { Proposal } from '../../../api/types';
 

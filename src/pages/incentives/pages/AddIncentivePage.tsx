@@ -29,9 +29,7 @@ import { ModalService, SorobanService, ToastService } from 'services/globalServi
 import { PoolProcessed } from 'types/amm';
 import { Token } from 'types/token';
 
-import { flexColumn, flexRowSpaceBetween, respondDown } from 'web/mixins';
 import ConfirmIncentiveModal from 'web/modals/ConfirmIncentiveModal';
-import { Breakpoints, COLORS, FONT_SIZE } from 'web/styles';
 
 import ArrowLeft from 'assets/icons/arrows/arrow-left-16.svg';
 import Fail from 'assets/icons/status/fail-red.svg';
@@ -40,7 +38,6 @@ import Success from 'assets/icons/status/success.svg';
 import Alert from 'basics/Alert';
 import AssetPicker from 'basics/asset-pickers/AssetPicker';
 import Button from 'basics/buttons/Button';
-import CircleButton from 'basics/buttons/CircleButton';
 import { DatePicker, Select } from 'basics/inputs';
 import Input from 'basics/inputs/Input';
 import { CircleLoader, PageLoader } from 'basics/loaders';
@@ -49,21 +46,23 @@ import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import ChooseLoginMethodModal from 'modals/auth/ChooseLoginMethodModal';
 
+import { PageContainer } from 'styles/commonPageStyles';
+import { flexColumn, flexRowSpaceBetween, respondDown } from 'styles/mixins';
 import {
-    Back,
-    Background,
-    Content,
-    MainBlock,
-    Title,
-    Description,
-    Form,
-    FormSection,
-    FormSectionTitle,
-    FormSectionDescription,
-    FormWrap,
-    FormRow,
     DashIcon,
-} from 'pages/bribes/pages/AddBribePage';
+    Form,
+    FormBackButton,
+    FormPageContentWrap,
+    FormPageHeaderDescription,
+    FormPageHeaderTitle,
+    FormPageHeaderWrap,
+    FormRow,
+    FormSection,
+    FormSectionDescription,
+    FormSectionTitle,
+    FormWrap,
+} from 'styles/sharedFormPage.styled';
+import { Breakpoints, COLORS, FONT_SIZE } from 'styles/style-constants';
 
 const OptionsRow = styled.div`
     ${flexRowSpaceBetween};
@@ -337,30 +336,29 @@ const AddIncentivePage = () => {
 
     if (!markets || !config) {
         return (
-            <MainBlock>
+            <PageContainer>
                 <PageLoader />
-            </MainBlock>
+            </PageContainer>
         );
     }
 
     return (
-        <MainBlock>
-            <Background>
-                <Content>
-                    <Back to={IncentivesRoutes.main}>
-                        <CircleButton label="Pool Incentives">
-                            <ArrowLeft />
-                        </CircleButton>
-                    </Back>
-                    <Title>Create Pool Incentive</Title>
-                    <Description>
+        <PageContainer>
+            <FormPageHeaderWrap>
+                <FormPageContentWrap>
+                    <FormBackButton label="Pool Incentives" to={IncentivesRoutes.main}>
+                        <ArrowLeft />
+                    </FormBackButton>
+
+                    <FormPageHeaderTitle>Create Pool Incentive</FormPageHeaderTitle>
+                    <FormPageHeaderDescription>
                         Launch a new incentive for any Aquarius pool. Select a token, amount, and
                         timeframe — rewards flow automatically to liquidity providers.
-                    </Description>
-                </Content>
-            </Background>
+                    </FormPageHeaderDescription>
+                </FormPageContentWrap>
+            </FormPageHeaderWrap>
             <FormWrap>
-                <Content>
+                <FormPageContentWrap>
                     <Form
                         onSubmit={event => {
                             event.preventDefault();
@@ -517,9 +515,9 @@ const AddIncentivePage = () => {
                             </FormSection>
                         )}
                     </Form>
-                </Content>
+                </FormPageContentWrap>
             </FormWrap>
-        </MainBlock>
+        </PageContainer>
     );
 };
 

@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
-import { customScroll, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
+import { customScroll, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 export const ModalWrapper = styled.div<{
     $isWide?: boolean;

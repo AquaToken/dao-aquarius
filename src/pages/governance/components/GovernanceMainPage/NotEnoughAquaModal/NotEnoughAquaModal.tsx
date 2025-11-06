@@ -7,12 +7,13 @@ import { ModalService } from 'services/globalServices';
 
 import { ModalProps } from 'types/modal';
 
-import { respondDown } from 'web/mixins';
 import GetAquaModal from 'web/modals/GetAquaModal';
-import { Breakpoints } from 'web/styles';
 
 import Button from 'basics/buttons/Button';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
+
+import { respondDown } from 'styles/mixins';
+import { Breakpoints } from 'styles/style-constants';
 
 const StyledButton = styled(Button)`
     margin-top: 7.2rem;

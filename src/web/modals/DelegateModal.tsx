@@ -20,9 +20,6 @@ import { Delegatee } from 'types/delegate';
 import { ModalProps } from 'types/modal';
 import { ClassicToken } from 'types/token';
 
-import { flexAllCenter, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import IconProfile from 'assets/icons/nav/icon-profile.svg';
 import Ice from 'assets/tokens/ice-logo.svg';
 
@@ -32,6 +29,9 @@ import { Input, RangeInput, Select, ToggleGroup } from 'basics/inputs';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 import PublicKeyWithIcon from 'components/PublicKeyWithIcon';
+
+import { flexAllCenter, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { GOV_ICE, UP_ICE } from 'pages/vote/components/MainPage/MainPage';
 

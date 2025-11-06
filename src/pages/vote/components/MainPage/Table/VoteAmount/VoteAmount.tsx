@@ -4,9 +4,6 @@ import { D_ICE_CODE, DOWN_ICE_CODE, ICE_ISSUER, UP_ICE_CODE } from 'constants/as
 
 import { formatBalance, roundToPrecision } from 'helpers/format-number';
 
-import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import IconDown from 'assets/icons/arrows/arrow-negative-16.svg';
 import IconUp from 'assets/icons/arrows/arrow-positive-16.svg';
 import InfoIcon from 'assets/icons/status/icon-info-16.svg';
@@ -14,6 +11,9 @@ import DIce from 'assets/tokens/dice-logo.svg';
 import Ice from 'assets/tokens/ice-logo.svg';
 
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { PairStats, TotalStats } from 'pages/vote/api/types';
 

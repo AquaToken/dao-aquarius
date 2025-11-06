@@ -11,9 +11,6 @@ import { clearCurrentWallet, saveCurrentWallet } from 'helpers/wallet-connect-he
 import { ModalProps } from 'types/modal';
 import { Wallet } from 'types/wallet-connect';
 
-import { flexAllCenter } from 'web/mixins';
-import { COLORS } from 'web/styles';
-
 import ArrowRight from 'assets/icons/arrows/arrow-right-16.svg';
 
 import Button from 'basics/buttons/Button';
@@ -21,6 +18,9 @@ import CopyButton from 'basics/buttons/CopyButton';
 import ToggleGroup from 'basics/inputs/ToggleGroup';
 import { ExternalLink } from 'basics/links';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
+
+import { flexAllCenter } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 const QRContainer = styled.div`
     width: 100%;

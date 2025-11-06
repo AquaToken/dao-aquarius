@@ -7,14 +7,14 @@ import { formatBalance } from 'helpers/format-number';
 
 import { PoolIncentives, PoolProcessed } from 'types/amm';
 
-import { flexAllCenter, flexColumn, flexRowSpaceBetween, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS, FONT_SIZE, hexWithOpacity } from 'web/styles';
-
 import Arrows from 'assets/icons/arrows/arrows-swap.svg';
 import Crown from 'assets/icons/objects/icon-crown.svg';
 
 import AssetLogo from 'basics/AssetLogo';
 import Tooltip from 'basics/Tooltip';
+
+import { flexAllCenter, flexColumn, flexRowSpaceBetween, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS, FONT_SIZE, hexWithOpacity } from 'styles/style-constants';
 
 const Container = styled.div`
     display: flex;

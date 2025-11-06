@@ -5,12 +5,12 @@ import styled from 'styled-components';
 
 import { GovernanceRoutes } from 'constants/routes';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import PageLoader from 'basics/loaders/PageLoader';
 
 import NotFoundPage from 'components/NotFoundPage';
+
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { getProposalRequest, UPDATE_INTERVAL } from '../api/api';
 import { Proposal } from '../api/types';

@@ -10,8 +10,8 @@ import Reddit from 'assets/community/reddit.svg';
 import Telegram from 'assets/community/telegram.svg';
 import Twitter from 'assets/community/twitter.svg';
 
-import { respondDown } from '../mixins';
-import { Breakpoints, COLORS } from '../styles';
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const VerticalStyles = css`
     position: absolute;

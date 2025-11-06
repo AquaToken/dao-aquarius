@@ -9,7 +9,6 @@ import useAuthStore from 'store/authStore/useAuthStore';
 import { ModalService, StellarService } from 'services/globalServices';
 import { StellarEvents } from 'services/stellar/events/events';
 
-import { flexRowSpaceBetween } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
 
 import IconDislike from 'assets/icons/actions/icon-dislike-alt-16.svg';
@@ -18,6 +17,8 @@ import IconTick from 'assets/icons/small-icons/check/icon-check-16.svg';
 
 import Button from 'basics/buttons/Button';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import { flexRowSpaceBetween } from 'styles/mixins';
 
 import { PairStats } from 'pages/vote/api/types';
 

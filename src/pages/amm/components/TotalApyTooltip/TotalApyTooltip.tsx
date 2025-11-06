@@ -8,13 +8,13 @@ import { apyValueToDisplay } from 'helpers/amount';
 
 import { PoolProcessed } from 'types/amm';
 
-import { flexColumn, flexRowSpaceBetween, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS, FONT_SIZE, hexWithOpacity } from 'web/styles';
-
 import Arrow from 'assets/icons/arrows/arrow-alt-16.svg';
 
 import { IconBoost } from 'basics/icons';
 import Label from 'basics/Label';
+
+import { flexColumn, flexRowSpaceBetween, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS, FONT_SIZE, hexWithOpacity } from 'styles/style-constants';
 
 const Container = styled.div`
     ${flexColumn};

@@ -9,9 +9,6 @@ import { getDateString } from 'helpers/date';
 import { getIsTestnetEnv } from 'helpers/env';
 import { formatBalance } from 'helpers/format-number';
 
-import { flexAllCenter, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import ExternalLinkIcon from 'assets/icons/nav/icon-external-link-16.svg';
 import DIce from 'assets/tokens/dice-logo.svg';
 import Ice from 'assets/tokens/ice-logo.svg';
@@ -21,6 +18,9 @@ import { CircleLoader } from 'basics/loaders';
 import Pagination from 'basics/Pagination';
 
 import PublicKeyWithIcon from 'components/PublicKeyWithIcon';
+
+import { flexAllCenter, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { getVotes, getVoteTxHash, UPDATE_INTERVAL, VoteFields } from '../../../api/api';
 import { Vote } from '../../../api/types';

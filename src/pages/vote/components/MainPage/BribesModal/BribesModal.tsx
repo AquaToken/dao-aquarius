@@ -10,9 +10,6 @@ import { createAsset } from 'helpers/token';
 
 import { ModalProps } from 'types/modal';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import Aqua from 'assets/aqua/aqua-logo.svg';
 import Close from 'assets/icons/nav/icon-close-alt-16.svg';
 import Info from 'assets/icons/status/icon-info-16.svg';
@@ -21,6 +18,9 @@ import Asset from 'basics/Asset';
 import { ExternalLink } from 'basics/links';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 import Table, { CellAlign } from 'basics/Table';
+
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { PairStats } from '../../../api/types';
 
