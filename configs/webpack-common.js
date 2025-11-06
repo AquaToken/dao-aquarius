@@ -29,6 +29,7 @@ module.exports = {
             basics: path.resolve(rootDir, 'web/basics/'),
             components: path.resolve(rootDir, 'web/components/'),
             modals: path.resolve(rootDir, 'web/modals/'),
+            styles: path.resolve(rootDir, 'web/styles/'),
             pages: path.resolve(rootDir, 'pages/'),
         },
     },

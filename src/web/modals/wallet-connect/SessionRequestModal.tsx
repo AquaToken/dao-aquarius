@@ -5,14 +5,14 @@ import { AuthService } from 'services/globalServices';
 
 import { ModalProps } from 'types/modal';
 
-import { flexAllCenter } from 'web/mixins';
-import { COLORS } from 'web/styles';
-
 import Aqua from 'assets/aqua/aqua-logo.svg';
 import ArrowsIcon from 'assets/icons/arrows/arrows-circle-16.svg';
 
 import DotsLoader from 'basics/loaders/DotsLoader';
 import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
+
+import { flexAllCenter } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 const IconsBlock = styled.div`
     ${flexAllCenter};

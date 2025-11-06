@@ -6,14 +6,14 @@ import { GovernanceRoutes } from 'constants/routes';
 
 import { formatBalance } from 'helpers/format-number';
 
-import { cardBoxShadow, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import ArrowLeft from 'assets/icons/arrows/arrow-left-16.svg';
 
 import Button from 'basics/buttons/Button';
 import CircleButton from 'basics/buttons/CircleButton';
 import Input from 'basics/inputs/Input';
+
+import { cardBoxShadow, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import QuillEditor from './QuillEditor';
 

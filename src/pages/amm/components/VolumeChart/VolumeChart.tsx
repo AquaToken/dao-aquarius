@@ -11,12 +11,12 @@ import { formatBalance } from 'helpers/format-number';
 
 import { PoolStatistics, PoolVolume24h } from 'types/amm';
 
-import { flexAllCenter, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import EmptyChart from 'assets/icons/objects/icon-empty-chart-66x48.svg';
 
 import { Select, ToggleGroup } from 'basics/inputs';
+
+import { flexAllCenter, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { transformDate } from '../LiquidityChart/LiquidityChart';
 

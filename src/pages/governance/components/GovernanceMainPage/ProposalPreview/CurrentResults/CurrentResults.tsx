@@ -3,8 +3,8 @@ import styled from 'styled-components';
 
 import { roundToPrecision } from 'helpers/format-number';
 
-import { flexAllCenter } from 'web/mixins';
-import { COLORS } from 'web/styles';
+import { flexAllCenter } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 import { ProposalSimple } from '../../../../api/types';
 import { SummaryTitle, SummaryValue } from '../ProposalPreview';

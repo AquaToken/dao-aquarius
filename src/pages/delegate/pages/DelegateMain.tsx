@@ -13,9 +13,7 @@ import useAuthStore from 'store/authStore/useAuthStore';
 import { ModalService, StellarService } from 'services/globalServices';
 import { StellarEvents } from 'services/stellar/events/events';
 
-import { commonMaxWidth, respondDown, respondUp } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
-import { Breakpoints, COLORS } from 'web/styles';
 
 import BackgroundImageLeft from 'assets/delegate/delegate-bg-left.svg';
 import BackgroundImageRight from 'assets/delegate/delegate-bg-right.svg';
@@ -26,6 +24,9 @@ import { ToggleGroup } from 'basics/inputs';
 import Select from 'basics/inputs/Select';
 import { BlankExternalLink, BlankRouterLink } from 'basics/links';
 import { PageLoader } from 'basics/loaders';
+
+import { commonMaxWidth, respondDown, respondUp } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import DelegatesList from 'pages/delegate/components/DelegatesList/DelegatesList';
 import MyDelegates from 'pages/delegate/components/MyDelegates/MyDelegates';

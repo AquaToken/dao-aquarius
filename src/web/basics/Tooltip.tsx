@@ -3,9 +3,8 @@ import { useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import styled, { css } from 'styled-components';
 
-import { COLORS, Z_INDEX } from 'web/styles';
-
-import { cardBoxShadow } from '../mixins';
+import { cardBoxShadow } from 'styles/mixins';
+import { COLORS, Z_INDEX } from 'styles/style-constants';
 
 export enum TOOLTIP_POSITION {
     top = 'top',

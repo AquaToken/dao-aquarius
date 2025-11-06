@@ -5,13 +5,14 @@ import styled from 'styled-components';
 
 import { ModalService } from 'services/globalServices';
 
-import { flexColumnCenter } from 'web/mixins';
 import CropperModal from 'web/modals/CropperModal';
-import { COLORS, FONT_SIZE } from 'web/styles';
 
 import Icon from 'assets/icons/actions/icon-withdraw-16.svg';
 
 import { ExternalLink } from 'basics/links';
+
+import { flexColumnCenter } from 'styles/mixins';
+import { COLORS, FONT_SIZE } from 'styles/style-constants';
 
 const Container = styled.div`
     position: relative;

@@ -19,9 +19,6 @@ import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-
 import { StellarService, ToastService } from 'services/globalServices';
 import { StellarEvents } from 'services/stellar/events/events';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import Aqua from 'assets/aqua/aqua-logo.svg';
 import IconFail from 'assets/icons/status/fail-red.svg';
 import IconSuccess from 'assets/icons/status/success.svg';
@@ -31,6 +28,9 @@ import Button from 'basics/buttons/Button';
 import Checkbox from 'basics/inputs/Checkbox';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import Table, { CellAlign } from 'basics/Table';
+
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { LogVote, ProposalSimple } from '../../../../api/types';
 

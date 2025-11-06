@@ -19,6 +19,8 @@ export const API_ST_TICKER = 'https://api.stellarterm.com/v1/ticker.json';
 
 export const API_DELEGATION_URL = 'https://api-delegation.aqua.network/api/delegation/';
 
+export const API_AIRDROP_2 = 'https://airdrop2-checker-api.aqua.network/api/snapshot/';
+
 export const API_URLS = {
     [ENV_PRODUCTION]: {
         moonpay: 'https://api.moonpay.com/v3',

@@ -4,11 +4,10 @@ import styled from 'styled-components';
 
 import useOnClickOutside from 'hooks/useOutsideClick';
 
-import { Breakpoints, COLORS } from 'web/styles';
-
 import ArrowDown from 'assets/icons/arrows/arrow-down-16.svg';
 
-import { cardBoxShadow, customScroll, noSelect, respondDown } from '../../mixins';
+import { cardBoxShadow, customScroll, noSelect, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const DropDown = styled.div<{ $isOpen: boolean; $disabled: boolean }>`
     width: 100%;

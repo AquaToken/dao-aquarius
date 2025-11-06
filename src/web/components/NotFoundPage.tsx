@@ -6,10 +6,10 @@ import { MainRoutes } from 'constants/routes';
 
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { flexAllCenter, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import LinkArrowIcon from 'assets/icons/arrows/arrow-alt2-16.svg';
+
+import { flexAllCenter, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const MainBlock = styled.main`
     flex: 1 0 auto;

@@ -13,14 +13,14 @@ import { ModalService, StellarService, ToastService } from 'services/globalServi
 
 import { ClassicToken, Token, TokenType } from 'types/token';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import Plus from 'assets/icons/nav/icon-plus-16.svg';
 
 import Asset from 'basics/Asset';
 import { Button } from 'basics/buttons';
 import { ButtonProps } from 'basics/buttons/Button';
+
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const TrustlineBlock = styled.div<{ $isRounded?: boolean }>`
     display: flex;

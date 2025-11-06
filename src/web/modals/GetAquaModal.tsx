@@ -12,8 +12,8 @@ import { ModalDescription, ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
 
 import PublicKeyWithIcon from 'components/PublicKeyWithIcon';
 
-import { flexRowSpaceBetween, respondDown } from '../mixins';
-import { Breakpoints, COLORS } from '../styles';
+import { flexRowSpaceBetween, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const Container = styled.div`
     width: 100%;

@@ -10,23 +10,22 @@ import { useScrollToHash } from 'hooks/useScrollToHash';
 
 import { StellarService } from 'services/globalServices';
 
-import { COLORS } from 'web/styles';
-
 import Community from 'components/Community';
+
+import { PageContainer, SectionWrapper } from 'styles/commonPageStyles';
+import { COLORS } from 'styles/style-constants';
 
 import { TotalRewards } from 'pages/vote/api/types';
 
-import AquaForBuilders from './components/AquaForBuilders';
-import AquaSoroban from './components/AquaSoroban';
-import DexStats from './components/DexStats';
-import HeroBlock from './components/HeroBlock';
-import HowItWorks from './components/HowItWorks';
-import LiqPoolsTabs from './components/LiqPoolsTabs';
-import SupportedWallets from './components/SupportedWallets';
-import TokenSystem from './components/TokenSystem';
-import WhyProvideLiq from './components/WhyProvideLiq';
-
-import { PageContainer, SectionWrapper } from '../commonPageStyles';
+import AquaForBuilders from './components/AquaForBuilders/AquaForBuilders';
+import AquaSoroban from './components/AquaSoroban/AquaSoroban';
+import DexStats from './components/DexStats/DexStats';
+import HeroBlock from './components/HeroBlock/HeroBlock';
+import HowItWorks from './components/HowItWorks/HowItWorks';
+import LiqPoolsTabs from './components/LiqPoolsTabs/LiqPoolsTabs';
+import SupportedWallets from './components/SupportedWallets/SupportedWallets';
+import TokenSystem from './components/TokenSystem/TokenSystem';
+import WhyProvideLiq from './components/WhyProvideLiq/WhyProvideLiq';
 
 const MainPage = () => {
     const [isLoadingStats, setIsLoadingStats] = useState(true);

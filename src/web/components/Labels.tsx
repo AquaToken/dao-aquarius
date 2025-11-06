@@ -4,12 +4,12 @@ import Crown from 'assets/icons/objects/icon-crown.svg';
 
 import Label from 'basics/Label';
 
+import { COLORS, hexWithOpacity } from 'styles/style-constants';
+
 import {
     MAX_REWARDS_PERCENT,
     MIN_REWARDS_PERCENT,
 } from 'pages/vote/components/MainPage/Table/Table';
-
-import { COLORS, hexWithOpacity } from '../styles';
 
 const StyledLabel = styled(Label)`
     margin: 0 0.5rem;

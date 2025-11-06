@@ -1,13 +1,13 @@
 import { useEffect } from 'react';
 import styled from 'styled-components';
 
-import { respondDown } from 'web/mixins';
-import { PageContainer, SectionWrapper } from 'web/pages/commonPageStyles';
-import { Breakpoints } from 'web/styles';
-
 import Community from 'components/Community';
 import DelegateBlock from 'components/DelegateBlock';
 import Subscribe from 'components/Subscribe';
+
+import { PageContainer, SectionWrapper } from 'styles/commonPageStyles';
+import { respondDown } from 'styles/mixins';
+import { Breakpoints } from 'styles/style-constants';
 
 import AboutIce from 'pages/token/components/AboutIce/AboutIce';
 import AboutToken from 'pages/token/components/AboutToken/AboutToken';

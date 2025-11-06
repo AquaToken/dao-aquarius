@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
-import { cardBoxShadow, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
+import { cardBoxShadow, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 export const Form = styled.form<{ $isEmbedded?: boolean }>`
     margin: 0 auto 2rem;

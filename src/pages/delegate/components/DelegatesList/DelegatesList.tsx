@@ -14,19 +14,20 @@ import Profile from 'assets/icons/nav/icon-profile.svg';
 
 import { Button } from 'basics/buttons';
 
-import Delegatee from 'pages/delegate/components/Delegatee/Delegatee';
-import DelegateeStats from 'pages/delegate/components/DelegateeStats/DelegateeStats';
-
 import {
     cardBoxShadow,
     flexAllCenter,
     flexColumn,
     flexColumnCenter,
     respondDown,
-} from '../../../../web/mixins';
+} from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
+
+import Delegatee from 'pages/delegate/components/Delegatee/Delegatee';
+import DelegateeStats from 'pages/delegate/components/DelegateeStats/DelegateeStats';
+
 import ChooseLoginMethodModal from '../../../../web/modals/auth/ChooseLoginMethodModal';
 import DelegateModal from '../../../../web/modals/DelegateModal';
-import { Breakpoints, COLORS } from '../../../../web/styles';
 
 export const List = styled.div`
     ${flexColumn};

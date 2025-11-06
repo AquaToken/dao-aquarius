@@ -8,13 +8,13 @@ import { truncateString } from 'helpers/truncate-string';
 
 import { Delegatee as DelegateeType } from 'types/delegate';
 
-import { cardBoxShadow, flexRowSpaceBetween, respondDown, respondUp } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import Arrow from 'assets/icons/arrows/arrow-down-16.svg';
 
 import Identicon from 'basics/Identicon';
 import Label from 'basics/Label';
+
+import { cardBoxShadow, flexRowSpaceBetween, respondDown, respondUp } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { GOV_ICE, UP_ICE } from 'pages/vote/components/MainPage/MainPage';
 

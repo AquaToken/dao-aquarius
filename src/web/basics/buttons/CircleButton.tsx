@@ -2,8 +2,8 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { cardBoxShadow, flexAllCenter } from 'web/mixins';
-import { COLORS } from 'web/styles';
+import { cardBoxShadow, flexAllCenter } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 import BlankButton from './BlankButton';
 

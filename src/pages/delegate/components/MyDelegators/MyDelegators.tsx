@@ -9,13 +9,13 @@ import { formatBalance } from 'helpers/format-number';
 
 import { ClaimableBalance } from 'types/stellar';
 
-import { cardBoxShadow } from 'web/mixins';
-
 import { ExternalLink } from 'basics/links';
 import { PageLoader } from 'basics/loaders';
 import Table, { CellAlign } from 'basics/Table';
 
 import PublicKeyWithIcon from 'components/PublicKeyWithIcon';
+
+import { cardBoxShadow } from 'styles/mixins';
 
 const Container = styled.div`
     padding: 2.4rem;

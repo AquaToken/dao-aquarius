@@ -4,9 +4,6 @@ import styled from 'styled-components';
 import { MoonpayCurrencies, MoonpayCurrency } from 'types/api-moonpay';
 import { ModalProps } from 'types/modal';
 
-import { flexAllCenter, flexRowSpaceBetween, respondDown, respondUp } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import Search from 'assets/icons/actions/icon-search-16.svg';
 import IconTick16 from 'assets/icons/small-icons/check/icon-check-16.svg';
 
@@ -14,6 +11,9 @@ import { BlankButton } from 'basics/buttons';
 import { Input } from 'basics/inputs';
 import Label from 'basics/Label';
 import { ModalDescription, ModalTitle } from 'basics/ModalAtoms';
+
+import { flexAllCenter, flexRowSpaceBetween, respondDown, respondUp } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const Container = styled.div`
     width: 52.8rem;

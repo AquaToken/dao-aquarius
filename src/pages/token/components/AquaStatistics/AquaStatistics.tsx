@@ -17,14 +17,15 @@ import { useScrollAnimation } from 'hooks/useScrollAnimation';
 import { IceStatistics } from 'types/api-ice-locker';
 import { ExpertAssetData } from 'types/api-stellar-expert';
 
-import { containerScrollAnimation, slideUpSoftAnimation } from 'web/animations';
 import DotsLoader from 'web/basics/loaders/DotsLoader';
-import { cardBoxShadow, commonMaxWidth, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
 
 import Info from 'assets/icons/status/icon-info-16.svg';
 
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import { containerScrollAnimation, slideUpSoftAnimation } from 'styles/animations';
+import { cardBoxShadow, commonMaxWidth, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import AquaLinks from 'pages/token/components/AquaLinks/AquaLinks';
 import AquaPrice from 'pages/token/components/AquaPrice/AquaPrice';

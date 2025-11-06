@@ -3,12 +3,12 @@ import styled from 'styled-components';
 
 import { formatBalance } from 'helpers/format-number';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import Aqua from 'assets/aqua/aqua-logo.svg';
 
 import DotsLoader from 'basics/loaders/DotsLoader';
+
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { TotalRewards as TotalRewardsType } from 'pages/vote/api/types';
 

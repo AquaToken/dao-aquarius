@@ -22,9 +22,6 @@ import { PoolExtended, PoolIncentives } from 'types/amm';
 import { Int128Parts } from 'types/stellar';
 import { SorobanToken, TokenType } from 'types/token';
 
-import { flexAllCenter, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import Info from 'assets/icons/status/icon-info-16.svg';
 
 import Asset from 'basics/Asset';
@@ -37,6 +34,9 @@ import { StickyButtonWrapper } from 'basics/ModalAtoms';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
 
 import NoTrustline from 'components/NoTrustline';
+
+import { flexAllCenter, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import SuccessModal from 'pages/amm/components/SuccessModal/SuccessModal';
 

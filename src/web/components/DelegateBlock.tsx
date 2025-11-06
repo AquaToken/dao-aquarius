@@ -5,10 +5,6 @@ import { MainRoutes } from 'constants/routes';
 
 import { useScrollAnimation } from 'hooks/useScrollAnimation';
 
-import { slideUpSoftAnimation, containerScrollAnimation } from 'web/animations';
-import { commonMaxWidth, flexAllCenter, flexColumn, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import Logo from 'assets/delegate/delegate-promo.svg';
 import DAO from 'assets/icons/objects/icon-dao-16x17.svg';
 import Heart from 'assets/icons/objects/icon-heart.svg';
@@ -16,6 +12,10 @@ import Present from 'assets/icons/objects/icon-present.svg';
 
 import { ExternalLink } from 'basics/links';
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import { slideUpSoftAnimation, containerScrollAnimation } from 'styles/animations';
+import { commonMaxWidth, flexAllCenter, flexColumn, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 /* ------------------------------- STYLED PART ------------------------------ */
 

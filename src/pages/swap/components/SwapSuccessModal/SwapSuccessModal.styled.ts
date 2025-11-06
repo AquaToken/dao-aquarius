@@ -1,13 +1,13 @@
 import styled from 'styled-components';
 
-import { flexAllCenter, flexColumnCenter, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS, FONT_SIZE, hexWithOpacity } from 'web/styles';
-
 import ArrowRight from 'assets/icons/arrows/arrow-alt2-16.svg';
 import Success from 'assets/icons/status/success.svg';
 
 import { Button } from 'basics/buttons';
 import { BlankExternalLink } from 'basics/links';
+
+import { flexAllCenter, flexColumnCenter, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS, FONT_SIZE, hexWithOpacity } from 'styles/style-constants';
 
 export const Wrapper = styled.div`
     ${flexColumnCenter};

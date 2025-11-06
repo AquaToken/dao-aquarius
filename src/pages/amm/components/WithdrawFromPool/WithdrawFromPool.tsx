@@ -12,11 +12,11 @@ import { SorobanService } from 'services/globalServices';
 import { PoolExtended } from 'types/amm';
 import { ModalProps } from 'types/modal';
 
-import { COLORS } from 'web/styles';
-
 import { ToggleGroup } from 'basics/inputs';
 import PageLoader from 'basics/loaders/PageLoader';
 import { ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
+
+import { COLORS } from 'styles/style-constants';
 
 import BalancedWithdraw from 'pages/amm/components/WithdrawFromPool/BalancedWithdraw/BalancedWithdraw';
 import CustomWithdraw from 'pages/amm/components/WithdrawFromPool/CustomWithdraw/CustomWithdraw';

@@ -3,8 +3,8 @@ import styled from 'styled-components';
 
 import { formatBalance } from 'helpers/format-number';
 
-import { flexRowSpaceBetween } from 'web/mixins';
-import { COLORS } from 'web/styles';
+import { flexRowSpaceBetween } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 const Container = styled.div`
     display: flex;

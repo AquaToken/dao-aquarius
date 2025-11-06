@@ -10,14 +10,15 @@ import { ModalService } from 'services/globalServices';
 import { Token } from 'types/token';
 
 import Button from 'web/basics/buttons/Button';
-import { flexColumn, respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
 
 import AssetLogo from 'basics/AssetLogo';
 
 import NoTrustline from 'components/NoTrustline';
 
 import ClaimRewardsModal from 'modals/ClaimRewardsModal';
+
+import { flexColumn, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const RewardsWrap = styled.div`
     display: flex;

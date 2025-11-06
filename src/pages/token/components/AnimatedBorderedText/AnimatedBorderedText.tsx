@@ -3,8 +3,8 @@ import styled from 'styled-components';
 
 import { isAndroid } from 'helpers/browser';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints } from 'web/styles';
+import { respondDown } from 'styles/mixins';
+import { Breakpoints } from 'styles/style-constants';
 
 const Svg = styled.svg`
     height: 100px;

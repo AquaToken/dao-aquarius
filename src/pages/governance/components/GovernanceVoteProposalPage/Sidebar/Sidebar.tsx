@@ -11,15 +11,16 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService } from 'services/globalServices';
 
-import { cardBoxShadow, flexAllCenter, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
-import { Breakpoints, COLORS } from 'web/styles';
 
 import Fail from 'assets/icons/status/fail-red.svg';
 import Success from 'assets/icons/status/success.svg';
 
 import Button from 'basics/buttons/Button';
 import { ExternalLink } from 'basics/links';
+
+import { cardBoxShadow, flexAllCenter, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import NativeVotingButton from './VotingButton/VotingButton';
 

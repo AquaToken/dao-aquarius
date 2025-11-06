@@ -5,13 +5,13 @@ import { getIsTestnetEnv } from 'helpers/env';
 import { ModalProps } from 'types/modal';
 import { Token } from 'types/token';
 
-import { flexAllCenter } from 'web/mixins';
-import { COLORS } from 'web/styles';
-
 import Button from 'basics/buttons/Button';
 import { ExternalLink } from 'basics/links';
 import Market from 'basics/Market';
 import { ModalTitle, ModalWrapper } from 'basics/ModalAtoms';
+
+import { flexAllCenter } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 const AssetsInfo = styled.div`
     ${flexAllCenter};

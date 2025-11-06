@@ -2,11 +2,11 @@ import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import { COLORS } from 'web/styles';
-
 import CopyIcon from 'assets/icons/actions/icon-copy-16.svg';
 
 import Tooltip, { TOOLTIP_POSITION } from 'basics/Tooltip';
+
+import { COLORS } from 'styles/style-constants';
 
 const CopyButtonContainer = styled.div<{ isBlackText?: boolean }>`
     display: flex;

@@ -3,13 +3,13 @@ import styled from 'styled-components';
 
 import { LockerRoutes } from 'constants/routes';
 
-import { respondDown } from 'web/mixins';
-import { Breakpoints, COLORS } from 'web/styles';
-
 import FreezeAqua from 'assets/locker/freeze-aqua-banner.svg';
 
 import { Button } from 'basics/buttons';
 import Label from 'basics/Label';
+
+import { respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 const Container = styled.div`
     display: flex;

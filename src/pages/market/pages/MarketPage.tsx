@@ -11,9 +11,7 @@ import useAuthStore from 'store/authStore/useAuthStore';
 
 import { ModalService } from 'services/globalServices';
 
-import { contentWithSidebar, respondDown } from 'web/mixins';
 import ChooseLoginMethodModal from 'web/modals/auth/ChooseLoginMethodModal';
-import { Breakpoints, COLORS } from 'web/styles';
 
 import ArrowLeft from 'assets/icons/arrows/arrow-left-16.svg';
 
@@ -25,6 +23,9 @@ import MigrateToSorobanBanner from 'components/MigrateToSorobanBanner';
 import NotFoundPage from 'components/NotFoundPage';
 import PageNavigation from 'components/PageNavigation';
 import PageTitle from 'components/PageTitle';
+
+import { contentWithSidebar, respondDown } from 'styles/mixins';
+import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import AmmStats from 'pages/market/components/AmmStats/AmmStats';
 import AssetsDetails from 'pages/market/components/AssetsDetails/AssetsDetails';

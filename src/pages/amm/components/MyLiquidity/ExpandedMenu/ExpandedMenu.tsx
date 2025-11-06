@@ -8,15 +8,16 @@ import { ModalService } from 'services/globalServices';
 
 import { PoolClassicProcessed, PoolUserProcessed } from 'types/amm';
 
-import { cardBoxShadow } from 'web/mixins';
 import MigrateLiquidityStep1 from 'web/modals/migrate-liquidity/MigrateLiquidityStep1';
-import { COLORS } from 'web/styles';
 
 import IconDeposit from 'assets/icons/actions/icon-deposit-16.svg';
 import IconWithdraw from 'assets/icons/actions/icon-withdraw-16.svg';
 import IconThreeDots from 'assets/icons/nav/icon-three-dots-10x16.svg';
 
 import Button from 'basics/buttons/Button';
+
+import { cardBoxShadow } from 'styles/mixins';
+import { COLORS } from 'styles/style-constants';
 
 import DepositToPool from 'pages/amm/components/DepositToPool/DepositToPool';
 import WithdrawFromPool from 'pages/amm/components/WithdrawFromPool/WithdrawFromPool';
