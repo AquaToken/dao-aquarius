@@ -18,27 +18,25 @@ import { ModalService, SorobanService, ToastService } from 'services/globalServi
 import { ModalProps } from 'types/modal';
 import { SorobanToken, Token, TokenType } from 'types/token';
 
+import { flexRowSpaceBetween, respondDown } from 'web/mixins';
+import { Breakpoints, COLORS } from 'web/styles';
+
 import AssetLogo from 'basics/AssetLogo';
 import Button from 'basics/buttons/Button';
 import DotsLoader from 'basics/loaders/DotsLoader';
 import PageLoader from 'basics/loaders/PageLoader';
-import Market from 'basics/Market';
 import { ModalDescription, ModalTitle, ModalWrapper, StickyButtonWrapper } from 'basics/ModalAtoms';
 
 import { flexAllCenter, flexRowSpaceBetween, respondDown } from 'styles/mixins';
 import { Breakpoints, COLORS } from 'styles/style-constants';
 
+import SwapTokenDirection from 'components/SwapTokenDirection';
+
+import SwapSuccessModal from 'pages/swap/components/SwapSuccessModal/SwapSuccessModal';
+
 import PathPool from './PathPool/PathPool';
 
-import SuccessModal from '../../../amm/components/SuccessModal/SuccessModal';
 import { SWAP_SLIPPAGE_ALIAS } from '../SwapSettingsModal/SwapSettingsModal';
-
-const AssetsInfo = styled.div`
-    ${flexAllCenter};
-    padding: 3.5rem 0;
-    background-color: ${COLORS.gray50};
-    border-radius: 0.5rem;
-`;
 
 const DescriptionRow = styled.div`
     ${flexRowSpaceBetween};
@@ -48,17 +46,14 @@ const DescriptionRow = styled.div`
 
     span:last-child {
         color: ${COLORS.textTertiary};
+        text-align: right;
     }
-`;
-
-const Divider = styled.div`
-    border-bottom: 0.1rem dashed ${COLORS.gray100};
-    margin: 3.2rem 0;
 `;
 
 const Pools = styled.div`
     display: flex;
     flex-wrap: wrap;
+    margin-bottom: 3.2rem;
 
     ${respondDown(Breakpoints.md)`
         flex-direction: column;
@@ -201,12 +196,12 @@ const SwapConfirmModal = ({
                       )
                     : counterAmount;
 
-                ModalService.openModal(SuccessModal, {
-                    assets: [base, counter],
-                    amounts: [sentAmount, receivedAmount],
-                    title: 'Swap Successful',
-                    isSwap: true,
-                    hash,
+                ModalService.openModal(SwapSuccessModal, {
+                    source: base,
+                    destination: counter,
+                    sourceAmount: sentAmount,
+                    destinationAmount: receivedAmount,
+                    txHash: hash,
                 });
 
                 if (base.type === TokenType.soroban) {
@@ -238,11 +233,9 @@ const SwapConfirmModal = ({
 
     return (
         <ModalWrapper>
-            <ModalTitle>Confirm swap</ModalTitle>
-            <ModalDescription>Please check all the details to make a swap</ModalDescription>
-            <AssetsInfo>
-                <Market verticalDirections assets={[base, counter]} />
-            </AssetsInfo>
+            <ModalTitle>Confirm Swap</ModalTitle>
+            <ModalDescription>Review amounts, rate, and fees before confirming</ModalDescription>
+            <SwapTokenDirection assets={[base, counter]} />
             <DescriptionRow>
                 <span>You give</span>
                 <span>
@@ -306,10 +299,8 @@ const SwapConfirmModal = ({
                     })}
                 </Pools>
             )}
-
-            <Divider />
             <StickyButtonWrapper>
-                <Button fullWidth isBig pending={swapPending} onClick={() => swap()}>
+                <Button fullWidth isBig pending={swapPending} isRounded onClick={() => swap()}>
                     Confirm Swap
                 </Button>
             </StickyButtonWrapper>

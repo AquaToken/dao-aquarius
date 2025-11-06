@@ -15,6 +15,7 @@ export enum PROPOSAL_FILTER {
     ACTIVE = 'active',
     DISCUSSION = 'discussion',
     CLOSED = 'closed',
+    EXPIRED = 'expired',
     MY = 'my',
     MY_VOTES = 'my_votes',
     HISTORY = 'history',
@@ -52,6 +53,8 @@ export const getProposalsRequest = async ({
         params.append('active', 'true');
     } else if (filter === PROPOSAL_FILTER.HISTORY) {
         params.append('vote_owner_public_key', pubkey);
+    } else if (filter === PROPOSAL_FILTER.EXPIRED) {
+        params.append('status', 'expired');
     }
 
     const { data } = await axios.get<ListResponse<ProposalSimple>>(`${apiURL}/proposal/`, {

@@ -52,6 +52,12 @@ const StyledButton = styled(Button)`
         width: 100%;
         margin-top: 2rem;
     `}
+
+    ${respondDown(Breakpoints.sm)`
+        white-space: normal;
+        text-align: center;
+        line-height: 130%;
+    `}
 `;
 
 const SwapHeader = styled.div`

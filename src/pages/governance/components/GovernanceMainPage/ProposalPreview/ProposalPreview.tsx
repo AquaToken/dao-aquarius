@@ -200,6 +200,8 @@ const getStatus = (proposal: ProposalSimple) => {
             return PROPOSAL_STATUS.ACTIVE;
         case 'VOTED':
             return PROPOSAL_STATUS.CLOSED;
+        case 'EXPIRED':
+            return PROPOSAL_STATUS.EXPIRED;
     }
 };
 

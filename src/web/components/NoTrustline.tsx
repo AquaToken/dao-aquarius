@@ -52,10 +52,17 @@ const TrustlineButton = styled(Button)`
     ${respondDown(Breakpoints.md)`
         width: 100%;
         margin-top: 2rem;
+        white-space: wrap;
     `}
     svg {
         margin-left: 0.8rem;
     }
+`;
+
+const AssetCode = styled.span`
+    ${respondDown(Breakpoints.sm)`
+        display: none;
+    `}
 `;
 
 interface NoTrustlineProps extends Omit<ButtonProps, 'children'> {
@@ -137,7 +144,10 @@ const NoTrustline = ({
                 pending={trustlinePending}
                 isRounded={isRounded}
             >
-                add {asset.code} trustline <Plus />
+                <span>
+                    add <AssetCode>{asset.code}</AssetCode> trustline
+                </span>
+                <Plus />
             </TrustlineButton>
         </TrustlineBlock>
     );

@@ -151,7 +151,8 @@ const TitleBlock = styled.div`
     display: flex;
     justify-content: space-between;
     margin-bottom: 4.8rem;
-    align-items: center;
+    flex-direction: column;
+    gap: 1rem;
 
     ${respondDown(Breakpoints.lg)`
         flex-direction: column;
@@ -271,6 +272,7 @@ const Options = [
     { label: 'Active', value: PROPOSAL_FILTER.ACTIVE },
     { label: 'Discussion', value: PROPOSAL_FILTER.DISCUSSION },
     { label: 'Finished', value: PROPOSAL_FILTER.CLOSED },
+    { label: 'Expired', value: PROPOSAL_FILTER.EXPIRED },
     { label: 'My Proposals', value: PROPOSAL_FILTER.MY },
     { label: 'My Votes', value: PROPOSAL_FILTER.MY_VOTES },
     { label: 'History', value: PROPOSAL_FILTER.HISTORY },
@@ -337,6 +339,7 @@ const GovernanceMainPage = (): JSX.Element => {
 
         filterRef.current = params.get(UrlParams.filter);
         setFilter(params.get(UrlParams.filter));
+        setPage(1);
     }, [location, isLogged]);
 
     useEffect(() => {

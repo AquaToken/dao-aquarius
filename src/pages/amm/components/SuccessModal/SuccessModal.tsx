@@ -16,7 +16,7 @@ import { COLORS } from 'styles/style-constants';
 const AssetsInfo = styled.div`
     ${flexAllCenter};
     flex-direction: column;
-    padding: 3.5rem 0;
+    padding: 2.5rem 0;
     background-color: ${COLORS.gray50};
     border-radius: 0.5rem;
     margin-top: 4rem;
@@ -32,24 +32,17 @@ interface SuccessModalParams {
     assets: Token[];
     amounts: string[];
     title: string;
-    isSwap?: boolean;
     hash?: string;
 }
 
 const SuccessModal = ({ params, close }: ModalProps<SuccessModalParams>) => {
-    const { assets, amounts, title, isSwap, hash } = params;
+    const { assets, amounts, title, hash } = params;
 
     return (
         <ModalWrapper>
             <ModalTitle>{title ?? 'Success'}</ModalTitle>
             <AssetsInfo>
-                <Market
-                    assets={assets}
-                    verticalDirections
-                    withoutLink
-                    amounts={amounts}
-                    isSwapResult={isSwap}
-                />
+                <Market assets={assets} verticalDirections withoutLink amounts={amounts} />
                 <ExternalLink
                     href={`https://stellar.expert/explorer/${
                         getIsTestnetEnv() ? 'testnet' : 'public'

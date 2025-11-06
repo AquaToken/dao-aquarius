@@ -7,6 +7,7 @@ import { AmmRoutes, MarketRoutes } from 'constants/routes';
 
 import { getAssetString } from 'helpers/assets';
 import { getIsTestnetEnv } from 'helpers/env';
+import getExplorerLink, { ExplorerSection } from 'helpers/explorer-links';
 import { formatBalance } from 'helpers/format-number';
 
 import { LumenInfo } from 'store/assetsStore/reducer';
@@ -66,10 +67,11 @@ const Icons = styled.div<{
     $verticalDirections?: boolean;
     $mobileVerticalDirections?: boolean;
     $leftAlign?: boolean;
+    $compact?: boolean;
 }>`
     display: flex;
     align-items: center;
-    min-width: 12rem;
+    ${({ $compact }) => ($compact ? '' : 'min-width: 12rem;')};
     justify-content: ${({ $leftAlign }) => ($leftAlign ? 'flex-start' : 'center')};
 
     ${({ $mobileVerticalDirections }) =>
@@ -240,6 +242,7 @@ type PairProps = {
     apyTier?: number;
     isAmmBribes?: boolean;
     isPrivateBribes?: boolean;
+    compact?: boolean;
 };
 
 const Market = ({
@@ -268,6 +271,7 @@ const Market = ({
     poolType,
     fee,
     apyTier,
+    compact,
     ...props
 }: PairProps): React.ReactNode => {
     const { assetsInfo } = useAssetsStore();
@@ -311,12 +315,7 @@ const Market = ({
         e.stopPropagation();
 
         if (asset.type === TokenType.soroban) {
-            window.open(
-                `https://stellar.expert/explorer/${
-                    getIsTestnetEnv() ? 'testnet' : 'public'
-                }/contract/${asset.contract}`,
-                '_blank',
-            );
+            window.open(getExplorerLink(ExplorerSection.contract, asset.contract), '_blank');
             return;
         }
 
@@ -342,6 +341,7 @@ const Market = ({
                 $assetsCount={assets.length}
                 $mobileVerticalDirections={mobileVerticalDirections}
                 $leftAlign={leftAlign}
+                $compact={compact}
             >
                 {assets.map((asset, index) => (
                     <Icon

@@ -325,48 +325,51 @@ const VoteTable = ({
                             align: CellAlign.Right,
                         },
                     ],
-                    afterRow: hasBribes ? (
-                        <BribeInfo key={pair.account_id} onClick={e => showBribes(e, pair)}>
-                            <BribeInfoRow>
-                                <span>Bribes APY:</span>
-                                <BribeAquaSum>
-                                    <span>up to {formatBalance(+maxApy.toFixed(2), true)}%</span>
-                                </BribeAquaSum>
-                            </BribeInfoRow>
-                            <BribeInfoRow>
-                                <span>Paid in:</span>
-                                <BribeAssets>
-                                    {pair.aggregated_bribes
-                                        .sort(
-                                            (a, b) =>
-                                                Number(b.daily_aqua_equivalent) -
-                                                Number(a.daily_aqua_equivalent),
-                                        )
-                                        .slice(0, 3)
-                                        .map((bribe, index) => (
-                                            <BribeAsset
-                                                style={{ zIndex: 3 - index }}
-                                                key={bribe.asset_code + bribe.asset_issuer}
-                                            >
-                                                <Asset
-                                                    asset={createAsset(
-                                                        bribe.asset_code,
-                                                        bribe.asset_issuer,
-                                                    )}
-                                                    onlyLogoSmall
-                                                />
-                                            </BribeAsset>
-                                        ))}
-                                </BribeAssets>
-                                {pair.aggregated_bribes.length > 3 ? (
-                                    <BribeAssetsMore>
-                                        +{pair.aggregated_bribes.length - 3} more
-                                    </BribeAssetsMore>
-                                ) : null}
-                            </BribeInfoRow>
-                            <ArrowRightIcon />
-                        </BribeInfo>
-                    ) : null,
+                    afterRow:
+                        hasBribes && !pair.is_banned ? (
+                            <BribeInfo key={pair.account_id} onClick={e => showBribes(e, pair)}>
+                                <BribeInfoRow>
+                                    <span>Bribes APY:</span>
+                                    <BribeAquaSum>
+                                        <span>
+                                            up to {formatBalance(+maxApy.toFixed(2), true)}%
+                                        </span>
+                                    </BribeAquaSum>
+                                </BribeInfoRow>
+                                <BribeInfoRow>
+                                    <span>Paid in:</span>
+                                    <BribeAssets>
+                                        {pair.aggregated_bribes
+                                            .sort(
+                                                (a, b) =>
+                                                    Number(b.daily_aqua_equivalent) -
+                                                    Number(a.daily_aqua_equivalent),
+                                            )
+                                            .slice(0, 3)
+                                            .map((bribe, index) => (
+                                                <BribeAsset
+                                                    style={{ zIndex: 3 - index }}
+                                                    key={bribe.asset_code + bribe.asset_issuer}
+                                                >
+                                                    <Asset
+                                                        asset={createAsset(
+                                                            bribe.asset_code,
+                                                            bribe.asset_issuer,
+                                                        )}
+                                                        onlyLogoSmall
+                                                    />
+                                                </BribeAsset>
+                                            ))}
+                                    </BribeAssets>
+                                    {pair.aggregated_bribes.length > 3 ? (
+                                        <BribeAssetsMore>
+                                            +{pair.aggregated_bribes.length - 3} more
+                                        </BribeAssetsMore>
+                                    ) : null}
+                                </BribeInfoRow>
+                                <ArrowRightIcon />
+                            </BribeInfo>
+                        ) : null,
                 };
             })}
         />
