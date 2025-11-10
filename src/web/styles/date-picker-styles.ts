@@ -1,7 +1,7 @@
 import { createGlobalStyle } from 'styled-components';
 
-import { customScroll, flexAllCenter } from './mixins';
-import { COLORS, FONT_FAMILY } from './style-constants';
+import { customScroll, flexAllCenter, respondDown } from './mixins';
+import { Breakpoints, COLORS, FONT_FAMILY } from './style-constants';
 
 export const DatePickerStyles = createGlobalStyle`
     div.react-datepicker-wrapper {
@@ -103,4 +103,23 @@ export const DatePickerStyles = createGlobalStyle`
     }
 
     ${customScroll};
+    
+    ${respondDown(Breakpoints.sm)`
+        div.react-datepicker__time-container {
+            float: left;
+            margin-left: 0;
+            border-left: 1px solid ${COLORS.gray100};
+            margin-top: 5px;
+            width: 323px
+        }
+
+        .react-datepicker__time-list {
+            height: 150px !important;
+            overflow-y: scroll;
+        }
+
+        div.react-datepicker__time-box {
+            width: 100%!important;
+        }
+    `}
 `;
