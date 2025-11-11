@@ -56,7 +56,7 @@ const IncentivesTable = ({ isActive }: Props) => {
                         { children: 'Pool', flexSize: 2.5 },
                         { children: 'Token' },
                         { children: 'Daily amount' },
-                        { children: 'Period' },
+                        { children: 'Period', flexSize: isActive ? 1 : 1.5 },
                     ]}
                     body={incentives.map(incentive => {
                         const amount = tpsToDailyAmount(
@@ -93,11 +93,16 @@ const IncentivesTable = ({ isActive }: Props) => {
                                         convertDateStrToTimestamp(incentive.start_at_str),
                                         {
                                             withoutYear: true,
+                                            withTime: !isActive,
                                         },
                                     )} - ${getDateString(
                                         convertDateStrToTimestamp(incentive.expired_at_str) - 1,
+                                        {
+                                            withTime: !isActive,
+                                        },
                                     )}`,
                                     label: 'Period:',
+                                    flexSize: isActive ? 1 : 1.5,
                                 },
                             ],
                         };

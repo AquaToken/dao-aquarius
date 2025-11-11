@@ -30,6 +30,7 @@ import { PoolProcessed } from 'types/amm';
 import { Token } from 'types/token';
 
 import ConfirmIncentiveModal from 'web/modals/ConfirmIncentiveModal';
+import { DurationInput } from 'web/pages/bribes/pages/AddBribePage/AddBribePage.styled';
 
 import ArrowLeft from 'assets/icons/arrows/arrow-left-16.svg';
 import Fail from 'assets/icons/status/fail-red.svg';
@@ -63,8 +64,6 @@ import {
     FormWrap,
 } from 'styles/sharedFormPage.styled';
 import { Breakpoints, COLORS, FONT_SIZE } from 'styles/style-constants';
-
-import { DurationInput } from '../../../web/pages/bribes/pages/AddBribePage/AddBribePage.styled';
 
 const OptionsRow = styled.div`
     ${flexRowSpaceBetween};
