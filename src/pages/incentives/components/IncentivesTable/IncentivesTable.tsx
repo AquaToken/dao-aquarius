@@ -96,7 +96,7 @@ const IncentivesTable = ({ isActive }: Props) => {
                                             withTime: !isActive,
                                         },
                                     )} - ${getDateString(
-                                        convertDateStrToTimestamp(incentive.expired_at_str) - 1,
+                                        convertDateStrToTimestamp(incentive.expired_at_str),
                                         {
                                             withTime: !isActive,
                                         },
