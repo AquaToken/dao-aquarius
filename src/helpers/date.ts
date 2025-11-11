@@ -108,7 +108,7 @@ export function convertUTCToLocalDateIgnoringTimezone(date: Date) {
 }
 
 export const convertDateStrToTimestamp = (str: string): number =>
-    convertLocalDateToUTCIgnoringTimezone(new Date(str)).getTime();
+    convertUTCToLocalDateIgnoringTimezone(new Date(str)).getTime();
 
 export function formatDuration(ms: number): string {
     const MS_IN_DAY = 1000 * 60 * 60 * 24;
