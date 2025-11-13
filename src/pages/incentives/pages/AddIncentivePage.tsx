@@ -10,6 +10,7 @@ import {
     MAX_INCENTIVES_TOKENS_PER_POOL,
     MAX_TOKEN_AMOUNT,
 } from 'constants/incentives';
+import { DAY } from 'constants/intervals';
 import { IncentivesRoutes } from 'constants/routes';
 
 import { contractValueToAmount } from 'helpers/amount';
@@ -23,12 +24,13 @@ import { useDebounce } from 'hooks/useDebounce';
 import useAssetsStore from 'store/assetsStore/useAssetsStore';
 import useAuthStore from 'store/authStore/useAuthStore';
 
-import { ModalService, SorobanService } from 'services/globalServices';
+import { ModalService, SorobanService, ToastService } from 'services/globalServices';
 
 import { PoolProcessed } from 'types/amm';
 import { Token } from 'types/token';
 
 import ConfirmIncentiveModal from 'web/modals/ConfirmIncentiveModal';
+import { DurationInput } from 'web/pages/bribes/pages/AddBribePage/AddBribePage.styled';
 
 import ArrowLeft from 'assets/icons/arrows/arrow-left-16.svg';
 import Fail from 'assets/icons/status/fail-red.svg';
@@ -139,6 +141,12 @@ const TooltipInner = styled.span`
     `}
 `;
 
+const DatePickerStyled = styled(DatePicker)`
+    input {
+        padding-right: 0;
+    }
+`;
+
 enum Step {
     'market',
     'amount',
@@ -163,6 +171,7 @@ const AddIncentivePage = () => {
 
     const [startDay, setStartDay] = useState<number | null>(null);
     const [endDay, setEndDay] = useState<number | null>(null);
+    const [duration, setDuration] = useState<string>('1');
 
     const { processNewAssets } = useAssetsStore();
 
@@ -210,6 +219,31 @@ const AddIncentivePage = () => {
             setXDR(res.swap_chain_xdr);
         });
     }, [debouncedAmount, rewardToken]);
+
+    const onDurationChange = (value: string) => {
+        setDuration(value);
+
+        if (startDay) {
+            const newEndDay = startDay + DAY * Number(value);
+            setEndDay(newEndDay);
+        }
+    };
+
+    const onStartDayChange = (value: number) => {
+        setStartDay(value);
+
+        const newEndDay = value + DAY * Number(duration);
+
+        setEndDay(newEndDay);
+    };
+
+    const onEndDayChange = (value: number) => {
+        setEndDay(value);
+
+        const newDuration = Math.round((value - startDay) / DAY);
+
+        setDuration(newDuration.toString());
+    };
 
     const OPTIONS = useMemo(() => {
         if (!markets) return [];
@@ -306,6 +340,24 @@ const AddIncentivePage = () => {
     }, [selectedMarket]);
 
     const onSubmit = () => {
+        if (startDay < Date.now()) {
+            ToastService.showErrorToast('Invalid period: start time cannot be in the past.');
+
+            return;
+        }
+
+        if (startDay > endDay) {
+            ToastService.showErrorToast('Invalid period: start time is after the end time.');
+
+            return;
+        }
+
+        if (endDay - startDay < DAY) {
+            ToastService.showErrorToast('Invalid period: must be at least 24 hours.');
+
+            return;
+        }
+
         if (!isLogged) {
             ModalService.openModal(ChooseLoginMethodModal, {});
             return;
@@ -315,8 +367,8 @@ const AddIncentivePage = () => {
             pool: selectedMarket,
             rewardToken,
             amountPerDay: amount,
-            startDate: convertUTCToLocalDateIgnoringTimezone(new Date(startDay)).getTime(),
-            endDate: convertUTCToLocalDateIgnoringTimezone(new Date(endDay)).getTime(),
+            startDate: startDay,
+            endDate: endDay,
             swapChainedXdr: xdr,
         });
     };
@@ -435,15 +487,20 @@ const AddIncentivePage = () => {
                                     automatically.
                                 </FormSectionDescription>
                                 <FormRow>
-                                    <DatePicker
+                                    <DurationInput
+                                        label="Duration (days)"
+                                        value={duration}
+                                        setValue={onDurationChange}
+                                    />
+                                    <DatePickerStyled
                                         customInput={<InputStyled label="Start date" />}
                                         calendarStartDay={1}
                                         date={startDay ? new Date(startDay).getTime() : null}
                                         onChange={res => {
-                                            setStartDay(startOfDay(res).getTime());
+                                            onStartDayChange(res as number);
                                         }}
-                                        dateFormat="MM.dd.yyyy"
-                                        placeholderText="MM.DD.YYYY"
+                                        dateFormat="MM.dd.yyyy HH:mm"
+                                        placeholderText="MM.DD.YYYY hh:mm"
                                         disabledKeyboardNavigation
                                         popperModifiers={[
                                             {
@@ -455,15 +512,19 @@ const AddIncentivePage = () => {
                                         ]}
                                         minDate={nextDay}
                                         fullWidth
+                                        showTimeSelect
+                                        timeIntervals={60}
                                     />
                                     <DashIcon />
 
-                                    <DatePicker
+                                    <DatePickerStyled
                                         customInput={<InputStyled label="End date" />}
                                         date={endDay ? new Date(endDay).getTime() : null}
                                         onChange={res => {
-                                            setEndDay(startOfDay(res).getTime());
+                                            onEndDayChange(res as number);
                                         }}
+                                        dateFormat="MM.dd.yyyy HH:mm"
+                                        placeholderText="MM.DD.YYYY hh:mm"
                                         calendarStartDay={1}
                                         disabledKeyboardNavigation
                                         disabled={!startDay}
