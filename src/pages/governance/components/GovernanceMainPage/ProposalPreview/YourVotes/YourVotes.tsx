@@ -19,9 +19,9 @@ import { BuildSignAndSubmitStatuses } from 'services/auth/wallet-connect/wallet-
 import { StellarService, ToastService } from 'services/globalServices';
 import { StellarEvents } from 'services/stellar/events/events';
 
-import Aqua from 'assets/aqua/aqua-logo.svg';
 import IconFail from 'assets/icons/status/fail-red.svg';
 import IconSuccess from 'assets/icons/status/success.svg';
+import GDIce from 'assets/tokens/dice-logo.svg';
 import Ice from 'assets/tokens/ice-logo.svg';
 
 import Button from 'basics/buttons/Button';
@@ -34,7 +34,7 @@ import { Breakpoints, COLORS } from 'styles/style-constants';
 
 import { LogVote, ProposalSimple } from '../../../../api/types';
 
-const AquaLogo = styled(Aqua)`
+const GDIceLogo = styled(GDIce)`
     height: 1.6rem;
     width: 1.6rem;
     margin-left: 0.5rem;
@@ -332,7 +332,7 @@ const YourVotes = ({ proposal }: YourVotesProps): React.ReactNode => {
                             children: (
                                 <Cell>
                                     {formatBalance(Number(log.amount))}
-                                    {log.asset_code === 'AQUA' ? <AquaLogo /> : <IceLogo />}
+                                    {log.asset_code === GOV_ICE_CODE ? <IceLogo /> : <GDIceLogo />}
                                 </Cell>
                             ),
                             label: 'Voted:',
