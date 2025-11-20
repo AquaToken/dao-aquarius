@@ -33,11 +33,11 @@ export const getIceApproveEndpoint = (asset: ClassicToken): string => {
         return 'https://ice-approval.aqua.network/api/v2/downvote-ice/tx-approve/';
     }
     if (asset.code === GOV_ICE_CODE && asset.issuer === ICE_ISSUER) {
-        return 'https://ice-approval.aqua.network/api/v1/govern-ice/tx-approve/';
+        return 'https://ice-approval.aqua.network/api/v2/govern-ice/tx-approve/';
     }
 
     if (asset.code === GD_ICE_CODE && asset.issuer === ICE_ISSUER) {
-        return 'https://ice-approval.aqua.network/api/v1/delegated-govern-ice/tx-approve/';
+        return 'https://ice-approval.aqua.network/api/v2/delegated-govern-ice/tx-approve/';
     }
 
     throw new Error('Unknown asset');
